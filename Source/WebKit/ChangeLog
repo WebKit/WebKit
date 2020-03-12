@@ -1,3 +1,20 @@
+2020-03-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        RemoteImageBuffer::getImageData() has to clear its DisplayList after calling flushDrawingContext()
+        https://bugs.webkit.org/show_bug.cgi?id=208931
+
+        Reviewed by Myles C. Maxfield.
+
+        Instead of letting every caller to flushDrawingContextAndWaitCommit() or
+        flushDrawingContext() be responsible of clearing the DisplayList, we can
+        make these functions take this responsibility.
+
+        * WebProcess/GPU/graphics/RemoteImageBuffer.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.cpp:
+        (WebKit::RemoteImageBufferMessageHandler::flushDrawingContext):
+        (WebKit::RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit):
+        * WebProcess/GPU/graphics/RemoteImageBufferMessageHandler.h:
+
 2020-03-11  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes early March 2020 edition Take 2

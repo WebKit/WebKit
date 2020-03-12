@@ -70,20 +70,22 @@ void RemoteImageBufferMessageHandler::waitForCommitImageBufferFlushContext()
         m_remoteRenderingBackend->waitForCommitImageBufferFlushContext();
 }
 
-void RemoteImageBufferMessageHandler::flushDrawingContext(const WebCore::DisplayList::DisplayList& displayList)
+void RemoteImageBufferMessageHandler::flushDrawingContext(WebCore::DisplayList::DisplayList& displayList)
 {
     if (!m_remoteRenderingBackend)
         return;
     
     m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContext(displayList, m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
+    displayList.clear();
 }
 
-void RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit(const WebCore::DisplayList::DisplayList& displayList)
+void RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit(WebCore::DisplayList::DisplayList& displayList)
 {
     if (!m_remoteRenderingBackend)
         return;
     m_sentFlushIdentifier = ImageBufferFlushIdentifier::generate();
     m_remoteRenderingBackend->send(Messages::RemoteRenderingBackendProxy::FlushImageBufferDrawingContextAndCommit(displayList, m_sentFlushIdentifier, m_imageBufferIdentifier), m_remoteRenderingBackend->renderingBackendIdentifier());
+    displayList.clear();
     waitForCommitImageBufferFlushContext();
 }
 

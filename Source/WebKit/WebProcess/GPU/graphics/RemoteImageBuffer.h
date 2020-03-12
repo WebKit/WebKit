@@ -75,7 +75,7 @@ protected:
 
     RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
     {
-        auto& displayList = m_drawingContext.displayList();
+        auto& displayList = const_cast<RemoteImageBuffer*>(this)->m_drawingContext.displayList();
         const_cast<RemoteImageBuffer*>(this)->RemoteImageBufferMessageHandler::flushDrawingContext(displayList);
         auto result = const_cast<RemoteImageBuffer*>(this)->RemoteImageBufferMessageHandler::getImageData(outputFormat, srcRect);
         // getImageData is synchronous, which means we've already received the CommitImageBufferFlushContext message.
@@ -99,20 +99,16 @@ protected:
     void flushDrawingContext() override
     {
         auto& displayList = m_drawingContext.displayList();
-        if (displayList.itemCount()) {
+        if (displayList.itemCount())
             RemoteImageBufferMessageHandler::flushDrawingContextAndWaitCommit(displayList);
-            displayList.clear();
-        }
     }
     
     void willAppendItem(const WebCore::DisplayList::Item&) override
     {
         constexpr size_t DisplayListBatchSize = 512;
         auto& displayList = m_drawingContext.displayList();
-        if (displayList.itemCount() >= DisplayListBatchSize) {
+        if (displayList.itemCount() >= DisplayListBatchSize)
             RemoteImageBufferMessageHandler::flushDrawingContext(displayList);
-            displayList.clear();
-        }
     }
 };
 
