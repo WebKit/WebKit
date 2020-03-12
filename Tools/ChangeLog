@@ -1,3 +1,15 @@
+2020-03-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in TextManipulationController::replace
+        https://bugs.webkit.org/show_bug.cgi?id=209021
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TextManipulation.CompleteTextManipulationShouldReplaceContentFollowedAfterImageInCSSTable):
+
 2020-03-12  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] _AXSApplicationAccessibilityEnabled should not be called

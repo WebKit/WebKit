@@ -481,10 +481,15 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
     }
 
     RefPtr<Node> commonAncestor;
+    RefPtr<Node> firstContentNode;
     ParagraphContentIterator iterator { item.start, item.end };
     HashSet<Ref<Node>> excludedNodes;
+    HashSet<Ref<Node>> nodesToRemove;
     for (; !iterator.atEnd(); iterator.advance()) {
         auto content = iterator.currentContent();
+        
+        if (content.node)
+            nodesToRemove.add(*content.node);
 
         if (!content.isReplacedContent && !content.isTextContent)
             continue;
@@ -498,32 +503,23 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
 
         tokenExchangeMap.set(currentToken.identifier, TokenExchangeData { content.node.copyRef(), currentToken.content, currentToken.isExcluded });
         ++currentTokenIndex;
+        
+        if (!firstContentNode)
+            firstContentNode = content.node;
 
         // FIXME: Take care of when currentNode is nullptr.
-        if (content.node) {
+        if (RefPtr<Node> parent = content.node ? content.node->parentNode() : nullptr) {
             if (!commonAncestor)
-                commonAncestor = content.node;
-            else if (!content.node->isDescendantOf(commonAncestor.get())) {
-                commonAncestor = Range::commonAncestorContainer(commonAncestor.get(), content.node.get());
+                commonAncestor = parent;
+            else if (!parent->isDescendantOf(commonAncestor.get())) {
+                commonAncestor = Range::commonAncestorContainer(commonAncestor.get(), parent.get());
                 ASSERT(commonAncestor);
             }
         }
     }
 
-    RefPtr<Node> nodeAfterStart = item.start.computeNodeAfterPosition();
-    if (!nodeAfterStart)
-        nodeAfterStart = item.start.containerNode();
-
-    RefPtr<Node> nodeAfterEnd = item.end.computeNodeAfterPosition();
-    if (!nodeAfterEnd)
-        nodeAfterEnd = NodeTraversal::nextSkippingChildren(*item.end.containerNode());
-
-    HashSet<Ref<Node>> nodesToRemove;
-    for (RefPtr<Node> currentNode = nodeAfterStart; currentNode && currentNode != nodeAfterEnd; currentNode = NodeTraversal::next(*currentNode)) {
-        if (commonAncestor == currentNode)
-            commonAncestor = currentNode->parentNode();
-        nodesToRemove.add(*currentNode);
-    }
+    for (auto node = commonAncestor; node; node = node->parentNode())
+        nodesToRemove.remove(*node);
 
     Vector<Ref<Node>> currentElementStack;
     HashSet<Ref<Node>> reusedOriginalNodes;
@@ -581,9 +577,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         }
     }
 
-    Position insertionPoint = item.start;
-    if (insertionPoint.anchorNode() != insertionPoint.containerNode())
-        insertionPoint = insertionPoint.parentAnchoredEquivalent();
+    Position insertionPoint = positionBeforeNode(firstContentNode.get()).parentAnchoredEquivalent();
     while (insertionPoint.containerNode() != commonAncestor)
         insertionPoint = positionInParentBeforeNode(insertionPoint.containerNode());
     ASSERT(!insertionPoint.isNull());
