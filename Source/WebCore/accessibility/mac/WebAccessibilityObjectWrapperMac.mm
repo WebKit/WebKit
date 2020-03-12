@@ -2826,13 +2826,27 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (backingObject->isList() && [attributeName isEqualToString:NSAccessibilityOrientationAttribute])
         return NSAccessibilityVerticalOrientationValue;
 
-    if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"])
-        return [self textMarkerRangeForSelection];
+    if ([attributeName isEqualToString:@"AXSelectedTextMarkerRange"]) {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> RetainPtr<id> {
+            return [protectedSelf textMarkerRangeForSelection];
+        });
+    }
 
-    if ([attributeName isEqualToString: @"AXStartTextMarker"])
-        return [self textMarkerForVisiblePosition:startOfDocument(backingObject->document())];
-    if ([attributeName isEqualToString: @"AXEndTextMarker"])
-        return [self textMarkerForVisiblePosition:endOfDocument(backingObject->document())];
+    if ([attributeName isEqualToString:@"AXStartTextMarker"]) {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> RetainPtr<id> {
+            if (auto* backingObject = protectedSelf.get().axBackingObject)
+                return [protectedSelf textMarkerForVisiblePosition:startOfDocument(backingObject->document())];
+            return nil;
+        });
+    }
+
+    if ([attributeName isEqualToString:@"AXEndTextMarker"]) {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> RetainPtr<id> {
+            if (auto* backingObject = protectedSelf.get().axBackingObject)
+                return [protectedSelf textMarkerForVisiblePosition:endOfDocument(backingObject->document())];
+            return nil;
+        });
+    }
 
     if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
         return [NSNumber numberWithUnsignedInt:backingObject->blockquoteLevel()];
