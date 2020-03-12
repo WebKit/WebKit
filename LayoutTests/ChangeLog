@@ -1,3 +1,14 @@
+2020-03-12  Chris Dumez  <cdumez@apple.com>
+
+        [ Mac ] fast/history/page-cache-webdatabase-pending-transaction.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=207010
+        <rdar://problem/59035295>
+
+        Unreviewed, silence console messages to address flakiness.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-03-12  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         REGRESSION (257740?): [ iOS ] fast/events/autoscroll-in-iframe.html is flaky failing
