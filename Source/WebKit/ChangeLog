@@ -1,3 +1,13 @@
+2020-03-12  Chris Dumez  <cdumez@apple.com>
+
+        Drop unused WebProcess::UpdateActivePages IPC
+        https://bugs.webkit.org/show_bug.cgi?id=209002
+        <rdar://problem/59682658>
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/WebProcess.messages.in:
+
 2020-03-12  youenn fablet  <youenn@apple.com>
 
         FrameLoader should own its FrameLoaderClient
