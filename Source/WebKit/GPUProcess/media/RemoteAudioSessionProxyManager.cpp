@@ -28,6 +28,8 @@
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 
+#include "GPUProcess.h"
+#include "GPUProcessConnectionMessages.h"
 #include "RemoteAudioSessionProxy.h"
 #include <WebCore/AudioSession.h>
 #include <wtf/HashCountedSet.h>
@@ -44,46 +46,36 @@ static bool categoryCanMixWithOthers(AudioSession::CategoryType category)
 RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager()
     : m_session(AudioSession::create())
 {
+    m_session->addInterruptionObserver(*this);
 }
 
-RemoteAudioSessionProxyManager::~RemoteAudioSessionProxyManager() = default;
-
-void RemoteAudioSessionProxyManager::addProxy(WeakPtr<RemoteAudioSessionProxy>&& proxy)
+RemoteAudioSessionProxyManager::~RemoteAudioSessionProxyManager()
 {
-    auto id = proxy->processIdentifier();
-    ASSERT(!m_proxies.contains(id));
-    m_proxies.set(id, WTFMove(proxy));
+    m_session->removeInterruptionObserver(*this);
 }
 
-void RemoteAudioSessionProxyManager::removeProxy(const ProcessIdentifier& id)
+void RemoteAudioSessionProxyManager::addProxy(RemoteAudioSessionProxy& proxy)
 {
-    ASSERT(m_proxies.contains(id));
-    m_proxies.remove(id);
+    ASSERT(!m_proxies.contains(proxy));
+    m_proxies.add(proxy);
 }
 
-RemoteAudioSessionProxy* RemoteAudioSessionProxyManager::getProxy(const ProcessIdentifier& id)
+void RemoteAudioSessionProxyManager::removeProxy(RemoteAudioSessionProxy& proxy)
 {
-    auto results = m_proxies.find(id);
-    if (results != m_proxies.end())
-        return results->value.get();
-    return nullptr;
+    ASSERT(m_proxies.contains(proxy));
+    m_proxies.remove(proxy);
 }
 
-void RemoteAudioSessionProxyManager::setCategoryForProcess(const ProcessIdentifier& id, AudioSession::CategoryType category, RouteSharingPolicy policy)
+void RemoteAudioSessionProxyManager::setCategoryForProcess(RemoteAudioSessionProxy& proxy, AudioSession::CategoryType category, RouteSharingPolicy policy)
 {
-    ASSERT(m_proxies.contains(id));
-    auto proxy = getProxy(id);
-    if (!proxy)
-        return;
-
-    if (proxy->category() == category && proxy->routeSharingPolicy() == policy)
+    if (proxy.category() == category && proxy.routeSharingPolicy() == policy)
         return;
 
     HashCountedSet<AudioSession::CategoryType, WTF::IntHash<AudioSession::CategoryType>, WTF::StrongEnumHashTraits<AudioSession::CategoryType>> categoryCounts;
     HashCountedSet<RouteSharingPolicy, WTF::IntHash<RouteSharingPolicy>, WTF::StrongEnumHashTraits<RouteSharingPolicy>> policyCounts;
-    for (auto& otherProxy : m_proxies.values()) {
-        categoryCounts.add(otherProxy->category());
-        policyCounts.add(otherProxy->routeSharingPolicy());
+    for (auto& otherProxy : m_proxies) {
+        categoryCounts.add(otherProxy.category());
+        policyCounts.add(otherProxy.routeSharingPolicy());
     }
 
     if (categoryCounts.contains(AudioSession::PlayAndRecord))
@@ -113,30 +105,23 @@ void RemoteAudioSessionProxyManager::setCategoryForProcess(const ProcessIdentifi
     m_session->setCategory(category, policy);
 }
 
-void RemoteAudioSessionProxyManager::setPreferredBufferSizeForProcess(const ProcessIdentifier& id, size_t preferredBufferSize)
+void RemoteAudioSessionProxyManager::setPreferredBufferSizeForProcess(RemoteAudioSessionProxy& proxy, size_t preferredBufferSize)
 {
-    for (auto& otherProxy : m_proxies.values()) {
-        if (!otherProxy)
-            continue;
-        if (otherProxy->preferredBufferSize() < preferredBufferSize)
-            preferredBufferSize = otherProxy->preferredBufferSize();
+    for (auto& otherProxy : m_proxies) {
+        if (otherProxy.preferredBufferSize() < preferredBufferSize)
+            preferredBufferSize = otherProxy.preferredBufferSize();
     }
 
     m_session->setPreferredBufferSize(preferredBufferSize);
 }
 
-bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(const ProcessIdentifier& id, bool active)
+bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSessionProxy& proxy, bool active)
 {
-    ASSERT(m_proxies.contains(id));
-    auto proxy = getProxy(id);
-    if (!proxy)
-        return false;
+    ASSERT(m_proxies.contains(proxy));
 
     size_t activeProxyCount { 0 };
-    for (auto& otherProxy : m_proxies.values()) {
-        if (!otherProxy)
-            continue;
-        if (otherProxy->isActive())
+    for (auto& otherProxy : m_proxies) {
+        if (otherProxy.isActive())
             ++activeProxyCount;
     }
 
@@ -162,28 +147,42 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(const ProcessIdent
     // If this proxy is Ambient, and the session is already active, this
     // proxy will mix with the active proxies. No-op, and return activation
     // was sucessful.
-    if (categoryCanMixWithOthers(proxy->category()))
+    if (categoryCanMixWithOthers(proxy.category()))
         return true;
 
 #if PLATFORM(IOS_FAMILY)
     // Otherwise, this proxy wants to become active, but there are other
     // proxies who are already active. Walk over the proxies, and interrupt
-    // those proxies whose cateogries indicate they cannot mix with others.
-    for (auto& otherProxy : m_proxies.values()) {
-        if (!otherProxy)
-            continue;
-        if (!otherProxy->isActive())
+    // those proxies whose categories indicate they cannot mix with others.
+    for (auto& otherProxy : m_proxies) {
+        if (!otherProxy.isActive())
             continue;
 
-        if (categoryCanMixWithOthers(otherProxy->category()))
+        if (categoryCanMixWithOthers(otherProxy.category()))
             continue;
 
-        otherProxy->beginInterruption(PlatformMediaSession::InterruptionType::SystemInterruption);
+        otherProxy.beginInterruption(PlatformMediaSession::InterruptionType::SystemInterruption);
     }
 #endif
 
     return true;
 
+}
+
+void RemoteAudioSessionProxyManager::beginAudioSessionInterruption(PlatformMediaSession::InterruptionType type)
+{
+    for (auto& proxy : m_proxies) {
+        if (proxy.isActive())
+            proxy.beginInterruption(type);
+    }
+}
+
+void RemoteAudioSessionProxyManager::endAudioSessionInterruption(PlatformMediaSession::EndInterruptionFlags flags)
+{
+    for (auto& proxy : m_proxies) {
+        if (proxy.isActive())
+            proxy.endInterruption(flags);
+    }
 }
 
 }

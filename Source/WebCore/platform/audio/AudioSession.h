@@ -27,11 +27,12 @@
 
 #if USE(AUDIO_SESSION)
 
+#include "PlatformMediaSession.h"
 #include <memory>
-#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -93,6 +94,19 @@ public:
     void addMutedStateObserver(MutedStateObserver*);
     void removeMutedStateObserver(MutedStateObserver*);
 
+    class InterruptionObserver : public CanMakeWeakPtr<InterruptionObserver> {
+    public:
+        virtual ~InterruptionObserver() = default;
+
+        // FIXME: Remove use of InterruptionType and EndInterruptionFlags in this interface.
+        virtual void beginAudioSessionInterruption(PlatformMediaSession::InterruptionType) = 0;
+        virtual void endAudioSessionInterruption(PlatformMediaSession::EndInterruptionFlags) = 0;
+    };
+    void addInterruptionObserver(InterruptionObserver&);
+    void removeInterruptionObserver(InterruptionObserver&);
+    void beginInterruption(PlatformMediaSession::InterruptionType);
+    void endInterruption(PlatformMediaSession::EndInterruptionFlags);
+
     virtual bool isMuted() const;
     virtual void handleMutedStateChange();
 
@@ -106,6 +120,9 @@ protected:
 
     std::unique_ptr<AudioSessionPrivate> m_private;
     HashSet<MutedStateObserver*> m_observers;
+#if PLATFORM(IOS_FAMILY)
+    WeakHashSet<InterruptionObserver> m_interruptionObservers;
+#endif
     bool m_active { false }; // Used only for testing.
 };
 

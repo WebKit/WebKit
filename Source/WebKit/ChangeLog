@@ -1,3 +1,39 @@
+2020-03-12  youenn fablet  <youenn@apple.com>
+
+        Move AudioSession interruption listener code to AudioSession
+        https://bugs.webkit.org/show_bug.cgi?id=208714
+
+        Reviewed by Jer Noble.
+
+        Make RemoteAudioSessionProxyManager an observer for AudioSession interruptions.
+        When being interrupted, notify all WebProcesses and trigger begin/end interruption mechanisms.
+        We only send interruption to sessions that are active in RemoteAudioSessionProxyManager.
+        Minor refactorting to move manager proxies from a map to a weak hash set.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::didClose):
+        (WebKit::GPUConnectionToWebProcess::audioSessionProxy):
+        * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+        (WebKit::RemoteAudioSessionProxy::setCategory):
+        (WebKit::RemoteAudioSessionProxy::setPreferredBufferSize):
+        (WebKit::RemoteAudioSessionProxy::tryToSetActive):
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+        (WebKit::RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager):
+        (WebKit::RemoteAudioSessionProxyManager::~RemoteAudioSessionProxyManager):
+        (WebKit::RemoteAudioSessionProxyManager::addProxy):
+        (WebKit::RemoteAudioSessionProxyManager::removeProxy):
+        (WebKit::RemoteAudioSessionProxyManager::setCategoryForProcess):
+        (WebKit::RemoteAudioSessionProxyManager::setPreferredBufferSizeForProcess):
+        (WebKit::RemoteAudioSessionProxyManager::tryToSetActiveForProcess):
+        (WebKit::RemoteAudioSessionProxyManager::beginAudioSessionInterruption):
+        (WebKit::RemoteAudioSessionProxyManager::endAudioSessionInterruption):
+        * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+        * GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp:
+        * GPUProcess/media/ios/RemoteMediaSessionHelperProxy.h:
+        * WebProcess/GPU/media/ios/RemoteMediaSessionHelper.cpp:
+        * WebProcess/GPU/media/ios/RemoteMediaSessionHelper.h:
+        * WebProcess/GPU/media/ios/RemoteMediaSessionHelper.messages.in:
+
 2020-03-12  Don Olmstead  <don.olmstead@sony.com>
 
         [GPUP] Use standard int type in RemoteMediaPlayerState

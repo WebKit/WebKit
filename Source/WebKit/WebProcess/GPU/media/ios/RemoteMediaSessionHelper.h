@@ -44,10 +44,8 @@ public:
     IPC::Connection& connection();
 
     using HasAvailableTargets = WebCore::MediaSessionHelperClient::HasAvailableTargets;
-    using InterruptionType = WebCore::MediaSessionHelperClient::InterruptionType;
     using PlayingToAutomotiveHeadUnit = WebCore::MediaSessionHelperClient::PlayingToAutomotiveHeadUnit;
     using ShouldPause = WebCore::MediaSessionHelperClient::ShouldPause;
-    using ShouldResume = WebCore::MediaSessionHelperClient::ShouldResume;
     using SupportsAirPlayVideo = WebCore::MediaSessionHelperClient::SupportsAirPlayVideo;
     using SuspendedUnderLock = WebCore::MediaSessionHelperClient::SuspendedUnderLock;
 
@@ -61,7 +59,6 @@ private:
     void providePresentingApplicationPID(int) final;
 
     // Messages
-    void receivedInterruption(InterruptionType, ShouldResume);
     void applicationWillEnterForeground(SuspendedUnderLock);
     void applicationDidEnterBackground(SuspendedUnderLock);
     void applicationWillBecomeInactive();

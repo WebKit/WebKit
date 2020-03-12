@@ -63,6 +63,24 @@ bool AudioSession::tryToSetActive(bool active)
     return true;
 }
 
+#if !PLATFORM(IOS_FAMILY)
+void AudioSession::addInterruptionObserver(InterruptionObserver&)
+{
+}
+
+void AudioSession::removeInterruptionObserver(InterruptionObserver&)
+{
+}
+
+void AudioSession::beginInterruption(PlatformMediaSession::InterruptionType)
+{
+}
+
+void AudioSession::endInterruption(PlatformMediaSession::EndInterruptionFlags)
+{
+}
+#endif
+
 #if !PLATFORM(COCOA)
 class AudioSessionPrivate {
     WTF_MAKE_FAST_ALLOCATED;
