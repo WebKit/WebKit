@@ -1,5 +1,22 @@
 2020-03-12  Chris Dumez  <cdumez@apple.com>
 
+        [ macOS iOS ] fast/dom/connected-subframe-counter-overflow.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=207152
+        <rdar://problem/59127411>
+
+        Unreviewed, mark the test as slow instead of flaky timeout. The test is slow to run because
+        it checks for some overflow and adds a lot of iframes to the document.
+
+        This patch also speed up the test a bit by marking the iframes as display:none *before* inserting
+        them into the document. We also now add the frames in a timer to yield and make sure that the
+        main thread stays responsive while running this test.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2020-03-12  Chris Dumez  <cdumez@apple.com>
+
         [ Mac wk2 Release ] fast/dom/navigator-detached-no-crash.html flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=207151
         <rdar://problem/59126935>
