@@ -381,6 +381,7 @@ def parse_args(args):
             options.internal_feature = []
         options.internal_feature.append('UseGPUProcessForMedia')
         options.internal_feature.append('CaptureAudioInGPUProcessEnabled')
+        options.internal_feature.append('RenderCanvasInGPUProcessEnabled')
         if options.result_report_flavor:
             raise RuntimeError('--use-gpu-process implicitly sets the result flavor, this should not be overridden')
         options.result_report_flavor = 'gpuprocess'
