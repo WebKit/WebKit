@@ -29,7 +29,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-find_package(PkgConfig)
+find_package(PkgConfig QUIET)
 pkg_check_modules(GTK_UNIX_PRINT gtk+-unix-print-3.0)
 
 set(VERSION_OK TRUE)

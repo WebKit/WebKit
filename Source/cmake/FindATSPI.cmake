@@ -30,7 +30,7 @@
 # ATSPI_INCLUDE_DIRS - containg the AT-SPI headers
 # ATSPI_LIBRARIES - containg the AT-SPI library
 
-include(FindPkgConfig)
+find_package(PkgConfig QUIET)
 
 pkg_check_modules(ATSPI atspi-2)
 

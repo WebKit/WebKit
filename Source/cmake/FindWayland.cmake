@@ -28,7 +28,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-find_package(PkgConfig)
+find_package(PkgConfig QUIET)
 pkg_check_modules(WAYLAND wayland-client wayland-server wayland-egl)
 
 include(FindPackageHandleStandardArgs)

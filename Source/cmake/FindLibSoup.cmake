@@ -31,7 +31,7 @@
 # LibSoup does not provide an easy way to retrieve its version other than its
 # .pc file, so we need to rely on PC_LIBSOUP_VERSION and REQUIRE the .pc file
 # to be found.
-find_package(PkgConfig)
+find_package(PkgConfig QUIET)
 pkg_check_modules(PC_LIBSOUP REQUIRED QUIET libsoup-2.4)
 
 find_path(LIBSOUP_INCLUDE_DIRS

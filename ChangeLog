@@ -1,5 +1,47 @@
 2020-03-12  Konstantin Tokarev  <annulen@yandex.ru>
 
+        [CMake] Find modules should find pkg-config with find_package(PkgConfig QUIET)
+        https://bugs.webkit.org/show_bug.cgi?id=208948
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/FindATK.cmake:
+        * Source/cmake/FindATKBridge.cmake:
+        * Source/cmake/FindATSPI.cmake:
+        * Source/cmake/FindCairo.cmake:
+        * Source/cmake/FindCairoGL.cmake:
+        * Source/cmake/FindEGL.cmake:
+        * Source/cmake/FindEnchant.cmake:
+        * Source/cmake/FindFontconfig.cmake:
+        * Source/cmake/FindGDK3.cmake:
+        * Source/cmake/FindGLIB.cmake:
+        * Source/cmake/FindGObjectIntrospection.cmake:
+        * Source/cmake/FindGStreamer.cmake:
+        * Source/cmake/FindGTK3.cmake:
+        * Source/cmake/FindGTKUnixPrint.cmake:
+        * Source/cmake/FindHarfBuzz.cmake:
+        * Source/cmake/FindLibEpoxy.cmake:
+        * Source/cmake/FindLibNotify.cmake:
+        * Source/cmake/FindLibPSL.cmake:
+        * Source/cmake/FindLibSoup.cmake:
+        * Source/cmake/FindLibseccomp.cmake:
+        * Source/cmake/FindLibsecret.cmake:
+        * Source/cmake/FindLibtasn1.cmake:
+        * Source/cmake/FindLibxkbcommon.cmake:
+        * Source/cmake/FindNghttp2.cmake:
+        * Source/cmake/FindOpenGL.cmake:
+        * Source/cmake/FindOpenGLES2.cmake:
+        * Source/cmake/FindOpenJPEG.cmake:
+        * Source/cmake/FindSQLite3.cmake:
+        * Source/cmake/FindWOFF2Dec.cmake:
+        * Source/cmake/FindWPE.cmake:
+        * Source/cmake/FindWPEBackend-fdo.cmake:
+        * Source/cmake/FindWayland.cmake:
+        * Source/cmake/FindWaylandProtocols.cmake:
+        * Source/cmake/FindWebP.cmake:
+
+2020-03-12  Konstantin Tokarev  <annulen@yandex.ru>
+
         [CMake] Avoid calling FPHSA multiple time in FindPerlModules.cmake
         https://bugs.webkit.org/show_bug.cgi?id=208948
 

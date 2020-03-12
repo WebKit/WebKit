@@ -57,7 +57,7 @@ This will define the following variables in your project:
 
 #]=======================================================================]
 
-find_package(PkgConfig)
+find_package(PkgConfig QUIET)
 pkg_check_modules(PC_WEBP QUIET libwebp)
 set(WebP_COMPILE_OPTIONS ${PC_WEBP_CFLAGS_OTHER})
 set(WebP_VERSION ${PC_WEBP_CFLAGS_VERSION})

@@ -52,7 +52,7 @@ This will define the following variables in your project:
 
 #]=======================================================================]
 
-include(FindPkgConfig)
+find_package(PkgConfig QUIET)
 pkg_check_modules(PC_CAIRO QUIET cairo)
 set(Cairo_COMPILE_OPTIONS ${PC_CAIRO_CFLAGS_OTHER})
 set(Cairo_VERSION ${PC_CAIRO_VERSION})

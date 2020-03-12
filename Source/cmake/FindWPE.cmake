@@ -53,7 +53,7 @@ This will define the following variables in your project:
 
 #]=======================================================================]
 
-include(FindPkgConfig)
+find_package(PkgConfig QUIET)
 pkg_check_modules(PC_WPE QUIET wpe-1.0)
 set(WPE_COMPILE_OPTIONS ${PC_WPE_CFLAGS_OTHER})
 set(WPE_VERSION ${PC_WPE_VERSION})

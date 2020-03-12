@@ -27,7 +27,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-find_package(PkgConfig)
+find_package(PkgConfig QUIET)
 
 # TODO Remove the check for Enchant 1.x once all major LTS GNU/Linux
 #      distributions ship the 2.x series (probably around mid-2020).

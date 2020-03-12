@@ -54,7 +54,7 @@ This will define the following variables in your project:
 
 # TODO: Remove when cmake_minimum_version bumped to 3.14.
 
-include(FindPkgConfig)
+find_package(PkgConfig QUIET)
 pkg_check_modules(PC_SQLITE3 QUIET sqlite3)
 set(SQLite3_COMPILE_OPTIONS ${PC_SQLITE3_CFLAGS_OTHER})
 set(SQLite3_VERSION ${PC_SQLITE3_VERSION})

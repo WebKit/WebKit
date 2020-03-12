@@ -65,7 +65,7 @@ This will define the following variables in your project:
 
 #]=======================================================================]
 
-include(FindPkgConfig)
+find_package(PkgConfig QUIET)
 pkg_check_modules(PC_HARFBUZZ QUIET harfbuzz)
 set(HarfBuzz_COMPILE_OPTIONS ${PC_HARFBUZZ_CFLAGS_OTHER})
 set(HarfBuzz_VERSION ${PC_HARFBUZZ_CFLAGS_VERSION})
