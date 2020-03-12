@@ -7928,6 +7928,9 @@ void WebPageProxy::willStartCapture(const UserMediaPermissionRequestProxy& reque
 
     auto& gpuProcess = GPUProcessProxy::singleton();
     gpuProcess.updateCaptureAccess(request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture(), m_process->coreProcessIdentifier(), WTFMove(callback));
+#if PLATFORM(IOS_FAMILY)
+    GPUProcessProxy::singleton().setOrientationForMediaCapture(m_deviceOrientation);
+#endif
 #else
     callback();
 #endif
@@ -9939,8 +9942,9 @@ void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
     if (auto* proxy = m_process->userMediaCaptureManagerProxy())
         proxy->setOrientation(orientation);
 
-    if (preferences().captureVideoInGPUProcessEnabled())
-        GPUProcessProxy::singleton().setOrientationForMediaCapture(orientation);
+    auto* gpuProcess = GPUProcessProxy::singletonIfCreated();
+    if (gpuProcess && preferences().captureVideoInGPUProcessEnabled())
+        gpuProcess->setOrientationForMediaCapture(orientation);
 #endif
 }
 

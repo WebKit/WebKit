@@ -1,3 +1,18 @@
+2020-03-12  Youenn Fablet  <youenn@apple.com>
+
+        Provide orientation to GPUProcess when it will start to capture
+        https://bugs.webkit.org/show_bug.cgi?id=208911
+
+        Reviewed by Eric Carlson.
+
+        Provide orientation to GPUProcess whenever starting to capture.
+        This fixes the case of spinning the GPUProcess/starting capture in landscape mode.
+        Do not send orientation to GPUProcess if it is not yet started as an optimization.
+
+        Manually tested.
+
+        * UIProcess/WebPageProxy.cpp:
+
 2020-03-12  Eric Carlson  <eric.carlson@apple.com>
 
         Remove TextTrackPrivateRemote.messages.in
