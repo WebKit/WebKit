@@ -1,3 +1,17 @@
+2020-03-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Remove TextTrackPrivateRemote.messages.in
+        https://bugs.webkit.org/show_bug.cgi?id=208935
+
+        Reviewed by Don Olmstead.
+
+        No new tests, no functional change.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/TextTrackPrivateRemote.messages.in: Removed.
+
 2020-03-12  youenn fablet  <youenn@apple.com>
 
         Move AudioSession interruption listener code to AudioSession

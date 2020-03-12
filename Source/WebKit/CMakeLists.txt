@@ -223,7 +223,6 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/GPU/media/RemoteCDMInstanceSession.messages.in
     WebProcess/GPU/media/RemoteLegacyCDMSession.messages.in
     WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in
-    WebProcess/GPU/media/TextTrackPrivateRemote.messages.in
 
     WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in
     WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in
