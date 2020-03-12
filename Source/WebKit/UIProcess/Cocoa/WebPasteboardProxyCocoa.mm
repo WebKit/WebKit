@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebPasteboardProxy.h"
 
+#import "Connection.h"
 #import "SandboxExtension.h"
 #import "WebProcessProxy.h"
 #import <WebCore/Color.h>
@@ -34,6 +35,8 @@
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/SharedBuffer.h>
 #import <wtf/URL.h>
+
+#define MESSAGE_CHECK(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, (&connection), completion)
 
 namespace WebKit {
 using namespace WebCore;
@@ -171,7 +174,7 @@ void WebPasteboardProxy::setPasteboardStringForType(const String& pasteboardName
     completionHandler(PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType));
 }
 
-void WebPasteboardProxy::setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, CompletionHandler<void(int64_t)>&& completionHandler)
+void WebPasteboardProxy::setPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, CompletionHandler<void(int64_t)>&& completionHandler)
 {
     ASSERT(!pasteboardType.isNull());
     if (pasteboardType.isNull())
@@ -179,10 +182,14 @@ void WebPasteboardProxy::setPasteboardBufferForType(const String& pasteboardName
 
     if (handle.isNull())
         return completionHandler(PlatformPasteboard(pasteboardName).setBufferForType(nullptr, pasteboardType));
+
+    // SharedMemory::Handle::size() is rounded up to the nearest page.
+    MESSAGE_CHECK(size && size <= handle.size(), completionHandler(0));
+
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return completionHandler(0);
-    auto buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
+    auto buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), static_cast<size_t>(size));
     completionHandler(PlatformPasteboard(pasteboardName).setBufferForType(buffer.ptr(), pasteboardType));
 }
 
@@ -287,3 +294,5 @@ void WebPasteboardProxy::updateSupportedTypeIdentifiers(const Vector<String>& id
 #endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK

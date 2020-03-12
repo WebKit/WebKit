@@ -73,6 +73,10 @@ public:
 
         bool isNull() const;
 
+#if OS(DARWIN) || OS(WINDOWS)
+        size_t size() const { return m_size; }
+#endif
+
         void clear();
 
         void encode(IPC::Encoder&) const;
