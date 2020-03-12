@@ -5,6 +5,7 @@
 
 accessibility/insert-newline.html [ Pass ]
 accessibility/misspelling-range.html [ Pass ]
+accessibility/url-test.html [ Pass ]
 css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 fast/frames/sandboxed-iframe-close-top-noclose.html [ Failure ]
 fast/multicol/flexbox-rows.html [ Skip ]

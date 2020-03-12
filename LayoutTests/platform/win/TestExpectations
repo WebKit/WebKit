@@ -1595,6 +1595,7 @@ webkit.org/b/140867 [ Debug ] accessibility/focusable-div.html [ Skip ]
 [ Debug ] accessibility/hang-in-isignored.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/heading-title-includes-links.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/spinbutton-value.html [ Skip ]
+accessibility/url-test.html [ Skip ]
 
 # Missing support for scrollTo* methods.
 accessibility/scroll-to-global-point-iframe-nested.html [ Skip ]

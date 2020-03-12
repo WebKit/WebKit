@@ -1,3 +1,19 @@
+2020-03-12  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: Isolated tree: Crash in URL retrieval
+        https://bugs.webkit.org/show_bug.cgi?id=208942
+        <rdar://problem/60337588>
+
+        Reviewed by Chris Fleizach.
+
+        Moved the url-test.html test to the root directory so that it is
+        executed in both Mac and iOS.
+
+        * accessibility/url-test-expected.txt: Renamed from LayoutTests/accessibility/ios-simulator/url-test-expected.txt.
+        * accessibility/url-test.html: Renamed from LayoutTests/accessibility/ios-simulator/url-test.html.
+        * platform/ios-simulator/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-03-12  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r257938): Some pointerevents/ios/touch-action-region tests started to fail
