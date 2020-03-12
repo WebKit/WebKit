@@ -1,3 +1,12 @@
+2020-03-12  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        REGRESSION (257740?): [ iOS ] fast/events/autoscroll-in-iframe.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=209025
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-03-12  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 Debug ] webgpu/whlsl/vector-compare.html is flaky crashing.

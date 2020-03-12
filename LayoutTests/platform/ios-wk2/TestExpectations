@@ -1443,3 +1443,5 @@ webkit.org/b/208887 fast/css-custom-paint/image.html [ Pass Timeout ]
 webkit.org/b/208890 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor.htm [ Pass Failure ]
 
 webkit.org/b/209006 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Pass Failure ]
+
+webkit.org/b/209205 fast/events/autoscroll-in-iframe.html [ Pass Failure ]
