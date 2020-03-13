@@ -117,11 +117,6 @@ public:
     void cleanupForSuspension(Function<void()>&&);
     void endSuspension();
 
-    void getNetworkLoadInformationRequest(ResourceLoadIdentifier identifier, CompletionHandler<void(const WebCore::ResourceRequest&)>&& completionHandler)
-    {
-        completionHandler(m_networkLoadInformationByID.get(identifier).request);
-    }
-
     void getNetworkLoadInformationResponse(ResourceLoadIdentifier identifier, CompletionHandler<void(const WebCore::ResourceResponse&)>&& completionHandler)
     {
         completionHandler(m_networkLoadInformationByID.get(identifier).response);
