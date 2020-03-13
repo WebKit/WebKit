@@ -1,3 +1,13 @@
+2020-03-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] run FindModifiedChangeLogs early in the build
+        https://bugs.webkit.org/show_bug.cgi?id=209060
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        * BuildSlaveSupport/ews-build/factories_unittest.py: Updated unit-test.
+
 2020-03-13  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Add EWS testers to run GTK layout tests
