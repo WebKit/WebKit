@@ -27,7 +27,6 @@
 #include "ImageRotationSessionVT.h"
 
 #include "AffineTransform.h"
-#include "MediaSample.h"
 
 #include "CoreVideoSoftLink.h"
 #include "VideoToolboxSoftLink.h"
@@ -65,16 +64,11 @@ ImageRotationSessionVT::ImageRotationSessionVT(AffineTransform&& transform, Floa
     m_transform = WTFMove(transform);
 }
 
-ImageRotationSessionVT::ImageRotationSessionVT(const RotationProperties& rotation, FloatSize size, OSType pixelFormat, IsCGImageCompatible cvImageCompatibility)
-{
-    initialize(rotation, size, pixelFormat, cvImageCompatibility);
-}
 
-void ImageRotationSessionVT::initialize(const RotationProperties& rotation, FloatSize size, OSType pixelFormat, IsCGImageCompatible cvImageCompatibility)
+ImageRotationSessionVT::ImageRotationSessionVT(RotationProperties&& rotation, FloatSize size, OSType pixelFormat, IsCGImageCompatible cvImageCompatibility)
+    : m_rotationProperties(WTFMove(rotation))
+    , m_size(size)
 {
-    m_rotationProperties = rotation;
-    m_size = size;
-
     if (m_rotationProperties.angle == 90 || m_rotationProperties.angle == 270)
         size = size.transposedSize();
 
@@ -95,7 +89,6 @@ void ImageRotationSessionVT::initialize(const RotationProperties& rotation, Floa
         (__bridge NSString *)kCVPixelBufferHeightKey: @(m_rotatedSize.height()),
         (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(pixelFormat),
         (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: (cvImageCompatibility == IsCGImageCompatible::Yes ? @YES : @NO),
-        (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
     };
     CVPixelBufferPoolRef rawPool = nullptr;
     if (auto err = CVPixelBufferPoolCreate(kCFAllocatorDefault, nullptr, (__bridge CFDictionaryRef)pixelAttributes, &rawPool); err != noErr)
@@ -111,20 +104,6 @@ RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(CVPixelBufferRef pixe
     if (status == noErr)
         return adoptCF(rawRotatedBuffer);
     return nullptr;
-}
-
-RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(MediaSample& sample, const RotationProperties& rotation, IsCGImageCompatible cvImageCompatibility)
-{
-    auto pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer));
-    ASSERT(pixelBuffer);
-    if (!pixelBuffer)
-        return nullptr;
-
-    IntSize size { (int)CVPixelBufferGetWidth(pixelBuffer), (int)CVPixelBufferGetHeight(pixelBuffer) };
-    if (rotation != m_rotationProperties || m_size != size)
-        initialize(rotation, size, CVPixelBufferGetPixelFormatType(pixelBuffer), cvImageCompatibility);
-
-    return rotate(pixelBuffer);
 }
 
 }

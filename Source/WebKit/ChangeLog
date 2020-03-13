@@ -1,3 +1,15 @@
+2020-03-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r258391.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "Apply rotation at source level if WebRTC sink ask so"
+        https://bugs.webkit.org/show_bug.cgi?id=205645
+        https://trac.webkit.org/changeset/258391
+
 2020-03-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Report all third party loads on a per-page basis

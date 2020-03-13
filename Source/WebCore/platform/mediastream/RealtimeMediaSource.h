@@ -200,8 +200,6 @@ public:
     virtual void delaySamples(Seconds) { };
     void setInterruptedForTesting(bool);
 
-    virtual bool setShouldApplyRotation(bool) { return false; }
-
 protected:
     RealtimeMediaSource(Type, String&& name, String&& deviceID = { }, String&& hashSalt = { });
 

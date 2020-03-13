@@ -4068,7 +4068,7 @@
 		CD1E7347167BC78E009A885D /* TextTrackRepresentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */; };
 		CD225C0B1C46FBF400140761 /* WebCoreNSURLSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD225C091C46FBF400140761 /* WebCoreNSURLSession.mm */; };
 		CD225C0C1C46FBF400140761 /* WebCoreNSURLSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CD225C0A1C46FBF400140761 /* WebCoreNSURLSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CD27AE5022A9868700947FF9 /* ImageRotationSessionVT.h in Headers */ = {isa = PBXBuildFile; fileRef = CD27AE4E22A9868700947FF9 /* ImageRotationSessionVT.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD27AE5022A9868700947FF9 /* ImageRotationSessionVT.h in Headers */ = {isa = PBXBuildFile; fileRef = CD27AE4E22A9868700947FF9 /* ImageRotationSessionVT.h */; };
 		CD27AE5122A9868700947FF9 /* ImageRotationSessionVT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD27AE4F22A9868700947FF9 /* ImageRotationSessionVT.mm */; };
 		CD2F4A2418D89F700063746D /* AudioHardwareListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2F4A2218D89F700063746D /* AudioHardwareListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD2F4A2818D8A3490063746D /* AudioHardwareListenerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2F4A2618D8A3490063746D /* AudioHardwareListenerMac.h */; };
