@@ -47,7 +47,7 @@ inline To jsCast(JSValue from)
 {
     static_assert(std::is_base_of<JSCell, typename std::remove_pointer<To>::type>::value, "JS casting expects that the types you are casting to is a subclass of JSCell");
 #if (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)) && CPU(X86_64)
-    ASSERT(from.isCell());
+    ASSERT_WITH_SECURITY_IMPLICATION(from.isCell());
     JSCell* cell = from.asCell();
     if (!cell->JSCell::inherits(cell->vm(), std::remove_pointer<To>::type::info()))
         reportZappedCellAndCrash(*cell->JSCell::heap(), cell);
