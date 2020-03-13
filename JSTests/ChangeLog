@@ -1,3 +1,12 @@
+2020-03-09  Caio Lima  <ticaiolima@gmail.com>
+
+        Tail calls are broken on ARM_THUMB2 and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=197797
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/tail-call-with-spilled-registers.js: Added.
+
 2019-10-01  Saam Barati  <sbarati@apple.com>
 
         ObjectAllocationSinkingPhase shouldn't insert hints for allocations which are no longer valid

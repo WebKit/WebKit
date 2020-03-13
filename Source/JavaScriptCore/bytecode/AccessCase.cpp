@@ -890,7 +890,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             CCallHelpers::Jump returnUndefined = jit.branchTestPtr(
                 CCallHelpers::Zero, loadedValueGPR);
 
-            unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + numberOfParameters;
+            unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + roundArgumentCountToAlignFrame(numberOfParameters);
+            ASSERT(!(numberOfRegsForCall % stackAlignmentRegisters()));
             unsigned numberOfBytesForCall = numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
 
             unsigned alignedNumberOfBytesForCall =

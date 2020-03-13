@@ -1,3 +1,33 @@
+2020-03-09  Caio Lima  <ticaiolima@gmail.com>
+
+        Tail calls are broken on ARM_THUMB2 and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=197797
+
+        Reviewed by Yusuke Suzuki.
+
+        `prepareForTailCall` operation expects that header size + parameters
+        size is aligned with stack (alignment is 16-bytes for every architecture).
+        This means that headerSizeInBytes + argumentsIncludingThisInBytes needs
+        to be multiple of 16. This was not being preserved during getter IC code
+        for 32-bits. The code generated was taking in account only
+        headerSizeInRegisters (it is 4 on 32-bits) and argumentsIncludingThis
+        (that is always 1 for getters) and allocating 32-bytes when applying
+        operation `(headerSize + argumentsIncludingThis) * 8 - sizeof(CallerFrameAndPC)`.
+        This results in a stack frame with size of 40 bytes (after we push
+        `lr` and `sp`). Since `prepareForTailCall` expects frames to be
+        16-bytes aligned, it will then calculate the top of such frame
+        considering it is 48 bytes, cloberring values of previous frame and
+        causing unexpected behavior. This patch is fixing how this IC code
+        calculates the stack frame using `roundArgumentCountToAlignFrame(numberOfParameters)`
+        aligning with what we do on code without IC installed.
+        This was not a problem for getter and setter IC on 64-bits because
+        `roundArgumentCountToAlignFrame(1) == 1` and `roundArgumentCountToAlignFrame(2) == 3`
+        while it is `roundArgumentCountToAlignFrame(1) == 2` and
+        `roundArgumentCountToAlignFrame(2) == 2` for MIPS and ARMv7.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+
 2020-01-22  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Fix non-unified build
