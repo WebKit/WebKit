@@ -342,28 +342,28 @@ void TestController::getAllStorageAccessEntries()
     }];
 }
 
-void TestController::getPrevalentDomains()
+void TestController::loadedThirdPartyDomains()
 {
     auto* parentView = mainWebView();
     if (!parentView)
         return;
     
-    [globalWebViewConfiguration.websiteDataStore _getPrevalentDomainsFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *nsDomains) {
+    [globalWebViewConfiguration.websiteDataStore _loadedThirdPartyDomainsFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *nsDomains) {
         Vector<String> domains;
         domains.reserveInitialCapacity(nsDomains.count);
         for (NSString *domain : nsDomains)
             domains.uncheckedAppend(domain);
-        m_currentInvocation->didReceivePrevalentDomains(WTFMove(domains));
+        m_currentInvocation->didReceiveLoadedThirdPartyDomains(WTFMove(domains));
     }];
 }
 
-void TestController::clearPrevalentDomains()
+void TestController::clearLoadedThirdPartyDomains()
 {
     auto* parentView = mainWebView();
     if (!parentView)
         return;
 
-    [globalWebViewConfiguration.websiteDataStore _clearPrevalentDomainsFor:parentView->platformView()];
+    [globalWebViewConfiguration.websiteDataStore _clearLoadedThirdPartyDomainsFor:parentView->platformView()];
 }
 
 void TestController::getWebViewCategory()

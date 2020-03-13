@@ -820,8 +820,8 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     }
 #endif
     
-    if (WKStringIsEqualToUTF8CString(messageName, "GetPrevalentDomains")) {
-        TestController::singleton().getPrevalentDomains();
+    if (WKStringIsEqualToUTF8CString(messageName, "LoadedThirdPartyDomains")) {
+        TestController::singleton().loadedThirdPartyDomains();
         return;
     }
 
@@ -1970,9 +1970,9 @@ void TestInvocation::didReceiveAllStorageAccessEntries(Vector<String>& domains)
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), messageBody.get());
 }
 
-void TestInvocation::didReceivePrevalentDomains(Vector<String>&& domains)
+void TestInvocation::didReceiveLoadedThirdPartyDomains(Vector<String>&& domains)
 {
-    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidReceivePrevalentDomains"));
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidReceiveLoadedThirdPartyDomains"));
     
     WKRetainPtr<WKMutableArrayRef> messageBody = adoptWK(WKMutableArrayCreate());
     for (auto& domain : domains)

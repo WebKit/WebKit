@@ -5,34 +5,30 @@
 </head>
 <body onload="runTest()">
 <script>
-    description('Ensure web socket loads are captured by per-page prevalent domain logging.');
+    description('Ensure web socket loads are reported as loaded third party domains.');
 
     window.jsTestIsAsync = true;
     
     if (window.testRunner)
         testRunner.setAllowsAnySSLCertificate(true);
 
-    function askForPrevalentResources() {
-        testRunner.getPrevalentDomains(function (arrayOfDomains) {
+    function askForLoadedThirdPartyDomains() {
+        testRunner.loadedThirdPartyDomains(function (arrayOfDomains) {
             if (arrayOfDomains.length == 0) {
-                askForPrevalentResources();
+                askForLoadedThirdPartyDomains();
                 return;
             }
             if (arrayOfDomains.includes("localhost"))
-                testPassed("Domain was successfully marked prevalent.");
+                testPassed("Loaded domain was successfully captured.");
             else
-                testFailed("Domain was not successfully marked prevalent.");
+                testFailed("Loaded domain was not successfully captured.");
             setEnableFeature(false, finishJSTest);
         });
     }
 
     function runTest() {
-        setEnableFeature(true, function() {
-            testRunner.setStatisticsPrevalentResource("http://localhost", true, function () {
-                new WebSocket('ws://localhost:8880/websocket/tests/hybi/simple');
-                setTimeout(askForPrevalentResources, 0);
-            });
-        });
+        new WebSocket('ws://localhost:8880/websocket/tests/hybi/simple');
+        setTimeout(askForLoadedThirdPartyDomains, 0);
     }
 </script>
 <script src="../resources/js-test-post.js"></script>

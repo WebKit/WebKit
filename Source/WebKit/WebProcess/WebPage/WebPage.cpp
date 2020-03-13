@@ -5860,7 +5860,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
         return;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    clearPrevalentDomains();
+    clearLoadedThirdPartyDomains();
 #endif
     
     // If previous URL is invalid, then it's not a real page that's being navigated away from.
@@ -6697,26 +6697,20 @@ void WebPage::wasLoadedWithDataTransferFromPrevalentResource()
     frame->document()->wasLoadedWithDataTransferFromPrevalentResource();
 }
 
-void WebPage::addLoadedRegistrableDomain(RegistrableDomain&& domain)
+void WebPage::didLoadFromRegistrableDomain(RegistrableDomain&& targetDomain)
 {
-    auto addResult = m_loadedDomains.add(domain);
-    if (addResult.isNewEntry) {
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsPrevalentSubresourceLoad(domain), [this, protectedThis = makeRef(*this), domain] (bool isPrevalent) {
-            if (isPrevalent)
-                m_prevalentDomains.add(domain);
-        });
-    }
+    if (targetDomain != RegistrableDomain(mainWebFrame()->url()))
+        m_loadedThirdPartyDomains.add(targetDomain);
 }
 
-void WebPage::getPrevalentDomains(CompletionHandler<void(Vector<RegistrableDomain>)>&& completionHandler)
+void WebPage::loadedThirdPartyDomains(CompletionHandler<void(Vector<RegistrableDomain>)>&& completionHandler)
 {
-    completionHandler(copyToVector(m_prevalentDomains));
+    completionHandler(copyToVector(m_loadedThirdPartyDomains));
 }
 
-void WebPage::clearPrevalentDomains()
+void WebPage::clearLoadedThirdPartyDomains()
 {
-    m_prevalentDomains.clear();
-    m_loadedDomains.clear();
+    m_loadedThirdPartyDomains.clear();
 }
 
 #endif

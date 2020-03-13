@@ -374,7 +374,7 @@ public:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     virtual bool hasFrameSpecificStorageAccess() { return false; }
-    virtual void addLoadedRegistrableDomain(RegistrableDomain&&) { }
+    virtual void didLoadFromRegistrableDomain(RegistrableDomain&&) { }
 #endif
 
     virtual AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return AllowsContentJavaScript::Yes; }

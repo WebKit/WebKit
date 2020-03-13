@@ -149,13 +149,13 @@ void WebFrameLoaderClient::setHasFrameSpecificStorageAccess(FrameSpecificStorage
     m_frameSpecificStorageAccessIdentifier = WTFMove(frameSpecificStorageAccessIdentifier);
 }
 
-void WebFrameLoaderClient::addLoadedRegistrableDomain(RegistrableDomain&& domain)
+void WebFrameLoaderClient::didLoadFromRegistrableDomain(RegistrableDomain&& domain)
 {
     auto* webPage = m_frame->page();
     if (!webPage)
         return;
     
-    webPage->addLoadedRegistrableDomain(WTFMove(domain));
+    webPage->didLoadFromRegistrableDomain(WTFMove(domain));
 }
 
 #endif

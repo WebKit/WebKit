@@ -754,7 +754,7 @@ enum {
     StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID,
     StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID,
     AllStorageAccessEntriesCallbackID,
-    GetPrevalentDomainsCallbackID,
+    LoadedThirdPartyDomainsCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
     TextDidChangeInTextFieldCallbackID,
@@ -2355,15 +2355,15 @@ void TestRunner::callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& d
     callTestRunnerCallback(AllStorageAccessEntriesCallbackID, 1, &result);
 }
 
-void TestRunner::getPrevalentDomains(JSValueRef callback)
+void TestRunner::loadedThirdPartyDomains(JSValueRef callback)
 {
-    cacheTestRunnerCallback(GetPrevalentDomainsCallbackID, callback);
+    cacheTestRunnerCallback(LoadedThirdPartyDomainsCallbackID, callback);
     
-    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("GetPrevalentDomains"));
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("LoadedThirdPartyDomains"));
     WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr);
 }
 
-void TestRunner::callDidReceivePrevalentDomainsCallback(Vector<String>&& domains)
+void TestRunner::callDidReceiveLoadedThirdPartyDomainsCallback(Vector<String>&& domains)
 {
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
@@ -2384,7 +2384,7 @@ void TestRunner::callDidReceivePrevalentDomainsCallback(Vector<String>&& domains
     
     JSValueRef result = JSValueMakeFromJSONString(context, adopt(JSStringCreateWithUTF8CString(stringBuilder.toString().utf8().data())).get());
 
-    callTestRunnerCallback(GetPrevalentDomainsCallbackID, 1, &result);
+    callTestRunnerCallback(LoadedThirdPartyDomainsCallbackID, 1, &result);
 }
 
 void TestRunner::addMockMediaDevice(JSStringRef persistentId, JSStringRef label, const char* type)

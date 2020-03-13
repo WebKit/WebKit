@@ -1,3 +1,27 @@
+2020-03-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Report all third party loads on a per-page basis
+        https://bugs.webkit.org/show_bug.cgi?id=209032
+        <rdar://problem/60397323>
+
+        Reviewed by Chris Dumez.
+
+        Now that we report all loaded third party domains, we no longer need
+        ITP to test this call. We can eliminate the dual testing for
+        memory/database setup and any logic related to setting a resource
+        as prevalent.
+
+        * http/tests/resourceLoadStatistics/loaded-registrable-domains-get-reported-expected.txt: Copied from LayoutTests/http/tests/websocket/web-socket-loads-captured-in-per-page-domains-expected.txt.
+        * http/tests/resourceLoadStatistics/loaded-registrable-domains-get-reported.html: Added.
+        * http/tests/resourceLoadStatistics/prevalent-domains-per-page-database-expected.txt: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-domains-per-page-database.html: Removed.
+        * http/tests/resourceLoadStatistics/prevalent-domains-per-page.html: Removed.
+        * http/tests/websocket/web-socket-loads-captured-in-per-page-domains-expected.txt:
+        * http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html:
+        * platform/ios/TestExpectations:
+        Since this test no longer uses UIHelper.activateAt, it can be
+        unskipped in iOS
+
 2020-03-13  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac Debug ] http/tests/css/shared-stylesheet-mutation-preconstruct.html is flaky failing. 

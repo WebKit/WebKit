@@ -9947,14 +9947,14 @@ void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebPageProxy::getPrevalentDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&& completionHandler)
+void WebPageProxy::loadedThirdPartyDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPage::GetPrevalentDomains(), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::LoadedThirdPartyDomains(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::clearPrevalentDomains()
+void WebPageProxy::clearLoadedThirdPartyDomains()
 {
-    send(Messages::WebPage::ClearPrevalentDomains());
+    send(Messages::WebPage::ClearLoadedThirdPartyDomains());
 }
 #endif
 

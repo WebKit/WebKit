@@ -1,3 +1,50 @@
+2020-03-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Report all third party loads on a per-page basis
+        https://bugs.webkit.org/show_bug.cgi?id=209032
+        <rdar://problem/60397323>
+
+        Reviewed by Chris Dumez.
+
+        Test: http/tests/resourceLoadStatistics/loaded-registrable-domains-get-reported.html
+
+        Removed IPC to the Network Process asking if a resource load is from
+        a prevalent domain. This now stores and sends all loaded registrable
+        domains. This patch is mostly updating naming to reflect this and
+        deleting the unnecessary code to communicate with the
+        ResourceLoadStatisticsStore.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccessUnderOpener):
+        (WebKit::NetworkConnectionToWebProcess::isPrevalentSubresourceLoad): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _loadedThirdPartyDomainsFor:completionHandler:]):
+        (-[WKWebsiteDataStore _clearLoadedThirdPartyDomainsFor:]):
+        (-[WKWebsiteDataStore _getPrevalentDomainsFor:completionHandler:]): Deleted.
+        (-[WKWebsiteDataStore _clearPrevalentDomainsFor:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didLoadFromRegistrableDomain):
+        (WebKit::WebFrameLoaderClient::addLoadedRegistrableDomain): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::didLoadFromRegistrableDomain):
+        Add a check that this is a third party by comparing the target domain
+        to the main frame domain.
+
+        (WebKit::WebPage::loadedThirdPartyDomains):
+        (WebKit::WebPage::clearLoadedThirdPartyDomains):
+        (WebKit::WebPage::addLoadedRegistrableDomain): Deleted.
+        (WebKit::WebPage::getPrevalentDomains): Deleted.
+        (WebKit::WebPage::clearPrevalentDomains): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-03-13  Brent Fulgham  <bfulgham@apple.com>
 
         Remove unused SmartMagnificationController Magnify message

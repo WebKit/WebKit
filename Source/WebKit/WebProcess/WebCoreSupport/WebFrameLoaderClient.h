@@ -60,7 +60,7 @@ public:
         WebCore::PageIdentifier pageID;
     };
     void setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&&);
-    void addLoadedRegistrableDomain(WebCore::RegistrableDomain&&) final;
+    void didLoadFromRegistrableDomain(WebCore::RegistrableDomain&&) final;
 #endif
 
     WebCore::AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const final;

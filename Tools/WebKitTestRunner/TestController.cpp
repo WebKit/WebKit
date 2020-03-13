@@ -1126,7 +1126,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setAllowsAnySSLCertificate(true);
 
     statisticsResetToConsistentState();
-    clearPrevalentDomains();
+    clearLoadedThirdPartyDomains();
 
     clearAdClickAttribution();
 
@@ -3130,11 +3130,11 @@ void TestController::getAllStorageAccessEntries()
 {
 }
 
-void TestController::getPrevalentDomains()
+void TestController::loadedThirdPartyDomains()
 {
 }
 
-void TestController::clearPrevalentDomains()
+void TestController::clearLoadedThirdPartyDomains()
 {
 }
 

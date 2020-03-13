@@ -390,7 +390,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     WebKit::WebsiteDataStore::allowWebsiteDataRecordsForAllOrigins();
 }
 
-- (void)_getPrevalentDomainsFor:(WKWebView *)webView completionHandler:(void (^)(NSArray<NSString *> *domains))completionHandler
+- (void)_loadedThirdPartyDomainsFor:(WKWebView *)webView completionHandler:(void (^)(NSArray<NSString *> *domains))completionHandler
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!webView) {
@@ -404,8 +404,8 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
     }
     
-    webPageProxy->getPrevalentDomains([completionHandler = makeBlockPtr(completionHandler)] (Vector<WebCore::RegistrableDomain>&& prevalentDomains) {
-        Vector<RefPtr<API::Object>> apiDomains = WTF::map(prevalentDomains, [](auto& domain) {
+    webPageProxy->loadedThirdPartyDomains([completionHandler = makeBlockPtr(completionHandler)] (Vector<WebCore::RegistrableDomain>&& loadedThirdPartyDomains) {
+        Vector<RefPtr<API::Object>> apiDomains = WTF::map(loadedThirdPartyDomains, [](auto& domain) {
             return RefPtr<API::Object>(API::String::create(WTFMove(domain.string())));
         });
         completionHandler(wrapper(API::Array::create(WTFMove(apiDomains))));
@@ -415,7 +415,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
-- (void)_clearPrevalentDomainsFor:(WKWebView *)webView
+- (void)_clearLoadedThirdPartyDomainsFor:(WKWebView *)webView
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!webView)
@@ -425,7 +425,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!webPageProxy)
         return;
 
-    webPageProxy->clearPrevalentDomains();
+    webPageProxy->clearLoadedThirdPartyDomains();
 #endif
 }
 

@@ -1,3 +1,41 @@
+2020-03-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Report all third party loads on a per-page basis
+        https://bugs.webkit.org/show_bug.cgi?id=209032
+        <rdar://problem/60397323>
+
+        Reviewed by Chris Dumez.
+
+        Mostly naming updates to reflect the change in use for this SPI call.
+        It now returns all loaded third party domains, not just prevalent ones.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::getLoadedThirdPartyDomains):
+        (WTR::TestRunner::callDidReceiveLoadedThirdPartyDomainsCallback):
+        (WTR::TestRunner::getPrevalentDomains): Deleted.
+        (WTR::TestRunner::callDidReceivePrevalentDomainsCallback): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::getLoadedThirdPartyDomains):
+        (WTR::TestController::clearLoadedThirdPartyDomains):
+        (WTR::TestController::getPrevalentDomains): Deleted.
+        (WTR::TestController::clearPrevalentDomains): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveLoadedThirdPartyDomains):
+        (WTR::TestInvocation::didReceivePrevalentDomains): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::getLoadedThirdPartyDomains):
+        (WTR::TestController::clearLoadedThirdPartyDomains):
+        (WTR::TestController::getPrevalentDomains): Deleted.
+        (WTR::TestController::clearPrevalentDomains): Deleted.
+
 2020-03-13  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] run FindModifiedChangeLogs early in the build

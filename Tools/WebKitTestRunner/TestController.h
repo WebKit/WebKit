@@ -265,8 +265,8 @@ public:
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();
-    void getPrevalentDomains();
-    void clearPrevalentDomains();
+    void loadedThirdPartyDomains();
+    void clearLoadedThirdPartyDomains();
     void getWebViewCategory();
     void setInAppBrowserPrivacyEnabled(bool);
 

@@ -449,8 +449,8 @@ public:
     void statisticsCallDidSetFirstPartyWebsiteDataRemovalModeCallback();
     void statisticsResetToConsistentState(JSValueRef completionHandler);
     void statisticsCallDidResetToConsistentStateCallback();
-    void getPrevalentDomains(JSValueRef callback);
-    void callDidReceivePrevalentDomainsCallback(Vector<String>&& domains);
+    void loadedThirdPartyDomains(JSValueRef callback);
+    void callDidReceiveLoadedThirdPartyDomainsCallback(Vector<String>&& domains);
 
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(JSValueRef callback);
