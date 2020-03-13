@@ -1,3 +1,15 @@
+2020-03-13  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        REGRESSION (257844): fast/scrolling/scroll-container-horizontally.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=209083
+
+        Also changed expectations for a test that is now timing out.
+
+        Unreviewwd test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2020-03-13  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac Release ] css3/selectors3/xml/css3-modsel-d4.xml is flaky failing.
