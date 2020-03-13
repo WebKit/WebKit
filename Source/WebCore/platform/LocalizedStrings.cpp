@@ -1208,9 +1208,14 @@ String unacceptableTLSCertificate()
 #endif
 
 #if ENABLE(WEB_AUTHN)
-String touchIDPromptTitle()
+String genericTouchIDPromptTitle()
 {
     return WEB_UI_STRING("Touch ID to sign into this website.", "Use Touch ID to sign into this website");
+}
+
+String makeCredentialTouchIDPromptTitle(const String& domain)
+{
+    return formatLocalizedString(WEB_UI_CFSTRING("Touch ID to allow signing into “%@” with Touch ID.", "Allow using Touch ID to sign into the specified website on this device"), domain.createCFString().get());
 }
 
 String biometricFallbackPromptTitle()

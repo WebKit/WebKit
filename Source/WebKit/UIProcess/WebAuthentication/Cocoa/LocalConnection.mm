@@ -40,14 +40,21 @@
 
 namespace WebKit {
 
-void LocalConnection::verifyUser(SecAccessControlRef accessControl, UserVerificationCallback&& completionHandler) const
+void LocalConnection::verifyUser(const String& rpId, SecAccessControlRef accessControl, UserVerificationCallback&& completionHandler) const
 {
     auto context = adoptNS([allocLAContextInstance() init]);
 
     auto options = adoptNS([[NSMutableDictionary alloc] init]);
-    if ([context biometryType] == LABiometryTypeTouchID)
-        [options setObject:WebCore::touchIDPromptTitle() forKey:@(LAOptionAuthenticationTitle)];
-#if PLATFORM(iOS)
+    if ([context biometryType] == LABiometryTypeTouchID) {
+#if PLATFORM(IOS)
+        [options setObject:WebCore::genericTouchIDPromptTitle() forKey:@(LAOptionAuthenticationTitle)];
+        ASSERT_UNUSED(rpId, rpId);
+#else
+        [options setObject:WebCore::makeCredentialTouchIDPromptTitle(rpId) forKey:@(LAOptionAuthenticationTitle)];
+#endif
+        [options setObject:@NO forKey:@(LAOptionFallbackVisible)];
+    }
+#if PLATFORM(IOS)
     [options setObject:WebCore::biometricFallbackPromptTitle() forKey:@(LAOptionPasscodeTitle)];
 #endif
 

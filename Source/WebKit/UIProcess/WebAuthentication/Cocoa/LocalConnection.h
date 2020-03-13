@@ -62,7 +62,7 @@ public:
     virtual ~LocalConnection() = default;
 
     // Overrided by MockLocalConnection.
-    virtual void verifyUser(SecAccessControlRef, UserVerificationCallback&&) const;
+    virtual void verifyUser(const String& rpId, SecAccessControlRef, UserVerificationCallback&&) const;
     virtual RetainPtr<SecKeyRef> createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const;
     virtual void getAttestation(SecKeyRef, NSData *authData, NSData *hash, AttestationCallback&&) const;
     virtual void filterResponses(HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&) const { };

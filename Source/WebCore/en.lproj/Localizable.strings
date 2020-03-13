@@ -886,6 +886,9 @@
 /* Use Touch ID to sign into this website */
 "Touch ID to sign into this website." = "Touch ID to sign into this website.";
 
+/* Allow using Touch ID to sign into the specified website on this device */
+"Touch ID to allow signing into “%@” with Touch ID." = "Touch ID to allow signing into “%@” with Touch ID.";
+
 /* Transformations context sub-menu item */
 "Transformations" = "Transformations";
 

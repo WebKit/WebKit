@@ -237,6 +237,8 @@ void LocalAuthenticator::continueMakeCredentialAfterDecidePolicy(LocalAuthentica
     ASSERT(m_state == State::RequestReceived);
     m_state = State::PolicyDecided;
 
+    auto& creationOptions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
+
     if (policy == LocalAuthenticatorPolicy::Disallow) {
         receiveRespond(ExceptionData { UnknownError, "Disallow local authenticator."_s });
         return;
@@ -261,7 +263,7 @@ void LocalAuthenticator::continueMakeCredentialAfterDecidePolicy(LocalAuthentica
 
         weakThis->continueMakeCredentialAfterUserVerification(accessControl.get(), verification, context);
     };
-    m_connection->verifyUser(accessControlRef, WTFMove(callback));
+    m_connection->verifyUser(creationOptions.rp.id, accessControlRef, WTFMove(callback));
 }
 
 void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessControlRef accessControlRef, LocalConnection::UserVerification verification, LAContext *context)
@@ -476,6 +478,8 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
     ASSERT(m_state == State::RequestReceived);
     m_state = State::ResponseSelected;
 
+    auto& requestOptions = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
+
     auto accessControlRef = response->accessControl();
     auto callback = [
         weakThis = makeWeakPtr(*this),
@@ -487,7 +491,7 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
 
         weakThis->continueGetAssertionAfterUserVerification(WTFMove(response), verification, context);
     };
-    m_connection->verifyUser(accessControlRef, WTFMove(callback));
+    m_connection->verifyUser(requestOptions.rpId, accessControlRef, WTFMove(callback));
 }
 
 void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::AuthenticatorAssertionResponse>&& response, LocalConnection::UserVerification verification, LAContext *context)

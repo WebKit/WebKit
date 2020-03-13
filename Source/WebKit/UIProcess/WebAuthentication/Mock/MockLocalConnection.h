@@ -37,7 +37,7 @@ public:
     explicit MockLocalConnection(const WebCore::MockWebAuthenticationConfiguration&);
 
 private:
-    void verifyUser(SecAccessControlRef, UserVerificationCallback&&) const final;
+    void verifyUser(const String&, SecAccessControlRef, UserVerificationCallback&&) const final;
     RetainPtr<SecKeyRef> createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const final;
     void getAttestation(SecKeyRef, NSData *authData, NSData *hash, AttestationCallback&&) const final;
     void filterResponses(HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&) const final;

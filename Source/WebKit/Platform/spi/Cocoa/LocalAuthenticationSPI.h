@@ -36,6 +36,7 @@
 typedef NS_ENUM(NSInteger, LAOption) {
     LAOptionAuthenticationTitle,
     LAOptionPasscodeTitle,
+    LAOptionFallbackVisible,
 };
 
 @interface LAContext(Private) <NSSecureCoding>
