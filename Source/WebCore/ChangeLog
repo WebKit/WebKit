@@ -1,3 +1,24 @@
+2020-02-24  ChangSeok Oh  <changseok@webkit.org>
+
+        PS-2019-006: [GTK] WebKit - AXObjectCache - m_deferredFocusedNodeChange - UaF
+        https://bugs.webkit.org/show_bug.cgi?id=204342
+
+        Reviewed by Carlos Garcia Campos.
+
+        m_deferredFocusedNodeChange keeps pairs of a old node and a new one
+        to update a focused node later. When a node is removed in the document,
+        it is also removed from the pair vector. The problem is only comparing
+        the new node in each pair with a removed node decides the removal.
+        In the case where the removed node lives in m_deferredFocusedNodeChange
+        as an old node, a crash happens while we get a renderer of the removed node
+        to handle focused elements. To fix this, we find all entries of which old node
+        is matched to the removed node, and set their first value null.
+
+        No new tests since no functionality changed.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::remove):
+
 2020-01-16  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         Do not detect the stopped animations in Nicosia::Animation to avoid flashback

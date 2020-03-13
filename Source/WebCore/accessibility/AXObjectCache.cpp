@@ -758,6 +758,12 @@ void AXObjectCache::remove(Node& node)
     m_deferredFocusedNodeChange.removeAllMatching([&node](auto& entry) -> bool {
         return entry.second == &node;
     });
+    // Set nullptr to the old focused node if it is being removed.
+    std::for_each(m_deferredFocusedNodeChange.begin(), m_deferredFocusedNodeChange.end(), [&node](auto& entry) {
+        if (entry.first == &node)
+            entry.first = nullptr;
+    });
+
     removeNodeForUse(node);
 
     remove(m_nodeObjectMapping.take(&node));
