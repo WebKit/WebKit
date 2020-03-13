@@ -1,3 +1,14 @@
+2020-03-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] reduce logging
+        https://bugs.webkit.org/show_bug.cgi?id=209062
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/common/bugzilla.py:
+        (BugzillaBeautifulSoup.authenticate):
+        (BugzillaBeautifulSoup._load_query):
+
 2020-03-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in TextIterator::node via TextManipulationController::replace

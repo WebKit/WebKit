@@ -158,7 +158,7 @@ class BugzillaBeautifulSoup():
         attempts = 0
         while not authenticated:
             attempts += 1
-            _log.info('Logging in as {}...'.format(username))
+            _log.debug('Logging in as {}...'.format(username))
             self.browser.open(config.BUG_SERVER_URL + 'index.cgi?GoAheadAndLogIn=1')
             self.browser.select_form(name="login")
             self.browser['Bugzilla_login'] = username
@@ -196,7 +196,7 @@ class BugzillaBeautifulSoup():
     def _load_query(self, query):
         self.authenticate()
         full_url = '{}{}'.format(config.BUG_SERVER_URL, query)
-        _log.info('Getting list of patches needing review, URL: {}'.format(full_url))
+        _log.debug('Getting list of patches needing review, URL: {}'.format(full_url))
         return self.browser.open(full_url)
 
     def _parse_attachment_ids_request_query(self, page, since=None):
