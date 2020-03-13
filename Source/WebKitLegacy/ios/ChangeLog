@@ -1,3 +1,10 @@
+2020-03-12  Alexey Proskuryakov  <ap@apple.com>
+
+        rdar://problem/60359230 Mark locationManager:didChangeAuthorizationStatus: as deprecated.
+
+        * Misc/WebGeolocationCoreLocationProvider.mm:
+        (-[WebGeolocationCoreLocationProvider locationManager:didChangeAuthorizationStatus:]):
+
 2020-03-07  Darin Adler  <darin@apple.com>
 
         Begin moving off of live ranges for WebKit internals
