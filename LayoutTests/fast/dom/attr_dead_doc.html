@@ -1,32 +1,27 @@
+<!DOCTYPE html>
 <html>
-<head>
+<body>
+<p>Tests that setting the src attribute of an img element inside a detached document does not crash.</p>
+<iframe id="testFrame" src="resources/top.html"></iframe>
 <script>
-var im;
-function getImg() {
-    im =  document.getElementById("right").contentDocument.getElementById("img");
-}
-function setImg() {
-    im.src = "resources/mozilla.gif";
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
-function init() {
-    if (window.testRunner) {
-        window.testRunner.waitUntilDone();
-    }
-    getImg();
-    document.getElementById("right").contentWindow.location.href = "about:blank";
-    if (window.testRunner) {
-        setTimeout("setImg(); window.testRunner.notifyDone();",100);
-    }
-    else {
-        setTimeout("setImg();",100);
-    }
-
+onload = () => {
+    image = testFrame.contentDocument.getElementById("img");
+    testFrame.remove();
+    setTimeout(() => {
+        image.src = "resources/mozilla.gif";
+        setTimeout(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }, 0);
 }
+
 </script>
-</head>
-<body onload=init()>
-<iframe id="right" src="resources/top.html"></iframe>
 </body>
 </html>
 
