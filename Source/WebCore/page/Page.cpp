@@ -1355,10 +1355,16 @@ void Page::updateRendering()
 #endif
 
     layoutIfNeeded();
-    
+
     forEachDocument([] (Document& document) {
         document.updateHighlightPositions();
     });
+
+#if ENABLE(VIDEO_TRACK)
+    forEachDocument([] (Document& document) {
+        document.updateTextTrackRepresentationImageIfNeeded();
+    });
+#endif
 }
 
 void Page::suspendScriptedAnimations()

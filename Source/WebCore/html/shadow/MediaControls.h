@@ -98,6 +98,7 @@ public:
     virtual void updateTextTrackDisplay();
     virtual void textTrackPreferencesChanged();
     virtual void clearTextDisplayContainer();
+    virtual void updateTextTrackRepresentationImageIfNeeded();
 #endif
 
 protected:
