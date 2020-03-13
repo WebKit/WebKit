@@ -45,6 +45,7 @@ static void setDefaultsToConsistentValuesForTesting()
         @"NSScrollAnimationEnabled": @NO,
         @"NSOverlayScrollersEnabled": @NO,
         @"AppleShowScrollBars": @"Always",
+        @"WebKit2UseRemoteLayerTreeDrawingArea": @NO,
     };
 
     [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];
