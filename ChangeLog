@@ -1,3 +1,15 @@
+2020-03-13  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [CMake] Eleminate mismatches between Find* module names and variables they set
+        https://bugs.webkit.org/show_bug.cgi?id=208948
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/FindLibseccomp.cmake:
+        * Source/cmake/FindWPEBackend_fdo.cmake: Renamed from Source/cmake/FindWPEBackend-fdo.cmake.
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2020-03-12  Konstantin Tokarev  <annulen@yandex.ru>
 
         [CMake] Find modules should find pkg-config with find_package(PkgConfig QUIET)

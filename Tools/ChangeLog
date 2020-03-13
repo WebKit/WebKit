@@ -1,3 +1,12 @@
+2020-03-13  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [CMake] Eleminate mismatches between Find* module names and variables they set
+        https://bugs.webkit.org/show_bug.cgi?id=208948
+
+        Reviewed by Michael Catanzaro.
+
+        * wpe/backends/CMakeLists.txt:
+
 2020-03-13  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] reduce logging

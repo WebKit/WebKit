@@ -2,7 +2,7 @@
 # Once done, this will define
 #
 #  LIBEVENT_FOUND - system has libevent.
-#  EVENT_LIBRARY - link this to use libevent.
+#  LIBEVENT_LIBRARY - link this to use libevent.
 #
 # Copyright (C) 2018 Igalia S.L.
 #
@@ -30,17 +30,17 @@
 find_package(PkgConfig)
 pkg_check_modules(PC_LIBEVENT libevent)
 
-find_library(EVENT_LIBRARY
+find_library(LIBEVENT_LIBRARY
     NAME event
     HINTS ${PC_LIBEVENT_LIBDIR}
 )
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LibEvent
-    REQUIRED_VARS EVENT_LIBRARY
+    REQUIRED_VARS LIBEVENT_LIBRARY
     FOUND_VAR LIBEVENT_FOUND
     VERSION_VAR PC_LIBEVENT_VERSION)
 
 mark_as_advanced(
-    EVENT_LIBRARY
+    LIBEVENT_LIBRARY
 )

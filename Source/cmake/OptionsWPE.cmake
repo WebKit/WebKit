@@ -168,7 +168,7 @@ if (ENABLE_WPE_QT_API)
 endif ()
 
 if (ENABLE_WPE_QT_API OR USE_WPE_VIDEO_PLANE_DISPLAY_DMABUF)
-    find_package(WPEBackend-fdo 1.5.0 REQUIRED)
+    find_package(WPEBackend_fdo 1.5.0 REQUIRED)
 endif ()
 
 add_definitions(-DBUILDING_WPE__=1)

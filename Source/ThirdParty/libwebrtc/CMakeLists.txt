@@ -1,7 +1,7 @@
 
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-find_package(Vpx 1.7.0)
+find_package(LibVpx 1.7.0)
 if (NOT LIBVPX_FOUND)
     message(FATAL_ERROR "libvpx is needed for USE_LIBWEBRTC.")
 endif ()
@@ -16,7 +16,7 @@ if (NOT ALSALIB_FOUND)
     message(FATAL_ERROR "alsa-lib is needed for USE_LIBWEBRTC.")
 endif ()
 
-find_package(Opus 1.3)
+find_package(LibOpus 1.3)
 if (NOT LIBOPUS_FOUND)
     message(FATAL_ERROR "libopus is needed for USE_LIBWEBRTC.")
 endif ()
@@ -1551,11 +1551,11 @@ target_include_directories(webrtc PRIVATE
     Source/webrtc/modules/audio_coding/codecs/isac/main/include
 )
 
-target_link_libraries(webrtc ${VPX_LIBRARY})
+target_link_libraries(webrtc ${LIBVPX_LIBRARY})
 
-target_link_libraries(webrtc ${EVENT_LIBRARY})
+target_link_libraries(webrtc ${LIBEVENT_LIBRARY})
 
-target_link_libraries(webrtc ${OPUS_LIBRARY})
+target_link_libraries(webrtc ${LIBOPUS_LIBRARY})
 
 # libsrtp package compilation
 set(libsrtp_SOURCES

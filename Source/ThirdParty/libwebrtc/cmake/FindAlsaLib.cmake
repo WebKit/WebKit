@@ -30,4 +30,4 @@ find_package(PkgConfig)
 pkg_check_modules(PC_ALSALIB alsa)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Alsalib DEFAULT_MSG PC_ALSALIB_VERSION)
+find_package_handle_standard_args(AlsaLib DEFAULT_MSG PC_ALSALIB_VERSION)

@@ -2,7 +2,7 @@
 # Once done, this will define
 #
 #  LIBOPUS_FOUND - system has opus.
-#  OPUS_LIBRARY - link this to use opus.
+#  LIBOPUS_LIBRARY - link this to use opus.
 #
 # Copyright (C) 2018 Igalia S.L.
 #
@@ -30,17 +30,17 @@
 find_package(PkgConfig)
 pkg_check_modules(PC_LIBOPUS opus)
 
-find_library(OPUS_LIBRARY
+find_library(LIBOPUS_LIBRARY
     NAME opus
     HINTS ${PC_LIBOPUS_LIBDIR}
 )
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LibOpus
-    REQUIRED_VARS OPUS_LIBRARY
+    REQUIRED_VARS LIBOPUS_LIBRARY
     FOUND_VAR LIBOPUS_FOUND
     VERSION_VAR PC_LIBOPUS_VERSION)
 
 mark_as_advanced(
-    OPUS_LIBRARY
+    LIBOPUS_LIBRARY
 )

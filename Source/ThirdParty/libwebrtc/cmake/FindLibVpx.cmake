@@ -2,7 +2,7 @@
 # Once done, this will define
 #
 #  LIBVPX_FOUND - system has libvpx.
-#  VPX_LIBRARY - link this to use libvpx.
+#  LIBVPX_LIBRARY - link this to use libvpx.
 #
 # Copyright (C) 2018 Igalia S.L.
 #
@@ -30,17 +30,17 @@
 find_package(PkgConfig)
 pkg_check_modules(PC_LIBVPX vpx)
 
-find_library(VPX_LIBRARY
+find_library(LIBVPX_LIBRARY
     NAME vpx
     HINTS ${PC_LIBVPX_LIBDIR}
 )
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LibVpx
-    REQUIRED_VARS VPX_LIBRARY
+    REQUIRED_VARS LIBVPX_LIBRARY
     FOUND_VAR LIBVPX_FOUND
     VERSION_VAR PC_LIBVPX_VERSION)
 
 mark_as_advanced(
-    VPX_LIBRARY
+    LIBVPX_LIBRARY
 )
