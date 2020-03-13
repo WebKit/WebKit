@@ -60,6 +60,7 @@ private:
     static void didCloseCallback(WebSocketTask*);
 
     NetworkSocketChannel& m_channel;
+    GRefPtr<SoupMessage> m_handshakeMessage;
     GRefPtr<SoupWebsocketConnection> m_connection;
     GRefPtr<GCancellable> m_cancellable;
     bool m_receivedDidFail { false };
