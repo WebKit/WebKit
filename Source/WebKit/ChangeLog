@@ -1,5 +1,20 @@
 2020-03-13  Brent Fulgham  <bfulgham@apple.com>
 
+        Remove unused IPC function UserMediaCaptureManagerProxy::SetMuted
+        https://bugs.webkit.org/show_bug.cgi?id=209087
+        <rdar://problem/59658963>
+
+        Reviewed by Eric Carlson.
+
+        Remove the unused UserMediaCaptureManagerProxy message 'SetMuted'.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::setMuted): Deleted.
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+
+2020-03-13  Brent Fulgham  <bfulgham@apple.com>
+
         Remove unused GetNetworkLoadInformationRequest call
         https://bugs.webkit.org/show_bug.cgi?id=209081
         <rdar://problem/59659064>

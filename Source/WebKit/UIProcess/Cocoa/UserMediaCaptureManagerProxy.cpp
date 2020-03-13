@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -242,12 +242,6 @@ void UserMediaCaptureManagerProxy::capabilities(RealtimeMediaSourceIdentifier id
     if (auto* proxy = m_proxies.get(id))
         capabilities = proxy->source().capabilities();
     completionHandler(WTFMove(capabilities));
-}
-
-void UserMediaCaptureManagerProxy::setMuted(RealtimeMediaSourceIdentifier id, bool muted)
-{
-    if (auto* proxy = m_proxies.get(id))
-        proxy->source().setMuted(muted);
 }
 
 void UserMediaCaptureManagerProxy::applyConstraints(RealtimeMediaSourceIdentifier id, const WebCore::MediaConstraints& constraints)
