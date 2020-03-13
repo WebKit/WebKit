@@ -1086,3 +1086,5 @@ webkit.org/b/209013 fast/scrolling/momentum-scroll-with-borders.html [ Pass Time
 webkit.org/b/209018 [ Catalina ] webrtc/video-autoplay1.html [ Pass Failure ]
 
 webkit.org/b/209024 [ Debug ] webgpu/whlsl/vector-compare.html [ Pass Crash ]
+
+webkit.org/b/209077 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure ]
