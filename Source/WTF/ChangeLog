@@ -1,3 +1,18 @@
+2020-03-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Push applicationSDKVersion() down from WebCore into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=209030
+
+        Reviewed by Simon Fraser.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/PlatformMac.cmake:
+        * wtf/cocoa/RuntimeApplicationChecksCocoa.cpp: Added.
+        * wtf/cocoa/RuntimeApplicationChecksCocoa.h: Added.
+        (WTF::applicationSDKVersionOverride):
+        (WTF::setApplicationSDKVersion):
+        (WTF::applicationSDKVersion):
+
 2020-03-11  Jer Noble  <jer.noble@apple.com>
 
         Adopt AVSampleBufferVideoOutput

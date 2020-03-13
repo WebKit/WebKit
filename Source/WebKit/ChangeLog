@@ -1,3 +1,17 @@
+2020-03-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Push applicationSDKVersion() down from WebCore into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=209030
+
+        Reviewed by Simon Fraser.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCSSOMViewScrollingAPIEnabled):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-03-13  Brent Fulgham  <bfulgham@apple.com>
 
         Remove unused IPC function UserMediaCaptureManagerProxy::SetMuted

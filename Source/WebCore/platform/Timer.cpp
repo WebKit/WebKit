@@ -37,7 +37,7 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
-#include <wtf/spi/darwin/dyldSPI.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 namespace WebCore {
