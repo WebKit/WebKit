@@ -1,3 +1,13 @@
+2020-03-13  Aakash Jain  <aakash_jain@apple.com>
+
+        Add API endpoint in EWS django app to provide patch status in json format
+        https://bugs.webkit.org/show_bug.cgi?id=208940
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/urls.py: Added url for new api endpoint.
+        * BuildSlaveSupport/ews-app/ews/views/status.py: Added.
+
 2020-03-13  Kate Cheney  <katherine_cheney@apple.com>
 
         WebKit2UseRemoteLayerTreeDrawingArea should be reset to NO between layout tests
