@@ -129,15 +129,10 @@ std::unique_ptr<AccessCase> AccessCase::createDelete(
     VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* oldStructure, Structure* newStructure)
 {
     RELEASE_ASSERT(oldStructure == newStructure->previousID(vm));
-    if (!newStructure->outOfLineCapacity() && oldStructure->outOfLineCapacity()) {
-        // We do not cache this case so that we do not need to check the jscell.
-        // See the Delete code below.
-        bool mayNeedToCheckCell;
-        newStructure->mayHaveIndexingHeader(mayNeedToCheckCell);
-
-        if (mayNeedToCheckCell)
-            return nullptr;
-    }
+    // We do not cache this case so that we do not need to check the jscell, e.g. TypedArray cells require a check for neutering status.
+    // See the Delete code below.
+    if (!newStructure->canCacheDeleteIC())
+        return nullptr;
     return std::unique_ptr<AccessCase>(new AccessCase(vm, owner, Delete, identifier, offset, newStructure, { }, { }));
 }
 
@@ -1950,11 +1945,10 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         ScratchRegisterAllocator::PreservedState preservedState =
             allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
-        bool mayNeedToCheckCell;
-        bool hasIndexingHeader = newStructure()->mayHaveIndexingHeader(mayNeedToCheckCell);
+        bool hasIndexingHeader = newStructure()->mayHaveIndexingHeader();
         // We do not cache this case yet so that we do not need to check the jscell.
         // See Structure::hasIndexingHeader and JSObject::deleteProperty.
-        ASSERT(!mayNeedToCheckCell);
+        ASSERT(newStructure()->canCacheDeleteIC());
         // Clear the butterfly if we have no properties, since our put code expects this.
         bool shouldNukeStructureAndClearButterfly = !newStructure()->outOfLineCapacity() && structure()->outOfLineCapacity() && !hasIndexingHeader;
 

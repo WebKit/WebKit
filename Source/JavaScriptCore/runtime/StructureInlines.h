@@ -256,17 +256,20 @@ inline bool Structure::hasIndexingHeader(const JSCell* cell) const
     return jsCast<const JSArrayBufferView*>(cell)->mode() == WastefulTypedArray;
 }
 
-inline bool Structure::mayHaveIndexingHeader(bool& mustCheckCell) const
+inline bool Structure::mayHaveIndexingHeader() const
 {
-    mustCheckCell = false;
     if (hasIndexedProperties(indexingType()))
         return true;
 
     if (!isTypedView(typedArrayTypeForType(m_blob.type())))
         return false;
 
-    mustCheckCell = true;
     return true;
+}
+
+inline bool Structure::canCacheDeleteIC() const
+{
+    return !isTypedView(typedArrayTypeForType(m_blob.type()));
 }
 
 inline bool Structure::masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject)

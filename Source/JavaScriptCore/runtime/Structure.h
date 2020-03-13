@@ -532,7 +532,8 @@ public:
     }
     
     bool hasIndexingHeader(const JSCell*) const;
-    bool mayHaveIndexingHeader(bool& mustCheckCell) const;
+    bool mayHaveIndexingHeader() const;
+    bool canCacheDeleteIC() const;
     
     bool masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject);
 

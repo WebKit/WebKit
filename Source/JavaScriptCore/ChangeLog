@@ -1,3 +1,22 @@
+2020-03-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Delete IC creation should check mayNeedToCheckCell/canCacheDeleteIC regardless of Structure::outOfLineCapacity
+        https://bugs.webkit.org/show_bug.cgi?id=209027
+
+        Reviewed by Saam Barati.
+
+        Delete IC code generation assumes that mayNeedToCheckCell (it is replaced with canCacheDeleteIC) is false
+        while we are looking into this status only if Structure::outOfLineCapacity meets a certain condition. We should avoid
+        create Delete IC when mayNeedToCheckCell/canCacheDeleteIC is true regardless of Structure::outOfLineCapacity
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::createDelete):
+        (JSC::AccessCase::generateImpl):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::mayHaveIndexingHeader const):
+        (JSC::Structure::canCacheDeleteIC const):
+
 2020-03-13  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Bound functions should pass correct NewTarget value
