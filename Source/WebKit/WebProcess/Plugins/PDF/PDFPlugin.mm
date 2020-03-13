@@ -805,7 +805,9 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
 
     firstPageSemaphore.wait();
 
+#if !LOG_DISABLED
     pdfLog("Fininished preloading first page");
+#endif
 
     // The main thread dispatch below removes the last reference to the PDF thread.
     // It must be the last code executed in this function.
@@ -948,7 +950,9 @@ bool PDFPlugin::ByteRangeRequest::maybeComplete(PDFPlugin& plugin)
     }
 
     if (plugin.m_completedRanges.contains({ m_position, m_position + m_count - 1 })) {
+#if !LOG_DISABLED
         plugin.pdfLog(makeString("Completing request %llu with a previously completed range", identifier()));
+#endif
         completeWithBytes(CFDataGetBytePtr(plugin.m_data.get()) + m_position, m_count, plugin);
         return true;
     }

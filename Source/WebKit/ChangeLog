@@ -1,3 +1,11 @@
+2020-03-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release build fix after r258384.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::threadEntry):
+        (WebKit::PDFPlugin::ByteRangeRequest::maybeComplete):
+
 2020-03-12  Brady Eidson  <beidson@apple.com>
 
         Add a very verbose logging mode for incremental PDF loading
