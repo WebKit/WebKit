@@ -1,3 +1,20 @@
+2020-03-12  Keith Miller  <keith_miller@apple.com>
+
+        DFG nodes that take a TypedArray's storage need to keepAlive the TypedArray
+        https://bugs.webkit.org/show_bug.cgi?id=209035
+
+        Reviewed by Saam Barati.
+
+        It might be possible to produce a graph where the last reference to a TypedArray
+        is via a GetByVal or PutByVal. Since those nodes don't create any reference to the
+        TypedArray in B3 we may end up not keeping the TypedArray alive until after the
+        storage access.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsReadModifyWrite):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+
 2020-03-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use CacheableIdentifier in ByValInfo
