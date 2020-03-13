@@ -279,6 +279,8 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
         }
 
         if (content.isReplacedContent) {
+            if (startOfCurrentParagraph.isNull())
+                startOfCurrentParagraph = positionBeforeNode(content.node.get());
             tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(), "[]", true /* isExcluded */});
             continue;
         }
