@@ -1,3 +1,15 @@
+2020-03-12  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTreeNeedsLayoutChecker asserts with imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-005.html
+        https://bugs.webkit.org/show_bug.cgi?id=209022
+        <rdar://problem/60390647>
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        * fast/block/containing-block-for-out-of-flow-becomes-static-expected.html: Added.
+        * fast/block/containing-block-for-out-of-flow-becomes-static.html: Added.
+
 2020-03-12  Chris Dumez  <cdumez@apple.com>
 
         http/tests/paymentrequest/page-cache-completed-payment-response.https.html is flaky failing.

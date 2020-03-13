@@ -3134,7 +3134,6 @@ webkit.org/b/203529 imported/w3c/web-platform-tests/css/css-text-decor/text-deco
 
 # wpt css-position failures
 webkit.org/b/203445 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-container-dynamic-002.html [ Skip ]
-webkit.org/b/203445 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-005.html [ Skip ]
 webkit.org/b/203447 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-overflow-001.html [ ImageOnlyFailure ]
 webkit.org/b/203447 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-overflow-002.html [ ImageOnlyFailure ]
 webkit.org/b/203448 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-table-cell.html [ ImageOnlyFailure ]

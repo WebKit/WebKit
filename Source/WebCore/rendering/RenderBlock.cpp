@@ -376,16 +376,10 @@ void RenderBlock::removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, c
     if (oldStyle.position() == newStyle.position() && hadTransform == willHaveTransform)
         return;
 
-    // We are no longer the containing block for fixed descendants.
-    if (hadTransform && !willHaveTransform) {
-        // Our positioned descendants will be inserted into a new containing block's positioned objects list during the next layout.
-        removePositionedObjects(nullptr, NewContainingBlock);
-        return;
-    }
-
-    // We are no longer the containing block for absolute positioned descendants.
-    if (newStyle.position() == PositionType::Static && !willHaveTransform) {
-        // Our positioned descendants will be inserted into a new containing block's positioned objects list during the next layout.
+    // We are no longer the containing block for out-of-flow descendants.
+    bool outOfFlowDescendantsHaveNewContainingBlock = (hadTransform && !willHaveTransform) || (newStyle.position() == PositionType::Static && !willHaveTransform);
+    if (outOfFlowDescendantsHaveNewContainingBlock) {
+        // Our out-of-flow descendants will be inserted into a new containing block's positioned objects list during the next layout.
         removePositionedObjects(nullptr, NewContainingBlock);
         return;
     }
@@ -1782,12 +1776,24 @@ void RenderBlock::removePositionedObjects(const RenderBlock* newContainingBlockC
         if (containingBlockState == NewContainingBlock)
             renderer->setChildNeedsLayout(MarkOnlyThis);
         // It is the parent block's job to add positioned children to positioned objects list of its containing block.
-        // Dirty the parent to ensure this happens.
+        // Dirty the parent to ensure this happens. We also need to make sure the new containing block is dirty as well so
+        // that it gets to these new positioned objects.
         auto* parent = renderer->parent();
-        while (parent && !parent->isRenderBlock())
+        while (parent && !is<RenderBlock>(parent))
             parent = parent->parent();
         if (parent)
             parent->setChildNeedsLayout();
+
+        if (renderer->isFixedPositioned())
+            view().setNeedsLayout();
+        else if (auto* newContainingBlock = containingBlock()) {
+            // During style change, at this point the renderer's containing block is still "this" renderer, and "this" renderer is still positioned.
+            // FIXME: During subtree moving, this is mostly invalid but either the subtree is detached (we don't even get here) or renderers
+            // are already marked dirty.
+            for (; newContainingBlock && !newContainingBlock->canContainAbsolutelyPositionedObjects(); newContainingBlock = newContainingBlock->containingBlock()) { }
+            if (newContainingBlock)
+                newContainingBlock->setNeedsLayout();
+        }
     }
     for (auto* renderer : renderersToRemove)
         removePositionedObject(*renderer);
