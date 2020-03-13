@@ -927,8 +927,6 @@ webkit.org/b/207153 [ Debug ] animations/animation-callback-timestamp.html [ Pas
 
 webkit.org/b/207568 inspector/page/overrideUserAgent.html [ Pass Failure ]
 
-webkit.org/b/207847 resize-observer/delete-observers-in-callbacks.html [ Pass Failure ]
-
 webkit.org/b/207857 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Pass Timeout ]
 
 webkit.org/b/207891 imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html [ Pass Failure ]

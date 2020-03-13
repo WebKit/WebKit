@@ -1,3 +1,13 @@
+2020-03-13  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: (r256232) [ Mac wk1 Release ] resize-observer/delete-observers-in-callbacks.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207847
+        <rdar://problem/59516099>
+
+        Unreviewed, unskip test now that is should no longer be flaky after r258438.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-03-13  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         REGRESSION (257844): fast/scrolling/scroll-container-horizontally.html is timing out
