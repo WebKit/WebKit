@@ -28,10 +28,13 @@
 
 #include "CallFrameClosure.h"
 #include "Exception.h"
+#include "FunctionCodeBlock.h"
+#include "FunctionExecutable.h"
 #include "Instruction.h"
 #include "Interpreter.h"
 #include "JSCPtrTag.h"
 #include "LLIntData.h"
+#include "ProtoCallFrameInlines.h"
 #include "UnlinkedCodeBlock.h"
 #include <wtf/UnalignedAccess.h>
 
@@ -80,6 +83,17 @@ ALWAYS_INLINE JSValue Interpreter::execute(CallFrameClosure& closure)
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 
+    // Reload CodeBlock since GC can replace CodeBlock owned by Executable.
+    CodeBlock* codeBlock;
+    Exception* error = closure.functionExecutable->prepareForExecution<FunctionExecutable>(vm, closure.function, closure.scope, CodeForCall, codeBlock);
+    EXCEPTION_ASSERT(throwScope.exception() == error);
+    if (UNLIKELY(error))
+        return checkedReturn(error);
+    codeBlock->m_shouldAlwaysBeInlined = false;
+    {
+        DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+        closure.protoCallFrame->setCodeBlock(codeBlock);
+    }
     // Execute the code:
     throwScope.release();
     JSValue result = closure.functionExecutable->generatedJITCodeForCall()->execute(&vm, closure.protoCallFrame);

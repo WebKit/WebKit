@@ -41,6 +41,7 @@ public:
     ALWAYS_INLINE ~DisallowScope() { }
     ALWAYS_INLINE static bool isInEffectOnCurrentThread() { return false; }
     ALWAYS_INLINE void enable() { }
+    ALWAYS_INLINE void disable() { }
 
 #else // not NDEBUG
 

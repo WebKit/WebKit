@@ -1,3 +1,46 @@
+2020-03-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Reload CodeBlock or suppress GC while setting up calls
+        https://bugs.webkit.org/show_bug.cgi?id=209033
+        <rdar://problem/58946936>
+
+        Reviewed by Saam Barati.
+
+        The sequence of Interpreter::execute is the following.
+
+            1. Getting CodeBlock from Executable
+            2. Doing a lot of setups
+            3. Setting (1)'s CodeBlock to ProtoFrame
+            4. Calling code through Executable
+
+        During (2), it would be possible that GC happens and it replaces CodeBlock in Executable.
+        Then, when executing JITCode with CodeBlock in (4), we use new JITCode with old CodeBlock.
+
+        In this patch,
+
+        For ProgramExecutable, FunctionExecutable, ModuleProgramExecutable, we ensure that no GC happens
+        after getting CodeBlock by placing DisallowGC. For EvalExecutable, we reload CodeBlock after setting
+        up environment. It is possible that FunctionExecutable* stored in CodeBlock can be different when
+        executing a new CodeBlock, but this is OK since this different does not appear and we do not rely on
+        this: we are touching `name` of FunctionExecutable* which is retrieved from CodeBlock. But this name
+        will not be changed since this is derived from UnlinkedFunctionExecutable which is shared by multiple
+        CodeBlocks. And FunctionExecutable* generation ordering must be the same for every CodeBlock generation
+        from the same UnlinkedCodeBlock.
+
+        * bytecode/CodeBlock.h:
+        (JSC::ScriptExecutable::prepareForExecution):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::execute):
+        * runtime/DisallowScope.h:
+        (JSC::DisallowScope::disable):
+        * runtime/StringPrototype.cpp:
+
 2020-03-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Delete IC creation should check mayNeedToCheckCell/canCacheDeleteIC regardless of Structure::outOfLineCapacity

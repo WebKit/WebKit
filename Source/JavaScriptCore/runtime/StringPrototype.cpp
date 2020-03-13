@@ -27,6 +27,7 @@
 #include "ButterflyInlines.h"
 #include "CachedCall.h"
 #include "Error.h"
+#include "ExecutableBaseInlines.h"
 #include "FrameTracers.h"
 #include "InterpreterInlines.h"
 #include "IntlCollator.h"

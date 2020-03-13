@@ -822,16 +822,6 @@ failedJSONP:
     if (UNLIKELY(error))
         return checkedReturn(throwException(globalObject, throwScope, error));
 
-    ProgramCodeBlock* codeBlock;
-    {
-        CodeBlock* tempCodeBlock;
-        Exception* error = program->prepareForExecution<ProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-        EXCEPTION_ASSERT(throwScope.exception() == error);
-        if (UNLIKELY(error))
-            return checkedReturn(error);
-        codeBlock = jsCast<ProgramCodeBlock*>(tempCodeBlock);
-    }
-
     constexpr auto trapsMask = VMTraps::interruptingTraps();
     if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
         vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
@@ -841,14 +831,29 @@ failedJSONP:
     if (scope->structure(vm)->isUncacheableDictionary())
         scope->flattenDictionaryObject(vm);
 
-    ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
+    ProgramCodeBlock* codeBlock;
+    {
+        CodeBlock* tempCodeBlock;
+        Exception* error = program->prepareForExecution<ProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
+        EXCEPTION_ASSERT(throwScope.exception() == error);
+        if (UNLIKELY(error))
+            return checkedReturn(error);
+        codeBlock = jsCast<ProgramCodeBlock*>(tempCodeBlock);
+        ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
+    }
+
+    DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+
+    RefPtr<JITCode> jitCode = program->generatedJITCode();
 
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(codeBlock, globalObject, globalCallee, thisObj, 1);
 
     // Execute the code:
+    disallowGC.disable();
     throwScope.release();
-    JSValue result = program->generatedJITCode()->execute(&vm, &protoCallFrame);
+    ASSERT(jitCode == program->generatedJITCode().ptr());
+    JSValue result = jitCode->execute(&vm, &protoCallFrame);
     return checkedReturn(result);
 }
 
@@ -864,7 +869,6 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
 
     bool isJSCall = (callType == CallType::JS);
     JSScope* scope = nullptr;
-    CodeBlock* newCodeBlock;
     size_t argsCount = 1 + args.size(); // implicit "this" parameter
 
     JSGlobalObject* globalObject;
@@ -881,6 +885,13 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
     if (UNLIKELY(!vm.isSafeToRecurseSoft() || args.size() > maxArguments))
         return checkedReturn(throwStackOverflowError(globalObject, throwScope));
 
+    constexpr auto trapsMask = VMTraps::interruptingTraps();
+    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
+        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
+        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+    }
+
+    CodeBlock* newCodeBlock = nullptr;
     if (isJSCall) {
         // Compile the callee:
         Exception* compileError = callData.js.functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(function), scope, CodeForCall, newCodeBlock);
@@ -890,14 +901,11 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
 
         ASSERT(!!newCodeBlock);
         newCodeBlock->m_shouldAlwaysBeInlined = false;
-    } else
-        newCodeBlock = 0;
-
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
+
+    DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+
+    RefPtr<JITCode> jitCode = callData.js.functionExecutable->generatedJITCodeForCall();
 
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(newCodeBlock, globalObject, function, thisValue, argsCount, args.data());
@@ -905,9 +913,11 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
     JSValue result;
     {
         // Execute the code:
+        disallowGC.disable();
         if (isJSCall) {
             throwScope.release();
-            result = callData.js.functionExecutable->generatedJITCodeForCall()->execute(&vm, &protoCallFrame);
+            ASSERT(jitCode == callData.js.functionExecutable->generatedJITCodeForCall().ptr());
+            result = jitCode->execute(&vm, &protoCallFrame);
         } else {
             result = JSValue::decode(vmEntryToNative(callData.native.function.rawPointer(), &vm, &protoCallFrame));
             RETURN_IF_EXCEPTION(throwScope, JSValue());
@@ -933,7 +943,6 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
 
     bool isJSConstruct = (constructType == ConstructType::JS);
     JSScope* scope = nullptr;
-    CodeBlock* newCodeBlock;
     size_t argsCount = 1 + args.size(); // implicit "this" parameter
 
     JSGlobalObject* globalObject;
@@ -952,6 +961,13 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
         return nullptr;
     }
 
+    constexpr auto trapsMask = VMTraps::interruptingTraps();
+    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
+        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
+    }
+
+    CodeBlock* newCodeBlock = nullptr;
     if (isJSConstruct) {
         // Compile the callee:
         Exception* compileError = constructData.js.functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(constructor), scope, CodeForConstruct, newCodeBlock);
@@ -961,14 +977,11 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
 
         ASSERT(!!newCodeBlock);
         newCodeBlock->m_shouldAlwaysBeInlined = false;
-    } else
-        newCodeBlock = 0;
-
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, nullptr);
     }
+
+    DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+
+    RefPtr<JITCode> jitCode = constructData.js.functionExecutable->generatedJITCodeForConstruct();
 
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(newCodeBlock, globalObject, constructor, newTarget, argsCount, args.data());
@@ -976,9 +989,11 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
     JSValue result;
     {
         // Execute the code.
-        if (isJSConstruct)
-            result = constructData.js.functionExecutable->generatedJITCodeForConstruct()->execute(&vm, &protoCallFrame);
-        else {
+        disallowGC.disable();
+        if (isJSConstruct) {
+            ASSERT(jitCode == constructData.js.functionExecutable->generatedJITCodeForConstruct().ptr());
+            result = jitCode->execute(&vm, &protoCallFrame);
+        } else {
             result = JSValue::decode(vmEntryToNative(constructData.native.function.rawPointer(), &vm, &protoCallFrame));
 
             if (LIKELY(!throwScope.exception()))
@@ -1058,14 +1073,29 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
         }
     }
 
+    constexpr auto trapsMask = VMTraps::interruptingTraps();
+    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
+        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
+        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+    }
+
+    auto loadCodeBlock = [&](Exception*& compileError) -> EvalCodeBlock* {
+        CodeBlock* tempCodeBlock;
+        compileError = eval->prepareForExecution<EvalExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
+        EXCEPTION_ASSERT(throwScope.exception() == compileError);
+        if (UNLIKELY(!!compileError))
+            return nullptr;
+        return jsCast<EvalCodeBlock*>(tempCodeBlock);
+    };
+
     EvalCodeBlock* codeBlock;
     {
-        CodeBlock* tempCodeBlock;
-        Exception* compileError = eval->prepareForExecution<EvalExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
+        Exception* compileError = nullptr;
+        codeBlock = loadCodeBlock(compileError);
         EXCEPTION_ASSERT(throwScope.exception() == compileError);
         if (UNLIKELY(!!compileError))
             return checkedReturn(compileError);
-        codeBlock = jsCast<EvalCodeBlock*>(tempCodeBlock);
+        ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
     }
     UnlinkedEvalCodeBlock* unlinkedCodeBlock = codeBlock->unlinkedEvalCodeBlock();
 
@@ -1148,25 +1178,34 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
         }
     }
 
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
-    }
-
-    ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
-
     JSCallee* callee = nullptr;
     if (scope == globalObject->globalScope())
         callee = globalObject->globalCallee();
     else
         callee = JSCallee::create(vm, globalObject, scope);
+
+    // Reload CodeBlock. It is possible that we replaced CodeBlock while setting up the environment.
+    {
+        Exception* compileError = nullptr;
+        codeBlock = loadCodeBlock(compileError);
+        EXCEPTION_ASSERT(throwScope.exception() == compileError);
+        if (UNLIKELY(!!compileError))
+            return checkedReturn(compileError);
+        ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
+    }
+
+    DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+
+    RefPtr<JITCode> jitCode = eval->generatedJITCode();
+
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(codeBlock, globalObject, callee, thisValue, 1);
 
     // Execute the code:
+    disallowGC.disable();
     throwScope.release();
-    JSValue result = eval->generatedJITCode()->execute(&vm, &protoCallFrame);
+    ASSERT(jitCode == eval->generatedJITCode().ptr());
+    JSValue result = jitCode->execute(&vm, &protoCallFrame);
 
     return checkedReturn(result);
 }
@@ -1188,16 +1227,6 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, J
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return checkedReturn(throwStackOverflowError(globalObject, throwScope));
 
-    ModuleProgramCodeBlock* codeBlock;
-    {
-        CodeBlock* tempCodeBlock;
-        Exception* compileError = executable->prepareForExecution<ModuleProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-        EXCEPTION_ASSERT(throwScope.exception() == compileError);
-        if (UNLIKELY(!!compileError))
-            return checkedReturn(compileError);
-        codeBlock = jsCast<ModuleProgramCodeBlock*>(tempCodeBlock);
-    }
-
     constexpr auto trapsMask = VMTraps::interruptingTraps();
     if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
         vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
@@ -1207,17 +1236,33 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, J
     if (scope->structure(vm)->isUncacheableDictionary())
         scope->flattenDictionaryObject(vm);
 
-    ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
+    JSCallee* callee = JSCallee::create(vm, globalObject, scope);
+    ModuleProgramCodeBlock* codeBlock;
+    {
+        CodeBlock* tempCodeBlock;
+        Exception* compileError = executable->prepareForExecution<ModuleProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
+        EXCEPTION_ASSERT(throwScope.exception() == compileError);
+        if (UNLIKELY(!!compileError))
+            return checkedReturn(compileError);
+        codeBlock = jsCast<ModuleProgramCodeBlock*>(tempCodeBlock);
+        ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
+    }
+
+    DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+
+    RefPtr<JITCode> jitCode = executable->generatedJITCode();
 
     // The |this| of the module is always `undefined`.
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-hasthisbinding
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-getthisbinding
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(codeBlock, globalObject, JSCallee::create(vm, globalObject, scope), jsUndefined(), 1);
+    protoCallFrame.init(codeBlock, globalObject, callee, jsUndefined(), 1);
 
     // Execute the code:
+    disallowGC.disable();
     throwScope.release();
-    JSValue result = executable->generatedJITCode()->execute(&vm, &protoCallFrame);
+    ASSERT(jitCode == executable->generatedJITCode().ptr());
+    JSValue result = jitCode->execute(&vm, &protoCallFrame);
 
     return checkedReturn(result);
 }
