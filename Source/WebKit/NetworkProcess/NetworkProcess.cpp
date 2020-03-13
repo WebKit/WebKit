@@ -1089,12 +1089,6 @@ void NetworkProcess::hasLocalStorage(PAL::SessionID sessionID, const Registrable
     completionHandler(false);
 }
 
-void NetworkProcess::removePrevalentDomains(PAL::SessionID sessionID, const Vector<RegistrableDomain>& domains)
-{
-    if (auto* networkStorageSession = storageSession(sessionID))
-        networkStorageSession->removePrevalentDomains(domains);
-}
-
 void NetworkProcess::setCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))

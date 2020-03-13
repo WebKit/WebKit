@@ -168,14 +168,6 @@ void NetworkStorageSession::setDomainsWithUserInteractionAsFirstParty(const Vect
     m_registrableDomainsWithUserInteractionAsFirstParty.add(domains.begin(), domains.end());
 }
 
-void NetworkStorageSession::removePrevalentDomains(const Vector<RegistrableDomain>& domains)
-{
-    for (auto& domain : domains) {
-        m_registrableDomainsToBlockAndDeleteCookiesFor.remove(domain);
-        m_registrableDomainsToBlockButKeepCookiesFor.remove(domain);
-    }
-}
-
 bool NetworkStorageSession::hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID) const
 {
     if (frameID) {

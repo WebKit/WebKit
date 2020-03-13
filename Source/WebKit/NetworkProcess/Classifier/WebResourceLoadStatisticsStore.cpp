@@ -1177,23 +1177,6 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
     completionHandler();
 }
 
-void WebResourceLoadStatisticsStore::removePrevalentDomains(const Vector<RegistrableDomain>& domains)
-{
-    ASSERT(RunLoop::isMain());
-    if (!m_networkSession)
-        return;
-
-    if (auto* storageSession = m_networkSession->networkStorageSession())
-        storageSession->removePrevalentDomains(domains);
-}
-
-void WebResourceLoadStatisticsStore::callRemoveDomainsHandler(const Vector<RegistrableDomain>& domains)
-{
-    ASSERT(RunLoop::isMain());
-
-    removePrevalentDomains(domains);
-}
-    
 void WebResourceLoadStatisticsStore::setMaxStatisticsEntries(size_t maximumEntryCount, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

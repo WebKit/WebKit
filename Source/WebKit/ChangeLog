@@ -1,3 +1,24 @@
+2020-03-13  John Wilander  <wilander@apple.com>
+
+        Remove unused code related to removePrevalentDomains()
+        https://bugs.webkit.org/show_bug.cgi?id=209078
+        <rdar://problem/59681984>
+
+        Reviewed by Brent Fulgham.
+
+        The various removePrevalentDomains() functions and its IPC endpoint are unused and should be removed.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::clearBlockingStateForDomains): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removePrevalentDomains): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::callRemoveDomainsHandler): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::removePrevalentDomains): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+
 2020-03-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Push applicationSDKVersion() down from WebCore into WTF

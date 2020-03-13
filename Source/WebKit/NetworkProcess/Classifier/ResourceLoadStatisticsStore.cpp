@@ -434,22 +434,6 @@ void ResourceLoadStatisticsStore::updateCookieBlockingForDomains(const Registrab
 }
     
 
-void ResourceLoadStatisticsStore::clearBlockingStateForDomains(const Vector<RegistrableDomain>& domains, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(!RunLoop::isMain());
-
-    if (domains.isEmpty()) {
-        completionHandler();
-        return;
-    }
-
-    RunLoop::main().dispatch([store = makeRef(m_store), domains = crossThreadCopy(domains)] {
-        store->callRemoveDomainsHandler(domains);
-    });
-
-    completionHandler();
-}
-
 Optional<Seconds> ResourceLoadStatisticsStore::statisticsEpirationTime() const
 {
     ASSERT(!RunLoop::isMain());
