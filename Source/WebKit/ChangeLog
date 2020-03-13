@@ -1,3 +1,18 @@
+2020-03-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove unused SmartMagnificationController Magnify message
+        https://bugs.webkit.org/show_bug.cgi?id=209036
+        <rdar://problem/59678060>
+
+        Reviewed by Tim Horton.
+
+        Remove the unused Magnify message from the SmartMagnificationController, since this is dead code.
+
+        * UIProcess/ios/SmartMagnificationController.h:
+        * UIProcess/ios/SmartMagnificationController.messages.in:
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::magnify): Deleted.
+
 2020-03-13  David Kilzer  <ddkilzer@apple.com>
 
         WebPageProxy::SetPromisedDataForImage should validate its `imageSize` and `archiveSize` parameters
