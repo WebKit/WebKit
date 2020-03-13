@@ -2041,3 +2041,5 @@ webkit.org/b/209056 webgpu/whlsl/uint-bitwise.html [ Pass Crash ]
 webkit.org/b/209072 [ Debug ] http/tests/css/shared-stylesheet-mutation-preconstruct.html [ Pass Crash ]
 
 webkit.org/b/209079 fast/animation/request-animation-frame-timestamps.html [ Pass Failure ]
+
+webkit.org/b/209084 css3/selectors3/xml/css3-modsel-d4.xml [ Pass Failure ]
