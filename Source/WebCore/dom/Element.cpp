@@ -3401,9 +3401,7 @@ void Element::setChildIndex(unsigned index)
 
 bool Element::hasFlagsSetDuringStylingOfChildren() const
 {
-    return styleAffectedByActive()
-        || childrenAffectedByHover()
-        || childrenAffectedByFirstChildRules()
+    return childrenAffectedByFirstChildRules()
         || childrenAffectedByLastChildRules()
         || childrenAffectedByDrag()
         || childrenAffectedByForwardPositionalRules()
@@ -4125,7 +4123,6 @@ void Element::resetComputedStyle()
 void Element::resetStyleRelations()
 {
     // FIXME: Make this code more consistent.
-    clearFlag(StyleAffectedByFocusWithinFlag);
     clearStyleFlags();
     if (!hasRareData())
         return;

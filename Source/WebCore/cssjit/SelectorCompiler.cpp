@@ -2244,7 +2244,7 @@ void SelectorCodeGenerator::generateAddStyleRelationIfResolvingStyle(Assembler::
 
 static void addStyleRelationFunction(SelectorChecker::CheckingContext* checkingContext, const Element* element)
 {
-    checkingContext->styleRelations.append({ *element, Style::Relation::AffectedByActive, 1 });
+    checkingContext->styleRelations.append({ *element, { }, 1 });
 }
 
 void SelectorCodeGenerator::generateAddStyleRelation(Assembler::RegisterID checkingContext, Assembler::RegisterID element, Style::Relation::Type relationType, Optional<Assembler::RegisterID> value)
@@ -3157,8 +3157,6 @@ void SelectorCodeGenerator::generateElementIsActive(Assembler::JumpList& failure
 {
     generateSpecialFailureInQuirksModeForActiveAndHoverIfNeeded(failureCases, fragment);
 
-    generateAddStyleRelationIfResolvingStyle(elementAddressRegister, Style::Relation::AffectedByActive);
-
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
     functionCall.setFunctionAddress(elementIsActive);
     functionCall.setOneArgument(elementAddressRegister);
@@ -3270,24 +3268,10 @@ void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failur
 {
     generateSpecialFailureInQuirksModeForActiveAndHoverIfNeeded(failureCases, fragment);
 
-    generateAddStyleRelationIfResolvingStyle(elementAddressRegister, Style::Relation::AffectedByHover);
-
-    Assembler::JumpList successCases;
-    if (m_selectorContext != SelectorContext::QuerySelector && fragment.relationToRightFragment != FragmentRelation::Rightmost) {
-        // :hover always matches when not in rightmost position when collecting rules for descendant style invalidation optimization.
-        // Resolving style for a matching descendant will set parent childrenAffectedByHover bit even when the element is not currently hovered.
-        // This bit has to be set for the event based :hover invalidation to work.
-        // FIXME: We should just collect style relation bits and apply them as needed when computing style invalidation optimization.
-        LocalRegister checkingContext(m_registerAllocator);
-        successCases.append(branchOnResolvingMode(Assembler::Equal, SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements, checkingContext));
-    }
-
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
     functionCall.setFunctionAddress(elementIsHovered);
     functionCall.setOneArgument(elementAddressRegister);
     failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
-
-    successCases.link(&m_assembler);
 }
 
 void SelectorCodeGenerator::generateElementIsInLanguage(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
@@ -3895,7 +3879,6 @@ void SelectorCodeGenerator::generateElementIsTarget(Assembler::JumpList& failure
 
 void SelectorCodeGenerator::generateElementHasFocusWithin(Assembler::JumpList& failureCases)
 {
-    generateAddStyleRelationIfResolvingStyle(elementAddressRegister, Style::Relation::AffectedByFocusWithin);
     failureCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(elementAddressRegister, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagHasFocusWithin())));
 }
 

@@ -1007,12 +1007,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassFocus:
             return matchesFocusPseudoClass(element);
         case CSSSelector::PseudoClassFocusWithin:
-            addStyleRelation(checkingContext, element, Style::Relation::AffectedByFocusWithin);
             return element.hasFocusWithin();
         case CSSSelector::PseudoClassHover:
             if (m_strictParsing || element.isLink() || canMatchHoverOrActiveInQuirksMode(context)) {
-                addStyleRelation(checkingContext, element, Style::Relation::AffectedByHover);
-
                 // See the comment in generateElementIsHovered() in SelectorCompiler.
                 if (checkingContext.resolvingMode == SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements && !context.isMatchElement)
                     return true;
@@ -1023,8 +1020,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             break;
         case CSSSelector::PseudoClassActive:
             if (m_strictParsing || element.isLink() || canMatchHoverOrActiveInQuirksMode(context)) {
-                addStyleRelation(checkingContext, element, Style::Relation::AffectedByActive);
-
                 if (element.active() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassActive))
                     return true;
             }

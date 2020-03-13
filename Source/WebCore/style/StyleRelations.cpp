@@ -50,19 +50,12 @@ std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, cons
             continue;
         }
         switch (relation.type) {
-        case Relation::AffectedByActive:
-            style.setAffectedByActive();
-            appendStyleRelation(relation);
-            break;
         case Relation::AffectedByDrag:
             style.setAffectedByDrag();
             break;
         case Relation::AffectedByEmpty:
             style.setEmptyState(relation.value);
             appendStyleRelation(relation);
-            break;
-        case Relation::AffectedByHover:
-            style.setAffectedByHover();
             break;
         case Relation::FirstChild:
             style.setFirstChildState();
@@ -73,7 +66,6 @@ std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, cons
         case Relation::Unique:
             style.setUnique();
             break;
-        case Relation::AffectedByFocusWithin:
         case Relation::AffectedByPreviousSibling:
         case Relation::DescendantsAffectedByPreviousSibling:
         case Relation::AffectsNextSibling:
@@ -99,20 +91,11 @@ void commitRelations(std::unique_ptr<Relations> relations, Update& update)
     for (auto& relation : *relations) {
         auto& element = const_cast<Element&>(*relation.element);
         switch (relation.type) {
-        case Relation::AffectedByActive:
-            element.setStyleAffectedByActive();
-            break;
         case Relation::AffectedByDrag:
             element.setChildrenAffectedByDrag();
             break;
         case Relation::AffectedByEmpty:
             element.setStyleAffectedByEmpty();
-            break;
-        case Relation::AffectedByFocusWithin:
-            element.setStyleAffectedByFocusWithin();
-            break;
-        case Relation::AffectedByHover:
-            element.setChildrenAffectedByHover();
             break;
         case Relation::AffectedByPreviousSibling:
             element.setStyleIsAffectedByPreviousSibling();

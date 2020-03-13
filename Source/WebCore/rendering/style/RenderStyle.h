@@ -192,12 +192,7 @@ public:
     void setHasViewportUnits(bool v = true) { m_nonInheritedFlags.hasViewportUnits = v; }
     bool hasViewportUnits() const { return m_nonInheritedFlags.hasViewportUnits; }
 
-    bool affectedByHover() const { return m_nonInheritedFlags.affectedByHover; }
-    bool affectedByActive() const { return m_nonInheritedFlags.affectedByActive; }
     bool affectedByDrag() const { return m_nonInheritedFlags.affectedByDrag; }
-
-    void setAffectedByHover() { m_nonInheritedFlags.affectedByHover = true; }
-    void setAffectedByActive() { m_nonInheritedFlags.affectedByActive = true; }
     void setAffectedByDrag() { m_nonInheritedFlags.affectedByDrag = true; }
 
     void setColumnStylesFromPaginationMode(const Pagination::Mode&);
@@ -1806,8 +1801,6 @@ private:
         unsigned emptyState : 1;
         unsigned firstChildState : 1;
         unsigned lastChildState : 1;
-        unsigned affectedByHover : 1;
-        unsigned affectedByActive : 1;
         unsigned affectedByDrag : 1;
         unsigned isLink : 1;
 
@@ -1940,8 +1933,6 @@ inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& 
         && emptyState == other.emptyState
         && firstChildState == other.firstChildState
         && lastChildState == other.lastChildState
-        && affectedByHover == other.affectedByHover
-        && affectedByActive == other.affectedByActive
         && affectedByDrag == other.affectedByDrag
         && isLink == other.isLink
         && styleType == other.styleType

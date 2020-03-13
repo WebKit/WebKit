@@ -189,8 +189,6 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.emptyState = false;
     m_nonInheritedFlags.firstChildState = false;
     m_nonInheritedFlags.lastChildState = false;
-    m_nonInheritedFlags.affectedByHover = false;
-    m_nonInheritedFlags.affectedByActive = false;
     m_nonInheritedFlags.affectedByDrag = false;
     m_nonInheritedFlags.isLink = false;
     m_nonInheritedFlags.styleType = static_cast<unsigned>(PseudoId::None);
