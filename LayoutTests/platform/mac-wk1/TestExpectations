@@ -951,3 +951,5 @@ webkit.org/b/208532 svg/custom/textPath-change-id-pattern.svg [ Pass Failure ]
 webkit.org/b/208825 [ Debug ] inspector/script-profiler/event-type-Microtask.html [ Pass Failure ]
 
 webkit.org/b/208890 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor.htm [ Pass Failure ]
+
+webkit.org/b/209067 http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html [ Pass Failure ]
