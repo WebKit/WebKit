@@ -462,8 +462,9 @@ public:
 
     void availableContentSizeChanged(AvailableSizeChangeReason) override;
 
+    enum AutoscrollStatus { NotInProgress, InProgress };
     // "absoluteRect" is in scaled document coordinates.
-    void scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&);
+    void scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&, AutoscrollStatus = AutoscrollStatus::NotInProgress);
 
     bool scrollsOverflow() const;
     bool hasScrollableHorizontalOverflow() const;

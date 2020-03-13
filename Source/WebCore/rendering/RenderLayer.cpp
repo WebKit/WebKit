@@ -2815,7 +2815,7 @@ bool RenderLayer::allowsCurrentScroll() const
     return box->hasHorizontalOverflow() || box->hasVerticalOverflow();
 }
 
-void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions& options)
+void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions& options, AutoscrollStatus autoscrollStatus)
 {
     LOG_WITH_STREAM(Scrolling, stream << "Layer " << this << " scrollRectToVisible " << absoluteRect);
 
@@ -2846,7 +2846,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
         ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(revealRect).location()));
         if (clampedScrollOffset != scrollOffset() || currentScrollBehaviorStatus() != ScrollBehaviorStatus::NotInAnimation) {
             ScrollOffset oldScrollOffset = scrollOffset();
-            bool animated = useSmoothScrolling(options.behavior, box->element());
+            bool animated = autoscrollStatus == AutoscrollStatus::NotInProgress && useSmoothScrolling(options.behavior, box->element());
             scrollToPosition(scrollPositionFromOffset(clampedScrollOffset), ScrollType::Programmatic, ScrollClamping::Clamped, animated);
             IntSize scrollOffsetDifference = clampedScrollOffset - oldScrollOffset;
             localExposeRect.move(-scrollOffsetDifference);
@@ -2873,7 +2873,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
                 scrollPosition = scrollPosition.constrainedBetween(IntPoint(), IntPoint(frameView.contentsSize()));
                 // FIXME: Should we use contentDocument()->scrollingElement()?
                 // See https://bugs.webkit.org/show_bug.cgi?id=205059
-                bool animated = ownerElement->contentDocument() && useSmoothScrolling(options.behavior, ownerElement->contentDocument()->documentElement());
+                bool animated = autoscrollStatus == AutoscrollStatus::NotInProgress && ownerElement->contentDocument() && useSmoothScrolling(options.behavior, ownerElement->contentDocument()->documentElement());
                 frameView.setScrollPosition(scrollPosition, ScrollClamping::Clamped, animated);
 
                 if (options.shouldAllowCrossOriginScrolling == ShouldAllowCrossOriginScrolling::Yes || frameView.safeToPropagateScrollToParent()) {
@@ -2915,7 +2915,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
                 ScrollOffset clampedScrollPosition = roundedIntPoint(revealRect.location()).constrainedBetween(minScrollPosition, maxScrollPosition);
                 // FIXME: Should we use document()->scrollingElement()?
                 // See https://bugs.webkit.org/show_bug.cgi?id=205059
-                bool animated = useSmoothScrolling(options.behavior, renderer().document().documentElement());
+                bool animated = autoscrollStatus == AutoscrollStatus::NotInProgress && useSmoothScrolling(options.behavior, renderer().document().documentElement());
                 frameView.setScrollPosition(clampedScrollPosition, ScrollClamping::Clamped, animated);
             }
 
@@ -3055,7 +3055,7 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect& visibleRect, const Lay
 void RenderLayer::autoscroll(const IntPoint& positionInWindow)
 {
     IntPoint currentDocumentPosition = renderer().view().frameView().windowToContents(positionInWindow);
-    scrollRectToVisible(LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), false, { SelectionRevealMode::Reveal, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::Yes });
+    scrollRectToVisible(LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), false, { SelectionRevealMode::Reveal, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::Yes }, AutoscrollStatus::InProgress);
 }
 
 bool RenderLayer::canResize() const

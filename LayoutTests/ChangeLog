@@ -1,3 +1,16 @@
+2020-03-12  Cathie Chen  <cathiechen@igalia.com>
+
+        REGRESSION(r255957): Element with scroll-behavior:smooth isn't draggable after r255957
+        https://bugs.webkit.org/show_bug.cgi?id=208566
+
+        Reviewed by Simon Fraser and Frédéric Wang.
+
+        The test uses eventSender to generate drag action.
+
+        * fast/events/drag-smooth-scroll-element-expected.txt: Added.
+        * fast/events/drag-smooth-scroll-element.html: Added.
+        * platform/ios/TestExpectations: IOS doesn't support mouse events, so skip the test.
+
 2020-03-12  Zalan Bujtas  <zalan@apple.com>
 
         RenderTreeNeedsLayoutChecker asserts with imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-005.html
