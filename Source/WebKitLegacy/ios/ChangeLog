@@ -1,3 +1,23 @@
+2020-03-13  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r258383. rdar://problem/60408777
+
+    rdar://problem/60359230 Mark locationManager:didChangeAuthorizationStatus: as deprecated.
+    
+    * Misc/WebGeolocationCoreLocationProvider.mm:
+    (-[WebGeolocationCoreLocationProvider locationManager:didChangeAuthorizationStatus:]):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258383 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-12  Alexey Proskuryakov  <ap@apple.com>
+
+            rdar://problem/60359230 Mark locationManager:didChangeAuthorizationStatus: as deprecated.
+
+            * Misc/WebGeolocationCoreLocationProvider.mm:
+            (-[WebGeolocationCoreLocationProvider locationManager:didChangeAuthorizationStatus:]):
+
 2020-03-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: re-add `InspectorFrontendHost` support for moving the inspected window

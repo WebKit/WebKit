@@ -141,7 +141,9 @@ static bool isAuthorizationGranted(CLAuthorizationStatus authorizationStatus)
     [_locationManager stopUpdatingLocation];
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (_isWaitingForAuthorization) {
         switch (status) {
