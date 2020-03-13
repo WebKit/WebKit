@@ -1,3 +1,12 @@
+2020-03-13  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk1 Debug] inspector/injected-script/avoid-getter-invocation.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209073
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-03-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Report all third party loads on a per-page basis
