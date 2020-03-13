@@ -249,6 +249,8 @@ private:
     // RealtimeMediaSource
     void beginConfiguration() final { }
     void commitConfiguration() final { }
+    bool setShouldApplyRotation(bool /* shouldApplyRotation */) final;
+
 
     void applyConstraints(const WebCore::MediaConstraints&, ApplyConstraintsHandler&&) final;
 
@@ -427,6 +429,12 @@ void UserMediaCaptureManager::Source::startProducingData()
 void UserMediaCaptureManager::Source::stopProducingData()
 {
     connection()->send(Messages::UserMediaCaptureManagerProxy::StopProducingData(m_id), 0);
+}
+
+bool UserMediaCaptureManager::Source::setShouldApplyRotation(bool shouldApplyRotation)
+{
+    connection()->send(Messages::UserMediaCaptureManagerProxy::SetShouldApplyRotation(m_id, shouldApplyRotation), 0);
+    return true;
 }
 
 const WebCore::RealtimeMediaSourceCapabilities& UserMediaCaptureManager::Source::capabilities()

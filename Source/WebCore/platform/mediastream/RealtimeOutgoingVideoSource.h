@@ -71,7 +71,7 @@ public:
         return rtc::RefCountReleaseStatus::kOtherRefsRemained;
     }
 
-    void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
+    void applyRotation();
 
 protected:
     explicit RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPrivate>&&);
@@ -134,6 +134,7 @@ private:
 
     mutable RecursiveLock m_sinksLock;
     HashSet<rtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks;
+    bool m_areSinksAskingToApplyRotation { false };
 
     bool m_enabled { true };
     bool m_muted { false };

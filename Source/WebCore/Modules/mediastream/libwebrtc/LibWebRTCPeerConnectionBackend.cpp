@@ -513,7 +513,7 @@ void LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources()
     for (auto& transceiver : m_peerConnection.currentTransceivers()) {
         if (!transceiver->sender().isStopped()) {
             if (auto* videoSource = backendFromRTPSender(transceiver->sender()).videoSource())
-                videoSource->setApplyRotation(true);
+                videoSource->applyRotation();
         }
     }
 }

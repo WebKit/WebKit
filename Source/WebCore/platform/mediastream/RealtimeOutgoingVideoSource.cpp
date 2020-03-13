@@ -80,6 +80,21 @@ void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
 {
     ASSERT(!m_videoSource->hasObserver(*this));
     m_videoSource = WTFMove(newSource);
+
+    if (!m_areSinksAskingToApplyRotation)
+        return;
+    if (!m_videoSource->source().setShouldApplyRotation(true))
+        m_shouldApplyRotation = true;
+}
+
+void RealtimeOutgoingVideoSource::applyRotation()
+{
+    if (m_areSinksAskingToApplyRotation)
+        return;
+
+    m_areSinksAskingToApplyRotation = true;
+    if (!m_videoSource->source().setShouldApplyRotation(true))
+        m_shouldApplyRotation = true;
 }
 
 void RealtimeOutgoingVideoSource::stop()
@@ -135,7 +150,7 @@ void RealtimeOutgoingVideoSource::AddOrUpdateSink(rtc::VideoSinkInterface<webrtc
     ASSERT(!sinkWants.black_frames);
 
     if (sinkWants.rotation_applied)
-        m_shouldApplyRotation = true;
+        applyRotation();
 
     auto locker = holdLock(m_sinksLock);
     m_sinks.add(sink);

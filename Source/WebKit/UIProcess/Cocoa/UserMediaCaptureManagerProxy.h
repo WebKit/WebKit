@@ -79,6 +79,7 @@ private:
     void applyConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::MediaConstraints&);
     void clone(WebCore::RealtimeMediaSourceIdentifier clonedID, WebCore::RealtimeMediaSourceIdentifier cloneID);
     void requestToEnd(WebCore::RealtimeMediaSourceIdentifier);
+    void setShouldApplyRotation(WebCore::RealtimeMediaSourceIdentifier, bool shouldApplyRotation);
 
     class SourceProxy;
     friend class SourceProxy;
