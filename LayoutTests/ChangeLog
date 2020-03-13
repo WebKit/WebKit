@@ -1,3 +1,12 @@
+2020-03-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=209047
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-03-13  Youenn Fablet  <youenn@apple.com>
 
         Apply rotation at source level if WebRTC sink ask so

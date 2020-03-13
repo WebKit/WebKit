@@ -249,7 +249,7 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-tra
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [ Failure ]
 
 # There is an oggdemux bug that deadlocks WebKit: https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/639
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout Failure Crash ]
 
 # CSS filters related failures
 webkit.org/b/99026 css3/filters/effect-brightness.html [ Failure ]
@@ -1336,6 +1336,8 @@ webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-
 
 webkit.org/b/208294 fast/images/image-map-outline-in-positioned-container.html [ ImageOnlyFailure ]
 
+webkit.org/b/209046 inspector/animation/lifecycle-css-animation.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -1532,7 +1534,7 @@ webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageO
 
 webkit.org/b/104809 media/adopt-node-crash.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Failure Timeout Crash ]
-webkit.org/b/104809 media/encrypted-media/encrypted-media-syntax.html [ Failure Timeout ]
+webkit.org/b/104809 media/encrypted-media/encrypted-media-syntax.html [ Failure Timeout Crash ]
 webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass Crash ]
 
 # This test also crashes after the FTL merge
@@ -1721,7 +1723,7 @@ webkit.org/b/133869 media/video-seek-after-end.html [ Failure Pass ]
 
 webkit.org/b/36642 fast/replaced/border-radius-clip.html [ Failure Pass ]
 
-webkit.org/b/134576 media/track/audio/audio-track-mkv-vorbis-language.html [ Failure Timeout Pass ]
+webkit.org/b/134576 media/track/audio/audio-track-mkv-vorbis-language.html [ Failure Timeout Pass Crash ]
 webkit.org/b/134576 webkit.org/b/198830 [ Release ] media/track/track-cue-rendering.html [ Failure Timeout Pass Crash ]
 webkit.org/b/134576 [ Debug ] media/track/track-cue-rendering.html [ Failure Timeout Pass ]
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Failure Timeout Pass Crash ]
@@ -1881,7 +1883,7 @@ webkit.org/b/160137 svg/custom/non-scaling-stroke-update.svg [ ImageOnlyFailure 
 
 webkit.org/b/163532 plugins/js-from-destroy.html [ Failure Pass ]
 
-webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
+webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure Crash ]
 
 webkit.org/b/168780 fast/forms/input-first-letter-edit.html [ ImageOnlyFailure Pass ]
 
@@ -2364,6 +2366,7 @@ webkit.org/b/198830 media/track/audio/audio-track-mkv-vorbis-addtrack.html [ Pas
 webkit.org/b/198830 media/track/track-css-matching-lang.html [ Pass Crash ]
 webkit.org/b/198830 media/track/track-mode-disabled-crash.html [ Pass Crash ]
 webkit.org/b/198830 media/video-concurrent-playback.html [ Pass Crash ]
+webkit.org/b/198830 media/video-dom-src.html [ Pass Crash ]
 webkit.org/b/198830 media/video-inactive-playback.html [ Pass Crash ]
 webkit.org/b/198830 media/video-load-preload-metadata-naturalsize.html [ Pass Crash ]
 webkit.org/b/198830 media/W3C/audio/events/event_canplay_manual.html [ Pass Crash ]
@@ -2476,6 +2479,9 @@ webkit.org/b/198830 [ Release ] media/video-source-media.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/video-zoom-controls.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/W3C/audio/events/event_loadstart_manual.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay.html [ Pass Crash ]
+webkit.org/b/198830 [ Release ] webrtc/video-autoplay1.html [ Pass Crash ]
+webkit.org/b/198830 [ Release ] webrtc/video-autoplay2.html [ Pass Crash ]
+webkit.org/b/198830 [ Release ] webrtc/video-getParameters.html [ Pass Crash ]
 
 webkit.org/b/198830 [ Release ] http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_playing.html [ Pass Crash ]
@@ -2646,11 +2652,18 @@ webkit.org/b/208287 http/tests/eventsource/eventsource-page-cache-connected.html
 
 webkit.org/b/208291 webanimations/accelerated-animation-renderer-change.html [ Pass Timeout ]
 
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idb-explicit-commit.any.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbindex-query-exception-order.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbindex-request-source.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-query-exception-order.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-request-source.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes.any.worker.html [ Failure Pass ]
-webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Failure Pass ]
-webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/keygenerator-explicit.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any.worker.html [ Failure Pass ]
+webkit.org/b/208292 storage/indexeddb/cursor-leak-private.html [ Failure Pass ]
 webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
 webkit.org/b/208292 storage/indexeddb/modern/blob-cursor.html [ Failure Pass ]
 webkit.org/b/208292 storage/indexeddb/modern/blob-svg-image.html [ Failure Pass ]
@@ -2730,6 +2743,8 @@ webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transfor
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-hmtx-003.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-hmtx-004.xht [ ImageOnlyFailure Pass ]
 
+webkit.org/b/209044 http/tests/media/hls/video-controls-live-stream.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2780,8 +2795,6 @@ Bug(GTK) http/tests/media/video-preload.html [ Pass Slow ]
 
 webkit.org/b/116958 http/tests/navigation/slowmetaredirect-basic.html [ Pass Slow ]
 webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Slow ]
-
-webkit.org/b/134575 http/tests/media/hls/video-controls-live-stream.html [ Pass Slow ]
 
 webkit.org/b/204635 http/tests/navigation/image-load-in-pagehide-handler.html [ Failure Pass ]
 
@@ -3031,7 +3044,7 @@ webkit.org/b/186341 fast/animation/css-animation-resuming-when-visible-with-styl
 
 webkit.org/b/187266 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html [ Pass Timeout ]
 
-webkit.org/b/187273 media/picture-in-picture/picture-in-picture-interruption.html [ Timeout ]
+webkit.org/b/187273 media/picture-in-picture/picture-in-picture-interruption.html [ Timeout Crash ]
 
 webkit.org/b/188103 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html [ Failure Pass ]
 webkit.org/b/188103 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html [ Failure Pass ]
