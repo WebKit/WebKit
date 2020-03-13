@@ -448,22 +448,25 @@ static HashSet<WebCore::RegistrableDomain>& appBoundDomains()
     return appBoundDomains;
 }
 
-void WebsiteDataStore::initializeAppBoundDomains()
+void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceReinitialization)
 {
     ASSERT(RunLoop::isMain());
 
-    if (hasInitializedAppBoundDomains)
+    if (hasInitializedAppBoundDomains && forceReinitialization != ForceReinitialization::Yes)
         return;
     
     static const auto maxAppBoundDomainCount = 10;
     
-    appBoundDomainQueue().dispatch([] () mutable {
-        if (hasInitializedAppBoundDomains)
+    appBoundDomainQueue().dispatch([forceReinitialization] () mutable {
+        if (hasInitializedAppBoundDomains && forceReinitialization != ForceReinitialization::Yes)
             return;
         
         NSArray<NSString *> *domains = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"WKAppBoundDomains"];
         
-        RunLoop::main().dispatch([domains = retainPtr(domains)] {
+        RunLoop::main().dispatch([forceReinitialization , domains = retainPtr(domains)] {
+            if (forceReinitialization == ForceReinitialization::Yes)
+                appBoundDomains().clear();
+
             for (NSString *domain in domains.get()) {
                 URL url { URL(), domain };
                 if (!url.isValid())
@@ -510,6 +513,12 @@ void WebsiteDataStore::appBoundDomainsForTesting(CompletionHandler<void(const Ha
     ensureAppBoundDomains([completionHandler = WTFMove(completionHandler)] (auto& domains) mutable {
         completionHandler(domains);
     });
+}
+
+void WebsiteDataStore::reinitializeAppBoundDomains()
+{
+    hasInitializedAppBoundDomains = false;
+    initializeAppBoundDomains(ForceReinitialization::Yes);
 }
 
 }

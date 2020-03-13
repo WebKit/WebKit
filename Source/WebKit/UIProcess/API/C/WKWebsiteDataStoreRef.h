@@ -164,6 +164,8 @@ WK_EXPORT void WKWebsiteDataStoreResetQuota(WKWebsiteDataStoreRef dataStoreRef, 
 typedef void (*WKWebsiteDataStoreSetInAppBrowserPrivacyEnabledFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreSetInAppBrowserPrivacyEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, WKWebsiteDataStoreSetInAppBrowserPrivacyEnabledFunction completionHandler);
 
+WK_EXPORT void WKWebsiteDataStoreReinitializeAppBoundDomains(WKWebsiteDataStoreRef dataStoreRef);
+
 #ifdef __cplusplus
 }
 #endif

@@ -791,6 +791,9 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     // Generally, the tests should default to running at 1x. updateWindowScaleForTest() will adjust the scale to
     // something else for specific tests that need to run at a different window scale.
     m_mainWebView->changeWindowScaleIfNeeded(1);
+    
+    if (!options.applicationBundleIdentifier.isEmpty())
+        reinitializeAppBoundDomains();
 }
 
 void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test)
@@ -3780,6 +3783,11 @@ void TestController::setInAppBrowserPrivacyEnabled(bool value)
     WKWebsiteDataStoreSetInAppBrowserPrivacyEnabled(TestController::websiteDataStore(), value, &context, inAppBrowserPrivacyVoidResultCallback);
     runUntil(context.done, noTimeout);
     m_currentInvocation->didSetInAppBrowserPrivacyEnabled();
+}
+
+void TestController::reinitializeAppBoundDomains()
+{
+    WKWebsiteDataStoreReinitializeAppBoundDomains(TestController::websiteDataStore());
 }
 
 #if !PLATFORM(COCOA)

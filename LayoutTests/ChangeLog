@@ -1,3 +1,16 @@
+2020-03-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ iOS and Mac wk2 ] http/tests/in-app-browser-privacy/ tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=209016
+        <rdar://problem/60329530> 
+
+        Reviewed by Chris Dumez.
+
+        Use TestOptions to trigger the re-initialization of app-bound domains.
+
+        * http/tests/in-app-browser-privacy/app-bound-domain.html:
+        * http/tests/in-app-browser-privacy/switch-session-on-navigation-to-app-bound-domain.html:
+
 2020-03-13  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac ] fast/animation/request-animation-frame-timestamps.html is flaky failing.
