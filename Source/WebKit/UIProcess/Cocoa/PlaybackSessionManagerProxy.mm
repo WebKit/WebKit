@@ -499,12 +499,6 @@ void PlaybackSessionManagerProxy::pictureInPictureSupportedChanged(uint64_t cont
     ensureModel(contextId).pictureInPictureSupportedChanged(supported);
 }
 
-void PlaybackSessionManagerProxy::pictureInPictureActiveChanged(uint64_t contextId, bool active)
-{
-    MESSAGE_CHECK_CONTEXTID(contextId);
-    ensureModel(contextId).pictureInPictureActiveChanged(active);
-}
-
 void PlaybackSessionManagerProxy::handleControlledElementIDResponse(uint64_t contextId, String identifier) const
 {
     MESSAGE_CHECK_CONTEXTID(contextId);
