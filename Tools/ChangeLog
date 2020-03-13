@@ -1,3 +1,26 @@
+2020-03-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Add EWS testers to run GTK layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=207648
+
+        Reviewed by Carlos Alberto Lopez Perez and Aakash Jain.
+
+        Queue 'GTK-Webkit2-EWS' was renamed to 'GTK-Build-EWS'.
+        A new queue, named 'GTK-WK2-Tests-EWS', was added for WK2
+        tests (layout tests).
+
+        * BuildSlaveSupport/ews-build/config.json: Added new queue for
+        WK2 tests.
+        * BuildSlaveSupport/ews-build/factories.py:
+        (GTKTestsFactory):
+        * BuildSlaveSupport/ews-build/factories_unittest.py:
+        (TestCommitQueueFactory.test_commit_queue_factory):
+        (TestGTKFactory): Added unit-test.
+        (TestGTKFactory.test_gtk_factory):
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py:
+        (TagsForBuilderTest.test_getTagsForBuilder):
+
 2020-03-13  Aakash Jain  <aakash_jain@apple.com>
 
         Add API endpoint in EWS django app to provide patch status in json format

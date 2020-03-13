@@ -69,7 +69,8 @@ class TagsForBuilderTest(unittest.TestCase):
         self.verifyTags('iOS(11),(test)-EWS', ['iOS', 'test'])
         self.verifyTags('Windows-EWS', ['Windows'])
         self.verifyTags('Windows_Windows', ['Windows'])
-        self.verifyTags('GTK-Webkit2-EWS', ['GTK', 'Webkit2'])
+        self.verifyTags('GTK-Build-EWS', ['GTK', 'Build'])
+        self.verifyTags('GTK-WK2-Tests-EWS', ['GTK', 'WK2', 'Tests'])
         self.verifyTags('macOS-Sierra-Release-WK1-EWS', ['Sierra', 'Release', 'macOS', 'WK1'])
         self.verifyTags('macOS-High-Sierra-Release-32bit-WK2-EWS', ['macOS', 'High', 'Sierra', 'Release', 'WK2', '32bit'])
 

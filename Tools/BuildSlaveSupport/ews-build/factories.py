@@ -178,6 +178,10 @@ class GTKBuildFactory(BuildFactory):
     pass
 
 
+class GTKTestsFactory(TestFactory):
+    LayoutTestClass = RunWebKitTests
+
+
 class WPEFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=True, triggers=triggers, additionalArguments=additionalArguments)
