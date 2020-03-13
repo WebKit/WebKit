@@ -1173,7 +1173,7 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
     result->setShape(WTFMove(shape));
     result->setSizingBehavior(WTFMove(sizeKeyword));
 
-    return WTFMove(result);
+    return result;
 }
 
 static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSParserMode cssParserMode, CSSGradientRepeat repeating)
