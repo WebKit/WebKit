@@ -1,3 +1,22 @@
+2020-03-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct preference handling and naming conventions in AppBound browsing preferences
+        https://bugs.webkit.org/show_bug.cgi?id=209031
+        <rdar://problem/60396298>
+
+        Reviewed by John Wilander.
+
+        This patch consistently uses the correct naming scheme for WebKit Internal Debug flags.
+        They should be 'WebKitDebug', not 'WebKitInternal' or 'WebKitInternalDebug'.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences isInAppBrowserPrivacyEnabled]):
+        (-[WebPreferences setInAppBrowserPrivacyEnabled:]):
+        (-[WebPreferences needsInAppBrowserPrivacyQuirks]):
+        (-[WebPreferences setNeedsInAppBrowserPrivacyQuirks:]):
+
 2020-03-12  youenn fablet  <youenn@apple.com>
 
         FrameLoader should own its FrameLoaderClient

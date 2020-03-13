@@ -167,7 +167,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 #endif
 
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
-    bool isInAppBrowserPrivacyEnabled = [defaults boolForKey:[NSString stringWithFormat:@"InternalDebug%@", WebPreferencesKey::isInAppBrowserPrivacyEnabledKey().createCFString().get()]];
+    bool isInAppBrowserPrivacyEnabled = [defaults boolForKey:[NSString stringWithFormat:@"WebKitDebug%@", WebPreferencesKey::isInAppBrowserPrivacyEnabledKey().createCFString().get()]];
     
     WebsiteDataStoreParameters parameters;
 

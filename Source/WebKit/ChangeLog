@@ -1,3 +1,25 @@
+2020-03-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct preference handling and naming conventions in AppBound browsing preferences
+        https://bugs.webkit.org/show_bug.cgi?id=209031
+        <rdar://problem/60396298>
+
+        Reviewed by John Wilander.
+
+        I made a mistake in the handling of preferences related to the IsInAppBrowserPrivacyEnabled
+        and the quirk flag, which led to some code not executing when expected.
+
+        This patch does the following:
+
+        1. Uses the correct naming scheme for WebKit Internal Debug flags. They should be
+           'WebKitDebug', not 'WebKitInternal' or 'WebKitInternalDebug'.
+        2. Updates the local quirk state in WebPage when page settings change.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2020-03-12  David Kilzer  <ddkilzer@apple.com>
 
         WebPageProxy::SaveImageToLibrary should validate its `imageSize` parameter

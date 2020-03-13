@@ -3704,6 +3704,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings.setLayoutViewportHeightExpansionFactor(store.getDoubleValueForKey(WebPreferencesKey::layoutViewportHeightExpansionFactorKey()));
 
+    m_needsInAppBrowserPrivacyQuirks = store.getBoolValueForKey(WebPreferencesKey::needsInAppBrowserPrivacyQuirksKey());
+
     if (m_drawingArea)
         m_drawingArea->updatePreferences(store);
 
