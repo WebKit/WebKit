@@ -72,11 +72,11 @@ void AudioSession::removeInterruptionObserver(InterruptionObserver&)
 {
 }
 
-void AudioSession::beginInterruption(PlatformMediaSession::InterruptionType)
+void AudioSession::beginInterruption()
 {
 }
 
-void AudioSession::endInterruption(PlatformMediaSession::EndInterruptionFlags)
+void AudioSession::endInterruption(MayResume)
 {
 }
 #endif

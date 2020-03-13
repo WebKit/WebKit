@@ -161,7 +161,7 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
         if (categoryCanMixWithOthers(otherProxy.category()))
             continue;
 
-        otherProxy.beginInterruption(PlatformMediaSession::InterruptionType::SystemInterruption);
+        otherProxy.beginInterruption();
     }
 #endif
 
@@ -169,19 +169,19 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
 
 }
 
-void RemoteAudioSessionProxyManager::beginAudioSessionInterruption(PlatformMediaSession::InterruptionType type)
+void RemoteAudioSessionProxyManager::beginAudioSessionInterruption()
 {
     for (auto& proxy : m_proxies) {
         if (proxy.isActive())
-            proxy.beginInterruption(type);
+            proxy.beginInterruption();
     }
 }
 
-void RemoteAudioSessionProxyManager::endAudioSessionInterruption(PlatformMediaSession::EndInterruptionFlags flags)
+void RemoteAudioSessionProxyManager::endAudioSessionInterruption(AudioSession::MayResume mayResume)
 {
     for (auto& proxy : m_proxies) {
         if (proxy.isActive())
-            proxy.endInterruption(flags);
+            proxy.endInterruption(mayResume);
     }
 }
 

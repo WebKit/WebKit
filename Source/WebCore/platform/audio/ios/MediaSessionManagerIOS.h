@@ -68,8 +68,8 @@ private:
     void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying) final;
 
     // AudioSession::InterruptionObserver
-    void beginAudioSessionInterruption(PlatformMediaSession::InterruptionType type) final { beginInterruption(type); }
-    void endAudioSessionInterruption(PlatformMediaSession::EndInterruptionFlags flags) final { endInterruption(flags); }
+    void beginAudioSessionInterruption() final { beginInterruption(PlatformMediaSession::SystemInterruption); }
+    void endAudioSessionInterruption(AudioSession::MayResume mayResume) final { endInterruption(mayResume == AudioSession::MayResume::Yes ? PlatformMediaSession::MayResumePlaying : PlatformMediaSession::NoFlags); }
 
     // MediaSessionHelperClient
     void applicationWillEnterForeground(SuspendedUnderLock) final;

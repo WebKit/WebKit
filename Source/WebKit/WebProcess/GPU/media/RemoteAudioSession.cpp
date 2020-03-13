@@ -84,16 +84,6 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
         handleMutedStateChange();
 }
 
-void RemoteAudioSession::beginInterruption(PlatformMediaSession::InterruptionType type)
-{
-    PlatformMediaSessionManager::sharedManager().beginInterruption(type);
-}
-
-void RemoteAudioSession::endInterruption(PlatformMediaSession::EndInterruptionFlags flags)
-{
-    PlatformMediaSessionManager::sharedManager().endInterruption(flags);
-}
-
 }
 
 #endif

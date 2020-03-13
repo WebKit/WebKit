@@ -54,8 +54,8 @@ public:
     const WebCore::AudioSession& session() const { return m_session; }
 
 private:
-    void beginAudioSessionInterruption(WebCore::PlatformMediaSession::InterruptionType) final;
-    void endAudioSessionInterruption(WebCore::PlatformMediaSession::EndInterruptionFlags) final;
+    void beginAudioSessionInterruption() final;
+    void endAudioSessionInterruption(WebCore::AudioSession::MayResume) final;
 
     UniqueRef<WebCore::AudioSession> m_session;
     WeakHashSet<RemoteAudioSessionProxy> m_proxies;

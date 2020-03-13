@@ -30,7 +30,6 @@
 #include "MessageReceiver.h"
 #include "RemoteAudioSessionConfiguration.h"
 #include <WebCore/AudioSession.h>
-#include <WebCore/PlatformMediaSession.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/WeakPtr.h>
 
@@ -59,8 +58,8 @@ public:
     size_t preferredBufferSize() const { return m_preferredBufferSize; }
     bool isActive() const { return m_active; }
 
-    void beginInterruption(WebCore::PlatformMediaSession::InterruptionType);
-    void endInterruption(WebCore::PlatformMediaSession::EndInterruptionFlags);
+    void beginInterruption();
+    void endInterruption(WebCore::AudioSession::MayResume);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -68,7 +67,7 @@ public:
 
 private:
     friend UniqueRef<RemoteAudioSessionProxy> WTF::makeUniqueRefWithoutFastMallocCheck<RemoteAudioSessionProxy>(GPUConnectionToWebProcess&);
-    RemoteAudioSessionProxy(GPUConnectionToWebProcess&);
+    explicit RemoteAudioSessionProxy(GPUConnectionToWebProcess&);
 
     // Messages
     void setCategory(WebCore::AudioSession::CategoryType, WebCore::RouteSharingPolicy);

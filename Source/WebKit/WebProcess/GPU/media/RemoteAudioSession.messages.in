@@ -27,8 +27,8 @@
 
 messages -> RemoteAudioSession NotRefCounted {
     ConfigurationChanged(struct WebKit::RemoteAudioSessionConfiguration configuration)
-    BeginInterruption(enum:uint8_t WebCore::PlatformMediaSession::InterruptionType type)
-    EndInterruption(enum:uint8_t WebCore::PlatformMediaSession::EndInterruptionFlags flags)
+    BeginInterruption()
+    EndInterruption(WebCore::AudioSession::MayResume flags)
 }
 
 #endif

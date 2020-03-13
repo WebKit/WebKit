@@ -27,8 +27,8 @@
 
 #if USE(AUDIO_SESSION)
 
-#include "PlatformMediaSession.h"
 #include <memory>
+#include <wtf/EnumTraits.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/UniqueRef.h>
@@ -94,21 +94,22 @@ public:
     void addMutedStateObserver(MutedStateObserver*);
     void removeMutedStateObserver(MutedStateObserver*);
 
+    virtual bool isMuted() const;
+    virtual void handleMutedStateChange();
+
+    void beginInterruption();
+    enum class MayResume { No, Yes };
+    void endInterruption(MayResume);
+
     class InterruptionObserver : public CanMakeWeakPtr<InterruptionObserver> {
     public:
         virtual ~InterruptionObserver() = default;
 
-        // FIXME: Remove use of InterruptionType and EndInterruptionFlags in this interface.
-        virtual void beginAudioSessionInterruption(PlatformMediaSession::InterruptionType) = 0;
-        virtual void endAudioSessionInterruption(PlatformMediaSession::EndInterruptionFlags) = 0;
+        virtual void beginAudioSessionInterruption() = 0;
+        virtual void endAudioSessionInterruption(MayResume) = 0;
     };
     void addInterruptionObserver(InterruptionObserver&);
     void removeInterruptionObserver(InterruptionObserver&);
-    void beginInterruption(PlatformMediaSession::InterruptionType);
-    void endInterruption(PlatformMediaSession::EndInterruptionFlags);
-
-    virtual bool isMuted() const;
-    virtual void handleMutedStateChange();
 
     virtual bool isActive() const { return m_active; }
 
@@ -152,6 +153,14 @@ template <> struct EnumTraits<WebCore::AudioSession::CategoryType> {
     WebCore::AudioSession::CategoryType::RecordAudio,
     WebCore::AudioSession::CategoryType::PlayAndRecord,
     WebCore::AudioSession::CategoryType::AudioProcessing
+    >;
+};
+
+template <> struct EnumTraits<WebCore::AudioSession::MayResume> {
+    using values = EnumValues <
+    WebCore::AudioSession::MayResume,
+    WebCore::AudioSession::MayResume::No,
+    WebCore::AudioSession::MayResume::Yes
     >;
 };
 

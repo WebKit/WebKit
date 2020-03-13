@@ -79,10 +79,7 @@
         return;
 
     NSUInteger type = [[[notification userInfo] objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
-    WebCore::PlatformMediaSession::EndInterruptionFlags flags = WebCore::PlatformMediaSession::NoFlags;
-
-    if (type == AVAudioSessionInterruptionTypeEnded && [[[notification userInfo] objectForKey:AVAudioSessionInterruptionOptionKey] unsignedIntegerValue] == AVAudioSessionInterruptionOptionShouldResume)
-        flags = WebCore::PlatformMediaSession::MayResumePlaying;
+    auto flags = (type == AVAudioSessionInterruptionTypeEnded && [[[notification userInfo] objectForKey:AVAudioSessionInterruptionOptionKey] unsignedIntegerValue] == AVAudioSessionInterruptionOptionShouldResume) ? WebCore::AudioSession::MayResume::Yes : WebCore::AudioSession::MayResume::No;
 
     callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = retainPtr(self), type, flags]() mutable {
         auto* callback = protectedSelf->_callback;
@@ -90,7 +87,7 @@
             return;
 
         if (type == AVAudioSessionInterruptionTypeBegan)
-            callback->beginInterruption(WebCore::PlatformMediaSession::SystemInterruption);
+            callback->beginInterruption();
         else
             callback->endInterruption(flags);
     });
@@ -333,16 +330,16 @@ void AudioSession::removeInterruptionObserver(InterruptionObserver& observer)
     m_interruptionObservers.remove(observer);
 }
 
-void AudioSession::beginInterruption(PlatformMediaSession::InterruptionType type)
+void AudioSession::beginInterruption()
 {
     for (auto& observer : m_interruptionObservers)
-        observer.beginAudioSessionInterruption(type);
+        observer.beginAudioSessionInterruption();
 }
 
-void AudioSession::endInterruption(PlatformMediaSession::EndInterruptionFlags flags)
+void AudioSession::endInterruption(MayResume mayResume)
 {
     for (auto& observer : m_interruptionObservers)
-        observer.endAudioSessionInterruption(flags);
+        observer.endAudioSessionInterruption(mayResume);
 }
 
 }

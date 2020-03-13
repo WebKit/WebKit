@@ -1,3 +1,29 @@
+2020-03-13  youenn fablet  <youenn@apple.com>
+
+        Remove use of PlatformMediaSession types in AudioSession
+        https://bugs.webkit.org/show_bug.cgi?id=208995
+
+        Reviewed by Eric Carlson.
+
+        Update code according WebCore API changes.
+        Make use of AudioSession current code path to make RemoteAudioSession notify its observers.
+
+        * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+        (WebKit::RemoteAudioSessionProxy::setCategory):
+        (WebKit::RemoteAudioSessionProxy::beginInterruption):
+        (WebKit::RemoteAudioSessionProxy::endInterruption):
+        * GPUProcess/media/RemoteAudioSessionProxy.h:
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+        (WebKit::RemoteAudioSessionProxyManager::tryToSetActiveForProcess):
+        (WebKit::RemoteAudioSessionProxyManager::beginAudioSessionInterruption):
+        (WebKit::RemoteAudioSessionProxyManager::endAudioSessionInterruption):
+        * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::beginInterruption): Deleted.
+        (WebKit::RemoteAudioSession::endInterruption): Deleted.
+        * WebProcess/GPU/media/RemoteAudioSession.h:
+        * WebProcess/GPU/media/RemoteAudioSession.messages.in:
+
 2020-03-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release build fix after r258384.

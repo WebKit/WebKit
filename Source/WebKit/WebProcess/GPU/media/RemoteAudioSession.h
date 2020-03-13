@@ -30,7 +30,6 @@
 #include "MessageReceiver.h"
 #include "RemoteAudioSessionConfiguration.h"
 #include <WebCore/AudioSession.h>
-#include <WebCore/PlatformMediaSession.h>
 
 namespace IPC {
 class Connection;
@@ -59,8 +58,6 @@ private:
 
     // Messages
     void configurationChanged(RemoteAudioSessionConfiguration&&);
-    void beginInterruption(WebCore::PlatformMediaSession::InterruptionType);
-    void endInterruption(WebCore::PlatformMediaSession::EndInterruptionFlags);
 
     // AudioSession
     void setCategory(CategoryType, WebCore::RouteSharingPolicy) final;
