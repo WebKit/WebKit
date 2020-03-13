@@ -54,10 +54,12 @@ extern "C" {
     M(DragAndDrop) \
     M(Fullscreen) \
     M(Gamepad) \
-    M(IconDatabase) \
-    M(IndexedDB) \
     M(IPC) \
     M(ITPDebug) \
+    M(IconDatabase) \
+    M(IncrementalPDF) \
+    M(IncrementalPDFVerbose) \
+    M(IndexedDB) \
     M(KeyHandling) \
     M(Layers) \
     M(Layout) \
@@ -71,7 +73,6 @@ extern "C" {
     M(NetworkCacheStorage) \
     M(NetworkScheduling) \
     M(NetworkSession) \
-    M(PDF) \
     M(PerformanceLogging) \
     M(Plugins) \
     M(Printing) \

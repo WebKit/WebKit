@@ -67,6 +67,10 @@ class Element;
 struct PluginInfo;
 }
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebKit {
 
 class PDFPluginAnnotation;
@@ -128,6 +132,11 @@ public:
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     void getResourceBytesAtPosition(size_t count, off_t position, CompletionHandler<void(const uint8_t*, size_t count)>&&);
+#ifndef NDEBUG
+    void pdfLog(const String& event);
+    size_t incrementThreadsWaitingOnCallback() { return ++m_threadsWaitingOnCallback; }
+    size_t decrementThreadsWaitingOnCallback() { return --m_threadsWaitingOnCallback; }
+#endif
 #endif
 
 private:
@@ -353,6 +362,9 @@ private:
         bool maybeComplete(PDFPlugin&);
         void completeUnconditionally(PDFPlugin&);
 
+        uint64_t position() const { return m_position; }
+        size_t count() const { return m_count; }
+
     private:
         uint64_t m_position { 0 };
         size_t m_count { 0 };
@@ -372,7 +384,16 @@ private:
     HashMap<RefPtr<WebCore::NetscapePlugInStreamLoader>, uint64_t> m_streamLoaderMap;
     RangeSet<WTF::Range<uint64_t>> m_completedRanges;
     bool m_incrementalPDFLoadingEnabled;
+
+#if !LOG_DISABLED
+    void verboseLog();
+    void logStreamLoader(WTF::TextStream&, WebCore::NetscapePlugInStreamLoader&);
+    std::atomic<size_t> m_threadsWaitingOnCallback { 0 };
+    std::atomic<size_t> m_completedRangeRequests { 0 };
+    std::atomic<size_t> m_completedNetworkRangeRequests { 0 };
 #endif
+
+#endif // HAVE(INCREMENTAL_PDF_APIS)
 };
 
 } // namespace WebKit

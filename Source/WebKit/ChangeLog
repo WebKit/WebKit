@@ -1,3 +1,28 @@
+2020-03-12  Brady Eidson  <beidson@apple.com>
+
+        Add a very verbose logging mode for incremental PDF loading
+        https://bugs.webkit.org/show_bug.cgi?id=208975
+
+        Reviewed by Simon Fraser.
+
+        Adds a verbose logging channel that includes a full dump of the PDFPlugin's loading status
+        for each logging message.
+        
+        * Platform/Logging.h:
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pdfLog):
+        (WebKit::PDFPlugin::logStreamLoader):
+        (WebKit::PDFPlugin::verboseLog):
+        (WebKit::dataProviderGetBytesAtPositionCallback):
+        (WebKit::dataProviderGetByteRangesCallback):
+        (WebKit::PDFPlugin::getResourceBytesAtPosition):
+        (WebKit::PDFPlugin::adoptBackgroundThreadDocument):
+        (WebKit::PDFPlugin::ByteRangeRequest::completeWithBytes):
+        (WebKit::PDFPlugin::ByteRangeRequest::completeWithAccumulatedData):
+        (WebKit::PDFPlugin::forgetLoader):
+
 2020-03-12  Brent Fulgham  <bfulgham@apple.com>
 
         Correct preference handling and naming conventions in AppBound browsing preferences
