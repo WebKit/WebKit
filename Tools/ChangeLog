@@ -1,3 +1,16 @@
+2020-03-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r256232.
+
+        Caused ResizeObserver tests to become flaky
+
+        Reverted changeset:
+
+        "[DRT] InternalSettingsGenerated::resetToConsistentState() may
+        override TestOptions"
+        https://bugs.webkit.org/show_bug.cgi?id=207481
+        https://trac.webkit.org/changeset/256232
+
 2020-03-13  Kate Cheney  <katherine_cheney@apple.com>
 
         [ iOS and Mac wk2 ] http/tests/in-app-browser-privacy/ tests failing
