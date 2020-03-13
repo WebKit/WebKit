@@ -1,3 +1,20 @@
+2020-03-13  John Wilander  <wilander@apple.com>
+
+        Add mixed content block test for imported scripts in worker global scope
+        https://bugs.webkit.org/show_bug.cgi?id=209075
+        <rdar://problem/27483005>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/security/mixedContent/insecure-worker-global-scope-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-worker-global-scope.html: Added.
+        * http/tests/security/mixedContent/resources/worker-importing-insecure-script.js: Added.
+        * http/tests/security/mixedContent/resources/worker-importing-secure-script.js: Added.
+        * http/tests/security/mixedContent/resources/worker-sending-message.js: Added.
+        * platform/mac-wk1/TestExpectations:
+            Test for some reason fails on Mojave Debug WK1 but not on Mojave Release WK1 or other bots.
+            Therefore skipped.
+
 2020-03-13  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         REGRESSION (r257840): [ iOS ] fast/backgrounds/hidpi-bitmap-background-on-subpixel-position.html is flaky failing

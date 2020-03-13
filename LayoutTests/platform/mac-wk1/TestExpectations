@@ -271,6 +271,9 @@ webkit.org/b/187230 editing/mac/style/do-not-crash-when-showing-font-panel.html 
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
+# Fails on Mojave Debug WK1
+[ Mojave Debug ] http/tests/security/mixedContent/insecure-worker-global-scope.html [ Skip ]
+
 # Plug-in blocking callback doesn't exist in WebKit1.
 plugins/unavailable-plugin-indicator-obscurity.html
 http/tests/plugins/plugin-allow-then-reload.html [ Skip ]
