@@ -52,17 +52,23 @@ GeoclueGeolocationProvider::~GeoclueGeolocationProvider()
 
 void GeoclueGeolocationProvider::start(UpdateNotifyFunction&& updateNotifyFunction)
 {
+    if (m_isRunning)
+        return;
+
     m_destroyManagerLaterTimer.stop();
     m_updateNotifyFunction = WTFMove(updateNotifyFunction);
     m_isRunning = true;
-
+    m_cancellable = adoptGRef(g_cancellable_new());
     if (!m_manager) {
         g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_NONE, nullptr,
-            "org.freedesktop.GeoClue2", "/org/freedesktop/GeoClue2/Manager", "org.freedesktop.GeoClue2.Manager", nullptr,
+            "org.freedesktop.GeoClue2", "/org/freedesktop/GeoClue2/Manager", "org.freedesktop.GeoClue2.Manager", m_cancellable.get(),
             [](GObject*, GAsyncResult* result, gpointer userData) {
-                auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
                 GUniqueOutPtr<GError> error;
                 GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
+                if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+                    return;
+
+                auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
                 if (error) {
                     provider.didFail(_("Failed to connect to geolocation service"));
                     return;
@@ -83,6 +89,7 @@ void GeoclueGeolocationProvider::stop()
     m_isRunning = false;
     m_updateNotifyFunction = nullptr;
     g_cancellable_cancel(m_cancellable.get());
+    m_cancellable = nullptr;
     stopClient();
     destroyManagerLater();
 }
@@ -121,11 +128,14 @@ void GeoclueGeolocationProvider::setupManager(GRefPtr<GDBusProxy>&& proxy)
         return;
     }
 
-    g_dbus_proxy_call(m_manager.get(), "CreateClient", nullptr, G_DBUS_CALL_FLAGS_NONE, -1, nullptr,
+    g_dbus_proxy_call(m_manager.get(), "CreateClient", nullptr, G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(),
         [](GObject* manager, GAsyncResult* result, gpointer userData) {
-            auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             GUniqueOutPtr<GError> error;
             GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(manager), result, &error.outPtr()));
+            if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+                return;
+
+            auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (error) {
                 provider.didFail(_("Failed to connect to geolocation service"));
                 return;
@@ -144,11 +154,14 @@ void GeoclueGeolocationProvider::createClient(const char* clientPath)
     }
 
     g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_NONE, nullptr,
-        "org.freedesktop.GeoClue2", clientPath, "org.freedesktop.GeoClue2.Client", nullptr,
+        "org.freedesktop.GeoClue2", clientPath, "org.freedesktop.GeoClue2.Client", m_cancellable.get(),
         [](GObject*, GAsyncResult* result, gpointer userData) {
-            auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             GUniqueOutPtr<GError> error;
             GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
+            if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+                return;
+
+            auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (error) {
                 provider.didFail(_("Failed to connect to geolocation service"));
                 return;
@@ -190,15 +203,14 @@ void GeoclueGeolocationProvider::startClient()
 
     g_signal_connect(m_client.get(), "g-signal", G_CALLBACK(clientLocationUpdatedCallback), this);
 
-    m_cancellable = adoptGRef(g_cancellable_new());
     g_dbus_proxy_call(m_client.get(), "Start", nullptr, G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(),
         [](GObject* client, GAsyncResult* result, gpointer userData) {
-            auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             GUniqueOutPtr<GError> error;
             GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(client), result, &error.outPtr()));
             if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
                 return;
 
+            auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (error) {
                 provider.didFail(_("Failed to determine position from geolocation service"));
                 return;
@@ -212,7 +224,6 @@ void GeoclueGeolocationProvider::stopClient()
         return;
 
     g_signal_handlers_disconnect_matched(m_client.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-    m_cancellable = nullptr;
     g_dbus_proxy_call(m_client.get(), "Stop", nullptr, G_DBUS_CALL_FLAGS_NONE, -1, nullptr, nullptr, nullptr);
 }
 
@@ -244,12 +255,12 @@ void GeoclueGeolocationProvider::createLocation(const char* locationPath)
     g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_NONE, nullptr,
         "org.freedesktop.GeoClue2", locationPath, "org.freedesktop.GeoClue2.Location", m_cancellable.get(),
         [](GObject*, GAsyncResult* result, gpointer userData) {
-            auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             GUniqueOutPtr<GError> error;
             GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
             if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
                 return;
 
+            auto& provider = *static_cast<GeoclueGeolocationProvider*>(userData);
             if (error) {
                 provider.didFail(_("Failed to determine position from geolocation service"));
                 return;
@@ -282,7 +293,8 @@ void GeoclueGeolocationProvider::locationUpdated(GRefPtr<GDBusProxy>&& proxy)
 
 void GeoclueGeolocationProvider::didFail(CString errorMessage)
 {
-    m_updateNotifyFunction({ }, errorMessage);
+    if (m_updateNotifyFunction)
+        m_updateNotifyFunction({ }, errorMessage);
 }
 
 } // namespace WebKit

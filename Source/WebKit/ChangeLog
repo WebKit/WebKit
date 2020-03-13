@@ -1,3 +1,22 @@
+2020-02-15  Pavel Feldman  <pavel.feldman@gmail.com>
+
+        [Geoclue] Avoid usage of provider in callbacks after it has been destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=207420
+
+        GeoclueGeolocationProvider was making non-cancelable g_dbus_proxy_call(s) with
+        bare |this| pointer.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/geoclue/GeoclueGeolocationProvider.cpp:
+        (WebKit::GeoclueGeolocationProvider::start):
+        (WebKit::GeoclueGeolocationProvider::stop):
+        (WebKit::GeoclueGeolocationProvider::setupManager):
+        (WebKit::GeoclueGeolocationProvider::createClient):
+        (WebKit::GeoclueGeolocationProvider::startClient):
+        (WebKit::GeoclueGeolocationProvider::didFail):
+        * UIProcess/geoclue/GeoclueGeolocationProvider.h:
+
 2020-02-14  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.26.4 release
