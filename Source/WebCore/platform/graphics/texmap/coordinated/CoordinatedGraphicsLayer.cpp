@@ -843,7 +843,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                 if (localDelta.filtersChanged)
                     state.filters = filters();
                 if (localDelta.animationsChanged)
-                    state.animations = m_animations.getActiveAnimations();
+                    state.animations = m_animations;
 
                 if (localDelta.childrenChanged) {
                     state.children = WTF::map(children(),

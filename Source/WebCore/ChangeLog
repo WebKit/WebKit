@@ -1,3 +1,38 @@
+2020-01-16  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Do not detect the stopped animations in Nicosia::Animation to avoid flashback
+        https://bugs.webkit.org/show_bug.cgi?id=206280
+
+        Reviewed by Carlos Garcia Campos.
+
+        This fixes the animation flashback issue found in https://webkit.org/blog-files/3d-transforms/morphing-cubes.html.
+        The flashback was caused by using the old layer transform matrix saved when the animation has been started.
+
+        The root cause is an inconsistency of animation state in Nicosia::Animation and CoordinatedGraphicsLayer.
+        For Nicosia::Animation, ThreadedCompositor increases MonitonicTime for animation every frame, and calls Nicosia::Animation::apply.
+        For CoordinatedGraphicsLayer, CSSAnimationController updates animations list and if the animation has been finished it updates CSS value.
+        There is a chance to use old layer state while the Nicosia::Animation stopped, but CoordinatedGraphicsLayer still obtains old CSS value and animations.
+
+        In this patch, all the Nicosia::Animation is considered to have "AnimationFillMode::Forwards" or "AnimationFillMode::Both",
+        which means they are active and use the last position when the animation is stopped.
+        Stopping and removing animations should be only done by CSSAnimationController and CoordinatedGraphicsScene
+        as they can remove the animation from the list and update the CSS value at the same time.
+
+        Mac implementation GraphicsLayerCA has a similar logic, it replaces AnimationFillMode with Forwards or Both.
+        https://trac.webkit.org/browser/webkit/trunk/Source/WebCore/platform/graphics/ca/GraphicsLayerCA.cpp?rev=254502#L3248
+
+        Tested manually with https://webkit.org/blog-files/3d-transforms/morphing-cubes.html
+
+        * platform/graphics/nicosia/NicosiaAnimation.cpp:
+        (Nicosia::Animation::apply): Return the last value for stopped animations to avoid flickering
+        (Nicosia::Animation::isActive const): Removed. It should always return true because
+        all the animations are considered as fillsForwards in Nicosia::Animation to avoid flashback.
+        (Nicosia::Animations::hasActiveAnimationsOfType const): Remove isActive check.
+        (Nicosia::Animations::getActiveAnimations() const): Removed. It returns whole animations list because all the animations are active.
+        * platform/graphics/nicosia/NicosiaAnimation.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+
 2020-01-09  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r253662): Large Data URLs are not being handled properly

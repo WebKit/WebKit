@@ -48,7 +48,6 @@ public:
     void applyKeepingInternalState(ApplicationResult&, MonotonicTime);
     void pause(Seconds);
     void resume();
-    bool isActive() const;
 
     const String& name() const { return m_name; }
     const WebCore::KeyframeValueList& keyframes() const { return m_keyframes; }
@@ -96,7 +95,6 @@ public:
 
     bool hasRunningAnimations() const;
     bool hasActiveAnimationsOfType(WebCore::AnimatedPropertyID type) const;
-    Animations getActiveAnimations() const;
 
 private:
     Vector<Animation> m_animations;
