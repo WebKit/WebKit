@@ -1859,18 +1859,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSArray*)renderWidgetChildren
 {
-    return Accessibility::retrieveValueFromMainThread<NSArray *>([protectedSelf = RetainPtr<WebAccessibilityObjectWrapper>(self)] () -> NSArray * {
-        auto* backingObject = protectedSelf.get().axBackingObject;
-        if (!backingObject)
-            return nil;
+    auto* backingObject = self.axBackingObject;
+    if (!backingObject)
+        return nil;
 
-        Widget* widget = backingObject->widget();
-        if (!widget)
-            return nil;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        return [(widget->platformWidget()) accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
-        ALLOW_DEPRECATED_DECLARATIONS_END
-    });
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    return [backingObject->platformWidget() accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (id)remoteAccessibilityParentObject
