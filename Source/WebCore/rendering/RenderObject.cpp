@@ -1524,22 +1524,6 @@ VisiblePosition RenderObject::positionForPoint(const LayoutPoint&, const RenderF
     return createVisiblePosition(caretMinOffset(), DOWNSTREAM);
 }
 
-void RenderObject::updateDragState(bool dragOn)
-{
-    bool valueChanged = (dragOn != isDragging());
-    setIsDragging(dragOn);
-
-    if (!is<RenderElement>(*this))
-        return;
-    auto& renderElement = downcast<RenderElement>(*this);
-
-    if (valueChanged && renderElement.element() && (style().affectedByDrag() || renderElement.element()->childrenAffectedByDrag()))
-        renderElement.element()->invalidateStyleForSubtree();
-
-    for (auto& child : childrenOfType<RenderObject>(renderElement))
-        child.updateDragState(dragOn);
-}
-
 bool RenderObject::isComposited() const
 {
     return hasLayer() && downcast<RenderLayerModelObject>(*this).layer()->isComposited();
@@ -1854,12 +1838,6 @@ void RenderObject::calculateBorderStyleColor(const BorderStyle& style, const Box
         if (differenceSquared(color, Color::white) > differenceSquared(baseLightColor, Color::white))
             color = color.light();
     }
-}
-
-void RenderObject::setIsDragging(bool isDragging)
-{
-    if (isDragging || hasRareData())
-        ensureRareData().setIsDragging(isDragging);
 }
 
 void RenderObject::setHasReflection(bool hasReflection)

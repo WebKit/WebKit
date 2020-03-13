@@ -2811,13 +2811,6 @@ LayoutRect RenderBlock::rectWithOutlineForRepaint(const RenderLayerModelObject* 
     return r;
 }
 
-void RenderBlock::updateDragState(bool dragOn)
-{
-    RenderBox::updateDragState(dragOn);
-    if (RenderBoxModelObject* continuation = this->continuation())
-        continuation->updateDragState(dragOn);
-}
-
 const RenderStyle& RenderBlock::outlineStyleForRepaint() const
 {
     if (auto* continuation = this->continuation())

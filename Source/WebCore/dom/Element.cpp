@@ -629,6 +629,12 @@ bool Element::isUserActionElementHovered() const
     return document().userActionElements().isHovered(*this);
 }
 
+bool Element::isUserActionElementDragged() const
+{
+    ASSERT(isUserActionElement());
+    return document().userActionElements().isBeingDragged(*this);
+}
+
 void Element::setActive(bool flag, bool pause)
 {
     if (flag == active())
@@ -717,6 +723,15 @@ void Element::setHovered(bool flag)
 
     if (auto* style = renderStyle(); style && style->hasAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::HoverState);
+}
+
+void Element::setBeingDragged(bool flag)
+{
+    if (flag == isBeingDragged())
+        return;
+
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassDrag);
+    document().userActionElements().setBeingDragged(*this, flag);
 }
 
 inline ScrollAlignment toScrollAlignmentForInlineDirection(Optional<ScrollLogicalPosition> position, WritingMode writingMode, bool isLTR)
@@ -3403,7 +3418,6 @@ bool Element::hasFlagsSetDuringStylingOfChildren() const
 {
     return childrenAffectedByFirstChildRules()
         || childrenAffectedByLastChildRules()
-        || childrenAffectedByDrag()
         || childrenAffectedByForwardPositionalRules()
         || descendantsAffectedByForwardPositionalRules()
         || childrenAffectedByBackwardPositionalRules()

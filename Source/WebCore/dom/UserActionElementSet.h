@@ -42,11 +42,13 @@ public:
     bool isFocused(const Element& element) { return hasFlag(element, Flag::IsFocused); }
     bool isHovered(const Element& element) { return hasFlag(element, Flag::IsHovered); }
     bool isInActiveChain(const Element& element) { return hasFlag(element, Flag::InActiveChain); }
+    bool isBeingDragged(const Element& element) { return hasFlag(element, Flag::IsBeingDragged); }
 
     void setActive(Element& element, bool enable) { setFlags(element, enable, Flag::IsActive); }
     void setFocused(Element& element, bool enable) { setFlags(element, enable, Flag::IsFocused); }
     void setHovered(Element& element, bool enable) { setFlags(element, enable, Flag::IsHovered); }
     void setInActiveChain(Element& element, bool enable) { setFlags(element, enable, Flag::InActiveChain); }
+    void setBeingDragged(Element& element, bool enable) { setFlags(element, enable, Flag::IsBeingDragged); }
 
     void clearActiveAndHovered(Element& element) { clearFlags(element, { Flag::IsActive, Flag::InActiveChain, Flag::IsHovered }); }
 
@@ -54,10 +56,11 @@ public:
 
 private:
     enum class Flag {
-        IsActive = 1 << 0,
-        InActiveChain = 1 << 1,
-        IsHovered = 1 << 2,
-        IsFocused = 1 << 3
+        IsActive        = 1 << 0,
+        InActiveChain   = 1 << 1,
+        IsHovered       = 1 << 2,
+        IsFocused       = 1 << 3,
+        IsBeingDragged  = 1 << 4,
     };
 
     void setFlags(Element& element, bool enable, OptionSet<Flag> flags) { enable ? setFlags(element, flags) : clearFlags(element, flags); }

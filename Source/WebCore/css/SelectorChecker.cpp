@@ -999,11 +999,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassDirectFocus:
             return matchesDirectFocusPseudoClass(element);
         case CSSSelector::PseudoClassDrag:
-            addStyleRelation(checkingContext, element, Style::Relation::AffectedByDrag);
-
-            if (element.renderer() && element.renderer()->isDragging())
-                return true;
-            break;
+            return element.isBeingDragged();
         case CSSSelector::PseudoClassFocus:
             return matchesFocusPseudoClass(element);
         case CSSSelector::PseudoClassFocusWithin:

@@ -79,22 +79,20 @@ DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& layoutSize
 
 struct ScopedNodeDragEnabler {
     ScopedNodeDragEnabler(Frame& frame, Node& node)
-        : frame(frame)
-        , node(node)
+        : element(is<Element>(node) ? &downcast<Element>(node) : nullptr)
     {
-        if (node.renderer())
-            node.renderer()->updateDragState(true);
+        if (element)
+            element->setBeingDragged(true);
         frame.document()->updateLayout();
     }
 
     ~ScopedNodeDragEnabler()
     {
-        if (node.renderer())
-            node.renderer()->updateDragState(false);
+        if (element)
+            element->setBeingDragged(false);
     }
 
-    const Frame& frame;
-    const Node& node;
+    RefPtr<Element> element;
 };
 
 static DragImageRef createDragImageFromSnapshot(std::unique_ptr<ImageBuffer> snapshot, Node* node)

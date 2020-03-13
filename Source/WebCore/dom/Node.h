@@ -601,17 +601,15 @@ protected:
     static constexpr uint32_t s_refCountMask = ~static_cast<uint32_t>(1);
 
     enum class ElementStyleFlag : uint8_t {
-        StyleAffectedByEmpty = 1 << 0,
-        ChildrenAffectedByDrag = 1 << 1,
-
+        StyleAffectedByEmpty                                    = 1 << 0,
         // Bits for dynamic child matching.
         // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
         // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
-        ChildrenAffectedByForwardPositionalRules = 1 << 2,
-        DescendantsAffectedByForwardPositionalRules = 1 << 3,
-        ChildrenAffectedByBackwardPositionalRules = 1 << 4,
-        DescendantsAffectedByBackwardPositionalRules = 1 << 5,
-        ChildrenAffectedByPropertyBasedBackwardPositionalRules = 1 << 6,
+        ChildrenAffectedByForwardPositionalRules                = 1 << 1,
+        DescendantsAffectedByForwardPositionalRules             = 1 << 2,
+        ChildrenAffectedByBackwardPositionalRules               = 1 << 3,
+        DescendantsAffectedByBackwardPositionalRules            = 1 << 4,
+        ChildrenAffectedByPropertyBasedBackwardPositionalRules  = 1 << 5,
     };
 
     bool hasStyleFlag(ElementStyleFlag state) const { return m_rendererWithStyleFlags.type() & static_cast<uint8_t>(state); }

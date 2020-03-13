@@ -38,7 +38,6 @@ class Update;
 
 struct Relation {
     enum Type {
-        AffectedByDrag,
         AffectedByEmpty,
         AffectedByPreviousSibling,
         DescendantsAffectedByPreviousSibling,
