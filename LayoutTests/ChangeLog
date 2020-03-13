@@ -1,5 +1,14 @@
 2020-03-13  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ Mac Debug ] http/tests/css/shared-stylesheet-mutation-preconstruct.html is flaky failing. 
+        https://bugs.webkit.org/show_bug.cgi?id=209072
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-03-13  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac wk1 ] http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=209067
 
