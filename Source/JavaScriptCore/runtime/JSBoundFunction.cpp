@@ -111,7 +111,11 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(JSGlobalObject* gl
     ConstructData constructData;
     ConstructType constructType = getConstructData(globalObject->vm(), targetFunction, constructData);
     ASSERT(constructType != ConstructType::None);
-    return JSValue::encode(construct(globalObject, targetFunction, constructType, constructData, args));
+
+    JSValue newTarget = callFrame->newTarget();
+    if (newTarget == boundFunction)
+        newTarget = targetFunction;
+    return JSValue::encode(construct(globalObject, targetFunction, constructType, constructData, args, newTarget));
 }
 
 EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -139,7 +143,11 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(JSGlobalObject* globalObject
     ConstructData constructData;
     ConstructType constructType = getConstructData(vm, targetFunction, constructData);
     ASSERT(constructType != ConstructType::None);
-    RELEASE_AND_RETURN(scope, JSValue::encode(construct(globalObject, targetFunction, constructType, constructData, args)));
+
+    JSValue newTarget = callFrame->newTarget();
+    if (newTarget == boundFunction)
+        newTarget = targetFunction;
+    RELEASE_AND_RETURN(scope, JSValue::encode(construct(globalObject, targetFunction, constructType, constructData, args, newTarget)));
 }
 
 EncodedJSValue JSC_HOST_CALL isBoundFunction(JSGlobalObject* globalObject, CallFrame* callFrame)

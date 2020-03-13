@@ -1,3 +1,19 @@
+2020-03-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Bound functions should pass correct NewTarget value
+        https://bugs.webkit.org/show_bug.cgi?id=209057
+
+        Reviewed by Keith Miller.
+
+        This change implements steps 5-6 of bound function's [[Construct]] method [1],
+        fixing bound function subclasses and aligning JSC with V8 and SpiderMonkey.
+
+        [1]: https://tc39.es/ecma262/#sec-bound-function-exotic-objects-construct-argumentslist-newtarget
+
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundThisNoArgsFunctionConstruct):
+        (JSC::boundFunctionConstruct):
+
 2020-03-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, change ASSERT to ASSERT_WITH_SECURITY_IMPLICATION since it is now enabled under ENABLE(SECURITY_ASSERTIONS)

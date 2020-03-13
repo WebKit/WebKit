@@ -942,9 +942,6 @@ test/built-ins/Function/proto-from-ctor-realm.js:
 test/built-ins/Function/prototype/bind/length-exceeds-int32.js:
   default: 'Test262Error: Expected SameValue(«0», «2147483648») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «2147483648») to be true'
-test/built-ins/Function/prototype/bind/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
 test/built-ins/Function/prototype/toString/AsyncFunction.js:
   default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
   strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
@@ -3306,9 +3303,6 @@ test/language/statements/class/ident-name-method-def-with-escaped.js:
 test/language/statements/class/poisoned-underscore-proto.js:
   default: 'Test262Error: should not be called'
   strict mode: 'Test262Error: should not be called'
-test/language/statements/class/subclass/bound-function.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
 test/language/statements/class/subclass/builtin-objects/ArrayBuffer/regular-subclassing.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
