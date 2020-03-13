@@ -307,4 +307,8 @@ inline auto subspaceForConcurrently(VM& vm)
     return Type::template subspaceFor<Type, SubspaceAccess::Concurrently>(vm);
 }
 
+#if CPU(X86_64)
+JS_EXPORT_PRIVATE NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCrash(Heap&, const JSCell*);
+#endif
+
 } // namespace JSC

@@ -192,6 +192,7 @@ void logMemoryStatisticsAtTimeOfDeath()
 #endif
 
     auto& vm = commonVM();
+    JSC::JSLockHolder locker(vm);
     RELEASE_LOG(MemoryPressure, "Memory usage statistics at time of death:");
     RELEASE_LOG(MemoryPressure, "GC heap size: %zu", vm.heap.size());
     RELEASE_LOG(MemoryPressure, "GC heap extra memory size: %zu", vm.heap.extraMemorySize());

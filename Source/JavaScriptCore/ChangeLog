@@ -1,3 +1,27 @@
+2020-03-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Report crashed cell in jsCast in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=209041
+        <rdar://problem/59705631>
+
+        Reviewed by Mark Lam.
+
+        To collect more information when crashing with jsCast, we attempt to use reportZappedCellAndCrash.
+        If it succeeds, we can get more information in registers. We enable this only for ASSERT_ENABLED
+        build. For non ASSERT_ENABLED, we keep the original assertion since this assertion can be enabled
+        via ENABLE(SECURITY_ASSERTIONS).
+
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::visitChildren):
+        (JSC::SlotVisitor::reportZappedCellAndCrash): Deleted.
+        * heap/SlotVisitor.h:
+        * runtime/JSCast.h:
+        (JSC::jsCast):
+        * runtime/JSCell.cpp:
+        (JSC::reportZappedCellAndCrash):
+        * runtime/JSCell.h:
+
 2020-03-12  Keith Miller  <keith_miller@apple.com>
 
         DFG nodes that take a TypedArray's storage need to keepAlive the TypedArray

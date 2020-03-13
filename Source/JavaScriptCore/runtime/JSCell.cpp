@@ -24,11 +24,13 @@
 #include "JSCell.h"
 
 #include "ArrayBufferView.h"
+#include "BlockDirectoryInlines.h"
 #include "JSCInlines.h"
 #include "JSCast.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSObject.h"
+#include "MarkedBlockInlines.h"
 #include "NumberObject.h"
 #include <wtf/LockAlgorithmInlines.h>
 #include <wtf/MathExtras.h>
@@ -315,5 +317,47 @@ void JSCellLock::unlockSlow()
     Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
     IndexingTypeLockAlgorithm::unlockSlow(*lock);
 }
+
+#if CPU(X86_64)
+NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCrash(Heap& heap, const JSCell* cell)
+{
+    MarkedBlock::Handle* foundBlockHandle = nullptr;
+    uint64_t* cellWords = bitwise_cast<uint64_t*>(cell);
+
+    uintptr_t cellAddress = bitwise_cast<uintptr_t>(cell);
+    uint64_t headerWord = cellWords[0];
+    uint64_t zapReasonAndMore = cellWords[1];
+    unsigned subspaceHash = 0;
+    size_t cellSize = 0;
+
+    heap.objectSpace().forEachBlock([&] (MarkedBlock::Handle* blockHandle) {
+        if (blockHandle->contains(bitwise_cast<JSCell*>(cell))) {
+            foundBlockHandle = blockHandle;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+
+    uint64_t variousState = 0;
+    MarkedBlock* foundBlock = nullptr;
+    if (foundBlockHandle) {
+        foundBlock = &foundBlockHandle->block();
+        subspaceHash = StringHasher::computeHash(foundBlockHandle->subspace()->name());
+        cellSize = foundBlockHandle->cellSize();
+
+        variousState |= static_cast<uint64_t>(foundBlockHandle->isFreeListed()) << 0;
+        variousState |= static_cast<uint64_t>(foundBlockHandle->isAllocated()) << 1;
+        variousState |= static_cast<uint64_t>(foundBlockHandle->isEmpty()) << 2;
+        variousState |= static_cast<uint64_t>(foundBlockHandle->needsDestruction()) << 3;
+        variousState |= static_cast<uint64_t>(foundBlock->isNewlyAllocated(cell)) << 4;
+
+        ptrdiff_t cellOffset = cellAddress - reinterpret_cast<uint64_t>(foundBlockHandle->start());
+        bool cellIsProperlyAligned = !(cellOffset % cellSize);
+        variousState |= static_cast<uint64_t>(cellIsProperlyAligned) << 5;
+    }
+
+    CRASH_WITH_INFO(cellAddress, headerWord, zapReasonAndMore, subspaceHash, cellSize, foundBlock, variousState);
+}
+#endif // CPU(X86_64)
 
 } // namespace JSC
