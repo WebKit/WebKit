@@ -1,14 +1,24 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
 
-if (window.testRunner) {
-    window.testRunner.dumpAsText();
-    window.testRunner.waitUntilDone();
+let isLoadComplete = false;
+let wasChildFrameWasNavigated = false;
+onload = () => {
+    isLoadComplete = true;
+    if (wasChildFrameWasNavigated)
+        runTest();
 }
 
 function childFrameWasNavigated()
+{
+    wasChildFrameWasNavigated = true;
+    if (isLoadComplete)
+        runTest();
+}
+
+function runTest()
 {
     // Check that the child frame was unable to load a plugin, since its parent is sandboxed.
     shouldBeTrue("(self.sandboxedFrame.frameWithPlugin.document.getElementById('plugin').destroyStream) == undefined");
@@ -25,10 +35,7 @@ function childFrameWasNavigated()
 function sandboxWasNavigated()
 {
     shouldBeEqualToString("String(document.getElementById('sandboxedFrameId').sandbox)", "allow-scripts allow-same-origin");
-    isSuccessfullyParsed();
-
-    if (window.testRunner)
-        window.testRunner.notifyDone();
+    finishJSTest();
 }
 
 </script>
@@ -50,6 +57,7 @@ function sandboxWasNavigated()
     description("This test verifies that a sandboxed iframe CAN navigate both itself and a child in the frame tree. "
                 + "It also verifies that the sandbox attribute remains intact after a frame has been navigated, "
                 + "and that sandbox attributes are propagated through the frame hierarchy.");
+    jsTestIsAsync = true;
     </script>
 </body>
 </html>
