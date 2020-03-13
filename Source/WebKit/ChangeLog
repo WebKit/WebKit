@@ -1,3 +1,9 @@
+2020-03-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop unused variable in WebPageProxy::backForwardGoToItem().
+
+        * UIProcess/WebPageProxy.cpp:
+
 2020-03-13  John Wilander  <wilander@apple.com>
 
         Remove unused code related to removePrevalentDomains()

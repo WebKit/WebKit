@@ -6169,7 +6169,6 @@ void WebPageProxy::backForwardGoToItem(const BackForwardItemIdentifier& itemID, 
     if (m_provisionalPage)
         return completionHandler({ }, m_backForwardList->counts());
 
-    SandboxExtension::Handle sandboxExtensionHandle;
     backForwardGoToItemShared(m_process.copyRef(), itemID, WTFMove(completionHandler));
 }
 
