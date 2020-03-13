@@ -1,5 +1,51 @@
 2020-03-12  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r258371. rdar://problem/60395490
+
+    Crash in TextManipulationController::replace
+    https://bugs.webkit.org/show_bug.cgi?id=209021
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    This patch addresses two issues that can lead to a crash in TextManipulationController::replace.
+    
+    The biggest issue here is that commonAncestor can be a descendent of insertionPoint's containerNode.
+    Addressed this issue by computing the first node to remove in the same traveral where commonAncestor
+    is computed by way of remembering the very first content node (firstContentNode). This also lets us
+    eliminate the secondary, redundant traversal to discover all the nodes to remove.
+    
+    In addition, the set of nodes to remove could sometimes contain commonAncestor and its ancestors.
+    This patch addresses this issue by removing all inclusive ancestors of commonAncestor from nodesToRemove.
+    
+    * editing/TextManipulationController.cpp:
+    (WebCore::TextManipulationController::replace):
+    
+    Tools:
+    
+    Added a regression test.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+    (TextManipulation.CompleteTextManipulationShouldReplaceContentFollowedAfterImageInCSSTable):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258371 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Crash in TextManipulationController::replace
+            https://bugs.webkit.org/show_bug.cgi?id=209021
+
+            Reviewed by Wenson Hsieh.
+
+            Added a regression test.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+            (TextManipulation.CompleteTextManipulationShouldReplaceContentFollowedAfterImageInCSSTable):
+
+2020-03-12  Russell Epstein  <repstein@apple.com>
+
         Revert r258353. rdar://problem/60395490
 
 2020-03-12  Russell Epstein  <repstein@apple.com>

@@ -906,6 +906,42 @@ TEST(TextManipulation, CompleteTextManipulationShouldReplaceAttributeContent)
         "<img src=\"apple.gif\" alt=\"Apple\"></div></body>", [webView stringByEvaluatingJavaScript:@"document.documentElement.innerHTML"]);
 }
 
+TEST(TextManipulation, CompleteTextManipulationShouldReplaceContentFollowedAfterImageInCSSTable)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body>"
+        "<div style=\"display: table\"><div style=\"float: left;\"><img src=\"apple.gif\" style=\"display: flex;\"></div>"
+        "<div><span style=\"display: block\">hello world</span></div></body></html>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_STREQ("[]", items[0].tokens[0].content.UTF8String);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_STREQ("hello world", items[1].tokens[0].content.UTF8String);
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[
+        (_WKTextManipulationItem *)createItem(items[0].identifier, { { items[0].tokens[0].identifier, nil } }),
+        (_WKTextManipulationItem *)createItem(items[1].identifier, { { items[1].tokens[0].identifier, @"hello, world" } }),
+    ] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_WK_STREQ("<div style=\"display: table\"><div style=\"float: left;\"><img src=\"apple.gif\" style=\"display: flex;\"></div>"
+        "<div><span style=\"display: block\">hello, world</span></div></div>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+}
+
 TEST(TextManipulation, CompleteTextManipulationShouldBatchItemCallback)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
