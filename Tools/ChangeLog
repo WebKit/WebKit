@@ -1,3 +1,48 @@
+2020-03-13  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r258399. rdar://problem/60422524
+
+    Crash in TextIterator::node via TextManipulationController::replace
+    https://bugs.webkit.org/show_bug.cgi?id=209048
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    The crash was caused by item.start being null in TextManipulationController::replace for a paragraph
+    consisting of just an image because TextManipulationController::observeParagraphs never may never set
+    startOfCurrentParagraph in such a case (content.isTextContent can be false for an image!).
+    
+    Fixed the bug by setting startOfCurrentParagraph to a position before the current content's node
+    when inserting a token for a RenderReplaced if it's null.
+    
+    Test: TextManipulation.CompleteTextManipulationShouldReplaceContentsAroundParagraphWithJustImage
+    
+    * editing/TextManipulationController.cpp:
+    (WebCore::TextManipulationController::observeParagraphs):
+    
+    Tools:
+    
+    Added a regression test.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+    (TextManipulation.CompleteTextManipulationShouldReplaceContentsAroundParagraphWithJustImage):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258399 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Crash in TextIterator::node via TextManipulationController::replace
+            https://bugs.webkit.org/show_bug.cgi?id=209048
+
+            Reviewed by Wenson Hsieh.
+
+            Added a regression test.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+            (TextManipulation.CompleteTextManipulationShouldReplaceContentsAroundParagraphWithJustImage):
+
 2020-03-12  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r258371. rdar://problem/60395490
