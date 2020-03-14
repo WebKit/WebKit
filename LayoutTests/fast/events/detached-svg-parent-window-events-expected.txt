@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 1: error
+This tests creating a disconnected SVG element with resize event handler. The event handler should not get dispatched unless the element is connected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS didFireResize is false
+PASS didFireOnError is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,1 @@
+Tests a symbol element with onError event being referenced by a use element. Test passes if WebKit does not crash. PASS

@@ -195,7 +195,7 @@ void SVGSVGElement::updateCurrentTranslate()
 
 void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (!nearestViewportElement()) {
+    if (!nearestViewportElement() && isConnected()) {
         // For these events, the outermost <svg> element works like a <body> element does,
         // setting certain event handlers directly on the window object.
         if (name == HTMLNames::onunloadAttr) {
@@ -214,18 +214,14 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomString& 
             document().setWindowAttributeEventListener(eventNames().zoomEvent, name, value, mainThreadNormalWorld());
             return;
         }
-    }
-
-    // For these events, any <svg> element works like a <body> element does,
-    // setting certain event handlers directly on the window object.
-    // FIXME: Why different from the events above that work only on the outermost <svg> element?
-    if (name == HTMLNames::onabortAttr) {
-        document().setWindowAttributeEventListener(eventNames().abortEvent, name, value, mainThreadNormalWorld());
-        return;
-    }
-    if (name == HTMLNames::onerrorAttr) {
-        document().setWindowAttributeEventListener(eventNames().errorEvent, name, value, mainThreadNormalWorld());
-        return;
+        if (name == HTMLNames::onabortAttr) {
+            document().setWindowAttributeEventListener(eventNames().abortEvent, name, value, mainThreadNormalWorld());
+            return;
+        }
+        if (name == HTMLNames::onerrorAttr) {
+            document().setWindowAttributeEventListener(eventNames().errorEvent, name, value, mainThreadNormalWorld());
+            return;
+        }
     }
 
     SVGParsingError parseError = NoError;

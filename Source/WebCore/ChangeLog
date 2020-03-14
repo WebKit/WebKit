@@ -1,3 +1,24 @@
+2020-03-04  Doug Kelly  <dougk@apple.com>
+
+        Crash in SVGElement::removeEventListener with symbol element
+        https://bugs.webkit.org/show_bug.cgi?id=207920
+
+        Reviewed by Ryosuke Niwa.
+
+        Resolves a crash in SVGElement::removeEventListener by only attaching the events to the window if the SVG element is both the outermost
+        SVG element, in addition to ensuring the SVG element is attached to the tree.  The symbol element's behavior when referenced by a use
+        tag actually creates an svg tag instead, so the SVGSVGElement's special behavior for copying attributes is vital.
+
+        Note that Chrome and Firefox have a similar behavior for detached SVG elements as to what this change creates: in both other browsers,
+        onerror is not fired for a detached svg element, and in Firefox, onresize is not fired for a detached svg element (it is however fired
+        in Chrome).
+
+        Tests: fast/events/detached-svg-parent-window-events.html
+               fast/events/onerror-svg-symbol.html
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseAttribute):
+
 2020-02-24  ChangSeok Oh  <changseok@webkit.org>
 
         PS-2019-006: [GTK] WebKit - AXObjectCache - m_deferredFocusedNodeChange - UaF

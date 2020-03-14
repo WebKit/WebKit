@@ -1,3 +1,15 @@
+2020-03-04  Doug Kelly  <dougk@apple.com>
+
+        Crash in SVGElement::removeEventListener with symbol element
+        https://bugs.webkit.org/show_bug.cgi?id=207920
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/events/detached-svg-parent-window-events-expected.txt: Added.
+        * fast/events/detached-svg-parent-window-events.html: Added.
+        * fast/events/onerror-svg-symbol-expected.txt: Added.
+        * fast/events/onerror-svg-symbol.html: Added.
+
 2020-01-09  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r253662): Large Data URLs are not being handled properly
