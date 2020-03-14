@@ -1,3 +1,22 @@
+2020-03-10  Darin Adler  <darin@apple.com>
+
+        Change all return values in TextIterator header from live ranges to SimpleRange
+        https://bugs.webkit.org/show_bug.cgi?id=208906
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm: Removed unneeded include of
+        TextIterator.h.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeNearPositionMatchesText): Removed unused originalRange argument,
+        changed return type to Optional<SimpleRange> since findClosestPlainText now
+        returns a SimpleRange.
+        (WebKit::WebPage::getRectsAtSelectionOffsetWithText): Updated since
+        rangeNearPositionMatchesText now returns Optional<SimpleRange>, use createLiveRange.
+        (WebKit::WebPage::requestDocumentEditingContext): Updated since
+        CharacterIterator::range returns SimpleRange, use createLiveRange.
+
 2020-03-14  Brady Eidson  <beidson@apple.com>
 
         Gather PDF scripts to run on a background thread.

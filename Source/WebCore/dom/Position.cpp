@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Position.h"
 
+#include "BoundaryPoint.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "Editing.h"
 #include "HTMLBRElement.h"
@@ -1590,6 +1591,11 @@ Position positionInParentAfterNode(Node* node)
     }
     ASSERT(ancestor);
     return Position(ancestor, node->computeNodeIndex() + 1, Position::PositionIsOffsetInAnchor);
+}
+
+Position createLegacyEditingPosition(const BoundaryPoint& point)
+{
+    return createLegacyEditingPosition(point.container.ptr(), point.offset);
 }
 
 } // namespace WebCore

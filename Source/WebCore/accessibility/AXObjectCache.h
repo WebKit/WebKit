@@ -349,7 +349,7 @@ public:
     void performDeferredCacheUpdate();
     void deferTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String& previousValue);
 
-    RefPtr<Range> rangeMatchesTextNearRange(RefPtr<Range>, const String&);
+    Optional<SimpleRange> rangeMatchesTextNearRange(const SimpleRange&, const String&);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WEBCORE_EXPORT static bool isIsolatedTreeEnabled();

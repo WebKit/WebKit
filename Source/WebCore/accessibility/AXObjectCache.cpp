@@ -1934,28 +1934,25 @@ RefPtr<Range> AXObjectCache::rangeForNodeContents(Node* node)
     return range;
 }
     
-RefPtr<Range> AXObjectCache::rangeMatchesTextNearRange(RefPtr<Range> originalRange, const String& matchText)
+Optional<SimpleRange> AXObjectCache::rangeMatchesTextNearRange(const SimpleRange& originalRange, const String& matchText)
 {
-    if (!originalRange)
-        return nullptr;
-    
     // Create a large enough range for searching the text within.
     unsigned textLength = matchText.length();
-    auto startPosition = visiblePositionForPositionWithOffset(originalRange->startPosition(), -textLength);
-    auto endPosition = visiblePositionForPositionWithOffset(originalRange->startPosition(), 2 * textLength);
-    
+    auto startPosition = visiblePositionForPositionWithOffset(createLegacyEditingPosition(originalRange.start), -textLength);
+    auto endPosition = visiblePositionForPositionWithOffset(createLegacyEditingPosition(originalRange.start), 2 * textLength);
+
     if (startPosition.isNull())
-        startPosition = firstPositionInOrBeforeNode(&originalRange->startContainer());
+        startPosition = firstPositionInOrBeforeNode(originalRange.start.container.ptr());
     if (endPosition.isNull())
-        endPosition = lastPositionInOrAfterNode(&originalRange->endContainer());
-    
+        endPosition = lastPositionInOrAfterNode(originalRange.end.container.ptr());
+
     auto searchRange = Range::create(m_document, startPosition, endPosition);
     if (searchRange->collapsed())
-        return nullptr;
-    
-    auto range = Range::create(m_document, startPosition, originalRange->startPosition());
+        return WTF::nullopt;
+
+    auto range = Range::create(m_document, startPosition, createLegacyEditingPosition(originalRange.start));
     unsigned targetOffset = TextIterator::rangeLength(range.ptr(), true);
-    return findClosestPlainText(searchRange.get(), matchText, { }, targetOffset);
+    return findClosestPlainText(searchRange, matchText, { }, targetOffset);
 }
 
 static bool isReplacedNodeOrBR(Node* node)
@@ -2668,7 +2665,7 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
     if (!next)
         return it.atEnd() ? start : characterOffset;
     
-    Node& node = it.atEnd() ? searchRange->startContainer() : it.range()->startContainer();
+    auto& node = it.atEnd() ? searchRange->startContainer() : it.range().start.container.get();
     
     // SimplifiedBackwardsTextIterator ignores replaced elements.
     if (AccessibilityObject::replacedNodeNeedsCharacter(characterOffset.node))

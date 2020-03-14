@@ -34,6 +34,8 @@ class TextStream;
 
 namespace WebCore {
 
+class Range;
+
 // VisiblePosition default affinity is downstream because
 // the callers do not really care (they just want the
 // deep position without regard to line position), and this

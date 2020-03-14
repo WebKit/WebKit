@@ -636,7 +636,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     if (!next)
         return VisiblePosition(it.atEnd() ? searchRange->startPosition() : pos, DOWNSTREAM);
 
-    Node& node = it.atEnd() ? searchRange->startContainer() : it.range()->startContainer();
+    auto& node = it.atEnd() ? searchRange->startContainer() : it.range().start.container.get();
     if ((!suffixLength && node.isTextNode() && static_cast<int>(next) <= node.maxCharacterOffset()) || (node.renderer() && node.renderer()->isBR() && !next)) {
         // The next variable contains a usable index into a text node
         return VisiblePosition(createLegacyEditingPosition(&node, next), DOWNSTREAM);
@@ -647,7 +647,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     if (next < string.size() - suffixLength)
         charIt.advance(string.size() - suffixLength - next);
     // FIXME: charIt can get out of shadow host.
-    return VisiblePosition(charIt.range()->endPosition(), DOWNSTREAM);
+    return { createLegacyEditingPosition(charIt.range().end), DOWNSTREAM };
 }
 
 static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunction searchFunction)
@@ -683,20 +683,18 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
         // Use the character iterator to translate the next value into a DOM position.
         CharacterIterator charIt(searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
         charIt.advance(next - prefixLength - 1);
-        RefPtr<Range> characterRange = charIt.range();
-        pos = characterRange->endPosition();
+        auto characterRange = charIt.range();
+        pos = createLegacyEditingPosition(characterRange.end);
         
         if (charIt.text()[0] == '\n') {
             // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines (see rdar://5192593)
-            VisiblePosition visPos = VisiblePosition(pos);
-            if (visPos == VisiblePosition(characterRange->startPosition())) {
+            if (VisiblePosition(pos) == VisiblePosition(createLegacyEditingPosition(characterRange.start))) {
                 charIt.advance(1);
-                pos = charIt.range()->startPosition();
+                pos = createLegacyEditingPosition(charIt.range().start);
             }
         }
     }
 
-    // generate VisiblePosition, use UPSTREAM affinity if possible
     return VisiblePosition(pos, VP_UPSTREAM_IF_POSSIBLE);
 }
 

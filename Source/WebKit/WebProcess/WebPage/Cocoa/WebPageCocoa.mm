@@ -47,7 +47,6 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/SimpleRange.h>
-#import <WebCore/TextIterator.h>
 
 #if PLATFORM(COCOA)
 

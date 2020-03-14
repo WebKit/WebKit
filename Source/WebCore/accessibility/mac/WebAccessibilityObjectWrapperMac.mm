@@ -1262,7 +1262,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
             // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
             if (it.text().length()) {
                 // Add the text of the list marker item if necessary.
-                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(createLiveRange(it.range())->startPosition()));
+                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(createLegacyEditingPosition(it.range().start)));
                 if (!listMarkerText.isEmpty())
                     AXAttributedStringAppendText(attrString, &node, listMarkerText, spellCheck);
                 AXAttributedStringAppendText(attrString, &node, it.text(), spellCheck);

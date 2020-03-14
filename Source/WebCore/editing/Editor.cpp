@@ -2253,14 +2253,14 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             // Stop looking at start of next misspelled word
             CharacterIterator chars(*grammarSearchRange);
             chars.advance(misspellingOffset);
-            grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset());
+            grammarSearchRange->setEnd(chars.range().start.container, chars.range().start.offset);
         }
-    
+
         if (isGrammarCheckingEnabled())
             badGrammarPhrase = TextCheckingHelper(*client(), *grammarSearchRange).findFirstBadGrammar(grammarDetail, grammarPhraseOffset, false);
 #endif
     }
-    
+
     // If we found neither bad grammar nor a misspelled word, wrap and try again (but don't bother if we started at the beginning of the
     // block rather than at a selection).
     if (startedWithSelection && !misspelledWord && !badGrammarPhrase) {
@@ -2288,7 +2288,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
                 // Stop looking at start of next misspelled word
                 CharacterIterator chars(*grammarSearchRange);
                 chars.advance(misspellingOffset);
-                grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset());
+                grammarSearchRange->setEnd(chars.range().start.container, chars.range().start.offset);
             }
 
             if (isGrammarCheckingEnabled())
@@ -3534,7 +3534,7 @@ RefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRange,
             searchRange->setStart(*shadowTreeRoot, 0);
     }
 
-    RefPtr<Range> resultRange = findPlainText(*searchRange, target, options);
+    RefPtr<Range> resultRange = createLiveRange(findPlainText(*searchRange, target, options));
     // If we started in the reference range and the found range exactly matches the reference range, find again.
     // Build a selection with the found range to remove collapsed whitespace.
     // Compare ranges instead of selection objects to ignore the way that the current selection was made.
@@ -3552,7 +3552,7 @@ RefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRange,
                 searchRange->setStart(*shadowTreeRoot, 0);
         }
 
-        resultRange = findPlainText(*searchRange, target, options);
+        resultRange = createLiveRange(findPlainText(*searchRange, target, options));
     }
 
     // If nothing was found in the shadow tree, search in main content following the shadow tree.
@@ -3565,14 +3565,13 @@ RefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRange,
                 searchRange->setEndBefore(*shadowTreeRoot->shadowHost());
         }
 
-        resultRange = findPlainText(*searchRange, target, options);
+        resultRange = createLiveRange(findPlainText(*searchRange, target, options));
     }
 
     // If we didn't find anything and we're wrapping, search again in the entire document (this will
     // redundantly re-search the area already searched in some cases).
     if (resultRange->collapsed() && options.contains(WrapAround)) {
-        searchRange = rangeOfContents(document());
-        resultRange = findPlainText(*searchRange, target, options);
+        resultRange = createLiveRange(findPlainText(rangeOfContents(document()), target, options));
         // We used to return false here if we ended up with the same range that we started with
         // (e.g., the reference range was already the only instance of this text). But we decided that
         // this should be a success case instead, so we'll just fall through in that case.
@@ -3613,21 +3612,21 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
     unsigned matchCount = 0;
     do {
         auto resultRange = findPlainText(*searchRange, target, options - Backwards);
-        if (resultRange->collapsed()) {
-            if (!resultRange->startContainer().isInShadowTree())
+        if (resultRange.collapsed()) {
+            if (!resultRange.start.container->isInShadowTree())
                 break;
 
-            searchRange->setStartAfter(*resultRange->startContainer().shadowHost());
+            searchRange->setStartAfter(*resultRange.start.container->shadowHost());
             searchRange->setEnd(originalEndContainer, originalEndOffset);
             continue;
         }
 
         ++matchCount;
         if (matches)
-            matches->append(resultRange.ptr());
-        
+            matches->append(createLiveRange(resultRange));
+
         if (markMatches)
-            document().markers().addMarker(resultRange, DocumentMarker::TextMatch);
+            document().markers().addMarker(createLiveRange(resultRange), DocumentMarker::TextMatch);
 
         // Stop looking if we hit the specified limit. A limit of 0 means no limit.
         if (limit > 0 && matchCount >= limit)
@@ -3637,7 +3636,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
         // result range. There is no need to use a VisiblePosition here,
         // since findPlainText will use a TextIterator to go over the visible
         // text nodes. 
-        searchRange->setStart(resultRange->endContainer(), resultRange->endOffset());
+        searchRange->setStart(WTFMove(resultRange.end.container), resultRange.end.offset);
 
         Node* shadowTreeRoot = searchRange->shadowRoot();
         if (searchRange->collapsed() && shadowTreeRoot)

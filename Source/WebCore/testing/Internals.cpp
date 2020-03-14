@@ -174,6 +174,7 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SimpleRange.h"
 #include "SourceBuffer.h"
 #include "SpellChecker.h"
 #include "StaticNodeList.h"
@@ -2053,7 +2054,7 @@ Ref<Range> Internals::subrange(Range& range, int rangeLocation, int rangeLength)
 
 RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& searchRange, const String& text, unsigned targetOffset)
 {
-    return findClosestPlainText(searchRange, text, { }, targetOffset);
+    return createLiveRange(findClosestPlainText(searchRange, text, { }, targetOffset));
 }
 
 #if !PLATFORM(MAC)

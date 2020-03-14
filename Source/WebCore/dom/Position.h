@@ -28,8 +28,6 @@
 #include "ContainerNode.h"
 #include "EditingBoundary.h"
 #include "TextAffinity.h"
-#include <wtf/Assertions.h>
-#include <wtf/RefPtr.h>
 
 namespace WTF {
 class TextStream;
@@ -37,14 +35,11 @@ class TextStream;
 
 namespace WebCore {
 
-class CSSComputedStyleDeclaration;
-class Element;
 class InlineBox;
-class Node;
-class Range;
 class RenderElement;
-class RenderObject;
 class Text;
+
+struct BoundaryPoint;
 
 enum PositionMoveType {
     CodePoint,       // Move by a single code point.
@@ -221,6 +216,8 @@ private:
     unsigned m_anchorType : 3;
     bool m_isLegacyEditingPosition : 1;
 };
+
+Position createLegacyEditingPosition(const BoundaryPoint&);
 
 inline Position createLegacyEditingPosition(Node* node, unsigned offset)
 {

@@ -124,6 +124,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/ShadowRoot.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIterator.h>
@@ -1974,11 +1975,13 @@ void WebPage::storeSelectionForAccessibility(bool shouldStore)
     }
 }
 
-static RefPtr<Range> rangeNearPositionMatchesText(const VisiblePosition& position, RefPtr<Range> originalRange, const String& matchText, RefPtr<Range> selectionRange)
+static Optional<SimpleRange> rangeNearPositionMatchesText(const VisiblePosition& position, const String& matchText, RefPtr<Range> selectionRange)
 {
+    if (!selectionRange)
+        return WTF::nullopt;
     auto range = Range::create(selectionRange->ownerDocument(), selectionRange->startPosition(), position.deepEquivalent().parentAnchoredEquivalent());
     unsigned targetOffset = TextIterator::rangeLength(range.ptr(), true);
-    return findClosestPlainText(*selectionRange.get(), matchText, { }, targetOffset);
+    return findClosestPlainText(*selectionRange, matchText, { }, targetOffset);
 }
 
 void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CallbackID callbackID)
@@ -2003,13 +2006,11 @@ void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& te
         return;
     }
 
-    String rangeText = plainTextReplacingNoBreakSpace(range.ptr(), TextIteratorDefaultBehavior, true);
-    if (rangeText != text) {
-        auto selectionRange = selection.toNormalizedRange();
+    if (plainTextReplacingNoBreakSpace(range.ptr(), TextIteratorDefaultBehavior, true) != text) {
         // Try to search for a range which is the closest to the position within the selection range that matches the passed in text.
-        if (auto wordRange = rangeNearPositionMatchesText(startPosition, range.ptr(), text, selectionRange)) {
+        if (auto wordRange = rangeNearPositionMatchesText(startPosition, text, selection.toNormalizedRange())) {
             if (!wordRange->collapsed())
-                range = *wordRange;
+                range = createLiveRange(*wordRange);
         }
     }
 
@@ -4214,7 +4215,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
                 continue;
             }
 
-            rects.append({ contextIterator.range()->absoluteBoundingBox(Range::BoundingRectBehavior::IgnoreEmptyTextSelections), { currentLocation, 1 } });
+            rects.append({ createLiveRange(contextIterator.range())->absoluteBoundingBox(Range::BoundingRectBehavior::IgnoreEmptyTextSelections), { currentLocation, 1 } });
             currentLocation++;
             contextIterator.advance(1);
         }

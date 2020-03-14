@@ -51,6 +51,7 @@
 #include "RenderElement.h"
 #include "RenderTableCell.h"
 #include "ShadowRoot.h"
+#include "SimpleRange.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
@@ -1128,10 +1129,10 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int in
         // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines.
         it.advance(1);
         if (!it.atEnd())
-            return VisiblePosition(it.range()->startPosition());
+            return VisiblePosition(createLegacyEditingPosition(it.range().start));
     }
 
-    return { it.atEnd() ? range->endPosition() : it.range()->endPosition(), UPSTREAM };
+    return { it.atEnd() ? range->endPosition() : createLegacyEditingPosition(it.range().end), UPSTREAM };
 }
 
 // Determines whether two positions are visibly next to each other (first then second)

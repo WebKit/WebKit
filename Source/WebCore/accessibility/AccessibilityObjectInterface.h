@@ -811,9 +811,9 @@ public:
     {
         // If text is empty we return true.
         return text.isEmpty()
-            || findPlainText(title(), text, CaseInsensitive)
-            || findPlainText(accessibilityDescription(), text, CaseInsensitive)
-            || findPlainText(stringValue(), text, CaseInsensitive);
+            || containsPlainText(title(), text, CaseInsensitive)
+            || containsPlainText(accessibilityDescription(), text, CaseInsensitive)
+            || containsPlainText(stringValue(), text, CaseInsensitive);
     }
 
     // Methods for determining accessibility text.

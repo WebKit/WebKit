@@ -194,12 +194,12 @@ public:
 
     Position startPosition()
     {
-        return createLiveRange(m_iterator.range())->startPosition();
+        return createLegacyEditingPosition(m_iterator.range().start);
     }
 
     Position endPosition()
     {
-        return createLiveRange(m_iterator.range())->endPosition();
+        return createLegacyEditingPosition(m_iterator.range().end);
     }
 
     bool atEnd() const { return m_iterator.atEnd() && m_currentNodeForFindingInvisibleContent == m_pastEndNode; }
