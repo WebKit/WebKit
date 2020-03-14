@@ -173,7 +173,7 @@ void RenderTreeBuilder::Block::attachIgnoringContinuation(RenderBlock& parent, R
                 m_builder.attach(parent, WTFMove(child), beforeChildContainer);
                 return;
             }
-            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!beforeChildContainer->isInline());
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!beforeChildContainer->isInline() || beforeChildContainer->isTable());
 
             // If the requested beforeChild is not one of our children, then this is because
             // there is an anonymous container within this object that contains the beforeChild.

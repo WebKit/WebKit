@@ -1,3 +1,14 @@
+2020-03-13  Zalan Bujtas  <zalan@apple.com>
+
+        [Tree building] Block::attachIgnoringContinuation should allow inline tables as before child container
+        https://bugs.webkit.org/show_bug.cgi?id=209095
+        <rdar://problem/59837588>
+
+        Reviewed by Simon Fraser.
+
+        * fast/table/before-child-is-inline-table-expected.txt: Added.
+        * fast/table/before-child-is-inline-table.html: Added.
+
 2020-03-13  Jason Lawrence  <lawrence.j@apple.com>
 
         Unreviewed, reverting r258446.
