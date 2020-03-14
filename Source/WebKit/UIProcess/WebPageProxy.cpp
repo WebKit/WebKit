@@ -4293,11 +4293,6 @@ void WebPageProxy::preconnectTo(const URL& url)
         networkProcess->preconnectTo(sessionID(), url, userAgent(), WebCore::StoredCredentialsPolicy::Use);
 }
 
-void WebPageProxy::usedLegacyTLS(CompletionHandler<void(WebCore::UsedLegacyTLS)>&& completionHandler)
-{
-    completionHandler(m_pageLoadState.hasNegotiatedLegacyTLS() ? UsedLegacyTLS::Yes : UsedLegacyTLS::No);
-}
-
 void WebPageProxy::didDestroyNavigation(uint64_t navigationID)
 {
     PageClientProtector protector(pageClient());

@@ -301,6 +301,42 @@ TEST(TLSVersion, NavigateBack)
     [webView removeObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS"];
 }
 
+TEST(TLSVersion, BackForwardNegotiatedLegacyTLS)
+{
+    HTTPServer secureServer({
+        { "/", { "hello" }}
+    }, HTTPServer::Protocol::Https);
+    HTTPServer insecureServer({
+        { "/", { "hello" } }
+    }, HTTPServer::Protocol::HttpsWithLegacyTLS);
+    HTTPServer mixedContentServer({
+        { "/", { {{ "Content-Type", "text/html" }}, makeString("<img src='https://127.0.0.1:", static_cast<unsigned>(insecureServer.port()), "/'></img>") } },
+    }, HTTPServer::Protocol::Https);
+
+    auto [webView, delegate] = webViewWithNavigationDelegate();
+    EXPECT_FALSE([webView _negotiatedLegacyTLS]);
+
+    [webView loadRequest:secureServer.request()];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_FALSE([webView _negotiatedLegacyTLS]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://localhost:%d/", mixedContentServer.port()]]]];
+    [delegate waitForDidFinishNavigation];
+    while (![webView _negotiatedLegacyTLS])
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_TRUE([webView _negotiatedLegacyTLS]);
+
+    [webView goBack];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_FALSE([webView _negotiatedLegacyTLS]);
+
+    [webView goForward];
+    [delegate waitForDidFinishNavigation];
+    while (![webView _negotiatedLegacyTLS])
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_TRUE([webView _negotiatedLegacyTLS]);
+}
+
 TEST(TLSVersion, Subresource)
 {
     HTTPServer legacyTLSServer({

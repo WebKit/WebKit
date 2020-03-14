@@ -29,6 +29,7 @@
 #include <wtf/URL.h>
 #include "ScriptCachedFrameData.h"
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -63,9 +64,8 @@ protected:
     std::unique_ptr<ScriptCachedFrameData> m_cachedFrameScriptData;
     std::unique_ptr<CachedFramePlatformData> m_cachedFramePlatformData;
     bool m_isMainFrame;
-    Optional<UsedLegacyTLS> m_usedLegacyTLS;
 
-    Vector<std::unique_ptr<CachedFrame>> m_childFrames;
+    Vector<UniqueRef<CachedFrame>> m_childFrames;
 };
 
 class CachedFrame : private CachedFrameBase {
@@ -80,16 +80,15 @@ public:
     WEBCORE_EXPORT void setCachedFramePlatformData(std::unique_ptr<CachedFramePlatformData>);
     WEBCORE_EXPORT CachedFramePlatformData* cachedFramePlatformData();
 
-    WEBCORE_EXPORT void setUsedLegacyTLS(UsedLegacyTLS);
     HasInsecureContent hasInsecureContent() const;
-    Optional<UsedLegacyTLS> usedLegacyTLS() const { return m_usedLegacyTLS; }
+    UsedLegacyTLS usedLegacyTLS() const;
 
     using CachedFrameBase::document;
     using CachedFrameBase::view;
     using CachedFrameBase::url;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
 
-    int descendantFrameCount() const;
+    size_t descendantFrameCount() const;
 };
 
 } // namespace WebCore

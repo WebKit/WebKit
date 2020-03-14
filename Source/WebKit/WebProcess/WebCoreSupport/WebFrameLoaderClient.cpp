@@ -1464,16 +1464,8 @@ String WebFrameLoaderClient::overrideContentSecurityPolicy() const
     return webPage->overrideContentSecurityPolicy();
 }
 
-void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
+void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)
 {
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    // FIXME: Remember in the web process rather than send this sync message.
-    UsedLegacyTLS usedLegacyTLS;
-    if (webPage->sendSync(Messages::WebPageProxy::UsedLegacyTLS(), Messages::WebPageProxy::UsedLegacyTLS::Reply(usedLegacyTLS)))
-        cachedFrame->setUsedLegacyTLS(usedLegacyTLS);
 }
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)

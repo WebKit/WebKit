@@ -500,6 +500,13 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHan
     // anything including possibly derefing this; one example of this is Radar 3266216.
     Ref<ResourceLoader> protectedThis(*this);
 
+    if (r.usedLegacyTLS()) {
+        if (auto* frame = m_frame.get()) {
+            if (auto* document = m_frame->document())
+                document->setUsedLegacyTLS(true);
+        }
+    }
+
     logResourceResponseSource(m_frame.get(), r.source());
 
     m_response = r;

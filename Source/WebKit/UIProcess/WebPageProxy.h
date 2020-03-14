@@ -1791,8 +1791,6 @@ private:
 
     void preconnectTo(const URL&);
 
-    void usedLegacyTLS(CompletionHandler<void(WebCore::UsedLegacyTLS)>&&);
-
     void didDestroyNavigation(uint64_t navigationID);
 
     void decidePolicyForNavigationAction(Ref<WebProcessProxy>&&, WebFrameProxy&, FrameInfoData&&, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo,

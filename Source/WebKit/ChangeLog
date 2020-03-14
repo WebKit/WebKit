@@ -1,3 +1,24 @@
+2020-03-13  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebView._negotiatedLegacyTLS should be correct after back/forward navigations
+        https://bugs.webkit.org/show_bug.cgi?id=209011
+        <rdar://problem/59370588>
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::didReceiveResponse):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::notifyDidReceiveResponse):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::usedLegacyTLS): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::savePlatformDataToCachedFrame):
+
 2020-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [watchOS] Don’t display empty text suggestions in Quickboard when editing input fields

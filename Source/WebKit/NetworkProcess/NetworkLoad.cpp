@@ -231,9 +231,8 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Negotiat
 {
     ASSERT(RunLoop::isMain());
 
-    response.setSource(ResourceResponse::Source::Network);
     if (m_parameters.needsCertificateInfo)
-        response.includeCertificateInfo(negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes ? UsedLegacyTLS::Yes : UsedLegacyTLS::No);
+        response.includeCertificateInfo();
 
     m_client.get().didReceiveResponse(WTFMove(response), WTFMove(completionHandler));
 }

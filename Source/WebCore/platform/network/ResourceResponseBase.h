@@ -134,9 +134,10 @@ public:
     WEBCORE_EXPORT String suggestedFilename() const;
     WEBCORE_EXPORT static String sanitizeSuggestedFilename(const String&);
 
-    WEBCORE_EXPORT void includeCertificateInfo(UsedLegacyTLS = UsedLegacyTLS::No) const;
+    WEBCORE_EXPORT void includeCertificateInfo() const;
     const Optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
     bool usedLegacyTLS() const { return m_usedLegacyTLS == UsedLegacyTLS::Yes; }
+    void setUsedLegacyTLS(UsedLegacyTLS used) { m_usedLegacyTLS = used; }
     
     // These functions return parsed values of the corresponding response headers.
     WEBCORE_EXPORT bool cacheControlContainsNoCache() const;

@@ -92,6 +92,8 @@ public:
         Active = 1 << 1,
     };
 
+    bool usedLegacyTLS() const { return m_usedLegacyTLS; }
+    void setUsedLegacyTLS(bool used) { m_usedLegacyTLS = used; }
     const OptionSet<MixedContentType>& foundMixedContent() const { return m_mixedContentTypes; }
     void setFoundMixedContent(MixedContentType type) { m_mixedContentTypes.add(type); }
     bool geolocationAccessed() const { return m_geolocationAccessed; }
@@ -126,6 +128,7 @@ private:
     bool m_geolocationAccessed { false };
     bool m_secureCookiesAccessed { false };
     bool m_isStrictMixedContentMode { false };
+    bool m_usedLegacyTLS { false };
 };
 
 } // namespace WebCore

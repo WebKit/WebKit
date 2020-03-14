@@ -142,8 +142,6 @@ messages -> WebPageProxy {
     DidExplicitOpenForFrame(WebCore::FrameIdentifier frameID, URL url, String mimeType)
     DidDestroyNavigation(uint64_t navigationID)
 
-    UsedLegacyTLS() -> (enum:bool WebCore::UsedLegacyTLS usedLegacyTLS) Synchronous
-
     MainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture)
 
     FrameDidBecomeFrameSet(WebCore::FrameIdentifier frameID, bool value)

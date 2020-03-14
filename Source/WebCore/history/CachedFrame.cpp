@@ -80,13 +80,12 @@ CachedFrameBase::~CachedFrameBase()
 
 void CachedFrameBase::pruneDetachedChildFrames()
 {
-    for (size_t i = m_childFrames.size(); i;) {
-        --i;
-        if (m_childFrames[i]->view()->frame().page())
-            continue;
-        m_childFrames[i]->destroy();
-        m_childFrames.remove(i);
-    }
+    m_childFrames.removeAllMatching([] (auto& childFrame) {
+        if (childFrame->view()->frame().page())
+            return false;
+        childFrame->destroy();
+        return true;
+    });
 }
 
 void CachedFrameBase::restore()
@@ -163,7 +162,7 @@ CachedFrame::CachedFrame(Frame& frame)
 
     // Create the CachedFrames for all Frames in the FrameTree.
     for (Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
-        m_childFrames.append(makeUnique<CachedFrame>(*child));
+        m_childFrames.append(makeUniqueRef<CachedFrame>(*child));
 
     RELEASE_ASSERT(m_document->domWindow());
     RELEASE_ASSERT(m_document->frame());
@@ -302,18 +301,27 @@ CachedFramePlatformData* CachedFrame::cachedFramePlatformData()
     return m_cachedFramePlatformData.get();
 }
 
-void CachedFrame::setUsedLegacyTLS(UsedLegacyTLS usedLegacyTLS)
+size_t CachedFrame::descendantFrameCount() const
 {
-    m_usedLegacyTLS = usedLegacyTLS;
+    size_t count = m_childFrames.size();
+    for (const auto& childFrame : m_childFrames)
+        count += childFrame->descendantFrameCount();
+    return count;
 }
 
-int CachedFrame::descendantFrameCount() const
+UsedLegacyTLS CachedFrame::usedLegacyTLS() const
 {
-    int count = m_childFrames.size();
-    for (size_t i = 0; i < m_childFrames.size(); ++i)
-        count += m_childFrames[i]->descendantFrameCount();
+    if (auto* document = this->document()) {
+        if (document->usedLegacyTLS())
+            return UsedLegacyTLS::Yes;
+    }
     
-    return count;
+    for (const auto& cachedFrame : m_childFrames) {
+        if (cachedFrame->usedLegacyTLS() == UsedLegacyTLS::Yes)
+            return UsedLegacyTLS::Yes;
+    }
+    
+    return UsedLegacyTLS::No;
 }
 
 HasInsecureContent CachedFrame::hasInsecureContent() const
@@ -324,7 +332,7 @@ HasInsecureContent CachedFrame::hasInsecureContent() const
     }
     
     for (const auto& cachedFrame : m_childFrames) {
-        if (cachedFrame && cachedFrame->hasInsecureContent() == HasInsecureContent::Yes)
+        if (cachedFrame->hasInsecureContent() == HasInsecureContent::Yes)
             return HasInsecureContent::Yes;
     }
     
