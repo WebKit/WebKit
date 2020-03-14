@@ -1,3 +1,32 @@
+2020-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Don’t display empty text suggestions in Quickboard when editing input fields
+        https://bugs.webkit.org/show_bug.cgi?id=209089
+
+        Reviewed by Tim Horton.
+
+        Add an API test for watchOS. Also rename a few occurrences of "Autofill" to "AutoFill", to reflect the official
+        marketing name for the feature.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (runUntilReceivesAutoplayEvent):
+
+        Additionally fix the watchOS engineering build for arm64_32, which was failing due to comparisons between 64-bit
+        and 32-bit integers. This is because this function took a `WKAutoplayEvent` (a 32-bit integer), but compared
+        against the `_WKAutoplayEvent` type (an NSInteger that is 64 bits on this architecture). There didn't seem to
+        be any compelling reason to compare against different types here (especially since we only set
+        `receivedAutoplayEvent` under the Objective-C delegate method that provides a `_WKAutoplayEvent`), so I changed
+        these all to be `_WKAutoplayEvent`.
+
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+        (-[AutoFillTestView _autofillInputView]):
+        (-[AutoFillTestView textInputHasAutoFillContext]):
+        (TestWebKitAPI::TEST):
+        (-[AutofillTestView initWithFrame:]): Deleted.
+        (-[AutofillTestView _autofillInputView]): Deleted.
+        (-[AutofillTestView textInputHasAutofillContext]): Deleted.
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2020-03-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r256232.

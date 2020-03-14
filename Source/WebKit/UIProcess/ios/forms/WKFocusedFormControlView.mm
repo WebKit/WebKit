@@ -462,10 +462,21 @@ static NSDictionary *submitActionNameFontAttributes()
 
 - (void)setSuggestions:(NSArray<UITextSuggestion *> *)suggestions
 {
-    if (_textSuggestions == suggestions || [_textSuggestions isEqualToArray:suggestions])
+    RetainPtr<NSMutableArray> displayableTextSuggestions;
+    if (suggestions) {
+        displayableTextSuggestions = adoptNS([[NSMutableArray alloc] initWithCapacity:suggestions.count]);
+        for (UITextSuggestion *suggestion in suggestions) {
+            if (!suggestion.displayText.length)
+                continue;
+
+            [displayableTextSuggestions addObject:suggestion];
+        }
+    }
+
+    if (_textSuggestions == displayableTextSuggestions.get() || [_textSuggestions isEqualToArray:displayableTextSuggestions.get()])
         return;
 
-    _textSuggestions = adoptNS(suggestions.copy);
+    _textSuggestions = WTFMove(displayableTextSuggestions);
     [_delegate focusedFormControllerDidUpdateSuggestions:self];
 }
 

@@ -1,3 +1,19 @@
+2020-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Don’t display empty text suggestions in Quickboard when editing input fields
+        https://bugs.webkit.org/show_bug.cgi?id=209089
+
+        Reviewed by Tim Horton.
+
+        Handle text suggestions that lack `displayText` gracefully in Quickboard by not showing them as AutoFill
+        candidates. Currently, they are presented as blank collection view cells in Quickboard, which leads to a
+        confusing user experience.
+
+        Test: WKWebViewAutoFillTests.DoNotShowBlankTextSuggestions
+
+        * UIProcess/ios/forms/WKFocusedFormControlView.mm:
+        (-[WKFocusedFormControlView setSuggestions:]):
+
 2020-03-13  Brent Fulgham  <bfulgham@apple.com>
 
         Clean up sandbox violations found during testing
