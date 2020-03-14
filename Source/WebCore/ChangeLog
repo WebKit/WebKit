@@ -1,3 +1,19 @@
+2020-03-02  Doug Kelly  <dougk@apple.com>
+
+        ASSERT(m_column != unsetColumnIndex) in RenderTable::cellBefore
+        https://bugs.webkit.org/show_bug.cgi?id=208397
+
+        Reviewed by Zalan Bujtas.
+
+        When inserting a cell into a table row which is not visible, this can lead to attempting to compute the repaint
+        rects during tree building.  Instead, mark the layer as dirty using dirtyVisibleContentStatus(), and the visibility
+        will be recomputed at a later time.
+
+        Test: fast/table/insert-cell-invisible-parent.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertedIntoTree):
+
 2020-03-04  Doug Kelly  <dougk@apple.com>
 
         Crash in SVGElement::removeEventListener with symbol element

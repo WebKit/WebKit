@@ -1,3 +1,13 @@
+2020-03-02  Doug Kelly  <dougk@apple.com>
+
+        ASSERT(m_column != unsetColumnIndex) in RenderTable::cellBefore
+        https://bugs.webkit.org/show_bug.cgi?id=208397
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/table/insert-cell-invisible-parent-expected.txt: Added.
+        * fast/table/insert-cell-invisible-parent.html: Added.
+
 2020-03-04  Doug Kelly  <dougk@apple.com>
 
         Crash in SVGElement::removeEventListener with symbol element
