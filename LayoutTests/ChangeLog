@@ -1,3 +1,14 @@
+2020-03-14  Zalan Bujtas  <zalan@apple.com>
+
+        [Tree building] Reset the fragmented flow status before calling child.willBeRemovedFromTree.
+        https://bugs.webkit.org/show_bug.cgi?id=209100
+        <rdar://problem/60434672>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/reparent-fragment-flow-content-expected.txt: Added.
+        * fast/multicol/reparent-fragment-flow-content.html: Added.
+
 2020-03-14  Rob Buis  <rbuis@igalia.com>
 
         Set Origin header value to null rather than omitting it

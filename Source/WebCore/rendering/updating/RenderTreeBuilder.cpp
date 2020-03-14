@@ -873,10 +873,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     if (!parent.renderTreeBeingDestroyed() && child.isSelectionBorder())
         parent.frame().selection().setNeedsSelectionUpdate();
 
+    child.resetFragmentedFlowStateOnRemoval();
+
     if (!parent.renderTreeBeingDestroyed())
         child.willBeRemovedFromTree();
-
-    child.resetFragmentedFlowStateOnRemoval();
 
     // WARNING: There should be no code running between willBeRemovedFromTree() and the actual removal below.
     // This is needed to avoid race conditions where willBeRemovedFromTree() would dirty the tree's structure
