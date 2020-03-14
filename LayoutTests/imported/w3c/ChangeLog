@@ -1,3 +1,14 @@
+2020-03-14  Rob Buis  <rbuis@igalia.com>
+
+        Set Origin header value to null rather than omitting it
+        https://bugs.webkit.org/show_bug.cgi?id=186030
+
+        Reviewed by Youenn Fablet.
+
+        Update improved test result.
+
+        * web-platform-tests/fetch/origin/assorted.window-expected.txt:
+
 2020-03-13  Antoine Quint  <graouts@apple.com>
 
         [iOS] 9 imported/w3c/web-platform-tests/pointerevents/pointerevent tests are failing since import in r253630

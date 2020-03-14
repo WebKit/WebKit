@@ -669,6 +669,8 @@ Expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessContr
     
     updateRequestReferrer(newRequest, referrerPolicy(), previousRequest.httpReferrer());
 
+    FrameLoader::addHTTPOriginIfNeeded(newRequest, m_origin ? m_origin->toString() : String());
+
     return { };
 }
 

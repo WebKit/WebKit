@@ -3002,6 +3002,9 @@ void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, const String& 
     if (request.httpMethod() == "GET" || request.httpMethod() == "HEAD")
         return;
 
+    // FIXME: take referrer-policy into account.
+    // https://bugs.webkit.org/show_bug.cgi?id=209066
+
     // For non-GET and non-HEAD methods, always send an Origin header so the
     // server knows we support this feature.
 

@@ -1,7 +1,7 @@
 
-FAIL Origin header and 308 redirect assert_equals: expected "null" but got "no Origin header"
+PASS Origin header and 308 redirect 
 PASS Origin header and GET navigation 
-FAIL Origin header and POST navigation assert_equals: expected "null" but got "no Origin header"
+PASS Origin header and POST navigation 
 PASS Origin header and POST same-origin navigation with Referrer-Policy no-referrer 
 PASS Origin header and POST same-origin fetch no-cors mode with Referrer-Policy no-referrer 
 PASS Origin header and POST same-origin fetch cors mode with Referrer-Policy no-referrer 

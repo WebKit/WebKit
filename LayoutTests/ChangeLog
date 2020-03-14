@@ -1,3 +1,16 @@
+2020-03-14  Rob Buis  <rbuis@igalia.com>
+
+        Set Origin header value to null rather than omitting it
+        https://bugs.webkit.org/show_bug.cgi?id=186030
+
+        Reviewed by Youenn Fablet.
+
+        Update improved test result.
+
+        * http/tests/security/cors-post-redirect-307-expected.txt:
+        * http/tests/security/cors-post-redirect-307-pson-expected.txt:
+        * http/tests/security/cors-post-redirect-308-expected.txt:
+
 2020-03-13  Justin Fan  <justin_fan@apple.com>
 
         PROGRESSION: webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html is failing

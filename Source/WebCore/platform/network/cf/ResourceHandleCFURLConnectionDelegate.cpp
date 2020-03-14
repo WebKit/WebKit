@@ -138,7 +138,7 @@ ResourceRequest ResourceHandleCFURLConnectionDelegate::createResourceRequest(CFU
 {
     ResourceRequest request;
     CFHTTPMessageRef httpMessage = CFURLResponseGetHTTPResponse(redirectResponse);
-    if (httpMessage && CFHTTPMessageGetResponseStatusCode(httpMessage) == 307) {
+    if (httpMessage && (CFHTTPMessageGetResponseStatusCode(httpMessage) == 307 || CFHTTPMessageGetResponseStatusCode(httpMessage) == 308)) {
         RetainPtr<CFStringRef> lastHTTPMethod = m_handle->lastHTTPMethod().createCFString();
         RetainPtr<CFStringRef> newMethod = adoptCF(CFURLRequestCopyHTTPRequestMethod(cfRequest));
         if (CFStringCompareWithOptions(lastHTTPMethod.get(), newMethod.get(), CFRangeMake(0, CFStringGetLength(lastHTTPMethod.get())), kCFCompareCaseInsensitive)) {
