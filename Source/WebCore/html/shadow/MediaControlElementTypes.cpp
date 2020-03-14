@@ -37,7 +37,7 @@
 #include "HTMLNames.h"
 #include "MouseEvent.h"
 #include "RenderMedia.h"
-#include "RenderMediaControlElements.h"
+#include "RenderMediaControls.h"
 #include "StyleProperties.h"
 #include <wtf/IsoMallocInlines.h>
 

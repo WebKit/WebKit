@@ -4560,7 +4560,7 @@
 		DE5F86591FA2AF24006DB63A /* UnifiedSource60-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = DE5F863A1FA2AF07006DB63A /* UnifiedSource60-mm.mm */; };
 		DE5F86591FA2AF24006DB63B /* UnifiedSource61-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = DE5F863A1FA2AF07006DB63B /* UnifiedSource61-mm.mm */; };
 		DE7710861FA2F0D600460016 /* WebArchiveDumpSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1763F3C1E205234001D58DE /* WebArchiveDumpSupport.mm */; };
-		DEBCCDD216646E8200A452E1 /* RenderMediaControlElements.h in Headers */ = {isa = PBXBuildFile; fileRef = DE49B308165F2FE10010338D /* RenderMediaControlElements.h */; };
+		DEBCCDD216646E8200A452E1 /* RenderMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = DE49B308165F2FE10010338D /* RenderMediaControls.h */; };
 		DEBCCDD416646EAF00A452E1 /* MediaControlElementTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = DE49B300165F2FC60010338D /* MediaControlElementTypes.h */; };
 		DECA7D931F9E67B500E3B661 /* UnifiedSource131.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DECA7D6D1F9E61CF00E3B661 /* UnifiedSource131.cpp */; };
 		DECA7D941F9E67B500E3B661 /* UnifiedSource132.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DECA7D7E1F9E61E300E3B661 /* UnifiedSource132.cpp */; };
@@ -14508,8 +14508,8 @@
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
 		DE49B2FF165F2FC60010338D /* MediaControlElementTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlElementTypes.cpp; sourceTree = "<group>"; };
 		DE49B300165F2FC60010338D /* MediaControlElementTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlElementTypes.h; sourceTree = "<group>"; };
-		DE49B307165F2FE10010338D /* RenderMediaControlElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMediaControlElements.cpp; sourceTree = "<group>"; };
-		DE49B308165F2FE10010338D /* RenderMediaControlElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMediaControlElements.h; sourceTree = "<group>"; };
+		DE49B307165F2FE10010338D /* RenderMediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMediaControls.cpp; sourceTree = "<group>"; };
+		DE49B308165F2FE10010338D /* RenderMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMediaControls.h; sourceTree = "<group>"; };
 		DE5F83B21FA18676006DB63A /* UnifiedSource301.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource301.cpp; path = "DerivedSources/WebCore/unified-sources/UnifiedSource301.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE5F83B31FA18677006DB63A /* UnifiedSource355.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource355.cpp; path = "DerivedSources/WebCore/unified-sources/UnifiedSource355.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE5F83B41FA18678006DB63A /* UnifiedSource378.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource378.cpp; path = "DerivedSources/WebCore/unified-sources/UnifiedSource378.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -27916,8 +27916,8 @@
 				0F56028D0E4B76580065B038 /* RenderMarquee.h */,
 				E4C279560CF9741900E97B98 /* RenderMedia.cpp */,
 				E4C279570CF9741900E97B98 /* RenderMedia.h */,
-				DE49B307165F2FE10010338D /* RenderMediaControlElements.cpp */,
-				DE49B308165F2FE10010338D /* RenderMediaControlElements.h */,
+				DE49B307165F2FE10010338D /* RenderMediaControls.cpp */,
+				DE49B308165F2FE10010338D /* RenderMediaControls.h */,
 				ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */,
 				ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */,
 				A454424C119B3687009BE912 /* RenderMeter.cpp */,
@@ -31178,7 +31178,6 @@
 				B2FA3D570AB75A6F000E5AC4 /* JSSVGAnimationElement.h in Headers */,
 				B2FA3D590AB75A6F000E5AC4 /* JSSVGCircleElement.h in Headers */,
 				B2FA3D5B0AB75A6F000E5AC4 /* JSSVGClipPathElement.h in Headers */,
-				E45A6C772417BA59006E4CD5 /* PseudoClassChangeInvalidation.h in Headers */,
 				B2FA3D5F0AB75A6F000E5AC4 /* JSSVGComponentTransferFunctionElement.h in Headers */,
 				B2FA3D610AB75A6F000E5AC4 /* JSSVGCursorElement.h in Headers */,
 				B2FA3D630AB75A6F000E5AC4 /* JSSVGDefsElement.h in Headers */,
@@ -31987,6 +31986,7 @@
 				372ADA38197F47B900FC501E /* ProtectionSpaceCocoa.h in Headers */,
 				51A052561058874000CC9E95 /* ProtectionSpaceHash.h in Headers */,
 				1AF8E11A1256592600230FF7 /* ProxyServer.h in Headers */,
+				E45A6C772417BA59006E4CD5 /* PseudoClassChangeInvalidation.h in Headers */,
 				FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */,
 				57D8462E1FEAF69900CA3682 /* PublicKeyCredential.h in Headers */,
 				57303BE92009748D00355965 /* PublicKeyCredentialCreationOptions.h in Headers */,
@@ -32116,7 +32116,7 @@
 				439046EC12DA25E800AF80A9 /* RenderMathMLToken.h in Headers */,
 				439046EA12DA25E800AF80A2 /* RenderMathMLUnderOver.h in Headers */,
 				E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */,
-				DEBCCDD216646E8200A452E1 /* RenderMediaControlElements.h in Headers */,
+				DEBCCDD216646E8200A452E1 /* RenderMediaControls.h in Headers */,
 				ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */,
 				A454424F119B3687009BE912 /* RenderMeter.h in Headers */,
 				1A3586E015264C450022A659 /* RenderMultiColumnFlow.h in Headers */,

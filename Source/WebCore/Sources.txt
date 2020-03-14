@@ -2159,7 +2159,6 @@ rendering/RenderListItem.cpp
 rendering/RenderListMarker.cpp
 rendering/RenderMarquee.cpp
 rendering/RenderMedia.cpp
-rendering/RenderMediaControlElements.cpp
 rendering/RenderMediaControls.cpp
 rendering/RenderMenuList.cpp
 rendering/RenderMeter.cpp

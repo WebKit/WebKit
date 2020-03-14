@@ -52,7 +52,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "RenderLayer.h"
-#include "RenderMediaControlElements.h"
+#include "RenderMediaControls.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "RenderVideo.h"
@@ -1106,7 +1106,7 @@ Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement
 
 RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderMediaControlTextTrackContainer>(*this, WTFMove(style));
+    return createRenderer<RenderBlockFlow>(*this, WTFMove(style));
 }
 
 static bool compareCueIntervalForDisplay(const CueInterval& one, const CueInterval& two)

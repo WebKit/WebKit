@@ -1,3 +1,14 @@
+2020-03-14  Peng Liu  <peng.liu6@apple.com>
+
+        Cleanup RenderMediaControls.cpp and RenderMediaControlElements.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=209008
+
+        Reviewed by Daniel Bates.
+
+        Remove unused code in a test.
+
+        * media/track/track-cue-rendering-rtl.html:
+
 2020-03-14  Zalan Bujtas  <zalan@apple.com>
 
         [Tree building] Reset the fragmented flow status before calling child.willBeRemovedFromTree.

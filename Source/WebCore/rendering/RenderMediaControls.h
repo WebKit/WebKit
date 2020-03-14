@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc.
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,22 +22,48 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#if ENABLE(VIDEO) && PLATFORM(WIN) && USE(CG)
+#if ENABLE(VIDEO)
+
+#include "RenderBlockFlow.h"
+#include "RenderFlexibleBox.h"
 
 namespace WebCore {
 
-class RenderStyle;
+class RenderMediaVolumeSliderContainer final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderMediaVolumeSliderContainer);
+public:
+    RenderMediaVolumeSliderContainer(Element&, RenderStyle&&);
+
+private:
+    void layout() override;
+};
+
+// ----------------------------
+
+class RenderMediaControlTimelineContainer final : public RenderFlexibleBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderMediaControlTimelineContainer);
+public:
+    RenderMediaControlTimelineContainer(Element&, RenderStyle&&);
+
+private:
+    void layout() override;
+    bool isFlexibleBoxImpl() const override { return true; }
+};
+
+#if PLATFORM(WIN) && USE(CG)
 
 class RenderMediaControls {
 public:
     static void adjustMediaSliderThumbSize(RenderStyle&);
 };
 
+#endif // PLATFORM(WIN) && USE(CG)
+
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO) && PLATFORM(WIN) && USE(CG)
+#endif // ENABLE(VIDEO)

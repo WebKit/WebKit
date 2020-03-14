@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc.
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,21 +22,77 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 #include "RenderMediaControls.h"
 
-#if ENABLE(VIDEO) && PLATFORM(WIN) && USE(CG)
+#if ENABLE(VIDEO)
+
+#include "MediaControlElements.h"
+#include "RenderLayoutState.h"
+#include "RenderTheme.h"
+#include "RenderView.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMediaVolumeSliderContainer);
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMediaControlTimelineContainer);
+
+RenderMediaVolumeSliderContainer::RenderMediaVolumeSliderContainer(Element& element, RenderStyle&& style)
+    : RenderBlockFlow(element, WTFMove(style))
+{
+}
+
+void RenderMediaVolumeSliderContainer::layout()
+{
+    RenderBlockFlow::layout();
+
+    if (style().display() == DisplayType::None || !is<RenderBox>(nextSibling()))
+        return;
+
+    RenderBox& buttonBox = downcast<RenderBox>(*nextSibling());
+    int absoluteOffsetTop = buttonBox.localToAbsolute(FloatPoint(0, -size().height())).y();
+
+    LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
+
+    // If the slider would be rendered outside the page, it should be moved below the controls.
+    if (UNLIKELY(absoluteOffsetTop < 0))
+        setY(buttonBox.offsetTop() + theme().volumeSliderOffsetFromMuteButton(buttonBox, size()).y());
+}
+
+// ----------------------------
+
+RenderMediaControlTimelineContainer::RenderMediaControlTimelineContainer(Element& element, RenderStyle&& style)
+    : RenderFlexibleBox(element, WTFMove(style))
+{
+}
+
+// We want the timeline slider to be at least 100 pixels wide.
+// FIXME: Eliminate hard-coded widths altogether.
+static const int minWidthToDisplayTimeDisplays = 45 + 100 + 45;
+
+void RenderMediaControlTimelineContainer::layout()
+{
+    RenderFlexibleBox::layout();
+
+    LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
+    MediaControlTimelineContainerElement* container = static_cast<MediaControlTimelineContainerElement*>(element());
+    container->setTimeDisplaysHidden(width().toInt() < minWidthToDisplayTimeDisplays);
+}
+
+#if PLATFORM(WIN) && USE(CG)
 
 void RenderMediaControls::adjustMediaSliderThumbSize(RenderStyle& style)
 {
     ASSERT_NOT_REACHED();
 }
 
-}
+#endif // PLATFORM(WIN) && USE(CG)
 
-#endif
+} // namespace WebCore
+
+#endif // ENABLE(VIDEO)
+

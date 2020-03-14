@@ -55,7 +55,7 @@
 #import "RenderAttachment.h"
 #import "RenderLayer.h"
 #import "RenderMedia.h"
-#import "RenderMediaControlElements.h"
+#import "RenderMediaControls.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
 #import "RenderSnapshottedPlugIn.h"
