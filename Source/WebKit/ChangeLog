@@ -1,3 +1,17 @@
+2020-03-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Clean up sandbox violations found during testing
+        https://bugs.webkit.org/show_bug.cgi?id=209096
+        <rdar://problem/59931477>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove telemetry from some items, and allow access to some IOKit properties
+        needed for media playback on macOS and iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-03-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop unused variable in WebPageProxy::backForwardGoToItem().

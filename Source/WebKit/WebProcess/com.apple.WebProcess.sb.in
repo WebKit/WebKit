@@ -570,7 +570,6 @@
     (with report) (with telemetry)
 #endif
     (iokit-user-client-class "AppleMultitouchDeviceUserClient")
-    (iokit-user-client-class "AppleUpstreamUserClient")
     (iokit-user-client-class "IOHIDParamUserClient")
     (iokit-user-client-class "IOAudioControlUserClient")
     (iokit-user-client-class "IOAudioEngineUserClient")
@@ -578,6 +577,7 @@
     (iokit-user-client-class "AudioAUUC"))
 
 (allow iokit-open
+    (iokit-user-client-class "AppleUpstreamUserClient")
     (iokit-user-client-class "RootDomainUserClient") ;; Needed by WebCore::PerformanceMonitor
 )
 
