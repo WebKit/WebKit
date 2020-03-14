@@ -2703,7 +2703,6 @@ webgl/1.0.3/conformance/context/context-attribute-preserve-drawing-buffer.html [
 webgl/1.0.3/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Failure ]
 webgl/1.0.3/conformance/context/context-hidden-alpha.html [ Failure ]
 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-pvrtc.html [ Failure ]
-webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ Failure ]
 fast/canvas/webgl/read-pixels-test.html [ Skip ]
 fast/canvas/webgl/webglcontextchangedevent.html [ Skip ]
 webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Skip ]

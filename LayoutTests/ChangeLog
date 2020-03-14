@@ -1,3 +1,14 @@
+2020-03-13  Justin Fan  <justin_fan@apple.com>
+
+        PROGRESSION (r253926): webgl/1.0.3/conformance/renderbuffers/feedback-loop.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=205738
+
+        Unreviewed test expectation updates.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * webgl/1.0.3/conformance/renderbuffers/feedback-loop-expected.txt:
+
 2020-03-13  Said Abou-Hallawa  <said@apple.com>
 
         SVGMatrix should have the access right of its owner SVGTransform always

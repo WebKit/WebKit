@@ -3288,7 +3288,6 @@ webgl/1.0.3/conformance/uniforms/gl-uniform-arrays.html [ Skip ]
 
 # webkit.org/b/203908 Tests generate inconsistent results or time out
 webgl/1.0.3/conformance/textures/texture-npot-video.html [ Skip ]
-webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ Skip ]
 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Skip ]
 webgl/1.0.3/conformance/canvas/rapid-resizing.html [ Skip ]
 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Skip ]
