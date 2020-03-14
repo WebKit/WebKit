@@ -806,7 +806,7 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
     firstPageSemaphore.wait();
 
 #if !LOG_DISABLED
-    pdfLog("Fininished preloading first page");
+    pdfLog("Finished preloading first page");
 #endif
 
     // The main thread dispatch below removes the last reference to the PDF thread.
@@ -923,7 +923,7 @@ void PDFPlugin::ByteRangeRequest::completeWithAccumulatedData(PDFPlugin& plugin)
 #endif
 
     m_completionHandler(m_accumulatedData.data(), m_accumulatedData.size());
-    
+
     if (m_streamLoader)
         plugin.forgetLoader(*m_streamLoader);
 
@@ -1407,7 +1407,7 @@ void PDFPlugin::convertPostScriptDataIfNeeded()
     m_data = PDFDocumentImage::convertPostScriptDataToPDF(WTFMove(m_data));
 }
 
-void PDFPlugin::pdfDocumentDidLoad()
+void PDFPlugin::documentDataDidFinishLoading()
 {
     addArchiveResource();
 
@@ -1426,6 +1426,8 @@ void PDFPlugin::pdfDocumentDidLoad()
         m_pdfDocument = adoptNS([[pdfDocumentClass() alloc] initWithData:rawData()]);
         installPDFDocument();
     }
+
+    tryRunScriptsInPDFDocument();
 }
 
 void PDFPlugin::installPDFDocument()
@@ -1446,7 +1448,7 @@ void PDFPlugin::installPDFDocument()
     calculateSizes();
     updateScrollbars();
 
-    runScriptsInPDFDocument();
+    tryRunScriptsInPDFDocument();
 
     if ([m_pdfDocument isLocked])
         createPasswordEntryForm();
@@ -1494,7 +1496,7 @@ void PDFPlugin::streamDidFinishLoading(uint64_t streamID)
     ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
 
     convertPostScriptDataIfNeeded();
-    pdfDocumentDidLoad();
+    documentDataDidFinishLoading();
 }
 
 void PDFPlugin::streamDidFail(uint64_t streamID, bool wasCancelled)
@@ -1544,7 +1546,7 @@ void PDFPlugin::manualStreamDidReceiveData(const char* bytes, int length)
 void PDFPlugin::manualStreamDidFinishLoading()
 {
     convertPostScriptDataIfNeeded();
-    pdfDocumentDidLoad();
+    documentDataDidFinishLoading();
 }
 
 void PDFPlugin::manualStreamDidFail(bool)
@@ -1556,19 +1558,43 @@ void PDFPlugin::manualStreamDidFail(bool)
 #endif
 }
 
-void PDFPlugin::runScriptsInPDFDocument()
+void PDFPlugin::tryRunScriptsInPDFDocument()
 {
-    Vector<RetainPtr<CFStringRef>> scripts;
-    getAllScriptsInPDFDocument([m_pdfDocument documentRef], scripts);
+    ASSERT(isMainThread());
 
-    if (scripts.isEmpty())
+    if (!m_pdfDocument || !m_documentFinishedLoading)
         return;
 
-    JSGlobalContextRef ctx = JSGlobalContextCreate(0);
-    JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx);
-    for (auto& script : scripts)
-        JSEvaluateScript(ctx, OpaqueJSString::tryCreate(script.get()).get(), jsPDFDoc, nullptr, 0, nullptr);
-    JSGlobalContextRelease(ctx);
+    auto completionHandler = [this, protectedThis = makeRef(*this)] (Vector<RetainPtr<CFStringRef>>&& scripts) mutable {
+        if (scripts.isEmpty())
+            return;
+
+        JSGlobalContextRef ctx = JSGlobalContextCreate(nullptr);
+        JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx);
+        for (auto& script : scripts)
+            JSEvaluateScript(ctx, OpaqueJSString::tryCreate(script.get()).get(), jsPDFDoc, nullptr, 1, nullptr);
+        JSGlobalContextRelease(ctx);
+    };
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+    auto scriptUtilityQueue = WorkQueue::create("PDF script utility");
+    auto& rawQueue = scriptUtilityQueue.get();
+    RetainPtr<CGPDFDocumentRef> document = [m_pdfDocument documentRef];
+    rawQueue.dispatch([scriptUtilityQueue = WTFMove(scriptUtilityQueue), completionHandler = WTFMove(completionHandler), document = WTFMove(document)] () mutable {
+        ASSERT(!isMainThread());
+
+        Vector<RetainPtr<CFStringRef>> scripts;
+        getAllScriptsInPDFDocument(document.get(), scripts);
+
+        callOnMainThread([completionHandler = WTFMove(completionHandler), scripts = WTFMove(scripts)] () mutable {
+            completionHandler(WTFMove(scripts));
+        });
+    });
+#else
+    Vector<RetainPtr<CFStringRef>> scripts;
+    getAllScriptsInPDFDocument([m_pdfDocument documentRef], scripts);
+    completionHandler(WTFMove(scripts));
+#endif
 }
 
 void PDFPlugin::createPasswordEntryForm()

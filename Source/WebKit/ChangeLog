@@ -1,3 +1,31 @@
+2020-03-14  Brady Eidson  <beidson@apple.com>
+
+        Gather PDF scripts to run on a background thread.
+        https://bugs.webkit.org/show_bug.cgi?id=209063
+
+        Reviewed by Geoff Garen.
+        
+        In incremental loading mode, gathering document scripts will sometimes require PDFKit/CG
+        to lock and wait on data loads from our data provider.
+        
+        So if we gather them on the main thread, we will hang the main thread and therefore deadlock
+        with our data provider thread/queue.
+        
+        So let's gather those scripts on a background thread!
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::threadEntry):
+        (WebKit::PDFPlugin::ByteRangeRequest::completeWithAccumulatedData):
+        (WebKit::PDFPlugin::documentDataDidFinishLoading):
+        (WebKit::PDFPlugin::installPDFDocument):
+        (WebKit::PDFPlugin::streamDidFinishLoading):
+        (WebKit::PDFPlugin::manualStreamDidFinishLoading):
+        (WebKit::PDFPlugin::tryRunScriptsInPDFDocument): Only actually gathers scripts to execute if there
+          is a m_pdfDocument and the entire document data finished loading.
+        (WebKit::PDFPlugin::pdfDocumentDidLoad): Deleted.
+        (WebKit::PDFPlugin::runScriptsInPDFDocument): Deleted.
+
 2020-03-13  Alex Christensen  <achristensen@webkit.org>
 
         WKWebView._negotiatedLegacyTLS should be correct after back/forward navigations

@@ -247,11 +247,11 @@ private:
     void updateScrollbars();
     Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     void destroyScrollbar(WebCore::ScrollbarOrientation);
-    void pdfDocumentDidLoad();
+    void documentDataDidFinishLoading();
     void installPDFDocument();
     void addArchiveResource();
     void calculateSizes();
-    void runScriptsInPDFDocument();
+    void tryRunScriptsInPDFDocument();
 
     NSEvent *nsEventForWebMouseEvent(const WebMouseEvent&);
     WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
