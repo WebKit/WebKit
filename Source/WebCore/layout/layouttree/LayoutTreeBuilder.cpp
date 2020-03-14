@@ -304,6 +304,36 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, Containe
         buildSubTree(downcast<RenderElement>(*sectionRenderer), sectionContainer);
         sectionRenderer = sectionRenderer->nextSibling();
     }
+    auto addMissingTableCells = [&] (auto& tableBody) {
+        // A "missing cell" is a cell in the row/column grid that is not occupied by an element or pseudo-element.
+        // Missing cells are rendered as if an anonymous table-cell box occupied their position in the grid.
+
+        // Find the max number of columns and fill in the gaps.
+        size_t maximumColumns = 0;
+        Vector<size_t> numberOfCellsPerRow;
+        for (auto& rowBox : childrenOfType<ContainerBox>(tableBody)) {
+            size_t numberOfCells = 0;
+            for (auto& cellBox : childrenOfType<ContainerBox>(rowBox))
+                numberOfCells += cellBox.columnSpan();
+            numberOfCellsPerRow.append(numberOfCells);
+            maximumColumns = std::max(maximumColumns, numberOfCells);
+        }
+        // Fill in the gaps.
+        size_t rowIndex = 0;
+        for (auto& rowBox : childrenOfType<ContainerBox>(tableBody)) {
+            ASSERT(maximumColumns >= numberOfCellsPerRow[rowIndex]);
+            auto numberOfMissingCells = maximumColumns - numberOfCellsPerRow[rowIndex++];
+            for (size_t i = 0; i < numberOfMissingCells; ++i)
+                appendChild(const_cast<ContainerBox&>(rowBox), createContainer({ }, RenderStyle::createAnonymousStyleWithDisplay(rowBox.style(), DisplayType::TableCell)));
+        }
+    };
+
+    for (auto& section : childrenOfType<ContainerBox>(tableBox)) {
+        // FIXME: Check if headers and footers need the same treatment.
+        if (!section.isTableBody())
+            continue;
+        addMissingTableCells(section);
+    }
 }
 
 void TreeBuilder::buildSubTree(const RenderElement& parentRenderer, ContainerBox& parentContainer)

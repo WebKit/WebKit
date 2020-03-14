@@ -1,3 +1,14 @@
+2020-03-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Fill in the gaps with anonymous table cell boxes
+        https://bugs.webkit.org/show_bug.cgi?id=209114
+        <rdar://problem/60458806>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-missing-cells-simple-expected.html: Added.
+        * fast/layoutformattingcontext/table-missing-cells-simple.html: Added.
+
 2020-03-14  Peng Liu  <peng.liu6@apple.com>
 
         Cleanup RenderMediaControls.cpp and RenderMediaControlElements.cpp
