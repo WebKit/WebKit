@@ -615,7 +615,8 @@ bool HitTestResult::isContentEditable() const
     return m_innerNonSharedNode->hasEditableStyle();
 }
 
-HitTestProgress HitTestResult::addNodeToListBasedTestResult(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const LayoutRect& rect)
+template<typename RectType>
+inline HitTestProgress HitTestResult::addNodeToListBasedTestResultCommon(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const RectType& rect)
 {
     // If it is not a list-based hit test, this method has to be no-op.
     if (!request.resultIsElementList()) {
@@ -638,27 +639,14 @@ HitTestProgress HitTestResult::addNodeToListBasedTestResult(Node* node, const Hi
     return regionFilled ? HitTestProgress::Stop : HitTestProgress::Continue;
 }
 
+HitTestProgress HitTestResult::addNodeToListBasedTestResult(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const LayoutRect& rect)
+{
+    return addNodeToListBasedTestResultCommon(node, request, locationInContainer, rect);
+}
+
 HitTestProgress HitTestResult::addNodeToListBasedTestResult(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const FloatRect& rect)
 {
-    // If it is not a list-based hit test, this method has to be no-op.
-    if (!request.resultIsElementList()) {
-        ASSERT(!isRectBasedTest());
-        return HitTestProgress::Stop;
-    }
-
-    if (!node)
-        return HitTestProgress::Continue;
-
-    if (request.disallowsUserAgentShadowContent() && node->isInUserAgentShadowTree())
-        node = node->document().ancestorNodeInThisScope(node);
-
-    mutableListBasedTestResult().add(node);
-
-    if (request.includesAllElementsUnderPoint())
-        return HitTestProgress::Continue;
-
-    bool regionFilled = rect.contains(locationInContainer.boundingBox());
-    return regionFilled ? HitTestProgress::Stop : HitTestProgress::Continue;
+    return addNodeToListBasedTestResultCommon(node, request, locationInContainer, rect);
 }
 
 void HitTestResult::append(const HitTestResult& other, const HitTestRequest& request)

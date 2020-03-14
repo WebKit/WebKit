@@ -149,6 +149,8 @@ public:
 private:
     NodeSet& mutableListBasedTestResult(); // See above.
 
+    template<typename RectType> HitTestProgress addNodeToListBasedTestResultCommon(Node*, const HitTestRequest&, const HitTestLocation&, const RectType&);
+
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement() const;
 #endif
