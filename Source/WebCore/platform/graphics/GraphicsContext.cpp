@@ -200,6 +200,9 @@ void GraphicsContextStateChange::apply(GraphicsContext& context) const
     if (m_changeFlags.contains(GraphicsContextState::FillPatternChange))
         context.setFillPattern(*m_state.fillPattern);
 
+    if (m_changeFlags.contains(GraphicsContextState::ShadowsIgnoreTransformsChange))
+        context.setShadowsIgnoreTransforms(m_state.shadowsIgnoreTransforms);
+
     if (m_changeFlags.contains(GraphicsContextState::ShadowChange)) {
 #if USE(CG)
         if (m_state.shadowsUseLegacyRadius)
@@ -241,9 +244,6 @@ void GraphicsContextStateChange::apply(GraphicsContext& context) const
 
     if (m_changeFlags.contains(GraphicsContextState::ShouldSubpixelQuantizeFontsChange))
         context.setShouldSubpixelQuantizeFonts(m_state.shouldSubpixelQuantizeFonts);
-
-    if (m_changeFlags.contains(GraphicsContextState::ShadowsIgnoreTransformsChange))
-        context.setShadowsIgnoreTransforms(m_state.shadowsIgnoreTransforms);
 
     if (m_changeFlags.contains(GraphicsContextState::DrawLuminanceMaskChange))
         context.setDrawLuminanceMask(m_state.drawLuminanceMask);
