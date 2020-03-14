@@ -1,3 +1,15 @@
+2020-03-14  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [CMake] Warning when ccache is not installed
+        https://bugs.webkit.org/show_bug.cgi?id=208952
+
+        Reviewed by Daniel Bates.
+
+        Change the warning when ccache is not installed to a status message. We shouldn't be
+        printing warnings except when there is an actual problem.
+
+        * Source/cmake/WebKitCCache.cmake:
+
 2020-03-13  Konstantin Tokarev  <annulen@yandex.ru>
 
         [CMake] Eleminate mismatches between Find* module names and variables they set

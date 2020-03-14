@@ -22,7 +22,7 @@ if (NOT "$ENV{WK_USE_CCACHE}" STREQUAL "NO")
             endif ()
         endif ()
     else ()
-        message(WARNING "Enabling ccache: Couldn't find ccache program. Not enabling it.")
+        message(STATUS "Enabling ccache: Couldn't find ccache program. Not enabling it.")
     endif ()
 endif ()
 
