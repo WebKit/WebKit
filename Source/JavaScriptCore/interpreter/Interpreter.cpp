@@ -905,7 +905,9 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
 
     DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
 
-    RefPtr<JITCode> jitCode = callData.js.functionExecutable->generatedJITCodeForCall();
+    RefPtr<JITCode> jitCode;
+    if (isJSCall)
+        jitCode = callData.js.functionExecutable->generatedJITCodeForCall();
 
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(newCodeBlock, globalObject, function, thisValue, argsCount, args.data());
@@ -981,7 +983,9 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
 
     DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
 
-    RefPtr<JITCode> jitCode = constructData.js.functionExecutable->generatedJITCodeForConstruct();
+    RefPtr<JITCode> jitCode;
+    if (isJSConstruct)
+        jitCode = constructData.js.functionExecutable->generatedJITCodeForConstruct();
 
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(newCodeBlock, globalObject, constructor, newTarget, argsCount, args.data());
