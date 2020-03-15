@@ -54,5 +54,11 @@ inline void IsoSubspace::sweep()
     });
 }
 
+template<typename Func>
+void IsoSubspace::forEachLowerTierFreeListedPreciseAllocation(const Func& func)
+{
+    m_lowerTierFreeList.forEach(func);
+}
+
 } // namespace JSC
 

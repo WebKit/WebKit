@@ -25,6 +25,7 @@
 
 #include "ArrayBufferView.h"
 #include "BlockDirectoryInlines.h"
+#include "IsoSubspaceInlines.h"
 #include "JSCInlines.h"
 #include "JSCast.h"
 #include "JSFunction.h"
@@ -32,6 +33,7 @@
 #include "JSObject.h"
 #include "MarkedBlockInlines.h"
 #include "NumberObject.h"
+#include "SubspaceInlines.h"
 #include <wtf/LockAlgorithmInlines.h>
 #include <wtf/MathExtras.h>
 
@@ -330,7 +332,7 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCras
     unsigned subspaceHash = 0;
     size_t cellSize = 0;
 
-    heap.objectSpace().forEachBlock([&] (MarkedBlock::Handle* blockHandle) {
+    heap.objectSpace().forEachBlock([&](MarkedBlock::Handle* blockHandle) {
         if (blockHandle->contains(bitwise_cast<JSCell*>(cell))) {
             foundBlockHandle = blockHandle;
             return IterationStatus::Done;
@@ -354,6 +356,43 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCras
         ptrdiff_t cellOffset = cellAddress - reinterpret_cast<uint64_t>(foundBlockHandle->start());
         bool cellIsProperlyAligned = !(cellOffset % cellSize);
         variousState |= static_cast<uint64_t>(cellIsProperlyAligned) << 5;
+    } else {
+        bool isFreeListed = false;
+        PreciseAllocation* foundPreciseAllocation = nullptr;
+        heap.objectSpace().forEachSubspace([&](Subspace& subspace) {
+            subspace.forEachPreciseAllocation([&](PreciseAllocation* allocation) {
+                if (allocation->contains(cell))
+                    foundPreciseAllocation = allocation;
+            });
+            if (foundPreciseAllocation)
+                return IterationStatus::Done;
+
+            if (subspace.isIsoSubspace()) {
+                static_cast<IsoSubspace&>(subspace).forEachLowerTierFreeListedPreciseAllocation([&](PreciseAllocation* allocation) {
+                    if (allocation->contains(cell)) {
+                        foundPreciseAllocation = allocation;
+                        isFreeListed = true;
+                    }
+                });
+            }
+            if (foundPreciseAllocation)
+                return IterationStatus::Done;
+            return IterationStatus::Continue;
+        });
+        if (foundPreciseAllocation) {
+            subspaceHash = StringHasher::computeHash(foundPreciseAllocation->subspace()->name());
+            cellSize = foundPreciseAllocation->cellSize();
+
+            variousState |= static_cast<uint64_t>(isFreeListed) << 0;
+            variousState |= static_cast<uint64_t>(!isFreeListed) << 1;
+            variousState |= static_cast<uint64_t>(foundPreciseAllocation->subspace()->attributes().destruction == NeedsDestruction) << 3;
+            if (!isFreeListed) {
+                variousState |= static_cast<uint64_t>(foundPreciseAllocation->isEmpty()) << 2;
+                variousState |= static_cast<uint64_t>(foundPreciseAllocation->isNewlyAllocated()) << 4;
+            }
+            bool cellIsProperlyAligned = foundPreciseAllocation->cell() == cell;
+            variousState |= static_cast<uint64_t>(cellIsProperlyAligned) << 5;
+        }
     }
 
     CRASH_WITH_INFO(cellAddress, headerWord, zapReasonAndMore, subspaceHash, cellSize, foundBlock, variousState);
