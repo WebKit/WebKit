@@ -76,14 +76,13 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     }
 
     // 2. Layout each table cell (and compute row height as well).
-    auto& columnList = columnsContext.columns();
     auto& cellList = grid.cells();
     ASSERT(!cellList.isEmpty());
     for (auto& cell : cellList) {
         auto& cellLayoutBox = cell->tableCellBox;
-        layoutTableCellBox(cellLayoutBox, columnList.at(cell->position.x()), invalidationState, horizontalConstraints);
+        layoutTableCellBox(*cell, invalidationState, horizontalConstraints);
         // FIXME: Add support for column and row spanning and this requires a 2 pass layout.
-        auto& row = grid.rows().at(cell->position.y());
+        auto& row = grid.rows().at(cell->startRow());
         row.setLogicalHeight(std::max(row.logicalHeight(), geometryForBox(cellLayoutBox).marginBoxHeight()));
     }
     // This is after the second pass when cell heights are fully computed.
@@ -99,8 +98,9 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     setComputedGeometryForRows();
 }
 
-void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const TableGrid::Column& column, InvalidationState& invalidationState, const HorizontalConstraints& horizontalConstraints)
+void TableFormattingContext::layoutTableCellBox(const TableGrid::CellInfo& cell, InvalidationState& invalidationState, const HorizontalConstraints& horizontalConstraints)
 {
+    auto& cellLayoutBox = cell.tableCellBox;
     computeBorderAndPadding(cellLayoutBox, horizontalConstraints);
     // Margins do not apply to internal table elements.
     auto& cellDisplayBox = formattingState().displayBox(cellLayoutBox);
@@ -108,7 +108,17 @@ void TableFormattingContext::layoutTableCellBox(const Box& cellLayoutBox, const 
     cellDisplayBox.setHorizontalComputedMargin({ });
     // Don't know the actual position yet.
     cellDisplayBox.setTopLeft({ });
-    cellDisplayBox.setContentBoxWidth(column.logicalWidth() - cellDisplayBox.horizontalMarginBorderAndPadding());
+    auto contentWidth = [&] {
+        auto& grid = formattingState().tableGrid();
+        auto& columnList = grid.columnsContext().columns();
+        auto logicalWidth = LayoutUnit { };
+        for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
+            logicalWidth += columnList.at(columnIndex).logicalWidth();
+        // No column spacing when spanning.
+        logicalWidth += (cell.columnSpan() - 1) * grid.horizontalSpacing();
+        return logicalWidth - cellDisplayBox.horizontalMarginBorderAndPadding();
+    }();
+    cellDisplayBox.setContentBoxWidth(contentWidth);
 
     ASSERT(cellLayoutBox.establishesBlockFormattingContext());
     if (is<ContainerBox>(cellLayoutBox) && downcast<ContainerBox>(cellLayoutBox).hasInFlowOrFloatingChild()) {
@@ -130,8 +140,8 @@ void TableFormattingContext::positionTableCells()
     auto& columnList = grid.columnsContext().columns();
     for (auto& cell : grid.cells()) {
         auto& cellDisplayBox = formattingState().displayBox(cell->tableCellBox);
-        cellDisplayBox.setTop(rowList.at(cell->position.y()).logicalTop());
-        cellDisplayBox.setLeft(columnList.at(cell->position.x()).logicalLeft());
+        cellDisplayBox.setTop(rowList.at(cell->startRow()).logicalTop());
+        cellDisplayBox.setLeft(columnList.at(cell->startColumn()).logicalLeft());
     }
 }
 

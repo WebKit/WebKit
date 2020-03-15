@@ -142,11 +142,11 @@ void TableGrid::appendCell(const Box& tableCellBox)
             initialSlotPosition.move(1, 0);
         }
     }
-    auto cellInfo = makeUnique<CellInfo>(tableCellBox, initialSlotPosition, CellSize { rowSpan, columnSpan });
+    auto cellInfo = makeUnique<CellInfo>(tableCellBox, initialSlotPosition, CellSize { columnSpan, rowSpan });
     // Row and column spanners create additional slots.
     for (int row = 1; row <= rowSpan; ++row) {
         for (int column = 1; column <= columnSpan; ++column) {
-            auto position = SlotPosition { initialSlotPosition.x() + row - 1, initialSlotPosition.y() + column - 1 };
+            auto position = SlotPosition { initialSlotPosition.x() + column - 1, initialSlotPosition.y() + row - 1 };
             ASSERT(!m_slotMap.contains(position));
             m_slotMap.add(position, makeUnique<SlotInfo>(*cellInfo));
         }
