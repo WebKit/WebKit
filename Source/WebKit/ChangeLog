@@ -1,3 +1,20 @@
+2020-03-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Add missing checks needed for AppBound Quirk
+        https://bugs.webkit.org/show_bug.cgi?id=209117
+        <rdar://problem/60460097>
+
+        Reviewed by John Wilander.
+
+        The checks for the 'NeedsInAppBrowserPrivacyQuirks' flag added in r258101 was incomplete.
+        These changes let the WebFrameLoaderClient report the quirk state to WebCore code. 
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::needsInAppBrowserPrivacyQuirks): Added.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::needsInAppBrowserPrivacyQuirks const): Added.
+
 2020-03-10  Darin Adler  <darin@apple.com>
 
         Change all return values in TextIterator header from live ranges to SimpleRange

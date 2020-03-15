@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1300,7 +1300,8 @@ public:
     NavigatingToAppBoundDomain isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
     NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain() const { return m_hasNavigatedAwayFromAppBoundDomain; }
     void setHasNavigatedAwayFromAppBoundDomain(NavigatedAwayFromAppBoundDomain navigatedAwayFromAppBoundDomain) { m_hasNavigatedAwayFromAppBoundDomain = navigatedAwayFromAppBoundDomain; }
-
+    bool needsInAppBrowserPrivacyQuirks() const { return m_needsInAppBrowserPrivacyQuirks; }
+    
     bool shouldUseRemoteRenderingFor(WebCore::RenderingPurpose);
     
 private:

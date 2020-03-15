@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1935,6 +1935,16 @@ bool WebFrameLoaderClient::hasNavigatedAwayFromAppBoundDomain()
     
     return webPage->hasNavigatedAwayFromAppBoundDomain() == NavigatedAwayFromAppBoundDomain::Yes;
 }
+
+bool WebFrameLoaderClient::needsInAppBrowserPrivacyQuirks() const
+{
+    auto* webPage = m_frame->page();
+    if (!webPage)
+        return false;
+    
+    return webPage->needsInAppBrowserPrivacyQuirks();
+}
+
 
 } // namespace WebKit
 

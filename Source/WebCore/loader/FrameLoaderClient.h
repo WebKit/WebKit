@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -380,7 +380,7 @@ public:
     virtual AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return AllowsContentJavaScript::Yes; }
 
     virtual bool hasNavigatedAwayFromAppBoundDomain() { return false; }
-
+    virtual bool needsInAppBrowserPrivacyQuirks() const { return false; }
 };
 
 } // namespace WebCore

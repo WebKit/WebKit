@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -576,7 +576,7 @@ JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperW
 
 ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)
 {
-    if (m_frame.loader().client().hasNavigatedAwayFromAppBoundDomain())
+    if (m_frame.loader().client().hasNavigatedAwayFromAppBoundDomain() && !m_frame.loader().client().needsInAppBrowserPrivacyQuirks())
         return jsNull();
 
     UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
