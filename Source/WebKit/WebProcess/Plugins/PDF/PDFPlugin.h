@@ -130,8 +130,11 @@ public:
     PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
     WebCore::AXObjectCache* axObjectCache() const;
 
+    void ensureDataBufferLength(uint64_t length);
+
 #if HAVE(INCREMENTAL_PDF_APIS)
     void getResourceBytesAtPosition(size_t count, off_t position, CompletionHandler<void(const uint8_t*, size_t count)>&&);
+    size_t getResourceBytesAtPositionMainThread(void* buffer, off_t position, size_t count);
 #ifndef NDEBUG
     void pdfLog(const String& event);
     size_t incrementThreadsWaitingOnCallback() { return ++m_threadsWaitingOnCallback; }
@@ -377,6 +380,7 @@ private:
     ByteRangeRequest* byteRangeRequestForLoader(WebCore::NetscapePlugInStreamLoader&);
     void forgetLoader(WebCore::NetscapePlugInStreamLoader&);
     void cancelAndForgetLoader(WebCore::NetscapePlugInStreamLoader&);
+    void maybeClearHighLatencyDataProviderFlag();
 
     RetainPtr<PDFDocument> m_backgroundThreadDocument;
     RefPtr<Thread> m_pdfThread;

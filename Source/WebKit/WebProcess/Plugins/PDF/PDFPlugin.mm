@@ -98,6 +98,7 @@
 @interface PDFDocument ()
 -(instancetype)initWithProvider:(CGDataProviderRef)dataProvider;
 -(void)preloadDataOfPagesInRange:(NSRange)range onQueue:(dispatch_queue_t)queue completion:(void (^)(NSIndexSet* loadedPageIndexes))completionBlock;
+@property (readwrite, nonatomic) BOOL hasHighLatencyDataProvider;
 @end
 #endif
 
@@ -693,7 +694,12 @@ void PDFPlugin::verboseLog()
 
 static size_t dataProviderGetBytesAtPositionCallback(void* info, void* buffer, off_t position, size_t count)
 {
-    ASSERT(!isMainThread());
+    if (isMainThread()) {
+#if !LOG_DISABLED
+        ((PDFPlugin*)info)->pdfLog(makeString("Handling request for ", count, " bytes at position ", position, " synchronously on the main thread"));
+#endif
+        return ((PDFPlugin*)info)->getResourceBytesAtPositionMainThread(buffer, position, count);
+    }
 
 #if !LOG_DISABLED
     Ref<PDFPlugin> debugPluginRef = *((PDFPlugin*)info);
@@ -777,6 +783,15 @@ static void dataProviderReleaseInfoCallback(void* info)
     adoptRef((PDFPlugin*)info);
 }
 
+void PDFPlugin::maybeClearHighLatencyDataProviderFlag()
+{
+    if (!m_pdfDocument || !m_documentFinishedLoading)
+        return;
+
+    if ([m_pdfDocument.get() respondsToSelector:@selector(setHasHighLatencyDataProvider:)])
+        [m_pdfDocument.get() setHasHighLatencyDataProvider:NO];
+}
+
 void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
 {
     CGDataProviderDirectAccessRangesCallbacks dataProviderCallbacks {
@@ -819,6 +834,25 @@ void PDFPlugin::unconditionalCompleteOutstandingRangeRequests()
     for (auto& request : m_outstandingByteRangeRequests.values())
         request.completeUnconditionally(*this);
     m_outstandingByteRangeRequests.clear();
+}
+
+size_t PDFPlugin::getResourceBytesAtPositionMainThread(void* buffer, off_t position, size_t count)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_documentFinishedLoading);
+    ASSERT(position >= 0);
+
+    auto cfLength = CFDataGetLength(m_data.get());
+    ASSERT(cfLength >= 0);
+
+    if ((unsigned)position + count > (unsigned)cfLength) {
+        // We could return partial data, but this method should only be called
+        // once the entire buffer is known, and therefore PDFKit should only
+        // be asking for valid ranges.
+        return 0;
+    }
+    memcpy(buffer, CFDataGetBytePtr(m_data.get()) + position, count);
+    return count;
 }
 
 void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, CompletionHandler<void(const uint8_t*, size_t)>&& completionHandler)
@@ -924,22 +958,16 @@ void PDFPlugin::ByteRangeRequest::completeWithAccumulatedData(PDFPlugin& plugin)
 
     m_completionHandler(m_accumulatedData.data(), m_accumulatedData.size());
 
-    if (m_streamLoader)
-        plugin.forgetLoader(*m_streamLoader);
-
     // Fold this data into the main data buffer so that if something in its range is requested again (which happens quite often)
     // we do not need to hit the network layer again.
-
-    auto length = CFDataGetLength(plugin.m_data.get());
-    CFIndex targetSize = m_position + m_accumulatedData.size();
-    auto delta = targetSize - length;
-    if (delta > 0)
-        CFDataIncreaseLength(plugin.m_data.get(), delta);
-
+    plugin.ensureDataBufferLength(m_position + m_accumulatedData.size());
     if (m_accumulatedData.size()) {
         memcpy(CFDataGetMutableBytePtr(plugin.m_data.get()) + m_position, m_accumulatedData.data(), m_accumulatedData.size());
         plugin.m_completedRanges.add({ m_position, m_position + m_accumulatedData.size() - 1});
     }
+
+    if (m_streamLoader)
+        plugin.forgetLoader(*m_streamLoader);
 }
 
 bool PDFPlugin::ByteRangeRequest::maybeComplete(PDFPlugin& plugin)
@@ -1022,7 +1050,7 @@ void PDFPlugin::didFail(NetscapePlugInStreamLoader* loader, const ResourceError&
             m_outstandingByteRangeRequests.remove(identifier);
     }
 
-    cancelAndForgetLoader(*loader);
+    forgetLoader(*loader);
 }
 
 void PDFPlugin::didFinishLoading(NetscapePlugInStreamLoader* loader)
@@ -1415,11 +1443,12 @@ void PDFPlugin::documentDataDidFinishLoading()
 
 #if HAVE(INCREMENTAL_PDF_APIS)
 #if !LOG_DISABLED
-    pdfLog(makeString("PDF document finished loading with a total of %llu bytes", m_streamedBytes));
+    pdfLog(makeString("PDF document finished loading with a total of ", m_streamedBytes, " bytes"));
 #endif
     if (m_incrementalPDFLoadingEnabled) {
         // At this point we know all data for the document, and therefore we know how to answer any outstanding range requests.
         unconditionalCompleteOutstandingRangeRequests();
+        maybeClearHighLatencyDataProviderFlag();
     } else
 #endif
     {
@@ -1434,6 +1463,10 @@ void PDFPlugin::installPDFDocument()
 {
     ASSERT(m_pdfDocument);
     ASSERT(isMainThread());
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+    maybeClearHighLatencyDataProviderFlag();
+#endif
 
     updatePageAndDeviceScaleFactors();
 
@@ -1514,12 +1547,23 @@ void PDFPlugin::manualStreamDidReceiveResponse(const URL& responseURL, uint32_t 
         m_isPostScript = true;
 }
 
+void PDFPlugin::ensureDataBufferLength(uint64_t targetLength)
+{
+    ASSERT(m_data);
+
+    auto currentLength = CFDataGetLength(m_data.get());
+    ASSERT(currentLength >= 0);
+    if (targetLength > (uint64_t)currentLength)
+        CFDataIncreaseLength(m_data.get(), targetLength - currentLength);
+}
+
 void PDFPlugin::manualStreamDidReceiveData(const char* bytes, int length)
 {
     if (!m_data)
         m_data = adoptCF(CFDataCreateMutable(0, 0));
 
-    CFDataAppendBytes(m_data.get(), reinterpret_cast<const UInt8*>(bytes), length);
+    ensureDataBufferLength(m_streamedBytes + length);
+    memcpy(CFDataGetMutableBytePtr(m_data.get()) + m_streamedBytes, bytes, length);
     m_streamedBytes += length;
 
 #if HAVE(INCREMENTAL_PDF_APIS)

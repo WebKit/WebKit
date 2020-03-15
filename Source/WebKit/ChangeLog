@@ -1,3 +1,33 @@
+2020-03-14  Brady Eidson  <beidson@apple.com>
+
+        Fix the "deliver cached ranges" logic in PDFPlugin (and other small cleanups)
+        https://bugs.webkit.org/show_bug.cgi?id=209097
+
+        Reviewed by Tim Hatcher.
+
+        Streaming in data always appended to the buffer instead of first growing the buffer.
+        This wasn't noticed earlier because we often did not grow the buffer for successful range request completion.
+        But now we often do!
+        
+        So this cleans that all up.
+        
+        At the same time it revealed other interactions with PDFKit that force us to handle data requests on the main
+        thread after the document load is complete - Which is fine!
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::dataProviderGetBytesAtPositionCallback): If on the main thread (and the document load is complete)
+          handle the request directly!
+        (WebKit::PDFPlugin::getResourceBytesAtPositionMainThread):
+        (WebKit::PDFPlugin::ByteRangeRequest::completeWithAccumulatedData):
+        (WebKit::PDFPlugin::ensureDataBufferLength):
+        (WebKit::PDFPlugin::didFail):
+        (WebKit::PDFPlugin::maybeClearHighLatencyDataProviderFlag):
+        (WebKit::PDFPlugin::documentDataDidFinishLoading):
+        (WebKit::PDFPlugin::installPDFDocument):
+        (WebKit::PDFPlugin::manualStreamDidReceiveData): Grow the buffer instead of append.
+
+
 2020-03-14  Brent Fulgham  <bfulgham@apple.com>
 
         Add missing checks needed for AppBound Quirk
