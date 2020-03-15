@@ -1,3 +1,47 @@
+2020-03-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Should not use variable-length-array (VLA)
+        https://bugs.webkit.org/show_bug.cgi?id=209043
+
+        Reviewed by Mark Lam.
+
+        This patch disables variable-length-array (VLA). If this feature uses user-input, user can
+        control the stack height consumed by C++ code. This patch avoids using VLA. To achieve that,
+
+            1. We set `-Wvla` warning option to trigger warnings if it is used.
+            2. Introduce MarkedJSValueRefArray for API. This replaces `JSValueRef arguments[variableLength]` use case.
+               MarkedJSValueRefArray registers itself to JSC GC so that GC can mark it as a strong root.
+
+        * API/JSContext.mm:
+        (+[JSContext currentArguments]):
+        * API/JSValue.mm:
+        (-[JSValue callWithArguments:]):
+        (-[JSValue constructWithArguments:]):
+        (-[JSValue invokeMethod:withArguments:]):
+        * API/MarkedJSValueRefArray.cpp: Added.
+        (JSC::MarkedJSValueRefArray::MarkedJSValueRefArray):
+        (JSC::MarkedJSValueRefArray::~MarkedJSValueRefArray):
+        (JSC::MarkedJSValueRefArray::visitAggregate):
+        * API/MarkedJSValueRefArray.h: Added.
+        * API/tests/minidom.c:
+        (print):
+        * API/tests/testapi.cpp:
+        (TestAPI::markedJSValueArrayAndGC):
+        (testCAPIViaCpp):
+        * Configurations/Base.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        (JSC::Heap::addMarkedJSValueRefArray):
+        * heap/Heap.h:
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::activeWeakSetsBegin): Deleted.
+        (JSC::MarkedSpace::activeWeakSetsEnd): Deleted.
+        (JSC::MarkedSpace::newActiveWeakSetsBegin): Deleted.
+        (JSC::MarkedSpace::newActiveWeakSetsEnd): Deleted.
+        * runtime/ArgList.h:
+
 2020-03-14  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Fix windows build by making configSizeToProtect stay 4KB.

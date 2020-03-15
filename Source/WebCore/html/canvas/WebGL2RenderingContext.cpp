@@ -393,8 +393,8 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
 #if USE(OPENGL_ES)
     m_context->getInternalformativ(target, internalformat, GraphicsContextGL::NUM_SAMPLE_COUNTS, 1, &numValues);
 
-    GCGLint params[numValues];
-    m_context->getInternalformativ(target, internalformat, pname, numValues, params);
+    Vector<GCGLint> params(numValues);
+    m_context->getInternalformativ(target, internalformat, pname, numValues, params.data());
 #else
     // On desktop OpenGL 4.1 or below we must emulate glGetInternalformativ.
 
@@ -423,12 +423,12 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
     // Since multisampling is not supported for signed and unsigned integer internal formats,
     // the value of GL_NUM_SAMPLE_COUNTS will be zero for such formats.
     numValues = isIntegerFormat(internalformat) ? 0 : samples.size();
-    GCGLint params[numValues];
+    Vector<GCGLint> params(numValues);
     for (size_t i = 0; i < static_cast<size_t>(numValues); ++i)
         params[i] = samples[i];
 #endif
 
-    return Int32Array::tryCreate(params, numValues);
+    return Int32Array::tryCreate(params.data(), numValues);
 }
 
 void WebGL2RenderingContext::invalidateFramebuffer(GCGLenum, const Vector<GCGLenum>&)

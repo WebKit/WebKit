@@ -62,8 +62,8 @@ static Optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displayID)
         return WTF::nullopt;
     }
 
-    CGDirectDisplayID activeDisplays[displayCount];
-    err = CGGetActiveDisplayList(displayCount, &(activeDisplays[0]), &displayCount);
+    Vector<CGDirectDisplayID> activeDisplays(displayCount);
+    err = CGGetActiveDisplayList(displayCount, activeDisplays.data(), &displayCount);
     if (err) {
         RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get the active display list", static_cast<int>(err));
         return WTF::nullopt;
@@ -319,8 +319,8 @@ void ScreenDisplayCaptureSourceMac::screenCaptureDevices(Vector<CaptureDevice>& 
         return;
     }
 
-    CGDirectDisplayID activeDisplays[displayCount];
-    err = CGGetActiveDisplayList(displayCount, &(activeDisplays[0]), &displayCount);
+    Vector<CGDirectDisplayID> activeDisplays(displayCount);
+    err = CGGetActiveDisplayList(displayCount, activeDisplays.data(), &displayCount);
     if (err) {
         RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get the active display list", (int)err);
         return;

@@ -1849,6 +1849,7 @@
 		E3C79CAB1DB9A4DC00D1ECA4 /* DOMJITEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C79CAA1DB9A4D600D1ECA4 /* DOMJITEffect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C8ED4323A1DBCB00131958 /* IsoInlinedHeapCellType.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C8ED4223A1DBC500131958 /* IsoInlinedHeapCellType.h */; };
 		E3D239C91B829C1C00BBEF67 /* JSModuleEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3D3515F241B89D7008DC16E /* MarkedJSValueRefArray.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D3515D241B89CE008DC16E /* MarkedJSValueRefArray.h */; };
 		E3D877741E65C0A000BE945A /* BytecodeDumper.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D877721E65C08900BE945A /* BytecodeDumper.h */; };
 		E3EE137621FBD43500D83C4B /* ErrorType.h in Headers */ = {isa = PBXBuildFile; fileRef = E3EE137421FBD43400D83C4B /* ErrorType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A7F1ECF13EE00978D99 /* SnippetSlowPathCalls.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7E1ECF13E500978D99 /* SnippetSlowPathCalls.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5026,6 +5027,8 @@
 		E3D264281D38C042000BE174 /* BytecodeGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeGraph.h; sourceTree = "<group>"; };
 		E3D264291D38C042000BE174 /* BytecodeRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BytecodeRewriter.cpp; sourceTree = "<group>"; };
 		E3D2642A1D38C042000BE174 /* BytecodeRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeRewriter.h; sourceTree = "<group>"; };
+		E3D3515D241B89CE008DC16E /* MarkedJSValueRefArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarkedJSValueRefArray.h; sourceTree = "<group>"; };
+		E3D3515E241B89CF008DC16E /* MarkedJSValueRefArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedJSValueRefArray.cpp; sourceTree = "<group>"; };
 		E3D877711E65C08900BE945A /* BytecodeDumper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BytecodeDumper.cpp; sourceTree = "<group>"; };
 		E3D877721E65C08900BE945A /* BytecodeDumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeDumper.h; sourceTree = "<group>"; };
 		E3EE137421FBD43400D83C4B /* ErrorType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorType.h; sourceTree = "<group>"; };
@@ -6411,6 +6414,8 @@
 				7A9774A7206B82C9008D03D0 /* JSWeakValue.h */,
 				86E3C60C167BAB87006D760A /* JSWrapperMap.h */,
 				86E3C60B167BAB87006D760A /* JSWrapperMap.mm */,
+				E3D3515E241B89CF008DC16E /* MarkedJSValueRefArray.cpp */,
+				E3D3515D241B89CE008DC16E /* MarkedJSValueRefArray.h */,
 				86F3EEB9168CCF750077B92A /* ObjCCallbackFunction.h */,
 				86F3EEBA168CCF750077B92A /* ObjCCallbackFunction.mm */,
 				86F3EEB616855A5B0077B92A /* ObjcRuntimeExtras.h */,
@@ -9963,6 +9968,7 @@
 				142D6F0913539A2800B02E86 /* MarkedBlock.h in Headers */,
 				0F7C5FB81D888A0C0044F5E2 /* MarkedBlockInlines.h in Headers */,
 				141448CB13A176EC00F5BA1A /* MarkedBlockSet.h in Headers */,
+				E3D3515F241B89D7008DC16E /* MarkedJSValueRefArray.h in Headers */,
 				14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */,
 				0F7DF1351E2970DC0095951B /* MarkedSpaceInlines.h in Headers */,
 				0F660E381E0517BB0031462C /* MarkingConstraint.h in Headers */,

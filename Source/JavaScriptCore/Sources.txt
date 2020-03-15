@@ -40,6 +40,7 @@ API/JSValueRef.cpp
 API/JSWeakObjectMapRefPrivate.cpp
 API/JSWeakPrivate.cpp
 API/JSWeakValue.cpp
+API/MarkedJSValueRefArray.cpp
 API/OpaqueJSString.cpp
 
 assembler/AbstractMacroAssembler.cpp

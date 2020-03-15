@@ -294,12 +294,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     touchCount = std::min(touchCount, HIDMaxTouchCount);
 
-    CGPoint locations[touchCount];
+    Vector<CGPoint> locations(touchCount);
 
     for (NSUInteger index = 0; index < touchCount; ++index)
         locations[index] = location;
     
-    [self touchDownAtPoints:locations touchCount:touchCount];
+    [self touchDownAtPoints:locations.data() touchCount:touchCount];
 }
 
 - (void)touchDown:(CGPoint)location
@@ -327,12 +327,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     touchCount = std::min(touchCount, HIDMaxTouchCount);
 
-    CGPoint locations[touchCount];
+    Vector<CGPoint> locations(touchCount);
 
     for (NSUInteger index = 0; index < touchCount; ++index)
         locations[index] = location;
     
-    [self liftUpAtPoints:locations touchCount:touchCount];
+    [self liftUpAtPoints:locations.data() touchCount:touchCount];
 }
 
 - (void)liftUp:(CGPoint)location
@@ -344,8 +344,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     touchCount = std::min(touchCount, HIDMaxTouchCount);
 
-    CGPoint startLocations[touchCount];
-    CGPoint nextLocations[touchCount];
+    Vector<CGPoint> startLocations(touchCount);
+    Vector<CGPoint> nextLocations(touchCount);
 
     CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
     CFTimeInterval elapsed = 0;
@@ -361,7 +361,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
             nextLocations[i] = calculateNextCurveLocation(startLocations[i], newLocations[i], interval);
         }
-        [self _updateTouchPoints:nextLocations count:touchCount];
+        [self _updateTouchPoints:nextLocations.data() count:touchCount];
 
         delayBetweenMove(eventIndex++, elapsed);
     }

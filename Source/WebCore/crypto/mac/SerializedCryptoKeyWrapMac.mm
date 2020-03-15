@@ -220,8 +220,9 @@ bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint
     wrappedKEK.shrink(wrappedKEKSize);
 
     Vector<uint8_t> encryptedKey(key.size());
-    size_t tagLength = 16;
-    uint8_t tag[tagLength];
+    constexpr size_t maxTagLength = 16;
+    size_t tagLength = maxTagLength;
+    uint8_t tag[maxTagLength];
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     status = CCCryptorGCM(kCCEncrypt, kCCAlgorithmAES128, kek.data(), kek.size(),
@@ -287,8 +288,9 @@ bool unwrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<ui
         return false;
     kek.shrink(kekSize);
 
-    size_t tagLength = 16;
-    uint8_t actualTag[tagLength];
+    constexpr size_t maxTagLength = 16;
+    size_t tagLength = maxTagLength;
+    uint8_t actualTag[maxTagLength];
 
     key.resize(encryptedKey.size());
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN

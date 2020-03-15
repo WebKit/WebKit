@@ -232,10 +232,10 @@
     if (!entry->currentArguments) {
         JSContext *context = [JSContext currentContext];
         size_t count = entry->argumentCount;
-        JSValue * argumentArray[count];
-        for (size_t i =0; i < count; ++i)
-            argumentArray[i] = [JSValue valueWithJSValueRef:entry->arguments[i] inContext:context];
-        entry->currentArguments = [[NSArray alloc] initWithObjects:argumentArray count:count];
+        NSMutableArray *arguments = [[NSMutableArray alloc] initWithCapacity:count];
+        for (size_t i = 0; i < count; ++i)
+            [arguments setObject:[JSValue valueWithJSValueRef:entry->arguments[i] inContext:context] atIndexedSubscript:i];
+        entry->currentArguments = arguments;
     }
 
     return entry->currentArguments;

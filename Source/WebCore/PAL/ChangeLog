@@ -1,3 +1,12 @@
+2020-03-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Should not use variable-length-array (VLA)
+        https://bugs.webkit.org/show_bug.cgi?id=209043
+
+        Reviewed by Mark Lam.
+
+        * Configurations/Base.xcconfig:
+
 2020-03-12  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] _AXSApplicationAccessibilityEnabled should not be called

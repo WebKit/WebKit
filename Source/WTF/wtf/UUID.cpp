@@ -70,8 +70,9 @@ String bootSessionUUIDString()
     static LazyNeverDestroyed<String> bootSessionUUID;
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
-        size_t uuidLength = 37;
-        char uuid[uuidLength];
+        constexpr size_t maxUUIDLength = 37;
+        char uuid[maxUUIDLength];
+        size_t uuidLength = maxUUIDLength;
         if (sysctlbyname("kern.bootsessionuuid", uuid, &uuidLength, nullptr, 0))
             return;
         bootSessionUUID.construct(static_cast<const char*>(uuid), uuidLength - 1);

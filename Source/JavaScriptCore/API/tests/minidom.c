@@ -88,10 +88,11 @@ static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef th
     if (argumentCount > 0) {
         JSStringRef string = JSValueToStringCopy(context, arguments[0], exception);
         size_t numChars = JSStringGetMaximumUTF8CStringSize(string);
-        char stringUTF8[numChars];
+        char* stringUTF8 = (char*)malloc(numChars);
         JSStringGetUTF8CString(string, stringUTF8, numChars);
         printf("%s\n", stringUTF8);
         JSStringRelease(string);
+        free(stringUTF8);
     }
     
     return JSValueMakeUndefined(context);

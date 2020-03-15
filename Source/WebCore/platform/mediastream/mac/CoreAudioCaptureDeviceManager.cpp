@@ -167,8 +167,8 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(NotifyIfDevicesHa
     }
 
     size_t deviceCount = dataSize / sizeof(AudioObjectID);
-    AudioObjectID deviceIDs[deviceCount];
-    err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, nullptr, &dataSize, deviceIDs);
+    Vector<AudioObjectID> deviceIDs(deviceCount);
+    err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &address, 0, nullptr, &dataSize, deviceIDs.data());
     if (err) {
         LOG(Media, "CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(%p) failed to get device list %d (%.4s)", this, (int)err, (char*)&err);
         return;

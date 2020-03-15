@@ -58,6 +58,7 @@
 #include "JSWebAssemblyCodeBlock.h"
 #include "MachineStackMarker.h"
 #include "MarkStackMergingConstraint.h"
+#include "MarkedJSValueRefArray.h"
 #include "MarkedSpaceInlines.h"
 #include "MarkingConstraintSet.h"
 #include "PreventCollectionScope.h"
@@ -2758,6 +2759,10 @@ void Heap::addCoreConstraints()
                 MarkedArgumentBuffer::markLists(slotVisitor, *m_markListSet);
             }
 
+            m_markedJSValueRefArrays.forEach([&] (MarkedJSValueRefArray* array) {
+                array->visitAggregate(slotVisitor);
+            });
+
             {
                 SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::VMExceptions);
                 slotVisitor.appendUnbarriered(m_vm.exception());
@@ -3000,6 +3005,12 @@ void Heap::setBonusVisitorTask(RefPtr<SharedTask<void(SlotVisitor&)>> task)
     auto locker = holdLock(m_markingMutex);
     m_bonusVisitorTask = task;
     m_markingConditionVariable.notifyAll();
+}
+
+
+void Heap::addMarkedJSValueRefArray(MarkedJSValueRefArray* array)
+{
+    m_markedJSValueRefArrays.append(array);
 }
 
 void Heap::runTaskInParallel(RefPtr<SharedTask<void(SlotVisitor&)>> task)

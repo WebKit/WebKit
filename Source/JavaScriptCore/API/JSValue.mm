@@ -36,6 +36,7 @@
 #import "JSValueInternal.h"
 #import "JSValuePrivate.h"
 #import "JSWrapperMap.h"
+#import "MarkedJSValueRefArray.h"
 #import "ObjcRuntimeExtras.h"
 #import "JSCInlines.h"
 #import "JSCJSValue.h"
@@ -472,8 +473,12 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
 - (JSValue *)callWithArguments:(NSArray *)argumentArray
 {
+    JSC::JSGlobalObject* globalObject = toJS([_context JSGlobalContextRef]);
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder locker(vm);
+
     NSUInteger argumentCount = [argumentArray count];
-    JSValueRef arguments[argumentCount];
+    JSC::MarkedJSValueRefArray arguments([_context JSGlobalContextRef], argumentCount);
     for (unsigned i = 0; i < argumentCount; ++i)
         arguments[i] = objectToValue(_context, [argumentArray objectAtIndex:i]);
 
@@ -482,7 +487,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     if (exception)
         return [_context valueFromNotifyException:exception];
 
-    JSValueRef result = JSObjectCallAsFunction([_context JSGlobalContextRef], object, 0, argumentCount, arguments, &exception);
+    JSValueRef result = JSObjectCallAsFunction([_context JSGlobalContextRef], object, 0, argumentCount, arguments.data(), &exception);
     if (exception)
         return [_context valueFromNotifyException:exception];
 
@@ -491,8 +496,12 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
 - (JSValue *)constructWithArguments:(NSArray *)argumentArray
 {
+    JSC::JSGlobalObject* globalObject = toJS([_context JSGlobalContextRef]);
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder locker(vm);
+
     NSUInteger argumentCount = [argumentArray count];
-    JSValueRef arguments[argumentCount];
+    JSC::MarkedJSValueRefArray arguments([_context JSGlobalContextRef], argumentCount);
     for (unsigned i = 0; i < argumentCount; ++i)
         arguments[i] = objectToValue(_context, [argumentArray objectAtIndex:i]);
 
@@ -501,7 +510,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     if (exception)
         return [_context valueFromNotifyException:exception];
 
-    JSObjectRef result = JSObjectCallAsConstructor([_context JSGlobalContextRef], object, argumentCount, arguments, &exception);
+    JSObjectRef result = JSObjectCallAsConstructor([_context JSGlobalContextRef], object, argumentCount, arguments.data(), &exception);
     if (exception)
         return [_context valueFromNotifyException:exception];
 
@@ -510,8 +519,12 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
 - (JSValue *)invokeMethod:(NSString *)method withArguments:(NSArray *)arguments
 {
+    JSC::JSGlobalObject* globalObject = toJS([_context JSGlobalContextRef]);
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder locker(vm);
+
     NSUInteger argumentCount = [arguments count];
-    JSValueRef argumentArray[argumentCount];
+    JSC::MarkedJSValueRefArray argumentArray([_context JSGlobalContextRef], argumentCount);
     for (unsigned i = 0; i < argumentCount; ++i)
         argumentArray[i] = objectToValue(_context, [arguments objectAtIndex:i]);
 
@@ -529,7 +542,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     if (exception)
         return [_context valueFromNotifyException:exception];
 
-    JSValueRef result = JSObjectCallAsFunction([_context JSGlobalContextRef], object, thisObject, argumentCount, argumentArray, &exception);
+    JSValueRef result = JSObjectCallAsFunction([_context JSGlobalContextRef], object, thisObject, argumentCount, argumentArray.data(), &exception);
     if (exception)
         return [_context valueFromNotifyException:exception];
 

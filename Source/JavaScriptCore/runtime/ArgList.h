@@ -36,7 +36,7 @@ class MarkedArgumentBuffer : public RecordOverflow {
 
 public:
     using Base = RecordOverflow;
-    static const size_t inlineCapacity = 8;
+    static constexpr size_t inlineCapacity = 8;
     typedef HashSet<MarkedArgumentBuffer*> ListSet;
 
     // Constructor for a read-write list, to which you may append values.
