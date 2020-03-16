@@ -122,6 +122,9 @@ public:
 #if USE(CG)
     Path(RetainPtr<CGMutablePathRef>&&);
 #endif
+#if USE(CAIRO)
+    explicit Path(RefPtr<cairo_t>&&);
+#endif
     WEBCORE_EXPORT ~Path();
 
     WEBCORE_EXPORT Path(const Path&);
@@ -192,10 +195,8 @@ public:
     PlatformPathPtr platformPath() const { return m_path; }
 #endif
 
+#if !USE(CAIRO)
     // ensurePlatformPath() will allocate a PlatformPath if it has not yet been and will never return null.
-#if USE(CAIRO)
-    cairo_t* ensureCairoPath();
-#else
     WEBCORE_EXPORT PlatformPathPtr ensurePlatformPath();
 #endif
 
@@ -257,6 +258,11 @@ private:
 #endif
 
 #if USE(CAIRO)
+    cairo_t* ensureCairoPath();
+    void appendElement(PathElement::Type, Vector<FloatPoint, 3>&&);
+#endif
+
+#if USE(CAIRO)
     RefPtr<cairo_t> m_path;
 #else
     mutable PlatformPathStorageType m_path;
@@ -273,6 +279,9 @@ private:
 #endif
 #if USE(CG)
     mutable bool m_copyPathBeforeMutation { false };
+#endif
+#if USE(CAIRO)
+    Optional<Vector<PathElement>> m_elements;
 #endif
 };
 

@@ -1,3 +1,21 @@
+2020-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Cairo][SVG] marker-mid isn't shown on a joint of rectilinearly connected line-to path segments
+        https://bugs.webkit.org/show_bug.cgi?id=113849
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove svg/custom/local-url-reference-marker.html from expectations and rebaseline other tests.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/text-path-01-b-manual-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/text-path-02-b-manual-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/marker-008-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001-expected.txt:
+        * platform/gtk/svg/text/text-path-01-b-expected.png:
+        * platform/gtk/svg/text/text-path-01-b-expected.txt:
+        * platform/wpe/TestExpectations:
+
 2020-03-16  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         [Gtk] Update pixel test baseline in svg/ subdirectory

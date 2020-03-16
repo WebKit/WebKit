@@ -43,6 +43,7 @@
 #include "ImageBuffer.h"
 #include "Pattern.h"
 #include "PlatformContextCairo.h"
+#include "RefPtrCairo.h"
 #include "ShadowBlur.h"
 
 namespace WebCore {
@@ -81,19 +82,18 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
 
 Path Font::platformPathForGlyph(Glyph glyph) const
 {
-    Path path;
-    cairo_t* cr = path.ensureCairoPath();
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(adoptRef(cairo_image_surface_create(CAIRO_FORMAT_A8, 1, 1)).get()));
 
     cairo_glyph_t cairoGlyph = { glyph, 0, 0 };
-    cairo_set_scaled_font(cr, platformData().scaledFont());
-    cairo_glyph_path(cr, &cairoGlyph, 1);
+    cairo_set_scaled_font(cr.get(), platformData().scaledFont());
+    cairo_glyph_path(cr.get(), &cairoGlyph, 1);
 
     float syntheticBoldOffset = this->syntheticBoldOffset();
     if (syntheticBoldOffset) {
-        cairo_translate(cr, syntheticBoldOffset, 0);
-        cairo_glyph_path(cr, &cairoGlyph, 1);
+        cairo_translate(cr.get(), syntheticBoldOffset, 0);
+        cairo_glyph_path(cr.get(), &cairoGlyph, 1);
     }
-    return path;
+    return Path(WTFMove(cr));
 }
 
 } // namespace WebCore

@@ -39,7 +39,15 @@
 
 namespace WebCore {
 
-Path::Path() = default;
+Path::Path()
+    : m_elements(Vector<PathElement>())
+{
+}
+
+Path::Path(RefPtr<cairo_t>&& path)
+    : m_path(WTFMove(path))
+{
+}
 
 Path::~Path() = default;
 
@@ -54,6 +62,7 @@ Path::Path(const Path& other)
 
     CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(other.m_path.get()));
     cairo_append_path(ensureCairoPath(), pathCopy.get());
+    m_elements = other.m_elements;
 }
 
 cairo_t* Path::ensureCairoPath()
@@ -70,12 +79,14 @@ Path& Path::operator=(const Path& other)
 
     if (other.isNull()) {
         m_path = nullptr;
+        m_elements = Vector<PathElement>();
         return *this;
     }
 
     clear();
     CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(other.m_path.get()));
     cairo_append_path(ensureCairoPath(), pathCopy.get());
+    m_elements = other.m_elements;
 
     return *this;
 }
@@ -87,6 +98,7 @@ void Path::clear()
 
     cairo_identity_matrix(m_path.get());
     cairo_new_path(m_path.get());
+    m_elements = Vector<PathElement>();
 }
 
 bool Path::isEmptySlowCase() const
@@ -106,21 +118,87 @@ FloatPoint Path::currentPointSlowCase() const
 void Path::translate(const FloatSize& p)
 {
     cairo_translate(ensureCairoPath(), -p.width(), -p.height());
+
+    if (!m_elements)
+        return;
+
+    for (auto& element : m_elements.value()) {
+        switch (element.type) {
+        case PathElement::Type::MoveToPoint:
+        case PathElement::Type::AddLineToPoint:
+            element.points[0].move(p);
+            break;
+        case PathElement::Type::AddQuadCurveToPoint:
+            element.points[0].move(p);
+            element.points[1].move(p);
+            break;
+        case PathElement::Type::AddCurveToPoint:
+            element.points[0].move(p);
+            element.points[1].move(p);
+            element.points[2].move(p);
+            break;
+        case PathElement::Type::CloseSubpath:
+            break;
+        }
+    }
+}
+
+void Path::appendElement(PathElement::Type type, Vector<FloatPoint, 3>&& points)
+{
+    PathElement element;
+    element.type = type;
+    switch (type) {
+    case PathElement::Type::MoveToPoint:
+    case PathElement::Type::AddLineToPoint:
+        element.points[0] = points[0];
+        break;
+    case PathElement::Type::AddQuadCurveToPoint:
+        element.points[0] = points[0];
+        element.points[1] = points[1];
+        break;
+    case PathElement::Type::AddCurveToPoint:
+        element.points[0] = points[0];
+        element.points[1] = points[1];
+        element.points[2] = points[2];
+        break;
+    case PathElement::Type::CloseSubpath:
+        break;
+    }
+    m_elements->append(WTFMove(element));
 }
 
 void Path::moveToSlowCase(const FloatPoint& p)
 {
     cairo_move_to(ensureCairoPath(), p.x(), p.y());
+    if (m_elements)
+        appendElement(PathElement::Type::MoveToPoint, { p });
 }
 
 void Path::addLineToSlowCase(const FloatPoint& p)
 {
     cairo_line_to(ensureCairoPath(), p.x(), p.y());
+    if (m_elements)
+        appendElement(PathElement::Type::AddLineToPoint, { p });
 }
 
 void Path::addRect(const FloatRect& rect)
 {
     cairo_rectangle(ensureCairoPath(), rect.x(), rect.y(), rect.width(), rect.height());
+
+    if (!m_elements)
+        return;
+
+    FloatPoint point(rect.location());
+    appendElement(PathElement::Type::MoveToPoint, { point });
+    point.move(rect.width(), 0);
+    appendElement(PathElement::Type::AddLineToPoint, { point });
+    point.move(0, rect.height());
+    appendElement(PathElement::Type::AddLineToPoint, { point });
+    point.move(-rect.width(), 0);
+    appendElement(PathElement::Type::AddLineToPoint, { point });
+    appendElement(PathElement::Type::CloseSubpath, { });
+    if (cairo_has_current_point(m_path.get()))
+        appendElement(PathElement::Type::MoveToPoint, { currentPointSlowCase() });
 }
 
 void Path::addQuadCurveToSlowCase(const FloatPoint& controlPoint, const FloatPoint& point)
@@ -136,16 +214,21 @@ void Path::addQuadCurveToSlowCase(const FloatPoint& controlPoint, const FloatPoi
         x  + 2.0 / 3.0 * (x1 - x),  y  + 2.0 / 3.0 * (y1 - y),
         x2 + 2.0 / 3.0 * (x1 - x2), y2 + 2.0 / 3.0 * (y1 - y2),
         x2, y2);
+    if (m_elements)
+        appendElement(PathElement::Type::AddQuadCurveToPoint, { controlPoint, point  });
 }
 
 void Path::addBezierCurveToSlowCase(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& controlPoint3)
 {
     cairo_curve_to(ensureCairoPath(), controlPoint1.x(), controlPoint1.y(),
         controlPoint2.x(), controlPoint2.y(), controlPoint3.x(), controlPoint3.y());
+    if (m_elements)
+        appendElement(PathElement::Type::AddCurveToPoint, { controlPoint1, controlPoint2, controlPoint3 });
 }
 
 void Path::addArcSlowCase(const FloatPoint& p, float r, float startAngle, float endAngle, bool anticlockwise)
 {
+    m_elements = WTF::nullopt;
     cairo_t* cr = ensureCairoPath();
     float sweep = endAngle - startAngle;
     const float twoPI = 2 * piFloat;
@@ -185,6 +268,8 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
     if ((p1.x() == p0.x() && p1.y() == p0.y()) || (p1.x() == p2.x() && p1.y() == p2.y()) || !radius
         || !areaOfTriangleFormedByPoints(p0, p1, p2)) {
         cairo_line_to(m_path.get(), p1.x(), p1.y());
+        if (m_elements)
+            appendElement(PathElement::Type::AddLineToPoint, { p1 });
         return;
     }
 
@@ -196,6 +281,8 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
     // all points on a line logic
     if (cos_phi == -1) {
         cairo_line_to(m_path.get(), p1.x(), p1.y());
+        if (m_elements)
+            appendElement(PathElement::Type::AddLineToPoint, { p1 });
         return;
     }
     if (cos_phi == 1) {
@@ -204,9 +291,12 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
         double factor_max = max_length / p1p0_length;
         FloatPoint ep((p0.x() + factor_max * p1p0.x()), (p0.y() + factor_max * p1p0.y()));
         cairo_line_to(m_path.get(), ep.x(), ep.y());
+        if (m_elements)
+            appendElement(PathElement::Type::AddLineToPoint, { ep });
         return;
     }
 
+    m_elements = WTF::nullopt;
     float tangent = radius / tan(acos(cos_phi) / 2);
     float factor_p1p0 = tangent / p1p0_length;
     FloatPoint t_p1p0((p1.x() + factor_p1p0 * p1p0.x()), (p1.y() + factor_p1p0 * p1p0.y()));
@@ -250,6 +340,7 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 
 void Path::addEllipse(FloatPoint point, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool anticlockwise)
 {
+    m_elements = WTF::nullopt;
     cairo_t* cr = ensureCairoPath();
     cairo_save(cr);
     cairo_translate(cr, point.x(), point.y());
@@ -266,6 +357,7 @@ void Path::addEllipse(FloatPoint point, float radiusX, float radiusY, float rota
 
 void Path::addEllipse(const FloatRect& rect)
 {
+    m_elements = WTF::nullopt;
     cairo_t* cr = ensureCairoPath();
     cairo_save(cr);
     float yRadius = .5 * rect.height();
@@ -285,6 +377,8 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
     if (cairo_matrix_invert(&matrix) != CAIRO_STATUS_SUCCESS)
         return;
 
+    m_elements = WTF::nullopt;
+
     cairo_t* cr = path.cairoPath();
     cairo_save(cr);
     cairo_transform(cr, &matrix);
@@ -296,6 +390,11 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
 void Path::closeSubpath()
 {
     cairo_close_path(ensureCairoPath());
+    if (m_elements) {
+        appendElement(PathElement::Type::CloseSubpath, { });
+        if (cairo_has_current_point(m_path.get()))
+            appendElement(PathElement::Type::MoveToPoint, { currentPointSlowCase() });
+    }
 }
 
 FloatRect Path::boundingRectSlowCase() const
@@ -348,6 +447,12 @@ bool Path::strokeContains(StrokeStyleApplier& applier, const FloatPoint& point) 
 
 void Path::applySlowCase(const PathApplierFunction& function) const
 {
+    if (m_elements) {
+        for (const auto& element : m_elements.value())
+            function(element);
+        return;
+    }
+
     CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(m_path.get()));
     cairo_path_data_t* data;
     PathElement pathElement;
@@ -390,6 +495,29 @@ void Path::transform(const AffineTransform& transform)
     cairo_matrix_t matrix = toCairoMatrix(transform);
     cairo_matrix_invert(&matrix);
     cairo_transform(ensureCairoPath(), &matrix);
+
+    if (!m_elements)
+        return;
+
+    for (auto& element : m_elements.value()) {
+        switch (element.type) {
+        case PathElement::Type::MoveToPoint:
+        case PathElement::Type::AddLineToPoint:
+            element.points[0] = transform.mapPoint(element.points[0]);
+            break;
+        case PathElement::Type::AddQuadCurveToPoint:
+            element.points[0] = transform.mapPoint(element.points[0]);
+            element.points[1] = transform.mapPoint(element.points[1]);
+            break;
+        case PathElement::Type::AddCurveToPoint:
+            element.points[0] = transform.mapPoint(element.points[0]);
+            element.points[1] = transform.mapPoint(element.points[1]);
+            element.points[2] = transform.mapPoint(element.points[2]);
+            break;
+        case PathElement::Type::CloseSubpath:
+            break;
+        }
+    }
 }
 
 bool Path::isNull() const
