@@ -2150,7 +2150,7 @@ ExceptionOr<Ref<DOMRectList>> Internals::touchEventRectsForEvent(const String& e
     if (!document || !document->page())
         return Exception { InvalidAccessError };
 
-    return document->page()->touchEventRectsForEvent(eventName);
+    return document->page()->touchEventRectsForEventForTesting(eventName);
 }
 
 ExceptionOr<Ref<DOMRectList>> Internals::passiveTouchEventListenerRects()
@@ -2159,7 +2159,7 @@ ExceptionOr<Ref<DOMRectList>> Internals::passiveTouchEventListenerRects()
     if (!document || !document->page())
         return Exception { InvalidAccessError };
 
-    return document->page()->passiveTouchEventListenerRects();
+    return document->page()->passiveTouchEventListenerRectsForTesting();
 }
 
 // FIXME: Remove the document argument. It is almost always the same as

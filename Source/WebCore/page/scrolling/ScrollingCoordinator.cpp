@@ -111,7 +111,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     ASSERT(frame.isMainFrame());
     auto* document = frame.document();
     if (!document)
-        return EventTrackingRegions();
+        return { };
     return document->eventTrackingRegions();
 #else
     auto* frameView = frame.view();

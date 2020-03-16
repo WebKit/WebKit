@@ -434,8 +434,12 @@ ScrollingCoordinator* Page::scrollingCoordinator()
 
 String Page::scrollingStateTreeAsText()
 {
-    if (Document* document = m_mainFrame->document())
+    if (Document* document = m_mainFrame->document()) {
         document->updateLayout();
+#if ENABLE(IOS_TOUCH_EVENTS)
+        document->updateTouchEventRegions();
+#endif
+    }
 
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
         return scrollingCoordinator->scrollingStateTreeAsText();
@@ -473,7 +477,7 @@ Ref<DOMRectList> Page::nonFastScrollableRects()
     return DOMRectList::create(quads);
 }
 
-Ref<DOMRectList> Page::touchEventRectsForEvent(const String& eventName)
+Ref<DOMRectList> Page::touchEventRectsForEventForTesting(const String& eventName)
 {
     if (Document* document = m_mainFrame->document()) {
         document->updateLayout();
@@ -496,7 +500,7 @@ Ref<DOMRectList> Page::touchEventRectsForEvent(const String& eventName)
     return DOMRectList::create(quads);
 }
 
-Ref<DOMRectList> Page::passiveTouchEventListenerRects()
+Ref<DOMRectList> Page::passiveTouchEventListenerRectsForTesting()
 {
     if (Document* document = m_mainFrame->document()) {
         document->updateLayout();
@@ -1378,6 +1382,12 @@ void Page::doAfterUpdateRendering()
     forEachDocument([] (Document& document) {
         document.updateTextTrackRepresentationImageIfNeeded();
     });
+#endif
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+    // updateTouchEventRegions() needs to be called only on the top document.
+    if (RefPtr<Document> document = mainFrame().document())
+        document->updateTouchEventRegions();
 #endif
 
 #if ASSERT_ENABLED

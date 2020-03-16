@@ -536,9 +536,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
     , FrameDestructionObserver(frame)
-#if ENABLE(IOS_TOUCH_EVENTS)
-    , m_touchEventsChangedTimer(*this, &Document::touchEventsChangedTimerFired)
-#endif
     , m_settings(frame ? Ref<Settings>(frame->settings()) : Settings::create(nullptr))
     , m_quirks(makeUniqueRef<Quirks>(*this))
     , m_cachedResourceLoader(m_frame ? Ref<CachedResourceLoader>(m_frame->loader().activeDocumentLoader()->cachedResourceLoader()) : CachedResourceLoader::create(nullptr))

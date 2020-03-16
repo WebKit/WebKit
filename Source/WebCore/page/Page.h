@@ -268,8 +268,8 @@ public:
     WEBCORE_EXPORT String synchronousScrollingReasonsAsText();
     WEBCORE_EXPORT Ref<DOMRectList> nonFastScrollableRects();
 
-    WEBCORE_EXPORT Ref<DOMRectList> touchEventRectsForEvent(const String& eventName);
-    WEBCORE_EXPORT Ref<DOMRectList> passiveTouchEventListenerRects();
+    WEBCORE_EXPORT Ref<DOMRectList> touchEventRectsForEventForTesting(const String& eventName);
+    WEBCORE_EXPORT Ref<DOMRectList> passiveTouchEventListenerRectsForTesting();
 
     Settings& settings() const { return *m_settings; }
     ProgressTracker& progress() const { return *m_progress; }
