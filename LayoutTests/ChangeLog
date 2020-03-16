@@ -1,3 +1,13 @@
+2020-03-16  Megan Gardner  <megan_gardner@apple.com>
+
+        Color Picker crashes on touch
+        https://bugs.webkit.org/show_bug.cgi?id=209086
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/color/color-input-activate-crash-expected.txt: Added.
+        * fast/forms/color/color-input-activate-crash.html: Added.
+
 2020-03-16  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB hits assertion with crypto/workers/subtle/aes-indexeddb.html

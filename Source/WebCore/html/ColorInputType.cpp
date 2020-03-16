@@ -288,7 +288,7 @@ Vector<Color> ColorInputType::suggestedColors() const
     if (auto dataList = element()->dataList()) {
         for (auto& option : dataList->suggestions()) {
             if (auto color = parseSimpleColorValue(option.value()))
-                suggestions.uncheckedAppend(*color);
+                suggestions.append(*color);
         }
     }
 #endif
