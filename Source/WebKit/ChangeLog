@@ -1,3 +1,20 @@
+2020-03-16  Rob Buis  <rbuis@igalia.com>
+
+        Simplify ChromeClient.createWindow
+        https://bugs.webkit.org/show_bug.cgi?id=209123
+
+        Reviewed by Darin Adler.
+
+        Adapt to API change.
+
+        * WebProcess/Inspector/WebInspector.cpp:
+        (WebKit::WebInspector::openInNewTab):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchCreatePage):
+
 2020-03-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Should not use variable-length-array (VLA)

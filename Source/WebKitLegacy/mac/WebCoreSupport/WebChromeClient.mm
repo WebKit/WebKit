@@ -66,7 +66,6 @@
 #import <WebCore/FileIconLoader.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
-#import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/FullscreenManager.h>
 #import <WebCore/GraphicsLayer.h>
@@ -238,7 +237,7 @@ void WebChromeClient::focusedFrameChanged(Frame*)
 {
 }
 
-Page* WebChromeClient::createWindow(Frame& frame, const FrameLoadRequest&, const WindowFeatures& features, const NavigationAction&)
+Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& features, const NavigationAction&)
 {
     id delegate = [m_webView UIDelegate];
     WebView *newWebView;
