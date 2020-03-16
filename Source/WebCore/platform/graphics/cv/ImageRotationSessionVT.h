@@ -36,6 +36,8 @@ typedef struct __CVPixelBufferPool* CVPixelBufferPoolRef;
 
 namespace WebCore {
 
+class MediaSample;
+
 class ImageRotationSessionVT final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -52,8 +54,9 @@ public:
         Yes,
     };
 
-    ImageRotationSessionVT(AffineTransform&&, FloatSize, OSType pixelFormat, IsCGImageCompatible);
-    ImageRotationSessionVT(RotationProperties&&, FloatSize, OSType pixelFormat, IsCGImageCompatible);
+    ImageRotationSessionVT(AffineTransform&&, FloatSize, OSType, IsCGImageCompatible);
+    ImageRotationSessionVT(const RotationProperties&, FloatSize, OSType, IsCGImageCompatible);
+    ImageRotationSessionVT() = default;
 
     const Optional<AffineTransform>& transform() const { return m_transform; }
     const RotationProperties& rotationProperties() const { return m_rotationProperties; }
@@ -61,8 +64,13 @@ public:
     const FloatSize& rotatedSize() { return m_rotatedSize; }
 
     RetainPtr<CVPixelBufferRef> rotate(CVPixelBufferRef);
+    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> rotate(MediaSample&, const RotationProperties&, IsCGImageCompatible);
+
+    bool isMatching(MediaSample&, const RotationProperties&);
 
 private:
+    void initialize(const RotationProperties&, FloatSize, OSType pixelFormat, IsCGImageCompatible);
+
     Optional<AffineTransform> m_transform;
     RotationProperties m_rotationProperties;
     FloatSize m_size;
@@ -70,6 +78,16 @@ private:
     RetainPtr<VTImageRotationSessionRef> m_rotationSession;
     RetainPtr<CVPixelBufferPoolRef> m_rotationPool;
 };
+
+inline bool operator==(const ImageRotationSessionVT::RotationProperties& rotation1, const ImageRotationSessionVT::RotationProperties& rotation2)
+{
+    return rotation1.flipX == rotation2.flipX && rotation1.flipY == rotation2.flipY && rotation1.angle == rotation2.angle;
+}
+
+inline bool operator!=(const ImageRotationSessionVT::RotationProperties& rotation1, const ImageRotationSessionVT::RotationProperties& rotation2)
+{
+    return !(rotation1 == rotation2);
+}
 
 }
 
