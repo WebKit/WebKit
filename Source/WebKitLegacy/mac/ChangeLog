@@ -1,3 +1,15 @@
+2020-03-16  Timothy Horton  <timothy_horton@apple.com>
+
+        Always include System.framework in WebKitLegacy's CPLUSPLUSFLAGS
+        https://bugs.webkit.org/show_bug.cgi?id=209147
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/WebKitLegacy.xcconfig:
+        Bring WebKitLegacy's xcconfigs in line with all the other projects,
+        adding System.framework globally, and in Base.xcconfig.
+
 2020-03-16  Simon Fraser  <simon.fraser@apple.com>
 
         Remove FrameView::scheduleRenderingUpdate()
