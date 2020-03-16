@@ -1,5 +1,20 @@
 2020-03-16  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
+        [Gtk] Update pixel test baseline in svg/ subdirectory
+        https://bugs.webkit.org/show_bug.cgi?id=209137
+
+        Ruber-stamped by Žan Doberšek.
+
+        Update pixel test baseline, reflecting the status quo with WebKit ToT.
+
+        * platform/gtk/svg: > 600 modifications of the -expected.png files.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-marker-06-f-expected.png: Added.
+        * platform/gtk/svg/filters/filter-refresh-expected.png: Copied from LayoutTests/platform/gtk/svg/filters/feImage-reference-invalidation-expected.png.
+        * platform/gtk/svg/hixie/error/015-expected.png: Copied from LayoutTests/platform/gtk/svg/zoom/page/absolute-sized-document-no-scrollbars-expected.png.
+        * platform/gtk/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.png: Added.
+
+2020-03-16  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
         [Gtk] Add missing pixel test results in svg/ subdirectory
         https://bugs.webkit.org/show_bug.cgi?id=209136
 
