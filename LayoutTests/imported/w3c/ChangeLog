@@ -1,3 +1,12 @@
+2020-03-16  youenn fablet  <youenn@apple.com>
+
+        Remove the use of empty WebRTC sources for receiver tracks
+        https://bugs.webkit.org/show_bug.cgi?id=209061
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-track-stats.https-expected.txt:
+
 2020-03-14  Rob Buis  <rbuis@igalia.com>
 
         Set Origin header value to null rather than omitting it

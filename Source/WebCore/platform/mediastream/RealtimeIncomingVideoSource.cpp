@@ -39,7 +39,7 @@ RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webr
     : RealtimeMediaSource(Type::Video, "remote video"_s, WTFMove(videoTrackId))
     , m_videoTrack(WTFMove(videoTrack))
 {
-    notifyMutedChange(!m_videoTrack);
+    ASSERT(m_videoTrack);
 
     RealtimeMediaSourceSupportedConstraints constraints;
     constraints.setSupportsWidth(true);
@@ -51,18 +51,6 @@ RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webr
 void RealtimeIncomingVideoSource::startProducingData()
 {
     if (m_videoTrack)
-        m_videoTrack->AddOrUpdateSink(this, rtc::VideoSinkWants());
-}
-
-void RealtimeIncomingVideoSource::setSourceTrack(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& track)
-{
-    ASSERT(track);
-
-    if (m_videoTrack && isProducingData())
-        m_videoTrack->RemoveSink(this);
-    m_videoTrack = WTFMove(track);
-    notifyMutedChange(!m_videoTrack);
-    if (isProducingData())
         m_videoTrack->AddOrUpdateSink(this, rtc::VideoSinkWants());
 }
 
