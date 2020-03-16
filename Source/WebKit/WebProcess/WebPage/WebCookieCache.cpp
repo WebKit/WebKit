@@ -118,8 +118,10 @@ void WebCookieCache::pruneCacheIfNecessary()
     // We may want to raise this limit if we start using the cache for third-party iframes.
     static const unsigned maxCachedHosts = 5;
 
-    while (m_hostsWithInMemoryStorage.size() >= maxCachedHosts)
-        clearForHost(*m_hostsWithInMemoryStorage.random());
+    while (m_hostsWithInMemoryStorage.size() >= maxCachedHosts) {
+        String hostToRemove = *m_hostsWithInMemoryStorage.random();
+        clearForHost(hostToRemove);
+    }
 }
 
 #if !PLATFORM(COCOA)

@@ -1,3 +1,21 @@
+2020-03-16  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCookieCache::clearForHost()
+        https://bugs.webkit.org/show_bug.cgi?id=209149
+        <rdar://problem/60453086>
+
+        Reviewed by Alex Christensen.
+
+        Make sure WebCookieCache::pruneCacheIfNecessary() keeps alive the host String it is passing
+        to WebCookieCache::clearForHost(). Previously, it was merely deferencing a HashSet iterator
+        and passing that to clearForHost(). However, clearForHost() would then drop the String from
+        the HashSet and the host would no longer be valid.
+
+        Change covered by new API test.
+
+        * WebProcess/WebPage/WebCookieCache.cpp:
+        (WebKit::WebCookieCache::pruneCacheIfNecessary):
+
 2020-03-16  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Accessibility sandbox regressions

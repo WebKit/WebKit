@@ -1,3 +1,16 @@
+2020-03-16  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCookieCache::clearForHost()
+        https://bugs.webkit.org/show_bug.cgi?id=209149
+        <rdar://problem/60453086>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CookiePrivateBrowsing.mm:
+        (TEST):
+
 2020-03-16  Keith Rollin  <krollin@apple.com>
 
         Remove support for WebKitSystemInterface
