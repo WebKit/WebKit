@@ -68,6 +68,7 @@
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
+#include "LayoutDisallowedScope.h"
 #include "LegacySchemeRegistry.h"
 #include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
@@ -104,6 +105,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
 #include "ScriptController.h"
+#include "ScriptDisallowedScope.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollLatchingState.h"
 #include "ScrollingCoordinator.h"
@@ -1355,6 +1357,13 @@ void Page::updateRendering()
 #endif
 
     layoutIfNeeded();
+    doAfterUpdateRendering();
+}
+
+void Page::doAfterUpdateRendering()
+{
+    // Code here should do once-per-frame work that needs to be done before painting, and requires
+    // layout to be up-to-date. It should not run script, trigger layout, or dirty layout.
 
     forEachDocument([] (Document& document) {
         document.updateHighlightPositions();
@@ -1364,6 +1373,13 @@ void Page::updateRendering()
     forEachDocument([] (Document& document) {
         document.updateTextTrackRepresentationImageIfNeeded();
     });
+#endif
+
+#if ASSERT_ENABLED
+    for (Frame* child = mainFrame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
+        auto* frameView = child->view();
+        ASSERT(!frameView || !frameView->needsLayout());
+    }
 #endif
 }
 

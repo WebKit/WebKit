@@ -762,6 +762,8 @@ private:
     void updateDOMTimerAlignmentInterval();
     void domTimerAlignmentIntervalIncreaseTimerFired();
 
+    void doAfterUpdateRendering();
+
     const std::unique_ptr<Chrome> m_chrome;
     const std::unique_ptr<DragCaretController> m_dragCaretController;
 
