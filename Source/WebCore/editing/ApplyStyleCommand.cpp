@@ -1497,6 +1497,8 @@ float ApplyStyleCommand::computedFontSize(Node* node)
         return 0;
 
     auto value = ComputedStyleExtractor(node).propertyValue(CSSPropertyFontSize);
+    if (!value)
+        return 0;
     return downcast<CSSPrimitiveValue>(*value).floatValue(CSSUnitType::CSS_PX);
 }
 
