@@ -1088,3 +1088,5 @@ webkit.org/b/209018 [ Catalina ] webrtc/video-autoplay1.html [ Pass Failure ]
 webkit.org/b/209024 [ Debug ] webgpu/whlsl/vector-compare.html [ Pass Crash ]
 
 webkit.org/b/209077 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure ]
+
+webkit.org/b/209052 fast/scrolling/mac/absolute-in-overflow-scroll-dynamic.html [ Pass Failure ]

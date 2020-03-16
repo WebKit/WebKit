@@ -1,3 +1,12 @@
+2020-03-16  Truitt Savell  <tsavell@apple.com>
+
+        [ Mac wk2 ] (r258249) fast/scrolling/mac/absolute-in-overflow-scroll-dynamic.html is a flaky failure (209052)
+        https://bugs.webkit.org/show_bug.cgi?id=209052
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-16  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html is failing.
