@@ -60,8 +60,13 @@ Path::Path(const Path& other)
     if (other.isNull())
         return;
 
+    cairo_t* cr = ensureCairoPath();
+    cairo_matrix_t ctm;
+    cairo_get_matrix(other.m_path.get(), &ctm);
+    cairo_set_matrix(cr, &ctm);
+
     CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(other.m_path.get()));
-    cairo_append_path(ensureCairoPath(), pathCopy.get());
+    cairo_append_path(cr, pathCopy.get());
     m_elements = other.m_elements;
 }
 
@@ -84,8 +89,14 @@ Path& Path::operator=(const Path& other)
     }
 
     clear();
+
+    cairo_t* cr = ensureCairoPath();
+    cairo_matrix_t ctm;
+    cairo_get_matrix(other.m_path.get(), &ctm);
+    cairo_set_matrix(cr, &ctm);
+
     CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(other.m_path.get()));
-    cairo_append_path(ensureCairoPath(), pathCopy.get());
+    cairo_append_path(cr, pathCopy.get());
     m_elements = other.m_elements;
 
     return *this;
