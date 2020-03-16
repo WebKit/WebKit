@@ -70,7 +70,6 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 else
                     RELEASE_ASSERT_NOT_REACHED();
 
-                
                 typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t, xpc_object_t);
                 InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKitBundle, entryPointFunctionName));
                 if (!initializerFunctionPtr) {
@@ -106,8 +105,17 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
     xpc_connection_resume(peer);
 }
 
-int XPCServiceMain(int, const char**)
+int XPCServiceMain(int argc, const char** argv)
 {
+    ASSERT(argc >= 1);
+    ASSERT(argv[0]);
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    if (argc >= 1 && argv[0] && strstr(argv[0], "com.apple.WebKit.WebContent")) {
+        // Enable CFPrefs direct mode to avoid unsuccessfully attempting to connect to the daemon and getting blocked by the sandbox.
+        _CFPrefsSetDirectModeEnabled(YES);
+    }
+#endif
+
     auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
 #if PLATFORM(IOS_FAMILY)
     auto containerEnvironmentVariables = xpc_dictionary_get_value(bootstrap.get(), "ContainerEnvironmentVariables");
@@ -115,11 +123,6 @@ int XPCServiceMain(int, const char**)
         setenv(key, xpc_string_get_string_ptr(value), 1);
         return true;
     });
-#endif
-
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    // Enable CF prefs direct mode to avoid connecting to the CF prefs daemon.
-    _CFPrefsSetDirectModeEnabled(YES);
 #endif
 
     if (bootstrap) {
