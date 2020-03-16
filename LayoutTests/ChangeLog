@@ -1,3 +1,44 @@
+2020-03-16  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        [Gtk] Add missing pixel test results in svg/ subdirectory
+        https://bugs.webkit.org/show_bug.cgi?id=209136
+
+        Reviewed by Žan Doberšek.
+
+        Add pixel tests results based on current WebKit ToT.
+        No Gtk bot is running pixel tests, but it is still helpful to have an
+        updated pixel test baseline for local development. Many SVG tests
+        still depend on the pixel test output as only way to catch
+        regressions. This should be changed in future, but for now we should
+        at least have an accurate baseline.
+
+        * platform/gtk/svg/animations/animate-marker-orienttype-1-expected.png: Added.
+        * platform/gtk/svg/animations/animate-marker-orienttype-2-expected.png: Added.
+        * platform/gtk/svg/animations/animate-marker-orienttype-3-expected.png: Added.
+        * platform/gtk/svg/animations/animate-viewport-overflow-2-expected.png: Added.
+        * platform/gtk/svg/animations/animate-viewport-overflow-expected.png: Added.
+        * platform/gtk/svg/animations/avoid-calculating-for-non-animating-elements-expected.png: Added.
+        * platform/gtk/svg/css/shape-rendering-parsing-expected.png: Added.
+        * platform/gtk/svg/custom/non-scaling-stroke-markers-expected.png: Added.
+        * platform/gtk/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.png: Added.
+        * platform/gtk/svg/custom/use-on-symbol-inside-pattern-expected.png: Added.
+        * platform/gtk/svg/dynamic-updates/SVGClipPath-prefixed-influences-hitTesting-expected.png: Added.
+        * platform/gtk/svg/dynamic-updates/SVGClipPath-prefixed-path-influences-hitTesting-expected.png: Added.
+        * platform/gtk/svg/dynamic-updates/SVGClipPathElement-prefixed-css-transform-influences-hitTesting-expected.png: Added.
+        * platform/gtk/svg/dynamic-updates/SVGClipPathElement-prefixed-transform-influences-hitTesting-expected.png: Added.
+        * platform/gtk/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-edgeMode-attr-expected.png: Added.
+        * platform/gtk/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-edgeMode-prop-expected.png: Added.
+        * platform/gtk/svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr-expected.png: Added.
+        * platform/gtk/svg/filters/feBlend-all-blendmodes-expected.png: Added.
+        * platform/gtk/svg/filters/filter-image-ref-root-expected.png: Added.
+        * platform/gtk/svg/hixie/text/001-expected.png: Added.
+        * platform/gtk/svg/in-html/overflow-repaint-expected.png: Added.
+        * platform/gtk/svg/overflow/overflow-scroll-on-outermost-svg-element-expected.png: Added.
+        * platform/gtk/svg/text/scaled-font-expected.png: Added.
+        * platform/gtk/svg/text/text-hkern-expected.png: Added.
+        * platform/gtk/svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures-expected.png: Added.
+        * platform/gtk/svg/text/text-vkern-on-horizontal-text-expected.png: Added.
+
 2020-03-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update TestExpectations
