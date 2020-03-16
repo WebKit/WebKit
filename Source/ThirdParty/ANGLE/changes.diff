@@ -2,12 +2,14 @@ diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index 87932a53f..83ea168e2 100644
 --- a/src/common/utilities.cpp
 +++ b/src/common/utilities.cpp
-@@ -6,6 +6,9 @@
+@@ -6,6 +6,11 @@
  
  // utilities.cpp: Conversion functions and other utility routines.
  
 +// Older clang versions have a false positive on this warning here.
++#if defined(__clang__)
 +#pragma clang diagnostic ignored "-Wglobal-constructors"
++#endif
 +
  #include "common/utilities.h"
  #include <GLSLANG/ShaderVars.h>

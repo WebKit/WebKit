@@ -7,7 +7,9 @@
 // utilities.cpp: Conversion functions and other utility routines.
 
 // Older clang versions have a false positive on this warning here.
+#if defined(__clang__)
 #pragma clang diagnostic ignored "-Wglobal-constructors"
+#endif
 
 #include "common/utilities.h"
 #include <GLSLANG/ShaderVars.h>

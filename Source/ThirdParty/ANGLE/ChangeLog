@@ -1,5 +1,17 @@
 2020-03-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
+        [ANGLE] Source/ThirdParty/ANGLE/src/common/utilities.cpp:10: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
+        https://bugs.webkit.org/show_bug.cgi?id=209014
+
+        Reviewed by Darin Adler.
+
+        Silence compiler warning.
+
+        * changes.diff:
+        * src/common/utilities.cpp:
+
+2020-03-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
         [ANGLE] Source/ThirdParty/ANGLE/src/libANGLE/Display.h:221:73: warning: implicitly-declared ‘egl::AttributeMap& egl::AttributeMap::operator=(const egl::AttributeMap&)’ is deprecated [-Wdeprecated-copy]
         https://bugs.webkit.org/show_bug.cgi?id=209015
 
