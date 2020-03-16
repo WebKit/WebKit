@@ -912,11 +912,12 @@ void WebProcess::notifyPreferencesChanged(const String& domain, const String& ke
     if (!encodedData)
         return;
     NSError *err = nil;
-    auto object = retainPtr([NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:encodedData.get() error:&err]);
+    auto classes = [NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDate class], [NSDictionary class], [NSArray class], [NSData class]]];
+    id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:encodedData.get() error:&err];
     ASSERT(!err);
     if (err)
         return;
-    [defaults setObject:object.get() forKey:key];
+    [defaults setObject:object forKey:key];
 }
 
 void WebProcess::unblockPreferenceService(const SandboxExtension::Handle& handle)

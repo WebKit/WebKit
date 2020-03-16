@@ -127,4 +127,104 @@ TEST(WebKit, PreferenceChangesArray)
     ASSERT_TRUE([object isEqual:changedArray]);
 }
 
+TEST(WebKit, PreferenceChangesDictionary)
+{
+    NSDictionary *dict = @{
+        @"a" : @1,
+        @"b" : @2,
+    };
+
+    auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:@"com.apple.coremedia"]);
+    [userDefaults.get() setObject:dict forKey:@"testkey"];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    auto preferenceValue = [&] {
+        return [webView stringByEvaluatingJavaScript:@"window.internals.encodedPreferenceValue(\"com.apple.coremedia\", \"testkey\")"];
+    };
+
+    preferenceValue();
+
+    NSDictionary *changedDict = @{
+        @"a" : @1,
+        @"b" : @2,
+        @"c" : @3,
+    };
+    [userDefaults.get() setObject:changedDict forKey:@"testkey"];
+
+    auto encodedString = preferenceValue();
+    auto encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:encodedString options:0]);
+    ASSERT_TRUE(encodedData);
+    NSError *err = nil;
+    auto object = retainPtr([NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:encodedData.get() error:&err]);
+    ASSERT_TRUE(!err);
+    ASSERT_TRUE(object);
+    ASSERT_TRUE([object isEqual:changedDict]);
+}
+
+TEST(WebKit, PreferenceChangesData)
+{
+    NSData *data = [NSData dataWithBytes:"abc" length:3];
+
+    auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:@"com.apple.coremedia"]);
+    [userDefaults.get() setObject:data forKey:@"testkey"];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    auto preferenceValue = [&] {
+        return [webView stringByEvaluatingJavaScript:@"window.internals.encodedPreferenceValue(\"com.apple.coremedia\", \"testkey\")"];
+    };
+
+    preferenceValue();
+
+    NSData *changedData = [NSData dataWithBytes:"abcd" length:4];
+    [userDefaults.get() setObject:changedData forKey:@"testkey"];
+
+    auto encodedString = preferenceValue();
+    auto encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:encodedString options:0]);
+    ASSERT_TRUE(encodedData);
+    NSError *err = nil;
+    auto object = retainPtr([NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:encodedData.get() error:&err]);
+    ASSERT_TRUE(!err);
+    ASSERT_TRUE(object);
+    ASSERT_TRUE([object isEqual:changedData]);
+}
+
+TEST(WebKit, PreferenceChangesDate)
+{
+    NSDate *date = [NSDate dateWithTimeIntervalSinceNow:0];
+
+    auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:@"com.apple.coremedia"]);
+    [userDefaults.get() setObject:date forKey:@"testkey"];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    auto preferenceValue = [&] {
+        return [webView stringByEvaluatingJavaScript:@"window.internals.encodedPreferenceValue(\"com.apple.coremedia\", \"testkey\")"];
+    };
+
+    preferenceValue();
+
+    NSDate *changedDate = [NSDate dateWithTimeIntervalSinceNow:10];
+    [userDefaults.get() setObject:changedDate forKey:@"testkey"];
+
+    auto encodedString = preferenceValue();
+    auto encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:encodedString options:0]);
+    ASSERT_TRUE(encodedData);
+    NSError *err = nil;
+    auto object = retainPtr([NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:encodedData.get() error:&err]);
+    ASSERT_TRUE(!err);
+    ASSERT_TRUE(object);
+    ASSERT_TRUE([object isEqual:changedDate]);
+}
+
 #endif // WK_HAVE_C_SPI
