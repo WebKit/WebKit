@@ -1,3 +1,10 @@
+2020-03-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed infrastructure fix.
+
+        * BuildSlaveSupport/ews-build/config.json: Temporarily remove ews114
+        while the hardware is out for repair.
+
 2020-03-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] IDLs, stubs and build configuration for WPE
