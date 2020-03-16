@@ -1,3 +1,139 @@
+2020-03-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Import wpt tests
+        https://bugs.webkit.org/show_bug.cgi?id=208989
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/webxr/META.yml: Added.
+        * web-platform-tests/webxr/ar-module/idlharness.https.window.html: Added.
+        * web-platform-tests/webxr/ar-module/idlharness.https.window.js: Added.
+        (async idl_array):
+        * web-platform-tests/webxr/ar-module/w3c-import.log: Added.
+        * web-platform-tests/webxr/ar-module/xrDevice_isSessionSupported_immersive-ar.https.html: Added.
+        * web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https.html: Added.
+        * web-platform-tests/webxr/ar-module/xrSession_environmentBlendMode.https.html: Added.
+        * web-platform-tests/webxr/dom-overlay/ar_dom_overlay.https.html: Added.
+        * web-platform-tests/webxr/dom-overlay/w3c-import.log: Added.
+        * web-platform-tests/webxr/events_input_source_recreation.https.html: Added.
+        * web-platform-tests/webxr/events_input_sources_change.https.html: Added.
+        * web-platform-tests/webxr/events_referenceSpace_reset_immersive.https.html: Added.
+        * web-platform-tests/webxr/events_referenceSpace_reset_inline.https.html: Added.
+        * web-platform-tests/webxr/events_session_select.https.html: Added.
+        * web-platform-tests/webxr/events_session_select_subframe.https.html: Added.
+        * web-platform-tests/webxr/events_session_squeeze.https.html: Added.
+        * web-platform-tests/webxr/exclusive_requestFrame_nolayer.https.html: Added.
+        * web-platform-tests/webxr/gamepads-module/idlharness.https.window.html: Added.
+        * web-platform-tests/webxr/gamepads-module/idlharness.https.window.js: Added.
+        (async idl_array):
+        * web-platform-tests/webxr/gamepads-module/w3c-import.log: Added.
+        * web-platform-tests/webxr/gamepads-module/xrInputSource_gamepad_disconnect.https.html: Added.
+        * web-platform-tests/webxr/gamepads-module/xrInputSource_gamepad_input_registered.https.html: Added.
+        * web-platform-tests/webxr/getInputPose_handedness.https.html: Added.
+        * web-platform-tests/webxr/getInputPose_pointer.https.html: Added.
+        * web-platform-tests/webxr/getViewerPose_emulatedPosition.https.html: Added.
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_refSpaces.https.html: Added.
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_states.https.html: Added.
+        * web-platform-tests/webxr/hit-test/w3c-import.log: Added.
+        * web-platform-tests/webxr/hit-test/xrRay_constructor.https.html: Added.
+        * web-platform-tests/webxr/hit-test/xrRay_matrix.https.html: Added.
+        * web-platform-tests/webxr/idlharness.https.window.html: Added.
+        * web-platform-tests/webxr/idlharness.https.window.js: Added.
+        (async idl_array):
+        * web-platform-tests/webxr/navigator_xr_sameObject.https.html: Added.
+        * web-platform-tests/webxr/render_state_vertical_fov_immersive.https.html: Added.
+        * web-platform-tests/webxr/render_state_vertical_fov_inline.https.html: Added.
+        * web-platform-tests/webxr/resources/w3c-import.log: Added.
+        * web-platform-tests/webxr/resources/webxr_check.html: Added.
+        * web-platform-tests/webxr/resources/webxr_math_utils.js: Added.
+        (let.transform_point_by_matrix):
+        (let.normalize_quaternion):
+        (let.conjugate_quaternion):
+        (let.multiply_quaternions):
+        (let.normalize_perspective):
+        (let.transform_point_by_quaternion):
+        * web-platform-tests/webxr/resources/webxr_test_asserts.js: Added.
+        (const.assert_point_approx_equals):
+        (const.assert_point_significantly_not_equals):
+        (const.assert_transform_approx_equals):
+        (const.assert_matrix_approx_equals):
+        (const.assert_matrix_significantly_not_equals):
+        (const.assert_ray_approx_equals):
+        * web-platform-tests/webxr/resources/webxr_test_constants.js: Added.
+        * web-platform-tests/webxr/resources/webxr_test_constants_fake_world.js: Added.
+        (createFakeWorld):
+        * web-platform-tests/webxr/resources/webxr_util.js: Added.
+        (xr_promise_test):
+        (async let):
+        (async xr_session_promise_test):
+        (async promise_simulate_user_activation):
+        * web-platform-tests/webxr/w3c-import.log: Added.
+        * web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html: Added.
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html: Added.
+        * web-platform-tests/webxr/webxr-supported-by-feature-policy.html: Added.
+        * web-platform-tests/webxr/webxr_availability.http.sub.html: Added.
+        * web-platform-tests/webxr/webxr_feature_policy.https.html: Added.
+        * web-platform-tests/webxr/webxr_feature_policy.https.html.headers: Added.
+        * web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html: Added.
+        * web-platform-tests/webxr/xrDevice_disconnect_ends.https.html: Added.
+        * web-platform-tests/webxr/xrDevice_isSessionSupported_immersive.https.html: Added.
+        * web-platform-tests/webxr/xrDevice_isSessionSupported_immersive_unsupported.https.html: Added.
+        * web-platform-tests/webxr/xrDevice_isSessionSupported_inline.https.html: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive.https.html: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive_no_gesture.https.html: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive_unsupported.https.html: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_no_mode.https.html: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https.html: Added.
+        * web-platform-tests/webxr/xrFrame_getPose.https.html: Added.
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https.html: Added.
+        * web-platform-tests/webxr/xrFrame_lifetime.https.html: Added.
+        * web-platform-tests/webxr/xrFrame_session_sameObject.https.html: Added.
+        * web-platform-tests/webxr/xrInputSource_add_remove.https.html: Added.
+        * web-platform-tests/webxr/xrInputSource_emulatedPosition.https.html: Added.
+        * web-platform-tests/webxr/xrInputSource_profiles.https.html: Added.
+        * web-platform-tests/webxr/xrInputSource_sameObject.https.html: Added.
+        * web-platform-tests/webxr/xrPose_transform_sameObject.https.html: Added.
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset.https.html: Added.
+        * web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https.html: Added.
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https.html: Added.
+        * web-platform-tests/webxr/xrRigidTransform_constructor.https.html: Added.
+        * web-platform-tests/webxr/xrRigidTransform_inverse.https.html: Added.
+        * web-platform-tests/webxr/xrRigidTransform_matrix.https.html: Added.
+        * web-platform-tests/webxr/xrRigidTransform_sameObject.https.html: Added.
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html: Added.
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html: Added.
+        * web-platform-tests/webxr/xrSession_end.https.html: Added.
+        * web-platform-tests/webxr/xrSession_features_deviceSupport.https.html: Added.
+        * web-platform-tests/webxr/xrSession_input_events_end.https.html: Added.
+        * web-platform-tests/webxr/xrSession_prevent_multiple_exclusive.https.html: Added.
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html: Added.
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https.html: Added.
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https.html: Added.
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https.html: Added.
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html: Added.
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html: Added.
+        * web-platform-tests/webxr/xrSession_sameObject.https.html: Added.
+        * web-platform-tests/webxr/xrSession_viewer_availability.https.html: Added.
+        * web-platform-tests/webxr/xrSession_viewer_referenceSpace.https.html: Added.
+        * web-platform-tests/webxr/xrSession_visibilityState.https.html: Added.
+        * web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https.html: Added.
+        * web-platform-tests/webxr/xrView_eyes.https.html: Added.
+        * web-platform-tests/webxr/xrView_match.https.html: Added.
+        * web-platform-tests/webxr/xrView_oneframeupdate.https.html: Added.
+        * web-platform-tests/webxr/xrView_sameObject.https.html: Added.
+        * web-platform-tests/webxr/xrViewerPose_views_sameObject.https.html: Added.
+        * web-platform-tests/webxr/xrViewport_valid.https.html: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_constructor.https.html: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https.html: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https.html: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https.html: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_viewports.https.html: Added.
+
 2020-03-16  youenn fablet  <youenn@apple.com>
 
         Unique origins should not be Potentially Trustworthy

@@ -1,3 +1,12 @@
+2020-03-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Import wpt tests
+        https://bugs.webkit.org/show_bug.cgi?id=208989
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Mark all of them as skipped.
+
 2020-03-16  youenn fablet  <youenn@apple.com>
 
         Unique origins should not be Potentially Trustworthy
