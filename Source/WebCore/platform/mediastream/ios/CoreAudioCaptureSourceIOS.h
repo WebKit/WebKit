@@ -27,18 +27,23 @@
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
+#include "AudioSession.h"
 #include "CoreAudioCaptureSource.h"
 
 OBJC_CLASS WebCoreAudioCaptureSourceIOSListener;
 
 namespace WebCore {
 
-class CoreAudioCaptureSourceFactoryIOS final : public CoreAudioCaptureSourceFactory {
+class CoreAudioCaptureSourceFactoryIOS final : public CoreAudioCaptureSourceFactory, public AudioSession::InterruptionObserver  {
 public:
     CoreAudioCaptureSourceFactoryIOS();
     ~CoreAudioCaptureSourceFactoryIOS();
 
 private:
+    // AudioSession::InterruptionObserver.
+    void beginAudioSessionInterruption() { beginInterruption(); }
+    void endAudioSessionInterruption(AudioSession::MayResume) { endInterruption(); }
+
     RetainPtr<WebCoreAudioCaptureSourceIOSListener> m_listener;
 };
 

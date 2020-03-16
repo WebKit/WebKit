@@ -41,7 +41,6 @@ using namespace WebCore;
 }
 
 - (void)invalidate;
-- (void)handleInterruption:(NSNotification*)notification;
 - (void)sessionMediaServicesWereReset:(NSNotification*)notification;
 @end
 
@@ -57,7 +56,6 @@ using namespace WebCore;
     NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
     AVAudioSession* session = [PAL::getAVAudioSessionClass() sharedInstance];
 
-    [center addObserver:self selector:@selector(handleInterruption:) name:AVAudioSessionInterruptionNotification object:session];
     [center addObserver:self selector:@selector(sessionMediaServicesWereReset:) name:AVAudioSessionMediaServicesWereResetNotification object:session];
 
     return self;
@@ -67,30 +65,6 @@ using namespace WebCore;
 {
     _callback = nullptr;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)handleInterruption:(NSNotification*)notification
-{
-    ASSERT(_callback);
-    if (!_callback)
-        return;
-
-    if ([[notification.userInfo valueForKey:AVAudioSessionInterruptionTypeKey] intValue] == AVAudioSessionInterruptionTypeBegan) {
-        _callback->beginInterruption();
-        return;
-    }
-
-    if ([[notification.userInfo valueForKey:AVAudioSessionInterruptionTypeKey] intValue] == AVAudioSessionInterruptionTypeEnded) {
-        NSError *error = nil;
-        [[PAL::getAVAudioSessionClass() sharedInstance] setActive:YES error:&error];
-
-#if !LOG_DISABLED
-        if (error)
-            LOG(Media, "-[WebCoreAudioCaptureSourceIOSListener handleInterruption] (%p) - error = %s", self, [[error localizedDescription] UTF8String]);
-#endif
-
-        _callback->endInterruption();
-    }
 }
 
 - (void)sessionMediaServicesWereReset:(NSNotification*)notification
@@ -112,10 +86,12 @@ namespace WebCore {
 CoreAudioCaptureSourceFactoryIOS::CoreAudioCaptureSourceFactoryIOS()
     : m_listener(adoptNS([[WebCoreAudioCaptureSourceIOSListener alloc] initWithCallback:this]))
 {
+    AudioSession::sharedSession().addInterruptionObserver(*this);
 }
 
 CoreAudioCaptureSourceFactoryIOS::~CoreAudioCaptureSourceFactoryIOS()
 {
+    AudioSession::sharedSession().removeInterruptionObserver(*this);
     [m_listener invalidate];
     m_listener = nullptr;
 }
