@@ -1,3 +1,14 @@
+2020-03-16  youenn fablet  <youenn@apple.com>
+
+        Audio is not played from an audio element when the srcObject object has unstarted video tracks
+        https://bugs.webkit.org/show_bug.cgi?id=207041
+        <rdar://problem/59084745>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/audio-video-element-playing-expected.txt: Added.
+        * webrtc/audio-video-element-playing.html: Added.
+
 2020-03-16  Truitt Savell  <tsavell@apple.com>
 
         [ Mac wk2 ] (r258249) fast/scrolling/mac/absolute-in-overflow-scroll-dynamic.html is a flaky failure (209052)

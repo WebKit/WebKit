@@ -278,7 +278,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueCorrectedVideoSample(MediaSamp
 
 void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPrivate& track, MediaSample& sample)
 {
-    if (&track != m_mediaStreamPrivate->activeVideoTrack())
+    if (&track != activeVideoTrack())
         return;
 
     if (!m_imagePainter.mediaSample || m_displayMode != PausedImage) {
@@ -360,7 +360,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     if (m_sampleBufferDisplayLayer)
         return;
 
-    if (!m_mediaStreamPrivate || !m_mediaStreamPrivate->activeVideoTrack() || !m_mediaStreamPrivate->activeVideoTrack()->enabled())
+    auto* activeVideoTrack = this->activeVideoTrack();
+    if (!activeVideoTrack || !activeVideoTrack->enabled())
         return;
 
     m_sampleBufferDisplayLayer = SampleBufferDisplayLayer::create(*this);
@@ -432,11 +433,16 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
     });
 }
 
+MediaStreamTrackPrivate* MediaPlayerPrivateMediaStreamAVFObjC::activeVideoTrack() const
+{
+    return (m_mediaStreamPrivate && m_player->isVideoPlayer()) ? m_mediaStreamPrivate->activeVideoTrack() : nullptr;
+}
+
 bool MediaPlayerPrivateMediaStreamAVFObjC::didPassCORSAccessCheck() const
 {
     // We are only doing a check on the active video track since the sole consumer of this API is canvas.
     // FIXME: We should change the name of didPassCORSAccessCheck if it is expected to stay like this.
-    const auto* track = m_mediaStreamPrivate->activeVideoTrack();
+    const auto* track = activeVideoTrack();
     return !track || !track->isIsolated();
 }
 
@@ -465,7 +471,7 @@ MediaPlayerPrivateMediaStreamAVFObjC::DisplayMode MediaPlayerPrivateMediaStreamA
     if (m_intrinsicSize.isEmpty() || !metaDataAvailable() || !m_sampleBufferDisplayLayer)
         return None;
 
-    if (auto* track = m_mediaStreamPrivate->activeVideoTrack()) {
+    if (auto* track = activeVideoTrack()) {
         if (!track->enabled() || track->muted() || track->ended())
             return PaintItBlack;
     }
@@ -627,7 +633,7 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState(
     if (!m_mediaStreamPrivate || !m_mediaStreamPrivate->active() || !m_mediaStreamPrivate->hasTracks())
         return MediaPlayer::ReadyState::HaveNothing;
 
-    bool waitingForImage = m_mediaStreamPrivate->activeVideoTrack() && !m_imagePainter.mediaSample;
+    bool waitingForImage = activeVideoTrack() && !m_imagePainter.mediaSample;
     if (waitingForImage && (!m_haveSeenMetadata || m_waitingForFirstImage))
         return MediaPlayer::ReadyState::HaveNothing;
 
@@ -843,10 +849,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
         auto oldVideoTrack = m_activeVideoTrack;
         bool hideVideoLayer = true;
         m_activeVideoTrack = nullptr;
-        if (m_mediaStreamPrivate->activeVideoTrack()) {
+        if (auto* activeVideoTrack = this->activeVideoTrack()) {
             for (const auto& track : m_videoTrackMap.values()) {
-                if (&track->streamTrack() == m_mediaStreamPrivate->activeVideoTrack()) {
-                    m_activeVideoTrack = m_mediaStreamPrivate->activeVideoTrack();
+                if (&track->streamTrack() == activeVideoTrack) {
+                    m_activeVideoTrack = activeVideoTrack;
                     if (track->selected())
                         hideVideoLayer = false;
                     break;
@@ -896,6 +902,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
     };
     updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Type::Audio, currentTracks, &AudioTrackPrivateMediaStream::create, WTFMove(setAudioTrackState));
 
+    if (!m_player->isVideoPlayer())
+        return;
+
     auto setVideoTrackState = [this](VideoTrackPrivateMediaStream& track, int index, TrackState state)
     {
         switch (state) {
@@ -910,7 +919,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
             break;
         case TrackState::Configure:
             track.setTrackIndex(index);
-            bool selected = &track.streamTrack() == m_mediaStreamPrivate->activeVideoTrack();
+            bool selected = &track.streamTrack() == activeVideoTrack();
             track.setSelected(selected);
             checkSelectedVideoTrack();
             break;

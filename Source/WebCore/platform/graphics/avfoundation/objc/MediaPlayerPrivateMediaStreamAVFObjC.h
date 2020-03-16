@@ -209,7 +209,9 @@ private:
 
     void applicationDidBecomeActive() final;
 
-    bool hideRootLayer() const { return (!m_activeVideoTrack || m_waitingForFirstImage) && m_displayMode != PaintItBlack; }
+    bool hideRootLayer() const { return (!activeVideoTrack() || m_waitingForFirstImage) && m_displayMode != PaintItBlack; }
+
+    MediaStreamTrackPrivate* activeVideoTrack() const;
 
     MediaPlayer* m_player { nullptr };
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
