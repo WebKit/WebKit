@@ -1,3 +1,12 @@
+2020-03-16  Justin Michaud  <justin_michaud@apple.com>
+
+        Add personal email to Tools/Scripts/webkitpy/common/config/contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=209151
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-03-16  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebCookieCache::clearForHost()
