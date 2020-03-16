@@ -1447,3 +1447,5 @@ webkit.org/b/209006 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/209205 fast/events/autoscroll-in-iframe.html [ Pass Failure ]
 
 webkit.org/b/209083 fast/scrolling/scroll-container-horizontally.html [ Timeout ]
+
+webkit.org/b/209139 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Pass Failure ]
