@@ -1,3 +1,25 @@
+2020-03-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] IDLs, stubs and build configuration for WPE
+        https://bugs.webkit.org/show_bug.cgi?id=208702
+
+        Reviewed by Dean Jackson.
+
+        Added a new compile flag for WEBXR which depends on WEBGL.
+
+        For the WPE port, added OpenXR detection and USE_OPENXR define to be
+        used in the sources. It also adds a dependency between USE_OPENXR and
+        ENABLE_WEBXR.
+
+        Largely based on previous work by Žan Doberšek.
+
+        * Source/cmake/FindOpenXR.cmake: Added.
+        * Source/cmake/OptionsWPE.cmake: Added mandatory OpenXR dependency if
+        WEBXR is enabled exposing USE_OPENXR to the build.
+        * Source/cmake/WebKitFeatures.cmake: Added ENABLE_WEBXR.
+        * Source/cmake/tools/vsprops/FeatureDefines.props: Ditto.
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props: Ditto.
+
 2020-03-14  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [CMake] Warning when ccache is not installed

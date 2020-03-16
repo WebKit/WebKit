@@ -64,6 +64,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/webgpu/WHLSL"
     "${WEBCORE_DIR}/Modules/webgpu/WHLSL/AST"
     "${WEBCORE_DIR}/Modules/websockets"
+    "${WEBCORE_DIR}/Modules/webxr"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/accessibility/isolatedtree"
     "${WEBCORE_DIR}/animation"
@@ -141,7 +142,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network"
     "${WEBCORE_DIR}/platform/sql"
     "${WEBCORE_DIR}/platform/text"
-    "${WEBCORE_DIR}/platform/vr"
+    "${WEBCORE_DIR}/platform/xr"
     "${WEBCORE_DIR}/plugins"
     "${WEBCORE_DIR}/rendering"
     "${WEBCORE_DIR}/rendering/line"
@@ -1176,6 +1177,42 @@ if (ENABLE_GAMEPAD)
 
         platform/gamepad/EmptyGamepadProvider.cpp
         platform/gamepad/GamepadProvider.cpp
+    )
+endif ()
+
+if (ENABLE_WEBGL)
+    list(APPEND WebCore_NON_SVG_IDL_FILES
+        Modules/webxr/NavigatorWebXR.idl
+        Modules/webxr/WebXRBoundedReferenceSpace.idl
+        Modules/webxr/WebXRFrame.idl
+        Modules/webxr/WebXRInputSource.idl
+        Modules/webxr/WebXRInputSourceArray.idl
+        Modules/webxr/WebXRPose.idl
+        Modules/webxr/WebXRReferenceSpace.idl
+        Modules/webxr/WebXRRenderState.idl
+        Modules/webxr/WebXRRigidTransform.idl
+        Modules/webxr/WebXRSession.idl
+        Modules/webxr/WebXRSpace.idl
+        Modules/webxr/WebXRSystem.idl
+        Modules/webxr/WebXRView.idl
+        Modules/webxr/WebXRViewerPose.idl
+        Modules/webxr/WebXRViewport.idl
+        Modules/webxr/WebXRWebGLLayer.idl
+        Modules/webxr/XREnvironmentBlendMode.idl
+        Modules/webxr/XREye.idl
+        Modules/webxr/XRFrameRequestCallback.idl
+        Modules/webxr/XRHandedness.idl
+        Modules/webxr/XRInputSourceEvent.idl
+        Modules/webxr/XRInputSourcesChangeEvent.idl
+        Modules/webxr/XRReferenceSpaceEvent.idl
+        Modules/webxr/XRReferenceSpaceType.idl
+        Modules/webxr/XRRenderStateInit.idl
+        Modules/webxr/XRSessionEvent.idl
+        Modules/webxr/XRSessionInit.idl
+        Modules/webxr/XRSessionMode.idl
+        Modules/webxr/XRTargetRayMode.idl
+        Modules/webxr/XRVisibilityState.idl
+        Modules/webxr/XRWebGLLayerInit.idl
     )
 endif ()
 

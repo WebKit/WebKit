@@ -40,7 +40,7 @@ namespace Detail {
 
 template<typename IDLType>
 struct GenericSequenceConverter {
-    using ReturnType = Vector<typename IDLType::ImplementationType>;
+    using ReturnType = Vector<typename IDLType::SequenceStorageType>;
 
     static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject* object)
     {

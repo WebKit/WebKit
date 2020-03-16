@@ -4816,6 +4816,60 @@
 		E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */; };
 		E1EC29A00BB04C6B00EA187B /* XPathNodeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EC299E0BB04C6B00EA187B /* XPathNodeSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1EE8B702412B2A800E794D6 /* PlatformXR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8B6C2412B2A700E794D6 /* PlatformXR.cpp */; };
+		E1EE8B712412B2A800E794D6 /* PlatformXR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8B6E2412B2A700E794D6 /* PlatformXR.cpp */; };
+		E1EE8B722412B2A800E794D6 /* PlatformXR.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8B6F2412B2A700E794D6 /* PlatformXR.h */; };
+		E1EE8B762413191F00E794D6 /* WebXRViewerPose.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AC72412B16F00E794D6 /* WebXRViewerPose.h */; };
+		E1EE8B772413191F00E794D6 /* XRReferenceSpaceType.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AC92412B17000E794D6 /* XRReferenceSpaceType.h */; };
+		E1EE8B782413191F00E794D6 /* NavigatorWebXR.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8ACA2412B17000E794D6 /* NavigatorWebXR.h */; };
+		E1EE8B792413191F00E794D6 /* XRRenderStateInit.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8ACB2412B17000E794D6 /* XRRenderStateInit.h */; };
+		E1EE8B7A2413191F00E794D6 /* XRInputSourceEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8ACC2412B17000E794D6 /* XRInputSourceEvent.cpp */; };
+		E1EE8B7B2413191F00E794D6 /* WebXRRigidTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8ACD2412B17000E794D6 /* WebXRRigidTransform.cpp */; };
+		E1EE8B7C2413191F00E794D6 /* WebXRRenderState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8ACE2412B17000E794D6 /* WebXRRenderState.cpp */; };
+		E1EE8B7D2413191F00E794D6 /* WebXRSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8ACF2412B17000E794D6 /* WebXRSpace.h */; };
+		E1EE8B7E2413191F00E794D6 /* WebXRBoundedReferenceSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AD12412B17000E794D6 /* WebXRBoundedReferenceSpace.h */; };
+		E1EE8B7F2413191F00E794D6 /* WebXRReferenceSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8AD22412B17000E794D6 /* WebXRReferenceSpace.cpp */; };
+		E1EE8B802413191F00E794D6 /* WebXRBoundedReferenceSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8AD32412B17000E794D6 /* WebXRBoundedReferenceSpace.cpp */; };
+		E1EE8B812413191F00E794D6 /* WebXRRenderState.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AD52412B17000E794D6 /* WebXRRenderState.h */; };
+		E1EE8B822413191F00E794D6 /* XRVisibilityState.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AD62412B17000E794D6 /* XRVisibilityState.h */; };
+		E1EE8B832413191F00E794D6 /* WebXRWebGLLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8AD82412B17000E794D6 /* WebXRWebGLLayer.cpp */; };
+		E1EE8B842413191F00E794D6 /* XRReferenceSpaceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8ADB2412B17000E794D6 /* XRReferenceSpaceEvent.h */; };
+		E1EE8B852413191F00E794D6 /* XRSessionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8ADC2412B17000E794D6 /* XRSessionEvent.cpp */; };
+		E1EE8B862413191F00E794D6 /* WebXRInputSourceArray.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8ADD2412B17000E794D6 /* WebXRInputSourceArray.h */; };
+		E1EE8B872413191F00E794D6 /* WebXRView.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AE02412B17000E794D6 /* WebXRView.h */; };
+		E1EE8B882413191F00E794D6 /* WebXRPose.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AE12412B17000E794D6 /* WebXRPose.h */; };
+		E1EE8B892413191F00E794D6 /* WebXRSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AE22412B17000E794D6 /* WebXRSystem.h */; };
+		E1EE8B8A2413191F00E794D6 /* WebXRFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AE32412B17000E794D6 /* WebXRFrame.h */; };
+		E1EE8B8B2413191F00E794D6 /* WebXRPose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8AE52412B17000E794D6 /* WebXRPose.cpp */; };
+		E1EE8B8C2413191F00E794D6 /* WebXRInputSourceArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8AE62412B17000E794D6 /* WebXRInputSourceArray.cpp */; };
+		E1EE8B8D2413195000E794D6 /* XRSessionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AE72412B17000E794D6 /* XRSessionEvent.h */; };
+		E1EE8B8E2413195000E794D6 /* WebXRSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8AE82412B17000E794D6 /* WebXRSystem.cpp */; };
+		E1EE8B8F2413195000E794D6 /* XRFrameRequestCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AE92412B17000E794D6 /* XRFrameRequestCallback.h */; };
+		E1EE8B902413195000E794D6 /* XRTargetRayMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AEA2412B17000E794D6 /* XRTargetRayMode.h */; };
+		E1EE8B912413195000E794D6 /* WebXRViewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8AEB2412B17000E794D6 /* WebXRViewport.cpp */; };
+		E1EE8B922413195000E794D6 /* XRHandedness.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AEE2412B17000E794D6 /* XRHandedness.h */; };
+		E1EE8B932413195000E794D6 /* WebXRFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8AF02412B17000E794D6 /* WebXRFrame.cpp */; };
+		E1EE8B942413195000E794D6 /* NavigatorWebXR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8AF12412B17000E794D6 /* NavigatorWebXR.cpp */; };
+		E1EE8B952413195000E794D6 /* XRReferenceSpaceEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8AF32412B17000E794D6 /* XRReferenceSpaceEvent.cpp */; };
+		E1EE8B962413195000E794D6 /* WebXRViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AF42412B17000E794D6 /* WebXRViewport.h */; };
+		E1EE8B972413195000E794D6 /* XREye.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AF52412B17000E794D6 /* XREye.h */; };
+		E1EE8B982413195000E794D6 /* WebXRSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8AF82412B17000E794D6 /* WebXRSpace.cpp */; };
+		E1EE8B992413195000E794D6 /* XRInputSourcesChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AF92412B17000E794D6 /* XRInputSourcesChangeEvent.h */; };
+		E1EE8B9A2413195000E794D6 /* XRSessionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AFE2412B17000E794D6 /* XRSessionMode.h */; };
+		E1EE8B9B2413195000E794D6 /* XRWebGLLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8B042412B17000E794D6 /* XRWebGLLayer.h */; };
+		E1EE8B9C2413195000E794D6 /* XREnvironmentBlendMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8B052412B17000E794D6 /* XREnvironmentBlendMode.h */; };
+		E1EE8B9D2413195000E794D6 /* WebXRRigidTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8B062412B17000E794D6 /* WebXRRigidTransform.h */; };
+		E1EE8B9E2413195000E794D6 /* XRWebGLLayerInit.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8B082412B17000E794D6 /* XRWebGLLayerInit.h */; };
+		E1EE8B9F2413195000E794D6 /* XRInputSourceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8B092412B17000E794D6 /* XRInputSourceEvent.h */; };
+		E1EE8BA02413195000E794D6 /* WebXRViewerPose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8B0B2412B17000E794D6 /* WebXRViewerPose.cpp */; };
+		E1EE8BA12413196300E794D6 /* WebXRInputSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8B0D2412B17000E794D6 /* WebXRInputSource.cpp */; };
+		E1EE8BA22413196300E794D6 /* WebXRSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8B0F2412B17000E794D6 /* WebXRSession.cpp */; };
+		E1EE8BA32413196300E794D6 /* WebXRSession.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8B112412B17000E794D6 /* WebXRSession.h */; };
+		E1EE8BA42413196300E794D6 /* WebXRView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8B122412B17000E794D6 /* WebXRView.cpp */; };
+		E1EE8BA52413196300E794D6 /* XRSessionInit.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8B132412B17000E794D6 /* XRSessionInit.h */; };
+		E1EE8BA62413196300E794D6 /* WebXRReferenceSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8B142412B17000E794D6 /* WebXRReferenceSpace.h */; };
+		E1EE8BA72413196300E794D6 /* XRInputSourcesChangeEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8B152412B17000E794D6 /* XRInputSourcesChangeEvent.cpp */; };
+		E1EE8BA82413196300E794D6 /* WebXRInputSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8B172412B17000E794D6 /* WebXRInputSource.h */; };
 		E1F1E8300C3C2BB9006DB391 /* XSLTExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */; };
 		E1F80B8818317252007885C3 /* CryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8618317252007885C3 /* CryptoKeyPair.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1F80B8E183172B5007885C3 /* JSCryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */; };
@@ -15154,6 +15208,91 @@
 		E1EC299D0BB04C6B00EA187B /* XPathNodeSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPathNodeSet.cpp; sourceTree = "<group>"; };
 		E1EC299E0BB04C6B00EA187B /* XPathNodeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPathNodeSet.h; sourceTree = "<group>"; };
 		E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValueMappings.h; sourceTree = "<group>"; };
+		E1EE8AC72412B16F00E794D6 /* WebXRViewerPose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRViewerPose.h; sourceTree = "<group>"; };
+		E1EE8AC82412B16F00E794D6 /* XRSessionMode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRSessionMode.idl; sourceTree = "<group>"; };
+		E1EE8AC92412B17000E794D6 /* XRReferenceSpaceType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRReferenceSpaceType.h; sourceTree = "<group>"; };
+		E1EE8ACA2412B17000E794D6 /* NavigatorWebXR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorWebXR.h; sourceTree = "<group>"; };
+		E1EE8ACB2412B17000E794D6 /* XRRenderStateInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRRenderStateInit.h; sourceTree = "<group>"; };
+		E1EE8ACC2412B17000E794D6 /* XRInputSourceEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XRInputSourceEvent.cpp; sourceTree = "<group>"; };
+		E1EE8ACD2412B17000E794D6 /* WebXRRigidTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRRigidTransform.cpp; sourceTree = "<group>"; };
+		E1EE8ACE2412B17000E794D6 /* WebXRRenderState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRRenderState.cpp; sourceTree = "<group>"; };
+		E1EE8ACF2412B17000E794D6 /* WebXRSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRSpace.h; sourceTree = "<group>"; };
+		E1EE8AD02412B17000E794D6 /* XRReferenceSpaceEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRReferenceSpaceEvent.idl; sourceTree = "<group>"; };
+		E1EE8AD12412B17000E794D6 /* WebXRBoundedReferenceSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRBoundedReferenceSpace.h; sourceTree = "<group>"; };
+		E1EE8AD22412B17000E794D6 /* WebXRReferenceSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRReferenceSpace.cpp; sourceTree = "<group>"; };
+		E1EE8AD32412B17000E794D6 /* WebXRBoundedReferenceSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRBoundedReferenceSpace.cpp; sourceTree = "<group>"; };
+		E1EE8AD42412B17000E794D6 /* XRSpace.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRSpace.idl; sourceTree = "<group>"; };
+		E1EE8AD52412B17000E794D6 /* WebXRRenderState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRRenderState.h; sourceTree = "<group>"; };
+		E1EE8AD62412B17000E794D6 /* XRVisibilityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRVisibilityState.h; sourceTree = "<group>"; };
+		E1EE8AD72412B17000E794D6 /* XRSessionInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRSessionInit.idl; sourceTree = "<group>"; };
+		E1EE8AD82412B17000E794D6 /* WebXRWebGLLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRWebGLLayer.cpp; sourceTree = "<group>"; };
+		E1EE8AD92412B17000E794D6 /* XRVisibilityState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRVisibilityState.idl; sourceTree = "<group>"; };
+		E1EE8ADA2412B17000E794D6 /* XREnvironmentBlendMode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XREnvironmentBlendMode.idl; sourceTree = "<group>"; };
+		E1EE8ADB2412B17000E794D6 /* XRReferenceSpaceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRReferenceSpaceEvent.h; sourceTree = "<group>"; };
+		E1EE8ADC2412B17000E794D6 /* XRSessionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XRSessionEvent.cpp; sourceTree = "<group>"; };
+		E1EE8ADD2412B17000E794D6 /* WebXRInputSourceArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRInputSourceArray.h; sourceTree = "<group>"; };
+		E1EE8ADE2412B17000E794D6 /* XRSession.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRSession.idl; sourceTree = "<group>"; };
+		E1EE8ADF2412B17000E794D6 /* XRView.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRView.idl; sourceTree = "<group>"; };
+		E1EE8AE02412B17000E794D6 /* WebXRView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRView.h; sourceTree = "<group>"; };
+		E1EE8AE12412B17000E794D6 /* WebXRPose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRPose.h; sourceTree = "<group>"; };
+		E1EE8AE22412B17000E794D6 /* WebXRSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRSystem.h; sourceTree = "<group>"; };
+		E1EE8AE32412B17000E794D6 /* WebXRFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRFrame.h; sourceTree = "<group>"; };
+		E1EE8AE42412B17000E794D6 /* XRInputSourcesChangeEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRInputSourcesChangeEvent.idl; sourceTree = "<group>"; };
+		E1EE8AE52412B17000E794D6 /* WebXRPose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRPose.cpp; sourceTree = "<group>"; };
+		E1EE8AE62412B17000E794D6 /* WebXRInputSourceArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRInputSourceArray.cpp; sourceTree = "<group>"; };
+		E1EE8AE72412B17000E794D6 /* XRSessionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRSessionEvent.h; sourceTree = "<group>"; };
+		E1EE8AE82412B17000E794D6 /* WebXRSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRSystem.cpp; sourceTree = "<group>"; };
+		E1EE8AE92412B17000E794D6 /* XRFrameRequestCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRFrameRequestCallback.h; sourceTree = "<group>"; };
+		E1EE8AEA2412B17000E794D6 /* XRTargetRayMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRTargetRayMode.h; sourceTree = "<group>"; };
+		E1EE8AEB2412B17000E794D6 /* WebXRViewport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRViewport.cpp; sourceTree = "<group>"; };
+		E1EE8AEC2412B17000E794D6 /* XRRenderStateInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRRenderStateInit.idl; sourceTree = "<group>"; };
+		E1EE8AED2412B17000E794D6 /* XRViewerPose.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRViewerPose.idl; sourceTree = "<group>"; };
+		E1EE8AEE2412B17000E794D6 /* XRHandedness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRHandedness.h; sourceTree = "<group>"; };
+		E1EE8AEF2412B17000E794D6 /* XRInputSource.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRInputSource.idl; sourceTree = "<group>"; };
+		E1EE8AF02412B17000E794D6 /* WebXRFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRFrame.cpp; sourceTree = "<group>"; };
+		E1EE8AF12412B17000E794D6 /* NavigatorWebXR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorWebXR.cpp; sourceTree = "<group>"; };
+		E1EE8AF22412B17000E794D6 /* XRRenderState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRRenderState.idl; sourceTree = "<group>"; };
+		E1EE8AF32412B17000E794D6 /* XRReferenceSpaceEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XRReferenceSpaceEvent.cpp; sourceTree = "<group>"; };
+		E1EE8AF42412B17000E794D6 /* WebXRViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRViewport.h; sourceTree = "<group>"; };
+		E1EE8AF52412B17000E794D6 /* XREye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XREye.h; sourceTree = "<group>"; };
+		E1EE8AF62412B17000E794D6 /* XRReferenceSpace.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRReferenceSpace.idl; sourceTree = "<group>"; };
+		E1EE8AF72412B17000E794D6 /* XRBoundedReferenceSpace.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRBoundedReferenceSpace.idl; sourceTree = "<group>"; };
+		E1EE8AF82412B17000E794D6 /* WebXRSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRSpace.cpp; sourceTree = "<group>"; };
+		E1EE8AF92412B17000E794D6 /* XRInputSourcesChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRInputSourcesChangeEvent.h; sourceTree = "<group>"; };
+		E1EE8AFA2412B17000E794D6 /* XRReferenceSpaceType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRReferenceSpaceType.idl; sourceTree = "<group>"; };
+		E1EE8AFB2412B17000E794D6 /* XRFrameRequestCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRFrameRequestCallback.idl; sourceTree = "<group>"; };
+		E1EE8AFC2412B17000E794D6 /* XRWebGLLayer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRWebGLLayer.idl; sourceTree = "<group>"; };
+		E1EE8AFD2412B17000E794D6 /* XRSessionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRSessionEvent.idl; sourceTree = "<group>"; };
+		E1EE8AFE2412B17000E794D6 /* XRSessionMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRSessionMode.h; sourceTree = "<group>"; };
+		E1EE8AFF2412B17000E794D6 /* XRTargetRayMode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRTargetRayMode.idl; sourceTree = "<group>"; };
+		E1EE8B002412B17000E794D6 /* XRInputSourceEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRInputSourceEvent.idl; sourceTree = "<group>"; };
+		E1EE8B012412B17000E794D6 /* XRRigidTransform.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRRigidTransform.idl; sourceTree = "<group>"; };
+		E1EE8B022412B17000E794D6 /* XRSystem.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRSystem.idl; sourceTree = "<group>"; };
+		E1EE8B032412B17000E794D6 /* XREye.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XREye.idl; sourceTree = "<group>"; };
+		E1EE8B042412B17000E794D6 /* XRWebGLLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRWebGLLayer.h; sourceTree = "<group>"; };
+		E1EE8B052412B17000E794D6 /* XREnvironmentBlendMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XREnvironmentBlendMode.h; sourceTree = "<group>"; };
+		E1EE8B062412B17000E794D6 /* WebXRRigidTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRRigidTransform.h; sourceTree = "<group>"; };
+		E1EE8B072412B17000E794D6 /* XRHandedness.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRHandedness.idl; sourceTree = "<group>"; };
+		E1EE8B082412B17000E794D6 /* XRWebGLLayerInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRWebGLLayerInit.h; sourceTree = "<group>"; };
+		E1EE8B092412B17000E794D6 /* XRInputSourceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRInputSourceEvent.h; sourceTree = "<group>"; };
+		E1EE8B0A2412B17000E794D6 /* XRViewport.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRViewport.idl; sourceTree = "<group>"; };
+		E1EE8B0B2412B17000E794D6 /* WebXRViewerPose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRViewerPose.cpp; sourceTree = "<group>"; };
+		E1EE8B0C2412B17000E794D6 /* XRFrame.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRFrame.idl; sourceTree = "<group>"; };
+		E1EE8B0D2412B17000E794D6 /* WebXRInputSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRInputSource.cpp; sourceTree = "<group>"; };
+		E1EE8B0E2412B17000E794D6 /* NavigatorWebXR.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorWebXR.idl; sourceTree = "<group>"; };
+		E1EE8B0F2412B17000E794D6 /* WebXRSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRSession.cpp; sourceTree = "<group>"; };
+		E1EE8B102412B17000E794D6 /* XRWebGLLayerInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRWebGLLayerInit.idl; sourceTree = "<group>"; };
+		E1EE8B112412B17000E794D6 /* WebXRSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRSession.h; sourceTree = "<group>"; };
+		E1EE8B122412B17000E794D6 /* WebXRView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRView.cpp; sourceTree = "<group>"; };
+		E1EE8B132412B17000E794D6 /* XRSessionInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRSessionInit.h; sourceTree = "<group>"; };
+		E1EE8B142412B17000E794D6 /* WebXRReferenceSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRReferenceSpace.h; sourceTree = "<group>"; };
+		E1EE8B152412B17000E794D6 /* XRInputSourcesChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XRInputSourcesChangeEvent.cpp; sourceTree = "<group>"; };
+		E1EE8B162412B17000E794D6 /* XRPose.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRPose.idl; sourceTree = "<group>"; };
+		E1EE8B172412B17000E794D6 /* WebXRInputSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRInputSource.h; sourceTree = "<group>"; };
+		E1EE8B182412B17000E794D6 /* XRInputSourceArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRInputSourceArray.idl; sourceTree = "<group>"; };
+		E1EE8B6C2412B2A700E794D6 /* PlatformXR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformXR.cpp; sourceTree = "<group>"; };
+		E1EE8B6E2412B2A700E794D6 /* PlatformXR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformXR.cpp; sourceTree = "<group>"; };
+		E1EE8B6F2412B2A700E794D6 /* PlatformXR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformXR.h; sourceTree = "<group>"; };
 		E1F1E82D0C3C2BB9006DB391 /* XSLTExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTExtensions.cpp; sourceTree = "<group>"; };
 		E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTExtensions.h; sourceTree = "<group>"; };
 		E1F80B8418317247007885C3 /* CryptoKeyPair.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoKeyPair.idl; sourceTree = "<group>"; };
@@ -22394,6 +22533,7 @@
 				996E59DA1DF00D45006612B9 /* webdriver */,
 				D00F593E216ECC43000D71DB /* webgpu */,
 				97AABCF714FA09B5007457AE /* websockets */,
+				E1EE8AC62412B16F00E794D6 /* webxr */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -25944,6 +26084,7 @@
 				656B84D70AEA1CE900A095B4 /* network */,
 				1A2E6E560CC551E0004A2062 /* sql */,
 				B2C3D9EC0D006C1D00EF6F26 /* text */,
+				E1EE8B6B2412B2A700E794D6 /* xr */,
 				DFDB912CF8E88A6DA1AD264F /* AbortableTaskQueue.h */,
 				49AE2D94134EE5F90072920A /* CalculationValue.cpp */,
 				49AE2D95134EE5F90072920A /* CalculationValue.h */,
@@ -27034,6 +27175,113 @@
 				51F175051F358BDE00C74950 /* JSWorkerType.h */,
 			);
 			name = Threads;
+			sourceTree = "<group>";
+		};
+		E1EE8AC62412B16F00E794D6 /* webxr */ = {
+			isa = PBXGroup;
+			children = (
+				E1EE8AF12412B17000E794D6 /* NavigatorWebXR.cpp */,
+				E1EE8ACA2412B17000E794D6 /* NavigatorWebXR.h */,
+				E1EE8B0E2412B17000E794D6 /* NavigatorWebXR.idl */,
+				E1EE8AD32412B17000E794D6 /* WebXRBoundedReferenceSpace.cpp */,
+				E1EE8AD12412B17000E794D6 /* WebXRBoundedReferenceSpace.h */,
+				E1EE8AF02412B17000E794D6 /* WebXRFrame.cpp */,
+				E1EE8AE32412B17000E794D6 /* WebXRFrame.h */,
+				E1EE8B0D2412B17000E794D6 /* WebXRInputSource.cpp */,
+				E1EE8B172412B17000E794D6 /* WebXRInputSource.h */,
+				E1EE8AE62412B17000E794D6 /* WebXRInputSourceArray.cpp */,
+				E1EE8ADD2412B17000E794D6 /* WebXRInputSourceArray.h */,
+				E1EE8AE52412B17000E794D6 /* WebXRPose.cpp */,
+				E1EE8AE12412B17000E794D6 /* WebXRPose.h */,
+				E1EE8AD22412B17000E794D6 /* WebXRReferenceSpace.cpp */,
+				E1EE8B142412B17000E794D6 /* WebXRReferenceSpace.h */,
+				E1EE8ACE2412B17000E794D6 /* WebXRRenderState.cpp */,
+				E1EE8AD52412B17000E794D6 /* WebXRRenderState.h */,
+				E1EE8ACD2412B17000E794D6 /* WebXRRigidTransform.cpp */,
+				E1EE8B062412B17000E794D6 /* WebXRRigidTransform.h */,
+				E1EE8B0F2412B17000E794D6 /* WebXRSession.cpp */,
+				E1EE8B112412B17000E794D6 /* WebXRSession.h */,
+				E1EE8AF82412B17000E794D6 /* WebXRSpace.cpp */,
+				E1EE8ACF2412B17000E794D6 /* WebXRSpace.h */,
+				E1EE8AE82412B17000E794D6 /* WebXRSystem.cpp */,
+				E1EE8AE22412B17000E794D6 /* WebXRSystem.h */,
+				E1EE8B122412B17000E794D6 /* WebXRView.cpp */,
+				E1EE8AE02412B17000E794D6 /* WebXRView.h */,
+				E1EE8B0B2412B17000E794D6 /* WebXRViewerPose.cpp */,
+				E1EE8AC72412B16F00E794D6 /* WebXRViewerPose.h */,
+				E1EE8AEB2412B17000E794D6 /* WebXRViewport.cpp */,
+				E1EE8AF42412B17000E794D6 /* WebXRViewport.h */,
+				E1EE8AD82412B17000E794D6 /* WebXRWebGLLayer.cpp */,
+				E1EE8AF72412B17000E794D6 /* XRBoundedReferenceSpace.idl */,
+				E1EE8B052412B17000E794D6 /* XREnvironmentBlendMode.h */,
+				E1EE8ADA2412B17000E794D6 /* XREnvironmentBlendMode.idl */,
+				E1EE8AF52412B17000E794D6 /* XREye.h */,
+				E1EE8B032412B17000E794D6 /* XREye.idl */,
+				E1EE8B0C2412B17000E794D6 /* XRFrame.idl */,
+				E1EE8AE92412B17000E794D6 /* XRFrameRequestCallback.h */,
+				E1EE8AFB2412B17000E794D6 /* XRFrameRequestCallback.idl */,
+				E1EE8AEE2412B17000E794D6 /* XRHandedness.h */,
+				E1EE8B072412B17000E794D6 /* XRHandedness.idl */,
+				E1EE8AEF2412B17000E794D6 /* XRInputSource.idl */,
+				E1EE8B182412B17000E794D6 /* XRInputSourceArray.idl */,
+				E1EE8ACC2412B17000E794D6 /* XRInputSourceEvent.cpp */,
+				E1EE8B092412B17000E794D6 /* XRInputSourceEvent.h */,
+				E1EE8B002412B17000E794D6 /* XRInputSourceEvent.idl */,
+				E1EE8B152412B17000E794D6 /* XRInputSourcesChangeEvent.cpp */,
+				E1EE8AF92412B17000E794D6 /* XRInputSourcesChangeEvent.h */,
+				E1EE8AE42412B17000E794D6 /* XRInputSourcesChangeEvent.idl */,
+				E1EE8B162412B17000E794D6 /* XRPose.idl */,
+				E1EE8AF62412B17000E794D6 /* XRReferenceSpace.idl */,
+				E1EE8AF32412B17000E794D6 /* XRReferenceSpaceEvent.cpp */,
+				E1EE8ADB2412B17000E794D6 /* XRReferenceSpaceEvent.h */,
+				E1EE8AD02412B17000E794D6 /* XRReferenceSpaceEvent.idl */,
+				E1EE8AC92412B17000E794D6 /* XRReferenceSpaceType.h */,
+				E1EE8AFA2412B17000E794D6 /* XRReferenceSpaceType.idl */,
+				E1EE8AF22412B17000E794D6 /* XRRenderState.idl */,
+				E1EE8ACB2412B17000E794D6 /* XRRenderStateInit.h */,
+				E1EE8AEC2412B17000E794D6 /* XRRenderStateInit.idl */,
+				E1EE8B012412B17000E794D6 /* XRRigidTransform.idl */,
+				E1EE8ADE2412B17000E794D6 /* XRSession.idl */,
+				E1EE8ADC2412B17000E794D6 /* XRSessionEvent.cpp */,
+				E1EE8AE72412B17000E794D6 /* XRSessionEvent.h */,
+				E1EE8AFD2412B17000E794D6 /* XRSessionEvent.idl */,
+				E1EE8B132412B17000E794D6 /* XRSessionInit.h */,
+				E1EE8AD72412B17000E794D6 /* XRSessionInit.idl */,
+				E1EE8AFE2412B17000E794D6 /* XRSessionMode.h */,
+				E1EE8AC82412B16F00E794D6 /* XRSessionMode.idl */,
+				E1EE8AD42412B17000E794D6 /* XRSpace.idl */,
+				E1EE8B022412B17000E794D6 /* XRSystem.idl */,
+				E1EE8AEA2412B17000E794D6 /* XRTargetRayMode.h */,
+				E1EE8AFF2412B17000E794D6 /* XRTargetRayMode.idl */,
+				E1EE8ADF2412B17000E794D6 /* XRView.idl */,
+				E1EE8AED2412B17000E794D6 /* XRViewerPose.idl */,
+				E1EE8B0A2412B17000E794D6 /* XRViewport.idl */,
+				E1EE8AD62412B17000E794D6 /* XRVisibilityState.h */,
+				E1EE8AD92412B17000E794D6 /* XRVisibilityState.idl */,
+				E1EE8B042412B17000E794D6 /* XRWebGLLayer.h */,
+				E1EE8AFC2412B17000E794D6 /* XRWebGLLayer.idl */,
+				E1EE8B082412B17000E794D6 /* XRWebGLLayerInit.h */,
+				E1EE8B102412B17000E794D6 /* XRWebGLLayerInit.idl */,
+			);
+			path = webxr;
+			sourceTree = "<group>";
+		};
+		E1EE8B6B2412B2A700E794D6 /* xr */ = {
+			isa = PBXGroup;
+			children = (
+				E1EE8B6D2412B2A700E794D6 /* openxr */,
+				E1EE8B6C2412B2A700E794D6 /* PlatformXR.cpp */,
+				E1EE8B6F2412B2A700E794D6 /* PlatformXR.h */,
+			);
+			path = xr;
+			sourceTree = "<group>";
+		};
+		E1EE8B6D2412B2A700E794D6 /* openxr */ = {
+			isa = PBXGroup;
+			children = (
+				E1EE8B6E2412B2A700E794D6 /* PlatformXR.cpp */,
+			);
+			path = openxr;
 			sourceTree = "<group>";
 		};
 		E1F0424309839389006694EA /* xml */ = {
@@ -31713,6 +31961,7 @@
 				6B507A24234BF34100BE7C62 /* NavigatorIsLoggedIn.h in Headers */,
 				5EA725D61ACABD5700EAD17B /* NavigatorMediaDevices.h in Headers */,
 				996E59DF1DF0128D006612B9 /* NavigatorWebDriver.h in Headers */,
+				E1EE8B782413191F00E794D6 /* NavigatorWebXR.h in Headers */,
 				8A309C9F123950BE00CB9204 /* NestingLevelIncrementer.h in Headers */,
 				656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */,
 				A19D934B1AA11B1E00B46C24 /* NetworkExtensionContentFilter.h in Headers */,
@@ -31927,6 +32176,7 @@
 				074E82BB18A69F0E007EF54C /* PlatformTimeRanges.h in Headers */,
 				52B0D4BE1C57FD1E0077CE53 /* PlatformView.h in Headers */,
 				935C476B09AC4D4F00A6AAB4 /* PlatformWheelEvent.h in Headers */,
+				E1EE8B722412B2A800E794D6 /* PlatformXR.h in Headers */,
 				712BE4801FE864A7002031CC /* PlaybackDirection.h in Headers */,
 				CDA29A091CBD99F400901CCF /* PlaybackSessionInterface.h in Headers */,
 				CDA29A321CC01A9500901CCF /* PlaybackSessionInterfaceAVKit.h in Headers */,
@@ -33172,6 +33422,20 @@
 				5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */,
 				B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */,
 				B10B6982140C174000BC1C26 /* WebVTTTokenizer.h in Headers */,
+				E1EE8B7E2413191F00E794D6 /* WebXRBoundedReferenceSpace.h in Headers */,
+				E1EE8B8A2413191F00E794D6 /* WebXRFrame.h in Headers */,
+				E1EE8BA82413196300E794D6 /* WebXRInputSource.h in Headers */,
+				E1EE8B862413191F00E794D6 /* WebXRInputSourceArray.h in Headers */,
+				E1EE8B882413191F00E794D6 /* WebXRPose.h in Headers */,
+				E1EE8BA62413196300E794D6 /* WebXRReferenceSpace.h in Headers */,
+				E1EE8B812413191F00E794D6 /* WebXRRenderState.h in Headers */,
+				E1EE8B9D2413195000E794D6 /* WebXRRigidTransform.h in Headers */,
+				E1EE8BA32413196300E794D6 /* WebXRSession.h in Headers */,
+				E1EE8B7D2413191F00E794D6 /* WebXRSpace.h in Headers */,
+				E1EE8B892413191F00E794D6 /* WebXRSystem.h in Headers */,
+				E1EE8B872413191F00E794D6 /* WebXRView.h in Headers */,
+				E1EE8B762413191F00E794D6 /* WebXRViewerPose.h in Headers */,
+				E1EE8B962413195000E794D6 /* WebXRViewport.h in Headers */,
 				F55B3DE01251F12D003EF269 /* WeekInputType.h in Headers */,
 				85031B510A44EFC700F992E0 /* WheelEvent.h in Headers */,
 				2EBBC3D81B65988300F5253D /* WheelEventDeltaFilter.h in Headers */,
@@ -33268,6 +33532,22 @@
 				1AB7FC840A8B92EC00D9D37B /* XPathUtil.h in Headers */,
 				1AB7FC860A8B92EC00D9D37B /* XPathValue.h in Headers */,
 				1AB7FC880A8B92EC00D9D37B /* XPathVariableReference.h in Headers */,
+				E1EE8B9C2413195000E794D6 /* XREnvironmentBlendMode.h in Headers */,
+				E1EE8B972413195000E794D6 /* XREye.h in Headers */,
+				E1EE8B8F2413195000E794D6 /* XRFrameRequestCallback.h in Headers */,
+				E1EE8B922413195000E794D6 /* XRHandedness.h in Headers */,
+				E1EE8B9F2413195000E794D6 /* XRInputSourceEvent.h in Headers */,
+				E1EE8B992413195000E794D6 /* XRInputSourcesChangeEvent.h in Headers */,
+				E1EE8B842413191F00E794D6 /* XRReferenceSpaceEvent.h in Headers */,
+				E1EE8B772413191F00E794D6 /* XRReferenceSpaceType.h in Headers */,
+				E1EE8B792413191F00E794D6 /* XRRenderStateInit.h in Headers */,
+				E1EE8B8D2413195000E794D6 /* XRSessionEvent.h in Headers */,
+				E1EE8BA52413196300E794D6 /* XRSessionInit.h in Headers */,
+				E1EE8B9A2413195000E794D6 /* XRSessionMode.h in Headers */,
+				E1EE8B902413195000E794D6 /* XRTargetRayMode.h in Headers */,
+				E1EE8B822413191F00E794D6 /* XRVisibilityState.h in Headers */,
+				E1EE8B9B2413195000E794D6 /* XRWebGLLayer.h in Headers */,
+				E1EE8B9E2413195000E794D6 /* XRWebGLLayerInit.h in Headers */,
 				85217E030A5ECD4700DB8D00 /* XSLImportRule.h in Headers */,
 				93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */,
 				E1F1E8300C3C2BB9006DB391 /* XSLTExtensions.h in Headers */,
@@ -33801,6 +34081,7 @@
 				CDF2B0161820540700F2B424 /* MockSourceBufferPrivate.cpp in Sources */,
 				2D9BF7421DBFDC27007A7D99 /* NavigatorEME.cpp in Sources */,
 				51A4BB101954D62700FA5C2E /* NavigatorGamepad.cpp in Sources */,
+				E1EE8B942413195000E794D6 /* NavigatorWebXR.cpp in Sources */,
 				1A569D130D7E2B82007C3983 /* objc_class.mm in Sources */,
 				1A569D160D7E2B82007C3983 /* objc_instance.mm in Sources */,
 				1A569D180D7E2B82007C3983 /* objc_runtime.mm in Sources */,
@@ -33808,6 +34089,8 @@
 				E16982601134636A00894115 /* ObjCRuntimeObject.mm in Sources */,
 				CEA284662141E84900E407E8 /* PlatformEventFactoryIOS.mm in Sources */,
 				AA12DF491743DF83004DAFDF /* PlatformSpeechSynthesizerIOS.mm in Sources */,
+				E1EE8B712412B2A800E794D6 /* PlatformXR.cpp in Sources */,
+				E1EE8B702412B2A800E794D6 /* PlatformXR.cpp in Sources */,
 				CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceAVKit.mm in Sources */,
 				CDA29A161CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm in Sources */,
 				419242492127B93E00634FCF /* RealtimeOutgoingVideoSourceCocoa.mm in Sources */,
@@ -34468,10 +34751,29 @@
 				F12171F516A8CED2000053CA /* WebVTTElement.cpp in Sources */,
 				5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */,
 				B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */,
+				E1EE8B802413191F00E794D6 /* WebXRBoundedReferenceSpace.cpp in Sources */,
+				E1EE8B932413195000E794D6 /* WebXRFrame.cpp in Sources */,
+				E1EE8BA12413196300E794D6 /* WebXRInputSource.cpp in Sources */,
+				E1EE8B8C2413191F00E794D6 /* WebXRInputSourceArray.cpp in Sources */,
+				E1EE8B8B2413191F00E794D6 /* WebXRPose.cpp in Sources */,
+				E1EE8B7F2413191F00E794D6 /* WebXRReferenceSpace.cpp in Sources */,
+				E1EE8B7C2413191F00E794D6 /* WebXRRenderState.cpp in Sources */,
+				E1EE8B7B2413191F00E794D6 /* WebXRRigidTransform.cpp in Sources */,
+				E1EE8BA22413196300E794D6 /* WebXRSession.cpp in Sources */,
+				E1EE8B982413195000E794D6 /* WebXRSpace.cpp in Sources */,
+				E1EE8B8E2413195000E794D6 /* WebXRSystem.cpp in Sources */,
+				E1EE8BA42413196300E794D6 /* WebXRView.cpp in Sources */,
+				E1EE8BA02413195000E794D6 /* WebXRViewerPose.cpp in Sources */,
+				E1EE8B912413195000E794D6 /* WebXRViewport.cpp in Sources */,
+				E1EE8B832413191F00E794D6 /* WebXRWebGLLayer.cpp in Sources */,
 				A14832C2187F65C700DA63A6 /* WKUtilities.c in Sources */,
 				A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */,
 				A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */,
 				E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */,
+				E1EE8B7A2413191F00E794D6 /* XRInputSourceEvent.cpp in Sources */,
+				E1EE8BA72413196300E794D6 /* XRInputSourcesChangeEvent.cpp in Sources */,
+				E1EE8B952413195000E794D6 /* XRReferenceSpaceEvent.cpp in Sources */,
+				E1EE8B852413191F00E794D6 /* XRSessionEvent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

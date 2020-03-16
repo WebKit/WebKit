@@ -225,4 +225,18 @@ bool defaultIncrementalPDFEnabled()
 }
 #endif
 
+#if ENABLE(WEBXR)
+
+bool defaultWebXREnabled()
+{
+#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+    return os_feature_enabled(WebKit, WebXR);
+#endif
+
+    return false;
+}
+
+#endif // ENABLE(WEBXR)
+
+
 } // namespace WebKit

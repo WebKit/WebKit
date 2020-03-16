@@ -58,4 +58,6 @@ Worker
 WorkletGlobalScope conditional=CSS_PAINTING_API
 XMLHttpRequest
 XMLHttpRequestUpload
-
+WebXRSession conditional=WEBXR
+WebXRSpace conditional=WEBXR
+WebXRSystem conditional=WEBXR

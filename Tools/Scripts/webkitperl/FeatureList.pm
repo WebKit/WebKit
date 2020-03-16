@@ -189,6 +189,7 @@ my (
     $webgl2Support,
     $webglSupport,
     $webgpuSupport,
+    $webXRSupport,
     $wirelessPlaybackTargetSupport,
     $xsltSupport,
 );
@@ -594,6 +595,9 @@ my @features = (
 
     { option => "webgpu", desc => "Toggle WebGPU support",
       define => "ENABLE_WEBGPU", value => \$webgpuSupport },
+
+    { option => "webxr", desc => "Toggle WebXR support",
+      define => "ENABLE_WEBXR", value => \$webXRSupport },
 
     { option => "web-api-statistics", desc => "Toggle Web API statistics support",
       define => "ENABLE_WEB_API_STATISTICS", value => \$webAPIStatisticsSupport },

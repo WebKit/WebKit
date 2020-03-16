@@ -85,3 +85,7 @@ MediaKeyMessageEvent conditional=ENCRYPTED_MEDIA
 PointerEvent
 GPUUncapturedErrorEvent conditional=WEBGPU
 EnterPictureInPictureEvent conditional=PICTURE_IN_PICTURE_API
+XRInputSourceEvent conditional=WEBXR
+XRInputSourcesChangeEvent conditional=WEBXR
+XRReferenceSpaceEvent conditional=WEBXR
+XRSessionEvent conditional=WEBXR

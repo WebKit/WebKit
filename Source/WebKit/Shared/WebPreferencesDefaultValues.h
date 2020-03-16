@@ -332,4 +332,8 @@ bool defaultInAppBrowserPrivacy();
 bool defaultIncrementalPDFEnabled();
 #endif
 
+#if ENABLE(WEBXR)
+bool defaultWebXREnabled();
+#endif
+
 } // namespace WebKit

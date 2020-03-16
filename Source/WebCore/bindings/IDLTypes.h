@@ -62,6 +62,7 @@ template<typename T>
 struct IDLType {
     using ImplementationType = T;
     using StorageType = T;
+    using SequenceStorageType = T;
 
     using ParameterType = T;
     using NullableParameterType = Optional<ImplementationType>;
@@ -82,6 +83,7 @@ struct IDLUnsupportedType : IDLType<void> { };
 struct IDLNull : IDLType<std::nullptr_t> { };
 
 struct IDLAny : IDLType<JSC::Strong<JSC::Unknown>> {
+    using SequenceStorageType = JSC::JSValue;
     using ParameterType = JSC::JSValue;
     using NullableParameterType = JSC::JSValue;
 

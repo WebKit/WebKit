@@ -64,6 +64,7 @@ VPATH = \
     $(WebCore)/Modules/webdriver \
     $(WebCore)/Modules/webgpu \
     $(WebCore)/Modules/websockets \
+    $(WebCore)/Modules/webxr \
     $(WebCore)/accessibility \
     $(WebCore)/animation \
     $(WebCore)/bindings/js \
@@ -460,6 +461,37 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WorkerNavigatorGPU.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
+    $(WebCore)/Modules/webxr/NavigatorWebXR.idl \
+    $(WebCore)/Modules/webxr/WebXRBoundedReferenceSpace.idl \
+    $(WebCore)/Modules/webxr/WebXRFrame.idl \
+    $(WebCore)/Modules/webxr/WebXRInputSourceArray.idl \
+    $(WebCore)/Modules/webxr/WebXRInputSource.idl \
+    $(WebCore)/Modules/webxr/WebXRPose.idl \
+    $(WebCore)/Modules/webxr/WebXRReferenceSpace.idl \
+    $(WebCore)/Modules/webxr/WebXRRenderState.idl \
+    $(WebCore)/Modules/webxr/WebXRRigidTransform.idl \
+    $(WebCore)/Modules/webxr/WebXRSession.idl \
+    $(WebCore)/Modules/webxr/WebXRSpace.idl \
+    $(WebCore)/Modules/webxr/WebXRSystem.idl \
+    $(WebCore)/Modules/webxr/WebXRViewerPose.idl \
+    $(WebCore)/Modules/webxr/WebXRView.idl \
+    $(WebCore)/Modules/webxr/WebXRViewport.idl \
+    $(WebCore)/Modules/webxr/WebXRWebGLLayer.idl \
+    $(WebCore)/Modules/webxr/XREnvironmentBlendMode.idl \
+    $(WebCore)/Modules/webxr/XREye.idl \
+    $(WebCore)/Modules/webxr/XRFrameRequestCallback.idl \
+    $(WebCore)/Modules/webxr/XRHandedness.idl \
+    $(WebCore)/Modules/webxr/XRInputSourceEvent.idl \
+    $(WebCore)/Modules/webxr/XRInputSourcesChangeEvent.idl \
+    $(WebCore)/Modules/webxr/XRReferenceSpaceEvent.idl \
+    $(WebCore)/Modules/webxr/XRReferenceSpaceType.idl \
+    $(WebCore)/Modules/webxr/XRRenderStateInit.idl \
+    $(WebCore)/Modules/webxr/XRSessionEvent.idl \
+    $(WebCore)/Modules/webxr/XRSessionInit.idl \
+    $(WebCore)/Modules/webxr/XRSessionMode.idl \
+    $(WebCore)/Modules/webxr/XRTargetRayMode.idl \
+    $(WebCore)/Modules/webxr/XRVisibilityState.idl \
+    $(WebCore)/Modules/webxr/XRWebGLLayerInit.idl \
     $(WebCore)/accessibility/AccessibilityRole.idl \
     $(WebCore)/accessibility/AriaAttributes.idl \
     $(WebCore)/animation/Animatable.idl \
