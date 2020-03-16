@@ -185,7 +185,7 @@ AttributedString TextCheckingControllerProxy::annotatedSubstringBetweenPositions
     size_t entireRangeLength;
     TextIterator::getLocationAndLengthFromRange(commonAncestor.get(), entireRange.get(), entireRangeLocation, entireRangeLength);
 
-    for (TextIterator it(start.deepEquivalent(), end.deepEquivalent()); !it.atEnd(); it.advance()) {
+    for (TextIterator it({ *makeBoundaryPoint(start.deepEquivalent()), *makeBoundaryPoint(end.deepEquivalent()) }); !it.atEnd(); it.advance()) {
         int currentTextLength = it.text().length();
         if (!currentTextLength)
             continue;

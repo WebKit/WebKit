@@ -1,3 +1,10 @@
+2020-03-16  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the macCatalyst build after r258525
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::annotatedSubstringBetweenPositions):
+
 2020-03-15  Darin Adler  <darin@apple.com>
 
         Move most of TextIterator off of live ranges
