@@ -211,6 +211,8 @@ private:
 
     bool isScrollableOrRubberbandableBox() const override;
 
+    Node* nodeForHitTest() const override;
+
 private:
     FrameView& m_frameView;
 

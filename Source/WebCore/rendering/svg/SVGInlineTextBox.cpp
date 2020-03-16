@@ -668,7 +668,7 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
                     
                     if (fragmentQuad.containsPoint(locationInContainer.point())) {
                         renderer().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-                        if (result.addNodeToListBasedTestResult(&renderer().textNode(), request, locationInContainer, rect) == HitTestProgress::Stop)
+                        if (result.addNodeToListBasedTestResult(renderer().nodeForHitTest(), request, locationInContainer, rect) == HitTestProgress::Stop)
                             return true;
                     }
                 }

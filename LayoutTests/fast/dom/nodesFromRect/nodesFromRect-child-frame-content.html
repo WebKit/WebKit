@@ -56,15 +56,15 @@
             checkRect(220, 20, 70, 70, "DIV#left");
             checkRect(250, 20, 100, 70, "DIV#right, DIV#left, HTML");
 
-            checkRect(150, 50, 100, 100, "DIV#left, HTML, #document, IFRAME#iframe1, DIV#layer, DIV#div2, DIV#div1, DIV#sandbox");
+            checkRect(150, 50, 100, 100, "DIV#left, HTML, IFRAME#iframe1, DIV#layer, DIV#div2, DIV#div1, DIV#sandbox");
 
             e.layer.setAttribute('class', 'rotate180');
             checkRect(220, 20, 70, 70, "DIV#right");
-            checkRect(150, 50, 100, 100, "DIV#right, HTML, #document, IFRAME#iframe1, DIV#layer, DIV#div2, DIV#div1, DIV#sandbox");
+            checkRect(150, 50, 100, 100, "DIV#right, HTML, IFRAME#iframe1, DIV#layer, DIV#div2, DIV#div1, DIV#sandbox");
 
             e.layer.setAttribute('class', 'rotate90');
             checkRect(250, 20, 100, 70, "DIV#left");
-            checkRect(150, 20, 200, 60, "DIV#left, HTML, #document, IFRAME#iframe1, DIV#layer, DIV#div1, DIV#sandbox");
+            checkRect(150, 20, 200, 60, "DIV#left, HTML, IFRAME#iframe1, DIV#layer, DIV#div1, DIV#sandbox");
 
             e.sandbox.display = 'none';
             finishJSTest();

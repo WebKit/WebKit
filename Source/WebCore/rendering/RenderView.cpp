@@ -662,6 +662,11 @@ IntSize RenderView::viewportSizeForCSSViewportUnits() const
     return frameView().viewportSizeForCSSViewportUnits();
 }
 
+Node* RenderView::nodeForHitTest() const
+{
+    return document().documentElement();
+}
+
 void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)
 {
     if (result.innerNode())
@@ -670,8 +675,7 @@ void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& p
     if (multiColumnFlow() && multiColumnFlow()->firstMultiColumnSet())
         return multiColumnFlow()->firstMultiColumnSet()->updateHitTestResult(result, point);
 
-    Node* node = document().documentElement();
-    if (node) {
+    if (auto* node = nodeForHitTest()) {
         result.setInnerNode(node);
         if (!result.innerNonSharedNode())
             result.setInnerNonSharedNode(node);

@@ -560,7 +560,7 @@ bool RenderInline::hitTestCulledInline(const HitTestRequest& request, HitTestRes
         updateHitTestResult(result, tmpLocation.point());
         // We cannot use addNodeToListBasedTestResult to determine if we fully enclose the hit-test area
         // because it can only handle rectangular targets.
-        result.addNodeToListBasedTestResult(element(), request, locationInContainer);
+        result.addNodeToListBasedTestResult(nodeForHitTest(), request, locationInContainer);
         return regionResult.contains(tmpLocation.boundingBox());
     }
     return false;
@@ -1036,20 +1036,17 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint&
         return;
 
     LayoutPoint localPoint(point);
-    if (Element* element = this->element()) {
+    if (auto* node = nodeForHitTest()) {
         if (isContinuation()) {
-            // We're in the continuation of a split inline.  Adjust our local point to be in the coordinate space
-            // of the principal renderer's containing block.  This will end up being the innerNonSharedNode.
-            RenderBlock* firstBlock = element->renderer()->containingBlock();
-            
-            // Get our containing block.
-            RenderBox* block = containingBlock();
-            localPoint.moveBy(block->location() - firstBlock->locationOffset());
+            // We're in the continuation of a split inline. Adjust our local point to be in the coordinate space
+            // of the principal renderer's containing block. This will end up being the innerNonSharedNode.
+            auto* firstBlock = node->renderer()->containingBlock();
+            localPoint.moveBy(containingBlock()->location() - firstBlock->locationOffset());
         }
 
-        result.setInnerNode(element);
+        result.setInnerNode(node);
         if (!result.innerNonSharedNode())
-            result.setInnerNonSharedNode(element);
+            result.setInnerNonSharedNode(node);
         result.setLocalPoint(localPoint);
     }
 }

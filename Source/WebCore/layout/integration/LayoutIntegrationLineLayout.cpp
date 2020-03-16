@@ -349,7 +349,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         auto& renderer = const_cast<RenderObject&>(*m_boxTree.rendererForLayoutBox(run.layoutBox()));
 
         renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-        if (result.addNodeToListBasedTestResult(renderer.node(), request, locationInContainer, runRect) == HitTestProgress::Stop)
+        if (result.addNodeToListBasedTestResult(renderer.nodeForHitTest(), request, locationInContainer, runRect) == HitTestProgress::Stop)
             return true;
     }
 

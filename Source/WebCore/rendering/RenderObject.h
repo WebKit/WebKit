@@ -553,7 +553,9 @@ public:
     bool isComposited() const;
 
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter = HitTestAll);
+    virtual Node* nodeForHitTest() const;
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&);
+
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     virtual Position positionForPoint(const LayoutPoint&);

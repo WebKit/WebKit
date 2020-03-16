@@ -1,3 +1,22 @@
+2020-03-16  Daniel Bates  <dabates@apple.com>
+
+        ASSERTION FAILURE: !result.innerNode() || (request.resultIsElementList() && result.listBasedTestResult().size()) in RenderLayer::hitTestContents()
+        https://bugs.webkit.org/show_bug.cgi?id=209112
+
+        Reviewed by Darin Adler.
+
+        Add a new test for an pseudo element.
+
+        Also update tests now that I added the RenderView::nodeForHitTest(), which returns the
+        same hit test node (the document element) as used in RenderView::updateHitTestResult().
+        Currently RenderView::nodeForHitTest() would actually fall back to RenderBlock::nodeForHitTest(),
+        which returned the document (seen in the test resutls as #document).
+
+        * fast/dom/nodesFromRect/nodesFromRect-child-frame-content.html: Update test to match new results.
+        * fast/dom/nodesFromRect/nodesFromRect-embedded-frame-content.html: Ditto.
+        * fast/dom/nodesFromRect/pseudo-empty-svg-image-crash-expected.txt: Added.
+        * fast/dom/nodesFromRect/pseudo-empty-svg-image-crash.html: Added.
+
 2020-03-16  Youenn Fablet  <youenn@apple.com>
 
         Apply rotation at source level if WebRTC sink ask so

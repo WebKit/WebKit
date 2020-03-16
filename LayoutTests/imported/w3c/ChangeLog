@@ -1,3 +1,14 @@
+2020-03-16  Daniel Bates  <dabates@apple.com>
+
+        ASSERTION FAILURE: !result.innerNode() || (request.resultIsElementList() && result.listBasedTestResult().size()) in RenderLayer::hitTestContents()
+        https://bugs.webkit.org/show_bug.cgi?id=209112
+
+        Reviewed by Darin Adler.
+
+        Update test result now that more sub-tests are passing.
+
+        * web-platform-tests/shadow-dom/DocumentOrShadowRoot-prototype-elementFromPoint-expected.txt:
+
 2020-03-16  youenn fablet  <youenn@apple.com>
 
         RTCRtpSender of kind video should have a null dtmf attribute
