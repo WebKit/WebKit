@@ -747,6 +747,7 @@ pluginsEnabled:
 usesBackForwardCache:
   initial: false
   onChange: usesBackForwardCacheChanged
+  excludeFromInternalSettings: true
 
 dnsPrefetchingEnabled:
   initial: false

@@ -30,7 +30,7 @@
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface InternalSettingsGenerated {
 <%- for @setting in @settings do -%>
-<%- if @setting.idlType -%>
+<%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
     void <%= @setting.setterFunctionName %>(<%= @setting.idlType %> <%= @setting.name %>);
 <%- end -%>
 <%- end -%>

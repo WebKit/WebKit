@@ -36,7 +36,7 @@ namespace WebCore {
 InternalSettingsGenerated::InternalSettingsGenerated(Page* page)
     : m_page(page)
 <%- for @setting in @settings do -%>
-<%- if @setting.idlType -%>
+<%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
 <%- if @setting.conditional -%>
 #if ENABLE(<%= @setting.conditional %>)
 <%- end -%>
@@ -56,7 +56,7 @@ InternalSettingsGenerated::~InternalSettingsGenerated()
 void InternalSettingsGenerated::resetToConsistentState()
 {
 <%- for @setting in @settings do -%>
-<%- if @setting.idlType -%>
+<%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
 <%- if @setting.conditional -%>
 #if ENABLE(<%= @setting.conditional %>)
 <%- end -%>
@@ -69,7 +69,7 @@ void InternalSettingsGenerated::resetToConsistentState()
 }
 
 <%- for @setting in @settings do -%>
-<%- if @setting.idlType -%>
+<%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
 void InternalSettingsGenerated::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>)
 {
 <%- if @setting.conditional -%>

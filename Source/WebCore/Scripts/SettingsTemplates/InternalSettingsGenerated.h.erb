@@ -42,7 +42,7 @@ public:
     void resetToConsistentState();
 
 <%- for @setting in @settings do -%>
-<%- if @setting.idlType -%>
+<%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
     void <%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>);
 <%- end -%>
 <%- end -%>
@@ -51,7 +51,7 @@ private:
     Page* m_page;
 
 <%- for @setting in @settings do -%>
-<%- if @setting.idlType -%>
+<%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
 <%- if @setting.conditional -%>
 #if ENABLE(<%= @setting.conditional %>)
 <%- end -%>
