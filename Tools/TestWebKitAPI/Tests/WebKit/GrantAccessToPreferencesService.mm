@@ -38,13 +38,15 @@ TEST(WebKit, GrantAccessPreferencesService)
     configuration.get().processPool = (WKProcessPool *)context.get();
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
 
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
     [webView _grantAccessToPreferenceService];
 
     auto sandboxAccess = [&] {
         return [webView stringByEvaluatingJavaScript:@"window.internals.hasSandboxMachLookupAccessToGlobalName('com.apple.WebKit.WebContent', 'com.apple.cfprefsd.daemon')"].boolValue;
     };
 
-    ASSERT_TRUE(sandboxAccess);
+    ASSERT_TRUE(sandboxAccess());
 }
 
 #endif

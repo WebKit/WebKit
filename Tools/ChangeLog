@@ -1,3 +1,15 @@
+2020-03-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Accessibility sandbox regressions
+        https://bugs.webkit.org/show_bug.cgi?id=209065
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKit/EnableAccessibility.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit/GrantAccessToPreferencesService.mm:
+        (TEST):
+
 2020-03-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed infrastructure fix.

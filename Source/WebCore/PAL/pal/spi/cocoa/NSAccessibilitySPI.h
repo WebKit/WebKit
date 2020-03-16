@@ -54,6 +54,8 @@
 
 WTF_EXTERN_C_BEGIN
 
+extern NSString *const NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification;
+
 void NSAccessibilityHandleFocusChanged();
 void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
 
