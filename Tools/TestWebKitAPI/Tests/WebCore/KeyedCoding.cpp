@@ -28,6 +28,7 @@
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/SharedBuffer.h>
 #include <cstdint>
+#include <cstdlib>
 #include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
@@ -290,4 +291,23 @@ TEST(KeyedCoding, SetAndGetWithEmptyKey)
     EXPECT_TRUE(success);
     EXPECT_EQ(false, boolValue);
 }
+
+static Vector<uint8_t> generateRandomData()
+{
+    Vector<uint8_t> data;
+    for (auto i = 0; i < 256; ++i)
+        data.append(std::rand() / (RAND_MAX + 1.0) * std::numeric_limits<uint8_t>::max());
+    return data;
+}
+
+TEST(KeyedCoding, DecodeRandomData)
+{
+    std::srand(0);
+    for (auto i = 0; i < 10; ++i) {
+        auto data = generateRandomData();
+        // Don't crash.
+        WebCore::KeyedDecoder::decoder(data.data(), data.size());
+    }
+}
+
 }

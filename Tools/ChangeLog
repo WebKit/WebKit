@@ -1,3 +1,14 @@
+2020-03-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        KeyedDecoderGeneric fails to allocate Vector while decoding broken data
+        https://bugs.webkit.org/show_bug.cgi?id=207324
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/KeyedCoding.cpp:
+        (TestWebKitAPI::generateRandomData): Added.
+        (TestWebKitAPI::KeyedCoding.DecodeRandomData): Added a new test decoding random data.
+
 2020-03-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Should not use variable-length-array (VLA)

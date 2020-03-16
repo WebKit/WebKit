@@ -58,6 +58,8 @@ static bool readString(WTF::Persistence::Decoder& decoder, String& result)
         return true;
     }
 
+    if (!decoder.bufferIsLargeEnoughToContain<uint8_t>(size))
+        return false;
     Vector<uint8_t> buffer(size);
     if (!decoder.decodeFixedLengthData(buffer.data(), size))
         return false;
@@ -106,6 +108,9 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
                 break;
             size_t size;
             ok = decoder.decode(size);
+            if (!ok)
+                break;
+            ok = decoder.bufferIsLargeEnoughToContain<uint8_t>(size);
             if (!ok)
                 break;
             Vector<uint8_t> buffer(size);
@@ -159,6 +164,8 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
         }
         case KeyedEncoderGeneric::Type::EndObject:
             m_dictionaryStack.removeLast();
+            if (m_dictionaryStack.isEmpty())
+                ok = false;
             break;
         case KeyedEncoderGeneric::Type::BeginArray: {
             ok = readString(decoder, key);
@@ -170,6 +177,9 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
             break;
         }
         case KeyedEncoderGeneric::Type::BeginArrayElement: {
+            ok = !m_arrayStack.isEmpty();
+            if (!ok)
+                break;
             auto newDictionary = makeUnique<Dictionary>();
             m_dictionaryStack.append(newDictionary.get());
             m_arrayStack.last()->append(WTFMove(newDictionary));
@@ -177,8 +187,13 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
         }
         case KeyedEncoderGeneric::Type::EndArrayElement:
             m_dictionaryStack.removeLast();
+            if (m_dictionaryStack.isEmpty())
+                ok = false;
             break;
         case KeyedEncoderGeneric::Type::EndArray:
+            ok = !m_arrayStack.isEmpty();
+            if (!ok)
+                break;
             m_arrayStack.removeLast();
             break;
         }
