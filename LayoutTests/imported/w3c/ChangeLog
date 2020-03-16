@@ -1,3 +1,13 @@
+2020-03-16  youenn fablet  <youenn@apple.com>
+
+        RTCRtpSender of kind video should have a null dtmf attribute
+        https://bugs.webkit.org/show_bug.cgi?id=209135
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCRtpSender.https-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCRtpSender.https.html: Added.
+
 2020-03-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Import wpt tests

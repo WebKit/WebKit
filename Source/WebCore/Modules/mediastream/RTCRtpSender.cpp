@@ -142,7 +142,7 @@ Optional<RTCRtpCapabilities> RTCRtpSender::getCapabilities(ScriptExecutionContex
 
 RTCDTMFSender* RTCRtpSender::dtmf()
 {
-    if (!m_dtmfSender && m_connection && m_connection->context() && m_backend)
+    if (!m_dtmfSender && m_connection && m_connection->context() && m_backend && m_trackKind == "audio")
         m_dtmfSender = RTCDTMFSender::create(*m_connection->context(), *this, m_backend->createDTMFBackend());
 
     return m_dtmfSender.get();
