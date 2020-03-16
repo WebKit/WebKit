@@ -1,5 +1,8 @@
-# The static runtime is required for AppleWin due to WebKitSystemInterface.lib
-# being compiled with a static runtime.
+# The static runtime used to be required for AppleWin due to
+# WebKitSystemInterface.lib being compiled with a static runtime. That library
+# is no longer used, but we keep building with static runtime for backward
+# compatibility. But if someone decides that it's OK to require existing
+# projects to build with the runtime DLLs, that's now technically possible.
 set(MSVC_STATIC_RUNTIME ON)
 
 if (DEFINED ENV{AppleApplicationSupportSDK})

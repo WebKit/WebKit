@@ -32,7 +32,6 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 my $showHelp = 0;
-my $wksi = 0;
 my $clean = 0;
 my $useFullLibPaths = 0;
 my $osxVersion;
@@ -44,7 +43,6 @@ my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options]
   --help                        Show this help message
-  --[no-]wksi                   Obsolete. Does nothing. Remove once we are sure nobody passes this option any more.
   --clean                       Clean the libraries (default: $clean)
   --[no-]use-full-lib-paths     Toggle using full library paths
   --sdk=<sdk>                   Use a specific Xcode SDK
@@ -56,7 +54,6 @@ EOF
 
 GetOptions(
     'help' => \$showHelp,
-    'wksi!' => \$wksi,
     'clean' => \$clean,
     'use-full-lib-paths!' => \$useFullLibPaths,
     'osx-version=s' => \$osxVersion,
