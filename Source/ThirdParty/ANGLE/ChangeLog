@@ -1,3 +1,16 @@
+2020-03-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [ANGLE] Source/ThirdParty/ANGLE/src/libANGLE/Display.h:221:73: warning: implicitly-declared ‘egl::AttributeMap& egl::AttributeMap::operator=(const egl::AttributeMap&)’ is deprecated [-Wdeprecated-copy]
+        https://bugs.webkit.org/show_bug.cgi?id=209015
+
+        Reviewed by Darin Adler.
+
+        Suppress compiler warning. If this were WebKit code, I might take the time to fix it, but
+        with third-party code it's probably best to just turn off warnings that upstream is not
+        using.
+
+        * CMakeLists.txt:
+
 2020-03-02  Alan Coon  <alancoon@apple.com>
 
         Add new Mac target numbers
