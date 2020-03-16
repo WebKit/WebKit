@@ -33,7 +33,6 @@
 #include "Range.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "SimpleRange.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 #include <stdio.h>

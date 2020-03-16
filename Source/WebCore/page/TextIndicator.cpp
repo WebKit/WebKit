@@ -43,7 +43,6 @@
 #include "RenderElement.h"
 #include "RenderObject.h"
 #include "RenderText.h"
-#include "SimpleRange.h"
 #include "TextIterator.h"
 #include "TextPaintStyle.h"
 
@@ -213,7 +212,7 @@ static bool styleContainsComplexBackground(const RenderStyle& style)
 static HashSet<Color> estimatedTextColorsForRange(const Range& range)
 {
     HashSet<Color> colors;
-    for (TextIterator iterator(&range); !iterator.atEnd(); iterator.advance()) {
+    for (TextIterator iterator(range); !iterator.atEnd(); iterator.advance()) {
         auto* node = iterator.node();
         if (!is<Text>(node) || !is<RenderText>(node->renderer()))
             continue;
@@ -299,7 +298,7 @@ static bool containsOnlyWhiteSpaceText(const Range& range)
         if (!is<RenderText>(node->renderer()))
             return false;
     }
-    return plainTextReplacingNoBreakSpace(&range).stripWhiteSpace().isEmpty();
+    return plainTextReplacingNoBreakSpace(range).stripWhiteSpace().isEmpty();
 }
 
 static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Range& range, FloatSize margin, bool indicatesCurrentSelection)

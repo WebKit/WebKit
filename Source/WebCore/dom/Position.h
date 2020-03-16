@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,7 +69,7 @@ public:
 
     // For creating offset positions:
     // FIXME: This constructor should eventually go away. See bug 63040.
-    WEBCORE_EXPORT Position(Node* anchorNode, int offset, AnchorType);
+    WEBCORE_EXPORT Position(Node* anchorNode, unsigned offset, AnchorType);
 
     AnchorType anchorType() const { return static_cast<AnchorType>(m_anchorType); }
 
@@ -121,8 +121,8 @@ public:
 
     // These should only be used for PositionIsOffsetInAnchor positions, unless
     // the position is a legacy editing position.
-    void moveToPosition(Node* anchorNode, int offset);
-    void moveToOffset(int offset);
+    void moveToPosition(Node* anchorNode, unsigned offset);
+    void moveToOffset(unsigned offset);
 
     bool isNull() const { return !m_anchorNode; }
     bool isNotNull() const { return m_anchorNode; }
@@ -135,9 +135,9 @@ public:
     // using composed characters, the result may be inside a single user-visible character if a ligature is formed.
     WEBCORE_EXPORT Position previous(PositionMoveType = CodePoint) const;
     WEBCORE_EXPORT Position next(PositionMoveType = CodePoint) const;
-    static int uncheckedPreviousOffset(const Node*, int current);
-    static int uncheckedPreviousOffsetForBackwardDeletion(const Node*, int current);
-    static int uncheckedNextOffset(const Node*, int current);
+    static int uncheckedPreviousOffset(const Node*, unsigned current);
+    static int uncheckedPreviousOffsetForBackwardDeletion(const Node*, unsigned current);
+    static int uncheckedNextOffset(const Node*, unsigned current);
 
     // These can be either inside or just before/after the node, depending on
     // if the node is ignored by editing or not.
@@ -206,18 +206,51 @@ private:
     Position previousCharacterPosition(EAffinity) const;
     Position nextCharacterPosition(EAffinity) const;
 
-    static AnchorType anchorTypeForLegacyEditingPosition(Node* anchorNode, int offset);
+    static AnchorType anchorTypeForLegacyEditingPosition(Node* anchorNode, unsigned offset);
 
     RefPtr<Node> m_anchorNode;
     // m_offset can be the offset inside m_anchorNode, or if editingIgnoresContent(m_anchorNode)
     // returns true, then other places in editing will treat m_offset == 0 as "before the anchor"
     // and m_offset > 0 as "after the anchor node".  See parentAnchoredEquivalent for more info.
-    int m_offset { 0 };
+    unsigned m_offset { 0 };
     unsigned m_anchorType : 3;
     bool m_isLegacyEditingPosition : 1;
 };
 
+bool operator==(const Position&, const Position&);
+bool operator!=(const Position&, const Position&);
+bool operator<(const Position&, const Position&);
+bool operator>(const Position&, const Position&);
+bool operator>=(const Position&, const Position&);
+bool operator<=(const Position&, const Position&);
+
+// FIXME: Consider renaming this to "make" instead of "create" since we normally use "create" for functions that allocate heap objects.
+Position createLegacyEditingPosition(Node*, unsigned offset);
 Position createLegacyEditingPosition(const BoundaryPoint&);
+
+WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPoint(const Position&);
+
+Position positionInParentBeforeNode(Node*);
+Position positionInParentAfterNode(Node*);
+
+// positionBeforeNode and positionAfterNode return neighbor-anchored positions, construction is O(1)
+Position positionBeforeNode(Node* anchorNode);
+Position positionAfterNode(Node* anchorNode);
+
+int lastOffsetInNode(Node*);
+
+// firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to countChildNodes()
+Position firstPositionInNode(Node* anchorNode);
+Position lastPositionInNode(Node* anchorNode);
+
+int minOffsetForNode(Node* anchorNode, unsigned offset);
+bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode);
+
+RefPtr<Node> commonShadowIncludingAncestor(const Position&, const Position&);
+
+WTF::TextStream& operator<<(WTF::TextStream&, const Position&);
+
+// inlines
 
 inline Position createLegacyEditingPosition(Node* node, unsigned offset)
 {
@@ -260,9 +293,6 @@ inline bool operator<=(const Position& a, const Position& b)
     return !a.isNull() && !b.isNull() && (a == b || a < b);
 }
 
-Position positionInParentBeforeNode(Node*);
-Position positionInParentAfterNode(Node*);
-
 // positionBeforeNode and positionAfterNode return neighbor-anchored positions, construction is O(1)
 inline Position positionBeforeNode(Node* anchorNode)
 {
@@ -278,7 +308,7 @@ inline Position positionAfterNode(Node* anchorNode)
 
 inline int lastOffsetInNode(Node* node)
 {
-    return node->isCharacterDataNode() ? node->maxCharacterOffset() : static_cast<int>(node->countChildNodes());
+    return node->isCharacterDataNode() ? node->maxCharacterOffset() : node->countChildNodes();
 }
 
 // firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to countChildNodes()
@@ -296,34 +326,30 @@ inline Position lastPositionInNode(Node* anchorNode)
     return Position(anchorNode, Position::PositionIsAfterChildren);
 }
 
-inline int minOffsetForNode(Node* anchorNode, int offset)
+inline int minOffsetForNode(Node* anchorNode, unsigned offset)
 {
     if (anchorNode->isCharacterDataNode())
-        return std::min(offset, anchorNode->maxCharacterOffset());
+        return std::min<unsigned>(offset, anchorNode->maxCharacterOffset());
 
-    int newOffset = 0;
+    unsigned newOffset = 0;
     for (Node* node = anchorNode->firstChild(); node && newOffset < offset; node = node->nextSibling())
         newOffset++;
     
     return newOffset;
 }
 
-inline bool offsetIsBeforeLastNodeOffset(int offset, Node* anchorNode)
+inline bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode)
 {
     if (anchorNode->isCharacterDataNode())
-        return offset < anchorNode->maxCharacterOffset();
+        return offset < static_cast<unsigned>(anchorNode->maxCharacterOffset());
 
-    int currentOffset = 0;
+    unsigned currentOffset = 0;
     for (Node* node = anchorNode->firstChild(); node && currentOffset < offset; node = node->nextSibling())
         currentOffset++;
     
     
     return offset < currentOffset;
 }
-
-RefPtr<Node> commonShadowIncludingAncestor(const Position&, const Position&);
-
-WTF::TextStream& operator<<(WTF::TextStream&, const Position&);
 
 } // namespace WebCore
 

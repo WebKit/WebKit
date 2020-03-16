@@ -29,7 +29,6 @@
 #include "LayoutRect.h"
 #include "Range.h"
 #include "TextIterator.h"
-#include "TextIteratorBehavior.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
 #include <wtf/RefCounted.h>

@@ -1,3 +1,29 @@
+2020-03-15  Darin Adler  <darin@apple.com>
+
+        Move most of TextIterator off of live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=209129
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebFrame.mm: Removed an include.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _legacyAttributedStringFrom:offset:to:offset:]):
+        Add casts to unsigned.
+
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator initWithRange:]): Leave _private->_textIterator
+        as a nullptr if the passed-in range is nil since we no longer offer
+        a way to create an empty TextIterator; other clients don't seem to
+        need one.
+        (-[WebTextIterator advance]): Check _private->_textIterator for null.
+        (-[WebTextIterator atEnd]): Ditto.
+        (-[WebTextIterator currentRange]): Ditto.
+        (-[WebTextIterator currentTextPointer]): Ditto.
+        (-[WebTextIterator currentTextLength]): Ditto.
+        (-[WebTextIterator currentNode]): Ditto.
+        (-[WebTextIterator currentText]): Ditto.
+
 2020-03-16  Timothy Horton  <timothy_horton@apple.com>
 
         Always include System.framework in WebKitLegacy's CPLUSPLUSFLAGS

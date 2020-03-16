@@ -1266,8 +1266,7 @@ bool ApplyStyleCommand::isValidCaretPositionInTextNode(const Position& position)
 bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position& start, const Position& end)
 {
     auto* startNode = start.containerNode();
-    int startOffset = start.computeOffsetInContainerNode();
-    if (startOffset)
+    if (start.computeOffsetInContainerNode())
         return false;
 
     if (isAtomicNode(startNode)) {
@@ -1289,10 +1288,11 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position& start,
     ASSERT(startChild);
     mergeIdenticalElements(previousElement, element);
 
-    int startOffsetAdjustment = startChild->computeNodeIndex();
-    int endOffsetAdjustment = startNode == end.deprecatedNode() ? startOffsetAdjustment : 0;
-    updateStartEnd({ startNode, startOffsetAdjustment, Position::PositionIsOffsetInAnchor},
-        { end.deprecatedNode(), end.deprecatedEditingOffset() + endOffsetAdjustment, Position::PositionIsOffsetInAnchor });
+    // FIXME: Inconsistent that we use computeOffsetInContainerNode for start, but deprecatedEditingOffset for end.
+    unsigned startOffset = startChild->computeNodeIndex();
+    unsigned endOffset = end.deprecatedEditingOffset() + (startNode == end.deprecatedNode() ? startOffset : 0);
+    updateStartEnd({ startNode, startOffset, Position::PositionIsOffsetInAnchor },
+        { end.deprecatedNode(), endOffset, Position::PositionIsOffsetInAnchor });
     return true;
 }
 
@@ -1322,7 +1322,7 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position& start, const
     mergeIdenticalElements(element, nextElement);
 
     bool shouldUpdateStart = start.containerNode() == endNode;
-    int endOffset = nextChild ? nextChild->computeNodeIndex() : nextElement.countChildNodes();
+    unsigned endOffset = nextChild ? nextChild->computeNodeIndex() : nextElement.countChildNodes();
     updateStartEnd(shouldUpdateStart ? Position(&nextElement, start.offsetInContainerNode(), Position::PositionIsOffsetInAnchor) : start,
         { &nextElement, endOffset, Position::PositionIsOffsetInAnchor });
     return true;

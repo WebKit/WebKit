@@ -53,16 +53,4 @@ bool operator==(const SimpleRange& a, const SimpleRange& b)
     return a.start == b.start && a.end == b.end;
 }
 
-Ref<Range> createLiveRange(const SimpleRange& range)
-{
-    return Range::create(range.start.document(), range.start.container.ptr(), range.start.offset, range.end.container.ptr(), range.end.offset);
-}
-
-RefPtr<Range> createLiveRange(const Optional<SimpleRange>& range)
-{
-    if (!range)
-        return nullptr;
-    return createLiveRange(*range);
-}
-
 }

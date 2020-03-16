@@ -70,7 +70,6 @@
 #import "RenderView.h"
 #import "RenderWidget.h"
 #import "ScrollView.h"
-#import "SimpleRange.h"
 #import "TextCheckerClient.h"
 #import "TextCheckingHelper.h"
 #import "TextDecorationPainter.h"
@@ -1255,7 +1254,9 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
 
         RefPtr<Range> range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
         NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
-        TextIterator it(range.get());
+        if (!range)
+            return nil;
+        TextIterator it(*range);
         while (!it.atEnd()) {
             Node& node = it.range().start.container;
 

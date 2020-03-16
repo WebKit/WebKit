@@ -100,7 +100,6 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
-#import <WebCore/SimpleRange.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/SubframeLoader.h>

@@ -43,24 +43,15 @@ struct SimpleRange {
     bool collapsed() const { return start == end; }
 
     SimpleRange(const BoundaryPoint&, const BoundaryPoint&);
-    SimpleRange(BoundaryPoint&&, BoundaryPoint&&);
+    WEBCORE_EXPORT SimpleRange(BoundaryPoint&&, BoundaryPoint&&);
 
+    // Convenience overloads to help with transition from using a lot of live ranges.
+    // FIXME: Move to the Range class header as either makeSimpleRange or Range::operator SimpleRange.
     WEBCORE_EXPORT SimpleRange(const Range&);
-
-    // Convenience overloads to help with transition from using a lot of live ranges. Consider removing these eventually.
-    SimpleRange(const Range*); // Crashes if passed a nullptr.
     SimpleRange(const Ref<Range>&);
 };
 
 bool operator==(const SimpleRange&, const SimpleRange&);
-
-WEBCORE_EXPORT Ref<Range> createLiveRange(const SimpleRange&);
-WEBCORE_EXPORT RefPtr<Range> createLiveRange(const Optional<SimpleRange>&);
-
-inline SimpleRange::SimpleRange(const Range* range)
-    : SimpleRange(*range)
-{
-}
 
 inline SimpleRange::SimpleRange(const Ref<Range>& range)
     : SimpleRange(range.get())

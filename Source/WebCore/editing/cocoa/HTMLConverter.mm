@@ -61,7 +61,6 @@
 #import "Range.h"
 #import "RenderImage.h"
 #import "RenderText.h"
-#import "SimpleRange.h"
 #import "StyleProperties.h"
 #import "StyledElement.h"
 #import "TextIterator.h"
@@ -2396,7 +2395,7 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
     NSUInteger stringLength = 0;
     RetainPtr<NSMutableDictionary> attrs = adoptNS([[NSMutableDictionary alloc] init]);
 
-    for (TextIterator it(&range); !it.atEnd(); it.advance()) {
+    for (TextIterator it(range); !it.atEnd(); it.advance()) {
         SimpleRange currentTextRange = it.range();
         Node& startContainer = currentTextRange.start.container;
         Node& endContainer = currentTextRange.end.container;

@@ -202,8 +202,12 @@ String HitTestResult::selectedText() const
     if (!frame)
         return emptyString();
 
+    auto range = frame->selection().toNormalizedRange();
+    if (!range)
+        return emptyString();
+
     // Look for a character that's not just a separator.
-    for (TextIterator it(frame->selection().toNormalizedRange().get()); !it.atEnd(); it.advance()) {
+    for (TextIterator it(*range); !it.atEnd(); it.advance()) {
         int length = it.text().length();
         for (int i = 0; i < length; ++i) {
             if (!(U_GET_GC_MASK(it.text()[i]) & U_GC_Z_MASK))

@@ -51,7 +51,6 @@
 #include "RenderElement.h"
 #include "RenderTableCell.h"
 #include "ShadowRoot.h"
-#include "SimpleRange.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
@@ -1308,7 +1307,7 @@ IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, c
 HashSet<RefPtr<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages(const Range& range)
 {
     HashSet<RefPtr<HTMLImageElement>> result;
-    for (TextIterator iterator(&range); !iterator.atEnd(); iterator.advance()) {
+    for (TextIterator iterator(range); !iterator.atEnd(); iterator.advance()) {
         if (!is<HTMLImageElement>(iterator.node()))
             continue;
 

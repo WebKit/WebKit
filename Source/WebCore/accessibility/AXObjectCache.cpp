@@ -99,7 +99,6 @@
 #include "SVGElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ScrollView.h"
-#include "SimpleRange.h"
 #include "TextBoundaries.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
@@ -1791,7 +1790,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
     bool finished = false;
     int lastStartOffset = 0;
     
-    TextIterator iterator(range.get(), doNotEnterTextControls ? TextIteratorDefaultBehavior : TextIteratorEntersTextControls);
+    TextIterator iterator(*range, doNotEnterTextControls ? TextIteratorDefaultBehavior : TextIteratorEntersTextControls);
     
     // When the range has zero length, there might be replaced node or brTag that we need to increment the characterOffset.
     if (iterator.atEnd()) {
@@ -1902,7 +1901,7 @@ int AXObjectCache::lengthForRange(Range* range)
     if (!range)
         return -1;
     int length = 0;
-    for (TextIterator it(range); !it.atEnd(); it.advance()) {
+    for (TextIterator it(*range); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length())
             length += it.text().length();
@@ -2602,7 +2601,7 @@ CharacterOffset AXObjectCache::nextBoundary(const CharacterOffset& characterOffs
         return { };
     CharacterOffset end = startOrEndCharacterOffsetForRange(searchRange, false);
     
-    TextIterator it(searchRange.get(), TextIteratorEmitsObjectReplacementCharacters);
+    TextIterator it(*searchRange, TextIteratorEmitsObjectReplacementCharacters);
     unsigned next = forwardSearchForBoundaryWithTextIterator(it, string, prefixLength, searchFunction);
     
     if (it.atEnd() && next == string.size())
@@ -2643,7 +2642,7 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
             return { };
         if (!setRangeStartOrEndWithCharacterOffset(forwardsScanRange, endOfCurrentParagraph, false))
             return { };
-        for (TextIterator forwardsIterator(forwardsScanRange.ptr()); !forwardsIterator.atEnd(); forwardsIterator.advance())
+        for (TextIterator forwardsIterator(forwardsScanRange); !forwardsIterator.atEnd(); forwardsIterator.advance())
             append(string, forwardsIterator.text());
         suffixLength = string.size();
     } else if (requiresContextForWordBoundary(characterBefore(characterOffset))) {
@@ -2666,7 +2665,7 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
         return it.atEnd() ? start : characterOffset;
     
     auto& node = it.atEnd() ? searchRange->startContainer() : it.range().start.container.get();
-    
+
     // SimplifiedBackwardsTextIterator ignores replaced elements.
     if (AccessibilityObject::replacedNodeNeedsCharacter(characterOffset.node))
         return characterOffsetForNodeAndOffset(*characterOffset.node, 0);

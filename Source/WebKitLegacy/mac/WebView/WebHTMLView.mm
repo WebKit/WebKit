@@ -7023,8 +7023,8 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
 - (NSAttributedString *)_legacyAttributedStringFrom:(DOMNode*)startContainer offset:(int)startOffset to:(DOMNode*)endContainer offset:(int)endOffset
 {
     return attributedStringBetweenStartAndEnd(
-        WebCore::Position { core(startContainer), startOffset, WebCore::Position::PositionIsOffsetInAnchor },
-        WebCore::Position { core(endContainer), endOffset, WebCore::Position::PositionIsOffsetInAnchor });
+        WebCore::Position { core(startContainer), static_cast<unsigned>(startOffset), WebCore::Position::PositionIsOffsetInAnchor },
+        WebCore::Position { core(endContainer), static_cast<unsigned>(endOffset), WebCore::Position::PositionIsOffsetInAnchor });
 }
 
 - (NSAttributedString *)attributedString

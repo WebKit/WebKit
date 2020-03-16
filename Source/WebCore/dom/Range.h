@@ -3,7 +3,7 @@
  * (C) 2000 Gunnstein Lye (gunnstein@netcom.no)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,26 +27,23 @@
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "RangeBoundaryPoint.h"
-#include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class ContainerNode;
 class DOMRect;
 class DOMRectList;
-class Document;
 class DocumentFragment;
 class FloatQuad;
-class Node;
 class NodeWithIndex;
 class RenderText;
 class SelectionRect;
 class Text;
 class VisiblePosition;
 
+struct SimpleRange;
+
+// FIXME: Rename to LiveRange, while leaving the DOM-exposed name as Range.
 class Range : public RefCounted<Range> {
 public:
     WEBCORE_EXPORT static Ref<Range> create(Document&);
@@ -185,15 +182,20 @@ WEBCORE_EXPORT Ref<Range> rangeOfContents(Node&);
 WEBCORE_EXPORT bool areRangesEqual(const Range*, const Range*);
 WEBCORE_EXPORT bool rangesOverlap(const Range*, const Range*);
 
+WEBCORE_EXPORT Ref<Range> createLiveRange(const SimpleRange&);
+WEBCORE_EXPORT RefPtr<Range> createLiveRange(const Optional<SimpleRange>&);
+
+bool documentOrderComparator(const Node*, const Node*);
+
+WTF::TextStream& operator<<(WTF::TextStream&, const RangeBoundaryPoint&);
+WTF::TextStream& operator<<(WTF::TextStream&, const Range&);
+
 inline bool documentOrderComparator(const Node* a, const Node* b)
 {
     return Range::compareBoundaryPoints(const_cast<Node*>(a), 0, const_cast<Node*>(b), 0).releaseReturnValue() < 0;
 }
-    
-WTF::TextStream& operator<<(WTF::TextStream&, const RangeBoundaryPoint&);
-WTF::TextStream& operator<<(WTF::TextStream&, const Range&);
 
-} // namespace
+} // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.

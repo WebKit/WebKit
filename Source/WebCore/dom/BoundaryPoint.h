@@ -27,11 +27,7 @@
 
 #include "Node.h"
 
-#include <wtf/Ref.h>
-
 namespace WebCore {
-
-class Document;
 
 struct BoundaryPoint {
     Ref<Node> container;
@@ -43,7 +39,7 @@ struct BoundaryPoint {
     BoundaryPoint(const BoundaryPoint&);
     BoundaryPoint(BoundaryPoint&&) = default;
     BoundaryPoint& operator=(const BoundaryPoint&);
-    BoundaryPoint& operator=(BoundaryPoint&&);
+    BoundaryPoint& operator=(BoundaryPoint&&) = default;
 
     Document& document() const;
 };
@@ -54,6 +50,24 @@ inline BoundaryPoint::BoundaryPoint(Ref<Node>&& container, unsigned offset)
     : container(WTFMove(container))
     , offset(offset)
 {
+}
+
+inline BoundaryPoint::BoundaryPoint(const BoundaryPoint& other)
+    : container(other.container.copyRef())
+    , offset(other.offset)
+{
+}
+
+inline BoundaryPoint& BoundaryPoint::operator=(const BoundaryPoint& other)
+{
+    container = other.container.copyRef();
+    offset = other.offset;
+    return *this;
+}
+
+inline Document& BoundaryPoint::document() const
+{
+    return container->document();
 }
 
 inline bool operator==(const BoundaryPoint& a, const BoundaryPoint& b)

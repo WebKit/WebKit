@@ -1,3 +1,49 @@
+2020-03-15  Darin Adler  <darin@apple.com>
+
+        Move most of TextIterator off of live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=209129
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.mm:
+        (-[WKDOMTextIterator initWithRange:]): Leave _textIterator as a nullptr
+        if the passed-in range is nil since we no longer offer a way to create
+        an empty TextIterator; other clients don't seem to need one.
+        (-[WKDOMTextIterator advance]): Add a null check.
+        (-[WKDOMTextIterator atEnd]): Ditto.
+        (-[WKDOMTextIterator currentRange]): Ditto.
+        (-[WKDOMTextIterator currentTextPointer]): Ditto.
+        (-[WKDOMTextIterator currentTextLength]): Ditto.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm: Removed include.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::computeTextLegibilityScales): Pass
+        a reference to a range known not to be null.
+
+        * WebProcess/WebPage/WebPage.cpp: Removed an include.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm: Removed a "using naemsapce WebCore".
+        Added two local functions
+        (WebKit::plainTextForContext): Added. Helper for just this file where calling
+        plainTextReplacingNoBreakSpace on a possibly null Range is common.
+        (WebKit::plainTextForDisplay): Ditto. This one passes true for isDisplayString.
+        Not entirely clear how carefully we chose which of the two to call, or if there
+        is sufficient test coverage.
+        (WebKit::WebPage::platformEditorState const): Use plainTextForContext
+        and plainTextForDisplay.
+        (WebKit::WebPage::getSelectionContext): Ditto.
+        (WebKit::WebPage::getRectsAtSelectionOffsetWithText): Use plainTextForDisplay.
+        (WebKit::WebPage::requestDictationContext): Use plainTextForContext.
+        (WebKit::WebPage::replaceSelectedText): Ditto.
+        (WebKit::WebPage::replaceDictatedText): Ditto.
+        (WebKit::WebPage::requestAutocorrectionData): Ditto.
+        (WebKit::WebPage::applyAutocorrectionInternal): Ditto.
+        (WebKit::WebPage::autocorrectionContext): Ditto.
+        (WebKit::dataDetectorLinkPositionInformation): Use plainTextForDisplay.
+        (WebKit::WebPage::requestDocumentEditingContext): Use RetainPtr instead of
+        autorelease. Use makeBoundaryPoint to convert Position objects to SimpleRange.
+
 2020-03-16  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebCookieCache::clearForHost()
@@ -124,6 +170,8 @@
         * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
         * WebProcess/cocoa/UserMediaCaptureManager.cpp:
         (WebKit::UserMediaCaptureManager::Source::setShouldApplyRotation):
+
+        * WebProcess/WebPage/mac/WebPageMac.mm: Removed an include.
 
 2020-03-13  Sergio Villar Senin  <svillar@igalia.com>
 

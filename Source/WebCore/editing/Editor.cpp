@@ -3313,7 +3313,11 @@ String Editor::selectedText(TextIteratorBehavior behavior) const
 {
     // We remove '\0' characters because they are not visibly rendered to the user.
     auto& selection = m_frame.selection().selection();
-    return plainText(selection.start(), selection.end(), behavior).replaceWithLiteral('\0', "");
+    auto start = selection.start();
+    auto end = selection.end();
+    if (start.isNull() || start.isOrphan() || end.isNull() || end.isOrphan())
+        return emptyString();
+    return plainText(SimpleRange { *makeBoundaryPoint(start), *makeBoundaryPoint(end) }, behavior).replaceWithLiteral('\0', "");
 }
 
 RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size)

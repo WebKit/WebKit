@@ -337,7 +337,9 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
         auto rangeToSelectionEnd = makeRange(paragraphStart, selectionEnd);
         
         fullCharacterRange = makeRange(paragraphStart, paragraphEnd);
-        
+        if (!fullCharacterRange)
+            return { nullptr, nil };
+
         selectionRange = NSMakeRange(TextIterator::rangeLength(rangeToSelectionStart.get()), TextIterator::rangeLength(makeRange(selectionStart, selectionEnd).get()));
         
         hitIndex = TextIterator::rangeLength(makeRange(paragraphStart, position).get());
@@ -357,7 +359,7 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
     
     NSRange selectedRange = [getRVSelectionClass() revealRangeAtIndex:hitIndex selectedRanges:@[[NSValue valueWithRange:selectionRange]] shouldUpdateSelection:nil];
     
-    String itemString = plainText(fullCharacterRange.get());
+    String itemString = plainText(*fullCharacterRange);
     RetainPtr<RVItem> item = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:selectedRange]);
     NSRange highlightRange = item.get().highlightRange;
 

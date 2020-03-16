@@ -30,7 +30,6 @@
 #import "WebTypesInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/Range.h>
-#import <WebCore/SimpleRange.h>
 #import <WebCore/TextIterator.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
@@ -70,32 +69,40 @@
         return self;
     
     _private = [[WebTextIteratorPrivate alloc] init];
-    _private->_textIterator = makeUnique<WebCore::TextIterator>(core(range));
+    if (!range)
+        return self;
+
+    _private->_textIterator = makeUnique<WebCore::TextIterator>(*core(range));
     return self;
 }
 
 - (void)advance
 {
-    _private->_textIterator->advance();
+    if (_private->_textIterator)
+        _private->_textIterator->advance();
     _private->_upconvertedText.shrink(0);
 }
 
 - (BOOL)atEnd
 {
-    return _private->_textIterator->atEnd();
+    return _private->_textIterator && _private->_textIterator->atEnd();
 }
 
 - (DOMRange *)currentRange
 {
+    if (!_private->_textIterator)
+        return nil;
     auto& textIterator = *_private->_textIterator;
     if (textIterator.atEnd())
-        return nullptr;
+        return nil;
     return kit(createLiveRange(textIterator.range()).ptr());
 }
 
 // FIXME: Consider deprecating this method and creating one that does not require copying 8-bit characters.
 - (const unichar*)currentTextPointer
 {
+    if (!_private->_textIterator)
+        return nullptr;
     StringView text = _private->_textIterator->text();
     unsigned length = text.length();
     if (!length)
@@ -110,7 +117,7 @@
 
 - (NSUInteger)currentTextLength
 {
-    return _private->_textIterator->text().length();
+    return _private->_textIterator ? _private->_textIterator->text().length() : 0;
 }
 
 @end
@@ -119,12 +126,12 @@
 
 - (DOMNode *)currentNode
 {
-    return kit(_private->_textIterator->node());
+    return _private->_textIterator ? kit(_private->_textIterator->node()) : nil;
 }
 
 - (NSString *)currentText
 {
-    return [[_private->_textIterator->text().createNSString().get() retain] autorelease];
+    return _private->_textIterator ? _private->_textIterator->text().createNSString().autorelease() : @"";
 }
 
 @end

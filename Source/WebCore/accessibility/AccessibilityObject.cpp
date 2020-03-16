@@ -1267,7 +1267,7 @@ String AccessibilityObject::stringForRange(RefPtr<Range> range) const
     if (!range)
         return String();
     
-    TextIterator it(range.get());
+    TextIterator it(*range);
     if (it.atEnd())
         return String();
     
@@ -1296,7 +1296,10 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
 
     StringBuilder builder;
     RefPtr<Range> range = makeRange(visiblePositionRange.start, visiblePositionRange.end);
-    for (TextIterator it(range.get()); !it.atEnd(); it.advance()) {
+    if (!range)
+        return String();
+
+    for (TextIterator it(*range); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length()) {
             // Add a textual representation for list marker text.
@@ -1318,9 +1321,12 @@ int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRang
     if (visiblePositionRange.isNull())
         return -1;
 
-    int length = 0;
     RefPtr<Range> range = makeRange(visiblePositionRange.start, visiblePositionRange.end);
-    for (TextIterator it(range.get()); !it.atEnd(); it.advance()) {
+    if (!range)
+        return -1;
+
+    int length = 0;
+    for (TextIterator it(*range); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length())
             length += it.text().length();
@@ -1329,7 +1335,6 @@ int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRang
                 ++length;
         }
     }
-
     return length;
 }
 

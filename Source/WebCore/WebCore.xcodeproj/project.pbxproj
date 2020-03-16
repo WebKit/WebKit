@@ -10708,7 +10708,6 @@
 		93153BE114195A5700FCF5BE /* missingImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = missingImage.png; sourceTree = "<group>"; };
 		9316DDF8240C64B3009340AA /* SimpleRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleRange.h; sourceTree = "<group>"; };
 		9316DDFA240C64B3009340AA /* SimpleRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleRange.cpp; sourceTree = "<group>"; };
-		9316DDFD240C64F8009340AA /* BoundaryPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryPoint.cpp; sourceTree = "<group>"; };
 		9316DDFE240C64F8009340AA /* BoundaryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundaryPoint.h; sourceTree = "<group>"; };
 		931AE3B81FB80EAE00F5EFB2 /* JSValueInWrappedObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSValueInWrappedObject.h; sourceTree = "<group>"; };
 		931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCanStartListener.h; sourceTree = "<group>"; };
@@ -28323,7 +28322,6 @@
 				85031B260A44EFC700F992E0 /* BeforeUnloadEvent.cpp */,
 				85031B270A44EFC700F992E0 /* BeforeUnloadEvent.h */,
 				7C1E8CFF1ED0C2BE00B1D983 /* BeforeUnloadEvent.idl */,
-				9316DDFD240C64F8009340AA /* BoundaryPoint.cpp */,
 				9316DDFE240C64F8009340AA /* BoundaryPoint.h */,
 				7C1E8D001ED0C2BE00B1D983 /* CallbackResult.h */,
 				6550B693099DF0270090D781 /* CDATASection.cpp */,

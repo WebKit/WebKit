@@ -30,19 +30,15 @@
 #include "SimpleRange.h"
 #include "TextIteratorBehavior.h"
 #include <wtf/Vector.h>
-#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
 class Range;
-class RenderText;
 class RenderTextFragment;
 
-WEBCORE_EXPORT String plainText(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
-WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
-
 WEBCORE_EXPORT String plainText(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
-WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
+WEBCORE_EXPORT String plainText(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
+WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 WEBCORE_EXPORT String plainTextUsingBackwardsTextIteratorForTesting(const SimpleRange&);
 
 SimpleRange findPlainText(const SimpleRange&, const String&, FindOptions);
@@ -91,8 +87,7 @@ private:
 class TextIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT TextIterator(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior);
-    WEBCORE_EXPORT explicit TextIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
+    WEBCORE_EXPORT explicit TextIterator(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
     WEBCORE_EXPORT ~TextIterator();
 
     bool atEnd() const { return !m_positionNode; }
@@ -177,7 +172,7 @@ private:
 // chunks so as to optimize for performance of the iteration.
 class SimplifiedBackwardsTextIterator {
 public:
-    explicit SimplifiedBackwardsTextIterator(const Range&);
+    explicit SimplifiedBackwardsTextIterator(const SimpleRange&);
 
     bool atEnd() const { return !m_positionNode; }
     void advance();
@@ -232,8 +227,7 @@ private:
 // character at a time, or faster, as needed. Useful for searching.
 class CharacterIterator {
 public:
-    WEBCORE_EXPORT explicit CharacterIterator(const Range&, TextIteratorBehavior = TextIteratorDefaultBehavior);
-    WEBCORE_EXPORT explicit CharacterIterator(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior);
+    WEBCORE_EXPORT explicit CharacterIterator(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
     
     bool atEnd() const { return m_underlyingIterator.atEnd(); }
     WEBCORE_EXPORT void advance(int numCharacters);
@@ -254,7 +248,7 @@ private:
     
 class BackwardsCharacterIterator {
 public:
-    explicit BackwardsCharacterIterator(const Range&);
+    explicit BackwardsCharacterIterator(const SimpleRange&);
 
     bool atEnd() const { return m_underlyingIterator.atEnd(); }
     void advance(int numCharacters);
@@ -273,7 +267,7 @@ private:
 // they never split up a word. This is useful for spell checking and perhaps one day for searching as well.
 class WordAwareIterator {
 public:
-    explicit WordAwareIterator(const Range&);
+    explicit WordAwareIterator(const SimpleRange&);
 
     bool atEnd() const { return !m_didLookAhead && m_underlyingIterator.atEnd(); }
     void advance();

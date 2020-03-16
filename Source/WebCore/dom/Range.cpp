@@ -1869,6 +1869,18 @@ FloatRect Range::absoluteBoundingRect(OptionSet<BoundingRectBehavior> rectOption
     return boundingRect(CoordinateSpace::Absolute, rectOptions);
 }
 
+Ref<Range> createLiveRange(const SimpleRange& range)
+{
+    return Range::create(range.start.document(), range.start.container.ptr(), range.start.offset, range.end.container.ptr(), range.end.offset);
+}
+
+RefPtr<Range> createLiveRange(const Optional<SimpleRange>& range)
+{
+    if (!range)
+        return nullptr;
+    return createLiveRange(*range);
+}
+
 WTF::TextStream& operator<<(WTF::TextStream& ts, const RangeBoundaryPoint& r)
 {
     return ts << r.toPosition();

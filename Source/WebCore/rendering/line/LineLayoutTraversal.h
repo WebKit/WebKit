@@ -29,15 +29,12 @@
 #include "LineLayoutTraversalComplexPath.h"
 #include "LineLayoutTraversalDisplayRunPath.h"
 #include "LineLayoutTraversalSimplePath.h"
-#include "RenderText.h"
-#include <wtf/HashMap.h>
-#include <wtf/IteratorRange.h>
 #include <wtf/Variant.h>
-#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
 class RenderLineBreak;
+class RenderText;
 
 namespace LineLayoutTraversal {
 

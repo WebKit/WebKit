@@ -141,7 +141,7 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
 class ParagraphContentIterator {
 public:
     ParagraphContentIterator(const Position& start, const Position& end)
-        : m_iterator(start, end)
+        : m_iterator({ *makeBoundaryPoint(start), *makeBoundaryPoint(end) })
         , m_iteratorNode(m_iterator.atEnd() ? nullptr : createLiveRange(m_iterator.range())->firstNode())
         , m_currentNodeForFindingInvisibleContent(start.firstNode())
         , m_pastEndNode(end.firstNode())
@@ -462,7 +462,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
     size_t currentTokenIndex = 0;
     HashMap<TokenIdentifier, TokenExchangeData> tokenExchangeMap;
 
-    if (item.start.isNull() && item.end.isNull()) {
+    if (item.start.isNull() || item.end.isNull()) {
         RELEASE_ASSERT(item.tokens.size() == 1);
         auto element = makeRefPtr(item.element.get());
         if (!element)

@@ -161,7 +161,7 @@ Optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTextLeg
     unsigned numberOfIterations = 0;
     unsigned totalSampledTextLength = 0;
 
-    for (TextIterator documentTextIterator { documentRange.ptr(), TextIteratorEntersTextControls }; !documentTextIterator.atEnd(); documentTextIterator.advance()) {
+    for (TextIterator documentTextIterator { documentRange.get(), TextIteratorEntersTextControls }; !documentTextIterator.atEnd(); documentTextIterator.advance()) {
         if (++numberOfIterations >= maximumNumberOfTextRunsToConsider)
             break;
 

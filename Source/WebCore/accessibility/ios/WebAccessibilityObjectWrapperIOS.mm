@@ -54,7 +54,6 @@
 #import "SVGNames.h"
 #import "SVGElement.h"
 #import "SelectionRect.h"
-#import "SimpleRange.h"
 #import "TextIterator.h"
 #import "WAKScrollView.h"
 #import "WAKWindow.h"
@@ -2253,10 +2252,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     VisiblePosition endVisiblePosition = [endMarker visiblePosition];
     if (endVisiblePosition.isNull())
         return nil;
-    
+
+    auto range = makeRange(startVisiblePosition, endVisiblePosition);
+    if (!range)
+        return nil;
+
     // iterate over the range to build the AX attributed string
     NSMutableArray* array = [[NSMutableArray alloc] init];
-    TextIterator it(makeRange(startVisiblePosition, endVisiblePosition).get());
+    TextIterator it(*range);
     for (; !it.atEnd(); it.advance()) {
         Node& node = it.range().start.container;
 

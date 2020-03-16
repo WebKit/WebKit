@@ -43,7 +43,6 @@
 #import "NodeTraversal.h"
 #import "Range.h"
 #import "RenderObject.h"
-#import "SimpleRange.h"
 #import "StyleProperties.h"
 #import "Text.h"
 #import "TextIterator.h"
@@ -162,6 +161,7 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
 
     return detectItemAtPositionWithRange(position, contextRange, detectedDataBoundingBox, detectedDataRange);
 }
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
@@ -345,7 +345,7 @@ static String dataDetectorStringForPath(NSIndexPath *path)
     }
 }
 
-static void buildQuery(DDScanQueryRef scanQuery, Range* contextRange)
+static void buildQuery(DDScanQueryRef scanQuery, const SimpleRange& contextRange)
 {
     // Once we're over this number of fragments, stop at the first hard break.
     const CFIndex maxFragmentWithHardBreak = 1000;
@@ -444,9 +444,12 @@ void DataDetection::removeDataDetectedLinksInDocument(Document& document)
 
 NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes types, NSDictionary *context)
 {
+    if (!contextRange)
+        return nil;
+
     RetainPtr<DDScannerRef> scanner = adoptCF(softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
     RetainPtr<DDScanQueryRef> scanQuery = adoptCF(softLink_DataDetectorsCore_DDScanQueryCreate(NULL));
-    buildQuery(scanQuery.get(), contextRange.get());
+    buildQuery(scanQuery.get(), *contextRange);
     
     if (types & DataDetectorTypeLookupSuggestion)
         softLink_DataDetectorsCore_DDScannerEnableOptionalSource(scanner.get(), DDScannerSourceSpotlight, true);
@@ -487,7 +490,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
     }
 
     Vector<Vector<RefPtr<Range>>> allResultRanges;
-    TextIterator iterator(contextRange.get());
+    TextIterator iterator(*contextRange);
     CFIndex iteratorCount = 0;
 
     // Iterate through the array of the expanded results to create a vector of Range objects that indicate

@@ -489,7 +489,7 @@ static void appendRepeatedCharacter(Vector<UChar, 1024>& buffer, UChar character
 unsigned suffixLengthForRange(const Range& forwardsScanRange, Vector<UChar, 1024>& string)
 {
     unsigned suffixLength = 0;
-    TextIterator forwardsIterator(&forwardsScanRange);
+    TextIterator forwardsIterator(forwardsScanRange);
     while (!forwardsIterator.atEnd()) {
         StringView text = forwardsIterator.text();
         unsigned i = endOfFirstWordBoundaryContext(text);
@@ -609,7 +609,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
         result = forwardsScanRange->setStart(start);
         if (result.hasException())
             return { };
-        for (TextIterator forwardsIterator(forwardsScanRange.ptr()); !forwardsIterator.atEnd(); forwardsIterator.advance())
+        for (TextIterator forwardsIterator(forwardsScanRange); !forwardsIterator.atEnd(); forwardsIterator.advance())
             append(string, forwardsIterator.text());
         suffixLength = string.size();
     } else if (requiresContextForWordBoundary(c.characterBefore())) {
@@ -674,7 +674,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
     searchRange->selectNodeContents(*boundary);
     if (start.deprecatedNode())
         searchRange->setStart(*start.deprecatedNode(), start.deprecatedEditingOffset());
-    TextIterator it(searchRange.ptr(), TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    TextIterator it(searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
     unsigned next = forwardSearchForBoundaryWithTextIterator(it, string, prefixLength, searchFunction);
     
     if (it.atEnd() && next == string.size())

@@ -329,51 +329,28 @@ void TextIteratorCopyableText::appendToStringBuilder(StringBuilder& builder) con
 
 // --------
 
-
-TextIterator::TextIterator(Position start, Position end, TextIteratorBehavior behavior)
-    : m_behavior(behavior)
+static Node* firstNode(const BoundaryPoint& point)
 {
-    if (start.isNull() || end.isNull())
-        return;
-    ASSERT(comparePositions(start, end) <= 0);
-
-    RELEASE_ASSERT(behavior & TextIteratorTraversesFlatTree || start.treeScope() == end.treeScope());
-
-    start.document()->updateLayoutIgnorePendingStylesheets();
-
-    // FIXME: Use Position / PositionIterator instead to avoid offset computation.
-    m_startContainer = start.containerNode();
-    m_startOffset = start.computeOffsetInContainerNode();
-
-    m_endContainer = end.containerNode();
-    m_endOffset = end.computeOffsetInContainerNode();
-
-    m_node = start.firstNode().get();
-    if (!m_node)
-        return;
-
-    init();
+    if (point.container->isCharacterDataNode())
+        return point.container.ptr();
+    if (Node* child = point.container->traverseToChildAt(point.offset))
+        return child;
+    if (!point.offset)
+        return point.container.ptr();
+    return NodeTraversal::nextSkippingChildren(point.container);
 }
 
-TextIterator::TextIterator(const Range* range, TextIteratorBehavior behavior)
+TextIterator::TextIterator(const SimpleRange& range, TextIteratorBehavior behavior)
     : m_behavior(behavior)
 {
-    if (!range)
-        return;
+    range.start.document().updateLayoutIgnorePendingStylesheets();
 
-    range->ownerDocument().updateLayoutIgnorePendingStylesheets();
+    m_startContainer = range.start.container.ptr();
+    m_startOffset = range.start.offset;
+    m_endContainer = range.end.container.ptr();
+    m_endOffset = range.end.offset;
 
-    m_startContainer = &range->startContainer();
-
-    // Callers should be handing us well-formed ranges. If we discover that this isn't
-    // the case, we could consider changing this assertion to an early return.
-    ASSERT(range->boundaryPointsValid());
-
-    m_startOffset = range->startOffset();
-    m_endContainer = &range->endContainer();
-    m_endOffset = range->endOffset();
-
-    m_node = range->firstNode();
+    m_node = firstNode(range.start);
     if (!m_node)
         return;
 
@@ -1140,23 +1117,23 @@ Node* TextIterator::node() const
 
 // --------
 
-SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range& range)
+SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const SimpleRange& range)
 {
-    range.ownerDocument().updateLayoutIgnorePendingStylesheets();
+    range.start.document().updateLayoutIgnorePendingStylesheets();
 
-    Node* startNode = &range.startContainer();
-    Node* endNode = &range.endContainer();
-    int startOffset = range.startOffset();
-    int endOffset = range.endOffset();
+    Node* startNode = range.start.container.ptr();
+    Node* endNode = range.end.container.ptr();
+    unsigned startOffset = range.start.offset;
+    unsigned endOffset = range.end.offset;
 
     if (!startNode->isCharacterDataNode()) {
-        if (startOffset >= 0 && startOffset < static_cast<int>(startNode->countChildNodes())) {
+        if (startOffset < startNode->countChildNodes()) {
             startNode = startNode->traverseToChildAt(startOffset);
             startOffset = 0;
         }
     }
     if (!endNode->isCharacterDataNode()) {
-        if (endOffset > 0 && endOffset <= static_cast<int>(endNode->countChildNodes())) {
+        if (endOffset > 0 && endOffset <= endNode->countChildNodes()) {
             endNode = endNode->traverseToChildAt(endOffset - 1);
             endOffset = lastOffsetInNode(endNode);
         }
@@ -1391,15 +1368,8 @@ SimpleRange SimplifiedBackwardsTextIterator::range() const
 
 // --------
 
-CharacterIterator::CharacterIterator(const Range& range, TextIteratorBehavior behavior)
-    : m_underlyingIterator(&range, behavior)
-{
-    while (!atEnd() && !m_underlyingIterator.text().length())
-        m_underlyingIterator.advance();
-}
-
-CharacterIterator::CharacterIterator(Position start, Position end, TextIteratorBehavior behavior)
-    : m_underlyingIterator(start, end, behavior)
+CharacterIterator::CharacterIterator(const SimpleRange& range, TextIteratorBehavior behavior)
+    : m_underlyingIterator(range, behavior)
 {
     while (!atEnd() && !m_underlyingIterator.text().length())
         m_underlyingIterator.advance();
@@ -1483,7 +1453,7 @@ static Ref<Range> characterSubrange(Document& document, CharacterIterator& it, i
     return createLiveRange(SimpleRange { start, end });
 }
 
-BackwardsCharacterIterator::BackwardsCharacterIterator(const Range& range)
+BackwardsCharacterIterator::BackwardsCharacterIterator(const SimpleRange& range)
     : m_underlyingIterator(range)
 {
     while (!atEnd() && !m_underlyingIterator.text().length())
@@ -1546,8 +1516,8 @@ void BackwardsCharacterIterator::advance(int count)
 
 // --------
 
-WordAwareIterator::WordAwareIterator(const Range& range)
-    : m_underlyingIterator(&range)
+WordAwareIterator::WordAwareIterator(const SimpleRange& range)
+    : m_underlyingIterator(range)
 {
     advance(); // get in position over the first chunk of text
 }
@@ -2375,8 +2345,10 @@ size_t SearchBuffer::length() const
 
 int TextIterator::rangeLength(const Range* range, bool forSelectionPreservation)
 {
+    if (!range)
+        return 0;
     unsigned length = 0;
-    for (TextIterator it(range, forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior); !it.atEnd(); it.advance())
+    for (TextIterator it(*range, forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior); !it.atEnd(); it.advance())
         length += it.text().length();
     return length;
 }
@@ -2405,7 +2377,7 @@ RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int
 
     Ref<Range> textRunRange = rangeOfContents(*scope);
 
-    TextIterator it(textRunRange.ptr(), forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior);
+    TextIterator it(textRunRange, forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior);
     
     // FIXME: the atEnd() check shouldn't be necessary, workaround for <http://bugs.webkit.org/show_bug.cgi?id=6289>.
     if (!rangeLocation && !rangeLength && it.atEnd()) {
@@ -2506,21 +2478,19 @@ bool TextIterator::getLocationAndLengthFromRange(Node* scope, const Range* range
 
 bool hasAnyPlainText(const SimpleRange& range, TextIteratorBehavior behavior)
 {
-    for (TextIterator iterator { createLiveRange(range).ptr(), behavior }; !iterator.atEnd(); iterator.advance()) {
+    for (TextIterator iterator { range, behavior }; !iterator.atEnd(); iterator.advance()) {
         if (!iterator.text().isEmpty())
             return true;
     }
     return false;
 }
 
-String plainText(Position start, Position end, TextIteratorBehavior defaultBehavior, bool isDisplayString)
+String plainText(const SimpleRange& range, TextIteratorBehavior defaultBehavior, bool isDisplayString)
 {
     // The initial buffer size can be critical for performance: https://bugs.webkit.org/show_bug.cgi?id=81192
     static const unsigned initialCapacity = 1 << 15;
 
-    if (!start.document())
-        return { };
-    auto document = makeRef(*start.document());
+    auto document = makeRef(range.start.document());
 
     unsigned bufferLength = 0;
     StringBuilder builder;
@@ -2529,7 +2499,7 @@ String plainText(Position start, Position end, TextIteratorBehavior defaultBehav
     if (!isDisplayString)
         behavior = static_cast<TextIteratorBehavior>(behavior | TextIteratorEmitsTextsWithoutTranscoding);
 
-    for (TextIterator it(start, end, behavior); !it.atEnd(); it.advance()) {
+    for (TextIterator it(range, behavior); !it.atEnd(); it.advance()) {
         it.appendTextToStringBuilder(builder);
         bufferLength += it.text().length();
     }
@@ -2545,16 +2515,11 @@ String plainText(Position start, Position end, TextIteratorBehavior defaultBehav
     return result;
 }
 
-String plainTextReplacingNoBreakSpace(Position start, Position end, TextIteratorBehavior defaultBehavior, bool isDisplayString)
-{
-    return plainText(start, end, defaultBehavior, isDisplayString).replace(noBreakSpace, ' ');
-}
-
 String plainText(const Range* range, TextIteratorBehavior defaultBehavior, bool isDisplayString)
 {
     if (!range)
         return emptyString();
-    return plainText(range->startPosition(), range->endPosition(), defaultBehavior, isDisplayString);
+    return plainText(*range, defaultBehavior, isDisplayString);
 }
 
 String plainTextUsingBackwardsTextIteratorForTesting(const SimpleRange& range)
@@ -2565,7 +2530,7 @@ String plainTextUsingBackwardsTextIteratorForTesting(const SimpleRange& range)
     return result;
 }
 
-String plainTextReplacingNoBreakSpace(const Range* range, TextIteratorBehavior defaultBehavior, bool isDisplayString)
+String plainTextReplacingNoBreakSpace(const SimpleRange& range, TextIteratorBehavior defaultBehavior, bool isDisplayString)
 {
     return plainText(range, defaultBehavior, isDisplayString).replace(noBreakSpace, ' ');
 }

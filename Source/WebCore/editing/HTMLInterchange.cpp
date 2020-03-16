@@ -27,10 +27,8 @@
 #include "HTMLInterchange.h"
 
 #include "Editing.h"
-#include "RenderElement.h"
 #include "RenderText.h"
 #include "Text.h"
-#include "TextIterator.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -62,9 +60,7 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
                 unsigned add = count % 3;
                 switch (add) {
                     case 0:
-                        s.appendLiteral(convertedSpaceString);
-                        s.append(' ');
-                        s.appendLiteral(convertedSpaceString);
+                        s.append(convertedSpaceString, ' ', convertedSpaceString);
                         add = 3;
                         break;
                     case 1:
@@ -76,15 +72,12 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
                     case 2:
                         if (i == 0) {
                              // at start of string
-                            s.appendLiteral(convertedSpaceString);
-                            s.append(' ');
+                            s.append(convertedSpaceString, ' ');
                         } else if (i + 2 == in.length()) {
                              // at end of string
-                            s.appendLiteral(convertedSpaceString);
-                            s.appendLiteral(convertedSpaceString);
+                            s.append(convertedSpaceString, convertedSpaceString);
                         } else {
-                            s.appendLiteral(convertedSpaceString);
-                            s.append(' ');
+                            s.append(convertedSpaceString, ' ');
                         }
                         break;
                 }
