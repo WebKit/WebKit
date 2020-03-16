@@ -7,6 +7,7 @@ PASS (self.sandboxedFrame.frameWithPlugin.document.getElementById('plugin').dest
 FAIL (self.frameWithPlugin.document.getElementById('plugin').destroyStream) != undefined should be true. Was false.
 PASS String(document.getElementById('sandboxedFrameId').sandbox) is "allow-scripts allow-same-origin"
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
   

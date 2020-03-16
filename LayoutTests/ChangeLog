@@ -1,3 +1,17 @@
+2020-03-15  Lauro Moura  <lmoura@igalia.com>
+
+        WPE gardening.
+
+        Updated a test baseline with new message after changed from
+        js-test-pre to js-test.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Updated an expectation with new bug
+        number.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/frames/sandboxed-iframe-navigation-allowed-expected.txt:
+
 2020-03-15  Aakash Jain  <aakash_jain@apple.com>
 
         Regression r258439: quicklook/multi-sheet-numbers-09.html is failing consistently on iOS

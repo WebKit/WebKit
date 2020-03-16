@@ -702,6 +702,9 @@ webkit.org/b/208985 fast/viewport/ios/shrink-to-fit-large-content-width.html [ F
 
 webkit.org/b/208992 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html [ Failure ]
 
+# SMOOTH_SCROLLING is disabled by default for WPE
+fast/events/drag-smooth-scroll-element.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1384,6 +1387,8 @@ webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/basic/conditional-
 webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/request/request-cache-default.html [ Failure Pass ]
 webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/request/request-cache-force-cache.html [ Failure Pass ]
 webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.html [ Failure Pass ]
+
+webkit.org/b/209130 fast/mediastream/fast/mediastream/change-tracks-media-stream-being-played.html [ Pass Crash Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
