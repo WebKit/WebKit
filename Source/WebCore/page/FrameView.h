@@ -151,8 +151,6 @@ public:
 
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForPlatformWidget(PlatformWidget);
 
-    WEBCORE_EXPORT void scheduleRenderingUpdate();
-
     WEBCORE_EXPORT TiledBacking* tiledBacking() const;
 
     ScrollingNodeID scrollingNodeID() const override;

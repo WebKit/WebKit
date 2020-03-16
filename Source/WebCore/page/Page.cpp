@@ -1304,6 +1304,11 @@ void Page::layoutIfNeeded()
         view->updateLayoutAndStyleIfNeededRecursive();
 }
 
+void Page::scheduleRenderingUpdate()
+{
+    renderingUpdateScheduler().scheduleRenderingUpdate();
+}
+
 // https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
 void Page::updateRendering()
 {

@@ -477,7 +477,7 @@ void RenderLayerCompositor::scheduleRenderingUpdate()
 {
     ASSERT(!m_flushingLayers);
 
-    page().renderingUpdateScheduler().scheduleRenderingUpdate();
+    page().scheduleRenderingUpdate();
 }
 
 FloatRect RenderLayerCompositor::visibleRectForLayerFlushing() const

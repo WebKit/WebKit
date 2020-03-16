@@ -1017,14 +1017,6 @@ GraphicsLayer* FrameView::graphicsLayerForPlatformWidget(PlatformWidget platform
     return widgetLayer->backing()->parentForSublayers();
 }
 
-void FrameView::scheduleRenderingUpdate()
-{
-    RenderView* view = this->renderView();
-    if (!view)
-        return;
-    view->compositor().scheduleRenderingUpdate();
-}
-
 LayoutRect FrameView::fixedScrollableAreaBoundsInflatedForScrolling(const LayoutRect& uninflatedBounds) const
 {
     LayoutPoint scrollPosition;
@@ -5267,11 +5259,10 @@ void FrameView::setViewExposedRect(Optional<FloatRect> viewExposedRect)
         tiledBacking->setTiledScrollingIndicatorPosition(m_viewExposedRect ? m_viewExposedRect.value().location() : FloatPoint());
     }
 
-    if (auto* view = renderView())
-        view->compositor().scheduleRenderingUpdate();
-
-    if (auto* page = frame().page())
+    if (auto* page = frame().page()) {
+        page->scheduleRenderingUpdate();
         page->pageOverlayController().didChangeViewExposedRect();
+    }
 }
 
 void FrameView::clearViewportSizeOverrideForCSSViewportUnits()

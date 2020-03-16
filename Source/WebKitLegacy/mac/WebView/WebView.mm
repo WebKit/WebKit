@@ -9312,9 +9312,8 @@ bool LayerFlushController::flushLayers()
 #if PLATFORM(IOS_FAMILY)
 - (void)_scheduleRenderingUpdateForPendingTileCacheRepaint
 {
-    auto* coreFrame = [self _mainCoreFrame];
-    if (auto* view = coreFrame->view())
-        view->scheduleRenderingUpdate();
+    if (auto* page = _private->page)
+        page->scheduleRenderingUpdate();
 }
 #endif
 

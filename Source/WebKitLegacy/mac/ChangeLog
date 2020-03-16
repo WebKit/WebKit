@@ -1,3 +1,16 @@
+2020-03-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove FrameView::scheduleRenderingUpdate()
+        https://bugs.webkit.org/show_bug.cgi?id=209109
+
+        Reviewed by Antti Koivisto.
+
+        FrameView::scheduleRenderingUpdate() called through to compositor(), but that just
+        turned around to call scheduleRenderingUpdate() via Page. So Remove it and change
+        callers to call Page::scheduleRenderingUpdate() directly.
+
+        * WebView/WebView.mm:
+
 2020-03-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] IDLs, stubs and build configuration for WPE
