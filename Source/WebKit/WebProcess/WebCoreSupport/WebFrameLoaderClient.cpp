@@ -1925,6 +1925,9 @@ void WebFrameLoaderClient::finishedLoadingApplicationManifest(uint64_t callbackI
 
 bool WebFrameLoaderClient::hasNavigatedAwayFromAppBoundDomain()
 {
+    if (!m_frame->isMainFrame())
+        return false;
+
     auto* webPage = m_frame->page();
     if (!webPage)
         return false;

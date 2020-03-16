@@ -152,10 +152,6 @@ TEST_F(SecurityOriginTest, IsPotentiallyTrustworthy)
     EXPECT_TRUE(SecurityOrigin::createFromString("blob:http://localhost/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("blob:http://[::1]/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("blob:https://example.com/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentiallyTrustworthy());
-    EXPECT_TRUE(SecurityOrigin::createFromString("data:,a")->isPotentiallyTrustworthy());
-    EXPECT_TRUE(SecurityOrigin::createFromString("about:")->isPotentiallyTrustworthy());
-    EXPECT_TRUE(SecurityOrigin::createFromString("about:blank")->isPotentiallyTrustworthy());
-    EXPECT_TRUE(SecurityOrigin::createFromString("about:srcdoc")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("wss://example.com")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("https://example.com")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("http://127.0.0.0")->isPotentiallyTrustworthy());
@@ -181,6 +177,12 @@ TEST_F(SecurityOriginTest, IsPotentiallyTrustworthy)
     EXPECT_FALSE(SecurityOrigin::createFromString("ws://example.com")->isPotentiallyTrustworthy());
     EXPECT_FALSE(SecurityOrigin::createFromString("blob:http://example.com/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentiallyTrustworthy());
     EXPECT_FALSE(SecurityOrigin::createFromString("dummy:a")->isPotentiallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("blob:null/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentiallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("data:,a")->isPotentiallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("about:")->isPotentiallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("about:blank")->isPotentiallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("about:srcdoc")->isPotentiallyTrustworthy());
+    EXPECT_FALSE(SecurityOrigin::createFromString("javascript:srcdoc")->isPotentiallyTrustworthy());
 }
 
 TEST_F(SecurityOriginTest, IsRegistrableDomainSuffix)

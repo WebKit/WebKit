@@ -1,3 +1,16 @@
+2020-03-16  youenn fablet  <youenn@apple.com>
+
+        Unique origins should not be Potentially Trustworthy
+        https://bugs.webkit.org/show_bug.cgi?id=209049
+
+        Reviewed by Darin Adler.
+
+        * editing/async-clipboard/resources/sanitize-when-reading-markup-iframe.html: Added.
+        * editing/async-clipboard/sanitize-when-reading-markup.html:
+        Updating test to use HTTP instead of data URL for iFrame since clipboard is SecureContext.
+        * http/tests/security/iframe-unique-origin.https-expected.txt: Added.
+        * http/tests/security/iframe-unique-origin.https.html: Added.
+
 2020-03-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Cairo][SVG] marker-mid isn't shown on a joint of rectilinearly connected line-to path segments

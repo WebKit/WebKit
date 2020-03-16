@@ -1,0 +1,12 @@
+<button id='copy' style='font-size: 40px; text-align: center;'>Click to copy</button>
+<script>
+    const markup1 = `<script>console.log('This script tag should be sanitized out.')</${'script'}><p onclick='javascript:void()'>Hello world 1</p>`;
+    const markup2 = `<p style='display: none;'>You should not see this text.</p><span>Hello world 2</span>`;
+    copy.addEventListener('click', async () => {
+        await navigator.clipboard.write([
+            new ClipboardItem({ 'text/html' : markup1 }),
+            new ClipboardItem({ 'text/html' : markup2 })
+        ]);
+        parent.postMessage('finished-copying', '*');
+    });
+</script>

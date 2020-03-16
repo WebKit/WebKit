@@ -174,7 +174,7 @@ SecurityOrigin::SecurityOrigin()
     : m_data { emptyString(), emptyString(), WTF::nullopt }
     , m_domain { emptyString() }
     , m_isUnique { true }
-    , m_isPotentiallyTrustworthy { true }
+    , m_isPotentiallyTrustworthy { false }
 {
 }
 
