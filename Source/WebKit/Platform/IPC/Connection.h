@@ -76,10 +76,13 @@ enum class WaitForOption {
     InterruptWaitingIfSyncMessageArrives = 1 << 0,
 };
 
-#define MESSAGE_CHECK_BASE(assertion, connection) do \
+#define MESSAGE_CHECK_BASE(assertion, connection) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, (void)0)
+
+#define MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion) do \
     if (!(assertion)) { \
         ASSERT(assertion); \
         (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
+        { completion; } \
         return; \
     } \
 while (0)

@@ -1,5 +1,54 @@
 2020-03-17  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/60396294
+
+    2020-03-17  David Kilzer  <ddkilzer@apple.com>
+
+            Cherry-pick r258334. rdar://problem/60396294
+
+        2020-03-12  David Kilzer  <ddkilzer@apple.com>
+
+            WebPasteboardProxy::SetPasteboardBufferForType should validate its `size` parameter
+            <https://webkit.org/b/208902>
+            <rdar://problem/60181117>
+
+            Reviewed by Chris Dumez.
+
+            * Platform/IPC/Connection.h:
+            (MESSAGE_CHECK_BASE):
+            - Define in terms of MESSAGE_CHECK_COMPLETION_BASE() with a
+              no-op completion handler.
+            (MESSAGE_CHECK_COMPLETION_BASE):
+            - Rename from MESSAGE_CHECK_BASE() and add completion handler
+              parameter.
+
+            * Platform/SharedMemory.h:
+            (WebKit::SharedMemory::Handle::size const): Add.
+
+            * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+            (MESSAGE_CHECK):
+            - Define macro to use in
+              WebPasteboardProxy::setPasteboardBufferForType().
+            - Undefine macro at end of source file due to unified sources.
+            (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+            - Add IPC::Connection& parameter after change to
+              WebPasteboardProxy.messages.in.  Use with MESSAGE_CHECK().
+            - Validate `size` parameter using MESSAGE_CHECK().  Because
+              SharedMemory::Handle::size() returns a size_t value, we do not
+              need to check `size <= std::numeric_limits<size_t>::max()`.
+            - Add static_cast<size_t>() to size parameter to denote type
+              change.
+            * UIProcess/WebPasteboardProxy.h:
+            (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+            - Add IPC::Connection& parameter after change to
+              WebPasteboardProxy.messages.in.
+            * UIProcess/WebPasteboardProxy.messages.in:
+            (SetPasteboardBufferForType):
+            - Add 'WantsConnection' attribute to add IPC::Connection&
+              parameter to WebPasteboardProxy::setPasteboardBufferForType().
+
+2020-03-17  Alan Coon  <alancoon@apple.com>
+
         Apply patch. rdar://problem/60430195
 
     2020-03-17  David Kilzer  <ddkilzer@apple.com>
