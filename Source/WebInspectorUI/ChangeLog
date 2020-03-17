@@ -1,3 +1,20 @@
+2020-03-17  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r257759): Web Inspector: Settings icon sometimes placed below the tab bar
+        https://bugs.webkit.org/show_bug.cgi?id=208603
+        <rdar://problem/60108967>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.prototype.layout):
+        Don't take into account the width of the flexible space before or after the normal tab bar
+        items since they will shrink to fit (the container is using `display: flex;`). Instead, use
+        determine the available space by subtracting the width of every `WI.PinnedTabBarItem` from
+        the `realOffsetWidth` of the container, comparing against the sum of the `realOffsetWidth`
+        of all `WI.GeneralTabBarItem`. If the sum is greater than the available space, successively
+        mark items from the end (right in LTR, left in RTL) as hidden until the remaining will fit.
+
 2020-03-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r257380): Web Inspector: deleting node causes TreeOutline to lose focus

@@ -432,19 +432,8 @@ WI.TabBar = class TabBar extends WI.View
         if (this._tabContainer.classList.contains("static-layout"))
             return;
 
-        const tabBarHozirontalPadding = WI.TabBar.horizontalPadding;
+        const tabBarHorizontalPadding = WI.TabBar.horizontalPadding;
         const tabBarItemHorizontalMargin = WI.TabBarItem.horizontalMargin;
-
-        let barWidth = this._tabContainer.realOffsetWidth;
-
-        let flexibleSpaceSizeWithHiddenItems = this._flexibleSpaceBeforeElement.realOffsetWidth - this._flexibleSpaceAfterElement.realOffsetWidth;
-
-        this._tabContainer.classList.add("calculate-width");
-
-        for (let item of this._tabBarItems)
-            item.hidden = item === this._tabPickerTabBarItem;
-
-        let flexibleSpaceSizeWithoutHiddenItems = this._flexibleSpaceBeforeElement.realOffsetWidth - this._flexibleSpaceAfterElement.realOffsetWidth;
 
         function measureItemWidth(item) {
             if (!item[WI.TabBar.CachedWidthSymbol])
@@ -452,37 +441,45 @@ WI.TabBar = class TabBar extends WI.View
             return item[WI.TabBar.CachedWidthSymbol];
         }
 
-        let recalculateItemWidths = () => {
-            return this._tabBarItems.reduce((total, item) => {
-                item[WI.TabBar.CachedWidthSymbol] = undefined;
-                return total + measureItemWidth(item);
-            }, tabBarItemHorizontalMargin);
-        };
+        let availableSpace = this._tabContainer.realOffsetWidth - tabBarHorizontalPadding;
+
+        this._tabContainer.classList.add("calculate-width");
 
         this._hiddenTabBarItems = [];
 
-        let availableSpace = barWidth - Math.max(0, Math.min(flexibleSpaceSizeWithHiddenItems, flexibleSpaceSizeWithoutHiddenItems)) - tabBarHozirontalPadding - tabBarItemHorizontalMargin + 1;
-
-        let totalItemWidth = recalculateItemWidths();
-        if (totalItemWidth > availableSpace) {
-            totalItemWidth = recalculateItemWidths();
-            if (totalItemWidth > availableSpace) {
-                this._tabPickerTabBarItem.hidden = false;
-                totalItemWidth += measureItemWidth(this._tabPickerTabBarItem);
+        let normalTabBarItems = [];
+        let normalTabBarItemsWidth = 0;
+        for (let tabBarItem of this._tabBarItemsFromLeftToRight()) {
+            if (tabBarItem === this._tabPickerTabBarItem) {
+                tabBarItem.hidden = true;
+                continue;
             }
 
-            let tabBarItems = this._tabBarItemsFromLeftToRight();
-            let index = tabBarItems.length;
-            while (totalItemWidth > availableSpace && --index >= 0) {
-                let item = tabBarItems[index];
-                if (item === this.selectedTabBarItem || item instanceof WI.PinnedTabBarItem)
+            tabBarItem.hidden = false;
+
+            if (tabBarItem instanceof WI.PinnedTabBarItem)
+                availableSpace -= measureItemWidth(tabBarItem);
+            else {
+                normalTabBarItems.push(tabBarItem);
+                normalTabBarItemsWidth += measureItemWidth(tabBarItem);
+            }
+        }
+
+        if (normalTabBarItemsWidth > availableSpace) {
+            this._tabPickerTabBarItem.hidden = false;
+            availableSpace -= measureItemWidth(this._tabPickerTabBarItem);
+
+            let index = normalTabBarItems.length - 1;
+            do {
+                let tabBarItem = normalTabBarItems[index];
+                if (tabBarItem === this._selectedTabBarItem)
                     continue;
 
-                totalItemWidth -= measureItemWidth(item);
-                item.hidden = true;
+                normalTabBarItemsWidth -= measureItemWidth(tabBarItem);
 
-                this._hiddenTabBarItems.push(item);
-            }
+                tabBarItem.hidden = true;
+                this._hiddenTabBarItems.push(tabBarItem);
+            } while (normalTabBarItemsWidth > availableSpace && --index >= 0);
         }
 
         this._tabContainer.classList.remove("calculate-width");
