@@ -520,17 +520,22 @@ WI.TreeElement = class TreeElement extends WI.Object
 
     select(omitFocus, selectedByUser, suppressNotification)
     {
-        if (!this.treeOutline || !this.selectable)
+        let treeOutline = this.treeOutline;
+        if (!treeOutline || !this.selectable)
             return;
 
         if (!omitFocus)
             this.focus();
+        else if (treeOutline.element.contains(document.activeElement)) {
+            // When treeOutline has focus, focus on the newly selected treeElement.
+            this.focus();
+        }
 
         if (this.selected && !this.treeOutline.allowsRepeatSelection)
             return;
 
         // Focusing on another node may detach "this" from tree.
-        let treeOutline = this.treeOutline;
+        treeOutline = this.treeOutline;
         if (!treeOutline)
             return;
 
