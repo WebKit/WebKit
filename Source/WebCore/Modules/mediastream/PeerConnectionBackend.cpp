@@ -303,7 +303,7 @@ void PeerConnectionBackend::addPendingTrackEvent(PendingTrackEvent&& event)
     m_pendingTrackEvents.append(WTFMove(event));
 }
 
-static String extractIPAddress(const String& sdp)
+static String extractIPAddress(StringView sdp)
 {
     unsigned counter = 0;
     for (auto item : StringView { sdp }.split(' ')) {
@@ -438,7 +438,7 @@ String PeerConnectionBackend::filterSDP(String&& sdp) const
         return WTFMove(sdp);
 
     StringBuilder filteredSDP;
-    sdp.split('\n', [&filteredSDP](StringView line) {
+    sdp.split('\n', [this, &filteredSDP](StringView line) {
         if (line.startsWith("c=IN IP4"))
             filteredSDP.append("c=IN IP4 0.0.0.0\r");
         else if (line.startsWith("c=IN IP6"))
@@ -447,8 +447,16 @@ String PeerConnectionBackend::filterSDP(String&& sdp) const
             filteredSDP.append(line);
         else if (line.find(" host ", 11) == notFound)
             filteredSDP.append(filterICECandidate(line.toString()));
-        else
+        else {
+            auto ipAddress = extractIPAddress(line);
+            auto mdnsName = m_ipAddressToMDNSNameMap.get(ipAddress);
+            if (!mdnsName.isEmpty()) {
+                auto sdp = line.toString();
+                sdp.replace(ipAddress, mdnsName);
+                filteredSDP.append(sdp);
+            }
             return;
+        }
         filteredSDP.append('\n');
     });
     return filteredSDP.toString();
@@ -520,6 +528,7 @@ void PeerConnectionBackend::registerMDNSName(const String& ipAddress)
 
 void PeerConnectionBackend::finishedRegisteringMDNSName(const String& ipAddress, const String& name)
 {
+    m_ipAddressToMDNSNameMap.add(ipAddress, name);
     Vector<PendingICECandidate*> candidates;
     for (auto& candidate : m_pendingICECandidates) {
         if (candidate.sdp.find(ipAddress) != notFound) {

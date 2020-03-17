@@ -1,3 +1,13 @@
+2020-03-17  youenn fablet  <youenn@apple.com>
+
+        Safari doesn't insert mDNS candidates to SDP
+        https://bugs.webkit.org/show_bug.cgi?id=209050
+        <rdar://problem/60419936>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/mdns-ice-candidates.html:
+
 2020-03-17  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Sync web-platform-tests/css/css-cascade from upstream

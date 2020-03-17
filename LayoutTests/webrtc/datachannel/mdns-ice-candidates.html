@@ -50,9 +50,11 @@ function sendMessages(channel)
     channel.send("four");
 }
 
-promise_test((test) => {
-    return new Promise((resolve, reject) => {
+let connection;
+promise_test(async (test) => {
+    await new Promise((resolve, reject) => {
         createConnections((localConnection) => {
+            connection = localConnection;
             localConnection.createDataChannel('sendDataChannel');
         }, () => {
         }, {
@@ -66,6 +68,8 @@ promise_test((test) => {
         });
         setTimeout(() => { reject("Test timed out"); }, 5000);
     });
+
+    assert_true(connection.localDescription.sdp.includes(".local "));
 }, "Getting some MDNS candidates");
 
 var finishTest;

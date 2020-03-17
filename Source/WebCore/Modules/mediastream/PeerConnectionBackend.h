@@ -243,6 +243,7 @@ private:
 
     Vector<PendingTrackEvent> m_pendingTrackEvents;
 
+    HashMap<String, String> m_ipAddressToMDNSNameMap;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
