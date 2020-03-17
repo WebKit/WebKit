@@ -696,6 +696,8 @@ http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-sho
 webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Pass Timeout ]
 webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Pass Timeout ]
 
+webkit.org/b/209194 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
+
 webkit.org/b/172148 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html [ Pass Failure ]
 
 webkit.org/b/175341 accessibility/mac/select-element-selection-with-optgroups.html [ Pass Failure ]
