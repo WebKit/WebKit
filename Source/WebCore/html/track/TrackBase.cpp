@@ -148,13 +148,8 @@ void TrackBase::setLanguage(const AtomString& language)
     String message;
     if (language.contains((UChar)'\0'))
         message = "The language contains a null character and is not a valid BCP 47 language tag."_s;
-    else {
-        StringBuilder stringBuilder;
-        stringBuilder.appendLiteral("The language '");
-        stringBuilder.append(language);
-        stringBuilder.appendLiteral("' is not a valid BCP 47 language tag.");
-        message = stringBuilder.toString();
-    }
+    else
+        message = makeString("The language '", language, "' is not a valid BCP 47 language tag.");
 
     element->document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
 }
