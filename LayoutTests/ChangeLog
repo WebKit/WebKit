@@ -1,5 +1,25 @@
 2020-03-17  Antoine Quint  <graouts@apple.com>
 
+        http/wpt/css/css-animations/start-animation-001.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207337
+        <rdar://problem/59226371>
+
+        Reviewed by Dean Jackson.
+
+        This test was written in a flaky way for two reasons:
+        
+        1. it was using a timer to assume state in the animation engine
+        2. it was using an accelerated animation that wasn't absolutely required to as an indicator of what a non-steps based version
+           of the tested animation would look like, but accelerated animations are notoriously hard to test for rendering purposes
+
+        We update the test to use the secondary animation as a timer so that we can test the state of animations at 200ms precisely,
+        and we get rid of the accelerated animation such that only the tested animation's rendering is tested.
+
+        * http/wpt/css/css-animations/start-animation-001.html:
+        * platform/mac/TestExpectations:
+
+2020-03-17  Antoine Quint  <graouts@apple.com>
+
         REGRESSION (r258411): imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch.html is failing consistently
         https://bugs.webkit.org/show_bug.cgi?id=209175
         <rdar://problem/60513114>

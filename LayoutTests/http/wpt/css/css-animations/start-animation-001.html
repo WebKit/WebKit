@@ -16,17 +16,13 @@
         position: absolute;
       }
       /* Avoid animation-fill-mode, to make sure that the move is done by the animation code. */
-      #squareLinear {
-        top: 0px;
-        animation: moveByTransform 10s linear;
-      }
       #squareSteps {
         top: 150px;
         animation: moveByTransform 10s steps(1000);
       }
       #squareNonAccelerated  {
         top: 300px;
-        animation: moveByLeft 10s steps(100);
+        animation: moveByLeft 200ms steps(10) forwards;
       }
       @keyframes moveByTransform
       {
@@ -40,7 +36,7 @@
           left: 0px;
         }
         100% {
-          left: 5000px;
+          left: 90px;
         }
       }
       #coveringRect {
@@ -53,21 +49,20 @@
       }
     </style>
     <script>
-      function runTest() {
-        if (!window.testRunner)
-          return;
-        // We wait a bit after the squares are moved behind the blue rectangle. For discontinuous
-        // transforms we have 5000px / 100 steps = 5px/step. Hence this happens after 20 steps i.e.
-        // 20/100*10s = 200ms.
-        testRunner.waitUntilDone();
-        setTimeout(() => { testRunner.notifyDone(); }, 300);
-      }
+      window.addEventListener("DOMContentLoaded", () => {
+          if (!window.testRunner)
+            return;
+          // We wait a bit after the squares are moved behind the blue rectangle. For discontinuous
+          // transforms we have 5000px / 100 steps = 5px/step. Hence this happens after 20 steps i.e.
+          // 20/100*10s = 200ms.
+          testRunner.waitUntilDone();
+          document.getElementById("squareNonAccelerated").addEventListener("animationend", () => testRunner.notifyDone());
+      });
     </script>
   </head>
-  <body onload="runTest()">
+  <body>
     <p>This test passes if green squares are moved behind the blue rectangle.</p>
     <div id="container">
-      <div id="squareLinear"><tt>transform</tt> (linear)</div>
       <div id="squareSteps"><tt>transform</tt> (steps)</div>
       <div id="squareNonAccelerated"><tt>left</tt> (steps)</div>
       <div id="coveringRect"></div>
