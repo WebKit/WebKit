@@ -98,6 +98,7 @@ class SerializedScriptValue;
 class SourceBuffer;
 class StringCallback;
 class StyleSheet;
+class TextTrack;
 class TimeRanges;
 class TypeConversions;
 class UnsuspendableActiveDOMObject;
@@ -594,6 +595,7 @@ public:
     ExceptionOr<void> setCaptionDisplayMode(const String&);
 #if ENABLE(VIDEO_TRACK)
     RefPtr<TextTrackCueGeneric> createGenericCue(double startTime, double endTime, String text);
+    ExceptionOr<String> textTrackBCP47Language(TextTrack&);
 #endif
 
 #if ENABLE(VIDEO)

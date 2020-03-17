@@ -59,7 +59,7 @@ public:
     AtomString label() const { return m_label; }
     void setLabel(const AtomString& label) { m_label = label; }
 
-    AtomString validBCP47Language() const;
+    AtomString validBCP47Language() const { return m_validBCP47Language; }
     AtomString language() const { return m_language; }
     virtual void setLanguage(const AtomString&);
 

@@ -1,3 +1,14 @@
+2020-03-17  Eric Carlson  <eric.carlson@apple.com>
+
+        TextTrackBase should validate language before setting m_validBCP47Language
+        https://bugs.webkit.org/show_bug.cgi?id=209094
+        <rdar://problem/60439603>
+
+        Reviewed by Jer Noble.
+
+        * media/track/track-bcp-language-expected.txt: Added.
+        * media/track/track-bcp-language.html: Added.
+
 2020-03-17  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk2 ] imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html is flaky failing

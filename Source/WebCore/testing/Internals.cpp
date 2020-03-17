@@ -237,6 +237,7 @@
 #if ENABLE(VIDEO_TRACK)
 #include "CaptionUserPreferences.h"
 #include "PageGroup.h"
+#include "TextTrack.h"
 #include "TextTrackCueGeneric.h"
 #endif
 
@@ -3768,6 +3769,11 @@ RefPtr<TextTrackCueGeneric> Internals::createGenericCue(double startTime, double
     if (!document || !document->page())
         return nullptr;
     return TextTrackCueGeneric::create(*document, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), text);
+}
+
+ExceptionOr<String> Internals::textTrackBCP47Language(TextTrack& track)
+{
+    return String { track.validBCP47Language() };
 }
 #endif
 

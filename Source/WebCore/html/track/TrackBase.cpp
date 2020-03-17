@@ -38,6 +38,8 @@ namespace WebCore {
 
 static int s_uniqueId = 0;
 
+static bool isValidBCP47LanguageTag(const String&);
+
 #if !RELEASE_LOG_DISABLED
 static RefPtr<Logger>& nullLogger()
 {
@@ -51,9 +53,11 @@ TrackBase::TrackBase(Type type, const AtomString& id, const AtomString& label, c
     , m_id(id)
     , m_label(label)
     , m_language(language)
-    , m_validBCP47Language(language)
 {
     ASSERT(type != BaseTrack);
+    if (isValidBCP47LanguageTag(language))
+        m_validBCP47Language = language;
+
     m_type = type;
 
 #if !RELEASE_LOG_DISABLED
@@ -129,28 +133,30 @@ static bool isValidBCP47LanguageTag(const String& languageTag)
     
 void TrackBase::setLanguage(const AtomString& language)
 {
-    if (!language.isEmpty() && !isValidBCP47LanguageTag(language)) {
-        String message;
-        if (language.contains((UChar)'\0'))
-            message = "The language contains a null character and is not a valid BCP 47 language tag."_s;
-        else {
-            StringBuilder stringBuilder;
-            stringBuilder.appendLiteral("The language '");
-            stringBuilder.append(language);
-            stringBuilder.appendLiteral("' is not a valid BCP 47 language tag.");
-            message = stringBuilder.toString();
-        }
-        if (auto element = this->element())
-            element->document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
-    } else
-        m_validBCP47Language = language;
-    
     m_language = language;
-}
+    if (language.isEmpty() || isValidBCP47LanguageTag(language)) {
+        m_validBCP47Language = language;
+        return;
+    }
 
-AtomString TrackBase::validBCP47Language() const
-{
-    return m_validBCP47Language;
+    m_validBCP47Language = emptyAtom();
+
+    auto element = this->element();
+    if (!element)
+        return;
+
+    String message;
+    if (language.contains((UChar)'\0'))
+        message = "The language contains a null character and is not a valid BCP 47 language tag."_s;
+    else {
+        StringBuilder stringBuilder;
+        stringBuilder.appendLiteral("The language '");
+        stringBuilder.append(language);
+        stringBuilder.appendLiteral("' is not a valid BCP 47 language tag.");
+        message = stringBuilder.toString();
+    }
+
+    element->document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
 }
 
 #if !RELEASE_LOG_DISABLED
