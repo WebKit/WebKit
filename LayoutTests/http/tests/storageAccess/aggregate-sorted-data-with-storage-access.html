@@ -17,7 +17,11 @@
                     testRunner.setStatisticsPrevalentResource(thirdPartyUrl, true, function () {
                         testRunner.dumpResourceLoadStatistics();
                         testPassed(event.data.replace("PASS ", ""));
+                        testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                            setEnableFeature(false, finishJSTest);
+                        });
                     });
+                    return;
                 } else
                     testFailed(event.data.replace("FAIL ", ""));
             } else
