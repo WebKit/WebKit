@@ -65,7 +65,6 @@ public:
     void durationChanged() override;
     MediaTime durationMediaTime() const override;
 
-    void setRate(float) override;
     std::unique_ptr<PlatformTimeRanges> buffered() const override;
     MediaTime maxMediaTimeSeekable() const override;
 
@@ -93,9 +92,8 @@ private:
     void updateStates() override;
 
     bool doSeek(const MediaTime&, float, GstSeekFlags) override;
-    bool doSeek();
     void maybeFinishSeek();
-    void updatePlaybackRate() override;
+
     void asyncStateChangeDone() override;
 
     // FIXME: Implement videoPlaybackQualityMetrics.

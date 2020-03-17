@@ -246,6 +246,7 @@ protected:
     virtual void sourceSetup(GstElement*);
     virtual void configurePlaySink() { }
     virtual bool changePipelineState(GstState);
+    virtual void updatePlaybackRate();
 
 #if USE(GSTREAMER_HOLEPUNCH)
     GstElement* createHolePunchVideoSink();
@@ -272,6 +273,7 @@ protected:
     void setStreamVolumeElement(GstStreamVolume*);
 
     void setPipeline(GstElement*);
+    GstElement* pipeline() const { return m_pipeline.get(); }
 
     void repaint();
     void cancelRepaint(bool destroying = false);
@@ -386,7 +388,6 @@ protected:
 private:
     bool isPlayerShuttingDown() const { return m_isPlayerShuttingDown.load(); }
     MediaTime maxTimeLoaded() const;
-    GstElement* pipeline() const { return m_pipeline.get(); }
     void setVideoSourceOrientation(ImageOrientation);
     MediaTime platformDuration() const;
     bool isMuted() const;
@@ -432,7 +433,6 @@ private:
     void purgeInvalidTextTracks(Vector<String> validTrackIds);
 #endif
     virtual bool doSeek(const MediaTime& position, float rate, GstSeekFlags seekType);
-    virtual void updatePlaybackRate();
 
     String engineDescription() const override { return "GStreamer"; }
     bool didPassCORSAccessCheck() const override;
