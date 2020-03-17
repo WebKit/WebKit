@@ -1,5 +1,16 @@
 2020-03-17  Antoine Quint  <graouts@apple.com>
 
+        pointerevents/ios/touch-action-none-link-traversal.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=209177
+        <rdar://problem/60393055>
+
+        Reviewed by Antti Koivisto.
+
+        * pointerevents/ios/resources/touch-action-none-link-traversal-resource.html: Added.
+        * pointerevents/ios/touch-action-none-link-traversal.html:
+
+2020-03-17  Antoine Quint  <graouts@apple.com>
+
         REGRESSION (r258411): imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch.html is failing consistently
         https://bugs.webkit.org/show_bug.cgi?id=209175
         <rdar://problem/60513114>

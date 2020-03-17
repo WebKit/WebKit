@@ -28,7 +28,7 @@ iframe {
 async_test(test => {
     const iframe = document.body.firstElementChild;
     const link = iframe.contentDocument.body.appendChild(document.createElement("a"));
-    link.href = "../disabled.html";
+    link.href = "resources/touch-action-none-link-traversal-resource.html";
     link.setAttribute("style", `
         position: absolute;
         left: 0;
@@ -41,7 +41,7 @@ async_test(test => {
 
     const loaded = new Promise(resolve => {
         iframe.addEventListener("load", () => {
-            assert_true(iframe.contentWindow.location.href.includes("disabled.html"), "Upon navigation the URL has a location.");
+            assert_true(iframe.contentWindow.location.href.includes("touch-action-none-link-traversal-resource.html"), "Upon navigation the URL has a location.");
             resolve();
         });
     });
