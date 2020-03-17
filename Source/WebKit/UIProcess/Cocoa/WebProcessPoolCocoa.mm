@@ -851,10 +851,12 @@ NSSet *WebProcessPool::allowedClassesForParameterCoding() const
     return m_classesForParameterCoder.get();
 }
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
 void WebProcessPool::notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue)
 {
     for (auto process : m_processes)
         process->send(Messages::WebProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
 }
+#endif
 
 } // namespace WebKit

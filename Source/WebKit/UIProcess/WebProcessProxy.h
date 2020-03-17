@@ -338,7 +338,9 @@ public:
     
 #if PLATFORM(COCOA)
     void unblockAccessibilityServerIfNeeded();
+#if ENABLE(CFPREFS_DIRECT_MODE)
     void unblockPreferenceServiceIfNeeded();
+#endif
 #endif
 
     void webPageMediaStateDidChange(WebPageProxy&);

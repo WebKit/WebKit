@@ -678,9 +678,7 @@
     (with report) (with telemetry)
 #endif
     (global-name "com.apple.PowerManagement.control")
-#if !ENABLE(CFPREFS_DIRECT_MODE)
     (global-name "com.apple.cfprefsd.daemon")
-#endif
     (global-name "com.apple.coreservices.launchservicesd")
     (global-name "com.apple.lsd.mapdb")
     (global-name "com.apple.trustd.agent")

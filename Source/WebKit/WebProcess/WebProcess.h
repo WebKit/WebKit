@@ -302,9 +302,11 @@ public:
 #if ENABLE(REMOTE_INSPECTOR)
     void enableRemoteWebInspector(const SandboxExtension::Handle&);
 #endif
-    void notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue);
     void unblockAccessibilityServer(const SandboxExtension::Handle&);
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    void notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue);
     void unblockPreferenceService(const SandboxExtension::Handle&);
+#endif
 #endif
 
     bool areAllPagesThrottleable() const;
