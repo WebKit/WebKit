@@ -133,6 +133,7 @@ function installDependenciesWithApt {
         libsoup2.4-dev \
         libsqlite3-dev \
         libsrtp2-dev \
+        libsystemd-dev \
         libtasn1-6-dev \
         libtheora-dev \
         libtool \
@@ -307,6 +308,7 @@ function installDependenciesWithPacman {
         libsecret \
         libsoup \
         libsrtp \
+        libsystemd \
         sqlite \
         libtasn1 \
         libtheora \
@@ -467,6 +469,7 @@ function installDependenciesWithDnf {
         libsecret-devel \
         libsoup-devel \
         libsrtp-devel \
+        libsystemd-devel \
         libtasn1-devel \
         libtheora-devel \
         libv4l-devel \

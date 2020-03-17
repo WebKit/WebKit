@@ -35,6 +35,7 @@
 #if defined(MOZ_X11)
     #include <X11/Xresource.h>
 
+    #undef Always
     #undef None
     #undef Above
     #undef Below

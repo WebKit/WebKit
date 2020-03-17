@@ -171,7 +171,11 @@ bool CDMProxyClearKey::cencDecryptSubsampled(cencDecryptContext& input)
             LOG(EME, "EME - subsample index %u - %u bytes encrypted (%lu bytes left to decrypt)", subsampleIndex, subsampleNumEncryptedBytes, input.encryptedBufferSizeInBytes - encryptedBufferByteOffset);
 
             if (gcry_error_t cipherError = gcry_cipher_decrypt(m_gcryHandle, input.encryptedBuffer + encryptedBufferByteOffset, subsampleNumEncryptedBytes, 0, 0)) {
+#if !LOG_DISABLED
                 LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_decrypt): %s", gpg_strerror(cipherError));
+#else
+                UNUSED_VARIABLE(cipherError);
+#endif
                 return false;
             }
 
@@ -193,7 +197,11 @@ bool CDMProxyClearKey::cencDecrypt(CDMProxyClearKey::cencDecryptContext& input)
 void CDMProxyClearKey::initializeGcrypt()
 {
     if (gcry_error_t error = gcry_cipher_open(&m_gcryHandle, GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_CTR, GCRY_CIPHER_SECURE)) {
+#if !LOG_DISABLED
         LOG(EME, "EME - CDMProxyClearKey - ERROR(gcry_cipher_open): %s", gpg_strerror(error));
+#else
+        UNUSED_VARIABLE(error);
+#endif
         RELEASE_ASSERT(false && "Should not get this far with a functional GCrypt!");
     }
 }

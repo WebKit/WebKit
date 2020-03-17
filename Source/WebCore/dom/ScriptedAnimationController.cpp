@@ -97,6 +97,8 @@ static const char* throttlingReasonToString(ScriptedAnimationController::Throttl
     case ScriptedAnimationController::ThrottlingReason::NonInteractedCrossOriginFrame:
         return "NonInteractiveCrossOriginFrame";
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return "";
 }
 
 static String throttlingReasonsToString(OptionSet<ScriptedAnimationController::ThrottlingReason> reasons)

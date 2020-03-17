@@ -81,6 +81,7 @@ function installDependenciesWithApt {
         $(aptIfElse libpng-dev libpng12-dev) \
         libseccomp-dev \
         libsqlite3-dev \
+        libsystemd-dev \
         libtasn1-6-dev \
         libtool \
         libwebp-dev \
@@ -192,6 +193,7 @@ function installDependenciesWithPacman {
         ruby
         sed \
         sqlite \
+        libsystemd \
         texinfo \
         which \
         zlib \
@@ -291,6 +293,7 @@ function installDependenciesWithDnf {
         libjpeg-turbo-devel \
         libpng-devel \
         libseccomp-devel \
+        libsystemd-devel \
         libtasn1-devel \
         libtool \
         libwebp-devel \

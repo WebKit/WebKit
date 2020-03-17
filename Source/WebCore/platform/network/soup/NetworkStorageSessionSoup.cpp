@@ -471,6 +471,7 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
     GUniquePtr<GSList> cookies(soup_cookie_jar_get_cookie_list(cookieStorage(), uri.get(), TRUE));
     UNUSED_PARAM(firstParty);
     UNUSED_PARAM(sameSiteInfo);
+    UNUSED_PARAM(firstParty);
 #endif
     if (!cookies)
         return false;

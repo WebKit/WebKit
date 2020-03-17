@@ -43,18 +43,27 @@ public:
 
 #define LOGIDENTIFIER WTF::Logger::LogSiteIdentifier(logClassName(), __func__, logIdentifier())
 
+#if VERBOSE_RELEASE_LOG
+#define ALWAYS_LOG(...)     logger().logAlwaysVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
+#define ERROR_LOG(...)      logger().errorVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
+#define WARNING_LOG(...)    logger().warningVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
+#define INFO_LOG(...)       logger().infoVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
+#define DEBUG_LOG(...)      logger().debugVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
+#else
 #define ALWAYS_LOG(...)     logger().logAlways(logChannel(), __VA_ARGS__)
 #define ERROR_LOG(...)      logger().error(logChannel(), __VA_ARGS__)
 #define WARNING_LOG(...)    logger().warning(logChannel(), __VA_ARGS__)
 #define INFO_LOG(...)       logger().info(logChannel(), __VA_ARGS__)
 #define DEBUG_LOG(...)      logger().debug(logChannel(), __VA_ARGS__)
+#endif
+
 #define WILL_LOG(_level_)   logger().willLog(logChannel(), _level_)
 
-#define ALWAYS_LOG_IF(condition, ...)     if (condition) logger().logAlways(logChannel(), __VA_ARGS__)
-#define ERROR_LOG_IF(condition, ...)      if (condition) logger().error(logChannel(), __VA_ARGS__)
-#define WARNING_LOG_IF(condition, ...)    if (condition) logger().warning(logChannel(), __VA_ARGS__)
-#define INFO_LOG_IF(condition, ...)       if (condition) logger().info(logChannel(), __VA_ARGS__)
-#define DEBUG_LOG_IF(condition, ...)      if (condition) logger().debug(logChannel(), __VA_ARGS__)
+#define ALWAYS_LOG_IF(condition, ...)     if (condition) ALWAYS_LOG(__VA_ARGS__)
+#define ERROR_LOG_IF(condition, ...)      if (condition) ERROR_LOG(__VA_ARGS__)
+#define WARNING_LOG_IF(condition, ...)    if (condition) WARNING_LOG(__VA_ARGS__)
+#define INFO_LOG_IF(condition, ...)       if (condition) INFO_LOG(__VA_ARGS__)
+#define DEBUG_LOG_IF(condition, ...)      if (condition) DEBUG_LOG(__VA_ARGS__)
 
 #define ALWAYS_LOG_IF_POSSIBLE(...)     if (loggerPtr()) loggerPtr()->logAlways(logChannel(), __VA_ARGS__)
 #define ERROR_LOG_IF_POSSIBLE(...)      if (loggerPtr()) loggerPtr()->error(logChannel(), __VA_ARGS__)

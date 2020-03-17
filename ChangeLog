@@ -1,3 +1,21 @@
+2020-03-17  Philippe Normand  <pnormand@igalia.com>
+
+        RELEASE_LOG should not be Cocoa specific
+        https://bugs.webkit.org/show_bug.cgi?id=195182
+
+        Reviewed by Konstantin Tokarev.
+
+        Add a Systemd Journald Logger implementation, enabled by default
+        in the GTK and WPE ports. When this is enabled, release logs will
+        be sent to the Systemd Journal. To retrieve media logs for
+        instance, this command can be used:
+
+        $ journalctl WEBKIT_SUBSYSTEM=WebKitGTK WEBKIT_CHANNEL=Media
+
+        * Source/cmake/FindSystemd.cmake: Added.
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2020-03-16  Keith Rollin  <krollin@apple.com>
 
         Remove support for WebKitSystemInterface

@@ -1,3 +1,22 @@
+2020-03-17  Philippe Normand  <pnormand@igalia.com>
+
+        RELEASE_LOG should not be Cocoa specific
+        https://bugs.webkit.org/show_bug.cgi?id=195182
+
+        Reviewed by Konstantin Tokarev.
+
+        Add sd-journal logging support and wrap the os_log calls with the USE(OS_LOG) guard.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/Logger.h:
+        (WTF::Logger::log):
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::toString):
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/RefCountedLeakCounter.cpp:
+
 2020-03-16  Keith Miller  <keith_miller@apple.com>
 
         JavaScript identifier grammar supports unescaped astral symbols, but JSC doesn’t

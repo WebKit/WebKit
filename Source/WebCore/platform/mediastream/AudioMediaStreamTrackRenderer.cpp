@@ -28,6 +28,8 @@
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
 
+#include "Logging.h"
+
 #if PLATFORM(COCOA)
 #include "AudioMediaStreamTrackRendererCocoa.h"
 #endif

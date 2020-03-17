@@ -87,6 +87,7 @@ WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential 
 WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_WPE_RENDERER "Whether to enable WPE rendering" PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_SYSTEMD "Whether to enable journald logging" PUBLIC ON)
 
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
@@ -383,6 +384,16 @@ if (USE_WOFF2)
     find_package(WOFF2Dec 1.0.2)
     if (NOT WOFF2DEC_FOUND)
        message(FATAL_ERROR "libwoff2dec is needed for USE_WOFF2.")
+    endif ()
+endif ()
+
+if (USE_SYSTEMD)
+    find_package(Systemd)
+    if (Systemd_FOUND)
+        message(STATUS "Release logs will be sent to the Systemd journal")
+        SET_AND_EXPOSE_TO_BUILD(USE_JOURNALD TRUE)
+    else ()
+        message(FATAL_ERROR "libsystemd is needed for USE_SYSTEMD")
     endif ()
 endif ()
 

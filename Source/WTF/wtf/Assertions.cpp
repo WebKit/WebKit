@@ -74,6 +74,10 @@
 #include <unistd.h>
 #endif
 
+#if USE(JOURNALD)
+#include <wtf/StringPrintStream.h>
+#endif
+
 namespace WTF {
 
 WTF_ATTRIBUTE_PRINTF(1, 0) static String createWithFormatAndArguments(const char* format, va_list args)
@@ -523,7 +527,7 @@ static void setStateOfAllChannels(WTFLogChannel* channels[], size_t channelCount
 
 void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t count, const char* logLevel)
 {
-#if !RELEASE_LOG_DISABLED
+#if USE(OS_LOG) && !RELEASE_LOG_DISABLED
     for (size_t i = 0; i < count; ++i) {
         WTFLogChannel* channel = channels[i];
         channel->osLogChannel = os_log_create(channel->subsystem, channel->name);
@@ -577,12 +581,23 @@ void WTFReleaseLogStackTrace(WTFLogChannel* channel)
         for (int frameNumber = 1; frameNumber < stackTrace->size(); ++frameNumber) {
             auto stackFrame = stack[frameNumber];
             auto demangled = WTF::StackTrace::demangle(stackFrame);
+#if USE(OS_LOG)
             if (demangled && demangled->demangledName())
                 os_log(channel->osLogChannel, "%-3d %p %{public}s", frameNumber, stackFrame, demangled->demangledName());
             else if (demangled && demangled->mangledName())
                 os_log(channel->osLogChannel, "%-3d %p %{public}s", frameNumber, stackFrame, demangled->mangledName());
             else
                 os_log(channel->osLogChannel, "%-3d %p", frameNumber, stackFrame);
+#elif USE(JOURNALD)
+            StringPrintStream out;
+            if (demangled && demangled->demangledName())
+                out.printf("%-3d %p %s", frameNumber, stackFrame, demangled->demangledName());
+            else if (demangled && demangled->mangledName())
+                out.printf("%-3d %p %s", frameNumber, stackFrame, demangled->mangledName());
+            else
+                out.printf("%-3d %p", frameNumber, stackFrame);
+            sd_journal_send("WEBKIT_SUBSYSTEM=%s", channel->subsystem, "WEBKIT_CHANNEL=%s", channel->name, "MESSAGE=%s", out.toCString().data(), nullptr);
+#endif
         }
     }
 }

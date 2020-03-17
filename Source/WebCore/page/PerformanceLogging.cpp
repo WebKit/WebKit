@@ -48,6 +48,8 @@ static const char* toString(PerformanceLogging::PointOfInterest poi)
     case PerformanceLogging::MainFrameLoadCompleted:
         return "MainFrameLoadCompleted";
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return "";
 }
 #endif
 

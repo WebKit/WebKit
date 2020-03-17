@@ -41,12 +41,17 @@
 #include "SourceBufferPrivate.h"
 #include "SourceBufferPrivateClient.h"
 #include "WebKitMediaSourceGStreamer.h"
+#include <wtf/LoggerHelper.h>
 
 namespace WebCore {
 
 class MediaSourceGStreamer;
 
-class SourceBufferPrivateGStreamer final : public SourceBufferPrivate {
+class SourceBufferPrivateGStreamer final : public SourceBufferPrivate
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 
 public:
     static Ref<SourceBufferPrivateGStreamer> create(MediaSourceGStreamer*, Ref<MediaSourceClientGStreamerMSE>, const ContentType&);
@@ -79,6 +84,15 @@ public:
 
     ContentType type() const { return m_type; }
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    const char* logClassName() const override { return "SourceBufferPrivateGStreamer"; }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
+    const Logger& sourceBufferLogger() const final { return m_logger; }
+    const void* sourceBufferLogIdentifier() final { return logIdentifier(); }
+#endif
+
 private:
     SourceBufferPrivateGStreamer(MediaSourceGStreamer*, Ref<MediaSourceClientGStreamerMSE>, const ContentType&);
     friend class MediaSourceClientGStreamerMSE;
@@ -90,6 +104,11 @@ private:
     bool m_isReadyForMoreSamples = true;
     bool m_notifyWhenReadyForMoreSamples = false;
     AtomString m_trackId;
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 }

@@ -58,6 +58,10 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourceGStreamer*
     , m_mediaSource(mediaSource)
     , m_type(contentType)
     , m_client(client.get())
+#if !RELEASE_LOG_DISABLED
+    , m_logger(mediaSource->logger())
+    , m_logIdentifier(mediaSource->nextSourceBufferLogIdentifier())
+#endif
 {
 }
 
@@ -176,6 +180,13 @@ void SourceBufferPrivateGStreamer::appendParsingFailed()
     if (m_sourceBufferPrivateClient)
         m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::ParsingFailed);
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& SourceBufferPrivateGStreamer::logChannel() const
+{
+    return LogMediaSource;
+}
+#endif
 
 }
 #endif

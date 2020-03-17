@@ -36,8 +36,12 @@ namespace WTF {
 
 #if RELEASE_LOG_DISABLED
 WTFLogChannel LogMemoryPressure = { WTFLogChannelState::On, "MemoryPressure", WTFLogLevel::Error };
-#else
+#endif
+#if USE(OS_LOG) && !RELEASE_LOG_DISABLED
 WTFLogChannel LogMemoryPressure = { WTFLogChannelState::On, "MemoryPressure", WTFLogLevel::Error, LOG_CHANNEL_WEBKIT_SUBSYSTEM, OS_LOG_DEFAULT };
+#endif
+#if USE(JOURNALD) && !RELEASE_LOG_DISABLED
+WTFLogChannel LogMemoryPressure = { WTFLogChannelState::On, "MemoryPressure", WTFLogLevel::Error, LOG_CHANNEL_WEBKIT_SUBSYSTEM };
 #endif
 
 WTF_EXPORT_PRIVATE bool MemoryPressureHandler::ReliefLogger::s_loggingEnabled = false;
@@ -83,6 +87,8 @@ static const char* toString(MemoryUsagePolicy policy)
     case MemoryUsagePolicy::Conservative: return "Conservative";
     case MemoryUsagePolicy::Strict: return "Strict";
     }
+    ASSERT_NOT_REACHED();
+    return "";
 }
 #endif
 

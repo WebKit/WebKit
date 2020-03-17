@@ -39,6 +39,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/LoggerHelper.h>
 
 typedef struct _WebKitMediaSrc WebKitMediaSrc;
 
@@ -50,7 +51,11 @@ class MediaPlayerPrivateGStreamerMSE;
 class PlatformTimeRanges;
 
 // FIXME: Should this be called MediaSourcePrivateGStreamer?
-class MediaSourceGStreamer final : public MediaSourcePrivate {
+class MediaSourceGStreamer final : public MediaSourcePrivate
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 public:
     static void open(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
     virtual ~MediaSourceGStreamer();
@@ -73,6 +78,15 @@ public:
 
     std::unique_ptr<PlatformTimeRanges> buffered();
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger; }
+    const char* logClassName() const override { return "MediaSourcePrivateGStreamer"; }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
+
+    const void* nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
+#endif
+
 private:
     MediaSourceGStreamer(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
 
@@ -81,6 +95,11 @@ private:
     Ref<MediaSourceClientGStreamerMSE> m_client;
     Ref<MediaSourcePrivateClient> m_mediaSource;
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+    uint64_t m_nextSourceBufferID { 0 };
+#endif
 };
 
 }

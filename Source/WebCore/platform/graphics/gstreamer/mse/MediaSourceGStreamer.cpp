@@ -38,6 +38,7 @@
 #if ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
 #include "ContentType.h"
+#include "Logging.h"
 #include "MediaPlayerPrivateGStreamer.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
 #include "MediaSourceClientGStreamerMSE.h"
@@ -60,17 +61,23 @@ MediaSourceGStreamer::MediaSourceGStreamer(MediaSourcePrivateClient& mediaSource
     , m_client(MediaSourceClientGStreamerMSE::create(playerPrivate))
     , m_mediaSource(mediaSource)
     , m_playerPrivate(playerPrivate)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(m_playerPrivate.mediaPlayerLogger())
+    , m_logIdentifier(m_playerPrivate.mediaPlayerLogIdentifier())
+#endif
 {
 }
 
 MediaSourceGStreamer::~MediaSourceGStreamer()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     for (auto& sourceBufferPrivate : m_sourceBuffers)
         sourceBufferPrivate->clearMediaSource();
 }
 
 MediaSourceGStreamer::AddStatus MediaSourceGStreamer::addSourceBuffer(const ContentType& contentType, RefPtr<SourceBufferPrivate>& sourceBufferPrivate)
 {
+    DEBUG_LOG(LOGIDENTIFIER, contentType);
     sourceBufferPrivate = SourceBufferPrivateGStreamer::create(this, m_client.get(), contentType);
     RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivateGStreamer = static_cast<SourceBufferPrivateGStreamer*>(sourceBufferPrivate.get());
     m_sourceBuffers.add(sourceBufferPrivateGStreamer);
@@ -134,6 +141,14 @@ std::unique_ptr<PlatformTimeRanges> MediaSourceGStreamer::buffered()
 {
     return m_mediaSource->buffered();
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& MediaSourceGStreamer::logChannel() const
+{
+    return LogMediaSource;
+}
+
+#endif
 
 }
 #endif

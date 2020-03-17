@@ -157,6 +157,8 @@ static rtc::LoggingSeverity computeLogLevel()
     case WTFLogLevel::Debug:
         return rtc::LS_VERBOSE;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return rtc::LS_NONE;
 #else
     return rtc::LS_NONE;
 #endif

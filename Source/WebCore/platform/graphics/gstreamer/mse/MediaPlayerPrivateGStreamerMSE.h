@@ -83,6 +83,8 @@ public:
     void blockDurationChanges();
     void unblockDurationChanges();
 
+    WTFLogChannel& logChannel() const final { return WebCore::LogMediaSource; }
+
 private:
     friend class MediaPlayerFactoryGStreamerMSE;
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
