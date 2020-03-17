@@ -40,10 +40,8 @@
 
     function setupTopLevel()
     {
-        if (window.eventSender) {
-            testRunner.dumpAsText();
+        if (window.eventSender)
             setTimeout(scrollTest, 0);
-        }
     
         setTimeout(checkForScroll, 1000);
     }
