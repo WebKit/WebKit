@@ -1,3 +1,31 @@
+2020-03-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/60500511
+
+    2020-03-17  David Kilzer  <ddkilzer@apple.com>
+
+            Cherry-pick r258507. rdar://problem/60500511
+
+        2020-03-16  David Kilzer  <ddkilzer@apple.com>
+
+            WebPage::GetDataSelectionForPasteboard should validate its `size` variable
+            <https://webkit.org/b/209092>
+            <rdar://problem/60181345>
+
+            Reviewed by Brent Fulgham.
+
+            * Platform/IPC/Connection.h:
+            (MESSAGE_CHECK_WITH_RETURN_VALUE_BASE): Add.
+            - Variant of MESSAGE_CHECK_BASE() that takes a return value.
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (MESSAGE_CHECK_WITH_RETURN_VALUE): Add.
+            (WebKit::WebPageProxy::dataSelectionForPasteboard):
+            - Use new MESSAGE_CHECK_WITH_RETURN_VALUE() macro to update
+              check for handle.isNull() and to add check for `size`
+              variable.
+            - Add static_cast<size_t>() to `size` variable to denote type
+              change.
+
 2020-03-17  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/60433244

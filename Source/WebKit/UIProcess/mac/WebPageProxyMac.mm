@@ -31,6 +31,7 @@
 #import "APIUIClient.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
+#import "Connection.h"
 #import "DataReference.h"
 #import "EditorState.h"
 #import "FontInfo.h"
@@ -67,6 +68,7 @@
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(m_process, url), m_process->connection())
+#define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, process().connection(), returnValue)
 
 @interface NSApplication ()
 - (BOOL)isSpeaking;
@@ -283,10 +285,12 @@ RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const Str
     const Seconds messageTimeout(20);
     process().sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType),
         Messages::WebPage::GetDataSelectionForPasteboard::Reply(handle, size), m_webPageID, messageTimeout);
-    if (handle.isNull())
-        return nullptr;
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
-    return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
+    MESSAGE_CHECK_WITH_RETURN_VALUE(!handle.isNull(), nullptr);
+    // SharedMemory::Handle::size() is rounded up to the nearest page.
+    MESSAGE_CHECK_WITH_RETURN_VALUE(size <= handle.size(), nullptr);
+
+    auto sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), static_cast<size_t>(size));
 }
 
 bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
