@@ -1,3 +1,16 @@
+2020-03-17  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r258334): WebPasteboardProxy::setPasteboardBufferForType should allow zero-size buffers
+        <https://webkit.org/b/209167>
+        <rdar://problem/60516302>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        - Remove check for zero-size buffer to match
+          WebPageProxy::dataSelectionForPasteboard().
+
 2020-03-17  Brent Fulgham  <bfulgham@apple.com>
 
         Terminate the WebContent process when receiving invalid IPC from a WebInspector session
