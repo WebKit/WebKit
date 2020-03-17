@@ -56,7 +56,7 @@ messages -> WebPasteboardProxy NotRefCounted {
     SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName) -> (int64_t changeCount) Synchronous WantsConnection
     SetPasteboardColor(String pasteboardName, WebCore::Color color) -> (int64_t changeCount) Synchronous
     SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string) -> (int64_t changeCount) Synchronous
-    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size) -> (int64_t changeCount) Synchronous
+    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size) -> (int64_t changeCount) Synchronous WantsConnection
 #endif
 
 #if PLATFORM(GTK)

@@ -93,7 +93,7 @@ private:
     void setPasteboardURL(IPC::Connection&, const WebCore::PasteboardURL&, const String& pasteboardName, CompletionHandler<void(int64_t)>&&);
     void setPasteboardColor(const String&, const WebCore::Color&, CompletionHandler<void(int64_t)>&&);
     void setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String&, CompletionHandler<void(int64_t)>&&);
-    void setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, CompletionHandler<void(int64_t)>&&);
+    void setPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, CompletionHandler<void(int64_t)>&&);
 #endif
 
     void readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(String&&)>&&);
