@@ -1,3 +1,25 @@
+2020-03-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/60396281
+
+    2020-03-17  David Kilzer  <ddkilzer@apple.com>
+
+            Cherry-pick r258374. rdar://problem/60396281
+
+        2020-03-12  David Kilzer  <ddkilzer@apple.com>
+
+            WebPageProxy::SaveImageToLibrary should validate its `imageSize` parameter
+            <https://webkit.org/b/209012>
+            <rdar://problem/60181295>
+
+            Reviewed by Chris Dumez.
+
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::saveImageToLibrary):
+            - Validate upper bound of `imageSize` parameter.
+            - Add static_cast<size_t>() to `imageSize` parameter to denote
+              type change.
+
 2020-03-17  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/60396294
