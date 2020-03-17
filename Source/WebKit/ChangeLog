@@ -1,3 +1,12 @@
+2020-03-17  Alex Christensen  <achristensen@webkit.org>
+
+        Fix API tests after r258574
+        https://bugs.webkit.org/show_bug.cgi?id=209192
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::printFrame):
+        I forgot to call the CompletionHandler from the IPC call.
+
 2020-03-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebKit::LocalAuthenticator::deleteDuplicateCredential() should check buffer size before memcmp
