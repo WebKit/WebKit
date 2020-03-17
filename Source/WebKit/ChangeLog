@@ -1,3 +1,27 @@
+2020-03-17  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/60430195
+
+    2020-03-17  David Kilzer  <ddkilzer@apple.com>
+
+            Cherry-pick r258053. rdar://problem/60430195
+
+        2020-03-06  David Kilzer  <ddkilzer@apple.com>
+
+            IPC hardening for WebPageProxy::SaveImageToLibrary message
+            <https://webkit.org/b/208730>
+            <rdar://problem/58700693>
+
+            Reviewed by Chris Dumez.
+
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (MESSAGE_CHECK): Define macro only for methods in this source file.
+            (WebKit::WebPageProxy::saveImageToLibrary):
+            - Make sure the shared memory handle sent over IPC is not null.
+            - Make sure the image size sent over IPC is not zero.
+            - Null check the SharedMemory object after calling
+              SharedMemory::map().
+
 2020-03-09  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r257659. rdar://problem/60183766
