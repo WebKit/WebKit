@@ -352,7 +352,9 @@ void WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHos
 
 void WebPageProxy::grantAccessToPreferenceService()
 {
+#if ENABLE(CFPREFS_DIRECT_MODE)
     process().unblockPreferenceServiceIfNeeded();
+#endif
 }
 
 } // namespace WebKit

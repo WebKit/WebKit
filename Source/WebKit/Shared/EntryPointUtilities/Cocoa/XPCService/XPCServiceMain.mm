@@ -114,6 +114,9 @@ int XPCServiceMain(int argc, const char** argv)
         // Enable CFPrefs direct mode to avoid unsuccessfully attempting to connect to the daemon and getting blocked by the sandbox.
         _CFPrefsSetDirectModeEnabled(YES);
     }
+#else
+    UNUSED_PARAM(argc);
+    UNUSED_PARAM(argv);
 #endif
 
     auto bootstrap = adoptOSObject(xpc_copy_bootstrap());

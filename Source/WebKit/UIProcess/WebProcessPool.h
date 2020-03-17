@@ -541,7 +541,7 @@ public:
     void setUseSeparateServiceWorkerProcess(bool);
     bool useSeparateServiceWorkerProcess() const { return m_useSeparateServiceWorkerProcess; }
 
-#if PLATFORM(COCOA)
+#if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue);
 #endif
 
