@@ -1,3 +1,22 @@
+2020-03-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DeleteIC patchpoint in FTL should require tag and mask registers
+        https://bugs.webkit.org/show_bug.cgi?id=209197
+        <rdar://problem/60531308>
+
+        Reviewed by Tadeu Zagallo and Saam Barati.
+
+        DeleteIC patchpoint is emitting `branchIfNotCell` machine code. This requires a mask register
+        while we are not reserving them when creating a patchpoint.
+
+        In general, our IC code is assuming usual CCallHelpers environment which provides macro-assembler
+        scratch, tag, and mask registers. We should offer them even if IC is emitted from FTL. In this
+        patch, we offer tag and mask registers for Delete IC even if this IC is not currently using tag
+        register.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+
 2020-03-17  Tadeu Zagallo  <tzagallo@apple.com>
 
         AccessCase::canReplace should allow a Getter to replace an IntrinsicGetter

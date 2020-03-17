@@ -5163,6 +5163,8 @@ private:
             patchpoint->append(ConstrainedValue(base, ValueRep::SomeLateRegister));
             patchpoint->append(ConstrainedValue(subscriptValue, ValueRep::SomeLateRegister));
         }
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->numGPScratchRegisters = 1;
 
