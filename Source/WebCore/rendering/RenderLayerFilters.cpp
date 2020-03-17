@@ -67,7 +67,11 @@ bool RenderLayerFilters::hasFilterThatShouldBeRestrictedBySecurityOrigin() const
 
 void RenderLayerFilters::notifyFinished(CachedResource&)
 {
-    m_layer.filterNeedsRepaint();
+    // FIXME: This really shouldn't have to invalidate layer composition,
+    // but tests like css3/filters/effect-reference-delete.html fail if that doesn't happen.
+    if (auto* enclosingElement = m_layer.enclosingElement())
+        enclosingElement->invalidateStyleAndLayerComposition();
+    m_layer.renderer().repaint();
 }
 
 void RenderLayerFilters::updateReferenceFilterClients(const FilterOperations& operations)

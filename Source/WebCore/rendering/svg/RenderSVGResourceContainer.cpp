@@ -26,6 +26,7 @@
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
 
 namespace WebCore {
@@ -91,10 +92,13 @@ void RenderSVGResourceContainer::idChanged()
 
 void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode mode)
 {
+    // FIXME: Style invalidation should either be a pre-layout task or this function
+    // should never get called while in layout. See webkit.org/b/208903.
     if ((m_clients.isEmpty() && m_clientLayers.isEmpty()) || m_isInvalidating)
         return;
 
-    m_isInvalidating = true;
+    SetForScope<bool> isInvalidating(m_isInvalidating, true);
+
     bool needsLayout = mode == LayoutAndBoundariesInvalidation;
     bool markForInvalidation = mode != ParentOnlyInvalidation;
     auto* root = SVGRenderSupport::findTreeRootObject(*this);
@@ -116,18 +120,29 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
     }
 
     markAllClientLayersForInvalidation();
-
-    m_isInvalidating = false;
 }
 
 void RenderSVGResourceContainer::markAllClientLayersForInvalidation()
 {
     if (m_clientLayers.isEmpty())
         return;
-    if ((*m_clientLayers.begin())->renderer().renderTreeBeingDestroyed())
+
+    auto& document = (*m_clientLayers.begin())->renderer().document();
+    if (!document.view() || document.renderTreeBeingDestroyed())
         return;
-    for (auto* clientLayer : m_clientLayers)
-        clientLayer->filterNeedsRepaint();
+
+    auto inLayout = document.view()->layoutContext().isInLayout();
+    for (auto* clientLayer : m_clientLayers) {
+        // FIXME: We should not get here while in layout. See webkit.org/b/208903.
+        // Repaint should also be triggered through some other means.
+        if (inLayout) {
+            clientLayer->renderer().repaint();
+            continue;
+        }
+        if (auto* enclosingElement = clientLayer->enclosingElement())
+            enclosingElement->invalidateStyleAndLayerComposition();
+        clientLayer->renderer().repaint();
+    }
 }
 
 void RenderSVGResourceContainer::markClientForInvalidation(RenderObject& client, InvalidationMode mode)
