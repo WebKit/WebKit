@@ -274,9 +274,10 @@ private:
     }
 
 #if PLATFORM(GTK)
-    void printFrame(WebPageProxy&, WebFrameProxy& frame) final
+    void printFrame(WebPageProxy&, WebFrameProxy& frame, CompletionHandler<void()>&& completionHandler) final
     {
         webkitWebViewPrintFrame(m_webView, &frame);
+        completionHandler();
     }
 #endif
 

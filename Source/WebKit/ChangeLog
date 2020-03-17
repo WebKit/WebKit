@@ -1,5 +1,13 @@
 2020-03-17  Alex Christensen  <achristensen@webkit.org>
 
+        Fix GTK build.
+        https://bugs.webkit.org/show_bug.cgi?id=209192
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        I committed r258574 too fast.
+
+2020-03-17  Alex Christensen  <achristensen@webkit.org>
+
         Add WKUIDelegatePrivate SPI _webView:printFrame:completionHandler:
         https://bugs.webkit.org/show_bug.cgi?id=209192
         <rdar://problem/51313336>
