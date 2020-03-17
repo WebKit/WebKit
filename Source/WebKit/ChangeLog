@@ -1,3 +1,22 @@
+2020-03-17  Kate Cheney  <katherine_cheney@apple.com>
+
+       Add internal debugging when initializing an app-bound session
+       https://bugs.webkit.org/show_bug.cgi?id=209190
+       <rdar://problem/60371620>
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::SessionWrapper::initialize):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::NetworkSessionCocoa::initializeEphemeralStatelessSession):
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        (WebKit::NetworkSessionCocoa::appBoundSession):
+        (WebKit::NetworkSessionCocoa::isolatedSession):
+
 2020-03-17  John Wilander  <wilander@apple.com>
 
         Add quirk for cookie blocking latch mode ymail.com redirecting to yahoo.com under yahoo.com

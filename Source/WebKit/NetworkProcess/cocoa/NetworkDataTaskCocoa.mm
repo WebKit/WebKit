@@ -52,12 +52,6 @@
 #import <CFNetwork/CFNSURLConnection.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
-#else
-#define NETWORK_DATA_TASK_COCOA_ADDITIONS
-#endif
-
 namespace WebKit {
 
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
@@ -223,8 +217,6 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     , m_isForMainResourceNavigationForAnyFrame(dataTaskIsForMainResourceNavigationForAnyFrame)
     , m_isAlwaysOnLoggingAllowed(computeIsAlwaysOnLoggingAllowed(session))
 {
-    NETWORK_DATA_TASK_COCOA_ADDITIONS
-
     if (m_scheduledFailureType != NoFailure)
         return;
 
