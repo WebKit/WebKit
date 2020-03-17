@@ -59,6 +59,10 @@
 #include "JSWebKitNamespace.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "RuntimeApplicationChecks.h"
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
 
 namespace WebCore {
 using namespace JSC;
@@ -632,9 +636,15 @@ EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionOpenDatabase(JSGlobalObj
 
 JSValue JSDOMWindow::openDatabase(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
+#if PLATFORM(IOS)
+    static const bool openDatabaseShouldBeDefinedEvenWhenDisabled = IOSApplication::isJesusCalling() && applicationSDKVersion() <= DYLD_IOS_VERSION_12_2;
+#else
+    constexpr bool openDatabaseShouldBeDefinedEvenWhenDisabled = false;
+#endif
+
     VM& vm = lexicalGlobalObject.vm();
     StringImpl* name = PropertyName(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().openDatabasePublicName()).publicName();
-    if (RuntimeEnabledFeatures::sharedFeatures().webSQLEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().webSQLEnabled() || openDatabaseShouldBeDefinedEvenWhenDisabled)
         return JSFunction::create(vm, &lexicalGlobalObject, 4, name, jsDOMWindowInstanceFunctionOpenDatabase, NoIntrinsic);
 
     return JSFunction::createFunctionThatMasqueradesAsUndefined(vm, &lexicalGlobalObject, 4, name, jsDOMWindowInstanceFunctionOpenDatabase, NoIntrinsic);

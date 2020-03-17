@@ -1,3 +1,13 @@
+2020-03-17  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r254856) Add exception for window.openDatabase to not masquerade as undefined in currently shipping Jesus Calling Devotional app
+        https://bugs.webkit.org/show_bug.cgi?id=209160
+        <rdar://problem/60297073>
+
+        Reviewed by Geoff Garen.
+
+        * wtf/spi/darwin/dyldSPI.h:
+
 2020-03-17  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Disable CF prefs direct mode
