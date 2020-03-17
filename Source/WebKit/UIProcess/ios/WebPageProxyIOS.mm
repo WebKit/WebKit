@@ -647,13 +647,14 @@ void WebPageProxy::performActionOnElement(uint32_t action)
 void WebPageProxy::saveImageToLibrary(const SharedMemory::Handle& imageHandle, uint64_t imageSize)
 {
     MESSAGE_CHECK(!imageHandle.isNull());
-    MESSAGE_CHECK(imageSize);
+    // SharedMemory::Handle::size() is rounded up to the nearest page.
+    MESSAGE_CHECK(imageSize && imageSize <= imageHandle.size());
 
     auto sharedMemoryBuffer = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return;
 
-    auto buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), imageSize);
+    auto buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), static_cast<size_t>(imageSize));
     pageClient().saveImageToLibrary(WTFMove(buffer));
 }
 
