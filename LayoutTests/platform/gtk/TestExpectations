@@ -1012,7 +1012,6 @@ fast/events/webkit-media-key-events-constructor.html [ Skip ]
 
 # eventSender.callAfterScrollingCompletes doesn't work.
 webkit.org/b/168189 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Failure Timeout ]
-webkit.org/b/168189 fast/scrolling/scroll-container-horizontally.html [ Failure Pass Timeout ]
 
 # Requires CACHE_PARTITIONING or an alternative implementation
 webkit.org/b/168366 http/tests/security/credentials-iframes.html

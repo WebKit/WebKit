@@ -1,3 +1,22 @@
+2020-03-17  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (257844): fast/scrolling/scroll-container-horizontally.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=209083
+        
+        Unreviewed test gardening.
+
+        mac/scroll-container-horizontally.html is a wheel event test, so move it to the mac directory.
+
+        * fast/scrolling/mac/scroll-container-horizontally-expected.txt: Renamed from LayoutTests/fast/scrolling/scroll-container-horizontally-expected.txt.
+        * fast/scrolling/mac/scroll-container-horizontally.html: Renamed from LayoutTests/fast/scrolling/scroll-container-horizontally.html.
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-03-17  Antoine Quint  <graouts@apple.com>
 
         http/wpt/css/css-animations/start-animation-001.html is flaky failing
