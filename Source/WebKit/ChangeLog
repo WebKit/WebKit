@@ -1,5 +1,33 @@
 2020-03-17  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Apply patch. rdar://problem/60363244
+
+    Crash in com.apple.WebKit.WebContent at WebKit::WebSWClientConnection::scheduleJobInServer <rdar://problem/60363244>
+    
+    Patch by Youenn Fablet <youenn@apple.com> on 2020-03-13
+    Reviewed by David Kilzer.
+    
+    * WebProcess/Storage/WebSWClientConnection.cpp:
+    (WebKit::WebSWClientConnection::scheduleJobInServer):
+    - Revert branch commit r256687.  This RELEASE_ASSERT() was
+      removed on trunk as part of r256578 (which was merged to this
+      branch in r256680, then added back in r256687).
+
+    2020-03-13  Youenn Fablet  <youenn@apple.com>
+
+            Crash in com.apple.WebKit.WebContent at WebKit::WebSWClientConnection::scheduleJobInServer
+            <rdar://problem/60363244>
+
+            Reviewed by David Kilzer.
+
+            * WebProcess/Storage/WebSWClientConnection.cpp:
+            (WebKit::WebSWClientConnection::scheduleJobInServer):
+            - Revert branch commit r256687.  This RELEASE_ASSERT() was
+              removed on trunk as part of r256578 (which was merged to this
+              branch in r256680, then added back in r256687).
+
+2020-03-17  Kocsen Chung  <kocsen_chung@apple.com>
+
         Apply patch. rdar://problem/60500511
 
     2020-03-17  David Kilzer  <ddkilzer@apple.com>
