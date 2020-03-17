@@ -1,5 +1,78 @@
 2020-03-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r258359. rdar://problem/60517387
+
+    [macOS] _AXSApplicationAccessibilityEnabled should not be called
+    https://bugs.webkit.org/show_bug.cgi?id=208953
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    The function _AXSApplicationAccessibilityEnabled and the notification kAXSApplicationAccessibilityEnabledNotification
+    exist on macOS, but they do not have the same behavior as on iOS, and should not be used in the same way. Using this
+    function and notification on macOS was introduced in <https://bugs.webkit.org/show_bug.cgi?id=208690>, and this patch
+    partially reverts this behavior.
+    
+    API test: WebKit.IsRemoteUIAppForAccessibility
+    
+    * testing/Internals.cpp:
+    (WebCore::Internals::isRemoteUIAppForAccessibility):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    * testing/Internals.mm:
+    (WebCore::Internals::isRemoteUIAppForAccessibility):
+    
+    Source/WebCore/PAL:
+    
+    Declare method to check if the process is a remote UI app for accessibility.
+    
+    * pal/spi/cocoa/NSAccessibilitySPI.h:
+    
+    Source/WebKit:
+    
+    On macOS, stop using the function _AXSApplicationAccessibilityEnabled and listening to the notification
+    kAXSApplicationAccessibilityEnabledNotification, since they do not have the same behavior as on iOS.
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::platformInitializeWebProcess):
+    (WebKit::WebProcessPool::registerNotificationObservers):
+    (WebKit::WebProcessPool::unregisterNotificationObservers):
+    * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+    (WebKit::WebProcessProxy::unblockAccessibilityServerIfNeeded):
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::platformInitializeProcess):
+    (WebKit::WebProcess::unblockAccessibilityServer):
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258359 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-12  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] _AXSApplicationAccessibilityEnabled should not be called
+            https://bugs.webkit.org/show_bug.cgi?id=208953
+
+            Reviewed by Brent Fulgham.
+
+            On macOS, stop using the function _AXSApplicationAccessibilityEnabled and listening to the notification
+            kAXSApplicationAccessibilityEnabledNotification, since they do not have the same behavior as on iOS.
+
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::platformInitializeWebProcess):
+            (WebKit::WebProcessPool::registerNotificationObservers):
+            (WebKit::WebProcessPool::unregisterNotificationObservers):
+            * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+            (WebKit::WebProcessProxy::unblockAccessibilityServerIfNeeded):
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::platformInitializeProcess):
+            (WebKit::WebProcess::unblockAccessibilityServer):
+
+2020-03-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r258557. rdar://problem/60517387
 
     [Cocoa] Disable CF prefs direct mode

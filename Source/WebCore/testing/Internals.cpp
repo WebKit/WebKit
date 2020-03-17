@@ -5506,6 +5506,11 @@ String Internals::getUTIFromTag(const String& tagClass, const String& tag, const
 {
     return emptyString();
 }
+
+bool Internals::isRemoteUIAppForAccessibility()
+{
+    return false;
+}
 #endif
 
 String Internals::mediaMIMETypeForExtension(const String& extension)

@@ -35,6 +35,7 @@
 
 @interface NSAccessibilityRemoteUIElement : NSObject
 
++ (BOOL)isRemoteUIApp;
 + (void)setRemoteUIApp:(BOOL)flag;
 + (NSData *)remoteTokenForLocalUIElement:(id)localUIElement;
 + (void)registerRemoteUIProcessIdentifier:(pid_t)pid;

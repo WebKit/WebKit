@@ -582,10 +582,6 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     else
         m_processType = ProcessType::WebContent;
 
-#if PLATFORM(MAC)
-    registerWithAccessibility();
-#endif
-
 #if USE(OS_STATE)
     registerWithStateDumper();
 #endif
@@ -1034,9 +1030,8 @@ void WebProcess::unblockAccessibilityServer(const SandboxExtension::Handle& hand
 #if PLATFORM(IOS_FAMILY)
     bool ok = SandboxExtension::consumePermanently(handle);
     ASSERT_UNUSED(ok, ok);
-    
-    registerWithAccessibility();
 #endif
+    registerWithAccessibility();
 }
 
 
