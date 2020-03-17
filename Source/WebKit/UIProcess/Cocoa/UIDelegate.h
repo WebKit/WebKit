@@ -133,7 +133,7 @@ private:
         void decidePolicyForUserMediaPermissionRequest(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionRequestProxy&) final;
         void checkUserMediaPermissionForOrigin(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionCheckProxy&) final;
         void mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags) final;
-        void printFrame(WebPageProxy&, WebFrameProxy&) final;
+        void printFrame(WebPageProxy&, WebFrameProxy&, CompletionHandler<void()>&&) final;
 #if PLATFORM(IOS_FAMILY)
 #if HAVE(APP_LINKS)
         bool shouldIncludeAppLinkActionsForElement(_WKActivatedElementInfo *) final;
@@ -206,6 +206,7 @@ private:
         bool webViewDecideDatabaseQuotaForSecurityOriginDatabaseNameDisplayNameCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler : 1;
         bool webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded : 1;
         bool webViewPrintFrame : 1;
+        bool webViewPrintFrameCompletionHandler : 1;
         bool webViewDidClose : 1;
         bool webViewClose : 1;
         bool webViewFullscreenMayReturnToInline : 1;

@@ -441,6 +441,37 @@ TEST(WebKit, PrintPreview)
     [previewView drawRect:CGRectMake(0, 0, 10, 10)];
 }
 
+@interface PrintDelegateWithCompletionHandler : NSObject <WKUIDelegatePrivate>
+- (void)waitForPrintFrameCall;
+@end
+
+@implementation PrintDelegateWithCompletionHandler {
+    bool _done;
+}
+
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame completionHandler:(void (^)(void))completionHandler
+{
+    completionHandler();
+    _done = true;
+}
+
+- (void)waitForPrintFrameCall
+{
+    while (!_done)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+@end
+
+TEST(WebKit, PrintWithCompletionHandler)
+{
+    auto webView = adoptNS([WKWebView new]);
+    auto delegate = adoptNS([PrintDelegateWithCompletionHandler new]);
+    [webView setUIDelegate:delegate.get()];
+    [webView loadHTMLString:@"<head><title>test_title</title></head><body onload='print()'>hello world!</body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    [delegate waitForPrintFrameCall];
+}
+
 @interface NotificationDelegate : NSObject <WKUIDelegatePrivate> {
     bool _allowNotifications;
 }

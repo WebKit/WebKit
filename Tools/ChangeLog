@@ -1,3 +1,16 @@
+2020-03-17  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate SPI _webView:printFrame:completionHandler:
+        https://bugs.webkit.org/show_bug.cgi?id=209192
+        <rdar://problem/51313336>
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[PrintDelegateWithCompletionHandler _webView:printFrame:completionHandler:]):
+        (-[PrintDelegateWithCompletionHandler waitForPrintFrameCall]):
+        (TEST):
+
 2020-03-17  Chris Dumez  <cdumez@apple.com>
 
         Use less sync IPC for ITP testRunner methods

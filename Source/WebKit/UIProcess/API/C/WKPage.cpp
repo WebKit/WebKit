@@ -1954,12 +1954,11 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.drawFooter(toAPI(&page), toAPI(&frame), toAPI(rect), m_client.base.clientInfo);
         }
 
-        void printFrame(WebPageProxy& page, WebFrameProxy& frame) final
+        void printFrame(WebPageProxy& page, WebFrameProxy& frame, CompletionHandler<void()>&& completionHandler) final
         {
-            if (!m_client.printFrame)
-                return;
-
-            m_client.printFrame(toAPI(&page), toAPI(&frame), m_client.base.clientInfo);
+            if (m_client.printFrame)
+                m_client.printFrame(toAPI(&page), toAPI(&frame), m_client.base.clientInfo);
+            completionHandler();
         }
 
         bool canRunModal() const final

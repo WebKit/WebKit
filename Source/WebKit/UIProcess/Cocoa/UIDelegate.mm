@@ -139,6 +139,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginDatabaseNameDisplayNameCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler = [delegate respondsToSelector:@selector(_webView:decideDatabaseQuotaForSecurityOrigin:databaseName:displayName:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:)];
     m_delegateMethods.webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded = [delegate respondsToSelector:@selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:)];
     m_delegateMethods.webViewPrintFrame = [delegate respondsToSelector:@selector(_webView:printFrame:)];
+    m_delegateMethods.webViewPrintFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:printFrame:completionHandler:)];
     m_delegateMethods.webViewDidClose = [delegate respondsToSelector:@selector(webViewDidClose:)];
     m_delegateMethods.webViewClose = [delegate respondsToSelector:@selector(_webViewClose:)];
     m_delegateMethods.webViewFullscreenMayReturnToInline = [delegate respondsToSelector:@selector(_webViewFullscreenMayReturnToInline:)];
@@ -1076,16 +1077,25 @@ void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, con
     }).get()];
 }
 
-void UIDelegate::UIClient::printFrame(WebPageProxy&, WebFrameProxy& webFrameProxy)
+void UIDelegate::UIClient::printFrame(WebPageProxy&, WebFrameProxy& webFrameProxy, CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_uiDelegate.m_delegateMethods.webViewPrintFrame)
-        return;
-
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
-        return;
+        return completionHandler();
 
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView printFrame:wrapper(API::FrameHandle::create(webFrameProxy.frameID()))];
+    auto handle = API::FrameHandle::create(webFrameProxy.frameID());
+    if (m_uiDelegate.m_delegateMethods.webViewPrintFrameCompletionHandler) {
+        auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:printFrame:completionHandler:));
+        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView printFrame:wrapper(handle) completionHandler:makeBlockPtr([checker = WTFMove(checker), completionHandler = WTFMove(completionHandler)] () mutable {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+            completionHandler();
+        }).get()];
+        return;
+    } else if (m_uiDelegate.m_delegateMethods.webViewPrintFrame)
+        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView printFrame:wrapper(handle)];
+    completionHandler();
 }
 
 void UIDelegate::UIClient::close(WebPageProxy*)
