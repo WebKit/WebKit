@@ -1,3 +1,15 @@
+2020-03-17  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r258411): imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch.html is failing consistently
+        https://bugs.webkit.org/show_bug.cgi?id=209175
+        <rdar://problem/60513114>
+
+        Unreviewed test gardening.
+
+        Actually, this test is not a pass on OpenSource iOS bots, reverting.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch-expected.txt:
+
 2020-03-17  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 ] http/tests/IndexedDB/storage-limit.https.html is flaky failing.
