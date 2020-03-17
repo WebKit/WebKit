@@ -63,11 +63,6 @@ function checkForScroll()
     else
         testPassed("Scrollable div did not receive wheel events.");
 
-    if (window.internals) {
-        document.getElementById('layers').innerText = internals.layerTreeAsText(document,
-            internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
-    }
-
     testRunner.notifyDone();
 }
 
@@ -175,7 +170,6 @@ function setupTopLevel()
 <script>
 description("Tests that a scrollable div doesn't consume wheel events when scroll is latched to main frame.");
 </script>
-<pre id="layers">Layer tree goes here</p>
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,3 +1,15 @@
+2020-03-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the zero-delay ScrollingCoordinatorMac commit timer
+        https://bugs.webkit.org/show_bug.cgi?id=209164
+
+        Reviewed by Zalan Bujtas.
+
+        Dumping layers just made this test flakey. It's enough to test for scroll events on the overflow.
+
+        * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-expected.txt:
+        * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe.html:
+
 2020-03-16  Lauro Moura  <lmoura@igalia.com>
 
         WPE and GTK gardening.

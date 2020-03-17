@@ -38,19 +38,15 @@ public:
 
     void pageDestroyed() override;
 
-    void commitTreeStateIfNeeded() override;
+    void commitTreeStateIfNeeded() final;
 
     // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
     ScrollingEventResult handleWheelEvent(FrameView&, const PlatformWheelEvent&) override;
 
 private:
-    void scheduleTreeStateCommit() override;
+    void scheduleTreeStateCommit() final;
 
-    void commitTreeState();
-    
     void updateTiledScrollingIndicator();
-
-    Timer m_scrollingStateTreeCommitterTimer;
 };
 
 } // namespace WebCore

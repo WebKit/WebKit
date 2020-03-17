@@ -53,7 +53,6 @@ Ref<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 
 ScrollingCoordinatorMac::ScrollingCoordinatorMac(Page* page)
     : AsyncScrollingCoordinator(page)
-    , m_scrollingStateTreeCommitterTimer(*this, &ScrollingCoordinatorMac::commitTreeState)
 {
     setScrollingTree(ScrollingTreeMac::create(*this));
 }
@@ -67,19 +66,11 @@ void ScrollingCoordinatorMac::pageDestroyed()
 {
     AsyncScrollingCoordinator::pageDestroyed();
 
-    m_scrollingStateTreeCommitterTimer.stop();
-
     // Invalidating the scrolling tree will break the reference cycle between the ScrollingCoordinator and ScrollingTree objects.
     RefPtr<ThreadedScrollingTree> scrollingTree = static_pointer_cast<ThreadedScrollingTree>(releaseScrollingTree());
     ScrollingThread::dispatch([scrollingTree] {
         scrollingTree->invalidate();
     });
-}
-
-void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
-{
-    commitTreeState();
-    m_scrollingStateTreeCommitterTimer.stop();
 }
 
 ScrollingEventResult ScrollingCoordinatorMac::handleWheelEvent(FrameView&, const PlatformWheelEvent& wheelEvent)
@@ -99,16 +90,10 @@ ScrollingEventResult ScrollingCoordinatorMac::handleWheelEvent(FrameView&, const
 
 void ScrollingCoordinatorMac::scheduleTreeStateCommit()
 {
-    ASSERT(scrollingStateTree()->hasChangedProperties() || eventTrackingRegionsDirty());
-
-    if (m_scrollingStateTreeCommitterTimer.isActive())
-        return;
-
-    LOG(Scrolling, "ScrollingCoordinatorMac::scheduleTreeStateCommit");
-    m_scrollingStateTreeCommitterTimer.startOneShot(0_s);
+    m_page->scheduleRenderingUpdate();
 }
 
-void ScrollingCoordinatorMac::commitTreeState()
+void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
 {
     willCommitTree();
 
