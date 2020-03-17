@@ -235,14 +235,13 @@ AXObjectCache::~AXObjectCache()
     m_focusModalNodeTimer.stop();
     m_performCacheUpdateTimer.stop();
 
+    for (const auto& object : m_objects.values())
+        object->detach(AccessibilityDetachmentType::CacheDestroyed);
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    // Destroy the IsolatedTree before destroying the live tree.
     if (m_pageID)
         AXIsolatedTree::removeTreeForPageID(*m_pageID);
 #endif
-
-    for (const auto& object : m_objects.values())
-        object->detach(AccessibilityDetachmentType::CacheDestroyed);
 }
 
 void AXObjectCache::findModalNodes()

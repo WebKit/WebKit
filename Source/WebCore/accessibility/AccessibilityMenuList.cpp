@@ -99,7 +99,10 @@ void AccessibilityMenuList::childrenChanged()
 bool AccessibilityMenuList::isCollapsed() const
 {
 #if !PLATFORM(IOS_FAMILY)
-    return !static_cast<RenderMenuList*>(renderer())->popupIsVisible();
+    auto* renderer = this->renderer();
+    if (is<RenderMenuList>(renderer))
+        return !downcast<RenderMenuList>(*renderer).popupIsVisible();
+    return true;
 #else
     return true;
 #endif

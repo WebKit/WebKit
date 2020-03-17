@@ -102,18 +102,15 @@ Ref<AXIsolatedTree> AXIsolatedTree::createTreeForPageID(PageIdentifier pageID)
 
 void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
 {
+    ASSERT(isMainThread());
     LockHolder locker(s_cacheLock);
 
     if (auto optionalTree = treePageCache().take(pageID)) {
         auto& tree { *optionalTree };
+
         LockHolder treeLocker { tree->m_changeLogLock };
-        for (const auto& axID : tree->m_readerThreadNodeMap.keys()) {
-            if (auto object = tree->nodeForID(axID))
-                object->detach(AccessibilityDetachmentType::CacheDestroyed);
-        }
-        tree->m_pendingAppends.clear();
-        tree->m_pendingRemovals.clear();
-        tree->m_readerThreadNodeMap.clear();
+        tree->m_pendingRemovals.append(tree->m_rootNodeID);
+        tree->setAXObjectCache(nullptr);
         treeLocker.unlockEarly();
 
         treeIDCache().remove(tree->treeIdentifier());
