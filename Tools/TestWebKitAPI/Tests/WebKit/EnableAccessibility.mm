@@ -30,6 +30,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
+#import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_LIBRARY(libAccessibility)
@@ -46,3 +47,25 @@ TEST(WebKit, EnableAccessibilityCrash)
 
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(),  getkAXSApplicationAccessibilityEnabledNotification(), NULL, NULL, false);
 }
+
+#if WK_HAVE_C_SPI
+
+TEST(WebKit, AccessibilityHasPreferencesServiceAccess)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification object:nil userInfo:nil];
+
+    auto sandboxAccess = [&] {
+        return [webView stringByEvaluatingJavaScript:@"window.internals.hasSandboxMachLookupAccessToGlobalName('com.apple.WebKit.WebContent', 'com.apple.cfprefsd.daemon')"].boolValue;
+    };
+
+    ASSERT_TRUE(sandboxAccess());
+}
+
+#endif

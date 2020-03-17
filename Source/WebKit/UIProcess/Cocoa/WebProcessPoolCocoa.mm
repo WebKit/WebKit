@@ -613,6 +613,10 @@ void WebProcessPool::registerNotificationObservers()
 #if !PLATFORM(IOS_FAMILY)
     // Listen for enhanced accessibility changes and propagate them to the WebProcess.
     m_enhancedAccessibilityObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+#if ENABLE(CFPREFS_DIRECT_MODE)
+        for (auto& process : m_processes)
+            process->unblockPreferenceServiceIfNeeded();
+#endif
         setEnhancedAccessibility([[[note userInfo] objectForKey:@"AXEnhancedUserInterface"] boolValue]);
     }];
 
@@ -663,7 +667,9 @@ void WebProcessPool::registerNotificationObservers()
 #endif // PLATFORM(IOS)
     m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
         for (size_t i = 0; i < m_processes.size(); ++i) {
+#if ENABLE(CFPREFS_DIRECT_MODE)
             m_processes[i]->unblockPreferenceServiceIfNeeded();
+#endif
             m_processes[i]->unblockAccessibilityServerIfNeeded();
         }
     }];
