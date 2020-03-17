@@ -205,6 +205,25 @@ OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) 
     return actions;
 }
 
+void EventRegion::dump(TextStream& ts) const
+{
+    ts << m_region;
+
+    if (!m_touchActionRegions.isEmpty()) {
+        TextStream::IndentScope indentScope(ts);
+        ts << indent << "(touch-action\n";
+        for (unsigned i = 0; i < m_touchActionRegions.size(); ++i) {
+            if (m_touchActionRegions[i].isEmpty())
+                continue;
+            TextStream::IndentScope indentScope(ts);
+            ts << indent << "(" << toTouchAction(i);
+            ts << indent << m_touchActionRegions[i];
+            ts << indent << ")\n";
+        }
+        ts << indent << ")\n";
+    }
+}
+
 TextStream& operator<<(TextStream& ts, TouchAction touchAction)
 {
     switch (touchAction) {
@@ -227,22 +246,7 @@ TextStream& operator<<(TextStream& ts, TouchAction touchAction)
 
 TextStream& operator<<(TextStream& ts, const EventRegion& eventRegion)
 {
-    ts << eventRegion.m_region;
-
-    if (!eventRegion.m_touchActionRegions.isEmpty()) {
-        TextStream::IndentScope indentScope(ts);
-        ts << indent << "(touch-action\n";
-        for (unsigned i = 0; i < eventRegion.m_touchActionRegions.size(); ++i) {
-            if (eventRegion.m_touchActionRegions[i].isEmpty())
-                continue;
-            TextStream::IndentScope indentScope(ts);
-            ts << indent << "(" << toTouchAction(i);
-            ts << indent << eventRegion.m_touchActionRegions[i];
-            ts << indent << ")\n";
-        }
-        ts << indent << ")\n";
-    }
-
+    eventRegion.dump(ts);
     return ts;
 }
 

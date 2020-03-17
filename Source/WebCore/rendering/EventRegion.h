@@ -83,15 +83,16 @@ public:
     // FIXME: Remove legacy decode.
     template<class Decoder> static bool decode(Decoder&, EventRegion&);
 
+    void dump(TextStream&) const;
+
 private:
     void uniteTouchActions(const Region&, OptionSet<TouchAction>);
-    friend TextStream& operator<<(TextStream&, const EventRegion&);
 
     Region m_region;
     Vector<Region> m_touchActionRegions;
 };
 
-TextStream& operator<<(TextStream&, const EventRegion&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const EventRegion&);
 
 template<class Encoder>
 void EventRegion::encode(Encoder& encoder) const

@@ -1514,7 +1514,9 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         // specified (only pan-x or only pan-y) we enable the two recognizers in the opposite axis to prevent scrolling from starting
         // if the initial gesture is such a swipe. Since the recognizers are specified to use a single finger for recognition, we don't
         // need to worry about the case where there may be more than a single touch for a given UIScrollView.
-        auto touchActions = WebKit::touchActionsForPoint(self, WebCore::roundedIntPoint([touch locationInView:self]));
+        auto touchLocation = [touch locationInView:self];
+        auto touchActions = WebKit::touchActionsForPoint(self, WebCore::roundedIntPoint(touchLocation));
+        LOG_WITH_STREAM(UIHitTesting, stream << "gestureRecognizer:shouldReceiveTouch: at " << WebCore::FloatPoint(touchLocation) << " - touch actions " << touchActions);
         if (gestureRecognizer == _touchActionLeftSwipeGestureRecognizer || gestureRecognizer == _touchActionRightSwipeGestureRecognizer)
             return touchActions == WebCore::TouchAction::PanY;
         return touchActions == WebCore::TouchAction::PanX;

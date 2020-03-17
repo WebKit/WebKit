@@ -1,3 +1,15 @@
+2020-03-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a bit more UIHitTesting logging, and make it possible to dump EventRegions from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=209058
+
+        Reviewed by Antti Koivisto.
+
+        Add a UIHitTesting log.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+
 2020-03-16  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebCookieCache::clearForHost()
