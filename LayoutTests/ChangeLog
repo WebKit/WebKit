@@ -1,3 +1,15 @@
+2020-03-16  ChangSeok Oh  <changseok@webkit.org>
+
+        A change event gets dispatched when textarea gets changed without focus
+        https://bugs.webkit.org/show_bug.cgi?id=202144
+
+        Reviewed by Ryosuke Niwa.
+
+        The test should be identical to the extected result without crash.
+
+        * fast/forms/textfield-onchange-without-focus-expected.html: Added.
+        * fast/forms/textfield-onchange-without-focus.html: Added.
+
 2020-03-16  Keith Miller  <keith_miller@apple.com>
 
         JavaScript identifier grammar supports unescaped astral symbols, but JSC doesn’t
