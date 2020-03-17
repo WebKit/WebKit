@@ -1,3 +1,11 @@
+2020-03-16  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix.
+       ​https://bugs.webkit.org/show_bug.cgi?id=208951
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+        r258314 was missing a nullability annotation.
+
 2020-03-16  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Accessibility sandbox regressions
