@@ -529,6 +529,7 @@ void testCompareDouble(MacroAssembler::DoubleCondition condition)
         case MacroAssembler::DoubleLessThanOrEqualOrUnordered:
             return isUnordered(a) || isUnordered(b) || (a <= b);
         } // switch
+        RELEASE_ASSERT_NOT_REACHED();
     };
 
     auto operands = doubleOperands();
@@ -600,6 +601,7 @@ void testCompareDoubleSameArg(MacroAssembler::DoubleCondition condition)
         case MacroAssembler::DoubleLessThanOrEqualOrUnordered:
             return isUnordered(a) || (a <= a);
         } // switch
+        RELEASE_ASSERT_NOT_REACHED();
     };
 
     auto operands = doubleOperands();
@@ -724,6 +726,7 @@ void testMoveConditionallyFloatingPoint(MacroAssembler::DoubleCondition conditio
         case MacroAssembler::DoubleLessThanOrEqualOrUnordered:
             return isUnordered(a) || isUnordered(b) || (a <= b) ? selectionA : selectionB;
         } // switch
+        RELEASE_ASSERT_NOT_REACHED();
     };
 
     for (auto a : operands) {
@@ -1296,6 +1299,7 @@ void testMoveConditionallyFloatingPointSameArg(MacroAssembler::DoubleCondition c
         case MacroAssembler::DoubleLessThanOrEqualOrUnordered:
             return isUnordered(a) || (a <= a) ? selectionA : selectionB;
         } // switch
+        RELEASE_ASSERT_NOT_REACHED();
     };
 
     for (auto a : operands) {
