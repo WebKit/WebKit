@@ -184,6 +184,8 @@ PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parent
 {
     WKWebViewConfiguration *newConfiguration = [[globalWebViewConfiguration copy] autorelease];
     newConfiguration._relatedWebView = static_cast<WKWebView*>(parentView->platformView());
+    if (newConfiguration._relatedWebView)
+        newConfiguration.websiteDataStore = newConfiguration._relatedWebView.configuration.websiteDataStore;
     PlatformWebView* view = new PlatformWebView(newConfiguration, options);
     finishCreatingPlatformWebView(view, options);
     return view;

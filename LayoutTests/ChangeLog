@@ -1,3 +1,15 @@
+2020-03-17  Chris Dumez  <cdumez@apple.com>
+
+        [WKTR] Crash when trying to open a new window in an ephemeral session test
+        https://bugs.webkit.org/show_bug.cgi?id=209181
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * fast/dom/window-open-ephemeral-expected.txt: Added.
+        * fast/dom/window-open-ephemeral.html: Added.
+
 2020-03-16  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up some latching tests
