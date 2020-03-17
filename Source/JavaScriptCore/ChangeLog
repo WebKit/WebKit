@@ -1,3 +1,19 @@
+2020-03-17  Tadeu Zagallo  <tzagallo@apple.com>
+
+        AccessCase::canReplace should allow a Getter to replace an IntrinsicGetter
+        https://bugs.webkit.org/show_bug.cgi?id=209158
+        <rdar://problem/59222012>
+
+        Reviewed by Saam Barati.
+
+        When we override an intrinsic getter with a user defined getter, we might end up with the
+        same offset and attributes. In which case, an inline cache that contained an entry for the
+        intrisic getter will believe that it is still valid, and add a new getter access case,
+        leading to duplicate entries for the same structure.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::canReplace const):
+
 2020-03-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSMapIterator and JSSetIterator are CellType

@@ -587,6 +587,23 @@ bool AccessCase::canReplace(const AccessCase& other) const
 
     if (m_identifier != other.m_identifier)
         return false;
+
+    auto checkPolyProtoAndStructure = [&] {
+        if (m_polyProtoAccessChain) {
+            if (!other.m_polyProtoAccessChain)
+                return false;
+            // This is the only check we need since PolyProtoAccessChain contains the base structure.
+            // If we ever change it to contain only the prototype chain, we'll also need to change
+            // this to check the base structure.
+            return structure() == other.structure()
+                && *m_polyProtoAccessChain == *other.m_polyProtoAccessChain;
+        }
+
+        if (!guardedByStructureCheckSkippingConstantIdentifierCheck() || !other.guardedByStructureCheckSkippingConstantIdentifierCheck())
+            return false;
+
+        return structure() == other.structure();
+    };
     
     switch (type()) {
     case IndexedInt32Load:
@@ -648,32 +665,24 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case Replace:
     case Miss:
     case GetGetter:
-    case Getter:
     case Setter:
     case CustomValueGetter:
     case CustomAccessorGetter:
     case CustomValueSetter:
     case CustomAccessorSetter:
-    case IntrinsicGetter:
     case InHit:
     case InMiss:
         if (other.type() != type())
             return false;
 
-        if (m_polyProtoAccessChain) {
-            if (!other.m_polyProtoAccessChain)
-                return false;
-            // This is the only check we need since PolyProtoAccessChain contains the base structure.
-            // If we ever change it to contain only the prototype chain, we'll also need to change
-            // this to check the base structure.
-            return structure() == other.structure()
-                && *m_polyProtoAccessChain == *other.m_polyProtoAccessChain;
-        }
+        return checkPolyProtoAndStructure();
 
-        if (!guardedByStructureCheckSkippingConstantIdentifierCheck() || !other.guardedByStructureCheckSkippingConstantIdentifierCheck())
+    case IntrinsicGetter:
+    case Getter:
+        if (other.type() != Getter && other.type() != IntrinsicGetter)
             return false;
 
-        return structure() == other.structure();
+        return checkPolyProtoAndStructure();
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
