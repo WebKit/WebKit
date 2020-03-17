@@ -955,3 +955,5 @@ webkit.org/b/209067 http/tests/security/javascriptURL/xss-DENIED-to-javascript-u
 webkit.org/b/209073 [ Debug ] inspector/injected-script/avoid-getter-invocation.html [ Pass Failure ]
 
 webkit.org/b/209154 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Pass Failure ]
+
+webkit.org/b/209180 inspector/script-profiler/event-type-Other.html [ Pass Failure ]
