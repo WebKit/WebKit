@@ -957,3 +957,5 @@ webkit.org/b/209073 [ Debug ] inspector/injected-script/avoid-getter-invocation.
 webkit.org/b/209154 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Pass Failure ]
 
 webkit.org/b/209180 inspector/script-profiler/event-type-Other.html [ Pass Failure ]
+
+webkit.org/b/209182 [ Debug ] inspector/debugger/setShouldBlackboxURL.html [ Pass Failure ]

@@ -1,5 +1,14 @@
 2020-03-17  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ Mac wk1 Debug] inspector/debugger/setShouldBlackboxURL.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209182
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-03-17  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac wk1 ] inspector/script-profiler/event-type-Other.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=209180
 
