@@ -141,7 +141,7 @@ class Trie:
         str = makePadding(indent)
 
         if self.value != None:
-            print(str + "if (!isIdentPartIncludingEscape(code+%d, m_codeEnd)) {" % (len(self.fullPrefix)))
+            print(str + "if (LIKELY(cannotBeIdentPartOrEscapeStart(code[%d]))) {" % (len(self.fullPrefix)))
             print(str + "    internalShift<%d>();" % len(self.fullPrefix))
             print(str + "    if (shouldCreateIdentifier)")
             print(str + ("        data->ident = &m_vm.propertyNames->%sKeyword;" % self.fullPrefix))
@@ -184,8 +184,8 @@ class Trie:
     def printAsC(self):
         print("namespace JSC {")
         print("")
-        print("static ALWAYS_INLINE bool isIdentPartIncludingEscape(const LChar* code, const LChar* codeEnd);")
-        print("static ALWAYS_INLINE bool isIdentPartIncludingEscape(const UChar* code, const UChar* codeEnd);")
+        print("static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(LChar);")
+        print("static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(UChar);")
         # max length + 1 so we don't need to do any bounds checking at all
         print("static constexpr int maxTokenLength = %d;" % (self.maxLength() + 1))
         print("")

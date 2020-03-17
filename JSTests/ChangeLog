@@ -1,3 +1,15 @@
+2020-03-16  Keith Miller  <keith_miller@apple.com>
+
+        JavaScript identifier grammar supports unescaped astral symbols, but JSC doesn’t
+        https://bugs.webkit.org/show_bug.cgi?id=208998
+
+        Reviewed by Michael Saboff.
+
+        * stress/unicode-identifiers-with-surrogate-pairs.js: Added.
+        (let.c.of.chars.eval.foo):
+        (throwsSyntaxError):
+        (let.c.of.continueChars.throwsSyntaxError.foo):
+
 2020-03-13  Saam Barati  <sbarati@apple.com>
 
         skip wasm/function-tests/grow-memory-cause-gc.js on memory limited devices

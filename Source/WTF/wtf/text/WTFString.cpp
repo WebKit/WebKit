@@ -888,6 +888,15 @@ String String::fromUTF8WithLatin1Fallback(const LChar* string, size_t size)
     return utf8;
 }
 
+String String::fromCodePoint(UChar32 codePoint)
+{
+    UChar buffer[2];
+    uint8_t length = 0;
+    UBool error = false;
+    U16_APPEND(buffer, length, 2, codePoint, error);
+    return error ? String() : String(buffer, length);
+}
+
 // String Operations
 template<typename CharacterType>
 static unsigned lengthOfCharactersAsInteger(const CharacterType* data, size_t length)

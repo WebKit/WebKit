@@ -5220,6 +5220,12 @@ template <typename LexerType> void Parser<LexerType>::printUnexpectedTokenText(W
     case INVALID_STRING_LITERAL_ERRORTOK:
         out.print("Invalid string literal: '", getToken(), "'");
         return;
+    case INVALID_UNICODE_ENCODING_ERRORTOK:
+        out.print("Invalid unicode encoding: '", getToken(), "'");
+        return;
+    case INVALID_IDENTIFIER_UNICODE_ERRORTOK:
+        out.print("Invalid unicode code point in identifier: '", getToken(), "'");
+        return;
     case ERRORTOK:
         out.print("Unrecognized token '", getToken(), "'");
         return;

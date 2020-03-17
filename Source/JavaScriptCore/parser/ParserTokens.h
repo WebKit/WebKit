@@ -33,7 +33,7 @@ namespace JSC {
 class Identifier;
 
 enum {
-    // Token Bitfield: 0b000000000RTE000IIIIPPPPKUXXXXXXX
+    // Token Bitfield: 0b000000000RTE00IIIIPPPPKUXXXXXXXX
     // R = right-associative bit
     // T = unterminated error flag
     // E = error flag
@@ -43,12 +43,12 @@ enum {
     // U = unary operator flag
     //
     // We must keep the upper 8bit (1byte) region empty. JSTokenType must be 24bits.
-    UnaryOpTokenFlag = 128,
-    KeywordTokenFlag = 256,
-    BinaryOpTokenPrecedenceShift = 9,
+    UnaryOpTokenFlag = 1 << 8,
+    KeywordTokenFlag = 1 << 9,
+    BinaryOpTokenPrecedenceShift = 10,
     BinaryOpTokenAllowsInPrecedenceAdditionalShift = 4,
     BinaryOpTokenPrecedenceMask = 15 << BinaryOpTokenPrecedenceShift,
-    ErrorTokenFlag = 1 << (BinaryOpTokenAllowsInPrecedenceAdditionalShift + BinaryOpTokenPrecedenceShift + 7),
+    ErrorTokenFlag = 1 << (BinaryOpTokenAllowsInPrecedenceAdditionalShift + BinaryOpTokenPrecedenceShift + 6),
     UnterminatedErrorTokenFlag = ErrorTokenFlag << 1,
     RightAssociativeBinaryOpTokenFlag = UnterminatedErrorTokenFlag << 1
 };
@@ -192,6 +192,8 @@ enum JSTokenType {
     UNTERMINATED_REGEXP_LITERAL_ERRORTOK = 14 | ErrorTokenFlag | UnterminatedErrorTokenFlag,
     INVALID_TEMPLATE_LITERAL_ERRORTOK = 15 | ErrorTokenFlag,
     UNEXPECTED_ESCAPE_ERRORTOK = 16 | ErrorTokenFlag,
+    INVALID_UNICODE_ENCODING_ERRORTOK = 17 | ErrorTokenFlag,
+    INVALID_IDENTIFIER_UNICODE_ERRORTOK = 18 | ErrorTokenFlag,
 };
 static_assert(static_cast<unsigned>(POW) <= 0x00ffffffU, "JSTokenType must be 24bits.");
 

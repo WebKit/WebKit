@@ -74,8 +74,8 @@ testInvalidStringUnicodeEscapeSequence("{100000000000000000000000}");
 testIdentifierStartUnicodeEscapeSequence("{41}", "0041");
 testIdentifierStartUnicodeEscapeSequence("{102C0}", "D800,DEC0");
 testIdentifierStartUnicodeEscapeSequence("{102c0}", "D800,DEC0");
-testIdentifierStartUnicodeEscapeSequence("{1D306}", "D834,DF06");
-testIdentifierStartUnicodeEscapeSequence("{1d306}", "D834,DF06");
+testIdentifierStartUnicodeEscapeSequence("{10000}", "D800,DC00");
+testIdentifierStartUnicodeEscapeSequence("{10001}", "D800,DC01");
 
 testInvalidIdentifierStartUnicodeEscapeSequence("");
 testInvalidIdentifierStartUnicodeEscapeSequence("{0}");
@@ -85,14 +85,14 @@ testInvalidIdentifierStartUnicodeEscapeSequence("{DC00}");
 testInvalidIdentifierStartUnicodeEscapeSequence("{dc00}");
 testInvalidIdentifierStartUnicodeEscapeSequence("{FFFF}");
 testInvalidIdentifierStartUnicodeEscapeSequence("{ffff}");
-testInvalidIdentifierStartUnicodeEscapeSequence("{10000}");
-testInvalidIdentifierStartUnicodeEscapeSequence("{10001}");
 testInvalidIdentifierStartUnicodeEscapeSequence("{10FFFE}");
 testInvalidIdentifierStartUnicodeEscapeSequence("{10fffe}");
 testInvalidIdentifierStartUnicodeEscapeSequence("{10FFFF}");
 testInvalidIdentifierStartUnicodeEscapeSequence("{10ffff}");
 testInvalidIdentifierStartUnicodeEscapeSequence("{00000000000000000000000010FFFF}");
 testInvalidIdentifierStartUnicodeEscapeSequence("{00000000000000000000000010ffff}");
+testInvalidIdentifierStartUnicodeEscapeSequence("{1D306}");
+testInvalidIdentifierStartUnicodeEscapeSequence("{1d306}");
 
 testInvalidIdentifierStartUnicodeEscapeSequence("x");
 testInvalidIdentifierStartUnicodeEscapeSequence("{");
