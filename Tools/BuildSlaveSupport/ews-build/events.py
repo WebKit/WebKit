@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import calendar
 import datetime
 import json
 import os
@@ -65,7 +66,7 @@ class JSONProducer(object):
         Serializing buildbot dates into UNIX epoch timestamps.
         """
         if isinstance(obj, datetime.datetime):
-            return int(time.mktime(obj.timetuple()))
+            return int(calendar.timegm(obj.timetuple()))
 
         raise TypeError("Type %s not serializable" % type(obj))
 

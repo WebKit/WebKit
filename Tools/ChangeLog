@@ -1,3 +1,16 @@
+2020-03-17  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Timestamp shown in status-bubble hover-over message is in future
+        https://bugs.webkit.org/show_bug.cgi?id=196628
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/events.py:
+        (JSONProducer.json_serialize_datetime): Keep the timestamp in UTC, instead of converting it to local time zone.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble.get_all_builds_for_queue): Sort the queues based on build number instead of start time, since the 
+        timestamps for new builds might be less than timestamps for old builds which completed immediately prior to this change.
+
 2020-03-17  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate SPI _webView:printFrame:completionHandler:

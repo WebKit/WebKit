@@ -241,7 +241,7 @@ class StatusBubble(View):
             is_parent_build = True
         if not builds:
             return (None, None)
-        builds.sort(key=lambda build: build.started_at, reverse=True)
+        builds.sort(key=lambda build: build.number, reverse=True)
         return (builds, is_parent_build)
 
     def get_builds_for_queue(self, patch, queue):
