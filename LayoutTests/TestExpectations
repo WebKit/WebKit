@@ -1803,6 +1803,12 @@ webkit.org/b/148026 [ Debug ] animations/restart-after-scroll.html [ Skip ]
 
 webkit.org/b/148650 fast/repaint/add-table-overpaint.html [ Pass Failure ]
 
+imported/w3c/web-platform-tests/css/css-cascade/all-prop-inherit-color.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-color.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-cascade/all-prop-unset-color.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-cascade/important-prop.html [ ImageOnlyFailure ]
+webkit.org/b/187093 [ Debug ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Skip ]
+
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht [ ImageOnlyFailure ]
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht [ ImageOnlyFailure ]
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht [ ImageOnlyFailure ]
