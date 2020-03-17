@@ -119,6 +119,10 @@ WebFrameLoaderClient::~WebFrameLoaderClient()
 {
 }
 
+void WebFrameLoaderClient::frameLoaderDestroyed()
+{
+}
+
 Optional<WebCore::PageIdentifier> WebFrameLoaderClient::pageID() const
 {
     return WTF::nullopt;
@@ -781,49 +785,49 @@ void WebFrameLoaderClient::didDetectXSS(const URL&, bool)
     // FIXME: propogate call into the private delegate.
 }
 
-ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request) const
+ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request)
 {
     // FIXME: Need ChickenCat to include CFNetwork/CFURLError.h to get these values
     // Alternatively, we could create our own error domain/codes.
     return ResourceError(String(WebURLErrorDomain), -999, request.url(), String("Cancelled"));
 }
 
-ResourceError WebFrameLoaderClient::blockedError(const ResourceRequest& request) const
+ResourceError WebFrameLoaderClient::blockedError(const ResourceRequest& request)
 {
     return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotUseRestrictedPort, request.url(), WEB_UI_STRING("Not allowed to use restricted network port", "WebKitErrorCannotUseRestrictedPort description"));
 }
 
-ResourceError WebFrameLoaderClient::blockedByContentBlockerError(const ResourceRequest& request) const
+ResourceError WebFrameLoaderClient::blockedByContentBlockerError(const ResourceRequest& request)
 {
     RELEASE_ASSERT_NOT_REACHED(); // Content Blockers are not enabled for WK1.
 }
 
-ResourceError WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request) const
+ResourceError WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request)
 {
     return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotShowURL, request.url(), WEB_UI_STRING("The URL can\xE2\x80\x99t be shown", "WebKitErrorCannotShowURL description"));
 }
 
-ResourceError WebFrameLoaderClient::interruptedForPolicyChangeError(const ResourceRequest& request) const
+ResourceError WebFrameLoaderClient::interruptedForPolicyChangeError(const ResourceRequest& request)
 {
     return ResourceError(String(WebKitErrorDomain), WebKitErrorFrameLoadInterruptedByPolicyChange, request.url(), WEB_UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description"));
 }
 
-ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse& response) const
+ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse& response)
 {
     return ResourceError(String(), WebKitErrorCannotShowMIMEType, response.url(), WEB_UI_STRING("Content with specified MIME type can\xE2\x80\x99t be shown", "WebKitErrorCannotShowMIMEType description"));
 }
 
-ResourceError WebFrameLoaderClient::fileDoesNotExistError(const ResourceResponse& response) const
+ResourceError WebFrameLoaderClient::fileDoesNotExistError(const ResourceResponse& response)
 {
     return ResourceError(String(WebURLErrorDomain), -1100, response.url(), String("File does not exist."));
 }
 
-ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse& response) const
+ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse& response)
 {
     return ResourceError(String(WebKitErrorDomain), WebKitErrorPlugInWillHandleLoad, response.url(), WEB_UI_STRING("Plug-in handled load", "WebKitErrorPlugInWillHandleLoad description"));
 }
 
-bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error) const
+bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error)
 {
     if (error.errorCode() == WebURLErrorCancelled && error.domain() == String(WebURLErrorDomain))
         return false;
@@ -975,7 +979,7 @@ void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool)
 {
 }
 
-String WebFrameLoaderClient::userAgent(const URL& url) const
+String WebFrameLoaderClient::userAgent(const URL& url)
 {
     return m_webFrame->webView()->userAgentForKURL(url);
 }

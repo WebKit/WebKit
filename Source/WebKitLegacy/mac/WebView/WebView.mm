@@ -1443,7 +1443,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
-        makeUniqueRef<WebFrameLoaderClient>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>()
     );
 #if !PLATFORM(IOS_FAMILY)
@@ -1466,6 +1465,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
     pageConfiguration.alternativeTextClient = makeUnique<WebAlternativeTextClient>(self);
+    pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.applicationCacheStorage = &webApplicationCacheStorage();
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
@@ -1714,7 +1714,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
-        makeUniqueRef<WebFrameLoaderClient>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>()
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
@@ -1727,6 +1726,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
+    pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.applicationCacheStorage = &webApplicationCacheStorage();
     pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();

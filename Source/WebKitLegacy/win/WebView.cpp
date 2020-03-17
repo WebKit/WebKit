@@ -3116,8 +3116,6 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
     m_inspectorClient = new WebInspectorClient(this);
 
     auto storageProvider = PageStorageSessionProvider::create();
-
-    WebFrame* webFrame = WebFrame::createInstance();
     PageConfiguration configuration(
         PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(this),
@@ -3127,13 +3125,13 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         BackForwardList::create(),
         CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(),
-        makeUniqueRef<WebFrameLoaderClient>(webFrame),
         makeUniqueRef<MediaRecorderProvider>()
     );
     configuration.chromeClient = new WebChromeClient(this);
     configuration.contextMenuClient = new WebContextMenuClient(this);
     configuration.dragClient = makeUnique<WebDragClient>(this);
     configuration.inspectorClient = m_inspectorClient;
+    configuration.loaderClientForMainFrame = new WebFrameLoaderClient;
     configuration.applicationCacheStorage = &WebApplicationCache::storage();
     configuration.databaseProvider = &WebDatabaseProvider::singleton();
     configuration.storageNamespaceProvider = &m_webViewGroup->storageNamespaceProvider();
@@ -3153,6 +3151,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
             m_page->settings().setFTPDirectoryTemplatePath(toString(path));
     }
 
+    WebFrame* webFrame = WebFrame::createInstance();
     webFrame->initWithWebView(this, m_page);
     static_cast<WebFrameLoaderClient&>(m_page->mainFrame().loader().client()).setWebFrame(webFrame);
     static_cast<WebProgressTrackerClient&>(m_page->progress().client()).setWebFrame(webFrame);

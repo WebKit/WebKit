@@ -73,12 +73,25 @@ using namespace PAL;
 using namespace WebCore;
 
 
+ServiceWorkerFrameLoaderClient& ServiceWorkerFrameLoaderClient::create(WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, FrameIdentifier frameID, const String& userAgent)
+{
+    auto frameLoaderClient = std::unique_ptr<ServiceWorkerFrameLoaderClient>(new ServiceWorkerFrameLoaderClient(webPageProxyID, pageID, frameID, userAgent));
+    auto& client = *frameLoaderClient;
+    SWContextManager::singleton().addServiceWorkerFrameLoaderClient(WTFMove(frameLoaderClient));
+    return client;
+}
+
 ServiceWorkerFrameLoaderClient::ServiceWorkerFrameLoaderClient(WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, FrameIdentifier frameID, const String& userAgent)
     : m_webPageProxyID(webPageProxyID)
     , m_pageID(pageID)
     , m_frameID(frameID)
     , m_userAgent(userAgent)
 {
+}
+
+void ServiceWorkerFrameLoaderClient::frameLoaderDestroyed()
+{
+    SWContextManager::singleton().removeServiceWorkerFrameLoaderClient(*this);
 }
 
 Ref<DocumentLoader> ServiceWorkerFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
@@ -149,7 +162,7 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
     if (effectiveUserAgent.isNull())
         effectiveUserAgent = m_userAgent;
 
-    pageConfiguration.loaderClientForMainFrame = makeUniqueRef<ServiceWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, FrameIdentifier::generate(), effectiveUserAgent);
+    pageConfiguration.loaderClientForMainFrame = &ServiceWorkerFrameLoaderClient::create(m_webPageProxyID, m_pageID, FrameIdentifier::generate(), effectiveUserAgent);
 
     auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), data, WTFMove(effectiveUserAgent), WebProcess::singleton().cacheStorageProvider(), m_storageBlockingPolicy);
     SWContextManager::singleton().registerServiceWorkerThreadForInstall(WTFMove(serviceWorkerThreadProxy));

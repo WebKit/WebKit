@@ -58,6 +58,7 @@ public:
 
     Ref<WebCore::FrameNetworkingContext> createNetworkingContext() override;
 
+    void frameLoaderDestroyed() override;
     void makeRepresentation(WebCore::DocumentLoader*) override;
     void forceLayoutForNonHTML() override;
 
@@ -136,18 +137,18 @@ public:
     void didRunInsecureContent(WebCore::SecurityOrigin&, const URL&) override;
     void didDetectXSS(const URL&, bool didBlockEntirePage) override;
 
-    WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) const override;
-    WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
-    WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&) const override;
-    WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&) const override;
-    WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&) const override;
-    WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&) const override;
-    WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&) const override;
-    WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&) const override;
+    WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) override;
+    WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) override;
+    WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&) override;
+    WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&) override;
+    WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&) override;
+    WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&) override;
+    WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&) override;
+    WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&) override;
 
-    bool shouldFallBack(const WebCore::ResourceError&) const override;
+    bool shouldFallBack(const WebCore::ResourceError&) override;
 
-    WTF::String userAgent(const URL&) const override;
+    WTF::String userAgent(const URL&) override;
 
     Ref<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&) override;
     void updateCachedDocumentLoader(WebCore::DocumentLoader&) override { }

@@ -54,13 +54,13 @@ class ResourceRequest;
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
-    explicit WebFrameLoaderClient(WebFrame* = nullptr);
-    ~WebFrameLoaderClient();
+    WebFrameLoaderClient(WebFrame* = 0);
 
-    void setWebFrame(WebFrame& webFrame) { m_webFrame = &webFrame; }
+    void setWebFrame(WebFrame* webFrame) { m_webFrame = webFrame; }
     WebFrame* webFrame() const { return m_webFrame.get(); }
 
 private:
+    void frameLoaderDestroyed() final;
     bool hasWebView() const final; // mainly for assertions
 
     Optional<WebCore::PageIdentifier> pageID() const final;
@@ -160,22 +160,22 @@ private:
     void didRunInsecureContent(WebCore::SecurityOrigin&, const URL&) final;
     void didDetectXSS(const URL&, bool didBlockEntirePage) final;
 
-    WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) const final;
-    WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const final;
-    WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&) const final;
-    WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&) const final;
-    WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) final;
+    WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) final;
+    WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&) final;
+    WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&) final;
+    WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&) final;
 #if ENABLE(CONTENT_FILTERING)
-    WebCore::ResourceError blockedByContentFilterError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError blockedByContentFilterError(const WebCore::ResourceRequest&) final;
 #endif
 
-    WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&) const final;
-    WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&) const final;
-    WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&) const final;
+    WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&) final;
+    WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&) final;
+    WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&) final;
 
-    bool shouldFallBack(const WebCore::ResourceError&) const final;
+    bool shouldFallBack(const WebCore::ResourceError&) final;
 
-    WTF::String userAgent(const URL&) const final;
+    WTF::String userAgent(const URL&) final;
     
     void savePlatformDataToCachedFrame(WebCore::CachedFrame*) final;
     void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) final;

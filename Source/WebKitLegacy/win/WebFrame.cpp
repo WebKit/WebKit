@@ -1082,7 +1082,7 @@ Ref<Frame> WebFrame::createSubframeWithOwnerElement(IWebView* webView, Page* pag
     d->webView->viewWindow(&viewWindow);
 
     this->AddRef(); // We release this ref in frameLoaderDestroyed()
-    auto frame = Frame::create(page, ownerElement, makeUniqueRef<WebFrameLoaderClient>(this));
+    auto frame = Frame::create(page, ownerElement, new WebFrameLoaderClient(this));
     d->frame = frame.ptr();
     return frame;
 }

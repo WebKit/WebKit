@@ -117,14 +117,18 @@ private:
 
 class ServiceWorkerFrameLoaderClient final : public WebCore::EmptyFrameLoaderClient {
 public:
-    ServiceWorkerFrameLoaderClient(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, const String& userAgent);
+    static ServiceWorkerFrameLoaderClient& create(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, const String& userAgent);
 
     WebPageProxyIdentifier webPageProxyID() const { return m_webPageProxyID; }
 
     void setUserAgent(String&& userAgent) { m_userAgent = WTFMove(userAgent); }
 
 private:
+    ServiceWorkerFrameLoaderClient(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier, const String& userAgent);
+
     Ref<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&) final;
+
+    void frameLoaderDestroyed() final;
 
     Optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
     Optional<WebCore::FrameIdentifier> frameID() const final { return m_frameID; }
@@ -132,7 +136,7 @@ private:
     bool shouldUseCredentialStorage(WebCore::DocumentLoader*, unsigned long) final { return true; }
     bool isServiceWorkerFrameLoaderClient() const final { return true; }
 
-    String userAgent(const URL&) const final { return m_userAgent; }
+    String userAgent(const URL&) final { return m_userAgent; }
 
     WebPageProxyIdentifier m_webPageProxyID;
     WebCore::PageIdentifier m_pageID;

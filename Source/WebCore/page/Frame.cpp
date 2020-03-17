@@ -143,12 +143,12 @@ static inline float parentTextZoomFactor(Frame* frame)
     return parent->textZoomFactor();
 }
 
-Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient)
+Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient& frameLoaderClient)
     : m_mainFrame(ownerElement ? page.mainFrame() : *this)
     , m_page(&page)
     , m_settings(&page.settings())
     , m_treeNode(*this, parentFromOwnerElement(ownerElement))
-    , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
+    , m_loader(makeUniqueRef<FrameLoader>(*this, frameLoaderClient))
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
     , m_ownerElement(ownerElement)
     , m_script(makeUniqueRef<ScriptController>(*this))
@@ -182,10 +182,11 @@ void Frame::init()
     m_loader->init();
 }
 
-Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& client)
+Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* client)
 {
     ASSERT(page);
-    return adoptRef(*new Frame(*page, ownerElement, WTFMove(client)));
+    ASSERT(client);
+    return adoptRef(*new Frame(*page, ownerElement, *client));
 }
 
 Frame::~Frame()

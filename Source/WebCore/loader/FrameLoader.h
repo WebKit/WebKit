@@ -52,7 +52,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
-#include <wtf/UniqueRef.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {
@@ -103,7 +102,7 @@ class FrameLoader final {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FrameLoader);
 public:
-    FrameLoader(Frame&, UniqueRef<FrameLoaderClient>&&);
+    FrameLoader(Frame&, FrameLoaderClient&);
     ~FrameLoader();
 
     WEBCORE_EXPORT void init();
@@ -228,8 +227,7 @@ public:
     static void addHTTPUpgradeInsecureRequestsIfNeeded(ResourceRequest&);
     static void addSameSiteInfoToRequestIfNeeded(ResourceRequest&, const Document* initiator = nullptr);
 
-    const FrameLoaderClient& client() const { return m_client.get(); }
-    FrameLoaderClient& client() { return m_client.get(); }
+    FrameLoaderClient& client() const { return m_client; }
 
     WEBCORE_EXPORT Optional<PageIdentifier> pageID() const;
     WEBCORE_EXPORT Optional<FrameIdentifier> frameID() const;
@@ -426,7 +424,7 @@ private:
     bool shouldTreatCurrentLoadAsContinuingLoad() const { return m_currentLoadContinuingState != LoadContinuingState::NotContinuing; }
 
     Frame& m_frame;
-    UniqueRef<FrameLoaderClient> m_client;
+    FrameLoaderClient& m_client;
 
     const std::unique_ptr<PolicyChecker> m_policyChecker;
     const std::unique_ptr<HistoryController> m_history;

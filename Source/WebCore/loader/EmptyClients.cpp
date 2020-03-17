@@ -597,7 +597,6 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         adoptRef(*new EmptyBackForwardClient),
         CookieJar::create(adoptRef(*new EmptyStorageSessionProvider)),
         makeUniqueRef<EmptyProgressTrackerClient>(),
-        makeUniqueRef<EmptyFrameLoaderClient>(),
         makeUniqueRef<EmptyMediaRecorderProvider>()
     };
 
@@ -620,6 +619,9 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
 
     static NeverDestroyed<EmptyInspectorClient> dummyInspectorClient;
     pageConfiguration.inspectorClient = &dummyInspectorClient.get();
+
+    static NeverDestroyed<EmptyFrameLoaderClient> dummyFrameLoaderClient;
+    pageConfiguration.loaderClientForMainFrame = &dummyFrameLoaderClient.get();
 
     pageConfiguration.diagnosticLoggingClient = makeUnique<EmptyDiagnosticLoggingClient>();
 

@@ -217,9 +217,10 @@ Optional<WebCore::FrameIdentifier> WebFrameLoaderClient::frameID() const
     return WTF::nullopt;
 }
 
-WebFrameLoaderClient::~WebFrameLoaderClient()
+void WebFrameLoaderClient::frameLoaderDestroyed()
 {
     [m_webFrame.get() _clearCoreFrame];
+    delete this;
 }
 
 bool WebFrameLoaderClient::hasWebView() const
@@ -1132,49 +1133,49 @@ void WebFrameLoaderClient::didDetectXSS(const URL& insecureURL, bool didBlockEnt
     }
 }
 
-WebCore::ResourceError WebFrameLoaderClient::cancelledError(const WebCore::ResourceRequest& request) const
+WebCore::ResourceError WebFrameLoaderClient::cancelledError(const WebCore::ResourceRequest& request)
 {
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:request.url()];
 }
     
-WebCore::ResourceError WebFrameLoaderClient::blockedError(const WebCore::ResourceRequest& request) const
+WebCore::ResourceError WebFrameLoaderClient::blockedError(const WebCore::ResourceRequest& request)
 {
     return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotUseRestrictedPort URL:request.url()];
 }
 
-WebCore::ResourceError WebFrameLoaderClient::blockedByContentBlockerError(const WebCore::ResourceRequest& request) const
+WebCore::ResourceError WebFrameLoaderClient::blockedByContentBlockerError(const WebCore::ResourceRequest& request)
 {
     RELEASE_ASSERT_NOT_REACHED(); // Content blockers are not enabled in WebKit1.
 }
 
-WebCore::ResourceError WebFrameLoaderClient::cannotShowURLError(const WebCore::ResourceRequest& request) const
+WebCore::ResourceError WebFrameLoaderClient::cannotShowURLError(const WebCore::ResourceRequest& request)
 {
     return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotShowURL URL:request.url()];
 }
 
-WebCore::ResourceError WebFrameLoaderClient::interruptedForPolicyChangeError(const WebCore::ResourceRequest& request) const
+WebCore::ResourceError WebFrameLoaderClient::interruptedForPolicyChangeError(const WebCore::ResourceRequest& request)
 {
     return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadInterruptedByPolicyChange URL:request.url()];
 }
 
 #if ENABLE(CONTENT_FILTERING)
-WebCore::ResourceError WebFrameLoaderClient::blockedByContentFilterError(const WebCore::ResourceRequest& request) const
+WebCore::ResourceError WebFrameLoaderClient::blockedByContentFilterError(const WebCore::ResourceRequest& request)
 {
     return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadBlockedByContentFilter URL:request.url()];
 }
 #endif
 
-WebCore::ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const WebCore::ResourceResponse& response) const
+WebCore::ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const WebCore::ResourceResponse& response)
 {
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:WebKitErrorCannotShowMIMEType URL:response.url()];
 }
 
-WebCore::ResourceError WebFrameLoaderClient::fileDoesNotExistError(const WebCore::ResourceResponse& response) const
+WebCore::ResourceError WebFrameLoaderClient::fileDoesNotExistError(const WebCore::ResourceResponse& response)
 {
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist URL:response.url()];    
 }
 
-WebCore::ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const WebCore::ResourceResponse& response) const
+WebCore::ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const WebCore::ResourceResponse& response)
 {
     NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
                                                     contentURL:response.url()
@@ -1184,7 +1185,7 @@ WebCore::ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const Web
     return [error autorelease];
 }
 
-bool WebFrameLoaderClient::shouldFallBack(const WebCore::ResourceError& error) const
+bool WebFrameLoaderClient::shouldFallBack(const WebCore::ResourceError& error)
 {
     // FIXME: Needs to check domain.
     // FIXME: WebKitErrorPlugInWillHandleLoad is a workaround for the cancel we do to prevent
@@ -1532,7 +1533,7 @@ RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(WebC
     return policyListener;
 }
 
-String WebFrameLoaderClient::userAgent(const URL& url) const
+String WebFrameLoaderClient::userAgent(const URL& url)
 {
     WebView *webView = getWebView(m_webFrame.get());
     ASSERT(webView);

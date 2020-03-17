@@ -243,8 +243,11 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
     if (!webFrameLoaderClient)
         return false;
 
-    auto& webFrame = webFrameLoaderClient->webFrame();
-    auto* webPage = webFrame.page();
+    auto* webFrame = webFrameLoaderClient->webFrame();
+    if (!webFrame)
+        return false;
+
+    auto* webPage = webFrame->page();
     if (!webPage)
         return false;
 
@@ -255,7 +258,7 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, URL '%s' will be handled by a UIProcess URL scheme handler.", resourceLoader.url().string().utf8().data());
     WEBLOADERSTRATEGY_RELEASE_LOG_IF_ALLOWED("tryLoadingUsingURLSchemeHandler: URL will be handled by a UIProcess URL scheme handler");
 
-    handler->startNewTask(resourceLoader, webFrame);
+    handler->startNewTask(resourceLoader, *webFrame);
     return true;
 }
 
@@ -327,7 +330,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     }
     
     auto* webFrameLoaderClient = frame ? toWebFrameLoaderClient(frame->loader().client()) : nullptr;
-    auto* webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
+    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
     auto* webPage = webFrame ? webFrame->page() : nullptr;
     if (webPage)
         loadParameters.isNavigatingToAppBoundDomain = webPage->isNavigatingToAppBoundDomain();
@@ -530,7 +533,7 @@ static bool shouldClearReferrerOnHTTPSToHTTPRedirect(Frame* frame)
 Optional<WebLoaderStrategy::SyncLoadResult> WebLoaderStrategy::tryLoadingSynchronouslyUsingURLSchemeHandler(FrameLoader& frameLoader, ResourceLoadIdentifier identifier, const ResourceRequest& request)
 {
     auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
-    auto* webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
+    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
     auto* webPage = webFrame ? webFrame->page() : nullptr;
     if (!webPage)
         return WTF::nullopt;
@@ -550,7 +553,7 @@ Optional<WebLoaderStrategy::SyncLoadResult> WebLoaderStrategy::tryLoadingSynchro
 void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, unsigned long resourceLoadIdentifier, const ResourceRequest& request, ClientCredentialPolicy clientCredentialPolicy,  const FetchOptions& options, const HTTPHeaderMap& originalRequestHeaders, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
-    auto* webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
+    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
     auto* webPage = webFrame ? webFrame->page() : nullptr;
     auto* page = webPage ? webPage->corePage() : nullptr;
 
@@ -683,7 +686,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     addParametersShared(&frame, loadParameters);
     
     auto* webFrameLoaderClient = toWebFrameLoaderClient(frame.loader().client());
-    auto* webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
+    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
     auto* webPage = webFrame ? webFrame->page() : nullptr;
     if (webPage)
         loadParameters.isNavigatingToAppBoundDomain = webPage->isNavigatingToAppBoundDomain();
@@ -715,14 +718,18 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
         completionHandler(internalError(url));
         return;
     }
-    auto& webFrame = webFrameLoaderClient->webFrame();
-    auto* webPage = webFrame.page();
+    auto* webFrame = webFrameLoaderClient->webFrame();
+    if (!webFrame) {
+        completionHandler(internalError(url));
+        return;
+    }
+    auto* webPage = webFrame->page();
     if (!webPage) {
         completionHandler(internalError(url));
         return;
     }
 
-    preconnectTo(ResourceRequest { url }, *webPage, webFrame, storedCredentialsPolicy, WTFMove(completionHandler));
+    preconnectTo(ResourceRequest { url }, *webPage, *webFrame, storedCredentialsPolicy, WTFMove(completionHandler));
 }
 
 void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage& webPage, WebFrame& webFrame, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
