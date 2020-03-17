@@ -1744,7 +1744,7 @@ void TestRunner::setStatisticsHasHadUserInteraction(JSStringRef hostName, bool v
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsHasHadUserInteraction"));
     WKRetainPtr<WKDictionaryRef> messageBody = adoptWK(WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
     
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
 }
 
 void TestRunner::statisticsCallDidSetHasHadUserInteractionCallback()
@@ -2071,7 +2071,7 @@ void TestRunner::statisticsUpdateCookieBlocking(JSValueRef completionHandler)
     cacheTestRunnerCallback(StatisticsDidSetBlockCookiesForHostCallbackID, completionHandler);
 
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("StatisticsUpdateCookieBlocking"));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr);
 }
 
 void TestRunner::statisticsCallDidSetBlockCookiesForHostCallback()
@@ -2146,7 +2146,7 @@ void TestRunner::statisticsClearInMemoryAndPersistentStore(JSValueRef callback)
     cacheTestRunnerCallback(StatisticsDidClearThroughWebsiteDataRemovalCallbackID, callback);
 
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("StatisticsClearInMemoryAndPersistentStore"));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr);
 }
 
 void TestRunner::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours, JSValueRef callback)
@@ -2155,7 +2155,7 @@ void TestRunner::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(uns
 
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("StatisticsClearInMemoryAndPersistentStoreModifiedSinceHours"));
     WKRetainPtr<WKTypeRef> messageBody = adoptWK(WKUInt64Create(hours));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
 }
 
 void TestRunner::statisticsClearThroughWebsiteDataRemoval(JSValueRef callback)
@@ -2163,7 +2163,7 @@ void TestRunner::statisticsClearThroughWebsiteDataRemoval(JSValueRef callback)
     cacheTestRunnerCallback(StatisticsDidClearThroughWebsiteDataRemovalCallbackID, callback);
     
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("StatisticsClearThroughWebsiteDataRemoval"));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr);
 }
 
 void TestRunner::statisticsDeleteCookiesForHost(JSStringRef hostName, bool includeHttpOnlyCookies)
@@ -2227,7 +2227,7 @@ void TestRunner::setStatisticsShouldDowngradeReferrer(bool value, JSValueRef com
     cacheTestRunnerCallback(StatisticsDidSetShouldDowngradeReferrerCallbackID, completionHandler);
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsShouldDowngradeReferrer"));
     WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
     m_hasSetDowngradeReferrerCallback = true;
 }
 
@@ -2265,7 +2265,7 @@ void TestRunner::setStatisticsFirstPartyWebsiteDataRemovalMode(bool value, JSVal
     cacheTestRunnerCallback(StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID, completionHandler);
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsFirstPartyWebsiteDataRemovalMode"));
     WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
     m_hasSetFirstPartyWebsiteDataRemovalModeCallback = true;
 }
 
@@ -2285,7 +2285,7 @@ void TestRunner::statisticsResetToConsistentState(JSValueRef completionHandler)
     cacheTestRunnerCallback(StatisticsDidResetToConsistentStateCallbackID, completionHandler);
     
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("StatisticsResetToConsistentState"));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr);
 }
 
 void TestRunner::statisticsCallDidResetToConsistentStateCallback()
@@ -2328,7 +2328,7 @@ void TestRunner::getAllStorageAccessEntries(JSValueRef callback)
     cacheTestRunnerCallback(AllStorageAccessEntriesCallbackID, callback);
     
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("GetAllStorageAccessEntries"));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr);
 }
 
 void TestRunner::callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains)
@@ -2667,7 +2667,7 @@ void TestRunner::removeAllSessionCredentials(JSValueRef callback)
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("RemoveAllSessionCredentials"));
     WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(true));
     
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
 }
 
 void TestRunner::callDidRemoveAllSessionCredentialsCallback()
@@ -2719,7 +2719,7 @@ void TestRunner::getApplicationManifestThen(JSValueRef callback)
     cacheTestRunnerCallback(GetApplicationManifestCallbackID, callback);
     
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("GetApplicationManifest"));
-    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr);
 }
 
 void TestRunner::didGetApplicationManifest()

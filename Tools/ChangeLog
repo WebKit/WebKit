@@ -1,3 +1,30 @@
+2020-03-17  Chris Dumez  <cdumez@apple.com>
+
+        [WKTR] testRunner API that takes in a completion handler should use async IPC
+        https://bugs.webkit.org/show_bug.cgi?id=209187
+
+        Reviewed by John Wilander.
+
+        testRunner API that takes in a completion handler should use async IPC. This hangs
+        the WebProcess for no reason and can cause deadlocks if the UIProcess then tries
+        to IPC the WebProcess as a result of this testRunner call.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsHasHadUserInteraction):
+        (WTR::TestRunner::statisticsUpdateCookieBlocking):
+        (WTR::TestRunner::statisticsClearInMemoryAndPersistentStore):
+        (WTR::TestRunner::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WTR::TestRunner::statisticsClearThroughWebsiteDataRemoval):
+        (WTR::TestRunner::setStatisticsShouldDowngradeReferrer):
+        (WTR::TestRunner::setStatisticsFirstPartyWebsiteDataRemovalMode):
+        (WTR::TestRunner::statisticsResetToConsistentState):
+        (WTR::TestRunner::getAllStorageAccessEntries):
+        (WTR::TestRunner::removeAllSessionCredentials):
+        (WTR::TestRunner::getApplicationManifestThen):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2020-03-17  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Timestamp shown in status-bubble hover-over message is in future
