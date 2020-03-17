@@ -72,6 +72,7 @@ webkit.org/b/187064 webrtc/video.html
 webkit.org/b/187064 webrtc/multi-video.html
 webkit.org/b/187064 webrtc/video-addTrack.html
 webkit.org/b/187064 webrtc/video-rotation.html
+webkit.org/b/187064 webrtc/video-rotation-no-cvo.html [ Failure ]
 webkit.org/b/187064 webrtc/video-mute.html
 webkit.org/b/187064 webrtc/video-disabled-black.html
 webkit.org/b/187064 webrtc/video-replace-track.html
@@ -705,6 +706,8 @@ webkit.org/b/208992 imported/w3c/web-platform-tests/html/semantics/forms/constra
 # SMOOTH_SCROLLING is disabled by default for WPE
 fast/events/drag-smooth-scroll-element.html [ Failure ]
 
+webkit.org/b/209163 webrtc/audio-video-element-playing.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1294,7 +1297,7 @@ webkit.org/b/208753 http/tests/adClickAttribution/store-disabled-in-ephemeral-se
 
 webkit.org/b/202736 http/tests/appcache/document-cookie-http-only.php [ Failure Pass ]
 webkit.org/b/202736 http/tests/appcache/history-test.html [ Failure Pass ]
-webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Timeout Pass ]
+webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure Timeout Pass ]
 webkit.org/b/202736 http/tests/cache-storage/cache-clearing-all.https.html [ Failure Pass ]
 webkit.org/b/202736 http/tests/cache-storage/cache-clearing-origin.https.html [ Failure Pass ]
 webkit.org/b/202736 http/tests/cache-storage/cache-origins.https.html [ Failure Pass ]
@@ -1389,6 +1392,23 @@ webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/request/request-ca
 webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.html [ Failure Pass ]
 
 webkit.org/b/209130 fast/mediastream/fast/mediastream/change-tracks-media-stream-being-played.html [ Pass Crash Timeout ]
+
+webkit.org/b/209144 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.image.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.norepeat.coord3.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeat.basic.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeat.outside.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeatx.basic.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeatx.coord1.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeaty.basic.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeaty.coord1.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeaty.outside.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.repeat.empty.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/shadows/2d.shadow.pattern.basic.html [ Pass Failure ]
+
+# Since r249622
+webkit.org/b/206639 http/tests/contentextensions/block-cookies-basic.html [ Failure Pass ]
+webkit.org/b/206639 http/tests/contentextensions/block-cookies-send.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS

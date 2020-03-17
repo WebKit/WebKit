@@ -1,3 +1,12 @@
+2020-03-16  Lauro Moura  <lmoura@igalia.com>
+
+        WPE and GTK gardening.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-03-16  ChangSeok Oh  <changseok@webkit.org>
 
         A change event gets dispatched when textarea gets changed without focus
