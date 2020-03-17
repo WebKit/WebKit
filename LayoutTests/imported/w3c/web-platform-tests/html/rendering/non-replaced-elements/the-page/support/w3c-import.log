@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/support/big-page.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/support/body-marginwidth-marginheight.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/support/body-topmargin-leftmargin.html

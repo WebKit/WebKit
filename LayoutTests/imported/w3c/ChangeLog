@@ -1,3 +1,19 @@
+2020-03-17  Frederic Wang  <fwang@igalia.com>
+
+        Update wpt tests imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page
+        https://bugs.webkit.org/show_bug.cgi?id=209178
+
+        Reviewed by Rob Buis.
+
+        * resources/resource-files.json:
+        * web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-scrolling-attribute-expected.html: Added.
+        * web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-scrolling-attribute-values-expected.html: Added.
+        * web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-scrolling-attribute-values.html: Added.
+        * web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-scrolling-attribute.html: Added.
+        * web-platform-tests/html/rendering/non-replaced-elements/the-page/support/big-page.html: Added.
+        * web-platform-tests/html/rendering/non-replaced-elements/the-page/support/w3c-import.log:
+        * web-platform-tests/html/rendering/non-replaced-elements/the-page/w3c-import.log:
+
 2020-03-17  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Sync web-platform-tests/css/css-cascade from upstream

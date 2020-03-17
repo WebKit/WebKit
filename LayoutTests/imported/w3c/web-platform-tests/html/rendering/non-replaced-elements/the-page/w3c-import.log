@@ -67,4 +67,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body_text_00ffff.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-body-margin-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-marginwidth-marginheight.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-scrolling-attribute-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-scrolling-attribute-values-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-scrolling-attribute-values.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/iframe-scrolling-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/test-body.xhtml

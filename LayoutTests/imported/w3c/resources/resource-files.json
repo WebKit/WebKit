@@ -2084,6 +2084,7 @@
         "web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-shadow-dom.html",
         "web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-dynamic-update.html",
         "web-platform-tests/html/rendering/non-replaced-elements/the-page/body_link.xhtml",
+        "web-platform-tests/html/rendering/non-replaced-elements/the-page/support/big-page.html",
         "web-platform-tests/html/rendering/non-replaced-elements/the-page/support/body-marginwidth-marginheight.html",
         "web-platform-tests/html/rendering/non-replaced-elements/the-page/support/body-topmargin-leftmargin.html",
         "web-platform-tests/html/rendering/non-replaced-elements/the-page/test-body.xhtml",
