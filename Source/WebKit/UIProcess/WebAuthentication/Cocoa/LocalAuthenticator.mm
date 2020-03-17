@@ -567,6 +567,8 @@ void LocalAuthenticator::deleteDuplicateCredential() const
     m_existingCredentials.findMatching([creationOptions] (auto& credential) {
         auto* userHandle = credential->userHandle();
         ASSERT(userHandle);
+        if (userHandle->byteLength() != creationOptions.user.idVector.size())
+            return false;
         if (memcmp(userHandle->data(), creationOptions.user.idVector.data(), userHandle->byteLength()))
             return false;
 

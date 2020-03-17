@@ -1,3 +1,16 @@
+2020-03-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebKit::LocalAuthenticator::deleteDuplicateCredential() should check buffer size before memcmp
+        https://bugs.webkit.org/show_bug.cgi?id=209156
+        <rdar://problem/60444655>
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing tests.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::deleteDuplicateCredential const):
+
 2020-03-17  Kate Cheney  <katherine_cheney@apple.com>
 
        Add internal debugging when initializing an app-bound session
