@@ -315,17 +315,23 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const S
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(visibleURL);
     MESSAGE_CHECK(!imageHandle.isNull());
+    // SharedMemory::Handle::size() is rounded up to the nearest page.
+    MESSAGE_CHECK(imageSize && imageSize <= imageHandle.size());
 
-    RefPtr<SharedMemory> sharedMemoryImage = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemoryImage = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryImage)
         return;
 
-    auto imageBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryImage->data()), imageSize);
+    auto imageBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryImage->data()), static_cast<size_t>(imageSize));
     RefPtr<SharedBuffer> archiveBuffer;
-    
+
     if (!archiveHandle.isNull()) {
-        RefPtr<SharedMemory> sharedMemoryArchive = SharedMemory::map(archiveHandle, SharedMemory::Protection::ReadOnly);
-        archiveBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryArchive->data()), archiveSize);
+        // SharedMemory::Handle::size() is rounded up to the nearest page.
+        MESSAGE_CHECK(archiveSize && archiveSize <= archiveHandle.size());
+        auto sharedMemoryArchive = SharedMemory::map(archiveHandle, SharedMemory::Protection::ReadOnly);
+        if (!sharedMemoryArchive)
+            return;
+        archiveBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryArchive->data()), static_cast<size_t>(archiveSize));
     }
     pageClient().setPromisedDataForImage(pasteboardName, WTFMove(imageBuffer), filename, extension, title, url, visibleURL, WTFMove(archiveBuffer));
 }
