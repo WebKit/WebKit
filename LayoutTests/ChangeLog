@@ -1,3 +1,48 @@
+2020-03-17  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r258455. rdar://problem/60539179
+
+    [Tree building] Block::attachIgnoringContinuation should allow inline tables as before child container
+    https://bugs.webkit.org/show_bug.cgi?id=209095
+    <rdar://problem/59837588>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    It's perfectly valid to have an inline table as the anonymous container for the before child.
+    It'll get wrapped inside an anonymous block right before we insert the block box candidate, so
+    the final result will be something like:
+    
+    new block level child (this is the child we are inserting)
+    anonymous block wrapper
+      inline table (this is the before child's inline container)
+        before child
+    
+    Test: fast/table/before-child-is-inline-table.html
+    
+    * rendering/updating/RenderTreeBuilderBlock.cpp:
+    (WebCore::RenderTreeBuilder::Block::attachIgnoringContinuation):
+    
+    LayoutTests:
+    
+    * fast/table/before-child-is-inline-table-expected.txt: Added.
+    * fast/table/before-child-is-inline-table.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258455 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-13  Zalan Bujtas  <zalan@apple.com>
+
+            [Tree building] Block::attachIgnoringContinuation should allow inline tables as before child container
+            https://bugs.webkit.org/show_bug.cgi?id=209095
+            <rdar://problem/59837588>
+
+            Reviewed by Simon Fraser.
+
+            * fast/table/before-child-is-inline-table-expected.txt: Added.
+            * fast/table/before-child-is-inline-table.html: Added.
+
 2020-03-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r254979. rdar://problem/58836694
