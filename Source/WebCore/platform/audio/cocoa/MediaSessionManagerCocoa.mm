@@ -42,10 +42,10 @@
 
 #include "MediaRemoteSoftLink.h"
 
-using namespace WebCore;
-
 static const size_t kWebAudioBufferSize = 128;
 static const size_t kLowPowerVideoBufferSize = 4096;
+
+namespace WebCore {
 
 #if PLATFORM(MAC)
 std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create()
@@ -334,4 +334,6 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 #endif // USE(MEDIAREMOTE)
 }
 
-#endif // USE(AUDIO_SESSION)
+} // namespace WebCore
+
+#endif // USE(AUDIO_SESSION) && PLATFORM(COCOA)
