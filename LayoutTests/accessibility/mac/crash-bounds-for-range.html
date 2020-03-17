@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div><a href="#">fake</a></div>
+<form novalidate="">
+<fake-radio id="radio1" data-id="jawns_01" data-name="jawns" data-label="Gritty"></fake-radio>
+<fake-radio data-id="jawns_02" data-name="jawns" data-label="Wawa"></fake-radio>
+</form>
+<div><a href="#">fake</a></div>
+<script>
+customElements.define(
+"fake-radio",
+class FakeRadio extends HTMLElement {
+  constructor() {
+    super();
+    let shadow = this.attachShadow({ mode: "open" });
+    let radio = document.createElement("input");
+    let label = document.createElement("label");
+    label.innerText = this.dataset.label;
+    radio.id = this.dataset.id;
+    radio.type = "radio";
+    radio.name = this.dataset.name;
+    label.setAttribute("for", this.dataset.id);
+
+    shadow.appendChild(radio);
+    shadow.appendChild(label);
+  }});
+</script>
+
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This test validates we don't crash asking for range for bounds when encountering a shadow dom element.");
+
+    if (window.accessibilityController) {
+        var element = accessibilityController.accessibleElementById("jawns_01");
+        var bounds = element.boundsForRange(0, 6);
+        shouldBeNonNull(element);
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

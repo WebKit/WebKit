@@ -1206,7 +1206,9 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
 {
     caretOffset = deprecatedEditingOffset();
     RenderObject* renderer = deprecatedNode()->renderer();
-
+    if (!renderer)
+        return;
+    
     if (renderer->isBR()) {
         auto& lineBreakRenderer = downcast<RenderLineBreak>(*renderer);
         lineBreakRenderer.ensureLineBoxes();
