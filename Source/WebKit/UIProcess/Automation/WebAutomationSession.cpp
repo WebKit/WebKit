@@ -346,6 +346,8 @@ void WebAutomationSession::createBrowsingContext(const String* optionalPresentat
         if (!page)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session failed to create a new browsing context.");
 
+        // WebDriver allows running commands in a browsing context which has not done any loads yet. Force WebProcess to be created so it can receive messages.
+        page->launchInitialProcessIfNecessary();
         callback->sendSuccess(protectedThis->handleForWebPageProxy(*page), toProtocol(protectedThis->m_client->currentPresentationOfPage(protectedThis.get(), *page)));
     });
 }

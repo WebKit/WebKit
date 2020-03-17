@@ -1,3 +1,18 @@
+2020-03-17  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r256882): WebDriver commands that run before initial navigation do not complete
+        https://bugs.webkit.org/show_bug.cgi?id=209185
+        <rdar://problem/60010248>
+
+        Reviewed by Brian Weinstein.
+
+        No new tests, covered by w3c/webdriver/tests/back/back.py.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::createBrowsingContext):
+        Force eager creation of WebProcess when a browsing context is created. This allows
+        all subsequent commands that use WebProcess IPC to proceed instead of hanging.
+
 2020-03-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix GTK build.
