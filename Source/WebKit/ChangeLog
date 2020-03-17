@@ -1,3 +1,19 @@
+2020-03-17  John Wilander  <wilander@apple.com>
+
+        Add quirk for cookie blocking latch mode ymail.com redirecting to yahoo.com under yahoo.com
+        https://bugs.webkit.org/show_bug.cgi?id=209193
+        <rdar://problem/60089022>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. Site-specific quirk tested manually on the site in question.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::unblockCookies):
+        (WebKit::NetworkDataTaskCocoa::needsFirstPartyCookieBlockingLatchModeQuirk const):
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+
 2020-03-17  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r256882): WebDriver commands that run before initial navigation do not complete
