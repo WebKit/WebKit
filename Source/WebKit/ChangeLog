@@ -1,5 +1,39 @@
 2020-03-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r258515. rdar://problem/60551856
+
+    [Cocoa] Crash under -[WKPreferenceObserver init]
+    https://bugs.webkit.org/show_bug.cgi?id=209145
+    
+    Reviewed by Darin Adler.
+    
+    Handle the case when calling [NSUserDefaults initWithSuiteName:] did not succeed.
+    
+    No new tests, since I have not been able to reproduce.
+    
+    * UIProcess/Cocoa/PreferenceObserver.mm:
+    (-[WKPreferenceObserver init]):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258515 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-16  Per Arne Vollan  <pvollan@apple.com>
+
+            [Cocoa] Crash under -[WKPreferenceObserver init]
+            https://bugs.webkit.org/show_bug.cgi?id=209145
+
+            Reviewed by Darin Adler.
+
+            Handle the case when calling [NSUserDefaults initWithSuiteName:] did not succeed.
+
+            No new tests, since I have not been able to reproduce.
+
+            * UIProcess/Cocoa/PreferenceObserver.mm:
+            (-[WKPreferenceObserver init]):
+
+2020-03-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r258518. rdar://problem/60517387
 
     [macOS] Accessibility sandbox regressions
