@@ -1,3 +1,42 @@
+2020-03-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r258381. rdar://problem/60539194
+
+    DFG nodes that take a TypedArray's storage need to keepAlive the TypedArray
+    https://bugs.webkit.org/show_bug.cgi?id=209035
+    
+    Reviewed by Saam Barati.
+    
+    It might be possible to produce a graph where the last reference to a TypedArray
+    is via a GetByVal or PutByVal. Since those nodes don't create any reference to the
+    TypedArray in B3 we may end up not keeping the TypedArray alive until after the
+    storage access.
+    
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsReadModifyWrite):
+    (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+    (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258381 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-12  Keith Miller  <keith_miller@apple.com>
+
+            DFG nodes that take a TypedArray's storage need to keepAlive the TypedArray
+            https://bugs.webkit.org/show_bug.cgi?id=209035
+
+            Reviewed by Saam Barati.
+
+            It might be possible to produce a graph where the last reference to a TypedArray
+            is via a GetByVal or PutByVal. Since those nodes don't create any reference to the
+            TypedArray in B3 we may end up not keeping the TypedArray alive until after the
+            storage access.
+
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsReadModifyWrite):
+            (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+            (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+
 2020-02-24  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r257134. rdar://problem/59676898
