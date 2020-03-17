@@ -103,7 +103,6 @@
 #include "VisibleUnits.h"
 #include "WheelEvent.h"
 #include "WheelEventDeltaFilter.h"
-#include "WheelEventTestMonitor.h"
 #include "WindowsKeyboardCodes.h"
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
@@ -2824,10 +2823,6 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
         m_frame.page()->pointerLockController().dispatchLockedWheelEvent(event);
         return true;
     }
-#endif
-
-#if PLATFORM(COCOA)
-    WheelEventTestMonitorCompletionDeferrer deferrer(m_frame.page()->wheelEventTestMonitor().get(), this, WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread);
 #endif
 
     m_isHandlingWheelEvent = true;

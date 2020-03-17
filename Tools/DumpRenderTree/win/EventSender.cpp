@@ -832,10 +832,6 @@ void mouseScrollBy(double x, double y, bool continuous)
     RECT rect;
     ::GetWindowRect(webViewWindow, &rect);
 
-    COMPtr<IWebFramePrivate> framePrivate;
-    if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
-        framePrivate->layout();
-
     if (x) {
         UINT scrollChars = 1;
         ::SystemParametersInfo(SPI_GETWHEELSCROLLCHARS, 0, &scrollChars, 0);
