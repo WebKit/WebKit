@@ -1,3 +1,9 @@
+2020-03-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Skip the http/wpt/notifications directory on iOS.
+
 2020-03-18  Zalan Bujtas  <zalan@apple.com>
 
         [MultiColumn] Ignore spanner boxes inside <legend>

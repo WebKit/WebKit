@@ -58,6 +58,7 @@ printing
 
 # Web Notifications are not supported on iOS.
 http/tests/notifications
+http/wpt/notifications
 fast/history/page-cache-notification-showing.html
 fast/history/page-cache-notification-suspendable.html
 imported/w3c/web-platform-tests/notifications/
