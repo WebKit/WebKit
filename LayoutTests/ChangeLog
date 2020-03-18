@@ -1,3 +1,17 @@
+2020-03-17  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Rebaseline after r258492.
+
+        Unreviewed test gardening.
+
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-path-01-b-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-path-02-b-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/marker-008-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/paint-order-001-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/wpe/svg/text/text-path-01-b-expected.txt:
+
 2020-03-17  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: [ macOS wk1 ] ASSERTION FAILED: _notifications.contains(notificationID) imported/w3c/web-platform-tests/notifications/constructor-basic.html is flaky crashing
