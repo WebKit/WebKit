@@ -222,7 +222,10 @@ int HTMLFrameElementBase::height()
 
 ScrollbarMode HTMLFrameElementBase::scrollingMode() const
 {
-    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(scrollingAttr), "no")
+    auto scrollingAttribute = attributeWithoutSynchronization(scrollingAttr);
+    return equalLettersIgnoringASCIICase(scrollingAttribute, "no")
+        || equalLettersIgnoringASCIICase(scrollingAttribute, "noscroll")
+        || equalLettersIgnoringASCIICase(scrollingAttribute, "off")
         ? ScrollbarAlwaysOff : ScrollbarAuto;
 }
 
