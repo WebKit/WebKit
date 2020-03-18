@@ -3500,4 +3500,6 @@ webkit.org/b/208053 imported/w3c/web-platform-tests/intersection-observer/v2/cro
 
 webkit.org/b/204312 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure Pass ]
 
+webkit.org/b/209257 svg/as-object/object-box-sizing-no-width-height.html [ Pass Failure ]
+
 webkit.org/b/208592 svg/custom/object-sizing-explicit-height.xhtml [ Pass Failure ]

@@ -2024,6 +2024,8 @@ webkit.org/b/208832 imported/w3c/web-platform-tests/webmessaging/Channel_postMes
 
 webkit.org/b/208592 svg/custom/object-sizing-explicit-height.xhtml [ Pass Failure ]
 
+webkit.org/b/209257 svg/as-object/object-box-sizing-no-width-height.html [ Pass Failure ]
+
 webkit.org/b/208930 accessibility/accessibility-node-memory-management.html [ Pass Failure ]
 
 webkit.org/b/209056 webgpu/whlsl/uint-bitwise.html [ Pass Crash ]
