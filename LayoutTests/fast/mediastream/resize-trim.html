@@ -28,8 +28,12 @@ promise_test(async () => {
     const ctx = canvas.getContext("2d");
     ctx.drawImage(video, 0 ,0);
 
-    assert_true(isPixelGray(ctx.getImageData(5, 5, 1, 1).data), "Pixel at 5x5 is not black.");
-    assert_true(isPixelGray(ctx.getImageData(10, 200, 1, 1).data), "Pixel at 10x200 is not black.");
+    let pixel = ctx.getImageData(5, 5, 1, 1).data;
+    assert_true(isPixelGray(pixel), `Pixel at 5x5 is not black, found {${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]}}`);
+
+    pixel = ctx.getImageData(10, 200, 1, 1).data;
+    assert_true(isPixelGray(pixel), `Pixel at 10x200 is not black, found {${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]}}`);
+
 }, "Video frames are resized in letterbox-mode when captured at non-native size.");
 
         </script>

@@ -29,6 +29,18 @@
     {
         return pixel[0] === 128 && pixel[1] === 128 && pixel[2] === 128 && pixel[3] === 255;
     }
+    
+    function checkPixels(x, y, test, expectedToBeTrue)
+    {
+        buffer = context.getImageData(x, y, 1, 1).data;
+        if (expectedToBeTrue)
+            shouldBeTrue(`${test.name}(buffer)`);
+        else
+            shouldBeFalse(`${test.name}(buffer)`);
+
+        if (test(buffer) != expectedToBeTrue)
+            debug(`Found: {${buffer[0]}, ${buffer[1]}, ${buffer[2]}, ${buffer[3]}}`);
+    }
 
     function verifyFramesBeingDisplayed()
     {
@@ -40,22 +52,16 @@
         context.clearRect(0, 0, canvas.width, canvas.height);
         let x = canvas.width * .035;
         let y = canvas.height * 0.6 + 2 + x;
-        buffer = context.getImageData(x, y, 1, 1).data;
-        shouldBeTrue('isPixelTransparent(buffer)');
+        checkPixels(x, y, isPixelTransparent, true)
         
         evalAndLog(`context.drawImage(videos[${currentTest}], 0, 0, ${canvas.width}, ${canvas.height})`);
-        buffer = context.getImageData(x, y, 1, 1).data;
-        shouldBeFalse('isPixelTransparent(buffer)');
-        shouldBeFalse('isPixelBlack(buffer)');
+        checkPixels(x, y, isPixelTransparent, false)
+        checkPixels(x, y, isPixelBlack, false)
 
         x = canvas.width * .05;
         y = canvas.height * .05;
-        buffer = context.getImageData(x, y, 1, 1).data;
-        shouldBeFalse('isPixelTransparent(buffer)');
-        if (!currentTest)
-            shouldBeTrue('isPixelBlack(buffer)');
-        else
-            shouldBeTrue('isPixelGray(buffer)');
+        checkPixels(x, y, isPixelTransparent, false)
+        checkPixels(x, y, currentTest ? isPixelGray : isPixelBlack, true)
 
         if (currentTest >= 1) {
             finishJSTest();

@@ -13,8 +13,20 @@
     let context;
     let mediaStream;
     let video;
-    
     let buffer;
+    
+    let timeout;
+
+    function updateWatchdog()
+    {
+        if (timeout)
+            clearTimeout(timeout);
+
+        timeout = setTimeout(() => {
+            console.log("Test took too long, timing out!");
+            finishJSTest();
+        }, 30000);
+    }
 
     function isPixelBlack(pixel)
     {
@@ -63,6 +75,8 @@
         } else {
             debug('');
             video.pause();
+            if (timeout)
+                clearTimeout(timeout);
             finishJSTest();
         }
     }
@@ -70,6 +84,7 @@
     function reenableTrack()
     {
         mediaStream.getVideoTracks()[0].enabled = true;
+        updateWatchdog();
         debug(`<br> === video track reenabled, should render current frame ===`);
 
         // The video is not guaranteed to render non-black frames before the canvas is drawn to and the pixels are checked.
@@ -96,6 +111,7 @@
     function disableAllTracks()
     {
         mediaStream.getVideoTracks()[0].enabled = false;
+        updateWatchdog();
         debug('<br> === all video tracks disabled ===');
         
         // The video is not guaranteed to render black frames before the canvas is drawn to and the pixels are checked.
@@ -105,6 +121,7 @@
 
     function beginTestRound()
     {
+        updateWatchdog();
         debug('<br> === beginning round of pixel tests ===');
         attempt(10, checkPixels, disableAllTracks);
     }
@@ -125,6 +142,8 @@
 
         video = document.querySelector('video');
         video.addEventListener('canplay', canplay);
+        
+        updateWatchdog();
 
         navigator.mediaDevices.getUserMedia({ video : true })
             .then((stream) => {
