@@ -86,7 +86,7 @@ static ExceptionOr<LengthBox> parseRootMargin(String& rootMargin)
 
 ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& document, Ref<IntersectionObserverCallback>&& callback, IntersectionObserver::Init&& init)
 {
-    Node* root = nullptr;
+    ContainerNode* root = nullptr;
     if (init.root) {
         WTF::switchOn(*init.root, [&root] (RefPtr<Element> element) {
             root = element.get();
@@ -115,7 +115,7 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
     return adoptRef(*new IntersectionObserver(document, WTFMove(callback), root, rootMarginOrException.releaseReturnValue(), WTFMove(thresholds)));
 }
 
-IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionObserverCallback>&& callback, Node* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds)
+IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionObserverCallback>&& callback, ContainerNode* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds)
     : ActiveDOMObject(callback->scriptExecutionContext())
     , m_root(root)
     , m_rootMargin(WTFMove(parsedRootMargin))

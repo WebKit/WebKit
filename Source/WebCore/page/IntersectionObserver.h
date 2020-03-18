@@ -41,7 +41,7 @@ namespace WebCore {
 
 class Document;
 class Element;
-class Node;
+class ContainerNode;
 
 struct IntersectionObserverRegistration {
     WeakPtr<IntersectionObserver> observer;
@@ -74,7 +74,7 @@ public:
 
     Document* trackingDocument() const { return m_root ? &m_root->document() : m_implicitRootDocument.get(); }
 
-    Node* root() const { return m_root; }
+    ContainerNode* root() const { return m_root; }
     String rootMargin() const;
     const LengthBox& rootMarginBox() const { return m_rootMargin; }
     const Vector<double>& thresholds() const { return m_thresholds; }
@@ -105,13 +105,13 @@ public:
     void stop() override;
 
 private:
-    IntersectionObserver(Document&, Ref<IntersectionObserverCallback>&&, Node* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds);
+    IntersectionObserver(Document&, Ref<IntersectionObserverCallback>&&, ContainerNode* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds);
 
     bool removeTargetRegistration(Element&);
     void removeAllTargets();
 
     WeakPtr<Document> m_implicitRootDocument;
-    Node* m_root;
+    ContainerNode* m_root;
     LengthBox m_rootMargin;
     Vector<double> m_thresholds;
     RefPtr<IntersectionObserverCallback> m_callback;
