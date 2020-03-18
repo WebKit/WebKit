@@ -1,3 +1,35 @@
+2020-03-18  youenn fablet  <youenn@apple.com>
+
+        FrameLoader should own its FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=208918
+
+        Reviewed by Geoff Garen.
+
+        Update according new Frame/FrameLoader constructors and FrameLoaderClient interface.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient::setWebFrame):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::~WebFrameLoaderClient):
+        (WebFrameLoaderClient::cancelledError const):
+        (WebFrameLoaderClient::blockedError const):
+        (WebFrameLoaderClient::blockedByContentBlockerError const):
+        (WebFrameLoaderClient::cannotShowURLError const):
+        (WebFrameLoaderClient::interruptedForPolicyChangeError const):
+        (WebFrameLoaderClient::blockedByContentFilterError const):
+        (WebFrameLoaderClient::cannotShowMIMETypeError const):
+        (WebFrameLoaderClient::fileDoesNotExistError const):
+        (WebFrameLoaderClient::pluginWillHandleLoadError const):
+        (WebFrameLoaderClient::shouldFallBack const):
+        (WebFrameLoaderClient::userAgent const):
+        * WebView/WebFrame.mm:
+        (+[WebFrame _createFrameWithPage:frameName:frameView:ownerElement:]):
+        (+[WebFrame _createMainFrameWithPage:frameName:frameView:]):
+        (+[WebFrame _createMainFrameWithSimpleHTMLDocumentWithPage:frameView:style:]):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
 2020-03-17  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: [ macOS wk1 ] ASSERTION FAILED: _notifications.contains(notificationID) imported/w3c/web-platform-tests/notifications/constructor-basic.html is flaky crashing

@@ -467,6 +467,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
+    auto mainFrame = WebFrame::create();
+
     PageConfiguration pageConfiguration(
         WebProcess::singleton().sessionID(),
         makeUniqueRef<WebEditorClient>(this),
@@ -476,6 +478,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebBackForwardListProxy::create(*this),
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
+        makeUniqueRef<WebFrameLoaderClient>(mainFrame.copyRef()),
         makeUniqueRef<MediaRecorderProvider>()
     );
     pageConfiguration.chromeClient = new WebChromeClient(*this);
@@ -491,7 +494,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
     pageConfiguration.plugInClient = makeUnique<WebPlugInClient>(*this);
-    pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.diagnosticLoggingClient = makeUnique<WebDiagnosticLoggingClient>(*this);
     pageConfiguration.performanceLoggingClient = makeUnique<WebPerformanceLoggingClient>(*this);
 
@@ -571,7 +573,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     // in modern WebKit.
     m_page->settings().setBackForwardCacheExpirationInterval(Seconds::infinity());
 
-    m_mainFrame = WebFrame::createWithCoreMainFrame(this, &m_page->mainFrame());
+    mainFrame->initWithCoreMainFrame(*this, m_page->mainFrame());
+    m_mainFrame = WTFMove(mainFrame);
+
     m_drawingArea->updatePreferences(parameters.store);
 
     setBackgroundExtendsBeyondPage(parameters.backgroundExtendsBeyondPage);

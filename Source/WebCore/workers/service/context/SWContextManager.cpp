@@ -182,17 +182,6 @@ void SWContextManager::stopAllServiceWorkers()
         stopWorker(serviceWorker, workerTerminationTimeout, [] { });
 }
 
-void SWContextManager::addServiceWorkerFrameLoaderClient(std::unique_ptr<FrameLoaderClient>&& client)
-{
-    m_serviceWorkerFrameLoaderClients.add(WTFMove(client));
-}
-
-void SWContextManager::removeServiceWorkerFrameLoaderClient(FrameLoaderClient& client)
-{
-    ASSERT(m_serviceWorkerFrameLoaderClients.contains(&client));
-    m_serviceWorkerFrameLoaderClients.remove(&client);
-}
-
 } // namespace WebCore
 
 #endif
