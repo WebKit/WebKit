@@ -2035,3 +2035,5 @@ webkit.org/b/209079 fast/animation/request-animation-frame-timestamps.html [ Pas
 webkit.org/b/209084 css3/selectors3/xml/css3-modsel-d4.xml [ Pass Failure ]
 
 webkit.org/b/207150 platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html [ Pass Failure ]
+
+webkit.org/b/209239 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement.html [ Pass Failure ]
