@@ -501,7 +501,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHan
     Ref<ResourceLoader> protectedThis(*this);
 
     if (r.usedLegacyTLS()) {
-        if (auto* frame = m_frame.get()) {
+        if (m_frame) {
             if (auto* document = m_frame->document())
                 document->setUsedLegacyTLS(true);
         }
