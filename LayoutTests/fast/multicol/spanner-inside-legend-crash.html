@@ -1,0 +1,13 @@
+<style>
+.container, fieldset {
+    column-count: 2;
+}
+.spanner {
+    column-span: all;
+}
+</style>
+<div class=container><fieldset><legend><div class=spanner>spanners should be ignored inside legends(legends are not part of the flow)</div></legend></fieldset></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
