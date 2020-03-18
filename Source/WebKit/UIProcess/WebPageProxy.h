@@ -1713,6 +1713,7 @@ public:
 #endif
 
     void setIsNavigatingToAppBoundDomainTesting(bool, CompletionHandler<void()>&&);
+    void isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&&);
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

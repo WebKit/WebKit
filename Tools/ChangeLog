@@ -1,3 +1,42 @@
+2020-03-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Expand In-App-Browser-Privacy testing
+        https://bugs.webkit.org/show_bug.cgi?id=209142
+        <rdar://problem/60496618>
+
+        Reviewed by Darin Adler.
+
+        Expanded test coverage by adding new tests and creating a custom url
+        scheme handler to get around the fact that local file loads are
+        always classified as app-bound.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[InAppBrowserSchemeHandler webView:startURLSchemeTask:]):
+        If the path indicates testing user scripts on load, notify the script message
+        handler that the navigation has finished. If the path indicates
+        testing user-agent scripts, set the window.wkUserScriptInjected
+        variable to true. A user agent script will attempt to read this
+        variable and should fail.
+
+        (-[InAppBrowserSchemeHandler webView:stopURLSchemeTask:]):
+        (initializeInAppBrowserPrivacyTestSettings):
+        Basic test setup. Initialize the main run loop and make sure we are
+        starting with a clean state.
+
+        (TEST):
+        Add tests for all protocols checked in shouldBeTreatedAsAppBound,
+        except for blob files which must be generated within the web content.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/in-app-browser-privacy-local-file.html: Added.
+        Basic html document to test local file loads are classified as
+        app-bound.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/in-app-browser-privacy-test-user-agent-script.html: Removed.
+        * TestWebKitAPI/Tests/WebKitCocoa/in-app-browser-privacy-test-user-script.html: Removed.
+        These files are no longer needed as their content is directly copied
+        into the URL scheme handler.
+
 2020-03-17  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: [ macOS wk1 ] ASSERTION FAILED: _notifications.contains(notificationID) imported/w3c/web-platform-tests/notifications/constructor-basic.html is flaky crashing

@@ -3123,6 +3123,11 @@ void WebPageProxy::setIsNavigatingToAppBoundDomainTesting(bool isNavigatingToApp
     sendWithAsyncReply(Messages::WebPage::SetIsNavigatingToAppBoundDomainTesting(isNavigatingToAppBoundDomain), WTFMove(completionHandler));
 }
 
+void WebPageProxy::isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(m_isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::Yes);
+}
+
 void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, API::Navigation* navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, WebFrameProxy& frame, API::WebsitePolicies* policies, Ref<PolicyDecisionSender>&& sender)
 {
     Ref<WebsiteDataStore> websiteDataStore = m_websiteDataStore.copyRef();

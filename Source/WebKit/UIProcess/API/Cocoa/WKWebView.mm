@@ -2694,6 +2694,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _page->recordNavigationSnapshot(item._item);
 }
 
+- (void)_isNavigatingToAppBoundDomain:(void(^)(BOOL))completionHandler
+{
+    _page->isNavigatingToAppBoundDomainTesting([completionHandler = makeBlockPtr(completionHandler)] (bool isAppBound) {
+        completionHandler(isAppBound);
+    });
+}
+
 - (void)_setIsNavigatingToAppBoundDomain:(BOOL)isNavigatingToAppBoundDomain completionHandler:(void (^)(void))completionHandler
 {
     _page->setIsNavigatingToAppBoundDomainTesting(isNavigatingToAppBoundDomain, [completionHandler = makeBlockPtr(completionHandler)]() {

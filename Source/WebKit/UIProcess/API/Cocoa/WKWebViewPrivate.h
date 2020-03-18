@@ -340,6 +340,7 @@ for this property.
 
 - (void)_getProcessDisplayNameWithCompletionHandler:(void (^)(NSString *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+- (void)_isNavigatingToAppBoundDomain:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_setIsNavigatingToAppBoundDomain:(BOOL)isNavigatingToAppBoundDomain completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_grantAccessToPreferenceService WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
