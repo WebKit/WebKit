@@ -239,6 +239,8 @@ enum CompositingPolicy {
     // Spatial Navigation testing
     [MayThrowException] unsigned long lastSpatialNavigationCandidateCount();
 
+    readonly attribute unsigned long inflightBeaconsCount;
+
     // CSS Animation testing.
     unsigned long numberOfActiveAnimations();
     [MayThrowException] void suspendAnimations();

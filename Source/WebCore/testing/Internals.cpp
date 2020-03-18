@@ -133,6 +133,7 @@
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
+#include "NavigatorBeacon.h"
 #include "NavigatorMediaDevices.h"
 #include "NetworkLoadInformation.h"
 #include "Page.h"
@@ -635,6 +636,23 @@ InternalSettings* Internals::settings() const
     if (!page)
         return nullptr;
     return InternalSettings::from(page);
+}
+
+unsigned Internals::inflightBeaconsCount() const
+{
+    auto* document = contextDocument();
+    if (!document)
+        return 0;
+
+    auto* window = document->domWindow();
+    if (!window)
+        return 0;
+
+    auto* navigator = window->optionalNavigator();
+    if (!navigator)
+        return 0;
+
+    return NavigatorBeacon::from(*navigator)->inflightBeaconsCount();
 }
 
 unsigned Internals::workerThreadCount() const

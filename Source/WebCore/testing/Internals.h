@@ -657,6 +657,8 @@ public:
     void simulateSystemSleep() const;
     void simulateSystemWake() const;
 
+    unsigned inflightBeaconsCount() const;
+
     enum class PageOverlayType { View, Document };
     ExceptionOr<Ref<MockPageOverlay>> installMockPageOverlay(PageOverlayType);
     ExceptionOr<String> pageOverlayLayerTreeAsText(unsigned short flags) const;

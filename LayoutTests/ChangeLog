@@ -1,3 +1,17 @@
+2020-03-18  Chris Dumez  <cdumez@apple.com>
+
+        [ Mac wk2 ] http/wpt/beacon/beacon-quota.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207894
+        <rdar://problem/59551688>
+
+        Reviewed by Geoffrey Garen.
+
+        Update test to address flakiness and unskip it.
+
+        * http/wpt/beacon/beacon-quota-expected.txt:
+        * http/wpt/beacon/beacon-quota.html:
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Default attachment icon is not necessarily the same as the file attachment icon whose extension is ".dat"
