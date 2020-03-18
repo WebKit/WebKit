@@ -193,5 +193,12 @@ Notification* core(WebNotification *notification)
 #endif
 }
 
+- (void)finalize
+{
+#if ENABLE(NOTIFICATIONS)
+    core(self)->finalize();
+#endif
+}
+
 @end
 

@@ -143,7 +143,10 @@
 
 - (void)reset
 {
-    _notifications.clear();
+    auto notifications = WTFMove(_notifications);
+    for (auto notification : notifications.values())
+        [notification finalize];
+
     _notificationViewMap.clear();
     [self removeAllWebNotificationPermissions];
 }

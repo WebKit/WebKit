@@ -197,6 +197,7 @@ fast/dom/Geolocation/ [ Skip ]
 
 # TODO This port doesn't support Notifications.
 http/tests/notifications/ [ Skip ]
+http/wpt/notifications/ [ Skip ]
 fast/history/page-cache-notification-showing.html [ Skip ]
 fast/history/page-cache-notification-suspendable.html [ Skip ]
 

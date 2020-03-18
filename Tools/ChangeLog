@@ -1,3 +1,23 @@
+2020-03-17  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: [ macOS wk1 ] ASSERTION FAILED: _notifications.contains(notificationID) imported/w3c/web-platform-tests/notifications/constructor-basic.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=207307
+        <rdar://problem/59206964>
+
+        Reviewed by Alex Christensen.
+
+        When [MockWebNotificationProvider reset] was called at the end of the test, it would remove all
+        notifications from the map but not tell WebCore that the notification were discarded. As a result,
+        WebCore would later tell the MockWebNotificationProvider to cancel the notification but this
+        notification would no longer be in the map, causing us to hit an assertion in debug.
+
+        To address the issue, we now call Notification::finalize() in [MockWebNotificationProvider reset]
+        to let WebCore know the notification was discarded. This is similar to what is already done for
+        WebKit2 in WebNotificationManager::clearNotifications().
+
+        * DumpRenderTree/mac/MockWebNotificationProvider.mm:
+        (-[MockWebNotificationProvider reset]):
+
 2020-03-17  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo][FTW] Update path to requirements download

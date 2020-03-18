@@ -50,5 +50,6 @@
 - (void)dispatchCloseEvent;
 - (void)dispatchClickEvent;
 - (void)dispatchErrorEvent;
+- (void)finalize;
 
 @end
