@@ -1,3 +1,19 @@
+2020-03-18  Antoine Quint  <graouts@apple.com>
+
+        [ macOS iOS ] animations/play-state-paused.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206682
+        <rdar://problem/58840950>
+
+        Reviewed by Antti Koivisto.
+
+        To make this test robust we animate a non-accelerated property and we use the Web Animations API to set the time
+        at which we want to pause the animation (1s).
+
+        * animations/play-state-paused-expected.txt:
+        * animations/play-state-paused.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-03-18  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Migrate to Flatpak-based dev SDK

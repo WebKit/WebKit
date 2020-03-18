@@ -30,8 +30,8 @@
       background-color: green;
     }
     @-webkit-keyframes "move1" {
-      from { -webkit-transform: translateX(0px); }
-      to   { -webkit-transform: translateX(300px); }
+      from { margin-left: 0px; }
+      to   { margin-left: 300px; }
     }
     #result {
       color: white; /* hide from pixel results */
@@ -41,14 +41,16 @@
   <script type="text/javascript" charset="utf-8">
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
-      ["move1", 0.5, "box", "webkitTransform", [1,0,0,1,75,0], 20],
-      ["move1", 1.0, "box", "webkitTransform", [1,0,0,1,150,0], 20],
-      ["move1", 2.5, "box", "webkitTransform", [1,0,0,1,150,0], 20],
+      ["move1", 0.5, "box", "margin-left", 75, 20],
+      ["move1", 1.0, "box", "margin-left", 150, 20],
+      ["move1", 2.5, "box", "margin-left", 150, 20],
     ];
 
     function pauseAnimation()
     {
-        document.getElementById("box").style.webkitAnimationPlayState = "paused";
+        const box = document.getElementById("box");
+        box.style.webkitAnimationPlayState = "paused";
+        box.getAnimations()[0].currentTime = 1000;
     }
 
     function setTimers()
