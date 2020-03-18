@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ MediaDeviceSandboxExtensions::MediaDeviceSandboxExtensions(Vector<String> ids, S
     : m_ids(ids)
     , m_handles(WTFMove(handles))
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(m_ids.size() == m_handles.size());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_ids.size() == m_handles.size());
 }
 
 void MediaDeviceSandboxExtensions::encode(IPC::Encoder& encoder) const
@@ -61,8 +61,8 @@ bool MediaDeviceSandboxExtensions::decode(IPC::Decoder& decoder, MediaDeviceSand
 
 std::pair<String, RefPtr<SandboxExtension>> MediaDeviceSandboxExtensions::operator[](size_t i)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(m_ids.size() == m_handles.size());
-    ASSERT_WITH_SECURITY_IMPLICATION(i < m_ids.size());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_ids.size() == m_handles.size());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(i < m_ids.size());
     return { m_ids[i], SandboxExtension::create(WTFMove(m_handles[i])) };
 }
 
