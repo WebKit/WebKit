@@ -264,16 +264,17 @@ Expected<void, String> validatePreflightResponse(const ResourceRequest& request,
     if (!accessControlCheckResult)
         return accessControlCheckResult;
 
-    auto result = makeUnique<CrossOriginPreflightResultCacheItem>(storedCredentialsPolicy);
-    String errorDescription;
-    // FIXME: allowsCrossOriginMethod and allowsCrossOriginHeaders should return Expected<void, String> to avoid having an out parameter.
-    if (!result->parse(response)
-        || !result->allowsCrossOriginMethod(request.httpMethod(), storedCredentialsPolicy, errorDescription)
-        || !result->allowsCrossOriginHeaders(request.httpHeaderFields(), storedCredentialsPolicy, errorDescription)) {
-        return makeUnexpected(errorDescription);
-    }
+    auto result = CrossOriginPreflightResultCacheItem::create(storedCredentialsPolicy, response);
+    if (!result.has_value())
+        return makeUnexpected(WTFMove(result.error()));
 
-    CrossOriginPreflightResultCache::singleton().appendEntry(securityOrigin.toString(), request.url(), WTFMove(result));
+    auto entry = WTFMove(result.value());
+    auto errorDescription = entry->validateMethodAndHeaders(request.httpMethod(), request.httpHeaderFields());
+    CrossOriginPreflightResultCache::singleton().appendEntry(securityOrigin.toString(), request.url(), entry.moveToUniquePtr());
+
+    if (errorDescription)
+        return makeUnexpected(WTFMove(*errorDescription));
+
     return { };
 }
 

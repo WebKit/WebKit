@@ -1,3 +1,17 @@
+2020-03-18  youenn fablet  <youenn@apple.com>
+
+        Make sure a preflight fails if response headers are invalid
+        https://bugs.webkit.org/show_bug.cgi?id=208924
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/cors/cors-preflight-response-validation.any-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-response-validation.any.html: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-response-validation.any.js: Added.
+        (corsPreflightResponseValidation):
+        * web-platform-tests/fetch/api/cors/cors-preflight-response-validation.any.worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/cors/cors-preflight-response-validation.any.worker.html: Added.
+
 2020-03-17  Frederic Wang  <fwang@igalia.com>
 
         Update wpt tests imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page

@@ -156,7 +156,7 @@ bool addToAccessControlAllowList(const String& string, unsigned start, unsigned 
 }
 
 template<class HashType = DefaultHash<String>::Hash>
-HashSet<String, HashType> parseAccessControlAllowList(const String& string)
+Optional<HashSet<String, HashType>> parseAccessControlAllowList(const String& string)
 {
     HashSet<String, HashType> set;
     unsigned start = 0;
@@ -172,7 +172,7 @@ HashSet<String, HashType> parseAccessControlAllowList(const String& string)
         if (!addToAccessControlAllowList(string, start, string.length() - 1, set))
             return { };
     }
-    return set;
+    return WTFMove(set);
 }
 
 }

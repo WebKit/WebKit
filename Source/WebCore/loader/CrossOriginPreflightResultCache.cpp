@@ -52,10 +52,15 @@ static bool parseAccessControlMaxAge(const String& string, Seconds& expiryDelta)
     return ok;
 }
 
-bool CrossOriginPreflightResultCacheItem::parse(const ResourceResponse& response)
+Expected<UniqueRef<CrossOriginPreflightResultCacheItem>, String> CrossOriginPreflightResultCacheItem::create(StoredCredentialsPolicy policy, const ResourceResponse& response)
 {
-    m_methods = parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods));
-    m_headers = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlAllowHeaders));
+    auto methods = parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods));
+    if (!methods)
+        return makeUnexpected(makeString("Header Access-Control-Allow-Methods has an invalid value: ", response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods)));
+
+    auto headers = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlAllowHeaders));
+    if (!headers)
+        return makeUnexpected(makeString("Header Access-Control-Allow-Headers has an invalid value: ", response.httpHeaderField(HTTPHeaderName::AccessControlAllowHeaders)));
 
     Seconds expiryDelta = 0_s;
     if (parseAccessControlMaxAge(response.httpHeaderField(HTTPHeaderName::AccessControlMaxAge), expiryDelta)) {
@@ -64,8 +69,17 @@ bool CrossOriginPreflightResultCacheItem::parse(const ResourceResponse& response
     } else
         expiryDelta = defaultPreflightCacheTimeout;
 
-    m_absoluteExpiryTime = MonotonicTime::now() + expiryDelta;
-    return true;
+    return makeUniqueRef<CrossOriginPreflightResultCacheItem>(MonotonicTime::now() + expiryDelta, policy, WTFMove(*methods), WTFMove(*headers));
+}
+
+Optional<String> CrossOriginPreflightResultCacheItem::validateMethodAndHeaders(const String& method, const HTTPHeaderMap& requestHeaders) const
+{
+    String errorDescription;
+    if (!allowsCrossOriginMethod(method, m_storedCredentialsPolicy, errorDescription))
+        return WTFMove(errorDescription);
+    if (!allowsCrossOriginHeaders(requestHeaders, m_storedCredentialsPolicy, errorDescription))
+        return WTFMove(errorDescription);
+    return { };
 }
 
 bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String& method, StoredCredentialsPolicy storedCredentialsPolicy, String& errorDescription) const
