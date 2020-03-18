@@ -1,5 +1,16 @@
 2020-03-18  Brent Fulgham  <bfulgham@apple.com>
 
+        Switch from debug ASSERT to RELEASE_ASSERT in toNPObjectProxy
+        https://bugs.webkit.org/show_bug.cgi?id=209212
+        <rdar://problem/59595502>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/Plugins/NPObjectProxy.h:
+        (WebKit::NPObjectProxy::toNPObjectProxy):
+
+2020-03-18  Brent Fulgham  <bfulgham@apple.com>
+
         Switch to release asserts for MediaDeviceSandboxExtension class
         https://bugs.webkit.org/show_bug.cgi?id=209211
         <rdar://problem/59595299>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NPObjectProxy_h
-#define NPObjectProxy_h
+#pragma once
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -46,7 +45,7 @@ public:
     
     static NPObjectProxy* toNPObjectProxy(NPObject* npObject)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(isNPObjectProxy(npObject));
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isNPObjectProxy(npObject));
         return static_cast<NPObjectProxy*>(npObject);
     }
 
@@ -92,5 +91,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-#endif // NPObjectProxy_h
