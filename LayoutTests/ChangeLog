@@ -1,3 +1,18 @@
+2020-03-18  Antoine Quint  <graouts@apple.com>
+
+        animations/animation-direction-reverse.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206671
+        <rdar://problem/58838216>
+
+        Reviewed by Antti Koivisto.
+
+        To make this test robust we animate a non-accelerated property.
+
+        * animations/animation-direction-reverse-expected.txt:
+        * animations/animation-direction-reverse.html:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-03-18  Eric Carlson  <eric.carlson@apple.com>
 
         Update some fast/mediastream to make failures easier to diagnose.
