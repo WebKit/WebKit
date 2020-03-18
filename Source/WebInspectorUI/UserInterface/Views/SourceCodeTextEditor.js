@@ -1941,6 +1941,10 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 if (!domNode.ownerDocument)
                     return;
 
+                WI.bindInteractionsForNodeToElement(domNode, titleElement, {
+                    ignoreClick: true,
+                });
+
                 var goToButton = titleElement.appendChild(WI.createGoToArrowButton());
                 goToButton.addEventListener("click", function() {
                     WI.domManager.inspectElement(nodeId, {
