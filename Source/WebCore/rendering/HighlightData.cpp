@@ -175,6 +175,7 @@ RenderObject::HighlightState HighlightData::highlightStateForRenderer(RenderObje
     auto* highlightDataEnd = m_renderRange.end();
     if (highlightDataEnd)
         highlightEnd = rendererAfterOffset(*highlightDataEnd, m_renderRange.endOffset().value());
+    UNUSED_PARAM(highlightEnd);
     HighlightIterator highlightIterator(m_renderRange.start());
     for (auto* currentRenderer = m_renderRange.start(); currentRenderer && currentRenderer != m_renderRange.end(); currentRenderer = highlightIterator.next()) {
         if (currentRenderer == m_renderRange.start() || currentRenderer == m_renderRange.end())
