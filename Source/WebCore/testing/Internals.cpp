@@ -5493,6 +5493,8 @@ int Internals::readPreferenceInteger(const String& domain, const String& key)
     Boolean keyExistsAndHasValidFormat = false;
     return CFPreferencesGetAppIntegerValue(key.createCFString().get(), domain.createCFString().get(), &keyExistsAndHasValidFormat);
 #else
+    UNUSED_PARAM(domain);
+    UNUSED_PARAM(key);
     return -1;
 #endif
 }
@@ -5500,16 +5502,22 @@ int Internals::readPreferenceInteger(const String& domain, const String& key)
 #if !PLATFORM(COCOA)
 String Internals::encodedPreferenceValue(const String& domain, const String& key)
 {
+    UNUSED_PARAM(domain);
+    UNUSED_PARAM(key);
     return emptyString();
 }
 
 String Internals::getUTIFromMIMEType(const String& mimeType)
 {
+    UNUSED_PARAM(mimeType);
     return emptyString();
 }
 
 String Internals::getUTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI)
 {
+    UNUSED_PARAM(tagClass);
+    UNUSED_PARAM(tag);
+    UNUSED_PARAM(conformingToUTI);
     return emptyString();
 }
 
