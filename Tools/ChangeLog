@@ -1,3 +1,16 @@
+2020-03-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo][FTW] Update path to requirements download
+        https://bugs.webkit.org/show_bug.cgi?id=209202
+
+        Reviewed by Ross Kirsling.
+
+        Repository was renamed from WinCairoRequirements to WebKitRequirements in the
+        WebKitForWindows org on GitHub. Additionally the .zip file was renamed to
+        WebKitRequirementsWin64.zip.
+
+        * Scripts/update-webkit-wincairo-libs.py:
+
 2020-03-17  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Resubmit patches to commit-queue which were cq- by commit-queue and later cq+
