@@ -1062,20 +1062,3 @@
         (syscall-number SYS_shared_region_map_and_slide_2_np) ;; <rdar://problem/60294880>
     )
 )
-
-(when (defined? 'mach-bootstrap)
-    (allow mach-bootstrap
-        (apply-message-filter
-            (allow xpc-message-send (with report) (with telemetry))
-            (allow xpc-message-send (message-number 206))
-            (allow xpc-message-send (message-number 207))
-            (allow xpc-message-send (message-number 711))
-            (allow xpc-message-send (message-number 712))
-            (allow xpc-message-send (message-number 718))
-            (allow xpc-message-send (message-number 800))
-            (allow xpc-message-send (message-number 803))
-            (allow xpc-message-send (message-number 804))
-            (allow xpc-message-send (message-number 805))
-        )
-    )
-)
