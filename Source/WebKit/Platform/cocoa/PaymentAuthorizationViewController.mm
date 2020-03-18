@@ -86,10 +86,12 @@
     [self _willFinishWithError:error];
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didRequestMerchantSession:(void(^)(PKPaymentMerchantSession *, NSError *))completion
 {
     [self _didRequestMerchantSession:completion];
 }
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @end
 

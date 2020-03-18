@@ -1,3 +1,9 @@
+2020-03-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix iOS build with recent SDKs.
+
+        * Platform/cocoa/PaymentAuthorizationViewController.mm:
+
 2020-03-18  Megan Gardner  <megan_gardner@apple.com>
 
         Remove unneeded and incorrect respondsToSelector checks.
