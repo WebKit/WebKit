@@ -1,0 +1,10 @@
+
+FAIL text-orientation initial value assert_equals: expected (string) "mixed" but got (undefined) undefined
+FAIL -webkit-text-orientation: upright assert_equals: expected (string) "upright" but got (undefined) undefined
+FAIL -webkit-text-orientation: sideways assert_equals: expected (string) "sideways" but got (undefined) undefined
+FAIL text-orientation should inherit assert_equals: expected (string) "upright" but got (undefined) undefined
+FAIL -webkit-text-orientation: mixed assert_equals: expected (string) "mixed" but got (undefined) undefined
+FAIL -webkit-text-orientation: initial assert_equals: expected (string) "mixed" but got (undefined) undefined
+FAIL -webkit-text-orientation: inherit assert_equals: expected (string) "upright" but got (undefined) undefined
+FAIL -webkit-text-orientation: foo assert_equals: expected (string) "upright" but got (undefined) undefined
+

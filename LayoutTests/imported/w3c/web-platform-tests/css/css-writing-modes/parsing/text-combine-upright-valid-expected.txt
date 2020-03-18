@@ -1,0 +1,4 @@
+
+FAIL e.style['text-combine-upright'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-combine-upright'] = "all" should set the property value assert_not_equals: property should be set got disallowed value ""
+

@@ -1,3 +1,17 @@
+2020-03-18  Frank Yang  <guowei_yang@apple.com>
+
+        [CSS Writing Modes] Import css/css-writing-modes from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=209088
+
+        Reviewed by Myles C. Maxfield.
+
+        Turns out that the imported tests from w3c in LayoutTests doesn't included
+        css-writing-modes, which is a set of tests that checks the behavior of 
+        css properties like "text-orientation". This patch is for importing those
+        tests in LayoutTests/import/w3c/css. 
+
+        * TestExpectations:
+
 2020-03-18  Antoine Quint  <graouts@apple.com>
 
         [macOS WK1] Layout Test media/modern-media-controls/compact-media-controls/compact-media-controls-constructor.html is flaky

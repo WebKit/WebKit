@@ -1,3 +1,18 @@
+2020-03-18  Frank Yang  <guowei_yang@apple.com>
+
+        [CSS Writing Modes] Import css/css-writing-modes from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=209088
+
+        Reviewed by Myles C. Maxfield.
+
+        Imported new tests in css-writing-mode from web platform tests. Those
+        tests are important for testing CSS property behaviors like "text-orientation"
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-writing-modes/*: Added.
+ 
+
 2020-03-18  youenn fablet  <youenn@apple.com>
 
         Make sure a preflight fails if response headers are invalid
