@@ -39,6 +39,7 @@ class Buildbot():
     ALL_RESULTS = lrange(7)
     SUCCESS, WARNINGS, FAILURE, SKIPPED, EXCEPTION, RETRY, CANCELLED = ALL_RESULTS
     icons_for_queues_mapping = {}
+    builder_name_to_id_mapping = {}
 
     @classmethod
     def send_patch_to_buildbot(cls, patch_path, send_to_commit_queue=False, properties=None):
@@ -99,7 +100,38 @@ class Buildbot():
             shortname = builder.get('shortname')
             Buildbot.icons_for_queues_mapping[shortname] = builder.get('icon')
 
-        return Buildbot.icons_for_queues_mapping
+    @classmethod
+    def update_builder_name_to_id_mapping(cls):
+        url = 'https://{}/api/v2/builders'.format(config.BUILDBOT_SERVER_HOST)
+        builders_data = util.fetch_data_from_url(url)
+        if not builders_data:
+            return
+        for builder in builders_data.json().get('builders', []):
+            name = builder.get('name')
+            Buildbot.builder_name_to_id_mapping[name] = builder.get('builderid')
+
+    @classmethod
+    def fetch_pending_and_inprogress_builds(cls, builder_full_name):
+        builderid = Buildbot.builder_name_to_id_mapping.get(builder_full_name)
+        if not builderid:
+            _log.error('Invalid builder: {}'.format(builder_full_name))
+            return {}
+        url = 'https://{}/api/v2/builders/{}/buildrequests?complete=false&property=*'.format(config.BUILDBOT_SERVER_HOST, builderid)
+        builders_data = util.fetch_data_from_url(url)
+        if not builders_data:
+            return {}
+        return builders_data.json()
+
+    @classmethod
+    def get_patches_in_queue(cls, builder_full_name):
+        patch_ids = []
+        builds = cls.fetch_pending_and_inprogress_builds(builder_full_name)
+        for buildrequest in builds.get('buildrequests', []):
+            properties = buildrequest.get('properties')
+            if properties:
+                patch_ids.append(properties.get('patch_id')[0])
+        _log.debug('Patches in queue for {}: {}'.format(builder_full_name, patch_ids))
+        return patch_ids
 
     @classmethod
     def retry_build(cls, builder_id, build_number):

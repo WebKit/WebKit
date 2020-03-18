@@ -1,3 +1,25 @@
+2020-03-17  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Resubmit patches to commit-queue which were cq- by commit-queue and later cq+
+        https://bugs.webkit.org/show_bug.cgi?id=208920
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/common/buildbot.py:
+        (Buildbot.update_builder_name_to_id_mapping): Method to generate builder name to id mapping.
+        (Buildbot.fetch_pending_and_inprogress_builds): Method to fetch pendign and in-progress builds from buildbot.
+        (Buildbot.get_patches_in_queue): Method to fetch list of patches which are pending or are in-progress on buildbot.
+        * BuildSlaveSupport/ews-app/ews/common/bugzilla.py:
+        (Bugzilla.get_cq_plus_timestamp): Get UTC timestamp when cq+ flag was set.
+        * BuildSlaveSupport/ews-app/ews/fetcher.py:
+        (FetchLoop.run): Update builder name to id mapping. We just need to update it one-time, since we need the id only
+        for commit-queue which isn't expected to change.
+        (BugzillaPatchFetcher.fetch_commit_queue_patches):
+        (BugzillaPatchFetcher.send_patches_to_buildbot): Allow sending the patch again to commit-queue.
+        (BugzillaPatchFetcher.patches_to_send_to_commit_queue): Find patches which needs to be sent to commit-queue. Filter
+        out patches which are already waiting or in-progress on commit-queue, or whose recent build was completed after
+        setting cq+ flag on bugzilla.
+
 2020-03-17  Chris Dumez  <cdumez@apple.com>
 
         [WKTR] testRunner API that takes in a completion handler should use async IPC

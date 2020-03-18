@@ -20,13 +20,16 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import datetime
 import logging
+import pytz
 import threading
 import time
 
 from ews.common.bugzilla import Bugzilla
 from ews.common.buildbot import Buildbot
 from ews.models.patch import Patch
+from ews.views.statusbubble import StatusBubble
 
 _log = logging.getLogger(__name__)
 
@@ -39,6 +42,7 @@ class FetchLoop():
         thread.start()
 
     def run(self):
+        Buildbot.update_builder_name_to_id_mapping()
         while True:
             Buildbot.update_icons_for_queues_mapping()
             try:
@@ -69,7 +73,7 @@ class BugzillaPatchFetcher():
         patch_ids_commit_queue = BugzillaPatchFetcher.filter_valid_patches(patch_ids_commit_queue)
         _log.debug('cq+ patches: {}'.format(patch_ids_commit_queue))
         Patch.save_patches(patch_ids_commit_queue)
-        patches_to_send = self.patches_to_send_to_buildbot(patch_ids_commit_queue, commit_queue=True)
+        patches_to_send = self.patches_to_send_to_commit_queue(patch_ids_commit_queue)
         _log.info('{} cq+ patches, {} patches need to be sent to commit queue: {}'.format(len(patch_ids_commit_queue), len(patches_to_send), patches_to_send))
         self.send_patches_to_buildbot(patches_to_send, send_to_commit_queue=True)
 
@@ -85,8 +89,8 @@ class BugzillaPatchFetcher():
                 _log.warn('Patch is obsolete, skipping')
                 Patch.set_obsolete(patch_id)
                 continue
-            if Patch.is_patch_sent_to_buildbot(patch_id, commit_queue=send_to_commit_queue):
-                _log.error('Patch {} is already sent to buildbot/commit-queue.'.format(patch_id))
+            if not send_to_commit_queue and Patch.is_patch_sent_to_buildbot(patch_id):
+                _log.error('Patch {} is already sent to buildbot.'.format(patch_id))
                 continue
             Patch.set_sent_to_buildbot(patch_id, True, commit_queue=send_to_commit_queue)
             rc = Buildbot.send_patch_to_buildbot(bz_patch['path'],
@@ -99,8 +103,30 @@ class BugzillaPatchFetcher():
                 Patch.set_sent_to_buildbot(patch_id, False, commit_queue=send_to_commit_queue)
                 #FIXME: send an email for this failure
 
-    def patches_to_send_to_buildbot(self, patch_ids, commit_queue=False):
-        return [patch_id for patch_id in patch_ids if not Patch.is_patch_sent_to_buildbot(patch_id, commit_queue)]
+    def patches_to_send_to_buildbot(self, patch_ids):
+        return [patch_id for patch_id in patch_ids if not Patch.is_patch_sent_to_buildbot(patch_id)]
+
+    def patches_to_send_to_commit_queue(self, patch_ids):
+        if not patch_ids:
+            return patch_ids
+        patches_in_queue = set(Buildbot.get_patches_in_queue('Commit-Queue'))
+        patch_ids = [patch_id for patch_id in set(patch_ids) if str(patch_id) not in patches_in_queue]
+
+        patch_ids_to_send = []
+        for patch_id in patch_ids:
+            patch = Patch.get_patch(patch_id)
+            recent_build, _ = StatusBubble().get_latest_build_for_queue(patch, 'commit')
+            if not recent_build:
+                patch_ids_to_send.append(patch_id)
+                continue
+            recent_build_timestamp = datetime.datetime.fromtimestamp(recent_build.complete_at, tz=pytz.UTC)
+            cq_timestamp = Bugzilla.get_cq_plus_timestamp(patch_id)
+            if not cq_timestamp:
+                patch_ids_to_send.append(patch_id)
+                continue
+            if cq_timestamp > recent_build_timestamp:
+                patch_ids_to_send.append(patch_id)
+        return patch_ids_to_send
 
     @classmethod
     def filter_valid_patches(cls, patch_ids):
