@@ -871,20 +871,6 @@ void WebProcess::userGestureTokenDestroyed(UserGestureToken& token)
     parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyUserGestureToken(identifier), 0);
 }
 
-void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear)
-{
-    // Toggling the cache model like this forces the cache to evict all its in-memory resources.
-    // FIXME: We need a better way to do this.
-    CacheModel cacheModel = m_cacheModel;
-    setCacheModel(CacheModel::DocumentViewer);
-    setCacheModel(cacheModel);
-
-    MemoryCache::singleton().evictResources();
-
-    // Empty the cross-origin preflight cache.
-    CrossOriginPreflightResultCache::singleton().clear();
-}
-
 static inline void addCaseFoldedCharacters(StringHasher& hasher, const String& string)
 {
     if (string.isEmpty())

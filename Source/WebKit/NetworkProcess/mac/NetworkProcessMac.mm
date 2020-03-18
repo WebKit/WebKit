@@ -31,7 +31,6 @@
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
-#import "ResourceCachesToClear.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
@@ -93,15 +92,6 @@ void NetworkProcess::initializeSandbox(const AuxiliaryProcessInitializationParam
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebKit.NetworkProcess" ofType:@"sb"]);
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
-}
-
-void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
-{
-    ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
-    if (resourceCachesToClear == InMemoryResourceCachesOnly)
-        return;
-
-    clearDiskCache(-WallTime::infinity(), [] { });
 }
 
 void NetworkProcess::platformTerminate()

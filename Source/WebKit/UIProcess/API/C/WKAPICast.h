@@ -31,7 +31,6 @@
 #include "InjectedBundleHitTestResultMediaType.h"
 #include "PluginModuleInfo.h"
 #include "ProcessTerminationReason.h"
-#include "ResourceCachesToClear.h"
 #include "WKBundleHitTestResult.h"
 #include "WKContext.h"
 #include "WKCookieManager.h"
@@ -355,19 +354,6 @@ inline WebCore::CredentialPersistence toCredentialPersistence(WKCredentialPersis
     default:
         return WebCore::CredentialPersistenceNone;
     }
-}
-
-inline ResourceCachesToClear toResourceCachesToClear(WKResourceCachesToClear wkResourceCachesToClear)
-{
-    switch (wkResourceCachesToClear) {
-    case WKResourceCachesToClearAll:
-        return AllResourceCaches;
-    case WKResourceCachesToClearInMemoryOnly:
-        return InMemoryResourceCachesOnly;
-    }
-
-    ASSERT_NOT_REACHED();
-    return AllResourceCaches;
 }
 
 inline WebCore::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WKHTTPCookieAcceptPolicy policy)

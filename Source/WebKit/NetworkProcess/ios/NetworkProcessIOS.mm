@@ -30,7 +30,6 @@
 
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
-#import "ResourceCachesToClear.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
 #import <WebCore/CertificateInfo.h>
@@ -59,17 +58,6 @@ void NetworkProcess::initializeSandbox(const AuxiliaryProcessInitializationParam
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
     [NSURLRequest setAllowsSpecificHTTPSCertificate:(NSArray *)certificateInfo.certificateChain() forHost:host];
-}
-
-void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
-{
-    ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
-    if (resourceCachesToClear == InMemoryResourceCachesOnly)
-        return;
-    forEachNetworkSession([](NetworkSession& session) {
-        if (auto* cache = session.cache())
-            cache->clear();
-    });
 }
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)

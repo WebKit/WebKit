@@ -31,7 +31,6 @@
 #include "MediaDeviceSandboxExtensions.h"
 #endif
 #include "PluginProcessConnectionManager.h"
-#include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
 #include "StorageAreaIdentifier.h"
 #include "TextCheckerState.h"
@@ -199,8 +198,6 @@ public:
     
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
     void setTextCheckerState(const TextCheckerState&);
-
-    void clearResourceCaches(ResourceCachesToClear = AllResourceCaches);
     
 #if ENABLE(NETSCAPE_PLUGIN_API)
     PluginProcessConnectionManager& pluginProcessConnectionManager();
