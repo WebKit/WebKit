@@ -1,3 +1,50 @@
+2020-03-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r257214): Targeted preview animates to the wrong place when dropping in editable content
+        https://bugs.webkit.org/show_bug.cgi?id=209218
+        <rdar://problem/60560831>
+
+        Reviewed by Tim Horton.
+
+        In r257214, we split out the context menu hint preview container view into two views: one for drag and drop, and
+        another for the context menu hint. The container view used for both drag and drop previews was removed under
+        -cleanUpDragSourceSessionState, which is invoked after both drag and drop sessions have ended; however, in the
+        case of a drop in editable content where the drop preview is delayed, the drop animation can end up finishing
+        after -cleanUpDragSourceSessionState is invoked. This means we end up prematurely unparenting the preview
+        container, which results in a broken drop animation.
+
+        To fix this, split the drag and drop container views further, into separate container views for dragging and for
+        dropping. The drag preview container will continue to be removed under -cleanUpDragSourceSessionState, and the
+        drop preview container will now be removed under the delegate call to -dropInteraction:concludeDrop:, which is
+        invoked by UIKit after all drop previews are finished animating.
+
+        Covered by adding additional test assertions while running existing API tests (see Tools/ChangeLog for more
+        details).
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _createPreviewContainerWithLayerName:]):
+
+        Pull out common logic for creating and setting up a preview container view into a helper method. This is used by
+        the three methods below, which ensure container views for each of the types of previews we create when showing
+        the context menu, dragging an element, and dropping.
+
+        (-[WKContentView containerForDropPreviews]):
+        (-[WKContentView containerForDragPreviews]):
+        (-[WKContentView containerForContextMenuHintPreviews]):
+
+        Add a third preview container view for drop previews, and factor duplicated code in these three methods into a
+        common helper (see above).
+
+        (-[WKContentView _hideTargetedPreviewContainerViews]):
+        (-[WKContentView _deliverDelayedDropPreviewIfPossible:]):
+
+        Instead of using the container for drag previews, use the container for drop previews.
+
+        (-[WKContentView dropInteraction:concludeDrop:]):
+
+        Remove the drop preview container after the drop has concluded (i.e. all animations are complete).
+
 2020-03-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix iOS build with recent SDKs.
