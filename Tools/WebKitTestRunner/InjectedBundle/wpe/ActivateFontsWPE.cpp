@@ -58,8 +58,13 @@ CString getOutputDir()
 
 static CString getFontsPath()
 {
+    // Try flatpak sandbox path.
+    GUniquePtr<char>fontsPath(g_build_filename("/usr", "share", "webkitgtk-test-fonts", NULL));
+    if (g_file_test(fontsPath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
+        return fontsPath.get();
+
     CString webkitOutputDir = getOutputDir();
-    GUniquePtr<char> fontsPath(g_build_filename(webkitOutputDir.data(), "DependenciesWPE", "Root", "webkitgtk-test-fonts", nullptr));
+    fontsPath.reset(g_build_filename(webkitOutputDir.data(), "DependenciesWPE", "Root", "webkitgtk-test-fonts", nullptr));
     if (g_file_test(fontsPath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
         return fontsPath.get();
 

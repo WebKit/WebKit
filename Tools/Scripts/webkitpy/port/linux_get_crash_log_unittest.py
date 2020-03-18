@@ -46,7 +46,7 @@ class GDBCrashLogGeneratorTest(unittest.TestCase):
         executive = MockExecutive()
         executive._proc = MockProcess()
         executive._proc.stdout = 'STDERR: <empty>'
-        generator = GDBCrashLogGenerator(executive, 'DumpRenderTree', 28529, newer_than=None, filesystem=MockFileSystem({'/path/to/coredumps': ''}), path_to_driver=None)
+        generator = GDBCrashLogGenerator(executive, 'DumpRenderTree', 28529, newer_than=None, filesystem=MockFileSystem({'/path/to/coredumps': ''}), path_to_driver=None, port_name="gtk", configuration="Debug")
 
         core_directory = os.environ.get('WEBKIT_CORE_DUMPS_DIRECTORY', '/path/to/coredumps')
         core_pattern = generator._filesystem.join(core_directory, "core-pid_%p.dump")

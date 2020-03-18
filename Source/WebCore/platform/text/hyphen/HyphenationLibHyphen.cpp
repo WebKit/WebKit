@@ -121,8 +121,15 @@ static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomString, Vector<
     // libhyphen doesn't have the concept of installed dictionaries. Instead,
     // we have this special case for WebKit tests.
 #if PLATFORM(GTK)
+    // Try alternative dictionaries path for people using Flatpak.
+    GUniquePtr<char> dictionariesPath(g_build_filename("/usr", "share", "webkitgtk-test-dicts", nullptr));
+    if (g_getenv("FLATPAK_ID") && g_file_test(dictionariesPath.get(), static_cast<GFileTest>(G_FILE_TEST_IS_DIR))) {
+        scanDirectoryForDictionaries(dictionariesPath.get(), availableLocales);
+        return;
+    }
+
     CString buildDirectory = webkitBuildDirectory();
-    GUniquePtr<char> dictionariesPath(g_build_filename(buildDirectory.data(), "DependenciesGTK", "Root", "webkitgtk-test-dicts", nullptr));
+    dictionariesPath.reset(g_build_filename(buildDirectory.data(), "DependenciesGTK", "Root", "webkitgtk-test-dicts", nullptr));
     if (g_file_test(dictionariesPath.get(), static_cast<GFileTest>(G_FILE_TEST_IS_DIR))) {
         scanDirectoryForDictionaries(dictionariesPath.get(), availableLocales);
         return;
@@ -130,7 +137,9 @@ static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomString, Vector<
 
     // Try alternative dictionaries path for people not using JHBuild.
     dictionariesPath.reset(g_build_filename(buildDirectory.data(), "webkitgtk-test-dicts", nullptr));
-    scanDirectoryForDictionaries(dictionariesPath.get(), availableLocales);
+    if (g_file_test(dictionariesPath.get(), static_cast<GFileTest>(G_FILE_TEST_IS_DIR)))
+        scanDirectoryForDictionaries(dictionariesPath.get(), availableLocales);
+
 #elif defined(TEST_HYPHENATAION_PATH)
     scanDirectoryForDictionaries(TEST_HYPHENATAION_PATH, availableLocales);
 #else

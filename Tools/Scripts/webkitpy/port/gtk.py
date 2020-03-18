@@ -122,6 +122,7 @@ class GtkPort(Port):
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
         environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('lib', 'plugins')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
+        self._copy_value_from_environ_if_set(environment, 'WEBKIT_JHBUILD')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_TOP_LEVEL')
         self._copy_value_from_environ_if_set(environment, 'USE_PLAYBIN3')
         self._copy_value_from_environ_if_set(environment, 'GST_DEBUG')
@@ -134,10 +135,11 @@ class GtkPort(Port):
             if self._should_use_jhbuild():
                 llvmpipe_libgl_path = self.host.executive.run_command(self._jhbuild_wrapper + ['printenv', 'LLVMPIPE_LIBGL_PATH'],
                                                                     ignore_errors=True).strip()
+                dri_libgl_path = os.path.join(llvmpipe_libgl_path, "dri")
             else:  # in flatpak
-                llvmpipe_libgl_path = "/app/softGL/lib"
+                llvmpipe_libgl_path = "/usr/lib/x86_64-linux-gnu/"
+                dri_libgl_path = os.path.join(llvmpipe_libgl_path, "GL", "lib", "dri")
 
-            dri_libgl_path = os.path.join(llvmpipe_libgl_path, "dri")
             if os.path.exists(os.path.join(llvmpipe_libgl_path, "libGL.so")) and os.path.exists(os.path.join(dri_libgl_path, "swrast_dri.so")):
                 # Make sure va-api support gets disabled because it's incompatible with Mesa's softGL driver.
                 environment['LIBVA_DRIVER_NAME'] = "null"
@@ -148,7 +150,7 @@ class GtkPort(Port):
                 if os.environ.get('LD_LIBRARY_PATH'):
                     environment['LD_LIBRARY_PATH'] += ':%s' % os.environ.get('LD_LIBRARY_PATH')
             else:
-                _log.warning("Can't find Gallium llvmpipe driver. Try to run update-webkitgtk-libs or update-webkitgtk-flatpak")
+                _log.warning("Can't find Gallium llvmpipe driver. Try to run update-webkitgtk-libs or update-webkit-flatpak")
         if self.get_option("leaks"):
             # Turn off GLib memory optimisations https://wiki.gnome.org/Valgrind.
             environment['G_SLICE'] = 'always-malloc'
@@ -237,7 +239,7 @@ class GtkPort(Port):
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
         return GDBCrashLogGenerator(self._executive, name, pid, newer_than,
-            self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)
+                                    self._filesystem, self._path_to_driver, self.port_name, self.get_option('configuration')).generate_crash_log(stdout, stderr)
 
     def test_expectations_file_position(self):
         # GTK port baseline search path is gtk -> wk2 -> generic (as gtk-wk2 and gtk baselines are merged), so port test expectations file is at third to last position.

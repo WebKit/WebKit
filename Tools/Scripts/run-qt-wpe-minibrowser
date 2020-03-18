@@ -38,9 +38,13 @@ my @jhbuildWrapper;
 my $configuration = passedConfiguration();
 my $productDir = productDir();
 
-$libPath = "/app/webkit/WebKitBuild/$configuration/lib/qt5/qml" if $configuration;
-$ENV{"QML2_IMPORT_PATH"} = "$libPath" if $libPath;
-runInFlatpakIfAvailable("/app/webkit/Tools/Scripts/run-qt-wpe-minibrowser");
+if ($configuration) {
+    $libPath = File::Spec->catfile(sourceDir(), "WebKitBuild", "$configuration", "lib", "qt5", "qml");
+    $ENV{"QML2_IMPORT_PATH"} = "$libPath";
+}
+
+my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "run-qt-wpe-minibrowser"));
+runInFlatpakIfAvailable(@command);
 
 # Check to see that all the frameworks are built.
 checkFrameworks();

@@ -30,7 +30,13 @@
 """Run performance tests."""
 
 import logging
+import os
 import sys
+
+top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'flatpak'))
+import flatpakutils
+flatpakutils.run_in_sandbox_if_available(sys.argv)
 
 from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
 

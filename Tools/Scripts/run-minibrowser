@@ -45,7 +45,8 @@ prohibitUnknownPort();
 setConfiguration();
 
 if (isGtk() || isWPE()) {
-    runInFlatpakIfAvailable("/app/webkit/Tools/Scripts/run-minibrowser");
+    my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "run-minibrowser"));
+    runInFlatpakIfAvailable(@command);
 
     # Check to see that all the frameworks are built.
     checkFrameworks();

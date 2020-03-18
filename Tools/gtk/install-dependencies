@@ -179,6 +179,10 @@ function installDependenciesWithApt {
         weston \
         xvfb"
 
+    # These are dependencies necessary for building with the Flatpak SDK.
+    packages="$packages \
+        flatpak"
+
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
         bison \
@@ -349,6 +353,10 @@ function installDependenciesWithPacman {
         ttf-liberation \
         weston \
         xorg-server-xvfb"
+
+    # These are dependencies necessary for building with the Flatpak SDK.
+    packages="$packages \
+        flatpak"
 
     # These are dependencies necessary for building the jhbuild.
     # Note: Could not find libegl-mesa
@@ -524,6 +532,10 @@ function installDependenciesWithDnf {
         rubygem-highline \
         weston-devel \
         xorg-x11-server-Xvfb"
+
+    # These are dependencies necessary for building with the Flatpak SDK.
+    packages="$packages \
+        flatpak"
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \

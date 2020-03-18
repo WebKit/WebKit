@@ -35,6 +35,26 @@ use FindBin;
 use Config;
 
 BEGIN {
+    use lib $FindBin::Bin;
+    use File::Spec::Functions qw(catfile);
+
+    if (!grep(/^--no-flatpak-check$/, @ARGV)) {
+        if (eval {require webkitdirs; 1;}) {
+            webkitdirs->import(qw(shouldUseFlatpak runInFlatpak sourceDir));
+            if (shouldUseFlatpak()) {
+                print "Running in flatpak based environment\n";
+                my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "test262-runner"));
+                # Prevent exec'd test262-runner process from importing
+                # webkitdirs so that it can succeed later on in the Runner
+                # module... Perl. ¯\_(ツ)_/¯
+                push(@ARGV, "--no-flatpak-check");
+                runInFlatpak(@command);
+            }
+        }
+    }
+}
+
+BEGIN {
     $ENV{DBIC_OVERWRITE_HELPER_METHODS_OK} = 1;
     $ENV{T262_EXEC_BIN} = "$FindBin::Bin/test262";
     unshift @INC, "$FindBin::Bin/test262";

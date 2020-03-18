@@ -1,3 +1,115 @@
+2020-03-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Migrate to Flatpak-based dev SDK
+        https://bugs.webkit.org/show_bug.cgi?id=205658
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        JHBuild will now be used only if the WEBKIT_JHBUILD environment
+        variable is set to 1, which is the case for the time being on the
+        GTK and WPE EWS/build bots.
+
+        By default the build dependencies are now locally installed from a
+        Flatpak repository hosted at https://software.igalia.com. The
+        repository can be regenerated with the scripts from the
+        webkit-flatpak-sdk Github project
+        (https://github.com/Igalia/webkit-flatpak-sdk). This is done
+        transparently with the update-webkit{gtk,wpe}-libs scripts. As
+        there is no need to rebuild the dependencies from scratch, the
+        developer user-experience should now be much more friendly and
+        overall build times reduced.
+
+        As an additional commodity, the new environment supports the
+        GStreamer gst-build-based workflow. Just set the GST_BUILD_PATH
+        environment variable to your gst-build path. This feature was
+        contributed by Thibault Saunier.
+
+        The JHBuild infrastructure will be removed once all the bots have
+        been switched over to Flatpak.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (InstallGtkDependencies):
+        (InstallWpeDependencies):
+        (CompileWebKit.start):
+        * BuildSlaveSupport/gtk/buildbot/run:
+        * Scripts/build-webkit:
+        * Scripts/run-bindings-tests:
+        * Scripts/run-builtins-generator-tests:
+        * Scripts/run-gtk-tests:
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-minibrowser:
+        * Scripts/run-qt-wpe-minibrowser:
+        * Scripts/run-webdriver-tests:
+        * Scripts/run-wpe-tests:
+        * Scripts/test-webkitperl:
+        * Scripts/test-webkitpy:
+        * Scripts/test262-runner:
+        * Scripts/update-webkit-flatpak: Renamed from Tools/Scripts/update-webkitgtk-flatpak.
+        * Scripts/update-webkitgtk-libs:
+        * Scripts/update-webkitwpe-flatpak: Removed.
+        * Scripts/update-webkitwpe-libs:
+        * Scripts/webkitdirs.pm:
+        (getUserFlatpakPath):
+        (inFlatpakSandbox):
+        (runInFlatpakIfAvailable):
+        (wrapperPrefixIfNeeded):
+        (shouldUseJhbuild):
+        (shouldUseFlatpak):
+        (shouldRemoveCMakeCache):
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.kill_all):
+        * Scripts/webkitpy/port/base.py:
+        (Port._path_to_apache):
+        (Port._should_run_as_pixel_test):
+        (Port._in_flatpak_sandbox):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        (GtkPort._get_crash_log):
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator):
+        (GDBCrashLogGenerator.__init__):
+        (GDBCrashLogGenerator.generate_crash_log):
+        * Scripts/webkitpy/port/linux_get_crash_log_unittest.py:
+        (GDBCrashLogGeneratorTest.test_generate_crash_log):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server):
+        (WPEPort._get_crash_log):
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver._setup_environ_for_test):
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::getFontsPath):
+        * WebKitTestRunner/InjectedBundle/wpe/ActivateFontsWPE.cpp:
+        (WTR::getFontsPath):
+        * flatpak/files/default.xkm: Removed.
+        * flatpak/files/httpd-autogen.sh: Removed.
+        * flatpak/flatpakutils.py:
+        (check_flatpak):
+        (FlatpakRepos.update):
+        (FlatpakPackage.__repr__):
+        (FlatpakPackage.__str__):
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak.setup_builddir):
+        (WebkitFlatpak):
+        (WebkitFlatpak.setup_gstbuild):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.run):
+        (WebkitFlatpak.has_environment):
+        (WebkitFlatpak.save_config):
+        (WebkitFlatpak.setup_dev_env):
+        (WebkitFlatpak.install_all):
+        (WebkitFlatpak.run_gdb):
+        * flatpak/org.webkit.CommonModules.yaml: Removed.
+        * flatpak/org.webkit.GTK.yaml: Removed.
+        * flatpak/org.webkit.WPE.yaml: Removed.
+        * flatpak/org.webkit.WPEModules.yaml: Removed.
+        * flatpak/org.webkit.WPEQT.yaml: Removed.
+        * flatpak/org.webkit.WebKit.yaml: Removed.
+        * flatpak/patches/httpd-0001-configure-use-pkg-config-for-PCRE-detection.patch: Removed.
+        * flatpak/patches/libgcrypt-0001-Use-pkg-config-to-detect-gpg-error.patch: Removed.
+        * flatpak/patches/xvfb-0001-HACK-Avoid-compiling-a-kbm-file.patch: Removed.
+
 2020-03-17  Kate Cheney  <katherine_cheney@apple.com>
 
         Expand In-App-Browser-Privacy testing

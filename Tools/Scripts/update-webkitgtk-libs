@@ -22,4 +22,8 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 my $scriptsDir = relativeScriptsDir();
-system("perl", "$scriptsDir/update-webkit-libs-jhbuild", "--gtk", @ARGV) == 0 or die $!;
+if (defined $ENV{'WEBKIT_JHBUILD'} and $ENV{'WEBKIT_JHBUILD'}) {
+    system("perl", "$scriptsDir/update-webkit-libs-jhbuild", "--gtk", @ARGV) == 0 or die $!;
+} else {
+    system("$scriptsDir/update-webkit-flatpak", @ARGV) == 0 or die $!;
+}

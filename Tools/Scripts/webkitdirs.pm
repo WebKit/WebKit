@@ -91,7 +91,10 @@ BEGIN {
        &setupUnixWebKitEnvironment
        &sharedCommandLineOptions
        &sharedCommandLineOptionsUsage
+       &shouldUseFlatpak
+       &runInFlatpak
        &shutDownIOSSimulatorDevice
+       &sourceDir
        &willUseIOSDeviceSDK
        &willUseIOSSimulatorSDK
        DO_NOT_USE_OPEN_COMMAND
@@ -2048,20 +2051,11 @@ sub getJhbuildPath()
     return File::Spec->catdir(@jhbuildPath);
 }
 
-sub getFlatpakPath()
+sub getUserFlatpakPath()
 {
-    my @flatpakBuildPath = File::Spec->splitdir(baseProductDir());
-    if (isGtk()) {
-        push(@flatpakBuildPath, "GTK");
-    } elsif (isWPE()) {
-        push(@flatpakBuildPath, "WPE");
-    } else {
-        die "Cannot get Flatpak path for platform that isn't GTK+ or WPE.\n";
-    }
-    my @configuration = configuration();
-    push(@flatpakBuildPath, "FlatpakTree$configuration");
-
-    return File::Spec->catdir(@flatpakBuildPath);
+    my @flatpakPath = File::Spec->splitdir(baseProductDir());
+    push(@flatpakPath, "UserFlatpak");
+    return File::Spec->catdir(@flatpakPath);
 }
 
 sub isCachedArgumentfileOutOfDate($@)
@@ -2088,15 +2082,19 @@ sub isCachedArgumentfileOutOfDate($@)
 
 sub inFlatpakSandbox()
 {
-    if (-f "/.flatpak-info") {
-        return 1;
-    }
-
-    return 0;
+    return (-f "/.flatpak-info");
 }
 
 sub runInFlatpak(@)
 {
+    if (isGtk() && checkForArgumentAndRemoveFromARGV("--update-gtk")) {
+        system("perl", File::Spec->catfile(sourceDir(), "Tools", "Scripts", "update-webkitgtk-libs"), argumentsForConfiguration()) == 0 or die $!;
+    }
+
+    if (isWPE() && checkForArgumentAndRemoveFromARGV("--update-wpe")) {
+        system("perl", File::Spec->catfile(sourceDir(), "Tools", "Scripts", "update-webkitwpe-libs"), argumentsForConfiguration()) == 0 or die $!;
+    }
+
     my @arg = @_;
     my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "webkit-flatpak"));
     exec @command, argumentsForConfiguration(), "--command", @_, argumentsForConfiguration(), @ARGV or die;
@@ -2113,45 +2111,65 @@ sub runInFlatpakIfAvailable(@)
         return 0;
     }
 
-    if (! -e getFlatpakPath()) {
-        return 0;
+    if (! -e getUserFlatpakPath()) {
+      return 0;
     }
 
     runInFlatpak(@_)
 }
 
+sub jhbuildWrapperPrefix()
+{
+    my @prefix = (File::Spec->catfile(sourceDir(), "Tools", "jhbuild", "jhbuild-wrapper"));
+    if (isGtk()) {
+        push(@prefix, "--gtk");
+    } elsif (isWPE()) {
+        push(@prefix, "--wpe");
+    }
+    push(@prefix, "run");
+
+    return @prefix;
+}
+
 sub wrapperPrefixIfNeeded()
 {
-
     if (isAnyWindows() || isJSCOnly() || isPlayStation()) {
         return ();
     }
     if (isAppleCocoaWebKit()) {
         return ("xcrun");
     }
-    if (shouldUseJhbuild() and ! shouldUseFlatpak()) {
-        my @prefix = (File::Spec->catfile(sourceDir(), "Tools", "jhbuild", "jhbuild-wrapper"));
-        if (isGtk()) {
-            push(@prefix, "--gtk");
-        } elsif (isWPE()) {
-            push(@prefix, "--wpe");
+
+    # Returning () here means either Flatpak or no wrapper will be used.
+    if (isGtk() or isWPE()) {
+        # Respect user's choice.
+        if (defined $ENV{'WEBKIT_JHBUILD'}) {
+            if ($ENV{'WEBKIT_JHBUILD'} and -e getJhbuildPath()) {
+                return jhbuildWrapperPrefix();
+            } else {
+                return ();
+            }
+            # or let Flatpak take precedence over JHBuild.
+        } elsif (-e getUserFlatpakPath()) {
+            return ();
+        } elsif (-e getJhbuildPath()) {
+            return jhbuildWrapperPrefix();
         }
-        push(@prefix, "run");
-
-        return @prefix;
     }
-
     return ();
-}
-
-sub shouldUseJhbuild()
-{
-    return ((isGtk() or isWPE()) and -e getJhbuildPath());
 }
 
 sub shouldUseFlatpak()
 {
-    return ((isGtk() or isWPE()) and ! inFlatpakSandbox() and -e getFlatpakPath());
+    # TODO: Use flatpak for JSCOnly on Linux? Could be useful when the SDK
+    # supports cross-compilation for ARMv7 and Aarch64 for instance.
+
+    if (!isGtk() and !isWPE()) {
+        return 0;
+    }
+
+    my @prefix = wrapperPrefixIfNeeded();
+    return ((! inFlatpakSandbox()) and (@prefix == 0) and -e getUserFlatpakPath());
 }
 
 sub cmakeCachePath()
@@ -2218,7 +2236,7 @@ sub shouldRemoveCMakeCache(@)
     }
 
     # If a change on the JHBuild moduleset has been done, we need to clean the cache as well.
-    if (isGtk() || isWPE()) {
+    if (! shouldUseFlatpak() and (isGtk() || isWPE())) {
         my $jhbuildRootDirectory = File::Spec->catdir(getJhbuildPath(), "Root");
         # The script update-webkit-libs-jhbuild shall re-generate $jhbuildRootDirectory if the moduleset changed.
         if (-d $jhbuildRootDirectory && $cacheFileModifiedTime < stat($jhbuildRootDirectory)->mtime) {
@@ -2408,12 +2426,14 @@ sub buildCMakeProjectOrExit($$$@)
 
     exit(exitStatus(cleanCMakeGeneratedProject())) if $clean;
 
-    if (isGtk() && checkForArgumentAndRemoveFromARGV("--update-gtk")) {
-        system("perl", "$sourceDir/Tools/Scripts/update-webkitgtk-libs") == 0 or die $!;
-    }
+    if (wrapperPrefixIfNeeded() == jhbuildWrapperPrefix()) {
+        if (isGtk() && checkForArgumentAndRemoveFromARGV("--update-gtk")) {
+            system("perl", File::Spec->catfile(sourceDir(), "Tools", "Scripts", "update-webkitgtk-libs")) == 0 or die $!;
+        }
 
-    if (isWPE() && checkForArgumentAndRemoveFromARGV("--update-wpe")) {
-        system("perl", "$sourceDir/Tools/Scripts/update-webkitwpe-libs") == 0 or die $!;
+        if (isWPE() && checkForArgumentAndRemoveFromARGV("--update-wpe")) {
+            system("perl", File::Spec->catfile(sourceDir(), "Tools", "Scripts", "update-webkitwpe-libs")) == 0 or die $!;
+        }
     }
 
     $returnCode = exitStatus(generateBuildSystemFromCMakeProject($prefixPath, @cmakeArgs));

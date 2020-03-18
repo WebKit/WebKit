@@ -893,6 +893,7 @@ class Port(object):
             'LANG',
             'LD_LIBRARY_PATH',
             'TERM',
+            'TZ',
             'XDG_DATA_DIRS',
             'XDG_RUNTIME_DIR',
 
@@ -1220,7 +1221,7 @@ class Port(object):
         This is needed only by ports that use the apache_http_server module."""
         # The Apache binary path can vary depending on OS and distribution
         # See http://wiki.apache.org/httpd/DistrosDefaultLayout
-        for path in ["/usr/sbin/httpd", "/usr/sbin/apache2", "/app/bin/httpd"]:
+        for path in ["/usr/sbin/httpd", "/usr/sbin/apache2", "/usr/bin/httpd"]:
             if self._filesystem.exists(path):
                 return path
         _log.error("Could not find apache. Not installed or unknown path.")
@@ -1452,14 +1453,8 @@ class Port(object):
         # --pixel-test-directory is not specified.
         return True
 
-    def _should_use_flatpak(self):
-        suffix = ""
-        if self.port_name:
-            suffix = self.port_name.upper()
-        return self._filesystem.exists(self.path_from_webkit_base('WebKitBuild', suffix, "FlatpakTree"))
-
     def _in_flatpak_sandbox(self):
-        return os.path.exists("/.flatpak-info")
+        return self._filesystem.exists("/.flatpak-info")
 
     def _should_use_jhbuild(self):
         if self._in_flatpak_sandbox():

@@ -112,6 +112,10 @@ function installDependenciesWithApt {
         ruby-highline \
         ruby-json"
 
+    # These are dependencies necessary for building with the Flatpak SDK.
+    packages="$packages \
+        flatpak"
+
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
         git \
@@ -215,6 +219,10 @@ function installDependenciesWithPacman {
         python2-psutil \
         ruby \
         ttf-liberation"
+
+    # These are dependencies necessary for building with the Flatpak SDK.
+    packages="$packages \
+        flatpak"
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
@@ -328,6 +336,10 @@ function installDependenciesWithDnf {
         ruby \
         rubygem-highline \
         rubygem-json"
+
+    # These are dependencies necessary for building with the Flatpak SDK.
+    packages="$packages \
+        flatpak"
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \

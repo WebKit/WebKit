@@ -1,3 +1,12 @@
+2020-03-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Migrate to Flatpak-based dev SDK
+        https://bugs.webkit.org/show_bug.cgi?id=205658
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * http/conf/flatpak-httpd.conf: Adjust paths.
+
 2020-03-17  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Crash in CSSPrimitiveValue::cleanup

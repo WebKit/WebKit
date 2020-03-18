@@ -53,8 +53,8 @@ setConfiguration();
 
 if (shouldUseFlatpak()) {
     print "Building flatpak based environment\n";
-
-    runInFlatpak("/app/webkit/Tools/Scripts/build-webkit");
+    my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "build-webkit"));
+    runInFlatpak(@command);
 }
 
 my $originalWorkingDirectory = getcwd();

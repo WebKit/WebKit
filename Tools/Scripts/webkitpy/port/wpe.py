@@ -77,6 +77,7 @@ class WPEPort(Port):
         environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('lib', 'plugins')
         environment['WEBKIT_EXEC_PATH'] = self._build_path('bin')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
+        self._copy_value_from_environ_if_set(environment, 'WEBKIT_JHBUILD')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_TOP_LEVEL')
         self._copy_value_from_environ_if_set(environment, 'USE_PLAYBIN3')
         self._copy_value_from_environ_if_set(environment, 'GST_DEBUG')
@@ -121,7 +122,8 @@ class WPEPort(Port):
         return 2
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
-        return GDBCrashLogGenerator(self._executive, name, pid, newer_than, self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)
+        return GDBCrashLogGenerator(self._executive, name, pid, newer_than,
+                                    self._filesystem, self._path_to_driver, self.port_name, self.get_option('configuration')).generate_crash_log(stdout, stderr)
 
     def configuration_for_upload(self, host=None):
         configuration = super(WPEPort, self).configuration_for_upload(host=host)
