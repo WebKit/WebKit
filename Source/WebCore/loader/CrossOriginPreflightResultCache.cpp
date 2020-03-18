@@ -74,47 +74,40 @@ Expected<UniqueRef<CrossOriginPreflightResultCacheItem>, String> CrossOriginPref
 
 Optional<String> CrossOriginPreflightResultCacheItem::validateMethodAndHeaders(const String& method, const HTTPHeaderMap& requestHeaders) const
 {
-    String errorDescription;
-    if (!allowsCrossOriginMethod(method, m_storedCredentialsPolicy, errorDescription))
-        return WTFMove(errorDescription);
-    if (!allowsCrossOriginHeaders(requestHeaders, m_storedCredentialsPolicy, errorDescription))
-        return WTFMove(errorDescription);
+    if (!allowsCrossOriginMethod(method, m_storedCredentialsPolicy))
+        return makeString("Method ", method, " is not allowed by Access-Control-Allow-Methods.");
+
+    if (auto badHeader = validateCrossOriginHeaders(requestHeaders, m_storedCredentialsPolicy))
+        return makeString("Request header field ", *badHeader, " is not allowed by Access-Control-Allow-Headers.");
     return { };
 }
 
-bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String& method, StoredCredentialsPolicy storedCredentialsPolicy, String& errorDescription) const
+bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String& method, StoredCredentialsPolicy storedCredentialsPolicy) const
 {
-    if (m_methods.contains(method) || (m_methods.contains("*") && storedCredentialsPolicy != StoredCredentialsPolicy::Use) || isOnAccessControlSimpleRequestMethodWhitelist(method))
-        return true;
-
-    errorDescription = "Method " + method + " is not allowed by Access-Control-Allow-Methods.";
-    return false;
+    return m_methods.contains(method) || (m_methods.contains("*") && storedCredentialsPolicy != StoredCredentialsPolicy::Use) || isOnAccessControlSimpleRequestMethodWhitelist(method);
 }
 
-bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, StoredCredentialsPolicy storedCredentialsPolicy, String& errorDescription) const
+Optional<String> CrossOriginPreflightResultCacheItem::validateCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, StoredCredentialsPolicy storedCredentialsPolicy) const
 {
     bool validWildcard = m_headers.contains("*") && storedCredentialsPolicy != StoredCredentialsPolicy::Use;
     for (const auto& header : requestHeaders) {
         if (header.keyAsHTTPHeaderName && isCrossOriginSafeRequestHeader(header.keyAsHTTPHeaderName.value(), header.value))
             continue;
-        if (!m_headers.contains(header.key) && !validWildcard) {
-            errorDescription = "Request header field " + header.key + " is not allowed by Access-Control-Allow-Headers.";
-            return false;
-        }
+        if (!m_headers.contains(header.key) && !validWildcard)
+            return header.key;
     }
-    return true;
+    return { };
 }
 
 bool CrossOriginPreflightResultCacheItem::allowsRequest(StoredCredentialsPolicy storedCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders) const
 {
-    String ignoredExplanation;
     if (m_absoluteExpiryTime < MonotonicTime::now())
         return false;
     if (storedCredentialsPolicy == StoredCredentialsPolicy::Use && m_storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse)
         return false;
-    if (!allowsCrossOriginMethod(method, storedCredentialsPolicy, ignoredExplanation))
+    if (!allowsCrossOriginMethod(method, storedCredentialsPolicy))
         return false;
-    if (!allowsCrossOriginHeaders(requestHeaders, storedCredentialsPolicy, ignoredExplanation))
+    if (auto badHeader = validateCrossOriginHeaders(requestHeaders, storedCredentialsPolicy))
         return false;
     return true;
 }
