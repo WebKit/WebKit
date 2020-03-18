@@ -1,3 +1,16 @@
+2020-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Default attachment icon is not necessarily the same as the file attachment icon whose extension is ".dat"
+        https://bugs.webkit.org/show_bug.cgi?id=209210
+        <rdar://problem/59606671>
+
+        Reviewed by Daniel Bates.
+
+        Ensure that the default attachment icon is the one which iconForFileType
+        returns for "public.data" icon.
+
+        * fast/attachment/attachment-default-icon-expected.html:
+
 2020-03-18  Antoine Quint  <graouts@apple.com>
 
         [macOS iOS ] animations/animation-direction-normal.html is flaky failing
