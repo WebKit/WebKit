@@ -88,10 +88,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         this._typeFilterScopeBar = new WI.ScopeBar("network-type-filter-scope-bar", typeFilterScopeBarItems, typeFilterScopeBarItems[0]);
+        this._typeFilterScopeBar.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         this._typeFilterScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._typeFilterScopeBarSelectionChanged, this);
 
         if (WI.MediaInstrument.supported()) {
             this._groupMediaRequestsByDOMNodeNavigationItem = new WI.CheckboxNavigationItem("group-media-requests", WI.UIString("Group Media Requests"), WI.settings.groupMediaRequestsByDOMNode.value);
+            this._groupMediaRequestsByDOMNodeNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
             this._groupMediaRequestsByDOMNodeNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._handleGroupMediaRequestsByDOMNodeCheckedDidChange, this);
         } else
             WI.settings.groupMediaRequestsByDOMNode.value = false;
@@ -101,6 +103,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._urlFilterIsActive = false;
 
         this._urlFilterNavigationItem = new WI.FilterBarNavigationItem;
+        this._urlFilterNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         this._urlFilterNavigationItem.filterBar.addEventListener(WI.FilterBar.Event.FilterDidChange, this._urlFilterDidChange, this);
         this._urlFilterNavigationItem.filterBar.placeholder = WI.UIString("Filter Full URL");
 
@@ -137,10 +140,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._collectionsPathNavigationItem.components = [pathComponent];
 
         this._checkboxesNavigationItemGroup = new WI.GroupNavigationItem([this._clearOnLoadNavigationItem, new WI.DividerNavigationItem]);
-        this._checkboxesNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         this._pathComponentsNavigationItemGroup = new WI.GroupNavigationItem([this._collectionsPathNavigationItem, new WI.DividerNavigationItem]);
-        this._pathComponentsNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._pathComponentsNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         this._pathComponentsNavigationItemGroup.hidden = true;
 
         this._buttonsNavigationItemGroup = new WI.GroupNavigationItem([this._harImportNavigationItem, this._harExportNavigationItem, new WI.DividerNavigationItem]);
@@ -152,8 +154,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             let activatedToolTipForDisableResourceCache = WI.UIString("Use the resource cache when loading resources");
             this._disableResourceCacheNavigationItem = new WI.ActivateButtonNavigationItem("disable-resource-cache", toolTipForDisableResourceCache, activatedToolTipForDisableResourceCache, "Images/IgnoreCaches.svg", 16, 16);
             this._disableResourceCacheNavigationItem.activated = WI.settings.resourceCachingDisabled.value;
-
+            this._disableResourceCacheNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
             this._disableResourceCacheNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleDisableResourceCache, this);
+
             WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
         }
 
