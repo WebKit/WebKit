@@ -452,7 +452,8 @@ void CSSPrimitiveValue::cleanup()
         m_value.pair->deref();
         break;
     case CSSUnitType::CSS_CALC:
-        m_value.calc->deref();
+        if (m_value.calc)
+            m_value.calc->deref();
         break;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:

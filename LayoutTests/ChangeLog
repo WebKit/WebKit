@@ -1,3 +1,15 @@
+2020-03-17  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Crash in CSSPrimitiveValue::cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=208316
+
+        Reviewed by Ryosuke Niwa.
+
+        Added modified version of testcase attached in 208316. Minimized version provided by Ryosuke Niwa.
+
+        * editing/execCommand/primitive-value-cleanup-minimal-expected.txt: Added.
+        * editing/execCommand/primitive-value-cleanup-minimal.html: Added.
+
 2020-03-17  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Gardening
