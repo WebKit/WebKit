@@ -2102,6 +2102,11 @@ sub runInFlatpak(@)
 
 sub runInFlatpakIfAvailable(@)
 {
+    my $prefix = wrapperPrefixIfNeeded();
+    if (defined($prefix)) {
+        return 0;
+    }
+
     if (inFlatpakSandbox()) {
         return 0;
     }

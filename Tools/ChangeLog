@@ -1,3 +1,14 @@
+2020-03-18  Philippe Normand  <pnormand@igalia.com>
+
+        [JHBuild] Flatpak used for run-minibrowser even when forcing jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=209222
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Scripts/webkitdirs.pm:
+        (runInFlatpakIfAvailable): If a command wrapper is required it
+        means Flatpak shouldn't be used.
+
 2020-03-18  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] commit-queue should comment on bug in case patch fails to build
