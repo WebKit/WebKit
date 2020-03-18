@@ -1,3 +1,13 @@
+2020-03-18  Aakash Jain  <aakash_jain@apple.com>
+
+        commit-queue should allow patches which are reviewed by patch author
+        https://bugs.webkit.org/show_bug.cgi?id=209231
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (BugzillaMixin._does_patch_have_acceptable_review_flag):
+
 2020-03-18  Philippe Normand  <pnormand@igalia.com>
 
         [JHBuild] Flatpak used for run-minibrowser even when forcing jhbuild

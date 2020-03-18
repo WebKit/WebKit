@@ -450,9 +450,6 @@ class BugzillaMixin(object):
                     self.setProperty('patch_reviewer', patch_reviewer)
                     if self.addURLs:
                         self.addURL('Reviewed by: {}'.format(patch_reviewer), '')
-                    if patch_reviewer == patch_json.get('creator'):
-                        self._addToLog('stdio', 'Patch {} is r+ by the patch author {} itself. This seems like a mistake.\n'.format(patch_id, patch_reviewer))
-                        return 0
                     return 1
                 if review_status in ['-', '?']:
                     self._addToLog('stdio', 'Patch {} is marked r{}.\n'.format(patch_id, review_status))
