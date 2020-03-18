@@ -1714,6 +1714,7 @@ public:
 
     void setIsNavigatingToAppBoundDomainTesting(bool, CompletionHandler<void()>&&);
     void isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&&);
+    NavigatingToAppBoundDomain isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -2271,7 +2272,6 @@ private:
     void makeStorageSpaceRequest(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
         
     void setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL&, NavigatingToAppBoundDomain);
-    NavigatingToAppBoundDomain isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
     NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain() const { return m_hasNavigatedAwayFromAppBoundDomain; }
         
     const Identifier m_identifier;

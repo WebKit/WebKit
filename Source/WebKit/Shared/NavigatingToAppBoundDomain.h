@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Igalia S.L.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,46 +25,9 @@
 
 #pragma once
 
-#if ENABLE(NETWORK_CACHE_STALE_WHILE_REVALIDATE)
-
-#include "NetworkCache.h"
-#include "NetworkCacheEntry.h"
-#include "NetworkCacheSpeculativeLoad.h"
-#include <wtf/CompletionHandler.h>
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class ResourceRequest;
-};
-
 namespace WebKit {
 
-class SpeculativeLoad;
+enum class NavigatingToAppBoundDomain : bool { Yes, No };
 
-namespace NetworkCache {
+}
 
-class AsyncRevalidation : public CanMakeWeakPtr<AsyncRevalidation> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    enum class Result {
-        Failure,
-        Timeout,
-        Success,
-    };
-    AsyncRevalidation(Cache&, const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>&&, NavigatingToAppBoundDomain, CompletionHandler<void(Result)>&&);
-    void cancel();
-
-    const SpeculativeLoad& load() const { return *m_load; }
-
-private:
-    void staleWhileRevalidateEnding();
-
-    std::unique_ptr<SpeculativeLoad> m_load;
-    WebCore::Timer m_timer;
-    CompletionHandler<void(Result)> m_completionHandler;
-};
-
-} // namespace NetworkCache
-} // namespace WebKit
-
-#endif // ENABLE(NETWORK_CACHE_STALE_WHILE_REVALIDATE)

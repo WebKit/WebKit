@@ -26,13 +26,13 @@
 #pragma once
 
 #include "DownloadID.h"
+#include "NavigatingToAppBoundDomain.h"
 #include "WebsitePoliciesData.h"
 #include <wtf/Forward.h>
 
 namespace WebKit {
 
-enum class NavigatingToAppBoundDomain { Yes, No };
-enum class NavigatedAwayFromAppBoundDomain { Yes, No};
+enum class NavigatedAwayFromAppBoundDomain : bool { Yes, No};
 
 struct PolicyDecision {
     WebCore::PolicyCheckIdentifier identifier { };
@@ -98,23 +98,3 @@ struct PolicyDecision {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::NavigatingToAppBoundDomain> {
-    using values = EnumValues<
-        WebKit::NavigatingToAppBoundDomain,
-        WebKit::NavigatingToAppBoundDomain::Yes,
-        WebKit::NavigatingToAppBoundDomain::No
-    >;
-};
-
-template<> struct EnumTraits<WebKit::NavigatedAwayFromAppBoundDomain> {
-    using values = EnumValues<
-        WebKit::NavigatedAwayFromAppBoundDomain,
-        WebKit::NavigatedAwayFromAppBoundDomain::Yes,
-        WebKit::NavigatedAwayFromAppBoundDomain::No
-    >;
-};
-
-}

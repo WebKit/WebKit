@@ -43,7 +43,7 @@ DownloadManager::DownloadManager(Client& client)
 {
 }
 
-void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
+void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, const String& suggestedName)
 {
     auto* networkSession = client().networkSession(sessionID);
     if (!networkSession)
@@ -52,6 +52,7 @@ void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloa
     NetworkLoadParameters parameters;
     parameters.request = request;
     parameters.clientCredentialPolicy = ClientCredentialPolicy::MayAskClientForCredentials;
+    parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     if (request.url().protocolIsBlob())
         parameters.blobFileReferences = client().networkSession(sessionID)->blobRegistry().filesInBlob(request.url());
     parameters.storedCredentialsPolicy = sessionID.isEphemeral() ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;

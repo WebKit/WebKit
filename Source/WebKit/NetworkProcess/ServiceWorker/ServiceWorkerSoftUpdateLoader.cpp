@@ -59,8 +59,8 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
     if (session.cache()) {
         // We set cache policy to disable speculative loading/async revalidation from the cache.
         request.setCachePolicy(ResourceRequestCachePolicy::ReturnCacheDataDontLoad);
-        
-        session.cache()->retrieve(request, NetworkCache::GlobalFrameID { }, [this, weakThis = makeWeakPtr(*this), request, shouldRefreshCache](auto&& entry, auto&&) mutable {
+
+        session.cache()->retrieve(request, NetworkCache::GlobalFrameID { }, NavigatingToAppBoundDomain::No, [this, weakThis = makeWeakPtr(*this), request, shouldRefreshCache](auto&& entry, auto&&) mutable {
             if (!weakThis)
                 return;
             if (!m_session) {

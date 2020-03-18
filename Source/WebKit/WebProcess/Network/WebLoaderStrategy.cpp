@@ -755,6 +755,7 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
     parameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
     // FIXME: Use the proper destination once all fetch options are passed.
     parameters.options.destination = FetchOptions::Destination::EmptyString;
+    parameters.isNavigatingToAppBoundDomain = webPage.isNavigatingToAppBoundDomain();
 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::PreconnectTo(preconnectionIdentifier, WTFMove(parameters)), 0);
 }

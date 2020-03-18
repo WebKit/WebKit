@@ -29,6 +29,7 @@
 #include "DownloadMap.h"
 #include "NetworkDataTask.h"
 #include "PendingDownload.h"
+#include "PolicyDecision.h"
 #include "SandboxExtension.h"
 #include <WebCore/NotImplemented.h>
 #include <wtf/Forward.h>
@@ -80,7 +81,7 @@ public:
 
     explicit DownloadManager(Client&);
 
-    void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
+    void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, NavigatingToAppBoundDomain, const String& suggestedName = { });
     void dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
     void willDecidePendingDownloadDestination(NetworkDataTask&, ResponseCompletionHandler&&);

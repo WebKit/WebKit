@@ -1357,8 +1357,11 @@ DownloadProxy& WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProx
     auto& downloadProxy = createDownloadProxy(dataStore, request, initiatingPage, { });
     PAL::SessionID sessionID = dataStore.sessionID();
 
-    if (initiatingPage)
+    NavigatingToAppBoundDomain isAppBound = NavigatingToAppBoundDomain::No;
+    if (initiatingPage) {
         initiatingPage->handleDownloadRequest(downloadProxy);
+        isAppBound = initiatingPage->isNavigatingToAppBoundDomain();
+    }
 
     if (networkProcess()) {
         ResourceRequest updatedRequest(request);
@@ -1377,7 +1380,7 @@ DownloadProxy& WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProx
                 updatedRequest.setHTTPUserAgent(WebPageProxy::standardUserAgent());
         }
         updatedRequest.setIsTopSite(false);
-        networkProcess()->send(Messages::NetworkProcess::DownloadRequest(sessionID, downloadProxy.downloadID(), updatedRequest, suggestedFilename), 0);
+        networkProcess()->send(Messages::NetworkProcess::DownloadRequest(sessionID, downloadProxy.downloadID(), updatedRequest, isAppBound, suggestedFilename), 0);
         return downloadProxy;
     }
 

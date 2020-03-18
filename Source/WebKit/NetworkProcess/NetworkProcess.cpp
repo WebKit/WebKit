@@ -1309,7 +1309,7 @@ void NetworkProcess::setFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionI
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
-void NetworkProcess::preconnectTo(PAL::SessionID sessionID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+void NetworkProcess::preconnectTo(PAL::SessionID sessionID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
 #if ENABLE(SERVER_PRECONNECT)
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
@@ -1319,6 +1319,7 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, const URL& url, cons
 
     NetworkLoadParameters parameters;
     parameters.request = ResourceRequest { url };
+    parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     if (!userAgent.isEmpty()) {
         // FIXME: we add user-agent to the preconnect request because otherwise the preconnect
         // gets thrown away by CFNetwork when using an HTTPS proxy (<rdar://problem/59434166>).
@@ -2034,9 +2035,9 @@ void NetworkProcess::removeCacheEngine(const PAL::SessionID& sessionID)
     m_cacheEngines.remove(sessionID);
 }
 
-void NetworkProcess::downloadRequest(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedFilename)
+void NetworkProcess::downloadRequest(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, const String& suggestedFilename)
 {
-    downloadManager().startDownload(sessionID, downloadID, request, suggestedFilename);
+    downloadManager().startDownload(sessionID, downloadID, request, isNavigatingToAppBoundDomain, suggestedFilename);
 }
 
 void NetworkProcess::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, WebKit::SandboxExtension::Handle&& sandboxExtensionHandle)

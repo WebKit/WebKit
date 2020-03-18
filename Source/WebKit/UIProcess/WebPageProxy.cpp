@@ -4296,7 +4296,7 @@ void WebPageProxy::preconnectTo(const URL& url)
         return;
 
     if (auto* networkProcess = m_process->processPool().networkProcess())
-        networkProcess->preconnectTo(sessionID(), url, userAgent(), WebCore::StoredCredentialsPolicy::Use);
+        networkProcess->preconnectTo(sessionID(), url, userAgent(), WebCore::StoredCredentialsPolicy::Use, m_isNavigatingToAppBoundDomain);
 }
 
 void WebPageProxy::didDestroyNavigation(uint64_t navigationID)

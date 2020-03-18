@@ -1,3 +1,89 @@
+2020-03-18  Kate Cheney  <katherine_cheney@apple.com>
+
+        Pass isNavigatingToAppBoundDomain for speculative loads, preconnect tasks and downloads
+        https://bugs.webkit.org/show_bug.cgi?id=209246
+        <rdar://problem/60552712>
+
+        Reviewed by Alex Christensen.
+
+        Pass isNavigatingToAppBoundDomain in 4 new places:
+
+        1) Speculative Loads
+        2) Preconnect Tasks
+        3) Downloads
+        4) CORS preflight checker
+
+        These loads should happen in an app-bound session if isNavigatingToAppBoundDomain
+        is true.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::PendingDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        (WebKit::NetworkProcess::downloadRequest):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::convertToDownload):
+        * NetworkProcess/PreconnectTask.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader):
+        The service worker script should be considered an app-bound load.
+
+        * NetworkProcess/cache/AsyncRevalidation.cpp:
+        (WebKit::NetworkCache::AsyncRevalidation::AsyncRevalidation):
+        * NetworkProcess/cache/AsyncRevalidation.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::startAsyncRevalidationIfNeeded):
+        (WebKit::NetworkCache::Cache::retrieve):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preconnectForSubresource):
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateSubresource):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        * Shared/NavigatingToAppBoundDomain.h:
+        Separates NavigatingToAppBoundDomain to its own file to allow for
+        sending over IPC.
+
+        * Shared/PolicyDecision.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::preconnectTo):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+        (WebKit::WebPageProxy::preconnectTo):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isNavigatingToAppBoundDomain const):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        (WebKit::WebFrame::convertMainResourceLoadToDownload):
+
 2020-03-18  Sihui Liu  <sihui_liu@apple.com>
 
         Remove unused IPC message NetworkProcess::ClearCacheForAllOrigins

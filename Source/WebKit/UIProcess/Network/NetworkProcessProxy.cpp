@@ -1434,11 +1434,11 @@ void NetworkProcessProxy::getLocalStorageDetails(PAL::SessionID sessionID, Compl
     sendWithAsyncReply(Messages::NetworkProcess::GetLocalStorageOriginDetails(sessionID), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     if (!url.isValid() || !url.protocolIsInHTTPFamily() || SecurityOrigin::isLocalHostOrLoopbackIPAddress(url.host()))
         return;
-    send(Messages::NetworkProcess::PreconnectTo(sessionID, url, userAgent, storedCredentialsPolicy), 0);
+    send(Messages::NetworkProcess::PreconnectTo(sessionID, url, userAgent, storedCredentialsPolicy, isNavigatingToAppBoundDomain), 0);
 }
 
 void NetworkProcessProxy::updateProcessAssertion()
