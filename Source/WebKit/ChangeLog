@@ -1,3 +1,16 @@
+2020-03-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove unneeded and incorrect respondsToSelector checks.
+        https://bugs.webkit.org/show_bug.cgi?id=209208
+        <rdar://problem/60512470>
+
+        Reviewed by Tim Horton.
+
+        No behaviour change, no tests needed.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView continueContextMenuInteractionWithDataDetectors:]):
+
 2020-03-18  Brent Fulgham  <bfulgham@apple.com>
 
         Switch from debug ASSERT to RELEASE_ASSERT in toNPObjectProxy

@@ -8434,18 +8434,16 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         // and create one. We need to replicate this code for the new API.
         if (!previewViewController || [(NSURL *)url iTunesStoreURL]) {
             auto ddContextMenuActionClass = getDDContextMenuActionClass();
-            if ([ddContextMenuActionClass respondsToSelector:@selector(contextMenuConfigurationForURL:identifier:selectedText:results:inView:context:menuIdentifier:)]) {
-                BEGIN_BLOCK_OBJC_EXCEPTIONS;
-                NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
-                RetainPtr<UIContextMenuConfiguration> dataDetectorsResult = [ddContextMenuActionClass contextMenuConfigurationForURL:url identifier:_positionInformation.dataDetectorIdentifier selectedText:self.selectedText results:_positionInformation.dataDetectorResults.get() inView:self context:context menuIdentifier:nil];
-                if (_showLinkPreviews && dataDetectorsResult && dataDetectorsResult.get().previewProvider)
-                    _contextMenuLegacyPreviewController = dataDetectorsResult.get().previewProvider();
-                if (dataDetectorsResult && dataDetectorsResult.get().actionProvider) {
-                    auto menuElements = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
-                    _contextMenuLegacyMenu = dataDetectorsResult.get().actionProvider(menuElements);
-                }
-                END_BLOCK_OBJC_EXCEPTIONS;
+            BEGIN_BLOCK_OBJC_EXCEPTIONS;
+            NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
+            RetainPtr<UIContextMenuConfiguration> dataDetectorsResult = [ddContextMenuActionClass contextMenuConfigurationForURL:url identifier:_positionInformation.dataDetectorIdentifier selectedText:self.selectedText results:_positionInformation.dataDetectorResults.get() inView:self context:context menuIdentifier:nil];
+            if (_showLinkPreviews && dataDetectorsResult && dataDetectorsResult.get().previewProvider)
+                _contextMenuLegacyPreviewController = dataDetectorsResult.get().previewProvider();
+            if (dataDetectorsResult && dataDetectorsResult.get().actionProvider) {
+                auto menuElements = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
+                _contextMenuLegacyMenu = dataDetectorsResult.get().actionProvider(menuElements);
             }
+            END_BLOCK_OBJC_EXCEPTIONS;
             return;
         }
 
@@ -8588,8 +8586,8 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
 #if ENABLE(DATA_DETECTION)
     if ([(NSURL *)linkURL iTunesStoreURL]) {
-        if ([self continueContextMenuInteractionWithDataDetectors:continueWithContextMenuConfiguration])
-            return;
+        [self continueContextMenuInteractionWithDataDetectors:continueWithContextMenuConfiguration];
+        return;
     }
 #endif
 
@@ -8651,10 +8649,11 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             return;
         }
 
-        if ([strongSelf continueContextMenuInteractionWithDataDetectors:continueWithContextMenuConfiguration.get()])
-            return;
-#endif
+        [strongSelf continueContextMenuInteractionWithDataDetectors:continueWithContextMenuConfiguration.get()];
+        return;
+#else
         continueWithContextMenuConfiguration(nil);
+#endif
     });
 
     _contextMenuActionProviderDelegateNeedsOverride = NO;
@@ -8689,22 +8688,17 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 }
 
 #if ENABLE(DATA_DETECTION)
-- (BOOL)continueContextMenuInteractionWithDataDetectors:(void(^)(UIContextMenuConfiguration *))continueWithContextMenuConfiguration
+- (void)continueContextMenuInteractionWithDataDetectors:(void(^)(UIContextMenuConfiguration *))continueWithContextMenuConfiguration
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     auto ddContextMenuActionClass = getDDContextMenuActionClass();
-    if ([ddContextMenuActionClass respondsToSelector:@selector(contextMenuConfigurationWithURL:inView:context:menuIdentifier:)]) {
-        URL linkURL = _positionInformation.url;
-        NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
-        UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() inView:self context:context menuIdentifier:nil];
-        _contextMenuActionProviderDelegateNeedsOverride = YES;
-        _page->startInteractionWithPositionInformation(_positionInformation);
-        continueWithContextMenuConfiguration(configurationFromDD);
-        return YES;
-    }
+    URL linkURL = _positionInformation.url;
+    NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
+    UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() inView:self context:context menuIdentifier:nil];
+    _contextMenuActionProviderDelegateNeedsOverride = YES;
+    _page->startInteractionWithPositionInformation(_positionInformation);
+    continueWithContextMenuConfiguration(configurationFromDD);
     END_BLOCK_OBJC_EXCEPTIONS;
-
-    return NO;
 }
 #endif
 
