@@ -38,7 +38,8 @@ BEGIN {
     use lib $FindBin::Bin;
     use File::Spec::Functions qw(catfile);
 
-    if (!grep(/^--no-flatpak-check$/, @ARGV)) {
+    my $osName = $Config{osname};
+    if ($osName eq "linux" && !grep(/^--no-flatpak-check$/, @ARGV)) {
         if (eval {require webkitdirs; 1;}) {
             webkitdirs->import(qw(shouldUseFlatpak runInFlatpak sourceDir));
             if (shouldUseFlatpak()) {

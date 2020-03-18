@@ -1,3 +1,12 @@
+2020-03-18  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION (r258626): test262 tests failing to run on macOS with error 'Undefined subroutine &Test262::Runner::setConfiguration'
+        https://bugs.webkit.org/show_bug.cgi?id=209238
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/test262-runner: Perform the flatpak check on Linux only.
+
 2020-03-18  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] archive-built-product fails after r258612
