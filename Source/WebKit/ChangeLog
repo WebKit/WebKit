@@ -1,5 +1,18 @@
 2020-03-18  youenn fablet  <youenn@apple.com>
 
+        REGRESSION (r257472): Can't start old Safari with new WebKit (dyld: Symbol not found: _WKContextConfigurationSetShouldCaptureAudioInUIProcess)
+        https://bugs.webkit.org/show_bug.cgi?id=209155
+
+        Reviewed by Eric Carlson.
+
+        Add a no-op WKContextConfigurationSetShouldCaptureAudioInUIProcess to allow latest WebKit being run on older Safari.
+
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationSetShouldCaptureAudioInUIProcess):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+
+2020-03-18  youenn fablet  <youenn@apple.com>
+
         FrameLoader should own its FrameLoaderClient
         https://bugs.webkit.org/show_bug.cgi?id=208918
 

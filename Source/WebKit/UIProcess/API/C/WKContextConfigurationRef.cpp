@@ -214,6 +214,10 @@ void WKContextConfigurationSetDiskCacheSizeOverride(WKContextConfigurationRef co
 {
 }
 
+void WKContextConfigurationSetShouldCaptureAudioInUIProcess(WKContextConfigurationRef, bool)
+{
+}
+
 void WKContextConfigurationSetShouldConfigureJSCForTesting(WKContextConfigurationRef configuration, bool value)
 {
     toImpl(configuration)->setShouldConfigureJSCForTesting(value);
