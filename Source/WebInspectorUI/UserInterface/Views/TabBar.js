@@ -435,20 +435,22 @@ WI.TabBar = class TabBar extends WI.View
         const tabBarHorizontalPadding = WI.TabBar.horizontalPadding;
         const tabBarItemHorizontalMargin = WI.TabBarItem.horizontalMargin;
 
-        function measureItemWidth(item) {
-            if (!item[WI.TabBar.CachedWidthSymbol])
-                item[WI.TabBar.CachedWidthSymbol] = item.element.realOffsetWidth + tabBarItemHorizontalMargin;
-            return item[WI.TabBar.CachedWidthSymbol];
+        let undocked = WI.dockConfiguration === WI.DockConfiguration.Undocked;
+
+        function measureWidth(tabBarItem) {
+            if (!tabBarItem[WI.TabBar.CachedWidthSymbol])
+                tabBarItem[WI.TabBar.CachedWidthSymbol] = tabBarItem.element.realOffsetWidth + tabBarItemHorizontalMargin;
+            return tabBarItem[WI.TabBar.CachedWidthSymbol];
         }
 
-        let availableSpace = this._tabContainer.realOffsetWidth - tabBarHorizontalPadding;
+        // Add one to allow for possible sub-px widths.
+        let availableSpace = this._tabContainer.realOffsetWidth - tabBarHorizontalPadding + 1;
 
         this._tabContainer.classList.add("calculate-width");
 
         this._hiddenTabBarItems = [];
 
         let normalTabBarItems = [];
-        let normalTabBarItemsWidth = 0;
         for (let tabBarItem of this._tabBarItemsFromLeftToRight()) {
             if (tabBarItem === this._tabPickerTabBarItem) {
                 tabBarItem.hidden = true;
@@ -457,17 +459,24 @@ WI.TabBar = class TabBar extends WI.View
 
             tabBarItem.hidden = false;
 
-            if (tabBarItem instanceof WI.PinnedTabBarItem)
-                availableSpace -= measureItemWidth(tabBarItem);
-            else {
-                normalTabBarItems.push(tabBarItem);
-                normalTabBarItemsWidth += measureItemWidth(tabBarItem);
+            if (tabBarItem instanceof WI.PinnedTabBarItem) {
+                availableSpace -= measureWidth(tabBarItem);
+                continue;
             }
+
+            normalTabBarItems.push(tabBarItem);
+
+            // When undocked, `WI.TabBarItem` grow to fill any available space. As a result, if a
+            // `WI.TabBarItem` is added or removed, the width of all `WI.TabBarItem` will change.
+            if (undocked)
+                tabBarItem[WI.TabBar.CachedWidthSymbol] = 0;
         }
 
+        // Wait to measure widths until all `WI.TabBarItem` are un-hidden for the reason above.
+        let normalTabBarItemsWidth = normalTabBarItems.reduce((accumulator, tabBarItem) => accumulator + measureWidth(tabBarItem), 0);
         if (normalTabBarItemsWidth > availableSpace) {
             this._tabPickerTabBarItem.hidden = false;
-            availableSpace -= measureItemWidth(this._tabPickerTabBarItem);
+            availableSpace -= measureWidth(this._tabPickerTabBarItem);
 
             let index = normalTabBarItems.length - 1;
             do {
@@ -475,7 +484,7 @@ WI.TabBar = class TabBar extends WI.View
                 if (tabBarItem === this._selectedTabBarItem)
                     continue;
 
-                normalTabBarItemsWidth -= measureItemWidth(tabBarItem);
+                normalTabBarItemsWidth -= measureWidth(tabBarItem);
 
                 tabBarItem.hidden = true;
                 this._hiddenTabBarItems.push(tabBarItem);
