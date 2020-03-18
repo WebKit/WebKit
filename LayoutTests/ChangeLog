@@ -1,5 +1,13 @@
 2020-03-17  Lauro Moura  <lmoura@igalia.com>
 
+        [WPE] Gardening
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+
+2020-03-17  Lauro Moura  <lmoura@igalia.com>
+
         [WPE] Rebaseline after r258492.
 
         Unreviewed test gardening.

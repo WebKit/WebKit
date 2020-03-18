@@ -1395,6 +1395,8 @@ webkit.org/b/209130 fast/mediastream/fast/mediastream/change-tracks-media-stream
 
 webkit.org/b/209144 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable.html [ Pass Failure ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.basic.image.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.norepeat.basic.html [ Pass Failure ]
+webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.norepeat.coord2.html [ Pass Failure ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.norepeat.coord3.html [ Pass Failure ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeat.basic.html [ Pass Failure ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeat.outside.html [ Pass Failure ]
@@ -1988,6 +1990,7 @@ webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout 
 webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
 webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-completion.html [ Failure ]
+webkit.org/b/180134 webanimations/opacity-animation.html [ Failure ]
 
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure ]
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure ]
