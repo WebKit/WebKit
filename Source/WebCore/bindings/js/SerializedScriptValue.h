@@ -179,8 +179,12 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
         unsigned bufferSize;
         if (!decoder.decode(bufferSize))
             return nullptr;
+        if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
+            return nullptr;
 
         auto buffer = Gigacage::tryMalloc(Gigacage::Primitive, bufferSize);
+        if (!buffer)
+            return nullptr;
         if (!decoder.decodeFixedLengthData(static_cast<uint8_t*>(buffer), bufferSize, 1)) {
             Gigacage::free(Gigacage::Primitive, buffer);
             return nullptr;
