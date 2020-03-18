@@ -1,3 +1,14 @@
+2020-03-18  Eugene But  <eugenebut@chromium.org>
+
+        Test for ReplaceSelectionCommand::InsertedNodes::willRemoveNodePreservingChildren crash fix
+        https://bugs.webkit.org/show_bug.cgi?id=208312
+
+        Reviewed by Ryosuke Niwa
+
+        This test insers empty Apple-style-span after timeout to a non-empty document.
+
+        * editing/pasteboard/insert-apple-style-span-after-timeout.html:
+
 2020-03-18  Frank Yang  <guowei_yang@apple.com>
 
         [CSS Writing Modes] Import css/css-writing-modes from WPT
