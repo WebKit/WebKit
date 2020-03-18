@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: line 140: Button failed to load, iconName = PlayCompact, layoutTraits = 8, src = PlayCompact.pdf
-CONSOLE MESSAGE: line 140: Button failed to load, iconName = InvalidCompact, layoutTraits = 8, src = InvalidCompact.pdf
-CONSOLE MESSAGE: line 140: Button failed to load, iconName = ActivityIndicatorSpriteCompact, layoutTraits = 8, src = ActivityIndicatorSpriteCompact@1x.png
 Testing the CompactMediaControls layout.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,3 +1,17 @@
+2020-03-18  Antoine Quint  <graouts@apple.com>
+
+        [ Mac WK1 ] Layout Test media/modern-media-controls/compact-media-controls/compact-media-controls-layout.html is a flaky text diff failure
+        https://bugs.webkit.org/show_bug.cgi?id=194309
+        <rdar://problem/48012947>
+
+        Reviewed by Dean Jackson.
+
+        Since the console output is not guaranteed to appear in a deterministic order, we supress it.
+
+        * media/modern-media-controls/compact-media-controls/compact-media-controls-layout-expected.txt:
+        * media/modern-media-controls/compact-media-controls/compact-media-controls-layout.html:
+        * platform/mac-wk1/TestExpectations:
+
 2020-03-18  Frederic Wang  <fwang@igalia.com>
 
         frame/iframe scrolling attribute does to recognize value "noscroll" or "off"
