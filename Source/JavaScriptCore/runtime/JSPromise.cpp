@@ -182,9 +182,24 @@ void JSPromise::reject(JSGlobalObject* lexicalGlobalObject, JSValue value)
     vm.promiseTimer->cancelPendingPromise(this);
 }
 
+void JSPromise::rejectAsHandled(JSGlobalObject* lexicalGlobalObject, JSValue value)
+{
+    // Setting isHandledFlag before calling reject since this removes round-trip between JSC and PromiseRejectionTracker, and it does not show an user-observable behavior.
+    VM& vm = lexicalGlobalObject->vm();
+    uint32_t flags = this->flags();
+    if (!(flags & isFirstResolvingFunctionCalledFlag))
+        internalField(static_cast<unsigned>(Field::Flags)).set(vm, this, jsNumber(flags | isHandledFlag));
+    reject(lexicalGlobalObject, value);
+}
+
 void JSPromise::reject(JSGlobalObject* lexicalGlobalObject, Exception* reason)
 {
     reject(lexicalGlobalObject, reason->value());
+}
+
+void JSPromise::rejectAsHandled(JSGlobalObject* lexicalGlobalObject, Exception* reason)
+{
+    rejectAsHandled(lexicalGlobalObject, reason->value());
 }
 
 } // namespace JSC

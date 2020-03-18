@@ -68,7 +68,9 @@ public:
 
     JS_EXPORT_PRIVATE void resolve(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void reject(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE void rejectAsHandled(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void reject(JSGlobalObject*, Exception*);
+    JS_EXPORT_PRIVATE void rejectAsHandled(JSGlobalObject*, Exception*);
 
     struct DeferredData {
         WTF_FORBID_HEAP_ALLOCATION;

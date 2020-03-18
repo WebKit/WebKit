@@ -2929,6 +2929,14 @@ static EncodedJSValue JSC_HOST_CALL functionHasOwnLengthProperty(JSGlobalObject*
     return JSValue::encode(jsBoolean(function->canAssumeNameAndLengthAreOriginal(vm)));
 }
 
+static EncodedJSValue JSC_HOST_CALL functionRejectPromiseAsHandled(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    JSPromise* promise = jsCast<JSPromise*>(callFrame->uncheckedArgument(0));
+    JSValue reason = callFrame->uncheckedArgument(1);
+    promise->rejectAsHandled(globalObject, reason);
+    return JSValue::encode(jsUndefined());
+}
+
 void JSDollarVM::finishCreation(VM& vm)
 {
     DollarVMAssertScope assertScope;
@@ -3063,6 +3071,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "getConcurrently", functionGetConcurrently, 2);
 
     addFunction(vm, "hasOwnLengthProperty", functionHasOwnLengthProperty, 1);
+    addFunction(vm, "rejectPromiseAsHandled", functionRejectPromiseAsHandled, 1);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

@@ -1,3 +1,26 @@
+2020-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add a way to mark a rejected promise as handled
+        https://bugs.webkit.org/show_bug.cgi?id=209241
+
+        Reviewed by Michael Saboff.
+
+        Some of WebCore promise implementations (WebAnimation etc.) want to reject promise
+        as handled state to suppress UnhandledPromiseRejection tracking. For example, a
+        lot of WebCore implementations expose Promise DOM attributes which will be rejected
+        at some conditions. But we do not want to force users setting a handler for each such an
+        attribute.
+
+        This patch adds `JSPromise::rejectAsHandled` C++ function. This simply sets isHandledFlag
+        before executing `JSPromise::reject` if we are not calling a reject function yet.
+
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::rejectAsHandled):
+        * runtime/JSPromise.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::functionRejectPromiseAsHandled):
+        (JSC::JSDollarVM::finishCreation):
+
 2020-03-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DeleteIC patchpoint in FTL should require tag and mask registers
