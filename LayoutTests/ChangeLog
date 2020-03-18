@@ -1,3 +1,19 @@
+2020-03-18  Antoine Quint  <graouts@apple.com>
+
+        [macOS iOS ] animations/animation-direction-normal.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206685
+        <rdar://problem/58841791>
+
+        Reviewed by Antti Koivisto.
+
+        To make this test robust we animate a non-accelerated property and we use the Web Animations API to set the time
+        at which we want to pause the animation (2.5s).
+
+        * animations/animation-direction-normal-expected.txt:
+        * animations/animation-direction-normal.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-03-18  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 Release ] platform/ios/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html is flaky failing.
