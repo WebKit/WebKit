@@ -224,8 +224,8 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         # Save WinCairoRequirements version for test bot use
         if platform == 'wincairo':
             shutil.copy(
-                os.path.join(os.getenv('WEBKIT_LIBRARIES'), 'WinCairoRequirements.zip.version'),
-                os.path.join(thinDirectory, 'WinCairoRequirements.zip.config'))
+                os.path.join(os.getenv('WEBKIT_LIBRARIES'), 'WebKitRequirementsWin64.zip.version'),
+                os.path.join(thinDirectory, 'WebKitRequirementsWin64.zip.config'))
 
         if createZip(thinDirectory, configuration):
             return 1

@@ -1,3 +1,14 @@
+2020-03-18  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] archive-built-product fails after r258612
+        https://bugs.webkit.org/show_bug.cgi?id=209237
+
+        Reviewed by Alex Christensen.
+
+        * BuildSlaveSupport/built-product-archive:
+        Update name of version file for requirements version
+        file for wincairo.
+
 2020-03-18  Aakash Jain  <aakash_jain@apple.com>
 
         commit-queue should allow patches which are reviewed by patch author
