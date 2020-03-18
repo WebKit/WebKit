@@ -93,6 +93,8 @@ bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
     uint64_t size;
     if (!decoder.decode(size))
         return false;
+    if (size != round_page(size))
+        return false;
 
     IPC::MachPort machPort;
     if (!decoder.decode(machPort))
@@ -190,13 +192,13 @@ RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, Protection p
 RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protection)
 {
     if (handle.isNull())
-        return 0;
-    
+        return nullptr;
+
     ASSERT(round_page(handle.m_size) == handle.m_size);
 
     vm_prot_t vmProtection = machProtection(protection);
     mach_vm_address_t mappedAddress = 0;
-    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, round_page(handle.m_size), 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
+    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, handle.m_size, 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
 #if RELEASE_LOG_DISABLED
     if (kr != KERN_SUCCESS)
         return nullptr;
