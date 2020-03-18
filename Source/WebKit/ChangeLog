@@ -1,3 +1,14 @@
+2020-03-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Switch from debug ASSERT to RELEASE_ASSERT in PluginQuirks.h
+        https://bugs.webkit.org/show_bug.cgi?id=209213
+        <rdar://problem/59595834>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/Plugins/PluginQuirks.h:
+        (WebKit::PluginQuirks::add):
+
 2020-03-18  youenn fablet  <youenn@apple.com>
 
         REGRESSION (r257472): Can't start old Safari with new WebKit (dyld: Symbol not found: _WKContextConfigurationSetShouldCaptureAudioInUIProcess)
