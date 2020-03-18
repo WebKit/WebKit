@@ -1208,7 +1208,7 @@ class BuildLogLineObserver(logobserver.LogLineObserver, object):
         else:
             self.error_context_buffer.append(line)
 
-        if "rror:" in line and self.errorReceived:
+        if 'rror:' in line and self.errorReceived:
             map(self.errorReceived, self.error_context_buffer)
             self.error_context_buffer = []
 
@@ -1826,7 +1826,13 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
         new_failures_string = ', '.join([failure_name for failure_name in new_failures])
         message = 'Found {} new test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
         self.descriptionDone = message
-        self.build.buildFinished([message], FAILURE)
+
+        if self.getProperty('buildername', '').lower() == 'commit-queue':
+            self.setProperty('bugzilla_comment_text', message)
+            self.setProperty('build_finish_summary', message)
+            self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+        else:
+            self.build.buildFinished([message], FAILURE)
         return defer.succeed(None)
 
     def report_pre_existing_failures(self, clean_tree_failures, flaky_failures):
@@ -2421,7 +2427,7 @@ class ApplyWatchList(shell.ShellCommand):
 
 
 class SetBuildSummary(buildstep.BuildStep):
-    name = "set-build-summary"
+    name = 'set-build-summary'
     descriptionDone = ['Set build summary']
     alwaysRun = True
     haltOnFailure = False

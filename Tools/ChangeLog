@@ -1,3 +1,16 @@
+2020-03-18  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] commit-queue should comment on bug in case of test failures
+        https://bugs.webkit.org/show_bug.cgi?id=209226
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeLayoutTestsResults.report_failure): Comment on bug and set cq- in case of test failure on commit-queue.
+        (BuildLogLineObserver.outLineReceived): Drive-by fix to use single quotes instead of double quotes.
+        (SetBuildSummary): Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-test.
+
 2020-03-18  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION (r258626): test262 tests failing to run on macOS with error 'Undefined subroutine &Test262::Runner::setConfiguration'
