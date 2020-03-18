@@ -16,7 +16,7 @@ if (NOT ALSALIB_FOUND)
     message(FATAL_ERROR "alsa-lib is needed for USE_LIBWEBRTC.")
 endif ()
 
-find_package(LibOpus 1.3)
+find_package(LibOpus 1.1)
 if (NOT LIBOPUS_FOUND)
     message(FATAL_ERROR "libopus is needed for USE_LIBWEBRTC.")
 endif ()

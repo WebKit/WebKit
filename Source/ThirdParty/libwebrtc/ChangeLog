@@ -1,3 +1,14 @@
+2020-03-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] libopus 1.1 its enough for building WebKitGTK with ENABLE_WEB_RTC
+        https://bugs.webkit.org/show_bug.cgi?id=209209
+
+        Reviewed by Konstantin Tokarev.
+
+        Ubuntu 18.04 ships libopus 1.1.2 which its enough for building with -DENABLE_WEB_RTC=ON
+
+        * CMakeLists.txt:
+
 2020-03-13  Konstantin Tokarev  <annulen@yandex.ru>
 
         [CMake] Eleminate mismatches between Find* module names and variables they set
