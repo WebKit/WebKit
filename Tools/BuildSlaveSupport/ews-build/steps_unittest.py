@@ -1061,8 +1061,26 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
             mock_step(CompileWebKitToT(), results=SUCCESS),
         ]
         self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
-        self.expectOutcome(result=FAILURE, state_string='Patch does not build (failure)')
-        return self.runStep()
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=FAILURE, state_string='Patch 1234 does not build (failure)')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        self.assertEqual(self.getProperty('build_finish_summary'), None)
+        return rc
+
+    def test_patch_with_build_failure_on_commit_queue(self):
+        previous_steps = [
+            mock_step(CompileWebKit(), results=FAILURE),
+            mock_step(CompileWebKitToT(), results=SUCCESS),
+        ]
+        self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
+        self.setProperty('patch_id', '1234')
+        self.setProperty('buildername', 'commit-queue')
+        self.expectOutcome(result=FAILURE, state_string='Patch 1234 does not build (failure)')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Patch 1234 does not build')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Patch 1234 does not build')
+        return rc
 
     def test_patch_with_ToT_failure(self):
         previous_steps = [

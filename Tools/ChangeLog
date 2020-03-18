@@ -1,3 +1,14 @@
+2020-03-18  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] commit-queue should comment on bug in case patch fails to build
+        https://bugs.webkit.org/show_bug.cgi?id=209227
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.start):
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-test.
+
 2020-03-18  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Migrate to Flatpak-based dev SDK

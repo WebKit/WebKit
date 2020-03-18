@@ -1332,9 +1332,15 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
 
         self.finished(FAILURE)
         self.build.results = FAILURE
-        message = 'Patch does not build'
+        patch_id = self.getProperty('patch_id', '')
+        message = 'Patch {} does not build'.format(patch_id)
         self.descriptionDone = message
-        self.build.buildFinished([message], FAILURE)
+        if self.getProperty('buildername', '').lower() == 'commit-queue':
+            self.setProperty('bugzilla_comment_text', message)
+            self.setProperty('build_finish_summary', message)
+            self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+        else:
+            self.build.buildFinished([message], FAILURE)
 
         return defer.succeed(None)
 
