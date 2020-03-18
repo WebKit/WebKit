@@ -395,6 +395,7 @@ Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& 
 
 WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     : m_identifier(pageID)
+    , m_mainFrame(WebFrame::create())
     , m_viewSize(parameters.viewSize)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
     , m_alwaysShowsVerticalScroller { parameters.alwaysShowsVerticalScroller }
@@ -467,8 +468,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
-    auto mainFrame = WebFrame::create();
-
     PageConfiguration pageConfiguration(
         WebProcess::singleton().sessionID(),
         makeUniqueRef<WebEditorClient>(this),
@@ -478,7 +477,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebBackForwardListProxy::create(*this),
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
-        makeUniqueRef<WebFrameLoaderClient>(mainFrame.copyRef()),
+        makeUniqueRef<WebFrameLoaderClient>(m_mainFrame.copyRef()),
         makeUniqueRef<MediaRecorderProvider>()
     );
     pageConfiguration.chromeClient = new WebChromeClient(*this);
@@ -573,8 +572,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     // in modern WebKit.
     m_page->settings().setBackForwardCacheExpirationInterval(Seconds::infinity());
 
-    mainFrame->initWithCoreMainFrame(*this, m_page->mainFrame());
-    m_mainFrame = WTFMove(mainFrame);
+    m_mainFrame->initWithCoreMainFrame(*this, m_page->mainFrame());
 
     m_drawingArea->updatePreferences(parameters.store);
 
@@ -1383,7 +1381,7 @@ void WebPage::close()
     m_isClosed = true;
 
     // If there is still no URL, then we never loaded anything in this page, so nothing to report.
-    if (!mainWebFrame()->url().isEmpty())
+    if (!mainWebFrame().url().isEmpty())
         reportUsedFeatures();
 
     if (WebProcess::singleton().injectedBundle())
@@ -1529,7 +1527,7 @@ void WebPage::suspendForProcessSwap()
     // Back/forward cache does not break the opener link for the main frame (only does so for the subframes) because the
     // main frame is normally re-used for the navigation. However, in the case of process-swapping, the main frame
     // is now hosted in another process and the one in this process is in the cache.
-    if (m_mainFrame && m_mainFrame->coreFrame())
+    if (m_mainFrame->coreFrame())
         m_mainFrame->coreFrame()->loader().detachFromAllOpenedFrames();
 
     send(Messages::WebPageProxy::DidSuspendAfterProcessSwap());
@@ -1546,10 +1544,10 @@ void WebPage::loadURLInFrame(URL&& url, const String& referrer, FrameIdentifier 
 
 void WebPage::loadDataInFrame(IPC::DataReference&& data, String&& MIMEType, String&& encodingName, URL&& baseURL, FrameIdentifier frameID)
 {
-    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    auto* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
-    ASSERT(mainWebFrame() != frame);
+    ASSERT(&mainWebFrame() != frame);
 
     auto sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(data.data()), data.size());
     ResourceResponse response(baseURL, MIMEType, sharedBuffer->size(), encodingName);
@@ -1573,7 +1571,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     m_pendingNavigationID = loadParameters.navigationID;
     m_pendingWebsitePolicies = WTFMove(loadParameters.websitePolicies);
 
-    m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), WTFMove(loadParameters.sandboxExtensionHandle));
+    m_sandboxExtensionTracker.beginLoad(m_mainFrame.ptr(), WTFMove(loadParameters.sandboxExtensionHandle));
 
     // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
     // to all the client to set up any needed state.
@@ -1698,7 +1696,7 @@ void WebPage::reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExten
     ASSERT(!m_mainFrame->coreFrame()->loader().frameHasLoaded() || !m_pendingNavigationID);
     m_pendingNavigationID = navigationID;
 
-    m_sandboxExtensionTracker.beginReload(m_mainFrame.get(), WTFMove(sandboxExtensionHandle));
+    m_sandboxExtensionTracker.beginReload(m_mainFrame.ptr(), WTFMove(sandboxExtensionHandle));
     corePage()->userInputBridge().reloadFrame(m_mainFrame->coreFrame(), OptionSet<ReloadOption>::fromRaw(reloadOptions));
 
     if (m_pendingNavigationID) {
@@ -3335,10 +3333,10 @@ void WebPage::didCompletePageTransition()
 {
     unfreezeLayerTree(LayerTreeFreezeReason::PageTransition);
 
-    RELEASE_LOG_IF_ALLOWED(Layers, "didCompletePageTransition: Did complete page transition");
+    auto& stateMachine = m_mainFrame->coreFrame()->loader().stateMachine();
+    RELEASE_LOG_IF_ALLOWED(Layers, "didCompletePageTransition: Did complete page transition, loader state is %d", stateMachine.stateForDebugging());
 
-    bool isInitialEmptyDocument = !m_mainFrame;
-    if (!isInitialEmptyDocument)
+    if (stateMachine.committedFirstRealDocumentLoad())
         unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
 }
 
@@ -3455,7 +3453,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 
 void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, Optional<WebCore::FrameIdentifier> frameID, const std::pair<ContentWorldIdentifier, String>& worldData, CallbackID callbackID)
 {
-    auto* webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : mainWebFrame();
+    auto* webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame();
 
     if (auto* newWorld = m_userContentController->addContentWorld(worldData)) {
         auto& coreWorld = newWorld->coreWorld();
@@ -6626,7 +6624,7 @@ void WebPage::setIsSuspended(bool suspended)
     // we don't hold a BackgroundApplication freeze reason when transitioning from committed to suspended.
     unfreezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
 
-    WebProcess::singleton().sendPrewarmInformation(mainWebFrame()->url());
+    WebProcess::singleton().sendPrewarmInformation(mainWebFrame().url());
 
     suspendForProcessSwap();
 }
@@ -6699,7 +6697,7 @@ void WebPage::wasLoadedWithDataTransferFromPrevalentResource()
 
 void WebPage::didLoadFromRegistrableDomain(RegistrableDomain&& targetDomain)
 {
-    if (targetDomain != RegistrableDomain(mainWebFrame()->url()))
+    if (targetDomain != RegistrableDomain(mainWebFrame().url()))
         m_loadedThirdPartyDomains.add(targetDomain);
 }
 

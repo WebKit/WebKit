@@ -462,7 +462,7 @@ public:
     void findStringMatchesFromInjectedBundle(const String&, FindOptions);
     void replaceStringMatchesFromInjectedBundle(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly);
 
-    WebFrame* mainWebFrame() const { return m_mainFrame.get(); }
+    WebFrame& mainWebFrame() const { return m_mainFrame; }
 
     WebCore::Frame* mainFrame() const; // May return nullptr.
     WebCore::FrameView* mainFrameView() const; // May return nullptr.
@@ -1709,7 +1709,7 @@ private:
     WebCore::PageIdentifier m_identifier;
 
     std::unique_ptr<WebCore::Page> m_page;
-    RefPtr<WebFrame> m_mainFrame;
+    Ref<WebFrame> m_mainFrame;
 
     RefPtr<WebPageGroupProxy> m_pageGroup;
 

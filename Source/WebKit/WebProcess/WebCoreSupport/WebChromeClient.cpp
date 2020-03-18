@@ -115,13 +115,13 @@ static WebFrame* findLargestFrameInFrameSet(WebPage& page)
 {
     // Approximate what a user could consider a default target frame for application menu operations.
 
-    WebFrame* mainFrame = page.mainWebFrame();
-    if (!mainFrame || !mainFrame->isFrameSet())
+    auto& mainFrame = page.mainWebFrame();
+    if (!mainFrame.isFrameSet())
         return nullptr;
 
     WebFrame* largestSoFar = nullptr;
 
-    Ref<API::Array> frameChildren = mainFrame->childFrames();
+    Ref<API::Array> frameChildren = mainFrame.childFrames();
     size_t count = frameChildren->size();
     for (size_t i = 0; i < count; ++i) {
         auto* childFrame = frameChildren->at<WebFrame>(i);
@@ -443,10 +443,9 @@ void WebChromeClient::closeWindowSoon()
 
     m_page.corePage()->setGroupName(String());
 
-    if (WebFrame* frame = m_page.mainWebFrame()) {
-        if (Frame* coreFrame = frame->coreFrame())
-            coreFrame->loader().stopForUserCancel();
-    }
+    auto& frame = m_page.mainWebFrame();
+    if (auto* coreFrame = frame.coreFrame())
+        coreFrame->loader().stopForUserCancel();
 
     m_page.sendClose();
 }

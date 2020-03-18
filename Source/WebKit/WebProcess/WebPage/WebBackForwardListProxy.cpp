@@ -111,7 +111,7 @@ void WebBackForwardListProxy::goToItem(HistoryItem& item)
     WebBackForwardListCounts backForwardListCounts;
     m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(item.identifier()), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle, backForwardListCounts));
     m_cachedBackForwardListCounts = backForwardListCounts;
-    m_page->sandboxExtensionTracker().beginLoad(m_page->mainWebFrame(), WTFMove(sandboxExtensionHandle));
+    m_page->sandboxExtensionTracker().beginLoad(&m_page->mainWebFrame(), WTFMove(sandboxExtensionHandle));
 }
 
 RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex)

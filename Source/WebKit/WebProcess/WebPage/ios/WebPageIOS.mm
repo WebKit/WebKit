@@ -338,7 +338,7 @@ FloatSize WebPage::overrideScreenSize() const
 
 void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
 {
-    resetViewportDefaultConfiguration(m_mainFrame.get(), isMobileDoctype);
+    resetViewportDefaultConfiguration(m_mainFrame.ptr(), isMobileDoctype);
 }
 
 void WebPage::savePageState(HistoryItem& historyItem)
@@ -1168,7 +1168,7 @@ void WebPage::commitPotentialTapFailed()
 void WebPage::cancelPotentialTap()
 {
     ContentChangeObserver::didCancelPotentialTap(m_page->mainFrame());
-    cancelPotentialTapInFrame(*m_mainFrame);
+    cancelPotentialTapInFrame(m_mainFrame);
 }
 
 void WebPage::cancelPotentialTapInFrame(WebFrame& frame)

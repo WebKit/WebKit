@@ -171,7 +171,7 @@ WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef pageRef)
 
 WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
 {
-    return toAPI(WebKit::toImpl(pageRef)->mainWebFrame());
+    return toAPI(&WebKit::toImpl(pageRef)->mainWebFrame());
 }
 
 WKFrameHandleRef WKBundleFrameCreateFrameHandle(WKBundleFrameRef bundleFrameRef)

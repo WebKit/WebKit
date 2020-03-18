@@ -701,7 +701,7 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
 
 #if USE(COORDINATED_GRAPHICS)
         // Make sure viewport properties are dispatched on the main frame by the time the first layout happens.
-        ASSERT(!webPage->useFixedLayout() || m_frame.ptr() != m_frame->page()->mainWebFrame() || m_frame->coreFrame()->document()->didDispatchViewportPropertiesChanged());
+        ASSERT(!webPage->useFixedLayout() || m_frame.ptr() != &m_frame->page()->mainWebFrame() || m_frame->coreFrame()->document()->didDispatchViewportPropertiesChanged());
 #endif
     }
 
@@ -766,7 +766,7 @@ void WebFrameLoaderClient::dispatchDidLayout()
     // NOTE: Unlike the other layout notifications, this does not notify the
     // the UIProcess for every call.
 
-    if (m_frame.ptr() == m_frame->page()->mainWebFrame()) {
+    if (m_frame.ptr() == &m_frame->page()->mainWebFrame()) {
         // FIXME: Remove at the soonest possible time.
         webPage->send(Messages::WebPageProxy::SetRenderTreeSize(webPage->renderTreeSize()));
         webPage->mainFrameDidLayout();
@@ -1393,7 +1393,7 @@ void WebFrameLoaderClient::restoreViewState()
 
     // FIXME: This should not be necessary. WebCore should be correctly invalidating
     // the view on restores from the back/forward cache.
-    if (m_frame->page() && m_frame.ptr() == m_frame->page()->mainWebFrame())
+    if (m_frame->page() && m_frame.ptr() == &m_frame->page()->mainWebFrame())
         m_frame->page()->drawingArea()->setNeedsDisplay();
 #endif
 }

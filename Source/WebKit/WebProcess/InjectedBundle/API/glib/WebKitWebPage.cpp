@@ -839,7 +839,7 @@ WebKitFrame* webkit_web_page_get_main_frame(WebKitWebPage* webPage)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), 0);
 
-    return webkitFrameGetOrCreate(webPage->priv->webPage->mainWebFrame());
+    return webkitFrameGetOrCreate(&webPage->priv->webPage->mainWebFrame());
 }
 
 /**
