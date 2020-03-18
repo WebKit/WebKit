@@ -25,7 +25,7 @@
  */
 
 function handleStatusBubbleMessage(event) {
-    if ((event.origin !== 'https://webkit-queues.webkit.org' && event.origin !== 'https://ews.webkit.org') || !event.data.height)
+    if (event.origin !== 'https://ews.webkit.org' || !event.data.height)
         return;
 
     for (const iframe of document.querySelectorAll('.statusBubble > iframe')) {
@@ -38,9 +38,5 @@ function handleStatusBubbleMessage(event) {
 }
 
 function handleStatusBubbleLoad(iframe) {
-    iframe.contentWindow.postMessage('containerMetrics', 'https://webkit-queues.webkit.org');
-}
-
-function handleStatusBubbleLoadNewEWS(iframe) {
     iframe.contentWindow.postMessage('containerMetrics', 'https://ews.webkit.org');
 }

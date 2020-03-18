@@ -568,18 +568,11 @@ var CODE_REVIEW_UNITTEST;
       addFlagsForAttachment(details);
 
       var statusBubble = document.createElement('iframe');
-      statusBubble.src  = 'https://webkit-queues.webkit.org/status-bubble/' + attachment_id;
+      statusBubble.src  = 'https://ews.webkit.org/status-bubble/' + attachment_id + '?hide_icons=True';
       statusBubble.scrolling = 'no';
       // Can't append the HTML because we need to set the onload handler before appending the iframe to the DOM.
       statusBubble.onload = function () { handleStatusBubbleLoad(this); };
       $('.statusBubble').append(statusBubble);
-
-      var statusBubbleNewEWS = document.createElement('iframe');
-      statusBubbleNewEWS.src  = 'https://ews.webkit.org/status-bubble/' + attachment_id + '?hide_icons=True';
-      // Can't append the HTML because we need to set the onload handler before appending the iframe to the DOM.
-      statusBubbleNewEWS.scrolling = "no";
-      statusBubbleNewEWS.onload = function () { handleStatusBubbleLoadNewEWS(this); };
-      $('.statusBubble').append(statusBubbleNewEWS);
 
       $('#toolbar .bugLink').html('<a href="/show_bug.cgi?id=' + bug_id + '" target="_blank">Bug ' + bug_id + '</a>');
     });

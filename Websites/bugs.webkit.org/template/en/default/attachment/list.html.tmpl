@@ -155,11 +155,8 @@ function toggle_display(link) {
 [%# if WEBKIT_CHANGES %]
           [% IF attachment.ispatch %]
           <div class="statusBubble">
-            <iframe src="https://webkit-queues.webkit.org/status-bubble/[% attachment.id %]"
-                    style="width: 0px; height: 20px; border: none;" scrolling="no" onload="handleStatusBubbleLoad(this)">
-            </iframe>
             <iframe src="https://ews.webkit.org/status-bubble/[% attachment.id %]/"
-                    style="width: 0px; height: 20px; border: none;" scrolling="no" onload="handleStatusBubbleLoadNewEWS(this)">
+                    style="width: 0px; height: 20px; border: none;" scrolling="no" onload="handleStatusBubbleLoad(this)">
             </iframe>
           </div>
           [% END %]
