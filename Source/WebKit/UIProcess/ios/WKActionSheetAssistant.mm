@@ -733,10 +733,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSDictionary *newContext = nil;
     DDResultRef ddResult = [controller resultForURL:_positionInformation->url identifier:_positionInformation->dataDetectorIdentifier selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context extendedContext:&newContext];
 
+
+    CGRect sourceRect;
+    if (_positionInformation->isLink)
+        sourceRect = _positionInformation->linkIndicator.textBoundingRectInRootViewCoordinates;
+    else
+        sourceRect = _positionInformation->bounds;
+
     auto ddContextMenuActionClass = getDDContextMenuActionClass();
+    auto finalContext = [ddContextMenuActionClass updateContext:newContext withSourceRect:sourceRect];
+
     if (ddResult)
-        return [ddContextMenuActionClass contextMenuConfigurationWithResult:ddResult inView:_view.getAutoreleased() context:context menuIdentifier:nil];
-    return [ddContextMenuActionClass contextMenuConfigurationWithURL:_positionInformation->url inView:_view.getAutoreleased() context:context menuIdentifier:nil];
+        return [ddContextMenuActionClass contextMenuConfigurationWithResult:ddResult inView:_view.getAutoreleased() context:finalContext menuIdentifier:nil];
+    return [ddContextMenuActionClass contextMenuConfigurationWithURL:_positionInformation->url inView:_view.getAutoreleased() context:finalContext menuIdentifier:nil];
 }
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration

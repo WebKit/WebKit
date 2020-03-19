@@ -6750,10 +6750,10 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         sourceRect = positionInformation.bounds;
 
     CGRect frameInContainerViewCoordinates = [self convertRect:sourceRect toView:self.containerForContextMenuHintPreviews];
-    context.get()[getkDataDetectorsSourceRectKey()] = [NSValue valueWithCGRect:frameInContainerViewCoordinates];
-#endif
-    
+    return [getDDContextMenuActionClass() updateContext:context.get() withSourceRect:frameInContainerViewCoordinates];
+#else
     return context.autorelease();
+#endif
 }
 
 - (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant

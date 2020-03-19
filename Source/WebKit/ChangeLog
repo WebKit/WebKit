@@ -1,3 +1,19 @@
+2020-03-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Correctly set up context for Data Detectors
+        https://bugs.webkit.org/show_bug.cgi?id=209258
+        <rdar://problem/60612327>
+
+        Reviewed by Tim Horton.
+
+        Stop passing in a nil context. This is OK now, but won't be in the near future.
+        Also, call -updateContext:withSourceRect: so that DataDetectors can populate the context appropriately.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant contextMenuInteraction:configurationForMenuAtLocation:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dataDetectionContextForPositionInformation:]):
+
 2020-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         eventSender.monitorWheelEvents() is very fragile
