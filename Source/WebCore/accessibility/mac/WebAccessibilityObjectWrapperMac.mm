@@ -553,16 +553,11 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
     [super detach];
 }
 
-static inline RetainPtr<WebAccessibilityObjectWrapper> retainWrapper(WebAccessibilityObjectWrapper* wrapper)
-{
-    return RetainPtr<WebAccessibilityObjectWrapper>(wrapper);
-}
-
 - (id)attachmentView
 {
     ASSERT(self.axBackingObject->isAttachment());
 
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
         auto* widget = protectedSelf.get().axBackingObject->widgetForAttachmentView();
         if (!widget)
             return nil;
@@ -1252,7 +1247,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
 
 - (NSAttributedString*)doAXAttributedStringForTextMarkerRange:(id)textMarkerRange spellCheck:(BOOL)spellCheck
 {
-    return Accessibility::retrieveValueFromMainThread<NSAttributedString *>([&textMarkerRange, &spellCheck, protectedSelf = retainWrapper(self)] () -> NSAttributedString * {
+    return Accessibility::retrieveValueFromMainThread<NSAttributedString *>([&textMarkerRange, &spellCheck, protectedSelf = retainPtr(self)] () -> NSAttributedString * {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject)
             return nil;
@@ -1298,7 +1293,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
 
 - (id)textMarkerRangeFromVisiblePositions:(const VisiblePosition&)startPosition endPosition:(const VisiblePosition&)endPosition
 {
-    return Accessibility::retrieveValueFromMainThread<NSAttributedString *>([&startPosition, &endPosition, protectedSelf = retainWrapper(self)] () -> id {
+    return Accessibility::retrieveValueFromMainThread<NSAttributedString *>([&startPosition, &endPosition, protectedSelf = retainPtr(self)] () -> id {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject)
             return nil;
@@ -1919,7 +1914,7 @@ static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
 
 - (id)associatedPluginParent
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject || !backingObject->hasApplePDFAnnotationAttribute())
             return nil;
@@ -2289,7 +2284,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)windowElement:(NSString*)attributeName
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([attributeName, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([attributeName, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
         id remoteParent = [protectedSelf remoteAccessibilityParentObject];
         if (remoteParent) {
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -2824,13 +2819,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return NSAccessibilityVerticalOrientationValue;
 
     if ([attributeName isEqualToString:@"AXSelectedTextMarkerRange"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             return [protectedSelf textMarkerRangeForSelection];
         });
     }
 
     if ([attributeName isEqualToString:@"AXStartTextMarker"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             if (auto* backingObject = protectedSelf.get().axBackingObject)
                 return [protectedSelf textMarkerForVisiblePosition:startOfDocument(backingObject->document())];
             return nil;
@@ -2838,7 +2833,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString:@"AXEndTextMarker"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             if (auto* backingObject = protectedSelf.get().axBackingObject)
                 return [protectedSelf textMarkerForVisiblePosition:endOfDocument(backingObject->document())];
             return nil;
@@ -3406,7 +3401,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)accessibilityShowContextMenu
 {
-    Accessibility::performFunctionOnMainThread([protectedSelf = retainWrapper(self)] {
+    Accessibility::performFunctionOnMainThread([protectedSelf = retainPtr(self)] {
         [protectedSelf _accessibilityShowContextMenu];
     });
 }
@@ -3783,7 +3778,7 @@ enum class TextUnit {
 
 - (id)textMarkerRangeAtTextMarker:(id)textMarker forUnit:(TextUnit)textUnit
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, &textUnit, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, &textUnit, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject)
             return nil;
@@ -3818,7 +3813,7 @@ enum class TextUnit {
 
 - (id)lineTextMarkerRangeForTextMarker:(id)textMarker forUnit:(TextUnit)textUnit
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, &textUnit, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, &textUnit, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject)
             return nil;
@@ -3850,7 +3845,7 @@ enum class TextUnit {
 
 - (id)textMarkerForTextMarker:(id)textMarker atUnit:(TextUnit)textUnit
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, &textUnit, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, &textUnit, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject)
             return nil;
@@ -3952,7 +3947,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // dispatch
     if ([attribute isEqualToString:NSAccessibilitySelectTextWithCriteriaParameterizedAttribute]) {
         // To be deprecated.
-        auto result = Accessibility::retrieveValueFromMainThread<Vector<String>>([dictionary, protectedSelf = retainWrapper(self)] () -> Vector<String> {
+        auto result = Accessibility::retrieveValueFromMainThread<Vector<String>>([dictionary, protectedSelf = retainPtr(self)] () -> Vector<String> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return Vector<String>();
@@ -3970,7 +3965,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:NSAccessibilitySearchTextWithCriteriaParameterizedAttribute]) {
         auto criteria = accessibilitySearchTextCriteriaForParameterizedAttribute(dictionary);
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<NSArray *>([&criteria, protectedSelf = retainWrapper(self)] () -> RetainPtr<NSArray> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<NSArray *>([&criteria, protectedSelf = retainPtr(self)] () -> RetainPtr<NSArray> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return nil;
@@ -3988,7 +3983,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:NSAccessibilityTextOperationParameterizedAttribute]) {
-        auto operationResult = Accessibility::retrieveValueFromMainThread<Vector<String>>([dictionary, protectedSelf = retainWrapper(self)] () -> Vector<String> {
+        auto operationResult = Accessibility::retrieveValueFromMainThread<Vector<String>>([dictionary, protectedSelf = retainPtr(self)] () -> Vector<String> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return Vector<String>();
@@ -4019,7 +4014,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&rect, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&rect, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return nil;
@@ -4035,7 +4030,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&rect, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&rect, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return nil;
@@ -4055,7 +4050,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:NSAccessibilityMisspellingTextMarkerRangeParameterizedAttribute]) {
         auto criteria = accessibilityMisspellingSearchCriteriaForParameterizedAttribute(self, dictionary);
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&criteria, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&criteria, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return nil;
@@ -4067,7 +4062,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:NSAccessibilityTextMarkerIsValidParameterizedAttribute]) {
-        bool result = Accessibility::retrieveValueFromMainThread<bool>([&textMarker, protectedSelf = retainWrapper(self)] () -> bool {
+        bool result = Accessibility::retrieveValueFromMainThread<bool>([&textMarker, protectedSelf = retainPtr(self)] () -> bool {
             VisiblePosition pos = [protectedSelf visiblePositionForTextMarker:textMarker];
             return !pos.isNull();
         });
@@ -4075,21 +4070,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:NSAccessibilityIndexForTextMarkerParameterizedAttribute]) {
-        auto result = Accessibility::retrieveValueFromMainThread<NSInteger>([&textMarker, protectedSelf = retainWrapper(self)] () -> NSInteger {
+        auto result = Accessibility::retrieveValueFromMainThread<NSInteger>([&textMarker, protectedSelf = retainPtr(self)] () -> NSInteger {
             return [protectedSelf _indexForTextMarker:textMarker];
         });
         return [NSNumber numberWithInteger:result];
     }
 
     if ([attribute isEqualToString:NSAccessibilityTextMarkerForIndexParameterizedAttribute]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&number, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&number, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             return [protectedSelf _textMarkerForIndex:[number integerValue]];
         });
     }
 
     if ([attribute isEqualToString:@"AXUIElementForTextMarker"]) {
         // FIXME: we need to return an IsolatedObject if this is called on the AX thread.
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* axObject = [protectedSelf accessibilityObjectForTextMarker:textMarker];
             if (!axObject)
                 return nil;
@@ -4100,14 +4095,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:@"AXTextMarkerRangeForUIElement"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&uiElement, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&uiElement, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             RefPtr<Range> range = uiElement.get()->elementRange();
             return [protectedSelf textMarkerRangeFromRange:range];
         });
     }
 
     if ([attribute isEqualToString:@"AXLineForTextMarker"]) {
-        int result = Accessibility::retrieveValueFromMainThread<int>([&textMarker, protectedSelf = retainWrapper(self)] () -> int {
+        int result = Accessibility::retrieveValueFromMainThread<int>([&textMarker, protectedSelf = retainPtr(self)] () -> int {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return -1;
@@ -4119,7 +4114,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:@"AXTextMarkerRangeForLine"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&number, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&number, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             VisiblePositionRange vpRange;
             if (backingObject && [number unsignedIntegerValue] != NSNotFound)
@@ -4129,7 +4124,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:@"AXStringForTextMarkerRange"]) {
-        return Accessibility::retrieveValueFromMainThread<String>([&textMarkerRange, protectedSelf = retainWrapper(self)] () -> String {
+        return Accessibility::retrieveValueFromMainThread<String>([&textMarkerRange, protectedSelf = retainPtr(self)] () -> String {
             RefPtr<Range> range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
             auto* backingObject = protectedSelf.get().axBackingObject;
             return backingObject ? backingObject->stringForRange(range) : String();
@@ -4141,7 +4136,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (!pointSet)
             return nil;
 
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&webCorePoint, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&webCorePoint, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return nil;
@@ -4156,7 +4151,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:@"AXBoundsForTextMarkerRange"]) {
-        NSRect rect = Accessibility::retrieveValueFromMainThread<NSRect>([&textMarkerRange, protectedSelf = retainWrapper(self)] () -> NSRect {
+        NSRect rect = Accessibility::retrieveValueFromMainThread<NSRect>([&textMarkerRange, protectedSelf = retainPtr(self)] () -> NSRect {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return CGRectZero;
@@ -4169,7 +4164,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:NSAccessibilityBoundsForRangeParameterizedAttribute]) {
-        NSRect rect = Accessibility::retrieveValueFromMainThread<NSRect>([&range, protectedSelf = retainWrapper(self)] () -> NSRect {
+        NSRect rect = Accessibility::retrieveValueFromMainThread<NSRect>([&range, protectedSelf = retainPtr(self)] () -> NSRect {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return CGRectZero;
@@ -4196,7 +4191,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return backingObject->doAXStringForRange(plainTextRange);
         }
 
-        return Accessibility::retrieveValueFromMainThread<String>([&range, protectedSelf = retainWrapper(self)] () -> String {
+        return Accessibility::retrieveValueFromMainThread<String>([&range, protectedSelf = retainPtr(self)] () -> String {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return String();
@@ -4244,7 +4239,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (!AXObjectIsTextMarker(textMarker1) || !AXObjectIsTextMarker(textMarker2))
             return nil;
 
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker1, &textMarker2, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker1, &textMarker2, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return nil;
@@ -4261,14 +4256,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:@"AXNextTextMarkerForTextMarker"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
             return [protectedSelf nextTextMarkerForCharacterOffset:characterOffset];
         });
     }
 
     if ([attribute isEqualToString:@"AXPreviousTextMarkerForTextMarker"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             CharacterOffset characterOffset = [protectedSelf characterOffsetForTextMarker:textMarker];
             return [protectedSelf previousTextMarkerForCharacterOffset:characterOffset];
         });
@@ -4317,7 +4312,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [self textMarkerForTextMarker:textMarker atUnit:TextUnit::PreviousParagraphStart];
 
     if ([attribute isEqualToString:@"AXStyleTextMarkerRangeForTextMarker"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarker, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return nil;
@@ -4333,7 +4328,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:@"AXLengthForTextMarkerRange"]) {
-        int length = Accessibility::retrieveValueFromMainThread<int>([&textMarkerRange, protectedSelf = retainWrapper(self)] () -> int {
+        int length = Accessibility::retrieveValueFromMainThread<int>([&textMarkerRange, protectedSelf = retainPtr(self)] () -> int {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return 0;
@@ -4348,14 +4343,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // Used only by DumpRenderTree (so far).
     if ([attribute isEqualToString:@"AXStartTextMarkerForTextMarkerRange"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarkerRange, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarkerRange, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             RefPtr<Range> range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
             return [protectedSelf startOrEndTextMarkerForRange:range isStart:YES];
         });
     }
 
     if ([attribute isEqualToString:@"AXEndTextMarkerForTextMarkerRange"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarkerRange, protectedSelf = retainWrapper(self)] () -> RetainPtr<id> {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&textMarkerRange, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             RefPtr<Range> range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
             return [protectedSelf startOrEndTextMarkerForRange:range isStart:NO];
         });
