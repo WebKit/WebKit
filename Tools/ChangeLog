@@ -1,3 +1,14 @@
+2020-03-19  Philippe Normand  <pnormand@igalia.com>
+
+        [CMake] cache not cleared when build-webkit options change
+        https://bugs.webkit.org/show_bug.cgi?id=209277
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Scripts/webkitdirs.pm:
+        (shouldRemoveCMakeCache): The expected function signature never
+        included the cache file path. Remove it.
+
 2020-03-18  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r258626): webkit-dirs warning

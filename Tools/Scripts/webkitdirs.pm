@@ -2189,7 +2189,7 @@ sub cmakeFilesPath()
 
 sub shouldRemoveCMakeCache(@)
 {
-    my ($cacheFilePath, @buildArgs) = @_;
+    my (@buildArgs) = @_;
 
     # We check this first, because we always want to create this file for a fresh build.
     my $productDir = File::Spec->catdir(baseProductDir(), configuration());
