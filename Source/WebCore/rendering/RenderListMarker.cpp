@@ -31,6 +31,8 @@
 #include "InlineElementBox.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
+#include "RenderMultiColumnFlow.h"
+#include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderView.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
@@ -1319,13 +1321,121 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     }
 }
 
+RenderBox* RenderListMarker::parentBox(RenderBox& box)
+{
+    ASSERT(m_listItem);
+    auto* fragmentedFlow = m_listItem->enclosingFragmentedFlow();
+    if (!is<RenderMultiColumnFlow>(fragmentedFlow))
+        return box.parentBox();
+    auto* placeholder = downcast<RenderMultiColumnFlow>(*fragmentedFlow).findColumnSpannerPlaceholder(&box);
+    if (!placeholder)
+        return box.parentBox();
+    return placeholder->parentBox();
+};
+
+void RenderListMarker::addOverflowFromListMarker()
+{
+    ASSERT(m_listItem);
+    if (!parent() || !parent()->isBox())
+        return;
+
+    if (isInside() || !inlineBoxWrapper())
+        return;
+
+    LayoutUnit markerOldLogicalLeft = logicalLeft();
+    LayoutUnit blockOffset;
+    LayoutUnit lineOffset;
+    for (auto* ancestor = parentBox(*this); ancestor && ancestor != m_listItem.get(); ancestor = parentBox(*ancestor)) {
+        blockOffset += ancestor->logicalTop();
+        lineOffset += ancestor->logicalLeft();
+    }
+
+    bool adjustOverflow = false;
+    LayoutUnit markerLogicalLeft;
+    bool hitSelfPaintingLayer = false;
+
+    const RootInlineBox& rootBox = inlineBoxWrapper()->root();
+    LayoutUnit lineTop = rootBox.lineTop();
+    LayoutUnit lineBottom = rootBox.lineBottom();
+
+    // FIXME: Need to account for relative positioning in the layout overflow.
+    if (m_listItem->style().isLeftToRightDirection()) {
+        markerLogicalLeft = lineOffsetForListItem() - lineOffset - m_listItem->paddingStart() - m_listItem->borderStart() + marginStart();
+        inlineBoxWrapper()->adjustLineDirectionPosition(markerLogicalLeft - markerOldLogicalLeft);
+        for (auto* box = inlineBoxWrapper()->parent(); box; box = box->parent()) {
+            auto newLogicalVisualOverflowRect = box->logicalVisualOverflowRect(lineTop, lineBottom);
+            auto newLogicalLayoutOverflowRect = box->logicalLayoutOverflowRect(lineTop, lineBottom);
+            if (markerLogicalLeft < newLogicalVisualOverflowRect.x() && !hitSelfPaintingLayer) {
+                newLogicalVisualOverflowRect.setWidth(newLogicalVisualOverflowRect.maxX() - markerLogicalLeft);
+                newLogicalVisualOverflowRect.setX(markerLogicalLeft);
+                if (box == &rootBox)
+                    adjustOverflow = true;
+            }
+            if (markerLogicalLeft < newLogicalLayoutOverflowRect.x()) {
+                newLogicalLayoutOverflowRect.setWidth(newLogicalLayoutOverflowRect.maxX() - markerLogicalLeft);
+                newLogicalLayoutOverflowRect.setX(markerLogicalLeft);
+                if (box == &rootBox)
+                    adjustOverflow = true;
+            }
+            box->setOverflowFromLogicalRects(newLogicalLayoutOverflowRect, newLogicalVisualOverflowRect, lineTop, lineBottom);
+            if (box->renderer().hasSelfPaintingLayer())
+                hitSelfPaintingLayer = true;
+        }
+    } else {
+        markerLogicalLeft = lineOffsetForListItem() - lineOffset + m_listItem->paddingStart() + m_listItem->borderStart() + marginEnd();
+        inlineBoxWrapper()->adjustLineDirectionPosition(markerLogicalLeft - markerOldLogicalLeft);
+        for (auto* box = inlineBoxWrapper()->parent(); box; box = box->parent()) {
+            auto newLogicalVisualOverflowRect = box->logicalVisualOverflowRect(lineTop, lineBottom);
+            auto newLogicalLayoutOverflowRect = box->logicalLayoutOverflowRect(lineTop, lineBottom);
+            if (markerLogicalLeft + logicalWidth() > newLogicalVisualOverflowRect.maxX() && !hitSelfPaintingLayer) {
+                newLogicalVisualOverflowRect.setWidth(markerLogicalLeft + logicalWidth() - newLogicalVisualOverflowRect.x());
+                if (box == &rootBox)
+                    adjustOverflow = true;
+            }
+            if (markerLogicalLeft + logicalWidth() > newLogicalLayoutOverflowRect.maxX()) {
+                newLogicalLayoutOverflowRect.setWidth(markerLogicalLeft + logicalWidth() - newLogicalLayoutOverflowRect.x());
+                if (box == &rootBox)
+                    adjustOverflow = true;
+            }
+            box->setOverflowFromLogicalRects(newLogicalLayoutOverflowRect, newLogicalVisualOverflowRect, lineTop, lineBottom);
+            if (box->renderer().hasSelfPaintingLayer())
+                hitSelfPaintingLayer = true;
+        }
+    }
+
+    if (adjustOverflow) {
+        LayoutRect markerRect(markerLogicalLeft + lineOffset, blockOffset, width(), height());
+        if (!m_listItem->style().isHorizontalWritingMode())
+            markerRect = markerRect.transposedRect();
+        RenderBox* markerAncestor = this;
+        bool propagateVisualOverflow = true;
+        bool propagateLayoutOverflow = true;
+        do {
+            markerAncestor = parentBox(*markerAncestor);
+            if (markerAncestor->hasOverflowClip())
+                propagateVisualOverflow = false;
+            if (is<RenderBlock>(*markerAncestor)) {
+                if (propagateVisualOverflow)
+                    downcast<RenderBlock>(*markerAncestor).addVisualOverflow(markerRect);
+                if (propagateLayoutOverflow)
+                    downcast<RenderBlock>(*markerAncestor).addLayoutOverflow(markerRect);
+            }
+            if (markerAncestor->hasOverflowClip())
+                propagateLayoutOverflow = false;
+            if (markerAncestor->hasSelfPaintingLayer())
+                propagateVisualOverflow = false;
+            markerRect.moveBy(-markerAncestor->location());
+        } while (markerAncestor != m_listItem.get() && propagateVisualOverflow && propagateLayoutOverflow);
+    }
+}
+
 void RenderListMarker::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
     LayoutUnit blockOffset;
-    for (auto* ancestor = parentBox(); ancestor && ancestor != m_listItem.get(); ancestor = ancestor->parentBox())
+    for (auto* ancestor = parentBox(*this); ancestor && ancestor != m_listItem.get(); ancestor = parentBox(*ancestor))
         blockOffset += ancestor->logicalTop();
     if (style().isLeftToRightDirection())
         m_lineOffsetForListItem = m_listItem->logicalLeftOffsetForLine(blockOffset, DoNotIndentText, 0_lu);

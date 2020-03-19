@@ -47,6 +47,8 @@ public:
 
     void updateMarginsAndContent();
 
+    void addOverflowFromListMarker();
+
 private:
     void willBeDestroyed() override;
 
@@ -80,6 +82,8 @@ private:
     void updateContent();
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+
+    RenderBox* parentBox(RenderBox&);
 
     FloatRect getRelativeMarkerRect();
     LayoutRect localSelectionRect();
