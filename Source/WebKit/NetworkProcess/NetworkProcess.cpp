@@ -50,7 +50,6 @@
 #include "PreconnectTask.h"
 #include "RemoteNetworkingContext.h"
 #include "ShouldGrandfatherStatistics.h"
-#include "StatisticsData.h"
 #include "StorageAccessStatus.h"
 #include "StorageManagerSet.h"
 #include "WebCookieManager.h"

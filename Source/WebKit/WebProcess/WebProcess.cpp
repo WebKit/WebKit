@@ -45,7 +45,6 @@
 #include "PluginProcessConnectionManager.h"
 #include "RemoteAudioSession.h"
 #include "RemoteLegacyCDMFactory.h"
-#include "StatisticsData.h"
 #include "StorageAreaMap.h"
 #include "UserData.h"
 #include "WebAutomationSessionProxy.h"

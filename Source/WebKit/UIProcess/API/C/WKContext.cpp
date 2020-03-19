@@ -517,12 +517,10 @@ void WKContextWarmInitialProcess(WKContextRef contextRef)
 
 void WKContextGetStatistics(WKContextRef contextRef, void* context, WKContextGetStatisticsFunction callback)
 {
-    WebKit::toImpl(contextRef)->getStatistics(0xFFFFFFFF, WebKit::toGenericCallbackFunction(context, callback));
 }
 
 void WKContextGetStatisticsWithOptions(WKContextRef contextRef, WKStatisticsOptions optionsMask, void* context, WKContextGetStatisticsFunction callback)
 {
-    WebKit::toImpl(contextRef)->getStatistics(optionsMask, WebKit::toGenericCallbackFunction(context, callback));
 }
 
 bool WKContextJavaScriptConfigurationFileEnabled(WKContextRef contextRef)

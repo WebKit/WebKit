@@ -50,7 +50,6 @@
 #include "PerActivityStateCPUUsageSampler.h"
 #include "PluginProcessManager.h"
 #include "SandboxExtension.h"
-#include "StatisticsData.h"
 #include "TextChecker.h"
 #include "UIGamepad.h"
 #include "UIGamepadProvider.h"
@@ -1863,24 +1862,6 @@ bool WebProcessPool::httpPipeliningEnabled() const
 #endif
 }
 
-void WebProcessPool::getStatistics(uint32_t statisticsMask, Function<void (API::Dictionary*, CallbackBase::Error)>&& callbackFunction)
-{
-    if (!statisticsMask) {
-        callbackFunction(nullptr, CallbackBase::Error::Unknown);
-        return;
-    }
-
-    auto request = StatisticsRequest::create(DictionaryCallback::create(WTFMove(callbackFunction)));
-
-    if (statisticsMask & StatisticsRequestTypeWebContent)
-        requestWebContentStatistics(request.get());
-}
-
-void WebProcessPool::requestWebContentStatistics(StatisticsRequest& request)
-{
-    // FIXME (Multi-WebProcess) <rdar://problem/13200059>: Make getting statistics from multiple WebProcesses work.
-}
-
 static WebProcessProxy* webProcessProxyFromConnection(IPC::Connection& connection, const Vector<RefPtr<WebProcessProxy>>& processes)
 {
     for (auto& process : processes) {
@@ -1909,17 +1890,6 @@ void WebProcessPool::handleSynchronousMessage(IPC::Connection& connection, const
     m_injectedBundleClient->didReceiveSynchronousMessageFromInjectedBundle(*this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get(), [webProcessProxy = makeRef(*webProcessProxy), completionHandler = WTFMove(completionHandler)] (RefPtr<API::Object>&& returnData) mutable {
         completionHandler(UserData(webProcessProxy->transformObjectsToHandles(returnData.get())));
     });
-}
-
-void WebProcessPool::didGetStatistics(const StatisticsData& statisticsData, uint64_t requestID)
-{
-    RefPtr<StatisticsRequest> request = m_statisticsRequests.take(requestID);
-    if (!request) {
-        LOG_ERROR("Cannot report networking statistics.");
-        return;
-    }
-
-    request->completedRequest(requestID, statisticsData);
 }
 
 #if ENABLE(GAMEPAD)

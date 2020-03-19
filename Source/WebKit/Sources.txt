@@ -176,7 +176,6 @@ Shared/ShareableResource.cpp
 Shared/SharedStringHashStore.cpp
 Shared/SharedStringHashTableReadOnly.cpp
 Shared/SharedStringHashTable.cpp
-Shared/StatisticsData.cpp
 Shared/TouchBarMenuData.cpp
 Shared/TouchBarMenuItemData.cpp
 Shared/URLSchemeTaskParameters.cpp
@@ -287,7 +286,6 @@ UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/ProvisionalPageProxy.cpp
 UIProcess/ResponsivenessTimer.cpp
-UIProcess/StatisticsRequest.cpp
 UIProcess/SuspendedPageProxy.cpp
 UIProcess/SystemPreviewController.cpp
 UIProcess/TextChecker.cpp
