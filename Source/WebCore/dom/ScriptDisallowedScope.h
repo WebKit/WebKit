@@ -24,6 +24,7 @@
 #pragma once
 
 #include "ContainerNode.h"
+#include "RuntimeApplicationChecks.h"
 #include <wtf/MainThread.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -62,7 +63,7 @@ public:
 
     static bool isEventAllowedInMainThread()
     {
-        return !isMainThread() || !s_count;
+        return !isInWebProcess() || !isMainThread() || !s_count;
     }
 
     class InMainThread {
@@ -85,7 +86,7 @@ public:
         static bool isEventDispatchAllowedInSubtree(Node& node)
         {
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
-            return isScriptAllowed() || EventAllowedScope::isAllowedNode(node);
+            return !isInWebProcess() || isScriptAllowed() || EventAllowedScope::isAllowedNode(node);
 #else
             UNUSED_PARAM(node);
             return true;
