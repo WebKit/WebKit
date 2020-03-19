@@ -1,3 +1,15 @@
+2020-03-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow for some tolerance when checking canvas pixels in fast/mediastream tests
+        https://bugs.webkit.org/show_bug.cgi?id=209259
+        <rdar://problem/60609789>
+
+        Unreviewed tweak of r258700, increase the maximum tolerance to +/- 2.
+
+        * resources/platform-helper.js:
+        (videoCanvasPixelComparisonTolerance):
+        (checkPixelColorWithTolerance):
+
 2020-03-19  Brent Fulgham  <bfulgham@apple.com>
 
         Remove Mobile Asset access from the WebContent process

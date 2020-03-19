@@ -19,10 +19,10 @@ function videoCanvasPixelComparisonTolerance()
 function checkPixelColorWithTolerance(pixel, r, g, b, a)
 {
     const tolerance = videoCanvasPixelComparisonTolerance();
-    return Math.abs(pixel[0] - r) < tolerance
-        && Math.abs(pixel[1] - g) < tolerance
-        && Math.abs(pixel[2] - b) < tolerance
-        && Math.abs(pixel[3] - a) < tolerance;
+    return Math.abs(pixel[0] - r) <= tolerance
+        && Math.abs(pixel[1] - g) <= tolerance
+        && Math.abs(pixel[2] - b) <= tolerance
+        && Math.abs(pixel[3] - a) <= tolerance;
 }
 
 function isPixelBlack(pixel)
