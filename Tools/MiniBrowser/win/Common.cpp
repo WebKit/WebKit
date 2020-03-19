@@ -232,22 +232,22 @@ Optional<Credential> askCredential(HWND hwnd, const std::wstring& realm)
     return WTF::nullopt;
 }
 
-bool askServerTrustEvaluation(HWND hwnd, const std::wstring& pems)
+bool askServerTrustEvaluation(HWND hwnd, const std::wstring& text)
 {
     class ServerTrustEvaluationDialog : public Dialog {
     public:
-        ServerTrustEvaluationDialog(const std::wstring& pems)
-            : m_pems { pems }
+        ServerTrustEvaluationDialog(const std::wstring& text)
+            : m_text { text }
         {
             SendMessage(GetDlgItem(this->hDlg(), IDC_SERVER_TRUST_TEXT), WM_SETFONT, (WPARAM)GetStockObject(ANSI_FIXED_FONT), TRUE);
         }
 
     protected:
-        std::wstring m_pems;
+        std::wstring m_text;
 
         void setup()
         {
-            setText(IDC_SERVER_TRUST_TEXT, m_pems);
+            setText(IDC_SERVER_TRUST_TEXT, m_text);
         }
 
         void ok() final
@@ -256,7 +256,7 @@ bool askServerTrustEvaluation(HWND hwnd, const std::wstring& pems)
         }
     };
 
-    ServerTrustEvaluationDialog dialog { pems };
+    ServerTrustEvaluationDialog dialog { text };
     return dialog.run(hInst, hwnd, IDD_SERVER_TRUST);
 }
 

@@ -56,6 +56,11 @@ int WKCertificateInfoGetVerificationError(WKCertificateInfoRef certificateInfoRe
     return WebKit::toImpl(certificateInfoRef)->certificateInfo().verificationError();
 }
 
+WKStringRef WKCertificateInfoCopyVerificationErrorDescription(WKCertificateInfoRef certificateInfoRef)
+{
+    return WebKit::toCopiedAPI(WebKit::toImpl(certificateInfoRef)->certificateInfo().verificationErrorDescription());
+}
+
 size_t WKCertificateInfoGetCertificateChainSize(WKCertificateInfoRef certificateInfoRef)
 {
     return WebKit::toImpl(certificateInfoRef)->certificateInfo().certificateChain().size();

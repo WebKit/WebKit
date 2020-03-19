@@ -1,3 +1,19 @@
+2020-03-19  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Add an API returns description of verification errors.
+        https://bugs.webkit.org/show_bug.cgi?id=208913
+
+        Reviewed by Fujii Hironori.
+
+        WKCertificateInfoCopyVerificationErrorDescription returns the description of SSL verification error as human readable string.
+        Browser can display more precise error information with this API.
+
+        API Test: Curl.CertificateAPI
+
+        * Shared/API/c/curl/WKCertificateInfoCurl.cpp:
+        (WKCertificateInfoCopyVerificationErrorDescription):
+        * Shared/API/c/curl/WKCertificateInfoCurl.h:
+
 2020-03-19  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to power service

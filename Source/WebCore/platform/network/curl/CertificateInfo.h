@@ -45,6 +45,7 @@ public:
     WEBCORE_EXPORT CertificateInfo isolatedCopy() const;
 
     int verificationError() const { return m_verificationError; }
+    WEBCORE_EXPORT String verificationErrorDescription() const;
     const Vector<Certificate>& certificateChain() const { return m_certificateChain; }
 
     bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }

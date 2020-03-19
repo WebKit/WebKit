@@ -34,6 +34,7 @@ extern "C" {
 WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(WKArrayRef);
 
 WK_EXPORT int WKCertificateInfoGetVerificationError(WKCertificateInfoRef);
+WK_EXPORT WKStringRef WKCertificateInfoCopyVerificationErrorDescription(WKCertificateInfoRef);
 WK_EXPORT size_t WKCertificateInfoGetCertificateChainSize(WKCertificateInfoRef);
 WK_EXPORT WKDataRef WKCertificateInfoCopyCertificateAtIndex(WKCertificateInfoRef, size_t);
 

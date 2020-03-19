@@ -64,9 +64,8 @@ std::string createUTF8String(const wchar_t* src, size_t srcLength)
     return { buffer.data(), actualLength };
 }
 
-std::wstring createPEMString(WKProtectionSpaceRef protectionSpace)
+std::wstring createPEMString(WKCertificateInfoRef certificateInfo)
 {
-    auto certificateInfo = WKProtectionSpaceCopyCertificateInfo(protectionSpace);
     auto chainSize = WKCertificateInfoGetCertificateChainSize(certificateInfo);
 
     std::wstring pems;
@@ -367,13 +366,21 @@ void WebKitBrowserWindow::didReceiveAuthenticationChallenge(WKPageRef page, WKAu
 bool WebKitBrowserWindow::canTrustServerCertificate(WKProtectionSpaceRef protectionSpace)
 {
     auto host = createString(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
-    auto pem = createPEMString(protectionSpace);
+    auto certificateInfo = adoptWK(WKProtectionSpaceCopyCertificateInfo(protectionSpace));
+    auto verificationError = WKCertificateInfoGetVerificationError(certificateInfo.get());
+    auto description = createString(adoptWK(WKCertificateInfoCopyVerificationErrorDescription(certificateInfo.get())).get());
+    auto pem = createPEMString(certificateInfo.get());
 
     auto it = m_acceptedServerTrustCerts.find(host);
     if (it != m_acceptedServerTrustCerts.end() && it->second == pem)
         return true;
 
-    if (askServerTrustEvaluation(hwnd(), pem)) {
+    std::wstring textString = L"[HOST] " + host + L"\r\n";
+    textString.append(L"[ERROR] " + std::to_wstring(verificationError) + L"\r\n");
+    textString.append(L"[DESCRIPTION] " + description + L"\r\n");
+    textString.append(pem);
+
+    if (askServerTrustEvaluation(hwnd(), textString)) {
         m_acceptedServerTrustCerts.emplace(host, pem);
         return true;
     }

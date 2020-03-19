@@ -26,10 +26,11 @@
 #include "config.h"
 #include "CertificateInfo.h"
 
-#include "OpenSSLHelper.h"
-#include <wtf/CrossThreadCopier.h>
-
 #if USE(CURL)
+
+#include "OpenSSLHelper.h"
+#include <openssl/ssl.h>
+#include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
 
@@ -42,6 +43,11 @@ CertificateInfo::CertificateInfo(int verificationError, CertificateChain&& certi
 CertificateInfo CertificateInfo::isolatedCopy() const
 {
     return { m_verificationError, crossThreadCopy(m_certificateChain) };
+}
+
+String CertificateInfo::verificationErrorDescription() const
+{
+    return X509_verify_cert_error_string(m_verificationError);
 }
 
 CertificateInfo::Certificate CertificateInfo::makeCertificate(const uint8_t* buffer, size_t size)

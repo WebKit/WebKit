@@ -89,8 +89,10 @@ TEST(Curl, CertificateAPI)
 
     auto size = WKCertificateInfoGetCertificateChainSize(certificateInfo.get());
     ASSERT_EQ(size, 2);
-    ASSERT_TRUE(isSamePEM(WKCertificateInfoCopyCertificateAtIndex(certificateInfo.get(), 0), PEM1));
-    ASSERT_TRUE(isSamePEM(WKCertificateInfoCopyCertificateAtIndex(certificateInfo.get(), 1), PEM2));
+    ASSERT_EQ(WKCertificateInfoGetVerificationError(certificateInfo.get()), 0);
+    ASSERT_TRUE(WKStringIsEqualToUTF8CString(adoptWK(WKCertificateInfoCopyVerificationErrorDescription(certificateInfo.get())).get(), "ok"));
+    ASSERT_TRUE(isSamePEM(adoptWK(WKCertificateInfoCopyCertificateAtIndex(certificateInfo.get(), 0)).get(), PEM1));
+    ASSERT_TRUE(isSamePEM(adoptWK(WKCertificateInfoCopyCertificateAtIndex(certificateInfo.get(), 1)).get(), PEM2));
 }
 
 }
