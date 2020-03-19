@@ -1,3 +1,20 @@
+2020-03-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update imported/w3c/web-platform-tests/css/css-text/line-break/line-break-{strict,normal}-015.xht
+        https://bugs.webkit.org/show_bug.cgi?id=209250
+        <rdar://problem/59957596>
+
+        Update them according to https://github.com/web-platform-tests/wpt/commit/7d24adef541b2e836f2b2f9534ce3f0e078f5782
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ios/TestExpectations: Mark as failing on old OSes
+        * platform/mac/TestExpectations: Mark as failing on old OSes
+        * web-platform-tests/css/css-text/line-break/line-break-normal-015-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-normal-015.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-015-expected.xht:
+        * web-platform-tests/css/css-text/line-break/line-break-strict-015.xht:
+
 2020-03-19  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Mark promises as handled when rejected
