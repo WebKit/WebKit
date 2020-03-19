@@ -1,3 +1,19 @@
+2020-03-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid calling 'notifyThisWebProcessPoolWasCreated' inside the constructor
+        https://bugs.webkit.org/show_bug.cgi?id=209254
+        <rdar://problem/60564526>
+
+        Reviewed by Alex Christensen and Chris Dumez.
+
+        Enqueue calls to 'notifyThisWebProcessPoolWasCreated' so they are not invoked until
+        after the process pool is finished with its constructor.
+
+        Behavior covered by existing tests.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+
 2020-03-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed WinCairo build fix following r258665.

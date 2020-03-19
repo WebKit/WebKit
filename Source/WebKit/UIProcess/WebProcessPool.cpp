@@ -306,7 +306,13 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     processPoolCounter.increment();
 #endif
 
-    notifyThisWebProcessPoolWasCreated();
+    ASSERT(RunLoop::isMain());
+    RunLoop::main().dispatch([weakPtr = makeWeakPtr(*this)] {
+        if (!weakPtr)
+            return;
+
+        weakPtr->notifyThisWebProcessPoolWasCreated();
+    });
 
     updateBackForwardCacheCapacity();
 }
