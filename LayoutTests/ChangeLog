@@ -1,3 +1,15 @@
+2020-03-19  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        REGRESSION (r258707): storage/indexeddb/cursor-leak.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=209318
+
+        Fixing expectations
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-03-19  Alex Christensen  <achristensen@webkit.org>
 
         Sanitize suggested download filename received from web process
