@@ -100,8 +100,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::IsMenuRelated, object.isMenuRelated());
     setProperty(AXPropertyName::IsMeter, object.isMeter());
     setProperty(AXPropertyName::IsMultiSelectable, object.isMultiSelectable());
-    setProperty(AXPropertyName::IsOffScreen, object.isOffScreen());
-    setProperty(AXPropertyName::IsOnScreen, object.isOnScreen());
     setProperty(AXPropertyName::IsOrderedList, object.isOrderedList());
     setProperty(AXPropertyName::IsOutput, object.isOutput());
     setProperty(AXPropertyName::IsPasswordField, object.isPasswordField());

@@ -633,7 +633,7 @@ public:
     virtual bool isIndeterminate() const = 0;
     virtual bool isLoaded() const = 0;
     virtual bool isMultiSelectable() const = 0;
-    // FIXME should need just one since onscreen should be !offscreen.
+    // FIXME: should need just one since onscreen should be !offscreen.
     virtual bool isOnScreen() const = 0;
     virtual bool isOffScreen() const = 0;
     virtual bool isPressed() const = 0;

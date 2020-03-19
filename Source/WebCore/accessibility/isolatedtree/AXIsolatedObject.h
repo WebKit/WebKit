@@ -223,8 +223,6 @@ private:
         IsMenuRelated,
         IsMeter,
         IsMultiSelectable,
-        IsOffScreen,
-        IsOnScreen,
         IsOrderedList,
         IsOutput,
         IsPasswordField,
