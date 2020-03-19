@@ -1,3 +1,12 @@
+2020-03-19  Frederic Wang  <fwang@igalia.com>
+
+        Delete accidentally committed file.
+        https://bugs.webkit.org/show_bug.cgi?id=209178
+
+        Unreviewed.
+
+        * TestExpectations.orig: Removed.
+
 2020-03-18  Zalan Bujtas  <zalan@apple.com>
 
         [Multicolumn] RenderListItem::positionListMarker should not fail when the list marker is inside a spanner.
