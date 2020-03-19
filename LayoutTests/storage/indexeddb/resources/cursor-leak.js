@@ -3,7 +3,7 @@ if (this.importScripts) {
     importScripts('shared.js');
 }
 
-description("Verify that that cursors weakly hold script value properties");
+description('Verify that that cursors weakly hold script value properties');
 
 if (window.internals) {
     indexedDBTest(prepareDatabase, onOpen);
@@ -24,30 +24,32 @@ function onOpen(evt)
     // evalAndLog() is not used as that generates new DOM nodes.
 
     db = evt.target.result;
-    tx = db.transaction('store');
+    tx = db.transaction('store', 'readonly');
     store = tx.objectStore('store');
-    cursorRequest = store.openCursor();
-    cursorRequest.onsuccess = function() {
-        cursor = cursorRequest.result;
-    };
+    cursorObservers = [];
+    for (let i = 0; i < 10000; ++i) {
+        store.openCursor().onsuccess = (event) => {
+            cursor = event.target.result
+            cursor.key.cursor = cursor;
+            cursor.primaryKey.cursor = cursor;
+            cursor.value.cursor = cursor;
+            cursorObservers.push(internals.observeGC(cursor));
+            cursor = null;
+        };
+    }
     tx.oncomplete = function() {
         db.close();
-
-        // Try and induce a leak by a reference cycle from DOM to V8 and back.
-        // If the v8 value of cursor.key (etc) is only held by the cursor's
-        // V8 wrapper then there will be no leak.
-        cursor.key.cursor = cursor;
-        cursor.primaryKey.cursor = cursor;
-        cursor.value.cursor = cursor;
-
-        cursorObserver = internals.observeGC(cursor);
-
-        cursorRequest = null;
-        cursor = null;
+        shouldBe('cursorObservers.length', '10000');
 
         gc();
 
-        shouldBeTrue("cursorObserver.wasCollected");
+        anyCollected = false;
+        for (let observer of cursorObservers) {
+            if (observer.wasCollected)
+                anyCollected = true;
+        }
+
+        shouldBeTrue('anyCollected');
         finishJSTest();
     };
 }

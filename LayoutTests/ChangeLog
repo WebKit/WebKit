@@ -1,3 +1,21 @@
+2020-03-19  Sihui Liu  <sihui_liu@apple.com>
+
+        Flaky Test: storage/indexeddb/cursor-leak.html and storage/indexeddb/cursor-leak-private.html
+        https://bugs.webkit.org/show_bug.cgi?id=209256
+        <rdar://problem/60097171>
+
+        Reviewed by Geoffrey Garen.
+
+        gc() does not guarantee all objects to be collected due to our conservative GC. To make the test more stable, we
+        now test if there is at lease one object is collected, which is enough to show cursor does not hold strong 
+        reference to script value properties.
+
+        * storage/indexeddb/cursor-leak-expected.txt:
+        * storage/indexeddb/cursor-leak-private-expected.txt:
+        * storage/indexeddb/resources/cursor-leak.js:
+        (onOpen.tx.oncomplete):
+        (onOpen.cursorRequest.onsuccess): Deleted.
+
 2020-03-19  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 and Mac wk2 ] imported/w3c/web-platform-tests/fetch/stale-while-revalidate/frame-removal.html is flaky failing.
