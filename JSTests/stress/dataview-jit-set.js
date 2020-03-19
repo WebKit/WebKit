@@ -5,13 +5,17 @@ function assert(b) {
         throw new Error;
 }
 
+function getIsLittleEndian() {
+    let ab = new ArrayBuffer(2);
+    let ta = new Int16Array(ab);
+    ta[0] = 0x0102;
+    let dv = new DataView(ab);
+    return dv.getInt16(0, true) === 0x0102;
+}
+
+let isLittleEndian = getIsLittleEndian();
+
 function readHex(dv, bytes) {
-    function isLittleEndian() { 
-        let b = new ArrayBuffer(4);
-        let dv = new DataView(b);
-        dv.setInt32(0, 0x00112233, true);
-        return dv.getUint8(0) === 0x33;
-    }
     let str = "";
     function readByte(i) {
         let b = dv.getUint8(i).toString(16);
@@ -21,7 +25,7 @@ function readHex(dv, bytes) {
             assert(b.length === 2)
         return b;
     }
-    if (isLittleEndian()) {
+    if (isLittleEndian) {
         for (let i = bytes; i--;)
             str = str + readByte(i);
     } else {
@@ -35,8 +39,19 @@ function readHex(dv, bytes) {
 {
     let b = new ArrayBuffer(4);
     let dv = new DataView(b);
-    dv.setInt32(0, 0x00112233, true);
+    dv.setInt32(0, 0x00112233, isLittleEndian);
     assert(readHex(dv, 4) === "0x00112233");
+}
+
+function adjustForEndianessUint16(value) {
+    if (isLittleEndian)
+        return value;
+
+    let ab = new ArrayBuffer(4);
+    let ta = new Uint16Array(ab);
+    ta[0] = value;
+    let dv = new DataView(ab);
+    return dv.getUint16(0, true);
 }
 
 function test() {
@@ -60,52 +75,52 @@ function test() {
     let dv = new DataView(buffer);
 
     for (let i = 0; i < 10000; ++i) {
-        storeLittleEndian(dv, 0, 0xfaba);
+        storeLittleEndian(dv, 0, adjustForEndianessUint16(0xfaba));
         assert(arr[0] === 0xfaba);
 
-        store(dv, 0, 0xabcd, true);
+        store(dv, 0, adjustForEndianessUint16(0xabcd), true);
         assert(arr[0] === 0xabcd);
 
-        store(dv, 0, 0xbadbeef, true);
+        store(dv, 0, adjustForEndianessUint16(0xbadbeef), true);
         assert(arr[0] === 0xbeef);
 
-        storeLittleEndian(dv, 0, 0xbb4db33f, true);
+        storeLittleEndian(dv, 0, adjustForEndianessUint16(0xbb4db33f), true);
         assert(arr[0] === 0xb33f);
 
-        storeBigEndian(dv, 0, 0xfada);
+        storeBigEndian(dv, 0, adjustForEndianessUint16(0xfada));
         assert(arr[0] === 0xdafa);
 
-        storeBigEndian(dv, 0, 0x12ab);
+        storeBigEndian(dv, 0, adjustForEndianessUint16(0x12ab));
         assert(arr[0] === 0xab12);
 
-        store(dv, 0, 0x1234, false);
+        store(dv, 0, adjustForEndianessUint16(0x1234), false);
         assert(arr[0] === 0x3412);
 
-        store(dv, 0, 0x0102, false);
+        store(dv, 0, adjustForEndianessUint16(0x0102), false);
         assert(arr[0] === 0x0201);
 
-        store(dv, 0, -1, false);
+        store(dv, 0, adjustForEndianessUint16(-1), false);
         assert(arr[0] === 0xffff);
 
-        store(dv, 0, -2, false);
+        store(dv, 0, adjustForEndianessUint16(-2), false);
         assert(arr[0] === 0xfeff);
 
-        storeBigEndian(dv, 0, -1);
+        storeBigEndian(dv, 0, adjustForEndianessUint16(-1));
         assert(arr[0] === 0xffff);
 
-        storeBigEndian(dv, 0, -2);
+        storeBigEndian(dv, 0, adjustForEndianessUint16(-2));
         assert(arr[0] === 0xfeff);
 
-        storeBigEndian(dv, 0, -2147483648); 
+        storeBigEndian(dv, 0, adjustForEndianessUint16(-2147483648));
         assert(arr[0] === 0x0000);
 
-        storeLittleEndian(dv, 0, -2147483648); 
+        storeLittleEndian(dv, 0, adjustForEndianessUint16(-2147483648));
         assert(arr[0] === 0x0000);
 
-        storeLittleEndian(dv, 0, -2147478988); 
+        storeLittleEndian(dv, 0, adjustForEndianessUint16(-2147478988));
         assert(arr[0] === 0x1234);
 
-        storeBigEndian(dv, 0, -2147478988); 
+        storeBigEndian(dv, 0, adjustForEndianessUint16(-2147478988));
         assert(arr[0] === 0x3412);
     }
 }
@@ -132,56 +147,67 @@ function test2() {
     let dv = new DataView(buffer);
 
     for (let i = 0; i < 10000; ++i) {
-        storeLittleEndian(dv, 0, 0xfaba);
+        storeLittleEndian(dv, 0, adjustForEndianessUint16(0xfaba));
         assert(arr[0] === 0xfaba);
 
-        store(dv, 0, 0xabcd, true);
+        store(dv, 0, adjustForEndianessUint16(0xabcd), true);
         assert(arr[0] === 0xabcd);
 
-        store(dv, 0, 0xbadbeef, true);
+        store(dv, 0, adjustForEndianessUint16(0xbadbeef), true);
         assert(arr[0] === 0xbeef);
 
-        storeLittleEndian(dv, 0, 0xbb4db33f, true);
+        storeLittleEndian(dv, 0, adjustForEndianessUint16(0xbb4db33f), true);
         assert(arr[0] === 0xb33f);
 
-        storeBigEndian(dv, 0, 0xfada);
+        storeBigEndian(dv, 0, adjustForEndianessUint16(0xfada));
         assert(arr[0] === 0xdafa);
 
-        storeBigEndian(dv, 0, 0x12ab);
+        storeBigEndian(dv, 0, adjustForEndianessUint16(0x12ab));
         assert(arr[0] === 0xab12);
 
-        store(dv, 0, 0x1234, false);
+        store(dv, 0, adjustForEndianessUint16(0x1234), false);
         assert(arr[0] === 0x3412);
 
-        store(dv, 0, 0x0102, false);
+        store(dv, 0, adjustForEndianessUint16(0x0102), false);
         assert(arr[0] === 0x0201);
 
-        store(dv, 0, -1, false);
+        store(dv, 0, adjustForEndianessUint16(-1), false);
         assert(arr[0] === 0xffff);
 
-        store(dv, 0, -2, false);
+        store(dv, 0, adjustForEndianessUint16(-2), false);
         assert(arr[0] === 0xfeff);
 
-        storeBigEndian(dv, 0, -1);
+        storeBigEndian(dv, 0, adjustForEndianessUint16(-1));
         assert(arr[0] === 0xffff);
 
-        storeBigEndian(dv, 0, -2);
+        storeBigEndian(dv, 0, adjustForEndianessUint16(-2));
         assert(arr[0] === 0xfeff);
 
-        storeBigEndian(dv, 0, -2147483648); 
+        storeBigEndian(dv, 0, adjustForEndianessUint16(-2147483648));
         assert(arr[0] === 0x0000);
 
-        storeLittleEndian(dv, 0, -2147483648); 
+        storeLittleEndian(dv, 0, adjustForEndianessUint16(-2147483648));
         assert(arr[0] === 0x0000);
 
-        storeLittleEndian(dv, 0, -2147478988); 
+        storeLittleEndian(dv, 0, adjustForEndianessUint16(-2147478988));
         assert(arr[0] === 0x1234);
 
-        storeBigEndian(dv, 0, -2147478988); 
+        storeBigEndian(dv, 0, adjustForEndianessUint16(-2147478988));
         assert(arr[0] === 0x3412);
     }
 }
 test2();
+
+function adjustForEndianessUint32(value) {
+    if (isLittleEndian)
+        return value;
+
+    let ab = new ArrayBuffer(4);
+    let ta = new Uint32Array(ab);
+    ta[0] = value;
+    let dv = new DataView(ab);
+    return dv.getUint32(0, true);
+}
 
 function test3() {
     function storeLittleEndian(dv, index, value) {
@@ -205,29 +231,29 @@ function test3() {
     let dv = new DataView(buffer);
 
     for (let i = 0; i < 10000; ++i) {
-        storeLittleEndian(dv, 0, 0xffffffff);
+        storeLittleEndian(dv, 0, adjustForEndianessUint32(0xffffffff));
         assert(arr[0] === 0xffffffff);
         assert(arr2[0] === -1);
 
-        storeLittleEndian(dv, 0, 0xffaabbcc);
+        storeLittleEndian(dv, 0, adjustForEndianessUint32(0xffaabbcc));
         assert(arr[0] === 0xffaabbcc);
 
-        storeBigEndian(dv, 0, 0x12345678);
+        storeBigEndian(dv, 0, adjustForEndianessUint32(0x12345678));
         assert(arr[0] === 0x78563412);
 
-        storeBigEndian(dv, 0, 0xffaabbcc);
+        storeBigEndian(dv, 0, adjustForEndianessUint32(0xffaabbcc));
         assert(arr[0] === 0xccbbaaff);
 
-        store(dv, 0, 0xfaeadaca, false);
+        store(dv, 0, adjustForEndianessUint32(0xfaeadaca), false);
         assert(arr[0] === 0xcadaeafa);
 
-        store(dv, 0, 0xcadaeafa, false);
+        store(dv, 0, adjustForEndianessUint32(0xcadaeafa), false);
         assert(arr2[0] === -85271862);
 
-        store(dv, 0, 0x12345678, false);
+        store(dv, 0, adjustForEndianessUint32(0x12345678), false);
         assert(arr[0] === 0x78563412);
 
-        storeBigEndian(dv, 0, 0xbeeffeeb);
+        storeBigEndian(dv, 0, adjustForEndianessUint32(0xbeeffeeb));
         assert(arr2[0] === -335614018);
     }
 }
@@ -255,33 +281,44 @@ function test4() {
     let dv = new DataView(buffer);
 
     for (let i = 0; i < 10000; ++i) {
-        storeLittleEndian(dv, 0, 0xffffffff);
+        storeLittleEndian(dv, 0, adjustForEndianessUint32(0xffffffff));
         assert(arr[0] === 0xffffffff);
         assert(arr2[0] === -1);
 
-        storeLittleEndian(dv, 0, 0xffaabbcc);
+        storeLittleEndian(dv, 0, adjustForEndianessUint32(0xffaabbcc));
         assert(arr[0] === 0xffaabbcc);
 
-        storeBigEndian(dv, 0, 0x12345678);
+        storeBigEndian(dv, 0, adjustForEndianessUint32(0x12345678));
         assert(arr[0] === 0x78563412);
 
-        storeBigEndian(dv, 0, 0xffaabbcc);
+        storeBigEndian(dv, 0, adjustForEndianessUint32(0xffaabbcc));
         assert(arr[0] === 0xccbbaaff);
 
-        store(dv, 0, 0xfaeadaca, false);
+        store(dv, 0, adjustForEndianessUint32(0xfaeadaca), false);
         assert(arr[0] === 0xcadaeafa);
 
-        store(dv, 0, 0xcadaeafa, false);
+        store(dv, 0, adjustForEndianessUint32(0xcadaeafa), false);
         assert(arr2[0] === -85271862);
 
-        store(dv, 0, 0x12345678, false);
+        store(dv, 0, adjustForEndianessUint32(0x12345678), false);
         assert(arr[0] === 0x78563412);
 
-        storeBigEndian(dv, 0, 0xbeeffeeb);
+        storeBigEndian(dv, 0, adjustForEndianessUint32(0xbeeffeeb));
         assert(arr2[0] === -335614018);
     }
 }
 test4();
+
+function adjustForEndianessFloat32(value) {
+    if (isLittleEndian)
+        return value;
+
+    let ab = new ArrayBuffer(4);
+    let ta = new Float32Array(ab);
+    ta[0] = value;
+    let dv = new DataView(ab);
+    return dv.getFloat32(0, true);
+}
 
 function test5() {
     function storeLittleEndian(dv, index, value) {
@@ -305,26 +342,37 @@ function test5() {
     let dv = new DataView(buffer);
 
     for (let i = 0; i < 10000; ++i) {
-        storeLittleEndian(dv, 0, 1.5);
+        storeLittleEndian(dv, 0, adjustForEndianessFloat32(1.5));
         assert(arr[0] === 1.5);
 
-        storeLittleEndian(dv, 0, 12912.124123215122);
-        assert(arr[0] === 12912.1240234375);
+        store(dv, 0, 12912.124123215122, isLittleEndian);
         assert(bits[0] === 0x4649c07f);
+        assert(arr[0] === 12912.1240234375);
 
-        storeLittleEndian(dv, 0, NaN);
+        storeLittleEndian(dv, 0, adjustForEndianessFloat32(NaN));
         assert(isNaN(arr[0]));
 
-        storeLittleEndian(dv, 0, 2.3879393e-38);
+        storeLittleEndian(dv, 0, adjustForEndianessFloat32(2.3879393e-38));
         assert(arr[0] === 2.387939260590663e-38);
         assert(bits[0] === 0x01020304);
 
-        storeBigEndian(dv, 0, 2.3879393e-38);
+        storeBigEndian(dv, 0, adjustForEndianessFloat32(2.3879393e-38));
         assert(arr[0] === 1.539989614439558e-36);
         assert(bits[0] === 0x04030201);
     }
 }
 test5();
+
+function adjustForEndianessFloat64(value) {
+    if (isLittleEndian)
+        return value;
+
+    let ab = new ArrayBuffer(8);
+    let ta = new Float64Array(ab);
+    ta[0] = value;
+    let dv = new DataView(ab);
+    return dv.getFloat64(0, true);
+}
 
 function test6() {
     function storeLittleEndian(dv, index, value) {
@@ -347,30 +395,30 @@ function test6() {
     let dv = new DataView(buffer);
 
     for (let i = 0; i < 10000; ++i) {
-        storeLittleEndian(dv, 0, NaN);
+        storeLittleEndian(dv, 0, adjustForEndianessFloat64(NaN));
         assert(isNaN(arr[0]));
 
-        storeLittleEndian(dv, 0, -2.5075187084135162e+284);
+        storeLittleEndian(dv, 0, adjustForEndianessFloat64(-2.5075187084135162e+284));
         assert(arr[0] === -2.5075187084135162e+284);
         assert(readHex(dv, 8) === "0xfafafafafafafafa");
 
-        store(dv, 0, 124.553, true);
+        store(dv, 0, adjustForEndianessFloat64(124.553), true);
         assert(readHex(dv, 8) === "0x405f23645a1cac08");
 
-        store(dv, 0, Infinity, true);
+        store(dv, 0, adjustForEndianessFloat64(Infinity), true);
         assert(readHex(dv, 8) === "0x7ff0000000000000");
 
-        store(dv, 0, Infinity, false);
+        store(dv, 0, adjustForEndianessFloat64(Infinity), false);
         assert(readHex(dv, 8) === "0x000000000000f07f");
 
-        store(dv, 0, -Infinity, true);
+        store(dv, 0, adjustForEndianessFloat64(-Infinity), true);
         assert(readHex(dv, 8) === "0xfff0000000000000");
 
-        storeBigEndian(dv, 0, -2.5075187084135162e+284);
+        storeBigEndian(dv, 0, adjustForEndianessFloat64(-2.5075187084135162e+284));
         assert(arr[0] === -2.5075187084135162e+284);
         assert(readHex(dv, 8) === "0xfafafafafafafafa");
 
-        storeBigEndian(dv, 0, 124.553);
+        storeBigEndian(dv, 0, adjustForEndianessFloat64(124.553));
         assert(readHex(dv, 8) === "0x08ac1c5a64235f40");
     }
 }

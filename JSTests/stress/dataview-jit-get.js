@@ -5,6 +5,16 @@ function assert(b) {
         throw new Error("Bad!");
 }
 
+function getIsLittleEndian() {
+    let ab = new ArrayBuffer(2);
+    let ta = new Int16Array(ab);
+    ta[0] = 0x0102;
+    let dv = new DataView(ab);
+    return dv.getInt16(0, true) === 0x0102;
+}
+
+let isLittleEndian = getIsLittleEndian();
+
 function test1() {
     function bigEndian(o, i) {
         return o.getInt32(i, false);
@@ -18,10 +28,20 @@ function test1() {
         return o.getInt32(i, b);
     }
     noInline(biEndian);
+    function adjustForEndianess(value) {
+        if (isLittleEndian)
+            return value;
+
+        let ab = new ArrayBuffer(4);
+        let ta = new Int32Array(ab);
+        ta[0] = value;
+        let dv = new DataView(ab);
+        return dv.getInt32(0, true);
+    }
 
     let ab = new ArrayBuffer(4);
     let ta = new Int32Array(ab);
-    ta[0] = 0x01020304;
+    ta[0] = adjustForEndianess(0x01020304);
     let dv = new DataView(ab);
 
     for (let i = 0; i < 10000; ++i) {
@@ -43,7 +63,7 @@ function test1() {
     }
 
     // Make sure we get the right sign.
-    ta[0] = -32361386; // 0xfe123456
+    ta[0] = adjustForEndianess(-32361386); // 0xfe123456
     for (let i = 0; i < 10000; ++i) {
         assert(bigEndian(dv, 0) === 0x563412fe);
         assert(littleEndian(dv, 0) === -32361386);
@@ -54,7 +74,7 @@ function test1() {
     }
 
     // -2146290602 == (int)0x80123456
-    ta[0] = 0x56341280;
+    ta[0] = adjustForEndianess(0x56341280);
     for (let i = 0; i < 10000; ++i) {
         assert(bigEndian(dv, 0) === -2146290602);
         assert(littleEndian(dv, 0) === 0x56341280);
@@ -79,10 +99,20 @@ function test2() {
         return o.getInt16(i, b);
     }
     noInline(biEndian);
+    function adjustForEndianess(value) {
+        if (isLittleEndian)
+            return value;
+
+        let ab = new ArrayBuffer(2);
+        let ta = new Int16Array(ab);
+        ta[0] = value;
+        let dv = new DataView(ab);
+        return dv.getInt16(0, true);
+    }
 
     let ab = new ArrayBuffer(2);
     let ta = new Int16Array(ab);
-    ta[0] = 0x0102;
+    ta[0] = adjustForEndianess(0x0102);
     let dv = new DataView(ab);
 
     for (let i = 0; i < 10000; ++i) {
@@ -95,7 +125,7 @@ function test2() {
     }
 
     // Check sign.
-    ta[0] = -512; // 0xfe00
+    ta[0] = adjustForEndianess(-512); // 0xfe00
     for (let i = 0; i < 10000; ++i) {
         assert(bigEndian(dv, 0) === 0x00fe);
         assert(littleEndian(dv, 0) === -512);
@@ -106,7 +136,7 @@ function test2() {
     }
 
     // Check sign extension.
-    ta[0] = 0x00fe;
+    ta[0] = adjustForEndianess(0x00fe);
     for (let i = 0; i < 10000; ++i) {
         assert(bigEndian(dv, 0) === -512);
         assert(littleEndian(dv, 0) === 0x00fe);
@@ -131,6 +161,16 @@ function test3() {
         return o.getFloat32(i, b);
     }
     noInline(biEndian);
+    function adjustForEndianess(value) {
+        if (isLittleEndian)
+            return value;
+
+        let ab = new ArrayBuffer(4);
+        let ta = new Float32Array(ab);
+        ta[0] = value;
+        let dv = new DataView(ab);
+        return dv.getFloat32(0, true);
+    }
 
     let ab = new ArrayBuffer(4);
     let ta = new Float32Array(ab);
@@ -138,7 +178,7 @@ function test3() {
     const normalAsDouble = 12912.403320312500;
 
     const flipped = -5.1162437589918884e-21;
-    ta[0] = normal;
+    ta[0] = adjustForEndianess(normal);
 
     let dv = new DataView(ab);
     for (let i = 0; i < 10000; ++i) {
@@ -151,6 +191,17 @@ function test3() {
     }
 }
 test3();
+
+function adjustForEndianessUint32(value) {
+    if (isLittleEndian)
+        return value;
+
+    let ab = new ArrayBuffer(4);
+    let ta = new Uint32Array(ab);
+    ta[0] = value;
+    let dv = new DataView(ab);
+    return dv.getUint32(0, true);
+}
 
 function test4() {
     function bigEndian(o, i) {
@@ -168,7 +219,7 @@ function test4() {
 
     let ab = new ArrayBuffer(4);
     let ta = new Uint32Array(ab);
-    ta[0] = 0xa0b0d0f0;
+    ta[0] = adjustForEndianessUint32(0xa0b0d0f0);
 
     let dv = new DataView(ab);
     for (let i = 0; i < 10000; ++i) {
@@ -198,7 +249,7 @@ function test5() {
 
     let ab = new ArrayBuffer(4);
     let ta = new Uint32Array(ab);
-    ta[0] = 0xa0b0d0f0;
+    ta[0] = adjustForEndianessUint32(0xa0b0d0f0);
 
     let dv = new DataView(ab);
     for (let i = 0; i < 10000; ++i) {
@@ -239,7 +290,7 @@ function test6() {
 
     let ab = new ArrayBuffer(4);
     let ta = new Uint32Array(ab);
-    ta[0] = 0xa070fa01;
+    ta[0] = adjustForEndianessUint32(0xa070fa01);
 
     let dv = new DataView(ab);
     for (let i = 0; i < 10000; ++i) {
@@ -272,7 +323,7 @@ function test7() {
 
     let ab = new ArrayBuffer(4);
     let ta = new Uint32Array(ab);
-    ta[0] = 0xa070fa01;
+    ta[0] = adjustForEndianessUint32(0xa070fa01);
 
     let dv = new DataView(ab);
     for (let i = 0; i < 10000; ++i) {
@@ -292,7 +343,7 @@ function test8() {
 
     let ab = new ArrayBuffer(4);
     let ta = new Uint32Array(ab);
-    ta[0] = 0xa070fa01;
+    ta[0] = adjustForEndianessUint32(0xa070fa01);
 
     let dv = new DataView(ab);
     for (let i = 0; i < 10000; ++i) {

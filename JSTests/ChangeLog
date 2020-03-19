@@ -1,3 +1,58 @@
+2020-03-19  Tomas Popela  <tpopela@redhat.com>
+
+        [JSC][BigEndians] Several JSC stress tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=194007
+
+        Reviewed by Michael Catanzaro.
+
+        Adapt the DataView tests to be able to pass on little endian as well
+        as the big endian hardware. Do so by introducing method that determine
+        the endianess and based on its value it saves the expected results in
+        the right format.
+
+        * stress/dataview-get-cse.js:
+        (getIsLittleEndian):
+        (adjustForEndianess):
+        (test3.foo):
+        (test3):
+        * stress/dataview-jit-get.js:
+        (getIsLittleEndian):
+        (test1.adjustForEndianess):
+        (test1):
+        (test2.adjustForEndianess):
+        (test2):
+        (test3.adjustForEndianess):
+        (test3):
+        (adjustForEndianessUint32):
+        (test4):
+        (test5):
+        (test6):
+        (test7):
+        (test8):
+        * stress/dataview-jit-neuter.js:
+        (getIsLittleEndian):
+        (adjustForEndianess):
+        (test):
+        (test2):
+        * stress/dataview-jit-set-nan.js:
+        (getIsLittleEndian):
+        (adjustForEndianessFloat32):
+        (test):
+        * stress/dataview-jit-set.js:
+        (getIsLittleEndian):
+        (readHex):
+        (adjustForEndianessUint16):
+        (test):
+        (test2):
+        (adjustForEndianessUint32):
+        (test3):
+        (test4):
+        (adjustForEndianessFloat32):
+        (test5):
+        (adjustForEndianessFloat64):
+        (test6):
+        (isLittleEndian): Deleted.
+
 2020-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add a way to mark a rejected promise as handled
