@@ -1,3 +1,16 @@
+2020-03-19  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Gardening, update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=209276
+
+        Unreviewed gardening.
+
+        Gardening of several WPT's css-writing-modes tests that were added for
+        the first time in r258661.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-03-19  Antoine Quint  <graouts@apple.com>
 
         Unreviewed test gardening.
