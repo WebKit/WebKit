@@ -359,7 +359,7 @@ Controller.prototype = {
 
     controlsAreAlwaysVisible: function()
     {
-        return this.controls.panel.classList.contains(this.ClassNames.noVideo);
+        return this.isAudio() || this.controls.panel.classList.contains(this.ClassNames.noVideo);
     },
 
     controlsAreHidden: function()
