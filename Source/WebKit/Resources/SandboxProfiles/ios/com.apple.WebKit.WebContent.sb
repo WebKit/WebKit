@@ -832,7 +832,7 @@
 (allow mach-lookup (with report) (with telemetry)
        (global-name "com.apple.webinspector"))
 
-(allow mach-lookup (with telemetry-backtrace)
+(deny mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.PowerManagement.control"))
 
 (deny file-write-create (vnode-type SYMLINK))
