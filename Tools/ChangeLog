@@ -1,3 +1,16 @@
+2020-03-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] REGRESSION(r258626): flatpak is used even when WEBKIT_JHBUILD is set
+        https://bugs.webkit.org/show_bug.cgi?id=209278
+
+        Reviewed by Philippe Normand.
+
+        This happens when using an external jhbuild, because shouldUseFlatpak() assumes that no command prefix always
+        means flatpak.
+
+        * Scripts/webkitdirs.pm:
+        (shouldUseFlatpak): Return early if WEBKIT_JHBUILD is set.
+
 2020-03-19  Philippe Normand  <pnormand@igalia.com>
 
         [CMake] cache not cleared when build-webkit options change

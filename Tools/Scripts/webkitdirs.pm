@@ -2173,6 +2173,10 @@ sub shouldUseFlatpak()
         return 0;
     }
 
+    if (defined $ENV{'WEBKIT_JHBUILD'} && $ENV{'WEBKIT_JHBUILD'}) {
+        return 0;
+    }
+
     my @prefix = wrapperPrefixIfNeeded();
     return ((! inFlatpakSandbox()) and (@prefix == 0) and -e getUserFlatpakPath());
 }
