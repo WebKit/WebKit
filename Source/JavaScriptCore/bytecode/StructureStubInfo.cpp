@@ -42,10 +42,6 @@ static constexpr bool verbose = false;
 
 StructureStubInfo::StructureStubInfo(AccessType accessType)
     : accessType(accessType)
-    , m_cacheType(CacheType::Unset)
-    , countdown(1) // For a totally clear stub, we'll patch it after the first execution.
-    , repatchCount(0)
-    , numberOfCoolDowns(0)
     , bufferingCountdown(Options::repatchBufferingCountdown())
     , resetByGC(false)
     , tookSlowPath(false)
@@ -165,7 +161,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
                 return result;
 
             if (!result.buffered()) {
-                bufferedStructures.clear();
+                clearBufferedStructures();
                 return result;
             }
         } else {
@@ -188,7 +184,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
                 return result;
 
             if (!result.buffered()) {
-                bufferedStructures.clear();
+                clearBufferedStructures();
                 return result;
             }
             
@@ -204,7 +200,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         if (!result.buffered()) {
             if (StructureStubInfoInternal::verbose)
                 dataLog("Didn't buffer anything, bailing.\n");
-            bufferedStructures.clear();
+            clearBufferedStructures();
             return result;
         }
         
@@ -217,7 +213,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         
         // Forget the buffered structures so that all future attempts to cache get fully handled by the
         // PolymorphicAccess.
-        bufferedStructures.clear();
+        clearBufferedStructures();
         
         result = u.stub->regenerate(locker, vm, codeBlock, *this);
         
@@ -240,7 +236,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
 
 void StructureStubInfo::reset(CodeBlock* codeBlock)
 {
-    bufferedStructures.clear();
+    clearBufferedStructures();
 
     if (m_cacheType == CacheType::Unset)
         return;
@@ -290,6 +286,11 @@ void StructureStubInfo::reset(CodeBlock* codeBlock)
 
 void StructureStubInfo::visitAggregate(SlotVisitor& visitor)
 {
+    {
+        auto locker = holdLock(m_bufferedStructuresLock);
+        for (auto& bufferedStructure : m_bufferedStructures)
+            bufferedStructure.byValId().visitAggregate(visitor);
+    }
     switch (m_cacheType) {
     case CacheType::Unset:
     case CacheType::ArrayLength:
@@ -312,12 +313,13 @@ void StructureStubInfo::visitAggregate(SlotVisitor& visitor)
 void StructureStubInfo::visitWeakReferences(CodeBlock* codeBlock)
 {
     VM& vm = codeBlock->vm();
-    
-    bufferedStructures.removeIf(
-        [&] (auto& pair) -> bool {
-            Structure* structure = pair.first;
-            return !vm.heap.isMarked(structure);
-        });
+    {
+        auto locker = holdLock(m_bufferedStructuresLock);
+        m_bufferedStructures.removeIf(
+            [&] (auto& entry) -> bool {
+                return !vm.heap.isMarked(entry.structure());
+            });
+    }
 
     switch (m_cacheType) {
     case CacheType::GetByIdSelf:

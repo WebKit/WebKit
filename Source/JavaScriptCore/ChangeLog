@@ -1,5 +1,55 @@
 2020-03-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] StructureStubInfo::bufferedStructures should not ref/deref UniquedStringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=209266
+        <rdar://problem/60508312>
+
+        Reviewed by Saam Barati.
+
+        StructureStubInfo::bufferedStructures includes RefPtr<UniquedStringImpl>. So destroying StructureStubInfo in
+        CodeBlock::finalizeUnconditionally can access to AtomStringTable, and get nullptr AtomStringTable since
+        CodeBlock::finalizeUnconditionally can be executed in heap-thread.
+
+        Temporarily setting AtomStringTable in the heap-thread when executing GC End phase is dangerous: Web worker's
+        JSC VM is releasing heapAccess when waiting for the next message in the RunLoop. This potentially means that
+        Web worker's main thread can run concurrently with Web worker's JSC VM's End phase heap-thread until the web
+        worker takes JSLock. (This is not a problem in WebCore since WebCore JSC VM never releases heapAccess. We cannot
+        take the same design since we would like to run End phase even if web worker is not getting any messages).
+
+        And removing resetJITData in CodeBlock::finalizeUnconditionally does not fix as well since CodeBlock::finalizeUnconditionally
+        calls StructureStubInfo::visitWeakReferences, and it removes some of entries of StructureStubInfo::bufferedStructures after
+        ByVal extension is introduced into StructureStubInfo.
+
+        This patch uses CacheableIdentifier for bufferedStructures. We make BufferedStructure class which holds Structure and CacheableIdentifier.
+        And StructureStubInfo holds HashSet<BufferedStructure>. We also visit CacheableIdentifier in StructureStubInfo::visitAggregate. To allow
+        concurrent collector to run this, we introduce m_bufferedStructuresLock in StructureStubInfo to guard m_bufferedStructures.
+
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::StructureStubInfo::addAccessCase):
+        (JSC::StructureStubInfo::reset):
+        (JSC::StructureStubInfo::visitAggregate):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::considerCaching):
+        (JSC::StructureStubInfo::getByIdSelfIdentifier):
+        (JSC::StructureStubInfo::cacheType const):
+        (JSC::StructureStubInfo::clearBufferedStructures):
+        (JSC::StructureStubInfo::BufferedStructure::BufferedStructure):
+        (JSC::StructureStubInfo::BufferedStructure::isHashTableDeletedValue const):
+        (JSC::StructureStubInfo::BufferedStructure::hash const):
+        (JSC::StructureStubInfo::BufferedStructure::operator==):
+        (JSC::StructureStubInfo::BufferedStructure::operator!=):
+        (JSC::StructureStubInfo::BufferedStructure::Hash::hash):
+        (JSC::StructureStubInfo::BufferedStructure::Hash::equal):
+        (JSC::StructureStubInfo::BufferedStructure::structure const):
+        (JSC::StructureStubInfo::BufferedStructure::byValId const):
+        * jit/JITOperations.cpp:
+        * runtime/CacheableIdentifier.h:
+        (JSC::CacheableIdentifier::hash const):
+
+2020-03-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, build fix after r258717
         https://bugs.webkit.org/show_bug.cgi?id=199295
 

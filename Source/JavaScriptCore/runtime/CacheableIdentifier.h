@@ -69,6 +69,8 @@ public:
 
     explicit operator bool() const { return m_bits; }
 
+    unsigned hash() const { return uid()->symbolAwareHash(); }
+
     CacheableIdentifier& operator=(const CacheableIdentifier&) = default;
     CacheableIdentifier& operator=(CacheableIdentifier&&) = default;
 
