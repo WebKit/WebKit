@@ -2265,6 +2265,11 @@ WTF::String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
     // FIXME: Implement.
     return WTF::String();
 }
+
+bool WebsiteDataStore::http3Enabled()
+{
+    return false;
+}
 #endif
 
 #if !USE(GLIB)

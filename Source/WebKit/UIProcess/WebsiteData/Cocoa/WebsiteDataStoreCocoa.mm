@@ -164,6 +164,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
     if (!alternativeServiceStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
+    bool http3Enabled = WebsiteDataStore::http3Enabled();
 #endif
 
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
@@ -198,6 +199,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
         WTFMove(alternativeServiceStorageDirectory),
         WTFMove(alternativeServiceStorageDirectoryExtensionHandle),
+        WTFMove(http3Enabled),
 #endif
         m_configuration->deviceManagementRestrictionsEnabled(),
         m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting(),
@@ -258,6 +260,15 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     parameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();
 
     return parameters;
+}
+
+bool WebsiteDataStore::http3Enabled()
+{
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    return [[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithFormat:@"Experimental%@", (NSString *)WebPreferencesKey::http3EnabledKey()]];
+#else
+    return false;
+#endif
 }
 
 void WebsiteDataStore::platformInitialize()

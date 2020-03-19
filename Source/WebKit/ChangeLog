@@ -1,3 +1,29 @@
+2020-03-18  Alex Christensen  <achristensen@webkit.org>
+
+        Add HTTP3 as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=209267
+        <rdar://problem/60245262> and <rdar://problem/60245168>
+
+        Reviewed by Brent Fulgham.
+
+        Manually verified this sets the CFNetwork SPI as expected.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * Shared/WebPreferences.yaml:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        (WebKit::WebsiteDataStore::http3Enabled):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::http3Enabled):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-03-18  Saam Barati  <sbarati@apple.com>
 
         SharedMemory::Handle::decode shouldn't check rounded size

@@ -278,6 +278,7 @@ public:
     static WTF::String defaultMediaKeysStorageDirectory();
     static WTF::String defaultDeviceIdHashSaltsStorageDirectory();
     static WTF::String defaultJavaScriptConfigurationDirectory();
+    static bool http3Enabled();
 
     void resetQuota(CompletionHandler<void()>&&);
     void hasAppBoundSession(CompletionHandler<void(bool)>&&) const;

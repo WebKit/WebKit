@@ -661,7 +661,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     parameters.defaultDataStoreParameters.networkSessionParameters.alternativeServiceDirectory = WebsiteDataStore::defaultAlternativeServicesDirectory();
-    SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.networkSessionParameters.alternativeServiceDirectory, parameters.defaultDataStoreParameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle);
+    if (!parameters.defaultDataStoreParameters.networkSessionParameters.alternativeServiceDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.networkSessionParameters.alternativeServiceDirectory, parameters.defaultDataStoreParameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle);
+    parameters.defaultDataStoreParameters.networkSessionParameters.http3Enabled = WebsiteDataStore::http3Enabled();
 #endif
     bool isItpStateExplicitlySet = false;
     parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsParameters = ResourceLoadStatisticsParameters {

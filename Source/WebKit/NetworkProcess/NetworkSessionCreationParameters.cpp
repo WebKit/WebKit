@@ -55,6 +55,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     encoder << alternativeServiceDirectory;
     encoder << alternativeServiceDirectoryExtensionHandle;
+    encoder << http3Enabled;
 #endif
 #if USE(SOUP)
     encoder << cookiePersistentStoragePath;
@@ -142,6 +143,11 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     Optional<SandboxExtension::Handle> alternativeServiceDirectoryExtensionHandle;
     decoder >> alternativeServiceDirectoryExtensionHandle;
     if (!alternativeServiceDirectoryExtensionHandle)
+        return WTF::nullopt;
+    
+    Optional<bool> http3Enabled;
+    decoder >> http3Enabled;
+    if (!http3Enabled)
         return WTF::nullopt;
 #endif
 
@@ -255,6 +261,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
         , WTFMove(*alternativeServiceDirectory)
         , WTFMove(*alternativeServiceDirectoryExtensionHandle)
+        , WTFMove(*http3Enabled)
 #endif
 #if USE(SOUP)
         , WTFMove(*cookiePersistentStoragePath)
