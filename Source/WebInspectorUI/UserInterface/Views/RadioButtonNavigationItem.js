@@ -66,6 +66,11 @@ WI.RadioButtonNavigationItem = class RadioButtonNavigationItem extends WI.Button
     {
         return ["radio", "button"];
     }
+
+    get tabbable()
+    {
+        return this.selected ? 0 : -1;
+    }
 };
 
 WI.RadioButtonNavigationItem.StyleClassName = "radio";

@@ -40,10 +40,9 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
         // Don't move the focus on the button when clicking on it. This matches macOS behavior.
         this.element.addEventListener("mousedown", this._handleMouseDown.bind(this), true);
 
-        if (role === "button") {
-            this.element.tabIndex = 0;
+        this._role = role;
+        if (this._role === "button")
             this.element.addEventListener("keydown", this._handleKeyDown.bind(this));
-        }
 
         if (label)
             this.element.setAttribute("aria-label", label);
@@ -54,6 +53,8 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
         this._imageWidth = imageWidth || 16;
         this._imageHeight = imageHeight || 16;
         this._label = toolTipOrLabel;
+
+        this._updateTabIndex();
 
         this.buttonStyle = this._image ? WI.ButtonNavigationItem.Style.Image : WI.ButtonNavigationItem.Style.Text;
 
@@ -111,6 +112,9 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 
         this._enabled = flag;
         this.element.classList.toggle("disabled", !this._enabled);
+        this.element.ariaDisabled = !this._enabled;
+
+        this._updateTabIndex();
     }
 
     get buttonStyle()
@@ -170,6 +174,11 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
         return ["button"];
     }
 
+    get tabbable()
+    {
+        return this._role === "button";
+    }
+
     // Private
 
     _mouseClicked(event)
@@ -227,6 +236,16 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
                 labelElement.textContent = this._label;
             }
         }
+    }
+
+    _updateTabIndex()
+    {
+        if (!this._enabled) {
+            this.element.tabIndex = -1;
+            return;
+        }
+
+        this.element.tabIndex = this.tabbable ? 0 : -1;
     }
 };
 

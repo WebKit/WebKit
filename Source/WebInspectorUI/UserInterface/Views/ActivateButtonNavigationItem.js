@@ -31,7 +31,6 @@ WI.ActivateButtonNavigationItem = class ActivateButtonNavigationItem extends WI.
 
         this._defaultToolTip = defaultToolTip;
         this._activatedToolTip = activatedToolTip || defaultToolTip;
-        this._role = role;
     }
 
     // Public
