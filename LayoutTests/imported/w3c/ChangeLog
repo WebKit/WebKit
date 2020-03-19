@@ -1,3 +1,45 @@
+2020-03-19  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Changes in grid or elements inside the grid affects margin on other elements in the grid
+        https://bugs.webkit.org/show_bug.cgi?id=209203
+
+        Reviewed by Darin Adler.
+
+        Imported new Web Platform tests to detect regressions in the auto-margins logic durignn relayouts.
+
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-002.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-003-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-003.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-004-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-004.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-005-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-005.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-006-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-006.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-007-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-007.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-008-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-block-axis-alignment-auto-margins-008.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-002.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-003-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-003.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-004-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-004.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-005-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-005.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-006-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-006.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-007-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-007.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-008-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-inline-axis-alignment-auto-margins-008.html: Added.
+
 2020-03-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update imported/w3c/web-platform-tests/css/css-text/line-break/line-break-{strict,normal}-015.xht
