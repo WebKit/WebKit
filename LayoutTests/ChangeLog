@@ -1,3 +1,13 @@
+2020-03-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VO and safari: caan't press the play button
+        https://bugs.webkit.org/show_bug.cgi?id=209249
+
+        Reviewed by Darin Adler.
+
+        * accessibility/ios-simulator/has-touch-event-listener-with-shadow-expected.txt: Added.
+        * accessibility/ios-simulator/has-touch-event-listener-with-shadow.html: Added.
+
 2020-03-19  Sihui Liu  <sihui_liu@apple.com>
 
         Flaky Test: storage/indexeddb/cursor-leak.html and storage/indexeddb/cursor-leak-private.html

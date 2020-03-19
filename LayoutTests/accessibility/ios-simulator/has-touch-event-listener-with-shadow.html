@@ -1,0 +1,45 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../media/media-file.js"></script>
+<script src="../../media/video-test.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body ontouchstart="var x = 5;">
+
+<audio id="audio1" width=100 height=100 controls aria-label="Audio One" onloadstart="go();"></audio>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("Make sure that the audio element shadow node elements have touch event listeners.");
+
+    window.jsTestIsAsync = true;
+    var audio = document.querySelector('audio');
+    audio.src = findMediaFile("audio", "../../../media/content/test");
+
+    var button;
+    var audioElement;
+    function go() {
+        if (window.accessibilityController) {
+            audioElement = accessibilityController.accessibleElementById("audio1");
+            button = audioElement.childAtIndex(0).childAtIndex(0);
+            shouldBeTrue("button.boolAttributeValue('AXHasTouchEventListener')");
+            shouldBe("button.description", "'AXLabel: Play'");
+            finishJSTest();
+        }
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+
