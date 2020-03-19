@@ -1,3 +1,12 @@
+2020-03-19  Antoine Quint  <graouts@apple.com>
+
+        Unreviewed test gardening.
+
+        These two platform-specific expectations are no longer necessary since we silenced the console output for these tests (see bugs 192974 and 194309).
+
+        * platform/ios/media/modern-media-controls/compact-media-controls/compact-media-controls-constructor-expected.txt: Removed.
+        * platform/ios/media/modern-media-controls/compact-media-controls/compact-media-controls-layout-expected.txt: Removed.
+
 2020-03-19  Frederic Wang  <fwang@igalia.com>
 
         Delete accidentally committed file.
