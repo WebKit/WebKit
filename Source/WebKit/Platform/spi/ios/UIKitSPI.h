@@ -69,6 +69,7 @@
 #import <UIKit/UITextEffectsWindow.h>
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UITextInteractionAssistant_Private.h>
+#import <UIKit/UITextInteraction_Private.h>
 #import <UIKit/UIViewControllerTransitioning_Private.h>
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/UIViewController_ViewService.h>
@@ -121,6 +122,13 @@
 
 #if __has_include(<UIKit/UITargetedPreview_Private.h>)
 #import <UIKit/UITargetedPreview_Private.h>
+#endif
+
+#if HAVE(UI_CURSOR_INTERACTION)
+#import <UIKit/_UICursorInteraction.h>
+#import <UIKit/_UICursorInteraction_ForWebKitOnly.h>
+#import <UIKit/_UICursorStyle.h>
+#import <UIKit/_UICursorStyle_Private.h>
 #endif
 
 #else // USE(APPLE_INTERNAL_SDK)
@@ -647,6 +655,10 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @property (nonatomic, readonly, assign) UITapGestureRecognizer *singleTapGesture;
 @end
 
+@interface UITextInteraction ()
+@property (class, nonatomic, readonly) CGFloat _maximumBeamSnappingLength;
+@end
+
 @protocol UIWKInteractionViewProtocol
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state;
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart withFlags:(UIWKSelectionFlags)flags;
@@ -1135,6 +1147,23 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (readonly) NSString *primaryString;
 @property (readonly) NSArray<NSString *> *alternativeStrings;
 @property (readonly) BOOL isLowConfidence;
+@end
+
+@protocol _UICursorInteractionDelegate;
+
+@interface _UICursorInteraction : NSObject <UIInteraction>
+- (instancetype)initWithDelegate:(id <_UICursorInteractionDelegate>)delegate;
+- (void)invalidate;
+@property (nonatomic, assign, getter=_pausesCursorUpdatesWhilePanning, setter=_setPausesCursorUpdatesWhilePanning:) BOOL pausesCursorUpdatesWhilePanning;
+@end
+
+@interface _UICursorRegion : NSObject <NSCopying>
++ (instancetype)regionWithIdentifier:(id <NSObject>)identifier rect:(CGRect)rect;
+@end
+
+@interface _UICursor : NSObject
++ (instancetype)beamWithPreferredLength:(CGFloat)length axis:(UIAxis)axis;
++ (instancetype)linkCursor;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

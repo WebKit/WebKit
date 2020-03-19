@@ -1,3 +1,35 @@
+2020-03-19  Tim Horton  <timothy_horton@apple.com>
+
+        Implement support for cursor interactions on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=209268
+
+        Reviewed by Darin Adler.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView _showShareSheet:inRect:completionHandler:]):
+        (-[WKContentView setupDragAndDropInteractions]):
+        (-[WKContentView shouldUseMouseGestureRecognizer]):
+        (-[WKContentView setupMouseGestureRecognizer]):
+        (-[WKContentView mouseGestureRecognizerChanged:]):
+        (-[WKContentView setupCursorInteraction]):
+        (-[WKContentView _cursorInteraction:regionForLocation:defaultRegion:completion:]):
+        (-[WKContentView cursorRegionForPositionInformation:point:]):
+        (-[WKContentView cursorInteraction:styleForRegion:modifiers:]):
+        (-[WKContentView _mouseGestureRecognizerChanged:]): Deleted.
+        * UIProcess/ios/WKMouseGestureRecognizer.h:
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::shouldUseMouseEventForSelection):
+
 2020-03-19  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Add telemetry for message filtering

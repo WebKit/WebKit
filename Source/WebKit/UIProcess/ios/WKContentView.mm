@@ -190,7 +190,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [_fixedClippingView addSubview:_rootContentView.get()];
 
     if (!linkedOnOrAfter(WebKit::SDKVersion::FirstWithLazyGestureRecognizerInstallation))
-        [self setupInteraction];
+        [self setUpInteraction];
     [self setUserInteractionEnabled:YES];
 
     self.layer.hitTestsAsOpaque = YES;
@@ -286,7 +286,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
 - (void)dealloc
 {
-    [self cleanupInteraction];
+    [self cleanUpInteraction];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -329,7 +329,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [super didMoveToWindow];
 
     if (self.window)
-        [self setupInteraction];
+        [self setUpInteraction];
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -610,7 +610,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (void)_processDidExit
 {
     [self _updateRemoteAccessibilityRegistration:NO];
-    [self cleanupInteraction];
+    [self cleanUpInteraction];
 
     [self setShowingInspectorIndication:NO];
     [self _hideInspectorHighlight];
@@ -638,7 +638,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (void)_didRelaunchProcess
 {
     [self _accessibilityRegisterUIProcessTokens];
-    [self setupInteraction];
+    [self setUpInteraction];
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     [self _setupVisibilityPropagationView];
 #endif

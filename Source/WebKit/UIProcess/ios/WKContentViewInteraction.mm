@@ -171,11 +171,17 @@
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
 #endif
 
-#if PLATFORM(WATCHOS)
+#if HAVE(UI_CURSOR_INTERACTION)
+static NSString * const cursorRegionIdentifier = @"WKCursorRegion";
+static NSString * const editableCursorRegionIdentifier = @"WKEditableCursorRegion";
 
+@interface WKContentView (WKUICursorInteractionDelegate) <_UICursorInteractionDelegate>
+@end
+#endif
+
+#if PLATFORM(WATCHOS)
 @interface WKContentView (WatchSupport) <WKFocusedFormControlViewDelegate, WKSelectMenuListViewControllerDelegate, WKTextInputListViewControllerDelegate>
 @end
-
 #endif
 
 namespace WebKit {
@@ -715,7 +721,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self addGestureRecognizer:_longPressGestureRecognizer.get()];
 }
 
-- (void)setupInteraction
+- (void)setUpInteraction
 {
     // If the page is not valid yet then delay interaction setup until the process is launched/relaunched.
     if (!_page->hasRunningProcess())
@@ -773,17 +779,14 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_touchEventGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
 
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
-    _mouseGestureRecognizer = adoptNS([[WKMouseGestureRecognizer alloc] initWithTarget:self action:@selector(_mouseGestureRecognizerChanged:)]);
-    [_mouseGestureRecognizer setDelegate:self];
-    [self addGestureRecognizer:_mouseGestureRecognizer.get()];
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    [self setUpMouseGestureRecognizer];
 #endif
 
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     _lookupGestureRecognizer = adoptNS([[_UILookupGestureRecognizer alloc] initWithTarget:self action:@selector(_lookupGestureRecognized:)]);
     [_lookupGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
-    
 #endif
 
     _singleTapGestureRecognizer = adoptNS([[WKSyntheticTapGestureRecognizer alloc] initWithTarget:self action:@selector(_singleTapRecognized:)]);
@@ -824,11 +827,15 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #endif
 
 #if ENABLE(DATA_INTERACTION)
-    [self setupDragAndDropInteractions];
+    [self setUpDragAndDropInteractions];
+#endif
+
+#if HAVE(UI_CURSOR_INTERACTION)
+    [self setUpCursorInteraction];
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)
-    [self setupAdditionalInteractions];
+    [self setUpAdditionalInteractions];
 #endif
 
     _twoFingerSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerSingleTapGestureRecognized:)]);
@@ -890,7 +897,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     _hasSetUpInteractions = YES;
 }
 
-- (void)cleanupInteraction
+- (void)cleanUpInteraction
 {
     if (!_hasSetUpInteractions)
         return;
@@ -936,7 +943,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self removeGestureRecognizer:_deferringGestureRecognizerForDelayedResettableGestures.get()];
 #endif
 
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [_mouseGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
@@ -989,8 +996,13 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self teardownDragAndDropInteractions];
 #endif
 
+#if HAVE(UI_CURSOR_INTERACTION)
+    [self removeInteraction:_cursorInteraction.get()];
+    _cursorInteraction = nil;
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
-    [self cleanupAdditionalInteractions];
+    [self cleanUpAdditionalInteractions];
 #endif
 
     _inspectorNodeSearchEnabled = NO;
@@ -1055,7 +1067,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
@@ -1083,7 +1095,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
@@ -1504,9 +1516,12 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         return YES;
 #endif
 
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch)
         return NO;
+
+    if (gestureRecognizer == _doubleTapGestureRecognizer || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer)
+        return !touch._isPointerTouch;
 #endif
 
     if (gestureRecognizer == _touchActionLeftSwipeGestureRecognizer || gestureRecognizer == _touchActionRightSwipeGestureRecognizer || gestureRecognizer == _touchActionUpSwipeGestureRecognizer || gestureRecognizer == _touchActionDownSwipeGestureRecognizer) {
@@ -1522,11 +1537,7 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         return touchActions == WebCore::TouchAction::PanX;
     }
 
-#if USE(APPLE_INTERNAL_SDK)
-    return [self _allowGestureRecognizer:gestureRecognizer toReceiveTouch:touch];
-#else
     return YES;
-#endif
 }
 
 #pragma mark - WKTouchActionGestureRecognizerDelegate implementation
@@ -2042,7 +2053,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _longPressGestureRecognizer.get()))
         return YES;
 
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if ([gestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]])
         return YES;
 #endif
@@ -6555,7 +6566,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:self.webView]);
     [_shareSheet setDelegate:self];
 
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (!rect) {
         if (auto lastMouseLocation = [_mouseGestureRecognizer lastMouseLocation]) {
             auto hoverLocationInWebView = [self convertPoint:*lastMouseLocation toView:self.webView];
@@ -6948,15 +6959,14 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
     return (id <WKUIDelegatePrivate>)[_webView UIDelegate];
 }
 
-- (void)setupDragAndDropInteractions
+- (void)setUpDragAndDropInteractions
 {
     _dragInteraction = adoptNS([[UIDragInteraction alloc] initWithDelegate:self]);
     _dropInteraction = adoptNS([[UIDropInteraction alloc] initWithDelegate:self]);
     [_dragInteraction _setLiftDelay:self.dragLiftDelay];
     [_dragInteraction setEnabled:shouldEnableDragInteractionForPolicy(self.webView._dragInteractionPolicy)];
-
-#if USE(APPLE_INTERNAL_SDK)
-    [self _performAdditionalSetupDragAndDropInteractions];
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    [_dragInteraction _setAllowsPointerDragBeforeLiftDelay:NO];
 #endif
 
     [self addInteraction:_dragInteraction.get()];
@@ -8074,21 +8084,6 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 }
 #endif
 
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
-- (void)_mouseGestureRecognizerChanged:(WKMouseGestureRecognizer *)gestureRecognizer
-{
-    if (!_page->hasRunningProcess())
-        return;
-
-    if (auto event = gestureRecognizer.lastMouseEvent) {
-        if (event->type() == WebKit::WebEvent::MouseDown)
-            _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
-
-        _page->handleMouseEvent(*event);
-    }
-}
-#endif
-
 #if HAVE(PENCILKIT)
 - (WKDrawingCoordinator *)_drawingCoordinator
 {
@@ -8103,6 +8098,160 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     if (WebKit::TextChecker::setContinuousSpellCheckingEnabled(enabled))
         _page->process().updateTextCheckerState();
 }
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+
+- (BOOL)shouldUseMouseGestureRecognizer
+{
+    static const BOOL shouldUseMouseGestureRecognizer = []() -> BOOL {
+        // System apps will always be linked on the current OS, so
+        // check them before the linked-on-or-after.
+
+        // <rdar://problem/59521967> iAd Video does not respond to mouse events, only touch events
+        if (WebCore::IOSApplication::isNews() || WebCore::IOSApplication::isStocks())
+            return NO;
+
+        if (WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstThatSendsNativeMouseEvents))
+            return YES;
+
+        // <rdar://problem/59155220> Some Feedly UI does not respond to mouse events, only touch events
+        if (WebCore::IOSApplication::isFeedly())
+            return NO;
+
+        return YES;
+    }();
+
+    return shouldUseMouseGestureRecognizer;
+}
+
+- (void)setUpMouseGestureRecognizer
+{
+    _mouseGestureRecognizer = adoptNS([[WKMouseGestureRecognizer alloc] initWithTarget:self action:@selector(mouseGestureRecognizerChanged:)]);
+    [_mouseGestureRecognizer setDelegate:self];
+    [_mouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
+    [self addGestureRecognizer:_mouseGestureRecognizer.get()];
+}
+
+- (void)mouseGestureRecognizerChanged:(WKMouseGestureRecognizer *)gestureRecognizer
+{
+    if (!_page->hasRunningProcess())
+        return;
+
+    auto event = gestureRecognizer.lastMouseEvent;
+    if (!event)
+        return;
+
+    if (event->type() == WebKit::WebEvent::MouseDown)
+        _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+
+    _page->handleMouseEvent(*event);
+}
+
+#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+
+#if HAVE(UI_CURSOR_INTERACTION)
+
+- (void)setUpCursorInteraction
+{
+    _cursorInteraction = adoptNS([[_UICursorInteraction alloc] initWithDelegate:self]);
+    [_cursorInteraction _setPausesCursorUpdatesWhilePanning:NO];
+
+    [self addInteraction:_cursorInteraction.get()];
+}
+
+- (void)_cursorInteraction:(_UICursorInteraction *)interaction regionForLocation:(CGPoint)location defaultRegion:(_UICursorRegion *)defaultRegion completion:(void(^)(_UICursorRegion *region))completion
+{
+    uint64_t interactionRequestID = ++_currentCursorInteractionRequestID;
+
+    WebKit::InteractionInformationRequest interactionInformationRequest;
+    interactionInformationRequest.point = WebCore::roundedIntPoint(location);
+    interactionInformationRequest.includeCaretContext = true;
+
+    BOOL didSynchronouslyReplyWithApproximation = false;
+    if (![self _currentPositionInformationIsValidForRequest:interactionInformationRequest] && self.webView._editable && !_positionInformation.shouldNotUseIBeamInEditableContent) {
+        didSynchronouslyReplyWithApproximation = true;
+        completion([_UICursorRegion regionWithIdentifier:editableCursorRegionIdentifier rect:self.bounds]);
+    }
+
+    [self doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
+        if (interactionRequestID < _currentCursorInteractionRequestID)
+            return;
+
+        if (didSynchronouslyReplyWithApproximation) {
+            [interaction invalidate];
+            return;
+        }
+
+        completion([self cursorRegionForPositionInformation:interactionInformation point:location]);
+    } forRequest:interactionInformationRequest];
+}
+
+- (_UICursorRegion *)cursorRegionForPositionInformation:(WebKit::InteractionInformationAtPosition&)interactionInformation point:(CGPoint)location
+{
+    WebCore::FloatRect expandedLineRect = enclosingIntRect(interactionInformation.lineCaretExtent);
+
+    // Pad lines of text in order to avoid switching back to the dot cursor between lines.
+    // This matches the value that UIKit uses.
+    expandedLineRect.inflateY(10);
+
+    if (interactionInformation.cursor) {
+        WebCore::Cursor::Type cursorType = interactionInformation.cursor->type();
+        if (cursorType == WebCore::Cursor::Hand)
+            return [_UICursorRegion regionWithIdentifier:cursorRegionIdentifier rect:interactionInformation.bounds];
+
+        if (cursorType == WebCore::Cursor::IBeam && expandedLineRect.contains(location))
+            return [_UICursorRegion regionWithIdentifier:cursorRegionIdentifier rect:expandedLineRect];
+    }
+
+    if (self.webView._editable) {
+        if (expandedLineRect.contains(location))
+            return [_UICursorRegion regionWithIdentifier:cursorRegionIdentifier rect:expandedLineRect];
+        return [_UICursorRegion regionWithIdentifier:editableCursorRegionIdentifier rect:self.bounds];
+    }
+
+    return nil;
+}
+
+- (_UICursorStyle *)cursorInteraction:(_UICursorInteraction *)interaction styleForRegion:(_UICursorRegion *)region modifiers:(UIKeyModifierFlags)modifiers
+{
+    double scaleFactor = self._contentZoomScale;
+
+    _UICursorStyle *(^iBeamCursor)(void) = ^{
+        float beamLength = _positionInformation.caretHeight * scaleFactor;
+        UIAxis iBeamConstraintAxes = UIAxisVertical;
+
+        // If the I-beam is so large that the magnetism is hard to fight, we should not apply any magnetism.
+        if (beamLength > [UITextInteraction _maximumBeamSnappingLength])
+            iBeamConstraintAxes = UIAxisNeither;
+
+        // If the region is the size of the view, we should not apply any magnetism.
+        if ([region.identifier isEqual:editableCursorRegionIdentifier])
+            iBeamConstraintAxes = UIAxisNeither;
+
+        return [_UICursorStyle styleWithCursor:[_UICursor beamWithPreferredLength:beamLength axis:UIAxisVertical] constrainedAxes:iBeamConstraintAxes];
+    };
+
+    if (self.webView._editable) {
+        if (_positionInformation.shouldNotUseIBeamInEditableContent)
+            return nil;
+        return iBeamCursor();
+    }
+
+    if (_positionInformation.cursor && [region.identifier isEqual:cursorRegionIdentifier]) {
+        WebCore::Cursor::Type cursorType = _positionInformation.cursor->type();
+
+        if (cursorType == WebCore::Cursor::Hand)
+            return [_UICursorStyle styleWithCursor:[_UICursor linkCursor] constrainedAxes:UIAxisNeither];
+
+        if (cursorType == WebCore::Cursor::IBeam && _positionInformation.lineCaretExtent.contains(_positionInformation.request.point))
+            return iBeamCursor();
+    }
+
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+#endif // HAVE(UI_CURSOR_INTERACTION)
 
 @end
 

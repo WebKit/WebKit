@@ -1,3 +1,18 @@
+2020-03-19  Tim Horton  <timothy_horton@apple.com>
+
+        Implement support for cursor interactions on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=209268
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformEnableCocoa.h:
+        Don't disable the contextmenu event on iOS anymore.
+
+        * wtf/PlatformHave.h:
+        Rename HAVE_HOVER_GESTURE_RECOGNIZER to HAVE_UIKIT_WITH_MOUSE_SUPPORT.
+        Add HAVE_UI_CURSOR_INTERACTION.
+        Enable HAVE_UI_PARALLAX_TRANSITION_GESTURE_RECOGNIZER on iOS.
+
 2020-03-19  Charlie Turner  <cturner@igalia.com>
 
         Fix many warnings with Clang 7.0 on GTK x86-64 in Debug.

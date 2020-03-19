@@ -23,7 +23,7 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 #import <UIKit/UIGestureRecognizer.h>
 #import "NativeWebMouseEvent.h"

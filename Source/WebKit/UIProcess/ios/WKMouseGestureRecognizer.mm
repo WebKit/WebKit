@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKMouseGestureRecognizer.h"
 
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 #import "NativeWebMouseEvent.h"
 #import "UIKitSPI.h"

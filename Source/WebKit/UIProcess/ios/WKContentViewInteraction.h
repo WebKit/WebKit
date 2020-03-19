@@ -95,6 +95,7 @@ class WebPageProxy;
 struct WebAutocorrectionContext;
 }
 
+@class _UICursorInteraction;
 @class _UILookupGestureRecognizer;
 @class _UIHighlightView;
 @class UITargetedPreview;
@@ -117,6 +118,8 @@ typedef void (^UIWKSelectionWithDirectionCompletionHandler)(BOOL selectionEndIsM
 
 typedef BlockPtr<void(WebKit::InteractionInformationAtPosition)> InteractionInformationCallback;
 typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationCallback> InteractionInformationRequestAndCallback;
+
+typedef uint64_t CursorInteractionRequestID;
 
 #define FOR_EACH_WKCONTENTVIEW_ACTION(M) \
     M(_addShortcut) \
@@ -233,8 +236,13 @@ struct WKAutoCorrectionData {
     RetainPtr<_UILookupGestureRecognizer> _lookupGestureRecognizer;
 #endif
 
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     RetainPtr<WKMouseGestureRecognizer> _mouseGestureRecognizer;
+#endif
+
+#if HAVE(UI_CURSOR_INTERACTION)
+    RetainPtr<_UICursorInteraction> _cursorInteraction;
+    CursorInteractionRequestID _currentCursorInteractionRequestID;
 #endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
@@ -427,8 +435,8 @@ struct WKAutoCorrectionData {
 @property (nonatomic, strong) NSArray<UITextSuggestion *> *dataListTextSuggestions;
 #endif
 
-- (void)setupInteraction;
-- (void)cleanupInteraction;
+- (void)setUpInteraction;
+- (void)cleanUpInteraction;
 
 - (void)scrollViewWillStartPanOrPinchGesture;
 

@@ -345,6 +345,24 @@ bool IOSApplication::isMiniBrowser()
     return isMiniBrowser;
 }
 
+bool IOSApplication::isNews()
+{
+    static bool isNews = applicationBundleIsEqualTo("com.apple.news"_s);
+    return isNews;
+}
+
+bool IOSApplication::isStocks()
+{
+    static bool isStocks = applicationBundleIsEqualTo("com.apple.stocks"_s);
+    return isStocks;
+}
+
+bool IOSApplication::isFeedly()
+{
+    static bool isFeedly = applicationBundleIsEqualTo("com.devhd.feedly"_s);
+    return isFeedly;
+}
+
 #endif
 
 } // namespace WebCore

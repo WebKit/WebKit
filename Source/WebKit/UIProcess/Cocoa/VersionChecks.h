@@ -92,6 +92,7 @@ enum class SDKVersion : uint32_t {
     FirstWhereSiteSpecificQuirksAreEnabledByDefault = DYLD_IOS_VERSION_13_2,
     FirstThatRestrictsBaseURLSchemes = DYLD_IOS_VERSION_13_4,
     FirstWithSessionCleanupByDefault = DYLD_IOS_VERSION_FIRST_WITH_SESSION_CLEANUP_BY_DEFAULT,
+    FirstThatSendsNativeMouseEvents = DYLD_IOS_VERSION_13_4,
 #elif PLATFORM(MAC)
     FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,

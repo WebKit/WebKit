@@ -184,9 +184,9 @@ void WebChromeClient::didDestroyEditableImage(GraphicsLayer::EmbeddedViewID embe
 
 bool WebChromeClient::shouldUseMouseEventForSelection(const WebCore::PlatformMouseEvent& event)
 {
-    // In macCatalyst, despite getting mouse events, we still want UITextInteraction and friends to own selection gestures.
+    // In iPadOS and macCatalyst, despite getting mouse events, we still want UITextInteraction and friends to own selection gestures.
     // However, we need to allow single-clicks to set the selection, because that is how UITextInteraction is activated.
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     return event.clickCount() <= 1;
 #else
     return true;
