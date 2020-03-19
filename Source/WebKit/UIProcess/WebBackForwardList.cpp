@@ -30,6 +30,7 @@
 #include "Logging.h"
 #include "SessionState.h"
 #include "WebBackForwardCache.h"
+#include "WebBackForwardListCounts.h"
 #include "WebPageProxy.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
@@ -272,6 +273,11 @@ unsigned WebBackForwardList::forwardListCount() const
     ASSERT(!m_currentIndex || *m_currentIndex < m_entries.size());
 
     return m_page && m_currentIndex ? m_entries.size() - (*m_currentIndex + 1) : 0;
+}
+
+WebBackForwardListCounts WebBackForwardList::counts() const
+{
+    return WebBackForwardListCounts { backListCount(), forwardListCount() };
 }
 
 Ref<API::Array> WebBackForwardList::backList() const

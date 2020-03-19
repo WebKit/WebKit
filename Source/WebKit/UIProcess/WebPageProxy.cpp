@@ -95,6 +95,7 @@
 #include "WebAutomationSession.h"
 #include "WebBackForwardCache.h"
 #include "WebBackForwardList.h"
+#include "WebBackForwardListCounts.h"
 #include "WebBackForwardListItem.h"
 #include "WebCertificateInfo.h"
 #include "WebContextMenuItem.h"
@@ -6038,30 +6039,30 @@ void WebPageProxy::backForwardAddItem(BackForwardListItemState&& itemState)
     m_backForwardList->addItem(WTFMove(item));
 }
 
-void WebPageProxy::backForwardGoToItem(const BackForwardItemIdentifier& itemID, CompletionHandler<void(SandboxExtension::Handle&&)>&& completionHandler)
+void WebPageProxy::backForwardGoToItem(const BackForwardItemIdentifier& itemID, CompletionHandler<void(SandboxExtension::Handle&&, const WebBackForwardListCounts&)>&& completionHandler)
 {
     // On process swap, we tell the previous process to ignore the load, which causes it so restore its current back forward item to its previous
     // value. Since the load is really going on in a new provisional process, we want to ignore such requests from the committed process.
     // Any real new load in the committed process would have cleared m_provisionalPage.
     if (m_provisionalPage)
-        return completionHandler({ });
+        return completionHandler({ }, m_backForwardList->counts());
 
     SandboxExtension::Handle sandboxExtensionHandle;
     backForwardGoToItemShared(m_process.copyRef(), itemID, WTFMove(completionHandler));
 }
 
-void WebPageProxy::backForwardGoToItemShared(Ref<WebProcessProxy>&& process, const BackForwardItemIdentifier& itemID, CompletionHandler<void(SandboxExtension::Handle&&)>&& completionHandler)
+void WebPageProxy::backForwardGoToItemShared(Ref<WebProcessProxy>&& process, const BackForwardItemIdentifier& itemID, CompletionHandler<void(SandboxExtension::Handle&&, const WebBackForwardListCounts&)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(m_process, !WebKit::isInspectorPage(*this), completionHandler({ }, m_backForwardList->counts()));
 
     auto* item = m_backForwardList->itemForID(itemID);
     if (!item)
-        return completionHandler({ });
+        return completionHandler({ }, m_backForwardList->counts());
 
     SandboxExtension::Handle sandboxExtensionHandle;
     maybeInitializeSandboxExtensionHandle(process, URL(URL(), item->url()), item->resourceDirectoryURL(),  sandboxExtensionHandle);
     m_backForwardList->goToItem(*item);
-    completionHandler(WTFMove(sandboxExtensionHandle));
+    completionHandler(WTFMove(sandboxExtensionHandle), m_backForwardList->counts());
 }
 
 void WebPageProxy::backForwardItemAtIndex(int32_t index, CompletionHandler<void(Optional<BackForwardItemIdentifier>&&)>&& completionHandler)
@@ -6072,14 +6073,9 @@ void WebPageProxy::backForwardItemAtIndex(int32_t index, CompletionHandler<void(
         completionHandler(WTF::nullopt);
 }
 
-void WebPageProxy::backForwardBackListCount(CompletionHandler<void(uint32_t)>&& completionHandler)
+void WebPageProxy::backForwardListCounts(Messages::WebPageProxy::BackForwardListCountsDelayedReply&& completionHandler)
 {
-    completionHandler(m_backForwardList->backListCount());
-}
-
-void WebPageProxy::backForwardForwardListCount(CompletionHandler<void(uint32_t)>&& completionHandler)
-{
-    completionHandler(m_backForwardList->forwardListCount());
+    completionHandler(m_backForwardList->counts());
 }
 
 void WebPageProxy::compositionWasCanceled()
