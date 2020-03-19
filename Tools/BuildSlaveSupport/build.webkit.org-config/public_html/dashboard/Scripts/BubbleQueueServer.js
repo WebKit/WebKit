@@ -25,9 +25,7 @@
 
 BubbleQueueServer = function()
 {
-    const queueInfo = {
-        "commit-queue": {platform: Dashboard.Platform.macOSMojave, shortName: "commit", title: "Commit Queue"},
-    };
+    const queueInfo = {};
 
     BaseObject.call(this);
 

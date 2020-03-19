@@ -1,3 +1,15 @@
+2020-03-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove commit queue bubble from bot watchers dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=209271
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove commit queue bubble from bot watchers dashboard now that it has moved to the new EWS.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer): 
+
 2020-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         eventSender.monitorWheelEvents() is very fragile
