@@ -115,8 +115,6 @@
         (allow file-read* asset-access-filter)
         (if (memq 'with-media-playback options)
             (play-media asset-access-filter))
-        (allow mach-lookup (with telemetry-backtrace)
-               (global-name "com.apple.mobileassetd" "com.apple.mobileassetd.v2"))
         (mobile-preferences-read "com.apple.MobileAsset")))
 
 (define-once (play-media . filters)
@@ -636,6 +634,10 @@
 
 ;; Permit reading assets via MobileAsset framework.
 (asset-access 'with-media-playback)
+
+;; FIXME(209309): Remove this telemetry once we have confirmed there are no more lookups.
+(deny mach-lookup (with telemetry-backtrace)
+       (global-name "com.apple.mobileassetd" "com.apple.mobileassetd.v2"))
 
 ;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
 (allow-well-known-system-group-container-literal-read
