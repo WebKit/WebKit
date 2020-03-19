@@ -1,5 +1,82 @@
 2020-03-19  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r255135. rdar://problem/60633852
+
+    Frequent sync BackForwardBackListCount/BackForwardForwardListCount IPC on reddit.com
+    https://bugs.webkit.org/show_bug.cgi?id=206438
+    
+    Reviewed by Darin Adler.
+    
+    Frequent sync BackForwardBackListCount/BackForwardForwardListCount IPC on reddit.com. When scrolling on reddit.com,
+    you frequently see 2 consecutive sync IPCs (WebPageProxy::BackForwardBackListCount then WebPageProxy::BackForwardForwardListCount)
+    from the WebContent process to the UIProcess. Those are bad for performance. This happens every time the script on the page accesses
+    history.length, which is unfortunate, since this history length rarely changes.
+    
+    To address the issue, the following changes were made:
+    1. Merge BackForwardBackListCount / BackForwardForwardListCount IPCs into a single BackForwardListCounts IPC which returns both
+       the back & forward counts, since we often need both (e.g. when accessing history.length) and since gettings those counts is
+       very cheap compared to the cost of a sync IPC.
+    2. Cache those counts in WebBackForwardListProxy and blow away the cached counts whenever the back/forward list changes. In the
+       common case (where the back/forward list rarely changes), we now see a single sync IPC instead of many (verified on reddit.com).
+    
+    No new tests, merely a performance improvement.
+    
+    * UIProcess/WebPageProxy.cpp:
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+    (WebKit::WebBackForwardListProxy::addItemFromUIProcess):
+    (WebKit::WebBackForwardListProxy::addItem):
+    (WebKit::WebBackForwardListProxy::goToItem):
+    (WebKit::WebBackForwardListProxy::backListCount const):
+    (WebKit::WebBackForwardListProxy::forwardListCount const):
+    (WebKit::WebBackForwardListProxy::cacheListCountsIfNecessary const):
+    (WebKit::WebBackForwardListProxy::clearCachedListCounts):
+    (WebKit::WebBackForwardListProxy::close):
+    (WebKit::WebBackForwardListProxy::clear):
+    * WebProcess/WebPage/WebBackForwardListProxy.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255135 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-26  Chris Dumez  <cdumez@apple.com>
+
+            Frequent sync BackForwardBackListCount/BackForwardForwardListCount IPC on reddit.com
+            https://bugs.webkit.org/show_bug.cgi?id=206438
+
+            Reviewed by Darin Adler.
+
+            Frequent sync BackForwardBackListCount/BackForwardForwardListCount IPC on reddit.com. When scrolling on reddit.com,
+            you frequently see 2 consecutive sync IPCs (WebPageProxy::BackForwardBackListCount then WebPageProxy::BackForwardForwardListCount)
+            from the WebContent process to the UIProcess. Those are bad for performance. This happens every time the script on the page accesses
+            history.length, which is unfortunate, since this history length rarely changes.
+
+            To address the issue, the following changes were made:
+            1. Merge BackForwardBackListCount / BackForwardForwardListCount IPCs into a single BackForwardListCounts IPC which returns both
+               the back & forward counts, since we often need both (e.g. when accessing history.length) and since gettings those counts is
+               very cheap compared to the cost of a sync IPC.
+            2. Cache those counts in WebBackForwardListProxy and blow away the cached counts whenever the back/forward list changes. In the
+               common case (where the back/forward list rarely changes), we now see a single sync IPC instead of many (verified on reddit.com).
+
+            No new tests, merely a performance improvement.
+
+            * UIProcess/WebPageProxy.cpp:
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+            (WebKit::WebBackForwardListProxy::addItemFromUIProcess):
+            (WebKit::WebBackForwardListProxy::addItem):
+            (WebKit::WebBackForwardListProxy::goToItem):
+            (WebKit::WebBackForwardListProxy::backListCount const):
+            (WebKit::WebBackForwardListProxy::forwardListCount const):
+            (WebKit::WebBackForwardListProxy::cacheListCountsIfNecessary const):
+            (WebKit::WebBackForwardListProxy::clearCachedListCounts):
+            (WebKit::WebBackForwardListProxy::close):
+            (WebKit::WebBackForwardListProxy::clear):
+            * WebProcess/WebPage/WebBackForwardListProxy.h:
+
+2020-03-19  Russell Epstein  <repstein@apple.com>
+
         Apply patch. rdar://problem/60633852
 
     2020-03-19  Brent Fulgham  <bfulgham@apple.com>

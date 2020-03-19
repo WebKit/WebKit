@@ -334,7 +334,7 @@ void ProvisionalPageProxy::startURLSchemeTask(URLSchemeTaskParameters&& paramete
     m_page.startURLSchemeTaskShared(m_process.copyRef(), m_webPageID, WTFMove(parameters));
 }
 
-void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIdentifier& identifier, CompletionHandler<void(SandboxExtension::Handle&&)>&& completionHandler)
+void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIdentifier& identifier, CompletionHandler<void(SandboxExtension::Handle&&, const WebBackForwardListCounts&)>&& completionHandler)
 {
     m_page.backForwardGoToItemShared(m_process.copyRef(), identifier, WTFMove(completionHandler));
 }
