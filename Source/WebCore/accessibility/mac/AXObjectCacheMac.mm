@@ -567,6 +567,7 @@ id textMarkerRangeFromMarkers(id textMarker1, id textMarker2)
 
 id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePosition& visiblePos)
 {
+    ASSERT(isMainThread());
     ASSERT(cache);
     if (!cache)
         return nil;
@@ -580,6 +581,7 @@ id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePosition& vis
 
 id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const VisiblePosition& startPosition, const VisiblePosition& endPosition)
 {
+    ASSERT(isMainThread());
     if (!cache)
         return nil;
 
