@@ -37,11 +37,11 @@ enum Mode { Explicit, Fallback, OnlineWhitelist, Unknown };
 
 static String manifestPath(const URL& manifestURL)
 {
-    String manifestPath = manifestURL.path();
+    auto manifestPath = manifestURL.path();
     ASSERT(manifestPath[0] == '/');
     manifestPath = manifestPath.substring(0, manifestPath.reverseFind('/') + 1);
     ASSERT(manifestPath[0] == manifestPath[manifestPath.length() - 1]);
-    return manifestPath;
+    return manifestPath.toString();
 }
 
 bool parseManifest(const URL& manifestURL, const String& manifestMIMEType, const char* data, int length, Manifest& manifest)

@@ -75,7 +75,7 @@ public:
     WTF::String path() const
     {
         parseURLIfNecessary();
-        return m_parsedURL->isValid() ? m_parsedURL->path() : WTF::String();
+        return m_parsedURL->isValid() ? m_parsedURL->path().toString() : WTF::String();
     }
 
     WTF::String lastPathComponent() const

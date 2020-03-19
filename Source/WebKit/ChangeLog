@@ -1,3 +1,23 @@
+2020-03-19  youenn fablet  <youenn@apple.com>
+
+        Make URL::path() return a StringView
+        https://bugs.webkit.org/show_bug.cgi?id=209173
+
+        Reviewed by Alex Christensen.
+
+        Update code according new path return type.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::didSendRequest):
+        * Shared/API/APIURL.h:
+        (API::URL::path const):
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestReadCallback):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::objectContentType):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+
 2020-03-19  Megan Gardner  <megan_gardner@apple.com>
 
         Correctly set up context for Data Detectors

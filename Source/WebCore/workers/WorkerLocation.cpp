@@ -58,7 +58,8 @@ String WorkerLocation::port() const
 
 String WorkerLocation::pathname() const
 {
-    return m_url.path().isEmpty() ? "/" : m_url.path();
+    auto path = m_url.path();
+    return path.isEmpty() ? "/" : path.toString();
 }
 
 String WorkerLocation::search() const

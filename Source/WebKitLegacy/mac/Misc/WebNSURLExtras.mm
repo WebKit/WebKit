@@ -239,7 +239,7 @@ using namespace WTF;
 
 - (NSString *)_webkit_stringByReplacingValidPercentEscapes
 {
-    return decodeURLEscapeSequences(self);
+    return decodeURLEscapeSequences(String(self));
 }
 
 - (NSString *)_webkit_scriptIfJavaScriptURL

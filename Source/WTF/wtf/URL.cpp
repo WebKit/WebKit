@@ -357,10 +357,10 @@ String URL::query() const
     return m_string.substring(m_pathEnd + 1, m_queryEnd - (m_pathEnd + 1)); 
 }
 
-String URL::path() const
+StringView URL::path() const
 {
     unsigned portEnd = m_hostEnd + m_portLength;
-    return m_string.substring(portEnd, m_pathEnd - portEnd);
+    return StringView(m_string).substring(portEnd, m_pathEnd - portEnd);
 }
 
 bool URL::setProtocol(const String& s)

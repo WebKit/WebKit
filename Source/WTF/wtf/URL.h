@@ -102,7 +102,7 @@ public:
     String protocolHostAndPort() const;
     String user() const;
     String pass() const;
-    String path() const;
+    StringView path() const;
     String lastPathComponent() const;
     String query() const;
     String fragmentIdentifier() const;

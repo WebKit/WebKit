@@ -215,7 +215,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
         return createYouTubeURL(videoID, emptyString());
     }
     
-    String path = url.path();
+    auto path = url.path();
     String query = url.query();
     String fragment = url.fragmentIdentifier();
     
@@ -227,7 +227,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
             path = fragment;
             query = emptyString();
         } else {
-            path = fragment.substring(0, location);
+            path = StringView(fragment).substring(0, location);
             query = fragment.substring(location + 1);
         }
         fragment = emptyString();
@@ -296,7 +296,7 @@ String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, co
         return srcString;
 
     // Transform the youtubeURL (youtube:VideoID) to iframe embed url which has the format: http://www.youtube.com/embed/VideoID
-    const String& srcPath = srcURL.path();
+    auto srcPath = srcURL.path().toString();
     const String& videoID = youTubeURL.string().substring(youTubeURL.protocol().length() + 1);
     size_t locationOfVideoIDInPath = srcPath.find(videoID);
 

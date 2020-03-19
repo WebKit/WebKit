@@ -1,3 +1,17 @@
+2020-03-19  youenn fablet  <youenn@apple.com>
+
+        Make URL::path() return a StringView
+        https://bugs.webkit.org/show_bug.cgi?id=209173
+
+        Reviewed by Alex Christensen.
+
+        * wtf/URL.cpp:
+        (WTF::URL::path const):
+        * wtf/URL.h:
+        * wtf/text/StringView.h:
+        (WTF::startsWithLettersIgnoringASCIICase):
+        Add an overload for StringView.
+
 2020-03-18  Peng Liu  <peng.liu6@apple.com>
 
         The value of [AVPlayerViewController isPictureInPicturePossible] is NO in the first attempt to enter PiP

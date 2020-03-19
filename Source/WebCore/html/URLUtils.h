@@ -245,7 +245,7 @@ void URLUtils<T>::setPort(const String& value)
 template <typename T>
 String URLUtils<T>::pathname() const
 {
-    return href().path();
+    return href().path().toString();
 }
 
 template <typename T>

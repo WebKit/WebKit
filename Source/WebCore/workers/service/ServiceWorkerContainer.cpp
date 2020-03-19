@@ -152,7 +152,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         return;
     }
 
-    String path = jobData.scriptURL.path();
+    auto path = jobData.scriptURL.path();
     if (path.containsIgnoringASCIICase("%2f") || path.containsIgnoringASCIICase("%5c")) {
         CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: scriptURL contains invalid character");
         promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a script URL whose path does not contain '%2f' or '%5c'"_s });

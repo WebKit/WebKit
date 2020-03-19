@@ -371,7 +371,7 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
     if (!checkCookieAcceptPolicy(firstParty, requestUrl))
         return WTF::nullopt;
 
-    String requestPath = requestUrl.path();
+    String requestPath = requestUrl.path().toString();
     if (requestPath.isEmpty())
         requestPath = "/";
 
@@ -565,7 +565,7 @@ bool CookieJarDB::deleteCookie(const String& url, const String& name)
     URL urlObj({ }, urlCopied);
     if (urlObj.isValid()) {
         String hostStr(urlObj.host().toString());
-        String pathStr(urlObj.path());
+        String pathStr(urlObj.path().toString());
         return deleteCookieInternal(name, hostStr, pathStr);
     }
 

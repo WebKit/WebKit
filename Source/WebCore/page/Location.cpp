@@ -97,8 +97,8 @@ String Location::port() const
 
 String Location::pathname() const
 {
-    const URL& url = this->url();
-    return url.path().isEmpty() ? "/" : url.path();
+    auto path = url().path();
+    return path.isEmpty() ? "/" : path.toString();
 }
 
 String Location::search() const

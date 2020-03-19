@@ -149,13 +149,13 @@ bool UserContentURLPattern::matchesHost(const URL& test) const
 
 struct MatchTester
 {
-    const String m_pattern;
+    StringView m_pattern;
     unsigned m_patternIndex;
     
-    const String m_test;
+    StringView m_test;
     unsigned m_testIndex;
     
-    MatchTester(const String& pattern, const String& test)
+    MatchTester(StringView pattern, StringView test)
     : m_pattern(pattern)
     , m_patternIndex(0)
     , m_test(test)
@@ -226,7 +226,7 @@ struct MatchTester
 
 bool UserContentURLPattern::matchesPath(const URL& test) const
 {
-    MatchTester match(m_path, test.path());
+    MatchTester match(StringView(m_path), test.path());
     return match.test();
 }
 

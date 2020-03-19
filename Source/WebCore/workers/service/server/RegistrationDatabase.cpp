@@ -346,7 +346,7 @@ void RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
 
         if (sql.bindText(1, data.registration.key.toDatabaseKey()) != SQLITE_OK
             || sql.bindText(2, data.registration.scopeURL.protocolHostAndPort()) != SQLITE_OK
-            || sql.bindText(3, data.registration.scopeURL.path()) != SQLITE_OK
+            || sql.bindText(3, data.registration.scopeURL.path().toString()) != SQLITE_OK
             || sql.bindText(4, data.registration.key.topOrigin().databaseIdentifier()) != SQLITE_OK
             || sql.bindDouble(5, data.registration.lastUpdateTime.secondsSinceEpoch().value()) != SQLITE_OK
             || sql.bindText(6, updateViaCacheToString(data.registration.updateViaCache)) != SQLITE_OK

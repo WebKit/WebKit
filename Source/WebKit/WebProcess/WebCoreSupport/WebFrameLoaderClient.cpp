@@ -1683,17 +1683,17 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
 
     String mimeType = mimeTypeIn;
     if (mimeType.isEmpty()) {
-        String path = url.path();
+        auto path = url.path();
         auto dotPosition = path.reverseFind('.');
         if (dotPosition == notFound)
             return ObjectContentType::Frame;
-        String extension = path.substring(dotPosition + 1).convertToASCIILowercase();
+        auto extension = path.substring(dotPosition + 1).convertToASCIILowercase();
 
         // Try to guess the MIME type from the extension.
         mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
         if (mimeType.isEmpty()) {
             // Check if there's a plug-in around that can handle the extension.
-            if (WebPage* webPage = m_frame->page()) {
+            if (auto* webPage = m_frame->page()) {
                 if (pluginSupportsExtension(webPage->corePage()->pluginData(), extension))
                     return ObjectContentType::PlugIn;
             }

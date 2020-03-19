@@ -27,7 +27,7 @@
 
 #include <pal/text/UnencodableHandling.h>
 #include <wtf/URL.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -75,7 +75,7 @@ WEBCORE_EXPORT const TextEncoding& WindowsLatin1Encoding();
 // Unescapes the given string using URL escaping rules.
 // DANGER: If the URL has "%00" in it,
 // the resulting string will have embedded null characters!
-WEBCORE_EXPORT String decodeURLEscapeSequences(const String&, const TextEncoding& = UTF8Encoding());
+WEBCORE_EXPORT String decodeURLEscapeSequences(StringView, const TextEncoding& = UTF8Encoding());
 
 inline String TextEncoding::decode(const char* characters, size_t length) const
 {
