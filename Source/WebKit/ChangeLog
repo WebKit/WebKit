@@ -1,3 +1,68 @@
+2020-03-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        Handle failed ITP Database insert attempts
+        https://bugs.webkit.org/show_bug.cgi?id=209253
+        <rdar://problem/58886756>
+
+        Reviewed by David Kilzer.
+
+        A first step toward handling I/O errors in the database. Adds checks
+        so that in the case where a domain insert fails, we don't execute
+        code which relies on this domain being in the database.
+
+        Future steps will be figuring out a way to schedule failed queries
+        to execute when the database is accepting inputs in the future.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain):
+        Check if the query to insert a domain failed. If so, return
+        WTF::nullopt in place of the domain ID to indicate the failure.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList):
+        The simplest solution here was to only append strings to this list
+        if they are already in the database, or are successfully inserted,
+        because insertDomainRelationshipList() relies on these being in the database.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensurePrevalentResourcesForDebugMode):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logFrameNavigation):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearPrevalentResource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setGrandfathered):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemoval):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubframeUnderTopFrameDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUnderTopFrameDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectTo):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setLastSeen):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setVeryPrevalentResource):
+        Every call to ensureResourceStatisticsForRegistrableDomain should
+        check the result to make sure the domain was inserted before
+        continuing, and return early (or return a value that does not further
+        rely on the database information, like an empty vector). Log these
+        errors but don't add a debug assert because there already is one in
+        ensureResourceStatisticsForRegistrableDomain.
+
+        * (WebKit::ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore):
+        * (WebKit::ResourceLoadStatisticsDatabaseStore::mergeStatistics):
+        The simplest thing to do in this case is to return early if any domain
+        inserts fail before inserting domain relationships as a best-effort
+        approach. A future step could be maintaining a vector of statistics
+        which successfully inserted, and only adding those relationships.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        ensureResourceStatisticsForRegistrableDomain should return an
+        Optional domain ID to account for failed inserts.
+
 2020-03-19  Tim Horton  <timothy_horton@apple.com>
 
         Upstream the definition of HAVE_READ_ONLY_SYSTEM_VOLUME

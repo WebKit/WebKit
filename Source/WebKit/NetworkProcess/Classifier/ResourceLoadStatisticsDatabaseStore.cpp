@@ -643,13 +643,14 @@ String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const HashSe
     for (auto& topFrameResource : domainList) {
         
         // Insert query will fail if top frame domain is not already in the database
-        ensureResourceStatisticsForRegistrableDomain(topFrameResource);
-        
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append('"');
-        builder.append(topFrameResource.string());
-        builder.append('"');
+        auto result = ensureResourceStatisticsForRegistrableDomain(topFrameResource);
+        if (result.second) {
+            if (!builder.isEmpty())
+                builder.appendLiteral(", ");
+            builder.append('"');
+            builder.append(topFrameResource.string());
+            builder.append('"');
+        }
     }
 
     return builder.toString();
@@ -707,8 +708,14 @@ void ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore(const Resource
         return;
 
     auto& statisticsMap = memoryStore.data();
-    for (const auto& statistic : statisticsMap)
-        insertObservedDomain(statistic.value);
+    for (const auto& statistic : statisticsMap) {
+        auto result = insertObservedDomain(statistic.value);
+        if (!result) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore insertObservedDomain failed to complete, error message: %{private}s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
 
     // Make a separate pass for inter-domain relationships so we
     // can refer to the ObservedDomain table entries
@@ -773,9 +780,14 @@ void ResourceLoadStatisticsDatabaseStore::mergeStatistics(Vector<ResourceLoadSta
     ASSERT(!RunLoop::isMain());
 
     for (auto& statistic : statistics) {
-        if (!domainID(statistic.registrableDomain))
-            insertObservedDomain(statistic);
-        else
+        if (!domainID(statistic.registrableDomain)) {
+            auto result = insertObservedDomain(statistic);
+            if (!result) {
+                RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::mergeStatistics insertObservedDomain failed to complete, error message: %{private}s", this, m_database.lastErrorMsg());
+                ASSERT_NOT_REACHED();
+                return;
+            }
+        } else
             mergeStatistic(statistic);
     }
 
@@ -1353,7 +1365,11 @@ void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const SubFrameDomain&
 {
     ASSERT(!RunLoop::isMain());
 
-    ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
+    auto result = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::hasStorageAccess was not completed due to failed insert attempt", this);
+        return;
+    }
 
     switch (cookieAccess(subFrameDomain, topFrameDomain)) {
     case CookieAccess::CannotRequest:
@@ -1387,6 +1403,10 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
     ASSERT(!RunLoop::isMain());
 
     auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
+    if (!subFrameStatus.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::requestStorageAccess was not completed due to failed insert attempt", this);
+        return;
+    }
     
     switch (cookieAccess(subFrameDomain, topFrameDomain)) {
     case CookieAccess::CannotRequest:
@@ -1402,7 +1422,7 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
         break;
     }
 
-    auto userWasPromptedEarlier = hasUserGrantedStorageAccessThroughPrompt(subFrameStatus.second, topFrameDomain);
+    auto userWasPromptedEarlier = hasUserGrantedStorageAccessThroughPrompt(*subFrameStatus.second, topFrameDomain);
     if (userWasPromptedEarlier == StorageAccessPromptWasShown::No) {
         RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "About to ask the user whether they want to grant storage access to %{private}s under %{private}s or not.", subFrameDomain.string().utf8().data(), topFrameDomain.string().utf8().data());
         completionHandler(StorageAccessStatus::RequiresUserPrompt);
@@ -1414,7 +1434,7 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
 
     SQLiteStatement incrementStorageAccess(m_database, "UPDATE ObservedDomains SET timesAccessedAsFirstPartyDueToStorageAccessAPI = timesAccessedAsFirstPartyDueToStorageAccessAPI + 1 WHERE domainID = ?");
     if (incrementStorageAccess.prepare() != SQLITE_OK
-        || incrementStorageAccess.bindInt(1, subFrameStatus.second) != SQLITE_OK
+        || incrementStorageAccess.bindInt(1, *subFrameStatus.second) != SQLITE_OK
         || incrementStorageAccess.step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::requestStorageAccess failed, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -1444,9 +1464,13 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccess(SubFrameDomain&& su
 
     if (promptWasShown == StorageAccessPromptWasShown::Yes) {
         auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
+        if (!subFrameStatus.second) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::grantStorageAccess was not completed due to failed insert attempt", this);
+            return;
+        }
         ASSERT(subFrameStatus.first == AddedRecord::No);
         ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
-        insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), subFrameStatus.second);
+        insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *subFrameStatus.second);
     }
 
     grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, WTFMove(completionHandler));
@@ -1464,9 +1488,13 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDom
     if (promptWasShownNowOrEarlier == StorageAccessPromptWasShown::Yes) {
 #ifndef NDEBUG
         auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
+        if (!subFrameStatus.second) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal was not completed due to failed insert attempt", this);
+            return;
+        }
         ASSERT(subFrameStatus.first == AddedRecord::No);
         ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
-        ASSERT(hasUserGrantedStorageAccessThroughPrompt(subFrameStatus.second, topFrameDomain) == StorageAccessPromptWasShown::Yes);
+        ASSERT(hasUserGrantedStorageAccessThroughPrompt(*subFrameStatus.second, topFrameDomain) == StorageAccessPromptWasShown::Yes);
 #endif
         setUserInteraction(subFrameDomain, true, WallTime::now());
     }
@@ -1485,8 +1513,11 @@ void ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains(const HashSe
 {
     ASSERT(!RunLoop::isMain());
 
-    for (auto& registrableDomain : domains)
-        ensureResourceStatisticsForRegistrableDomain(registrableDomain);
+    for (auto& registrableDomain : domains) {
+        auto result = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
+        if (!result.second)
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains was not completed due to failed insert attempt", this);
+    }
 
     SQLiteStatement domainsToUpdateStatement(m_database, makeString("UPDATE ObservedDomains SET grandfathered = 1 WHERE registrableDomain IN (", domainsToString(domains), ")"));
     if (domainsToUpdateStatement.prepare() != SQLITE_OK
@@ -1506,12 +1537,21 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::ensurePrevalentRe
     Vector<RegistrableDomain> primaryDomainsToBlock;
     primaryDomainsToBlock.reserveInitialCapacity(2);
 
-    ensureResourceStatisticsForRegistrableDomain(debugStaticPrevalentResource());
+    auto result = ensureResourceStatisticsForRegistrableDomain(debugStaticPrevalentResource());
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::ensurePrevalentResourcesForDebugMode was not completed due to failed insert attempt for debugStaticPrevalentResource", this);
+        return { };
+    }
+
     setPrevalentResource(debugStaticPrevalentResource(), ResourceLoadPrevalence::High);
     primaryDomainsToBlock.uncheckedAppend(debugStaticPrevalentResource());
 
     if (!debugManualPrevalentResource().isEmpty()) {
-        ensureResourceStatisticsForRegistrableDomain(debugManualPrevalentResource());
+        auto result = ensureResourceStatisticsForRegistrableDomain(debugManualPrevalentResource());
+        if (!result.second) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::ensurePrevalentResourcesForDebugMode was not completed due to failed insert attempt for debugManualPrevalentResource", this);
+            return { };
+        }
         setPrevalentResource(debugManualPrevalentResource(), ResourceLoadPrevalence::High);
         primaryDomainsToBlock.uncheckedAppend(debugManualPrevalentResource());
         RELEASE_LOG_INFO(ITPDebug, "Did set %{private}s as prevalent resource for the purposes of ITP Debug Mode.", debugManualPrevalentResource().string().utf8().data());
@@ -1530,8 +1570,12 @@ void ResourceLoadStatisticsDatabaseStore::logFrameNavigation(const RegistrableDo
     bool statisticsWereUpdated = false;
     if (!isMainFrame && !(areTargetAndTopFrameDomainsSameSite || areTargetAndSourceDomainsSameSite)) {
         auto targetResult = ensureResourceStatisticsForRegistrableDomain(targetDomain);
+        if (!targetResult.second) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logFrameNavigation was not completed due to failed insert attempt of target domain", this);
+            return;
+        }
         updateLastSeen(targetDomain, ResourceLoadStatistics::reduceTimeResolution(WallTime::now()));
-        insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), targetResult.second);
+        insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *targetResult.second);
         statisticsWereUpdated = true;
     }
 
@@ -1541,15 +1585,23 @@ void ResourceLoadStatisticsDatabaseStore::logFrameNavigation(const RegistrableDo
             if (isRedirect || wasNavigatedAfterShortDelayWithoutUserInteraction) {
                 auto redirectingDomainResult = ensureResourceStatisticsForRegistrableDomain(sourceDomain);
                 auto targetResult = ensureResourceStatisticsForRegistrableDomain(targetDomain);
-                insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), redirectingDomainResult.second);
-                insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), targetResult.second);
+                if (!targetResult.second || !redirectingDomainResult.second) {
+                    RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logFrameNavigation was not completed due to failed insert attempt of target or redirecting domain (isMainFrame)", this);
+                    return;
+                }
+                insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
+                insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
                 statisticsWereUpdated = true;
             }
         } else if (isRedirect) {
             auto redirectingDomainResult = ensureResourceStatisticsForRegistrableDomain(sourceDomain);
             auto targetResult = ensureResourceStatisticsForRegistrableDomain(targetDomain);
-            insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), redirectingDomainResult.second);
-            insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), targetResult.second);
+            if (!targetResult.second || !redirectingDomainResult.second) {
+                RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logFrameNavigation was not completed due to failed insert attempt of target or redirecting domain (isRedirect)", this);
+                return;
+            }
+            insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
+            insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
             statisticsWereUpdated = true;
         }
     }
@@ -1564,7 +1616,11 @@ void ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration(con
     ASSERT(fromDomain != toDomain);
 
     auto toDomainResult = ensureResourceStatisticsForRegistrableDomain(toDomain);
-    insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, HashSet<RegistrableDomain>({ fromDomain }), toDomainResult.second);
+    if (!toDomainResult.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration was not completed due to failed insert attempt", this);
+        return;
+    }
+    insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, HashSet<RegistrableDomain>({ fromDomain }), *toDomainResult.second);
     
     if (isPrevalentResource(fromDomain))
         setIsScheduledForAllButCookieDataRemoval(toDomain, true);
@@ -1592,7 +1648,11 @@ void ResourceLoadStatisticsDatabaseStore::logUserInteraction(const TopFrameDomai
     ASSERT(!RunLoop::isMain());
 
     bool didHavePreviousUserInteraction = hasHadUserInteraction(domain, OperatingDatesWindow::Long);
-    ensureResourceStatisticsForRegistrableDomain(domain);
+    auto result = ensureResourceStatisticsForRegistrableDomain(domain);
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logUserInteraction was not completed due to failed insert attempt", this);
+        return;
+    }
     setUserInteraction(domain, true, WallTime::now());
     if (didHavePreviousUserInteraction) {
         completionHandler();
@@ -1606,11 +1666,15 @@ void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const Registrable
     ASSERT(!RunLoop::isMain());
 
     auto targetResult = ensureResourceStatisticsForRegistrableDomain(domain);
+    if (!targetResult.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearUserInteraction was not completed due to failed insert attempt", this);
+        return;
+    }
     setUserInteraction(domain, false, { });
 
     SQLiteStatement removeStorageAccess(m_database, "DELETE FROM StorageAccessUnderTopFrameDomains WHERE domainID = ?");
     if (removeStorageAccess.prepare() != SQLITE_OK
-        || removeStorageAccess.bindInt(1, targetResult.second) != SQLITE_OK
+        || removeStorageAccess.bindInt(1, *targetResult.second) != SQLITE_OK
         || removeStorageAccess.step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logUserInteraction failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -1803,8 +1867,11 @@ void ResourceLoadStatisticsDatabaseStore::clearPrevalentResource(const Registrab
 {
     ASSERT(!RunLoop::isMain());
 
-    ensureResourceStatisticsForRegistrableDomain(domain);
-    
+    auto result = ensureResourceStatisticsForRegistrableDomain(domain);
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearPrevalentResource was not completed due to failed insert attempt", this);
+        return;
+    }
     if (m_clearPrevalentResourceStatement.bindText(1, domain.string()) != SQLITE_OK
         || m_clearPrevalentResourceStatement.step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearPrevalentResource, error message: %{private}s", this, m_database.lastErrorMsg());
@@ -1820,8 +1887,11 @@ void ResourceLoadStatisticsDatabaseStore::setGrandfathered(const RegistrableDoma
 {
     ASSERT(!RunLoop::isMain());
 
-    ensureResourceStatisticsForRegistrableDomain(domain);
-    
+    auto result = ensureResourceStatisticsForRegistrableDomain(domain);
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setGrandfathered was not completed due to failed insert attempt", this);
+        return;
+    }
     if (m_updateGrandfatheredStatement.bindInt(1, value) != SQLITE_OK
         || m_updateGrandfatheredStatement.bindText(2, domain.string()) != SQLITE_OK
         || m_updateGrandfatheredStatement.step() != SQLITE_DONE) {
@@ -1838,8 +1908,11 @@ void ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemov
 {
     ASSERT(!RunLoop::isMain());
 
-    ensureResourceStatisticsForRegistrableDomain(domain);
-    
+    auto result = ensureResourceStatisticsForRegistrableDomain(domain);
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemoval was not completed due to failed insert attempt", this);
+        return;
+    }
     if (m_updateIsScheduledForAllButCookieDataRemovalStatement.bindInt(1, value) != SQLITE_OK
         || m_updateIsScheduledForAllButCookieDataRemovalStatement.bindText(2, domain.string()) != SQLITE_OK
         || m_updateIsScheduledForAllButCookieDataRemovalStatement.step() != SQLITE_DONE) {
@@ -1893,9 +1966,12 @@ void ResourceLoadStatisticsDatabaseStore::setSubframeUnderTopFrameDomain(const S
     ASSERT(!RunLoop::isMain());
 
     auto result = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
-
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setSubframeUnderTopFrameDomain was not completed due to failed insert attempt", this);
+        return;
+    }
     // For consistency, make sure we also have a statistics entry for the top frame domain.
-    insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), result.second);
+    insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setSubresourceUnderTopFrameDomain(const SubResourceDomain& subresourceDomain, const TopFrameDomain& topFrameDomain)
@@ -1903,9 +1979,12 @@ void ResourceLoadStatisticsDatabaseStore::setSubresourceUnderTopFrameDomain(cons
     ASSERT(!RunLoop::isMain());
 
     auto result = ensureResourceStatisticsForRegistrableDomain(subresourceDomain);
-
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setSubresourceUnderTopFrameDomain was not completed due to failed insert attempt", this);
+        return;
+    }
     // For consistency, make sure we also have a statistics entry for the top frame domain.
-    insertDomainRelationshipList(subresourceUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), result.second);
+    insertDomainRelationshipList(subresourceUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectTo(const SubResourceDomain& subresourceDomain, const RedirectDomain& redirectDomain)
@@ -1913,9 +1992,12 @@ void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectTo(const S
     ASSERT(!RunLoop::isMain());
 
     auto result = ensureResourceStatisticsForRegistrableDomain(subresourceDomain);
-
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectTo was not completed due to failed insert attempt", this);
+        return;
+    }
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), result.second);
+    insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectFrom(const SubResourceDomain& subresourceDomain, const RedirectDomain& redirectDomain)
@@ -1923,9 +2005,12 @@ void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectFrom(const
     ASSERT(!RunLoop::isMain());
 
     auto result = ensureResourceStatisticsForRegistrableDomain(subresourceDomain);
-
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectFrom was not completed due to failed insert attempt", this);
+        return;
+    }
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), result.second);
+    insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo(const TopFrameDomain& topFrameDomain, const RedirectDomain& redirectDomain)
@@ -1933,9 +2018,12 @@ void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo(const TopF
     ASSERT(!RunLoop::isMain());
 
     auto result = ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
-
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo was not completed due to failed insert attempt", this);
+        return;
+    }
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), result.second);
+    insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom(const TopFrameDomain& topFrameDomain, const RedirectDomain& redirectDomain)
@@ -1943,12 +2031,15 @@ void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom(const To
     ASSERT(!RunLoop::isMain());
 
     auto result = ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
-
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom was not completed due to failed insert attempt", this);
+        return;
+    }
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), result.second);
+    insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
-std::pair<ResourceLoadStatisticsDatabaseStore::AddedRecord, unsigned> ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain)
+std::pair<ResourceLoadStatisticsDatabaseStore::AddedRecord, Optional<unsigned>> ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1970,7 +2061,13 @@ std::pair<ResourceLoadStatisticsDatabaseStore::AddedRecord, unsigned> ResourceLo
     ASSERT_UNUSED(resetResult, resetResult == SQLITE_OK);
 
     ResourceLoadStatistics newObservation(domain);
-    insertObservedDomain(newObservation);
+    auto result = insertObservedDomain(newObservation);
+
+    if (!result) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain insertObservedDomain failed to complete, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { AddedRecord::No, WTF::nullopt };
+    }
 
     return { AddedRecord::Yes, domainID(domain).value() };
 }
@@ -2360,7 +2457,12 @@ void ResourceLoadStatisticsDatabaseStore::setLastSeen(const RegistrableDomain& d
 {
     ASSERT(!RunLoop::isMain());
 
-    ensureResourceStatisticsForRegistrableDomain(domain);
+    auto result = ensureResourceStatisticsForRegistrableDomain(domain);
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setLastSeen was not completed due to failed insert attempt", this);
+        return;
+    }
+    
     updateLastSeen(domain, WallTime::fromRawSeconds(seconds.seconds()));
 }
 
@@ -2370,8 +2472,13 @@ void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const Registrable
 
     if (shouldSkip(domain))
         return;
+    
+    auto result = ensureResourceStatisticsForRegistrableDomain(domain);
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setPrevalentResource was not completed due to failed insert attempt", this);
+        return;
+    }
 
-    ensureResourceStatisticsForRegistrableDomain(domain);
     setPrevalentResource(domain, ResourceLoadPrevalence::High);
 }
 
@@ -2382,7 +2489,12 @@ void ResourceLoadStatisticsDatabaseStore::setVeryPrevalentResource(const Registr
     if (shouldSkip(domain))
         return;
     
-    ensureResourceStatisticsForRegistrableDomain(domain);
+    auto result = ensureResourceStatisticsForRegistrableDomain(domain);
+    if (!result.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setVeryPrevalentResource was not completed due to failed insert attempt", this);
+        return;
+    }
+
     setPrevalentResource(domain, ResourceLoadPrevalence::VeryHigh);
 }
 
