@@ -72,7 +72,11 @@ const eventsInGlobalEventHandlers = [
     "volumechange",
     "waiting",
     "search",
-    "wheel"
+    "wheel",
+    "webkitanimationend",
+    "webkitanimationiteration",
+    "webkitanimationstart",
+    "webkittransitionend"
 ];
 
 const eventsInWindowEventHandlers = [
@@ -103,9 +107,6 @@ const elementAndWindowEvents = [
     "webkitanimationiteration",
     "webkitanimationstart",
     "webkittransitionend"
-];
-
-const uniqueWindowEvents = [
 ];
 
 const uniqueDocumentEvents = [
@@ -246,7 +247,7 @@ function arrayDifference(a, b)
     });
 }
 
-const windowEvents = arrayUnion(eventsInGlobalEventHandlers, eventsInWindowEventHandlers, elementAndWindowEvents, uniqueWindowEvents);
+const windowEvents = arrayUnion(eventsInGlobalEventHandlers, eventsInWindowEventHandlers, elementAndWindowEvents);
 const documentEvents = arrayUnion(eventsInGlobalEventHandlers, elementAndDocumentEvents, uniqueDocumentEvents);
 const elementEvents = arrayUnion(eventsInGlobalEventHandlers, elementAndDocumentEvents, elementAndWindowEvents, elementBodyAndFrameSetEvents, uniqueElementEvents);
 

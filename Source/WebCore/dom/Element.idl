@@ -119,12 +119,6 @@
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
 
-    // Non standard.
-    [NotEnumerable, ImplementedAs=onwebkitAnimationEnd] attribute EventHandler onwebkitanimationend;
-    [NotEnumerable, ImplementedAs=onwebkitAnimationIteration] attribute EventHandler onwebkitanimationiteration;
-    [NotEnumerable, ImplementedAs=onwebkitAnimationStart] attribute EventHandler onwebkitanimationstart;
-    [NotEnumerable, ImplementedAs=onwebkitTransitionEnd] attribute EventHandler onwebkittransitionend;
-
     // FIXME: These event handlers should only be on Document (https://fullscreen.spec.whatwg.org/#api).
     [NotEnumerable, Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, DisabledByQuirk=shouldDisableElementFullscreen] attribute EventHandler onwebkitfullscreenchange;
     [NotEnumerable, Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, DisabledByQuirk=shouldDisableElementFullscreen] attribute EventHandler onwebkitfullscreenerror;

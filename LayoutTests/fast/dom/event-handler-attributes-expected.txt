@@ -166,6 +166,10 @@ PASS testScriptAttribute(document, "timeupdate") is "document"
 PASS testScriptAttribute(document, "transitionend") is "document"
 PASS testScriptAttribute(document, "volumechange") is "document"
 PASS testScriptAttribute(document, "waiting") is "document"
+PASS testScriptAttribute(document, "webkitanimationend") is "document"
+PASS testScriptAttribute(document, "webkitanimationiteration") is "document"
+PASS testScriptAttribute(document, "webkitanimationstart") is "document"
+PASS testScriptAttribute(document, "webkittransitionend") is "document"
 PASS testScriptAttribute(document, "wheel") is "document"
 
 Event names we expect not to be able to set on the document
@@ -184,10 +188,6 @@ PASS testScriptAttribute(document, "pageshow") is "none"
 PASS testScriptAttribute(document, "popstate") is "none"
 PASS testScriptAttribute(document, "storage") is "none"
 PASS testScriptAttribute(document, "unload") is "none"
-PASS testScriptAttribute(document, "webkitanimationend") is "none"
-PASS testScriptAttribute(document, "webkitanimationiteration") is "none"
-PASS testScriptAttribute(document, "webkitanimationstart") is "none"
-PASS testScriptAttribute(document, "webkittransitionend") is "none"
 
 Event names we expect to be able to set on an element (tested on the <html> element)
 
