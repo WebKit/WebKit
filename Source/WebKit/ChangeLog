@@ -1,3 +1,18 @@
+2020-03-19  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/60633852
+
+    2020-03-19  Brent Fulgham  <bfulgham@apple.com>
+
+         Terminate the WebContent process when receiving invalid IPC from a WebInspector session
+         https://bugs.webkit.org/show_bug.cgi?id=209157
+         <rdar://problem/58961055>
+
+         * UIProcess/WebPageProxy.cpp:
+         (WebKit::WebPageProxy::backForwardGoToItemShared): Add a message check that we are not receiving
+         the request from a WebInspector page.
+         (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle): Switch to a release assert.
+
 2020-03-17  Kocsen Chung  <kocsen_chung@apple.com>
 
         Apply patch. rdar://problem/60363244
