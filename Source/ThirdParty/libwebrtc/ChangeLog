@@ -1,3 +1,30 @@
+2020-03-19  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r258690. rdar://problem/60633853
+
+    Cherry pick usrsctp commit 790a7a2555aefb392a5a69923f1e9d17b4968467
+    https://bugs.webkit.org/show_bug.cgi?id=209204
+    <rdar://problem/59362671>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2020-03-19
+    Reviewed by Youenn Fablet.
+    
+    * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c:
+    * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258690 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-19  Alex Christensen  <achristensen@webkit.org>
+
+            Cherry pick usrsctp commit 790a7a2555aefb392a5a69923f1e9d17b4968467
+            https://bugs.webkit.org/show_bug.cgi?id=209204
+            <rdar://problem/59362671>
+
+            Reviewed by Youenn Fablet.
+
+            * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c:
+            * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c:
+
 2020-01-01  youenn fablet  <youenn@apple.com>
 
         Implement transceiver setCodecPreferences
