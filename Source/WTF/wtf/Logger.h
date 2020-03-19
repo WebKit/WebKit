@@ -186,6 +186,9 @@ public:
         // "Standard" WebCore logging goes to stderr, which is captured in layout test output and can generally be a problem
         //  on some systems, so don't allow it.
         UNUSED_PARAM(channel);
+        UNUSED_PARAM(file);
+        UNUSED_PARAM(function);
+        UNUSED_PARAM(line);
 #else
         if (!willLog(channel, WTFLogLevel::Always))
             return;

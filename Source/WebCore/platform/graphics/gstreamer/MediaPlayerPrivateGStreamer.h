@@ -119,7 +119,9 @@ void registerWebKitGStreamerElements();
 // Use eager initialization for the WeakPtrFactory since we call makeWeakPtr() from another thread.
 class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface
     , public CanMakeWeakPtr<MediaPlayerPrivateGStreamer, WeakPtrFactoryInitialization::Eager>
+#if !RELEASE_LOG_DISABLED
     , private LoggerHelper
+#endif
 #if USE(TEXTURE_MAPPER_GL)
 #if USE(NICOSIA)
     , public Nicosia::ContentLayerTextureMapperImpl::Client
@@ -230,6 +232,7 @@ public:
     void flushCurrentBuffer();
 #endif
 
+#if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     const char* logClassName() const override { return "MediaPlayerPrivateGStreamer"; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
@@ -237,6 +240,7 @@ public:
 
     const void* mediaPlayerLogIdentifier() { return logIdentifier(); }
     const Logger& mediaPlayerLogger() { return logger(); }
+#endif
 
 protected:
     enum MainThreadNotification {
@@ -541,8 +545,10 @@ private:
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
     GUniquePtr<struct wpe_video_plane_display_dmabuf_source> m_wpeVideoPlaneDisplayDmaBuf;
 #endif
+#if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
+#endif
 };
 
 }

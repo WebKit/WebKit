@@ -1,3 +1,10 @@
+2020-03-19  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Unreviewed, build fixes after r258547 when disabling release logging support
+
+        * wtf/Logger.h:
+        (WTF::Logger::logAlwaysVerbose const):
+
 2020-03-19  youenn fablet  <youenn@apple.com>
 
         Make URL::path() return a StringView
