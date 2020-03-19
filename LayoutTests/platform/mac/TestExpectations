@@ -1757,8 +1757,6 @@ webkit.org/b/199013 [ Debug Mojave+ ] imported/w3c/web-platform-tests/websockets
 
 webkit.org/b/190882 [ Mojave+ ] animations/change-one-anim.html [ Pass Failure ]
 
-webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout ]
-
 # <rdar://problem/48781098>
 [ Catalina+ ] fast/images/animated-heics-draw.html [ Pass ]
 [ Catalina+ ] fast/images/animated-heics-verify.html [ Pass ]

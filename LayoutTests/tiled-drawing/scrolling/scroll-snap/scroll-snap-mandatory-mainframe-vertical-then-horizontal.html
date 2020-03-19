@@ -26,9 +26,11 @@
         <script>
         window.jsTestIsAsync = true;
 
-        function scrollSnapTest() {
+        function scrollSnapTest()
+        {
             var startPosX = document.body.offsetLeft + 20;
             var startPosY = document.body.offsetTop + 20;
+            eventSender.monitorWheelEvents();
             eventSender.mouseMoveTo(startPosX, startPosY);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
@@ -49,9 +51,9 @@
             });
         }
 
-        function onLoad() {
+        function onLoad()
+        {
             if (window.eventSender) {
-                eventSender.monitorWheelEvents();
                 internals.setPlatformMomentumScrollingPredictionEnabled(false);
                 setTimeout(scrollSnapTest, 0);
             } else {

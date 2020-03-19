@@ -26,30 +26,28 @@
         <script>
         window.jsTestIsAsync = true;
 
-        var divTarget;
-        var divScrollPositionBeforeGlide;
-        var divScrollPositionBeforeSnap;
+        var scrollingTarget;
+        var scrollPositionBeforeGlide;
+        var scrollPositionBeforeSnap;
 
-        function checkForScrollSnap() {
+        function checkForScrollSnap()
+        {
             // The div should have snapped back to the previous position
-            if (divTarget.scrollTop != divScrollPositionBeforeSnap)
-                testFailed(`div did not snap back to proper location. (${divTarget.scrollTop} vs. ${divScrollPositionBeforeSnap})`);
+            if (scrollingTarget.scrollTop != scrollPositionBeforeSnap)
+                testFailed(`div did not snap back to proper location. (${scrollingTarget.scrollTop} vs. ${scrollPositionBeforeSnap})`);
             else
                 testPassed("div honored snap points.");
 
             finishJSTest();
         }
 
-        function scrollSnapTest() {
-            // See where our div lives:
-            pageScrollPositionBefore = document.scrollingElement.scrollTop;
+        function scrollSnapTest()
+        {
+            scrollPositionBeforeSnap = scrollingTarget.scrollTop;
 
-            divTarget = document.getElementById('target');
- 
-            divScrollPositionBeforeSnap = divTarget.scrollTop;
-
-            var startPosX = divTarget.offsetLeft + 20;
-            var startPosY = divTarget.offsetTop + 20;
+            var startPosX = scrollingTarget.offsetLeft + 20;
+            var startPosY = scrollingTarget.offsetTop + 20;
+            eventSender.monitorWheelEvents();
             eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
@@ -58,23 +56,24 @@
             eventSender.callAfterScrollingCompletes(checkForScrollSnap);
         }
 
-        function checkForScrollGlide() {
+        function checkForScrollGlide()
+        {
             // The div should have scrolled (glided) to the next snap point.
-            if (divTarget.scrollTop == window.innerHeight)
+            if (scrollingTarget.scrollTop == window.innerHeight)
                 testPassed("div scrolled to next window.");
             else
-                testFailed(`div did not honor snap points. (${divTarget.scrollTop} vs. ${window.innerHeight})`);
+                testFailed(`div did not honor snap points. (${scrollingTarget.scrollTop} vs. ${window.innerHeight})`);
 
             setTimeout(scrollSnapTest, 0);
         }
 
-        function scrollGlideTest() {
-            divTarget = document.getElementById('target');
- 
-            divScrollPositionBeforeGlide = divTarget.scrollTop;
+        function scrollGlideTest()
+        {
+            scrollPositionBeforeGlide = scrollingTarget.scrollTop;
 
-            var startPosX = divTarget.offsetLeft + 20;
-            var startPosY = divTarget.offsetTop + 20;
+            var startPosX = scrollingTarget.offsetLeft + 20;
+            var startPosY = scrollingTarget.offsetTop + 20;
+            eventSender.monitorWheelEvents();
             eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
@@ -87,10 +86,10 @@
             eventSender.callAfterScrollingCompletes(checkForScrollGlide);
         }
 
-        function onLoad() {
-
+        function onLoad()
+        {
+            scrollingTarget = document.scrollingElement;
             if (window.eventSender) {
-                eventSender.monitorWheelEvents();
                 internals.setPlatformMomentumScrollingPredictionEnabled(false);
                 setTimeout(scrollGlideTest, 0);
             } else {
@@ -109,7 +108,7 @@
         }
         </script>
     </head>
-    <body onload="onLoad();" class="verticalGallery" id="target">
+    <body onload="onLoad();" class="verticalGallery">
         <div id="item0" class="colorBox"><div id="console"></div></div>
         <div id="item1" class="colorBox"></div>
         <div id="item2" class="colorBox"></div>

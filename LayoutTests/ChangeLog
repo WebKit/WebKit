@@ -1,3 +1,31 @@
+2020-03-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Many tests relying on eventSender.monitorWheelEvents() are no longer flaky
+        https://bugs.webkit.org/show_bug.cgi?id=209272
+
+        Reviewed by Wenson Hsieh.
+        
+        Remove tests from TestExpectations that were flakey because of bug 197819.
+
+        Fix some scroll-snap tests which were written before CSS OM View changes made document.body
+        not the scrolling element.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-zoomed-expected.txt:
+        * tiled-drawing/scrolling/frames/frameset-frame-scrollability-expected.txt:
+        * tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability-expected.txt:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated.html:
+
 2020-03-19  Eric Carlson  <eric.carlson@apple.com>
 
         Allow for some tolerance when checking canvas pixels in fast/mediastream tests
