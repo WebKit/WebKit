@@ -568,15 +568,21 @@ class WebkitFlatpak:
         building = os.path.basename(args[0]).startswith("build")
 
         sandbox_build_path = os.path.join(self.sandbox_source_root, "WebKitBuild", self.build_type)
+        # FIXME: Using the `run` flatpak command would be better, but it doesn't
+        # have a --bind-mount option.
         flatpak_command = ["flatpak", "build",
                            "--die-with-parent",
                            "--talk-name=org.a11y.Bus",
                            "--talk-name=org.gtk.vfs",
                            "--talk-name=org.gtk.vfs.*",
                            "--bind-mount=/run/shm=/dev/shm",
-                           # Workaround for https://webkit.org/b/187384 to have our own perl modules usable inside the sandbox
-                           # as setting the PERL5LIB envvar won't work inside apache (and for scripts using `perl -T``).
+                           # Access to /run/host is required by the crash log reporter.
                            "--bind-mount=/run/host/%s=%s" % (tempfile.gettempdir(), tempfile.gettempdir()),
+                           # flatpak build doesn't expose a --socket option for
+                           # white-listing the systemd journal socket. So
+                           # white-list it in /run, hoping this is the right
+                           # path.
+                           "--bind-mount=/run/systemd/journal=/run/systemd/journal",
                            "--bind-mount=%s=%s" % (self.sandbox_source_root, self.source_root),
                            # We mount WebKitBuild/PORTNAME/BuildType to /app/webkit/WebKitBuild/BuildType
                            # so we can build WPE and GTK in a same source tree.

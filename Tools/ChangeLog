@@ -1,3 +1,16 @@
+2020-03-19  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Release logs not sent to journald when running within the SDK runtime
+        https://bugs.webkit.org/show_bug.cgi?id=209223
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        flatpak build doesn't expose a --socket option for white-listing
+        the systemd journal socket. So white-list everything in /run. 🤷
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-03-19  Charlie Turner  <cturner@igalia.com>
 
         Fix many warnings with Clang 7.0 on GTK x86-64 in Debug.
