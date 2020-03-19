@@ -1,3 +1,17 @@
+2020-03-19  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add telemetry for message filtering
+        https://bugs.webkit.org/show_bug.cgi?id=208925
+        <rdar://problem/58885485>
+
+        Reviewed by Darin Adler.
+
+        On iOS, add telemetry for message filtering in the WebContent process' sandbox.
+
+        No new tests, no behavior change.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-03-19  Charlie Turner  <cturner@igalia.com>
 
         Fix many warnings with Clang 7.0 on GTK x86-64 in Debug.
