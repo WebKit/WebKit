@@ -1,3 +1,19 @@
+2020-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        svg/custom/animate-initial-pause-unpause.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=127116
+        <rdar://problem/59430898>
+
+        Reviewed by Ryosuke Niwa.
+
+        Use the 'onend' event to perform post-animation actions instead of relying
+        on setTimeout() which can be flaky if the bots are really slow.
+
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * svg/custom/animate-initial-pause-unpause.html:
+
 2020-03-18  John Wilander  <wilander@apple.com>
 
         WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener() should call its ephemeral counterpart when appropriate

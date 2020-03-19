@@ -1737,8 +1737,6 @@ webkit.org/b/134758 svg/custom/composited-svg-with-opacity.html [ ImageOnlyFailu
 
 webkit.org/b/134760 plugins/layout-in-beforeload-listener-affects-plugin-loading.html [ Failure Pass ]
 
-webkit.org/b/134761 svg/custom/animate-initial-pause-unpause.html [ Failure Pass ]
-
 webkit.org/b/134994 fast/forms/select/listbox-click-on-scrollbar.html [ Failure Pass ]
 
 webkit.org/b/134981 fast/parser/document-write-during-load.html [ Timeout Pass Crash ]

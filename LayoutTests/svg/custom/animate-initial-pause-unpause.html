@@ -7,7 +7,7 @@
     <svg id="svg" width="400" height="400">
         <rect x="0" y="0" width="100" height="100" fill="red"/>
         <rect id="rect" x="100" y="0" width="100" height="100" fill="green">
-            <set attributeName="x" to="0" begin="0.01s" fill="freeze"/>
+            <set attributeName="x" to="0" begin="10ms" end="30ms" fill="freeze" onend="handleEndEvent()"/>
         </rect>
     </svg>
     <script>
@@ -22,7 +22,7 @@
         svg.pauseAnimations();
         svg.unpauseAnimations();
 
-        setTimeout(function() {
+        function handleEndEvent() {
             if (rect.x.animVal.value == 0)
                 document.body.innerHTML = "PASS";
             else
@@ -30,7 +30,7 @@
 
             if (window.testRunner)
                 testRunner.notifyDone();
-        }, 50);
+        }
     </script>
 </body>
 </html>
