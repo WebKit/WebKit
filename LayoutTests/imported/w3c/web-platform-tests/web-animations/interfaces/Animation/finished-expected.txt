@@ -20,4 +20,5 @@ PASS Test finished promise is not resolved when the animation falls out finished
 PASS Test finished promise is not resolved once the animation falls out finished state even though the current finished promise is generated soon after animation state became finished 
 PASS Finished promise should be resolved after the ready promise is resolved 
 PASS Finished promise should be rejected after the ready promise is rejected 
+PASS Finished promise does not report an unhandledrejection when rejected 
 

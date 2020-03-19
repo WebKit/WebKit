@@ -1,3 +1,21 @@
+2020-03-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Mark promises as handled when rejected
+        https://bugs.webkit.org/show_bug.cgi?id=209240
+        <rdar://problem/60592305>
+
+        Reviewed by Youenn Fablet.
+
+        Add the new WPT tests added for this spec change (https://github.com/web-platform-tests/wpt/pull/22314) and revert some workarounds
+        made in our copy of WPT tests to previously silence flaky console output related to promise rejections (added in r258275 and r258276).
+
+        * web-platform-tests/web-animations/interfaces/Animation/finished-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/finished.html:
+        * web-platform-tests/web-animations/interfaces/Animation/ready-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/ready.html:
+        * web-platform-tests/web-animations/timing-model/animations/finishing-an-animation.html:
+        * web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html:
+
 2020-03-18  Frank Yang  <guowei_yang@apple.com>
 
         [CSS Writing Modes] Import css/css-writing-modes from WPT
