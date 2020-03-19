@@ -492,6 +492,12 @@ void EventSendingController::mouseScrollByWithWheelAndMomentumPhases(int x, int 
 
     uint64_t phase = cgEventPhaseFromString(phaseStr);
     uint64_t momentum = cgEventMomentumPhaseFromString(momentumStr);
+    
+    if (phase == 4 /* kCGScrollPhaseEnded */ || phase == 8 /* kCGScrollPhaseCancelled */)
+        m_sentWheelPhaseEndOrCancel = true;
+    
+    if (momentum == 3 /* kCGMomentumScrollPhaseEnd */)
+        m_sentWheelMomentumPhaseEnd = true;
 
     WKRetainPtr<WKStringRef> phaseKey = adoptWK(WKStringCreateWithUTF8CString("Phase"));
     WKRetainPtr<WKUInt64Ref> phaseRef = adoptWK(WKUInt64Create(phase));
@@ -608,6 +614,8 @@ void EventSendingController::monitorWheelEvents()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     
+    m_sentWheelPhaseEndOrCancel = false;
+    m_sentWheelMomentumPhaseEnd = false;
     WKBundlePageStartMonitoringScrollOperations(page);
 }
 
@@ -650,7 +658,7 @@ void EventSendingController::callAfterScrollingCompletes(JSValueRef functionCall
 
     auto scrollCompletionCallbackData = makeUnique<ScrollCompletionCallbackData>(context, functionCallbackObject);
     auto scrollCompletionCallbackDataPtr = scrollCompletionCallbackData.release();
-    bool callbackWillBeCalled = WKBundlePageRegisterScrollOperationCompletionCallback(page, executeCallback, scrollCompletionCallbackDataPtr);
+    bool callbackWillBeCalled = WKBundlePageRegisterScrollOperationCompletionCallback(page, executeCallback, m_sentWheelPhaseEndOrCancel, m_sentWheelMomentumPhaseEnd, scrollCompletionCallbackDataPtr);
     if (!callbackWillBeCalled) {
         // Reassign raw pointer to std::unique_ptr<> so it will not be leaked.
         scrollCompletionCallbackData.reset(scrollCompletionCallbackDataPtr);

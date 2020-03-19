@@ -88,7 +88,7 @@ void monitorWheelEvents(WebCore::Frame& frame)
     page->ensureWheelEventTestMonitor().clearAllTestDeferrals();
 }
 
-void setTestCallbackAndStartNotificationTimer(WebCore::Frame& frame, JSContextRef context, JSObjectRef jsCallbackFunction)
+void setWheelEventMonitorTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WebCore::Frame& frame, JSContextRef context, JSObjectRef jsCallbackFunction)
 {
     Page* page = frame.page();
     if (!page || !page->isMonitoringWheelEvents())
@@ -96,7 +96,7 @@ void setTestCallbackAndStartNotificationTimer(WebCore::Frame& frame, JSContextRe
 
     JSValueProtect(context, jsCallbackFunction);
     
-    page->ensureWheelEventTestMonitor().setTestCallbackAndStartNotificationTimer([=](void) {
+    page->ensureWheelEventTestMonitor().setTestCallbackAndStartMonitoring(expectWheelEndOrCancel, expectMomentumEnd, [=](void) {
         JSObjectCallAsFunction(context, jsCallbackFunction, nullptr, 0, nullptr, nullptr);
         JSValueUnprotect(context, jsCallbackFunction);
     });

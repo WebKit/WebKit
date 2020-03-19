@@ -130,6 +130,7 @@
 #include "VisitedLinkStore.h"
 #include "VoidCallback.h"
 #include "WheelEventDeltaFilter.h"
+#include "WheelEventTestMonitor.h"
 #include "Widget.h"
 #include <wtf/FileSystem.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -1390,6 +1391,9 @@ void Page::doAfterUpdateRendering()
         document->updateTouchEventRegions();
 #endif
 
+    if (UNLIKELY(isMonitoringWheelEvents()))
+        wheelEventTestMonitor()->checkShouldFireCallbacks();
+
 #if ASSERT_ENABLED
     for (Frame* child = mainFrame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
         auto* frameView = child->view();
@@ -2621,14 +2625,34 @@ void Page::playbackTargetPickerWasDismissed(uint64_t clientId)
 
 #endif
 
+RefPtr<WheelEventTestMonitor> Page::wheelEventTestMonitor() const
+{
+    return m_wheelEventTestMonitor;
+}
+
+void Page::clearWheelEventTestMonitor()
+{
+    if (m_scrollingCoordinator)
+        m_scrollingCoordinator->stopMonitoringWheelEvents();
+
+    m_wheelEventTestMonitor = nullptr;
+}
+
+bool Page::isMonitoringWheelEvents() const
+{
+    return !!m_wheelEventTestMonitor;
+}
+
 WheelEventTestMonitor& Page::ensureWheelEventTestMonitor()
 {
     if (!m_wheelEventTestMonitor) {
-        m_wheelEventTestMonitor = adoptRef(new WheelEventTestMonitor());
+        m_wheelEventTestMonitor = adoptRef(new WheelEventTestMonitor(*this));
         // We need to update the scrolling coordinator so that the mainframe scrolling node can expect wheel event test triggers.
         if (auto* frameView = mainFrame().view()) {
-            if (m_scrollingCoordinator)
+            if (m_scrollingCoordinator) {
+                m_scrollingCoordinator->startMonitoringWheelEvents();
                 m_scrollingCoordinator->updateIsMonitoringWheelEventsForFrameView(*frameView);
+            }
         }
     }
 

@@ -307,7 +307,6 @@ void ScrollingTreeScrollingNodeDelegateMac::deferWheelEventTestCompletionForReas
     if (!scrollingTree().isMonitoringWheelEvents())
         return;
 
-    LOG_WITH_STREAM(WheelEventTestMonitor, stream << isMainThread() << "  ScrollingTreeScrollingNodeDelegateMac::deferForReason: STARTING deferral for " << identifier << " because of " << reason);
     scrollingTree().deferWheelEventTestCompletionForReason(identifier, reason);
 }
     
@@ -316,7 +315,6 @@ void ScrollingTreeScrollingNodeDelegateMac::removeWheelEventTestCompletionDeferr
     if (!scrollingTree().isMonitoringWheelEvents())
         return;
     
-    LOG_WITH_STREAM(WheelEventTestMonitor, stream << isMainThread() << "  ScrollingTreeScrollingNodeDelegateMac::deferForReason: ENDING deferral for " << identifier << " because of " << reason);
     scrollingTree().removeWheelEventTestCompletionDeferralForReason(identifier, reason);
 }
 

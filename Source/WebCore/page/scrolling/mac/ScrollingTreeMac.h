@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class WheelEventTestMonitor;
+
 class ScrollingTreeMac final : public ThreadedScrollingTree {
 public:
     static Ref<ScrollingTreeMac> create(AsyncScrollingCoordinator&);
@@ -42,11 +44,20 @@ private:
 
     RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint) final;
 
+    void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&&) final;
+
+    void receivedWheelEvent(const PlatformWheelEvent&) final;
+
+    void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) final;
+    void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) final;
+
     void lockLayersForHitTesting() final;
     void unlockLayersForHitTesting() final;
 
     // This lock protects the CALayer/PlatformCALayer tree.
     Lock m_layerHitTestMutex;
+    
+    RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
 };
 
 } // namespace WebCore

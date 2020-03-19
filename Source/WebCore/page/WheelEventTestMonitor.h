@@ -28,45 +28,79 @@
 
 #pragma once
 
+#include "PlatformWheelEvent.h"
 #include <functional>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
-#include <wtf/RunLoop.h>
-#include <wtf/StdSet.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
+class Page;
+
 class WheelEventTestMonitor : public ThreadSafeRefCounted<WheelEventTestMonitor> {
     WTF_MAKE_NONCOPYABLE(WheelEventTestMonitor); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WheelEventTestMonitor();
+    WheelEventTestMonitor(Page&);
 
-    WEBCORE_EXPORT void setTestCallbackAndStartNotificationTimer(WTF::Function<void()>&&);
+    WEBCORE_EXPORT void setTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WTF::Function<void()>&&);
     WEBCORE_EXPORT void clearAllTestDeferrals();
     
     enum DeferReason {
-        HandlingWheelEvent          = 1 << 0,
-        RubberbandInProgress        = 1 << 1,
-        ScrollSnapInProgress        = 1 << 2,
-        ScrollingThreadSyncNeeded   = 1 << 3,
-        ContentScrollInProgress     = 1 << 4,
+        HandlingWheelEvent              = 1 << 0,
+        HandlingWheelEventOnMainThread  = 1 << 1,
+        RubberbandInProgress            = 1 << 2,
+        ScrollSnapInProgress            = 1 << 3,
+        ScrollingThreadSyncNeeded       = 1 << 4,
+        ContentScrollInProgress         = 1 << 5,
     };
     typedef const void* ScrollableAreaIdentifier;
 
+    WEBCORE_EXPORT void receivedWheelEvent(const PlatformWheelEvent&);
     WEBCORE_EXPORT void deferForReason(ScrollableAreaIdentifier, DeferReason);
     WEBCORE_EXPORT void removeDeferralForReason(ScrollableAreaIdentifier, DeferReason);
     
-    void triggerTestTimerFired();
+    void checkShouldFireCallbacks();
 
     using ScrollableAreaReasonMap = WTF::HashMap<ScrollableAreaIdentifier, OptionSet<DeferReason>>;
 
 private:
-    WTF::Function<void()> m_completionCallback;
-    RunLoop::Timer<WheelEventTestMonitor> m_testForCompletionTimer;
+    void scheduleCallbackCheck();
 
+    WTF::Function<void()> m_completionCallback;
+    Page& m_page;
+
+    Lock m_mutex;
     ScrollableAreaReasonMap m_deferCompletionReasons;
+    bool m_expectWheelEndOrCancel { false };
+    bool m_receivedWheelEndOrCancel { false };
+    bool m_expectMomentumEnd { false };
+    bool m_receivedMomentumEnd { false };
+    bool m_everHadDeferral { false };
+};
+
+class WheelEventTestMonitorCompletionDeferrer {
+public:
+    WheelEventTestMonitorCompletionDeferrer(WheelEventTestMonitor* monitor, WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason)
+        : m_monitor(monitor)
+        , m_identifier(identifier)
+        , m_reason(reason)
+    {
+        if (m_monitor)
+            m_monitor->deferForReason(m_identifier, m_reason);
+    }
+    
+    ~WheelEventTestMonitorCompletionDeferrer()
+    {
+        if (m_monitor)
+            m_monitor->removeDeferralForReason(m_identifier, m_reason);
+    }
+
+private:
+    RefPtr<WheelEventTestMonitor> m_monitor;
+    WheelEventTestMonitor::ScrollableAreaIdentifier m_identifier;
+    WheelEventTestMonitor::DeferReason m_reason;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, WheelEventTestMonitor::DeferReason);

@@ -138,8 +138,6 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
 
     auto* page = frameView.frame().page();
     if (page && page->isMonitoringWheelEvents()) {
-        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    AsyncScrollingCoordinator::frameViewLayoutUpdated: Expects wheel event test trigger: " << page->isMonitoringWheelEvents());
-
         auto* node = m_scrollingStateTree->stateNodeForID(frameView.scrollingNodeID());
         if (!is<ScrollingStateFrameScrollingNode>(node))
             return;
@@ -826,29 +824,6 @@ void AsyncScrollingCoordinator::setActiveScrollSnapIndices(ScrollingNodeID scrol
     }
 }
 
-void AsyncScrollingCoordinator::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
-{
-    ASSERT(isMainThread());
-    if (!m_page || !m_page->isMonitoringWheelEvents())
-        return;
-
-    if (const auto& trigger = m_page->wheelEventTestMonitor()) {
-        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) AsyncScrollingCoordinator::deferForReason: Deferring " << identifier << " for reason " << reason);
-        trigger->deferForReason(identifier, reason);
-    }
-}
-
-void AsyncScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
-{
-    ASSERT(isMainThread());
-    if (!m_page || !m_page->isMonitoringWheelEvents())
-        return;
-
-    if (const auto& trigger = m_page->wheelEventTestMonitor()) {
-        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) AsyncScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason: Deferring " << identifier << " for reason " << reason);
-        trigger->removeDeferralForReason(identifier, reason);
-    }
-}
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)

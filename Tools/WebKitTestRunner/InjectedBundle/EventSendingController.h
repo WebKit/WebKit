@@ -87,6 +87,8 @@ public:
 private:
     EventSendingController();
     WKPoint m_position;
+    bool m_sentWheelPhaseEndOrCancel { false };
+    bool m_sentWheelMomentumPhaseEnd { false };
 };
 
 } // namespace WTR

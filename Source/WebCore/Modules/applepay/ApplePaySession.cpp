@@ -63,6 +63,7 @@
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/RunLoop.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/ApplePaySessionAdditions.cpp>

@@ -96,6 +96,9 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
 
     LockHolder locker(m_treeMutex);
 
+    if (isMonitoringWheelEvents())
+        receivedWheelEvent(wheelEvent);
+
     if (!asyncFrameOrOverflowScrollingEnabled()) {
         if (m_rootNode)
             m_rootNode->handleWheelEvent(wheelEvent);

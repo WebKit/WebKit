@@ -136,6 +136,17 @@ void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
     tiledBacking->setScrollingModeIndication(indicatorMode);
 }
 
+void ScrollingCoordinatorMac::startMonitoringWheelEvents()
+{
+    auto monitor = m_page->wheelEventTestMonitor();
+    scrollingTree()->setWheelEventTestMonitor(WTFMove(monitor));
+}
+
+void ScrollingCoordinatorMac::stopMonitoringWheelEvents()
+{
+    scrollingTree()->setWheelEventTestMonitor(nullptr);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)

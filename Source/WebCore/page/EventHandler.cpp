@@ -103,6 +103,7 @@
 #include "VisibleUnits.h"
 #include "WheelEvent.h"
 #include "WheelEventDeltaFilter.h"
+#include "WheelEventTestMonitor.h"
 #include "WindowsKeyboardCodes.h"
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
@@ -2823,6 +2824,14 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
         m_frame.page()->pointerLockController().dispatchLockedWheelEvent(event);
         return true;
     }
+#endif
+
+#if PLATFORM(COCOA)
+    LOG_WITH_STREAM(WheelEventTestMonitor, stream << "EventHandler::handleWheelEvent on main thread, phase " << event.phase() << " momentum phase " << event.momentumPhase());
+    if (auto monitor = m_frame.page()->wheelEventTestMonitor())
+        monitor->receivedWheelEvent(event);
+
+    WheelEventTestMonitorCompletionDeferrer deferrer(m_frame.page()->wheelEventTestMonitor().get(), this, WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread);
 #endif
 
     m_isHandlingWheelEvent = true;

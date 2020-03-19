@@ -180,6 +180,9 @@ public:
     EventTrackingRegions absoluteEventTrackingRegions() const;
     virtual void updateIsMonitoringWheelEventsForFrameView(const FrameView&) { }
 
+    virtual void startMonitoringWheelEvents() { }
+    virtual void stopMonitoringWheelEvents() { }
+
 protected:
     explicit ScrollingCoordinator(Page*);
 

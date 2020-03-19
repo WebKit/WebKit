@@ -33,6 +33,7 @@
 #include "WheelEventTestMonitor.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 
@@ -107,6 +108,8 @@ public:
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) = 0;
     virtual void setActiveScrollSnapIndices(ScrollingNodeID, unsigned /*horizontalIndex*/, unsigned /*verticalIndex*/) { }
 
+    virtual void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&&) { }
+
     virtual void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) { }
     virtual void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) { }
 #endif
@@ -178,6 +181,7 @@ private:
     void notifyRelatedNodesRecursive(ScrollingTreeNode&);
 
     WEBCORE_EXPORT virtual RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint);
+    virtual void receivedWheelEvent(const PlatformWheelEvent&) { }
 
     Lock m_treeMutex; // Protects the scrolling tree.
 

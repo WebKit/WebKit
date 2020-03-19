@@ -47,6 +47,9 @@ private:
     void scheduleTreeStateCommit() final;
 
     void updateTiledScrollingIndicator();
+
+    void startMonitoringWheelEvents() final;
+    void stopMonitoringWheelEvents() final;
 };
 
 } // namespace WebCore

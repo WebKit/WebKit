@@ -38,6 +38,10 @@
     NSTimeInterval lastClick;
     int eventNumber;
     double timeOffset;
+#if PLATFORM(MAC)
+    BOOL _sentWheelPhaseEndOrCancel;
+    BOOL _sentMomentumPhaseEnd;
+#endif
 #if PLATFORM(IOS_FAMILY)
     NSMutableArray* touches;
     unsigned currentTouchIdentifier;

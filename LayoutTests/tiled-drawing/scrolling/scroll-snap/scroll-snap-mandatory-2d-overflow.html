@@ -56,6 +56,8 @@
                 x: divTarget.scrollLeft,
                 y: divTarget.scrollTop
             };
+
+            eventSender.monitorWheelEvents();
             eventSender.mouseMoveTo(100, 100);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none");
@@ -84,6 +86,7 @@
                 y: divTarget.scrollTop
             };
 
+            eventSender.monitorWheelEvents();
             eventSender.mouseMoveTo(100, 100);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "changed", "none");
@@ -108,6 +111,7 @@
                 y: divTarget.scrollTop
             };
 
+            eventSender.monitorWheelEvents();
             eventSender.mouseMoveTo(100, 100);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "changed", "none");
@@ -122,7 +126,6 @@
 
         function onLoad() {
             if (window.eventSender) {
-                eventSender.monitorWheelEvents();
                 internals.setPlatformMomentumScrollingPredictionEnabled(false);
                 setTimeout(scrollGlideTest, 0);
             } else {

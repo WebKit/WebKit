@@ -34,6 +34,7 @@
 #include "MutationObserver.h"
 #include "SecurityOrigin.h"
 #include "ThreadGlobalData.h"
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 

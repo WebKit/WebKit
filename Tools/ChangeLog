@@ -1,3 +1,41 @@
+2020-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        eventSender.monitorWheelEvents() is very fragile
+        https://bugs.webkit.org/show_bug.cgi?id=197819
+        <rdar://problem/51319456>
+
+        Reviewed by Tim Horton.
+
+        Deflake tests using eventSender.monitorWheelEvents() by fixing several causes of flakiness,
+        adding back changes from r257844 that were reverted in r258558.
+        
+        First, have EventSendingController keep track of whether it's seen then "end" event
+        for the scrolling and momentum phases, and pass this down to WheelEventTestMonitor, which
+        now waits until it sees these, which prevents premature triggering which was a common cause of
+        failure before.
+        
+        Second, remove WheelEventTestMonitor's 1/60s timer and instead have WheelEventTestMonitor test
+        for completion in a callout from the end of Page::updateRendering(), which makes it test
+        and fire at a more consistent time.
+        
+        Third, push WheelEventTestMonitor to the ScrollingTree, so that reasons for deferral
+        can be added on the scrolling thread. This fixes an issue where the RunLoop::main().dispatch()
+        used to send the "ScrollingThreadSyncNeeded" reason to the main thread would get delayed,
+        also resulting in a premature trigger.
+
+        * DumpRenderTree/mac/EventSendingController.h:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseScrollByX:andY:withWheel:andMomentumPhases:]):
+        (-[EventSendingController monitorWheelEvents]):
+        (-[EventSendingController callAfterScrollingCompletes:]):
+        * DumpRenderTree/win/EventSender.cpp:
+        (mouseScrollBy):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::mouseScrollByWithWheelAndMomentumPhases):
+        (WTR::EventSendingController::monitorWheelEvents):
+        (WTR::EventSendingController::callAfterScrollingCompletes):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+
 2020-03-18  John Wilander  <wilander@apple.com>
 
         WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener() should call its ephemeral counterpart when appropriate

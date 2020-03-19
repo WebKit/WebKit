@@ -704,7 +704,7 @@ void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef pageRef)
     page->ensureWheelEventTestMonitor().clearAllTestDeferrals();
 }
 
-bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageRef, WKBundlePageTestNotificationCallback callback, void* context)
+bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageRef, WKBundlePageTestNotificationCallback callback, bool expectWheelEndOrCancel, bool expectMomentumEnd, void* context)
 {
     if (!callback)
         return false;
@@ -714,7 +714,7 @@ bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageR
     if (!page || !page->isMonitoringWheelEvents())
         return false;
     
-    page->ensureWheelEventTestMonitor().setTestCallbackAndStartNotificationTimer([=]() {
+    page->ensureWheelEventTestMonitor().setTestCallbackAndStartMonitoring(expectWheelEndOrCancel, expectMomentumEnd, [=]() {
         callback(context);
     });
     return true;

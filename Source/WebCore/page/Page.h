@@ -40,7 +40,6 @@
 #include "UserInterfaceLayoutDirection.h"
 #include "ViewportArguments.h"
 #include "VisibilityState.h"
-#include "WheelEventTestMonitor.h"
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/Assertions.h>
@@ -147,6 +146,7 @@ class VisibleSelection;
 class VisitedLinkStore;
 class WebGLStateTracker;
 class WheelEventDeltaFilter;
+class WheelEventTestMonitor;
 
 using SharedStringHash = uint32_t;
 
@@ -649,10 +649,10 @@ public:
     WEBCORE_EXPORT void playbackTargetPickerWasDismissed(uint64_t);
 #endif
 
-    RefPtr<WheelEventTestMonitor> wheelEventTestMonitor() const { return m_wheelEventTestMonitor; }
+    WEBCORE_EXPORT RefPtr<WheelEventTestMonitor> wheelEventTestMonitor() const;
     WEBCORE_EXPORT WheelEventTestMonitor& ensureWheelEventTestMonitor();
-    void clearWheelEventTestMonitor() { m_wheelEventTestMonitor = nullptr; }
-    bool isMonitoringWheelEvents() const { return !!m_wheelEventTestMonitor; }
+    WEBCORE_EXPORT void clearWheelEventTestMonitor();
+    WEBCORE_EXPORT bool isMonitoringWheelEvents() const;
 
 #if ENABLE(VIDEO)
     bool allowsMediaDocumentInlinePlayback() const { return m_allowsMediaDocumentInlinePlayback; }

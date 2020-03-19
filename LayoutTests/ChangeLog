@@ -1,3 +1,16 @@
+2020-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        eventSender.monitorWheelEvents() is very fragile
+        https://bugs.webkit.org/show_bug.cgi?id=197819
+        <rdar://problem/51319456>
+
+        Reviewed by Tim Horton.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html: Need to call eventSender.monitorWheelEvents()
+        for each subtest.
+
 2020-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         svg/custom/animate-initial-pause-unpause.html is flaky

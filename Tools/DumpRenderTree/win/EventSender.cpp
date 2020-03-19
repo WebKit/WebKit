@@ -832,6 +832,10 @@ void mouseScrollBy(double x, double y, bool continuous)
     RECT rect;
     ::GetWindowRect(webViewWindow, &rect);
 
+    COMPtr<IWebFramePrivate> framePrivate;
+    if (SUCCEEDED(frame->QueryInterface(&framePrivate)))
+        framePrivate->layout();
+
     if (x) {
         UINT scrollChars = 1;
         ::SystemParametersInfo(SPI_GETWHEELSCROLLCHARS, 0, &scrollChars, 0);
@@ -923,7 +927,7 @@ static JSValueRef callAfterScrollingCompletes(JSContextRef context, JSObjectRef 
         return JSValueMakeUndefined(context);
 
     WebCore::Frame* coreFrame = core(static_cast<WebFrame*>(frame2.get()));
-    WebCoreTestSupport::setTestCallbackAndStartNotificationTimer(*coreFrame, globalContext, jsCallbackFunction);
+    WebCoreTestSupport::setWheelEventMonitorTestCallbackAndStartMonitoring(false, false, *coreFrame, globalContext, jsCallbackFunction);
 
     return JSValueMakeUndefined(context);
 }

@@ -99,7 +99,6 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
         return;
 
     auto scrollPosition = node.currentScrollPosition();
-
     if (node.isRootNode())
         setMainFrameScrollPosition(scrollPosition);
 
@@ -116,11 +115,12 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
     if (monitoringWheelEvents)
         deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(node.scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
 #endif
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, nodeID = node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction, monitoringWheelEvents] {
-        scrollingCoordinator->scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction);
+
+    RunLoop::main().dispatch([strongThis = makeRef(*this), nodeID = node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction, monitoringWheelEvents] {
+        strongThis->m_scrollingCoordinator->scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction);
 #if PLATFORM(MAC)
         if (monitoringWheelEvents)
-            scrollingCoordinator->removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
+            strongThis->removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
 #else
         UNUSED_PARAM(monitoringWheelEvents);
 #endif
@@ -200,26 +200,6 @@ void ThreadedScrollingTree::setActiveScrollSnapIndices(ScrollingNodeID nodeID, u
     
     RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, nodeID, horizontalIndex, verticalIndex] {
         scrollingCoordinator->setActiveScrollSnapIndices(nodeID, horizontalIndex, verticalIndex);
-    });
-}
-
-void ThreadedScrollingTree::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason)
-{
-    if (!m_scrollingCoordinator)
-        return;
-
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, identifier, reason] {
-        scrollingCoordinator->deferWheelEventTestCompletionForReason(identifier, reason);
-    });
-}
-
-void ThreadedScrollingTree::removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason)
-{
-    if (!m_scrollingCoordinator)
-        return;
-    
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, identifier, reason] {
-        scrollingCoordinator->removeWheelEventTestCompletionDeferralForReason(identifier, reason);
     });
 }
 
