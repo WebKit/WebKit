@@ -1,3 +1,22 @@
+2020-03-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow for some tolerance when checking canvas pixels in fast/mediastream tests
+        https://bugs.webkit.org/show_bug.cgi?id=209259
+        <rdar://problem/60609789>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/MediaStream-video-element-displays-buffer.html:
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html:
+        * fast/mediastream/media-stream-renders-first-frame.html:
+        * fast/mediastream/resize-trim.html:
+        * resources/platform-helper.js:
+        (checkPixelColorWithTolerance):
+        (isPixelBlack):
+        (isPixelTransparent):
+        (isPixelWhite):
+        (isPixelGray):
+
 2020-03-19  Antoine Quint  <graouts@apple.com>
 
         onwebkit{animation, transition}XX handlers missing from Document

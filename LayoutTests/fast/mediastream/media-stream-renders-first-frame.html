@@ -5,15 +5,11 @@
         <canvas id="canvas" width=640px height=480px></canvas>
         <script src="../../resources/testharness.js"></script>
         <script src="../../resources/testharnessreport.js"></script>
+        <script src="../../resources/platform-helper.js"></script>
         <script>
 
 const canvas = document.getElementById("canvas");
 const video = document.getElementById("video");
-
-function isPixelBlack(pixel)
-{
-    return pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0 && pixel[3] === 255;
-}
 
 function logPixel(name, pixel)
 {

@@ -2,6 +2,7 @@
 <html>
 <head>
     <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/platform-helper.js"></script>
 </head>
 <body onload="start()">
 <p id="description"></p>
@@ -14,21 +15,6 @@
     let videos;
     let buffer;
     let currentTest = 0;
-    
-    function isPixelTransparent(pixel)
-    {
-        return pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0 && pixel[3] === 0;
-    }
-
-    function isPixelBlack(pixel)
-    {
-        return pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0 && pixel[3] === 255;
-    }
-
-    function isPixelGray(pixel)
-    {
-        return pixel[0] === 128 && pixel[1] === 128 && pixel[2] === 128 && pixel[3] === 255;
-    }
     
     function checkPixels(x, y, test, expectedToBeTrue)
     {

@@ -3,14 +3,10 @@
     <head>
         <video id="video" autoplay width=480px height=480px controls ></video>
         <canvas id="canvas" width=480px height=480px></canvas>
+        <script src="../../resources/platform-helper.js"></script>
         <script src="../../resources/testharness.js"></script>
         <script src="../../resources/testharnessreport.js"></script>
         <script>
-
-function isPixelGray(pixel)
-{
-    return pixel[0] === 128 && pixel[1] === 128 && pixel[2] === 128 && pixel[3] === 255;
-}
 
 promise_test(async () => {
     let stream = await navigator.mediaDevices.getUserMedia({ video: true });

@@ -2,6 +2,7 @@
 <html>
 <head>
     <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/platform-helper.js"></script>
 </head>
 <body onload="start()">
 <p id="description"></p>
@@ -26,21 +27,6 @@
             console.log("Test took too long, timing out!");
             finishJSTest();
         }, 30000);
-    }
-
-    function isPixelBlack(pixel)
-    {
-        return pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0 && pixel[3] === 255;
-    }
-
-    function isPixelTransparent(pixel)
-    {
-        return pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0 && pixel[3] === 0;
-    }
-
-    function isPixelWhite(pixel)
-    {
-        return pixel[0] === 255 && pixel[1] === 255 && pixel[2] === 255 && pixel[3] === 255;
     }
 
     function canvasShouldBeBlack()
