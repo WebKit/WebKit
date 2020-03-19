@@ -128,8 +128,9 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
     setProperty(AXPropertyName::SpeechHint, object.speechHintAttributeValue().isolatedCopy());
-    setProperty(AXPropertyName::Title, object.titleAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::SupportsDatetimeAttribute, object.supportsDatetimeAttribute());
+    setProperty(AXPropertyName::Title, object.title().isolatedCopy());
+    setProperty(AXPropertyName::TitleAttributeValue, object.titleAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::DatetimeAttributeValue, object.datetimeAttributeValue());
     setProperty(AXPropertyName::CanSetFocusAttribute, object.canSetFocusAttribute());
     setProperty(AXPropertyName::CanSetTextRangeAttributes, object.canSetTextRangeAttributes());
@@ -1474,12 +1475,6 @@ bool AXIsolatedObject::hasAttributesRequiredForInclusion() const
 }
 
 String AXIsolatedObject::accessibilityDescription() const
-{
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-String AXIsolatedObject::title() const
 {
     ASSERT_NOT_REACHED();
     return String();

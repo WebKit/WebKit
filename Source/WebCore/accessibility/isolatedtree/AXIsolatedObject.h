@@ -321,6 +321,7 @@ private:
         TagName,
         TextLength,
         Title,
+        TitleAttributeValue,
         TitleUIElement,
         URL,
         ValueAutofillButtonType,
@@ -582,7 +583,7 @@ private:
     String speechHintAttributeValue() const override { return stringAttributeValue(AXPropertyName::SpeechHint); }
     String descriptionAttributeValue() const override { return stringAttributeValue(AXPropertyName::Description); }
     String helpTextAttributeValue() const override { return stringAttributeValue(AXPropertyName::HelpText); }
-    String titleAttributeValue() const override { return stringAttributeValue(AXPropertyName::Title); }
+    String titleAttributeValue() const override { return stringAttributeValue(AXPropertyName::TitleAttributeValue); }
 #if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
     bool caretBrowsingEnabled() const override { return boolAttributeValue(AXPropertyName::CaretBrowsingEnabled); }
 #endif
@@ -807,7 +808,7 @@ private:
     void setAccessibleName(const AtomString&) override;
     bool hasAttributesRequiredForInclusion() const override;
     String accessibilityDescription() const override;
-    String title() const override;
+    String title() const override { return stringAttributeValue(AXPropertyName::Title); }
     String helpText() const override;
     bool isARIAStaticText() const override;
     String text() const override;
