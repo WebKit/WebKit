@@ -1,3 +1,13 @@
+2020-03-19  Aakash Jain  <aakash_jain@apple.com>
+
+        commit-queue status-bubble shows incorrect position in queue
+        https://bugs.webkit.org/show_bug.cgi?id=209313
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._queue_position):
+
 2020-03-19  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Add an API returns description of verification errors.

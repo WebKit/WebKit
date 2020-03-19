@@ -275,9 +275,10 @@ class StatusBubble(View):
             # added after the patch was submitted, or build request for that patch was cancelled.
             return None
 
+        sent = 'sent_to_commit_queue' if queue == 'commit' else 'sent_to_buildbot'
         previously_sent_patches = set(Patch.objects
                                           .filter(modified__gte=from_timestamp)
-                                          .filter(sent_to_buildbot=True)
+                                          .filter(**{sent: True})
                                           .filter(obsolete=False)
                                           .filter(modified__lt=patch.modified))
         if parent_queue:
