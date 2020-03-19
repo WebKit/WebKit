@@ -1,3 +1,17 @@
+2020-03-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        WebCoreArgumentCoders should check bufferIsLargeEnoughToContain before allocating buffers
+        https://bugs.webkit.org/show_bug.cgi?id=209219
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::decodeSharedBuffer): Added checking of bufferIsLargeEnoughToContain.
+        (IPC::decodeTypesAndData): Don't allocate a buffer with the
+        decoded size. bufferIsLargeEnoughToContain can't be used in this
+        case because SharedBuffer is encoded as variable length data.
+        Instead, append items one-by-one.
+
 2020-03-18  John Wilander  <wilander@apple.com>
 
         WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener() should call its ephemeral counterpart when appropriate

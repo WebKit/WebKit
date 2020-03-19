@@ -155,6 +155,9 @@ static bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
         return true;
 
 #if USE(UNIX_DOMAIN_SOCKETS)
+    if (!decoder.bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
+        return false;
+
     Vector<uint8_t> data;
     data.grow(bufferSize);
     if (!decoder.decodeFixedLengthData(data.data(), data.size(), 1))
@@ -193,9 +196,12 @@ static bool decodeTypesAndData(Decoder& decoder, Vector<String>& types, Vector<R
 
     ASSERT(dataSize == types.size());
 
-    data.resize(dataSize);
-    for (auto& buffer : data)
-        decodeSharedBuffer(decoder, buffer);
+    for (uint64_t i = 0; i < dataSize; i++) {
+        RefPtr<SharedBuffer> buffer;
+        if (!decodeSharedBuffer(decoder, buffer))
+            return false;
+        data.append(WTFMove(buffer));
+    }
 
     return true;
 }
