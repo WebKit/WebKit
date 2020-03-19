@@ -1,3 +1,10 @@
+2020-03-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed WinCairo build fix following r258665.
+
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        (WebKit::NetworkProcess::clearCacheForAllOrigins): Deleted.
+
 2020-03-18  Kate Cheney  <katherine_cheney@apple.com>
 
         Pass isNavigatingToAppBoundDomain for speculative loads, preconnect tasks and downloads
