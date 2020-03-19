@@ -1,3 +1,15 @@
+2020-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        sanitizeStackForVMImpl writes below stack pointer, triggers huge warning spam from valgrind
+        https://bugs.webkit.org/show_bug.cgi?id=199295
+
+        Reviewed by Mark Lam.
+
+        During sanitizeStackForVMImpl, we should not access to the region beyond the stack-pointer.
+        This patch changes stack-pointer while sanitizeStackForVMImpl is zero-filling the old stack region.
+
+        * llint/LowLevelInterpreter.asm:
+
 2020-03-19  Charlie Turner  <cturner@igalia.com>
 
         Fix many warnings with Clang 7.0 on GTK x86-64 in Debug.
