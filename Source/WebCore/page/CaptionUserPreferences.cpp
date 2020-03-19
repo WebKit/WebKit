@@ -30,6 +30,7 @@
 
 #include "AudioTrackList.h"
 #include "DOMWrapperWorld.h"
+#include "HTMLMediaElement.h"
 #include "LocalizedStrings.h"
 #include "MediaSelectionOption.h"
 #include "Page.h"
@@ -285,15 +286,93 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioT
     return tracksForMenu;
 }
 
-int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaElement*) const
+int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaElement* mediaElement) const
 {
-    if (track->kind() != TextTrack::Kind::Captions && track->kind() != TextTrack::Kind::Subtitles)
+    CaptionDisplayMode displayMode = captionDisplayMode();
+    if (displayMode == Manual)
         return 0;
-    
-    if (!userPrefersSubtitles() && !userPrefersCaptions())
+
+    bool legacyOverride = mediaElement->webkitClosedCaptionsVisible();
+    if (displayMode == AlwaysOn && (!userPrefersSubtitles() && !userPrefersCaptions() && !legacyOverride))
         return 0;
-    
-    return textTrackLanguageSelectionScore(track, preferredLanguages()) + 1;
+    if (track->kind() != TextTrack::Kind::Captions && track->kind() != TextTrack::Kind::Subtitles && track->kind() != TextTrack::Kind::Forced)
+        return 0;
+    if (!track->isMainProgramContent())
+        return 0;
+
+    bool trackHasOnlyForcedSubtitles = track->containsOnlyForcedSubtitles();
+    if (!legacyOverride && ((trackHasOnlyForcedSubtitles && displayMode != ForcedOnly) || (!trackHasOnlyForcedSubtitles && displayMode == ForcedOnly)))
+        return 0;
+
+    Vector<String> userPreferredCaptionLanguages = preferredLanguages();
+
+    if ((displayMode == Automatic && !legacyOverride) || trackHasOnlyForcedSubtitles) {
+
+        if (!mediaElement || !mediaElement->player())
+            return 0;
+
+        String textTrackLanguage = track->validBCP47Language();
+        if (textTrackLanguage.isEmpty())
+            return 0;
+
+        Vector<String> languageList;
+        languageList.reserveCapacity(1);
+
+        String audioTrackLanguage;
+        if (testingMode())
+            audioTrackLanguage = primaryAudioTrackLanguageOverride();
+        else
+            audioTrackLanguage = mediaElement->player()->languageOfPrimaryAudioTrack();
+
+        if (audioTrackLanguage.isEmpty())
+            return 0;
+
+        bool exactMatch;
+        if (trackHasOnlyForcedSubtitles) {
+            languageList.append(audioTrackLanguage);
+            size_t offset = indexOfBestMatchingLanguageInList(textTrackLanguage, languageList, exactMatch);
+
+            // Only consider a forced-only track if it IS in the same language as the primary audio track.
+            if (offset)
+                return 0;
+        } else {
+            languageList.append(defaultLanguage());
+
+            // Only enable a text track if the current audio track is NOT in the user's preferred language ...
+            size_t offset = indexOfBestMatchingLanguageInList(audioTrackLanguage, languageList, exactMatch);
+            if (!offset)
+                return 0;
+
+            // and the text track matches the user's preferred language.
+            offset = indexOfBestMatchingLanguageInList(textTrackLanguage, languageList, exactMatch);
+            if (offset)
+                return 0;
+        }
+
+        userPreferredCaptionLanguages = languageList;
+    }
+
+    int trackScore = 0;
+
+    if (userPrefersCaptions()) {
+        // When the user prefers accessibility tracks, rank is SDH, then CC, then subtitles.
+        if (track->kind() == TextTrack::Kind::Subtitles)
+            trackScore = 1;
+        else if (track->isClosedCaptions())
+            trackScore = 2;
+        else
+            trackScore = 3;
+    } else {
+        // When the user prefers translation tracks, rank is subtitles, then SDH, then CC tracks.
+        if (track->kind() == TextTrack::Kind::Subtitles)
+            trackScore = 3;
+        else if (!track->isClosedCaptions())
+            trackScore = 2;
+        else
+            trackScore = 1;
+    }
+
+    return trackScore + textTrackLanguageSelectionScore(track, userPreferredCaptionLanguages);
 }
 
 int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack* track, const Vector<String>& preferredLanguages) const

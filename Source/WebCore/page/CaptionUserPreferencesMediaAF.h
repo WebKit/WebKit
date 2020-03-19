@@ -65,7 +65,6 @@ public:
 #endif
 
     String captionsStyleSheetOverride() const override;
-    int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const override;
     Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList*) override;
     Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*) override;
     String displayNameForTrack(AudioTrack*) const override;

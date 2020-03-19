@@ -1,3 +1,14 @@
+2020-03-19  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] media/track/track-automatic-subtitles.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=116957
+
+        Reviewed by Adrian Perez de Castro.
+
+        Removed test from expectations.
+
+        * platform/gtk/TestExpectations:
+
 2020-03-19  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, update TestExpectations
