@@ -1,3 +1,13 @@
+2020-03-18  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r258626): webkit-dirs warning
+        https://bugs.webkit.org/show_bug.cgi?id=209221
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Scripts/webkitdirs.pm:
+        (buildCMakeProjectOrExit): Fix Perl Warning. 😎
+
 2020-03-19  Chris Lord  <clord@igalia.com>
 
         Add Chris Lord (clord@igalia.com) to the list of contributors

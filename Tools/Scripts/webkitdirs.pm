@@ -2431,7 +2431,9 @@ sub buildCMakeProjectOrExit($$$@)
 
     exit(exitStatus(cleanCMakeGeneratedProject())) if $clean;
 
-    if (wrapperPrefixIfNeeded() == jhbuildWrapperPrefix()) {
+    my $wrapper = wrapperPrefixIfNeeded();
+    my $jhbuildPrefix = jhbuildWrapperPrefix();
+    if (defined($wrapper) && defined($jhbuildPrefix) && $wrapper == $jhbuildPrefix) {
         if (isGtk() && checkForArgumentAndRemoveFromARGV("--update-gtk")) {
             system("perl", File::Spec->catfile(sourceDir(), "Tools", "Scripts", "update-webkitgtk-libs")) == 0 or die $!;
         }
