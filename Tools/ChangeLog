@@ -1,3 +1,31 @@
+2020-03-18  John Wilander  <wilander@apple.com>
+
+        WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener() should call its ephemeral counterpart when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=209245
+        <rdar://problem/60511121>
+
+        Reviewed by Chris Dumez.
+
+        These changes to the TestRunner makes sure that
+        - statisticsClearInMemoryAndPersistentStore()
+        - statisticsClearInMemoryAndPersistentStoreModifiedSinceHours()
+        ... use their own StatisticsDidClearInMemoryAndPersistentStoreCallbackID
+        and adds the infrastructure for that.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::statisticsClearInMemoryAndPersistentStore):
+        (WTR::TestRunner::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WTR::TestRunner::statisticsCallClearInMemoryAndPersistentStoreCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStore):
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didClearStatisticsInMemoryAndPersistentStore):
+        * WebKitTestRunner/TestInvocation.h:
+
 2020-03-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r257214): Targeted preview animates to the wrong place when dropping in editable content

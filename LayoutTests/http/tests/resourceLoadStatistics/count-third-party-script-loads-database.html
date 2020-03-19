@@ -22,9 +22,9 @@
         switch (document.location.hash) {
             case "":
                 if (window.testRunner && window.internals) {
+                    testRunner.waitUntilDone();
                     setEnableFeature(true, function() {
                         testRunner.setUseITPDatabase(true);
-                        testRunner.waitUntilDone();
                         testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
                         testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
                         document.location.hash = "step1";

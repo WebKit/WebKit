@@ -57,6 +57,17 @@
 
     function runTest() {
         switch (document.location.hash) {
+            case "":
+                if (document.location.origin !== prevalentOrigin)
+                    testFailed("Test is not starting out on " + prevalentOrigin + ".");
+
+                testRunner.setUseITPDatabase(true);
+                setEnableFeature(true, function () {
+                    if (testRunner.isStatisticsPrevalentResource(prevalentOrigin))
+                        testFailed(prevalentOrigin + " was classified as prevalent resource before the test starts.");
+                    document.location.hash = "step1";
+                    runTest();
+                });
             case "#step1":
                 setSessionCookie();
                 setPersistentCookie();
@@ -95,18 +106,6 @@
                 testFailed("Unknown hash.");
                 setEnableFeature(false, finishJSTest);
         }
-    }
-
-    if (document.location.hash === "") {
-        if (document.location.origin !== prevalentOrigin)
-            testFailed("Test is not starting out on " + prevalentOrigin + ".");
-            
-            testRunner.setUseITPDatabase(true);
-        setEnableFeature(true, function () {
-            if (testRunner.isStatisticsPrevalentResource(prevalentOrigin))
-                testFailed(prevalentOrigin + " was classified as prevalent resource before the test starts.");
-            document.location.hash = "step1";
-        });
     }
 </script>
 </body>

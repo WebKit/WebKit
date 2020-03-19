@@ -1,3 +1,22 @@
+2020-03-18  John Wilander  <wilander@apple.com>
+
+        WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener() should call its ephemeral counterpart when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=209245
+        <rdar://problem/60511121>
+
+        Reviewed by Chris Dumez.
+
+        This change makes sure that WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener()
+        calls WebResourceLoadStatisticsStore::requestStorageAccessUnderOpenerEphemeral() for ephemeral
+        sessions.
+
+        Tests: http/tests/storageAccess/deny-storage-access-under-opener-ephemeral.html
+               http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-ephemeral.html
+               http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.html
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener):
+
 2020-03-18  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid calling 'notifyThisWebProcessPoolWasCreated' inside the constructor

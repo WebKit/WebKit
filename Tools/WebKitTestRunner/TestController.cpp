@@ -3631,7 +3631,7 @@ void TestController::statisticsClearInMemoryAndPersistentStore()
     ResourceStatisticsCallbackContext context(*this);
     WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore(websiteDataStore(), &context, resourceStatisticsVoidResultCallback);
     runUntil(context.done, noTimeout);
-    m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
+    m_currentInvocation->didClearStatisticsInMemoryAndPersistentStore();
 }
 
 void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
@@ -3639,7 +3639,7 @@ void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours
     ResourceStatisticsCallbackContext context(*this);
     WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours(websiteDataStore(), hours, &context, resourceStatisticsVoidResultCallback);
     runUntil(context.done, noTimeout);
-    m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
+    m_currentInvocation->didClearStatisticsInMemoryAndPersistentStore();
 }
 
 void TestController::statisticsClearThroughWebsiteDataRemoval()

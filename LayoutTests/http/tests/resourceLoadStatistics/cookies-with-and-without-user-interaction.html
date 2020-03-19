@@ -67,8 +67,8 @@
     }
 
     if (document.location.host === partitionHost && document.location.hash == "" && window.testRunner && window.internals) {
+        testRunner.waitUntilDone();
         setEnableFeature(true, function() {
-            testRunner.waitUntilDone();
             testRunner.dumpChildFramesAsText();
             document.location.hash = "step1";
             if (testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))

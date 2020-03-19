@@ -1880,6 +1880,12 @@ void TestInvocation::notifyDownloadDone()
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
 }
 
+void TestInvocation::didClearStatisticsInMemoryAndPersistentStore()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidClearStatisticsInMemoryAndPersistentStore"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
+}
+
 void TestInvocation::didClearStatisticsThroughWebsiteDataRemoval()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidClearStatisticsThroughWebsiteDataRemoval"));

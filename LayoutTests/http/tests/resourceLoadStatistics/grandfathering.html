@@ -98,11 +98,11 @@
     }
 
     if (document.location.hash === "" && window.testRunner && window.internals) {
+        testRunner.waitUntilDone();
         setEnableFeature(true, function() {
             testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
             testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
 
-            testRunner.waitUntilDone();
             testRunner.dumpChildFramesAsText();
             document.location.hash = "step1";
             runTest();

@@ -72,6 +72,7 @@ public:
 
     void notifyDownloadDone();
 
+    void didClearStatisticsInMemoryAndPersistentStore();
     void didClearStatisticsThroughWebsiteDataRemoval();
     void didSetShouldDowngradeReferrer();
     void didSetShouldBlockThirdPartyCookies();

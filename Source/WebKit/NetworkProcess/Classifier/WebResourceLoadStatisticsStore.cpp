@@ -484,6 +484,9 @@ void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener(Registrable
 {
     ASSERT(RunLoop::isMain());
 
+    if (isEphemeral())
+        return requestStorageAccessUnderOpenerEphemeral(WTFMove(domainInNeedOfStorageAccess), openerPageID, WTFMove(openerDomain));
+
     // It is safe to move the strings to the background queue without isolated copy here because they are r-value references
     // coming from IPC. Strings which are safe to move to other threads as long as nobody on this thread holds a reference
     // to those strings.

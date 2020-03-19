@@ -748,6 +748,7 @@ enum {
     StatisticsDidScanDataRecordsCallbackID,
     StatisticsDidRunTelemetryCallbackID,
     StatisticsDidClearThroughWebsiteDataRemovalCallbackID,
+    StatisticsDidClearInMemoryAndPersistentStoreCallbackID,
     StatisticsDidResetToConsistentStateCallbackID,
     StatisticsDidSetBlockCookiesForHostCallbackID,
     StatisticsDidSetShouldDowngradeReferrerCallbackID,
@@ -2143,7 +2144,7 @@ void TestRunner::setStatisticsPruneEntriesDownTo(unsigned entries)
     
 void TestRunner::statisticsClearInMemoryAndPersistentStore(JSValueRef callback)
 {
-    cacheTestRunnerCallback(StatisticsDidClearThroughWebsiteDataRemovalCallbackID, callback);
+    cacheTestRunnerCallback(StatisticsDidClearInMemoryAndPersistentStoreCallbackID, callback);
 
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("StatisticsClearInMemoryAndPersistentStore"));
     WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr);
@@ -2151,7 +2152,7 @@ void TestRunner::statisticsClearInMemoryAndPersistentStore(JSValueRef callback)
 
 void TestRunner::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours, JSValueRef callback)
 {
-    cacheTestRunnerCallback(StatisticsDidClearThroughWebsiteDataRemovalCallbackID, callback);
+    cacheTestRunnerCallback(StatisticsDidClearInMemoryAndPersistentStoreCallbackID, callback);
 
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("StatisticsClearInMemoryAndPersistentStoreModifiedSinceHours"));
     WKRetainPtr<WKTypeRef> messageBody = adoptWK(WKUInt64Create(hours));
@@ -2273,6 +2274,11 @@ void TestRunner::statisticsCallDidSetFirstPartyWebsiteDataRemovalModeCallback()
 {
     callTestRunnerCallback(StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID);
     m_hasSetFirstPartyWebsiteDataRemovalModeCallback = false;
+}
+
+void TestRunner::statisticsCallClearInMemoryAndPersistentStoreCallback()
+{
+    callTestRunnerCallback(StatisticsDidClearInMemoryAndPersistentStoreCallbackID);
 }
 
 void TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback()

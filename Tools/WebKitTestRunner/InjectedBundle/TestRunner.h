@@ -437,6 +437,7 @@ public:
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours, JSValueRef callback);
     void statisticsClearThroughWebsiteDataRemoval(JSValueRef callback);
     void statisticsDeleteCookiesForHost(JSStringRef hostName, bool includeHttpOnlyCookies);
+    void statisticsCallClearInMemoryAndPersistentStoreCallback();
     void statisticsCallClearThroughWebsiteDataRemovalCallback();
     bool isStatisticsHasLocalStorage(JSStringRef hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);

@@ -327,6 +327,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidClearStatisticsInMemoryAndPersistentStore")) {
+        m_testRunner->statisticsCallClearInMemoryAndPersistentStoreCallback();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidClearStatisticsThroughWebsiteDataRemoval")) {
         m_testRunner->statisticsCallClearThroughWebsiteDataRemovalCallback();
         return;

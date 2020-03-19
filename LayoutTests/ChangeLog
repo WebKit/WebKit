@@ -1,3 +1,39 @@
+2020-03-18  John Wilander  <wilander@apple.com>
+
+        WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener() should call its ephemeral counterpart when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=209245
+        <rdar://problem/60511121>
+
+        Reviewed by Chris Dumez.
+
+        There are new tests added for the code change. The rest of these change are to better
+        align test cases with asynchronous TestRunner functions that landed in
+        https://trac.webkit.org/changeset/258566 and https://trac.webkit.org/changeset/258598.
+
+        While working on the new tests, I found a crasher which Chris Dumez fixed in
+        https://trac.webkit.org/changeset/258562, so there's a dependency on that change.
+
+        * http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction-database.html:
+        * http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker-database.html:
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker.html:
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads-database.html:
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads.html:
+        * http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction-database.php:
+        * http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.php:
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script-database.html:
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script.html:
+        * http/tests/resourceLoadStatistics/grandfathering-database.html:
+        * http/tests/resourceLoadStatistics/grandfathering.html:
+        * http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database.php:
+        * http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.php:
+        * http/tests/storageAccess/deny-storage-access-under-opener-ephemeral-expected.txt: Added.
+        * http/tests/storageAccess/deny-storage-access-under-opener-ephemeral.html: Added.
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-ephemeral-expected.txt: Added.
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-ephemeral.html: Added.
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral-expected.txt: Added.
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.html: Added.
+
 2020-03-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         svg/as-object/object-box-sizing-no-width-height.html is a flaky failure
