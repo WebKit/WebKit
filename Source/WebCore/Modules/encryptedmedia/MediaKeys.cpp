@@ -63,6 +63,8 @@ MediaKeys::MediaKeys(Document& document, bool useDistinctiveIdentifier, bool per
 {
 #if !RELEASE_LOG_DISABLED
     m_instance->setLogger(document.logger(), m_logIdentifier);
+#else
+    UNUSED_PARAM(document);
 #endif
     m_instance->setClient(makeWeakPtr(this));
 }

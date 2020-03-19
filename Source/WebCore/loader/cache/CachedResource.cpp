@@ -330,8 +330,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     platformStrategies()->loaderStrategy()->loadResource(frame, *this, WTFMove(request), m_options, [this, protectedThis = CachedResourceHandle<CachedResource>(this), frameRef = makeRef(frame), loggingAllowed = cachedResourceLoader.isAlwaysOnLoggingAllowed()] (RefPtr<SubresourceLoader>&& loader) {
         m_loader = WTFMove(loader);
         if (!m_loader) {
-            auto& frame = frameRef.get();
-            RELEASE_LOG_IF(loggingAllowed, Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResource::load: Unable to create SubresourceLoader", this, PAGE_ID(frame), FRAME_ID(frame));
+            RELEASE_LOG_IF(loggingAllowed, Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResource::load: Unable to create SubresourceLoader", this, PAGE_ID(frameRef.get()), FRAME_ID(frameRef.get()));
             failBeforeStarting();
             return;
         }

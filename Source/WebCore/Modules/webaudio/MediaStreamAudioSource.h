@@ -58,7 +58,9 @@ private:
 
     String m_deviceId;
     RealtimeMediaSourceSettings m_currentSettings;
+#if USE(AVFOUNDATION)
     size_t m_numberOfFrames { 0 };
+#endif
 };
 
 } // namespace WebCore

@@ -118,7 +118,7 @@ public:
     }
 
     GRefPtr<WebKitPrintOperation> m_printOperation;
-    unsigned m_expectedError;
+    int m_expectedError;
 };
 
 static void testPrintOperationPrint(PrintTest* test, gconstpointer)

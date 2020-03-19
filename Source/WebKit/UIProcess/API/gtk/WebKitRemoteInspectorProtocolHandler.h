@@ -49,7 +49,6 @@ private:
     void targetListChanged(RemoteInspectorClient&) override;
     void connectionClosed(RemoteInspectorClient&) override;
 
-    WebKitWebContext* m_context { nullptr };
     HashMap<String, std::unique_ptr<RemoteInspectorClient>> m_inspectorClients;
     HashSet<WebKitUserContentManager*> m_userContentManagers;
     HashSet<WebKitWebView*> m_webViews;

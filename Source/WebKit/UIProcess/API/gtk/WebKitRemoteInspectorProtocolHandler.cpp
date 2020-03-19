@@ -60,7 +60,6 @@ private:
 };
 
 RemoteInspectorProtocolHandler::RemoteInspectorProtocolHandler(WebKitWebContext* context)
-    : m_context(context)
 {
     webkit_web_context_register_uri_scheme(context, "inspector", [](WebKitURISchemeRequest* request, gpointer userData) {
         static_cast<RemoteInspectorProtocolHandler*>(userData)->handleRequest(request);

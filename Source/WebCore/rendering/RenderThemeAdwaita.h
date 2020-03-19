@@ -62,8 +62,8 @@ private:
     bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
     bool popsMenuBySpaceOrReturn() const final { return true; }
-    void adjustMenuListStyle(RenderStyle&, const Element*) const;
-    void adjustMenuListButtonStyle(RenderStyle&, const Element*) const;
+    void adjustMenuListStyle(RenderStyle&, const Element*) const override;
+    void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
     LengthBox popupInternalPaddingBox(const RenderStyle&) const final;
     bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     bool paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;

@@ -1,3 +1,18 @@
+2020-03-19  Charlie Turner  <cturner@igalia.com>
+
+        Fix many warnings with Clang 7.0 on GTK x86-64 in Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=209146
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/TransformationMatrix.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp:
+        (testDownloadMIMEType):
+        (testContextMenuDownloadActions):
+        * TestWebKitAPI/Tests/WebKitGtk/TestPrinting.cpp:
+
 2020-03-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] REGRESSION(r258626): flatpak is used even when WEBKIT_JHBUILD is set

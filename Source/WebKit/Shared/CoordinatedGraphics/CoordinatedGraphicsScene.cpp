@@ -271,7 +271,7 @@ void CoordinatedGraphicsScene::updateSceneState()
             for (auto& compositionLayer : m_nicosia.state.layers) {
                 auto& layer = texmapLayer(*compositionLayer);
                 compositionLayer->commitState(
-                    [this, &layer, &compositionLayer, &layersByBacking]
+                    [&layer, &layersByBacking]
                     (const Nicosia::CompositionLayer::LayerState& layerState)
                     {
                         if (layerState.delta.positionChanged)

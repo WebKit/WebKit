@@ -1,3 +1,29 @@
+2020-03-19  Charlie Turner  <cturner@igalia.com>
+
+        Fix many warnings with Clang 7.0 on GTK x86-64 in Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=209146
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.cpp:
+        (WebKit::NetworkHTTPSUpgradeChecker::query):
+        * NetworkProcess/NetworkLoadChecker.cpp: The m_isHTTPSUpgradeEnabled
+        ivar is only used on Cocoa platforms, on GTK it is causing warning
+        spam.
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        * NetworkProcess/NetworkLoadChecker.h:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::updateSceneState):
+        *
+        Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        m_inForceRepaint is not being used anymore.
+        (WebKit::ThreadedCompositor::forceRepaint):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * UIProcess/API/glib/WebKitNavigationClient.cpp:
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::RemoteInspectorProtocolHandler):
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.h:
+
 2020-03-19  youenn fablet  <youenn@apple.com>
 
         Make URL::path() return a StringView

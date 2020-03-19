@@ -150,7 +150,7 @@ void TextureMapperGLData::initializeStencil()
 GLuint TextureMapperGLData::getStaticVBO(GLenum target, GLsizeiptr size, const void* data)
 {
     auto addResult = m_vbos.ensure(data,
-        [this, target, size, data] {
+        [target, size, data] {
             GLuint vbo = 0;
             glGenBuffers(1, &vbo);
             glBindBuffer(target, vbo);

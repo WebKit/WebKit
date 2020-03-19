@@ -70,7 +70,9 @@ private:
 
     Ref<RealtimeVideoCaptureSource> m_source;
     RealtimeMediaSourceSettings m_currentSettings;
+#if !RELEASE_LOG_DISABLED
     uint64_t m_cloneCounter { 0 };
+#endif
 };
 
 } // namespace WebCore

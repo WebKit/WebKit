@@ -62,7 +62,6 @@ public:
 
     void setConnection(Ref<SocketConnection>&& connection)
     {
-        g_assert_true(connection.ptr());
         m_connection = WTFMove(connection);
         g_main_loop_quit(m_mainLoop.get());
     }

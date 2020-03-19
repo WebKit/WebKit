@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class GStreamerAudioCapturer : public GStreamerCapturer {
+class GStreamerAudioCapturer final : public GStreamerCapturer {
 public:
     GStreamerAudioCapturer(GStreamerCaptureDevice);
     GStreamerAudioCapturer();

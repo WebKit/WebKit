@@ -317,6 +317,8 @@ void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&
 
         soup_cookie_jar_add_cookie_full(cookieStorage(), cookie.toSoupCookie(), origin.get(), firstPartyURI.get());
 #else
+        UNUSED_PARAM(url);
+        UNUSED_PARAM(firstParty);
         soup_cookie_jar_add_cookie(cookieStorage(), cookie.toSoupCookie());
 #endif
     }

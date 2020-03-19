@@ -62,11 +62,17 @@ NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkRe
     , m_preflightPolicy(preflightPolicy)
     , m_referrer(WTFMove(referrer))
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
+#if PLATFORM(COCOA)
     , m_isHTTPSUpgradeEnabled(isHTTPSUpgradeEnabled)
+#endif
     , m_requestLoadType(requestLoadType)
     , m_schemeRegistry(schemeRegistry)
     , m_networkResourceLoader(makeWeakPtr(networkResourceLoader))
 {
+#if !PLATFORM(COCOA)
+    UNUSED_PARAM(isHTTPSUpgradeEnabled);
+#endif
+
     m_isSameOriginRequest = isSameOrigin(m_url, m_origin.get());
     switch (options.credentials) {
     case FetchOptions::Credentials::Include:

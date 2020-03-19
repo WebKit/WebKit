@@ -5518,24 +5518,18 @@ int Internals::readPreferenceInteger(const String& domain, const String& key)
 }
 
 #if !PLATFORM(COCOA)
-String Internals::encodedPreferenceValue(const String& domain, const String& key)
+String Internals::encodedPreferenceValue(const String&, const String&)
 {
-    UNUSED_PARAM(domain);
-    UNUSED_PARAM(key);
     return emptyString();
 }
 
-String Internals::getUTIFromMIMEType(const String& mimeType)
+String Internals::getUTIFromMIMEType(const String&)
 {
-    UNUSED_PARAM(mimeType);
     return emptyString();
 }
 
-String Internals::getUTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI)
+String Internals::getUTIFromTag(const String&, const String&, const String&)
 {
-    UNUSED_PARAM(tagClass);
-    UNUSED_PARAM(tag);
-    UNUSED_PARAM(conformingToUTI);
     return emptyString();
 }
 

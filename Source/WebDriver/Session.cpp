@@ -608,7 +608,7 @@ void Session::newWindow(Optional<String> typeHint, Function<void (CommandResult&
             parameters = JSON::Object::create();
             parameters->setString("presentationHint"_s, typeHint.value() == "window" ? "Window"_s : "Tab"_s);
         }
-        m_host->sendCommandToBackend("createBrowsingContext"_s, WTFMove(parameters), [this, protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("createBrowsingContext"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
@@ -1550,7 +1550,7 @@ void Session::elementIsFileUpload(const String& elementID, Function<void (Comman
         parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
     parameters->setString("function"_s, isFileUploadScript);
     parameters->setArray("arguments"_s, WTFMove(arguments));
-    m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+    m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError || !response.responseObject) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
@@ -1692,7 +1692,7 @@ void Session::elementIsEditable(const String& elementID, Function<void (CommandR
         parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
     parameters->setString("function"_s, isEditableScript);
     parameters->setArray("arguments"_s, WTFMove(arguments));
-    m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+    m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError || !response.responseObject) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
@@ -1794,7 +1794,7 @@ void Session::setInputFileUploadFiles(const String& elementID, const String& tex
     parameters->setString("frameHandle"_s, m_currentBrowsingContext.valueOr(emptyString()));
     parameters->setString("nodeHandle"_s, elementID);
     parameters->setArray("filenames"_s, WTFMove(filenames));
-    m_host->sendCommandToBackend("setFilesForInputFileUpload"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+    m_host->sendCommandToBackend("setFilesForInputFileUpload"_s, WTFMove(parameters), [protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;

@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class GStreamerVideoCapturer : public GStreamerCapturer {
+class GStreamerVideoCapturer final : public GStreamerCapturer {
 public:
     GStreamerVideoCapturer(GStreamerCaptureDevice);
     GStreamerVideoCapturer(const char* source_factory);

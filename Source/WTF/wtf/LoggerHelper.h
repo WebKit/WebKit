@@ -89,14 +89,13 @@ public:
 
 #define LOGIDENTIFIER (WTF::nullopt)
 
-#define ALWAYS_LOG(...)     ((void)0)
-#define ERROR_LOG(...)      ((void)0)
-#define ERROR_LOG(...)      ((void)0)
-#define WARNING_LOG(...)    ((void)0)
-#define NOTICE_LOG(...)     ((void)0)
-#define INFO_LOG(...)       ((void)0)
-#define DEBUG_LOG(...)      ((void)0)
-#define WILL_LOG(_level_)   false
+#define ALWAYS_LOG(channelName, ...)  (UNUSED_PARAM(channelName))
+#define ERROR_LOG(channelName, ...)   (UNUSED_PARAM(channelName))
+#define WARNING_LOG(channelName, ...) (UNUSED_PARAM(channelName))
+#define NOTICE_LOG(channelName, ...)  (UNUSED_PARAM(channelName))
+#define INFO_LOG(channelName, ...)    (UNUSED_PARAM(channelName))
+#define DEBUG_LOG(channelName, ...)   (UNUSED_PARAM(channelName))
+#define WILL_LOG(_level_)    false
 
 #define ALWAYS_LOG_IF(condition, ...)     ((void)0)
 #define ERROR_LOG_IF(condition, ...)      ((void)0)

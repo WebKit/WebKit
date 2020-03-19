@@ -1,3 +1,16 @@
+2020-03-19  Charlie Turner  <cturner@igalia.com>
+
+        Fix many warnings with Clang 7.0 on GTK x86-64 in Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=209146
+
+        Reviewed by Darin Adler.
+
+        * Session.cpp:
+        (WebDriver::Session::newWindow):
+        (WebDriver::Session::elementIsFileUpload):
+        (WebDriver::Session::elementIsEditable):
+        (WebDriver::Session::setInputFileUploadFiles):
+
 2020-02-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         WebDriver: return invalidSessionID exception if the WebProcess doesn't respond (crashes)

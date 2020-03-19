@@ -35,7 +35,7 @@ public:
 private:
     std::vector<webrtc::SdpVideoFormat> GetSupportedFormats() const override;
     std::unique_ptr<webrtc::VideoEncoder> CreateVideoEncoder(const webrtc::SdpVideoFormat&) final;
-    CodecInfo QueryVideoEncoder(const webrtc::SdpVideoFormat&) const
+    CodecInfo QueryVideoEncoder(const webrtc::SdpVideoFormat&) const override
     {
         GST_FIXME("Detect wether the decoder is HW accelerated");
 

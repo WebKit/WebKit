@@ -672,14 +672,14 @@ static void testDownloadMIMEType(DownloadTest* test, gconstpointer)
     events.clear();
 
     WebKitURIRequest* request = webkit_download_get_request(download.get());
-    WEBKIT_IS_URI_REQUEST(request);
+    g_assert_true(WEBKIT_IS_URI_REQUEST(request));
     ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/unknown"));
 
     auto headers = webkit_uri_request_get_http_headers(request);
     g_assert_nonnull(soup_message_headers_get_one(headers, "User-Agent"));
 
     WebKitURIResponse* response = webkit_download_get_response(download.get());
-    WEBKIT_IS_URI_RESPONSE(response);
+    g_assert_true(WEBKIT_IS_URI_RESPONSE(response));
     g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "application/pdf");
 
     g_assert_nonnull(webkit_download_get_destination(download.get()));
@@ -739,7 +739,7 @@ static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpoin
     g_assert_true(test->m_webView == webkit_download_get_web_view(test->m_download.get()));
 
     WebKitURIRequest* request = webkit_download_get_request(test->m_download.get());
-    WEBKIT_IS_URI_REQUEST(request);
+    g_assert_true(WEBKIT_IS_URI_REQUEST(request));
     ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/test.pdf"));
 
     auto headers = webkit_uri_request_get_http_headers(request);

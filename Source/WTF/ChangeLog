@@ -1,3 +1,15 @@
+2020-03-19  Charlie Turner  <cturner@igalia.com>
+
+        Fix many warnings with Clang 7.0 on GTK x86-64 in Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=209146
+
+        Reviewed by Darin Adler.
+
+        * wtf/LoggerHelper.h: When the RELEASE_LOG is disabled, avoid warning
+        spam about unused channel names. Call sites often create locals for
+        the channel name outside of RELEASE_LOG ifdef's, which cause many
+        unused variable warnings.
+
 2020-03-19  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Unreviewed, build fixes after r258547 when disabling release logging support

@@ -123,6 +123,7 @@ private:
             return true;
         case ProcessTerminationReason::ExceededCPULimit:
         case ProcessTerminationReason::RequestedByClient:
+        case ProcessTerminationReason::RequestedByNetworkProcess:
         case ProcessTerminationReason::NavigationSwap:
             break;
         }

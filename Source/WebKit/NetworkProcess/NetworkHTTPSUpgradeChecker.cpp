@@ -112,6 +112,8 @@ void NetworkHTTPSUpgradeChecker::query(String&& host, PAL::SessionID sessionID, 
         if (stepResult != SQLITE_ROW && stepResult != SQLITE_DONE) {
 #if PLATFORM(COCOA)
             RELEASE_LOG_ERROR_IF_ALLOWED(sessionID, "step failed with error code %d, error message: %{public}s, database path: %{public}s", stepResult, m_database->lastErrorMsg(), networkHTTPSUpgradeCheckerDatabasePath().utf8().data());
+#else
+            UNUSED_VARIABLE(sessionID);
 #endif
             ASSERT_NOT_REACHED();
             RunLoop::main().dispatch([callback = WTFMove(callback)] () mutable {

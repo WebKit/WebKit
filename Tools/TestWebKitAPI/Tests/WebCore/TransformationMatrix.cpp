@@ -1239,6 +1239,8 @@ TEST(TransformationMatrix, Casting)
     EXPECT_DOUBLE_EQ(3.0, caFromWK.m42);
     EXPECT_DOUBLE_EQ(2.0, caFromWK.m43);
     EXPECT_DOUBLE_EQ(1.0, caFromWK.m44);
+#else
+    UNUSED_VARIABLE(test);
 #endif
 
 #if USE(CG)

@@ -100,7 +100,7 @@ public:
         return elem;
     }
 
-    int32_t InitEncode(const webrtc::VideoCodec* codecSettings, int32_t, size_t)
+    int32_t InitEncode(const webrtc::VideoCodec* codecSettings, int32_t, size_t) override
     {
         g_return_val_if_fail(codecSettings, WEBRTC_VIDEO_CODEC_ERR_PARAMETER);
         g_return_val_if_fail(codecSettings->codecType == CodecType(), WEBRTC_VIDEO_CODEC_ERR_PARAMETER);
@@ -188,7 +188,8 @@ public:
         }
     }
 
-    VideoEncoder::EncoderInfo GetEncoderInfo() const {
+    VideoEncoder::EncoderInfo GetEncoderInfo() const override
+    {
         EncoderInfo info;
         info.supports_native_handle = false;
         info.implementation_name = "GStreamer";
@@ -298,10 +299,8 @@ public:
 
     void AddCodecIfSupported(std::vector<webrtc::SdpVideoFormat>* supportedFormats)
     {
-        GstElement* encoder;
-
-        if (createEncoder().get() != nullptr) {
-            webrtc::SdpVideoFormat format = ConfigureSupportedCodec(encoder);
+        if (auto encoder = createEncoder()) {
+            webrtc::SdpVideoFormat format = ConfigureSupportedCodec(encoder.get());
 
             supportedFormats->push_back(format);
         }

@@ -142,7 +142,6 @@ ALWAYS_INLINE VM& CallFrame::deprecatedVM() const
 {
     JSCell* callee = this->callee().asCell();
     ASSERT(callee);
-    ASSERT(&callee->vm());
     return callee->vm();
 }
 

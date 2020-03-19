@@ -1,3 +1,14 @@
+2020-03-19  Charlie Turner  <cturner@igalia.com>
+
+        Fix many warnings with Clang 7.0 on GTK x86-64 in Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=209146
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSCellInlines.h:
+        (JSC::CallFrame::deprecatedVM const): A reference may not be NULL, so
+        this ASSERT() can never trip.
+
 2020-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add a way to mark a rejected promise as handled

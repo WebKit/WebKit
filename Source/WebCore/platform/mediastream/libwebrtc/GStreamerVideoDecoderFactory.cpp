@@ -165,7 +165,7 @@ public:
         return WEBRTC_VIDEO_CODEC_OK;
     }
 
-    int32_t RegisterDecodeCompleteCallback(webrtc::DecodedImageCallback* callback)
+    int32_t RegisterDecodeCompleteCallback(webrtc::DecodedImageCallback* callback) override
     {
         m_imageReadyCb = callback;
 
@@ -320,7 +320,7 @@ public:
 
     virtual const gchar* Caps() = 0;
     virtual webrtc::VideoCodecType CodecType() = 0;
-    const char* ImplementationName() const { return "GStreamer"; }
+    const char* ImplementationName() const override { return "GStreamer"; }
     virtual const gchar* Name() = 0;
 
 protected:
@@ -336,7 +336,6 @@ private:
     GstElement* m_sink;
     GstElement* m_src;
 
-    GstVideoInfo m_info;
     webrtc::DecodedImageCallback* m_imageReadyCb;
 
     StdMap<GstClockTime, InputTimestamps> m_dtsPtsMap;

@@ -167,7 +167,6 @@ void ThreadedCompositor::forceRepaint()
     // in a way that doesn't starve out the underlying graphics buffers.
 #if PLATFORM(GTK) && !USE(WPE_RENDERER)
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
-        SetForScope<bool> change(m_inForceRepaint, true);
         renderLayerTree();
     });
 #endif
