@@ -1,3 +1,15 @@
+2020-03-19  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] extract-built-product fails after r258612
+        https://bugs.webkit.org/show_bug.cgi?id=209285
+
+        extractBuiltProduct also references the old name for the
+        requirements on wincairo.
+
+        Reviewed by Ross Kirsling.
+
+        * BuildSlaveSupport/built-product-archive:
+
 2020-03-19  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Release logs not sent to journald when running within the SDK runtime
