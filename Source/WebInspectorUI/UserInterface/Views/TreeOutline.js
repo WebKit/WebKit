@@ -360,12 +360,12 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         let child = this.children[childIndex];
         let parent = child.parent;
 
-        if (child.deselect(suppressOnDeselect)) {
-            if (child.previousSibling && !suppressSelectSibling)
+        if (child.deselect(suppressOnDeselect) && !suppressSelectSibling) {
+            if (child.previousSibling)
                 child.previousSibling.select(true, false);
-            else if (child.nextSibling && !suppressSelectSibling)
+            else if (child.nextSibling)
                 child.nextSibling.select(true, false);
-            else if (!suppressSelectSibling)
+            else
                 parent.select(true, false);
         }
 
