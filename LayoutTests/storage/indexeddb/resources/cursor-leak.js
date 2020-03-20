@@ -27,7 +27,7 @@ function onOpen(evt)
     tx = db.transaction('store', 'readonly');
     store = tx.objectStore('store');
     cursorObservers = [];
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < 1000; ++i) {
         store.openCursor().onsuccess = (event) => {
             cursor = event.target.result
             cursor.key.cursor = cursor;
@@ -39,7 +39,7 @@ function onOpen(evt)
     }
     tx.oncomplete = function() {
         db.close();
-        shouldBe('cursorObservers.length', '10000');
+        shouldBe('cursorObservers.length', '1000');
 
         gc();
 
