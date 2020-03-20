@@ -72,7 +72,7 @@ WI.TabBar = class TabBar extends WI.View
 
     static get horizontalPadding()
     {
-        return (WI.dockConfiguration !== WI.DockConfiguration.Undocked) ? 8 : 0; // Keep in sync with `body.docked .tab-bar .tabs`
+        return (WI.dockConfiguration === WI.DockConfiguration.Undocked) ? 0 : 8; // Keep in sync with `body.docked .tab-bar .tabs`
     }
 
     // Public
@@ -423,6 +423,12 @@ WI.TabBar = class TabBar extends WI.View
     get normalTabCount()
     {
         return this._tabBarItems.filter((item) => !(item instanceof WI.PinnedTabBarItem)).length;
+    }
+
+    resetCachedWidths()
+    {
+        for (let tabBarItem of this._tabBarItems)
+            tabBarItem[WI.TabBar.CachedWidthSymbol] = 0;
     }
 
     // Protected

@@ -53,7 +53,7 @@ WI.TabBarItem = class TabBarItem
 
     static get horizontalMargin()
     {
-        return (WI.dockConfiguration !== WI.DockConfiguration.Undocked) ? 4 : 0; // Keep in sync with `body.docked .tab-bar > .tabs > .item`
+        return (WI.dockConfiguration === WI.DockConfiguration.Undocked) ? 0 : 4; // Keep in sync with `body.docked .tab-bar > .tabs > .item`
     }
 
     // Public

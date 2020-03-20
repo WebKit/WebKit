@@ -1,3 +1,49 @@
+2020-03-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r257835): close and undock buttons are shown in remote inspector
+        https://bugs.webkit.org/show_bug.cgi?id=209346
+
+        Reviewed by Timothy Hatcher.
+
+        In the case of remote inspection, the frontend is told that docking is not available before
+        it is even shown (via `InspectorFrontendAPI.setDockingUnavailable`). Additionally, the
+        backend (`WebKit::RemoteWebInspectorUI`) never tells the frontend what dock side it actually
+        is (via `InspectorFrontendAPI.setDockSide`), as there would be no point, given that docking
+        is unavailable, meaning that the frontend must be undocked.
+
+        Before r257835, the docking state held by `WI._dockConfiguration` and `WI.docked`, neither
+        of which would be set as described above. As a result, in `WI._updateDockNavigationItems`
+        `WI.docked` would be undefined, which is falsy, thereby causing all docking navigation items
+        to be hidden. After r257835, these were merged into one `WI.dockConfiguration`, which is
+        compared against `WI.DockConfiguration.Undocked` instead of just being falsy checked,
+        meaning it would result in `true` which would not hide all of the docking navigation items.
+
+        Change the logic of `WI.updateDockingAvailability` such that if the frontend is told that
+        docking is unavailable, mark the `WI.dockConfiguration` as `WI.DockConfiguration.Undocked`.
+        This way, the frontend will always have a valid value for `WI.dockConfiguration`.
+
+        Additionally, further leverage `InspectorFrontendHost.supportsDockSide` to only create the
+        docking navigation items that are actually supported by the host.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI.updateDockingAvailability):
+        (WI.resizeDockedFrameMouseDown):
+        (WI.dockedConfigurationSupportsSplitContentBrowser):
+        (WI._updateDockNavigationItems):
+        (WI._updateTabBarDividers):
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.get horizontalPadding):
+        (WI.TabBar.prototype.resetCachedWidths): Added.
+        When switching dock configurations, we need to reset the cached width of each tab bar item,
+        as otherwise, a large width cached when undocked can incorrectly be used when docked.
+
+        * UserInterface/Views/TabBarItem.js:
+        (WI.TabBarItem.get horizontalMargin):
+        Replace negative checks of `WI.dockConfiguration` with positive ones that can't be fooled by
+        a falsy value.
+
 2020-03-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: AXI: disabled buttons shouldn't be focusable
