@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 #include "JIT.h"
 
+#include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "DirectArguments.h"
 #include "GCAwareJITStubRoutine.h"

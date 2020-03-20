@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "APICast.h"
 #include "ArgList.h"
+#include <wtf/CagedUniquePtr.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>

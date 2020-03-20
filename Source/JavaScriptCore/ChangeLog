@@ -1,3 +1,19 @@
+2020-03-20  Justin Michaud  <justin@justinmichaud.com>
+
+        Fix JSCOnly build without unified sources
+        https://bugs.webkit.org/show_bug.cgi?id=209343
+
+        Reviewed by Keith Miller.
+
+        I managed to get clangd to work for code completion using the following command:
+
+        ./Tools/Scripts/build-webkit --jsc-only --cmakeargs="-DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DENABLE_UNIFIED_BUILDS=OFF" && compdb -p WebKitBuild/Release/ list > compile_commands.json
+
+        This patch fixes the build for non-unified sources, and adds some extra clangd files to .gitignore.
+
+        * API/MarkedJSValueRefArray.h:
+        * jit/JITPropertyAccess.cpp:
+
 2020-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Upstream a variety of Cocoa-platform HAVE and ENABLE macros

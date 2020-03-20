@@ -26,6 +26,8 @@ xcuserdata
 tags
 *~
 .*.sw[a-p]
+.clangd
+compile_commands.json
 
 # Ignore CMake caches outside of the build directory.
 __cmake_systeminformation/
