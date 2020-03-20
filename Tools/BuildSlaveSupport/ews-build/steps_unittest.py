@@ -36,8 +36,8 @@ from twisted.trial import unittest
 
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
-                   CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckStyle, CleanBuild,
-                   CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCToT, CompileWebKit,
+                   CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
+                   CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCToT, CompileWebKit,
                    CompileWebKitToT, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, ExtractBuiltProduct, ExtractTestResults,
                    FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
@@ -1542,6 +1542,16 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
         self.setProperty('revert', True)
+        self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
+        return self.runStep()
+
+    def test_skip_for_mac_wk2_passed_patch_on_commit_queue(self):
+        self.configureStep()
+        self.setProperty('patch_id', '1234')
+        self.setProperty('buildername', 'Commit-Queue')
+        self.setProperty('fullPlatform', 'mac')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('passed_mac_wk2', True)
         self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
         return self.runStep()
 
@@ -3282,6 +3292,34 @@ class TestValidateCommiterAndReviewer(BuildStepMixinAdditions, unittest.TestCase
         self.expectHidden(False)
         self.expectOutcome(result=FAILURE, state_string='committer@webkit.org does not have reviewer permissions')
         return self.runStep()
+
+
+class TestCheckPatchStatusOnEWSQueues(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        CheckPatchStatusOnEWSQueues.get_patch_status = lambda cls, patch_id, queue: SUCCESS
+        self.setupStep(CheckPatchStatusOnEWSQueues())
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=SUCCESS, state_string='Checked patch status on other queues')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('passed_mac_wk2'), True)
+        return rc
+
+    def test_failure(self):
+        self.setupStep(CheckPatchStatusOnEWSQueues())
+        self.setProperty('patch_id', '1234')
+        CheckPatchStatusOnEWSQueues.get_patch_status = lambda cls, patch_id, queue: FAILURE
+        self.expectOutcome(result=SUCCESS, state_string='Checked patch status on other queues')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('passed_mac_wk2'), None)
+        return rc
+
 
 class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

@@ -1,5 +1,23 @@
 2020-03-20  Aakash Jain  <aakash_jain@apple.com>
 
+        commit-queue should skip building and testing if patch already passed tests on mac-wk2 queue
+        https://bugs.webkit.org/show_bug.cgi?id=208938
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTests.doStepIf): Skip testing if patch already passed mac-wk2 tests.
+        (CheckPatchStatusOnEWSQueues): Build-step to check patch status on other queues.
+        (CheckPatchStatusOnEWSQueues.get_patch_status):
+        (CheckPatchStatusOnEWSQueues.start):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (test_skip_for_mac_wk2_passed_patch_on_commit_queue): Added unit-tests.
+        * BuildSlaveSupport/ews-build/factories.py: Added build-step to check the patch status on other queues.
+        * BuildSlaveSupport/ews-build/factories_unittest.py: Updated unit-test.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py: Added the new step status to STEPS_TO_HIDE.
+
+2020-03-20  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Better organize patch status api data
         https://bugs.webkit.org/show_bug.cgi?id=209342
 

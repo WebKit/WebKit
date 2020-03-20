@@ -25,7 +25,7 @@ from buildbot.process import factory
 from buildbot.steps import trigger
 
 from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance,
-                   CheckStyle, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
+                   CheckPatchStatusOnEWSQueues, CheckStyle, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, ExtractBuiltProduct, FindModifiedChangeLogs, InstallGtkDependencies,
                    InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
                    RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests,
@@ -215,6 +215,7 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(KillOldProcesses())
         self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
+        self.addStep(CheckPatchStatusOnEWSQueues())
         self.addStep(RunWebKitTests())
         self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
         self.addStep(CheckOutSource())

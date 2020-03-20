@@ -191,6 +191,7 @@ class TestCommitQueueFactory(TestCase):
             _BuildStepFactory(steps.CompileWebKit, skipUpload=True),
             _BuildStepFactory(steps.KillOldProcesses),
             _BuildStepFactory(steps.ValidatePatch, addURLs=False, verifycqplus=True),
+            _BuildStepFactory(steps.CheckPatchStatusOnEWSQueues),
             _BuildStepFactory(steps.RunWebKitTests),
             _BuildStepFactory(steps.ValidatePatch, addURLs=False, verifycqplus=True),
             _BuildStepFactory(steps.CheckOutSource),

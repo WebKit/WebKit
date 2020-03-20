@@ -37,7 +37,8 @@ import os
 
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
-EWS_URL = 'https://ews-build.webkit.org/'
+EWS_BUILD_URL = 'https://ews-build.webkit.org/'
+EWS_URL = 'https://ews.webkit.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 
@@ -1634,7 +1635,8 @@ class RunWebKitTests(shell.Test):
         self.incorrectLayoutLines = []
 
     def doStepIf(self, step):
-        return not (self.getProperty('revert') and self.getProperty('buildername', '').lower() == 'commit-queue')
+        return not ((self.getProperty('buildername', '').lower() == 'commit-queue') and
+                    (self.getProperty('revert') or self.getProperty('passed_mac_wk2')))
 
     def start(self):
         self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
@@ -2050,7 +2052,7 @@ class DownloadBuiltProduct(shell.ShellCommand):
 class DownloadBuiltProductFromMaster(DownloadBuiltProduct):
     command = ['python', 'Tools/BuildSlaveSupport/download-built-product',
         WithProperties('--%(configuration)s'),
-        WithProperties(EWS_URL + 'archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
+        WithProperties(EWS_BUILD_URL + 'archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
     haltOnFailure = True
     flunkOnFailure = True
 
@@ -2582,3 +2584,39 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         if self.results != SUCCESS:
             return {u'step': u'Failed to push commit to Webkit repository'}
         return shell.ShellCommand.getResultSummary(self)
+
+
+class CheckPatchStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
+    name = 'check-status-on-other-ewses'
+    descriptionDone = ['Checked patch status on other queues']
+
+    def get_patch_status(self, patch_id, queue):
+        url = '{}status/{}'.format(EWS_URL, patch_id)
+        try:
+            response = requests.get(url)
+            if response.status_code != 200:
+                self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(url, response.status_code))
+                return -1
+            queue_data = response.json().get(queue)
+            if not queue_data:
+                return -1
+            return queue_data.get('state')
+        except Exception as e:
+            self._addToLog('stdio', 'Failed to access {}\n'.format(url))
+            return -1
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+    def start(self):
+        patch_id = self.getProperty('patch_id', '')
+        patch_status_on_mac_wk2 = self.get_patch_status(patch_id, 'mac-wk2')
+        if patch_status_on_mac_wk2 == SUCCESS:
+            self.setProperty('passed_mac_wk2', True)
+        self.finished(SUCCESS)
+        return None
