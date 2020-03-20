@@ -1,5 +1,14 @@
 2020-03-20  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ iOS wk2 ] animations/animation-direction-reverse.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=209362
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-03-20  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         Update imported/w3c/web-platform-tests/css/css-text/line-break/line-break-{strict,normal}-015.xht
         https://bugs.webkit.org/show_bug.cgi?id=209250
 
