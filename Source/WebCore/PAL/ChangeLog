@@ -1,5 +1,16 @@
 2020-03-20  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        Unreviewed, reverting r258762.
+
+        This commit broke the Catalina build
+
+        Reverted changeset:
+
+        "Fix the build"
+        https://trac.webkit.org/changeset/258762
+
+2020-03-20  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         Unreviewed, reverting r258748.
 
         This commit broke the Catalina build
