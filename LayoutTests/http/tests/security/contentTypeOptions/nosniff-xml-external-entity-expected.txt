@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=application/pdf' because non XML External Entity MIME types are not allowed when 'X-Content-Type-Options: nosniff' is given.
+CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/html' because non XML External Entity MIME types are not allowed when 'X-Content-Type-Options: nosniff' is given.
+CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/javascript' because non XML External Entity MIME types are not allowed when 'X-Content-Type-Options: nosniff' is given.
+CONSOLE MESSAGE: line 42: Executed script with MIME type: 'application/xml'.
+CONSOLE MESSAGE: line 42: Executed script with MIME type: 'text/xml'.
+CONSOLE MESSAGE: line 42: Executed script with MIME type: 'application/xml-external-parsed-entity'.
+CONSOLE MESSAGE: line 42: Executed script with MIME type: 'text/xml-external-parsed-entity'.
+Check that xml external entity resources loaded with an 'X-Content-Type-Options: nosniff' header are correctly accepted or blocked based on the MIME type.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.scriptsSuccessfullyLoaded is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
