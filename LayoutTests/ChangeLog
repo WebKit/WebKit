@@ -1,3 +1,16 @@
+2020-03-20  David Kilzer  <ddkilzer@apple.com>
+
+        Fix name of "X-Content-Type:" HTTP header in console logging
+        <https://webkit.org/b/209348>
+
+        Reviewed by Devin Rousso.
+
+        * http/tests/security/contentTypeOptions/nosniff-dynamic-script-blocked-expected.txt:
+        * http/tests/security/contentTypeOptions/nosniff-script-blocked-expected.txt:
+        * http/tests/security/contentTypeOptions/nosniff-script-without-content-type-blocked-expected.txt:
+        - Update test results for the correct name of the header:
+          "X-Content-Type-Options:".
+
 2020-03-20  Ali Juma  <ajuma@chromium.org>
 
         Intersection Observer intersections are wrong with zooming

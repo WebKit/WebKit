@@ -91,7 +91,7 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource)
             ConsoleMessage {
                 MessageSource::Security,
                 MessageLevel::Error,
-                makeString("Refused to execute ", m_cachedScript->url().stringCenterEllipsizedToLength(), " as script because \"X-Content-Type: nosniff\" was given and its Content-Type is not a script MIME type.")
+                makeString("Refused to execute ", m_cachedScript->url().stringCenterEllipsizedToLength(), " as script because \"X-Content-Type-Options: nosniff\" was given and its Content-Type is not a script MIME type.")
             }
         };
     }
