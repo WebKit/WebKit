@@ -271,7 +271,7 @@ static Class scrollViewScrollIndicatorClass()
 
 @end
 
-#if HAVE(UI_REMOTE_VIEW)
+#if USE(UIREMOTEVIEW_CONTEXT_HOSTING)
 @implementation WKUIRemoteView
 
 - (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid contextID:(uint32_t)contextID

@@ -54,8 +54,6 @@
 - (void) goToPageIndex:(NSInteger) pageIndex;
 - (void) updatePDFViewLayout;
 
-+ (UIColor *)backgroundColor;
-
 - (void) beginPDFViewRotation;
 - (void) endPDFViewRotation;
 

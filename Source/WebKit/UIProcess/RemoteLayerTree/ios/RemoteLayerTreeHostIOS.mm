@@ -43,7 +43,7 @@ using namespace WebCore;
 
 static RetainPtr<UIView> createRemoteView(pid_t pid, uint32_t contextID)
 {
-#if HAVE(UI_REMOTE_VIEW)
+#if USE(UIREMOTEVIEW_CONTEXT_HOSTING)
     // FIXME: Remove this respondsToSelector check when possible.
     static BOOL canUseUIRemoteView;
     static std::once_flag initializeCanUseUIRemoteView;

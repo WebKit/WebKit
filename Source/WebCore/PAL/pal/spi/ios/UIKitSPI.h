@@ -38,7 +38,6 @@ WTF_EXTERN_C_END
 #import <UIKit/UIApplicationSceneConstants.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIColor_Private.h>
-#import <UIKit/UIFocusRingStyle.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIInterface_Private.h>
 #import <UIKit/UIScreen_Private.h>
@@ -56,6 +55,9 @@ WTF_EXTERN_C_END
 - (CGFloat)_iOSMacScale;
 @end
 
+#if __has_include(<UIKit/UIFocusRingStyle.h>)
+#import <UIKit/UIFocusRingStyle.h>
+#endif
 
 #else // USE(APPLE_INTERNAL_SDK)
 
@@ -146,19 +148,17 @@ typedef enum {
 @property (nonatomic, copy, setter=_setTitle:) NSString *_title;
 @end
 
-#if ENABLE(FULL_KEYBOARD_ACCESS)
-@interface UIFocusRingStyle : NSObject
-+ (CGFloat)cornerRadius;
-+ (CGFloat)maxAlpha;
-+ (CGFloat)alphaThreshold;
-@end
-#endif
-
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(FULL_KEYBOARD_ACCESS)
 @interface UIColor (IPI)
 + (UIColor *)keyboardFocusIndicatorColor;
+@end
+
+@interface UIFocusRingStyle (Staging_47831886)
++ (CGFloat)cornerRadius;
++ (CGFloat)maxAlpha;
++ (CGFloat)alphaThreshold;
 @end
 #endif
 

@@ -120,7 +120,7 @@
     if (!(self = [super initWithFrame:frame webView:webView]))
         return nil;
 
-#if HAVE(PDF_HOST_VIEW_CONTROLLER_WITH_BACKGROUND_COLOR)
+#if USE(PDFKIT_BACKGROUND_COLOR)
     UIColor *backgroundColor = PDFHostViewController.backgroundColor;
 #else
     UIColor *backgroundColor = UIColor.grayColor;
