@@ -117,7 +117,7 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
     ASSERT(size);
 
-    mach_vm_address_t address;
+    mach_vm_address_t address = 0;
     kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, round_page(size), VM_FLAGS_ANYWHERE);
     if (kr != KERN_SUCCESS) {
 #if RELEASE_LOG_DISABLED

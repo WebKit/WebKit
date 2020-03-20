@@ -1,3 +1,14 @@
+2020-03-19  David Kilzer  <ddkilzer@apple.com>
+
+        SharedMemory::allocate() should initialize `address`
+        <https://webkit.org/b/209315>
+        <rdar://problem/60606720>
+
+        Reviewed by Geoffrey Garen.
+
+        * Platform/cocoa/SharedMemoryCocoa.cpp:
+        (WebKit::SharedMemory::allocate): Initialize `address` to zero.
+
 2020-03-19  Tim Horton  <timothy_horton@apple.com>
 
         Unable to build WebKit with iOS 13.4 SDK
