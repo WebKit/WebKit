@@ -1,3 +1,50 @@
+2020-03-20  Daniel Bates  <dabates@apple.com>
+
+        Replace "deferred element focus" functionality with alternative solution
+        https://bugs.webkit.org/show_bug.cgi?id=201608
+
+        Reviewed by Wenson Hsieh.
+
+        This is a partial revert of r190278. Have the web process perform a layout, if needed, when
+        computing focus element information and send an editor state update immediately. If layout is
+        not needed then explicitly schedule a full editor state update.
+
+        Currently, fetching focus element information neither sends an editor state update nor
+        schedules one. As a result, when the web process tells the UI process to focus an element the
+        UI process may need to defer doing so if the last received update did not include details
+        that require up-to-date layout (e.g. the bounding rect of the focused element, which is used
+        to scroll and zoom to center the focused element). The UI process then schedules an async message
+        to the web process to fetch the full editor state, which will arrive in a layer tree commit message
+        from the web process. (Note that the UI process schedules this request to ensure the web process
+        knows that it is waiting for a layer tree commit. The web process can use this info to expedite
+        a layer tree commit, if needed). This deferral mechanism complicates the element focusing and
+        defocusing logic in the UI process and prevents fixing <https://bugs.webkit.org/show_bug.cgi?id=199960>.
+        Instead remove this deferral concept and have the web process ensure that a full editor state
+        update is sent or will be sent when computing the focus element information.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        (WebKit::WebPageProxy::elementDidFocus):
+        (WebKit::WebPageProxy::elementDidBlur):
+        Remove bookkeeping code to track a deferred focus event or to perform the deferred event
+        on layer tree commit.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::elementDidFocus):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getFocusedElementInformation): Save off whether a layout is needed then
+        tell the page to layout if needed. If a layout was needed then send an editor state update
+        immediately (it's an async message): this update will be a "full editor state" update that
+        includes up-to-date layout details. Otherwise, schedule a full editor state update. While I
+        am here, I updated the code to take out a ref on the focused frame's document before performing
+        a layout because layout can cause arbitrary JavaScript execution that could detach the document
+        from its frame view as part of destroying the document. Document destruction is detected by
+        checking whether the document has been detached from its frame view. If this happens then
+        bail out as there is no need to get focus element info.
+
 2020-03-20  Don Olmstead  <don.olmstead@sony.com>
 
         [GPUP] Add PlatformLayerContainer to hold pointer to PlatformLayer

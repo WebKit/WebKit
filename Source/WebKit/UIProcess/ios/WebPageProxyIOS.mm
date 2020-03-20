@@ -404,9 +404,6 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
         m_hitRenderTreeSizeThreshold = true;
         didReachLayoutMilestone(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold);
     }
-
-    if (auto arguments = std::exchange(m_deferredElementDidFocusArguments, nullptr))
-        pageClient().elementDidFocus(arguments->information, arguments->userIsInteracting, arguments->blurPreviousNode, arguments->activityStateChanges, arguments->userData.get());
 }
 
 bool WebPageProxy::updateLayoutViewportParameters(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
@@ -987,19 +984,12 @@ void WebPageProxy::elementDidFocus(const FocusedElementInformation& information,
     m_pendingInputModeChange = WTF::nullopt;
 
     API::Object* userDataObject = process().transformHandlesToObjects(userData.object()).get();
-    if (m_editorState.isMissingPostLayoutData) {
-        // FIXME: We should try to eliminate m_deferredElementDidFocusArguments altogether, in favor of only deferring actions that are dependent on post-layout editor state information.
-        m_deferredElementDidFocusArguments = makeUnique<ElementDidFocusArguments>(ElementDidFocusArguments { information, userIsInteracting, blurPreviousNode, activityStateChanges, userDataObject });
-        return;
-    }
-
     pageClient().elementDidFocus(information, userIsInteracting, blurPreviousNode, activityStateChanges, userDataObject);
 }
 
 void WebPageProxy::elementDidBlur()
 {
     m_pendingInputModeChange = WTF::nullopt;
-    m_deferredElementDidFocusArguments = nullptr;
     pageClient().elementDidBlur();
 }
 

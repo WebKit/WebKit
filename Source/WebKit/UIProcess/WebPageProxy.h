@@ -395,14 +395,6 @@ typedef GenericCallback<const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t> 
 typedef GenericCallback<const WebCore::IntPoint&, uint32_t, uint32_t> TouchesCallback;
 typedef GenericCallback<const Vector<WebCore::SelectionRect>&> SelectionRectsCallback;
 typedef GenericCallback<const FocusedElementInformation&> FocusedElementInformationCallback;
-struct ElementDidFocusArguments {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    FocusedElementInformation information;
-    bool userIsInteracting;
-    bool blurPreviousNode;
-    OptionSet<WebCore::ActivityState::Flag> activityStateChanges;
-    RefPtr<API::Object> userData;
-};
 #endif
 
 #if PLATFORM(COCOA)
@@ -2665,7 +2657,6 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     Function<bool()> m_deviceOrientationUserPermissionHandlerForTesting;
-    std::unique_ptr<ElementDidFocusArguments> m_deferredElementDidFocusArguments;
     bool m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement { false };
     WebCore::FloatSize m_maximumUnobscuredSize;
     bool m_lastObservedStateWasBackground { false };

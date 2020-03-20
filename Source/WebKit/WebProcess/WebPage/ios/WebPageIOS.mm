@@ -3037,10 +3037,22 @@ void WebPage::focusNextFocusedElement(bool isForward, CallbackID callbackID)
 
 void WebPage::getFocusedElementInformation(FocusedElementInformation& information)
 {
-    auto focusedElement = m_focusedElement.copyRef();
-    layoutIfNeeded();
-    if (focusedElement != m_focusedElement)
+    RefPtr<Document> document = m_page->focusController().focusedOrMainFrame().document();
+    if (!document || !document->view())
         return;
+
+    auto focusedElement = m_focusedElement.copyRef();
+    bool willLayout = document->view()->needsLayout();
+    layoutIfNeeded();
+
+    // Layout may have detached the document or caused a change of focus.
+    if (!document->view() || focusedElement != m_focusedElement)
+        return;
+
+    if (willLayout)
+        sendEditorStateUpdate();
+    else
+        scheduleFullEditorStateUpdate();
 
     information.lastInteractionLocation = m_lastInteractionLocation;
     if (auto elementContext = contextForElement(*focusedElement))

@@ -5627,8 +5627,6 @@ void WebPage::elementDidFocus(WebCore::Element& element)
         send(Messages::WebPageProxy::SetEditableElementIsFocused(!element.hasTagName(WebCore::HTMLNames::selectTag)));
 #endif
         m_recentlyBlurredElement = nullptr;
-
-        scheduleFullEditorStateUpdate();
     }
 }
 
