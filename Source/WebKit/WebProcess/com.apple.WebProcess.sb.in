@@ -406,12 +406,11 @@
     (xpc-service-name "com.apple.print.normalizerd")
 )
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101600
 (allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-    (with report) (with telemetry)
-#endif
     (xpc-service-name-regex #"\.apple-extension-service$")
 )
+#endif
 
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)

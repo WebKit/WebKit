@@ -1,3 +1,17 @@
+2020-03-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [macoOS] Remove access to 'apple-extension-services' from the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=209324
+        <rdar://problem/58089661>
+
+        Reviewed by Per Arne Vollan.
+
+        Remove the last of permissions for the unused 'apple-extension-services' mach service.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-03-19  Tim Horton  <timothy_horton@apple.com>
 
         Upstream a variety of Cocoa-platform HAVE and ENABLE macros
