@@ -479,8 +479,6 @@ webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 ########################################
 ### START OF (6) New WebKit2-only failures in Yosemite
 
-media/video-background-tab-playback.html [ Pass Failure ]
-
 webkit.org/b/140607 http/tests/navigation/navigation-interrupted-by-fragment.html [ Pass Timeout ]
 
 webkit.org/b/141322 [ Debug ] fast/images/destroyed-image-load-event.html [ Pass Timeout ]

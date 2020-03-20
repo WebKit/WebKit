@@ -4,12 +4,21 @@
         <script src=video-test.js></script>
         <script>
             var state = 0;
+            var retryCount = 0;
+            const maxRetryCount = 10;
 
             function checkState()
             {
-                consoleWrite("<br>** 100ms timer fired...");
                 switch (state) {
                 case "background":
+                    if (!video.paused) {
+                        if (++retryCount >= maxRetryCount) 
+                            failTest(`Video did not pause after switching to backgound.`);
+                        else
+                            setTimeout(checkState, 100);
+                        return;
+                    }
+
                     testExpected("video.paused", true);
                     state = "foreground";
                     consoleWrite("<br>** Simulate switch back to foreground, video should remain paused.");

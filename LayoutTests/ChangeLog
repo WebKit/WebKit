@@ -1,3 +1,17 @@
+2020-03-19  Eric Carlson  <eric.carlson@apple.com>
+
+        [ Mac WK1 ] REGRESSION (r240537) Layout Test media/video-background-tab-playback.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196502
+        <rdar://problem/49532580>
+
+        Reviewed by Jer Noble.
+
+        * media/video-background-tab-playback-expected.txt:
+        * media/video-background-tab-playback.html: Don't assume the state will change in 100ms.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-19  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed test fixing.
