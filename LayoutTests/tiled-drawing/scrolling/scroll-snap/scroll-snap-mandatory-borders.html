@@ -114,6 +114,7 @@
 
             var startPosX = windowPosition.x + 0.5 * divTarget.clientWidth;
             var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
+            eventSender.monitorWheelEvents();
             eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
@@ -161,6 +162,7 @@
 
             var startPosX = windowPosition.x + divTarget.clientWidth - 10;
             var startPosY = windowPosition.y + 50;
+            eventSender.monitorWheelEvents();
             eventSender.mouseMoveTo(startPosX, startPosY);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
@@ -176,7 +178,6 @@
         function onLoad()
         {
             if (window.eventSender) {
-                eventSender.monitorWheelEvents();
                 internals.setPlatformMomentumScrollingPredictionEnabled(false);
                 setTimeout(function() { scrollGlideTest('horizontalTarget') }, 0);
             } else {

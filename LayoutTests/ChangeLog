@@ -1,3 +1,11 @@
+2020-03-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed test fixing.
+
+        Tests that fire multiple wheel event sequences need to call eventSender.monitorWheelEvents() between each one.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html:
+
 2020-03-19  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         REGRESSION (r258707): storage/indexeddb/cursor-leak.html is flaky timing out
