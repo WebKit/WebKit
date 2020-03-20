@@ -37,7 +37,6 @@ class Status(View):
             return {}
 
         return {
-            'name': queue,
             'state': build.result,
             'url': 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number),
             'timestamp': build.complete_at,
@@ -47,17 +46,17 @@ class Status(View):
         if not patch:
             return []
 
-        statuses = []
+        statuses = {}
         if patch.sent_to_buildbot:
             for queue in StatusBubble.ALL_QUEUES:
                 status = self._build_status(patch, queue)
                 if status:
-                    statuses.append(status)
+                    statuses[queue] = status
 
         if patch.sent_to_commit_queue:
             cq_status = self._build_status(patch, 'commit')
             if cq_status:
-                statuses.insert(0, cq_status)
+                statuses['commit'] = cq_status
 
         return statuses
 
@@ -65,4 +64,4 @@ class Status(View):
         patch_id = int(patch_id)
         patch = Patch.get_patch(patch_id)
         response_data = self._build_statuses_for_patch(patch)
-        return JsonResponse(response_data, safe=False)
+        return JsonResponse(response_data)

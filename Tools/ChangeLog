@@ -1,3 +1,15 @@
+2020-03-20  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Better organize patch status api data
+        https://bugs.webkit.org/show_bug.cgi?id=209342
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/status.py:
+        (Status._build_status):
+        (Status._build_statuses_for_patch): Updated to return dictionary instead of list.
+        (Status.get): Remove safe=false now that we are returning a dictionary.
+
 2020-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Upstream a variety of Cocoa-platform HAVE and ENABLE macros
