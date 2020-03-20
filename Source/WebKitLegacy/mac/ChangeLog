@@ -1,5 +1,12 @@
 2020-03-20  Timothy Horton  <timothy_horton@apple.com>
 
+        Improve the previous build fix.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        Darin points out that we have USE(WEB_THREAD), so might as well use it!
+
+2020-03-20  Timothy Horton  <timothy_horton@apple.com>
+
         Fix the build.
 
         * WebCoreSupport/WebFrameLoaderClient.mm:
