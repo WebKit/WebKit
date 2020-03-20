@@ -279,9 +279,6 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
         targetVideoFrame = largestRectWithAspectRatioInsideRect(videoAspectRatio, self.bounds);
     } else if ([AVLayerVideoGravityResizeAspectFill isEqualToString:self.videoGravity]) {
         sourceVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.modelVideoLayerFrame);
-        self.modelVideoLayerFrame = CGRectMake(0, 0, sourceVideoFrame.width(), sourceVideoFrame.height());
-        if (auto* model = _fullscreenInterface->videoFullscreenModel())
-            model->setVideoLayerFrame(self.modelVideoLayerFrame);
         targetVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.bounds);
     } else
         ASSERT_NOT_REACHED();
