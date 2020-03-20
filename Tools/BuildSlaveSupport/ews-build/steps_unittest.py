@@ -2032,6 +2032,71 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+
+        def mock_start(cls, *args, **kwargs):
+            from buildbot.steps import shell
+            return shell.ShellCommand.start(cls)
+        ApplyPatch.start = mock_start
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(ApplyPatch())
+        self.assertEqual(ApplyPatch.flunkOnFailure, True)
+        self.assertEqual(ApplyPatch.haltOnFailure, False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=600,
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/svn-apply', '--force', '.buildbot-diff'],
+                        ) +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Applied patch')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(ApplyPatch())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=600,
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/svn-apply', '--force', '.buildbot-diff'],
+                        ) +
+            ExpectShell.log('stdio', stdout='Unexpected failure.') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Patch does not apply')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        self.assertEqual(self.getProperty('build_finish_summary'), None)
+        return rc
+
+    def test_failure_on_commit_queue(self):
+        self.setupStep(ApplyPatch())
+        self.setProperty('buildername', 'Commit-Queue')
+        self.setProperty('patch_id', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=600,
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/svn-apply', '--force', '.buildbot-diff'],
+                        ) +
+            ExpectShell.log('stdio', stdout='Unexpected failure.') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Patch does not apply')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Attachment 1234 does not apply')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Patch 1234 does not apply')
+        return rc
+
+
 class TestUnApplyPatchIfRequired(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True

@@ -192,8 +192,7 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
     name = 'apply-patch'
     description = ['applying-patch']
     descriptionDone = ['Applied patch']
-    flunkOnFailure = True
-    haltOnFailure = True
+    haltOnFailure = False
     command = ['perl', 'Tools/Scripts/svn-apply', '--force', '.buildbot-diff']
 
     def __init__(self, **kwargs):
@@ -224,6 +223,19 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
         if self.results != SUCCESS:
             return {u'step': u'Patch does not apply'}
         return super(ApplyPatch, self).getResultSummary()
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        patch_id = self.getProperty('patch_id', '')
+        if rc == FAILURE:
+            message = 'Patch {} does not apply'.format(patch_id)
+            if self.getProperty('buildername', '').lower() == 'commit-queue':
+                self.setProperty('bugzilla_comment_text', message.replace('Patch', 'Attachment'))
+                self.setProperty('build_finish_summary', message)
+                self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+            else:
+                self.build.buildFinished([message], FAILURE)
+        return rc
 
 
 class CheckPatchRelevance(buildstep.BuildStep):
