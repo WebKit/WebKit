@@ -221,16 +221,19 @@ void AXIsolatedTree::applyPendingChanges()
     }
 
     for (const auto& item : m_pendingAppends) {
+        ASSERT(item.m_isolatedObject->wrapper() || item.m_wrapper);
         AXID axID = item.m_isolatedObject->objectID();
         if (axID == InvalidAXID)
             continue;
 
-        if (m_readerThreadNodeMap.get(axID) != &item.m_isolatedObject.get()) {
-            // The new IsolatedObject is a replacement for an existing object
-            // as the result of an update. Thus detach the existing one before
-            // adding the new one.
-            if (auto object = nodeForID(axID))
-                object->detach(AccessibilityDetachmentType::ElementDestroyed);
+        if (auto object = m_readerThreadNodeMap.get(axID)) {
+            if (object != &item.m_isolatedObject.get()
+                && (object->wrapper() == item.m_wrapper || object->wrapper() == item.m_isolatedObject->wrapper())) {
+                // The new IsolatedObject is a replacement for an existing object
+                // as the result of an update. Thus detach the existing one before
+                // adding the new one.
+                object->detachWrapper(AccessibilityDetachmentType::ElementDestroyed);
+            }
             m_readerThreadNodeMap.remove(axID);
         }
 

@@ -1053,10 +1053,14 @@ void AXObjectCache::notificationPostTimerFired()
                 continue;
         }
         
-        postPlatformNotification(obj, notification);
-
         if (notification == AXChildrenChanged && obj->parentObjectIfExists() && obj->lastKnownIsIgnoredValue() != obj->accessibilityIsIgnored())
             childrenChanged(obj->parentObject());
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        updateIsolatedTree(obj, notification);
+#endif
+
+        postPlatformNotification(obj, notification);
     }
 }
 
@@ -1129,16 +1133,17 @@ void AXObjectCache::postNotification(AXCoreObject* object, Document* document, A
     if (!object)
         return;
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    updateIsolatedTree(object, notification);
-#endif
-
     if (postType == PostAsynchronously) {
         m_notificationsToPost.append(std::make_pair(object, notification));
         if (!m_notificationPostTimer.isActive())
             m_notificationPostTimer.startOneShot(0_s);
-    } else
+    } else {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        updateIsolatedTree(object, notification);
+#endif
+
         postPlatformNotification(object, notification);
+    }
 }
 
 void AXObjectCache::checkedStateChanged(Node* node)
