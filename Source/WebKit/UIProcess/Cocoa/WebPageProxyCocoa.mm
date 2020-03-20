@@ -232,7 +232,7 @@ void WebPageProxy::performDictionaryLookupOfCurrentSelection()
     process().send(Messages::WebPage::PerformDictionaryLookupOfCurrentSelection(), m_webPageID);
 }
 
-void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange, bool registerUndoGroup)
+void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange, InsertTextOptions&& options)
 {
 #if USE(DICTATION_ALTERNATIVES)
     if (!hasRunningProcess())
@@ -246,18 +246,12 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
     }
 
     if (dictationAlternatives.isEmpty()) {
-        InsertTextOptions options;
-        options.registerUndoGroup = registerUndoGroup;
-
         insertTextAsync(text, replacementRange, WTFMove(options));
         return;
     }
 
-    process().send(Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, registerUndoGroup }, m_webPageID);
+    process().send(Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, WTFMove(options) }, m_webPageID);
 #else
-    InsertTextOptions options;
-    options.registerUndoGroup = registerUndoGroup;
-
     insertTextAsync(text, replacementRange, WTFMove(options));
 #endif
 }

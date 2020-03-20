@@ -4731,7 +4731,7 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
         BOOL isLowConfidence = style == UITextAlternativeStyleLowConfidence;
         auto textAlternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:aStringValue alternativeStrings:alternatives isLowConfidence:isLowConfidence]);
         WebCore::TextAlternativeWithRange textAlternativeWithRange { textAlternatives.get(), NSMakeRange(0, aStringValue.length) };
-        _page->insertDictatedTextAsync(aStringValue, WebKit::EditingRange { }, { textAlternativeWithRange }, false /* registerUndoGroup */);
+        _page->insertDictatedTextAsync(aStringValue, { }, { textAlternativeWithRange }, { });
     }
 }
 

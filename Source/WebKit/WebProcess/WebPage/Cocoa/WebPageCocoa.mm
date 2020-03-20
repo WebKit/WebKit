@@ -27,6 +27,7 @@
 #import "WebPage.h"
 
 #import "AttributedString.h"
+#import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "PluginView.h"
 #import "WKAccessibilityWebPageObjectBase.h"
@@ -182,7 +183,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
     return dictionaryPopupInfo;
 }
 
-void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool registerUndoGroup)
+void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, InsertTextOptions&& options)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     Ref<Frame> protector { frame };
@@ -193,7 +194,7 @@ void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& re
             frame.selection().setSelection(VisibleSelection { *replacementRange, SEL_DEFAULT_AFFINITY });
     }
 
-    if (registerUndoGroup)
+    if (options.registerUndoGroup)
         send(Messages::WebPageProxy::RegisterInsertionUndoGrouping { });
 
     ASSERT(!frame.editor().hasComposition());

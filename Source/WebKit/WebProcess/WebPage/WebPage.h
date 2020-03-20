@@ -846,7 +846,7 @@ public:
     void acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&, CompletionHandler<void(bool)>&&);
     bool performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*);
 
-    void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool registerUndoGroup = false);
+    void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, InsertTextOptions&&);
 #endif
 
 #if PLATFORM(MAC)

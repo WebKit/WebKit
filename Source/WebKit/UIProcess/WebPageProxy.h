@@ -848,7 +848,7 @@ public:
     void setTextAsync(const String&);
 
     void insertTextAsync(const String&, const EditingRange& replacementRange, InsertTextOptions&&);
-    void insertDictatedTextAsync(const String&, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>&, bool registerUndoGroup);
+    void insertDictatedTextAsync(const String&, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>&, InsertTextOptions&&);
 
     void hasMarkedText(CompletionHandler<void(bool)>&&);
     void getMarkedRangeAsync(WTF::Function<void (EditingRange, CallbackBase::Error)>&&);

@@ -4844,9 +4844,11 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
 
     String eventText = text;
     eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
-    if (!dictationAlternatives.isEmpty())
-        m_page->insertDictatedTextAsync(eventText, replacementRange, dictationAlternatives, registerUndoGroup);
-    else {
+    if (!dictationAlternatives.isEmpty()) {
+        InsertTextOptions options;
+        options.registerUndoGroup = registerUndoGroup;
+        m_page->insertDictatedTextAsync(eventText, replacementRange, dictationAlternatives, WTFMove(options));
+    } else {
         InsertTextOptions options;
         options.registerUndoGroup = registerUndoGroup;
         options.editingRangeIsRelativeTo = m_isTextInsertionReplacingSoftSpace ? EditingRangeIsRelativeTo::Paragraph : EditingRangeIsRelativeTo::EditableRoot;
