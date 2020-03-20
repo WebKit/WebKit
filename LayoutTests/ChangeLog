@@ -1,3 +1,14 @@
+2020-03-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update TestExpectations and baselines
+        https://bugs.webkit.org/show_bug.cgi?id=209331
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/paint-order-001-expected.txt:
+        Update baseline after r258492.
+
 2020-03-20  Jack Lee  <shihchieh_lee@apple.com>
 
         Nullptr crash in RenderObject::RenderObjectBitfields::isBox when current renderer is the RenderView
