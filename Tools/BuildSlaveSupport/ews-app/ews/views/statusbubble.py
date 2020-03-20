@@ -83,6 +83,7 @@ class StatusBubble(View):
         build = None
         if builds:
             build = builds[0]
+            builds = builds[:10]  # Limit number of builds to display in status-bubble hover over message
         if not self._should_show_bubble_for_build(build):
             return None
 
