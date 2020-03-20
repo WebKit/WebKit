@@ -873,6 +873,12 @@ const URL& blankURL()
     return staticBlankURL;
 }
 
+const URL& aboutSrcDocURL()
+{
+    static NeverDestroyed<URL> staticAboutSrcDocURL(URL(), "about:srcdoc");
+    return staticAboutSrcDocURL;
+}
+
 bool URL::protocolIsAbout() const
 {
     return protocolIs("about");
@@ -1013,6 +1019,16 @@ URL URL::fakeURLWithRelativePart(const String& relativePart)
 URL URL::fileURLWithFileSystemPath(const String& filePath)
 {
     return URL(URL(), "file:///" + filePath);
+}
+
+bool URL::isAboutBlank() const
+{
+    return protocolIsAbout() && path() == "blank";
+}
+
+bool URL::isAboutSrcDoc() const
+{
+    return protocolIsAbout() && path() == "srcdoc";
 }
 
 TextStream& operator<<(TextStream& ts, const URL& url)

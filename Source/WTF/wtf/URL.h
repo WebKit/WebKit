@@ -132,8 +132,10 @@ public:
     bool protocolIsAbout() const;
     bool protocolIsInHTTPFamily() const;
     bool isLocalFile() const;
-    bool isBlankURL() const;
     bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }
+
+    bool isAboutBlank() const;
+    bool isAboutSrcDoc() const;
 
     bool isMatchingDomain(const String&) const;
 
@@ -258,6 +260,7 @@ WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 WTF_EXPORT_PRIVATE bool hostsAreEqual(const URL&, const URL&);
 
 WTF_EXPORT_PRIVATE const URL& blankURL();
+WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();
 
 // Functions to do URL operations on strings.
 // These are operations that aren't faster on a parsed URL.

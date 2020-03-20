@@ -6038,7 +6038,7 @@ bool Document::isContextThread() const
 static bool isURLPotentiallyTrustworthy(const URL& url)
 {
     if (url.protocolIsAbout())
-        return equalIgnoringASCIICase(url.string(), WTF::blankURL()) || equalLettersIgnoringASCIICase(url.string(), "about:srcdoc");
+        return url.isAboutBlank() || url.isAboutSrcDoc();
     if (url.protocolIsData())
         return true;
     return SecurityOrigin::create(url)->isPotentiallyTrustworthy();

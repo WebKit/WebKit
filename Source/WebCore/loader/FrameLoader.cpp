@@ -3711,7 +3711,7 @@ bool FrameLoader::shouldTreatURLAsSameAsCurrent(const URL& url) const
 
 bool FrameLoader::shouldTreatURLAsSrcdocDocument(const URL& url) const
 {
-    if (!equalLettersIgnoringASCIICase(url.string(), "about:srcdoc"))
+    if (!url.isAboutSrcDoc())
         return false;
     HTMLFrameOwnerElement* ownerElement = m_frame.ownerElement();
     if (!ownerElement)

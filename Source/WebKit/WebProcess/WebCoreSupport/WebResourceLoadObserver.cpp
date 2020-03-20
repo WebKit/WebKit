@@ -79,7 +79,7 @@ void WebResourceLoadObserver::requestStorageAccessUnderOpener(const RegistrableD
     RegistrableDomain openerDomain { openerUrl };
     if (domainInNeedOfStorageAccess != openerDomain
         && !openerDocument.hasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess)
-        && !equalIgnoringASCIICase(openerUrl.string(), WTF::blankURL())) {
+        && !openerUrl.isAboutBlank()) {
         WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(domainInNeedOfStorageAccess, openerPage.identifier(), openerDomain), 0);
         
         openerPage.addDomainWithPageLevelStorageAccess(openerDomain, domainInNeedOfStorageAccess);

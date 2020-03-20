@@ -166,8 +166,8 @@ bool SecurityPolicy::shouldInheritSecurityOriginFromOwner(const URL& url)
     //      The origin of the document is the origin of its parent document.
     //
     // Note: We generalize this to invalid URLs because we treat such URLs as about:blank.
-    //
-    return url.isEmpty() || equalIgnoringASCIICase(url.string(), WTF::blankURL()) || equalLettersIgnoringASCIICase(url.string(), "about:srcdoc");
+    // FIXME: We also allow some URLs like "about:BLANK". We should probably block navigation to these URLs, see rdar://problem/57966056.
+    return url.isEmpty() || url.isAboutBlank() || url.isAboutSrcDoc() || equalIgnoringASCIICase(url.string(), WTF::blankURL());
 }
 
 bool SecurityPolicy::isBaseURLSchemeAllowed(const URL& url)

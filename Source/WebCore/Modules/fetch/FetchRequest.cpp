@@ -60,7 +60,7 @@ static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, cons
     if (!referrerURL.isValid())
         return Exception { TypeError, "Referrer is not a valid URL."_s };
 
-    if (referrerURL.protocolIs("about") && referrerURL.path() == "client")
+    if (referrerURL.protocolIsAbout() && referrerURL.path() == "client")
         return "client"_str;
 
     if (!(context.securityOrigin() && context.securityOrigin()->canRequest(referrerURL)))
