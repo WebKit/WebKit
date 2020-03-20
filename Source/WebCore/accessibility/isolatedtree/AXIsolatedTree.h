@@ -102,7 +102,7 @@ private:
     // Written to by main thread under lock, accessed and applied by AX thread.
     Vector<NodeChange> m_pendingAppends;
     Vector<AXID> m_pendingRemovals;
-    AXID m_pendingFocusedNodeID;
+    AXID m_pendingFocusedNodeID { InvalidAXID };
     Lock m_changeLogLock;
 
     AXIsolatedTreeID m_treeID;

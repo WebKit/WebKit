@@ -143,7 +143,7 @@ public:
     explicit AXObjectCache(Document&);
     ~AXObjectCache();
 
-    WEBCORE_EXPORT static AXCoreObject* focusedUIElementForPage(const Page*);
+    WEBCORE_EXPORT AXCoreObject* focusedUIElementForPage(const Page*);
 
     // Returns the root object for the entire document.
     WEBCORE_EXPORT AXCoreObject* rootObject();
@@ -356,8 +356,9 @@ public:
 private:
     static bool clientSupportsIsolatedTree();
     AXCoreObject* isolatedTreeRootObject();
-    static AXCoreObject* isolatedTreeFocusedObject(Document&);
+    AXCoreObject* isolatedTreeFocusedObject();
     void setIsolatedTreeFocusedObject(Node*);
+    RefPtr<AXIsolatedTree> getOrCreateIsolatedTree() const;
     static Ref<AXIsolatedTree> generateIsolatedTree(PageIdentifier, Document&);
     void updateIsolatedTree(AXCoreObject*, AXNotification);
     static void initializeSecondaryAXThread();

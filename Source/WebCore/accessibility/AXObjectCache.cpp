@@ -382,19 +382,9 @@ AXCoreObject* AXObjectCache::focusedObject(Document& document)
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-AXCoreObject* AXObjectCache::isolatedTreeFocusedObject(Document& document)
+AXCoreObject* AXObjectCache::isolatedTreeFocusedObject()
 {
-    auto pageID = document.pageID();
-    if (!pageID)
-        return nullptr;
-
-    auto tree = AXIsolatedTree::treeForPageID(*pageID);
-    if (!tree) {
-        tree = generateIsolatedTree(*pageID, document);
-        initializeSecondaryAXThread();
-    }
-
-    if (tree)
+    if (auto tree = getOrCreateIsolatedTree())
         return tree->focusedUIElement().get();
 
     // Should not get here, couldn't create the IsolatedTree.
@@ -421,17 +411,17 @@ AXCoreObject* AXObjectCache::focusedUIElementForPage(const Page* page)
     if (!gAccessibilityEnabled)
         return nullptr;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (isIsolatedTreeEnabled())
+        return isolatedTreeFocusedObject();
+#endif
+
     // get the focused node in the page
     Document* focusedDocument = page->focusController().focusedOrMainFrame().document();
     if (!focusedDocument)
         return nullptr;
 
     focusedDocument->updateStyleIfNeeded();
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (isIsolatedTreeEnabled())
-        return isolatedTreeFocusedObject(*focusedDocument);
-#endif
 
     return focusedObject(*focusedDocument);
 }
@@ -753,7 +743,7 @@ void AXObjectCache::initializeSecondaryAXThread()
         _AXUIElementUseSecondaryAXThread(true);
 }
 
-AXCoreObject* AXObjectCache::isolatedTreeRootObject()
+RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree() const
 {
     if (!m_pageID)
         return nullptr;
@@ -766,7 +756,12 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
         AXObjectCache::initializeSecondaryAXThread();
     }
 
-    if (tree)
+    return tree;
+}
+
+AXCoreObject* AXObjectCache::isolatedTreeRootObject()
+{
+    if (auto tree = getOrCreateIsolatedTree())
         return tree->rootNode().get();
 
     // Should not get here, couldn't create the IsolatedTree.
