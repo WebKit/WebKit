@@ -1,3 +1,14 @@
+2020-03-20  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        Update imported/w3c/web-platform-tests/css/css-text/line-break/line-break-{strict,normal}-015.xht
+        https://bugs.webkit.org/show_bug.cgi?id=209250
+
+        Fixing test expectations.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-03-20  Ali Juma  <ajuma@chromium.org>
 
         Intersection Observer intersections are wrong with zooming
