@@ -1,3 +1,14 @@
+2020-03-20  Ali Juma  <ajuma@chromium.org>
+
+        Intersection Observer intersections are wrong with zooming
+        https://bugs.webkit.org/show_bug.cgi?id=209264
+        
+        Unreviewed test gardening.
+
+        Add an expected.txt file that was accidentally omitted in r258787.
+
+        * intersection-observer/root-margin-with-zoom-expected.txt: Added.
+
 2020-03-20  David Kilzer  <ddkilzer@apple.com>
 
         Fix name of "X-Content-Type:" HTTP header in console logging
