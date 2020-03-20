@@ -2440,7 +2440,11 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, WebCore::Sha
 #if HAVE(APP_LINKS)
     if (_appLinkURL && _frame) {
         [LSAppLink openWithURL:_appLinkURL.get() completionHandler:^(BOOL success, NSError *) {
+#if PLATFORM(IOS_FAMILY)
             WebThreadRun(^{
+#else
+            dispatch_async(dispatch_get_main_queue(), ^{
+#endif
                 if (success)
                     [self receivedPolicyDecision:WebCore::PolicyAction::Ignore];
                 else

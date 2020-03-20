@@ -1,3 +1,9 @@
+2020-03-20  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2020-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Upstream a variety of Cocoa-platform HAVE and ENABLE macros
