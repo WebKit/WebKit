@@ -228,11 +228,17 @@ typedef enum {
     kUIKeyboardInputPreProcessed           = 1 << 7,
 } UIKeyboardInputFlags;
 
+typedef NS_OPTIONS(NSInteger, UIEventButtonMask) {
+    UIEventButtonMaskPrimary = 1 << 0,
+    UIEventButtonMaskSecondary = 1 << 1,
+};
+
 @interface UIEvent ()
 - (void *)_hidEvent;
 - (NSString *)_unmodifiedInput;
 - (NSString *)_modifiedInput;
 - (BOOL)_isKeyDown;
+- (UIEventButtonMask)_buttonMask;
 @end
 
 typedef enum {
@@ -404,6 +410,11 @@ typedef enum {
 
 @interface UIGestureRecognizer ()
 @property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
+
+- (void)_hoverEntered:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
+- (void)_hoverMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
+- (void)_hoverExited:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
+- (void)_hoverCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
 @end
 
 @interface UITapGestureRecognizer ()
@@ -997,6 +1008,7 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 
 @interface UIDragInteraction ()
 @property (nonatomic, assign, getter=_liftDelay, setter=_setLiftDelay:) NSTimeInterval liftDelay;
+- (void)_setAllowsPointerDragBeforeLiftDelay:(BOOL)allowsPointerDragBeforeLiftDelay;
 @end
 
 @interface UIDragItem ()
@@ -1013,6 +1025,9 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 
 @interface UIURLDragPreviewView : UIView
 + (instancetype)viewWithTitle:(NSString *)title URL:(NSURL *)url;
+@end
+
+@interface _UIParallaxTransitionPanGestureRecognizer : UIScreenEdgePanGestureRecognizer
 @end
 
 #endif
@@ -1149,7 +1164,8 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (readonly) BOOL isLowConfidence;
 @end
 
-@protocol _UICursorInteractionDelegate;
+@protocol _UICursorInteractionDelegate
+@end
 
 @interface _UICursorInteraction : NSObject <UIInteraction>
 - (instancetype)initWithDelegate:(id <_UICursorInteractionDelegate>)delegate;
@@ -1159,11 +1175,20 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 
 @interface _UICursorRegion : NSObject <NSCopying>
 + (instancetype)regionWithIdentifier:(id <NSObject>)identifier rect:(CGRect)rect;
+- (id <NSObject>)identifier;
 @end
 
 @interface _UICursor : NSObject
 + (instancetype)beamWithPreferredLength:(CGFloat)length axis:(UIAxis)axis;
 + (instancetype)linkCursor;
+@end
+
+@interface _UICursorStyle : NSObject
++ (instancetype)styleWithCursor:(_UICursor *)cursor constrainedAxes:(UIAxis)axes;
+@end
+
+@interface UITouch ()
+- (BOOL)_isPointerTouch;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
