@@ -7488,13 +7488,13 @@ void Document::removeIntersectionObserver(IntersectionObserver& observer)
     m_intersectionObservers.removeFirst(&observer);
 }
 
-static void expandRootBoundsWithRootMargin(FloatRect& localRootBounds, const LengthBox& rootMargin)
+static void expandRootBoundsWithRootMargin(FloatRect& localRootBounds, const LengthBox& rootMargin, float zoomFactor)
 {
     FloatBoxExtent rootMarginFloatBox(
-        floatValueForLength(rootMargin.top(), localRootBounds.height()),
-        floatValueForLength(rootMargin.right(), localRootBounds.width()),
-        floatValueForLength(rootMargin.bottom(), localRootBounds.height()),
-        floatValueForLength(rootMargin.left(), localRootBounds.width())
+        floatValueForLength(rootMargin.top(), localRootBounds.height()) * zoomFactor,
+        floatValueForLength(rootMargin.right(), localRootBounds.width()) * zoomFactor,
+        floatValueForLength(rootMargin.bottom(), localRootBounds.height()) * zoomFactor,
+        floatValueForLength(rootMargin.left(), localRootBounds.width()) * zoomFactor
     );
 
     localRootBounds.expand(rootMarginFloatBox);
@@ -7560,7 +7560,7 @@ static Optional<IntersectionObservationState> computeIntersectionState(FrameView
     }
 
     if (applyRootMargin)
-        expandRootBoundsWithRootMargin(localRootBounds, observer.rootMarginBox());
+        expandRootBoundsWithRootMargin(localRootBounds, observer.rootMarginBox(), rootRenderer->style().effectiveZoom());
 
     LayoutRect localTargetBounds;
     if (is<RenderBox>(*targetRenderer))
