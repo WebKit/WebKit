@@ -1427,6 +1427,10 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         if (WebCore::IOSApplication::isMobileSafari())
             WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
+
+#if ENABLE(VIDEO)
+        WebCore::HTMLMediaElement::setMediaCacheDirectory(FileSystem::pathByAppendingComponent(NSTemporaryDirectory(), "MediaCache/"_s));
+#endif
         didOneTimeInitialization = true;
     }
 
