@@ -1049,6 +1049,8 @@ webkit.org/b/155948 transitions/cancel-transition.html [ Pass Failure ]
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-vary.html [ Pass Timeout ]
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-vary-no-body.html [ Pass Timeout ]
 
+webkit.org/b/209349 http/tests/cache/disk-cache/disk-cache-disable.html [ Pass Timeout ]
+
 webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html [ Pass Failure ]
 webkit.org/b/156620 fast/animation/request-animation-frame-iframe2.html [ Pass Failure ]
 
