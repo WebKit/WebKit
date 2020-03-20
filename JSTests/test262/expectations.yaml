@@ -1486,15 +1486,6 @@ test/built-ins/RegExp/proto-from-ctor-realm.js:
 test/built-ins/RegExp/prototype/Symbol.match/builtin-infer-unicode.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
-test/built-ins/RegExp/prototype/Symbol.replace/result-coerce-capture.js:
-  default: 'Test262Error: Expected SameValue(«», «foo[toString value]bar») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«», «foo[toString value]bar») to be true'
-test/built-ins/RegExp/prototype/Symbol.replace/result-coerce-length.js:
-  default: 'Test262Error: Expected SameValue(«», «foobar$3») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«», «foobar$3») to be true'
-test/built-ins/RegExp/prototype/Symbol.replace/result-coerce-matched.js:
-  default: 'Test262Error: Expected SameValue(«», «foo[toString value]bar») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«», «foo[toString value]bar») to be true'
 test/built-ins/RegExp/prototype/Symbol.search/u-lastindex-advance.js:
   default: 'Test262Error: Expected SameValue(«1», «-1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «-1») to be true'

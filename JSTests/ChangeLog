@@ -1,3 +1,13 @@
+2020-03-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        RegExp.prototype[@@replace] doesn't coerce result index to integer
+        https://bugs.webkit.org/show_bug.cgi?id=209323
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        Mark six test cases as passing.
+
 2020-03-19  Tomas Popela  <tpopela@redhat.com>
 
         [JSC][BigEndians] Several JSC stress tests failing

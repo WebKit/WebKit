@@ -1,3 +1,22 @@
+2020-03-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        RegExp.prototype[@@replace] doesn't coerce result index to integer
+        https://bugs.webkit.org/show_bug.cgi?id=209323
+
+        Reviewed by Yusuke Suzuki.
+
+        From https://tc39.es/ecma262/#sec-regexp.prototype-@@replace:
+          21.2.5.10 RegExp.prototype [ @@replace ] ( string, replaceValue )
+            ...
+            14. For each result in results, do
+              ...
+              e. Let position be ? ToInteger(? Get(result, "index")).
+              f. Set position to max(min(position, lengthS), 0).
+
+        result.index may be undefined, so it doesn't suffice to coerce it with comparison operators.
+
+        * builtins/RegExpPrototype.js:
+
 2020-03-20  Justin Michaud  <justin@justinmichaud.com>
 
         Fix JSCOnly build without unified sources
