@@ -954,3 +954,5 @@ webkit.org/b/209154 http/tests/security/clipboard/copy-paste-html-cross-origin-i
 webkit.org/b/209180 inspector/script-profiler/event-type-Other.html [ Pass Failure ]
 
 webkit.org/b/209182 [ Debug ] inspector/debugger/setShouldBlackboxURL.html [ Pass Failure ]
+
+webkit.org/b/209353 [ Release ] media/video-background-tab-playback.html [ Pass Failure ]
