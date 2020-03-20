@@ -1116,8 +1116,6 @@ webkit.org/b/156112 [ Sierra+ ] media/controls-without-preload.html [ Pass Failu
 
 webkit.org/b/156351 storage/indexeddb/modern/autoincrement-abort-private.html [ Pass Timeout ]
 
-webkit.org/b/209318 storage/indexeddb/cursor-leak.html [ Pass Timeout ]
-
 webkit.org/b/156983 media/video-fullscreen-restriction-removed.html [ Pass Failure ]
 
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
