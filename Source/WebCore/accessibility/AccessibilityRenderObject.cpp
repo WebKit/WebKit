@@ -352,7 +352,7 @@ static inline bool lastChildHasContinuation(RenderElement& renderer)
 
 AccessibilityObject* AccessibilityRenderObject::nextSibling() const
 {
-    if (!m_renderer)
+    if (!m_renderer || is<RenderView>(*m_renderer))
         return nullptr;
 
     RenderObject* nextSibling = nullptr;

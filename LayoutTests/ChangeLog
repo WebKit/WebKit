@@ -1,3 +1,16 @@
+2020-03-20  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in RenderObject::RenderObjectBitfields::isBox when current renderer is the RenderView
+        https://bugs.webkit.org/show_bug.cgi?id=209251
+        <rdar://problem/60103614>
+
+        Reviewed by Antti Koivisto.
+
+        It’s perfectly fine to call AccessibilityRenderObject::nextSibling on the RenderView (empty document) and since the RenderView has no sibling, let’s just early return with nullptr. 
+
+        * fast/frames/iframe-empty-doc-crash-expected.txt: Added.
+        * fast/frames/iframe-empty-doc-crash.html: Added.
+
 2020-03-19  Eric Carlson  <eric.carlson@apple.com>
 
         [ Mac WK1 ] REGRESSION (r240537) Layout Test media/video-background-tab-playback.html is a flaky failure
