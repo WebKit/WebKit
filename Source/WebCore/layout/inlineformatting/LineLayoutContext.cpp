@@ -496,6 +496,7 @@ LineLayoutContext::Result LineLayoutContext::handleFloatsAndInlineContent(LineBr
 
         auto partialRun = *result.partialTrailingContent->partialRun;
         auto& trailingInlineTextItem = downcast<InlineTextItem>(candidateRuns[trailingRunIndex].inlineItem);
+        ASSERT(partialRun.length < trailingInlineTextItem.length());
         auto overflowLength = trailingInlineTextItem.length() - partialRun.length;
         return { LineBreaker::IsEndOfLine::Yes, { committedInlineItemCount, false }, LineContent::PartialContent { partialRun.needsHyphen, overflowLength } };
     }

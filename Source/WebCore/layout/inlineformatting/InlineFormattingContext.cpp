@@ -139,29 +139,49 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
 void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineLayoutContext::InlineItemRange layoutRange, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
 {
     auto lineLogicalTop = verticalConstraints.logicalTop;
-    Optional<unsigned> partialLeadingContentLength;
+    struct PreviousLineEnd {
+        unsigned runIndex;
+        Optional<unsigned> overflowContentLength;
+    };
+    Optional<PreviousLineEnd> previousLineEnd;
     auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::IntrinsicSizing::No };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
 
     while (!layoutRange.isEmpty()) {
         lineBuilder.initialize(constraintsForLine(horizontalConstraints, lineLogicalTop));
-        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, layoutRange, partialLeadingContentLength);
+        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, layoutRange, previousLineEnd ? previousLineEnd->overflowContentLength : WTF::nullopt);
         setDisplayBoxesForLine(lineContent, horizontalConstraints);
 
-        partialLeadingContentLength = { };
         if (lineContent.trailingInlineItemIndex) {
             lineLogicalTop = lineContent.lineBox.logicalBottom();
-            // When the trailing content is partial, we need to reuse the last InlinItem.
+            // When the trailing content is partial, we need to reuse the last InlineTextItem.
+            auto trailingRunIndex = *lineContent.trailingInlineItemIndex;
             if (lineContent.partialContent) {
-                layoutRange.start = *lineContent.trailingInlineItemIndex;
+                ASSERT(lineContent.partialContent->overflowContentLength);
                 // Turn previous line's overflow content length into the next line's leading content partial length.
-                // "sp<->litcontent" -> overflow length: 10 -> leading partial content length: 10. 
-                partialLeadingContentLength = lineContent.partialContent->overflowContentLength;
-            } else
-                layoutRange.start = *lineContent.trailingInlineItemIndex + 1;
+                // "sp<->litcontent" -> overflow length: 10 -> leading partial content length: 10.
+                auto isNewInlineContent = !previousLineEnd
+                    || trailingRunIndex > previousLineEnd->runIndex
+                    || (previousLineEnd->overflowContentLength && *previousLineEnd->overflowContentLength > lineContent.partialContent->overflowContentLength);
+                if (isNewInlineContent) {
+                    // Strart the next line with the same, partial trailing InlineTextItem.
+                    previousLineEnd = PreviousLineEnd { trailingRunIndex, lineContent.partialContent->overflowContentLength };
+                    layoutRange.start = previousLineEnd->runIndex;
+                } else {
+                    ASSERT_NOT_REACHED();
+                    // Move over to the next run if we are stuck on this partial content (when the overflow content length remains the same).
+                    // We certainly lose some content, but we would be busy looping anyway.
+                    previousLineEnd = PreviousLineEnd { trailingRunIndex, { } };
+                    layoutRange.start = previousLineEnd->runIndex + 1;
+                }
+            } else {
+                previousLineEnd = PreviousLineEnd { trailingRunIndex, { } };
+                layoutRange.start = previousLineEnd->runIndex + 1;
+            }
             continue;
         }
         // Floats prevented us placing any content on the line.
+        ASSERT(lineContent.runList.isEmpty());
         ASSERT(lineBuilder.hasIntrusiveFloat());
         // Move the next line below the intrusive float.
         auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
