@@ -61,6 +61,7 @@
 #import <UIKit/UIPopoverPresentationController_Private.h>
 #import <UIKit/UIPresentationController_Private.h>
 #import <UIKit/UIResponder_Private.h>
+#import <UIKit/UIScene_Private.h>
 #import <UIKit/UIScrollView_Private.h>
 #import <UIKit/UIStringDrawing_Private.h>
 #import <UIKit/UITableViewCell_Private.h>
@@ -1407,5 +1408,8 @@ extern NSString * const NSTimeoutDocumentOption;
 extern NSString * const NSWebPreferencesDocumentOption;
 extern NSString * const NSWebResourceLoadDelegateDocumentOption;
 extern NSString * const NSTextSizeMultiplierDocumentOption;
+
+extern NSNotificationName const _UISceneWillBeginSystemSnapshotSequence;
+extern NSNotificationName const _UISceneDidCompleteSystemSnapshotSequence;
 
 WTF_EXTERN_C_END

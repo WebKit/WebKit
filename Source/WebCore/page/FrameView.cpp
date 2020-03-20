@@ -3350,7 +3350,8 @@ void FrameView::sendResizeEventIfNeeded()
     if (!renderView || renderView->printing())
         return;
 
-    if (frame().page() && frame().page()->chrome().client().isSVGImageChromeClient())
+    auto* page = frame().page();
+    if (page && page->chrome().client().isSVGImageChromeClient())
         return;
 
     IntSize currentSize = sizeForResizeEvent();
@@ -3375,15 +3376,18 @@ void FrameView::sendResizeEventIfNeeded()
     }
 #endif
 
+    if (page && !page->shouldFireResizeEvents()) {
+        FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(Events, "sendResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
+        return;
+    }
+
     LOG_WITH_STREAM(Events, stream << "FrameView" << this << "sendResizeEventIfNeeded scheduling resize event for document" << frame().document() << ", size " << currentSize);
     frame().document()->setNeedsDOMWindowResizeEvent();
 
     bool isMainFrame = frame().isMainFrame();
     if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
-        if (Page* page = frame().page()) {
-            if (InspectorClient* inspectorClient = page->inspectorController().inspectorClient())
-                inspectorClient->didResizeMainFrame(&frame());
-        }
+        if (InspectorClient* inspectorClient = page ? page->inspectorController().inspectorClient() : nullptr)
+            inspectorClient->didResizeMainFrame(&frame());
     }
 }
 

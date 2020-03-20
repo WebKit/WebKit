@@ -9923,6 +9923,11 @@ void WebPageProxy::setOverriddenMediaType(const String& mediaType)
     send(Messages::WebPage::SetOverriddenMediaType(mediaType));
 }
 
+void WebPageProxy::setShouldFireResizeEvents(bool shouldFireResizeEvents)
+{
+    send(Messages::WebPage::SetShouldFireResizeEvents(shouldFireResizeEvents));
+}
+
 #if !PLATFORM(IOS_FAMILY)
 bool WebPageProxy::shouldUseForegroundPriorityForClientNavigation() const
 {

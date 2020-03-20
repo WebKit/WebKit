@@ -596,6 +596,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetOverriddenMediaType(String mediaType)
     GetProcessDisplayName() -> (String displayName) Async
 
+    SetShouldFireResizeEvents(bool shouldFireResizeEvents)
+
     SetHasResourceLoadClient(bool has)
     SetIsNavigatingToAppBoundDomainTesting(bool isNavigatingToAppBoundDomain) -> () Async
 

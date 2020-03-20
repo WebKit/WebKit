@@ -727,6 +727,9 @@ public:
     WEBCORE_EXPORT void injectUserStyleSheet(UserStyleSheet&);
     WEBCORE_EXPORT void removeInjectedUserStyleSheet(UserStyleSheet&);
 
+    bool shouldFireResizeEvents() const { return m_shouldFireResizeEvents; }
+    void setShouldFireResizeEvents(bool shouldFireResizeEvents) { m_shouldFireResizeEvents = shouldFireResizeEvents; }
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1005,6 +1008,7 @@ private:
 
     Vector<UserContentURLPattern> m_corsDisablingPatterns;
     Vector<UserStyleSheet> m_userStyleSheetsPendingInjection;
+    bool m_shouldFireResizeEvents { true };
 };
 
 inline PageGroup& Page::group()

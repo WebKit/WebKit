@@ -75,11 +75,13 @@ static bool isBackgroundState(BKSApplicationState state)
     }
 }
 
-ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackgroundSelector, SEL didFinishSnapshottingAfterEnteringBackgroundSelector, SEL willEnterForegroundSelector)
+ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackgroundSelector, SEL didFinishSnapshottingAfterEnteringBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector)
     : m_view(view)
     , m_didEnterBackgroundSelector(didEnterBackgroundSelector)
     , m_didFinishSnapshottingAfterEnteringBackgroundSelector(didFinishSnapshottingAfterEnteringBackgroundSelector)
     , m_willEnterForegroundSelector(willEnterForegroundSelector)
+    , m_willBeginSnapshotSequenceSelector(willBeginSnapshotSequenceSelector)
+    , m_didCompleteSnapshotSequenceSelector(didCompleteSnapshotSequenceSelector)
     , m_isInBackground(true)
     , m_didEnterBackgroundObserver(nullptr)
     , m_didFinishSnapshottingAfterEnteringBackgroundObserver(nullptr)
@@ -122,6 +124,14 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
                 RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: UISceneWillEnterForeground", this);
                 applicationWillEnterForeground();
             }
+        }];
+
+        m_willBeginSnapshotSequenceObserver = [notificationCenter addObserverForName:_UISceneWillBeginSystemSnapshotSequence object:nil queue:nil usingBlock:[this](NSNotification *notification) {
+            willBeginSnapshotSequence();
+        }];
+
+        m_didCompleteSnapshotSequenceObserver = [notificationCenter addObserverForName:_UISceneDidCompleteSystemSnapshotSequence object:nil queue:nil usingBlock:[this](NSNotification *notification) {
+            didCompleteSnapshotSequence();
         }];
 #else
         m_isInBackground = application.applicationState == UIApplicationStateBackground;
@@ -196,6 +206,10 @@ ApplicationStateTracker::~ApplicationStateTracker()
     [notificationCenter removeObserver:m_didEnterBackgroundObserver];
     [notificationCenter removeObserver:m_didFinishSnapshottingAfterEnteringBackgroundObserver];
     [notificationCenter removeObserver:m_willEnterForegroundObserver];
+#if HAVE(UISCENE)
+    [notificationCenter removeObserver:m_willBeginSnapshotSequenceObserver];
+    [notificationCenter removeObserver:m_didCompleteSnapshotSequenceObserver];
+#endif
 }
 
 void ApplicationStateTracker::applicationDidEnterBackground()
@@ -218,6 +232,20 @@ void ApplicationStateTracker::applicationWillEnterForeground()
 
     if (auto view = m_view.get())
         wtfObjCMsgSend<void>(view.get(), m_willEnterForegroundSelector);
+}
+
+void ApplicationStateTracker::willBeginSnapshotSequence()
+{
+    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker:willBeginSnapshotSequence()", this);
+    if (auto view = m_view.get())
+        wtfObjCMsgSend<void>(view.get(), m_willBeginSnapshotSequenceSelector);
+}
+
+void ApplicationStateTracker::didCompleteSnapshotSequence()
+{
+    RELEASE_LOG(ViewState, "%p - ApplicationStateTracker:didCompleteSnapshotSequence()", this);
+    if (auto view = m_view.get())
+        wtfObjCMsgSend<void>(view.get(), m_didCompleteSnapshotSequenceSelector);
 }
 
 }

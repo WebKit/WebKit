@@ -3345,6 +3345,14 @@ void WebPage::show()
     send(Messages::WebPageProxy::ShowPage());
 }
 
+void WebPage::setShouldFireResizeEvents(bool shouldFireResizeEvents)
+{
+    RELEASE_LOG_IF_ALLOWED(Resize, "setShouldFireResizeEvents(%d)", shouldFireResizeEvents);
+
+    if (m_page)
+        m_page->setShouldFireResizeEvents(shouldFireResizeEvents);
+}
+
 String WebPage::userAgent(const URL& webCoreURL) const
 {
     String userAgent = platformUserAgent(webCoreURL);

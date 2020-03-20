@@ -1712,6 +1712,8 @@ public:
     void grantAccessToPreferenceService();
 #endif
 
+    void setShouldFireResizeEvents(bool);
+
     void setIsNavigatingToAppBoundDomainTesting(bool, CompletionHandler<void()>&&);
     void isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&&);
     NavigatingToAppBoundDomain isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }

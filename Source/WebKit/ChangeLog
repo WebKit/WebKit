@@ -1,3 +1,38 @@
+2020-03-20  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Articles on NYTimes.com get truncated when switching between MobileSafari and another app
+        https://bugs.webkit.org/show_bug.cgi?id=209321
+        <rdar://problem/59763843>
+
+        Reviewed by Tim Horton.
+
+        Articles on NYTimes.com get truncated when switching between MobileSafari and another app
+        (multitasking). The reason is that when you home out of MobileSafari, snapshots of the 
+        web view are taken at various sizes and we were firing 5 resizes events at the page as a
+        result. Those resize events were confusing the logic on NYTimes.com and causing it to
+        truncate the article.
+
+        To address the issue, we stop firing resize events at the page if the resize is happening
+        during the snapshotting sequence.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ApplicationStateTracker.h:
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        (WebKit::ApplicationStateTracker::~ApplicationStateTracker):
+        (WebKit::ApplicationStateTracker::willBeginSnapshotSequence):
+        (WebKit::ApplicationStateTracker::didCompleteSnapshotSequence):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView didMoveToWindow]):
+        (-[WKApplicationStateTrackingView _willBeginSnapshotSequence]):
+        (-[WKApplicationStateTrackingView _didCompleteSnapshotSequence]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setShouldFireResizeEvents):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-03-20  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, reverting r258748.
