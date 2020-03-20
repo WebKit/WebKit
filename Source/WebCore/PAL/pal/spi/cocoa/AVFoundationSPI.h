@@ -124,7 +124,7 @@ NS_ASSUME_NONNULL_END
 
 #endif // PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 
-#if !PLATFORM(IOS_FAMILY)
+#if ENABLE(MEDIA_SOURCE)
 
 #pragma mark -
 #pragma mark AVStreamDataParser
@@ -163,7 +163,7 @@ NS_ASSUME_NONNULL_END
 @end
 #endif
 
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // ENABLE(MEDIA_SOURCE)
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
@@ -182,7 +182,7 @@ NS_ASSUME_NONNULL_END
 @end
 #endif // HAVE(AVCONTENTKEYSESSION)
 
-#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
+#if ENABLE(MEDIA_SOURCE) && !USE(APPLE_INTERNAL_SDK)
 NS_ASSUME_NONNULL_BEGIN
 @interface AVStreamDataParser (AVStreamDataParserPrivate)
 + (NSString *)outputMIMECodecParameterForInputMIMECodecParameter:(NSString *)inputMIMECodecParameter;

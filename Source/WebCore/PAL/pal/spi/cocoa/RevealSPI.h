@@ -47,6 +47,7 @@
 
 @interface RVItem : NSObject <NSSecureCoding>
 - (instancetype)initWithText:(NSString *)text selectedRange:(NSRange)selectedRange NS_DESIGNATED_INITIALIZER;
+@property (readonly, nonatomic) NSRange highlightRange;
 @end
 
 @interface RVSelection : NSObject
@@ -56,8 +57,8 @@
 #if PLATFORM(MAC)
 @interface RVPresentingContext : NSObject
 - (instancetype)initWithPointerLocationInView:(NSPoint)pointerLocationInView inView:(NSView *)view highlightDelegate:(id<RVPresenterHighlightDelegate>)highlightDelegate;
+@property (readonly) NSArray <NSValue *> * itemRectsInView;
 @end
-#endif
 
 @protocol RVPresenterHighlightDelegate <NSObject>
 @required
@@ -66,6 +67,7 @@
 - (void)revealContext:(RVPresentingContext *)context stopHighlightingItem:(RVItem *)item;
 - (void)revealContext:(RVPresentingContext *)context drawRectsForItem:(RVItem *)item;
 @end
+#endif
 
 @interface RVDocumentContext : NSObject < NSSecureCoding >
 @end
@@ -73,8 +75,8 @@
 @interface RVPresenter : NSObject
 #if PLATFORM(MAC)
 - (id<NSImmediateActionAnimationController>)animationControllerForItem:(RVItem *)item documentContext:(RVDocumentContext *)documentContext presentingContext:(RVPresentingContext *)presentingContext options:(NSDictionary *)options;
-#endif // PLATFORM(MAC)
 - (BOOL)revealItem:(RVItem *)item documentContext:(RVDocumentContext *)documentContext presentingContext:(RVPresentingContext *)presentingContext options:(NSDictionary *)options;
+#endif // PLATFORM(MAC)
 @end
 
 #endif // !USE(APPLE_INTERNAL_SDK)
