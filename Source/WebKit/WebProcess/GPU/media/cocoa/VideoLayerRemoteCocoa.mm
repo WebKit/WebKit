@@ -151,7 +151,7 @@ static const Seconds PostAnimationDelay { 100_ms };
 
 namespace WebKit {
 
-RetainPtr<CALayer> createVideoLayerRemote(MediaPlayerPrivateRemote* mediaPlayerPrivateRemote, LayerHostingContextID contextId)
+PlatformLayerContainer createVideoLayerRemote(MediaPlayerPrivateRemote* mediaPlayerPrivateRemote, LayerHostingContextID contextId)
 {
     // Initially, all the layers will be empty (both width and height are 0) and invisible.
     // The renderer will change the sizes of WKVideoLayerRemote to trigger layout of sublayers and make them visible.

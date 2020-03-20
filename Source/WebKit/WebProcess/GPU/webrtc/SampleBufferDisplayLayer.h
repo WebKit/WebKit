@@ -66,7 +66,7 @@ private:
     Ref<IPC::Connection> m_connection;
     SampleBufferDisplayLayerIdentifier m_identifier;
 
-    RetainPtr<PlatformLayer> m_videoLayer;
+    PlatformLayerContainer m_videoLayer;
     bool m_didFail { false };
 };
 

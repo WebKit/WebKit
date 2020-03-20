@@ -183,7 +183,7 @@ private:
     PlatformLayer* platformLayer() const final;
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    RetainPtr<PlatformLayer> createVideoFullscreenLayer() final;
+    PlatformLayerContainer createVideoFullscreenLayer() final;
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) final;
     void updateVideoFullscreenInlineImage() final;
     void setVideoFullscreenFrame(WebCore::FloatRect) final;
@@ -357,8 +357,8 @@ private:
 
     WebCore::MediaPlayer* m_player { nullptr };
     RefPtr<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;
-    RetainPtr<PlatformLayer> m_videoInlineLayer;
-    RetainPtr<PlatformLayer> m_videoFullscreenLayer;
+    PlatformLayerContainer m_videoInlineLayer;
+    PlatformLayerContainer m_videoFullscreenLayer;
     Optional<LayerHostingContextID> m_fullscreenLayerHostingContextId;
     RemoteMediaPlayerManager& m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_remoteEngineIdentifier;

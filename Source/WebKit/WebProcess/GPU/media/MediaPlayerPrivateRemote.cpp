@@ -54,6 +54,14 @@
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
+#if USE(NICOSIA)
+#include <WebCore/NicosiaPlatformLayer.h>
+#elif USE(COORDINATED_GRAPHICS)
+#include <WebCore/TextureMapperPlatformLayerProxyProvider.h>
+#elif USE(TEXTURE_MAPPER)
+#include <WebCore/TextureMapperPlatformLayer.h>
+#endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMInstance.h"
 #endif

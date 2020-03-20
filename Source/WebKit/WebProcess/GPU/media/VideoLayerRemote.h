@@ -28,15 +28,13 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "LayerHostingContext.h"
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS CALayer;
-
-class MediaPlayerPrivateRemote;
+#include <WebCore/PlatformLayer.h>
 
 namespace WebKit {
 
-RetainPtr<PlatformLayer> createVideoLayerRemote(MediaPlayerPrivateRemote*, LayerHostingContextID);
+class MediaPlayerPrivateRemote;
+
+PlatformLayerContainer createVideoLayerRemote(MediaPlayerPrivateRemote*, LayerHostingContextID);
 
 } // namespace WebKit
 

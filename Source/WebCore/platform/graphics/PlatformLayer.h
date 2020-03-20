@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc. All Rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,25 +28,34 @@
 
 #if PLATFORM(COCOA)
 OBJC_CLASS CALayer;
-typedef CALayer PlatformLayer;
+using PlatformLayer = CALayer;
 #elif PLATFORM(WIN) && USE(CA)
 typedef struct _CACFLayer PlatformLayer;
 #elif USE(NICOSIA)
 namespace Nicosia {
 class PlatformLayer;
 }
-typedef Nicosia::PlatformLayer PlatformLayer;
+using PlatformLayer = Nicosia::PlatformLayer;
 #elif USE(COORDINATED_GRAPHICS)
 namespace WebCore {
 class TextureMapperPlatformLayerProxyProvider;
-typedef TextureMapperPlatformLayerProxyProvider PlatformLayer;
 };
+using PlatformLayer = WebCore::TextureMapperPlatformLayerProxyProvider;
 #elif USE(TEXTURE_MAPPER)
 namespace WebCore {
 class TextureMapperPlatformLayer;
-typedef TextureMapperPlatformLayer PlatformLayer;
 };
+using PlatformLayer = WebCore::TextureMapperPlatformLayer;
 #else
-typedef void* PlatformLayer;
+using PlatformLayer = void*;
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/RetainPtr.h>
+using PlatformLayerContainer = WTF::RetainPtr<PlatformLayer>;
+#elif USE(TEXTURE_MAPPER)
+using PlatformLayerContainer = std::unique_ptr<PlatformLayer>;
+#else
+#include <wtf/RefPtr.h>
+using PlatformLayerContainer = WTF::RefPtr<PlatformLayer>;
+#endif
