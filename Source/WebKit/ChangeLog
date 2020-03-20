@@ -1,3 +1,16 @@
+2020-03-20  Alex Christensen  <achristensen@webkit.org>
+
+        Use same syntax for ComputePagesForPrintingAndDrawToPDF message as other messages
+        https://bugs.webkit.org/show_bug.cgi?id=209310
+        <rdar://problem/60648013>
+
+        Reviewed by Sam Weinig.
+
+        This makes it easier for scripts to find which messages are unused.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computePagesForPrintingAndDrawToPDF):
+
 2020-03-20  youenn fablet  <youenn@apple.com>
 
         Add routines to check about:blank and about:srcdoc URLs
