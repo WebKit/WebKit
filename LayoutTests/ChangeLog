@@ -1,3 +1,12 @@
+2020-03-20  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ iOS wk2 ] http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=209357
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-03-20  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] http/tests/security/stylesheet-href-redirect.html is flaky timing out
