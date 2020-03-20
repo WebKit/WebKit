@@ -836,7 +836,7 @@ TEST(URLSchemeHandler, CORS)
 TEST(URLSchemeHandler, DisableCORS)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/subresource", { "subresourcecontent" } }
+        { "/subresource", { {{ "Content-Type", "application/json" }}, "{\"testkey\":\"testvalue\"}" } }
     });
 
     bool corssuccess = false;
@@ -850,7 +850,18 @@ TEST(URLSchemeHandler, DisableCORS)
 
     [handler setStartURLSchemeTaskHandler:[&](WKWebView *, id<WKURLSchemeTask> task) {
         if ([task.request.URL.path isEqualToString:@"/main.html"]) {
-            NSData *data = [[NSString stringWithFormat:@"<script>fetch('http://127.0.0.1:%d/subresource').then(function(){fetch('/corssuccess')}).catch(function(){fetch('/corsfailure')})</script>", server.port()] dataUsingEncoding:NSUTF8StringEncoding];
+            NSData *data = [[NSString stringWithFormat:
+                @"<script>"
+                    "fetch('http://127.0.0.1:%d/subresource').then(function(r){"
+                        "r.json().then(function(object) {"
+                            "if (object.testkey == 'testvalue') {"
+                                "fetch('/corssuccess')"
+                            "} else {"
+                                "fetch('/corsfailure')"
+                            "}"
+                        "}).catch(function(){fetch('/corsfailure')})"
+                    "}).catch(function(){fetch('/corsfailure')})"
+                "</script>", server.port()] dataUsingEncoding:NSUTF8StringEncoding];
             [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil] autorelease]];
             [task didReceiveData:data];
             [task didFinish];

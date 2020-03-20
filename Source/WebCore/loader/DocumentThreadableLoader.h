@@ -123,6 +123,7 @@ namespace WebCore {
         ThreadableLoaderClient* m_client;
         Document& m_document;
         ThreadableLoaderOptions m_options;
+        bool m_responsesCanBeOpaque { true };
         RefPtr<SecurityOrigin> m_origin;
         String m_referrer;
         bool m_sameOriginRequest;

@@ -161,6 +161,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     if (shouldDisableCORS) {
         m_options.mode = FetchOptions::Mode::NoCors;
         m_options.filteringPolicy = ResponseFilteringPolicy::Disable;
+        m_responsesCanBeOpaque = false;
     }
 
     m_options.cspResponseHeaders = m_options.contentSecurityPolicyEnforcement != ContentSecurityPolicyEnforcement::DoNotEnforce ? this->contentSecurityPolicy().responseHeaders() : ContentSecurityPolicyResponseHeaders { };
@@ -371,7 +372,12 @@ void DocumentThreadableLoader::dataSent(CachedResource& resource, unsigned long 
 void DocumentThreadableLoader::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
-    didReceiveResponse(m_resource->identifier(), response);
+    if (!m_responsesCanBeOpaque) {
+        ResourceResponse responseWithoutTainting = response;
+        responseWithoutTainting.setTainting(ResourceResponse::Tainting::Basic);
+        didReceiveResponse(m_resource->identifier(), responseWithoutTainting);
+    } else
+        didReceiveResponse(m_resource->identifier(), response);
 
     if (completionHandler)
         completionHandler();

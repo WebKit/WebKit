@@ -1,3 +1,13 @@
+2020-03-20  Alex Christensen  <achristensen@webkit.org>
+
+        CORS-disabling SPI introduced in r253978 should make responses non-opaque
+        https://bugs.webkit.org/show_bug.cgi?id=209351
+        <rdar://problem/60024850>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+
 2020-03-20  Aakash Jain  <aakash_jain@apple.com>
 
         commit-queue should skip building and testing if patch already passed tests on mac-wk2 queue
