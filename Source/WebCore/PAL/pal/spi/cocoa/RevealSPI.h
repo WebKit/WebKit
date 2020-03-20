@@ -57,6 +57,7 @@
 #if PLATFORM(MAC)
 @interface RVPresentingContext : NSObject
 - (instancetype)initWithPointerLocationInView:(NSPoint)pointerLocationInView inView:(NSView *)view highlightDelegate:(id<RVPresenterHighlightDelegate>)highlightDelegate;
+@property (readonly, nonnull) NSArray <NSValue *> * itemRectsInView;
 @end
 
 @protocol RVPresenterHighlightDelegate <NSObject>
