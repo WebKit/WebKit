@@ -141,6 +141,8 @@ private:
     void setEventTrackingRegionsDirty();
     void updateEventTrackingRegions();
     
+    void noteScrollingThreadSyncCompleteForNode(ScrollingNodeID);
+    
     FrameView* frameViewForScrollingNode(ScrollingNodeID) const;
 
     Timer m_updateNodeScrollPositionTimer;
