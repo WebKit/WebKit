@@ -1,3 +1,12 @@
+2020-03-19  Tim Horton  <timothy_horton@apple.com>
+
+        Upstream a variety of Cocoa-platform HAVE and ENABLE macros
+        https://bugs.webkit.org/show_bug.cgi?id=209307
+
+        Reviewed by Andy Estes.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2020-03-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] StructureStubInfo::bufferedStructures should not ref/deref UniquedStringImpl

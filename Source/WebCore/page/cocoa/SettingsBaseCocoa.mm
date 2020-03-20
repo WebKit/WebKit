@@ -86,6 +86,13 @@ bool SettingsBase::defaultTextAutosizingEnabled()
     return true;
 }
 
+#if ENABLE(MEDIA_SOURCE)
+bool SettingsBase::platformDefaultMediaSourceEnabled()
+{
+    return false;
+}
+#endif
+
 #endif
 
 const String& SettingsBase::defaultMediaContentTypesRequiringHardwareSupport()

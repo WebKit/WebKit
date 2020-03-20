@@ -1,3 +1,15 @@
+2020-03-19  Tim Horton  <timothy_horton@apple.com>
+
+        Upstream a variety of Cocoa-platform HAVE and ENABLE macros
+        https://bugs.webkit.org/show_bug.cgi?id=209307
+
+        Reviewed by Andy Estes.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * pal/spi/cocoa/AVFoundationSPI.h:
+        * pal/spi/cocoa/RevealSPI.h:
+        * pal/spi/ios/UIKitSPI.h:
+
 2020-03-19  Megan Gardner  <megan_gardner@apple.com>
 
         Correctly set up context for Data Detectors
