@@ -975,8 +975,6 @@ webkit.org/b/207476 webgpu/whlsl/store-to-property-updates-properly.html [ Pass 
 
 webkit.org/b/207508 webgpu/whlsl/textures-load.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/207518 tiled-drawing/simple-document-with-margin-tiles.html [ Pass Failure ]
-
 webkit.org/b/207571 http/tests/IndexedDB/collect-IDB-objects.https.html [ Pass Failure ]
 
 webkit.org/b/207599 webgpu/whlsl/do-while-loop.html [ Pass ImageOnlyFailure ]
