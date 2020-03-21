@@ -1,3 +1,16 @@
+2020-03-21  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Use ${PYTHON_EXECUTABLE} to run generate-gtkdoc
+        https://bugs.webkit.org/show_bug.cgi?id=208970
+
+        Reviewed by Konstantin Tokarev.
+
+        We are allowed to use /usr/bin/env in this script because it's not installed (so not
+        packaged). Therefore we can make the shebang compatible with FreeBSD in this particularl
+        case.
+
+        * gtkdoc/generate-gtkdoc:
+
 2020-03-20  Jonathan Bedard  <jbedard@apple.com>
 
         run-webkit-tests: Report MacCatalyst as a unique platform
