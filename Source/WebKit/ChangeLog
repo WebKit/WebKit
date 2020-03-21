@@ -1,3 +1,13 @@
+2020-03-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add telemetry for message filtering
+        https://bugs.webkit.org/show_bug.cgi?id=209003
+        <rdar://problem/60376722>
+
+        Reviewed by Brent Fulgham.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-03-20  Daniel Bates  <dabates@apple.com>
 
         Have insertDictatedTextAsync() take an InsertTextOptions
