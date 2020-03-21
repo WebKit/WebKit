@@ -260,6 +260,12 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
     if (!stateNode)
         return false;
 
+#if PLATFORM(MAC)
+    if (m_page && m_page->isMonitoringWheelEvents()) {
+        LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) AsyncScrollingCoordinator::requestScrollPositionUpdate: Adding deferral on " << scrollingNodeID << " for reason " << WheelEventTestMonitor::RequestedScrollPosition);
+        m_page->wheelEventTestMonitor()->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNodeID), WheelEventTestMonitor::RequestedScrollPosition);
+    }
+#endif
     stateNode->setRequestedScrollData({ scrollPosition, scrollType, clamping });
     return true;
 }

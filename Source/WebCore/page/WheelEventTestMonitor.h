@@ -54,6 +54,7 @@ public:
         ScrollSnapInProgress            = 1 << 3,
         ScrollingThreadSyncNeeded       = 1 << 4,
         ContentScrollInProgress         = 1 << 5,
+        RequestedScrollPosition         = 1 << 6,
     };
     typedef const void* ScrollableAreaIdentifier;
 

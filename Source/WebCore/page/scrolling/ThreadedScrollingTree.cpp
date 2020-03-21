@@ -197,6 +197,10 @@ void ThreadedScrollingTree::setActiveScrollSnapIndices(ScrollingNodeID nodeID, u
     });
 }
 
+void ThreadedScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID, const FloatPoint& /*scrollPosition*/, ScrollType, ScrollClamping)
+{
+    removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), WheelEventTestMonitor::RequestedScrollPosition);
+}
 #endif
 
 } // namespace WebCore

@@ -172,6 +172,7 @@ TextStream& operator<<(TextStream& ts, WheelEventTestMonitor::DeferReason reason
     case WheelEventTestMonitor::ScrollSnapInProgress: ts << "scroll-snapping"; break;
     case WheelEventTestMonitor::ScrollingThreadSyncNeeded: ts << "scrolling thread sync needed"; break;
     case WheelEventTestMonitor::ContentScrollInProgress: ts << "content scrolling"; break;
+    case WheelEventTestMonitor::RequestedScrollPosition: ts << "requested scroll position"; break;
     }
     return ts;
 }
