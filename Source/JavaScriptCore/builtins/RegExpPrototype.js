@@ -459,9 +459,11 @@ function hasObservableSideEffectsForRegExpSplit(regexp)
     if (regexpUnicode !== @regExpProtoUnicodeGetter)
         return true;
     
-    // This is accessed by the RegExp species constructor.
+    // These are accessed by the RegExp species constructor.
     var regexpSource = @tryGetById(regexp, "source");
     if (regexpSource !== @regExpProtoSourceGetter)
+        return true;
+    if (regexp.@@match !== @regExpPrototypeSymbolMatch)
         return true;
 
     return typeof regexp.lastIndex !== "number";

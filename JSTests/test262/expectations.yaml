@@ -8,9 +8,6 @@ test/annexB/built-ins/Function/createdynfn-html-open-comment-params.js:
 test/annexB/built-ins/Function/createdynfn-no-line-terminator-html-close-comment-body.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/annexB/built-ins/RegExp/prototype/Symbol.split/Symbol.match-getter-recompiles-source.js:
-  default: 'Test262Error: Expected SameValue(«», «a») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«», «a») to be true'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-for-in.js:

@@ -148,6 +148,7 @@ namespace JSC {
     macro(regExpProtoSourceGetter) \
     macro(regExpProtoStickyGetter) \
     macro(regExpProtoUnicodeGetter) \
+    macro(regExpPrototypeSymbolMatch) \
     macro(regExpPrototypeSymbolReplace) \
     macro(regExpSearchFast) \
     macro(regExpSplitFast) \
