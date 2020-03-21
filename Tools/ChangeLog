@@ -1,3 +1,14 @@
+2020-03-20  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests: Report MacCatalyst as a unique platform
+        https://bugs.webkit.org/show_bug.cgi?id=209361
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacCatalystPort):
+        (MacCatalystPort.configuration_for_upload): Treat MacCatalyst as a separate platform from Mac.
+
 2020-03-20  Alex Christensen  <achristensen@webkit.org>
 
         CORS-disabling SPI introduced in r253978 should make responses non-opaque
