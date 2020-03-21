@@ -175,11 +175,10 @@ void RenderTextControlSingleLine::layout()
 
     HTMLElement* placeholderElement = inputElement().placeholderElement();
     if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
-        LayoutSize innerTextSize;
+        auto innerTextWidth = LayoutUnit { };
         if (innerTextRenderer)
-            innerTextSize = innerTextRenderer->size();
-        placeholderBox->mutableStyle().setWidth(Length(innerTextSize.width() - placeholderBox->horizontalBorderAndPaddingExtent(), Fixed));
-        placeholderBox->mutableStyle().setHeight(Length(innerTextSize.height() - placeholderBox->verticalBorderAndPaddingExtent(), Fixed));
+            innerTextWidth = innerTextRenderer->logicalWidth();
+        placeholderBox->mutableStyle().setWidth(Length(innerTextWidth - placeholderBox->horizontalBorderAndPaddingExtent(), Fixed));
         bool neededLayout = placeholderBox->needsLayout();
         bool placeholderBoxHadLayout = placeholderBox->everHadLayout();
         if (innerTextSizeChanged) {
@@ -187,15 +186,20 @@ void RenderTextControlSingleLine::layout()
             placeholderBox->setChildNeedsLayout(MarkOnlyThis);
         }
         placeholderBox->layoutIfNeeded();
-        LayoutPoint textOffset;
+        auto placeholderTopLeft = containerRenderer ? containerRenderer->location() : LayoutPoint { };
+        auto* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : nullptr;
+        if (innerBlockRenderer)
+            placeholderTopLeft += toLayoutSize(innerBlockRenderer->location());
         if (innerTextRenderer)
-            textOffset = innerTextRenderer->location();
-        if (innerBlockElement() && innerBlockElement()->renderBox())
-            textOffset += toLayoutSize(innerBlockElement()->renderBox()->location());
-        if (containerRenderer)
-            textOffset += toLayoutSize(containerRenderer->location());
-        placeholderBox->setLocation(textOffset);
-
+            placeholderTopLeft += toLayoutSize(innerTextRenderer->location());
+        placeholderBox->setLogicalLeft(placeholderTopLeft.x());
+        // Here the container box indicates the renderer that the placeholder content is aligned with (no parent and/or containing block relationship).
+        auto* containerBox = innerTextRenderer ? innerTextRenderer : innerBlockRenderer ? innerBlockRenderer : containerRenderer;
+        if (containerBox) {
+            // Center vertical align the placeholder content.
+            auto logicalTop = placeholderTopLeft.y() + (containerBox->logicalHeight() / 2 - placeholderBox->logicalHeight() / 2);
+            placeholderBox->setLogicalTop(logicalTop);
+        }
         if (!placeholderBoxHadLayout && placeholderBox->checkForRepaintDuringLayout()) {
             // This assumes a shadow tree without floats. If floats are added, the
             // logic should be shared with RenderBlock::layoutBlockChild.

@@ -1,3 +1,14 @@
+2020-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        telerik.com: Placeholder text is misaligned in search text box
+        https://bugs.webkit.org/show_bug.cgi?id=209371
+        <rdar://problem/45945564>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/forms/placeholder-content-center-expected.html: Added.
+        * fast/forms/placeholder-content-center.html: Added.
+
 2020-03-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Yahoo! search results are sometimes zoomed in a little
