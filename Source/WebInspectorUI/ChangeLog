@@ -1,3 +1,138 @@
+2020-03-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r257380, r257759): focusing the inspected page when docked dims most of the interface
+        https://bugs.webkit.org/show_bug.cgi?id=209366
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (body.window-inactive .navigation-bar .item.button > img): Added.
+        (body.window-inactive .navigation-bar .item.button.disabled > img): Added.
+        (body:matches(.window-inactive, .window-docked-inactive) .navigation-bar .item.button > img): Deleted.
+        (body:matches(.window-inactive, .window-docked-inactive) .navigation-bar .item.button.disabled > img): Deleted.
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css:
+        (body.window-inactive .timeline-overview-graph.rendering-frame > .frame-marker): Added.
+        (body:matches(.window-inactive, .window-docked-inactive) .timeline-overview-graph.rendering-frame > .frame-marker): Deleted.
+        * UserInterface/Views/TabBar.css:
+        (body:not(.docked).window-inactive .tab-bar): Added.
+        (body.docked.window-inactive .tab-bar): Added.
+        (body.window-inactive .tab-bar > .border): Added.
+        (body.window-inactive .tab-bar > .navigation-bar > .item.divider): Added.
+        (body:not(.docked).window-inactive .tab-bar > .tabs > .item): Added.
+        (body:not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (body.docked.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (body.window-inactive .tab-bar > .tabs > .item > .icon): Added.
+        (body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .icon): Added.
+        (body.window-inactive .tab-bar > .tabs > .item > .title): Added.
+        (body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .title): Added.
+        (body:not(.docked).window-inactive .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected, body:not(.docked).window-inactive .tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)), body:not(.docked).window-inactive .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected): Added.
+        (@media (prefers-color-scheme: dark) body.docked.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (@media (prefers-color-scheme: dark) body:not(.docked).window-inactive .tab-bar): Added.
+        (@media (prefers-color-scheme: dark) body:not(.docked).window-inactive .tab-bar > .tabs > .item): Added.
+        (@media (prefers-color-scheme: dark) body:not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar): Deleted.
+        (body.docked:matches(.window-inactive, .window-docked-inactive) .tab-bar): Deleted.
+        (body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .border): Deleted.
+        (body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .navigation-bar > .item.divider): Deleted.
+        (body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item): Deleted.
+        (body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (body.docked:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item > .icon): Deleted.
+        (body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected > .icon): Deleted.
+        (body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item > .title): Deleted.
+        (body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected > .title): Deleted.
+        (body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected, body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)), body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected): Deleted.
+        (@media (prefers-color-scheme: dark) body.docked:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (body.window-inactive .timeline-record-frame.selected): Added.
+        (body:matches(.window-inactive, .window-docked-inactive) .timeline-record-frame.selected): Deleted.
+        * UserInterface/Views/TimelineRuler.css:
+        (body.window-inactive .timeline-ruler > .header > .divider): Added.
+        (body:matches(.window-inactive, .window-docked-inactive) .timeline-ruler > .header > .divider): Deleted.
+        * UserInterface/Views/Variables.css:
+        (body.window-inactive): Added.
+        (body.window-inactive *): Added.
+        (@media (prefers-color-scheme: dark) body.window-inactive): Added.
+        (@media (prefers-color-scheme: dark) body.window-inactive *): Added.
+        (body:matches(.window-inactive, .window-docked-inactive)): Deleted.
+        (body:matches(.window-inactive, .window-docked-inactive) *): Deleted.
+        (@media (prefers-color-scheme: dark) body:matches(.window-inactive, .window-docked-inactive)): Deleted.
+        (@media (prefers-color-scheme: dark) body:matches(.window-inactive, .window-docked-inactive) *): Deleted.
+        Remove usage of `.window-docked-inactive` as we don't want the UI to change when the focus
+        switches between the inspected page and the docked Web Inspector area, which happens a lot.
+
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.breakpoint.selected .status > .status-image.resolved): Added.
+        (.tree-outline:focus .item.breakpoint.selected .status > .status-image.resolved): Deleted.
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.call-frame.selected .status > .status-image): Added.
+        (.tree-outline:focus .item.call-frame.selected .status > .status-image): Deleted.
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (body:not(.window-inactive, .window-docked-inactive) .sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline:focus-within .item.processing.selected .subtitle > progress): Added.
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline:focus .item.processing.selected .subtitle > progress): Deleted.
+        * UserInterface/Views/DOMTreeContentView.css:
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom-tree:focus-within .tree-outline.dom li:matches(.selected, .hovered) .status-image.breakpoint): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom-tree:focus-within .tree-outline.dom li:matches(.selected, .hovered) .status-image.breakpoint.subtree): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .content-view.dom-tree .tree-outline.dom:focus li:matches(.selected, .hovered) .status-image.breakpoint): Deleted.
+        (body:not(.window-inactive, .window-docked-inactive) .content-view.dom-tree .tree-outline.dom:focus li:matches(.selected, .hovered) .status-image.breakpoint.subtree): Deleted.
+        * UserInterface/Views/DOMTreeOutline.css:
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:not(.non-selectable):focus-within li.selected .selection-area): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.inspected-node.selected > span::after): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .pseudo-class-indicator): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected *): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.parent.selected::before): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.parent.expanded.selected::before): Added.
+        (.tree-outline.dom:not(.non-selectable):focus-within li.selected .selection-area): Deleted.
+        (.tree-outline.dom:focus-within li.inspected-node.selected > span::after): Deleted.
+        (.tree-outline.dom:focus-within li.selected .pseudo-class-indicator): Deleted.
+        (.tree-outline.dom:focus-within li.selected): Deleted.
+        (.tree-outline.dom:focus-within li.selected *): Deleted.
+        (.tree-outline.dom:focus-within li.parent.selected::before): Deleted.
+        (.tree-outline.dom:focus-within li.parent.expanded.selected::before): Deleted.
+        * UserInterface/Views/Main.css:
+        (:focus .selected .go-to-arrow, .selected:focus .go-to-arrow): Added.
+        (:focus .selected .go-to-arrow:active, .selected .go:focus-to-arrow:active): Added.
+        (@media (prefers-color-scheme: dark) :focus .selected .go-to-arrow, .selected:focus .go-to-arrow): Added.
+        (:focus .selected .go-to-arrow): Deleted.
+        (:focus .selected .go-to-arrow:active): Deleted.
+        (@media (prefers-color-scheme: dark) :focus .selected .go-to-arrow): Deleted.
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected > .titles .parameter.swizzled, body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected::before): Added.
+        (.tree-outline:focus .item.recording-action.selected:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon): Deleted.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.recording-action.selected > .titles .parameter.swizzled, body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.recording-action.selected::before): Deleted.
+        * UserInterface/Views/ResourceTreeElement.css:
+        (.item.resource.resource-type-websocket:not(.selected) .status .ready-state.open, .tree-outline:not(:focus-within) .item.resource.resource-type-websocket.selected .status .ready-state.open, body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.open): Added.
+        (.item.resource.resource-type-websocket:not(.selected) .status .ready-state.connecting, .tree-outline:not(:focus-within) .item.resource.resource-type-websocket.selected .status .ready-state.connecting, body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.connecting): Added.
+        (.item.resource.resource-type-websocket:not(.selected) .status .ready-state.open, .tree-outline:not(:focus) .item.resource.resource-type-websocket.selected .status .ready-state.open, body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.open): Deleted.
+        (.item.resource.resource-type-websocket:not(.selected) .status .ready-state.connecting, .tree-outline:not(:focus) .item.resource.resource-type-websocket.selected .status .ready-state.connecting, body:matches(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.connecting): Deleted.
+        * UserInterface/Views/ScriptDetailsTimelineView.css:
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.selected .alternate-subtitle): Added.
+        (.tree-outline:focus .item.selected .alternate-subtitle): Deleted.
+        * UserInterface/Views/SourceCodeTreeElement.css:
+        (.tree-outline .item .status > .toggle-script-blackbox, body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.selected .status > .toggle-script-blackbox.pattern-blackboxed): Added.
+        (.tree-outline .item .status > .toggle-script-blackbox, .tree-outline:focus .item.selected .status > .toggle-script-blackbox.pattern-blackboxed): Deleted.
+        * UserInterface/Views/ThreadTreeElement.css:
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within > .item.thread.selected .status-button.resume): Added.
+        (.tree-outline:focus > .item.thread.selected .status-button.resume): Deleted.
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview > .tree-outline.timelines .item.selected + .item): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .timeline-overview > .tree-outline.timelines:focus-within .item.selected + .item): Added.
+        (@media (prefers-color-scheme: dark) .timeline-overview > .tree-outline.timelines .item.selected + .item): Added.
+        (.timeline-overview > .tree-outline.timelines .item.selected + .item, body:matches(.window-inactive, .window-docked-inactive) .timeline-overview > .tree-outline.timelines .item.selected + .item): Deleted.
+        (.timeline-overview > .tree-outline.timelines :focus .item.selected + .item): Deleted.
+        (@media (prefers-color-scheme: dark) .timeline-overview > .tree-outline.timelines .item.selected + .item, body:matches(.window-inactive, .window-docked-inactive) .timeline-overview > .tree-outline.timelines .item.selected + .item): Deleted.
+        * UserInterface/Views/TreeElementStatusButton.css:
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.selected > .status > .status-button): Added.
+        (:focus .item.selected > .status > .status-button): Deleted.
+        Fix cases where `:focus` was still being checked from the `WI.TreeOutline` instead of the
+        individual `WI.TreeElement`. We should be using `:focus-within`, but only if the window or
+        docked Web Inspector area is also focused.
+
 2020-03-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r257835): close and undock buttons are shown in remote inspector

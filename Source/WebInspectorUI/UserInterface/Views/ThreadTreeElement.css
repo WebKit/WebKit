@@ -42,7 +42,7 @@
     fill: hsla(0, 0%, var(--foreground-lightness), 0.7);
 }
 
-.tree-outline:focus > .item.thread.selected .status-button.resume {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within > .item.thread.selected .status-button.resume {
     fill: var(--selected-foreground-color);
 }
 

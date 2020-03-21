@@ -24,7 +24,7 @@
  */
 
 .tree-outline .item .status > .toggle-script-blackbox,
-.tree-outline:focus .item.selected .status > .toggle-script-blackbox.pattern-blackboxed {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.selected .status > .toggle-script-blackbox.pattern-blackboxed {
     content: url(../Images/Hide.svg#white);
 }
 

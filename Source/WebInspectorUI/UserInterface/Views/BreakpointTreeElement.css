@@ -41,7 +41,7 @@
     filter: none;
 }
 
-.tree-outline:focus .item.breakpoint.selected .status > .status-image.resolved {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.breakpoint.selected .status > .status-image.resolved {
     stroke: var(--selected-foreground-color);
 }
 

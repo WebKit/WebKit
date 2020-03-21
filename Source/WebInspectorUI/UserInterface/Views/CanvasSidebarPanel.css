@@ -87,7 +87,7 @@
     vertical-align: -3px;
 }
 
-.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline:focus .item.processing.selected .subtitle > progress {
+body:not(.window-inactive, .window-docked-inactive) .sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline:focus-within .item.processing.selected .subtitle > progress {
     filter: brightness(10);
 }
 

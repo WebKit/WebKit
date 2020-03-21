@@ -59,7 +59,7 @@ body[dir=rtl] .tree-outline .item.call-frame .status {
     fill: hsl(0, 0%, 57%);
 }
 
-.tree-outline:focus .item.call-frame.selected .status > .status-image {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.call-frame.selected .status > .status-image {
     fill: var(--selected-foreground-color);
 }
 

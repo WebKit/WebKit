@@ -307,11 +307,13 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     transform: revert;
 }
 
-:focus .selected .go-to-arrow {
+:focus .selected .go-to-arrow,
+.selected:focus .go-to-arrow {
     background-image: url(../Images/GoToArrow.svg#selected);
 }
 
-:focus .selected .go-to-arrow:active {
+:focus .selected .go-to-arrow:active,
+.selected:focus .go-to-arrow:active {
     background-image: url(../Images/GoToArrow.svg#selected-active);
 }
 
@@ -568,7 +570,8 @@ body[dir=rtl] .device-settings-content > .reference-page-link-container {
         filter: invert();
     }
 
-    :focus .selected .go-to-arrow {
+    :focus .selected .go-to-arrow,
+    .selected:focus .go-to-arrow {
         filter: unset;
     }
 

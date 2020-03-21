@@ -27,7 +27,7 @@
     content: url(../Images/FolderGeneric.svg#light)
 }
 
-.tree-outline .folder-icon.selected:focus .icon {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .folder-icon.selected .icon {
     content: url(../Images/FolderGeneric.svg#dark)
 }
 
@@ -35,7 +35,7 @@
     content: url(../Images/Origin.svg#light);
 }
 
-.tree-outline .origin-icon.selected:focus .icon {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .origin-icon.selected .icon {
     content: url(../Images/Origin.svg#dark);
 }
 

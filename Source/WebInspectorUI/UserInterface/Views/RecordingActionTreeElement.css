@@ -50,7 +50,7 @@ body[dir=rtl] .item.recording-action::before {
     float: right;
 }
 
-.tree-outline:focus .item.recording-action.selected:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon {
     filter: invert();
     opacity: 1;
 }
@@ -65,8 +65,8 @@ body[dir=rtl] .item.recording-action::before {
     font-style: italic;
 }
 
-body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.recording-action.selected > .titles .parameter.swizzled,
-body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.recording-action.selected::before {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected > .titles .parameter.swizzled,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected::before {
     color: var(--selected-secondary-text-color);
 }
 

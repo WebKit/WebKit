@@ -43,7 +43,7 @@
     color: hsla(0, 0%, 0%, 0.7);
 }
 
-.tree-outline:focus .item.selected .alternate-subtitle {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.selected .alternate-subtitle {
     color: hsla(0, 0%, 100%, 0.9);
 }
 

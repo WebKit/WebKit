@@ -96,11 +96,11 @@
     opacity: 0.3;
 }
 
-body:matches(.window-inactive, .window-docked-inactive) .navigation-bar .item.button > img {
+body.window-inactive .navigation-bar .item.button > img {
     opacity: 0.6;
 }
 
-body:matches(.window-inactive, .window-docked-inactive) .navigation-bar .item.button.disabled > img {
+body.window-inactive .navigation-bar .item.button.disabled > img {
     opacity: 0.18;
 }
 

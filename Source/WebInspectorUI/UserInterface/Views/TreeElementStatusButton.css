@@ -34,7 +34,7 @@
     color: hsl(0, 0%, 50%);
 }
 
-:focus .item.selected > .status > .status-button {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.selected > .status > .status-button {
     color: white;
 }
 

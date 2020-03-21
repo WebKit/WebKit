@@ -46,12 +46,12 @@ body:not(.docked) .tab-bar {
     background-size: 100% 200%;
 }
 
-body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar {
+body:not(.docked).window-inactive .tab-bar {
     background-image: none;
     background-color: var(--tab-item-extra-light-border-color);
 }
 
-body.docked:matches(.window-inactive, .window-docked-inactive) .tab-bar {
+body.docked.window-inactive .tab-bar {
     background-color: var(--background-color-unfocused);
 }
 
@@ -77,7 +77,7 @@ body.docked.bottom .tab-bar > .border.top {
     filter: brightness(80%);
 }
 
-body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .border {
+body.window-inactive .tab-bar > .border {
     background-color: var(--tab-item-light-border-color);
 }
 
@@ -104,7 +104,7 @@ body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .border {
     background-color: var(--tab-item-medium-border-color);
 }
 
-body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .navigation-bar > .item.divider {
+body.window-inactive .tab-bar > .navigation-bar > .item.divider {
     background-color: var(--tab-item-light-border-color);
 }
 
@@ -232,7 +232,7 @@ body[dir=rtl]:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selecte
     border-right-color: var(--tab-item-dark-border-color);
 }
 
-body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item {
+body:not(.docked).window-inactive .tab-bar > .tabs > .item {
     border-right-color: var(--tab-item-light-border-color) !important;
     border-left-color: var(--tab-item-light-border-color) !important;
 
@@ -242,7 +242,7 @@ body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > 
     transition: none;
 }
 
-body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected {
+body:not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
     background-image: none;
     background-color: hsl(0, 0%, 96%);
 }
@@ -251,7 +251,7 @@ body.docked .tab-bar > .tabs > .item:not(.disabled):matches(.selected, :hover) {
     box-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.15) inset;
 }
 
-body.docked:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected {
+body.docked.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
     background-color: hsl(0, 0%, 90%);
 }
 
@@ -291,11 +291,11 @@ body.docked:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs 
     opacity: 0.35;
 }
 
-body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item > .icon {
+body.window-inactive .tab-bar > .tabs > .item > .icon {
     opacity: 0.3;
 }
 
-body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected > .icon {
+body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .icon {
     opacity: 0.4;
 }
 
@@ -309,7 +309,7 @@ body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item
     -webkit-margin-start: 6px;
 }
 
-body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item > .title {
+body.window-inactive .tab-bar > .tabs > .item > .title {
     color: hsla(0, 0%, var(--foreground-lightness), 0.4);
 }
 
@@ -329,7 +329,7 @@ body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item
     color: hsla(0, 0%, var(--foreground-lightness), 0.8);
 }
 
-body:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected > .title {
+body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .title {
     color: hsla(0, 0%, var(--foreground-lightness), 0.5);
 }
 
@@ -365,9 +365,9 @@ body:not(.docked) .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).
     border-right: var(--tab-item-medium-border-style);
 }
 
-body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected,
-body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
-body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected {
+body:not(.docked).window-inactive .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected,
+body:not(.docked).window-inactive .tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
+body:not(.docked).window-inactive .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected {
     border-right-color: var(--tab-item-light-border-color);
 }
 
@@ -419,7 +419,7 @@ body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > 
         background-color: var(--background-color);
     }
 
-    body.docked:matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected {
+    body.docked.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
         background-color: hsl(0, 0%, 20%);
     }
 
@@ -431,19 +431,19 @@ body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > 
         opacity: 0.6;
     }
 
-    body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar {
+    body:not(.docked).window-inactive .tab-bar {
         --tab-item-border-color: hsl(0, 0%, 34%);
 
         background-image: none;
         background-color: hsl(0, 0%, 13%);
     }
 
-    body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item {
+    body:not(.docked).window-inactive .tab-bar > .tabs > .item {
         background-image: none;
         background-color: hsl(0, 0%, 13%);
     }
 
-    body:not(.docked):matches(.window-inactive, .window-docked-inactive) .tab-bar > .tabs > .item:not(.disabled).selected {
+    body:not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
         background-color: hsl(0, 0%, 19%);
     }
 }

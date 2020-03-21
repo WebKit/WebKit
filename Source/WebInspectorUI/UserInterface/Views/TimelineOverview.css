@@ -116,12 +116,11 @@ body[dir=rtl] .timeline-overview:not(.frames) > :matches(.scroll-container, .tim
     border-top: 1px solid hsla(0, 0%, 0%, 0.09);
 }
 
-.timeline-overview > .tree-outline.timelines .item.selected + .item,
-body:matches(.window-inactive, .window-docked-inactive) .timeline-overview > .tree-outline.timelines .item.selected + .item {
+.timeline-overview > .tree-outline.timelines .item.selected + .item {
     border-top-color: hsl(0, 0%, 83%);
 }
 
-.timeline-overview > .tree-outline.timelines :focus .item.selected + .item {
+body:not(.window-inactive, .window-docked-inactive) .timeline-overview > .tree-outline.timelines:focus-within .item.selected + .item {
     border-top-color: hsl(209, 100%, 49%);
 }
 
@@ -245,8 +244,7 @@ body[dir=rtl] .timeline-overview > .scroll-container > .scroll-width-sizer {
         border-top-color: hsla(0, 0%, var(--foreground-lightness), 0.09);
     }
 
-    .timeline-overview > .tree-outline.timelines .item.selected + .item,
-    body:matches(.window-inactive, .window-docked-inactive) .timeline-overview > .tree-outline.timelines .item.selected + .item {
+    .timeline-overview > .tree-outline.timelines .item.selected + .item {
         border-top-color: hsla(0, 0%, var(--foreground-lightness), 0.09);
     }
 }
