@@ -104,6 +104,7 @@
 #import "RunningBoardServicesSPI.h"
 #import "UserInterfaceIdiom.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
+#import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIAccessibility.h>
 #import <WebCore/UTTypeRecordSwizzler.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -274,6 +275,17 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (parameters.neSessionManagerExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.neSessionManagerExtensionHandle);
     NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(parameters.neHelperExtensionHandle.hasValue() && parameters.neSessionManagerExtensionHandle.hasValue());
+
+    if (parameters.mapDBExtensionHandle) {
+        auto extension = SandboxExtension::create(WTFMove(*parameters.mapDBExtensionHandle));
+        bool ok = extension->consume();
+        ASSERT_UNUSED(ok, ok);
+        // Perform an API call which will communicate with the database mapping service, and map the database.
+        auto r = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0));
+        ok = extension->revoke();
+        ASSERT_UNUSED(ok, ok);
+    }
+
     setSystemHasBattery(parameters.systemHasBattery);
 
     if (parameters.mimeTypesMap)

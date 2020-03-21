@@ -213,6 +213,7 @@ struct WebProcessCreationParameters {
 #if PLATFORM(COCOA)
     Optional<SandboxExtension::Handle> neHelperExtensionHandle;
     Optional<SandboxExtension::Handle> neSessionManagerExtensionHandle;
+    Optional<SandboxExtension::Handle> mapDBExtensionHandle;
     bool systemHasBattery { false };
     Optional<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> mimeTypesMap;
     HashMap<String, String> mapUTIFromMIMEType;
