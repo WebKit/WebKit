@@ -1,3 +1,81 @@
+2020-03-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Yahoo! search results are sometimes zoomed in a little
+        https://bugs.webkit.org/show_bug.cgi?id=209356
+        <rdar://problem/60563952>
+
+        Reviewed by Tim Horton.
+
+        When the web content process uses `WebPage::scalePage()` to modify the viewport scale (e.g. after a viewport
+        configuration change) on iOS, it's possible for this new scale to be replaced by a previous scale when
+        dispatching the next visible content rect update. Consider the following scenario:
+
+        1. A remote layer tree transaction is sent to the UI process containing scale `a`.
+        2. `WebPage::scalePage` is called with a scale `b`.
+        3. A visible content rect update with scale `a` is scheduled, sent to the web process and dispatched.
+        4. The page scale reverts to `a`.
+
+        This bug exercises the above scenario: the Yahoo search results page specifies a responsive viewport
+        (device-width and scale=1), but proceeds to lay out outside of the bounds of the device width. As such, after
+        the document finishes parsing, we attempt to shrink the page to fit; however, if this shrinking happens after
+        a remote layer tree transaction with the old scale but before the next visible content rect update containing
+        that old scale, we will end up reverting to this old scale instead of the scale after shrinking to fit. This
+        same bug is present when using `setViewScale`, which was exercised by the flaky test below, since the new scale
+        after the viewport configuration change may be overridden by an incoming visible content rect update.
+
+        To fix this, we add a mechanism to detect when the page scale has been changed by the web process (e.g. after a
+        viewport change) and remember the last committed layer tree identifier at that moment. Later, if we get a
+        visible content rect update with a layer tree commit identifier equal to (or older than) the layer tree commit
+        identifier when we changed the page scale, don't set the page scale factor using this incoming scale; instead,
+        wait for the next visible content rect update (which will contain the new scale).
+
+        Fixes an existing flaky test: fast/viewport/ios/device-width-viewport-after-changing-view-scale.html
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::scalePage):
+        (WebKit::WebPage::platformDidScalePage):
+
+        Add a platform hook that is invoked after scaling the page via `scalePage`. See below for the iOS version.
+
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::didFinishDocumentLoad):
+        (WebKit::WebPage::didFinishLoad):
+
+        Drive-by fix: remove an unnecessary `UNUSED_PARAM`. Also, replace calls to schedule the shrink to fit content
+        timer with a call to `shrinkToFitContent` instead.
+
+        * WebProcess/WebPage/WebPage.h:
+
+        Add a member variable to remember the last sent layer tree commit ID and page scale, when we last changed the
+        page scale via the web process. This is set in `platformDidScalePage` below.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::shrinkToFitContent):
+
+        Refactor this to not return a bool, but instead call `viewportConfigurationChanged` at the end if the viewport
+        actually changed.
+
+        (WebKit::WebPage::updateVisibleContentRects):
+
+        Ignore the incoming page scale when updating visible content rects if it:
+        1. Is the same as the last page scale we sent via layer tree commit.
+        2. After sending the above scale, we've since adjusted the page scale such that it is no longer the same.
+
+        (WebKit::WebPage::platformDidScalePage):
+
+        Update `m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage`.
+
+        (WebKit::WebPage::scheduleShrinkToFitContent): Deleted.
+        (WebKit::WebPage::shrinkToFitContentTimerFired): Deleted.
+
+        Remove the zero-delay timer before running the shrink-to-fit heuristic, and just call `shrinkToFitContent`
+        directly. This was a source of flakiness when trying to reproduce the bug, and doesn't seem to serve any
+        purpose since we shrink-to-fit after dispatching the "DOMContentLoaded" and "load" events anyways.
+
+        (WebKit::WebPage::immediatelyShrinkToFitContent): Deleted.
+
 2020-03-20  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Deny access to database mapping service
