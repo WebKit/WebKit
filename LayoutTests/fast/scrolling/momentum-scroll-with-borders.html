@@ -46,6 +46,7 @@
             let sendMomentumScroll = function() {
                 eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'none', 'continue');
                 if (!--remainingScrolls) {
+                    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
                     eventSender.callAfterScrollingCompletes(checkForScroll);
                     return;
                 }
