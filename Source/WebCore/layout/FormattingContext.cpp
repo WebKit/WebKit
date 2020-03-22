@@ -139,19 +139,17 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
     collectOutOfFlowDescendantsIfNeeded();
 
     auto horizontalConstraintsForLayoutBox = [&] (const auto& outOfFlowBox) {
-        auto* containingBlock = outOfFlowBox.containingBlock();
-        ASSERT(containingBlock);
-        if (containingBlock == &root())
+        auto& containingBlock = outOfFlowBox.containingBlock();
+        if (&containingBlock == &root())
             return rootHorizontalConstraints;
-        return Geometry::horizontalConstraintsForOutOfFlow(geometryForBox(*containingBlock));
+        return Geometry::horizontalConstraintsForOutOfFlow(geometryForBox(containingBlock));
     };
 
     auto verticalConstraintsForLayoutBox = [&] (const auto& outOfFlowBox) {
-        auto* containingBlock = outOfFlowBox.containingBlock();
-        ASSERT(containingBlock);
-        if (containingBlock == &root())
+        auto& containingBlock = outOfFlowBox.containingBlock();
+        if (&containingBlock == &root())
             return rootVerticalConstraints;
-        return Geometry::verticalConstraintsForOutOfFlow(geometryForBox(*containingBlock));
+        return Geometry::verticalConstraintsForOutOfFlow(geometryForBox(containingBlock));
     };
 
     for (auto& outOfFlowBox : formattingState().outOfFlowBoxes()) {
@@ -303,7 +301,7 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
     for (auto& layoutBox : descendantsOfType<Box>(formattingContextRoot)) {
         if (&layoutBox.formattingContextRoot() != &formattingContextRoot)
             continue;
-        auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
+        auto& containingBlockGeometry = geometryForBox(layoutBox.containingBlock());
         auto& boxGeometry = geometryForBox(layoutBox);
 
         // 10.3.3 Block-level, non-replaced elements in normal flow

@@ -251,10 +251,10 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
         ASSERT(*floatBottom == rootRelativeTop);
 
         // The return vertical position is in the containing block's coordinate system. Convert it to the formatting root's coordinate system if needed.
-        if (layoutBox.containingBlock() == &m_floatingState.root())
+        if (&layoutBox.containingBlock() == &m_floatingState.root())
             return { Position { rootRelativeTop }, clearance };
 
-        auto containingBlockRootRelativeTop = mapTopToFloatingStateRoot(*layoutBox.containingBlock());
+        auto containingBlockRootRelativeTop = mapTopToFloatingStateRoot(layoutBox.containingBlock());
         return { Position { rootRelativeTop - containingBlockRootRelativeTop }, clearance };
     };
 
@@ -418,7 +418,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
 
 FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absoluteDisplayBoxCoordinates(const Box& floatAvoider) const
 {
-    auto& containingBlock = *floatAvoider.containingBlock();
+    auto& containingBlock = floatAvoider.containingBlock();
     auto displayBox = mapToFloatingStateRoot(floatAvoider);
 
     if (&containingBlock == &floatingState().root()) {
@@ -435,7 +435,7 @@ Display::Box FloatingContext::mapToFloatingStateRoot(const Box& floatBox) const
     auto& floatingStateRoot = floatingState().root();
     auto& boxGeometry = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates);
     auto topLeft = boxGeometry.topLeft();
-    for (auto* containingBlock = floatBox.containingBlock(); containingBlock && containingBlock != &floatingStateRoot; containingBlock = containingBlock->containingBlock())
+    for (auto* containingBlock = &floatBox.containingBlock(); containingBlock != &floatingStateRoot; containingBlock = &containingBlock->containingBlock())
         topLeft.moveBy(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).topLeft());
 
     auto mappedDisplayBox = Display::Box(boxGeometry);
@@ -447,8 +447,8 @@ LayoutUnit FloatingContext::mapTopToFloatingStateRoot(const Box& floatBox) const
 {
     auto& floatingStateRoot = floatingState().root();
     auto top = formattingContext().geometryForBox(floatBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).top();
-    for (auto* containerBox = floatBox.containingBlock(); containerBox && containerBox != &floatingStateRoot; containerBox = containerBox->containingBlock())
-        top += formattingContext().geometryForBox(*containerBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).top();
+    for (auto* containingBlock = &floatBox.containingBlock(); containingBlock != &floatingStateRoot; containingBlock = &containingBlock->containingBlock())
+        top += formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).top();
     return top;
 }
 
@@ -459,8 +459,8 @@ Point FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot(Poin
     if (&from == &to)
         return position;
     auto mappedPosition = position;
-    for (auto* containerBox = &from; containerBox && containerBox != &to; containerBox = containerBox->containingBlock())
-        mappedPosition.moveBy(formattingContext().geometryForBox(*containerBox, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).topLeft());
+    for (auto* containingBlock = &from; containingBlock != &to; containingBlock = &containingBlock->containingBlock())
+        mappedPosition.moveBy(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxNeedsToBeInAbsoluteCoordinates).topLeft());
     return mappedPosition;
 }
 

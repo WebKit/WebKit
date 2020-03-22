@@ -97,7 +97,7 @@ Optional<PositionInContextRoot> FloatingState::bottom(const ContainerBox& format
     Optional<PositionInContextRoot> bottom;
     for (auto& floatItem : m_floats) {
         // Ignore floats from ancestor formatting contexts when the floating state is inherited.
-        if (!floatItem.isDescendantOfFormattingRoot(formattingContextRoot))
+        if (!floatItem.isInFormattingContextOf(formattingContextRoot))
             continue;
 
         if ((type == Clear::Left && !floatItem.isLeftPositioned())
@@ -122,7 +122,7 @@ Optional<PositionInContextRoot> FloatingState::top(const ContainerBox& formattin
     Optional<PositionInContextRoot> top;
     for (auto& floatItem : m_floats) {
         // Ignore floats from ancestor formatting contexts when the floating state is inherited.
-        if (!floatItem.isDescendantOfFormattingRoot(formattingContextRoot))
+        if (!floatItem.isInFormattingContextOf(formattingContextRoot))
             continue;
 
         auto floatTop = floatItem.rectWithMargin().top();

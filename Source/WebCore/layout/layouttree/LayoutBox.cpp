@@ -178,43 +178,47 @@ bool Box::isFloatAvoider() const
     return (establishesBlockFormattingContext() && !establishesInlineFormattingContext()) || establishesTableFormattingContext() || hasFloatClear();
 }
 
-const ContainerBox* Box::containingBlock() const
+const ContainerBox& Box::containingBlock() const
 {
     // Finding the containing block by traversing the tree during tree construction could provide incorrect result.
     ASSERT(!Phase::isInTreeBuilding());
+    // If we ever end up here with the ICB, we must be doing something not-so-great.
+    RELEASE_ASSERT(!isInitialContainingBlock());
     // The containing block in which the root element lives is a rectangle called the initial containing block.
     // For other elements, if the element's position is 'relative' or 'static', the containing block is formed by the
     // content edge of the nearest block container ancestor box or which establishes a formatting context.
     // If the element has 'position: fixed', the containing block is established by the viewport
     // If the element has 'position: absolute', the containing block is established by the nearest ancestor with a
     // 'position' of 'absolute', 'relative' or 'fixed'.
-    if (!parent())
-        return nullptr;
-
     if (!isPositioned() || isInFlowPositioned()) {
-        for (auto* nearestBlockContainerOrFormattingContextRoot = parent(); nearestBlockContainerOrFormattingContextRoot; nearestBlockContainerOrFormattingContextRoot = nearestBlockContainerOrFormattingContextRoot->parent()) {
-            if (nearestBlockContainerOrFormattingContextRoot->isBlockContainerBox() || nearestBlockContainerOrFormattingContextRoot->establishesFormattingContext())
-                return nearestBlockContainerOrFormattingContextRoot; 
+        auto* ancestor = parent();
+        for (; !ancestor->isInitialContainingBlock(); ancestor = ancestor->parent()) {
+            if (ancestor->isBlockContainerBox() || ancestor->establishesFormattingContext())
+                return *ancestor;
         }
-        // We should always manage to find the ICB.
-        ASSERT_NOT_REACHED();
-        return nullptr;
+        return *ancestor;
     }
 
     if (isFixedPositioned()) {
         auto* ancestor = parent();
-        for (; ancestor->parent() && !ancestor->style().hasTransform(); ancestor = ancestor->parent()) { }
-        return ancestor;
+        for (; !ancestor->isInitialContainingBlock(); ancestor = ancestor->parent()) {
+            if (ancestor->style().hasTransform())
+                return *ancestor;
+        }
+        return *ancestor;
     }
 
     if (isOutOfFlowPositioned()) {
         auto* ancestor = parent();
-        for (; ancestor->parent() && !ancestor->isPositioned() && !ancestor->style().hasTransform(); ancestor = ancestor->parent()) { }
-        return ancestor;
+        for (; !ancestor->isInitialContainingBlock(); ancestor = ancestor->parent()) {
+            if (ancestor->isPositioned() || ancestor->style().hasTransform())
+                return *ancestor;
+        }
+        return *ancestor;
     }
 
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return initialContainingBlock();
 }
 
 const ContainerBox& Box::formattingContextRoot() const
@@ -230,15 +234,10 @@ const ContainerBox& Box::formattingContextRoot() const
     // <div id=outer style="position: absolute"><div id=inner><span style="position: relative">content</span></div></div>
     // While the relatively positioned inline container (span) is placed relative to its containing block "outer", it lives in the inline
     // formatting context established by "inner".
-    const ContainerBox* ancestor = nullptr;
-    if (isInlineLevelBox() && isInFlowPositioned())
-        ancestor = parent();
-    else
-        ancestor = containingBlock();
-    ASSERT(ancestor);
-    if (ancestor->establishesFormattingContext())
-        return *ancestor;
-    return ancestor->formattingContextRoot();
+    auto& ancestor = isInlineLevelBox() && isInFlowPositioned() ? *parent() : containingBlock();
+    if (ancestor.establishesFormattingContext())
+        return ancestor;
+    return ancestor.formattingContextRoot();
 }
 
 const ContainerBox& Box::initialContainingBlock() const
@@ -252,21 +251,19 @@ const ContainerBox& Box::initialContainingBlock() const
     return *parent;
 }
 
-bool Box::isDescendantOf(const ContainerBox& ancestorCandidate) const
-{
-    for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
-        if (ancestor == &ancestorCandidate)
-            return true;
-    }
-    return false;
-}
-
-bool Box::isContainingBlockDescendantOf(const ContainerBox& ancestorCandidate) const
+bool Box::isInFormattingContextOf(const ContainerBox& formattingContextRoot) const
 { 
-    for (auto* ancestor = containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-        if (ancestor == &ancestorCandidate)
+    ASSERT(formattingContextRoot.establishesFormattingContext());
+    ASSERT(!isInitialContainingBlock());
+    auto* ancestor = &containingBlock();
+    while (ancestor) {
+        if (ancestor == &formattingContextRoot)
             return true;
+        if (ancestor->isInitialContainingBlock())
+            return false;
+        ancestor = &ancestor->containingBlock();
     }
+    ASSERT_NOT_REACHED();
     return false;
 }
 

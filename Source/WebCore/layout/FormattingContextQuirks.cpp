@@ -39,7 +39,7 @@ LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFix
     // In quirks mode, we go and travers the containing block chain to find a block level box with fixed height value, even if it means leaving
     // the current formatting context. FIXME: surely we need to do some tricks here when block direction support is added.
     auto& formattingContext = this->formattingContext();
-    auto* containingBlock = layoutBox.containingBlock();
+    auto* containingBlock = &layoutBox.containingBlock();
     LayoutUnit bodyAndDocumentVerticalMarginPaddingAndBorder;
     while (containingBlock) {
         auto containingBlockHeight = containingBlock->style().logicalHeight();
@@ -51,7 +51,7 @@ LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFix
         if (containingBlock->isBodyBox() || containingBlock->isDocumentBox()) {
             auto& boxGeometry = formattingContext.geometryForBox(*containingBlock, FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk);
 
-            auto& containingBlockDisplayBox = formattingContext.geometryForBox(*containingBlock->containingBlock(), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk);
+            auto& containingBlockDisplayBox = formattingContext.geometryForBox(containingBlock->containingBlock(), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk);
             auto horizontalConstraints = Geometry::horizontalConstraintsForInFlow(containingBlockDisplayBox);
             auto verticalMargin = formattingContext.geometry().computedVerticalMargin(*containingBlock, horizontalConstraints);
             auto verticalPadding = boxGeometry.paddingTop().valueOr(0) + boxGeometry.paddingBottom().valueOr(0);
@@ -59,7 +59,9 @@ LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFix
             bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.valueOr(0) + verticalMargin.after.valueOr(0) + verticalPadding + verticalBorder;
         }
 
-        containingBlock = containingBlock->containingBlock();
+        if (containingBlock->isInitialContainingBlock())
+            break;
+        containingBlock = &containingBlock->containingBlock();
     }
     // Initial containing block has to have a height.
     return formattingContext.geometryForBox(layoutBox.initialContainingBlock(), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).contentBox().height() - bodyAndDocumentVerticalMarginPaddingAndBorder;

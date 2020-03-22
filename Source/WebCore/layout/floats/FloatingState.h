@@ -66,7 +66,7 @@ public:
         FloatItem(Position, Display::Box absoluteDisplayBox);
 
         bool isLeftPositioned() const { return m_position == Position::Left; }
-        bool isDescendantOfFormattingRoot(const ContainerBox&) const;
+        bool isInFormattingContextOf(const ContainerBox& formattingContextRoot) const { return m_layoutBox->isInFormattingContextOf(formattingContextRoot); }
 
         Display::Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
         UsedHorizontalMargin horizontalMargin() const { return m_absoluteDisplayBox.horizontalMargin(); }
@@ -113,12 +113,6 @@ inline Optional<PositionInContextRoot> FloatingState::bottom(const ContainerBox&
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
     return bottom(formattingContextRoot, Clear::Both);
-}
-
-inline bool FloatingState::FloatItem::isDescendantOfFormattingRoot(const ContainerBox& formattingContextRoot) const
-{
-    ASSERT(formattingContextRoot.establishesFormattingContext());
-    return m_layoutBox->isContainingBlockDescendantOf(downcast<ContainerBox>(formattingContextRoot));
 }
 
 }

@@ -406,7 +406,7 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
                 // Any float box in this formatting context prevents collapsing through.
                 auto& floats = formattingState.floatingState().floats();
                 for (auto& floatItem : floats) {
-                    if (floatItem.isDescendantOfFormattingRoot(containerBox))
+                    if (floatItem.isInFormattingContextOf(containerBox))
                         return false;
                 }
                 return true;

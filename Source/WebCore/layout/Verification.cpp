@@ -251,7 +251,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
     if (layoutBox.isTableBox()) {
         // When the <table> is out-of-flow positioned, the wrapper table box has the offset
         // while the actual table box is static, inflow.
-        auto& tableWrapperDisplayBox = context.displayBoxForLayoutBox(*layoutBox.containingBlock());
+        auto& tableWrapperDisplayBox = context.displayBoxForLayoutBox(layoutBox.containingBlock());
         displayBox.moveBy(tableWrapperDisplayBox.topLeft());
     }
 

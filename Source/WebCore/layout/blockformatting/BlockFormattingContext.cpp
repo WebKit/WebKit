@@ -91,19 +91,17 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     };
 
     auto horizontalConstraintsForLayoutBox = [&] (const auto& layoutBox) {
-        auto* containingBlock = layoutBox.containingBlock();
-        ASSERT(containingBlock);
-        if (containingBlock == &formattingRoot)
+        auto& containingBlock = layoutBox.containingBlock();
+        if (&containingBlock == &formattingRoot)
             return rootHorizontalConstraints;
-        return Geometry::horizontalConstraintsForInFlow(geometryForBox(*containingBlock));
+        return Geometry::horizontalConstraintsForInFlow(geometryForBox(containingBlock));
     };
 
     auto verticalConstraintsForLayoutBox = [&] (const auto& layoutBox) {
-        auto* containingBlock = layoutBox.containingBlock();
-        ASSERT(containingBlock);
-        if (containingBlock == &formattingRoot)
+        auto& containingBlock = layoutBox.containingBlock();
+        if (&containingBlock == &formattingRoot)
             return rootVerticalConstraints;
-        return Geometry::verticalConstraintsForInFlow(geometryForBox(*containingBlock));
+        return Geometry::verticalConstraintsForInFlow(geometryForBox(containingBlock));
     };
 
     // This is a post-order tree traversal layout.
@@ -211,10 +209,10 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
 
     auto mapLogicalTopToFormattingContextRoot = [&] {
         auto& formattingContextRoot = root();
-        ASSERT(layoutBox.isContainingBlockDescendantOf(formattingContextRoot));
+        ASSERT(layoutBox.isInFormattingContextOf(formattingContextRoot));
         auto top = geometryForBox(layoutBox).top();
-        for (auto* containerBox = layoutBox.containingBlock(); containerBox && containerBox != &formattingContextRoot; containerBox = containerBox->containingBlock())
-            top += geometryForBox(*containerBox).top();
+        for (auto* ancestor = &layoutBox.containingBlock(); ancestor != &formattingContextRoot; ancestor = &ancestor->containingBlock())
+            top += geometryForBox(*ancestor).top();
         return top;
     };
 
@@ -259,7 +257,7 @@ void BlockFormattingContext::computeStaticHorizontalPosition(const Box& layoutBo
 void BlockFormattingContext::precomputeVerticalPositionForAncestors(const Box& layoutBox, const ConstraintsPair<HorizontalConstraints>& horizontalConstraints, const ConstraintsPair<VerticalConstraints>& verticalConstraints)
 {
     ASSERT(layoutBox.isFloatAvoider());
-    precomputeVerticalPositionForBoxAndAncestors(*layoutBox.containingBlock(), horizontalConstraints, verticalConstraints);
+    precomputeVerticalPositionForBoxAndAncestors(layoutBox.containingBlock(), horizontalConstraints, verticalConstraints);
 }
 
 void BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors(const Box& layoutBox, const ConstraintsPair<HorizontalConstraints>& horizontalConstraints, const ConstraintsPair<VerticalConstraints>& verticalConstraints)
@@ -274,14 +272,14 @@ void BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors(const 
     //
     // The idea here is that as long as we don't cross the block formatting context boundary, we should be able to pre-compute the final top position.
     // FIXME: we currently don't account for the "clear" property when computing the final position for an ancestor.
-    for (auto* ancestor = &layoutBox; ancestor && ancestor != &root(); ancestor = ancestor->containingBlock()) {
+    for (auto* ancestor = &layoutBox; ancestor && ancestor != &root(); ancestor = &ancestor->containingBlock()) {
         auto horizontalConstraintsForAncestor = [&] {
-            auto* containingBlock = ancestor->containingBlock();
-            return containingBlock == &root() ? horizontalConstraints.root : Geometry::horizontalConstraintsForInFlow(geometryForBox(*containingBlock));
+            auto& containingBlock = ancestor->containingBlock();
+            return &containingBlock == &root() ? horizontalConstraints.root : Geometry::horizontalConstraintsForInFlow(geometryForBox(containingBlock));
         };
         auto verticalConstraintsForAncestor = [&] {
-            auto* containingBlock = ancestor->containingBlock();
-            return containingBlock == &root() ? verticalConstraints.root : Geometry::verticalConstraintsForInFlow(geometryForBox(*containingBlock));
+            auto& containingBlock = ancestor->containingBlock();
+            return &containingBlock == &root() ? verticalConstraints.root : Geometry::verticalConstraintsForInFlow(geometryForBox(containingBlock));
         };
 
         auto computedVerticalMargin = geometry().computedVerticalMargin(*ancestor, horizontalConstraintsForAncestor());
@@ -553,7 +551,7 @@ LayoutUnit BlockFormattingContext::verticalPositionWithMargin(const Box& layoutB
         return containingBlockContentBoxTop + verticalMargin.before();
     }
     // At this point this box indirectly (via collapsed through previous in-flow siblings) adjoins the parent. Let's check if it margin collapses with the parent.
-    auto& containingBlock = *layoutBox.containingBlock();
+    auto& containingBlock = layoutBox.containingBlock();
     ASSERT(containingBlock.firstInFlowChild());
     ASSERT(containingBlock.firstInFlowChild() != &layoutBox);
     if (marginCollapse().marginBeforeCollapsesWithParentMarginBefore(*containingBlock.firstInFlowChild()))

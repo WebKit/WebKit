@@ -93,12 +93,11 @@ public:
 
     bool isFloatingOrOutOfFlowPositioned() const { return isFloatingPositioned() || isOutOfFlowPositioned(); }
 
-    const ContainerBox* containingBlock() const;
+    const ContainerBox& containingBlock() const;
     const ContainerBox& formattingContextRoot() const;
     const ContainerBox& initialContainingBlock() const;
 
-    bool isDescendantOf(const ContainerBox&) const;
-    bool isContainingBlockDescendantOf(const ContainerBox&) const;
+    bool isInFormattingContextOf(const ContainerBox&) const;
 
     bool isAnonymous() const { return m_isAnonymous; }
 

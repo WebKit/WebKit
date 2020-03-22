@@ -44,7 +44,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     if (blockFormattingState.hasPositiveAndNegativeVerticalMargin(layoutBox))
         return blockFormattingState.positiveAndNegativeVerticalMargin(layoutBox).before;
 
-    auto horizontalConstraints = Geometry::horizontalConstraintsForInFlow(formattingContext().geometryForBox(*layoutBox.containingBlock()));
+    auto horizontalConstraints = Geometry::horizontalConstraintsForInFlow(formattingContext().geometryForBox(layoutBox.containingBlock()));
     auto computedVerticalMargin = formattingContext().geometry().computedVerticalMargin(layoutBox, horizontalConstraints);
     auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
     return precomputedPositiveNegativeMarginBefore(layoutBox, nonCollapsedMargin);

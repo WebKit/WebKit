@@ -150,8 +150,8 @@ static Box absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layo
         return layoutState.displayBoxForLayoutBox(layoutBox);
 
     auto absoluteBox = Box { layoutState.displayBoxForLayoutBox(layoutBox) };
-    for (auto* containerBox = layoutBox.containingBlock(); containerBox != &layoutBox.initialContainingBlock(); containerBox = containerBox->containingBlock())
-        absoluteBox.moveBy(layoutState.displayBoxForLayoutBox(*containerBox).topLeft());
+    for (auto* containingBlock = &layoutBox.containingBlock(); !containingBlock->isInitialContainingBlock(); containingBlock = &containingBlock->containingBlock())
+        absoluteBox.moveBy(layoutState.displayBoxForLayoutBox(*containingBlock).topLeft());
     return absoluteBox;
 }
 

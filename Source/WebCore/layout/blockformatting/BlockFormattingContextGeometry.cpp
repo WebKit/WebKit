@@ -158,7 +158,7 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAn
 
         // #2
         if (width && computedHorizontalMargin.start && computedHorizontalMargin.end) {
-            if (layoutBox.containingBlock()->style().isLeftToRightDirection()) {
+            if (layoutBox.containingBlock().style().isLeftToRightDirection()) {
                 usedHorizontalMargin.start = *computedHorizontalMargin.start;
                 usedHorizontalMargin.end = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + *width + paddingRight + borderRight);
             } else {
