@@ -88,13 +88,6 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
     }
 }
 
-int32_t deviceOrientation()
-{
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return deviceOrientationForUIInterfaceOrientation([[UIApplication sharedApplication] statusBarOrientation]);
-ALLOW_DEPRECATED_DECLARATIONS_END
-}
-
 @interface UIView (UIViewInternal)
 - (UIViewController *)_viewControllerForAncestor;
 @end
@@ -157,7 +150,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self addSubview:_scrollView.get()];
 
-    [self _dispatchSetDeviceOrientation:deviceOrientation()];
+    [self _dispatchSetDeviceOrientation:[self _deviceOrientation]];
 
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
@@ -228,6 +221,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // behavior of -_retainActiveFocusedState, and it's harmless to invoke
     // -_decrementFocusPreservationCount after resetting the count to 0.
     return _focusPreservationCount || _activeFocusedStateRetainCount;
+}
+
+- (int32_t)_deviceOrientation
+{
+    auto orientation = UIInterfaceOrientationUnknown;
+    auto application = UIApplication.sharedApplication;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (!application._appAdoptsUISceneLifecycle)
+        orientation = application.statusBarOrientation;
+ALLOW_DEPRECATED_DECLARATIONS_END
+    else if (auto windowScene = self.window.windowScene)
+        orientation = windowScene.interfaceOrientation;
+    return deviceOrientationForUIInterfaceOrientation(orientation);
 }
 
 - (BOOL)_effectiveAppearanceIsDark
@@ -1395,6 +1401,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)didMoveToWindow
 {
+    if (!_overridesInterfaceOrientation)
+        [self _dispatchSetDeviceOrientation:[self _deviceOrientation]];
     _page->activityStateDidChange(WebCore::ActivityState::allFlags());
     _page->webViewDidMoveToWindow();
 }
@@ -2241,7 +2249,7 @@ static int32_t activeOrientation(WKWebView *webView)
 - (void)_windowDidRotate:(NSNotification *)notification
 {
     if (!_overridesInterfaceOrientation)
-        [self _dispatchSetDeviceOrientation:deviceOrientation()];
+        [self _dispatchSetDeviceOrientation:[self _deviceOrientation]];
 }
 
 - (void)_contentSizeCategoryDidChange:(NSNotification *)notification

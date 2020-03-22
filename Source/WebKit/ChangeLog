@@ -1,3 +1,49 @@
+2020-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adopt -[UIWindowScene interfaceOrientation] when determining device orientation
+        https://bugs.webkit.org/show_bug.cgi?id=209372
+        <rdar://problem/60491857>
+
+        Reviewed by Darin Adler.
+
+        Currently, for WebKit clients that have adopted the UIScene lifecycle (and also do not set an interface
+        orientation override, like MobileSafari does), device orientation APIs will always report that the device is in
+        portrait mode, regardless of the actual device orientation. This is because our current mechanism for tracking
+        device orientation asks the shared UIApplication for its -statusBarOrientation. This is hard-coded to always
+        return UIInterfaceOrientationPortrait for apps that adopt the UIScene lifecycle, and will additionally trigger a
+        simulated crash, explaining that it is invalid for any scene-based app to call -statusBarOrientation.
+
+        To fix this, we adjust the `deviceOrientation` helper in WKWebViewIOS.mm to work for scene-based apps. See below
+        for more details.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setupScrollAndContentViews]):
+
+        Change call sites of `deviceOrientation()` to be `[self _deviceOrientation]` instead.
+
+        (-[WKWebView _deviceOrientation]):
+
+        Replace `deviceOrientation()` with a `_deviceOrientation` helper method on `WKWebView`. For non-scene-based
+        apps, this new helper method does not change any behavior, and continues to go through UIApplication. However,
+        for scene-based apps, we instead ask the web view's window's `UIWindowScene` for its interface orientation.
+
+        Importantly, this means that if a WKWebView is not parented, it doesn't have a valid device orientation (i.e.
+        the orientation is UIInterfaceOrientationUnknown). As such, a newly created WKWebView that is unparented will
+        start out with no orientation; it's only upon moving the view into a window that it is able to determine the
+        device orientation. To ensure this, we add logic to -didMoveToWindow to recompute device orientation and
+        dispatch an update if needed.
+
+        To avoid sending unnecessary updates, if a WKWebView is unparented, we wait until it's parented again to send
+        the new device orientation.
+
+        (-[WKWebView didMoveToWindow]):
+        (-[WKWebView _windowDidRotate:]):
+        (deviceOrientation): Deleted.
+
+        See -[WKWebView _deviceOrientation] above.
+
 2020-03-21  David Kilzer  <ddkilzer@apple.com>
 
         decodeSharedBuffer() in WebCoreArgumentCoders.cpp should validate `bufferSize`
