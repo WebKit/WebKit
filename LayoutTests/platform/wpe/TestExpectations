@@ -1000,6 +1000,17 @@ fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ Pass ]
 
+# Passing since added in r258661.
+imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/bidi-plaintext-011.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-007.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ Pass ]
+
+# Passing since r257562.
+imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-013.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1888,12 +1899,6 @@ webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure
 Bug(WPE) fast/dom/Range/getClientRects.html [ Failure ]
 webkit.org/b/189664 fast/events/dblclick-event-getModifierState.html [ Timeout ]
 
-Bug(WPE) storage/indexeddb/modern/date-basic-private.html [ Failure ]
-Bug(WPE) storage/indexeddb/modern/date-basic.html [ Failure ]
-Bug(WPE) storage/indexeddb/modern/get-keyrange-private.html [ Failure ]
-Bug(WPE) storage/indexeddb/modern/get-keyrange.html [ Failure ]
-Bug(WPE) storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
-Bug(WPE) storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]
 Bug(WPE) storage/storageinfo-missing-arguments.html [ Failure ]
 Bug(WPE) storage/storageinfo-no-callbacks.html [ Failure ]
 Bug(WPE) storage/storageinfo-query-usage.html [ Failure ]

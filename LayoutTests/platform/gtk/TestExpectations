@@ -1364,6 +1364,8 @@ webkit.org/b/209329 fast/dom/HTMLAnchorElement/anchor-file-blob-download-include
 
 webkit.org/b/209330 imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
 
+webkit.org/b/209403 fast/forms/placeholder-content-center.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -4709,6 +4711,13 @@ http/tests/cookies/same-site [ Pass ]
 
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ Pass ]
+
+# Test passing since added in r258661.
+imported/w3c/web-platform-tests/css/css-writing-modes/bidi-plaintext-011.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-007.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.

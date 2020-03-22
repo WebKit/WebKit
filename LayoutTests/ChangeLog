@@ -1,3 +1,13 @@
+2020-03-22  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Gardening, update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=209404
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         An animated PNG plays the frames one time more than the image loopCount
