@@ -1,3 +1,16 @@
+2020-03-21  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in RenderObject::RenderObjectBitfields::isBox when current renderer is the RenderView
+        https://bugs.webkit.org/show_bug.cgi?id=209251
+        <rdar://problem/60103614>
+
+        Reviewed by Darin Adler.
+
+        In this case, which is a valid scenario, we are looking for sibling of an AccessibilityRenderObject through the parent of its renderer, which happens to be of <RenderView>. Since <RenderView> has no parent, we need to skip calling isInlineWithContinuation with a null parent, by adding null check. 
+
+        * fast/frames/iframe-empty-doc-crash-expected.txt: Added.
+        * fast/frames/iframe-empty-doc-crash.html: Added.
+
 2020-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         LayoutTest fast/scrolling/scroll-container-horizontally.html frequently times out & fails
