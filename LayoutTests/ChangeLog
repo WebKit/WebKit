@@ -1,3 +1,13 @@
+2020-03-22  Antoine Quint  <graouts@apple.com>
+
+        [ Mac ] imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209239
+        <rdar://problem/60591358>
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/TestExpectations:
+
 2020-03-22  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, update TestExpectations

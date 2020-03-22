@@ -189,11 +189,6 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
     invalidateEffect();
 }
 
-AnimationTimeline* WebAnimation::timeline() const
-{
-    return m_timeline.get();
-}
-
 void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool doNotRemoveFromTimeline)
 {
     if (m_effect == newEffect)
@@ -232,7 +227,7 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     // https://drafts.csswg.org/web-animations-1/#setting-the-timeline
 
     // 2. If new timeline is the same object as old timeline, abort this procedure.
-    if (timeline == m_timeline.get())
+    if (timeline == m_timeline)
         return;
 
     // 4. If the animation start time of animation is resolved, make animation's hold time unresolved.
@@ -257,7 +252,7 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     auto protectedThis = makeRef(*this);
     setTimelineInternal(WTFMove(timeline));
 
-    setSuspended(is<DocumentTimeline>(m_timeline.get()) && downcast<DocumentTimeline>(*m_timeline).animationsAreSuspended());
+    setSuspended(is<DocumentTimeline>(m_timeline) && downcast<DocumentTimeline>(*m_timeline).animationsAreSuspended());
 
     // 5. Run the procedure to update an animation's finished state for animation with the did seek flag set to false,
     // and the synchronously notify flag set to false.
@@ -268,13 +263,13 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
 
 void WebAnimation::setTimelineInternal(RefPtr<AnimationTimeline>&& timeline)
 {
-    if (m_timeline.get() == timeline)
+    if (m_timeline == timeline)
         return;
 
     if (m_timeline)
         m_timeline->removeAnimation(*this);
 
-    m_timeline = makeWeakPtr(timeline.get());
+    m_timeline = WTFMove(timeline);
 
     if (m_effect)
         m_effect->animationTimelineDidChange(m_timeline.get());
@@ -683,7 +678,7 @@ void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, Optiona
 
 void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
 {
-    if (is<DocumentTimeline>(m_timeline.get())) {
+    if (is<DocumentTimeline>(m_timeline)) {
         // If animation has a document for timing, then append event to its document for timing's pending animation event queue along
         // with its target, animation. If animation is associated with an active timeline that defines a procedure to convert timeline times
         // to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
@@ -1239,7 +1234,7 @@ void WebAnimation::setSuspended(bool isSuspended)
 
 void WebAnimation::acceleratedStateDidChange()
 {
-    if (is<DocumentTimeline>(m_timeline.get()))
+    if (is<DocumentTimeline>(m_timeline))
         downcast<DocumentTimeline>(*m_timeline).animationAcceleratedRunningStateDidChange(*this);
 }
 
