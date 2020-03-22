@@ -311,11 +311,6 @@ bool Box::isBlockContainerBox() const
     return display == DisplayType::Block || display == DisplayType::ListItem || isInlineBlockBox() || isTableWrapperBox() || isTableCell() || isTableCaption(); // TODO && !replaced element
 }
 
-bool Box::isInitialContainingBlock() const
-{
-    return !parent();
-}
-
 const Box* Box::nextInFlowSibling() const
 {
     auto* nextSibling = this->nextSibling();

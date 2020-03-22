@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "LayoutInitialContainingBlock.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutBox.h"
-#include <wtf/IsoMalloc.h>
+#include "RenderStyle.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
-
-class RenderStyle;
-
 namespace Layout {
 
-class ContainerBox : public Box {
-    WTF_MAKE_ISO_ALLOCATED(ContainerBox);
-public:
-    ContainerBox(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = Box::ContainerBoxFlag);
+WTF_MAKE_ISO_ALLOCATED_IMPL(InitialContainingBlock);
 
-    const Box* firstChild() const { return m_firstChild; }
-    const Box* firstInFlowChild() const;
-    const Box* firstInFlowOrFloatingChild() const;
-    const Box* lastChild() const { return m_lastChild; }
-    const Box* lastInFlowChild() const;
-    const Box* lastInFlowOrFloatingChild() const;
-
-    // FIXME: This is currently needed for style updates.
-    Box* firstChild() { return m_firstChild; }
-
-    bool hasChild() const { return firstChild(); }
-    bool hasInFlowChild() const { return firstInFlowChild(); }
-    bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
-
-    void setFirstChild(Box&);
-    void setLastChild(Box&);
-    void appendChild(Box&);
-
-private:
-    Box* m_firstChild { nullptr };
-    Box* m_lastChild { nullptr };
-};
+InitialContainingBlock::InitialContainingBlock(RenderStyle&& style)
+    : ContainerBox({ }, WTFMove(style), Box::InitialContainingBlock)
+{
+}
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(ContainerBox, isContainerBox())
 
 #endif

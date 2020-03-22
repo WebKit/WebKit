@@ -47,7 +47,7 @@ static RenderStyle rootBoxStyle(const RenderStyle& style)
 }
 
 BoxTree::BoxTree(const RenderBlockFlow& flow)
-    : m_root({ }, rootBoxStyle(flow.style()))
+    : m_root(rootBoxStyle(flow.style()))
 {
     if (flow.isAnonymous())
         m_root.setIsAnonymous();

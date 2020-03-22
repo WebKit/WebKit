@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,46 +27,32 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutBox.h"
+#include "LayoutContainerBox.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
-
-class RenderStyle;
-
 namespace Layout {
 
-class ContainerBox : public Box {
-    WTF_MAKE_ISO_ALLOCATED(ContainerBox);
+class InitialContainingBlock final : public ContainerBox {
+    WTF_MAKE_ISO_ALLOCATED(InitialContainingBlock);
 public:
-    ContainerBox(Optional<ElementAttributes>, RenderStyle&&, BaseTypeFlags = Box::ContainerBoxFlag);
-
-    const Box* firstChild() const { return m_firstChild; }
-    const Box* firstInFlowChild() const;
-    const Box* firstInFlowOrFloatingChild() const;
-    const Box* lastChild() const { return m_lastChild; }
-    const Box* lastInFlowChild() const;
-    const Box* lastInFlowOrFloatingChild() const;
-
-    // FIXME: This is currently needed for style updates.
-    Box* firstChild() { return m_firstChild; }
-
-    bool hasChild() const { return firstChild(); }
-    bool hasInFlowChild() const { return firstInFlowChild(); }
-    bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
-
-    void setFirstChild(Box&);
-    void setLastChild(Box&);
-    void appendChild(Box&);
+    InitialContainingBlock(RenderStyle&&);
+    virtual ~InitialContainingBlock() = default;
 
 private:
-    Box* m_firstChild { nullptr };
-    Box* m_lastChild { nullptr };
+    const ContainerBox* parent() const = delete;
+    const Box* nextSibling() const = delete;
+    const Box* nextInFlowSibling() const = delete;
+    const Box* nextInFlowOrFloatingSibling() const = delete;
+    const Box* previousSibling() const = delete;
+    const Box* previousInFlowSibling() const = delete;
+    const Box* previousInFlowOrFloatingSibling() const = delete;
+    Box* nextSibling() = delete;
 };
 
 }
 }
 
-SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(ContainerBox, isContainerBox())
+SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(InitialContainingBlock, isInitialContainingBlock())
 
 #endif

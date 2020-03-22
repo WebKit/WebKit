@@ -42,6 +42,7 @@
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
+#include "LayoutInitialContainingBlock.h"
 #include "LayoutInlineTextBox.h"
 #include "LayoutLineBreakBox.h"
 #include "LayoutPhase.h"
@@ -130,7 +131,7 @@ std::unique_ptr<Layout::LayoutTreeContent> TreeBuilder::buildLayoutTree(const Re
     style.setLogicalWidth(Length(renderView.width(), Fixed));
     style.setLogicalHeight(Length(renderView.height(), Fixed));
 
-    auto layoutTreeContent = makeUnique<LayoutTreeContent>(renderView, makeUnique<ContainerBox>(WTF::nullopt, WTFMove(style)));
+    auto layoutTreeContent = makeUnique<LayoutTreeContent>(renderView, makeUnique<InitialContainingBlock>(WTFMove(style)));
     TreeBuilder(*layoutTreeContent).buildTree();
     return layoutTreeContent;
 }

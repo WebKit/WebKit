@@ -2051,6 +2051,7 @@
 		6F26EB48234004A5006906E2 /* LineLayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F26EB46234004A5006906E2 /* LineLayoutContext.h */; };
 		6F360E5023999421001512A7 /* InlineSoftLineBreakItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F360E4E23999420001512A7 /* InlineSoftLineBreakItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F3E1F622136142000A65A08 /* FloatBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F3E1F612136141700A65A08 /* FloatBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6F6383F62427AF4A00DABA53 /* LayoutInitialContainingBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F6383F42427AF4900DABA53 /* LayoutInitialContainingBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F77868823491AD8004D9636 /* DisplayPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F77868723491AD7004D9636 /* DisplayPainter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F7CA3C6208C2957002F29AB /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C4208C2956002F29AB /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F7CA3CA208C2B2E002F29AB /* InlineFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9395,6 +9396,7 @@
 		6F3E1F612136141700A65A08 /* FloatBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FloatBox.h; sourceTree = "<group>"; };
 		6F4A5BD522F9F16B00A80F25 /* LayoutPhase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutPhase.cpp; sourceTree = "<group>"; };
 		6F5B7EAA2300A79E0067D9C3 /* TableGrid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TableGrid.cpp; sourceTree = "<group>"; };
+		6F6383F42427AF4900DABA53 /* LayoutInitialContainingBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutInitialContainingBlock.h; sourceTree = "<group>"; };
 		6F73918C2106CEDD006AF262 /* LayoutUnits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutUnits.h; sourceTree = "<group>"; };
 		6F77868523491AC6004D9636 /* DisplayPainter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayPainter.cpp; sourceTree = "<group>"; };
 		6F77868723491AD7004D9636 /* DisplayPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayPainter.h; sourceTree = "<group>"; };
@@ -9433,6 +9435,7 @@
 		6F995A2F1A70833700A735F4 /* JSWebGLVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLVertexArrayObject.cpp; sourceTree = "<group>"; };
 		6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLVertexArrayObject.h; sourceTree = "<group>"; };
 		6FAE16BA2406DE7E00A48414 /* PrecomputedBlockMarginCollapse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrecomputedBlockMarginCollapse.cpp; sourceTree = "<group>"; };
+		6FB0ED112427B6C6002737E6 /* LayoutInitialContainingBlock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutInitialContainingBlock.cpp; sourceTree = "<group>"; };
 		6FB11B5921783FCF00E2A574 /* TextUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUtil.h; sourceTree = "<group>"; };
 		6FB11B5B21783FCF00E2A574 /* TextUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextUtil.cpp; sourceTree = "<group>"; };
 		6FB22E30230097E300C20866 /* TableGrid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableGrid.h; sourceTree = "<group>"; };
@@ -16958,6 +16961,8 @@
 				1199FA45208E35A3002358CC /* LayoutContainerBox.cpp */,
 				1199FA44208E35A3002358CC /* LayoutContainerBox.h */,
 				11B042FB20B0E21400828A6B /* LayoutDescendantIterator.h */,
+				6FB0ED112427B6C6002737E6 /* LayoutInitialContainingBlock.cpp */,
+				6F6383F42427AF4900DABA53 /* LayoutInitialContainingBlock.h */,
 				6F0B98B623F2690600EEC2F2 /* LayoutInlineTextBox.cpp */,
 				6F0B98B323F268EB00EEC2F2 /* LayoutInlineTextBox.h */,
 				11100FC72092764C0081AA6C /* LayoutIterator.h */,
@@ -31677,6 +31682,7 @@
 				1199FA46208E35A3002358CC /* LayoutContainerBox.h in Headers */,
 				6F26BB6C23343E6F002F2BEA /* LayoutContext.h in Headers */,
 				11310CF520BA4A4C0065A8D0 /* LayoutDescendantIterator.h in Headers */,
+				6F6383F62427AF4A00DABA53 /* LayoutInitialContainingBlock.h in Headers */,
 				6F0B98B523F268EC00EEC2F2 /* LayoutInlineTextBox.h in Headers */,
 				E418025523D4549B00FFB071 /* LayoutIntegrationBoxTree.h in Headers */,
 				E4ABABDD236088FE00FA4345 /* LayoutIntegrationLineLayout.h in Headers */,

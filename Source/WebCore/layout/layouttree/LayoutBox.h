@@ -65,7 +65,8 @@ public:
         InlineTextBox          = 1 << 1,
         LineBreakBox           = 1 << 2,
         ReplacedBox            = 1 << 3,
-        ContainerBoxFlag       = 1 << 4
+        InitialContainingBlock = 1 << 4,
+        ContainerBoxFlag       = 1 << 5
     };
     typedef unsigned BaseTypeFlags;
 
@@ -108,7 +109,7 @@ public:
     bool isInlineBlockBox() const;
     bool isInlineTableBox() const;
     bool isBlockContainerBox() const;
-    bool isInitialContainingBlock() const;
+    bool isInitialContainingBlock() const { return m_baseTypeFlags & InitialContainingBlock; }
 
     bool isDocumentBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Document; }
     bool isBodyBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Body; }
