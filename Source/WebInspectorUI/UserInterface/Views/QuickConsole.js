@@ -350,15 +350,15 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
     _handleFramePageExecutionContextChanged(event)
     {
-        if (this._restoreSelectedExecutionContextForFrame !== event.target)
+        let frame = event.target;
+
+        if (this._restoreSelectedExecutionContextForFrame !== frame)
             return;
 
         this._restoreSelectedExecutionContextForFrame = null;
 
-        let {context} = event.data;
-
         this._useExecutionContextOfInspectedNode = false;
-        this._setActiveExecutionContext(context);
+        this._setActiveExecutionContext(frame.pageExecutionContext);
     }
 
     _handleFrameExecutionContextsCleared(event)

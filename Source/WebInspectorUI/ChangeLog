@@ -1,3 +1,13 @@
+2020-03-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Uncaught Exception: Right side of assignment cannot be destructured (at QuickConsole.js:358:30)
+        https://bugs.webkit.org/show_bug.cgi?id=209388
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole.prototype._handleFramePageExecutionContextChanged):
+
 2020-03-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r257380, r257759): focusing the inspected page when docked dims most of the interface
