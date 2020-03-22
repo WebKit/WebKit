@@ -1,3 +1,24 @@
+2020-03-21  Keith Rollin  <krollin@apple.com>
+
+        Set INSTALLHDRS_SCRIPT_PHASE in ANGLE builds
+        https://bugs.webkit.org/show_bug.cgi?id=209384
+        <rdar://problem/59513380>
+
+        Reviewed by Dan Bernstein.
+
+        Production ANGLE builds are technically non-compliant. During the
+        installhdrs build action, ANGLE headers are exported but are not
+        post-processed. This differs from the install build action, where the
+        exported headers *are* post-processed. The headers need to be treated
+        identically under both actions. The post-processing is enabled by
+        setting the INSTALLHDRS_SCRIPT_PHASE build setting to YES. Most other
+        WebKit projects already set this setting (see, for example,
+        https://trac.webkit.org/changeset/155787,
+        https://trac.webkit.org/changeset/110327, and
+        https://trac.webkit.org/changeset/41417).
+
+        * Configurations/ANGLE.xcconfig:
+
 2020-03-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [ANGLE] Source/ThirdParty/ANGLE/src/common/utilities.cpp:10: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
