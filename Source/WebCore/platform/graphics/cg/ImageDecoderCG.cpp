@@ -291,9 +291,15 @@ RepetitionCount ImageDecoderCG::repetitionCount() const
     CFNumberGetValue(num, kCFNumberIntType, &loopCount);
 
     // A property with value 0 means loop forever.
-    // For loopCount > 0, the specs is not clear about it. But it looks the meaning
+    if (!loopCount)
+        return RepetitionCountInfinite;
+
+    if (!isGIFImageType(uti()))
+        return loopCount;
+
+    // For GIF and loopCount > 0, the specs is not clear about it. But it looks the meaning
     // is: play once + loop loopCount which is equivalent to play loopCount + 1.
-    return loopCount ? loopCount + 1 : RepetitionCountInfinite;
+    return loopCount + 1;
 }
 
 Optional<IntPoint> ImageDecoderCG::hotSpot() const

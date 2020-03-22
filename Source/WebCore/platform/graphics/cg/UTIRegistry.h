@@ -35,5 +35,6 @@ HashSet<String>& additionalSupportedImageTypes();
 WEBCORE_EXPORT void setAdditionalSupportedImageTypes(const Vector<String>&);
 WEBCORE_EXPORT void setAdditionalSupportedImageTypesForTesting(const String&);
 bool isSupportedImageType(const String&);
+bool isGIFImageType(StringView);
 
 }

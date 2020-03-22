@@ -1,3 +1,27 @@
+2020-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        An animated PNG plays the frames one time more than the image loopCount
+        https://bugs.webkit.org/show_bug.cgi?id=205640
+
+        Reviewed by Darin Adler.
+
+        Refactor the js code to a separate js file. Add two layout tests: one for
+        animated GIFs and the other for animated PNGs.
+
+        * fast/images/animated-gif-loop-count-expected.html: Added.
+        * fast/images/animated-gif-loop-count.html: Added.
+        * fast/images/animated-image-loop-count-expected.html: Removed.
+        * fast/images/animated-image-loop-count.html: Removed.
+        * fast/images/animated-png-loop-count-expected.html: Added.
+        * fast/images/animated-png-loop-count.html: Added.
+        * fast/images/resources/animated-image-loop-count.js: Added.
+        * fast/images/resources/animated-red-green-blue-repeat-1.png: Added.
+        * fast/images/resources/animated-red-green-blue-repeat-2.png: Added.
+        * fast/images/resources/animated-red-green-blue-repeat-infinite.png: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-03-21  Jack Lee  <shihchieh_lee@apple.com>
 
         Nullptr crash in RenderObject::RenderObjectBitfields::isBox when current renderer is the RenderView

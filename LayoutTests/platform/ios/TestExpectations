@@ -2804,7 +2804,8 @@ canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
 fast/images/slower-animation-than-decoding-image.html [ Failure ]
 fast/images/slower-decoding-than-animation-image.html [ Failure ]
 fast/images/reset-image-animation.html [ Failure ]
-fast/images/animated-image-loop-count.html [ ImageOnlyFailure ]
+fast/images/animated-gif-loop-count.html [ ImageOnlyFailure ]
+fast/images/animated-png-loop-count.html [ ImageOnlyFailure ]
 fast/images/animated-image-different-dest-size.html [ ImageOnlyFailure ]
 
 # <rdar://problem/32659595> iOS 11: LayoutTest fast/text/international/system-language/arabic-glyph-cache-fill-combine.html is failing

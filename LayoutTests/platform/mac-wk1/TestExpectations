@@ -783,7 +783,8 @@ webkit.org/b/190849 http/tests/security/XFrameOptions/x-frame-options-multiple-h
 
 webkit.org/b/186406 [ Mojave+ ] compositing/iframes/display-none-subframe.html [ Pass Failure ]
 
-webkit.org/b/190383 fast/images/animated-image-loop-count.html [ Pass ImageOnlyFailure ]
+webkit.org/b/190383 fast/images/animated-gif-loop-count.html [ Pass ImageOnlyFailure ]
+webkit.org/b/190383 fast/images/animated-png-loop-count.html [ Pass ImageOnlyFailure ]
 webkit.org/b/190383 fast/images/animated-image-different-dest-size.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/191639 imported/blink/compositing/squashing/squashing-into-ancestor-painted-layer.html [ Pass ImageOnlyFailure ]

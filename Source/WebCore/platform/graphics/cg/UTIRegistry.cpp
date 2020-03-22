@@ -102,6 +102,11 @@ bool isSupportedImageType(const String& imageType)
     return defaultSupportedImageTypes().contains(imageType) || additionalSupportedImageTypes().contains(imageType);
 }
 
+bool isGIFImageType(StringView imageType)
+{
+    return imageType == "com.compuserve.gif";
+}
+
 }
 
 #endif
