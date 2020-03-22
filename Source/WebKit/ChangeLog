@@ -1,3 +1,15 @@
+2020-03-21  David Kilzer  <ddkilzer@apple.com>
+
+        decodeSharedBuffer() in WebCoreArgumentCoders.cpp should validate `bufferSize`
+        <https://webkit.org/b/209373>
+        <rdar://problem/60610919>
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::decodeSharedBuffer):
+        - Return early if `bufferSize` is too big.
+
 2020-03-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Yahoo! search results are sometimes zoomed in a little
