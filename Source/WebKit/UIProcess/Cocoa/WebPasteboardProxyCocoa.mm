@@ -165,7 +165,7 @@ void WebPasteboardProxy::setPasteboardBufferForType(IPC::Connection& connection,
         return completionHandler(PlatformPasteboard(pasteboardName).setBufferForType(0, pasteboardType));
 
     // SharedMemory::Handle::size() is rounded up to the nearest page.
-    MESSAGE_CHECK(size && size <= handle.size(), completionHandler(0));
+    MESSAGE_CHECK(size <= handle.size(), completionHandler(0));
 
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     auto buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), static_cast<size_t>(size));
