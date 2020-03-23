@@ -598,10 +598,21 @@ bool SourceBufferPrivateAVFObjC::processCodedFrame(int trackID, CMSampleBufferRe
     if (m_discardSamplesUntilNextInitializationSegment)
         return false;
 
-    if (m_client) {
-        Ref<MediaSample> mediaSample = MediaSampleAVFObjC::create(sampleBuffer, trackID);
-        DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
+    if (!m_client)
+        return true;
+
+    auto mediaSample = MediaSampleAVFObjC::create(sampleBuffer, trackID);
+
+    if (mediaSample->isHomogeneous()) {
+        DEBUG_LOG(LOGIDENTIFIER, mediaSample->toJSONString());
         m_client->sourceBufferPrivateDidReceiveSample(mediaSample);
+        return true;
+    }
+
+    auto mediaSamples = mediaSample->divideIntoHomogeneousSamples();
+    for (auto& sample : mediaSamples) {
+        DEBUG_LOG(LOGIDENTIFIER, sample->toJSONString());
+        m_client->sourceBufferPrivateDidReceiveSample(sample);
     }
 
     return true;

@@ -68,6 +68,9 @@ public:
 
     CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
 
+    bool isHomogeneous() const;
+    Vector<Ref<MediaSampleAVFObjC>> divideIntoHomogeneousSamples();
+
 protected:
     MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&& sample)
         : m_sample(WTFMove(sample))
