@@ -1,3 +1,12 @@
+2020-03-23  youenn fablet  <youenn@apple.com>
+
+        Disable TestWebKitAPI.ProcessSwap.GetUserMediaCaptureState if getUserMedia is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=209428
+
+        Reviewed by Jonathan Bedard.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2020-03-23  Chris Lord  <clord@igalia.com>
 
         Add missing committer status to Chris Lord in contributors.json

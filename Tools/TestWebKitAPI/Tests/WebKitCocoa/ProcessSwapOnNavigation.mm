@@ -6298,6 +6298,8 @@ TEST(ProcessSwap, LoadAlternativeHTML)
     done = false;
 }
 
+#if ENABLE(MEDIA_STREAM)
+
 static bool isCapturing = false;
 @interface GetUserMediaUIDelegate : NSObject<WKUIDelegate>
 - (void)_webView:(WKWebView *)webView requestUserMediaAuthorizationForDevices:(_WKCaptureDevices)devices url:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL decisionHandler:(void (^)(BOOL authorized))decisionHandler;
@@ -6384,6 +6386,8 @@ TEST(ProcessSwap, GetUserMediaCaptureState)
     TestWebKitAPI::Util::run(&isCapturing);
     isCapturing = false;
 }
+
+#endif
 
 #if !PLATFORM(MAC)
 static void traverseLayerTree(CALayer *layer, void(^block)(CALayer *))
