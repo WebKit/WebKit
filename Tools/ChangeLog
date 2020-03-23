@@ -1,3 +1,23 @@
+2020-03-22  Antoine Quint  <graouts@apple.com>
+
+        DocumentTimeline / CSSTransition objects are leaking on CNN.com
+        https://bugs.webkit.org/show_bug.cgi?id=208069
+        <rdar://problem/59680143>
+
+        Reviewed by Simon Fraser, Geoffrey Garen and Darin Adler.
+
+        Add a test that checks that a ListHashSet containing RefPtr<> types correctly calls the destructor for those items when the assignment operator is used.
+
+        * TestWebKitAPI/Tests/WTF/ListHashSet.cpp:
+        (TestWebKitAPI::ListHashSetReferencedItem::create):
+        (TestWebKitAPI::ListHashSetReferencedItem::ListHashSetReferencedItem):
+        (TestWebKitAPI::ListHashSetReferencedItem::~ListHashSetReferencedItem):
+        (TestWebKitAPI::FakeElementAnimationRareData::FakeElementAnimationRareData):
+        (TestWebKitAPI::FakeElementAnimationRareData::~FakeElementAnimationRareData):
+        (TestWebKitAPI::FakeElementAnimationRareData::collection):
+        (TestWebKitAPI::FakeElementAnimationRareData::setCollection):
+        (TestWebKitAPI::TEST):
+
 2020-03-21  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Use ${PYTHON_EXECUTABLE} to run generate-gtkdoc

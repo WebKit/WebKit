@@ -28,6 +28,8 @@
 #include "Counters.h"
 #include "MoveOnly.h"
 #include <wtf/ListHashSet.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RefCounted.h>
 
 namespace TestWebKitAPI {
 
@@ -474,6 +476,65 @@ TEST(WTF_ListHashSet, UniquePtrKey_RemoveUsingRawPointer)
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
+}
+
+class ListHashSetReferencedItem : public RefCounted<ListHashSetReferencedItem> {
+public:
+    static Ref<ListHashSetReferencedItem> create()
+    {
+        auto result = adoptRef(*new ListHashSetReferencedItem());
+        return result;
+    }
+
+    explicit ListHashSetReferencedItem()
+    {
+        instances().add(this);
+    }
+
+    ~ListHashSetReferencedItem()
+    {
+        ASSERT(instances().contains(this));
+        instances().remove(this);
+    }
+
+    static HashSet<ListHashSetReferencedItem*>& instances()
+    {
+        static NeverDestroyed<HashSet<ListHashSetReferencedItem*>> instances;
+        return instances;
+    }
+};
+
+using Collection = ListHashSet<RefPtr<ListHashSetReferencedItem>>;
+
+class FakeElementAnimationRareData {
+    WTF_MAKE_NONCOPYABLE(FakeElementAnimationRareData);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit FakeElementAnimationRareData() { };
+    ~FakeElementAnimationRareData() { };
+
+    Collection& collection() { return m_collection; }
+    void setCollection(Collection&& collection) { m_collection = WTFMove(collection); }
+
+private:
+    Collection m_collection;
+};
+
+TEST(WTF_ListHashSet, ClearsItemUponAssignment)
+{
+    std::unique_ptr<FakeElementAnimationRareData> data = makeUnique<FakeElementAnimationRareData>();
+
+    EXPECT_EQ(0u, ListHashSetReferencedItem::instances().size());
+
+    Collection firstCollection({ ListHashSetReferencedItem::create() });
+    data->setCollection(WTFMove(firstCollection));
+
+    EXPECT_EQ(1u, ListHashSetReferencedItem::instances().size());
+
+    Collection secondCollection;
+    data->setCollection(WTFMove(secondCollection));
+
+    EXPECT_EQ(0u, ListHashSetReferencedItem::instances().size());
 }
 
 } // namespace TestWebKitAPI

@@ -1,5 +1,19 @@
 2020-03-22  Antoine Quint  <graouts@apple.com>
 
+        DocumentTimeline / CSSTransition objects are leaking on CNN.com
+        https://bugs.webkit.org/show_bug.cgi?id=208069
+        <rdar://problem/59680143>
+
+        Reviewed by Simon Fraser, Geoffrey Garen and Darin Adler.
+
+        Add a test that checks that setting a CSSAnimation on an element, waiting a frame, and removing it will not leak that CSSAnimation.
+
+        * webanimations/leak-css-animation-expected.txt: Added.
+        * webanimations/leak-css-animation.html: Added.
+        * webanimations/resources/css-animation-leak-iframe.html: Added.
+
+2020-03-22  Antoine Quint  <graouts@apple.com>
+
         [ Mac ] imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=209239
         <rdar://problem/60591358>

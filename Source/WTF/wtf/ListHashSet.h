@@ -351,9 +351,8 @@ inline ListHashSet<T, U>::ListHashSet(ListHashSet&& other)
 template<typename T, typename U>
 inline ListHashSet<T, U>& ListHashSet<T, U>::operator=(ListHashSet&& other)
 {
-    m_impl = WTFMove(other.m_impl);
-    m_head = std::exchange(other.m_head, nullptr);
-    m_tail = std::exchange(other.m_tail, nullptr);
+    ListHashSet tmp(WTFMove(other));
+    swap(tmp);
     return *this;
 }
 

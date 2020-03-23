@@ -48,7 +48,7 @@ public:
     AnimationCollection& cssAnimations() { return m_cssAnimations; }
     AnimationCollection& transitions() { return m_transitions; }
     CSSAnimationCollection& animationsCreatedByMarkup() { return m_animationsCreatedByMarkup; }
-    void setAnimationsCreatedByMarkup(CSSAnimationCollection&& animations) { m_animationsCreatedByMarkup = WTFMove(animations); }
+    void setAnimationsCreatedByMarkup(CSSAnimationCollection&&);
     PropertyToTransitionMap& completedTransitionByProperty() { return m_completedTransitionByProperty; }
     PropertyToTransitionMap& runningTransitionsByProperty() { return m_runningTransitionsByProperty; }
 

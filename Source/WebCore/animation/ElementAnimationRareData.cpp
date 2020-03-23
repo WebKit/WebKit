@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ElementAnimationRareData.h"
 
+#include "CSSAnimation.h"
 #include "KeyframeEffectStack.h"
 
 namespace WebCore {
@@ -43,6 +44,11 @@ KeyframeEffectStack& ElementAnimationRareData::ensureKeyframeEffectStack()
     if (!m_keyframeEffectStack)
         m_keyframeEffectStack = makeUnique<KeyframeEffectStack>();
     return *m_keyframeEffectStack.get();
+}
+
+void ElementAnimationRareData::setAnimationsCreatedByMarkup(CSSAnimationCollection&& animations)
+{
+    m_animationsCreatedByMarkup = WTFMove(animations);
 }
 
 } // namespace WebCore

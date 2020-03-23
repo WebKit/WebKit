@@ -242,6 +242,7 @@ enum CompositingPolicy {
     readonly attribute unsigned long inflightBeaconsCount;
 
     // CSS Animation testing.
+    boolean animationWithIdExists(DOMString id);
     unsigned long numberOfActiveAnimations();
     [MayThrowException] void suspendAnimations();
     [MayThrowException] void resumeAnimations();

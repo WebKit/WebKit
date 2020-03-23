@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<body onload="runTest()">
+<script src="../resources/js-test.js"></script>
+<script>
+description("This test asserts that a CSSAnimation doesn't leak after it was removed declaratively and the document was replaced.");
+
+if (window.internals)
+    jsTestIsAsync = true;
+
+function runTest() {
+    if (!window.internals)
+        return;
+
+    var frame = document.body.appendChild(document.createElement("iframe"));
+
+    frame.addEventListener("load", async () => {
+        if (frame.src === 'about:blank')
+            return;
+
+        const animationId = "leak-css-animation";
+
+        await (element => {
+            return new Promise(resolve => {
+                const animation = element.getAnimations()[0];
+                if (!animation) {
+                    testFailed("The expected CSS animation was not created.");
+                    finishJSTest();
+                }
+
+                animation.id = animationId;
+                if (!internals.animationWithIdExists(animationId)) {
+                    testFailed("The expected CSS animation with the provided ID was not initially found.");
+                    finishJSTest();
+                }
+
+                requestAnimationFrame(() => {
+                    element.style.animation = "none";
+                    resolve();
+                });
+            });
+        })(frame.contentDocument.querySelector("div"));
+
+        requestAnimationFrame(() => {
+            frame.remove();
+            frame = null;
+
+            gc();
+            let timeout = 0;
+            const handle = setInterval(() => {
+                if (!internals.animationWithIdExists(animationId)) {
+                    clearInterval(handle);
+                    testPassed("The CSS animation was destroyed.");
+                    finishJSTest();
+                    return;
+                }
+                timeout++;
+                if (timeout == 500) {
+                    clearInterval(handle);
+                    testFailed("The CSS animation was leaked.");
+                    finishJSTest();
+                    return;
+                }
+                gc();
+            }, 10);
+        });
+    });
+
+    frame.src = 'resources/css-animation-leak-iframe.html';
+}
+
+</script>
+</body>
+</html>

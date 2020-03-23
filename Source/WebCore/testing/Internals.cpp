@@ -193,6 +193,7 @@
 #include "UserMediaController.h"
 #include "ViewportArguments.h"
 #include "VoidCallback.h"
+#include "WebAnimation.h"
 #include "WebCoreJSClientData.h"
 #include "WindowProxy.h"
 #include "WorkerThread.h"
@@ -1033,6 +1034,15 @@ ExceptionOr<unsigned> Internals::lastSpatialNavigationCandidateCount() const
         return Exception { InvalidAccessError };
 
     return contextDocument()->page()->lastSpatialNavigationCandidateCount();
+}
+
+bool Internals::animationWithIdExists(const String& id) const
+{
+    for (auto* animation : WebAnimation::instances()) {
+        if (animation && animation->id() == id)
+            return true;
+    }
+    return false;
 }
 
 unsigned Internals::numberOfActiveAnimations() const
