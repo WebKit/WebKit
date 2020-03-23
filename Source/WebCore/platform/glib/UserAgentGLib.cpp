@@ -152,7 +152,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
         RELEASE_ASSERT_WITH_MESSAGE(isValidUserAgentHeaderValue(userAgent), "%s is not a valid user agent header", userAgent.utf8().data());
         checked = true;
     }
-    ASSERT(isValidUserAgentHeaderValue(userAgent);
+    ASSERT(isValidUserAgentHeaderValue(userAgent));
     return userAgent;
 }
 
