@@ -1158,7 +1158,7 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     patchBuffer.link(badType, byValInfo->slowPathTarget);
     patchBuffer.link(slowCases, byValInfo->slowPathTarget);
 
-    patchBuffer.link(done, byValInfo->badTypeDoneTarget);
+    patchBuffer.link(done, byValInfo->doneTarget);
 
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         m_codeBlock, patchBuffer, JITStubRoutinePtrTag,

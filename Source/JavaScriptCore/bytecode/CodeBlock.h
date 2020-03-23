@@ -312,9 +312,10 @@ public:
 
     StructureStubInfo* addStubInfo(AccessType);
 
-    // O(n) operation. Use getStubInfoMap() unless you really only intend to get one
-    // stub info.
+    // O(n) operation. Use getICStatusMap() unless you really only intend to get one stub info.
     StructureStubInfo* findStubInfo(CodeOrigin);
+    // O(n) operation. Use getICStatusMap() unless you really only intend to get one by-val-info.
+    ByValInfo* findByValInfo(CodeOrigin);
 
     ByValInfo* addByValInfo();
 

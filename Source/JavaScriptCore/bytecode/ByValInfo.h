@@ -227,11 +227,11 @@ inline JITArrayMode jitArrayModeForStructure(Structure* structure)
 struct ByValInfo {
     ByValInfo() { }
 
-    ByValInfo(BytecodeIndex bytecodeIndex, CodeLocationJump<JSInternalPtrTag> notIndexJump, CodeLocationJump<JSInternalPtrTag> badTypeJump, CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler, JITArrayMode arrayMode, ArrayProfile* arrayProfile, CodeLocationLabel<JSInternalPtrTag> badTypeDoneTarget, CodeLocationLabel<JSInternalPtrTag> badTypeNextHotPathTarget, CodeLocationLabel<JSInternalPtrTag> slowPathTarget)
+    ByValInfo(BytecodeIndex bytecodeIndex, CodeLocationJump<JSInternalPtrTag> notIndexJump, CodeLocationJump<JSInternalPtrTag> badTypeJump, CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler, JITArrayMode arrayMode, ArrayProfile* arrayProfile, CodeLocationLabel<JSInternalPtrTag> doneTarget, CodeLocationLabel<JSInternalPtrTag> badTypeNextHotPathTarget, CodeLocationLabel<JSInternalPtrTag> slowPathTarget)
         : notIndexJump(notIndexJump)
         , badTypeJump(badTypeJump)
         , exceptionHandler(exceptionHandler)
-        , badTypeDoneTarget(badTypeDoneTarget)
+        , doneTarget(doneTarget)
         , badTypeNextHotPathTarget(badTypeNextHotPathTarget)
         , slowPathTarget(slowPathTarget)
         , arrayProfile(arrayProfile)
@@ -249,7 +249,7 @@ struct ByValInfo {
     CodeLocationJump<JSInternalPtrTag> notIndexJump;
     CodeLocationJump<JSInternalPtrTag> badTypeJump;
     CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler;
-    CodeLocationLabel<JSInternalPtrTag> badTypeDoneTarget;
+    CodeLocationLabel<JSInternalPtrTag> doneTarget;
     CodeLocationLabel<JSInternalPtrTag> badTypeNextHotPathTarget;
     CodeLocationLabel<JSInternalPtrTag> slowPathTarget;
     ArrayProfile* arrayProfile;

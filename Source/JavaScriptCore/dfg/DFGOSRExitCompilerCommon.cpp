@@ -154,8 +154,8 @@ MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlock
 
     MacroAssemblerCodePtr<JSEntryPtrTag> jumpTarget;
 
+    const Instruction& callInstruction = *baselineCodeBlockForCaller->instructions().at(callBytecodeIndex).ptr();
     if (callerIsLLInt) {
-        const Instruction& callInstruction = *baselineCodeBlockForCaller->instructions().at(callBytecodeIndex).ptr();
 #define LLINT_RETURN_LOCATION(name) (callInstruction.isWide16() ? LLInt::getWide16CodePtr<JSEntryPtrTag>(name##_return_location) : (callInstruction.isWide32() ? LLInt::getWide32CodePtr<JSEntryPtrTag>(name##_return_location) : LLInt::getCodePtr<JSEntryPtrTag>(name##_return_location)))
 
         switch (trueCallerCallKind) {
@@ -213,10 +213,23 @@ MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlock
 
         case InlineCallFrame::GetterCall:
         case InlineCallFrame::SetterCall: {
-            StructureStubInfo* stubInfo =
-                baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
-            RELEASE_ASSERT(stubInfo);
+            if (callInstruction.opcodeID() == op_put_by_val) {
+                // We compile op_put_by_val as PutById and inlines SetterCall only when we found StructureStubInfo for this op_put_by_val.
+                // But still it is possible that we cannot find StructureStubInfo here. Let's consider the following scenario.
+                // 1. Baseline CodeBlock (A) is compiled.
+                // 2. (A) gets DFG (B).
+                // 3. Since (A) collects enough information for put_by_val, (B) can get StructureStubInfo from (A) and copmile it as inlined Setter call.
+                // 4. (A)'s JITData is destroyed since it is not executed. Then, (A) becomes LLInt.
+                // 5. The CodeBlock inlining (A) gets OSR exit. So (A) is executed and (A) eventually gets Baseline CodeBlock again.
+                // 6. (B) gets OSR exit. (B) attempts to search for StructureStubInfo in (A) for PutById (originally, put_by_val). But it does not exist since (A)'s JITData is cleared once.
+                ByValInfo* byValInfo = baselineCodeBlockForCaller->findByValInfo(CodeOrigin(callBytecodeIndex));
+                RELEASE_ASSERT(byValInfo);
+                jumpTarget = byValInfo->doneTarget.retagged<JSEntryPtrTag>();
+                break;
+            }
 
+            StructureStubInfo* stubInfo = baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
+            RELEASE_ASSERT(stubInfo);
             jumpTarget = stubInfo->doneLocation.retagged<JSEntryPtrTag>();
             break;
         }

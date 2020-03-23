@@ -1337,7 +1337,7 @@ void JIT::privateCompilePutByVal(const ConcurrentJSLocker&, ByValInfo* byValInfo
     LinkBuffer patchBuffer(*this, m_codeBlock);
     patchBuffer.link(badType, byValInfo->slowPathTarget);
     patchBuffer.link(slowCases, byValInfo->slowPathTarget);
-    patchBuffer.link(done, byValInfo->badTypeDoneTarget);
+    patchBuffer.link(done, byValInfo->doneTarget);
     if (needsLinkForWriteBarrier) {
         ASSERT(removeCodePtrTag(m_calls.last().callee.executableAddress()) == removeCodePtrTag(operationWriteBarrierSlowPath));
         patchBuffer.link(m_calls.last().from, m_calls.last().callee);
@@ -1377,7 +1377,7 @@ void JIT::privateCompilePutByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
     ConcurrentJSLocker locker(m_codeBlock->m_lock);
     LinkBuffer patchBuffer(*this, m_codeBlock);
     patchBuffer.link(slowCases, byValInfo->slowPathTarget);
-    patchBuffer.link(doneCases, byValInfo->badTypeDoneTarget);
+    patchBuffer.link(doneCases, byValInfo->doneTarget);
     if (!m_exceptionChecks.empty())
         patchBuffer.link(m_exceptionChecks, byValInfo->exceptionHandler);
 

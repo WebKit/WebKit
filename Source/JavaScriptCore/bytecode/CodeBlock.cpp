@@ -1557,6 +1557,18 @@ StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
     return nullptr;
 }
 
+ByValInfo* CodeBlock::findByValInfo(CodeOrigin codeOrigin)
+{
+    ConcurrentJSLocker locker(m_lock);
+    if (auto* jitData = m_jitData.get()) {
+        for (ByValInfo* byValInfo : jitData->m_byValInfos) {
+            if (byValInfo->bytecodeIndex == codeOrigin.bytecodeIndex())
+                return byValInfo;
+        }
+    }
+    return nullptr;
+}
+
 ByValInfo* CodeBlock::addByValInfo()
 {
     ConcurrentJSLocker locker(m_lock);
