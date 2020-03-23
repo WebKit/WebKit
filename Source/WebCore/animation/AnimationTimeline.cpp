@@ -102,11 +102,11 @@ Optional<double> AnimationTimeline::bindingsCurrentTime()
 void AnimationTimeline::animationWasAddedToElement(WebAnimation& animation, Element& element)
 {
     if (is<CSSTransition>(animation) && downcast<CSSTransition>(animation).owningElement() == &element)
-        element.transitions().add(&animation);
+        element.ensureTransitions().add(&animation);
     else if (is<CSSAnimation>(animation) && downcast<CSSAnimation>(animation).owningElement() == &element)
-        element.cssAnimations().add(&animation);
+        element.ensureCSSAnimations().add(&animation);
     else
-        element.webAnimations().add(&animation);
+        element.ensureWebAnimations().add(&animation);
 }
 
 static inline bool removeCSSTransitionFromMap(CSSTransition& transition, PropertyToTransitionMap& cssTransitionsByProperty)
@@ -121,9 +121,9 @@ static inline bool removeCSSTransitionFromMap(CSSTransition& transition, Propert
 
 void AnimationTimeline::animationWasRemovedFromElement(WebAnimation& animation, Element& element)
 {
-    element.transitions().remove(&animation);
-    element.cssAnimations().remove(&animation);
-    element.webAnimations().remove(&animation);
+    element.ensureTransitions().remove(&animation);
+    element.ensureCSSAnimations().remove(&animation);
+    element.ensureWebAnimations().remove(&animation);
 
     // Now, if we're dealing with a CSS Transition, we remove it from the m_elementToRunningCSSTransitionByCSSPropertyID map.
     // We don't need to do this for CSS Animations because their timing can be set via CSS to end, which would cause this
@@ -139,8 +139,8 @@ void AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement(WebA
 
     if (is<CSSTransition>(animation)) {
         auto& transition = downcast<CSSTransition>(animation);
-        if (!removeCSSTransitionFromMap(transition, element.runningTransitionsByProperty()))
-            removeCSSTransitionFromMap(transition, element.completedTransitionsByProperty());
+        if (!removeCSSTransitionFromMap(transition, element.ensureRunningTransitionsByProperty()))
+            removeCSSTransitionFromMap(transition, element.ensureCompletedTransitionsByProperty());
     }
 }
 
@@ -154,12 +154,12 @@ Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& el
                 animations.append(effect->animation());
         }
     } else {
-        const auto& cssTransitions = element.transitions();
-        animations.appendRange(cssTransitions.begin(), cssTransitions.end());
-        const auto& cssAnimations = element.cssAnimations();
-        animations.appendRange(cssAnimations.begin(), cssAnimations.end());
-        const auto& webAnimations = element.webAnimations();
-        animations.appendRange(webAnimations.begin(), webAnimations.end());
+        if (auto* cssTransitions = element.transitions())
+            animations.appendRange(cssTransitions->begin(), cssTransitions->end());
+        if (auto* cssAnimations = element.cssAnimations())
+            animations.appendRange(cssAnimations->begin(), cssAnimations->end());
+        if (auto* webAnimations = element.webAnimations())
+            animations.appendRange(webAnimations->begin(), webAnimations->end());
     }
 
     return animations;
@@ -190,13 +190,17 @@ void AnimationTimeline::removeCSSAnimationCreatedByMarkup(Element& element, CSSA
 
 void AnimationTimeline::willDestroyRendererForElement(Element& element)
 {
-    for (auto& cssTransition : element.transitions())
-        cssTransition->cancel(WebAnimation::Silently::Yes);
+    if (auto* transitions = element.transitions()) {
+        for (auto& cssTransition : *transitions)
+            cssTransition->cancel(WebAnimation::Silently::Yes);
+    }
 
-    for (auto& cssAnimation : element.cssAnimations()) {
-        if (is<CSSAnimation>(cssAnimation))
-            removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*cssAnimation));
-        cssAnimation->cancel(WebAnimation::Silently::Yes);
+    if (auto* cssAnimations = element.cssAnimations()) {
+        for (auto& cssAnimation : *cssAnimations) {
+            if (is<CSSAnimation>(cssAnimation))
+                removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*cssAnimation));
+            cssAnimation->cancel(WebAnimation::Silently::Yes);
+        }
     }
 }
 
@@ -219,12 +223,17 @@ void AnimationTimeline::willChangeRendererForElement(Element& element)
 
 void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element)
 {
-    for (auto& cssTransition : element.transitions())
-        cssTransition->cancel();
-    for (auto& cssAnimation : element.cssAnimations()) {
-        if (is<CSSAnimation>(cssAnimation))
-            removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*cssAnimation));
-        cssAnimation->cancel();
+    if (auto* transitions = element.transitions()) {
+        for (auto& cssTransition : *transitions)
+            cssTransition->cancel();
+    }
+
+    if (auto* cssAnimations = element.cssAnimations()) {
+        for (auto& cssAnimation : *cssAnimations) {
+            if (is<CSSAnimation>(cssAnimation))
+                removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*cssAnimation));
+            cssAnimation->cancel();
+        }
     }
 }
 
@@ -385,7 +394,7 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
     }
 }
 
-void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& element, CSSPropertyID property, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle, PropertyToTransitionMap& runningTransitionsByProperty, PropertyToTransitionMap& completedTransitionsByProperty, const MonotonicTime generationTime)
+void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& element, CSSPropertyID property, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle, const MonotonicTime generationTime)
 {
     const Animation* matchingBackingAnimation = nullptr;
     if (auto* transitions = afterChangeStyle.transitions()) {
@@ -399,12 +408,12 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
     // https://drafts.csswg.org/css-transitions-1/#before-change-style
     // Define the before-change style as the computed values of all properties on the element as of the previous style change event, except with
     // any styles derived from declarative animations such as CSS Transitions, CSS Animations, and SMIL Animations updated to the current time.
-    bool hasRunningTransition = runningTransitionsByProperty.contains(property);
+    bool hasRunningTransition = element.hasRunningTransitionsForProperty(property);
     auto beforeChangeStyle = [&]() {
         if (hasRunningTransition && CSSPropertyAnimation::animationOfPropertyIsAccelerated(property)) {
             // In case we have an accelerated transition running for this element, we need to get its computed style as the before-change style
             // since otherwise the animated value for that property won't be visible.
-            auto* runningTransition = runningTransitionsByProperty.get(property);
+            auto* runningTransition = element.ensureRunningTransitionsByProperty().get(property);
             if (is<KeyframeEffect>(runningTransition->effect())) {
                 auto& keyframeEffect = *downcast<KeyframeEffect>(runningTransition->effect());
                 if (keyframeEffect.isRunningAccelerated()) {
@@ -436,7 +445,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
     if (!hasRunningTransition
         && !CSSPropertyAnimation::propertiesEqual(property, &beforeChangeStyle, &afterChangeStyle)
         && CSSPropertyAnimation::canPropertyBeInterpolated(property, &beforeChangeStyle, &afterChangeStyle)
-        && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, completedTransitionsByProperty)
+        && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, element.ensureCompletedTransitionsByProperty())
         && matchingBackingAnimation && transitionCombinedDuration(matchingBackingAnimation) > 0) {
         // 1. If all of the following are true:
         //   - the element does not have a running transition for the property,
@@ -446,7 +455,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
         //   - the combined duration is greater than 0s,
 
         // then implementations must remove the completed transition (if present) from the set of completed transitions
-        completedTransitionsByProperty.remove(property);
+        element.ensureCompletedTransitionsByProperty().remove(property);
 
         // and start a transition whose:
         //   - start time is the time of the style change event plus the matching transition delay,
@@ -459,25 +468,25 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
         auto duration = Seconds(matchingBackingAnimation->duration());
         auto& reversingAdjustedStartStyle = beforeChangeStyle;
         auto reversingShorteningFactor = 1;
-        runningTransitionsByProperty.set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &beforeChangeStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
-    } else if (completedTransitionsByProperty.contains(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, completedTransitionsByProperty)) {
+        element.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &beforeChangeStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
+    } else if (element.hasCompletedTransitionsForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, element.ensureCompletedTransitionsByProperty())) {
         // 2. Otherwise, if the element has a completed transition for the property and the end value of the completed transition is different from
         //    the after-change style for the property, then implementations must remove the completed transition from the set of completed transitions.
-        completedTransitionsByProperty.remove(property);
+        element.ensureCompletedTransitionsByProperty().remove(property);
     }
 
-    hasRunningTransition = runningTransitionsByProperty.contains(property);
-    if ((hasRunningTransition || completedTransitionsByProperty.contains(property)) && !matchingBackingAnimation) {
+    hasRunningTransition = element.hasRunningTransitionsForProperty(property);
+    if ((hasRunningTransition || element.hasCompletedTransitionsForProperty(property)) && !matchingBackingAnimation) {
         // 3. If the element has a running transition or completed transition for the property, and there is not a matching transition-property
         //    value, then implementations must cancel the running transition or remove the completed transition from the set of completed transitions.
         if (hasRunningTransition)
-            runningTransitionsByProperty.take(property)->cancel();
+            element.ensureRunningTransitionsByProperty().take(property)->cancel();
         else
-            completedTransitionsByProperty.remove(property);
+            element.ensureCompletedTransitionsByProperty().remove(property);
     }
 
-    if (matchingBackingAnimation && runningTransitionsByProperty.contains(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, runningTransitionsByProperty)) {
-        auto previouslyRunningTransition = runningTransitionsByProperty.take(property);
+    if (matchingBackingAnimation && element.hasRunningTransitionsForProperty(property) && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, element.ensureRunningTransitionsByProperty())) {
+        auto previouslyRunningTransition = element.ensureRunningTransitionsByProperty().take(property);
         auto& previouslyRunningTransitionCurrentStyle = previouslyRunningTransition->currentStyle();
         // 4. If the element has a running transition for the property, there is a matching transition-property value, and the end value of the running
         //    transition is not equal to the value of the property in the after-change style, then:
@@ -515,7 +524,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
             auto delay = matchingBackingAnimation->delay() < 0 ? Seconds(matchingBackingAnimation->delay()) * reversingShorteningFactor : Seconds(matchingBackingAnimation->delay());
             auto duration = Seconds(matchingBackingAnimation->duration()) * reversingShorteningFactor;
 
-            element.runningTransitionsByProperty().set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
+            element.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
         } else {
             // 4. Otherwise, implementations must cancel the running transition
             previouslyRunningTransition->cancelFromStyle();
@@ -531,7 +540,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
             auto duration = Seconds(matchingBackingAnimation->duration());
             auto& reversingAdjustedStartStyle = currentStyle;
             auto reversingShorteningFactor = 1;
-            element.runningTransitionsByProperty().set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
+            element.ensureRunningTransitionsByProperty().set(property, CSSTransition::create(element, property, generationTime, *matchingBackingAnimation, &previouslyRunningTransitionCurrentStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor));
         }
     }
 }
@@ -540,17 +549,16 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
 {
     // In case this element is newly getting a "display: none" we need to cancel all of its transitions and disregard new ones.
     if (currentStyle.hasTransitions() && currentStyle.display() != DisplayType::None && afterChangeStyle.display() == DisplayType::None) {
-        auto runningTransitions = element.runningTransitionsByProperty();
-        for (const auto& cssTransitionsByCSSPropertyIDMapItem : runningTransitions)
-            cssTransitionsByCSSPropertyIDMapItem.value->cancelFromStyle();
+        if (element.hasRunningTransitions()) {
+            auto runningTransitions = element.ensureRunningTransitionsByProperty();
+            for (const auto& cssTransitionsByCSSPropertyIDMapItem : runningTransitions)
+                cssTransitionsByCSSPropertyIDMapItem.value->cancelFromStyle();
+        }
         return;
     }
 
     // Section 3 "Starting of transitions" from the CSS Transitions Level 1 specification.
     // https://drafts.csswg.org/css-transitions-1/#starting
-
-    auto& runningTransitionsByProperty = element.runningTransitionsByProperty();
-    auto& completedTransitionsByProperty = element.completedTransitionsByProperty();
 
     auto generationTime = MonotonicTime::now();
 
@@ -567,13 +575,13 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
             auto property = CSSPropertyAnimation::getPropertyAtIndex(propertyIndex, isShorthand);
             if (isShorthand && *isShorthand)
                 continue;
-            updateCSSTransitionsForElementAndProperty(element, property, currentStyle, afterChangeStyle, runningTransitionsByProperty, completedTransitionsByProperty, generationTime);
+            updateCSSTransitionsForElementAndProperty(element, property, currentStyle, afterChangeStyle, generationTime);
         }
         return;
     }
 
     for (auto property : transitionProperties)
-        updateCSSTransitionsForElementAndProperty(element, property, currentStyle, afterChangeStyle, runningTransitionsByProperty, completedTransitionsByProperty, generationTime);
+        updateCSSTransitionsForElementAndProperty(element, property, currentStyle, afterChangeStyle, generationTime);
 }
 
 } // namespace WebCore

@@ -3797,17 +3797,59 @@ OptionSet<AnimationImpact> Element::applyKeyframeEffects(RenderStyle& targetStyl
     return impact;
 }
 
-AnimationCollection& Element::webAnimations()
+const AnimationCollection* Element::webAnimations() const
+{
+    if (auto* animationData = animationRareData())
+        return &animationRareData()->webAnimations();
+    return nullptr;
+}
+
+const AnimationCollection* Element::cssAnimations() const
+{
+    if (auto* animationData = animationRareData())
+        return &animationRareData()->cssAnimations();
+    return nullptr;
+}
+
+const AnimationCollection* Element::transitions() const
+{
+    if (auto* animationData = animationRareData())
+        return &animationRareData()->transitions();
+    return nullptr;
+}
+
+bool Element::hasCompletedTransitionsForProperty(CSSPropertyID property) const
+{
+    if (auto* animationData = animationRareData())
+        return animationRareData()->completedTransitionsByProperty().contains(property);
+    return false;
+}
+
+bool Element::hasRunningTransitionsForProperty(CSSPropertyID property) const
+{
+    if (auto* animationData = animationRareData())
+        return animationRareData()->runningTransitionsByProperty().contains(property);
+    return false;
+}
+
+bool Element::hasRunningTransitions() const
+{
+    if (auto* animationData = animationRareData())
+        return !animationRareData()->runningTransitionsByProperty().isEmpty();
+    return false;
+}
+
+AnimationCollection& Element::ensureWebAnimations()
 {
     return ensureAnimationRareData().webAnimations();
 }
 
-AnimationCollection& Element::cssAnimations()
+AnimationCollection& Element::ensureCSSAnimations()
 {
     return ensureAnimationRareData().cssAnimations();
 }
 
-AnimationCollection& Element::transitions()
+AnimationCollection& Element::ensureTransitions()
 {
     return ensureAnimationRareData().transitions();
 }
@@ -3822,12 +3864,12 @@ void Element::setAnimationsCreatedByMarkup(CSSAnimationCollection&& animations)
     ensureAnimationRareData().setAnimationsCreatedByMarkup(WTFMove(animations));
 }
 
-PropertyToTransitionMap& Element::completedTransitionsByProperty()
+PropertyToTransitionMap& Element::ensureCompletedTransitionsByProperty()
 {
     return ensureAnimationRareData().completedTransitionsByProperty();
 }
 
-PropertyToTransitionMap& Element::runningTransitionsByProperty()
+PropertyToTransitionMap& Element::ensureRunningTransitionsByProperty()
 {
     return ensureAnimationRareData().runningTransitionsByProperty();
 }

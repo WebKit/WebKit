@@ -85,7 +85,7 @@ protected:
 
 private:
     void updateGlobalPosition(WebAnimation&);
-    void updateCSSTransitionsForElementAndProperty(Element&, CSSPropertyID, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle, PropertyToTransitionMap&, PropertyToTransitionMap&, const MonotonicTime);
+    void updateCSSTransitionsForElementAndProperty(Element&, CSSPropertyID, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle, const MonotonicTime);
     void removeCSSAnimationCreatedByMarkup(Element&, CSSAnimation&);
 
     Markable<Seconds, Seconds::MarkableTraits> m_currentTime;

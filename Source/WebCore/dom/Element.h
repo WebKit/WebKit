@@ -487,13 +487,19 @@ public:
     bool hasKeyframeEffects() const;
     OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle&);
 
-    AnimationCollection& webAnimations();
-    AnimationCollection& cssAnimations();
-    AnimationCollection& transitions();
+    const AnimationCollection* webAnimations() const;
+    const AnimationCollection* cssAnimations() const;
+    const AnimationCollection* transitions() const;
+    bool hasCompletedTransitionsForProperty(CSSPropertyID) const;
+    bool hasRunningTransitionsForProperty(CSSPropertyID) const;
+    bool hasRunningTransitions() const;
+    AnimationCollection& ensureWebAnimations();
+    AnimationCollection& ensureCSSAnimations();
+    AnimationCollection& ensureTransitions();
+    PropertyToTransitionMap& ensureCompletedTransitionsByProperty();
+    PropertyToTransitionMap& ensureRunningTransitionsByProperty();
     CSSAnimationCollection& animationsCreatedByMarkup();
     void setAnimationsCreatedByMarkup(CSSAnimationCollection&&);
-    PropertyToTransitionMap& completedTransitionsByProperty();
-    PropertyToTransitionMap& runningTransitionsByProperty();
 
 #if ENABLE(FULLSCREEN_API)
     WEBCORE_EXPORT bool containsFullScreenElement() const;
