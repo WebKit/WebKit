@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <mutex>
 #include <unicode/ubrk.h>
 #include <unicode/unorm2.h>
+#include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
@@ -240,6 +241,32 @@ String StringView::convertToASCIIUppercase() const
     if (m_is8Bit)
         return convertASCIICase<ASCIICase::Upper>(static_cast<const LChar*>(m_characters), m_length);
     return convertASCIICase<ASCIICase::Upper>(static_cast<const UChar*>(m_characters), m_length);
+}
+
+template<typename DestinationCharacterType, typename SourceCharacterType>
+void getCharactersWithASCIICaseInternal(StringView::CaseConvertType type, DestinationCharacterType* destination, const SourceCharacterType* source, unsigned length)
+{
+    static_assert(std::is_same<SourceCharacterType, LChar>::value || std::is_same<SourceCharacterType, UChar>::value);
+    static_assert(std::is_same<DestinationCharacterType, LChar>::value || std::is_same<DestinationCharacterType, UChar>::value);
+    static_assert(sizeof(DestinationCharacterType) >= sizeof(SourceCharacterType));
+    auto caseConvert = (type == StringView::CaseConvertType::Lower) ? toASCIILower<SourceCharacterType> : toASCIIUpper<SourceCharacterType>;
+    for (unsigned i = 0; i < length; ++i)
+        destination[i] = caseConvert(source[i]);
+}
+
+void StringView::getCharactersWithASCIICase(CaseConvertType type, LChar* destination) const
+{
+    ASSERT(is8Bit());
+    getCharactersWithASCIICaseInternal(type, destination, characters8(), m_length);
+}
+
+void StringView::getCharactersWithASCIICase(CaseConvertType type, UChar* destination) const
+{
+    if (is8Bit()) {
+        getCharactersWithASCIICaseInternal(type, destination, characters8(), m_length);
+        return;
+    }
+    getCharactersWithASCIICaseInternal(type, destination, characters16(), m_length);
 }
 
 StringViewWithUnderlyingString normalizedNFC(StringView string)

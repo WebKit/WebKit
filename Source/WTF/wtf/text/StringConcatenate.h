@@ -287,6 +287,39 @@ private:
     Indentation<N> m_indentation;
 };
 
+struct ASCIICaseConverter {
+    StringView::CaseConvertType type;
+    StringView string;
+};
+
+inline ASCIICaseConverter lowercase(const StringView& stringView)
+{
+    return { StringView::CaseConvertType::Lower, stringView };
+}
+
+inline ASCIICaseConverter uppercase(const StringView& stringView)
+{
+    return { StringView::CaseConvertType::Upper, stringView };
+}
+
+template<> class StringTypeAdapter<ASCIICaseConverter, void> {
+public:
+    StringTypeAdapter(const ASCIICaseConverter& converter)
+        : m_converter { converter }
+    {
+    }
+
+    unsigned length() const { return m_converter.string.length(); }
+    bool is8Bit() const { return m_converter.string.is8Bit(); }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    {
+        m_converter.string.getCharactersWithASCIICase(m_converter.type, destination);
+    }
+
+private:
+    const ASCIICaseConverter& m_converter;
+};
+
 template<typename Adapter>
 inline bool are8Bit(Adapter adapter)
 {
@@ -364,6 +397,8 @@ using WTF::Indentation;
 using WTF::IndentationScope;
 using WTF::makeString;
 using WTF::pad;
+using WTF::lowercase;
 using WTF::tryMakeString;
+using WTF::uppercase;
 
 #include <wtf/text/StringOperators.h>

@@ -120,6 +120,10 @@ public:
     void getCharactersWithUpconvert(LChar*) const;
     void getCharactersWithUpconvert(UChar*) const;
 
+    enum class CaseConvertType { Upper, Lower };
+    WTF_EXPORT_PRIVATE void getCharactersWithASCIICase(CaseConvertType, LChar*) const;
+    WTF_EXPORT_PRIVATE void getCharactersWithASCIICase(CaseConvertType, UChar*) const;
+
     StringView substring(unsigned start, unsigned length = std::numeric_limits<unsigned>::max()) const;
     StringView left(unsigned length) const { return substring(0, length); }
     StringView right(unsigned length) const { return substring(this->length() - length, length); }

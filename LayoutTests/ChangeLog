@@ -1,3 +1,16 @@
+2020-03-23  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest: getAllResponseHeaders() sorting
+        https://bugs.webkit.org/show_bug.cgi?id=200565
+
+        Reviewed by Darin Adler.
+
+        Update improved test results.
+
+        * platform/ios/imported/w3c/web-platform-tests/xhr/getallresponseheaders-expected.txt:
+        * platform/mac-highsierra/imported/w3c/web-platform-tests/xhr/getallresponseheaders-expected.txt:
+        * platform/mac-mojave/imported/w3c/web-platform-tests/xhr/getallresponseheaders-expected.txt:
+
 2020-03-23  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Fixing merge conflict
