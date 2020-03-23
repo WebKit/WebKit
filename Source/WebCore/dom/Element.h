@@ -492,7 +492,7 @@ public:
     AnimationCollection& transitions();
     CSSAnimationCollection& animationsCreatedByMarkup();
     void setAnimationsCreatedByMarkup(CSSAnimationCollection&&);
-    PropertyToTransitionMap& completedTransitionByProperty();
+    PropertyToTransitionMap& completedTransitionsByProperty();
     PropertyToTransitionMap& runningTransitionsByProperty();
 
 #if ENABLE(FULLSCREEN_API)

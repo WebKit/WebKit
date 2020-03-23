@@ -140,7 +140,7 @@ void AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement(WebA
     if (is<CSSTransition>(animation)) {
         auto& transition = downcast<CSSTransition>(animation);
         if (!removeCSSTransitionFromMap(transition, element.runningTransitionsByProperty()))
-            removeCSSTransitionFromMap(transition, element.completedTransitionByProperty());
+            removeCSSTransitionFromMap(transition, element.completedTransitionsByProperty());
     }
 }
 
@@ -550,7 +550,7 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
     // https://drafts.csswg.org/css-transitions-1/#starting
 
     auto& runningTransitionsByProperty = element.runningTransitionsByProperty();
-    auto& completedTransitionsByProperty = element.completedTransitionByProperty();
+    auto& completedTransitionsByProperty = element.completedTransitionsByProperty();
 
     auto generationTime = MonotonicTime::now();
 

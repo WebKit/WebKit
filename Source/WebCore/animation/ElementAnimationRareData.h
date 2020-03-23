@@ -49,7 +49,7 @@ public:
     AnimationCollection& transitions() { return m_transitions; }
     CSSAnimationCollection& animationsCreatedByMarkup() { return m_animationsCreatedByMarkup; }
     void setAnimationsCreatedByMarkup(CSSAnimationCollection&&);
-    PropertyToTransitionMap& completedTransitionByProperty() { return m_completedTransitionByProperty; }
+    PropertyToTransitionMap& completedTransitionsByProperty() { return m_completedTransitionsByProperty; }
     PropertyToTransitionMap& runningTransitionsByProperty() { return m_runningTransitionsByProperty; }
 
 private:
@@ -59,7 +59,7 @@ private:
     AnimationCollection m_cssAnimations;
     AnimationCollection m_transitions;
     CSSAnimationCollection m_animationsCreatedByMarkup;
-    PropertyToTransitionMap m_completedTransitionByProperty;
+    PropertyToTransitionMap m_completedTransitionsByProperty;
     PropertyToTransitionMap m_runningTransitionsByProperty;
 };
 

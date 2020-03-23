@@ -3822,9 +3822,9 @@ void Element::setAnimationsCreatedByMarkup(CSSAnimationCollection&& animations)
     ensureAnimationRareData().setAnimationsCreatedByMarkup(WTFMove(animations));
 }
 
-PropertyToTransitionMap& Element::completedTransitionByProperty()
+PropertyToTransitionMap& Element::completedTransitionsByProperty()
 {
-    return ensureAnimationRareData().completedTransitionByProperty();
+    return ensureAnimationRareData().completedTransitionsByProperty();
 }
 
 PropertyToTransitionMap& Element::runningTransitionsByProperty()
