@@ -30,12 +30,17 @@
 #import "IPadUserInterfaceSwizzler.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "TestCocoa.h"
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKitLegacy/WebEvent.h>
 #import <cmath>
+
+@interface WKContentView ()
+- (BOOL)_shouldSimulateKeyboardInputOnTextInsertion;
+@end
 
 @interface InputAssistantItemTestingWebView : TestWKWebView
 + (UIBarButtonItemGroup *)leadingItemsForWebView:(WKWebView *)webView;
@@ -646,6 +651,47 @@ TEST(KeyboardInputTests, SuppressSoftwareKeyboard)
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
     EXPECT_TRUE(UIKeyboardImpl.sharedInstance._shouldSuppressSoftwareKeyboard);
 }
+
+static BOOL shouldSimulateKeyboardInputOnTextInsertionOverride(id, SEL)
+{
+    return YES;
+}
+
+TEST(KeyboardInputTests, InsertTextSimulatingKeyboardInput)
+{
+    InstanceMethodSwizzler overrideShouldSimulateKeyboardInputOnTextInsertion { NSClassFromString(@"WKContentView"), @selector(_shouldSimulateKeyboardInputOnTextInsertion), reinterpret_cast<IMP>(shouldSimulateKeyboardInputOnTextInsertionOverride) };
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&](WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"insert-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
+    [[webView textInputContentView] insertText:@"hello"];
+    EXPECT_NS_EQUAL((@[@"keydown", @"beforeinput", @"input", @"keyup", @"change"]), [webView objectByEvaluatingJavaScript:@"firedEvents"]);
+}
+
+#if USE(DICTATION_ALTERNATIVES)
+
+TEST(KeyboardInputTests, InsertDictationAlternativesSimulatingKeyboardInput)
+{
+    InstanceMethodSwizzler overrideShouldSimulateKeyboardInputOnTextInsertion { NSClassFromString(@"WKContentView"), @selector(_shouldSimulateKeyboardInputOnTextInsertion), reinterpret_cast<IMP>(shouldSimulateKeyboardInputOnTextInsertionOverride) };
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&](WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"insert-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
+    [[webView textInputContentView] insertText:@"hello" alternatives:@[ @"helo" ] style:UITextAlternativeStyleNone];
+    EXPECT_NS_EQUAL((@[@"keydown", @"beforeinput", @"input", @"keyup", @"change"]), [webView objectByEvaluatingJavaScript:@"firedEvents"]);
+}
+
+#endif
 
 } // namespace TestWebKitAPI
 

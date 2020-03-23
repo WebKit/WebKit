@@ -1,3 +1,38 @@
+2020-03-23  Daniel Bates  <dabates@apple.com>
+
+        Support inserting text or dictation alternative by simulating keyboard input
+        https://bugs.webkit.org/show_bug.cgi?id=209380
+        <rdar://problem/59445102>
+
+        Reviewed by Darin Adler.
+
+        As a workaround for sites the implement their own editing system (e.g. facebook.com)
+        add a new insertion option that makes the insertion having a passing resemblance
+        of a person typing. The resemblance is achieved by dispatching DOM events with type
+        "keydown", "keyup", and "change".
+
+        * Shared/Cocoa/InsertTextOptions.cpp:
+        (IPC::ArgumentCoder<WebKit::InsertTextOptions>::encode):
+        (IPC::ArgumentCoder<WebKit::InsertTextOptions>::decode):
+        Encode and decode the new option.
+
+        * Shared/Cocoa/InsertTextOptions.h: Default the new option, shouldSimulateKeyboardInput,
+        to false to keep our current behavior.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _shouldSimulateKeyboardInputOnTextInsertion]): Added. Returns NO when
+        building without USE(TEXT_INTERACTION_ADDITIONS) to keep the current behavior.
+
+        (-[WKContentView insertText:]):
+        (-[WKContentView insertText:alternatives:style:]):
+        Set the shouldSimulateKeyboardInput option.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::insertDictatedTextAsync):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertTextAsync):
+        If shouldSimulateKeyboardInput is false then do what we do now. Otherwise, dispatch a DOM event
+        of type "keydown" and perform the insertion. Then dispatch DOM events of type "keyup" and "change". 
+
 2020-03-23  Darin Adler  <darin@apple.com>
 
         Change TextIterator::rangeLength to not require a live range

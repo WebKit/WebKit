@@ -4710,6 +4710,15 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
     _page->executeEditCommand("deleteBackward"_s);
 }
 
+- (BOOL)_shouldSimulateKeyboardInputOnTextInsertion
+{
+#if USE(TEXT_INTERACTION_ADDITIONS)
+    return [self _shouldSimulateKeyboardInputOnTextInsertionInternal];
+#else
+    return NO;
+#endif
+}
+
 // Inserts the given string, replacing any selected or marked text.
 - (void)insertText:(NSString *)aStringValue
 {
@@ -4717,7 +4726,7 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 
     WebKit::InsertTextOptions options;
     options.processingUserGesture = [keyboard respondsToSelector:@selector(isCallingInputDelegate)] && keyboard.isCallingInputDelegate;
-
+    options.shouldSimulateKeyboardInput = [self _shouldSimulateKeyboardInputOnTextInsertion];
     _page->insertTextAsync(aStringValue, WebKit::EditingRange(), WTFMove(options));
 }
 
@@ -4731,7 +4740,10 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
         BOOL isLowConfidence = style == UITextAlternativeStyleLowConfidence;
         auto textAlternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:aStringValue alternativeStrings:alternatives isLowConfidence:isLowConfidence]);
         WebCore::TextAlternativeWithRange textAlternativeWithRange { textAlternatives.get(), NSMakeRange(0, aStringValue.length) };
-        _page->insertDictatedTextAsync(aStringValue, { }, { textAlternativeWithRange }, { });
+
+        WebKit::InsertTextOptions options;
+        options.shouldSimulateKeyboardInput = [self _shouldSimulateKeyboardInputOnTextInsertion];
+        _page->insertDictatedTextAsync(aStringValue, { }, { textAlternativeWithRange }, WTFMove(options));
     }
 }
 

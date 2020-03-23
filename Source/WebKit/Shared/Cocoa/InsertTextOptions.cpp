@@ -33,6 +33,7 @@ void ArgumentCoder<WebKit::InsertTextOptions>::encode(Encoder& encoder, const We
     encoder << options.registerUndoGroup;
     encoder << options.suppressSelectionUpdate;
     encoder << options.processingUserGesture;
+    encoder << options.shouldSimulateKeyboardInput;
     encoder << options.editingRangeIsRelativeTo;
 }
 
@@ -44,6 +45,8 @@ Optional<WebKit::InsertTextOptions> ArgumentCoder<WebKit::InsertTextOptions>::de
     if (!decoder.decode(options.suppressSelectionUpdate))
         return WTF::nullopt;
     if (!decoder.decode(options.processingUserGesture))
+        return WTF::nullopt;
+    if (!decoder.decode(options.shouldSimulateKeyboardInput))
         return WTF::nullopt;
     if (!decoder.decode(options.editingRangeIsRelativeTo))
         return WTF::nullopt;

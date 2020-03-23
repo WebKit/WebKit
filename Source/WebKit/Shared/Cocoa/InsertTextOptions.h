@@ -34,6 +34,7 @@ struct InsertTextOptions {
     bool registerUndoGroup { false };
     bool suppressSelectionUpdate { false };
     bool processingUserGesture { false };
+    bool shouldSimulateKeyboardInput { false };
     EditingRangeIsRelativeTo editingRangeIsRelativeTo { EditingRangeIsRelativeTo::EditableRoot };
 };
 

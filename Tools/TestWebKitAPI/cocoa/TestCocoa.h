@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,25 @@
 
 #pragma once
 
+#import "PlatformUtilities.h"
 #import "Test.h"
+
+namespace TestWebKitAPI {
+namespace Util {
+
+template<typename T, typename U>
+static inline ::testing::AssertionResult assertNSObjectsAreEqual(const char* expectedExpression, const char* actualExpression, T *expected, U *actual)
+{
+    if ((!expected && !actual) || [expected isEqual:actual])
+        return ::testing::AssertionSuccess();
+    return ::testing::internal::EqFailure(expectedExpression, actualExpression, toSTD([expected description]), toSTD([actual description]), false /* ignoring_case */);
+}
+
+} // namespace Util
+} // namespace TestWebKitAPI
+
+#define EXPECT_NS_EQUAL(expected, actual) \
+    EXPECT_PRED_FORMAT2(TestWebKitAPI::Util::assertNSObjectsAreEqual, expected, actual)
 
 #if USE(CG)
 

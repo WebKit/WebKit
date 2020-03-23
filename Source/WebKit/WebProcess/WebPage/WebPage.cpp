@@ -5343,13 +5343,22 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
     
     if (options.registerUndoGroup)
         send(Messages::WebPageProxy::RegisterInsertionUndoGrouping());
-    
+
+    RefPtr<Element> focusedElement = frame.document() ? frame.document()->focusedElement() : nullptr;
+    if (focusedElement && options.shouldSimulateKeyboardInput)
+        focusedElement->dispatchEvent(Event::create(eventNames().keydownEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes));
+
     if (!frame.editor().hasComposition()) {
         // An insertText: might be handled by other responders in the chain if we don't handle it.
         // One example is space bar that results in scrolling down the page.
         frame.editor().insertText(text, nullptr, replacesText ? TextEventInputAutocompletion : TextEventInputKeyboard);
     } else
         frame.editor().confirmComposition(text);
+
+    if (focusedElement && options.shouldSimulateKeyboardInput) {
+        focusedElement->dispatchEvent(Event::create(eventNames().keyupEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes));
+        focusedElement->dispatchEvent(Event::create(eventNames().changeEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes));
+    }
 }
 
 void WebPage::hasMarkedText(CompletionHandler<void(bool)>&& completionHandler)

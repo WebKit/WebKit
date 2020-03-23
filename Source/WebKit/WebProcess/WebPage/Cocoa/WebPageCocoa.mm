@@ -38,6 +38,7 @@
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/EventNames.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
@@ -197,8 +198,17 @@ void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& re
     if (options.registerUndoGroup)
         send(Messages::WebPageProxy::RegisterInsertionUndoGrouping { });
 
+    RefPtr<Element> focusedElement = frame.document() ? frame.document()->focusedElement() : nullptr;
+    if (focusedElement && options.shouldSimulateKeyboardInput)
+        focusedElement->dispatchEvent(Event::create(eventNames().keydownEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes));
+
     ASSERT(!frame.editor().hasComposition());
     frame.editor().insertDictatedText(text, dictationAlternativeLocations, nullptr /* triggeringEvent */);
+
+    if (focusedElement && options.shouldSimulateKeyboardInput) {
+        focusedElement->dispatchEvent(Event::create(eventNames().keyupEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes));
+        focusedElement->dispatchEvent(Event::create(eventNames().changeEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes));
+    }
 }
 
 void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)

@@ -984,6 +984,7 @@
 		CE3524FA1B1443890028A7C5 /* input-focus-blur.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE3524F51B142BBB0028A7C5 /* input-focus-blur.html */; };
 		CE449E1121AE0F7200E7ADA1 /* WKWebViewFindString.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE449E1021AE0F7200E7ADA1 /* WKWebViewFindString.mm */; };
 		CE4D5DE71F6743BA0072CFC6 /* StringWithDirection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE4D5DE51F6743BA0072CFC6 /* StringWithDirection.cpp */; };
+		CE6D0EE32426B932002AD901 /* insert-text.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE6D0EE22426B8ED002AD901 /* insert-text.html */; };
 		CE6E81A020A6935F00E2C80F /* SetTimeoutFunction.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE6E819F20A6935F00E2C80F /* SetTimeoutFunction.mm */; };
 		CE6E81A420A933D500E2C80F /* set-timeout-function.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE6E81A320A933B800E2C80F /* set-timeout-function.html */; };
 		CE78705F2107AB980053AC67 /* MoveOnlyLifecycleLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE78705D2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.cpp */; };
@@ -1374,6 +1375,7 @@
 				5110FCF61E01CD83006F8D0B /* IndexUpgrade.sqlite3 in Copy Resources */,
 				2EFF06CD1D8A429A0004BB30 /* input-field-in-scrollable-document.html in Copy Resources */,
 				CE3524FA1B1443890028A7C5 /* input-focus-blur.html in Copy Resources */,
+				CE6D0EE32426B932002AD901 /* insert-text.html in Copy Resources */,
 				57F56A5C1C7F8CC100F31D7E /* IsNavigationActionTrusted.html in Copy Resources */,
 				C9B4AD2C1ECA6F7F00F5FEA0 /* js-autoplay-audio.html in Copy Resources */,
 				C99B675D1E39722000FC6C80 /* js-play-with-controls.html in Copy Resources */,
@@ -2578,6 +2580,7 @@
 		CE50D8C81C8665CE0072EA5A /* OptionSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionSet.cpp; sourceTree = "<group>"; };
 		CE640CA52370A4F300C5CAA4 /* TestCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestCocoa.h; path = cocoa/TestCocoa.h; sourceTree = "<group>"; };
 		CE640CA62370A4F300C5CAA4 /* TestCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TestCocoa.mm; path = cocoa/TestCocoa.mm; sourceTree = "<group>"; };
+		CE6D0EE22426B8ED002AD901 /* insert-text.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "insert-text.html"; path = "ios/insert-text.html"; sourceTree = SOURCE_ROOT; };
 		CE6E819F20A6935F00E2C80F /* SetTimeoutFunction.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SetTimeoutFunction.mm; sourceTree = "<group>"; };
 		CE6E81A320A933B800E2C80F /* set-timeout-function.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "set-timeout-function.html"; path = "ios/set-timeout-function.html"; sourceTree = SOURCE_ROOT; };
 		CE78705C2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveOnlyLifecycleLogger.h; sourceTree = "<group>"; };
@@ -3671,6 +3674,7 @@
 			isa = PBXGroup;
 			children = (
 				0F16BED72304A1D100B4A167 /* composited.html */,
+				CE6D0EE22426B8ED002AD901 /* insert-text.html */,
 				0F340777230382540060A1A0 /* overflow-scroll.html */,
 				A1C4FB721BACD1B7003742D0 /* pages.pages */,
 				CE6E81A320A933B800E2C80F /* set-timeout-function.html */,

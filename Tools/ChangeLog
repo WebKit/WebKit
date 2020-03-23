@@ -1,3 +1,28 @@
+2020-03-23  Daniel Bates  <dabates@apple.com>
+
+        Support inserting text or dictation alternative by simulating keyboard input
+        https://bugs.webkit.org/show_bug.cgi?id=209380
+        <rdar://problem/59445102>
+
+        Reviewed by Darin Adler.
+
+        Add tests to ensure that DOM events are dispatched on insertion when shouldSimulateKeyboardInput
+        is enabled.
+
+        I also added a convenience assertion function, EXPECT_NS_EQUAL, that can
+        compare NSObjects so long as they implement -isEqual and -description. I
+        make use of this to compare the actual array of fired DOM events types to
+        an expected array.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::shouldSimulateKeyboardInputOnTextInsertionOverride):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestCocoa.h:
+        (TestWebKitAPI::Util::assertNSObjectsAreEqual): Added.
+        (EXPECT_NS_EQUAL): Added.
+        * TestWebKitAPI/ios/insert-text.html: Added.
+
 2020-03-23  Kate Cheney  <katherine_cheney@apple.com>
 
         Add checks for app-bound navigations when evaluating user style sheets
