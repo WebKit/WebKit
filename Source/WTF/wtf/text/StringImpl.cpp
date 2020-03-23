@@ -1183,7 +1183,7 @@ ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned startOff
 
 bool StringImpl::startsWith(const StringImpl* string) const
 {
-    return string && ::WTF::startsWith(*this, *string);
+    return !string || ::WTF::startsWith(*this, *string);
 }
 
 bool StringImpl::startsWith(const StringImpl& string) const

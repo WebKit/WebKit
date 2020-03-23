@@ -41,6 +41,17 @@ StringView stringViewFromUTF8(String& ref, const char* characters)
     return ref;
 }
 
+TEST(WTF, StringViewStartsWithEmptyVsNull)
+{
+    StringView nullView;
+    StringView emptyView = StringView::empty();
+    String stringWithCharacters("hello");
+    StringView viewWithCharacters(stringWithCharacters);
+
+    EXPECT_TRUE(viewWithCharacters.startsWith(nullView));
+    EXPECT_TRUE(viewWithCharacters.startsWith(emptyView));
+}
+
 TEST(WTF, StringViewEmptyVsNull)
 {
     StringView nullView;

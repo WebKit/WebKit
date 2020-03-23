@@ -71,6 +71,16 @@ TEST(WTF, StringASCII)
     EXPECT_STREQ("foobar", output.data());
 }
 
+TEST(WTF, StringStartsWithEmptyVsNull)
+{
+    String nullString;
+    String emptyString = WTF::emptyString();
+    String stringWithCharacters("hello");
+
+    EXPECT_TRUE(stringWithCharacters.startsWith(nullString));
+    EXPECT_TRUE(stringWithCharacters.startsWith(emptyString));
+}
+
 static inline const char* testStringNumberFixedPrecision(double number)
 {
     static char testBuffer[100] = { };

@@ -1,3 +1,15 @@
+2020-03-23  youenn fablet  <youenn@apple.com>
+
+        StringView::startsWith and String::startsWith do not treat null strings the same
+        https://bugs.webkit.org/show_bug.cgi?id=209273
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-03-22  Antoine Quint  <graouts@apple.com>
 
         DocumentTimeline / CSSTransition objects are leaking on CNN.com
