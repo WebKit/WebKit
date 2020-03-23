@@ -270,7 +270,7 @@ public:
     String clientRedirectDestinationForHistory() const { return urlForHistory(); }
     void setClientRedirectSourceForHistory(const String& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = clientRedirectSourceForHistory; }
     
-    String serverRedirectSourceForHistory() const { return (urlForHistory() == url() || url() == WTF::blankURL()) ? String() : urlForHistory().string(); } // null if no server redirect occurred.
+    String serverRedirectSourceForHistory() const { return (urlForHistory() == url() || url() == aboutBlankURL()) ? String() : urlForHistory().string(); } // null if no server redirect occurred.
     String serverRedirectDestinationForHistory() const { return url(); }
 
     bool didCreateGlobalHistoryEntry() const { return m_didCreateGlobalHistoryEntry; }

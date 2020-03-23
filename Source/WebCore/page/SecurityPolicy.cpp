@@ -167,7 +167,7 @@ bool SecurityPolicy::shouldInheritSecurityOriginFromOwner(const URL& url)
     //
     // Note: We generalize this to invalid URLs because we treat such URLs as about:blank.
     // FIXME: We also allow some URLs like "about:BLANK". We should probably block navigation to these URLs, see rdar://problem/57966056.
-    return url.isEmpty() || url.isAboutBlank() || url.isAboutSrcDoc() || equalIgnoringASCIICase(url.string(), WTF::blankURL());
+    return url.isEmpty() || url.isAboutBlank() || url.isAboutSrcDoc() || equalIgnoringASCIICase(url.string(), aboutBlankURL());
 }
 
 bool SecurityPolicy::isBaseURLSchemeAllowed(const URL& url)

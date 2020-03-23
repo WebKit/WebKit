@@ -529,7 +529,7 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
     String sanitizedMarkup = sanitizeMarkupWithArchive(frame, *frame.document(), *result, msoListQuirksForMarkup(), [&] (const String& type) {
         return frame.loader().client().canShowMIMETypeAsHTML(type);
     });
-    fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, WTF::blankURL(), DisallowScriptingAndPluginContent);
+    fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, aboutBlankURL(), DisallowScriptingAndPluginContent);
 
     if (!fragment)
         return false;

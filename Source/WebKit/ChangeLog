@@ -1,3 +1,29 @@
+2020-03-23  youenn fablet  <youenn@apple.com>
+
+        Rename blankURL to aboutBlankURL
+        https://bugs.webkit.org/show_bug.cgi?id=209344
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadPlainTextStringWithUserData):
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserStyleSheet):
+        (WKPageGroupAddUserScript):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_load_plain_text):
+        * UIProcess/Inspector/WebPageDebuggable.cpp:
+        (WebKit::WebPageDebuggable::url const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadDataWithNavigationShared):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadAlternateHTML):
+        (WebKit::WebPage::dumpHistoryForTesting):
+        (WebKit::WebPage::addUserScript):
+        (WebKit::WebPage::addUserStyleSheet):
+
 2020-03-23  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to move localStorage to a different domain

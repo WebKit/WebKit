@@ -1420,7 +1420,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
 
     auto transaction = m_pageLoadState.transaction();
 
-    m_pageLoadState.setPendingAPIRequest(transaction, { navigation.navigationID(), !baseURL.isEmpty() ? baseURL : WTF::blankURL().string() });
+    m_pageLoadState.setPendingAPIRequest(transaction, { navigation.navigationID(), !baseURL.isEmpty() ? baseURL : aboutBlankURL().string() });
 
     LoadParameters loadParameters;
     loadParameters.navigationID = navigation.navigationID();
@@ -1497,7 +1497,7 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
         launchProcess({ }, ProcessLaunchReason::InitialProcess);
 
     auto transaction = m_pageLoadState.transaction();
-    m_pageLoadState.setPendingAPIRequest(transaction, { 0, WTF::blankURL().string() });
+    m_pageLoadState.setPendingAPIRequest(transaction, { 0, aboutBlankURL().string() });
 
     LoadParameters loadParameters;
     loadParameters.navigationID = 0;

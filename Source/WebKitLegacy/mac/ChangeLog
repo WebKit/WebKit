@@ -1,3 +1,15 @@
+2020-03-23  youenn fablet  <youenn@apple.com>
+
+        Rename blankURL to aboutBlankURL
+        https://bugs.webkit.org/show_bug.cgi?id=209344
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistory):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+
 2020-03-20  Jer Noble  <jer.noble@apple.com>
 
         Ensure media cache directory is created before passing to AVURLAsset.

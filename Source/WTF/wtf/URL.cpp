@@ -867,7 +867,7 @@ bool protocolIsInHTTPFamily(const String& url)
         && (url[4] == ':' || (isASCIIAlphaCaselessEqual(url[4], 's') && length >= 6 && url[5] == ':'));
 }
 
-const URL& blankURL()
+const URL& aboutBlankURL()
 {
     static NeverDestroyed<URL> staticBlankURL(URL(), "about:blank");
     return staticBlankURL;

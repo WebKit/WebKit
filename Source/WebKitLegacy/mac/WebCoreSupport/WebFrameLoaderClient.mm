@@ -1033,7 +1033,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     WebView* view = getWebView(m_webFrame.get());
     auto* loader = core(m_webFrame.get())->loader().documentLoader();
 #if PLATFORM(IOS_FAMILY)
-    if (loader->urlForHistory() == WTF::blankURL())
+    if (loader->urlForHistory() == aboutBlankURL())
         return;
 #endif
 

@@ -1783,7 +1783,7 @@ bool DocumentLoader::maybeLoadEmpty()
         return false;
 
     if (m_request.url().isEmpty() && !frameLoader()->stateMachine().creatingInitialEmptyDocument()) {
-        m_request.setURL(WTF::blankURL());
+        m_request.setURL(aboutBlankURL());
         if (isLoadingMainResource())
             frameLoader()->client().dispatchDidChangeProvisionalURL();
     }

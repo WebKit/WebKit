@@ -1582,7 +1582,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     // Only the first iframe navigation or the first iframe navigation after about:blank should be reported.
     // https://www.w3.org/TR/resource-timing-2/#resources-included-in-the-performanceresourcetiming-interface
-    if (m_shouldReportResourceTimingToParentFrame && !m_previousURL.isNull() && m_previousURL != WTF::blankURL())
+    if (m_shouldReportResourceTimingToParentFrame && !m_previousURL.isNull() && m_previousURL != aboutBlankURL())
         m_shouldReportResourceTimingToParentFrame = false;
 
     // Log main frame navigation types.

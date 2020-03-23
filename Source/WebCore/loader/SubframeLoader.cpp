@@ -80,12 +80,12 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerElement, const Str
     URL url;
     if (WTF::protocolIsJavaScript(urlString)) {
         scriptURL = completeURL(urlString); // completeURL() encodes the URL.
-        url = WTF::blankURL();
+        url = aboutBlankURL();
     } else
         url = completeURL(urlString);
 
     if (shouldConvertInvalidURLsToBlank() && !url.isValid())
-        url = WTF::blankURL();
+        url = aboutBlankURL();
 
     // If we will schedule a JavaScript URL load, we need to delay the firing of the load event at least until we've run the JavaScript in the URL.
     CompletionHandlerCallingScope stopDelayingLoadEvent;

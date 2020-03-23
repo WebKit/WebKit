@@ -50,11 +50,11 @@ Location::Location(DOMWindow& window)
 inline const URL& Location::url() const
 {
     if (!frame())
-        return WTF::blankURL();
+        return aboutBlankURL();
 
     const URL& url = frame()->document()->url();
     if (!url.isValid())
-        return WTF::blankURL(); // Use "about:blank" while the page is still loading (before we have a frame).
+        return aboutBlankURL(); // Use "about:blank" while the page is still loading (before we have a frame).
 
     return url;
 }

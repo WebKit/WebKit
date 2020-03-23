@@ -272,7 +272,7 @@ void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& re
     const char* startMarkup = "<HTML>\n<BODY>\n<!--StartFragment-->\n";
     const char* endMarkup = "\n<!--EndFragment-->\n</BODY>\n</HTML>";
 
-    CString sourceURLUTF8 = srcURL == WTF::blankURL() ? "" : srcURL.utf8();
+    CString sourceURLUTF8 = srcURL == aboutBlankURL() ? "" : srcURL.utf8();
     CString markupUTF8 = markup.utf8();
 
     // calculate offsets

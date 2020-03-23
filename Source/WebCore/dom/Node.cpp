@@ -1333,7 +1333,7 @@ Document* Node::ownerDocument() const
 const URL& Node::baseURI() const
 {
     auto& url = document().baseURL();
-    return url.isNull() ? WTF::blankURL() : url;
+    return url.isNull() ? aboutBlankURL() : url;
 }
 
 bool Node::isEqualNode(Node* other) const

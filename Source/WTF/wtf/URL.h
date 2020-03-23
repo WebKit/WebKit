@@ -259,7 +259,7 @@ WTF_EXPORT_PRIVATE bool equalIgnoringQueryAndFragment(const URL&, const URL&);
 WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 WTF_EXPORT_PRIVATE bool hostsAreEqual(const URL&, const URL&);
 
-WTF_EXPORT_PRIVATE const URL& blankURL();
+WTF_EXPORT_PRIVATE const URL& aboutBlankURL();
 WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();
 
 // Functions to do URL operations on strings.
@@ -387,3 +387,6 @@ template<> struct DefaultHash<URL>;
 template<> struct HashTraits<URL>;
 
 } // namespace WTF
+
+using WTF::aboutBlankURL;
+using WTF::aboutSrcDocURL;

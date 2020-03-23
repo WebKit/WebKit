@@ -1021,7 +1021,7 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
 
     fragment->parseHTML(markup, fakeBody.ptr(), parserContentPolicy);
     restoreAttachmentElementsInFragment(fragment);
-    if (!baseURL.isEmpty() && baseURL != WTF::blankURL() && baseURL != document.baseURL())
+    if (!baseURL.isEmpty() && baseURL != aboutBlankURL() && baseURL != document.baseURL())
         completeURLs(fragment.ptr(), baseURL);
 
     return fragment;

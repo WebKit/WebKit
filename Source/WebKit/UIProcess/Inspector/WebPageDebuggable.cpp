@@ -55,11 +55,11 @@ String WebPageDebuggable::name() const
 String WebPageDebuggable::url() const
 {
     if (!m_page.mainFrame())
-        return WTF::blankURL().string();
+        return aboutBlankURL().string();
 
     String url = m_page.mainFrame()->url().string();
     if (url.isEmpty())
-        return WTF::blankURL().string();
+        return aboutBlankURL().string();
 
     return url;
 }

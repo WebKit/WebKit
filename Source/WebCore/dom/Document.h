@@ -684,7 +684,7 @@ public:
 
     const URL& url() const final { return m_url; }
     void setURL(const URL&);
-    const URL& urlForBindings() const { return m_url.isEmpty() ? WTF::blankURL() : m_url; }
+    const URL& urlForBindings() const { return m_url.isEmpty() ? aboutBlankURL() : m_url; }
 
     // To understand how these concepts relate to one another, please see the
     // comments surrounding their declaration.
