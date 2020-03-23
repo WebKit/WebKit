@@ -63,7 +63,7 @@ public:
     ExceptionOr<void> bindingsPause() override;
 
     void setTimeline(RefPtr<AnimationTimeline>&&) final;
-    void cancel() final;
+    void cancel(Silently = Silently::No) final;
 
     void tick() override;
 

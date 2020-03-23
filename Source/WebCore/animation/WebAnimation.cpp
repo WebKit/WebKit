@@ -604,12 +604,6 @@ Seconds WebAnimation::effectEndTime() const
     return m_effect ? m_effect->endTime() : 0_s;
 }
 
-void WebAnimation::cancel()
-{
-    cancel(Silently::No);
-    invalidateEffect();
-}
-
 void WebAnimation::cancel(Silently silently)
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " cancel(silently " << (silently == Silently::Yes) << ") (current time is " << currentTime() << ")");

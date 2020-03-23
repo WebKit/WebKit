@@ -188,25 +188,9 @@ void AnimationTimeline::removeCSSAnimationCreatedByMarkup(Element& element, CSSA
     }
 }
 
-void AnimationTimeline::willDestroyRendererForElement(Element& element)
-{
-    if (auto* transitions = element.transitions()) {
-        for (auto& cssTransition : *transitions)
-            cssTransition->cancel(WebAnimation::Silently::Yes);
-    }
-
-    if (auto* cssAnimations = element.cssAnimations()) {
-        for (auto& cssAnimation : *cssAnimations) {
-            if (is<CSSAnimation>(cssAnimation))
-                removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*cssAnimation));
-            cssAnimation->cancel(WebAnimation::Silently::Yes);
-        }
-    }
-}
-
 void AnimationTimeline::elementWasRemoved(Element& element)
 {
-    willDestroyRendererForElement(element);
+    cancelDeclarativeAnimationsForElement(element, WebAnimation::Silently::Yes);
 }
 
 void AnimationTimeline::removeAnimationsForElement(Element& element)
@@ -221,18 +205,18 @@ void AnimationTimeline::willChangeRendererForElement(Element& element)
         animation->willChangeRenderer();
 }
 
-void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element)
+void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element, WebAnimation::Silently silently)
 {
     if (auto* transitions = element.transitions()) {
         for (auto& cssTransition : *transitions)
-            cssTransition->cancel();
+            cssTransition->cancel(silently);
     }
 
     if (auto* cssAnimations = element.cssAnimations()) {
         for (auto& cssAnimation : *cssAnimations) {
             if (is<CSSAnimation>(cssAnimation))
                 removeCSSAnimationCreatedByMarkup(element, downcast<CSSAnimation>(*cssAnimation));
-            cssAnimation->cancel();
+            cssAnimation->cancel(silently);
         }
     }
 }

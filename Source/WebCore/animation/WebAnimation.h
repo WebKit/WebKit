@@ -93,8 +93,7 @@ public:
     using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
     FinishedPromise& finished() { return m_finishedPromise.get(); }
 
-    virtual void cancel();
-    void cancel(Silently);
+    virtual void cancel(Silently = Silently::No);
     ExceptionOr<void> finish();
     ExceptionOr<void> play();
     void updatePlaybackRate(double);

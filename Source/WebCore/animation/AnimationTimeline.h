@@ -64,8 +64,7 @@ public:
     void removeAnimationsForElement(Element&);
 
     void willChangeRendererForElement(Element&);
-    void willDestroyRendererForElement(Element&);
-    void cancelDeclarativeAnimationsForElement(Element&);
+    void cancelDeclarativeAnimationsForElement(Element&, WebAnimation::Silently);
 
     virtual void animationWasAddedToElement(WebAnimation&, Element&);
     virtual void animationWasRemovedFromElement(WebAnimation&, Element&);
