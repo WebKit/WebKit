@@ -37,7 +37,7 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ReplacedBox);
 
 ReplacedBox::ReplacedBox(RenderStyle&& style)
-    : Box({ }, WTFMove(style), Box::ReplacedBoxFlag)
+    : Box({ }, WTFMove(style), Box::ReplacedBox)
 {
 }
 

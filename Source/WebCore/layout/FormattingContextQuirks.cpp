@@ -30,7 +30,6 @@
 
 #include "DisplayBox.h"
 #include "LayoutBox.h"
-#include "LayoutInitialContainingBlock.h"
 
 namespace WebCore {
 namespace Layout {
@@ -60,7 +59,7 @@ LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFix
             bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.valueOr(0) + verticalMargin.after.valueOr(0) + verticalPadding + verticalBorder;
         }
 
-        if (is<InitialContainingBlock>(*containingBlock))
+        if (containingBlock->isInitialContainingBlock())
             break;
         containingBlock = &containingBlock->containingBlock();
     }

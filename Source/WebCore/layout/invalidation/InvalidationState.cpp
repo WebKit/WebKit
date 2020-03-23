@@ -42,7 +42,7 @@ InvalidationState::InvalidationState()
 void InvalidationState::markNeedsUpdate(const Box& layoutBox)
 {
     // We never lay out the initial containing block. It always has pre-determined geometry.
-    ASSERT(!is<InitialContainingBlock>(layoutBox));
+    ASSERT(!layoutBox.isInitialContainingBlock());
     // FIXME: This is just a placeholder implementation.
     m_formattingContextRoots.add(&layoutBox.formattingContextRoot());
 }
