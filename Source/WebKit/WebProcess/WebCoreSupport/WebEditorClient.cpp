@@ -361,6 +361,7 @@ WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(const Str
 }
 
 #if !PLATFORM(COCOA) && !USE(GLIB)
+
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent& event)
 {
     if (m_page->handleEditingKeyboardEvent(event))
@@ -371,6 +372,7 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent&)
 {
     notImplemented();
 }
+
 #endif // !PLATFORM(COCOA) && !USE(GLIB)
 
 void WebEditorClient::textFieldDidBeginEditing(Element* element)
@@ -420,6 +422,7 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
 }
 
 #if !PLATFORM(IOS_FAMILY)
+
 void WebEditorClient::overflowScrollPositionChanged()
 {
     notImplemented();
@@ -429,6 +432,7 @@ void WebEditorClient::subFrameScrollPositionChanged()
 {
     notImplemented();
 }
+
 #endif
 
 static bool getActionTypeForKeyEvent(KeyboardEvent* event, WKInputFieldActionType& type)
@@ -549,20 +553,25 @@ void WebEditorClient::checkGrammarOfString(StringView text, Vector<WebCore::Gram
     *badGrammarLength = resultLength;
 }
 
-static int32_t insertionPointFromCurrentSelection(const VisibleSelection& currentSelection)
+static CharacterCount insertionPointFromCurrentSelection(const VisibleSelection& currentSelection)
 {
-    VisiblePosition selectionStart = currentSelection.visibleStart();
-    VisiblePosition paragraphStart = startOfParagraph(selectionStart);
-    return TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
+    auto selectionStart = currentSelection.visibleStart();
+    auto selectionStartBoundary = makeBoundaryPoint(selectionStart);
+    auto paragraphStart = makeBoundaryPoint(startOfParagraph(selectionStart));
+    if (!selectionStartBoundary || !paragraphStart)
+        return 0;
+    return characterCount({ *paragraphStart, *selectionStartBoundary });
 }
 
 #if USE(UNIFIED_TEXT_CHECKING)
+
 Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stringView, OptionSet<WebCore::TextCheckingType> checkingTypes, const VisibleSelection& currentSelection)
 {
     Vector<TextCheckingResult> results;
     m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(stringView.toStringWithoutCopying(), checkingTypes, insertionPointFromCurrentSelection(currentSelection)), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
     return results;
 }
+
 #endif
 
 void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
@@ -616,15 +625,13 @@ void WebEditorClient::setInputMethodState(Element* element)
 
 bool WebEditorClient::supportsGlobalSelection()
 {
-#if PLATFORM(GTK)
-#if PLATFORM(X11)
+#if PLATFORM(GTK) && PLATFORM(X11)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
         return true;
 #endif
-#if PLATFORM(WAYLAND)
+#if PLATFORM(GTK) && PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
         return true;
-#endif
 #endif
     return false;
 }

@@ -580,52 +580,38 @@ String AlternativeTextController::markerDescriptionForAppliedAlternativeText(Alt
 
 void AlternativeTextController::applyAlternativeTextToRange(const Range& range, const String& alternative, AlternativeTextType alternativeType, OptionSet<DocumentMarker::MarkerType> markerTypesToAdd)
 {
-    auto paragraphRangeContainingCorrection = range.cloneRange();
-
-    setStart(paragraphRangeContainingCorrection.ptr(), startOfParagraph(range.startPosition()));
-    setEnd(paragraphRangeContainingCorrection.ptr(), endOfParagraph(range.endPosition()));
-
     // After we replace the word at range rangeWithAlternative, we need to add markers to that range.
-    // However, once the replacement took place, the value of rangeWithAlternative is not valid anymore.
-    // So before we carry out the replacement, we need to store the start position of rangeWithAlternative
-    // relative to the start position of the containing paragraph. We use correctionStartOffsetInParagraph
-    // to store this value. In order to obtain this offset, we need to first create a range
-    // which spans from the start of paragraph to the start position of rangeWithAlternative.
-    auto correctionStartOffsetInParagraphAsRange = Range::create(paragraphRangeContainingCorrection->startContainer().document(), paragraphRangeContainingCorrection->startPosition(), paragraphRangeContainingCorrection->startPosition());
-
-    Position startPositionOfRangeWithAlternative = range.startPosition();
-    if (!startPositionOfRangeWithAlternative.containerNode())
-        return;
-    auto setEndResult = correctionStartOffsetInParagraphAsRange->setEnd(*startPositionOfRangeWithAlternative.containerNode(), startPositionOfRangeWithAlternative.computeOffsetInContainerNode());
-    if (setEndResult.hasException())
-        return;
+    // So before we carry out the replacement,store the start position relative to the start position
+    // of the containing paragraph.
 
     // Take note of the location of autocorrection so that we can add marker after the replacement took place.
-    int correctionStartOffsetInParagraph = TextIterator::rangeLength(correctionStartOffsetInParagraphAsRange.ptr());
+    auto correctionStartPosition = range.startPosition();
+    auto correctionStart { makeBoundaryPoint(correctionStartPosition) };
+    auto paragraphStart { makeBoundaryPoint(startOfParagraph(correctionStartPosition)) };
+    if (!correctionStart || !paragraphStart)
+        return;
+    auto treeScopeRoot = makeRef(correctionStart->container->treeScope().rootNode());
+    auto treeScopeStart = BoundaryPoint { treeScopeRoot.get(), 0 };
+    auto correctionOffsetInParagraph = characterCount({ *paragraphStart, *correctionStart });
+    auto paragraphOffsetInTreeScope = characterCount({ treeScopeStart, *paragraphStart });
 
-    // Clone the range, since the caller of this method may want to keep the original range around.
-    auto rangeWithAlternative = range.cloneRange();
+    // Clone the range, since the caller of may keep a refernece to the original range and modify it.
+    SpellingCorrectionCommand::create(range.cloneRange(), alternative)->apply();
 
-    ContainerNode& rootNode = paragraphRangeContainingCorrection->startContainer().treeScope().rootNode();
-    int paragraphStartIndex = TextIterator::rangeLength(Range::create(rootNode.document(), &rootNode, 0, &paragraphRangeContainingCorrection->startContainer(), paragraphRangeContainingCorrection->startOffset()).ptr());
-    SpellingCorrectionCommand::create(rangeWithAlternative, alternative)->apply();
     // Recalculate pragraphRangeContainingCorrection, since SpellingCorrectionCommand modified the DOM, such that the original paragraphRangeContainingCorrection is no longer valid. Radar: 10305315 Bugzilla: 89526
-    auto updatedParagraphRangeContainingCorrection = TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex, correctionStartOffsetInParagraph + alternative.length());
+    auto updatedParagraphRangeContainingCorrection = TextIterator::rangeFromLocationAndLength(treeScopeRoot.ptr(), paragraphOffsetInTreeScope, correctionOffsetInParagraph + alternative.length());
     if (!updatedParagraphRangeContainingCorrection)
         return;
-
     setEnd(updatedParagraphRangeContainingCorrection.get(), m_frame.selection().selection().start());
-    RefPtr<Range> replacementRange = TextIterator::subrange(*updatedParagraphRangeContainingCorrection, correctionStartOffsetInParagraph, alternative.length());
-    String newText = plainText(replacementRange.get());
+    auto replacementRange = TextIterator::subrange(*updatedParagraphRangeContainingCorrection, correctionOffsetInParagraph, alternative.length());
 
     // Check to see if replacement succeeded.
-    if (newText != alternative)
+    if (plainText(replacementRange.get()) != alternative)
         return;
 
-    DocumentMarkerController& markers = replacementRange->startContainer().document().markers();
-
+    auto& markers = replacementRange->ownerDocument().markers();
     for (auto markerType : markerTypesToAdd)
-        markers.addMarker(*replacementRange, markerType, markerDescriptionForAppliedAlternativeText(alternativeType, markerType));
+        markers.addMarker(replacementRange, markerType, markerDescriptionForAppliedAlternativeText(alternativeType, markerType));
 }
 
 #endif

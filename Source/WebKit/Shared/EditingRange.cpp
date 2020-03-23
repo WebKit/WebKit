@@ -58,18 +58,17 @@ RefPtr<WebCore::Range> EditingRange::toRange(WebCore::Frame& frame, const Editin
 
     ASSERT(editingRangeIsRelativeTo == EditingRangeIsRelativeTo::Paragraph);
 
-    const WebCore::VisibleSelection& selection = frame.selection().selection();
-    RefPtr<WebCore::Range> selectedRange = selection.toNormalizedRange();
-    if (!selectedRange)
+    auto& selection = frame.selection().selection();
+    if (!selection.toNormalizedRange())
         return nullptr;
 
-    RefPtr<WebCore::Range> paragraphRange = makeRange(startOfParagraph(selection.visibleStart()), selection.visibleEnd());
-    if (!paragraphRange)
+    auto paragraphStart = makeBoundaryPoint(startOfParagraph(selection.visibleStart()));
+    if (!paragraphStart)
         return nullptr;
+    auto& rootNode = paragraphStart->container->treeScope().rootNode();
 
-    auto& rootNode = paragraphRange.get()->startContainer().treeScope().rootNode();
-    int paragraphStartIndex = WebCore::TextIterator::rangeLength(WebCore::Range::create(rootNode.document(), &rootNode, 0, &paragraphRange->startContainer(), paragraphRange->startOffset()).ptr());
-    return WebCore::TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex + static_cast<int>(range.location), length);
+    auto paragraphStartIndex = WebCore::characterCount({ { rootNode, 0 }, *paragraphStart });
+    return WebCore::TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex + range.location, length);
 }
 
 EditingRange EditingRange::fromRange(WebCore::Frame& frame, const WebCore::Range* range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)

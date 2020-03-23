@@ -835,24 +835,19 @@ static NSURL *createUniqueWebDataURL();
         // That fits with AppKit's idea of an input context.
         auto* element = _private->coreFrame->selection().rootEditableElementOrDocumentElement();
         if (!element)
-            return nil;
+            return nullptr;
         return WebCore::TextIterator::rangeFromLocationAndLength(element, nsrange.location, nsrange.length);
     }
 
     ASSERT(rangeIsRelativeTo == WebRangeIsRelativeTo::Paragraph);
 
-    const auto& selection = _private->coreFrame->selection().selection();
-    RefPtr<WebCore::Range> selectedRange = selection.toNormalizedRange();
-    if (!selectedRange)
+    auto paragraphStart = makeBoundaryPoint(startOfParagraph(_private->coreFrame->selection().selection().visibleStart()));
+    if (!paragraphStart)
         return nullptr;
+    auto& rootNode = paragraphStart->container->treeScope().rootNode();
 
-    RefPtr<WebCore::Range> paragraphRange = makeRange(startOfParagraph(selection.visibleStart()), selection.visibleEnd());
-    if (!paragraphRange)
-        return nullptr;
-
-    auto& rootNode = paragraphRange.get()->startContainer().treeScope().rootNode();
-    int paragraphStartIndex = WebCore::TextIterator::rangeLength(WebCore::Range::create(rootNode.document(), &rootNode, 0, &paragraphRange->startContainer(), paragraphRange->startOffset()).ptr());
-    return WebCore::TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex + static_cast<int>(nsrange.location), nsrange.length);
+    auto paragraphStartIndex = WebCore::characterCount({ { rootNode, 0 }, *paragraphStart });
+    return WebCore::TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex + nsrange.location, nsrange.length);
 }
 
 - (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange

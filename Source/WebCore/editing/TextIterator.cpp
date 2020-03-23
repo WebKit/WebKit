@@ -2343,12 +2343,10 @@ size_t SearchBuffer::length() const
 
 // --------
 
-int TextIterator::rangeLength(const Range* range, bool forSelectionPreservation)
+CharacterCount characterCount(const SimpleRange& range, TextIteratorBehavior behavior)
 {
-    if (!range)
-        return 0;
-    unsigned length = 0;
-    for (TextIterator it(*range, forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior); !it.atEnd(); it.advance())
+    CharacterCount length = 0;
+    for (TextIterator it(range, behavior); !it.atEnd(); it.advance())
         length += it.text().length();
     return length;
 }
@@ -2456,21 +2454,16 @@ bool TextIterator::getLocationAndLengthFromRange(Node* scope, const Range* range
 
     // The critical assumption is that this only gets called with ranges that
     // concentrate on a given area containing the selection root. This is done
-    // because of text fields and textareas. The DOM for those is not
-    // directly in the document DOM, so ensure that the range does not cross a
-    // boundary of one of those.
+    // because of text fields and textareas. The DOM for those is not directly
+    // in the document DOM, so ensure that the range does not cross a boundary
+    // of one of those.
     if (&range->startContainer() != scope && !range->startContainer().isDescendantOf(scope))
         return false;
     if (&range->endContainer() != scope && !range->endContainer().isDescendantOf(scope))
         return false;
 
-    Ref<Range> testRange = Range::create(scope->document(), scope, 0, &range->startContainer(), range->startOffset());
-    ASSERT(&testRange->startContainer() == scope);
-    location = TextIterator::rangeLength(testRange.ptr());
-
-    testRange->setEnd(range->endContainer(), range->endOffset());
-    ASSERT(&testRange->startContainer() == scope);
-    length = TextIterator::rangeLength(testRange.ptr()) - location;
+    location = characterCount({ { *scope, 0 }, { range->startContainer(), range->startOffset() } });
+    length = characterCount({ { *scope, 0 }, { range->endContainer(), range->endOffset() } }) - location;
     return true;
 }
 

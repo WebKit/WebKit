@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,10 +89,12 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
     // As context, we are going to use the surrounding paragraphs of text.
     auto paragraphStart = startOfParagraph(selectionStart);
     auto paragraphEnd = endOfParagraph(selectionEnd);
+    if (paragraphStart.isNull() || paragraphEnd.isNull())
+        return { nullptr, nil };
 
-    int lengthToSelectionStart = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
-    int lengthToSelectionEnd = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get());
-    NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
+    auto lengthToSelectionStart = characterCount({ *makeBoundaryPoint(paragraphStart), *makeBoundaryPoint(selectionStart) });
+    auto selectionCharacterCount = characterCount({ *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selectionEnd) });
+    NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, selectionCharacterCount);
 
     NSDictionary *options = nil;
     tokenRange(plainText(makeRange(paragraphStart, paragraphEnd).get()), rangeToPass, &options);
@@ -133,7 +135,12 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
     if (!fullCharacterRange)
         return { nullptr, nil };
 
-    NSRange rangeToPass = NSMakeRange(TextIterator::rangeLength(makeRange(fullCharacterRange->startPosition(), position).get()), 0);
+    auto fullCharacterStart = makeBoundaryPoint(fullCharacterRange->startPosition());
+    auto positionBoundary = makeBoundaryPoint(position);
+    if (!fullCharacterStart || !positionBoundary)
+        return { nullptr, nil };
+
+    NSRange rangeToPass = NSMakeRange(characterCount({ *fullCharacterStart, *positionBoundary }), 0);
     NSDictionary *options = nil;
     NSRange extractedRange = tokenRange(plainText(fullCharacterRange.get()), rangeToPass, &options);
 

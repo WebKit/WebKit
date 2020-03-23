@@ -42,7 +42,7 @@ struct SimpleRange {
 
     bool collapsed() const { return start == end; }
 
-    SimpleRange(const BoundaryPoint&, const BoundaryPoint&);
+    WEBCORE_EXPORT SimpleRange(const BoundaryPoint&, const BoundaryPoint&);
     WEBCORE_EXPORT SimpleRange(BoundaryPoint&&, BoundaryPoint&&);
 
     // Convenience overloads to help with transition from using a lot of live ranges.

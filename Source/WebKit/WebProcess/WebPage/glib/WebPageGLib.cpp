@@ -116,12 +116,12 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
             surroundingRange->setEnd(compositionRange->startPosition());
             clonedRange->setStart(compositionRange->endPosition());
             postLayoutData.surroundingContext = plainText(surroundingRange.get()) + plainText(clonedRange.ptr());
-            postLayoutData.surroundingContextCursorPosition = TextIterator::rangeLength(surroundingRange.get());
+            postLayoutData.surroundingContextCursorPosition = characterCount(*surroundingRange);
             postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;
         } else {
             postLayoutData.surroundingContext = plainText(surroundingRange.get());
-            postLayoutData.surroundingContextCursorPosition = TextIterator::rangeLength(makeRange(surroundingStart, selectionStart).get());
-            postLayoutData.surroundingContextSelectionPosition = TextIterator::rangeLength(makeRange(surroundingStart, selection.visibleEnd()).get());
+            postLayoutData.surroundingContextCursorPosition = characterCount(*makeRange(surroundingStart, selectionStart));
+            postLayoutData.surroundingContextSelectionPosition = characterCount(*makeRange(surroundingStart, selection.visibleEnd()));
         }
     }
 }

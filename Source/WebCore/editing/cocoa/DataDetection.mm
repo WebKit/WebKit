@@ -71,15 +71,18 @@ using namespace HTMLNames;
 static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition position, RefPtr<Range> contextRange, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
 {
     String fullPlainTextString = plainText(contextRange.get());
-    int hitLocation = TextIterator::rangeLength(makeRange(contextRange->startPosition(), position).get());
+    auto start = contextRange->startPosition();
+    if (start.isNull() || position.isNull())
+        return nil;
+    CFIndex hitLocation = characterCount({ *makeBoundaryPoint(start), *makeBoundaryPoint(position) });
 
-    RetainPtr<DDScannerRef> scanner = adoptCF(DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
-    RetainPtr<DDScanQueryRef> scanQuery = adoptCF(DDScanQueryCreateFromString(kCFAllocatorDefault, fullPlainTextString.createCFString().get(), CFRangeMake(0, fullPlainTextString.length())));
+    auto scanner = adoptCF(DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
+    auto scanQuery = adoptCF(DDScanQueryCreateFromString(kCFAllocatorDefault, fullPlainTextString.createCFString().get(), CFRangeMake(0, fullPlainTextString.length())));
 
     if (!DDScannerScanQuery(scanner.get(), scanQuery.get()))
-        return nullptr;
+        return nil;
 
-    RetainPtr<CFArrayRef> results = adoptCF(DDScannerCopyResultsWithOptions(scanner.get(), DDScannerCopyResultsOptionsNoOverlap));
+    auto results = adoptCF(DDScannerCopyResultsWithOptions(scanner.get(), DDScannerCopyResultsOptionsNoOverlap));
 
     // Find the DDResultRef that intersects the hitTestResult's VisiblePosition.
     DDResultRef mainResult = nullptr;
@@ -100,7 +103,7 @@ static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition 
     }
 
     if (!mainResult)
-        return nullptr;
+        return nil;
 
     RetainPtr<DDActionContext> actionContext = adoptNS([allocDDActionContextInstance() init]);
     [actionContext setAllResults:@[ (__bridge id)mainResult ]];
@@ -112,9 +115,9 @@ static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition 
     FrameView* frameView = mainResultRange->ownerDocument().view();
     for (const auto& quad : quads)
         detectedDataBoundingBox.unite(frameView->contentsToWindow(quad.enclosingBoundingBox()));
-    
+
     detectedDataRange = mainResultRange;
-    
+
     return actionContext;
 }
 

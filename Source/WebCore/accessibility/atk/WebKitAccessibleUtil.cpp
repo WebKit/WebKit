@@ -247,10 +247,10 @@ AXCoreObject* objectFocusedAndCaretOffsetUnignored(AXCoreObject* referenceObject
         offset = 0;
     else if (!isStartOfLine(endPosition)) {
         RefPtr<Range> range = makeRange(startPosition, endPosition.previous());
-        offset = TextIterator::rangeLength(range.get(), true) + 1;
+        offset = (range ? characterCount(*range, TextIteratorEmitsCharactersBetweenAllVisiblePositions) : 0) + 1;
     } else {
         RefPtr<Range> range = makeRange(startPosition, endPosition);
-        offset = TextIterator::rangeLength(range.get(), true);
+        offset = range ? characterCount(*range, TextIteratorEmitsCharactersBetweenAllVisiblePositions) : 0;
     }
 
     return firstUnignoredParent;

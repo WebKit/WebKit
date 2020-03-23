@@ -654,10 +654,13 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
     return updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), ParagraphGranularity);
 }
 
-static int textDistance(const Position& start, const Position& end)
+static CharacterCount textDistance(const Position& start, const Position& end)
 {
-    auto range = Range::create(start.anchorNode()->document(), start, end);
-    return TextIterator::rangeLength(range.ptr(), true);
+    auto startBoundary = makeBoundaryPoint(start);
+    auto endBoundary = makeBoundaryPoint(end);
+    if (!startBoundary || !endBoundary)
+        return 0;
+    return characterCount({ *startBoundary, *endBoundary }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
 }
 
 bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)

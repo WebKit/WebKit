@@ -1,3 +1,16 @@
+2020-03-23  Darin Adler  <darin@apple.com>
+
+        Change TextIterator::rangeLength to not require a live range
+        https://bugs.webkit.org/show_bug.cgi?id=209207
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (insertionPointFromCurrentSelection): Use characterCount.
+        (WebEditorClient::requestCandidatesForSelection): Ditto.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _convertToDOMRange:rangeIsRelativeTo:]): Ditto.
+
 2020-03-23  youenn fablet  <youenn@apple.com>
 
         Rename blankURL to aboutBlankURL

@@ -1083,15 +1083,23 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Conta
             scope = &document;
     }
 
-    auto range = Range::create(document, firstPositionInNode(scope.get()), position.parentAnchoredEquivalent());
-    return TextIterator::rangeLength(range.ptr(), true);
+    auto start = makeBoundaryPoint(firstPositionInNode(scope.get()));
+    auto end = makeBoundaryPoint(position.parentAnchoredEquivalent());
+    if (!start || !end)
+        return 0;
+
+    return characterCount({ *start, *end }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
 }
 
 // FIXME: Merge this function with the one above.
 int indexForVisiblePosition(Node& node, const VisiblePosition& visiblePosition, bool forSelectionPreservation)
 {
-    auto range = Range::create(node.document(), firstPositionInNode(&node), visiblePosition.deepEquivalent().parentAnchoredEquivalent());
-    return TextIterator::rangeLength(range.ptr(), forSelectionPreservation);
+    auto start = makeBoundaryPoint(firstPositionInNode(&node));
+    auto end = makeBoundaryPoint(visiblePosition.deepEquivalent().parentAnchoredEquivalent());
+    if (!start || !end)
+        return 0;
+
+    return characterCount({ *start, *end }, forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior);
 }
 
 VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& position, int offset)

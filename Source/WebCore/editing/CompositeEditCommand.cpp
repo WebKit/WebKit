@@ -1417,7 +1417,6 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     
     int startIndex = -1;
     int endIndex = -1;
-    int destinationIndex = -1;
     bool originalIsDirectional = endingSelection().isDirectional();
     if (preserveSelection && !endingSelection().isNone()) {
         VisiblePosition visibleStart = endingSelection().visibleStart();
@@ -1432,18 +1431,22 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
             
             startIndex = 0;
             if (startInParagraph) {
-                auto startRange = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), visibleStart.deepEquivalent().parentAnchoredEquivalent());
-                startIndex = TextIterator::rangeLength(startRange.ptr(), true);
+                auto paragraphStart = makeBoundaryPoint(startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent());
+                auto selectionStart = makeBoundaryPoint(visibleStart.deepEquivalent().parentAnchoredEquivalent());
+                if (paragraphStart && selectionStart)
+                    startIndex = characterCount({ *paragraphStart, *selectionStart }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
             }
 
             endIndex = 0;
             if (endInParagraph) {
-                auto endRange = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), visibleEnd.deepEquivalent().parentAnchoredEquivalent());
-                endIndex = TextIterator::rangeLength(endRange.ptr(), true);
+                auto paragraphStart = makeBoundaryPoint(startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent());
+                auto selectionEnd = makeBoundaryPoint(visibleEnd.deepEquivalent().parentAnchoredEquivalent());
+                if (paragraphStart && selectionEnd)
+                    endIndex = characterCount({ *paragraphStart, *selectionEnd }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
             }
         }
     }
-    
+
     VisiblePosition beforeParagraph = startOfParagraphToMove.previous(CannotCrossEditingBoundary);
     VisiblePosition afterParagraph(endOfParagraphToMove.next(CannotCrossEditingBoundary));
 
@@ -1478,9 +1481,9 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         // The moved paragraph should assume the block style of the destination.
         styleInEmptyParagraph->removeBlockProperties();
     }
-    
+
     // FIXME (5098931): We should add a new insert action "WebViewInsertActionMoved" and call shouldInsertFragment here.
-    
+
     setEndingSelection(VisibleSelection(start, end, DOWNSTREAM));
     frame().editor().clearMisspellingsAndBadGrammar(endingSelection());
     deleteSelection(false, false, false, false);
@@ -1509,8 +1512,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     if (!editableRoot)
         editableRoot = &document();
 
-    auto startToDestinationRange = Range::create(document(), firstPositionInNode(editableRoot.get()), destination.deepEquivalent().parentAnchoredEquivalent());
-    destinationIndex = TextIterator::rangeLength(startToDestinationRange.ptr(), true);
+    auto destinationIndex = characterCount({ { *editableRoot, 0 }, *makeBoundaryPoint(destination.deepEquivalent().parentAnchoredEquivalent()) }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
 
     setEndingSelection(VisibleSelection(destination, originalIsDirectional));
     ASSERT(endingSelection().isCaretOrRange());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -264,12 +264,11 @@ namespace WebCore {
 std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    
+
     if (!RevealLibrary() || !RevealCoreLibrary() || !getRVItemClass())
         return { nullptr, nil };
-    
-    auto selectedRange = selection.toNormalizedRange();
-    if (!selectedRange)
+
+    if (!selection.toNormalizedRange())
         return { nullptr, nil };
 
     // Since we already have the range we want, we just need to grab the returned options.
@@ -279,20 +278,22 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
     // As context, we are going to use the surrounding paragraphs of text.
     auto paragraphStart = startOfParagraph(selectionStart);
     auto paragraphEnd = endOfParagraph(selectionEnd);
+    if (paragraphStart.isNull() || paragraphEnd.isNull())
+        return { nullptr, nil };
 
-    int lengthToSelectionStart = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
-    int lengthToSelectionEnd = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get());
-    NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
-    
+    auto lengthToSelectionStart = characterCount({ *makeBoundaryPoint(paragraphStart), *makeBoundaryPoint(selectionStart) });
+    auto selectionCharacterCount = characterCount({ *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selectionEnd) });
+    NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, selectionCharacterCount);
+
     RefPtr<Range> fullCharacterRange = makeRange(paragraphStart, paragraphEnd);
     String itemString = plainText(fullCharacterRange.get());
     RetainPtr<RVItem> item = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:rangeToPass]);
     NSRange highlightRange = item.get().highlightRange;
-    
+
     return { TextIterator::subrange(*fullCharacterRange, highlightRange.location, highlightRange.length), nil };
-    
+
     END_BLOCK_OBJC_EXCEPTIONS;
-    
+
     return { nullptr, nil };
 }
 
@@ -322,43 +323,40 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
 
     auto selection = frame->page()->focusController().focusedOrMainFrame().selection().selection();
     NSRange selectionRange;
-    int hitIndex;
+    NSUInteger hitIndex;
     RefPtr<Range> fullCharacterRange;
     
     if (selection.selectionType() == VisibleSelection::RangeSelection) {
         auto selectionStart = selection.visibleStart();
         auto selectionEnd = selection.visibleEnd();
-        
+
         // As context, we are going to use the surrounding paragraphs of text.
         auto paragraphStart = startOfParagraph(selectionStart);
         auto paragraphEnd = endOfParagraph(selectionEnd);
-        
-        auto rangeToSelectionStart = makeRange(paragraphStart, selectionStart);
-        auto rangeToSelectionEnd = makeRange(paragraphStart, selectionEnd);
         
         fullCharacterRange = makeRange(paragraphStart, paragraphEnd);
         if (!fullCharacterRange)
             return { nullptr, nil };
 
-        selectionRange = NSMakeRange(TextIterator::rangeLength(rangeToSelectionStart.get()), TextIterator::rangeLength(makeRange(selectionStart, selectionEnd).get()));
-        
-        hitIndex = TextIterator::rangeLength(makeRange(paragraphStart, position).get());
+        selectionRange = NSMakeRange(characterCount({ *makeBoundaryPoint(paragraphStart), *makeBoundaryPoint(selectionStart) }),
+            characterCount({ *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selectionEnd) }));
+        hitIndex = characterCount({ *makeBoundaryPoint(paragraphStart), *makeBoundaryPoint(position) });
     } else {
         VisibleSelection selectionAccountingForLineRules { position };
         selectionAccountingForLineRules.expandUsingGranularity(WordGranularity);
         position = selectionAccountingForLineRules.start();
+
         // As context, we are going to use 250 characters of text before and after the point.
         fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
-        
         if (!fullCharacterRange)
             return { nullptr, nil };
-        
+
         selectionRange = NSMakeRange(NSNotFound, 0);
-        hitIndex = TextIterator::rangeLength(makeRange(fullCharacterRange->startPosition(), position).get());
+        hitIndex = characterCount({ *makeBoundaryPoint(fullCharacterRange->startPosition()), *makeBoundaryPoint(position) });
     }
-    
+
     NSRange selectedRange = [getRVSelectionClass() revealRangeAtIndex:hitIndex selectedRanges:@[[NSValue valueWithRange:selectionRange]] shouldUpdateSelection:nil];
-    
+
     String itemString = plainText(*fullCharacterRange);
     RetainPtr<RVItem> item = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:selectedRange]);
     NSRange highlightRange = item.get().highlightRange;

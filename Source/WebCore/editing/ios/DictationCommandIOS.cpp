@@ -48,9 +48,7 @@ DictationCommandIOS::DictationCommandIOS(Document& document, Vector<Vector<Strin
 
 void DictationCommandIOS::doApply()
 {
-    VisiblePosition insertionPosition(startingSelection().visibleStart());
-
-    unsigned resultLength = 0;
+    CharacterCount resultLength = 0;
     for (auto& interpretations : m_dictationPhrases) {
         const String& firstInterpretation = interpretations[0];
         resultLength += firstInterpretation.length();
@@ -62,20 +60,23 @@ void DictationCommandIOS::doApply()
         setEndingSelection(VisibleSelection(endingSelection().visibleEnd()));
     }
 
-    VisiblePosition afterResults(endingSelection().visibleEnd());
+    // FIXME: Add the result marker using a Position cached before results are inserted, instead of relying on character counts.
 
-    Element* root = afterResults.rootEditableElement();
+    auto endPosition = endingSelection().visibleEnd();
+    auto end = makeBoundaryPoint(endPosition);
+    auto* root = endPosition.rootEditableElement();
+    if (!end || !root)
+        return;
 
-    // FIXME: Add the result marker using a Position cached before results are inserted, instead of relying on TextIterators.
-    auto rangeToEnd = Range::create(document(), createLegacyEditingPosition((Node *)root, 0), afterResults.deepEquivalent());
-    int endIndex = TextIterator::rangeLength(rangeToEnd.ptr(), true);
-    int startIndex = endIndex - resultLength;
+    auto endOffset = characterCount({ { *root, 0 }, WTFMove(*end) });
+    if (endOffset < resultLength)
+        return;
 
-    if (startIndex >= 0) {
-        RefPtr<Range> resultRange = TextIterator::rangeFromLocationAndLength(document().documentElement(), startIndex, endIndex, true);
-        ASSERT(resultRange); // FIXME: What guarantees this?
-        document().markers().addDictationResultMarker(*resultRange, m_metadata);
-    }
+    auto resultRange = TextIterator::rangeFromLocationAndLength(root, endOffset - resultLength, endOffset);
+    if (!resultRange)
+        return;
+
+    document().markers().addDictationResultMarker(*resultRange, m_metadata);
 }
 
 } // namespace WebCore

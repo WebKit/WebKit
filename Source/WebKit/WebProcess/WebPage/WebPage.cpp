@@ -5428,6 +5428,7 @@ void WebPage::confirmCompositionAsync()
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
+
 static Frame* targetFrameForEditing(WebPage& page)
 {
     Frame& targetFrame = page.corePage()->focusController().focusedOrMainFrame();
@@ -5467,7 +5468,7 @@ void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
 
     auto selectionStart = selection.visibleStart();
     auto surroundingRange = makeRange(startOfEditableContent(selectionStart), selectionStart);
-    auto cursorPosition = TextIterator::rangeLength(surroundingRange.get());
+    auto cursorPosition = WebCore::characterCount(*surroundingRange);
     auto& rootNode = surroundingRange->startContainer().treeScope().rootNode();
     auto selectionRange = TextIterator::rangeFromLocationAndLength(&rootNode, cursorPosition + offset, characterCount);
     if (!selectionRange)
@@ -5479,6 +5480,7 @@ void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
     targetFrame->editor().setIgnoreSelectionChanges(false);
     sendEditorStateUpdate();
 }
+
 #endif
 
 void WebPage::didApplyStyle()

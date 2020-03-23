@@ -36,7 +36,9 @@ namespace WebCore {
 class Range;
 class RenderTextFragment;
 
+// FIXME: Delete this overload after moving all the callers to the SimpleRange version.
 WEBCORE_EXPORT String plainText(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
+
 WEBCORE_EXPORT String plainText(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 WEBCORE_EXPORT String plainTextUsingBackwardsTextIteratorForTesting(const SimpleRange&);
@@ -100,7 +102,7 @@ public:
     const TextIteratorCopyableText& copyableText() const { ASSERT(!atEnd()); return m_copyableText; }
     void appendTextToStringBuilder(StringBuilder& builder) const { copyableText().appendToStringBuilder(builder); }
 
-    WEBCORE_EXPORT static int rangeLength(const Range*, bool spacesForReplacedElements = false);
+    // FIXME: Move these to SimpleRange, CharacterRange, and CharacterCount and move out of this class to the top level (bottom of this file).
     WEBCORE_EXPORT static RefPtr<Range> rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool spacesForReplacedElements = false);
     WEBCORE_EXPORT static bool getLocationAndLengthFromRange(Node* scope, const Range*, size_t& location, size_t& length);
     WEBCORE_EXPORT static Ref<Range> subrange(Range& entireRange, int characterOffset, int characterCount);
@@ -286,5 +288,14 @@ private:
     // Did we have to look ahead in the text iterator to confirm the current chunk?
     bool m_didLookAhead { true };
 };
+
+using CharacterCount = std::size_t;
+
+struct CharacterRange {
+    CharacterCount location { 0 };
+    CharacterCount length { 0 };
+};
+
+WEBCORE_EXPORT CharacterCount characterCount(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
 
 } // namespace WebCore

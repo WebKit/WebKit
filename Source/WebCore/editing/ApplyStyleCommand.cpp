@@ -223,19 +223,14 @@ void ApplyStyleCommand::doApply()
 
 void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
 {
-    // update document layout once before removing styles
-    // so that we avoid the expense of updating before each and every call
-    // to check a computed style
+    // Update document layout once before removing styles so that we avoid the expense of
+    // updating before each and every call to check a computed style.
     document().updateLayoutIgnorePendingStylesheets();
 
-    // get positions we want to use for applying style
     Position start = startPosition();
     Position end = endPosition();
-    if (comparePositions(end, start) < 0) {
-        Position swap = start;
-        start = end;
-        end = swap;
-    }
+    if (comparePositions(end, start) < 0)
+        std::swap(start, end);
 
     VisiblePosition visibleStart(start);
     VisiblePosition visibleEnd(end);
@@ -246,14 +241,18 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
     // Save and restore the selection endpoints using their indices in the editable root, since
     // addBlockStyleIfNeeded may moveParagraphs, which can remove these endpoints.
     // Calculate start and end indices from the start of the tree that they're in.
-    auto* scope = highestEditableRoot(visibleStart.deepEquivalent());
+    auto scope = makeRefPtr(highestEditableRoot(visibleStart.deepEquivalent()));
     if (!scope)
         return;
 
-    auto startRange = Range::create(document(), firstPositionInNode(scope), visibleStart.deepEquivalent().parentAnchoredEquivalent());
-    auto endRange = Range::create(document(), firstPositionInNode(scope), visibleEnd.deepEquivalent().parentAnchoredEquivalent());
-    int startIndex = TextIterator::rangeLength(startRange.ptr(), true);
-    int endIndex = TextIterator::rangeLength(endRange.ptr(), true);
+    auto scopeStart = BoundaryPoint { *scope, 0 };
+    auto startBoundaryPoint = makeBoundaryPoint(visibleStart.deepEquivalent().parentAnchoredEquivalent());
+    auto endBoundaryPoint = makeBoundaryPoint(visibleEnd.deepEquivalent().parentAnchoredEquivalent());
+    if (!startBoundaryPoint || !endBoundaryPoint)
+        return;
+
+    auto startIndex = characterCount({ scopeStart, *startBoundaryPoint }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    auto endIndex = characterCount({ scopeStart, *endBoundaryPoint }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
 
     VisiblePosition paragraphStart(startOfParagraph(visibleStart));
     VisiblePosition nextParagraphStart(endOfParagraph(paragraphStart).next());
@@ -285,8 +284,8 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
     }
     
     {
-        auto startRange = TextIterator::rangeFromLocationAndLength(scope, startIndex, 0, true);
-        auto endRange = TextIterator::rangeFromLocationAndLength(scope, endIndex, 0, true);
+        auto startRange = TextIterator::rangeFromLocationAndLength(scope.get(), startIndex, 0, true);
+        auto endRange = TextIterator::rangeFromLocationAndLength(scope.get(), endIndex, 0, true);
         if (startRange && endRange)
             updateStartEnd(startRange->startPosition(), endRange->startPosition());
     }

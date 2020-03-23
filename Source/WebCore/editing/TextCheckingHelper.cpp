@@ -148,7 +148,7 @@ void TextCheckingParagraph::invalidateParagraphRangeValues()
 
 int TextCheckingParagraph::rangeLength() const
 {
-    return TextIterator::rangeLength(&paragraphRange());
+    return characterCount(paragraphRange());
 }
 
 Range& TextCheckingParagraph::paragraphRange() const
@@ -165,14 +165,11 @@ Ref<Range> TextCheckingParagraph::subrange(int characterOffset, int characterCou
 
 ExceptionOr<int> TextCheckingParagraph::offsetTo(const Position& position) const
 {
-    if (!position.containerNode())
+    auto start = makeBoundaryPoint(paragraphRange().startPosition());
+    auto end = makeBoundaryPoint(position);
+    if (!start || !end)
         return Exception { TypeError };
-
-    auto range = offsetAsRange().cloneRange();
-    auto result = range->setEnd(*position.containerNode(), position.computeOffsetInContainerNode());
-    if (result.hasException())
-        return result.releaseException();
-    return TextIterator::rangeLength(range.ptr());
+    return characterCount({ *start, *end });
 }
 
 bool TextCheckingParagraph::isEmpty() const
@@ -200,21 +197,21 @@ const String& TextCheckingParagraph::text() const
 int TextCheckingParagraph::checkingStart() const
 {
     if (!m_checkingStart)
-        m_checkingStart = TextIterator::rangeLength(&offsetAsRange());
+        m_checkingStart = characterCount(offsetAsRange());
     return *m_checkingStart;
 }
 
 int TextCheckingParagraph::checkingEnd() const
 {
     if (!m_checkingEnd)
-        m_checkingEnd = checkingStart() + TextIterator::rangeLength(m_checkingRange.ptr());
+        m_checkingEnd = checkingStart() + checkingLength();
     return *m_checkingEnd;
 }
 
 int TextCheckingParagraph::checkingLength() const
 {
     if (!m_checkingLength)
-        m_checkingLength = TextIterator::rangeLength(m_checkingRange.ptr());
+        m_checkingLength = characterCount(m_checkingRange);
     return *m_checkingLength;
 }
 
@@ -223,8 +220,12 @@ int TextCheckingParagraph::automaticReplacementStart() const
     if (m_automaticReplacementStart)
         return *m_automaticReplacementStart;
 
-    auto startOffsetRange = Range::create(paragraphRange().startContainer().document(), paragraphRange().startPosition(), m_automaticReplacementRange->startPosition());
-    m_automaticReplacementStart = TextIterator::rangeLength(startOffsetRange.ptr());
+    auto start = makeBoundaryPoint(paragraphRange().startPosition());
+    auto end = makeBoundaryPoint(m_automaticReplacementRange->startPosition());
+    if (!start || !end)
+        return 0;
+
+    m_automaticReplacementStart = characterCount({ *start, *end });
     return *m_automaticReplacementStart;
 }
 
@@ -233,8 +234,7 @@ int TextCheckingParagraph::automaticReplacementLength() const
     if (m_automaticReplacementLength)
         return *m_automaticReplacementLength;
 
-    auto endOffsetRange = Range::create(paragraphRange().startContainer().document(), paragraphRange().startPosition(), m_automaticReplacementRange->endPosition());
-    m_automaticReplacementLength = TextIterator::rangeLength(endOffsetRange.ptr()) - automaticReplacementStart();
+    m_automaticReplacementLength = characterCount(m_automaticReplacementRange);
     return *m_automaticReplacementLength;
 }
 
@@ -323,25 +323,23 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
     // since we will want to ignore results in this area.
     Ref<Range> paragraphRange = m_range->cloneRange();
     setStart(paragraphRange.ptr(), startOfParagraph(m_range->startPosition()));
-    int totalRangeLength = TextIterator::rangeLength(paragraphRange.ptr());
+    auto totalRangeLength = characterCount(paragraphRange);
     setEnd(paragraphRange.ptr(), endOfParagraph(m_range->startPosition()));
     
-    Ref<Range> offsetAsRange = Range::create(paragraphRange->startContainer().document(), paragraphRange->startPosition(), m_range->startPosition());
-    int rangeStartOffset = TextIterator::rangeLength(offsetAsRange.ptr());
-    int totalLengthProcessed = 0;
+    auto rangeStartOffset = characterCount({ *makeBoundaryPoint(paragraphRange->startPosition()), *makeBoundaryPoint(m_range->startPosition()) });
+    CharacterCount totalLengthProcessed = 0;
     
     bool firstIteration = true;
     bool lastIteration = false;
     while (totalLengthProcessed < totalRangeLength) {
         // Iterate through the search range by paragraphs, checking each one for spelling and grammar.
-        int currentLength = TextIterator::rangeLength(paragraphRange.ptr());
+        auto currentLength = characterCount(paragraphRange);
         int currentStartOffset = firstIteration ? rangeStartOffset : 0;
         int currentEndOffset = currentLength;
         if (inSameParagraph(paragraphRange->startPosition(), m_range->endPosition())) {
             // Determine the character offset from the end of the original search range to the end of the paragraph,
             // since we will want to ignore results in this area.
-            auto endOffsetAsRange = Range::create(paragraphRange->startContainer().document(), paragraphRange->startPosition(), m_range->endPosition());
-            currentEndOffset = TextIterator::rangeLength(endOffsetAsRange.ptr());
+            currentEndOffset = characterCount({ *makeBoundaryPoint(paragraphRange->startPosition()), *makeBoundaryPoint(m_range->endPosition()) });
             lastIteration = true;
         }
         if (currentStartOffset < currentEndOffset) {
@@ -399,10 +397,8 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
 
                 if (!misspelledWord.isEmpty() && (!checkGrammar || badGrammarPhrase.isEmpty() || spellingLocation <= grammarDetailLocation)) {
                     int spellingOffset = spellingLocation - currentStartOffset;
-                    if (!firstIteration) {
-                        auto paragraphOffsetAsRange = Range::create(paragraphRange->startContainer().document(), m_range->startPosition(), paragraphRange->startPosition());
-                        spellingOffset += TextIterator::rangeLength(paragraphOffsetAsRange.ptr());
-                    }
+                    if (!firstIteration)
+                        spellingOffset += characterCount({ *makeBoundaryPoint(m_range->startPosition()), *makeBoundaryPoint(paragraphRange->startPosition()) });
                     outIsSpelling = true;
                     outFirstFoundOffset = spellingOffset;
                     firstFoundItem = misspelledWord;
@@ -410,10 +406,8 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
                 }
                 if (checkGrammar && !badGrammarPhrase.isEmpty()) {
                     int grammarPhraseOffset = grammarPhraseLocation - currentStartOffset;
-                    if (!firstIteration) {
-                        auto paragraphOffsetAsRange = Range::create(paragraphRange->startContainer().document(), m_range->startPosition(), paragraphRange->startPosition());
-                        grammarPhraseOffset += TextIterator::rangeLength(paragraphOffsetAsRange.ptr());
-                    }
+                    if (!firstIteration)
+                        grammarPhraseOffset += characterCount({ *makeBoundaryPoint(m_range->startPosition()), *makeBoundaryPoint(paragraphRange->startPosition()) });
                     outIsSpelling = false;
                     outFirstFoundOffset = grammarPhraseOffset;
                     firstFoundItem = badGrammarPhrase;
@@ -556,7 +550,7 @@ bool TextCheckingHelper::isUngrammatical() const
         return false;
     
     // Bad grammar at start of range, but end of bad grammar is before or after end of range
-    if (grammarDetail.length != TextIterator::rangeLength(m_range.ptr()))
+    if (static_cast<unsigned>(grammarDetail.length) != characterCount(m_range))
         return false;
     
     // Update the spelling panel to be displaying this error (whether or not the spelling panel is on screen).

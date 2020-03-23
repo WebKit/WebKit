@@ -1031,16 +1031,19 @@ static Vector<TextCheckingResult> core(NSArray *incomingResults, OptionSet<TextC
     return results;
 }
 
-static int insertionPointFromCurrentSelection(const VisibleSelection& currentSelection)
+static NSUInteger insertionPointFromCurrentSelection(const VisibleSelection& selection)
 {
-    VisiblePosition selectionStart = currentSelection.visibleStart();
-    VisiblePosition paragraphStart = startOfParagraph(selectionStart);
-    return TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
+    auto selectionStart = selection.visibleStart();
+    auto selectionStartBoundary = makeBoundaryPoint(selectionStart);
+    auto paragraphStart = makeBoundaryPoint(startOfParagraph(selectionStart));
+    if (!selectionStartBoundary || !paragraphStart)
+        return 0;
+    return characterCount({ *paragraphStart, *selectionStartBoundary });
 }
 
 Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView string, OptionSet<TextCheckingType> coreCheckingTypes, const VisibleSelection& currentSelection)
 {
-    NSDictionary *options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPointFromCurrentSelection(currentSelection)] };
+    NSDictionary *options = @{ NSTextCheckingInsertionPointKey : @(insertionPointFromCurrentSelection(currentSelection)) };
     return core([[NSSpellChecker sharedSpellChecker] checkString:string.createNSStringWithoutCopying().get() range:NSMakeRange(0, string.length()) types:(nsTextCheckingTypes(coreCheckingTypes) | NSTextCheckingTypeOrthography) options:options inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL], coreCheckingTypes);
 }
 
@@ -1083,7 +1086,7 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
     NSString *language = nil;
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-    NSDictionary *options = @{ NSTextCheckingInsertionPointKey :  [NSNumber numberWithUnsignedInteger:insertionPointFromCurrentSelection(currentSelection)] };
+    NSDictionary *options = @{ NSTextCheckingInsertionPointKey : @(insertionPointFromCurrentSelection(currentSelection)) };
     if (context.length()) {
         [checker checkString:context range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:options inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:&orthography wordCount:0];
         language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:context orthography:orthography];
@@ -1116,24 +1119,20 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
     if (![m_webView shouldRequestCandidates])
         return;
 
-    RefPtr<Range> selectedRange = selection.toNormalizedRange();
-    if (!selectedRange)
+    if (!selection.toNormalizedRange())
         return;
-    
-    Frame* frame = core([m_webView _selectedOrMainFrame]);
+
+    auto* frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
     m_lastSelectionForRequestedCandidates = selection;
 
-    VisiblePosition selectionStart = selection.visibleStart();
-    VisiblePosition selectionEnd = selection.visibleEnd();
-    VisiblePosition paragraphStart = startOfParagraph(selectionStart);
-    VisiblePosition paragraphEnd = endOfParagraph(selectionEnd);
+    auto selectionStart = selection.visibleStart();
+    auto selectionStartOffsetInParagraph = characterCount({ *makeBoundaryPoint(startOfParagraph(selectionStart)), *makeBoundaryPoint(selectionStart) });
+    auto selectionLength = characterCount({ *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selection.visibleEnd()) });
 
-    int lengthToSelectionStart = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
-    int lengthToSelectionEnd = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get());
-    m_rangeForCandidates = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
+    m_rangeForCandidates = NSMakeRange(selectionStartOffsetInParagraph, selectionLength);
     m_paragraphContextForCandidateRequest = plainText(frame->editor().contextRangeForCandidateRequest().get());
 
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;

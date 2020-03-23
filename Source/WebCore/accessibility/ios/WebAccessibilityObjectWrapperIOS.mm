@@ -2310,30 +2310,30 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return [array autorelease];
 }
 
-- (NSRange)_convertToNSRange:(Range *)range
+- (NSRange)_convertToNSRange:(Range *)liveRange
 {
-    if (!range)
+    if (!liveRange)
         return NSMakeRange(NSNotFound, 0);
 
-    Document* document = self.axBackingObject->document();
-    Element* selectionRoot = document->frame()->selection().selection().rootEditableElement();
-    Element* scope = selectionRoot ? selectionRoot : document->documentElement();
+    auto range = SimpleRange { *liveRange };
+
+    auto& document = range.start.document();
+    auto* frame = document.frame();
+    if (!frame)
+        return NSMakeRange(NSNotFound, 0);
+
+    auto* rootEditableElement = frame->selection().selection().rootEditableElement();
+    auto* scope = rootEditableElement ? rootEditableElement : document.documentElement();
+    if (!scope)
+        return NSMakeRange(NSNotFound, 0);
 
     // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
-    // that is not inside the current editable region.  These checks ensure we don't produce
+    // that is not inside the current editable region. These checks ensure we don't produce
     // potentially invalid data when responding to such requests.
-    if (&range->startContainer() != scope && !range->startContainer().isDescendantOf(scope))
-        return NSMakeRange(NSNotFound, 0);
-    if (&range->endContainer() != scope && !range->endContainer().isDescendantOf(scope))
+    if (!scope->contains(range.start.container.ptr()) || !scope->contains(range.end.container.ptr()))
         return NSMakeRange(NSNotFound, 0);
 
-    auto testRange = Range::create(scope->document(), scope, 0, &range->startContainer(), range->startOffset());
-    ASSERT(&testRange->startContainer() == scope);
-    int startPosition = TextIterator::rangeLength(testRange.ptr());
-    testRange->setEnd(range->endContainer(), range->endOffset());
-    ASSERT(&testRange->startContainer() == scope);
-    int endPosition = TextIterator::rangeLength(testRange.ptr());
-    return NSMakeRange(startPosition, endPosition - startPosition);
+    return NSMakeRange(characterCount({ { *scope, 0 }, range.start }), characterCount(range));
 }
 
 - (RefPtr<Range>)_convertToDOMRange:(NSRange)nsrange

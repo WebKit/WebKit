@@ -1,3 +1,15 @@
+2020-03-23  Darin Adler  <darin@apple.com>
+
+        Change TextIterator::rangeLength to not require a live range
+        https://bugs.webkit.org/show_bug.cgi?id=209207
+
+        Reviewed by Antti Koivisto.
+
+        * editing/mac/spelling/autocorrection-contraction-expected.txt: Update these expected
+        results because of changes to delegate callbacks. The test is still passing and this
+        change is only in the legacy WebKit case (there is a separate result for modern WebKit).
+        This seems to be a progression, not evidence of a bug.
+
 2020-03-23  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest: getAllResponseHeaders() sorting

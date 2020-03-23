@@ -1901,20 +1901,13 @@ RefPtr<Range> enclosingTextUnitOfGranularity(const VisiblePosition& vp, TextGran
     return Range::create(prevBoundary.deepEquivalent().deprecatedNode()->document(), prevBoundary, nextBoundary);
 }
 
-int distanceBetweenPositions(const VisiblePosition& vp, const VisiblePosition& other)
+std::ptrdiff_t distanceBetweenPositions(const VisiblePosition& a, const VisiblePosition& b)
 {
-    if (vp.isNull() || other.isNull())
+    if (a.isNull() || b.isNull())
         return 0;
-
-    bool thisIsStart = (vp < other);
-
-    // Start must come first in the Range constructor.
-    auto range = Range::create(vp.deepEquivalent().deprecatedNode()->document(),
-                                        (thisIsStart ? vp : other),
-                                        (thisIsStart ? other : vp));
-    int distance = TextIterator::rangeLength(range.ptr());
-
-    return (thisIsStart ? -distance : distance);
+    return a < b
+        ? -characterCount({ *makeBoundaryPoint(a), *makeBoundaryPoint(b) })
+        : characterCount({ *makeBoundaryPoint(b), *makeBoundaryPoint(a) });
 }
 
 void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore)

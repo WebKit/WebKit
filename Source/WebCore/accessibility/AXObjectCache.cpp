@@ -1938,18 +1938,16 @@ Optional<SimpleRange> AXObjectCache::rangeMatchesTextNearRange(const SimpleRange
     unsigned textLength = matchText.length();
     auto startPosition = visiblePositionForPositionWithOffset(createLegacyEditingPosition(originalRange.start), -textLength);
     auto endPosition = visiblePositionForPositionWithOffset(createLegacyEditingPosition(originalRange.start), 2 * textLength);
-
     if (startPosition.isNull())
         startPosition = firstPositionInOrBeforeNode(originalRange.start.container.ptr());
     if (endPosition.isNull())
         endPosition = lastPositionInOrAfterNode(originalRange.end.container.ptr());
 
-    auto searchRange = Range::create(m_document, startPosition, endPosition);
-    if (searchRange->collapsed())
+    auto searchRange = SimpleRange { *makeBoundaryPoint(startPosition), *makeBoundaryPoint(endPosition) };
+    if (searchRange.collapsed())
         return WTF::nullopt;
 
-    auto range = Range::create(m_document, startPosition, createLegacyEditingPosition(originalRange.start));
-    unsigned targetOffset = TextIterator::rangeLength(range.ptr(), true);
+    auto targetOffset = characterCount({ searchRange.start, originalRange.start }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
     return findClosestPlainText(searchRange, matchText, { }, targetOffset);
 }
 
@@ -1992,12 +1990,11 @@ static bool characterOffsetsInOrder(const CharacterOffset& characterOffset1, con
 static Node* resetNodeAndOffsetForReplacedNode(Node* replacedNode, int& offset, int characterCount)
 {
     // Use this function to include the replaced node itself in the range we are creating.
-    if (!replacedNode)
+    auto nodeRange = AXObjectCache::rangeForNodeContents(replacedNode);
+    if (!nodeRange)
         return nullptr;
-    
-    RefPtr<Range> nodeRange = AXObjectCache::rangeForNodeContents(replacedNode);
-    int nodeLength = TextIterator::rangeLength(nodeRange.get());
-    offset = characterCount <= nodeLength ? replacedNode->computeNodeIndex() : replacedNode->computeNodeIndex() + 1;
+    bool isInNode = static_cast<unsigned>(characterCount) <= WebCore::characterCount(*nodeRange);
+    offset = replacedNode->computeNodeIndex() + (isInNode ? 0 : 1);
     return replacedNode->parentNode();
 }
 
@@ -2413,14 +2410,16 @@ CharacterOffset AXObjectCache::nextCharacterOffset(const CharacterOffset& charac
         return CharacterOffset();
     
     // We don't always move one 'character' at a time since there might be composed characters.
-    int nextOffset = Position::uncheckedNextOffset(characterOffset.node, characterOffset.offset);
+    unsigned nextOffset = Position::uncheckedNextOffset(characterOffset.node, characterOffset.offset);
     CharacterOffset next = characterOffsetForNodeAndOffset(*characterOffset.node, nextOffset);
     
     // To be consistent with VisiblePosition, we should consider the case that current node end to next node start counts 1 offset.
     if (!ignoreNextNodeStart && !next.isNull() && !isReplacedNodeOrBR(next.node) && next.node != characterOffset.node) {
-        int length = TextIterator::rangeLength(rangeForUnorderedCharacterOffsets(characterOffset, next).get());
-        if (length > nextOffset - characterOffset.offset)
-            next = characterOffsetForNodeAndOffset(*next.node, 0, TraverseOptionIncludeStart);
+        if (auto range = rangeForUnorderedCharacterOffsets(characterOffset, next)) {
+            auto length = characterCount(*range);
+            if (length > nextOffset - characterOffset.offset)
+                next = characterOffsetForNodeAndOffset(*next.node, 0, TraverseOptionIncludeStart);
+        }
     }
     
     return next;

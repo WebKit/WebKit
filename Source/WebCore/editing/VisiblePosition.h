@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,6 @@
 #include "EditingBoundary.h"
 #include "Position.h"
 
-namespace WTF {
-class TextStream;
-}
-
 namespace WebCore {
 
 class Range;
@@ -48,9 +44,6 @@ class Range;
 // constructors auto-correct UPSTREAM to DOWNSTREAM if the
 // position is not at a line break.
 #define VP_UPSTREAM_IF_POSSIBLE UPSTREAM
-
-class InlineBox;
-class Node;
 
 class VisiblePosition {
 public:
@@ -85,21 +78,16 @@ public:
 
     // FIXME: This does not handle [table, 0] correctly.
     Element* rootEditableElement() const { return m_deepPosition.isNotNull() ? m_deepPosition.deprecatedNode()->rootEditableElement() : 0; }
-    
-    void getInlineBoxAndOffset(InlineBox*& inlineBox, int& caretOffset) const
-    {
-        m_deepPosition.getInlineBoxAndOffset(m_affinity, inlineBox, caretOffset);
-    }
 
-    void getInlineBoxAndOffset(TextDirection primaryDirection, InlineBox*& inlineBox, int& caretOffset) const
-    {
-        m_deepPosition.getInlineBoxAndOffset(m_affinity, primaryDirection, inlineBox, caretOffset);
-    }
+    void getInlineBoxAndOffset(InlineBox*&, int& caretOffset) const;
+    void getInlineBoxAndOffset(TextDirection primaryDirection, InlineBox*&, int& caretOffset) const;
 
     // Rect is local to the returned renderer
     WEBCORE_EXPORT LayoutRect localCaretRect(RenderObject*&) const;
+
     // Bounds of (possibly transformed) caret in absolute coords
     WEBCORE_EXPORT IntRect absoluteCaretBounds(bool* insideFixed = nullptr) const;
+
     // Abs x/y position of the caret ignoring transforms.
     // FIXME: navigation with transforms should be smarter.
     WEBCORE_EXPORT int lineDirectionPointForBlockDirectionNavigation() const;
@@ -107,7 +95,7 @@ public:
     WEBCORE_EXPORT FloatRect absoluteSelectionBoundsForLine() const;
 
     // This is a tentative enhancement of operator== to account for affinity.
-    // FIXME: Combine this function with operator==
+    // FIXME: Combine this function with operator==.
     bool equals(const VisiblePosition&) const;
 
 #if ENABLE(TREE_DEBUGGING)
@@ -115,7 +103,7 @@ public:
     void formatForDebugger(char* buffer, unsigned length) const;
     void showTreeForThis() const;
 #endif
-    
+
 private:
     void init(const Position&, EAffinity);
     Position canonicalPosition(const Position&);
@@ -127,36 +115,14 @@ private:
     EAffinity m_affinity;
 };
 
-// FIXME: This shouldn't ignore affinity.
-inline bool operator==(const VisiblePosition& a, const VisiblePosition& b)
-{
-    return a.deepEquivalent() == b.deepEquivalent();
-}
- 
-inline bool operator!=(const VisiblePosition& a, const VisiblePosition& b)
-{
-    return !(a == b);
-}
-    
-inline bool operator<(const VisiblePosition& a, const VisiblePosition& b)
-{
-    return a.deepEquivalent() < b.deepEquivalent();
-}
+bool operator==(const VisiblePosition&, const VisiblePosition&);
+bool operator!=(const VisiblePosition&, const VisiblePosition&);
+bool operator<(const VisiblePosition&, const VisiblePosition&);
+bool operator>(const VisiblePosition&, const VisiblePosition&);
+bool operator<=(const VisiblePosition&, const VisiblePosition&);
+bool operator>=(const VisiblePosition&, const VisiblePosition&);
 
-inline bool operator>(const VisiblePosition& a, const VisiblePosition& b) 
-{
-    return a.deepEquivalent() > b.deepEquivalent();
-}
-
-inline bool operator<=(const VisiblePosition& a, const VisiblePosition& b)
-{
-    return a.deepEquivalent() <= b.deepEquivalent();
-}
-
-inline bool operator>=(const VisiblePosition& a, const VisiblePosition& b) 
-{
-    return a.deepEquivalent() >= b.deepEquivalent();
-}    
+WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPoint(const VisiblePosition&);
 
 WEBCORE_EXPORT RefPtr<Range> makeRange(const VisiblePosition&, const VisiblePosition&);
 bool setStart(Range*, const VisiblePosition&);
@@ -173,6 +139,49 @@ bool areVisiblePositionsInSameTreeScope(const VisiblePosition&, const VisiblePos
 
 WTF::TextStream& operator<<(WTF::TextStream&, EAffinity);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const VisiblePosition&);
+
+// inlines
+
+// FIXME: This shouldn't ignore affinity.
+inline bool operator==(const VisiblePosition& a, const VisiblePosition& b)
+{
+    return a.deepEquivalent() == b.deepEquivalent();
+}
+
+inline bool operator!=(const VisiblePosition& a, const VisiblePosition& b)
+{
+    return !(a == b);
+}
+
+inline bool operator<(const VisiblePosition& a, const VisiblePosition& b)
+{
+    return a.deepEquivalent() < b.deepEquivalent();
+}
+
+inline bool operator>(const VisiblePosition& a, const VisiblePosition& b)
+{
+    return a.deepEquivalent() > b.deepEquivalent();
+}
+
+inline bool operator<=(const VisiblePosition& a, const VisiblePosition& b)
+{
+    return a.deepEquivalent() <= b.deepEquivalent();
+}
+
+inline bool operator>=(const VisiblePosition& a, const VisiblePosition& b)
+{
+    return a.deepEquivalent() >= b.deepEquivalent();
+}
+
+inline void VisiblePosition::getInlineBoxAndOffset(InlineBox*& inlineBox, int& caretOffset) const
+{
+    m_deepPosition.getInlineBoxAndOffset(m_affinity, inlineBox, caretOffset);
+}
+
+inline void VisiblePosition::getInlineBoxAndOffset(TextDirection primaryDirection, InlineBox*& inlineBox, int& caretOffset) const
+{
+    m_deepPosition.getInlineBoxAndOffset(m_affinity, primaryDirection, inlineBox, caretOffset);
+}
 
 } // namespace WebCore
 
