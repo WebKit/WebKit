@@ -1779,7 +1779,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
             }
             handleProductionOrFail(CLOSEPAREN, ")", "end", "'catch' target");
             matchOrFail(OPENBRACE, "Expected exception handler to be a block statement");
-            catchBlock = parseBlockStatement(context);
+            constexpr bool isCatchBlock = true;
+            catchBlock = parseBlockStatement(context, isCatchBlock);
             failIfFalse(catchBlock, "Unable to parse 'catch' block");
             catchEnvironment = catchScope->finalizeLexicalEnvironment();
             RELEASE_ASSERT(!ident || (catchEnvironment.size() == 1 && catchEnvironment.contains(ident->impl())));
@@ -1812,7 +1813,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseDebuggerState
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatement(TreeBuilder& context)
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatement(TreeBuilder& context, bool isCatchBlock)
 {
     ASSERT(match(OPENBRACE));
 
@@ -1824,6 +1825,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatemen
         ScopeRef newScope = pushScope();
         newScope->setIsLexicalScope();
         newScope->preventVarDeclarations();
+        if (isCatchBlock)
+            newScope->setIsCatchBlockScope();
         lexicalScope.setIsValid(newScope, this);
     }
     JSTokenLocation location(tokenLocation());

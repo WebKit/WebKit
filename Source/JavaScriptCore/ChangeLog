@@ -1,3 +1,28 @@
+2020-03-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Catch parameters must not be lexically redeclared
+        https://bugs.webkit.org/show_bug.cgi?id=208976
+
+        Reviewed by Keith Miller.
+
+        From https://tc39.es/ecma262/#sec-try-statement-static-semantics-early-errors:
+          Catch : catch ( CatchParameter ) Block
+            It is a Syntax Error if any element of the BoundNames of CatchParameter
+            also occurs in the LexicallyDeclaredNames of Block.
+
+        In other words, let/const/class/function declarations in the immediate catch block scope
+        must not shadow catch parameters.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseTryStatement):
+        (JSC::Parser<LexerType>::parseBlockStatement):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::setIsCatchBlockScope): Added.
+        (JSC::Scope::isCatchBlockScope): Added.
+        (JSC::Parser::declareVariable):
+        (JSC::Parser::declareFunction):
+
 2020-03-23  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r249808): [GTK] Crash in JSC Config::permanentlyFreeze() on architecture ppc64el

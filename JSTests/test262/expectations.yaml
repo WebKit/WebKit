@@ -3679,12 +3679,6 @@ test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-atte
 test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/try/early-catch-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/try/early-catch-lex.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/while/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/with/let-array-with-newline.js:
