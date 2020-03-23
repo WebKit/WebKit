@@ -950,6 +950,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetToSameSiteStrictCookies")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef hostName = static_cast<WKStringRef>(messageBody);
+        TestController::singleton().setStatisticsToSameSiteStrictCookies(hostName);
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsResetToConsistentState")) {
         if (m_shouldDumpResourceLoadStatistics)
             m_savedResourceLoadStatistics = TestController::singleton().dumpResourceLoadStatistics();
@@ -1913,6 +1920,12 @@ void TestInvocation::didSetInAppBrowserPrivacyEnabled()
 void TestInvocation::didSetFirstPartyWebsiteDataRemovalMode()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetFirstPartyWebsiteDataRemovalMode"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
+}
+
+void TestInvocation::didSetToSameSiteStrictCookies()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetToSameSiteStrictCookies"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
 }
 

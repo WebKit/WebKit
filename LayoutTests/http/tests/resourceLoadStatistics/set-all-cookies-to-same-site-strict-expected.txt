@@ -1,0 +1,31 @@
+Tests setting all of a site's cookies to SameSite=strict.
+
+'clientSideCookie' 1 Before Change -- domain: '127.0.0.1' isSession: 'true'
+'clientSideCookie' 2 After Change --- domain: '127.0.0.1' isSession: 'true' isSameSiteStrict: 'true'
+
+'persistentCookie' 1 Before Change -- domain: '127.0.0.1' expiry set
+'persistentCookie' 2 After Change --- domain: '127.0.0.1' expiry set isSameSiteStrict: 'true'
+
+'persistentHttpOnlyCookie' 1 Before Change -- domain: '127.0.0.1' expiry set isHttpOnly: 'true'
+'persistentHttpOnlyCookie' 2 After Change --- domain: '127.0.0.1' expiry set isHttpOnly: 'true' isSameSiteStrict: 'true'
+
+'persistentSameSiteLaxCookie' 1 Before Change -- domain: '127.0.0.1' expiry set isSameSiteLax: 'true'
+'persistentSameSiteLaxCookie' 2 After Change --- domain: '127.0.0.1' expiry set isSameSiteStrict: 'true'
+
+'persistentSameSiteStrictCookie' 1 Before Change -- domain: '127.0.0.1' expiry set isSameSiteStrict: 'true'
+'persistentSameSiteStrictCookie' 2 After Change --- domain: '127.0.0.1' expiry set isSameSiteStrict: 'true'
+
+'sessionCookie' 1 Before Change -- domain: '127.0.0.1' isSession: 'true'
+'sessionCookie' 2 After Change --- domain: '127.0.0.1' isSession: 'true' isSameSiteStrict: 'true'
+
+'sessionHttpOnlyCookie' 1 Before Change -- domain: '127.0.0.1' isHttpOnly: 'true' isSession: 'true'
+'sessionHttpOnlyCookie' 2 After Change --- domain: '127.0.0.1' isHttpOnly: 'true' isSession: 'true' isSameSiteStrict: 'true'
+
+'sessionSameSiteLaxCookie' 1 Before Change -- domain: '127.0.0.1' isSession: 'true' isSameSiteLax: 'true'
+'sessionSameSiteLaxCookie' 2 After Change --- domain: '127.0.0.1' isSession: 'true' isSameSiteStrict: 'true'
+
+'sessionSameSiteStrictCookie' 1 Before Change -- domain: '127.0.0.1' isSession: 'true' isSameSiteStrict: 'true'
+'sessionSameSiteStrictCookie' 2 After Change --- domain: '127.0.0.1' isSession: 'true' isSameSiteStrict: 'true'
+
+
+

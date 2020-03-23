@@ -1,3 +1,25 @@
+2020-03-23  John Wilander  <wilander@apple.com>
+
+        Add the capability to change all of a website's cookies to SameSite=Strict
+        https://bugs.webkit.org/show_bug.cgi?id=209369
+        <rdar://problem/60710690>
+
+        Reviewed by Alex Christensen and David Kilzer.
+
+        * http/tests/resourceLoadStatistics/resources/set-all-kinds-of-cookies.php: Added.
+        * http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html: Added.
+        * platform/ios/TestExpectations:
+            Marked http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html
+            as Pass.
+        * platform/mac-wk2/TestExpectations:
+            Marked http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html
+            as Pass for Catalina+.
+        * platform/wk2/TestExpectations:
+            Skipped http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html
+            since it's only available on macOS Catalina and up and the functionality is not
+            implemented on non-Cocoa platforms.
+
 2020-03-23  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk1 Debug ] http/tests/css/shared-stylesheet-mutation-preconstruct.html is flaky failing.

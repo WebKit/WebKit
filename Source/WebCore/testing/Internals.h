@@ -848,11 +848,13 @@ public:
         String name;
         String value;
         String domain;
+        String path;
         // Expiration dates are expressed as milliseconds since the UNIX epoch.
         double expires { 0 };
         bool isHttpOnly { false };
         bool isSecure { false };
         bool isSession { false };
+        bool isSameSiteNone { false };
         bool isSameSiteLax { false };
         bool isSameSiteStrict { false };
 
@@ -860,14 +862,16 @@ public:
             : name(cookie.name)
             , value(cookie.value)
             , domain(cookie.domain)
+            , path(cookie.path)
             , expires(cookie.expires.valueOr(0))
             , isHttpOnly(cookie.httpOnly)
             , isSecure(cookie.secure)
             , isSession(cookie.session)
+            , isSameSiteNone(cookie.sameSite == Cookie::SameSitePolicy::None)
             , isSameSiteLax(cookie.sameSite == Cookie::SameSitePolicy::Lax)
             , isSameSiteStrict(cookie.sameSite == Cookie::SameSitePolicy::Strict)
         {
-            ASSERT(!(isSameSiteLax && isSameSiteStrict));
+            ASSERT(!(isSameSiteLax && isSameSiteStrict) && !(isSameSiteLax && isSameSiteNone) && !(isSameSiteStrict && isSameSiteNone));
         }
 
         CookieData()

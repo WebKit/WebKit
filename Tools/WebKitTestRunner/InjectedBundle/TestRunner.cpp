@@ -754,6 +754,7 @@ enum {
     StatisticsDidSetShouldDowngradeReferrerCallbackID,
     StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID,
     StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID,
+    StatisticsDidSetToSameSiteStrictCookiesCallbackID,
     AllStorageAccessEntriesCallbackID,
     LoadedThirdPartyDomainsCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
@@ -2284,6 +2285,20 @@ void TestRunner::statisticsCallClearInMemoryAndPersistentStoreCallback()
 void TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback()
 {
     callTestRunnerCallback(StatisticsDidClearThroughWebsiteDataRemovalCallbackID);
+}
+
+void TestRunner::statisticsSetToSameSiteStrictCookies(JSStringRef hostName, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(StatisticsDidSetToSameSiteStrictCookiesCallbackID, completionHandler);
+
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("StatisticsSetToSameSiteStrictCookies"));
+    auto messageBody = adoptWK(WKStringCreateWithJSString(hostName));
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
+}
+
+void TestRunner::statisticsCallDidSetToSameSiteStrictCookiesCallback()
+{
+    callTestRunnerCallback(StatisticsDidSetToSameSiteStrictCookiesCallbackID);
 }
 
 void TestRunner::statisticsResetToConsistentState(JSValueRef completionHandler)

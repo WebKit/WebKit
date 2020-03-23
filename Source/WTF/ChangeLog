@@ -1,3 +1,15 @@
+2020-03-23  John Wilander  <wilander@apple.com>
+
+        Add the capability to change all of a website's cookies to SameSite=Strict
+        https://bugs.webkit.org/show_bug.cgi?id=209369
+        <rdar://problem/60710690>
+
+        Reviewed by Alex Christensen and David Kilzer.
+
+        * wtf/PlatformHave.h:
+            Adds HAVE_CFNETWORK_SAMESITE_COOKIE_API for macOS Catalina and up,
+            iOS 13 and up, Catalyst, watchOS, and Apple TV.
+
 2020-03-23  youenn fablet  <youenn@apple.com>
 
         Rename blankURL to aboutBlankURL

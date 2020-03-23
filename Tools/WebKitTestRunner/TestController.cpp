@@ -3704,6 +3704,14 @@ void TestController::setStatisticsFirstPartyWebsiteDataRemovalMode(bool value)
     m_currentInvocation->didSetFirstPartyWebsiteDataRemovalMode();
 }
 
+void TestController::setStatisticsToSameSiteStrictCookies(WKStringRef hostName)
+{
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetResourceLoadStatisticsToSameSiteStrictCookiesForTesting(websiteDataStore(), hostName, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetToSameSiteStrictCookies();
+}
+
 void TestController::statisticsResetToConsistentState()
 {
     ResourceStatisticsCallbackContext context(*this);

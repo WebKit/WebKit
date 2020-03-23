@@ -448,6 +448,8 @@ public:
     void statisticsCallDidSetShouldBlockThirdPartyCookiesCallback();
     void setStatisticsFirstPartyWebsiteDataRemovalMode(bool value, JSValueRef callback);
     void statisticsCallDidSetFirstPartyWebsiteDataRemovalModeCallback();
+    void statisticsSetToSameSiteStrictCookies(JSStringRef hostName, JSValueRef callback);
+    void statisticsCallDidSetToSameSiteStrictCookiesCallback();
     void statisticsResetToConsistentState(JSValueRef completionHandler);
     void statisticsCallDidResetToConsistentStateCallback();
     void loadedThirdPartyDomains(JSValueRef callback);

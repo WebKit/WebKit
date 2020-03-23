@@ -739,6 +739,9 @@ webkit.org/b/185994 fast/text/user-installed-fonts/shadow-postscript-family.html
 [ HighSierra+ ] http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-requests.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html [ Pass ]
 
+# The SameSite cookie API is only available in macOS Catalina and above.
+[ Catalina+ ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ]
+
 # Skipped in general expectations since they only work on iOS and Mac, WK2.
 media/deactivate-audio-session.html [ Pass ]
 

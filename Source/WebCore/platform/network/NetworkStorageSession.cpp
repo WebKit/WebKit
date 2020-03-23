@@ -88,6 +88,14 @@ bool NetworkStorageSession::shouldBlockThirdPartyCookiesButKeepFirstPartyCookies
     return m_registrableDomainsToBlockButKeepCookiesFor.contains(registrableDomain);
 }
 
+#if !PLATFORM(COCOA)
+void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomain&, CompletionHandler<void()>&& completionHandler)
+{
+    // Not implemented.
+    completionHandler();
+}
+#endif
+
 bool NetworkStorageSession::hasHadUserInteractionAsFirstParty(const RegistrableDomain& registrableDomain) const
 {
     if (registrableDomain.isEmpty())

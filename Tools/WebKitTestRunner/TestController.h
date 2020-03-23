@@ -262,6 +262,7 @@ public:
     void setStatisticsShouldDowngradeReferrer(bool value);
     void setStatisticsShouldBlockThirdPartyCookies(bool value, bool onlyOnSitesWithoutUserInteraction);
     void setStatisticsFirstPartyWebsiteDataRemovalMode(bool value);
+    void setStatisticsToSameSiteStrictCookies(WKStringRef hostName);
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();

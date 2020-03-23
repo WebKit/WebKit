@@ -116,6 +116,37 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, Completi
     completionHandler(false);
 }
 
+void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
+#if HAVE(CFNETWORK_SAMESITE_COOKIE_API)
+    RetainPtr<NSMutableArray<NSHTTPCookie *>> oldCookiesToDelete = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray<NSHTTPCookie *>> newCookiesToAdd = adoptNS([[NSMutableArray alloc] init]);
+
+    for (NSHTTPCookie *nsCookie in nsCookieStorage().cookies) {
+        if (RegistrableDomain::uncheckedCreateFromHost(nsCookie.domain) == domain && nsCookie.sameSitePolicy != NSHTTPCookieSameSiteStrict) {
+            [oldCookiesToDelete addObject:nsCookie];
+            RetainPtr<NSMutableDictionary<NSHTTPCookiePropertyKey, id>> mutableProperties = adoptNS([[nsCookie properties] mutableCopy]);
+            mutableProperties.get()[NSHTTPCookieSameSitePolicy] = NSHTTPCookieSameSiteStrict;
+            NSHTTPCookie *strictCookie = [NSHTTPCookie cookieWithProperties:mutableProperties.get()];
+            [newCookiesToAdd addObject:strictCookie];
+        }
+    }
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    for (NSHTTPCookie *oldCookie in oldCookiesToDelete.get())
+        deleteHTTPCookie(cookieStorage().get(), oldCookie);
+
+    for (NSHTTPCookie *newCookie in newCookiesToAdd.get())
+        [nsCookieStorage() setCookie:newCookie];
+    END_BLOCK_OBJC_EXCEPTIONS;
+#else
+    UNUSED_PARAM(domain);
+#endif
+    completionHandler();
+}
+
 void NetworkStorageSession::flushCookieStore()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
