@@ -1,3 +1,14 @@
+2020-03-23  youenn fablet  <youenn@apple.com>
+
+        MediaDevices::refreshDevices should take device type into account
+        https://bugs.webkit.org/show_bug.cgi?id=209417
+        <rdar://problem/60521332>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/media-device-info-expected.txt:
+        * fast/mediastream/media-device-info.html:
+
 2020-03-22  Antoine Quint  <graouts@apple.com>
 
         DocumentTimeline / CSSTransition objects are leaking on CNN.com

@@ -181,16 +181,16 @@ void MediaDevices::refreshDevices(const Vector<CaptureDevice>& newDevices)
         if (!canAccessCamera && newDevice.type() == CaptureDevice::DeviceType::Camera)
             continue;
 
-        auto index = m_devices.findMatching([&newDevice](auto& oldDevice) {
-            return oldDevice->deviceId() == newDevice.persistentId();
+        auto deviceKind = newDevice.type() == CaptureDevice::DeviceType::Microphone ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
+        auto index = m_devices.findMatching([deviceKind, &newDevice](auto& oldDevice) {
+            return oldDevice->deviceId() == newDevice.persistentId() && oldDevice->kind() == deviceKind;
         });
         if (index != notFound) {
             devices.append(m_devices[index].copyRef());
             continue;
         }
 
-        auto deviceType = newDevice.type() == CaptureDevice::DeviceType::Microphone ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
-        devices.append(MediaDeviceInfo::create(newDevice.label(), newDevice.persistentId(), newDevice.groupId(), deviceType));
+        devices.append(MediaDeviceInfo::create(newDevice.label(), newDevice.persistentId(), newDevice.groupId(), deviceKind));
     }
     m_devices = WTFMove(devices);
 }
