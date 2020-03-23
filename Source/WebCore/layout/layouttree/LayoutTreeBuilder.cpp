@@ -41,7 +41,6 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
-#include "LayoutDescendantIterator.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutInlineTextBox.h"
 #include "LayoutLineBreakBox.h"

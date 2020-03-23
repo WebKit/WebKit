@@ -36,7 +36,6 @@
 #include "InlineTextItem.h"
 #include "IntRect.h"
 #include "LayoutContainerBox.h"
-#include "LayoutDescendantIterator.h"
 #include "LayoutState.h"
 #include "RenderStyle.h"
 #include "TextRun.h"

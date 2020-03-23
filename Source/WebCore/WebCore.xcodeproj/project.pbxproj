@@ -380,7 +380,6 @@
 		11310CF420BA4A3D0065A8D0 /* LayoutIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11100FC72092764C0081AA6C /* LayoutIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		11310CF520BA4A4C0065A8D0 /* LayoutDescendantIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11B042FB20B0E21400828A6B /* LayoutDescendantIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		11310CF620BA4A560065A8D0 /* LayoutChildIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11100FC920927CBC0081AA6C /* LayoutChildIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		11310CF720BA4A620065A8D0 /* LayoutAncestorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11100FCA2092868D0081AA6C /* LayoutAncestorIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		113409DA203E038000C66915 /* RenderTreeBuilderContinuation.h in Headers */ = {isa = PBXBuildFile; fileRef = 113409D8203E038000C66915 /* RenderTreeBuilderContinuation.h */; };
 		113D0B521F9FDD2B00F611BB /* FrameViewLayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 113D0B501F9FDD2B00F611BB /* FrameViewLayoutContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		115CFA6A208AF7D0001E6991 /* FormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA68208AF7D0001E6991 /* FormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5992,7 +5991,6 @@
 		1100FC6E1FDB3C4D00DD961B /* TrailingFloatsRootInlineBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TrailingFloatsRootInlineBox.cpp; sourceTree = "<group>"; };
 		11100FC72092764C0081AA6C /* LayoutIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutIterator.h; sourceTree = "<group>"; };
 		11100FC920927CBC0081AA6C /* LayoutChildIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutChildIterator.h; sourceTree = "<group>"; };
-		11100FCA2092868D0081AA6C /* LayoutAncestorIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutAncestorIterator.h; sourceTree = "<group>"; };
 		11100FD5209514DE0081AA6C /* LayoutTreeBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutTreeBuilder.cpp; sourceTree = "<group>"; };
 		11100FD7209514DF0081AA6C /* LayoutTreeBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutTreeBuilder.h; sourceTree = "<group>"; };
 		111C615620AD1AE1005B82FA /* LayoutReplacedBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutReplacedBox.h; sourceTree = "<group>"; };
@@ -16954,7 +16952,6 @@
 		115CFA90208B9441001E6991 /* layouttree */ = {
 			isa = PBXGroup;
 			children = (
-				11100FCA2092868D0081AA6C /* LayoutAncestorIterator.h */,
 				115CFA96208B952B001E6991 /* LayoutBox.cpp */,
 				115CFA95208B952B001E6991 /* LayoutBox.h */,
 				11100FC920927CBC0081AA6C /* LayoutChildIterator.h */,
@@ -31676,7 +31673,6 @@
 				0FEC120C22BF2CD2004E9D35 /* LayerAncestorClippingStack.h in Headers */,
 				580371641A66F1D300BAF519 /* LayerFragment.h in Headers */,
 				7AA3A6A0194B59B6001CBD24 /* LayerPool.h in Headers */,
-				11310CF720BA4A620065A8D0 /* LayoutAncestorIterator.h in Headers */,
 				115CFA97208B952B001E6991 /* LayoutBox.h in Headers */,
 				11310CF620BA4A560065A8D0 /* LayoutChildIterator.h in Headers */,
 				1199FA46208E35A3002358CC /* LayoutContainerBox.h in Headers */,

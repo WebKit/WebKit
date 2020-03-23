@@ -32,7 +32,6 @@
 #include "DisplayBox.h"
 #include "FormattingContext.h"
 #include "InlineFormattingState.h"
-#include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LayoutReplacedBox.h"
 #include "Logging.h"

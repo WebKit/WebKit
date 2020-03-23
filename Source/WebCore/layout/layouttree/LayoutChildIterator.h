@@ -102,12 +102,6 @@ inline const T* LayoutChildIteratorAdapter<T>::first() const
 }
 
 template <typename T>
-inline const T* LayoutChildIteratorAdapter<T>::last() const
-{
-    return Traversal::lastChild<T>(m_parent);
-}
-
-template <typename T>
 inline LayoutChildIteratorAdapter<T> childrenOfType(const ContainerBox& parent)
 {
     return LayoutChildIteratorAdapter<T>(parent);
