@@ -200,6 +200,42 @@ void NetworkDataTaskCocoa::blockCookies()
     [m_task _setExplicitCookieStorage:statelessCookieStorage()._cookieStorage];
     m_hasBeenSetToUseStatelessCookieStorage = true;
 }
+
+void NetworkDataTaskCocoa::unblockCookies()
+{
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
+    if (!m_hasBeenSetToUseStatelessCookieStorage)
+        return;
+
+    if (auto* storageSession = m_session->networkStorageSession()) {
+        [m_task _setExplicitCookieStorage:storageSession->nsCookieStorage()._cookieStorage];
+        m_hasBeenSetToUseStatelessCookieStorage = false;
+    }
+}
+
+// FIXME: Temporary fix for <rdar://problem/60089022> until content can be updated.
+bool NetworkDataTaskCocoa::needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const
+{
+    using RegistrableDomain = WebCore::RegistrableDomain;
+    static NeverDestroyed<HashMap<RegistrableDomain, RegistrableDomain>> quirkPairs = [] {
+        HashMap<RegistrableDomain, RegistrableDomain> map;
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("ymail.com"_s), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("yahoo.com"_s));
+        return map;
+    }();
+
+    RegistrableDomain firstPartyDomain { firstPartyURL };
+    RegistrableDomain requestDomain { requestURL };
+    if (firstPartyDomain != requestDomain)
+        return false;
+
+    RegistrableDomain redirectingDomain { redirectingURL };
+    auto quirk = quirkPairs.get().find(redirectingDomain);
+    if (quirk == quirkPairs.get().end())
+        return false;
+
+    return quirk->value == requestDomain;
+}
 #endif
 
 bool NetworkDataTaskCocoa::isThirdPartyRequest(const WebCore::ResourceRequest& request) const
@@ -434,7 +470,8 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         if (m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless
             || (m_session->networkStorageSession() && m_session->networkStorageSession()->shouldBlockCookies(request, m_frameID, m_pageID)))
             blockCookies();
-    }
+    } else if (m_storedCredentialsPolicy != WebCore::StoredCredentialsPolicy::EphemeralStateless && needsFirstPartyCookieBlockingLatchModeQuirk(request.firstPartyForCookies(), request.url(), redirectResponse.url()))
+        unblockCookies();
 #if !RELEASE_LOG_DISABLED
     if (m_session->shouldLogCookieInformation())
         RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: %s cookies for redirect URL %s", this, m_pageID.toUInt64(), m_frameID.toUInt64(), (unsigned long)[m_task taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), request.url().string().utf8().data());

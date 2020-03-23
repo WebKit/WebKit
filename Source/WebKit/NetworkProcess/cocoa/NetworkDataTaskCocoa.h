@@ -86,6 +86,8 @@ private:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     static NSHTTPCookieStorage *statelessCookieStorage();
     void blockCookies();
+    void unblockCookies();
+    bool needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const;
 #endif
     bool isThirdPartyRequest(const WebCore::ResourceRequest&) const;
     bool isAlwaysOnLoggingAllowed() const;

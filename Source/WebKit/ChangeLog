@@ -1,19 +1,21 @@
-b'2020-03-23  Russell Epstein  <repstein@apple.com>\n\n        Apply patch. rdar://problem/60555343\n\n    Cherry-pick r258565. rdar://problem/60555343\n    \n        2020-03-17  David Kilzer  <ddkilzer@apple.com>\n    \n    REGRESSION (r258334): WebPasteboardProxy::setPasteboardBufferForType should allow zero-size buffers\n    <https://webkit.org/b/209167>\n    <rdar://problem/60516302>\n    \n    Reviewed by Geoffrey Garen.\n    \n    * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:\n    (WebKit::WebPasteboardProxy::setPasteboardBufferForType):\n    - Remove check for zero-size buffer to match\n      WebPageProxy::dataSelectionForPasteboard().\n\n    2020-03-17  David Kilzer  <ddkilzer@apple.com>\n\n            Cherry-pick r258565. rdar://problem/60555343\n\n        2020-03-17  David Kilzer  <ddkilzer@apple.com>\n\n            REGRESSION (r258334): WebPasteboardProxy::setPasteboardBufferForType should allow zero-size buffers\n            <https://webkit.org/b/209167>\n            <rdar://problem/60516302>\n\n            Reviewed by Geoffrey Garen.\n\n            * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:\n            (WebKit::WebPasteboardProxy::setPasteboardBufferForType):\n            - Remove check for zero-size buffer to match\n              WebPageProxy::dataSelectionForPasteboard().\n\n'2020-03-19  Russell Epstein  <repstein@apple.com>
+2020-03-23 Russell Epstein  <repstein@apple.com>
 
-        Apply patch. rdar://problem/60633852
-
-    2020-03-19  Brent Fulgham  <bfulgham@apple.com>
-
-         Terminate the WebContent process when receiving invalid IPC from a WebInspector session
-         https://bugs.webkit.org/show_bug.cgi?id=209157
-         <rdar://problem/58961055>
-
-         * UIProcess/WebPageProxy.cpp:
-         (WebKit::WebPageProxy::backForwardGoToItemShared): Add a message check that we are not receiving
-         the request from a WebInspector page.
-         (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle): Switch to a release assert.
-
-2020-03-17  Kocsen Chung  <kocsen_chung@apple.com>
+        Apply patch. rdar://problem/60756683
+    2020-03-23  John Wilander  <wilander@apple.com>
+    Cherry-pick r258599. rdar://problem/60089022
+    2020-03-17  John Wilander  <wilander@apple.com>
+    Add quirk for cookie blocking latch mode ymail.com redirecting to yahoo.com under yahoo.com
+    https://bugs.webkit.org/show_bug.cgi?id=209193
+    <rdar://problem/60089022>
+    
+    Reviewed by Brent Fulgham.
+    
+    No new tests. Site-specific quirk tested manually on the site in question.
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+    (WebKit::NetworkDataTaskCocoa::unblockCookies):
+    (WebKit::NetworkDataTaskCocoa::needsFirstPartyCookieBlockingLatchModeQuirk const):
+    (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
 
         Apply patch. rdar://problem/60363244
 
