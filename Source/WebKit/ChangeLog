@@ -1,3 +1,10 @@
+2020-03-23  Megan Gardner  <megan_gardner@apple.com>
+
+        Removed FIXME comment for work that had already been done.
+
+        * UIProcess/ios/WKSyntheticTapGestureRecognizer.mm:
+        (-[WKSyntheticTapGestureRecognizer touchesEnded:withEvent:]):
+
 2020-03-23  John Wilander  <wilander@apple.com>
 
         Add the capability to change all of a website's cookies to SameSite=Strict
