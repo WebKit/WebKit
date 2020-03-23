@@ -69,8 +69,8 @@ bool Box::establishesFormattingContext() const
 
 bool Box::establishesBlockFormattingContext() const
 {
-    // Initial Containing Block always creates a new (inital) block formatting context.
-    if (!parent())
+    // ICB always creates a new (inital) block formatting context.
+    if (isInitialContainingBlock())
         return true;
 
     if (isTableWrapperBox())
@@ -245,10 +245,10 @@ const ContainerBox& Box::initialContainingBlock() const
     if (isInitialContainingBlock())
         return downcast<ContainerBox>(*this);
 
-    auto* parent = this->parent();
-    for (; parent->parent(); parent = parent->parent()) { }
+    auto* ancestor = parent();
+    for (; ancestor->parent(); ancestor = ancestor->parent()) { }
 
-    return *parent;
+    return *ancestor;
 }
 
 bool Box::isInFormattingContextOf(const ContainerBox& formattingContextRoot) const
