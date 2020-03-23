@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <wtf/Threading.h>
 #include <wtf/UniStdExtras.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
 
@@ -46,6 +47,11 @@ static const double s_minUsedMemoryPercentageForPolling = 50;
 static const double s_maxUsedMemoryPercentageForPolling = 85;
 static const int s_memoryPresurePercentageThreshold = 90;
 static const int s_memoryPresurePercentageThresholdCritical = 95;
+// cgroups.7: The usual place for such mounts is under a tmpfs(5)
+// filesystem mounted at /sys/fs/cgroup.
+static const char* s_cgroupMemoryPath = "/sys/fs/cgroup/memory/%s/%s";
+static const char* s_cgroupController = "/proc/self/cgroup";
+static const unsigned maxCgroupPath = 4096; // PATH_MAX = 4096 from (Linux) include/uapi/linux/limits.h
 
 static size_t lowWatermarkPages()
 {
@@ -126,6 +132,124 @@ static size_t calculateMemoryAvailable(size_t memoryFree, size_t activeFile, siz
     return memoryAvailable;
 }
 
+size_t getMemoryTotalWithCgroup(CString memoryControllerName)
+{
+    char buffer[128];
+    char cgroupPath[maxCgroupPath];
+    char* token;
+    FILE* file;
+
+    // Check memory limits in cgroupV2
+    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.memsw.max");
+    file = fopen(cgroupPath, "r");
+    if (file) {
+        token = fgets(buffer, 128, file);
+        fclose(file);
+        return atoll(token);
+    }
+    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.max");
+    file = fopen(cgroupPath, "r");
+    if (file) {
+        token = fgets(buffer, 128, file);
+        fclose(file);
+        return atoll(token);
+    }
+
+    // Check memory limits in cgroupV1
+    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.memsw.limit_in_bytes");
+    file = fopen(cgroupPath, "r");
+    if (file) {
+        token = fgets(buffer, 128, file);
+        fclose(file);
+        return atoll(token);
+    }
+    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.limit_in_bytes");
+    file = fopen(cgroupPath, "r");
+    if (file) {
+        token = fgets(buffer, 128, file);
+        fclose(file);
+        return atoll(token);
+    }
+    return 0;
+}
+
+static size_t getMemoryUsageWithCgroup(CString memoryControllerName)
+{
+    char buffer[128];
+    char cgroupPath[maxCgroupPath];
+    char* token;
+    char* line;
+    FILE* fileCgroupPathUsageBytes;
+
+    // Check memory limits in cgroupV2
+    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.current");
+    fileCgroupPathUsageBytes = fopen(cgroupPath, "r");
+    if (fileCgroupPathUsageBytes) {
+        line = fgets(buffer, 128, fileCgroupPathUsageBytes);
+        token = strtok(line, " ");
+        fclose(fileCgroupPathUsageBytes);
+        return atoll(token);
+    }
+
+    // Check memory limits in cgroupV1
+    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.usage_in_bytes");
+    fileCgroupPathUsageBytes = fopen(cgroupPath, "r");
+    if (fileCgroupPathUsageBytes) {
+        line = fgets(buffer, 128, fileCgroupPathUsageBytes);
+        token = strtok(line, " ");
+        fclose(fileCgroupPathUsageBytes);
+        return atoll(token);
+    }
+    return 0;
+}
+
+// This file describes control groups to which the process with
+// the corresponding PID belongs. The displayed information differs
+// for cgroups version 1 and version 2 hierarchies.
+//
+// Example:
+//
+// $ cat /proc/self/cgroup
+// 12:hugetlb:/
+// 11:rdma:/
+// 10:net_cls,net_prio:/
+// 9:devices:/user.slice
+// 8:memory:/user.slice
+// 7:freezer:/user/psaavedra/0
+// 6:pids:/user.slice/user-1000.slice/user@1000.service
+// 5:blkio:/user.slice
+// 4:perf_event:/
+// 3:cpu,cpuacct:/user.slice
+// 2:cpuset:/
+// 1:name=systemd:/user.slice/user-1000.slice/user@1000.service/gnome-terminal-server.service
+// 0::/user.slice/user-1000.slice/user@1000.service/gnome-terminal-server.service
+static CString getCgroupController(const char* controllerName)
+{
+    CString memoryControllerName;
+    FILE* file = fopen(s_cgroupController, "r");
+    if (!file)
+        return CString();
+
+    char buffer[maxCgroupPath];
+    while (char* line = fgets(buffer, maxCgroupPath, file)) {
+        char* token = strtok(line, "\n");
+        if (!token)
+            break;
+
+        token = strtok(token, ":");
+        token = strtok(nullptr, ":");
+        if (!strcmp(token, controllerName)) {
+            token = strtok(nullptr, ":");
+            memoryControllerName = CString(token);
+            fclose(file);
+            return memoryControllerName;
+        }
+    }
+    fclose(file);
+    return CString();
+}
+
+
 static int systemMemoryUsedAsPercentage()
 {
     FILE* file = fopen("/proc/meminfo", "r");
@@ -190,7 +314,18 @@ static int systemMemoryUsedAsPercentage()
     if (memoryAvailable > memoryTotal)
         return -1;
 
-    return ((memoryTotal - memoryAvailable) * 100) / memoryTotal;
+    int memoryUsagePercentage = ((memoryTotal - memoryAvailable) * 100) / memoryTotal;
+    CString memoryControllerName = getCgroupController("memory");
+    if (!memoryControllerName.isNull()) {
+        memoryTotal = getMemoryTotalWithCgroup(memoryControllerName);
+        size_t memoryUsage = getMemoryUsageWithCgroup(memoryControllerName);
+        if (memoryTotal) {
+            int memoryUsagePercentageWithCgroup = 100 * ((float) memoryUsage / (float) memoryTotal);
+            if (memoryUsagePercentageWithCgroup > memoryUsagePercentage)
+                memoryUsagePercentage = memoryUsagePercentageWithCgroup;
+        }
+    }
+    return memoryUsagePercentage;
 }
 
 static inline Seconds pollIntervalForUsedMemoryPercentage(int usedPercentage)

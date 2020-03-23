@@ -1,3 +1,40 @@
+2020-03-23  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK][WPE] Check the cgroups memory limits (v1 and v2) to calculate the systemMemoryUsedAsPercentage() in the MemoryPressureMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=209186
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Modifies the systemMemoryUsedAsPercentage() function adding the logic
+        to read the memory limits and the current memory used in the cgroup
+        associated to the WebKit process:
+
+        - memory.memsw.usage_in_bytes (or memory.memsw.max in cgroupV2):
+          current usage for memory+Swap
+        - memory.limit_in_bytes (or memory.current in cgroupV2):
+          limit of memory usage
+        - memory.memsw.limit_in_bytes (or memory.max in cgroupV2):
+          limit of memory+Swap usage
+
+        In case of the WK processes are associated to a cgroup with memory
+        controller, the function reads the memory.limit_in_bytes or
+        the memory.memsw.limit_in_bytes and the and memory.usage_in_bytes
+        from the cgroup mount point and calculates the percentage of
+        memory used.
+
+        In other cases (no cgroup memory controller associated or limits
+        higher than the real memory available), the function will return the
+        percentage based on the real memory available and real total memory
+        in the system.
+
+        The logic supports supports both cgroupV1 and cgroupV2
+
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        (WebKit::getMemoryTotalWithCgroup):
+        (WebKit::getMemoryUsageWithCgroup):
+        (WebKit::getCgroupController):
+        (WebKit::systemMemoryUsedAsPercentage):
+
 2020-03-23  Chris Lord  <clord@igalia.com>
 
         [WPE] AsyncScrolling: horizontal scrolling is inverted
