@@ -69,6 +69,7 @@ public:
     void deleteLocalStorageModifiedSince(PAL::SessionID, WallTime, DeleteCallback&&);
     void deleteLocalStorageForOrigins(PAL::SessionID, const Vector<WebCore::SecurityOriginData>&, DeleteCallback&&);
     void getLocalStorageOriginDetails(PAL::SessionID, GetOriginDetailsCallback&&);
+    void renameDomain(PAL::SessionID, const String&, const String&, CompletionHandler<void()>&&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>& replyEncoder);

@@ -69,6 +69,7 @@ public:
     void deleteLocalStorageOriginsModifiedSince(WallTime);
     void deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&);
     Vector<LocalStorageDatabaseTracker::OriginDetails> getLocalStorageOriginDetailsCrossThreadCopy() const;
+    void renameDomain(const String&, const String&);
 
     void clearStorageNamespaces();
 

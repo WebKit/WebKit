@@ -1,3 +1,40 @@
+2020-03-23  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to move localStorage to a different domain
+        https://bugs.webkit.org/show_bug.cgi?id=209260
+        <rdar://problem/60285683>
+
+        Reviewed by Brady Eidson.
+
+        Covered by an API test.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::renameDomainInWebsiteData):
+        (WebKit::NetworkProcess::getLocalStorageOriginDetails):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/WebStorage/LocalStorageNamespace.cpp:
+        (WebKit::LocalStorageNamespace::renameDomain):
+        * NetworkProcess/WebStorage/LocalStorageNamespace.h:
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::close):
+        * NetworkProcess/WebStorage/StorageArea.h:
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::renameDomain):
+        * NetworkProcess/WebStorage/StorageManager.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::renameDomain):
+        * NetworkProcess/WebStorage/StorageManagerSet.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _renameDomain:to:forDataOfTypes:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::renameDomainInWebsiteData):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::renameDomainInWebsiteData):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-03-23  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to icon services

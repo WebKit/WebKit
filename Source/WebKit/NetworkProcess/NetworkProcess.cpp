@@ -2437,6 +2437,16 @@ void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void
     completionHandler();
 }
 
+void NetworkProcess::renameDomainInWebsiteData(PAL::SessionID sessionID, const String& oldName, const String& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
+{
+    auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    if (dataTypes.contains(WebsiteDataType::LocalStorage)) {
+        if (m_storageManagerSet->contains(sessionID))
+            m_storageManagerSet->renameDomain(sessionID, oldName, newName, [aggregator = aggregator.copyRef()] { });
+    }
+}
+
 #if ENABLE(SERVICE_WORKER)
 void NetworkProcess::forEachSWServer(const Function<void(SWServer&)>& callback)
 {
@@ -2623,12 +2633,11 @@ void NetworkProcess::getLocalStorageOriginDetails(PAL::SessionID sessionID, Comp
 {
     if (!m_storageManagerSet->contains(sessionID)) {
         LOG_ERROR("Cannot get local storage information for an unknown session");
+        completionHandler({ });
         return;
     }
 
-    m_storageManagerSet->getLocalStorageOriginDetails(sessionID, [completionHandler = WTFMove(completionHandler)](auto&& details) mutable {
-        completionHandler(WTFMove(details));
-    });
+    m_storageManagerSet->getLocalStorageOriginDetails(sessionID, WTFMove(completionHandler));
 }
 
 void NetworkProcess::connectionToWebProcessClosed(IPC::Connection& connection, PAL::SessionID sessionID)

@@ -71,6 +71,7 @@ public:
     void openDatabaseAndImportItemsIfNeeded() const;
 
     void syncToDatabase();
+    void close();
 
 private:
     void dispatchEvents(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;

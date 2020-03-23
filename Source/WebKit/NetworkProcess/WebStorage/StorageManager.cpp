@@ -155,6 +155,13 @@ Vector<LocalStorageDatabaseTracker::OriginDetails> StorageManager::getLocalStora
     return { };
 }
 
+void StorageManager::renameDomain(const String& oldName, const String& newName)
+{
+    ASSERT(!RunLoop::isMain());
+    for (auto& localStorageNamespace : m_localStorageNamespaces.values())
+        localStorageNamespace->renameDomain(oldName, newName, m_localStorageDatabaseTracker.get());
+}
+
 void StorageManager::deleteLocalStorageOriginsModifiedSince(WallTime time)
 {
     ASSERT(!RunLoop::isMain());

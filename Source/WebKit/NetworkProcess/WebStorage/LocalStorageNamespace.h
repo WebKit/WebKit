@@ -52,6 +52,7 @@ public:
 
     void clearStorageAreasMatchingOrigin(const WebCore::SecurityOriginData&);
     void clearAllStorageAreas();
+    void renameDomain(const String&, const String&, LocalStorageDatabaseTracker*);
 
     Vector<WebCore::SecurityOriginData> ephemeralOrigins() const;
 

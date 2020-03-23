@@ -2301,4 +2301,13 @@ void WebsiteDataStore::setInAppBrowserPrivacyEnabled(bool enabled, CompletionHan
     }
 }
 
+void WebsiteDataStore::renameDomainInWebsiteData(String&& oldName, String&& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    for (auto& processPool : processPools()) {
+        if (auto* networkProcess = processPool->networkProcess())
+            networkProcess->renameDomainInWebsiteData(m_sessionID, oldName, newName, dataTypes, [callbackAggregator = callbackAggregator.copyRef()] { });
+    }
+}
+
 }

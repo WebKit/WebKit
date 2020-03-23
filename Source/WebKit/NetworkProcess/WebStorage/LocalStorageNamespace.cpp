@@ -70,6 +70,34 @@ void LocalStorageNamespace::clearAllStorageAreas()
         storageArea->clear();
 }
 
+void LocalStorageNamespace::renameDomain(const String& oldName, const String& newName, LocalStorageDatabaseTracker* tracker)
+{
+    ASSERT(!RunLoop::isMain());
+
+    struct MoveRecord {
+        SecurityOriginData fromOrigin;
+        SecurityOriginData toOrigin;
+    };
+
+    Vector<MoveRecord> moveRecords;
+    for (const auto& pair : m_storageAreaMap) {
+        const auto& fromOrigin = pair.key;
+        if (fromOrigin.host == oldName) {
+            pair.value->syncToDatabase();
+            pair.value->close();
+            SecurityOriginData toOrigin = fromOrigin;
+            toOrigin.host = newName;
+            moveRecords.append({ fromOrigin, toOrigin });
+        }
+    }
+
+    for (const auto& record : moveRecords) {
+        if (tracker)
+            FileSystem::moveFile(tracker->databasePath(record.fromOrigin), tracker->databasePath(record.toOrigin));
+        m_storageAreaMap.take(record.fromOrigin)->clear();
+    }
+}
+
 Vector<SecurityOriginData> LocalStorageNamespace::ephemeralOrigins() const
 {
     ASSERT(!RunLoop::isMain());

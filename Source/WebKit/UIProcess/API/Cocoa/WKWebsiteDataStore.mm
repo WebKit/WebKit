@@ -595,6 +595,17 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
+- (void)_renameDomain:(NSString *)domainName to:(NSString *)newDomainName forDataOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(void (^)(void))completionHandler
+{
+    if (!dataTypes.count)
+        return completionHandler();
+    if (dataTypes.count > 1 || ![dataTypes containsObject:WKWebsiteDataTypeLocalStorage])
+        [NSException raise:NSInvalidArgumentException format:@"_renameDomain can only be called with WKWebsiteDataTypeLocalStorage right now."];
+    _websiteDataStore->renameDomainInWebsiteData(domainName, newDomainName, WebKit::toWebsiteDataTypes(dataTypes), [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (id <_WKWebsiteDataStoreDelegate>)_delegate
 {
     return _delegate.get().get();
