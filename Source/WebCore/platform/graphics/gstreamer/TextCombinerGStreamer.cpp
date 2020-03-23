@@ -273,6 +273,7 @@ static void webkit_text_combiner_class_init(WebKitTextCombinerClass* klass)
         GST_DEBUG_FUNCPTR(webkitTextCombinerReleasePad);
 
     GRefPtr<GstElementFactory> webVTTEncFactory = adoptGRef(gst_element_factory_find("webvttenc"));
+    ASSERT(webVTTEncFactory);
     gst_object_unref(gst_plugin_feature_load(GST_PLUGIN_FEATURE(webVTTEncFactory.get())));
     webVTTEncType = gst_element_factory_get_element_type(webVTTEncFactory.get());
     ASSERT(webVTTEncType);
@@ -292,6 +293,12 @@ static void webkit_text_combiner_pad_class_init(WebKitTextCombinerPadClass* klas
 
 GstElement* webkitTextCombinerNew()
 {
+    // The combiner relies on webvttenc, fail early if it's not there.
+    if (!WebCore::isGStreamerPluginAvailable("subenc")) {
+        WTFLogAlways("WebKit wasn't able to find a WebVTT encoder. Not continuing without platform support for subtitles.");
+        return nullptr;
+    }
+
     return GST_ELEMENT(g_object_new(WEBKIT_TYPE_TEXT_COMBINER, nullptr));
 }
 
