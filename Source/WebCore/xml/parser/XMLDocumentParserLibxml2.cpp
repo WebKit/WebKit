@@ -39,7 +39,9 @@
 #include "HTMLEntityParser.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLTemplateElement.h"
+#include "HTTPParsers.h"
 #include "InlineClassicScript.h"
+#include "MIMETypeRegistry.h"
 #include "PendingScript.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
@@ -375,6 +377,19 @@ private:
     unsigned m_currentOffset;
 };
 
+static bool externalEntityMimeTypeAllowedByNosniff(const ResourceResponse& response)
+{
+    ContentTypeOptionsDisposition contentTypeOption = parseContentTypeOptionsHeader(response.httpHeaderField(HTTPHeaderName::XContentTypeOptions));
+    if (contentTypeOption != ContentTypeOptionsNosniff) {
+        // Allow any MIME type without 'X-Content-Type-Options: nosniff' HTTP header.
+        return true;
+    }
+    String mimeType = extractMIMETypeFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType));
+    if (MIMETypeRegistry::isXMLMIMEType(mimeType) || MIMETypeRegistry::isXMLEntityMIMEType(mimeType))
+        return true;
+    return false;
+}
+
 static inline void setAttributes(Element* element, Vector<Attribute>& attributeVector, ParserContentPolicy parserContentPolicy)
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
@@ -455,6 +470,11 @@ static void* openFunc(const char* uri)
             options.mode = FetchOptions::Mode::SameOrigin;
             options.credentials = FetchOptions::Credentials::Include;
             cachedResourceLoader->frame()->loader().loadResourceSynchronously(url, ClientCredentialPolicy::MayAskClientForCredentials, options, { }, error, response, data);
+            if (!externalEntityMimeTypeAllowedByNosniff(response)) {
+                data = nullptr;
+                if (Page* page = cachedResourceLoader->document()->page())
+                    page->console().addMessage(MessageSource::Security, MessageLevel::Error, makeString("Did not parse external entity resource at '", url.stringCenterEllipsizedToLength(), "' because non XML External Entity MIME types are not allowed when 'X-Content-Type-Options: nosniff' is given."));
+            }
         }
     }
 

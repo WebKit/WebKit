@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+[
+<!ENTITY entA SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=application/xml">
+<!ENTITY entB SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/xml">
+<!ENTITY entC SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=application/xml-external-parsed-entity">
+<!ENTITY entD SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/xml-external-parsed-entity">
+<!ENTITY entE SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=application/pdf">
+<!ENTITY entF SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/html">
+<!ENTITY entG SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/javascript">
+]>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>'X-Content-Type-Options: nosniff' blocks xml external entity resources with improper MIME type</title>
+    <script src="/js-test-resources/js-test-pre.js"></script>
+    <script type="text/javascript">
+        window.jsTestIsAsync = true;
+        window.scriptsSuccessfullyLoaded = 0;
+
+        window.onload = function () {
+            shouldBe('window.scriptsSuccessfullyLoaded', '4');
+            finishJSTest();
+        };
+    </script>
+    <script type="text/javascript">&entA;</script>
+    <script type="text/javascript">&entB;</script>
+    <script type="text/javascript">&entC;</script>
+    <script type="text/javascript">&entD;</script>
+    <script type="text/javascript">&entE;</script>
+    <script type="text/javascript">&entF;</script>
+    <script type="text/javascript">&entG;</script>
+</head>
+<body>
+    <script type="text/javascript">
+        description('Check that xml external entity resources loaded with an \'X-Content-Type-Options: nosniff\' header are correctly accepted or blocked based on the MIME type.');
+    </script>
+    <script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>
