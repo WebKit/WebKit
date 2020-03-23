@@ -1,3 +1,16 @@
+2020-03-23  Antoine Quint  <graouts@apple.com>
+
+        DocumentTimeline / CSSTransition objects are leaking on CNN.com
+        https://bugs.webkit.org/show_bug.cgi?id=208069
+        <rdar://problem/59680143>
+
+        Reviewed by Darin Adler.
+
+        Integrating post-commit review feedback from Darin. 
+
+        * wtf/ListHashSet.h:
+        (WTF::=):
+
 2020-03-23  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r249808): [GTK] Crash in JSC Config::permanentlyFreeze() on architecture ppc64el

@@ -351,8 +351,8 @@ inline ListHashSet<T, U>::ListHashSet(ListHashSet&& other)
 template<typename T, typename U>
 inline ListHashSet<T, U>& ListHashSet<T, U>::operator=(ListHashSet&& other)
 {
-    ListHashSet tmp(WTFMove(other));
-    swap(tmp);
+    ListHashSet movedSet(WTFMove(other));
+    swap(movedSet);
     return *this;
 }
 

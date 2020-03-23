@@ -1039,7 +1039,7 @@ ExceptionOr<unsigned> Internals::lastSpatialNavigationCandidateCount() const
 bool Internals::animationWithIdExists(const String& id) const
 {
     for (auto* animation : WebAnimation::instances()) {
-        if (animation && animation->id() == id)
+        if (animation->id() == id)
             return true;
     }
     return false;
