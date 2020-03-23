@@ -30,6 +30,7 @@
 
 #include "DisplayBox.h"
 #include "LayoutContainerBox.h"
+#include "LayoutInitialContainingBlock.h"
 #include "LayoutPhase.h"
 #include "LayoutState.h"
 #include "RenderStyle.h"
@@ -70,7 +71,7 @@ bool Box::establishesFormattingContext() const
 bool Box::establishesBlockFormattingContext() const
 {
     // ICB always creates a new (inital) block formatting context.
-    if (isInitialContainingBlock())
+    if (is<ContainerBox>(*this))
         return true;
 
     if (isTableWrapperBox())
@@ -183,7 +184,7 @@ const ContainerBox& Box::containingBlock() const
     // Finding the containing block by traversing the tree during tree construction could provide incorrect result.
     ASSERT(!Phase::isInTreeBuilding());
     // If we ever end up here with the ICB, we must be doing something not-so-great.
-    RELEASE_ASSERT(!isInitialContainingBlock());
+    RELEASE_ASSERT(!is<InitialContainingBlock>(*this));
     // The containing block in which the root element lives is a rectangle called the initial containing block.
     // For other elements, if the element's position is 'relative' or 'static', the containing block is formed by the
     // content edge of the nearest block container ancestor box or which establishes a formatting context.
@@ -192,7 +193,7 @@ const ContainerBox& Box::containingBlock() const
     // 'position' of 'absolute', 'relative' or 'fixed'.
     if (!isPositioned() || isInFlowPositioned()) {
         auto* ancestor = parent();
-        for (; !ancestor->isInitialContainingBlock(); ancestor = ancestor->parent()) {
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = ancestor->parent()) {
             if (ancestor->isBlockContainerBox() || ancestor->establishesFormattingContext())
                 return *ancestor;
         }
@@ -201,7 +202,7 @@ const ContainerBox& Box::containingBlock() const
 
     if (isFixedPositioned()) {
         auto* ancestor = parent();
-        for (; !ancestor->isInitialContainingBlock(); ancestor = ancestor->parent()) {
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = ancestor->parent()) {
             if (ancestor->style().hasTransform())
                 return *ancestor;
         }
@@ -210,7 +211,7 @@ const ContainerBox& Box::containingBlock() const
 
     if (isOutOfFlowPositioned()) {
         auto* ancestor = parent();
-        for (; !ancestor->isInitialContainingBlock(); ancestor = ancestor->parent()) {
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = ancestor->parent()) {
             if (ancestor->isPositioned() || ancestor->style().hasTransform())
                 return *ancestor;
         }
@@ -226,7 +227,7 @@ const ContainerBox& Box::formattingContextRoot() const
     // Finding the context root by traversing the tree during tree construction could provide incorrect result.
     ASSERT(!Phase::isInTreeBuilding());
     // We should never need to ask this question on the ICB.
-    ASSERT(!isInitialContainingBlock());
+    ASSERT(!is<InitialContainingBlock>(*this));
     // A box lives in the same formatting context as its containing block unless the containing block establishes a formatting context.
     // However relatively positioned (inflow) inline container lives in the formatting context where its parent lives unless
     // the parent establishes a formatting context.
@@ -240,26 +241,26 @@ const ContainerBox& Box::formattingContextRoot() const
     return ancestor.formattingContextRoot();
 }
 
-const ContainerBox& Box::initialContainingBlock() const
+const InitialContainingBlock& Box::initialContainingBlock() const
 {
-    if (isInitialContainingBlock())
-        return downcast<ContainerBox>(*this);
+    if (is<InitialContainingBlock>(*this))
+        return downcast<InitialContainingBlock>(*this);
 
     auto* ancestor = parent();
     for (; ancestor->parent(); ancestor = ancestor->parent()) { }
 
-    return *ancestor;
+    return downcast<InitialContainingBlock>(*ancestor);
 }
 
 bool Box::isInFormattingContextOf(const ContainerBox& formattingContextRoot) const
 { 
     ASSERT(formattingContextRoot.establishesFormattingContext());
-    ASSERT(!isInitialContainingBlock());
+    ASSERT(!is<InitialContainingBlock>(*this));
     auto* ancestor = &containingBlock();
     while (ancestor) {
         if (ancestor == &formattingContextRoot)
             return true;
-        if (ancestor->isInitialContainingBlock())
+        if (is<InitialContainingBlock>(*ancestor))
             return false;
         ancestor = &ancestor->containingBlock();
     }
@@ -360,7 +361,7 @@ bool Box::isOverflowVisible() const
             return isOverflowVisible;
         return true;
     }
-    if (isInitialContainingBlock()) {
+    if (is<InitialContainingBlock>(*this)) {
         auto* documentBox = downcast<ContainerBox>(*this).firstChild();
         if (!documentBox || !documentBox->isDocumentBox() || !is<ContainerBox>(documentBox))
             return isOverflowVisible;
