@@ -1,0 +1,12 @@
+
+Make sure that the audio element shadow node elements have touch event listeners.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS button.boolAttributeValue('AXHasTouchEventListener') is true
+PASS button.description is 'AXLabel: Play'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
