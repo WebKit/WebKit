@@ -1422,9 +1422,8 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tryGetById(BytecodeGenerator& 
     RefPtr<RegisterID> base = generator.emitNode(node);
     node = node->m_next;
 
-    // Since this is a builtin we expect the creator to use a string literal as the second argument.
-    ASSERT(node->m_expr->isString());
-    const Identifier& ident = static_cast<StringNode*>(node->m_expr)->value();
+    ASSERT(node->m_expr->isString() || node->m_expr->isResolveNode());
+    const Identifier& ident = node->m_expr->isString() ? static_cast<StringNode*>(node->m_expr)->value() : static_cast<ResolveNode*>(node->m_expr)->identifier();
     ASSERT(!node->m_next);
 
     RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
