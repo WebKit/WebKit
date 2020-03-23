@@ -858,7 +858,9 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
     m_boundArrayBuffer = nullptr;
     m_defaultVertexArrayObject = nullptr;
     m_boundVertexArrayObject = nullptr;
+#if !USE(ANGLE)
     m_vertexAttrib0Buffer = nullptr;
+#endif
     m_currentProgram = nullptr;
     m_framebufferBinding = nullptr;
     m_readFramebufferBinding = nullptr;
@@ -1962,7 +1964,9 @@ void WebGLRenderingContextBase::disableVertexAttribArray(GCGLuint index)
     WebGLVertexArrayObjectBase::VertexAttribState& state = m_boundVertexArrayObject->getVertexAttribState(index);
     state.enabled = false;
 
+#if !USE(ANGLE)
     if (index > 0 || isGLES2Compliant())
+#endif
         m_context->disableVertexAttribArray(index);
 }
 
@@ -2176,10 +2180,12 @@ bool WebGLRenderingContextBase::validateDrawArrays(const char* functionName, GCG
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
         return false;
     }
+#if !USE(ANGLE)
     if (!validateSimulatedVertexAttrib0(checkedSum.unsafeGet() - 1)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "attempt to access outside the bounds of the simulated vertexAttrib0 array");
         return false;
     }
+#endif
 
     const char* reason = "framebuffer incomplete";
     if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContextGL(), &reason)) {
@@ -2254,10 +2260,12 @@ bool WebGLRenderingContextBase::validateDrawElements(const char* functionName, G
         }
     }
 
+#if !USE(ANGLE)
     if (!validateSimulatedVertexAttrib0(numElements)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "attempt to access outside the bounds of the simulated vertexAttrib0 array");
         return false;
     }
+#endif
     
     const char* reason = "framebuffer incomplete";
     if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContextGL(), &reason)) {
@@ -2278,6 +2286,7 @@ void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsiz
 
     clearIfComposited();
 
+#if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;
     if (!isGLES2Compliant()) {
         auto simulateVertexAttrib0Status = simulateVertexAttrib0(first + count - 1);
@@ -2288,6 +2297,7 @@ void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsiz
         }
         vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
     }
+#endif
     bool usesFallbackTexture = false;
     if (!isGLES2NPOTStrict())
         usesFallbackTexture = checkTextureCompleteness("drawArrays", true);
@@ -2298,8 +2308,10 @@ void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsiz
         m_context->drawArrays(mode, first, count);
     }
 
+#if !USE(ANGLE)
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
+#endif
     if (usesFallbackTexture)
         checkTextureCompleteness("drawArrays", false);
     markContextChangedAndNotifyCanvasObserver();
@@ -2336,6 +2348,7 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
     if (!isGLES2Compliant()) {
         if (!numElements)
             validateIndexArrayPrecise(count, type, static_cast<GCGLintptr>(offset), numElements);
+#if !USE(ANGLE)
         auto simulateVertexAttrib0Status = simulateVertexAttrib0(numElements);
         if (!simulateVertexAttrib0Status) {
             // We were unable to simulate the attribute buffer.
@@ -2343,6 +2356,7 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
             return;
         }
         vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
+#endif
     }
 
     bool usesFallbackTexture = false;
@@ -2360,8 +2374,12 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
         m_context->drawElements(mode, count, type, static_cast<GCGLintptr>(offset));
     }
 
+#if !USE(ANGLE)
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
+#else
+    UNUSED_VARIABLE(vertexAttrib0Simulated);
+#endif
     if (usesFallbackTexture)
         checkTextureCompleteness("drawElements", false);
     markContextChangedAndNotifyCanvasObserver();
@@ -2547,6 +2565,7 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram
     GraphicsContextGL::ActiveInfo info;
     if (!m_context->getActiveUniform(objectOrZero(program), index, info))
         return nullptr;
+    // FIXME: Do we still need this for the ANGLE backend?
     if (!isGLES2Compliant())
         if (info.size > 1 && !info.name.endsWith("[0]"))
             info.name.append("[0]");
@@ -3049,10 +3068,12 @@ WebGLAny WebGLRenderingContextBase::getVertexAttrib(GCGLuint index, GCGLenum pna
 
     switch (pname) {
     case GraphicsContextGL::VERTEX_ATTRIB_ARRAY_BUFFER_BINDING:
+#if !USE(ANGLE)
         if ((!isGLES2Compliant() && !index && m_boundVertexArrayObject->getVertexAttribState(0).bufferBinding == m_vertexAttrib0Buffer)
             || !state.bufferBinding
             || !state.bufferBinding->object())
             return nullptr;
+#endif
         return state.bufferBinding;
     case GraphicsContextGL::VERTEX_ATTRIB_ARRAY_ENABLED:
         return state.enabled;
@@ -6109,8 +6130,11 @@ void WebGLRenderingContextBase::vertexAttribfImpl(const char* functionName, GCGL
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "index out of range");
         return;
     }
+#if !USE(ANGLE)
     // In GL, we skip setting vertexAttrib0 values.
-    if (index || isGLES2Compliant()) {
+    if (index || isGLES2Compliant())
+#endif
+    {
         switch (expectedSize) {
         case 1:
             m_context->vertexAttrib1f(index, v0);
@@ -6153,8 +6177,11 @@ void WebGLRenderingContextBase::vertexAttribfvImpl(const char* functionName, GCG
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "index out of range");
         return;
     }
+#if !USE(ANGLE)
     // In GL, we skip setting vertexAttrib0 values.
-    if (index || isGLES2Compliant()) {
+    if (index || isGLES2Compliant())
+#endif
+    {
         switch (expectedSize) {
         case 1:
             m_context->vertexAttrib1fv(index, data);
@@ -6176,6 +6203,7 @@ void WebGLRenderingContextBase::vertexAttribfvImpl(const char* functionName, GCG
         attribValue.value[ii] = data[ii];
 }
 
+#if !USE(ANGLE)
 void WebGLRenderingContextBase::initVertexAttrib0()
 {
     WebGLVertexArrayObjectBase::VertexAttribState& state = m_boundVertexArrayObject->getVertexAttribState(0);
@@ -6288,6 +6316,7 @@ void WebGLRenderingContextBase::restoreStatesAfterVertexAttrib0Simulation()
     }
     m_context->bindBuffer(GraphicsContextGL::ARRAY_BUFFER, objectOrZero(m_boundArrayBuffer.get()));
 }
+#endif
 
 void WebGLRenderingContextBase::dispatchContextLostEvent()
 {
@@ -6558,6 +6587,7 @@ void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first
 
     clearIfComposited();
 
+#if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;
     if (!isGLES2Compliant()) {
         auto simulateVertexAttrib0Status = simulateVertexAttrib0(first + count - 1);
@@ -6568,13 +6598,16 @@ void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first
         }
         vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
     }
+#endif
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawArraysInstanced", true);
 
     m_context->drawArraysInstanced(mode, first, count, primcount);
 
+#if !USE(ANGLE)
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
+#endif
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawArraysInstanced", false);
     markContextChangedAndNotifyCanvasObserver();
@@ -6597,6 +6630,7 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
     if (!isGLES2Compliant()) {
         if (!numElements)
             validateIndexArrayPrecise(count, type, static_cast<GCGLintptr>(offset), numElements);
+#if !USE(ANGLE)
         auto simulateVertexAttrib0Status = simulateVertexAttrib0(numElements);
         if (!simulateVertexAttrib0Status) {
             // We were unable to simulate the attribute buffer.
@@ -6604,6 +6638,7 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
             return;
         }
         vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
+#endif
     }
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawElementsInstanced", true);
@@ -6615,8 +6650,12 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
 
     m_context->drawElementsInstanced(mode, count, type, static_cast<GCGLintptr>(offset), primcount);
 
+#if !USE(ANGLE)
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
+#else
+    UNUSED_VARIABLE(vertexAttrib0Simulated);
+#endif
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawElementsInstanced", false);
     markContextChangedAndNotifyCanvasObserver();

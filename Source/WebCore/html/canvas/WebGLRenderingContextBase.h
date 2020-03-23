@@ -512,11 +512,13 @@ protected:
     };
     Vector<VertexAttribValue> m_vertexAttribValue;
     unsigned m_maxVertexAttribs;
+#if !USE(ANGLE)
     RefPtr<WebGLBuffer> m_vertexAttrib0Buffer;
     long m_vertexAttrib0BufferSize { 0 };
     GCGLfloat m_vertexAttrib0BufferValue[4];
     bool m_forceAttrib0BufferRefill { true };
     bool m_vertexAttrib0UsedBefore { false };
+#endif
 
     RefPtr<WebGLProgram> m_currentProgram;
     RefPtr<WebGLFramebuffer> m_framebufferBinding;
@@ -820,11 +822,13 @@ protected:
 
     bool validateAndCacheBufferBinding(const char* functionName, GCGLenum target, WebGLBuffer*);
 
+#if !USE(ANGLE)
     // Helpers for simulating vertexAttrib0.
     void initVertexAttrib0();
     Optional<bool> simulateVertexAttrib0(GCGLuint numVertex);
     bool validateSimulatedVertexAttrib0(GCGLuint numVertex);
     void restoreStatesAfterVertexAttrib0Simulation();
+#endif
 
     // Wrapper for GraphicsContextGLOpenGL::synthesizeGLError that sends a message to the JavaScript console.
     enum ConsoleDisplayPreference { DisplayInConsole, DontDisplayInConsole };

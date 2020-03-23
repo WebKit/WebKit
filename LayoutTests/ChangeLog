@@ -1,3 +1,18 @@
+2020-03-23  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Skip vertexAttrib0 simulation when using ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=209416
+        <rdar://problem/60765734>
+
+        Reviewed by Antoine Quint.
+
+        Remove the console logging that is no longer output when using ANGLE.
+        Remove failing expectations for some tests.
+
+        * fast/canvas/webgl/index-validation-with-subsequent-draws-expected.txt:
+        * fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays-expected.txt:
+        * platform/mac/TestExpectations:
+
 2020-03-23  Darin Adler  <darin@apple.com>
 
         Change TextIterator::rangeLength to not require a live range

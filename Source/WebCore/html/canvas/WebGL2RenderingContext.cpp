@@ -120,8 +120,10 @@ void WebGL2RenderingContext::initializeVertexArrayObjects()
 #else
     bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
 #endif
+#if !USE(ANGLE)
     if (!isGLES2Compliant())
         initVertexAttrib0();
+#endif
 }
 
 void WebGL2RenderingContext::initializeShaderExtensions()
