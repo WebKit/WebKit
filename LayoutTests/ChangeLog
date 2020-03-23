@@ -1,3 +1,13 @@
+2020-03-23  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac Debug and iOS ] imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209446
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-03-23  John Wilander  <wilander@apple.com>
 
         Add the capability to change all of a website's cookies to SameSite=Strict
