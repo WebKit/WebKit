@@ -53,7 +53,7 @@
 #if PLATFORM(IOS_FAMILY)
 #include "AudioSession.h"
 #include "RuntimeApplicationChecks.h"
-#include <wtf/spi/darwin/dyldSPI.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 namespace WebCore {
@@ -737,7 +737,7 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback() const
 #if PLATFORM(IOS_FAMILY)
     if (IOSApplication::isIBooks())
         return !m_element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr) && !m_element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr);
-    if (dyld_get_program_sdk_version() < DYLD_IOS_VERSION_10_0)
+    if (applicationSDKVersion() < DYLD_IOS_VERSION_10_0)
         return !m_element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr);
 #endif
 

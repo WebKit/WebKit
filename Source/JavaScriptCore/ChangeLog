@@ -1,3 +1,23 @@
+2020-03-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Push applicationSDKVersion() down from WebCore into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=209030
+
+        Reviewed by Simon Fraser.
+
+        dyld_get_program_sdk_version() gives you the wrong answer in the Web Process (or at least
+        not the answer you actually want). There are already facilities for the UI Process to tell
+        the Web Process what the real value is, but those functions are currently in WebCore,
+        which is inaccessible to WTF. This patch is in preparation for
+        https://bugs.webkit.org/show_bug.cgi?id=208969 which needs to know this information in WTF.
+
+        I also found a few places which were calling dyld_get_program_sdk_version() in JavaScriptCore
+        and WebCore (which is wrong because those libraries exist in the Web Process), and have fixed
+        them up to use applicationSDKVersion() instead.
+
+        * API/JSWrapperMap.mm:
+        (supportsInitMethodConstructors):
+
 2020-03-17  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/60396286

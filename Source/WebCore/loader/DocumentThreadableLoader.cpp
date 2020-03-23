@@ -64,7 +64,7 @@
 #include <wtf/Ref.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include <wtf/spi/darwin/dyldSPI.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 namespace WebCore {
