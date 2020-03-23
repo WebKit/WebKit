@@ -1,5 +1,36 @@
 2020-03-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, rename keepAlive to ensureStillAliveHere
+        https://bugs.webkit.org/show_bug.cgi?id=209398
+
+        Based on Geoff and Mark's feedback, renaming keepAlive to ensureStillAliveHere
+        to make the effect of keepAlive clear.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsReadModifyWrite):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArraySlice):
+        (JSC::FTL::DFG::LowerDFGToB3::ensureStillAliveHere):
+        (JSC::FTL::DFG::LowerDFGToB3::keepAlive): Deleted.
+        * heap/HeapCell.cpp:
+        (JSC::ensureStillAliveHere):
+        (JSC::keepAlive): Deleted.
+        * heap/HeapCell.h:
+        (JSC::ensureStillAliveHere):
+        (JSC::HeapCell::use const):
+        (JSC::keepAlive): Deleted.
+        * runtime/JSCJSValue.cpp:
+        (JSC::ensureStillAliveHere):
+        (JSC::keepAlive): Deleted.
+        * runtime/JSCJSValue.h:
+        (JSC::ensureStillAliveHere):
+        (JSC::keepAlive): Deleted.
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+
+2020-03-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add JSC::keepAlive(JSValue)
         https://bugs.webkit.org/show_bug.cgi?id=209398
 

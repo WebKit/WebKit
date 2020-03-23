@@ -429,7 +429,7 @@ String JSValue::toWTFStringSlowCase(JSGlobalObject* globalObject) const
 
 #if !COMPILER(GCC_COMPATIBLE)
 // This makes the argument opaque from the compiler.
-NEVER_INLINE void keepAlive(JSValue)
+NEVER_INLINE void ensureStillAliveHere(JSValue)
 {
 }
 #endif

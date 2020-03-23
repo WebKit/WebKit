@@ -638,7 +638,7 @@ bool isThisValueAltered(const PutPropertySlot&, JSObject* baseObject);
 bool sameValue(JSGlobalObject*, JSValue a, JSValue b);
 
 #if COMPILER(GCC_COMPATIBLE)
-ALWAYS_INLINE void keepAlive(JSValue value)
+ALWAYS_INLINE void ensureStillAliveHere(JSValue value)
 {
 #if USE(JSVALUE64)
     asm volatile ("" : : "r"(bitwise_cast<uint64_t>(value)) : "memory");
@@ -647,7 +647,7 @@ ALWAYS_INLINE void keepAlive(JSValue value)
 #endif
 }
 #else
-JS_EXPORT_PRIVATE void keepAlive(JSValue);
+JS_EXPORT_PRIVATE void ensureStillAliveHere(JSValue);
 #endif
 
 } // namespace JSC

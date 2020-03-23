@@ -44,7 +44,7 @@ bool HeapCell::isLive()
 
 #if !COMPILER(GCC_COMPATIBLE)
 // This makes the argument opaque from the compiler.
-NEVER_INLINE void keepAlive(const void*)
+NEVER_INLINE void ensureStillAliveHere(const void*)
 {
 }
 #endif
