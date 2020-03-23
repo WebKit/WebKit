@@ -1,3 +1,13 @@
+2020-03-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Uncaught Exception: TypeError: this._springEditor.removeListeners is not a function. (In 'this._springEditor.removeListeners()', 'this._springEditor.removeListeners' is undefined)
+        https://bugs.webkit.org/show_bug.cgi?id=209325
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/CodeMirrorSpringEditingController.js:
+        (WI.CodeMirrorSpringEditingController.prototype.popoverDidDismiss): Deleted.
+
 2020-03-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Uncaught Exception: Right side of assignment cannot be destructured (at QuickConsole.js:358:30)

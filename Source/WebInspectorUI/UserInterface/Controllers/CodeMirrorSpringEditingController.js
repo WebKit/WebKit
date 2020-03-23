@@ -49,11 +49,6 @@ WI.CodeMirrorSpringEditingController = class CodeMirrorSpringEditingController e
         this._springEditor.spring = this.value;
     }
 
-    popoverDidDismiss(popover)
-    {
-        this._springEditor.removeListeners();
-    }
-
     // Private
 
     _springEditorSpringChanged(event)
