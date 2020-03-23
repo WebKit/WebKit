@@ -27,7 +27,8 @@
 
 #include "ActiveDOMObject.h"
 #include "CacheStorageConnection.h"
-#include "CacheStorageRecord.h"
+#include "FetchRequest.h"
+#include "FetchResponse.h"
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -57,7 +58,7 @@ public:
     const String& name() const { return m_name; }
     uint64_t identifier() const { return m_identifier; }
 
-    using MatchCallback = Function<void(ExceptionOr<RefPtr<FetchResponse>>)>;
+    using MatchCallback = CompletionHandler<void(ExceptionOr<RefPtr<FetchResponse>>)>;
     void doMatch(RequestInfo&&, CacheQueryOptions&&, MatchCallback&&);
 
     CacheStorageConnection& connection() { return m_connection.get(); }
@@ -73,22 +74,21 @@ private:
 
     void putWithResponseData(DOMPromiseDeferred<void>&&, Ref<FetchRequest>&&, Ref<FetchResponse>&&, ExceptionOr<RefPtr<SharedBuffer>>&&);
 
-    void retrieveRecords(const URL&, WTF::Function<void(Optional<Exception>&&)>&&);
-    Vector<CacheStorageRecord> queryCacheWithTargetStorage(const FetchRequest&, const CacheQueryOptions&, const Vector<CacheStorageRecord>&);
-    void queryCache(Ref<FetchRequest>&&, CacheQueryOptions&&, WTF::Function<void(ExceptionOr<Vector<CacheStorageRecord>>&&)>&&);
-    void batchDeleteOperation(const FetchRequest&, CacheQueryOptions&&, WTF::Function<void(ExceptionOr<bool>&&)>&&);
-    void batchPutOperation(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&, WTF::Function<void(ExceptionOr<void>&&)>&&);
-    void batchPutOperation(Vector<DOMCacheEngine::Record>&&, WTF::Function<void(ExceptionOr<void>&&)>&&);
+    using RecordsCallback = CompletionHandler<void(ExceptionOr<Vector<DOMCacheEngine::Record>>&&)>;
+    void retrieveRecords(const URL&, RecordsCallback&&);
+    Vector<DOMCacheEngine::Record> queryCacheWithTargetStorage(const FetchRequest&, const CacheQueryOptions&, const Vector<DOMCacheEngine::Record>&);
+    void queryCache(Ref<FetchRequest>&&, CacheQueryOptions&&, RecordsCallback&&);
+    void batchDeleteOperation(const FetchRequest&, CacheQueryOptions&&, CompletionHandler<void(ExceptionOr<bool>&&)>&&);
+    void batchPutOperation(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&, CompletionHandler<void(ExceptionOr<void>&&)>&&);
+    void batchPutOperation(Vector<DOMCacheEngine::Record>&&, CompletionHandler<void(ExceptionOr<void>&&)>&&);
 
-    void updateRecords(Vector<DOMCacheEngine::Record>&&);
-    Vector<Ref<FetchResponse>> cloneResponses(const Vector<CacheStorageRecord>&);
+    Vector<Ref<FetchResponse>> cloneResponses(const Vector<DOMCacheEngine::Record>&);
     DOMCacheEngine::Record toConnectionRecord(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&);
 
     String m_name;
     uint64_t m_identifier;
     Ref<CacheStorageConnection> m_connection;
 
-    Vector<CacheStorageRecord> m_records;
     bool m_isStopped { false };
 };
 

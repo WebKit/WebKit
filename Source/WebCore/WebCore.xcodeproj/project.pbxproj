@@ -1132,7 +1132,6 @@
 		41D129CE1F3D0EF600D15E47 /* WorkerGlobalScopeCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB278D1F34C28200795487 /* WorkerGlobalScopeCaches.h */; };
 		41D129D01F3D0F0500D15E47 /* CacheQueryOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB279B1F34CEF000795487 /* CacheQueryOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129D11F3D0F0E00D15E47 /* DOMWindowCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB278C1F34C28200795487 /* DOMWindowCaches.h */; };
-		41D129D21F3D0F1200D15E47 /* CacheStorageRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129CA1F3D0EE300D15E47 /* CacheStorageRecord.h */; };
 		41D129D31F3D0F1600D15E47 /* CacheStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129D51F3D0F6900D15E47 /* CacheStorageProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129D41F3D0F6600D15E47 /* CacheStorageProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129DB1F3D143800D15E47 /* FetchHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F54F831C50C4F600338488 /* FetchHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7558,7 +7557,6 @@
 		41D015C80F4B5C71004A662F /* ContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentType.h; sourceTree = "<group>"; };
 		41D015C90F4B5C71004A662F /* ContentType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentType.cpp; sourceTree = "<group>"; };
 		41D129C91F3D0EE300D15E47 /* CacheStorageConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageConnection.cpp; sourceTree = "<group>"; };
-		41D129CA1F3D0EE300D15E47 /* CacheStorageRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageRecord.h; sourceTree = "<group>"; };
 		41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageConnection.h; sourceTree = "<group>"; };
 		41D129D41F3D0F6600D15E47 /* CacheStorageProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageProvider.h; sourceTree = "<group>"; };
 		41D1938F2152C561006F14CA /* RealtimeVideoUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeVideoUtilities.h; sourceTree = "<group>"; };
@@ -18202,7 +18200,6 @@
 				41FB27991F34CE9C00795487 /* CacheQueryOptions.idl */,
 				41D129C91F3D0EE300D15E47 /* CacheStorageConnection.cpp */,
 				41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */,
-				41D129CA1F3D0EE300D15E47 /* CacheStorageRecord.h */,
 				41380C201F34368A00155FDA /* DOMCache.cpp */,
 				41380C251F34369A00155FDA /* DOMCache.h */,
 				41380C231F34369400155FDA /* DOMCache.idl */,
@@ -29581,7 +29578,6 @@
 				41D129D01F3D0F0500D15E47 /* CacheQueryOptions.h in Headers */,
 				41D129D31F3D0F1600D15E47 /* CacheStorageConnection.h in Headers */,
 				41D129D51F3D0F6900D15E47 /* CacheStorageProvider.h in Headers */,
-				41D129D21F3D0F1200D15E47 /* CacheStorageRecord.h in Headers */,
 				E43AF8E71AC5B7EC00CA717E /* CacheValidation.h in Headers */,
 				49AE2D97134EE5F90072920A /* CalculationValue.h in Headers */,
 				7C1E8D011ED0C2DA00B1D983 /* CallbackResult.h in Headers */,
