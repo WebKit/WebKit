@@ -5257,16 +5257,20 @@ private:
 
     void compileDeleteById()
     {
-        LValue base;
-
         switch (m_node->child1().useKind()) {
         case CellUse: {
-            base = lowCell(m_node->child1());
+            LValue base = lowCell(m_node->child1());
+            compileDelBy<DelByKind::Normal>(base, m_graph.identifiers()[m_node->identifierNumber()]);
             break;
         }
 
         case UntypedUse: {
-            base = lowJSValue(m_node->child1());
+            // FIXME: We should use IC even if child1 is UntypedUse. In that case, we should emit write-barrier after tha fast path of IC.
+            // https://bugs.webkit.org/show_bug.cgi?id=209397
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+            LValue base = lowJSValue(m_node->child1());
+            auto uid = m_graph.identifiers()[m_node->identifierNumber()];
+            setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteByIdGeneric, weakPointer(globalObject), m_out.intPtrZero, base, m_out.constIntPtr(uid))));
             break;
         }
 
@@ -5274,46 +5278,47 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             return;
         }
-        compileDelBy<DelByKind::Normal>(base, m_graph.identifiers()[m_node->identifierNumber()]);
     }
 
     void compileDeleteByVal()
     {
-        LValue base;
-        LValue subscript;
-
         switch (m_node->child1().useKind()) {
         case CellUse: {
-            base = lowCell(m_node->child1());
-            break;
+            LValue base = lowCell(m_node->child1());
+            LValue subscript;
+            switch (m_node->child2().useKind()) {
+            case CellUse: {
+                subscript = lowCell(m_node->child2());
+                break;
+            }
+
+            case UntypedUse: {
+                subscript = lowJSValue(m_node->child2());
+                break;
+            }
+
+            default:
+                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                return;
+            }
+            compileDelBy<DelByKind::NormalByVal>(base, subscript);
+            return;
         }
 
         case UntypedUse: {
-            base = lowJSValue(m_node->child1());
-            break;
+            // FIXME: We should use IC even if child1 is UntypedUse. In that case, we should emit write-barrier after tha fast path of IC.
+            // https://bugs.webkit.org/show_bug.cgi?id=209397
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+            LValue base = lowJSValue(m_node->child1());
+            LValue subscript = lowJSValue(m_node->child2());
+            setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteByValGeneric, weakPointer(globalObject), m_out.intPtrZero, base, subscript)));
+            return;
         }
 
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             return;
         }
-
-        switch (m_node->child2().useKind()) {
-        case CellUse: {
-            subscript = lowCell(m_node->child2());
-            break;
-        }
-
-        case UntypedUse: {
-            subscript = lowJSValue(m_node->child2());
-            break;
-        }
-
-        default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
-            return;
-        }
-        compileDelBy<DelByKind::NormalByVal>(base, subscript);
     }
     
     void compileArrayPush()

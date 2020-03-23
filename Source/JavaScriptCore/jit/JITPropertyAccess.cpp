@@ -289,7 +289,10 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(ByValInfo* byValInfo, Op bytec
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         JSValueRegs(regT0), JSValueRegs(regT1), regT2, m_codeBlock->ecmaMode(), putKind);
     gen.generateFastPath(*this);
-    emitWriteBarrier(base, value, ShouldFilterBase);
+    // IC can write new Structure without write-barrier if a base is cell.
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
     doneCases.append(jump());
 
     Label coldPathBegin = label();
@@ -400,6 +403,12 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
 
     boxBoolean(regT0, JSValueRegs(regT0));
     emitPutVirtualRegister(dst, JSValueRegs(regT0));
+
+    // IC can write new Structure without write-barrier if a base is cell.
+    // We should emit write-barrier at the end of sequence since write-barrier clobbers registers.
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
 }
 
 void JIT::emitSlow_op_del_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -443,6 +452,12 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
 
     boxBoolean(regT0, JSValueRegs(regT0));
     emitPutVirtualRegister(dst, JSValueRegs(regT0));
+
+    // We should emit write-barrier at the end of sequence since write-barrier clobbers registers.
+    // IC can write new Structure without write-barrier if a base is cell.
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
 }
 
 void JIT::emitSlow_op_del_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -654,10 +669,12 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
-    
-    emitWriteBarrier(baseVReg, valueVReg, ShouldFilterBase);
-
     m_putByIds.append(gen);
+    
+    // IC can write new Structure without write-barrier if a base is cell.
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(baseVReg, ShouldFilterBase);
 }
 
 void JIT::emitSlow_op_put_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1176,6 +1193,7 @@ void JIT::emit_op_put_to_arguments(const Instruction* currentInstruction)
 
 void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBarrierMode mode)
 {
+    // value may be invalid VirtualRegister if mode is UnconditionalWriteBarrier or ShouldFilterBase.
     Jump valueNotCell;
     if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
         emitGetVirtualRegister(value, regT0);
@@ -1242,6 +1260,7 @@ void JIT::emit_op_put_internal_field(const Instruction* currentInstruction)
 
 void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBarrierMode mode)
 {
+    // value may be invalid VirtualRegister if mode is UnconditionalWriteBarrier or ShouldFilterBase.
     Jump valueNotCell;
     if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
         emitLoadTag(value, regT0);
@@ -1278,6 +1297,12 @@ void JIT::emitWriteBarrier(JSCell* owner, VirtualRegister value, WriteBarrierMod
 }
 
 #endif // USE(JSVALUE64)
+
+void JIT::emitWriteBarrier(VirtualRegister owner, WriteBarrierMode mode)
+{
+    ASSERT(mode == UnconditionalWriteBarrier || mode == ShouldFilterBase);
+    emitWriteBarrier(owner, VirtualRegister(), mode);
+}
 
 void JIT::emitWriteBarrier(JSCell* owner)
 {

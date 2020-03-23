@@ -5441,82 +5441,111 @@ void SpeculativeJIT::compileStringCodePointAt(Node* node)
 
 void SpeculativeJIT::compileDeleteById(Node* node)
 {
-    speculate(node, node->child1());
+    if (node->child1().useKind() == CellUse) {
+        SpeculateCellOperand base(this, node->child1());
+        GPRTemporary result(this);
+        GPRTemporary scratch(this);
 
-    GPRTemporary result(this);
-    GPRTemporary scratch(this);
-    JSValueOperand base(this, node->child1(), ManualOperandSpeculation);
+        auto* property = identifierUID(node->identifierNumber());
+        JITCompiler::JumpList slowCases;
 
-    auto* property = identifierUID(node->identifierNumber());
-    JITCompiler::JumpList slowCases;
+        GPRReg baseGPR = base.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        CodeOrigin codeOrigin = node->origin.semantic;
+        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+        RegisterSet usedRegisters = this->usedRegisters();
+
+        JITDelByIdGenerator gen(
+            m_jit.codeBlock(), codeOrigin, callSite, usedRegisters,
+            JSValueRegs(baseGPR), resultGPR, scratchGPR);
+
+        gen.generateFastPath(m_jit);
+        slowCases.append(gen.slowPathJump());
+
+        std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
+            slowCases, this, operationDeleteByIdOptimize,
+            resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), JSValueRegs(baseGPR), property);
+
+        m_jit.addDelById(gen, slowPath.get());
+        addSlowPathGenerator(WTFMove(slowPath));
+
+        unblessedBooleanResult(resultGPR, node);
+        return;
+    }
+
+    // FIXME: We should use IC even if child1 is UntypedUse. In that case, we should emit write-barrier after the fast path of IC.
+    // https://bugs.webkit.org/show_bug.cgi?id=209397
+    ASSERT(node->child1().useKind() == UntypedUse);
+    JSValueOperand base(this, node->child1());
 
     JSValueRegs baseRegs = base.jsValueRegs();
-    GPRReg scratchGPR = scratch.gpr();
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
-
-    if (needsTypeCheck(node->child1(), SpecCell))
-        slowCases.append(m_jit.branchIfNotCell(baseRegs));
-
-    CodeOrigin codeOrigin = node->origin.semantic;
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
-    RegisterSet usedRegisters = this->usedRegisters();
-
-    JITDelByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters,
-        baseRegs, resultGPR, scratchGPR);
-
-    gen.generateFastPath(m_jit);
-    slowCases.append(gen.slowPathJump());
-
-    std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
-        slowCases, this, operationDeleteByIdOptimize,
-        resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), baseRegs, property);
-
-    m_jit.addDelById(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    callOperation(operationDeleteByIdGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, baseRegs, identifierUID(node->identifierNumber()));
+    m_jit.exceptionCheck();
 
     unblessedBooleanResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compileDeleteByVal(Node* node)
 {
-    speculate(node, node->child1());
-    speculate(node, node->child2());
+    if (node->child1().useKind() == CellUse) {
+        speculate(node, node->child2());
 
-    GPRTemporary result(this);
-    GPRTemporary scratch(this);
-    JSValueOperand base(this, node->child1(), ManualOperandSpeculation);
-    JSValueOperand key(this, node->child2(), ManualOperandSpeculation);
+        SpeculateCellOperand base(this, node->child1());
+        JSValueOperand key(this, node->child2(), ManualOperandSpeculation);
+        GPRTemporary result(this);
+        GPRTemporary scratch(this);
 
-    JITCompiler::JumpList slowCases;
+        JITCompiler::JumpList slowCases;
+
+        GPRReg baseGPR = base.gpr();
+        JSValueRegs keyRegs = key.jsValueRegs();
+        GPRReg scratchGPR = scratch.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        if (needsTypeCheck(node->child2(), SpecCell))
+            slowCases.append(m_jit.branchIfNotCell(keyRegs));
+
+        CodeOrigin codeOrigin = node->origin.semantic;
+        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+        RegisterSet usedRegisters = this->usedRegisters();
+
+        JITDelByValGenerator gen(
+            m_jit.codeBlock(), codeOrigin, callSite, usedRegisters,
+            JSValueRegs(baseGPR), keyRegs, resultGPR, scratchGPR);
+
+        gen.generateFastPath(m_jit);
+        slowCases.append(gen.slowPathJump());
+
+        std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
+            slowCases, this, operationDeleteByValOptimize,
+            resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), JSValueRegs(baseGPR), keyRegs);
+
+        m_jit.addDelByVal(gen, slowPath.get());
+        addSlowPathGenerator(WTFMove(slowPath));
+
+        unblessedBooleanResult(resultGPR, node);
+        return;
+    }
+
+    // FIXME: We should use IC even if child1 is UntypedUse. In that case, we should emit write-barrier after the fast path of IC.
+    // https://bugs.webkit.org/show_bug.cgi?id=209397
+    JSValueOperand base(this, node->child1());
+    JSValueOperand key(this, node->child2());
 
     JSValueRegs baseRegs = base.jsValueRegs();
     JSValueRegs keyRegs = key.jsValueRegs();
-    GPRReg scratchGPR = scratch.gpr();
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
-
-    if (needsTypeCheck(node->child1(), SpecCell))
-        slowCases.append(m_jit.branchIfNotCell(baseRegs));
-    if (needsTypeCheck(node->child2(), SpecCell))
-        slowCases.append(m_jit.branchIfNotCell(keyRegs));
-
-    CodeOrigin codeOrigin = node->origin.semantic;
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
-    RegisterSet usedRegisters = this->usedRegisters();
-
-    JITDelByValGenerator gen(
-        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters,
-        baseRegs, keyRegs, resultGPR, scratchGPR);
-
-    gen.generateFastPath(m_jit);
-    slowCases.append(gen.slowPathJump());
-
-    std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
-        slowCases, this, operationDeleteByValOptimize,
-        resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), baseRegs, keyRegs);
-
-    m_jit.addDelByVal(gen, slowPath.get());
-    addSlowPathGenerator(WTFMove(slowPath));
+    callOperation(operationDeleteByValGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, baseRegs, keyRegs);
+    m_jit.exceptionCheck();
 
     unblessedBooleanResult(resultGPR, node);
 }
