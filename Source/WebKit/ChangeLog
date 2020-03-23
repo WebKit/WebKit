@@ -1,3 +1,13 @@
+2020-03-23  Chris Lord  <clord@igalia.com>
+
+        [WPE] AsyncScrolling: horizontal scrolling is inverted
+        https://bugs.webkit.org/show_bug.cgi?id=208638
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/API/wpe/ScrollGestureController.cpp:
+        (WebKit::ScrollGestureController::handleEvent):
+
 2020-03-23  youenn fablet  <youenn@apple.com>
 
         Explicitly activate the new DrawingAreaProxy on PSON navigation
