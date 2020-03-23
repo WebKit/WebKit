@@ -1,3 +1,16 @@
+2020-03-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Disable systemd logging by default
+
+        Rubber-stamped by Žan Doberšek.
+
+        The logAlways logs are filling the journal way too fast currently,
+        specially on EWS running tests and buildbots. For the time being
+        disable logging until we figure out a better way to handle this.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2020-03-21  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Use ${PYTHON_EXECUTABLE} to run generate-gtkdoc
