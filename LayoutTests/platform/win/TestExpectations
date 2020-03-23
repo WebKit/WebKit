@@ -2143,6 +2143,7 @@ webkit.org/b/97026 fast/forms/state-restore-broken-state.html [ Failure ]
 
 # Search fields do change in size. May be correct behavior
 fast/forms/searchfield-heights.html [ Failure ]
+fast/forms/placeholder-content-center.html [ Failure ]
 
 # Test uses "required" form element property which currently does not work on Safari
 fast/forms/validation-message-user-modify.html [ Failure ]

@@ -1,3 +1,9 @@
+2020-03-23  Zalan Bujtas  <zalan@apple.com>
+
+        [Win] Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2020-03-23  Dean Jackson  <dino@apple.com>
 
         [WebGL] Skip vertexAttrib0 simulation when using ANGLE
