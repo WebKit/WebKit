@@ -671,7 +671,7 @@
 ;; <rdar://problem/7344719&26323449> LaunchServices app icons
 (allow file-read*
     (well-known-system-group-container-subpath "/systemgroup.com.apple.lsd.iconscache"))
-(allow mach-lookup (with telemetry-backtrace)
+(deny mach-lookup (with telemetry-backtrace)
     (xpc-service-name "com.apple.iconservices")
     (global-name "com.apple.iconservices"))
 

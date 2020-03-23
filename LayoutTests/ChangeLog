@@ -1,3 +1,13 @@
+2020-03-23  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to icon services
+        https://bugs.webkit.org/show_bug.cgi?id=209340
+
+        Reviewed by Brent Fulgham.
+
+        * fast/sandbox/ios/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/ios/sandbox-mach-lookup.html:
+
 2020-03-23  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, reverting r258803.
