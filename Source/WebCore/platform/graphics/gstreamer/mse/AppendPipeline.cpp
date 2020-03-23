@@ -474,10 +474,23 @@ void AppendPipeline::appsinkNewSample(GRefPtr<GstSample>&& sample)
         return;
     }
 
-    // Add a gap sample if a gap is detected before the first sample.
+    // Hack, rework when GStreamer >= 1.16 becomes a requirement:
+    // We're not applying edit lists. GStreamer < 1.16 doesn't emit the correct segments to do so.
+    // GStreamer fix in https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/commit/c2a0da8096009f0f99943f78dc18066965be60f9
+    // Also, in order to apply them we would need to convert the timestamps to stream time, which we're not currently
+    // doing for consistency between GStreamer versions.
+    //
+    // In consequence, the timestamps we're handling here are unedited track time. In track time, the first sample is
+    // guaranteed to have DTS == 0, but in the case of streams with B-frames, often PTS > 0. Edit lists fix this by
+    // offsetting all timestamps by that amount in movie time, but we can't do that if we don't have access to them.
+    // (We could assume the track PTS of the sample with track DTS = 0 is the offset, but we don't have any guarantee
+    // we will get appended that sample first, or ever).
+    //
+    // Because a track presentation time starting at some close to zero, but not exactly zero time can cause unexpected
+    // results for applications, we extend the duration of this first sample to the left so that it starts at zero.
     if (mediaSample->decodeTime() == MediaTime::zeroTime() && mediaSample->presentationTime() > MediaTime::zeroTime() && mediaSample->presentationTime() <= MediaTime(1, 10)) {
-        GST_DEBUG("Adding gap offset");
-        mediaSample->applyPtsOffset(MediaTime::zeroTime());
+        GST_DEBUG("Extending first sample to make it start at PTS=0");
+        mediaSample->extendToTheBeginning();
     }
 
     m_sourceBufferPrivate->didReceiveSample(mediaSample.get());

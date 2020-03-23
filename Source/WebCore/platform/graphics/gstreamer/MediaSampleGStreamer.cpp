@@ -95,12 +95,13 @@ Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, Media
     return adoptRef(*gstreamerMediaSample);
 }
 
-void MediaSampleGStreamer::applyPtsOffset(MediaTime timestampOffset)
+void MediaSampleGStreamer::extendToTheBeginning()
 {
-    if (m_pts > timestampOffset) {
-        m_duration = m_duration + (m_pts - timestampOffset);
-        m_pts = timestampOffset;
-    }
+    // Only to be used with the first sample, as a hack for lack of support for edit lists.
+    // See AppendPipeline::appsinkNewSample()
+    ASSERT(m_dts == MediaTime::zeroTime());
+    m_duration += m_pts;
+    m_pts = MediaTime::zeroTime();
 }
 
 void MediaSampleGStreamer::offsetTimestampsBy(const MediaTime& timestampOffset)
