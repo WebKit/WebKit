@@ -1,3 +1,15 @@
+2020-03-23  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r249808): [GTK] Crash in JSC Config::permanentlyFreeze() on architecture ppc64el
+        https://bugs.webkit.org/show_bug.cgi?id=209236
+
+        Reviewed by Mark Lam.
+
+        * heap/MarkedBlock.h: Use new CeilingOnPageSize.
+        * runtime/JSCConfig.cpp:
+        (JSC::Config::permanentlyFreeze): Use pageSize instead of vmPageSize.
+        * runtime/JSCConfig.h: Use new CeilingOnPageSize.
+
 2020-03-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, rename keepAlive to ensureStillAliveHere

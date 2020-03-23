@@ -1,3 +1,22 @@
+2020-03-23  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r249808): [GTK] Crash in JSC Config::permanentlyFreeze() on architecture ppc64el
+        https://bugs.webkit.org/show_bug.cgi?id=209236
+
+        Reviewed by Mark Lam.
+
+        Add new CeilingOnPageSize constants, for use in JSC, in order to centralize our compile-time
+        page size guessing into one place. Improve the implementation of pageSize() to
+        RELEASE_ASSERT() when CeilingOnPageSize is wrong, so we can detect and fix it if so. (It
+        will be even easier to detect if we change RELEASE_ASSERT_WITH_MESSAGE() to actually print
+        its message in release builds.) Change pageSize() to use sysconf(_SC_PAGESIZE), which is
+        specified by POSIX, instead of getpagesize(), which is nonstandard.
+
+        * wtf/PageBlock.cpp:
+        (WTF::systemPageSize):
+        (WTF::pageSize):
+        * wtf/PageBlock.h:
+
 2020-03-23  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, reverting r258803.
