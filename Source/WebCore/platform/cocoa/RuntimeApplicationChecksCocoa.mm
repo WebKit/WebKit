@@ -66,22 +66,13 @@ void setApplicationBundleIdentifier(const String& bundleIdentifier)
     applicationBundleIdentifierOverride() = bundleIdentifier;
 }
 
-static Optional<uint32_t>& applicationSDKVersionOverride()
+void clearApplicationBundleIdentifierTestingOverride()
 {
-    static NeverDestroyed<Optional<uint32_t>> version;
-    return version;
-}
-
-void setApplicationSDKVersion(uint32_t version)
-{
-    applicationSDKVersionOverride() = version;
-}
-
-uint32_t applicationSDKVersion()
-{
-    if (applicationSDKVersionOverride())
-        return *applicationSDKVersionOverride();
-    return dyld_get_program_sdk_version();
+    ASSERT(RunLoop::isMain());
+    applicationBundleIdentifierOverride() = emptyString();
+#if !ASSERT_MSG_DISABLED
+    applicationBundleIdentifierOverrideWasQueried = false;
+#endif
 }
 
 bool isInWebProcess()

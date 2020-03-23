@@ -16,6 +16,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     cocoa/CrashReporter.h
     cocoa/Entitlements.h
     cocoa/NSURLExtras.h
+    cocoa/RuntimeApplicationChecksCocoa.h
     cocoa/SoftLinking.h
 
     darwin/WeakLinking.h
@@ -64,6 +65,8 @@ list(APPEND WTF_SOURCES
     cocoa/MemoryPressureHandlerCocoa.mm
     cocoa/NSURLExtras.mm
     cocoa/ResourceUsageCocoa.cpp
+    cocoa/RuntimeApplicationChecksCocoa.cpp
+    cocoa/SystemTracingCocoa.cpp
     cocoa/URLCocoa.mm
     cocoa/WorkQueueCocoa.cpp
 
