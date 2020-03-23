@@ -139,7 +139,11 @@ void AudioTrackPrivateMediaStream::trackEnabledChanged(MediaStreamTrackPrivate&)
 
 void AudioTrackPrivateMediaStream::updateRendererMutedState()
 {
-    m_renderer->setMuted(streamTrack().muted() || streamTrack().ended() || !streamTrack().enabled());
+    if (streamTrack().muted() || streamTrack().ended() || !streamTrack().enabled()) {
+        pause();
+        return;
+    }
+    play();
 }
 
 void AudioTrackPrivateMediaStream::trackEnded(MediaStreamTrackPrivate&)
