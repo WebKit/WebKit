@@ -459,10 +459,14 @@ String Page::synchronousScrollingReasonsAsText()
     return String();
 }
 
-Ref<DOMRectList> Page::nonFastScrollableRects()
+Ref<DOMRectList> Page::nonFastScrollableRectsForTesting()
 {
-    if (Document* document = m_mainFrame->document())
+    if (Document* document = m_mainFrame->document()) {
         document->updateLayout();
+#if ENABLE(IOS_TOUCH_EVENTS)
+        document->updateTouchEventRegions();
+#endif
+    }
 
     Vector<IntRect> rects;
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {

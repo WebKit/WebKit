@@ -266,7 +266,7 @@ public:
 
     WEBCORE_EXPORT String scrollingStateTreeAsText();
     WEBCORE_EXPORT String synchronousScrollingReasonsAsText();
-    WEBCORE_EXPORT Ref<DOMRectList> nonFastScrollableRects();
+    WEBCORE_EXPORT Ref<DOMRectList> nonFastScrollableRectsForTesting();
 
     WEBCORE_EXPORT Ref<DOMRectList> touchEventRectsForEventForTesting(const String& eventName);
     WEBCORE_EXPORT Ref<DOMRectList> passiveTouchEventListenerRectsForTesting();

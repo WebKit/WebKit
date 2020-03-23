@@ -2864,7 +2864,7 @@ ExceptionOr<Ref<DOMRectList>> Internals::nonFastScrollableRects() const
     if (!page)
         return DOMRectList::create();
 
-    return page->nonFastScrollableRects();
+    return page->nonFastScrollableRectsForTesting();
 }
 
 ExceptionOr<void> Internals::setElementUsesDisplayListDrawing(Element& element, bool usesDisplayListDrawing)
