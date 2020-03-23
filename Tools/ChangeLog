@@ -1,3 +1,19 @@
+2020-03-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add checks for app-bound navigations when evaluating user style sheets
+        https://bugs.webkit.org/show_bug.cgi?id=209368
+        <rdar://problem/60204230>
+
+        Reviewed by Brent Fulgham.
+
+        Tested cases based on those in UserContentController.mm.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[InAppBrowserSchemeHandler webView:startURLSchemeTask:]):
+        (expectScriptEvaluatesToColor):
+        (TEST):
+
+
 2020-03-23  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to move localStorage to a different domain

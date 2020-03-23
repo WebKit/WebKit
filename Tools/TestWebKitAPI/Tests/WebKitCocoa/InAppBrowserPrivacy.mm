@@ -34,6 +34,8 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKUserContentWorld.h>
+#import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
 
@@ -68,6 +70,10 @@ static NSString * const userScriptSource = @"window.wkUserScriptInjected = true"
         response = @"<script>window.webkit.messageHandlers.testInAppBrowserPrivacy.postMessage(\"done\");</script>";
     else if ([task.request.URL.path isEqualToString:@"/in-app-browser-privacy-test-user-agent-script"])
         response = @"<script> window.wkUserScriptInjected = true; </script>";
+    else if ([task.request.URL.path isEqualToString:@"/in-app-browser-privacy-test-user-style-sheets"])
+        response = @"<body style='background-color: red;'></body>";
+    else if ([task.request.URL.path isEqualToString:@"/in-app-browser-privacy-test-user-style-sheets-iframe"])
+        response = @"<body style='background-color: red;'><iframe src='in-app-browser:///in-app-browser-privacy-test-user-style-sheets'></iframe></body>";
 
     [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:response.length textEncodingName:nil] autorelease]];
     [task didReceiveData:[response dataUsingEncoding:NSUTF8StringEncoding]];
@@ -409,6 +415,93 @@ TEST(InAppBrowserPrivacy, IgnoreAppBoundDomainsAcceptsUserScripts)
 
     isDone = false;
     TestWebKitAPI::Util::run(&isDone);
+}
+
+static NSString *styleSheetSource = @"body { background-color: green !important; }";
+static NSString *backgroundColorScript = @"window.getComputedStyle(document.body, null).getPropertyValue('background-color')";
+static NSString *frameBackgroundColorScript = @"window.getComputedStyle(document.getElementsByTagName('iframe')[0].contentDocument.body, null).getPropertyValue('background-color')";
+static const char* redInRGB = "rgb(255, 0, 0)";
+
+static void expectScriptEvaluatesToColor(WKWebView *webView, NSString *script, const char* color)
+{
+    static bool didCheckBackgroundColor;
+
+    [webView evaluateJavaScript:script completionHandler:^(id value, NSError * error) {
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(color, value);
+        didCheckBackgroundColor = true;
+    }];
+
+    TestWebKitAPI::Util::run(&didCheckBackgroundColor);
+    didCheckBackgroundColor = false;
+}
+
+TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetForSpecificWebViewFails)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+    [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+}
+
+TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetForAllWebViewsFails)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+    [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:YES]);
+    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+}
+
+TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetAffectingAllFramesFails)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+    [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets-iframe"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
+    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
+
+    // The main frame should be affected.
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+
+    // The subframe should also be affected.
+    expectScriptEvaluatesToColor(webView.get(), frameBackgroundColorScript, redInRGB);
 }
 
 #endif // USE(APPLE_INTERNAL_SDK)
