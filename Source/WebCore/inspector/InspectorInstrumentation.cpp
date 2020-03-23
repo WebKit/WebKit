@@ -361,28 +361,35 @@ bool InspectorInstrumentation::isEventListenerDisabledImpl(InstrumentingAgents& 
     return false;
 }
 
-void InspectorInstrumentation::didPostMessageImpl(InstrumentingAgents& instrumentingAgents, const TimerBase& timer, JSC::JSGlobalObject& state)
+int InspectorInstrumentation::willPostMessageImpl(InstrumentingAgents& instrumentingAgents)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
-        webDebuggerAgent->didPostMessage(timer, state);
+        return webDebuggerAgent->willPostMessage();
+    return 0;
 }
 
-void InspectorInstrumentation::didFailPostMessageImpl(InstrumentingAgents& instrumentingAgents, const TimerBase& timer)
+void InspectorInstrumentation::didPostMessageImpl(InstrumentingAgents& instrumentingAgents, int postMessageIdentifier, JSC::JSGlobalObject& state)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
-        webDebuggerAgent->didFailPostMessage(timer);
+        webDebuggerAgent->didPostMessage(postMessageIdentifier, state);
 }
 
-void InspectorInstrumentation::willDispatchPostMessageImpl(InstrumentingAgents& instrumentingAgents, const TimerBase& timer)
+void InspectorInstrumentation::didFailPostMessageImpl(InstrumentingAgents& instrumentingAgents, int postMessageIdentifier)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
-        webDebuggerAgent->willDispatchPostMessage(timer);
+        webDebuggerAgent->didFailPostMessage(postMessageIdentifier);
 }
 
-void InspectorInstrumentation::didDispatchPostMessageImpl(InstrumentingAgents& instrumentingAgents, const TimerBase& timer)
+void InspectorInstrumentation::willDispatchPostMessageImpl(InstrumentingAgents& instrumentingAgents, int postMessageIdentifier)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
-        webDebuggerAgent->didDispatchPostMessage(timer);
+        webDebuggerAgent->willDispatchPostMessage(postMessageIdentifier);
+}
+
+void InspectorInstrumentation::didDispatchPostMessageImpl(InstrumentingAgents& instrumentingAgents, int postMessageIdentifier)
+{
+    if (auto* webDebuggerAgent = instrumentingAgents.webDebuggerAgent())
+        webDebuggerAgent->didDispatchPostMessage(postMessageIdentifier);
 }
 
 void InspectorInstrumentation::willCallFunctionImpl(InstrumentingAgents& instrumentingAgents, const String& scriptName, int scriptLine, int scriptColumn, ScriptExecutionContext* context)

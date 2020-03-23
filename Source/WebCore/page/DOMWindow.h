@@ -75,7 +75,6 @@ class NodeList;
 class Page;
 class PageConsoleClient;
 class Performance;
-class PostMessageTimer;
 class RequestAnimationFrameCallback;
 class RequestIdleCallback;
 class ScheduledAction;
@@ -275,8 +274,6 @@ public:
     {
         return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { WTFMove(targetOrigin), WTFMove(transfer) });
     }
-
-    void postMessageTimerFired(PostMessageTimer&);
 
     void languagesChanged();
 

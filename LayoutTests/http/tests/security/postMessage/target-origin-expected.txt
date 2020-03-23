@@ -17,7 +17,6 @@ CONSOLE MESSAGE: Unable to post message to http://127.0.0.1:8000. Recipient has 
 window.location.href = http://127.0.0.1:8000/security/postMessage/target-origin.html
 
 waiting...
-Error sending message to //. SyntaxError: The string did not match the expected pattern.
 Received message: data="Received message: data="Trying origin=http://localhost:8000" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
 Received message: data="Received message: data="Trying origin=http://localhost:8000/" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
 Received message: data="Received message: data="Trying origin=http://localhost:8000/foo" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
@@ -25,5 +24,7 @@ Received message: data="Received message: data="Trying origin=http://localhost:8
 Received message: data="Received message: data="Trying origin=http://localhost:8000/foo?bar#baz" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
 Received message: data="Received message: data="Trying origin=http://user:pass@localhost:8000/foo?bar#baz" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
 Received message: data="Received message: data="Trying origin=*" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+Received message: data="Received message: data="runNextTest" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+Error sending message to //. SyntaxError: The string did not match the expected pattern.
 Received message: data="Received message: data="Trying origin=/" origin="http://127.0.0.1:8000"" origin="http://127.0.0.1:8000"
-Received message: data="Received message: data="done" origin="http://127.0.0.1:8000"" origin="http://localhost:8000"
+Received message: data="Received message: data="done" origin="http://127.0.0.1:8000"" origin="http://127.0.0.1:8000"

@@ -9,6 +9,9 @@ function recv(e) {
 
     log(msg);
 
+    if (e.data.match(/data="runNextTest"/))
+        runNextTest();
+
     if (e.data.match(/data="done"/) && window.testRunner)
         testRunner.notifyDone();
 }

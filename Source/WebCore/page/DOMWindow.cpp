@@ -164,46 +164,6 @@ static Seconds transientActivationDuration()
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DOMWindow);
 
-class PostMessageTimer : public TimerBase {
-public:
-    PostMessageTimer(DOMWindow& window, MessageWithMessagePorts&& message, const String& sourceOrigin, RefPtr<WindowProxy>&& source, RefPtr<SecurityOrigin>&& targetOrigin, RefPtr<ScriptCallStack>&& stackTrace)
-        : m_window(window)
-        , m_message(WTFMove(message))
-        , m_origin(sourceOrigin)
-        , m_source(source)
-        , m_targetOrigin(WTFMove(targetOrigin))
-        , m_stackTrace(stackTrace)
-        , m_userGestureToForward(UserGestureIndicator::currentUserGesture())
-    {
-    }
-
-    Ref<MessageEvent> event(ScriptExecutionContext& context)
-    {
-        return MessageEvent::create(MessagePort::entanglePorts(context, WTFMove(m_message.transferredPorts)), m_message.message.releaseNonNull(), m_origin, { }, m_source ? makeOptional(MessageEventSource(WTFMove(m_source))) : WTF::nullopt);
-    }
-
-    SecurityOrigin* targetOrigin() const { return m_targetOrigin.get(); }
-    ScriptCallStack* stackTrace() const { return m_stackTrace.get(); }
-
-private:
-    void fired() override
-    {
-        // This object gets deleted when std::unique_ptr falls out of scope..
-        std::unique_ptr<PostMessageTimer> timer(this);
-        
-        UserGestureIndicator userGestureIndicator(m_userGestureToForward);
-        m_window->postMessageTimerFired(*timer);
-    }
-
-    Ref<DOMWindow> m_window;
-    MessageWithMessagePorts m_message;
-    String m_origin;
-    RefPtr<WindowProxy> m_source;
-    RefPtr<SecurityOrigin> m_targetOrigin;
-    RefPtr<ScriptCallStack> m_stackTrace;
-    RefPtr<UserGestureToken> m_userGestureToForward;
-};
-
 typedef HashCountedSet<DOMWindow*> DOMWindowSet;
 
 static DOMWindowSet& windowsWithUnloadEventListeners()
@@ -930,45 +890,47 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObjec
     if (InspectorInstrumentation::consoleAgentEnabled(sourceDocument))
         stackTrace = createScriptCallStack(JSExecState::currentState());
 
+    auto postMessageIdentifier = InspectorInstrumentation::willPostMessage(*frame());
+
     MessageWithMessagePorts message { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
 
     // Schedule the message.
     RefPtr<WindowProxy> incumbentWindowProxy = incumbentWindow.frame() ? &incumbentWindow.frame()->windowProxy() : nullptr;
-    auto* timer = new PostMessageTimer(*this, WTFMove(message), sourceOrigin, WTFMove(incumbentWindowProxy), WTFMove(target), WTFMove(stackTrace));
-    timer->startOneShot(0_s);
+    auto userGestureToForward = UserGestureIndicator::currentUserGesture();
 
-    InspectorInstrumentation::didPostMessage(*frame(), *timer, lexicalGlobalObject);
+    document()->eventLoop().queueTask(TaskSource::PostedMessageQueue, [this, protectedThis = makeRef(*this), message = WTFMove(message), incumbentWindowProxy = WTFMove(incumbentWindowProxy), sourceOrigin = WTFMove(sourceOrigin), userGestureToForward = WTFMove(userGestureToForward), postMessageIdentifier, stackTrace = WTFMove(stackTrace), targetOrigin = WTFMove(target)]() mutable {
+        if (!isCurrentlyDisplayedInFrame())
+            return;
+
+        Ref<Frame> frame = *this->frame();
+        if (targetOrigin) {
+            // Check target origin now since the target document may have changed since the timer was scheduled.
+            if (!targetOrigin->isSameSchemeHostPort(document()->securityOrigin())) {
+                if (auto* pageConsole = console()) {
+                    String message = makeString("Unable to post message to ", targetOrigin->toString(), ". Recipient has origin ", document()->securityOrigin().toString(), ".\n");
+                    if (stackTrace)
+                        pageConsole->addMessage(MessageSource::Security, MessageLevel::Error, message, *stackTrace);
+                    else
+                        pageConsole->addMessage(MessageSource::Security, MessageLevel::Error, message);
+                }
+
+                InspectorInstrumentation::didFailPostMessage(frame, postMessageIdentifier);
+                return;
+            }
+        }
+
+        UserGestureIndicator userGestureIndicator(userGestureToForward);
+        InspectorInstrumentation::willDispatchPostMessage(frame, postMessageIdentifier);
+
+        auto event = MessageEvent::create(MessagePort::entanglePorts(*document(), WTFMove(message.transferredPorts)), message.message.releaseNonNull(), sourceOrigin, { }, incumbentWindowProxy ? makeOptional(MessageEventSource(WTFMove(incumbentWindowProxy))) : WTF::nullopt);
+        dispatchEvent(event);
+
+        InspectorInstrumentation::didDispatchPostMessage(frame, postMessageIdentifier);
+    });
+
+    InspectorInstrumentation::didPostMessage(*frame(), postMessageIdentifier, lexicalGlobalObject);
 
     return { };
-}
-
-void DOMWindow::postMessageTimerFired(PostMessageTimer& timer)
-{
-    if (!document() || !isCurrentlyDisplayedInFrame())
-        return;
-
-    Ref<Frame> frame = *this->frame();
-    if (auto* intendedTargetOrigin = timer.targetOrigin()) {
-        // Check target origin now since the target document may have changed since the timer was scheduled.
-        if (!intendedTargetOrigin->isSameSchemeHostPort(document()->securityOrigin())) {
-            if (auto* pageConsole = console()) {
-                String message = makeString("Unable to post message to ", intendedTargetOrigin->toString(), ". Recipient has origin ", document()->securityOrigin().toString(), ".\n");
-                if (timer.stackTrace())
-                    pageConsole->addMessage(MessageSource::Security, MessageLevel::Error, message, *timer.stackTrace());
-                else
-                    pageConsole->addMessage(MessageSource::Security, MessageLevel::Error, message);
-            }
-
-            InspectorInstrumentation::didFailPostMessage(frame, timer);
-            return;
-        }
-    }
-
-    InspectorInstrumentation::willDispatchPostMessage(frame, timer);
-
-    dispatchEvent(timer.event(*document()));
-
-    InspectorInstrumentation::didDispatchPostMessage(frame, timer);
 }
 
 DOMSelection* DOMWindow::getSelection()

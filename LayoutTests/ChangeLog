@@ -1,3 +1,18 @@
+2020-03-23  Chris Dumez  <cdumez@apple.com>
+
+        Port window.postMessage to the HTML event loop
+        https://bugs.webkit.org/show_bug.cgi?id=209359
+
+        Reviewed by Alex Christensen.
+
+        Update tests so that it does not run postMessage tests in parallel on the 2 different-origin iframes,
+        since the ordering would not be guaranteed and it would cause flakiness.
+
+        * http/tests/security/postMessage/resources/recv.js:
+        (recv):
+        * http/tests/security/postMessage/target-origin-expected.txt:
+        * http/tests/security/postMessage/target-origin.html:
+
 2020-03-23  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to icon services

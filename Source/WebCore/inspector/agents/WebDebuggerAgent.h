@@ -48,10 +48,11 @@ public:
     void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void willHandleEvent(const RegisteredEventListener&);
-    void didPostMessage(const TimerBase&, JSC::JSGlobalObject&);
-    void didFailPostMessage(const TimerBase&);
-    void willDispatchPostMessage(const TimerBase&);
-    void didDispatchPostMessage(const TimerBase&);
+    int willPostMessage();
+    void didPostMessage(int postMessageIdentifier, JSC::JSGlobalObject&);
+    void didFailPostMessage(int postMessageIdentifier);
+    void willDispatchPostMessage(int postMessageIdentifier);
+    void didDispatchPostMessage(int postMessageIdentifier);
 
 protected:
     WebDebuggerAgent(WebAgentContext&);
@@ -64,7 +65,7 @@ protected:
 
 private:
     HashMap<const RegisteredEventListener*, int> m_registeredEventListeners;
-    HashMap<const TimerBase*, int> m_postMessageTimers;
+    HashSet<int> m_postMessageTasks;
     int m_nextEventListenerIdentifier { 1 };
     int m_nextPostMessageIdentifier { 1 };
 };

@@ -155,10 +155,11 @@ public:
     static void didInstallTimer(ScriptExecutionContext&, int timerId, Seconds timeout, bool singleShot);
     static void didRemoveTimer(ScriptExecutionContext&, int timerId);
 
-    static void didPostMessage(Frame&, TimerBase&, JSC::JSGlobalObject&);
-    static void didFailPostMessage(Frame&, TimerBase&);
-    static void willDispatchPostMessage(Frame&, TimerBase&);
-    static void didDispatchPostMessage(Frame&, TimerBase&);
+    static int willPostMessage(Frame&);
+    static void didPostMessage(Frame&, int postTimerIdentifier, JSC::JSGlobalObject&);
+    static void didFailPostMessage(Frame&, int postTimerIdentifier);
+    static void willDispatchPostMessage(Frame&, int postTimerIdentifier);
+    static void didDispatchPostMessage(Frame&, int postTimerIdentifier);
 
     static void willCallFunction(ScriptExecutionContext*, const String& scriptName, int scriptLine, int scriptColumn);
     static void didCallFunction(ScriptExecutionContext*);
@@ -373,10 +374,11 @@ private:
     static void didInstallTimerImpl(InstrumentingAgents&, int timerId, Seconds timeout, bool singleShot, ScriptExecutionContext&);
     static void didRemoveTimerImpl(InstrumentingAgents&, int timerId, ScriptExecutionContext&);
 
-    static void didPostMessageImpl(InstrumentingAgents&, const TimerBase&, JSC::JSGlobalObject&);
-    static void didFailPostMessageImpl(InstrumentingAgents&, const TimerBase&);
-    static void willDispatchPostMessageImpl(InstrumentingAgents&, const TimerBase&);
-    static void didDispatchPostMessageImpl(InstrumentingAgents&, const TimerBase&);
+    static int willPostMessageImpl(InstrumentingAgents&);
+    static void didPostMessageImpl(InstrumentingAgents&, int postMessageIdentifier, JSC::JSGlobalObject&);
+    static void didFailPostMessageImpl(InstrumentingAgents&, int postMessageIdentifier);
+    static void willDispatchPostMessageImpl(InstrumentingAgents&, int postMessageIdentifier);
+    static void didDispatchPostMessageImpl(InstrumentingAgents&, int postMessageIdentifier);
 
     static void willCallFunctionImpl(InstrumentingAgents&, const String& scriptName, int scriptLine, int scriptColumn, ScriptExecutionContext*);
     static void didCallFunctionImpl(InstrumentingAgents&, ScriptExecutionContext*);
@@ -807,32 +809,40 @@ inline bool InspectorInstrumentation::isEventListenerDisabled(EventTarget& targe
     return false;
 }
 
-inline void InspectorInstrumentation::didPostMessage(Frame& frame, TimerBase& timer, JSC::JSGlobalObject& state)
+inline int InspectorInstrumentation::willPostMessage(Frame& frame)
 {
-    FAST_RETURN_IF_NO_FRONTENDS(void());
+    FAST_RETURN_IF_NO_FRONTENDS(0);
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        didPostMessageImpl(*instrumentingAgents, timer, state);
+        return willPostMessageImpl(*instrumentingAgents);
+    return 0;
 }
 
-inline void InspectorInstrumentation::didFailPostMessage(Frame& frame, TimerBase& timer)
+inline void InspectorInstrumentation::didPostMessage(Frame& frame, int postMessageIdentifier, JSC::JSGlobalObject& state)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        didFailPostMessageImpl(*instrumentingAgents, timer);
+        didPostMessageImpl(*instrumentingAgents, postMessageIdentifier, state);
 }
 
-inline void InspectorInstrumentation::willDispatchPostMessage(Frame& frame, TimerBase& timer)
+inline void InspectorInstrumentation::didFailPostMessage(Frame& frame, int postMessageIdentifier)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        willDispatchPostMessageImpl(*instrumentingAgents, timer);
+        didFailPostMessageImpl(*instrumentingAgents, postMessageIdentifier);
 }
 
-inline void InspectorInstrumentation::didDispatchPostMessage(Frame& frame, TimerBase& timer)
+inline void InspectorInstrumentation::willDispatchPostMessage(Frame& frame, int postMessageIdentifier)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        didDispatchPostMessageImpl(*instrumentingAgents, timer);
+        willDispatchPostMessageImpl(*instrumentingAgents, postMessageIdentifier);
+}
+
+inline void InspectorInstrumentation::didDispatchPostMessage(Frame& frame, int postMessageIdentifier)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        didDispatchPostMessageImpl(*instrumentingAgents, postMessageIdentifier);
 }
 
 inline void InspectorInstrumentation::willCallFunction(ScriptExecutionContext* context, const String& scriptName, int scriptLine, int scriptColumn)
