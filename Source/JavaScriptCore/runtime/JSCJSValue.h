@@ -637,4 +637,17 @@ bool isThisValueAltered(const PutPropertySlot&, JSObject* baseObject);
 // See section 7.2.9: https://tc39.github.io/ecma262/#sec-samevalue
 bool sameValue(JSGlobalObject*, JSValue a, JSValue b);
 
+#if COMPILER(GCC_COMPATIBLE)
+ALWAYS_INLINE void keepAlive(JSValue value)
+{
+#if USE(JSVALUE64)
+    asm volatile ("" : : "r"(bitwise_cast<uint64_t>(value)) : "memory");
+#else
+    asm volatile ("" : : "r"(value.payload()) : "memory");
+#endif
+}
+#else
+JS_EXPORT_PRIVATE void keepAlive(JSValue);
+#endif
+
 } // namespace JSC

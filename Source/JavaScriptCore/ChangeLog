@@ -1,3 +1,18 @@
+2020-03-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add JSC::keepAlive(JSValue)
+        https://bugs.webkit.org/show_bug.cgi?id=209398
+
+        Reviewed by Mark Lam.
+
+        Add JSC::keepAlive(JSValue). This is useful to make some JSValue variable alive from GC.
+
+        * heap/HeapCell.cpp:
+        * runtime/JSCJSValue.cpp:
+        (JSC::keepAlive):
+        * runtime/JSCJSValue.h:
+        (JSC::keepAlive):
+
 2020-03-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         hasObservableSideEffectsForRegExpSplit doesn't check for @@match override
