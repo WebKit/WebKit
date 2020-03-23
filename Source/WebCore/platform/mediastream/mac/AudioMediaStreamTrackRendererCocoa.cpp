@@ -45,6 +45,8 @@ AudioMediaStreamTrackRendererCocoa::~AudioMediaStreamTrackRendererCocoa() = defa
 
 void AudioMediaStreamTrackRendererCocoa::start()
 {
+    clear();
+
     m_shouldPlay = true;
 
     if (m_dataSource)
