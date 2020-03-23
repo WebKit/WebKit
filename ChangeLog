@@ -1,3 +1,15 @@
+2020-03-23  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Allow distributors to brand user agent
+        https://bugs.webkit.org/show_bug.cgi?id=162611
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add build option for inserting distributor branding into the user agent string.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2020-03-23  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Disable systemd logging by default

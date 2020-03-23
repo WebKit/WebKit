@@ -89,6 +89,9 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     else {
         uaString.append(platformForUAString());
         uaString.appendLiteral("; ");
+#if defined(USER_AGENT_BRANDING)
+        uaString.appendLiteral(USER_AGENT_BRANDING "; ");
+#endif
         uaString.append(platformVersionForUAString());
     }
 
@@ -141,7 +144,15 @@ String standardUserAgent(const String& applicationName, const String& applicatio
             finalApplicationVersion = versionForUAString();
         userAgent = standardUserAgentStatic() + ' ' + applicationName + '/' + finalApplicationVersion;
     }
-    ASSERT(isValidUserAgentHeaderValue(userAgent));
+
+    static bool checked = false;
+    if (!checked) {
+        // For release builds, we'll only check the first resource load, mainly to ensure that any
+        // configured application details or user agent branding is OK.
+        RELEASE_ASSERT_WITH_MESSAGE(isValidUserAgentHeaderValue(userAgent), "%s is not a valid user agent header", userAgent.utf8().data());
+        checked = true;
+    }
+    ASSERT(isValidUserAgentHeaderValue(userAgent);
     return userAgent;
 }
 

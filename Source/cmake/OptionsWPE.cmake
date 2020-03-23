@@ -12,6 +12,11 @@ set(LIB_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE PATH "Absolute path to 
 set(EXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_BINDIR}" CACHE PATH "Absolute path to executable installation directory")
 set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/wpe-webkit-${WPE_API_VERSION}" CACHE PATH "Absolute path to install executables executed by the library")
 
+set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
+if (USER_AGENT_BRANDING)
+    add_definitions(-DUSER_AGENT_BRANDING=${USER_AGENT_BRANDING})
+endif ()
+
 find_package(Cairo 1.14.0 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
 find_package(Freetype 2.4.2 REQUIRED)

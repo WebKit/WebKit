@@ -17,6 +17,11 @@ set(WEBKITGTK_HEADER_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/webkitgtk-${WEBKIT
 set(INTROSPECTION_INSTALL_GIRDIR "${CMAKE_INSTALL_FULL_DATADIR}/gir-1.0")
 set(INTROSPECTION_INSTALL_TYPELIBDIR "${LIB_INSTALL_DIR}/girepository-1.0")
 
+set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
+if (USER_AGENT_BRANDING)
+    add_definitions(-DUSER_AGENT_BRANDING="${USER_AGENT_BRANDING}")
+endif ()
+
 find_package(Cairo 1.14.0 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
 find_package(Freetype 2.4.2 REQUIRED)
