@@ -1,3 +1,11 @@
+2020-03-23  Chris Lord  <clord@igalia.com>
+
+        Add missing committer status to Chris Lord in contributors.json
+
+        Unreviewed
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-03-23  youenn fablet  <youenn@apple.com>
 
         StringView::startsWith and String::startsWith do not treat null strings the same
