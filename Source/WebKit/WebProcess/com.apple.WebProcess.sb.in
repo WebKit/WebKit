@@ -679,6 +679,7 @@
     (global-name "com.apple.PowerManagement.control")
     (global-name "com.apple.cfprefsd.daemon")
     (global-name "com.apple.coreservices.launchservicesd")
+    (global-name "com.apple.lsd.mapdb")
     (global-name "com.apple.trustd.agent")
 )
 
@@ -886,7 +887,6 @@
             "com.apple.webinspector"
             "com.apple.cfprefsd.daemon"
             "com.apple.tccd"
-            "com.apple.lsd.mapdb"
 
             ;;; FIXME(207716): The following should be removed when the GPU process is complete
             "com.apple.audio.AudioComponentRegistrar" "com.apple.coremedia.endpoint.xpc" "com.apple.coremedia.endpointstream.xpc"

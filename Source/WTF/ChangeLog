@@ -1,3 +1,16 @@
+2020-03-23  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        Unreviewed, reverting r258803.
+
+        This revision caused many layout tests and 10 API tests to
+        start failing/crashing
+
+        Reverted changeset:
+
+        "[Cocoa] Deny access to database mapping service"
+        https://bugs.webkit.org/show_bug.cgi?id=209339
+        https://trac.webkit.org/changeset/258803
+
 2020-03-23  youenn fablet  <youenn@apple.com>
 
         StringView::startsWith and String::startsWith do not treat null strings the same
