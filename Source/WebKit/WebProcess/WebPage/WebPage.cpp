@@ -3334,12 +3334,6 @@ void WebPage::didStartPageTransition()
 void WebPage::didCompletePageTransition()
 {
     unfreezeLayerTree(LayerTreeFreezeReason::PageTransition);
-
-    auto& stateMachine = m_mainFrame->coreFrame()->loader().stateMachine();
-    RELEASE_LOG_IF_ALLOWED(Layers, "didCompletePageTransition: Did complete page transition, loader state is %d", stateMachine.stateForDebugging());
-
-    if (stateMachine.committedFirstRealDocumentLoad())
-        unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
 }
 
 void WebPage::show()
@@ -5864,6 +5858,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
     if (!frame->isMainFrame())
         return;
+
+    ASSERT(!frame->coreFrame()->loader().stateMachine().creatingInitialEmptyDocument());
+    unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     clearLoadedThirdPartyDomains();

@@ -1,3 +1,26 @@
+2020-03-23  youenn fablet  <youenn@apple.com>
+
+        Explicitly activate the new DrawingAreaProxy on PSON navigation
+        https://bugs.webkit.org/show_bug.cgi?id=209232
+
+        Reviewed by Antti Koivisto.
+
+        Delay tree unfreezing for provisional pages until the main frame load is committed.
+        At that point, UIProcess is made aware and is doing the process swap.
+        We can thus unfreeze the tree so that UIProcess starts getting DrawAreaProxy messages.
+
+        This allows UIProcess to start listening to DrawAreaProxy messages at the time of doing process swapping in WebPageProxy.
+
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        (WebKit::DrawingAreaProxy::startReceivingMessages):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setDrawingArea):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCompletePageTransition):
+        (WebKit::WebPage::didCommitLoad):
+
 2020-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adopt -[UIWindowScene interfaceOrientation] when determining device orientation

@@ -61,6 +61,8 @@ public:
     DrawingAreaType type() const { return m_type; }
     DrawingAreaIdentifier identifier() const { return m_identifier; }
 
+    void startReceivingMessages();
+
     virtual void deviceScaleFactorDidChange() = 0;
 
     // FIXME: These should be pure virtual.
@@ -155,6 +157,7 @@ private:
     virtual void didUpdateBackingStoreState(uint64_t /* backingStoreStateID */, const UpdateInfo&, const LayerTreeContext&) { }
     virtual void exitAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
 #endif
+    bool m_startedReceivingMessages { false };
 };
 
 } // namespace WebKit
