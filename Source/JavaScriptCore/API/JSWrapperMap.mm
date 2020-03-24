@@ -40,10 +40,7 @@
 #import "WeakGCMap.h"
 #import "WeakGCMapInlines.h"
 #import <wtf/Vector.h>
-
-#if PLATFORM(COCOA)
-#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
-#endif
+#import <wtf/spi/darwin/dyldSPI.h>
 
 #include <mach-o/dyld.h>
 
@@ -723,7 +720,7 @@ bool supportsInitMethodConstructors()
     // base our check on what SDK was used to build the application.
     static uint32_t programSDKVersion = 0;
     if (!programSDKVersion)
-        programSDKVersion = applicationSDKVersion();
+        programSDKVersion = dyld_get_program_sdk_version();
 
     return programSDKVersion >= firstSDKVersionWithInitConstructorSupport;
 #endif
