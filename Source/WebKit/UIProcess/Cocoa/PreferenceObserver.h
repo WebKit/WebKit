@@ -46,6 +46,5 @@ __attribute__((visibility("default")))
     Vector<RetainPtr<WKUserDefaults>> m_userDefaults;
 }
 + (id)sharedInstance;
-+ (void)swizzleRegisterDefaults;
 - (void)preferenceDidChange:(NSString *)domain key:(NSString *)key encodedValue:(NSString *)encodedValue;
 @end

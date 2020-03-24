@@ -611,6 +611,10 @@ private:
 #endif
 #endif
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    void startObservingPreferenceChanges();
+#endif
+
     Ref<API::ProcessPoolConfiguration> m_configuration;
 
     IPC::MessageReceiverMap m_messageReceiverMap;
@@ -691,7 +695,6 @@ private:
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     RetainPtr<NSObject> m_scrollerStyleNotificationObserver;
 #endif
-    RetainPtr<NSObject> m_activationObserver;
     RetainPtr<NSObject> m_deactivationObserver;
 
     std::unique_ptr<HighPerformanceGraphicsUsageSampler> m_highPerformanceGraphicsUsageSampler;
@@ -699,6 +702,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
+    RetainPtr<NSObject> m_activationObserver;
     RetainPtr<NSObject> m_accessibilityEnabledObserver;
 #endif
 
@@ -802,10 +806,6 @@ private:
     bool m_isDelayedWebProcessLaunchDisabled { false };
 #endif
     bool m_useSeparateServiceWorkerProcess { false };
-
-#if PLATFORM(COCOA)
-    RetainPtr<WKPreferenceObserver> m_preferenceObserver;
-#endif
 };
 
 template<typename T>

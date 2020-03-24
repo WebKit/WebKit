@@ -534,7 +534,6 @@
 (allow mach-lookup
     (global-name "com.apple.logd")
     (global-name "com.apple.logd.events")
-    (global-name "com.apple.cfprefsd.daemon")
 )
 
 (deny mach-lookup (with telemetry-backtrace)

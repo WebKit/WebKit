@@ -28,30 +28,11 @@
 
 #import "WebProcessPool.h"
 
-#import <wtf/ObjCRuntimeExtras.h>
-
-static IMP registerDefaultsOriginal = nil;
-static bool registeringDefaults = false;
-
-static void registerDefaultsOverride(id self, SEL selector, NSDictionary<NSString *, id> *dictionary)
-{
-    registeringDefaults = true;
-    if (registerDefaultsOriginal)
-        wtfCallIMP<void>(registerDefaultsOriginal, self, selector, dictionary);
-    registeringDefaults = false;
-}
-
 @implementation WKUserDefaults
 
 - (void)_notifyObserversOfChangeFromValuesForKeys:(NSDictionary<NSString *, id> *)oldValues toValuesForKeys:(NSDictionary<NSString *, id> *)newValues
 {
-    if (registeringDefaults)
-        return;
-
     [super _notifyObserversOfChangeFromValuesForKeys:oldValues toValuesForKeys:newValues];
-
-    if ([oldValues isEqualToDictionary:newValues])
-        return;
 
     for (NSString *key in oldValues) {
         id oldValue = oldValues[key];
@@ -101,103 +82,35 @@ static void registerDefaultsOverride(id self, SEL selector, NSDictionary<NSStrin
     return instance;
 }
 
-+ (void)swizzleRegisterDefaults
-{
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        Method registerDefaultsMethod = class_getInstanceMethod(objc_getClass("NSUserDefaults"), @selector(registerDefaults:));
-        registerDefaultsOriginal = method_setImplementation(registerDefaultsMethod, (IMP)registerDefaultsOverride);
-    });
-}
-
 - (instancetype)init
 {
     std::initializer_list<NSString*> domains = {
+#if PLATFORM(IOS_FAMILY)
         @"com.apple.Accessibility",
-#if PLATFORM(IOS_FAMILY)
         @"com.apple.AdLib",
-        @"com.apple.CFNetwork",
-        @"com.apple.EmojiPreferences",
-        @"com.apple.FontParser",
-        @"com.apple.ImageIO",
-        @"com.apple.InputModePreferences",
-#else
-        @"com.apple.ATS",
-        @"com.apple.CoreGraphics",
-        @"com.apple.DownloadAssessment",
-        @"com.apple.HIToolbox",
-#endif
-        @"com.apple.LaunchServices",
-#if PLATFORM(IOS_FAMILY)
-        @"com.apple.Metal",
-        @"com.apple.MobileAsset",
         @"com.apple.Preferences",
         @"com.apple.SpeakSelection",
         @"com.apple.UIKit",
-        @"com.apple.VoiceOverTouch",
-#else
-        @"com.apple.MultitouchSupport"
-        @"com.apple.ServicesMenu.Services"
-        @"com.apple.ViewBridge"
-#endif
-        @"com.apple.WebFoundation",
-#if PLATFORM(IOS_FAMILY)
-        @"com.apple.WebKit.WebContent",
         @"com.apple.WebUI",
-        @"com.apple.airplay",
-        @"com.apple.applejpeg",
-        @"com.apple.audio.virtualaudio",
         @"com.apple.avfaudio",
-#endif
-        @"com.apple.avfoundation",
-        @"com.apple.avfoundation.frecents",
-        @"com.apple.avfoundation.videoperformancehud",
-#if PLATFORM(IOS_FAMILY)
-        @"com.apple.avkit",
-        @"com.apple.coreanimation",
-        @"com.apple.coreaudio",
-#endif
-        @"com.apple.coremedia",
-#if PLATFORM(IOS_FAMILY)
-        @"com.apple.corevideo",
-        @"com.apple.da",
-        @"com.apple.hangtracer",
-        @"com.apple.indigo",
-        @"com.apple.iokit.IOMobileGraphicsFamily",
         @"com.apple.itunesstored",
-        @"com.apple.keyboard",
+        @"com.apple.mediaremote",
+        @"com.apple.preferences.sounds",
+        @"com.apple.voiceservices",
+        @"kCFPreferencesAnyApplication",
 #else
-        @"com.apple.crypto",
+        @"com.apple.CoreGraphics",
+        @"com.apple.HIToolbox",
+        @"com.apple.ServicesMenu.Services",
+        @"com.apple.ViewBridge",
+        @"com.apple.avfoundation",
+        @"com.apple.avfoundation.videoperformancehud",
         @"com.apple.driver.AppleBluetoothMultitouch.mouse",
         @"com.apple.driver.AppleBluetoothMultitouch.trackpad",
-        @"com.apple.driver.AppleHIDMouse"
-#endif
-        @"com.apple.lookup.shared",
         @"com.apple.mediaaccessibility",
-#if PLATFORM(IOS_FAMILY)
-        @"com.apple.mediaaccessibility.public",
-        @"com.apple.mediaremote",
-        @"com.apple.mobileipod",
-        @"com.apple.mt",
-#else
-        @"com.apple.networkConnect"
-#endif
-        @"com.apple.opengl",
-#if PLATFORM(IOS_FAMILY)
-        @"com.apple.preferences.sounds",
-        @"com.apple.security",
-        @"com.apple.voiceservices",
-        @"com.apple.voiceservices.logging",
-#else
         @"com.apple.speech.voice.prefs",
-        @"com.apple.systemsound",
         @"com.apple.universalaccess",
-        @"com.nvidia.OpenGL",
-        @"edu.mit.Kerberos",
-#endif
         @"kCFPreferencesAnyApplication",
-#if !PLATFORM(IOS_FAMILY)
-        @"pbs",
 #endif
     };
 

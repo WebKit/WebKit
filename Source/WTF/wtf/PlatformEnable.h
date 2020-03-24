@@ -553,6 +553,9 @@
 #define ENABLE_MALLOC_HEAP_BREAKDOWN 0
 #endif
 
+#if !defined(ENABLE_CFPREFS_DIRECT_MODE)
+#define ENABLE_CFPREFS_DIRECT_MODE 0
+#endif
 
 
 
@@ -870,5 +873,3 @@
 #if ENABLE(WEBGL2) && !ENABLE(WEBGL)
 #error "ENABLE(WEBGL2) requires ENABLE(WEBGL)"
 #endif
-
-#define ENABLE_CFPREFS_DIRECT_MODE 0

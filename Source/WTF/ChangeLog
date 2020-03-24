@@ -1,5 +1,17 @@
 2020-03-24  Per Arne Vollan  <pvollan@apple.com>
 
+        [Cocoa] Fix launch time regression with CF prefs direct mode enabled
+        https://bugs.webkit.org/show_bug.cgi?id=209244
+
+        Reviewed by Darin Adler.
+
+        Re-enable CF prefs direct mode.
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+
+2020-03-24  Per Arne Vollan  <pvollan@apple.com>
+
         [Cocoa] Deny access to database mapping service
         https://bugs.webkit.org/show_bug.cgi?id=209339
         <rdar://problem/56966010>

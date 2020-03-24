@@ -173,14 +173,6 @@ void WebProcessPool::platformInitialize()
         installMemoryPressureHandler();
 
     setLegacyCustomProtocolManagerClient(makeUnique<LegacyCustomProtocolManagerClient>());
-
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    [WKPreferenceObserver swizzleRegisterDefaults];
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
-        // Start observing preference changes.
-        [WKPreferenceObserver sharedInstance];
-    });
-#endif
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -611,6 +603,19 @@ void WebProcessPool::remoteWebInspectorEnabledCallback(CFNotificationCenterRef, 
 }
 #endif
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+void WebProcessPool::startObservingPreferenceChanges()
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            // Start observing preference changes.
+            [WKPreferenceObserver sharedInstance];
+        });
+    });
+}
+#endif
+
 void WebProcessPool::registerNotificationObservers()
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -655,6 +660,9 @@ void WebProcessPool::registerNotificationObservers()
 #endif
 
     m_activationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidBecomeActiveNotification object:NSApp queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+#if ENABLE(CFPREFS_DIRECT_MODE)
+        startObservingPreferenceChanges();
+#endif
         setApplicationIsActive(true);
     }];
 
@@ -676,6 +684,11 @@ void WebProcessPool::registerNotificationObservers()
             m_processes[i]->unblockAccessibilityServerIfNeeded();
         }
     }];
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    m_activationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"UIApplicationDidBecomeActiveNotification" object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        startObservingPreferenceChanges();
+    }];
+#endif
 #endif // !PLATFORM(IOS_FAMILY)
 }
 
@@ -691,7 +704,6 @@ void WebProcessPool::unregisterNotificationObservers()
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     [[NSNotificationCenter defaultCenter] removeObserver:m_scrollerStyleNotificationObserver.get()];
 #endif
-    [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_deactivationObserver.get()];
 #elif !PLATFORM(MACCATALYST)
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, static_cast<CFStringRef>(UIBacklightLevelChangedNotification) , nullptr);
@@ -701,6 +713,7 @@ void WebProcessPool::unregisterNotificationObservers()
 #endif
 #endif // PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
 #endif // !PLATFORM(IOS_FAMILY)
 }
 
