@@ -120,8 +120,14 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
             postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;
         } else {
             postLayoutData.surroundingContext = plainText(surroundingRange.get());
-            postLayoutData.surroundingContextCursorPosition = characterCount(*makeRange(surroundingStart, selectionStart));
-            postLayoutData.surroundingContextSelectionPosition = characterCount(*makeRange(surroundingStart, selection.visibleEnd()));
+            if (surroundingStart.isNull() || selectionStart.isNull())
+                postLayoutData.surroundingContextCursorPosition = 0;
+            else
+                postLayoutData.surroundingContextCursorPosition = characterCount(*makeRange(surroundingStart, selectionStart));
+            if (surroundingStart.isNull() || selection.visibleEnd().isNull())
+                postLayoutData.surroundingContextSelectionPosition = 0;
+            else
+                postLayoutData.surroundingContextSelectionPosition = characterCount(*makeRange(surroundingStart, selection.visibleEnd()));
         }
     }
 }
