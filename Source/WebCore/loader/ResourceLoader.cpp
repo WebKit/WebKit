@@ -501,14 +501,14 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHan
     // anything including possibly derefing this; one example of this is Radar 3266216.
     Ref<ResourceLoader> protectedThis(*this);
 
-    if (r.usedLegacyTLS()) {
-        if (m_frame) {
-            if (auto* document = m_frame->document()) {
-                if (!document->usedLegacyTLS()) {
-                    if (auto* page = document->page())
-                        page->console().addMessage(MessageSource::Network, MessageLevel::Warning, "Loaded resource using TLS 1.0 or 1.1, which are deprecated protocols that will be removed. Please use TLS 1.2 or newer instead."_s, 0, document);
-                    document->setUsedLegacyTLS(true);
+    if (r.usedLegacyTLS() && m_frame) {
+        if (auto* document = m_frame->document()) {
+            if (!document->usedLegacyTLS()) {
+                if (auto* page = document->page()) {
+                    RELEASE_LOG_IF_ALLOWED("usedLegacyTLS:");
+                    page->console().addMessage(MessageSource::Network, MessageLevel::Warning, makeString("Loaded resource from ", r.url().host(), " using TLS 1.0 or 1.1, which are deprecated protocols that will be removed. Please use TLS 1.2 or newer instead."), 0, document);
                 }
+                document->setUsedLegacyTLS(true);
             }
         }
     }
