@@ -47,7 +47,6 @@ messages -> WebPasteboardProxy NotRefCounted {
     GetPasteboardStringsForType(String pasteboardName, String pasteboardType) -> (Vector<String> strings) Synchronous
     GetPasteboardBufferForType(String pasteboardName, String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Synchronous
     GetPasteboardChangeCount(String pasteboardName) -> (int64_t changeCount) Synchronous
-    GetPasteboardUniqueName() -> (String pasteboardName) Synchronous
     GetPasteboardColor(String pasteboardName) -> (WebCore::Color color) Synchronous
     GetPasteboardURL(String pasteboardName) -> (String urlString) Synchronous
     AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (int64_t changeCount) Synchronous

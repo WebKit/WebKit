@@ -55,7 +55,6 @@ public:
     virtual String stringForType(const String& pasteboardType, const String& pasteboardName) = 0;
     virtual Vector<String> allStringsForType(const String& pasteboardType, const String& pasteboardName) = 0;
     virtual int64_t changeCount(const String& pasteboardName) = 0;
-    virtual String uniqueName() = 0;
     virtual Color color(const String& pasteboardName) = 0;
     virtual URL url(const String& pasteboardName) = 0;
     virtual int getNumberOfFiles(const String& pasteboardName) = 0;

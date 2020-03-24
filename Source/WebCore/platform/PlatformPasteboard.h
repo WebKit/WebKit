@@ -64,7 +64,6 @@ public:
 #endif
     WEBCORE_EXPORT Optional<PasteboardItemInfo> informationForItemAtIndex(size_t index, int64_t changeCount);
     WEBCORE_EXPORT Optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo(int64_t changeCount);
-    WEBCORE_EXPORT static String uniqueName();
 
     enum class IncludeImageTypes : bool { No, Yes };
     static String platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes = IncludeImageTypes::No);

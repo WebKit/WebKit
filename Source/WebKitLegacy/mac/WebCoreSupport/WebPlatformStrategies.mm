@@ -142,11 +142,6 @@ int64_t WebPlatformStrategies::changeCount(const String& pasteboardName)
     return PlatformPasteboard(pasteboardName).changeCount();
 }
 
-String WebPlatformStrategies::uniqueName()
-{
-    return PlatformPasteboard::uniqueName();
-}
-
 Color WebPlatformStrategies::color(const String& pasteboardName)
 {
     return PlatformPasteboard(pasteboardName).color();    

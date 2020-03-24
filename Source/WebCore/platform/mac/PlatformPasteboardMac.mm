@@ -282,11 +282,6 @@ String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite
     return { };
 }
 
-String PlatformPasteboard::uniqueName()
-{
-    return [[NSPasteboard pasteboardWithUniqueName] name];
-}
-
 Color PlatformPasteboard::color()
 {
     return colorFromNSColor([NSColor colorFromPasteboard:m_pasteboard.get()]);

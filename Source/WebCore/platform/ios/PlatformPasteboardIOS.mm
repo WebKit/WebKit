@@ -316,11 +316,6 @@ int64_t PlatformPasteboard::changeCount() const
     return [m_pasteboard changeCount];
 }
 
-String PlatformPasteboard::uniqueName()
-{
-    return String();
-}
-
 String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes includeImageTypes)
 {
     if (domType == "text/plain")

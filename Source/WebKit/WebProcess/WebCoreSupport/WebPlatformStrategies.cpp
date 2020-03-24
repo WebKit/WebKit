@@ -173,13 +173,6 @@ int64_t WebPlatformStrategies::changeCount(const String& pasteboardName)
     return changeCount;
 }
 
-String WebPlatformStrategies::uniqueName()
-{
-    String pasteboardName;
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardUniqueName(), Messages::WebPasteboardProxy::GetPasteboardUniqueName::Reply(pasteboardName), 0);
-    return pasteboardName;
-}
-
 Color WebPlatformStrategies::color(const String& pasteboardName)
 {
     Color color;

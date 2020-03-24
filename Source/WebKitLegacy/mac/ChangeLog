@@ -1,3 +1,16 @@
+2020-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove the unused method PasteboardStrategy::uniqueName()
+        https://bugs.webkit.org/show_bug.cgi?id=209452
+
+        Reviewed by Tim Horton.
+
+        See WebCore/ChangeLog for more detail.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::uniqueName): Deleted.
+
 2020-03-23  Darin Adler  <darin@apple.com>
 
         Change TextIterator::rangeLength to not require a live range

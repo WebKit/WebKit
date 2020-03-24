@@ -61,7 +61,6 @@ private:
     String stringForType(const String& pasteboardType, const String& pasteboardName) override;
     Vector<String> allStringsForType(const String& pasteboardType, const String& pasteboardName) override;
     int64_t changeCount(const String& pasteboardName) override;
-    String uniqueName() override;
     WebCore::Color color(const String& pasteboardName) override;
     URL url(const String& pasteboardName) override;
 

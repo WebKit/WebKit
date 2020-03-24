@@ -121,11 +121,6 @@ void WebPasteboardProxy::getPasteboardChangeCount(const String& pasteboardName, 
     completionHandler(PlatformPasteboard(pasteboardName).changeCount());
 }
 
-void WebPasteboardProxy::getPasteboardUniqueName(CompletionHandler<void(String&&)>&& completionHandler)
-{
-    completionHandler(PlatformPasteboard::uniqueName());
-}
-
 void WebPasteboardProxy::getPasteboardColor(const String& pasteboardName, CompletionHandler<void(WebCore::Color&&)>&& completionHandler)
 {
     completionHandler(PlatformPasteboard(pasteboardName).color());
