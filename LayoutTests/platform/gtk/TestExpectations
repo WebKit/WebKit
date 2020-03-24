@@ -1606,8 +1606,6 @@ webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 
 webkit.org/b/116976 media/video-played-collapse.html [ Failure Pass Crash ]
 
-webkit.org/b/103443 fast/parser/parser-yield-timing.html [ Failure Pass ]
-
 webkit.org/b/119009 http/tests/cache/subresource-failover-to-network.html [ Failure Pass ]
 
 webkit.org/b/119040 perf/nested-combined-selectors.html [ Failure Pass ]

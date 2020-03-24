@@ -1,3 +1,21 @@
+2020-03-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [ macOS iOS ] fast/parser/parser-yield-timing.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=207559
+
+        Reviewed by Geoffrey Garen.
+
+        Delete the test which was added in r120108 to test the yielding time of the parser.
+
+        This test has been flaky everywhere, and there isn't a way to test these kinds of timing
+        reliably in our layout test infrastructure.
+
+        * fast/parser/parser-yield-timing-expected.txt: Removed.
+        * fast/parser/parser-yield-timing.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2020-03-24  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS and Mac Debug ] fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html is flaky timing out and crashing.
