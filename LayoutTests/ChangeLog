@@ -1,5 +1,14 @@
 2020-03-24  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ Mac wk2 ] http/tests/media/track-in-band-hls-metadata.html is flaky crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=209490
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-03-24  Jason Lawrence  <lawrence.j@apple.com>
+
         Unreviewed, reverting r258931.
 
         Expectations need to include the timeout that is set in mac.

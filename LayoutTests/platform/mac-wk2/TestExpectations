@@ -1065,3 +1065,5 @@ webkit.org/b/209283 tiled-drawing/scrolling/scroll-iframe-latched-selects.html [
 webkit.org/b/209295 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https.html  [ Pass Failure ]
 
 webkit.org/b/209483 imported/w3c/web-platform-tests/notifications/event-onclose.html [ Pass Failure ]
+
+webkit.org/b/209490 http/tests/media/track-in-band-hls-metadata.html [ Pass Crash Timeout ]
