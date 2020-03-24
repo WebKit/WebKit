@@ -1707,7 +1707,7 @@ static void invalidateAnyPreviousWaitToDumpWatchdog()
     if (waitToDumpWatchdog) {
         CFRunLoopTimerInvalidate(waitToDumpWatchdog);
         CFRelease(waitToDumpWatchdog);
-        waitToDumpWatchdog = 0;
+        waitToDumpWatchdog = NULL;
     }
 }
 

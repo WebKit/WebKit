@@ -1,3 +1,15 @@
+2020-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        [mac-wk1] fast/scrolling/arrow-key-scroll-in-rtl-document.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=209427
+
+        Reviewed by Wenson Hsieh.
+        
+        0 => NULL
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (invalidateAnyPreviousWaitToDumpWatchdog):
+
 2020-03-23  Dean Jackson  <dino@apple.com>
 
         webkitpy Git class must expose the repository URL
