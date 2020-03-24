@@ -520,11 +520,11 @@ const documentation = {
         ],
         'UUID': [
             `Ultimately, most data in the results database is sorted by UUID. As mentioned in the ${localLink(['API', 'Commits'], 'commits section')}, UUIDs are defined by the timestamp of a commit and the commit order, where the commit order is the order a commit appears in it's patch series. Since most commits are not in a patch series, most commits have an order of 0. Commit UUIDs are calculated with the following equation:`,
-            codeBlock('commit.UUID = commit.timestamp * 100 + commit.order'),
+            codeBlock('commit.uuid = commit.timestamp * 100 + commit.order'),
             `All endpoints which accept time queries allow data to be retrieved by a UUID with a query like this:`,
-            codeBlock('UUID=156295247300'),
+            codeBlock('uuid=156295247300'),
             `Since UUIDs are integers, endpoints which accept time queries also accept UUID ranges. A query looking for data between UUIDs 156295149100 and 156295247300 would be formated like this:`,
-            codeBlock('after_UUID=156295149100&before_UUID=156295247300'),
+            codeBlock('after_uuid=156295149100&before_uuid=156295247300'),
             `We also know that timestamps can be easily converted to UUIDs. Endpoints which support querying by UUID also support querying by UTC timestamp. Our previous query could be instead written like this:`,
             codeBlock('after_timestamp=1562951491&before_timestamp=1562952473'),
             `Commits can also be translated to timestamp, although with a bit more work required from the back-end. Endpoints which support querying by UUID also support querying by commit information. In the first example in this section, we queried by UUID 156295247300. This corresponds to ${externalLink('https://trac.webkit.org/changeset/247391/webkit', 'r247391')}. We could instead query by the commit information:`,
@@ -534,7 +534,7 @@ const documentation = {
             `Because endpoints supporting time are convert everything to UUID on the backend, the queries to these endpoints are quite flexible. The following are all examples of valid time queries:`,
             codeBlock('after_id=247391&repository_id=webkit'),
             codeBlock('after_id=247390&before_timestamp=1562952473'),
-            codeBlock('before_id=247391&after_UUID=156295149100&before_branch=trunk'),
+            codeBlock('before_id=247391&after_uuid=156295149100&before_branch=trunk'),
         ],
     }
 }
