@@ -67,26 +67,26 @@ static String domainsToString(const Vector<RegistrableDomain>& domains)
     return builder.toString();
 }
 
-static String domainsToString(const RegistrableDomainsToDeleteOrRestrictWebsiteDataFor& domainsToRemoveOrRestrictWebsiteDataFor)
+static String domainsToString(const Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>>& domainsToRemoveWebsiteDataFor)
 {
     StringBuilder builder;
-    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllCookiesFor) {
+    for (auto& pair : domainsToRemoveWebsiteDataFor) {
+        auto& domain = pair.first;
+        auto& dataToRemove = pair.second;
         if (!builder.isEmpty())
             builder.appendLiteral(", ");
         builder.append(domain.string());
-        builder.appendLiteral("(all data)");
-    }
-    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllButHttpOnlyCookiesFor) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append(domain.string());
-        builder.appendLiteral("(all but HttpOnly cookies)");
-    }
-    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllNonCookieWebsiteDataFor) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append(domain.string());
-        builder.appendLiteral("(all but cookies)");
+        switch (dataToRemove) {
+        case WebsiteDataToRemove::All:
+            builder.appendLiteral("(all data)");
+            break;
+        case WebsiteDataToRemove::AllButHttpOnlyCookies:
+            builder.appendLiteral("(all but HttpOnly cookies)");
+            break;
+        case WebsiteDataToRemove::AllButCookies:
+            builder.appendLiteral("(all but cookies)");
+            break;
+        }
     }
     return builder.toString();
 }
@@ -199,18 +199,18 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
         m_activePluginTokens.add(plugin->pluginProcessToken());
 #endif
 
-    auto domainsToDeleteOrRestrictWebsiteDataFor = registrableDomainsToDeleteOrRestrictWebsiteDataFor();
-    if (domainsToDeleteOrRestrictWebsiteDataFor.isEmpty()) {
+    auto domainsToRemoveWebsiteDataFor = registrableDomainsToRemoveWebsiteDataFor();
+    if (domainsToRemoveWebsiteDataFor.isEmpty()) {
         completionHandler();
         return;
     }
 
-    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ITPDebug, "About to remove data records for %" PUBLIC_LOG_STRING ".", domainsToString(domainsToDeleteOrRestrictWebsiteDataFor).utf8().data());
+    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ITPDebug, "About to remove data records for %" PUBLIC_LOG_STRING ".", domainsToString(domainsToRemoveWebsiteDataFor).utf8().data());
 
     setDataRecordsBeingRemoved(true);
 
-    RunLoop::main().dispatch([store = makeRef(m_store), domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(domainsToDeleteOrRestrictWebsiteDataFor), completionHandler = WTFMove(completionHandler), weakThis = makeWeakPtr(*this), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue.copyRef()] () mutable {
-        store->deleteAndRestrictWebsiteDataForRegistrableDomains(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(domainsToDeleteOrRestrictWebsiteDataFor), shouldNotifyPagesWhenDataRecordsWereScanned, [completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis), workQueue = workQueue.copyRef()](const HashSet<RegistrableDomain>& domainsWithDeletedWebsiteData) mutable {
+    RunLoop::main().dispatch([store = makeRef(m_store), domainsToRemoveWebsiteDataFor = crossThreadCopy(domainsToRemoveWebsiteDataFor), completionHandler = WTFMove(completionHandler), weakThis = makeWeakPtr(*this), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue.copyRef()] () mutable {
+        store->deleteWebsiteDataForRegistrableDomains(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(domainsToRemoveWebsiteDataFor), shouldNotifyPagesWhenDataRecordsWereScanned, [completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis), workQueue = workQueue.copyRef()](const HashSet<RegistrableDomain>& domainsWithDeletedWebsiteData) mutable {
             workQueue->dispatch([domainsWithDeletedWebsiteData = crossThreadCopy(domainsWithDeletedWebsiteData), completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis)] () mutable {
                 if (!weakThis) {
                     completionHandler();

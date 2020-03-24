@@ -1248,12 +1248,12 @@ void WebResourceLoadStatisticsStore::invalidateAndCancel()
     m_networkSession = nullptr;
 }
 
-void WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domainsToDeleteAndRestrictWebsiteDataFor, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
+void WebResourceLoadStatisticsStore::deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>>&& domainsToRemoveWebsiteDataFor, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     
     if (m_networkSession) {
-        m_networkSession->deleteAndRestrictWebsiteDataForRegistrableDomains(dataTypes, WTFMove(domainsToDeleteAndRestrictWebsiteDataFor), shouldNotifyPage, WTFMove(completionHandler));
+        m_networkSession->deleteWebsiteDataForRegistrableDomains(dataTypes, WTFMove(domainsToRemoveWebsiteDataFor), shouldNotifyPage, WTFMove(completionHandler));
         return;
     }
 

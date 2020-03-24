@@ -2353,7 +2353,7 @@ bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor(const Dom
     return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, window);
 }
 
-RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabaseStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor()
+Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor()
 {
     ASSERT(!RunLoop::isMain());
 
@@ -2367,17 +2367,16 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
 
     auto now = WallTime::now();
     auto oldestUserInteraction = now;
-    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor toDeleteOrRestrictFor;
+    Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> domainsToRemoveWebsiteDataFor;
 
     Vector<DomainData> domains = this->domains();
     Vector<unsigned> domainIDsToClearGrandfathering;
     for (auto& statistic : domains) {
         oldestUserInteraction = std::min(oldestUserInteraction, statistic.mostRecentUserInteractionTime);
-        if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
-            toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);
-            toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
-        } else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
-            toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
+        if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering))
+            domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registrableDomain, WebsiteDataToRemove::All));
+        else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
+            domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registrableDomain, WebsiteDataToRemove::AllButCookies));
             setIsScheduledForAllButCookieDataRemoval(statistic.registrableDomain, false);
         }
         if (shouldClearGrandfathering && statistic.grandfathered)
@@ -2385,12 +2384,15 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
     }
 
     // Give the user enough time to interact with websites until we remove non-cookie website data.
-    if (!parameters().isRunningTest && now - oldestUserInteraction > parameters().minimumTimeBetweenDataRecordsRemoval)
-        toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.clear();
+    if (!parameters().isRunningTest && now - oldestUserInteraction > parameters().minimumTimeBetweenDataRecordsRemoval) {
+        domainsToRemoveWebsiteDataFor.removeAllMatching([&] (auto& pair) {
+            return pair.second == WebsiteDataToRemove::AllButCookies;
+        });
+    }
 
     clearGrandfathering(WTFMove(domainIDsToClearGrandfathering));
     
-    return toDeleteOrRestrictFor;
+    return domainsToRemoveWebsiteDataFor;
 }
 
 void ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded()

@@ -914,7 +914,7 @@ bool ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor(ResourceLoa
     return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, window);
 }
 
-RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor()
+Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatisticsMemoryStore::registrableDomainsToRemoveWebsiteDataFor()
 {
     ASSERT(!RunLoop::isMain());
 
@@ -926,14 +926,13 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryS
 
     auto now = WallTime::now();
     auto oldestUserInteraction = now;
-    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor toDeleteOrRestrictFor;
+    Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> domainsToRemoveWebsiteDataFor;
     for (auto& statistic : m_resourceStatisticsMap.values()) {
         oldestUserInteraction = std::min(oldestUserInteraction, statistic.mostRecentUserInteractionTime);
-        if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
-            toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);
-            toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
-        } else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
-            toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
+        if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering))
+            domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registrableDomain, WebsiteDataToRemove::All));
+        else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
+            domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registrableDomain, WebsiteDataToRemove::AllButCookies));
             statistic.gotLinkDecorationFromPrevalentResource = false;
         }
 
@@ -942,10 +941,13 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryS
     }
 
     // Give the user enough time to interact with websites until we remove non-cookie website data.
-    if (!parameters().isRunningTest && now - oldestUserInteraction > parameters().minimumTimeBetweenDataRecordsRemoval)
-        toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.clear();
+    if (!parameters().isRunningTest && now - oldestUserInteraction > parameters().minimumTimeBetweenDataRecordsRemoval) {
+        domainsToRemoveWebsiteDataFor.removeAllMatching([&] (auto& pair) {
+            return pair.second == WebsiteDataToRemove::AllButCookies;
+        });
+    }
 
-    return toDeleteOrRestrictFor;
+    return domainsToRemoveWebsiteDataFor;
 }
 
 void ResourceLoadStatisticsMemoryStore::pruneStatisticsIfNeeded()
