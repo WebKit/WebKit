@@ -2753,6 +2753,7 @@ private:
         
     NavigatingToAppBoundDomain m_isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
     NavigatedAwayFromAppBoundDomain m_hasNavigatedAwayFromAppBoundDomain { NavigatedAwayFromAppBoundDomain::No };
+    bool m_ignoresAppBoundDomains { false };
 };
 
 } // namespace WebKit
