@@ -159,7 +159,7 @@ body:not(.docked) .tab-bar > .tabs > .item {
     background-size: 100% 200%;
 }
 
-body:not(.docked) .tab-bar > .tabs > .item:not(.pinned) {
+body:not(.docked) .tab-bar > .tabs:not(.calculate-width) > .item:not(.pinned) {
     flex-grow: 1;
 }
 
@@ -170,7 +170,7 @@ body.docked .tab-bar > .tabs > .item {
     --tab-bar-item-vertical-margin: 4px;
 }
 
-.tab-bar > .tabs.calculate-width > .item {
+.tab-bar > .tabs.calculate-width > .item:not(.pinned) {
     flex: initial;
 }
 

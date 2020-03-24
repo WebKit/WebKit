@@ -27,3 +27,7 @@ body.focus-debug *:focus {
     outline: 2px solid fuchsia !important;
     outline-offset: -1px !important;
 }
+
+.tab-bar > .navigation-bar .inspect-inspector {
+    width: 1em !important;
+}

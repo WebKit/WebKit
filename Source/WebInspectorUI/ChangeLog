@@ -1,5 +1,33 @@
 2020-03-23  Devin Rousso  <drousso@apple.com>
 
+        REGRESSION(r257759, r258623): Web Inspector: Settings icon sometimes placed below the tab bar
+        https://bugs.webkit.org/show_bug.cgi?id=208603
+        <rdar://problem/60108967>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.prototype.layout):
+        If the total width of all `WI.GeneralTabBarItem` is not an integer, it needs to be rounded
+        when compared to the width of the container `WI.TabBar`. This is be necessary because CSS
+        often rounds to the nearest pixel, meaning that `99.5px` would actually render as `100px`,
+        whereas `99.4px` would render as `99px`.
+
+        * UserInterface/Views/TabBar.css:
+        (body:not(.docked) .tab-bar > .tabs:not(.calculate-width) > .item:not(.pinned)): Added.
+        (.tab-bar > .tabs.calculate-width > .item:not(.pinned)): Added.
+        (body:not(.docked) .tab-bar > .tabs > .item:not(.pinned)): Deleted.
+        (.tab-bar > .tabs.calculate-width > .item): Deleted.
+        When undocked, force all `WI.GeneralTabBarItem` to take up as little width as possible when
+        resizing so that if there isn't enough room for all of them, any that `flex-wrap` won't be
+        incorrectly perceived as needing a much larger width.
+
+        * UserInterface/Debug/Bootstrap.css:
+        (.tab-bar > .navigation-bar .inspect-inspector):
+        Ensure that the "inspect inspector" navigation item has an integer pixel width.
+
+2020-03-23  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: TypeError: this._springEditor.removeListeners is not a function. (In 'this._springEditor.removeListeners()', 'this._springEditor.removeListeners' is undefined)
         https://bugs.webkit.org/show_bug.cgi?id=209325
 

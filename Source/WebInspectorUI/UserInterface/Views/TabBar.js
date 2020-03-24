@@ -449,8 +449,7 @@ WI.TabBar = class TabBar extends WI.View
             return tabBarItem[WI.TabBar.CachedWidthSymbol];
         }
 
-        // Add one to allow for possible sub-px widths.
-        let availableSpace = this._tabContainer.realOffsetWidth - tabBarHorizontalPadding + 1;
+        let availableSpace = this._tabContainer.realOffsetWidth - tabBarHorizontalPadding;
 
         this._tabContainer.classList.add("calculate-width");
 
@@ -480,7 +479,7 @@ WI.TabBar = class TabBar extends WI.View
 
         // Wait to measure widths until all `WI.TabBarItem` are un-hidden for the reason above.
         let normalTabBarItemsWidth = normalTabBarItems.reduce((accumulator, tabBarItem) => accumulator + measureWidth(tabBarItem), 0);
-        if (normalTabBarItemsWidth > availableSpace) {
+        if (Math.round(normalTabBarItemsWidth) >= Math.floor(availableSpace)) {
             this._tabPickerTabBarItem.hidden = false;
             availableSpace -= measureWidth(this._tabPickerTabBarItem);
 
@@ -494,8 +493,12 @@ WI.TabBar = class TabBar extends WI.View
 
                 tabBarItem.hidden = true;
                 this._hiddenTabBarItems.push(tabBarItem);
-            } while (normalTabBarItemsWidth > availableSpace && --index >= 0);
+            } while (normalTabBarItemsWidth >= availableSpace && --index >= 0);
         }
+
+        // Tabs are marked as hidden from right to left, meaning that the right-most item will be
+        // first in the list. Reverse the list so that the right-most item is last.
+        this._hiddenTabBarItems.reverse();
 
         this._tabContainer.classList.remove("calculate-width");
     }
