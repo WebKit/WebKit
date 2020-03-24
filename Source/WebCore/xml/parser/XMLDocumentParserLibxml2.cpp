@@ -42,6 +42,7 @@
 #include "HTTPParsers.h"
 #include "InlineClassicScript.h"
 #include "MIMETypeRegistry.h"
+#include "PageConsoleClient.h"
 #include "PendingScript.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
