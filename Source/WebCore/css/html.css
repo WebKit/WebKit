@@ -702,6 +702,7 @@ input::placeholder {
     white-space: pre;
     word-wrap: normal;
     overflow: hidden;
+    line-height: initial;
 }
 
 input[type="password"] {
