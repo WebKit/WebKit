@@ -1646,4 +1646,4 @@ webkit.org/b/209357 http/tests/resourceLoadStatistics/third-party-cookie-blockin
 
 webkit.org/b/209446 imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
 
-webkit.org/b/209450 [ Debug ] fast/text/control-characters/visible-control-characters-1.html [ Pass Crash ]
+webkit.org/b/209450 [ Debug ] fast/text/control-characters/visible-control-characters-1.html [ Pass ImageOnlyFailure Crash ]
