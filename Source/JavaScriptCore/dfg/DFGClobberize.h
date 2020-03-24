@@ -324,8 +324,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 def(HeapLocation(HasIndexedPropertyLoc, IndexedInt32Properties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
-            read(Heap);
-            return;
+            break;
         }
             
         case Array::Double: {
@@ -335,8 +334,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 def(HeapLocation(HasIndexedPropertyLoc, IndexedDoubleProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
-            read(Heap);
-            return;
+            break;
         }
             
         case Array::Contiguous: {
@@ -346,8 +344,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 def(HeapLocation(HasIndexedPropertyLoc, IndexedContiguousProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
-            read(Heap);
-            return;
+            break;
         }
 
         case Array::ArrayStorage: {
@@ -356,17 +353,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
                 read(IndexedArrayStorageProperties);
                 return;
             }
-            read(Heap);
-            return;
+            break;
         }
 
-        default: {
-            read(World);
-            write(Heap);
-            return;
+        default: 
+            break;
         }
-        }
-        RELEASE_ASSERT_NOT_REACHED();
+        read(World);
+        write(Heap);
         return;
     }
 
