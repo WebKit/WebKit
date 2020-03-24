@@ -4242,8 +4242,11 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         unsigned offsetSoFar = startOffset;
         const int stride = 1;
         while (!iterator.atEnd()) {
-            if (!iterator.text().isEmpty())
-                rects.append({ createLiveRange(iterator.range())->absoluteBoundingBox(Range::BoundingRectBehavior::IgnoreEmptyTextSelections), { offsetSoFar++, stride } });
+            if (!iterator.text().isEmpty()) {
+                auto currentRange = createLiveRange(iterator.range());
+                auto absoluteBoundingBox = currentRange->absoluteBoundingBox(Range::BoundingRectBehavior::IgnoreEmptyTextSelections);
+                rects.append({ currentRange->ownerDocument().view()->contentsToRootView(absoluteBoundingBox), { offsetSoFar++, stride } });
+            }
             iterator.advance(stride);
         }
         return rects;
