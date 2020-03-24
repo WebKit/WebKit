@@ -2032,3 +2032,5 @@ webkit.org/b/209250 [ Sierra+ ] imported/w3c/web-platform-tests/css/css-text/lin
 webkit.org/b/207858 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
 
 webkit.org/b/209446 [ Debug ] imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
+
+webkit.org/b/209491 fast/animation/request-animation-frame-cancel2.html [ Pass Failure ]
