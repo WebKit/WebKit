@@ -360,20 +360,24 @@ const documentation = {
                     codeBlock('[\n' +
                     '    {\n' +
                     '        "configuration": <configuration-object-a>,\n' +
-                    '        "results": {\n' +
-                    '            "start_time": <UTC time test run started>,\n' +
-                    '            "uuid": <UUID for test run>,\n' +
-                    '            "suite.sub-1.test-1": "FAIL",\n' +
-                    '            "suite.sub-1.test-2": "FAIL",\n' +
-                    '        }\n' +
+                    '        "results": [\n' +
+                    '            {\n' +
+                    '                "start_time": <UTC time test run started>,\n' +
+                    '                "uuid": <UUID for test run>,\n' +
+                    '                "suite.sub-1.test-1": "FAIL",\n' +
+                    '                "suite.sub-1.test-2": "FAIL",\n' +
+                    '            }\n' +
+                    '        ]\n' +
                     '    }, {\n' +
                     '        "configuration": <configuration-object-b>,\n' +
-                    '        "results": {\n' +
-                    '            "start_time": <UTC time test run started>,\n' +
-                    '            "uuid": <UUID for test run>,\n' +
-                    '            "suite.sub-1.test-1": "FAIL",\n' +
-                    '            "suite.sub-2.test-1": "CRASH",\n' +
-                    '        }\n' +
+                    '        "results": [\n' +
+                    '            {\n' +
+                    '                "start_time": <UTC time test run started>,\n' +
+                    '                "uuid": <UUID for test run>,\n' +
+                    '                "suite.sub-1.test-1": "FAIL",\n' +
+                    '                "suite.sub-1.test-2": "CRASH",\n' +
+                    '            }\n' +
+                    '        ]\n' +
                     '    }\n' +
                     ']'),
                     `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}.`,

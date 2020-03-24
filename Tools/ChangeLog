@@ -1,5 +1,14 @@
 2020-03-24  Jonathan Bedard  <jbedard@apple.com>
 
+        results.webkit.org: Documentation for uncollapsed failure endpoints is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=209496
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/templates/documentation.html:
+
+2020-03-24  Jonathan Bedard  <jbedard@apple.com>
+
         results.webkit.org: Filter suite results by expectation by default
         https://bugs.webkit.org/show_bug.cgi?id=209500
 
