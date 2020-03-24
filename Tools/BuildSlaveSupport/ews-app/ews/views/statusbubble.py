@@ -23,6 +23,7 @@
 from __future__ import unicode_literals
 
 import datetime
+import logging
 import re
 
 from django.http import HttpResponse
@@ -34,6 +35,8 @@ from ews.common.buildbot import Buildbot
 from ews.models.build import Build
 from ews.models.patch import Patch
 import ews.config as config
+
+_log = logging.getLogger(__name__)
 
 
 class StatusBubble(View):
@@ -110,7 +113,7 @@ class StatusBubble(View):
             bubble['details_message'] = 'Waiting for available bot to retry the build.\n\nRecent messages:' + self._steps_messages_from_multiple_builds(builds)
         elif build.result == Buildbot.SUCCESS:
             if is_parent_build:
-                if patch.modified < (timezone.now() - datetime.timedelta(days=StatusBubble.DAYS_TO_CHECK)):
+                if patch.created < (timezone.now() - datetime.timedelta(days=StatusBubble.DAYS_TO_CHECK)):
                     # Do not display bubble for old patch for which no build has been reported on given queue.
                     # Most likely the patch would never be processed on this queue, since either the queue was
                     # added after the patch was submitted, or build request for that patch was cancelled.
@@ -270,7 +273,7 @@ class StatusBubble(View):
         # FIXME: Handle retried builds and cancelled build-requests as well.
         from_timestamp = timezone.now() - datetime.timedelta(days=StatusBubble.DAYS_TO_CHECK)
 
-        if patch.modified < from_timestamp:
+        if patch.created < from_timestamp:
             # Do not display bubble for old patch for which no build has been reported on given queue.
             # Most likely the patch would never be processed on this queue, since either the queue was
             # added after the patch was submitted, or build request for that patch was cancelled.
@@ -278,21 +281,22 @@ class StatusBubble(View):
 
         sent = 'sent_to_commit_queue' if queue == 'commit' else 'sent_to_buildbot'
         previously_sent_patches = set(Patch.objects
-                                          .filter(modified__gte=from_timestamp)
+                                          .filter(created__gte=from_timestamp)
                                           .filter(**{sent: True})
                                           .filter(obsolete=False)
-                                          .filter(modified__lt=patch.modified))
+                                          .filter(created__lt=patch.created))
         if parent_queue:
             recent_builds_parent_queue = Build.objects \
-                                             .filter(modified__gte=from_timestamp) \
+                                             .filter(created__gte=from_timestamp) \
                                              .filter(builder_display_name=parent_queue)
             processed_patches_parent_queue = set([build.patch for build in recent_builds_parent_queue])
             return len(previously_sent_patches - processed_patches_parent_queue) + 1
 
         recent_builds = Build.objects \
-                            .filter(modified__gte=from_timestamp) \
+                            .filter(created__gte=from_timestamp) \
                             .filter(builder_display_name=queue)
         processed_patches = set([build.patch for build in recent_builds])
+        _log.debug('Patch: {}, queue: {}, previous patches: {}'.format(patch.patch_id, queue, previously_sent_patches - processed_patches))
         return len(previously_sent_patches - processed_patches) + 1
 
     def _build_bubbles_for_patch(self, patch, hide_icons=False):
