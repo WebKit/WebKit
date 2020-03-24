@@ -145,6 +145,10 @@ static bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
     if (!decoder.decode(handle))
         return false;
 
+    // SharedMemory::Handle::size() is rounded up to the nearest page.
+    if (bufferSize > handle.size())
+        return false;
+
     auto sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
 
