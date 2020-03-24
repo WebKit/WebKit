@@ -550,7 +550,7 @@ WKWebsiteDataStoreRef TestController::defaultWebsiteDataStore()
 
 WKWebsiteDataStoreRef TestController::websiteDataStore()
 {
-    return WKPageConfigurationGetWebsiteDataStore(WKPageCopyPageConfiguration(m_mainWebView->page()));
+    return WKPageConfigurationGetWebsiteDataStore(adoptWK(WKPageCopyPageConfiguration(m_mainWebView->page())).get());
 }
 
 WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(const TestOptions& options)

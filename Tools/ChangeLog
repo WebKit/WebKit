@@ -1,3 +1,14 @@
+2020-03-23  Alex Christensen  <achristensen@webkit.org>
+
+        Fix memory leak introduced in r257726
+        https://bugs.webkit.org/show_bug.cgi?id=208399
+
+        Reviewed by John Wilander.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::websiteDataStore):
+        We were leaking page configurations.
+
 2020-03-23  John Wilander  <wilander@apple.com>
 
         Add the capability to change all of a website's cookies to SameSite=Strict
