@@ -3888,7 +3888,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::Double:
         case Array::Contiguous:
         case Array::ArrayStorage: {
-            break;
+            if (mode.isInBounds())
+                break;
+            FALLTHROUGH;
         }
         default: {
             clobberWorld();

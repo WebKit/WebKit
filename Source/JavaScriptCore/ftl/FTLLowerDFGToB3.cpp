@@ -11412,6 +11412,7 @@ private:
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         LValue base = lowCell(m_graph.varArgChild(m_node, 0));
         LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
+        ArrayMode mode = m_node->arrayMode();
 
         switch (m_node->arrayMode().type()) {
         case Array::Int32:
@@ -11419,14 +11420,14 @@ private:
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
             LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
 
-            IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
+            IndexedAbstractHeap& heap = mode.type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
             LBasicBlock slowCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
             LBasicBlock lastNext = nullptr;
 
-            if (!m_node->arrayMode().isInBounds()) {
+            if (!mode.isInBounds()) {
                 LBasicBlock checkHole = m_out.newBlock();
                 m_out.branch(
                     m_out.aboveOrEqual(
@@ -11439,7 +11440,12 @@ private:
             LValue checkHoleResultValue =
                 m_out.notZero64(m_out.load64(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1))));
             ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
-            m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
+            if (mode.isSaneChain())
+                m_out.jump(continuation);
+            else if (!mode.isInBounds())
+                m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
+            else
+                speculateAndJump(continuation, LoadFromHole, noValue(), nullptr, checkHoleResultValue);
 
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
@@ -11473,7 +11479,12 @@ private:
             LValue doubleValue = m_out.loadDouble(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
             LValue checkHoleResultValue = m_out.doubleEqual(doubleValue, doubleValue);
             ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
-            m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
+            if (mode.isSaneChain())
+                m_out.jump(continuation);
+            else if (!mode.isInBounds())
+                m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
+            else
+                speculateAndJump(continuation, LoadFromHole, noValue(), nullptr, checkHoleResultValue);
             
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
@@ -11506,7 +11517,12 @@ private:
             LValue checkHoleResultValue =
                 m_out.notZero64(m_out.load64(baseIndex(m_heaps.ArrayStorage_vector, storage, index, m_graph.varArgChild(m_node, 1))));
             ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
-            m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
+            if (mode.isSaneChain())
+                m_out.jump(continuation);
+            else if (!mode.isInBounds())
+                m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
+            else
+                speculateAndJump(continuation, LoadFromHole, noValue(), nullptr, checkHoleResultValue);
 
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
@@ -15887,6 +15903,13 @@ private:
         ExitKind kind, FormattedValue lowValue, const MethodOfGettingAValueProfile& profile, LValue failCondition)
     {
         appendOSRExit(kind, lowValue, profile, failCondition, m_origin);
+    }
+
+    template<typename... Args>
+    void speculateAndJump(B3::BasicBlock* target, Args... args)
+    {
+        speculate(args...);
+        m_out.jump(target);
     }
     
     void terminate(ExitKind kind)

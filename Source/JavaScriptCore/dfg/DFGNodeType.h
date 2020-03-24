@@ -474,7 +474,8 @@ namespace JSC { namespace DFG {
     \
     /* For-in enumeration opcodes */\
     macro(GetEnumerableLength, NodeMustGenerate | NodeResultJS) \
-    macro(HasIndexedProperty, NodeResultBoolean | NodeHasVarArgs) \
+    /* Must generate because of Proxies on the prototype chain */ \
+    macro(HasIndexedProperty, NodeMustGenerate | NodeResultBoolean | NodeHasVarArgs) \
     macro(HasStructureProperty, NodeResultBoolean) \
     macro(HasGenericProperty, NodeResultBoolean) \
     macro(GetDirectPname, NodeMustGenerate | NodeHasVarArgs | NodeResultJS) \
