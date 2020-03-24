@@ -643,10 +643,14 @@ class WebkitFlatpak:
             "LANG",
             "LDFLAGS",
             "Malloc",
+            "GPU_PROCESS_CMD_PREFIX",
+            "NETWORK_PROCESS_CMD_PREFIX",
             "NUMBER_OF_PROCESSORS",
+            "PLUGIN_PROCESS_CMD_PREFIX",
             "QML2_IMPORT_PATH",
             "WAYLAND_DISPLAY",
             "WAYLAND_SOCKET",
+            "WEB_PROCESS_CMD_PREFIX"
         ]
 
         env_vars = os.environ
