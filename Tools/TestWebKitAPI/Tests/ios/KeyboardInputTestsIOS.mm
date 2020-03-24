@@ -437,6 +437,28 @@ TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponder)
     [webView waitForSelectionViewRectsToBecome:expectedSelectionRects];
 }
 
+TEST(KeyboardInputTests, IsSingleLineDocument)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<body><input id='first' type='text'><textarea id='second'></textarea><div id='third' contenteditable='true'></div></body>"];
+
+    // Text field
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('first').focus()"];
+    EXPECT_TRUE([webView textInputContentView].textInputTraits.isSingleLineDocument);
+
+    // Text area
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('second').focus()"];
+    EXPECT_FALSE([webView textInputContentView].textInputTraits.isSingleLineDocument);
+
+    // Content editable
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('third').focus()"];
+    EXPECT_FALSE([webView textInputContentView].textInputTraits.isSingleLineDocument);
+}
+
 TEST(KeyboardInputTests, KeyboardTypeForInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

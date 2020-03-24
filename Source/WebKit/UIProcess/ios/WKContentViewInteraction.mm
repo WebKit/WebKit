@@ -43,6 +43,7 @@
 #import "SmartMagnificationController.h"
 #import "TextChecker.h"
 #import "TextInputSPI.h"
+#import "UIKitSPI.h"
 #import "UserInterfaceIdiom.h"
 #import "VersionChecks.h"
 #import "WKActionSheetAssistant.h"
@@ -163,7 +164,6 @@
 #endif
 
 #if USE(DICTATION_ALTERNATIVES)
-#import "UIKitSPI.h"
 #import <WebCore/TextAlternativeWithRange.h>
 #endif
 
@@ -4976,6 +4976,35 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     }
 
     [_traits setTextContentType:contentTypeFromFieldName(_focusedElementInformation.autofillFieldName)];
+
+    switch (_focusedElementInformation.elementType) {
+    case WebKit::InputType::ContentEditable:
+    case WebKit::InputType::TextArea:
+        [_traits setIsSingleLineDocument:NO];
+        break;
+#if ENABLE(INPUT_TYPE_COLOR)
+    case WebKit::InputType::Color:
+#endif
+    case WebKit::InputType::Date:
+    case WebKit::InputType::DateTime:
+    case WebKit::InputType::DateTimeLocal:
+    case WebKit::InputType::Drawing:
+    case WebKit::InputType::Email:
+    case WebKit::InputType::Month:
+    case WebKit::InputType::None:
+    case WebKit::InputType::Number:
+    case WebKit::InputType::NumberPad:
+    case WebKit::InputType::Password:
+    case WebKit::InputType::Phone:
+    case WebKit::InputType::Search:
+    case WebKit::InputType::Select:
+    case WebKit::InputType::Text:
+    case WebKit::InputType::Time:
+    case WebKit::InputType::URL:
+    case WebKit::InputType::Week:
+        [_traits setIsSingleLineDocument:YES];
+        break;
+    }
 
     [self _updateInteractionTintColor];
 
