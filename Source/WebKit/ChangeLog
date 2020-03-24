@@ -1,3 +1,17 @@
+2020-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        IPC::Decoder::decodeFixedLengthData() should be marked WARN_UNUSED_RETURN
+        <https://webkit.org/b/209448>
+        <rdar://problem/60797998>
+
+        Reviewed by Chris Dumez.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (struct VectorArgumentCoder::decode):
+        - Check the return value of Decoder::decodeFixedLengthData().
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::decodeFixedLengthData): Add WARN_UNUSED_RETURN.
+
 2020-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove the unused method PasteboardStrategy::uniqueName()
