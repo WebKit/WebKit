@@ -40,7 +40,6 @@ KeyframeEffectStack::KeyframeEffectStack()
 
 KeyframeEffectStack::~KeyframeEffectStack()
 {
-    ASSERT(m_effects.isEmpty());
 }
 
 bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
