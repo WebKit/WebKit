@@ -100,7 +100,7 @@
 }
 
 .snapshot-list-icon .icon {
-    content: url(../Images/TypeIcons.svg#Events-light);
+    content: url(../Images/TypeIcons.svg#HeapSnapshotList-light);
 }
 
 .snapshot-diff-icon .icon {
@@ -193,7 +193,7 @@
     }
 
     .snapshot-list-icon .icon {
-        content: url(../Images/TypeIcons.svg#Events-dark);
+        content: url(../Images/TypeIcons.svg#HeapSnapshotList-dark);
     }
 
     .snapshot-diff-icon .icon {

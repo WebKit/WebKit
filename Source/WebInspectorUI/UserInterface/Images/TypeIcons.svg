@@ -320,8 +320,8 @@
     <g id="EventBreakpointAnimationFrame-light" class="light blue"><use href="#box"/><use href="#R"/></g>
     <g id="EventBreakpointInterval-dark" class="dark blue"><use href="#box"/><use href="#I"/></g>
     <g id="EventBreakpointInterval-light" class="light blue"><use href="#box"/><use href="#I"/></g>
-    <g id="EventBreakpointListener-dark" class="dark blue"><use href="#box"/><use href="#I"/></g>
-    <g id="EventBreakpointListener-light" class="light blue"><use href="#box"/><use href="#I"/></g>
+    <g id="EventBreakpointListener-dark" class="dark blue"><use href="#box"/><use href="#E"/></g>
+    <g id="EventBreakpointListener-light" class="light blue"><use href="#box"/><use href="#E"/></g>
     <g id="EventBreakpointTimeout-dark" class="dark blue"><use href="#box"/><use href="#T"/></g>
     <g id="EventBreakpointTimeout-light" class="light blue"><use href="#box"/><use href="#T"/></g>
     <g id="EventListener-dark" class="dark beige"><use href="#box"/><use href="#E"/></g>
@@ -337,6 +337,8 @@
     <g id="HeapSnapshotDiff-light" class="light green"><use href="#box"/><use href="#D"/></g>
     <g id="HeapSnapshotInstances-dark" class="dark yellow"><use href="#box"/><use href="#O"/></g>
     <g id="HeapSnapshotInstances-light" class="light yellow"><use href="#box"/><use href="#O"/></g>
+    <g id="HeapSnapshotList-dark" class="dark grey"><use href="#box"/><use href="#list"/></g>
+    <g id="HeapSnapshotList-light" class="light grey"><use href="#box"/><use href="#list"/></g>
     <g id="HeapSnapshotObjectGraph-dark" class="dark red"><use href="#box"/><use href="#braces"/></g>
     <g id="HeapSnapshotObjectGraph-light" class="light red"><use href="#box"/><use href="#braces"/></g>
     <g id="Microtask-dark" class="dark blue"><use href="#box"/><use href="#M"/></g>
