@@ -13587,7 +13587,7 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
         m_jit.loadDouble(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), scratchFPR);
 
         if (mode.isSaneChain()) {
-            m_jit.compareDouble(MacroAssembler::DoubleEqualAndOrdered, scratchFPR, scratchFPR, resultGPR);
+            m_jit.compareDouble(MacroAssembler::DoubleEqual, scratchFPR, scratchFPR, resultGPR);
             break;
         }
 
