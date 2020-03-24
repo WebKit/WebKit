@@ -4236,7 +4236,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         context.selectedRangeInMarkedText.length = [context.selectedText.string length];
     }
 
-    auto characterRectsForRange = [](const Range& range, unsigned startOffset) {
+    auto characterRectsForRange = [](const SimpleRange& range, unsigned startOffset) {
         Vector<DocumentEditingContext::TextRectAndRange> rects;
         CharacterIterator iterator { range };
         unsigned offsetSoFar = startOffset;
