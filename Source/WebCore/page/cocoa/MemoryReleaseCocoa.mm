@@ -31,6 +31,7 @@
 #import "IOSurfacePool.h"
 #import "LayerPool.h"
 #import "LocaleCocoa.h"
+#import "SubimageCacheWithTimer.h"
 #import "SystemFontDatabaseCoreText.h"
 #import <notify.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -68,6 +69,10 @@ void platformReleaseMemory(Critical)
 
 #if HAVE(IOSURFACE)
     IOSurfacePool::sharedPool().discardAllSurfaces();
+#endif
+
+#if CACHE_SUBIMAGES
+    SubimageCacheWithTimer::clear();
 #endif
 }
 
