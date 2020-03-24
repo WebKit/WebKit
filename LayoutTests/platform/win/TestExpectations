@@ -4474,6 +4474,8 @@ webkit.org/b/207499 webanimations/transform-accelerated-animation-finishes-befor
 
 webkit.org/b/209426 http/wpt/css/css-animations/start-animation-001.html  [ Pass Failure ]
 
+webkit.org/b/209455 http/tests/misc/last-modified-parsing.html [ Failure ]
+
 # IntersectionObserver is off by default
 http/tests/lazyload [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/below-viewport-image-loading-lazy-load-event.html [ Skip ]

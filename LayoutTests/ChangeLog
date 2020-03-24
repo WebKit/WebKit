@@ -1,3 +1,12 @@
+2020-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        [Win] http/tests/misc/last-modified-parsing.html always fails on Windows EWS
+        <https://webkit.org/b/209455>
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2020-03-23  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Deny access to database mapping service
