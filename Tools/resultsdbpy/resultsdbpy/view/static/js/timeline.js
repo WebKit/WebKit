@@ -830,7 +830,8 @@ function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
     return `<div class="label" style="font-size: var(--smallSize)" ref="${ref}"></div>`;
 } 
 
-function Legend(callback=null, plural=false) {
+function Legend(callback=null, plural=false, defaultWillFilterExpected=false) {
+    willFilterExpected = defaultWillFilterExpected;
     InvestigateDrawer.willFilterExpected = willFilterExpected;
     let updateLabelEvents = new EventStream();
     const legendDetails = {
