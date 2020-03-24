@@ -380,7 +380,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (!WebCore::IOSApplication::isMobileSafari() || _AXSApplicationAccessibilityEnabled()) {
         static const char* services[] = {
             "com.apple.lsd.open",
-            "com.apple.lsd.mapdb",
             "com.apple.mobileassetd",
             "com.apple.iconservices",
             "com.apple.PowerManagement.control",
@@ -435,6 +434,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (WebCore::IOSApplication::isMobileSafari())
         parameters.vectorOfUTTypeItem = createVectorOfUTTypeItem();
 #endif
+
+    SandboxExtension::Handle mapDBHandle;
+    SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb", WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport);
+    parameters.mapDBExtensionHandle = WTFMove(mapDBHandle);
 #endif
     
     // Allow microphone access if either preference is set because WebRTC requires microphone access.

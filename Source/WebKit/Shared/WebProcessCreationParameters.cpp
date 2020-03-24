@@ -169,6 +169,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << neHelperExtensionHandle;
     encoder << neSessionManagerExtensionHandle;
+    encoder << mapDBExtensionHandle;
     encoder << systemHasBattery;
     encoder << mimeTypesMap;
     encoder << mapUTIFromMIMEType;
@@ -455,6 +456,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!neSessionManagerExtensionHandle)
         return false;
     parameters.neSessionManagerExtensionHandle = WTFMove(*neSessionManagerExtensionHandle);
+
+    Optional<Optional<SandboxExtension::Handle>> mapDBExtensionHandle;
+    decoder >> mapDBExtensionHandle;
+    if (!mapDBExtensionHandle)
+        return false;
+    parameters.mapDBExtensionHandle = WTFMove(*mapDBExtensionHandle);
 
     Optional<bool> systemHasBattery;
     decoder >> systemHasBattery;
