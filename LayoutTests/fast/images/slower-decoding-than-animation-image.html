@@ -4,52 +4,63 @@
     <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
+    <img id="image">
     <canvas id="canvas"></canvas>
     <script>
-        description("Ensure the image frame is drawn when it finishes decoding even if it takes more than the previous frame duration.");
-        jsTestIsAsync = true;
+        function drawFrame(image, canvas, frameIndex) {
+            return new Promise((resolve) => {
+                let context = canvas.getContext("2d");
+                context.drawImage(image, 0, 0, 100, 100, 0, 0, canvas.width, canvas.height);
 
-        if (window.internals) {
-            internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
-            internals.clearMemoryCache();
+                if (window.internals) {
+                    shouldBe("internals.imageFrameIndex(image)", frameIndex.toString());
+                    image.addEventListener("webkitImageFrameReady", function() {
+                        resolve();
+                    }, false);
+                } else {
+                    setTimeout(() => {
+                        resolve();
+                    }, 40);
+                }
+            });
         }
 
-        var image = new Image;
-        image.onload = imageLoaded;
-        image.src = "resources/animated-red-green-blue.gif";
-
-        function imageLoaded()
-        {
-            if (!window.internals)
-                return;
-            internals.setImageFrameDecodingDuration(image, 0.050);
-            drawImage();
-            drawLoop();
+        function drawImage(image, canvas, frameCount) {
+            let promise = drawFrame(image, canvas, 0);
+            for (let frameIndex = 1; frameIndex < frameCount; ++frameIndex) {
+                promise = promise.then(() => {
+                    return drawFrame(image, canvas, frameIndex);
+                });
+            }
+            return promise;
         }
 
-        function drawImage()
-        {
-            if (drawImage.count == undefined)
-                drawImage.count = 0;
+        function loadImage(image, src, canvas, frameCount) {
+            return new Promise((resolve) => {
+                image.onload = (() => {
+                    if (window.internals) {
+                        internals.clearMemoryCache();
+                        internals.setImageFrameDecodingDuration(image, 0.050);
+                        internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+                        internals.settings.setWebkitImageReadyEventEnabled(true);
+                    }
+                    drawImage(image, canvas, frameCount).then(resolve);
+                });
+                image.src = src;
+            });
+        }
+
+        (function() {
+            description("Ensure the image frame is drawn when it finishes decoding even if it takes more than the previous frame duration.");
+            jsTestIsAsync = true;
+
+            var image = document.getElementById("image");
             var canvas = document.getElementById("canvas");
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-            return ++drawImage.count;
-        }
-                
-        function drawLoop()
-        {
-            // 1st time the image is drawn, time = 0, current_frame = 0
-            // 2nd time the image is drawn, time = 40, current_frame = 0
-            // 3rd time the image is drawn, time = 80, current_frame = 1
-            setTimeout(function() {
-                if (drawImage() == 3) {
-                    shouldBe("internals.imageFrameIndex(image)", "1");
-                    finishJSTest();
-                } else
-                    drawLoop();
-            }, 40);
-        }
+
+            loadImage(image, "resources/animated-red-green-blue.gif", canvas, 3).then(() => {
+                finishJSTest();
+            });
+        })();
     </script>
     <script src="../../resources/js-test-post.js"></script>
 </body>
