@@ -130,7 +130,7 @@ private:
     void removeDataRecords(CompletionHandler<void()>&&);
     void pruneStatisticsIfNeeded() override;
     ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&);
-    Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> registrableDomainsToRemoveWebsiteDataFor() override;
+    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor registrableDomainsToDeleteOrRestrictWebsiteDataFor() override;
     bool isMemoryStore() const final { return true; }
 
     WeakPtr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;

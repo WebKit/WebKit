@@ -70,16 +70,18 @@ class WebProcessProxy;
 enum class ShouldGrandfatherStatistics : bool;
 enum class ShouldIncludeLocalhost : bool { No, Yes };
 enum class EnableResourceLoadStatisticsDebugMode : bool { No, Yes };
-enum class WebsiteDataToRemove : uint8_t {
-    All,
-    AllButHttpOnlyCookies,
-    AllButCookies
-};
 struct RegistrableDomainsToBlockCookiesFor {
     Vector<WebCore::RegistrableDomain> domainsToBlockAndDeleteCookiesFor;
     Vector<WebCore::RegistrableDomain> domainsToBlockButKeepCookiesFor;
     Vector<WebCore::RegistrableDomain> domainsWithUserInteractionAsFirstParty;
     RegistrableDomainsToBlockCookiesFor isolatedCopy() const { return { domainsToBlockAndDeleteCookiesFor.isolatedCopy(), domainsToBlockButKeepCookiesFor.isolatedCopy(), domainsWithUserInteractionAsFirstParty.isolatedCopy() }; }
+};
+struct RegistrableDomainsToDeleteOrRestrictWebsiteDataFor {
+    Vector<WebCore::RegistrableDomain> domainsToDeleteAllCookiesFor;
+    Vector<WebCore::RegistrableDomain> domainsToDeleteAllButHttpOnlyCookiesFor;
+    Vector<WebCore::RegistrableDomain> domainsToDeleteAllNonCookieWebsiteDataFor;
+    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor isolatedCopy() const { return { domainsToDeleteAllCookiesFor.isolatedCopy(), domainsToDeleteAllButHttpOnlyCookiesFor.isolatedCopy(), domainsToDeleteAllNonCookieWebsiteDataFor.isolatedCopy() }; }
+    bool isEmpty() const { return domainsToDeleteAllCookiesFor.isEmpty() && domainsToDeleteAllButHttpOnlyCookiesFor.isEmpty() && domainsToDeleteAllNonCookieWebsiteDataFor.isEmpty(); }
 };
 
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main> {
@@ -215,7 +217,7 @@ struct ThirdPartyData {
     void logUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
     void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&, CompletionHandler<void()>&&);
     void clearUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
-    void deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>>&&, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);
+    void deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
     StorageAccessWasGranted grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier);
     void hasHadUserInteraction(const RegistrableDomain&, CompletionHandler<void(bool)>&&);

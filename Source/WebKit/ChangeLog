@@ -1,3 +1,52 @@
+2020-03-24  John Wilander  <wilander@apple.com>
+
+        Refactor ResourceLoadStatisticsStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor() to return a struct instead of a Vector of pairs
+        https://bugs.webkit.org/show_bug.cgi?id=209463
+        <rdar://problem/60808759>
+
+        Reviewed by Alex Christensen.
+
+        This change does three things:
+
+        1. Replaces the Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> with a new struct called
+        RegistrableDomainsToDeleteOrRestrictWebsiteDataFor for sending around which domains to delete website data for.
+
+        2. Removes the enum WebsiteDataToRemove, replacing its structure with the members of the above mentioned struct:
+        - domainsToDeleteAllCookiesFor
+        - domainsToDeleteAllButHttpOnlyCookiesFor
+        - domainsToDeleteAllNonCookieWebsiteDataFor
+
+        3. Consistently renames "domainsToDeleteFor" to "domainsToDeleteOrRestrictFor" in preparation for website data
+        policies that are not about deletion, see for instance recently landed https://trac.webkit.org/changeset/258884.
+
+        No new tests. No changed functionality. This code is covered by several existing tests.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor):
+        (WebKit::ResourceLoadStatisticsMemoryStore::registrableDomainsToRemoveWebsiteDataFor): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::domainsToString):
+        (WebKit::ResourceLoadStatisticsStore::removeDataRecords):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::WebResourceLoadStatisticsStore::deleteWebsiteDataForRegistrableDomains): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        (WebKit::RegistrableDomainsToDeleteOrRestrictWebsiteDataFor::isolatedCopy const):
+        (WebKit::RegistrableDomainsToDeleteOrRestrictWebsiteDataFor::isEmpty const):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::deleteCookiesForTesting):
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomains): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkSession::deleteWebsiteDataForRegistrableDomains): Deleted.
+        * NetworkProcess/NetworkSession.h:
+
 2020-03-24  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Crash in WebKit::LayerTreeHost::LayerTreeHost with bubblewrap sandbox enabled
