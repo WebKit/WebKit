@@ -517,33 +517,6 @@ TEST(WebKit, WebsiteDataStoreIfExists)
     EXPECT_TRUE(dataStore._configuration.persistent);
 }
 
-TEST(WebKit, WebsiteDataStoreRenameDomain)
-{
-    TestWKWebView *webView = [[[TestWKWebView alloc] init] autorelease];
-    [webView synchronouslyLoadHTMLString:@"<script>localStorage.setItem('testkey', 'testvalue')</script>" baseURL:[NSURL URLWithString:@"https://example.com/"]];
-    
-    __block bool done = false;
-    WKWebsiteDataStore *dataStore = webView.configuration.websiteDataStore;
-    NSSet *localStorageSet = [NSSet setWithObject:WKWebsiteDataTypeLocalStorage];
-    [dataStore _renameDomain:@"example.com" to:@"webkit.org" forDataOfTypes:localStorageSet completionHandler:^{
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-
-    [webView synchronouslyLoadHTMLString:@"hello" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
-    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"localStorage.getItem('testkey')"], "testvalue");
-    [webView synchronouslyLoadHTMLString:@"hello" baseURL:[NSURL URLWithString:@"https://example.com/"]];
-    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"localStorage.getItem('testkey')"] isKindOfClass:[NSNull class]]);
-
-    done = false;
-    [dataStore fetchDataRecordsOfTypes:localStorageSet completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
-        [dataStore removeDataOfTypes:localStorageSet forDataRecords:records completionHandler:^{
-            done = true;
-        }];
-    }];
-    TestWebKitAPI::Util::run(&done);
-}
-
 TEST(WebKit, NetworkCacheDirectory)
 {
     using namespace TestWebKitAPI;

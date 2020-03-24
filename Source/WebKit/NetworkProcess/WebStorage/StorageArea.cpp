@@ -210,12 +210,4 @@ void StorageArea::syncToDatabase()
     m_localStorageDatabase->updateDatabase();
 }
 
-void StorageArea::close()
-{
-    if (!m_localStorageDatabase)
-        return;
-
-    m_localStorageDatabase->close();
-}
-
 } // namespace WebKit

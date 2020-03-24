@@ -255,8 +255,6 @@ public:
 
     API::HTTPCookieStore& cookieStore();
 
-    void renameDomainInWebsiteData(String&&, String&&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
-
 #if ENABLE(DEVICE_ORIENTATION)
     WebDeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController() { return m_deviceOrientationAndMotionAccessController; }
 #endif

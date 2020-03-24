@@ -244,11 +244,6 @@ void NetworkProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, 
     send(Messages::NetworkProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, origins, cookieHostNames, HSTSCacheHostNames, callbackID), 0);
 }
 
-void NetworkProcessProxy::renameDomainInWebsiteData(PAL::SessionID sessionID, const String& oldName, const String& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
-{
-    sendWithAsyncReply(Messages::NetworkProcess::RenameDomainInWebsiteData(sessionID, oldName, newName, dataTypes), WTFMove(completionHandler));
-}
-
 void NetworkProcessProxy::networkProcessCrashed()
 {
     clearCallbackStates();
