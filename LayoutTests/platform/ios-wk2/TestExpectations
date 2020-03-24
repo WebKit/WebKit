@@ -1011,6 +1011,8 @@ fast/shadow-dom/fullscreen-in-slot-webkitCurrentFullScreenElement.html [ Skip ]
 fast/events/focus-label-legend-elements-with-tab.html [ Skip ]
 fast/forms/search-cancel-button-hover.html [ Skip ]
 
+webkit.org/b/209502 fast/dom/window-open-ephemeral.html [ Pass Timeout ]
+
 # No touch events
 fast/visual-viewport/ios/bottom-bar-with-keyboard.html [ Skip ]
 fast/visual-viewport/ios/fixed-element-on-bottom-with-keyboard.html [ Skip ]
