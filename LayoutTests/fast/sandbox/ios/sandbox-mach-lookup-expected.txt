@@ -25,4 +25,3 @@ PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebConte
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.mobileassetd") is false
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.mobileassetd.v2") is false
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.iconservices") is false
-PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.lsd.mapdb") is false
