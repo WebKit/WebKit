@@ -193,12 +193,6 @@ void AnimationTimeline::elementWasRemoved(Element& element)
     cancelDeclarativeAnimationsForElement(element, WebAnimation::Silently::Yes);
 }
 
-void AnimationTimeline::removeAnimationsForElement(Element& element)
-{
-    for (auto& animation : animationsForElement(element))
-        animation->remove();
-}
-
 void AnimationTimeline::willChangeRendererForElement(Element& element)
 {
     for (auto& animation : animationsForElement(element))

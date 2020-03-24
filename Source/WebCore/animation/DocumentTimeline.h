@@ -66,7 +66,6 @@ public:
     bool isRunningAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
     bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
     void animationAcceleratedRunningStateDidChange(WebAnimation&);
-    void applyPendingAcceleratedAnimations();
     bool runningAnimationsForElementAreAllAccelerated(Element&) const;
     void detachFromDocument();
 
@@ -89,6 +88,7 @@ private:
     DocumentTimeline(Document&, Seconds);
 
     DOMHighResTimeStamp liveCurrentTime() const;
+    void applyPendingAcceleratedAnimations();
     void cacheCurrentTime(DOMHighResTimeStamp);
     void maybeClearCachedCurrentTime();
     void scheduleInvalidationTaskIfNeeded();
