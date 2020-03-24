@@ -40,6 +40,7 @@ class Box;
 namespace Layout {
 
 class ContainerBox;
+class InitialContainingBlock;
 class LayoutState;
 class TreeBuilder;
 
@@ -61,12 +62,12 @@ public:
     };
 
     enum BaseTypeFlag {
-        BoxFlag                = 1 << 0,
-        InlineTextBox          = 1 << 1,
-        LineBreakBox           = 1 << 2,
-        ReplacedBox            = 1 << 3,
-        InitialContainingBlock = 1 << 4,
-        ContainerBoxFlag       = 1 << 5
+        BoxFlag                    = 1 << 0,
+        InlineTextBoxFlag          = 1 << 1,
+        LineBreakBoxFlag           = 1 << 2,
+        ReplacedBoxFlag            = 1 << 3,
+        InitialContainingBlockFlag = 1 << 4,
+        ContainerBoxFlag           = 1 << 5
     };
     typedef unsigned BaseTypeFlags;
 
@@ -96,7 +97,7 @@ public:
 
     const ContainerBox& containingBlock() const;
     const ContainerBox& formattingContextRoot() const;
-    const ContainerBox& initialContainingBlock() const;
+    const InitialContainingBlock& initialContainingBlock() const;
 
     bool isInFormattingContextOf(const ContainerBox&) const;
 
@@ -109,7 +110,7 @@ public:
     bool isInlineBlockBox() const;
     bool isInlineTableBox() const;
     bool isBlockContainerBox() const;
-    bool isInitialContainingBlock() const { return m_baseTypeFlags & InitialContainingBlock; }
+    bool isInitialContainingBlock() const { return m_baseTypeFlags & InitialContainingBlockFlag; }
 
     bool isDocumentBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Document; }
     bool isBodyBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Body; }
@@ -138,9 +139,9 @@ public:
     Box* nextSibling() { return m_nextSibling; }
 
     bool isContainerBox() const { return m_baseTypeFlags & ContainerBoxFlag; }
-    bool isInlineTextBox() const { return m_baseTypeFlags & InlineTextBox; }
-    bool isLineBreakBox() const { return m_baseTypeFlags & LineBreakBox; }
-    bool isReplacedBox() const { return m_baseTypeFlags & ReplacedBox; }
+    bool isInlineTextBox() const { return m_baseTypeFlags & InlineTextBoxFlag; }
+    bool isLineBreakBox() const { return m_baseTypeFlags & LineBreakBoxFlag; }
+    bool isReplacedBox() const { return m_baseTypeFlags & ReplacedBoxFlag; }
 
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;

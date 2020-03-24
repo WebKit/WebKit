@@ -37,7 +37,7 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(InitialContainingBlock);
 
 InitialContainingBlock::InitialContainingBlock(RenderStyle&& style)
-    : ContainerBox({ }, WTFMove(style), Box::InitialContainingBlock)
+    : ContainerBox({ }, WTFMove(style), Box::InitialContainingBlockFlag)
 {
 }
 

@@ -394,7 +394,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
     if (layoutBox.isFloatingPositioned())
         stream << "[float] ";
 
-    if (layoutBox.isInitialContainingBlock())
+    if (is<InitialContainingBlock>(layoutBox))
         stream << "Initial containing block";
     else if (layoutBox.isDocumentBox())
         stream << "HTML";
