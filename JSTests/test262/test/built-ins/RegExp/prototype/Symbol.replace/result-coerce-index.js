@@ -2,32 +2,42 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-regexp.prototype-@@replace
 description: >
-    Type coercion of `index` property of result
-es6id: 21.2.5.8
+  Integer coercion of "index" property of the value returned by RegExpExec.
 info: |
+  RegExp.prototype [ @@replace ] ( string, replaceValue )
+
+  [...]
+  14. For each result in results, do
     [...]
-    13. Repeat, while done is false
-        a. Let result be RegExpExec(rx, S).
-        [...]
-    16. Repeat, for each result in results,
-        [...]
-        g. Let position be ToInteger(Get(result, "index")).
-        [...]
+    e. Let position be ? ToInteger(? Get(result, "index")).
+    [...]
+    k. If functionalReplace is true, then
+      i. Let replacerArgs be « matched ».
+      ii. Append in list order the elements of captures to the end of the List replacerArgs.
+      iii. Append position and S to replacerArgs.
+      [...]
+      v. Let replValue be ? Call(replaceValue, undefined, replacerArgs).
 features: [Symbol.replace]
 ---*/
 
 var r = /./;
-var counter = 0;
 var coercibleIndex = {
+  length: 1,
+  0: '',
   index: {
     valueOf: function() {
       return 2.9;
-    }
-  }
+    },
+  },
 };
 r.exec = function() {
   return coercibleIndex;
 };
 
-assert.sameValue(r[Symbol.replace]('abcd', ''), 'ab');
+var replacer = function(_matched, position) {
+  return position;
+};
+
+assert.sameValue(r[Symbol.replace]('abcd', replacer), 'ab2cd');

@@ -2,32 +2,31 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-regexp.prototype-@@replace
 description: >
-    Type coercion of `length` property of result
-es6id: 21.2.5.8
+  Type coercion of "length" property of the value returned by RegExpExec.
 info: |
+  RegExp.prototype [ @@replace ] ( string, replaceValue )
+
+  [...]
+  14. For each result in results, do
+    a. Let nCaptures be ? LengthOfArrayLike(result).
     [...]
-    13. Repeat, while done is false
-        a. Let result be RegExpExec(rx, S).
-        [...]
-    16. Repeat, for each result in results,
-        a. Let nCaptures be ToLength(Get(result, "length")).
-        [...]
 features: [Symbol.replace]
 ---*/
 
 var r = /./;
-var counter = 0;
 var coercibleIndex = {
   length: {
     valueOf: function() {
       return 3.9;
-    }
+    },
   },
   0: '',
   1: 'foo',
   2: 'bar',
-  3: 'baz'
+  3: 'baz',
+  index: 0,
 };
 r.exec = function() {
   return coercibleIndex;

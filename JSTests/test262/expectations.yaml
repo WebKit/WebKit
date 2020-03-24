@@ -624,9 +624,15 @@ test/built-ins/Array/proto-from-ctor-realm-zero.js:
 test/built-ins/Array/prototype/concat/arg-length-exceeding-integer-limit.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError'
+test/built-ins/Array/prototype/concat/arg-length-near-integer-limit.js:
+  default: 'Test262Error: Expected a Test262Error but got a RangeError'
+  strict mode: 'Test262Error: Expected a Test262Error but got a RangeError'
 test/built-ins/Array/prototype/concat/is-concat-spreadable-get-order.js:
   default: 'Test262Error: Expected [isConcatSpreadable, constructor, isConcatSpreadable] and [constructor, isConcatSpreadable] to have the same contents. '
   strict mode: 'Test262Error: Expected [isConcatSpreadable, constructor, isConcatSpreadable] and [constructor, isConcatSpreadable] to have the same contents. '
+test/built-ins/Array/prototype/indexOf/length-near-integer-limit.js:
+  default: 'Test262Error: Expected SameValue(«-1», «9007199254740990») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-1», «9007199254740990») to be true'
 test/built-ins/Array/prototype/pop/S15.4.4.6_A2_T2.js:
   default: 'Test262Error: #4: var obj = {}; obj.length = Number.POSITIVE_INFINITY; obj.pop = Array.prototype.pop; obj.pop(); obj.length === 9007199254740990. Actual: 4294967294'
   strict mode: 'Test262Error: #4: var obj = {}; obj.length = Number.POSITIVE_INFINITY; obj.pop = Array.prototype.pop; obj.pop(); obj.length === 9007199254740990. Actual: 4294967294'
@@ -1080,6 +1086,12 @@ test/built-ins/GeneratorFunction/proto-from-ctor-realm.js:
 test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
+test/built-ins/JSON/stringify/replacer-function-stack-overflow.js:
+  default: 'Exception: JavaScript execution terminated.'
+  strict mode: 'Exception: JavaScript execution terminated.'
+test/built-ins/JSON/stringify/value-tojson-stack-overflow.js:
+  default: 'Exception: JavaScript execution terminated.'
+  strict mode: 'Exception: JavaScript execution terminated.'
 test/built-ins/Map/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'
@@ -1107,6 +1119,18 @@ test/built-ins/Number/bigint-conversion.js:
 test/built-ins/Number/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«0», «0») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «0») to be true'
+test/built-ins/Object/entries/order-after-define-property.js:
+  default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
+  strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
+test/built-ins/Object/getOwnPropertyDescriptors/order-after-define-property.js:
+  default: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
+  strict mode: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
+test/built-ins/Object/getOwnPropertyNames/order-after-define-property.js:
+  default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
+  strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
+test/built-ins/Object/getOwnPropertySymbols/order-after-define-property.js:
+  default: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
+  strict mode: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-arguments.js:
   default: 'Test262Error: Expected SameValue(«null», «[object Arguments]») to be true'
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-caller.js:
@@ -1114,6 +1138,9 @@ test/built-ins/Object/internals/DefineOwnProperty/consistent-value-function-call
 test/built-ins/Object/internals/DefineOwnProperty/consistent-value-regexp-dollar1.js:
   default: 'Test262Error: Expected SameValue(«», «x») to be true'
   strict mode: 'Test262Error: Expected SameValue(«», «x») to be true'
+test/built-ins/Object/keys/order-after-define-property.js:
+  default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
+  strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
 test/built-ins/Object/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
@@ -1126,6 +1153,9 @@ test/built-ins/Object/prototype/toString/symbol-tag-non-str-builtin.js:
 test/built-ins/Object/prototype/toString/symbol-tag-non-str-proxy-function.js:
   default: 'Test262Error: generator function proxy without Symbol.toStringTag Expected SameValue(«[object Object]», «[object Function]») to be true'
   strict mode: 'Test262Error: generator function proxy without Symbol.toStringTag Expected SameValue(«[object Object]», «[object Function]») to be true'
+test/built-ins/Object/values/order-after-define-property.js:
+  default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
+  strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
 test/built-ins/Promise/all/invoke-resolve-get-error-close.js:
   default: 'Test262Error: Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
@@ -1195,6 +1225,30 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
+test/built-ins/Proxy/defineProperty/trap-is-undefined-target-is-proxy.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Proxy/getOwnPropertyDescriptor/trap-is-missing-target-is-proxy.js:
+  default: "TypeError: undefined is not an object (evaluating 'originalDesc.enumerable')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'originalDesc.enumerable')"
+test/built-ins/Proxy/getOwnPropertyDescriptor/trap-is-null-target-is-proxy.js:
+  default: "TypeError: undefined is not an object (evaluating 'originalDesc.value')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'originalDesc.value')"
+test/built-ins/Proxy/getOwnPropertyDescriptor/trap-is-undefined-target-is-proxy.js:
+  default: "TypeError: undefined is not an object (evaluating 'originalDesc.value')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'originalDesc.value')"
+test/built-ins/Proxy/ownKeys/trap-is-undefined-target-is-proxy.js:
+  default: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
+  strict mode: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
+test/built-ins/Proxy/set/trap-is-missing-target-is-proxy.js:
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'TypeError: Attempting to change configurable attribute of unconfigurable property.'
+test/built-ins/Proxy/set/trap-is-null-target-is-proxy.js:
+  default: 'Test262Error: Expected [1, 2, 3] and [] to have the same contents. '
+  strict mode: 'TypeError: Attempting to change configurable attribute of unconfigurable property.'
+test/built-ins/Proxy/set/trap-is-undefined-target-is-proxy.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
 test/built-ins/RegExp/named-groups/unicode-property-names.js:
   default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
   strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
@@ -1202,11 +1256,11 @@ test/built-ins/RegExp/property-escapes/generated/Alphabetic.js:
   default: 'Test262Error: `\p{Alphabetic}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{Alphabetic}` should match U+001CFA (`ᳺ`)'
 test/built-ins/RegExp/property-escapes/generated/Assigned.js:
-  default: 'Test262Error: `\p{Assigned}` should match U+01E2FF (`𞋿`)'
-  strict mode: 'Test262Error: `\p{Assigned}` should match U+01E2FF (`𞋿`)'
+  default: 'Test262Error: `\p{Assigned}` should match U+011909 (`𑤉`)'
+  strict mode: 'Test262Error: `\p{Assigned}` should match U+011909 (`𑤉`)'
 test/built-ins/RegExp/property-escapes/generated/Case_Ignorable.js:
-  default: 'Test262Error: `\p{Case_Ignorable}` should match U+0119E0 (`𑧠`)'
-  strict mode: 'Test262Error: `\p{Case_Ignorable}` should match U+0119E0 (`𑧠`)'
+  default: 'Test262Error: `\p{Case_Ignorable}` should match U+00055F (`՟`)'
+  strict mode: 'Test262Error: `\p{Case_Ignorable}` should match U+00055F (`՟`)'
 test/built-ins/RegExp/property-escapes/generated/Cased.js:
   default: 'Test262Error: `\p{Cased}` should match U+00A7BA (`Ꞻ`)'
   strict mode: 'Test262Error: `\p{Cased}` should match U+00A7BA (`Ꞻ`)'
@@ -1228,30 +1282,45 @@ test/built-ins/RegExp/property-escapes/generated/Changes_When_Titlecased.js:
 test/built-ins/RegExp/property-escapes/generated/Changes_When_Uppercased.js:
   default: 'Test262Error: `\p{Changes_When_Uppercased}` should match U+001D8E (`ᶎ`)'
   strict mode: 'Test262Error: `\p{Changes_When_Uppercased}` should match U+001D8E (`ᶎ`)'
+test/built-ins/RegExp/property-escapes/generated/Dash.js:
+  default: 'Test262Error: `\p{Dash}` should match U+010EAD (`𐺭`)'
+  strict mode: 'Test262Error: `\p{Dash}` should match U+010EAD (`𐺭`)'
 test/built-ins/RegExp/property-escapes/generated/Diacritic.js:
-  default: 'Test262Error: `\p{Diacritic}` should match U+000EBA (`຺`)'
-  strict mode: 'Test262Error: `\p{Diacritic}` should match U+000EBA (`຺`)'
+  default: 'Test262Error: `\p{Diacritic}` should match U+000B55 (`୕`)'
+  strict mode: 'Test262Error: `\p{Diacritic}` should match U+000B55 (`୕`)'
 test/built-ins/RegExp/property-escapes/generated/Emoji.js:
-  default: 'Test262Error: `\p{Emoji}` should match U+01F6D5 (`🛕`)'
-  strict mode: 'Test262Error: `\p{Emoji}` should match U+01F6D5 (`🛕`)'
+  default: 'Test262Error: `\p{Emoji}` should match U+0026A7 (`⚧`)'
+  strict mode: 'Test262Error: `\p{Emoji}` should match U+0026A7 (`⚧`)'
+test/built-ins/RegExp/property-escapes/generated/Emoji_Component.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Emoji_Modifier.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Emoji_Modifier_Base.js:
-  default: 'Test262Error: `\p{Emoji_Modifier_Base}` should match U+01F48F (`💏`)'
-  strict mode: 'Test262Error: `\p{Emoji_Modifier_Base}` should match U+01F48F (`💏`)'
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Emoji_Presentation.js:
-  default: 'Test262Error: `\p{Emoji_Presentation}` should match U+01F6D5 (`🛕`)'
-  strict mode: 'Test262Error: `\p{Emoji_Presentation}` should match U+01F6D5 (`🛕`)'
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Extended_Pictographic.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Extender.js:
-  default: 'Test262Error: `\p{Extender}` should match U+016FE3 (`𖿣`)'
-  strict mode: 'Test262Error: `\p{Extender}` should match U+016FE3 (`𖿣`)'
+  default: 'Test262Error: `\p{Extender}` should match U+000B55 (`୕`)'
+  strict mode: 'Test262Error: `\p{Extender}` should match U+000B55 (`୕`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Cased_Letter.js:
   default: 'Test262Error: `\p{General_Category=Cased_Letter}` should match U+00A7BA (`Ꞻ`)'
   strict mode: 'Test262Error: `\p{General_Category=Cased_Letter}` should match U+00A7BA (`Ꞻ`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Currency_Symbol.js:
   default: 'Test262Error: `\p{General_Category=Currency_Symbol}` should match U+01E2FF (`𞋿`)'
   strict mode: 'Test262Error: `\p{General_Category=Currency_Symbol}` should match U+01E2FF (`𞋿`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Dash_Punctuation.js:
+  default: 'Test262Error: `\p{General_Category=Dash_Punctuation}` should match U+010EAD (`𐺭`)'
+  strict mode: 'Test262Error: `\p{General_Category=Dash_Punctuation}` should match U+010EAD (`𐺭`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Decimal_Number.js:
-  default: 'Test262Error: `\p{General_Category=Decimal_Number}` should match U+01E140 (`𞅀`)'
-  strict mode: 'Test262Error: `\p{General_Category=Decimal_Number}` should match U+01E140 (`𞅀`)'
+  default: 'Test262Error: `\p{General_Category=Decimal_Number}` should match U+011950 (`𑥐`)'
+  strict mode: 'Test262Error: `\p{General_Category=Decimal_Number}` should match U+011950 (`𑥐`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Format.js:
   default: 'Test262Error: `\p{General_Category=Format}` should match U+013430 (`𓐰`)'
   strict mode: 'Test262Error: `\p{General_Category=Format}` should match U+013430 (`𓐰`)'
@@ -1262,26 +1331,29 @@ test/built-ins/RegExp/property-escapes/generated/General_Category_-_Lowercase_Le
   default: 'Test262Error: `\p{General_Category=Lowercase_Letter}` should match U+00A7BB (`ꞻ`)'
   strict mode: 'Test262Error: `\p{General_Category=Lowercase_Letter}` should match U+00A7BB (`ꞻ`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Mark.js:
-  default: 'Test262Error: `\p{General_Category=Mark}` should match U+0119E4 (`𑧤`)'
-  strict mode: 'Test262Error: `\p{General_Category=Mark}` should match U+0119E4 (`𑧤`)'
+  default: 'Test262Error: `\p{General_Category=Mark}` should match U+00A82C (`꠬`)'
+  strict mode: 'Test262Error: `\p{General_Category=Mark}` should match U+00A82C (`꠬`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Modifier_Letter.js:
-  default: 'Test262Error: `\p{General_Category=Modifier_Letter}` should match U+016FE3 (`𖿣`)'
-  strict mode: 'Test262Error: `\p{General_Category=Modifier_Letter}` should match U+016FE3 (`𖿣`)'
+  default: 'Test262Error: `\p{General_Category=Modifier_Letter}` should match U+00AB69 (`ꭩ`)'
+  strict mode: 'Test262Error: `\p{General_Category=Modifier_Letter}` should match U+00AB69 (`ꭩ`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Modifier_Symbol.js:
+  default: 'Test262Error: `\p{General_Category=Modifier_Symbol}` should match U+00AB6A (`꭪`)'
+  strict mode: 'Test262Error: `\p{General_Category=Modifier_Symbol}` should match U+00AB6A (`꭪`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Nonspacing_Mark.js:
-  default: 'Test262Error: `\p{General_Category=Nonspacing_Mark}` should match U+0119E0 (`𑧠`)'
-  strict mode: 'Test262Error: `\p{General_Category=Nonspacing_Mark}` should match U+0119E0 (`𑧠`)'
+  default: 'Test262Error: `\p{General_Category=Nonspacing_Mark}` should match U+000D81 (`ඁ`)'
+  strict mode: 'Test262Error: `\p{General_Category=Nonspacing_Mark}` should match U+000D81 (`ඁ`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Number.js:
-  default: 'Test262Error: `\p{General_Category=Number}` should match U+011FC0 (`𑿀`)'
-  strict mode: 'Test262Error: `\p{General_Category=Number}` should match U+011FC0 (`𑿀`)'
+  default: 'Test262Error: `\p{General_Category=Number}` should match U+010FC5 (`𐿅`)'
+  strict mode: 'Test262Error: `\p{General_Category=Number}` should match U+010FC5 (`𐿅`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other.js:
-  default: 'Test262Error: `\P{General_Category=Other}` should match U+01E2FF (`𞋿`)'
-  strict mode: 'Test262Error: `\P{General_Category=Other}` should match U+01E2FF (`𞋿`)'
+  default: 'Test262Error: `\P{General_Category=Other}` should match U+011909 (`𑤉`)'
+  strict mode: 'Test262Error: `\P{General_Category=Other}` should match U+011909 (`𑤉`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Letter.js:
   default: 'Test262Error: `\p{General_Category=Other_Letter}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{General_Category=Other_Letter}` should match U+001CFA (`ᳺ`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Number.js:
-  default: 'Test262Error: `\p{General_Category=Other_Number}` should match U+011FC0 (`𑿀`)'
-  strict mode: 'Test262Error: `\p{General_Category=Other_Number}` should match U+011FC0 (`𑿀`)'
+  default: 'Test262Error: `\p{General_Category=Other_Number}` should match U+010FC5 (`𐿅`)'
+  strict mode: 'Test262Error: `\p{General_Category=Other_Number}` should match U+010FC5 (`𐿅`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Punctuation.js:
   default: 'Test262Error: `\p{General_Category=Other_Punctuation}` should match U+000C77 (`౷`)'
   strict mode: 'Test262Error: `\p{General_Category=Other_Punctuation}` should match U+000C77 (`౷`)'
@@ -1292,14 +1364,14 @@ test/built-ins/RegExp/property-escapes/generated/General_Category_-_Punctuation.
   default: 'Test262Error: `\p{General_Category=Punctuation}` should match U+000C77 (`౷`)'
   strict mode: 'Test262Error: `\p{General_Category=Punctuation}` should match U+000C77 (`౷`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Spacing_Mark.js:
-  default: 'Test262Error: `\p{General_Category=Spacing_Mark}` should match U+0119E4 (`𑧤`)'
-  strict mode: 'Test262Error: `\p{General_Category=Spacing_Mark}` should match U+0119E4 (`𑧤`)'
+  default: 'Test262Error: `\p{General_Category=Spacing_Mark}` should match U+0111CE (`𑇎`)'
+  strict mode: 'Test262Error: `\p{General_Category=Spacing_Mark}` should match U+0111CE (`𑇎`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Symbol.js:
   default: 'Test262Error: `\p{General_Category=Symbol}` should match U+00166D (`᙭`)'
   strict mode: 'Test262Error: `\p{General_Category=Symbol}` should match U+00166D (`᙭`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Unassigned.js:
-  default: 'Test262Error: `\P{General_Category=Unassigned}` should match U+01E2FF (`𞋿`)'
-  strict mode: 'Test262Error: `\P{General_Category=Unassigned}` should match U+01E2FF (`𞋿`)'
+  default: 'Test262Error: `\P{General_Category=Unassigned}` should match U+011909 (`𑤉`)'
+  strict mode: 'Test262Error: `\P{General_Category=Unassigned}` should match U+011909 (`𑤉`)'
 test/built-ins/RegExp/property-escapes/generated/General_Category_-_Uppercase_Letter.js:
   default: 'Test262Error: `\p{General_Category=Uppercase_Letter}` should match U+00A7BA (`Ꞻ`)'
   strict mode: 'Test262Error: `\p{General_Category=Uppercase_Letter}` should match U+00A7BA (`Ꞻ`)'
@@ -1307,35 +1379,56 @@ test/built-ins/RegExp/property-escapes/generated/Grapheme_Base.js:
   default: 'Test262Error: `\p{Grapheme_Base}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{Grapheme_Base}` should match U+001CFA (`ᳺ`)'
 test/built-ins/RegExp/property-escapes/generated/Grapheme_Extend.js:
-  default: 'Test262Error: `\p{Grapheme_Extend}` should match U+0119E0 (`𑧠`)'
-  strict mode: 'Test262Error: `\p{Grapheme_Extend}` should match U+0119E0 (`𑧠`)'
+  default: 'Test262Error: `\p{Grapheme_Extend}` should match U+000D81 (`ඁ`)'
+  strict mode: 'Test262Error: `\p{Grapheme_Extend}` should match U+000D81 (`ඁ`)'
 test/built-ins/RegExp/property-escapes/generated/ID_Continue.js:
-  default: 'Test262Error: `\p{ID_Continue}` should match U+016FE3 (`𖿣`)'
-  strict mode: 'Test262Error: `\p{ID_Continue}` should match U+016FE3 (`𖿣`)'
+  default: 'Test262Error: `\p{ID_Continue}` should match U+00A82C (`꠬`)'
+  strict mode: 'Test262Error: `\p{ID_Continue}` should match U+00A82C (`꠬`)'
 test/built-ins/RegExp/property-escapes/generated/ID_Start.js:
   default: 'Test262Error: `\p{ID_Start}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{ID_Start}` should match U+001CFA (`ᳺ`)'
 test/built-ins/RegExp/property-escapes/generated/Ideographic.js:
-  default: 'Test262Error: `\p{Ideographic}` should match U+0187F2 (`𘟲`)'
-  strict mode: 'Test262Error: `\p{Ideographic}` should match U+0187F2 (`𘟲`)'
+  default: 'Test262Error: `\p{Ideographic}` should match U+016FE4 (`𖿤`)'
+  strict mode: 'Test262Error: `\p{Ideographic}` should match U+016FE4 (`𖿤`)'
 test/built-ins/RegExp/property-escapes/generated/Lowercase.js:
   default: 'Test262Error: `\p{Lowercase}` should match U+00A7BB (`ꞻ`)'
   strict mode: 'Test262Error: `\p{Lowercase}` should match U+00A7BB (`ꞻ`)'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Adlam.js:
   default: 'Test262Error: `\p{Script=Adlam}` should match U+01E94B (`𞥋`)'
   strict mode: 'Test262Error: `\p{Script=Adlam}` should match U+01E94B (`𞥋`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Arabic.js:
+  default: 'Test262Error: `\p{Script=Arabic}` should match U+0008BE (`ࢾ`)'
+  strict mode: 'Test262Error: `\p{Script=Arabic}` should match U+0008BE (`ࢾ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Armenian.js:
+  default: 'Test262Error: `\p{Script=Armenian}` should match U+000589 (`։`)'
+  strict mode: 'Test262Error: `\p{Script=Armenian}` should match U+000589 (`։`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Bopomofo.js:
+  default: 'Test262Error: `\p{Script=Bopomofo}` should match U+0031BB (`ㆻ`)'
+  strict mode: 'Test262Error: `\p{Script=Bopomofo}` should match U+0031BB (`ㆻ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Chakma.js:
+  default: 'Test262Error: `\p{Script=Chakma}` should match U+011147 (`𑅇`)'
+  strict mode: 'Test262Error: `\p{Script=Chakma}` should match U+011147 (`𑅇`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Chorasmian.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Common.js:
   default: 'Test262Error: `\p{Script=Common}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{Script=Common}` should match U+001CFA (`ᳺ`)'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Devanagari.js:
   default: 'Test262Error: `\P{Script=Devanagari}` should match U+000953 (`॓`)'
   strict mode: 'Test262Error: `\P{Script=Devanagari}` should match U+000953 (`॓`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Dives_Akuru.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Egyptian_Hieroglyphs.js:
   default: 'Test262Error: `\p{Script=Egyptian_Hieroglyphs}` should match U+013430 (`𓐰`)'
   strict mode: 'Test262Error: `\p{Script=Egyptian_Hieroglyphs}` should match U+013430 (`𓐰`)'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Elymaic.js:
   default: 'SyntaxError: Invalid regular expression: invalid property expression'
   strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Han.js:
+  default: 'Test262Error: `\p{Script=Han}` should match U+004DB6 (`䶶`)'
+  strict mode: 'Test262Error: `\p{Script=Han}` should match U+004DB6 (`䶶`)'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Hiragana.js:
   default: 'Test262Error: `\p{Script=Hiragana}` should match U+01B150 (`𛅐`)'
   strict mode: 'Test262Error: `\p{Script=Hiragana}` should match U+01B150 (`𛅐`)'
@@ -1345,12 +1438,21 @@ test/built-ins/RegExp/property-escapes/generated/Script_-_Inherited.js:
 test/built-ins/RegExp/property-escapes/generated/Script_-_Katakana.js:
   default: 'Test262Error: `\p{Script=Katakana}` should match U+01B164 (`𛅤`)'
   strict mode: 'Test262Error: `\p{Script=Katakana}` should match U+01B164 (`𛅤`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Khitan_Small_Script.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Lao.js:
   default: 'Test262Error: `\p{Script=Lao}` should match U+000E86 (`ຆ`)'
   strict mode: 'Test262Error: `\p{Script=Lao}` should match U+000E86 (`ຆ`)'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Latin.js:
   default: 'Test262Error: `\p{Script=Latin}` should match U+00A7BA (`Ꞻ`)'
   strict mode: 'Test262Error: `\p{Script=Latin}` should match U+00A7BA (`Ꞻ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Lisu.js:
+  default: 'Test262Error: `\p{Script=Lisu}` should match U+011FB0 (`𑾰`)'
+  strict mode: 'Test262Error: `\p{Script=Lisu}` should match U+011FB0 (`𑾰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Malayalam.js:
+  default: 'Test262Error: `\p{Script=Malayalam}` should match U+000D04 (`ഄ`)'
+  strict mode: 'Test262Error: `\p{Script=Malayalam}` should match U+000D04 (`ഄ`)'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Miao.js:
   default: 'Test262Error: `\p{Script=Miao}` should match U+016F45 (`𖽅`)'
   strict mode: 'Test262Error: `\p{Script=Miao}` should match U+016F45 (`𖽅`)'
@@ -1358,14 +1460,26 @@ test/built-ins/RegExp/property-escapes/generated/Script_-_Nandinagari.js:
   default: 'SyntaxError: Invalid regular expression: invalid property expression'
   strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Newa.js:
-  default: 'Test262Error: `\p{Script=Newa}` should match U+01145F (`𑑟`)'
-  strict mode: 'Test262Error: `\p{Script=Newa}` should match U+01145F (`𑑟`)'
+  default: 'Test262Error: `\p{Script=Newa}` should match U+01145A (`𑑚`)'
+  strict mode: 'Test262Error: `\p{Script=Newa}` should match U+01145A (`𑑚`)'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Nyiakeng_Puachue_Hmong.js:
   default: 'SyntaxError: Invalid regular expression: invalid property expression'
   strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Oriya.js:
+  default: 'Test262Error: `\p{Script=Oriya}` should match U+000B55 (`୕`)'
+  strict mode: 'Test262Error: `\p{Script=Oriya}` should match U+000B55 (`୕`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Sharada.js:
+  default: 'Test262Error: `\p{Script=Sharada}` should match U+0111CE (`𑇎`)'
+  strict mode: 'Test262Error: `\p{Script=Sharada}` should match U+0111CE (`𑇎`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Sinhala.js:
+  default: 'Test262Error: `\p{Script=Sinhala}` should match U+000D81 (`ඁ`)'
+  strict mode: 'Test262Error: `\p{Script=Sinhala}` should match U+000D81 (`ඁ`)'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Soyombo.js:
   default: 'Test262Error: `\p{Script=Soyombo}` should match U+011A84 (`𑪄`)'
   strict mode: 'Test262Error: `\p{Script=Soyombo}` should match U+011A84 (`𑪄`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Syloti_Nagri.js:
+  default: 'Test262Error: `\p{Script=Syloti_Nagri}` should match U+00A82C (`꠬`)'
+  strict mode: 'Test262Error: `\p{Script=Syloti_Nagri}` should match U+00A82C (`꠬`)'
 test/built-ins/RegExp/property-escapes/generated/Script_-_Takri.js:
   default: 'Test262Error: `\p{Script=Takri}` should match U+0116B8 (`𑚸`)'
   strict mode: 'Test262Error: `\p{Script=Takri}` should match U+0116B8 (`𑚸`)'
@@ -1381,24 +1495,48 @@ test/built-ins/RegExp/property-escapes/generated/Script_-_Telugu.js:
 test/built-ins/RegExp/property-escapes/generated/Script_-_Wancho.js:
   default: 'SyntaxError: Invalid regular expression: invalid property expression'
   strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Yezidi.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Adlam.js:
   default: 'Test262Error: `\p{Script_Extensions=Adlam}` should match U+01E94B (`𞥋`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Adlam}` should match U+01E94B (`𞥋`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Arabic.js:
+  default: 'Test262Error: `\p{Script_Extensions=Arabic}` should match U+0008BE (`ࢾ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Arabic}` should match U+0008BE (`ࢾ`)'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Bengali.js:
   default: 'Test262Error: `\p{Script_Extensions=Bengali}` should match U+001CF2 (`ᳲ`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Bengali}` should match U+001CF2 (`ᳲ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Bopomofo.js:
+  default: 'Test262Error: `\p{Script_Extensions=Bopomofo}` should match U+0031BB (`ㆻ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Bopomofo}` should match U+0031BB (`ㆻ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Chakma.js:
+  default: 'Test262Error: `\p{Script_Extensions=Chakma}` should match U+011147 (`𑅇`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Chakma}` should match U+011147 (`𑅇`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Chorasmian.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Common.js:
-  default: 'Test262Error: `\p{Script_Extensions=Common}` should match U+002BC9 (`⯉`)'
-  strict mode: 'Test262Error: `\p{Script_Extensions=Common}` should match U+002BC9 (`⯉`)'
+  default: 'Test262Error: `\p{Script_Extensions=Common}` should match U+002B97 (`⮗`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Common}` should match U+002B97 (`⮗`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Cyrillic.js:
+  default: 'Test262Error: `\p{Script_Extensions=Cyrillic}` should match U+001DF8 (`᷸`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Cyrillic}` should match U+001DF8 (`᷸`)'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Devanagari.js:
   default: 'Test262Error: `\P{Script_Extensions=Devanagari}` should match U+000953 (`॓`)'
   strict mode: 'Test262Error: `\P{Script_Extensions=Devanagari}` should match U+000953 (`॓`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Dives_Akuru.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Egyptian_Hieroglyphs.js:
   default: 'Test262Error: `\p{Script_Extensions=Egyptian_Hieroglyphs}` should match U+013430 (`𓐰`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Egyptian_Hieroglyphs}` should match U+013430 (`𓐰`)'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Elymaic.js:
   default: 'SyntaxError: Invalid regular expression: invalid property expression'
   strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Georgian.js:
+  default: 'Test262Error: `\P{Script_Extensions=Georgian}` should match U+000589 (`։`)'
+  strict mode: 'Test262Error: `\P{Script_Extensions=Georgian}` should match U+000589 (`։`)'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Grantha.js:
   default: 'Test262Error: `\p{Script_Extensions=Grantha}` should match U+011FD3 (`𑿓`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Grantha}` should match U+011FD3 (`𑿓`)'
@@ -1417,12 +1555,21 @@ test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Kannada.js:
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Katakana.js:
   default: 'Test262Error: `\p{Script_Extensions=Katakana}` should match U+01B164 (`𛅤`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Katakana}` should match U+01B164 (`𛅤`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Khitan_Small_Script.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Lao.js:
   default: 'Test262Error: `\p{Script_Extensions=Lao}` should match U+000E86 (`ຆ`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Lao}` should match U+000E86 (`ຆ`)'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Latin.js:
   default: 'Test262Error: `\p{Script_Extensions=Latin}` should match U+00202F (` `)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Latin}` should match U+00202F (` `)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Lisu.js:
+  default: 'Test262Error: `\p{Script_Extensions=Lisu}` should match U+011FB0 (`𑾰`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Lisu}` should match U+011FB0 (`𑾰`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Malayalam.js:
+  default: 'Test262Error: `\p{Script_Extensions=Malayalam}` should match U+000D04 (`ഄ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Malayalam}` should match U+000D04 (`ഄ`)'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Masaram_Gondi.js:
   default: 'Test262Error: `\p{Script_Extensions=Masaram_Gondi}` should match U+000964 (`।`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Masaram_Gondi}` should match U+000964 (`।`)'
@@ -1436,17 +1583,29 @@ test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Nandinagari
   default: 'SyntaxError: Invalid regular expression: invalid property expression'
   strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Newa.js:
-  default: 'Test262Error: `\p{Script_Extensions=Newa}` should match U+01145F (`𑑟`)'
-  strict mode: 'Test262Error: `\p{Script_Extensions=Newa}` should match U+01145F (`𑑟`)'
+  default: 'Test262Error: `\p{Script_Extensions=Newa}` should match U+01145A (`𑑚`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Newa}` should match U+01145A (`𑑚`)'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Nyiakeng_Puachue_Hmong.js:
   default: 'SyntaxError: Invalid regular expression: invalid property expression'
   strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Oriya.js:
   default: 'Test262Error: `\p{Script_Extensions=Oriya}` should match U+001CF2 (`ᳲ`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Oriya}` should match U+001CF2 (`ᳲ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Sharada.js:
+  default: 'Test262Error: `\p{Script_Extensions=Sharada}` should match U+0111CE (`𑇎`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Sharada}` should match U+0111CE (`𑇎`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Sinhala.js:
+  default: 'Test262Error: `\p{Script_Extensions=Sinhala}` should match U+000D81 (`ඁ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Sinhala}` should match U+000D81 (`ඁ`)'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Soyombo.js:
   default: 'Test262Error: `\p{Script_Extensions=Soyombo}` should match U+011A84 (`𑪄`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Soyombo}` should match U+011A84 (`𑪄`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Syloti_Nagri.js:
+  default: 'Test262Error: `\p{Script_Extensions=Syloti_Nagri}` should match U+00A82C (`꠬`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Syloti_Nagri}` should match U+00A82C (`꠬`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Syriac.js:
+  default: 'Test262Error: `\p{Script_Extensions=Syriac}` should match U+001DF8 (`᷸`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Syriac}` should match U+001DF8 (`᷸`)'
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Takri.js:
   default: 'Test262Error: `\p{Script_Extensions=Takri}` should match U+0116B8 (`𑚸`)'
   strict mode: 'Test262Error: `\p{Script_Extensions=Takri}` should match U+0116B8 (`𑚸`)'
@@ -1465,15 +1624,24 @@ test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Tirhuta.js:
 test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Wancho.js:
   default: 'SyntaxError: Invalid regular expression: invalid property expression'
   strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Yezidi.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Sentence_Terminal.js:
+  default: 'Test262Error: `\p{Sentence_Terminal}` should match U+011944 (`𑥄`)'
+  strict mode: 'Test262Error: `\p{Sentence_Terminal}` should match U+011944 (`𑥄`)'
 test/built-ins/RegExp/property-escapes/generated/Terminal_Punctuation.js:
-  default: 'Test262Error: `\p{Terminal_Punctuation}` should match U+002E4F (`⹏`)'
-  strict mode: 'Test262Error: `\p{Terminal_Punctuation}` should match U+002E4F (`⹏`)'
+  default: 'Test262Error: `\p{Terminal_Punctuation}` should match U+011944 (`𑥄`)'
+  strict mode: 'Test262Error: `\p{Terminal_Punctuation}` should match U+011944 (`𑥄`)'
+test/built-ins/RegExp/property-escapes/generated/Unified_Ideograph.js:
+  default: 'Test262Error: `\p{Unified_Ideograph}` should match U+004DB6 (`䶶`)'
+  strict mode: 'Test262Error: `\p{Unified_Ideograph}` should match U+004DB6 (`䶶`)'
 test/built-ins/RegExp/property-escapes/generated/Uppercase.js:
   default: 'Test262Error: `\p{Uppercase}` should match U+00A7BA (`Ꞻ`)'
   strict mode: 'Test262Error: `\p{Uppercase}` should match U+00A7BA (`Ꞻ`)'
 test/built-ins/RegExp/property-escapes/generated/XID_Continue.js:
-  default: 'Test262Error: `\p{XID_Continue}` should match U+016FE3 (`𖿣`)'
-  strict mode: 'Test262Error: `\p{XID_Continue}` should match U+016FE3 (`𖿣`)'
+  default: 'Test262Error: `\p{XID_Continue}` should match U+00A82C (`꠬`)'
+  strict mode: 'Test262Error: `\p{XID_Continue}` should match U+00A82C (`꠬`)'
 test/built-ins/RegExp/property-escapes/generated/XID_Start.js:
   default: 'Test262Error: `\p{XID_Start}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{XID_Start}` should match U+001CFA (`ᳺ`)'
@@ -1483,6 +1651,18 @@ test/built-ins/RegExp/proto-from-ctor-realm.js:
 test/built-ins/RegExp/prototype/Symbol.match/builtin-infer-unicode.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
+test/built-ins/RegExp/prototype/Symbol.replace/coerce-lastindex.js:
+  default: 'Test262Error: Expected SameValue(«18014398509481984», «9007199254740992») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«18014398509481984», «9007199254740992») to be true'
+test/built-ins/RegExp/prototype/Symbol.replace/poisoned-stdlib.js:
+  default: 'TypeError: undefined is not a function'
+  strict mode: 'TypeError: undefined is not a function'
+test/built-ins/RegExp/prototype/Symbol.search/set-lastindex-init-samevalue.js:
+  default: 'Test262Error: Expected SameValue(«0», «0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «0») to be true'
+test/built-ins/RegExp/prototype/Symbol.search/set-lastindex-restore-samevalue.js:
+  default: 'Test262Error: Expected SameValue(«0», «0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «0») to be true'
 test/built-ins/RegExp/prototype/Symbol.search/u-lastindex-advance.js:
   default: 'Test262Error: Expected SameValue(«1», «-1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «-1») to be true'
@@ -1525,6 +1705,12 @@ test/built-ins/RegExp/prototype/test/S15.10.6.3_A1_T22.js:
 test/built-ins/RegExp/prototype/unicode/cross-realm.js:
   default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/RegExp/quantifier-integer-limit.js:
+  default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+  strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/RegExp/unicode_character_class_backspace_escape.js:
+  default: 'SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern'
 test/built-ins/RegExp/unicode_restricted_identity_escape_alpha.js:
   default: "Test262Error: IdentityEscape in AtomEscape: 'k' Expected a SyntaxError to be thrown but no exception was thrown at all"
   strict mode: "Test262Error: IdentityEscape in AtomEscape: 'k' Expected a SyntaxError to be thrown but no exception was thrown at all"
@@ -2566,6 +2752,12 @@ test/language/expressions/import.meta/syntax/invalid-assignment-target-for-of-lo
 test/language/expressions/instanceof/prototype-getter-with-primitive.js:
   default: "Test262Error: getter for 'prototype' called"
   strict mode: "Test262Error: getter for 'prototype' called"
+test/language/expressions/new/ctorExpr-fn-ref-before-args-eval-fn-wrapup.js:
+  default: "TypeError: 1 is not a constructor (evaluating 'new x(x = 1)')"
+  strict mode: "TypeError: 1 is not a constructor (evaluating 'new x(x = 1)')"
+test/language/expressions/new/ctorExpr-isCtor-after-args-eval-fn-wrapup.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/expressions/new/non-ctor-err-realm.js:
   default: 'Test262Error: production including Arguments Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: production including Arguments Expected a TypeError but got a TypeError'
@@ -3048,6 +3240,30 @@ test/language/global-code/script-decl-func-err-non-extensible.js:
 test/language/global-code/script-decl-var-err.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/language/identifiers/part-unicode-12.0.0-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '_\\u0EBA'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '_\\u0EBA'"
+test/language/identifiers/part-unicode-12.0.0.js:
+  default: "SyntaxError: Invalid character '\\u0eba'"
+  strict mode: "SyntaxError: Invalid character '\\u0eba'"
+test/language/identifiers/part-unicode-13.0.0-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '_\\u0B55'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '_\\u0B55'"
+test/language/identifiers/part-unicode-13.0.0.js:
+  default: "SyntaxError: Invalid character '\\u0b55'"
+  strict mode: "SyntaxError: Invalid character '\\u0b55'"
+test/language/identifiers/start-unicode-12.0.0-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '\\u0E86'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u0E86'"
+test/language/identifiers/start-unicode-12.0.0.js:
+  default: "SyntaxError: Invalid character '\\u0e86'"
+  strict mode: "SyntaxError: Invalid character '\\u0e86'"
+test/language/identifiers/start-unicode-13.0.0-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '\\u08BE'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u08BE'"
+test/language/identifiers/start-unicode-13.0.0.js:
+  default: "SyntaxError: Invalid character '\\u08be'"
+  strict mode: "SyntaxError: Invalid character '\\u08be'"
 test/language/literals/regexp/named-groups/invalid-dangling-groupname-2-u.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
@@ -3102,6 +3318,9 @@ test/language/literals/regexp/named-groups/invalid-incomplete-groupname-without-
 test/language/literals/regexp/named-groups/invalid-incomplete-groupname.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
+test/language/literals/regexp/u-astral-char-class-invert.js:
+  default: 'Test262Error: Expected SameValue(«�», «null») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
 test/language/literals/regexp/u-dec-esc.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
@@ -3370,6 +3589,9 @@ test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expressio
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
 test/language/statements/for-in/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-in/order-after-define-property.js:
+  default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
+  strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
 test/language/statements/for-in/order-enumerable-shadowed.js:
   default: 'Test262Error: Expected [p1, p2] and [p1] to have the same contents. '
   strict mode: 'Test262Error: Expected [p1, p2] and [p1] to have the same contents. '

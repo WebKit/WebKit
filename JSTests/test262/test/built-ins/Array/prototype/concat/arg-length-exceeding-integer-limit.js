@@ -16,12 +16,6 @@ info: |
       ii. Let len be ? LengthOfArrayLike(E).
       iii. If n + len > 2^53 - 1, throw a TypeError exception.
     [...]
-
-  CreateDataPropertyOrThrow ( O, P, V )
-
-  [...]
-  3. Let success be ? CreateDataProperty(O, P, V).
-  4. If success is false, throw a TypeError exception.
 features: [Symbol.isConcatSpreadable, Proxy]
 ---*/
 

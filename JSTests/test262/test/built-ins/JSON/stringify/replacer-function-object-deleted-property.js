@@ -5,10 +5,17 @@ esid: sec-serializejsonproperty
 description: >
   Replacer function is called on properties, deleted during stringification.
 info: |
-  JSON.stringify ( value [ , replacer [ , space ] ] )
+  SerializeJSONObject ( value )
 
   [...]
-  12. Return ? SerializeJSONProperty(the empty String, wrapper).
+  5. If PropertyList is not undefined, then
+    [...]
+  6. Else,
+    a. Let K be ? EnumerableOwnPropertyNames(value, key).
+  [...]
+  8. For each element P of K, do
+    a. Let strP be ? SerializeJSONProperty(P, value).
+    [...]
 
   SerializeJSONProperty ( key, holder )
 

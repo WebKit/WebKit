@@ -2,19 +2,19 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-description: String coercion of the value returned by functional replaceValue
-es6id: 21.2.5.8
+esid: sec-regexp.prototype-@@replace
+description: >
+  String coercion of the value returned by functional replaceValue.
 info: |
-    16. Repeat, for each result in results,
-        [...]
-        m. If functionalReplace is true, then
-           i. Let replacerArgs be «matched».
-           ii. Append in list order the elements of captures to the end of the
-               List replacerArgs.
-           iii. Append position and S as the last two elements of replacerArgs.
-           iv. Let replValue be Call(replaceValue, undefined, replacerArgs).
-           v. Let replacement be ToString(replValue).
-        [...]
+  RegExp.prototype [ @@replace ] ( string, replaceValue )
+
+  [...]
+  14. For each result in results, do
+    [...]
+    k. If functionalReplace is true, then
+      [...]
+      v. Let replValue be ? Call(replaceValue, undefined, replacerArgs).
+      vi. Let replacement be ? ToString(replValue).
 features: [Symbol.replace]
 ---*/
 
@@ -22,7 +22,10 @@ var replacer = function() {
   return {
     toString: function() {
       return 'toString value';
-    }
+    },
+    valueOf: function() {
+      throw new Test262Error('This method should not be invoked.');
+    },
   };
 };
 
