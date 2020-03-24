@@ -37,6 +37,7 @@ function scrollRightMostSelect()
 
     var startPosX = Math.round(selectRight.offsetLeft) + 10;
     var startPosY = Math.round(selectRight.offsetTop) + 10;
+    eventSender.monitorWheelEvents();
     eventSender.mouseMoveTo(startPosX, startPosY);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
@@ -48,6 +49,7 @@ function scrollLeftMostSelect()
 {
     var startPosX = Math.round(selectLeft.offsetLeft) + 10;
     var startPosY = Math.round(selectLeft.offsetTop) + 10;
+    eventSender.monitorWheelEvents();
     eventSender.mouseMoveTo(startPosX, startPosY);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
@@ -58,8 +60,6 @@ function scrollLeftMostSelect()
 function setupTopLevel()
 {
     if (window.eventSender) {
-        eventSender.monitorWheelEvents();
-
         iframeTarget = document.getElementById("target");
         selectLeft = window.frames["target"].document.getElementById("selectLeft");
         selectRight = window.frames["target"].document.getElementById("selectRight");
