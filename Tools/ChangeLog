@@ -1,3 +1,17 @@
+2020-03-23  Dean Jackson  <dino@apple.com>
+
+        webkitpy Git class must expose the repository URL
+        https://bugs.webkit.org/show_bug.cgi?id=209439
+        <rdar://problem/60792668>
+
+        Reviewed by Simon Fraser.
+
+        Some internal tools were relying on the svn_url() method
+        that was changed/removed in r258164. Add a replacement.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.svn_repository_url):
+
 2020-03-23  Alex Christensen  <achristensen@webkit.org>
 
         Fix memory leak introduced in r257726

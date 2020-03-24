@@ -304,6 +304,14 @@ class Git(SCM, SVNRepository):
     def svn_url(self, path):
         return self._field_from_git_svn_id(path, 'svn_url')
 
+    def svn_repository_url(self):
+        git_command = ['svn', 'info']
+        status = self._run_git(git_command)
+        match = re.search(r'^URL: (?P<url>.*)$', status, re.MULTILINE)
+        if not match:
+            return ""
+        return match.group('url')
+
     def native_revision(self, path):
         return self._run_git(['-C', self.find_checkout_root(path), 'log', '-1', '--pretty=format:%H'])
 
