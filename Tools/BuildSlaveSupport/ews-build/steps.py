@@ -2507,7 +2507,7 @@ class FindModifiedChangeLogs(shell.ShellCommand):
 class CreateLocalGITCommit(shell.ShellCommand):
     name = 'create-local-git-commit'
     descriptionDone = ['Created local git commit']
-    haltOnFailure = True
+    haltOnFailure = False
 
     def __init__(self, **kwargs):
         shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
@@ -2515,8 +2515,9 @@ class CreateLocalGITCommit(shell.ShellCommand):
     def start(self):
         self.failure_message = None
         modified_changelogs = self.getProperty('modified_changelogs')
+        patch_id = self.getProperty('patch_id', '')
         if not modified_changelogs:
-            self.failure_message = u'No modified ChangeLog file found'
+            self.failure_message = u'No modified ChangeLog file found for Patch {}'.format(patch_id)
             self.finished(FAILURE)
             return None
 
@@ -2531,6 +2532,19 @@ class CreateLocalGITCommit(shell.ShellCommand):
         if self.results != SUCCESS:
             return {u'step': u'Failed to create git commit'}
         return shell.ShellCommand.getResultSummary(self)
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc == FAILURE:
+            patch_id = self.getProperty('patch_id', '')
+            message = self.failure_message or 'Failed to create git commit for Patch {}'.format(patch_id)
+            if self.getProperty('buildername', '').lower() == 'commit-queue':
+                self.setProperty('bugzilla_comment_text', message.replace('Patch', 'Attachment'))
+                self.setProperty('build_finish_summary', message)
+                self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+            else:
+                self.build.buildFinished([message], FAILURE)
+        return rc
 
 
 class PushCommitToWebKitRepo(shell.ShellCommand):

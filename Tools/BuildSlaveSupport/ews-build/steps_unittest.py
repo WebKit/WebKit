@@ -3205,6 +3205,8 @@ class TestCreateLocalGITCommit(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(CreateLocalGITCommit())
+        self.assertEqual(CreateLocalGITCommit.haltOnFailure, False)
+        self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('modified_changelogs', ['Tools/Scripts/ChangeLog', 'Source/WebCore/ChangeLog'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -3214,15 +3216,21 @@ class TestCreateLocalGITCommit(BuildStepMixinAdditions, unittest.TestCase):
             0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Created local git commit')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        self.assertEqual(self.getProperty('build_finish_summary'), None)
+        return rc
 
     def test_failure_no_changelog(self):
         self.setupStep(CreateLocalGITCommit())
-        self.expectOutcome(result=FAILURE, state_string='No modified ChangeLog file found')
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=FAILURE, state_string='No modified ChangeLog file found for Patch 1234')
         return self.runStep()
 
     def test_failure(self):
         self.setupStep(CreateLocalGITCommit())
+        self.setProperty('patch_id', '1234')
+        self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('modified_changelogs', ['Tools/Scripts/ChangeLog'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -3233,7 +3241,10 @@ class TestCreateLocalGITCommit(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to create git commit')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Failed to create git commit for Attachment 1234')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to create git commit for Patch 1234')
+        return rc
 
 
 class TestValidateCommiterAndReviewer(BuildStepMixinAdditions, unittest.TestCase):
