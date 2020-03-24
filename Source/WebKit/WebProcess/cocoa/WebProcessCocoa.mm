@@ -92,6 +92,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "AccessibilitySupportSPI.h"
 #import "AssertionServicesSPI.h"
+#import "RunningBoardServicesSPI.h"
 #import "UserInterfaceIdiom.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import <UIKit/UIAccessibility.h>
@@ -326,61 +327,6 @@ void WebProcess::updateProcessName()
     });
 #endif // PLATFORM(MAC)
 }
-
-#if PLATFORM(IOS_FAMILY)
-void WebProcess::processTaskStateDidChange(ProcessTaskStateObserver::TaskState taskState)
-{
-    // NOTE: This will be called from a background thread.
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateDidChange() - taskState(%d)", this, taskState);
-    if (taskState != ProcessTaskStateObserver::Running)
-        return;
-
-    LockHolder holder(m_processWasResumedAssertionsLock);
-    if (m_processWasResumedUIAssertion && m_processWasResumedOwnAssertion)
-        return;
-
-    // We were awakened from suspension unexpectedly. Notify the WebProcessProxy, but take a process assertion on our parent PID
-    // to ensure that it too is awakened.
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateChanged() Taking 'WebProcess was resumed' assertion on behalf on UIProcess", this);
-    m_processWasResumedUIAssertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:parentProcessConnection()->remoteProcessID() flags:BKSProcessAssertionPreventTaskSuspend reason:BKSProcessAssertionReasonFinishTask name:@"WebProcess was resumed" withHandler:^(BOOL acquired) {
-        if (!acquired)
-            RELEASE_LOG_ERROR(ProcessSuspension, "%p - WebProcess::processTaskStateDidChange() failed to take 'WebProcess was resumed' assertion for parent process", this);
-    }]);
-    m_processWasResumedUIAssertion.get().invalidationHandler = [this] {
-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - WebProcess::processTaskStateChanged() Releasing 'WebProcess was resumed' assertion on behalf on UIProcess due to invalidation", this);
-        releaseProcessWasResumedAssertions();
-    };
-    m_processWasResumedOwnAssertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:getpid() flags:BKSProcessAssertionPreventTaskSuspend reason:BKSProcessAssertionReasonFinishTask name:@"WebProcess was resumed" withHandler:^(BOOL acquired) {
-        if (!acquired)
-            RELEASE_LOG_ERROR(ProcessSuspension, "%p - WebProcess::processTaskStateDidChange() failed to take 'WebProcess was resumed' assertion for WebContent process", this);
-    }]);
-    m_processWasResumedOwnAssertion.get().invalidationHandler = [this] {
-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - WebProcess::processTaskStateChanged() Releasing 'WebProcess was resumed' assertion on behalf on WebContent process due to invalidation", this);
-        releaseProcessWasResumedAssertions();
-    };
-
-    parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::ProcessWasResumed(), [this] {
-        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateDidChange() Parent process handled ProcessWasResumed IPC, releasing our assertions", this);
-        releaseProcessWasResumedAssertions();
-    });
-}
-
-void WebProcess::releaseProcessWasResumedAssertions()
-{
-    LockHolder holder(m_processWasResumedAssertionsLock);
-    if (m_processWasResumedUIAssertion) {
-        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::releaseProcessWasResumedAssertions() Releasing parent process 'WebProcess was resumed' assertion", this);
-        [m_processWasResumedUIAssertion invalidate];
-        m_processWasResumedUIAssertion = nullptr;
-    }
-    if (m_processWasResumedOwnAssertion) {
-        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::releaseProcessWasResumedAssertions() Releasing WebContent process 'WebProcess was resumed' assertion", this);
-        [m_processWasResumedOwnAssertion invalidate];
-        m_processWasResumedOwnAssertion = nullptr;
-    }
-}
-
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 static NSString *webProcessLoaderAccessibilityBundlePath()

@@ -65,11 +65,6 @@
 #include <wtf/MachSendRight.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-#include "ProcessTaskStateObserver.h"
-OBJC_CLASS BKSProcessAssertion;
-#endif
-
 #if PLATFORM(WAYLAND) && USE(WPE_RENDERER)
 #include <WebCore/PlatformDisplayLibWPE.h>
 #endif
@@ -105,6 +100,7 @@ struct ServiceWorkerContextData;
 
 namespace WebKit {
 
+class DependencyProcessAssertion;
 class EventDispatcher;
 class GamepadData;
 class GPUProcessConnection;
@@ -140,11 +136,7 @@ struct WebsiteDataStoreParameters;
 class LayerHostingContext;
 #endif
 
-class WebProcess
-    : public AuxiliaryProcess
-#if PLATFORM(IOS_FAMILY)
-    , ProcessTaskStateObserver::Client
-#endif
+class WebProcess : public AuxiliaryProcess
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -478,11 +470,8 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void processTaskStateDidChange(ProcessTaskStateObserver::TaskState) final;
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();
-
-    void releaseProcessWasResumedAssertions();
 #endif
 
 #if ENABLE(VIDEO)
@@ -569,10 +558,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
-    RefPtr<ProcessTaskStateObserver> m_taskStateObserver;
-    Lock m_processWasResumedAssertionsLock;
-    RetainPtr<BKSProcessAssertion> m_processWasResumedUIAssertion;
-    RetainPtr<BKSProcessAssertion> m_processWasResumedOwnAssertion;
+    std::unique_ptr<DependencyProcessAssertion> m_uiProcessDependencyProcessAssertion;
 #endif
 
     enum PageMarkingLayersAsVolatileCounterType { };

@@ -111,6 +111,7 @@ function ios_family_process_webcontent_entitlements()
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.private.webinspector.allow-remote-inspection bool YES
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
+    plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
     plistbuddy Add :dynamic-codesigning bool YES
 
     plistbuddy Add :com.apple.tcc.delegated-services array
