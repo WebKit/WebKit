@@ -961,3 +961,7 @@ webkit.org/b/209182 [ Debug ] inspector/debugger/setShouldBlackboxURL.html [ Pas
 webkit.org/b/209353 [ Release ] media/video-background-tab-playback.html [ Pass Failure ]
 
 webkit.org/b/209494 fast/events/mouse-cursor-no-mousemove.html [ Pass Failure ]
+
+webkit.org/b/209499 [ Catalina ] storage/indexeddb/modern/abort-requests-cancelled.html [ Pass Timeout Crash ]
+
+webkit.org/b/209499 [ Catalina ] storage/indexeddb/modern/abort-requests-cancelled-private.html [ Pass Timeout Crash ]
