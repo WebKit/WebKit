@@ -4236,20 +4236,15 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         context.selectedRangeInMarkedText.length = [context.selectedText.string length];
     }
 
-    auto characterRectsForRange = [&] (Range& range, uint64_t locationOffset) {
+    auto characterRectsForRange = [](const Range& range, unsigned startOffset) {
         Vector<DocumentEditingContext::TextRectAndRange> rects;
-        CharacterIterator contextIterator(range);
-        unsigned currentLocation = locationOffset;
-        while (!contextIterator.atEnd()) {
-            unsigned length = contextIterator.text().length();
-            if (!length) {
-                contextIterator.advance(1);
-                continue;
-            }
-
-            rects.append({ createLiveRange(contextIterator.range())->absoluteBoundingBox(Range::BoundingRectBehavior::IgnoreEmptyTextSelections), { currentLocation, 1 } });
-            currentLocation++;
-            contextIterator.advance(1);
+        CharacterIterator iterator { range };
+        unsigned offsetSoFar = startOffset;
+        const int stride = 1;
+        while (!iterator.atEnd()) {
+            if (!iterator.text().isEmpty())
+                rects.append({ createLiveRange(iterator.range())->absoluteBoundingBox(Range::BoundingRectBehavior::IgnoreEmptyTextSelections), { offsetSoFar++, stride } });
+            iterator.advance(stride);
         }
         return rects;
     };

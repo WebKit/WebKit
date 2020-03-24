@@ -1,5 +1,23 @@
 2020-03-24  Daniel Bates  <dabates@apple.com>
 
+        Simplify characterRectsForRange() in WebPage::requestDocumentEditingContext()
+        https://bugs.webkit.org/show_bug.cgi?id=209462
+
+        Reviewed by Wenson Hsieh.
+
+        No need to allow by-reference capture by default. Update code to take a const
+        Range& and unsigned instead of non-const and uint64_t params. The former is
+        const correct for this code, which doesn't modify anything. The latter is
+        actually the max width data type callers pass. Simplify the inside of the loop
+        by using StringView::isEmpty(). Lastly add a constant for the stride length
+        to make the 1s less mysterious despite the name of the function alluding to
+        this stride.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext):
+
+2020-03-24  Daniel Bates  <dabates@apple.com>
+
         [iOS][WK2] Set text trait isSingleLineDocument
         https://bugs.webkit.org/show_bug.cgi?id=209391
         <rdar://problem/60705870>
