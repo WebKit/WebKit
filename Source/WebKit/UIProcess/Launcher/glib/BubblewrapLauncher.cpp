@@ -31,6 +31,10 @@
 #include <wtf/glib/GUniquePtr.h>
 
 #if PLATFORM(GTK)
+#include "WaylandCompositor.h"
+#endif
+
+#if PLATFORM(GTK)
 #define BASE_DIRECTORY "webkitgtk"
 #elif PLATFORM(WPE)
 #define BASE_DIRECTORY "wpe"
@@ -330,6 +334,12 @@ static void bindWayland(Vector<CString>& args)
     const char* runtimeDir = g_get_user_runtime_dir();
     GUniquePtr<char> waylandRuntimeFile(g_build_filename(runtimeDir, display, nullptr));
     bindIfExists(args, waylandRuntimeFile.get(), BindFlags::ReadWrite);
+
+#if PLATFORM(GTK) && !USE(WPE_RENDERER)
+    String displayName = WaylandCompositor::singleton().displayName();
+    waylandRuntimeFile.reset(g_build_filename(runtimeDir, displayName.utf8().data(), nullptr));
+    bindIfExists(args, waylandRuntimeFile.get(), BindFlags::ReadWrite);
+#endif
 }
 #endif
 

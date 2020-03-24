@@ -1,3 +1,16 @@
+2020-03-24  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Crash in WebKit::LayerTreeHost::LayerTreeHost with bubblewrap sandbox enabled
+        https://bugs.webkit.org/show_bug.cgi?id=209106
+
+        Reviewed by Adrian Perez de Castro.
+
+        The bubblewrap sandbox is blocking access to WebKit's nested Wayland compositor. Apparently
+        nobody has ever tested the nested Wayland compositor with the sandbox enabled until now.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bindWayland):
+
 2020-03-24  Daniel Bates  <dabates@apple.com>
 
         Simplify characterRectsForRange() in WebPage::requestDocumentEditingContext()
