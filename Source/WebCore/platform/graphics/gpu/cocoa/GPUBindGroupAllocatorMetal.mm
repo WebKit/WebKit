@@ -116,6 +116,7 @@ Optional<GPUBindGroupAllocator::ArgumentBufferOffsets> GPUBindGroupAllocator::al
     END_BLOCK_OBJC_EXCEPTIONS;
 
     m_lastOffset = newOffset;
+    ++m_numBindGroups;
 
     return offsets;
 }
@@ -153,11 +154,14 @@ bool GPUBindGroupAllocator::reallocate(NSUInteger newOffset)
 
 void GPUBindGroupAllocator::tryReset()
 {
-    if (!hasOneRef())
-        return;
+    --m_numBindGroups;
+    
+    ASSERT(m_numBindGroups > -1);
 
-    m_argumentBuffer = nullptr;
-    m_lastOffset = 0;
+    if (!m_numBindGroups) {
+        m_argumentBuffer = nullptr;
+        m_lastOffset = 0;
+    }
 }
 
 #endif // USE(METAL)

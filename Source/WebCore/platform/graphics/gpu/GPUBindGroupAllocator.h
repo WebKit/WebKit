@@ -69,6 +69,7 @@ private:
 #endif
 
     Ref<GPUErrorScopes> m_errorScopes;
+    int m_numBindGroups { 0 };
 };
 
 } // namespace WebCore

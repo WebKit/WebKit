@@ -239,9 +239,7 @@ GPUBindGroup::GPUBindGroup(GPUBindGroupAllocator::ArgumentBufferOffsets&& offset
 
 GPUBindGroup::~GPUBindGroup()
 {
-    GPUBindGroupAllocator& rawAllocator = m_allocator.leakRef();
-    rawAllocator.deref();
-    rawAllocator.tryReset();
+    m_allocator->tryReset();
 }
     
 } // namespace WebCore
