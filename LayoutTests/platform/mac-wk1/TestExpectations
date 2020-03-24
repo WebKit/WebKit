@@ -940,6 +940,8 @@ webkit.org/b/208449 [ Debug ] mathml/presentation/attributes-accent-accentunder-
 
 webkit.org/b/208524 [ Release ] webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Timeout ]
 
+webkit.org/b/209479 [ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Pass Timeout ]
+
 webkit.org/b/208532 svg/custom/textPath-change-id-pattern.svg [ Pass Failure ]
 
 webkit.org/b/208825 [ Debug ] inspector/script-profiler/event-type-Microtask.html [ Pass Failure ]
