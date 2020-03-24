@@ -1,3 +1,12 @@
+2020-03-24  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS wk1 ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=209480
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-03-24  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: [ iOS wk2 Debug ] fast/text/control-characters/visible-control-characters-1.html is flaky crashing.
