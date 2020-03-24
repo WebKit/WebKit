@@ -964,9 +964,18 @@ public:
     void isEmpty(GPRReg gpr, GPRReg dst)
     {
 #if USE(JSVALUE64)
-        test64(NonZero, gpr, TrustedImm32(-1), dst);
+        test64(Zero, gpr, gpr, dst);
 #else
         compare32(Equal, gpr, TrustedImm32(JSValue::EmptyValueTag), dst);
+#endif
+    }
+
+    void isNotEmpty(GPRReg gpr, GPRReg dst)
+    {
+#if USE(JSVALUE64)
+        test64(NonZero, gpr, gpr, dst);
+#else
+        compare32(NotEqual, gpr, TrustedImm32(JSValue::EmptyValueTag), dst);
 #endif
     }
 

@@ -13593,7 +13593,7 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
 #endif
 
         if (mode.isSaneChain()) {
-            m_jit.isEmpty(scratchGPR, resultGPR);
+            m_jit.isNotEmpty(scratchGPR, resultGPR);
             break;
         }
 
@@ -13655,7 +13655,7 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
 #endif
 
         if (mode.isSaneChain()) {
-            m_jit.isEmpty(scratchGPR, resultGPR);
+            m_jit.isNotEmpty(scratchGPR, resultGPR);
             break;
         }
 

@@ -1,3 +1,19 @@
+2020-03-24  Keith Miller  <keith_miller@apple.com>
+
+        Fix isEmpty AssemblyHelpers function and add isNotEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=209507
+
+        Reviewed by Saam Barati.
+
+        This fixes the 32 version of my HasIndexedProperty patch as well
+        as properly names the functions for what they do.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::isEmpty):
+        (JSC::AssemblyHelpers::isNotEmpty):
+
 2020-03-23  Keith Miller  <keith_miller@apple.com>
 
         HasIndexedProperty should know about sane chain
