@@ -1067,3 +1067,5 @@ webkit.org/b/209295 [ Debug ] imported/w3c/web-platform-tests/service-workers/se
 webkit.org/b/209483 imported/w3c/web-platform-tests/notifications/event-onclose.html [ Pass Failure ]
 
 webkit.org/b/209490 http/tests/media/track-in-band-hls-metadata.html [ Pass Crash Timeout ]
+
+webkit.org/b/209503 [ Debug ] http/tests/referrer-policy-anchor/origin/cross-origin-http.https.html [ Pass Crash ]

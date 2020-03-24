@@ -1,5 +1,14 @@
 2020-03-24  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ Mac wk2 Debug] http/tests/referrer-policy-anchor/origin/cross-origin-http.https.html is flaky crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=209503
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-03-24  Jason Lawrence  <lawrence.j@apple.com>
+
         REGRESSION: [ Catalina wk1 ] storage/indexeddb/modern/abort-requests flaky crashing.
         https://bugs.webkit.org/show_bug.cgi?id=209499
 
