@@ -965,3 +965,5 @@ webkit.org/b/209494 fast/events/mouse-cursor-no-mousemove.html [ Pass Failure ]
 webkit.org/b/209499 [ Catalina ] storage/indexeddb/modern/abort-requests-cancelled.html [ Pass Timeout Crash ]
 
 webkit.org/b/209499 [ Catalina ] storage/indexeddb/modern/abort-requests-cancelled-private.html [ Pass Timeout Crash ]
+
+webkit.org/b/209560 imported/w3c/web-platform-tests/xhr/send-response-upload-event-progress.htm [ Pass Crash Failure ]
