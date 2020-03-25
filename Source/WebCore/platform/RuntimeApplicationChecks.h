@@ -43,9 +43,6 @@ inline bool isInWebProcess() { return true; }
 bool isInWebProcess();
 bool isInNetworkProcess();
 
-WEBCORE_EXPORT void setApplicationSDKVersion(uint32_t);
-WEBCORE_EXPORT uint32_t applicationSDKVersion();
-
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
 String applicationBundleIdentifier();
 

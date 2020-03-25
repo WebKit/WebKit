@@ -61,6 +61,7 @@
 		1C181C931D307AB800F5FA16 /* UTextProviderUTF16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C8D1D307AB800F5FA16 /* UTextProviderUTF16.cpp */; };
 		1C181C961D30800A00F5FA16 /* TextBreakIteratorInternalICUCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C951D30800A00F5FA16 /* TextBreakIteratorInternalICUCocoa.cpp */; };
 		1C503BE623AAE0AE0072E66B /* LanguageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C503BE523AAE0AE0072E66B /* LanguageCocoa.mm */; };
+		1C9E1C8A242AA9BC00DEB5B2 /* RuntimeApplicationChecksCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C9E1C88242AA9A800DEB5B2 /* RuntimeApplicationChecksCocoa.cpp */; };
 		1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FA47C88152502DA00568D1B /* WebCoreThread.cpp */; };
 		2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CCD892915C0390200285083 /* GregorianDateTime.cpp */; };
 		2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */; };
@@ -342,6 +343,8 @@
 		1C181C951D30800A00F5FA16 /* TextBreakIteratorInternalICUCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBreakIteratorInternalICUCocoa.cpp; sourceTree = "<group>"; };
 		1C503BE423AADEEA0072E66B /* NSLocaleSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSLocaleSPI.h; sourceTree = "<group>"; };
 		1C503BE523AAE0AE0072E66B /* LanguageCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LanguageCocoa.mm; sourceTree = "<group>"; };
+		1C9E1C88242AA9A800DEB5B2 /* RuntimeApplicationChecksCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeApplicationChecksCocoa.cpp; sourceTree = "<group>"; };
+		1C9E1C89242AA9A800DEB5B2 /* RuntimeApplicationChecksCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeApplicationChecksCocoa.h; sourceTree = "<group>"; };
 		1CCDB1491E566626006C73C0 /* TextBreakIteratorCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorCF.h; sourceTree = "<group>"; };
 		1CCDB14D1E566898006C73C0 /* TextBreakIteratorICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorICU.h; sourceTree = "<group>"; };
 		1CCDB1511E566BC5006C73C0 /* CFStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFStringSPI.h; sourceTree = "<group>"; };
@@ -1470,6 +1473,8 @@
 		E4A0AD3B1A96251900536DF6 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				1C9E1C88242AA9A800DEB5B2 /* RuntimeApplicationChecksCocoa.cpp */,
+				1C9E1C89242AA9A800DEB5B2 /* RuntimeApplicationChecksCocoa.h */,
 				1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */,
 				E38C41241EB4E04C0042957D /* CPUTimeCocoa.cpp */,
 				CEA072A9236FFBF70018839C /* CrashReporter.cpp */,
@@ -1593,6 +1598,7 @@
 				517F82D71FD22F3000DA3DEA /* CrossThreadTaskHandler.cpp in Sources */,
 				A8A4739A151A825B004123FF /* CryptographicallyRandomNumber.cpp in Sources */,
 				E15556F518A0CC18006F48FB /* CryptographicUtilities.cpp in Sources */,
+				1C9E1C8A242AA9BC00DEB5B2 /* RuntimeApplicationChecksCocoa.cpp in Sources */,
 				A8A47439151A825B004123FF /* CString.cpp in Sources */,
 				A8A4739C151A825B004123FF /* CurrentTime.cpp in Sources */,
 				A8A4739E151A825B004123FF /* DataLog.cpp in Sources */,
