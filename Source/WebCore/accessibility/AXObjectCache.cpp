@@ -1025,7 +1025,7 @@ void AXObjectCache::notificationPostTimerFired()
     // In tests, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
     // when the notification list is cleared at the end. Instead copy this list at the start.
     auto notifications = WTFMove(m_notificationsToPost);
-    
+
     for (const auto& note : notifications) {
         AXCoreObject* obj = note.first.get();
         if (!obj->objectID())
@@ -1056,12 +1056,12 @@ void AXObjectCache::notificationPostTimerFired()
         if (notification == AXChildrenChanged && obj->parentObjectIfExists() && obj->lastKnownIsIgnoredValue() != obj->accessibilityIsIgnored())
             childrenChanged(obj->parentObject());
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        updateIsolatedTree(obj, notification);
-#endif
-
         postPlatformNotification(obj, notification);
     }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(notifications);
+#endif
 }
 
 void AXObjectCache::passwordNotificationPostTimerFired()
@@ -1139,7 +1139,7 @@ void AXObjectCache::postNotification(AXCoreObject* object, Document* document, A
             m_notificationPostTimer.startOneShot(0_s);
     } else {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        updateIsolatedTree(object, notification);
+        updateIsolatedTree(*object, notification);
 #endif
 
         postPlatformNotification(object, notification);
@@ -1375,7 +1375,7 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
     }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    updateIsolatedTree(object, AXSelectedTextChanged);
+    updateIsolatedTree(*object, AXSelectedTextChanged);
 #endif
 
     postTextStateChangeNotification(object, intent, selection);
@@ -1425,7 +1425,7 @@ void AXObjectCache::postTextStateChangeNotification(Node* node, AXTextEditType t
     }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    updateIsolatedTree(object, AXValueChanged);
+    updateIsolatedTree(*object, AXValueChanged);
 #endif
 
     postTextStateChangePlatformNotification(object, type, text, position);
@@ -3083,27 +3083,6 @@ void AXObjectCache::performDeferredCacheUpdate()
 }
     
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-static Ref<AXIsolatedObject> createIsolatedTreeHierarchy(AXCoreObject& object, AXIsolatedTreeID treeID, AXID parentID, bool attachWrapper, Vector<AXIsolatedTree::NodeChange>& nodeChanges)
-{
-    auto isolatedObject = AXIsolatedObject::create(object, treeID, parentID);
-    if (attachWrapper) {
-        isolatedObject->attachPlatformWrapper(object.wrapper());
-        // Since this object has already an attached wrapper, set the wrapper
-        // in the NodeChange to null so that it is not re-attached.
-        nodeChanges.append(AXIsolatedTree::NodeChange(isolatedObject, nullptr));
-    } else {
-        // Set the wrapper in the NodeChange so that it is set on the AX thread.
-        nodeChanges.append(AXIsolatedTree::NodeChange(isolatedObject, object.wrapper()));
-    }
-
-    for (const auto& child : object.children()) {
-        auto staticChild = createIsolatedTreeHierarchy(*child, treeID, isolatedObject->objectID(), attachWrapper, nodeChanges);
-        isolatedObject->appendChild(staticChild->objectID());
-    }
-
-    return isolatedObject;
-}
-
 Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, Document& document)
 {
     RELEASE_ASSERT(isMainThread());
@@ -3118,12 +3097,8 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
     tree->setAXObjectCache(axObjectCache);
 
     auto* axRoot = axObjectCache->getOrCreate(document.view());
-    if (axRoot) {
-        Vector<AXIsolatedTree::NodeChange> nodeChanges;
-        auto isolatedRoot = createIsolatedTreeHierarchy(*axRoot, tree->treeIdentifier(), InvalidAXID, true, nodeChanges);
-        tree->setRootNode(isolatedRoot);
-        tree->appendNodeChanges(nodeChanges);
-    }
+    if (axRoot)
+        tree->generateSubtree(*axRoot, InvalidAXID, true);
 
     auto* axFocus = axObjectCache->focusedObject(document);
     if (axFocus)
@@ -3132,7 +3107,7 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
     return makeRef(*tree);
 }
 
-void AXObjectCache::updateIsolatedTree(AXCoreObject* object, AXNotification notification)
+void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification notification)
 {
     if (!m_pageID)
         return;
@@ -3143,23 +3118,71 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject* object, AXNotification noti
 
     switch (notification) {
     case AXCheckedStateChanged:
-    case AXChildrenChanged:
     case AXSelectedTextChanged:
     case AXValueChanged: {
-        tree->removeNode(object->objectID());
-        auto* parent = object->parentObject();
-        AXID parentID = parent ? parent->objectID() : InvalidAXID;
-        Vector<AXIsolatedTree::NodeChange> nodeChanges;
-        auto isolatedObject = createIsolatedTreeHierarchy(*object, tree->treeIdentifier(), parentID, false, nodeChanges);
-        tree->appendNodeChanges(nodeChanges);
+        if (object.objectID() != InvalidAXID)
+            tree->updateNode(object);
         break;
     }
     default:
         break;
     }
 }
+
+// FIXME: should be added to WTF::Vector.
+template<typename T, typename F>
+static bool appendIfNotContainsMatching(Vector<T>& vector, const T& value, F matches)
+{
+    if (vector.findMatching(matches) != notFound)
+        return false;
+    vector.append(value);
+    return true;
+}
+
+void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>& notifications)
+{
+    if (!m_pageID)
+        return;
+
+    auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
+    if (!tree)
+        return;
+
+    // Filter out multiple notifications for the same object. This avoids
+    // updating the isolated tree multiple times unnecessarily.
+    Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>> filteredNotifications;
+    for (const auto& notification : notifications) {
+        if (!notification.first || notification.first->objectID() == InvalidAXID)
+            continue;
+
+        switch (notification.second) {
+        case AXCheckedStateChanged:
+        case AXSelectedTextChanged:
+        case AXValueChanged: {
+            bool needsUpdate = appendIfNotContainsMatching(filteredNotifications, notification, [&notification] (const std::pair<RefPtr<AXCoreObject>, AXNotification>& note) {
+                return note.second == notification.second && note.first.get() == notification.first.get();
+            });
+
+            if (needsUpdate)
+                tree->updateNode(*notification.first);
+            break;
+        }
+        case AXChildrenChanged: {
+            bool needsUpdate = appendIfNotContainsMatching(filteredNotifications, notification, [&notification] (const std::pair<RefPtr<AXCoreObject>, AXNotification>& note) {
+                return note.second == notification.second && note.first.get() == notification.first.get();
+            });
+
+            if (needsUpdate)
+                tree->updateChildren(*notification.first);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+}
 #endif
-    
+
 void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element* element)
 {
     if (!nodeAndRendererAreValid(element))

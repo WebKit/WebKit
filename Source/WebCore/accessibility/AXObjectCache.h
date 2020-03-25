@@ -360,7 +360,8 @@ private:
     void setIsolatedTreeFocusedObject(Node*);
     RefPtr<AXIsolatedTree> getOrCreateIsolatedTree() const;
     static Ref<AXIsolatedTree> generateIsolatedTree(PageIdentifier, Document&);
-    void updateIsolatedTree(AXCoreObject*, AXNotification);
+    void updateIsolatedTree(AXCoreObject&, AXNotification);
+    void updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>&);
     static void initializeSecondaryAXThread();
 #endif
 

@@ -51,13 +51,13 @@ public:
     static Ref<AXIsolatedTree> createTreeForPageID(PageIdentifier);
     static void removeTreeForPageID(PageIdentifier);
 
-    WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForPageID(PageIdentifier);
-    WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForID(AXIsolatedTreeID);
+    static RefPtr<AXIsolatedTree> treeForPageID(PageIdentifier);
+    static RefPtr<AXIsolatedTree> treeForID(AXIsolatedTreeID);
     AXObjectCache* axObjectCache() const { return m_axObjectCache; }
     void setAXObjectCache(AXObjectCache* axObjectCache) { m_axObjectCache = axObjectCache; }
 
-    WEBCORE_EXPORT RefPtr<AXIsolatedObject> rootNode();
-    WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedUIElement();
+    RefPtr<AXIsolatedObject> rootNode();
+    RefPtr<AXIsolatedObject> focusedUIElement();
     RefPtr<AXIsolatedObject> nodeForID(AXID) const;
     static RefPtr<AXIsolatedObject> nodeInTreeForID(AXIsolatedTreeID, AXID);
     Vector<RefPtr<AXCoreObject>> objectsForIDs(Vector<AXID>) const;
@@ -69,10 +69,15 @@ public:
         NodeChange(const NodeChange&);
     };
 
-    // Call on main thread
-    void appendNodeChanges(const Vector<NodeChange>&);
-    // Removes the given node and all its descendants.
+    void generateSubtree(AXCoreObject&, AXID parentID, bool attachWrapper);
+    void updateNode(AXCoreObject&);
+    void updateSubtree(AXCoreObject&);
+    void updateChildren(AXCoreObject&);
+
+    // Removes the given node leaving all descendants alone.
     void removeNode(AXID);
+    // Removes the given node and all its descendants.
+    void removeSubtree(AXID);
 
     // Both setRootNode and setFocusedNode must be called only during the
     // generation of the IsolatedTree.
@@ -94,14 +99,20 @@ private:
     static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache();
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache();
 
+    // Call on main thread
+    Ref<AXIsolatedObject> createSubtree(AXCoreObject&, AXID parentID, bool attachWrapper, Vector<NodeChange>&);
+    // Queues all pending additions to the tree as the result of a subtree generation.
+    void appendNodeChanges(const Vector<NodeChange>&);
+
     AXObjectCache* m_axObjectCache { nullptr };
 
     // Only access on AX thread requesting data.
     HashMap<AXID, Ref<AXIsolatedObject>> m_readerThreadNodeMap;
 
     // Written to by main thread under lock, accessed and applied by AX thread.
-    Vector<NodeChange> m_pendingAppends;
-    Vector<AXID> m_pendingRemovals;
+    Vector<NodeChange> m_pendingAppends; // Nodes to be added to the tree and platform-wrapped.
+    Vector<AXID> m_pendingNodeRemovals; // Nodes to be removed from the tree.
+    Vector<AXID> m_pendingSubtreeRemovals; // Nodes whose subtrees are to be removed from the tree.
     AXID m_pendingFocusedNodeID { InvalidAXID };
     Lock m_changeLogLock;
 

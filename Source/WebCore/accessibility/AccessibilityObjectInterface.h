@@ -904,10 +904,12 @@ public:
     virtual void childrenChanged() = 0;
     virtual void textChanged() = 0;
     virtual void updateAccessibilityRole() = 0;
+
     virtual const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) = 0;
     virtual void addChildren() = 0;
     virtual void addChild(AXCoreObject*) = 0;
     virtual void insertChild(AXCoreObject*, unsigned) = 0;
+    Vector<AXID> childrenIDs();
 
     virtual bool shouldIgnoreAttributeRole() const = 0;
 
@@ -1200,6 +1202,14 @@ inline void AXCoreObject::detachWrapper(AccessibilityDetachmentType detachmentTy
     m_wrapper = nullptr;
 }
 #endif
+
+inline Vector<AXID> AXCoreObject::childrenIDs()
+{
+    Vector<AXID> childrenIDs;
+    for (const auto& child : children())
+        childrenIDs.append(child->objectID());
+    return childrenIDs;
+}
 
 namespace Accessibility {
 
