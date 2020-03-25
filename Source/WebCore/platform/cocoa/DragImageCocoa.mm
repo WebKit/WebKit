@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,7 +91,7 @@ RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float d
 
     return dissolvedImage;
 }
-        
+
 RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orientation)
 {
     if (is<BitmapImage>(*image)) {
@@ -334,7 +334,7 @@ DragImageRef createDragImageForColor(const Color& color, const FloatRect&, float
 
     return dragImage;
 }
-   
+
 } // namespace WebCore
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

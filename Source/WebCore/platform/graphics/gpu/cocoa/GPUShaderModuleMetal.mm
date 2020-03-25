@@ -29,6 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #import "GPUDevice.h"
+#import "GPUErrorScopes.h"
 #import "GPUShaderModuleDescriptor.h"
 #import "Logging.h"
 

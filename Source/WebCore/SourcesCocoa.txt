@@ -195,6 +195,8 @@ platform/cf/SharedBufferCF.cpp
 platform/cocoa/ContentFilterUnblockHandlerCocoa.mm @no-unify
 platform/cocoa/CoreVideoSoftLink.cpp
 platform/cocoa/DataDetectorsCoreSoftLink.mm @no-unify
+platform/cocoa/DragDataCocoa.mm
+platform/cocoa/DragImageCocoa.mm
 platform/cocoa/FileMonitorCocoa.mm
 platform/cocoa/KeyEventCocoa.mm
 platform/cocoa/LocalizedStringsCocoa.mm
@@ -444,8 +446,6 @@ platform/ios/wak/WKView.mm
 
 platform/mac/BlacklistUpdater.mm
 platform/mac/CursorMac.mm @no-unify
-platform/mac/DragDataMac.mm
-platform/mac/DragImageMac.mm
 platform/mac/KeyEventMac.mm @no-unify
 platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
 platform/mac/LocalCurrentGraphicsContext.mm

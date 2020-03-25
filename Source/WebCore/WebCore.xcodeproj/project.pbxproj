@@ -11885,7 +11885,6 @@
 		A784941A0B5FE507001E237A /* DataTransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DataTransfer.cpp; sourceTree = "<group>"; };
 		A78FE13912366B1000ACE8D0 /* SpellChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellChecker.cpp; sourceTree = "<group>"; };
 		A78FE13A12366B1000ACE8D0 /* SpellChecker.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = SpellChecker.h; sourceTree = "<group>"; };
-		A795463D0B5C4C80007B438F /* DragDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragDataMac.mm; sourceTree = "<group>"; };
 		A79546420B5C4CB4007B438F /* DragData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragData.cpp; sourceTree = "<group>"; };
 		A79BAD9D161E7F3F00C2E652 /* RuleFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RuleFeature.cpp; sourceTree = "<group>"; };
 		A79BAD9E161E7F3F00C2E652 /* RuleFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuleFeature.h; sourceTree = "<group>"; };
@@ -11911,7 +11910,6 @@
 		A7CA59620B27C1F200FA021D /* DragClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragClient.h; sourceTree = "<group>"; };
 		A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DragImage.cpp; sourceTree = "<group>"; };
 		A7CFB3D00B7ED10A0070C32D /* DragImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DragImage.h; sourceTree = "<group>"; };
-		A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragImageMac.mm; sourceTree = "<group>"; };
 		A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageDataCustom.cpp; sourceTree = "<group>"; };
 		A7D20F3B107F373800A80392 /* WebGLActiveInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLActiveInfo.idl; sourceTree = "<group>"; };
 		A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLActiveInfo.cpp; sourceTree = "<group>"; };
@@ -15636,6 +15634,8 @@
 		F45C231B1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AxisScrollSnapOffsets.cpp; sourceTree = "<group>"; };
 		F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AxisScrollSnapOffsets.h; sourceTree = "<group>"; };
 		F4628A9E234D3BBF00BC884C /* PlatformPasteboardCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformPasteboardCocoa.mm; sourceTree = "<group>"; };
+		F462E79F242ADA3C00204DDD /* DragDataCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragDataCocoa.mm; sourceTree = "<group>"; };
+		F462E7A0242ADA3D00204DDD /* DragImageCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragImageCocoa.mm; sourceTree = "<group>"; };
 		F46729251E0DE5AB00ACC3D8 /* ScrollSnapOffsetsInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollSnapOffsetsInfo.h; sourceTree = "<group>"; };
 		F46C447A2346535E0039A79D /* ClipboardItemDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClipboardItemDataSource.h; sourceTree = "<group>"; };
 		F46C447C234654540039A79D /* ClipboardItemBindingsDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClipboardItemBindingsDataSource.h; sourceTree = "<group>"; };
@@ -20671,8 +20671,6 @@
 				1AFFC44D1D5E7EC700267A66 /* BlacklistUpdater.h */,
 				1AFFC44E1D5E7EC700267A66 /* BlacklistUpdater.mm */,
 				F58784F002DE375901EA4122 /* CursorMac.mm */,
-				A795463D0B5C4C80007B438F /* DragDataMac.mm */,
-				A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */,
 				E1BA66F01742BD8600C20251 /* DynamicLinkerInterposing.h */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
 				F44A5F571FED3830007F5944 /* LegacyNSPasteboardTypes.h */,
@@ -23261,6 +23259,8 @@
 				CD7D33461C7A16BF00041293 /* CoreVideoSoftLink.h */,
 				7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */,
 				7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */,
+				F462E79F242ADA3C00204DDD /* DragDataCocoa.mm */,
+				F462E7A0242ADA3D00204DDD /* DragImageCocoa.mm */,
 				7A09CEF01F01D1F700E93BDB /* FileMonitorCocoa.mm */,
 				A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */,
 				A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */,
