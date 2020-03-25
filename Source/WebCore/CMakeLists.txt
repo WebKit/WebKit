@@ -1180,7 +1180,7 @@ if (ENABLE_GAMEPAD)
     )
 endif ()
 
-if (ENABLE_WEBGL)
+if (ENABLE_WEBXR)
     list(APPEND WebCore_NON_SVG_IDL_FILES
         Modules/webxr/NavigatorWebXR.idl
         Modules/webxr/WebXRBoundedReferenceSpace.idl
