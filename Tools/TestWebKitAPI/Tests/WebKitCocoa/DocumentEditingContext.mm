@@ -513,64 +513,6 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaAcrossWordWrappedLine)
     }
 }
 
-TEST(DocumentEditingContext, RequestRectsInTextAreaInsideIFrame)
-{
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    // Use "padding: 0" for the <textarea> as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle([NSString stringWithFormat:@"<iframe srcdoc=\"%@\" style='position: absolute; left: 1em; top: 1em; border: none'></iframe>", applyAhemStyle(@"<textarea id='test' style='padding: 0'>The quick brown fox jumps over the lazy dog.</textarea><script>let textarea = document.querySelector('iframe').contentDocument.getElementById('test'); textarea.focus(); textarea.setSelectionRange(0, 0); /* Place caret at the beginning of the field. */</script>")])];
-
-    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
-    EXPECT_NOT_NULL(context);
-    EXPECT_NULL(context.contextBefore);
-    EXPECT_NSSTRING_EQ("The", context.contextAfter);
-    auto *textRects = [context textRects];
-    EXPECT_EQ(3U, textRects.count);
-
-#if PLATFORM(MACCATALYST)
-    const size_t yPos = 27;
-    const size_t height = 26;
-#else
-    const size_t yPos = 28;
-    const size_t height = 25;
-#endif
-
-    if (textRects.count >= 3) {
-        CGFloat x = 28;
-        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, yPos, 25, height), textRects[0].CGRectValue); // T
-        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, yPos, 25, height), textRects[1].CGRectValue); // h
-        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, yPos, 25, height), textRects[2].CGRectValue); // e
-    }
-}
-
-TEST(DocumentEditingContext, RequestRectsInTextAreaInsideScrolledIFrame)
-{
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    // Use "padding: 0" for the <textarea> as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle([NSString stringWithFormat:@"<iframe srcdoc=\"%@\" style='position: absolute; left: 1em; top: 1em; border: none' height='200'></iframe>", applyAhemStyle(@"<body style='height: 1000px'><div style='width: 200px; height: 200px'></div><textarea id='test' style='padding: 0'>The quick brown fox jumps over the lazy dog.</textarea><script>let textarea = document.getElementById('test'); textarea.focus(); textarea.setSelectionRange(0, 0); window.scrollTo(0, 200); /* Scroll <textarea> to the top. */</script></body>")])];
-
-    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
-    EXPECT_NOT_NULL(context);
-    EXPECT_NULL(context.contextBefore);
-    EXPECT_NSSTRING_EQ("The", context.contextAfter);
-    auto *textRects = [context textRects];
-    EXPECT_EQ(3U, textRects.count);
-
-#if PLATFORM(MACCATALYST)
-    const size_t yPos = 27;
-    const size_t height = 26;
-#else
-    const size_t yPos = 28;
-    const size_t height = 25;
-#endif
-
-    if (textRects.count >= 3) {
-        CGFloat x = 28;
-        EXPECT_EQ(CGRectMake(x + 0 * glyphWidth, yPos, 25, height), textRects[0].CGRectValue); // T
-        EXPECT_EQ(CGRectMake(x + 1 * glyphWidth, yPos, 25, height), textRects[1].CGRectValue); // h
-        EXPECT_EQ(CGRectMake(x + 2 * glyphWidth, yPos, 25, height), textRects[2].CGRectValue); // e
-    }
-}
-
 // MARK: Tests using word granularity
 
 TEST(DocumentEditingContext, RequestFirstTwoWords)
