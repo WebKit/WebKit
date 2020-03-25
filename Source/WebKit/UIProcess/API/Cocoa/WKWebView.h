@@ -233,7 +233,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  Evaluating your JavaScript string can leave behind other changes to global state visibile to JavaScript. (e.g. `window.myVariable = 1;`)
  Those changes will only be visibile to scripts executed in the same WKContentWorld.
  evaluateJavaScript: is a great way to set up global state for future JavaScript execution in a given world. (e.g. Importing libraries/utilities that future JavaScript execution will rely on)
- Once your global state is set up, consider using callAsyncJavaScriptFunction: for more flexible interaction with the JavaScript programming model.
+ Once your global state is set up, consider using callAsyncJavaScript: for more flexible interaction with the JavaScript programming model.
 */
 - (void)evaluateJavaScript:(NSString *)javaScriptString inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
@@ -243,18 +243,29 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  @param contentWorld The WKContentWorld in which to call the JavaScript function.
  @param completionHandler A block to invoke with the return value of the function call, or with the asynchronous resolution of the function's return value.
  @discussion The functionBody string is treated as an anonymous JavaScript function body that can be called with named arguments.
- Do not format your string as one of the variants of function call available in JavaScript.
- Instead pass in a JavaScript string representing the function body, formatted for evaluation.
+ Do not format your functionBody string as a function-like callable object as you would in pure JavaScript.
+ Your functionBody string should contain only the function body you want executed.
+
  For example do not pass in the string:
-     function(x, y, z) { return x ? y : z; }
+ @textblock
+     function(x, y, z)
+     {
+         return x ? y : z;
+     }
+ @/textblock
+
  Instead pass in the string:
+ @textblock
      return x ? y : z;
+ @/textblock
 
  The arguments dictionary supplies the values for those arguments which are serialized into JavaScript equivalents.
  For example:
+ @textblock
      @{ @"x" : @YES, @"y" : @1, @"z" : @"hello world" };
+ @/textblock
 
- Combining the above arguments dictionary with the above functionBody string, a function with the arguments named "x", "y", and "z" is called with values YES, 1, and "hello world" respectively.
+ Combining the above arguments dictionary with the above functionBody string, a function with the arguments named "x", "y", and "z" is called with values true, 1, and "hello world" respectively.
 
  Allowed argument types are:
  NSNumber, NSString, NSDate, NSArray, NSDictionary, and NSNull.
@@ -279,11 +290,13 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
  Since the function is a JavaScript "async" function you can use JavaScript "await" on thenable objects inside your function body.
  For example:
+ @textblock
      var p = new Promise(function (f) {
          window.setTimeout("f(42)", 1000);
      });
      await p;
      return p;
+ @/textblock
 
  The above function text will create a promise that will fulfull with the value 42 after a one second delay, wait for it to resolve, then return the fulfillment value of 42.
 */
