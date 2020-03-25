@@ -206,9 +206,6 @@ public:
         bool reevaluateAfterLayout { false };
     };
 
-    // Update the compositing state of the given layer. Returns true if that state changed.
-    bool updateLayerCompositingState(RenderLayer&, const RenderLayer* compositingAncestor, RequiresCompositingData&);
-
     // Whether layer's backing needs a graphics layer to do clipping by an ancestor (non-stacking-context parent with overflow).
     bool clippedByAncestor(RenderLayer&, const RenderLayer* compositingAncestor) const;
 
@@ -414,12 +411,14 @@ private:
 
     // Make or destroy the backing for this layer; returns true if backing changed.
     enum class BackingRequired { No, Yes, Unknown };
-    bool updateBacking(RenderLayer&, RequiresCompositingData&, BackingRequired = BackingRequired::Unknown);
+    bool updateBacking(RenderLayer&, RequiresCompositingData&, BackingSharingState* = nullptr, BackingRequired = BackingRequired::Unknown);
+    bool updateLayerCompositingState(RenderLayer&, const RenderLayer* compositingAncestor, RequiresCompositingData&, BackingSharingState&);
 
     void clearBackingForLayerIncludingDescendants(RenderLayer&);
 
     // Repaint this and its child layers.
     void recursiveRepaintLayer(RenderLayer&);
+    bool layerRepaintTargetsBackingSharingLayer(RenderLayer&, BackingSharingState&) const;
 
     void computeExtent(const LayerOverlapMap&, const RenderLayer&, OverlapExtent&) const;
     void addToOverlapMap(LayerOverlapMap&, const RenderLayer&, OverlapExtent&) const;
