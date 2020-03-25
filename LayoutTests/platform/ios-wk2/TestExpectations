@@ -1650,3 +1650,5 @@ webkit.org/b/209450 [ Debug ] fast/text/control-characters/visible-control-chara
 webkit.org/b/209512 http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Pass Timeout ]
 
 webkit.org/b/209520 http/wpt/fetch/dnt-header-after-redirection.html [ Pass Timeout ]
+
+webkit.org/b/209544 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure ]
