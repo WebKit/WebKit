@@ -1,3 +1,14 @@
+2020-03-24  Zalan Bujtas  <zalan@apple.com>
+
+        [MultiColumn] Infinite recursion in RenderBlockFlow::relayoutToAvoidWidows
+        https://bugs.webkit.org/show_bug.cgi?id=209527
+        <rdar://problem/56993589>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/page-cant-accommodate-widow-crash-expected.txt: Added.
+        * fast/multicol/page-cant-accommodate-widow-crash.html: Added.
+
 2020-03-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [ macOS ] fast/images/slower-decoding-than-animation-image.html is flaky failing

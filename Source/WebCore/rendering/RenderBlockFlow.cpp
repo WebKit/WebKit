@@ -1767,6 +1767,8 @@ void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, La
     if (!pageLogicalHeight || !hasNextPage(logicalOffset)) {
         // FIXME: In case the line aligns with the top of the page (or it's slightly shifted downwards) it will not be marked as the first line in the page.
         // From here, the fix is not straightforward because it's not easy to always determine when the current line is the first in the page.
+        // With no valid page height, we can't possibly accommodate the widow rules.
+        clearShouldBreakAtLineToAvoidWidowIfNeeded(*this);
         return;
     }
 
