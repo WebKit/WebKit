@@ -588,7 +588,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
 #if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     if (m_videoOutput) {
         CMTime outputTime;
-        if (auto pixelBuffer = [m_videoOutput copyPixelBufferForSourceTime:toCMTime(currentMediaTime()) sourceTimeForDisplay:&outputTime]) {
+        if (auto pixelBuffer = adoptCF([m_videoOutput copyPixelBufferForSourceTime:toCMTime(currentMediaTime()) sourceTimeForDisplay:&outputTime])) {
             INFO_LOG(LOGIDENTIFIER, "new pixelbuffer found for time ", toMediaTime(outputTime));
             m_lastPixelBuffer = WTFMove(pixelBuffer);
             return true;
