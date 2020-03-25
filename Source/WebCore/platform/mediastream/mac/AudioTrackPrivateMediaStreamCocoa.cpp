@@ -61,6 +61,9 @@ void AudioTrackPrivateMediaStreamCocoa::clear()
     if (m_dataSource)
         m_dataSource->setPaused(true);
 
+    m_isAudioUnitStarted = false;
+    m_isPlaying = false;
+
     if (m_remoteIOUnit) {
         AudioOutputUnitStop(m_remoteIOUnit);
         AudioComponentInstanceDispose(m_remoteIOUnit);
@@ -84,6 +87,11 @@ void AudioTrackPrivateMediaStreamCocoa::playInternal()
 
     if (m_dataSource)
         m_dataSource->setPaused(false);
+
+    if (m_isCleared) {
+        streamTrack().source().addObserver(*this);
+        m_isCleared = false;
+    }
 }
 
 void AudioTrackPrivateMediaStreamCocoa::play()
@@ -97,6 +105,8 @@ void AudioTrackPrivateMediaStreamCocoa::pause()
 
     if (!m_isPlaying)
         return;
+
+    clear();
 
     m_isPlaying = false;
     m_autoPlay = false;
@@ -254,6 +264,19 @@ void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& s
 void AudioTrackPrivateMediaStreamCocoa::sourceStopped()
 {
     pause();
+}
+
+void AudioTrackPrivateMediaStreamCocoa::sourceMutedChanged()
+{
+    if (streamTrack().muted())
+        return;
+
+    if (!m_isPlaying)
+        return;
+
+    // If we we want to play and were muted, we restart from scratch by doing a pause/start.
+    pause();
+    play();
 }
 
 OSStatus AudioTrackPrivateMediaStreamCocoa::render(UInt32 sampleCount, AudioBufferList& ioData, UInt32 /*inBusNumber*/, const AudioTimeStamp& timeStamp, AudioUnitRenderActionFlags& actionFlags)
