@@ -154,6 +154,8 @@ public:
 
     void setIdForTesting(String&& id) { m_private->setIdForTesting(WTFMove(id)); }
 
+    Document* document() const;
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }
     const void* logIdentifier() const final { return m_private->logIdentifier(); }
@@ -170,8 +172,6 @@ private:
     explicit MediaStreamTrack(MediaStreamTrack&);
 
     void configureTrackRendering();
-
-    Document* document() const;
 
     // ActiveDOMObject API.
     void stop() final { stopTrack(); }

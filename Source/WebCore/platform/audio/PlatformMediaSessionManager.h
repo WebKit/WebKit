@@ -140,6 +140,8 @@ public:
 
     WEBCORE_EXPORT void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*);
 
+    bool isInterrupted() const { return m_interrupted; }
+
 protected:
     friend class PlatformMediaSession;
     PlatformMediaSessionManager();

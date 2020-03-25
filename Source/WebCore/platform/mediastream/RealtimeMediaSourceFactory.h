@@ -45,7 +45,6 @@ public:
     virtual void setActiveSource(RealtimeMediaSource&);
     void unsetActiveSource(RealtimeMediaSource&);
 
-protected:
     RealtimeMediaSource* activeSource() { return m_activeSource; }
 
 private:
