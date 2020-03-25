@@ -1360,7 +1360,7 @@ webkit.org/b/207596 fast/viewport/ios/width-is-device-width-overflowing-body-ove
 
 webkit.org/b/207665 http/tests/cache-storage/cache-representation.https.html [ Slow ]
 
-webkit.org/b/209514 http/tests/cache-storage/page-cache-domcache-pending-promise.html [ Pass Timeout ]
+webkit.org/b/209514 http/tests/cache-storage/page-cache-domcache-pending-promise.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/196300 fast/visual-viewport/ios/min-scale-greater-than-one.html [ Pass Failure ]
 
