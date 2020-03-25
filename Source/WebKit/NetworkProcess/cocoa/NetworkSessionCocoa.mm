@@ -994,15 +994,17 @@ static bool sessionsCreated = false;
 
 static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID& session)
 {
+    NSURLSessionConfiguration *configuration;
     if (session.isEphemeral()) {
-        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+        configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
         configuration._shouldSkipPreferredClientCertificateLookup = YES;
+    } else
+        configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+
 #if HAVE(ALLOWS_SENSITIVE_LOGGING)
-        configuration._allowsSensitiveLogging = NO;
+    configuration._allowsSensitiveLogging = NO;
 #endif
-        return configuration;
-    }
-    return [NSURLSessionConfiguration defaultSessionConfiguration];
+    return configuration;
 }
 
 const String& NetworkSessionCocoa::boundInterfaceIdentifier() const

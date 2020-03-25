@@ -1,3 +1,19 @@
+2020-03-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid logging sensitive information for all network sessions
+        https://bugs.webkit.org/show_bug.cgi?id=209522
+        <rdar://problem/54807157>
+
+        Reviewed by Alex Christensen.
+
+        We avoid logging sensitive information (such as visited URLs) on production builds and for ephemeral sessions.
+
+        We should also avoid such logging for engineering and prerelease builds to reduce the possibility of any
+        personally identifiable information being retained in logs.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForSessionID): Deny senstive logging for all sessions.
+
 2020-03-24  Daniel Bates  <dabates@apple.com>
 
         [iOS] ASSERTION FAILURE: !isMissingPostLayoutData in WebKit::EditorState::postLayoutData()
