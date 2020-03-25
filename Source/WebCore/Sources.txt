@@ -3552,7 +3552,7 @@ JSXPathNSResolver.cpp
 JSXPathResult.cpp
 JSXSLTProcessor.cpp
 
-#if ENABLE_WEBGL
+#if ENABLE_WEBXR
 
 JSWebXRBoundedReferenceSpace.cpp
 JSXREnvironmentBlendMode.cpp
