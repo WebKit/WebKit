@@ -1,3 +1,13 @@
+2020-03-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [ macOS ] fast/images/slower-decoding-than-animation-image.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207859
+
+        Unreviewed tiny follow-up to make the test more reliable on slow bots.
+
+        * fast/images/slower-decoding-than-animation-image-expected.txt:
+        * fast/images/slower-decoding-than-animation-image.html:
+
 2020-03-24  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] http/tests/security/cookies/third-party-cookie-blocking.html is flaky timing out
