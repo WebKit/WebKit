@@ -1,3 +1,12 @@
+2020-03-25  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk2 ] svg/as-image/svg-image-with-data-uri-background.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209564
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-25  Chris Dumez  <cdumez@apple.com>
 
         Event listeners registered with 'once' option may get garbage collected too soon
