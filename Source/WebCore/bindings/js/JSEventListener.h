@@ -48,10 +48,12 @@ public:
     // Returns true if this event listener was created for an event handler attribute, like "onload" or "onclick".
     bool isAttribute() const final { return m_isAttribute; }
 
-    JSC::JSObject* jsFunction(ScriptExecutionContext&) const;
+    JSC::JSObject* ensureJSFunction(ScriptExecutionContext&) const;
     DOMWrapperWorld& isolatedWorld() const { return m_isolatedWorld; }
 
-    JSC::JSObject* wrapper() const { return m_wrapper.get(); }
+
+    JSC::JSObject* jsFunction() const final { return m_jsFunction.get(); }
+    JSC::JSObject* wrapper() const final { return m_wrapper.get(); }
 
     virtual String sourceURL() const { return String(); }
     virtual TextPosition sourcePosition() const { return TextPosition(); }
@@ -92,7 +94,7 @@ void setDocumentEventHandlerAttribute(JSC::JSGlobalObject&, JSC::JSObject&, HTML
 JSC::JSValue documentEventHandlerAttribute(Document&, const AtomString& eventType, DOMWrapperWorld&);
 void setDocumentEventHandlerAttribute(JSC::JSGlobalObject&, JSC::JSObject&, Document&, const AtomString& eventType, JSC::JSValue);
 
-inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext& scriptExecutionContext) const
+inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& scriptExecutionContext) const
 {
     // initializeJSFunction can trigger code that deletes this event listener
     // before we're done. It should always return null in this case.

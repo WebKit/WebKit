@@ -60,6 +60,9 @@ public:
     virtual void checkValidityForEventTarget(EventTarget&) { }
 #endif
 
+    virtual JSC::JSObject* jsFunction() const { return nullptr; }
+    virtual JSC::JSObject* wrapper() const { return nullptr; }
+
 protected:
     explicit EventListener(Type type)
         : m_type(type)

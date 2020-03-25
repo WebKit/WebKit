@@ -34,6 +34,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MediaTime.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TriState.h>
 
@@ -649,5 +650,27 @@ ALWAYS_INLINE void ensureStillAliveHere(JSValue value)
 #else
 JS_EXPORT_PRIVATE void ensureStillAliveHere(JSValue);
 #endif
+
+// Use EnsureStillAliveScope when you have a data structure that includes GC pointers, and you need
+// to remove it from the DOM and then use it in the same scope. For example, a 'once' event listener
+// needs to be removed from the DOM and then fired.
+class EnsureStillAliveScope {
+    WTF_FORBID_HEAP_ALLOCATION;
+    WTF_MAKE_NONCOPYABLE(EnsureStillAliveScope);
+    WTF_MAKE_NONMOVABLE(EnsureStillAliveScope);
+public:
+    EnsureStillAliveScope(JSValue value)
+        : m_value(value)
+    {
+    }
+
+    ~EnsureStillAliveScope()
+    {
+        ensureStillAliveHere(m_value);
+    }
+
+private:
+    JSValue m_value;
+};
 
 } // namespace JSC

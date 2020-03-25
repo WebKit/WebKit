@@ -67,7 +67,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     VM& vm = scriptExecutionContext.vm();
     JSLockHolder lock(vm);
 
-    JSObject* jsFunction = this->jsFunction(scriptExecutionContext);
+    JSObject* jsFunction = this->ensureJSFunction(scriptExecutionContext);
     if (!jsFunction)
         return;
 

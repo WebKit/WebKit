@@ -304,6 +304,12 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
         if (event.immediatePropagationStopped())
             break;
 
+        // Make sure the JS wrapper and function stay alive until the end of this scope. Otherwise,
+        // event listeners with 'once' flag may get collected as soon as they get unregistered below,
+        // before we call the js function.
+        JSC::EnsureStillAliveScope wrapperProtector(registeredListener->callback().wrapper());
+        JSC::EnsureStillAliveScope jsFunctionProtector(registeredListener->callback().jsFunction());
+
         // Do this before invocation to avoid reentrancy issues.
         if (registeredListener->isOnce())
             removeEventListener(event.type(), registeredListener->callback(), ListenerOptions(registeredListener->useCapture()));

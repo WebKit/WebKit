@@ -110,7 +110,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     // "If this throws an exception, report the exception." It should not propagate the
     // exception.
 
-    JSObject* jsFunction = this->jsFunction(scriptExecutionContext);
+    JSObject* jsFunction = ensureJSFunction(scriptExecutionContext);
     if (!jsFunction)
         return;
 
@@ -242,7 +242,7 @@ static inline JSC::JSValue eventHandlerAttribute(EventListener* abstractListener
     if (!is<JSEventListener>(abstractListener))
         return jsNull();
 
-    auto* function = downcast<JSEventListener>(*abstractListener).jsFunction(context);
+    auto* function = downcast<JSEventListener>(*abstractListener).ensureJSFunction(context);
     if (!function)
         return jsNull();
 

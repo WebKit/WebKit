@@ -1770,7 +1770,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         JSC::JSLockHolder lock(scriptListener.isolatedWorld().vm());
 
         if (document) {
-            handlerObject = scriptListener.jsFunction(*document);
+            handlerObject = scriptListener.ensureJSFunction(*document);
             exec = execStateFromNode(scriptListener.isolatedWorld(), document);
         }
 

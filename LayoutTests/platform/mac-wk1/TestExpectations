@@ -562,6 +562,7 @@ http/tests/inspector/network/resource-request-headers.html [ Failure ]
 http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 http/tests/inspector/network/resource-sizes-memory-cache.html [ Failure ]
 http/tests/inspector/network/har/har-page.html [ Failure ]
+http/tests/inspector/network/har/har-page-aggressive-gc.html [ Failure ]
 
 # Local Overrides not available in WebKit1
 http/tests/inspector/network/local-resource-override-basic.html [ Failure ]

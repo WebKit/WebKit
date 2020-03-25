@@ -113,7 +113,7 @@ CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(J
             if (&jsListener.isolatedWorld() != &currentWorld(lexicalGlobalObject))
                 continue;
 
-            auto* function = jsListener.jsFunction(*scriptExecutionContext);
+            auto* function = jsListener.ensureJSFunction(*scriptExecutionContext);
             if (!function)
                 continue;
 

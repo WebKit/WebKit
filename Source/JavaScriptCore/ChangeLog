@@ -1,3 +1,17 @@
+2020-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Event listeners registered with 'once' option may get garbage collected too soon
+        https://bugs.webkit.org/show_bug.cgi?id=209504
+        <rdar://problem/60541567>
+
+        Reviewed by Yusuke Suzuki.
+
+        Add EnsureStillAliveScope RAII object for ensureStillAliveHere().
+
+        * runtime/JSCJSValue.h:
+        (JSC::EnsureStillAliveScope::EnsureStillAliveScope):
+        (JSC::EnsureStillAliveScope::~EnsureStillAliveScope):
+
 2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         \b escapes inside character classes should be valid in Unicode patterns
