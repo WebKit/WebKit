@@ -96,6 +96,11 @@ class StatusBubble(View):
             bubble['queue_position'] = queue_position
             if not queue_position:
                 return None
+            if self._get_parent_queue(queue):
+                queue = self._get_parent_queue(queue)
+            queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
+            if queue_full_name:
+                bubble['url'] = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
             bubble['details_message'] = 'Waiting in queue, processing has not started yet.\n\nPosition in queue: {}'.format(queue_position)
             return bubble
 

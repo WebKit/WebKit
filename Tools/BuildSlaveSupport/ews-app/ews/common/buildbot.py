@@ -39,6 +39,7 @@ class Buildbot():
     ALL_RESULTS = lrange(7)
     SUCCESS, WARNINGS, FAILURE, SKIPPED, EXCEPTION, RETRY, CANCELLED = ALL_RESULTS
     icons_for_queues_mapping = {}
+    queue_name_by_shortname_mapping = {}
     builder_name_to_id_mapping = {}
 
     @classmethod
@@ -96,9 +97,12 @@ class Buildbot():
     @classmethod
     def update_icons_for_queues_mapping(cls):
         config = cls.fetch_config()
+        if not config:
+            _log.warn('Unable to fetch buildbot config.json')
         for builder in config.get('builders', []):
             shortname = builder.get('shortname')
             Buildbot.icons_for_queues_mapping[shortname] = builder.get('icon')
+            Buildbot.queue_name_by_shortname_mapping[shortname] = builder.get('name')
 
     @classmethod
     def update_builder_name_to_id_mapping(cls):

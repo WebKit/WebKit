@@ -1,3 +1,15 @@
+2020-03-25  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] status-bubble should link to buildbot queue while waiting in queue
+        https://bugs.webkit.org/show_bug.cgi?id=209543
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble): Link to buildbot queue whil patch is waiting in queue.
+        * BuildSlaveSupport/ews-app/ews/common/buildbot.py:
+        (Buildbot.update_icons_for_queues_mapping): Generate the mapping for shortname to full queue name.
+
 2020-03-25  Ting-Wei Lan  <lantw44@gmail.com>
 
         [GTK] Add user agent quirk for auth.mayohr.com
