@@ -37,6 +37,7 @@ OBJC_CLASS LAContext;
 
 namespace WebCore {
 class AuthenticatorAssertionResponse;
+enum class ClientDataType : bool;
 }
 
 namespace WebKit {
@@ -59,10 +60,11 @@ public:
     using UserVerificationCallback = CompletionHandler<void(UserVerification, LAContext *)>;
 
     LocalConnection() = default;
+    // FIXME(183534): Invalidate the LAContext.
     virtual ~LocalConnection() = default;
 
     // Overrided by MockLocalConnection.
-    virtual void verifyUser(const String& rpId, SecAccessControlRef, UserVerificationCallback&&) const;
+    virtual void verifyUser(const String& rpId, WebCore::ClientDataType, SecAccessControlRef, UserVerificationCallback&&) const;
     virtual RetainPtr<SecKeyRef> createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const;
     virtual void getAttestation(SecKeyRef, NSData *authData, NSData *hash, AttestationCallback&&) const;
     virtual void filterResponses(HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&) const { };

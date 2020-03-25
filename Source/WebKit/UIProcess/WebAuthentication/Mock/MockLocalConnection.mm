@@ -44,7 +44,7 @@ MockLocalConnection::MockLocalConnection(const WebCore::MockWebAuthenticationCon
 {
 }
 
-void MockLocalConnection::verifyUser(const String&, SecAccessControlRef, UserVerificationCallback&& callback) const
+void MockLocalConnection::verifyUser(const String&, WebCore::ClientDataType, SecAccessControlRef, UserVerificationCallback&& callback) const
 {
     // Mock async operations.
     RunLoop::main().dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {

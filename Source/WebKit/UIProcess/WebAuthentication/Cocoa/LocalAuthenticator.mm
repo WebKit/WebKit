@@ -263,7 +263,7 @@ void LocalAuthenticator::continueMakeCredentialAfterDecidePolicy(LocalAuthentica
 
         weakThis->continueMakeCredentialAfterUserVerification(accessControl.get(), verification, context);
     };
-    m_connection->verifyUser(creationOptions.rp.id, accessControlRef, WTFMove(callback));
+    m_connection->verifyUser(creationOptions.rp.id, getClientDataType(requestData().options), accessControlRef, WTFMove(callback));
 }
 
 void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessControlRef accessControlRef, LocalConnection::UserVerification verification, LAContext *context)
@@ -491,7 +491,7 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
 
         weakThis->continueGetAssertionAfterUserVerification(WTFMove(response), verification, context);
     };
-    m_connection->verifyUser(requestOptions.rpId, accessControlRef, WTFMove(callback));
+    m_connection->verifyUser(requestOptions.rpId, getClientDataType(requestData().options), accessControlRef, WTFMove(callback));
 }
 
 void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::AuthenticatorAssertionResponse>&& response, LocalConnection::UserVerification verification, LAContext *context)

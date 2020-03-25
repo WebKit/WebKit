@@ -1,3 +1,9 @@
+/* Allow the specified bundle to use Touch ID to sign in to the specified website on this device */
+"“%@” would like to use Touch ID for “%@”." = "“%@” would like to use Touch ID for “%@”.";
+
+/* "Allow the specified bundle to sign in to the specified website */
+"“%@” would like to sign in to “%@”." = "“%@” would like to sign in to “%@”.";
+
 /* accessibility help text for media controller time value >= 1 day */
 "%1$d days %2$d hours %3$d minutes %4$d seconds" = "%1$d days %2$d hours %3$d minutes %4$d seconds";
 
@@ -312,9 +318,6 @@
 
 /* Video Enter Full Screen context menu item */
 "Enter Full Screen" = "Enter Full Screen";
-
-/* Use passcode as a fallback to sign into this website */
-"Enter passcode to sign into this website." = "Enter passcode to sign into this website.";
 
 /* menu item */
 "Enter Picture in Picture" = "Enter Picture in Picture";
@@ -865,6 +868,9 @@
 /* Unwanted software warning */
 "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove." = "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.";
 
+/* This website would like to use Touch ID */
+"This website would like to use Touch ID." = "This website would like to use Touch ID.";
+
 /* Informative text for requesting cross-site cookie and website data access. */
 "This will allow “%@” to track your activity." = "This will allow “%@” to track your activity.";
 
@@ -883,11 +889,8 @@
 /* prompt string in authentication panel */
 "To view this page, you must log in to this area on %@:" = "To view this page, you must log in to this area on %@:";
 
-/* Use Touch ID to sign into this website */
-"Touch ID to sign into this website." = "Touch ID to sign into this website.";
-
-/* Allow using Touch ID to sign into the specified website on this device */
-"Touch ID to allow signing into “%@” with Touch ID." = "Touch ID to allow signing into “%@” with Touch ID.";
+/* Use Touch ID to sign in to this website */
+"Touch ID to sign in to this website." = "Touch ID to sign in to this website.";
 
 /* Transformations context sub-menu item */
 "Transformations" = "Transformations";

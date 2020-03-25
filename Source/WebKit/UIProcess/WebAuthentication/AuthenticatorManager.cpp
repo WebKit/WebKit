@@ -143,13 +143,6 @@ static String getRpId(const Variant<PublicKeyCredentialCreationOptions, PublicKe
     return WTF::get<PublicKeyCredentialRequestOptions>(options).rpId;
 }
 
-static ClientDataType getClientDataType(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
-{
-    if (WTF::holds_alternative<PublicKeyCredentialCreationOptions>(options))
-        return ClientDataType::Create;
-    return ClientDataType::Get;
-}
-
 } // namespace
 
 const size_t AuthenticatorManager::maxTransportNumber = 3;

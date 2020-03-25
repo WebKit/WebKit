@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebAuthenticationRequestData.h"
 
 #if ENABLE(WEB_AUTHN)
 
-#include "LocalConnection.h"
-#include <WebCore/MockWebAuthenticationConfiguration.h>
-
 namespace WebKit {
+using namespace WebCore;
 
-class MockLocalConnection final : public LocalConnection {
-public:
-    explicit MockLocalConnection(const WebCore::MockWebAuthenticationConfiguration&);
-
-private:
-    void verifyUser(const String&, WebCore::ClientDataType, SecAccessControlRef, UserVerificationCallback&&) const final;
-    RetainPtr<SecKeyRef> createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const final;
-    void getAttestation(SecKeyRef, NSData *authData, NSData *hash, AttestationCallback&&) const final;
-    void filterResponses(HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&) const final;
-
-    WebCore::MockWebAuthenticationConfiguration m_configuration;
-};
+ClientDataType getClientDataType(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
+{
+    if (WTF::holds_alternative<PublicKeyCredentialCreationOptions>(options))
+        return ClientDataType::Create;
+    return ClientDataType::Get;
+}
 
 } // namespace WebKit
 

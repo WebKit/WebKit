@@ -33,6 +33,7 @@
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
+#include <WebCore/WebAuthenticationConstants.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -50,6 +51,8 @@ struct WebAuthenticationRequestData {
     WTF::Optional<WebCore::GlobalFrameIdentifier> frameID;
     WebKit::FrameInfoData frameInfo;
 };
+
+WebCore::ClientDataType getClientDataType(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);
 
 } // namespace WebKit
 

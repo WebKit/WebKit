@@ -340,9 +340,8 @@ namespace WebCore {
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    WEBCORE_EXPORT String genericTouchIDPromptTitle();
-    WEBCORE_EXPORT String makeCredentialTouchIDPromptTitle(const String& domain);
-    WEBCORE_EXPORT String biometricFallbackPromptTitle();
+    WEBCORE_EXPORT String makeCredentialTouchIDPromptTitle(const String& bundleName, const String& domain);
+    WEBCORE_EXPORT String getAssertionTouchIDPromptTitle(const String& bundleName, const String& domain);
 #endif
 
 #if USE(GLIB) && defined(GETTEXT_PACKAGE)
