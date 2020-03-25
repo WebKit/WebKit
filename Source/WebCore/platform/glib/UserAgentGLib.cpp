@@ -104,15 +104,16 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     uaString.append(versionForUAString());
     uaString.appendLiteral(" (KHTML, like Gecko) ");
 
-    // Note that Chrome UAs advertise *both* Chrome and Safari.
+    // Note that Chrome UAs advertise *both* Chrome/X and Safari/X, but it does
+    // not advertise Version/X.
     if (quirks.contains(UserAgentQuirks::NeedsChromeBrowser)) {
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsChromeBrowser));
         uaString.appendLiteral(" ");
-    }
-
     // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
     // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
-    uaString.appendLiteral("Version/13.0 Safari/");
+    } else
+        uaString.appendLiteral("Version/13.0 ");
+    uaString.appendLiteral("Safari/");
     uaString.append(versionForUAString());
 
     return uaString.toString();
