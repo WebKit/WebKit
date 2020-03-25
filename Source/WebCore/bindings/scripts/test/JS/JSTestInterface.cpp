@@ -275,11 +275,11 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(JS
     auto* context = castedThis->scriptExecutionContext();
     if (UNLIKELY(!context))
         return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, throwScope, "TestInterface");
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto str1 = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto str1 = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument1 = callFrame->argument(1);
-    auto str2 = argument1.isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, argument1);
+    EnsureStillAliveScope argument1 = callFrame->argument(1);
+    auto str2 = argument1.value().isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, argument1.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestInterface::create(*context, WTFMove(str1), WTFMove(str2));
     auto jsValue = toJSNewlyCreated<IDLInterface<TestInterface>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
@@ -925,18 +925,13 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMeth
     auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto strArg = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto strArg = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument1 = callFrame->uncheckedArgument(1);
-    auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument1, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg", "TestInterface", "implementsMethod2", "TestObj"); });
+    EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
+    auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument1.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg", "TestInterface", "implementsMethod2", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto result = JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.implementsMethod2(*context, WTFMove(strArg), *objArg)));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-    ensureStillAliveHere(argument1);
-
     return result;
 }
 
@@ -1029,18 +1024,13 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMe
     auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto strArg = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto strArg = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument1 = callFrame->uncheckedArgument(1);
-    auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument1, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg", "TestInterface", "supplementalMethod2", "TestObj"); });
+    EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
+    auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, argument1.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg", "TestInterface", "supplementalMethod2", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto result = JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WebCore::TestSupplemental::supplementalMethod2(impl, *context, WTFMove(strArg), *objArg)));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-    ensureStillAliveHere(argument1);
-
     return result;
 }
 

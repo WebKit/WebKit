@@ -330,18 +330,13 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithIndexedGetterPrototypeFun
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto name = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto name = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument1 = callFrame->uncheckedArgument(1);
-    auto value = convert<IDLDOMString>(*lexicalGlobalObject, argument1);
+    EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
+    auto value = convert<IDLDOMString>(*lexicalGlobalObject, argument1.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.namedSetter(WTFMove(name), WTFMove(value));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-    ensureStillAliveHere(argument1);
-
     return JSValue::encode(jsUndefined());
 }
 
@@ -358,14 +353,10 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithIndexedGetterPrototypeFun
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto index = convert<IDLUnsignedLong>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto index = convert<IDLUnsignedLong>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto result = JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.indexedSetter(WTFMove(index))));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return result;
 }
 

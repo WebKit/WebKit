@@ -307,14 +307,10 @@ static inline JSC::EncodedJSValue jsTestEnabledBySettingPrototypeFunctionEnabled
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto testParam = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto testParam = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.enabledBySettingOperation(WTFMove(testParam));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return JSValue::encode(jsUndefined());
 }
 

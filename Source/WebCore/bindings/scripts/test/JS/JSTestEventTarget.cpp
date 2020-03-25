@@ -256,14 +256,10 @@ static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemBody(JSC
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto index = convert<IDLUnsignedLong>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto index = convert<IDLUnsignedLong>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto result = JSValue::encode(toJS<IDLInterface<Node>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.item(WTFMove(index))));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return result;
 }
 

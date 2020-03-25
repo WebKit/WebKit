@@ -225,14 +225,10 @@ static inline JSC::EncodedJSValue jsReadOnlyMapLikePrototypeFunctionGetBody(JSC:
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto key = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto key = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto result = JSValue::encode(toJS<IDLAny>(forwardGetToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key))));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return result;
 }
 
@@ -248,14 +244,10 @@ static inline JSC::EncodedJSValue jsReadOnlyMapLikePrototypeFunctionHasBody(JSC:
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto key = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto key = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto result = JSValue::encode(toJS<IDLAny>(forwardHasToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key))));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return result;
 }
 
@@ -313,14 +305,10 @@ static inline JSC::EncodedJSValue jsReadOnlyMapLikePrototypeFunctionForEachBody(
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto callback = convert<IDLAny>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto callback = convert<IDLAny>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto result = JSValue::encode(toJS<IDLAny>(forwardForEachToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback))));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return result;
 }
 

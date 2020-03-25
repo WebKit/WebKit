@@ -669,6 +669,8 @@ public:
         ensureStillAliveHere(m_value);
     }
 
+    JSValue value() const { return m_value; }
+
 private:
     JSValue m_value;
 };

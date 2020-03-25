@@ -162,14 +162,14 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(JSG
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 3))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto hello = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto hello = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument1 = callFrame->uncheckedArgument(1);
-    auto testCallbackFunction = convert<IDLCallbackFunction<JSTestCallbackFunction>>(*lexicalGlobalObject, argument1, *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 1, "testCallbackFunction", "TestTypedefs", nullptr); });
+    EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
+    auto testCallbackFunction = convert<IDLCallbackFunction<JSTestCallbackFunction>>(*lexicalGlobalObject, argument1.value(), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 1, "testCallbackFunction", "TestTypedefs", nullptr); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument2 = callFrame->uncheckedArgument(2);
-    auto testCallbackInterface = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*lexicalGlobalObject, argument2, *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 2, "testCallbackInterface", "TestTypedefs", nullptr); });
+    EnsureStillAliveScope argument2 = callFrame->uncheckedArgument(2);
+    auto testCallbackInterface = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*lexicalGlobalObject, argument2.value(), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 2, "testCallbackInterface", "TestTypedefs", nullptr); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestTypedefs::create(WTFMove(hello), testCallbackFunction.releaseNonNull(), testCallbackInterface.releaseNonNull());
     auto jsValue = toJSNewlyCreated<IDLInterface<TestTypedefs>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
@@ -510,14 +510,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncBody(JSC::J
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto argument0 = callFrame->argument(0);
-    auto x = argument0.isUndefined() ? Converter<IDLSequence<IDLLong>>::ReturnType{ } : convert<IDLSequence<IDLLong>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->argument(0);
+    auto x = argument0.value().isUndefined() ? Converter<IDLSequence<IDLLong>>::ReturnType{ } : convert<IDLSequence<IDLLong>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.func(WTFMove(x));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return JSValue::encode(jsUndefined());
 }
 
@@ -534,30 +530,22 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSetShadowBody(J
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 3))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto width = convert<IDLUnrestrictedFloat>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto width = convert<IDLUnrestrictedFloat>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument1 = callFrame->uncheckedArgument(1);
-    auto height = convert<IDLUnrestrictedFloat>(*lexicalGlobalObject, argument1);
+    EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
+    auto height = convert<IDLUnrestrictedFloat>(*lexicalGlobalObject, argument1.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument2 = callFrame->uncheckedArgument(2);
-    auto blur = convert<IDLUnrestrictedFloat>(*lexicalGlobalObject, argument2);
+    EnsureStillAliveScope argument2 = callFrame->uncheckedArgument(2);
+    auto blur = convert<IDLUnrestrictedFloat>(*lexicalGlobalObject, argument2.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument3 = callFrame->argument(3);
-    auto color = argument3.isUndefined() ? String() : convert<IDLDOMString>(*lexicalGlobalObject, argument3);
+    EnsureStillAliveScope argument3 = callFrame->argument(3);
+    auto color = argument3.value().isUndefined() ? String() : convert<IDLDOMString>(*lexicalGlobalObject, argument3.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument4 = callFrame->argument(4);
-    auto alpha = argument4.isUndefined() ? Optional<Converter<IDLUnrestrictedFloat>::ReturnType>() : Optional<Converter<IDLUnrestrictedFloat>::ReturnType>(convert<IDLUnrestrictedFloat>(*lexicalGlobalObject, argument4));
+    EnsureStillAliveScope argument4 = callFrame->argument(4);
+    auto alpha = argument4.value().isUndefined() ? Optional<Converter<IDLUnrestrictedFloat>::ReturnType>() : Optional<Converter<IDLUnrestrictedFloat>::ReturnType>(convert<IDLUnrestrictedFloat>(*lexicalGlobalObject, argument4.value()));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.setShadow(WTFMove(width), WTFMove(height), WTFMove(blur), WTFMove(color), WTFMove(alpha));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-    ensureStillAliveHere(argument1);
-    ensureStillAliveHere(argument2);
-    ensureStillAliveHere(argument3);
-    ensureStillAliveHere(argument4);
-
     return JSValue::encode(jsUndefined());
 }
 
@@ -574,14 +562,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithSeque
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto sequenceArg = convert<IDLSequence<IDLSerializedScriptValue<SerializedScriptValue>>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto sequenceArg = convert<IDLSequence<IDLSerializedScriptValue<SerializedScriptValue>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto result = JSValue::encode(toJS<IDLUnsignedLongLong>(impl.methodWithSequenceArg(WTFMove(sequenceArg))));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return result;
 }
 
@@ -598,14 +582,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto sequenceArg = convert<IDLNullable<IDLSequence<IDLDOMString>>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto sequenceArg = convert<IDLNullable<IDLSequence<IDLDOMString>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.nullableSequenceArg(WTFMove(sequenceArg));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return JSValue::encode(jsUndefined());
 }
 
@@ -622,14 +602,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSequenceOfNulla
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto sequenceArg = convert<IDLSequence<IDLNullable<IDLDOMString>>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto sequenceArg = convert<IDLSequence<IDLNullable<IDLDOMString>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.sequenceOfNullablesArg(WTFMove(sequenceArg));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return JSValue::encode(jsUndefined());
 }
 
@@ -646,14 +622,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto sequenceArg = convert<IDLNullable<IDLSequence<IDLNullable<IDLDOMString>>>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto sequenceArg = convert<IDLNullable<IDLSequence<IDLNullable<IDLDOMString>>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.nullableSequenceOfNullablesArg(WTFMove(sequenceArg));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return JSValue::encode(jsUndefined());
 }
 
@@ -670,14 +642,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto sequenceArg = convert<IDLNullable<IDLSequence<IDLUnion<IDLDOMString, IDLSequence<IDLDOMString>>>>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto sequenceArg = convert<IDLNullable<IDLSequence<IDLUnion<IDLDOMString, IDLSequence<IDLDOMString>>>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.nullableSequenceOfUnionsArg(WTFMove(sequenceArg));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return JSValue::encode(jsUndefined());
 }
 
@@ -694,14 +662,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionUnionArgBody(JS
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto unionArg = convert<IDLUnion<IDLDOMString, IDLLong>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto unionArg = convert<IDLUnion<IDLDOMString, IDLLong>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.unionArg(WTFMove(unionArg));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return JSValue::encode(jsUndefined());
 }
 
@@ -718,18 +682,13 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampBo
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto arg1 = convert<IDLClampAdaptor<IDLUnsignedLongLong>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto arg1 = convert<IDLClampAdaptor<IDLUnsignedLongLong>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument1 = callFrame->argument(1);
-    auto arg2 = argument1.isUndefined() ? Optional<Converter<IDLClampAdaptor<IDLUnsignedLongLong>>::ReturnType>() : Optional<Converter<IDLClampAdaptor<IDLUnsignedLongLong>>::ReturnType>(convert<IDLClampAdaptor<IDLUnsignedLongLong>>(*lexicalGlobalObject, argument1));
+    EnsureStillAliveScope argument1 = callFrame->argument(1);
+    auto arg2 = argument1.value().isUndefined() ? Optional<Converter<IDLClampAdaptor<IDLUnsignedLongLong>>::ReturnType>() : Optional<Converter<IDLClampAdaptor<IDLUnsignedLongLong>>::ReturnType>(convert<IDLClampAdaptor<IDLUnsignedLongLong>>(*lexicalGlobalObject, argument1.value()));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.funcWithClamp(WTFMove(arg1), WTFMove(arg2));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-    ensureStillAliveHere(argument1);
-
     return JSValue::encode(jsUndefined());
 }
 
@@ -746,14 +705,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampIn
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto arg = convert<IDLClampAdaptor<IDLLong>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto arg = convert<IDLClampAdaptor<IDLLong>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.funcWithClampInTypedef(WTFMove(arg));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return JSValue::encode(jsUndefined());
 }
 
@@ -785,14 +740,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceF
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto values = convert<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto values = convert<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto result = JSValue::encode(toJS<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.stringSequenceFunction(WTFMove(values))));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return result;
 }
 
@@ -809,14 +760,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceF
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto values = convert<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto values = convert<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto result = JSValue::encode(toJS<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.stringSequenceFunction2(WTFMove(values))));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return result;
 }
 
@@ -833,14 +780,10 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionCallWithSequenc
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto sequenceArg = convert<IDLSequence<IDLInterface<TestEventTarget>>>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto sequenceArg = convert<IDLSequence<IDLInterface<TestEventTarget>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto result = JSValue::encode(toJS<IDLBoolean>(impl.callWithSequenceThatRequiresInclude(WTFMove(sequenceArg))));
-
-    // Make sure arguments stay alive until this end of this method.
-    ensureStillAliveHere(argument0);
-
     return result;
 }
 

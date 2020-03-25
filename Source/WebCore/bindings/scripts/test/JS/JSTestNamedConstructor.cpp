@@ -108,14 +108,14 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto argument0 = callFrame->uncheckedArgument(0);
-    auto str1 = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto str1 = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument1 = callFrame->argument(1);
-    auto str2 = argument1.isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, argument1);
+    EnsureStillAliveScope argument1 = callFrame->argument(1);
+    auto str2 = argument1.value().isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, argument1.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto argument2 = callFrame->argument(2);
-    auto str3 = argument2.isUndefined() ? String() : convert<IDLDOMString>(*lexicalGlobalObject, argument2);
+    EnsureStillAliveScope argument2 = callFrame->argument(2);
+    auto str3 = argument2.value().isUndefined() ? String() : convert<IDLDOMString>(*lexicalGlobalObject, argument2.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestNamedConstructor::createForJSConstructor(WTFMove(str1), WTFMove(str2), WTFMove(str3));
     auto jsValue = toJSNewlyCreated<IDLInterface<TestNamedConstructor>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
