@@ -63,7 +63,7 @@ void WebPage::platformDetach()
 {
 }
 
-void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
+void WebPage::getPlatformEditorState(Frame&, EditorState&) const
 {
 }
 

@@ -133,12 +133,12 @@ void WebPage::platformDetach()
     [m_mockAccessibilityElement setWebPage:nullptr];
 }
 
-void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
+void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 {
-    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No || !frame.view() || frame.view()->needsLayout() || !result.isContentEditable) {
-        result.isMissingPostLayoutData = true;
+    getPlatformEditorStateCommon(frame, result);
+
+    if (result.isMissingPostLayoutData)
         return;
-    }
 
     auto& selection = frame.selection().selection();
     RefPtr<Range> selectedRange = selection.toNormalizedRange();

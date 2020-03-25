@@ -68,12 +68,10 @@ void WebPage::sendMessageToWebExtension(UserMessage&& message)
     sendMessageToWebExtensionWithReply(WTFMove(message), [](UserMessage&&) { });
 }
 
-void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
+void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 {
-    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No || !frame.view() || frame.view()->needsLayout()) {
-        result.isMissingPostLayoutData = true;
+    if (result.isMissingPostLayoutData || !frame.view() || frame.view()->needsLayout())
         return;
-    }
 
     auto& postLayoutData = result.postLayoutData();
     postLayoutData.caretRectAtStart = frame.selection().absoluteCaretBounds();

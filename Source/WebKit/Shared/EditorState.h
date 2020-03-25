@@ -74,7 +74,7 @@ struct EditorState {
     bool isInPasswordField { false };
     bool isInPlugin { false };
     bool hasComposition { false };
-    bool isMissingPostLayoutData { false };
+    bool isMissingPostLayoutData { true };
 
 #if PLATFORM(IOS_FAMILY)
     WebCore::IntRect firstMarkedRect;

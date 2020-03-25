@@ -71,7 +71,7 @@ bool WebPage::handleEditingKeyboardEvent(WebCore::KeyboardEvent& event)
     return false;
 }
 
-void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
+void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 {
     notImplemented();
 }

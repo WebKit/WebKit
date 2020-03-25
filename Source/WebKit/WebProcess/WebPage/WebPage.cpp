@@ -178,12 +178,10 @@
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLMenuElement.h>
 #include <WebCore/HTMLMenuItemElement.h>
-#include <WebCore/HTMLOListElement.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextFormControlElement.h>
-#include <WebCore/HTMLUListElement.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestResult.h>
@@ -1036,9 +1034,10 @@ WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const URL&
 }
 #endif
 
-EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayoutData) const
+EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    // Ref the frame because this function may perform layout, which may cause frame destruction.
+    Ref<Frame> frame = m_page->focusController().focusedOrMainFrame();
 
     EditorState result;
 
@@ -1051,8 +1050,8 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
         }
     }
 
-    const VisibleSelection& selection = frame.selection().selection();
-    const Editor& editor = frame.editor();
+    const VisibleSelection& selection = frame->selection().selection();
+    const Editor& editor = frame->editor();
 
     result.selectionIsNone = selection.isNone();
     result.selectionIsRange = selection.isRange();
@@ -1062,11 +1061,15 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
     result.hasComposition = editor.hasComposition();
     result.shouldIgnoreSelectionChanges = editor.ignoreSelectionChanges() || (editor.client() && !editor.client()->shouldRevealCurrentSelectionAfterInsertion());
 
-    if (auto* document = frame.document())
-        result.originIdentifierForPasteboard = document->originIdentifierForPasteboard();
+    Ref<Document> document = *frame->document();
+    result.originIdentifierForPasteboard = document->originIdentifierForPasteboard();
 
-    bool canIncludePostLayoutData = frame.view() && !frame.view()->needsLayout();
-    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::Yes && canIncludePostLayoutData) {
+    if (shouldPerformLayout == ShouldPerformLayout::Yes || platformNeedsLayoutForEditorState(frame))
+        document->updateLayout(); // May cause document destruction
+
+    if (auto* frameView = document->view(); frameView && !frameView->needsLayout()) {
+        result.isMissingPostLayoutData = false;
+
         auto& postLayoutData = result.postLayoutData();
         postLayoutData.canCut = editor.canCut();
         postLayoutData.canCopy = editor.canCopy();
@@ -1074,66 +1077,9 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
 
         if (m_needsFontAttributes)
             postLayoutData.fontAttributes = editor.fontAttributesAtSelectionStart();
-
-#if PLATFORM(COCOA)
-        if (result.isContentEditable && !selection.isNone()) {
-            if (auto editingStyle = EditingStyle::styleAtSelectionStart(selection)) {
-                if (editingStyle->hasStyle(CSSPropertyFontWeight, "bold"))
-                    postLayoutData.typingAttributes |= AttributeBold;
-
-                if (editingStyle->hasStyle(CSSPropertyFontStyle, "italic") || editingStyle->hasStyle(CSSPropertyFontStyle, "oblique"))
-                    postLayoutData.typingAttributes |= AttributeItalics;
-
-                if (editingStyle->hasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"))
-                    postLayoutData.typingAttributes |= AttributeUnderline;
-
-                if (auto* styleProperties = editingStyle->style()) {
-                    bool isLeftToRight = styleProperties->propertyAsValueID(CSSPropertyDirection) == CSSValueLtr;
-                    switch (styleProperties->propertyAsValueID(CSSPropertyTextAlign)) {
-                    case CSSValueRight:
-                    case CSSValueWebkitRight:
-                        postLayoutData.textAlignment = RightAlignment;
-                        break;
-                    case CSSValueLeft:
-                    case CSSValueWebkitLeft:
-                        postLayoutData.textAlignment = LeftAlignment;
-                        break;
-                    case CSSValueCenter:
-                    case CSSValueWebkitCenter:
-                        postLayoutData.textAlignment = CenterAlignment;
-                        break;
-                    case CSSValueJustify:
-                        postLayoutData.textAlignment = JustifiedAlignment;
-                        break;
-                    case CSSValueStart:
-                        postLayoutData.textAlignment = isLeftToRight ? LeftAlignment : RightAlignment;
-                        break;
-                    case CSSValueEnd:
-                        postLayoutData.textAlignment = isLeftToRight ? RightAlignment : LeftAlignment;
-                        break;
-                    default:
-                        break;
-                    }
-                    if (auto textColor = styleProperties->propertyAsColor(CSSPropertyColor))
-                        postLayoutData.textColor = *textColor;
-                }
-            }
-
-            if (auto* enclosingListElement = enclosingList(selection.start().containerNode())) {
-                if (is<HTMLUListElement>(*enclosingListElement))
-                    postLayoutData.enclosingListType = UnorderedList;
-                else if (is<HTMLOListElement>(*enclosingListElement))
-                    postLayoutData.enclosingListType = OrderedList;
-                else
-                    ASSERT_NOT_REACHED();
-            }
-
-            postLayoutData.baseWritingDirection = editor.baseWritingDirectionForSelectionStart();
-        }
-#endif
     }
 
-    platformEditorState(frame, result, shouldIncludePostLayoutData);
+    getPlatformEditorState(frame, result);
 
     m_lastEditorStateWasContentEditable = result.isContentEditable ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
 

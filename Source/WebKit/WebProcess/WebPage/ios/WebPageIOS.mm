@@ -223,8 +223,21 @@ bool WebPage::isTransparentOrFullyClipped(const Element& element) const
     return renderer->hasNonEmptyVisibleRectRespectingParentFrames();
 }
 
-void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
+bool WebPage::platformNeedsLayoutForEditorState(const Frame& frame) const
 {
+    // If we have a composition or are using a hardware keyboard then we need to send the full
+    // editor so that the UIProcess can update UI, including the position of the caret.
+    bool needsLayout = frame.editor().hasComposition();
+#if !PLATFORM(MACCATALYST)
+    needsLayout |= m_keyboardIsAttached;
+#endif
+    return needsLayout;
+}
+
+void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
+{
+    getPlatformEditorStateCommon(frame, result);
+
     FrameView* view = frame.view();
     if (!view) {
         result.isMissingPostLayoutData = true;
@@ -255,14 +268,11 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
 #if !PLATFORM(MACCATALYST)
     requiresPostLayoutData |= m_keyboardIsAttached;
 #endif
-    if ((shouldIncludePostLayoutData == IncludePostLayoutDataHint::No || needsLayout) && !requiresPostLayoutData) {
-        result.isMissingPostLayoutData = true;
+    if (needsLayout || result.isMissingPostLayoutData)
         return;
-    }
 
     auto& postLayoutData = result.postLayoutData();
-    
-    const VisibleSelection& selection = frame.selection().selection();
+    const auto& selection = frame.selection().selection();
     postLayoutData.isStableStateUpdate = m_isInStableState;
     bool startNodeIsInsideFixedPosition = false;
     bool endNodeIsInsideFixedPosition = false;
@@ -479,7 +489,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
 
     // FIXME: Interpret the event immediately upon receiving it in UI process, without sending to WebProcess first.
     bool eventWasHandled = false;
-    bool sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(), platformEvent->type() == PlatformKeyboardEvent::Char),
+    bool sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(ShouldPerformLayout::Yes), platformEvent->type() == PlatformKeyboardEvent::Char),
         Messages::WebPageProxy::InterpretKeyEvent::Reply(eventWasHandled), m_identifier);
     return sendResult && eventWasHandled;
 }

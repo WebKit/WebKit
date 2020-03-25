@@ -1,3 +1,71 @@
+2020-03-24  Daniel Bates  <dabates@apple.com>
+
+        [iOS] ASSERTION FAILURE: !isMissingPostLayoutData in WebKit::EditorState::postLayoutData()
+        https://bugs.webkit.org/show_bug.cgi?id=199960
+        <rdar://problem/53323966>
+
+        Reviewed by Simon Fraser.
+
+        Refactor the computation of editor state so that we can request that a layout be performed
+        each time we compute the editor state as part of asking the UI process to interpret a key
+        event. The full (read: after layout) editor state is needed for UIKit to perform a deletion
+        because UIKit wants to know how many characters are before the selection. Otherwise, we hit
+        an assert due to the fact the last editor state sent (when the Web process asked the UI process
+        to interpret the key) is missing layout data.
+
+        The refactoring also moves the Cocoa-common code out of the platform-independent WebPage.cpp
+        file into WebPageCocoa.mm.
+
+        One side effect of the refactoring is that we no longer allow the platformEditorState() function
+        to override the isMissingPostLayoutData bit. Currently it can even though the calling code, the
+        platform independent code (PIE) in WebPage, may have attached layout data. Now the PIE code sets
+        this bit if it attached layout data and the platformEditorState() function only attaches more
+        layout data if that bit is set. platformEditorState() never unsets that bit (i.e. sets isMissingPostLayoutData
+        to true).
+
+        The patch also removes m_isEditorStateMissingPostLayoutData in WebPage.h. This instance variable
+        has been unused since <https://trac.webkit.org/changeset/221064/webkit>. Also we haven't been using
+        IncludePostLayoutDataHint::No since the last reference to it was removed in <https://trac.webkit.org/changeset/244494/webkit>.
+
+        I also renamed platformEditorState() to getPlatformEditorState() since it has an out argument.
+
+        Test: editing/deleting/ios/backspace-last-character.html
+
+        * Shared/EditorState.h:
+        * UIProcess/API/glib/WebKitEditorState.cpp:
+        (webkitEditorStateCreate): Initialize _WebKitEditorStatePrivate::typingAttributes to WEBKIT_EDITOR_TYPING_ATTRIBUTE_NONE.
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::getPlatformEditorStateCommon const): Added. Moved Cocoa-common code from WebPage.cpp to here.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState const): Move Cocoa-common code to WebPageCocoa.mm. Change enum to
+        track whether a layout should be performed. Keep the current behavior of only including post layout
+        data if the frame view does not need a layout. This behavior is encoded in the enumerator ShouldPerformLayout::Default.
+        which is the default argument value for the argument shouldPerformLayout.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::platformNeedsLayoutForEditorState const): Added. Non-Cocoa port implementation
+        that returns false.
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::getPlatformEditorState const): Early return if isMissingPostLayoutData is true.
+        (WebKit::WebPage::platformEditorState const): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformNeedsLayoutForEditorState const): Added. Keep the current behavior of
+        performing a layout if we have a composition or a hardware keyboard is attached.
+        (WebKit::WebPage::getPlatformEditorState const): Call platformEditorStateCommon(). Bail out early
+        if isMissingPostLayoutData is true.
+        (WebKit::WebPage::handleEditingKeyboardEvent): The important part of this patch. Request a layout
+        when computing the editor state that we will send to the UI process.
+        (WebKit::WebPage::platformEditorState const): Deleted.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getPlatformEditorState const): Call platformEditorStateCommon(). Bail out early
+        if isMissingPostLayoutData is true.
+        (WebKit::WebPage::platformEditorState const): Deleted.
+        * WebProcess/WebPage/playstation/WebPagePlayStation.cpp:
+        (WebKit::WebPage::getPlatformEditorState const): Update as needed.
+        (WebKit::WebPage::platformEditorState const): Deleted.
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::getPlatformEditorState const): Update as needed.
+        (WebKit::WebPage::platformEditorState const): Deleted.
+
 2020-03-25  Kate Cheney  <katherine_cheney@apple.com>
 
         App-bound domain checks should provide more debugging details at script evaluation sites

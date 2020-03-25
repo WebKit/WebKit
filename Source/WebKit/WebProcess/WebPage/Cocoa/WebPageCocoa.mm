@@ -36,12 +36,15 @@
 #import "WebRemoteObjectRegistry.h"
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <WebCore/DictionaryLookup.h>
+#import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
+#import <WebCore/HTMLOListElement.h>
+#import <WebCore/HTMLUListElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/PaymentCoordinator.h>
@@ -311,6 +314,7 @@ RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize
     return data;
 }
 
+
 void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completionHandler)
 {
 #if PLATFORM(MAC)
@@ -318,6 +322,71 @@ void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completi
 #else
     completionHandler({ });
 #endif
+}
+
+void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& result) const
+{
+    if (result.isMissingPostLayoutData)
+        return;
+
+    const auto& selection = frame.selection().selection();
+
+    if (!result.isContentEditable || selection.isNone())
+        return;
+
+    auto& postLayoutData = result.postLayoutData();
+    if (auto editingStyle = EditingStyle::styleAtSelectionStart(selection)) {
+        if (editingStyle->hasStyle(CSSPropertyFontWeight, "bold"_s))
+            postLayoutData.typingAttributes |= AttributeBold;
+
+        if (editingStyle->hasStyle(CSSPropertyFontStyle, "italic"_s) || editingStyle->hasStyle(CSSPropertyFontStyle, "oblique"_s))
+            postLayoutData.typingAttributes |= AttributeItalics;
+
+        if (editingStyle->hasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s))
+            postLayoutData.typingAttributes |= AttributeUnderline;
+
+        if (auto* styleProperties = editingStyle->style()) {
+            bool isLeftToRight = styleProperties->propertyAsValueID(CSSPropertyDirection) == CSSValueLtr;
+            switch (styleProperties->propertyAsValueID(CSSPropertyTextAlign)) {
+            case CSSValueRight:
+            case CSSValueWebkitRight:
+                postLayoutData.textAlignment = RightAlignment;
+                break;
+            case CSSValueLeft:
+            case CSSValueWebkitLeft:
+                postLayoutData.textAlignment = LeftAlignment;
+                break;
+            case CSSValueCenter:
+            case CSSValueWebkitCenter:
+                postLayoutData.textAlignment = CenterAlignment;
+                break;
+            case CSSValueJustify:
+                postLayoutData.textAlignment = JustifiedAlignment;
+                break;
+            case CSSValueStart:
+                postLayoutData.textAlignment = isLeftToRight ? LeftAlignment : RightAlignment;
+                break;
+            case CSSValueEnd:
+                postLayoutData.textAlignment = isLeftToRight ? RightAlignment : LeftAlignment;
+                break;
+            default:
+                break;
+            }
+            if (auto textColor = styleProperties->propertyAsColor(CSSPropertyColor))
+                postLayoutData.textColor = *textColor;
+        }
+    }
+
+    if (auto* enclosingListElement = enclosingList(selection.start().containerNode())) {
+        if (is<HTMLUListElement>(*enclosingListElement))
+            postLayoutData.enclosingListType = UnorderedList;
+        else if (is<HTMLOListElement>(*enclosingListElement))
+            postLayoutData.enclosingListType = OrderedList;
+        else
+            ASSERT_NOT_REACHED();
+    }
+
+    postLayoutData.baseWritingDirection = frame.editor().baseWritingDirectionForSelectionStart();
 }
 
 } // namespace WebKit

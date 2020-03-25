@@ -1,3 +1,19 @@
+2020-03-24  Daniel Bates  <dabates@apple.com>
+
+        [iOS] ASSERTION FAILURE: !isMissingPostLayoutData in WebKit::EditorState::postLayoutData()
+        https://bugs.webkit.org/show_bug.cgi?id=199960
+        <rdar://problem/53323966>
+
+        Reviewed by Simon Fraser.
+
+        Add a test to ensure we do not assert when using the software keyboard to type a character
+        into a <textarea> and then delete it.
+
+        * TestExpectations: Skip tests in editing/deleting/ios on all platforms.
+        * editing/deleting/ios/backspace-last-character-expected.txt: Added.
+        * editing/deleting/ios/backspace-last-character.html: Added.
+        * platform/ios/TestExpectations: Unskip tests in editing/deleting/ios on iOS.
+
 2020-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r251385): box-shadow interferes with backdrop-filter

@@ -478,8 +478,8 @@ public:
     WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(WebFrame*, const URL&);
 #endif
     
-    enum class IncludePostLayoutDataHint { No, Yes };
-    EditorState editorState(IncludePostLayoutDataHint = IncludePostLayoutDataHint::Yes) const;
+    enum class ShouldPerformLayout { Default, Yes };
+    EditorState editorState(ShouldPerformLayout = ShouldPerformLayout::Default) const;
     void updateEditorStateAfterLayoutIfEditabilityChanged();
 
     // options are RenderTreeExternalRepresentationBehavior values.
@@ -1316,9 +1316,11 @@ private:
     void platformInitialize();
     void platformReinitialize();
     void platformDetach();
-    void platformEditorState(WebCore::Frame&, EditorState& result, IncludePostLayoutDataHint) const;
+    void getPlatformEditorState(WebCore::Frame&, EditorState&) const;
+    bool platformNeedsLayoutForEditorState(const WebCore::Frame&) const;
     void platformWillPerformEditingCommand();
     void sendEditorStateUpdate();
+    void getPlatformEditorStateCommon(const WebCore::Frame&, EditorState&) const;
 
 #if HAVE(TOUCH_BAR)
     void sendTouchBarMenuDataAddedUpdate(WebCore::HTMLMenuElement&);
@@ -2009,7 +2011,6 @@ private:
 
     bool m_mainFrameProgressCompleted { false };
     bool m_shouldDispatchFakeMouseMoveEvents { true };
-    bool m_isEditorStateMissingPostLayoutData { false };
     bool m_isSelectingTextWhileInsertingAsynchronously { false };
 
     enum class EditorStateIsContentEditable { No, Yes, Unset };
@@ -2081,6 +2082,7 @@ private:
 
 #if !PLATFORM(IOS_FAMILY)
 inline void WebPage::platformWillPerformEditingCommand() { }
+inline bool WebPage::platformNeedsLayoutForEditorState(const WebCore::Frame&) const { return false; }
 #endif
 
 } // namespace WebKit

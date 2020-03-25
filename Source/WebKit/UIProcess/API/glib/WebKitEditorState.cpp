@@ -109,6 +109,7 @@ WebKitEditorState* webkitEditorStateCreate(WebPageProxy& page)
 {
     WebKitEditorState* editorState = WEBKIT_EDITOR_STATE(g_object_new(WEBKIT_TYPE_EDITOR_STATE, nullptr));
     editorState->priv->page = &page;
+    editorState->priv->typingAttributes = WEBKIT_EDITOR_TYPING_ATTRIBUTE_NONE;
     webkitEditorStateChanged(editorState, page.editorState());
     return editorState;
 }
