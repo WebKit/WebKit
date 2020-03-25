@@ -1,3 +1,13 @@
+2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        \b escapes inside character classes should be valid in Unicode patterns
+        https://bugs.webkit.org/show_bug.cgi?id=209528
+
+        Reviewed by Darin Adler.
+
+        * js/regexp-unicode-expected.txt:
+        * js/script-tests/regexp-unicode.js:
+
 2020-03-24  Zalan Bujtas  <zalan@apple.com>
 
         [MultiColumn] Infinite recursion in RenderBlockFlow::relayoutToAvoidWidows

@@ -247,7 +247,6 @@ function shouldThrowInvalidEscape(pattern, error='invalidEscapeException')
 shouldThrowInvalidEscape("\\\\-");
 shouldThrowInvalidEscape("\\\\a");
 shouldThrowInvalidEscape("[\\\\a]");
-shouldThrowInvalidEscape("[\\\\b]");
 shouldThrowInvalidEscape("[\\\\B]");
 shouldThrowInvalidEscape("\\\\x");
 shouldThrowInvalidEscape("[\\\\x]");

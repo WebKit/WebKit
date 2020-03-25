@@ -1,3 +1,20 @@
+2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        \b escapes inside character classes should be valid in Unicode patterns
+        https://bugs.webkit.org/show_bug.cgi?id=209528
+
+        Reviewed by Darin Adler.
+
+        This change removes isIdentityEscapeAnError('b') check, allowing \b escapes
+        inside character classes in Unicode patterns match U+0008 (BACKSPACE) characters,
+        aligning JSC with V8 and SpiderMonkey.
+
+        Grammar: https://tc39.es/ecma262/#prod-ClassEscape
+        ('b' comes before CharacterEscape :: IdentityEscape)
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseEscape):
+
 2020-03-24  Ross Kirsling  <ross.kirsling@sony.com>
 
         Introduce @tryGetByIdWithWellKnownSymbol instead of repurposing @tryGetById itself

@@ -275,12 +275,9 @@ private:
         // Assertions
         case 'b':
             consume();
-            if (inCharacterClass) {
-                if (isIdentityEscapeAnError('b'))
-                    break;
-
+            if (inCharacterClass)
                 delegate.atomPatternCharacter('\b');
-            } else {
+            else {
                 delegate.assertionWordBoundary(false);
                 return false;
             }

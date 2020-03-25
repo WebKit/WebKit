@@ -187,7 +187,6 @@ PASS /\c9/u threw exception SyntaxError: Invalid regular expression: invalid \c 
 PASS r = new RegExp("\\-", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern.
 PASS r = new RegExp("\\a", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern.
 PASS r = new RegExp("[\\a]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern.
-PASS r = new RegExp("[\\b]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern.
 PASS r = new RegExp("[\\B]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern.
 PASS r = new RegExp("\\x", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern.
 PASS r = new RegExp("[\\x]", "u") threw exception SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern.
