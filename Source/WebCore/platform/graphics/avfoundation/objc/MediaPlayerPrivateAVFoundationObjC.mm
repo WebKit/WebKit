@@ -79,6 +79,7 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/FileSystem.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>
@@ -323,20 +324,42 @@ void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistra
 
 static AVAssetCache *assetCacheForPath(const String& path)
 {
-    NSURL *assetCacheURL;
-    
     if (path.isEmpty())
-        assetCacheURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()] URLByAppendingPathComponent:@"MediaCache" isDirectory:YES];
-    else
-        assetCacheURL = [NSURL fileURLWithPath:path isDirectory:YES];
+        return nil;
 
-    return [PAL::getAVAssetCacheClass() assetCacheWithURL:assetCacheURL];
+    return [PAL::getAVAssetCacheClass() assetCacheWithURL:[NSURL fileURLWithPath:path isDirectory:YES]];
+}
+
+static AVAssetCache *ensureAssetCacheExistsForPath(const String& path)
+{
+    if (path.isEmpty())
+        return nil;
+
+    auto fileExistsAtPath = FileSystem::fileExists(path);
+
+    if (fileExistsAtPath && !FileSystem::fileIsDirectory(path, FileSystem::ShouldFollowSymbolicLinks::Yes)) {
+        // Non-directory file already exists at the path location; bail.
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+
+    if (!fileExistsAtPath && !FileSystem::makeAllDirectories(path)) {
+        // Could not create a directory at the specified location; bail.
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+
+    return assetCacheForPath(path);
 }
 
 HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateAVFoundationObjC::originsInMediaCache(const String& path)
 {
     HashSet<RefPtr<SecurityOrigin>> origins;
-    for (NSString *key in [assetCacheForPath(path) allKeys]) {
+    AVAssetCache* assetCache = assetCacheForPath(path);
+    if (!assetCache)
+        return origins;
+
+    for (NSString *key in [assetCache allKeys]) {
         URL keyAsURL = URL(URL(), key);
         if (keyAsURL.isValid())
             origins.add(SecurityOrigin::create(keyAsURL));
@@ -353,6 +376,8 @@ static WallTime toSystemClockTime(NSDate *date)
 void MediaPlayerPrivateAVFoundationObjC::clearMediaCache(const String& path, WallTime modifiedSince)
 {
     AVAssetCache* assetCache = assetCacheForPath(path);
+    if (!assetCache)
+        return;
     
     for (NSString *key in [assetCache allKeys]) {
         if (toSystemClockTime([assetCache lastModifiedDateOfEntryForKey:key]) > modifiedSince)
@@ -395,6 +420,9 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCache(const String& path, Wal
 void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
 {
     AVAssetCache* assetCache = assetCacheForPath(path);
+    if (!assetCache)
+        return;
+
     for (NSString *key in [assetCache allKeys]) {
         URL keyAsURL = URL(URL(), key);
         if (keyAsURL.isValid()) {
@@ -840,8 +868,12 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
     bool usePersistentCache = player()->shouldUsePersistentCache();
     [options setObject:@(!usePersistentCache) forKey:AVURLAssetUsesNoPersistentCacheKey];
     
-    if (usePersistentCache)
-        [options setObject:assetCacheForPath(player()->mediaCacheDirectory()) forKey:AVURLAssetCacheKey];
+    if (usePersistentCache) {
+        if (auto* assetCache = ensureAssetCacheExistsForPath(player()->mediaCacheDirectory()))
+            [options setObject:assetCache forKey:AVURLAssetCacheKey];
+        else
+            [options setObject:@NO forKey:AVURLAssetUsesNoPersistentCacheKey];
+    }
 
     NSURL *cocoaURL = canonicalURL(url);
     m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
