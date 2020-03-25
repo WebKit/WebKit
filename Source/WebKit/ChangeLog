@@ -1,3 +1,17 @@
+2020-03-25  Daniel Bates  <dabates@apple.com>
+
+        Element context character rects may be in wrong coordinate system
+        https://bugs.webkit.org/show_bug.cgi?id=209493
+        <rdar://problem/60840261>
+
+        Reviewed by Wenson Hsieh.
+
+        Convert the character rects from content view coordinates to root view coordinates
+        as that is the coordinate system callers of -requestDocumentContext expect.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext):
+
 2020-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename "data interaction pasteboard" to "drag and drop pasteboard"
