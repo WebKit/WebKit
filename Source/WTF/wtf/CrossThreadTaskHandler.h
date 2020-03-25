@@ -45,8 +45,6 @@ protected:
 
     WTF_EXPORT_PRIVATE void postTask(CrossThreadTask&&);
     WTF_EXPORT_PRIVATE void postTaskReply(CrossThreadTask&&);
-    WTF_EXPORT_PRIVATE void suspendAndWait();
-    WTF_EXPORT_PRIVATE void resume();
 
 private:
     void handleTaskRepliesOnMainThread();
@@ -57,14 +55,6 @@ private:
     Lock m_taskThreadCreationLock;
     Lock m_mainThreadReplyLock;
     bool m_mainThreadReplyScheduled { false };
-
-    bool m_shouldSuspend { false };
-    Condition m_shouldSuspendCondition;
-    Lock m_shouldSuspendLock;
-    
-    bool m_suspended { false };
-    Condition m_suspendedCondition;
-    Lock m_suspendedLock;
 
     CrossThreadQueue<CrossThreadTask> m_taskQueue;
     CrossThreadQueue<CrossThreadTask> m_taskReplyQueue;
