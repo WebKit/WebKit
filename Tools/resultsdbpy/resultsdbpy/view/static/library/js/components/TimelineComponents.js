@@ -609,7 +609,7 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
     const onScaleEnter = typeof option.onScaleEnter === "function" ? option.onScaleEnter : null;
     const onScaleLeave = typeof option.onScaleLeave === "function" ? option.onScaleLeave : null;
     const sortData = option.sortData === true ? option.sortData : false;
-    const getLabel = typeof option.getLabelFunc === "function" ? option.getLabelFunc : (a) => a;
+    const getLabel = typeof option.getLabelFunc === "function" ? option.getLabelFunc : (a) => `${a}`;
     const isTop = typeof option.isTop === "boolean" ? option.isTop : false;
 
     // Get the css value, this component assume to use with webkit.css

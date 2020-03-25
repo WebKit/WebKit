@@ -1,5 +1,14 @@
 2020-03-25  Zhifei Fang  <zhifei_fang@apple.com>
 
+        [Timeline] A better default get label function, which fit the assumpation the label is always a string
+        https://bugs.webkit.org/show_bug.cgi?id=209567
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+
+2020-03-25  Zhifei Fang  <zhifei_fang@apple.com>
+
         [Timeline] Fix the out of bound dot index
         https://bugs.webkit.org/show_bug.cgi?id=209492
 
