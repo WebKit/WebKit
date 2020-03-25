@@ -334,7 +334,6 @@ set(webrtc_SOURCES
     Source/third_party/libyuv/source/scale_neon64.cc
     Source/third_party/libyuv/source/video_common.cc
     Source/third_party/pffft/src/pffft.c
-    Source/third_party/rnnoise/src/kiss_fft.cc
     Source/third_party/rnnoise/src/rnn_vad_weights.cc
     Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c
     Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c

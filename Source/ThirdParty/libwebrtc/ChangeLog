@@ -1,3 +1,14 @@
+2020-03-25  youenn fablet  <youenn@apple.com>
+
+        Bump rnnoise to M82
+        https://bugs.webkit.org/show_bug.cgi?id=209541
+
+        Reviewed by Eric Carlson.
+
+        * CMakeLists.txt:
+        * Source/third_party/rnnoise: Updated.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-03-19  Alex Christensen  <achristensen@webkit.org>
 
         Cherry pick usrsctp commit 790a7a2555aefb392a5a69923f1e9d17b4968467

@@ -1329,8 +1329,6 @@
 		419241902127581000634FCF /* fec_private_tables_bursty.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4192418F2127581000634FCF /* fec_private_tables_bursty.cc */; };
 		419241982127586500634FCF /* rnn_vad_weights.h in Headers */ = {isa = PBXBuildFile; fileRef = 419241932127586400634FCF /* rnn_vad_weights.h */; };
 		419241992127586500634FCF /* rnn_vad_weights.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419241942127586400634FCF /* rnn_vad_weights.cc */; };
-		4192419A2127586500634FCF /* kiss_fft.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419241952127586500634FCF /* kiss_fft.cc */; };
-		4192419B2127586500634FCF /* kiss_fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 419241962127586500634FCF /* kiss_fft.h */; };
 		4192419C2127586500634FCF /* rnn_activations.h in Headers */ = {isa = PBXBuildFile; fileRef = 419241972127586500634FCF /* rnn_activations.h */; };
 		4192419F2127588300634FCF /* audio_codec_pair_id.h in Headers */ = {isa = PBXBuildFile; fileRef = 4192419D2127588200634FCF /* audio_codec_pair_id.h */; };
 		419241A02127588300634FCF /* audio_codec_pair_id.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4192419E2127588200634FCF /* audio_codec_pair_id.cc */; };
@@ -5237,8 +5235,6 @@
 		4192418F2127581000634FCF /* fec_private_tables_bursty.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fec_private_tables_bursty.cc; sourceTree = "<group>"; };
 		419241932127586400634FCF /* rnn_vad_weights.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rnn_vad_weights.h; path = src/rnn_vad_weights.h; sourceTree = "<group>"; };
 		419241942127586400634FCF /* rnn_vad_weights.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rnn_vad_weights.cc; path = src/rnn_vad_weights.cc; sourceTree = "<group>"; };
-		419241952127586500634FCF /* kiss_fft.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = kiss_fft.cc; path = src/kiss_fft.cc; sourceTree = "<group>"; };
-		419241962127586500634FCF /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kiss_fft.h; path = src/kiss_fft.h; sourceTree = "<group>"; };
 		419241972127586500634FCF /* rnn_activations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rnn_activations.h; path = src/rnn_activations.h; sourceTree = "<group>"; };
 		4192419D2127588200634FCF /* audio_codec_pair_id.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audio_codec_pair_id.h; path = audio_codecs/audio_codec_pair_id.h; sourceTree = "<group>"; };
 		4192419E2127588200634FCF /* audio_codec_pair_id.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = audio_codec_pair_id.cc; path = audio_codecs/audio_codec_pair_id.cc; sourceTree = "<group>"; };
@@ -9249,8 +9245,6 @@
 		419241922127585000634FCF /* src */ = {
 			isa = PBXGroup;
 			children = (
-				419241952127586500634FCF /* kiss_fft.cc */,
-				419241962127586500634FCF /* kiss_fft.h */,
 				419241972127586500634FCF /* rnn_activations.h */,
 				419241942127586400634FCF /* rnn_vad_weights.cc */,
 				419241932127586400634FCF /* rnn_vad_weights.h */,
@@ -14886,7 +14880,6 @@
 				5C63F8DE1E416D53002CA531 /* json.h in Headers */,
 				4131C038234B898D0028A615 /* keep_ref_until_done.h in Headers */,
 				5C0885301E4A99D200403995 /* key.h in Headers */,
-				4192419B2127586500634FCF /* kiss_fft.h in Headers */,
 				5CDD84201E439B2900621E92 /* legacy_encoded_audio_frame.h in Headers */,
 				5CDD84B91E43AF1300621E92 /* level_estimator_impl.h in Headers */,
 				413E67732169863B00EF37ED /* libvpx_interface.h in Headers */,
@@ -17363,7 +17356,6 @@
 				4131BF44234B88200028A615 /* jsep_transport.cc in Sources */,
 				4131BEFC234B88200028A615 /* jsep_transport_controller.cc in Sources */,
 				4131C227234B8BB20028A615 /* keyframe_interval_settings.cc in Sources */,
-				4192419A2127586500634FCF /* kiss_fft.cc in Sources */,
 				5CDD87C41E43BC0500621E92 /* lattice.c in Sources */,
 				41433CF21F79B33400387B4D /* lattice.c in Sources */,
 				41433D141F79B33400387B4D /* lattice_c.c in Sources */,
