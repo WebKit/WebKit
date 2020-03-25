@@ -1484,6 +1484,11 @@ webkit.org/b/207605 [ Debug ] http/tests/workers/service/postmessage-after-termi
 
 webkit.org/b/207737 imported/w3c/web-platform-tests/media-source/mediasource-h264-play-starved.html [ Pass Crash ]
 
+# Tests crashing in EWS but not in test bot.
+webkit.org/b/209533 http/tests/contentextensions/video-element-resource-type.html [ Crash Pass ]
+webkit.org/b/209533 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadstart_noautoplay.html [ Crash Pass ]
+webkit.org/b/209533 media/track/track-automatic-subtitles.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2703,7 +2708,12 @@ webkit.org/b/208300 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-st
 
 webkit.org/b/208301 editing/pasteboard/4922709.html [ Failure Pass ]
 webkit.org/b/208301 editing/pasteboard/5028447.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/copy-paste-content-starting-and-ending-canvas.html [ Failure Pass ]
 webkit.org/b/208301 editing/pasteboard/paste-before-tab-span.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/paste-line-endings-003.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/paste-line-endings-007.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/paste-text-005.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/pasting-into-p-should-not-nest-p.html [ Failure Pass ]
 
 webkit.org/b/208304 http/tests/cache/disk-cache/speculative-validation/validation-request.html [ Failure Pass ]
 
@@ -2770,6 +2780,10 @@ webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transfor
 webkit.org/b/209044 http/tests/media/hls/video-controls-live-stream.html [ Failure Pass ]
 
 webkit.org/b/209102 accessibility/accessibility-node-memory-management.html [ Failure Pass ]
+
+webkit.org/b/209474 media/media-can-play-ogg.html [ Failure Pass ]
+
+webkit.org/b/209475 fast/hidpi/hidpi-long-page-with-inset-element.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3167,6 +3181,13 @@ webkit.org/b/208000 [ Debug ] inspector/unit-tests/editing-support.html [ Timeou
 webkit.org/b/208000 [ Debug ] inspector/unit-tests/server-timing-entry.html [ Timeout ]
 webkit.org/b/208000 [ Debug ] inspector/unit-tests/throttler.html [ Failure Timeout ]
 webkit.org/b/208000 [ Debug ] inspector/unit-tests/url-utilities.html [ Timeout ]
+
+# Tests timing out in EWS but not test-bot.
+webkit.org/b/209533 fast/frames/exponential-frames.html [ Timeout Pass ]
+webkit.org/b/209533 http/tests/appcache/top-frame-2.html [ Timeout Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Timeout Pass ]
+webkit.org/b/209533 http/tests/workers/service/Client-properties.html [ Timeout Pass ]
+webkit.org/b/209533 media/video-isplayingtoautomotiveheadunit.html [ Timeout Pass ]
 
 # These entries are commented to avoid a lint error of duplicated bug entry.
 # webkit.org/b/208630 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Timeout ]
