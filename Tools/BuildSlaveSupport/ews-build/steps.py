@@ -2464,7 +2464,7 @@ class FindModifiedChangeLogs(shell.ShellCommand):
     name = 'find-modified-changelogs'
     descriptionDone = ['Found modified ChangeLogs']
     command = ['git', 'diff', '-r', '--name-status', '--no-renames', '--no-ext-diff', '--full-index']
-    haltOnFailure = True
+    haltOnFailure = False
 
     def __init__(self, **kwargs):
         shell.ShellCommand.__init__(self, timeout=3 * 60, logEnviron=False, **kwargs)
@@ -2476,7 +2476,8 @@ class FindModifiedChangeLogs(shell.ShellCommand):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'Failed to find list of modified ChangeLogs'}
+            patch_id = self.getProperty('patch_id', '')
+            return {u'step': u'Failed to find any modified ChangeLog in Patch {}'.format(patch_id)}
         return shell.ShellCommand.getResultSummary(self)
 
     def evaluateCommand(self, cmd):
@@ -2484,6 +2485,15 @@ class FindModifiedChangeLogs(shell.ShellCommand):
         log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
         modified_changelogs = self.extract_changelogs(log_text, self._status_regexp('MA'))
         self.setProperty('modified_changelogs', modified_changelogs)
+        if rc == FAILURE or not modified_changelogs:
+            patch_id = self.getProperty('patch_id', '')
+            message = 'Unable to find any modified ChangeLog in Patch {}'.format(patch_id)
+            if self.getProperty('buildername', '').lower() == 'commit-queue':
+                self.setProperty('bugzilla_comment_text', message.replace('Patch', 'Attachment'))
+                self.setProperty('build_finish_summary', message)
+                self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+            else:
+                self.build.buildFinished([message], FAILURE)
         return rc
 
     def is_path_to_changelog(self, path):

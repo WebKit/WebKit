@@ -3148,6 +3148,8 @@ class TestFindModifiedChangeLogs(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_modified_changelogs(self):
         self.setupStep(FindModifiedChangeLogs())
+        self.assertEqual(FindModifiedChangeLogs.haltOnFailure, False)
+        self.setProperty('buildername', 'Commit-Queue')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=180,
@@ -3163,6 +3165,8 @@ M	Tools/TestWebKitAPI/CMakeLists.txt''') +
         self.expectOutcome(result=SUCCESS, state_string='Found modified ChangeLogs')
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_changelogs'), ['Source/WebCore/ChangeLog', 'Tools/ChangeLog'])
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        self.assertEqual(self.getProperty('build_finish_summary'), None)
         return rc
 
     def test_success_added_changelog(self):
@@ -3179,10 +3183,14 @@ M	Tools/Scripts/run-api-tests''') +
         self.expectOutcome(result=SUCCESS, state_string='Found modified ChangeLogs')
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_changelogs'), ['Tools/Scripts/ChangeLog'])
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        self.assertEqual(self.getProperty('build_finish_summary'), None)
         return rc
 
     def test_failure(self):
         self.setupStep(FindModifiedChangeLogs())
+        self.setProperty('patch_id', '1234')
+        self.setProperty('buildername', 'Commit-Queue')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=180,
@@ -3191,8 +3199,11 @@ M	Tools/Scripts/run-api-tests''') +
             ExpectShell.log('stdio', stdout='Unexpected failure') +
             2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Failed to find list of modified ChangeLogs')
-        return self.runStep()
+        self.expectOutcome(result=FAILURE, state_string='Failed to find any modified ChangeLog in Patch 1234')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Unable to find any modified ChangeLog in Attachment 1234')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Unable to find any modified ChangeLog in Patch 1234')
+        return rc
 
 
 class TestCreateLocalGITCommit(BuildStepMixinAdditions, unittest.TestCase):
