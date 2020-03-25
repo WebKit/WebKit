@@ -1,3 +1,25 @@
+2020-03-24  Tadeu Zagallo  <tzagallo@apple.com>
+
+        LLIntGenerator must link switch jumps to otherwise redundant labels
+        https://bugs.webkit.org/show_bug.cgi?id=209333
+        <rdar://problem/60827987>
+
+        Reviewed by Saam Barati.
+
+        The LLIntGenerator optimizes jumps at the end of blocks. It does so when a block ends, by checking if
+        the last instruction emitted was a jump, if it pointed to the end of the current block and if it was
+        the only jump that pointed there. If all those conditions are satisfied, the jump is removed and it's
+        not necessary to emit the label at the end of block, since the only jump that pointed to it was removed.
+        However, switches (br_table) are handled specially by the LLIntGenerator and therefore are not counted
+        in Label::unresolvedJumps, which was used to check whether we could skip emitting the label.
+        The end result is that we might skip linking a switch jump if it points to a block that ends with a jump.
+
+
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addEndToUnreachable):
+        (JSC::Wasm::LLIntGenerator::linkSwitchTargets):
+        (JSC::GenericLabel<Wasm::GeneratorTraits>::setLocation):
+
 2020-03-24  Saam Barati  <sbarati@apple.com>
 
         Memory::fastMappedBytes() is wrong

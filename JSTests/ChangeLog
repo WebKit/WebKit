@@ -1,3 +1,13 @@
+2020-03-24  Tadeu Zagallo  <tzagallo@apple.com>
+
+        LLIntGenerator must link switch jumps to otherwise redundant labels
+        https://bugs.webkit.org/show_bug.cgi?id=209333
+        <rdar://problem/60827987>
+
+        Reviewed by Saam Barati.
+
+        * wasm/stress/terminal-jump-switch-target.js: Added.
+
 2020-03-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Update test262 to commit dfc7ecc6785e
