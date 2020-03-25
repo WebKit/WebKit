@@ -1,3 +1,21 @@
+2020-03-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Introduce @tryGetByIdWithWellKnownSymbol instead of repurposing @tryGetById itself
+        https://bugs.webkit.org/show_bug.cgi?id=209524
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        r258865 allowed @tryGetById to take any ResolveNode, such that a built-in could pass a well-known symbol.
+        This is much more permissive than necessary, since we shouldn't really need a ResolveNode in the first place; 
+        instead, let's make a new bytecode intrinsic function @tryGetByIdWithWellKnownSymbol for this purpose.
+
+        * builtins/RegExpPrototype.js:
+        (globalPrivate.hasObservableSideEffectsForRegExpSplit):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_tryGetById): Revert change from r258865.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_tryGetByIdWithWellKnownSymbol): Added.
+
 2020-03-24  Tadeu Zagallo  <tzagallo@apple.com>
 
         LLIntGenerator must link switch jumps to otherwise redundant labels

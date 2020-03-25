@@ -1422,12 +1422,27 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tryGetById(BytecodeGenerator& 
     RefPtr<RegisterID> base = generator.emitNode(node);
     node = node->m_next;
 
-    ASSERT(node->m_expr->isString() || node->m_expr->isResolveNode());
-    const Identifier& ident = node->m_expr->isString() ? static_cast<StringNode*>(node->m_expr)->value() : static_cast<ResolveNode*>(node->m_expr)->identifier();
+    ASSERT(node->m_expr->isString());
+    const Identifier& ident = static_cast<StringNode*>(node->m_expr)->value();
     ASSERT(!node->m_next);
 
     RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
     return generator.emitTryGetById(finalDest.get(), base.get(), ident);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tryGetByIdWithWellKnownSymbol(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+
+    ASSERT(node->m_expr->isString());
+    SymbolImpl* symbol = generator.vm().propertyNames->builtinNames().lookUpWellKnownSymbol(static_cast<StringNode*>(node->m_expr)->value());
+    RELEASE_ASSERT(symbol);
+    ASSERT(!node->m_next);
+
+    RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
+    return generator.emitTryGetById(finalDest.get(), base.get(), generator.parserArena().identifierArena().makeIdentifier(generator.vm(), symbol));
 }
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toNumber(BytecodeGenerator& generator, RegisterID* dst)

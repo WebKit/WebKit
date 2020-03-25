@@ -463,7 +463,7 @@ function hasObservableSideEffectsForRegExpSplit(regexp)
     var regexpSource = @tryGetById(regexp, "source");
     if (regexpSource !== @regExpProtoSourceGetter)
         return true;
-    var regexpSymbolMatch = @tryGetById(regexp, @@match);
+    var regexpSymbolMatch = @tryGetByIdWithWellKnownSymbol(regexp, "match");
     if (regexpSymbolMatch !== @regExpPrototypeSymbolMatch)
         return true;
 
