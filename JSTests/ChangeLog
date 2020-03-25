@@ -1,5 +1,18 @@
 2020-03-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Update test262 to commit dfc7ecc6785e
+        https://bugs.webkit.org/show_bug.cgi?id=209449
+
+        Unreviewed test gardening.
+
+        * test262/expectations.yaml:
+        * test262/harness/propertyHelper.js:
+        * test262/latest-changes-summary.txt:
+        * test262/test/*: Updated.
+        * test262/test262-Revision.txt:
+
+2020-03-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Update test262 to commit 79146e5cf48d
         https://bugs.webkit.org/show_bug.cgi?id=209449
 
