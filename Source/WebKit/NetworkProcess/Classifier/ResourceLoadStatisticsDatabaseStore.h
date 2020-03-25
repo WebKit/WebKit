@@ -215,7 +215,7 @@ private:
     std::pair<AddedRecord, Optional<unsigned>> ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&) WARN_UNUSED_RETURN;
     bool shouldRemoveAllWebsiteDataFor(const DomainData&, bool shouldCheckForGrandfathering);
     bool shouldRemoveAllButCookiesFor(const DomainData&, bool shouldCheckForGrandfathering);
-    Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> registrableDomainsToRemoveWebsiteDataFor() override;
+    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor registrableDomainsToDeleteOrRestrictWebsiteDataFor() override;
     bool isDatabaseStore() const final { return true; }
 
     bool createUniqueIndices();

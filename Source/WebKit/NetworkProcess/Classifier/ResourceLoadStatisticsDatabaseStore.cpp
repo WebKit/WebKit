@@ -2353,7 +2353,7 @@ bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor(const Dom
     return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, window);
 }
 
-Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor()
+RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabaseStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor()
 {
     ASSERT(!RunLoop::isMain());
 
@@ -2367,16 +2367,17 @@ Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatistics
 
     auto now = WallTime::now();
     auto oldestUserInteraction = now;
-    Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> domainsToRemoveWebsiteDataFor;
+    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor toDeleteOrRestrictFor;
 
     Vector<DomainData> domains = this->domains();
     Vector<unsigned> domainIDsToClearGrandfathering;
     for (auto& statistic : domains) {
         oldestUserInteraction = std::min(oldestUserInteraction, statistic.mostRecentUserInteractionTime);
-        if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering))
-            domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registrableDomain, WebsiteDataToRemove::All));
-        else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
-            domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registrableDomain, WebsiteDataToRemove::AllButCookies));
+        if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
+            toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);
+            toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
+        } else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
+            toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
             setIsScheduledForAllButCookieDataRemoval(statistic.registrableDomain, false);
         }
         if (shouldClearGrandfathering && statistic.grandfathered)
@@ -2384,15 +2385,12 @@ Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatistics
     }
 
     // Give the user enough time to interact with websites until we remove non-cookie website data.
-    if (!parameters().isRunningTest && now - oldestUserInteraction > parameters().minimumTimeBetweenDataRecordsRemoval) {
-        domainsToRemoveWebsiteDataFor.removeAllMatching([&] (auto& pair) {
-            return pair.second == WebsiteDataToRemove::AllButCookies;
-        });
-    }
+    if (!parameters().isRunningTest && now - oldestUserInteraction > parameters().minimumTimeBetweenDataRecordsRemoval)
+        toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.clear();
 
     clearGrandfathering(WTFMove(domainIDsToClearGrandfathering));
     
-    return domainsToRemoveWebsiteDataFor;
+    return toDeleteOrRestrictFor;
 }
 
 void ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded()
