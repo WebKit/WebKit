@@ -37,6 +37,7 @@ messages -> WebPasteboardProxy NotRefCounted {
     ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String string) Synchronous
     ReadURLFromPasteboard(uint64_t index, String pasteboardName) -> (String url, String title) Synchronous
     ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Synchronous
+    ContainsStringSafeForDOMToReadForType(String type, String pasteboardName) -> (bool result) Synchronous
 
 #if PLATFORM(COCOA)
     # Pasteboard messages.

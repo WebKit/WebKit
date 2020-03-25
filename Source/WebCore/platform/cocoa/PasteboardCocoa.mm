@@ -159,14 +159,14 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
         if (cocoaTypes.findMatching([](const String& cocoaType) { return shouldTreatCocoaTypeAsFile(cocoaType); }) == notFound)
             return FileContentState::NoFileOrImageData;
 
-        bool containsURL = notFound != cocoaTypes.findMatching([] (auto& cocoaType) {
+        auto indexOfURL = cocoaTypes.findMatching([](auto& cocoaType) {
 #if PLATFORM(MAC)
             if (cocoaType == String(legacyURLPasteboardType()))
                 return true;
 #endif
             return cocoaType == String(kUTTypeURL);
         });
-        mayContainFilePaths = containsURL && !Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(readString("text/uri-list"_s));
+        mayContainFilePaths = indexOfURL != notFound && !platformStrategies()->pasteboardStrategy()->containsStringSafeForDOMToReadForType(cocoaTypes[indexOfURL], m_pasteboardName);
     }
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be

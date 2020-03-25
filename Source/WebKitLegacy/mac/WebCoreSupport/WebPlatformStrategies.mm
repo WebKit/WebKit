@@ -197,6 +197,11 @@ int64_t WebPlatformStrategies::writeCustomData(const Vector<WebCore::PasteboardC
     return PlatformPasteboard(pasteboardName).write(data);
 }
 
+bool WebPlatformStrategies::containsStringSafeForDOMToReadForType(const String& pasteboardName, const String& type)
+{
+    return PlatformPasteboard(pasteboardName).containsStringSafeForDOMToReadForType(type);
+}
+
 Optional<WebCore::PasteboardItemInfo> WebPlatformStrategies::informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount)
 {
     return PlatformPasteboard(pasteboardName).informationForItemAtIndex(index, changeCount);

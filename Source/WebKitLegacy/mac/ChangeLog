@@ -1,3 +1,16 @@
+2020-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Avoid querying pasteboard strings while dragging content over a potential drop target
+        https://bugs.webkit.org/show_bug.cgi?id=209531
+
+        Reviewed by Tim Horton and Ryosuke Niwa.
+
+        Add PasteboardStrategy plumbing; see WebCore for more details.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::containsStringSafeForDOMToReadForType):
+
 2020-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove the unused method PasteboardStrategy::uniqueName()

@@ -52,4 +52,9 @@ Optional<Vector<PasteboardItemInfo>> PlatformPasteboard::allPasteboardItemInfo(i
     return itemInfo;
 }
 
+bool PlatformPasteboard::containsStringSafeForDOMToReadForType(const String& type) const
+{
+    return !stringForType(type).isEmpty();
+}
+
 } // namespace WebCore

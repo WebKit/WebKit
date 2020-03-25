@@ -198,7 +198,7 @@ bool DragData::containsPlainText() const
 #if PLATFORM(MAC)
         || types.contains(String(legacyFilenamesPasteboardType()))
 #endif
-        || platformStrategies()->pasteboardStrategy()->stringForType(urlPasteboardType(), m_pasteboardName).length();
+        || platformStrategies()->pasteboardStrategy()->containsStringSafeForDOMToReadForType(urlPasteboardType(), m_pasteboardName);
 }
 
 String DragData::asPlainText() const

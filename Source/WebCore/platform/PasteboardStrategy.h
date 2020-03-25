@@ -75,6 +75,7 @@ public:
 
     virtual Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin) = 0;
     virtual int64_t writeCustomData(const Vector<PasteboardCustomData>&, const String& pasteboardName) = 0;
+    virtual bool containsStringSafeForDOMToReadForType(const String&, const String& pasteboardName) = 0;
 
 #if PLATFORM(GTK)
     virtual void writeToClipboard(const String& pasteboardName, const SelectionData&) = 0;

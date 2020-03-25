@@ -99,6 +99,7 @@ public:
     WEBCORE_EXPORT int64_t write(const Vector<PasteboardCustomData>&);
     WEBCORE_EXPORT int64_t write(const PasteboardCustomData&);
     WEBCORE_EXPORT Vector<String> typesSafeForDOMToReadAndWrite(const String& origin) const;
+    WEBCORE_EXPORT bool containsStringSafeForDOMToReadForType(const String&) const;
 
 #if PLATFORM(GTK)
     WEBCORE_EXPORT void writeToClipboard(const SelectionData&, WTF::Function<void()>&& primarySelectionCleared);

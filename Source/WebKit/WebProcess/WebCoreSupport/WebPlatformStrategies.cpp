@@ -328,6 +328,13 @@ int64_t WebPlatformStrategies::writeCustomData(const Vector<PasteboardCustomData
     return newChangeCount;
 }
 
+bool WebPlatformStrategies::containsStringSafeForDOMToReadForType(const String& type, const String& pasteboardName)
+{
+    bool result = false;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ContainsStringSafeForDOMToReadForType(type, pasteboardName), Messages::WebPasteboardProxy::ContainsStringSafeForDOMToReadForType::Reply(result), 0);
+    return result;
+}
+
 int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName)
 {
     uint64_t itemsCount { 0 };

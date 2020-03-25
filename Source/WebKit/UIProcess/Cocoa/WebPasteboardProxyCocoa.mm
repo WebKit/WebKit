@@ -259,6 +259,11 @@ void WebPasteboardProxy::readBufferFromPasteboard(size_t index, const String& pa
     completionHandler(WTFMove(handle), size);
 }
 
+void WebPasteboardProxy::containsStringSafeForDOMToReadForType(const String& type, const String& pasteboardName, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(PlatformPasteboard(pasteboardName).containsStringSafeForDOMToReadForType(type));
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 void WebPasteboardProxy::writeURLToPasteboard(const PasteboardURL& url, const String& pasteboardName)

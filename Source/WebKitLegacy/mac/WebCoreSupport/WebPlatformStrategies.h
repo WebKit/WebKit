@@ -79,5 +79,6 @@ private:
     int64_t setURL(const WebCore::PasteboardURL&, const String& pasteboardName) override;
     int64_t setColor(const WebCore::Color&, const String& pasteboardName) override;
     int64_t setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) override;
+    bool containsStringSafeForDOMToReadForType(const String&, const String& pasteboardName) override;
 };
 

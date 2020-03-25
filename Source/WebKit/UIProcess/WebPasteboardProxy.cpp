@@ -114,6 +114,11 @@ void WebPasteboardProxy::readStringFromPasteboard(size_t, const String&, const S
 
 #endif // !USE(LIBWPE)
 
+void WebPasteboardProxy::containsStringSafeForDOMToReadForType(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(false);
+}
+
 #endif // !PLATFORM(COCOA)
 
 } // namespace WebKit
