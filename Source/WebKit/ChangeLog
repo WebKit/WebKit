@@ -1,3 +1,9 @@
+2020-03-25  Daniel Bates  <dabates@apple.com>
+
+        Remove newline that I accidentally added in r258989.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+
 2020-03-25  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid logging sensitive information for all network sessions

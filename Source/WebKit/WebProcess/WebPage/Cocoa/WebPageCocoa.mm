@@ -314,7 +314,6 @@ RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize
     return data;
 }
 
-
 void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completionHandler)
 {
 #if PLATFORM(MAC)
