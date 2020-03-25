@@ -1,3 +1,16 @@
+2020-03-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Fix sandbox violations related to media playback
+        https://bugs.webkit.org/show_bug.cgi?id=209568
+        <rdar://problem/60262125>
+
+        Reviewed by Brent Fulgham.
+
+        Fix observed sandbox violations during media playback.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::mediaRelatedMachServices):
+
 2020-03-25  Daniel Bates  <dabates@apple.com>
 
         Element context character rects may be in wrong coordinate system

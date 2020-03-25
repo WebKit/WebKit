@@ -253,7 +253,7 @@ static const Vector<String>& mediaRelatedMachServices()
         "com.apple.coremedia.visualcontext.xpc", "com.apple.airplay.apsynccontroller.xpc",
         "com.apple.audio.AURemoteIOServer"
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         "com.apple.coremedia.endpointstream.xpc", "com.apple.coremedia.endpointplaybacksession.xpc",
         "com.apple.coremedia.endpointremotecontrolsession.xpc", "com.apple.coremedia.videodecoder",
         "com.apple.coremedia.videoencoder"
