@@ -63,6 +63,7 @@ private:
 
     // RealtimeMediaSource::Observer
     void sourceStopped() final;
+    void sourceMutedChanged() final;
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
     static OSStatus inputProc(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 inBusNumber, UInt32 numberOfFrames, AudioBufferList*);
@@ -72,6 +73,7 @@ private:
     void cleanup();
     void zeroBufferList(AudioBufferList&, size_t);
     void playInternal();
+    void stop();
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "AudioTrackPrivateMediaStreamCocoa"; }
