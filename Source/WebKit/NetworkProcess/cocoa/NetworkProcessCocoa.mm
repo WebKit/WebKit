@@ -45,7 +45,6 @@
 #import <wtf/CallbackAggregator.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 namespace WebKit {
 
@@ -72,7 +71,7 @@ static void initializeNetworkSettings()
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
     WebCore::setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
-    setApplicationSDKVersion(parameters.uiProcessSDKVersion);
+    WebCore::setApplicationSDKVersion(parameters.uiProcessSDKVersion);
 
 #if HAVE(HSTS_STORAGE_PATH)
     if (!parameters.hstsStorageDirectory.isNull()) {
