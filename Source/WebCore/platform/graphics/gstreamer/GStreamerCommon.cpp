@@ -268,8 +268,7 @@ bool initializeGStreamer(Optional<Vector<String>>&& options)
                 if (avAACDecoderFactory)
                     gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(avAACDecoderFactory.get()), GST_RANK_MARGINAL);
             }
-        } else
-            WTFLogAlways("WARNING: You might have broken LC support in your AAC decoders, consider installing fdkaacdec");
+        }
 
 #endif
     });
