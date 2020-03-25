@@ -1,7 +1,7 @@
 /* Copyright (c) 2015 Xiph.Org Foundation
    Written by Viswanath Puttagunta */
 /**
-   @file celt_ne10_fft.c
+   @file celt_fft_ne10.c
    @brief ARM Neon optimizations for fft using NE10 library
  */
 

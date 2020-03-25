@@ -170,6 +170,9 @@ extern "C" {
 #define OPUS_GET_PHASE_INVERSION_DISABLED_REQUEST 4047
 #define OPUS_GET_IN_DTX_REQUEST              4049
 
+/** Defines for the presence of extended APIs. */
+#define OPUS_HAVE_OPUS_PROJECTION_H
+
 /* Macros to trigger compilation errors when the wrong types are provided to a CTL */
 #define __opus_check_int(x) (((void)((x) == (opus_int32)0)), (opus_int32)(x))
 #define __opus_check_int_ptr(ptr) ((ptr) + ((ptr) - (opus_int32*)(ptr)))

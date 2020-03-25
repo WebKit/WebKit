@@ -247,7 +247,7 @@ void silk_NSQ_del_dec_sse4_1(
 
                 /* Rewhiten with new A coefs */
                 start_idx = psEncC->ltp_mem_length - lag - psEncC->predictLPCOrder - LTP_ORDER / 2;
-                silk_assert( start_idx > 0 );
+                celt_assert( start_idx > 0 );
 
                 silk_LPC_analysis_filter( &sLTP[ start_idx ], &NSQ->xq[ start_idx + k * psEncC->subfr_length ],
                     A_Q12, psEncC->ltp_mem_length - start_idx, psEncC->predictLPCOrder, psEncC->arch );
@@ -353,7 +353,7 @@ static OPUS_INLINE void silk_noise_shape_quantizer_del_dec_sse4_1(
     __m128i b_Q12_0123, b_sr_Q12_0123;
     SAVE_STACK;
 
-    silk_assert( nStatesDelayedDecision > 0 );
+    celt_assert( nStatesDelayedDecision > 0 );
     ALLOC( psSampleState, nStatesDelayedDecision, NSQ_sample_pair );
 
     shp_lag_ptr  = &NSQ->sLTP_shp_Q14[ NSQ->sLTP_shp_buf_idx - lag + HARM_SHAPE_FIR_TAPS / 2 ];

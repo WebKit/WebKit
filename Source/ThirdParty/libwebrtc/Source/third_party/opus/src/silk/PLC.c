@@ -291,7 +291,7 @@ static OPUS_INLINE void silk_PLC_conceal(
 
     /* Rewhiten LTP state */
     idx = psDec->ltp_mem_length - lag - psDec->LPC_order - LTP_ORDER / 2;
-    silk_assert( idx > 0 );
+    celt_assert( idx > 0 );
     silk_LPC_analysis_filter( &sLTP[ idx ], &psDec->outBuf[ idx ], A_Q12, psDec->ltp_mem_length - idx, psDec->LPC_order, arch );
     /* Scale LTP state */
     inv_gain_Q30 = silk_INVERSE32_varQ( psPLC->prevGain_Q16[ 1 ], 46 );
@@ -347,7 +347,7 @@ static OPUS_INLINE void silk_PLC_conceal(
     /* Copy LPC state */
     silk_memcpy( sLPC_Q14_ptr, psDec->sLPC_Q14_buf, MAX_LPC_ORDER * sizeof( opus_int32 ) );
 
-    silk_assert( psDec->LPC_order >= 10 ); /* check that unrolling works */
+    celt_assert( psDec->LPC_order >= 10 ); /* check that unrolling works */
     for( i = 0; i < psDec->frame_length; i++ ) {
         /* partly unrolled */
         /* Avoids introducing a bias because silk_SMLAWB() always rounds to -inf */
