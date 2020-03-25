@@ -47,7 +47,7 @@ namespace WTF {
 // 64 KiB. (Apple uses 16 KiB.)
 //
 // Use 64 KiB for any unknown CPUs to be conservative.
-#if OS(DARWIN)
+#if OS(DARWIN) || PLATFORM(PLAYSTATION)
 constexpr size_t CeilingOnPageSize = 16 * KB;
 #elif OS(WINDOWS) || CPU(MIPS) || CPU(X86) || CPU(X86_64) || CPU(ARM)
 constexpr size_t CeilingOnPageSize = 4 * KB;
