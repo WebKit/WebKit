@@ -287,6 +287,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'longhands': self.validate_array,
             'name-for-methods': self.validate_string,
             'no-default-color': self.validate_boolean,
+            'related-property': self.validate_string,
             'runtime-flag': self.validate_string,
             'setter': self.validate_string,
             'skip-builder': self.validate_boolean,

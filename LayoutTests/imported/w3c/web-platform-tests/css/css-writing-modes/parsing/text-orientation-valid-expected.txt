@@ -1,5 +1,5 @@
 
-FAIL e.style['text-orientation'] = "mixed" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['text-orientation'] = "upright" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['text-orientation'] = "sideways" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['text-orientation'] = "mixed" should set the property value 
+PASS e.style['text-orientation'] = "upright" should set the property value 
+PASS e.style['text-orientation'] = "sideways" should set the property value 
 

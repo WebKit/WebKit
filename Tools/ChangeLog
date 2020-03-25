@@ -1,3 +1,16 @@
+2020-03-25  Frank Yang  <guowei_yang@apple.com>
+
+        Unprefix -webkit-text-orientation
+        https://bugs.webkit.org/show_bug.cgi?id=196139
+
+        Reviewed by Myles C. Maxfield.
+
+        This change is made to add the extra flag "related-property" in CSSProperty.json
+        in the jsonchecker so that the jsonchecker would not complain about unrecognized key
+
+        * Scripts/webkitpy/style/checkers/jsonchecker.py: added check for related-property
+        (JSONCSSPropertiesChecker.check_codegen_properties): 
+
 2020-03-25  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] commit-queue should comment on bug if it fails to find any modified ChangeLog

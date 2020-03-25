@@ -244,6 +244,7 @@ PASS text-decoration-skip
 PASS text-decoration-style 
 PASS text-decoration-thickness 
 PASS text-indent 
+PASS text-orientation 
 PASS text-overflow 
 PASS text-rendering 
 PASS text-shadow 

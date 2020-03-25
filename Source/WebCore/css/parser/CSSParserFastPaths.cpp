@@ -668,6 +668,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
 #endif
     case CSSPropertyWebkitTextOrientation: // mixed | upright | sideways | sideways-right
         return valueID == CSSValueMixed || valueID == CSSValueUpright || valueID == CSSValueSideways || valueID == CSSValueSidewaysRight;
+    case CSSPropertyTextOrientation:
+        return valueID == CSSValueMixed || valueID == CSSValueUpright || valueID == CSSValueSideways;
     case CSSPropertyTextOverflow: // clip | ellipsis
         return valueID == CSSValueClip || valueID == CSSValueEllipsis;
     case CSSPropertyTextRendering: // auto | optimizeSpeed | optimizeLegibility | geometricPrecision
@@ -869,6 +871,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyResize:
     case CSSPropertyTableLayout:
     case CSSPropertyTextAlign:
+    case CSSPropertyTextOrientation:
     case CSSPropertyTextOverflow:
     case CSSPropertyTextRendering:
     case CSSPropertyTextTransform:
@@ -943,7 +946,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     // case CSSPropertyTextCombineUpright:
     // case CSSPropertyTextDecorationStyle:
     // case CSSPropertyTextJustify:
-    // case CSSPropertyTextOrientation:
     // case CSSPropertyUserSelect:
 #if ENABLE(CSS_TRAILING_WORD)
     case CSSPropertyAppleTrailingWord:

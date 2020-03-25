@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<script src="../../resources/js-test-pre.js"></script>
+	</head>
+	<body>
+		<div
+		  data-expected="mixed" title="text-orientation initial value"></div>
+
+		<div id="test1" style="text-orientation: upright"
+		  data-expected="upright"></div>
+		<div id="test2" style="text-orientation: sideways"
+		  data-expected="sideways"></div>
+
+		<div id="test3" style="text-orientation: upright">
+		  <div
+		    data-expected="upright" title="text-orientation should inherit"></div>
+
+		  <div id="test4" style="text-orientation: mixed"
+		    data-expected="mixed"></div>
+
+		  <div id="test5" style="text-orientation: initial"
+		    data-expected="mixed"></div>
+		  <div id="test6" style="text-orientation: inherit"
+		    data-expected="upright"></div>
+
+		  <div id="test7" style="text-orientation: foo"
+		    data-expected="upright"></div>
+		</div>
+
+
+
+
+		<script>
+			shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).webkitTextOrientation", "upright");
+			shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).webkitTextOrientation", "sideways");
+			shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).webkitTextOrientation", "upright");
+			shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).webkitTextOrientation", "mixed");
+			shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).webkitTextOrientation", "mixed");
+			shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).webkitTextOrientation", "upright");
+			shouldBeEqualToString("window.getComputedStyle(document.getElementById('test7')).webkitTextOrientation", "upright");
+		</script>
+
+		<script src="../../resources/js-test-post.js"></script>
+	</body>
+</html>

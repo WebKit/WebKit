@@ -67,7 +67,7 @@ PASS Property "text-decoration-color" is supported
 PASS Property "text-decoration-line" is supported 
 PASS Property "text-decoration-style" is supported 
 PASS Property "text-indent" is supported 
-FAIL Property "text-orientation" is supported assert_true: expected true got false
+PASS Property "text-orientation" is supported 
 PASS Property "text-overflow" is supported 
 PASS Property "text-rendering" is supported 
 FAIL Property "text-space-collapse" is supported assert_true: expected true got false

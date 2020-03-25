@@ -116,6 +116,13 @@
         "Whether the property needs to be applied before non-high-priority properties",
         "in CSS cascading order.",
         "",
+        "* related-property:",
+        "Indicates the prefixed or unprefixed version of the same property,",
+        "e.g. -webkit-text-orientation has a related property text-orientation",
+        "When parsing high priority CSS properties with both prefixed and unprefixed",
+        "versions, this flig will help the parser to mark all related properties ",
+        "as seen when one is seen. This could enforce the 'last-one-wins' rule.",
+        "",
         "* aliases:",
         "An array of the alternative names for this property.",
         "",
@@ -619,6 +626,23 @@
             },
             "status": "non-standard"
         },
+        "text-orientation": {
+            "inherited": true,
+            "values": [
+                "sideways",
+                "mixed",
+                "upright"
+            ],
+            "codegen-properties": {
+                "custom": "Value",
+                "related-property": "-webkit-text-orientation",
+                "high-priority": true
+            },
+            "specification": {
+                "category": "css-writing-modes",
+                "url": "https://www.w3.org/TR/css-writing-modes-3/#text-orientation"
+            }
+        },
         "-webkit-text-orientation": {
             "inherited": true,
             "values": [
@@ -638,6 +662,7 @@
                 "aliases": [
                     "-epub-text-orientation"
                 ],
+                "related-property": "text-orientation",
                 "custom": "Value",
                 "high-priority": true
             },

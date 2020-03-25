@@ -85,6 +85,7 @@ my %styleBuilderOptions = (
 );
 my %nameToId;
 my %nameToAliases;
+my %relatedProperty;
 
 for my $name (@allNames) {
     my $value = $propertiesHashRef->{$name};
@@ -193,6 +194,8 @@ sub addProperty($$)
                     next;
                 } elsif ($codegenOptionName eq "high-priority") {
                     $nameIsHighPriority{$name} = 1;
+                } elsif ($codegenOptionName eq "related-property") {
+                    $relatedProperty{$name} = $codegenProperties->{"related-property"}
                 } elsif ($codegenOptionName eq "aliases") {
                     $nameToAliases{$name} = $codegenProperties->{"aliases"};
                 } elsif ($styleBuilderOptions{$codegenOptionName}) {
@@ -415,6 +418,24 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID id)
     ASSERT(id != CSSPropertyInvalid);
     return isInheritedPropertyTable[id];
 }
+    
+CSSPropertyID getRelatedPropertyId(CSSPropertyID id)
+{
+    switch(id) {
+EOF
+for my $name (@names) {
+    if (!$relatedProperty{$name}) {
+        next;
+    }
+    print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+    print GPERF "        return CSSPropertyID::CSSProperty" . $nameToId{$relatedProperty{$name}} . ";\n";
+}
+        
+print GPERF << "EOF";
+    default:
+        return CSSPropertyID::CSSPropertyInvalid;
+    }
+}
 
 Vector<String> CSSProperty::aliasesForProperty(CSSPropertyID id)
 {
@@ -531,6 +552,7 @@ const char* getPropertyName(CSSPropertyID);
 const WTF::AtomString& getPropertyNameAtomString(CSSPropertyID id);
 WTF::String getPropertyNameString(CSSPropertyID id);
 WTF::String getJSPropertyName(CSSPropertyID);
+CSSPropertyID getRelatedPropertyId(CSSPropertyID id);
 
 inline CSSPropertyID convertToCSSPropertyID(int value)
 {

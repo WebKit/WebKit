@@ -123,9 +123,16 @@ static inline void filterProperties(bool important, const ParsedPropertyVector& 
          // FIXME: Do we need to do anything here?
          } */
         
+
         if (seenProperties.test(propertyIDIndex))
             continue;
-        seenProperties.set(propertyIDIndex);
+        const unsigned relatedPropertyId = getRelatedPropertyId(property.id());
+        if (property.id() != CSSPropertyInvalid && relatedPropertyId != CSSPropertyInvalid) {
+            const unsigned relatedPropertyIDIndex = relatedPropertyId - firstCSSProperty;
+            seenProperties.set(relatedPropertyIDIndex);
+            seenProperties.set(propertyIDIndex);
+        } else
+            seenProperties.set(propertyIDIndex);
 
         output[--unusedEntries] = property;
     }

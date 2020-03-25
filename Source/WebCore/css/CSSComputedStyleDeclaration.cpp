@@ -3504,6 +3504,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createValue(style.textCombine());
         case CSSPropertyWebkitTextOrientation:
             return CSSPrimitiveValue::create(style.textOrientation());
+        case CSSPropertyTextOrientation:
+            return CSSPrimitiveValue::create(style.textOrientation());
         case CSSPropertyWebkitLineBoxContain:
             return createLineBoxContainValue(style.lineBoxContain());
         case CSSPropertyAlt:
