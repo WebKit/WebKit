@@ -1821,6 +1821,15 @@
          "dwim"
       ]
    },
+   "Doug Kelly" : {
+      "emails" : [
+         "dougk@apple.com"
+      ],
+      "nicks" : [
+         "dougk"
+      ],
+      "status" : "committer"
+   },
    "Doug Russell" : {
       "emails" : [
          "d_russell@apple.com"

@@ -1,3 +1,9 @@
+2020-03-25  Doug Kelly  <dougk@apple.com>
+
+        Unreviewed, add new committer to contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-03-25  Frank Yang  <guowei_yang@apple.com>
 
         Unprefix -webkit-text-orientation
