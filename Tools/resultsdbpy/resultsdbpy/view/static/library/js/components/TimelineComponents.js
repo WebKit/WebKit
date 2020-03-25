@@ -385,10 +385,8 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         let endScalesIndex = startScalesIndex + Math.ceil((renderWidth) / dotWidth);
         if (endScalesIndex >= scales.length)
             endScalesIndex = scales.length - 1;
-        let currentDotIndex = startScalesIndex - (scales.length - dots.length);
-        if (currentDotIndex < 0)
-            currentDotIndex = 0;
-        for (let i = currentDotIndex; i <= startScalesIndex; i++) {
+        let currentDotIndex = 0;
+        for (let i = currentDotIndex; i <= startScalesIndex && currentDotIndex < dots.length; i++) {
             const compResult = comp(scales[startScalesIndex], getScale(dots[currentDotIndex]));
             if (!reversed) {
                 if (compResult > 0)
