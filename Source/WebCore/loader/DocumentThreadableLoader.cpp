@@ -64,6 +64,7 @@
 #include <wtf/Ref.h>
 
 #if PLATFORM(IOS_FAMILY)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #include <wtf/spi/darwin/dyldSPI.h>
 #endif
 

@@ -66,24 +66,6 @@ void setApplicationBundleIdentifier(const String& bundleIdentifier)
     applicationBundleIdentifierOverride() = bundleIdentifier;
 }
 
-static Optional<uint32_t>& applicationSDKVersionOverride()
-{
-    static NeverDestroyed<Optional<uint32_t>> version;
-    return version;
-}
-
-void setApplicationSDKVersion(uint32_t version)
-{
-    applicationSDKVersionOverride() = version;
-}
-
-uint32_t applicationSDKVersion()
-{
-    if (applicationSDKVersionOverride())
-        return *applicationSDKVersionOverride();
-    return dyld_get_program_sdk_version();
-}
-
 bool isInWebProcess()
 {
     static bool mainBundleIsWebProcess = [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"com.apple.WebKit.WebContent"];

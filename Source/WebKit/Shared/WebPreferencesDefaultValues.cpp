@@ -32,6 +32,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#include <wtf/Cocoa/RuntimeApplicationChecksCocoa.h>
 #include "VersionChecks.h"
 #endif
 
