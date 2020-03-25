@@ -498,6 +498,10 @@ private:
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
 
+#if PLATFORM(IOS_FAMILY)
+    bool m_hasSentMessageToUnblockAccessibilityServer { false };
+#endif
+
     HashMap<String, uint64_t> m_pageURLRetainCountMap;
 
     Optional<WebCore::RegistrableDomain> m_registrableDomain;
