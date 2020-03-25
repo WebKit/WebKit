@@ -107,6 +107,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
+#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - Frame::" fmt, this, ##__VA_ARGS__)
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -624,8 +626,12 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
 
 void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript& script)
 {
-    if (loader().client().hasNavigatedAwayFromAppBoundDomain() && !loader().client().needsInAppBrowserPrivacyQuirks())
+    if (loader().client().hasNavigatedAwayFromAppBoundDomain() && !loader().client().needsInAppBrowserPrivacyQuirks()) {
+        if (auto* document = this->document())
+            document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain."_s);
+        RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "injectUserScriptImmediately: Ignoring user script injection for non app-bound domain");
         return;
+    }
 
     auto* document = this->document();
     if (!document)
@@ -1047,3 +1053,5 @@ void Frame::selfOnlyDeref()
 }
 
 } // namespace WebCore
+
+#undef RELEASE_LOG_ERROR_IF_ALLOWED

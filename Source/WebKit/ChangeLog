@@ -1,3 +1,17 @@
+2020-03-25  Kate Cheney  <katherine_cheney@apple.com>
+
+        App-bound domain checks should provide more debugging details at script evaluation sites
+        https://bugs.webkit.org/show_bug.cgi?id=209521
+        <rdar://problem/60837954>
+
+        Reviewed by Chris Dumez.
+
+        Return an exception because that option is available here, and also add
+        console and release logging for consistency across app-bound domain checks.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScript):
+
 2020-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Avoid querying pasteboard strings while dragging content over a potential drop target

@@ -40,6 +40,7 @@
 #include "JSDocument.h"
 #include "JSExecState.h"
 #include "LoadableModuleScript.h"
+#include "Logging.h"
 #include "ModuleFetchFailureKind.h"
 #include "ModuleFetchParameters.h"
 #include "NP_jsobject.h"
@@ -76,6 +77,8 @@
 #include <wtf/SharedTask.h>
 #include <wtf/Threading.h>
 #include <wtf/text/TextPosition.h>
+
+#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(m_frame.isAlwaysOnLoggingAllowed(), channel, "%p - ScriptController::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 using namespace JSC;
@@ -576,8 +579,12 @@ JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperW
 
 ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)
 {
-    if (m_frame.loader().client().hasNavigatedAwayFromAppBoundDomain() && !m_frame.loader().client().needsInAppBrowserPrivacyQuirks())
-        return jsNull();
+    if (m_frame.loader().client().hasNavigatedAwayFromAppBoundDomain() && !m_frame.loader().client().needsInAppBrowserPrivacyQuirks()) {
+        if (auto* document = m_frame.document())
+            document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain.");
+        RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "executeScriptInWorld: Ignoring user script injection for non app-bound domain");
+        return makeUnexpected(ExceptionDetails { "Ignoring user script injection for non-app bound domain"_s });
+    }
 
     UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
 
@@ -860,3 +867,5 @@ bool ScriptController::executeIfJavaScriptURL(const URL& url, RefPtr<SecurityOri
 }
 
 } // namespace WebCore
+
+#undef RELEASE_LOG_ERROR_IF_ALLOWED
