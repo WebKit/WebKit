@@ -37,7 +37,7 @@ CHROMIUM_LOG_TEMPLATE = CHROMIUM_SRC_URL + '/+log/%s'
 CHROMIUM_FILE_TEMPLATE = CHROMIUM_SRC_URL + '/+/%s/%s'
 
 COMMIT_POSITION_RE = re.compile('^Cr-Commit-Position: .*#([0-9]+).*$')
-CLANG_REVISION_RE = re.compile(r'^CLANG_REVISION = \'(\d+)\'$')
+CLANG_REVISION_RE = re.compile(r'^CLANG_REVISION = \'([0-9a-z]+)\'$')
 ROLL_BRANCH_NAME = 'roll_chromium_revision'
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))

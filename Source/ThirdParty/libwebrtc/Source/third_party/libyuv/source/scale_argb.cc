@@ -627,6 +627,14 @@ static void ScaleYUVToARGBBilinearUp(int src_width,
     }
   }
 #endif
+#if defined(HAS_I422TOARGBROW_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    I422ToARGBRow = I422ToARGBRow_Any_MMI;
+    if (IS_ALIGNED(src_width, 4)) {
+      I422ToARGBRow = I422ToARGBRow_MMI;
+    }
+  }
+#endif
 
   void (*InterpolateRow)(uint8_t * dst_argb, const uint8_t* src_argb,
                          ptrdiff_t src_stride, int dst_width,

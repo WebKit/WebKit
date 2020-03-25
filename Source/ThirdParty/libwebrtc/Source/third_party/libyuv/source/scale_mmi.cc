@@ -1103,6 +1103,61 @@ void ScaleRowUp2_16_MMI(const uint16_t* src_ptr,
       : "memory");
 }
 
+void ScaleRowDown34_MMI(const uint8_t* src_ptr,
+                      ptrdiff_t src_stride,
+                      uint8_t* dst,
+                      int dst_width) {
+  (void)src_stride;
+  assert((dst_width % 3 == 0) && (dst_width > 0));
+  uint64_t src[2];
+  uint64_t tmp[2];
+  __asm__ volatile (
+    "1:                                                           \n\t"
+    "gsldlc1    %[src0],         0x07(%[src_ptr])                 \n\t"
+    "gsldrc1    %[src0],         0x00(%[src_ptr])                 \n\t"
+    "gsldlc1    %[src1],         0x0f(%[src_ptr])                 \n\t"
+    "gsldrc1    %[src1],         0x08(%[src_ptr])                 \n\t"
+    "and        %[tmp1],         %[src0],        %[mask1]         \n\t"
+    "psrlw      %[tmp0],         %[src0],        %[rmov]          \n\t"
+    "psllw      %[tmp0],         %[tmp0],        %[lmov1]         \n\t"
+    "or         %[src0],         %[tmp0],        %[tmp1]          \n\t"
+    "punpckhwd  %[tmp0],         %[src0],        %[src0]          \n\t"
+    "psllw      %[tmp1],         %[tmp0],        %[rmov]          \n\t"
+    "or         %[src0],         %[src0],        %[tmp1]          \n\t"
+    "psrlw      %[tmp0],         %[tmp0],        %[rmov8]         \n\t"
+    "pextrh     %[tmp0],         %[tmp0],        %[zero]          \n\t"
+    "pinsrh_2   %[src0],         %[src0],        %[tmp0]          \n\t"
+    "pextrh     %[tmp0],         %[src1],        %[zero]          \n\t"
+    "pinsrh_3   %[src0],         %[src0],        %[tmp0]          \n\t"
+
+    "punpckhwd  %[tmp0],         %[src1],        %[src1]          \n\t"
+    "pextrh     %[tmp1],         %[tmp0],        %[zero]          \n\t"
+    "psrlw      %[src1],         %[src1],        %[rmov]          \n\t"
+    "psllw      %[tmp1],         %[tmp1],        %[rmov8]         \n\t"
+    "or         %[src1],         %[src1],        %[tmp1]          \n\t"
+    "and        %[tmp0],         %[tmp0],        %[mask2]         \n\t"
+    "or         %[src1],         %[src1],        %[tmp0]          \n\t"
+
+    "gssdlc1    %[src0],         0x07(%[dst_ptr])                 \n\t"
+    "gssdrc1    %[src0],         0x00(%[dst_ptr])                 \n\t"
+    "gsswlc1    %[src1],         0x0b(%[dst_ptr])                 \n\t"
+    "gsswrc1    %[src1],         0x08(%[dst_ptr])                 \n\t"
+
+    "daddiu     %[src_ptr],      %[src_ptr],     0x10             \n\t"
+    "daddi      %[width],        %[width],      -0x0c             \n\t"
+    "daddiu     %[dst_ptr],      %[dst_ptr],     0x0c             \n\t"
+    "bnez       %[width],        1b                               \n\t"
+
+    : [src0]"=&f"(src[0]),              [src1]"=&f"(src[1]),
+      [tmp0]"=&f"(tmp[0]),              [tmp1]"=&f"(tmp[1])
+    : [src_ptr]"r"(src_ptr),            [dst_ptr]"r"(dst),
+      [lmov]"f"(0xc),                   [rmov]"f"(0x18),
+      [mask1]"f"(0xffff0000ffff),       [rmov8]"f"(0x8),
+      [zero]"f"(0x0),                   [mask2]"f"(0xff000000),
+      [width]"r"(dst_width),            [lmov1]"f"(0x10)
+    : "memory"
+  );
+}
 // clang-format on
 
 #endif  // !defined(LIBYUV_DISABLE_MMI) && defined(_MIPS_ARCH_LOONGSON3A)

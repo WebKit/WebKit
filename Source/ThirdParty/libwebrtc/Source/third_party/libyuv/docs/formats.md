@@ -36,7 +36,7 @@ This is how OSX formats map to libyuv
 
 The following is extracted from video_common.h as a complete list of formats supported by libyuv.
     enum FourCC {
-      // 9 Primary YUV formats: 5 planar, 2 biplanar, 2 packed.
+      // 10 Primary YUV formats: 5 planar, 2 biplanar, 2 packed.
       FOURCC_I420 = FOURCC('I', '4', '2', '0'),
       FOURCC_I422 = FOURCC('I', '4', '2', '2'),
       FOURCC_I444 = FOURCC('I', '4', '4', '4'),
@@ -46,6 +46,8 @@ The following is extracted from video_common.h as a complete list of formats sup
       FOURCC_YUY2 = FOURCC('Y', 'U', 'Y', '2'),
       FOURCC_UYVY = FOURCC('U', 'Y', 'V', 'Y'),
       FOURCC_H010 = FOURCC('H', '0', '1', '0'),  // unofficial fourcc. 10 bit lsb
+      FOURCC_U010 = FOURCC('U', '0', '1', '0'),  // bt.2020, unofficial fourcc.
+                                                 // 10 bit lsb
 
       // 1 Secondary YUV format: row biplanar.
       FOURCC_M420 = FOURCC('M', '4', '2', '0'),
@@ -66,7 +68,7 @@ The following is extracted from video_common.h as a complete list of formats sup
       // 1 Primary Compressed YUV format.
       FOURCC_MJPG = FOURCC('M', 'J', 'P', 'G'),
 
-      // 8 Auxiliary YUV variations: 3 with U and V planes are swapped, 1 Alias.
+      // 11 Auxiliary YUV variations: 3 with U and V planes are swapped, 1 Alias.
       FOURCC_YV12 = FOURCC('Y', 'V', '1', '2'),
       FOURCC_YV16 = FOURCC('Y', 'V', '1', '6'),
       FOURCC_YV24 = FOURCC('Y', 'V', '2', '4'),
@@ -75,6 +77,9 @@ The following is extracted from video_common.h as a complete list of formats sup
       FOURCC_J400 = FOURCC('J', '4', '0', '0'),  // unofficial fourcc
       FOURCC_H420 = FOURCC('H', '4', '2', '0'),  // unofficial fourcc
       FOURCC_H422 = FOURCC('H', '4', '2', '2'),  // unofficial fourcc
+      FOURCC_U420 = FOURCC('U', '4', '2', '0'),  // bt.2020, unofficial fourcc
+      FOURCC_U422 = FOURCC('U', '4', '2', '2'),  // bt.2020, unofficial fourcc
+      FOURCC_U444 = FOURCC('U', '4', '4', '4'),  // bt.2020, unofficial fourcc
 
       // 14 Auxiliary aliases.  CanonicalFourCC() maps these to canonical fourcc.
       FOURCC_IYUV = FOURCC('I', 'Y', 'U', 'V'),  // Alias for I420.

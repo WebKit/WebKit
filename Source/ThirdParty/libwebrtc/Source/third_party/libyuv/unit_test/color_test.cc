@@ -27,13 +27,13 @@ namespace libyuv {
 #define ERROR_G 1
 #define ERROR_B 3
 #define ERROR_FULL 6
-#define ERROR_J420 5
+#define ERROR_J420 6
 #else
 #define ERROR_R 1
 #define ERROR_G 1
 #define ERROR_B 3
 #define ERROR_FULL 5
-#define ERROR_J420 3
+#define ERROR_J420 4
 #endif
 
 #define TESTCS(TESTNAME, YUVTOARGB, ARGBTOYUV, HS1, HS, HN, DIFF)              \

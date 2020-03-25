@@ -398,6 +398,18 @@ static void ScalePlaneDown34(int src_width,
     }
   }
 #endif
+#if defined(HAS_SCALEROWDOWN34_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    if (!filtering) {
+      ScaleRowDown34_0 = ScaleRowDown34_Any_MMI;
+      ScaleRowDown34_1 = ScaleRowDown34_Any_MMI;
+      if (dst_width % 24 == 0) {
+        ScaleRowDown34_0 = ScaleRowDown34_MMI;
+        ScaleRowDown34_1 = ScaleRowDown34_MMI;
+      }
+    }
+  }
+#endif
 #if defined(HAS_SCALEROWDOWN34_SSSE3)
   if (TestCpuFlag(kCpuHasSSSE3)) {
     if (!filtering) {

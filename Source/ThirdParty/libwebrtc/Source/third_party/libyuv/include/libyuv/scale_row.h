@@ -126,6 +126,7 @@ extern "C" {
 #define HAS_SCALEROWDOWN2_MMI
 #define HAS_SCALEROWDOWN4_16_MMI
 #define HAS_SCALEROWDOWN4_MMI
+#define HAS_SCALEROWDOWN34_MMI
 #endif
 
 // Scale ARGB vertically with bilinear interpolation.
@@ -950,6 +951,10 @@ void ScaleRowDown34_MSA(const uint8_t* src_ptr,
                         ptrdiff_t src_stride,
                         uint8_t* dst,
                         int dst_width);
+void ScaleRowDown34_MMI(const uint8_t* src_ptr,
+                        ptrdiff_t src_stride,
+                        uint8_t* dst,
+                        int dst_width);
 void ScaleRowDown34_0_Box_MSA(const uint8_t* src_ptr,
                               ptrdiff_t src_stride,
                               uint8_t* d,
@@ -1000,6 +1005,10 @@ void ScaleFilterCols_Any_MSA(uint8_t* dst_ptr,
                              int x,
                              int dx);
 void ScaleRowDown34_Any_MSA(const uint8_t* src_ptr,
+                            ptrdiff_t src_stride,
+                            uint8_t* dst_ptr,
+                            int dst_width);
+void ScaleRowDown34_Any_MMI(const uint8_t* src_ptr,
                             ptrdiff_t src_stride,
                             uint8_t* dst_ptr,
                             int dst_width);

@@ -1,5 +1,14 @@
 2020-03-25  youenn fablet  <youenn@apple.com>
 
+        Bump libyuv to M82
+        https://bugs.webkit.org/show_bug.cgi?id=209539
+
+        Reviewed by Eric Carlson.
+
+        * Source/third_party/libyuv: Updated.
+
+2020-03-25  youenn fablet  <youenn@apple.com>
+
         Bump rnnoise to M82
         https://bugs.webkit.org/show_bug.cgi?id=209541
 

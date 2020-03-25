@@ -296,6 +296,14 @@ SDANY(ScaleRowDown34_1_Box_Any_MSA,
       1,
       47)
 #endif
+#ifdef HAS_SCALEROWDOWN34_MMI
+SDANY(ScaleRowDown34_Any_MMI,
+      ScaleRowDown34_MMI,
+      ScaleRowDown34_C,
+      4 / 3,
+      1,
+      23)
+#endif
 #ifdef HAS_SCALEROWDOWN38_SSSE3
 SDANY(ScaleRowDown38_Any_SSSE3,
       ScaleRowDown38_SSSE3,

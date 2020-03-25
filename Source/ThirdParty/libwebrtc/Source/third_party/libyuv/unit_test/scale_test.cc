@@ -14,7 +14,10 @@
 #include "../unit_test/unit_test.h"
 #include "libyuv/cpu_id.h"
 #include "libyuv/scale.h"
+
+#ifdef ENABLE_ROW_TESTS
 #include "libyuv/scale_row.h"  // For ScaleRowDown2Box_Odd_C
+#endif
 
 #define STRINGIZE(line) #line
 #define FILELINESTR(file, line) file ":" STRINGIZE(line)
@@ -541,7 +544,7 @@ static int I444TestFilter_16(int src_width,
 
 TEST_FACTOR(2, 1, 2, 0)
 TEST_FACTOR(4, 1, 4, 0)
-TEST_FACTOR(8, 1, 8, 0)
+// TEST_FACTOR(8, 1, 8, 0) Disable for benchmark performance.  Takes 90 seconds.
 TEST_FACTOR(3by4, 3, 4, 1)
 TEST_FACTOR(3by8, 3, 8, 1)
 TEST_FACTOR(3, 1, 3, 0)
@@ -622,6 +625,7 @@ TEST_SCALETO(Scale, 1920, 1080)
 #undef TEST_SCALETO1
 #undef TEST_SCALETO
 
+#ifdef ENABLE_ROW_TESTS
 #ifdef HAS_SCALEROWDOWN2_SSSE3
 TEST_F(LibYUVScaleTest, TestScaleRowDown2Box_Odd_SSSE3) {
   SIMD_ALIGNED(uint8_t orig_pixels[128 * 2]);
@@ -803,6 +807,7 @@ TEST_F(LibYUVScaleTest, TestScaleRowDown2Box_16) {
   EXPECT_EQ(dst_pixels_c[0], (0 + 1 + 2560 + 2561 + 2) / 4);
   EXPECT_EQ(dst_pixels_c[1279], 3839);
 }
+#endif  // ENABLE_ROW_TESTS
 
 // Test scaling plane with 8 bit C vs 16 bit C and return maximum pixel
 // difference.
@@ -893,7 +898,7 @@ static int TestPlaneFilter_16(int src_width,
 
 TEST_FACTOR(2, 1, 2, 0)
 TEST_FACTOR(4, 1, 4, 0)
-TEST_FACTOR(8, 1, 8, 0)
+// TEST_FACTOR(8, 1, 8, 0) Disable for benchmark performance.  Takes 90 seconds.
 TEST_FACTOR(3by4, 3, 4, 1)
 TEST_FACTOR(3by8, 3, 8, 1)
 TEST_FACTOR(3, 1, 3, 0)

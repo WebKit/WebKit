@@ -32,9 +32,6 @@ extern "C" {
 // TODO(fbarchard): Add the following:
 // H010ToARGB
 // I010ToARGB
-// J400ToARGB
-// J422ToARGB
-// J444ToARGB
 
 LIBYUV_API
 int ConvertToARGB(const uint8_t* sample,
@@ -161,6 +158,11 @@ int ConvertToARGB(const uint8_t* sample,
       r = I400ToARGB(src, src_width, dst_argb, dst_stride_argb, crop_width,
                      inv_crop_height);
       break;
+    case FOURCC_J400:
+      src = sample + src_width * crop_y + crop_x;
+      r = J400ToARGB(src, src_width, dst_argb, dst_stride_argb, crop_width,
+                     inv_crop_height);
+      break;
 
     // Biplanar formats
     case FOURCC_NV12:
@@ -208,6 +210,19 @@ int ConvertToARGB(const uint8_t* sample,
       break;
     }
 
+    case FOURCC_J420: {
+      int halfwidth = (src_width + 1) / 2;
+      int halfheight = (abs_src_height + 1) / 2;
+      const uint8_t* src_y = sample + (src_width * crop_y + crop_x);
+      const uint8_t* src_u = sample + src_width * abs_src_height +
+                             (halfwidth * crop_y + crop_x) / 2;
+      const uint8_t* src_v = sample + src_width * abs_src_height +
+                             halfwidth * (halfheight + crop_y / 2) + crop_x / 2;
+      r = J420ToARGB(src_y, src_width, src_u, halfwidth, src_v, halfwidth,
+                     dst_argb, dst_stride_argb, crop_width, inv_crop_height);
+      break;
+    }
+
     case FOURCC_H420: {
       int halfwidth = (src_width + 1) / 2;
       int halfheight = (abs_src_height + 1) / 2;
@@ -221,7 +236,7 @@ int ConvertToARGB(const uint8_t* sample,
       break;
     }
 
-    case FOURCC_J420: {
+    case FOURCC_U420: {
       int halfwidth = (src_width + 1) / 2;
       int halfheight = (abs_src_height + 1) / 2;
       const uint8_t* src_y = sample + (src_width * crop_y + crop_x);
@@ -229,7 +244,7 @@ int ConvertToARGB(const uint8_t* sample,
                              (halfwidth * crop_y + crop_x) / 2;
       const uint8_t* src_v = sample + src_width * abs_src_height +
                              halfwidth * (halfheight + crop_y / 2) + crop_x / 2;
-      r = J420ToARGB(src_y, src_width, src_u, halfwidth, src_v, halfwidth,
+      r = U420ToARGB(src_y, src_width, src_u, halfwidth, src_v, halfwidth,
                      dst_argb, dst_stride_argb, crop_width, inv_crop_height);
       break;
     }
@@ -256,7 +271,31 @@ int ConvertToARGB(const uint8_t* sample,
       break;
     }
 
+    case FOURCC_J422: {
+      int halfwidth = (src_width + 1) / 2;
+      const uint8_t* src_y = sample + src_width * crop_y + crop_x;
+      const uint8_t* src_u =
+          sample + src_width * abs_src_height + halfwidth * crop_y + crop_x / 2;
+      const uint8_t* src_v = sample + src_width * abs_src_height +
+                             halfwidth * (abs_src_height + crop_y) + crop_x / 2;
+      r = J422ToARGB(src_y, src_width, src_u, halfwidth, src_v, halfwidth,
+                     dst_argb, dst_stride_argb, crop_width, inv_crop_height);
+      break;
+    }
+
     case FOURCC_H422: {
+      int halfwidth = (src_width + 1) / 2;
+      const uint8_t* src_y = sample + src_width * crop_y + crop_x;
+      const uint8_t* src_u =
+          sample + src_width * abs_src_height + halfwidth * crop_y + crop_x / 2;
+      const uint8_t* src_v = sample + src_width * abs_src_height +
+                             halfwidth * (abs_src_height + crop_y) + crop_x / 2;
+      r = H422ToARGB(src_y, src_width, src_u, halfwidth, src_v, halfwidth,
+                     dst_argb, dst_stride_argb, crop_width, inv_crop_height);
+      break;
+    }
+
+    case FOURCC_U422: {
       int halfwidth = (src_width + 1) / 2;
       const uint8_t* src_y = sample + src_width * crop_y + crop_x;
       const uint8_t* src_u =
@@ -284,6 +323,40 @@ int ConvertToARGB(const uint8_t* sample,
                      dst_argb, dst_stride_argb, crop_width, inv_crop_height);
       break;
     }
+
+    case FOURCC_J444: {
+      const uint8_t* src_y = sample + src_width * crop_y + crop_x;
+      const uint8_t* src_u;
+      const uint8_t* src_v;
+      src_u = sample + src_width * (abs_src_height + crop_y) + crop_x;
+      src_v = sample + src_width * (abs_src_height * 2 + crop_y) + crop_x;
+      r = J444ToARGB(src_y, src_width, src_u, src_width, src_v, src_width,
+                     dst_argb, dst_stride_argb, crop_width, inv_crop_height);
+      break;
+    }
+
+    case FOURCC_H444: {
+      const uint8_t* src_y = sample + src_width * crop_y + crop_x;
+      const uint8_t* src_u;
+      const uint8_t* src_v;
+      src_u = sample + src_width * (abs_src_height + crop_y) + crop_x;
+      src_v = sample + src_width * (abs_src_height * 2 + crop_y) + crop_x;
+      r = H444ToARGB(src_y, src_width, src_u, src_width, src_v, src_width,
+                     dst_argb, dst_stride_argb, crop_width, inv_crop_height);
+      break;
+    }
+
+    case FOURCC_U444: {
+      const uint8_t* src_y = sample + src_width * crop_y + crop_x;
+      const uint8_t* src_u;
+      const uint8_t* src_v;
+      src_u = sample + src_width * (abs_src_height + crop_y) + crop_x;
+      src_v = sample + src_width * (abs_src_height * 2 + crop_y) + crop_x;
+      r = U444ToARGB(src_y, src_width, src_u, src_width, src_v, src_width,
+                     dst_argb, dst_stride_argb, crop_width, inv_crop_height);
+      break;
+    }
+
 #ifdef HAVE_JPEG
     case FOURCC_MJPG:
       r = MJPGToARGB(sample, sample_size, dst_argb, dst_stride_argb, src_width,

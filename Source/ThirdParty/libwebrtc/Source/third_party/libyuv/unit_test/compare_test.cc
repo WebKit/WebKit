@@ -15,9 +15,12 @@
 #include "../unit_test/unit_test.h"
 #include "libyuv/basic_types.h"
 #include "libyuv/compare.h"
-#include "libyuv/compare_row.h" /* For HammingDistance_C */
 #include "libyuv/cpu_id.h"
 #include "libyuv/video_common.h"
+
+#ifdef ENABLE_ROW_TESTS
+#include "libyuv/compare_row.h" /* For HammingDistance_C */
+#endif
 
 namespace libyuv {
 
@@ -206,6 +209,7 @@ TEST_F(LibYUVCompareTest, BenchmarkARGBDetect_Unaligned) {
   free_aligned_buffer_page_end(src_a);
 }
 
+#ifdef ENABLE_ROW_TESTS
 TEST_F(LibYUVCompareTest, BenchmarkHammingDistance_Opt) {
   const int kMaxWidth = 4096 * 3;
   align_buffer_page_end(src_a, kMaxWidth);
@@ -403,6 +407,7 @@ TEST_F(LibYUVCompareTest, TestHammingDistance_Opt) {
   free_aligned_buffer_page_end(src_a);
   free_aligned_buffer_page_end(src_b);
 }
+#endif  // ENABLE_ROW_TESTS
 
 TEST_F(LibYUVCompareTest, TestHammingDistance) {
   align_buffer_page_end(src_a, benchmark_width_ * benchmark_height_);

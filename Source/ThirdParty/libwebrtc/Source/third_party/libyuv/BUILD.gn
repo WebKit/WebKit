@@ -6,8 +6,8 @@
 # in the file PATENTS. All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("libyuv.gni")
 import("//testing/test.gni")
+import("libyuv.gni")
 
 declare_args() {
   # Set to false to disable building with gflags.

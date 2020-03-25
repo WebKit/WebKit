@@ -100,4 +100,8 @@ Inverting can be achieved with almost any libyuv function by passing a negative 
 
 I420Mirror and ARGBMirror can also be used to rotate by 180 degrees by passing a negative height.
 
+# Cropping - Vertical Flip
 
+When cropping from a subsampled format like NV21, the method of setting the start pointers wont work for odd crop start y on the UV plane.
+If the height after cropping will be odd, invert the source - point to the last row, negate the strides, and pass negative height, which
+will re-invert the image as the conversion outputs.

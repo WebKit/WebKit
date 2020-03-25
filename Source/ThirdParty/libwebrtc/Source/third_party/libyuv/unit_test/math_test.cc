@@ -16,10 +16,14 @@
 #include "libyuv/basic_types.h"
 #include "libyuv/cpu_id.h"
 #include "libyuv/scale.h"
+
+#ifdef ENABLE_ROW_TESTS
 #include "libyuv/scale_row.h"
+#endif
 
 namespace libyuv {
 
+#ifdef ENABLE_ROW_TESTS
 TEST_F(LibYUVBaseTest, TestFixedDiv) {
   int num[1280];
   int div[1280];
@@ -151,5 +155,6 @@ TEST_F(LibYUVBaseTest, TestFixedDiv1_Opt) {
     EXPECT_NEAR(result_c[j], result_opt[j], 1);
   }
 }
+#endif  // ENABLE_ROW_TESTS
 
 }  // namespace libyuv

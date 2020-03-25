@@ -20,6 +20,18 @@ namespace libyuv {
 extern "C" {
 #endif
 
+// The following ifdef from row_win makes the C code match the row_win code,
+// which is 7 bit fixed point.
+#if !defined(LIBYUV_DISABLE_X86) && defined(_MSC_VER) && \
+    (defined(_M_IX86) || (defined(_M_X64) && !defined(__clang__)))
+#define LIBYUV_RGB7 1
+#endif
+// mips use 7 bit RGBToY
+#if (!defined(LIBYUV_DISABLE_MMI) && defined(_MIPS_ARCH_LOONGSON3A)) || \
+    (!defined(LIBYUV_DISABLE_MSA) && defined(__mips_msa))
+#define LIBYUV_RGB7 1
+#endif
+
 // llvm x86 is poor at ternary operator, so use branchless min/max.
 
 #define USE_BRANCHLESS 1
@@ -107,6 +119,21 @@ void RAWToARGBRow_C(const uint8_t* src_raw, uint8_t* dst_argb, int width) {
     dst_argb[2] = r;
     dst_argb[3] = 255u;
     dst_argb += 4;
+    src_raw += 3;
+  }
+}
+
+void RAWToRGBARow_C(const uint8_t* src_raw, uint8_t* dst_rgba, int width) {
+  int x;
+  for (x = 0; x < width; ++x) {
+    uint8_t r = src_raw[0];
+    uint8_t g = src_raw[1];
+    uint8_t b = src_raw[2];
+    dst_rgba[0] = 255u;
+    dst_rgba[1] = b;
+    dst_rgba[2] = g;
+    dst_rgba[3] = r;
+    dst_rgba += 4;
     src_raw += 3;
   }
 }
@@ -381,9 +408,22 @@ void ARGBToAR30Row_C(const uint8_t* src_argb, uint8_t* dst_ar30, int width) {
   }
 }
 
+#ifdef LIBYUV_RGB7
+// Old 7 bit math for compatibility on unsupported platforms.
+static __inline int RGBToY(uint8_t r, uint8_t g, uint8_t b) {
+  return ((33 * r + 65 * g + 13 * b) >> 7) + 16;
+}
+#else
+// 8 bit
+// Intel SSE/AVX uses the following equivalent formula
+// 0x7e80 = (66 + 129 + 25) * -128 + 0x1000 (for +16) and 0x0080 for round.
+//  return (66 * ((int)r - 128) + 129 * ((int)g - 128) + 25 * ((int)b - 128) +
+//  0x7e80) >> 8;
+
 static __inline int RGBToY(uint8_t r, uint8_t g, uint8_t b) {
   return (66 * r + 129 * g + 25 * b + 0x1080) >> 8;
 }
+#endif
 
 static __inline int RGBToU(uint8_t r, uint8_t g, uint8_t b) {
   return (112 * b - 74 * g - 38 * r + 0x8080) >> 8;
@@ -448,14 +488,14 @@ MAKEROWY(RAW, 0, 1, 2, 3)
 // b 0.1016 * 255 = 25.908 = 25
 // g 0.5078 * 255 = 129.489 = 129
 // r 0.2578 * 255 = 65.739 = 66
-// JPeg 8 bit Y (not used):
-// b 0.11400 * 256 = 29.184 = 29
-// g 0.58700 * 256 = 150.272 = 150
-// r 0.29900 * 256 = 76.544 = 77
-// JPeg 7 bit Y:
+// JPeg 7 bit Y (deprecated)
 // b 0.11400 * 128 = 14.592 = 15
 // g 0.58700 * 128 = 75.136 = 75
 // r 0.29900 * 128 = 38.272 = 38
+// JPeg 8 bit Y:
+// b 0.11400 * 256 = 29.184 = 29
+// g 0.58700 * 256 = 150.272 = 150
+// r 0.29900 * 256 = 76.544 = 77
 // JPeg 8 bit U:
 // b  0.50000 * 255 = 127.5 = 127
 // g -0.33126 * 255 = -84.4713 = -84
@@ -465,9 +505,17 @@ MAKEROWY(RAW, 0, 1, 2, 3)
 // g -0.41869 * 255 = -106.76595 = -107
 // r  0.50000 * 255 = 127.5 = 127
 
+#ifdef LIBYUV_RGB7
+// Old 7 bit math for compatibility on unsupported platforms.
 static __inline int RGBToYJ(uint8_t r, uint8_t g, uint8_t b) {
   return (38 * r + 75 * g + 15 * b + 64) >> 7;
 }
+#else
+// 8 bit
+static __inline int RGBToYJ(uint8_t r, uint8_t g, uint8_t b) {
+  return (77 * r + 150 * g + 29 * b + 128) >> 8;
+}
+#endif
 
 static __inline int RGBToUJ(uint8_t r, uint8_t g, uint8_t b) {
   return (127 * b - 84 * g - 43 * r + 0x8080) >> 8;
@@ -516,6 +564,7 @@ static __inline int RGBToVJ(uint8_t r, uint8_t g, uint8_t b) {
   }
 
 MAKEROWYJ(ARGB, 2, 1, 0, 4)
+MAKEROWYJ(RGBA, 3, 2, 1, 4)
 #undef MAKEROWYJ
 
 void RGB565ToYRow_C(const uint8_t* src_rgb565, uint8_t* dst_y, int width) {
@@ -1284,6 +1333,87 @@ const struct YuvConstants SIMD_ALIGNED(kYuvH709Constants) = {
     {BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR},
     {YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG}};
 const struct YuvConstants SIMD_ALIGNED(kYvuH709Constants) = {
+    {VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0,
+     VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0},
+    {VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG,
+     VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG},
+    {0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB,
+     0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB},
+    {BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR},
+    {BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},
+    {BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB},
+    {YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG}};
+#endif
+
+#undef BB
+#undef BG
+#undef BR
+#undef YGB
+#undef UB
+#undef UG
+#undef VG
+#undef VR
+#undef YG
+
+// BT.2020 YUV to RGB reference
+//  R = (Y - 16) * 1.164384                - V * -1.67867
+//  G = (Y - 16) * 1.164384 - U * 0.187326 - V * -0.65042
+//  B = (Y - 16) * 1.164384 - U * -2.14177
+
+// Y contribution to R,G,B.  Scale and bias.
+#define YG 19003  /* round(1.164384 * 64 * 256 * 256 / 257) */
+#define YGB -1160 /* 1.164384 * 64 * -16 + 64 / 2 */
+
+// TODO(fbarchard): Improve accuracy; the B channel is off by 7%.
+#define UB -128 /* max(-128, round(-2.142 * 64)) */
+#define UG 12   /* round(0.187326 * 64) */
+#define VG 42   /* round(0.65042 * 64) */
+#define VR -107 /* round(-1.67867 * 64) */
+
+// Bias values to round, and subtract 128 from U and V.
+#define BB (UB * 128 + YGB)
+#define BG (UG * 128 + VG * 128 + YGB)
+#define BR (VR * 128 + YGB)
+
+#if defined(__aarch64__)
+const struct YuvConstants SIMD_ALIGNED(kYuv2020Constants) = {
+    {-UB, -VR, -UB, -VR, -UB, -VR, -UB, -VR},
+    {-UB, -VR, -UB, -VR, -UB, -VR, -UB, -VR},
+    {UG, VG, UG, VG, UG, VG, UG, VG},
+    {UG, VG, UG, VG, UG, VG, UG, VG},
+    {BB, BG, BR, 0, 0, 0, 0, 0},
+    {0x0101 * YG, 0, 0, 0}};
+const struct YuvConstants SIMD_ALIGNED(kYvu2020Constants) = {
+    {-VR, -UB, -VR, -UB, -VR, -UB, -VR, -UB},
+    {-VR, -UB, -VR, -UB, -VR, -UB, -VR, -UB},
+    {VG, UG, VG, UG, VG, UG, VG, UG},
+    {VG, UG, VG, UG, VG, UG, VG, UG},
+    {BR, BG, BB, 0, 0, 0, 0, 0},
+    {0x0101 * YG, 0, 0, 0}};
+#elif defined(__arm__)
+const struct YuvConstants SIMD_ALIGNED(kYuv2020Constants) = {
+    {-UB, -UB, -UB, -UB, -VR, -VR, -VR, -VR, 0, 0, 0, 0, 0, 0, 0, 0},
+    {UG, UG, UG, UG, VG, VG, VG, VG, 0, 0, 0, 0, 0, 0, 0, 0},
+    {BB, BG, BR, 0, 0, 0, 0, 0},
+    {0x0101 * YG, 0, 0, 0}};
+const struct YuvConstants SIMD_ALIGNED(kYvu2020Constants) = {
+    {-VR, -VR, -VR, -VR, -UB, -UB, -UB, -UB, 0, 0, 0, 0, 0, 0, 0, 0},
+    {VG, VG, VG, VG, UG, UG, UG, UG, 0, 0, 0, 0, 0, 0, 0, 0},
+    {BR, BG, BB, 0, 0, 0, 0, 0},
+    {0x0101 * YG, 0, 0, 0}};
+#else
+const struct YuvConstants SIMD_ALIGNED(kYuv2020Constants) = {
+    {UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0,
+     UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0, UB, 0},
+    {UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG,
+     UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG},
+    {0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR,
+     0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR},
+    {BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB, BB},
+    {BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG},
+    {BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR, BR},
+    {YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG, YG}};
+const struct YuvConstants SIMD_ALIGNED(kYvu2020Constants) = {
     {VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0,
      VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0, VR, 0},
     {VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG, VG, UG,
@@ -3178,9 +3308,6 @@ void NV12ToRGB565Row_AVX2(const uint8_t* src_y,
 float ScaleSumSamples_C(const float* src, float* dst, float scale, int width) {
   float fsum = 0.f;
   int i;
-#if defined(__clang__)
-#pragma clang loop vectorize_width(4)
-#endif
   for (i = 0; i < width; ++i) {
     float v = *src++;
     fsum += v * v;
@@ -3319,6 +3446,7 @@ void AYUVToYRow_C(const uint8_t* src_ayuv, uint8_t* dst_y, int width) {
   }
 }
 
+// Convert UV plane of NV12 to VU of NV21.
 void SwapUVRow_C(const uint8_t* src_uv, uint8_t* dst_vu, int width) {
   int x;
   for (x = 0; x < width; ++x) {
