@@ -64,9 +64,14 @@ void Pasteboard::setDragImage(DragImage, const IntPoint&)
     notImplemented();
 }
 
+String Pasteboard::nameOfDragPasteboard()
+{
+    return "drag and drop pasteboard";
+}
+
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
-    return makeUnique<Pasteboard>("data interaction pasteboard");
+    return makeUnique<Pasteboard>(Pasteboard::nameOfDragPasteboard());
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
@@ -348,7 +353,7 @@ bool Pasteboard::respectsUTIFidelities() const
     // For now, data interaction is the only feature that uses item-provider-based pasteboard representations.
     // In the future, we may need to consult the client layer to determine whether or not the pasteboard supports
     // item types ranked by fidelity.
-    return m_pasteboardName == "data interaction pasteboard";
+    return m_pasteboardName == Pasteboard::nameOfDragPasteboard();
 }
 
 void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, Optional<size_t> itemIndex)

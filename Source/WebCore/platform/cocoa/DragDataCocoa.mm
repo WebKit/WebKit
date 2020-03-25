@@ -126,7 +126,7 @@ DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPo
 #if PLATFORM(MAC)
     , m_pasteboardName([[m_platformDragData draggingPasteboard] name])
 #else
-    , m_pasteboardName("data interaction pasteboard")
+    , m_pasteboardName(Pasteboard::nameOfDragPasteboard())
 #endif
 {
 }

@@ -7788,7 +7788,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     _dragDropInteractionState.dropSessionDidEnterOrUpdate(session, dragData);
 
     [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session)];
-    _page->dragEntered(dragData, "data interaction pasteboard");
+    _page->dragEntered(dragData, WebCore::Pasteboard::nameOfDragPasteboard());
 }
 
 - (UIDropProposal *)dropInteraction:(UIDropInteraction *)interaction sessionDidUpdate:(id <UIDropSession>)session
@@ -7796,7 +7796,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session)];
 
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:[self _dragDestinationActionForDropSession:session]];
-    _page->dragUpdated(dragData, "data interaction pasteboard");
+    _page->dragUpdated(dragData, WebCore::Pasteboard::nameOfDragPasteboard());
     _dragDropInteractionState.dropSessionDidEnterOrUpdate(session, dragData);
 
     auto delegate = self.webViewUIDelegate;
@@ -7828,7 +7828,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session)];
 
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
-    _page->dragExited(dragData, "data interaction pasteboard");
+    _page->dragExited(dragData, WebCore::Pasteboard::nameOfDragPasteboard());
     _page->resetCurrentDragInformation();
 
     _dragDropInteractionState.dropSessionDidExit();
@@ -7872,7 +7872,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         WebKit::SandboxExtension::Handle sandboxExtensionHandle;
         WebKit::SandboxExtension::HandleArray sandboxExtensionForUpload;
         retainedSelf->_page->createSandboxExtensionsIfNeeded(filenames, sandboxExtensionHandle, sandboxExtensionForUpload);
-        retainedSelf->_page->performDragOperation(capturedDragData, "data interaction pasteboard", WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
+        retainedSelf->_page->performDragOperation(capturedDragData, WebCore::Pasteboard::nameOfDragPasteboard(), WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
         if (shouldSnapshotView) {
             retainedSelf->_visibleContentViewSnapshot = [retainedSelf snapshotViewAfterScreenUpdates:NO];
             [retainedSelf->_visibleContentViewSnapshot setFrame:[retainedSelf bounds]];

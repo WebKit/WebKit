@@ -105,6 +105,11 @@ std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 }
 
 #if ENABLE(DRAG_SUPPORT)
+String Pasteboard::nameOfDragPasteboard()
+{
+    return NSPasteboardNameDrag;
+}
+
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN

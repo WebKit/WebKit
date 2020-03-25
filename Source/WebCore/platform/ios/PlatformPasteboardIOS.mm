@@ -60,7 +60,7 @@ PlatformPasteboard::PlatformPasteboard()
 #if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS
 PlatformPasteboard::PlatformPasteboard(const String& name)
 {
-    if (name == "data interaction pasteboard")
+    if (name == Pasteboard::nameOfDragPasteboard())
         m_pasteboard = [WebItemProviderPasteboard sharedInstance];
     else
         m_pasteboard = [PAL::getUIPasteboardClass() generalPasteboard];
