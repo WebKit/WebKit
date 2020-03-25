@@ -5,7 +5,7 @@ layer at (0,0) size 800x112
     RenderBody {BODY} at (8,8) size 784x96
       RenderRuby (inline) {RUBY} at (0,0) size 570x36
         RenderRubyRun (anonymous) at (0,0) size 57x48
-          RenderRubyText {RT} at (32,20) size 14x8
+          RenderRubyText {RT} at (32,20) size 12x8
             RenderRuby (inline) {RUBY} at (0,0) size 10x8
               RenderRubyRun (anonymous) at (0,0) size 12x8
                 RenderRubyText {RT} at (11,0) size 11x8
@@ -18,7 +18,7 @@ layer at (0,0) size 800x112
             RenderText {#text} at (0,6) size 57x36
               text run at (0,6) width 57: "\x{4E16}"
         RenderRubyRun (anonymous) at (57,0) size 57x48
-          RenderRubyText {RT} at (32,16) size 14x16
+          RenderRubyText {RT} at (32,16) size 12x16
             RenderRuby (inline) {RUBY} at (0,0) size 10x16
               RenderRubyRun (anonymous) at (0,0) size 12x16
                 RenderRubyText {RT} at (11,0) size 11x16
@@ -31,7 +31,7 @@ layer at (0,0) size 800x112
             RenderText {#text} at (0,6) size 57x36
               text run at (0,6) width 57: "\x{4E0A}"
         RenderRubyRun (anonymous) at (114,0) size 57x48
-          RenderRubyText {RT} at (32,20) size 14x8
+          RenderRubyText {RT} at (32,20) size 12x8
             RenderRuby (inline) {RUBY} at (0,0) size 10x8
               RenderRubyRun (anonymous) at (0,0) size 12x8
                 RenderRubyText {RT} at (11,0) size 11x8
@@ -44,7 +44,7 @@ layer at (0,0) size 800x112
             RenderText {#text} at (0,6) size 57x36
               text run at (0,6) width 57: "\x{7121}"
         RenderRubyRun (anonymous) at (171,0) size 57x48
-          RenderRubyText {RT} at (32,16) size 14x16
+          RenderRubyText {RT} at (32,16) size 12x16
             RenderRuby (inline) {RUBY} at (0,0) size 10x16
               RenderRubyRun (anonymous) at (0,0) size 12x16
                 RenderRubyText {RT} at (11,0) size 11x16
@@ -57,7 +57,7 @@ layer at (0,0) size 800x112
             RenderText {#text} at (0,6) size 57x36
               text run at (0,6) width 57: "\x{96E3}"
         RenderRubyRun (anonymous) at (228,0) size 57x48
-          RenderRubyText {RT} at (32,20) size 14x8
+          RenderRubyText {RT} at (32,20) size 12x8
             RenderRuby (inline) {RUBY} at (0,0) size 10x8
               RenderRubyRun (anonymous) at (0,0) size 12x8
                 RenderRubyText {RT} at (11,0) size 11x8
@@ -77,7 +77,7 @@ layer at (0,0) size 800x112
             RenderText {#text} at (0,6) size 57x36
               text run at (0,6) width 57: "\x{53EA}"
         RenderRubyRun (anonymous) at (342,0) size 57x48
-          RenderRubyText {RT} at (32,16) size 14x16
+          RenderRubyText {RT} at (32,16) size 12x16
             RenderRuby (inline) {RUBY} at (0,0) size 10x16
               RenderRubyRun (anonymous) at (0,0) size 12x16
                 RenderRubyText {RT} at (11,0) size 11x16
@@ -90,7 +90,7 @@ layer at (0,0) size 800x112
             RenderText {#text} at (0,6) size 57x36
               text run at (0,6) width 57: "\x{6015}"
         RenderRubyRun (anonymous) at (399,0) size 57x48
-          RenderRubyText {RT} at (32,16) size 14x16
+          RenderRubyText {RT} at (32,16) size 12x16
             RenderRuby (inline) {RUBY} at (0,0) size 10x16
               RenderRubyRun (anonymous) at (0,0) size 12x16
                 RenderRubyText {RT} at (11,0) size 11x16
@@ -110,7 +110,7 @@ layer at (0,0) size 800x112
             RenderText {#text} at (0,6) size 57x36
               text run at (0,6) width 57: "\x{5FC3}"
         RenderRubyRun (anonymous) at (513,0) size 57x48
-          RenderRubyText {RT} at (32,16) size 14x16
+          RenderRubyText {RT} at (32,16) size 12x16
             RenderRuby (inline) {RUBY} at (0,0) size 10x16
               RenderRubyRun (anonymous) at (0,0) size 12x16
                 RenderRubyText {RT} at (11,0) size 11x16

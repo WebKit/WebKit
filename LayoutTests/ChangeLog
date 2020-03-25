@@ -1,3 +1,144 @@
+2020-03-25  Frank Yang  <guowei_yang@apple.com>
+
+        WebKit uses Alphabetic Baseline when "-webkit-text-orientation" is "mixed" in Vertical Writing Mode
+        https://bugs.webkit.org/show_bug.cgi?id=208824
+
+        Reviewed by Myles C. Maxfield.
+
+        Fixed errors in existing test files and expected results regarding 
+        baseline alignment. This baseline alignment bug is probably in the codebase 
+        for a long time, and all the following tests are based on 
+        two incorrect behaviors within WebKit, which is 
+           1) WebKit cannot parse "text-orientation" since it's not supported yet, 
+           2) WebKit doesn't distinguish "mixed" and "sideways" when selecting baselines, 
+        so both orientations alphabetic baseline is selected. Therefore, for those test
+        cases, the expected files are actually reflecting the behavior of 
+        "sideways" instead of "mixed". Now after this patch, "mixed" now 
+        selects ideographic baseline, which will cause the tests to fail, 
+        so I added "-webkit-text-orientation: sideways" to these tests, and 
+        I also created new tests to cover "mixed" text orientation. 
+
+        * editing/selection/vertical-rl-rtl-extend-line-backward-br.html:
+        * editing/selection/vertical-rl-rtl-extend-line-backward-p.html:
+        * editing/selection/vertical-rl-rtl-extend-line-forward-br.html:
+        * editing/selection/vertical-rl-rtl-extend-line-forward-p.html:
+        * fast/backgrounds/background-leakage-transforms.html:
+        * fast/css/vertical-text-overflow-ellipsis-text-align-center.html:
+        * fast/css/vertical-text-overflow-ellipsis-text-align-justify.html:
+        * fast/css/vertical-text-overflow-ellipsis-text-align-left.html:
+        * fast/css/vertical-text-overflow-ellipsis-text-align-right.html:
+        * fast/html/details-marker-style.html:
+        * fast/html/details-writing-mode.html:
+        * fast/inline-block/baseline-vertical-01-expected.html:
+        * fast/inline-block/baseline-vertical-01.html:
+        * fast/inline-block/baseline-vertical-02-expected.html:
+        * fast/inline-block/baseline-vertical-02.html:
+        * fast/inline-block/baseline-vertical-03-expected.html:
+        * fast/inline-block/baseline-vertical-03.html:
+        * fast/inline-block/baseline-vertical-04-expected.html:
+        * fast/inline-block/baseline-vertical-04.html:
+        * fast/inline-block/baseline-vertical-05-expected.html:
+        * fast/inline-block/baseline-vertical-05.html:
+        * fast/inline-block/baseline-vertical-06-expected.html:
+        * fast/inline-block/baseline-vertical-06.html:
+        * fast/inline-block/baseline-vertical-07-expected.html:
+        * fast/inline-block/baseline-vertical-07.html:
+        * fast/inline-block/baseline-vertical-08-expected.html:
+        * fast/inline-block/baseline-vertical-08.html:
+        * fast/lists/003-vertical.html:
+        * fast/lists/009-vertical.html:
+        * fast/multicol/tall-image-behavior-lr.html:
+        * fast/multicol/vertical-rl/rule-style.html:
+        * fast/ruby/overhang-vertical-no-overlap2.html:
+        * fast/ruby/overhang-vertical.html:
+        * fast/text/vertical-rl-rtl-linebreak.html:
+        * fast/writing-mode/background-vertical-lr.html:
+        * fast/writing-mode/background-vertical-rl.html:
+        * fast/writing-mode/basic-vertical-line.html:
+        * fast/writing-mode/border-image-vertical-lr.html:
+        * fast/writing-mode/border-image-vertical-rl.html:
+        * fast/writing-mode/border-styles-vertical-lr.html:
+        * fast/writing-mode/border-styles-vertical-rl.html:
+        * fast/writing-mode/vertical-lr-replaced-selection.html:
+        * fast/writing-mode/vertical-rl-replaced-selection.html:
+        * platform/ios/media/track/track-cue-rendering-vertical-expected.txt: 
+        * platform/mac/fast/ruby/bopomofo-expected.txt:
+        * platform/mac/fast/ruby/bopomofo-letter-spacing-expected.txt:
+        * platform/mac/fast/ruby/bopomofo-rl-expected.txt:
+        * platform/mac/fast/text/orientation-sideways-expected.png: Removed.
+        * platform/mac/fast/writing-mode/text-orientation-basic-expected.txt:
+        * platform/mac/fast/writing-mode/vertical-baseline-alignment-expected.txt:
+        * platform/win/fast/ruby/bopomofo-expected.txt:
+        * platform/win/fast/ruby/bopomofo-letter-spacing-expected.txt:
+        * platform/win/fast/ruby/bopomofo-rl-expected.txt:
+        * platform/win/fast/writing-mode/text-orientation-basic-expected.txt:
+        * platform/win/fast/writing-mode/vertical-align-table-baseline-expected.txt:
+        * platform/win/fast/writing-mode/vertical-baseline-alignment-expected.txt:
+        * platform/win/fast/css/vertical-text-overflow-ellipsis-text-align-center-mixed-expected.txt: Added.
+        * platform/win/fast/css/vertical-text-overflow-ellipsis-text-align-justify-mixed-expected.txt: Added.
+        * platform/win/fast/css/vertical-text-overflow-ellipsis-text-align-left-mixed-expected.txt: Added.
+        * platform/win/fast/css/vertical-text-overflow-ellipsis-text-align-right-mixed-expected.txt: Added.
+        * platform/win/fast/html/details-marker-style-mixed-expected.txt: Added.
+        * platform/win/fast/html/details-writing-mode-mixed-expected.txt: Added.
+        * platform/win/fast/multicol/tall-image-behavior-lr-mixed-expected.txt: Added.
+        * platform/win/fast/ruby/bopomofo-mixed-expected.txt: Added.
+        * platform/win/fast/text/vertical-rl-rtl-linebreak-mixed-expected.txt: Added.
+        * platform/win/fast/writing-mode/vertical-baseline-alignment-mixed-expected.txt: Added.
+        * platform/win/fast/writing-mode/vertical-lr-replaced-selection-mixed-expected.txt: Added.
+        * platform/win/fast/writing-mode/vertical-rl-replaced-selection-mixed-expected.txt: Added.
+        * printing/resources/iframe-subframe-vertical-rl.html:
+        * editing/selection/vertical-rl-rtl-extend-line-backward-br-mixed-expected.txt: Added.
+        * editing/selection/vertical-rl-rtl-extend-line-backward-br-mixed.html: Added.
+        * editing/selection/vertical-rl-rtl-extend-line-backward-p-mixed-expected.txt: Added.
+        * editing/selection/vertical-rl-rtl-extend-line-backward-p-mixed.html: Added.
+        * editing/selection/vertical-rl-rtl-extend-line-forward-br-mixed-expected.txt: Added.
+        * editing/selection/vertical-rl-rtl-extend-line-forward-br-mixed.html: Added.
+        * editing/selection/vertical-rl-rtl-extend-line-forward-p-mixed-expected.txt: Added.
+        * editing/selection/vertical-rl-rtl-extend-line-forward-p-mixed.html: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-center-mixed-expected.txt: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-center-mixed.html: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-justify-mixed-expected.txt: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-justify-mixed.html: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-left-mixed-expected.txt: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-left-mixed.html: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-right-mixed-expected.txt: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-right-mixed.html: Added.
+        * fast/html/details-marker-style-mixed-expected.txt: Added.
+        * fast/html/details-marker-style-mixed.html: Added.
+        * fast/html/details-writing-mode-mixed-expected.txt: Added.
+        * fast/html/details-writing-mode-mixed.html: Added.
+        * fast/multicol/tall-image-behavior-lr-mixed-expected.txt: Added.
+        * fast/multicol/tall-image-behavior-lr-mixed.html: Added.
+        * fast/ruby/bopomofo-mixed-expected.txt: Added.
+        * fast/ruby/bopomofo-mixed.html: Added.
+        * fast/ruby/overhang-vertical-mixed-expected.txt: Added.
+        * fast/ruby/overhang-vertical-mixed.html: Added.
+        * fast/ruby/overhang-vertical-no-overlap2-mixed-expected.txt: Added.
+        * fast/ruby/overhang-vertical-no-overlap2-mixed.html: Added.
+        * fast/text/vertical-rl-rtl-linebreak-mixed-expected.txt: Added.
+        * fast/text/vertical-rl-rtl-linebreak-mixed.html: Added.
+        * fast/writing-mode/background-vertical-lr-mixed-expected.txt: Added.
+        * fast/writing-mode/background-vertical-lr-mixed.html: Added.
+        * fast/writing-mode/background-vertical-rl-mixed-expected.txt: Added.
+        * fast/writing-mode/background-vertical-rl-mixed.html: Added.
+        * fast/writing-mode/basic-vertical-line-mixed-expected.txt: Added.
+        * fast/writing-mode/basic-vertical-line-mixed.html: Added.
+        * fast/writing-mode/border-styles-vertical-lr-mixed-expected.txt: Added.
+        * fast/writing-mode/border-styles-vertical-lr-mixed.html: Added.
+        * fast/writing-mode/border-styles-vertical-rl-mixed-expected.txt: Added.
+        * fast/writing-mode/border-styles-vertical-rl-mixed.html: Added.
+        * fast/writing-mode/vertical-baseline-alignment-mixed-expected.txt: Added.
+        * fast/writing-mode/vertical-baseline-alignment-mixed.html: Added.
+        * fast/writing-mode/vertical-lr-replaced-selection-mixed-expected.txt: Added.
+        * fast/writing-mode/vertical-lr-replaced-selection-mixed.html: Added.
+        * fast/writing-mode/vertical-rl-replaced-selection-mixed-expected.txt: Added.
+        * fast/writing-mode/vertical-rl-replaced-selection-mixed.html: Added.
+        * LayoutTests/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
+
 2020-03-24  Daniel Bates  <dabates@apple.com>
 
         [iOS] ASSERTION FAILURE: !isMissingPostLayoutData in WebKit::EditorState::postLayoutData()

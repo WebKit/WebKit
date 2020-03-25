@@ -451,7 +451,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
         return false;
 
     const RenderStyle& lineStyle = this->lineStyle();
-    if (lineStyle.fontDescription().nonCJKGlyphOrientation() == NonCJKGlyphOrientation::Upright
+    if (lineStyle.fontDescription().orientation() == FontOrientation::Vertical
         || lineStyle.fontCascade().primaryFont().hasVerticalGlyphs())
         return true;
 

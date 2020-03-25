@@ -1,3 +1,18 @@
+2020-03-25  Frank Yang  <guowei_yang@apple.com>
+        
+        WebKit uses Alphabetic Baseline when "-webkit-text-orientation" is "mixed" in Vertical Writing Mode 
+        https://bugs.webkit.org/show_bug.cgi?id=208824
+
+        Reviewed by Myles C. Maxfield.
+
+        Those -expected.txt files need to be updated since previously they are expecting 
+        failures, but after the code change those failures are actually passing, so the 
+        expected.txt files need to be updated.        
+
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-008-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-container-baseline-001-expected.txt:
+
+
 2020-03-23  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest: getAllResponseHeaders() sorting
