@@ -223,9 +223,15 @@ static inline JSC::EncodedJSValue jsReadOnlySetLikePrototypeFunctionHasBody(JSC:
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto key = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto key = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLAny>(forwardHasToSetLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key))));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardHasToSetLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionHas(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -238,7 +244,8 @@ static inline JSC::EncodedJSValue jsReadOnlySetLikePrototypeFunctionEntriesBody(
     UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
-    return JSValue::encode(toJS<IDLAny>(forwardEntriesToSetLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardEntriesToSetLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionEntries(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -251,7 +258,8 @@ static inline JSC::EncodedJSValue jsReadOnlySetLikePrototypeFunctionKeysBody(JSC
     UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
-    return JSValue::encode(toJS<IDLAny>(forwardKeysToSetLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardKeysToSetLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionKeys(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -264,7 +272,8 @@ static inline JSC::EncodedJSValue jsReadOnlySetLikePrototypeFunctionValuesBody(J
     UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
-    return JSValue::encode(toJS<IDLAny>(forwardValuesToSetLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardValuesToSetLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionValues(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -279,9 +288,15 @@ static inline JSC::EncodedJSValue jsReadOnlySetLikePrototypeFunctionForEachBody(
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto callback = convert<IDLAny>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto callback = convert<IDLAny>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLAny>(forwardForEachToSetLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback))));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardForEachToSetLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionForEach(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

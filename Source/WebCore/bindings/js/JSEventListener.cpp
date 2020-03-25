@@ -53,9 +53,7 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
 {
     if (function) {
         ASSERT(wrapper);
-        JSC::VM& vm = m_isolatedWorld->vm();
         m_jsFunction = JSC::Weak<JSC::JSObject>(function);
-        vm.heap.writeBarrier(wrapper, function);
         m_isInitialized = true;
     }
 }

@@ -256,9 +256,15 @@ static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemBody(JSC
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto index = convert<IDLUnsignedLong>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto index = convert<IDLUnsignedLong>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLInterface<Node>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.item(WTFMove(index))));
+    auto result = JSValue::encode(toJS<IDLInterface<Node>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.item(WTFMove(index))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

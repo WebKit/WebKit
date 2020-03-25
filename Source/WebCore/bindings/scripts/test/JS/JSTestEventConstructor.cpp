@@ -173,9 +173,11 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto type = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto type = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto eventInitDict = convert<IDLDictionary<TestEventConstructor::Init>>(*lexicalGlobalObject, callFrame->argument(1));
+    auto argument1 = callFrame->argument(1);
+    auto eventInitDict = convert<IDLDictionary<TestEventConstructor::Init>>(*lexicalGlobalObject, argument1);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestEventConstructor::create(WTFMove(type), WTFMove(eventInitDict));
     auto jsValue = toJSNewlyCreated<IDLInterface<TestEventConstructor>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));

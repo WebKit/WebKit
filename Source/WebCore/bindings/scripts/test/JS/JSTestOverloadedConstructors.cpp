@@ -93,7 +93,8 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(JSGlobalObje
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
-    auto arrayBuffer = convert<IDLArrayBuffer>(*lexicalGlobalObject, callFrame->uncheckedArgument(0), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "arrayBuffer", "TestOverloadedConstructors", nullptr, "ArrayBuffer"); });
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto arrayBuffer = convert<IDLArrayBuffer>(*lexicalGlobalObject, argument0, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "arrayBuffer", "TestOverloadedConstructors", nullptr, "ArrayBuffer"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructors::create(*arrayBuffer);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
@@ -108,7 +109,8 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(JSGlobalObje
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
-    auto arrayBufferView = convert<IDLArrayBufferView>(*lexicalGlobalObject, callFrame->uncheckedArgument(0), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "arrayBufferView", "TestOverloadedConstructors", nullptr, "ArrayBufferView"); });
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto arrayBufferView = convert<IDLArrayBufferView>(*lexicalGlobalObject, argument0, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "arrayBufferView", "TestOverloadedConstructors", nullptr, "ArrayBufferView"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructors::create(arrayBufferView.releaseNonNull());
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
@@ -123,7 +125,8 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(JSGlobalObje
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
-    auto blob = convert<IDLInterface<Blob>>(*lexicalGlobalObject, callFrame->uncheckedArgument(0), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "blob", "TestOverloadedConstructors", nullptr, "Blob"); });
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto blob = convert<IDLInterface<Blob>>(*lexicalGlobalObject, argument0, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "blob", "TestOverloadedConstructors", nullptr, "Blob"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructors::create(*blob);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
@@ -138,7 +141,8 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(JSGlobalObje
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
-    auto string = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto string = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructors::create(WTFMove(string));
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));

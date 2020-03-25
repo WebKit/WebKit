@@ -268,7 +268,8 @@ static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionT
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    return JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.value()));
+    auto result = JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.value()));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestCEReactionsStringifierPrototypeFunctionToString(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

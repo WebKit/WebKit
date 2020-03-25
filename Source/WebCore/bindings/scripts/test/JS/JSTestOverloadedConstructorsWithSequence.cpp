@@ -92,7 +92,8 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
-    auto sequenceOfStrings = callFrame->argument(0).isUndefined() ? Converter<IDLSequence<IDLDOMString>>::ReturnType{ } : convert<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->argument(0);
+    auto sequenceOfStrings = argument0.isUndefined() ? Converter<IDLSequence<IDLDOMString>>::ReturnType{ } : convert<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructorsWithSequence::create(WTFMove(sequenceOfStrings));
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructorsWithSequence>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
@@ -107,7 +108,8 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
-    auto string = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto string = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructorsWithSequence::create(WTFMove(string));
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructorsWithSequence>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));

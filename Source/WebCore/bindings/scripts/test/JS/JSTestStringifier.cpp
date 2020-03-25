@@ -189,7 +189,8 @@ static inline JSC::EncodedJSValue jsTestStringifierPrototypeFunctionToStringBody
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    return JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.toString()));
+    auto result = JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.toString()));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestStringifierPrototypeFunctionToString(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

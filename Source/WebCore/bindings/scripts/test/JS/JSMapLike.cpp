@@ -231,9 +231,15 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionGetBody(JSC::JSGloba
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto key = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto key = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLAny>(forwardGetToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key))));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardGetToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionGet(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -248,9 +254,15 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionHasBody(JSC::JSGloba
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto key = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto key = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLAny>(forwardHasToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key))));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardHasToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionHas(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -263,7 +275,8 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionEntriesBody(JSC::JSG
     UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
-    return JSValue::encode(toJS<IDLAny>(forwardEntriesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardEntriesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionEntries(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -276,7 +289,8 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionKeysBody(JSC::JSGlob
     UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
-    return JSValue::encode(toJS<IDLAny>(forwardKeysToMapLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardKeysToMapLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionKeys(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -289,7 +303,8 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionValuesBody(JSC::JSGl
     UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
-    return JSValue::encode(toJS<IDLAny>(forwardValuesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardValuesToMapLike(*lexicalGlobalObject, *callFrame, *castedThis)));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionValues(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -304,9 +319,15 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionForEachBody(JSC::JSG
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto callback = convert<IDLAny>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto callback = convert<IDLAny>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLAny>(forwardForEachToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback))));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardForEachToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionForEach(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -321,11 +342,19 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionSetBody(JSC::JSGloba
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto key = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto key = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto value = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(1));
+    auto argument1 = callFrame->uncheckedArgument(1);
+    auto value = convert<IDLDOMString>(*lexicalGlobalObject, argument1);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLAny>(forwardSetToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key), WTFMove(value))));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardSetToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key), WTFMove(value))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+    ensureStillAliveHere(argument1);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionSet(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -354,9 +383,15 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionDeleteBody(JSC::JSGl
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto key = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto key = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLAny>(forwardDeleteToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key))));
+    auto result = JSValue::encode(toJS<IDLAny>(forwardDeleteToMapLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(key))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsMapLikePrototypeFunctionDelete(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

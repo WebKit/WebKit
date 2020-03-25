@@ -1135,9 +1135,15 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunctionGetAttributeBody(
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto name = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto name = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, impl.getAttribute(WTFMove(name))));
+    auto result = JSValue::encode(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, impl.getAttribute(WTFMove(name))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetAttribute(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -1169,11 +1175,19 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunctionItemBody(JSC::JSG
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto x = convert<IDLUnsignedShort>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto x = convert<IDLUnsignedShort>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto y = convert<IDLUnsignedShort>(*lexicalGlobalObject, callFrame->uncheckedArgument(1));
+    auto argument1 = callFrame->uncheckedArgument(1);
+    auto y = convert<IDLUnsignedShort>(*lexicalGlobalObject, argument1);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.item(WTFMove(x), WTFMove(y))));
+    auto result = JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.item(WTFMove(x), WTFMove(y))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+    ensureStillAliveHere(argument1);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionItem(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -1205,7 +1219,8 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunctionHasAttributeBody(
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    return JSValue::encode(toJS<IDLBoolean>(impl.hasAttribute()));
+    auto result = JSValue::encode(toJS<IDLBoolean>(impl.hasAttribute()));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionHasAttribute(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -1235,9 +1250,15 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunctionGetElementByIdBod
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto elementId = convert<IDLRequiresExistingAtomStringAdaptor<IDLDOMString>>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto elementId = convert<IDLRequiresExistingAtomStringAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLInterface<Element>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.getElementById(WTFMove(elementId))));
+    auto result = JSValue::encode(toJS<IDLInterface<Element>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.getElementById(WTFMove(elementId))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetElementById(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -1269,9 +1290,15 @@ static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunctionGetElementsByName
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto elementName = convert<IDLAtomStringAdaptor<IDLDOMString>>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto elementName = convert<IDLAtomStringAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLInterface<NodeList>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.getElementsByName(WTFMove(elementName))));
+    auto result = JSValue::encode(toJS<IDLInterface<NodeList>>(*lexicalGlobalObject, *castedThis->globalObject(), impl.getElementsByName(WTFMove(elementName))));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestDOMJITPrototypeFunctionGetElementsByName(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

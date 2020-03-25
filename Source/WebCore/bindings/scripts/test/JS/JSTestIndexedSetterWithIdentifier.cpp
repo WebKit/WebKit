@@ -283,11 +283,18 @@ static inline JSC::EncodedJSValue jsTestIndexedSetterWithIdentifierPrototypeFunc
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto index = convert<IDLUnsignedLong>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto index = convert<IDLUnsignedLong>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto value = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(1));
+    auto argument1 = callFrame->uncheckedArgument(1);
+    auto value = convert<IDLDOMString>(*lexicalGlobalObject, argument1);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.indexedSetter(WTFMove(index), WTFMove(value));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+    ensureStillAliveHere(argument1);
+
     return JSValue::encode(jsUndefined());
 }
 

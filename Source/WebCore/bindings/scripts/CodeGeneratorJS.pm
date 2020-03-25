@@ -1746,14 +1746,17 @@ sub OperationShouldBeOnInstance
     return 0;
 }
 
-sub OperationHasForcedReturnValue
+sub GetOperationReturnedArgumentName
 {
     my ($operation) = @_;
 
+    my $argumentIndex = 0;
     foreach my $argument (@{$operation->arguments}) {
-        return 1 if $argument->extendedAttributes->{ReturnValue};
+        return "argument${argumentIndex}" if $argument->extendedAttributes->{ReturnValue};
+        $argumentIndex++;
     }
-    return 0;
+
+    return undef;
 }
 
 sub IsAcceleratedDOMAttribute
@@ -5131,6 +5134,9 @@ sub GenerateAttributeSetterBodyDefinition
                 : "setEventHandlerAttribute";
             push(@$outputArray, "    $setter(lexicalGlobalObject, thisObject, thisObject.wrapped(), ${eventName}, value);\n");
         }
+        push(@$outputArray, "\n    VM& vm = JSC::getVM(&lexicalGlobalObject);\n");
+        push(@$outputArray, "    vm.heap.writeBarrier(&thisObject, value);\n");
+        push(@$outputArray, "    ensureStillAliveHere(value);\n\n");
         push(@$outputArray, "    return true;\n");
     } elsif ($codeGenerator->IsConstructorType($attribute->type)) {
         my $constructorType = $attribute->type->name;
@@ -5859,7 +5865,7 @@ sub NeedsExplicitPropagateExceptionCall
 
     return 0 unless $operation->extendedAttributes->{MayThrowException};
 
-    return $operation->type && ($operation->type->name eq "void" || $codeGenerator->IsPromiseType($operation->type) || OperationHasForcedReturnValue($operation));
+    return $operation->type && ($operation->type->name eq "void" || $codeGenerator->IsPromiseType($operation->type) || GetOperationReturnedArgumentName($operation));
 }
 
 sub GenerateParametersCheck
@@ -5936,13 +5942,12 @@ sub GenerateParametersCheck
                 assert("[ReturnValue] is not supported for optional arguments") if $argument->extendedAttributes->{ReturnValue};
 
                 if (defined($argument->default)) {
-                    if (WillConvertUndefinedToDefaultParameterValue($type, $argument->default)) {
-                        $argumentLookupForConversion = "callFrame->argument($argumentIndex)";
-                    } else {
+                    push(@$outputArray, $indent . "auto argument${argumentIndex} = callFrame->argument($argumentIndex);\n");
+                    if (!WillConvertUndefinedToDefaultParameterValue($type, $argument->default)) {
                         my $defaultValue = GenerateDefaultValue($interface, $argument, $argument->type, $argument->default);
-                        $optionalCheck = "callFrame->argument($argumentIndex).isUndefined() ? $defaultValue : ";
-                        $argumentLookupForConversion = "callFrame->uncheckedArgument($argumentIndex)"
+                        $optionalCheck = "argument${argumentIndex}.isUndefined() ? $defaultValue : ";
                     }
+                    $argumentLookupForConversion = "argument${argumentIndex}"
                 } else {
                     my $argumentIDLType = GetIDLType($interface, $argument->type);
 
@@ -5954,16 +5959,13 @@ sub GenerateParametersCheck
                         $nativeValueCastFunction = "Optional<Converter<$argumentIDLType>::ReturnType>";
                     }
 
-                    $optionalCheck = "callFrame->argument($argumentIndex).isUndefined() ? $defaultValue : ";
-                    $argumentLookupForConversion = "callFrame->uncheckedArgument($argumentIndex)";
+                    push(@$outputArray, $indent . "auto argument${argumentIndex} = callFrame->argument($argumentIndex);\n");
+                    $optionalCheck = "argument${argumentIndex}.isUndefined() ? $defaultValue : ";
+                    $argumentLookupForConversion = "argument${argumentIndex}";
                 }
             } else {
-                if ($argument->extendedAttributes->{ReturnValue}) {
-                    push(@$outputArray, $indent . "auto returnValue = callFrame->uncheckedArgument($argumentIndex);\n");
-                    $argumentLookupForConversion = "returnValue";
-                } else {
-                    $argumentLookupForConversion = "callFrame->uncheckedArgument($argumentIndex)";
-                }
+                push(@$outputArray, $indent . "auto argument${argumentIndex} = callFrame->uncheckedArgument($argumentIndex);\n");
+                $argumentLookupForConversion = "argument${argumentIndex}";
             }
 
             my $globalObjectReference = $operation->isStatic ? "*jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)" : "*castedThis->globalObject()";
@@ -6416,6 +6418,31 @@ sub GenerateCallbackImplementationContent
     push(@$contentRef, "}\n\n");
 }
 
+sub GenerateEnsureStillAliveCallsForArguments
+{
+    my ($outputArray, $operation, $indent) = @_;
+
+    my $addedStatements = 0;
+    my $hasVM = 0;
+    my $argumentIndex = 0;
+    foreach my $argument (@{$operation->arguments}) {
+        if (!$argument->isVariadic) {
+            push(@$outputArray, "\n${indent}// Make sure arguments stay alive until this end of this method.\n") if $argumentIndex == 0;
+            if ($argument->type->name eq "EventListener") {
+                if (!$hasVM) {
+                    push(@$outputArray, $indent . "VM& vm = JSC::getVM(lexicalGlobalObject);\n");
+                    $hasVM = 1;
+                }
+                push(@$outputArray, $indent . "vm.heap.writeBarrier(&static_cast<JSObject&>(*castedThis), argument${argumentIndex});\n");
+            }
+            push(@$outputArray, $indent . "ensureStillAliveHere(argument${argumentIndex});\n");
+            $addedStatements = 1;
+        }
+        $argumentIndex++;
+    }
+    push(@$outputArray, "\n") if $addedStatements;
+}
+
 sub GenerateImplementationFunctionCall
 {
     my ($outputArray, $operation, $interface, $functionString, $indent) = @_;
@@ -6426,15 +6453,20 @@ sub GenerateImplementationFunctionCall
         GenerateCallTracer($outputArray, $callTracingCallback, $operation->name, \@callTracerArguments, $indent);
     }
 
-    if (OperationHasForcedReturnValue($operation)) {
+    my $returnArgumentName = GetOperationReturnedArgumentName($operation);
+    if ($returnArgumentName) {
         push(@$outputArray, $indent . "$functionString;\n");
-        push(@$outputArray, $indent . "return JSValue::encode(returnValue);\n");
+        GenerateEnsureStillAliveCallsForArguments($outputArray, $operation, $indent);
+        push(@$outputArray, $indent . "return JSValue::encode($returnArgumentName);\n");
     } elsif ($operation->type->name eq "void" || ($codeGenerator->IsPromiseType($operation->type) && !$operation->extendedAttributes->{PromiseProxy})) {
         push(@$outputArray, $indent . "$functionString;\n");
+        GenerateEnsureStillAliveCallsForArguments($outputArray, $operation, $indent);
         push(@$outputArray, $indent . "return JSValue::encode(jsUndefined());\n");
     } else {
         my $globalObjectReference = $operation->isStatic ? "*jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)" : "*castedThis->globalObject()";
-        push(@$outputArray, $indent . "return JSValue::encode(" . NativeToJSValueUsingPointers($operation, $interface, $functionString, $globalObjectReference) . ");\n");
+        push(@$outputArray, $indent . "auto result = JSValue::encode(" . NativeToJSValueUsingPointers($operation, $interface, $functionString, $globalObjectReference) . ");\n");
+        GenerateEnsureStillAliveCallsForArguments($outputArray, $operation, $indent);
+        push(@$outputArray, $indent . "return result;\n");
     }
 }
 

@@ -191,7 +191,8 @@ static inline JSC::EncodedJSValue jsTestStringifierOperationImplementedAsPrototy
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    return JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.alternateIdentifier()));
+    auto result = JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.alternateIdentifier()));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestStringifierOperationImplementedAsPrototypeFunctionIdentifier(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -205,7 +206,8 @@ static inline JSC::EncodedJSValue jsTestStringifierOperationImplementedAsPrototy
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    return JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.alternateIdentifier()));
+    auto result = JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.alternateIdentifier()));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestStringifierOperationImplementedAsPrototypeFunctionToString(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

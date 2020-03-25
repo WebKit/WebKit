@@ -108,11 +108,14 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto str1 = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto str1 = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto str2 = callFrame->argument(1).isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(1));
+    auto argument1 = callFrame->argument(1);
+    auto str2 = argument1.isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, argument1);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto str3 = callFrame->argument(2).isUndefined() ? String() : convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(2));
+    auto argument2 = callFrame->argument(2);
+    auto str3 = argument2.isUndefined() ? String() : convert<IDLDOMString>(*lexicalGlobalObject, argument2);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestNamedConstructor::createForJSConstructor(WTFMove(str1), WTFMove(str2), WTFMove(str3));
     auto jsValue = toJSNewlyCreated<IDLInterface<TestNamedConstructor>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));

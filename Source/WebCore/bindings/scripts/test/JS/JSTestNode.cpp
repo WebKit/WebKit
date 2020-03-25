@@ -351,7 +351,8 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionGetSecretBooleanBod
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    return JSValue::encode(toJS<IDLBoolean>(impl.getSecretBoolean()));
+    auto result = JSValue::encode(toJS<IDLBoolean>(impl.getSecretBoolean()));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionGetSecretBoolean(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -366,7 +367,8 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestFeatureGetSecre
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    return JSValue::encode(toJS<IDLBoolean>(impl.testFeatureGetSecretBoolean()));
+    auto result = JSValue::encode(toJS<IDLBoolean>(impl.testFeatureGetSecretBoolean()));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestFeatureGetSecretBoolean(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

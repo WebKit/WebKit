@@ -193,9 +193,14 @@ static inline JSC::EncodedJSValue jsTestMediaQueryListListenerPrototypeFunctionM
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto listener = convert<IDLCallbackFunction<JSMediaQueryListListener>>(*lexicalGlobalObject, callFrame->uncheckedArgument(0), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 0, "listener", "TestMediaQueryListListener", "method"); });
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto listener = convert<IDLCallbackFunction<JSMediaQueryListListener>>(*lexicalGlobalObject, argument0, *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 0, "listener", "TestMediaQueryListListener", "method"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.method(listener.releaseNonNull());
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
     return JSValue::encode(jsUndefined());
 }
 

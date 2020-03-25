@@ -2567,9 +2567,14 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionRegularOpera
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto testParam = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto testParam = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.regularOperation(WTFMove(testParam));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
     return JSValue::encode(jsUndefined());
 }
 
@@ -2585,9 +2590,14 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRun
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto testParam = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto testParam = convert<IDLDOMString>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.enabledAtRuntimeOperation(WTFMove(testParam));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
     return JSValue::encode(jsUndefined());
 }
 
@@ -2600,9 +2610,14 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRun
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto testParam = convert<IDLLong>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto testParam = convert<IDLLong>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.enabledAtRuntimeOperation(WTFMove(testParam));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
     return JSValue::encode(jsUndefined());
 }
 
@@ -2646,9 +2661,14 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectConstructorFunctionEnabledAt
     UNUSED_PARAM(throwScope);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto testParam = convert<IDLLong>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto testParam = convert<IDLLong>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     TestGlobalObject::enabledAtRuntimeOperationStatic(WTFMove(testParam));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
     return JSValue::encode(jsUndefined());
 }
 
@@ -2667,9 +2687,14 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpe
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto testParam = convert<IDLLong>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto testParam = convert<IDLLong>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.enabledInSpecificWorld(WTFMove(testParam));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
     return JSValue::encode(jsUndefined());
 }
 
@@ -2686,9 +2711,14 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpe
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto testParam = convert<IDLLong>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto testParam = convert<IDLLong>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.enabledInSpecificWorldWhenRuntimeFeatureEnabled(WTFMove(testParam));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
     return JSValue::encode(jsUndefined());
 }
 
@@ -2705,9 +2735,14 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledInSpe
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto testParam = convert<IDLLong>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    auto argument0 = callFrame->uncheckedArgument(0);
+    auto testParam = convert<IDLLong>(*lexicalGlobalObject, argument0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.enabledInSpecificWorldWhenRuntimeFeaturesEnabled(WTFMove(testParam));
+
+    // Make sure arguments stay alive until this end of this method.
+    ensureStillAliveHere(argument0);
+
     return JSValue::encode(jsUndefined());
 }
 
@@ -2755,7 +2790,8 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionGetSecretBoo
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    return JSValue::encode(toJS<IDLBoolean>(impl.getSecretBoolean()));
+    auto result = JSValue::encode(toJS<IDLBoolean>(impl.getSecretBoolean()));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionGetSecretBoolean(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
@@ -2770,7 +2806,8 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionTestFeatureG
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    return JSValue::encode(toJS<IDLBoolean>(impl.testFeatureGetSecretBoolean()));
+    auto result = JSValue::encode(toJS<IDLBoolean>(impl.testFeatureGetSecretBoolean()));
+    return result;
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBoolean(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
