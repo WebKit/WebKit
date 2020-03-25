@@ -1,3 +1,16 @@
+2020-03-25  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Add ref test for apple pay button corner radius change
+        https://bugs.webkit.org/show_bug.cgi?id=208959
+
+        Reviewed by Andy Estes.
+
+        Add ref test to check that providing a border-radius does not result in rendering
+        a default apple pay button.
+
+        * http/tests/ssl/applepay/ApplePayButtonCornerRadius-expected-mismatch.html: Added.
+        * http/tests/ssl/applepay/ApplePayButtonCornerRadius.html: Added.
+
 2020-03-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Layout Test fast/images/async-image-multiple-clients-repaint.html is flaky
