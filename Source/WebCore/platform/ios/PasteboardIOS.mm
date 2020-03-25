@@ -350,10 +350,12 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
 
 bool Pasteboard::respectsUTIFidelities() const
 {
-    // For now, data interaction is the only feature that uses item-provider-based pasteboard representations.
-    // In the future, we may need to consult the client layer to determine whether or not the pasteboard supports
-    // item types ranked by fidelity.
+#if ENABLE(DRAG_SUPPORT)
+    // FIXME: We should respect UTI fidelity for normal UIPasteboard-backed pasteboards as well.
     return m_pasteboardName == Pasteboard::nameOfDragPasteboard();
+#else
+    return false;
+#endif
 }
 
 void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, Optional<size_t> itemIndex)
