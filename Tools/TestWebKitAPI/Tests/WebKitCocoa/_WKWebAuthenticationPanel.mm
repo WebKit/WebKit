@@ -1292,6 +1292,8 @@ TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
     cleanUpKeychain("");
 }
 
+// Skip the test because of <rdar://problem/59635486>.
+#if PLATFORM(MAC)
 TEST(WebAuthenticationPanel, LAGetAssertion)
 {
     reset();
@@ -1311,6 +1313,7 @@ TEST(WebAuthenticationPanel, LAGetAssertion)
     checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeGet);
     cleanUpKeychain("");
 }
+#endif
 
 #endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
 

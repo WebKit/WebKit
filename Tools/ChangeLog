@@ -1,3 +1,9 @@
+2020-03-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, skips a test for iOS
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+
 2020-03-24  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Documentation for uncollapsed failure endpoints is wrong
