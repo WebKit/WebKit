@@ -1,3 +1,21 @@
+2020-03-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Layout Test fast/images/async-image-multiple-clients-repaint.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=202328
+        <rdar://problem/54325032>
+
+        Unreviewed test gardening.
+
+        Remove flaky expectation for this test since it has been passing on all
+        Mac and iOS platforms. Make the iOS expected result the same for the 
+        device and for the simulator.
+
+        * platform/ios-simulator/fast/images: Removed.
+        * platform/ios/TestExpectations:
+        * platform/ios/fast/images/async-image-multiple-clients-repaint-expected.txt: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-03-25  Frank Yang  <guowei_yang@apple.com>
 
         WebKit uses Alphabetic Baseline when "-webkit-text-orientation" is "mixed" in Vertical Writing Mode

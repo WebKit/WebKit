@@ -1833,9 +1833,6 @@ webkit.org/b/205525 webgpu/whlsl/buffer-fragment.html [ Pass ImageOnlyFailure ]
 # The test runner is failing in an unrelated, unexplained, invisible to the human eye, 2 pixels difference.
 webkit.org/b/201401 imported/w3c/web-platform-tests/media-source/mediasource-video-is-visible.html [ Skip ]
 
-# rdar://55484256 (REGRESSION: (Catalina) fast/images/async-image-multiple-clients-repaint.html is a flakey failure)
-[ Catalina+ ] fast/images/async-image-multiple-clients-repaint.html [ Pass Failure ]
-
 # Two canvas tests fail with small antialiasing diffs
 imported/w3c/web-platform-tests/2dcontext/building-paths/canvas_complexshapes_arcto_001.htm [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/2dcontext/building-paths/canvas_complexshapes_beziercurveto_001.htm [ ImageOnlyFailure ]
