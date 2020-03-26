@@ -1,3 +1,24 @@
+2020-03-26  Daniel Bates  <dabates@apple.com>
+
+        Remove hitTestOrder from ElementContext as it is no longer need
+        https://bugs.webkit.org/show_bug.cgi?id=209561
+        <rdar://problem/60888305>
+
+        Reviewed by Wenson Hsieh.
+
+        Revert the temporary workaround made in r257749 as <rdar://problem/59602885>
+        has been fixed: WebKit no longer needs to explicitly annotate the resulting
+        elements found in textInputContextsInRect() with their hit test order.
+        Instead client code has been updated to assume these elements are returned
+        in hit test order.
+
+        * UIProcess/API/Cocoa/_WKTextInputContext.mm:
+        (-[_WKTextInputContext _hitTestOrder]): Deleted.
+        * UIProcess/API/Cocoa/_WKTextInputContextInternal.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::textInputContextsInRect):
+        (WebKit::WebPage::contextForElement const):
+
 2020-03-26  Tim Horton  <timothy_horton@apple.com>
 
         Pinch to zoom gesture has to be repeated twice if the cursor isn't moved between gestures

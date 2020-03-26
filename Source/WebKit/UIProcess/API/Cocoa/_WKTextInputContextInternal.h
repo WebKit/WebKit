@@ -35,7 +35,4 @@ struct ElementContext;
 
 - (const WebCore::ElementContext&)_textInputContext;
 
-// Lower ordinal means the element is visually closer to a person's face.
-@property (nonatomic, readonly) NSUInteger _hitTestOrder;
-
 @end

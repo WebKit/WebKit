@@ -35,10 +35,6 @@ namespace WebCore {
 struct ElementContext {
     FloatRect boundingRect;
 
-    // Lower ordinal means the element is visually closer to a person's face.
-    // FIXME: Remove this once <rdar://problem/59737118> is fixed.
-    Optional<unsigned> hitTestOrder;
-
     PageIdentifier webPageIdentifier;
     DocumentIdentifier documentIdentifier;
     ElementIdentifier elementIdentifier;
@@ -62,7 +58,6 @@ inline bool operator==(const ElementContext& a, const ElementContext& b)
 template<class Encoder>
 void ElementContext::encode(Encoder& encoder) const
 {
-    encoder << hitTestOrder;
     encoder << boundingRect;
     encoder << webPageIdentifier;
     encoder << documentIdentifier;
@@ -73,9 +68,6 @@ template<class Decoder>
 Optional<ElementContext> ElementContext::decode(Decoder& decoder)
 {
     ElementContext context;
-
-    if (!decoder.decode(context.hitTestOrder))
-        return WTF::nullopt;
 
     if (!decoder.decode(context.boundingRect))
         return WTF::nullopt;
