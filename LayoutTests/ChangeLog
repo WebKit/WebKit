@@ -1,3 +1,16 @@
+2020-03-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Sequential focus navigation can't get out of a descendent of a slot element in a document tree
+        https://bugs.webkit.org/show_bug.cgi?id=199633
+
+        Reviewed by Darin Adler.
+
+        Skip the newly added test in iOS since eventSender isn't supported on iOS.
+
+        * platform/ios/TestExpectations:
+        * fast/shadow-dom/focus-across-slot-outside-shadow-tree-expected.txt: Added.
+        * fast/shadow-dom/focus-across-slot-outside-shadow-tree.html: Added.
+
 2020-03-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         [win] animations/many-pseudo-animations.html is failing

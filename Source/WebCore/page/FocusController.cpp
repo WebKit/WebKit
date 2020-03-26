@@ -77,9 +77,9 @@ static inline bool isFocusScopeOwner(const Element& element)
         return true;
     if (is<HTMLSlotElement>(element)) {
         ShadowRoot* root = element.containingShadowRoot();
-        if (root && root->host() && !hasCustomFocusLogic(*root->host()))
+        if (!root || !root->host() || !hasCustomFocusLogic(*root->host()))
             return true;
-    } 
+    }
     return false;
 }
 

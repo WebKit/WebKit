@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests moving the focus from a descendent of a slot element to an element which appears later in the tree order.<br>
+WebKit should focus each input element in the order of their number</p>
+<div id="container">
+    2.<input placeholder="2">
+    <slot>
+        3.<input placeholder="3">
+    </slot>
+    4.<input placeholder="4">
+    1.<input placeholder="1" tabindex="1">
+    <slot>
+        5.<input placeholder="5" tabindex="2">
+    </slot>
+</div>
+<div id="host">
+    7.<input placeholder="7">
+    <slot>
+        8.<input placeholder="8">
+    </slot>
+    9.<input placeholder="9">
+    6.<input placeholder="6" tabindex="1">
+    <slot>
+        10.<input placeholder="10" tabindex="2">
+    </slot>
+</div>
+<pre id="log"></pre>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+for (const element of Array.from(document.querySelectorAll('input')))
+    element.addEventListener('focus', (event) => log.textContent += event.target.placeholder + '\n');
+
+host.attachShadow({mode: 'closed'}).append(...Array.from(host.childNodes));
+
+document.body.focus();
+if (window.eventSender) {
+    for (let i = 0; i < 10; i++)
+        eventSender.keyDown('\t');
+    for (let i = 0; i < 9; i++)
+        eventSender.keyDown('\t', ['shiftKey']);
+    container.remove();
+    host.remove();
+}
+
+</script>
+</body>
+</html>
