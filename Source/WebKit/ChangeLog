@@ -1,3 +1,25 @@
+2020-03-26  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r258989): ASSERTION FAILED: !isMissingPostLayoutData in WebKit::EditorState::PostLayoutData
+        https://bugs.webkit.org/show_bug.cgi?id=209570
+        <rdar://problem/60895050>
+
+        Reviewed by Darin Adler.
+
+        Send an editor state update before responding to a request for position information
+        to ensure that the UI process has up-to-date selection state. Otherwise, calling code
+        that uses this information to determine whether to query for the selection text will
+        cause an assertion failure.
+
+        This fixes the test failure TestWebKitAPI.ActionSheetTests.DataDetectorsLinkIsNotPresentedAsALink
+        caused by r258989. Following r258989 WebKit now accurately reports whether editor state
+        has or does not have post-layout details. Prior to this the default EditorState was marked
+        as having post-layout data even if it did not actually have such data.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        (WebKit::WebPage::requestPositionInformation):
+
 2020-03-26  David Quesada  <david_quesada@apple.com>
 
         Add SPI to specify whether file upload panels are uploading to an enterprise-managed destination

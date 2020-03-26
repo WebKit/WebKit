@@ -2587,6 +2587,8 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
         return reply({ });
     }
 
+    sendEditorStateUpdate();
+
     m_pendingSynchronousPositionInformationReply = WTFMove(reply);
 
     auto information = positionInformation(request);
@@ -2961,6 +2963,7 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
 
 void WebPage::requestPositionInformation(const InteractionInformationRequest& request)
 {
+    sendEditorStateUpdate();
     send(Messages::WebPageProxy::DidReceivePositionInformation(positionInformation(request)));
 }
 
