@@ -1074,3 +1074,5 @@ webkit.org/b/209503 [ Debug ] http/tests/referrer-policy-anchor/origin/cross-ori
 webkit.org/b/209564 svg/as-image/svg-image-with-data-uri-background.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/209622 http/tests/eventsource/eventsource-reconnect-during-navigate-crash.html [ Pass Failure ]
+
+webkit.org/b/209624 [ Release ] tiled-drawing/scrolling/fixed/four-bars-zoomed.html [ Pass Failure ]
