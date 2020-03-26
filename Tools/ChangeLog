@@ -1,3 +1,17 @@
+2020-03-26  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WKTR: Don't update isolated tree mode behavior if not required
+        https://bugs.webkit.org/show_bug.cgi?id=209555
+        <rdar://problem/60885094>
+
+        Reviewed by Darin Adler.
+
+        If the isolated tree mode has not changed, then we should not poke at the mechanisms for turning it on/off.
+        This might have the side effect of turning on accessibility unexpectedly.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::setAccessibilityIsolatedTreeMode):
+
 2020-03-26  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Pass all the arguments of build-webkit to webkit-flatpak

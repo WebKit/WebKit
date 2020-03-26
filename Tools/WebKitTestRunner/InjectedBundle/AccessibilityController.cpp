@@ -57,8 +57,10 @@ AccessibilityController::~AccessibilityController()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void AccessibilityController::setAccessibilityIsolatedTreeMode(bool flag)
 {
-    m_accessibilityIsolatedTreeMode = flag;
-    updateIsolatedTreeMode();
+    if (m_accessibilityIsolatedTreeMode != flag) {
+        m_accessibilityIsolatedTreeMode = flag;
+        updateIsolatedTreeMode();
+    }
 }
 
 void AccessibilityController::updateIsolatedTreeMode()
