@@ -238,6 +238,7 @@ public:
 #elif ENABLE(MAC_GESTURE_EVENTS)
     bool dispatchGestureEvent(const PlatformGestureEvent&, const AtomString&, const EventTargetSet&, float, float);
     WEBCORE_EXPORT bool handleGestureEvent(const PlatformGestureEvent&);
+    WEBCORE_EXPORT void didEndMagnificationGesture();
 #endif
 
 #if PLATFORM(IOS_FAMILY)

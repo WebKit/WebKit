@@ -1046,6 +1046,13 @@ void WebPage::playbackTargetPickerWasDismissed(uint64_t contextId)
 }
 #endif
 
+void WebPage::didEndMagnificationGesture()
+{
+#if ENABLE(MAC_GESTURE_EVENTS)
+    m_page->mainFrame().eventHandler().didEndMagnificationGesture();
+#endif
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

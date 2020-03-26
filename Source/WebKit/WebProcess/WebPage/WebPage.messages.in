@@ -493,13 +493,15 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     HandleAcceptedCandidate(struct WebCore::TextCheckingResult acceptedCandidate)
 
-    SetUseSystemAppearance(bool useSystemAppearance);
+    SetUseSystemAppearance(bool useSystemAppearance)
 
-    SetHeaderBannerHeightForTesting(int height);
-    SetFooterBannerHeightForTesting(int height);
+    SetHeaderBannerHeightForTesting(int height)
+    SetFooterBannerHeightForTesting(int height)
+
+    DidEndMagnificationGesture()
 #endif
 
-    EffectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel);
+    EffectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 
 #if PLATFORM(GTK)
     ThemeDidChange(String themeName)

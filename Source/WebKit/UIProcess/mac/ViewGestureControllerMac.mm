@@ -187,6 +187,8 @@ void ViewGestureController::endMagnificationGesture()
             drawingArea->commitTransientZoom(newMagnification, scaledMagnificationOrigin(m_magnificationOrigin, newMagnification));
     }
 
+    m_webPageProxy.didEndMagnificationGesture();
+
     didEndGesture();
     m_visibleContentRectIsValid = false;
 }

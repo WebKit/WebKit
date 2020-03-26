@@ -8955,6 +8955,11 @@ void WebPageProxy::setFooterBannerHeightForTesting(int height)
     send(Messages::WebPage::SetFooterBannerHeightForTesting(height));
 }
 
+void WebPageProxy::didEndMagnificationGesture()
+{
+    send(Messages::WebPage::DidEndMagnificationGesture());
+}
+
 #endif
 
 void WebPageProxy::installActivityStateChangeCompletionHandler(Function<void()>&& completionHandler)

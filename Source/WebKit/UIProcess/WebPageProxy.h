@@ -1440,6 +1440,8 @@ public:
 
     void setHeaderBannerHeightForTesting(int);
     void setFooterBannerHeightForTesting(int);
+
+    void didEndMagnificationGesture();
 #endif
 
     bool scrollingUpdatesDisabledForTesting();

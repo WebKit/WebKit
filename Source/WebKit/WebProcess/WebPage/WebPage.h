@@ -578,6 +578,8 @@ public:
     void setBottomOverhangImage(WebImage*);
     
     void setUseSystemAppearance(bool);
+
+    void didEndMagnificationGesture();
 #endif
 
     void effectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel);
