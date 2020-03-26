@@ -590,9 +590,14 @@ void RenderReplaced::computePreferredLogicalWidths()
 
     // We cannot resolve any percent logical width here as the available logical
     // width may not be set on our containing block.
-    if (style().logicalWidth().isPercentOrCalculated())
+    if (style().logicalWidth().isPercentOrCalculated()) {
+        double intrinsicRatio = 0;
+        FloatSize constrainedSize;
+        // For images with explicit width/height this updates the instrinsic size as a side effect.
+        computeAspectRatioInformationForRenderBox(embeddedContentBox(), constrainedSize, intrinsicRatio);
+
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
-    else
+    } else
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(ComputePreferred);
 
     const RenderStyle& styleToUse = style();

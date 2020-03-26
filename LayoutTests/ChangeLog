@@ -1,3 +1,14 @@
+2020-03-26  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r254669): Expand media button doesn't work on first try on photos on reddit.com
+        https://bugs.webkit.org/show_bug.cgi?id=209590
+        <rdar://problem/60461809>
+
+        Reviewed by Darin Adler.
+
+        * fast/images/preferred-width-computation-with-attribute-intrinsic-size-expected.html: Added.
+        * fast/images/preferred-width-computation-with-attribute-intrinsic-size.html: Added.
+
 2020-03-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, make GC a bit less aggressive on test to decrease runtime.

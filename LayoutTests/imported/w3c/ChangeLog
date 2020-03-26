@@ -1,3 +1,15 @@
+2020-03-26  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r254669): Expand media button doesn't work on first try on photos on reddit.com
+        https://bugs.webkit.org/show_bug.cgi?id=209590
+        <rdar://problem/60461809>
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+
+        Failure here shifts to a different subtest. This one uses fractional pixels and LayoutUnit accuracy is not sufficient to compute the exact ratio.
+
 2020-03-25  Frank Yang  <guowei_yang@apple.com>
         
         WebKit uses Alphabetic Baseline when "-webkit-text-orientation" is "mixed" in Vertical Writing Mode 
