@@ -1172,16 +1172,6 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     m_deviceManagementRestrictionsEnabled = parameters.deviceManagementRestrictionsEnabled;
     m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = parameters.allLoadsBlockedByDeviceManagementRestrictionsForTesting;
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    m_resourceLoadStatisticsDirectory = WTFMove(parameters.resourceLoadStatisticsParameters.directory);
-    m_shouldIncludeLocalhostInResourceLoadStatistics = parameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No;
-    m_enableResourceLoadStatisticsDebugMode = parameters.resourceLoadStatisticsParameters.enableDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No;
-    m_resourceLoadStatisticsManualPrevalentResource = parameters.resourceLoadStatisticsParameters.manualPrevalentResource;
-    m_thirdPartyCookieBlockingMode = parameters.resourceLoadStatisticsParameters.thirdPartyCookieBlockingMode;
-    m_firstPartyWebsiteDataRemovalMode = parameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode;
-    setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsParameters.enabled);
-#endif
-
 #if HAVE(SESSION_CLEANUP)
     activateSessionCleanup(*this, parameters);
 #endif

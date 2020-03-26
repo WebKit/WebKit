@@ -80,7 +80,13 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     : m_sessionID(parameters.sessionID)
     , m_networkProcess(networkProcess)
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+    , m_resourceLoadStatisticsDirectory(parameters.resourceLoadStatisticsParameters.directory)
+    , m_shouldIncludeLocalhostInResourceLoadStatistics(parameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No)
+    , m_enableResourceLoadStatisticsDebugMode(parameters.resourceLoadStatisticsParameters.enableDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No)
+    , m_resourceLoadStatisticsManualPrevalentResource(parameters.resourceLoadStatisticsParameters.manualPrevalentResource)
     , m_enableResourceLoadStatisticsLogTestingEvent(parameters.resourceLoadStatisticsParameters.enableLogTestingEvent)
+    , m_thirdPartyCookieBlockingMode(parameters.resourceLoadStatisticsParameters.thirdPartyCookieBlockingMode)
+    , m_firstPartyWebsiteDataRemovalMode(parameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode)
 #endif
     , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(parameters.sessionID))
     , m_testSpeedMultiplier(parameters.testSpeedMultiplier)
@@ -117,6 +123,10 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
         // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
         new PingLoad(m_networkProcess, m_sessionID, WTFMove(loadParameters), WTFMove(completionHandler));
     });
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsParameters.enabled);
+#endif
 }
 
 NetworkSession::~NetworkSession()

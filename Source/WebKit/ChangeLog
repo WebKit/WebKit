@@ -1,3 +1,20 @@
+2020-03-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        WebKitTestRunner should enable ResourceLoadStatistics also for non-Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=209410
+
+        Reviewed by Youenn Fablet.
+
+        NetworkSession's member variables for ResourceLoadStatistics were
+        initialized only for Cocoa port. They also should be initialized
+        for non-Cocoa ports.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession): Added member initializers for ResourceLoadStatistics.
+        * NetworkProcess/NetworkSession.h: Have m_resourceLoadStatisticsDirectory only if ENABLE(RESOURCE_LOAD_STATISTICS).
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa): Removed the code to initialize member variables for ResourceLoadStatistics.
+
 2020-03-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Guard AppBound domain protections with PLATFORM(iOS_FAMILY)
