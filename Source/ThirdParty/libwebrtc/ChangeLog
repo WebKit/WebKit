@@ -1,3 +1,15 @@
+2020-03-26  youenn fablet  <youenn@apple.com>
+
+        Bump boringssl version to M82
+        https://bugs.webkit.org/show_bug.cgi?id=209538
+
+        Reviewed by Eric Carlson.
+
+        * CMakeLists.txt:
+        * Source/third_party/boringssl: Updated.
+        * WebKit/0001-Tweaking-boringssl-include-of-internal.h.patch: Removed.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-03-25  youenn fablet  <youenn@apple.com>
 
         Bump opus to M82

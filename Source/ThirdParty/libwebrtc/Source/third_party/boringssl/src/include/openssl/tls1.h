@@ -179,6 +179,7 @@ extern "C" {
 #define TLS1_AD_BAD_CERTIFICATE_HASH_VALUE 114
 #define TLS1_AD_UNKNOWN_PSK_IDENTITY 115
 #define TLS1_AD_CERTIFICATE_REQUIRED 116
+#define TLS1_AD_NO_APPLICATION_PROTOCOL 120
 
 // ExtensionType values from RFC6066
 #define TLSEXT_TYPE_server_name 0
@@ -243,9 +244,6 @@ extern "C" {
 
 // This is not an IANA defined extension number
 #define TLSEXT_TYPE_channel_id 30032
-
-// This is not an IANA defined extension number
-#define TLSEXT_TYPE_pq_experiment_signal 54538
 
 // status request value from RFC 3546
 #define TLSEXT_STATUSTYPE_nothing (-1)

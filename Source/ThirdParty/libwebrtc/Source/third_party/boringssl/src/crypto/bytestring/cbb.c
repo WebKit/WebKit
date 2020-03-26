@@ -18,7 +18,6 @@
 #include <limits.h>
 #include <string.h>
 
-#include <openssl/buf.h>
 #include <openssl/mem.h>
 
 #include "../internal.h"
@@ -448,6 +447,10 @@ int CBB_add_u16(CBB *cbb, uint16_t value) {
   return cbb_buffer_add_u(cbb->base, value, 2);
 }
 
+int CBB_add_u16le(CBB *cbb, uint16_t value) {
+  return CBB_add_u16(cbb, CRYPTO_bswap2(value));
+}
+
 int CBB_add_u24(CBB *cbb, uint32_t value) {
   if (!CBB_flush(cbb)) {
     return 0;
@@ -464,11 +467,19 @@ int CBB_add_u32(CBB *cbb, uint32_t value) {
   return cbb_buffer_add_u(cbb->base, value, 4);
 }
 
+int CBB_add_u32le(CBB *cbb, uint32_t value) {
+  return CBB_add_u32(cbb, CRYPTO_bswap4(value));
+}
+
 int CBB_add_u64(CBB *cbb, uint64_t value) {
   if (!CBB_flush(cbb)) {
     return 0;
   }
   return cbb_buffer_add_u(cbb->base, value, 8);
+}
+
+int CBB_add_u64le(CBB *cbb, uint64_t value) {
+  return CBB_add_u64(cbb, CRYPTO_bswap8(value));
 }
 
 void CBB_discard_child(CBB *cbb) {
@@ -514,6 +525,34 @@ int CBB_add_asn1_uint64(CBB *cbb, uint64_t value) {
     return 0;
   }
 
+  return CBB_flush(cbb);
+}
+
+int CBB_add_asn1_int64(CBB *cbb, int64_t value) {
+  if (value >= 0) {
+    return CBB_add_asn1_uint64(cbb, value);
+  }
+
+  union {
+    int64_t i;
+    uint8_t bytes[sizeof(int64_t)];
+  } u;
+  u.i = value;
+  int start = 7;
+  // Skip leading sign-extension bytes unless they are necessary.
+  while (start > 0 && (u.bytes[start] == 0xff && (u.bytes[start - 1] & 0x80))) {
+    start--;
+  }
+
+  CBB child;
+  if (!CBB_add_asn1(cbb, &child, CBS_ASN1_INTEGER)) {
+    return 0;
+  }
+  for (int i = start; i >= 0; i--) {
+    if (!CBB_add_u8(&child, u.bytes[i])) {
+      return 0;
+    }
+  }
   return CBB_flush(cbb);
 }
 
@@ -649,7 +688,7 @@ int CBB_flush_asn1_set_of(CBB *cbb) {
   // remain valid as we rewrite |cbb|.
   int ret = 0;
   size_t buf_len = CBB_len(cbb);
-  uint8_t *buf = BUF_memdup(CBB_data(cbb), buf_len);
+  uint8_t *buf = OPENSSL_memdup(CBB_data(cbb), buf_len);
   CBS *children = OPENSSL_malloc(num_children * sizeof(CBS));
   if (buf == NULL || children == NULL) {
     goto err;

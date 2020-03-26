@@ -21,7 +21,6 @@
 #include <unistd.h>
 
 #include <openssl/arm_arch.h>
-#include <openssl/buf.h>
 #include <openssl/mem.h>
 
 #include "cpu-arm-linux.h"

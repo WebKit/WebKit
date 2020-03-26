@@ -26,7 +26,7 @@
 #include "../internal.h"
 
 
-#if defined(OPENSSL_WINDOWS) || !defined(OPENSSL_X86_64)
+#if !defined(BORINGSSL_HAS_UINT128) || !defined(OPENSSL_X86_64)
 
 // We can assume little-endian.
 static uint32_t U8TO32_LE(const uint8_t *m) {
@@ -315,4 +315,4 @@ void CRYPTO_poly1305_finish(poly1305_state *statep, uint8_t mac[16]) {
   U32TO8_LE(&mac[12], f3);
 }
 
-#endif  // OPENSSL_WINDOWS || !OPENSSL_X86_64
+#endif  // !BORINGSSL_HAS_UINT128 || !OPENSSL_X86_64

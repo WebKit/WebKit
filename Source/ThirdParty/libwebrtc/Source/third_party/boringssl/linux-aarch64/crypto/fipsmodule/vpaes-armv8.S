@@ -1213,3 +1213,4 @@ vpaes_ctr32_encrypt_blocks:
 .size	vpaes_ctr32_encrypt_blocks,.-vpaes_ctr32_encrypt_blocks
 #endif
 #endif  // !OPENSSL_NO_ASM
+.section	.note.GNU-stack,"",%progbits

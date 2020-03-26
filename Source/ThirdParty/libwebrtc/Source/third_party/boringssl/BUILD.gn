@@ -4,6 +4,7 @@
 
 import("//build/config/android/config.gni")
 import("//build/config/arm.gni")
+import("//build/config/compiler/compiler.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 import("//build_overrides/build.gni")
 import("//testing/libfuzzer/fuzzer_test.gni")
@@ -55,9 +56,6 @@ if (is_win && !is_msan && current_cpu != "arm64") {
       sources = crypto_sources_win_x86_64
     } else if (current_cpu == "x86") {
       sources = crypto_sources_win_x86
-    }
-    if (!is_debug) {
-      nasm_flags = [ "-DNDEBUG" ]
     }
   }
 } else {
@@ -113,16 +111,12 @@ component("boringssl") {
   sources = all_sources
   public = all_headers
   friend = [ ":*" ]
-  deps = [
-    "//third_party/boringssl/src/third_party/fiat:fiat_license",
-  ]
+  deps = [ "//third_party/boringssl/src/third_party/fiat:fiat_license" ]
 
   # Mark boringssl_asm as a public dependency so the OPENSSL_NO_ASM
   # config is forwarded to callers. In particular, boringssl_crypto_tests
   # requires it.
-  public_deps = [
-    ":boringssl_asm",
-  ]
+  public_deps = [ ":boringssl_asm" ]
 
   public_configs = [ ":external_config" ]
   configs += [ ":internal_config" ]
@@ -132,6 +126,11 @@ component("boringssl") {
 
   if (is_nacl) {
     deps += [ "//native_client_sdk/src/libraries/nacl_io" ]
+  }
+
+  if (!is_debug && !optimize_for_size) {
+    configs -= [ "//build/config/compiler:default_optimization" ]
+    configs += [ "//build/config/compiler:optimize_max" ]
   }
 }
 
@@ -143,10 +142,8 @@ if (build_with_chromium) {
   bundle_data("boringssl_crypto_tests_bundle_data") {
     sources = crypto_test_data
     testonly = true
-    outputs = [
-      "{{bundle_resources_dir}}/" +
-          "{{source_root_relative_dir}}/{{source_file_part}}",
-    ]
+    outputs = [ "{{bundle_resources_dir}}/" +
+                "{{source_root_relative_dir}}/{{source_file_part}}" ]
   }
 
   test("boringssl_crypto_tests") {
@@ -215,16 +212,12 @@ if (build_with_chromium) {
     visibility = [ ":*" ]  # Only targets in this file can depend on this.
 
     sources = all_sources
-    deps = [
-      "//third_party/boringssl/src/third_party/fiat:fiat_license",
-    ]
+    deps = [ "//third_party/boringssl/src/third_party/fiat:fiat_license" ]
 
     # Mark boringssl_asm as a public dependency so the OPENSSL_NO_ASM
     # config is forwarded to callers. In particular, boringssl_crypto_tests
     # requires it.
-    public_deps = [
-      ":boringssl_asm",
-    ]
+    public_deps = [ ":boringssl_asm" ]
 
     public_configs = [
       ":external_config",
@@ -248,9 +241,7 @@ if (build_with_chromium) {
         "src/ssl/test/fuzzer_tags.h",
       ]
       additional_configs = [ ":internal_config" ]
-      deps = [
-        ":boringssl_fuzzer",
-      ]
+      deps = [ ":boringssl_fuzzer" ]
       seed_corpus = "src/fuzz/${fuzzer}_corpus"
 
       if ("cert" == fuzzer) {
@@ -285,16 +276,12 @@ if (build_with_chromium) {
     visibility = [ ":*" ]  # Only targets in this file can depend on this.
 
     sources = all_sources
-    deps = [
-      "//third_party/boringssl/src/third_party/fiat:fiat_license",
-    ]
+    deps = [ "//third_party/boringssl/src/third_party/fiat:fiat_license" ]
 
     # Mark boringssl_asm as a public dependency so the OPENSSL_NO_ASM
     # config is forwarded to callers. In particular, boringssl_crypto_tests
     # requires it.
-    public_deps = [
-      ":boringssl_asm",
-    ]
+    public_deps = [ ":boringssl_asm" ]
 
     public_configs = [
       ":external_config",
@@ -317,9 +304,7 @@ if (build_with_chromium) {
       "src/ssl/test/fuzzer_tags.h",
     ]
     additional_configs = [ ":internal_config" ]
-    deps = [
-      ":boringssl_fuzzer_no_fuzzer_mode",
-    ]
+    deps = [ ":boringssl_fuzzer_no_fuzzer_mode" ]
     seed_corpus = "src/fuzz/client_corpus_no_fuzzer_mode"
   }
 
@@ -330,9 +315,7 @@ if (build_with_chromium) {
       "src/ssl/test/fuzzer_tags.h",
     ]
     additional_configs = [ ":internal_config" ]
-    deps = [
-      ":boringssl_fuzzer_no_fuzzer_mode",
-    ]
+    deps = [ ":boringssl_fuzzer_no_fuzzer_mode" ]
     seed_corpus = "src/fuzz/server_corpus_no_fuzzer_mode"
   }
 }

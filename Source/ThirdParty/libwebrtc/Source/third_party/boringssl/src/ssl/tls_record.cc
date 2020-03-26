@@ -566,9 +566,14 @@ enum ssl_open_record_t ssl_process_alert(SSL *ssl, uint8_t *out_alert,
       return ssl_open_record_close_notify;
     }
 
-    // Warning alerts do not exist in TLS 1.3.
+    // Warning alerts do not exist in TLS 1.3, but RFC 8446 section 6.1
+    // continues to define user_canceled as a signal to cancel the handshake,
+    // without specifying how to handle it. JDK11 misuses it to signal
+    // full-duplex connection close after the handshake. As a workaround, skip
+    // user_canceled as in TLS 1.2. This matches NSS and OpenSSL.
     if (ssl->s3->have_version &&
-        ssl_protocol_version(ssl) >= TLS1_3_VERSION) {
+        ssl_protocol_version(ssl) >= TLS1_3_VERSION &&
+        alert_descr != SSL_AD_USER_CANCELLED) {
       *out_alert = SSL_AD_DECODE_ERROR;
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ALERT);
       return ssl_open_record_error;

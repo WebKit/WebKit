@@ -97,6 +97,7 @@ bool TrackListBase::contains(TrackBase& track) const
 
 void TrackListBase::scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&& track)
 {
+    fprintf(stderr, "TrackListBase::scheduleTrackEvent\n");
     m_asyncEventQueue->enqueueEvent(TrackEvent::create(eventName, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
 }
 
@@ -160,6 +161,7 @@ void TrackListBase::scheduleChangeEvent()
     // Whenever a track in a VideoTrackList that was previously not selected is
     // selected, the user agent must queue a task to fire a simple event named
     // change at the VideoTrackList object.
+    fprintf(stderr, "TrackListBase::scheduleChangeEvent\n");
     m_asyncEventQueue->enqueueEvent(Event::create(eventNames().changeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 

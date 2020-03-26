@@ -62,7 +62,6 @@
 
 #include <openssl/asn1.h>
 #include <openssl/asn1t.h>
-#include <openssl/buf.h>
 #include <openssl/conf.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
@@ -137,9 +136,9 @@ static STACK_OF(CONF_VALUE) *i2v_AUTHORITY_INFO_ACCESS(
         ntmp = OPENSSL_malloc(nlen);
         if (ntmp == NULL)
             goto err;
-        BUF_strlcpy(ntmp, objtmp, nlen);
-        BUF_strlcat(ntmp, " - ", nlen);
-        BUF_strlcat(ntmp, vtmp->name, nlen);
+        OPENSSL_strlcpy(ntmp, objtmp, nlen);
+        OPENSSL_strlcat(ntmp, " - ", nlen);
+        OPENSSL_strlcat(ntmp, vtmp->name, nlen);
         OPENSSL_free(vtmp->name);
         vtmp->name = ntmp;
 
@@ -192,7 +191,7 @@ static AUTHORITY_INFO_ACCESS *v2i_AUTHORITY_INFO_ACCESS(X509V3_EXT_METHOD
             OPENSSL_PUT_ERROR(X509V3, ERR_R_MALLOC_FAILURE);
             goto err;
         }
-        BUF_strlcpy(objtmp, cnf->name, objlen + 1);
+        OPENSSL_strlcpy(objtmp, cnf->name, objlen + 1);
         acc->method = OBJ_txt2obj(objtmp, 0);
         if (!acc->method) {
             OPENSSL_PUT_ERROR(X509V3, X509V3_R_BAD_OBJECT);

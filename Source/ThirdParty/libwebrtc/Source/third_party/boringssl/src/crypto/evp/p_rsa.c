@@ -59,7 +59,6 @@
 #include <string.h>
 
 #include <openssl/bn.h>
-#include <openssl/buf.h>
 #include <openssl/bytestring.h>
 #include <openssl/digest.h>
 #include <openssl/err.h>
@@ -135,7 +134,7 @@ static int pkey_rsa_copy(EVP_PKEY_CTX *dst, EVP_PKEY_CTX *src) {
   dctx->saltlen = sctx->saltlen;
   if (sctx->oaep_label) {
     OPENSSL_free(dctx->oaep_label);
-    dctx->oaep_label = BUF_memdup(sctx->oaep_label, sctx->oaep_labellen);
+    dctx->oaep_label = OPENSSL_memdup(sctx->oaep_label, sctx->oaep_labellen);
     if (!dctx->oaep_label) {
       return 0;
     }
@@ -567,6 +566,19 @@ int EVP_PKEY_CTX_set_rsa_padding(EVP_PKEY_CTX *ctx, int padding) {
 int EVP_PKEY_CTX_get_rsa_padding(EVP_PKEY_CTX *ctx, int *out_padding) {
   return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, -1, EVP_PKEY_CTRL_GET_RSA_PADDING,
                            0, out_padding);
+}
+
+int EVP_PKEY_CTX_set_rsa_pss_keygen_md(EVP_PKEY_CTX *ctx, const EVP_MD *md) {
+  return 0;
+}
+
+int EVP_PKEY_CTX_set_rsa_pss_keygen_saltlen(EVP_PKEY_CTX *ctx, int salt_len) {
+  return 0;
+}
+
+int EVP_PKEY_CTX_set_rsa_pss_keygen_mgf1_md(EVP_PKEY_CTX *ctx,
+                                            const EVP_MD *md) {
+  return 0;
 }
 
 int EVP_PKEY_CTX_set_rsa_pss_saltlen(EVP_PKEY_CTX *ctx, int salt_len) {

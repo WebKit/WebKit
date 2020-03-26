@@ -25,6 +25,7 @@
 #include "cavp_test_util.h"
 #include "../crypto/fipsmodule/tls/internal.h"
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 
 
 static bool TestTLSKDF(FileTest *t, void *arg) {
@@ -91,9 +92,8 @@ static bool TestTLSKDF(FileTest *t, void *arg) {
   }
 
   printf("%smaster_secret = %s\r\nkey_block = %s\r\n\r\n",
-         t->CurrentTestToString().c_str(),
-         EncodeHex(master_secret, sizeof(master_secret)).c_str(),
-         EncodeHex(key_block.data(), key_block.size()).c_str());
+         t->CurrentTestToString().c_str(), EncodeHex(master_secret).c_str(),
+         EncodeHex(key_block).c_str());
 
   return true;
 }

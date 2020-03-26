@@ -103,7 +103,17 @@ static void freeze(fe1305x2 *r) {
   r->v[8] = y4;
 }
 
-static void fe1305x2_tobytearray(uint8_t *r, fe1305x2 *x) {
+static void store32(uint8_t out[4], uint32_t v) { OPENSSL_memcpy(out, &v, 4); }
+
+// load32 exists to avoid breaking strict aliasing rules in
+// fe1305x2_frombytearray.
+static uint32_t load32(const uint8_t t[4]) {
+  uint32_t tmp;
+  OPENSSL_memcpy(&tmp, t, sizeof(tmp));
+  return tmp;
+}
+
+static void fe1305x2_tobytearray(uint8_t r[16], fe1305x2 *x) {
   uint32_t x0 = x->v[0];
   uint32_t x1 = x->v[2];
   uint32_t x2 = x->v[4];
@@ -119,22 +129,13 @@ static void fe1305x2_tobytearray(uint8_t *r, fe1305x2 *x) {
   x4 += x3 >> 26;
   x3 &= 0x3ffffff;
 
-  *(uint32_t *)r = x0 + (x1 << 26);
-  *(uint32_t *)(r + 4) = (x1 >> 6) + (x2 << 20);
-  *(uint32_t *)(r + 8) = (x2 >> 12) + (x3 << 14);
-  *(uint32_t *)(r + 12) = (x3 >> 18) + (x4 << 8);
+  store32(r, x0 + (x1 << 26));
+  store32(r + 4, (x1 >> 6) + (x2 << 20));
+  store32(r + 8, (x2 >> 12) + (x3 << 14));
+  store32(r + 12, (x3 >> 18) + (x4 << 8));
 }
 
-// load32 exists to avoid breaking strict aliasing rules in
-// fe1305x2_frombytearray.
-static uint32_t load32(uint8_t *t) {
-  uint32_t tmp;
-  OPENSSL_memcpy(&tmp, t, sizeof(tmp));
-  return tmp;
-}
-
-static void fe1305x2_frombytearray(fe1305x2 *r, const uint8_t *x,
-                                   unsigned long long xlen) {
+static void fe1305x2_frombytearray(fe1305x2 *r, const uint8_t *x, size_t xlen) {
   unsigned i;
   uint8_t t[17];
 
@@ -190,11 +191,11 @@ void CRYPTO_poly1305_init_neon(poly1305_state *state, const uint8_t key[32]) {
   fe1305x2 *const precomp = c + 1;
   unsigned int j;
 
-  r->v[1] = r->v[0] = 0x3ffffff & *(uint32_t *)key;
-  r->v[3] = r->v[2] = 0x3ffff03 & ((*(uint32_t *)(key + 3)) >> 2);
-  r->v[5] = r->v[4] = 0x3ffc0ff & ((*(uint32_t *)(key + 6)) >> 4);
-  r->v[7] = r->v[6] = 0x3f03fff & ((*(uint32_t *)(key + 9)) >> 6);
-  r->v[9] = r->v[8] = 0x00fffff & ((*(uint32_t *)(key + 12)) >> 8);
+  r->v[1] = r->v[0] = 0x3ffffff & load32(key);
+  r->v[3] = r->v[2] = 0x3ffff03 & (load32(key + 3) >> 2);
+  r->v[5] = r->v[4] = 0x3ffc0ff & (load32(key + 6) >> 4);
+  r->v[7] = r->v[6] = 0x3f03fff & (load32(key + 9) >> 6);
+  r->v[9] = r->v[8] = 0x00fffff & (load32(key + 12) >> 8);
 
   for (j = 0; j < 10; j++) {
     h->v[j] = 0;  // XXX: should fast-forward a bit

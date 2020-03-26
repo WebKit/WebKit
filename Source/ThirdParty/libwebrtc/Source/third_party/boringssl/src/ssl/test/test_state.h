@@ -15,11 +15,13 @@
 #ifndef HEADER_TEST_STATE
 #define HEADER_TEST_STATE
 
+#include <openssl/base.h>
+
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <openssl/base.h>
+#include "mock_quic_transport.h"
 
 struct TestState {
   // Serialize writes |pending_session| and |msg_callback_text| to |out|, for
@@ -37,6 +39,7 @@ struct TestState {
   BIO *async_bio = nullptr;
   // packeted_bio is the packeted BIO which simulates read timeouts.
   BIO *packeted_bio = nullptr;
+  std::unique_ptr<MockQuicTransport> quic_transport;
   bssl::UniquePtr<EVP_PKEY> channel_id;
   bool cert_ready = false;
   bssl::UniquePtr<SSL_SESSION> session;
@@ -61,6 +64,7 @@ struct TestState {
   // cert_verified is true if certificate verification has been driven to
   // completion. This tests that the callback is not called again after this.
   bool cert_verified = false;
+  int explicit_renegotiates = 0;
 };
 
 bool SetTestState(SSL *ssl, std::unique_ptr<TestState> state);

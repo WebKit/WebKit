@@ -1,3 +1,17 @@
+// Copyright (c) 2019, Google Inc.
+//
+// Permission to use, copy, modify, and/or distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+// OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 package subprocess
 
 import (
@@ -43,19 +57,27 @@ func New(path string) (*Subprocess, error) {
 // WriteCloser. The returned Subprocess will call Wait on the Cmd when closed.
 func NewWithIO(cmd *exec.Cmd, in io.WriteCloser, out io.ReadCloser) *Subprocess {
 	m := &Subprocess{
-		cmd:	cmd,
+		cmd:    cmd,
 		stdin:  in,
 		stdout: out,
 	}
 
 	m.primitives = map[string]primitive{
-		"SHA-1":        &hashPrimitive{"SHA-1", 20, m},
-		"SHA2-224":     &hashPrimitive{"SHA2-224", 28, m},
-		"SHA2-256":     &hashPrimitive{"SHA2-256", 32, m},
-		"SHA2-384":     &hashPrimitive{"SHA2-384", 48, m},
-		"SHA2-512":     &hashPrimitive{"SHA2-512", 64, m},
-		"ACVP-AES-ECB": &blockCipher{"AES", 16, false, m},
-		"ACVP-AES-CBC": &blockCipher{"AES-CBC", 16, true, m},
+		"SHA-1":         &hashPrimitive{"SHA-1", 20, m},
+		"SHA2-224":      &hashPrimitive{"SHA2-224", 28, m},
+		"SHA2-256":      &hashPrimitive{"SHA2-256", 32, m},
+		"SHA2-384":      &hashPrimitive{"SHA2-384", 48, m},
+		"SHA2-512":      &hashPrimitive{"SHA2-512", 64, m},
+		"ACVP-AES-ECB":  &blockCipher{"AES", 16, false, m},
+		"ACVP-AES-CBC":  &blockCipher{"AES-CBC", 16, true, m},
+		"HMAC-SHA-1":    &hmacPrimitive{"HMAC-SHA-1", 20, m},
+		"HMAC-SHA2-224": &hmacPrimitive{"HMAC-SHA2-224", 28, m},
+		"HMAC-SHA2-256": &hmacPrimitive{"HMAC-SHA2-256", 32, m},
+		"HMAC-SHA2-384": &hmacPrimitive{"HMAC-SHA2-384", 48, m},
+		"HMAC-SHA2-512": &hmacPrimitive{"HMAC-SHA2-512", 64, m},
+		"ctrDRBG":       &drbg{"ctrDRBG", map[string]bool{"AES-128": true, "AES-192": true, "AES-256": true}, m},
+		"hmacDRBG":      &drbg{"hmacDRBG", map[string]bool{"SHA-1": true, "SHA2-224": true, "SHA2-256": true, "SHA2-384": true, "SHA2-512": true}, m},
+		"ECDSA":         &ecdsa{"ECDSA", map[string]bool{"P-224": true, "P-256": true, "P-384": true, "P-521": true}, m},
 	}
 
 	return m

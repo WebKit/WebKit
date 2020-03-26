@@ -10,7 +10,6 @@ import (
 	"crypto/ecdsa"
 	"crypto/rand"
 	"crypto/x509"
-	"errors"
 	"fmt"
 	"io"
 	"math/big"
@@ -126,7 +125,6 @@ const (
 	extensionQUICTransportParams        uint16 = 0xffa5 // draft-ietf-quic-tls-13
 	extensionChannelID                  uint16 = 30032  // not IANA assigned
 	extensionDelegatedCredentials       uint16 = 0xff02 // not IANA assigned
-	extensionPQExperimentSignal         uint16 = 54538
 )
 
 // TLS signaling cipher suite values
@@ -145,13 +143,12 @@ var tls13HelloRetryRequest = []uint8{
 type CurveID uint16
 
 const (
-	CurveP224    CurveID = 21
-	CurveP256    CurveID = 23
-	CurveP384    CurveID = 24
-	CurveP521    CurveID = 25
-	CurveX25519  CurveID = 29
-	CurveCECPQ2  CurveID = 16696
-	CurveCECPQ2b CurveID = 65074
+	CurveP224   CurveID = 21
+	CurveP256   CurveID = 23
+	CurveP384   CurveID = 24
+	CurveP521   CurveID = 25
+	CurveX25519 CurveID = 29
+	CurveCECPQ2 CurveID = 16696
 )
 
 // TLS Elliptic Curve Point Formats
@@ -501,11 +498,6 @@ type Config struct {
 
 	CertCompressionAlgs map[uint16]CertCompressionAlg
 
-	// PQExperimentSignal instructs a client to send a non-IANA defined extension
-	// that signals participation in an experiment of post-quantum key exchange
-	// methods.
-	PQExperimentSignal bool
-
 	// Bugs specifies optional misbehaviour to be used for testing other
 	// implementations.
 	Bugs ProtocolBugs
@@ -537,15 +529,6 @@ const (
 	RSABadValueWrongLeadingByte
 	RSABadValueNoZero
 	NumRSABadValues
-)
-
-type RSAPSSSupport int
-
-const (
-	RSAPSSSupportAny RSAPSSSupport = iota
-	RSAPSSSupportNone
-	RSAPSSSupportOnlineSignatureOnly
-	RSAPSSSupportBoth
 )
 
 type ProtocolBugs struct {
@@ -674,10 +657,48 @@ type ProtocolBugs struct {
 	// in the same record as ServerHello.
 	PartialEncryptedExtensionsWithServerHello bool
 
-	// PartialClientFinishedWithClientHello, if true, causes the TLS 1.3
-	// client to send part of Finished unencrypted in the same record as
-	// ClientHello.
+	// PartialClientFinishedWithClientHello, if true, causes the TLS 1.2
+	// or TLS 1.3 client to send part of Finished unencrypted in the same
+	// record as ClientHello.
 	PartialClientFinishedWithClientHello bool
+
+	// PartialClientFinishedWithSecondClientHello, if true, causes the
+	// TLS 1.3 client to send part of Finished unencrypted in the same
+	// record as the second ClientHello.
+	PartialClientFinishedWithSecondClientHello bool
+
+	// PartialEndOfEarlyDataWithClientHello, if true, causes the TLS 1.3
+	// client to send part of EndOfEarlyData unencrypted in the same record
+	// as ClientHello.
+	PartialEndOfEarlyDataWithClientHello bool
+
+	// PartialSecondClientHelloAfterFirst, if true, causes the TLS 1.3 client
+	// to send part of the second ClientHello in the same record as the first
+	// one.
+	PartialSecondClientHelloAfterFirst bool
+
+	// PartialClientKeyExchangeWithClientHello, if true, causes the TLS 1.2
+	// client to send part of the ClientKeyExchange in the same record as
+	// the ClientHello.
+	PartialClientKeyExchangeWithClientHello bool
+
+	// PartialNewSessionTicketWithServerHelloDone, if true, causes the TLS 1.2
+	// server to send part of the NewSessionTicket in the same record as
+	// ServerHelloDone.
+	PartialNewSessionTicketWithServerHelloDone bool
+
+	// PartialNewSessionTicketWithServerHelloDone, if true, causes the TLS 1.2
+	// server to send part of the Finshed in the same record as ServerHelloDone.
+	PartialFinishedWithServerHelloDone bool
+
+	// PartialServerHelloWithHelloRetryRequest, if true, causes the TLS 1.3
+	// server to send part of the ServerHello in the same record as
+	// HelloRetryRequest.
+	PartialServerHelloWithHelloRetryRequest bool
+
+	// TrailingDataWithFinished, if true, causes the record containing the
+	// Finished message to include an extra byte of data at the end.
+	TrailingDataWithFinished bool
 
 	// SendV2ClientHello causes the client to send a V2ClientHello
 	// instead of a normal ClientHello.
@@ -941,6 +962,10 @@ type ProtocolBugs struct {
 
 	// PacketAdaptor is the packetAdaptor to use to simulate timeouts.
 	PacketAdaptor *packetAdaptor
+
+	// MockQUICTransport is the mockQUICTransport used when testing
+	// QUIC interfaces.
+	MockQUICTransport *mockQUICTransport
 
 	// ReorderHandshakeFragments, if true, causes handshake fragments in
 	// DTLS to overlap and be sent in the wrong order. It also causes
@@ -1583,10 +1608,6 @@ type ProtocolBugs struct {
 	// curves to use compressed coordinates.
 	SendCompressedCoordinates bool
 
-	// ExpectRSAPSSSupport specifies the level of RSA-PSS support expected
-	// from the peer.
-	ExpectRSAPSSSupport RSAPSSSupport
-
 	// SetX25519HighBit, if true, causes X25519 key shares to set their
 	// high-order bit.
 	SetX25519HighBit bool
@@ -1649,10 +1670,6 @@ type ProtocolBugs struct {
 	// DisableDelegatedCredentials, if true, disables client support for delegated
 	// credentials.
 	DisableDelegatedCredentials bool
-
-	// ExpectPQExperimentSignal specifies whether or not the post-quantum
-	// experiment signal should be received by a client or server.
-	ExpectPQExperimentSignal bool
 }
 
 func (c *Config) serverInit() {
@@ -1732,7 +1749,7 @@ func (c *Config) maxVersion(isDTLS bool) uint16 {
 	return ret
 }
 
-var defaultCurvePreferences = []CurveID{CurveCECPQ2b, CurveCECPQ2, CurveX25519, CurveP256, CurveP384, CurveP521}
+var defaultCurvePreferences = []CurveID{CurveCECPQ2, CurveX25519, CurveP256, CurveP384, CurveP521}
 
 func (c *Config) curvePreferences() []CurveID {
 	if c == nil || len(c.CurvePreferences) == 0 {
@@ -2080,51 +2097,4 @@ func containsGREASE(values []uint16) bool {
 		}
 	}
 	return false
-}
-
-func checkRSAPSSSupport(support RSAPSSSupport, sigAlgs, sigAlgsCert []signatureAlgorithm) error {
-	if sigAlgsCert == nil {
-		sigAlgsCert = sigAlgs
-	} else if eqSignatureAlgorithms(sigAlgs, sigAlgsCert) {
-		// The peer should have only sent the list once.
-		return errors.New("tls: signature_algorithms and signature_algorithms_cert extensions were identical")
-	}
-
-	if support == RSAPSSSupportAny {
-		return nil
-	}
-
-	var foundPSS, foundPSSCert bool
-	for _, sigAlg := range sigAlgs {
-		if sigAlg == signatureRSAPSSWithSHA256 || sigAlg == signatureRSAPSSWithSHA384 || sigAlg == signatureRSAPSSWithSHA512 {
-			foundPSS = true
-			break
-		}
-	}
-	for _, sigAlg := range sigAlgsCert {
-		if sigAlg == signatureRSAPSSWithSHA256 || sigAlg == signatureRSAPSSWithSHA384 || sigAlg == signatureRSAPSSWithSHA512 {
-			foundPSSCert = true
-			break
-		}
-	}
-
-	expectPSS := support != RSAPSSSupportNone
-	if foundPSS != expectPSS {
-		if expectPSS {
-			return errors.New("tls: peer did not support PSS")
-		} else {
-			return errors.New("tls: peer unexpectedly supported PSS")
-		}
-	}
-
-	expectPSSCert := support == RSAPSSSupportBoth
-	if foundPSSCert != expectPSSCert {
-		if expectPSSCert {
-			return errors.New("tls: peer did not support PSS in certificates")
-		} else {
-			return errors.New("tls: peer unexpectedly supported PSS in certificates")
-		}
-	}
-
-	return nil
 }

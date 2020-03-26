@@ -63,7 +63,6 @@
 #include <string.h>
 
 #include <openssl/bn.h>
-#include <openssl/buf.h>
 #include <openssl/conf.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
@@ -94,9 +93,9 @@ int X509V3_add_value(const char *name, const char *value,
 {
     CONF_VALUE *vtmp = NULL;
     char *tname = NULL, *tvalue = NULL;
-    if (name && !(tname = BUF_strdup(name)))
+    if (name && !(tname = OPENSSL_strdup(name)))
         goto err;
-    if (value && !(tvalue = BUF_strdup(value)))
+    if (value && !(tvalue = OPENSSL_strdup(value)))
         goto err;
     if (!(vtmp = CONF_VALUE_new()))
         goto err;
@@ -185,11 +184,11 @@ static char *bignum_to_string(const BIGNUM *bn)
 
     /* Prepend "0x", but place it after the "-" if negative. */
     if (tmp[0] == '-') {
-        BUF_strlcpy(ret, "-0x", len);
-        BUF_strlcat(ret, tmp + 1, len);
+        OPENSSL_strlcpy(ret, "-0x", len);
+        OPENSSL_strlcat(ret, tmp + 1, len);
     } else {
-        BUF_strlcpy(ret, "0x", len);
-        BUF_strlcat(ret, tmp, len);
+        OPENSSL_strlcpy(ret, "0x", len);
+        OPENSSL_strlcat(ret, tmp, len);
     }
     OPENSSL_free(tmp);
     return ret;
@@ -331,7 +330,7 @@ STACK_OF(CONF_VALUE) *X509V3_parse_list(const char *line)
     char *linebuf;
     int state;
     /* We are going to modify the line so copy it first */
-    linebuf = BUF_strdup(line);
+    linebuf = OPENSSL_strdup(line);
     if (linebuf == NULL) {
         OPENSSL_PUT_ERROR(X509V3, ERR_R_MALLOC_FAILURE);
         goto err;
@@ -646,7 +645,7 @@ static int append_ia5(STACK_OF(OPENSSL_STRING) **sk, ASN1_IA5STRING *email)
     sk_OPENSSL_STRING_sort(*sk);
     if (sk_OPENSSL_STRING_find(*sk, NULL, (char *)email->data))
         return 1;
-    emtmp = BUF_strdup((char *)email->data);
+    emtmp = OPENSSL_strdup((char *)email->data);
     if (!emtmp || !sk_OPENSSL_STRING_push(*sk, emtmp)) {
         X509_email_free(*sk);
         *sk = NULL;
@@ -978,7 +977,7 @@ static int do_check_string(ASN1_STRING *a, int cmp_type, equal_fn equal,
         else if (a->length == (int)blen && !OPENSSL_memcmp(a->data, b, blen))
             rv = 1;
         if (rv > 0 && peername)
-            *peername = BUF_strndup((char *)a->data, a->length);
+            *peername = OPENSSL_strndup((char *)a->data, a->length);
     } else {
         int astrlen;
         unsigned char *astr;
@@ -997,7 +996,7 @@ static int do_check_string(ASN1_STRING *a, int cmp_type, equal_fn equal,
             rv = equal(astr, astrlen, (unsigned char *)b, blen, flags);
         }
         if (rv > 0 && peername)
-            *peername = BUF_strndup((char *)astr, astrlen);
+            *peername = OPENSSL_strndup((char *)astr, astrlen);
         OPENSSL_free(astr);
     }
     return rv;
@@ -1156,7 +1155,7 @@ ASN1_OCTET_STRING *a2i_IPADDRESS_NC(const char *ipasc)
     p = strchr(ipasc, '/');
     if (!p)
         return NULL;
-    iptmp = BUF_strdup(ipasc);
+    iptmp = OPENSSL_strdup(ipasc);
     if (!iptmp)
         return NULL;
     p = iptmp + (p - ipasc);

@@ -260,7 +260,7 @@ static PKCS7 *pkcs7_new(CBS *cbs) {
   }
 
   ret->ber_len = CBS_len(&copy2) - CBS_len(cbs);
-  ret->ber_bytes = BUF_memdup(CBS_data(&copy2), ret->ber_len);
+  ret->ber_bytes = OPENSSL_memdup(CBS_data(&copy2), ret->ber_len);
   if (ret->ber_bytes == NULL) {
     goto err;
   }

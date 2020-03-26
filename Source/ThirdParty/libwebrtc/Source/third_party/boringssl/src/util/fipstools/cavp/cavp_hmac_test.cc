@@ -19,8 +19,10 @@
 
 #include <openssl/crypto.h>
 #include <openssl/hmac.h>
+#include <openssl/span.h>
 
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 
@@ -79,7 +81,8 @@ static bool TestHMAC(FileTest *t, void *arg) {
   }
 
   printf("%s", t->CurrentTestToString().c_str());
-  printf("Mac = %s\r\n\r\n", EncodeHex(out, t_len).c_str());
+  printf("Mac = %s\r\n\r\n",
+         EncodeHex(bssl::MakeConstSpan(out, t_len)).c_str());
 
   return true;
 }

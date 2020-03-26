@@ -275,11 +275,9 @@ $code.=<<___;
 .align	16
 ${PREFIX}_encrypt:
 .cfi_startproc
-#ifndef NDEBUG
-#ifndef BORINGSSL_FIPS
+#ifdef BORINGSSL_DISPATCH_TEST
 .extern	BORINGSSL_function_hit
 	movb \$1,BORINGSSL_function_hit+1(%rip)
-#endif
 #endif
 	movups	($inp),$inout0		# load input
 	mov	240($key),$rounds	# key->rounds
@@ -1205,10 +1203,8 @@ $code.=<<___;
 .align	16
 ${PREFIX}_ctr32_encrypt_blocks:
 .cfi_startproc
-#ifndef NDEBUG
-#ifndef BORINGSSL_FIPS
+#ifdef BORINGSSL_DISPATCH_TEST
 	movb \$1,BORINGSSL_function_hit(%rip)
-#endif
 #endif
 	cmp	\$1,$len
 	jne	.Lctr32_bulk
@@ -4354,10 +4350,8 @@ $code.=<<___;
 ${PREFIX}_set_encrypt_key:
 __aesni_set_encrypt_key:
 .cfi_startproc
-#ifndef NDEBUG
-#ifndef BORINGSSL_FIPS
+#ifdef BORINGSSL_DISPATCH_TEST
 	movb \$1,BORINGSSL_function_hit+3(%rip)
-#endif
 #endif
 	.byte	0x48,0x83,0xEC,0x08	# sub rsp,8
 .cfi_adjust_cfa_offset	8

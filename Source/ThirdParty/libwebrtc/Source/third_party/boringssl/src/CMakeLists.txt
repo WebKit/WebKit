@@ -59,9 +59,15 @@ if(BORINGSSL_ALLOW_CXX_RUNTIME)
   add_definitions(-DBORINGSSL_ALLOW_CXX_RUNTIME)
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-  # Windows release builds don't set NDEBUG in NASM flags automatically.
-  set(CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS} -DNDEBUG")
+string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER)
+if(NOT FIPS)
+  if(CMAKE_BUILD_TYPE_LOWER STREQUAL "relwithassert" OR
+     NOT CMAKE_BUILD_TYPE_LOWER MATCHES "rel")
+    add_definitions(-DBORINGSSL_DISPATCH_TEST)
+    # CMake automatically connects include_directories to the NASM
+    # command-line, but not add_definitions.
+    set(CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS} -DBORINGSSL_DISPATCH_TEST")
+  endif()
 endif()
 
 # Add a RelWithAsserts build configuration. It is the same as Release, except it
@@ -104,10 +110,14 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CLANG 1)
 endif()
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+  set(EMSCRIPTEN 1)
+endif()
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CLANG)
   # Note clang-cl is odd and sets both CLANG and MSVC. We base our configuration
   # primarily on our normal Clang one.
-  set(C_CXX_FLAGS "-Werror -Wformat=2 -Wsign-compare -Wmissing-field-initializers -Wwrite-strings")
+  set(C_CXX_FLAGS "-Werror -Wformat=2 -Wsign-compare -Wmissing-field-initializers -Wwrite-strings -Wvla")
   if(MSVC)
     # clang-cl sets different default warnings than clang. It also treats -Wall
     # as -Weverything, to match MSVC. Instead -W3 is the alias for -Wall.
@@ -117,7 +127,14 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CLANG)
     # honor it. Suppress it here to compensate. See https://crbug.com/772117.
     set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wno-deprecated-declarations")
   else()
-    set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wall -ggdb -fvisibility=hidden -fno-common")
+    if(EMSCRIPTEN)
+      # emscripten's emcc/clang does not accept the "-ggdb" flag.
+      set(C_CXX_FLAGS "${C_CXX_FLAGS} -g")
+    else()
+      set(C_CXX_FLAGS "${C_CXX_FLAGS} -ggdb")
+    endif()
+
+    set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wall -fvisibility=hidden -fno-common")
   endif()
 
   if(CLANG)
@@ -231,11 +248,10 @@ if(WIN32)
   add_definitions(-DNOMINMAX)
   # Allow use of fopen.
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-  # VS 2017 and higher supports STL-only warning suppressions. Manually add to
-  # C++ only to work around a CMake quoting bug when using NASM with the Visual
-  # Studio generator. This will be fixed in CMake 3.13.0. See
-  # https://gitlab.kitware.com/cmake/cmake/merge_requests/2179
-  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-D_STL_EXTRA_DISABLED_WARNINGS=4774\ 4987>)
+  # VS 2017 and higher supports STL-only warning suppressions.
+  # A bug in CMake < 3.13.0 may cause the space in this value to
+  # cause issues when building with NASM. In that case, update CMake.
+  add_definitions("-D_STL_EXTRA_DISABLED_WARNINGS=4774 4987")
 endif()
 
 if((CMAKE_COMPILER_IS_GNUCXX AND CMAKE_C_COMPILER_VERSION VERSION_GREATER "4.7.99") OR
@@ -371,6 +387,14 @@ if(FIPS)
       set(FIPS_DELOCATE "1")
     endif()
   endif()
+  if(FIPS_SHARED)
+    # The Android CMake files set -ffunction-sections and -fdata-sections,
+    # which is incompatible with FIPS_SHARED.
+    set(CMAKE_C_FLAGS
+        "${CMAKE_C_FLAGS} -fno-function-sections -fno-data-sections")
+    set(CMAKE_CXX_FLAGS
+        "${CMAKE_CXX_FLAGS} -fno-function-sections -fno-data-sections")
+  endif()
 endif()
 
 if(OPENSSL_SMALL)
@@ -432,6 +456,10 @@ if(NOT OPENSSL_NO_ASM AND CMAKE_OSX_ARCHITECTURES)
     message(FATAL_ERROR "Universal binaries not supported.")
   endif()
   list(GET CMAKE_OSX_ARCHITECTURES 0 CMAKE_SYSTEM_PROCESSOR)
+endif()
+
+if(OPENSSL_NO_SSE2_FOR_TESTING)
+  add_definitions(-DOPENSSL_NO_SSE2_FOR_TESTING)
 endif()
 
 if(OPENSSL_NO_ASM)

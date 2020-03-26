@@ -382,18 +382,16 @@ char *ERR_error_string(uint32_t packed_error, char *ret) {
   OPENSSL_memset(ret, 0, ERR_ERROR_STRING_BUF_LEN);
 #endif
 
-  ERR_error_string_n(packed_error, ret, ERR_ERROR_STRING_BUF_LEN);
-
-  return ret;
+  return ERR_error_string_n(packed_error, ret, ERR_ERROR_STRING_BUF_LEN);
 }
 
-void ERR_error_string_n(uint32_t packed_error, char *buf, size_t len) {
+char *ERR_error_string_n(uint32_t packed_error, char *buf, size_t len) {
   char lib_buf[64], reason_buf[64];
   const char *lib_str, *reason_str;
   unsigned lib, reason;
 
   if (len == 0) {
-    return;
+    return NULL;
   }
 
   lib = ERR_GET_LIB(packed_error);
@@ -425,7 +423,7 @@ void ERR_error_string_n(uint32_t packed_error, char *buf, size_t len) {
     if (len <= num_colons) {
       // In this situation it's not possible to ensure that the correct number
       // of colons are included in the output.
-      return;
+      return buf;
     }
 
     for (i = 0; i < num_colons; i++) {
@@ -444,6 +442,8 @@ void ERR_error_string_n(uint32_t packed_error, char *buf, size_t len) {
       s = colon + 1;
     }
   }
+
+  return buf;
 }
 
 // err_string_cmp is a compare function for searching error values with

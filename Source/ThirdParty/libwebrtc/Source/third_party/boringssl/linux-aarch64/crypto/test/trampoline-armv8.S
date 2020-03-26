@@ -26,7 +26,6 @@
 .hidden	abi_test_trampoline
 .align	4
 abi_test_trampoline:
-.Labi_test_trampoline_begin:
 	// Stack layout (low to high addresses)
 	//   x29,x30 (16 bytes)
 	//    d8-d15 (64 bytes)
@@ -685,3 +684,4 @@ abi_test_clobber_v15_upper:
 .size	abi_test_clobber_v15_upper,.-abi_test_clobber_v15_upper
 #endif
 #endif  // !OPENSSL_NO_ASM
+.section	.note.GNU-stack,"",%progbits

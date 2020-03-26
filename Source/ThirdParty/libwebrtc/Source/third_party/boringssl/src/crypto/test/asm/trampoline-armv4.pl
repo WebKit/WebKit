@@ -64,7 +64,6 @@ my $code = <<____;
 .globl	abi_test_trampoline
 .align	4
 abi_test_trampoline:
-.Labi_test_trampoline_begin:
 	@ Save parameters and all callee-saved registers. For convenience, we
 	@ save r9 on iOS even though it's volatile.
 	vstmdb	sp!, {d8-d15}

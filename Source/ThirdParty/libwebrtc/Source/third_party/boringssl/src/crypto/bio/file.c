@@ -79,7 +79,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <openssl/buf.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
@@ -208,16 +207,16 @@ static long file_ctrl(BIO *b, int cmd, long num, void *ptr) {
       b->shutdown = (int)num & BIO_CLOSE;
       if (num & BIO_FP_APPEND) {
         if (num & BIO_FP_READ) {
-          BUF_strlcpy(p, "a+", sizeof(p));
+          OPENSSL_strlcpy(p, "a+", sizeof(p));
         } else {
-          BUF_strlcpy(p, "a", sizeof(p));
+          OPENSSL_strlcpy(p, "a", sizeof(p));
         }
       } else if ((num & BIO_FP_READ) && (num & BIO_FP_WRITE)) {
-        BUF_strlcpy(p, "r+", sizeof(p));
+        OPENSSL_strlcpy(p, "r+", sizeof(p));
       } else if (num & BIO_FP_WRITE) {
-        BUF_strlcpy(p, "w", sizeof(p));
+        OPENSSL_strlcpy(p, "w", sizeof(p));
       } else if (num & BIO_FP_READ) {
-        BUF_strlcpy(p, "r", sizeof(p));
+        OPENSSL_strlcpy(p, "r", sizeof(p));
       } else {
         OPENSSL_PUT_ERROR(BIO, BIO_R_BAD_FOPEN_MODE);
         ret = 0;

@@ -26,6 +26,7 @@
 #include <openssl/nid.h>
 
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 
@@ -68,10 +69,8 @@ static bool TestECDSA2KeyPair(FileTest *t, void *arg) {
       return false;
     }
 
-    printf("d = %s\r\nQx = %s\r\nQy = %s\r\n\r\n",
-           EncodeHex(d_bytes.data(), d_bytes.size()).c_str(),
-           EncodeHex(qx_bytes.data(), qx_bytes.size()).c_str(),
-           EncodeHex(qy_bytes.data(), qy_bytes.size()).c_str());
+    printf("d = %s\r\nQx = %s\r\nQy = %s\r\n\r\n", EncodeHex(d_bytes).c_str(),
+           EncodeHex(qx_bytes).c_str(), EncodeHex(qy_bytes).c_str());
   }
 
   return true;

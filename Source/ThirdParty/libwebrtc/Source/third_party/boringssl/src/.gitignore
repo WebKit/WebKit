@@ -1,4 +1,6 @@
 build/
+build32/
+build64/
 ssl/test/runner/runner
 *.pyc
 *.swp

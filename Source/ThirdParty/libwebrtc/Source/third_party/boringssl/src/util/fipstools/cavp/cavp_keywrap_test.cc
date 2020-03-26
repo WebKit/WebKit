@@ -21,6 +21,7 @@
 #include <openssl/crypto.h>
 
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 
@@ -119,8 +120,7 @@ static bool TestCipher(FileTest *t, void *arg) {
       printf("FAIL\r\n\r\n");
     }
   } else {
-    printf("%s = %s\r\n\r\n", result_label.c_str(),
-           EncodeHex(result.data(), result.size()).c_str());
+    printf("%s = %s\r\n\r\n", result_label.c_str(), EncodeHex(result).c_str());
   }
 
   return true;

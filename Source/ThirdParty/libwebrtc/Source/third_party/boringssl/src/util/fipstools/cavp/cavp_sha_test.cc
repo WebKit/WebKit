@@ -21,6 +21,7 @@
 #include <openssl/digest.h>
 
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 namespace {
@@ -69,7 +70,7 @@ static bool TestSHA(FileTest *t, void *arg) {
   }
 
   printf("%s", t->CurrentTestToString().c_str());
-  printf("MD = %s\r\n\r\n", EncodeHex(out.data(), out.size()).c_str());
+  printf("MD = %s\r\n\r\n", EncodeHex(out).c_str());
 
   return true;
 }

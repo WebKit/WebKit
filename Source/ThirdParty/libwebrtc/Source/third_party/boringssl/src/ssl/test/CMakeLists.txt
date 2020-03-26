@@ -6,6 +6,7 @@ add_executable(
   async_bio.cc
   bssl_shim.cc
   handshake_util.cc
+  mock_quic_transport.cc
   packeted_bio.cc
   settings_writer.cc
   test_config.cc
@@ -23,6 +24,7 @@ if(UNIX AND NOT APPLE AND NOT ANDROID)
     async_bio.cc
     handshake_util.cc
     handshaker.cc
+    mock_quic_transport.cc
     packeted_bio.cc
     settings_writer.cc
     test_config.cc

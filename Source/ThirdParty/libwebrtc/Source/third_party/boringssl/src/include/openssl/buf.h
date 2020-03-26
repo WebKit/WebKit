@@ -97,25 +97,25 @@ OPENSSL_EXPORT size_t BUF_MEM_grow_clean(BUF_MEM *buf, size_t len);
 // error.
 OPENSSL_EXPORT int BUF_MEM_append(BUF_MEM *buf, const void *in, size_t len);
 
-// BUF_strdup returns an allocated, duplicate of |str|.
+
+// Deprecated functions.
+
+// BUF_strdup calls |OPENSSL_strdup|.
 OPENSSL_EXPORT char *BUF_strdup(const char *str);
 
-// BUF_strnlen returns the number of characters in |str|, excluding the NUL
-// byte, but at most |max_len|. This function never reads more than |max_len|
-// bytes from |str|.
+// BUF_strnlen calls |OPENSSL_strnlen|.
 OPENSSL_EXPORT size_t BUF_strnlen(const char *str, size_t max_len);
 
-// BUF_strndup returns an allocated, duplicate of |str|, which is, at most,
-// |size| bytes. The result is always NUL terminated.
+// BUF_strndup calls |OPENSSL_strndup|.
 OPENSSL_EXPORT char *BUF_strndup(const char *str, size_t size);
 
-// BUF_memdup returns an allocated, duplicate of |size| bytes from |data|.
+// BUF_memdup calls |OPENSSL_memdup|.
 OPENSSL_EXPORT void *BUF_memdup(const void *data, size_t size);
 
-// BUF_strlcpy acts like strlcpy(3).
+// BUF_strlcpy calls |OPENSSL_strlcpy|.
 OPENSSL_EXPORT size_t BUF_strlcpy(char *dst, const char *src, size_t dst_size);
 
-// BUF_strlcat acts like strlcat(3).
+// BUF_strlcat calls |OPENSSL_strlcat|.
 OPENSSL_EXPORT size_t BUF_strlcat(char *dst, const char *src, size_t dst_size);
 
 

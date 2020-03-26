@@ -172,6 +172,21 @@ foo:
 	leaq 128(%rsp), %rsp
 	vpbroadcastq %xmm0, %xmm0
 
+# WAS cmpq foo@GOTPCREL(%rip), %rax
+	leaq -128(%rsp), %rsp
+	pushq %rbx
+	leaq	.Lfoo_local_target(%rip), %rbx
+	cmpq %rbx, %rax
+	popq %rbx
+	leaq 128(%rsp), %rsp
+# WAS cmpq %rax, foo@GOTPCREL(%rip)
+	leaq -128(%rsp), %rsp
+	pushq %rbx
+	leaq	.Lfoo_local_target(%rip), %rbx
+	cmpq %rax, %rbx
+	popq %rbx
+	leaq 128(%rsp), %rsp
+
 .comm foobar,64,32
 .text
 .loc 1 2 0

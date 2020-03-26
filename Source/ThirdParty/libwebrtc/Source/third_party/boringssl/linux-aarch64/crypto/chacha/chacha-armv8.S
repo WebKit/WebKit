@@ -1982,3 +1982,4 @@ ChaCha20_512_neon:
 .size	ChaCha20_512_neon,.-ChaCha20_512_neon
 #endif
 #endif  // !OPENSSL_NO_ASM
+.section	.note.GNU-stack,"",%progbits

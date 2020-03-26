@@ -99,6 +99,36 @@ OPENSSL_EXPORT int RSA_up_ref(RSA *rsa);
 // RSA_bits returns the size of |rsa|, in bits.
 OPENSSL_EXPORT unsigned RSA_bits(const RSA *rsa);
 
+// RSA_get0_n returns |rsa|'s public modulus.
+OPENSSL_EXPORT const BIGNUM *RSA_get0_n(const RSA *rsa);
+
+// RSA_get0_e returns |rsa|'s public exponent.
+OPENSSL_EXPORT const BIGNUM *RSA_get0_e(const RSA *rsa);
+
+// RSA_get0_d returns |rsa|'s private exponent. If |rsa| is a public key, this
+// value will be NULL.
+OPENSSL_EXPORT const BIGNUM *RSA_get0_d(const RSA *rsa);
+
+// RSA_get0_p returns |rsa|'s first private prime factor. If |rsa| is a public
+// key or lacks its prime factors, this value will be NULL.
+OPENSSL_EXPORT const BIGNUM *RSA_get0_p(const RSA *rsa);
+
+// RSA_get0_q returns |rsa|'s second private prime factor. If |rsa| is a public
+// key or lacks its prime factors, this value will be NULL.
+OPENSSL_EXPORT const BIGNUM *RSA_get0_q(const RSA *rsa);
+
+// RSA_get0_dmp1 returns d (mod p-1) for |rsa|. If |rsa| is a public key or
+// lacks CRT parameters, this value will be NULL.
+OPENSSL_EXPORT const BIGNUM *RSA_get0_dmp1(const RSA *rsa);
+
+// RSA_get0_dmq1 returns d (mod q-1) for |rsa|. If |rsa| is a public key or
+// lacks CRT parameters, this value will be NULL.
+OPENSSL_EXPORT const BIGNUM *RSA_get0_dmq1(const RSA *rsa);
+
+// RSA_get0_iqmp returns q^-1 (mod p). If |rsa| is a public key or lacks CRT
+// parameters, this value will be NULL.
+OPENSSL_EXPORT const BIGNUM *RSA_get0_iqmp(const RSA *rsa);
+
 // RSA_get0_key sets |*out_n|, |*out_e|, and |*out_d|, if non-NULL, to |rsa|'s
 // modulus, public exponent, and private exponent, respectively. If |rsa| is a
 // public key, the private exponent will be set to NULL.

@@ -461,7 +461,7 @@ TEST_P(RSAEncryptTest, TestKey) {
   }
 }
 
-INSTANTIATE_TEST_SUITE_P(, RSAEncryptTest,
+INSTANTIATE_TEST_SUITE_P(All, RSAEncryptTest,
                          testing::ValuesIn(kRSAEncryptParams));
 
 TEST(RSATest, TestDecrypt) {
@@ -1117,4 +1117,48 @@ TEST(RSATest, Threads) {
     thread.join();
   }
 }
+
+// This test might be excessively slow on slower CPUs or platforms that do not
+// expect server workloads. It is disabled by default and reenabled on some
+// platforms when running tests standalone via all_tests.go.
+//
+// Additionally, even when running disabled tests standalone, limit this to
+// x86_64. On other platforms, this test hits resource limits or is too slow.
+#if defined(OPENSSL_X86_64)
+TEST(RSATest, DISABLED_BlindingCacheConcurrency) {
+  bssl::UniquePtr<RSA> rsa(
+      RSA_private_key_from_bytes(kKey1, sizeof(kKey1) - 1));
+  ASSERT_TRUE(rsa);
+
+#if defined(OPENSSL_TSAN)
+  constexpr size_t kSignaturesPerThread = 10;
+  constexpr size_t kNumThreads = 10;
+#else
+  constexpr size_t kSignaturesPerThread = 100;
+  constexpr size_t kNumThreads = 2048;
 #endif
+
+  const uint8_t kDummyHash[32] = {0};
+  auto worker = [&] {
+    uint8_t sig[256];
+    ASSERT_LE(RSA_size(rsa.get()), sizeof(sig));
+
+    for (size_t i = 0; i < kSignaturesPerThread; i++) {
+      unsigned sig_len = sizeof(sig);
+      EXPECT_TRUE(RSA_sign(NID_sha256, kDummyHash, sizeof(kDummyHash), sig,
+                           &sig_len, rsa.get()));
+    }
+  };
+
+  std::vector<std::thread> threads;
+  threads.reserve(kNumThreads);
+  for (size_t i = 0; i < kNumThreads; i++) {
+    threads.emplace_back(worker);
+  }
+  for (auto &thread : threads) {
+    thread.join();
+  }
+}
+#endif  // X86_64
+
+#endif  // THREADS

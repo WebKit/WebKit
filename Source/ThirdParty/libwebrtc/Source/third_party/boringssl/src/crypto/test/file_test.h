@@ -164,11 +164,6 @@ class FileTest {
   // success and returns false with an error to |stderr| on failure.
   bool GetBytes(std::vector<uint8_t> *out, const std::string &key);
 
-  // ExpectBytesEqual returns true if |expected| and |actual| are equal.
-  // Otherwise, it returns false and prints a message to |stderr|.
-  bool ExpectBytesEqual(const uint8_t *expected, size_t expected_len,
-                        const uint8_t *actual, size_t actual_len);
-
   // AtNewInstructionBlock returns true if the current test was immediately
   // preceded by an instruction block.
   bool IsAtNewInstructionBlock() const;
@@ -178,6 +173,9 @@ class FileTest {
 
   // IgnoreInstruction marks the instruction with key |key| as used.
   void IgnoreInstruction(const std::string &key) { HasInstruction(key); }
+
+  // IgnoreAllUnusedInstructions disables checking for unused instructions.
+  void IgnoreAllUnusedInstructions();
 
   // GetInstruction looks up the instruction with key |key|. It sets
   // |*out_value| to the value (empty string if the instruction has no value)

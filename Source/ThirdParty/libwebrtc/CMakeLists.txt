@@ -289,11 +289,6 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/ssl/tls_method.cc
     Source/third_party/boringssl/src/ssl/tls_record.cc
     Source/third_party/boringssl/src/third_party/fiat/curve25519.c
-    Source/third_party/boringssl/src/third_party/sike/asm/fp_generic.c
-    Source/third_party/boringssl/src/third_party/sike/curve_params.c
-    Source/third_party/boringssl/src/third_party/sike/fpx.c
-    Source/third_party/boringssl/src/third_party/sike/isogeny.c
-    Source/third_party/boringssl/src/third_party/sike/sike.c
     Source/third_party/jsoncpp/source/src/lib_json/json_reader.cpp
     Source/third_party/jsoncpp/source/src/lib_json/json_value.cpp
     Source/third_party/jsoncpp/source/src/lib_json/json_writer.cpp

@@ -105,7 +105,7 @@ static const Base64TestVector kTestVectors[] = {
 
 class Base64Test : public testing::TestWithParam<Base64TestVector> {};
 
-INSTANTIATE_TEST_SUITE_P(, Base64Test, testing::ValuesIn(kTestVectors));
+INSTANTIATE_TEST_SUITE_P(All, Base64Test, testing::ValuesIn(kTestVectors));
 
 // RemoveNewlines returns a copy of |in| with all '\n' characters removed.
 static std::string RemoveNewlines(const char *in) {

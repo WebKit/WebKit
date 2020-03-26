@@ -32,9 +32,9 @@
 
 
 // It's assumed that the operating system always has an unfailing source of
-// entropy which is accessed via |CRYPTO_sysrand|. (If the operating system
-// entropy source fails, it's up to |CRYPTO_sysrand| to abort the process—we
-// don't try to handle it.)
+// entropy which is accessed via |CRYPTO_sysrand[_for_seed]|. (If the operating
+// system entropy source fails, it's up to |CRYPTO_sysrand| to abort the
+// process—we don't try to handle it.)
 //
 // In addition, the hardware may provide a low-latency RNG. Intel's rdrand
 // instruction is the canonical example of this. When a hardware RNG is
@@ -61,11 +61,11 @@ struct rand_thread_state {
   // (re)seeded. This is bound by |kReseedInterval|.
   unsigned calls;
   // last_block_valid is non-zero iff |last_block| contains data from
-  // |CRYPTO_sysrand|.
+  // |CRYPTO_sysrand_for_seed|.
   int last_block_valid;
 
 #if defined(BORINGSSL_FIPS)
-  // last_block contains the previous block from |CRYPTO_sysrand|.
+  // last_block contains the previous block from |CRYPTO_sysrand_for_seed|.
   uint8_t last_block[CRNGT_BLOCK_SIZE];
   // next and prev form a NULL-terminated, double-linked list of all states in
   // a process.
@@ -169,7 +169,7 @@ static void rand_get_seed(struct rand_thread_state *state,
                           uint8_t seed[CTR_DRBG_ENTROPY_LEN]) {
   if (!state->last_block_valid) {
     if (!hwrand(state->last_block, sizeof(state->last_block))) {
-      CRYPTO_sysrand(state->last_block, sizeof(state->last_block));
+      CRYPTO_sysrand_for_seed(state->last_block, sizeof(state->last_block));
     }
     state->last_block_valid = 1;
   }
@@ -179,8 +179,9 @@ static void rand_get_seed(struct rand_thread_state *state,
 #define FIPS_OVERREAD 10
   uint8_t entropy[CTR_DRBG_ENTROPY_LEN * FIPS_OVERREAD];
 
-  if (!hwrand(entropy, sizeof(entropy))) {
-    CRYPTO_sysrand(entropy, sizeof(entropy));
+  int used_hwrand = hwrand(entropy, sizeof(entropy));
+  if (!used_hwrand) {
+    CRYPTO_sysrand_for_seed(entropy, sizeof(entropy));
   }
 
   // See FIPS 140-2, section 4.9.2. This is the “continuous random number
@@ -210,6 +211,17 @@ static void rand_get_seed(struct rand_thread_state *state,
       seed[j] ^= entropy[CTR_DRBG_ENTROPY_LEN * i + j];
     }
   }
+
+#if defined(OPENSSL_URANDOM)
+  // If we used RDRAND, also opportunistically read from the system. This avoids
+  // solely relying on the hardware once the entropy pool has been initialized.
+  if (used_hwrand) {
+    CRYPTO_sysrand_if_available(entropy, CTR_DRBG_ENTROPY_LEN);
+    for (size_t i = 0; i < CTR_DRBG_ENTROPY_LEN; i++) {
+      seed[i] ^= entropy[i];
+    }
+  }
+#endif
 }
 
 #else

@@ -140,22 +140,16 @@ static void RunWycheproofTest(FileTest *t) {
   ASSERT_TRUE(GetWycheproofResult(t, &result));
   std::vector<uint8_t> shared;
   ASSERT_TRUE(t->GetBytes(&shared, "shared"));
+  // BoringSSL supports compressed coordinates.
+  bool is_valid = result.IsValid({"CompressedPoint"});
 
   // Wycheproof stores the peer key in an SPKI to mimic a Java API mistake.
   // This is non-standard and error-prone.
   CBS cbs;
   CBS_init(&cbs, peer_spki.data(), peer_spki.size());
   bssl::UniquePtr<EVP_PKEY> peer_evp(EVP_parse_public_key(&cbs));
-  if (!peer_evp) {
-    // Note some of Wycheproof's "acceptable" entries are unsupported by
-    // BoringSSL because they test explicit curves (forbidden by RFC 5480),
-    // while others are supported because they used compressed coordinates. If
-    // the peer key fails to parse, we consider it to match "acceptable", but if
-    // the resulting shared secret matches below, it too matches "acceptable".
-    //
-    // TODO(davidben): Use the flags field to disambiguate these. Possibly
-    // first get the Wycheproof folks to use flags more consistently.
-    EXPECT_NE(WycheproofResult::kValid, result);
+  if (!peer_evp || CBS_len(&cbs) != 0) {
+    EXPECT_FALSE(is_valid);
     return;
   }
   EC_KEY *peer_ec = EVP_PKEY_get0_EC_KEY(peer_evp.get());
@@ -170,11 +164,11 @@ static void RunWycheproofTest(FileTest *t) {
   int ret =
       ECDH_compute_key(actual.data(), actual.size(),
                        EC_KEY_get0_public_key(peer_ec), key.get(), nullptr);
-  if (result == WycheproofResult::kInvalid) {
-    EXPECT_EQ(-1, ret);
-  } else {
+  if (is_valid) {
     EXPECT_EQ(static_cast<int>(actual.size()), ret);
     EXPECT_EQ(Bytes(shared), Bytes(actual.data(), static_cast<size_t>(ret)));
+  } else {
+    EXPECT_EQ(-1, ret);
   }
 }
 

@@ -99,6 +99,19 @@ extern "C" {
 // parameters, only use 12-byte nonces.
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_gcm(void);
 
+// EVP_aead_aes_192_gcm is AES-192 in Galois Counter Mode.
+//
+// WARNING: AES-192 is superfluous and shouldn't exist. NIST should never have
+// defined it. Use only when interop with another system requires it, never
+// de novo.
+//
+// Note: AES-GCM should only be used with 12-byte (96-bit) nonces. Although it
+// is specified to take a variable-length nonce, nonces with other lengths are
+// effectively randomized, which means one must consider collisions. Unless
+// implementing an existing protocol which has already specified incorrect
+// parameters, only use 12-byte nonces.
+OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_192_gcm(void);
+
 // EVP_aead_aes_256_gcm is AES-256 in Galois Counter Mode.
 //
 // Note: AES-GCM should only be used with 12-byte (96-bit) nonces. Although it

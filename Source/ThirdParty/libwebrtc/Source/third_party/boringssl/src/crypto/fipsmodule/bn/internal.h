@@ -437,6 +437,40 @@ OPENSSL_EXPORT uint16_t bn_mod_u16_consttime(const BIGNUM *bn, uint16_t d);
 // of the first several odd primes and zero otherwise.
 int bn_odd_number_is_obviously_composite(const BIGNUM *bn);
 
+// A BN_MILLER_RABIN stores state common to each Miller-Rabin iteration. It is
+// initialized within an existing |BN_CTX| scope and may not be used after
+// that scope is released with |BN_CTX_end|. Field names match those in FIPS
+// 186-4, section C.3.1.
+typedef struct {
+  // w1 is w-1.
+  BIGNUM *w1;
+  // m is (w-1)/2^a.
+  BIGNUM *m;
+  // one_mont is 1 (mod w) in Montgomery form.
+  BIGNUM *one_mont;
+  // w1_mont is w-1 (mod w) in Montgomery form.
+  BIGNUM *w1_mont;
+  // w_bits is BN_num_bits(w).
+  int w_bits;
+  // a is the largest integer such that 2^a divides w-1.
+  int a;
+} BN_MILLER_RABIN;
+
+// bn_miller_rabin_init initializes |miller_rabin| for testing if |mont->N| is
+// prime. It returns one on success and zero on error.
+OPENSSL_EXPORT int bn_miller_rabin_init(BN_MILLER_RABIN *miller_rabin,
+                                        const BN_MONT_CTX *mont, BN_CTX *ctx);
+
+// bn_miller_rabin_iteration performs one Miller-Rabin iteration, checking if
+// |b| is a composite witness for |mont->N|. |miller_rabin| must have been
+// initialized with |bn_miller_rabin_setup|. On success, it returns one and sets
+// |*out_is_possibly_prime| to one if |mont->N| may still be prime or zero if
+// |b| shows it is composite. On allocation or internal failure, it returns
+// zero.
+OPENSSL_EXPORT int bn_miller_rabin_iteration(
+    const BN_MILLER_RABIN *miller_rabin, int *out_is_possibly_prime,
+    const BIGNUM *b, const BN_MONT_CTX *mont, BN_CTX *ctx);
+
 // bn_rshift1_words sets |r| to |a| >> 1, where both arrays are |num| bits wide.
 void bn_rshift1_words(BN_ULONG *r, const BN_ULONG *a, size_t num);
 

@@ -22,6 +22,7 @@
 #include <openssl/err.h>
 
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 
@@ -47,13 +48,11 @@ static bool MonteCarlo(const TestCtx *ctx, FileTest *t,
                     result_label = encrypt ? "CIPHERTEXT" : "PLAINTEXT";
   std::vector<uint8_t> prev_result, result, prev_in;
   for (int i = 0; i < 100; i++) {
-    printf("COUNT = %d\r\nKEY = %s\r\n", i,
-           EncodeHex(key.data(), key.size()).c_str());
+    printf("COUNT = %d\r\nKEY = %s\r\n", i, EncodeHex(key).c_str());
     if (ctx->has_iv) {
-      printf("IV = %s\r\n", EncodeHex(iv.data(), iv.size()).c_str());
+      printf("IV = %s\r\n", EncodeHex(iv).c_str());
     }
-    printf("%s = %s\r\n", in_label.c_str(),
-           EncodeHex(in.data(), in.size()).c_str());
+    printf("%s = %s\r\n", in_label.c_str(), EncodeHex(in).c_str());
 
     if (!ctx->has_iv) {  // ECB mode
       for (int j = 0; j < 1000; j++) {
@@ -88,8 +87,7 @@ static bool MonteCarlo(const TestCtx *ctx, FileTest *t,
       }
     }
 
-    printf("%s = %s\r\n\r\n", result_label.c_str(),
-           EncodeHex(result.data(), result.size()).c_str());
+    printf("%s = %s\r\n\r\n", result_label.c_str(), EncodeHex(result).c_str());
 
     const size_t key_len = key.size() * 8;
     if (key_len == 128) {
@@ -165,7 +163,7 @@ static bool TestCipher(FileTest *t, void *arg) {
     const std::string label =
         operation == kEncrypt ? "CIPHERTEXT" : "PLAINTEXT";
     printf("%s%s = %s\r\n\r\n", t->CurrentTestToString().c_str(), label.c_str(),
-           EncodeHex(result.data(), result.size()).c_str());
+           EncodeHex(result).c_str());
   } else {  // ctx->mode == kMCT
     const std::string op_label =
         operation == kEncrypt ? "[ENCRYPT]" : "[DECRYPT]";

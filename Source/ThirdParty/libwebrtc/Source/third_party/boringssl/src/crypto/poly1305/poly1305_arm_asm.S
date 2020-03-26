@@ -2023,3 +2023,7 @@ add sp,sp,#0
 bx lr
 
 #endif  /* __arm__ && !OPENSSL_NO_ASM && !__APPLE__ */
+
+#if defined(__ELF__)
+.section	.note.GNU-stack,"",%progbits
+#endif

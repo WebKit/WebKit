@@ -817,6 +817,117 @@ static const char kCommonNameNotDNSLeaf[] =
     "-----END CERTIFICATE-----\n";
 static const char kCommonNameNotDNS[] = "Not a DNS name";
 
+// The following six certificates are issued by |kSANTypesRoot| and have
+// different extended key usage values. They were created with the following
+// Go program:
+//
+// func main() {
+//     block, _ := pem.Decode([]byte(rootKeyPEM))
+//     rootPriv, _ := x509.ParsePKCS1PrivateKey(block.Bytes)
+//     block, _ = pem.Decode([]byte(rootCertPEM))
+//     root, _ := x509.ParseCertificate(block.Bytes)
+//
+//     leafTemplate := &x509.Certificate{
+//         SerialNumber: big.NewInt(3),
+//         Subject: pkix.Name{
+//             CommonName: "EKU msSGC",
+//         },
+//         NotBefore:             time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC),
+//         NotAfter:              time.Date(2099, time.January, 1, 0, 0, 0, 0, time.UTC),
+//         BasicConstraintsValid: true,
+//         ExtKeyUsage:           []x509.ExtKeyUsage{FILL IN HERE},
+//     }
+//     leafKey, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+//     leafDER, err := x509.CreateCertificate(rand.Reader, leafTemplate, root, &leafKey.PublicKey, rootPriv)
+//     if err != nil {
+//         panic(err)
+//     }
+//     pem.Encode(os.Stdout, &pem.Block{Type: "CERTIFICATE", Bytes: leafDER})
+// }
+
+static const char kMicrosoftSGCCert[] =
+    "-----BEGIN CERTIFICATE-----\n"
+    "MIIBtDCCAR2gAwIBAgIBAzANBgkqhkiG9w0BAQsFADArMRcwFQYDVQQKEw5Cb3Jp\n"
+    "bmdTU0wgVGVzdDEQMA4GA1UEAxMHUm9vdCBDQTAgFw0wMDAxMDEwMDAwMDBaGA8y\n"
+    "MDk5MDEwMTAwMDAwMFowFDESMBAGA1UEAxMJRUtVIG1zU0dDMFkwEwYHKoZIzj0C\n"
+    "AQYIKoZIzj0DAQcDQgAEEn61v3Vs+q6bTyyRnrJvuKBE8PTNVLbXGB52jig4Qse2\n"
+    "mGygNEysS0uzZ0luz+rn2hDRUFL6sHLUs1d8UMbI/6NEMEIwFQYDVR0lBA4wDAYK\n"
+    "KwYBBAGCNwoDAzAMBgNVHRMBAf8EAjAAMBsGA1UdIwQUMBKAEEA31wH7QC+4HH5U\n"
+    "BCeMWQEwDQYJKoZIhvcNAQELBQADgYEAgDQI9RSo3E3ZVnU71TV/LjG9xwHtfk6I\n"
+    "rlNnlJJ0lsTHAuMc1mwCbzhtsmasetwYlIa9G8GFWB9Gh/QqHA7G649iGGmXShqe\n"
+    "aVDuWgeSEJxBPE2jILoMm4pEYF7jfonTn7XXX6O78yuSlP+NPIU0gUKHkWZ1sWk0\n"
+    "cC4l0r/6jik=\n"
+    "-----END CERTIFICATE-----\n";
+
+static const char kNetscapeSGCCert[] =
+    "-----BEGIN CERTIFICATE-----\n"
+    "MIIBszCCARygAwIBAgIBAzANBgkqhkiG9w0BAQsFADArMRcwFQYDVQQKEw5Cb3Jp\n"
+    "bmdTU0wgVGVzdDEQMA4GA1UEAxMHUm9vdCBDQTAgFw0wMDAxMDEwMDAwMDBaGA8y\n"
+    "MDk5MDEwMTAwMDAwMFowFDESMBAGA1UEAxMJRUtVIG1zU0dDMFkwEwYHKoZIzj0C\n"
+    "AQYIKoZIzj0DAQcDQgAE3NbT+TnBfq1DWJCezjaUL52YhDU7cOkI2S2PoWgJ1v7x\n"
+    "kKLwBonUFZjppZs69SyBHeJdti+KoJ3qTW+hCG08EaNDMEEwFAYDVR0lBA0wCwYJ\n"
+    "YIZIAYb4QgQBMAwGA1UdEwEB/wQCMAAwGwYDVR0jBBQwEoAQQDfXAftAL7gcflQE\n"
+    "J4xZATANBgkqhkiG9w0BAQsFAAOBgQBuiyVcfazekHkCWksxdFmjPmMtWCxFjkzc\n"
+    "8VBxFE0CfSHQAfZ8J7tXd1FbAq/eXdZvvo8v0JB4sOM4Ex1ob1fuvDFHdSAHAD7W\n"
+    "dhKIjJyzVojoxjCjyue0XMeEPl7RiqbdxoS/R5HFAqAF0T2OeQAqP9gTpOXoau1M\n"
+    "RQHX6HQJJg==\n"
+    "-----END CERTIFICATE-----\n";
+
+static const char kServerEKUCert[] =
+    "-----BEGIN CERTIFICATE-----\n"
+    "MIIBsjCCARugAwIBAgIBAzANBgkqhkiG9w0BAQsFADArMRcwFQYDVQQKEw5Cb3Jp\n"
+    "bmdTU0wgVGVzdDEQMA4GA1UEAxMHUm9vdCBDQTAgFw0wMDAxMDEwMDAwMDBaGA8y\n"
+    "MDk5MDEwMTAwMDAwMFowFDESMBAGA1UEAxMJRUtVIG1zU0dDMFkwEwYHKoZIzj0C\n"
+    "AQYIKoZIzj0DAQcDQgAEDd35i+VWPwIOKLrLWTuP5cqD+yJDB5nujEzPgkXP5LKJ\n"
+    "SZRbHTqTdpYZB2jy6y90RY2Bsjx7FfZ7nN5G2g1GOKNCMEAwEwYDVR0lBAwwCgYI\n"
+    "KwYBBQUHAwEwDAYDVR0TAQH/BAIwADAbBgNVHSMEFDASgBBAN9cB+0AvuBx+VAQn\n"
+    "jFkBMA0GCSqGSIb3DQEBCwUAA4GBAIKmbMBjuivL/rxDu7u7Vr3o3cdmEggBJxwL\n"
+    "iatNW3x1wg0645aNYOktW/iQ7mAAiziTY73GFyfiJDWqnY+CwA94ZWyQidjHdN/I\n"
+    "6BR52sN/dkYEoInYEbmDNMc/if+T0yqeBQLP4BeKLiT8p0qqaimae6LgibS19hDP\n"
+    "2hoEMdz2\n"
+    "-----END CERTIFICATE-----\n";
+
+static const char kServerEKUPlusMicrosoftSGCCert[] =
+    "-----BEGIN CERTIFICATE-----\n"
+    "MIIBvjCCASegAwIBAgIBAzANBgkqhkiG9w0BAQsFADArMRcwFQYDVQQKEw5Cb3Jp\n"
+    "bmdTU0wgVGVzdDEQMA4GA1UEAxMHUm9vdCBDQTAgFw0wMDAxMDEwMDAwMDBaGA8y\n"
+    "MDk5MDEwMTAwMDAwMFowFDESMBAGA1UEAxMJRUtVIG1zU0dDMFkwEwYHKoZIzj0C\n"
+    "AQYIKoZIzj0DAQcDQgAEDO1MYPxq+U4oXMIK8UnsS4C696wpcu4UOmcMJJ5CUd5Z\n"
+    "ZpJShN6kYKnrb3GK/6xEgbUGntmrzSRG5FYqk6QgD6NOMEwwHwYDVR0lBBgwFgYI\n"
+    "KwYBBQUHAwEGCisGAQQBgjcKAwMwDAYDVR0TAQH/BAIwADAbBgNVHSMEFDASgBBA\n"
+    "N9cB+0AvuBx+VAQnjFkBMA0GCSqGSIb3DQEBCwUAA4GBAHOu2IBa4lHzVGS36HxS\n"
+    "SejUE87Ji1ysM6BgkYbfxfS9MuV+J3UnqH57JjbH/3CFl4ZDWceF6SGBSCn8LqKa\n"
+    "KHpwoNFU3zA99iQzVJgbUyN0PbKwHEanLyKDJZyFk71R39ToxhSNQgaQYjZYCy1H\n"
+    "5V9oXd1bodEqVsOZ/mur24Ku\n"
+    "-----END CERTIFICATE-----\n";
+
+static const char kAnyEKU[] =
+    "-----BEGIN CERTIFICATE-----\n"
+    "MIIBrjCCARegAwIBAgIBAzANBgkqhkiG9w0BAQsFADArMRcwFQYDVQQKEw5Cb3Jp\n"
+    "bmdTU0wgVGVzdDEQMA4GA1UEAxMHUm9vdCBDQTAgFw0wMDAxMDEwMDAwMDBaGA8y\n"
+    "MDk5MDEwMTAwMDAwMFowFDESMBAGA1UEAxMJRUtVIG1zU0dDMFkwEwYHKoZIzj0C\n"
+    "AQYIKoZIzj0DAQcDQgAE9nsLABDporlTvx1OBUc4Hd5vxfX+8nS/OhbHmKtFLYNu\n"
+    "1CLLrImbwMQYD2G+PgLO6sQHmASq2jmJKp6ZWsRkTqM+MDwwDwYDVR0lBAgwBgYE\n"
+    "VR0lADAMBgNVHRMBAf8EAjAAMBsGA1UdIwQUMBKAEEA31wH7QC+4HH5UBCeMWQEw\n"
+    "DQYJKoZIhvcNAQELBQADgYEAxgjgn1SAzQ+2GeCicZ5ndvVhKIeFelGCQ989XTVq\n"
+    "uUbAYBW6v8GXNuVzoXYxDgNSanF6U+w+INrJ6daKVrIxAxdk9QFgBXqJoupuRAA3\n"
+    "/OqnmYux0EqOTLbTK1P8DhaiaD0KV6dWGUwzqsgBmPkZ0lgNaPjvb1mKV3jhBkjz\n"
+    "L6A=\n"
+    "-----END CERTIFICATE-----\n";
+
+static const char kNoEKU[] =
+    "-----BEGIN CERTIFICATE-----\n"
+    "MIIBnTCCAQagAwIBAgIBAzANBgkqhkiG9w0BAQsFADArMRcwFQYDVQQKEw5Cb3Jp\n"
+    "bmdTU0wgVGVzdDEQMA4GA1UEAxMHUm9vdCBDQTAgFw0wMDAxMDEwMDAwMDBaGA8y\n"
+    "MDk5MDEwMTAwMDAwMFowFDESMBAGA1UEAxMJRUtVIG1zU0dDMFkwEwYHKoZIzj0C\n"
+    "AQYIKoZIzj0DAQcDQgAEpSFSqbYY86ZcMamE606dqdyjWlwhSHKOLUFsUUIzkMPz\n"
+    "KHRu/x3Yzi8+Hm8eFK/TnCbkpYsYw4hIw00176dYzaMtMCswDAYDVR0TAQH/BAIw\n"
+    "ADAbBgNVHSMEFDASgBBAN9cB+0AvuBx+VAQnjFkBMA0GCSqGSIb3DQEBCwUAA4GB\n"
+    "AHvYzynIkjLThExHRS+385hfv4vgrQSMmCM1SAnEIjSBGsU7RPgiGAstN06XivuF\n"
+    "T1fNugRmTu4OtOIbfdYkcjavJufw9hR9zWTt77CNMTy9XmOZLgdS5boFTtLCztr3\n"
+    "TXHOSQQD8Dl4BK0wOet+TP6LBEjHlRFjAqK4bu9xpxV2\n"
+    "-----END CERTIFICATE-----\n";
+
 // CertFromPEM parses the given, NUL-terminated pem block and returns an
 // |X509*|.
 static bssl::UniquePtr<X509> CertFromPEM(const char *pem) {
@@ -2072,4 +2183,46 @@ TEST(X509Test, CommonNameAndNameConstraints) {
                               {}, 0, false, nullptr));
   EXPECT_EQ(X509_V_ERR_HOSTNAME_MISMATCH,
             verify_cert(not_dns.get(), 0 /* no flags */, kCommonNameNotDNS));
+}
+
+TEST(X509Test, ServerGatedCryptoEKUs) {
+  bssl::UniquePtr<X509> root = CertFromPEM(kSANTypesRoot);
+  ASSERT_TRUE(root);
+  bssl::UniquePtr<X509> ms_sgc = CertFromPEM(kMicrosoftSGCCert);
+  ASSERT_TRUE(ms_sgc);
+  bssl::UniquePtr<X509> ns_sgc = CertFromPEM(kNetscapeSGCCert);
+  ASSERT_TRUE(ns_sgc);
+  bssl::UniquePtr<X509> server_eku = CertFromPEM(kServerEKUCert);
+  ASSERT_TRUE(server_eku);
+  bssl::UniquePtr<X509> server_eku_plus_ms_sgc =
+      CertFromPEM(kServerEKUPlusMicrosoftSGCCert);
+  ASSERT_TRUE(server_eku_plus_ms_sgc);
+  bssl::UniquePtr<X509> any_eku = CertFromPEM(kAnyEKU);
+  ASSERT_TRUE(any_eku);
+  bssl::UniquePtr<X509> no_eku = CertFromPEM(kNoEKU);
+  ASSERT_TRUE(no_eku);
+
+  auto verify_cert = [&root](X509 *leaf) {
+    return Verify(leaf, {root.get()}, /*intermediates=*/{}, /*crls=*/{},
+                  /*flags=*/0, /*use_additional_untrusted=*/false,
+                  [&](X509_VERIFY_PARAM *param) {
+                    ASSERT_TRUE(X509_VERIFY_PARAM_set_purpose(
+                        param, X509_PURPOSE_SSL_SERVER));
+                  });
+  };
+
+  // Neither the Microsoft nor Netscape SGC EKU should be sufficient for
+  // |X509_PURPOSE_SSL_SERVER|. The "any" EKU probably, technically, should be.
+  // However, we've never accepted it and it's not acceptable in leaf
+  // certificates by the Baseline, so perhaps we don't need this complexity.
+  for (X509 *leaf : {ms_sgc.get(), ns_sgc.get(), any_eku.get()}) {
+    EXPECT_EQ(X509_V_ERR_INVALID_PURPOSE, verify_cert(leaf));
+  }
+
+  // The server-auth EKU is sufficient, and it doesn't matter if an SGC EKU is
+  // also included. Lastly, not specifying an EKU is also valid.
+  for (X509 *leaf : {server_eku.get(), server_eku_plus_ms_sgc.get(),
+                     no_eku.get()}) {
+    EXPECT_EQ(X509_V_OK, verify_cert(leaf));
+  }
 }

@@ -48,6 +48,11 @@ static const struct argument kArguments[] = {
         "An OpenSSL-style ECDH curves list that configures the offered curves",
     },
     {
+        "-sigalgs", kOptionalArgument,
+        "An OpenSSL-style signature algorithms list that configures the "
+        "signature algorithm preferences",
+    },
+    {
         "-max-version", kOptionalArgument,
         "The maximum acceptable protocol version",
     },
@@ -117,16 +122,19 @@ static const struct argument kArguments[] = {
     },
     {
         "-root-certs", kOptionalArgument,
-        "A filename containing one of more PEM root certificates. Implies that "
+        "A filename containing one or more PEM root certificates. Implies that "
         "verification is required.",
+    },
+    {
+        "-root-cert-dir", kOptionalArgument,
+        "A directory containing one or more root certificate PEM files in "
+        "OpenSSL's hashed-directory format. Implies that verification is "
+        "required.",
     },
     {
         "-early-data", kOptionalArgument, "Enable early data. The argument to "
         "this flag is the early data to send or if it starts with '@', the "
         "file to read from for early data.",
-    },
-    {
-        "-ed25519", kBooleanArgument, "Advertise Ed25519 support",
     },
     {
         "-http-tunnel", kOptionalArgument,
@@ -374,6 +382,12 @@ bool Client(const std::vector<std::string> &args) {
     return false;
   }
 
+  if (args_map.count("-sigalgs") != 0 &&
+      !SSL_CTX_set1_sigalgs_list(ctx.get(), args_map["-sigalgs"].c_str())) {
+    fprintf(stderr, "Failed setting signature algorithms list\n");
+    return false;
+  }
+
   uint16_t max_version = TLS1_3_VERSION;
   if (args_map.count("-max-version") != 0 &&
       !VersionFromString(&max_version, args_map["-max-version"])) {
@@ -500,12 +514,18 @@ bool Client(const std::vector<std::string> &args) {
     SSL_CTX_set_verify(ctx.get(), SSL_VERIFY_PEER, nullptr);
   }
 
-  if (args_map.count("-early-data") != 0) {
-    SSL_CTX_set_early_data_enabled(ctx.get(), 1);
+  if (args_map.count("-root-cert-dir") != 0) {
+    if (!SSL_CTX_load_verify_locations(
+            ctx.get(), nullptr, args_map["-root-cert-dir"].c_str())) {
+      fprintf(stderr, "Failed to load root certificates.\n");
+      ERR_print_errors_fp(stderr);
+      return false;
+    }
+    SSL_CTX_set_verify(ctx.get(), SSL_VERIFY_PEER, nullptr);
   }
 
-  if (args_map.count("-ed25519") != 0) {
-    SSL_CTX_set_ed25519_enabled(ctx.get(), 1);
+  if (args_map.count("-early-data") != 0) {
+    SSL_CTX_set_early_data_enabled(ctx.get(), 1);
   }
 
   if (args_map.count("-debug") != 0) {

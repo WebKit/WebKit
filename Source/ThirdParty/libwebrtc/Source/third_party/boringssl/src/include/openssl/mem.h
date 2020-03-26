@@ -126,8 +126,23 @@ OPENSSL_EXPORT int BIO_snprintf(char *buf, size_t n, const char *format, ...)
 
 // BIO_vsnprintf has the same behavior as vsnprintf(3).
 OPENSSL_EXPORT int BIO_vsnprintf(char *buf, size_t n, const char *format,
-                                 va_list args)
-    OPENSSL_PRINTF_FORMAT_FUNC(3, 0);
+                                 va_list args) OPENSSL_PRINTF_FORMAT_FUNC(3, 0);
+
+// OPENSSL_strndup returns an allocated, duplicate of |str|, which is, at most,
+// |size| bytes. The result is always NUL terminated.
+OPENSSL_EXPORT char *OPENSSL_strndup(const char *str, size_t size);
+
+// OPENSSL_memdup returns an allocated, duplicate of |size| bytes from |data| or
+// NULL on allocation failure.
+OPENSSL_EXPORT void *OPENSSL_memdup(const void *data, size_t size);
+
+// OPENSSL_strlcpy acts like strlcpy(3).
+OPENSSL_EXPORT size_t OPENSSL_strlcpy(char *dst, const char *src,
+                                      size_t dst_size);
+
+// OPENSSL_strlcat acts like strlcat(3).
+OPENSSL_EXPORT size_t OPENSSL_strlcat(char *dst, const char *src,
+                                      size_t dst_size);
 
 
 // Deprecated functions.

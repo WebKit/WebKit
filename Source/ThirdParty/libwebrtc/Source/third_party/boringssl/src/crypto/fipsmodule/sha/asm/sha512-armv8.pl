@@ -50,7 +50,8 @@ if ($flavour && $flavour ne "void") {
     open OUT,"| \"$^X\" $xlate $flavour $output";
     *STDOUT=*OUT;
 } else {
-    open STDOUT,">$output";
+    open OUT,">$output";
+    *STDOUT=*OUT;
 }
 
 if ($output =~ /512/) {

@@ -800,7 +800,7 @@ static std::string CurveToString(
   return OBJ_nid2sn(params.param.nid);
 }
 
-INSTANTIATE_TEST_SUITE_P(, ECCurveTest, testing::ValuesIn(AllCurves()),
+INSTANTIATE_TEST_SUITE_P(All, ECCurveTest, testing::ValuesIn(AllCurves()),
                          CurveToString);
 
 static bssl::UniquePtr<EC_GROUP> GetCurve(FileTest *t, const char *key) {
@@ -879,11 +879,45 @@ TEST(ECTest, ScalarBaseMultVectors) {
     ASSERT_TRUE(
         EC_POINT_mul(group.get(), p.get(), nullptr, g, n.get(), ctx.get()));
     check_point(p.get());
+  });
+}
 
-    // These tests take a very long time, but are worth running when we make
-    // non-trivial changes to the EC code.
-#if 0
-    // Test two-point multiplication.
+// These tests take a very long time, but are worth running when we make
+// non-trivial changes to the EC code.
+TEST(ECTest, DISABLED_ScalarBaseMultVectorsTwoPoint) {
+  bssl::UniquePtr<BN_CTX> ctx(BN_CTX_new());
+  ASSERT_TRUE(ctx);
+
+  FileTestGTest("crypto/fipsmodule/ec/ec_scalar_base_mult_tests.txt",
+                [&](FileTest *t) {
+    bssl::UniquePtr<EC_GROUP> group = GetCurve(t, "Curve");
+    ASSERT_TRUE(group);
+    bssl::UniquePtr<BIGNUM> n = GetBIGNUM(t, "N");
+    ASSERT_TRUE(n);
+    bssl::UniquePtr<BIGNUM> x = GetBIGNUM(t, "X");
+    ASSERT_TRUE(x);
+    bssl::UniquePtr<BIGNUM> y = GetBIGNUM(t, "Y");
+    ASSERT_TRUE(y);
+    bool is_infinity = BN_is_zero(x.get()) && BN_is_zero(y.get());
+
+    bssl::UniquePtr<BIGNUM> px(BN_new());
+    ASSERT_TRUE(px);
+    bssl::UniquePtr<BIGNUM> py(BN_new());
+    ASSERT_TRUE(py);
+    auto check_point = [&](const EC_POINT *p) {
+      if (is_infinity) {
+        EXPECT_TRUE(EC_POINT_is_at_infinity(group.get(), p));
+      } else {
+        ASSERT_TRUE(EC_POINT_get_affine_coordinates_GFp(
+            group.get(), p, px.get(), py.get(), ctx.get()));
+        EXPECT_EQ(0, BN_cmp(x.get(), px.get()));
+        EXPECT_EQ(0, BN_cmp(y.get(), py.get()));
+      }
+    };
+
+    const EC_POINT *g = EC_GROUP_get0_generator(group.get());
+    bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group.get()));
+    ASSERT_TRUE(p);
     bssl::UniquePtr<BIGNUM> a(BN_new()), b(BN_new());
     for (int i = -64; i < 64; i++) {
       SCOPED_TRACE(i);
@@ -905,10 +939,82 @@ TEST(ECTest, ScalarBaseMultVectors) {
       EC_SCALAR a_scalar, b_scalar;
       ASSERT_TRUE(ec_bignum_to_scalar(group.get(), &a_scalar, a.get()));
       ASSERT_TRUE(ec_bignum_to_scalar(group.get(), &b_scalar, b.get()));
-      ASSERT_TRUE(ec_point_mul_scalar_public(group.get(), &p->raw, &a_scalar, &g->raw,
-                                             &b_scalar));
+      ASSERT_TRUE(ec_point_mul_scalar_public(group.get(), &p->raw, &a_scalar,
+                                             &g->raw, &b_scalar));
       check_point(p.get());
     }
-#endif
   });
+}
+
+static std::vector<uint8_t> HexToBytes(const char *str) {
+  std::vector<uint8_t> ret;
+  if (!DecodeHex(&ret, str)) {
+    abort();
+  }
+  return ret;
+}
+
+TEST(ECTest, DeriveFromSecret) {
+  struct DeriveTest {
+    int curve;
+    std::vector<uint8_t> secret;
+    std::vector<uint8_t> expected_priv;
+    std::vector<uint8_t> expected_pub;
+  };
+  const DeriveTest kDeriveTests[] = {
+      {NID_X9_62_prime256v1, HexToBytes(""),
+       HexToBytes(
+           "b98a86a71efb51ebdac4759937b977e9b0c05224675bb2b6a58ba306e237f4b8"),
+       HexToBytes(
+           "04fbe6cab439918e00231a2ff073cdc25823998864a9eb36f809095a1a919ece875"
+           "a145803fbe89a6cde53936e3c6d9c253ed3d38f5f58cae455c27e95645ceda9")},
+      {NID_X9_62_prime256v1, HexToBytes("123456"),
+       HexToBytes(
+           "44a72bc62087b88e5ab7126766177ed0d8f1ed09ad066cd746527fc201105a7e"),
+       HexToBytes(
+           "04ec0555cd76e991fef7f5504343937d0f38696db3360a4854052cb0d84a377a5a0"
+           "ff64c352755c28692b4ae085c2b817db9a1eddbd22e9cf39c12751e0870791b")},
+      {NID_X9_62_prime256v1, HexToBytes("00000000000000000000000000000000"),
+       HexToBytes(
+           "7ca1e2c83e6a5f2c1b3e7d58180226f269930c4b9fbe2a275096079630b7c57d"),
+       HexToBytes(
+           "0442ef70c8fc0fbe383ed0a0da36f39f9a590f3feebc07863cc858c9a8ef0465731"
+           "0408c249bd4d61929c54b71ffe056e6b4fa1eb537039b43d1c175f0ceab0f89")},
+      {NID_X9_62_prime256v1,
+       HexToBytes(
+           "de9c9b35543aaa0fba039e34e8ca9695da3225c7161c9e3a8c70356cac28c780"),
+       HexToBytes(
+           "659f5abf3b62b9931c29d6ed0722efd2349fa56f54e708cf3272f620f1bc44d0"),
+       HexToBytes(
+           "046741f806b593bf3a3d4a9d76bdcb9b0d7874633cbea8f42c05e78561f7e8ec362"
+           "b9b6f1913ded796fbdafe7f210cea897ac22a4e580c06a60f2659fd09f1830f")},
+      {NID_secp384r1, HexToBytes("123456"),
+       HexToBytes("95cd90d548997de090c7622708eccb7edc1b1bd78d2422235ad97406dada"
+                  "076555309da200096f6e4b36c46002beee89"),
+       HexToBytes(
+           "04007b2d026aa7636fa912c3f970d62bb6c10fa81c8f3290ed90b2d701696d1c6b9"
+           "5af88ce13e962996a7ac37e16527cb5d69bd081b8641d07634cf84b438600ec9434"
+           "15ac6bd7a0236f7ab0ea31ece67df03fa11646ea2b75e73d1b5e45b75c18")},
+  };
+
+  for (const auto &test : kDeriveTests) {
+    SCOPED_TRACE(Bytes(test.secret));
+    bssl::UniquePtr<EC_GROUP> group(EC_GROUP_new_by_curve_name(test.curve));
+    ASSERT_TRUE(group);
+    bssl::UniquePtr<EC_KEY> key(EC_KEY_derive_from_secret(
+        group.get(), test.secret.data(), test.secret.size()));
+    ASSERT_TRUE(key);
+
+    std::vector<uint8_t> priv(BN_num_bytes(EC_GROUP_get0_order(group.get())));
+    ASSERT_TRUE(BN_bn2bin_padded(priv.data(), priv.size(),
+                                 EC_KEY_get0_private_key(key.get())));
+    EXPECT_EQ(Bytes(priv), Bytes(test.expected_priv));
+
+    uint8_t *pub = nullptr;
+    size_t pub_len =
+        EC_KEY_key2buf(key.get(), POINT_CONVERSION_UNCOMPRESSED, &pub, nullptr);
+    bssl::UniquePtr<uint8_t> free_pub(pub);
+    EXPECT_NE(pub_len, 0u);
+    EXPECT_EQ(Bytes(pub, pub_len), Bytes(test.expected_pub));
+  }
 }

@@ -60,6 +60,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include <openssl/err.h>
+
 #if defined(OPENSSL_WINDOWS)
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <windows.h>
@@ -103,6 +105,10 @@ void sdallocx(void *ptr, size_t size, int flags) {
 }
 
 void *OPENSSL_malloc(size_t size) {
+  if (size + OPENSSL_MALLOC_PREFIX < size) {
+    return NULL;
+  }
+
   void *ptr = malloc(size + OPENSSL_MALLOC_PREFIX);
   if (ptr == NULL) {
     return NULL;
@@ -211,6 +217,9 @@ size_t OPENSSL_strnlen(const char *s, size_t len) {
 }
 
 char *OPENSSL_strdup(const char *s) {
+  if (s == NULL) {
+    return NULL;
+  }
   const size_t len = strlen(s) + 1;
   char *ret = OPENSSL_malloc(len);
   if (ret == NULL) {
@@ -269,4 +278,69 @@ int BIO_snprintf(char *buf, size_t n, const char *format, ...) {
 
 int BIO_vsnprintf(char *buf, size_t n, const char *format, va_list args) {
   return vsnprintf(buf, n, format, args);
+}
+
+char *OPENSSL_strndup(const char *str, size_t size) {
+  char *ret;
+  size_t alloc_size;
+
+  if (str == NULL) {
+    return NULL;
+  }
+
+  size = OPENSSL_strnlen(str, size);
+
+  alloc_size = size + 1;
+  if (alloc_size < size) {
+    // overflow
+    OPENSSL_PUT_ERROR(CRYPTO, ERR_R_MALLOC_FAILURE);
+    return NULL;
+  }
+  ret = OPENSSL_malloc(alloc_size);
+  if (ret == NULL) {
+    OPENSSL_PUT_ERROR(CRYPTO, ERR_R_MALLOC_FAILURE);
+    return NULL;
+  }
+
+  OPENSSL_memcpy(ret, str, size);
+  ret[size] = '\0';
+  return ret;
+}
+
+size_t OPENSSL_strlcpy(char *dst, const char *src, size_t dst_size) {
+  size_t l = 0;
+
+  for (; dst_size > 1 && *src; dst_size--) {
+    *dst++ = *src++;
+    l++;
+  }
+
+  if (dst_size) {
+    *dst = 0;
+  }
+
+  return l + strlen(src);
+}
+
+size_t OPENSSL_strlcat(char *dst, const char *src, size_t dst_size) {
+  size_t l = 0;
+  for (; dst_size > 0 && *dst; dst_size--, dst++) {
+    l++;
+  }
+  return l + OPENSSL_strlcpy(dst, src, dst_size);
+}
+
+void *OPENSSL_memdup(const void *data, size_t size) {
+  if (size == 0) {
+    return NULL;
+  }
+
+  void *ret = OPENSSL_malloc(size);
+  if (ret == NULL) {
+    OPENSSL_PUT_ERROR(CRYPTO, ERR_R_MALLOC_FAILURE);
+    return NULL;
+  }
+
+  OPENSSL_memcpy(ret, data, size);
+  return ret;
 }

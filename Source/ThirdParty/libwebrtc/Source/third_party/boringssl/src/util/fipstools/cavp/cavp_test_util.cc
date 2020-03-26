@@ -20,17 +20,6 @@
 #include <openssl/nid.h>
 
 
-std::string EncodeHex(const uint8_t *in, size_t in_len) {
-  static const char kHexDigits[] = "0123456789abcdef";
-  std::string ret;
-  ret.reserve(in_len * 2);
-  for (size_t i = 0; i < in_len; i++) {
-    ret += kHexDigits[in[i] >> 4];
-    ret += kHexDigits[in[i] & 0xf];
-  }
-  return ret;
-}
-
 const EVP_CIPHER *GetCipher(const std::string &name) {
   if (name == "des-cbc") {
     return EVP_des_cbc();

@@ -27,6 +27,7 @@ struct TestConfig {
   int port = 0;
   bool is_server = false;
   bool is_dtls = false;
+  bool is_quic = false;
   int resume_count = 0;
   std::string write_settings;
   bool fallback_scsv = false;
@@ -119,6 +120,7 @@ struct TestConfig {
   bool renegotiate_once = false;
   bool renegotiate_freely = false;
   bool renegotiate_ignore = false;
+  bool renegotiate_explicit = false;
   bool forbid_renegotiation_after_handshake = false;
   int expect_peer_signature_algorithm = 0;
   bool enable_all_curves = false;
@@ -150,14 +152,12 @@ struct TestConfig {
   bool no_op_extra_handshake = false;
   bool handshake_twice = false;
   bool allow_unknown_alpn_protos = false;
-  bool enable_ed25519 = false;
   bool use_custom_verify_callback = false;
   std::string expect_msg_callback;
   bool allow_false_start_without_alpn = false;
   bool ignore_tls13_downgrade = false;
   bool expect_tls13_downgrade = false;
   bool handoff = false;
-  bool no_rsa_pss_rsae_certs = false;
   bool use_ocsp_callback = false;
   bool set_ocsp_in_callback = false;
   bool decline_ocsp_callback = false;
@@ -175,8 +175,8 @@ struct TestConfig {
   bool expect_delegated_credential_used = false;
   std::string delegated_credential;
   std::string expect_early_data_reason;
-  bool enable_pq_experiment_signal = false;
-  bool expect_pq_experiment_signal = false;
+  bool expect_hrr = false;
+  bool expect_no_hrr = false;
 
   int argc;
   char **argv;

@@ -1232,3 +1232,4 @@ sha1_block_armv8:
 .hidden	OPENSSL_armcap_P
 #endif
 #endif  // !OPENSSL_NO_ASM
+.section	.note.GNU-stack,"",%progbits

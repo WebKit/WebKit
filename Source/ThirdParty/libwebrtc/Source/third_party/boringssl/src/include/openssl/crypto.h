@@ -64,8 +64,7 @@ OPENSSL_EXPORT int FIPS_mode(void);
 // module and may be used to check and write flag files to suppress duplicate
 // self-tests. If it is all zeros, no flag file will be checked nor written and
 // tests will always be run.
-OPENSSL_EXPORT int BORINGSSL_self_test(
-    const uint8_t module_sha512_hash[SHA512_DIGEST_LENGTH]);
+OPENSSL_EXPORT int BORINGSSL_self_test(void);
 
 
 // Deprecated functions.

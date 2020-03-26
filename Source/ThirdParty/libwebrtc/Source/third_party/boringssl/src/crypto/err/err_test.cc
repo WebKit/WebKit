@@ -235,3 +235,51 @@ TEST(ErrTest, PreservesErrno) {
   EXPECT_EQ(EINVAL, errno);
 }
 #endif
+
+TEST(ErrTest, String) {
+  char buf[128];
+  const uint32_t err = ERR_PACK(ERR_LIB_CRYPTO, ERR_R_INTERNAL_ERROR);
+
+  EXPECT_STREQ(
+      "error:0e000044:common libcrypto routines:OPENSSL_internal:internal "
+      "error",
+      ERR_error_string_n(err, buf, sizeof(buf)));
+
+  // The buffer is exactly the right size.
+  EXPECT_STREQ(
+      "error:0e000044:common libcrypto routines:OPENSSL_internal:internal "
+      "error",
+      ERR_error_string_n(err, buf, 73));
+
+  // If the buffer is too short, the string is truncated.
+  EXPECT_STREQ(
+      "error:0e000044:common libcrypto routines:OPENSSL_internal:internal "
+      "erro",
+      ERR_error_string_n(err, buf, 72));
+  EXPECT_STREQ("error:0e000044:common libcrypto routines:OPENSSL_internal:",
+               ERR_error_string_n(err, buf, 59));
+
+  // Truncated log lines always have the right number of colons.
+  EXPECT_STREQ("error:0e000044:common libcrypto routines:OPENSSL_interna:",
+               ERR_error_string_n(err, buf, 58));
+  EXPECT_STREQ("error:0e000044:common libcrypto routines:OPENSSL_intern:",
+               ERR_error_string_n(err, buf, 57));
+  EXPECT_STREQ("error:0e000044:common libcryp::",
+               ERR_error_string_n(err, buf, 32));
+  EXPECT_STREQ("error:0e0000:::",
+               ERR_error_string_n(err, buf, 16));
+  EXPECT_STREQ("err::::",
+               ERR_error_string_n(err, buf, 8));
+  EXPECT_STREQ("::::",
+               ERR_error_string_n(err, buf, 5));
+
+  // If the buffer is too short for even four colons, |ERR_error_string_n| does
+  // not bother trying to preserve the format.
+  EXPECT_STREQ("err", ERR_error_string_n(err, buf, 4));
+  EXPECT_STREQ("er", ERR_error_string_n(err, buf, 3));
+  EXPECT_STREQ("e", ERR_error_string_n(err, buf, 2));
+  EXPECT_STREQ("", ERR_error_string_n(err, buf, 1));
+
+  // A buffer length of zero should not touch the buffer.
+  ERR_error_string_n(err, nullptr, 0);
+}

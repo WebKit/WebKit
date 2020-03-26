@@ -19,7 +19,6 @@
 
 TEST(SelfTests, KAT) {
 #if !defined(_MSC_VER)
-  const uint8_t zero_hash[SHA512_DIGEST_LENGTH] = {0};
-  EXPECT_TRUE(BORINGSSL_self_test(zero_hash));
+  EXPECT_TRUE(BORINGSSL_self_test());
 #endif
 }

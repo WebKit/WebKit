@@ -28,6 +28,7 @@
 #include <openssl/err.h>
 
 #include "../internal.h"
+#include "./test_util.h"
 
 
 FileTest::FileTest(std::unique_ptr<FileTest::LineReader> reader,
@@ -286,6 +287,10 @@ bool FileTest::GetInstruction(std::string *out_value, const std::string &key) {
   return true;
 }
 
+void FileTest::IgnoreAllUnusedInstructions() {
+  unused_instructions_.clear();
+}
+
 const std::string &FileTest::GetInstructionOrDie(const std::string &key) {
   if (!HasInstruction(key)) {
     abort();
@@ -306,31 +311,6 @@ const std::string &FileTest::CurrentTestToString() const {
 bool FileTest::GetBytes(std::vector<uint8_t> *out, const std::string &key) {
   std::string value;
   return GetAttribute(&value, key) && ConvertToBytes(out, value);
-}
-
-static std::string EncodeHex(const uint8_t *in, size_t in_len) {
-  static const char kHexDigits[] = "0123456789abcdef";
-  std::string ret;
-  ret.reserve(in_len * 2);
-  for (size_t i = 0; i < in_len; i++) {
-    ret += kHexDigits[in[i] >> 4];
-    ret += kHexDigits[in[i] & 0xf];
-  }
-  return ret;
-}
-
-bool FileTest::ExpectBytesEqual(const uint8_t *expected, size_t expected_len,
-                                const uint8_t *actual, size_t actual_len) {
-  if (expected_len == actual_len &&
-      OPENSSL_memcmp(expected, actual, expected_len) == 0) {
-    return true;
-  }
-
-  std::string expected_hex = EncodeHex(expected, expected_len);
-  std::string actual_hex = EncodeHex(actual, actual_len);
-  PrintLine("Expected: %s", expected_hex.c_str());
-  PrintLine("Actual:   %s", actual_hex.c_str());
-  return false;
 }
 
 void FileTest::ClearTest() {
@@ -356,22 +336,6 @@ void FileTest::OnInstructionUsed(const std::string &key) {
   unused_instructions_.erase(key);
 }
 
-static bool FromHexDigit(uint8_t *out, char c) {
-  if ('0' <= c && c <= '9') {
-    *out = c - '0';
-    return true;
-  }
-  if ('a' <= c && c <= 'f') {
-    *out = c - 'a' + 10;
-    return true;
-  }
-  if ('A' <= c && c <= 'F') {
-    *out = c - 'A' + 10;
-    return true;
-  }
-  return false;
-}
-
 bool FileTest::ConvertToBytes(std::vector<uint8_t> *out,
                               const std::string &value) {
   if (value.size() >= 2 && value[0] == '"' && value[value.size() - 1] == '"') {
@@ -379,19 +343,9 @@ bool FileTest::ConvertToBytes(std::vector<uint8_t> *out,
     return true;
   }
 
-  if (value.size() % 2 != 0) {
+  if (!DecodeHex(out, value)) {
     PrintLine("Error decoding value: %s", value.c_str());
     return false;
-  }
-  out->clear();
-  out->reserve(value.size() / 2);
-  for (size_t i = 0; i < value.size(); i += 2) {
-    uint8_t hi, lo;
-    if (!FromHexDigit(&hi, value[i]) || !FromHexDigit(&lo, value[i + 1])) {
-      PrintLine("Error decoding value: %s", value.c_str());
-      return false;
-    }
-    out->push_back((hi << 4) | lo);
   }
   return true;
 }

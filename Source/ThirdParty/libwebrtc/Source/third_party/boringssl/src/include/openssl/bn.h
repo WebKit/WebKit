@@ -684,10 +684,22 @@ OPENSSL_EXPORT int BN_generate_prime_ex(BIGNUM *ret, int bits, int safe,
                                         const BIGNUM *add, const BIGNUM *rem,
                                         BN_GENCB *cb);
 
-// BN_prime_checks is magic value that can be used as the |checks| argument to
-// the primality testing functions in order to automatically select a number of
-// Miller-Rabin checks that gives a false positive rate of ~2^{-80}.
-#define BN_prime_checks 0
+// BN_prime_checks_for_validation can be used as the |checks| argument to the
+// primarily testing functions when validating an externally-supplied candidate
+// prime. It gives a false positive rate of at most 2^{-128}. (The worst case
+// false positive rate for a single iteration is 1/4, so we perform 32
+// iterations.)
+#define BN_prime_checks_for_validation 32
+
+// BN_prime_checks_for_generation can be used as the |checks| argument to the
+// primality testing functions when generating random primes. It gives a false
+// positive rate at most the security level of the corresponding RSA key size.
+//
+// Note this value only performs enough checks if the candidate prime was
+// selected randomly. If validating an externally-supplied candidate, especially
+// one that may be selected adversarially, use |BN_prime_checks_for_validation|
+// instead.
+#define BN_prime_checks_for_generation 0
 
 // bn_primality_result_t enumerates the outcomes of primality-testing.
 enum bn_primality_result_t {
@@ -698,7 +710,7 @@ enum bn_primality_result_t {
 
 // BN_enhanced_miller_rabin_primality_test tests whether |w| is probably a prime
 // number using the Enhanced Miller-Rabin Test (FIPS 186-4 C.3.2) with
-// |iterations| iterations and returns the result in |out_result|. Enhanced
+// |checks| iterations and returns the result in |out_result|. Enhanced
 // Miller-Rabin tests primality for odd integers greater than 3, returning
 // |bn_probably_prime| if the number is probably prime,
 // |bn_non_prime_power_composite| if the number is a composite that is not the
@@ -706,12 +718,10 @@ enum bn_primality_result_t {
 // success and zero on failure. If |cb| is not NULL, then it is called during
 // each iteration of the primality test.
 //
-// If |iterations| is |BN_prime_checks|, then a value that results in a false
-// positive rate lower than the number-field sieve security level of |w| is
-// used, provided |w| was generated randomly. |BN_prime_checks| is not suitable
-// for inputs potentially crafted by an adversary.
+// See |BN_prime_checks_for_validation| and |BN_prime_checks_for_generation| for
+// recommended values of |checks|.
 OPENSSL_EXPORT int BN_enhanced_miller_rabin_primality_test(
-    enum bn_primality_result_t *out_result, const BIGNUM *w, int iterations,
+    enum bn_primality_result_t *out_result, const BIGNUM *w, int checks,
     BN_CTX *ctx, BN_GENCB *cb);
 
 // BN_primality_test sets |*is_probably_prime| to one if |candidate| is
@@ -720,11 +730,9 @@ OPENSSL_EXPORT int BN_enhanced_miller_rabin_primality_test(
 //
 // If |do_trial_division| is non-zero then |candidate| will be tested against a
 // list of small primes before Miller-Rabin tests. The probability of this
-// function returning a false positive is 2^{2*checks}. If |checks| is
-// |BN_prime_checks| then a value that results in a false positive rate lower
-// than the number-field sieve security level of |candidate| is used, provided
-// |candidate| was generated randomly. |BN_prime_checks| is not suitable for
-// inputs potentially crafted by an adversary.
+// function returning a false positive is at most 2^{2*checks}. See
+// |BN_prime_checks_for_validation| and |BN_prime_checks_for_generation| for
+// recommended values of |checks|.
 //
 // If |cb| is not NULL then it is called during the checking process. See the
 // comment above |BN_GENCB|.
@@ -740,11 +748,9 @@ OPENSSL_EXPORT int BN_primality_test(int *is_probably_prime,
 //
 // If |do_trial_division| is non-zero then |candidate| will be tested against a
 // list of small primes before Miller-Rabin tests. The probability of this
-// function returning one when |candidate| is composite is 2^{2*checks}. If
-// |checks| is |BN_prime_checks| then a value that results in a false positive
-// rate lower than the number-field sieve security level of |candidate| is used,
-// provided |candidate| was generated randomly. |BN_prime_checks| is not
-// suitable for inputs potentially crafted by an adversary.
+// function returning one when |candidate| is composite is at most 2^{2*checks}.
+// See |BN_prime_checks_for_validation| and |BN_prime_checks_for_generation| for
+// recommended values of |checks|.
 //
 // If |cb| is not NULL then it is called during the checking process. See the
 // comment above |BN_GENCB|.
@@ -846,8 +852,9 @@ OPENSSL_EXPORT int BN_to_montgomery(BIGNUM *ret, const BIGNUM *a,
                                     const BN_MONT_CTX *mont, BN_CTX *ctx);
 
 // BN_from_montgomery sets |ret| equal to |a| * R^-1, i.e. translates values out
-// of the Montgomery domain. |a| is assumed to be in the range [0, n), where |n|
-// is the Montgomery modulus. It returns one on success or zero on error.
+// of the Montgomery domain. |a| is assumed to be in the range [0, n*R), where
+// |n| is the Montgomery modulus. Note n < R, so inputs in the range [0, n*n)
+// are valid. This function returns one on success or zero on error.
 OPENSSL_EXPORT int BN_from_montgomery(BIGNUM *ret, const BIGNUM *a,
                                       const BN_MONT_CTX *mont, BN_CTX *ctx);
 
@@ -937,6 +944,12 @@ OPENSSL_EXPORT int BN_MONT_CTX_set(BN_MONT_CTX *mont, const BIGNUM *mod,
 //
 // Use |BN_bn2bin_padded| instead. It is |size_t|-clean.
 OPENSSL_EXPORT int BN_bn2binpad(const BIGNUM *in, uint8_t *out, int len);
+
+// BN_prime_checks is a deprecated alias for |BN_prime_checks_for_validation|.
+// Use |BN_prime_checks_for_generation| or |BN_prime_checks_for_validation|
+// instead. (This defaults to the |_for_validation| value in order to be
+// conservative.)
+#define BN_prime_checks BN_prime_checks_for_validation
 
 
 // Private functions

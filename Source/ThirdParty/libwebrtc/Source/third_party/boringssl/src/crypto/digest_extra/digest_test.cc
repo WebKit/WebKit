@@ -147,16 +147,8 @@ static const DigestTestVector kTestVectors[] = {
 static void CompareDigest(const DigestTestVector *test,
                           const uint8_t *digest,
                           size_t digest_len) {
-  static const char kHexTable[] = "0123456789abcdef";
-  char digest_hex[2*EVP_MAX_MD_SIZE + 1];
-
-  for (size_t i = 0; i < digest_len; i++) {
-    digest_hex[2*i] = kHexTable[digest[i] >> 4];
-    digest_hex[2*i + 1] = kHexTable[digest[i] & 0xf];
-  }
-  digest_hex[2*digest_len] = '\0';
-
-  EXPECT_STREQ(test->expected_hex, digest_hex);
+  EXPECT_EQ(test->expected_hex,
+            EncodeHex(bssl::MakeConstSpan(digest, digest_len)));
 }
 
 static void TestDigest(const DigestTestVector *test) {

@@ -129,6 +129,14 @@ const ASN1_TIME *X509_get0_notBefore(const X509 *x)
     return x->cert_info->validity->notBefore;
 }
 
+ASN1_TIME *X509_getm_notBefore(X509 *x)
+{
+    // Note this function takes a const |X509| pointer in OpenSSL. We require
+    // non-const as this allows mutating |x|. If it comes up for compatibility,
+    // we can relax this.
+    return x->cert_info->validity->notBefore;
+}
+
 int X509_set_notAfter(X509 *x, const ASN1_TIME *tm)
 {
     ASN1_TIME *in;
@@ -148,6 +156,14 @@ int X509_set_notAfter(X509 *x, const ASN1_TIME *tm)
 
 const ASN1_TIME *X509_get0_notAfter(const X509 *x)
 {
+    return x->cert_info->validity->notAfter;
+}
+
+ASN1_TIME *X509_getm_notAfter(X509 *x)
+{
+    // Note this function takes a const |X509| pointer in OpenSSL. We require
+    // non-const as this allows mutating |x|. If it comes up for compatibility,
+    // we can relax this.
     return x->cert_info->validity->notAfter;
 }
 

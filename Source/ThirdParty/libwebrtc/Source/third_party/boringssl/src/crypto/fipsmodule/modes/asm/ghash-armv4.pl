@@ -78,6 +78,9 @@
 # *native* byte order on current platform. See gcm128.c for working
 # example...
 
+# This file was patched in BoringSSL to remove the variable-time 4-bit
+# implementation.
+
 $flavour = shift;
 if ($flavour=~/\w[\w\-]*\.\w+$/) { $output=$flavour; undef $flavour; }
 else { while (($output=shift) && ($output!~/\w[\w\-]*\.\w+$/)) {} }
@@ -88,56 +91,17 @@ if ($flavour && $flavour ne "void") {
     ( $xlate="${dir}../../../perlasm/arm-xlate.pl" and -f $xlate) or
     die "can't locate arm-xlate.pl";
 
-    open STDOUT,"| \"$^X\" $xlate $flavour $output";
+    open OUT,"| \"$^X\" $xlate $flavour $output";
+    *STDOUT=*OUT;
 } else {
-    open STDOUT,">$output";
+    open OUT,">$output";
+    *STDOUT=*OUT;
 }
 
 $Xi="r0";	# argument block
 $Htbl="r1";
 $inp="r2";
 $len="r3";
-
-$Zll="r4";	# variables
-$Zlh="r5";
-$Zhl="r6";
-$Zhh="r7";
-$Tll="r8";
-$Tlh="r9";
-$Thl="r10";
-$Thh="r11";
-$nlo="r12";
-################# r13 is stack pointer
-$nhi="r14";
-################# r15 is program counter
-
-$rem_4bit=$inp;	# used in gcm_gmult_4bit
-$cnt=$len;
-
-sub Zsmash() {
-  my $i=12;
-  my @args=@_;
-  for ($Zll,$Zlh,$Zhl,$Zhh) {
-    $code.=<<___;
-#if __ARM_ARCH__>=7 && defined(__ARMEL__)
-	rev	$_,$_
-	str	$_,[$Xi,#$i]
-#elif defined(__ARMEB__)
-	str	$_,[$Xi,#$i]
-#else
-	mov	$Tlh,$_,lsr#8
-	strb	$_,[$Xi,#$i+3]
-	mov	$Thl,$_,lsr#16
-	strb	$Tlh,[$Xi,#$i+2]
-	mov	$Thh,$_,lsr#24
-	strb	$Thl,[$Xi,#$i+1]
-	strb	$Thh,[$Xi,#$i]
-#endif
-___
-    $code.="\t".shift(@args)."\n";
-    $i-=4;
-  }
-}
 
 $code=<<___;
 #include <openssl/arm_arch.h>
@@ -158,226 +122,6 @@ $code=<<___;
 #else
 .code	32
 #endif
-
-.type	rem_4bit,%object
-.align	5
-rem_4bit:
-.short	0x0000,0x1C20,0x3840,0x2460
-.short	0x7080,0x6CA0,0x48C0,0x54E0
-.short	0xE100,0xFD20,0xD940,0xC560
-.short	0x9180,0x8DA0,0xA9C0,0xB5E0
-.size	rem_4bit,.-rem_4bit
-
-.type	rem_4bit_get,%function
-rem_4bit_get:
-#if defined(__thumb2__)
-	adr	$rem_4bit,rem_4bit
-#else
-	sub	$rem_4bit,pc,#8+32	@ &rem_4bit
-#endif
-	b	.Lrem_4bit_got
-	nop
-	nop
-.size	rem_4bit_get,.-rem_4bit_get
-
-.global	gcm_ghash_4bit
-.type	gcm_ghash_4bit,%function
-.align	4
-gcm_ghash_4bit:
-#if defined(__thumb2__)
-	adr	r12,rem_4bit
-#else
-	sub	r12,pc,#8+48		@ &rem_4bit
-#endif
-	add	$len,$inp,$len		@ $len to point at the end
-	stmdb	sp!,{r3-r11,lr}		@ save $len/end too
-
-	ldmia	r12,{r4-r11}		@ copy rem_4bit ...
-	stmdb	sp!,{r4-r11}		@ ... to stack
-
-	ldrb	$nlo,[$inp,#15]
-	ldrb	$nhi,[$Xi,#15]
-.Louter:
-	eor	$nlo,$nlo,$nhi
-	and	$nhi,$nlo,#0xf0
-	and	$nlo,$nlo,#0x0f
-	mov	$cnt,#14
-
-	add	$Zhh,$Htbl,$nlo,lsl#4
-	ldmia	$Zhh,{$Zll-$Zhh}	@ load Htbl[nlo]
-	add	$Thh,$Htbl,$nhi
-	ldrb	$nlo,[$inp,#14]
-
-	and	$nhi,$Zll,#0xf		@ rem
-	ldmia	$Thh,{$Tll-$Thh}	@ load Htbl[nhi]
-	add	$nhi,$nhi,$nhi
-	eor	$Zll,$Tll,$Zll,lsr#4
-	ldrh	$Tll,[sp,$nhi]		@ rem_4bit[rem]
-	eor	$Zll,$Zll,$Zlh,lsl#28
-	ldrb	$nhi,[$Xi,#14]
-	eor	$Zlh,$Tlh,$Zlh,lsr#4
-	eor	$Zlh,$Zlh,$Zhl,lsl#28
-	eor	$Zhl,$Thl,$Zhl,lsr#4
-	eor	$Zhl,$Zhl,$Zhh,lsl#28
-	eor	$Zhh,$Thh,$Zhh,lsr#4
-	eor	$nlo,$nlo,$nhi
-	and	$nhi,$nlo,#0xf0
-	and	$nlo,$nlo,#0x0f
-	eor	$Zhh,$Zhh,$Tll,lsl#16
-
-.Linner:
-	add	$Thh,$Htbl,$nlo,lsl#4
-	and	$nlo,$Zll,#0xf		@ rem
-	subs	$cnt,$cnt,#1
-	add	$nlo,$nlo,$nlo
-	ldmia	$Thh,{$Tll-$Thh}	@ load Htbl[nlo]
-	eor	$Zll,$Tll,$Zll,lsr#4
-	eor	$Zll,$Zll,$Zlh,lsl#28
-	eor	$Zlh,$Tlh,$Zlh,lsr#4
-	eor	$Zlh,$Zlh,$Zhl,lsl#28
-	ldrh	$Tll,[sp,$nlo]		@ rem_4bit[rem]
-	eor	$Zhl,$Thl,$Zhl,lsr#4
-#ifdef	__thumb2__
-	it	pl
-#endif
-	ldrplb	$nlo,[$inp,$cnt]
-	eor	$Zhl,$Zhl,$Zhh,lsl#28
-	eor	$Zhh,$Thh,$Zhh,lsr#4
-
-	add	$Thh,$Htbl,$nhi
-	and	$nhi,$Zll,#0xf		@ rem
-	eor	$Zhh,$Zhh,$Tll,lsl#16	@ ^= rem_4bit[rem]
-	add	$nhi,$nhi,$nhi
-	ldmia	$Thh,{$Tll-$Thh}	@ load Htbl[nhi]
-	eor	$Zll,$Tll,$Zll,lsr#4
-#ifdef	__thumb2__
-	it	pl
-#endif
-	ldrplb	$Tll,[$Xi,$cnt]
-	eor	$Zll,$Zll,$Zlh,lsl#28
-	eor	$Zlh,$Tlh,$Zlh,lsr#4
-	ldrh	$Tlh,[sp,$nhi]
-	eor	$Zlh,$Zlh,$Zhl,lsl#28
-	eor	$Zhl,$Thl,$Zhl,lsr#4
-	eor	$Zhl,$Zhl,$Zhh,lsl#28
-#ifdef	__thumb2__
-	it	pl
-#endif
-	eorpl	$nlo,$nlo,$Tll
-	eor	$Zhh,$Thh,$Zhh,lsr#4
-#ifdef	__thumb2__
-	itt	pl
-#endif
-	andpl	$nhi,$nlo,#0xf0
-	andpl	$nlo,$nlo,#0x0f
-	eor	$Zhh,$Zhh,$Tlh,lsl#16	@ ^= rem_4bit[rem]
-	bpl	.Linner
-
-	ldr	$len,[sp,#32]		@ re-load $len/end
-	add	$inp,$inp,#16
-	mov	$nhi,$Zll
-___
-	&Zsmash("cmp\t$inp,$len","\n".
-				 "#ifdef __thumb2__\n".
-				 "	it	ne\n".
-				 "#endif\n".
-				 "	ldrneb	$nlo,[$inp,#15]");
-$code.=<<___;
-	bne	.Louter
-
-	add	sp,sp,#36
-#if __ARM_ARCH__>=5
-	ldmia	sp!,{r4-r11,pc}
-#else
-	ldmia	sp!,{r4-r11,lr}
-	tst	lr,#1
-	moveq	pc,lr			@ be binary compatible with V4, yet
-	bx	lr			@ interoperable with Thumb ISA:-)
-#endif
-.size	gcm_ghash_4bit,.-gcm_ghash_4bit
-
-.global	gcm_gmult_4bit
-.type	gcm_gmult_4bit,%function
-gcm_gmult_4bit:
-	stmdb	sp!,{r4-r11,lr}
-	ldrb	$nlo,[$Xi,#15]
-	b	rem_4bit_get
-.Lrem_4bit_got:
-	and	$nhi,$nlo,#0xf0
-	and	$nlo,$nlo,#0x0f
-	mov	$cnt,#14
-
-	add	$Zhh,$Htbl,$nlo,lsl#4
-	ldmia	$Zhh,{$Zll-$Zhh}	@ load Htbl[nlo]
-	ldrb	$nlo,[$Xi,#14]
-
-	add	$Thh,$Htbl,$nhi
-	and	$nhi,$Zll,#0xf		@ rem
-	ldmia	$Thh,{$Tll-$Thh}	@ load Htbl[nhi]
-	add	$nhi,$nhi,$nhi
-	eor	$Zll,$Tll,$Zll,lsr#4
-	ldrh	$Tll,[$rem_4bit,$nhi]	@ rem_4bit[rem]
-	eor	$Zll,$Zll,$Zlh,lsl#28
-	eor	$Zlh,$Tlh,$Zlh,lsr#4
-	eor	$Zlh,$Zlh,$Zhl,lsl#28
-	eor	$Zhl,$Thl,$Zhl,lsr#4
-	eor	$Zhl,$Zhl,$Zhh,lsl#28
-	eor	$Zhh,$Thh,$Zhh,lsr#4
-	and	$nhi,$nlo,#0xf0
-	eor	$Zhh,$Zhh,$Tll,lsl#16
-	and	$nlo,$nlo,#0x0f
-
-.Loop:
-	add	$Thh,$Htbl,$nlo,lsl#4
-	and	$nlo,$Zll,#0xf		@ rem
-	subs	$cnt,$cnt,#1
-	add	$nlo,$nlo,$nlo
-	ldmia	$Thh,{$Tll-$Thh}	@ load Htbl[nlo]
-	eor	$Zll,$Tll,$Zll,lsr#4
-	eor	$Zll,$Zll,$Zlh,lsl#28
-	eor	$Zlh,$Tlh,$Zlh,lsr#4
-	eor	$Zlh,$Zlh,$Zhl,lsl#28
-	ldrh	$Tll,[$rem_4bit,$nlo]	@ rem_4bit[rem]
-	eor	$Zhl,$Thl,$Zhl,lsr#4
-#ifdef	__thumb2__
-	it	pl
-#endif
-	ldrplb	$nlo,[$Xi,$cnt]
-	eor	$Zhl,$Zhl,$Zhh,lsl#28
-	eor	$Zhh,$Thh,$Zhh,lsr#4
-
-	add	$Thh,$Htbl,$nhi
-	and	$nhi,$Zll,#0xf		@ rem
-	eor	$Zhh,$Zhh,$Tll,lsl#16	@ ^= rem_4bit[rem]
-	add	$nhi,$nhi,$nhi
-	ldmia	$Thh,{$Tll-$Thh}	@ load Htbl[nhi]
-	eor	$Zll,$Tll,$Zll,lsr#4
-	eor	$Zll,$Zll,$Zlh,lsl#28
-	eor	$Zlh,$Tlh,$Zlh,lsr#4
-	ldrh	$Tll,[$rem_4bit,$nhi]	@ rem_4bit[rem]
-	eor	$Zlh,$Zlh,$Zhl,lsl#28
-	eor	$Zhl,$Thl,$Zhl,lsr#4
-	eor	$Zhl,$Zhl,$Zhh,lsl#28
-	eor	$Zhh,$Thh,$Zhh,lsr#4
-#ifdef	__thumb2__
-	itt	pl
-#endif
-	andpl	$nhi,$nlo,#0xf0
-	andpl	$nlo,$nlo,#0x0f
-	eor	$Zhh,$Zhh,$Tll,lsl#16	@ ^= rem_4bit[rem]
-	bpl	.Loop
-___
-	&Zsmash();
-$code.=<<___;
-#if __ARM_ARCH__>=5
-	ldmia	sp!,{r4-r11,pc}
-#else
-	ldmia	sp!,{r4-r11,lr}
-	tst	lr,#1
-	moveq	pc,lr			@ be binary compatible with V4, yet
-	bx	lr			@ interoperable with Thumb ISA:-)
-#endif
-.size	gcm_gmult_4bit,.-gcm_gmult_4bit
 ___
 {
 my ($Xl,$Xm,$Xh,$IN)=map("q$_",(0..3));

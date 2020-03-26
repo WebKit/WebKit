@@ -33,6 +33,7 @@ add_executable(
   cast/cast_test.cc
   cfb/cfb_test.cc
   ripemd/ripemd_test.cc
+  xts/xts_test.cc
 
   $<TARGET_OBJECTS:boringssl_gtest_main>
 )

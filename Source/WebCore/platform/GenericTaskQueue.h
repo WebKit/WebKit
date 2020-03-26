@@ -95,6 +95,7 @@ public:
 
     void enqueueTask(TaskFunction&& task)
     {
+        ASSERT(isMainThread());
         if (m_isClosed)
             return;
 

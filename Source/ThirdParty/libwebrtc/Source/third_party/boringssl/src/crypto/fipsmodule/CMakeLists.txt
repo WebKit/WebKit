@@ -6,7 +6,6 @@ if(${ARCH} STREQUAL "x86_64")
 
     aesni-gcm-x86_64.${ASM_EXT}
     aesni-x86_64.${ASM_EXT}
-    aes-x86_64.${ASM_EXT}
     ghash-ssse3-x86_64.${ASM_EXT}
     ghash-x86_64.${ASM_EXT}
     md5-x86_64.${ASM_EXT}
@@ -27,7 +26,6 @@ if(${ARCH} STREQUAL "x86")
   set(
     BCM_ASM_SOURCES
 
-    aes-586.${ASM_EXT}
     aesni-x86.${ASM_EXT}
     bn-586.${ASM_EXT}
     co-586.${ASM_EXT}
@@ -46,7 +44,6 @@ if(${ARCH} STREQUAL "arm")
   set(
     BCM_ASM_SOURCES
 
-    aes-armv4.${ASM_EXT}
     aesv8-armx.${ASM_EXT}
     armv4-mont.${ASM_EXT}
     bsaes-armv7.${ASM_EXT}
@@ -55,6 +52,7 @@ if(${ARCH} STREQUAL "arm")
     sha1-armv4-large.${ASM_EXT}
     sha256-armv4.${ASM_EXT}
     sha512-armv4.${ASM_EXT}
+    vpaes-armv7.${ASM_EXT}
   )
 endif()
 
@@ -82,14 +80,11 @@ if(${ARCH} STREQUAL "ppc64le")
   )
 endif()
 
-perlasm(aes-586.${ASM_EXT} aes/asm/aes-586.pl)
-perlasm(aes-armv4.${ASM_EXT} aes/asm/aes-armv4.pl)
 perlasm(aesni-gcm-x86_64.${ASM_EXT} modes/asm/aesni-gcm-x86_64.pl)
 perlasm(aesni-x86_64.${ASM_EXT} aes/asm/aesni-x86_64.pl)
 perlasm(aesni-x86.${ASM_EXT} aes/asm/aesni-x86.pl)
 perlasm(aesp8-ppc.${ASM_EXT} aes/asm/aesp8-ppc.pl)
 perlasm(aesv8-armx.${ASM_EXT} aes/asm/aesv8-armx.pl)
-perlasm(aes-x86_64.${ASM_EXT} aes/asm/aes-x86_64.pl)
 perlasm(armv4-mont.${ASM_EXT} bn/asm/armv4-mont.pl)
 perlasm(armv8-mont.${ASM_EXT} bn/asm/armv8-mont.pl)
 perlasm(bn-586.${ASM_EXT} bn/asm/bn-586.pl)
@@ -121,6 +116,7 @@ perlasm(sha512-586.${ASM_EXT} sha/asm/sha512-586.pl)
 perlasm(sha512-armv4.${ASM_EXT} sha/asm/sha512-armv4.pl)
 perlasm(sha512-armv8.${ASM_EXT} sha/asm/sha512-armv8.pl)
 perlasm(sha512-x86_64.${ASM_EXT} sha/asm/sha512-x86_64.pl)
+perlasm(vpaes-armv7.${ASM_EXT} aes/asm/vpaes-armv7.pl)
 perlasm(vpaes-armv8.${ASM_EXT} aes/asm/vpaes-armv8.pl)
 perlasm(vpaes-x86_64.${ASM_EXT} aes/asm/vpaes-x86_64.pl)
 perlasm(vpaes-x86.${ASM_EXT} aes/asm/vpaes-x86.pl)
@@ -230,7 +226,7 @@ elseif(FIPS_SHARED)
 
   add_custom_command(
     OUTPUT bcm.o
-    COMMAND ld -r -T ${CMAKE_CURRENT_SOURCE_DIR}/fips_shared.lds -o bcm.o --whole-archive $<TARGET_FILE:bcm_library>
+    COMMAND ${CMAKE_LINKER} -r -T ${CMAKE_CURRENT_SOURCE_DIR}/fips_shared.lds -o bcm.o --whole-archive $<TARGET_FILE:bcm_library>
     DEPENDS bcm_library fips_shared.lds
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )

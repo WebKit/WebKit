@@ -236,10 +236,12 @@ int tls1_configure_aead(SSL *ssl, evp_aead_direction_t direction,
   }
 
   if (direction == evp_aead_open) {
-    return ssl->method->set_read_state(ssl, std::move(aead_ctx));
+    return ssl->method->set_read_state(ssl, ssl_encryption_application,
+                                       std::move(aead_ctx));
   }
 
-  return ssl->method->set_write_state(ssl, std::move(aead_ctx));
+  return ssl->method->set_write_state(ssl, ssl_encryption_application,
+                                      std::move(aead_ctx));
 }
 
 int tls1_change_cipher_state(SSL_HANDSHAKE *hs,

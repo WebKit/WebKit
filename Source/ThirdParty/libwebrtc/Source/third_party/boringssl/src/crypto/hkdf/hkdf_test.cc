@@ -18,7 +18,9 @@
 
 #include <gtest/gtest.h>
 
+#include "../test/file_test.h"
 #include "../test/test_util.h"
+#include "../test/wycheproof_util.h"
 
 
 struct HKDFTestVector {
@@ -265,4 +267,48 @@ TEST(HKDFTest, TestVectors) {
                      test->info_len));
     EXPECT_EQ(Bytes(test->out, test->out_len), Bytes(buf, test->out_len));
   }
+}
+
+static void RunWycheproofTest(const char *path, const EVP_MD *md) {
+  SCOPED_TRACE(path);
+  FileTestGTest(path, [&](FileTest *t) {
+    t->IgnoreInstruction("keySize");
+    std::vector<uint8_t> ikm, info, okm, salt;
+    ASSERT_TRUE(t->GetBytes(&ikm, "ikm"));
+    ASSERT_TRUE(t->GetBytes(&info, "info"));
+    ASSERT_TRUE(t->GetBytes(&okm, "okm"));
+    ASSERT_TRUE(t->GetBytes(&salt, "salt"));
+    WycheproofResult result;
+    ASSERT_TRUE(GetWycheproofResult(t, &result));
+    std::string size_str;
+    ASSERT_TRUE(t->GetAttribute(&size_str, "size"));
+
+    std::vector<uint8_t> out(atoi(size_str.c_str()));
+    bool ret = HKDF(out.data(), out.size(), md, ikm.data(), ikm.size(),
+                    salt.data(), salt.size(), info.data(), info.size());
+    EXPECT_EQ(result.IsValid(), ret);
+    if (result.IsValid()) {
+      EXPECT_EQ(Bytes(okm), Bytes(out));
+    }
+  });
+}
+
+TEST(HKDFTest, WycheproofSHA1) {
+  RunWycheproofTest("third_party/wycheproof_testvectors/hkdf_sha1_test.txt",
+                    EVP_sha1());
+}
+
+TEST(HKDFTest, WycheproofSHA256) {
+  RunWycheproofTest("third_party/wycheproof_testvectors/hkdf_sha256_test.txt",
+                    EVP_sha256());
+}
+
+TEST(HKDFTest, WycheproofSHA384) {
+  RunWycheproofTest("third_party/wycheproof_testvectors/hkdf_sha384_test.txt",
+                    EVP_sha384());
+}
+
+TEST(HKDFTest, WycheproofSHA512) {
+  RunWycheproofTest("third_party/wycheproof_testvectors/hkdf_sha512_test.txt",
+                    EVP_sha512());
 }

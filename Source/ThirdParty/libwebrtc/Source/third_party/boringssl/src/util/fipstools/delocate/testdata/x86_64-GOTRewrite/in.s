@@ -44,4 +44,7 @@ foo:
 	vpbroadcastq stderr@GOTPCREL(%rip), %xmm0
 	vpbroadcastq foo@GOTPCREL(%rip), %xmm0
 
+	cmpq foo@GOTPCREL(%rip), %rax
+	cmpq %rax, foo@GOTPCREL(%rip)
+
 .comm foobar,64,32

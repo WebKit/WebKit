@@ -14,6 +14,10 @@
 
 #include "./wycheproof_util.h"
 
+#include <stdlib.h>
+
+#include <algorithm>
+
 #include <openssl/bn.h>
 #include <openssl/digest.h>
 #include <openssl/ec.h>
@@ -22,20 +26,54 @@
 #include "./file_test.h"
 
 
+bool WycheproofResult::IsValid(
+    const std::vector<std::string> &acceptable_flags) const {
+  switch (raw_result) {
+    case WycheproofRawResult::kValid:
+      return true;
+    case WycheproofRawResult::kInvalid:
+      return false;
+    case WycheproofRawResult::kAcceptable:
+      for (const auto &flag : flags) {
+        if (std::find(acceptable_flags.begin(), acceptable_flags.end(), flag) ==
+            acceptable_flags.end()) {
+          return false;
+        }
+      }
+      return true;
+  }
+
+  abort();
+}
+
 bool GetWycheproofResult(FileTest *t, WycheproofResult *out) {
   std::string result;
   if (!t->GetAttribute(&result, "result")) {
     return false;
   }
   if (result == "valid") {
-    *out = WycheproofResult::kValid;
+    out->raw_result = WycheproofRawResult::kValid;
   } else if (result == "invalid") {
-    *out = WycheproofResult::kInvalid;
+    out->raw_result = WycheproofRawResult::kInvalid;
   } else if (result == "acceptable") {
-    *out = WycheproofResult::kAcceptable;
+    out->raw_result = WycheproofRawResult::kAcceptable;
   } else {
     t->PrintLine("Bad result string '%s'", result.c_str());
     return false;
+  }
+
+  out->flags.clear();
+  if (t->HasAttribute("flags")) {
+    std::string flags = t->GetAttributeOrDie("flags");
+    size_t idx = 0;
+    while (idx < flags.size()) {
+      size_t comma = flags.find(',', idx);
+      if (comma == std::string::npos) {
+        comma = flags.size();
+      }
+      out->flags.push_back(flags.substr(idx, comma - idx));
+      idx = comma + 1;
+    }
   }
   return true;
 }

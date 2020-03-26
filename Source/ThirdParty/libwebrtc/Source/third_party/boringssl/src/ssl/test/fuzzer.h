@@ -409,10 +409,6 @@ class TLSFuzzer {
     if (!SSL_CTX_set_strict_cipher_list(ctx_.get(), "ALL:NULL-SHA")) {
       return false;
     }
-    if (protocol_ == kTLS &&
-        !SSL_CTX_set_max_proto_version(ctx_.get(), TLS1_3_VERSION)) {
-      return false;
-    }
 
     static const int kCurves[] = {NID_CECPQ2, NID_X25519, NID_X9_62_prime256v1,
                                   NID_secp384r1, NID_secp521r1};

@@ -334,9 +334,9 @@ int ec_point_mul_scalar(const EC_GROUP *group, EC_RAW_POINT *r,
 int ec_point_mul_scalar_base(const EC_GROUP *group, EC_RAW_POINT *r,
                              const EC_SCALAR *scalar);
 
-// ec_point_mul_scalar_public performs the same computation as
-// ec_point_mul_scalar.  It further assumes that the inputs are public so
-// there is no concern about leaking their values through timing.
+// ec_point_mul_scalar_public sets |r| to
+// generator * |g_scalar| + |p| * |p_scalar|. It assumes that the inputs are
+// public so there is no concern about leaking their values through timing.
 OPENSSL_EXPORT int ec_point_mul_scalar_public(const EC_GROUP *group,
                                               EC_RAW_POINT *r,
                                               const EC_SCALAR *g_scalar,
