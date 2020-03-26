@@ -245,13 +245,12 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         });
     }
 
-#if PLATFORM(MAC)
     WebCore::setScreenProperties(parameters.screenProperties);
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     scrollerStylePreferenceChanged(parameters.useOverlayScrollbars);
 #endif
-#endif
-    
+
 #if PLATFORM(IOS)
     if (parameters.compilerServiceExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.compilerServiceExtensionHandle);
@@ -960,15 +959,17 @@ void WebProcess::revokeAccessToAssetServices()
 }
 #endif
 
-#if PLATFORM(MAC)
 void WebProcess::setScreenProperties(const ScreenProperties& properties)
 {
     WebCore::setScreenProperties(properties);
     for (auto& page : m_pageMap.values())
         page->screenPropertiesDidChange();
+#if PLATFORM(MAC)
     updatePageScreenProperties();
+#endif
 }
 
+#if PLATFORM(MAC)
 void WebProcess::updatePageScreenProperties()
 {
     if (hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer)) {

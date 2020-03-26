@@ -353,10 +353,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     parameters.shouldLogUserInteraction = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
 #endif
-    
-#if PLATFORM(MAC)
+
     auto screenProperties = WebCore::collectScreenProperties();
     parameters.screenProperties = WTFMove(screenProperties);
+#if PLATFORM(MAC)
     parameters.useOverlayScrollbars = ([NSScroller preferredScrollerStyle] == NSScrollerStyleOverlay);
 #endif
     

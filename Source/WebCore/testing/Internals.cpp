@@ -5264,7 +5264,7 @@ void Internals::notifyResourceLoadObserver()
 
 unsigned Internals::primaryScreenDisplayID()
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     return WebCore::primaryScreenDisplayID();
 #else
     return 0;

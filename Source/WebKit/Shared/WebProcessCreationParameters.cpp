@@ -141,10 +141,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
 #if PLATFORM(COCOA)
     encoder << mediaMIMETypes;
+    encoder << screenProperties;
 #endif
 
 #if PLATFORM(MAC)
-    encoder << screenProperties;
     encoder << useOverlayScrollbars;
 #endif
 
@@ -389,14 +389,15 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 #if PLATFORM(COCOA)
     if (!decoder.decode(parameters.mediaMIMETypes))
         return false;
-#endif
 
-#if PLATFORM(MAC)
     Optional<WebCore::ScreenProperties> screenProperties;
     decoder >> screenProperties;
     if (!screenProperties)
         return false;
     parameters.screenProperties = WTFMove(*screenProperties);
+#endif
+
+#if PLATFORM(MAC)
     if (!decoder.decode(parameters.useOverlayScrollbars))
         return false;
 #endif

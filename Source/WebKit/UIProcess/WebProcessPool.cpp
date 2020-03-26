@@ -474,7 +474,7 @@ void WebProcessPool::setApplicationIsActive(bool isActive)
 
 void WebProcessPool::screenPropertiesStateChanged()
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     auto screenProperties = WebCore::collectScreenProperties();
     sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
 #endif

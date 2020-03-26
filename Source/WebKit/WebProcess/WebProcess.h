@@ -46,9 +46,6 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
-#if PLATFORM(MAC)
-#include <WebCore/ScreenProperties.h>
-#endif
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/Timer.h>
 #include <pal/HysteresisActivity.h>
@@ -61,6 +58,7 @@
 #include <wtf/text/AtomStringHash.h>
 
 #if PLATFORM(COCOA)
+#include <WebCore/ScreenProperties.h>
 #include <dispatch/dispatch.h>
 #include <wtf/MachSendRight.h>
 #endif
@@ -473,16 +471,14 @@ private:
     // Implemented in generated WebProcessMessageReceiver.cpp
     void didReceiveWebProcessMessage(IPC::Connection&, IPC::Decoder&);
 
-#if PLATFORM(MAC)
-    void setScreenProperties(const WebCore::ScreenProperties&);
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
     void displayWasRefreshed(CGDirectDisplayID);
 #endif
-#endif
 
 #if PLATFORM(COCOA)
+    void setScreenProperties(const WebCore::ScreenProperties&);
     void updateProcessName();
 #endif
 

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
-
 #include "FloatRect.h"
 #include "PlatformScreen.h"
 #include <wtf/RetainPtr.h>
@@ -46,9 +44,10 @@ struct ScreenData {
     bool screenHasInvertedColors { false };
     bool screenIsMonochrome { false };
     bool screenSupportsHighDynamicRange { false };
+#if PLATFORM(MAC)
     uint32_t displayMask { 0 };
     IORegistryGPUID gpuID { 0 };
-
+#endif
     enum EncodedColorSpaceDataType {
         Null,
         ColorSpaceName,
@@ -95,7 +94,11 @@ Optional<ScreenProperties> ScreenProperties::decode(Decoder& decoder)
 template<class Encoder>
 void ScreenData::encode(Encoder& encoder) const
 {
-    encoder << screenAvailableRect << screenRect << screenDepth << screenDepthPerComponent << screenSupportsExtendedColor << screenHasInvertedColors << screenIsMonochrome << screenSupportsHighDynamicRange << displayMask << gpuID;
+    encoder << screenAvailableRect << screenRect << screenDepth << screenDepthPerComponent << screenSupportsExtendedColor << screenHasInvertedColors << screenIsMonochrome << screenSupportsHighDynamicRange;
+
+#if PLATFORM(MAC)
+    encoder << displayMask << gpuID;
+#endif
 
     if (colorSpace) {
         // Try to encode the name.
@@ -164,6 +167,7 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
     if (!screenSupportsHighDynamicRange)
         return WTF::nullopt;
 
+#if PLATFORM(MAC)
     Optional<uint32_t> displayMask;
     decoder >> displayMask;
     if (!displayMask)
@@ -173,7 +177,8 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
     decoder >> gpuID;
     if (!gpuID)
         return WTF::nullopt;
-    
+#endif
+
     EncodedColorSpaceDataType dataType;
     if (!decoder.decodeEnum(dataType))
         return WTF::nullopt;
@@ -205,9 +210,21 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
     }
     }
 
-    return { { WTFMove(*screenAvailableRect), WTFMove(*screenRect), WTFMove(cgColorSpace), WTFMove(*screenDepth), WTFMove(*screenDepthPerComponent), WTFMove(*screenSupportsExtendedColor), WTFMove(*screenHasInvertedColors), WTFMove(*screenIsMonochrome), WTFMove(*screenSupportsHighDynamicRange), WTFMove(*displayMask), WTFMove(*gpuID) } };
+    return { {
+        WTFMove(*screenAvailableRect),
+        WTFMove(*screenRect),
+        WTFMove(cgColorSpace),
+        WTFMove(*screenDepth),
+        WTFMove(*screenDepthPerComponent),
+        WTFMove(*screenSupportsExtendedColor),
+        WTFMove(*screenHasInvertedColors),
+        WTFMove(*screenIsMonochrome),
+        WTFMove(*screenSupportsHighDynamicRange),
+#if PLATFORM(MAC)
+        WTFMove(*displayMask),
+        WTFMove(*gpuID)
+#endif
+    } };
 }
 
 } // namespace WebCore
-
-#endif // PLATFORM(MAC)

@@ -13581,6 +13581,7 @@
 		C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingDetector.h; sourceTree = "<group>"; };
 		C11A9ECD21403A5C00CFB20A /* SwitchingGPUClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwitchingGPUClient.h; sourceTree = "<group>"; };
 		C11A9ED22140578B00CFB20A /* SwitchingGPUClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SwitchingGPUClient.cpp; sourceTree = "<group>"; };
+		C137846B242BEEBA00E86FA8 /* PlatformScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformScreen.cpp; sourceTree = "<group>"; };
 		C149380522342719000CD707 /* SpeechSynthesisClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeechSynthesisClient.h; sourceTree = "<group>"; };
 		C1692DD123D23ABD006E88F7 /* SystemBattery.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemBattery.mm; sourceTree = "<group>"; };
 		C1692DD423D23AE0006E88F7 /* SystemBattery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemBattery.h; sourceTree = "<group>"; };
@@ -26187,6 +26188,7 @@
 				935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */,
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
 				C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */,
+				C137846B242BEEBA00E86FA8 /* PlatformScreen.cpp */,
 				BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */,
 				2527CC9516BF95DD009DDAC0 /* PlatformSpeechSynthesisUtterance.cpp */,
 				2527CC9116BF8BA1009DDAC0 /* PlatformSpeechSynthesisUtterance.h */,

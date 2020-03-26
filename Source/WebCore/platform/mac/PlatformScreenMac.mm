@@ -100,17 +100,6 @@ static NSScreen *screen(Widget* widget)
     return screen(displayID(widget));
 }
 
-static ScreenProperties& screenProperties()
-{
-    static NeverDestroyed<ScreenProperties> screenProperties;
-    return screenProperties;
-}
-
-PlatformDisplayID primaryScreenDisplayID()
-{
-    return screenProperties().primaryDisplayID;
-}
-
 ScreenProperties collectScreenProperties()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -151,60 +140,42 @@ ScreenProperties collectScreenProperties()
     return screenProperties;
 }
 
-void setScreenProperties(const ScreenProperties& properties)
-{
-    screenProperties() = properties;
-}
-
 void setShouldOverrideScreenSupportsHighDynamicRange(bool shouldOverride, bool supportsHighDynamicRange)
 {
     if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTOverrideShouldPlayHDRVideo())
         PAL::softLink_MediaToolbox_MTOverrideShouldPlayHDRVideo(shouldOverride, supportsHighDynamicRange);
 }
 
-static ScreenData screenData(PlatformDisplayID screendisplayID)
-{
-    RELEASE_ASSERT(!screenProperties().screenDataMap.isEmpty());
-
-    // Return property of the first screen if the screen is not found in the map.
-    auto displayID = screendisplayID ? screendisplayID : primaryScreenDisplayID();
-    if (displayID) {
-        auto screenPropertiesForDisplay = screenProperties().screenDataMap.find(displayID);
-        if (screenPropertiesForDisplay != screenProperties().screenDataMap.end())
-            return screenPropertiesForDisplay->value;
-    }
-
-    // Last resort: use the first item in the screen list.
-    return screenProperties().screenDataMap.begin()->value;
-}
-
 uint32_t primaryOpenGLDisplayMask()
 {
-    if (!screenProperties().screenDataMap.isEmpty())
-        return screenData(primaryScreenDisplayID()).displayMask;
-    
+    auto v = screenData(primaryScreenDisplayID());
+    if (v.hasValue())
+        return v->displayMask;
+
     return 0;
 }
 
 uint32_t displayMaskForDisplay(PlatformDisplayID displayID)
 {
-    if (!screenProperties().screenDataMap.isEmpty())
-        return screenData(displayID).displayMask;
-    
+    auto v = screenData(displayID);
+    if (v.hasValue())
+        return v->displayMask;
+
     ASSERT_NOT_REACHED();
     return 0;
 }
 
 IORegistryGPUID primaryGPUID()
 {
-    return gpuIDForDisplay(screenProperties().primaryDisplayID);
+    return gpuIDForDisplay(primaryScreenDisplayID());
 }
 
 IORegistryGPUID gpuIDForDisplay(PlatformDisplayID displayID)
 {
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    if (!screenProperties().screenDataMap.isEmpty())
-        return screenData(displayID).gpuID;
+    auto v = screenData(displayID);
+    if (v.hasValue())
+        return v->gpuID;
 #else
     return gpuIDForDisplayMask(CGDisplayIDToOpenGLDisplayMask(displayID));
 #endif
@@ -246,15 +217,16 @@ IORegistryGPUID gpuIDForDisplayMask(GLuint displayMask)
     return (IORegistryGPUID) gpuIDHigh << 32 | gpuIDLow;
 }
 
-static ScreenData getScreenProperties(Widget* widget)
+static Optional<const ScreenData&> getScreenProperties(Widget* widget)
 {
     return screenData(displayID(widget));
 }
 
 bool screenIsMonochrome(Widget* widget)
 {
-    if (!screenProperties().screenDataMap.isEmpty())
-        return getScreenProperties(widget).screenIsMonochrome;
+    auto v = getScreenProperties(widget);
+    if (v.hasValue())
+        return v->screenIsMonochrome;
 
     // This is a system-wide accessibility setting, same on all screens.
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -263,8 +235,9 @@ bool screenIsMonochrome(Widget* widget)
 
 bool screenHasInvertedColors()
 {
-    if (!screenProperties().screenDataMap.isEmpty())
-        return screenData(primaryScreenDisplayID()).screenHasInvertedColors;
+    auto v = screenData(primaryScreenDisplayID());
+    if (v.hasValue())
+        return v->screenHasInvertedColors;
 
     // This is a system-wide accessibility setting, same on all screens.
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -273,8 +246,9 @@ bool screenHasInvertedColors()
 
 int screenDepth(Widget* widget)
 {
-    if (!screenProperties().screenDataMap.isEmpty()) {
-        auto screenDepth = getScreenProperties(widget).screenDepth;
+    auto v = getScreenProperties(widget);
+    if (v.hasValue()) {
+        auto screenDepth = v->screenDepth;
         ASSERT(screenDepth);
         return screenDepth;
     }
@@ -285,8 +259,9 @@ int screenDepth(Widget* widget)
 
 int screenDepthPerComponent(Widget* widget)
 {
-    if (!screenProperties().screenDataMap.isEmpty()) {
-        auto depthPerComponent = getScreenProperties(widget).screenDepthPerComponent;
+    auto v = getScreenProperties(widget);
+    if (v.hasValue()) {
+        auto depthPerComponent = v->screenDepthPerComponent;
         ASSERT(depthPerComponent);
         return depthPerComponent;
     }
@@ -297,8 +272,9 @@ int screenDepthPerComponent(Widget* widget)
 
 FloatRect screenRectForDisplay(PlatformDisplayID displayID)
 {
-    if (!screenProperties().screenDataMap.isEmpty()) {
-        auto screenRect = screenData(displayID).screenRect;
+    auto v = screenData(displayID);
+    if (v.hasValue()) {
+        auto screenRect = v->screenRect;
         ASSERT(!screenRect.isEmpty());
         return screenRect;
     }
@@ -314,8 +290,9 @@ FloatRect screenRectForPrimaryScreen()
 
 FloatRect screenRect(Widget* widget)
 {
-    if (!screenProperties().screenDataMap.isEmpty())
-        return getScreenProperties(widget).screenRect;
+    auto v = getScreenProperties(widget);
+    if (v.hasValue())
+        return v->screenRect;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return toUserSpace([screen(widget) frame], window(widget));
@@ -323,8 +300,9 @@ FloatRect screenRect(Widget* widget)
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-    if (!screenProperties().screenDataMap.isEmpty())
-        return getScreenProperties(widget).screenAvailableRect;
+    auto v = getScreenProperties(widget);
+    if (v.hasValue())
+        return v->screenAvailableRect;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return toUserSpace([screen(widget) visibleFrame], window(widget));
@@ -348,8 +326,9 @@ NSScreen *screen(PlatformDisplayID displayID)
 
 CGColorSpaceRef screenColorSpace(Widget* widget)
 {
-    if (!screenProperties().screenDataMap.isEmpty())
-        return getScreenProperties(widget).colorSpace.get();
+    auto v = getScreenProperties(widget);
+    if (v.hasValue())
+        return v->colorSpace.get();
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return screen(widget).colorSpace.CGColorSpace;
@@ -357,8 +336,9 @@ CGColorSpaceRef screenColorSpace(Widget* widget)
 
 bool screenSupportsExtendedColor(Widget* widget)
 {
-    if (!screenProperties().screenDataMap.isEmpty())
-        return getScreenProperties(widget).screenSupportsExtendedColor;
+    auto v = getScreenProperties(widget);
+    if (v.hasValue())
+        return v->screenSupportsExtendedColor;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return [screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
@@ -366,8 +346,9 @@ bool screenSupportsExtendedColor(Widget* widget)
 
 bool screenSupportsHighDynamicRange(Widget* widget)
 {
-    if (!screenProperties().screenDataMap.isEmpty())
-        return getScreenProperties(widget).screenSupportsHighDynamicRange;
+    auto v = getScreenProperties(widget);
+    if (v.hasValue())
+        return v->screenSupportsHighDynamicRange;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 #if USE(MEDIATOOLBOX)

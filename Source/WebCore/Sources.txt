@@ -1775,6 +1775,7 @@ platform/Pasteboard.cpp
 platform/PasteboardCustomData.cpp
 platform/PasteboardWriterData.cpp
 platform/PlatformKeyboardEvent.cpp
+platform/PlatformScreen.cpp
 platform/PlatformSpeechSynthesisUtterance.cpp
 platform/PlatformSpeechSynthesisVoice.cpp
 platform/PlatformSpeechSynthesizer.cpp

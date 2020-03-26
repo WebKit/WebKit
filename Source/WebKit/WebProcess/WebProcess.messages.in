@@ -113,13 +113,13 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     MarkIsNoLongerPrewarmed()
     GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins) Async
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#endif
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
     DisplayWasRefreshed(uint32_t displayID)
-#endif
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

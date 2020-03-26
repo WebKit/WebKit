@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Optional.h>
+
 #if USE(GLIB)
 #include <wtf/Function.h>
 #endif
@@ -85,9 +87,15 @@ constexpr bool screenSupportsHighDynamicRange(Widget* = nullptr) { return false;
 WEBCORE_EXPORT CGColorSpaceRef screenColorSpace(Widget* = nullptr);
 #endif
 
-#if PLATFORM(MAC)
 struct ScreenProperties;
-
+struct ScreenData;
+    
+WEBCORE_EXPORT ScreenProperties collectScreenProperties();
+WEBCORE_EXPORT void setScreenProperties(const ScreenProperties&);
+Optional<const ScreenData&> screenData(PlatformDisplayID screendisplayID);
+WEBCORE_EXPORT PlatformDisplayID primaryScreenDisplayID();
+    
+#if PLATFORM(MAC)
 WEBCORE_EXPORT PlatformDisplayID displayID(NSScreen *);
 
 WEBCORE_EXPORT NSScreen *screen(NSWindow *);
@@ -102,12 +110,7 @@ WEBCORE_EXPORT NSRect toDeviceSpace(const FloatRect&, NSWindow *source);
 
 NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
 
-WEBCORE_EXPORT ScreenProperties collectScreenProperties();
-WEBCORE_EXPORT void setScreenProperties(const ScreenProperties&);
-
 WEBCORE_EXPORT void setShouldOverrideScreenSupportsHighDynamicRange(bool shouldOverride, bool supportsHighDynamicRange);
-
-WEBCORE_EXPORT PlatformDisplayID primaryScreenDisplayID();
 
 uint32_t primaryOpenGLDisplayMask();
 uint32_t displayMaskForDisplay(PlatformDisplayID);
