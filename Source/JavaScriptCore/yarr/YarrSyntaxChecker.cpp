@@ -49,10 +49,10 @@ public:
     void atomParenthesesEnd() {}
     void atomBackReference(unsigned) {}
     void atomNamedBackReference(const String&) {}
-    bool isValidNamedForwardReference(const String&) { return true; }
     void atomNamedForwardReference(const String&) {}
     void quantifyAtom(unsigned, unsigned, bool) {}
     void disjunction() {}
+    void resetForReparsing() {}
 };
 
 ErrorCode checkSyntax(const String& pattern, const String& flags)

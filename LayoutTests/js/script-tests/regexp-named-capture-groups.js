@@ -111,6 +111,7 @@ shouldBe('"1122332211".match(/\\\k<ones>\\\k<twos>\\\k<threes>(?<ones>1*)(?<twos
 shouldBe('"1122332211".match(/\\\k<ones>\\\k<twos>\\\k<threes>(?<ones>1*)(?<twos>2*)(?<threes>3*)\\\k<threes>\\\k<twos>\\\k<ones>/u)', '["1122332211", "11", "22", "3"]');
 
 // Check that a named forward reference for a non-existent named capture
-// matches for non-unicode patterns and throws for unicode patterns.
+// matches for non-Unicode patterns w/o a named group and throws for patterns with a named group or Unicode flag.
 shouldBe('"\\\k<z>XzzX".match(/\\\k<z>X(z*)X/)', '["k<z>XzzX", "zz"]');
-shouldThrow('"\\\k<z>XzzX".match(/\\\k<z>X(z*)X/u)', '"SyntaxError: Invalid regular expression: invalid backreference for Unicode pattern"');
+shouldThrow('"\\\k<z>XzzX".match(/\\\k<z>X(z*)X/u)', '"SyntaxError: Invalid regular expression: invalid \\\\k<> named backreference"');
+shouldThrow('/\\\k<xxx(?<a>y)(/', '"SyntaxError: Invalid regular expression: invalid \\\\k<> named backreference"');

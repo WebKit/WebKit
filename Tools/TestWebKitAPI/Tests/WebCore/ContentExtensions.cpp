@@ -1760,7 +1760,6 @@ TEST_F(ContentExtensionTest, ParsingFailures)
     testPatternStatus("[", ContentExtensions::URLFilterParser::ParseStatus::YarrError);
     testPatternStatus("[a}", ContentExtensions::URLFilterParser::ParseStatus::YarrError);
     
-    // FIXME: Look into why these do not cause YARR parsing errors.  They probably should.
     testPatternStatus("a]", ContentExtensions::URLFilterParser::ParseStatus::Ok);
     testPatternStatus("{", ContentExtensions::URLFilterParser::ParseStatus::Ok);
     testPatternStatus("{[a]", ContentExtensions::URLFilterParser::ParseStatus::Ok);
@@ -1789,10 +1788,12 @@ TEST_F(ContentExtensionTest, ParsingFailures)
     
     testPatternStatus("(a)\\1", ContentExtensions::URLFilterParser::ParseStatus::Ok); // Back references are disabled, it parse as octal 1
     testPatternStatus("(<A>a)\\k<A>", ContentExtensions::URLFilterParser::ParseStatus::Ok); // Named back references aren't handled, it parse as "k<A>"
+    testPatternStatus("(?<A>a)\\k<A>", ContentExtensions::URLFilterParser::ParseStatus::BackReference);
     testPatternStatus("\\1(a)", ContentExtensions::URLFilterParser::ParseStatus::Ok); // Forward references are disabled, it parse as octal 1
     testPatternStatus("\\8(a)", ContentExtensions::URLFilterParser::ParseStatus::Ok); // Forward references are disabled, it parse as '8'
     testPatternStatus("\\9(a)", ContentExtensions::URLFilterParser::ParseStatus::Ok); // Forward references are disabled, it parse as '9'
     testPatternStatus("\\k<A>(<A>a)", ContentExtensions::URLFilterParser::ParseStatus::Ok); // Named forward references aren't handled, it parse as "k<A>"
+    testPatternStatus("\\k<A>(?<A>a)", ContentExtensions::URLFilterParser::ParseStatus::YarrError);
     testPatternStatus("\\k<A>(a)", ContentExtensions::URLFilterParser::ParseStatus::Ok); // Unmatched named forward references aren't handled, it parse as "k<A>"
 }
 

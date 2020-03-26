@@ -1,3 +1,56 @@
+2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Invalid numeric and named references should be early syntax errors
+        https://bugs.webkit.org/show_bug.cgi?id=178175
+
+        Reviewed by Ross Kirsling.
+
+        This patch:
+
+        1. Fixes named reference parsing in parseEscape(), making /\k/u throw SyntaxError per spec [1].
+
+        2. Reworks containsIllegalNamedForwardReferences(), making dangling (e.g. /\k<a>(?<b>.)/) and
+           incomplete (e.g. /\k<(?<a>.)/) named references throw SyntaxError if the non-Unicode pattern
+           contains a named group [2].
+
+        3. Moves reparsing logic from YarrPattern to YarrParser, ensuring syntax errors due to illegal
+           references (named & numeric) are thrown at parse time; drops isValidNamedForwardReference()
+           from Delegate, refactors saveUnmatchedNamedForwardReferences(), and overall improves cohesion
+           of illegal references logic.
+
+        [1]: https://tc39.es/ecma262/#prod-IdentityEscape
+        [2]: https://tc39.es/ecma262/#sec-regexpinitialize (step 7.b)
+
+        * yarr/YarrErrorCode.cpp:
+        (JSC::Yarr::errorMessage):
+        (JSC::Yarr::errorToThrow):
+        * yarr/YarrErrorCode.h:
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomNamedBackReference):
+        (JSC::Yarr::Parser::Parser):
+        (JSC::Yarr::Parser::parseEscape):
+        (JSC::Yarr::Parser::parseParenthesesBegin):
+        (JSC::Yarr::Parser::parse):
+        (JSC::Yarr::Parser::handleIllegalReferences):
+        (JSC::Yarr::Parser::containsIllegalNamedForwardReference):
+        (JSC::Yarr::Parser::resetForReparsing):
+        (JSC::Yarr::parse):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::isValidNamedForwardReference): Deleted.
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::atomBackReference):
+        (JSC::Yarr::YarrPatternConstructor::atomNamedForwardReference):
+        (JSC::Yarr::YarrPattern::compile):
+        (JSC::Yarr::YarrPatternConstructor::saveUnmatchedNamedForwardReferences): Deleted.
+        (JSC::Yarr::YarrPatternConstructor::isValidNamedForwardReference): Deleted.
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::resetForReparsing):
+        (JSC::Yarr::YarrPattern::containsIllegalBackReference): Deleted.
+        (JSC::Yarr::YarrPattern::containsIllegalNamedForwardReferences): Deleted.
+        * yarr/YarrSyntaxChecker.cpp:
+        (JSC::Yarr::SyntaxChecker::atomNamedBackReference):
+        (JSC::Yarr::SyntaxChecker::resetForReparsing):
+        (JSC::Yarr::SyntaxChecker::isValidNamedForwardReference): Deleted.
+
 2020-03-25  Chris Dumez  <cdumez@apple.com>
 
         Use JSC::EnsureStillAliveScope RAII object in the generated bindings code

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Alexey Shvayka <shvaikalesh@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,17 +11,17 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -41,7 +42,7 @@ template<class Delegate, typename CharType>
 class Parser {
 private:
     template<class FriendDelegate>
-    friend ErrorCode parse(FriendDelegate&, const String& pattern, bool isUnicode, unsigned backReferenceLimit);
+    friend ErrorCode parse(FriendDelegate&, const String& pattern, bool isUnicode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed);
 
     /*
      * CharacterClassParserDelegate:
@@ -200,7 +201,6 @@ private:
         NO_RETURN_DUE_TO_ASSERT void assertionWordBoundary(bool) { RELEASE_ASSERT_NOT_REACHED(); }
         NO_RETURN_DUE_TO_ASSERT void atomBackReference(unsigned) { RELEASE_ASSERT_NOT_REACHED(); }
         NO_RETURN_DUE_TO_ASSERT void atomNamedBackReference(const String&) { RELEASE_ASSERT_NOT_REACHED(); }
-        NO_RETURN_DUE_TO_ASSERT bool isValidNamedForwardReference(const String&) { RELEASE_ASSERT_NOT_REACHED(); }
         NO_RETURN_DUE_TO_ASSERT void atomNamedForwardReference(const String&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     private:
@@ -217,12 +217,13 @@ private:
         UChar32 m_character;
     };
 
-    Parser(Delegate& delegate, const String& pattern, bool isUnicode, unsigned backReferenceLimit)
+    Parser(Delegate& delegate, const String& pattern, bool isUnicode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed)
         : m_delegate(delegate)
-        , m_backReferenceLimit(backReferenceLimit)
         , m_data(pattern.characters<CharType>())
         , m_size(pattern.length())
         , m_isUnicode(isUnicode)
+        , m_backReferenceLimit(backReferenceLimit)
+        , m_isNamedForwardReferenceAllowed(isNamedForwardReferenceAllowed)
     {
     }
 
@@ -338,16 +339,12 @@ private:
 
                 unsigned backReference = consumeNumber();
                 if (backReference <= m_backReferenceLimit) {
+                    m_maxSeenBackReference = std::max(m_maxSeenBackReference, backReference);
                     delegate.atomBackReference(backReference);
                     break;
                 }
 
                 restoreState(state);
-
-                if (m_isUnicode) {
-                    m_errorCode = ErrorCode::InvalidBackreference;
-                    return false;
-                }
             }
 
             // Not a backreference, and not octal. Just a number.
@@ -439,28 +436,27 @@ private:
         case 'k': {
             consume();
             ParseState state = saveState();
-            if (!atEndOfPattern() && !inCharacterClass) {
-                if (consume() == '<') {
-                    auto groupName = tryConsumeGroupName();
-                    if (groupName) {
-                        if (m_captureGroupNames.contains(groupName.value())) {
-                            delegate.atomNamedBackReference(groupName.value());
-                            break;
-                        }
-                        
-                        if (delegate.isValidNamedForwardReference(groupName.value())) {
-                            delegate.atomNamedForwardReference(groupName.value());
-                            break;
-                        }
+            if (!inCharacterClass && tryConsume('<')) {
+                auto groupName = tryConsumeGroupName();
+                if (groupName) {
+                    if (m_captureGroupNames.contains(groupName.value())) {
+                        delegate.atomNamedBackReference(groupName.value());
+                        break;
                     }
-                    if (m_isUnicode) {
-                        m_errorCode = ErrorCode::InvalidBackreference;
+
+                    if (m_isNamedForwardReferenceAllowed) {
+                        m_forwardReferenceNames.add(groupName.value());
+                        delegate.atomNamedForwardReference(groupName.value());
                         break;
                     }
                 }
             }
+
             restoreState(state);
-            delegate.atomPatternCharacter('k');
+            if (!isIdentityEscapeAnError('k')) {
+                delegate.atomPatternCharacter('k');
+                m_kIdentityEscapeSeen = true; 
+            }
             break;
         }
 
@@ -677,6 +673,11 @@ private:
             case '<': {
                 auto groupName = tryConsumeGroupName();
                 if (groupName) {
+                    if (m_kIdentityEscapeSeen) {
+                        m_errorCode = ErrorCode::InvalidNamedBackReference;
+                        break;
+                    }
+
                     auto setAddResult = m_captureGroupNames.add(groupName.value());
                     if (setAddResult.isNewEntry)
                         m_delegate.atomParenthesesSubpatternBegin(true, groupName);
@@ -693,6 +694,9 @@ private:
             }
         } else
             m_delegate.atomParenthesesSubpatternBegin();
+
+        if (type == ParenthesesType::Subpattern)
+            ++m_numSubpatterns;
 
         m_parenthesesStack.append(type);
     }
@@ -881,12 +885,85 @@ private:
     ErrorCode parse()
     {
         if (m_size > MAX_PATTERN_SIZE)
-            m_errorCode = ErrorCode::PatternTooLarge;
-        else
-            parseTokens();
-        ASSERT(atEndOfPattern() || hasError(m_errorCode));
-        
+            return ErrorCode::PatternTooLarge;
+
+        parseTokens();
+
+        if (!hasError(m_errorCode)) {
+            ASSERT(atEndOfPattern());
+            handleIllegalReferences();
+            ASSERT(atEndOfPattern());
+        }
+
         return m_errorCode;
+    }
+
+    void handleIllegalReferences()
+    {
+        bool shouldReparse = false;
+
+        if (m_maxSeenBackReference > m_numSubpatterns) {
+            // Contains illegal numeric backreference. See https://tc39.es/ecma262/#prod-annexB-AtomEscape
+            if (m_isUnicode) {
+                m_errorCode = ErrorCode::InvalidBackreference;
+                return;
+            }
+
+            m_backReferenceLimit = m_numSubpatterns;
+            shouldReparse = true;
+        }
+
+        if (m_kIdentityEscapeSeen && !m_captureGroupNames.isEmpty()) {
+            m_errorCode = ErrorCode::InvalidNamedBackReference;
+            return;
+        }
+
+        if (containsIllegalNamedForwardReference()) {
+            // \k<a> is parsed as named reference in Unicode patterns because of strict IdentityEscape grammar.
+            // See https://tc39.es/ecma262/#sec-patterns-static-semantics-early-errors
+            if (m_isUnicode || !m_captureGroupNames.isEmpty()) {
+                m_errorCode = ErrorCode::InvalidNamedBackReference;
+                return;
+            }
+
+            m_isNamedForwardReferenceAllowed = false;
+            shouldReparse = true;
+        }
+
+        if (shouldReparse) {
+            resetForReparsing();
+            parseTokens();
+        }
+    }
+
+    bool containsIllegalNamedForwardReference()
+    {
+        if (m_forwardReferenceNames.isEmpty())
+            return false;
+
+        if (m_captureGroupNames.isEmpty())
+            return true;
+
+        for (auto& entry : m_forwardReferenceNames) {
+            if (!m_captureGroupNames.contains(entry))
+                return true;
+        }
+
+        return false;
+    }
+
+    void resetForReparsing()
+    {
+        ASSERT(!hasError(m_errorCode));
+
+        m_delegate.resetForReparsing();
+        m_index = 0;
+        m_numSubpatterns = 0;
+        m_maxSeenBackReference = 0;
+        m_kIdentityEscapeSeen = false;
+        m_parenthesesStack.clear();
+        m_captureGroupNames.clear();
+        m_forwardReferenceNames.clear();
     }
 
     // Misc helper functions:
@@ -1153,14 +1230,19 @@ private:
     enum class ParenthesesType : uint8_t { Subpattern, Assertion };
 
     Delegate& m_delegate;
-    unsigned m_backReferenceLimit;
     ErrorCode m_errorCode { ErrorCode::NoError };
     const CharType* m_data;
     unsigned m_size;
     unsigned m_index { 0 };
     bool m_isUnicode;
+    unsigned m_backReferenceLimit;
+    unsigned m_numSubpatterns { 0 };
+    unsigned m_maxSeenBackReference { 0 };
+    bool m_isNamedForwardReferenceAllowed;
+    bool m_kIdentityEscapeSeen { false };
     Vector<ParenthesesType, 16> m_parenthesesStack;
     HashSet<String> m_captureGroupNames;
+    HashSet<String> m_forwardReferenceNames;
 
     // Derived by empirical testing of compile time in PCRE and WREC.
     static constexpr unsigned MAX_PATTERN_SIZE = 1024 * 1024;
@@ -1192,12 +1274,13 @@ private:
  *    void atomParenthesesEnd();
  *    void atomBackReference(unsigned subpatternId);
  *    void atomNamedBackReference(const String& subpatternName);
- *    bool isValidNamedForwardReference(const String& subpatternName);
  *    void atomNamedForwardReference(const String& subpatternName);
  *
  *    void quantifyAtom(unsigned min, unsigned max, bool greedy);
  *
  *    void disjunction();
+ *
+ *    void resetForReparsing();
  *
  * The regular expression is described by a sequence of assertion*() and atom*()
  * callbacks to the delegate, describing the terms in the regular expression.
@@ -1229,11 +1312,11 @@ private:
  */
 
 template<class Delegate>
-ErrorCode parse(Delegate& delegate, const String& pattern, bool isUnicode, unsigned backReferenceLimit = quantifyInfinite)
+ErrorCode parse(Delegate& delegate, const String& pattern, bool isUnicode, unsigned backReferenceLimit = quantifyInfinite, bool isNamedForwardReferenceAllowed = true)
 {
     if (pattern.is8Bit())
-        return Parser<Delegate, LChar>(delegate, pattern, isUnicode, backReferenceLimit).parse();
-    return Parser<Delegate, UChar>(delegate, pattern, isUnicode, backReferenceLimit).parse();
+        return Parser<Delegate, LChar>(delegate, pattern, isUnicode, backReferenceLimit, isNamedForwardReferenceAllowed).parse();
+    return Parser<Delegate, UChar>(delegate, pattern, isUnicode, backReferenceLimit, isNamedForwardReferenceAllowed).parse();
 }
 
 } } // namespace JSC::Yarr

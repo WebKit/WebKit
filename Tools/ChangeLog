@@ -1,3 +1,15 @@
+2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Invalid numeric and named references should be early syntax errors
+        https://bugs.webkit.org/show_bug.cgi?id=178175
+
+        Reviewed by Ross Kirsling.
+
+        Removes FIXME as YarrParser is correct not to throw errors as it is
+        parsing in non-Unicode mode. Also adds a few named groups tests.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+
 2020-03-25  Zhifei Fang  <zhifei_fang@apple.com>
 
         [Timeline] A better default get label function, which fit the assumpation the label is always a string

@@ -1,3 +1,13 @@
+2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Invalid numeric and named references should be early syntax errors
+        https://bugs.webkit.org/show_bug.cgi?id=178175
+
+        Reviewed by Ross Kirsling.
+
+        * js/regexp-named-capture-groups-expected.txt:
+        * js/script-tests/regexp-named-capture-groups.js:
+
 2020-03-25  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         CanvasRenderingContext2D.putImageData() should not process neutered ImageData

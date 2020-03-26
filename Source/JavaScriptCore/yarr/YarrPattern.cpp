@@ -462,16 +462,6 @@ public:
         m_pattern.m_disjunctions.append(WTFMove(body));
     }
 
-    void saveUnmatchedNamedForwardReferences()
-    {
-        m_unmatchedNamedForwardReferences.shrink(0);
-        
-        for (auto& entry : m_pattern.m_namedForwardReferences) {
-            if (!m_pattern.m_captureGroupNames.contains(entry))
-                m_unmatchedNamedForwardReferences.append(entry);
-        }
-    }
-
     void assertionBOL()
     {
         if (!m_alternative->m_terms.size() && !m_invertParentheticalAssertion) {
@@ -657,7 +647,6 @@ public:
     {
         ASSERT(subpatternId);
         m_pattern.m_containsBackreferences = true;
-        m_pattern.m_maxBackReference = std::max(m_pattern.m_maxBackReference, subpatternId);
 
         if (subpatternId > m_pattern.m_numSubpatterns) {
             m_alternative->m_terms.append(PatternTerm::ForwardReference());
@@ -687,14 +676,8 @@ public:
         atomBackReference(m_pattern.m_namedGroupToParenIndex.get(subpatternName));
     }
 
-    bool isValidNamedForwardReference(const String& subpatternName)
+    void atomNamedForwardReference(const String&)
     {
-        return !m_unmatchedNamedForwardReferences.contains(subpatternName);
-    }
-
-    void atomNamedForwardReference(const String& subpatternName)
-    {
-        m_pattern.m_namedForwardReferences.appendIfNotContains(subpatternName);
         m_alternative->m_terms.append(PatternTerm::ForwardReference());
     }
     
@@ -1130,7 +1113,6 @@ private:
     YarrPattern& m_pattern;
     PatternAlternative* m_alternative;
     CharacterClassConstructor m_characterClassConstructor;
-    Vector<String> m_unmatchedNamedForwardReferences;
     void* m_stackLimit;
     ErrorCode m_error { ErrorCode::NoError };
     bool m_invertCharacterClass;
@@ -1145,23 +1127,6 @@ ErrorCode YarrPattern::compile(const String& patternString, void* stackLimit)
         ErrorCode error = parse(constructor, patternString, unicode());
         if (hasError(error))
             return error;
-    }
-    
-    // If the pattern contains illegal backreferences reset & reparse.
-    // Quoting Netscape's "What's new in JavaScript 1.2",
-    //      "Note: if the number of left parentheses is less than the number specified
-    //       in \#, the \# is taken as an octal escape as described in the next row."
-    if (containsIllegalBackReference() || containsIllegalNamedForwardReferences()) {
-        if (unicode())
-            return ErrorCode::InvalidBackreference;
-
-        unsigned numSubpatterns = m_numSubpatterns;
-
-        constructor.saveUnmatchedNamedForwardReferences();
-        constructor.resetForReparsing();
-        ErrorCode error = parse(constructor, patternString, unicode(), numSubpatterns);
-        ASSERT_UNUSED(error, !hasError(error));
-        ASSERT(numSubpatterns == m_numSubpatterns);
     }
 
     constructor.checkForTerminalParentheses();

@@ -134,11 +134,6 @@ public:
         fail(URLFilterParser::BackReference);
     }
 
-    bool isValidNamedForwardReference(const String&)
-    {
-        return false;
-    }
-
     void atomNamedForwardReference(const String&)
     {
         fail(URLFilterParser::ForwardReference);
@@ -247,6 +242,11 @@ public:
     void disjunction()
     {
         fail(URLFilterParser::Disjunction);
+    }
+
+    NO_RETURN_DUE_TO_CRASH void resetForReparsing()
+    {
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
 private:
@@ -358,7 +358,7 @@ URLFilterParser::ParseStatus URLFilterParser::addPattern(const String& pattern, 
 
     ParseStatus status = Ok;
     PatternParser patternParser(patternIsCaseSensitive);
-    if (!JSC::Yarr::hasError(JSC::Yarr::parse(patternParser, pattern, false, 0)))
+    if (!JSC::Yarr::hasError(JSC::Yarr::parse(patternParser, pattern, false, 0, false)))
         patternParser.finalize(patternId, m_combinedURLFilters);
     else
         status = YarrError;

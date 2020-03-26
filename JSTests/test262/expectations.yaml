@@ -1711,9 +1711,6 @@ test/built-ins/RegExp/prototype/unicode/cross-realm.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/RegExp/unicode_restricted_identity_escape_alpha.js:
-  default: "Test262Error: IdentityEscape in AtomEscape: 'k' Expected a SyntaxError to be thrown but no exception was thrown at all"
-  strict mode: "Test262Error: IdentityEscape in AtomEscape: 'k' Expected a SyntaxError to be thrown but no exception was thrown at all"
 test/built-ins/RegExp/unicode_restricted_octal_escape.js:
   default: 'Test262Error: RegExp("[\1]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: RegExp("[\1]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
@@ -3264,72 +3261,9 @@ test/language/identifiers/start-unicode-13.0.0-escaped.js:
 test/language/identifiers/start-unicode-13.0.0.js:
   default: "SyntaxError: Invalid character '\\u08be'"
   strict mode: "SyntaxError: Invalid character '\\u08be'"
-test/language/literals/regexp/named-groups/invalid-dangling-groupname-2-u.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-dangling-groupname-2.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-dangling-groupname-3-u.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-dangling-groupname-3.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-dangling-groupname-4-u.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-dangling-groupname-4.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-dangling-groupname-5.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-dangling-groupname-u.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-dangling-groupname-without-group-u.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-dangling-groupname.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-incomplete-groupname-2.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-incomplete-groupname-3.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-incomplete-groupname-4.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-incomplete-groupname-5.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-incomplete-groupname-6.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-incomplete-groupname-u.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-incomplete-groupname-without-group-3-u.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-incomplete-groupname.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/u-astral-char-class-invert.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
-test/language/literals/regexp/u-dec-esc.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-legacy-octal-escape.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/u-invalid-oob-decimal-escape.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/module-code/eval-rqstd-once.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/eval-rqstd-order.js:
