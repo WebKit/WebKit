@@ -1,3 +1,17 @@
+2020-03-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Sync wpt/domxpath and re-sync wpt/css/cssom-view from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=209574
+
+        Reviewed by Antti Koivisto.
+
+        web-platform-tests revision: 1137f4bff2b7
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/cssom-view/*: Updated.
+        * web-platform-tests/domxpath/*: Added.
+
 2020-03-26  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r254669): Expand media button doesn't work on first try on photos on reddit.com

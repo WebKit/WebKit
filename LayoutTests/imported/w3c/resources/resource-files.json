@@ -1102,6 +1102,8 @@
         "web-platform-tests/dom/traversal/unfinished/008.xml",
         "web-platform-tests/dom/traversal/unfinished/009.xml",
         "web-platform-tests/dom/traversal/unfinished/010.xml",
+        "web-platform-tests/domxpath/001.html",
+        "web-platform-tests/domxpath/xml_xpath_tests.xml",
         "web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp_chars-cseucpkdfmtjapanese.html",
         "web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp_chars-x-euc-jp.html",
         "web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp_chars.html",

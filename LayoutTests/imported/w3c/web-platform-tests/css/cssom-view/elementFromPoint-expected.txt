@@ -15,7 +15,6 @@ PASS SVG element at x,y
 PASS transformed element at x,y 
 PASS no hit target at x,y 
 PASS No viewport available 
-FAIL Image Maps assert_equals: Should have returned the area element expected Element node <area id="rectG" shape="rect" coords="0,0,90,100" href="#... but got Element node <html><head><title>cssom-view - elementFromPoint</title>
-...
+PASS Image Maps 
 PASS Fieldsets 
 
