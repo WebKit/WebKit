@@ -1,3 +1,15 @@
+2020-03-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in RadioButtonGroups::requiredStateChanged
+        https://bugs.webkit.org/show_bug.cgi?id=209585
+
+        Reviewed by Zalan Bujtas.
+
+        Added a regression test.
+
+        * fast/forms/update-required-state-on-radio-before-finalizing-tree-insertion-crash-expected.txt: Added.
+        * fast/forms/update-required-state-on-radio-before-finalizing-tree-insertion-crash.html: Added.
+
 2020-03-26  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Catalina ] compositing/clipping/border-radius-async-overflow-stacking.html is flaky failing.

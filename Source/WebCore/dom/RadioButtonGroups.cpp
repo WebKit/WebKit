@@ -237,7 +237,8 @@ void RadioButtonGroups::requiredStateChanged(HTMLInputElement& element)
     if (element.name().isEmpty())
         return;
     auto* group = m_nameToGroupMap.get(element.name().impl());
-    ASSERT(group);
+    if (!group)
+        return;
     group->requiredStateChanged(element);
 }
 
