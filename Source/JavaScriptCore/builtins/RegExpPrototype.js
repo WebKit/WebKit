@@ -191,14 +191,14 @@ function replace(strArg, replace)
         var result = "";
         var lastStart = 0;
 
-        for (var start = 0; start = replacement.indexOf("$", lastStart), start !== -1; lastStart = start) {
+        for (var start = 0; start = @stringIndexOfInternal.@call(replacement, "$", lastStart), start !== -1; lastStart = start) {
             if (start - lastStart > 0)
-                result = result + replacement.substring(lastStart, start);
+                result = result + @stringSubstringInternal.@call(replacement, lastStart, start);
             start++;
-            var ch = replacement.charAt(start);
-            if (ch === "")
+            if (start >= replacementLength)
                 result = result + "$";
             else {
+                var ch = replacement[start];
                 switch (ch)
                 {
                 case "$":
@@ -211,20 +211,20 @@ function replace(strArg, replace)
                     break;
                 case "`":
                     if (position > 0)
-                        result = result + str.substring(0, position);
+                        result = result + @stringSubstringInternal.@call(str, 0, position);
                     start++;
                     break;
                 case "'":
                     if (tailPos < stringLength)
-                        result = result + str.substring(tailPos);
+                        result = result + @stringSubstringInternal.@call(str, tailPos);
                     start++;
                     break;
                 case "<":
                     if (namedCaptures !== @undefined) {
                         var groupNameStartIndex = start + 1;
-                        var groupNameEndIndex = replacement.indexOf(">", groupNameStartIndex);
+                        var groupNameEndIndex = @stringIndexOfInternal.@call(replacement, ">", groupNameStartIndex);
                         if (groupNameEndIndex !== -1) {
-                            var groupName = replacement.substring(groupNameStartIndex, groupNameEndIndex);
+                            var groupName = @stringSubstringInternal.@call(replacement, groupNameStartIndex, groupNameEndIndex);
                             var capture = namedCaptures[groupName];
                             if (capture !== @undefined)
                                 result = result + @toString(capture);
@@ -238,19 +238,19 @@ function replace(strArg, replace)
                     start++;
                     break;
                 default:
-                    var chCode = ch.charCodeAt(0);
+                    var chCode = ch.@charCodeAt(0);
                     if (chCode >= 0x30 && chCode <= 0x39) {
                         var originalStart = start - 1;
                         start++;
 
                         var n = chCode - 0x30;
                         if (n > m) {
-                            result = result + replacement.substring(originalStart, start);
+                            result = result + @stringSubstringInternal.@call(replacement, originalStart, start);
                             break;
                         }
 
                         if (start < replacementLength) {
-                            var nextChCode = replacement.charCodeAt(start);
+                            var nextChCode = replacement.@charCodeAt(start);
                             if (nextChCode >= 0x30 && nextChCode <= 0x39) {
                                 var nn = 10 * n + nextChCode - 0x30;
                                 if (nn <= m) {
@@ -261,7 +261,7 @@ function replace(strArg, replace)
                         }
 
                         if (n == 0) {
-                            result = result + replacement.substring(originalStart, start);
+                            result = result + @stringSubstringInternal.@call(replacement, originalStart, start);
                             break;
                         }
 
@@ -275,7 +275,7 @@ function replace(strArg, replace)
             }
         }
 
-        return result + replacement.substring(lastStart);
+        return result + @stringSubstringInternal.@call(replacement, lastStart);
     }
 
     if (!@isObject(this))
@@ -313,15 +313,16 @@ function replace(strArg, replace)
             else {
                 var matchStr = @toString(result[0]);
 
-                if (!matchStr.length)
-                    regexp.lastIndex = @advanceStringIndex(str, regexp.lastIndex, unicode);
+                if (!matchStr.length) {
+                    var thisIndex = @toLength(regexp.lastIndex);
+                    regexp.lastIndex = @advanceStringIndex(str, thisIndex, unicode);
+                }
             }
         }
     }
 
     var accumulatedResult = "";
     var nextSourcePosition = 0;
-    var lastPosition = 0;
 
     for (var i = 0, resultListLength = resultList.length; i < resultListLength; ++i) {
         var result = resultList[i];
@@ -346,7 +347,10 @@ function replace(strArg, replace)
         var namedCaptures = result.groups;
 
         if (functionalReplace) {
-            var replacerArgs = [ matched ].concat(captures);
+            var replacerArgs = [ matched ];
+            for (var j = 0; j < captures.length; j++)
+                replacerArgs.@push(captures[j]);
+
             replacerArgs.@push(position);
             replacerArgs.@push(str);
 
@@ -362,17 +366,16 @@ function replace(strArg, replace)
             replacement = getSubstitution(matched, str, position, captures, namedCaptures, replace);
         }
 
-        if (position >= nextSourcePosition && position >= lastPosition) {
-            accumulatedResult = accumulatedResult + str.substring(nextSourcePosition, position) + replacement;
+        if (position >= nextSourcePosition) {
+            accumulatedResult = accumulatedResult + @stringSubstringInternal.@call(str, nextSourcePosition, position) + replacement;
             nextSourcePosition = position + matchLength;
-            lastPosition = position;
         }
     }
 
     if (nextSourcePosition >= stringLength)
         return  accumulatedResult;
 
-    return accumulatedResult + str.substring(nextSourcePosition);
+    return accumulatedResult + @stringSubstringInternal.@call(str, nextSourcePosition);
 }
 
 // 21.2.5.9 RegExp.prototype[@@search] (string)
@@ -562,7 +565,7 @@ function split(string, limit)
             // iv. Else e != p,
             else {
                 // 1. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through q (exclusive).
-                var subStr = @stringSubstrInternal.@call(str, position, matchPosition - position);
+                var subStr = @stringSubstringInternal.@call(str, position, matchPosition);
                 // 2. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
                 // 3. Let lengthA be lengthA + 1.
                 @putByValDirect(result, result.length, subStr);
@@ -597,7 +600,7 @@ function split(string, limit)
         }
     }
     // 20. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through size (exclusive).
-    var remainingStr = @stringSubstrInternal.@call(str, position, size);
+    var remainingStr = @stringSubstringInternal.@call(str, position, size);
     // 21. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
     @putByValDirect(result, result.length, remainingStr);
     // 22. Return A.

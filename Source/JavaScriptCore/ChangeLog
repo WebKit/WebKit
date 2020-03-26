@@ -1,5 +1,51 @@
 2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        RegExp.prototype[@@replace] relies on globals and doesn't perform ToLength
+        https://bugs.webkit.org/show_bug.cgi?id=173867
+
+        Reviewed by Ross Kirsling.
+
+        This change:
+
+        a) Adds "lastIndex" ToLength coercion [1], which is observable, unlike ToLength coercion
+           of RegExpExec result [2] that we omit, just like the one in @@split [3].
+
+        b) Removes `lastPosition` checks/updates, as there are none in the spec, and it was
+           equivalent to checking `nextSourcePosition`.
+
+        c) Removes reliance of @@replace on globals and also replaces @stringSubstrInternal
+           built-in with @stringSubstringInternal, as the former is Annex B and accepts size
+           as 2nd paramter, which is not very handy because ECMA-262 usually says "substring
+           of S consisting of the code units at indices X (inclusive) through Y (exclusive)".
+
+        [1]: https://tc39.es/ecma262/#sec-regexp.prototype-@@replace (step 11.c.iii.2.a)
+        [2]: https://tc39.es/ecma262/#sec-regexp.prototype-@@replace (step 14.a)
+        [3]: https://tc39.es/ecma262/#sec-regexp.prototype-@@split (step 19.d.iv.6)
+
+        * builtins/BuiltinNames.h:
+        * builtins/RegExpPrototype.js:
+        (getSubstitution):
+        (Symbol.replace):
+        (Symbol.split):
+        * builtins/StringPrototype.js:
+        (globalPrivate.repeatCharactersSlowPath):
+        * bytecode/LinkTimeConstant.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringIndexOfImpl):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::builtinStringIndexOfInternal):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringSubstringImpl):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::builtinStringSubstringInternal):
+        (JSC::stringProtoFuncSubstrImpl): Deleted.
+        (JSC::builtinStringSubstrInternal): Deleted.
+        * runtime/StringPrototype.h:
+
+2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Invalid numeric and named references should be early syntax errors
         https://bugs.webkit.org/show_bug.cgi?id=178175
 

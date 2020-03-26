@@ -60,7 +60,8 @@ void substituteBackreferences(StringBuilder& result, const String& replacement, 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(JSGlobalObject*, CallFrame*);
 
-EncodedJSValue JSC_HOST_CALL builtinStringSubstrInternal(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL builtinStringSubstringInternal(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL builtinStringIncludesInternal(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL builtinStringIndexOfInternal(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC

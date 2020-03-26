@@ -90,8 +90,9 @@ class JSGlobalObject;
     v(regExpPrototypeSymbolReplace, nullptr) \
     v(regExpTestFast, nullptr) \
     v(stringIncludesInternal, nullptr) \
+    v(stringIndexOfInternal, nullptr) \
     v(stringSplitFast, nullptr) \
-    v(stringSubstrInternal, nullptr) \
+    v(stringSubstringInternal, nullptr) \
     v(makeBoundFunction, nullptr) \
     v(hasOwnLengthProperty, nullptr) \
     v(dateTimeFormat, nullptr) \

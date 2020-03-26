@@ -159,8 +159,9 @@ namespace JSC {
     macro(regExpStringIteratorUnicode) \
     macro(regExpStringIteratorDone) \
     macro(stringIncludesInternal) \
+    macro(stringIndexOfInternal) \
     macro(stringSplitFast) \
-    macro(stringSubstrInternal) \
+    macro(stringSubstringInternal) \
     macro(makeBoundFunction) \
     macro(hasOwnLengthProperty) \
     macro(importModule) \

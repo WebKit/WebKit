@@ -1076,7 +1076,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCodePointAt(JSGlobalObject* globalOb
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+static EncodedJSValue stringIndexOfImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1121,6 +1121,19 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(JSGlobalObject* globalObject
     if (result == notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
+}
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    return stringIndexOfImpl(globalObject, callFrame);
+}
+
+EncodedJSValue JSC_HOST_CALL builtinStringIndexOfInternal(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    ASSERT(callFrame->thisValue().isString());
+    ASSERT(callFrame->argument(0).isString());
+    ASSERT(callFrame->argument(1).isNumber() || callFrame->argument(1).isUndefined());
+    return stringIndexOfImpl(globalObject, callFrame);
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -1365,7 +1378,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(JSGlobalObject* globalObje
     return JSValue::encode(result);
 }
 
-static EncodedJSValue stringProtoFuncSubstrImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1409,26 +1422,7 @@ static EncodedJSValue stringProtoFuncSubstrImpl(JSGlobalObject* globalObject, Ca
     return JSValue::encode(jsSubstring(vm, uString, substringStart, substringLength));
 }
 
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(JSGlobalObject* globalObject, CallFrame* callFrame)
-{
-    return stringProtoFuncSubstrImpl(globalObject, callFrame);
-}
-
-EncodedJSValue JSC_HOST_CALL builtinStringSubstrInternal(JSGlobalObject* globalObject, CallFrame* callFrame)
-{
-    // @substrInternal should not have any observable side effects (e.g. it should not call
-    // GetMethod(..., @@toPrimitive) on the thisValue).
-
-    // It is ok to use the default stringProtoFuncSubstr as the implementation of
-    // @substrInternal because @substrInternal will only be called by builtins, which will
-    // guarantee that we only pass it a string thisValue. As a result, stringProtoFuncSubstr
-    // will not need to call toString() on the thisValue, and there will be no observable
-    // side-effects.
-    ASSERT(callFrame->thisValue().isString());
-    return stringProtoFuncSubstrImpl(globalObject, callFrame);
-}
-
-EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(JSGlobalObject* globalObject, CallFrame* callFrame)
+static EncodedJSValue stringSubstringImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1470,6 +1464,19 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(JSGlobalObject* globalObje
     unsigned substringStart = static_cast<unsigned>(start);
     unsigned substringLength = static_cast<unsigned>(end) - substringStart;
     RELEASE_AND_RETURN(scope, JSValue::encode(jsSubstring(globalObject, jsString, substringStart, substringLength)));
+}
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    return stringSubstringImpl(globalObject, callFrame);
+}
+
+EncodedJSValue JSC_HOST_CALL builtinStringSubstringInternal(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    ASSERT(callFrame->thisValue().isString());
+    ASSERT(callFrame->argument(0).isNumber());
+    ASSERT(callFrame->argument(1).isNumber() || callFrame->argument(1).isUndefined());
+    return stringSubstringImpl(globalObject, callFrame);   
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(JSGlobalObject* globalObject, CallFrame* callFrame)

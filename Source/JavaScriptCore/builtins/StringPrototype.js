@@ -113,7 +113,7 @@ function repeatCharactersSlowPath(string, count)
         operand += operand;
     }
     if (remainingCharacters)
-        result += @stringSubstrInternal.@call(string, 0, remainingCharacters);
+        result += @stringSubstringInternal.@call(string, 0, remainingCharacters);
     return result;
 }
 

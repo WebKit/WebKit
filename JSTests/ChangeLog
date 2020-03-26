@@ -1,5 +1,14 @@
 2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        RegExp.prototype[@@replace] relies on globals and doesn't perform ToLength
+        https://bugs.webkit.org/show_bug.cgi?id=173867
+
+        Reviewed by Ross Kirsling.
+
+        * test262/expectations.yaml: Mark 4 test cases as passing.
+
+2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Invalid numeric and named references should be early syntax errors
         https://bugs.webkit.org/show_bug.cgi?id=178175
 
