@@ -1,3 +1,31 @@
+2020-03-26  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, add missing expectation files
+        https://bugs.webkit.org/show_bug.cgi?id=209588
+
+        Unreviewed gardening.
+
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-mixed-expected.txt: Added.
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-mixed-expected.txt: Added.
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-br-mixed-expected.txt: Added.
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-p-mixed-expected.txt: Added.
+        * platform/gtk/fast/css/vertical-text-overflow-ellipsis-text-align-center-mixed-expected.txt: Added.
+        * platform/gtk/fast/css/vertical-text-overflow-ellipsis-text-align-justify-mixed-expected.txt: Added.
+        * platform/gtk/fast/css/vertical-text-overflow-ellipsis-text-align-left-mixed-expected.txt: Added.
+        * platform/gtk/fast/css/vertical-text-overflow-ellipsis-text-align-right-mixed-expected.txt: Added.
+        * platform/gtk/fast/html/details-marker-style-mixed-expected.txt: Added.
+        * platform/gtk/fast/html/details-writing-mode-mixed-expected.txt: Added.
+        * platform/gtk/fast/multicol/tall-image-behavior-lr-mixed-expected.txt: Added.
+        * platform/gtk/fast/text/vertical-rl-rtl-linebreak-mixed-expected.txt: Added.
+        * platform/gtk/fast/writing-mode/background-vertical-lr-mixed-expected.txt: Added.
+        * platform/gtk/fast/writing-mode/background-vertical-rl-mixed-expected.txt: Added.
+        * platform/gtk/fast/writing-mode/basic-vertical-line-mixed-expected.txt: Added.
+        * platform/gtk/fast/writing-mode/border-styles-vertical-lr-mixed-expected.txt: Added.
+        * platform/gtk/fast/writing-mode/border-styles-vertical-rl-mixed-expected.txt: Added.
+        * platform/gtk/fast/writing-mode/vertical-baseline-alignment-mixed-expected.txt: Added.
+        * platform/gtk/fast/writing-mode/vertical-lr-replaced-selection-mixed-expected.txt: Added.
+        * platform/gtk/fast/writing-mode/vertical-rl-replaced-selection-mixed-expected.txt: Added.
+
 2020-03-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening for Win10.
