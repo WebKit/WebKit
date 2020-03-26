@@ -1,3 +1,9 @@
+2020-03-26  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, make GC a bit less aggressive on test to decrease runtime.
+
+        * http/tests/inspector/network/har/har-page-aggressive-gc.html:
+
 2020-03-26  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, add missing expectation files
