@@ -1182,7 +1182,7 @@ bool XMLHttpRequest::hasPendingActivity() const
     if (ActiveDOMObject::hasPendingActivity())
         return true;
 
-    if (!m_hasRelevantEventListener)
+    if (!m_hasRelevantEventListener && !(m_upload && m_upload->hasRelevantEventListener()))
         return false;
 
     switch (readyState()) {

@@ -41,6 +41,17 @@ XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest& request)
 {
 }
 
+void XMLHttpRequestUpload::eventListenersDidChange()
+{
+    m_hasRelevantEventListener = hasEventListeners(eventNames().abortEvent)
+        || hasEventListeners(eventNames().errorEvent)
+        || hasEventListeners(eventNames().loadEvent)
+        || hasEventListeners(eventNames().loadendEvent)
+        || hasEventListeners(eventNames().loadstartEvent)
+        || hasEventListeners(eventNames().progressEvent)
+        || hasEventListeners(eventNames().timeoutEvent);
+}
+
 void XMLHttpRequestUpload::dispatchProgressEvent(const AtomString& type, unsigned long long loaded, unsigned long long total)
 {
     ASSERT(type == eventNames().loadstartEvent || type == eventNames().progressEvent || type == eventNames().loadEvent || type == eventNames().loadendEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);

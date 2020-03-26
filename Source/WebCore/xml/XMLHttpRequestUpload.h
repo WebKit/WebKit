@@ -40,7 +40,11 @@ public:
 
     void dispatchProgressEvent(const AtomString& type, unsigned long long loaded, unsigned long long total);
 
+    bool hasRelevantEventListener() const { return m_hasRelevantEventListener; }
+
 private:
+    // EventTarget.
+    void eventListenersDidChange() final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
@@ -48,6 +52,7 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const final { return m_request.scriptExecutionContext(); }
 
     XMLHttpRequest& m_request;
+    bool m_hasRelevantEventListener { false };
 };
     
 } // namespace WebCore
