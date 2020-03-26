@@ -230,14 +230,13 @@ void CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders(FrameLoader&
     updateRequestReferrer(m_resourceRequest, m_options.referrerPolicy, outgoingReferrer);
     frameLoader.applyUserAgentIfNeeded(m_resourceRequest);
 
-    if (!m_resourceRequest.httpOrigin().isEmpty())
-        return;
-    String outgoingOrigin;
-    if (m_options.mode == FetchOptions::Mode::Cors)
-        outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
-    else
-        outgoingOrigin = SecurityPolicy::generateOriginHeader(m_options.referrerPolicy, m_resourceRequest.url(), SecurityOrigin::createFromString(outgoingReferrer));
-    FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
+    if (doesRequestNeedHTTPOriginHeader(m_resourceRequest)) {
+        auto outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer);
+        // FIXME: Should take referrer-policy into account in some cases, see https://github.com/web-platform-tests/wpt/issues/22298.
+        auto referrerPolicy = (m_options.mode == FetchOptions::Mode::Cors) ? ReferrerPolicy::UnsafeUrl : m_options.referrerPolicy;
+        auto origin = SecurityPolicy::generateOriginHeader(referrerPolicy, m_resourceRequest.url(), outgoingOrigin);
+        m_resourceRequest.setHTTPOrigin(origin);
+    }
 }
 
 bool isRequestCrossOrigin(SecurityOrigin* origin, const URL& requestURL, const ResourceLoaderOptions& options)

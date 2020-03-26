@@ -224,7 +224,6 @@ public:
     void addExtraFieldsToSubresourceRequest(ResourceRequest&);
     void addExtraFieldsToMainResourceRequest(ResourceRequest&);
     
-    static void addHTTPOriginIfNeeded(ResourceRequest&, const String& origin);
     static void addHTTPUpgradeInsecureRequestsIfNeeded(ResourceRequest&);
     static void addSameSiteInfoToRequestIfNeeded(ResourceRequest&, const Document* initiator = nullptr);
 

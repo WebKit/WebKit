@@ -47,6 +47,7 @@
 #include "ResourceLoadObserver.h"
 #include "ResourceTiming.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SecurityPolicy.h"
 #include "Settings.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
@@ -661,15 +662,18 @@ Expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessContr
 
     // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 14.
     updateReferrerPolicy(redirectResponse.httpHeaderField(HTTPHeaderName::ReferrerPolicy));
-    
+
     if (options().mode == FetchOptions::Mode::Cors && redirectingToNewOrigin) {
         cleanHTTPRequestHeadersForAccessControl(newRequest, options().httpHeadersToKeep);
         updateRequestForAccessControl(newRequest, *m_origin, options().storedCredentialsPolicy);
     }
-    
+
     updateRequestReferrer(newRequest, referrerPolicy(), previousRequest.httpReferrer());
 
-    FrameLoader::addHTTPOriginIfNeeded(newRequest, m_origin ? m_origin->toString() : String());
+    if (doesRequestNeedHTTPOriginHeader(newRequest)) {
+        auto origin = SecurityPolicy::generateOriginHeader(referrerPolicy(), newRequest.url(), m_origin ? *m_origin : SecurityOrigin::createUnique().get());
+        newRequest.setHTTPOrigin(origin);
+    }
 
     return { };
 }

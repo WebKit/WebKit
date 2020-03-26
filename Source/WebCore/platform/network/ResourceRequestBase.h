@@ -262,6 +262,8 @@ private:
     WEBCORE_EXPORT static double s_defaultTimeoutInterval;
 };
 
+bool doesRequestNeedHTTPOriginHeader(const ResourceRequest&);
+
 bool equalIgnoringHeaderFields(const ResourceRequestBase&, const ResourceRequestBase&);
 
 inline bool operator==(const ResourceRequest& a, const ResourceRequest& b) { return ResourceRequestBase::equal(a, b); }

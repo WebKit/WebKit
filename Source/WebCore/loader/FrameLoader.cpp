@@ -2978,44 +2978,11 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
 
     applyUserAgentIfNeeded(request);
 
-    // Make sure we send the Origin header.
-    addHTTPOriginIfNeeded(request, String());
-
     // Only set fallback array if it's still empty (later attempts may be incorrect, see bug 117818).
     if (request.responseContentDispositionEncodingFallbackArray().isEmpty()) {
         // Always try UTF-8. If that fails, try frame encoding (if any) and then the default.
         request.setResponseContentDispositionEncodingFallbackArray("UTF-8", m_frame.document()->encoding(), m_frame.settings().defaultTextEncodingName());
     }
-}
-
-void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, const String& origin)
-{
-    if (!request.httpOrigin().isEmpty())
-        return;  // Request already has an Origin header.
-
-    // Don't send an Origin header for GET or HEAD to avoid privacy issues.
-    // For example, if an intranet page has a hyperlink to an external web
-    // site, we don't want to include the Origin of the request because it
-    // will leak the internal host name. Similar privacy concerns have lead
-    // to the widespread suppression of the Referer header at the network
-    // layer.
-    if (request.httpMethod() == "GET" || request.httpMethod() == "HEAD")
-        return;
-
-    // FIXME: take referrer-policy into account.
-    // https://bugs.webkit.org/show_bug.cgi?id=209066
-
-    // For non-GET and non-HEAD methods, always send an Origin header so the
-    // server knows we support this feature.
-
-    if (origin.isEmpty()) {
-        // If we don't know what origin header to attach, we attach the value
-        // for an empty origin.
-        request.setHTTPOrigin(SecurityOrigin::createUnique()->toString());
-        return;
-    }
-
-    request.setHTTPOrigin(origin);
 }
 
 // Implements the "'Same-site' and 'cross-site' Requests" algorithm from <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00#section-2.1>.
@@ -3113,7 +3080,10 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
     
     if (!referrer.isEmpty())
         initialRequest.setHTTPReferrer(referrer);
-    addHTTPOriginIfNeeded(initialRequest, outgoingOrigin());
+    if (doesRequestNeedHTTPOriginHeader(initialRequest)) {
+        auto origin = SecurityPolicy::generateOriginHeader(m_frame.document()->referrerPolicy(), initialRequest.url(), m_frame.document()->securityOrigin());
+        initialRequest.setHTTPOrigin(origin);
+    }
 
     initialRequest.setFirstPartyForCookies(m_frame.mainFrame().loader().documentLoader()->request().url());
     
@@ -3811,8 +3781,11 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
         request.setHTTPMethod("POST");
         request.setHTTPBody(WTFMove(formData));
         request.setHTTPContentType(item.formContentType());
-        auto securityOrigin = SecurityOrigin::createFromString(item.referrer());
-        addHTTPOriginIfNeeded(request, securityOrigin->toString());
+        if (doesRequestNeedHTTPOriginHeader(request)) {
+            auto securityOrigin = SecurityOrigin::createFromString(item.referrer());
+            auto origin = SecurityPolicy::generateOriginHeader(m_frame.document()->referrerPolicy(), request.url(), securityOrigin);
+            request.setHTTPOrigin(origin);
+        }
         addHTTPUpgradeInsecureRequestsIfNeeded(request);
 
         // Make sure to add extra fields to the request after the Origin header is added for the FormData case.
