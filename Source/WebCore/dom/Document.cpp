@@ -757,7 +757,7 @@ void Document::removedLastRef()
 #endif
         decrementReferencingNodeCount();
     } else {
-        stopActiveDOMObjects();
+        commonTeardown();
 #ifndef NDEBUG
         m_inRemovedLastRefFunction = false;
         m_deletionHasBegun = true;
@@ -783,6 +783,10 @@ void Document::commonTeardown()
         m_highlightMap->clear();
 
     m_pendingScrollEventTargetList = nullptr;
+
+    while (!m_timelines.computesEmpty())
+        m_timelines.begin()->detachFromDocument();
+    m_timeline = nullptr;
 }
 
 Element* Document::elementForAccessKey(const String& key)
@@ -2576,10 +2580,6 @@ void Document::prepareForDestruction()
     }
 
     detachFromFrame();
-
-    while (!m_timelines.computesEmpty())
-        m_timelines.begin()->detachFromDocument();
-    m_timeline = nullptr;
 
 #if ENABLE(CSS_PAINTING_API)
     for (auto& scope : m_paintWorkletGlobalScopes.values())
