@@ -1,3 +1,13 @@
+2020-03-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to frontboard services in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=209604
+
+        Reviewed by Darin Adler.
+
+        * fast/sandbox/ios/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/ios/sandbox-mach-lookup.html:
+
 2020-03-26  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r254669): Expand media button doesn't work on first try on photos on reddit.com

@@ -351,7 +351,7 @@
         "com.apple.mt"
         "com.apple.preferences.sounds")
 
-    (allow mach-lookup (with telemetry-backtrace)
+    (deny mach-lookup (with telemetry-backtrace)
         (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
     )
 

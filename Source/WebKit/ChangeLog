@@ -1,5 +1,18 @@
 2020-03-26  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS] Deny mach lookup access to frontboard services in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=209604
+
+        Reviewed by Darin Adler.
+
+        Deny mach lookup access to "com.apple.frontboard.systemappservices" in the WebContent process on iOS.
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup.html
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-03-26  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Adopt ScreenProperties class.
         https://bugs.webkit.org/show_bug.cgi?id=191767
 
