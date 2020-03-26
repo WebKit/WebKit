@@ -1,3 +1,12 @@
+2020-03-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] lld-link: error: /manifestdependency: is not allowed in .drectve
+        https://bugs.webkit.org/show_bug.cgi?id=204831
+
+        Reviewed by Ross Kirsling.
+
+        * shell/DLLLauncherMain.cpp: Removed /manifestdependency for Microsoft.VC80.CRT which seems leftover of Bug 116562 (r178530).
+
 2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         RegExp.prototype[@@replace] relies on globals and doesn't perform ToLength
