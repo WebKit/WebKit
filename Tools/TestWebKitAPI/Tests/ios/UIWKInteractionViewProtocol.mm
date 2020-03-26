@@ -154,4 +154,25 @@ TEST(UIWKInteractionViewProtocol, SelectPositionAtPointInFocusedElementStartsInp
     TestWebKitAPI::Util::run(&didCallDecidePolicyForFocusedElement);
 }
 
+TEST(UIWKInteractionViewProtocol, SelectPositionAtPointInElementInNonFocusedFrame)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto inputDelegate = adoptNS([TestInputDelegate new]);
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    bool didStartInputSession = false;
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) {
+        didStartInputSession = true;
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView synchronouslyLoadHTMLString:@"<body style='margin: 0; padding: 0'><iframe height='100' width='100%' style='border: none; padding: 0; margin: 0' srcdoc='<body style=\"margin: 0; padding: 0\"><div contenteditable=\"true\" style=\"width: 200px; height: 200px\"></body>'></iframe></body>"];
+    EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.querySelector('iframe').contentDocument.activeElement.tagName"]);
+
+    [webView becomeFirstResponder];
+    [webView selectPositionAtPoint:CGPointMake(0, 0)];
+    TestWebKitAPI::Util::run(&didStartInputSession);
+    EXPECT_WK_STREQ("DIV", [webView stringByEvaluatingJavaScript:@"document.querySelector('iframe').contentDocument.activeElement.tagName"]);
+}
+
 #endif

@@ -2058,6 +2058,8 @@ void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInter
 {
     SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
 
+    setFocusedFrameBeforeSelectingTextAtLocation(point);
+
     auto& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
     
