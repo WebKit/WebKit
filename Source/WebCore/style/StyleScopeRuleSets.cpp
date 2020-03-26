@@ -92,7 +92,7 @@ void ScopeRuleSets::initializeUserStyle()
     if (CSSStyleSheet* pageUserSheet = extensionStyleSheets.pageUserSheet())
         tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), nullptr, mediaQueryEvaluator, m_styleResolver);
     auto* page = m_styleResolver.document().page();
-    if (page && page->mainFrame().loader().client().hasNavigatedAwayFromAppBoundDomain())
+    if (page && page->mainFrame().loader().client().hasNavigatedAwayFromAppBoundDomain() && !extensionStyleSheets.injectedUserStyleSheets().isEmpty())
         m_styleResolver.document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
     else
         collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), tempUserStyle.get(), mediaQueryEvaluator);
