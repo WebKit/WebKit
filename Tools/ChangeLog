@@ -1,5 +1,23 @@
 2020-03-26  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] update-webkitgtk-libs fails
+        https://bugs.webkit.org/show_bug.cgi?id=209546
+
+        Reviewed by Žan Doberšek.
+
+        Simplify the code a bit, add a `--assumeyes` argument to the
+        `flatpak update` command to make it non-interactive and improve
+        error handling/reporting a bit as well.
+
+        * flatpak/flatpakutils.py:
+        (FlatpakObject.flatpak):
+        (WebkitFlatpak.main):
+        (WebkitFlatpak.run):
+        (WebkitFlatpak.install_all):
+        (WebkitFlatpak.update_all): Deleted.
+
+2020-03-26  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Crash post-mortem debugging is broken
         https://bugs.webkit.org/show_bug.cgi?id=209537
 

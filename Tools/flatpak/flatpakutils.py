@@ -135,6 +135,8 @@ class FlatpakObject:
             res = subprocess.check_output(command + ["--help"]).decode("utf-8")
             if "--user" in res:
                 command.append("--user")
+            if "--assumeyes" in res:
+                command.append("--assumeyes")
         command.extend(args)
 
         if not show_output:
@@ -696,7 +698,7 @@ class WebkitFlatpak:
 
         return 0
 
-    def run(self):
+    def main(self):
         if self.check_available:
             return 0
 
@@ -712,9 +714,18 @@ class WebkitFlatpak:
         if self.update:
             Console.message("Updating Flatpak %s environment" % self.build_type)
             if not self.no_flatpak_update:
-                self.update_all()
+                self.sdk_repo.flatpak("update")
 
         return self.setup_dev_env()
+
+    def run(self):
+        try:
+            return self.main()
+        except subprocess.CalledProcessError as error:
+            Console.message("\n%sThe following command returned a non-zero exit status: %s\n"
+                            "Output: %s%s", Colors.FAIL, ' '.join(error.cmd), error.output, Colors.ENDC)
+            return error.returncode
+        return 0
 
     def has_environment(self):
         return os.path.exists(self.flatpak_build_path)
@@ -801,9 +812,6 @@ class WebkitFlatpak:
         for package in self._get_packages():
             if not package.is_installed(self.sdk_branch):
                 package.install()
-
-    def update_all(self):
-        self.sdk_repo.flatpak("update")
 
     def run_gdb(self):
         with disable_signals():
