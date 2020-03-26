@@ -933,3 +933,4 @@ webkit.org/b/206958 http/tests/media/media-stream/get-display-media-prompt.html 
 webkit.org/b/207509 [ Debug ] imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-worker.https.html [ Pass Crash ]
 
 webkit.org/b/207631 tiled-drawing/scrolling/fixed/fixed-during-rubberband.html [ Pass ImageOnlyFailure ]
+webkit.org/b/207632 tiled-drawing/scrolling/sticky/sticky-during-rubberband.html [ Pass ImageOnlyFailure ]
