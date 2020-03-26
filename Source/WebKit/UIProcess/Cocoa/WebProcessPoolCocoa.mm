@@ -713,8 +713,8 @@ void WebProcessPool::unregisterNotificationObservers()
 #endif
 #endif // PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
-    [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
 #endif // !PLATFORM(IOS_FAMILY)
+    [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
 }
 
 static CFURLStorageSessionRef privateBrowsingSession()

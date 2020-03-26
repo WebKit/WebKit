@@ -1,3 +1,16 @@
+2020-03-26  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r258949) Safari sometimes crashes when becoming the foreground application
+        https://bugs.webkit.org/show_bug.cgi?id=209620
+        <rdar://problem/60930466>
+
+        Reviewed by Per Arne Vollan.
+
+        Make sure m_activationObserver gets unregistered on all Cocoa platforms, not just on iOS.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+
 2020-03-26  Daniel Bates  <dabates@apple.com>
 
         WebPage::selectPositionAtPoint() does not focus an element in a non-focused frame
