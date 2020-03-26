@@ -121,6 +121,7 @@
 
 #endif
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page->process().connection())
 #define MESSAGE_CHECK_CONTEXTID(identifier) MESSAGE_CHECK_BASE(m_contextMap.isValidKey(identifier), m_page->process().connection())
 
 namespace WebKit {
@@ -491,8 +492,7 @@ void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenMo
 void VideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby)
 {
     MESSAGE_CHECK_CONTEXTID(contextId);
-
-    ASSERT(videoLayerID);
+    MESSAGE_CHECK(videoLayerID);
 
     auto& [model, interface] = ensureModelAndInterface(contextId);
     addClientForContext(contextId);
@@ -729,5 +729,6 @@ void VideoFullscreenManagerProxy::fullscreenMayReturnToInline(uint64_t contextId
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_CONTEXTID
+#undef MESSAGE_CHECK
 
 #endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

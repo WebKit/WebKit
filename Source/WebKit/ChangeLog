@@ -1,3 +1,16 @@
+2020-03-26  David Kilzer  <ddkilzer@apple.com>
+
+        VideoFullscreenManagerProxy::setupFullscreenWithID should message check videoLayerID
+        <https://webkit.org/b/209578>
+        <rdar://problem/60703503>
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (MESSAGE_CHECK): Define (and undef) new macro for assertions.
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        Change ASSERT() to MESSAGE_CHECK().
+
 2020-03-26  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Syscall param sendmsg(msg.msg_iov[0]) points to uninitialised byte(s) in IPC::Connection::sendOutgoingMessage
