@@ -1232,6 +1232,9 @@ void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
 
 static void setSyncOnClock(GstElement *element, bool sync)
 {
+    if (!element)
+        return;
+
     if (!GST_IS_BIN(element)) {
         g_object_set(element, "sync", sync, NULL);
         return;
