@@ -1,3 +1,12 @@
+2020-03-25  Timothy Horton  <timothy_horton@apple.com>
+
+        Unable to build WebKit with iOS 13.4 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=209317
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Address post-landing review comment; use SDK conditionals, not deployment
+        target conditionals, since SPI headers are mimicing SDK content.
+
 2020-03-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mini browser immediately hit an assertion in debug build
