@@ -49,6 +49,8 @@ static constexpr unsigned offsetNoMatch = std::numeric_limits<unsigned>::max();
 // avoid spending exponential time on complex regular expressions.
 static constexpr unsigned matchLimit = 1000000;
 
+enum MatchFrom { VMThread, CompilerThread };
+
 enum JSRegExpResult {
     JSRegExpMatch = 1,
     JSRegExpNoMatch = 0,

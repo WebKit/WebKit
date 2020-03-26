@@ -1,3 +1,59 @@
+2020-03-26  Michael Saboff  <msaboff@apple.com>
+
+        Refactor YARR Stack Overflow Checks
+        https://bugs.webkit.org/show_bug.cgi?id=209435
+        rdar://problem/58988252
+
+        Reviewed by Mark Lam.
+
+        Refactored stack checks in YARR code including adding a stack check to the YARR JIT'ed code.
+        The C++ code including the parser, byte code compiler and interpreter now all use StackCheck.
+        The JIT'ed code needs a stack limit passed via a parameter since the JIT'ed code can be 
+        called from the compiler thread when compiling DFG / FTL code.
+
+        Instead of adding a new parameter, consolidated the two pattern context buffer values, buffer
+        pointer and size, with the new stack limit into a new MatchingContextHolder, an RAII object.
+        The MatchingContextHolder constructor uses either the VM stack limit or the current thread's
+        stack limit depending on how it is called.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::finishCreation):
+        (JSC::RegExp::byteCodeCompileIfNecessary):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::matchConcurrently):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/RegExp.h:
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        (JSC::PatternContextBufferHolder::PatternContextBufferHolder): Deleted.
+        (JSC::PatternContextBufferHolder::~PatternContextBufferHolder): Deleted.
+        (JSC::PatternContextBufferHolder::buffer): Deleted.
+        (JSC::PatternContextBufferHolder::size): Deleted.
+        (): Deleted.
+        * yarr/Yarr.h:
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::Interpreter::isSafeToRecurse):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::MatchingContextHolder::MatchingContextHolder):
+        (JSC::Yarr::MatchingContextHolder::~MatchingContextHolder):
+        (JSC::Yarr::YarrGenerator::initParenContextFreeList):
+        (JSC::Yarr::YarrGenerator::alignCallFrameSizeInBytes):
+        (JSC::Yarr::YarrGenerator::compile):
+        (JSC::Yarr::YarrGenerator::initCallFrame): Deleted.
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::MatchingContextHolder::offsetOfStackLimit):
+        (JSC::Yarr::MatchingContextHolder::offsetOfPatternContextBuffer):
+        (JSC::Yarr::MatchingContextHolder::offsetOfPatternContextBufferSize):
+        (JSC::Yarr::YarrCodeBlock::execute):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::YarrPatternConstructor):
+        (JSC::Yarr::YarrPatternConstructor::isSafeToRecurse):
+        (JSC::Yarr::YarrPattern::compile):
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        (JSC::Yarr::YarrPatternConstructor::isSafeToRecurse const): Deleted.
+        * yarr/YarrPattern.h:
+
 2020-03-26  Keith Miller  <keith_miller@apple.com>
 
         TypedArrays should more gracefully handle OOM during slowDownAndWasteMemory

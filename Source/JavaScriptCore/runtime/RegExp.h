@@ -86,8 +86,9 @@ public:
     bool matchConcurrently(VM&, const String&, unsigned startOffset, MatchResult&);
 
     // Call these versions of the match functions if you're desperate for performance.
-    template<typename VectorType>
+    template<typename VectorType, Yarr::MatchFrom thread = Yarr::MatchFrom::VMThread>
     int matchInline(VM&, const String&, unsigned startOffset, VectorType& ovector);
+    template<Yarr::MatchFrom thread = Yarr::MatchFrom::VMThread>
     MatchResult matchInline(VM&, const String&, unsigned startOffset);
     
     unsigned numSubpatterns() const { return m_numSubpatterns; }

@@ -86,38 +86,6 @@ ALWAYS_INLINE bool RegExp::hasCodeFor(Yarr::YarrCharSize charSize)
     return false;
 }
 
-class PatternContextBufferHolder {
-    WTF_FORBID_HEAP_ALLOCATION;
-public:
-    PatternContextBufferHolder(VM& vm, bool needBuffer)
-        : m_vm(vm)
-    {
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-        if (needBuffer)
-            m_buffer = m_vm.acquireRegExpPatternContexBuffer();
-#else
-        UNUSED_PARAM(needBuffer);
-#endif
-    }
-
-    ~PatternContextBufferHolder()
-    {
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-        if (buffer())
-            m_vm.releaseRegExpPatternContexBuffer();
-#else
-        UNUSED_PARAM(m_vm);
-#endif
-    }
-
-    void* buffer() { return m_buffer; }
-    unsigned size() { return buffer() ? VM::patternContextBufferSize : 0; }
-
-private:
-    VM& m_vm;
-    void* m_buffer { nullptr };
-};
-
 ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::YarrCharSize charSize)
 {
     if (hasCodeFor(charSize))
@@ -129,7 +97,7 @@ ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::YarrCharSize charSiz
     compile(&vm, charSize);
 }
 
-template<typename VectorType>
+template<typename VectorType, Yarr::MatchFrom matchFrom>
 ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOffset, VectorType& ovector)
 {
 #if ENABLE(REGEXP_TRACING)
@@ -162,19 +130,22 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
     if (m_state == JITCode) {
         {
             ASSERT(m_regExpJITCode);
-            PatternContextBufferHolder patternContextBufferHolder(vm, m_regExpJITCode->usesPatternContextBuffer());
+            Yarr::MatchingContextHolder regExpContext(vm, m_regExpJITCode.get(), matchFrom);
 
             if (s.is8Bit())
-                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), offsetVector, patternContextBufferHolder.buffer(), patternContextBufferHolder.size()).start;
+                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), offsetVector, regExpContext).start;
             else
-                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length(), offsetVector, patternContextBufferHolder.buffer(), patternContextBufferHolder.size()).start;
+                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length(), offsetVector, regExpContext).start;
         }
 
         if (result == Yarr::JSRegExpJITCodeFailure) {
             // JIT'ed code couldn't handle expression, so punt back to the interpreter.
             byteCodeCompileIfNecessary(&vm);
-            if (m_state == ParseError)
+            if (m_state == ParseError) {
+                if (matchFrom == Yarr::MatchFrom::CompilerThread)
+                    return -1;
                 return throwError();
+            }
             result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
         }
 
@@ -260,6 +231,7 @@ ALWAYS_INLINE void RegExp::compileIfNecessaryMatchOnly(VM& vm, Yarr::YarrCharSiz
     compileMatchOnly(&vm, charSize);
 }
 
+template<Yarr::MatchFrom matchFrom>
 ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned startOffset)
 {
 #if ENABLE(REGEXP_TRACING)
@@ -289,11 +261,12 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
     if (m_state == JITCode) {
         {
             ASSERT(m_regExpJITCode);
-            PatternContextBufferHolder patternContextBufferHolder(vm, m_regExpJITCode->usesPatternContextBuffer());
+            Yarr::MatchingContextHolder regExpContext(vm, m_regExpJITCode.get(), matchFrom);
+
             if (s.is8Bit())
-                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), patternContextBufferHolder.buffer(), patternContextBufferHolder.size());
+                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), regExpContext);
             else
-                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length(), patternContextBufferHolder.buffer(), patternContextBufferHolder.size());
+                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length(), regExpContext);
         }
 
 #if ENABLE(REGEXP_TRACING)

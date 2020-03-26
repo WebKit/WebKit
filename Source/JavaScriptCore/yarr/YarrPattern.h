@@ -386,7 +386,7 @@ struct TermChain {
 
 
 struct YarrPattern {
-    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, OptionSet<Flags>, ErrorCode&, void* stackLimit = nullptr);
+    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, OptionSet<Flags>, ErrorCode&);
 
     void resetForReparsing()
     {
@@ -543,7 +543,7 @@ struct YarrPattern {
     HashMap<String, unsigned> m_namedGroupToParenIndex;
 
 private:
-    ErrorCode compile(const String& patternString, void* stackLimit);
+    ErrorCode compile(const String& patternString);
 
     CharacterClass* anycharCached { nullptr };
     CharacterClass* newlineCached { nullptr };

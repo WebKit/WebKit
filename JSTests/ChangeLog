@@ -1,3 +1,21 @@
+2020-03-26  Michael Saboff  <msaboff@apple.com>
+
+        Refactor YARR Stack Overflow Checks
+        https://bugs.webkit.org/show_bug.cgi?id=209435
+        rdar://problem/58988252
+
+        Reviewed by Mark Lam.
+
+        Added a new test and removed a now obsolete test.
+
+        * stress/regexp-compile-oom.js: Removed because the test is no longer valid.
+        Previously when therer where different stack check mechanisims we failed different.
+        This test was based on the different failure modes.  With these changes, most of
+        the contain subtests no longer throw as this test expects.
+        * stress/regexp-huge-oom.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2020-03-26  Keith Miller  <keith_miller@apple.com>
 
         TypedArrays should more gracefully handle OOM during slowDownAndWasteMemory

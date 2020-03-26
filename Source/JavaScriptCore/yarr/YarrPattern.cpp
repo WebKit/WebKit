@@ -33,7 +33,7 @@
 #include "YarrParser.h"
 #include <wtf/DataLog.h>
 #include <wtf/Optional.h>
-#include <wtf/StackPointer.h>
+#include <wtf/StackCheck.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
@@ -436,10 +436,9 @@ private:
 
 class YarrPatternConstructor {
 public:
-    YarrPatternConstructor(YarrPattern& pattern, void* stackLimit)
+    YarrPatternConstructor(YarrPattern& pattern)
         : m_pattern(pattern)
         , m_characterClassConstructor(pattern.ignoreCase(), pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
-        , m_stackLimit(stackLimit)
     {
         auto body = makeUnique<PatternDisjunction>();
         m_pattern.m_body = body.get();
@@ -1101,27 +1100,20 @@ public:
     ErrorCode error() { return m_error; }
 
 private:
-    bool isSafeToRecurse() const
-    {
-        if (!m_stackLimit)
-            return true;
-        int8_t* curr = reinterpret_cast<int8_t*>(currentStackPointer());
-        int8_t* limit = reinterpret_cast<int8_t*>(m_stackLimit);
-        return curr >= limit;
-    }
+    inline bool isSafeToRecurse() { return m_stackCheck.isSafeToRecurse(); }
 
     YarrPattern& m_pattern;
     PatternAlternative* m_alternative;
     CharacterClassConstructor m_characterClassConstructor;
-    void* m_stackLimit;
+    StackCheck m_stackCheck;
     ErrorCode m_error { ErrorCode::NoError };
     bool m_invertCharacterClass;
     bool m_invertParentheticalAssertion { false };
 };
 
-ErrorCode YarrPattern::compile(const String& patternString, void* stackLimit)
+ErrorCode YarrPattern::compile(const String& patternString)
 {
-    YarrPatternConstructor constructor(*this, stackLimit);
+    YarrPatternConstructor constructor(*this);
 
     {
         ErrorCode error = parse(constructor, patternString, unicode());
@@ -1148,7 +1140,7 @@ ErrorCode YarrPattern::compile(const String& patternString, void* stackLimit)
     return ErrorCode::NoError;
 }
 
-YarrPattern::YarrPattern(const String& pattern, OptionSet<Flags> flags, ErrorCode& error, void* stackLimit)
+YarrPattern::YarrPattern(const String& pattern, OptionSet<Flags> flags, ErrorCode& error)
     : m_containsBackreferences(false)
     , m_containsBOL(false)
     , m_containsUnsignedLengthPattern(false)
@@ -1157,7 +1149,7 @@ YarrPattern::YarrPattern(const String& pattern, OptionSet<Flags> flags, ErrorCod
     , m_flags(flags)
 {
     ASSERT(m_flags != Flags::DeletedValue);
-    error = compile(pattern, stackLimit);
+    error = compile(pattern);
 }
 
 void indentForNestingLevel(PrintStream& out, unsigned nestingDepth)

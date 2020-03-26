@@ -170,7 +170,7 @@ RegExp::RegExp(VM& vm, const String& patternString, OptionSet<Yarr::Flags> flags
 void RegExp::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode, vm.stackLimit());
+    Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode);
     if (!isValid()) {
         m_state = ParseError;
         return;
@@ -227,13 +227,10 @@ void RegExp::byteCodeCompileIfNecessary(VM* vm)
     if (m_regExpBytecode)
         return;
 
-    Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode, vm->stackLimit());
+    Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode);
     if (hasError(m_constructionErrorCode)) {
-        RELEASE_ASSERT_NOT_REACHED();
-#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
         m_state = ParseError;
         return;
-#endif
     }
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
@@ -248,7 +245,7 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 {
     auto locker = holdLock(cellLock());
     
-    Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode, vm->stackLimit());
+    Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode);
     if (hasError(m_constructionErrorCode)) {
         m_state = ParseError;
         return;
@@ -302,7 +299,9 @@ bool RegExp::matchConcurrently(
     if (!hasCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
 
-    position = match(vm, s, startOffset, ovector);
+    position = matchInline<Vector<int>&, Yarr::MatchFrom::CompilerThread>(vm, s, startOffset, ovector);
+    if (m_state == ParseError)
+        return false;
     return true;
 }
 
@@ -310,7 +309,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 {
     auto locker = holdLock(cellLock());
     
-    Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode, vm->stackLimit());
+    Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode);
     if (hasError(m_constructionErrorCode)) {
         m_state = ParseError;
         return;
@@ -363,7 +362,7 @@ bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, Ma
     if (!hasMatchOnlyCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
 
-    result = match(vm, s, startOffset);
+    result = matchInline<Yarr::MatchFrom::CompilerThread>(vm, s, startOffset);
     return true;
 }
 

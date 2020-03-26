@@ -1,3 +1,19 @@
+2020-03-26  Michael Saboff  <msaboff@apple.com>
+
+        Refactor YARR Stack Overflow Checks
+        https://bugs.webkit.org/show_bug.cgi?id=209435
+        rdar://problem/58988252
+
+        Reviewed by Mark Lam.
+
+	Updated test for improved stack overflow checking.
+
+        * js/script-tests/stack-overflow-regexp.js:
+        (shouldThrow.recursiveCall):
+        (shouldThrow):
+        (recursiveCall):
+        * js/stack-overflow-regexp-expected.txt:
+
 2020-03-26  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 Release ] tiled-drawing/scrolling/fixed/four-bars-zoomed.html is flaky failing.
