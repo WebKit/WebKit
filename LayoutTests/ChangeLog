@@ -1,3 +1,15 @@
+2020-03-26  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: ASSERTION FAILED: m_wrapper on storage/indexeddb/modern/abort-requests tests
+        https://bugs.webkit.org/show_bug.cgi?id=209499
+        <rdar://problem/60842165>
+
+        Reviewed by Alex Christensen.
+
+        Unskip tests that should no longer be flaky.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-03-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Sequential focus navigation can't get out of a descendent of a slot element in a document tree
