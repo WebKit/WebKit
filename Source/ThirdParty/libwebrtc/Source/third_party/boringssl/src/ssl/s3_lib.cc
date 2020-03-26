@@ -151,6 +151,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include <openssl/buf.h>
 #include <openssl/digest.h>
 #include <openssl/err.h>
 #include <openssl/md5.h>
@@ -179,13 +180,12 @@ SSL3_STATE::SSL3_STATE()
       early_data_accepted(false),
       tls13_downgrade(false),
       token_binding_negotiated(false),
-      alert_dispatch(false),
-      renegotiate_pending(false),
-      used_hello_retry_request(false) {}
+      pq_experiment_signal_seen(false),
+      alert_dispatch(false) {}
 
 SSL3_STATE::~SSL3_STATE() {}
 
-bool tls_new(SSL *ssl) {
+bool ssl3_new(SSL *ssl) {
   UniquePtr<SSL3_STATE> s3 = MakeUnique<SSL3_STATE>();
   if (!s3) {
     return false;
@@ -209,7 +209,7 @@ bool tls_new(SSL *ssl) {
   return true;
 }
 
-void tls_free(SSL *ssl) {
+void ssl3_free(SSL *ssl) {
   if (ssl == NULL || ssl->s3 == NULL) {
     return;
   }

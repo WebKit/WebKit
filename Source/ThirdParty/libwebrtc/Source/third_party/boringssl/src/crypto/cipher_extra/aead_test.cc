@@ -53,8 +53,6 @@ static const struct KnownAEAD kAEADs[] = {
      true, 0},
     {"AES_128_GCM_NIST", EVP_aead_aes_128_gcm, "nist_cavp/aes_128_gcm.txt",
      false, true, true, 0},
-    {"AES_192_GCM", EVP_aead_aes_192_gcm, "aes_192_gcm_tests.txt", false, true,
-     true, 0},
     {"AES_256_GCM", EVP_aead_aes_256_gcm, "aes_256_gcm_tests.txt", false, true,
      true, 0},
     {"AES_256_GCM_NIST", EVP_aead_aes_256_gcm, "nist_cavp/aes_256_gcm.txt",
@@ -103,7 +101,7 @@ class PerAEADTest : public testing::TestWithParam<KnownAEAD> {
   const EVP_AEAD *aead() { return GetParam().func(); }
 };
 
-INSTANTIATE_TEST_SUITE_P(All, PerAEADTest, testing::ValuesIn(kAEADs),
+INSTANTIATE_TEST_SUITE_P(, PerAEADTest, testing::ValuesIn(kAEADs),
                          [](const testing::TestParamInfo<KnownAEAD> &params)
                              -> std::string { return params.param.name; });
 
@@ -542,10 +540,10 @@ TEST_P(PerAEADTest, AliasedBuffers) {
 }
 
 TEST_P(PerAEADTest, UnalignedInput) {
-  alignas(16) uint8_t key[EVP_AEAD_MAX_KEY_LENGTH + 1];
-  alignas(16) uint8_t nonce[EVP_AEAD_MAX_NONCE_LENGTH + 1];
-  alignas(16) uint8_t plaintext[32 + 1];
-  alignas(16) uint8_t ad[32 + 1];
+  alignas(64) uint8_t key[EVP_AEAD_MAX_KEY_LENGTH + 1];
+  alignas(64) uint8_t nonce[EVP_AEAD_MAX_NONCE_LENGTH + 1];
+  alignas(64) uint8_t plaintext[32 + 1];
+  alignas(64) uint8_t ad[32 + 1];
   OPENSSL_memset(key, 'K', sizeof(key));
   OPENSSL_memset(nonce, 'N', sizeof(nonce));
   OPENSSL_memset(plaintext, 'P', sizeof(plaintext));
@@ -563,7 +561,7 @@ TEST_P(PerAEADTest, UnalignedInput) {
   ASSERT_TRUE(EVP_AEAD_CTX_init_with_direction(
       ctx.get(), aead(), key + 1, key_len, EVP_AEAD_DEFAULT_TAG_LENGTH,
       evp_aead_seal));
-  alignas(16) uint8_t ciphertext[sizeof(plaintext) + EVP_AEAD_MAX_OVERHEAD];
+  alignas(64) uint8_t ciphertext[sizeof(plaintext) + EVP_AEAD_MAX_OVERHEAD];
   size_t ciphertext_len;
   ASSERT_TRUE(EVP_AEAD_CTX_seal(ctx.get(), ciphertext + 1, &ciphertext_len,
                                 sizeof(ciphertext) - 1, nonce + 1, nonce_len,
@@ -571,7 +569,7 @@ TEST_P(PerAEADTest, UnalignedInput) {
                                 ad_len));
 
   // It must successfully decrypt.
-  alignas(16) uint8_t out[sizeof(ciphertext)];
+  alignas(64) uint8_t out[sizeof(ciphertext)];
   ctx.Reset();
   ASSERT_TRUE(EVP_AEAD_CTX_init_with_direction(
       ctx.get(), aead(), key + 1, key_len, EVP_AEAD_DEFAULT_TAG_LENGTH,
@@ -585,7 +583,7 @@ TEST_P(PerAEADTest, UnalignedInput) {
 }
 
 TEST_P(PerAEADTest, Overflow) {
-  uint8_t key[EVP_AEAD_MAX_KEY_LENGTH];
+  alignas(64) uint8_t key[EVP_AEAD_MAX_KEY_LENGTH];
   OPENSSL_memset(key, 'K', sizeof(key));
 
   bssl::ScopedEVP_AEAD_CTX ctx;
@@ -728,8 +726,8 @@ static void RunWycheproofTestCase(FileTest *t, const EVP_AEAD *aead) {
   size_t out_len;
   // Wycheproof tags small AES-GCM IVs as "acceptable" and otherwise does not
   // use it in AEADs. Any AES-GCM IV that isn't 96 bits is absurd, but our API
-  // supports those, so we treat SmallIv tests as valid.
-  if (result.IsValid({"SmallIv"})) {
+  // supports those, so we treat "acceptable" as "valid" here.
+  if (result != WycheproofResult::kInvalid) {
     // Decryption should succeed.
     ASSERT_TRUE(EVP_AEAD_CTX_open(ctx.get(), out.data(), &out_len, out.size(),
                                   iv.data(), iv.size(), ct_and_tag.data(),
@@ -803,8 +801,9 @@ TEST(AEADTest, WycheproofAESGCM) {
         aead = EVP_aead_aes_128_gcm();
         break;
       case 192:
-        aead = EVP_aead_aes_192_gcm();
-        break;
+        // Skip AES-192-GCM tests.
+        t->SkipCurrent();
+        return;
       case 256:
         aead = EVP_aead_aes_256_gcm();
         break;
@@ -822,13 +821,4 @@ TEST(AEADTest, WycheproofChaCha20Poly1305) {
     t->IgnoreInstruction("keySize");
     RunWycheproofTestCase(t, EVP_aead_chacha20_poly1305());
   });
-}
-
-TEST(AEADTest, WycheproofXChaCha20Poly1305) {
-  FileTestGTest(
-      "third_party/wycheproof_testvectors/xchacha20_poly1305_test.txt",
-      [](FileTest *t) {
-        t->IgnoreInstruction("keySize");
-        RunWycheproofTestCase(t, EVP_aead_xchacha20_poly1305());
-      });
 }

@@ -125,10 +125,9 @@ int EVP_CIPHER_CTX_copy(EVP_CIPHER_CTX *out, const EVP_CIPHER_CTX *in) {
   return 1;
 }
 
-int EVP_CIPHER_CTX_reset(EVP_CIPHER_CTX *ctx) {
+void EVP_CIPHER_CTX_reset(EVP_CIPHER_CTX *ctx) {
   EVP_CIPHER_CTX_cleanup(ctx);
   EVP_CIPHER_CTX_init(ctx);
-  return 1;
 }
 
 int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
@@ -192,7 +191,7 @@ int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
 
       case EVP_CIPH_CFB_MODE:
         ctx->num = 0;
-        OPENSSL_FALLTHROUGH;
+        // fall-through
 
       case EVP_CIPH_CBC_MODE:
         assert(EVP_CIPHER_CTX_iv_length(ctx) <= sizeof(ctx->iv));

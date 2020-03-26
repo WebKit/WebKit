@@ -115,6 +115,7 @@
 #include <string.h>
 
 #include <openssl/bio.h>
+#include <openssl/buf.h>
 #include <openssl/bytestring.h>
 #include <openssl/mem.h>
 #include <openssl/evp.h>

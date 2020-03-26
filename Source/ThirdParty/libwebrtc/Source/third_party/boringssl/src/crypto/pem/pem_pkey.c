@@ -59,6 +59,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <openssl/buf.h>
 #include <openssl/dh.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>

@@ -56,10 +56,6 @@ func do(outPath, inPath string) error {
 
 	symbols, err := object.Symbols()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s\nTrying dynamic symbols\n", err)
-		symbols, err = object.DynamicSymbols()
-	}
-	if err != nil {
 		return errors.New("failed to parse symbols: " + err.Error())
 	}
 
@@ -127,7 +123,7 @@ func do(outPath, inPath string) error {
 	newHash := mac.Sum(nil)
 
 	fmt.Printf("Found start of module at offset 0x%x (VMA 0x%x):\n", start-textSection.Addr, start)
-	fmt.Println(hex.Dump(moduleText[:128]))
+	fmt.Printf(hex.Dump(moduleText[:128]))
 	fmt.Printf("\nHash of module was:          %x\n", hashWas)
 	fmt.Printf("Hash of corrupted module is: %x\n", newHash)
 

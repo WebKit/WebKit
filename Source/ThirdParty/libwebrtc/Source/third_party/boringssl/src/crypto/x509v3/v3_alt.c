@@ -169,9 +169,9 @@ STACK_OF(CONF_VALUE) *i2v_GENERAL_NAME(X509V3_EXT_METHOD *method,
             for (i = 0; i < 8; i++) {
                 BIO_snprintf(htmp, sizeof htmp, "%X", p[0] << 8 | p[1]);
                 p += 2;
-                OPENSSL_strlcat(oline, htmp, sizeof(oline));
+                BUF_strlcat(oline, htmp, sizeof(oline));
                 if (i != 7)
-                    OPENSSL_strlcat(oline, ":", sizeof(oline));
+                    BUF_strlcat(oline, ":", sizeof(oline));
             }
         } else {
             if (!X509V3_add_value("IP Address", "<invalid>", &ret))
@@ -210,18 +210,15 @@ int GENERAL_NAME_print(BIO *out, GENERAL_NAME *gen)
         break;
 
     case GEN_EMAIL:
-        BIO_printf(out, "email:");
-        ASN1_STRING_print(out, gen->d.ia5);
+        BIO_printf(out, "email:%s", gen->d.ia5->data);
         break;
 
     case GEN_DNS:
-        BIO_printf(out, "DNS:");
-        ASN1_STRING_print(out, gen->d.ia5);
+        BIO_printf(out, "DNS:%s", gen->d.ia5->data);
         break;
 
     case GEN_URI:
-        BIO_printf(out, "URI:");
-        ASN1_STRING_print(out, gen->d.ia5);
+        BIO_printf(out, "URI:%s", gen->d.ia5->data);
         break;
 
     case GEN_DIRNAME:
@@ -594,7 +591,7 @@ static int do_othername(GENERAL_NAME *gen, char *value, X509V3_CTX *ctx)
     objtmp = OPENSSL_malloc(objlen + 1);
     if (objtmp == NULL)
         return 0;
-    OPENSSL_strlcpy(objtmp, value, objlen + 1);
+    BUF_strlcpy(objtmp, value, objlen + 1);
     gen->d.otherName->type_id = OBJ_txt2obj(objtmp, 0);
     OPENSSL_free(objtmp);
     if (!gen->d.otherName->type_id)

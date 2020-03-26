@@ -188,24 +188,13 @@ typedef __uint128_t uint128_t;
 #elif defined(__GNUC__) && __GNUC__ >= 7 // gcc 7
 #define OPENSSL_FALLTHROUGH __attribute__ ((fallthrough))
 #elif defined(__clang__)
-#if __has_attribute(fallthrough) && __clang_major__ >= 5
-// Clang 3.5, at least, complains about "error: declaration does not declare
-// anything", possibily because we put a semicolon after this macro in
-// practice. Thus limit it to >= Clang 5, which does work.
+#if __has_attribute(fallthrough)
 #define OPENSSL_FALLTHROUGH __attribute__ ((fallthrough))
 #else // clang versions that do not support fallthrough.
 #define OPENSSL_FALLTHROUGH
 #endif
 #else // C++11 on gcc 6, and all other cases
 #define OPENSSL_FALLTHROUGH
-#endif
-
-// For convenience in testing 64-bit generic code, we allow disabling SSE2
-// intrinsics via |OPENSSL_NO_SSE2_FOR_TESTING|. x86_64 always has SSE2
-// available, so we would otherwise need to test such code on a non-x86_64
-// platform.
-#if defined(__SSE2__) && !defined(OPENSSL_NO_SSE2_FOR_TESTING)
-#define OPENSSL_SSE2
 #endif
 
 // buffers_alias returns one if |a| and |b| alias and zero otherwise.
@@ -689,10 +678,6 @@ OPENSSL_EXPORT void CRYPTO_free_ex_data(CRYPTO_EX_DATA_CLASS *ex_data_class,
 // Endianness conversions.
 
 #if defined(__GNUC__) && __GNUC__ >= 2
-static inline uint16_t CRYPTO_bswap2(uint16_t x) {
-  return __builtin_bswap16(x);
-}
-
 static inline uint32_t CRYPTO_bswap4(uint32_t x) {
   return __builtin_bswap32(x);
 }
@@ -704,11 +689,7 @@ static inline uint64_t CRYPTO_bswap8(uint64_t x) {
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <stdlib.h>
 OPENSSL_MSVC_PRAGMA(warning(pop))
-#pragma intrinsic(_byteswap_uint64, _byteswap_ulong, _byteswap_ushort)
-static inline uint16_t CRYPTO_bswap2(uint16_t x) {
-  return _byteswap_ushort(x);
-}
-
+#pragma intrinsic(_byteswap_uint64, _byteswap_ulong)
 static inline uint32_t CRYPTO_bswap4(uint32_t x) {
   return _byteswap_ulong(x);
 }
@@ -717,10 +698,6 @@ static inline uint64_t CRYPTO_bswap8(uint64_t x) {
   return _byteswap_uint64(x);
 }
 #else
-static inline uint16_t CRYPTO_bswap2(uint16_t x) {
-  return (x >> 8) | (x << 8);
-}
-
 static inline uint32_t CRYPTO_bswap4(uint32_t x) {
   x = (x >> 16) | (x << 16);
   x = ((x & 0xff00ff00) >> 8) | ((x & 0x00ff00ff) << 8);
@@ -817,15 +794,6 @@ static inline void *OPENSSL_memset(void *dst, int c, size_t n) {
 // process.
 void BORINGSSL_FIPS_abort(void) __attribute__((noreturn));
 #endif
-
-// boringssl_fips_self_test runs the FIPS KAT-based self tests. It returns one
-// on success and zero on error. The argument is the integrity hash of the FIPS
-// module and may be used to check and write flag files to suppress duplicate
-// self-tests. If |module_hash_len| is zero then no flag file will be checked
-// nor written and tests will always be run.
-int boringssl_fips_self_test(const uint8_t *module_hash,
-                             size_t module_hash_len);
-
 
 #if defined(__cplusplus)
 }  // extern C

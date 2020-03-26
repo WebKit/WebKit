@@ -84,13 +84,6 @@
 
             function cuechange(event)
             {
-
-                if (true /* ++loadCount == 2 */) {
-                    endTest();
-                    return;
-                }
-
-
                 if (++cuechangeCount != cueData.length)
                     return;
 
@@ -129,8 +122,7 @@
 
             function start()
             {
-                consoleWrite("<br><em>**  Set  video.src, wait for media data to load</em>");
-                consoleWrite("<br><em>**  Set  video.src, wait for media data to load</em>");
+                consoleWrite("<br><em>** Set video.src, wait for media data to load</em>");
                 findMediaElement();
                 run("video.src = 'http://127.0.0.1:8000/media/resources/hls/metadata/prog_index.m3u8'");
 

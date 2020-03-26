@@ -149,7 +149,6 @@ IntRect TextTrackRepresentationCocoa::bounds() const
 
 void TextTrackRepresentationCocoa::boundsChanged()
 {
-    fprintf(stderr, "TextTrackRepresentationCocoa::boundsChanged\n");
     m_taskQueue.enqueueTask([this] () {
         client().textTrackRepresentationBoundsChanged(bounds());
     });

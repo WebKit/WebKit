@@ -16,6 +16,7 @@ const (
 
 const (
 	alertCloseNotify                  alert = 0
+	alertEndOfEarlyData               alert = 1
 	alertUnexpectedMessage            alert = 10
 	alertBadRecordMAC                 alert = 20
 	alertDecryptionFailed             alert = 21
@@ -49,6 +50,7 @@ const (
 
 var alertText = map[alert]string{
 	alertCloseNotify:                  "close notify",
+	alertEndOfEarlyData:               "end of early data",
 	alertUnexpectedMessage:            "unexpected message",
 	alertBadRecordMAC:                 "bad record MAC",
 	alertDecryptionFailed:             "decryption failed",

@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <array>
 
+#include <openssl/buf.h>
 #include <openssl/mem.h>
 #include <openssl/rand.h>
 #include <openssl/span.h>
@@ -46,11 +47,6 @@ OPENSSL_MSVC_PRAGMA(warning(push, 3))
 OPENSSL_MSVC_PRAGMA(warning(pop))
 #endif
 #endif  // X86_64 && SUPPORTS_ABI_TEST
-
-// FIPS mode breaks unwind tests. See https://crbug.com/boringssl/289.
-#if defined(BORINGSSL_FIPS)
-#undef SUPPORTS_UNWIND_TEST
-#endif
 
 
 namespace abi_test {
@@ -183,7 +179,7 @@ static void StrCatSignalSafeImpl(bssl::Span<char> out) {}
 template <typename... Args>
 static void StrCatSignalSafeImpl(bssl::Span<char> out, const char *str,
                                  Args... args) {
-  OPENSSL_strlcat(out.data(), str, out.size());
+  BUF_strlcat(out.data(), str, out.size());
   StrCatSignalSafeImpl(out, args...);
 }
 

@@ -26,7 +26,6 @@ The recommended values of `max_len` for each test are:
 
 | Test          | `max_len` value |
 |---------------|-----------------|
-| `bn_div`      | 384             |
 | `bn_mod_exp`  | 4096            |
 | `cert`        | 10000           |
 | `client`      | 20000           |

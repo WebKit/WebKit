@@ -69,7 +69,7 @@ $PREFIX="vpaes";
 my  ($round, $base, $magic, $key, $const, $inp, $out)=
     ("eax",  "ebx", "ecx",  "edx","ebp",  "esi","edi");
 
-&preprocessor_ifdef("BORINGSSL_DISPATCH_TEST")
+&preprocessor_ifndef("NDEBUG")
 &external_label("BORINGSSL_function_hit");
 &preprocessor_endif();
 &static_label("_vpaes_consts");

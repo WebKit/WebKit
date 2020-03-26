@@ -1210,4 +1210,3 @@ sha256_block_armv8:
 #endif
 #endif
 #endif  // !OPENSSL_NO_ASM
-.section	.note.GNU-stack,"",%progbits

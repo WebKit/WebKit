@@ -148,7 +148,7 @@ TEST(CMACTest, Wycheproof) {
         // Some test vectors intentionally give the wrong key size. Our API
         // requires the caller pick the sized CBC primitive, so these tests
         // aren't useful for us.
-        EXPECT_FALSE(result.IsValid());
+        EXPECT_EQ(WycheproofResult::kInvalid, result);
         return;
     }
 
@@ -164,7 +164,7 @@ TEST(CMACTest, Wycheproof) {
     // Truncate the tag, if requested.
     out_len = std::min(out_len, tag_len);
 
-    if (result.IsValid()) {
+    if (result == WycheproofResult::kValid) {
       EXPECT_EQ(Bytes(tag), Bytes(out, out_len));
 
       // Test the streaming API as well.

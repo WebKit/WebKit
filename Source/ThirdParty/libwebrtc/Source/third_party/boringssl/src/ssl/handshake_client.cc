@@ -157,6 +157,7 @@
 
 #include <openssl/aead.h>
 #include <openssl/bn.h>
+#include <openssl/buf.h>
 #include <openssl/bytestring.h>
 #include <openssl/ec_key.h>
 #include <openssl/ecdsa.h>
@@ -458,7 +459,9 @@ static enum ssl_hs_wait_t do_enter_early_data(SSL_HANDSHAKE *hs) {
   if (!tls13_init_early_key_schedule(
           hs, MakeConstSpan(ssl->session->master_key,
                             ssl->session->master_key_length)) ||
-      !tls13_derive_early_secret(hs)) {
+      !tls13_derive_early_secrets(hs) ||
+      !tls13_set_traffic_key(ssl, ssl_encryption_early_data, evp_aead_seal,
+                             hs->early_traffic_secret())) {
     return ssl_hs_error;
   }
 
@@ -471,30 +474,15 @@ static enum ssl_hs_wait_t do_enter_early_data(SSL_HANDSHAKE *hs) {
 
 static enum ssl_hs_wait_t do_early_reverify_server_certificate(SSL_HANDSHAKE *hs) {
   if (hs->ssl->ctx->reverify_on_resume) {
-    // Don't send an alert on error. The alert be in early data, which the
-    // server may not accept anyway. It would also be a mismatch between QUIC
-    // and TCP because the QUIC early keys are deferred below.
-    //
-    // TODO(davidben): The client behavior should be to verify the certificate
-    // before deciding whether to offer the session and, if invalid, decline to
-    // send the session.
-    switch (ssl_reverify_peer_cert(hs, /*send_alert=*/false)) {
-      case ssl_verify_ok:
-        break;
-      case ssl_verify_invalid:
-        return ssl_hs_error;
-      case ssl_verify_retry:
-        hs->state = state_early_reverify_server_certificate;
-        return ssl_hs_certificate_verify;
+    switch (ssl_reverify_peer_cert(hs)) {
+    case ssl_verify_ok:
+      break;
+    case ssl_verify_invalid:
+      return ssl_hs_error;
+    case ssl_verify_retry:
+      hs->state = state_early_reverify_server_certificate;
+      return ssl_hs_certificate_verify;
     }
-  }
-
-  // Defer releasing the 0-RTT key to after certificate reverification, so the
-  // QUIC implementation does not accidentally write data too early.
-  if (!tls13_set_traffic_key(hs->ssl, ssl_encryption_early_data, evp_aead_seal,
-                             hs->early_session.get(),
-                             hs->early_traffic_secret())) {
-    return ssl_hs_error;
   }
 
   hs->in_early_data = true;
@@ -916,7 +904,7 @@ static enum ssl_hs_wait_t do_verify_server_certificate(SSL_HANDSHAKE *hs) {
 static enum ssl_hs_wait_t do_reverify_server_certificate(SSL_HANDSHAKE *hs) {
   assert(hs->ssl->ctx->reverify_on_resume);
 
-  switch (ssl_reverify_peer_cert(hs, /*send_alert=*/true)) {
+  switch (ssl_reverify_peer_cert(hs)) {
     case ssl_verify_ok:
       break;
     case ssl_verify_invalid:
@@ -1047,7 +1035,7 @@ static enum ssl_hs_wait_t do_read_server_key_exchange(SSL_HANDSHAKE *hs) {
         return ssl_hs_error;
       }
       uint8_t alert = SSL_AD_DECODE_ERROR;
-      if (!tls12_check_peer_sigalg(hs, &alert, signature_algorithm)) {
+      if (!tls12_check_peer_sigalg(ssl, &alert, signature_algorithm)) {
         ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
         return ssl_hs_error;
       }
@@ -1198,13 +1186,6 @@ static enum ssl_hs_wait_t do_read_server_hello_done(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
-  // ServerHelloDone should be the end of the flight.
-  if (ssl->method->has_unprocessed_handshake_data(ssl)) {
-    ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_UNEXPECTED_MESSAGE);
-    OPENSSL_PUT_ERROR(SSL, SSL_R_EXCESS_HANDSHAKE_DATA);
-    return ssl_hs_error;
-  }
-
   ssl->method->next_message(ssl);
   hs->state = state_send_client_certificate;
   return ssl_hs_ok;
@@ -1277,7 +1258,7 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
     ssl_key_usage_t intended_use = (alg_k & SSL_kRSA)
                                        ? key_usage_encipherment
                                        : key_usage_digital_signature;
-    if (hs->config->enforce_rsa_key_usage ||
+    if (ssl->config->enforce_rsa_key_usage ||
         EVP_PKEY_id(hs->peer_pubkey.get()) != EVP_PKEY_RSA) {
       if (!ssl_cert_check_key_usage(&leaf_cbs, intended_use)) {
         return ssl_hs_error;
@@ -1306,7 +1287,7 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
     }
     assert(psk_len <= PSK_MAX_PSK_LEN);
 
-    hs->new_session->psk_identity.reset(OPENSSL_strdup(identity));
+    hs->new_session->psk_identity.reset(BUF_strdup(identity));
     if (hs->new_session->psk_identity == nullptr) {
       OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return ssl_hs_error;

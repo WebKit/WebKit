@@ -38,7 +38,6 @@ OPENSSL_INLINE int hwaes_capable(void) {
 #if defined(OPENSSL_X86_64)
 #define VPAES_CTR32
 #endif
-#define VPAES_CBC
 OPENSSL_INLINE int vpaes_capable(void) {
   return (OPENSSL_ia32cap_get()[1] & (1 << (41 - 32))) != 0;
 }
@@ -50,15 +49,11 @@ OPENSSL_INLINE int hwaes_capable(void) { return CRYPTO_is_ARMv8_AES_capable(); }
 
 #if defined(OPENSSL_ARM)
 #define BSAES
-#define VPAES
-#define VPAES_CTR32
 OPENSSL_INLINE int bsaes_capable(void) { return CRYPTO_is_NEON_capable(); }
-OPENSSL_INLINE int vpaes_capable(void) { return CRYPTO_is_NEON_capable(); }
 #endif
 
 #if defined(OPENSSL_AARCH64)
 #define VPAES
-#define VPAES_CBC
 #define VPAES_CTR32
 OPENSSL_INLINE int vpaes_capable(void) { return CRYPTO_is_NEON_capable(); }
 #endif
@@ -135,14 +130,12 @@ void aes_hw_ecb_encrypt(const uint8_t *in, uint8_t *out, size_t length,
 
 
 #if defined(BSAES)
-// Note |bsaes_cbc_encrypt| requires |enc| to be zero.
+// On platforms where BSAES gets defined (just above), then these functions are
+// provided by asm. Note |bsaes_cbc_encrypt| requires |enc| to be zero.
 void bsaes_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t length,
                        const AES_KEY *key, uint8_t ivec[16], int enc);
 void bsaes_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out, size_t len,
                                 const AES_KEY *key, const uint8_t ivec[16]);
-// VPAES to BSAES conversions are available on all BSAES platforms.
-void vpaes_encrypt_key_to_bsaes(AES_KEY *out_bsaes, const AES_KEY *vpaes);
-void vpaes_decrypt_key_to_bsaes(AES_KEY *out_bsaes, const AES_KEY *vpaes);
 #else
 OPENSSL_INLINE char bsaes_capable(void) { return 0; }
 
@@ -159,16 +152,6 @@ OPENSSL_INLINE void bsaes_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out,
                                                const uint8_t ivec[16]) {
   abort();
 }
-
-OPENSSL_INLINE void vpaes_encrypt_key_to_bsaes(AES_KEY *out_bsaes,
-                                               const AES_KEY *vpaes) {
-  abort();
-}
-
-OPENSSL_INLINE void vpaes_decrypt_key_to_bsaes(AES_KEY *out_bsaes,
-                                               const AES_KEY *vpaes) {
-  abort();
-}
 #endif  // !BSAES
 
 
@@ -181,10 +164,8 @@ int vpaes_set_decrypt_key(const uint8_t *userKey, int bits, AES_KEY *key);
 void vpaes_encrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key);
 void vpaes_decrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key);
 
-#if defined(VPAES_CBC)
 void vpaes_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t length,
                        const AES_KEY *key, uint8_t *ivec, int enc);
-#endif
 #if defined(VPAES_CTR32)
 void vpaes_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out, size_t len,
                                 const AES_KEY *key, const uint8_t ivec[16]);
@@ -218,17 +199,19 @@ OPENSSL_INLINE void vpaes_cbc_encrypt(const uint8_t *in, uint8_t *out,
 #endif  // !VPAES
 
 
+void aes_nohw_encrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key);
+void aes_nohw_decrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key);
 int aes_nohw_set_encrypt_key(const uint8_t *key, unsigned bits,
                              AES_KEY *aeskey);
 int aes_nohw_set_decrypt_key(const uint8_t *key, unsigned bits,
                              AES_KEY *aeskey);
-void aes_nohw_encrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key);
-void aes_nohw_decrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key);
-void aes_nohw_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out,
-                                   size_t blocks, const AES_KEY *key,
-                                   const uint8_t ivec[16]);
+
+#if !defined(OPENSSL_NO_ASM) && \
+    (defined(OPENSSL_X86_64) || defined(OPENSSL_X86))
+#define AES_NOHW_CBC
 void aes_nohw_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t len,
                           const AES_KEY *key, uint8_t *ivec, const int enc);
+#endif
 
 
 #if defined(__cplusplus)

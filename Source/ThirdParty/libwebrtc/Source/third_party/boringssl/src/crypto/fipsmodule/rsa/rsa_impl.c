@@ -345,12 +345,7 @@ err:
 // MAX_BLINDINGS_PER_RSA defines the maximum number of cached BN_BLINDINGs per
 // RSA*. Then this limit is exceeded, BN_BLINDING objects will be created and
 // destroyed as needed.
-#if defined(OPNESSL_TSAN)
-// Smaller under TSAN so that the edge case can be hit with fewer threads.
-#define MAX_BLINDINGS_PER_RSA 2
-#else
 #define MAX_BLINDINGS_PER_RSA 1024
-#endif
 
 // rsa_blinding_get returns a BN_BLINDING to use with |rsa|. It does this by
 // allocating one of the cached BN_BLINDING objects in |rsa->blindings|. If
@@ -365,84 +360,80 @@ static BN_BLINDING *rsa_blinding_get(RSA *rsa, unsigned *index_used,
   assert(rsa->mont_n != NULL);
 
   BN_BLINDING *ret = NULL;
+  BN_BLINDING **new_blindings;
+  uint8_t *new_blindings_inuse;
+  char overflow = 0;
+
   CRYPTO_MUTEX_lock_write(&rsa->lock);
 
-  uint8_t *const free_inuse_flag =
-      OPENSSL_memchr(rsa->blindings_inuse, 0, rsa->num_blindings);
-  if (free_inuse_flag != NULL) {
-    *free_inuse_flag = 1;
-    *index_used = free_inuse_flag - rsa->blindings_inuse;
-    ret = rsa->blindings[*index_used];
-    goto out;
-  }
-
-  if (rsa->num_blindings >= MAX_BLINDINGS_PER_RSA) {
-    // No |BN_BLINDING| is free and nor can the cache be extended. This index
-    // value is magic and indicates to |rsa_blinding_release| that a
-    // |BN_BLINDING| was not inserted into the array.
-    *index_used = MAX_BLINDINGS_PER_RSA;
-    ret = BN_BLINDING_new();
-    goto out;
-  }
-
-  // Double the length of the cache.
-  OPENSSL_STATIC_ASSERT(MAX_BLINDINGS_PER_RSA < UINT_MAX / 2,
-                        "MAX_BLINDINGS_PER_RSA too large");
-  unsigned new_num_blindings = rsa->num_blindings * 2;
-  if (new_num_blindings == 0) {
-    new_num_blindings = 1;
-  }
-  if (new_num_blindings > MAX_BLINDINGS_PER_RSA) {
-    new_num_blindings = MAX_BLINDINGS_PER_RSA;
-  }
-  assert(new_num_blindings > rsa->num_blindings);
-
-  OPENSSL_STATIC_ASSERT(
-      MAX_BLINDINGS_PER_RSA < UINT_MAX / sizeof(BN_BLINDING *),
-      "MAX_BLINDINGS_PER_RSA too large");
-  BN_BLINDING **new_blindings =
-      OPENSSL_malloc(sizeof(BN_BLINDING *) * new_num_blindings);
-  uint8_t *new_blindings_inuse = OPENSSL_malloc(new_num_blindings);
-  if (new_blindings == NULL || new_blindings_inuse == NULL) {
-    goto err;
-  }
-
-  OPENSSL_memcpy(new_blindings, rsa->blindings,
-                 sizeof(BN_BLINDING *) * rsa->num_blindings);
-  OPENSSL_memcpy(new_blindings_inuse, rsa->blindings_inuse, rsa->num_blindings);
-
-  for (unsigned i = rsa->num_blindings; i < new_num_blindings; i++) {
-    new_blindings[i] = BN_BLINDING_new();
-    if (new_blindings[i] == NULL) {
-      for (unsigned j = rsa->num_blindings; j < i; j++) {
-        BN_BLINDING_free(new_blindings[j]);
-      }
-      goto err;
+  unsigned i;
+  for (i = 0; i < rsa->num_blindings; i++) {
+    if (rsa->blindings_inuse[i] == 0) {
+      rsa->blindings_inuse[i] = 1;
+      ret = rsa->blindings[i];
+      *index_used = i;
+      break;
     }
   }
-  memset(&new_blindings_inuse[rsa->num_blindings], 0,
-         new_num_blindings - rsa->num_blindings);
 
+  if (ret != NULL) {
+    CRYPTO_MUTEX_unlock_write(&rsa->lock);
+    return ret;
+  }
+
+  overflow = rsa->num_blindings >= MAX_BLINDINGS_PER_RSA;
+
+  // We didn't find a free BN_BLINDING to use so increase the length of
+  // the arrays by one and use the newly created element.
+
+  CRYPTO_MUTEX_unlock_write(&rsa->lock);
+  ret = BN_BLINDING_new();
+  if (ret == NULL) {
+    return NULL;
+  }
+
+  if (overflow) {
+    // We cannot add any more cached BN_BLINDINGs so we use |ret|
+    // and mark it for destruction in |rsa_blinding_release|.
+    *index_used = MAX_BLINDINGS_PER_RSA;
+    return ret;
+  }
+
+  CRYPTO_MUTEX_lock_write(&rsa->lock);
+
+  new_blindings =
+      OPENSSL_malloc(sizeof(BN_BLINDING *) * (rsa->num_blindings + 1));
+  if (new_blindings == NULL) {
+    goto err1;
+  }
+  OPENSSL_memcpy(new_blindings, rsa->blindings,
+         sizeof(BN_BLINDING *) * rsa->num_blindings);
+  new_blindings[rsa->num_blindings] = ret;
+
+  new_blindings_inuse = OPENSSL_malloc(rsa->num_blindings + 1);
+  if (new_blindings_inuse == NULL) {
+    goto err2;
+  }
+  OPENSSL_memcpy(new_blindings_inuse, rsa->blindings_inuse, rsa->num_blindings);
   new_blindings_inuse[rsa->num_blindings] = 1;
   *index_used = rsa->num_blindings;
-  assert(*index_used != MAX_BLINDINGS_PER_RSA);
-  ret = new_blindings[rsa->num_blindings];
 
   OPENSSL_free(rsa->blindings);
   rsa->blindings = new_blindings;
   OPENSSL_free(rsa->blindings_inuse);
   rsa->blindings_inuse = new_blindings_inuse;
-  rsa->num_blindings = new_num_blindings;
+  rsa->num_blindings++;
 
-  goto out;
-
-err:
-  OPENSSL_free(new_blindings_inuse);
-  OPENSSL_free(new_blindings);
-
-out:
   CRYPTO_MUTEX_unlock_write(&rsa->lock);
   return ret;
+
+err2:
+  OPENSSL_free(new_blindings);
+
+err1:
+  CRYPTO_MUTEX_unlock_write(&rsa->lock);
+  BN_BLINDING_free(ret);
+  return NULL;
 }
 
 // rsa_blinding_release marks the cached BN_BLINDING at the given index as free
@@ -1044,7 +1035,7 @@ static int generate_prime(BIGNUM *out, int bits, const BIGNUM *e,
     }
 
     // RSA key generation's bottleneck is discarding composites. If it fails
-    // trial division, do not bother computing a GCD or performing Miller-Rabin.
+    // trial division, do not bother computing a GCD or performing Rabin-Miller.
     if (!bn_odd_number_is_obviously_composite(out)) {
       // Check gcd(out-1, e) is one (steps 4.5 and 5.6).
       int relatively_prime;
@@ -1055,8 +1046,8 @@ static int generate_prime(BIGNUM *out, int bits, const BIGNUM *e,
       if (relatively_prime) {
         // Test |out| for primality (steps 4.5.1 and 5.6.1).
         int is_probable_prime;
-        if (!BN_primality_test(&is_probable_prime, out,
-                               BN_prime_checks_for_generation, ctx, 0, cb)) {
+        if (!BN_primality_test(&is_probable_prime, out, BN_prime_checks, ctx, 0,
+                               cb)) {
           goto err;
         }
         if (is_probable_prime) {

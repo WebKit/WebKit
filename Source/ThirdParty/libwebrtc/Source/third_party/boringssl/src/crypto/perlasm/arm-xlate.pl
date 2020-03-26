@@ -231,7 +231,4 @@ while(my $line=<>) {
 print "#endif\n" if ($flavour eq "linux32" || $flavour eq "linux64");
 print "#endif  // !OPENSSL_NO_ASM\n";
 
-# See https://www.airs.com/blog/archives/518.
-print ".section\t.note.GNU-stack,\"\",\%progbits\n" if ($flavour =~ /linux/);
-
 close STDOUT;

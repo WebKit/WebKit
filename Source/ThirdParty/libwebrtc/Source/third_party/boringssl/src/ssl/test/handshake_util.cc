@@ -38,26 +38,13 @@
 using namespace bssl;
 
 bool RetryAsync(SSL *ssl, int ret) {
-  const TestConfig *config = GetTestConfig(ssl);
-  TestState *test_state = GetTestState(ssl);
+  // No error; don't retry.
   if (ret >= 0) {
     return false;
   }
 
-  int ssl_err = SSL_get_error(ssl, ret);
-  if (ssl_err == SSL_ERROR_WANT_RENEGOTIATE && config->renegotiate_explicit) {
-    test_state->explicit_renegotiates++;
-    return SSL_renegotiate(ssl);
-  }
-
-  if (test_state->quic_transport && ssl_err == SSL_ERROR_WANT_READ) {
-    return test_state->quic_transport->ReadHandshake();
-  }
-
-  if (!config->async) {
-    // Only asynchronous tests should trigger other retries.
-    return false;
-  }
+  TestState *test_state = GetTestState(ssl);
+  assert(GetTestConfig(ssl)->async);
 
   if (test_state->packeted_bio != nullptr &&
       PacketedBioAdvanceClock(test_state->packeted_bio)) {
@@ -76,7 +63,7 @@ bool RetryAsync(SSL *ssl, int ret) {
 
   // See if we needed to read or write more. If so, allow one byte through on
   // the appropriate end to maximally stress the state machine.
-  switch (ssl_err) {
+  switch (SSL_get_error(ssl, ret)) {
     case SSL_ERROR_WANT_READ:
       AsyncBioAllowRead(test_state->async_bio, 1);
       return true;
@@ -84,7 +71,8 @@ bool RetryAsync(SSL *ssl, int ret) {
       AsyncBioAllowWrite(test_state->async_bio, 1);
       return true;
     case SSL_ERROR_WANT_CHANNEL_ID_LOOKUP: {
-      UniquePtr<EVP_PKEY> pkey = LoadPrivateKey(config->send_channel_id);
+      UniquePtr<EVP_PKEY> pkey =
+          LoadPrivateKey(GetTestConfig(ssl)->send_channel_id);
       if (!pkey) {
         return false;
       }
@@ -242,55 +230,24 @@ static bool Proxy(BIO *socket, bool async, int control, int rfd, int wfd) {
         return false;
     }
 
-    auto proxy_data = [&](uint8_t *out, size_t len) -> bool {
-      if (async) {
-        AsyncBioAllowRead(socket, len);
-      }
-
-      while (len > 0) {
-        int bytes_read = BIO_read(socket, out, len);
-        if (bytes_read < 1) {
-          fprintf(stderr, "BIO_read failed\n");
-          return false;
-        }
-
-        ssize_t bytes_written = write_eintr(rfd, out, bytes_read);
-        if (bytes_written == -1) {
-          perror("write");
-          return false;
-        }
-        if (bytes_written != bytes_read) {
-          fprintf(stderr, "short write (%zu of %d bytes)\n", bytes_written,
-                  bytes_read);
-          return false;
-        }
-
-        len -= bytes_read;
-        out += bytes_read;
-      }
-      return true;
-    };
-
-    // Process one SSL record at a time.  That way, we don't send the handshaker
-    // anything it doesn't want to process, e.g. early data.
-    uint8_t header[SSL3_RT_HEADER_LENGTH];
-    if (!proxy_data(header, sizeof(header))) {
+    char readbuf[64];
+    if (async) {
+      AsyncBioAllowRead(socket, 1);
+    }
+    int read = BIO_read(socket, readbuf, sizeof(readbuf));
+    if (read < 1) {
+      fprintf(stderr, "BIO_read failed\n");
       return false;
     }
-    if (header[1] != 3) {
-       fprintf(stderr, "bad header\n");
-       return false;
+    ssize_t written = write_eintr(rfd, readbuf, read);
+    if (written == -1) {
+      perror("write");
+      return false;
     }
-    size_t remaining = (header[3] << 8) + header[4];
-    while (remaining > 0) {
-      uint8_t readbuf[64];
-      size_t len = remaining > sizeof(readbuf) ? sizeof(readbuf) : remaining;
-      if (!proxy_data(readbuf, len)) {
-        return false;
-      }
-      remaining -= len;
+    if (written != read) {
+      fprintf(stderr, "short write (%zu of %d bytes)\n", written, read);
+      return false;
     }
-
     // The handshaker blocks on the control channel, so we have to signal
     // it that the data have been written.
     msg = kControlMsgWriteCompleted;

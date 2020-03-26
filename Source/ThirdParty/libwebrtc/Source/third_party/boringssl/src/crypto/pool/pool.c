@@ -17,6 +17,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include <openssl/buf.h>
 #include <openssl/bytestring.h>
 #include <openssl/mem.h>
 #include <openssl/thread.h>
@@ -98,7 +99,7 @@ CRYPTO_BUFFER *CRYPTO_BUFFER_new(const uint8_t *data, size_t len,
   }
   OPENSSL_memset(buf, 0, sizeof(CRYPTO_BUFFER));
 
-  buf->data = OPENSSL_memdup(data, len);
+  buf->data = BUF_memdup(data, len);
   if (len != 0 && buf->data == NULL) {
     OPENSSL_free(buf);
     return NULL;

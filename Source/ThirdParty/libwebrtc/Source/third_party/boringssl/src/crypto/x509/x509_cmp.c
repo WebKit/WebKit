@@ -58,6 +58,7 @@
 #include <string.h>
 
 #include <openssl/asn1.h>
+#include <openssl/buf.h>
 #include <openssl/digest.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>

@@ -14,6 +14,7 @@
 
 #include <openssl/evp.h>
 
+#include <openssl/buf.h>
 #include <openssl/bytestring.h>
 #include <openssl/curve25519.h>
 #include <openssl/err.h>
@@ -243,6 +244,6 @@ size_t EVP_PKEY_get1_tls_encodedpoint(const EVP_PKEY *pkey, uint8_t **out_ptr) {
     return 0;
   }
 
-  *out_ptr = OPENSSL_memdup(key->pub, 32);
+  *out_ptr = BUF_memdup(key->pub, 32);
   return *out_ptr == NULL ? 0 : 32;
 }

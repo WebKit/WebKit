@@ -7,7 +7,6 @@ package runner
 import (
 	"crypto"
 	"crypto/ecdsa"
-	"crypto/ed25519"
 	"crypto/elliptic"
 	"crypto/md5"
 	"crypto/rsa"
@@ -18,6 +17,8 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+
+	"boringssl.googlesource.com/boringssl/ssl/test/runner/ed25519"
 )
 
 type signer interface {

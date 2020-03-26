@@ -59,6 +59,7 @@
 #include <time.h>
 
 #include <openssl/asn1.h>
+#include <openssl/buf.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/mem.h>

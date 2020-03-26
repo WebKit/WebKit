@@ -117,6 +117,7 @@
 #include <limits.h>
 #include <string.h>
 
+#include <openssl/buf.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/mem.h>
@@ -437,6 +438,10 @@ void dtls1_next_message(SSL *ssl) {
 }
 
 bool dtls_has_unprocessed_handshake_data(const SSL *ssl) {
+  if (ssl->d1->has_change_cipher_spec) {
+    return true;
+  }
+
   size_t current = ssl->d1->handshake_read_seq % SSL_MAX_HANDSHAKE_FLIGHT;
   for (size_t i = 0; i < SSL_MAX_HANDSHAKE_FLIGHT; i++) {
     // Skip the current message.

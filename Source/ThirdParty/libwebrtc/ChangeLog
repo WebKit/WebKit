@@ -1,3 +1,8 @@
+2020-03-26  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(r259042): It creates some test failures (Requested by youenn on #webkit).
+        Roll back the patch.
+
 2020-03-26  youenn fablet  <youenn@apple.com>
 
         Bump boringssl version to M82

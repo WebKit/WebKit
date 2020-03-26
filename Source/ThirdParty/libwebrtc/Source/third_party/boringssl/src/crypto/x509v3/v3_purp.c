@@ -59,6 +59,7 @@
 
 #include <string.h>
 
+#include <openssl/buf.h>
 #include <openssl/err.h>
 #include <openssl/digest.h>
 #include <openssl/mem.h>
@@ -236,8 +237,8 @@ int X509_PURPOSE_add(int id, int trust, int flags,
         ptmp = X509_PURPOSE_get0(idx);
 
     /* Duplicate the supplied names. */
-    name_dup = OPENSSL_strdup(name);
-    sname_dup = OPENSSL_strdup(sname);
+    name_dup = BUF_strdup(name);
+    sname_dup = BUF_strdup(sname);
     if (name_dup == NULL || sname_dup == NULL) {
         OPENSSL_PUT_ERROR(X509V3, ERR_R_MALLOC_FAILURE);
         if (name_dup != NULL)
@@ -610,7 +611,7 @@ static int check_purpose_ssl_client(const X509_PURPOSE *xp, const X509 *x,
 static int check_purpose_ssl_server(const X509_PURPOSE *xp, const X509 *x,
                                     int ca)
 {
-    if (xku_reject(x, XKU_SSL_SERVER))
+    if (xku_reject(x, XKU_SSL_SERVER | XKU_SGC))
         return 0;
     if (ca)
         return check_ca(x);

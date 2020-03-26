@@ -59,6 +59,7 @@
 #include <limits.h>
 
 #include <openssl/asn1.h>
+#include <openssl/buf.h>
 #include <openssl/digest.h>
 #include <openssl/dsa.h>
 #include <openssl/evp.h>

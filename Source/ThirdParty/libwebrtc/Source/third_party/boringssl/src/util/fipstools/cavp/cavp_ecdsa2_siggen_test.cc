@@ -28,7 +28,6 @@
 
 #include "../crypto/internal.h"
 #include "../crypto/test/file_test.h"
-#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 
@@ -83,9 +82,11 @@ static bool TestECDSA2SigGenImpl(FileTest *t, bool is_component) {
   }
 
   printf("%sQx = %s\r\nQy = %s\r\nR = %s\r\nS = %s\r\n\r\n",
-         t->CurrentTestToString().c_str(), EncodeHex(qx_bytes).c_str(),
-         EncodeHex(qy_bytes).c_str(), EncodeHex(r_bytes).c_str(),
-         EncodeHex(s_bytes).c_str());
+         t->CurrentTestToString().c_str(),
+         EncodeHex(qx_bytes.data(), qx_bytes.size()).c_str(),
+         EncodeHex(qy_bytes.data(), qy_bytes.size()).c_str(),
+         EncodeHex(r_bytes.data(), r_bytes.size()).c_str(),
+         EncodeHex(s_bytes.data(), s_bytes.size()).c_str());
   return true;
 }
 

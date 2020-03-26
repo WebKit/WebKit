@@ -16,9 +16,7 @@
 // pointer, on grounds that MSVC cannot check them. Unfortunately, there is no
 // way to suppress the warning just on one line. The warning is flagged inside
 // the STL itself, so suppressing at the |std::copy| call does not work.
-#if !defined(_SCL_SECURE_NO_WARNINGS)
 #define _SCL_SECURE_NO_WARNINGS
-#endif
 
 #include <openssl/base.h>
 

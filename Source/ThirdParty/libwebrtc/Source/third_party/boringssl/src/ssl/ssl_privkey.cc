@@ -791,8 +791,7 @@ int SSL_CTX_set1_sigalgs_list(SSL_CTX *ctx, const char *str) {
 
   if (!SSL_CTX_set_signing_algorithm_prefs(ctx, sigalgs.data(),
                                            sigalgs.size()) ||
-      !SSL_CTX_set_verify_algorithm_prefs(ctx, sigalgs.data(),
-                                          sigalgs.size())) {
+      !ctx->verify_sigalgs.CopyFrom(sigalgs)) {
     return 0;
   }
 
@@ -812,7 +811,7 @@ int SSL_set1_sigalgs_list(SSL *ssl, const char *str) {
   }
 
   if (!SSL_set_signing_algorithm_prefs(ssl, sigalgs.data(), sigalgs.size()) ||
-      !SSL_set_verify_algorithm_prefs(ssl, sigalgs.data(), sigalgs.size())) {
+      !ssl->config->verify_sigalgs.CopyFrom(sigalgs)) {
     return 0;
   }
 
@@ -822,14 +821,4 @@ int SSL_set1_sigalgs_list(SSL *ssl, const char *str) {
 int SSL_CTX_set_verify_algorithm_prefs(SSL_CTX *ctx, const uint16_t *prefs,
                                        size_t num_prefs) {
   return ctx->verify_sigalgs.CopyFrom(MakeConstSpan(prefs, num_prefs));
-}
-
-int SSL_set_verify_algorithm_prefs(SSL *ssl, const uint16_t *prefs,
-                                   size_t num_prefs) {
-  if (!ssl->config) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
-    return 0;
-  }
-
-  return ssl->config->verify_sigalgs.CopyFrom(MakeConstSpan(prefs, num_prefs));
 }

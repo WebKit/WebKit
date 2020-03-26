@@ -64,11 +64,9 @@ if ($flavour && $flavour ne "void") {
     ( $xlate="${dir}../../../perlasm/arm-xlate.pl" and -f $xlate) or
     die "can't locate arm-xlate.pl";
 
-    open OUT,"| \"$^X\" $xlate $flavour $output";
-    *STDOUT=*OUT;
+    open STDOUT,"| \"$^X\" $xlate $flavour $output";
 } else {
-    open OUT,">$output";
-    *STDOUT=*OUT;
+    open STDOUT,">$output";
 }
 
 $num="r0";	# starts as num argument, but holds &tp[num-1]

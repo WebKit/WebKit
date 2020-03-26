@@ -14,10 +14,6 @@
 
 #if !defined(OPENSSL_NO_ASM) && !defined(OPENSSL_SMALL) && defined(__linux__)
 
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
-
 // This is the polynomial multiplication function from [HRSS], provided by kind
 // permission of the authors.
 //
@@ -8464,8 +8460,4 @@ ret
 .cfi_endproc
 .size poly_Rq_mul,.-poly_Rq_mul
 
-#endif
-
-#if defined(__ELF__)
-.section	.note.GNU-stack,"",@progbits
 #endif

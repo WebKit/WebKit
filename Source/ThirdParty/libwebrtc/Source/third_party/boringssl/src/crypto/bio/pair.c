@@ -55,6 +55,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include <openssl/buf.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
