@@ -241,7 +241,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBufferAndOffset(JSContextRef ctx, JST
     return toRef(result);
 }
 
-void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
+void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSValueRef* exception)
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
@@ -249,9 +249,12 @@ void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSV
     JSObject* object = toJS(objectRef);
 
     if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object)) {
-        ArrayBuffer* buffer = typedArray->possiblySharedBuffer();
-        buffer->pinAndLock();
-        return buffer->data();
+        if (ArrayBuffer* buffer = typedArray->possiblySharedBuffer()) {
+            buffer->pinAndLock();
+            return buffer->data();
+        }
+
+        setException(ctx, exception, createOutOfMemoryError(globalObject));
     }
     return nullptr;
 }
@@ -292,15 +295,20 @@ size_t JSObjectGetTypedArrayByteOffset(JSContextRef ctx, JSObjectRef objectRef, 
     return 0;
 }
 
-JSObjectRef JSObjectGetTypedArrayBuffer(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
+JSObjectRef JSObjectGetTypedArrayBuffer(JSContextRef ctx, JSObjectRef objectRef, JSValueRef* exception)
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object))
-        return toRef(vm.m_typedArrayController->toJS(globalObject, typedArray->globalObject(vm), typedArray->possiblySharedBuffer()));
+
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object)) {
+        if (ArrayBuffer* buffer = typedArray->possiblySharedBuffer())
+            return toRef(vm.m_typedArrayController->toJS(globalObject, typedArray->globalObject(vm), buffer));
+
+        setException(ctx, exception, createOutOfMemoryError(globalObject));
+    }
 
     return nullptr;
 }

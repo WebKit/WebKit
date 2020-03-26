@@ -1,3 +1,13 @@
+2020-03-26  Keith Miller  <keith_miller@apple.com>
+
+        TypedArrays should more gracefully handle OOM during slowDownAndWasteMemory
+        https://bugs.webkit.org/show_bug.cgi?id=209611
+
+        Reviewed by Tadeu Zagallo.
+
+        * stress/typed-array-oom-in-buffer-accessor.js: Added.
+        (try.foo):
+
 2020-03-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, reimport test262 once more to make bot green.

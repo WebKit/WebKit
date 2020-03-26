@@ -1,3 +1,40 @@
+2020-03-26  Keith Miller  <keith_miller@apple.com>
+
+        TypedArrays should more gracefully handle OOM during slowDownAndWasteMemory
+        https://bugs.webkit.org/show_bug.cgi?id=209611
+
+        Reviewed by Tadeu Zagallo.
+
+        Right now if we cannot allocate an ArrayBuffer for a TypedArray we
+        crash. However, since we use the primitive gigacage for
+        ArrayBuffer allocations we can likely still allocate an OOM error
+        object. In order to do this some changes were needed in
+        slowDownAndWasteMemory. Namely, we should not allocate the
+        butterfly until we know we have an ArrayBuffer. I also check that
+        all the transitive callers of slowDownAndWasteMemory can handle
+        failure.
+
+        Lastly, this patch makes it so failure to allocate an ArrayBuffer
+        for a TypeArray during DFG watchpoint addition causes the code
+        block to be thrown away, rather than crash the process.
+
+        * API/JSTypedArray.cpp:
+        (JSObjectGetTypedArrayBytesPtr):
+        (JSObjectGetTypedArrayBuffer):
+        * bytecode/Watchpoint.h:
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::add):
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::tryCreate):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::unsharedBuffer):
+        (JSC::JSArrayBufferView::unsharedJSBuffer):
+        (JSC::JSArrayBufferView::possiblySharedJSBuffer):
+        (JSC::JSArrayBufferView::slowDownAndWasteMemory):
+        (JSC::JSArrayBufferView::possiblySharedImpl):
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::byteOffsetImpl):
+
 2020-03-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r259035.
