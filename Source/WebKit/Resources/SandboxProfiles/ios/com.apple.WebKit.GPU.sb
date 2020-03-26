@@ -879,10 +879,6 @@
 
 (media-accessibility-support)
 
-;; Remote Web Inspector
-(allow mach-lookup
-       (global-name "com.apple.webinspector"))
-
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
     (global-name "com.apple.PowerManagement.control")

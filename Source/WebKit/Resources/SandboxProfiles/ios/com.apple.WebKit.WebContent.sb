@@ -829,10 +829,6 @@
 
 (media-accessibility-support)
 
-;; Remote Web Inspector
-(allow mach-lookup (with report) (with telemetry)
-       (global-name "com.apple.webinspector"))
-
 (deny mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.PowerManagement.control"))
 

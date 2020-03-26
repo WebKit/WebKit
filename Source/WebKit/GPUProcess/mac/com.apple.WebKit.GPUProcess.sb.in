@@ -585,10 +585,6 @@
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
     (ipc-posix-name-regex #"^AudioIO"))
 
-;; Remote Web Inspector
-(allow mach-lookup
-       (global-name "com.apple.webinspector"))
-
 (allow mach-lookup
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
     (with report) (with telemetry)
