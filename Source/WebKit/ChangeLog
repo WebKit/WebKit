@@ -1,3 +1,16 @@
+2020-03-26  Dean Jackson  <dino@apple.com>
+
+        Force Touch preview on file:/// URL works while clicking on the URL is blocked
+        https://bugs.webkit.org/show_bug.cgi?id=209589
+        <rdar://57687893>
+
+        Reviewed by Antoine Quint.
+
+        The immediate action for links should never trigger on file: URLs.
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _defaultAnimationController]):
+
 2020-03-26  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to frontboard services in the WebContent process

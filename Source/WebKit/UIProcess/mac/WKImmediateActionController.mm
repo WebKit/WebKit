@@ -276,6 +276,11 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 
     String absoluteLinkURL = hitTestResult->absoluteLinkURL();
     if (!absoluteLinkURL.isEmpty()) {
+        if (WTF::protocolIs(absoluteLinkURL, "file")) {
+            _type = kWKImmediateActionNone;
+            return nil;
+        }
+
         if (WTF::protocolIs(absoluteLinkURL, "mailto")) {
             _type = kWKImmediateActionMailtoLink;
             return [self _animationControllerForDataDetectedLink];
