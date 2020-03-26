@@ -230,10 +230,12 @@ typedef enum {
     kUIKeyboardInputPreProcessed           = 1 << 7,
 } UIKeyboardInputFlags;
 
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 130400
 typedef NS_OPTIONS(NSInteger, UIEventButtonMask) {
     UIEventButtonMaskPrimary = 1 << 0,
     UIEventButtonMaskSecondary = 1 << 1,
 };
+#endif
 
 @interface UIEvent ()
 - (void *)_hidEvent;
@@ -379,12 +381,14 @@ typedef NS_ENUM(NSInteger, UIScrollViewIndicatorInsetAdjustmentBehavior) {
     UIScrollViewIndicatorInsetAdjustmentNever
 };
 
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 130400
 typedef enum {
     UIAxisNeither = 0,
     UIAxisHorizontal = 1 << 0,
     UIAxisVertical = 1 << 1,
     UIAxisBoth = (UIAxisHorizontal | UIAxisVertical),
 } UIAxis;
+#endif
 
 @interface UIScrollView ()
 - (void)_stopScrollingAndZoomingAnimations;
@@ -411,7 +415,9 @@ typedef enum {
 @end
 
 @interface UIGestureRecognizer ()
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 130400
 @property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
+#endif
 
 - (void)_hoverEntered:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
 - (void)_hoverMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;

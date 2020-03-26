@@ -1,3 +1,13 @@
+2020-03-25  Tim Horton  <timothy_horton@apple.com>
+
+        Unable to build WebKit with iOS 13.4 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=209317
+
+        Reviewed by Megan Gardner.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Stop defining some UIKit SPI that is now API (hurray!).
+
 2020-03-25  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Fix sandbox violations related to media playback
