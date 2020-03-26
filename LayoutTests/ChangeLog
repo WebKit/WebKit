@@ -1,3 +1,12 @@
+2020-03-26  Alicia Boya García  <aboya@igalia.com>
+
+        Unreviewed GTK debug multimedia gardening
+        https://bugs.webkit.org/show_bug.cgi?id=209603
+
+        I need a clean baseline to check for regressions.
+
+        * platform/gtk/TestExpectations:
+
 2020-03-26  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to frontboard services in the WebContent process
