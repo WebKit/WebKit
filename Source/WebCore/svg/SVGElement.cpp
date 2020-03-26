@@ -34,6 +34,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "RenderAncestorIterator.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
 #include "SVGDocumentExtensions.h"
@@ -867,6 +868,10 @@ void SVGElement::buildPendingResourcesIfNeeded()
         ASSERT(clientElement->hasPendingResources());
         if (clientElement->hasPendingResources()) {
             clientElement->buildPendingResource();
+            if (auto renderer = clientElement->renderer()) {
+                for (auto& ancestor : ancestorsOfType<RenderSVGResourceContainer>(*renderer))
+                    ancestor.markAllClientsForRepaint();
+            }
             extensions.clearHasPendingResourcesIfPossible(*clientElement);
         }
     }
@@ -946,7 +951,7 @@ void SVGElement::invalidateInstances()
         if (auto useElement = instance->correspondingUseElement())
             useElement->invalidateShadowTree();
         instance->setCorrespondingElement(nullptr);
-    } while (!instances.isEmpty());
+    }
 }
 
 }

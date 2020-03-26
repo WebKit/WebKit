@@ -90,6 +90,11 @@ void RenderSVGResourceContainer::idChanged()
     registerResource();
 }
 
+void RenderSVGResourceContainer::markAllClientsForRepaint()
+{
+    markAllClientsForInvalidation(RepaintInvalidation);
+}
+
 void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode mode)
 {
     // FIXME: Style invalidation should either be a pre-layout task or this function

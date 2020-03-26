@@ -943,8 +943,6 @@ webkit.org/b/209479 [ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer
 
 webkit.org/b/209480 [ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Pass Timeout ]
 
-webkit.org/b/208532 svg/custom/textPath-change-id-pattern.svg [ Pass Failure ]
-
 webkit.org/b/208825 [ Debug ] inspector/script-profiler/event-type-Microtask.html [ Pass Failure ]
 
 webkit.org/b/208890 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor.htm [ Pass Failure ]
