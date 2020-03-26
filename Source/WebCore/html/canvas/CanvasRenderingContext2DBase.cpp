@@ -2159,7 +2159,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, float dx, float
     if (!buffer)
         return;
 
-    if (!data.data())
+    if (!data.data() || data.data()->isNeutered())
         return;
 
     if (dirtyWidth < 0) {

@@ -1,3 +1,16 @@
+2020-03-25  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        CanvasRenderingContext2D.putImageData() should not process neutered ImageData
+        https://bugs.webkit.org/show_bug.cgi?id=208303
+
+        Reviewed by Said Abou-Hallawa.
+
+        Added slightly modified version of testcase from bugzilla.
+        This testcase checks that a neutered ImageData object is not considered to be put onto the canvas.
+
+        * fast/canvas/canvas-putImageData-neutered-ImageData-expected.txt: Added.
+        * fast/canvas/canvas-putImageData-neutered-ImageData.html: Added.
+
 2020-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         Flashing and partly visible elements
