@@ -128,6 +128,7 @@ class StatusBubble(View):
                 queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
                 if queue_full_name:
                     bubble['url'] = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
+                    builder_full_name = queue_full_name.replace('-', ' ')
             else:
                 bubble['state'] = 'pass'
                 if is_builder_queue and is_tester_queue:
