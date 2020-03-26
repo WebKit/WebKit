@@ -677,11 +677,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 @implementation WKContentView (WKInteraction)
 
-static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedElementInformation)
-{
-    return (focusedElementInformation.elementType != WebKit::InputType::None);
-}
-
 - (BOOL)preventsPanningInXAxis
 {
     return _preventsPanningInXAxis;
@@ -1768,7 +1763,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!_isTapHighlightIDValid || _latestTapID != requestID)
         return;
 
-    if (hasFocusedElement(_focusedElementInformation) && _positionInformation.elementContext && _positionInformation.elementContext->isSameElement(_focusedElementInformation.elementContext))
+    if (self._hasFocusedElement && _positionInformation.elementContext && _positionInformation.elementContext->isSameElement(_focusedElementInformation.elementContext))
         return;
 
     _isTapHighlightIDValid = NO;
@@ -1960,7 +1955,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (UIView *)inputViewForWebView
 {
-    if (!hasFocusedElement(_focusedElementInformation))
+    if (!self._hasFocusedElement)
         return nil;
 
     if (_inputPeripheral) {
@@ -1990,7 +1985,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (CGRect)_selectionClipRect
 {
-    if (!hasFocusedElement(_focusedElementInformation))
+    if (!self._hasFocusedElement)
         return CGRectNull;
 
     if (_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
@@ -2360,7 +2355,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer
         || gestureRecognizer == _twoFingerDoubleTapGestureRecognizer) {
 
-        if (hasFocusedElement(_focusedElementInformation)) {
+        if (self._hasFocusedElement) {
             // Request information about the position with sync message.
             // If the focused element is the same, prevent the gesture.
             if (![self ensurePositionInformationIsUpToDate:WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(point))])
@@ -2374,7 +2369,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if (isInterruptingDecelerationForScrollViewOrAncestor([_highlightLongPressGestureRecognizer lastTouchedScrollView]))
             return NO;
 
-        if (hasFocusedElement(_focusedElementInformation)) {
+        if (self._hasFocusedElement) {
             // This is a different element than the focused one.
             // Prevent the gesture if there is no node.
             // Allow the gesture if it is a node that wants highlight or if there is an action for it.
@@ -2409,7 +2404,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if (![self ensurePositionInformationIsUpToDate:request])
             return NO;
 
-        if (hasFocusedElement(_focusedElementInformation)) {
+        if (self._hasFocusedElement) {
             // Prevent the gesture if it is the same node.
             if (_positionInformation.elementContext && _positionInformation.elementContext->isSameElement(_focusedElementInformation.elementContext))
                 return NO;
@@ -3271,9 +3266,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         return action == @selector(paste:);
 
     if (action == @selector(_nextAccessoryTab:))
-        return hasFocusedElement(_focusedElementInformation) && _focusedElementInformation.hasNextNode;
+        return self._hasFocusedElement && _focusedElementInformation.hasNextNode;
     if (action == @selector(_previousAccessoryTab:))
-        return hasFocusedElement(_focusedElementInformation) && _focusedElementInformation.hasPreviousNode;
+        return self._hasFocusedElement && _focusedElementInformation.hasPreviousNode;
 
     auto editorState = _page->editorState();
     if (action == @selector(_showTextStyleOptions:))
@@ -3864,9 +3859,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WebKit::SelectionTouch)touch) withFlags:static_cast<UIWKSelectionFlags>(flags)];
 }
 
-- (BOOL)_isInteractingWithFocusedElement
+- (BOOL)_hasFocusedElement
 {
-    return hasFocusedElement(_focusedElementInformation);
+    return _focusedElementInformation.elementType != WebKit::InputType::None;
 }
 
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state
@@ -3877,7 +3872,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state withFlags:(UIWKSelectionFlags)flags
 {
     _usingGestureForSelection = YES;
-    _page->selectWithGesture(WebCore::IntPoint(point), WebCore::CharacterGranularity, static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(state)), [self _isInteractingWithFocusedElement], [self, state, flags](const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t innerFlags, WebKit::CallbackBase::Error error) {
+    _page->selectWithGesture(WebCore::IntPoint(point), WebCore::CharacterGranularity, static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(state)), self._hasFocusedElement, [self, state, flags](const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t innerFlags, WebKit::CallbackBase::Error error) {
         selectionChangedWithGesture(self, point, gestureType, gestureState, flags | innerFlags, error);
         if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
@@ -3996,7 +3991,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
-    [self _selectPositionAtPoint:point stayingWithinFocusedElement:[self _isInteractingWithFocusedElement] completionHandler:completionHandler];
+    [self _selectPositionAtPoint:point stayingWithinFocusedElement:self._hasFocusedElement completionHandler:completionHandler];
 }
 
 - (void)_selectPositionAtPoint:(CGPoint)point stayingWithinFocusedElement:(BOOL)stayingWithinFocusedElement completionHandler:(void (^)(void))completionHandler
@@ -4018,7 +4013,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
     RetainPtr<WKContentView> view = self;
     
-    _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), [self _isInteractingWithFocusedElement], [view, selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), self._hasFocusedElement, [view, selectionHandler](WebKit::CallbackBase::Error error) {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         [selectionHandler release];
@@ -4045,7 +4040,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
     RetainPtr<WKContentView> view = self;
 
-    _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), [self _isInteractingWithFocusedElement], [view, selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view, selectionHandler](WebKit::CallbackBase::Error error) {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         --view->_suppressNonEditableSingleTapTextInteractionCount;
@@ -4068,7 +4063,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
     
     auto respectSelectionAnchor = self.interactionAssistant._wk_hasFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
-    _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._isInteractingWithFocusedElement, respectSelectionAnchor, [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
+    _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._hasFocusedElement, respectSelectionAnchor, [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
         selectionHandler(endIsMoving);
         [selectionHandler release];
     });
@@ -4079,7 +4074,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
     
     ++_suppressNonEditableSingleTapTextInteractionCount;
-    _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), [self _isInteractingWithFocusedElement], [selectionHandler, protectedSelf = retainPtr(self)] (bool endIsMoving, WebKit::CallbackBase::Error error) {
+    _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [selectionHandler, protectedSelf = retainPtr(self)] (bool endIsMoving, WebKit::CallbackBase::Error error) {
         selectionHandler(endIsMoving);
         [selectionHandler release];
         --protectedSelf->_suppressNonEditableSingleTapTextInteractionCount;
@@ -4506,7 +4501,7 @@ static NSArray<WKTextSelectionRect *> *wkTextSelectionRects(const Vector<WebCore
     if (range)
         return;
 #if !PLATFORM(MACCATALYST)
-    if (!hasFocusedElement(_focusedElementInformation))
+    if (!self._hasFocusedElement)
         return;
 #endif
     [self clearSelection];
@@ -5676,7 +5671,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject
 {
-    SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasFocusedElement(_focusedElementInformation) };
+    SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, self._hasFocusedElement };
     SetForScope<BOOL> isFocusingElementWithKeyboardForScope { _isFocusingElementWithKeyboard, shouldShowKeyboardForElement(information) };
 
     auto inputViewUpdateDeferrer = std::exchange(_inputViewUpdateDeferrer, nullptr);
@@ -5901,7 +5896,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
 - (void)_updateInputContextAfterBlurringAndRefocusingElement
 {
-    if (!hasFocusedElement(_focusedElementInformation) || !_suppressSelectionAssistantReasons)
+    if (!self._hasFocusedElement || !_suppressSelectionAssistantReasons)
         return;
 
     [UIKeyboardImpl.activeInstance updateForChangedSelection];
@@ -6364,7 +6359,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         if (postLayoutData.editableRootIsTransparentOrFullyClipped)
             editableRootIsTransparentOrFullyClipped = YES;
 
-        if (hasFocusedElement(_focusedElementInformation)) {
+        if (self._hasFocusedElement) {
             auto elementArea = postLayoutData.focusedElementRect.area<RecordOverflow>();
             if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
                 focusedElementIsTooSmall = YES;
@@ -7412,7 +7407,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 - (NSDictionary *)_autofillContext
 {
     BOOL provideStrongPasswordAssistance = _focusRequiresStrongPasswordAssistance && _focusedElementInformation.elementType == WebKit::InputType::Password;
-    if (!hasFocusedElement(_focusedElementInformation) || (!_focusedElementInformation.acceptsAutofilledLoginCredentials && !provideStrongPasswordAssistance))
+    if (!self._hasFocusedElement || (!_focusedElementInformation.acceptsAutofilledLoginCredentials && !provideStrongPasswordAssistance))
         return nil;
 
     if (provideStrongPasswordAssistance)

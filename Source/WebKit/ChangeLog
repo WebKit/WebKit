@@ -1,5 +1,45 @@
 2020-03-26  Daniel Bates  <dabates@apple.com>
 
+        Rename -_isInteractingWithFocusedElement, add it to the header, and replace calls to hasFocusedElement() with it
+        https://bugs.webkit.org/show_bug.cgi?id=209623
+
+        Reviewed by Simon Fraser.
+
+        Rename -_isInteractingWithFocusedElement to -_hasFocusedElement. For now, standardize around
+        the convention of using -_hasFocusedElement instead of hasFocusedElement(_focusedElementInformation).
+
+        I think in the ideal world -_hasFocusedElement would not exist and instead -_elementDidBlur would
+        reset the state of _focusedElementInformation to what it was when a page is first loaded. I will
+        look to do this in a subsequent patch because it is risky. Doing so requires a careful audit of all
+        call sites that use _focusedElementInformation as they may have inadvertently depended on stale state.
+
+        While I am here, I added -_hasFocusedElement to WKContentViewInteraction.h so that I can make use
+        of it in the fix for <rdar://problem/60871807>.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didGetTapHighlightForRequest:color:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:nodeHasBuiltInClickHandling:]):
+        (-[WKContentView inputViewForWebView]):
+        (-[WKContentView _selectionClipRect]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView _hasFocusedElement]):
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:withFlags:]):
+        (-[WKContentView selectPositionAtPoint:completionHandler:]):
+        (-[WKContentView selectPositionAtBoundary:inDirection:fromPoint:completionHandler:]):
+        (-[WKContentView selectTextWithGranularity:atPoint:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:withBoundary:completionHandler:]):
+        (-[WKContentView setSelectedTextRange:]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        (-[WKContentView _updateInputContextAfterBlurringAndRefocusingElement]):
+        (-[WKContentView _updateSelectionAssistantSuppressionState]):
+        (-[WKContentView _autofillContext]):
+        (hasFocusedElement): Deleted.
+        (-[WKContentView _isInteractingWithFocusedElement]): Deleted.
+
+2020-03-26  Daniel Bates  <dabates@apple.com>
+
         Remove hitTestOrder from ElementContext as it is no longer need
         https://bugs.webkit.org/show_bug.cgi?id=209561
         <rdar://problem/60888305>

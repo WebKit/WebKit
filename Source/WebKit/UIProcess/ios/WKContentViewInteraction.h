@@ -453,6 +453,7 @@ struct WKAutoCorrectionData {
 - (void)_startSuppressingSelectionAssistantForReason:(WebKit::SuppressSelectionAssistantReason)reason;
 - (void)_stopSuppressingSelectionAssistantForReason:(WebKit::SuppressSelectionAssistantReason)reason;
 
+- (BOOL)_hasFocusedElement;
 - (void)_zoomToRevealFocusedElement;
 
 - (void)cancelPointersForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
