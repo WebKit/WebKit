@@ -1,3 +1,33 @@
+2020-03-26  David Quesada  <david_quesada@apple.com>
+
+        Add SPI to specify whether file upload panels are uploading to an enterprise-managed destination
+        https://bugs.webkit.org/show_bug.cgi?id=209607
+        rdar://problem/60888386
+
+        Reviewed by Darin Adler.
+
+        When presenting the file upload panel, set the UIDocumentPickerViewController.isContentManaged
+        property to a value ultimately provided by the UI delegate. This can be used to prevent the upload
+        of personal data to enterprise websites on managed devices configured to prevent such a transfer.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::handleRunOpenPanel):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runOpenPanel):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::handleRunOpenPanel):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showRunOpenPanel:frameInfo:resultListener:]):
+        (-[WKContentView fileUploadPanelDestinationIsManaged:]):
+        (-[WKContentView _showRunOpenPanel:resultListener:]): Deleted.
+        * UIProcess/ios/forms/WKFileUploadPanel.h:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel showFilePickerMenu]):
+
 2020-03-26  Dean Jackson  <dino@apple.com>
 
         Force Touch preview on file:/// URL works while clicking on the URL is blocked

@@ -501,6 +501,8 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     _documentPickerController = adoptNS([[UIDocumentPickerViewController alloc] initWithDocumentTypes:documentTypes inMode:UIDocumentPickerModeImport]);
     [_documentPickerController setAllowsMultipleSelection:_allowMultipleFiles];
     [_documentPickerController setDelegate:self];
+    if ([_delegate respondsToSelector:@selector(fileUploadPanelDestinationIsManaged:)])
+        [_documentPickerController _setIsContentManaged:[_delegate fileUploadPanelDestinationIsManaged:self]];
     [self _presentFullscreenViewController:_documentPickerController.get() animated:YES];
 }
 
