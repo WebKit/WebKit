@@ -463,7 +463,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
         if (auto existingAnimation = cssAnimationForElementAndProperty(element, property))
             return downcast<CSSAnimation>(existingAnimation.get())->unanimatedStyle();
 
-        return RenderStyle::clone(currentStyle);
+        return currentStyle;
     }();
 
     if (!hasRunningTransition
