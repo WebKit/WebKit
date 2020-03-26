@@ -1,3 +1,9 @@
+2020-03-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for Win10.
+
+        * platform/win/TestExpectations: Skip two webanimations tests that are consistently timing out.
+
 2020-03-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [ macOS ] svg/custom/textPath-change-id-pattern.svg is flakey failing
