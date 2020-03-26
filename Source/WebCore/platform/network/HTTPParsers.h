@@ -172,7 +172,7 @@ Optional<HashSet<String, HashType>> parseAccessControlAllowList(const String& st
         if (!addToAccessControlAllowList(string, start, string.length() - 1, set))
             return { };
     }
-    return WTFMove(set);
+    return set;
 }
 
 }

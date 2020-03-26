@@ -109,10 +109,8 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
     if (is<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
 
-    bool monitoringWheelEvents = false;
 #if PLATFORM(MAC)
-    monitoringWheelEvents = isMonitoringWheelEvents();
-    if (monitoringWheelEvents)
+    if (isMonitoringWheelEvents())
         deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(node.scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
 #endif
 

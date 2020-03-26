@@ -1203,7 +1203,12 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
 
     WebPageProxy* webPageProxy = toImpl(pageRef);
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // GCC 10 gets confused here and warns that WKPageSetPagePolicyClient is deprecated when we call
+    // makeUnique<LoaderClient>(). This seems to be a GCC bug. It's not really appropriate to use
+    // ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END here because we are not using a deprecated symbol.
     auto loaderClient = makeUnique<LoaderClient>(wkClient);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     // It would be nice to get rid of this code and transition all clients to using didLayout instead of
     // didFirstLayoutInFrame and didFirstVisuallyNonEmptyLayoutInFrame. In the meantime, this is required
@@ -1285,7 +1290,12 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* 
         }
     };
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // GCC 10 gets confused here and warns that WKPageSetPagePolicyClient is deprecated when we call
+    // makeUnique<PolicyClient>(). This seems to be a GCC bug. It's not really appropriate to use
+    // ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END here because we are not using a deprecated symbol.
     toImpl(pageRef)->setPolicyClient(makeUnique<PolicyClient>(wkClient));
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 namespace WebKit {

@@ -3800,42 +3800,42 @@ OptionSet<AnimationImpact> Element::applyKeyframeEffects(RenderStyle& targetStyl
 const AnimationCollection* Element::webAnimations() const
 {
     if (auto* animationData = animationRareData())
-        return &animationRareData()->webAnimations();
+        return &animationData->webAnimations();
     return nullptr;
 }
 
 const AnimationCollection* Element::cssAnimations() const
 {
     if (auto* animationData = animationRareData())
-        return &animationRareData()->cssAnimations();
+        return &animationData->cssAnimations();
     return nullptr;
 }
 
 const AnimationCollection* Element::transitions() const
 {
     if (auto* animationData = animationRareData())
-        return &animationRareData()->transitions();
+        return &animationData->transitions();
     return nullptr;
 }
 
 bool Element::hasCompletedTransitionsForProperty(CSSPropertyID property) const
 {
     if (auto* animationData = animationRareData())
-        return animationRareData()->completedTransitionsByProperty().contains(property);
+        return animationData->completedTransitionsByProperty().contains(property);
     return false;
 }
 
 bool Element::hasRunningTransitionsForProperty(CSSPropertyID property) const
 {
     if (auto* animationData = animationRareData())
-        return animationRareData()->runningTransitionsByProperty().contains(property);
+        return animationData->runningTransitionsByProperty().contains(property);
     return false;
 }
 
 bool Element::hasRunningTransitions() const
 {
     if (auto* animationData = animationRareData())
-        return !animationRareData()->runningTransitionsByProperty().isEmpty();
+        return !animationData->runningTransitionsByProperty().isEmpty();
     return false;
 }
 
