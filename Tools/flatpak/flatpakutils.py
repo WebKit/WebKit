@@ -472,7 +472,7 @@ class WebkitFlatpak:
         self.platform = self.platform.upper()
 
         if self.gdb is None and '--gdb' in sys.argv:
-            self.gdb = ""
+            self.gdb = True
 
         self.command = "%s %s %s" % (os.path.join(self.sandbox_source_root,
                                                   "Tools/Scripts/run-minibrowser"),
@@ -565,7 +565,9 @@ class WebkitFlatpak:
                 args[0] = command.replace(self.source_root, self.sandbox_source_root)
             if args[0].endswith("build-webkit"):
                 args.append("--prefix=/app")
-        building = os.path.basename(args[0]).startswith("build")
+            building = os.path.basename(args[0]).startswith("build")
+        else:
+            building = False
 
         sandbox_build_path = os.path.join(self.sandbox_source_root, "WebKitBuild", self.build_type)
         # FIXME: Using the `run` flatpak command would be better, but it doesn't
@@ -833,7 +835,9 @@ class WebkitFlatpak:
                 executable, = re.findall(".*Executable: (.*)", stderr)
 
                 if self.gdb:
-                    bargs = ["gdb", executable, "/run/host/%s" % coredump.name] + shlex.split(self.gdb)
+                    bargs = ["gdb", executable, "/run/host/%s" % coredump.name]
+                    if type(self.gdb) != bool:
+                        bargs.extend(shlex.split(self.gdb))
                 elif self.gdb_stack_trace:
                     bargs = ["gdb", '-ex', "thread apply all backtrace", '--batch', executable, "/run/host/%s" % coredump.name]
 

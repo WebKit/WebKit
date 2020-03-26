@@ -1,3 +1,19 @@
+2020-03-26  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Crash post-mortem debugging is broken
+        https://bugs.webkit.org/show_bug.cgi?id=209537
+
+        Reviewed by Žan Doberšek.
+
+        webkit-flatpak --gdb now properly launches gdb to inspect the last
+        crash reported to coredumpctl. The -m argument can be used to
+        select another crash dump.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.run_gdb):
+
 2020-03-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] lld-link: error: /manifestdependency: is not allowed in .drectve
