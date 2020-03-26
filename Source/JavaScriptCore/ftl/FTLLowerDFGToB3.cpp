@@ -3818,9 +3818,7 @@ private:
         // the typed array storage, since that's as precise of an abstraction as we can have of shared
         // array buffer storage.
         m_heaps.decorateFencedAccess(&m_heaps.typedArrayProperties, atomicValue);
-
-        // We have to keep base alive since that keeps storage alive.
-        keepAlive(lowCell(baseEdge));
+        
         setIntTypedArrayLoadResult(result, type);
     }
     
@@ -4634,7 +4632,6 @@ private:
         case Array::Uint32Array:
         case Array::Float32Array:
         case Array::Float64Array: {
-            LValue base = lowCell(m_graph.varArgChild(m_node, 0));
             LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
             
@@ -4664,8 +4661,6 @@ private:
                     DFG_CRASH(m_graph, m_node, "Bad typed array type");
                 }
                 
-                // We have to keep base alive since that keeps storage alive.
-                keepAlive(base);
                 setDouble(result);
                 return;
             }
@@ -5032,8 +5027,6 @@ private:
                     m_out.appendTo(continuation, lastNext);
                 }
                 
-                // We have to keep base alive since that keeps storage alive.
-                keepAlive(base);
                 return;
             }
         }
