@@ -40,19 +40,6 @@ static void finishConverting(PKPaymentMethod *, ApplePayPaymentMethod&) { }
 }
 #endif
 
-// Allowed billingAddress fields
-// Awaiting fix for rdar://problem/59075234
-#define ALLOW_COUNTRY 1
-#define ALLOW_COUNTRY_CODE 1
-#define ALLOW_ADMIN_AREA 1
-#define ALLOW_POSTAL_CODE 0
-#define ALLOW_SUB_ADMIN_AREA 0
-#define ALLOW_ADDRESS_LINES 0
-#define ALLOW_SUB_LOCALITY 0
-#define ALLOW_LOCALITY 0
-
-#define ALLOW(FIELD) (ALLOW_##FIELD == 1)
-
 namespace WebCore {
 
 static ApplePayPaymentPass::ActivationState convert(PKPaymentPassActivationState paymentPassActivationState)
@@ -110,34 +97,18 @@ static Optional<ApplePayPaymentMethod::Type> convert(PKPaymentMethodType payment
 #if HAVE(PASSKIT_PAYMENT_METHOD_BILLING_ADDRESS)
 static void convert(CNLabeledValue<CNPostalAddress*> *postalAddress, ApplePayPaymentContact &result)
 {
-#if ALLOW(SUB_LOCALITY)
     Vector<String> addressLine;
     if (NSString *street = postalAddress.value.street) {
         addressLine.append(street);
-        result.addressLine = WTFMove(addressLine);
+        result.addressLines = WTFMove(addressLine);
     }
-#endif
-#if ALLOW(SUB_LOCALITY)
     result.subLocality = postalAddress.value.subLocality;
-#endif
-#if ALLOW(LOCALITY)
     result.locality = postalAddress.value.city;
-#endif
-#if ALLOW(SUB_ADMIN_AREA)
     result.subAdministrativeArea = postalAddress.value.subAdministrativeArea;
-#endif
-#if ALLOW(ADMIN_AREA)
     result.administrativeArea = postalAddress.value.state;
-#endif
-#if ALLOW(POSTAL_CODE)
     result.postalCode = postalAddress.value.postalCode;
-#endif
-#if ALLOW(COUNTRY)
     result.country = postalAddress.value.country;
-#endif
-#if ALLOW(COUNTRY_CODE)
     result.countryCode = postalAddress.value.ISOCountryCode;
-#endif
 }
 
 static Optional<ApplePayPaymentContact> convert(CNContact *billingContact)
