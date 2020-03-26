@@ -171,15 +171,13 @@ void IDBServer::deleteDatabase(const IDBRequestData& requestData)
     database->handleDelete(*connection, requestData);
 }
 
-std::unique_ptr<UniqueIDBDatabase> IDBServer::closeAndTakeUniqueIDBDatabase(UniqueIDBDatabase& database)
+void IDBServer::removeUniqueIDBDatabase(const IDBDatabaseIdentifier& identifier)
 {
-    LOG(IndexedDB, "IDBServer::closeUniqueIDBDatabase");
-    ASSERT(isMainThread());
+    LOG(IndexedDB, "IDBServer::removeUniqueIDBDatabase");
+    ASSERT(!isMainThread());
 
-    auto uniquePointer = m_uniqueIDBDatabaseMap.take(database.identifier());
-    ASSERT(uniquePointer);
-
-    return uniquePointer;
+    auto removed = m_uniqueIDBDatabaseMap.remove(identifier);
+    ASSERT_UNUSED(removed, removed);
 }
 
 void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
