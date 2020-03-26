@@ -2097,7 +2097,22 @@ sub runInFlatpak(@)
 
     my @arg = @_;
     my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "webkit-flatpak"));
-    exec @command, argumentsForConfiguration(), "--command", @_, argumentsForConfiguration(), @ARGV or die;
+
+    my @flatpakArgs;
+    my @filteredArgv;
+
+    # Filter-out Flatpak SDK-specific arguments to a separate array, passed to webkit-flatpak.
+    my $prefix = "--flatpak-";
+    foreach my $opt (@ARGV) {
+        if (substr($opt, 0, length($prefix)) eq $prefix) {
+            my ($name, $value) = split("--flatpak-", $opt);
+            push(@flatpakArgs, "--$value");
+        } else {
+            push(@filteredArgv, $opt);
+        }
+    }
+
+    exec @command, argumentsForConfiguration(), @flatpakArgs, "--command", @_, argumentsForConfiguration(), @filteredArgv or die;
 }
 
 sub runInFlatpakIfAvailable(@)
