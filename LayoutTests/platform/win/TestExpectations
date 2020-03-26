@@ -4482,6 +4482,8 @@ webkit.org/b/209583 webanimations/no-scheduling-while-filling-accelerated.html [
 
 webkit.org/b/209582 webanimations/css-transition-in-flight-reversal-accelerated.html [ Skip ]
 
+webkit.org/b/209601 animations/many-pseudo-animations.html [ Pass Failure ]
+
 # IntersectionObserver is off by default
 http/tests/lazyload [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/below-viewport-image-loading-lazy-load-event.html [ Skip ]
