@@ -39,6 +39,8 @@
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
 
+#if PLATFORM(IOS_FAMILY)
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/InAppBrowserPrivacyTestAdditions.h>
 
@@ -506,3 +508,4 @@ TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetAffectingAllFramesFails)
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+#endif // PLATFORM(IOS_FAMILY)

@@ -3099,13 +3099,16 @@ private:
     PolicyCheckIdentifier m_identifier;
 };
 
+#if PLATFORM(IOS_FAMILY)
 static bool shouldBeTreatedAsAppBound(const URL& requestURL)
 {
     return requestURL.protocolIsAbout() || requestURL.protocolIsData() || requestURL.protocolIsBlob() || requestURL.isLocalFile();
 }
+#endif
 
 void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& requestURL, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
+#if PLATFORM(IOS_FAMILY)
     if (isMainFrame && (m_preferences->isInAppBrowserPrivacyEnabled() || WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN_2)) {
         if (m_ignoresAppBoundDomains)
             return;
@@ -3122,6 +3125,11 @@ void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& 
         m_configuration->setWebViewCategory(WebViewCategory::AppBoundDomain);
         m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
     }
+#else
+    UNUSED_PARAM(isMainFrame);
+    UNUSED_PARAM(requestURL);
+    UNUSED_PARAM(isNavigatingToAppBoundDomain);
+#endif
 }
 
 void WebPageProxy::setIsNavigatingToAppBoundDomainTesting(bool isNavigatingToAppBoundDomain, CompletionHandler<void()>&& completionHandler)

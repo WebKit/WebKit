@@ -1,3 +1,14 @@
+2020-03-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Guard AppBound domain protections with PLATFORM(iOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=209615
+        <rdar://problem/60931014>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+
 2020-03-26  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Deny mach lookup to 'com.apple.webinspector' in the WebContent process.

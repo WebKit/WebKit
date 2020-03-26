@@ -1,3 +1,15 @@
+2020-03-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Guard AppBound domain protections with PLATFORM(iOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=209615
+        <rdar://problem/60931014>
+
+        Reviewed by Darin Adler.
+
+        Tests should only be run on iOS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
 2020-03-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] status-bubble for tester queues should point to tester queue while waiting in queue (Follow-up fix)
