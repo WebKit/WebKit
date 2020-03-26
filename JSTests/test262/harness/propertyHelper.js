@@ -139,8 +139,9 @@ function isSameValue(a, b) {
   return a === b;
 }
 
+var __isArray = Array.isArray;
 function isWritable(obj, name, verifyProp, value) {
-  var unlikelyValue = Array.isArray(obj) && name === "length" ?
+  var unlikelyValue = __isArray(obj) && name === "length" ?
     Math.pow(2, 32) - 1 :
     "unlikelyValue";
   var newValue = value || unlikelyValue;

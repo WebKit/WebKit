@@ -4,11 +4,12 @@
 esid: sec-regexp.prototype-@@replace
 description: >
   Both functional and pattern replacement performs as expected with poisoned stdlib.
-features: [Symbol.replace, regexp-named-groups]
+features: [Symbol.iterator, Symbol.replace, regexp-named-groups]
 ---*/
 
 assert(delete Array.prototype.concat);
 assert(delete Array.prototype.push);
+assert(delete Array.prototype[Symbol.iterator]);
 assert(delete Function.prototype.apply);
 assert(delete String.prototype.charAt);
 assert(delete String.prototype.charCodeAt);

@@ -96,6 +96,10 @@ assert.throws = function (expectedErrorConstructor, func, message) {
 
 assert._toString = function (value) {
   try {
+    if (value === 0 && 1 / value === -Infinity) {
+      return '-0';
+    }
+
     return String(value);
   } catch (err) {
     if (err.name === 'TypeError') {

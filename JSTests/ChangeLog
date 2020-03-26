@@ -1,3 +1,20 @@
+2020-03-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, reimport test262 once more to make bot green.
+
+        * test262/expectations.yaml:
+        * test262/harness/assert.js:
+        * test262/harness/propertyHelper.js:
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/JSON/stringify/replacer-function-stack-overflow.js: Removed.
+        * test262/test/built-ins/JSON/stringify/value-tojson-stack-overflow.js: Removed.
+        * test262/test/built-ins/NativeErrors/AggregateError/newtarget-is-undefined.js: Added.
+        * test262/test/built-ins/RegExp/prototype/Symbol.replace/poisoned-stdlib.js:
+        * test262/test/harness/assert-samevalue-zeros.js:
+        * test262/test/language/expressions/class/elements/private-field-after-optional-chain.js: Added.
+        * test262/test/language/statements/class/elements/private-field-after-optional-chain.js: Added.
+        * test262/test262-Revision.txt:
+
 2020-03-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         RegExp.prototype[@@replace] relies on globals and doesn't perform ToLength

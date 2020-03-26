@@ -1,5 +1,9 @@
+M harness/assert.js
 M harness/propertyHelper.js
+D test/built-ins/JSON/stringify/replacer-function-stack-overflow.js
+D test/built-ins/JSON/stringify/value-tojson-stack-overflow.js
 A test/built-ins/NativeErrors/AggregateError/newtarget-is-undefined.js
-M test/built-ins/Proxy/set/trap-is-undefined.js
+M test/built-ins/RegExp/prototype/Symbol.replace/poisoned-stdlib.js
+M test/harness/assert-samevalue-zeros.js
 A test/language/expressions/class/elements/private-field-after-optional-chain.js
 A test/language/statements/class/elements/private-field-after-optional-chain.js

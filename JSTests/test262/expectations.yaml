@@ -1086,12 +1086,6 @@ test/built-ins/GeneratorFunction/proto-from-ctor-realm.js:
 test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
-test/built-ins/JSON/stringify/replacer-function-stack-overflow.js:
-  default: 'Exception: JavaScript execution terminated.'
-  strict mode: 'Exception: JavaScript execution terminated.'
-test/built-ins/JSON/stringify/value-tojson-stack-overflow.js:
-  default: 'Exception: JavaScript execution terminated.'
-  strict mode: 'Exception: JavaScript execution terminated.'
 test/built-ins/Map/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'
@@ -1655,11 +1649,11 @@ test/built-ins/RegExp/prototype/Symbol.match/builtin-infer-unicode.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
 test/built-ins/RegExp/prototype/Symbol.search/set-lastindex-init-samevalue.js:
-  default: 'Test262Error: Expected SameValue(«0», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-0», «0») to be true'
 test/built-ins/RegExp/prototype/Symbol.search/set-lastindex-restore-samevalue.js:
-  default: 'Test262Error: Expected SameValue(«0», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «0») to be true'
+  default: 'Test262Error: Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-0», «0») to be true'
 test/built-ins/RegExp/prototype/Symbol.search/u-lastindex-advance.js:
   default: 'Test262Error: Expected SameValue(«1», «-1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «-1») to be true'
@@ -3231,24 +3225,12 @@ test/language/global-code/script-decl-func-err-non-extensible.js:
 test/language/global-code/script-decl-var-err.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/identifiers/part-unicode-12.0.0-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '_\\u0EBA'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '_\\u0EBA'"
-test/language/identifiers/part-unicode-12.0.0.js:
-  default: "SyntaxError: Invalid character '\\u0eba'"
-  strict mode: "SyntaxError: Invalid character '\\u0eba'"
 test/language/identifiers/part-unicode-13.0.0-escaped.js:
   default: "SyntaxError: Invalid unicode escape in identifier: '_\\u0B55'"
   strict mode: "SyntaxError: Invalid unicode escape in identifier: '_\\u0B55'"
 test/language/identifiers/part-unicode-13.0.0.js:
   default: "SyntaxError: Invalid character '\\u0b55'"
   strict mode: "SyntaxError: Invalid character '\\u0b55'"
-test/language/identifiers/start-unicode-12.0.0-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '\\u0E86'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u0E86'"
-test/language/identifiers/start-unicode-12.0.0.js:
-  default: "SyntaxError: Invalid character '\\u0e86'"
-  strict mode: "SyntaxError: Invalid character '\\u0e86'"
 test/language/identifiers/start-unicode-13.0.0-escaped.js:
   default: "SyntaxError: Invalid unicode escape in identifier: '\\u08BE'"
   strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u08BE'"

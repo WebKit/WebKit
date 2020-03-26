@@ -18,6 +18,7 @@ try {
       '" was thrown.'
     );
   }
+  assert.notSameValue(err.message.indexOf('-0'), -1);
 }
 
 if (threw === false) {
