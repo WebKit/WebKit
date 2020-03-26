@@ -2,14 +2,16 @@
 <html>
 <head>
 <meta http-equiv="Content-Security-Policy" content="block-all-mixed-content">
-</head>
-<body>
 <script>
 function frameLoaded() {
     if (window.opener)
         window.opener.postMessage("PASS did load data URL iframe.", "*");
 }
+function addiframe() {
+    document.write("<iframe onload='frameLoaded()' src='data:text/html,This is a boring HTML document.'></iframe>");
+}
 </script>
-<iframe onload="frameLoaded()" src="data:text/html,This is a boring HTML document."></iframe>
+</head>
+<body onload='addiframe()'>
 </body>
 </html>
