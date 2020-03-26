@@ -911,10 +911,6 @@ bool WebProcessProxy::mayBecomeUnresponsive()
 
     return true;
 #endif
-
-#if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
-    enableRemoteInspectorIfNeeded();
-#endif
 }
 
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
@@ -945,6 +941,9 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
 #if PLATFORM(COCOA)
     unblockAccessibilityServerIfNeeded();
+#if ENABLE(REMOTE_INSPECTOR)
+    enableRemoteInspectorIfNeeded();
+#endif
 #endif
 
     if (m_shouldStartResponsivenessTimerWhenLaunched) {
