@@ -34,6 +34,7 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/HTTPParsers.h>
+#include <WebCore/RetrieveRecordsOptions.h>
 #include <pal/SessionID.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -281,18 +282,26 @@ void Cache::retrieveRecord(const RecordInformation& record, Ref<ReadRecordTaskCo
     });
 }
 
-void Cache::retrieveRecords(const URL& url, RecordsCallback&& callback)
+void Cache::retrieveRecords(const RetrieveRecordsOptions& options, RecordsCallback&& callback)
 {
     ASSERT(m_state == State::Open);
 
-    auto taskCounter = ReadRecordTaskCounter::create([caches = makeRef(m_caches), identifier = m_identifier, callback = WTFMove(callback)](Vector<Record>&& records, Vector<uint64_t>&& failedRecordIdentifiers) mutable {
+    auto taskCounter = ReadRecordTaskCounter::create([caches = makeRef(m_caches), identifier = m_identifier, shouldProvideResponse = options.shouldProvideResponse, callback = WTFMove(callback)](Vector<Record>&& records, Vector<uint64_t>&& failedRecordIdentifiers) mutable {
         auto* cache = caches->find(identifier);
         if (cache)
             cache->removeFromRecordList(failedRecordIdentifiers);
+
+        if (!shouldProvideResponse) {
+            for (auto& record : records) {
+                record.response = { };
+                record.responseBody = nullptr;
+                record.responseBodySize = 0;
+            }
+        }
         callback(WTFMove(records));
     });
 
-    if (url.isNull()) {
+    if (options.request.url().isNull()) {
         for (auto& records : m_records.values()) {
             for (auto& record : records)
                 retrieveRecord(record, taskCounter.copyRef());
@@ -300,12 +309,18 @@ void Cache::retrieveRecords(const URL& url, RecordsCallback&& callback)
         return;
     }
 
-    auto* records = recordsFromURL(url);
+    if (!options.ignoreMethod && options.request.httpMethod() != "GET")
+        return;
+
+    auto* records = recordsFromURL(options.request.url());
     if (!records)
         return;
 
-    for (auto& record : *records)
-        retrieveRecord(record, taskCounter.copyRef());
+    CacheQueryOptions queryOptions { options.ignoreSearch, options.ignoreMethod, options.ignoreVary, { } };
+    for (auto& record : *records) {
+        if (DOMCacheEngine::queryCacheMatch(options.request, record.url, record.hasVaryStar, record.varyHeaders, queryOptions))
+            retrieveRecord(record, taskCounter.copyRef());
+    }
 }
 
 RecordInformation& Cache::addRecord(Vector<RecordInformation>* records, const Record& record)

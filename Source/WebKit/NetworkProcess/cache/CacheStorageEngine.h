@@ -44,6 +44,10 @@ namespace WTF {
 class CallbackAggregator;
 };
 
+namespace WebCore {
+struct RetrieveRecordsOptions;
+}
+
 namespace WebKit {
 
 class NetworkProcess;
@@ -65,7 +69,7 @@ public:
     static void remove(NetworkProcess&, PAL::SessionID, uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     static void retrieveCaches(NetworkProcess&, PAL::SessionID, WebCore::ClientOrigin&&, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
 
-    static void retrieveRecords(NetworkProcess&, PAL::SessionID, uint64_t cacheIdentifier, URL&&, WebCore::DOMCacheEngine::RecordsCallback&&);
+    static void retrieveRecords(NetworkProcess&, PAL::SessionID, uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::RecordsCallback&&);
     static void putRecords(NetworkProcess&, PAL::SessionID, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     static void deleteMatchingRecords(NetworkProcess&, PAL::SessionID, uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 
@@ -111,7 +115,7 @@ private:
     void clearMemoryRepresentation(const WebCore::ClientOrigin&, WebCore::DOMCacheEngine::CompletionCallback&&);
     String representation();
 
-    void retrieveRecords(uint64_t cacheIdentifier, URL&&, WebCore::DOMCacheEngine::RecordsCallback&&);
+    void retrieveRecords(uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::RecordsCallback&&);
     void putRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 

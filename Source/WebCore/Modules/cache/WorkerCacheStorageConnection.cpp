@@ -195,13 +195,13 @@ void WorkerCacheStorageConnection::retrieveCachesCompleted(uint64_t requestIdent
         callback(WTFMove(result));
 }
 
-void WorkerCacheStorageConnection::retrieveRecords(uint64_t cacheIdentifier, const URL& url, RecordsCallback&& callback)
+void WorkerCacheStorageConnection::retrieveRecords(uint64_t cacheIdentifier, const RetrieveRecordsOptions& options, RecordsCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_retrieveRecordsPendingRequests.add(requestIdentifier, WTFMove(callback));
 
-    callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, url = url.isolatedCopy()]() mutable {
-        mainThreadConnection->retrieveRecords(cacheIdentifier, url, [workerThread = WTFMove(workerThread), requestIdentifier](RecordsOrError&& result) mutable {
+    callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, options = options.isolatedCopy()]() mutable {
+        mainThreadConnection->retrieveRecords(cacheIdentifier, options, [workerThread = WTFMove(workerThread), requestIdentifier](RecordsOrError&& result) mutable {
             workerThread->runLoop().postTaskForMode([result = recordsDataOrErrorFromRecords(result), requestIdentifier] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).cacheStorageConnection().retrieveRecordsCompleted(requestIdentifier, recordsOrErrorFromRecordsData(WTFMove(result)));
             }, WorkerRunLoop::defaultMode());

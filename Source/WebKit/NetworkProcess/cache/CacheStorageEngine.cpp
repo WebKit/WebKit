@@ -32,6 +32,7 @@
 #include "NetworkProcess.h"
 #include "WebsiteDataType.h"
 #include <WebCore/CacheQueryOptions.h>
+#include <WebCore/RetrieveRecordsOptions.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/NeverDestroyed.h>
@@ -133,10 +134,10 @@ void Engine::retrieveCaches(NetworkProcess& networkProcess, PAL::SessionID sessi
 }
 
 
-void Engine::retrieveRecords(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier, URL&& url, WebCore::DOMCacheEngine::RecordsCallback&& callback)
+void Engine::retrieveRecords(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
 {
-    from(networkProcess, sessionID, [cacheIdentifier, url = WTFMove(url), callback = WTFMove(callback)](auto& engine) mutable {
-        engine.retrieveRecords(cacheIdentifier, WTFMove(url), WTFMove(callback));
+    from(networkProcess, sessionID, [cacheIdentifier, options = WTFMove(options), callback = WTFMove(callback)](auto& engine) mutable {
+        engine.retrieveRecords(cacheIdentifier, WTFMove(options), WTFMove(callback));
     });
 }
 
@@ -311,14 +312,14 @@ void Engine::retrieveCaches(const WebCore::ClientOrigin& origin, uint64_t update
     });
 }
 
-void Engine::retrieveRecords(uint64_t cacheIdentifier, URL&& url, RecordsCallback&& callback)
+void Engine::retrieveRecords(uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, RecordsCallback&& callback)
 {
-    readCache(cacheIdentifier, [url = WTFMove(url), callback = WTFMove(callback)](CacheOrError&& result) mutable {
+    readCache(cacheIdentifier, [options = WTFMove(options), callback = WTFMove(callback)](CacheOrError&& result) mutable {
         if (!result.has_value()) {
             callback(makeUnexpected(result.error()));
             return;
         }
-        result.value().get().retrieveRecords(url, WTFMove(callback));
+        result.value().get().retrieveRecords(options, WTFMove(callback));
     });
 }
 

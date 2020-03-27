@@ -28,7 +28,7 @@ messages -> CacheStorageEngineConnection {
     Remove(uint64_t cacheIdentifier) -> (WebCore::DOMCacheEngine::CacheIdentifierOrError result) Async
     Caches(struct WebCore::ClientOrigin origin, uint64_t updateCounter) -> (WebCore::DOMCacheEngine::CacheInfosOrError result) Async
 
-    RetrieveRecords(uint64_t cacheIdentifier, URL url) -> (WebCore::DOMCacheEngine::RecordsOrError result) Async
+    RetrieveRecords(uint64_t cacheIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (WebCore::DOMCacheEngine::RecordsOrError result) Async
     DeleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result) Async
     PutRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record> record) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result) Async
 

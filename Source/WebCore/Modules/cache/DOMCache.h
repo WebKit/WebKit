@@ -74,10 +74,10 @@ private:
 
     void putWithResponseData(DOMPromiseDeferred<void>&&, Ref<FetchRequest>&&, Ref<FetchResponse>&&, ExceptionOr<RefPtr<SharedBuffer>>&&);
 
+    enum class ShouldRetrieveResponses : bool { No, Yes };
     using RecordsCallback = CompletionHandler<void(ExceptionOr<Vector<DOMCacheEngine::Record>>&&)>;
-    void retrieveRecords(const URL&, RecordsCallback&&);
-    Vector<DOMCacheEngine::Record> queryCacheWithTargetStorage(const FetchRequest&, const CacheQueryOptions&, const Vector<DOMCacheEngine::Record>&);
-    void queryCache(Ref<FetchRequest>&&, CacheQueryOptions&&, RecordsCallback&&);
+    void queryCache(ResourceRequest&&, const CacheQueryOptions&, ShouldRetrieveResponses, RecordsCallback&&);
+
     void batchDeleteOperation(const FetchRequest&, CacheQueryOptions&&, CompletionHandler<void(ExceptionOr<bool>&&)>&&);
     void batchPutOperation(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&, CompletionHandler<void(ExceptionOr<void>&&)>&&);
     void batchPutOperation(Vector<DOMCacheEngine::Record>&&, CompletionHandler<void(ExceptionOr<void>&&)>&&);

@@ -86,10 +86,10 @@ void CacheStorageEngineConnection::caches(WebCore::ClientOrigin&& origin, uint64
     });
 }
 
-void CacheStorageEngineConnection::retrieveRecords(uint64_t cacheIdentifier, URL&& url, RecordsCallback&& callback)
+void CacheStorageEngineConnection::retrieveRecords(uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, RecordsCallback&& callback)
 {
     RELEASE_LOG_IF_ALLOWED("retrieveRecords in cache %" PRIu64, cacheIdentifier);
-    Engine::retrieveRecords(m_connection.networkProcess(), sessionID(), cacheIdentifier, WTFMove(url), [callback = WTFMove(callback), sessionID = this->sessionID()](auto&& result) mutable {
+    Engine::retrieveRecords(m_connection.networkProcess(), sessionID(), cacheIdentifier, WTFMove(options), [callback = WTFMove(callback), sessionID = this->sessionID()](auto&& result) mutable {
         RELEASE_LOG_FUNCTION_IF_ALLOWED_IN_CALLBACK("retrieveRecords", "records size is %lu", [](const auto& value) { return value.size(); });
         callback(WTFMove(result));
     });

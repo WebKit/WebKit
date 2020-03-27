@@ -92,9 +92,9 @@ void DOMCache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCal
         callback(nullptr);
         return;
     }
-    auto request = requestOrException.releaseReturnValue();
 
-    queryCache(request.get(), WTFMove(options), [this, callback = WTFMove(callback)](auto&& result) mutable {
+    auto request = requestOrException.releaseReturnValue()->resourceRequest();
+    queryCache(WTFMove(request), options, ShouldRetrieveResponses::Yes, [this, callback = WTFMove(callback)](auto&& result) mutable {
         if (result.hasException()) {
             callback(result.releaseException());
             return;
@@ -120,17 +120,17 @@ void DOMCache::matchAll(Optional<RequestInfo>&& info, CacheQueryOptions&& option
     if (UNLIKELY(!scriptExecutionContext()))
         return;
 
-    RefPtr<FetchRequest> request;
+    ResourceRequest resourceRequest;
     if (info) {
         auto requestOrException = requestFromInfo(WTFMove(info.value()), options.ignoreMethod);
         if (requestOrException.hasException()) {
             promise.resolve({ });
             return;
         }
-        request = requestOrException.releaseReturnValue();
+        resourceRequest = requestOrException.releaseReturnValue()->resourceRequest();
     }
 
-    RecordsCallback callback = [this, promise = WTFMove(promise)](auto&& result) mutable {
+    queryCache(WTFMove(resourceRequest), options, ShouldRetrieveResponses::Yes, [this, promise = WTFMove(promise)](auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, promise = WTFMove(promise), result = WTFMove(result)]() mutable {
             if (result.hasException()) {
                 promise.reject(result.releaseException());
@@ -138,11 +138,7 @@ void DOMCache::matchAll(Optional<RequestInfo>&& info, CacheQueryOptions&& option
             }
             promise.resolve(cloneResponses(result.releaseReturnValue()));
         });
-    };
-
-    if (!request)
-        return retrieveRecords(URL { }, WTFMove(callback));
-    queryCache(request.releaseNonNull(), WTFMove(options), WTFMove(callback));
+    });
 }
 
 void DOMCache::add(RequestInfo&& info, DOMPromiseDeferred<void>&& promise)
@@ -425,17 +421,17 @@ void DOMCache::keys(Optional<RequestInfo>&& info, CacheQueryOptions&& options, K
     if (UNLIKELY(!scriptExecutionContext()))
         return;
 
-    RefPtr<FetchRequest> request;
+    ResourceRequest resourceRequest;
     if (info) {
         auto requestOrException = requestFromInfo(WTFMove(info.value()), options.ignoreMethod);
         if (requestOrException.hasException()) {
             promise.resolve(Vector<Ref<FetchRequest>> { });
             return;
         }
-        request = requestOrException.releaseReturnValue();
+        resourceRequest = requestOrException.releaseReturnValue()->resourceRequest();
     }
 
-    RecordsCallback callback = [this, promise = WTFMove(promise)](auto&& result) mutable {
+    queryCache(WTFMove(resourceRequest), options, ShouldRetrieveResponses::No, [this, promise = WTFMove(promise)](auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, promise = WTFMove(promise), result = WTFMove(result)]() mutable {
             if (result.hasException()) {
                 promise.reject(result.releaseException());
@@ -447,19 +443,13 @@ void DOMCache::keys(Optional<RequestInfo>&& info, CacheQueryOptions&& options, K
                 return createRequest(*scriptExecutionContext(), record);
             }));
         });
-    };
-
-    if (!request)
-        return retrieveRecords(URL { }, WTFMove(callback));
-    queryCache(request.releaseNonNull(), WTFMove(options), WTFMove(callback));
+    });
 }
 
-void DOMCache::retrieveRecords(const URL& url, RecordsCallback&& callback)
+void DOMCache::queryCache(ResourceRequest&& request, const CacheQueryOptions& options, ShouldRetrieveResponses shouldRetrieveResponses, RecordsCallback&& callback)
 {
-    URL retrieveURL = url;
-    retrieveURL.removeQueryAndFragmentIdentifier();
-
-    m_connection->retrieveRecords(m_identifier, retrieveURL, [this, pendingActivity = makePendingActivity(*this), callback = WTFMove(callback)](auto&& result) mutable {
+    RetrieveRecordsOptions retrieveOptions { WTFMove(request), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses == ShouldRetrieveResponses::Yes };
+    m_connection->retrieveRecords(m_identifier, retrieveOptions, [this, pendingActivity = makePendingActivity(*this), callback = WTFMove(callback)](auto&& result) mutable {
         if (m_isStopped) {
             callback(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), DOMCacheEngine::Error::Stopped));
             return;
@@ -472,32 +462,7 @@ void DOMCache::retrieveRecords(const URL& url, RecordsCallback&& callback)
 
         callback(WTFMove(result.value()));
     });
-}
 
-void DOMCache::queryCache(Ref<FetchRequest>&& request, CacheQueryOptions&& options, RecordsCallback&& callback)
-{
-    auto url = request->url();
-    retrieveRecords(url, [this, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](auto&& result) mutable {
-        if (result.hasException()) {
-            callback(result.releaseException());
-            return;
-        }
-        callback(queryCacheWithTargetStorage(request.get(), options, result.releaseReturnValue()));
-    });
-}
-
-Vector<DOMCacheEngine::Record> DOMCache::queryCacheWithTargetStorage(const FetchRequest& request, const CacheQueryOptions& options, const Vector<DOMCacheEngine::Record>& targetStorage)
-{
-    if (!options.ignoreMethod && request.method() != "GET")
-        return { };
-
-    Vector<DOMCacheEngine::Record> records;
-    for (auto& record : targetStorage) {
-        // We need to pass the resource request with all correct headers hence why we call resourceRequest().
-        if (DOMCacheEngine::queryCacheMatch(request.resourceRequest(), record.request, record.response, options))
-            records.append(record.copy());
-    }
-    return records;
 }
 
 void DOMCache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&& options, CompletionHandler<void(ExceptionOr<bool>&&)>&& callback)

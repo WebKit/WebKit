@@ -1110,6 +1110,7 @@
 		4186BD40213EE3450001826F /* LibWebRTCRtpReceiverBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D1A04A213EDDFE0063FB6B /* LibWebRTCRtpReceiverBackend.cpp */; };
 		4186BD4E2140B9E80001826F /* LibWebRTCRtpTransceiverBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4186BD4D2140B9E80001826F /* LibWebRTCRtpTransceiverBackend.cpp */; };
 		41885B9311B6FDA6003383BB /* FormSubmission.h in Headers */ = {isa = PBXBuildFile; fileRef = 41885B9111B6FDA6003383BB /* FormSubmission.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		418938B22429F9B4007FDC41 /* RetrieveRecordsOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 418938AF2429F9AB007FDC41 /* RetrieveRecordsOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		418A06D0133C04D500CD379C /* EventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 418A06CE133C04D500CD379C /* EventDispatcher.h */; };
 		418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 418F88030FF957AE0080F045 /* JSAbstractWorker.h */; };
 		419242492127B93E00634FCF /* RealtimeOutgoingVideoSourceCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 419242472127B7CC00634FCF /* RealtimeOutgoingVideoSourceCocoa.mm */; };
@@ -7484,6 +7485,7 @@
 		4186BD4D2140B9E80001826F /* LibWebRTCRtpTransceiverBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCRtpTransceiverBackend.cpp; path = libwebrtc/LibWebRTCRtpTransceiverBackend.cpp; sourceTree = "<group>"; };
 		41885B9111B6FDA6003383BB /* FormSubmission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormSubmission.h; sourceTree = "<group>"; };
 		41885B9211B6FDA6003383BB /* FormSubmission.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormSubmission.cpp; sourceTree = "<group>"; };
+		418938AF2429F9AB007FDC41 /* RetrieveRecordsOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RetrieveRecordsOptions.h; sourceTree = "<group>"; };
 		418A06CE133C04D500CD379C /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
 		418A06CF133C04D500CD379C /* EventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDispatcher.cpp; sourceTree = "<group>"; };
 		418C39521C8DAC7B0051C8A3 /* DOMWindowFetch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowFetch.cpp; sourceTree = "<group>"; };
@@ -18212,6 +18214,7 @@
 				41FB278E1F34C28200795487 /* DOMWindowCaches.cpp */,
 				41FB278C1F34C28200795487 /* DOMWindowCaches.h */,
 				41380C2B1F343E2F00155FDA /* DOMWindowCaches.idl */,
+				418938AF2429F9AB007FDC41 /* RetrieveRecordsOptions.h */,
 				41A7D34F1F438D10008988DE /* WorkerCacheStorageConnection.cpp */,
 				41A7D3501F438D10008988DE /* WorkerCacheStorageConnection.h */,
 				41FB278F1F34C28200795487 /* WorkerGlobalScopeCaches.cpp */,
@@ -32489,6 +32492,7 @@
 				A5071E851C56D0DC009951BE /* ResourceUsageData.h in Headers */,
 				ADBAD6EF1BCDD95700381325 /* ResourceUsageOverlay.h in Headers */,
 				A5071E871C56D0E1009951BE /* ResourceUsageThread.h in Headers */,
+				418938B22429F9B4007FDC41 /* RetrieveRecordsOptions.h in Headers */,
 				FD3160A512B026F700C1A359 /* Reverb.h in Headers */,
 				FD3160A712B026F700C1A359 /* ReverbAccumulationBuffer.h in Headers */,
 				FD3160A912B026F700C1A359 /* ReverbConvolver.h in Headers */,
