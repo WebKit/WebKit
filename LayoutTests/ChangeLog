@@ -1,5 +1,14 @@
 2020-03-27  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ Mac wk2 ] MediaPlayerPrivateInterface crash in WebKit::VideoFullscreenManager
+        https://bugs.webkit.org/show_bug.cgi?id=209688
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-03-27  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html is flaky crashing. 
         https://bugs.webkit.org/show_bug.cgi?id=209684
 
