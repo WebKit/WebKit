@@ -1,3 +1,17 @@
+2020-03-27  Paulo Matos  <pmatos@igalia.com>
+
+        Pass hardness for test numberingSystemsForLocale-cached-... through test header
+        https://bugs.webkit.org/show_bug.cgi?id=209476
+
+        Reviewed by Yusuke Suzuki.
+
+        Improvement over change r258190. Instead of creating a new test file
+        duplicating contents where a hardness parameter is different, pass this
+        through the test header using the -e flag to jsc.
+
+        * stress/numberingSystemsForLocale-cached-strings-should-be-immortal-and-safe-for-concurrent-access.js:
+        * stress/numberingSystemsForLocale-cached-strings-should-be-immortal-and-safe-for-concurrent-access_memory-limited.js: Removed.
+
 2020-03-26  Michael Saboff  <msaboff@apple.com>
 
         Refactor YARR Stack Overflow Checks
