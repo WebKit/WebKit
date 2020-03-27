@@ -1037,13 +1037,13 @@ private:
 
     Path computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, WindRule&) const;
 
-    bool setupClipPath(GraphicsContext&, const LayerPaintingInfo&, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
+    bool setupClipPath(GraphicsContext&, const LayerPaintingInfo&, const LayoutSize& offsetFromRoot, Optional<LayoutRect>& rootRelativeBounds);
 
     void ensureLayerFilters();
     void clearLayerFilters();
 
     RenderLayerFilters* filtersForPainting(GraphicsContext&, OptionSet<PaintLayerFlag>) const;
-    GraphicsContext* setupFilters(GraphicsContext& destinationContext, LayerPaintingInfo&, OptionSet<PaintLayerFlag>, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
+    GraphicsContext* setupFilters(GraphicsContext& destinationContext, LayerPaintingInfo&, OptionSet<PaintLayerFlag>, const LayoutSize& offsetFromRoot, Optional<LayoutRect>& rootRelativeBounds);
     void applyFilters(GraphicsContext& originalContext, const LayerPaintingInfo&, const LayerFragments&);
 
     void paintLayer(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
