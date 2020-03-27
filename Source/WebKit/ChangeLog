@@ -1,3 +1,18 @@
+2020-03-27  David Kilzer  <ddkilzer@apple.com>
+
+        NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked should validate its parameters
+        <https://webkit.org/b/209614>
+        <rdar://problem/60096304>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (NETWORK_PROCESS_MESSAGE_CHECK):
+        - Define/undef macro for killing WebContent process when an
+          invalid IPC message is received.
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked):
+        - Use NETWORK_PROCESS_MESSAGE_CHECK to validate its parameters.
+
 2020-03-27  Tim Horton  <timothy_horton@apple.com>
 
         Unable to build WebKit with iOS 13.4 SDK

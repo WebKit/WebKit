@@ -83,6 +83,7 @@
 #undef RELEASE_LOG_IF_ALLOWED
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), channel, "%p - NetworkConnectionToWebProcess::" fmt, this, ##__VA_ARGS__)
 
+#define NETWORK_PROCESS_MESSAGE_CHECK(assertion) NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(assertion, (void)0)
 #define NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(assertion, completion) do { \
     ASSERT(assertion); \
     if (UNLIKELY(!(assertion))) { \
@@ -749,6 +750,8 @@ void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const
 
 void NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
 {
+    NETWORK_PROCESS_MESSAGE_CHECK(!url.isEmpty() && !srcURL.isEmpty() && !fileBackedPath.isEmpty());
+
     auto* session = networkSession();
     if (!session)
         return;
@@ -1117,3 +1120,4 @@ void NetworkConnectionToWebProcess::checkProcessLocalPortForActivity(const Messa
 } // namespace WebKit
 
 #undef NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION
+#undef NETWORK_PROCESS_MESSAGE_CHECK
