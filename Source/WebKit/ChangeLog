@@ -1,3 +1,26 @@
+2020-03-27  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Delay process suspension for a while after loading an app link
+        https://bugs.webkit.org/show_bug.cgi?id=209686
+        <rdar://problem/60888891>
+
+        Reviewed by Darin Adler.
+
+        Delay process suspension for a while after loading an app link. This will allow the page's script to pass
+        information more reliably to the native app handling the navigation.
+
+        This patch adds a [WKWebView _willOpenAppLink] SPI that the client needs to call before opening the
+        app link.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _willOpenAppLink]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::willOpenAppLink):
+
 2020-03-27  David Kilzer  <ddkilzer@apple.com>
 
         NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked should validate its parameters

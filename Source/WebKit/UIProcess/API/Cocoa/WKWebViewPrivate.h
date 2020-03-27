@@ -448,6 +448,8 @@ for this property.
 - (void)_grantAccessToAssetServices WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_revokeAccessToAssetServices WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
+- (void)_willOpenAppLink WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 @end
 
 @interface WKWebView () <UIResponderStandardEditActions>

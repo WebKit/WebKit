@@ -3100,6 +3100,12 @@ static WTF::Optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 #endif
 }
 
+- (void)_willOpenAppLink
+{
+    if (_page)
+        _page->willOpenAppLink();
+}
+
 @end // WKWebView (WKPrivateIOS)
 
 #if ENABLE(FULLSCREEN_API)

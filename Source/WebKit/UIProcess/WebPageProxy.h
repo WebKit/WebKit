@@ -523,6 +523,8 @@ public:
 #if PLATFORM(IOS_FAMILY)
     bool allowsMediaDocumentInlinePlayback() const;
     void setAllowsMediaDocumentInlinePlayback(bool);
+
+    void willOpenAppLink();
 #endif
 
 #if USE(SYSTEM_PREVIEW)
@@ -2400,6 +2402,7 @@ private:
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isCapturingActivity;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_alwaysRunsAtForegroundPriorityActivity;
     RunLoop::Timer<WebPageProxy> m_audibleActivityTimer;
+    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_openingAppLinkActivity;
 #endif
     bool m_initialCapitalizationEnabled { false };
     Optional<double> m_cpuLimit;

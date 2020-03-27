@@ -1138,6 +1138,7 @@ void WebPageProxy::close()
     m_isVisibleActivity = nullptr;
     m_isAudibleActivity = nullptr;
     m_isCapturingActivity = nullptr;
+    m_openingAppLinkActivity = nullptr;
     m_alwaysRunsAtForegroundPriorityActivity = nullptr;
     m_audibleActivityTimer.stop();
 #endif
@@ -7571,6 +7572,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_isVisibleActivity = nullptr;
     m_isAudibleActivity = nullptr;
     m_isCapturingActivity = nullptr;
+    m_openingAppLinkActivity = nullptr;
     m_alwaysRunsAtForegroundPriorityActivity = nullptr;
 #endif
 

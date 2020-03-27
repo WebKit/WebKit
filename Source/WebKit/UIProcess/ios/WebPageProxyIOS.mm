@@ -1539,6 +1539,21 @@ void WebPageProxy::setShouldRevealCurrentSelectionAfterInsertion(bool shouldReve
         send(Messages::WebPage::SetShouldRevealCurrentSelectionAfterInsertion(shouldRevealCurrentSelectionAfterInsertion));
 }
 
+void WebPageProxy::willOpenAppLink()
+{
+    if (m_openingAppLinkActivity && m_openingAppLinkActivity->isValid())
+        return;
+
+    // We take a background activity for 25 seconds when switching to another app via an app link in case the WebPage
+    // needs to run script to pass information to the native app.
+    // We chose 25 seconds because the system only gives us 30 seconds and we don't want to get too close to that limit
+    // to avoid assertion invalidation (or even termination).
+    m_openingAppLinkActivity = process().throttler().backgroundActivity("Opening AppLink"_s).moveToUniquePtr();
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 25 * NSEC_PER_SEC), dispatch_get_main_queue(), [weakThis = makeWeakPtr(*this)] {
+        if (weakThis)
+            weakThis->m_openingAppLinkActivity = nullptr;
+    });
+}
 
 #if PLATFORM(IOS)
 void WebPageProxy::grantAccessToAssetServices()
