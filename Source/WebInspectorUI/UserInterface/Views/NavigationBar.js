@@ -368,32 +368,35 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
     _keyDown(event)
     {
-        if (event.keyIdentifier !== "Left" && event.keyIdentifier !== "Right")
+        let isLeftArrow = event.code === "ArrowLeft";
+        if (!isLeftArrow && event.code !== "ArrowRight")
             return;
 
         event.preventDefault();
         event.stopPropagation();
 
-        var selectedNavigationItemIndex = this._navigationItems.indexOf(this._selectedNavigationItem);
+        let delta = isLeftArrow ? -1 : 1;
+        if (WI.resolveLayoutDirectionForElement(this._element) === WI.LayoutDirection.RTL)
+            delta *= -1;
 
-        if (event.keyIdentifier === "Left") {
-            if (selectedNavigationItemIndex === -1)
-                selectedNavigationItemIndex = this._navigationItems.length;
+        let selectedIndex = this._navigationItems.indexOf(this._selectedNavigationItem);
 
-            do {
-                selectedNavigationItemIndex = Math.max(0, selectedNavigationItemIndex - 1);
-            } while (selectedNavigationItemIndex && !(this._navigationItems[selectedNavigationItemIndex] instanceof WI.RadioButtonNavigationItem));
-        } else if (event.keyIdentifier === "Right") {
-            do {
-                selectedNavigationItemIndex = Math.min(selectedNavigationItemIndex + 1, this._navigationItems.length - 1);
-            } while (selectedNavigationItemIndex < this._navigationItems.length - 1 && !(this._navigationItems[selectedNavigationItemIndex] instanceof WI.RadioButtonNavigationItem));
+        if (selectedIndex === -1)
+            selectedIndex = (this._navigationItems.length + delta) % this._navigationItems.length;
+
+        while (true) {
+            selectedIndex += delta;
+
+            if (selectedIndex < 0 || selectedIndex >= this._navigationItems.length)
+                break;
+
+            let selectedItemCandidate = this._navigationItems[selectedIndex];
+            if (selectedItemCandidate instanceof WI.RadioButtonNavigationItem) {
+                this.selectedNavigationItem = selectedItemCandidate;
+                this.selectedNavigationItem.element.focus();
+                break;
+            }
         }
-
-        if (!(this._navigationItems[selectedNavigationItemIndex] instanceof WI.RadioButtonNavigationItem))
-            return;
-
-        this.selectedNavigationItem = this._navigationItems[selectedNavigationItemIndex];
-        this.selectedNavigationItem?.element.focus();
     }
 
     _calculateMinimumWidth()
