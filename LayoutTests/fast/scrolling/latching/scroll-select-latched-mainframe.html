@@ -6,20 +6,6 @@
     width: 680px;
 }
 
-.table td, .table th {
-    padding: 2px;
-}
-
-.table th {
-    height: 20px;
-    text-align: left;
-    font-weight: strong;
-}
-
-.table tr:nth-child(odd) {
-    background: #f3f3f3;
-}
-
 .scrollable_select option:nth-child(odd) {
     background: #f3f3f3;
 }
@@ -27,77 +13,76 @@
 </style>
 <script src="../../../resources/js-test-pre.js"></script>
 <script>
-function onLoad() {
-    setupTopLevel();
-}
-</script>
-</head>
-<body onload="onLoad();">
-<script>
+    jsTestIsAsync = true;
 
-var selectTarget;
-var pageScrollPositionBefore;
-var selectScrollPositionBefore;
-var continueCount = 5;
+    var selectTarget;
+    var pageScrollPositionBefore;
+    var selectScrollPositionBefore;
 
-function checkForScroll() {
+    function checkForScroll()
+    {
+        // The select should not have scrolled at all.
+        var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+        var selectScrollPositionAfter = selectTarget.scrollTop;
 
-    // The select should not have scrolled at all.
-    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
-    var selectScrollPositionAfter = selectTarget.scrollTop;
+        if (selectScrollPositionBefore != selectScrollPositionAfter)
+            testFailed("Select consumed wheel events.");
+        else
+            testPassed("Select did not receive wheel events.");
 
-    //debug("Page before: " + pageScrollPositionBefore + ", select before: " + selectScrollPositionBefore);
-    //debug("Page after:  " + pageScrollPositionAfter + ", select after: " + selectScrollPositionAfter);
+        finishJSTest();
+    }
 
-    if (selectScrollPositionBefore != selectScrollPositionAfter)
-        testFailed("Select consumed wheel events.");
-    else
-        testPassed("Select did not receive wheel events.");
+    function scrollTest()
+    {
+        pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
-    testRunner.notifyDone();
-}
+        selectTarget = document.getElementById('target');
 
-function scrollTest() {
-    // See where our IFrame lives:
-    pageScrollPositionBefore = document.scrollingElement.scrollTop;
+        selectScrollPositionBefore = selectTarget.scrollTop;
 
-    selectTarget = document.getElementById('target');
+        // Scroll the #source until we reach the #target.
+        var startPosX = Math.round(selectTarget.offsetLeft) + 20;
+        var startPosY = Math.round(selectTarget.offsetTop) - 42; // Slightly more than one wheel scroll away from the iframe
+        eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+        debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
 
-    selectScrollPositionBefore = selectTarget.scrollTop;
+        eventSender.monitorWheelEvents();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end', true);
+        eventSender.callAfterScrollingCompletes(checkForScroll);
+    }
 
-    // Scroll the #source until we reach the #target.
-    var startPosX = Math.round(selectTarget.offsetLeft) + 20;
-    var startPosY = Math.round(selectTarget.offsetTop) - 42; // Slightly more than one wheel scroll away from the IFrame
-    eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
-    debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end', true);
-    setTimeout(checkForScroll, 100);
-}
+    function setupTopLevel()
+    {
+        description("Tests that a select doesn't consume wheel events when scroll is latched to main frame.");
 
-function setupTopLevel() {
-
-    if (window.eventSender) {
-        testRunner.waitUntilDone();
-
-        setTimeout(scrollTest, 1000);
-    } else {
+        if (window.eventSender) {
+            setTimeout(scrollTest, 0);
+            return;
+        }
+        
         var messageLocation = document.getElementById('parent');
         var message = document.createElement('div');
-        message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
-            + "at the top of the page, and then use the mouse wheel or a two-finger swipe to scroll down<br/>"
-            + "past the selectTarget.<br/><br/>"
-            + "You should not see the 'content21' label if this test is successful.</p>";
+        message.innerHTML = "<p>To manually run this test, place the mouse pointer "
+            + "at the top of the page, and then use the mouse wheel or a two-finger swipe to scroll down "
+            + "past the selectTarget.</p>"
+            + "<p>You should not see the 'content21' label if this test is successful.</p>";
         messageLocation.appendChild(message);
+        finishJSTest();
     }
-}
 
-</script>
+    window.addEventListener('load', () => {
+        setupTopLevel();
+    }, false);
+    </script>
+</head>
+<body>
 <div id="parent" style="height: 2000px; width: 2000px;">
     <div id="source" style="height: 100px; width: 500px;">
         Put mouse here and flick downwards
@@ -131,9 +116,6 @@ function setupTopLevel() {
     </div>
 </div>
 <div id="console"></div>
-<script>
-description("Tests that a select doesn't consume wheel events when scroll is latched to main frame.");
-</script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

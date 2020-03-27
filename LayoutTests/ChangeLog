@@ -1,3 +1,52 @@
+2020-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up fast/scrolling/latching tests
+        https://bugs.webkit.org/show_bug.cgi?id=209629
+
+        Reviewed by Zalan Bujtas.
+        
+        These tests had a bunch of issues:
+            - mixture of waitUntilDone/jsTestIsAsync
+            - not all used eventSender.monitorWheelEvents
+            - script in the body for no reason
+            - commented out code, unused variables
+            - confusing comments
+            - contradictory test content
+
+        * fast/scrolling/latching/iframe_in_iframe-expected.txt:
+        * fast/scrolling/latching/iframe_in_iframe.html:
+        * fast/scrolling/latching/resources/inner_content.html:
+        * fast/scrolling/latching/resources/scroll_nested_iframe_test_inner.html:
+        * fast/scrolling/latching/scroll-div-latched-div-expected.txt:
+        * fast/scrolling/latching/scroll-div-latched-div.html:
+        * fast/scrolling/latching/scroll-div-latched-mainframe-expected.txt:
+        * fast/scrolling/latching/scroll-div-latched-mainframe.html:
+        * fast/scrolling/latching/scroll-div-no-latching-expected.txt:
+        * fast/scrolling/latching/scroll-div-no-latching.html:
+        * fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe-expected.txt:
+        * fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe.html:
+        * fast/scrolling/latching/scroll-iframe-fragment-expected.txt:
+        * fast/scrolling/latching/scroll-iframe-fragment.html:
+        * fast/scrolling/latching/scroll-iframe-in-overflow-expected.txt:
+        * fast/scrolling/latching/scroll-iframe-in-overflow.html:
+        * fast/scrolling/latching/scroll-iframe-latched-iframe-expected.txt:
+        * fast/scrolling/latching/scroll-iframe-latched-iframe.html:
+        * fast/scrolling/latching/scroll-iframe-latched-mainframe-expected.txt:
+        * fast/scrolling/latching/scroll-iframe-latched-mainframe.html:
+        * fast/scrolling/latching/scroll-iframe-webkit1-latching-bug-expected.txt:
+        * fast/scrolling/latching/scroll-iframe-webkit1-latching-bug.html:
+        * fast/scrolling/latching/scroll-latched-nested-div-expected.txt:
+        * fast/scrolling/latching/scroll-latched-nested-div.html:
+        * fast/scrolling/latching/scroll-nested-iframe-expected.txt:
+        * fast/scrolling/latching/scroll-nested-iframe.html:
+        * fast/scrolling/latching/scroll-select-bottom-test-expected.txt:
+        * fast/scrolling/latching/scroll-select-bottom-test.html:
+        * fast/scrolling/latching/scroll-select-latched-mainframe-expected.txt:
+        * fast/scrolling/latching/scroll-select-latched-mainframe.html:
+        * fast/scrolling/latching/scroll-select-latched-select-expected.txt:
+        * fast/scrolling/latching/scroll-select-latched-select.html:
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-27  Kate Cheney  <katherine_cheney@apple.com>
 
         [ macOS wk2 ] http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time-database.html is flaky failing on safari-609-branch

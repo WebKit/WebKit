@@ -794,8 +794,6 @@ webkit.org/b/182176 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/183869 [ HighSierra+ ] media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Pass Failure ]
 
-webkit.org/b/183879 [ Debug ] fast/scrolling/latching/scroll-div-no-latching.html [ Pass Failure ]
-
 webkit.org/b/183860 [ Sierra Release ] http/wpt/service-workers/third-party-registration.html [ Pass Failure ]
 
 webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]
@@ -919,8 +917,6 @@ webkit.org/b/207003 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-ov
 
 webkit.org/b/207060 imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html [ Pass Failure ]
 
-webkit.org/b/207063 fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe.html [ Pass Failure ]
-
 webkit.org/b/207078 webgpu/whlsl/textures-sample-level.html [ Pass ImageOnlyFailure Crash ]
 
 webkit.org/b/207117 webgpu/whlsl/nested-loop.html [ Pass ImageOnlyFailure ]
@@ -947,7 +943,7 @@ webkit.org/b/207202 webgpu/whlsl/textures-sample-grad.html [ Pass ImageOnlyFailu
 
 webkit.org/b/206718 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Pass Crash ]
 
-webkit.org/b/207209  inspector/heap/getPreview.html [ Pass Failure Timeout ]
+webkit.org/b/207209 inspector/heap/getPreview.html [ Pass Failure Timeout ]
 
 webkit.org/b/207222 webgpu/whlsl/zero-initialize-values-2.html [ Pass ImageOnlyFailure ]
 
@@ -994,8 +990,6 @@ webkit.org/b/206852 inspector/canvas/updateShader-webgpu-sharedVertexFragment.ht
 webkit.org/b/207700 webgpu/whlsl/return-local-variable.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207728 [ Release ] accessibility/press-targets-center-point.html [ Pass Failure ]
-
-webkit.org/b/207732 fast/scrolling/latching/iframe_in_iframe.html [ Pass Failure ]
 
 webkit.org/b/206699 http/tests/media/now-playing-info.html [ Pass Failure ]
 

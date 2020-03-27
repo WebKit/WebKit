@@ -23,84 +23,79 @@
 .scrollable_select option:nth-child(odd) {
     background: #f3f3f3;
 }
-
 </style>
 <script src="../../../resources/js-test-pre.js"></script>
 <script>
-function onLoad() {
-    setupTopLevel();
-}
-</script>
-</head>
-<body onload="onLoad();">
-<script>
+    jsTestIsAsync = true;
 
-var selectTarget;
-var pageScrollPositionBefore;
-var selectScrollPositionBefore;
-var continueCount = 5;
+    var selectTarget;
+    var pageScrollPositionBefore;
+    var selectScrollPositionBefore;
 
-function checkForScroll() {
+    function checkForScroll()
+    {
+        // The page should not have scrolled at all.
+        var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+        var selectScrollPositionAfter = selectTarget.scrollTop;
 
-    // The page should not have scrolled at all.
-    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
-    var selectScrollPositionAfter = selectTarget.scrollTop;
+        if (pageScrollPositionBefore != pageScrollPositionAfter)
+            testFailed("Page received wheel events.");
+        else
+            testPassed("Page did not receive wheel events.");
 
-    //debug("Page before: " + pageScrollPositionBefore + ", select before: " + selectScrollPositionBefore);
-    //debug("Page after:  " + pageScrollPositionAfter + ", select after: " + selectScrollPositionAfter);
+        finishJSTest();
+    }
 
-    if (pageScrollPositionBefore != pageScrollPositionAfter)
-        testFailed("Page received wheel events.");
-    else
-        testPassed("Page did not receive wheel events.");
+    function scrollTest()
+    {
+        pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
-    testRunner.notifyDone();
-}
+        selectTarget = document.getElementById('target');
+        selectTarget.scrollTop = selectTarget.scrollHeight - selectTarget.clientHeight - 100;
 
-function scrollTest() {
-    // See where our IFrame lives:
-    pageScrollPositionBefore = document.scrollingElement.scrollTop;
+        selectScrollPositionBefore = selectTarget.scrollTop;
 
-    selectTarget = document.getElementById('target');
-    selectTarget.scrollTop = selectTarget.scrollHeight - selectTarget.clientHeight - 100;
+        // Scroll the #source until we reach the #target.
+        var startPosX = Math.round(selectTarget.offsetLeft) + 20;
+        debug("div display height = " + selectTarget.clientHeight);
+        var startPosY = Math.round(selectTarget.offsetTop) + Math.round(selectTarget.clientHeight) - 42; // One wheel turn before end.
+        eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+        debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
 
-    selectScrollPositionBefore = selectTarget.scrollTop;
+        eventSender.monitorWheelEvents();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end', true);
+        eventSender.callAfterScrollingCompletes(checkForScroll);
+    }
 
-    // Scroll the #source until we reach the #target.
-    var startPosX = Math.round(selectTarget.offsetLeft) + 20;
-    debug("div display height = " + selectTarget.clientHeight);
-    var startPosY = Math.round(selectTarget.offsetTop) + Math.round(selectTarget.clientHeight) - 42; // One wheel turn before end.
-    eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
-    debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end', true);
-    setTimeout(checkForScroll, 100);
-}
+    function setupTopLevel() {
 
-function setupTopLevel() {
-
-    if (window.eventSender) {
-        testRunner.dumpAsText(true);
-        testRunner.waitUntilDone();
-
-        setTimeout(scrollTest, 1000);
-    } else {
+        if (window.eventSender) {
+            setTimeout(scrollTest, 0);
+            return;
+        }
+        
         var messageLocation = document.getElementById('parent');
         var message = document.createElement('div');
-        message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
-            + "inside the select box, and scroll near (but not AT) the bottom of the range. Use the mouse wheel or a two-finger<br/>"
-            + "swipe to scroll through the rest of the select options.<br/><br/>"
-            + "You should not see the page position change if this test is successful.</p>";
+        message.innerHTML = "<p>To manually test it, place the mouse pointer "
+            + "inside the select box, and scroll near (but not AT) the bottom of the range. Use the mouse wheel or a two-finger "
+            + "swipe to scroll through the rest of the select options.</p>"
+            + "<p>You should not see the page position change if this test is successful.</p>";
         messageLocation.appendChild(message);
+        finishJSTest();
     }
-}
 
+    window.addEventListener('load', () => {
+        setupTopLevel();
+    }, false);
 </script>
+</head>
+<body>
 <div id="parent" style="height: 2000px; width: 2000px;">
     <div id="source" style="height: 100px; width: 500px;">
         Put mouse here and flick downwards

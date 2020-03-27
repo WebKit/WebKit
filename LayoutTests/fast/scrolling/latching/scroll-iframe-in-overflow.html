@@ -21,7 +21,7 @@
     }
     </style>
     <script>
-    window.jsTestIsAsync = true;
+    jsTestIsAsync = true;
 
     function checkForScroll() {
         var iframe = document.getElementById("frame");
@@ -31,10 +31,12 @@
         else
             testFailed("The iframe's scroll position is: " + iframe.contentWindow.scrollY + ", and the wrapper's scroll position is: " + wrapper.scrollTop);
 
-        testRunner.notifyDone();
+        finishJSTest();
     }
 
-    function scrollTest() {
+    function scrollTest()
+    {
+        eventSender.monitorWheelEvents();
         eventSender.mouseMoveTo(200, 50);
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
@@ -55,16 +57,16 @@
 
     function setup() {
         if (window.eventSender) {
-            eventSender.monitorWheelEvents();
             setTimeout(scrollTest, 0);
-        } else {
-            var message = document.createElement("div");
-            message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
-                + "inside the IFrame, then use a two-finger swipe to scroll the iframe to the bottom (and beyond).<br/>"
-                + "<br/><br/>"
-                + "The test passes if the overflow container does not scroll but the iframe scrolls to the bottom.</p>";
-            document.body.appendChild(message);
+            return;
         }
+        
+        var message = document.createElement("div");
+        message.innerHTML = "<p>To run this test manually, place the mouse pointer "
+            + "inside the iframe, then use a two-finger swipe to scroll the iframe to the bottom (and beyond).</p>"
+            + "<p>The test passes if the overflow container does not scroll but the iframe scrolls to the bottom.</p>";
+        document.body.appendChild(message);
+        finishJSTest();
     }
 
     </script>
