@@ -1,3 +1,17 @@
+2020-03-26  Chris Dumez  <cdumez@apple.com>
+
+        Regression: Unable to trigger context menu on empty tabs in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=209628
+
+        Reviewed by Geoffrey Garen.
+
+        Launch the WebPageProxy's initial process if it starts processing mouse events.
+        As an optimization, the WebPageProxy only launches its initial process when it
+        really needs to.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMouseEvent):
+
 2020-03-26  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix various compiler warnings

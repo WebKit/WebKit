@@ -2497,6 +2497,9 @@ static bool removeOldRedundantEvent(Deque<NativeWebMouseEvent>& queue, WebEvent:
 
 void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
 {
+    if (event.type() == WebEvent::MouseDown)
+        launchInitialProcessIfNecessary();
+
     if (!hasRunningProcess())
         return;
 
