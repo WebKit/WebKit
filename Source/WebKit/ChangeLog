@@ -1,3 +1,13 @@
+2020-03-27  Tim Horton  <timothy_horton@apple.com>
+
+        Unable to build WebKit with iOS 13.4 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=209317
+
+        Reviewed by Dean Jackson.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        One more attempt. __IPHONE_OS_VERSION_MAX_ALLOWED is inaccurate.
+
 2020-03-27  Daniel Bates  <dabates@apple.com>
 
         Use -_hasFocusedElement in -_didUpdateInputMode
