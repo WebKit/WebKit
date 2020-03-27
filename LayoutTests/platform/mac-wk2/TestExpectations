@@ -672,6 +672,7 @@ http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephe
 
 # As of https://trac.webkit.org/changeset/227762 the timestampResolution is just 5 seconds which makes this test flaky
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
+http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time-database.html [ Skip ]
 
 webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Pass Timeout ]
 webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Pass Timeout ]

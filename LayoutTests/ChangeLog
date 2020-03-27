@@ -1,3 +1,13 @@
+2020-03-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ macOS wk2 ] http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time-database.html is flaky failing on safari-609-branch
+        <rdar://problem/60940165>
+
+        Unreviewed test gardening. Updating expectations for ITP test which
+        should be skipped due to a short timestampResolution.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening for iOS.
