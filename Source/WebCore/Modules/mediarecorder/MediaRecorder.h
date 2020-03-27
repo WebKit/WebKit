@@ -75,6 +75,8 @@ public:
 
     MediaStream& stream() { return m_stream.get(); }
 
+    bool hasPendingActivity() const final;
+
 private:
     MediaRecorder(Document&, Ref<MediaStream>&&, std::unique_ptr<MediaRecorderPrivate>&&, Options&& = { });
 
@@ -107,8 +109,6 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) final { };
     void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) final;
     void audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
-    
-    void scheduleDeferredTask(Function<void()>&&);
     
     static creatorFunction m_customCreator;
     

@@ -121,9 +121,7 @@ void MediaRecorder::suspend(ReasonForSuspension reason)
 
     stopRecordingInternal();
 
-    scheduleDeferredTask([this] {
-        dispatchEvent(MediaRecorderErrorEvent::create(eventNames().errorEvent, Exception { UnknownError, "MediaStream recording was interrupted"_s }));
-    });
+    queueTaskToDispatchEvent(*this, TaskSource::Networking, MediaRecorderErrorEvent::create(eventNames().errorEvent, Exception { UnknownError, "MediaStream recording was interrupted"_s }));
 }
 
 const char* MediaRecorder::activeDOMObjectName() const
@@ -149,7 +147,7 @@ ExceptionOr<void> MediaRecorder::stopRecording()
     if (state() == RecordingState::Inactive)
         return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
     
-    scheduleDeferredTask([this] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
         if (!m_isActive || state() == RecordingState::Inactive)
             return;
 
@@ -198,7 +196,7 @@ void MediaRecorder::stopRecordingInternal()
 
 void MediaRecorder::didAddOrRemoveTrack()
 {
-    scheduleDeferredTask([this] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
         if (!m_isActive || state() == RecordingState::Inactive)
             return;
         stopRecordingInternal();
@@ -234,16 +232,9 @@ void MediaRecorder::audioSamplesAvailable(MediaStreamTrackPrivate& track, const 
     m_private->audioSamplesAvailable(track, mediaTime, audioData, description, sampleCount);
 }
 
-void MediaRecorder::scheduleDeferredTask(Function<void()>&& function)
+bool MediaRecorder::hasPendingActivity() const
 {
-    ASSERT(function);
-    auto* document = this->document();
-    if (!document)
-        return;
-
-    document->eventLoop().queueTask(TaskSource::Networking, [pendingActivity = makePendingActivity(*this), function = WTFMove(function)] {
-        function();
-    });
+    return ActiveDOMObject::hasPendingActivity() || m_state != RecordingState::Inactive;
 }
 
 } // namespace WebCore
