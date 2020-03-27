@@ -1,3 +1,15 @@
+2020-03-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [MSVC] Remove experimental lambda processor usage
+        https://bugs.webkit.org/show_bug.cgi?id=209358
+
+        Reviewed by Fujii Hironori.
+
+        Remove /experimental:newLambdaProcessor since WebKit is no longer able to build
+        with this setting as of Visual Studio 16.5.0.
+
+        * Source/cmake/OptionsMSVC.cmake:
+
 2020-03-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] lld-link: error: /manifestdependency: is not allowed in .drectve
