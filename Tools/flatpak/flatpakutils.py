@@ -540,8 +540,11 @@ class WebkitFlatpak:
             if not building:
                 raise RuntimeError('Trying to enter gst-build env from %s but it is not built, make sure to rebuild webkit.' % gst_dir)
 
-            Console.message("Running meson for `gst-build` %s ", gst_dir)
-            self.run_in_sandbox('meson', gst_dir, gst_builddir, building_gst=True)
+            args = ['meson', ]
+            extra_args = os.environ.get('GST_BUILD_ARGS', '')
+            args.extend(shlex.split(extra_args) + [gst_dir, gst_builddir])
+            Console.message("Running %s ", ' '.join(args))
+            self.run_in_sandbox(*args, building_gst=True)
 
         if not building:
             return [os.path.join(gst_dir, 'gst-env.py'), '--builddir', gst_builddir, '--srcdir', gst_dir]

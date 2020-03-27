@@ -1,5 +1,17 @@
 2020-03-27  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Allow passing gst-build Meson options
+        https://bugs.webkit.org/show_bug.cgi?id=209608
+
+        Reviewed by Žan Doberšek.
+
+        Add support for the GST_BUILD_ARGS env var storing gst-build Meson options.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.setup_gstbuild):
+
+2020-03-27  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Warn when gst-build support was requested but GST_BUILD_PATH is not set
         https://bugs.webkit.org/show_bug.cgi?id=209599
 
