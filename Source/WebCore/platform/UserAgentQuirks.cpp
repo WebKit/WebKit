@@ -173,9 +173,9 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
     switch (quirk) {
     case NeedsChromeBrowser:
         // Get versions from https://chromium.googlesource.com/chromium/src.git
-        return "Chrome/75.0.3770.141"_s;
+        return "Chrome/83.0.4096.4"_s;
     case NeedsFirefoxBrowser:
-        return "; rv:72.0) Gecko/20100101 Firefox/72.0"_s;
+        return "; rv:76.0) Gecko/20100101 Firefox/76.0"_s;
     case NeedsMacintoshPlatform:
         return "Macintosh; Intel Mac OS X 10_15"_s;
     case NeedsLinuxDesktopPlatform:
