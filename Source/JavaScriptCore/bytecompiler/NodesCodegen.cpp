@@ -2779,13 +2779,13 @@ static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(BytecodeGenerator& gen
         case OpURShift:
             opcodeID = op_urshift;
             break;
-        case OpAndEq:
+        case OpBitAndEq:
             opcodeID = op_bitand;
             break;
-        case OpXOrEq:
+        case OpBitXOrEq:
             opcodeID = op_bitxor;
             break;
-        case OpOrEq:
+        case OpBitOrEq:
             opcodeID = op_bitor;
             break;
         case OpModEq:

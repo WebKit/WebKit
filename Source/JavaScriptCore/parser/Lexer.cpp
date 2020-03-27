@@ -2097,7 +2097,7 @@ start:
         }
         if (m_current == '=') {
             shift();
-            token = ANDEQUAL;
+            token = BITANDEQUAL;
             break;
         }
         token = BITAND;
@@ -2106,7 +2106,7 @@ start:
         shift();
         if (m_current == '=') {
             shift();
-            token = XOREQUAL;
+            token = BITXOREQUAL;
             break;
         }
         token = BITXOR;
@@ -2124,7 +2124,7 @@ start:
         shift();
         if (m_current == '=') {
             shift();
-            token = OREQUAL;
+            token = BITOREQUAL;
             break;
         }
         if (m_current == '|') {

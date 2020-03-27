@@ -3832,7 +3832,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
 
     failIfFalse(lhs, "Cannot parse expression");
     if (initialNonLHSCount != m_parserState.nonLHSCount) {
-        if (m_token.m_type >= EQUAL && m_token.m_type <= OREQUAL)
+        if (m_token.m_type >= EQUAL && m_token.m_type <= BITOREQUAL)
             semanticFail("Left hand side of operator '", getToken(), "' must be a reference");
 
         return lhs;
@@ -3851,9 +3851,9 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         case LSHIFTEQUAL: op = OpLShift; break;
         case RSHIFTEQUAL: op = OpRShift; break;
         case URSHIFTEQUAL: op = OpURShift; break;
-        case ANDEQUAL: op = OpAndEq; break;
-        case XOREQUAL: op = OpXOrEq; break;
-        case OREQUAL: op = OpOrEq; break;
+        case BITANDEQUAL: op = OpBitAndEq; break;
+        case BITXOREQUAL: op = OpBitXOrEq; break;
+        case BITOREQUAL: op = OpBitOrEq; break;
         case MODEQUAL: op = OpModEq; break;
         case POWEQUAL: op = OpPowEq; break;
         default:
@@ -3875,7 +3875,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         lhs = parseAssignmentExpression(context);
         failIfFalse(lhs, "Cannot parse the right hand side of an assignment expression");
         if (initialNonLHSCount != m_parserState.nonLHSCount) {
-            if (m_token.m_type >= EQUAL && m_token.m_type <= OREQUAL)
+            if (m_token.m_type >= EQUAL && m_token.m_type <= BITOREQUAL)
                 semanticFail("Left hand side of operator '", getToken(), "' must be a reference");
             break;
         }
