@@ -83,6 +83,15 @@
 #undef RELEASE_LOG_IF_ALLOWED
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), channel, "%p - NetworkConnectionToWebProcess::" fmt, this, ##__VA_ARGS__)
 
+#define NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(assertion, completion) do { \
+    ASSERT(assertion); \
+    if (UNLIKELY(!(assertion))) { \
+        m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0); \
+        { completion; } \
+        return; \
+    } \
+} while (0)
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -664,6 +673,8 @@ void NetworkConnectionToWebProcess::deleteCookie(const URL& url, const String& c
 
 void NetworkConnectionToWebProcess::domCookiesForHost(const String& host, bool subscribeToCookieChangeNotifications, CompletionHandler<void(const Vector<WebCore::Cookie>&)>&& completionHandler)
 {
+    NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(HashSet<String>::isValidValue(host), completionHandler({ }));
+
     auto* networkStorageSession = storageSession();
     if (!networkStorageSession)
         return completionHandler({ });
@@ -1104,3 +1115,5 @@ void NetworkConnectionToWebProcess::checkProcessLocalPortForActivity(const Messa
 }
 
 } // namespace WebKit
+
+#undef NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION

@@ -1,3 +1,19 @@
+2020-03-26  David Kilzer  <ddkilzer@apple.com>
+
+        NetworkConnectionToWebProcess::domCookiesForHost should validate its `host` parameter
+        <https://webkit.org/b/209612>
+        <rdar://problem/60097830>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION):
+        - Define/undef macro for killing WebContent process when an
+          invalid IPC message is received.
+        (WebKit::NetworkConnectionToWebProcess::domCookiesForHost):
+        - Use NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION) to validate
+          `host` parameter.
+
 2020-03-26  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: Unable to show Web Inspector on empty tabs in Safari
