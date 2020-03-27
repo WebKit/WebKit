@@ -80,8 +80,9 @@ void WorkerScriptController::initScript()
     // constructed, it can mark its own prototype.)
     if (m_workerGlobalScope->isDedicatedWorkerGlobalScope()) {
         Structure* dedicatedContextPrototypeStructure = JSDedicatedWorkerGlobalScopePrototype::createStructure(*m_vm, nullptr, jsNull());
-        Strong<JSDedicatedWorkerGlobalScopePrototype> dedicatedContextPrototype(*m_vm, JSDedicatedWorkerGlobalScopePrototype::create(*m_vm, nullptr, dedicatedContextPrototypeStructure));
-        Structure* structure = JSDedicatedWorkerGlobalScope::createStructure(*m_vm, nullptr, dedicatedContextPrototype.get());
+        JSDedicatedWorkerGlobalScopePrototype* dedicatedContextPrototype = JSDedicatedWorkerGlobalScopePrototype::create(*m_vm, nullptr, dedicatedContextPrototypeStructure);
+        JSC::EnsureStillAliveScope protectedDedicatedContextPrototype(dedicatedContextPrototype);
+        Structure* structure = JSDedicatedWorkerGlobalScope::createStructure(*m_vm, nullptr, dedicatedContextPrototype);
         auto* proxyStructure = JSProxy::createStructure(*m_vm, nullptr, jsNull(), PureForwardingProxyType);
         auto* proxy = JSProxy::create(*m_vm, proxyStructure);
 
@@ -99,8 +100,9 @@ void WorkerScriptController::initScript()
 #if ENABLE(SERVICE_WORKER)
     } else if (m_workerGlobalScope->isServiceWorkerGlobalScope()) {
         Structure* contextPrototypeStructure = JSServiceWorkerGlobalScopePrototype::createStructure(*m_vm, nullptr, jsNull());
-        Strong<JSServiceWorkerGlobalScopePrototype> contextPrototype(*m_vm, JSServiceWorkerGlobalScopePrototype::create(*m_vm, nullptr, contextPrototypeStructure));
-        Structure* structure = JSServiceWorkerGlobalScope::createStructure(*m_vm, nullptr, contextPrototype.get());
+        JSServiceWorkerGlobalScopePrototype* contextPrototype = JSServiceWorkerGlobalScopePrototype::create(*m_vm, nullptr, contextPrototypeStructure);
+        JSC::EnsureStillAliveScope protectedContextPrototype(contextPrototype);
+        Structure* structure = JSServiceWorkerGlobalScope::createStructure(*m_vm, nullptr, contextPrototype);
         auto* proxyStructure = JSProxy::createStructure(*m_vm, nullptr, jsNull(), PureForwardingProxyType);
         auto* proxy = JSProxy::create(*m_vm, proxyStructure);
     

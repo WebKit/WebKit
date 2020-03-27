@@ -100,7 +100,7 @@ inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& 
     // before we're done. It should always return null in this case.
     JSC::VM& vm = m_isolatedWorld->vm();
     auto protect = makeRef(const_cast<JSEventListener&>(*this));
-    JSC::Strong<JSC::JSObject> wrapper(vm, m_wrapper.get());
+    JSC::EnsureStillAliveScope protectedWrapper(m_wrapper.get());
 
     if (!m_isInitialized) {
         ASSERT(!m_jsFunction);
