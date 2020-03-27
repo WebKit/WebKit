@@ -161,7 +161,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         [](void* data, struct wpe_input_axis_event* event)
         {
             auto& page = reinterpret_cast<View*>(data)->page();
-            page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor()));
+            page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
         },
         // handle_touch_event
         [](void* data, struct wpe_input_touch_event* event)
@@ -175,9 +175,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
             if (scrollGestureController.isHandling()) {
                 const struct wpe_input_touch_event_raw* touchPoint = touchEvent.nativeFallbackTouchPoint();
                 if (touchPoint->type != wpe_input_touch_event_type_null && scrollGestureController.handleEvent(touchPoint)) {
-                    struct wpe_input_axis_event* axisEvent = scrollGestureController.axisEvent();
-                    if (axisEvent->type != wpe_input_axis_event_type_null)
-                        page.handleWheelEvent(WebKit::NativeWebWheelEvent(axisEvent, page.deviceScaleFactor()));
+                    page.handleWheelEvent(WebKit::NativeWebWheelEvent(scrollGestureController.axisEvent(), page.deviceScaleFactor(), scrollGestureController.phase(), WebWheelEvent::Phase::PhaseNone));
                     return;
                 }
             }

@@ -32,8 +32,8 @@
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, deviceScaleFactor))
+NativeWebWheelEvent::NativeWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, deviceScaleFactor, phase, momentumPhase))
 {
 }
 

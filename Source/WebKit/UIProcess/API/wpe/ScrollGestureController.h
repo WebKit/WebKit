@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebEvent.h"
 #include <wpe/wpe.h>
 
 namespace WebKit {
@@ -42,6 +43,8 @@ public:
         return &m_axisEvent;
 #endif
     }
+
+    WebWheelEvent::Phase phase() { return m_phase; }
 
     bool isHandling() const { return m_handling; }
     bool handleEvent(const struct wpe_input_touch_event_raw*);
@@ -64,6 +67,7 @@ private:
 #else
     struct wpe_input_axis_event m_axisEvent;
 #endif
+    WebWheelEvent::Phase m_phase { WebWheelEvent::Phase::PhaseNone };
 };
 
 } // namespace WebKit

@@ -37,6 +37,10 @@
 #include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingTree.h"
 
+#if ENABLE(KINETIC_SCROLLING)
+#include "ScrollAnimationKinetic.h"
+#endif
+
 namespace WebCore {
 
 Ref<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeNicosia::create(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
@@ -47,6 +51,20 @@ Ref<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeNicosia::cre
 ScrollingTreeFrameScrollingNodeNicosia::ScrollingTreeFrameScrollingNodeNicosia(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
     : ScrollingTreeFrameScrollingNode(scrollingTree, nodeType, nodeID)
 {
+#if ENABLE(KINETIC_SCROLLING)
+    m_kineticAnimation = makeUnique<ScrollAnimationKinetic>(
+        [this]() -> ScrollAnimationKinetic::ScrollExtents {
+            return { IntPoint(minimumScrollPosition()), IntPoint(maximumScrollPosition()) };
+        },
+        [this](FloatPoint&& position) {
+            auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrolledContentsLayer());
+            ASSERT(scrollLayer);
+            auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
+
+            auto updateScope = compositionLayer.createUpdateScope();
+            scrollTo(position);
+        });
+#endif
 }
 
 ScrollingTreeFrameScrollingNodeNicosia::~ScrollingTreeFrameScrollingNodeNicosia() = default;
@@ -108,12 +126,36 @@ ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(co
 
         auto updateScope = compositionLayer.createUpdateScope();
         scrollBy({ -wheelEvent.deltaX(), -wheelEvent.deltaY() });
+
+#if ENABLE(KINETIC_SCROLLING)
+        m_kineticAnimation->appendToScrollHistory(wheelEvent);
+#endif
     }
+
+#if ENABLE(KINETIC_SCROLLING)
+    m_kineticAnimation->stop();
+    if (wheelEvent.isEndOfNonMomentumScroll()) {
+        m_kineticAnimation->start(currentScrollPosition(), m_kineticAnimation->computeVelocity(), canHaveHorizontalScrollbar(), canHaveVerticalScrollbar());
+        m_kineticAnimation->clearScrollHistory();
+    }
+    if (wheelEvent.isTransitioningToMomentumScroll()) {
+        m_kineticAnimation->start(currentScrollPosition(), wheelEvent.swipeVelocity(), canHaveHorizontalScrollbar(), canHaveVerticalScrollbar());
+        m_kineticAnimation->clearScrollHistory();
+    }
+#endif
 
     scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());
 
     // FIXME: This needs to return whether the event was handled.
     return ScrollingEventResult::DidHandleEvent;
+}
+
+void ScrollingTreeFrameScrollingNodeNicosia::stopScrollAnimations()
+{
+#if ENABLE(KINETIC_SCROLLING)
+    m_kineticAnimation->stop();
+    m_kineticAnimation->clearScrollHistory();
+#endif
 }
 
 FloatPoint ScrollingTreeFrameScrollingNodeNicosia::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamping) const

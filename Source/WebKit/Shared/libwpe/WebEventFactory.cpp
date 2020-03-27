@@ -142,7 +142,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
         0, 0, 0, clickCount, modifiersForEventModifiers(event->modifiers), wallTimeForEventTime(event->time));
 }
 
-WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor)
+WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
 {
     WebCore::IntPoint position(event->x, event->y);
     position.scale(1 / deviceScaleFactor);
@@ -168,7 +168,8 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
         }
 
         return WebWheelEvent(WebEvent::Wheel, position, position,
-            delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent,
+            delta, wheelTicks, phase, momentumPhase,
+            WebWheelEvent::ScrollByPixelWheelEvent,
             OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
     }
 #endif
@@ -200,7 +201,8 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
     };
 
     return WebWheelEvent(WebEvent::Wheel, position, position,
-        delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent,
+        delta, wheelTicks, phase, momentumPhase,
+        WebWheelEvent::ScrollByPixelWheelEvent,
         OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
 }
 
