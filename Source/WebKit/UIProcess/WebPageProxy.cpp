@@ -508,7 +508,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     m_preferences->addPage(*this);
     m_pageGroup->addPage(this);
 
-    m_inspector = WebInspectorProxy::create(this);
+    m_inspector = WebInspectorProxy::create(*this);
 
     if (hasRunningProcess())
         didAttachToRunningProcess();
@@ -786,6 +786,10 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
 
     RELEASE_LOG_IF_ALLOWED(Loading, "launchProcess:");
 
+    // In case we are currently connected to the dummy process, we need to make sure the inspector proxy
+    // disconnects from the dummy process first.
+    m_inspector->reset();
+
     m_process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
 
@@ -924,7 +928,7 @@ void WebPageProxy::finishAttachingToWebProcess(ProcessLaunchReason reason)
     if (reason != ProcessLaunchReason::ProcessSwap)
         initializeWebPage();
 
-    m_inspector->updateForNewPageProcess(this);
+    m_inspector->updateForNewPageProcess(*this);
 
 #if ENABLE(REMOTE_INSPECTOR)
     remoteInspectorInformationDidChange();

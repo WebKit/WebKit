@@ -80,7 +80,7 @@ class WebInspectorProxy
 #endif
 {
 public:
-    static Ref<WebInspectorProxy> create(WebPageProxy* inspectedPage)
+    static Ref<WebInspectorProxy> create(WebPageProxy& inspectedPage)
     {
         return adoptRef(*new WebInspectorProxy(inspectedPage));
     }
@@ -107,7 +107,7 @@ public:
     void resetState();
 
     void reset();
-    void updateForNewPageProcess(WebPageProxy*);
+    void updateForNewPageProcess(WebPageProxy&);
 
 #if PLATFORM(MAC)
     enum class InspectionTargetType { Local, Remote };
@@ -181,7 +181,7 @@ public:
     static const unsigned initialWindowHeight;
 
 private:
-    explicit WebInspectorProxy(WebPageProxy*);
+    explicit WebInspectorProxy(WebPageProxy&);
 
     void createFrontendPage();
     void closeFrontendPageAndWindow();

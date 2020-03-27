@@ -3966,6 +3966,32 @@ TEST(ProcessSwap, WebInspector)
     EXPECT_EQ(numberOfDecidePolicyCalls, 3);
 }
 
+TEST(ProcessSwap, WebInspectorDelayedProcessLaunch)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    EXPECT_EQ(0, [webView _webProcessIdentifier]);
+    TestWebKitAPI::Util::spinRunLoop(100);
+    EXPECT_EQ(0, [webView _webProcessIdentifier]);
+
+    [[webView _inspector] show];
+    EXPECT_TRUE([[webView _inspector] isConnected]);
+
+    // Trying to inspect the view should launch a WebProcess.
+    while (![webView _webProcessIdentifier])
+        TestWebKitAPI::Util::spinRunLoop(10);
+    EXPECT_NE(0, [webView _webProcessIdentifier]);
+
+    [[webView _inspector] close];
+}
+
 #endif // !TARGET_OS_IPHONE
 
 static const char* sameOriginBlobNavigationTestBytes = R"PSONRESOURCE(

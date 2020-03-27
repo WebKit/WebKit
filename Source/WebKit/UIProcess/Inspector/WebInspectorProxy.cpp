@@ -66,15 +66,13 @@ const unsigned WebInspectorProxy::minimumWindowHeight = 400;
 const unsigned WebInspectorProxy::initialWindowWidth = 1000;
 const unsigned WebInspectorProxy::initialWindowHeight = 650;
 
-WebInspectorProxy::WebInspectorProxy(WebPageProxy* inspectedPage)
+WebInspectorProxy::WebInspectorProxy(WebPageProxy& inspectedPage)
+    : m_inspectedPage(&inspectedPage)
 #if PLATFORM(MAC)
-    : m_closeFrontendAfterInactivityTimer(RunLoop::main(), this, &WebInspectorProxy::closeFrontendAfterInactivityTimerFired)
+    , m_closeFrontendAfterInactivityTimer(RunLoop::main(), this, &WebInspectorProxy::closeFrontendAfterInactivityTimerFired)
 #endif
 {
-    if (inspectedPage && inspectedPage->hasRunningProcess()) {
-        m_inspectedPage = inspectedPage;
-        m_inspectedPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->webPageID(), *this);
-    }
+    m_inspectedPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->webPageID(), *this);
 }
 
 WebInspectorProxy::~WebInspectorProxy()
@@ -94,13 +92,10 @@ WebPreferences& WebInspectorProxy::inspectorPagePreferences() const
 
 void WebInspectorProxy::invalidate()
 {
-    if (m_inspectedPage)
-        m_inspectedPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->webPageID());
-
     closeFrontendPageAndWindow();
     platformInvalidate();
 
-    m_inspectedPage = nullptr;
+    reset();
 }
 
 void WebInspectorProxy::sendMessageToFrontend(const String& message)
@@ -133,6 +128,7 @@ void WebInspectorProxy::connect()
 
     createFrontendPage();
 
+    m_inspectedPage->launchInitialProcessIfNecessary();
     m_inspectedPage->send(Messages::WebInspectorInterruptDispatcher::NotifyNeedDebuggerBreak(), 0);
     m_inspectedPage->send(Messages::WebInspector::Show());
 }
@@ -213,12 +209,11 @@ void WebInspectorProxy::reset()
     }
 }
 
-void WebInspectorProxy::updateForNewPageProcess(WebPageProxy* inspectedPage)
+void WebInspectorProxy::updateForNewPageProcess(WebPageProxy& inspectedPage)
 {
     ASSERT(!m_inspectedPage);
-    ASSERT(inspectedPage);
 
-    m_inspectedPage = inspectedPage;
+    m_inspectedPage = &inspectedPage;
     m_inspectedPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->webPageID(), *this);
 
     if (m_inspectorPage)

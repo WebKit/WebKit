@@ -1,5 +1,45 @@
 2020-03-26  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION: Unable to show Web Inspector on empty tabs in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=209639
+        <rdar://problem/60937524>
+
+        Reviewed by Darin Adler.
+
+        Make sure we launch the WebPageProxy's initial process when trying to inspect the
+        page using Web Inspector (i.e. WebInspectorProxy::connect() is called).
+
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        - Take in a reference instead of a raw pointer as it could never be null.
+        - Store the inspected page and add the message receiver to its process, even
+          if the process is the dummy one (due to delayed process launch).
+
+        (WebKit::WebInspectorProxy::invalidate):
+        Call reset() to avoid code duplication.
+
+        (WebKit::WebInspectorProxy::connect):
+        Launch the page's initial process if necessary before trying to send IPC to that
+        process.
+
+        (WebKit::WebInspectorProxy::updateForNewPageProcess):
+        Take in a reference instead of a raw pointer as it could never be null.
+
+        * UIProcess/Inspector/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::create):
+        Take in a reference instead of a raw pointer as it could never be null.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::launchProcess):
+        Call WebInspectorProxy::reset() before launching and connecting to the new process.
+        This is important now that the WebInspectorProxy connect to the dummy process proxy.
+        We need to make sure the WebInspectorProxy disconnects from the dummy process proxy
+        because we connect it to the newly launched process.
+
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+
+2020-03-26  Chris Dumez  <cdumez@apple.com>
+
         Regression: Unable to trigger context menu on empty tabs in Safari
         https://bugs.webkit.org/show_bug.cgi?id=209628
 
