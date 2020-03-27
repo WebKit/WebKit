@@ -1,3 +1,27 @@
+2020-03-27  Kenneth Russell  <kbr@chromium.org>
+
+        Use ANGLE_robust_client_memory to replace framebuffer/texture validation
+        https://bugs.webkit.org/show_bug.cgi?id=209098
+
+        Reviewed by Dean Jackson.
+
+        Incorporated fix from anglebug.com/4504 to make
+        fast/canvas/webgl/uninitialized-test.html pass.
+
+        Incorporated fix from anglebug.com/4518 to make:
+         webgl/2.0.0/conformance2/renderbuffers/invalidate-framebuffer.html
+         webgl/2.0.0/conformance2/rendering/blitframebuffer-test.html
+         webgl/2.0.0/conformance2/rendering/rgb-format-support.html
+         webgl/2.0.0/conformance2/state/gl-object-get-calls.html
+         webgl/2.0.0/conformance2/textures/misc/tex-new-formats.html
+        pass.
+
+        * src/libANGLE/Texture.cpp:
+        (gl::Texture::copySubImage):
+        (gl::Texture::ensureSubImageInitialized):
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::InitializeFeatures):
+
 2020-03-21  Keith Rollin  <krollin@apple.com>
 
         Set INSTALLHDRS_SCRIPT_PHASE in ANGLE builds

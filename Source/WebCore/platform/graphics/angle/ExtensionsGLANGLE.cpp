@@ -246,6 +246,370 @@ String ExtensionsGLANGLE::getExtensions()
     return String(reinterpret_cast<const char*>(gl::GetString(GL_EXTENSIONS)));
 }
 
+// GL_ANGLE_robust_client_memory
+void ExtensionsGLANGLE::getBooleanvRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLboolean *data)
+{
+    gl::GetBooleanvRobustANGLE(pname, bufSize, length, data);
+}
+
+void ExtensionsGLANGLE::getBufferParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetBufferParameterivRobustANGLE(target, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getFloatvRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *data)
+{
+    gl::GetFloatvRobustANGLE(pname, bufSize, length, data);
+}
+
+void ExtensionsGLANGLE::getFramebufferAttachmentParameterivRobustANGLE(GCGLenum target, GCGLenum attachment, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetFramebufferAttachmentParameterivRobustANGLE(target, attachment, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getIntegervRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *data)
+{
+    gl::GetIntegervRobustANGLE(pname, bufSize, length, data);
+}
+
+void ExtensionsGLANGLE::getProgramivRobustANGLE(GCGLuint program, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetProgramivRobustANGLE(program, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getRenderbufferParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetRenderbufferParameterivRobustANGLE(target, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getShaderivRobustANGLE(GCGLuint shader, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetShaderivRobustANGLE(shader, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getTexParameterfvRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
+{
+    gl::GetTexParameterfvRobustANGLE(target, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getTexParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetTexParameterivRobustANGLE(target, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getUniformfvRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
+{
+    gl::GetUniformfvRobustANGLE(program, location, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getUniformivRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetUniformivRobustANGLE(program, location, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getVertexAttribfvRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
+{
+    gl::GetVertexAttribfvRobustANGLE(index, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getVertexAttribivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetVertexAttribivRobustANGLE(index, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getVertexAttribPointervRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, void **pointer)
+{
+    gl::GetVertexAttribPointervRobustANGLE(index, pname, bufSize, length, pointer);
+}
+
+void ExtensionsGLANGLE::readPixelsRobustANGLE(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei *length, GCGLsizei *columns, GCGLsizei *rows, void *pixels)
+{
+    gl::ReadPixelsRobustANGLE(x, y, width, height, format, type, bufSize, length, columns, rows, pixels);
+}
+
+void ExtensionsGLANGLE::texImage2DRobustANGLE(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels)
+{
+    gl::TexImage2DRobustANGLE(target, level, internalformat, width, height, border, format, type, bufSize, pixels);
+}
+
+void ExtensionsGLANGLE::texParameterfvRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLfloat *params)
+{
+    gl::TexParameterfvRobustANGLE(target, pname, bufSize, params);
+}
+
+void ExtensionsGLANGLE::texParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLint *params)
+{
+    gl::TexParameterivRobustANGLE(target, pname, bufSize, params);
+}
+
+void ExtensionsGLANGLE::texSubImage2DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels)
+{
+    gl::TexSubImage2DRobustANGLE(target, level, xoffset, yoffset, width, height, format, type, bufSize, pixels);
+}
+
+void ExtensionsGLANGLE::compressedTexImage2DRobustANGLE(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLsizei imageSize, GCGLsizei bufSize, const void* data)
+{
+    gl::CompressedTexImage2DRobustANGLE(target, level, internalformat, width, height, border, imageSize, bufSize, data);
+}
+
+void ExtensionsGLANGLE::compressedTexSubImage2DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLsizei bufSize, const void* data)
+{
+    gl::CompressedTexSubImage2DRobustANGLE(target, level, xoffset, yoffset, width, height, format, imageSize, bufSize, data);
+}
+
+void ExtensionsGLANGLE::compressedTexImage3DRobustANGLE(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLsizei imageSize, GCGLsizei bufSize, const void* data)
+{
+    gl::CompressedTexImage3DRobustANGLE(target, level, internalformat, width, height, depth, border, imageSize, bufSize, data);
+}
+
+void ExtensionsGLANGLE::compressedTexSubImage3DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, GCGLsizei bufSize, const void* data)
+{
+    gl::CompressedTexSubImage3DRobustANGLE(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bufSize, data);
+}
+
+
+void ExtensionsGLANGLE::texImage3DRobustANGLE(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels)
+{
+    gl::TexImage3DRobustANGLE(target, level, internalformat, width, height, depth, border, format, type, bufSize, pixels);
+}
+
+void ExtensionsGLANGLE::texSubImage3DRobustANGLE(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels)
+{
+    gl::TexSubImage3DRobustANGLE(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, bufSize, pixels);
+}
+
+void ExtensionsGLANGLE::getQueryivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetQueryivRobustANGLE(target, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getQueryObjectuivRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params)
+{
+    gl::GetQueryObjectuivRobustANGLE(id, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getBufferPointervRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, void **params)
+{
+    gl::GetBufferPointervRobustANGLE(target, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getIntegeri_vRobustANGLE(GCGLenum target, GCGLuint index, GCGLsizei bufSize, GCGLsizei *length, GCGLint *data)
+{
+    gl::GetIntegeri_vRobustANGLE(target, index, bufSize, length, data);
+}
+
+void ExtensionsGLANGLE::getInternalformativRobustANGLE(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetInternalformativRobustANGLE(target, internalformat, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getVertexAttribIivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetVertexAttribIivRobustANGLE(index, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getVertexAttribIuivRobustANGLE(GCGLuint index, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params)
+{
+    gl::GetVertexAttribIuivRobustANGLE(index, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getUniformuivRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params)
+{
+    gl::GetUniformuivRobustANGLE(program, location, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getActiveUniformBlockivRobustANGLE(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetActiveUniformBlockivRobustANGLE(program, uniformBlockIndex, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getInteger64vRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *data)
+{
+    gl::GetInteger64vRobustANGLE(pname, bufSize, length, data);
+}
+
+void ExtensionsGLANGLE::getInteger64i_vRobustANGLE(GCGLenum target, GCGLuint index, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *data)
+{
+    gl::GetInteger64i_vRobustANGLE(target, index, bufSize, length, data);
+}
+
+void ExtensionsGLANGLE::getBufferParameteri64vRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *params)
+{
+    gl::GetBufferParameteri64vRobustANGLE(target, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::samplerParameterivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLint *param)
+{
+    gl::SamplerParameterivRobustANGLE(sampler, pname, bufSize, param);
+}
+
+void ExtensionsGLANGLE::samplerParameterfvRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLfloat *param)
+{
+    gl::SamplerParameterfvRobustANGLE(sampler, pname, bufSize, param);
+}
+
+void ExtensionsGLANGLE::getSamplerParameterivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetSamplerParameterivRobustANGLE(sampler, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getSamplerParameterfvRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
+{
+    gl::GetSamplerParameterfvRobustANGLE(sampler, pname, bufSize, length, params);
+}
+
+
+void ExtensionsGLANGLE::getFramebufferParameterivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetFramebufferParameterivRobustANGLE(target, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getProgramInterfaceivRobustANGLE(GCGLuint program, GCGLenum programInterface, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetProgramInterfaceivRobustANGLE(program, programInterface, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getBooleani_vRobustANGLE(GCGLenum target, GCGLuint index, GCGLsizei bufSize, GCGLsizei *length, GCGLboolean *data)
+{
+    gl::GetBooleani_vRobustANGLE(target, index, bufSize, length, data);
+}
+
+void ExtensionsGLANGLE::getMultisamplefvRobustANGLE(GCGLenum pname, GCGLuint index, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *val)
+{
+    gl::GetMultisamplefvRobustANGLE(pname, index, bufSize, length, val);
+}
+
+void ExtensionsGLANGLE::getTexLevelParameterivRobustANGLE(GCGLenum target, int level, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetTexLevelParameterivRobustANGLE(target, level, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getTexLevelParameterfvRobustANGLE(GCGLenum target, int level, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
+{
+    gl::GetTexLevelParameterfvRobustANGLE(target, level, pname, bufSize, length, params);
+}
+
+
+void ExtensionsGLANGLE::getPointervRobustANGLERobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, void **params)
+{
+    gl::GetPointervRobustANGLERobustANGLE(pname, bufSize, length, params);
+}
+
+#if PLATFORM(MAC)
+static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pixels)
+{
+    // We can assume this doesn't overflow because the calling functions
+    // use checked arithmetic.
+    int totalBytes = width * height * 4;
+    for (int i = 0; i < totalBytes; i += 4)
+        pixels[i + 3] = 255;
+}
+#endif
+
+void ExtensionsGLANGLE::readnPixelsRobustANGLE(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei *length, GCGLsizei *columns, GCGLsizei *rows, void *data)
+{
+    // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
+    // all previous rendering calls should be done before reading pixels.
+    gl::Flush();
+    auto attrs = m_context->contextAttributes();
+    GCGLenum framebufferTarget = m_context->m_isForWebGL2 ? GraphicsContextGL::READ_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
+    const GraphicsContextGLOpenGL::GraphicsContextGLState& state = m_context->m_state;
+    if (attrs.antialias && state.boundReadFBO == m_context->m_multisampleFBO) {
+        m_context->resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
+        gl::BindFramebuffer(framebufferTarget, m_context->m_fbo);
+        gl::Flush();
+    }
+    (void) m_context->moveErrorsToSyntheticErrorList();
+    gl::ReadnPixelsRobustANGLE(x, y, width, height, format, type, bufSize, length, columns, rows, data);
+    GLenum error = gl::GetError();
+    if (attrs.antialias && state.boundReadFBO == m_context->m_multisampleFBO)
+        gl::BindFramebuffer(framebufferTarget, m_context->m_multisampleFBO);
+
+    if (error) {
+        // ANGLE detected a failure during the ReadnPixelsRobustANGLE operation. Surface this in the
+        // synthetic error list, and skip the alpha channel fixup below.
+        m_context->synthesizeGLError(error);
+        return;
+    }
+
+#if PLATFORM(MAC)
+    if (!attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (state.boundReadFBO == m_context->m_fbo || (attrs.antialias && state.boundReadFBO == m_context->m_multisampleFBO)))
+        wipeAlphaChannelFromPixels(width, height, static_cast<unsigned char*>(data));
+#endif
+}
+
+void ExtensionsGLANGLE::getnUniformfvRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLfloat *params)
+{
+    gl::GetnUniformfvRobustANGLE(program, location, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getnUniformivRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetnUniformivRobustANGLE(program, location, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getnUniformuivRobustANGLE(GCGLuint program, int location, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params)
+{
+    gl::GetnUniformuivRobustANGLE(program, location, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::texParameterIivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLint *params)
+{
+    gl::TexParameterIivRobustANGLE(target, pname, bufSize, params);
+}
+
+void ExtensionsGLANGLE::texParameterIuivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, const GCGLuint *params)
+{
+    gl::TexParameterIuivRobustANGLE(target, pname, bufSize, params);
+}
+
+void ExtensionsGLANGLE::getTexParameterIivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetTexParameterIivRobustANGLE(target, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getTexParameterIuivRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params)
+{
+    gl::GetTexParameterIuivRobustANGLE(target, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::samplerParameterIivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLint *param)
+{
+    gl::SamplerParameterIivRobustANGLE(sampler, pname, bufSize, param);
+}
+
+void ExtensionsGLANGLE::samplerParameterIuivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLuint *param)
+{
+    gl::SamplerParameterIuivRobustANGLE(sampler, pname, bufSize, param);
+}
+
+void ExtensionsGLANGLE::getSamplerParameterIivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetSamplerParameterIivRobustANGLE(sampler, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getSamplerParameterIuivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint *params)
+{
+    gl::GetSamplerParameterIuivRobustANGLE(sampler, pname, bufSize, length, params);
+}
+
+
+void ExtensionsGLANGLE::getQueryObjectivRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint *params)
+{
+    gl::GetQueryObjectivRobustANGLE(id, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getQueryObjecti64vRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *params)
+{
+    gl::GetQueryObjecti64vRobustANGLE(id, pname, bufSize, length, params);
+}
+
+void ExtensionsGLANGLE::getQueryObjectui64vRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint64 *params)
+{
+    gl::GetQueryObjectui64vRobustANGLE(id, pname, bufSize, length, params);
+}
+
+
 } // namespace WebCore
 
 #endif // ENABLE(GRAPHICS_CONTEXT_GL) && USE(ANGLE)

@@ -267,7 +267,9 @@ private:
     void initializeTransformFeedbackBufferCache();
     void initializeSamplerCache();
 
+#if !USE(ANGLE)
     bool validateTexStorageFuncParameters(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, const char* functionName);
+#endif
 
     void uncacheDeletedBuffer(WebGLBuffer*) final;
 

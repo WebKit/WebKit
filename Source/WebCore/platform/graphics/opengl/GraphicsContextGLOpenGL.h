@@ -803,7 +803,8 @@ private:
 #endif
 
     struct GraphicsContextGLState {
-        GCGLuint boundFBO { 0 };
+        GCGLuint boundReadFBO { 0 };
+        GCGLuint boundDrawFBO { 0 };
         GCGLenum activeTextureUnit { GraphicsContextGL::TEXTURE0 };
 
         using BoundTextureMap = HashMap<GCGLenum,

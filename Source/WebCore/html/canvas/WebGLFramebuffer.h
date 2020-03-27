@@ -44,9 +44,11 @@ public:
     public:
         virtual ~WebGLAttachment();
 
+#if !USE(ANGLE)
         virtual GCGLsizei getWidth() const = 0;
         virtual GCGLsizei getHeight() const = 0;
         virtual GCGLenum getFormat() const = 0;
+#endif
         virtual WebGLSharedObject* getObject() const = 0;
         virtual bool isSharedObject(WebGLSharedObject*) const = 0;
         virtual bool isValid() const = 0;
@@ -72,6 +74,7 @@ public:
     void removeAttachmentFromBoundFramebuffer(GCGLenum);
     WebGLSharedObject* getAttachmentObject(GCGLenum) const;
 
+#if !USE(ANGLE)
     GCGLenum getColorBufferFormat() const;
     GCGLsizei getColorBufferWidth() const;
     GCGLsizei getColorBufferHeight() const;
@@ -89,6 +92,7 @@ public:
     // glCheckFramebufferStatus() to return FRAMEBUFFER_UNSUPPORTED,
     // depending on hardware implementation.
     GCGLenum checkStatus(const char** reason) const;
+#endif
 
     bool hasEverBeenBound() const { return object() && m_hasEverBeenBound; }
 

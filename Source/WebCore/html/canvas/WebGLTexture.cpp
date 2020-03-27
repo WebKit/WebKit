@@ -43,6 +43,7 @@ Ref<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase& ctx)
 WebGLTexture::WebGLTexture(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
     , m_target(0)
+#if !USE(ANGLE)
     , m_minFilter(GraphicsContextGL::NEAREST_MIPMAP_LINEAR)
     , m_magFilter(GraphicsContextGL::LINEAR)
     , m_wrapS(GraphicsContextGL::REPEAT)
@@ -54,6 +55,7 @@ WebGLTexture::WebGLTexture(WebGLRenderingContextBase& ctx)
     , m_isFloatType(false)
     , m_isHalfFloatType(false)
     , m_isForWebGL1(ctx.isWebGL1())
+#endif
 {
     setObject(ctx.graphicsContextGL()->createTexture());
 }
@@ -70,6 +72,10 @@ void WebGLTexture::setTarget(GCGLenum target, GCGLint maxLevel)
     // Target is finalized the first time bindTexture() is called.
     if (m_target)
         return;
+#if USE(ANGLE)
+    UNUSED_PARAM(maxLevel);
+    m_target = target;
+#else
     switch (target) {
     case GraphicsContextGL::TEXTURE_2D:
         m_target = target;
@@ -83,8 +89,37 @@ void WebGLTexture::setTarget(GCGLenum target, GCGLint maxLevel)
             m_info[ii].resize(maxLevel);
         break;
     }
+#endif // USE(ANGLE)
 }
 
+void WebGLTexture::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+{
+    context3d->deleteTexture(object);
+}
+
+GCGLint WebGLTexture::computeLevelCount(GCGLsizei width, GCGLsizei height)
+{
+    // return 1 + log2Floor(std::max(width, height));
+    GCGLsizei n = std::max(width, height);
+    if (n <= 0)
+        return 0;
+    GCGLint log = 0;
+    GCGLsizei value = n;
+    for (int ii = 4; ii >= 0; --ii) {
+        int shift = (1 << ii);
+        GCGLsizei x = (value >> shift);
+        if (x) {
+            value = x;
+            log += shift;
+        }
+    }
+    ASSERT(value == 1);
+    return log + 1;
+}
+
+// Everything below this point is unused with the ANGLE backend.
+
+#if !USE(ANGLE)
 void WebGLTexture::setParameteri(GCGLenum pname, GCGLint param)
 {
     if (!object() || !m_target)
@@ -261,6 +296,21 @@ bool WebGLTexture::needToUseBlackTexture(TextureExtensionFlag extensions) const
     return false;
 }
 
+bool WebGLTexture::canGenerateMipmaps()
+{
+    if (isNPOT())
+        return false;
+    const LevelInfo& first = m_info[0][0];
+    for (size_t ii = 0; ii < m_info.size(); ++ii) {
+        const LevelInfo& info = m_info[ii][0];
+        if (!info.valid
+            || info.width != first.width || info.height != first.height
+            || info.internalFormat != first.internalFormat || (m_isForWebGL1 && info.type != first.type))
+            return false;
+    }
+    return true;
+}
+
 bool WebGLTexture::isCompressed() const
 {
     if (!object())
@@ -272,11 +322,6 @@ void WebGLTexture::setCompressed()
 {
     ASSERT(object());
     m_isCompressed = true;
-}
-
-void WebGLTexture::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
-{
-    context3d->deleteTexture(object);
 }
 
 int WebGLTexture::mapTargetToIndex(GCGLenum target) const
@@ -301,41 +346,6 @@ int WebGLTexture::mapTargetToIndex(GCGLenum target) const
         }
     }
     return -1;
-}
-
-bool WebGLTexture::canGenerateMipmaps()
-{
-    if (isNPOT())
-        return false;
-    const LevelInfo& first = m_info[0][0];
-    for (size_t ii = 0; ii < m_info.size(); ++ii) {
-        const LevelInfo& info = m_info[ii][0];
-        if (!info.valid
-            || info.width != first.width || info.height != first.height
-            || info.internalFormat != first.internalFormat || (m_isForWebGL1 && info.type != first.type))
-            return false;
-    }
-    return true;
-}
-
-GCGLint WebGLTexture::computeLevelCount(GCGLsizei width, GCGLsizei height)
-{
-    // return 1 + log2Floor(std::max(width, height));
-    GCGLsizei n = std::max(width, height);
-    if (n <= 0)
-        return 0;
-    GCGLint log = 0;
-    GCGLsizei value = n;
-    for (int ii = 4; ii >= 0; --ii) {
-        int shift = (1 << ii);
-        GCGLsizei x = (value >> shift);
-        if (x) {
-            value = x;
-            log += shift;
-        }
-    }
-    ASSERT(value == 1);
-    return log + 1;
 }
 
 static bool internalFormatIsFloatType(GCGLenum internalFormat)
@@ -465,6 +475,7 @@ const WebGLTexture::LevelInfo* WebGLTexture::getLevelInfo(GCGLenum target, GCGLi
         return 0;
     return &(m_info[targetIndex][level]);
 }
+#endif // !USE(ANGLE)
 
 }
 

@@ -31,7 +31,7 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 27: PASS ] getError was expected value: NO_ERROR :
 [ 28: PASS ] getError was expected value: NO_ERROR :
 [ 29: PASS ] getError was expected value: NO_ERROR :
-[ 30: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36053. Was 36061.
+[ 30: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 [ 31: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.TEXTURE
 [ 32: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is texture
 [ 33: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL) is 0
@@ -94,7 +94,7 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 90: PASS ] getError was expected value: NO_ERROR :
 [ 91: PASS ] getError was expected value: NO_ERROR :
 [ 92: PASS ] getError was expected value: NO_ERROR :
-[ 93: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36053. Was 36061.
+[ 93: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 [ 94: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.TEXTURE
 [ 95: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is texture
 [ 96: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL) is 0
@@ -290,7 +290,7 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 286: PASS ] getError was expected value: NO_ERROR :
 [ 287: PASS ] getInternalformatParameter correctly handled invalid target enums
 [ 288: PASS ] getInternalformatParameter correctly handled invalid pname enums
-[ 289: PASS ] getInternalformatParameter correctly handled invalid internalformat enums
+[ 289: FAIL ] getInternalformatParameter returned 4,2 instead of null for invalid internalformat enum: 0x81a7
 [ 290: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING, 0) should be [object WebGLBuffer]. Was null.
 [ 291: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_SIZE, 0) should be 8 (of type number). Was null (of type object).
 [ 292: FAIL ] gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_START, 0) should be 4 (of type number). Was null (of type object).
@@ -311,5 +311,5 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 307: PASS ] getSamplerParameter correctly handled invalid pname enums
 [ 308: FAIL ] gl.getSyncParameter(sync, gl.OBJECT_TYPE) should be 37142. Threw exception TypeError: Argument 1 ('sync') to WebGL2RenderingContext.getSyncParameter must be an instance of WebGLSync
 [ 309: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-[ FAIL ] 74 failures reported
+[ FAIL ] 73 failures reported
 

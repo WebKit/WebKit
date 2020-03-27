@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: line 58: WebGL: INVALID_OPERATION: texStorage2D: texStorage2D already called on this texture
-CONSOLE MESSAGE: line 61: WebGL: INVALID_OPERATION: texImage2D: texStorage() called on this texture previously
 Test that texStorage2D() works.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

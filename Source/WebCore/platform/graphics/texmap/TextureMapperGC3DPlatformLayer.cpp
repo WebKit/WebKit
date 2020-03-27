@@ -98,13 +98,14 @@ void TextureMapperGC3DPlatformLayer::paintToTextureMapper(TextureMapper& texture
 
 #if USE(TEXTURE_MAPPER_GL)
     auto attrs = m_context.contextAttributes();
-    if (attrs.antialias && m_context.m_state.boundFBO == m_context.m_multisampleFBO) {
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (attrs.antialias && m_context.m_state.boundDrawFBO == m_context.m_multisampleFBO) {
         GLContext* previousActiveContext = GLContext::current();
         if (previousActiveContext != m_glContext.get())
             m_context.makeContextCurrent();
 
         m_context.resolveMultisamplingIfNecessary();
-        ::glBindFramebuffer(GraphicsContextGLOpenGL::FRAMEBUFFER, m_context.m_state.boundFBO);
+        ::glBindFramebuffer(GraphicsContextGLOpenGL::FRAMEBUFFER, m_context.m_state.boundDrawFBO);
 
         if (previousActiveContext && previousActiveContext != m_glContext.get())
             previousActiveContext->makeContextCurrent();

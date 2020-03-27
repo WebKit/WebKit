@@ -46,11 +46,14 @@ public:
     static Ref<WebGLTexture> create(WebGLRenderingContextBase&);
 
     void setTarget(GCGLenum target, GCGLint maxLevel);
+#if !USE(ANGLE)
     void setParameteri(GCGLenum pname, GCGLint param);
     void setParameterf(GCGLenum pname, GCGLfloat param);
+#endif
 
     GCGLenum getTarget() const { return m_target; }
 
+#if !USE(ANGLE)
     int getMinFilter() const { return m_minFilter; }
 
     void setLevelInfo(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type);
@@ -73,21 +76,25 @@ public:
     // Determine if texture sampling should always return [0, 0, 0, 1] (OpenGL ES 2.0 Sec 3.8.2).
     bool needToUseBlackTexture(TextureExtensionFlag) const;
 
+    bool immutable() const { return m_immutable; }
+    void setImmutable() { m_immutable = true; }
+
     bool isCompressed() const;
     void setCompressed();
+#endif
 
     bool hasEverBeenBound() const { return object() && m_target; }
 
     static GCGLint computeLevelCount(GCGLsizei width, GCGLsizei height);
-
-    bool immutable() const { return m_immutable; }
-    void setImmutable() { m_immutable = true; }
 
 private:
     WebGLTexture(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
+    bool isTexture() const override { return true; }
+
+#if !USE(ANGLE)
     class LevelInfo {
     public:
         LevelInfo()
@@ -115,16 +122,18 @@ private:
         GCGLenum type;
     };
 
-    bool isTexture() const override { return true; }
-
     void update();
+#endif // !USE(ANGLE)
 
     int mapTargetToIndex(GCGLenum) const;
 
+#if !USE(ANGLE)
     const LevelInfo* getLevelInfo(GCGLenum target, GCGLint level) const;
+#endif // !USE(ANGLE)
 
     GCGLenum m_target;
 
+#if !USE(ANGLE)
     GCGLenum m_minFilter;
     GCGLenum m_magFilter;
     GCGLenum m_wrapS;
@@ -140,6 +149,7 @@ private:
     bool m_isHalfFloatType;
     bool m_isForWebGL1;
     bool m_immutable { false };
+#endif
 };
 
 } // namespace WebCore

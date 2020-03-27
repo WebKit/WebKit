@@ -461,7 +461,6 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     ::glGenFramebuffersEXT(1, &m_fbo);
     ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
 
-    m_state.boundFBO = m_fbo;
     if (!attrs.antialias && (attrs.stencil || attrs.depth))
         ::glGenRenderbuffersEXT(1, &m_depthStencilBuffer);
 
@@ -469,7 +468,6 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     if (attrs.antialias) {
         ::glGenFramebuffersEXT(1, &m_multisampleFBO);
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
-        m_state.boundFBO = m_multisampleFBO;
         ::glGenRenderbuffersEXT(1, &m_multisampleColorBuffer);
         if (attrs.stencil || attrs.depth)
             ::glGenRenderbuffersEXT(1, &m_multisampleDepthStencilBuffer);
@@ -477,7 +475,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 #elif USE(ANGLE)
     gl::GenFramebuffers(1, &m_fbo);
     gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    m_state.boundFBO = m_fbo;
+    m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
 
     if (!attrs.antialias && (attrs.stencil || attrs.depth))
         gl::GenRenderbuffers(1, &m_depthStencilBuffer);
@@ -486,7 +484,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     if (attrs.antialias) {
         gl::GenFramebuffers(1, &m_multisampleFBO);
         gl::BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-        m_state.boundFBO = m_multisampleFBO;
+        m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
         gl::GenRenderbuffers(1, &m_multisampleColorBuffer);
         if (attrs.stencil || attrs.depth)
             gl::GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);

@@ -440,9 +440,11 @@ protected:
 
     bool validateWebGLObject(const char*, WebGLObject*);
 
+#if !USE(ANGLE)
     bool validateDrawArrays(const char* functionName, GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount);
     bool validateDrawElements(const char* functionName, GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, unsigned& numElements, GCGLsizei primcount);
     bool validateNPOTTextureLevel(GCGLsizei width, GCGLsizei height, GCGLint level, const char* functionName);
+#endif
 
     // Adds a compressed texture format.
     void addCompressedTextureFormat(GCGLenum);
@@ -522,8 +524,9 @@ protected:
         RefPtr<WebGLTexture> textureCubeMapBinding;
     };
     Vector<TextureUnitState> m_textureUnits;
+#if !USE(ANGLE)
     HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_unrenderableTextureUnits;
-
+#endif
     unsigned long m_activeTextureUnit;
 
     RefPtr<WebGLTexture> m_blackTexture2D;
@@ -641,11 +644,12 @@ protected:
     void restoreStateAfterClear();
 
     ExceptionOr<void> texImageSource2D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, TexImageSource&&);
-    void texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels);
+    void texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLsizei byteLength, const void* pixels);
     void texImage2DImpl(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, Image*, GraphicsContextGL::DOMSource, bool flipY, bool premultiplyAlpha);
-    void texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalformat, GCGLenum format, GCGLenum type, const void* pixels);
+    void texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalformat, GCGLenum format, GCGLenum type, GCGLsizei byteLength, const void* pixels);
     void texSubImage2DImpl(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLenum format, GCGLenum type, Image*, GraphicsContextGL::DOMSource, bool flipY, bool premultiplyAlpha);
 
+#if !USE(ANGLE)
     bool checkTextureCompleteness(const char*, bool);
 
     void createFallbackBlackTextures1x1();
@@ -655,14 +659,15 @@ protected:
     // is valid.
     bool isTexInternalFormatColorBufferCombinationValid(GCGLenum texInternalFormat, GCGLenum colorBufferFormat);
 
-    // Helper function to get the bound framebuffer's color buffer format.
-    GCGLenum getBoundFramebufferColorFormat();
+    // Helper function to get the bound read framebuffer's color buffer format.
+    GCGLenum getBoundReadFramebufferColorFormat();
 
-    // Helper function to get the bound framebuffer's width.
-    int getBoundFramebufferWidth();
+    // Helper function to get the bound read framebuffer's width.
+    int getBoundReadFramebufferWidth();
 
-    // Helper function to get the bound framebuffer's height.
-    int getBoundFramebufferHeight();
+    // Helper function to get the bound read framebuffer's height.
+    int getBoundReadFramebufferHeight();
+#endif
 
     // Helper function to verify limits on the length of uniform and attribute locations.
     bool validateLocationLength(const char* functionName, const String&);
@@ -739,6 +744,7 @@ protected:
     // Generates GL error and returns false if the format is not settable.
     bool validateSettableTexInternalFormat(const char* functionName, GCGLenum format);
 
+#if !USE(ANGLE)
     // Helper function to validate compressed texture data is correct size
     // for the given format and dimensions.
     bool validateCompressedTexFuncData(const char* functionName, GCGLsizei width, GCGLsizei height, GCGLenum format, ArrayBufferView& pixels);
@@ -754,6 +760,7 @@ protected:
     // the given format.
     bool validateCompressedTexSubDimensions(const char* functionName, GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset,
         GCGLsizei width, GCGLsizei height, GCGLenum format, WebGLTexture*);
+#endif
 
     // Helper function to validate mode for draw{Arrays/Elements}.
     bool validateDrawMode(const char* functionName, GCGLenum);

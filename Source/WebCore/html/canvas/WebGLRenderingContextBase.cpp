@@ -338,6 +338,7 @@ namespace {
     }
 } // namespace anonymous
 
+#if !USE(ANGLE)
 // Returns false if no clipping is necessary, i.e., x, y, width, height stay the same.
 static bool clip2D(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height,
     GCGLsizei sourceWidth, GCGLsizei sourceHeight,
@@ -372,6 +373,7 @@ static bool clip2D(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height,
 
     return (*clippedX != x || *clippedY != y || *clippedWidth != width || *clippedHeight != height);
 }
+#endif
 
 class InspectorScopedShaderProgramHighlight {
 public:
@@ -498,7 +500,10 @@ static bool isHighPerformanceContext(const RefPtr<GraphicsContextGLOpenGL>& cont
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, const String& type)
 {
 #if ENABLE(WEBGL2)
+    // WebGL 2.0 is only supported with the ANGLE backend.
+#if USE(ANGLE)
     if (type == "webgl2" && !RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
+#endif
         return nullptr;
 #else
     UNUSED_PARAM(type);
@@ -742,9 +747,11 @@ void WebGLRenderingContextBase::initializeNewContext()
     m_context->getIntegerv(GraphicsContextGL::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &numCombinedTextureImageUnits);
     m_textureUnits.clear();
     m_textureUnits.resize(numCombinedTextureImageUnits);
+#if !USE(ANGLE)
     for (GCGLint i = 0; i < numCombinedTextureImageUnits; ++i)
         m_unrenderableTextureUnits.add(i);
-
+#endif
+    
     GCGLint numVertexAttribs = 0;
     m_context->getIntegerv(GraphicsContextGL::MAX_VERTEX_ATTRIBS, &numVertexAttribs);
     m_maxVertexAttribs = numVertexAttribs;
@@ -768,8 +775,10 @@ void WebGLRenderingContextBase::initializeNewContext()
     
     m_vertexAttribValue.resize(m_maxVertexAttribs);
 
+#if !USE(ANGLE)
     if (!isGLES2NPOTStrict())
         createFallbackBlackTextures1x1();
+#endif
 
     IntSize canvasSize = clampedCanvasSize();
     m_context->reshape(canvasSize.width(), canvasSize.height());
@@ -978,13 +987,15 @@ bool WebGLRenderingContextBase::clearIfComposited(GCGLbitfield mask)
         clearMask |= GraphicsContextGL::STENCIL_BUFFER_BIT;
         m_context->stencilMaskSeparate(GraphicsContextGL::FRONT, 0xFFFFFFFF);
     }
+    
+    GCGLenum bindingPoint = isWebGL2() ? GraphicsContextGL::DRAW_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
     if (m_framebufferBinding)
-        m_context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, 0);
+        m_context->bindFramebuffer(bindingPoint, 0);
     m_context->clear(clearMask);
 
     restoreStateAfterClear();
     if (m_framebufferBinding)
-        m_context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, objectOrZero(m_framebufferBinding.get()));
+        m_context->bindFramebuffer(bindingPoint, objectOrZero(m_framebufferBinding.get()));
     m_layerCleared = true;
 
     return combinedClear;
@@ -1080,8 +1091,10 @@ void WebGLRenderingContextBase::reshape(int width, int height)
 
     auto& textureUnit = m_textureUnits[m_activeTextureUnit];
     m_context->bindTexture(GraphicsContextGL::TEXTURE_2D, objectOrZero(textureUnit.texture2DBinding.get()));
+#if !USE(ANGLE)
     if (textureUnit.texture2DBinding && textureUnit.texture2DBinding->needToUseBlackTexture(textureExtensionFlags()))
         m_unrenderableTextureUnits.add(m_activeTextureUnit);
+#endif
     m_context->bindRenderbuffer(GraphicsContextGL::RENDERBUFFER, objectOrZero(m_renderbufferBinding.get()));
     if (m_framebufferBinding)
         m_context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, objectOrZero(m_framebufferBinding.get()));
@@ -1264,19 +1277,19 @@ void WebGLRenderingContextBase::bindFramebuffer(GCGLenum target, WebGLFramebuffe
     if (!checkObjectToBeBound("bindFramebuffer", buffer))
         return;
 
-    bool isWebGL2DrawFramebufferTarget = false;
-#if ENABLE(WEBGL2)
-    isWebGL2DrawFramebufferTarget = isWebGL2() && target == GraphicsContextGL::DRAW_FRAMEBUFFER;
-#endif
     bool success = false;
 
-    if (target == GraphicsContextGL::FRAMEBUFFER || isWebGL2DrawFramebufferTarget) {
-        m_framebufferBinding = buffer;
+    if (target == GraphicsContextGL::FRAMEBUFFER) {
+        m_readFramebufferBinding = m_framebufferBinding = buffer;
         success = true;
     }
 #if ENABLE(WEBGL2)
-    if (isWebGL2() && (target == GraphicsContextGL::FRAMEBUFFER || target == GraphicsContextGL::READ_FRAMEBUFFER)) {
+    if (isWebGL2() && target == GraphicsContextGL::READ_FRAMEBUFFER) {
         m_readFramebufferBinding = buffer;
+        success = true;
+    }
+    if (isWebGL2() && (target == GraphicsContextGL::DRAW_FRAMEBUFFER)) {
+        m_framebufferBinding = buffer;
         success = true;
     }
 #endif
@@ -1319,17 +1332,22 @@ void WebGLRenderingContextBase::bindTexture(GCGLenum target, WebGLTexture* textu
     if (target == GraphicsContextGL::TEXTURE_2D) {
         textureUnit.texture2DBinding = texture;
         maxLevel = m_maxTextureLevel;
+#if !USE(ANGLE)
         if (texture && texture->needToUseBlackTexture(textureExtensionFlags()))
             m_unrenderableTextureUnits.add(m_activeTextureUnit);
         else
             m_unrenderableTextureUnits.remove(m_activeTextureUnit);
+#endif
+        
     } else if (target == GraphicsContextGL::TEXTURE_CUBE_MAP) {
         textureUnit.textureCubeMapBinding = texture;
         maxLevel = m_maxCubeMapTextureLevel;
+#if !USE(ANGLE)
         if (texture && texture->needToUseBlackTexture(textureExtensionFlags()))
             m_unrenderableTextureUnits.add(m_activeTextureUnit);
         else
             m_unrenderableTextureUnits.remove(m_activeTextureUnit);
+#endif
     } else {
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "bindTexture", "invalid target");
         return;
@@ -1484,6 +1502,9 @@ GCGLenum WebGLRenderingContextBase::checkFramebufferStatus(GCGLenum target)
 #endif
     }
 
+#if USE(ANGLE)
+    return m_context->checkFramebufferStatus(target);
+#else
     auto targetFramebuffer = (target == GraphicsContextGL::READ_FRAMEBUFFER) ? m_readFramebufferBinding : m_framebufferBinding;
 
     if (!targetFramebuffer || !targetFramebuffer->object())
@@ -1497,6 +1518,7 @@ GCGLenum WebGLRenderingContextBase::checkFramebufferStatus(GCGLenum target)
     }
     result = m_context->checkFramebufferStatus(target);
     return result;
+#endif
 }
 
 void WebGLRenderingContextBase::clearColor(GCGLfloat r, GCGLfloat g, GCGLfloat b, GCGLfloat a)
@@ -1568,6 +1590,12 @@ void WebGLRenderingContextBase::compressedTexImage2D(GCGLenum target, GCGLint le
 {
     if (isContextLostOrPending())
         return;
+#if USE(ANGLE)
+    if (!validateTextureBinding("compressedTexImage2D", target, true))
+        return;
+    m_context->getExtensions().compressedTexImage2DRobustANGLE(target, level, internalformat, width, height,
+        border, data.byteLength(), data.byteLength(), data.baseAddress());
+#else
     if (!validateTexFuncLevel("compressedTexImage2D", target, level))
         return;
 
@@ -1600,12 +1628,18 @@ void WebGLRenderingContextBase::compressedTexImage2D(GCGLenum target, GCGLint le
 
     tex->setLevelInfo(target, level, internalformat, width, height, GraphicsContextGL::UNSIGNED_BYTE);
     tex->setCompressed();
+#endif
 }
 
 void WebGLRenderingContextBase::compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, ArrayBufferView& data)
 {
     if (isContextLostOrPending())
         return;
+#if USE(ANGLE)
+    if (!validateTextureBinding("compressedTexSubImage2D", target, true))
+        return;
+    graphicsContextGL()->getExtensions().compressedTexSubImage2DRobustANGLE(target, level, xoffset, yoffset, width, height, format, data.byteLength(), data.byteLength(), data.baseAddress());
+#else
     if (!validateTexFuncLevel("compressedTexSubImage2D", target, level))
         return;
     if (!validateCompressedTexFormat(format)) {
@@ -1629,6 +1663,7 @@ void WebGLRenderingContextBase::compressedTexSubImage2D(GCGLenum target, GCGLint
 
     graphicsContextGL()->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data.byteLength(), data.baseAddress());
     tex->setCompressed();
+#endif
 }
 
 bool WebGLRenderingContextBase::validateSettableTexInternalFormat(const char* functionName, GCGLenum internalFormat)
@@ -1653,6 +1688,12 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
 {
     if (isContextLostOrPending())
         return;
+#if USE(ANGLE)
+    if (!validateTextureBinding("copyTexSubImage2D", target, true))
+        return;
+    clearIfComposited();
+    m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+#else
     if (!validateTexFuncLevel("copyTexSubImage2D", target, level))
         return;
     auto tex = validateTextureBinding("copyTexSubImage2D", target, true);
@@ -1672,7 +1713,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
     GCGLenum internalFormat = tex->getInternalFormat(target, level);
     if (!validateSettableTexInternalFormat("copyTexSubImage2D", internalFormat))
         return;
-    if (!isTexInternalFormatColorBufferCombinationValid(internalFormat, getBoundFramebufferColorFormat())) {
+    if (!isTexInternalFormatColorBufferCombinationValid(internalFormat, getBoundReadFramebufferColorFormat())) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "copyTexSubImage2D", "framebuffer is incompatible format");
         return;
     }
@@ -1685,7 +1726,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
 
     GCGLint clippedX, clippedY;
     GCGLsizei clippedWidth, clippedHeight;
-    if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
+    if (clip2D(x, y, width, height, getBoundReadFramebufferWidth(), getBoundReadFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
         GCGLenum format;
         GCGLenum type;
         if (!GraphicsContextGLOpenGL::possibleFormatAndTypeForInternalFormat(tex->getInternalFormat(target, level), format, type)) {
@@ -1712,6 +1753,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
             m_context->copyTexSubImage2D(target, level, xoffset + clippedX - x, yoffset + clippedY - y, clippedX, clippedY, clippedWidth, clippedHeight);
     } else
         m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+#endif
 }
 
 RefPtr<WebGLBuffer> WebGLRenderingContextBase::createBuffer()
@@ -1880,11 +1922,15 @@ void WebGLRenderingContextBase::deleteTexture(WebGLTexture* texture)
     for (auto& textureUnit : m_textureUnits) {
         if (texture == textureUnit.texture2DBinding) {
             textureUnit.texture2DBinding = nullptr;
+#if !USE(ANGLE)
             m_unrenderableTextureUnits.remove(current);
+#endif
         }
         if (texture == textureUnit.textureCubeMapBinding) {
             textureUnit.textureCubeMapBinding = nullptr;
+#if !USE(ANGLE)
             m_unrenderableTextureUnits.remove(current);
+#endif
         }
         ++current;
     }
@@ -1962,6 +2008,7 @@ void WebGLRenderingContextBase::disableVertexAttribArray(GCGLuint index)
         m_context->disableVertexAttribArray(index);
 }
 
+#if !USE(ANGLE)
 bool WebGLRenderingContextBase::validateNPOTTextureLevel(GCGLsizei width, GCGLsizei height, GCGLint level, const char* functionName)
 {
     if (!isGLES2NPOTStrict() && level && WebGLTexture::isNPOT(width, height)) {
@@ -1971,6 +2018,7 @@ bool WebGLRenderingContextBase::validateNPOTTextureLevel(GCGLsizei width, GCGLsi
 
     return true;
 }
+#endif
 
 bool WebGLRenderingContextBase::validateElementArraySize(GCGLsizei count, GCGLenum type, GCGLintptr offset)
 {
@@ -2125,7 +2173,7 @@ bool WebGLRenderingContextBase::validateVertexAttributes(unsigned elementCount, 
         }
     }
 #endif
-    
+
     return true;
 }
 
@@ -2142,6 +2190,7 @@ bool WebGLRenderingContextBase::validateWebGLObject(const char* functionName, We
     return true;
 }
 
+#if !USE(ANGLE)
 bool WebGLRenderingContextBase::validateDrawArrays(const char* functionName, GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primitiveCount)
 {
     if (isContextLostOrPending() || !validateDrawMode(functionName, mode))
@@ -2267,11 +2316,17 @@ bool WebGLRenderingContextBase::validateDrawElements(const char* functionName, G
     
     return true;
 }
+#endif
 
 void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsizei count)
 {
+#if USE(ANGLE)
+    if (isContextLostOrPending())
+        return;
+#else
     if (!validateDrawArrays("drawArrays", mode, first, count, 0))
         return;
+#endif
 
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
@@ -2289,10 +2344,10 @@ void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsiz
         }
         vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
     }
-#endif
     bool usesFallbackTexture = false;
     if (!isGLES2NPOTStrict())
         usesFallbackTexture = checkTextureCompleteness("drawArrays", true);
+#endif
 
     {
         InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
@@ -2303,9 +2358,9 @@ void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsiz
 #if !USE(ANGLE)
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
-#endif
     if (usesFallbackTexture)
         checkTextureCompleteness("drawArrays", false);
+#endif
     markContextChangedAndNotifyCanvasObserver();
 }
 
@@ -2327,20 +2382,25 @@ static GCGLuint getRestartIndex(GCGLenum type)
 
 void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset)
 {
+#if USE(ANGLE)
+    if (isContextLostOrPending())
+        return;
+#else
     unsigned numElements = 0;
     if (!validateDrawElements("drawElements", mode, count, type, offset, numElements, 0))
         return;
+#endif
 
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
     clearIfComposited();
 
+#if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;
     if (!isGLES2Compliant()) {
         if (!numElements)
             validateIndexArrayPrecise(count, type, static_cast<GCGLintptr>(offset), numElements);
-#if !USE(ANGLE)
         auto simulateVertexAttrib0Status = simulateVertexAttrib0(numElements);
         if (!simulateVertexAttrib0Status) {
             // We were unable to simulate the attribute buffer.
@@ -2348,12 +2408,11 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
             return;
         }
         vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
-#endif
     }
-
     bool usesFallbackTexture = false;
     if (!isGLES2NPOTStrict())
         usesFallbackTexture = checkTextureCompleteness("drawElements", true);
+#endif
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
     if (isWebGL2())
@@ -2369,11 +2428,9 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
 #if !USE(ANGLE)
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
-#else
-    UNUSED_VARIABLE(vertexAttrib0Simulated);
-#endif
     if (usesFallbackTexture)
         checkTextureCompleteness("drawElements", false);
+#endif
     markContextChangedAndNotifyCanvasObserver();
 }
 
@@ -2505,6 +2562,11 @@ void WebGLRenderingContextBase::generateMipmap(GCGLenum target)
 {
     if (isContextLostOrPending())
         return;
+#if USE(ANGLE)
+    if (!validateTextureBinding("generateMipmap", target, false))
+        return;
+    m_context->generateMipmap(target);
+#else
     auto tex = validateTextureBinding("generateMipmap", target, false);
     if (!tex)
         return;
@@ -2535,6 +2597,7 @@ void WebGLRenderingContextBase::generateMipmap(GCGLenum target)
         m_context->texParameteri(target, GraphicsContextGL::TEXTURE_MIN_FILTER, tex->getMinFilter());
 #endif
     tex->generateMipmapLevelInfo();
+#endif
 }
 
 RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveAttrib(WebGLProgram* program, GCGLuint index)
@@ -3315,6 +3378,7 @@ enum class InternalFormatTheme {
     UnsignedInteger
 };
 
+#if !USE(ANGLE)
 static InternalFormatTheme internalFormatTheme(GCGLenum internalFormat)
 {
     switch (internalFormat) {
@@ -3476,6 +3540,8 @@ static int numberOfComponentsForInternalFormat(GCGLenum internalFormat)
     }
 }
 
+#endif // !USE(ANGLE)
+
 void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& pixels)
 {
     if (isContextLostOrPending())
@@ -3484,6 +3550,154 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     // taint the origin using the WebGL API.
     ASSERT(canvasBase().originClean());
 
+#if USE(ANGLE)
+    // ANGLE will validate the readback from the framebuffer according
+    // to WebGL's restrictions. At this level, just validate the type
+    // of the readback against the typed array's type.
+    JSC::TypedArrayType bufferType = pixels.getType();
+    if (isWebGL1()) {
+        switch (format) {
+        case GraphicsContextGL::ALPHA:
+        case GraphicsContextGL::RGB:
+        case GraphicsContextGL::RGBA:
+            break;
+        default:
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "invalid format");
+            return;
+        }
+
+        switch (type) {
+        case GraphicsContextGL::UNSIGNED_BYTE:
+            if (bufferType != JSC::TypeUint8 && bufferType != JSC::TypeUint8Clamped) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type UNSIGNED_BYTE but ArrayBufferView was neither Uint8Array or Uint8ClampedArray");
+                return;
+            }
+            break;
+        case GraphicsContextGL::UNSIGNED_SHORT_5_6_5:
+        case GraphicsContextGL::UNSIGNED_SHORT_4_4_4_4:
+        case GraphicsContextGL::UNSIGNED_SHORT_5_5_5_1:
+            if (bufferType != JSC::TypeUint16) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type UNSIGNED_BYTE but ArrayBufferView wasn't Uint16Array");
+                return;
+            }
+            break;
+        case GraphicsContextGL::FLOAT:
+            if (!m_oesTextureFloat && !m_oesTextureHalfFloat) {
+                synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "floating-point extensions not enabled");
+                return;
+            }
+            if (bufferType != JSC::TypeFloat32) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type FLOAT but ArrayBufferView wasn't Float32Array");
+                return;
+            }
+            break;
+        case GraphicsContextGL::HALF_FLOAT_OES:
+            if (!m_oesTextureHalfFloat) {
+                synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "half-float extension not enabled");
+                return;
+            }
+            if (bufferType != JSC::TypeUint16) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type HALF_FLOAT_OES but ArrayBufferView wasn't Uint16Array");
+                return;
+            }
+            break;
+        default:
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "invalid type");
+            return;
+        }
+    } else {
+        // WebGL 2.0
+        switch (format) {
+        case GraphicsContextGL::RED:
+        case GraphicsContextGL::RED_INTEGER:
+        case GraphicsContextGL::RG:
+        case GraphicsContextGL::RG_INTEGER:
+        case GraphicsContextGL::RGB:
+        case GraphicsContextGL::RGB_INTEGER:
+        case GraphicsContextGL::RGBA:
+        case GraphicsContextGL::RGBA_INTEGER:
+        case GraphicsContextGL::LUMINANCE_ALPHA:
+        case GraphicsContextGL::LUMINANCE:
+        case GraphicsContextGL::ALPHA:
+            break;
+        default:
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "invalid format");
+            return;
+        }
+
+        switch (type) {
+        case GraphicsContextGL::UNSIGNED_BYTE:
+            if (bufferType != JSC::TypeUint8 && bufferType != JSC::TypeUint8Clamped) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type UNSIGNED_BYTE but ArrayBufferView was neither Uint8Array or Uint8ClampedArray");
+                return;
+            }
+            break;
+        case GraphicsContextGL::BYTE:
+            if (bufferType != JSC::TypeInt8) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type BYTE but ArrayBufferView was not Int8Array");
+                return;
+            }
+            break;
+        case GraphicsContextGL::HALF_FLOAT:
+            if (bufferType != JSC::TypeUint16) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type HALF_FLOAT but ArrayBufferView wasn't Uint16Array");
+                return;
+            }
+            break;
+        case GraphicsContextGL::FLOAT:
+            if (bufferType != JSC::TypeFloat32) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type FLOAT but ArrayBufferView wasn't Float32Array");
+                return;
+            }
+            break;
+        case GraphicsContextGL::UNSIGNED_SHORT:
+        case GraphicsContextGL::UNSIGNED_SHORT_5_6_5:
+        case GraphicsContextGL::UNSIGNED_SHORT_4_4_4_4:
+        case GraphicsContextGL::UNSIGNED_SHORT_5_5_5_1:
+            if (bufferType != JSC::TypeUint16) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type UNSIGNED_SHORT but ArrayBufferView wasn't Uint16Array");
+                return;
+            }
+            break;
+        case GraphicsContextGL::SHORT:
+            if (bufferType != JSC::TypeInt16) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type SHORT but ArrayBufferView wasn't Int16Array");
+                return;
+            }
+            break;
+        case GraphicsContextGL::UNSIGNED_INT:
+        case GraphicsContextGL::UNSIGNED_INT_2_10_10_10_REV:
+        case GraphicsContextGL::UNSIGNED_INT_10F_11F_11F_REV:
+        case GraphicsContextGL::UNSIGNED_INT_5_9_9_9_REV:
+            if (bufferType != JSC::TypeUint32) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type UNSIGNED_INT but ArrayBufferView wasn't Uint32Array");
+                return;
+            }
+            break;
+        case GraphicsContextGL::INT:
+            if (bufferType != JSC::TypeInt32) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels",
+                    "type INT but ArrayBufferView wasn't Int32Array");
+                return;
+            }
+            break;
+        default:
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "invalid type");
+            return;
+        }
+    }
+#else
     GCGLenum internalFormat = 0;
     if (m_framebufferBinding) {
         const char* reason = "framebuffer incomplete";
@@ -3492,7 +3706,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
             return;
         }
         // FIXME: readBuffer() should affect this
-        internalFormat = m_framebufferBinding->getColorBufferFormat();
+        internalFormat = m_readFramebufferBinding->getColorBufferFormat();
     } else {
         if (m_attributes.alpha)
             internalFormat = GraphicsContextGL::RGBA8;
@@ -3637,14 +3851,21 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
             return;
         }
     }
+#endif // USE(ANGLE)
 
     clearIfComposited();
     void* data = pixels.baseAddress();
 
+#if USE(ANGLE)
+        GLsizei length, columns, rows;
+        m_context->makeContextCurrent();
+        m_context->getExtensions().readnPixelsRobustANGLE(x, y, width, height, format, type, pixels.byteLength(), &length, &columns, &rows, data);
+#else
     if (m_isRobustnessEXTSupported)
         m_context->getExtensions().readnPixelsEXT(x, y, width, height, format, type, pixels.byteLength(), data);
     else
         m_context->readPixels(x, y, width, height, format, type, data);
+#endif
 }
 
 void WebGLRenderingContextBase::releaseShaderCompiler()
@@ -3771,6 +3992,7 @@ void WebGLRenderingContextBase::stencilOpSeparate(GCGLenum face, GCGLenum fail, 
     m_context->stencilOpSeparate(face, fail, zfail, zpass);
 }
 
+#if !USE(ANGLE)
 static bool isRGBFormat(GCGLenum internalFormat)
 {
     return internalFormat == GraphicsContextGL::RGB
@@ -3778,6 +4000,7 @@ static bool isRGBFormat(GCGLenum internalFormat)
         || internalFormat == GraphicsContextGL::RGB8
         || internalFormat == GraphicsContextGL::RGBA8;
 }
+#endif // !USE(ANGLE)
 
 ExceptionOr<void> WebGLRenderingContextBase::texImageSource2D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, TexImageSource&& source)
 {
@@ -3795,6 +4018,8 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource2D(GCGLenum target, G
         if (!buffer)
             return { };
 
+#if !USE(ANGLE)
+        // FIXME: Enable this path with ANGLE. Only used with Cairo, not on macOS or iOS.
         auto texture = validateTextureBinding("texImage2D", target, true);
         // If possible, copy from the bitmap directly to the texture
         // via the GPU, without a read-back to system memory.
@@ -3812,6 +4037,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource2D(GCGLenum target, G
                 }
             }
         }
+#endif // !USE(ANGLE)
 
         // Fallback pure SW path.
         RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore);
@@ -3841,7 +4067,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource2D(GCGLenum target, G
         }
         if (m_unpackAlignment != 1)
             m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, 1);
-        texImage2DBase(target, level, internalformat, width, height, border, format, type, needConversion ? data.data() : pixels->data()->data());
+        texImage2DBase(target, level, internalformat, width, height, border, format, type, needConversion ? data.size() : pixels->data()->byteLength(), needConversion ? data.data() : pixels->data()->data());
         if (m_unpackAlignment != 1)
             m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, m_unpackAlignment);
         return { };
@@ -3890,6 +4116,8 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource2D(GCGLenum target, G
         if (!validateTexFunc("texImage2D", TexImage, SourceHTMLCanvasElement, target, level, internalformat, width, height, border, format, type, 0, 0))
             return { };
 
+#if !USE(ANGLE)
+        // FIXME: Enable this path with ANGLE. Only used with Cairo, not on macOS or iOS.
         auto texture = validateTextureBinding("texImage2D", target, true);
         // If possible, copy from the canvas element directly to the texture
         // via the GPU, without a read-back to system memory.
@@ -3908,7 +4136,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource2D(GCGLenum target, G
                 }
             }
         }
-
+#endif // !USE(ANGLE)
         RefPtr<ImageData> imageData = canvas->getImageData();
         if (imageData)
             texImageSource2D(target, level, internalformat, width, height, border, format, type, TexImageSource(imageData.get()));
@@ -3944,14 +4172,14 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource2D(GCGLenum target, G
             && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA)
             && type == GraphicsContextGL::UNSIGNED_BYTE
             && !level) {
-            auto textureInternalFormat = texture->getInternalFormat(target, level);
-            if (isRGBFormat(textureInternalFormat) || !texture->isValid(target, level)) {
-                if (video->copyVideoTextureToPlatformTexture(m_context.get(), texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
-                    texture->setLevelInfo(target, level, internalformat, width, height, type);
-                    return { };
-                }
+            if (video->copyVideoTextureToPlatformTexture(m_context.get(), texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
+#if !USE(ANGLE)
+                texture->setLevelInfo(target, level, internalformat, width, height, type);
+#endif // !USE(ANGLE)
+                return { };
             }
         }
+#endif // ENABLE(VIDEO)
 
         // Fallback pure SW path.
         RefPtr<Image> image = videoFrameToImage(video.get(), DontCopyBackingStore);
@@ -3960,14 +4188,16 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource2D(GCGLenum target, G
         texImage2DImpl(target, level, internalformat, width, height, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha);
         return { };
     }
-#endif
     );
 
     return WTF::visit(visitor, source);
 }
 
-void WebGLRenderingContextBase::texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
+void WebGLRenderingContextBase::texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLsizei byteLength, const void* pixels)
 {
+#if USE(ANGLE)
+    m_context->getExtensions().texImage2DRobustANGLE(target, level, internalFormat, width, height, border, format, type, byteLength, pixels);
+#else
     // FIXME: For now we ignore any errors returned.
     auto tex = validateTextureBinding("texImage2D", target, true);
     ASSERT(validateTexFuncParameters("texImage2D", TexImage, target, level, internalFormat, width, height, border, format, type));
@@ -3988,6 +4218,7 @@ void WebGLRenderingContextBase::texImage2DBase(GCGLenum target, GCGLint level, G
         }
     }
     tex->setLevelInfo(target, level, internalFormat, width, height, type);
+#endif // USE(ANGLE)
 }
 
 void WebGLRenderingContextBase::texImage2DImpl(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, Image* image, GraphicsContextGL::DOMSource domSource, bool flipY, bool premultiplyAlpha)
@@ -4003,18 +4234,21 @@ void WebGLRenderingContextBase::texImage2DImpl(GCGLenum target, GCGLint level, G
     const void* imagePixelData = imageExtractor.imagePixelData();
 
     bool needConversion = true;
-    if (type == GraphicsContextGL::UNSIGNED_BYTE && sourceDataFormat == GraphicsContextGL::DataFormat::RGBA8 && format == GraphicsContextGL::RGBA && alphaOp == GraphicsContextGL::AlphaOp::DoNothing && !flipY)
+    GCGLsizei byteLength = 0;
+    if (type == GraphicsContextGL::UNSIGNED_BYTE && sourceDataFormat == GraphicsContextGL::DataFormat::RGBA8 && format == GraphicsContextGL::RGBA && alphaOp == GraphicsContextGL::AlphaOp::DoNothing && !flipY) {
         needConversion = false;
-    else {
+        byteLength = imageExtractor.imageWidth() * imageExtractor.imageHeight() * 4;
+    } else {
         if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), imageExtractor.imageSourceUnpackAlignment(), data)) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "packImage error");
             return;
         }
+        byteLength = data.size();
     }
 
     if (m_unpackAlignment != 1)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, 1);
-    texImage2DBase(target, level, internalformat, width, height, 0, format, type, needConversion ? data.data() : imagePixelData);
+    texImage2DBase(target, level, internalformat, width, height, 0, format, type, byteLength, needConversion ? data.data() : imagePixelData);
     if (m_unpackAlignment != 1)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
@@ -4029,12 +4263,14 @@ bool WebGLRenderingContextBase::validateTexFunc(const char* functionName, TexFun
         return false;
 
     if (functionType != TexSubImage) {
+#if !USE(ANGLE)
         if (functionType == TexImage && texture->immutable()) {
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "texStorage() called on this texture previously");
             return false;
         }
         if (!validateNPOTTextureLevel(width, height, level, functionName))
             return false;
+#endif
         // For SourceArrayBufferView, function validateTexFuncData() would handle whether to validate the SettableTexFormat
         // by checking if the ArrayBufferView is null or not.
         if (sourceType != SourceArrayBufferView) {
@@ -4046,6 +4282,7 @@ bool WebGLRenderingContextBase::validateTexFunc(const char* functionName, TexFun
             return false;
         if (!validateSize(functionName, xoffset, yoffset))
             return false;
+#if !USE(ANGLE)
         // Before checking if it is in the range, check if overflow happens first.
         if (xoffset + width < 0 || yoffset + height < 0) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "bad dimensions");
@@ -4059,6 +4296,7 @@ bool WebGLRenderingContextBase::validateTexFunc(const char* functionName, TexFun
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "type and format do not match texture");
             return false;
         }
+#endif // !USE(ANGLE)
     }
 
     return true;
@@ -4070,6 +4308,7 @@ void WebGLRenderingContextBase::texImage2D(GCGLenum target, GCGLint level, GCGLe
         || !validateTexFunc("texImage2D", TexImage, SourceArrayBufferView, target, level, internalFormat, width, height, border, format, type, 0, 0))
         return;
     void* data = pixels ? pixels->baseAddress() : 0;
+    GCGLsizei byteLength = pixels ? pixels->byteLength() : 0;
     Vector<uint8_t> tempData;
     bool changeUnpackAlignment = false;
     if (data && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
@@ -4080,11 +4319,12 @@ void WebGLRenderingContextBase::texImage2D(GCGLenum target, GCGLint level, GCGLe
                                            tempData))
             return;
         data = tempData.data();
+        byteLength = tempData.size();
         changeUnpackAlignment = true;
     }
     if (changeUnpackAlignment)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, 1);
-    texImage2DBase(target, level, internalFormat, width, height, border, format, type, data);
+    texImage2DBase(target, level, internalFormat, width, height, border, format, type, byteLength, data);
     if (changeUnpackAlignment)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
@@ -4102,19 +4342,22 @@ void WebGLRenderingContextBase::texSubImage2DImpl(GCGLenum target, GCGLint level
     const void* imagePixelData = imageExtractor.imagePixelData();
     
     bool needConversion = true;
-    if (type == GraphicsContextGL::UNSIGNED_BYTE && sourceDataFormat == GraphicsContextGL::DataFormat::RGBA8 && format == GraphicsContextGL::RGBA && alphaOp == GraphicsContextGL::AlphaOp::DoNothing && !flipY)
+    GCGLsizei byteLength = 0;
+    if (type == GraphicsContextGL::UNSIGNED_BYTE && sourceDataFormat == GraphicsContextGL::DataFormat::RGBA8 && format == GraphicsContextGL::RGBA && alphaOp == GraphicsContextGL::AlphaOp::DoNothing && !flipY) {
         needConversion = false;
-    else {
+        byteLength = image->width() * image->height() * 4;
+    } else {
         if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), imageExtractor.imageSourceUnpackAlignment(), data)) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "bad image data");
             return;
         }
+        byteLength = data.size();
     }
     
     if (m_unpackAlignment != 1)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, 1);
 
-    texSubImage2DBase(target, level, xoffset, yoffset, image->width(), image->height(), format, format, type, needConversion ? data.data() : imagePixelData);
+    texSubImage2DBase(target, level, xoffset, yoffset, image->width(), image->height(), format, format, type, byteLength, needConversion ? data.data() : imagePixelData);
 
     if (m_unpackAlignment != 1)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, m_unpackAlignment);
@@ -4129,11 +4372,16 @@ void WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGLint level, GC
     if (!texture)
         return;
 
+#if USE(ANGLE)
+    // Using the format is sufficient to reject attempts to set the contents of depth textures.
+    GCGLenum internalFormat = format;
+#else
     GCGLenum internalFormat = texture->getInternalFormat(target, level);
     if (!internalFormat) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texSubImage2D", "invalid texture target or level");
         return;
     }
+#endif // USE(ANGLE)
 
     if (!validateTexFuncData("texSubImage2D", level, width, height, internalFormat, format, type, pixels.get(), NullNotAllowed))
         return;
@@ -4153,8 +4401,11 @@ void WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGLint level, GC
     if (changeUnpackAlignment)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, 1);
 
-    texSubImage2DBase(target, level, xoffset, yoffset, width, height, internalFormat, format, type, data);
-
+#if USE(ANGLE)
+    m_context->getExtensions().texSubImage2DRobustANGLE(target, level, xoffset, yoffset, width, height, format, type, pixels->byteLength(), data);
+#else
+    texSubImage2DBase(target, level, xoffset, yoffset, width, height, internalFormat, format, type, pixels->byteLength(), data);
+#endif // USE(ANGLE)
     if (changeUnpackAlignment)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
@@ -4174,11 +4425,16 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
         if (!texture)
             return { };
 
+#if USE(ANGLE)
+        // Using the format is sufficient to reject attempts to set the contents of depth textures.
+        GCGLenum internalFormat = format;
+#else
         GCGLenum internalFormat = texture->getInternalFormat(target, level);
         if (!internalFormat) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texSubImage2D", "invalid texture target or level");
             return { };
         }
+#endif // USE(ANGLE)
 
         if (!validateTexFunc("texSubImage2D", TexSubImage, SourceImageBitmap, target, level, internalFormat, bitmap->width(), bitmap->height(), 0, format, type, xoffset, yoffset))
             return { };
@@ -4195,32 +4451,39 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
         auto texture = validateTextureBinding("texSubImage2D", target, true);
         if (!texture)
             return { };
-
+#if USE(ANGLE)
+        // Using the format is sufficient to reject attempts to set the contents of depth textures.
+        GCGLenum internalFormat = format;
+#else
         GCGLenum internalFormat = texture->getInternalFormat(target, level);
         if (!internalFormat) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texSubImage2D", "invalid texture target or level");
             return { };
         }
+#endif // USE(ANGLE)
 
         if (!validateTexFunc("texSubImage2D", TexSubImage, SourceImageData, target, level, internalFormat, pixels->width(), pixels->height(), 0, format, type, xoffset, yoffset))
             return { };
 
         Vector<uint8_t> data;
         bool needConversion = true;
+        GCGLsizei byteLength;
         // The data from ImageData is always of format RGBA8.
         // No conversion is needed if destination format is RGBA and type is UNSIGNED_BYTE and no Flip or Premultiply operation is required.
-        if (format == GraphicsContextGL::RGBA && type == GraphicsContextGL::UNSIGNED_BYTE && !m_unpackFlipY && !m_unpackPremultiplyAlpha)
+        if (format == GraphicsContextGL::RGBA && type == GraphicsContextGL::UNSIGNED_BYTE && !m_unpackFlipY && !m_unpackPremultiplyAlpha) {
             needConversion = false;
-        else {
+            byteLength = pixels->width() * pixels->height() * 4;
+        } else {
             if (!m_context->extractImageData(pixels.get(), format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
                 synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texSubImage2D", "bad image data");
                 return { };
             }
+            byteLength = data.size();
         }
         if (m_unpackAlignment != 1)
             m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, 1);
 
-        texSubImage2DBase(target, level, xoffset, yoffset, pixels->width(), pixels->height(), format, format, type, needConversion ? data.data() : pixels->data()->data());
+        texSubImage2DBase(target, level, xoffset, yoffset, pixels->width(), pixels->height(), format, format, type, byteLength, needConversion ? data.data() : pixels->data()->data());
 
         if (m_unpackAlignment != 1)
             m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, m_unpackAlignment);
@@ -4246,11 +4509,16 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
         if (!texture)
             return { };
 
+#if USE(ANGLE)
+        // Using the format is sufficient to reject attempts to set the contents of depth textures.
+        GCGLenum internalFormat = format;
+#else
         GCGLenum internalFormat = texture->getInternalFormat(target, level);
         if (!internalFormat) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texSubImage2D", "invalid texture target or level");
             return { };
         }
+#endif // USE(ANGLE)
 
         if (!imageForRender || !validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLImageElement, target, level, internalFormat, imageForRender->width(), imageForRender->height(), 0, format, type, xoffset, yoffset))
             return { };
@@ -4270,11 +4538,16 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
         if (!texture)
             return { };
 
+#if USE(ANGLE)
+        // Using the format is sufficient to reject attempts to set the contents of depth textures.
+        GCGLenum internalFormat = format;
+#else
         GCGLenum internalFormat = texture->getInternalFormat(target, level);
         if (!internalFormat) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texSubImage2D", "invalid texture target or level");
             return { };
         }
+#endif // USE(ANGLE)
 
         if (!validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLCanvasElement, target, level, internalFormat, canvas->width(), canvas->height(), 0, format, type, xoffset, yoffset))
             return { };
@@ -4295,16 +4568,20 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
             return validationResult.releaseException();
         if (!validationResult.returnValue())
             return { };
-
         auto texture = validateTextureBinding("texSubImage2D", target, true);
         if (!texture)
             return { };
 
+#if USE(ANGLE)
+        // Using the format is sufficient to reject attempts to set the contents of depth textures.
+        GCGLenum internalFormat = format;
+#else
         GCGLenum internalFormat = texture->getInternalFormat(target, level);
         if (!internalFormat) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texSubImage2D", "invalid texture target or level");
             return { };
         }
+#endif // USE(ANGLE)
 
         if (!validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLVideoElement, target, level, internalFormat, video->videoWidth(), video->videoHeight(), 0, format, type, xoffset, yoffset))
             return { };
@@ -4315,7 +4592,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
         texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha);
         return { };
     }
-#endif
+#endif // ENABLE(VIDEO)
     );
 
     return WTF::visit(visitor, source.value());
@@ -4548,7 +4825,10 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
             return false;
         }
     }
-    
+
+#if USE(ANGLE)
+    UNUSED_PARAM(internalFormat);
+#else
     // Verify that the combination of internalformat, format, and type is supported.
 #define INTERNAL_FORMAT_CASE(internalFormatMacro, formatMacro, type0, type1, type2, type3, type4) case GraphicsContextGLOpenGL::internalFormatMacro: \
     if (format != GraphicsContextGLOpenGL::formatMacro) { \
@@ -4649,13 +4929,19 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
         return false;
     }
 #undef INTERNAL_FORMAT_CASE
-    
+
+#endif // USE(ANGLE)
     return true;
 }
 
-void WebGLRenderingContextBase::texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalFormat, GCGLenum format, GCGLenum type, const void* pixels)
+void WebGLRenderingContextBase::texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalFormat, GCGLenum format, GCGLenum type, GCGLsizei byteLength, const void* pixels)
 {
     ASSERT(!isContextLost());
+#if USE(ANGLE)
+    UNUSED_PARAM(internalFormat);
+    m_context->getExtensions().texSubImage2DRobustANGLE(target, level, xoffset, yoffset, width, height, format, type, byteLength, pixels);
+#else
+    UNUSED_PARAM(byteLength);
     ASSERT(validateTexFuncParameters("texSubImage2D", TexSubImage, target, level, internalFormat, width, height, 0, format, type));
     ASSERT(validateSize("texSubImage2D", xoffset, yoffset));
     ASSERT(validateSettableTexInternalFormat("texSubImage2D", internalFormat));
@@ -4670,8 +4956,8 @@ void WebGLRenderingContextBase::texSubImage2DBase(GCGLenum target, GCGLint level
     ASSERT(tex->getHeight(target, level) >= (yoffset + height));
     if (!isWebGL2())
         ASSERT_UNUSED(internalFormat, tex->getInternalFormat(target, level) == internalFormat);
-
     m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+#endif
 }
 
 void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border)
@@ -4685,7 +4971,11 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
     auto tex = validateTextureBinding("copyTexImage2D", target, true);
     if (!tex)
         return;
-    if (!isTexInternalFormatColorBufferCombinationValid(internalFormat, getBoundFramebufferColorFormat())) {
+#if USE(ANGLE)
+    clearIfComposited();
+    m_context->copyTexImage2D(target, level, internalFormat, x, y, width, height, border);
+#else
+    if (!isTexInternalFormatColorBufferCombinationValid(internalFormat, getBoundReadFramebufferColorFormat())) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "copyTexImage2D", "framebuffer is incompatible format");
         return;
     }
@@ -4694,7 +4984,7 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
         return;
     }
     const char* reason = "framebuffer incomplete";
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContextGL(), &reason)) {
+    if (m_readFramebufferBinding && !m_readFramebufferBinding->onAccess(graphicsContextGL(), &reason)) {
         synthesizeGLError(GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION, "copyTexImage2D", reason);
         return;
     }
@@ -4702,7 +4992,7 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
 
     GCGLint clippedX, clippedY;
     GCGLsizei clippedWidth, clippedHeight;
-    if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
+    if (clip2D(x, y, width, height, getBoundReadFramebufferWidth(), getBoundReadFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
         m_context->texImage2DResourceSafe(target, level, internalFormat, width, height, border,
             internalFormat, GraphicsContextGL::UNSIGNED_BYTE, m_unpackAlignment);
         if (clippedWidth > 0 && clippedHeight > 0) {
@@ -4714,6 +5004,7 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
 
     // FIXME: if the framebuffer is not complete, none of the below should be executed.
     tex->setLevelInfo(target, level, internalFormat, width, height, GraphicsContextGL::UNSIGNED_BYTE);
+#endif
 }
 
 ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLenum format, GCGLenum type, Optional<TexImageSource> source)
@@ -4790,10 +5081,14 @@ void WebGLRenderingContextBase::texParameter(GCGLenum target, GCGLenum pname, GC
         return;
     }
     if (isFloat) {
+#if !USE(ANGLE)
         tex->setParameterf(pname, paramf);
+#endif
         m_context->texParameterf(target, pname, paramf);
     } else {
+#if !USE(ANGLE)
         tex->setParameteri(pname, parami);
+#endif
         m_context->texParameteri(target, pname, parami);
     }
 }
@@ -5374,6 +5669,7 @@ RefPtr<Int32Array> WebGLRenderingContextBase::getWebGLIntArrayParameter(GCGLenum
     return Int32Array::tryCreate(value, length);
 }
 
+#if !USE(ANGLE)
 bool WebGLRenderingContextBase::checkTextureCompleteness(const char* functionName, bool prepareToDraw)
 {
     bool resetActiveUnit = false;
@@ -5459,28 +5755,29 @@ bool WebGLRenderingContextBase::isTexInternalFormatColorBufferCombinationValid(G
     return (need & have) == need;
 }
 
-GCGLenum WebGLRenderingContextBase::getBoundFramebufferColorFormat()
+GCGLenum WebGLRenderingContextBase::getBoundReadFramebufferColorFormat()
 {
-    if (m_framebufferBinding && m_framebufferBinding->object())
-        return m_framebufferBinding->getColorBufferFormat();
+    if (m_readFramebufferBinding && m_readFramebufferBinding->object())
+        return m_readFramebufferBinding->getColorBufferFormat();
     if (m_attributes.alpha)
         return GraphicsContextGL::RGBA;
     return GraphicsContextGL::RGB;
 }
 
-int WebGLRenderingContextBase::getBoundFramebufferWidth()
+int WebGLRenderingContextBase::getBoundReadFramebufferWidth()
 {
-    if (m_framebufferBinding && m_framebufferBinding->object())
-        return m_framebufferBinding->getColorBufferWidth();
+    if (m_readFramebufferBinding && m_readFramebufferBinding->object())
+        return m_readFramebufferBinding->getColorBufferWidth();
     return m_context->getInternalFramebufferSize().width();
 }
 
-int WebGLRenderingContextBase::getBoundFramebufferHeight()
+int WebGLRenderingContextBase::getBoundReadFramebufferHeight()
 {
-    if (m_framebufferBinding && m_framebufferBinding->object())
-        return m_framebufferBinding->getColorBufferHeight();
+    if (m_readFramebufferBinding && m_readFramebufferBinding->object())
+        return m_readFramebufferBinding->getColorBufferHeight();
     return m_context->getInternalFramebufferSize().height();
 }
+#endif // USE(ANGLE)
 
 RefPtr<WebGLTexture> WebGLRenderingContextBase::validateTextureBinding(const char* functionName, GCGLenum target, bool useSixEnumsForCubeMap)
 {
@@ -5513,8 +5810,10 @@ RefPtr<WebGLTexture> WebGLRenderingContextBase::validateTextureBinding(const cha
         return nullptr;
     }
 
+#if !USE(ANGLE)
     if (texture && texture->needToUseBlackTexture(textureExtensionFlags()))
         m_unrenderableTextureUnits.add(m_activeTextureUnit);
+#endif // !USE(ANGLE)
 
     if (!texture)
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "no texture");
@@ -5553,6 +5852,13 @@ bool WebGLRenderingContextBase::validateString(const char* functionName, const S
 
 bool WebGLRenderingContextBase::validateTexFuncLevel(const char* functionName, GCGLenum target, GCGLint level)
 {
+#if USE(ANGLE)
+    UNUSED_PARAM(functionName);
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(level);
+    // ANGLE subsumes this validation.
+    return true;
+#else
     if (level < 0) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "level < 0");
         return false;
@@ -5579,8 +5885,10 @@ bool WebGLRenderingContextBase::validateTexFuncLevel(const char* functionName, G
     // This function only checks if level is legal, so we return true and don't
     // generate INVALID_ENUM if target is illegal.
     return true;
+#endif // USE(ANGLE)
 }
 
+#if !USE(ANGLE)
 bool WebGLRenderingContextBase::validateCompressedTexFormat(GCGLenum format)
 {
     return m_compressedTextureFormats.contains(format);
@@ -5895,6 +6203,7 @@ bool WebGLRenderingContextBase::validateCompressedTexSubDimensions(const char* f
         return false;
     }
 }
+#endif // !USE(ANGLE)
 
 bool WebGLRenderingContextBase::validateDrawMode(const char* functionName, GCGLenum mode)
 {
@@ -6550,14 +6859,20 @@ void WebGLRenderingContextBase::setBackDrawBuffer(GCGLenum buf)
 void WebGLRenderingContextBase::restoreCurrentFramebuffer()
 {
     bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebufferBinding.get());
+#if ENABLE(WEBGL2)
+    if (isWebGL2())
+        bindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER, m_readFramebufferBinding.get());
+#endif
 }
 
 void WebGLRenderingContextBase::restoreCurrentTexture2D()
 {
     auto texture = m_textureUnits[m_activeTextureUnit].texture2DBinding.get();
     bindTexture(GraphicsContextGL::TEXTURE_2D, texture);
+#if !USE(ANGLE)
     if (texture && texture->needToUseBlackTexture(textureExtensionFlags()))
         m_unrenderableTextureUnits.add(m_activeTextureUnit);
+#endif // !USE(ANGLE)
 }
 
 bool WebGLRenderingContextBase::supportsDrawBuffers()
@@ -6571,13 +6886,20 @@ bool WebGLRenderingContextBase::supportsDrawBuffers()
 
 void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
+#if USE(ANGLE)
+    if (isContextLostOrPending())
+        return;
+#endif // USE(ANGLE)
+
     if (!primcount) {
         markContextChanged();
         return;
     }
 
+#if !USE(ANGLE)
     if (!validateDrawArrays("drawArraysInstanced", mode, first, count, primcount))
         return;
+#endif // !USE(ANGLE)
 
     clearIfComposited();
 
@@ -6592,39 +6914,46 @@ void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first
         }
         vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
     }
-#endif
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawArraysInstanced", true);
+#endif
 
     m_context->drawArraysInstanced(mode, first, count, primcount);
 
 #if !USE(ANGLE)
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
-#endif
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawArraysInstanced", false);
+#endif
     markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount)
 {
+#if USE(ANGLE)
+    if (isContextLostOrPending())
+        return;
+#endif
+
     if (!primcount) {
         markContextChanged();
         return;
     }
 
+#if !USE(ANGLE)
     unsigned numElements = 0;
     if (!validateDrawElements("drawElementsInstanced", mode, count, type, offset, numElements, primcount))
         return;
+#endif // !USE(ANGLE)
 
     clearIfComposited();
 
+#if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;
     if (!isGLES2Compliant()) {
         if (!numElements)
             validateIndexArrayPrecise(count, type, static_cast<GCGLintptr>(offset), numElements);
-#if !USE(ANGLE)
         auto simulateVertexAttrib0Status = simulateVertexAttrib0(numElements);
         if (!simulateVertexAttrib0Status) {
             // We were unable to simulate the attribute buffer.
@@ -6632,10 +6961,10 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
             return;
         }
         vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
-#endif
     }
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawElementsInstanced", true);
+#endif
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
     if (isWebGL2())
@@ -6647,11 +6976,9 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
 #if !USE(ANGLE)
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
-#else
-    UNUSED_VARIABLE(vertexAttrib0Simulated);
-#endif
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawElementsInstanced", false);
+#endif
     markContextChangedAndNotifyCanvasObserver();
 }
 

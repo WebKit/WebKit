@@ -404,6 +404,7 @@ void WebGLRenderingContext::clear(GCGLbitfield mask)
 {
     if (isContextLostOrPending())
         return;
+#if !USE(ANGLE)
     if (mask & ~(GraphicsContextGL::COLOR_BUFFER_BIT | GraphicsContextGL::DEPTH_BUFFER_BIT | GraphicsContextGL::STENCIL_BUFFER_BIT)) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "clear", "invalid mask");
         return;
@@ -413,6 +414,7 @@ void WebGLRenderingContext::clear(GCGLbitfield mask)
         synthesizeGLError(GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION, "clear", reason);
         return;
     }
+#endif
     if (!clearIfComposited(mask))
         m_context->clear(mask);
     markContextChangedAndNotifyCanvasObserver();

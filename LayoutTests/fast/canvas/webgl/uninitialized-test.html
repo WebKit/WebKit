@@ -156,10 +156,7 @@ debug("Reading an uninitialized portion of a texture (copyTexSubImage2D) should 
 
 var tex = gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D, tex);
-var data = new Uint8Array(width * height * 4);
-for (var i = 0; i < width * height * 4; ++i)
-    data[i] = 255;
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 glErrorShouldBe(gl, gl.NO_ERROR);
 var fbo = gl.createFramebuffer();
 gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
@@ -184,10 +181,7 @@ debug("Reading an uninitialized portion of a texture (copyTexSubImage2D with neg
 
 var tex = gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D, tex);
-var data = new Uint8Array(width * height * 4);
-for (var i = 0; i < width * height * 4; ++i)
-    data[i] = 255;
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 glErrorShouldBe(gl, gl.NO_ERROR);
 var fbo = gl.createFramebuffer();
 gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
@@ -214,10 +208,7 @@ debug("Reading an uninitialized portion of a texture (copyTexSubImage2D from Web
 
 var tex = gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D, tex);
-var data = new Uint8Array(width * height * 4);
-for (var i = 0; i < width * height * 4; ++i)
-    data[i] = 255;
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 glErrorShouldBe(gl, gl.NO_ERROR);
 gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 gl.clearColor(0.0, 1.0, 0.0, 0.0);

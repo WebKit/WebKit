@@ -327,9 +327,11 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
     m_context->moveErrorsToSyntheticErrorList();
 }
 
-void WebGL2RenderingContext::blitFramebuffer(GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLbitfield, GCGLenum)
+void WebGL2RenderingContext::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] blitFramebuffer()");
+    if (isContextLostOrPending())
+        return;
+    m_context->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
 void WebGL2RenderingContext::framebufferTextureLayer(GCGLenum, GCGLenum, WebGLTexture*, GCGLint, GCGLint)
@@ -337,7 +339,7 @@ void WebGL2RenderingContext::framebufferTextureLayer(GCGLenum, GCGLenum, WebGLTe
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] framebufferTextureLayer()");
 }
 
-#if !USE(OPENGL_ES)
+#if !USE(OPENGL_ES) && !USE(ANGLE)
 static bool isRenderableInternalformat(GCGLenum internalformat)
 {
     // OpenGL ES 3: internalformat must be a color-renderable, depth-renderable, or stencil-renderable format, as shown in Table 1 below.
@@ -392,11 +394,20 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
     }
 
     int numValues = 0;
-#if USE(OPENGL_ES)
+#if USE(OPENGL_ES) || USE(ANGLE)
+    m_context->moveErrorsToSyntheticErrorList();
     m_context->getInternalformativ(target, internalformat, GraphicsContextGL::NUM_SAMPLE_COUNTS, 1, &numValues);
+    if (m_context->moveErrorsToSyntheticErrorList()) {
+        // The getInternalformativ call failed; return null from the NUM_SAMPLE_COUNTS query.
+        return nullptr;
+    }
 
     Vector<GCGLint> params(numValues);
     m_context->getInternalformativ(target, internalformat, pname, numValues, params.data());
+    if (m_context->moveErrorsToSyntheticErrorList()) {
+        // The getInternalformativ call failed; return null from the NUM_SAMPLE_COUNTS query.
+        return nullptr;
+    }
 #else
     // On desktop OpenGL 4.1 or below we must emulate glGetInternalformativ.
 
@@ -443,13 +454,17 @@ void WebGL2RenderingContext::invalidateSubFramebuffer(GCGLenum, const Vector<GCG
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] invalidateSubFramebuffer()");
 }
 
-void WebGL2RenderingContext::readBuffer(GCGLenum)
+void WebGL2RenderingContext::readBuffer(GCGLenum src)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] readBuffer()");
+    m_context->readBuffer(src);
 }
 
 void WebGL2RenderingContext::renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
+#if USE(ANGLE)
+    m_context->renderbufferStorageMultisample(target, samples, internalformat, width, height);
+    return;
+#endif
     // To be backward compatible with WebGL 1, also accepts internal format DEPTH_STENCIL,
     // which should be mapped to DEPTH24_STENCIL8 by implementations.
     if (internalformat == GraphicsContextGL::DEPTH_STENCIL)
@@ -517,6 +532,7 @@ void WebGL2RenderingContext::renderbufferStorageMultisample(GCGLenum target, GCG
     applyStencilTest();
 }
 
+#if !USE(ANGLE)
 bool WebGL2RenderingContext::validateTexStorageFuncParameters(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, const char* functionName)
 {
     if (width < 0 || height < 0) {
@@ -607,6 +623,7 @@ bool WebGL2RenderingContext::validateTexStorageFuncParameters(GCGLenum target, G
 
     return true;
 }
+#endif
 
 void WebGL2RenderingContext::texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height)
 {
@@ -617,6 +634,7 @@ void WebGL2RenderingContext::texStorage2D(GCGLenum target, GCGLsizei levels, GCG
     if (!texture)
         return;
 
+#if !USE(ANGLE)
     if (!validateTexStorageFuncParameters(target, levels, internalFormat, width, height, "texStorage2D"))
         return;
 
@@ -628,9 +646,11 @@ void WebGL2RenderingContext::texStorage2D(GCGLenum target, GCGLsizei levels, GCG
         return;
     }
     texture->setImmutable();
+#endif // !USE(ANGLE)
 
     m_context->texStorage2D(target, levels, internalFormat, width, height);
 
+#if !USE(ANGLE)
     {
         GCGLenum format;
         GCGLenum type;
@@ -678,6 +698,7 @@ void WebGL2RenderingContext::texStorage2D(GCGLenum target, GCGLsizei levels, GCG
         } else
             texture->setLevelInfo(target, level, internalFormat, width, height, GraphicsContextGL::UNSIGNED_BYTE);
     }
+#endif // !USE(ANGLE)
 }
 
 void WebGL2RenderingContext::texStorage3D(GCGLenum, GCGLsizei, GCGLenum, GCGLsizei, GCGLsizei, GCGLsizei)
@@ -924,6 +945,7 @@ void WebGL2RenderingContext::clear(GCGLbitfield mask)
 {
     if (isContextLostOrPending())
         return;
+#if !USE(ANGLE)
     if (mask & ~(GraphicsContextGL::COLOR_BUFFER_BIT | GraphicsContextGL::DEPTH_BUFFER_BIT | GraphicsContextGL::STENCIL_BUFFER_BIT)) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "clear", "invalid mask");
         return;
@@ -933,10 +955,11 @@ void WebGL2RenderingContext::clear(GCGLbitfield mask)
         synthesizeGLError(GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION, "clear", reason);
         return;
     }
-    if (m_framebufferBinding && (mask & GraphicsContextGL::COLOR_BUFFER_BIT) && isIntegerFormat(m_framebufferBinding->getColorBufferFormat())) {
+    if (m_framebufferBinding && (mask & GraphicsContextGL::COLOR_BUFFER_BIT) && m_framebufferBinding->getColorBufferFormat() && isIntegerFormat(m_framebufferBinding->getColorBufferFormat())) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "clear", "cannot clear an integer buffer");
         return;
     }
+#endif
     if (!clearIfComposited(mask))
         m_context->clear(mask);
     markContextChangedAndNotifyCanvasObserver();
@@ -1808,6 +1831,10 @@ void WebGL2RenderingContext::renderbufferStorage(GCGLenum target, GCGLenum inter
 {
     if (isContextLostOrPending())
         return;
+#if USE(ANGLE)
+    m_context->renderbufferStorage(target, internalformat, width, height);
+    return;
+#endif
     if (target != GraphicsContextGL::RENDERBUFFER) {
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "renderbufferStorage", "invalid target");
         return;
@@ -1974,6 +2001,8 @@ GCGLenum WebGL2RenderingContext::baseInternalFormatFromInternalFormat(GCGLenum i
     case GraphicsContextGL::LUMINANCE_ALPHA:
     case GraphicsContextGL::ALPHA:
         return internalformat;
+    case GraphicsContextGL::STENCIL_INDEX8:
+        return GraphicsContextGL::STENCIL;
     default:
         ASSERT_NOT_REACHED();
         return GraphicsContextGL::NONE;

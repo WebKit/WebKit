@@ -177,17 +177,18 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 #endif
 
         // Create a multisample FBO.
+        ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
         if (attributes.antialias) {
             gl::GenFramebuffers(1, &m_multisampleFBO);
             gl::BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-            m_state.boundFBO = m_multisampleFBO;
+            m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
             gl::GenRenderbuffers(1, &m_multisampleColorBuffer);
             if (attributes.stencil || attributes.depth)
                 gl::GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         } else {
             // Bind canvas FBO.
             gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-            m_state.boundFBO = m_fbo;
+            m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
 #if USE(OPENGL_ES)
             if (attributes.depth)
                 gl::GenRenderbuffers(1, &m_depthBuffer);
@@ -250,17 +251,18 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 #endif
 
         // Create a multisample FBO.
+        ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
         if (attributes.antialias) {
             ::glGenFramebuffers(1, &m_multisampleFBO);
             ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-            m_state.boundFBO = m_multisampleFBO;
+            m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
             ::glGenRenderbuffers(1, &m_multisampleColorBuffer);
             if (attributes.stencil || attributes.depth)
                 ::glGenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         } else {
             // Bind canvas FBO.
             glBindFramebuffer(GraphicsContextGLOpenGL::FRAMEBUFFER, m_fbo);
-            m_state.boundFBO = m_fbo;
+            m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
 #if USE(OPENGL_ES)
             if (attributes.depth)
                 glGenRenderbuffers(1, &m_depthBuffer);

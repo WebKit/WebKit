@@ -20,51 +20,54 @@ Test: ../../resources/webgl_test_files/conformance2/renderbuffers/framebuffer-ob
 [ 17: PASS ] checkFramebufferStatus got FRAMEBUFFER_UNSUPPORTED as expected
 [ 18: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_COMPLETE], was FRAMEBUFFER_INCOMPLETE_ATTACHMENT
 [ 19: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_COMPLETE], was FRAMEBUFFER_INCOMPLETE_ATTACHMENT
-[ 20: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_COMPLETE], was FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 20: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
 [ 21: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_COMPLETE], was FRAMEBUFFER_INCOMPLETE_ATTACHMENT
-[ 22: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_COMPLETE], was FRAMEBUFFER_INCOMPLETE_ATTACHMENT
-[ 23: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_COMPLETE], was FRAMEBUFFER_INCOMPLETE_ATTACHMENT
-[ 24: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 25: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_ATTACHMENT as expected
-[ 26: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 27: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_ATTACHMENT as expected
-[ 28: PASS ] getError was expected value: NO_ERROR :
-[ 29: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT as expected
-[ 30: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 31: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT as expected
-[ 32: PASS ] getError was expected value: NO_ERROR :
-[ 33: PASS ] getError was expected value: NO_ERROR :
-[ 34: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 35: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_DIMENSIONS as expected
-[ 36: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_DIMENSIONS as expected
-[ 37: PASS ] getError was expected value: NO_ERROR :
-[ 38: PASS ] getError was expected value: NO_ERROR :
-[ 39: PASS ] getError was expected value: NO_ERROR :
-[ 40: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT as expected
+[ 22: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
+[ 23: PASS ] gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+[ 24: PASS ] gl.getParameter(gl.DEPTH_BITS) == 0 is true
+[ 25: PASS ] gl.getParameter(gl.STENCIL_BITS) == 0 is true
+[ 26: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_COMPLETE], was FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 27: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
+[ 28: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_ATTACHMENT as expected
+[ 29: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
+[ 30: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_ATTACHMENT as expected
+[ 31: PASS ] getError was expected value: NO_ERROR :
+[ 32: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT as expected
+[ 33: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
+[ 34: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT as expected
+[ 35: PASS ] getError was expected value: NO_ERROR :
+[ 36: PASS ] getError was expected value: NO_ERROR :
+[ 37: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
+[ 38: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_DIMENSIONS as expected
+[ 39: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_DIMENSIONS as expected
+[ 40: PASS ] getError was expected value: NO_ERROR :
 [ 41: PASS ] getError was expected value: NO_ERROR :
-[ 42: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : drawArrays with incomplete framebuffer
-[ 43: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : readPixels from incomplete framebuffer
-[ 44: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexImage2D from incomplete framebuffer
-[ 45: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexSubImage2D from incomplete framebuffer
-[ 46: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : clear with incomplete framebuffer
-[ 47: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_ATTACHMENT as expected
-[ 48: PASS ] getError was expected value: NO_ERROR :
-[ 49: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : drawArrays with incomplete framebuffer
-[ 50: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : readPixels from incomplete framebuffer
-[ 51: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexImage2D from incomplete framebuffer
-[ 52: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexSubImage2D from incomplete framebuffer
-[ 53: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : clear with incomplete framebuffer
-[ 54: PASS ] object type from empty attachment point is NONE
-[ 55: PASS ] getError was expected value: NO_ERROR : Query should not generate error
-[ 56: PASS ] object name from empty attachment point is null
-[ 57: PASS ] getError was expected value: NO_ERROR : Query should not generate error
-[ 58: PASS ] getError was expected value: NO_ERROR : After depth renderbuffer setup
-[ 59: PASS ] getError was expected value: NO_ERROR : Before ReadPixels from missing attachment
-[ 60: PASS ] getError was expected value: INVALID_OPERATION : After ReadPixels from missing attachment
-[ 61: PASS ] getError was expected value: NO_ERROR : Before CopyTexImage2D from missing attachment
-[ 62: PASS ] getError was expected value: INVALID_OPERATION : After CopyTexImage2D from missing attachment
-[ 63: PASS ] getError was expected value: NO_ERROR : Before CopyTexSubImage2D from missing attachment
-[ 64: PASS ] getError was expected value: INVALID_OPERATION : After CopyTexSubImage2D from missing attachment
-[ 65: PASS ] successfullyParsed is true
-[ FAIL ] 8 failures reported
+[ 42: PASS ] getError was expected value: NO_ERROR :
+[ 43: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT as expected
+[ 44: PASS ] getError was expected value: NO_ERROR :
+[ 45: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : drawArrays with incomplete framebuffer
+[ 46: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : readPixels from incomplete framebuffer
+[ 47: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexImage2D from incomplete framebuffer
+[ 48: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexSubImage2D from incomplete framebuffer
+[ 49: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : clear with incomplete framebuffer
+[ 50: PASS ] checkFramebufferStatus got FRAMEBUFFER_INCOMPLETE_ATTACHMENT as expected
+[ 51: PASS ] getError was expected value: NO_ERROR :
+[ 52: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : drawArrays with incomplete framebuffer
+[ 53: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : readPixels from incomplete framebuffer
+[ 54: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexImage2D from incomplete framebuffer
+[ 55: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexSubImage2D from incomplete framebuffer
+[ 56: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : clear with incomplete framebuffer
+[ 57: PASS ] object type from empty attachment point is NONE
+[ 58: PASS ] getError was expected value: NO_ERROR : Query should not generate error
+[ 59: PASS ] object name from empty attachment point is null
+[ 60: PASS ] getError was expected value: NO_ERROR : Query should not generate error
+[ 61: PASS ] getError was expected value: NO_ERROR : After depth renderbuffer setup
+[ 62: PASS ] getError was expected value: NO_ERROR : Before ReadPixels from missing attachment
+[ 63: PASS ] getError was expected value: INVALID_OPERATION : After ReadPixels from missing attachment
+[ 64: PASS ] getError was expected value: NO_ERROR : Before CopyTexImage2D from missing attachment
+[ 65: PASS ] getError was expected value: INVALID_OPERATION : After CopyTexImage2D from missing attachment
+[ 66: PASS ] getError was expected value: NO_ERROR : Before CopyTexSubImage2D from missing attachment
+[ 67: PASS ] getError was expected value: INVALID_OPERATION : After CopyTexSubImage2D from missing attachment
+[ 68: PASS ] successfullyParsed is true
+[ FAIL ] 6 failures reported
 

@@ -55,7 +55,8 @@ void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, 
     // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
     // all previous rendering calls should be done before reading pixels.
     ::glFlush();
-    if (attributes.antialias && m_state.boundFBO == m_multisampleFBO) {
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (attributes.antialias && m_state.boundDrawFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         ::glFlush();
@@ -63,7 +64,7 @@ void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, 
 
     ::glReadPixels(x, y, width, height, format, type, data);
 
-    if (attributes.antialias && m_state.boundFBO == m_multisampleFBO)
+    if (attributes.antialias && m_state.boundDrawFBO == m_multisampleFBO)
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
 }
 
@@ -98,7 +99,8 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
 
     // Resize regular FBO.
     bool mustRestoreFBO = false;
-    if (m_state.boundFBO != m_fbo) {
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (m_state.boundDrawFBO != m_fbo) {
         mustRestoreFBO = true;
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     }
@@ -301,7 +303,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         ::glGenFramebuffers(1, &m_fbo);
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         
-        m_state.boundFBO = m_fbo;
+        m_state.boundDrawFBO = m_state.boundReadFbo = m_fbo;
         if (!attributes.antialias && (attributes.stencil || attributes.depth))
             ::glGenRenderbuffers(1, &m_depthStencilBuffer);
         
@@ -309,7 +311,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         if (attributes.antialias) {
             ::glGenFramebuffers(1, &m_multisampleFBO);
             ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-            m_state.boundFBO = m_multisampleFBO;
+            m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
             ::glGenRenderbuffers(1, &m_multisampleColorBuffer);
             if (attributes.stencil || attributes.depth)
                 ::glGenRenderbuffers(1, &m_multisampleDepthStencilBuffer);

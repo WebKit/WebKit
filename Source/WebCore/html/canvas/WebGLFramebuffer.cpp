@@ -43,9 +43,11 @@ namespace {
 
     private:
         WebGLRenderbufferAttachment(WebGLRenderbuffer*);
+#if !USE(ANGLE)
         GCGLsizei getWidth() const override;
         GCGLsizei getHeight() const override;
         GCGLenum getFormat() const override;
+#endif
         WebGLSharedObject* getObject() const override;
         bool isSharedObject(WebGLSharedObject*) const override;
         bool isValid() const override;
@@ -70,6 +72,7 @@ namespace {
     {
     }
 
+#if !USE(ANGLE)
     GCGLsizei WebGLRenderbufferAttachment::getWidth() const
     {
         return m_renderbuffer->getWidth();
@@ -84,6 +87,7 @@ namespace {
     {
         return m_renderbuffer->getInternalFormat();
     }
+#endif
 
     WebGLSharedObject* WebGLRenderbufferAttachment::getObject() const
     {
@@ -139,9 +143,11 @@ namespace {
 
     private:
         WebGLTextureAttachment(WebGLTexture*, GCGLenum target, GCGLint level);
+#if !USE(ANGLE)
         GCGLsizei getWidth() const override;
         GCGLsizei getHeight() const override;
         GCGLenum getFormat() const override;
+#endif
         WebGLSharedObject* getObject() const override;
         bool isSharedObject(WebGLSharedObject*) const override;
         bool isValid() const override;
@@ -170,6 +176,7 @@ namespace {
     {
     }
 
+#if !USE(ANGLE)
     GCGLsizei WebGLTextureAttachment::getWidth() const
     {
         return m_texture->getWidth(m_target, m_level);
@@ -184,6 +191,7 @@ namespace {
     {
         return m_texture->getInternalFormat(m_target, m_level);
     }
+#endif
 
     WebGLSharedObject* WebGLTextureAttachment::getObject() const
     {
@@ -233,6 +241,7 @@ namespace {
             context->framebufferTexture2D(GraphicsContextGL::FRAMEBUFFER, attachment, m_target, 0, m_level);
     }
 
+#if !USE(ANGLE)
     bool isAttachmentComplete(WebGLFramebuffer::WebGLAttachment* attachedObject, GCGLenum attachment, const char** reason)
     {
         ASSERT(attachedObject && attachedObject->isValid());
@@ -256,6 +265,7 @@ namespace {
         }
         return true;
     }
+#endif
 
 } // anonymous namespace
 
@@ -380,6 +390,7 @@ void WebGLFramebuffer::removeAttachmentFromBoundFramebuffer(WebGLSharedObject* a
     } while (checkMore);
 }
 
+#if !USE(ANGLE)
 GCGLsizei WebGLFramebuffer::getColorBufferWidth() const
 {
     if (!object())
@@ -481,6 +492,7 @@ bool WebGLFramebuffer::onAccess(GraphicsContextGLOpenGL* context3d, const char**
         return false;
     return initializeAttachments(context3d, reason);
 }
+#endif
 
 bool WebGLFramebuffer::hasStencilBuffer() const
 {

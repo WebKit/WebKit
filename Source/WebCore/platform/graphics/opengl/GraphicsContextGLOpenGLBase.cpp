@@ -213,12 +213,13 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
     attachDepthAndStencilBufferIfNeeded(internalDepthStencilFormat, width, height);
 
     bool mustRestoreFBO = true;
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
     if (attrs.antialias) {
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
-        if (m_state.boundFBO == m_multisampleFBO)
+        if (m_state.boundDrawFBO == m_multisampleFBO)
             mustRestoreFBO = false;
     } else {
-        if (m_state.boundFBO == m_fbo)
+        if (m_state.boundDrawFBO == m_fbo)
             mustRestoreFBO = false;
     }
 
@@ -496,17 +497,18 @@ void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, 
     // all previous rendering calls should be done before reading pixels.
     makeContextCurrent();
     ::glFlush();
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_fbo);
         ::glFlush();
     }
     ::glReadPixels(x, y, width, height, format, type, data);
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO)
+    if (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
 
 #if PLATFORM(MAC)
-    if (!attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (m_state.boundFBO == m_fbo || (attrs.antialias && m_state.boundFBO == m_multisampleFBO)))
+    if (!attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (m_state.boundDrawFBO == m_fbo || (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO)))
         wipeAlphaChannelFromPixels(width, height, static_cast<unsigned char*>(data));
 #endif
 }

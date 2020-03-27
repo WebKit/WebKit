@@ -69,11 +69,6 @@ typedef void* GLeglContext;
 // would need more work to be included from WebCore.
 #define GL_MAX_SAMPLES_EXT 0x8D57
 
-#if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
-#define GL_COLOR_ATTACHMENT0_EXT 0x8CE0
-#define GL_FRAMEBUFFER_EXT 0x8D40
-#endif
-
 namespace WebCore {
 
 static const char* packedDepthStencilExtensionName = "GL_OES_packed_depth_stencil";
@@ -218,10 +213,10 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
     bool mustRestoreFBO = true;
     if (attrs.antialias) {
         gl::BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-        if (m_state.boundFBO == m_multisampleFBO)
+        if (m_state.boundDrawFBO == m_multisampleFBO && m_state.boundReadFBO == m_multisampleFBO)
             mustRestoreFBO = false;
     } else {
-        if (m_state.boundFBO == m_fbo)
+        if (m_state.boundDrawFBO == m_fbo && m_state.boundReadFBO == m_fbo)
             mustRestoreFBO = false;
     }
 
@@ -382,17 +377,18 @@ void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, 
     makeContextCurrent();
     gl::Flush();
     auto attrs = contextAttributes();
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
+    GCGLenum framebufferTarget = m_isForWebGL2 ? GraphicsContextGL::READ_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
+    if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
-        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_fbo);
+        gl::BindFramebuffer(framebufferTarget, m_fbo);
         gl::Flush();
     }
     gl::ReadPixels(x, y, width, height, format, type, data);
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO)
-        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
+    if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO)
+        gl::BindFramebuffer(framebufferTarget, m_multisampleFBO);
 
 #if PLATFORM(MAC)
-    if (!attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (m_state.boundFBO == m_fbo || (attrs.antialias && m_state.boundFBO == m_multisampleFBO)))
+    if (!attrs.alpha && (format == GraphicsContextGL::RGBA || format == GraphicsContextGL::BGRA) && (m_state.boundReadFBO == m_fbo || (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO)))
         wipeAlphaChannelFromPixels(width, height, static_cast<unsigned char*>(data));
 #endif
 }
@@ -507,8 +503,8 @@ void GraphicsContextGLOpenGL::prepareTexture()
     gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ANGLE, m_texture, 0);
     gl::Flush();
 
-    if (m_state.boundFBO != m_fbo)
-        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundFBO);
+    if (m_state.boundDrawFBO != m_fbo)
+        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
     else
         gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_fbo);
 #else
@@ -523,15 +519,17 @@ void GraphicsContextGLOpenGL::readRenderingResults(unsigned char *pixels, int pi
 
     makeContextCurrent();
 
+    GCGLenum framebufferTarget = m_isForWebGL2 ? GraphicsContextGL::READ_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
+
     bool mustRestoreFBO = false;
     if (contextAttributes().antialias) {
         resolveMultisamplingIfNecessary();
-        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_fbo);
+        gl::BindFramebuffer(framebufferTarget, m_fbo);
         mustRestoreFBO = true;
     } else {
-        if (m_state.boundFBO != m_fbo) {
+        if (m_state.boundReadFBO != m_fbo) {
             mustRestoreFBO = true;
-            gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_fbo);
+            gl::BindFramebuffer(framebufferTarget, m_fbo);
         }
     }
 
@@ -549,7 +547,7 @@ void GraphicsContextGLOpenGL::readRenderingResults(unsigned char *pixels, int pi
         gl::PixelStorei(GL_PACK_ALIGNMENT, packAlignment);
 
     if (mustRestoreFBO)
-        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundFBO);
+        gl::BindFramebuffer(framebufferTarget, m_state.boundReadFBO);
 }
 
 void GraphicsContextGLOpenGL::reshape(int width, int height)
@@ -619,8 +617,11 @@ void GraphicsContextGLOpenGL::reshape(int width, int height)
         gl::StencilMaskSeparate(GL_BACK, stencilMaskBack);
     }
 
-    if (mustRestoreFBO)
-        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundFBO);
+    if (mustRestoreFBO) {
+        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
+        if (m_isForWebGL2 && m_state.boundDrawFBO != m_state.boundReadFBO)
+            gl::BindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER, m_state.boundReadFBO);
+    }
 
     gl::Flush();
 }
@@ -666,9 +667,14 @@ void GraphicsContextGLOpenGL::bindFramebuffer(GCGLenum target, PlatformGLObject 
         fbo = buffer;
     else
         fbo = (contextAttributes().antialias ? m_multisampleFBO : m_fbo);
-    if (fbo != m_state.boundFBO) {
-        gl::BindFramebuffer(target, fbo);
-        m_state.boundFBO = fbo;
+
+    gl::BindFramebuffer(target, fbo);
+    if (target == GL_FRAMEBUFFER) {
+        m_state.boundReadFBO = m_state.boundDrawFBO = fbo;
+    } else if (target == GL_READ_FRAMEBUFFER) {
+        m_state.boundReadFBO = fbo;
+    } else if (target == GL_DRAW_FRAMEBUFFER) {
+        m_state.boundDrawFBO = fbo;
     }
 }
 
@@ -841,28 +847,30 @@ void GraphicsContextGLOpenGL::copyTexImage2D(GCGLenum target, GCGLint level, GCG
 {
     makeContextCurrent();
     auto attrs = contextAttributes();
+    GCGLenum framebufferTarget = m_isForWebGL2 ? GraphicsContextGL::READ_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
 
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
+    if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
-        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_fbo);
+        gl::BindFramebuffer(framebufferTarget, m_fbo);
     }
     gl::CopyTexImage2D(target, level, internalformat, x, y, width, height, border);
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO)
-        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
+    if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO)
+        gl::BindFramebuffer(framebufferTarget, m_multisampleFBO);
 }
 
 void GraphicsContextGLOpenGL::copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
 {
     makeContextCurrent();
     auto attrs = contextAttributes();
+    GCGLenum framebufferTarget = m_isForWebGL2 ? GraphicsContextGL::READ_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
 
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
+    if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
-        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_fbo);
+        gl::BindFramebuffer(framebufferTarget, m_fbo);
     }
     gl::CopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO)
-        gl::BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
+    if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO)
+        gl::BindFramebuffer(framebufferTarget, m_multisampleFBO);
 }
 
 void GraphicsContextGLOpenGL::cullFace(GCGLenum mode)
@@ -1733,11 +1741,15 @@ void GraphicsContextGLOpenGL::deleteBuffer(PlatformGLObject buffer)
 void GraphicsContextGLOpenGL::deleteFramebuffer(PlatformGLObject framebuffer)
 {
     makeContextCurrent();
-    if (framebuffer == m_state.boundFBO) {
-        // Make sure the framebuffer is not going to be used for drawing
-        // operations after it gets deleted.
+    // Make sure the framebuffer is not going to be used for drawing
+    // operations after it gets deleted.
+    if (m_isForWebGL2) {
+        if (framebuffer == m_state.boundDrawFBO)
+            bindFramebuffer(DRAW_FRAMEBUFFER, 0);
+        if (framebuffer == m_state.boundReadFBO)
+            bindFramebuffer(READ_FRAMEBUFFER, 0);
+    } else if (framebuffer == m_state.boundDrawFBO)
         bindFramebuffer(FRAMEBUFFER, 0);
-    }
     gl::DeleteFramebuffers(1, &framebuffer);
 }
 
@@ -2006,16 +2018,7 @@ void GraphicsContextGLOpenGL::getBufferSubData(GCGLenum target, GCGLintptr srcBy
 
 void GraphicsContextGLOpenGL::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter)
 {
-    UNUSED_PARAM(srcX0);
-    UNUSED_PARAM(srcY0);
-    UNUSED_PARAM(srcX1);
-    UNUSED_PARAM(srcY1);
-    UNUSED_PARAM(dstX0);
-    UNUSED_PARAM(dstY0);
-    UNUSED_PARAM(dstX1);
-    UNUSED_PARAM(dstY1);
-    UNUSED_PARAM(mask);
-    UNUSED_PARAM(filter);
+    gl::BlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
 void GraphicsContextGLOpenGL::framebufferTextureLayer(GCGLenum target, GCGLenum attachment, PlatformGLObject texture, GCGLint level, GCGLint layer)
@@ -2045,7 +2048,7 @@ void GraphicsContextGLOpenGL::invalidateSubFramebuffer(GCGLenum target, const Ve
 
 void GraphicsContextGLOpenGL::readBuffer(GCGLenum src)
 {
-    UNUSED_PARAM(src);
+    gl::ReadBuffer(src);
 }
 
 void GraphicsContextGLOpenGL::texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr pboOffset)

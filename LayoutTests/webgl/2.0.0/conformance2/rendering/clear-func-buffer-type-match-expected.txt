@@ -13,7 +13,7 @@ Test: ../../resources/webgl_test_files/conformance2/rendering/clear-func-buffer-
 [ 10: PASS ] getError was expected value: INVALID_OPERATION : clear and UINT buffer
 [ 11: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferfv and UINT buffer
 [ 12: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferiv and UINT buffer
-[ 13: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : clear and UINT buffer is NONE
+[ 13: PASS ] getError was expected value: NO_ERROR : clear and UINT buffer is NONE
 [ 14: PASS ] getError was expected value: NO_ERROR : clearBufferfv and UINT buffer is NONE
 [ 15: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferiv and float buffer
 [ 16: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
@@ -23,5 +23,5 @@ Test: ../../resources/webgl_test_files/conformance2/rendering/clear-func-buffer-
 [ 20: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferuiv and RGBA8 buffer
 [ 21: PASS ] getError was expected value: NO_ERROR : should be no error
 [ 22: PASS ] successfullyParsed is true
-[ FAIL ] 9 failures reported
+[ FAIL ] 8 failures reported
 

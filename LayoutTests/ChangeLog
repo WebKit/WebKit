@@ -1,3 +1,54 @@
+2020-03-27  Kenneth Russell  <kbr@chromium.org>
+
+        Use ANGLE_robust_client_memory to replace framebuffer/texture validation
+        https://bugs.webkit.org/show_bug.cgi?id=209098
+
+        Reviewed by Dean Jackson.
+
+        Several more webgl/2.0.0 tests pass completely with these changes.
+        Rebaseline all WebGL-related layout tests. Nearly all diffs are forward
+        progressions. All will eventually be passed as more of WebGL 2.0 is
+        implemented.
+
+        Removed fast/canvas/webgl/webgl-specific.html test, which was
+        duplicated in webgl/1.0.3 and webgl/2.0.0 and which was testing
+        behavior from an old version of the WebGL specification.
+
+        Revised uninitialized-test.html to test current WebGL
+        specification; copyTexSubImage2D now leaves out-of-range
+        pixels untouched, rather than zeroing them.
+
+        * fast/canvas/webgl/uninitialized-test.html:
+        * fast/canvas/webgl/webgl-specific-expected.txt: Removed.
+        * fast/canvas/webgl/webgl-specific.html: Removed.
+        * fast/canvas/webgl/webgl2-texStorage-expected.txt:
+        * platform/gtk/webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt: Copied from LayoutTests/webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt.
+        * platform/ios/webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt: Copied from LayoutTests/webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt.
+        * webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt:
+        * webgl/2.0.0/conformance/textures/misc/copy-tex-image-and-sub-image-2d-expected.txt:
+        * webgl/2.0.0/conformance/textures/misc/tex-sub-image-2d-bad-args-expected.txt:
+        * webgl/2.0.0/conformance2/reading/read-pixels-from-fbo-test-expected.txt:
+        * webgl/2.0.0/conformance2/renderbuffers/framebuffer-object-attachment-expected.txt:
+        * webgl/2.0.0/conformance2/renderbuffers/readbuffer-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-multisampled-readbuffer-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-outside-readbuffer-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-size-overflow-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-srgb-and-linear-drawbuffers-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/blitframebuffer-test-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/clear-func-buffer-type-match-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/instanced-arrays-expected.txt:
+        * webgl/2.0.0/conformance2/state/gl-object-get-calls-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/copy-texture-image-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-new-formats-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-storage-2d-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/texture-npot-expected.txt:
+
 2020-03-27  Simon Fraser  <simon.fraser@apple.com>
 
         Hovering over countries at https://covidinc.io/ shows bizarre rendering artifacts

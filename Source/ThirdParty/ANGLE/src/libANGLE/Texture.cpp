@@ -1179,7 +1179,27 @@ angle::Result Texture::copySubImage(Context *context,
 {
     ASSERT(TextureTargetToType(index.getTarget()) == mState.mType);
 
-    Box destBox(destOffset.x, destOffset.y, destOffset.z, sourceArea.width, sourceArea.height, 1);
+    // Most if not all renderers clip these copies to the size of the source framebuffer, leaving
+    // other pixels untouched. For safety in robust resource initialization, assume that that
+    // clipping is going to occur when computing the region for which to ensure initialization. If
+    // the copy lies entirely off the source framebuffer, initialize as though a zero-size box is
+    // going to be set during the copy operation. Note that this assumes that
+    // ensureSubImageInitialized ensures initialization of the entire destination texture, and not
+    // just a sub-region.
+    Box destBox;
+    if (context->isRobustResourceInitEnabled())
+    {
+        Extents fbSize = source->getReadColorAttachment()->getSize();
+        Rectangle clippedArea;
+        if (ClipRectangle(sourceArea, Rectangle(0, 0, fbSize.width, fbSize.height), &clippedArea))
+        {
+            const Offset clippedOffset(destOffset.x + clippedArea.x - sourceArea.x,
+                                       destOffset.y + clippedArea.y - sourceArea.y, 0);
+            destBox = Box(clippedOffset.x, clippedOffset.y, clippedOffset.z, clippedArea.width,
+                          clippedArea.height, 1);
+        }
+    }
+
     ANGLE_TRY(
         ensureSubImageInitialized(context, index.getTarget(), index.getLevelIndex(), destBox));
 
@@ -1846,6 +1866,8 @@ angle::Result Texture::ensureSubImageInitialized(const Context *context,
                                 area.depth == desc.size.depth;
         if (!coversWholeImage)
         {
+            // NOTE: do not optimize this to only initialize the passed area of the texture, or the
+            // initialization logic in copySubImage will be incorrect.
             ANGLE_TRY(initializeContents(context, imageIndex));
         }
         setInitState(imageIndex, InitState::Initialized);

@@ -246,8 +246,9 @@ void GraphicsContextGLOpenGL::prepareTexture()
     ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_texture, 0);
     glFlush();
 
-    if (m_state.boundFBO != m_fbo)
-        ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_state.boundFBO);
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (m_state.boundDrawFBO != m_fbo)
+        ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
     else
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_fbo);
     return;
@@ -256,8 +257,9 @@ void GraphicsContextGLOpenGL::prepareTexture()
     ::glActiveTexture(GL_TEXTURE0);
     ::glBindTexture(GL_TEXTURE_2D, m_state.boundTarget(GL_TEXTURE0) == GL_TEXTURE_2D ? m_state.boundTexture(GL_TEXTURE0) : 0);
     ::glActiveTexture(m_state.activeTextureUnit);
-    if (m_state.boundFBO != m_fbo)
-        ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_state.boundFBO);
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (m_state.boundDrawFBO != m_fbo)
+        ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
     ::glFlush();
 }
 
@@ -274,7 +276,8 @@ void GraphicsContextGLOpenGL::readRenderingResults(unsigned char *pixels, int pi
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_fbo);
         mustRestoreFBO = true;
     } else {
-        if (m_state.boundFBO != m_fbo) {
+        ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+        if (m_state.boundDrawFBO != m_fbo) {
             mustRestoreFBO = true;
             ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_fbo);
         }
@@ -294,7 +297,7 @@ void GraphicsContextGLOpenGL::readRenderingResults(unsigned char *pixels, int pi
         ::glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
 
     if (mustRestoreFBO)
-        ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_state.boundFBO);
+        ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
 }
 
 void GraphicsContextGLOpenGL::reshape(int width, int height)
@@ -367,7 +370,7 @@ void GraphicsContextGLOpenGL::reshape(int width, int height)
     }
 
     if (mustRestoreFBO)
-        ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_state.boundFBO);
+        ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
 
     ::glFlush();
 }
@@ -489,9 +492,11 @@ void GraphicsContextGLOpenGL::bindFramebuffer(GCGLenum target, PlatformGLObject 
         fbo = buffer;
     else
         fbo = (contextAttributes().antialias ? m_multisampleFBO : m_fbo);
-    if (fbo != m_state.boundFBO) {
+    ASSERT(target == GL_FRAMEBUFFER);
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (fbo != m_state.boundDrawFBO) {
         ::glBindFramebufferEXT(target, fbo);
-        m_state.boundFBO = fbo;
+        m_state.boundDrawFBO = m_state.boundReadFBO = fbo;
     }
 }
 
@@ -691,12 +696,13 @@ void GraphicsContextGLOpenGL::copyTexImage2D(GCGLenum target, GCGLint level, GCG
     makeContextCurrent();
     auto attrs = contextAttributes();
 
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_fbo);
     }
     ::glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO)
+    if (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
 
 #if PLATFORM(MAC) && USE(OPENGL)
@@ -710,12 +716,13 @@ void GraphicsContextGLOpenGL::copyTexSubImage2D(GCGLenum target, GCGLint level, 
     makeContextCurrent();
     auto attrs = contextAttributes();
 
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_fbo);
     }
     ::glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-    if (attrs.antialias && m_state.boundFBO == m_multisampleFBO)
+    if (attrs.antialias && m_state.boundDrawFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_multisampleFBO);
 
 #if PLATFORM(MAC) && USE(OPENGL)
@@ -1919,7 +1926,8 @@ void GraphicsContextGLOpenGL::deleteBuffer(PlatformGLObject buffer)
 void GraphicsContextGLOpenGL::deleteFramebuffer(PlatformGLObject framebuffer)
 {
     makeContextCurrent();
-    if (framebuffer == m_state.boundFBO) {
+    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    if (framebuffer == m_state.boundDrawFBO) {
         // Make sure the framebuffer is not going to be used for drawing
         // operations after it gets deleted.
         bindFramebuffer(FRAMEBUFFER, 0);
