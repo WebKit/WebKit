@@ -611,16 +611,12 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
 
 WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLContextAttributes attributes)
     : GPUBasedCanvasRenderingContext(canvas)
-    , m_dispatchContextLostEventTimer(canvas.scriptExecutionContext(), *this, &WebGLRenderingContextBase::dispatchContextLostEvent)
-    , m_dispatchContextChangedEventTimer(canvas.scriptExecutionContext(), *this, &WebGLRenderingContextBase::dispatchContextChangedEvent)
     , m_restoreTimer(canvas.scriptExecutionContext(), *this, &WebGLRenderingContextBase::maybeRestoreContext)
     , m_attributes(attributes)
     , m_numGLErrorsToConsoleAllowed(maxGLErrorsAllowedToConsole)
     , m_isPendingPolicyResolution(true)
     , m_checkForContextLossHandlingTimer(*this, &WebGLRenderingContextBase::checkForContextLossHandling)
 {
-    m_dispatchContextLostEventTimer.suspendIfNeeded();
-    m_dispatchContextChangedEventTimer.suspendIfNeeded();
     m_restoreTimer.suspendIfNeeded();
 
     registerWithWebGLStateTracker();
@@ -630,16 +626,12 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLCo
 WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<GraphicsContextGLOpenGL>&& context, WebGLContextAttributes attributes)
     : GPUBasedCanvasRenderingContext(canvas)
     , m_context(WTFMove(context))
-    , m_dispatchContextLostEventTimer(canvas.scriptExecutionContext(), *this, &WebGLRenderingContextBase::dispatchContextLostEvent)
-    , m_dispatchContextChangedEventTimer(canvas.scriptExecutionContext(), *this, &WebGLRenderingContextBase::dispatchContextChangedEvent)
     , m_restoreTimer(canvas.scriptExecutionContext(), *this, &WebGLRenderingContextBase::maybeRestoreContext)
     , m_generatedImageCache(4)
     , m_attributes(attributes)
     , m_numGLErrorsToConsoleAllowed(maxGLErrorsAllowedToConsole)
     , m_checkForContextLossHandlingTimer(*this, &WebGLRenderingContextBase::checkForContextLossHandling)
 {
-    m_dispatchContextLostEventTimer.suspendIfNeeded();
-    m_dispatchContextChangedEventTimer.suspendIfNeeded();
     m_restoreTimer.suspendIfNeeded();
 
     m_contextGroup = WebGLContextGroup::create();
@@ -5195,7 +5187,7 @@ void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostC
 
     // Always defer the dispatch of the context lost event, to implement
     // the spec behavior of queueing a task.
-    m_dispatchContextLostEventTimer.startOneShot(0_s);
+    scheduleTaskToDispatchContextLostEvent();
 }
 
 void WebGLRenderingContextBase::forceRestoreContext()
@@ -6318,18 +6310,20 @@ void WebGLRenderingContextBase::restoreStatesAfterVertexAttrib0Simulation()
 }
 #endif
 
-void WebGLRenderingContextBase::dispatchContextLostEvent()
+void WebGLRenderingContextBase::scheduleTaskToDispatchContextLostEvent()
 {
-    RELEASE_ASSERT(!m_isSuspended);
     auto* canvas = htmlCanvas();
     if (!canvas)
         return;
 
-    Ref<WebGLContextEvent> event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString());
-    canvas->dispatchEvent(event);
-    m_restoreAllowed = event->defaultPrevented();
-    if (m_contextLostMode == RealLostContext && m_restoreAllowed)
-        m_restoreTimer.startOneShot(0_s);
+    // It is safe to capture |this| because we keep the canvas element alive and it owns |this|.
+    queueTaskKeepingObjectAlive(*canvas, TaskSource::WebGL, [this, canvas] {
+        auto event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString());
+        canvas->dispatchEvent(event);
+        m_restoreAllowed = event->defaultPrevented();
+        if (m_contextLostMode == RealLostContext && m_restoreAllowed)
+            m_restoreTimer.startOneShot(0_s);
+    });
 }
 
 void WebGLRenderingContextBase::maybeRestoreContext()
@@ -6726,18 +6720,11 @@ void WebGLRenderingContextBase::recycleContext()
 
 void WebGLRenderingContextBase::dispatchContextChangedNotification()
 {
-    if (!m_dispatchContextChangedEventTimer.isActive())
-        m_dispatchContextChangedEventTimer.startOneShot(0_s);
-}
-
-void WebGLRenderingContextBase::dispatchContextChangedEvent()
-{
-    RELEASE_ASSERT(!m_isSuspended);
     auto* canvas = htmlCanvas();
     if (!canvas)
         return;
 
-    canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextchangedEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
+    queueTaskToDispatchEvent(*canvas, TaskSource::WebGL, WebGLContextEvent::create(eventNames().webglcontextchangedEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
 }
 
 

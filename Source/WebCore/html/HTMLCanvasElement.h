@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "CanvasBase.h"
 #include "FloatRect.h"
 #include "HTMLElement.h"
@@ -57,7 +58,7 @@ namespace DisplayList {
 using AsTextFlags = unsigned;
 }
 
-class HTMLCanvasElement final : public HTMLElement, public CanvasBase {
+class HTMLCanvasElement final : public HTMLElement, public CanvasBase, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLCanvasElement);
 public:
     static Ref<HTMLCanvasElement> create(Document&);
@@ -132,6 +133,7 @@ private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
     bool isHTMLCanvasElement() const final { return true; }
+    const char* activeDOMObjectName() const final;
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;

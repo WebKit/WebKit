@@ -462,13 +462,6 @@ protected:
     RefPtr<GraphicsContextGLOpenGL> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
 
-    // Dispatches a context lost event once it is determined that one is needed.
-    // This is used both for synthetic and real context losses. For real ones, it's
-    // likely that there's no JavaScript on the stack, but that might be dependent
-    // on how exactly the platform discovers that the context was lost. For better
-    // portability we always defer the dispatch of the event.
-    SuspendableTimer m_dispatchContextLostEventTimer;
-    SuspendableTimer m_dispatchContextChangedEventTimer;
     bool m_restoreAllowed { false };
     SuspendableTimer m_restoreTimer;
 
@@ -864,8 +857,7 @@ protected:
     template <typename T> unsigned getMaxIndex(const RefPtr<JSC::ArrayBuffer> elementArrayBuffer, GCGLintptr uoffset, GCGLsizei n);
 
 private:
-    void dispatchContextLostEvent();
-    void dispatchContextChangedEvent();
+    void scheduleTaskToDispatchContextLostEvent();
     // Helper for restoration after context lost.
     void maybeRestoreContext();
 

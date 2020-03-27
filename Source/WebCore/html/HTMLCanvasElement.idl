@@ -38,6 +38,7 @@ typedef (
     CanvasRenderingContext2D) RenderingContext;
 
 [
+    ActiveDOMObject,
     JSGenerateToNativeObject,
     ReportExtraMemoryCost,
     ReportExternalMemoryCost,
