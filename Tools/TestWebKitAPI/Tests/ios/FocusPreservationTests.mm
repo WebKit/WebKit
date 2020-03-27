@@ -74,7 +74,8 @@ TEST(FocusPreservationTests, PreserveAndRestoreFocus)
     EXPECT_TRUE([webView becomeFirstResponder]);
 }
 
-TEST(FocusPreservationTests, ChangingFocusedNodeResetsFocusPreservationState)
+// FIXME: Re-enable this test once rdar://60644908 is resolved
+TEST(FocusPreservationTests, DISABLED_ChangingFocusedNodeResetsFocusPreservationState)
 {
     bool inputFocused = false;
     bool selectFocused = false;
