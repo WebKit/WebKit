@@ -119,6 +119,16 @@ void WebPasteboardProxy::containsStringSafeForDOMToReadForType(const String&, co
     completionHandler(false);
 }
 
+void WebPasteboardProxy::containsURLStringSuitableForLoading(const String&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(false);
+}
+
+void WebPasteboardProxy::urlStringSuitableForLoading(const String&, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
+{
+    completionHandler({ }, { });
+}
+
 #endif // !PLATFORM(COCOA)
 
 } // namespace WebKit

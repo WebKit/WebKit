@@ -265,81 +265,41 @@ bool DragData::containsPromise() const
     return files.size() == 1;
 }
 
-bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(FilenameConversionPolicy) const
 {
-#if PLATFORM(IOS_FAMILY)
-    UNUSED_PARAM(filenamePolicy);
+    if (platformStrategies()->pasteboardStrategy()->containsURLStringSuitableForLoading(m_pasteboardName))
+        return true;
+
+#if PLATFORM(MAC)
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
-    if (!types.contains(urlPasteboardType()))
-        return false;
-
-    auto urlString = platformStrategies()->pasteboardStrategy()->stringForType(urlPasteboardType(), m_pasteboardName);
-    if (urlString.isEmpty()) {
-        // On iOS, we don't get access to the contents of NSItemProviders until we perform the drag operation.
-        // Thus, we consider DragData to contain an URL if it contains the `public.url` UTI type. Later down the
-        // road, when we perform the drag operation, we can then check if the URL's protocol is http or https,
-        // and if it isn't, we bail out of page navigation.
-        return true;
-    }
-
-    URL webcoreURL = [NSURL URLWithString:urlString];
-    return webcoreURL.protocolIs("http") || webcoreURL.protocolIs("https");
-#else
-    return !asURL(filenamePolicy).isEmpty();
+    if (types.contains(String(legacyFilesPromisePasteboardType())) && fileNames().size() == 1)
+        return !![NSURL fileURLWithPath:fileNames().first()];
 #endif
+
+    return false;
 }
 
 String DragData::asURL(FilenameConversionPolicy, String* title) const
 {
     // FIXME: Use filenamePolicy.
 
-    if (title) {
+    String urlTitle;
+    auto urlString = platformStrategies()->pasteboardStrategy()->urlStringSuitableForLoading(m_pasteboardName, urlTitle);
+    if (title)
+        *title = urlTitle;
+
+    if (!urlString.isEmpty())
+        return urlString;
+
 #if PLATFORM(MAC)
-        String URLTitleString = platformStrategies()->pasteboardStrategy()->stringForType(String(WebURLNamePboardType), m_pasteboardName);
-        if (!URLTitleString.isEmpty())
-            *title = URLTitleString;
-#endif
-    }
-    
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
-
-    if (types.contains(urlPasteboardType())) {
-        NSURL *URLFromPasteboard = [NSURL URLWithString:platformStrategies()->pasteboardStrategy()->stringForType(urlPasteboardType(), m_pasteboardName)];
-        NSString *scheme = [URLFromPasteboard scheme];
-        // Cannot drop other schemes unless <rdar://problem/10562662> and <rdar://problem/11187315> are fixed.
-        if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"])
-            return [URLByCanonicalizingURL(URLFromPasteboard) absoluteString];
-    }
-    
-    if (types.contains(stringPasteboardType())) {
-        NSURL *URLFromPasteboard = [NSURL URLWithString:platformStrategies()->pasteboardStrategy()->stringForType(stringPasteboardType(), m_pasteboardName)];
-        NSString *scheme = [URLFromPasteboard scheme];
-        // Pasteboard content is not trusted, because JavaScript code can modify it. We can sanitize it for URLs and other typed content, but not for strings.
-        // The result of this function is used to initiate navigation, so we shouldn't allow arbitrary file URLs.
-        // FIXME: Should we allow only http family schemes, or anything non-local?
-        if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"])
-            return [URLByCanonicalizingURL(URLFromPasteboard) absoluteString];
-    }
-    
-#if PLATFORM(MAC)
-    if (types.contains(String(legacyFilenamesPasteboardType()))) {
-        Vector<String> files;
-        platformStrategies()->pasteboardStrategy()->getPathnamesForType(files, String(legacyFilenamesPasteboardType()), m_pasteboardName);
-        if (files.size() == 1) {
-            BOOL isDirectory;
-            if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && isDirectory)
-                return String();
-            return [URLByCanonicalizingURL([NSURL fileURLWithPath:files[0]]) absoluteString];
-        }
-    }
-
     if (types.contains(String(legacyFilesPromisePasteboardType())) && fileNames().size() == 1)
         return [URLByCanonicalizingURL([NSURL fileURLWithPath:fileNames()[0]]) absoluteString];
 #endif
 
-    return String();        
+    return { };
 }
 
 } // namespace WebCore

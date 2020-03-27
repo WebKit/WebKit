@@ -232,6 +232,16 @@ String WebPlatformStrategies::readStringFromPasteboard(size_t index, const Strin
     return PlatformPasteboard(pasteboardName).readString(index, type);
 }
 
+bool WebPlatformStrategies::containsURLStringSuitableForLoading(const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).containsURLStringSuitableForLoading();
+}
+
+String WebPlatformStrategies::urlStringSuitableForLoading(const String& pasteboardName, String& title)
+{
+    return PlatformPasteboard(pasteboardName).urlStringSuitableForLoading(title);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 void WebPlatformStrategies::writeToPasteboard(const PasteboardURL& url, const String& pasteboardName)

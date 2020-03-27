@@ -539,6 +539,12 @@ NSPasteboardItem *PlatformPasteboard::itemAtIndex(size_t index) const
     return index >= items.count ? nil : items[index];
 }
 
+bool PlatformPasteboard::containsURLStringSuitableForLoading()
+{
+    String unusedTitle;
+    return !urlStringSuitableForLoading(unusedTitle).isEmpty();
+}
+
 }
 
 #endif // PLATFORM(MAC)

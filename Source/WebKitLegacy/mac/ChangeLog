@@ -1,3 +1,18 @@
+2020-03-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        DragData::containsURL() should avoid reading URL strings from the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=209642
+        Work towards <rdar://problem/59611585>
+
+        Reviewed by Tim Horton.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::containsURLStringSuitableForLoading):
+        (WebPlatformStrategies::urlStringSuitableForLoading):
+
 2020-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Avoid querying pasteboard strings while dragging content over a potential drop target

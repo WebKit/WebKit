@@ -106,6 +106,11 @@ public:
     WEBCORE_EXPORT Ref<SelectionData> readFromClipboard();
 #endif
 
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT bool containsURLStringSuitableForLoading();
+    WEBCORE_EXPORT String urlStringSuitableForLoading(String& title);
+#endif
+
 private:
 #if PLATFORM(IOS_FAMILY)
     bool allowReadingURLAtIndex(const URL&, int index) const;

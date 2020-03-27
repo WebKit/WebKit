@@ -246,6 +246,20 @@ int WebPlatformStrategies::getNumberOfFiles(const String& pasteboardName)
     return numberOfFiles;
 }
 
+bool WebPlatformStrategies::containsURLStringSuitableForLoading(const String& pasteboardName)
+{
+    bool result;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ContainsURLStringSuitableForLoading(pasteboardName), Messages::WebPasteboardProxy::ContainsURLStringSuitableForLoading::Reply(result), 0);
+    return result;
+}
+
+String WebPlatformStrategies::urlStringSuitableForLoading(const String& pasteboardName, String& title)
+{
+    String url;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::URLStringSuitableForLoading(pasteboardName), Messages::WebPasteboardProxy::URLStringSuitableForLoading::Reply(url, title), 0);
+    return url;
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 void WebPlatformStrategies::writeToPasteboard(const PasteboardURL& url, const String& pasteboardName)

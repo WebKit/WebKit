@@ -169,6 +169,18 @@ void WebPasteboardProxy::setPasteboardStringForType(const String& pasteboardName
     completionHandler(PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType));
 }
 
+void WebPasteboardProxy::containsURLStringSuitableForLoading(const String& pasteboardName, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(PlatformPasteboard(pasteboardName).containsURLStringSuitableForLoading());
+}
+
+void WebPasteboardProxy::urlStringSuitableForLoading(const String& pasteboardName, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
+{
+    String title;
+    auto urlString = PlatformPasteboard(pasteboardName).urlStringSuitableForLoading(title);
+    completionHandler(WTFMove(urlString), WTFMove(title));
+}
+
 void WebPasteboardProxy::setPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, CompletionHandler<void(int64_t)>&& completionHandler)
 {
     ASSERT(!pasteboardType.isNull());

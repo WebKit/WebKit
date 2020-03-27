@@ -65,6 +65,9 @@ public:
     virtual int64_t setURL(const PasteboardURL&, const String& pasteboardName) = 0;
     virtual int64_t setColor(const Color&, const String& pasteboardName) = 0;
     virtual int64_t setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) = 0;
+
+    virtual bool containsURLStringSuitableForLoading(const String& pasteboardName) = 0;
+    virtual String urlStringSuitableForLoading(const String& pasteboardName, String& title) = 0;
 #endif
     virtual String readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName) = 0;
     virtual RefPtr<SharedBuffer> readBufferFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName) = 0;

@@ -104,6 +104,8 @@ private:
     void writeCustomData(const Vector<WebCore::PasteboardCustomData>&, const String& pasteboardName, CompletionHandler<void(int64_t)>&&);
     void typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, CompletionHandler<void(Vector<String>&&)>&&);
     void containsStringSafeForDOMToReadForType(const String&, const String& pasteboardName, CompletionHandler<void(bool)>&&);
+    void containsURLStringSuitableForLoading(const String& pasteboardName, CompletionHandler<void(bool)>&&);
+    void urlStringSuitableForLoading(const String& pasteboardName, CompletionHandler<void(String&& url, String&& title)>&&);
 
 #if PLATFORM(GTK)
     void writeToClipboard(const String& pasteboardName, const WebSelectionData&);
