@@ -28,6 +28,6 @@
 
   <g mask="url(#crop)" transform="translate(100, 0)">
     <rect width="10000" height="400" fill="red" clip-path="url(#clip2)"/>
-    <rect x="199" width="101" height="100" fill="green"/>
+    <rect x="195" width="105" height="100" fill="green"/>
   </g>
 </svg>
