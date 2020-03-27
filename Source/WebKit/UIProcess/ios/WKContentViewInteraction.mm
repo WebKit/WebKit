@@ -5926,7 +5926,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
 - (void)_didUpdateInputMode:(WebCore::InputMode)mode
 {
-    if (!self.inputDelegate || _focusedElementInformation.elementType == WebKit::InputType::None)
+    if (!self.inputDelegate || !self._hasFocusedElement)
         return;
 
 #if !PLATFORM(WATCHOS)
