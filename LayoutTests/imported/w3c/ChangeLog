@@ -1,3 +1,82 @@
+2020-03-27  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r256627. rdar://problem/60919944
+
+    [Web Animations] Style changes due to Web Animations should not trigger CSS Transitions
+    https://bugs.webkit.org/show_bug.cgi?id=207760
+    <rdar://problem/59458111>
+    
+    Reviewed by Simon Fraser.
+    
+    LayoutTests/imported/w3c:
+    
+    Mark Web Platform Tests progressions.
+    
+    * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+    * web-platform-tests/web-animations/interfaces/Animation/style-change-events-expected.txt:
+    * web-platform-tests/web-animations/interfaces/DocumentTimeline/style-change-events-expected.txt:
+    * web-platform-tests/web-animations/interfaces/KeyframeEffect/style-change-events-expected.txt:
+    
+    Source/WebCore:
+    
+    While we would consider the unanimated style of CSS Animations specifically when considering what the "start" style values (before-change style in spec terminology)
+    should be when considering whether to start a CSS Transition during style resolution, we would not consider other types of animations, specifically JS-created Web
+    Animations. However, Web Platform Tests specifically test whether changes made using the Web Animations API may trigger transitions, and until now they would because
+    the RenderStyle used to determine the before-change style was the style from the previous resolution, which would include animated values.
+    
+    To fix this, we make it so that KeyframeEffect objects now keep a copy of the unanimated style used when blending animated values for the very first time. That style
+    is cleared each time keyframes change, which is rare, but may happen through the Web Animations API. Then in AnimationTimeline::updateCSSTransitionsForElementAndProperty(),
+    we look for a KeyframeEffect currently affecting the property for which we're considering starting a CSS Transition, and use its unanimated style.
+    
+    If that unanimated style has not been set yet, this is because the KeyframeEffect has not had a chance to apply itself with a non-null progress. In this case, the before-change
+    and after-change styles should be the same in order to prevent a transition from being triggered as the unanimated style for this keyframe effect will most likely be this
+    after-change style, or any future style change that may happen before the keyframe effect starts blending animated values.
+    
+    Finally, tracking the unanimated style at the KeyframeEffect level means we no longer to track it specifically for CSSAnimation.
+    
+    * animation/AnimationTimeline.cpp:
+    (WebCore::keyframeEffectForElementAndProperty):
+    (WebCore::AnimationTimeline::updateCSSTransitionsForElementAndProperty):
+    * animation/AnimationTimeline.h:
+    * animation/CSSAnimation.cpp:
+    (WebCore::CSSAnimation::create):
+    (WebCore::CSSAnimation::CSSAnimation):
+    * animation/CSSAnimation.h:
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::animatesProperty const): Because the backing KeyframeList object may not have been created by the first time we query a KeyframeEffect during
+    CSS Transitions resolution, we provide a method that will check the values provided by the Web Animations API to determine whether it targets a given CSS property.
+    (WebCore::KeyframeEffect::clearBlendingKeyframes):
+    (WebCore::KeyframeEffect::computeDeclarativeAnimationBlendingKeyframes):
+    (WebCore::KeyframeEffect::computeCSSAnimationBlendingKeyframes):
+    (WebCore::KeyframeEffect::apply):
+    * animation/KeyframeEffect.h:
+    (WebCore::KeyframeEffect::unanimatedStyle const):
+    * style/StyleTreeResolver.cpp:
+    (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+    
+    LayoutTests:
+    
+    Mark that a couple of tests are no longer flaky.
+    
+    * TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256627 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-14  Antoine Quint  <graouts@webkit.org>
+
+            [Web Animations] Style changes due to Web Animations should not trigger CSS Transitions
+            https://bugs.webkit.org/show_bug.cgi?id=207760
+            <rdar://problem/59458111>
+
+            Reviewed by Simon Fraser.
+
+            Mark Web Platform Tests progressions.
+
+            * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+            * web-platform-tests/web-animations/interfaces/Animation/style-change-events-expected.txt:
+            * web-platform-tests/web-animations/interfaces/DocumentTimeline/style-change-events-expected.txt:
+            * web-platform-tests/web-animations/interfaces/KeyframeEffect/style-change-events-expected.txt:
+
 2020-02-14  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r256207. rdar://problem/59447263

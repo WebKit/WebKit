@@ -133,8 +133,12 @@ PASS Element.animate() correctly sets the Animation's timeline
 PASS Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document 
 PASS Element.animate() calls play on the Animation 
 PASS Element.animate() does NOT trigger a style change event 
-PASS CSSPseudoElement.animate() creates an Animation object 
-FAIL CSSPseudoElement.animate() creates an Animation object for ::marker assert_true: expected true got false
-PASS CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object 
-FAIL CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object for ::marker assert_true: expected true got false
+PASS animate() with pseudoElement parameter creates an Animation object 
+PASS animate() with pseudoElement parameter without content creates an Animation object 
+PASS animate() with pseudoElement parameter  creates an Animation object for ::marker 
+PASS animate() with pseudoElement parameter  creates an Animation object for ::first-line 
+FAIL animate() with pseudoElement an Animation object targeting the correct pseudo-element assert_equals: The returned Animation targets the correct selector expected (string) "::before" but got (undefined) undefined
+FAIL animate() with pseudoElement without content creates an Animation object targeting the correct pseudo-element assert_equals: The returned Animation targets the correct selector expected (string) "::before" but got (undefined) undefined
+FAIL animate() with pseudoElement an Animation object targeting the correct pseudo-element for ::marker assert_equals: The returned Animation targets the correct selector expected (string) "::marker" but got (undefined) undefined
+FAIL animate() with pseudoElement an Animation object targeting the correct pseudo-element for ::first-line assert_equals: The returned Animation targets the correct selector expected (string) "::first-line" but got (undefined) undefined
 
