@@ -528,6 +528,8 @@ class WebkitFlatpak:
     def setup_gstbuild(self, building):
         gst_dir = os.environ.get('GST_BUILD_PATH')
         if not gst_dir:
+            if building:
+                Console.message("%s$GST_BUILD_PATH environment variable not set. Skipping gst-build%s\n", Colors.WARNING, Colors.ENDC)
             return []
 
         if not os.path.exists(os.path.join(gst_dir, 'gst-env.py')):
@@ -750,8 +752,6 @@ class WebkitFlatpak:
             self.save_config()
 
         build_type = "--debug" if self.debug else "--release"
-        if self.build_gst:
-            self.setup_gstbuild(True)
 
         if self.build_webkit:
             builder = [

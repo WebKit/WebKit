@@ -1,3 +1,14 @@
+2020-03-27  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Warn when gst-build support was requested but GST_BUILD_PATH is not set
+        https://bugs.webkit.org/show_bug.cgi?id=209599
+
+        Reviewed by Žan Doberšek.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.setup_gstbuild):
+        (WebkitFlatpak.setup_dev_env):
+
 2020-03-26  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: Unable to show Web Inspector on empty tabs in Safari
