@@ -1,3 +1,13 @@
+2020-03-27  Keith Miller  <keith_miller@apple.com>
+
+        Add missing scope release to DataView's buffer getter
+        https://bugs.webkit.org/show_bug.cgi?id=209663
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::dataViewProtoGetterBuffer):
+
 2020-03-26  Mark Lam  <mark.lam@apple.com>
 
         Clear the entropy bits in the encodedStructureBits when deallocating a structureID.
