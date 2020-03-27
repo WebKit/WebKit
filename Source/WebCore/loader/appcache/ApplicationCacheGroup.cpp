@@ -463,7 +463,6 @@ void ApplicationCacheGroup::update(Frame& frame, ApplicationCacheUpdateOption up
 ResourceRequest ApplicationCacheGroup::createRequest(URL&& url, ApplicationCacheResource* resource)
 {
     ResourceRequest request { WTFMove(url) };
-    m_frame->loader().applyUserAgentIfNeeded(request);
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
 
     if (resource) {

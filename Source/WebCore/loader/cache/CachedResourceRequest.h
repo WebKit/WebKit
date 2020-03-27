@@ -78,7 +78,8 @@ public:
     void updateForAccessControl(Document&);
 
     void updateReferrerPolicy(ReferrerPolicy);
-    void updateReferrerOriginAndUserAgentHeaders(FrameLoader&);
+    void updateReferrerAndOriginHeaders(FrameLoader&);
+    void updateUserAgentHeader(FrameLoader&);
     void upgradeInsecureRequestIfNeeded(Document&);
     void setAcceptHeaderIfNone(CachedResource::Type);
     void updateAccordingCacheMode();
