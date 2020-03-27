@@ -1,5 +1,14 @@
 2020-03-27  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ Mac wk2 ] ASSERTION FAILED: m_messageEventCount @ WebCore::ServiceWorkerThread::finishedFiringMessageEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=209672
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-03-27  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac wk2 Release ] media/modern-media-controls/seek-backward-support/seek-backward-support.html is flaky crashing.
         https://bugs.webkit.org/show_bug.cgi?id=209668
 
