@@ -49,8 +49,8 @@ public:
     }
 
 protected:
-    GlobalExecutable(Structure* structure, VM& vm, const SourceCode& sourceCode, bool isInStrictContext, DerivedContextType derivedContextType, bool isInArrowFunctionContext, EvalContextType evalContextType, Intrinsic intrinsic)
-        : Base(structure, vm, sourceCode, isInStrictContext, derivedContextType, isInArrowFunctionContext, evalContextType, intrinsic)
+    GlobalExecutable(Structure* structure, VM& vm, const SourceCode& sourceCode, bool isInStrictContext, DerivedContextType derivedContextType, bool isInArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType evalContextType, Intrinsic intrinsic)
+        : Base(structure, vm, sourceCode, isInStrictContext, derivedContextType, isInArrowFunctionContext, isInsideOrdinaryFunction, evalContextType, intrinsic)
     {
     }
 

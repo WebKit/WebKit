@@ -44,7 +44,7 @@ namespace JSC {
 const ClassInfo ProgramExecutable::s_info = { "ProgramExecutable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProgramExecutable) };
 
 ProgramExecutable::ProgramExecutable(JSGlobalObject* globalObject, const SourceCode& source)
-    : Base(globalObject->vm().programExecutableStructure.get(), globalObject->vm(), source, false, DerivedContextType::None, false, EvalContextType::None, NoIntrinsic)
+    : Base(globalObject->vm().programExecutableStructure.get(), globalObject->vm(), source, false, DerivedContextType::None, false, false, EvalContextType::None, NoIntrinsic)
 {
     ASSERT(source.provider()->sourceType() == SourceProviderSourceType::Program);
     VM& vm = globalObject->vm();

@@ -78,6 +78,7 @@ public:
     bool isInliningCandidate() const { return !neverInline(); }
     bool isOkToOptimize() const { return !neverOptimize(); }
     bool canUseOSRExitFuzzing() const { return m_canUseOSRExitFuzzing; }
+    bool isInsideOrdinaryFunction() const { return m_isInsideOrdinaryFunction; }
     
     bool* addressOfDidTryToEnterInLoop() { return &m_didTryToEnterInLoop; }
 
@@ -128,7 +129,7 @@ private:
     TemplateObjectMap& ensureTemplateObjectMap(VM&);
 
 protected:
-    ScriptExecutable(Structure*, VM&, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isInArrowFunctionContext, EvalContextType, Intrinsic);
+    ScriptExecutable(Structure*, VM&, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isInArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType, Intrinsic);
 
     void finishCreation(VM& vm)
     {
@@ -160,6 +161,7 @@ protected:
     bool m_isArrowFunctionContext : 1;
     bool m_canUseOSRExitFuzzing : 1;
     bool m_codeForGeneratorBodyWasGenerated : 1;
+    bool m_isInsideOrdinaryFunction : 1;
     unsigned m_derivedContextType : 2; // DerivedContextType
     unsigned m_evalContextType : 2; // EvalContextType
 };

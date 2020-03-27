@@ -125,7 +125,7 @@ public:
         int overrideLineNumber, Optional<int> functionConstructorParametersEndPosition);
 
     SourceCode linkedSourceCode(const SourceCode&) const;
-    JS_EXPORT_PRIVATE FunctionExecutable* link(VM&, ScriptExecutable* topLevelExecutable, const SourceCode& parentSource, Optional<int> overrideLineNumber = WTF::nullopt, Intrinsic = NoIntrinsic);
+    JS_EXPORT_PRIVATE FunctionExecutable* link(VM&, ScriptExecutable* topLevelExecutable, const SourceCode& parentSource, Optional<int> overrideLineNumber = WTF::nullopt, Intrinsic = NoIntrinsic, bool isInsideOrdinaryFunction = false);
 
     void clearCode(VM& vm)
     {

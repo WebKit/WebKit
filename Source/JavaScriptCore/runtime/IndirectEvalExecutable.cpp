@@ -69,7 +69,7 @@ IndirectEvalExecutable* IndirectEvalExecutable::create(JSGlobalObject* globalObj
 }
 
 IndirectEvalExecutable::IndirectEvalExecutable(JSGlobalObject* globalObject, const SourceCode& source, bool inStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType)
-    : EvalExecutable(globalObject, source, inStrictContext, derivedContextType, isArrowFunctionContext, evalContextType, NeedsClassFieldInitializer::No)
+    : EvalExecutable(globalObject, source, inStrictContext, derivedContextType, isArrowFunctionContext, false, evalContextType, NeedsClassFieldInitializer::No)
 {
 }
 

@@ -1,3 +1,57 @@
+2020-03-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Fix instances of new.target that should be syntax errors
+        https://bugs.webkit.org/show_bug.cgi?id=208040
+        <rdar://problem/59653142>
+
+        Reviewed by Michael Saboff.
+
+        We were not throwing the appropriate syntax errors for the following usages of new.target:
+        - Class field initializers outside ordinary functions: we were missing a check that the
+          closestOrdinaryFunctionScope was not the global scope.
+        - Within an eval inside an arrow function: we were only checking that the EvalContextType should
+          be FunctionEvalContext, but that does not tell us whether it's an arrow function or an ordinary
+          function. To fix that we must thread that information from the executables to the parser.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::link):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::parse):
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockImpl):
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create):
+        (JSC::DirectEvalExecutable::DirectEvalExecutable):
+        * runtime/DirectEvalExecutable.h:
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::EvalExecutable):
+        * runtime/EvalExecutable.h:
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/FunctionExecutable.h:
+        * runtime/GlobalExecutable.h:
+        (JSC::GlobalExecutable::GlobalExecutable):
+        * runtime/IndirectEvalExecutable.cpp:
+        (JSC::IndirectEvalExecutable::IndirectEvalExecutable):
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::ModuleProgramExecutable):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::ProgramExecutable):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::isInsideOrdinaryFunction const):
+
 2020-03-27  Keith Miller  <keith_miller@apple.com>
 
         Add missing scope release to DataView's buffer getter
