@@ -79,7 +79,7 @@
 #define OPENSSL_DSA_MAX_MODULUS_BITS 10000
 
 // Primality test according to FIPS PUB 186[-1], Appendix 2.1: 50 rounds of
-// Rabin-Miller
+// Miller-Rabin.
 #define DSS_prime_checks 50
 
 static int dsa_sign_setup(const DSA *dsa, BN_CTX *ctx_in, BIGNUM **out_kinv,
@@ -256,7 +256,7 @@ int DSA_generate_parameters_ex(DSA *dsa, unsigned bits, const uint8_t *seed_in,
     // Find q.
     for (;;) {
       // step 1
-      if (!BN_GENCB_call(cb, 0, m++)) {
+      if (!BN_GENCB_call(cb, BN_GENCB_GENERATED, m++)) {
         goto err;
       }
 
@@ -319,7 +319,7 @@ int DSA_generate_parameters_ex(DSA *dsa, unsigned bits, const uint8_t *seed_in,
     n = (bits - 1) / 160;
 
     for (;;) {
-      if ((counter != 0) && !BN_GENCB_call(cb, 0, counter)) {
+      if ((counter != 0) && !BN_GENCB_call(cb, BN_GENCB_GENERATED, counter)) {
         goto err;
       }
 

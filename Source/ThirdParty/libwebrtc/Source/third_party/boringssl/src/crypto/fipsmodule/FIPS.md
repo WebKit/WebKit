@@ -46,6 +46,10 @@ The DRBG state is kept in a thread-local structure and is seeded from one of the
 
 In FIPS mode, each of those entropy sources is subject to a 10× overread. That is, when *n* bytes of entropy are needed, *10n* bytes will be read from the entropy source and XORed down to *n* bytes. Reads from the entropy source are also processed in blocks of 16 bytes and if two consecutive chunks are equal the process will abort.
 
+In the case that the seed is taken from RDRAND, getrandom will also be queried with `GRND_NONBLOCK` to attempt to obtain additional entropy from the operating system. If available, that extra entropy will be XORed into the whitened seed.
+
+On Android, only `getrandom` is supported and, when seeding for the first time, the system property `ro.boringcrypto.hwrand` is queried. If set to `true` then `getrandom` will be called with the `GRND_RANDOM` flag. Only entropy draws destined for DRBG seeds are affected by this. We are not suggesting that there is any security advantage at all to doing this, and thus recommend that Android vendors do _not_ set this flag.
+
 The CTR-DRBG is reseeded every 4096 calls to `RAND_bytes`. Thus the process will randomly crash about every 2¹³⁵ calls.
 
 The FIPS PRNGs allow “additional input” to be fed into a given call. We use this feature to be as robust as possible to state duplication from process forks and VM copies: for every call we read 32 bytes of “additional data” from the entropy source (without overread) which means that cloned states will diverge at the next call to `RAND_bytes`. This is called “prediction resistance” by FIPS, but we do *not* claim this property in a FIPS context because we don't implement it the way they want.
@@ -53,6 +57,12 @@ The FIPS PRNGs allow “additional input” to be fed into a given call. We use 
 There is a second interface to the RNG which allows the caller to supply bytes that will be XORed into the generated additional data (`RAND_bytes_with_additional_data`). This is used in the ECDSA code to include the message and private key in the generation of *k*, the ECDSA nonce. This allows ECDSA to be robust to entropy failures while still following the FIPS rules.
 
 FIPS requires that RNG state be zeroed when the process exits. In order to implement this, all per-thread RNG states are tracked in a linked list and a destructor function is included which clears them. In order for this to be safe in the presence of threads, a lock is used to stop all other threads from using the RNG once this process has begun. Thus the main thread exiting may cause other threads to deadlock, and drawing on entropy in a destructor function may also deadlock.
+
+## Self-test optimisation
+
+On Android, the self-tests are optimised in line with [IG](https://csrc.nist.gov/csrc/media/projects/cryptographic-module-validation-program/documents/fips140-2/fips1402ig.pdf) section 9.11. The module will always perform the integrity test at power-on, but the self-tests will test for the presence of a file named after the hex encoded, HMAC-SHA-256 hash of the module in `/dev/boringssl/selftest/`. If such a file is found then the self-tests are skipped. Otherwise, after the self-tests complete successfully, that file will be written. Any I/O errors are ignored and, if they occur when testing for the presence of the file, the module acts as if it's not present.
+
+It is intended that a `tmpfs` be mounted at that location in order to skip running the self tests for every process once they have already passed in a given instance of the operating system.
 
 ## Integrity Test
 

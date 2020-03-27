@@ -133,9 +133,9 @@ bool tls13_process_certificate(SSL_HANDSHAKE *hs, const SSLMessage &msg,
     }
 
     ssl_cert_decompression_func_t decompress = nullptr;
-    for (const auto* alg : ssl->ctx->cert_compression_algs.get()) {
-      if (alg->alg_id == alg_id) {
-        decompress = alg->decompress;
+    for (const auto &alg : ssl->ctx->cert_compression_algs) {
+      if (alg.alg_id == alg_id) {
+        decompress = alg.decompress;
         break;
       }
     }
@@ -356,7 +356,7 @@ bool tls13_process_certificate_verify(SSL_HANDSHAKE *hs, const SSLMessage &msg) 
   }
 
   uint8_t alert = SSL_AD_DECODE_ERROR;
-  if (!tls12_check_peer_sigalg(ssl, &alert, signature_algorithm)) {
+  if (!tls12_check_peer_sigalg(hs, &alert, signature_algorithm)) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
     return false;
   }
@@ -517,9 +517,9 @@ bool tls13_add_certificate(SSL_HANDSHAKE *hs) {
   }
 
   const CertCompressionAlg *alg = nullptr;
-  for (const auto *candidate : ssl->ctx->cert_compression_algs.get()) {
-    if (candidate->alg_id == hs->cert_compression_alg_id) {
-      alg = candidate;
+  for (const auto &candidate : ssl->ctx->cert_compression_algs) {
+    if (candidate.alg_id == hs->cert_compression_alg_id) {
+      alg = &candidate;
       break;
     }
   }

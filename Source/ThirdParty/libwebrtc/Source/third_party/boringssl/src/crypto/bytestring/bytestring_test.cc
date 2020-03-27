@@ -67,6 +67,14 @@ TEST(CBSTest, GetUint) {
   EXPECT_EQ(0x13u, u8);
   EXPECT_FALSE(CBS_get_u8(&data, &u8));
   EXPECT_FALSE(CBS_get_last_u8(&data, &u8));
+
+  CBS_init(&data, kData, sizeof(kData));
+  ASSERT_TRUE(CBS_get_u16le(&data, &u16));
+  EXPECT_EQ(0x0201u, u16);
+  ASSERT_TRUE(CBS_get_u32le(&data, &u32));
+  EXPECT_EQ(0x06050403u, u32);
+  ASSERT_TRUE(CBS_get_u64le(&data, &u64));
+  EXPECT_EQ(0x0e0d0c0b0a090807u, u64);
 }
 
 TEST(CBSTest, GetPrefixed) {
@@ -316,7 +324,9 @@ TEST(CBBTest, InitUninitialized) {
 TEST(CBBTest, Basic) {
   static const uint8_t kExpected[] = {1,   2,    3,    4,    5,    6,   7,
                                       8,   9,    0xa,  0xb,  0xc,  0xd, 0xe,
-                                      0xf, 0x10, 0x11, 0x12, 0x13, 0x14};
+                                      0xf, 0x10, 0x11, 0x12, 0x13, 0x14, 3, 2,
+                                      10,  9,    8,    7,    0x12, 0x11, 0x10,
+                                      0xf, 0xe,  0xd,  0xc,  0xb};
   uint8_t *buf;
   size_t buf_len;
 
@@ -331,6 +341,9 @@ TEST(CBBTest, Basic) {
   ASSERT_TRUE(CBB_add_u32(cbb.get(), 0x708090a));
   ASSERT_TRUE(CBB_add_u64(cbb.get(), 0xb0c0d0e0f101112));
   ASSERT_TRUE(CBB_add_bytes(cbb.get(), (const uint8_t *)"\x13\x14", 2));
+  ASSERT_TRUE(CBB_add_u16le(cbb.get(), 0x203));
+  ASSERT_TRUE(CBB_add_u32le(cbb.get(), 0x708090a));
+  ASSERT_TRUE(CBB_add_u64le(cbb.get(), 0xb0c0d0e0f101112));
   ASSERT_TRUE(CBB_finish(cbb.get(), &buf, &buf_len));
 
   bssl::UniquePtr<uint8_t> scoper(buf);
@@ -751,6 +764,79 @@ TEST(CBSTest, ASN1Uint64) {
 
     CBS_init(&cbs, (const uint8_t *)test->encoding, test->encoding_len);
     EXPECT_FALSE(CBS_get_asn1_uint64(&cbs, &value));
+  }
+}
+
+struct ASN1Int64Test {
+  int64_t value;
+  const char *encoding;
+  size_t encoding_len;
+};
+
+static const ASN1Int64Test kASN1Int64Tests[] = {
+    {0, "\x02\x01\x00", 3},
+    {1, "\x02\x01\x01", 3},
+    {-1, "\x02\x01\xff", 3},
+    {127, "\x02\x01\x7f", 3},
+    {-127, "\x02\x01\x81", 3},
+    {128, "\x02\x02\x00\x80", 4},
+    {-128, "\x02\x01\x80", 3},
+    {129, "\x02\x02\x00\x81", 4},
+    {-129, "\x02\x02\xff\x7f", 4},
+    {0xdeadbeef, "\x02\x05\x00\xde\xad\xbe\xef", 7},
+    {INT64_C(0x0102030405060708), "\x02\x08\x01\x02\x03\x04\x05\x06\x07\x08",
+     10},
+    {INT64_MIN, "\x02\x08\x80\x00\x00\x00\x00\x00\x00\x00", 10},
+    {INT64_MAX, "\x02\x08\x7f\xff\xff\xff\xff\xff\xff\xff", 10},
+};
+
+struct ASN1InvalidInt64Test {
+  const char *encoding;
+  size_t encoding_len;
+};
+
+static const ASN1InvalidInt64Test kASN1InvalidInt64Tests[] = {
+    // Bad tag.
+    {"\x03\x01\x00", 3},
+    // Empty contents.
+    {"\x02\x00", 2},
+    // Overflow.
+    {"\x02\x09\x01\x00\x00\x00\x00\x00\x00\x00\x00", 11},
+    // Leading zeros.
+    {"\x02\x02\x00\x01", 4},
+    // Leading 0xff.
+    {"\x02\x02\xff\xff", 4},
+};
+
+TEST(CBSTest, ASN1Int64) {
+  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kASN1Int64Tests); i++) {
+    SCOPED_TRACE(i);
+    const ASN1Int64Test *test = &kASN1Int64Tests[i];
+    CBS cbs;
+    int64_t value;
+    uint8_t *out;
+    size_t len;
+
+    CBS_init(&cbs, (const uint8_t *)test->encoding, test->encoding_len);
+    ASSERT_TRUE(CBS_get_asn1_int64(&cbs, &value));
+    EXPECT_EQ(0u, CBS_len(&cbs));
+    EXPECT_EQ(test->value, value);
+
+    bssl::ScopedCBB cbb;
+    ASSERT_TRUE(CBB_init(cbb.get(), 0));
+    ASSERT_TRUE(CBB_add_asn1_int64(cbb.get(), test->value));
+    ASSERT_TRUE(CBB_finish(cbb.get(), &out, &len));
+    bssl::UniquePtr<uint8_t> scoper(out);
+    EXPECT_EQ(Bytes(test->encoding, test->encoding_len), Bytes(out, len));
+  }
+
+  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kASN1InvalidInt64Tests); i++) {
+    const ASN1InvalidInt64Test *test = &kASN1InvalidInt64Tests[i];
+    CBS cbs;
+    int64_t value;
+
+    CBS_init(&cbs, (const uint8_t *)test->encoding, test->encoding_len);
+    EXPECT_FALSE(CBS_get_asn1_int64(&cbs, &value));
   }
 }
 

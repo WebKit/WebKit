@@ -26,9 +26,11 @@
 #include <openssl/err.h>
 #include <openssl/nid.h>
 #include <openssl/sha.h>
+#include <openssl/span.h>
 
 #include "../crypto/internal.h"
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 
@@ -104,7 +106,8 @@ static bool TestKAS(FileTest *t, void *arg) {
 
     printf("%sIUTHashZZ = %s\r\nResult = %c\r\n\r\n\r\n",
            t->CurrentTestToString().c_str(),
-           EncodeHex(digest, digest_len).c_str(), ok ? 'P' : 'F');
+           EncodeHex(bssl::MakeConstSpan(digest, digest_len)).c_str(),
+           ok ? 'P' : 'F');
   } else {
     const EC_POINT *pub = EC_KEY_get0_public_key(ec_key.get());
     bssl::UniquePtr<BIGNUM> x(BN_new());
@@ -119,7 +122,7 @@ static bool TestKAS(FileTest *t, void *arg) {
 
     printf("%sQeIUTx = %s\r\nQeIUTy = %s\r\nHashZZ = %s\r\n",
            t->CurrentTestToString().c_str(), x_hex.get(), y_hex.get(),
-           EncodeHex(digest, digest_len).c_str());
+           EncodeHex(bssl::MakeConstSpan(digest, digest_len)).c_str());
   }
 
   return true;

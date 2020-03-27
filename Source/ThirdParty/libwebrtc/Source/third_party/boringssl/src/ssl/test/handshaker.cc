@@ -35,7 +35,7 @@ bool HandbackReady(SSL *ssl, int ret) {
 }
 
 bool Handshaker(const TestConfig *config, int rfd, int wfd,
-                       Span<const uint8_t> input, int control) {
+                Span<const uint8_t> input, int control) {
   UniquePtr<SSL_CTX> ctx = config->SetupCtx(/*old_ctx=*/nullptr);
   if (!ctx) {
     return false;
@@ -80,7 +80,7 @@ bool Handshaker(const TestConfig *config, int rfd, int wfd,
       }
       continue;
     }
-    if (!config->async || !RetryAsync(ssl.get(), ret)) {
+    if (!RetryAsync(ssl.get(), ret)) {
       break;
     }
   }

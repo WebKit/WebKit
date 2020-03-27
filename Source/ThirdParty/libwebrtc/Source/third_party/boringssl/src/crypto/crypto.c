@@ -60,7 +60,7 @@
 // that tests the capability values will still skip the constructor but, so
 // far, the init constructor function only sets the capability variables.
 
-#if !defined(NDEBUG) && !defined(BORINGSSL_FIPS)
+#if defined(BORINGSSL_DISPATCH_TEST)
 // This value must be explicitly initialised to zero in order to work around a
 // bug in libtool or the linker on OS X.
 //

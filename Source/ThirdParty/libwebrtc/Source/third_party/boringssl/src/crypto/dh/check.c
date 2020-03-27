@@ -151,7 +151,7 @@ int DH_check(const DH *dh, int *out_flags) {
         *out_flags |= DH_CHECK_NOT_SUITABLE_GENERATOR;
       }
     }
-    r = BN_is_prime_ex(dh->q, BN_prime_checks, ctx, NULL);
+    r = BN_is_prime_ex(dh->q, BN_prime_checks_for_validation, ctx, NULL);
     if (r < 0) {
       goto err;
     }
@@ -188,7 +188,7 @@ int DH_check(const DH *dh, int *out_flags) {
     *out_flags |= DH_CHECK_UNABLE_TO_CHECK_GENERATOR;
   }
 
-  r = BN_is_prime_ex(dh->p, BN_prime_checks, ctx, NULL);
+  r = BN_is_prime_ex(dh->p, BN_prime_checks_for_validation, ctx, NULL);
   if (r < 0) {
     goto err;
   }
@@ -198,7 +198,7 @@ int DH_check(const DH *dh, int *out_flags) {
     if (!BN_rshift1(t1, dh->p)) {
       goto err;
     }
-    r = BN_is_prime_ex(t1, BN_prime_checks, ctx, NULL);
+    r = BN_is_prime_ex(t1, BN_prime_checks_for_validation, ctx, NULL);
     if (r < 0) {
       goto err;
     }

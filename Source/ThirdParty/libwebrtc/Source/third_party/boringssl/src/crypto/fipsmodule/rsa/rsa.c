@@ -167,6 +167,22 @@ int RSA_up_ref(RSA *rsa) {
 
 unsigned RSA_bits(const RSA *rsa) { return BN_num_bits(rsa->n); }
 
+const BIGNUM *RSA_get0_n(const RSA *rsa) { return rsa->n; }
+
+const BIGNUM *RSA_get0_e(const RSA *rsa) { return rsa->e; }
+
+const BIGNUM *RSA_get0_d(const RSA *rsa) { return rsa->d; }
+
+const BIGNUM *RSA_get0_p(const RSA *rsa) { return rsa->p; }
+
+const BIGNUM *RSA_get0_q(const RSA *rsa) { return rsa->q; }
+
+const BIGNUM *RSA_get0_dmp1(const RSA *rsa) { return rsa->dmp1; }
+
+const BIGNUM *RSA_get0_dmq1(const RSA *rsa) { return rsa->dmq1; }
+
+const BIGNUM *RSA_get0_iqmp(const RSA *rsa) { return rsa->iqmp; }
+
 void RSA_get0_key(const RSA *rsa, const BIGNUM **out_n, const BIGNUM **out_e,
                   const BIGNUM **out_d) {
   if (out_n != NULL) {
@@ -809,6 +825,11 @@ int RSA_check_fips(RSA *key) {
   int ret = 1;
 
   // Perform partial public key validation of RSA keys (SP 800-89 5.3.3).
+  // Although this is not for primality testing, SP 800-89 cites an RSA
+  // primality testing algorithm, so we use |BN_prime_checks_for_generation| to
+  // match. This is only a plausibility test and we expect the value to be
+  // composite, so too few iterations will cause us to reject the key, not use
+  // an implausible one.
   enum bn_primality_result_t primality_result;
   if (BN_num_bits(key->e) <= 16 ||
       BN_num_bits(key->e) > 256 ||
@@ -817,7 +838,8 @@ int RSA_check_fips(RSA *key) {
       !BN_gcd(&small_gcd, key->n, g_small_factors(), ctx) ||
       !BN_is_one(&small_gcd) ||
       !BN_enhanced_miller_rabin_primality_test(&primality_result, key->n,
-                                               BN_prime_checks, ctx, NULL) ||
+                                               BN_prime_checks_for_generation,
+                                               ctx, NULL) ||
       primality_result != bn_non_prime_power_composite) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_PUBLIC_KEY_VALIDATION_FAILED);
     ret = 0;

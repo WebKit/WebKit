@@ -23,6 +23,7 @@
 #include <openssl/err.h>
 
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 
@@ -37,6 +38,8 @@ struct TestCtx {
 static const EVP_AEAD *GetAEAD(const std::string &name, const bool enc) {
   if (name == "aes-128-gcm") {
     return EVP_aead_aes_128_gcm();
+  } else if (name == "aes-192-gcm") {
+    return EVP_aead_aes_192_gcm();
   } else if (name == "aes-256-gcm") {
     return EVP_aead_aes_256_gcm();
   }
@@ -75,8 +78,8 @@ static bool TestAEADEncrypt(FileTest *t, void *arg) {
     return false;
   }
   printf("%s", t->CurrentTestToString().c_str());
-  printf("CT = %s\r\n", EncodeHex(ct.data(), ct.size()).c_str());
-  printf("Tag = %s\r\n\r\n", EncodeHex(tag.data(), tag.size()).c_str());
+  printf("CT = %s\r\n", EncodeHex(ct).c_str());
+  printf("Tag = %s\r\n\r\n", EncodeHex(tag).c_str());
 
   return true;
 }
@@ -117,7 +120,7 @@ static bool TestAEADDecrypt(FileTest *t, void *arg) {
   bool aead_result =
       AEADDecrypt(ctx->aead, &pt, pt_len, key, aad, ct, tag, iv);
   if (aead_result) {
-    printf("PT = %s\r\n\r\n", EncodeHex(pt.data(), pt.size()).c_str());
+    printf("PT = %s\r\n\r\n", EncodeHex(pt).c_str());
   } else {
     printf("FAIL\r\n\r\n");
   }

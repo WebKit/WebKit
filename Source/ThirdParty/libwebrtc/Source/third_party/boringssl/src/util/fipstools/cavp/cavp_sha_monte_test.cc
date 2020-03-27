@@ -21,6 +21,7 @@
 #include <openssl/digest.h>
 
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 
@@ -74,7 +75,7 @@ static bool TestSHAMonte(FileTest *t, void *arg) {
       msg.insert(msg.end(), out.begin(), out.end());
     }
     printf("COUNT = %d\r\n", count);
-    printf("MD = %s\r\n\r\n", EncodeHex(out.data(), out.size()).c_str());
+    printf("MD = %s\r\n\r\n", EncodeHex(out).c_str());
   }
 
   return true;

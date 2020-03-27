@@ -347,6 +347,11 @@ func readObjects(numPath, objectsPath string) (*objects, error) {
 		return nil, err
 	}
 
+	// The kNIDsIn*Order constants assume each NID fits in a uint16_t.
+	if len(objs.byNID) > 0xffff {
+		return nil, errors.New("too many NIDs allocated")
+	}
+
 	return objs, nil
 }
 
@@ -645,7 +650,7 @@ func writeData(path string, objs *objects) error {
 	}
 	sortNIDs(nids, objs, func(a, b object) bool { return a.shortName < b.shortName })
 
-	fmt.Fprintf(&b, "\nstatic const unsigned kNIDsInShortNameOrder[] = {\n")
+	fmt.Fprintf(&b, "\nstatic const uint16_t kNIDsInShortNameOrder[] = {\n")
 	for _, nid := range nids {
 		fmt.Fprintf(&b, "%d /* %s */,\n", nid, objs.byNID[nid].shortName)
 	}
@@ -661,7 +666,7 @@ func writeData(path string, objs *objects) error {
 	}
 	sortNIDs(nids, objs, func(a, b object) bool { return a.longName < b.longName })
 
-	fmt.Fprintf(&b, "\nstatic const unsigned kNIDsInLongNameOrder[] = {\n")
+	fmt.Fprintf(&b, "\nstatic const uint16_t kNIDsInLongNameOrder[] = {\n")
 	for _, nid := range nids {
 		fmt.Fprintf(&b, "%d /* %s */,\n", nid, objs.byNID[nid].longName)
 	}
@@ -686,7 +691,7 @@ func writeData(path string, objs *objects) error {
 		return bytes.Compare(a.encoded, b.encoded) < 0
 	})
 
-	fmt.Fprintf(&b, "\nstatic const unsigned kNIDsInOIDOrder[] = {\n")
+	fmt.Fprintf(&b, "\nstatic const uint16_t kNIDsInOIDOrder[] = {\n")
 	for _, nid := range nids {
 		obj := objs.byNID[nid]
 		fmt.Fprintf(&b, "%d /* ", nid)

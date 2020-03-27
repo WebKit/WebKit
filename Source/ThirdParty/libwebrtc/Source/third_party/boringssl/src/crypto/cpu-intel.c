@@ -123,9 +123,17 @@ static uint64_t OPENSSL_xgetbv(uint32_t xcr) {
 // and |out[1]|. See the comment in |OPENSSL_cpuid_setup| about this.
 static void handle_cpu_env(uint32_t *out, const char *in) {
   const int invert = in[0] == '~';
-  uint64_t v;
+  const int hex = in[invert] == '0' && in[invert+1] == 'x';
 
-  if (!sscanf(in + invert, "%" PRIu64, &v)) {
+  int sscanf_result;
+  uint64_t v;
+  if (hex) {
+    sscanf_result = sscanf(in + invert + 2, "%" PRIx64, &v);
+  } else {
+    sscanf_result = sscanf(in + invert, "%" PRIu64, &v);
+  }
+
+  if (!sscanf_result) {
     return;
   }
 
@@ -164,17 +172,23 @@ void OPENSSL_cpuid_setup(void) {
   if (is_amd) {
     // See https://www.amd.com/system/files/TechDocs/25481.pdf, page 10.
     const uint32_t base_family = (eax >> 8) & 15;
+    const uint32_t base_model = (eax >> 4) & 15;
 
     uint32_t family = base_family;
+    uint32_t model = base_model;
     if (base_family == 0xf) {
       const uint32_t ext_family = (eax >> 20) & 255;
       family += ext_family;
+      const uint32_t ext_model = (eax >> 16) & 15;
+      model |= ext_model << 4;
     }
 
-    if (family < 0x17) {
+    if (family < 0x17 || (family == 0x17 && 0x70 <= model && model <= 0x7f)) {
       // Disable RDRAND on AMD families before 0x17 (Zen) due to reported
       // failures after suspend.
       // https://bugzilla.redhat.com/show_bug.cgi?id=1150286
+      // Also disable for family 0x17, models 0x70–0x7f, due to possible RDRAND
+      // failures there too.
       ecx &= ~(1u << 30);
     }
   }

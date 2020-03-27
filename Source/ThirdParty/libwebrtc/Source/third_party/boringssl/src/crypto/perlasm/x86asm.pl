@@ -34,12 +34,12 @@ sub ::AUTOLOAD
 }
 
 # record_function_hit(int) writes a byte with value one to the given offset of
-# |BORINGSSL_function_hit|, but only if NDEBUG is not defined. This is used in
-# impl_dispatch_test.cc to test whether the expected assembly functions are
-# triggered by high-level API calls.
+# |BORINGSSL_function_hit|, but only if BORINGSSL_DISPATCH_TEST is defined.
+# This is used in impl_dispatch_test.cc to test whether the expected assembly
+# functions are triggered by high-level API calls.
 sub ::record_function_hit
 { my($index)=@_;
-    &preprocessor_ifndef("NDEBUG");
+    &preprocessor_ifdef("BORINGSSL_DISPATCH_TEST");
     &push("ebx");
     &push("edx");
     &call(&label("pic"));
@@ -298,6 +298,8 @@ ___
     }
     print @out;
     print "#endif\n" unless ($win32 || $netware);
+    # See https://www.airs.com/blog/archives/518.
+    print ".section\t.note.GNU-stack,\"\",\@progbits\n" if ($elf);
 }
 
 sub ::asm_init

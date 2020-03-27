@@ -31,7 +31,6 @@
 
 #include "internal.h"
 #include "../crypto/internal.h"
-#include "../third_party/sike/sike.h"
 
 BSSL_NAMESPACE_BEGIN
 
@@ -300,87 +299,6 @@ class CECPQ2KeyShare : public SSLKeyShare {
   HRSS_private_key hrss_private_key_;
 };
 
-class CECPQ2bKeyShare : public SSLKeyShare {
- public:
-  uint16_t GroupID() const override { return SSL_CURVE_CECPQ2b; }
-
-  bool Offer(CBB *out) override {
-    uint8_t public_x25519[32] = {0};
-    X25519_keypair(public_x25519, private_x25519_);
-    if (!SIKE_keypair(private_sike_, public_sike_)) {
-      return false;
-    }
-
-    return CBB_add_bytes(out, public_x25519, sizeof(public_x25519)) &&
-           CBB_add_bytes(out, public_sike_, sizeof(public_sike_));
-  }
-
-  bool Accept(CBB *out_public_key, Array<uint8_t> *out_secret,
-              uint8_t *out_alert, Span<const uint8_t> peer_key) override {
-    uint8_t public_x25519[32];
-    uint8_t private_x25519[32];
-    uint8_t sike_ciphertext[SIKE_CT_BYTESZ] = {0};
-
-    *out_alert = SSL_AD_INTERNAL_ERROR;
-
-    if (peer_key.size() != sizeof(public_x25519) + SIKE_PUB_BYTESZ) {
-      *out_alert = SSL_AD_DECODE_ERROR;
-      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
-      return false;
-    }
-
-    Array<uint8_t> secret;
-    if (!secret.Init(sizeof(private_x25519_) + SIKE_SS_BYTESZ)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
-      return false;
-    }
-
-    X25519_keypair(public_x25519, private_x25519);
-    if (!X25519(secret.data(), private_x25519, peer_key.data())) {
-      *out_alert = SSL_AD_DECODE_ERROR;
-      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
-      return false;
-    }
-
-    SIKE_encaps(secret.data() + sizeof(private_x25519_), sike_ciphertext,
-                peer_key.data() + sizeof(public_x25519));
-    *out_secret = std::move(secret);
-
-    return CBB_add_bytes(out_public_key, public_x25519,
-                         sizeof(public_x25519)) &&
-           CBB_add_bytes(out_public_key, sike_ciphertext,
-                         sizeof(sike_ciphertext));
-  }
-
-  bool Finish(Array<uint8_t> *out_secret, uint8_t *out_alert,
-              Span<const uint8_t> peer_key) override {
-    *out_alert = SSL_AD_INTERNAL_ERROR;
-
-    Array<uint8_t> secret;
-    if (!secret.Init(sizeof(private_x25519_) + SIKE_SS_BYTESZ)) {
-      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
-      return false;
-    }
-
-    if (peer_key.size() != 32 + SIKE_CT_BYTESZ ||
-        !X25519(secret.data(), private_x25519_, peer_key.data())) {
-      *out_alert = SSL_AD_DECODE_ERROR;
-      OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_ECPOINT);
-      return false;
-    }
-
-    SIKE_decaps(secret.data() + sizeof(private_x25519_), peer_key.data() + 32,
-                public_sike_, private_sike_);
-    *out_secret = std::move(secret);
-    return true;
-  }
-
- private:
-  uint8_t private_x25519_[32];
-  uint8_t private_sike_[SIKE_PRV_BYTESZ];
-  uint8_t public_sike_[SIKE_PUB_BYTESZ];
-};
-
 CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_secp224r1, SSL_CURVE_SECP224R1, "P-224", "secp224r1"},
     {NID_X9_62_prime256v1, SSL_CURVE_SECP256R1, "P-256", "prime256v1"},
@@ -388,7 +306,6 @@ CONSTEXPR_ARRAY NamedGroup kNamedGroups[] = {
     {NID_secp521r1, SSL_CURVE_SECP521R1, "P-521", "secp521r1"},
     {NID_X25519, SSL_CURVE_X25519, "X25519", "x25519"},
     {NID_CECPQ2, SSL_CURVE_CECPQ2, "CECPQ2", "CECPQ2"},
-    {NID_CECPQ2b, SSL_CURVE_CECPQ2b, "CECPQ2b", "CECPQ2b"},
 };
 
 }  // namespace
@@ -415,8 +332,6 @@ UniquePtr<SSLKeyShare> SSLKeyShare::Create(uint16_t group_id) {
       return UniquePtr<SSLKeyShare>(New<X25519KeyShare>());
     case SSL_CURVE_CECPQ2:
       return UniquePtr<SSLKeyShare>(New<CECPQ2KeyShare>());
-    case SSL_CURVE_CECPQ2b:
-      return UniquePtr<SSLKeyShare>(New<CECPQ2bKeyShare>());
     default:
       return nullptr;
   }

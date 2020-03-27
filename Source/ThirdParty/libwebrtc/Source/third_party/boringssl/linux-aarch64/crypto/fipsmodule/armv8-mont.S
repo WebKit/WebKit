@@ -1420,3 +1420,4 @@ __bn_mul4x_mont:
 .align	4
 #endif
 #endif  // !OPENSSL_NO_ASM
+.section	.note.GNU-stack,"",%progbits

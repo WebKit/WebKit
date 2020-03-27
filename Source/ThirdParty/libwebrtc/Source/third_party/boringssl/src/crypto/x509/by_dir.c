@@ -236,7 +236,7 @@ static int add_cert_dir(BY_DIR *ctx, const char *dir, int type)
                 by_dir_entry_free(ent);
                 return 0;
             }
-            BUF_strlcpy(ent->dir, ss, len + 1);
+            OPENSSL_strlcpy(ent->dir, ss, len + 1);
             if (!sk_BY_DIR_ENTRY_push(ctx->dirs, ent)) {
                 by_dir_entry_free(ent);
                 return 0;

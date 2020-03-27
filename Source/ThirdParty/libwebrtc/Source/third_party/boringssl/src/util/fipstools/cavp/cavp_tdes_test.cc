@@ -22,6 +22,7 @@
 #include <openssl/err.h>
 
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 
@@ -131,20 +132,16 @@ static bool TestKAT(FileTest *t, void *arg) {
       operation == kEncrypt ? "CIPHERTEXT" : "PLAINTEXT";
   printf("COUNT = %s\r\n", count.c_str());
   if (num_keys == kNotPresent) {
-    printf("KEYs = %s\r\n", EncodeHex(keys.data(), keys.size()).c_str());
+    printf("KEYs = %s\r\n", EncodeHex(keys).c_str());
   } else {
-    printf("KEY1 = %s\r\nKEY2 = %s\r\nKEY3 = %s\r\n",
-           EncodeHex(key1.data(), key1.size()).c_str(),
-           EncodeHex(key2.data(), key2.size()).c_str(),
-           EncodeHex(key3.data(), key3.size()).c_str());
+    printf("KEY1 = %s\r\nKEY2 = %s\r\nKEY3 = %s\r\n", EncodeHex(key1).c_str(),
+           EncodeHex(key2).c_str(), EncodeHex(key3).c_str());
   }
   if (ctx->has_iv) {
-    printf("IV = %s\r\n", EncodeHex(iv.data(), iv.size()).c_str());
+    printf("IV = %s\r\n", EncodeHex(iv).c_str());
   }
-  printf("%s = %s\r\n", in_label.c_str(),
-         EncodeHex(in.data(), in.size()).c_str());
-  printf("%s = %s\r\n\r\n", result_label.c_str(),
-         EncodeHex(result.data(), result.size()).c_str());
+  printf("%s = %s\r\n", in_label.c_str(), EncodeHex(in).c_str());
+  printf("%s = %s\r\n\r\n", result_label.c_str(), EncodeHex(result).c_str());
 
   return true;
 }
@@ -265,16 +262,13 @@ static bool TestMCT(FileTest *t, void *arg) {
       printf("[%s]\n\n", op_label.c_str());
     }
     printf("COUNT = %d\r\nKEY1 = %s\r\nKEY2 = %s\r\nKEY3 = %s\r\n", i,
-           EncodeHex(key1.data(), key1.size()).c_str(),
-           EncodeHex(key2.data(), key2.size()).c_str(),
-           EncodeHex(key3.data(), key3.size()).c_str());
+           EncodeHex(key1).c_str(), EncodeHex(key2).c_str(),
+           EncodeHex(key3).c_str());
     if (ctx->has_iv) {
-      printf("IV = %s\r\n", EncodeHex(iv.data(), iv.size()).c_str());
+      printf("IV = %s\r\n", EncodeHex(iv).c_str());
     }
-    printf("%s = %s\r\n", in_label.c_str(),
-           EncodeHex(in.data(), in.size()).c_str());
-    printf("%s = %s\r\n\r\n", result_label.c_str(),
-           EncodeHex(result.data(), result.size()).c_str());
+    printf("%s = %s\r\n", in_label.c_str(), EncodeHex(in).c_str());
+    printf("%s = %s\r\n\r\n", result_label.c_str(), EncodeHex(result).c_str());
 
 
     XORKeyWithOddParityLSB(&key1, result);

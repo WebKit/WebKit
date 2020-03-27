@@ -63,24 +63,16 @@ static const uint16_t kDTLSVersions[] = {
     DTLS1_VERSION,
 };
 
-static void get_method_versions(const SSL_PROTOCOL_METHOD *method,
-                                const uint16_t **out, size_t *out_num) {
-  if (method->is_dtls) {
-    *out = kDTLSVersions;
-    *out_num = OPENSSL_ARRAY_SIZE(kDTLSVersions);
-  } else {
-    *out = kTLSVersions;
-    *out_num = OPENSSL_ARRAY_SIZE(kTLSVersions);
-  }
+static Span<const uint16_t> get_method_versions(
+    const SSL_PROTOCOL_METHOD *method) {
+  return method->is_dtls ? Span<const uint16_t>(kDTLSVersions)
+                         : Span<const uint16_t>(kTLSVersions);
 }
 
 bool ssl_method_supports_version(const SSL_PROTOCOL_METHOD *method,
                                  uint16_t version) {
-  const uint16_t *versions;
-  size_t num_versions;
-  get_method_versions(method, &versions, &num_versions);
-  for (size_t i = 0; i < num_versions; i++) {
-    if (versions[i] == version) {
+  for (uint16_t supported : get_method_versions(method)) {
+    if (supported == version) {
       return true;
     }
   }
@@ -158,7 +150,7 @@ static bool set_max_version(const SSL_PROTOCOL_METHOD *method, uint16_t *out,
                             uint16_t version) {
   // Zero is interpreted as the default maximum version.
   if (version == 0) {
-    *out = method->is_dtls ? DTLS1_2_VERSION : TLS1_2_VERSION;
+    *out = method->is_dtls ? DTLS1_2_VERSION : TLS1_3_VERSION;
     return true;
   }
 
@@ -282,12 +274,9 @@ bool ssl_supports_version(SSL_HANDSHAKE *hs, uint16_t version) {
 }
 
 bool ssl_add_supported_versions(SSL_HANDSHAKE *hs, CBB *cbb) {
-  const uint16_t *versions;
-  size_t num_versions;
-  get_method_versions(hs->ssl->method, &versions, &num_versions);
-  for (size_t i = 0; i < num_versions; i++) {
-    if (ssl_supports_version(hs, versions[i]) &&
-        !CBB_add_u16(cbb, versions[i])) {
+  for (uint16_t version : get_method_versions(hs->ssl->method)) {
+    if (ssl_supports_version(hs, version) &&
+        !CBB_add_u16(cbb, version)) {
       return false;
     }
   }
@@ -296,11 +285,8 @@ bool ssl_add_supported_versions(SSL_HANDSHAKE *hs, CBB *cbb) {
 
 bool ssl_negotiate_version(SSL_HANDSHAKE *hs, uint8_t *out_alert,
                            uint16_t *out_version, const CBS *peer_versions) {
-  const uint16_t *versions;
-  size_t num_versions;
-  get_method_versions(hs->ssl->method, &versions, &num_versions);
-  for (size_t i = 0; i < num_versions; i++) {
-    if (!ssl_supports_version(hs, versions[i])) {
+  for (uint16_t version : get_method_versions(hs->ssl->method)) {
+    if (!ssl_supports_version(hs, version)) {
       continue;
     }
 
@@ -312,20 +298,20 @@ bool ssl_negotiate_version(SSL_HANDSHAKE *hs, uint8_t *out_alert,
     // own.)
     //
     // See https://bugs.openjdk.java.net/browse/JDK-8211806.
-    if (versions[i] == TLS1_3_VERSION && hs->apply_jdk11_workaround) {
+    if (version == TLS1_3_VERSION && hs->apply_jdk11_workaround) {
       continue;
     }
 
     CBS copy = *peer_versions;
     while (CBS_len(&copy) != 0) {
-      uint16_t version;
-      if (!CBS_get_u16(&copy, &version)) {
+      uint16_t peer_version;
+      if (!CBS_get_u16(&copy, &peer_version)) {
         OPENSSL_PUT_ERROR(SSL, SSL_R_DECODE_ERROR);
         *out_alert = SSL_AD_DECODE_ERROR;
         return false;
       }
 
-      if (version == versions[i]) {
+      if (peer_version == version) {
         *out_version = version;
         return true;
       }
@@ -349,11 +335,11 @@ int SSL_CTX_set_max_proto_version(SSL_CTX *ctx, uint16_t version) {
   return set_max_version(ctx->method, &ctx->conf_max_version, version);
 }
 
-uint16_t SSL_CTX_get_min_proto_version(SSL_CTX *ctx) {
+uint16_t SSL_CTX_get_min_proto_version(const SSL_CTX *ctx) {
   return ctx->conf_min_version;
 }
 
-uint16_t SSL_CTX_get_max_proto_version(SSL_CTX *ctx) {
+uint16_t SSL_CTX_get_max_proto_version(const SSL_CTX *ctx) {
   return ctx->conf_max_version;
 }
 
@@ -369,6 +355,20 @@ int SSL_set_max_proto_version(SSL *ssl, uint16_t version) {
     return 0;
   }
   return set_max_version(ssl->method, &ssl->config->conf_max_version, version);
+}
+
+uint16_t SSL_get_min_proto_version(const SSL *ssl) {
+  if (!ssl->config) {
+    return 0;
+  }
+  return ssl->config->conf_min_version;
+}
+
+uint16_t SSL_get_max_proto_version(const SSL *ssl) {
+  if (!ssl->config) {
+    return 0;
+  }
+  return ssl->config->conf_max_version;
 }
 
 int SSL_version(const SSL *ssl) {

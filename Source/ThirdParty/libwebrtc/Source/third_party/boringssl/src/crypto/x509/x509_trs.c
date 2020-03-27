@@ -54,7 +54,6 @@
  * (eay@cryptsoft.com).  This product includes software written by Tim
  * Hudson (tjh@cryptsoft.com). */
 
-#include <openssl/buf.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
 #include <openssl/obj.h>
@@ -201,7 +200,7 @@ int X509_TRUST_add(int id, int flags, int (*ck) (X509_TRUST *, X509 *, int),
         trtmp = X509_TRUST_get0(idx);
 
     /* Duplicate the supplied name. */
-    name_dup = BUF_strdup(name);
+    name_dup = OPENSSL_strdup(name);
     if (name_dup == NULL) {
         OPENSSL_PUT_ERROR(X509, ERR_R_MALLOC_FAILURE);
         if (idx == -1)

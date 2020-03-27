@@ -24,6 +24,7 @@
 
 #include "../crypto/internal.h"
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 namespace {
@@ -66,10 +67,8 @@ static bool TestRSA2SigGen(FileTest *t, void *arg) {
       return false;
     }
 
-    printf("[mod = %s]\r\n\r\nn = %s\r\n\r\ne = %s",
-           mod_str.c_str(),
-           EncodeHex(n_bytes.data(), n_bytes.size()).c_str(),
-           EncodeHex(e_bytes.data(), e_bytes.size()).c_str());
+    printf("[mod = %s]\r\n\r\nn = %s\r\n\r\ne = %s", mod_str.c_str(),
+           EncodeHex(n_bytes).c_str(), EncodeHex(e_bytes).c_str());
     test = test.substr(test.find("]") + 3);
   }
 
@@ -97,8 +96,8 @@ static bool TestRSA2SigGen(FileTest *t, void *arg) {
     sig_len = sig_len_u;
   }
 
-  printf("%sS = %s\r\n\r\n", test.c_str(),
-         EncodeHex(sig.data(), sig_len).c_str());
+  sig.resize(sig_len);
+  printf("%sS = %s\r\n\r\n", test.c_str(), EncodeHex(sig).c_str());
   return true;
 }
 

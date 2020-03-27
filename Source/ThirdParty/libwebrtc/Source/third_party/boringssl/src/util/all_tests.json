@@ -1,6 +1,28 @@
 [
-	["crypto/crypto_test"],
-	["crypto/crypto_test", "--fork_unsafe_buffering", "--gtest_filter=RandTest.*:-RandTest.Fork"],
-	["decrepit/decrepit_test"],
-	["ssl/ssl_test"]
+  {
+    "cmd": ["crypto/crypto_test"]
+  },
+  {
+    "cmd": ["crypto/crypto_test", "--gtest_also_run_disabled_tests", "--gtest_filter=BNTest.DISABLED_WycheproofPrimality"]
+  },
+  {
+    "cmd": ["crypto/crypto_test", "--gtest_also_run_disabled_tests", "--gtest_filter=RSATest.DISABLED_BlindingCacheConcurrency"],
+    "skip_sde": true
+  },
+  {
+    "cmd": ["crypto/urandom_test"]
+  },
+  {
+    "cmd": ["crypto/urandom_test"],
+    "env": ["OPENSSL_ia32cap=~0x4000000000000000"]
+  },
+  {
+    "cmd": ["crypto/crypto_test", "--fork_unsafe_buffering", "--gtest_filter=RandTest.*:-RandTest.Fork"]
+  },
+  {
+    "cmd": ["decrepit/decrepit_test"]
+  },
+  {
+    "cmd": ["ssl/ssl_test"]
+  }
 ]

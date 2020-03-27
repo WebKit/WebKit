@@ -14,8 +14,7 @@
 
 #include <openssl/base.h>
 
-#if !defined(NDEBUG) && !defined(BORINGSSL_FIPS) && \
-    !defined(BORINGSSL_SHARED_LIBRARY)
+#if defined(BORINGSSL_DISPATCH_TEST) && !defined(BORINGSSL_SHARED_LIBRARY)
 
 #include <functional>
 #include <utility>
@@ -105,12 +104,12 @@ TEST_F(ImplDispatchTest, AEAD_AES_GCM) {
         const uint8_t kPlaintext[40] = {1, 2, 3, 4, 0};
         uint8_t ciphertext[sizeof(kPlaintext) + 16];
         size_t ciphertext_len;
-        EVP_AEAD_CTX ctx;
-        ASSERT_TRUE(EVP_AEAD_CTX_init(&ctx, EVP_aead_aes_128_gcm(), kZeros,
+        bssl::ScopedEVP_AEAD_CTX ctx;
+        ASSERT_TRUE(EVP_AEAD_CTX_init(ctx.get(), EVP_aead_aes_128_gcm(), kZeros,
                                       sizeof(kZeros),
                                       EVP_AEAD_DEFAULT_TAG_LENGTH, nullptr));
         ASSERT_TRUE(EVP_AEAD_CTX_seal(
-            &ctx, ciphertext, &ciphertext_len, sizeof(ciphertext), kZeros,
+            ctx.get(), ciphertext, &ciphertext_len, sizeof(ciphertext), kZeros,
             EVP_AEAD_nonce_length(EVP_aead_aes_128_gcm()), kPlaintext,
             sizeof(kPlaintext), nullptr, 0));
       });
@@ -148,4 +147,4 @@ TEST_F(ImplDispatchTest, AES_single_block) {
 
 #endif  // X86 || X86_64
 
-#endif  // !NDEBUG && !FIPS && !SHARED_LIBRARY
+#endif  // DISPATCH_TEST && !SHARED_LIBRARY

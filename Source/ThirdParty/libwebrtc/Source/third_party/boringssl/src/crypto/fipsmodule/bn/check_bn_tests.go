@@ -228,8 +228,8 @@ func main() {
 				checkResult(test, "A ^ E", "Exp", r)
 			}
 		case "ModSqrt":
-			bigOne := new(big.Int).SetInt64(1)
-			bigTwo := new(big.Int).SetInt64(2)
+			bigOne := big.NewInt(1)
+			bigTwo := big.NewInt(2)
 
 			if checkKeys(test, "A", "P", "ModSqrt") {
 				test.Values["A"].Mod(test.Values["A"], test.Values["P"])
@@ -249,8 +249,21 @@ func main() {
 			}
 		case "ModInv":
 			if checkKeys(test, "A", "M", "ModInv") {
-				r := new(big.Int).ModInverse(test.Values["A"], test.Values["M"])
-				checkResult(test, "A ^ -1 (mod M)", "ModInv", r)
+				a := test.Values["A"]
+				m := test.Values["M"]
+				var r *big.Int
+				if a.Sign() == 0 && m.IsInt64() && m.Int64() == 1 {
+					// OpenSSL says 0^(-1) mod (1) is 0, while Go says the
+					// inverse does not exist.
+					r = big.NewInt(0)
+				} else {
+					r = new(big.Int).ModInverse(a, m)
+				}
+				if r == nil {
+					fmt.Fprintf(os.Stderr, "Line %d: A has no inverse mod M.\n", test.LineNumber)
+				} else {
+					checkResult(test, "A ^ -1 (mod M)", "ModInv", r)
+				}
 			}
 		case "ModSquare":
 			if checkKeys(test, "A", "M", "ModSquare") {

@@ -57,4 +57,12 @@ static const EVP_CIPHER aes_128_cfb128 = {
     NULL /* cleanup */,  NULL /* ctrl */,
 };
 
+static const EVP_CIPHER aes_256_cfb128 = {
+    NID_aes_256_cfb128,  1 /* block_size */,  32 /* key_size */,
+    16 /* iv_len */,     sizeof(EVP_CFB_CTX), EVP_CIPH_CFB_MODE,
+    NULL /* app_data */, aes_cfb_init_key,    aes_cfb128_cipher,
+    NULL /* cleanup */,  NULL /* ctrl */,
+};
+
 const EVP_CIPHER *EVP_aes_128_cfb128(void) { return &aes_128_cfb128; }
+const EVP_CIPHER *EVP_aes_256_cfb128(void) { return &aes_256_cfb128; }

@@ -25,8 +25,6 @@
 #include "../crypto/test/file_test.h"
 
 
-std::string EncodeHex(const uint8_t *in, size_t in_len);
-
 const EVP_CIPHER *GetCipher(const std::string &name);
 
 bool CipherOperation(const EVP_CIPHER *cipher, std::vector<uint8_t> *out,

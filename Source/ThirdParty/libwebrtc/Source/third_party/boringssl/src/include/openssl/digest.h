@@ -195,7 +195,7 @@ OPENSSL_EXPORT size_t EVP_MD_size(const EVP_MD *md);
 // EVP_MD_block_size returns the native block-size of |md|, in bytes.
 OPENSSL_EXPORT size_t EVP_MD_block_size(const EVP_MD *md);
 
-// EVP_MD_FLAG_PKEY_DIGEST indicates the the digest function is used with a
+// EVP_MD_FLAG_PKEY_DIGEST indicates that the digest function is used with a
 // specific public key in order to verify signatures. (For example,
 // EVP_dss1.)
 #define EVP_MD_FLAG_PKEY_DIGEST 1
@@ -204,6 +204,11 @@ OPENSSL_EXPORT size_t EVP_MD_block_size(const EVP_MD *md);
 // DigestAlgorithmIdentifier representing this digest function should be
 // undefined rather than NULL.
 #define EVP_MD_FLAG_DIGALGID_ABSENT 2
+
+// EVP_MD_FLAG_XOF indicates that the digest is an extensible-output function
+// (XOF). This flag is defined for compatibility and will never be set in any
+// |EVP_MD| in BoringSSL.
+#define EVP_MD_FLAG_XOF 4
 
 
 // Digest operation accessors.
@@ -273,6 +278,9 @@ OPENSSL_EXPORT void EVP_MD_CTX_destroy(EVP_MD_CTX *ctx);
 // BoringSSL does not support any XOF digests.
 OPENSSL_EXPORT int EVP_DigestFinalXOF(EVP_MD_CTX *ctx, uint8_t *out,
                                       size_t len);
+
+// EVP_MD_meth_get_flags calls |EVP_MD_flags|.
+OPENSSL_EXPORT uint32_t EVP_MD_meth_get_flags(const EVP_MD *md);
 
 
 struct evp_md_pctx_ops;

@@ -298,7 +298,6 @@ type clientHelloMsg struct {
 	pad                     int
 	compressedCertAlgs      []uint16
 	delegatedCredentials    bool
-	pqExperimentSignal      bool
 }
 
 func (m *clientHelloMsg) equal(i interface{}) bool {
@@ -353,8 +352,7 @@ func (m *clientHelloMsg) equal(i interface{}) bool {
 		m.emptyExtensions == m1.emptyExtensions &&
 		m.pad == m1.pad &&
 		eqUint16s(m.compressedCertAlgs, m1.compressedCertAlgs) &&
-		m.delegatedCredentials == m1.delegatedCredentials &&
-		m.pqExperimentSignal == m1.pqExperimentSignal
+		m.delegatedCredentials == m1.delegatedCredentials
 }
 
 func (m *clientHelloMsg) marshalKeyShares(bb *byteBuilder) {
@@ -600,10 +598,6 @@ func (m *clientHelloMsg) marshal() []byte {
 		extensions.addU16(extensionDelegatedCredentials)
 		extensions.addU16(0) // Length is always 0
 	}
-	if m.pqExperimentSignal {
-		extensions.addU16(extensionPQExperimentSignal)
-		extensions.addU16(0) // Length is always 0
-	}
 
 	// The PSK extension must be last. See https://tools.ietf.org/html/rfc8446#section-4.2.11
 	if len(m.pskIdentities) > 0 && !m.pskBinderFirst {
@@ -731,7 +725,6 @@ func (m *clientHelloMsg) unmarshal(data []byte) bool {
 	m.extendedMasterSecret = false
 	m.customExtension = ""
 	m.delegatedCredentials = false
-	m.pqExperimentSignal = false
 
 	if len(reader) == 0 {
 		// ClientHello is optionally followed by extension data
@@ -967,11 +960,6 @@ func (m *clientHelloMsg) unmarshal(data []byte) bool {
 				return false
 			}
 			m.delegatedCredentials = true
-		case extensionPQExperimentSignal:
-			if len(body) != 0 {
-				return false
-			}
-			m.pqExperimentSignal = true
 		}
 
 		if isGREASEValue(extension) {
@@ -1239,7 +1227,6 @@ type serverExtensions struct {
 	supportedCurves         []CurveID
 	quicTransportParams     []byte
 	serverNameAck           bool
-	pqExperimentSignal      bool
 }
 
 func (m *serverExtensions) marshal(extensions *byteBuilder) {
@@ -1374,10 +1361,6 @@ func (m *serverExtensions) marshal(extensions *byteBuilder) {
 		extensions.addU16(extensionServerName)
 		extensions.addU16(0) // zero length
 	}
-	if m.pqExperimentSignal {
-		extensions.addU16(extensionPQExperimentSignal)
-		extensions.addU16(0) // zero length
-	}
 }
 
 func (m *serverExtensions) unmarshal(data byteReader, version uint16) bool {
@@ -1486,11 +1469,6 @@ func (m *serverExtensions) unmarshal(data byteReader, version uint16) bool {
 				return false
 			}
 			m.hasEarlyData = true
-		case extensionPQExperimentSignal:
-			if len(body) != 0 {
-				return false
-			}
-			m.pqExperimentSignal = true
 		default:
 			// Unknown extensions are illegal from the server.
 			return false

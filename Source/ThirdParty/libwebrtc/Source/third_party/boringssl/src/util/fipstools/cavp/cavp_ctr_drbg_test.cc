@@ -22,6 +22,7 @@
 #include "cavp_test_util.h"
 #include "../crypto/fipsmodule/rand/internal.h"
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 
 
 static bool TestCTRDRBG(FileTest *t, void *arg) {
@@ -81,8 +82,7 @@ static bool TestCTRDRBG(FileTest *t, void *arg) {
                     ai2.size() > 0 ? ai2.data() : nullptr, ai2.size());
 
   printf("%s", t->CurrentTestToString().c_str());
-  printf("ReturnedBits = %s\r\n\r\n",
-         EncodeHex(out.data(), out.size()).c_str());
+  printf("ReturnedBits = %s\r\n\r\n", EncodeHex(out).c_str());
 
   return true;
 }

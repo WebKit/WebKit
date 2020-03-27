@@ -136,8 +136,8 @@ OPENSSL_EXPORT int EVP_CIPHER_CTX_copy(EVP_CIPHER_CTX *out,
                                        const EVP_CIPHER_CTX *in);
 
 // EVP_CIPHER_CTX_reset calls |EVP_CIPHER_CTX_cleanup| followed by
-// |EVP_CIPHER_CTX_init|.
-OPENSSL_EXPORT void EVP_CIPHER_CTX_reset(EVP_CIPHER_CTX *ctx);
+// |EVP_CIPHER_CTX_init| and returns one.
+OPENSSL_EXPORT int EVP_CIPHER_CTX_reset(EVP_CIPHER_CTX *ctx);
 
 
 // Cipher context configuration.
@@ -424,6 +424,9 @@ OPENSSL_EXPORT const EVP_CIPHER *EVP_des_ede3_ecb(void);
 
 // EVP_aes_128_cfb128 is only available in decrepit.
 OPENSSL_EXPORT const EVP_CIPHER *EVP_aes_128_cfb128(void);
+
+// EVP_aes_256_cfb128 is only available in decrepit.
+OPENSSL_EXPORT const EVP_CIPHER *EVP_aes_256_cfb128(void);
 
 // EVP_bf_ecb is Blowfish in ECB mode and is only available in decrepit.
 OPENSSL_EXPORT const EVP_CIPHER *EVP_bf_ecb(void);

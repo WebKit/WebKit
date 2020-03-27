@@ -36,7 +36,6 @@ struct poly3 {
   struct poly2 s, a;
 };
 
-OPENSSL_EXPORT void HRSS_poly2_rotr_consttime(struct poly2 *p, size_t bits);
 OPENSSL_EXPORT void HRSS_poly3_mul(struct poly3 *out, const struct poly3 *x,
                                    const struct poly3 *y);
 OPENSSL_EXPORT void HRSS_poly3_invert(struct poly3 *out,

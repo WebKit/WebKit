@@ -13,9 +13,9 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
 #include <algorithm>
-#include <string>
 #include <functional>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include <assert.h>
@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include <openssl/aead.h>
+#include <openssl/aes.h>
 #include <openssl/bn.h>
 #include <openssl/curve25519.h>
 #include <openssl/digest.h>
@@ -51,8 +52,8 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 #include "../crypto/internal.h"
 #include "internal.h"
 
-#include "../third_party/sike/sike.h"
-
+// g_print_json is true if printed output is JSON formatted.
+static bool g_print_json = false;
 
 // TimeResults represents the results of benchmarking a function.
 struct TimeResults {
@@ -61,19 +62,53 @@ struct TimeResults {
   // us is the number of microseconds that elapsed in the time period.
   unsigned us;
 
-  void Print(const std::string &description) {
-    printf("Did %u %s operations in %uus (%.1f ops/sec)\n", num_calls,
-           description.c_str(), us,
-           (static_cast<double>(num_calls) / us) * 1000000);
+  void Print(const std::string &description) const {
+    if (g_print_json) {
+      PrintJSON(description);
+    } else {
+      printf("Did %u %s operations in %uus (%.1f ops/sec)\n", num_calls,
+             description.c_str(), us,
+             (static_cast<double>(num_calls) / us) * 1000000);
+    }
   }
 
-  void PrintWithBytes(const std::string &description, size_t bytes_per_call) {
-    printf("Did %u %s operations in %uus (%.1f ops/sec): %.1f MB/s\n",
-           num_calls, description.c_str(), us,
-           (static_cast<double>(num_calls) / us) * 1000000,
-           static_cast<double>(bytes_per_call * num_calls) / us);
+  void PrintWithBytes(const std::string &description,
+                      size_t bytes_per_call) const {
+    if (g_print_json) {
+      PrintJSON(description, bytes_per_call);
+    } else {
+      printf("Did %u %s operations in %uus (%.1f ops/sec): %.1f MB/s\n",
+             num_calls, description.c_str(), us,
+             (static_cast<double>(num_calls) / us) * 1000000,
+             static_cast<double>(bytes_per_call * num_calls) / us);
+    }
   }
+
+ private:
+  void PrintJSON(const std::string &description,
+                 size_t bytes_per_call = 0) const {
+    if (first_json_printed) {
+      puts(",");
+    }
+
+    printf("{\"description\": \"%s\", \"numCalls\": %u, \"microseconds\": %u",
+           description.c_str(), num_calls, us);
+
+    if (bytes_per_call > 0) {
+      printf(", \"bytesPerCall\": %zu", bytes_per_call);
+    }
+
+    printf("}");
+    first_json_printed = true;
+  }
+
+  // first_json_printed is true if |g_print_json| is true and the first item in
+  // the JSON results has been printed already. This is used to handle the
+  // commas between each item in the result list.
+  static bool first_json_printed;
 };
+
+bool TimeResults::first_json_printed = false;
 
 #if defined(OPENSSL_WINDOWS)
 static uint64_t time_now() { return GetTickCount64() * 1000; }
@@ -273,84 +308,31 @@ static bool SpeedRSAKeyGen(const std::string &selected) {
     }
 
     std::sort(durations.begin(), durations.end());
-    printf("Did %u RSA %d key-gen operations in %uus (%.1f ops/sec)\n",
-           num_calls, size, us,
-           (static_cast<double>(num_calls) / us) * 1000000);
+    const std::string description =
+        std::string("RSA ") + std::to_string(size) + std::string(" key-gen");
+    const TimeResults results = {num_calls, us};
+    results.Print(description);
     const size_t n = durations.size();
     assert(n > 0);
 
-    // |min| and |max| must be stored in temporary variables to avoid an MSVC
-    // bug on x86. There, size_t is a typedef for unsigned, but MSVC's printf
-    // warning tries to retain the distinction and suggest %zu for size_t
-    // instead of %u. It gets confused if std::vector<unsigned> and
-    // std::vector<size_t> are both instantiated. Being typedefs, the two
-    // instantiations are identical, which somehow breaks the size_t vs unsigned
-    // metadata.
-    unsigned min = durations[0];
-    unsigned median = n & 1 ? durations[n / 2]
-                            : (durations[n / 2 - 1] + durations[n / 2]) / 2;
-    unsigned max = durations[n - 1];
-    printf("  min: %uus, median: %uus, max: %uus\n", min, median, max);
+    // Distribution information is useful, but doesn't fit into the standard
+    // format used by |g_print_json|.
+    if (!g_print_json) {
+      // |min| and |max| must be stored in temporary variables to avoid an MSVC
+      // bug on x86. There, size_t is a typedef for unsigned, but MSVC's printf
+      // warning tries to retain the distinction and suggest %zu for size_t
+      // instead of %u. It gets confused if std::vector<unsigned> and
+      // std::vector<size_t> are both instantiated. Being typedefs, the two
+      // instantiations are identical, which somehow breaks the size_t vs
+      // unsigned metadata.
+      unsigned min = durations[0];
+      unsigned median = n & 1 ? durations[n / 2]
+                              : (durations[n / 2 - 1] + durations[n / 2]) / 2;
+      unsigned max = durations[n - 1];
+      printf("  min: %uus, median: %uus, max: %uus\n", min, median, max);
+    }
   }
 
-  return true;
-}
-
-static bool SpeedSIKEP434(const std::string &selected) {
-  if (!selected.empty() && selected.find("SIKE") == std::string::npos) {
-    return true;
-  }
-  // speed generation
-  uint8_t public_SIKE[SIKE_PUB_BYTESZ];
-  uint8_t private_SIKE[SIKE_PRV_BYTESZ];
-  uint8_t ct[SIKE_CT_BYTESZ];
-  bool res;
-
-  {
-    TimeResults results;
-    res = TimeFunction(&results,
-                [&private_SIKE, &public_SIKE]() -> bool {
-      return (SIKE_keypair(private_SIKE, public_SIKE) == 1);
-    });
-    results.Print("SIKE/P434 generate");
-  }
-
-  if (!res) {
-    fprintf(stderr, "Failed to time SIKE_keypair.\n");
-    return false;
-  }
-
-  {
-    TimeResults results;
-    TimeFunction(&results,
-                [&ct, &public_SIKE]() -> bool {
-      uint8_t ss[SIKE_SS_BYTESZ];
-      SIKE_encaps(ss, ct, public_SIKE);
-      return true;
-    });
-    results.Print("SIKE/P434 encap");
-  }
-
-  if (!res) {
-    fprintf(stderr, "Failed to time SIKE_encaps.\n");
-    return false;
-  }
-
-  {
-    TimeResults results;
-    TimeFunction(&results,
-                [&ct, &public_SIKE, &private_SIKE]() -> bool {
-      uint8_t ss[SIKE_SS_BYTESZ];
-      SIKE_decaps(ss, ct, public_SIKE, private_SIKE);
-      return true;
-    });
-    results.Print("SIKE/P434 decap");
-  }
-
-  if (!res) {
-    fprintf(stderr, "Failed to time SIKE_decaps.\n");
-    return false;
-  }
   return true;
 }
 
@@ -487,6 +469,75 @@ static bool SpeedAEADOpen(const EVP_AEAD *aead, const std::string &name,
     if (!SpeedAEADChunk(aead, name, chunk_len, ad_len, evp_aead_open)) {
       return false;
     }
+  }
+
+  return true;
+}
+
+static bool SpeedAESBlock(const std::string &name, unsigned bits,
+                          const std::string &selected) {
+  if (!selected.empty() && name.find(selected) == std::string::npos) {
+    return true;
+  }
+
+  static const uint8_t kZero[32] = {0};
+
+  {
+    TimeResults results;
+    if (!TimeFunction(&results, [&]() -> bool {
+          AES_KEY key;
+          return AES_set_encrypt_key(kZero, bits, &key) == 0;
+        })) {
+      fprintf(stderr, "AES_set_encrypt_key failed.\n");
+      return false;
+    }
+    results.Print(name + " encrypt setup");
+  }
+
+  {
+    AES_KEY key;
+    if (AES_set_encrypt_key(kZero, bits, &key) != 0) {
+      return false;
+    }
+    uint8_t block[16] = {0};
+    TimeResults results;
+    if (!TimeFunction(&results, [&]() -> bool {
+          AES_encrypt(block, block, &key);
+          return true;
+        })) {
+      fprintf(stderr, "AES_encrypt failed.\n");
+      return false;
+    }
+    results.Print(name + " encrypt");
+  }
+
+  {
+    TimeResults results;
+    if (!TimeFunction(&results, [&]() -> bool {
+          AES_KEY key;
+          return AES_set_decrypt_key(kZero, bits, &key) == 0;
+        })) {
+      fprintf(stderr, "AES_set_decrypt_key failed.\n");
+      return false;
+    }
+    results.Print(name + " decrypt setup");
+  }
+
+  {
+    AES_KEY key;
+    if (AES_set_decrypt_key(kZero, bits, &key) != 0) {
+      return false;
+    }
+    uint8_t block[16] = {0};
+    TimeResults results;
+    if (!TimeFunction(&results, [&]() -> bool {
+          AES_decrypt(block, block, &key);
+          return true;
+        })) {
+      fprintf(stderr, "AES_decrypt failed.\n");
+      return false;
+    }
+    results.Print(name + " decrypt");
   }
 
   return true;
@@ -909,6 +960,16 @@ static const struct argument kArguments[] = {
         "16,256,1350,8192,16384)",
     },
     {
+        "-json",
+        kBooleanArgument,
+        "If this flag is set, speed will print the output of each benchmark in "
+        "JSON format as follows: \"{\"description\": "
+        "\"descriptionOfOperation\", \"numCalls\": 1234, "
+        "\"timeInMicroseconds\": 1234567, \"bytesPerCall\": 1234}\". When "
+        "there is no information about the bytes per call for an  operation, "
+        "the JSON field for bytesPerCall will be omitted.",
+    },
+    {
         "",
         kOptionalArgument,
         "",
@@ -925,6 +986,10 @@ bool Speed(const std::vector<std::string> &args) {
   std::string selected;
   if (args_map.count("-filter") != 0) {
     selected = args_map["-filter"];
+  }
+
+  if (args_map.count("-json") != 0) {
+    g_print_json = true;
   }
 
   if (args_map.count("-timeout") != 0) {
@@ -966,6 +1031,9 @@ bool Speed(const std::vector<std::string> &args) {
   // knowledge in them and construct a couple of the AD bytes internally.
   static const size_t kLegacyADLen = kTLSADLen - 2;
 
+  if (g_print_json) {
+    puts("[");
+  }
   if (!SpeedRSA(selected) ||
       !SpeedAEAD(EVP_aead_aes_128_gcm(), "AES-128-GCM", kTLSADLen, selected) ||
       !SpeedAEAD(EVP_aead_aes_256_gcm(), "AES-256-GCM", kTLSADLen, selected) ||
@@ -991,6 +1059,8 @@ bool Speed(const std::vector<std::string> &args) {
                      selected) ||
       !SpeedAEAD(EVP_aead_aes_128_ccm_bluetooth(), "AES-128-CCM-Bluetooth",
                  kTLSADLen, selected) ||
+      !SpeedAESBlock("AES-128", 128, selected) ||
+      !SpeedAESBlock("AES-256", 256, selected) ||
       !SpeedHash(EVP_sha1(), "SHA-1", selected) ||
       !SpeedHash(EVP_sha256(), "SHA-256", selected) ||
       !SpeedHash(EVP_sha512(), "SHA-512", selected) ||
@@ -998,12 +1068,14 @@ bool Speed(const std::vector<std::string> &args) {
       !SpeedECDH(selected) ||
       !SpeedECDSA(selected) ||
       !Speed25519(selected) ||
-      !SpeedSIKEP434(selected) ||
       !SpeedSPAKE2(selected) ||
       !SpeedScrypt(selected) ||
       !SpeedRSAKeyGen(selected) ||
       !SpeedHRSS(selected)) {
     return false;
+  }
+  if (g_print_json) {
+    puts("\n]");
   }
 
   return true;

@@ -37,8 +37,11 @@ static_assert((SSL3_ALIGN_PAYLOAD & (SSL3_ALIGN_PAYLOAD - 1)) == 0,
               "SSL3_ALIGN_PAYLOAD must be a power of 2");
 
 void SSLBuffer::Clear() {
-  free(buf_);  // Allocated with malloc().
+  if (buf_allocated_) {
+    free(buf_);  // Allocated with malloc().
+  }
   buf_ = nullptr;
+  buf_allocated_ = false;
   offset_ = 0;
   size_ = 0;
   cap_ = 0;
@@ -54,27 +57,43 @@ bool SSLBuffer::EnsureCap(size_t header_len, size_t new_cap) {
     return true;
   }
 
-  // Add up to |SSL3_ALIGN_PAYLOAD| - 1 bytes of slack for alignment.
-  //
-  // Since this buffer gets allocated quite frequently and doesn't contain any
-  // sensitive data, we allocate with malloc rather than |OPENSSL_malloc| and
-  // avoid zeroing on free.
-  uint8_t *new_buf = (uint8_t *)malloc(new_cap + SSL3_ALIGN_PAYLOAD - 1);
-  if (new_buf == NULL) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
-    return false;
+  uint8_t *new_buf;
+  bool new_buf_allocated;
+  size_t new_offset;
+  if (new_cap <= sizeof(inline_buf_)) {
+    // This function is called twice per TLS record, first for the five-byte
+    // header. To avoid allocating twice, use an inline buffer for short inputs.
+    new_buf = inline_buf_;
+    new_buf_allocated = false;
+    new_offset = 0;
+  } else {
+    // Add up to |SSL3_ALIGN_PAYLOAD| - 1 bytes of slack for alignment.
+    //
+    // Since this buffer gets allocated quite frequently and doesn't contain any
+    // sensitive data, we allocate with malloc rather than |OPENSSL_malloc| and
+    // avoid zeroing on free.
+    new_buf = (uint8_t *)malloc(new_cap + SSL3_ALIGN_PAYLOAD - 1);
+    if (new_buf == NULL) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
+      return false;
+    }
+    new_buf_allocated = true;
+
+    // Offset the buffer such that the record body is aligned.
+    new_offset =
+        (0 - header_len - (uintptr_t)new_buf) & (SSL3_ALIGN_PAYLOAD - 1);
   }
 
-  // Offset the buffer such that the record body is aligned.
-  size_t new_offset =
-      (0 - header_len - (uintptr_t)new_buf) & (SSL3_ALIGN_PAYLOAD - 1);
+  // Note if the both old and new buffer are inline, the source and destination
+  // may alias.
+  OPENSSL_memmove(new_buf + new_offset, buf_ + offset_, size_);
 
-  if (buf_ != NULL) {
-    OPENSSL_memcpy(new_buf + new_offset, buf_ + offset_, size_);
+  if (buf_allocated_) {
     free(buf_);  // Allocated with malloc().
   }
 
   buf_ = new_buf;
+  buf_allocated_ = new_buf_allocated;
   offset_ = new_offset;
   cap_ = new_cap;
   return true;

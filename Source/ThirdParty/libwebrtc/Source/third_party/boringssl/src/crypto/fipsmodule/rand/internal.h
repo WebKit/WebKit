@@ -26,6 +26,11 @@ extern "C" {
 #endif
 
 
+#if !defined(OPENSSL_WINDOWS) && !defined(OPENSSL_FUCHSIA) && \
+    !defined(BORINGSSL_UNSAFE_DETERMINISTIC_MODE) && !defined(OPENSSL_TRUSTY)
+#define OPENSSL_URANDOM
+#endif
+
 // RAND_bytes_with_additional_data samples from the RNG after mixing 32 bytes
 // from |user_additional_data| in.
 void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
@@ -34,6 +39,19 @@ void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
 // CRYPTO_sysrand fills |len| bytes at |buf| with entropy from the operating
 // system.
 void CRYPTO_sysrand(uint8_t *buf, size_t len);
+
+#if defined(OPENSSL_URANDOM) || defined(BORINGSSL_UNSAFE_DETERMINISTIC_MODE)
+// CRYPTO_sysrand_for_seed fills |len| bytes at |buf| with entropy from the
+// operating system. It may draw from the |GRND_RANDOM| pool on Android,
+// depending on the vendor's configuration.
+void CRYPTO_sysrand_for_seed(uint8_t *buf, size_t len);
+
+// CRYPTO_sysrand_if_available fills |len| bytes at |buf| with entropy from the
+// operating system, if the entropy pool is initialized. If it is uninitialized,
+// it will not block and will instead fill |buf| with all zeros or early
+// /dev/urandom output.
+void CRYPTO_sysrand_if_available(uint8_t *buf, size_t len);
+#endif
 
 // rand_fork_unsafe_buffering_enabled returns whether fork-unsafe buffering has
 // been enabled via |RAND_enable_fork_unsafe_buffering|.

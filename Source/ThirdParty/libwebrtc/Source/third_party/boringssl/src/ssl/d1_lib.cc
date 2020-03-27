@@ -86,12 +86,12 @@ DTLS1_STATE::DTLS1_STATE()
 DTLS1_STATE::~DTLS1_STATE() {}
 
 bool dtls1_new(SSL *ssl) {
-  if (!ssl3_new(ssl)) {
+  if (!tls_new(ssl)) {
     return false;
   }
   UniquePtr<DTLS1_STATE> d1 = MakeUnique<DTLS1_STATE>();
   if (!d1) {
-    ssl3_free(ssl);
+    tls_free(ssl);
     return false;
   }
 
@@ -107,7 +107,7 @@ bool dtls1_new(SSL *ssl) {
 }
 
 void dtls1_free(SSL *ssl) {
-  ssl3_free(ssl);
+  tls_free(ssl);
 
   if (ssl == NULL) {
     return;

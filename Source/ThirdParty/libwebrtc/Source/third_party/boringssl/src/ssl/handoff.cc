@@ -24,6 +24,17 @@ BSSL_NAMESPACE_BEGIN
 constexpr int kHandoffVersion = 0;
 constexpr int kHandbackVersion = 0;
 
+// early_data_t represents the state of early data in a more compact way than
+// the 3 bits used by the implementation.
+enum early_data_t {
+  early_data_not_offered = 0,
+  early_data_accepted = 1,
+  early_data_rejected_hrr = 2,
+  early_data_skipped = 3,
+
+  early_data_max_value = early_data_skipped,
+};
+
 // serialize_features adds a description of features supported by this binary to
 // |out|.  Returns true on success and false on error.
 static bool serialize_features(CBB *out) {
@@ -181,8 +192,15 @@ static bool apply_remote_features(SSL *ssl, CBS *in) {
   return true;
 }
 
+// uses_disallowed_feature returns true iff |ssl| enables a feature that
+// disqualifies it for split handshakes.
+static bool uses_disallowed_feature(const SSL *ssl) {
+  return ssl->method->is_dtls || (ssl->config->cert && ssl->config->cert->dc) ||
+         ssl->config->quic_transport_params.size() > 0;
+}
+
 bool SSL_apply_handoff(SSL *ssl, Span<const uint8_t> handoff) {
-  if (ssl->method->is_dtls) {
+  if (uses_disallowed_feature(ssl)) {
     return false;
   }
 
@@ -223,11 +241,13 @@ bool SSL_apply_handoff(SSL *ssl, Span<const uint8_t> handoff) {
 }
 
 bool SSL_serialize_handback(const SSL *ssl, CBB *out) {
-  if (!ssl->server || ssl->method->is_dtls) {
+  if (!ssl->server || uses_disallowed_feature(ssl)) {
     return false;
   }
+  const SSL3_STATE *const s3 = ssl->s3;
+  SSL_HANDSHAKE *const hs = s3->hs.get();
   handback_t type;
-  switch (ssl->s3->hs->state) {
+  switch (hs->state) {
     case state12_read_change_cipher_spec:
       type = handback_after_session_resumption;
       break;
@@ -237,19 +257,23 @@ bool SSL_serialize_handback(const SSL *ssl, CBB *out) {
     case state12_finish_server_handshake:
       type = handback_after_handshake;
       break;
+    case state12_tls13:
+      if (hs->tls13_state != state13_send_half_rtt_ticket) {
+        return false;
+      }
+      type = handback_tls13;
+      break;
     default:
       return false;
   }
 
-  const SSL3_STATE *const s3 = ssl->s3;
   size_t hostname_len = 0;
   if (s3->hostname) {
     hostname_len = strlen(s3->hostname.get());
   }
 
   Span<const uint8_t> transcript;
-  if (type == handback_after_ecdhe ||
-      type == handback_after_session_resumption) {
+  if (type != handback_after_handshake) {
     transcript = s3->hs->transcript.buffer();
   }
   size_t write_iv_len = 0;
@@ -272,8 +296,12 @@ bool SSL_serialize_handback(const SSL *ssl, CBB *out) {
 
   // TODO(mab): make sure everything is serialized.
   CBB seq, key_share;
-  const SSL_SESSION *session =
-      s3->session_reused ? ssl->session.get() : s3->hs->new_session.get();
+  const SSL_SESSION *session;
+  if (type == handback_tls13) {
+    session = hs->new_session.get();
+  } else {
+    session = s3->session_reused ? ssl->session.get() : hs->new_session.get();
+  }
   if (!CBB_add_asn1(out, &seq, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1_uint64(&seq, kHandbackVersion) ||
       !CBB_add_asn1_uint64(&seq, type) ||
@@ -314,7 +342,62 @@ bool SSL_serialize_handback(const SSL *ssl, CBB *out) {
       !s3->hs->key_shares[0]->Serialize(&key_share)) {
     return false;
   }
+  if (type == handback_tls13) {
+    early_data_t early_data;
+    // Check early data invariants.
+    if (ssl->enable_early_data ==
+        (s3->early_data_reason == ssl_early_data_disabled)) {
+      return false;
+    }
+    if (hs->early_data_offered) {
+      if (s3->early_data_accepted && !s3->skip_early_data) {
+        early_data = early_data_accepted;
+      } else if (!s3->early_data_accepted && !s3->skip_early_data) {
+        early_data = early_data_rejected_hrr;
+      } else if (!s3->early_data_accepted && s3->skip_early_data) {
+        early_data = early_data_skipped;
+      } else {
+        return false;
+      }
+    } else if (!s3->early_data_accepted && !s3->skip_early_data) {
+      early_data = early_data_not_offered;
+    } else {
+      return false;
+    }
+    if (!CBB_add_asn1_octet_string(&seq, hs->client_traffic_secret_0().data(),
+                                   hs->client_traffic_secret_0().size()) ||
+        !CBB_add_asn1_octet_string(&seq, hs->server_traffic_secret_0().data(),
+                                   hs->server_traffic_secret_0().size()) ||
+        !CBB_add_asn1_octet_string(&seq, hs->client_handshake_secret().data(),
+                                   hs->client_handshake_secret().size()) ||
+        !CBB_add_asn1_octet_string(&seq, hs->server_handshake_secret().data(),
+                                   hs->server_handshake_secret().size()) ||
+        !CBB_add_asn1_octet_string(&seq, hs->secret().data(),
+                                   hs->secret().size()) ||
+        !CBB_add_asn1_octet_string(&seq, s3->exporter_secret,
+                                   s3->exporter_secret_len) ||
+        !CBB_add_asn1_bool(&seq, s3->used_hello_retry_request) ||
+        !CBB_add_asn1_bool(&seq, hs->accept_psk_mode) ||
+        !CBB_add_asn1_int64(&seq, s3->ticket_age_skew) ||
+        !CBB_add_asn1_uint64(&seq, s3->early_data_reason) ||
+        !CBB_add_asn1_uint64(&seq, early_data)) {
+      return false;
+    }
+    if (early_data == early_data_accepted &&
+        !CBB_add_asn1_octet_string(&seq, hs->early_traffic_secret().data(),
+                                   hs->early_traffic_secret().size())) {
+      return false;
+    }
+  }
   return CBB_flush(out);
+}
+
+static bool CopyExact(Span<uint8_t> out, const CBS *in) {
+  if (CBS_len(in) != out.size()) {
+    return false;
+  }
+  OPENSSL_memcpy(out.data(), CBS_data(in), out.size());
+  return true;
 }
 
 bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
@@ -324,7 +407,7 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
   }
 
   SSL3_STATE *const s3 = ssl->s3;
-  uint64_t handback_version, negotiated_token_binding_param, cipher, type;
+  uint64_t handback_version, negotiated_token_binding_param, cipher, type_u64;
 
   CBS seq, read_seq, write_seq, server_rand, client_rand, read_iv, write_iv,
       next_proto, alpn, hostname, channel_id, transcript, key_share;
@@ -336,10 +419,12 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
   if (!CBS_get_asn1(&handback_cbs, &seq, CBS_ASN1_SEQUENCE) ||
       !CBS_get_asn1_uint64(&seq, &handback_version) ||
       handback_version != kHandbackVersion ||
-      !CBS_get_asn1_uint64(&seq, &type)) {
+      !CBS_get_asn1_uint64(&seq, &type_u64) ||
+      type_u64 > handback_max_value) {
     return false;
   }
 
+  handback_t type = static_cast<handback_t>(type_u64);
   if (!CBS_get_asn1(&seq, &read_seq, CBS_ASN1_OCTETSTRING) ||
       CBS_len(&read_seq) != sizeof(s3->read_sequence) ||
       !CBS_get_asn1(&seq, &write_seq, CBS_ASN1_OCTETSTRING) ||
@@ -360,14 +445,15 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
   }
 
   s3->hs = ssl_handshake_new(ssl);
-  if (session_reused) {
+  SSL_HANDSHAKE *const hs = s3->hs.get();
+  if (!session_reused || type == handback_tls13) {
+    hs->new_session =
+        SSL_SESSION_parse(&seq, ssl->ctx->x509_method, ssl->ctx->pool);
+    session = hs->new_session.get();
+  } else {
     ssl->session =
         SSL_SESSION_parse(&seq, ssl->ctx->x509_method, ssl->ctx->pool);
     session = ssl->session.get();
-  } else {
-    s3->hs->new_session =
-        SSL_SESSION_parse(&seq, ssl->ctx->x509_method, ssl->ctx->pool);
-    session = s3->hs->new_session.get();
   }
 
   if (!session || !CBS_get_asn1(&seq, &next_proto, CBS_ASN1_OCTETSTRING) ||
@@ -386,7 +472,7 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
       !CBS_get_asn1_uint64(&seq, &cipher)) {
     return false;
   }
-  if ((s3->hs->new_cipher =
+  if ((hs->new_cipher =
            SSL_get_cipher_by_value(static_cast<uint16_t>(cipher))) == nullptr) {
     return false;
   }
@@ -394,11 +480,74 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
       !CBS_get_asn1(&seq, &key_share, CBS_ASN1_SEQUENCE)) {
     return false;
   }
+  CBS client_handshake_secret, server_handshake_secret, client_traffic_secret_0,
+      server_traffic_secret_0, secret, exporter_secret, early_traffic_secret;
+  if (type == handback_tls13) {
+    int used_hello_retry_request, accept_psk_mode;
+    uint64_t early_data, early_data_reason;
+    int64_t ticket_age_skew;
+    if (!CBS_get_asn1(&seq, &client_traffic_secret_0, CBS_ASN1_OCTETSTRING) ||
+        !CBS_get_asn1(&seq, &server_traffic_secret_0, CBS_ASN1_OCTETSTRING) ||
+        !CBS_get_asn1(&seq, &client_handshake_secret, CBS_ASN1_OCTETSTRING) ||
+        !CBS_get_asn1(&seq, &server_handshake_secret, CBS_ASN1_OCTETSTRING) ||
+        !CBS_get_asn1(&seq, &secret, CBS_ASN1_OCTETSTRING) ||
+        !CBS_get_asn1(&seq, &exporter_secret, CBS_ASN1_OCTETSTRING) ||
+        !CBS_get_asn1_bool(&seq, &used_hello_retry_request) ||
+        !CBS_get_asn1_bool(&seq, &accept_psk_mode) ||
+        !CBS_get_asn1_int64(&seq, &ticket_age_skew) ||
+        !CBS_get_asn1_uint64(&seq, &early_data_reason) ||
+        early_data_reason > ssl_early_data_reason_max_value ||
+        !CBS_get_asn1_uint64(&seq, &early_data) ||
+        early_data > early_data_max_value) {
+      return false;
+    }
+    early_data_t early_data_type = static_cast<early_data_t>(early_data);
+    if (early_data_type == early_data_accepted &&
+        !CBS_get_asn1(&seq, &early_traffic_secret, CBS_ASN1_OCTETSTRING)) {
+      return false;
+    }
+    if (ticket_age_skew > std::numeric_limits<int32_t>::max() ||
+        ticket_age_skew < std::numeric_limits<int32_t>::min()) {
+      return false;
+    }
+    s3->ticket_age_skew = static_cast<int32_t>(ticket_age_skew);
+    s3->used_hello_retry_request = used_hello_retry_request;
+    hs->accept_psk_mode = accept_psk_mode;
+
+    s3->early_data_reason =
+        static_cast<ssl_early_data_reason_t>(early_data_reason);
+    ssl->enable_early_data = s3->early_data_reason != ssl_early_data_disabled;
+    s3->skip_early_data = false;
+    s3->early_data_accepted = false;
+    hs->early_data_offered = false;
+    switch (early_data_type) {
+      case early_data_not_offered:
+        break;
+      case early_data_accepted:
+        s3->early_data_accepted = true;
+        hs->early_data_offered = true;
+        hs->can_early_write = true;
+        hs->can_early_read = true;
+        hs->in_early_data = true;
+        break;
+      case early_data_rejected_hrr:
+        hs->early_data_offered = true;
+        break;
+      case early_data_skipped:
+        s3->skip_early_data = true;
+        hs->early_data_offered = true;
+        break;
+      default:
+        return false;
+    }
+  } else {
+    s3->early_data_reason = ssl_early_data_protocol_version;
+  }
 
   ssl->version = session->ssl_version;
   s3->have_version = true;
   if (!ssl_method_supports_version(ssl->method, ssl->version) ||
-      session->cipher != s3->hs->new_cipher ||
+      session->cipher != hs->new_cipher ||
       ssl_protocol_version(ssl) < SSL_CIPHER_get_min_version(session->cipher) ||
       SSL_CIPHER_get_max_version(session->cipher) < ssl_protocol_version(ssl)) {
     return false;
@@ -407,19 +556,23 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
   ssl->server = true;
   switch (type) {
     case handback_after_session_resumption:
-      ssl->s3->hs->state = state12_read_change_cipher_spec;
+      hs->state = state12_read_change_cipher_spec;
       if (!session_reused) {
         return false;
       }
       break;
     case handback_after_ecdhe:
-      ssl->s3->hs->state = state12_read_client_certificate;
+      hs->state = state12_read_client_certificate;
       if (session_reused) {
         return false;
       }
       break;
     case handback_after_handshake:
-      ssl->s3->hs->state = state12_finish_server_handshake;
+      hs->state = state12_finish_server_handshake;
+      break;
+    case handback_tls13:
+      hs->state = state12_tls13;
+      hs->tls13_state = state13_send_half_rtt_ticket;
       break;
     default:
       return false;
@@ -443,47 +596,80 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
   s3->token_binding_negotiated = token_binding_negotiated;
   s3->negotiated_token_binding_param =
       static_cast<uint8_t>(negotiated_token_binding_param);
-  s3->hs->next_proto_neg_seen = next_proto_neg_seen;
-  s3->hs->wait = ssl_hs_flush;
-  s3->hs->extended_master_secret = extended_master_secret;
-  s3->hs->ticket_expected = ticket_expected;
+  hs->next_proto_neg_seen = next_proto_neg_seen;
+  hs->wait = ssl_hs_flush;
+  hs->extended_master_secret = extended_master_secret;
+  hs->ticket_expected = ticket_expected;
   s3->aead_write_ctx->SetVersionIfNullCipher(ssl->version);
-  s3->hs->cert_request = cert_request;
+  hs->cert_request = cert_request;
 
-  // TODO(davidben): When handoff for TLS 1.3 is added, serialize
-  // |early_data_reason| and stabilize the constants.
-  s3->early_data_reason = ssl_early_data_protocol_version;
+  if (type != handback_after_handshake &&
+      (!hs->transcript.Init() ||
+       !hs->transcript.InitHash(ssl_protocol_version(ssl), hs->new_cipher) ||
+       !hs->transcript.Update(transcript))) {
+    return false;
+  }
+  if (type == handback_tls13) {
+    hs->ResizeSecrets(hs->transcript.DigestLen());
+    if (!CopyExact(hs->client_traffic_secret_0(), &client_traffic_secret_0) ||
+        !CopyExact(hs->server_traffic_secret_0(), &server_traffic_secret_0) ||
+        !CopyExact(hs->client_handshake_secret(), &client_handshake_secret) ||
+        !CopyExact(hs->server_handshake_secret(), &server_handshake_secret) ||
+        !CopyExact(hs->secret(), &secret) ||
+        !CopyExact({s3->exporter_secret, hs->transcript.DigestLen()},
+                   &exporter_secret)) {
+      return false;
+    }
+    s3->exporter_secret_len = CBS_len(&exporter_secret);
 
+    if (s3->early_data_accepted &&
+        !CopyExact(hs->early_traffic_secret(), &early_traffic_secret)) {
+      return false;
+    }
+  }
   Array<uint8_t> key_block;
-  if ((type == handback_after_session_resumption ||
-       type == handback_after_handshake) &&
-      (!tls1_configure_aead(ssl, evp_aead_seal, &key_block, session->cipher,
-                            write_iv) ||
-       !CBS_copy_bytes(&write_seq, s3->write_sequence,
-                       sizeof(s3->write_sequence)))) {
-    return false;
+  switch (type) {
+    case handback_after_session_resumption:
+      // The write keys are installed after server Finished, but the client
+      // keys must wait for ChangeCipherSpec.
+      if (!tls1_configure_aead(ssl, evp_aead_seal, &key_block, session->cipher,
+                               write_iv)) {
+        return false;
+      }
+      break;
+    case handback_after_ecdhe:
+      // The premaster secret is not yet computed, so install no keys.
+      break;
+    case handback_after_handshake:
+      // The handshake is complete, so both keys are installed.
+      if (!tls1_configure_aead(ssl, evp_aead_seal, &key_block, session->cipher,
+                               write_iv) ||
+          !tls1_configure_aead(ssl, evp_aead_open, &key_block, session->cipher,
+                               read_iv)) {
+        return false;
+      }
+      break;
+    case handback_tls13:
+      // After server Finished, the application write keys are installed, but
+      // none of the read keys. The read keys are installed in the state machine
+      // immediately after processing handback.
+      if (!tls13_set_traffic_key(ssl, ssl_encryption_application, evp_aead_seal,
+                                 hs->new_session.get(),
+                                 hs->server_traffic_secret_0())) {
+        return false;
+      }
+      break;
   }
-  if (type == handback_after_handshake &&
-      (!tls1_configure_aead(ssl, evp_aead_open, &key_block, session->cipher,
-                            read_iv) ||
-       !CBS_copy_bytes(&read_seq, s3->read_sequence,
-                       sizeof(s3->read_sequence)))) {
-    return false;
-  }
-  if ((type == handback_after_ecdhe ||
-       type == handback_after_session_resumption) &&
-      (!s3->hs->transcript.Init() ||
-       !s3->hs->transcript.InitHash(ssl_protocol_version(ssl),
-                                    s3->hs->new_cipher) ||
-       !s3->hs->transcript.Update(transcript))) {
+  if (!CopyExact({s3->read_sequence, sizeof(s3->read_sequence)}, &read_seq) ||
+      !CopyExact({s3->write_sequence, sizeof(s3->write_sequence)},
+                 &write_seq)) {
     return false;
   }
   if (type == handback_after_ecdhe &&
-      (s3->hs->key_shares[0] = SSLKeyShare::Create(&key_share)) == nullptr) {
+      (hs->key_shares[0] = SSLKeyShare::Create(&key_share)) == nullptr) {
     return false;
   }
-
-  return CBS_len(&seq) == 0;
+  return true;  // Trailing data allowed for extensibility.
 }
 
 BSSL_NAMESPACE_END

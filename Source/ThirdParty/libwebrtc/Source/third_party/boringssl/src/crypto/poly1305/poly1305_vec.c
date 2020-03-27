@@ -23,13 +23,25 @@
 #include "../internal.h"
 
 
-#if !defined(OPENSSL_WINDOWS) && defined(OPENSSL_X86_64)
+#if defined(BORINGSSL_HAS_UINT128) && defined(OPENSSL_X86_64)
 
 #include <emmintrin.h>
 
-#define U8TO64_LE(m) (*(const uint64_t *)(m))
-#define U8TO32_LE(m) (*(const uint32_t *)(m))
-#define U64TO8_LE(m, v) (*(uint64_t *)(m)) = v
+static uint32_t load_u32_le(const uint8_t in[4]) {
+  uint32_t ret;
+  OPENSSL_memcpy(&ret, in, 4);
+  return ret;
+}
+
+static uint64_t load_u64_le(const uint8_t in[8]) {
+  uint64_t ret;
+  OPENSSL_memcpy(&ret, in, 8);
+  return ret;
+}
+
+static void store_u64_le(uint8_t out[8], uint64_t v) {
+  OPENSSL_memcpy(out, &v, 8);
+}
 
 typedef __m128i xmmi;
 
@@ -96,8 +108,8 @@ void CRYPTO_poly1305_init(poly1305_state *state, const uint8_t key[32]) {
   uint64_t t0, t1;
 
   // clamp key
-  t0 = U8TO64_LE(key + 0);
-  t1 = U8TO64_LE(key + 8);
+  t0 = load_u64_le(key + 0);
+  t1 = load_u64_le(key + 8);
   r0 = t0 & 0xffc0fffffff;
   t0 >>= 44;
   t0 |= t1 << 20;
@@ -115,10 +127,10 @@ void CRYPTO_poly1305_init(poly1305_state *state, const uint8_t key[32]) {
   p->R22.d[3] = (uint32_t)(r2 >> 32);
 
   // store pad
-  p->R23.d[1] = U8TO32_LE(key + 16);
-  p->R23.d[3] = U8TO32_LE(key + 20);
-  p->R24.d[1] = U8TO32_LE(key + 24);
-  p->R24.d[3] = U8TO32_LE(key + 28);
+  p->R23.d[1] = load_u32_le(key + 16);
+  p->R23.d[3] = load_u32_le(key + 20);
+  p->R24.d[1] = load_u32_le(key + 24);
+  p->R24.d[3] = load_u32_le(key + 28);
 
   // H = 0
   st->H[0] = _mm_setzero_si128();
@@ -662,6 +674,11 @@ void CRYPTO_poly1305_update(poly1305_state *state, const uint8_t *m,
   poly1305_state_internal *st = poly1305_aligned_state(state);
   size_t want;
 
+  // Work around a C language bug. See https://crbug.com/1019588.
+  if (bytes == 0) {
+    return;
+  }
+
   // need at least 32 initial bytes to start the accelerated branch
   if (!st->started) {
     if ((st->leftover == 0) && (bytes > 32)) {
@@ -745,8 +762,8 @@ void CRYPTO_poly1305_finish(poly1305_state *state, uint8_t mac[16]) {
   }
 
 poly1305_donna_atleast16bytes:
-  t0 = U8TO64_LE(m + 0);
-  t1 = U8TO64_LE(m + 8);
+  t0 = load_u64_le(m + 0);
+  t1 = load_u64_le(m + 8);
   h0 += t0 & 0xfffffffffff;
   t0 = shr128_pair(t1, t0, 44);
   h1 += t0 & 0xfffffffffff;
@@ -785,8 +802,8 @@ poly1305_donna_atmost15bytes:
   OPENSSL_memset(m + leftover, 0, 16 - leftover);
   leftover = 16;
 
-  t0 = U8TO64_LE(m + 0);
-  t1 = U8TO64_LE(m + 8);
+  t0 = load_u64_le(m + 0);
+  t1 = load_u64_le(m + 8);
   h0 += t0 & 0xfffffffffff;
   t0 = shr128_pair(t1, t0, 44);
   h1 += t0 & 0xfffffffffff;
@@ -832,8 +849,8 @@ poly1305_donna_finish:
   t1 = (t1 >> 24);
   h2 += (t1)+c;
 
-  U64TO8_LE(mac + 0, ((h0) | (h1 << 44)));
-  U64TO8_LE(mac + 8, ((h1 >> 20) | (h2 << 24)));
+  store_u64_le(mac + 0, ((h0) | (h1 << 44)));
+  store_u64_le(mac + 8, ((h1 >> 20) | (h2 << 24)));
 }
 
-#endif  // !OPENSSL_WINDOWS && OPENSSL_X86_64
+#endif  // BORINGSSL_HAS_UINT128 && OPENSSL_X86_64

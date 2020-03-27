@@ -265,9 +265,9 @@ ___
 sub ::dataseg
 {   push(@out,".data\n");   }
 
-sub ::preprocessor_ifndef
+sub ::preprocessor_ifdef
 { my($define)=@_;
-    push(@out,"#ifndef ${define}\n");
+    push(@out,"#ifdef ${define}\n");
 }
 
 sub ::preprocessor_endif

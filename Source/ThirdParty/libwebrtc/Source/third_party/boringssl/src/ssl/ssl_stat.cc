@@ -197,6 +197,9 @@ const char *SSL_alert_desc_string_long(int value) {
     case TLS1_AD_NO_RENEGOTIATION:
       return "no renegotiation";
 
+    case TLS1_AD_MISSING_EXTENSION:
+      return "missing extension";
+
     case TLS1_AD_UNSUPPORTED_EXTENSION:
       return "unsupported extension";
 
@@ -217,6 +220,9 @@ const char *SSL_alert_desc_string_long(int value) {
 
     case TLS1_AD_CERTIFICATE_REQUIRED:
       return "certificate required";
+
+    case TLS1_AD_NO_APPLICATION_PROTOCOL:
+      return "no application protocol";
 
     default:
       return "unknown";

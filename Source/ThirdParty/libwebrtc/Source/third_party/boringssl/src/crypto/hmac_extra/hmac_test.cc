@@ -65,6 +65,7 @@
 
 #include "../test/file_test.h"
 #include "../test/test_util.h"
+#include "../test/wycheproof_util.h"
 
 
 static const EVP_MD *GetDigest(const std::string &name) {
@@ -127,4 +128,57 @@ TEST(HMACTest, TestVectors) {
     ASSERT_TRUE(HMAC_Final(ctx.get(), mac.get(), &mac_len));
     EXPECT_EQ(Bytes(output), Bytes(mac.get(), mac_len));
   });
+}
+
+static void RunWycheproofTest(const char *path, const EVP_MD *md) {
+  SCOPED_TRACE(path);
+  FileTestGTest(path, [&](FileTest *t) {
+    t->IgnoreInstruction("keySize");
+    t->IgnoreInstruction("tagSize");
+    std::vector<uint8_t> key, msg, tag;
+    ASSERT_TRUE(t->GetBytes(&key, "key"));
+    ASSERT_TRUE(t->GetBytes(&msg, "msg"));
+    ASSERT_TRUE(t->GetBytes(&tag, "tag"));
+    WycheproofResult result;
+    ASSERT_TRUE(GetWycheproofResult(t, &result));
+
+    if (!result.IsValid()) {
+      // Wycheproof tests assume the HMAC implementation checks the MAC. Ours
+      // simply computes the HMAC, so skip the tests with invalid outputs.
+      return;
+    }
+
+    uint8_t out[EVP_MAX_MD_SIZE];
+    unsigned out_len;
+    ASSERT_TRUE(HMAC(md, key.data(), key.size(), msg.data(), msg.size(), out,
+                     &out_len));
+    // Wycheproof tests truncate the tags down to |tagSize|.
+    ASSERT_LE(tag.size(), out_len);
+    EXPECT_EQ(Bytes(out, tag.size()), Bytes(tag));
+  });
+}
+
+TEST(HMACTest, WycheproofSHA1) {
+  RunWycheproofTest("third_party/wycheproof_testvectors/hmac_sha1_test.txt",
+                    EVP_sha1());
+}
+
+TEST(HMACTest, WycheproofSHA224) {
+  RunWycheproofTest("third_party/wycheproof_testvectors/hmac_sha224_test.txt",
+                    EVP_sha224());
+}
+
+TEST(HMACTest, WycheproofSHA256) {
+  RunWycheproofTest("third_party/wycheproof_testvectors/hmac_sha256_test.txt",
+                    EVP_sha256());
+}
+
+TEST(HMACTest, WycheproofSHA384) {
+  RunWycheproofTest("third_party/wycheproof_testvectors/hmac_sha384_test.txt",
+                    EVP_sha384());
+}
+
+TEST(HMACTest, WycheproofSHA512) {
+  RunWycheproofTest("third_party/wycheproof_testvectors/hmac_sha512_test.txt",
+                    EVP_sha512());
 }

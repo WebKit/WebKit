@@ -246,3 +246,4 @@ gcm_ghash_v8:
 .align	2
 #endif
 #endif  // !OPENSSL_NO_ASM
+.section	.note.GNU-stack,"",%progbits

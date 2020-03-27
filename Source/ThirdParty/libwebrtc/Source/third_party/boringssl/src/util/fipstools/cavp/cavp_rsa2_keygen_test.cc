@@ -23,6 +23,7 @@
 
 #include "../crypto/internal.h"
 #include "../crypto/test/file_test.h"
+#include "../crypto/test/test_util.h"
 #include "cavp_test_util.h"
 
 
@@ -68,11 +69,9 @@ static bool TestRSA2KeyGen(FileTest *t, void *arg) {
     }
 
     printf("e = %s\r\np = %s\r\nq = %s\r\nn = %s\r\nd = %s\r\n\r\n",
-           EncodeHex(e_bytes.data(), e_bytes.size()).c_str(),
-           EncodeHex(p_bytes.data(), p_bytes.size()).c_str(),
-           EncodeHex(q_bytes.data(), q_bytes.size()).c_str(),
-           EncodeHex(n_bytes.data(), n_bytes.size()).c_str(),
-           EncodeHex(d_bytes.data(), d_bytes.size()).c_str());
+           EncodeHex(e_bytes).c_str(), EncodeHex(p_bytes).c_str(),
+           EncodeHex(q_bytes).c_str(), EncodeHex(n_bytes).c_str(),
+           EncodeHex(d_bytes).c_str());
   }
 
   return true;

@@ -71,6 +71,11 @@
 #include "../internal.h"
 
 
+// Node depends on |EVP_R_NOT_XOF_OR_INVALID_LENGTH|.
+//
+// TODO(davidben): Fix Node to not touch the error queue itself and remove this.
+OPENSSL_DECLARE_ERROR_REASON(EVP, NOT_XOF_OR_INVALID_LENGTH)
+
 EVP_PKEY *EVP_PKEY_new(void) {
   EVP_PKEY *ret;
 

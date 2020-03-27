@@ -209,9 +209,9 @@ OPENSSL_EXPORT uint32_t ERR_peek_last_error_line_data(const char **file,
                                                       int *flags);
 
 // ERR_error_string_n generates a human-readable string representing
-// |packed_error| and places it at |buf|. It writes at most |len| bytes
-// (including the terminating NUL) and truncates the string if necessary. If
-// |len| is greater than zero then |buf| is always NUL terminated.
+// |packed_error|, places it at |buf|, and returns |buf|. It writes at most
+// |len| bytes (including the terminating NUL) and truncates the string if
+// necessary. If |len| is greater than zero then |buf| is always NUL terminated.
 //
 // The string will have the following format:
 //
@@ -219,8 +219,8 @@ OPENSSL_EXPORT uint32_t ERR_peek_last_error_line_data(const char **file,
 //
 // error code is an 8 digit hexadecimal number; library name and reason string
 // are ASCII text.
-OPENSSL_EXPORT void ERR_error_string_n(uint32_t packed_error, char *buf,
-                                       size_t len);
+OPENSSL_EXPORT char *ERR_error_string_n(uint32_t packed_error, char *buf,
+                                        size_t len);
 
 // ERR_lib_error_string returns a string representation of the library that
 // generated |packed_error|.
@@ -389,10 +389,12 @@ OPENSSL_EXPORT void ERR_remove_thread_state(const CRYPTO_THREADID *tid);
 OPENSSL_EXPORT const char *ERR_func_error_string(uint32_t packed_error);
 
 // ERR_error_string behaves like |ERR_error_string_n| but |len| is implicitly
-// |ERR_ERROR_STRING_BUF_LEN| and it returns |buf|. If |buf| is NULL, the error
-// string is placed in a static buffer which is returned. (The static buffer may
-// be overridden by concurrent calls in other threads so this form should not be
-// used.)
+// |ERR_ERROR_STRING_BUF_LEN|.
+//
+// Additionally, if |buf| is NULL, the error string is placed in a static buffer
+// which is returned. This is not thread-safe and only exists for backwards
+// compatibility with legacy callers. The static buffer will be overridden by
+// calls in other threads.
 //
 // Use |ERR_error_string_n| instead.
 //

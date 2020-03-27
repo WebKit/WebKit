@@ -119,16 +119,13 @@ static void bn_mul_normal(BN_ULONG *r, const BN_ULONG *a, size_t na,
   }
 }
 
-#if !defined(OPENSSL_X86) || defined(OPENSSL_NO_ASM)
 // Here follows specialised variants of bn_add_words() and bn_sub_words(). They
 // have the property performing operations on arrays of different sizes. The
 // sizes of those arrays is expressed through cl, which is the common length (
 // basicall, min(len(a),len(b)) ), and dl, which is the delta between the two
 // lengths, calculated as len(a)-len(b). All lengths are the number of
 // BN_ULONGs...  For the operations that require a result array as parameter,
-// it must have the length cl+abs(dl). These functions should probably end up
-// in bn_asm.c as soon as there are assembler counterparts for the systems that
-// use assembler files.
+// it must have the length cl+abs(dl).
 
 static BN_ULONG bn_sub_part_words(BN_ULONG *r, const BN_ULONG *a,
                                   const BN_ULONG *b, int cl, int dl) {
@@ -282,11 +279,6 @@ static BN_ULONG bn_sub_part_words(BN_ULONG *r, const BN_ULONG *a,
 
   return c;
 }
-#else
-// On other platforms the function is defined in asm.
-BN_ULONG bn_sub_part_words(BN_ULONG *r, const BN_ULONG *a, const BN_ULONG *b,
-                           int cl, int dl);
-#endif
 
 // bn_abs_sub_part_words computes |r| = |a| - |b|, storing the absolute value
 // and returning a mask of all ones if the result was negative and all zeros if
@@ -294,8 +286,7 @@ BN_ULONG bn_sub_part_words(BN_ULONG *r, const BN_ULONG *a, const BN_ULONG *b,
 // convention.
 //
 // TODO(davidben): Make this take |size_t|. The |cl| + |dl| calling convention
-// is confusing. The trouble is 32-bit x86 implements |bn_sub_part_words| in
-// assembly, but we can probably just delete it?
+// is confusing.
 static BN_ULONG bn_abs_sub_part_words(BN_ULONG *r, const BN_ULONG *a,
                                       const BN_ULONG *b, int cl, int dl,
                                       BN_ULONG *tmp) {

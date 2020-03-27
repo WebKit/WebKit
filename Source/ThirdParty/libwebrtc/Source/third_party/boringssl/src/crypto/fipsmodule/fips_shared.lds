@@ -15,5 +15,11 @@ SECTIONS
     *(.rela.dyn)
     *(.data)
     *(.rel.ro)
+    *(*.text.*)
+    *(*.data.*)
+
+    /* This should be included to catch any unexpected rodata subsections, but
+       it crashes the linker!
+    *(*.rodata.*) */
   }
 }

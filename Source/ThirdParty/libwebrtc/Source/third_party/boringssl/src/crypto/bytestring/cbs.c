@@ -12,7 +12,6 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-#include <openssl/buf.h>
 #include <openssl/mem.h>
 #include <openssl/bytestring.h>
 
@@ -61,7 +60,7 @@ int CBS_stow(const CBS *cbs, uint8_t **out_ptr, size_t *out_len) {
   if (cbs->len == 0) {
     return 1;
   }
-  *out_ptr = BUF_memdup(cbs->data, cbs->len);
+  *out_ptr = OPENSSL_memdup(cbs->data, cbs->len);
   if (*out_ptr == NULL) {
     return 0;
   }
@@ -73,7 +72,7 @@ int CBS_strdup(const CBS *cbs, char **out_ptr) {
   if (*out_ptr != NULL) {
     OPENSSL_free(*out_ptr);
   }
-  *out_ptr = BUF_strndup((const char*)cbs->data, cbs->len);
+  *out_ptr = OPENSSL_strndup((const char*)cbs->data, cbs->len);
   return (*out_ptr != NULL);
 }
 
@@ -121,6 +120,14 @@ int CBS_get_u16(CBS *cbs, uint16_t *out) {
   return 1;
 }
 
+int CBS_get_u16le(CBS *cbs, uint16_t *out) {
+  if (!CBS_get_u16(cbs, out)) {
+    return 0;
+  }
+  *out = CRYPTO_bswap2(*out);
+  return 1;
+}
+
 int CBS_get_u24(CBS *cbs, uint32_t *out) {
   uint64_t v;
   if (!cbs_get_u(cbs, &v, 3)) {
@@ -139,8 +146,24 @@ int CBS_get_u32(CBS *cbs, uint32_t *out) {
   return 1;
 }
 
+int CBS_get_u32le(CBS *cbs, uint32_t *out) {
+  if (!CBS_get_u32(cbs, out)) {
+    return 0;
+  }
+  *out = CRYPTO_bswap4(*out);
+  return 1;
+}
+
 int CBS_get_u64(CBS *cbs, uint64_t *out) {
   return cbs_get_u(cbs, out, 8);
+}
+
+int CBS_get_u64le(CBS *cbs, uint64_t *out) {
+  if (!cbs_get_u(cbs, out, 8)) {
+    return 0;
+  }
+  *out = CRYPTO_bswap8(*out);
+  return 1;
 }
 
 int CBS_get_last_u8(CBS *cbs, uint8_t *out) {
@@ -435,6 +458,40 @@ int CBS_get_asn1_uint64(CBS *cbs, uint64_t *out) {
     *out |= data[i];
   }
 
+  return 1;
+}
+
+int CBS_get_asn1_int64(CBS *cbs, int64_t *out) {
+  CBS bytes;
+  if (!CBS_get_asn1(cbs, &bytes, CBS_ASN1_INTEGER)) {
+    return 0;
+  }
+  const uint8_t *data = CBS_data(&bytes);
+  const size_t len = CBS_len(&bytes);
+
+  if (len == 0 || len > sizeof(int64_t)) {
+    // An INTEGER is encoded with at least one octet.
+    return 0;
+  }
+  if (len > 1) {
+    if (data[0] == 0 && (data[1] & 0x80) == 0) {
+      return 0;  // Extra leading zeros.
+    }
+    if (data[0] == 0xff && (data[1] & 0x80) != 0) {
+      return 0;  // Extra leading 0xff.
+    }
+  }
+
+  union {
+    int64_t i;
+    uint8_t bytes[sizeof(int64_t)];
+  } u;
+  const int is_negative = (data[0] & 0x80);
+  memset(u.bytes, is_negative ? 0xff : 0, sizeof(u.bytes));  // Sign-extend.
+  for (size_t i = 0; i < len; i++) {
+    u.bytes[i] = data[len - i - 1];
+  }
+  *out = u.i;
   return 1;
 }
 

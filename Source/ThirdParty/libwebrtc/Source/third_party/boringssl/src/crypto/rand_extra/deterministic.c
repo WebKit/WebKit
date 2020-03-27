@@ -45,4 +45,12 @@ void CRYPTO_sysrand(uint8_t *out, size_t requested) {
   g_num_calls++;
 }
 
+void CRYPTO_sysrand_for_seed(uint8_t *out, size_t requested) {
+  CRYPTO_sysrand(out, requested);
+}
+
+void CRYPTO_sysrand_if_available(uint8_t *out, size_t requested) {
+  CRYPTO_sysrand(out, requested);
+}
+
 #endif  // BORINGSSL_UNSAFE_DETERMINISTIC_MODE

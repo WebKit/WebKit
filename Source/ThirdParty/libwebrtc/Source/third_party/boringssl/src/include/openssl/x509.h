@@ -829,8 +829,10 @@ OPENSSL_EXPORT int 		X509_set_subject_name(X509 *x, X509_NAME *name);
 OPENSSL_EXPORT X509_NAME *	X509_get_subject_name(X509 *a);
 OPENSSL_EXPORT int 		X509_set_notBefore(X509 *x, const ASN1_TIME *tm);
 OPENSSL_EXPORT const ASN1_TIME *X509_get0_notBefore(const X509 *x);
+OPENSSL_EXPORT ASN1_TIME *X509_getm_notBefore(X509 *x);
 OPENSSL_EXPORT int 		X509_set_notAfter(X509 *x, const ASN1_TIME *tm);
 OPENSSL_EXPORT const ASN1_TIME *X509_get0_notAfter(const X509 *x);
+OPENSSL_EXPORT ASN1_TIME *X509_getm_notAfter(X509 *x);
 OPENSSL_EXPORT int 		X509_set_pubkey(X509 *x, EVP_PKEY *pkey);
 OPENSSL_EXPORT EVP_PKEY *	X509_get_pubkey(X509 *x);
 OPENSSL_EXPORT ASN1_BIT_STRING * X509_get0_pubkey_bitstr(const X509 *x);
@@ -957,13 +959,13 @@ OPENSSL_EXPORT X509_NAME_ENTRY *X509_NAME_delete_entry(X509_NAME *name, int loc)
 OPENSSL_EXPORT int 		X509_NAME_add_entry(X509_NAME *name,X509_NAME_ENTRY *ne,
 			int loc, int set);
 OPENSSL_EXPORT int X509_NAME_add_entry_by_OBJ(X509_NAME *name, ASN1_OBJECT *obj, int type,
-			unsigned char *bytes, int len, int loc, int set);
+			const unsigned char *bytes, int len, int loc, int set);
 OPENSSL_EXPORT int X509_NAME_add_entry_by_NID(X509_NAME *name, int nid, int type,
-			unsigned char *bytes, int len, int loc, int set);
+			const unsigned char *bytes, int len, int loc, int set);
 OPENSSL_EXPORT X509_NAME_ENTRY *X509_NAME_ENTRY_create_by_txt(X509_NAME_ENTRY **ne,
 		const char *field, int type, const unsigned char *bytes, int len);
 OPENSSL_EXPORT X509_NAME_ENTRY *X509_NAME_ENTRY_create_by_NID(X509_NAME_ENTRY **ne, int nid,
-			int type,unsigned char *bytes, int len);
+			int type, const unsigned char *bytes, int len);
 OPENSSL_EXPORT int X509_NAME_add_entry_by_txt(X509_NAME *name, const char *field, int type,
 			const unsigned char *bytes, int len, int loc, int set);
 OPENSSL_EXPORT X509_NAME_ENTRY *X509_NAME_ENTRY_create_by_OBJ(X509_NAME_ENTRY **ne,

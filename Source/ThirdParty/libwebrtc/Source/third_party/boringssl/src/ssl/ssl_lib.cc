@@ -478,6 +478,7 @@ static bool ssl_can_renegotiate(const SSL *ssl) {
       return false;
 
     case ssl_renegotiate_freely:
+    case ssl_renegotiate_explicit:
       return true;
     case ssl_renegotiate_once:
       return ssl->s3->total_renegotiations == 0;
@@ -563,13 +564,10 @@ ssl_ctx_st::ssl_ctx_st(const SSL_METHOD *ssl_method)
       channel_id_enabled(false),
       grease_enabled(false),
       allow_unknown_alpn_protos(false),
-      ed25519_enabled(false),
-      rsa_pss_rsae_certs_enabled(true),
       false_start_allowed_without_alpn(false),
       ignore_tls13_downgrade(false),
       handoff(false),
-      enable_early_data(false),
-      pq_experiment_signal(false) {
+      enable_early_data(false) {
   CRYPTO_MUTEX_init(&lock);
   CRYPTO_new_ex_data(&ex_data);
 }
@@ -698,7 +696,7 @@ SSL *SSL_new(SSL_CTX *ctx) {
 
   if (ctx->psk_identity_hint) {
     ssl->config->psk_identity_hint.reset(
-        BUF_strdup(ctx->psk_identity_hint.get()));
+        OPENSSL_strdup(ctx->psk_identity_hint.get()));
     if (ssl->config->psk_identity_hint == nullptr) {
       return nullptr;
     }
@@ -945,29 +943,16 @@ static int ssl_do_post_handshake(SSL *ssl, const SSLMessage &msg) {
     return 1;  // Ignore the HelloRequest.
   }
 
-  if (!ssl_can_renegotiate(ssl) ||
-      // Renegotiation is only supported at quiescent points in the application
-      // protocol, namely in HTTPS, just before reading the HTTP response.
-      // Require the record-layer be idle and avoid complexities of sending a
-      // handshake record while an application_data record is being written.
-      !ssl->s3->write_buffer.empty() ||
-      ssl->s3->write_shutdown != ssl_shutdown_none) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_RENEGOTIATION);
+  ssl->s3->renegotiate_pending = true;
+  if (ssl->renegotiate_mode == ssl_renegotiate_explicit) {
+    return 1;  // Handle it later.
+  }
+
+  if (!SSL_renegotiate(ssl)) {
     ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_NO_RENEGOTIATION);
     return 0;
   }
 
-  // Begin a new handshake.
-  if (ssl->s3->hs != nullptr) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-    return 0;
-  }
-  ssl->s3->hs = ssl_handshake_new(ssl);
-  if (ssl->s3->hs == nullptr) {
-    return 0;
-  }
-
-  ssl->s3->total_renegotiations++;
   return 1;
 }
 
@@ -1012,6 +997,11 @@ static int ssl_read_impl(SSL *ssl) {
   }
 
   while (ssl->s3->pending_app_data.empty()) {
+    if (ssl->s3->renegotiate_pending) {
+      ssl->s3->rwstate = SSL_ERROR_WANT_RENEGOTIATE;
+      return -1;
+    }
+
     // Complete the current handshake, if any. False Start will cause
     // |SSL_do_handshake| to return mid-handshake, so this may require multiple
     // iterations.
@@ -1245,14 +1235,6 @@ int SSL_send_fatal_alert(SSL *ssl, uint8_t alert) {
   return ssl_send_alert_impl(ssl, SSL3_AL_FATAL, alert);
 }
 
-void SSL_CTX_enable_pq_experiment_signal(SSL_CTX *ctx) {
-  ctx->pq_experiment_signal = true;
-}
-
-int SSL_pq_experiment_signal_seen(const SSL *ssl) {
-  return ssl->s3->pq_experiment_signal_seen;
-}
-
 int SSL_set_quic_transport_params(SSL *ssl, const uint8_t *params,
                                   size_t params_len) {
   return ssl->config && ssl->config->quic_transport_params.CopyFrom(
@@ -1353,6 +1335,7 @@ int SSL_get_error(const SSL *ssl, int ret_code) {
     case SSL_ERROR_PENDING_TICKET:
     case SSL_ERROR_EARLY_DATA_REJECTED:
     case SSL_ERROR_WANT_CERTIFICATE_VERIFY:
+    case SSL_ERROR_WANT_RENEGOTIATE:
       return ssl->s3->rwstate;
 
     case SSL_ERROR_WANT_READ: {
@@ -1743,8 +1726,39 @@ long SSL_get_default_timeout(const SSL *ssl) {
 
 int SSL_renegotiate(SSL *ssl) {
   // Caller-initiated renegotiation is not supported.
-  OPENSSL_PUT_ERROR(SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
-  return 0;
+  if (!ssl->s3->renegotiate_pending) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+    return 0;
+  }
+
+  if (!ssl_can_renegotiate(ssl)) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_RENEGOTIATION);
+    return 0;
+  }
+
+  // Renegotiation is only supported at quiescent points in the application
+  // protocol, namely in HTTPS, just before reading the HTTP response.
+  // Require the record-layer be idle and avoid complexities of sending a
+  // handshake record while an application_data record is being written.
+  if (!ssl->s3->write_buffer.empty() ||
+      ssl->s3->write_shutdown != ssl_shutdown_none) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_NO_RENEGOTIATION);
+    return 0;
+  }
+
+  // Begin a new handshake.
+  if (ssl->s3->hs != nullptr) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+    return 0;
+  }
+  ssl->s3->hs = ssl_handshake_new(ssl);
+  if (ssl->s3->hs == nullptr) {
+    return 0;
+  }
+
+  ssl->s3->renegotiate_pending = false;
+  ssl->s3->total_renegotiations++;
+  return 1;
 }
 
 int SSL_renegotiate_pending(SSL *ssl) {
@@ -2104,7 +2118,7 @@ int SSL_set_tlsext_host_name(SSL *ssl, const char *name) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_SSL3_EXT_INVALID_SERVERNAME);
     return 0;
   }
-  ssl->hostname.reset(BUF_strdup(name));
+  ssl->hostname.reset(OPENSSL_strdup(name));
   if (ssl->hostname == nullptr) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
     return 0;
@@ -2226,36 +2240,17 @@ int SSL_CTX_add_cert_compression_alg(SSL_CTX *ctx, uint16_t alg_id,
                                      ssl_cert_decompression_func_t decompress) {
   assert(compress != nullptr || decompress != nullptr);
 
-  for (const auto *alg : ctx->cert_compression_algs.get()) {
-    if (alg->alg_id == alg_id) {
+  for (const auto &alg : ctx->cert_compression_algs) {
+    if (alg.alg_id == alg_id) {
       return 0;
     }
   }
 
-  UniquePtr<CertCompressionAlg> alg = MakeUnique<CertCompressionAlg>();
-  if (alg == nullptr) {
-    return 0;
-  }
-
-  alg->alg_id = alg_id;
-  alg->compress = compress;
-  alg->decompress = decompress;
-
-  if (ctx->cert_compression_algs == nullptr) {
-    ctx->cert_compression_algs.reset(sk_CertCompressionAlg_new_null());
-    if (ctx->cert_compression_algs == nullptr) {
-      return 0;
-    }
-  }
-
-  if (!PushToStack(ctx->cert_compression_algs.get(), std::move(alg))) {
-    if (sk_CertCompressionAlg_num(ctx->cert_compression_algs.get()) == 0) {
-      ctx->cert_compression_algs.reset();
-    }
-    return 0;
-  }
-
-  return 1;
+  CertCompressionAlg alg;
+  alg.alg_id = alg_id;
+  alg.compress = compress;
+  alg.decompress = decompress;
+  return ctx->cert_compression_algs.Push(alg);
 }
 
 void SSL_CTX_set_tls_channel_id_enabled(SSL_CTX *ctx, int enabled) {
@@ -2490,6 +2485,11 @@ char *SSL_get_shared_ciphers(const SSL *ssl, char *buf, int len) {
   return buf;
 }
 
+int SSL_get_shared_sigalgs(SSL *ssl, int idx, int *psign, int *phash,
+                           int *psignandhash, uint8_t *rsig, uint8_t *rhash) {
+  return 0;
+}
+
 int SSL_CTX_set_quic_method(SSL_CTX *ctx, const SSL_QUIC_METHOD *quic_method) {
   if (ctx->method->is_dtls) {
     return 0;
@@ -2574,7 +2574,7 @@ static int use_psk_identity_hint(UniquePtr<char> *out,
   // ECDHE_PSK can only spell empty hint. Having different capabilities is odd,
   // so we interpret empty and missing as identical.
   if (identity_hint != NULL && identity_hint[0] != '\0') {
-    out->reset(BUF_strdup(identity_hint));
+    out->reset(OPENSSL_strdup(identity_hint));
     if (*out == nullptr) {
       return 0;
     }
@@ -2847,6 +2847,10 @@ void SSL_CTX_set_false_start_allowed_without_alpn(SSL_CTX *ctx, int allowed) {
 }
 
 int SSL_is_tls13_downgrade(const SSL *ssl) { return ssl->s3->tls13_downgrade; }
+
+int SSL_used_hello_retry_request(const SSL *ssl) {
+  return ssl->s3->used_hello_retry_request;
+}
 
 void SSL_CTX_set_ignore_tls13_downgrade(SSL_CTX *ctx, int ignore) {
   ctx->ignore_tls13_downgrade = !!ignore;

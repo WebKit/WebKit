@@ -17,18 +17,31 @@
 
 #include <openssl/base.h>
 
+#include <string>
+#include <vector>
+
 
 // This header contains convenience functions for Wycheproof tests.
 
 class FileTest;
 
-enum class WycheproofResult {
+enum class WycheproofRawResult {
   kValid,
   kInvalid,
   kAcceptable,
 };
 
-// GetWycheproofResult sets |*out| to the parsed "result" key of |t|.
+struct WycheproofResult {
+  WycheproofRawResult raw_result;
+  std::vector<std::string> flags;
+
+  // IsValid returns true if the Wycheproof test should be considered valid. A
+  // test result of "acceptable" is treated as valid if all flags are included
+  // in |acceptable_flags| and invalid otherwise.
+  bool IsValid(const std::vector<std::string> &acceptable_flags = {}) const;
+};
+
+// GetWycheproofResult sets |*out| to the parsed "result" and "flags" keys of |t|.
 bool GetWycheproofResult(FileTest *t, WycheproofResult *out);
 
 // GetWycheproofDigest returns a digest function using the Wycheproof name, or

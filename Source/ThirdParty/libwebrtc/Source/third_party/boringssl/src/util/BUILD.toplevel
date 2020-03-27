@@ -16,6 +16,8 @@ licenses(["notice"])
 
 exports_files(["LICENSE"])
 
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
 load(
     ":BUILD.generated.bzl",
     "crypto_headers",

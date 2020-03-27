@@ -107,7 +107,7 @@ struct alignas(16) Reg128 {
 #elif defined(OPENSSL_ARM)
 
 // References:
-// AAPCS: http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042f/IHI0042F_aapcs.pdf
+// AAPCS: https://developer.arm.com/docs/ihi0042/latest
 // iOS32: https://developer.apple.com/library/archive/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARMv6FunctionCallingConventions.html
 // Linux: http://sourcery.mentor.com/sgpp/lite/arm/portal/kbattach142/arm_gnu_linux_%20abi.pdf
 //
@@ -146,7 +146,7 @@ struct alignas(16) Reg128 {
 #elif defined(OPENSSL_AARCH64)
 
 // References:
-// AAPCS64: http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf
+// AAPCS64: https://developer.arm.com/docs/ihi0055/latest
 // iOS64: https://developer.apple.com/library/archive/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARM64FunctionCallingConventions.html
 //
 // In aarch64, r18 (accessed as w18 or x18 in a 64-bit context) is the platform
@@ -179,7 +179,78 @@ struct alignas(16) Reg128 {
   CALLER_STATE_REGISTER(uint64_t, x28)                               \
   CALLER_STATE_REGISTER(uint64_t, x29)
 
-#endif  // X86_64 || X86 || ARM || AARCH64
+#elif defined(OPENSSL_PPC64LE)
+
+// CRReg only compares the CR2-CR4 bits of a CR register.
+struct CRReg {
+  uint32_t masked() const { return value & 0x00fff000; }
+  bool operator==(CRReg r) const { return masked() == r.masked(); }
+  bool operator!=(CRReg r) const { return masked() != r.masked(); }
+  uint32_t value;
+};
+
+// References:
+// ELFv2: http://openpowerfoundation.org/wp-content/uploads/resources/leabi/leabi-20170510.pdf
+//
+// Note vector and floating-point registers on POWER have two different names.
+// Originally, there were 32 floating-point registers and 32 vector registers,
+// labelled f0-f31 and v0-v31 respectively. Later, VSX (Vector Scalar Extension)
+// unified them into 64 registers vs0-vs63. f0-f31 map to the lower halves of
+// vs0-vs31. v0-v31 map to vs32-vs63. The ABI was defined in terms of pre-VSX
+// names, so we use those names here. In particular, f14-f31 are
+// callee-saved, but the upper halves of vs14-vs31 are not.
+#define LOOP_CALLER_STATE_REGISTERS()  \
+  CALLER_STATE_REGISTER(Reg128, v20)   \
+  CALLER_STATE_REGISTER(Reg128, v21)   \
+  CALLER_STATE_REGISTER(Reg128, v22)   \
+  CALLER_STATE_REGISTER(Reg128, v23)   \
+  CALLER_STATE_REGISTER(Reg128, v24)   \
+  CALLER_STATE_REGISTER(Reg128, v25)   \
+  CALLER_STATE_REGISTER(Reg128, v26)   \
+  CALLER_STATE_REGISTER(Reg128, v27)   \
+  CALLER_STATE_REGISTER(Reg128, v28)   \
+  CALLER_STATE_REGISTER(Reg128, v29)   \
+  CALLER_STATE_REGISTER(Reg128, v30)   \
+  CALLER_STATE_REGISTER(Reg128, v31)   \
+  CALLER_STATE_REGISTER(uint64_t, r14) \
+  CALLER_STATE_REGISTER(uint64_t, r15) \
+  CALLER_STATE_REGISTER(uint64_t, r16) \
+  CALLER_STATE_REGISTER(uint64_t, r17) \
+  CALLER_STATE_REGISTER(uint64_t, r18) \
+  CALLER_STATE_REGISTER(uint64_t, r19) \
+  CALLER_STATE_REGISTER(uint64_t, r20) \
+  CALLER_STATE_REGISTER(uint64_t, r21) \
+  CALLER_STATE_REGISTER(uint64_t, r22) \
+  CALLER_STATE_REGISTER(uint64_t, r23) \
+  CALLER_STATE_REGISTER(uint64_t, r24) \
+  CALLER_STATE_REGISTER(uint64_t, r25) \
+  CALLER_STATE_REGISTER(uint64_t, r26) \
+  CALLER_STATE_REGISTER(uint64_t, r27) \
+  CALLER_STATE_REGISTER(uint64_t, r28) \
+  CALLER_STATE_REGISTER(uint64_t, r29) \
+  CALLER_STATE_REGISTER(uint64_t, r30) \
+  CALLER_STATE_REGISTER(uint64_t, r31) \
+  CALLER_STATE_REGISTER(uint64_t, f14) \
+  CALLER_STATE_REGISTER(uint64_t, f15) \
+  CALLER_STATE_REGISTER(uint64_t, f16) \
+  CALLER_STATE_REGISTER(uint64_t, f17) \
+  CALLER_STATE_REGISTER(uint64_t, f18) \
+  CALLER_STATE_REGISTER(uint64_t, f19) \
+  CALLER_STATE_REGISTER(uint64_t, f20) \
+  CALLER_STATE_REGISTER(uint64_t, f21) \
+  CALLER_STATE_REGISTER(uint64_t, f22) \
+  CALLER_STATE_REGISTER(uint64_t, f23) \
+  CALLER_STATE_REGISTER(uint64_t, f24) \
+  CALLER_STATE_REGISTER(uint64_t, f25) \
+  CALLER_STATE_REGISTER(uint64_t, f26) \
+  CALLER_STATE_REGISTER(uint64_t, f27) \
+  CALLER_STATE_REGISTER(uint64_t, f28) \
+  CALLER_STATE_REGISTER(uint64_t, f29) \
+  CALLER_STATE_REGISTER(uint64_t, f30) \
+  CALLER_STATE_REGISTER(uint64_t, f31) \
+  CALLER_STATE_REGISTER(CRReg, cr)
+
+#endif  // X86_64 || X86 || ARM || AARCH64 || PPC64LE
 
 // Enable ABI testing if all of the following are true.
 //
@@ -210,24 +281,44 @@ crypto_word_t RunTrampoline(Result *out, crypto_word_t func,
 
 template <typename T>
 inline crypto_word_t ToWord(T t) {
-#if !defined(OPENSSL_X86) && !defined(OPENSSL_X86_64) && \
-    !defined(OPENSSL_ARM) && !defined(OPENSSL_AARCH64)
-#error "Unknown architecture"
-#endif
+  // ABIs typically pass floats and structs differently from integers and
+  // pointers. We only need to support the latter.
+  static_assert(std::is_integral<T>::value || std::is_pointer<T>::value,
+                "parameter types must be integral or pointer types");
+  // We only support types which fit in registers.
   static_assert(sizeof(T) <= sizeof(crypto_word_t),
-                "T is larger than crypto_word_t");
-  static_assert(sizeof(T) >= 4, "types under four bytes are complicated");
+                "parameter types must be at most word-sized");
 
-  // ABIs are complex around arguments that are smaller than native words. For
-  // 32-bit architectures, the rules above imply we only have word-sized
-  // arguments. For 64-bit architectures, we still have assembly functions which
-  // take |int|.
+  // ABIs are complex around arguments that are smaller than native words.
+  // Parameters passed in memory are sometimes packed and sometimes padded to a
+  // word. When parameters are padded in memory or passed in a larger register,
+  // the unused bits may be undefined or sign- or zero-extended.
   //
-  // For aarch64, AAPCS64, section 5.4.2, clauses C.7 and C.14 says any
-  // remaining bits are unspecified. iOS64 contradicts this and says the callee
-  // extends arguments up to 32 bits, and only the upper 32 bits are
-  // unspecified. Rejecting parameters smaller than 32 bits avoids the
-  // divergence.
+  // We could simply cast to |crypto_word_t| everywhere but, on platforms where
+  // padding is undefined, we perturb the bits to test the function accounts for
+  // for this.
+#if defined(OPENSSL_32_BIT)
+  // We never pass parameters smaller than int, so require word-sized parameters
+  // on 32-bit architectures for simplicity.
+  static_assert(sizeof(T) == 4, "parameter types must be word-sized");
+  return (crypto_word_t)t;
+#elif defined(OPENSSL_PPC64LE)
+  // ELFv2, section 2.2.2.3 says the parameter save area sign- or zero-extends
+  // parameters passed in memory. Section 2.2.3 is unclear on how to handle
+  // register parameters, but section 2.2.2.3 additionally says that the memory
+  // copy of a parameter is identical to the register one.
+  return (crypto_word_t)t;
+#elif defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)
+  // AAPCS64, section 5.4.2, clauses C.7 and C.14 says any remaining bits in
+  // aarch are unspecified. iOS64 contradicts this and says the callee extends
+  // arguments up to 32 bits, and only the upper 32 bits are unspecified.
+  //
+  // On x86_64, Win64 leaves all unused bits unspecified. SysV also leaves
+  // unused bits in stack parameters unspecified, but it behaves like iOS64 for
+  // register parameters. This was determined via experimentation.
+  //
+  // We limit to 32-bit and 64-bit parameters, the subset where the above all
+  // align, and then test that functions tolerate arbitrary unused bits.
   //
   // TODO(davidben): Find authoritative citations for x86_64. For x86_64, I
   // observed the behavior of Clang, GCC, and MSVC. ABI rules here may be
@@ -241,27 +332,22 @@ inline crypto_word_t ToWord(T t) {
   // 2. When compiling a small-argument-taking function, does the compiler make
   //    assumptions about unused bits of arguments?
   //
-  // MSVC for x86_64 is straightforward. It appears to tolerate and produce
-  // arbitrary values for unused bits, like AAPCS64.
-  //
-  // GCC and Clang for x86_64 are more complex. They match MSVC for stack
-  // parameters. However, for register parameters, they behave like iOS64 and,
-  // as callers, extend up to 32 bits, leaving the remainder arbitrary. When
-  // compiling a callee, Clang takes advantage of this conversion, but I was
-  // unable to make GCC do so.
-  //
-  // Note that, although the Win64 rules are sufficient to require our assembly
-  // be conservative, we wish for |CHECK_ABI| to support C-compiled functions,
-  // so it must enforce the correct rules for each platform.
-  //
-  // Fortunately, the |static_assert|s above cause all supported architectures
-  // to behave the same.
+  // MSVC was observed to tolerate and produce arbitrary values for unused bits,
+  // which is conclusive. GCC and Clang, targeting Linux, were similarly
+  // conclusive on stack parameters. Clang was also conclusive for register
+  // parameters. Callers only extended parameters up to 32 bits, and callees
+  // took advantage of the 32-bit extension. GCC only exhibited the callee
+  // behavior.
+  static_assert(sizeof(T) >= 4, "parameters must be at least 32 bits wide");
   crypto_word_t ret;
   // Filling extra bits with 0xaa will be vastly out of bounds for code
   // expecting either sign- or zero-extension. (0xaa is 0b10101010.)
   OPENSSL_memset(&ret, 0xaa, sizeof(ret));
   OPENSSL_memcpy(&ret, &t, sizeof(t));
   return ret;
+#else
+#error "unknown architecture"
+#endif
 }
 
 // CheckImpl runs |func| on |args|, recording ABI errors in |out|. If |unwind|
@@ -276,11 +362,9 @@ inline crypto_word_t ToWord(T t) {
 template <typename R, typename... Args>
 inline crypto_word_t CheckImpl(Result *out, bool unwind, R (*func)(Args...),
                                typename DeductionGuard<Args>::Type... args) {
-  // We only support up to 8 arguments. This ensures all arguments on aarch64
-  // are passed in registers and avoids the iOS descrepancy around packing small
-  // arguments on the stack.
-  //
-  // https://developer.apple.com/library/archive/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARM64FunctionCallingConventions.html
+  // We only support up to 8 arguments, so all arguments on aarch64 and ppc64le
+  // are passed in registers. This is simpler and avoids the iOS discrepancy
+  // around packing small arguments on the stack. (See the iOS64 reference.)
   static_assert(sizeof...(args) <= 8,
                 "too many arguments for abi_test_trampoline");
 

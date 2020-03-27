@@ -369,8 +369,8 @@ int EC_KEY_check_fips(const EC_KEY *key) {
   return 1;
 }
 
-int EC_KEY_set_public_key_affine_coordinates(EC_KEY *key, BIGNUM *x,
-                                             BIGNUM *y) {
+int EC_KEY_set_public_key_affine_coordinates(EC_KEY *key, const BIGNUM *x,
+                                             const BIGNUM *y) {
   EC_POINT *point = NULL;
   int ok = 0;
 
@@ -394,7 +394,7 @@ err:
   return ok;
 }
 
-size_t EC_KEY_key2buf(EC_KEY *key, point_conversion_form_t form,
+size_t EC_KEY_key2buf(const EC_KEY *key, point_conversion_form_t form,
                       unsigned char **out_buf, BN_CTX *ctx) {
   if (key == NULL || key->pub_key == NULL || key->group == NULL) {
     return 0;
