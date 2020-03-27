@@ -1,3 +1,19 @@
+2020-03-27  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r258857): Broke aarch64 JSCOnly CI
+        https://bugs.webkit.org/show_bug.cgi?id=209670
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Change aarch64 to use 4 KB rather than 64 KB as the ceiling on page size.
+
+        This change is definitely incorrect, because it will break our internal aarch64 CI that uses
+        64 KB pages. But maybe it will fix the public aarch64 CI bot that is using 4 KB pages?
+        Further investigation is required, because 64 KB should have been a safe value for all
+        platforms, but first step is to commit this and see what happens.
+
+        * wtf/PageBlock.h:
+
 2020-03-26  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix various compiler warnings
