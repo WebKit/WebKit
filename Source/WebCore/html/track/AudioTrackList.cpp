@@ -82,5 +82,10 @@ EventTargetInterface AudioTrackList::eventTargetInterface() const
     return AudioTrackListEventTargetInterfaceType;
 }
 
+const char* AudioTrackList::activeDOMObjectName() const
+{
+    return "AudioTrackList";
+}
+
 } // namespace WebCore
 #endif

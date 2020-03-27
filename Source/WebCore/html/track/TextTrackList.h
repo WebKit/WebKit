@@ -38,7 +38,9 @@ class TextTrackList final : public TrackListBase {
 public:
     static Ref<TextTrackList> create(WeakPtr<HTMLMediaElement> element, ScriptExecutionContext* context)
     {
-        return adoptRef(*new TextTrackList(element, context));
+        auto list = adoptRef(*new TextTrackList(element, context));
+        list->suspendIfNeeded();
+        return list;
     }
     virtual ~TextTrackList();
 
@@ -61,6 +63,7 @@ public:
 
 private:
     TextTrackList(WeakPtr<HTMLMediaElement>, ScriptExecutionContext*);
+    const char* activeDOMObjectName() const final;
 
     void invalidateTrackIndexesAfterTrack(TextTrack&);
 

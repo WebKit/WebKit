@@ -40,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(TrackListBase);
 
 TrackListBase::TrackListBase(WeakPtr<HTMLMediaElement> element, ScriptExecutionContext* context)
-    : ContextDestructionObserver(context)
+    : ActiveDOMObject(context)
     , m_element(element)
     , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
 {
@@ -175,6 +175,11 @@ bool TrackListBase::isAnyTrackEnabled() const
             return true;
     }
     return false;
+}
+
+bool TrackListBase::hasPendingActivity() const
+{
+    return ActiveDOMObject::hasPendingActivity() || m_asyncEventQueue->hasPendingEvents();
 }
 
 } // namespace WebCore
