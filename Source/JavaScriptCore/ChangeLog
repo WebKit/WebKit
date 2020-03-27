@@ -1,3 +1,21 @@
+2020-03-26  Mark Lam  <mark.lam@apple.com>
+
+        Clear the entropy bits in the encodedStructureBits when deallocating a structureID.
+        https://bugs.webkit.org/show_bug.cgi?id=209632
+        <rdar://problem/60943876>
+
+        Reviewed by Saam Barati.
+
+        We currently only use a 32-bit offset in the StructureIDTable's StructureOrOffset.
+        Though we will never store an offset value that is near 32-bit in size, let alone
+        64-bit, there's no reason why we can't just use all 64-bits for the offset.
+        Doing so will also have the benefit of zero'ing out the entropy bits in the old
+        encodedStructureBits.  This guarantees that there's no chance of coalition between
+        a "freed" structureID's entropy bits and the entropy bits in a dead cell due to
+        GC bugs.
+
+        * runtime/StructureIDTable.h:
+
 2020-03-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] lld-link: error: /manifestdependency: is not allowed in .drectve

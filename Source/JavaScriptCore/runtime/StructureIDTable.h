@@ -108,7 +108,7 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         EncodedStructureBits encodedStructureBits;
-        StructureID offset;
+        uintptr_t offset;
     };
 
     StructureOrOffset* table() const { return m_table.get(); }
