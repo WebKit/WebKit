@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "ActiveDOMObject.h"
 #include "HTMLElement.h"
 #include "LoadableTextTrack.h"
 
@@ -35,7 +36,7 @@ namespace WebCore {
 
 class HTMLMediaElement;
 
-class HTMLTrackElement final : public HTMLElement, public TextTrackClient {
+class HTMLTrackElement final : public HTMLElement, public ActiveDOMObject, public TextTrackClient {
     WTF_MAKE_ISO_ALLOCATED(HTMLTrackElement);
 public:
     static Ref<HTMLTrackElement> create(const QualifiedName&, Document&);
@@ -48,7 +49,7 @@ public:
     bool isDefault() const;
 
     enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, TRACK_ERROR = 3 };
-    ReadyState readyState();
+    ReadyState readyState() const;
     void setReadyState(ReadyState);
 
     LoadableTextTrack& track();
@@ -61,9 +62,15 @@ public:
     RefPtr<HTMLMediaElement> mediaElement() const;
     const AtomString& mediaElementCrossOriginAttribute() const;
 
+    // ActiveDOMObject.
+    bool hasPendingActivity() const final;
+
 private:
     HTMLTrackElement(const QualifiedName&, Document&);
     virtual ~HTMLTrackElement();
+
+    // ActiveDOMObject.
+    const char* activeDOMObjectName() const final;
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 
@@ -71,6 +78,9 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode&) final;
 
     bool isURLAttribute(const Attribute&) const final;
+
+    // EventTarget.
+    void eventListenersDidChange() final;
 
     void loadTimerFired();
 
@@ -86,6 +96,7 @@ private:
 
     RefPtr<LoadableTextTrack> m_track;
     Timer m_loadTimer;
+    bool m_hasRelevantLoadEventsListener { false };
 };
 
 }
