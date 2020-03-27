@@ -1,3 +1,12 @@
+2020-03-27  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html is flaky crashing. 
+        https://bugs.webkit.org/show_bug.cgi?id=209684
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-03-27  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: should also escape the method when Copy as cURL
