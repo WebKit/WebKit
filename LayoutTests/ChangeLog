@@ -1,3 +1,12 @@
+2020-03-27  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk2 Release ] media/modern-media-controls/seek-backward-support/seek-backward-support.html is flaky crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=209668
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up fast/scrolling/latching tests
