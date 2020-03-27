@@ -50,7 +50,8 @@ WI.SearchTabContentView = class SearchTabContentView extends WI.ContentBrowserTa
         return {
             identifier: SearchTabContentView.Type,
             image: "Images/Search.svg",
-            title: WI.UIString("Search"),
+            displayName: WI.UIString("Search", "Search Tab Name", "Name of Search Tab"),
+            title: WI.UIString("Search (%s)", "Search Tab Title", "Title of Search Tab with keyboard shortcut").format(WI.searchKeyboardShortcut.displayName),
         };
     }
 

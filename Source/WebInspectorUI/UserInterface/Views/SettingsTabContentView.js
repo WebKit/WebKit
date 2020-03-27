@@ -39,7 +39,8 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         return {
             identifier: SettingsTabContentView.Type,
             image: "Images/Gear.svg",
-            title: WI.UIString("Settings"),
+            displayName: WI.UIString("Settings", "Settings Tab Name", "Name of Settings Tab"),
+            title: WI.UIString("Settings (%s)", "Settings Tab Title", "Title of Settings Tab with keyboard shortcut").format(WI.settingsKeyboardShortcut.displayName),
         };
     }
 

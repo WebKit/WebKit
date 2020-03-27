@@ -165,8 +165,9 @@ localizedStrings["Attribute"] = "Attribute";
 /* A submenu item of 'Break On' that breaks (pauses) before DOM attribute is modified */
 localizedStrings["Attribute Modified"] = "Attribute Modified";
 localizedStrings["Attributes"] = "Attributes";
-localizedStrings["Audit"] = "Audit";
 localizedStrings["Audit Error: %s"] = "Audit Error: %s";
+/* Name of Audit Tab */
+localizedStrings["Audit Tab Name"] = "Audit";
 localizedStrings["Audit Warning: %s"] = "Audit Warning: %s";
 localizedStrings["Audit version: %s"] = "Audit version: %s";
 localizedStrings["Audits"] = "Audits";
@@ -316,6 +317,8 @@ localizedStrings["Console"] = "Console";
 localizedStrings["Console Evaluation"] = "Console Evaluation";
 localizedStrings["Console Evaluation %d"] = "Console Evaluation %d";
 localizedStrings["Console Profile Recorded"] = "Console Profile Recorded";
+/* Name of Console Tab */
+localizedStrings["Console Tab Name"] = "Console";
 localizedStrings["Console cleared at %s"] = "Console cleared at %s";
 localizedStrings["Console opened at %s"] = "Console opened at %s";
 localizedStrings["Console prompt"] = "Console prompt";
@@ -480,6 +483,8 @@ localizedStrings["Element is the root element"] = "Element is the root element";
 localizedStrings["Element may overlap another compositing element"] = "Element may overlap another compositing element";
 localizedStrings["Element overlaps other compositing element"] = "Element overlaps other compositing element";
 localizedStrings["Elements"] = "Elements";
+/* Name of Elements Tab */
+localizedStrings["Elements Tab Name"] = "Elements";
 localizedStrings["Emulate User Gesture"] = "Emulate User Gesture";
 localizedStrings["Enable Breakpoint"] = "Enable Breakpoint";
 localizedStrings["Enable Breakpoints"] = "Enable Breakpoints";
@@ -605,7 +610,8 @@ localizedStrings["Global Code"] = "Global Code";
 localizedStrings["Global Lexical Environment"] = "Global Lexical Environment";
 localizedStrings["Global Variables"] = "Global Variables";
 localizedStrings["Grammar"] = "Grammar";
-localizedStrings["Graphics"] = "Graphics";
+/* Name of Graphics Tab */
+localizedStrings["Graphics Tab Name"] = "Graphics";
 localizedStrings["Group"] = "Group";
 localizedStrings["Group By Resource"] = "Group By Resource";
 localizedStrings["Group Media Requests"] = "Group Media Requests";
@@ -698,6 +704,8 @@ localizedStrings["Latency"] = "Latency";
 localizedStrings["Layer Count: %d"] = "Layer Count: %d";
 localizedStrings["Layer Info"] = "Layer Info";
 localizedStrings["Layers"] = "Layers";
+/* Name of Layers Tab */
+localizedStrings["Layers Tab Name"] = "Layers";
 localizedStrings["Layout & Rendering"] = "Layout & Rendering";
 /* Layout phase timeline records */
 localizedStrings["Layout @ Timeline record"] = "Layout";
@@ -779,6 +787,8 @@ localizedStrings["Network"] = "Network";
 localizedStrings["Network Issue"] = "Network Issue";
 localizedStrings["Network Requests"] = "Network Requests";
 localizedStrings["Network Requests:"] = "Network Requests:";
+/* Name of Network Tab */
+localizedStrings["Network Tab Name"] = "Network";
 /* A submenu item of 'Add' to add DOM nodes after the selected DOM node */
 localizedStrings["Next Sibling"] = "Next Sibling";
 localizedStrings["No"] = "No";
@@ -1043,6 +1053,10 @@ localizedStrings["Scroll into View"] = "Scroll into View";
 localizedStrings["Search"] = "Search";
 localizedStrings["Search Again"] = "Search Again";
 localizedStrings["Search Resource Content"] = "Search Resource Content";
+/* Name of Search Tab */
+localizedStrings["Search Tab Name"] = "Search";
+/* Title of Search Tab with keyboard shortcut */
+localizedStrings["Search Tab Title"] = "Search (%s)";
 /* Settings tab label for search related settings */
 localizedStrings["Search: @ Settings"] = "Search:";
 localizedStrings["Searching %s"] = "Searching %s";
@@ -1077,7 +1091,10 @@ localizedStrings["Session"] = "Session";
 localizedStrings["Session Storage"] = "Session Storage";
 localizedStrings["Set to Automatically Continue"] = "Set to Automatically Continue";
 localizedStrings["Setter"] = "Setter";
-localizedStrings["Settings"] = "Settings";
+/* Name of Settings Tab */
+localizedStrings["Settings Tab Name"] = "Settings";
+/* Title of Settings Tab with keyboard shortcut */
+localizedStrings["Settings Tab Title"] = "Settings (%s)";
 localizedStrings["Shader Programs"] = "Shader Programs";
 localizedStrings["Shadow Content"] = "Shadow Content";
 localizedStrings["Shadow Content (%s)"] = "Shadow Content (%s)";
@@ -1123,6 +1140,8 @@ localizedStrings["Sort Descending"] = "Sort Descending";
 localizedStrings["Source"] = "Source";
 localizedStrings["Source Maps:"] = "Source Maps:";
 localizedStrings["Sources"] = "Sources";
+/* Name of Sources Tab */
+localizedStrings["Sources Tab Name"] = "Sources";
 localizedStrings["Space"] = "Space";
 localizedStrings["Spaces"] = "Spaces";
 localizedStrings["Specially Exposed Data"] = "Specially Exposed Data";
@@ -1155,6 +1174,8 @@ localizedStrings["Stop recording canvas actions"] = "Stop recording canvas actio
 localizedStrings["Stop recording once page loads"] = "Stop recording once page loads";
 localizedStrings["Stopping the \u201C%s\u201D audit"] = "Stopping the \u201C%s\u201D audit";
 localizedStrings["Storage"] = "Storage";
+/* Name of Storage Tab */
+localizedStrings["Storage Tab Name"] = "Storage";
 /* CSS properties defined via HTML style attribute */
 localizedStrings["Style Attribute"] = "Style Attribute";
 localizedStrings["Style Sheet"] = "Style Sheet";
@@ -1242,7 +1263,8 @@ localizedStrings["Time to First Byte"] = "Time to First Byte";
 localizedStrings["Timeline"] = "Timeline";
 localizedStrings["Timeline Recording %d"] = "Timeline Recording %d";
 localizedStrings["Timeline Recording Import Error: %s"] = "Timeline Recording Import Error: %s";
-localizedStrings["Timelines"] = "Timelines";
+/* Name of Timelines Tab */
+localizedStrings["Timelines Tab Name"] = "Timelines";
 localizedStrings["Timer %d Fired"] = "Timer %d Fired";
 localizedStrings["Timer %d Installed"] = "Timer %d Installed";
 localizedStrings["Timer %d Removed"] = "Timer %d Removed";

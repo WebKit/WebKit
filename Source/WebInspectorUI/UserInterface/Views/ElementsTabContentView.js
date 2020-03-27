@@ -47,7 +47,7 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         return {
             identifier: ElementsTabContentView.Type,
             image: "Images/Elements.svg",
-            title: WI.UIString("Elements"),
+            displayName: WI.UIString("Elements", "Elements Tab Name", "Name of Elements Tab"),
         };
     }
 

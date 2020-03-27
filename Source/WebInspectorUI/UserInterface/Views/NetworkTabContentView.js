@@ -50,7 +50,7 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
         return {
             identifier: NetworkTabContentView.Type,
             image: "Images/Network.svg",
-            title: WI.UIString("Network"),
+            displayName: WI.UIString("Network", "Network Tab Name", "Name of Network Tab"),
         };
     }
 

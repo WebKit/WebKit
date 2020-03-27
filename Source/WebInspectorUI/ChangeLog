@@ -1,3 +1,74 @@
+2020-03-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add keyboard shortcut to tooltip of pinned tabs
+        https://bugs.webkit.org/show_bug.cgi?id=209640
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TabBarItem.js:
+        (WI.TabBarItem):
+        (WI.TabBarItem.prototype.get displayName): Added.
+        (WI.TabBarItem.prototype.set displayName): Added.
+        (WI.TabBarItem.prototype.set title):
+        (WI.TabBarItem.prototype.titleDidChange): Deleted.
+        * UserInterface/Views/GeneralTabBarItem.js:
+        (WI.GeneralTabBarItem.fromTabContentView):
+        (WI.GeneralTabBarItem.prototype.get displayName): Added.
+        (WI.GeneralTabBarItem.prototype.set displayName): Added.
+        (WI.GeneralTabBarItem.prototype.get title): Deleted.
+        (WI.GeneralTabBarItem.prototype.set title): Deleted.
+        * UserInterface/Views/PinnedTabBarItem.js:
+        (WI.PinnedTabBarItem):
+        (WI.PinnedTabBarItem.fromTabContentView):
+        (WI.PinnedTabBarItem.titleDidChange): Deleted.
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar > .tabs > .item > .name): Added.
+        (body.window-inactive .tab-bar > .tabs > .item > .name): Added.
+        (.tab-bar > .tabs > .item > .name > .content): Added.
+        (.tab-bar > .tabs > .item:not(.selected):hover > .name): Added.
+        (.tab-bar > .tabs > .item:not(.disabled).selected > .name): Added.
+        (body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .name): Added.
+        (.tab-bar > .tabs > .item > .title): Deleted.
+        (body.window-inactive .tab-bar > .tabs > .item > .title): Deleted.
+        (.tab-bar > .tabs > .item > .title > .content): Deleted.
+        (.tab-bar > .tabs > .item:not(.selected):hover > .title): Deleted.
+        (.tab-bar > .tabs > .item:not(.disabled).selected > .title): Deleted.
+        (body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .title): Deleted.
+        Separate the shown name of the tab (`displayName`) from the tooltip text (`title`).
+
+        * UserInterface/Views/SearchTabContentView.js:
+        (WI.SearchTabContentView.tabInfo):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.tabInfo):
+        Move the current `title` value to `displayName` and add a new `title` value with the
+        keyboard shortcut in parenthesis.
+
+        * UserInterface/Views/AuditTabContentView.js:
+        (WI.AuditTabContentView.tabInfo):
+        * UserInterface/Views/ConsoleTabContentView.js:
+        (WI.ConsoleTabContentView.tabInfo):
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView.tabInfo):
+        * UserInterface/Views/GraphicsTabContentView.js:
+        (WI.GraphicsTabContentView.tabInfo):
+        * UserInterface/Views/LayersTabContentView.js:
+        (WI.LayersTabContentView.tabInfo):
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView.tabInfo):
+        * UserInterface/Views/SourcesTabContentView.js:
+        (WI.SourcesTabContentView.tabInfo):
+        * UserInterface/Views/StorageTabContentView.js:
+        (WI.StorageTabContentView.tabInfo):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.tabInfo):
+        Use `displayName` instead of `title` since the name is shown in the UI.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        Make the Settings Tab shortcut public.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2020-03-26  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: RTL: ArrowLeft and ArrowRight keys select wrong navigation bar items

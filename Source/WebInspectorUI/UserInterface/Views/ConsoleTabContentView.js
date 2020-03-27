@@ -35,7 +35,7 @@ WI.ConsoleTabContentView = class ConsoleTabContentView extends WI.ContentBrowser
         return {
             identifier: ConsoleTabContentView.Type,
             image: "Images/Console.svg",
-            title: WI.UIString("Console"),
+            displayName: WI.UIString("Console", "Console Tab Name", "Name of Console Tab"),
         };
     }
 

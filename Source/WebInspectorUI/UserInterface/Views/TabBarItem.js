@@ -26,7 +26,7 @@
 
 WI.TabBarItem = class TabBarItem
 {
-    constructor(representedObject, image, title)
+    constructor(representedObject, image, displayName, title)
     {
         this._representedObject = representedObject || null;
         this._parentTabBar = null;
@@ -45,7 +45,8 @@ WI.TabBarItem = class TabBarItem
 
         this._element.createChild("div", "flex-space");
 
-        this.title = title;
+        this.displayName = displayName;
+        this.title = title || displayName;
         this.image = image;
     }
 
@@ -102,6 +103,20 @@ WI.TabBarItem = class TabBarItem
     get image() { return this._iconElement.src; }
     set image(url) { this._iconElement.src = url || ""; }
 
+    get displayName()
+    {
+        return this._displayName;
+    }
+
+    set displayName(displayName)
+    {
+        displayName = displayName || "";
+        if (this._displayName === displayName)
+            return;
+
+        this._displayName = displayName;
+    }
+
     get title()
     {
         return this._title;
@@ -114,14 +129,8 @@ WI.TabBarItem = class TabBarItem
             return;
 
         this._title = title;
-        this.titleDidChange();
-    }
 
-    // Protected
-
-    titleDidChange()
-    {
-        // Implemented by subclasses.
+        this._element.title = this._title;
     }
 };
 

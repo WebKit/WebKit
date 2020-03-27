@@ -25,9 +25,9 @@
 
 WI.PinnedTabBarItem = class PinnedTabBarItem extends WI.TabBarItem
 {
-    constructor(representedObject, image, title)
+    constructor(representedObject, image, displayName, title)
     {
-        super(representedObject, image, title);
+        super(representedObject, image, displayName, title);
 
         this.element.classList.add("pinned");
     }
@@ -38,14 +38,7 @@ WI.PinnedTabBarItem = class PinnedTabBarItem extends WI.TabBarItem
     {
         console.assert(tabContentView instanceof WI.TabContentView);
 
-        let {image, title} = tabContentView.constructor.tabInfo();
-        return new WI.PinnedTabBarItem(tabContentView, image, title);
-    }
-
-    // Protected
-
-    titleDidChange()
-    {
-        this.element.title = this.title;
+        let {image, displayName, title} = tabContentView.constructor.tabInfo();
+        return new WI.PinnedTabBarItem(tabContentView, image, displayName, title);
     }
 };

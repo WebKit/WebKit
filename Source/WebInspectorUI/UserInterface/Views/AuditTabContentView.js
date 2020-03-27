@@ -43,7 +43,7 @@ WI.AuditTabContentView = class AuditTabContentView extends WI.ContentBrowserTabC
         return {
             identifier: AuditTabContentView.Type,
             image: "Images/Audit.svg",
-            title: WI.UIString("Audit"),
+            displayName: WI.UIString("Audit", "Audit Tab Name", "Name of Audit Tab"),
         };
     }
 

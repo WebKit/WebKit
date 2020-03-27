@@ -66,7 +66,7 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
         return {
             identifier: GraphicsTabContentView.Type,
             image: "Images/Graphics.svg",
-            title: WI.UIString("Graphics"),
+            displayName: WI.UIString("Graphics", "Graphics Tab Name", "Name of Graphics Tab"),
         };
     }
 

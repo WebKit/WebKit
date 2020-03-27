@@ -103,7 +103,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         return {
             identifier: TimelineTabContentView.Type,
             image: "Images/Timeline.svg",
-            title: WI.UIString("Timelines"),
+            displayName: WI.UIString("Timelines", "Timelines Tab Name", "Name of Timelines Tab"),
         };
     }
 

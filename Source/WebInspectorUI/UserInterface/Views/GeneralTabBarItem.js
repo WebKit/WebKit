@@ -32,36 +32,35 @@ WI.GeneralTabBarItem = class GeneralTabBarItem extends WI.TabBarItem
     {
         console.assert(tabContentView instanceof WI.TabContentView);
 
-        let {image, title} = tabContentView.constructor.tabInfo();
-        return new WI.GeneralTabBarItem(tabContentView, image, title);
+        let {image, displayName, title} = tabContentView.constructor.tabInfo();
+        return new WI.GeneralTabBarItem(tabContentView, image, displayName, title);
     }
 
     // Public
 
-    get title()
+    get displayName()
     {
-        return super.title;
+        return super.displayName;
     }
 
-    set title(title)
+    set displayName(displayName)
     {
-        if (title) {
-            this._titleElement = document.createElement("span");
-            this._titleElement.classList.add("title");
+        if (displayName) {
+            this._displayNameElement = document.createElement("span");
+            this._displayNameElement.className = "name";
 
-            let titleContentElement = document.createElement("span");
-            titleContentElement.classList.add("content");
-            titleContentElement.textContent = title;
-            this._titleElement.appendChild(titleContentElement);
+            let displayNameContentElement = this._displayNameElement.appendChild(document.createElement("span"));
+            displayNameContentElement.className = "content";
+            displayNameContentElement.textContent = displayName;
 
-            this.element.insertBefore(this._titleElement, this.element.lastChild);
+            this.element.insertBefore(this._displayNameElement, this.element.lastChild);
         } else {
-            if (this._titleElement)
-                this._titleElement.remove();
+            if (this._displayNameElement)
+                this._displayNameElement.remove();
 
-            this._titleElement = null;
+            this._displayNameElement = null;
         }
 
-        super.title = title;
+        super.displayName = displayName;
     }
 };

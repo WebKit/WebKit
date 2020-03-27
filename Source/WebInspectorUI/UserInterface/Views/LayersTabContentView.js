@@ -45,7 +45,7 @@ WI.LayersTabContentView = class LayersTabContentView extends WI.ContentBrowserTa
         return {
             identifier: LayersTabContentView.Type,
             image: "Images/Layers.svg",
-            title: WI.UIString("Layers"),
+            displayName: WI.UIString("Layers", "Layers Tab Name", "Name of Layers Tab"),
         };
     }
 

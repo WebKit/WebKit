@@ -299,7 +299,7 @@ body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .icon {
     opacity: 0.4;
 }
 
-.tab-bar > .tabs > .item > .title {
+.tab-bar > .tabs > .item > .name {
     color: hsla(0, 0%, var(--foreground-lightness), 0.6);
 
     display: flex;
@@ -309,11 +309,11 @@ body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .icon {
     -webkit-margin-start: 6px;
 }
 
-body.window-inactive .tab-bar > .tabs > .item > .title {
+body.window-inactive .tab-bar > .tabs > .item > .name {
     color: hsla(0, 0%, var(--foreground-lightness), 0.4);
 }
 
-.tab-bar > .tabs > .item > .title > .content {
+.tab-bar > .tabs > .item > .name > .content {
     min-width: 0;
     width: 100%;
     overflow: hidden;
@@ -321,15 +321,15 @@ body.window-inactive .tab-bar > .tabs > .item > .title {
     white-space: nowrap;
 }
 
-.tab-bar > .tabs > .item:not(.selected):hover > .title {
+.tab-bar > .tabs > .item:not(.selected):hover > .name {
     color: hsla(0, 0%, var(--foreground-lightness), 0.7);
 }
 
-.tab-bar > .tabs > .item:not(.disabled).selected > .title {
+.tab-bar > .tabs > .item:not(.disabled).selected > .name {
     color: hsla(0, 0%, var(--foreground-lightness), 0.8);
 }
 
-body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .title {
+body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .name {
     color: hsla(0, 0%, var(--foreground-lightness), 0.5);
 }
 

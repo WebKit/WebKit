@@ -46,7 +46,7 @@ WI.StorageTabContentView = class StorageTabContentView extends WI.ContentBrowser
         return {
             identifier: StorageTabContentView.Type,
             image: "Images/Storage.svg",
-            title: WI.UIString("Storage"),
+            displayName: WI.UIString("Storage", "Storage Tab Name", "Name of Storage Tab"),
         };
     }
 
