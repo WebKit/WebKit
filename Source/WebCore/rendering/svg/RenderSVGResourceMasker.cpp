@@ -109,7 +109,7 @@ bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, C
         const RenderStyle& style = renderer->style();
         if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
             continue;
-        SVGRenderingContext::renderSubtreeToImageBuffer(maskerData->maskImage.get(), *renderer, maskContentTransformation);
+        SVGRenderingContext::renderSubtreeToContext(maskImageContext, *renderer, maskContentTransformation);
     }
 
 #if !USE(CG)

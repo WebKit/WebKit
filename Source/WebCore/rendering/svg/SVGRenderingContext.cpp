@@ -290,13 +290,11 @@ std::unique_ptr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatR
     return imageBuffer;
 }
 
-void SVGRenderingContext::renderSubtreeToImageBuffer(ImageBuffer* image, RenderElement& item, const AffineTransform& subtreeContentTransformation)
+void SVGRenderingContext::renderSubtreeToContext(GraphicsContext& context, RenderElement& item, const AffineTransform& subtreeContentTransformation)
 {
-    ASSERT(image);
-
     // Rendering into a buffer implies we're being used for masking, clipping, patterns or filters. In each of these
     // cases we don't want to paint the selection.
-    PaintInfo info(image->context(), LayoutRect::infiniteRect(), PaintPhase::Foreground, PaintBehavior::SkipSelectionHighlight);
+    PaintInfo info(context, LayoutRect::infiniteRect(), PaintPhase::Foreground, PaintBehavior::SkipSelectionHighlight);
 
     AffineTransform& contentTransformation = currentContentTransformation();
     AffineTransform savedContentTransformation = contentTransformation;

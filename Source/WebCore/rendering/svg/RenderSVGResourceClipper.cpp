@@ -231,9 +231,9 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskImageBu
         maskContext.setFillRule(newClipRule);
 
         // In the case of a <use> element, we obtained its renderere above, to retrieve its clipRule.
-        // We have to pass the <use> renderer itself to renderSubtreeToImageBuffer() to apply it's x/y/transform/etc. values when rendering.
+        // We have to pass the <use> renderer itself to renderSubtreeToContext() to apply it's x/y/transform/etc. values when rendering.
         // So if isUseElement is true, refetch the childNode->renderer(), as renderer got overridden above.
-        SVGRenderingContext::renderSubtreeToImageBuffer(&maskImageBuffer, isUseElement ? *child.renderer() : *renderer, maskContentTransformation);
+        SVGRenderingContext::renderSubtreeToContext(maskContext, isUseElement ? *child.renderer() : *renderer, maskContentTransformation);
     }
 
     view().frameView().setPaintBehavior(oldBehavior);
