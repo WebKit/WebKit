@@ -1,3 +1,22 @@
+2020-03-26  Saam Barati  <sbarati@apple.com>
+
+        Make it so RAMification can be run with python 3 and 2 and that it recognizes the new JavaScriptCore.framework directory structure
+        https://bugs.webkit.org/show_bug.cgi?id=209636
+
+        Reviewed by Yusuke Suzuki.
+
+        - JavaScriptCore builds now put the jsc shell under JavaScriptCore.framework/Helpers/jsc,
+          not JavaScriptCore.framework/Resources/jsc
+        - It's also helpful to be able to run RAMification with python3.7 and 2.7,
+          since there are some contexts where 3.7 is all we have.
+
+        * JetStream2/RAMification.py:
+        (frameworkPathFromExecutablePath):
+        (BaseRunner.processLine):
+        (LocalRunner.runOneTest):
+        (main.runTestList):
+        (main):
+
 2020-03-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Should not use variable-length-array (VLA)

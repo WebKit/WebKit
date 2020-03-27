@@ -28,6 +28,7 @@ import math
 import os
 import re
 import subprocess
+import sys
 
 jitTests = ["3d-cube-SP", "3d-raytrace-SP", "acorn-wtb", "ai-astar", "Air", "async-fs", "Babylon", "babylon-wtb", "base64-SP", "Basic", "Box2D", "cdjs", "chai-wtb", "coffeescript-wtb", "crypto", "crypto-aes-SP", "crypto-md5-SP", "crypto-sha1-SP", "date-format-tofte-SP", "date-format-xparb-SP", "delta-blue", "earley-boyer", "espree-wtb", "first-inspector-code-load", "FlightPlanner", "float-mm.c", "gaussian-blur", "gbemu", "gcc-loops-wasm", "hash-map", "HashSet-wasm", "jshint-wtb", "json-parse-inspector", "json-stringify-inspector", "lebab-wtb", "mandreel", "ML", "multi-inspector-code-load", "n-body-SP", "navier-stokes", "octane-code-load", "octane-zlib", "OfflineAssembler", "pdfjs", "prepack-wtb", "quicksort-wasm", "raytrace", "regex-dna-SP", "regexp", "richards", "richards-wasm", "splay", "stanford-crypto-aes", "stanford-crypto-pbkdf2", "stanford-crypto-sha256", "string-unpack-code-SP", "tagcloud-SP", "tsf-wasm", "typescript", "uglify-js-wtb", "UniPoker", "WSL"]
 
@@ -77,6 +78,10 @@ def frameworkPathFromExecutablePath(execPath):
         return pathMatch.group(1)
 
     pathMatch = re.match("(.*?)/JavaScriptCore.framework/Resources/([a-zA-Z]+)$", execPath)
+    if pathMatch:
+        return pathMatch.group(1)
+
+    pathMatch = re.match("(.*?)/JavaScriptCore.framework/Helpers/([a-zA-Z]+)$", execPath)
     if pathMatch:
         return pathMatch.group(1)
 
@@ -158,7 +163,7 @@ class BaseRunner:
         self.returnCode = 0
 
     def processLine(self, line):
-        line = line.strip()
+        line = str(line.strip())
 
         footprintMatch = re.match(footprintRE, line)
         if footprintMatch:
@@ -198,6 +203,9 @@ class LocalRunner(BaseRunner):
         proc = subprocess.Popen(args, cwd=self.rootDir, env=self.environmentVars, stdout=subprocess.PIPE, stderr=None, shell=False)
         while True:
             line = proc.stdout.readline()
+            if sys.version_info[0] >= 3:
+                line = str(line, "utf-8")
+
             self.processLine(line)
 
             if line == "":
@@ -241,12 +249,12 @@ def main(parser=None):
             else:
                 testName, test, weight = testInfo, testInfo, 1
 
-            print "Running {}...".format(testName),
+            sys.stdout.write("Running {}... ".format(testName))
             testResult = testRunner.runOneTest(test, extraOptions, useJetStream2Harness)
 
             if testResult.returnCode == 0 and testResult.footprint and testResult.peakFootprint:
                 if args.verbose:
-                    print "footprint: {}, peak footprint: {}".format(testResult.footprint, testResult.peakFootprint)
+                    print("footprint: {}, peak footprint: {}".format(testResult.footprint, testResult.peakFootprint))
                 else:
                     print
 
@@ -260,13 +268,13 @@ def main(parser=None):
                         peakFootprintValues.append(testResult.peakFootprint / oneMB)
             else:
                 hasFailedRuns = True
-                print "failed",
+                print("failed")
                 if testResult.returnCode != 0:
-                    print " exit code = {}".format(testResult.returnCode),
+                    print(" exit code = {}".format(testResult.returnCode))
                 if not testResult.footprint:
-                    print " footprint = {}".format(testResult.footprint),
+                    print(" footprint = {}".format(testResult.footprint))
                 if not testResult.peakFootprint:
-                    print " peak footprint = {}".format(testResult.peakFootprint),
+                    print(" peak footprint = {}".format(testResult.peakFootprint))
                 print
 
             testScoresDict[test] = {"metrics": {"Allocations": ["Geometric"]}, "tests": {"end": {"metrics": {"Allocations": {"current": footprintScores}}}, "peak": {"metrics": {"Allocations": {"current": peakFootprintScores}}}}}
@@ -278,7 +286,7 @@ def main(parser=None):
 
     if args.runLuaTests:
         if args.verbose:
-            print "== LuaJSFight No JIT tests =="
+            print("== LuaJSFight No JIT tests ==")
 
         # Use system malloc for LuaJSFight tests
         testRunner.setEnv("Malloc", "X")
@@ -291,7 +299,7 @@ def main(parser=None):
 
     if args.runGroupedTests:
         if args.verbose:
-            print "== Grouped tests =="
+            print("== Grouped tests ==")
 
         scoresDict = runTestList(groupTests)
 
@@ -299,7 +307,7 @@ def main(parser=None):
 
     if args.runJITTests:
         if args.verbose:
-            print "== JIT tests =="
+            print("== JIT tests ==")
 
         scoresDict = runTestList(jitTests)
 
@@ -307,7 +315,7 @@ def main(parser=None):
 
     if args.runNoJITTests:
         if args.verbose:
-            print "== No JIT tests =="
+            print("== No JIT tests ==")
 
         scoresDict = runTestList(nonJITTests, ["--useJIT=false", "-e", "testIterationCount=1"])
 
@@ -318,13 +326,13 @@ def main(parser=None):
     totalScore = int(geomean([footprintGeomean, peakFootprintGeomean]))
 
     if footprintGeomean:
-        print "Footprint geomean: {} ({:.3f} MB)".format(footprintGeomean, footprintGeomean / oneMB)
+        print("Footprint geomean: {} ({:.3f} MB)".format(footprintGeomean, footprintGeomean / oneMB))
 
     if peakFootprintGeomean:
-        print "Peak Footprint geomean: {} ({:.3f} MB)".format(peakFootprintGeomean, peakFootprintGeomean / oneMB)
+        print("Peak Footprint geomean: {} ({:.3f} MB)".format(peakFootprintGeomean, peakFootprintGeomean / oneMB))
 
     if footprintGeomean and peakFootprintGeomean:
-        print "Score: {} ({:.3f} MB)".format(totalScore, totalScore / oneMB)
+        print("Score: {} ({:.3f} MB)".format(totalScore, totalScore / oneMB))
 
     resultsDict = {"RAMification": {"metrics": {"Allocations": {"current": [totalScore]}}, "tests": testResultsDict}}
 
@@ -338,7 +346,7 @@ def main(parser=None):
                 json.dump(resultsDict, jsonFile)
 
     if hasFailedRuns:
-        print "Detected failed run(s), exiting with non-zero return code"
+        print("Detected failed run(s), exiting with non-zero return code")
 
     return hasFailedRuns
 
