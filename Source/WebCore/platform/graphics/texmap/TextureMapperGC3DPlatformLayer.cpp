@@ -98,7 +98,7 @@ void TextureMapperGC3DPlatformLayer::paintToTextureMapper(TextureMapper& texture
 
 #if USE(TEXTURE_MAPPER_GL)
     auto attrs = m_context.contextAttributes();
-    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
+    ASSERT(m_context.m_state.boundReadFBO == m_context.m_state.boundDrawFBO);
     if (attrs.antialias && m_context.m_state.boundDrawFBO == m_context.m_multisampleFBO) {
         GLContext* previousActiveContext = GLContext::current();
         if (previousActiveContext != m_glContext.get())
