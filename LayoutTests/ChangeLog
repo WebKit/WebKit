@@ -1,3 +1,28 @@
+2020-03-27  Eugene But  <eugenebut@chromium.org>
+
+        Test for RenderBox::styleDidChange crash fix
+        https://bugs.webkit.org/show_bug.cgi?id=208311
+
+        Reviewed by Ryosuke Niwa
+
+        add-document-child-during-document-child-replacement.html test adds svg child to a document
+        from mutation event observer while existing document child is being replaced.
+        After adding svg child, the document should reject the replacement of existing child, per spec:
+        
+        If parent is a document, and any of the statements below, switched on node,
+        are true, then throw a "HierarchyRequestError" DOMException:
+            .......
+            element
+                parent has an element child that is not child or a doctype is following child.
+            ......
+        https://dom.spec.whatwg.org/#concept-node-replace
+
+        add-document-child-and-reparent-old-child-during-document-child-replacement.html reparents the old child
+        to create slightly different state where old child still has a parent but that parent is not document.
+ 
+        * add-document-child-during-document-child-replacement.html:
+        * add-document-child-and-reparent-old-child-during-document-child-replacement.html:
+
 2020-03-27  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 ] MediaPlayerPrivateInterface crash in WebKit::VideoFullscreenManager
