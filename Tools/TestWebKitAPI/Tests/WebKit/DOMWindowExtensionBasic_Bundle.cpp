@@ -32,6 +32,7 @@
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePageGroup.h>
+#include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>
 #include <WebKit/WKBundleScriptWorld.h>
 #include <WebKit/WKRetainPtr.h>
@@ -68,9 +69,8 @@ class DOMWindowExtensionBasic : public InjectedBundleTest {
 public:
     DOMWindowExtensionBasic(const std::string& identifier);
     
-    virtual void initialize(WKBundleRef, WKTypeRef userData);
-    virtual void didCreatePage(WKBundleRef, WKBundlePageRef);
-    virtual void willDestroyPage(WKBundleRef, WKBundlePageRef);
+    void didCreatePage(WKBundleRef, WKBundlePageRef) override;
+    void willDestroyPage(WKBundleRef, WKBundlePageRef) override;
     
     void globalObjectIsAvailableForFrame(WKBundleFrameRef, WKBundleScriptWorldRef);
     void willDisconnectDOMWindowExtensionFromGlobalObject(WKBundleDOMWindowExtensionRef);
@@ -142,19 +142,13 @@ void DOMWindowExtensionBasic::sendExtensionStateMessage()
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
 
-void DOMWindowExtensionBasic::initialize(WKBundleRef bundle, WKTypeRef userData)
-{
-    assert(WKGetTypeID(userData) == WKBundlePageGroupGetTypeID());
-    WKBundlePageGroupRef pageGroup = static_cast<WKBundlePageGroupRef>(userData);
-
-    WKRetainPtr<WKStringRef> source = adoptWK(WKStringCreateWithUTF8CString("alert('Unimportant alert');"));
-    WKBundleAddUserScript(bundle, pageGroup, WKBundleScriptWorldCreateWorld(), source.get(), 0, 0, 0, kWKInjectAtDocumentStart, kWKInjectInAllFrames);
-}
-
 void DOMWindowExtensionBasic::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
 {    
     m_bundle = bundle;
 
+    auto source = adoptWK(WKStringCreateWithUTF8CString("alert('Unimportant alert');"));
+    WKBundlePageAddUserScriptInWorld(page, source.get(), WKBundleScriptWorldCreateWorld(), kWKInjectAtDocumentStart, kWKInjectInAllFrames);
+    
     WKBundlePageLoaderClientV1 pageLoaderClient;
     memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
     

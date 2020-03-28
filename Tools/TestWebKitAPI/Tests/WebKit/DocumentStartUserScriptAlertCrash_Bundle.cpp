@@ -29,6 +29,7 @@
 
 #include "InjectedBundleTest.h"
 #include <WebKit/WKBundlePageGroup.h>
+#include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>
 #include <WebKit/WKBundleScriptWorld.h>
 #include <WebKit/WKRetainPtr.h>
@@ -43,13 +44,10 @@ public:
     {
     }
 
-    virtual void initialize(WKBundleRef bundle, WKTypeRef userData)
+    void didCreatePage(WKBundleRef, WKBundlePageRef page) override
     {
-        assert(WKGetTypeID(userData) == WKBundlePageGroupGetTypeID());
-        WKBundlePageGroupRef pageGroup = static_cast<WKBundlePageGroupRef>(userData);
-
         WKRetainPtr<WKStringRef> source = adoptWK(WKStringCreateWithUTF8CString("alert('an alert');"));
-        WKBundleAddUserScript(bundle, pageGroup, WKBundleScriptWorldNormalWorld(), source.get(), 0, 0, 0, kWKInjectAtDocumentStart, kWKInjectInAllFrames);
+        WKBundlePageAddUserScript(page, source.get(), kWKInjectAtDocumentStart, kWKInjectInAllFrames);
     }
 };
 

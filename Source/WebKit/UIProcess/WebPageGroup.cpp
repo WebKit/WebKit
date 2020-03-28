@@ -85,8 +85,6 @@ WebPageGroup::WebPageGroup(const String& identifier)
     , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifier, ".WebKit2", "WebKit2."))
     , m_userContentController(WebUserContentControllerProxy::create())
 {
-    m_data.userContentControllerIdentifier = m_userContentController->identifier();
-
     webPageGroupMap().set(m_data.pageGroupID, this);
 }
 

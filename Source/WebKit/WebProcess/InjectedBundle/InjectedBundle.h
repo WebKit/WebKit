@@ -124,15 +124,6 @@ public:
     typedef HashMap<uint64_t, String> DocumentIDToURLMap;
     DocumentIDToURLMap liveDocumentURLs(WebPageGroupProxy*, bool excludeDocumentsInPageGroupPages);
 
-    // UserContent API
-    void addUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, String&& source, String&& url, API::Array* whitelist, API::Array* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);
-    void addUserStyleSheet(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames);
-    void removeUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& url);
-    void removeUserStyleSheet(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& url);
-    void removeUserScripts(WebPageGroupProxy*, InjectedBundleScriptWorld*);
-    void removeUserStyleSheets(WebPageGroupProxy*, InjectedBundleScriptWorld*);
-    void removeAllUserContent(WebPageGroupProxy*);
-
     // Garbage collection API
     void garbageCollectJavaScriptObjects();
     void garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(bool waitUntilDone);

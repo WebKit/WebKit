@@ -1,3 +1,26 @@
+2020-03-28  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate injected bundle page group SPI
+        https://bugs.webkit.org/show_bug.cgi?id=209687
+
+        Reviewed by Timothy Hatcher.
+
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionBasic_Bundle.cpp:
+        (TestWebKitAPI::DOMWindowExtensionBasic::didCreatePage):
+        (TestWebKitAPI::DOMWindowExtensionBasic::initialize): Deleted.
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionNoCache_Bundle.cpp:
+        (TestWebKitAPI::DOMWindowExtensionNoCache::didCreatePage):
+        (TestWebKitAPI::DOMWindowExtensionNoCache::initialize): Deleted.
+        * TestWebKitAPI/Tests/WebKit/DocumentStartUserScriptAlertCrash_Bundle.cpp:
+        (TestWebKitAPI::DocumentStartUserScriptAlertCrashTest::didCreatePage):
+        (TestWebKitAPI::DocumentStartUserScriptAlertCrashTest::initialize): Deleted.
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleDisableOverrideBuiltinsBehavior_Bundle.cpp:
+        (TestWebKitAPI::InjectedBundleNoDisableOverrideBuiltinsBehaviorTest::initialize): Deleted.
+        (TestWebKitAPI::InjectedBundleDisableOverrideBuiltinsBehaviorTest::initialize): Deleted.
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp:
+        (TestWebKitAPI::InjectedBundleMakeAllShadowRootOpenTest::didCreatePage):
+        (TestWebKitAPI::InjectedBundleMakeAllShadowRootOpenTest::initialize): Deleted.
+
 2020-03-28  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] No libsystemd-devel for DNF

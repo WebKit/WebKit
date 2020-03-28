@@ -96,39 +96,32 @@ size_t WKBundleGetJavaScriptObjectsCount(WKBundleRef bundleRef)
     return WebKit::toImpl(bundleRef)->javaScriptObjectsCount();
 }
 
-void WKBundleAddUserScript(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, _WKUserScriptInjectionTime injectionTimeRef, WKUserContentInjectedFrames injectedFramesRef)
+void WKBundleAddUserScript(WKBundleRef, WKBundlePageGroupRef, WKBundleScriptWorldRef, WKStringRef, WKURLRef, WKArrayRef, WKArrayRef, _WKUserScriptInjectionTime, WKUserContentInjectedFrames)
 {
-    WebKit::toImpl(bundleRef)->addUserScript(WebKit::toImpl(pageGroupRef), WebKit::toImpl(scriptWorldRef), WebKit::toWTFString(sourceRef), WebKit::toWTFString(urlRef), WebKit::toImpl(whitelistRef), WebKit::toImpl(blacklistRef), WebKit::toUserScriptInjectionTime(injectionTimeRef), WebKit::toUserContentInjectedFrames(injectedFramesRef));
 }
 
-void WKBundleAddUserStyleSheet(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, WKUserContentInjectedFrames injectedFramesRef)
+void WKBundleAddUserStyleSheet(WKBundleRef, WKBundlePageGroupRef, WKBundleScriptWorldRef, WKStringRef, WKURLRef, WKArrayRef, WKArrayRef, WKUserContentInjectedFrames)
 {
-    WebKit::toImpl(bundleRef)->addUserStyleSheet(WebKit::toImpl(pageGroupRef), WebKit::toImpl(scriptWorldRef), WebKit::toWTFString(sourceRef), WebKit::toWTFString(urlRef), WebKit::toImpl(whitelistRef), WebKit::toImpl(blacklistRef), WebKit::toUserContentInjectedFrames(injectedFramesRef));
 }
 
-void WKBundleRemoveUserScript(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
+void WKBundleRemoveUserScript(WKBundleRef, WKBundlePageGroupRef, WKBundleScriptWorldRef, WKURLRef)
 {
-    WebKit::toImpl(bundleRef)->removeUserScript(WebKit::toImpl(pageGroupRef), WebKit::toImpl(scriptWorldRef), WebKit::toWTFString(urlRef));
 }
 
-void WKBundleRemoveUserStyleSheet(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
+void WKBundleRemoveUserStyleSheet(WKBundleRef, WKBundlePageGroupRef, WKBundleScriptWorldRef, WKURLRef)
 {
-    WebKit::toImpl(bundleRef)->removeUserStyleSheet(WebKit::toImpl(pageGroupRef), WebKit::toImpl(scriptWorldRef), WebKit::toWTFString(urlRef));
 }
 
-void WKBundleRemoveUserScripts(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef)
+void WKBundleRemoveUserScripts(WKBundleRef, WKBundlePageGroupRef, WKBundleScriptWorldRef)
 {
-    WebKit::toImpl(bundleRef)->removeUserScripts(WebKit::toImpl(pageGroupRef), WebKit::toImpl(scriptWorldRef));
 }
 
-void WKBundleRemoveUserStyleSheets(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKBundleScriptWorldRef scriptWorldRef)
+void WKBundleRemoveUserStyleSheets(WKBundleRef, WKBundlePageGroupRef, WKBundleScriptWorldRef)
 {
-    WebKit::toImpl(bundleRef)->removeUserStyleSheets(WebKit::toImpl(pageGroupRef), WebKit::toImpl(scriptWorldRef));
 }
 
-void WKBundleRemoveAllUserContent(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef)
+void WKBundleRemoveAllUserContent(WKBundleRef, WKBundlePageGroupRef)
 {
-    WebKit::toImpl(bundleRef)->removeAllUserContent(WebKit::toImpl(pageGroupRef));
 }
 
 void WKBundleOverrideBoolPreferenceForTestRunner(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKStringRef preference, bool enabled)

@@ -48,17 +48,11 @@ Ref<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& data)
 WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
     : m_data(data)
     , m_pageGroup(WebCore::PageGroup::pageGroup(m_data.identifier))
-    , m_userContentController(WebUserContentController::getOrCreate(m_data.userContentControllerIdentifier))
 {
 }
 
 WebPageGroupProxy::~WebPageGroupProxy()
 {
-}
-
-WebUserContentController& WebPageGroupProxy::userContentController()
-{
-    return m_userContentController;
 }
 
 } // namespace WebKit

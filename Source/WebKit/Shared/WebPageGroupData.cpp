@@ -34,7 +34,6 @@ void WebPageGroupData::encode(IPC::Encoder& encoder) const
 {
     encoder << identifier;
     encoder << pageGroupID;
-    encoder << userContentControllerIdentifier;
 }
 
 Optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
@@ -48,13 +47,8 @@ Optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
     decoder >> pageGroupID;
     if (!pageGroupID)
         return WTF::nullopt;
-    
-    Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
-    decoder >> userContentControllerIdentifier;
-    if (!userContentControllerIdentifier)
-        return WTF::nullopt;
-    
-    return {{ WTFMove(*identifier), *pageGroupID, *userContentControllerIdentifier }};
+        
+    return {{ WTFMove(*identifier), *pageGroupID }};
 }
 
 } // namespace WebKit

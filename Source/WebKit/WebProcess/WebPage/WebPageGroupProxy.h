@@ -48,14 +48,11 @@ public:
     StorageNamespaceIdentifier localStorageNamespaceIdentifier() const { return makeObjectIdentifier<StorageNamespaceIdentifierType>(pageGroupID()); }
     WebCore::PageGroup* corePageGroup() const { return m_pageGroup; }
 
-    WebUserContentController& userContentController();
-
 private:
     WebPageGroupProxy(const WebPageGroupData&);
 
     WebPageGroupData m_data;
     WebCore::PageGroup* m_pageGroup;
-    Ref<WebUserContentController> m_userContentController;
 };
 
 } // namespace WebKit

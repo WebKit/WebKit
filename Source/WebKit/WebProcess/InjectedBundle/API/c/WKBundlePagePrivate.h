@@ -116,6 +116,7 @@ WK_EXPORT void WKBundlePageStopExtendingIncrementalRenderingSuppression(WKBundle
 
 // UserContent API (compatible with Modern API, for WKTR)
 WK_EXPORT void WKBundlePageAddUserScript(WKBundlePageRef page, WKStringRef source, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames);
+WK_EXPORT void WKBundlePageAddUserScriptInWorld(WKBundlePageRef page, WKStringRef source, WKBundleScriptWorldRef scriptWorld, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames);
 WK_EXPORT void WKBundlePageAddUserStyleSheet(WKBundlePageRef page, WKStringRef source, WKUserContentInjectedFrames injectedFrames);
 WK_EXPORT void WKBundlePageRemoveAllUserContent(WKBundlePageRef page);
 
