@@ -1,4 +1,4 @@
-//@ skip if $memoryLimited or ["arm", "mips"].include?($architecture)
+//@ skip if $memoryLimited
 //@ runDefault
 
 const a = [0];

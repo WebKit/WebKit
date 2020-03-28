@@ -1,3 +1,12 @@
+2020-03-28  Caio Lima  <ticaiolima@gmail.com>
+
+        stress/test-out-of-memory.js test gaderning
+        https://bugs.webkit.org/show_bug.cgi?id=209701
+
+        Unreviewed test gardening.
+
+        * stress/test-out-of-memory.js:
+
 2020-03-27  Mark Lam  <mark.lam@apple.com>
 
         Skip stress/test-out-of-memory.js on memory limited devices.
