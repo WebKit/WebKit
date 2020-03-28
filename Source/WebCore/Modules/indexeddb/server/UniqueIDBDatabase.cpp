@@ -379,8 +379,6 @@ void UniqueIDBDatabase::handleDelete(IDBConnectionToClient& connection, const ID
 
     m_pendingOpenDBRequests.add(ServerOpenDBRequest::create(connection, requestData));
     handleDatabaseOperations();
-
-    tryCloseAndRemoveFromServer();
 }
 
 void UniqueIDBDatabase::startVersionChangeTransaction()
@@ -948,7 +946,6 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
             handleDatabaseOperations();
             handleTransactions();
 
-            tryCloseAndRemoveFromServer();
             return;
         }
     }
@@ -964,8 +961,6 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
     // Now that a database connection has closed, previously blocked operations might be runnable.
     handleDatabaseOperations();
     handleTransactions();
-
-    tryCloseAndRemoveFromServer();
 }
 
 void UniqueIDBDatabase::connectionClosedFromServer(UniqueIDBDatabaseConnection& connection)
@@ -1193,18 +1188,6 @@ void UniqueIDBDatabase::close()
         m_backingStore->close();
         m_backingStore = nullptr;
     }
-}
-
-void UniqueIDBDatabase::tryCloseAndRemoveFromServer()
-{
-    if (m_backingStore && m_backingStore->isEphemeral())
-        return;
-
-    if (hasAnyOpenConnections() || m_versionChangeDatabaseConnection)
-        return;
-
-    close();
-    m_server.removeUniqueIDBDatabase(m_identifier);
 }
 
 RefPtr<ServerOpenDBRequest> UniqueIDBDatabase::takeNextRunnableRequest(RequestType requestType)

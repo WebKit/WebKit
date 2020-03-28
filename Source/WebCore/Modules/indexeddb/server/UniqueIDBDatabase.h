@@ -136,7 +136,6 @@ private:
     void deleteBackingStore();
     void didDeleteBackingStore(uint64_t deletedVersion);
     void close();
-    void tryCloseAndRemoveFromServer();
 
     bool isCurrentlyInUse() const;
     void clearStalePendingOpenDBRequests();
