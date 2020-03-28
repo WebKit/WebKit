@@ -52,13 +52,13 @@
 
 namespace WebCore {
 
-#if ENABLE(DRAG_SUPPORT)
-
 Pasteboard::Pasteboard(const String& pasteboardName)
     : m_pasteboardName(pasteboardName)
     , m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(pasteboardName))
 {
 }
+
+#if ENABLE(DRAG_SUPPORT)
 
 void Pasteboard::setDragImage(DragImage, const IntPoint&)
 {
@@ -80,7 +80,7 @@ std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dra
     return makeUnique<Pasteboard>(dragData.pasteboardName());
 }
 
-#endif
+#endif // ENABLE(DRAG_SUPPORT)
 
 static int64_t changeCountForPasteboard(const String& pasteboardName = { })
 {
