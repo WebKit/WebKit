@@ -138,7 +138,7 @@ void RenderBlockFlow::willBeDestroyed()
             // We can't wait for RenderBox::destroy to clear the selection,
             // because by then we will have nuked the line boxes.
             if (isSelectionBorder())
-                frame().selection().setNeedsSelectionUpdate();
+                frame().selection().setNeedsSelectionUpdateForRenderTreeChange();
 
             // If we are an anonymous block, then our line boxes might have children
             // that will outlast this block. In the non-anonymous block case those

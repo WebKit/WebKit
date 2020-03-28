@@ -1,3 +1,13 @@
+2020-03-28  Antti Koivisto  <antti@apple.com>
+
+        Nullptr crash in InlineTextBox::emphasisMarkExistsAndIsAbove
+        https://bugs.webkit.org/show_bug.cgi?id=207034
+
+        Reviewed by Zalan Bujtas.
+
+        * editing/selection/selection-update-during-anonymous-inline-teardown-expected.txt: Added.
+        * editing/selection/selection-update-during-anonymous-inline-teardown.html: Added.
+
 2020-03-27  Jack Lee  <shihchieh_lee@apple.com>
 
         Nullptr crash in CompositeEditCommand::moveParagraphs when inserting OL into uneditable parent.

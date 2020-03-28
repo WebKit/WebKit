@@ -87,7 +87,7 @@ void RenderInline::willBeDestroyed()
             // We can't wait for RenderBoxModelObject::destroy to clear the selection,
             // because by then we will have nuked the line boxes.
             if (isSelectionBorder())
-                frame().selection().setNeedsSelectionUpdate();
+                frame().selection().setNeedsSelectionUpdateForRenderTreeChange();
 
             // If line boxes are contained inside a root, that means we're an inline.
             // In that case, we need to remove all the line boxes so that the parent

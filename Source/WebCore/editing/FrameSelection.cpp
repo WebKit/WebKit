@@ -435,14 +435,12 @@ static void updateSelectionByUpdatingLayoutOrStyle(Frame& frame)
 #endif
 }
 
-void FrameSelection::setNeedsSelectionUpdate(RevealSelectionAfterUpdate revealMode)
+void FrameSelection::setNeedsSelectionUpdateForRenderTreeChange(RevealSelectionAfterUpdate revealMode)
 {
     m_selectionRevealIntent = AXTextStateChangeIntent();
     if (revealMode == RevealSelectionAfterUpdate::Forced)
         m_selectionRevealMode = SelectionRevealMode::Reveal;
     m_pendingSelectionUpdate = true;
-    if (RenderView* view = m_frame->contentRenderer())
-        view->selection().clearSelection();
 }
 
 void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& intent)
@@ -2502,6 +2500,9 @@ void FrameSelection::appearanceUpdateTimerFired()
 
 void FrameSelection::updateAppearanceAfterLayoutOrStyleChange()
 {
+    if (auto* view = m_frame->contentRenderer(); view && m_pendingSelectionUpdate)
+        view->selection().clearSelection();
+
     if (auto* client = m_frame->editor().client())
         client->updateEditorStateAfterLayoutIfEditabilityChanged();
 

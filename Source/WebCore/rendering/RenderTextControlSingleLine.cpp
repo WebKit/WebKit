@@ -220,7 +220,7 @@ void RenderTextControlSingleLine::layout()
         // The caps lock indicator was hidden or shown. If it is now visible then it may be occluding
         // the current selection (say, the caret was after the last character in the text field).
         // Schedule an update and reveal of the current selection.
-        frame().selection().setNeedsSelectionUpdate(FrameSelection::RevealSelectionAfterUpdate::Forced);
+        frame().selection().setNeedsSelectionUpdateForRenderTreeChange(FrameSelection::RevealSelectionAfterUpdate::Forced);
     }
 }
 

@@ -164,7 +164,7 @@ public:
     void scheduleAppearanceUpdateAfterStyleChange();
 
     enum class RevealSelectionAfterUpdate : bool { NotForced, Forced };
-    void setNeedsSelectionUpdate(RevealSelectionAfterUpdate = RevealSelectionAfterUpdate::NotForced);
+    void setNeedsSelectionUpdateForRenderTreeChange(RevealSelectionAfterUpdate = RevealSelectionAfterUpdate::NotForced);
 
     bool contains(const LayoutPoint&) const;
 
