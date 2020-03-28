@@ -306,7 +306,7 @@ static inline bool didScrollInScrollableArea(ScrollableArea* scrollableArea, Whe
 static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, WheelEvent& wheelEvent, RefPtr<Element>& stopElement, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity)
 {
     bool shouldHandleEvent = wheelEvent.deltaX() || wheelEvent.deltaY();
-#if PLATFORM(MAC)
+#if ENABLE(WHEEL_EVENT_LATCHING)
     shouldHandleEvent |= wheelEvent.phase() == PlatformWheelEventPhaseEnded;
 #if ENABLE(CSS_SCROLL_SNAP)
     shouldHandleEvent |= wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded;
@@ -2850,7 +2850,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     bool isOverWidget = result.isOverWidget();
     platformPrepareForWheelEvents(event, result, element, scrollableContainer, scrollableArea, isOverWidget);
 
-#if PLATFORM(MAC)
+#if ENABLE(WHEEL_EVENT_LATCHING)
     if (event.phase() == PlatformWheelEventPhaseNone && event.momentumPhase() == PlatformWheelEventPhaseNone && m_frame.page())
         m_frame.page()->resetLatchingState();
 #endif
@@ -2895,7 +2895,7 @@ void EventHandler::clearLatchedState()
     if (!page)
         return;
 
-#if PLATFORM(MAC)
+#if ENABLE(WHEEL_EVENT_LATCHING)
     page->resetLatchingState();
 #endif
     if (auto filter = page->wheelEventDeltaFilter())
@@ -2916,7 +2916,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
         filteredPlatformDelta.setHeight(platformWheelEvent->deltaY());
     }
 
-#if PLATFORM(MAC)
+#if ENABLE(WHEEL_EVENT_LATCHING)
     ScrollLatchingState* latchedState = m_frame.page() ? m_frame.page()->latchingState() : nullptr;
     RefPtr<Element> stopElement = latchedState ? latchedState->previousWheelScrolledElement() : nullptr;
 
@@ -2931,7 +2931,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
     if (handleWheelEventInAppropriateEnclosingBox(startNode, wheelEvent, stopElement, filteredPlatformDelta, filteredVelocity))
         wheelEvent.setDefaultHandled();
 
-#if PLATFORM(MAC)
+#if ENABLE(WHEEL_EVENT_LATCHING)
     if (latchedState && !latchedState->wheelEventElement())
         latchedState->setPreviousWheelScrolledElement(WTFMove(stopElement));
 #endif

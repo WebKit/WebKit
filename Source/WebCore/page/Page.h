@@ -428,13 +428,13 @@ public:
     ServicesOverlayController& servicesOverlayController() { return *m_servicesOverlayController; }
 #endif
 
-#if PLATFORM(MAC)
+#if ENABLE(WHEEL_EVENT_LATCHING)
     ScrollLatchingState* latchingState();
     void pushNewLatchingState();
     void popLatchingState();
     void resetLatchingState();
     void removeLatchingStateForTarget(Element&);
-#endif // PLATFORM(MAC)
+#endif // ENABLE(WHEEL_EVENT_LATCHING)
 
 #if ENABLE(APPLE_PAY)
     PaymentCoordinator& paymentCoordinator() const { return *m_paymentCoordinator; }
@@ -978,7 +978,7 @@ private:
     Optional<Navigation> m_navigationToLogWhenVisible;
 
     std::unique_ptr<PerformanceLogging> m_performanceLogging;
-#if PLATFORM(MAC)
+#if ENABLE(WHEEL_EVENT_LATCHING)
     Vector<ScrollLatchingState> m_latchingState;
 #endif
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))

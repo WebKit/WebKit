@@ -2941,7 +2941,7 @@ void Page::applicationDidBecomeActive()
 #endif
 }
 
-#if PLATFORM(MAC)
+#if ENABLE(WHEEL_EVENT_LATCHING)
 ScrollLatchingState* Page::latchingState()
 {
     if (m_latchingState.isEmpty())
@@ -2978,7 +2978,7 @@ void Page::removeLatchingStateForTarget(Element& targetNode)
         return targetNode.isEqualNode(wheelElement);
     });
 }
-#endif // PLATFORM(MAC)
+#endif // ENABLE(WHEEL_EVENT_LATCHING)
 
 static void dispatchPrintEvent(Frame& mainFrame, const AtomString& eventType)
 {
