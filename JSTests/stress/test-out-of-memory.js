@@ -1,4 +1,5 @@
-//@ if ["arm", "mips"].include?($architecture) then skip else runDefault end
+//@ skip if $memoryLimited or ["arm", "mips"].include?($architecture)
+//@ runDefault
 
 const a = [0];
 a.__proto__ = {};
