@@ -477,7 +477,6 @@ function installDependenciesWithDnf {
         libsecret-devel \
         libsoup-devel \
         libsrtp-devel \
-        libsystemd-devel \
         libtasn1-devel \
         libtheora-devel \
         libv4l-devel \
@@ -503,6 +502,7 @@ function installDependenciesWithDnf {
         redhat-rpm-config \
         ruby \
         sqlite-devel \
+        systemd-devel \
         upower-devel \
         woff2-devel"
 

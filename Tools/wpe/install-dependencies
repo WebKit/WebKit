@@ -301,7 +301,6 @@ function installDependenciesWithDnf {
         libjpeg-turbo-devel \
         libpng-devel \
         libseccomp-devel \
-        libsystemd-devel \
         libtasn1-devel \
         libtool \
         libwebp-devel \
@@ -316,6 +315,7 @@ function installDependenciesWithDnf {
         perl-version \
         ruby \
         sqlite-devel \
+        systemd-devel \
         zlib-devel"
 
     # These are dependencies necessary for running tests.
