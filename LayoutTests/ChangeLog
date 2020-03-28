@@ -1,3 +1,17 @@
+2020-03-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Sideways jiggles when scrolling the shelves on beta.music.apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=209696
+        <rdar://problem/55092050>
+
+        Reviewed by Anders Carlsson.
+
+        Test that sends scroll and momentum events to a vertically-scrolling overflow with snap-points,
+        which checked that the document didn't scroll.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-phase-change-relatching-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-phase-change-relatching.html: Added.
+
 2020-03-28  Antti Koivisto  <antti@apple.com>
 
         Nullptr crash in InlineTextBox::emphasisMarkExistsAndIsAbove
