@@ -654,6 +654,21 @@ NSWindow *WebPageProxy::paymentCoordinatorPresentingWindow(const WebPaymentCoord
 
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
+
+void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData& item)
+{
+    if (item.action() == ContextMenuItemTagPaste)
+        grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral);
+}
+
+#endif
+
+void WebPageProxy::willPerformPasteCommand()
+{
+    grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral);
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

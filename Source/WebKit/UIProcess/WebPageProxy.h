@@ -1714,6 +1714,14 @@ public:
     void isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&&);
     NavigatingToAppBoundDomain isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
 
+#if PLATFORM(COCOA)
+    void grantAccessToCurrentPasteboardData(const String& pasteboardName);
+#endif
+
+#if ENABLE(CONTEXT_MENUS)
+    void platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1933,6 +1941,7 @@ private:
 #endif
 
     void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
+    void willPerformPasteCommand();
 
     // Back/Forward list management
     void backForwardAddItem(BackForwardListItemState&&);

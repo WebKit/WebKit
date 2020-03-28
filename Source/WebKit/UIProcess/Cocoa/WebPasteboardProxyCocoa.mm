@@ -28,6 +28,8 @@
 
 #import "Connection.h"
 #import "SandboxExtension.h"
+#import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import "WebProcessProxy.h"
 #import <WebCore/Color.h>
 #import <WebCore/Pasteboard.h>
@@ -40,6 +42,81 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+void WebPasteboardProxy::grantAccessToCurrentData(WebProcessProxy& process, const String& pasteboardName)
+{
+    if (!m_webProcessProxyList.contains(&process))
+        return;
+
+    if (pasteboardName.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto changeCount = PlatformPasteboard(pasteboardName).changeCount();
+    auto changeCountsAndProcesses = m_pasteboardNameToChangeCountAndProcessesMap.find(pasteboardName);
+    if (changeCountsAndProcesses != m_pasteboardNameToChangeCountAndProcessesMap.end() && changeCountsAndProcesses->value.first == changeCount) {
+        changeCountsAndProcesses->value.second.add(process);
+        return;
+    }
+
+    WeakHashSet<WebProcessProxy> processes;
+    processes.add(process);
+    m_pasteboardNameToChangeCountAndProcessesMap.set(pasteboardName, std::make_pair(changeCount, WTFMove(processes)));
+}
+
+void WebPasteboardProxy::revokeAccessToAllData(WebProcessProxy& process)
+{
+    for (auto& changeCountAndProcesses : m_pasteboardNameToChangeCountAndProcessesMap.values())
+        changeCountAndProcesses.second.remove(process);
+}
+
+bool WebPasteboardProxy::canAccessPasteboardData(IPC::Connection& connection, const String& pasteboardName) const
+{
+    if (pasteboardName.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    auto* process = webProcessProxyForConnection(connection);
+    if (!process)
+        return false;
+
+    for (auto* page : process->pages()) {
+        auto& preferences = page->preferences();
+        if (!preferences.domPasteAllowed() || !preferences.javaScriptCanAccessClipboard())
+            continue;
+
+        // If a web page already allows JavaScript to programmatically read pasteboard data,
+        // then it is possible for any other web page residing in the same web process to send
+        // IPC messages that can read pasteboard data by pretending to be the page that has
+        // allowed unmitigated pasteboard access from script. As such, there is no security
+        // benefit in limiting the scope of pasteboard data access to only the web page that
+        // enables programmatic pasteboard access.
+        return true;
+    }
+
+    auto changeCountAndProcesses = m_pasteboardNameToChangeCountAndProcessesMap.find(pasteboardName);
+    if (changeCountAndProcesses == m_pasteboardNameToChangeCountAndProcessesMap.end())
+        return false;
+
+    auto& [changeCount, processes] = changeCountAndProcesses->value;
+    return changeCount == PlatformPasteboard(pasteboardName).changeCount() && processes.contains(*process);
+}
+
+void WebPasteboardProxy::didModifyContentsOfPasteboard(IPC::Connection& connection, const String& pasteboardName, int64_t previousChangeCount, int64_t newChangeCount)
+{
+    auto* process = webProcessProxyForConnection(connection);
+    if (!process)
+        return;
+
+    auto changeCountAndProcesses = m_pasteboardNameToChangeCountAndProcessesMap.find(pasteboardName);
+    if (changeCountAndProcesses != m_pasteboardNameToChangeCountAndProcessesMap.end() && previousChangeCount == changeCountAndProcesses->value.first) {
+        WeakHashSet<WebProcessProxy> processes;
+        processes.add(process);
+        changeCountAndProcesses->value = std::make_pair(newChangeCount, WTFMove(processes));
+    }
+}
 
 void WebPasteboardProxy::getPasteboardTypes(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
@@ -55,12 +132,10 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
     if (pasteboardType.isNull())
         return completionHandler({ }, { });
 
+    // FIXME: This should consult canAccessPasteboardData() as well, and avoid responding with file paths if it returns false.
     Vector<String> pathnames;
     SandboxExtension::HandleArray sandboxExtensions;
-    for (auto* webProcessProxy : m_webProcessProxyList) {
-        if (!webProcessProxy->hasConnection(connection))
-            continue;
-
+    if (webProcessProxyForConnection(connection)) {
         PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
 
 #if PLATFORM(MAC)
@@ -77,8 +152,11 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
     completionHandler(WTFMove(pathnames), WTFMove(sandboxExtensions));
 }
 
-void WebPasteboardProxy::getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(String&&)>&& completionHandler)
+void WebPasteboardProxy::getPasteboardStringForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(String&&)>&& completionHandler)
 {
+    if (!canAccessPasteboardData(connection, pasteboardName))
+        return completionHandler({ });
+
     ASSERT(!pasteboardType.isNull());
     if (pasteboardType.isNull())
         return completionHandler({ });
@@ -86,19 +164,25 @@ void WebPasteboardProxy::getPasteboardStringForType(const String& pasteboardName
     completionHandler(PlatformPasteboard(pasteboardName).stringForType(pasteboardType));
 }
 
-void WebPasteboardProxy::getPasteboardStringsForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void WebPasteboardProxy::getPasteboardStringsForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     ASSERT(!pasteboardType.isNull());
     if (pasteboardType.isNull())
         return completionHandler({ });
 
+    if (!canAccessPasteboardData(connection, pasteboardName))
+        return completionHandler({ });
+
     completionHandler(PlatformPasteboard(pasteboardName).allStringsForType(pasteboardType));
 }
 
-void WebPasteboardProxy::getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&& completionHandler)
+void WebPasteboardProxy::getPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&& completionHandler)
 {
     ASSERT(!pasteboardType.isNull());
     if (pasteboardType.isNull())
+        return completionHandler({ }, 0);
+
+    if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ }, 0);
 
     RefPtr<SharedBuffer> buffer = PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
@@ -121,52 +205,70 @@ void WebPasteboardProxy::getPasteboardChangeCount(const String& pasteboardName, 
     completionHandler(PlatformPasteboard(pasteboardName).changeCount());
 }
 
-void WebPasteboardProxy::getPasteboardColor(const String& pasteboardName, CompletionHandler<void(WebCore::Color&&)>&& completionHandler)
+void WebPasteboardProxy::getPasteboardColor(IPC::Connection& connection, const String& pasteboardName, CompletionHandler<void(WebCore::Color&&)>&& completionHandler)
 {
+    if (!canAccessPasteboardData(connection, pasteboardName))
+        return completionHandler({ });
+
     completionHandler(PlatformPasteboard(pasteboardName).color());
 }
 
-void WebPasteboardProxy::getPasteboardURL(const String& pasteboardName, CompletionHandler<void(const String&)>&& completionHandler)
+void WebPasteboardProxy::getPasteboardURL(IPC::Connection& connection, const String& pasteboardName, CompletionHandler<void(const String&)>&& completionHandler)
 {
+    if (!canAccessPasteboardData(connection, pasteboardName))
+        return completionHandler({ });
+
     completionHandler(PlatformPasteboard(pasteboardName).url().string());
 }
 
-void WebPasteboardProxy::addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(int64_t)>&& completionHandler)
+void WebPasteboardProxy::addPasteboardTypes(IPC::Connection& connection, const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    completionHandler(PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes));
+    auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
+    auto newChangeCount = PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes);
+    didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, previousChangeCount);
+    completionHandler(newChangeCount);
 }
 
-void WebPasteboardProxy::setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(int64_t)>&& completionHandler)
+void WebPasteboardProxy::setPasteboardTypes(IPC::Connection& connection, const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    completionHandler(PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes));
+    auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
+    auto newChangeCount = PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
+    didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
+    completionHandler(newChangeCount);
 }
 
 void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, const PasteboardURL& pasteboardURL, const String& pasteboardName, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    for (auto* webProcessProxy : m_webProcessProxyList) {
-        if (!webProcessProxy->hasConnection(connection))
-            continue;
-
+    if (auto* webProcessProxy = webProcessProxyForConnection(connection)) {
         if (!webProcessProxy->checkURLReceivedFromWebProcess(pasteboardURL.url.string()))
             return completionHandler(0);
 
-        return completionHandler(PlatformPasteboard(pasteboardName).setURL(pasteboardURL));
+        auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
+        auto newChangeCount = PlatformPasteboard(pasteboardName).setURL(pasteboardURL);
+        didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
+        return completionHandler(newChangeCount);
     }
     completionHandler(0);
 }
 
-void WebPasteboardProxy::setPasteboardColor(const String& pasteboardName, const WebCore::Color& color, CompletionHandler<void(int64_t)>&& completionHandler)
+void WebPasteboardProxy::setPasteboardColor(IPC::Connection& connection, const String& pasteboardName, const WebCore::Color& color, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    completionHandler(PlatformPasteboard(pasteboardName).setColor(color));
+    auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
+    auto newChangeCount = PlatformPasteboard(pasteboardName).setColor(color);
+    didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
+    completionHandler(newChangeCount);
 }
 
-void WebPasteboardProxy::setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String& string, CompletionHandler<void(int64_t)>&& completionHandler)
+void WebPasteboardProxy::setPasteboardStringForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const String& string, CompletionHandler<void(int64_t)>&& completionHandler)
 {
     ASSERT(!pasteboardType.isNull());
     if (pasteboardType.isNull())
         return completionHandler(0);
 
-    completionHandler(PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType));
+    auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
+    auto newChangeCount = PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
+    didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
+    completionHandler(newChangeCount);
 }
 
 void WebPasteboardProxy::containsURLStringSuitableForLoading(const String& pasteboardName, CompletionHandler<void(bool)>&& completionHandler)
@@ -174,8 +276,11 @@ void WebPasteboardProxy::containsURLStringSuitableForLoading(const String& paste
     completionHandler(PlatformPasteboard(pasteboardName).containsURLStringSuitableForLoading());
 }
 
-void WebPasteboardProxy::urlStringSuitableForLoading(const String& pasteboardName, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
+void WebPasteboardProxy::urlStringSuitableForLoading(IPC::Connection& connection, const String& pasteboardName, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
 {
+    if (!canAccessPasteboardData(connection, pasteboardName))
+        return completionHandler({ }, { });
+
     String title;
     auto urlString = PlatformPasteboard(pasteboardName).urlStringSuitableForLoading(title);
     completionHandler(WTFMove(urlString), WTFMove(title));
@@ -187,8 +292,12 @@ void WebPasteboardProxy::setPasteboardBufferForType(IPC::Connection& connection,
     if (pasteboardType.isNull())
         return completionHandler(0);
 
-    if (handle.isNull())
-        return completionHandler(PlatformPasteboard(pasteboardName).setBufferForType(nullptr, pasteboardType));
+    auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
+    if (handle.isNull()) {
+        auto newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(nullptr, pasteboardType);
+        didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
+        return completionHandler(newChangeCount);
+    }
 
     // SharedMemory::Handle::size() is rounded up to the nearest page.
     MESSAGE_CHECK(size <= handle.size(), completionHandler(0));
@@ -197,7 +306,9 @@ void WebPasteboardProxy::setPasteboardBufferForType(IPC::Connection& connection,
     if (!sharedMemoryBuffer)
         return completionHandler(0);
     auto buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), static_cast<size_t>(size));
-    completionHandler(PlatformPasteboard(pasteboardName).setBufferForType(buffer.ptr(), pasteboardType));
+    auto newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(buffer.ptr(), pasteboardType);
+    didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
+    completionHandler(newChangeCount);
 }
 
 void WebPasteboardProxy::getNumberOfFiles(const String& pasteboardName, CompletionHandler<void(uint64_t)>&& completionHandler)
@@ -214,9 +325,12 @@ void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String& pasteboardN
     completionHandler(PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite(origin));
 }
 
-void WebPasteboardProxy::writeCustomData(const Vector<PasteboardCustomData>& data, const String& pasteboardName, CompletionHandler<void(int64_t)>&& completionHandler)
+void WebPasteboardProxy::writeCustomData(IPC::Connection& connection, const Vector<PasteboardCustomData>& data, const String& pasteboardName, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    completionHandler(PlatformPasteboard(pasteboardName).write(data));
+    auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
+    auto newChangeCount = PlatformPasteboard(pasteboardName).write(data);
+    didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
+    completionHandler(newChangeCount);
 }
 
 void WebPasteboardProxy::allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, CompletionHandler<void(Optional<Vector<PasteboardItemInfo>>&&)>&& completionHandler)
@@ -234,26 +348,35 @@ void WebPasteboardProxy::getPasteboardItemsCount(const String& pasteboardName, C
     completionHandler(PlatformPasteboard(pasteboardName).count());
 }
 
-void WebPasteboardProxy::readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(String&&)>&& completionHandler)
+void WebPasteboardProxy::readStringFromPasteboard(IPC::Connection& connection, size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(String&&)>&& completionHandler)
 {
     ASSERT(!pasteboardType.isNull());
     if (pasteboardType.isNull())
         return completionHandler({ });
 
+    if (!canAccessPasteboardData(connection, pasteboardName))
+        return completionHandler({ });
+
     completionHandler(PlatformPasteboard(pasteboardName).readString(index, pasteboardType));
 }
 
-void WebPasteboardProxy::readURLFromPasteboard(size_t index, const String& pasteboardName, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
+void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection& connection, size_t index, const String& pasteboardName, CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
 {
+    if (!canAccessPasteboardData(connection, pasteboardName))
+        return completionHandler({ }, { });
+
     String title;
     String url = PlatformPasteboard(pasteboardName).readURL(index, title);
     completionHandler(WTFMove(url), WTFMove(title));
 }
 
-void WebPasteboardProxy::readBufferFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(SharedMemory::Handle&&, uint64_t size)>&& completionHandler)
+void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(SharedMemory::Handle&&, uint64_t size)>&& completionHandler)
 {
     ASSERT(!pasteboardType.isNull());
     if (pasteboardType.isNull())
+        return completionHandler({ }, 0);
+
+    if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ }, 0);
 
     RefPtr<SharedBuffer> buffer = PlatformPasteboard(pasteboardName).readBuffer(index, pasteboardType);
@@ -278,24 +401,32 @@ void WebPasteboardProxy::containsStringSafeForDOMToReadForType(const String& typ
 
 #if PLATFORM(IOS_FAMILY)
 
-void WebPasteboardProxy::writeURLToPasteboard(const PasteboardURL& url, const String& pasteboardName)
+void WebPasteboardProxy::writeURLToPasteboard(IPC::Connection& connection, const PasteboardURL& url, const String& pasteboardName)
 {
+    auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     PlatformPasteboard(pasteboardName).write(url);
+    didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, PlatformPasteboard(pasteboardName).changeCount());
 }
 
-void WebPasteboardProxy::writeWebContentToPasteboard(const WebCore::PasteboardWebContent& content, const String& pasteboardName)
+void WebPasteboardProxy::writeWebContentToPasteboard(IPC::Connection& connection, const WebCore::PasteboardWebContent& content, const String& pasteboardName)
 {
+    auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     PlatformPasteboard(pasteboardName).write(content);
+    didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, PlatformPasteboard(pasteboardName).changeCount());
 }
 
-void WebPasteboardProxy::writeImageToPasteboard(const WebCore::PasteboardImage& pasteboardImage, const String& pasteboardName)
+void WebPasteboardProxy::writeImageToPasteboard(IPC::Connection& connection, const WebCore::PasteboardImage& pasteboardImage, const String& pasteboardName)
 {
+    auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     PlatformPasteboard(pasteboardName).write(pasteboardImage);
+    didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, PlatformPasteboard(pasteboardName).changeCount());
 }
 
-void WebPasteboardProxy::writeStringToPasteboard(const String& pasteboardType, const String& text, const String& pasteboardName)
+void WebPasteboardProxy::writeStringToPasteboard(IPC::Connection& connection, const String& pasteboardType, const String& text, const String& pasteboardName)
 {
+    auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     PlatformPasteboard(pasteboardName).write(pasteboardType, text);
+    didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, PlatformPasteboard(pasteboardName).changeCount());
 }
 
 void WebPasteboardProxy::updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName)

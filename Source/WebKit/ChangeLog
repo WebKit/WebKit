@@ -1,3 +1,171 @@
+2020-03-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Web content processes should not be able to arbitrarily request pasteboard data from the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=209657
+        <rdar://problem/59611585>
+
+        Reviewed by Geoff Garen.
+
+        This patch adds a mechanism to prevent the UI process from sending pasteboard data to the web process in
+        response to WebPasteboardProxy IPC messages, unless the user (or the WebKit client, on behalf of the user) has
+        explicitly made the contents of the pasteboard available to a page in that web process. We determine the latter
+        by maintaining information about the `changeCount`s of each pasteboard we allow each web process to read. This
+        mapping is updated when either the user interacts with trusted UI (context menus, DOM paste menu) for pasting,
+        or an API client calls into -[WKWebView paste:], as is the case when pasting via the callout bar on iOS or
+        pasting via keyboard shortcuts (i.e. cmd + V) on macOS and iOS.
+
+        See per-change comments below for more details. Under normal circumstances, there should be no change in
+        behavior; refer to the radar for more context.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::grantAccessToCurrentPasteboardData):
+
+        Add a helper method to grant access to the data currently on the pasteboard with the given name; for now, this
+        grants access to all related pages that reside in the same web process, but this may be refactored in a future
+        change to make the mapping granular to each WebPageProxy rather than WebProcessProxy.
+
+        (Note: it is _critical_ that this method is never invoked as a result of IPC from the web process.)
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::grantAccessToCurrentData):
+
+        Helper method to grant access to the current contents on the named pasteboard. Calling this method updates
+        `m_pasteboardNameToChangeCountAndProcessesMap`, such that the given web process is able to read from the
+        pasteboard with the given name, as long as the `changeCount` is still the same. To implement this behavior,
+        we either (1) add the process to an existing `WeakHashSet` of process proxies in the case where the
+        `changeCount` is the same as it was when we added the existing `WeakHashSet`, or in all other cases, (2) add a
+        replace the current (changeCount, processes) pair with the new change count and a weak set containing only the
+        given WebProcessProxy.
+
+        (WebKit::WebPasteboardProxy::revokeAccessToAllData):
+
+        Helper method to revoke all pasteboard access for the given WebProcessProxy. Called when resetting state, e.g.
+        after web process termination.
+
+        (WebKit::WebPasteboardProxy::canAccessPasteboardData const):
+
+        Private helper method to check whether an IPC message can access pasteboard data, based on the IPC::Connection
+        used to receive the message. This helper method returns true if either the WebKit client has used SPI
+        (both DOMPasteAllowed and JavaScriptCanAccessClipboard) to grant unmitigated access to the clipboard from the
+        web process, or access has been previously granted due to user interaction in the UI process or API calls made
+        directly by the WebKit client.
+
+        (WebKit::WebPasteboardProxy::didModifyContentsOfPasteboard):
+
+        Private helper method to update the pasteboard changeCount that has been granted to a given web process, in the
+        case where that web process was also responsible for writing data to the pasteboard and the pasteboard
+        changeCount prior to modifying the pasteboard was still valid. In other words, we should always allow a web
+        process to read contents it has just written. This allows us to maintain the use case where a WKWebView client
+        copies and pastes using back-to-back API calls:
+
+        ```
+        [webView copy:nil];
+        [webView paste:nil];
+        ```
+
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType):
+
+        Add a FIXME to add the `canAccessPasteboardData` check here as well. We can't do this yet because the web
+        process currently relies on being able to read the full list of pasteboard path names when dragging over the
+        page, but this will be fixed in a followup patch in the near future (see https://webkit.org/b/209671).
+
+        (WebKit::WebPasteboardProxy::getPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringsForType):
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::getPasteboardColor):
+        (WebKit::WebPasteboardProxy::getPasteboardURL):
+
+        In all the call sites where we ask for pasteboard data (with the exception of getPasteboardPathnamesForType, for
+        the time being), check whether we're allowed to read pasteboard data by consulting canAccessPasteboardData. If
+        not, return early with no data.
+
+        (WebKit::WebPasteboardProxy::addPasteboardTypes):
+        (WebKit::WebPasteboardProxy::setPasteboardTypes):
+        (WebKit::WebPasteboardProxy::setPasteboardURL):
+        (WebKit::WebPasteboardProxy::setPasteboardColor):
+        (WebKit::WebPasteboardProxy::setPasteboardStringForType):
+
+        In all the call sites where we knowingly mutate the pasteboard (and bump the changeCount as a result),
+        additionally update the changeCount to which we've granted access on behalf of the web process that is modifying
+        the pasteboard.
+
+        (WebKit::WebPasteboardProxy::urlStringSuitableForLoading):
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        (WebKit::WebPasteboardProxy::readStringFromPasteboard):
+        (WebKit::WebPasteboardProxy::readURLFromPasteboard):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        (WebKit::WebPasteboardProxy::writeURLToPasteboard):
+        (WebKit::WebPasteboardProxy::writeWebContentToPasteboard):
+        (WebKit::WebPasteboardProxy::writeImageToPasteboard):
+        (WebKit::WebPasteboardProxy::writeStringToPasteboard):
+
+        (See comments above).
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::performDragOperation):
+
+        When performing a drop on macOS, grant temporary access to the drag pasteboard.
+
+        (WebKit::WebViewImpl::requestDOMPasteAccess):
+        (WebKit::WebViewImpl::handleDOMPasteRequestWithResult):
+
+        If the user has granted DOM paste access, additionally grant access to the general pasteboard.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::isPasteCommandName):
+        (WebKit::WebPageProxy::executeEditCommand):
+
+        When executing an edit command on behalf of a WebKit client, check to see if it is a paste command (one of
+        the four that are defined in EditorCommand.cpp). If so, we grant access to the current contents of the general
+        pasteboard.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPasteboardProxy.cpp:
+        (WebKit::WebPasteboardProxy::webProcessProxyForConnection const):
+
+        Add a helper method to map a given IPC::Connection to a WebProcessProxy. While we have a list of WebProcessProxy
+        objects, we know a priori that at most one of them will have the given connection, so returning a single
+        `WebProcessProxy*` here is sufficient (rather than a list of `WebProcessProxy*`s).
+
+        (WebKit::WebPasteboardProxy::allPasteboardItemInfo):
+        (WebKit::WebPasteboardProxy::informationForItemAtIndex):
+        (WebKit::WebPasteboardProxy::getPasteboardItemsCount):
+        (WebKit::WebPasteboardProxy::readURLFromPasteboard):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        (WebKit::WebPasteboardProxy::readStringFromPasteboard):
+        (WebKit::WebPasteboardProxy::urlStringSuitableForLoading):
+
+        Update interface stubs for non-Cocoa platforms.
+
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+
+        Decorate more IPC endpoints with `WantsConnection`, so that we can reason about the `IPC::Connection`s used to
+        receive pasteboard messages.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _handleDOMPasteRequestWithResult:]):
+
+        If the user has granted DOM paste access, additionally grant access to the general pasteboard.
+
+        (-[WKContentView dropInteraction:performDrop:]):
+
+        When performing a drop on iOS, grant temporary access to the drag pasteboard.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::willPerformPasteCommand):
+        * UIProcess/libwpe/WebPasteboardProxyLibWPE.cpp:
+        (WebKit::WebPasteboardProxy::readStringFromPasteboard):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::platformDidSelectItemFromActiveContextMenu):
+
+        Grant pasteboard access when using the context menu to paste on macOS.
+
+        (WebKit::WebPageProxy::willPerformPasteCommand):
+
+        Grant pasteboard access when triggering the "Paste" edit command using WebKit SPI.
+
 2020-03-27  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Delay process suspension for a while after loading an app link

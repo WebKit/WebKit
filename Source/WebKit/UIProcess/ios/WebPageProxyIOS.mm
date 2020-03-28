@@ -1570,6 +1570,11 @@ void WebPageProxy::revokeAccessToAssetServices()
 }
 #endif
 
+void WebPageProxy::willPerformPasteCommand()
+{
+    grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral);
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

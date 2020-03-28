@@ -38,6 +38,7 @@
 #import "UTIUtilities.h"
 #import "WebNSAttributedStringExtras.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <pal/ios/UIKitSoftLink.h>
 #import <wtf/URL.h>
 #import <wtf/text/StringHash.h>
 
@@ -106,7 +107,7 @@ void Pasteboard::writeMarkup(const String&)
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
-    return makeUnique<Pasteboard>(changeCountForPasteboard());
+    return makeUnique<Pasteboard>(PAL::get_UIKit_UIPasteboardNameGeneral());
 }
 
 void Pasteboard::write(const PasteboardWebContent& content)

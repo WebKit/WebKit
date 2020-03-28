@@ -4037,7 +4037,9 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
         m_page->createSandboxExtensionsIfNeeded(fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
     }
 
-    m_page->performDragOperation(*dragData, draggingInfo.draggingPasteboard.name, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
+    String draggingPasteboardName = draggingInfo.draggingPasteboard.name;
+    m_page->grantAccessToCurrentPasteboardData(draggingPasteboardName);
+    m_page->performDragOperation(*dragData, draggingPasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
     delete dragData;
 
     return true;
@@ -4331,6 +4333,7 @@ void WebViewImpl::requestDOMPasteAccess(const WebCore::IntRect&, const String& o
     NSData *data = [NSPasteboard.generalPasteboard dataForType:@(WebCore::PasteboardCustomData::cocoaType())];
     auto buffer = WebCore::SharedBuffer::create(data);
     if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
+        m_page->grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral);
         completion(WebCore::DOMPasteAccessResponse::GrantedForGesture);
         return;
     }
@@ -4347,6 +4350,9 @@ void WebViewImpl::requestDOMPasteAccess(const WebCore::IntRect&, const String& o
 
 void WebViewImpl::handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse response)
 {
+    if (response == WebCore::DOMPasteAccessResponse::GrantedForCommand || response == WebCore::DOMPasteAccessResponse::GrantedForGesture)
+        m_page->grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral);
+
     if (auto handler = std::exchange(m_domPasteRequestHandler, { }))
         handler(response);
     [m_domPasteMenu removeAllItems];

@@ -41,6 +41,7 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIApplicationDidBecomeActiveNotificati
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIApplicationDidEnterBackgroundNotification, NSNotificationName)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIContentSizeCategoryDidChangeNotification, NSNotificationName)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIFontTextStyleCallout, UIFontTextStyle)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIPasteboardNameGeneral, UIPasteboardName)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UITextEffectsBeneathStatusBarWindowLevel, UIWindowLevel)
 SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, NSParagraphStyle)
 SOFT_LINK_CLASS_FOR_SOURCE(PAL, UIKit, NSShadow)

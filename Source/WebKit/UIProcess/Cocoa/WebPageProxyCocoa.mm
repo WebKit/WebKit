@@ -36,6 +36,7 @@
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferDataReference.h"
 #import "WebPageMessages.h"
+#import "WebPasteboardProxy.h"
 #import "WebProcessProxy.h"
 #import "WebsiteDataStore.h"
 #import <WebCore/DragItem.h>
@@ -77,6 +78,14 @@ void WebPageProxy::loadRecentSearches(const String& name, CompletionHandler<void
     }
 
     completionHandler(WebCore::loadRecentSearches(name));
+}
+
+void WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardName)
+{
+    if (!hasRunningProcess())
+        return;
+
+    WebPasteboardProxy::singleton().grantAccessToCurrentData(m_process.get(), pasteboardName);
 }
 
 void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavigation, WebFramePolicyListenerProxy& listener)

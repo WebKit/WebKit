@@ -1,3 +1,16 @@
+2020-03-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Web content processes should not be able to arbitrarily request pasteboard data from the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=209657
+        <rdar://problem/59611585>
+
+        Reviewed by Geoff Garen.
+
+        Soft-link the string constant `UIPasteboardNameGeneral`. See WebKit/ChangeLog for more details.
+
+        * pal/ios/UIKitSoftLink.h:
+        * pal/ios/UIKitSoftLink.mm:
+
 2020-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Upstream a variety of Cocoa-platform HAVE and ENABLE macros

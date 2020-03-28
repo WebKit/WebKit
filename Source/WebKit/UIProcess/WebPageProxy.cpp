@@ -124,6 +124,7 @@
 #include "WebPageInspectorController.h"
 #include "WebPageMessages.h"
 #include "WebPageProxyMessages.h"
+#include "WebPasteboardProxy.h"
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebPopupItem.h"
 #include "WebPopupMenuProxy.h"
@@ -2279,12 +2280,26 @@ void WebPageProxy::selectAll()
     send(Messages::WebPage::SelectAll());
 }
 
+static bool isPasteCommandName(const String& commandName)
+{
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> pasteCommandNames = HashSet<String, ASCIICaseInsensitiveHash> {
+        "Paste",
+        "PasteAndMatchStyle",
+        "PasteAsQuotation",
+        "PasteAsPlainText"
+    };
+    return pasteCommandNames->contains(commandName);
+}
+
 void WebPageProxy::executeEditCommand(const String& commandName, const String& argument, WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
         callbackFunction(CallbackBase::Error::Unknown);
         return;
     }
+
+    if (isPasteCommandName(commandName))
+        willPerformPasteCommand();
 
     auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::executeEditCommand"_s));
     send(Messages::WebPage::ExecuteEditCommandWithCallback(commandName, argument, callbackID));
@@ -2296,6 +2311,9 @@ void WebPageProxy::executeEditCommand(const String& commandName, const String& a
 
     if (!hasRunningProcess())
         return;
+
+    if (isPasteCommandName(commandName))
+        willPerformPasteCommand();
 
     if (commandName == ignoreSpellingCommandName)
         ++m_pendingLearnOrIgnoreWordMessageCount;
@@ -6539,6 +6557,8 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     if (item.action() == ContextMenuItemTagLearnSpelling || item.action() == ContextMenuItemTagIgnoreSpelling)
         ++m_pendingLearnOrIgnoreWordMessageCount;
 
+    platformDidSelectItemFromActiveContextMenu(item);
+
     send(Messages::WebPage::DidSelectItemFromActiveContextMenu(item));
 }
 
@@ -7591,6 +7611,10 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
         pageClient().processDidExit();
 
     pageClient().clearAllEditCommands();
+
+#if PLATFORM(COCOA)
+    WebPasteboardProxy::singleton().revokeAccessToAllData(m_process.get());
+#endif
 
     auto resetStateReason = terminationReason == ProcessTerminationReason::NavigationSwap ? ResetStateReason::NavigationSwap : ResetStateReason::WebProcessExited;
     resetState(resetStateReason);
@@ -9997,6 +10021,22 @@ void WebPageProxy::gpuProcessCrashed()
 {
     pageClient().gpuProcessCrashed();
 }
+#endif
+
+#if ENABLE(CONTEXT_MENUS) && !PLATFORM(MAC)
+
+void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData&)
+{
+}
+
+#endif
+
+#if !PLATFORM(COCOA)
+
+void WebPageProxy::willPerformPasteCommand()
+{
+}
+
 #endif
 
 } // namespace WebKit

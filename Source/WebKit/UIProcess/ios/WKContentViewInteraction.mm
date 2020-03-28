@@ -3631,6 +3631,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (BOOL)_handleDOMPasteRequestWithResult:(WebCore::DOMPasteAccessResponse)response
 {
+    if (response == WebCore::DOMPasteAccessResponse::GrantedForCommand || response == WebCore::DOMPasteAccessResponse::GrantedForGesture)
+        _page->grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral);
+
     if (auto pasteHandler = WTFMove(_domPasteRequestHandler)) {
         [self hideGlobalMenuController];
         pasteHandler(response);
@@ -7878,8 +7881,10 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
         WebKit::SandboxExtension::Handle sandboxExtensionHandle;
         WebKit::SandboxExtension::HandleArray sandboxExtensionForUpload;
+        auto dragPasteboardName = WebCore::Pasteboard::nameOfDragPasteboard();
+        retainedSelf->_page->grantAccessToCurrentPasteboardData(dragPasteboardName);
         retainedSelf->_page->createSandboxExtensionsIfNeeded(filenames, sandboxExtensionHandle, sandboxExtensionForUpload);
-        retainedSelf->_page->performDragOperation(capturedDragData, WebCore::Pasteboard::nameOfDragPasteboard(), WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
+        retainedSelf->_page->performDragOperation(capturedDragData, dragPasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
         if (shouldSnapshotView) {
             retainedSelf->_visibleContentViewSnapshot = [retainedSelf snapshotViewAfterScreenUpdates:NO];
             [retainedSelf->_visibleContentViewSnapshot setFrame:[retainedSelf bounds]];
