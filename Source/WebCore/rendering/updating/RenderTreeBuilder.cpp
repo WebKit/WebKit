@@ -762,47 +762,46 @@ void RenderTreeBuilder::childFlowStateChangesAndNoLongerAffectsParentBlock(Rende
     removeAnonymousWrappersForInlineChildrenIfNeeded(*child.parent());
 }
 
-static bool isAnonymousAndSafeToDelete(RenderElement& element)
-{
-    if (!element.isAnonymous())
-        return false;
-    if (element.isRenderView() || element.isRenderFragmentedFlow())
-        return false;
-    return true;
-}
-
-static RenderObject& findDestroyRootIncludingAnonymous(RenderObject& renderer)
-{
-    auto* destroyRoot = &renderer;
-    while (true) {
-        auto& destroyRootParent = *destroyRoot->parent();
-        if (!isAnonymousAndSafeToDelete(destroyRootParent))
-            break;
-        bool destroyingOnlyChild = destroyRootParent.firstChild() == destroyRoot && destroyRootParent.lastChild() == destroyRoot;
-        if (!destroyingOnlyChild)
-            break;
-        destroyRoot = &destroyRootParent;
-    }
-    return *destroyRoot;
-}
-
-void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& child)
+void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendererToDestroy)
 {
     // If the tree is destroyed, there is no need for a clean-up phase.
-    if (child.renderTreeBeingDestroyed()) {
-        destroy(child);
+    if (rendererToDestroy.renderTreeBeingDestroyed()) {
+        destroy(rendererToDestroy);
         return;
     }
 
     // Remove intruding floats from sibling blocks before detaching.
-    if (is<RenderBox>(child) && child.isFloatingOrOutOfFlowPositioned())
-        downcast<RenderBox>(child).removeFloatingOrPositionedChildFromBlockLists();
-    auto& destroyRoot = findDestroyRootIncludingAnonymous(child);
+    if (is<RenderBox>(rendererToDestroy) && rendererToDestroy.isFloatingOrOutOfFlowPositioned())
+        downcast<RenderBox>(rendererToDestroy).removeFloatingOrPositionedChildFromBlockLists();
+
+    auto isAnonymousAndSafeToDelete = [] (const auto& renderer) {
+        return renderer.isAnonymous() && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow();
+    };
+
+    auto destroyRootIncludingAnonymous = [&] () -> RenderObject& {
+        auto* destroyRoot = &rendererToDestroy;
+        while (!is<RenderView>(*destroyRoot)) {
+            auto& destroyRootParent = *destroyRoot->parent();
+            if (!isAnonymousAndSafeToDelete(destroyRootParent))
+                break;
+            bool destroyingOnlyChild = destroyRootParent.firstChild() == destroyRoot && destroyRootParent.lastChild() == destroyRoot;
+            if (!destroyingOnlyChild)
+                break;
+            destroyRoot = &destroyRootParent;
+        }
+        return *destroyRoot;
+    };
+
+    auto& destroyRoot = destroyRootIncludingAnonymous();
     if (is<RenderTableRow>(destroyRoot))
         tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
 
     // FIXME: Do not try to collapse/cleanup the anonymous wrappers inside destroy (see webkit.org/b/186746).
     auto destroyRootParent = makeWeakPtr(*destroyRoot.parent());
+    if (&rendererToDestroy != &destroyRoot) {
+        // Destroy the child renderer first, before we start tearing down the anonymous wrapper ancestor chain.
+        destroy(rendererToDestroy);
+    }
     destroy(destroyRoot);
     if (!destroyRootParent)
         return;
@@ -811,7 +810,7 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& child)
     // Anonymous parent might have become empty, try to delete it too.
     if (isAnonymousAndSafeToDelete(*destroyRootParent) && !destroyRootParent->firstChild())
         destroyAndCleanUpAnonymousWrappers(*destroyRootParent);
-    // WARNING: child is deleted here.
+    // WARNING: rendererToDestroy is deleted here.
 }
 
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
