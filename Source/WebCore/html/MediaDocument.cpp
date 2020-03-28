@@ -126,6 +126,7 @@ void MediaDocumentParser::createDocumentStructure()
     }
 
     body->appendChild(videoElement);
+    document.setHasVisuallyNonEmptyCustomContent();
 
     RefPtr<Frame> frame = document.frame();
     if (!frame)

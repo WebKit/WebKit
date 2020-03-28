@@ -1567,6 +1567,9 @@ public:
 
     LazyLoadImageObserver& lazyLoadImageObserver();
 
+    void setHasVisuallyNonEmptyCustomContent() { m_hasVisuallyNonEmptyCustomContent = true; }
+    bool hasVisuallyNonEmptyCustomContent() const { return m_hasVisuallyNonEmptyCustomContent; }
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -2089,6 +2092,7 @@ private:
 #if ENABLE(APPLE_PAY)
     bool m_hasStartedApplePaySession { false };
 #endif
+    bool m_hasVisuallyNonEmptyCustomContent { false };
 
     Ref<UndoManager> m_undoManager;
 #if PLATFORM(IOS_FAMILY)

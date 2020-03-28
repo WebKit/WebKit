@@ -108,6 +108,7 @@ void PluginDocumentParser::createDocumentStructure()
     document.setPluginElement(*m_embedElement);
 
     body->appendChild(embedElement);
+    document.setHasVisuallyNonEmptyCustomContent();
 }
 
 void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)

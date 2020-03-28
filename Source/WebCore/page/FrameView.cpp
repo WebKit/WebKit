@@ -4378,15 +4378,19 @@ void FrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
 {
     auto qualifiesAsVisuallyNonEmpty = [&] {
         // No content yet.
-        Element* documentElement = frame().document()->documentElement();
+        auto& document = *frame().document();
+        auto* documentElement = document.documentElement();
         if (!documentElement || !documentElement->renderer())
             return false;
 
+        if (document.hasVisuallyNonEmptyCustomContent())
+            return true;
+
         // FIXME: We should also ignore renderers with non-final style.
-        if (frame().document()->styleScope().hasPendingSheetsBeforeBody())
+        if (document.styleScope().hasPendingSheetsBeforeBody())
             return false;
 
-        auto finishedParsingMainDocument = frame().loader().stateMachine().committedFirstRealDocumentLoad() && (frame().document()->readyState() == Document::Interactive || frame().document()->readyState() == Document::Complete);
+        auto finishedParsingMainDocument = frame().loader().stateMachine().committedFirstRealDocumentLoad() && (document.readyState() == Document::Interactive || document.readyState() == Document::Complete);
         // Ensure that we always fire visually non-empty milestone eventually.
         if (finishedParsingMainDocument && frame().loader().isComplete())
             return true;
@@ -4402,7 +4406,7 @@ void FrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
         if (!isVisible(documentElement))
             return false;
 
-        if (!isVisible(frame().document()->body()))
+        if (!isVisible(document.body()))
             return false;
 
         // The first few hundred characters rarely contain the interesting content of the page.
