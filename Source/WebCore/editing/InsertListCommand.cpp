@@ -275,6 +275,10 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
     Node* previousListChild;
     VisiblePosition start;
     VisiblePosition end;
+
+    if (!listNode->parentNode()->hasEditableStyle())
+        return;
+
     if (listChildNode->hasTagName(liTag)) {
         start = firstPositionInNode(listChildNode);
         end = lastPositionInNode(listChildNode);
@@ -389,6 +393,9 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
         Node* listChild = enclosingListChild(insertionPos.deprecatedNode());
         if (listChild && listChild->hasTagName(liTag))
             insertionPos = positionInParentBeforeNode(listChild);
+
+        if (!isEditablePosition(insertionPos))
+            return 0;
 
         insertNodeAt(*listElement, insertionPos);
 

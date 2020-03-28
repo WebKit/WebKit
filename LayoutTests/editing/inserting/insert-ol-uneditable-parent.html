@@ -1,0 +1,10 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    window.onload = () => {
+        document.getSelection().setPosition(LI);
+        document.execCommand("insertOrderedList", false);
+    }
+</script>
+<body><ul><li id=LI contenteditable="true"><span>Test insering an ol into uneditable parent. The test passes if WebKit doesn't crash or hit an assertion.</span>
