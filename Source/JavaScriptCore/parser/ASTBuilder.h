@@ -1458,10 +1458,10 @@ ExpressionNode* ASTBuilder::makeBinaryNode(const JSTokenLocation& location, int 
         return makeCoalesceNode(location, lhs.first, rhs.first);
 
     case OR:
-        return new (m_parserArena) LogicalOpNode(location, lhs.first, rhs.first, OpLogicalOr);
+        return new (m_parserArena) LogicalOpNode(location, lhs.first, rhs.first, LogicalOperator::Or);
 
     case AND:
-        return new (m_parserArena) LogicalOpNode(location, lhs.first, rhs.first, OpLogicalAnd);
+        return new (m_parserArena) LogicalOpNode(location, lhs.first, rhs.first, LogicalOperator::And);
 
     case BITOR:
         return makeBitOrNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
@@ -1548,7 +1548,7 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
 
     if (loc->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
-        if (op == OpEqual) {
+        if (op == Operator::Equal) {
             if (expr->isBaseFuncExprNode()) {
                 auto metadata = static_cast<BaseFuncExprNode*>(expr)->metadata();
                 metadata->setEcmaName(resolve->identifier());
@@ -1562,7 +1562,7 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
     }
     if (loc->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(loc);
-        if (op == OpEqual)
+        if (op == Operator::Equal)
             return new (m_parserArena) AssignBracketNode(location, bracket->base(), bracket->subscript(), expr, locHasAssignments, exprHasAssignments, bracket->divot(), start, end);
         ReadModifyBracketNode* node = new (m_parserArena) ReadModifyBracketNode(location, bracket->base(), bracket->subscript(), op, expr, locHasAssignments, exprHasAssignments, divot, start, end);
         node->setSubexpressionInfo(bracket->divot(), bracket->divotEnd().offset);
@@ -1570,7 +1570,7 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
     }
     ASSERT(loc->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(loc);
-    if (op == OpEqual)
+    if (op == Operator::Equal)
         return new (m_parserArena) AssignDotNode(location, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), start, end);
 
     ReadModifyDotNode* node = new (m_parserArena) ReadModifyDotNode(location, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, start, end);

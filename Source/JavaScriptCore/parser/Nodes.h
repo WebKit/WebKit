@@ -55,27 +55,27 @@ namespace JSC {
 
     typedef SmallPtrSet<UniquedStringImpl*> UniquedStringImplPtrSet;
 
-    enum Operator : uint8_t {
-        OpEqual,
-        OpPlusEq,
-        OpMinusEq,
-        OpMultEq,
-        OpDivEq,
-        OpPlusPlus,
-        OpMinusMinus,
-        OpBitAndEq,
-        OpBitXOrEq,
-        OpBitOrEq,
-        OpModEq,
-        OpPowEq,
-        OpLShift,
-        OpRShift,
-        OpURShift
+    enum class Operator : uint8_t {
+        Equal,
+        PlusEq,
+        MinusEq,
+        MultEq,
+        DivEq,
+        PlusPlus,
+        MinusMinus,
+        BitAndEq,
+        BitXOrEq,
+        BitOrEq,
+        ModEq,
+        PowEq,
+        LShift,
+        RShift,
+        URShift
     };
     
-    enum LogicalOperator : uint8_t {
-        OpLogicalAnd,
-        OpLogicalOr
+    enum class LogicalOperator : uint8_t {
+        And,
+        Or
     };
 
     enum FallThroughMode : uint8_t {
@@ -1413,7 +1413,7 @@ namespace JSC {
         ExpressionNode* m_base;
         ExpressionNode* m_subscript;
         ExpressionNode* m_right;
-        unsigned m_operator : 30;
+        Operator m_operator;
         bool m_subscriptHasAssignments : 1;
         bool m_rightHasAssignments : 1;
     };
@@ -1455,7 +1455,7 @@ namespace JSC {
         ExpressionNode* m_base;
         const Identifier& m_ident;
         ExpressionNode* m_right;
-        unsigned m_operator : 31;
+        Operator m_operator;
         bool m_rightHasAssignments : 1;
     };
 

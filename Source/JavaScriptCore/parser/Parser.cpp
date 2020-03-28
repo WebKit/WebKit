@@ -3844,19 +3844,19 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     bool hadAssignment = false;
     while (true) {
         switch (m_token.m_type) {
-        case EQUAL: op = OpEqual; break;
-        case PLUSEQUAL: op = OpPlusEq; break;
-        case MINUSEQUAL: op = OpMinusEq; break;
-        case MULTEQUAL: op = OpMultEq; break;
-        case DIVEQUAL: op = OpDivEq; break;
-        case LSHIFTEQUAL: op = OpLShift; break;
-        case RSHIFTEQUAL: op = OpRShift; break;
-        case URSHIFTEQUAL: op = OpURShift; break;
-        case BITANDEQUAL: op = OpBitAndEq; break;
-        case BITXOREQUAL: op = OpBitXOrEq; break;
-        case BITOREQUAL: op = OpBitOrEq; break;
-        case MODEQUAL: op = OpModEq; break;
-        case POWEQUAL: op = OpPowEq; break;
+        case EQUAL: op = Operator::Equal; break;
+        case PLUSEQUAL: op = Operator::PlusEq; break;
+        case MINUSEQUAL: op = Operator::MinusEq; break;
+        case MULTEQUAL: op = Operator::MultEq; break;
+        case DIVEQUAL: op = Operator::DivEq; break;
+        case LSHIFTEQUAL: op = Operator::LShift; break;
+        case RSHIFTEQUAL: op = Operator::RShift; break;
+        case URSHIFTEQUAL: op = Operator::URShift; break;
+        case BITANDEQUAL: op = Operator::BitAndEq; break;
+        case BITXOREQUAL: op = Operator::BitXOrEq; break;
+        case BITOREQUAL: op = Operator::BitOrEq; break;
+        case MODEQUAL: op = Operator::ModEq; break;
+        case POWEQUAL: op = Operator::PowEq; break;
         default:
             goto end;
         }
@@ -5117,7 +5117,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
         semanticFailIfFalse(isSimpleAssignmentTarget(context, expr), "Postfix ++ operator applied to value that is not a reference");
         m_parserState.nonTrivialExpressionCount++;
         m_parserState.nonLHSCount++;
-        expr = context.makePostfixNode(location, expr, OpPlusPlus, subExprStart, lastTokenEndPosition(), tokenEndPosition());
+        expr = context.makePostfixNode(location, expr, Operator::PlusPlus, subExprStart, lastTokenEndPosition(), tokenEndPosition());
         m_parserState.assignmentCount++;
         failIfTrueIfStrict(isEvalOrArguments, "Cannot modify '", m_parserState.lastIdentifier->impl(), "' in strict mode");
         semanticFailIfTrue(hasPrefixUpdateOp, "The ", operatorString(false, lastOperator), " operator requires a reference expression");
@@ -5128,7 +5128,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
         semanticFailIfFalse(isSimpleAssignmentTarget(context, expr), "Postfix -- operator applied to value that is not a reference");
         m_parserState.nonTrivialExpressionCount++;
         m_parserState.nonLHSCount++;
-        expr = context.makePostfixNode(location, expr, OpMinusMinus, subExprStart, lastTokenEndPosition(), tokenEndPosition());
+        expr = context.makePostfixNode(location, expr, Operator::MinusMinus, subExprStart, lastTokenEndPosition(), tokenEndPosition());
         m_parserState.assignmentCount++;
         failIfTrueIfStrict(isEvalOrArguments, "'", m_parserState.lastIdentifier->impl(), "' cannot be modified in strict mode");
         semanticFailIfTrue(hasPrefixUpdateOp, "The ", operatorString(false, lastOperator), " operator requires a reference expression");
@@ -5158,13 +5158,13 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
         case PLUSPLUS:
         case AUTOPLUSPLUS:
             ASSERT(isSimpleAssignmentTarget(context, expr));
-            expr = context.makePrefixNode(location, expr, OpPlusPlus, subExprStart, subExprStart + 2, end);
+            expr = context.makePrefixNode(location, expr, Operator::PlusPlus, subExprStart, subExprStart + 2, end);
             m_parserState.assignmentCount++;
             break;
         case MINUSMINUS:
         case AUTOMINUSMINUS:
             ASSERT(isSimpleAssignmentTarget(context, expr));
-            expr = context.makePrefixNode(location, expr, OpMinusMinus, subExprStart, subExprStart + 2, end);
+            expr = context.makePrefixNode(location, expr, Operator::MinusMinus, subExprStart, subExprStart + 2, end);
             m_parserState.assignmentCount++;
             break;
         case TYPEOF:
