@@ -507,8 +507,10 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
                 trySOAuthorization(WTFMove(navigationAction), *weakPage, WTFMove(completionHandler));
                 return;
             }
+#if PLATFORM(IOS_FAMILY)
             if (success && weakPage)
                 weakPage->willOpenAppLink();
+#endif
             completionHandler(success);
         });
         [LSAppLink openWithURL:url completionHandler:[localCompletionHandler](BOOL success, NSError *) {
