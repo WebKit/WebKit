@@ -4398,8 +4398,11 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     m_pageLoadState.commitChanges();
     if (m_loaderClient)
         m_loaderClient->didStartProvisionalLoadForFrame(*this, *frame, navigation.get(), process->transformHandlesToObjects(userData.object()).get());
-    else
-        m_navigationClient->didStartProvisionalNavigation(*this, WTFMove(frameInfo), WTFMove(request), navigation.get(), process->transformHandlesToObjects(userData.object()).get());
+    else {
+        if (frameInfo.isMainFrame)
+            m_navigationClient->didStartProvisionalNavigation(*this, request, navigation.get(), process->transformHandlesToObjects(userData.object()).get());
+        m_navigationClient->didStartProvisionalLoadForFrame(*this, WTFMove(request), WTFMove(frameInfo));
+    }
 
 #if ENABLE(WEB_AUTHN)
     m_websiteDataStore->authenticatorManager().cancelRequest(m_webPageID, frameID);
@@ -4563,8 +4566,10 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
 
     if (m_loaderClient)
         m_loaderClient->didFailProvisionalLoadWithErrorForFrame(*this, *frame, navigation.get(), error, process->transformHandlesToObjects(userData.object()).get());
-    else
-        m_navigationClient->didFailProvisionalNavigationWithError(*this, WTFMove(frameInfo), WTFMove(request), navigation.get(), error, process->transformHandlesToObjects(userData.object()).get());
+    else {
+        m_navigationClient->didFailProvisionalNavigationWithError(*this, FrameInfoData { frameInfo }, navigation.get(), error, process->transformHandlesToObjects(userData.object()).get());
+        m_navigationClient->didFailProvisionalLoadWithErrorForFrame(*this, WTFMove(request), error, WTFMove(frameInfo));
+    }
 
     m_failingProvisionalLoadURL = { };
 
@@ -4701,9 +4706,11 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     m_pageLoadState.commitChanges();
     if (m_loaderClient)
         m_loaderClient->didCommitLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
-    else
-        m_navigationClient->didCommitNavigation(*this, WTFMove(frameInfo), WTFMove(request), navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
-
+    else {
+        if (frameInfo.isMainFrame)
+            m_navigationClient->didCommitNavigation(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
+        m_navigationClient->didCommitLoadForFrame(*this, WTFMove(request), WTFMove(frameInfo));
+    }
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (frame->isMainFrame())
         invalidateAllAttachments();
@@ -4773,8 +4780,11 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     m_pageLoadState.commitChanges();
     if (m_loaderClient)
         m_loaderClient->didFinishLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
-    else
-        m_navigationClient->didFinishNavigation(*this, WTFMove(frameInfo), WTFMove(request), navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
+    else {
+        if (frameInfo.isMainFrame)
+            m_navigationClient->didFinishNavigation(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
+        m_navigationClient->didFinishLoadForFrame(*this, WTFMove(request), WTFMove(frameInfo));
+    }
 
     if (isMainFrame) {
         reportPageLoadResult();
@@ -4824,8 +4834,11 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, FrameInfoData&& 
     m_pageLoadState.commitChanges();
     if (m_loaderClient)
         m_loaderClient->didFailLoadWithErrorForFrame(*this, *frame, navigation.get(), error, m_process->transformHandlesToObjects(userData.object()).get());
-    else
-        m_navigationClient->didFailNavigationWithError(*this, WTFMove(frameInfo), WTFMove(request), navigation.get(), error, m_process->transformHandlesToObjects(userData.object()).get());
+    else {
+        if (frameInfo.isMainFrame)
+            m_navigationClient->didFailNavigationWithError(*this, frameInfo, navigation.get(), error, m_process->transformHandlesToObjects(userData.object()).get());
+        m_navigationClient->didFailLoadWithErrorForFrame(*this, WTFMove(request), error, WTFMove(frameInfo));
+    }
 
     if (isMainFrame) {
         reportPageLoadResult(error);

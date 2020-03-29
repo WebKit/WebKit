@@ -43,10 +43,8 @@ public:
     }
 
 private:
-    void didStartProvisionalNavigation(WebPageProxy&, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation*, API::Object* /* userData */) override
+    void didStartProvisionalNavigation(WebPageProxy&, const ResourceRequest&, API::Navigation*, API::Object* /* userData */) override
     {
-        if (!frameInfo.isMainFrame)
-            return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_STARTED);
     }
 
@@ -55,7 +53,7 @@ private:
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_REDIRECTED);
     }
 
-    void didFailProvisionalNavigationWithError(WebPageProxy&, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
+    void didFailProvisionalNavigationWithError(WebPageProxy&, FrameInfoData&& frameInfo, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
     {
         if (!frameInfo.isMainFrame)
             return;
@@ -68,21 +66,17 @@ private:
             webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_STARTED, resourceError.failingURL().string().utf8().data(), error.get());
     }
 
-    void didCommitNavigation(WebPageProxy&, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation*, API::Object* /* userData */) override
+    void didCommitNavigation(WebPageProxy&, API::Navigation*, API::Object* /* userData */) override
     {
-        if (!frameInfo.isMainFrame)
-            return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_COMMITTED);
     }
 
-    void didFinishNavigation(WebPageProxy&, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation*, API::Object* /* userData */) override
+    void didFinishNavigation(WebPageProxy&, API::Navigation*, API::Object* /* userData */) override
     {
-        if (!frameInfo.isMainFrame)
-            return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_FINISHED);
     }
 
-    void didFailNavigationWithError(WebPageProxy&, FrameInfoData&& frameInfo, ResourceRequest&&, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
+    void didFailNavigationWithError(WebPageProxy&, const FrameInfoData& frameInfo, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
     {
         if (!frameInfo.isMainFrame)
             return;

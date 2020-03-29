@@ -48,12 +48,14 @@ static bool navigationFailed = false;
 {
     navigationFailed = true;
     navigationComplete = true;
+    webView.navigationDelegate = nil;
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
 {
     navigationFailed = true;
     navigationComplete = true;
+    webView.navigationDelegate = nil;
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler

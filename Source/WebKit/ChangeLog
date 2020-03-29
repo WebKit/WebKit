@@ -1,3 +1,50 @@
+2020-03-28  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r257963) UI process crashes when setting navigation delegate inside navigation delegate callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=209705
+        <rdar://problem/60814765>
+
+        Reviewed by Darin Adler.
+
+        I introduced a pattern of making multiple delegate calls sequentially.  This is bad because the delegate can change.
+        We need to go back to the WebPageProxy and get the navigation client again between calls.
+        I manually verified this fixes the crash in the radar.
+        Covered by modifying an existing API test to modify the navigation delegate in a callback.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didStartProvisionalNavigation):
+        (API::NavigationClient::didStartProvisionalLoadForFrame):
+        (API::NavigationClient::didFailProvisionalNavigationWithError):
+        (API::NavigationClient::didFailProvisionalLoadWithErrorForFrame):
+        (API::NavigationClient::didCommitNavigation):
+        (API::NavigationClient::didCommitLoadForFrame):
+        (API::NavigationClient::didFinishNavigation):
+        (API::NavigationClient::didFinishLoadForFrame):
+        (API::NavigationClient::didFailNavigationWithError):
+        (API::NavigationClient::didFailLoadWithErrorForFrame):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/glib/WebKitNavigationClient.cpp:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::~NavigationState):
+        (WebKit::NavigationState::NavigationClient::didStartProvisionalNavigation):
+        (WebKit::NavigationState::NavigationClient::didStartProvisionalLoadForFrame):
+        (WebKit::NavigationState::NavigationClient::didFailProvisionalNavigationWithError):
+        (WebKit::NavigationState::NavigationClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::NavigationState::NavigationClient::didCommitNavigation):
+        (WebKit::NavigationState::NavigationClient::didCommitLoadForFrame):
+        (WebKit::NavigationState::NavigationClient::didFinishNavigation):
+        (WebKit::NavigationState::NavigationClient::didFinishLoadForFrame):
+        (WebKit::NavigationState::NavigationClient::didFailNavigationWithError):
+        (WebKit::NavigationState::NavigationClient::didFailLoadWithErrorForFrame):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+
 2020-03-28  David Kilzer  <ddkilzer@apple.com>
 
         Use-after-move in NetworkProcess::addServiceWorkerSession()
