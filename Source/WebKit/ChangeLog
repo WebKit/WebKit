@@ -1,3 +1,15 @@
+2020-03-28  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r258201): Use-after-move in UserMediaCaptureManager::Source::didFail()
+        <https://webkit.org/b/209711>
+        <rdar://problem/61018569>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::didFail):
+        - Use `m_errorMessage` to fix the use-after-move.
+
 2020-03-28  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r257963) UI process crashes when setting navigation delegate inside navigation delegate callbacks

@@ -113,7 +113,7 @@ public:
         m_isReady = true;
         m_errorMessage = WTFMove(errorMessage);
         if (m_callback)
-            m_callback(String(errorMessage));
+            m_callback(m_errorMessage);
     }
 
     void setAsReady()
