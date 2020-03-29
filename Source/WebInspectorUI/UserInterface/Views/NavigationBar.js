@@ -372,6 +372,9 @@ WI.NavigationBar = class NavigationBar extends WI.View
         if (!isLeftArrow && event.code !== "ArrowRight")
             return;
 
+        if (this._selectedNavigationItem?.element !== document.activeElement)
+            return;
+
         event.preventDefault();
         event.stopPropagation();
 
