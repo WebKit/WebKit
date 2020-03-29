@@ -1354,10 +1354,9 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     const URL& newURL = frameLoadRequest.resourceRequest().url();
     ResourceRequest request(newURL);
-    if (!referrer.isEmpty()) {
+    if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
-        auto referrerOrigin = SecurityOrigin::createFromString(referrer);
-    }
+
     if (&m_frame.tree().top() != &m_frame)
         request.setDomainForCachePartition(m_frame.tree().top().document()->domainForCachePartition());
 
