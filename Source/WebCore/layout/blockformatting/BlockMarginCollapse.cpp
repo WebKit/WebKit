@@ -97,7 +97,7 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarg
     // 1. This is the last in-flow child and its margins collapse through and the margin after collapses with parent's margin after or
     // 2. This box's margin after collapses with the next sibling's margin before and that sibling collapses through and
     // we can get to the last in-flow child like that.
-    auto* lastInFlowChild = layoutBox.parent().lastInFlowChild();
+    auto* lastInFlowChild = layoutBox.containingBlock().lastInFlowChild();
     for (auto* currentBox = &layoutBox; currentBox; currentBox = currentBox->nextInFlowSibling()) {
         if (!marginsCollapseThrough(*currentBox))
             return false;
@@ -132,15 +132,15 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarg
     if (layoutBox.previousInFlowSibling())
         return false;
 
-    auto& parent = layoutBox.parent();
+    auto& containingBlock = layoutBox.containingBlock();
     // Margins of elements that establish new block formatting contexts do not collapse with their in-flow children
-    if (establishesBlockFormattingContext(parent))
+    if (establishesBlockFormattingContext(containingBlock))
         return false;
 
-    if (hasBorderBefore(parent))
+    if (hasBorderBefore(containingBlock))
         return false;
 
-    if (hasPaddingBefore(parent))
+    if (hasPaddingBefore(containingBlock))
         return false;
 
     // ...and the child has no clearance.
@@ -234,7 +234,7 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMargi
     // 1. This is the first in-flow child and its margins collapse through and the margin before collapses with parent's margin before or
     // 2. This box's margin before collapses with the previous sibling's margin after and that sibling collapses through and
     // we can get to the first in-flow child like that.
-    auto* firstInFlowChild = layoutBox.parent().firstInFlowChild();
+    auto* firstInFlowChild = layoutBox.containingBlock().firstInFlowChild();
     for (auto* currentBox = &layoutBox; currentBox; currentBox = currentBox->previousInFlowSibling()) {
         if (!marginsCollapseThrough(*currentBox))
             return false;
@@ -267,21 +267,21 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMargi
     if (layoutBox.nextInFlowSibling())
         return false;
 
-    auto& parent = layoutBox.parent();
+    auto& containingBlock = layoutBox.containingBlock();
     // Margins of elements that establish new block formatting contexts do not collapse with their in-flow children.
-    if (establishesBlockFormattingContext(parent))
+    if (establishesBlockFormattingContext(containingBlock))
         return false;
 
     // The bottom margin of an in-flow block box with a 'height' of 'auto' collapses with its last in-flow block-level child's bottom margin, if:
-    if (!parent.style().height().isAuto())
+    if (!containingBlock.style().height().isAuto())
         return false;
 
     // the box has no bottom padding, and
-    if (hasPaddingAfter(parent))
+    if (hasPaddingAfter(containingBlock))
         return false;
 
     // the box has no bottom border, and
-    if (hasBorderAfter(parent))
+    if (hasBorderAfter(containingBlock))
         return false;
 
     // the child's bottom margin neither collapses with a top margin that has clearance...
@@ -289,7 +289,7 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMargi
         return false;
 
     // nor (if the box's min-height is non-zero) with the box's top margin.
-    auto computedMinHeight = parent.style().logicalMinHeight();
+    auto computedMinHeight = containingBlock.style().logicalMinHeight();
     if (!computedMinHeight.isAuto() && computedMinHeight.value() && marginAfterCollapsesWithParentMarginBefore(layoutBox))
         return false;
 

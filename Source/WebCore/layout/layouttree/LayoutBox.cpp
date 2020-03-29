@@ -352,7 +352,7 @@ bool Box::isOverflowVisible() const
     // if the value on the root element is 'visible'. The 'visible' value when used for the viewport must be interpreted as 'auto'.
     // The element from which the value is propagated must have a used value for 'overflow' of 'visible'.
     if (isBodyBox()) {
-        auto& documentBox = parent();
+        auto& documentBox = containingBlock();
         if (!documentBox.isDocumentBox())
             return isOverflowVisible;
         if (!documentBox.isOverflowVisible())
