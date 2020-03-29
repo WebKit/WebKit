@@ -31,10 +31,14 @@
     height: 1em;
     margin-right: 3px;
     vertical-align: -2px;
-    background-color: var(--background-color);
     border-radius: 2px;
     overflow: hidden;
     cursor: default;
+}
+
+.inline-swatch:not(.box-shadow),
+.inline-swatch.box-shadow:matches(:hover, :active) {
+    background-color: var(--background-color-content);
 }
 
 .inline-swatch:matches(.color, .gradient) {
@@ -50,15 +54,15 @@
     color: var(--glyph-color-active);
 }
 
-.inline-swatch:matches(.bezier, .spring, .variable) {
+.inline-swatch:matches(.bezier, .box-shadow, .spring, .variable) {
     margin-right: 2px;
 }
 
-.inline-swatch:not(.read-only):matches(.bezier, .spring, .variable):hover {
+.inline-swatch:not(.read-only):matches(.bezier, .box-shadow, .spring, .variable):hover {
     filter: brightness(0.9);
 }
 
-.inline-swatch:not(.read-only):matches(.bezier, .spring, .variable):active {
+.inline-swatch:not(.read-only):matches(.bezier, .box-shadow, .spring, .variable):active {
     filter: brightness(0.8);
 }
 
@@ -90,7 +94,7 @@
     border-color: hsl(0, 0%, 25%);
 }
 
-.inline-swatch:matches(.bezier, .spring, .variable) > span {
+.inline-swatch:matches(.bezier, .box-shadow, .spring, .variable) > span {
     display: none;
 }
 
@@ -113,4 +117,10 @@
 
 .inline-swatch-variable-popover .CodeMirror pre {
     padding: 0 3px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .inline-swatch.box-shadow > svg {
+        filter: invert();
+    }
 }

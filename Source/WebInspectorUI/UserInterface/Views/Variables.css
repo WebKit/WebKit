@@ -196,6 +196,8 @@
     --diff-deletion-text-color: hsl(0, 100%, 35%);
     --diff-deletion-background-color: hsl(5, 100%, 94%);
     --diff-addition-border-color: hsl(90, 100%, 40%);
+
+    --color-picker-width: 256px;
 }
 
 body.window-inactive {

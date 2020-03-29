@@ -29,7 +29,6 @@
     height: 236px;
     padding: 5px;
 
-    --color-picker-width: 256px;
     --color-picker-hue-offset-start: 41px;
     --color-picker-opacity-offset-start: 18px;
 }

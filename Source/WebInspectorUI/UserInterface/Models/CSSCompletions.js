@@ -357,3 +357,21 @@ WI.CSSCompletions = class CSSCompletions
 };
 
 WI.CSSCompletions.cssNameCompletions = null;
+
+WI.CSSCompletions.lengthUnits = new Set([
+    "ch",
+    "cm",
+    "em",
+    "ex",
+    "in",
+    "mm",
+    "pc",
+    "pt",
+    "px",
+    "q",
+    "rem",
+    "vh",
+    "vmax",
+    "vmin",
+    "vw",
+]);

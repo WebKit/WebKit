@@ -1,5 +1,120 @@
 2020-03-28  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: CSS: create visual editor for `box-shadow`
+        https://bugs.webkit.org/show_bug.cgi?id=208380
+
+        Reviewed by Timothy Hatcher.
+
+        Recognize `box-shadow` CSS properties in the Styles sidebar, parse the comma-separated list
+        value for individual box shadows, and create a `WI.InlineSwatch` for each. When clicked,
+        show a `WI.Popover` with a `WI.BoxShadowEditor`, which contains a table of editors:
+
+            Offset X |   <input type="text">   |   [ 2D (X & Y) ]
+            Offset Y |   <input type="text">   |   [   Slider   ]
+               Inset | <input type="checkbox"> |
+                Blur |   <input type="text">   | <input type="range">
+              Spread |   <input type="text">   | <input type="range">
+            [                                                       ]
+            [                                                       ]
+            [                   full color picker                   ]
+            [                                                       ]
+            [                                                       ]
+
+
+        * UserInterface/Models/BoxShadow.js: Added.
+        (WI.BoxShadow):
+        (WI.BoxShadow.fromString):
+        (WI.BoxShadow.parseNumberComponent):
+        (WI.BoxShadow.prototype.get offsetX):
+        (WI.BoxShadow.prototype.get offsetY):
+        (WI.BoxShadow.prototype.get blurRadius):
+        (WI.BoxShadow.prototype.get spreadRadius):
+        (WI.BoxShadow.prototype.get inset):
+        (WI.BoxShadow.prototype.get color):
+        (WI.BoxShadow.prototype.copy):
+        (WI.BoxShadow.prototype.toString):
+        (WI.BoxShadow.prototype.toString.stringifyNumberComponent):
+
+        * UserInterface/Models/CSSCompletions.js:
+        Add a `Set` of allowed CSS length units.
+
+        * UserInterface/Views/BoxShadowEditor.js: Added.
+        (WI.BoxShadowEditor):
+        (WI.BoxShadowEditor.createInputRow):
+        (WI.BoxShadowEditor.createSlider):
+        (WI.BoxShadowEditor.prototype.get element):
+        (WI.BoxShadowEditor.prototype.get boxShadow):
+        (WI.BoxShadowEditor.prototype.set boxShadow):
+        (WI.BoxShadowEditor.prototype.handleEvent):
+        (WI.BoxShadowEditor.prototype._updateBoxShadow):
+        (WI.BoxShadowEditor.prototype._updateBoxShadowOffsetFromSliderMouseEvent):
+        (WI.BoxShadowEditor.prototype._determineShiftForEvent):
+        (WI.BoxShadowEditor.prototype._handleOffsetSliderSVGKeyDown):
+        (WI.BoxShadowEditor.prototype._handleOffsetSliderSVGMouseDown):
+        (WI.BoxShadowEditor.prototype._handleWindowMouseMove):
+        (WI.BoxShadowEditor.prototype._handleWindowMouseUp):
+        (WI.BoxShadowEditor.prototype._handleOffsetXInputInput):
+        (WI.BoxShadowEditor.prototype._handleOffsetXInputKeyDown):
+        (WI.BoxShadowEditor.prototype._handleOffsetYInputInput):
+        (WI.BoxShadowEditor.prototype._handleOffsetYInputKeyDown):
+        (WI.BoxShadowEditor.prototype._handleBlurRadiusInputInput):
+        (WI.BoxShadowEditor.prototype._handleBlurRadiusInputKeyDown):
+        (WI.BoxShadowEditor.prototype._handleBlurRadiusSliderInput):
+        (WI.BoxShadowEditor.prototype._handleSpreadRadiusInputInput):
+        (WI.BoxShadowEditor.prototype._handleSpreadRadiusInputKeyDown):
+        (WI.BoxShadowEditor.prototype._handleSpreadRadiusSliderInput):
+        (WI.BoxShadowEditor.prototype._handleInsetCheckboxChange):
+        (WI.BoxShadowEditor.prototype._handleColorChanged):
+        * UserInterface/Views/BoxShadowEditor.css: Added.
+        (.box-shadow-editor):
+        (.box-shadow-editor > table):
+        (.box-shadow-editor > table > tr > th):
+        (.box-shadow-editor > table > tr > td):
+        (.box-shadow-editor > table > tr > td > input[type="text"]):
+        (.box-shadow-editor > table > tr > td > input[type="range"]):
+        (.box-shadow-editor > table > tr > td > svg):
+        (.box-shadow-editor > table > tr > td > svg line.axis):
+        (.box-shadow-editor > table > tr > td > svg line:not(.axis)):
+        (.box-shadow-editor > table > tr > td > svg circle):
+        (@media (prefers-color-scheme: dark) .box-shadow-editor > table > tr > th):
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch):
+        (WI.InlineSwatch.prototype._fallbackValue):
+        (WI.InlineSwatch.prototype._valueEditorValueDidChange):
+        * UserInterface/Views/InlineSwatch.css:
+        (.inline-swatch):
+        (.inline-swatch:not(.box-shadow), .inline-swatch.box-shadow:matches(:hover, :active)): Added.
+        (.inline-swatch:matches(.bezier, .box-shadow, .spring, .variable)): Added.
+        (.inline-swatch:not(.read-only):matches(.bezier, .box-shadow, .spring, .variable):hover): Added.
+        (.inline-swatch:not(.read-only):matches(.bezier, .box-shadow, .spring, .variable):active): Added.
+        (.inline-swatch:matches(.bezier, .box-shadow, .spring, .variable) > span): Added.
+        (@media (prefers-color-scheme: dark) .inline-swatch.box-shadow > svg): Added.
+        (.inline-swatch:not(.read-only):matches(.bezier, .spring, .variable):hover): Deleted.
+        (.inline-swatch:not(.read-only):matches(.bezier, .spring, .variable):active): Deleted.
+        (.inline-swatch:matches(.bezier, .spring, .variable) > span): Deleted.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._replaceSpecialTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addGradientTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addColorTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addTimingFunctionTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addBoxShadowTokens):
+        (WI.SpreadsheetStyleProperty.prototype._resolveVariables):
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        * UserInterface/Views/ColorPicker.css:
+        (.color-picker):
+        Move `--color-picker-width` to `:root` so that `WI.BoxShadowEditor` can use it.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Images/BoxShadow.svg: Added.
+
+2020-03-28  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r257759): Network: graph in Timing pane of selected resource is missing bars
         https://bugs.webkit.org/show_bug.cgi?id=209525
 

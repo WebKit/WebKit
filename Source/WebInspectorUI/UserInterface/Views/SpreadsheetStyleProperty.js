@@ -552,6 +552,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     {
         // FIXME: <https://webkit.org/b/178636> Web Inspector: Styles: Make inline widgets work with CSS functions (var(), calc(), etc.)
 
+        if (this._property.name === "box-shadow")
+            return this._addBoxShadowTokens(tokens);
+
         tokens = this._addVariableTokens(tokens);
 
         if (this._property.isVariable || WI.CSSKeywordCompletions.isColorAwareProperty(this._property.name)) {
@@ -589,7 +592,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 }
 
                 let rawTokens = tokens.slice(gradientStartIndex, i + 1);
-                let text = rawTokens.map((token) => token.value).join("");
+                let text = this._resolveVariables(rawTokens.map((token) => token.value).join(""));
                 let gradient = WI.Gradient.fromString(text);
                 if (gradient)
                     newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Gradient, rawTokens, gradient));
@@ -607,6 +610,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     _addColorTokens(tokens)
     {
         let newTokens = [];
+        let openParentheses = 0;
 
         let pushPossibleColorToken = (text, ...rawTokens) => {
             let color = WI.Color.fromString(text);
@@ -630,12 +634,21 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 // Color keyword
                 pushPossibleColorToken(token.value, token);
             } else if (!isNaN(colorFunctionStartIndex)) {
-                // Color Function end
-                if (token.value !== ")")
+                if (token.value === "(") {
+                    ++openParentheses;
                     continue;
+                }
+
+                if (token.value === ")") {
+                    --openParentheses;
+                    if (openParentheses)
+                        continue;
+                }
+
+                // Color Function end
 
                 let rawTokens = tokens.slice(colorFunctionStartIndex, i + 1);
-                let text = rawTokens.map((token) => token.value).join("");
+                let text = this._resolveVariables(rawTokens.map((token) => token.value).join(""));
                 pushPossibleColorToken(text, ...rawTokens);
                 colorFunctionStartIndex = NaN;
             } else
@@ -665,7 +678,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                     continue;
 
                 let rawTokens = tokens.slice(startIndex, i + 1);
-                let text = rawTokens.map((token) => token.value).join("");
+                let text = this._resolveVariables(rawTokens.map((token) => token.value).join(""));
 
                 let valueObject;
                 let inlineSwatchType;
@@ -687,6 +700,61 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Bezier, [token], WI.CubicBezier.fromString(token.value)));
             else if (isNaN(startIndex))
                 newTokens.push(token);
+        }
+
+        return newTokens;
+    }
+
+    _addBoxShadowTokens(tokens)
+    {
+        let newTokens = [];
+        let startIndex = 0;
+        let openParentheses = 0;
+
+        for (let i = 0; i <= tokens.length; i++) {
+            let token = tokens[i];
+            if (i === tokens.length || (token.value === "," && !openParentheses)) {
+                let rawTokens = tokens.slice(startIndex, i);
+
+                let firstNonWhitespaceIndex = Infinity;
+                let lastNonWhitespaceIndex = 0;
+                for (let j = 0; j < rawTokens.length; ++j) {
+                    if (/\s/.test(rawTokens[j].value))
+                        continue;
+
+                    firstNonWhitespaceIndex = Math.min(firstNonWhitespaceIndex, j);
+                    lastNonWhitespaceIndex = Math.max(lastNonWhitespaceIndex, j);
+                }
+
+                let nonWhitespaceTokens = rawTokens.slice(firstNonWhitespaceIndex, lastNonWhitespaceIndex + 1);
+
+                newTokens.pushAll(rawTokens.slice(0, firstNonWhitespaceIndex));
+
+                let text = this._resolveVariables(nonWhitespaceTokens.map((rawToken) => rawToken.value).join(""));
+                let boxShadow = WI.BoxShadow.fromString(text);
+                if (boxShadow)
+                    newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.BoxShadow, nonWhitespaceTokens, boxShadow));
+                else
+                    newTokens.pushAll(nonWhitespaceTokens);
+
+                newTokens.pushAll(rawTokens.slice(lastNonWhitespaceIndex + 1));
+
+                if (token)
+                    newTokens.push(token);
+
+                startIndex = i + 1;
+                continue;
+            }
+
+            if (token.value === "(") {
+                ++openParentheses;
+                continue;
+            }
+
+            if (token.value === ")") {
+                --openParentheses;
+                continue;
+            }
         }
 
         return newTokens;
@@ -740,6 +808,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         }
 
         return newTokens;
+    }
+
+    _resolveVariables(cssText)
+    {
+        return cssText.replace(/var\(--[^\)]+\)/g, (match) => this._property.ownerStyle.nodeStyles.computedStyle.resolveVariableValue(match) || match);
     }
 
     _handleNameChange()

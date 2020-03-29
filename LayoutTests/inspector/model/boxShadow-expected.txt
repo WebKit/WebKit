@@ -1,0 +1,80 @@
+Tests for the WI.BoxShadow model object.
+
+
+== Running test suite: WI.BoxShadow
+-- Running test case: WI.BoxShadow.fromString
+PASS: default value should be "none"
+
+"1px 2rem" resolves to "1px 2rem"
+"red 1px 2rem" resolves to "1px 2rem red"
+"1px red 2rem" resolves to "1px 2rem red"
+"1px 2rem red" resolves to "1px 2rem red"
+"inset 1px 2rem" resolves to "1px 2rem inset"
+"1px inset 2rem" resolves to "1px 2rem inset"
+"1px 2rem inset" resolves to "1px 2rem inset"
+"inset 1px 2rem red" resolves to "1px 2rem red inset"
+"1px inset 2rem red" resolves to "1px 2rem red inset"
+"1px 2rem inset red" resolves to "1px 2rem red inset"
+"1px 2rem red inset" resolves to "1px 2rem red inset"
+
+"1px 2rem 3in" resolves to "1px 2rem 3in"
+"red 1px 2rem 3in" resolves to "1px 2rem 3in red"
+"1px red 2rem 3in" resolves to "1px 2rem 3in red"
+"1px 2rem red 3in" resolves to "1px 2rem 3in red"
+"1px 2rem 3in red" resolves to "1px 2rem 3in red"
+"inset 1px 2rem 3in" resolves to "1px 2rem 3in inset"
+"1px inset 2rem 3in" resolves to "1px 2rem 3in inset"
+"1px 2rem inset 3in" resolves to "1px 2rem 3in inset"
+"1px 2rem 3in inset" resolves to "1px 2rem 3in inset"
+"inset 1px 2rem 3in red" resolves to "1px 2rem 3in red inset"
+"1px inset 2rem 3in red" resolves to "1px 2rem 3in red inset"
+"1px 2rem inset 3in red" resolves to "1px 2rem 3in red inset"
+"1px 2rem 3in inset red" resolves to "1px 2rem 3in red inset"
+"1px 2rem 3in red inset" resolves to "1px 2rem 3in red inset"
+
+"1px 2rem 3in 4q" resolves to "1px 2rem 3in 4q"
+"red 1px 2rem 3in 4q" resolves to "1px 2rem 3in 4q red"
+"1px red 2rem 3in 4q" resolves to "1px 2rem 3in 4q red"
+"1px 2rem red 3in 4q" resolves to "1px 2rem 3in 4q red"
+"1px 2rem 3in red 4q" resolves to "1px 2rem 3in 4q red"
+"1px 2rem 3in 4q red" resolves to "1px 2rem 3in 4q red"
+"inset 1px 2rem 3in 4q" resolves to "1px 2rem 3in 4q inset"
+"1px inset 2rem 3in 4q" resolves to "1px 2rem 3in 4q inset"
+"1px 2rem inset 3in 4q" resolves to "1px 2rem 3in 4q inset"
+"1px 2rem 3in inset 4q" resolves to "1px 2rem 3in 4q inset"
+"1px 2rem 3in 4q inset" resolves to "1px 2rem 3in 4q inset"
+"inset 1px 2rem 3in 4q red" resolves to "1px 2rem 3in 4q red inset"
+"1px inset 2rem 3in 4q red" resolves to "1px 2rem 3in 4q red inset"
+"1px 2rem inset 3in 4q red" resolves to "1px 2rem 3in 4q red inset"
+"1px 2rem 3in inset 4q red" resolves to "1px 2rem 3in 4q red inset"
+"1px 2rem 3in 4q inset red" resolves to "1px 2rem 3in 4q red inset"
+"1px 2rem 3in 4q red inset" resolves to "1px 2rem 3in 4q red inset"
+
+"0 0 0 0 red inset" resolves to "0 0 0 0 red inset"
+"0px 0px 0px 0px red inset" resolves to "0 0 0 0 red inset"
+"0rem 0rem 0rem 0rem red inset" resolves to "0 0 0 0 red inset"
+"0in 0in 0in 0in red inset" resolves to "0 0 0 0 red inset"
+"0q 0q 0q 0q red inset" resolves to "0 0 0 0 red inset"
+
+"none" resolves to "none"
+
+"1px 2rem 3in 4q rgb(11, 12, 13) inset" resolves to "1px 2rem 3in 4q rgb(11, 12, 13) inset"
+
+PASS: '1' should not be detected
+
+PASS: '1%' should not be detected
+PASS: '1px 2%' should not be detected
+PASS: '1px 2px 3%' should not be detected
+PASS: '1px 2px 3px 4%' should not be detected
+
+PASS: '1px' should not be detected
+PASS: '1px 2rem 3in 4q 5pt' should not be detected
+PASS: '1px 2rem 3in 4q invalid' should not be detected
+PASS: '1px 2rem 3in 4q red inset extra' should not be detected
+PASS: 'red' should not be detected
+PASS: 'inset' should not be detected
+
+PASS: 'red red' should not be detected
+PASS: 'inset inset' should not be detected
+
+

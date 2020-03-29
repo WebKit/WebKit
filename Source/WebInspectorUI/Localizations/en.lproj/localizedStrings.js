@@ -192,6 +192,8 @@ localizedStrings["Blackbox"] = "Blackbox";
 localizedStrings["Blackbox Script"] = "Blackbox Script";
 localizedStrings["Blackbox script to ignore it when debugging"] = "Blackbox script to ignore it when debugging";
 localizedStrings["Block Variables"] = "Block Variables";
+/* Input label for the blur radius of a CSS box shadow */
+localizedStrings["Blur @ Box Shadow Editor"] = "Blur";
 localizedStrings["Body:"] = "Body:";
 localizedStrings["Boundary"] = "Boundary";
 localizedStrings["Box Model"] = "Box Model";
@@ -448,6 +450,7 @@ localizedStrings["Edit"] = "Edit";
 localizedStrings["Edit Breakpoint\u2026"] = "Edit Breakpoint\u2026";
 localizedStrings["Edit Local Override\u2026"] = "Edit Local Override\u2026";
 localizedStrings["Edit \u201C%s\u201D"] = "Edit \u201C%s\u201D";
+localizedStrings["Edit \u201Cbox-shadow\u201D"] = "Edit \u201Cbox-shadow\u201D";
 localizedStrings["Edit \u201Ccubic-bezier\u201D function"] = "Edit \u201Ccubic-bezier\u201D function";
 localizedStrings["Edit \u201Cspring\u201D function"] = "Edit \u201Cspring\u201D function";
 localizedStrings["Edit configuration"] = "Edit configuration";
@@ -679,6 +682,8 @@ localizedStrings["Initial Velocity"] = "Initial Velocity";
 localizedStrings["Initiated"] = "Initiated";
 localizedStrings["Initiator"] = "Initiator";
 localizedStrings["Input: "] = "Input: ";
+/* Checkbox label for the inset of a CSS box shadow. */
+localizedStrings["Inset @ Box Shadow Editor"] = "Inset";
 localizedStrings["Inspector Bootstrap Script"] = "Inspector Bootstrap Script";
 localizedStrings["Inspector Override"] = "Inspector Override";
 localizedStrings["Inspector Style Sheet"] = "Inspector Style Sheet";
@@ -846,6 +851,10 @@ localizedStrings["Observer Callback"] = "Observer Callback";
 localizedStrings["Observer Handlers:"] = "Observer Handlers:";
 localizedStrings["Observers:"] = "Observers:";
 localizedStrings["Off"] = "Off";
+/* Input label for the x-axis of the offset of a CSS box shadow */
+localizedStrings["Offset X @ Box Shadow Editor"] = "Offset X";
+/* Input label for the y-axis of the offset of a CSS box shadow */
+localizedStrings["Offset Y @ Box Shadow Editor"] = "Offset Y";
 localizedStrings["Once"] = "Once";
 localizedStrings["Online"] = "Online";
 localizedStrings["Only show resources with issues"] = "Only show resources with issues";
@@ -1148,6 +1157,8 @@ localizedStrings["Specially Exposed Data"] = "Specially Exposed Data";
 localizedStrings["Specificity: (%d, %d, %d)"] = "Specificity: (%d, %d, %d)";
 localizedStrings["Specificity: No value for selected element"] = "Specificity: No value for selected element";
 localizedStrings["Spelling"] = "Spelling";
+/* Input label for the spread radius of a CSS box shadow */
+localizedStrings["Spread @ Box Shadow Editor"] = "Spread";
 localizedStrings["Staging:"] = "Staging:";
 localizedStrings["Stalled"] = "Stalled";
 localizedStrings["Start"] = "Start";
