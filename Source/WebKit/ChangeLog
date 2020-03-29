@@ -1,3 +1,18 @@
+2020-03-28  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Delay process suspension for a while after loading an app link
+        https://bugs.webkit.org/show_bug.cgi?id=209686
+        <rdar://problem/60888891>
+
+        Reviewed by Darin Adler.
+
+        Client apps that rely on WebKit to open app links cannot call the [WKWebView _willOpenAppLink] SPI
+        that was added in r259146. Instead, we need to call WebPageProxy::willOpenAppLink() in
+        tryInterceptNavigation() when WebKit opens the AppLink itself.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::tryInterceptNavigation):
+
 2020-03-28  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate injected bundle page group SPI
