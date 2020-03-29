@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018=2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,9 +86,16 @@ CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier)
     return storageSession;
 }
 
+void NetworkStorageSession::setCookie(const Cookie&)
+{
+    // FIXME: Implement this. <https://webkit.org/b/156298>
+    notImplemented();
+}
+
 void NetworkStorageSession::setCookies(const Vector<Cookie>&, const URL&, const URL&)
 {
     // FIXME: Implement this. <https://webkit.org/b/156298>
+    notImplemented();
 }
 
 static const CFStringRef s_setCookieKeyCF = CFSTR("Set-Cookie");
