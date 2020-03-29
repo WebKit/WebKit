@@ -5,6 +5,7 @@
   }
   .test img, .test canvas {
     border: 1px solid black;
+    image-rendering: pixelated;
   }
   .test .stats {
     display: inline-block;

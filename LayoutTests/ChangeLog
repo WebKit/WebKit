@@ -1,3 +1,23 @@
+2020-03-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Regression: fast/hidpi/image-srcset-svg-canvas-2x.html is failing consistently on iOS EWS
+        https://bugs.webkit.org/show_bug.cgi?id=207038
+
+        Reviewed by Darin Adler.
+
+        Disable the canvas scaling anti-aliasing by applying the CSS property 
+        "image-rendering: pixelated;" to the <img> and the <canvas> elements.
+
+        Avoid the SVG drawing anti-aliasing entirely by replacing the <cricle>
+        element by a <rect> element.
+
+        * fast/hidpi/resources/relativesrcset.svg:
+        * fast/hidpi/resources/srcset.svg:
+        * fast/hidpi/resources/srcset_100px.svg:
+        * fast/hidpi/resources/svg_tests.css:
+        (.test img, .test canvas):
+        * platform/mac/TestExpectations:
+
 2020-03-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: support editing cookie key/values from inspector

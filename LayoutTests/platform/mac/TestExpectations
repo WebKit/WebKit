@@ -628,8 +628,6 @@ webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailur
 # repaintRectsAsText reports different repaintrects.
 webkit.org/b/131887 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 
-webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure ]
-
 webkit.org/b/187491 fast/hidpi/filters-and-image-buffer-resolution.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/136419 fast/sub-pixel/block-with-margin-overflow.html [ ImageOnlyFailure ]
