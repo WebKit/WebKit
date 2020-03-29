@@ -134,6 +134,23 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "Number.prototype.maxDecimals",
+        test() {
+            const n = 123.456;
+
+            InspectorTest.expectEqual(n.maxDecimals(-4), 0, "maxDecimals with a negative argument more than the number of digits should be 0");
+            InspectorTest.expectEqual(n.maxDecimals(-3), 0, "maxDecimals with a negative argument more equal to the number of digits should be 0");
+            InspectorTest.expectEqual(n.maxDecimals(-2), 100, "maxDecimals with -2 should truncate that 2 units in front of the decimal");
+            InspectorTest.expectEqual(n.maxDecimals(-1), 120, "maxDecimals with -1 should truncate that 1 units in front of the decimal");
+            InspectorTest.expectEqual(n.maxDecimals(0), 123, "maxDecimals with 0 should round the value");
+            InspectorTest.expectEqual(n.maxDecimals(1), 123.5, "maxDecimals with 1 should round after the 1st decimal");
+            InspectorTest.expectEqual(n.maxDecimals(2), 123.46, "maxDecimals with 2 should round after the 2nd decimal");
+            InspectorTest.expectEqual(n.maxDecimals(3), 123.456, "maxDecimals with a positive argument equal to the number of digits should not modify the number");
+            InspectorTest.expectEqual(n.maxDecimals(4), 123.456, "maxDecimals with a positive argument greater than the number of digits should not modify the number");
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

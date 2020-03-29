@@ -171,6 +171,14 @@ bool CookieJar::getRawCookies(const Document& document, const URL& url, Vector<C
     return false;
 }
 
+void CookieJar::setRawCookie(const Document&, const Cookie& cookie)
+{
+    if (auto* session = m_storageSessionProvider->storageSession())
+        session->setCookie(cookie);
+    else
+        ASSERT_NOT_REACHED();
+}
+
 void CookieJar::deleteCookie(const Document&, const URL& url, const String& cookieName)
 {
     if (auto* session = m_storageSessionProvider->storageSession())

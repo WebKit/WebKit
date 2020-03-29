@@ -25,29 +25,30 @@
 
 WI.Cookie = class Cookie
 {
-    constructor(type, name, value, {header, expires, maxAge, path, domain, secure, httpOnly, sameSite, size} = {})
+    constructor(type, name, value, {header, expires, session, maxAge, path, domain, secure, httpOnly, sameSite} = {})
     {
         console.assert(Object.values(WI.Cookie.Type).includes(type));
         console.assert(typeof name === "string");
         console.assert(typeof value === "string");
         console.assert(!header || typeof header === "string");
         console.assert(!expires || expires instanceof Date);
+        console.assert(!session || typeof session === "boolean");
         console.assert(!maxAge || typeof maxAge === "number");
         console.assert(!path || typeof path === "string");
         console.assert(!domain || typeof domain === "string");
         console.assert(!secure || typeof secure === "boolean");
         console.assert(!httpOnly || typeof httpOnly === "boolean");
         console.assert(!sameSite || Object.values(WI.Cookie.SameSiteType).includes(sameSite));
-        console.assert(!size || typeof size === "number");
 
         this._type = type;
         this._name = name;
         this._value = value;
-        this._size = size || this._name.length + this._value.length;
+        this._size = this._name.length + this._value.length;
 
         if (this._type === WI.Cookie.Type.Response) {
             this._header = header || "";
-            this._expires = expires || null;
+            this._expires = (!session && expires) || null;
+            this._session = session || false;
             this._maxAge = maxAge || null;
             this._path = path || null;
             this._domain = domain || null;
@@ -62,7 +63,7 @@ WI.Cookie = class Cookie
     static fromPayload(payload)
     {
         let {name, value, ...options} = payload;
-        options.expires = options.expires ? new Date(options.expires) : null;
+        options.expires = options.expires ? new Date(options.expires.maxDecimals(-3)) : null;
 
         return new WI.Cookie(WI.Cookie.Type.Response, name, value, options);
     }
@@ -148,6 +149,7 @@ WI.Cookie = class Cookie
 
         let {name, value} = nameValueMatch.groups;
         let expires = null;
+        let session = false;
         let maxAge = null;
         let path = null;
         let domain = null;
@@ -212,7 +214,10 @@ WI.Cookie = class Cookie
             }
         }
 
-        return new WI.Cookie(WI.Cookie.Type.Response, name, value, {header, expires, maxAge, path, domain, secure, httpOnly, sameSite});
+        if (!expires)
+            session = true;
+
+        return new WI.Cookie(WI.Cookie.Type.Response, name, value, {header, expires, session, maxAge, path, domain, secure, httpOnly, sameSite});
     }
 
     // Public
@@ -222,6 +227,7 @@ WI.Cookie = class Cookie
     get value() { return this._value; }
     get header() { return this._header; }
     get expires() { return this._expires; }
+    get session() { return this._session; }
     get maxAge() { return this._maxAge; }
     get path() { return this._path; }
     get domain() { return this._domain; }
@@ -240,12 +246,66 @@ WI.Cookie = class Cookie
 
     expirationDate(requestSentDate)
     {
+        if (this._session)
+            return null;
+
         if (this._maxAge) {
             let startDate = requestSentDate || new Date;
             return new Date(startDate.getTime() + (this._maxAge * 1000));
         }
 
         return this._expires;
+    }
+
+    equals(other)
+    {
+        return this._type === other.type
+            && this._name === other.name
+            && this._value === other.value
+            && this._header === other.header
+            && this._expires?.getTime() === other.expires?.getTime()
+            && this._session === other.session
+            && this._maxAge === other.maxAge
+            && this._path === other.path
+            && this._domain === other.domain
+            && this._secure === other.secure
+            && this._httpOnly === other.httpOnly
+            && this._sameSite === other.sameSite;
+    }
+
+    toProtocol()
+    {
+        if (typeof this._name !== "string")
+            return null;
+
+        if (typeof this._value !== "string")
+            return null;
+
+        if (typeof this._domain !== "string")
+            return null;
+
+        if (typeof this._path !== "string")
+            return null;
+
+        if (!this._session && !this._expires)
+            return null;
+
+        if (!Object.values(WI.Cookie.SameSiteType).includes(this._sameSite))
+            return null;
+
+        let json = {
+            name: this._name,
+            value: this._value,
+            domain: this._domain,
+            path: this._path,
+            expires: this._expires?.getTime(),
+            session: this._session,
+            httpOnly: !!this._httpOnly,
+            secure: !!this._secure,
+            sameSite: this._sameSite,
+        };
+
+        return json;
     }
 };
 

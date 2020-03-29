@@ -489,10 +489,9 @@ static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie&
         .setDomain(cookie.domain)
         .setPath(cookie.path)
         .setExpires(cookie.expires.valueOr(0))
-        .setSize((cookie.name.length() + cookie.value.length()))
+        .setSession(cookie.session)
         .setHttpOnly(cookie.httpOnly)
         .setSecure(cookie.secure)
-        .setSession(cookie.session)
         .setSameSite(cookieSameSitePolicyJSON(cookie.sameSite))
         .release();
 }
@@ -558,6 +557,90 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector
         cookies = buildArrayForCookies(rawCookiesList);
     else
         cookies = JSON::ArrayOf<Inspector::Protocol::Page::Cookie>::create();
+}
+
+static Optional<Cookie> parseCookieObject(ErrorString& errorString, const JSON::Object& cookieObject)
+{
+    Cookie cookie;
+
+    if (!cookieObject.getString("name"_s, cookie.name)) {
+        errorString = "Invalid value for key name in given cookie";
+        return WTF::nullopt;
+    }
+
+    if (!cookieObject.getString("value"_s, cookie.value)) {
+        errorString = "Invalid value for key value in given cookie";
+        return WTF::nullopt;
+    }
+
+    if (!cookieObject.getString("domain"_s, cookie.domain)) {
+        errorString = "Invalid value for key domain in given cookie";
+        return WTF::nullopt;
+    }
+
+    if (!cookieObject.getString("path"_s, cookie.path)) {
+        errorString = "Invalid value for key path in given cookie";
+        return WTF::nullopt;
+    }
+
+    if (!cookieObject.getBoolean("httpOnly"_s, cookie.httpOnly)) {
+        errorString = "Invalid value for key httpOnly in given cookie";
+        return WTF::nullopt;
+    }
+
+    if (!cookieObject.getBoolean("secure"_s, cookie.secure)) {
+        errorString = "Invalid value for key secure in given cookie";
+        return WTF::nullopt;
+    }
+
+    bool validSession = cookieObject.getBoolean("session"_s, cookie.session);
+    cookie.expires = cookieObject.getNumber<double>("expires"_s);
+    if (!validSession && !cookie.expires) {
+        errorString = "Invalid value for key expires in given cookie";
+        return WTF::nullopt;
+    }
+
+    String sameSiteString;
+    if (!cookieObject.getString("sameSite"_s, sameSiteString)) {
+        errorString = "Invalid value for key sameSite in given cookie";
+        return WTF::nullopt;
+    }
+
+    auto sameSite = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Page::CookieSameSitePolicy>(sameSiteString);
+    if (!sameSite) {
+        errorString = "Invalid value for key sameSite in given cookie";
+        return WTF::nullopt;
+    }
+
+    switch (sameSite.value()) {
+    case Inspector::Protocol::Page::CookieSameSitePolicy::None:
+        cookie.sameSite = Cookie::SameSitePolicy::None;
+
+        break;
+    case Inspector::Protocol::Page::CookieSameSitePolicy::Lax:
+        cookie.sameSite = Cookie::SameSitePolicy::Lax;
+
+        break;
+    case Inspector::Protocol::Page::CookieSameSitePolicy::Strict:
+        cookie.sameSite = Cookie::SameSitePolicy::Strict;
+        break;
+    }
+
+    return cookie;
+}
+
+void InspectorPageAgent::setCookie(ErrorString& errorString, const JSON::Object& cookieObject)
+{
+    auto cookie = parseCookieObject(errorString, cookieObject);
+    if (!cookie)
+        return;
+
+    for (auto* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (auto* document = frame->document()) {
+            if (auto* page = document->page())
+                page->cookieJar().setRawCookie(*document, cookie.value());
+        }
+    }
 }
 
 void InspectorPageAgent::deleteCookie(ErrorString&, const String& cookieName, const String& url)

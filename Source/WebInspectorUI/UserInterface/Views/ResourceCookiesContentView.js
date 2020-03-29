@@ -98,7 +98,7 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
             cell.textContent = cookie.path || emDash;
             break;
         case "expires":
-            cell.textContent = cookie.expires ? cookie.expires.toLocaleString() : WI.UIString("Session");
+            cell.textContent = (!cookie.session && cookie.expires) ? cookie.expires.toLocaleString() : WI.UIString("Session");
             break;
         case "maxAge":
             cell.textContent = cookie.maxAge || emDash;

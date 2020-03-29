@@ -87,3 +87,14 @@ PASS: -100000000 should have 9 digits
 PASS: 1000000000 should have 10 digits
 PASS: -1000000000 should have 10 digits
 
+-- Running test case: Number.prototype.maxDecimals
+PASS: maxDecimals with a negative argument more than the number of digits should be 0
+PASS: maxDecimals with a negative argument more equal to the number of digits should be 0
+PASS: maxDecimals with -2 should truncate that 2 units in front of the decimal
+PASS: maxDecimals with -1 should truncate that 1 units in front of the decimal
+PASS: maxDecimals with 0 should round the value
+PASS: maxDecimals with 1 should round after the 1st decimal
+PASS: maxDecimals with 2 should round after the 2nd decimal
+PASS: maxDecimals with a positive argument equal to the number of digits should not modify the number
+PASS: maxDecimals with a positive argument greater than the number of digits should not modify the number
+

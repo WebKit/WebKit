@@ -1,5 +1,68 @@
 2020-03-28  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: support editing cookie key/values from inspector
+        https://bugs.webkit.org/show_bug.cgi?id=31157
+        <rdar://problem/19281523>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/Cookie.js:
+        (WI.Cookie):
+        (WI.Cookie.fromPayload):
+        (WI.Cookie.parseSetCookieResponseHeader):
+        (WI.Cookie.prototype.get session): Added.
+        (WI.Cookie.prototype.expirationDate):
+        (WI.Cookie.prototype.equals): Added.
+        (WI.Cookie.prototype.toProtocol): Added.
+        Add `session` value in addition to the existing `expires` value. Create helper methods for
+        comparing `WI.Cookie` objects and for using the `WI.Cookie` as a `Page.Cookie` type when
+        invoking protocol commands (right now just `Page.setCookie`).
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView):
+        (WI.CookieStorageContentView.prototype.get navigationItems):
+        (WI.CookieStorageContentView.prototype.tableCellContextMenuClicked):
+        (WI.CookieStorageContentView.prototype.willDismissPopover): Added.
+        (WI.CookieStorageContentView.prototype.async _willDismissCookiePopover): Added.
+        (WI.CookieStorageContentView.prototype._handleSetCookieButtonClick): Added.
+        (WI.CookieStorageContentView.prototype._reloadCookies):
+        (WI.CookieStorageContentView.prototype._formatCookiePropertyForColumn):
+        Add a + navigation item that shows a popover for creating a new cookie. When contextmenu
+        clicking on a table row, add an "Edit" item that shows a popover for creating a new cookie
+        with the values from the existing cookie, which will "replace" (delete and set) the existing
+        cookie upon being dismissed.
+
+        * UserInterface/Views/ResourceCookiesContentView.js:
+        (WI.ResourceCookiesContentView.prototype.tablePopulateCell):
+        If only use the `expires` value if `session` is not set.
+
+        * UserInterface/Views/CookiePopover.js: Added.
+        (WI.CookiePopover):
+        (WI.CookiePopover.prototype.get serializedData):
+        (WI.CookiePopover.prototype.show.createRow):
+        (WI.CookiePopover.prototype.show.createInputRow):
+        (WI.CookiePopover.prototype.show):
+        (WI.CookiePopover.prototype._presentOverTargetElement):
+        (WI.CookiePopover.prototype._defaultExpires):
+        (WI.CookiePopover.prototype._parseExpires):
+        (WI.CookiePopover.prototype._handleInputKeyDown):
+        * UserInterface/Views/CookiePopover.css: Added.
+        (.popover .cookie-popover-content):
+        (.popover .cookie-popover-content > table):
+        (.popover .cookie-popover-content > table > tr > th):
+        (.popover .cookie-popover-content > table > tr > td):
+        (.popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"])):
+        (.popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"]).invalid):
+        (@media (prefers-color-scheme: dark) .popover .cookie-popover-content > table > tr > th):
+        Show an  `<input>` (or `<select>`) for each configuration option when creating a cookie.
+        Hide the `<input>` for `expires` if the `<input type="checkbox">` for `session` is checked.
+        Indicate when the value in the `<input>` for `expires` is not a valid date.
+
+        * UserInterface/Main.html:
+        * Localizations/en.lproj/localizedStrings.js:
+
+2020-03-28  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: CSS: create visual editor for `box-shadow`
         https://bugs.webkit.org/show_bug.cgi?id=208380
 

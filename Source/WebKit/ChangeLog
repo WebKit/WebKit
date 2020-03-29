@@ -1,3 +1,20 @@
+2020-03-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: support editing cookie key/values from inspector
+        https://bugs.webkit.org/show_bug.cgi?id=31157
+        <rdar://problem/19281523>
+
+        Reviewed by Timothy Hatcher.
+
+        * WebProcess/WebPage/WebCookieJar.h:
+        * WebProcess/WebPage/WebCookieJar.cpp:
+        (WebKit::WebCookieJar::setRawCookie):
+
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::setRawCookie): Added.
+
 2020-03-28  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r258201): Use-after-move in UserMediaCaptureManager::Source::didFail()

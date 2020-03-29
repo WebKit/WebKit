@@ -99,6 +99,7 @@ localizedStrings["Add %s Rule"] = "Add %s Rule";
 localizedStrings["Add Action"] = "Add Action";
 localizedStrings["Add Breakpoint"] = "Add Breakpoint";
 localizedStrings["Add Breakpoints"] = "Add Breakpoints";
+localizedStrings["Add Cookie"] = "Add Cookie";
 localizedStrings["Add Header"] = "Add Header";
 localizedStrings["Add New"] = "Add New";
 localizedStrings["Add New Class"] = "Add New Class";

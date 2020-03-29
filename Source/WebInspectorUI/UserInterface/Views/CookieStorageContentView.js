@@ -35,6 +35,11 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         this._sortComparator = null;
         this._table = null;
 
+        if (InspectorBackend.hasCommand("Page.setCookie")) {
+            this._setCookieButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-set-cookie", WI.UIString("Add Cookie"), "Images/Plus15.svg", 15, 15);
+            this._setCookieButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleSetCookieButtonClick, this);
+        }
+
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
     }
@@ -43,7 +48,11 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     get navigationItems()
     {
-        return [this._refreshButtonNavigationItem];
+        let navigationItems = [];
+        if (this._setCookieButtonNavigationItem)
+            navigationItems.push(this._setCookieButtonNavigationItem);
+        navigationItems.push(this._refreshButtonNavigationItem);
+        return navigationItems;
     }
 
     saveToCookie(cookie)
@@ -111,6 +120,17 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         let contextMenu = WI.ContextMenu.createFromEvent(event);
 
         contextMenu.appendSeparator();
+
+        if (InspectorBackend.hasCommand("Page.setCookie")) {
+            contextMenu.appendItem(WI.UIString("Edit"), () => {
+                console.assert(!this._editingCookie);
+                this._editingCookie = this._cookies[rowIndex];
+
+                let popover = new WI.CookiePopover(this);
+                popover.show(this._editingCookie, this._table.cellForRowAndColumn(rowIndex, this._table.columns[0]), [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_X]);
+            });
+        }
+
         contextMenu.appendItem(WI.UIString("Copy"), () => {
             let rowIndexes;
             if (table.isRowSelected(rowIndex))
@@ -128,6 +148,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             else
                 table.removeRow(rowIndex);
         });
+
         contextMenu.appendSeparator();
     }
 
@@ -155,6 +176,18 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         let cookie = this._cookies[rowIndex];
         cell.textContent = this._formatCookiePropertyForColumn(cookie, column);
         return cell;
+    }
+
+    // Popover delegate
+
+    willDismissPopover(popover)
+    {
+        if (popover instanceof WI.CookiePopover) {
+            this._willDismissCookiePopover(popover);
+            return;
+        }
+
+        console.assert();
     }
 
     // Protected
@@ -315,6 +348,45 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         this._sortComparator = (a, b) => reverseFactor * comparator(a, b);
     }
 
+    async _willDismissCookiePopover(popover)
+    {
+        let editingCookie = this._editingCookie;
+        this._editingCookie = null;
+
+        let serializedData = popover.serializedData;
+        if (!serializedData) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let cookieToSet = WI.Cookie.fromPayload(serializedData);
+
+        let cookieProtocolPayload = cookieToSet.toProtocol();
+        if (!cookieProtocolPayload) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let target = WI.assumingMainTarget();
+
+        let promises = [];
+        if (editingCookie)
+            promises.push(target.PageAgent.deleteCookie(editingCookie.name, editingCookie.url));
+        promises.push(target.PageAgent.setCookie(cookieProtocolPayload));
+        promises.push(this._reloadCookies());
+        await Promise.all(promises);
+
+        let index = this._cookies.findIndex((existingCookie) => cookieToSet.equals(existingCookie));
+        if (index >= 0)
+            this._table.selectRow(index);
+    }
+
+    _handleSetCookieButtonClick(event)
+    {
+        let popover = new WI.CookiePopover(this);
+        popover.show(null, this._setCookieButtonNavigationItem.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_X]);
+    }
+
     _refreshButtonClicked(event)
     {
         this._reloadCookies();
@@ -323,7 +395,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     _reloadCookies()
     {
         let target = WI.assumingMainTarget();
-        target.PageAgent.getCookies().then((payload) => {
+        return target.PageAgent.getCookies().then((payload) => {
             this._cookies = this._filterCookies(payload.cookies.map(WI.Cookie.fromPayload));
             this._updateSort();
             this._table.reloadData();
@@ -384,7 +456,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         case "path":
             return cookie.path || missingValue;
         case "expires":
-            return cookie.expires ? new Date(cookie.expires).toLocaleString() : WI.UIString("Session");
+            return (!cookie.session && cookie.expires) ? cookie.expires.toLocaleString() : WI.UIString("Session");
         case "size":
             return Number.bytesToString(cookie.size);
         case "secure":

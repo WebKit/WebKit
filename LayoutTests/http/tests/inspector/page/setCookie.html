@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.setAlwaysAcceptCookies(true);
+
+function test()
+{
+    const millisecondsPerDay = 1000 * 60 * 60 * 24;
+    let tomorrow = new Date(Date.now().maxDecimals(-3) + millisecondsPerDay);
+
+    let suite = InspectorTest.createAsyncSuite("Page.setCookie");
+
+    suite.addTestCase({
+        name: "Page.setCookie.Valid",
+        description: "Check that setting a valid cookies works.",
+        async test() {
+            let cookiesToSet = [
+                {
+                    expires: tomorrow,
+                    session: false,
+                    path: "/",
+                    domain: "127.0.0.1",
+                    secure: false,
+                    httpOnly: false,
+                    sameSite: WI.Cookie.SameSiteType.Lax,
+                },
+                {
+                    expires: tomorrow,
+                    session: true,
+                    path: "/inspector/",
+                    domain: "127.0.0.1",
+                    secure: true,
+                    httpOnly: true,
+                    sameSite: WI.Cookie.SameSiteType.Strict,
+                },
+            ].map((options, i) => new WI.Cookie(WI.Cookie.Type.Response, "TestCookieName" + i, "TestCookieValue" + i, options));
+
+            for (let cookieToSet of cookiesToSet)
+                await PageAgent.setCookie(cookieToSet.toProtocol());
+
+            let getCookiesResult = await PageAgent.getCookies();
+            let setCookies = getCookiesResult.cookies.map(WI.Cookie.fromPayload);
+
+            let found = true;
+            for (let cookieToSet of cookiesToSet) {
+                if (!setCookies.find((setCookie) => cookieToSet.equals(setCookie))) {
+                    found = false;
+                    InspectorTest.fail("Missing cookie:");
+                    InspectorTest.json(cookieToSet);
+                }
+            }
+            InspectorTest.expectTrue(found, "Should have been able to set all cookies.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Page.setCookie.Invalid",
+        description: "Check that the PageAgent correctly parses the given cookie JSON object.",
+        async test() {
+            const invalidValue = null;
+            const invalidString = -1;
+            const invalidNumber = "INVALID";
+            const invalidBoolean = invalidNumber;
+
+            const cookies = [
+                {},
+
+                {name: invalidValue},
+                {name: invalidString},
+                {name: "name"},
+
+                {name: "name", value: invalidValue},
+                {name: "name", value: invalidString},
+                {name: "name", value: "value"},
+
+                {name: "name", value: "value", domain: invalidValue},
+                {name: "name", value: "value", domain: invalidString},
+                {name: "name", value: "value", domain: "webkit.org"},
+
+                {name: "name", value: "value", domain: "webkit.org", path: invalidValue},
+                {name: "name", value: "value", domain: "webkit.org", path: invalidString},
+                {name: "name", value: "value", domain: "webkit.org", path: "/"},
+
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: invalidValue},
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: invalidNumber},
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000},
+
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: invalidValue},
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: invalidBoolean},
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: true},
+
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: true, httpOnly: invalidValue},
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: true, httpOnly: invalidBoolean},
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: true, httpOnly: true},
+
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: true, httpOnly: true, secure: invalidValue},
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: true, httpOnly: true, secure: invalidBoolean},
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: true, httpOnly: true, secure: true},
+
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: true, httpOnly: true, secure: true, sameSite: invalidValue},
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: true, httpOnly: true, secure: true, sameSite: invalidString},
+                {name: "name", value: "value", domain: "webkit.org", path: "/", expires: 10000000000, session: true, httpOnly: true, secure: true, sameSite: "INVALID"},
+            ];
+            for (let cookie of cookies) {
+                InspectorTest.log("Setting cookie " + JSON.stringify(cookie) + " ...");
+                await InspectorTest.expectException(() => PageAgent.setCookie(cookie));
+                InspectorTest.newline();
+            }
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTestHTTPS()">
+    <p>Test for the Page.setCookie.</p>
+</body>
+</html>

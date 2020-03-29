@@ -101,6 +101,7 @@ public:
     void overrideUserAgent(ErrorString&, const String* value) override;
     void overrideSetting(ErrorString&, const String& setting, const bool* value) override;
     void getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::Cookie>>& cookies) override;
+    void setCookie(ErrorString&, const JSON::Object& cookieObject) override;
     void deleteCookie(ErrorString&, const String& cookieName, const String& url) override;
     void getResourceTree(ErrorString&, RefPtr<Inspector::Protocol::Page::FrameResourceTree>&) override;
     void getResourceContent(ErrorString&, const String& frameId, const String& url, String* content, bool* base64Encoded) override;

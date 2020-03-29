@@ -104,10 +104,9 @@
                 { "name": "domain", "type": "string", "description": "Cookie domain." },
                 { "name": "path", "type": "string", "description": "Cookie path." },
                 { "name": "expires", "type": "number", "description": "Cookie expires." },
-                { "name": "size", "type": "integer", "description": "Cookie size." },
+                { "name": "session", "type": "boolean", "description": "True in case of session cookie." },
                 { "name": "httpOnly", "type": "boolean", "description": "True if cookie is http-only." },
                 { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
-                { "name": "session", "type": "boolean", "description": "True in case of session cookie." },
                 { "name": "sameSite", "$ref": "CookieSameSitePolicy", "description": "Cookie Same-Site policy." }
             ]
         }
@@ -159,8 +158,15 @@
             ]
         },
         {
+            "name": "setCookie",
+            "description": "Sets a new browser cookie with the given name, domain, and path.",
+            "parameters": [
+                { "name": "cookie", "$ref": "Cookie" }
+            ]
+        },
+        {
             "name": "deleteCookie",
-            "description": "Deletes browser cookie with given name, domain and path.",
+            "description": "Deletes browser cookie with given name, domain, and path.",
             "parameters": [
                 { "name": "cookieName", "type": "string", "description": "Name of the cookie to remove." },
                 { "name": "url", "type": "string", "description": "URL to match cookie domain and path." }

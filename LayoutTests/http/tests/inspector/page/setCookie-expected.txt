@@ -1,0 +1,121 @@
+Test for the Page.setCookie.
+
+
+== Running test suite: Page.setCookie
+-- Running test case: Page.setCookie.Valid
+PASS: Should have been able to set all cookies.
+
+-- Running test case: Page.setCookie.Invalid
+Setting cookie {} ...
+PASS: Should produce an exception.
+Error: Invalid value for key name in given cookie
+
+Setting cookie {"name":null} ...
+PASS: Should produce an exception.
+Error: Invalid value for key name in given cookie
+
+Setting cookie {"name":-1} ...
+PASS: Should produce an exception.
+Error: Invalid value for key name in given cookie
+
+Setting cookie {"name":"name"} ...
+PASS: Should produce an exception.
+Error: Invalid value for key value in given cookie
+
+Setting cookie {"name":"name","value":null} ...
+PASS: Should produce an exception.
+Error: Invalid value for key value in given cookie
+
+Setting cookie {"name":"name","value":-1} ...
+PASS: Should produce an exception.
+Error: Invalid value for key value in given cookie
+
+Setting cookie {"name":"name","value":"value"} ...
+PASS: Should produce an exception.
+Error: Invalid value for key domain in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":null} ...
+PASS: Should produce an exception.
+Error: Invalid value for key domain in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":-1} ...
+PASS: Should produce an exception.
+Error: Invalid value for key domain in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org"} ...
+PASS: Should produce an exception.
+Error: Invalid value for key path in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":null} ...
+PASS: Should produce an exception.
+Error: Invalid value for key path in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":-1} ...
+PASS: Should produce an exception.
+Error: Invalid value for key path in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/"} ...
+PASS: Should produce an exception.
+Error: Invalid value for key httpOnly in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":null} ...
+PASS: Should produce an exception.
+Error: Invalid value for key httpOnly in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":"INVALID"} ...
+PASS: Should produce an exception.
+Error: Invalid value for key httpOnly in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000} ...
+PASS: Should produce an exception.
+Error: Invalid value for key httpOnly in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":null} ...
+PASS: Should produce an exception.
+Error: Invalid value for key httpOnly in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":"INVALID"} ...
+PASS: Should produce an exception.
+Error: Invalid value for key httpOnly in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":true} ...
+PASS: Should produce an exception.
+Error: Invalid value for key httpOnly in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":true,"httpOnly":null} ...
+PASS: Should produce an exception.
+Error: Invalid value for key httpOnly in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":true,"httpOnly":"INVALID"} ...
+PASS: Should produce an exception.
+Error: Invalid value for key httpOnly in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":true,"httpOnly":true} ...
+PASS: Should produce an exception.
+Error: Invalid value for key secure in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":true,"httpOnly":true,"secure":null} ...
+PASS: Should produce an exception.
+Error: Invalid value for key secure in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":true,"httpOnly":true,"secure":"INVALID"} ...
+PASS: Should produce an exception.
+Error: Invalid value for key secure in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":true,"httpOnly":true,"secure":true} ...
+PASS: Should produce an exception.
+Error: Invalid value for key sameSite in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":true,"httpOnly":true,"secure":true,"sameSite":null} ...
+PASS: Should produce an exception.
+Error: Invalid value for key sameSite in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":true,"httpOnly":true,"secure":true,"sameSite":-1} ...
+PASS: Should produce an exception.
+Error: Invalid value for key sameSite in given cookie
+
+Setting cookie {"name":"name","value":"value","domain":"webkit.org","path":"/","expires":10000000000,"session":true,"httpOnly":true,"secure":true,"sameSite":"INVALID"} ...
+PASS: Should produce an exception.
+Error: Invalid value for key sameSite in given cookie
+
+

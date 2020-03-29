@@ -664,6 +664,15 @@ void NetworkConnectionToWebProcess::getRawCookies(const URL& firstParty, const S
     completionHandler(WTFMove(result));
 }
 
+void NetworkConnectionToWebProcess::setRawCookie(const WebCore::Cookie& cookie)
+{
+    auto* networkStorageSession = storageSession();
+    if (!networkStorageSession)
+        return;
+
+    networkStorageSession->setCookie(cookie);
+}
+
 void NetworkConnectionToWebProcess::deleteCookie(const URL& url, const String& cookieName)
 {
     auto* networkStorageSession = storageSession();
