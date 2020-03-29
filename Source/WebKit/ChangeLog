@@ -1,3 +1,17 @@
+2020-03-28  David Kilzer  <ddkilzer@apple.com>
+
+        Use-after-move in NetworkProcess::addServiceWorkerSession()
+        <https://webkit.org/b/209710>
+        <rdar://problem/61017857>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::addServiceWorkerSession):
+        - Use `addResult.iterator->value.databasePath` instead of the
+          `serviceWorkerRegistrationDirectory` parameter to fix the
+          use-after-move.
+
 2020-03-28  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Delay process suspension for a while after loading an app link

@@ -2486,8 +2486,8 @@ void NetworkProcess::addServiceWorkerSession(PAL::SessionID sessionID, bool proc
     auto addResult = m_serviceWorkerInfo.add(sessionID, WTFMove(info));
     if (addResult.isNewEntry) {
         SandboxExtension::consumePermanently(handle);
-        if (!serviceWorkerRegistrationDirectory.isEmpty())
-            postStorageTask(createCrossThreadTask(*this, &NetworkProcess::ensurePathExists, serviceWorkerRegistrationDirectory));
+        if (!addResult.iterator->value.databasePath.isEmpty())
+            postStorageTask(createCrossThreadTask(*this, &NetworkProcess::ensurePathExists, addResult.iterator->value.databasePath));
     }
 }
 #endif // ENABLE(SERVICE_WORKER)
