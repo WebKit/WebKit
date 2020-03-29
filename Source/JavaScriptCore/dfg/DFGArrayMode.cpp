@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayPrototype.h"
+#include "CacheableIdentifierInlines.h"
 #include "DFGAbstractValue.h"
 #include "DFGGraph.h"
 #include "JSCInlines.h"
@@ -186,7 +187,7 @@ static bool canBecomeGetArrayLength(Graph& graph, Node* node)
 {
     if (node->op() != GetById)
         return false;
-    auto uid = graph.identifiers()[node->identifierNumber()];
+    auto uid = node->cacheableIdentifier().uid();
     return uid == graph.m_vm.propertyNames->length.impl();
 }
 

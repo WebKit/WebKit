@@ -551,7 +551,7 @@ private:
             case GetByIdFlush: {
                 Edge childEdge = node->child1();
                 Node* child = childEdge.node();
-                unsigned identifierNumber = node->identifierNumber();
+                UniquedStringImpl* uid = node->cacheableIdentifier().uid();
                 
                 AbstractValue baseValue = m_state.forNode(child);
 
@@ -562,8 +562,7 @@ private:
                     || (node->child1().useKind() == UntypedUse || (baseValue.m_type & ~SpecCell)))
                     break;
                 
-                GetByStatus status = GetByStatus::computeFor(
-                    baseValue.m_structure.toStructureSet(), m_graph.identifiers()[identifierNumber]);
+                GetByStatus status = GetByStatus::computeFor(baseValue.m_structure.toStructureSet(), uid);
                 if (!status.isSimple())
                     break;
                 
@@ -583,6 +582,7 @@ private:
                 };
                 
                 if (status.numVariants() == 1) {
+                    unsigned identifierNumber = m_graph.identifiers().ensure(uid);
                     addFilterStatus();
                     emitGetByOffset(indexInBlock, node, baseValue, status[0], identifierNumber);
                     changed = true;
@@ -592,6 +592,7 @@ private:
                 if (!m_graph.m_plan.isFTL())
                     break;
                 
+                unsigned identifierNumber = m_graph.identifiers().ensure(uid);
                 addFilterStatus();
                 MultiGetByOffsetData* data = m_graph.m_multiGetByOffsetData.add();
                 for (const GetByIdVariant& variant : status.variants()) {
@@ -612,7 +613,7 @@ private:
                 NodeOrigin origin = node->origin;
                 Edge childEdge = node->child1();
                 Node* child = childEdge.node();
-                unsigned identifierNumber = node->identifierNumber();
+                UniquedStringImpl* uid = node->cacheableIdentifier().uid();
                 
                 ASSERT(childEdge.useKind() == CellUse);
                 
@@ -625,7 +626,7 @@ private:
                 PutByIdStatus status = PutByIdStatus::computeFor(
                     m_graph.globalObjectFor(origin.semantic),
                     baseValue.m_structure.toStructureSet(),
-                    m_graph.identifiers()[identifierNumber],
+                    node->cacheableIdentifier().uid(),
                     node->op() == PutByIdDirect);
 
                 if (!status.isSimple())
@@ -690,6 +691,7 @@ private:
                     OpInfo(m_graph.m_plan.recordedStatuses().addPutByIdStatus(node->origin.semantic, status)),
                     Edge(child));
                 
+                unsigned identifierNumber = m_graph.identifiers().ensure(uid);
                 if (status.numVariants() == 1) {
                     emitPutByOffset(indexInBlock, node, baseValue, status[0], identifierNumber);
                     break;
@@ -709,10 +711,12 @@ private:
                 if (JSValue constant = property.value()) {
                     if (constant.isString()) {
                         JSString* string = asString(constant);
-                        const StringImpl* impl = string->tryGetValueImpl();
-                        if (impl && impl->isAtom()) {
-                            unsigned identifierNumber = m_graph.identifiers().ensure(const_cast<UniquedStringImpl*>(static_cast<const UniquedStringImpl*>(impl)));
-                            node->convertToInById(identifierNumber);
+                        if (CacheableIdentifier::isCacheableIdentifierCell(string)) {
+                            const StringImpl* impl = string->tryGetValueImpl();
+                            RELEASE_ASSERT(impl);
+                            m_graph.freezeStrong(string);
+                            m_graph.identifiers().ensure(const_cast<UniquedStringImpl*>(static_cast<const UniquedStringImpl*>(impl)));
+                            node->convertToInById(CacheableIdentifier::createFromCell(string));
                             changed = true;
                             break;
                         }

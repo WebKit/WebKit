@@ -63,7 +63,7 @@ void StructureStubInfo::initGetByIdSelf(CodeBlock* codeBlock, Structure* baseObj
 {
     ASSERT(hasConstantIdentifier);
     setCacheType(CacheType::GetByIdSelf);
-    m_getByIdSelfIdentifier = identifier;
+    m_identifier = identifier;
     codeBlock->vm().heap.writeBarrier(codeBlock);
     
     u.byIdSelf.baseObjectStructure.set(
@@ -81,18 +81,22 @@ void StructureStubInfo::initStringLength()
     setCacheType(CacheType::StringLength);
 }
 
-void StructureStubInfo::initPutByIdReplace(CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset)
+void StructureStubInfo::initPutByIdReplace(CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset, CacheableIdentifier identifier)
 {
     setCacheType(CacheType::PutByIdReplace);
-    
+    m_identifier = identifier;
+    codeBlock->vm().heap.writeBarrier(codeBlock);
+
     u.byIdSelf.baseObjectStructure.set(
         codeBlock->vm(), codeBlock, baseObjectStructure);
     u.byIdSelf.offset = offset;
 }
 
-void StructureStubInfo::initInByIdSelf(CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset)
+void StructureStubInfo::initInByIdSelf(CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset, CacheableIdentifier identifier)
 {
     setCacheType(CacheType::InByIdSelf);
+    m_identifier = identifier;
+    codeBlock->vm().heap.writeBarrier(codeBlock);
 
     u.byIdSelf.baseObjectStructure.set(
         codeBlock->vm(), codeBlock, baseObjectStructure);
@@ -295,11 +299,11 @@ void StructureStubInfo::visitAggregate(SlotVisitor& visitor)
     case CacheType::Unset:
     case CacheType::ArrayLength:
     case CacheType::StringLength:
+        return;
     case CacheType::PutByIdReplace:
     case CacheType::InByIdSelf:
-        return;
     case CacheType::GetByIdSelf:
-        m_getByIdSelfIdentifier.visitAggregate(visitor);
+        m_identifier.visitAggregate(visitor);
         return;
     case CacheType::Stub:
         u.stub->visitAggregate(visitor);
@@ -401,8 +405,18 @@ bool StructureStubInfo::containsPC(void* pc) const
 
 void StructureStubInfo::setCacheType(CacheType newCacheType)
 {
-    if (m_cacheType == CacheType::GetByIdSelf)
-        m_getByIdSelfIdentifier = nullptr;
+    switch (m_cacheType) {
+    case CacheType::Unset:
+    case CacheType::ArrayLength:
+    case CacheType::StringLength:
+    case CacheType::Stub:
+        break;
+    case CacheType::PutByIdReplace:
+    case CacheType::InByIdSelf:
+    case CacheType::GetByIdSelf:
+        m_identifier = nullptr;
+        break;
+    }
     m_cacheType = newCacheType;
 }
 

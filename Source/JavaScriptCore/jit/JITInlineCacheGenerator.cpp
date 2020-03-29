@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "InlineAccess.h"
 #include "JSCInlines.h"
@@ -103,9 +104,9 @@ void JITByIdGenerator::generateFastCommon(MacroAssembler& jit, size_t inlineICSi
 
 JITGetByIdGenerator::JITGetByIdGenerator(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
-    UniquedStringImpl* propertyName, JSValueRegs base, JSValueRegs value, AccessType accessType)
+    CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs value, AccessType accessType)
     : JITByIdGenerator(codeBlock, codeOrigin, callSite, accessType, usedRegisters, base, value)
-    , m_isLengthAccess(propertyName == codeBlock->vm().propertyNames->length.impl())
+    , m_isLengthAccess(propertyName.uid() == codeBlock->vm().propertyNames->length.impl())
 {
     RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
 }
@@ -117,7 +118,7 @@ void JITGetByIdGenerator::generateFastPath(MacroAssembler& jit)
 
 JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
-    UniquedStringImpl*, JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs)
+    CacheableIdentifier, JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs)
     : JITByIdGenerator(codeBlock, codeOrigin, callSite, AccessType::GetByIdWithThis, usedRegisters, base, value)
 {
     RELEASE_ASSERT(thisRegs.payloadGPR() != thisRegs.tagGPR());
@@ -134,7 +135,7 @@ void JITGetByIdWithThisGenerator::generateFastPath(MacroAssembler& jit)
 }
 
 JITPutByIdGenerator::JITPutByIdGenerator(
-    CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters, CacheableIdentifier,
     JSValueRegs base, JSValueRegs value, GPRReg scratch, 
     ECMAMode ecmaMode, PutKind putKind)
     : JITByIdGenerator(
@@ -150,7 +151,7 @@ void JITPutByIdGenerator::generateFastPath(MacroAssembler& jit)
     generateFastCommon(jit, InlineAccess::sizeForPropertyReplace());
 }
 
-V_JITOperation_GSsiJJI JITPutByIdGenerator::slowPathFunction()
+V_JITOperation_GSsiJJC JITPutByIdGenerator::slowPathFunction()
 {
     if (m_ecmaMode == StrictMode) {
         if (m_putKind == Direct)
@@ -193,7 +194,7 @@ void JITDelByValGenerator::finalize(
         fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
 }
 
-JITDelByIdGenerator::JITDelByIdGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base, GPRReg result, GPRReg scratch)
+JITDelByIdGenerator::JITDelByIdGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier, JSValueRegs base, GPRReg result, GPRReg scratch)
     : Base(codeBlock, codeOrigin, callSiteIndex, AccessType::DeleteByID, usedRegisters)
 {
     m_stubInfo->hasConstantIdentifier = true;
@@ -226,7 +227,7 @@ void JITDelByIdGenerator::finalize(
 
 JITInByIdGenerator::JITInByIdGenerator(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
-    UniquedStringImpl* propertyName, JSValueRegs base, JSValueRegs value)
+    CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs value)
     : JITByIdGenerator(codeBlock, codeOrigin, callSite, AccessType::In, usedRegisters, base, value)
 {
     // FIXME: We are not supporting fast path for "length" property.

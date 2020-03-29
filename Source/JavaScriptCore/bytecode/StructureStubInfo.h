@@ -80,8 +80,8 @@ public:
     void initGetByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
     void initArrayLength();
     void initStringLength();
-    void initPutByIdReplace(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
-    void initInByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
+    void initPutByIdReplace(CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
+    void initInByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
 
     AccessGenerationResult addAccessCase(const GCSafeConcurrentJSLocker&, CodeBlock*, CacheableIdentifier, std::unique_ptr<AccessCase>);
 
@@ -103,10 +103,21 @@ public:
     
     static StubInfoSummary summary(VM&, const StructureStubInfo*);
 
-    CacheableIdentifier getByIdSelfIdentifier()
+    CacheableIdentifier identifier()
     {
-        RELEASE_ASSERT(m_cacheType == CacheType::GetByIdSelf);
-        return m_getByIdSelfIdentifier;
+        switch (m_cacheType) {
+        case CacheType::Unset:
+        case CacheType::ArrayLength:
+        case CacheType::StringLength:
+        case CacheType::Stub:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        case CacheType::PutByIdReplace:
+        case CacheType::InByIdSelf:
+        case CacheType::GetByIdSelf:
+            break;
+        }
+        return m_identifier;
     }
 
     bool containsPC(void* pc) const;
@@ -167,12 +178,7 @@ public:
         return considerCaching(vm, codeBlock, structure, CacheableIdentifier());
     }
 
-    ALWAYS_INLINE bool considerCachingById(VM& vm, CodeBlock* codeBlock, Structure* structure)
-    {
-        return considerCaching(vm, codeBlock, structure, CacheableIdentifier());
-    }
-
-    ALWAYS_INLINE bool considerCachingByVal(VM& vm, CodeBlock* codeBlock, Structure* structure, CacheableIdentifier impl)
+    ALWAYS_INLINE bool considerCachingBy(VM& vm, CodeBlock* codeBlock, Structure* structure, CacheableIdentifier impl)
     {
         return considerCaching(vm, codeBlock, structure, impl);
     }
@@ -325,7 +331,7 @@ public:
         PolymorphicAccess* stub;
     } u;
 private:
-    CacheableIdentifier m_getByIdSelfIdentifier;
+    CacheableIdentifier m_identifier;
     // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.
     // Note that it's always safe to clear this. If we clear it prematurely, then if we see the same
     // structure again during this buffering countdown, we will create an AccessCase object for it.

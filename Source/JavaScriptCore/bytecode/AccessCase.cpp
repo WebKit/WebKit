@@ -150,22 +150,18 @@ std::unique_ptr<AccessCase> AccessCase::fromStructureStubInfo(
 
     case CacheType::PutByIdReplace:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        ASSERT(!identifier.isCell());
         return AccessCase::create(vm, owner, Replace, identifier, stubInfo.u.byIdSelf.offset, stubInfo.u.byIdSelf.baseObjectStructure.get());
 
     case CacheType::InByIdSelf:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        ASSERT(!identifier.isCell());
         return AccessCase::create(vm, owner, InHit, identifier, stubInfo.u.byIdSelf.offset, stubInfo.u.byIdSelf.baseObjectStructure.get());
 
     case CacheType::ArrayLength:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        ASSERT(!identifier.isCell());
         return AccessCase::create(vm, owner, AccessCase::ArrayLength, identifier);
 
     case CacheType::StringLength:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        ASSERT(!identifier.isCell());
         return AccessCase::create(vm, owner, AccessCase::StringLength, identifier);
 
     default:

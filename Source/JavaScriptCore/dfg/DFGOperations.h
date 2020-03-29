@@ -152,8 +152,8 @@ void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsStrict(JSGlobalObject
 void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(JSGlobalObject*, JSObject*, int32_t index, double value) WTF_INTERNAL;
 void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsStrict(JSGlobalObject*, JSObject*, int32_t index, double value) WTF_INTERNAL;
 void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsNonStrict(JSGlobalObject*, JSObject*, int32_t index, double value) WTF_INTERNAL;
-void JIT_OPERATION operationPutByIdWithThis(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
-void JIT_OPERATION operationPutByIdWithThisStrict(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
+void JIT_OPERATION operationPutByIdWithThis(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, uintptr_t) WTF_INTERNAL;
+void JIT_OPERATION operationPutByIdWithThisStrict(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, uintptr_t) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValWithThis(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValWithThisStrict(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationDefineDataProperty(JSGlobalObject*, JSObject*, EncodedJSValue, EncodedJSValue, int32_t) WTF_INTERNAL;

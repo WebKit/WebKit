@@ -168,12 +168,13 @@ int32_t JIT_OPERATION operationConstructArityCheck(JSGlobalObject* globalObject)
     return missingArgCount;
 }
 
-EncodedJSValue JIT_OPERATION operationTryGetById(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationTryGetById(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     stubInfo->tookSlowPath = true;
 
     JSValue baseValue = JSValue::decode(base);
@@ -184,12 +185,13 @@ EncodedJSValue JIT_OPERATION operationTryGetById(JSGlobalObject* globalObject, S
 }
 
 
-EncodedJSValue JIT_OPERATION operationTryGetByIdGeneric(JSGlobalObject* globalObject, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationTryGetByIdGeneric(JSGlobalObject* globalObject, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
@@ -198,13 +200,14 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdGeneric(JSGlobalObject* globalOb
     return JSValue::encode(slot.getPureResult());
 }
 
-EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
@@ -213,19 +216,20 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(JSGlobalObject* globalO
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CodeBlock* codeBlock = callFrame->codeBlock();
-    if (stubInfo->considerCachingById(vm, codeBlock, baseValue.structureOrNull()) && !slot.isTaintedByOpaqueObject() && (slot.isCacheableValue() || slot.isCacheableGetter() || slot.isUnset()))
-        repatchGetBy(globalObject, codeBlock, baseValue, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(ident), slot, *stubInfo, GetByKind::Try);
+    if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(), identifier) && !slot.isTaintedByOpaqueObject() && (slot.isCacheableValue() || slot.isCacheableGetter() || slot.isUnset()))
+        repatchGetBy(globalObject, codeBlock, baseValue, identifier, slot, *stubInfo, GetByKind::Try);
 
     return JSValue::encode(slot.getPureResult());
 }
 
-EncodedJSValue JIT_OPERATION operationGetByIdDirect(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationGetByIdDirect(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     stubInfo->tookSlowPath = true;
 
     JSValue baseValue = JSValue::decode(base);
@@ -237,13 +241,14 @@ EncodedJSValue JIT_OPERATION operationGetByIdDirect(JSGlobalObject* globalObject
     RELEASE_AND_RETURN(scope, JSValue::encode(found ? slot.getValue(globalObject, ident) : jsUndefined()));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByIdDirectGeneric(JSGlobalObject* globalObject, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationGetByIdDirectGeneric(JSGlobalObject* globalObject, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::GetOwnProperty);
@@ -254,13 +259,14 @@ EncodedJSValue JIT_OPERATION operationGetByIdDirectGeneric(JSGlobalObject* globa
     RELEASE_AND_RETURN(scope, JSValue::encode(found ? slot.getValue(globalObject, ident) : jsUndefined()));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByIdDirectOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationGetByIdDirectOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::GetOwnProperty);
@@ -269,13 +275,13 @@ EncodedJSValue JIT_OPERATION operationGetByIdDirectOptimize(JSGlobalObject* glob
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CodeBlock* codeBlock = callFrame->codeBlock();
-    if (stubInfo->considerCachingById(vm, codeBlock, baseValue.structureOrNull()))
-        repatchGetBy(globalObject, codeBlock, baseValue, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(ident), slot, *stubInfo, GetByKind::Direct);
+    if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
+        repatchGetBy(globalObject, codeBlock, baseValue, identifier, slot, *stubInfo, GetByKind::Direct);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(found ? slot.getValue(globalObject, ident) : jsUndefined()));
 }
 
-EncodedJSValue JIT_OPERATION operationGetById(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationGetById(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -287,7 +293,8 @@ EncodedJSValue JIT_OPERATION operationGetById(JSGlobalObject* globalObject, Stru
     
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     JSValue result = baseValue.get(globalObject, ident, slot);
 
     LOG_IC((ICEvent::OperationGetById, baseValue.classInfoOrNull(vm), ident, baseValue == slot.slotBase()));
@@ -295,7 +302,7 @@ EncodedJSValue JIT_OPERATION operationGetById(JSGlobalObject* globalObject, Stru
     return JSValue::encode(result);
 }
 
-EncodedJSValue JIT_OPERATION operationGetByIdGeneric(JSGlobalObject* globalObject, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationGetByIdGeneric(JSGlobalObject* globalObject, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -305,7 +312,8 @@ EncodedJSValue JIT_OPERATION operationGetByIdGeneric(JSGlobalObject* globalObjec
     
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     JSValue result = baseValue.get(globalObject, ident, slot);
     
     LOG_IC((ICEvent::OperationGetByIdGeneric, baseValue.classInfoOrNull(vm), ident, baseValue == slot.slotBase()));
@@ -313,14 +321,15 @@ EncodedJSValue JIT_OPERATION operationGetByIdGeneric(JSGlobalObject* globalObjec
     return JSValue::encode(result);
 }
 
-EncodedJSValue JIT_OPERATION operationGetByIdOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationGetByIdOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
 
@@ -329,20 +338,21 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(JSGlobalObject* globalObje
         LOG_IC((ICEvent::OperationGetByIdOptimize, baseValue.classInfoOrNull(vm), ident, baseValue == slot.slotBase()));
         
         CodeBlock* codeBlock = callFrame->codeBlock();
-        if (stubInfo->considerCachingById(vm, codeBlock, baseValue.structureOrNull()))
-            repatchGetBy(globalObject, codeBlock, baseValue, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(ident), slot, *stubInfo, GetByKind::Normal);
+        if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
+            repatchGetBy(globalObject, codeBlock, baseValue, identifier, slot, *stubInfo, GetByKind::Normal);
         return found ? slot.getValue(globalObject, ident) : jsUndefined();
     }));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByIdWithThis(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, EncodedJSValue thisEncoded, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationGetByIdWithThis(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, EncodedJSValue thisEncoded, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
 
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     stubInfo->tookSlowPath = true;
 
@@ -353,14 +363,15 @@ EncodedJSValue JIT_OPERATION operationGetByIdWithThis(JSGlobalObject* globalObje
     return JSValue::encode(baseValue.get(globalObject, ident, slot));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByIdWithThisGeneric(JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue thisEncoded, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationGetByIdWithThisGeneric(JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue thisEncoded, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
 
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
     JSValue thisValue = JSValue::decode(thisEncoded);
@@ -369,14 +380,15 @@ EncodedJSValue JIT_OPERATION operationGetByIdWithThisGeneric(JSGlobalObject* glo
     return JSValue::encode(baseValue.get(globalObject, ident, slot));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByIdWithThisOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, EncodedJSValue thisEncoded, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationGetByIdWithThisOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, EncodedJSValue thisEncoded, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
     JSValue thisValue = JSValue::decode(thisEncoded);
@@ -386,13 +398,13 @@ EncodedJSValue JIT_OPERATION operationGetByIdWithThisOptimize(JSGlobalObject* gl
         LOG_IC((ICEvent::OperationGetByIdWithThisOptimize, baseValue.classInfoOrNull(vm), ident, baseValue == slot.slotBase()));
         
         CodeBlock* codeBlock = callFrame->codeBlock();
-        if (stubInfo->considerCachingById(vm, codeBlock, baseValue.structureOrNull()))
-            repatchGetBy(globalObject, codeBlock, baseValue, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(ident), slot, *stubInfo, GetByKind::WithThis);
+        if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
+            repatchGetBy(globalObject, codeBlock, baseValue, identifier, slot, *stubInfo, GetByKind::WithThis);
         return found ? slot.getValue(globalObject, ident) : jsUndefined();
     }));
 }
 
-EncodedJSValue JIT_OPERATION operationInById(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationInById(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
 
@@ -403,7 +415,8 @@ EncodedJSValue JIT_OPERATION operationInById(JSGlobalObject* globalObject, Struc
 
     stubInfo->tookSlowPath = true;
 
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
     if (!baseValue.isObject()) {
@@ -419,7 +432,7 @@ EncodedJSValue JIT_OPERATION operationInById(JSGlobalObject* globalObject, Struc
     return JSValue::encode(jsBoolean(baseObject->getPropertySlot(globalObject, ident, slot)));
 }
 
-EncodedJSValue JIT_OPERATION operationInByIdGeneric(JSGlobalObject* globalObject, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationInByIdGeneric(JSGlobalObject* globalObject, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
 
@@ -428,7 +441,8 @@ EncodedJSValue JIT_OPERATION operationInByIdGeneric(JSGlobalObject* globalObject
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
     if (!baseValue.isObject()) {
@@ -444,7 +458,7 @@ EncodedJSValue JIT_OPERATION operationInByIdGeneric(JSGlobalObject* globalObject
     return JSValue::encode(jsBoolean(baseObject->getPropertySlot(globalObject, ident, slot)));
 }
 
-EncodedJSValue JIT_OPERATION operationInByIdOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationInByIdOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
 
@@ -453,7 +467,8 @@ EncodedJSValue JIT_OPERATION operationInByIdOptimize(JSGlobalObject* globalObjec
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
     if (!baseValue.isObject()) {
@@ -468,8 +483,8 @@ EncodedJSValue JIT_OPERATION operationInByIdOptimize(JSGlobalObject* globalObjec
     PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
     bool found = baseObject->getPropertySlot(globalObject, ident, slot);
     CodeBlock* codeBlock = callFrame->codeBlock();
-    if (stubInfo->considerCachingById(vm, codeBlock, baseObject->structure(vm)))
-        repatchInByID(globalObject, codeBlock, baseObject, ident, found, slot, *stubInfo);
+    if (stubInfo->considerCachingBy(vm, codeBlock, baseObject->structure(vm), identifier))
+        repatchInByID(globalObject, codeBlock, baseObject, identifier, found, slot, *stubInfo);
     return JSValue::encode(jsBoolean(found));
 }
 
@@ -484,7 +499,7 @@ EncodedJSValue JIT_OPERATION operationInByVal(JSGlobalObject* globalObject, JSCe
     return JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, base, JSValue::decode(key))));
 }
 
-void JIT_OPERATION operationPutByIdStrict(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
+void JIT_OPERATION operationPutByIdStrict(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -495,14 +510,15 @@ void JIT_OPERATION operationPutByIdStrict(JSGlobalObject* globalObject, Structur
     stubInfo->tookSlowPath = true;
     
     JSValue baseValue = JSValue::decode(encodedBase);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     PutPropertySlot slot(baseValue, true, callFrame->codeBlock()->putByIdContext());
     baseValue.putInline(globalObject, ident, JSValue::decode(encodedValue), slot);
     
     LOG_IC((ICEvent::OperationPutByIdStrict, baseValue.classInfoOrNull(vm), ident, slot.base() == baseValue));
 }
 
-void JIT_OPERATION operationPutByIdNonStrict(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
+void JIT_OPERATION operationPutByIdNonStrict(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -513,14 +529,15 @@ void JIT_OPERATION operationPutByIdNonStrict(JSGlobalObject* globalObject, Struc
     stubInfo->tookSlowPath = true;
     
     JSValue baseValue = JSValue::decode(encodedBase);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     PutPropertySlot slot(baseValue, false, callFrame->codeBlock()->putByIdContext());
     baseValue.putInline(globalObject, ident, JSValue::decode(encodedValue), slot);
 
     LOG_IC((ICEvent::OperationPutByIdNonStrict, baseValue.classInfoOrNull(vm), ident, slot.base() == baseValue));
 }
 
-void JIT_OPERATION operationPutByIdDirectStrict(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
+void JIT_OPERATION operationPutByIdDirectStrict(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -531,14 +548,15 @@ void JIT_OPERATION operationPutByIdDirectStrict(JSGlobalObject* globalObject, St
     stubInfo->tookSlowPath = true;
     
     JSValue baseValue = JSValue::decode(encodedBase);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     PutPropertySlot slot(baseValue, true, callFrame->codeBlock()->putByIdContext());
     CommonSlowPaths::putDirectWithReify(vm, globalObject, asObject(baseValue), ident, JSValue::decode(encodedValue), slot);
 
     LOG_IC((ICEvent::OperationPutByIdDirectStrict, baseValue.classInfoOrNull(vm), ident, slot.base() == baseValue));
 }
 
-void JIT_OPERATION operationPutByIdDirectNonStrict(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
+void JIT_OPERATION operationPutByIdDirectNonStrict(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -549,14 +567,15 @@ void JIT_OPERATION operationPutByIdDirectNonStrict(JSGlobalObject* globalObject,
     stubInfo->tookSlowPath = true;
     
     JSValue baseValue = JSValue::decode(encodedBase);
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     PutPropertySlot slot(baseValue, false, callFrame->codeBlock()->putByIdContext());
     CommonSlowPaths::putDirectWithReify(vm, globalObject, asObject(baseValue), ident, JSValue::decode(encodedValue), slot);
 
     LOG_IC((ICEvent::OperationPutByIdDirectNonStrict, baseValue.classInfoOrNull(vm), ident, slot.base() == baseValue));
 }
 
-void JIT_OPERATION operationPutByIdStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
+void JIT_OPERATION operationPutByIdStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -565,7 +584,8 @@ void JIT_OPERATION operationPutByIdStrictOptimize(JSGlobalObject* globalObject, 
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
@@ -583,11 +603,11 @@ void JIT_OPERATION operationPutByIdStrictOptimize(JSGlobalObject* globalObject, 
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
-    if (stubInfo->considerCachingById(vm, codeBlock, structure))
-        repatchPutByID(globalObject, codeBlock, baseValue, structure, ident, slot, *stubInfo, NotDirect);
+    if (stubInfo->considerCachingBy(vm, codeBlock, structure, identifier))
+        repatchPutByID(globalObject, codeBlock, baseValue, structure, identifier, slot, *stubInfo, NotDirect);
 }
 
-void JIT_OPERATION operationPutByIdNonStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
+void JIT_OPERATION operationPutByIdNonStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -596,7 +616,8 @@ void JIT_OPERATION operationPutByIdNonStrictOptimize(JSGlobalObject* globalObjec
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
@@ -614,11 +635,11 @@ void JIT_OPERATION operationPutByIdNonStrictOptimize(JSGlobalObject* globalObjec
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
-    if (stubInfo->considerCachingById(vm, codeBlock, structure))
-        repatchPutByID(globalObject, codeBlock, baseValue, structure, ident, slot, *stubInfo, NotDirect);
+    if (stubInfo->considerCachingBy(vm, codeBlock, structure, identifier))
+        repatchPutByID(globalObject, codeBlock, baseValue, structure, identifier, slot, *stubInfo, NotDirect);
 }
 
-void JIT_OPERATION operationPutByIdDirectStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
+void JIT_OPERATION operationPutByIdDirectStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -627,7 +648,8 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(JSGlobalObject* globalOb
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
@@ -644,11 +666,11 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(JSGlobalObject* globalOb
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
-    if (stubInfo->considerCachingById(vm, codeBlock, structure))
-        repatchPutByID(globalObject, codeBlock, baseObject, structure, ident, slot, *stubInfo, Direct);
+    if (stubInfo->considerCachingBy(vm, codeBlock, structure, identifier))
+        repatchPutByID(globalObject, codeBlock, baseObject, structure, identifier, slot, *stubInfo, Direct);
 }
 
-void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
+void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -657,7 +679,8 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(JSGlobalObject* globa
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    Identifier ident = Identifier::fromUid(vm, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue value = JSValue::decode(encodedValue);
@@ -674,8 +697,8 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(JSGlobalObject* globa
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
-    if (stubInfo->considerCachingById(vm, codeBlock, structure))
-        repatchPutByID(globalObject, codeBlock, baseObject, structure, ident, slot, *stubInfo, Direct);
+    if (stubInfo->considerCachingBy(vm, codeBlock, structure, identifier))
+        repatchPutByID(globalObject, codeBlock, baseObject, structure, identifier, slot, *stubInfo, Direct);
 }
 
 static void putByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, JSValue subscript, JSValue value, ByValInfo* byValInfo)
@@ -830,7 +853,7 @@ static OptimizationResult tryPutByValOptimize(JSGlobalObject* globalObject, Call
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId.uid() == propertyName) {
-                    JIT::compilePutByValWithCachedId<OpPutByVal>(vm, codeBlock, byValInfo, returnAddress, NotDirect, propertyName);
+                    JIT::compilePutByValWithCachedId<OpPutByVal>(vm, codeBlock, byValInfo, returnAddress, NotDirect, byValInfo->cachedId);
                     optimizationResult = OptimizationResult::Optimized;
                 } else {
                     // Seem like a generic property access site.
@@ -920,7 +943,7 @@ static OptimizationResult tryDirectPutByValOptimize(JSGlobalObject* globalObject
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId.uid() == propertyName) {
-                    JIT::compilePutByValWithCachedId<OpPutByValDirect>(vm, codeBlock, byValInfo, returnAddress, Direct, propertyName);
+                    JIT::compilePutByValWithCachedId<OpPutByValDirect>(vm, codeBlock, byValInfo, returnAddress, Direct, byValInfo->cachedId);
                     optimizationResult = OptimizationResult::Optimized;
                 } else {
                     // Seem like a generic property access site.
@@ -2019,7 +2042,7 @@ EncodedJSValue JIT_OPERATION operationGetByValOptimize(JSGlobalObject* globalObj
                 LOG_IC((ICEvent::OperationGetByValOptimize, baseValue.classInfoOrNull(vm), propertyName, baseValue == slot.slotBase())); 
                 
                 CacheableIdentifier identifier = CacheableIdentifier::createFromCell(subscript.asCell());
-                if (stubInfo->considerCachingByVal(vm, codeBlock, baseValue.structureOrNull(), identifier))
+                if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
                     repatchGetBy(globalObject, codeBlock, baseValue, identifier, slot, *stubInfo, GetByKind::NormalByVal);
                 return found ? slot.getValue(globalObject, propertyName) : jsUndefined();
             }));
@@ -2140,7 +2163,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyGeneric(JSGlobalObject* 
     return JSValue::encode(jsBoolean(object->hasPropertyGeneric(globalObject, index, PropertySlot::InternalMethodType::GetOwnProperty)));
 }
     
-static bool deleteById(JSGlobalObject* globalObject, CallFrame* callFrame, VM& vm, DeletePropertySlot& slot, JSValue base, UniquedStringImpl* uid)
+static bool deleteById(JSGlobalObject* globalObject, CallFrame* callFrame, VM& vm, DeletePropertySlot& slot, JSValue base, const Identifier& ident)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -2148,14 +2171,14 @@ static bool deleteById(JSGlobalObject* globalObject, CallFrame* callFrame, VM& v
     RETURN_IF_EXCEPTION(scope, false);
     if (!baseObj)
         return false;
-    bool couldDelete = baseObj->methodTable(vm)->deleteProperty(baseObj, globalObject, Identifier::fromUid(vm, uid), slot);
+    bool couldDelete = baseObj->methodTable(vm)->deleteProperty(baseObj, globalObject, ident, slot);
     RETURN_IF_EXCEPTION(scope, false);
     if (!couldDelete && callFrame->codeBlock()->isStrictMode())
         throwTypeError(globalObject, scope, UnableToDeletePropertyError);
     return couldDelete;
 }
 
-size_t JIT_OPERATION operationDeleteByIdOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, UniquedStringImpl* uid)
+size_t JIT_OPERATION operationDeleteByIdOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2166,30 +2189,32 @@ size_t JIT_OPERATION operationDeleteByIdOptimize(JSGlobalObject* globalObject, S
     DeletePropertySlot slot;
     Structure* oldStructure = baseValue.structureOrNull();
 
-    bool result = deleteById(globalObject, callFrame, vm, slot, baseValue, uid);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
+
+    bool result = deleteById(globalObject, callFrame, vm, slot, baseValue, ident);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (baseValue.isObject()) {
-        const Identifier ident = Identifier::fromUid(vm, uid);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
         if (!parseIndex(ident)) {
             CodeBlock* codeBlock = callFrame->codeBlock();
-            if (stubInfo->considerCachingById(vm, codeBlock, baseValue.structureOrNull()))
-                repatchDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(ident), *stubInfo, DelByKind::Normal);
+            if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
+                repatchDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, identifier, *stubInfo, DelByKind::Normal);
         }
     }
 
     return result;
 }
 
-size_t JIT_OPERATION operationDeleteByIdGeneric(JSGlobalObject* globalObject, StructureStubInfo*, EncodedJSValue encodedBase, UniquedStringImpl* uid)
+size_t JIT_OPERATION operationDeleteByIdGeneric(JSGlobalObject* globalObject, StructureStubInfo*, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
     DeletePropertySlot slot;
-    return deleteById(globalObject, callFrame, vm, slot, JSValue::decode(encodedBase), uid);
+    return deleteById(globalObject, callFrame, vm, slot, JSValue::decode(encodedBase), ident);
 }
 
 static bool deleteByVal(JSGlobalObject* globalObject, CallFrame* callFrame, VM& vm, DeletePropertySlot& slot, JSValue base, JSValue key)
@@ -2238,7 +2263,7 @@ size_t JIT_OPERATION operationDeleteByValOptimize(JSGlobalObject* globalObject, 
         if (subscript.isSymbol() || !parseIndex(propertyName)) {
             CodeBlock* codeBlock = callFrame->codeBlock();
             CacheableIdentifier identifier = CacheableIdentifier::createFromCell(subscript.asCell());
-            if (stubInfo->considerCachingByVal(vm, codeBlock, baseValue.structureOrNull(), identifier))
+            if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
                 repatchDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, identifier, *stubInfo, DelByKind::NormalByVal);
         }
     }

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CacheableIdentifier.h"
 #include "DFGRegisteredStructure.h"
 #include "HeapCell.h"
 #include <wtf/StdLibExtras.h>
@@ -45,6 +46,7 @@ struct OpInfo {
         : m_value(static_cast<uint64_t>(value)) { }
     explicit OpInfo(RegisteredStructure structure) : m_value(static_cast<uint64_t>(bitwise_cast<uintptr_t>(structure))) { }
     explicit OpInfo(Operand op) : m_value(op.asBits()) { }
+    explicit OpInfo(CacheableIdentifier identifier) : m_value(static_cast<uint64_t>(identifier.rawBits())) { }
 
     template <typename T>
     explicit OpInfo(T* ptr)

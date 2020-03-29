@@ -3605,13 +3605,13 @@ private:
             ValueFromBlock cellResult = m_out.anchor(getById(value, type));
             m_out.jump(continuation);
 
-            J_JITOperation_GJI getByIdFunction = appropriateGenericGetByIdFunction(type);
+            auto getByIdFunction = appropriateGenericGetByIdFunction(type);
 
             m_out.appendTo(notCellCase, continuation);
             ValueFromBlock notCellResult = m_out.anchor(vmCall(
                 Int64, getByIdFunction,
                 weakPointer(globalObject), value,
-                m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
+                m_out.constIntPtr(m_node->cacheableIdentifier().rawBits())));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -3655,7 +3655,7 @@ private:
             ValueFromBlock notCellResult = m_out.anchor(vmCall(
                 Int64, operationGetByIdWithThisGeneric,
                 weakPointer(globalObject), base, thisValue,
-                m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
+                m_out.constIntPtr(m_node->cacheableIdentifier().rawBits())));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -3683,7 +3683,7 @@ private:
         LValue value = lowJSValue(m_node->child3());
 
         vmCall(Void, m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutByIdWithThisStrict : operationPutByIdWithThis,
-            weakPointer(globalObject), base, thisValue, value, m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()]));
+            weakPointer(globalObject), base, thisValue, value, m_out.constIntPtr(m_node->cacheableIdentifier().rawBits()));
     }
 
     void compilePutByValWithThis()
@@ -3951,7 +3951,7 @@ private:
         Node* node = m_node;
         LValue base = lowCell(node->child1());
         LValue value = lowJSValue(node->child2());
-        auto uid = m_graph.identifiers()[node->identifierNumber()];
+        CacheableIdentifier identifier = node->cacheableIdentifier();
 
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendSomeRegister(base);
@@ -3984,7 +3984,7 @@ private:
 
                 auto generator = Box<JITPutByIdGenerator>::create(
                     jit.codeBlock(), node->origin.semantic, callSiteIndex,
-                    params.unavailableRegisters(), JSValueRegs(params[0].gpr()),
+                    params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), GPRInfo::patchpointScratchRegister, ecmaMode,
                     node->op() == PutByIdDirect ? Direct : NotDirect);
 
@@ -4002,7 +4002,7 @@ private:
                             exceptions.get(), generator->slowPathFunction(), InvalidGPRReg,
                             jit.codeBlock()->globalObjectFor(node->origin.semantic),
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
-                            params[0].gpr(), CCallHelpers::TrustedImmPtr(uid)).call();
+                            params[0].gpr(), identifier.rawBits()).call();
                         jit.jump().linkTo(done, &jit);
 
                         generator->reportSlowPathCall(slowPathBegin, slowPathCall);
@@ -5202,7 +5202,7 @@ private:
 
                 const auto subscript = [&] {
                     if constexpr (kind == DelByKind::Normal)
-                        return CCallHelpers::TrustedImmPtr(subscriptValue);
+                        return CCallHelpers::TrustedImmPtr(subscriptValue.rawBits());
                     else {
                         ASSERT(params.gpScratch(0) != params[2].gpr());
                         if (node->child2().useKind() == UntypedUse)
@@ -5215,7 +5215,7 @@ private:
                     if constexpr (kind == DelByKind::Normal) {
                         return Box<JITDelByIdGenerator>::create(
                             jit.codeBlock(), node->origin.semantic, callSiteIndex,
-                            params.unavailableRegisters(), base,
+                            params.unavailableRegisters(), subscriptValue, base,
                             returnGPR, params.gpScratch(0));
                     } else {
                         return Box<JITDelByValGenerator>::create(
@@ -5260,7 +5260,7 @@ private:
         switch (m_node->child1().useKind()) {
         case CellUse: {
             LValue base = lowCell(m_node->child1());
-            compileDelBy<DelByKind::Normal>(base, m_graph.identifiers()[m_node->identifierNumber()]);
+            compileDelBy<DelByKind::Normal>(base, m_node->cacheableIdentifier());
             break;
         }
 
@@ -5269,8 +5269,7 @@ private:
             // https://bugs.webkit.org/show_bug.cgi?id=209397
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
             LValue base = lowJSValue(m_node->child1());
-            auto uid = m_graph.identifiers()[m_node->identifierNumber()];
-            setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteByIdGeneric, weakPointer(globalObject), m_out.intPtrZero, base, m_out.constIntPtr(uid))));
+            setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteByIdGeneric, weakPointer(globalObject), m_out.intPtrZero, base, m_out.constIntPtr(m_node->cacheableIdentifier().rawBits()))));
             break;
         }
 
@@ -11229,7 +11228,7 @@ private:
     void compileInById()
     {
         Node* node = m_node;
-        UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
+        CacheableIdentifier identifier = node->cacheableIdentifier();
         LValue base = lowCell(m_node->child1());
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
@@ -11256,7 +11255,7 @@ private:
 
                 auto generator = Box<JITInByIdGenerator>::create(
                     jit.codeBlock(), node->origin.semantic, callSiteIndex,
-                    params.unavailableRegisters(), uid, JSValueRegs(params[1].gpr()),
+                    params.unavailableRegisters(), identifier, JSValueRegs(params[1].gpr()),
                     JSValueRegs(params[0].gpr()));
 
                 generator->generateFastPath(jit);
@@ -11273,7 +11272,7 @@ private:
                             exceptions.get(), operationInByIdOptimize, params[0].gpr(),
                             jit.codeBlock()->globalObjectFor(node->origin.semantic),
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
-                            CCallHelpers::TrustedImmPtr(uid)).call();
+                            identifier.rawBits()).call();
                         jit.jump().linkTo(done, &jit);
 
                         generator->reportSlowPathCall(slowPathBegin, slowPathCall);
@@ -12938,7 +12937,7 @@ private:
     LValue getById(LValue base, AccessType type)
     {
         Node* node = m_node;
-        UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
+        CacheableIdentifier identifier = node->cacheableIdentifier();
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(base);
@@ -12974,7 +12973,7 @@ private:
 
                 auto generator = Box<JITGetByIdGenerator>::create(
                     jit.codeBlock(), node->origin.semantic, callSiteIndex,
-                    params.unavailableRegisters(), uid, JSValueRegs(params[1].gpr()),
+                    params.unavailableRegisters(), identifier, JSValueRegs(params[1].gpr()),
                     JSValueRegs(params[0].gpr()), type);
 
                 generator->generateFastPath(jit);
@@ -12984,7 +12983,7 @@ private:
                     [=] (CCallHelpers& jit) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
 
-                        J_JITOperation_GSsiJI optimizationFunction = appropriateOptimizingGetByIdFunction(type);
+                        auto optimizationFunction = appropriateOptimizingGetByIdFunction(type);
 
                         generator->slowPathJump().link(&jit);
                         CCallHelpers::Label slowPathBegin = jit.label();
@@ -12993,7 +12992,7 @@ private:
                             exceptions.get(), optimizationFunction, params[0].gpr(),
                             jit.codeBlock()->globalObjectFor(node->origin.semantic),
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
-                            CCallHelpers::TrustedImmPtr(uid)).call();
+                            CCallHelpers::TrustedImmPtr(identifier.rawBits())).call();
                         jit.jump().linkTo(done, &jit);
 
                         generator->reportSlowPathCall(slowPathBegin, slowPathCall);
@@ -13011,7 +13010,7 @@ private:
     LValue getByIdWithThis(LValue base, LValue thisValue)
     {
         Node* node = m_node;
-        UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
+        CacheableIdentifier identifier = node->cacheableIdentifier();
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(base);
@@ -13043,7 +13042,7 @@ private:
 
                 auto generator = Box<JITGetByIdWithThisGenerator>::create(
                     jit.codeBlock(), node->origin.semantic, callSiteIndex,
-                    params.unavailableRegisters(), uid, JSValueRegs(params[0].gpr()),
+                    params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()));
 
                 generator->generateFastPath(jit);
@@ -13053,7 +13052,7 @@ private:
                     [=] (CCallHelpers& jit) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
 
-                        J_JITOperation_GSsiJJI optimizationFunction = operationGetByIdWithThisOptimize;
+                        auto optimizationFunction = operationGetByIdWithThisOptimize;
 
                         generator->slowPathJump().link(&jit);
                         CCallHelpers::Label slowPathBegin = jit.label();
@@ -13062,7 +13061,7 @@ private:
                             exceptions.get(), optimizationFunction, params[0].gpr(),
                             jit.codeBlock()->globalObjectFor(node->origin.semantic),
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
-                            params[2].gpr(), CCallHelpers::TrustedImmPtr(uid)).call();
+                            params[2].gpr(), CCallHelpers::TrustedImmPtr(identifier.rawBits())).call();
                         jit.jump().linkTo(done, &jit);
 
                         generator->reportSlowPathCall(slowPathBegin, slowPathCall);

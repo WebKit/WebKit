@@ -1023,7 +1023,7 @@ void SpeculativeJIT::compileGetById(Node* node, AccessType accessType)
 
         base.use();
 
-        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->identifierNumber(), JITCompiler::Jump(), NeedToSpill, accessType);
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->cacheableIdentifier(), JITCompiler::Jump(), NeedToSpill, accessType);
 
         jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
         break;
@@ -1040,7 +1040,7 @@ void SpeculativeJIT::compileGetById(Node* node, AccessType accessType)
 
         JITCompiler::Jump notCell = m_jit.branchIfNotCell(baseRegs);
 
-        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->identifierNumber(), notCell, NeedToSpill, accessType);
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->cacheableIdentifier(), notCell, NeedToSpill, accessType);
 
         jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
         break;
@@ -1066,7 +1066,7 @@ void SpeculativeJIT::compileGetByIdFlush(Node* node, AccessType accessType)
 
         flushRegisters();
 
-        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->identifierNumber(), JITCompiler::Jump(), DontSpill, accessType);
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->cacheableIdentifier(), JITCompiler::Jump(), DontSpill, accessType);
 
         jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
         break;
@@ -1085,7 +1085,7 @@ void SpeculativeJIT::compileGetByIdFlush(Node* node, AccessType accessType)
 
         JITCompiler::Jump notCell = m_jit.branchIfNotCell(baseRegs);
 
-        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->identifierNumber(), notCell, DontSpill, accessType);
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, node->cacheableIdentifier(), notCell, DontSpill, accessType);
 
         jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
         break;
@@ -1111,14 +1111,14 @@ void SpeculativeJIT::compileInById(Node* node)
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
     RegisterSet usedRegisters = this->usedRegisters();
     JITInByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters, identifierUID(node->identifierNumber()),
+        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters, node->cacheableIdentifier(),
         JSValueRegs::payloadOnly(baseGPR), resultRegs);
     gen.generateFastPath(m_jit);
 
     auto slowPath = slowPathCall(
         gen.slowPathJump(), this, operationInByIdOptimize,
         NeedToSpill, ExceptionCheckRequirement::CheckNeeded,
-        resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), gen.stubInfo(), CCallHelpers::CellValue(baseGPR), identifierUID(node->identifierNumber()));
+        resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), gen.stubInfo(), CCallHelpers::CellValue(baseGPR), node->cacheableIdentifier().rawBits());
 
     m_jit.addInById(gen, slowPath.get());
     addSlowPathGenerator(WTFMove(slowPath));
@@ -12215,7 +12215,7 @@ void SpeculativeJIT::compilePutByIdFlush(Node* node)
     GPRReg scratchGPR = scratch.gpr();
     flushRegisters();
 
-    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->identifierNumber(), NotDirect, MacroAssembler::Jump(), DontSpill);
+    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->cacheableIdentifier(), NotDirect, MacroAssembler::Jump(), DontSpill);
 
     noResult(node);
 }
@@ -12230,7 +12230,7 @@ void SpeculativeJIT::compilePutById(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg scratchGPR = scratch.gpr();
 
-    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->identifierNumber(), NotDirect);
+    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->cacheableIdentifier(), NotDirect);
 
     noResult(node);
 }
@@ -12245,7 +12245,7 @@ void SpeculativeJIT::compilePutByIdDirect(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg scratchGPR = scratch.gpr();
 
-    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->identifierNumber(), Direct);
+    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->cacheableIdentifier(), Direct);
 
     noResult(node);
 }
@@ -12261,7 +12261,7 @@ void SpeculativeJIT::compilePutByIdWithThis(Node* node)
 
     flushRegisters();
     callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByIdWithThisStrict : operationPutByIdWithThis,
-        TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, thisRegs, valueRegs, identifierUID(node->identifierNumber()));
+        TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, thisRegs, valueRegs, node->cacheableIdentifier().rawBits());
     m_jit.exceptionCheck();
 
     noResult(node);
@@ -13828,7 +13828,7 @@ void SpeculativeJIT::compileProfileType(Node* node)
     noResult(node);
 }
 
-void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
+void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg scratchGPR, CacheableIdentifier identifier, PutKind putKind, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     RegisterSet usedRegisters = this->usedRegisters();
     if (spillMode == DontSpill) {
@@ -13838,7 +13838,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValu
     }
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
     JITPutByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters,
+        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs::payloadOnly(baseGPR), valueRegs,
         scratchGPR, m_jit.ecmaModeFor(codeOrigin), putKind);
 
@@ -13851,7 +13851,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValu
 
     auto slowPath = slowPathCall(
         slowCases, this, gen.slowPathFunction(), NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), valueRegs,
-        CCallHelpers::CellValue(baseGPR), identifierUID(identifierNumber));
+        CCallHelpers::CellValue(baseGPR), identifier.rawBits());
 
     m_jit.addPutById(gen, slowPath.get());
     addSlowPathGenerator(WTFMove(slowPath));

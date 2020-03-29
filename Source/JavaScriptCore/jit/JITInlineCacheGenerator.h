@@ -105,7 +105,7 @@ public:
     JITGetByIdGenerator() { }
 
     JITGetByIdGenerator(
-        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, UniquedStringImpl* propertyName,
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
         JSValueRegs base, JSValueRegs value, AccessType);
     
     void generateFastPath(MacroAssembler&);
@@ -119,7 +119,7 @@ public:
     JITGetByIdWithThisGenerator() { }
 
     JITGetByIdWithThisGenerator(
-        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, UniquedStringImpl* propertyName,
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
         JSValueRegs value, JSValueRegs base, JSValueRegs thisRegs);
 
     void generateFastPath(MacroAssembler&);
@@ -130,12 +130,12 @@ public:
     JITPutByIdGenerator() { }
 
     JITPutByIdGenerator(
-        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base,
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier, JSValueRegs base,
         JSValueRegs value, GPRReg scratch, ECMAMode, PutKind);
     
     void generateFastPath(MacroAssembler&);
     
-    V_JITOperation_GSsiJJI slowPathFunction();
+    V_JITOperation_GSsiJJC slowPathFunction();
 
 private:
     ECMAMode m_ecmaMode;
@@ -173,7 +173,7 @@ public:
     JITDelByIdGenerator() { }
 
     JITDelByIdGenerator(
-        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters,
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
         JSValueRegs base, GPRReg result, GPRReg scratch);
 
     MacroAssembler::Jump slowPathJump() const
@@ -197,7 +197,7 @@ public:
     JITInByIdGenerator() { }
 
     JITInByIdGenerator(
-        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, UniquedStringImpl* propertyName,
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
         JSValueRegs base, JSValueRegs value);
 
     void generateFastPath(MacroAssembler&);

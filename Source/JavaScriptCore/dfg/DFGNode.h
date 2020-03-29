@@ -810,12 +810,12 @@ public:
         m_opInfo = false;
     }
 
-    void convertToInById(unsigned identifierNumber)
+    void convertToInById(CacheableIdentifier identifier)
     {
         ASSERT(m_op == InByVal);
         setOpAndDefaultFlags(InById);
         children.setChild2(Edge());
-        m_opInfo = identifierNumber;
+        m_opInfo = identifier;
         m_opInfo2 = OpInfoWrapper();
     }
     
@@ -1063,7 +1063,7 @@ public:
         return op() == StoreBarrier || op() == FencedStoreBarrier;
     }
 
-    bool hasIdentifier()
+    bool hasCacheableIdentifier()
     {
         switch (op()) {
         case TryGetById:
@@ -1072,15 +1072,30 @@ public:
         case GetByIdWithThis:
         case GetByIdDirect:
         case GetByIdDirectFlush:
+        case DeleteById:
+        case InById:
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect:
         case PutByIdWithThis:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    CacheableIdentifier cacheableIdentifier()
+    {
+        ASSERT(hasCacheableIdentifier());
+        return CacheableIdentifier::createFromRawBits(m_opInfo.as<uintptr_t>());
+    }
+
+    bool hasIdentifier()
+    {
+        switch (op()) {
         case PutGetterById:
         case PutSetterById:
         case PutGetterSetterById:
-        case DeleteById:
-        case InById:
         case GetDynamicVar:
         case PutDynamicVar:
         case ResolveScopeForHoistingFuncDeclInEval:
@@ -3036,6 +3051,11 @@ private:
             u.int64 = 0;
             u.pointer = bitwise_cast<void*>(structure);
         }
+        OpInfoWrapper(CacheableIdentifier identifier)
+        {
+            u.int64 = 0;
+            u.pointer = bitwise_cast<void*>(identifier.rawBits());
+        }
         OpInfoWrapper& operator=(uint32_t int32)
         {
             u.int64 = 0;
@@ -3069,6 +3089,12 @@ private:
         {
             u.int64 = 0;
             u.pointer = bitwise_cast<void*>(structure);
+            return *this;
+        }
+        OpInfoWrapper& operator=(CacheableIdentifier identifier)
+        {
+            u.int64 = 0;
+            u.pointer = bitwise_cast<void*>(identifier.rawBits());
             return *this;
         }
         OpInfoWrapper& operator=(NewArrayBufferData newArrayBufferData)

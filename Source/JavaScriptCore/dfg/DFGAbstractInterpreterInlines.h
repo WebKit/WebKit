@@ -29,6 +29,7 @@
 
 #include "ArrayConstructor.h"
 #include "ArrayPrototype.h"
+#include "CacheableIdentifierInlines.h"
 #include "DFGAbstractInterpreter.h"
 #include "DFGAbstractInterpreterClobberState.h"
 #include "DOMJITGetterSetter.h"
@@ -3167,7 +3168,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         AbstractValue& value = forNode(node->child1());
         if (value.m_structure.isFinite()
             && (node->child1().useKind() == CellUse || !(value.m_type & ~SpecCell))) {
-            UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
+            UniquedStringImpl* uid = node->cacheableIdentifier().uid();
             GetByStatus status = GetByStatus::computeFor(value.m_structure.toStructureSet(), uid);
             if (status.isSimple()) {
                 // Figure out what the result is going to be - is it TOP, a constant, or maybe
@@ -3796,7 +3797,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             PutByIdStatus status = PutByIdStatus::computeFor(
                 m_graph.globalObjectFor(node->origin.semantic),
                 value.m_structure.toStructureSet(),
-                m_graph.identifiers()[node->identifierNumber()],
+                node->cacheableIdentifier().uid(),
                 node->op() == PutByIdDirect);
 
             bool allGood = true;
@@ -3877,8 +3878,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (JSValue constant = property.value()) {
             if (constant.isString()) {
                 JSString* string = asString(constant);
-                const StringImpl* impl = string->tryGetValueImpl();
-                if (impl && impl->isAtom())
+                if (CacheableIdentifier::isCacheableIdentifierCell(string))
                     m_state.setShouldTryConstantFolding(true);
             }
         }

@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayPrototype.h"
+#include "CacheableIdentifierInlines.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
@@ -1632,7 +1633,7 @@ private:
             // FIXME: This should be done in the ByteCodeParser based on reading the
             // PolymorphicAccess, which will surely tell us that this is a AccessCase::ArrayLength.
             // https://bugs.webkit.org/show_bug.cgi?id=154990
-            auto uid = m_graph.identifiers()[node->identifierNumber()];
+            UniquedStringImpl* uid = node->cacheableIdentifier().uid();
             if (node->child1()->shouldSpeculateCellOrOther()
                 && !m_graph.hasExitSite(node->origin.semantic, BadType)
                 && !m_graph.hasExitSite(node->origin.semantic, BadCache)
@@ -1698,8 +1699,7 @@ private:
                 && !m_graph.hasExitSite(node->origin.semantic, BadCache)
                 && !m_graph.hasExitSite(node->origin.semantic, BadIndexingType)
                 && !m_graph.hasExitSite(node->origin.semantic, ExoticObjectMode)) {
-                
-                auto uid = m_graph.identifiers()[node->identifierNumber()];
+                UniquedStringImpl* uid = node->cacheableIdentifier().uid();
                 
                 if (uid == vm().propertyNames->lastIndex.impl()
                     && node->child1()->shouldSpeculateRegExpObject()) {
@@ -3266,11 +3266,10 @@ private:
             Edge(searchRegExp, RegExpObjectUse));
 
         auto emitPrimordialCheckFor = [&] (JSValue primordialProperty, UniquedStringImpl* propertyUID) {
-            unsigned index = m_graph.identifiers().ensure(propertyUID);
-
+            m_graph.identifiers().ensure(propertyUID);
             Node* actualProperty = m_insertionSet.insertNode(
                 m_indexInBlock, SpecNone, TryGetById, node->origin,
-                OpInfo(index), OpInfo(SpecFunction), Edge(searchRegExp, CellUse));
+                OpInfo(CacheableIdentifier::createFromImmortalIdentifier(propertyUID)), OpInfo(SpecFunction), Edge(searchRegExp, CellUse));
 
             m_insertionSet.insertNode(
                 m_indexInBlock, SpecNone, CheckCell, node->origin,

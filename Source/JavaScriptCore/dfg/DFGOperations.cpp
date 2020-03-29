@@ -28,6 +28,7 @@
 
 #include "ArrayConstructor.h"
 #include "ButterflyInlines.h"
+#include "CacheableIdentifierInlines.h"
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
 #include "CommonSlowPaths.h"
@@ -1719,22 +1720,28 @@ EncodedJSValue JIT_OPERATION operationGetByValWithThis(JSGlobalObject* globalObj
     RELEASE_AND_RETURN(scope, JSValue::encode(baseValue.get(globalObject, property, slot)));
 }
 
-void JIT_OPERATION operationPutByIdWithThisStrict(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, UniquedStringImpl* impl)
+void JIT_OPERATION operationPutByIdWithThisStrict(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, uintptr_t rawCacheableIdentifier)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    putWithThis<true>(globalObject, encodedBase, encodedThis, encodedValue, Identifier::fromUid(vm, impl));
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
+
+    putWithThis<true>(globalObject, encodedBase, encodedThis, encodedValue, ident);
 }
 
-void JIT_OPERATION operationPutByIdWithThis(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, UniquedStringImpl* impl)
+void JIT_OPERATION operationPutByIdWithThis(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, uintptr_t rawCacheableIdentifier)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    putWithThis<false>(globalObject, encodedBase, encodedThis, encodedValue, Identifier::fromUid(vm, impl));
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
+
+    putWithThis<false>(globalObject, encodedBase, encodedThis, encodedValue, ident);
 }
 
 void JIT_OPERATION operationPutByValWithThisStrict(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)

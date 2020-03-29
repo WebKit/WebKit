@@ -1,3 +1,178 @@
+2020-03-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use CacheableIdentifier for all ById case
+        https://bugs.webkit.org/show_bug.cgi?id=209698
+
+        Reviewed by Saam Barati.
+
+        StructureStubInfo & AccessCase holds CacheableIdentifier to keep cell identifiers alive.
+        We are assuming that operationGetById...'s identifier is always owned by CodeBlock, and
+        we call CacheableIdentifier::createFromIdentifierOwnedByCodeBlock for UniquedStringImpl*.
+
+        This is wrong since GetById IC can be generated with identifier which is not owned by CodeBlock.
+        Let's consider the following case,
+
+            1. op_get_by_val gets GetById IC. CacheableIdentifier is kept by StructureStubInfo/AccessCase correctly.
+            2. This CodeBlock gets DFG.
+            3. DFG understand op_get_by_val and emit GetById DFG node since it only has one identifier.
+            4. Then, DFG can generate GetById DFG code which generates GetById IC
+            5. (4)'s GetById IC gets executed. But this IC considers that identifier is owned by CodeBlock since this is ById IC.
+            6. New DFG CodeBlock starts compilation. And it gets feedback from (2)'s get_by_val's StructureStubInfo, so it emits GetById with non-cell CacheableIdentifier!
+               So it does not retain the cell. It just registers desired identifier.
+            7. While compiling (6) (after parsing bytecode), (2)'s CodeBlock's DFG code & IC gets jettisoned. And then, identifier used in (6) gets destroyed too.
+            8. (6)'s CodeBlock finalizes its compilation, registering desired identifiers to the actual CodeBlock. And it found the identifier gets destroyed.
+
+        In this patch,
+
+            1. CacheableIdentifier::createFromIdentifierOwnedByCodeBlock is called only when the creator knowns that this is owned by the CodeBlock.
+               Typically, this is when the code generator generates IC.
+            2. operationGetById... functions get CacheableIdentifier instead of UniquedStringImpl*. So it propagates whether the given CacheableIdentifier
+               is created from CodeBlock's identifier or cells.
+            3. AccessCase holds this propagated CacheableIdentifiers. If CacheableIdentifiers is created from a cell in some tier's IC, then it continues to be represented as
+               a cell-origin CacheableIdentifiers regardless of whether the current IC is GetById / GetByVal. Then GC marks it correctly.
+            4. This patch does the same thing to all the ICs.
+            5. This patch extends StructureStubInfo / AccessCase to pave the way to use them in PutByVal / InByVal by introducing CacheableIdentifier for Put and In.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::fromStructureStubInfo):
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initGetByIdSelf):
+        (JSC::StructureStubInfo::initPutByIdReplace):
+        (JSC::StructureStubInfo::initInByIdSelf):
+        (JSC::StructureStubInfo::visitAggregate):
+        (JSC::StructureStubInfo::setCacheType):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::identifier):
+        (JSC::StructureStubInfo::considerCachingBy):
+        (JSC::StructureStubInfo::getByIdSelfIdentifier): Deleted.
+        (JSC::StructureStubInfo::considerCachingById): Deleted.
+        (JSC::StructureStubInfo::considerCachingByVal): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::canBecomeGetArrayLength):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::emitPutById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::addStringReplacePrimordialChecks):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToInById):
+        (JSC::DFG::Node::hasCacheableIdentifier):
+        (JSC::DFG::Node::cacheableIdentifier):
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::OpInfoWrapper::OpInfoWrapper):
+        (JSC::DFG::Node::OpInfoWrapper::operator=):
+        * dfg/DFGOpInfo.h:
+        (JSC::DFG::OpInfo::OpInfo):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetById):
+        (JSC::DFG::SpeculativeJIT::compileGetByIdFlush):
+        (JSC::DFG::SpeculativeJIT::compileInById):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdFlush):
+        (JSC::DFG::SpeculativeJIT::compilePutById):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdDirect):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileDeleteById):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileDeleteById):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDeleteById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInById):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        (JSC::FTL::DFG::LowerDFGToB3::getByIdWithThis):
+        * jit/JIT.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator):
+        (JSC::JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator):
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        (JSC::JITPutByIdGenerator::slowPathFunction):
+        (JSC::JITDelByIdGenerator::JITDelByIdGenerator):
+        (JSC::JITInByIdGenerator::JITInByIdGenerator):
+        * jit/JITInlineCacheGenerator.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emitSlow_op_del_by_id):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        (JSC::JIT::emitByValIdentifierCheck):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        * jit/Repatch.cpp:
+        (JSC::appropriateGenericPutByIdFunction):
+        (JSC::appropriateOptimizingPutByIdFunction):
+        (JSC::tryCachePutByID):
+        (JSC::repatchPutByID):
+        (JSC::tryCacheInByID):
+        (JSC::repatchInByID):
+        (JSC::resetPutByID):
+        * jit/Repatch.h:
+        * runtime/CacheableIdentifier.cpp:
+        (JSC::CacheableIdentifier::dump const):
+        * runtime/CacheableIdentifier.h:
+        (JSC::CacheableIdentifier::createFromRawBits):
+        (JSC::CacheableIdentifier::rawBits const):
+        (JSC::CacheableIdentifier::CacheableIdentifier):
+        * runtime/CacheableIdentifierInlines.h:
+        (JSC::CacheableIdentifier::createFromIdentifierOwnedByCodeBlock):
+        (JSC::CacheableIdentifier::createFromImmortalIdentifier):
+        (JSC::CacheableIdentifier::CacheableIdentifier):
+
 2020-03-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: support editing cookie key/values from inspector

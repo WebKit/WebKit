@@ -33,7 +33,13 @@ namespace JSC {
 
 void CacheableIdentifier::dump(PrintStream& out) const
 {
-    out.print(m_bits ? uid() : StringImpl::empty());
+    if (!m_bits) {
+        out.print(StringImpl::empty());
+        return;
+    }
+    out.print("uid:(", uid(), ")");
+    if (isCell())
+        out.print(",cell:(", JSValue(cell()), ")");
 }
 
 } // namespace JSC

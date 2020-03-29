@@ -35,9 +35,31 @@
 
 namespace JSC {
 
-inline CacheableIdentifier CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(const Identifier& i)
+inline CacheableIdentifier CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(CodeBlock* codeBlock, const Identifier& i)
 {
-    return CacheableIdentifier(i);
+    return createFromIdentifierOwnedByCodeBlock(codeBlock, i.impl());
+}
+
+inline CacheableIdentifier CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(CodeBlock* codeBlock, UniquedStringImpl* uid)
+{
+    UNUSED_PARAM(codeBlock);
+#if ASSERT_ENABLED
+    bool found = false;
+    for (unsigned index = 0; index < codeBlock->numberOfIdentifiers(); ++index) {
+        const Identifier& identifier = codeBlock->identifier(index);
+        if (identifier.impl() == uid) {
+            found = true;
+            break;
+        }
+    }
+    ASSERT(found);
+#endif
+    return CacheableIdentifier(uid);
+}
+
+inline CacheableIdentifier CacheableIdentifier::createFromImmortalIdentifier(UniquedStringImpl* uid)
+{
+    return CacheableIdentifier(uid);
 }
 
 inline CacheableIdentifier CacheableIdentifier::createFromCell(JSCell* i)
@@ -45,9 +67,9 @@ inline CacheableIdentifier CacheableIdentifier::createFromCell(JSCell* i)
     return CacheableIdentifier(i);
 }
 
-inline CacheableIdentifier::CacheableIdentifier(const Identifier& identifier)
+inline CacheableIdentifier::CacheableIdentifier(UniquedStringImpl* uid)
 {
-    setUidBits(identifier.impl());
+    setUidBits(uid);
 }
 
 inline CacheableIdentifier::CacheableIdentifier(JSCell* identifier)

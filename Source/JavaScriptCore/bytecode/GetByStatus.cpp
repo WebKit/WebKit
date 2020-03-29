@@ -184,7 +184,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
         Structure* structure = stubInfo->u.byIdSelf.baseObjectStructure.get();
         if (structure->takesSlowPathInDFGForImpureProperty())
             return GetByStatus(JSC::slowVersion(summary), *stubInfo);
-        CacheableIdentifier identifier = stubInfo->getByIdSelfIdentifier();
+        CacheableIdentifier identifier = stubInfo->identifier();
         UniquedStringImpl* uid = identifier.uid();
         RELEASE_ASSERT(uid);
         GetByIdVariant variant(WTFMove(identifier));
