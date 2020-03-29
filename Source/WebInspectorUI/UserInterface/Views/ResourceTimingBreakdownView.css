@@ -64,9 +64,11 @@
 }
 
 .resource-timing-breakdown .waterfall .block {
-    top: 1px;
-    height: 14px;
+    top: 1px !important;
+    height: 14px !important;
 }
+
+/* Additional styles used from `WI.NetworkTableContentView`. */
 
 @media (prefers-color-scheme: dark) {
     .resource-timing-breakdown > table > tr.header:not(.total-row) > td {

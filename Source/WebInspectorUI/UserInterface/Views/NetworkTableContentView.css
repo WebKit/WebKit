@@ -50,7 +50,7 @@
     -webkit-margin-end: 4px;
 }
 
-.network-table > .table li:not(.selected) .cell:not(.current-session) {
+.network-table > .table li:not(.filler, .selected) .cell:not(.current-session) {
     opacity: 0.5;
 }
 
@@ -114,10 +114,6 @@ body[dir=rtl] .network-table > .table .cell.dom-node.name .disclosure {
 
 .network-table > .table li:not(.selected) .cell:matches(.cache-type, .multiple) {
     color: var(--text-color-gray-medium);
-}
-
-.network-table > .table .error {
-    color: var(--error-text-color);
 }
 
 .network-table > .table .cell.domain > .lock {
@@ -236,7 +232,13 @@ body[dir=rtl] .network-table > .table .cell.name > .status {
     font-weight: normal;
 }
 
-.network-table > .table .waterfall .block {
+/* Styles also used by `WI.ResourceTimingBreakdownView`. */
+
+.network-table .error {
+    color: var(--error-text-color);
+}
+
+.network-table .waterfall .block {
     position: absolute;
     top: 8px;
     min-width: 2px;
@@ -246,14 +248,14 @@ body[dir=rtl] .network-table > .table .cell.name > .status {
     --end-radius: 2px;
 }
 
-body[dir=ltr] .network-table > .table .waterfall .block {
+body[dir=ltr] .network-table .waterfall .block {
     border-top-left-radius: var(--start-radius);
     border-top-right-radius: var(--end-radius);
     border-bottom-left-radius: var(--start-radius);
     border-bottom-right-radius: var(--end-radius);
 }
 
-body[dir=rtl] .network-table > .table .waterfall .block {
+body[dir=rtl] .network-table .waterfall .block {
     border-top-left-radius: var(--end-radius);
     border-top-right-radius: var(--start-radius);
     border-bottom-left-radius: var(--end-radius);
@@ -274,49 +276,49 @@ body[dir=rtl] .network-table > .table .waterfall .block {
     --end-radius: 2px;
 }
 
-.network-table > .table .waterfall .block.request,
-.network-table > .table .waterfall .block.response {
+.network-table .waterfall .block.request,
+.network-table .waterfall .block.response {
     top: 3px;
     height: 14px;
 }
 
-.network-table > .table .waterfall .block.mouse-tracking {
+.network-table .waterfall .block.mouse-tracking {
     top: 1px;
     z-index: 2;
     height: 18px;
 }
 
-.network-table > .table .waterfall .block.filler {
+.network-table .waterfall .block.filler {
     top: 9px;
     height: 2px;
     background-color: lightgrey;
 }
 
-.network-table > .table .waterfall .block.redirect {
+.network-table .waterfall .block.redirect {
     background-color: var(--network-redirect-color);
 }
 
-.network-table > .table .waterfall .block.queue {
+.network-table .waterfall .block.queue {
     background-color: var(--network-queue-color);
 }
 
-.network-table > .table .waterfall .block.dns {
+.network-table .waterfall .block.dns {
     background-color: var(--network-dns-color);
 }
 
-.network-table > .table .waterfall .block.connect {
+.network-table .waterfall .block.connect {
     background-color: var(--network-connect-color);
 }
 
-.network-table > .table .waterfall .block.secure {
+.network-table .waterfall .block.secure {
     background-color: var(--network-secure-color);
 }
 
-.network-table > .table .waterfall .block.request {
+.network-table .waterfall .block.request {
     background-color: var(--network-request-color);
 }
 
-.network-table > .table .waterfall .block.response {
+.network-table .waterfall .block.response {
     background-color: var(--network-response-color);
 }
 
