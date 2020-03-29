@@ -41,6 +41,10 @@
 // This needs to be here because Document.h also depends on it.
 #define DUMP_NODE_STATISTICS 0
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class ContainerNode;
@@ -788,6 +792,8 @@ inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
 }
 
 bool areNodesConnectedInSameTreeScope(const Node*, const Node*);
+
+WTF::TextStream& operator<<(WTF::TextStream&, const Node&);
 
 } // namespace WebCore
 

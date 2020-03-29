@@ -27,6 +27,7 @@
 #include "ScrollLatchingState.h"
 
 #include "Element.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -61,6 +62,22 @@ void ScrollLatchingState::setPreviousWheelScrolledElement(RefPtr<Element>&& elem
 void ScrollLatchingState::setScrollableContainer(RefPtr<ContainerNode>&& container)
 {
     m_scrollableContainer = WTFMove(container);
+}
+
+TextStream& operator<<(TextStream& ts, const ScrollLatchingState& state)
+{
+    TextStream multilineStream;
+    multilineStream.setIndent(ts.indent() + 2);
+
+    multilineStream.dumpProperty("element", state.wheelEventElement());
+    multilineStream.dumpProperty("previousElement", state.previousWheelScrolledElement());
+    multilineStream.dumpProperty("scrollable container", state.scrollableContainer());
+    multilineStream.dumpProperty("widgetIsLatched", state.widgetIsLatched());
+    multilineStream.dumpProperty("started at limit", state.startedGestureAtScrollLimit());
+
+    ts << "ScrollLatchingState " << multilineStream.release();
+
+    return ts;
 }
 
 }

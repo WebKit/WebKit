@@ -93,6 +93,7 @@ namespace WebCore {
     M(ResourceLoadObserver) \
     M(ResourceLoadStatistics) \
     M(Scrolling) \
+    M(ScrollLatching) \
     M(Services) \
     M(ServiceWorker) \
     M(SpellingAndGrammar) \

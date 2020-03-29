@@ -28,6 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/Optional.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTF {
@@ -176,6 +177,24 @@ inline TextStream& indent(TextStream& ts)
     return ts;
 }
 
+template<typename T>
+struct ValueOrNull {
+    explicit ValueOrNull(T* inValue)
+        : value(inValue)
+    { }
+    T* value;
+};
+
+template<typename T>
+TextStream& operator<<(TextStream& ts, ValueOrNull<T> item)
+{
+    if (item.value)
+        ts << *item.value;
+    else
+        ts << "null";
+    return ts;
+}
+
 template<typename Item>
 TextStream& operator<<(TextStream& ts, const Optional<Item>& item)
 {
@@ -207,6 +226,15 @@ TextStream& operator<<(TextStream& ts, const Vector<Item>& vector)
     }
 
     return ts << "]";
+}
+
+template<typename T>
+TextStream& operator<<(TextStream& ts, const WeakPtr<T>& item)
+{
+    if (item)
+        return ts << *item;
+    
+    return ts << "null";
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
@@ -261,4 +289,5 @@ WTF_EXPORT_PRIVATE void writeIndent(TextStream&, int indent);
 } // namespace WTF
 
 using WTF::TextStream;
+using WTF::ValueOrNull;
 using WTF::indent;

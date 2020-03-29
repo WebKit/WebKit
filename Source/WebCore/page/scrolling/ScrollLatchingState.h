@@ -27,6 +27,10 @@
 
 #include <wtf/RefPtr.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class ContainerNode;
@@ -40,18 +44,18 @@ public:
 
     void clear();
 
-    Element* wheelEventElement() { return m_wheelEventElement.get(); }
+    Element* wheelEventElement() const { return m_wheelEventElement.get(); }
     void setWheelEventElement(RefPtr<Element>&&);
-    Frame* frame() { return m_frame; }
+    Frame* frame() const { return m_frame; }
     void setFrame(Frame* frame) { m_frame = frame; }
 
     bool widgetIsLatched() const { return m_widgetIsLatched; }
     void setWidgetIsLatched(bool isOverWidget);
 
-    Element* previousWheelScrolledElement() { return m_previousWheelScrolledElement.get(); }
+    Element* previousWheelScrolledElement() const { return m_previousWheelScrolledElement.get(); }
     void setPreviousWheelScrolledElement(RefPtr<Element>&&);
     
-    ContainerNode* scrollableContainer() { return m_scrollableContainer.get(); }
+    ContainerNode* scrollableContainer() const { return m_scrollableContainer.get(); }
     void setScrollableContainer(RefPtr<ContainerNode>&&);
     bool startedGestureAtScrollLimit() const { return m_startedGestureAtScrollLimit; }
     void setStartedGestureAtScrollLimit(bool startedAtLimit) { m_startedGestureAtScrollLimit = startedAtLimit; }
@@ -66,5 +70,7 @@ private:
     bool m_widgetIsLatched { false };
     bool m_startedGestureAtScrollLimit { false };
 };
-    
+
+WTF::TextStream& operator<<(WTF::TextStream&, const ScrollLatchingState&);
+
 } // namespace WebCore

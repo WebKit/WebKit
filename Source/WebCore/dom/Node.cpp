@@ -83,6 +83,7 @@
 #include <wtf/Variant.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -2610,6 +2611,20 @@ void* Node::opaqueRootSlow() const
         node = nextNode;
     }
     return const_cast<void*>(static_cast<const void*>(node));
+}
+
+TextStream& operator<<(TextStream& ts, const Node& node)
+{
+#if ENABLE(TREE_DEBUGGING)
+    const size_t FormatBufferSize = 512;
+    char s[FormatBufferSize];
+    node.formatForDebugger(s, FormatBufferSize);
+    ts << "node " << &node << " " << s;
+#else
+    ts << "node " << &node << " " << node.nodeName();
+#endif
+
+    return ts;
 }
 
 } // namespace WebCore

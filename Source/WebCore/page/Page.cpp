@@ -2950,9 +2950,9 @@ ScrollLatchingState* Page::latchingState()
     return &m_latchingState.last();
 }
 
-void Page::pushNewLatchingState()
+void Page::pushNewLatchingState(ScrollLatchingState&& state)
 {
-    m_latchingState.append(ScrollLatchingState());
+    m_latchingState.append(WTFMove(state));
 }
 
 void Page::resetLatchingState()
@@ -2963,6 +2963,7 @@ void Page::resetLatchingState()
 void Page::popLatchingState()
 {
     m_latchingState.removeLast();
+    LOG_WITH_STREAM(ScrollLatching, stream << "Page::popLatchingState() - new state " << m_latchingState);
 }
 
 void Page::removeLatchingStateForTarget(Element& targetNode)
@@ -2977,6 +2978,7 @@ void Page::removeLatchingStateForTarget(Element& targetNode)
 
         return targetNode.isEqualNode(wheelElement);
     });
+    LOG_WITH_STREAM(ScrollLatching, stream << "Page::removeLatchingStateForTarget() - new state " << m_latchingState);
 }
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 

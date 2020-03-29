@@ -2896,6 +2896,7 @@ void EventHandler::clearLatchedState()
         return;
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
+    LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::clearLatchedState()");
     page->resetLatchingState();
 #endif
     if (auto filter = page->wheelEventDeltaFilter())

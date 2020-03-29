@@ -430,7 +430,8 @@ public:
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     ScrollLatchingState* latchingState();
-    void pushNewLatchingState();
+    const Vector<ScrollLatchingState>& latchingStateStack() const { return m_latchingState; }
+    void pushNewLatchingState(ScrollLatchingState&&);
     void popLatchingState();
     void resetLatchingState();
     void removeLatchingStateForTarget(Element&);
