@@ -127,7 +127,7 @@ public:
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
 
-    const ContainerBox* parent() const { return m_parent; }
+    const ContainerBox& parent() const { return *m_parent; }
     const Box* nextSibling() const { return m_nextSibling; }
     const Box* nextInFlowSibling() const;
     const Box* nextInFlowOrFloatingSibling() const;

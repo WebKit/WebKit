@@ -232,15 +232,13 @@ LayoutUnit FormattingContext::Geometry::staticVerticalPositionForOutOfFlowPositi
         // Add sibling offset
         auto& previousInFlowBoxGeometry = formattingContext.geometryForBox(*layoutBox.previousInFlowSibling(), EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         top += previousInFlowBoxGeometry.bottom() + previousInFlowBoxGeometry.nonCollapsedMarginAfter();
-    } else {
-        ASSERT(layoutBox.parent());
-        top = formattingContext.geometryForBox(*layoutBox.parent(), EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxTop();
-    }
+    } else
+        top = formattingContext.geometryForBox(layoutBox.parent(), EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxTop();
 
     // Resolve top all the way up to the containing block.
     auto& containingBlock = layoutBox.containingBlock();
     // Start with the parent since we pretend that this box is normal flow.
-    for (auto* ancestor = layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
+    for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // Display::Box::top is the border box top position in its containing block's coordinate system.
         top += boxGeometry.top();
@@ -257,13 +255,12 @@ LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPosi
 
     // Start with this box's border box offset from the parent's border box.
     auto& formattingContext = this->formattingContext();
-    ASSERT(layoutBox.parent());
-    auto left = formattingContext.geometryForBox(*layoutBox.parent(), EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxLeft();
+    auto left = formattingContext.geometryForBox(layoutBox.parent(), EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxLeft();
 
     // Resolve left all the way up to the containing block.
     auto& containingBlock = layoutBox.containingBlock();
     // Start with the parent since we pretend that this box is normal flow.
-    for (auto* ancestor = layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
+    for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // Display::Box::left is the border box left position in its containing block's coordinate system.
         left += boxGeometry.left();

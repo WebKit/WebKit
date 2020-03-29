@@ -68,7 +68,7 @@ static inline const Box* nextInlineLevelBoxToLayout(const Box& layoutBox, const 
         }
     }
 
-    for (auto* nextInPreOrder = &layoutBox; nextInPreOrder && nextInPreOrder != &stayWithin; nextInPreOrder = nextInPreOrder->parent()) {
+    for (auto* nextInPreOrder = &layoutBox; nextInPreOrder && nextInPreOrder != &stayWithin; nextInPreOrder = &nextInPreOrder->parent()) {
         if (auto* nextSibling = nextInPreOrder->nextInFlowOrFloatingSibling())
             return nextSibling;
     }
@@ -427,7 +427,7 @@ LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const Horiz
             // For example, the first line of an anonymous block box is only affected if it is the first child of its parent element.
             isFormattingContextRootCandidateToTextIndent = RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()
                 ? layoutState().isIntegratedRootBoxFirstChild()
-                : root.parent()->firstInFlowChild() == &root;
+                : root.parent().firstInFlowChild() == &root;
         }
         if (!isFormattingContextRootCandidateToTextIndent)
             return InlineLayoutUnit { };

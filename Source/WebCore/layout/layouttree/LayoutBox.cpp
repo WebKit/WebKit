@@ -192,8 +192,8 @@ const ContainerBox& Box::containingBlock() const
     // If the element has 'position: absolute', the containing block is established by the nearest ancestor with a
     // 'position' of 'absolute', 'relative' or 'fixed'.
     if (!isPositioned() || isInFlowPositioned()) {
-        auto* ancestor = parent();
-        for (; !is<InitialContainingBlock>(*ancestor); ancestor = ancestor->parent()) {
+        auto* ancestor = &parent();
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
             if (ancestor->isBlockContainerBox() || ancestor->establishesFormattingContext())
                 return *ancestor;
         }
@@ -201,8 +201,8 @@ const ContainerBox& Box::containingBlock() const
     }
 
     if (isFixedPositioned()) {
-        auto* ancestor = parent();
-        for (; !is<InitialContainingBlock>(*ancestor); ancestor = ancestor->parent()) {
+        auto* ancestor = &parent();
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
             if (ancestor->style().hasTransform())
                 return *ancestor;
         }
@@ -210,8 +210,8 @@ const ContainerBox& Box::containingBlock() const
     }
 
     if (isOutOfFlowPositioned()) {
-        auto* ancestor = parent();
-        for (; !is<InitialContainingBlock>(*ancestor); ancestor = ancestor->parent()) {
+        auto* ancestor = &parent();
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
             if (ancestor->isPositioned() || ancestor->style().hasTransform())
                 return *ancestor;
         }
@@ -235,7 +235,7 @@ const ContainerBox& Box::formattingContextRoot() const
     // <div id=outer style="position: absolute"><div id=inner><span style="position: relative">content</span></div></div>
     // While the relatively positioned inline container (span) is placed relative to its containing block "outer", it lives in the inline
     // formatting context established by "inner".
-    auto& ancestor = isInlineLevelBox() && isInFlowPositioned() ? *parent() : containingBlock();
+    auto& ancestor = isInlineLevelBox() && isInFlowPositioned() ? parent() : containingBlock();
     if (ancestor.establishesFormattingContext())
         return ancestor;
     return ancestor.formattingContextRoot();
@@ -246,9 +246,8 @@ const InitialContainingBlock& Box::initialContainingBlock() const
     if (is<InitialContainingBlock>(*this))
         return downcast<InitialContainingBlock>(*this);
 
-    auto* ancestor = parent();
-    for (; ancestor->parent(); ancestor = ancestor->parent()) { }
-
+    auto* ancestor = &parent();
+    for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) { }
     return downcast<InitialContainingBlock>(*ancestor);
 }
 
@@ -353,11 +352,10 @@ bool Box::isOverflowVisible() const
     // if the value on the root element is 'visible'. The 'visible' value when used for the viewport must be interpreted as 'auto'.
     // The element from which the value is propagated must have a used value for 'overflow' of 'visible'.
     if (isBodyBox()) {
-        auto* documentBox = parent();
-        ASSERT(documentBox);
-        if (!documentBox->isDocumentBox())
+        auto& documentBox = parent();
+        if (!documentBox.isDocumentBox())
             return isOverflowVisible;
-        if (!documentBox->isOverflowVisible())
+        if (!documentBox.isOverflowVisible())
             return isOverflowVisible;
         return true;
     }

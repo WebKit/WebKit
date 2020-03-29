@@ -40,7 +40,7 @@ public:
     virtual ~InitialContainingBlock() = default;
 
 private:
-    const ContainerBox* parent() const = delete;
+    const ContainerBox& parent() const = delete;
     const Box* nextSibling() const = delete;
     const Box* nextInFlowSibling() const = delete;
     const Box* nextInFlowOrFloatingSibling() const = delete;

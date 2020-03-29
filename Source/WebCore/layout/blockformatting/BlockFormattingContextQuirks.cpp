@@ -86,7 +86,7 @@ LayoutUnit BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box& layo
     usedVerticalMargin += collapsedMargin.isCollapsedThrough ? nonCollapsedMargin.after : collapsedMargin.after.valueOr(nonCollapsedMargin.after);
     bodyBoxContentHeight -= usedVerticalMargin;
     // Document box's padding and border also shrink the body box's content height.
-    auto& documentBox = *layoutBox.parent();
+    auto& documentBox = layoutBox.parent();
     auto& documentBoxGeometry = formattingContext.geometryForBox(documentBox, EscapeReason::BodyStrechesToViewportQuirk);
     bodyBoxContentHeight -= documentBoxGeometry.verticalBorder() + documentBoxGeometry.verticalPadding().valueOr(0);
     // However the non-in-flow document box's vertical margins are ignored. They don't affect the body box's content height.

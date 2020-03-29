@@ -157,7 +157,7 @@ void TableGrid::appendCell(const Box& tableCellBox)
         m_columnsContext.addColumn();
 
     if (isInNewRow)
-        m_rows.append({ *tableCellBox.parent() });
+        m_rows.append({ tableCellBox.parent() });
 
     m_cellList.add(WTFMove(cellInfo));
 }

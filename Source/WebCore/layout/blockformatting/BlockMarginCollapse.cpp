@@ -97,7 +97,7 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarg
     // 1. This is the last in-flow child and its margins collapse through and the margin after collapses with parent's margin after or
     // 2. This box's margin after collapses with the next sibling's margin before and that sibling collapses through and
     // we can get to the last in-flow child like that.
-    auto* lastInFlowChild = layoutBox.parent()->lastInFlowChild();
+    auto* lastInFlowChild = layoutBox.parent().lastInFlowChild();
     for (auto* currentBox = &layoutBox; currentBox; currentBox = currentBox->nextInFlowSibling()) {
         if (!marginsCollapseThrough(*currentBox))
             return false;
@@ -132,7 +132,7 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarg
     if (layoutBox.previousInFlowSibling())
         return false;
 
-    auto& parent = *layoutBox.parent();
+    auto& parent = layoutBox.parent();
     // Margins of elements that establish new block formatting contexts do not collapse with their in-flow children
     if (establishesBlockFormattingContext(parent))
         return false;
@@ -234,7 +234,7 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMargi
     // 1. This is the first in-flow child and its margins collapse through and the margin before collapses with parent's margin before or
     // 2. This box's margin before collapses with the previous sibling's margin after and that sibling collapses through and
     // we can get to the first in-flow child like that.
-    auto* firstInFlowChild = layoutBox.parent()->firstInFlowChild();
+    auto* firstInFlowChild = layoutBox.parent().firstInFlowChild();
     for (auto* currentBox = &layoutBox; currentBox; currentBox = currentBox->previousInFlowSibling()) {
         if (!marginsCollapseThrough(*currentBox))
             return false;
@@ -267,7 +267,7 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMargi
     if (layoutBox.nextInFlowSibling())
         return false;
 
-    auto& parent = *layoutBox.parent();
+    auto& parent = layoutBox.parent();
     // Margins of elements that establish new block formatting contexts do not collapse with their in-flow children.
     if (establishesBlockFormattingContext(parent))
         return false;

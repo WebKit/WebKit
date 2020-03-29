@@ -69,10 +69,10 @@ inline const Box* firstChild(const Box& box)
     return nullptr;
 }
 
-inline const Box* nextAncestorSibling(const Box& current, const ContainerBox* stayWithin)
+inline const Box* nextAncestorSibling(const Box& current, const ContainerBox& stayWithin)
 {
-    for (auto* ancestor = current.parent(); ancestor; ancestor = ancestor->parent()) {
-        if (ancestor == stayWithin)
+    for (auto* ancestor = &current.parent(); !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
+        if (ancestor == &stayWithin)
             return nullptr;
         if (auto* sibling = ancestor->nextSibling())
             return sibling;
@@ -81,12 +81,12 @@ inline const Box* nextAncestorSibling(const Box& current, const ContainerBox* st
 }
 
 template <typename U>
-inline const Box* next(const U& current, const ContainerBox* stayWithin)
+inline const Box* next(const U& current, const ContainerBox& stayWithin)
 {
     if (auto* child = firstChild(current))
         return child;
 
-    if (&current == stayWithin)
+    if (&current == &stayWithin)
         return nullptr;
 
     if (auto* sibling = current.nextSibling())
@@ -122,12 +122,12 @@ inline const T* firstWithin(const U& stayWithin)
 {
     auto* descendant = LayoutBoxTraversal::firstChild(stayWithin);
     while (descendant && !isLayoutBoxOfType<T>(*descendant))
-        descendant = LayoutBoxTraversal::next(*descendant, &stayWithin);
+        descendant = LayoutBoxTraversal::next(*descendant, stayWithin);
     return static_cast<const T*>(descendant);
 }
 
 template <typename T, typename U>
-inline const T* next(const U& current, const ContainerBox* stayWithin)
+inline const T* next(const U& current, const ContainerBox& stayWithin)
 {
     auto* descendant = LayoutBoxTraversal::next(current, stayWithin);
     while (descendant && !isLayoutBoxOfType<T>(*descendant))
@@ -165,7 +165,7 @@ template <typename T>
 inline LayoutIterator<T>& LayoutIterator<T>::traverseNext()
 {
     ASSERT(m_current);
-    m_current = Traversal::next<T>(*m_current, m_root);
+    m_current = Traversal::next<T>(*m_current, *m_root);
     return *this;
 }
 
