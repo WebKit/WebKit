@@ -1,3 +1,17 @@
+2020-03-29  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r257867): [GPUP] Use-after-move in RemoteCDMInstance::createSession()
+        <https://webkit.org/b/209712>
+        <rdar://problem/61018795>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/GPU/media/RemoteCDMInstance.cpp:
+        (WebKit::RemoteCDMInstance::createSession): Fix use-after-move
+        by using RemoteCDMInstanceSession::identifier().
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.h:
+        (RemoteCDMInstanceSession::identifier): Add getter.
+
 2020-03-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: support editing cookie key/values from inspector

@@ -43,6 +43,8 @@ public:
     static Ref<RemoteCDMInstanceSession> create(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceSessionIdentifier&&);
     virtual ~RemoteCDMInstanceSession() = default;
 
+    RemoteCDMInstanceSessionIdentifier identifier() const { return m_identifier; }
+
 private:
     friend class RemoteCDMFactory;
     RemoteCDMInstanceSession(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceSessionIdentifier&&);
