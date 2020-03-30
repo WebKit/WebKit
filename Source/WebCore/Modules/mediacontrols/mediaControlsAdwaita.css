@@ -220,9 +220,7 @@ video::-webkit-media-controls-current-time-display.no-duration {
 }
 
 audio::-webkit-media-controls-current-time-display.hidden,
-video::-webkit-media-controls-current-time-display.hidden,
-audio::-webkit-media-controls-time-remaining-display.hidden,
-video::-webkit-media-controls-time-remaining-display.hidden {
+video::-webkit-media-controls-current-time-display.hidden {
     display: none !important;
 }
 
