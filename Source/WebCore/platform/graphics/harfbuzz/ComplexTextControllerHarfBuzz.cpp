@@ -28,6 +28,7 @@
 
 #include "CairoUtilities.h"
 #include "FontCascade.h"
+#include "FontTaggedSettings.h"
 #include "HbUniquePtr.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include <hb-ft.h>
@@ -175,28 +176,226 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const
     m_initialAdvance = toFloatSize(m_glyphOrigins[0]);
 }
 
-static const hb_tag_t s_vertTag = HB_TAG('v', 'e', 'r', 't');
-static const hb_tag_t s_vrt2Tag = HB_TAG('v', 'r', 't', '2');
-static const hb_tag_t s_kernTag = HB_TAG('k', 'e', 'r', 'n');
-static const unsigned s_hbEnd = static_cast<unsigned>(-1);
+using FeaturesMap = HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits>;
 
-static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, FontOrientation orientation)
+static void setFeatureSettingsFromVariants(const FontVariantSettings& variantSettings, FeaturesMap& features)
 {
-    Vector<hb_feature_t, 4> features;
-
-    if (orientation == FontOrientation::Vertical) {
-        features.append({ s_vertTag, 1, 0, s_hbEnd });
-        features.append({ s_vrt2Tag, 1, 0, s_hbEnd });
+    switch (variantSettings.commonLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        features.set(fontFeatureTag("liga"), 1);
+        features.set(fontFeatureTag("clig"), 1);
+        break;
+    case FontVariantLigatures::No:
+        features.set(fontFeatureTag("liga"), 0);
+        features.set(fontFeatureTag("clig"), 0);
+        break;
     }
 
-    hb_feature_t kerning = { s_kernTag, 0, 0, s_hbEnd };
-    if (font.enableKerning())
-        kerning.value = 1;
-    features.append(WTFMove(kerning));
+    switch (variantSettings.discretionaryLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        features.set(fontFeatureTag("dlig"), 1);
+        break;
+    case FontVariantLigatures::No:
+        features.set(fontFeatureTag("dlig"), 0);
+        break;
+    }
 
-    for (auto& feature : font.fontDescription().featureSettings()) {
-        auto& tag = feature.tag();
-        features.append({ HB_TAG(tag[0], tag[1], tag[2], tag[3]), static_cast<uint32_t>(feature.value()), 0, s_hbEnd });
+    switch (variantSettings.historicalLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        features.set(fontFeatureTag("hlig"), 1);
+        break;
+    case FontVariantLigatures::No:
+        features.set(fontFeatureTag("hlig"), 0);
+        break;
+    }
+
+    switch (variantSettings.contextualAlternates) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        features.set(fontFeatureTag("calt"), 1);
+        break;
+    case FontVariantLigatures::No:
+        features.set(fontFeatureTag("calt"), 0);
+        break;
+    }
+
+    switch (variantSettings.position) {
+    case FontVariantPosition::Normal:
+        break;
+    case FontVariantPosition::Subscript:
+        features.set(fontFeatureTag("subs"), 1);
+        break;
+    case FontVariantPosition::Superscript:
+        features.set(fontFeatureTag("sups"), 1);
+        break;
+    }
+
+    switch (variantSettings.caps) {
+    case FontVariantCaps::Normal:
+        break;
+    case FontVariantCaps::AllSmall:
+        features.set(fontFeatureTag("c2sc"), 1);
+        FALLTHROUGH;
+    case FontVariantCaps::Small:
+        features.set(fontFeatureTag("smcp"), 1);
+        break;
+    case FontVariantCaps::AllPetite:
+        features.set(fontFeatureTag("c2pc"), 1);
+        FALLTHROUGH;
+    case FontVariantCaps::Petite:
+        features.set(fontFeatureTag("pcap"), 1);
+        break;
+    case FontVariantCaps::Unicase:
+        features.set(fontFeatureTag("unic"), 1);
+        break;
+    case FontVariantCaps::Titling:
+        features.set(fontFeatureTag("titl"), 1);
+        break;
+    }
+
+    switch (variantSettings.numericFigure) {
+    case FontVariantNumericFigure::Normal:
+        break;
+    case FontVariantNumericFigure::LiningNumbers:
+        features.set(fontFeatureTag("lnum"), 1);
+        break;
+    case FontVariantNumericFigure::OldStyleNumbers:
+        features.set(fontFeatureTag("onum"), 1);
+        break;
+    }
+
+    switch (variantSettings.numericSpacing) {
+    case FontVariantNumericSpacing::Normal:
+        break;
+    case FontVariantNumericSpacing::ProportionalNumbers:
+        features.set(fontFeatureTag("pnum"), 1);
+        break;
+    case FontVariantNumericSpacing::TabularNumbers:
+        features.set(fontFeatureTag("tnum"), 1);
+        break;
+    }
+
+    switch (variantSettings.numericFraction) {
+    case FontVariantNumericFraction::Normal:
+        break;
+    case FontVariantNumericFraction::DiagonalFractions:
+        features.set(fontFeatureTag("frac"), 1);
+        break;
+    case FontVariantNumericFraction::StackedFractions:
+        features.set(fontFeatureTag("afrc"), 1);
+        break;
+    }
+
+    switch (variantSettings.numericOrdinal) {
+    case FontVariantNumericOrdinal::Normal:
+        break;
+    case FontVariantNumericOrdinal::Yes:
+        features.set(fontFeatureTag("ordn"), 1);
+        break;
+    }
+
+    switch (variantSettings.numericSlashedZero) {
+    case FontVariantNumericSlashedZero::Normal:
+        break;
+    case FontVariantNumericSlashedZero::Yes:
+        features.set(fontFeatureTag("zero"), 1);
+        break;
+    }
+
+    switch (variantSettings.alternates) {
+    case FontVariantAlternates::Normal:
+        break;
+    case FontVariantAlternates::HistoricalForms:
+        features.set(fontFeatureTag("hist"), 1);
+        break;
+    }
+
+    switch (variantSettings.eastAsianVariant) {
+    case FontVariantEastAsianVariant::Normal:
+        break;
+    case FontVariantEastAsianVariant::Jis78:
+        features.set(fontFeatureTag("jp78"), 1);
+        break;
+    case FontVariantEastAsianVariant::Jis83:
+        features.set(fontFeatureTag("jp83"), 1);
+        break;
+    case FontVariantEastAsianVariant::Jis90:
+        features.set(fontFeatureTag("jp90"), 1);
+        break;
+    case FontVariantEastAsianVariant::Jis04:
+        features.set(fontFeatureTag("jp04"), 1);
+        break;
+    case FontVariantEastAsianVariant::Simplified:
+        features.set(fontFeatureTag("smpl"), 1);
+        break;
+    case FontVariantEastAsianVariant::Traditional:
+        features.set(fontFeatureTag("trad"), 1);
+        break;
+    }
+
+    switch (variantSettings.eastAsianWidth) {
+    case FontVariantEastAsianWidth::Normal:
+        break;
+    case FontVariantEastAsianWidth::Full:
+        features.set(fontFeatureTag("fwid"), 1);
+        break;
+    case FontVariantEastAsianWidth::Proportional:
+        features.set(fontFeatureTag("pwid"), 1);
+        break;
+    }
+
+    switch (variantSettings.eastAsianRuby) {
+    case FontVariantEastAsianRuby::Normal:
+        break;
+    case FontVariantEastAsianRuby::Yes:
+        features.set(fontFeatureTag("ruby"), 1);
+        break;
+    }
+}
+
+static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, const FontPlatformData& fontPlatformData)
+{
+    FeaturesMap featuresToBeApplied;
+
+    // 7.2. Feature precedence
+    // https://www.w3.org/TR/css-fonts-3/#feature-precedence
+
+    // 1. Font features enabled by default, including features required for a given script.
+
+    // 2. If the font is defined via an @font-face rule, the font features implied by the
+    //    font-feature-settings descriptor in the @font-face rule.
+    auto* fcPattern = fontPlatformData.fcPattern();
+    FcChar8* fcFontFeature;
+    for (int i = 0; FcPatternGetString(fcPattern, FC_FONT_FEATURES, i, &fcFontFeature) == FcResultMatch; ++i)
+        featuresToBeApplied.set(fontFeatureTag(reinterpret_cast<char*>(fcFontFeature)), 1);
+
+    // 3. Font features implied by the value of the ‘font-variant’ property, the related ‘font-variant’
+    //    subproperties and any other CSS property that uses OpenType features.
+    setFeatureSettingsFromVariants(font.fontDescription().variantSettings(), featuresToBeApplied);
+    featuresToBeApplied.set(fontFeatureTag("kern"), font.enableKerning() ? 1 : 0);
+
+    // 4. Feature settings determined by properties other than ‘font-variant’ or ‘font-feature-settings’.
+    if (fontPlatformData.orientation() == FontOrientation::Vertical) {
+        featuresToBeApplied.set(fontFeatureTag("vert"), 1);
+        featuresToBeApplied.set(fontFeatureTag("vrt2"), 1);
+    }
+
+    // 5. Font features implied by the value of ‘font-feature-settings’ property.
+    for (auto& feature : font.fontDescription().featureSettings())
+        featuresToBeApplied.set(feature.tag(), feature.value());
+
+    Vector<hb_feature_t, 4> features;
+    features.reserveInitialCapacity(featuresToBeApplied.size());
+    for (auto& iter : featuresToBeApplied) {
+        auto& tag = iter.key;
+        features.append({ HB_TAG(tag[0], tag[1], tag[2], tag[3]), static_cast<uint32_t>(iter.value), 0, static_cast<unsigned>(-1) });
     }
 
     return features;
@@ -276,8 +475,8 @@ static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)
         hb_ot_layout_script_get_language_tags(face, HB_OT_TAG_GSUB, scriptIndex, 0, &languageCount, languageTags);
         for (unsigned languageIndex = 0; languageIndex < languageCount; ++languageIndex) {
             unsigned featureIndex;
-            if (hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, s_vertTag, &featureIndex)
-                || hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, s_vrt2Tag, &featureIndex))
+            if (hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, HB_TAG('v', 'e', 'r', 't'), &featureIndex)
+                || hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, HB_TAG('v', 'r', 't', '2'), &featureIndex))
                 return hb_ot_tag_to_script(scriptTags[scriptIndex]);
         }
     }
@@ -341,7 +540,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cha
 
     hb_font_make_immutable(harfBuzzFont.get());
 
-    auto features = fontFeatures(m_font, fontPlatformData.orientation());
+    auto features = fontFeatures(m_font, fontPlatformData);
     HbUniquePtr<hb_buffer_t> buffer(hb_buffer_create());
     if (fontPlatformData.orientation() == FontOrientation::Vertical)
         hb_buffer_set_script(buffer.get(), findScriptForVerticalGlyphSubstitution(face.get()));

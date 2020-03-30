@@ -1,3 +1,15 @@
+2020-03-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [HarfBuzz] Not all CSS font features are applied
+        https://bugs.webkit.org/show_bug.cgi?id=209591
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove expectations for tests that are now passing.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-03-29  Antoine Quint  <graouts@apple.com>
 
         [AutoSizing] Bring back the old auto-sizing code as a deprecated codepath for compatibility reasons

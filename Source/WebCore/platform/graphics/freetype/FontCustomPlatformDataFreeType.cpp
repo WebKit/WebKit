@@ -75,12 +75,21 @@ static RefPtr<FcPattern> defaultFontconfigOptions()
     return adoptRef(FcPatternDuplicate(pattern));
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& description, bool bold, bool italic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities)
+FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& description, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, FontSelectionSpecifiedCapabilities)
 {
     auto* freeTypeFace = static_cast<FT_Face>(cairo_font_face_get_user_data(m_fontFace.get(), &freeTypeFaceKey));
     ASSERT(freeTypeFace);
     RefPtr<FcPattern> pattern = defaultFontconfigOptions();
     FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(freeTypeFace->family_name));
+
+    for (auto& fontFaceFeature : fontFaceFeatures) {
+        if (fontFaceFeature.enabled()) {
+            const auto& tag = fontFaceFeature.tag();
+            const char buffer[] = { tag[0], tag[1], tag[2], tag[3], '\0' };
+            FcPatternAddString(pattern.get(), FC_FONT_FEATURES, reinterpret_cast<const FcChar8*>(buffer));
+        }
+    }
+
 #if ENABLE(VARIATION_FONTS)
     auto variants = buildVariationSettings(freeTypeFace, description);
     if (!variants.isEmpty()) {
