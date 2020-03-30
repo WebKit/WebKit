@@ -604,7 +604,7 @@ Timeline.ExpandableSeriesWithHeaderExpanderComponent = (mainSeriesWithLable, opt
 Timeline.CanvasXAxisComponent = (scales, option = {}) => {
     // Get configuration
     const getScaleKey = typeof option.getScaleFunc === "function" ? option.getScaleFunc : (a) => a;
-    const comp = typeof option.compareFunc === "function" ? option.compareFunc : (a, b) => a - b;
+    const comp = typeof option.compareFunc === "function" ? option.compareFunc : (a, b) => b - a;
     const onScaleClick = typeof option.onScaleClick === "function" ? option.onScaleClick : null;
     const onScaleEnter = typeof option.onScaleEnter === "function" ? option.onScaleEnter : null;
     const onScaleLeave = typeof option.onScaleLeave === "function" ? option.onScaleLeave : null;
