@@ -1,3 +1,23 @@
+2020-03-30  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update baselines
+        https://bugs.webkit.org/show_bug.cgi?id=209724
+
+        Unreviewed gardening.
+
+        * platform/gtk/fast/forms/placeholder-position-expected.txt: Updated
+        after r258906.
+        * platform/gtk/fast/ruby/bopomofo-mixed-expected.txt: Added after
+        r258990.
+        * platform/gtk/fast/text/international/text-combine-image-test-expected.png:
+        Updated after r258990.
+        * platform/gtk/fast/text/international/text-combine-image-test-expected.txt:
+        Updated after r258990.
+        * platform/gtk/fast/writing-mode/vertical-align-table-baseline-expected.png:
+        Updated after r258990.
+        * platform/gtk/fast/writing-mode/vertical-align-table-baseline-expected.txt:
+        Updated after r258990.
+
 2020-03-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [HarfBuzz] Not all CSS font features are applied

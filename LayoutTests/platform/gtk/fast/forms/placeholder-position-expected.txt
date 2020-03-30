@@ -99,10 +99,10 @@ layer at (13,311) size 185x25
   RenderBlock {DIV} at (3,3) size 185x25
     RenderText {#text} at (0,4) size 41x17
       text run at (0,4) width 41: "Value"
-layer at (212,311) size 185x25
-  RenderBlock {DIV} at (3,3) size 185x25 [color=#A9A9A9]
-    RenderText {#text} at (0,4) size 84x17
-      text run at (0,4) width 84: "placeholder"
+layer at (212,315) size 185x18
+  RenderBlock {DIV} at (3,6) size 185x19 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 84x17
+      text run at (0,0) width 84: "placeholder"
 layer at (212,311) size 185x25
   RenderBlock {DIV} at (3,3) size 185x25
 layer at (13,346) size 185x18
