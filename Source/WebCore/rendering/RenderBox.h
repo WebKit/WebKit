@@ -212,8 +212,8 @@ public:
     void updateLayerTransform();
 
     LayoutSize contentSize() const { return { contentWidth(), contentHeight() }; }
-    LayoutUnit contentWidth() const { return paddingBoxWidth() - paddingLeft() - paddingRight(); }
-    LayoutUnit contentHeight() const { return paddingBoxHeight() - paddingTop() - paddingBottom(); }
+    LayoutUnit contentWidth() const { return std::max(0_lu, paddingBoxWidth() - paddingLeft() - paddingRight()); }
+    LayoutUnit contentHeight() const { return std::max(0_lu, paddingBoxHeight() - paddingTop() - paddingBottom()); }
     LayoutUnit contentLogicalWidth() const { return style().isHorizontalWritingMode() ? contentWidth() : contentHeight(); }
     LayoutUnit contentLogicalHeight() const { return style().isHorizontalWritingMode() ? contentHeight() : contentWidth(); }
 

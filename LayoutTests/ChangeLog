@@ -1,3 +1,18 @@
+2020-03-30  Jack Lee  <shihchieh_lee@apple.com>
+
+        Division by zero in RenderBlockFlow::computeColumnCountAndWidth
+        https://bugs.webkit.org/show_bug.cgi?id=209485
+        <rdar://problem/60746109>
+
+        Reviewed by Zalan Bujtas.
+
+        Added a regression test for the crash. Also modify the expected output
+        of button.html because the size would now be different.
+
+        * fast/multicol/negativeColumnGap-expected.txt: Added.
+        * fast/multicol/negativeColumnGap.html: Added.
+        * platform/mac/css3/flexbox/button-expected.txt:
+
 2020-03-30  youenn fablet  <youenn@apple.com>
 
         Skip webrtc/datachannel/multiple-connections.html on debug bots
