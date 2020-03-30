@@ -1,3 +1,0 @@
-
-PASS WebSockets: proper first line 
-

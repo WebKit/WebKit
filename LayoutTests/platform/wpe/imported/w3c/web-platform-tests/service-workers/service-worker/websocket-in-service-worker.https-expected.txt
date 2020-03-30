@@ -1,3 +1,0 @@
-
-PASS Verify WebSockets can be created in a Service Worker 
-

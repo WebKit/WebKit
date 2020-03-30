@@ -1,3 +1,0 @@
-
-FAIL WebSockets: close() in close event handler assert_equals: expected 2 but got 3
-

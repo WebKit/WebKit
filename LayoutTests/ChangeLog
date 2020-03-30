@@ -1,3 +1,52 @@
+2020-03-30  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, remove redundant baselines
+        https://bugs.webkit.org/show_bug.cgi?id=209768
+
+        Unreviewed gardening.
+
+        The baselines below are not needed as they're equal to the
+        generic baseline.
+
+        * platform/wpe/fast/dom/Range/getBoundingClientRect-expected.txt: Removed.
+        * platform/wpe/fast/dom/Window/window-properties-geolocation-expected.txt: Removed.
+        * platform/wpe/fast/images/icon-decoding-expected.txt: Removed.
+        * platform/wpe/http/tests/dom/same-origin-detached-window-properties-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/network-process-crash-error-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-transitions/before-load-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/Create-valid-url-protocol-empty.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/Create-valid-url-protocol-empty.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-deleting-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-multiple-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-nested-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-return-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/017-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/018-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/019-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/003-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/opening-handshake/001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/opening-handshake/003-sets-origin.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/opening-handshake/005-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/security/001-expected.txt: Removed.
+        * platform/wpe/webanimations/partly-accelerated-transition-by-removing-property-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance/canvas/buffer-offscreen-test-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance/canvas/buffer-preserve-test-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance/context/context-attribute-preserve-drawing-buffer-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance/extensions/webgl-draw-buffers-framebuffer-unsupported-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance/glsl/misc/shader-struct-scope-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance/glsl/misc/shaders-with-invariance-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance/reading/read-pixels-test-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance2/extensions/promoted-extensions-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/shader-linking-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance2/glsl3/valid-invariant-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance2/rendering/clear-srgb-color-buffer-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance2/rendering/instanced-rendering-bug-expected.txt: Removed.
+
 020-03-30  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, reverting r259158.

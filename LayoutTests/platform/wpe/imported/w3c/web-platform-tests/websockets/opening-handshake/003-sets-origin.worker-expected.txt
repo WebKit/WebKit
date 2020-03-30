@@ -1,3 +1,0 @@
-
-PASS origin set in a Worker 
-
