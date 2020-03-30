@@ -124,7 +124,8 @@
 
     --timeline-marker-z-index: 4;
     --timeline-record-z-index: 8;
-    --timeline-selection-z-index: 16;
+    --timeline-current-time-z-index: 16;
+    --timeline-selection-z-index: 32;
 
     --timeline-odd-background-color: var(--background-color-content);
     --timeline-even-background-color: hsl(0, 0%, 96%);

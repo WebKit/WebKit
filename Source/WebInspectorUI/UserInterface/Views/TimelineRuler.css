@@ -102,20 +102,21 @@ body[dir=rtl] .timeline-ruler > .header > .divider > .label {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: var(--timeline-marker-z-index);
 }
 
 .timeline-ruler > .markers > .divider {
     position: absolute;
-    width: 1px;
     top: 1px;
+    z-index: var(--timeline-marker-z-index);
     bottom: 0;
+    width: 1px;
     background-color: hsla(0, 0%, var(--foreground-lightness), 0.07);
 }
 
 .timeline-ruler > .markers > .marker {
     position: absolute;
     top: 0;
+    z-index: var(--timeline-marker-z-index);
     bottom: 0;
     width: 3px;
     color: hsla(0, 0%, 50%, 0.5);
@@ -177,7 +178,7 @@ body[dir=rtl] .timeline-ruler > .markers > .marker::after {
 }
 
 .timeline-ruler > .markers > .marker.current-time {
-    z-index: 1;
+    z-index: var(--timeline-current-time-z-index);
     color: red;
 }
 
