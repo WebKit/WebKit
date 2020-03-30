@@ -50,11 +50,9 @@ class WebXRWebGLLayer : public RefCounted<WebXRWebGLLayer> {
 public:
     
     using WebXRRenderingContext = WTF::Variant<
-        RefPtr<WebGLRenderingContext>,
+        RefPtr<WebGLRenderingContext>
 #if ENABLE(WEBGL2)
-        RefPtr<WebGL2RenderingContext>
-#else
-        WTF::Monostate
+        , RefPtr<WebGL2RenderingContext>
 #endif
     >;
 

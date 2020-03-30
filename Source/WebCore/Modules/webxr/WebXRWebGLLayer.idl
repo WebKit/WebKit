@@ -23,7 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
 typedef (WebGLRenderingContext or WebGL2RenderingContext) WebXRWebGLRenderingContext;
+#else
+typedef (WebGLRenderingContext) WebXRWebGLRenderingContext;
+#endif
 
 [
     EnabledAtRuntime=WebXR,

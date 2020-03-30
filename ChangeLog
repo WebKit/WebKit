@@ -1,3 +1,13 @@
+2020-03-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Can't create WebGL context after r259139
+        https://bugs.webkit.org/show_bug.cgi?id=209722
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsWPE.cmake: Disable WebGL2 for WPE until
+        the ANGLE-backed implementation can be used for it.
+
 2020-03-26  Don Olmstead  <don.olmstead@sony.com>
 
         [MSVC] Remove experimental lambda processor usage
