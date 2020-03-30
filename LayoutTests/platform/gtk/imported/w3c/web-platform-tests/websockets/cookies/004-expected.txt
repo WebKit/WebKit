@@ -1,3 +1,0 @@
-
-PASS WebSockets: setting HttpOnly cookies in ws response, checking document.cookie 
-

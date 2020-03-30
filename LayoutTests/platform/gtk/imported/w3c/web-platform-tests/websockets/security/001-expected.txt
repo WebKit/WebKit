@@ -1,3 +1,0 @@
-
-PASS WebSockets: wrong accept key 
-

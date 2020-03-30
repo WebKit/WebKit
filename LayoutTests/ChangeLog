@@ -1,5 +1,52 @@
 2020-03-30  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Gardening, remove redundant baselines
+        https://bugs.webkit.org/show_bug.cgi?id=209738
+
+        Unreviewed gardening.
+
+        The baselines below are not needed as they're equal to the
+        generic baseline.
+
+        * platform/gtk/animations/lineheight-animation-expected.txt: Removed.
+        * platform/gtk/animations/simultaneous-start-transform-expected.txt: Removed.
+        * platform/gtk/animations/width-using-ems-expected.txt: Removed.
+        * platform/gtk/css-dark-mode/prefers-color-scheme-expected.txt: Removed.
+        * platform/gtk/fast/dom/Range/getBoundingClientRect-expected.txt: Removed.
+        * platform/gtk/fast/events/window-events-bubble-expected.txt: Removed.
+        * platform/gtk/fast/events/window-events-bubble2-expected.txt: Removed.
+        * platform/gtk/fast/forms/number/number-spinbutton-change-and-input-events-expected.txt: Removed.
+        * platform/gtk/fast/forms/number/number-spinbutton-click-in-iframe-expected.txt: Removed.
+        * platform/gtk/fast/forms/number/number-spinbutton-gets-disabled-or-readonly-expected.txt: Removed.
+        * platform/gtk/fast/images/icon-decoding-expected.txt: Removed.
+        * platform/gtk/http/tests/websocket/tests/hybi/network-process-crash-error-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-015-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-016-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/legacy-mrow-like-elements-001-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/legacy-mstyle-attributes-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/cramped-001-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-001-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-001-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/Create-valid-url-protocol-empty.any-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/Create-valid-url-protocol-empty.any.worker-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/closing-handshake/003-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/cookies/004-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-deleting-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-multiple-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-nested-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-return-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/017-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/018-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/019-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/003-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/opening-handshake/001-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/opening-handshake/003-sets-origin.worker-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/opening-handshake/005-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/websockets/security/001-expected.txt: Removed.
+
+2020-03-30  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Gardening, update TestExpectations
         https://bugs.webkit.org/show_bug.cgi?id=209728
 
