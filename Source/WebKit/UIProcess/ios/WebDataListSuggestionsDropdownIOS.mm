@@ -41,7 +41,7 @@ static const CGFloat suggestionsPopoverWidth = 320;
 static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCell";
 
 @interface WKDataListSuggestionsControl : NSObject {
-    WebKit::WebDataListSuggestionsDropdownIOS* _dropdown;
+    WeakPtr<WebKit::WebDataListSuggestionsDropdownIOS> _dropdown;
     Vector<String> _suggestions;
 }
 
@@ -49,7 +49,7 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 
 - (instancetype)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(WKContentView *)view;
 - (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information;
-- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS *)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType;
+- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS&)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType;
 - (void)didSelectOptionAtIndex:(NSInteger)index;
 - (void)invalidate;
 
@@ -107,7 +107,7 @@ void WebDataListSuggestionsDropdownIOS::show(WebCore::DataListSuggestionInformat
     else
         m_suggestionsControl = adoptNS([[WKDataListSuggestionsPicker alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
 
-    [m_suggestionsControl showSuggestionsDropdown:this activationType:type];
+    [m_suggestionsControl showSuggestionsDropdown:*this activationType:type];
 }
 
 void WebDataListSuggestionsDropdownIOS::handleKeydownWithIdentifier(const String&)
@@ -152,9 +152,9 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     _suggestions = WTFMove(information.suggestions);
 }
 
-- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS *)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType
+- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS&)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType
 {
-    _dropdown = dropdown;
+    _dropdown = makeWeakPtr(dropdown);
 }
 
 - (void)didSelectOptionAtIndex:(NSInteger)index
@@ -232,7 +232,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     [_pickerView selectRow:0 inComponent:0 animated:NO];
 }
 
-- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS *)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType
+- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS&)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType
 {
     [super showSuggestionsDropdown:dropdown activationType:activationType];
     if (activationType == WebCore::DataListSuggestionActivationType::IndicatorClicked) {
@@ -311,7 +311,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     self.view.dataListTextSuggestions = self.textSuggestions;
 }
 
-- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS *)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType
+- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownIOS&)dropdown activationType:(WebCore::DataListSuggestionActivationType)activationType
 {
     [super showSuggestionsDropdown:dropdown activationType:activationType];
 

@@ -1,3 +1,26 @@
+2020-03-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Minor code cleanup around WebDataListSuggestionsDropdown
+        https://bugs.webkit.org/show_bug.cgi?id=209747
+
+        Reviewed by Tim Horton.
+
+        Refactor WKDataListSuggestionsController and WKDataListSuggestionsControl, such that their `_dropdown`s are
+        `WeakPtr`s instead of raw pointers. Also, make `-showSuggestionsDropdown:` take a reference instead of a
+        pointer, since the argument is always `this` (and assumed to be non-null).
+
+        No change in behavior.
+
+        * UIProcess/WebDataListSuggestionsDropdown.h:
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (WebKit::WebDataListSuggestionsDropdownIOS::show):
+        (-[WKDataListSuggestionsControl showSuggestionsDropdown:activationType:]):
+        (-[WKDataListSuggestionsPicker showSuggestionsDropdown:activationType:]):
+        (-[WKDataListSuggestionsPopover showSuggestionsDropdown:activationType:]):
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (WebKit::WebDataListSuggestionsDropdownMac::show):
+        (-[WKDataListSuggestionsController showSuggestionsDropdown:]):
+
 2020-03-30  David Kilzer  <ddkilzer@apple.com>
 
         NetworkConnectionToWebProcess::registerFileBlobURL should validate its parameters

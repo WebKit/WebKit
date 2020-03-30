@@ -55,7 +55,7 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionVi
 @interface WKDataListSuggestionsController : NSObject<NSTableViewDataSource, NSTableViewDelegate>
 
 - (id)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(NSView *)view;
-- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownMac*)dropdown;
+- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownMac&)dropdown;
 - (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information;
 - (void)moveSelectionByDirection:(const String&)direction;
 - (void)invalidate;
@@ -87,7 +87,7 @@ void WebDataListSuggestionsDropdownMac::show(WebCore::DataListSuggestionInformat
     }
 
     m_dropdownUI = adoptNS([[WKDataListSuggestionsController alloc] initWithInformation:WTFMove(information) inView:m_view]);
-    [m_dropdownUI showSuggestionsDropdown:this];
+    [m_dropdownUI showSuggestionsDropdown:*this];
 }
 
 void WebDataListSuggestionsDropdownMac::didSelectOption(const String& selectedOption)
@@ -252,7 +252,7 @@ void WebDataListSuggestionsDropdownMac::close()
 @end
 
 @implementation WKDataListSuggestionsController {
-    WebKit::WebDataListSuggestionsDropdownMac* _dropdown;
+    WeakPtr<WebKit::WebDataListSuggestionsDropdownMac> _dropdown;
     Vector<String> _suggestions;
     NSView *_presentingView;
 
@@ -374,9 +374,9 @@ void WebDataListSuggestionsDropdownMac::close()
     return NSMakeRect(NSMinX(windowRect), NSMinY(windowRect) - height - dropdownTopMargin, rect.width(), height);
 }
 
-- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownMac*)dropdown
+- (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownMac&)dropdown
 {
-    _dropdown = dropdown;
+    _dropdown = makeWeakPtr(dropdown);
     [[_enclosingWindow contentView] addSubview:_scrollView.get()];
     [_table reload];
     [[_presentingView window] addChildWindow:_enclosingWindow.get() ordered:NSWindowAbove];

@@ -36,7 +36,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebDataListSuggestionsDropdown : public RefCounted<WebDataListSuggestionsDropdown> {
+class WebDataListSuggestionsDropdown : public RefCounted<WebDataListSuggestionsDropdown>, public CanMakeWeakPtr<WebDataListSuggestionsDropdown> {
 public:
     virtual ~WebDataListSuggestionsDropdown();
 
