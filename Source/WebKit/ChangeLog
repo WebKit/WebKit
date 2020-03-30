@@ -1,3 +1,14 @@
+2020-03-30  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r256756): -[WKPreferenceObserver init]: Instance variable used while 'self' is not set to the result of '[(super or self) init...]'
+        <https://webkit.org/b/209765>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (-[WKPreferenceObserver init]): Call `[self init]` and set
+        `self` to fix the clang static analyzer warning.
+
 2020-03-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r259211.

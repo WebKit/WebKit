@@ -84,6 +84,9 @@
 
 - (instancetype)init
 {
+    if (!(self = [super init]))
+        return nil;
+
     std::initializer_list<NSString*> domains = {
 #if PLATFORM(IOS_FAMILY)
         @"com.apple.Accessibility",
@@ -128,7 +131,7 @@
         [userDefaults.get() addObserver:userDefaults.get() forKeyPath:@"testkey" options:NSKeyValueObservingOptionNew context:nil];
         m_userDefaults.append(userDefaults);
     }
-    return [super init];
+    return self;
 }
 
 - (void)preferenceDidChange:(NSString *)domain key:(NSString *)key encodedValue:(NSString *)encodedValue
