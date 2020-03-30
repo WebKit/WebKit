@@ -1732,7 +1732,7 @@ private:
     void notifyProcessPoolToPrewarm();
     bool shouldUseBackForwardCache() const;
 
-    bool shouldUseForegroundPriorityForClientNavigation() const;
+    bool shouldForceForegroundPriorityForClientNavigation() const;
 
     RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem&, WebCore::FrameLoadType);
 

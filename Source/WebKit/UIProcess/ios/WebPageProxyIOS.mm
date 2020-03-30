@@ -1519,13 +1519,16 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
     return WebContentMode::Desktop;
 }
 
-bool WebPageProxy::shouldUseForegroundPriorityForClientNavigation() const
+bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
 {
     // The client may request that we do client navigations at foreground priority, even if the
     // view is not visible, as long as the application is foreground.
     if (!configuration().clientNavigationsRunAtForegroundPriority())
         return false;
 
+    // This setting only applies to background views. There is no need to force foreground
+    // priority for foreground views since they get foreground priority by virtue of being
+    // visible.
     if (isViewVisible())
         return false;
 

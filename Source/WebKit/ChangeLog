@@ -1,3 +1,24 @@
+2020-03-30  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r259211): ASSERT(window) in applicationType() under shouldUseForegroundPriorityForClientNavigation()
+        https://bugs.webkit.org/show_bug.cgi?id=209759
+
+        Reviewed by Darin Adler.
+
+        Make sure to not call applicationType() with a null window. This patch maintains previous behavior
+        in release builds.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadData):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isApplicationVisible):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::shouldForceForegroundPriorityForClientNavigation const):
+        (WebKit::WebPageProxy::shouldUseForegroundPriorityForClientNavigation const): Deleted.
+
 2020-03-30  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes late March 2020 edition

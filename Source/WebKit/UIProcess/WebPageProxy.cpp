@@ -1293,7 +1293,7 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
 
     auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
 
-    if (shouldUseForegroundPriorityForClientNavigation())
+    if (shouldForceForegroundPriorityForClientNavigation())
         navigation->setForegroundActivity(process().throttler().foregroundActivity("Client navigation"_s).moveToUniquePtr());
 
     loadRequestWithNavigationShared(m_process.copyRef(), m_webPageID, navigation.get(), WTFMove(request), shouldOpenExternalURLsPolicy, userData, ShouldTreatAsContinuingLoad::No, isNavigatingToAppBoundDomain(), hasNavigatedAwayFromAppBoundDomain());
@@ -1372,7 +1372,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
 
     auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(fileURL), m_backForwardList->currentItem());
 
-    if (shouldUseForegroundPriorityForClientNavigation())
+    if (shouldForceForegroundPriorityForClientNavigation())
         navigation->setForegroundActivity(process().throttler().foregroundActivity("Client navigation"_s).moveToUniquePtr());
 
     auto transaction = m_pageLoadState.transaction();
@@ -1415,7 +1415,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
 
     auto navigation = m_navigationState->createLoadDataNavigation(makeUnique<API::SubstituteData>(data.vector(), MIMEType, encoding, baseURL, userData));
 
-    if (shouldUseForegroundPriorityForClientNavigation())
+    if (shouldForceForegroundPriorityForClientNavigation())
         navigation->setForegroundActivity(process().throttler().foregroundActivity("Client navigation"_s).moveToUniquePtr());
 
     loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, isNavigatingToAppBoundDomain(), hasNavigatedAwayFromAppBoundDomain(), WTF::nullopt, shouldOpenExternalURLsPolicy);
@@ -10002,7 +10002,7 @@ void WebPageProxy::setShouldFireResizeEvents(bool shouldFireResizeEvents)
 }
 
 #if !PLATFORM(IOS_FAMILY)
-bool WebPageProxy::shouldUseForegroundPriorityForClientNavigation() const
+bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
 {
     return false;
 }
