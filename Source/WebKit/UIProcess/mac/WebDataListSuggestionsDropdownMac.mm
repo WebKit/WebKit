@@ -221,9 +221,7 @@ void WebDataListSuggestionsDropdownMac::close()
 
 @end
 
-@implementation WKDataListSuggestionTableView {
-    RetainPtr<NSScrollView> _enclosingScrollView;
-}
+@implementation WKDataListSuggestionTableView
 
 - (id)initWithElementRect:(const WebCore::IntRect&)rect
 {
@@ -238,22 +236,7 @@ void WebDataListSuggestionsDropdownMac::close()
     [column setWidth:rect.width()];
     [self addTableColumn:column.get()];
 
-    _enclosingScrollView = adoptNS([[NSScrollView alloc] init]);
-    [_enclosingScrollView setHasVerticalScroller:YES];
-    [_enclosingScrollView setVerticalScrollElasticity:NSScrollElasticityAllowed];
-    [_enclosingScrollView setHorizontalScrollElasticity:NSScrollElasticityNone];
-    [_enclosingScrollView setDocumentView:self];
-    [_enclosingScrollView setDrawsBackground:NO];
-    [[_enclosingScrollView contentView] setAutomaticallyAdjustsContentInsets:NO];
-    [[_enclosingScrollView contentView] setContentInsets:NSEdgeInsetsMake(dropdownVerticalPadding, 0, dropdownVerticalPadding, 0)];
-    [[_enclosingScrollView contentView] scrollToPoint:NSMakePoint(0, -dropdownVerticalPadding)];
-
     return self;
-}
-
-- (void)layout
-{
-    [_enclosingScrollView setFrame:[_enclosingScrollView superview].bounds];
 }
 
 - (void)reload
@@ -266,17 +249,6 @@ void WebDataListSuggestionsDropdownMac::close()
     return NO;
 }
 
-- (NSScrollView *)enclosingScrollView
-{
-    return _enclosingScrollView.get();
-}
-
-- (void)removeFromSuperviewWithoutNeedingDisplay
-{
-    [super removeFromSuperviewWithoutNeedingDisplay];
-    [_enclosingScrollView removeFromSuperviewWithoutNeedingDisplay];
-}
-
 @end
 
 @implementation WKDataListSuggestionsController {
@@ -284,6 +256,7 @@ void WebDataListSuggestionsDropdownMac::close()
     Vector<String> _suggestions;
     NSView *_presentingView;
 
+    RetainPtr<NSScrollView> _scrollView;
     RetainPtr<WKDataListSuggestionWindow> _enclosingWindow;
     RetainPtr<WKDataListSuggestionTableView> _table;
 }
@@ -305,6 +278,16 @@ void WebDataListSuggestionsDropdownMac::close()
     [_enclosingWindow setMovable:NO];
     [_enclosingWindow setBackgroundColor:[NSColor clearColor]];
     [_enclosingWindow setOpaque:NO];
+
+    _scrollView = adoptNS([[NSScrollView alloc] initWithFrame:[_enclosingWindow contentView].bounds]);
+    [_scrollView setHasVerticalScroller:YES];
+    [_scrollView setVerticalScrollElasticity:NSScrollElasticityAllowed];
+    [_scrollView setHorizontalScrollElasticity:NSScrollElasticityNone];
+    [_scrollView setDocumentView:_table.get()];
+    [_scrollView setDrawsBackground:NO];
+    [[_scrollView contentView] setAutomaticallyAdjustsContentInsets:NO];
+    [[_scrollView contentView] setContentInsets:NSEdgeInsetsMake(dropdownVerticalPadding, 0, dropdownVerticalPadding, 0)];
+    [[_scrollView contentView] scrollToPoint:NSMakePoint(0, -dropdownVerticalPadding)];
 
     [_table setDelegate:self];
     [_table setDataSource:self];
@@ -330,6 +313,7 @@ void WebDataListSuggestionsDropdownMac::close()
     [_table reload];
 
     [_enclosingWindow setFrame:[self dropdownRectForElementRect:information.elementRect] display:YES];
+    [_scrollView setFrame:[_enclosingWindow contentView].bounds];
 }
 
 - (void)notifyAccessibilityClients:(NSString *)info
@@ -364,12 +348,14 @@ void WebDataListSuggestionsDropdownMac::close()
 - (void)invalidate
 {
     [_table removeFromSuperviewWithoutNeedingDisplay];
+    [_scrollView removeFromSuperviewWithoutNeedingDisplay];
 
     [_table setDelegate:nil];
     [_table setDataSource:nil];
     [_table setTarget:nil];
 
     _table = nil;
+    _scrollView = nil;
 
     [[_presentingView window] removeChildWindow:_enclosingWindow.get()];
     [_enclosingWindow close];
@@ -391,10 +377,10 @@ void WebDataListSuggestionsDropdownMac::close()
 - (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownMac*)dropdown
 {
     _dropdown = dropdown;
-    [[_enclosingWindow contentView] addSubview:[_table enclosingScrollView]];
+    [[_enclosingWindow contentView] addSubview:_scrollView.get()];
     [_table reload];
     [[_presentingView window] addChildWindow:_enclosingWindow.get() ordered:NSWindowAbove];
-    [[_table enclosingScrollView] flashScrollers];
+    [_scrollView flashScrollers];
 
     // Notify accessibility clients of datalist becoming visible.
     NSString *currentSelectedString = [self currentSelectedString];

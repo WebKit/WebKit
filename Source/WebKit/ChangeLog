@@ -1,3 +1,43 @@
+2020-03-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Datalist dropdown suggestions table can be scrolled too far
+        https://bugs.webkit.org/show_bug.cgi?id=209721
+
+        Reviewed by Tim Horton.
+
+        WKDataListSuggestionTableView's enclosing scroll view is set to an incorrect size while laying out the table
+        view, due to AppKit logic that attempts to adjust the size of the table view's enclosing scroll view after we've
+        already attempted to set the frame of the scroll view under the overridden call to -layout.
+
+        Fix this by refactoring the logic around the suggestion table view's enclosing scroll view; currently,
+        WKDataListSuggestionTableView overrides -enclosingScrollView to return its own NSScrollView, which it sizes
+        underneath an overridden call to -layout. This is a bit strange, since the table view is actually a subview of
+        the scroll view it owns; the fact that laying out the table view causes an ancestor view to change size (and
+        subsequently invalidate the table view's layout) seems to be what breaks AppKit's enclosing scroll view
+        adjustment logic.
+
+        Instead, we can have own both the table view and the table view's enclosing scroll view.
+
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (-[WKDataListSuggestionTableView initWithElementRect:]):
+        (-[WKDataListSuggestionsController initWithInformation:inView:]):
+
+        Move the scroll view initialization logic out of -[WKDataListSuggestionTableView initWithElementRect:] and into
+        this method. This also means that we can initialize the scroll view with the bounds of the window's content
+        view, instead of waiting until we lay out the table view underneath the scroll view.
+
+        (-[WKDataListSuggestionsController updateWithInformation:]):
+        (-[WKDataListSuggestionsController invalidate]):
+
+        Clear out and remove _scrollView as well when we tear down the controller.
+
+        (-[WKDataListSuggestionsController showSuggestionsDropdown:]):
+        (-[WKDataListSuggestionTableView layout]): Deleted.
+        (-[WKDataListSuggestionTableView enclosingScrollView]): Deleted.
+        (-[WKDataListSuggestionTableView removeFromSuperviewWithoutNeedingDisplay]): Deleted.
+
+        Now that the controller owns the scroll view, we don't need to override these anymore.
+
 2020-03-29  Antoine Quint  <graouts@apple.com>
 
         [AutoSizing] Bring back the old auto-sizing code as a deprecated codepath for compatibility reasons
