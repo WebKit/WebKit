@@ -108,9 +108,12 @@ HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* el
         // the value of form attribute, so we put the result of
         // treeScope().getElementById() over the given element.
         RefPtr<Element> newFormCandidate = element->treeScope().getElementById(formId);
-        if (is<HTMLFormElement>(newFormCandidate))
+        if (!is<HTMLFormElement>(newFormCandidate))
+            return nullptr;
+        if (&element->traverseToRootNode() == &element->treeScope().rootNode()) {
+            ASSERT(&element->traverseToRootNode() == &newFormCandidate->traverseToRootNode());
             return downcast<HTMLFormElement>(newFormCandidate.get());
-        return nullptr;
+        }
     }
 
     if (!currentAssociatedForm)
