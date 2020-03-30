@@ -1190,6 +1190,18 @@ void UniqueIDBDatabase::close()
     }
 }
 
+bool UniqueIDBDatabase::tryClose()
+{
+    if (m_backingStore && m_backingStore->isEphemeral())
+        return false;
+
+    if (hasAnyOpenConnections() || m_versionChangeDatabaseConnection)
+        return false;
+
+    close();
+    return true;
+}
+
 RefPtr<ServerOpenDBRequest> UniqueIDBDatabase::takeNextRunnableRequest(RequestType requestType)
 {
     // Connection of request may be closed or lost.

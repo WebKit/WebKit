@@ -110,6 +110,7 @@ public:
     void immediateCloseForUserDelete();
 
     void abortActiveTransactions();
+    bool tryClose();
 
 private:
     void handleDatabaseOperations();
