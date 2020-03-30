@@ -200,6 +200,7 @@ video::-webkit-media-controls-current-time-display {
 
     line-height: 30px;
     font-family: -webkit-system-font;
+    font-variant-numeric: tabular-nums;
     font-size: 13px;
     font-weight: normal;
     font-style: normal;
