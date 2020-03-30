@@ -34,6 +34,7 @@
 #include "WebCacheStorageProvider.h"
 #include "WebCookieJar.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebFrame.h"
 #include "WebIDBConnectionToServer.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebLoaderStrategy.h"
@@ -58,6 +59,7 @@
 #include "WebSocketStreamMessages.h"
 #include <WebCore/CachedResource.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
+#include <WebCore/InspectorInstrumentationWebKit.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MessagePort.h>
 #include <WebCore/SharedBuffer.h>
@@ -311,6 +313,14 @@ void NetworkProcessConnection::messagesAvailableForPort(const WebCore::MessagePo
 void NetworkProcessConnection::checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier& messagePortIdentifier, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
 {
     callback(WebCore::MessagePort::isExistingMessagePortLocallyReachable(messagePortIdentifier) ? MessagePortChannelProvider::HasActivity::Yes : MessagePortChannelProvider::HasActivity::No);
+}
+
+void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, MessageLevel level, const String& message)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+
+    for (auto* frame : WebProcess::singleton().webFrames())
+        frame->addConsoleMessage(source, level, message);
 }
 
 } // namespace WebKit

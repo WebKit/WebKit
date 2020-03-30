@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "NetworkProcess.h"
 #include "NetworkResourceLoadParameters.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/RegistrableDomain.h>
@@ -49,12 +50,13 @@ public:
     using Destination = WebCore::AdClickAttribution::Destination;
     using Conversion = WebCore::AdClickAttribution::Conversion;
 
-    explicit AdClickAttributionManager(PAL::SessionID sessionID)
+    explicit AdClickAttributionManager(NetworkProcess& networkProcess, PAL::SessionID sessionID)
         : m_firePendingConversionRequestsTimer(*this, &AdClickAttributionManager::firePendingConversionRequests)
         , m_pingLoadFunction([](NetworkResourceLoadParameters&& params, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
             UNUSED_PARAM(params);
             completionHandler(WebCore::ResourceError(), WebCore::ResourceResponse());
         })
+        , m_networkProcess(networkProcess)
         , m_sessionID(sessionID)
     {
     }
@@ -83,6 +85,7 @@ private:
     Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)> m_pingLoadFunction;
     bool m_isRunningTest { false };
     Optional<URL> m_conversionBaseURLForTesting;
+    Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;
 };
     

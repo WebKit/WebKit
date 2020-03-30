@@ -27,6 +27,7 @@
 
 #include "RegistrableDomain.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/Forward.h>
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
@@ -239,7 +240,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT static Optional<Conversion> parseConversionRequest(const URL& redirectURL);
+    WEBCORE_EXPORT static Expected<Conversion, String> parseConversionRequest(const URL& redirectURL);
     WEBCORE_EXPORT Optional<Seconds> convertAndGetEarliestTimeToSend(Conversion&&);
     WEBCORE_EXPORT bool hasHigherPriorityThan(const AdClickAttribution&) const;
     WEBCORE_EXPORT URL url() const;

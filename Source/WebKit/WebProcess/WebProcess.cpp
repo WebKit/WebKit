@@ -799,6 +799,11 @@ WebFrame* WebProcess::webFrame(FrameIdentifier frameID) const
     return m_frameMap.get(frameID);
 }
 
+Vector<WebFrame*> WebProcess::webFrames() const
+{
+    return copyToVector(m_frameMap.values());
+}
+
 void WebProcess::addWebFrame(FrameIdentifier frameID, WebFrame* frame)
 {
     m_frameMap.set(frameID, frame);

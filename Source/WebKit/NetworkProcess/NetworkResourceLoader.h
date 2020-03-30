@@ -196,7 +196,7 @@ private:
     WebCore::ResourceResponse sanitizeResponseIfPossible(WebCore::ResourceResponse&&, WebCore::ResourceResponse::SanitizationType);
 
     // ContentSecurityPolicyClient
-    void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final;
+    void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier = 0) final;
     void sendCSPViolationReport(URL&&, Ref<WebCore::FormData>&&) final;
     void enqueueSecurityPolicyViolationEvent(WebCore::SecurityPolicyViolationEvent::Init&&) final;
 

@@ -184,6 +184,7 @@ public:
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
 
     WebFrame* webFrame(WebCore::FrameIdentifier) const;
+    Vector<WebFrame*> webFrames() const;
     void addWebFrame(WebCore::FrameIdentifier, WebFrame*);
     void removeWebFrame(WebCore::FrameIdentifier);
 

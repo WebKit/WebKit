@@ -119,10 +119,12 @@ NSString *WebConsoleMessageRenderingMessageSource = @"RenderingMessageSource";
 NSString *WebConsoleMessageCSSMessageSource = @"CSSMessageSource";
 NSString *WebConsoleMessageSecurityMessageSource = @"SecurityMessageSource";
 NSString *WebConsoleMessageContentBlockerMessageSource = @"ContentBlockerMessageSource";
-NSString *WebConsoleMessageOtherMessageSource = @"OtherMessageSource";
 NSString *WebConsoleMessageMediaMessageSource = @"MediaMessageSource";
-NSString *WebConsoleMessageWebRTCMessageSource = @"WebRTCMessageSource";
 NSString *WebConsoleMessageMediaSourceMessageSource = @"MediaSourceMessageSource";
+NSString *WebConsoleMessageWebRTCMessageSource = @"WebRTCMessageSource";
+NSString *WebConsoleMessageITPDebugMessageSource = @"ITPDebugMessageSource";
+NSString *WebConsoleMessageAdClickAttributionMessageSource = @"AdClickAttributionMessageSource";
+NSString *WebConsoleMessageOtherMessageSource = @"OtherMessageSource";
 
 NSString *WebConsoleMessageDebugMessageLevel = @"DebugMessageLevel";
 NSString *WebConsoleMessageLogMessageLevel = @"LogMessageLevel";
@@ -392,14 +394,18 @@ inline static NSString *stringForMessageSource(MessageSource source)
         return WebConsoleMessageSecurityMessageSource;
     case MessageSource::ContentBlocker:
         return WebConsoleMessageContentBlockerMessageSource;
-    case MessageSource::Other:
-        return WebConsoleMessageOtherMessageSource;
     case MessageSource::Media:
         return WebConsoleMessageMediaMessageSource;
-    case MessageSource::WebRTC:
-        return WebConsoleMessageWebRTCMessageSource;
     case MessageSource::MediaSource:
         return WebConsoleMessageMediaSourceMessageSource;
+    case MessageSource::WebRTC:
+        return WebConsoleMessageWebRTCMessageSource;
+    case MessageSource::ITPDebug:
+        return WebConsoleMessageITPDebugMessageSource;
+    case MessageSource::AdClickAttribution:
+        return WebConsoleMessageAdClickAttributionMessageSource;
+    case MessageSource::Other:
+        return WebConsoleMessageOtherMessageSource;
     }
     ASSERT_NOT_REACHED();
     return @"";

@@ -60,75 +60,128 @@ static void appendURLAndPosition(StringBuilder& builder, const String& url, unsi
 
 static void appendMessagePrefix(StringBuilder& builder, MessageSource source, MessageType type, MessageLevel level)
 {
-    const char* sourceString;
+    String sourceString;
     switch (source) {
     case MessageSource::XML:
-        sourceString = "XML";
+        sourceString = "XML"_s;
         break;
     case MessageSource::JS:
-        sourceString = "JS";
+        sourceString = "JS"_s;
         break;
     case MessageSource::Network:
-        sourceString = "NETWORK";
+        sourceString = "NETWORK"_s;
         break;
     case MessageSource::ConsoleAPI:
-        sourceString = "CONSOLE";
+        sourceString = "CONSOLE"_s;
         break;
     case MessageSource::Storage:
-        sourceString = "STORAGE";
+        sourceString = "STORAGE"_s;
         break;
     case MessageSource::AppCache:
-        sourceString = "APPCACHE";
+        sourceString = "APPCACHE"_s;
         break;
     case MessageSource::Rendering:
-        sourceString = "RENDERING";
+        sourceString = "RENDERING"_s;
         break;
     case MessageSource::CSS:
-        sourceString = "CSS";
+        sourceString = "CSS"_s;
         break;
     case MessageSource::Security:
-        sourceString = "SECURITY";
+        sourceString = "SECURITY"_s;
+        break;
+    case MessageSource::ContentBlocker:
+        sourceString = "CONTENTBLOCKER"_s;
+        break;
+    case MessageSource::Media:
+        sourceString = "MEDIA"_s;
+        break;
+    case MessageSource::MediaSource:
+        sourceString = "MEDIASOURCE"_s;
+        break;
+    case MessageSource::WebRTC:
+        sourceString = "WEBRTC"_s;
+        break;
+    case MessageSource::ITPDebug:
+        sourceString = "ITPDEBUG"_s;
+        break;
+    case MessageSource::AdClickAttribution:
+        sourceString = "ADCLICKATTRIBUTION"_s;
         break;
     case MessageSource::Other:
-        sourceString = "OTHER";
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        sourceString = "UNKNOWN";
+        sourceString = "OTHER"_s;
         break;
     }
 
-    const char* levelString;
+    String levelString;
     switch (level) {
     case MessageLevel::Debug:
-        levelString = "DEBUG";
+        levelString = "DEBUG"_s;
         break;
     case MessageLevel::Log:
-        levelString = "LOG";
+        levelString = "LOG"_s;
         break;
     case MessageLevel::Info:
-        levelString = "INFO";
+        levelString = "INFO"_s;
         break;
     case MessageLevel::Warning:
-        levelString = "WARN";
+        levelString = "WARN"_s;
         break;
     case MessageLevel::Error:
-        levelString = "ERROR";
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        levelString = "UNKNOWN";
+        levelString = "ERROR"_s;
         break;
     }
 
-    if (type == MessageType::Trace)
-        levelString = "TRACE";
-    else if (type == MessageType::Table)
-        levelString = "TABLE";
+    String typeString;
+    switch (type) {
+    case MessageType::Log:
+        typeString = "LOG"_s;
+        break;
+    case MessageType::Clear:
+        typeString = "CLEAR"_s;
+        break;
+    case MessageType::Dir:
+        typeString = "DIR"_s;
+        break;
+    case MessageType::DirXML:
+        typeString = "DIRXML"_s;
+        break;
+    case MessageType::Table:
+        typeString = "TABLE"_s;
+        break;
+    case MessageType::Trace:
+        typeString = "TRACE"_s;
+        break;
+    case MessageType::StartGroup:
+        typeString = "STARTGROUP"_s;
+        break;
+    case MessageType::StartGroupCollapsed:
+        typeString = "STARTGROUPCOLLAPSED"_s;
+        break;
+    case MessageType::EndGroup:
+        typeString = "ENDGROUP"_s;
+        break;
+    case MessageType::Assert:
+        typeString = "ASSERT"_s;
+        break;
+    case MessageType::Timing:
+        typeString = "TIMING"_s;
+        break;
+    case MessageType::Profile:
+        typeString = "PROFILE"_s;
+        break;
+    case MessageType::ProfileEnd:
+        typeString = "PROFILEEND"_s;
+        break;
+    case MessageType::Image:
+        typeString = "IMAGE"_s;
+        break;
+    }
 
     builder.append(sourceString);
     builder.append(' ');
     builder.append(levelString);
+    builder.append(' ');
+    builder.append(typeString);
 }
 
 void ConsoleClient::printConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber)

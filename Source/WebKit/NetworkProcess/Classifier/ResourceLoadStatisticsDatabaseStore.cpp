@@ -37,6 +37,7 @@
 #include "WebProcessProxy.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataStore.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -1410,11 +1411,17 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
     
     switch (cookieAccess(subFrameDomain, topFrameDomain)) {
     case CookieAccess::CannotRequest:
-        RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Cannot grant storage access to %{private}s since its cookies are blocked in third-party contexts and it has not received user interaction as first-party.", subFrameDomain.string().utf8().data());
+        if (UNLIKELY(debugLoggingEnabled())) {
+            RELEASE_LOG_INFO(ITPDebug, "Cannot grant storage access to %{private}s since its cookies are blocked in third-party contexts and it has not received user interaction as first-party.", subFrameDomain.string().utf8().data());
+            debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Error, makeString("[ITP] Cannot grant storage access to '"_s, subFrameDomain.string(), "' since its cookies are blocked in third-party contexts and it has not received user interaction as first-party."_s));
+        }
         completionHandler(StorageAccessStatus::CannotRequestAccess);
         return;
     case CookieAccess::BasedOnCookiePolicy:
-        RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "No need to grant storage access to %{private}s since its cookies are not blocked in third-party contexts. Note that the underlying cookie policy may still block this third-party from setting cookies.", subFrameDomain.string().utf8().data());
+        if (UNLIKELY(debugLoggingEnabled())) {
+            RELEASE_LOG_INFO(ITPDebug, "No need to grant storage access to %{private}s since its cookies are not blocked in third-party contexts. Note that the underlying cookie policy may still block this third-party from setting cookies.", subFrameDomain.string().utf8().data());
+            debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] No need to grant storage access to '"_s, subFrameDomain.string(), "' since its cookies are not blocked in third-party contexts. Note that the underlying cookie policy may still block this third-party from setting cookies."_s));
+        }
         completionHandler(StorageAccessStatus::HasAccess);
         return;
     case CookieAccess::OnlyIfGranted:
@@ -1424,13 +1431,20 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
 
     auto userWasPromptedEarlier = hasUserGrantedStorageAccessThroughPrompt(*subFrameStatus.second, topFrameDomain);
     if (userWasPromptedEarlier == StorageAccessPromptWasShown::No) {
-        RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "About to ask the user whether they want to grant storage access to %{private}s under %{private}s or not.", subFrameDomain.string().utf8().data(), topFrameDomain.string().utf8().data());
+        if (UNLIKELY(debugLoggingEnabled())) {
+            RELEASE_LOG_INFO(ITPDebug, "About to ask the user whether they want to grant storage access to %{private}s under %{private}s or not.", subFrameDomain.string().utf8().data(), topFrameDomain.string().utf8().data());
+            debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] About to ask the user whether they want to grant storage access to '"_s, subFrameDomain.string(), "' under '"_s, topFrameDomain.string(), "' or not."_s));
+        }
         completionHandler(StorageAccessStatus::RequiresUserPrompt);
         return;
     }
 
-    if (userWasPromptedEarlier == StorageAccessPromptWasShown::Yes)
-        RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Storage access was granted to %{private}s under %{private}s.", subFrameDomain.string().utf8().data(), topFrameDomain.string().utf8().data());
+    if (userWasPromptedEarlier == StorageAccessPromptWasShown::Yes) {
+        if (UNLIKELY(debugLoggingEnabled())) {
+            RELEASE_LOG_INFO(ITPDebug, "Storage access was granted to %{private}s under %{private}s.", subFrameDomain.string().utf8().data(), topFrameDomain.string().utf8().data());
+            debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Storage access was granted to '"_s, subFrameDomain.string(), "' under '"_s, topFrameDomain.string(), "'."_s));
+        }
+    }
 
     SQLiteStatement incrementStorageAccess(m_database, "UPDATE ObservedDomains SET timesAccessedAsFirstPartyDueToStorageAccessAPI = timesAccessedAsFirstPartyDueToStorageAccessAPI + 1 WHERE domainID = ?");
     if (incrementStorageAccess.prepare() != SQLITE_OK
@@ -1454,7 +1468,11 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener(Domain
     if (domainInNeedOfStorageAccess == openerDomain)
         return;
 
-    RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "[Temporary combatibility fix] Storage access was granted for %{private}s under opener page from %{private}s, with user interaction in the opened window.", domainInNeedOfStorageAccess.string().utf8().data(), openerDomain.string().utf8().data());
+    if (UNLIKELY(debugLoggingEnabled())) {
+        RELEASE_LOG_INFO(ITPDebug, "[Temporary combatibility fix] Storage access was granted for %{private}s under opener page from %{private}s, with user interaction in the opened window.", domainInNeedOfStorageAccess.string().utf8().data(), openerDomain.string().utf8().data());
+        debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Storage access was granted for '"_s, domainInNeedOfStorageAccess.string(), "' under opener page from '"_s, openerDomain.string(), "', with user interaction in the opened window."_s));
+    }
+
     grantStorageAccessInternal(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), WTF::nullopt, openerPageID, StorageAccessPromptWasShown::No, [](StorageAccessWasGranted) { });
 }
 
@@ -1554,7 +1572,11 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::ensurePrevalentRe
         }
         setPrevalentResource(debugManualPrevalentResource(), ResourceLoadPrevalence::High);
         primaryDomainsToBlock.uncheckedAppend(debugManualPrevalentResource());
-        RELEASE_LOG_INFO(ITPDebug, "Did set %{private}s as prevalent resource for the purposes of ITP Debug Mode.", debugManualPrevalentResource().string().utf8().data());
+
+        if (debugLoggingEnabled()) {
+            RELEASE_LOG_INFO(ITPDebug, "Did set %{private}s as prevalent resource for the purposes of ITP Debug Mode.", debugManualPrevalentResource().string().utf8().data());
+            debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Did set '"_s, debugManualPrevalentResource().string(), "' as prevalent resource for the purposes of ITP Debug Mode."_s));
+        }
     }
 
     return primaryDomainsToBlock;
@@ -2217,9 +2239,14 @@ void ResourceLoadStatisticsDatabaseStore::updateCookieBlocking(CompletionHandler
         store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [weakThis = WTFMove(weakThis), store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
             store->statisticsQueue().dispatch([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();
+
                 if (!weakThis)
                     return;
-                RELEASE_LOG_INFO_IF(weakThis->debugLoggingEnabled(), ITPDebug, "Done updating cookie blocking.");
+
+                if (UNLIKELY(weakThis->debugLoggingEnabled())) {
+                    RELEASE_LOG_INFO(ITPDebug, "Done updating cookie blocking.");
+                    weakThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done updating cookie blocking."_s);
+                }
             });
         });
     });

@@ -1128,6 +1128,11 @@ void NetworkConnectionToWebProcess::checkProcessLocalPortForActivity(const Messa
     connection().sendWithAsyncReply(Messages::NetworkProcessConnection::CheckProcessLocalPortForActivity { port }, WTFMove(callback), 0);
 }
 
+void NetworkConnectionToWebProcess::broadcastConsoleMessage(JSC::MessageSource source, JSC::MessageLevel level, const String& message)
+{
+    connection().send(Messages::NetworkProcessConnection::BroadcastConsoleMessage(source, level, message), 0);
+}
+
 } // namespace WebKit
 
 #undef NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION

@@ -187,10 +187,12 @@ static Protocol::Console::ChannelSource messageSourceValue(MessageSource source)
     case MessageSource::CSS: return Protocol::Console::ChannelSource::CSS;
     case MessageSource::Security: return Protocol::Console::ChannelSource::Security;
     case MessageSource::ContentBlocker: return Protocol::Console::ChannelSource::ContentBlocker;
-    case MessageSource::Other: return Protocol::Console::ChannelSource::Other;
     case MessageSource::Media: return Protocol::Console::ChannelSource::Media;
-    case MessageSource::WebRTC: return Protocol::Console::ChannelSource::WebRTC;
     case MessageSource::MediaSource: return Protocol::Console::ChannelSource::MediaSource;
+    case MessageSource::WebRTC: return Protocol::Console::ChannelSource::WebRTC;
+    case MessageSource::ITPDebug: return Protocol::Console::ChannelSource::ITPDebug;
+    case MessageSource::AdClickAttribution: return Protocol::Console::ChannelSource::AdClickAttribution;
+    case MessageSource::Other: return Protocol::Console::ChannelSource::Other;
     }
     return Protocol::Console::ChannelSource::Other;
 }

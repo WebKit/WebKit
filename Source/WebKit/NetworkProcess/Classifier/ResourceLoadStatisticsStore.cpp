@@ -29,6 +29,7 @@
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 
 #include "Logging.h"
+#include "NetworkProcess.h"
 #include "NetworkSession.h"
 #include "PluginProcessManager.h"
 #include "PluginProcessProxy.h"
@@ -55,7 +56,6 @@ constexpr unsigned operatingDatesWindowLong { 30 };
 constexpr unsigned operatingDatesWindowShort { 7 };
 constexpr Seconds operatingTimeWindowForLiveOnTesting { 1_h };
 
-#if !RELEASE_LOG_DISABLED
 static String domainsToString(const Vector<RegistrableDomain>& domains)
 {
     StringBuilder builder;
@@ -90,7 +90,6 @@ static String domainsToString(const RegistrableDomainsToDeleteOrRestrictWebsiteD
     }
     return builder.toString();
 }
-#endif
 
 OperatingDate OperatingDate::fromWallTime(WallTime time)
 {
@@ -205,7 +204,10 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
         return;
     }
 
-    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ITPDebug, "About to remove data records for %" PUBLIC_LOG_STRING ".", domainsToString(domainsToDeleteOrRestrictWebsiteDataFor).utf8().data());
+    if (UNLIKELY(m_debugLoggingEnabled)) {
+        RELEASE_LOG_INFO(ITPDebug, "About to remove data records for %" PUBLIC_LOG_STRING ".", domainsToString(domainsToDeleteOrRestrictWebsiteDataFor).utf8().data());
+        debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] About to remove data records for: ["_s, domainsToString(domainsToDeleteOrRestrictWebsiteDataFor), "]."_s));
+    }
 
     setDataRecordsBeingRemoved(true);
 
@@ -216,16 +218,20 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
                     completionHandler();
                     return;
                 }
+
                 weakThis->incrementRecordsDeletedCountForDomains(WTFMove(domainsWithDeletedWebsiteData));
                 weakThis->setDataRecordsBeingRemoved(false);
-                
+
                 auto dataRecordRemovalCompletionHandlers = WTFMove(weakThis->m_dataRecordRemovalCompletionHandlers);
                 completionHandler();
-                
+
                 for (auto& dataRecordRemovalCompletionHandler : dataRecordRemovalCompletionHandlers)
                     dataRecordRemovalCompletionHandler();
 
-                RELEASE_LOG_INFO_IF(weakThis->m_debugLoggingEnabled, ITPDebug, "Done removing data records.");
+                if (UNLIKELY(weakThis->m_debugLoggingEnabled)) {
+                    RELEASE_LOG_INFO(ITPDebug, "Done removing data records.");
+                    weakThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done removing data records"_s);
+                }
             });
         });
     });
@@ -286,11 +292,16 @@ void ResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool enable
 {
     ASSERT(!RunLoop::isMain());
 
-    if (enable)
-        RELEASE_LOG_INFO(ITPDebug, "Turned ITP Debug Mode on.");
-
     m_debugModeEnabled = enable;
     m_debugLoggingEnabled = enable;
+
+    if (m_debugLoggingEnabled) {
+        RELEASE_LOG_INFO(ITPDebug, "Turned ITP Debug Mode on.");
+        debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Turned Debug Mode on."_s);
+    } else {
+        RELEASE_LOG_INFO(ITPDebug, "Turned ITP Debug Mode off.");
+        debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Turned Debug Mode off."_s);
+    }
 
     ensurePrevalentResourcesForDebugMode();
     // This will log the current cookie blocking state.
@@ -575,25 +586,46 @@ void ResourceLoadStatisticsStore::didCreateNetworkProcess()
     updateClientSideCookiesAgeCap();
 }
 
+void ResourceLoadStatisticsStore::debugBroadcastConsoleMessage(MessageSource source, MessageLevel level, const String& message)
+{
+    ASSERT(m_debugLoggingEnabled);
+
+    if (!RunLoop::isMain()) {
+        RunLoop::main().dispatch([&, weakThis = makeWeakPtr(*this), source = crossThreadCopy(source), level = crossThreadCopy(level), message = crossThreadCopy(message)]() {
+            if (!weakThis)
+                return;
+
+            debugBroadcastConsoleMessage(source, level, message);
+        });
+        return;
+    }
+
+    if (auto* networkSession = m_store.networkSession())
+        networkSession->networkProcess().broadcastConsoleMessage(networkSession->sessionID(), source, level, message);
+}
+
 void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, const RegistrableDomainsToBlockCookiesFor& domainsToBlock)
 {
     Vector<RegistrableDomain> domains;
     domains.appendVector(domainsToBlock.domainsToBlockAndDeleteCookiesFor);
     domains.appendVector(domainsToBlock.domainsToBlockButKeepCookiesFor);
-    static const auto maxNumberOfDomainsInOneLogStatement = 50;
     if (domains.isEmpty())
         return;
-    
+
+    debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] About to "_s, action, "cookies in third-party contexts for: ["_s, domainsToString(domains), "]."_s));
+
+    static const auto maxNumberOfDomainsInOneLogStatement = 50;
+
     if (domains.size() <= maxNumberOfDomainsInOneLogStatement) {
         RELEASE_LOG_INFO(ITPDebug, "About to %" PUBLIC_LOG_STRING " cookies in third-party contexts for: %" PUBLIC_LOG_STRING ".", action, domainsToString(domains).utf8().data());
         return;
     }
-    
+
     Vector<RegistrableDomain> batch;
     batch.reserveInitialCapacity(maxNumberOfDomainsInOneLogStatement);
     auto batchNumber = 1;
     unsigned numberOfBatches = std::ceil(domains.size() / static_cast<float>(maxNumberOfDomainsInOneLogStatement));
-    
+
     for (auto& domain : domains) {
         if (batch.size() == maxNumberOfDomainsInOneLogStatement) {
             RELEASE_LOG_INFO(ITPDebug, "About to %" PUBLIC_LOG_STRING " cookies in third-party contexts for (%{public}d of %u): %" PUBLIC_LOG_STRING ".", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());

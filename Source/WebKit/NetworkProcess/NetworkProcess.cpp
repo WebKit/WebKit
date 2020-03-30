@@ -2665,4 +2665,12 @@ void NetworkProcess::setInAppBrowserPrivacyEnabled(PAL::SessionID sessionID, boo
     }
 }
 
+void NetworkProcess::broadcastConsoleMessage(PAL::SessionID sessionID, JSC::MessageSource source, JSC::MessageLevel level, const String& message)
+{
+    for (auto& networkConnectionToWebProcess : m_webProcessConnections.values()) {
+        if (networkConnectionToWebProcess->sessionID() == sessionID)
+            networkConnectionToWebProcess->broadcastConsoleMessage(source, level, message);
+    }
+}
+
 } // namespace WebKit

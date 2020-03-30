@@ -1,3 +1,25 @@
+2020-03-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way to log messages from the network process
+        https://bugs.webkit.org/show_bug.cgi?id=204775
+
+        Reviewed by Brian Burg.
+
+        ITP can be influenced by multiple pages simultaneously, meaning that sending a console
+        message to the Web Inspector that's connected to the page that caused a change may not be
+        useful as developers often don't test in complete isolation. As such, having a way to
+        broadcast a console message to all Web Inspectors ensures that any changes caused by any
+        page are always able to be seen, no matter which page is being actively inspected.
+
+        * inspector/protocol/Console.json:
+        * inspector/scripts/codegen/generator.py:
+        * runtime/ConsoleTypes.h:
+        * runtime/ConsoleClient.cpp:
+        (JSC::appendMessagePrefix):
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::messageSourceValue):
+        Add `ITPDebug` and `AdClickAttribution` message sources.
+
 2020-03-30  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, add FIXME.

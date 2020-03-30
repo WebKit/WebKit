@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "RuntimeEnabledFeatures.h"
+#include <wtf/Expected.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
@@ -50,25 +51,34 @@ bool AdClickAttribution::isValid() const
         && m_earliestTimeToSend;
 }
 
-Optional<AdClickAttribution::Conversion> AdClickAttribution::parseConversionRequest(const URL& redirectURL)
+Expected<AdClickAttribution::Conversion, String> AdClickAttribution::parseConversionRequest(const URL& redirectURL)
 {
     if (!redirectURL.protocolIs("https"_s) || redirectURL.hasUsername() || redirectURL.hasPassword() || redirectURL.hasQuery() || redirectURL.hasFragment()) {
-        RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, query string, and fragment.");
-        return { };
+        if (UNLIKELY(debugModeEnabled())) {
+            RELEASE_LOG_INFO(AdClickAttribution, "Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, query string, and fragment.");
+            return makeUnexpected("[Ad Click Attribution] Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, query string, and fragment."_s);
+        }
+        return makeUnexpected(nullString());
     }
 
     auto path = StringView(redirectURL.string()).substring(redirectURL.pathStart(), redirectURL.pathEnd() - redirectURL.pathStart());
     if (path.isEmpty() || !path.startsWith(adClickAttributionPathPrefix)) {
-        RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because the URL path did not start with %" PUBLIC_LOG_STRING ".", adClickAttributionPathPrefix);
-        return { };
+        if (UNLIKELY(debugModeEnabled())) {
+            RELEASE_LOG_INFO(AdClickAttribution, "Conversion was not accepted because the URL path did not start with %" PUBLIC_LOG_STRING ".", adClickAttributionPathPrefix);
+            return makeUnexpected(makeString("[Ad Click Attribution] Conversion was not accepted because the URL path did not start with "_s, adClickAttributionPathPrefix, "."_s));
+        }
+        return makeUnexpected(nullString());
     }
 
     auto prefixLength = sizeof(adClickAttributionPathPrefix) - 1;
     if (path.length() == prefixLength + adClickConversionDataPathSegmentSize) {
         auto conversionDataUInt64 = path.substring(prefixLength, adClickConversionDataPathSegmentSize).toUInt64Strict();
         if (!conversionDataUInt64 || *conversionDataUInt64 > MaxEntropy) {
-            RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
-            return { };
+            if (UNLIKELY(debugModeEnabled())) {
+                RELEASE_LOG_INFO(AdClickAttribution, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
+                return makeUnexpected(makeString("[Ad Click Attribution] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, MaxEntropy, "."_s));
+            }
+            return makeUnexpected(nullString());
         }
 
         return Conversion { static_cast<uint32_t>(*conversionDataUInt64), Priority { 0 } };
@@ -77,21 +87,30 @@ Optional<AdClickAttribution::Conversion> AdClickAttribution::parseConversionRequ
     if (path.length() == prefixLength + adClickConversionDataPathSegmentSize + 1 + adClickPriorityPathSegmentSize) {
         auto conversionDataUInt64 = path.substring(prefixLength, adClickConversionDataPathSegmentSize).toUInt64Strict();
         if (!conversionDataUInt64 || *conversionDataUInt64 > MaxEntropy) {
-            RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
-            return { };
+            if (UNLIKELY(debugModeEnabled())) {
+                RELEASE_LOG_INFO(AdClickAttribution, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
+                return makeUnexpected(makeString("[Ad Click Attribution] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, MaxEntropy, "."_s));
+            }
+            return makeUnexpected(nullString());
         }
 
         auto conversionPriorityUInt64 = path.substring(prefixLength + adClickConversionDataPathSegmentSize + 1, adClickPriorityPathSegmentSize).toUInt64Strict();
         if (!conversionPriorityUInt64 || *conversionPriorityUInt64 > MaxEntropy) {
-            RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
-            return { };
+            if (UNLIKELY(debugModeEnabled())) {
+                RELEASE_LOG_INFO(AdClickAttribution, "Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of %{public}u.", MaxEntropy);
+                return makeUnexpected(makeString("[Ad Click Attribution] Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of "_s, MaxEntropy, "."_s));
+            }
+            return makeUnexpected(nullString());
         }
 
         return Conversion { static_cast<uint32_t>(*conversionDataUInt64), Priority { static_cast<uint32_t>(*conversionPriorityUInt64) } };
     }
 
-    RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because the URL path contained unrecognized parts.");
-    return { };
+    if (UNLIKELY(debugModeEnabled())) {
+        RELEASE_LOG_INFO(AdClickAttribution, "Conversion was not accepted because the URL path contained unrecognized parts.");
+        return makeUnexpected("[Ad Click Attribution] Conversion was not accepted because the URL path contained unrecognized parts."_s);
+    }
+    return makeUnexpected(nullString());
 }
 
 Optional<Seconds> AdClickAttribution::convertAndGetEarliestTimeToSend(Conversion&& conversion)

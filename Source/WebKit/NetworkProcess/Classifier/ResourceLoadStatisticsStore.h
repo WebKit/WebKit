@@ -29,6 +29,7 @@
 
 #include "ResourceLoadStatisticsClassifier.h"
 #include "WebResourceLoadStatisticsStore.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Vector.h>
@@ -192,7 +193,6 @@ public:
 protected:
     static unsigned computeImportance(const WebCore::ResourceLoadStatistics&);
     static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& existingDates, Vector<OperatingDate>&& newDates);
-    static void debugLogDomainsInBatches(const char* action, const RegistrableDomainsToBlockCookiesFor&);
 
     ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost);
     
@@ -237,6 +237,8 @@ protected:
     void clearEndOfGrandfatheringTimeStamp() { m_endOfGrandfatheringTimestamp = { }; }
     const RegistrableDomain& debugManualPrevalentResource() const { return m_debugManualPrevalentResource; }
     const RegistrableDomain& debugStaticPrevalentResource() const { return m_debugStaticPrevalentResource; }
+    void debugBroadcastConsoleMessage(MessageSource, MessageLevel, const String& message);
+    void debugLogDomainsInBatches(const char* action, const RegistrableDomainsToBlockCookiesFor&);
     bool debugLoggingEnabled() const { return m_debugLoggingEnabled; };
     bool debugModeEnabled() const { return m_debugModeEnabled; }
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode() const { return m_firstPartyWebsiteDataRemovalMode; }

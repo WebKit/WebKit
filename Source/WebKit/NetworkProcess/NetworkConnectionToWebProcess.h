@@ -39,6 +39,7 @@
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebResourceLoadObserver.h"
 #include "WebSocketIdentifier.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/MessagePortIdentifier.h>
@@ -172,6 +173,8 @@ public:
     NetworkSchemeRegistry& schemeRegistry() { return m_schemeRegistry.get(); }
 
     void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
+
+    void broadcastConsoleMessage(JSC::MessageSource, JSC::MessageLevel, const String& message);
 
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Identifier);

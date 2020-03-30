@@ -28,6 +28,7 @@
 
 #include "Connection.h"
 #include "ShareableResource.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <wtf/RefCounted.h>
@@ -111,6 +112,8 @@ private:
     // Message handlers.
     void didCacheResource(const WebCore::ResourceRequest&, const ShareableResource::Handle&);
 #endif
+
+    void broadcastConsoleMessage(MessageSource, MessageLevel, const String& message);
 
     // The connection from the web process to the network process.
     Ref<IPC::Connection> m_connection;

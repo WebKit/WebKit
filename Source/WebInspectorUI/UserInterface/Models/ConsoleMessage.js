@@ -109,10 +109,12 @@ WI.ConsoleMessage.MessageSource = {
     Rendering: "rendering",
     CSS: "css",
     Security: "security",
-    Other: "other",
     Media: "media",
     MediaSource: "mediasource",
     WebRTC: "webrtc",
+    ITPDebug: "itp-debug",
+    AdClickAttribution: "ad-click-attribution",
+    Other: "other",
 };
 
 WI.ConsoleMessage.MessageType = {

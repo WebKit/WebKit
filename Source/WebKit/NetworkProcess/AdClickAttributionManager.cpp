@@ -27,6 +27,7 @@
 #include "AdClickAttributionManager.h"
 
 #include "Logging.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/FormData.h>
 #include <WebCore/ResourceError.h>
@@ -51,7 +52,11 @@ void AdClickAttributionManager::storeUnconverted(AdClickAttribution&& attributio
 {
     clearExpired();
 
-    RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Storing an ad click.");
+    if (UNLIKELY(debugModeEnabled())) {
+        RELEASE_LOG_INFO(AdClickAttribution, "Storing an ad click.");
+        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::AdClickAttribution, MessageLevel::Error, "[Ad Click Attribution] Storing an ad click."_s);
+    }
+
     m_unconvertedAdClickAttributionMap.set(std::make_pair(attribution.source(), attribution.destination()), WTFMove(attribution));
 }
 
@@ -64,12 +69,18 @@ void AdClickAttributionManager::handleConversion(Conversion&& conversion, const 
     auto& firstPartyURL = redirectRequest.firstPartyForCookies();
 
     if (!redirectDomain.matches(requestURL)) {
-        RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because the HTTP redirect was not same-site.");
+        if (UNLIKELY(debugModeEnabled())) {
+            RELEASE_LOG_INFO(AdClickAttribution, "Conversion was not accepted because the HTTP redirect was not same-site.");
+            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::AdClickAttribution, MessageLevel::Error, "[Ad Click Attribution] Conversion was not accepted because the HTTP redirect was not same-site."_s);
+        }
         return;
     }
 
     if (redirectDomain.matches(firstPartyURL)) {
-        RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Conversion was not accepted because it was requested in an HTTP redirect that is same-site as the first-party.");
+        if (UNLIKELY(debugModeEnabled())) {
+            RELEASE_LOG_INFO(AdClickAttribution, "Conversion was not accepted because it was requested in an HTTP redirect that is same-site as the first-party.");
+            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::AdClickAttribution, MessageLevel::Error, "[Ad Click Attribution] Conversion was not accepted because it was requested in an HTTP redirect that is same-site as the first-party."_s);
+        }
         return;
     }
 
@@ -86,16 +97,20 @@ void AdClickAttributionManager::convert(const Source& source, const Destination&
     clearExpired();
 
     if (!conversion.isValid()) {
-        RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Got an invalid conversion.");
+        if (UNLIKELY(debugModeEnabled())) {
+            RELEASE_LOG_INFO(AdClickAttribution, "Got an invalid conversion.");
+            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::AdClickAttribution, MessageLevel::Error, "[Ad Click Attribution] Got an invalid conversion."_s);
+        }
         return;
     }
 
-#if !RELEASE_LOG_DISABLED
     auto conversionData = conversion.data;
     auto conversionPriority = conversion.priority;
-#endif
 
-    RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Got a conversion with conversion data: %{public}u and priority: %{public}u.", conversionData, conversionPriority);
+    if (UNLIKELY(debugModeEnabled())) {
+        RELEASE_LOG_INFO(AdClickAttribution, "Got a conversion with conversion data: %{public}u and priority: %{public}u.", conversionData, conversionPriority);
+        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::AdClickAttribution, MessageLevel::Info, makeString("[Ad Click Attribution] Got a conversion with conversion data: '"_s, conversionData, "' and priority: '"_s, conversionPriority, "'."_s));
+    }
 
     auto secondsUntilSend = Seconds::infinity();
 
@@ -108,7 +123,11 @@ void AdClickAttributionManager::convert(const Source& source, const Destination&
         if (auto optionalSecondsUntilSend = previouslyUnconvertedAttribution.convertAndGetEarliestTimeToSend(WTFMove(conversion))) {
             secondsUntilSend = *optionalSecondsUntilSend;
             ASSERT(secondsUntilSend != Seconds::infinity());
-            RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Converted a stored ad click with conversion data: %{public}u and priority: %{public}u.", conversionData, conversionPriority);
+
+            if (UNLIKELY(debugModeEnabled())) {
+                RELEASE_LOG_INFO(AdClickAttribution, "Converted a stored ad click with conversion data: %{public}u and priority: %{public}u.", conversionData, conversionPriority);
+                m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::AdClickAttribution, MessageLevel::Info, makeString("[Ad Click Attribution] Converted a stored ad click with conversion data: '"_s, conversionData, "' and priority: '"_s, conversionPriority, "'."_s));
+            }
         }
 
         if (previouslyConvertedAttributionIter == m_convertedAdClickAttributionMap.end())
@@ -116,14 +135,22 @@ void AdClickAttributionManager::convert(const Source& source, const Destination&
         else if (previouslyUnconvertedAttribution.hasHigherPriorityThan(previouslyConvertedAttributionIter->value)) {
             // If the newly converted attribution has higher priority, replace the old one.
             m_convertedAdClickAttributionMap.set(pair, WTFMove(previouslyUnconvertedAttribution));
-            RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Replaced a previously converted ad click with a new one with conversion data: %{public}u and priority: %{public}u because it had higher priority.", conversionData, conversionPriority);
+
+            if (UNLIKELY(debugModeEnabled())) {
+                RELEASE_LOG_INFO(AdClickAttribution, "Replaced a previously converted ad click with a new one with conversion data: %{public}u and priority: %{public}u because it had higher priority.", conversionData, conversionPriority);
+                m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::AdClickAttribution, MessageLevel::Info, makeString("[Ad Click Attribution] Replaced a previously converted ad click with a new one with conversion data: '"_s, conversionData, "' and priority: '"_s, conversionPriority, "' because it had higher priority."_s));
+            }
         }
     } else if (previouslyConvertedAttributionIter != m_convertedAdClickAttributionMap.end()) {
         // If we have no newly converted attribution, re-convert the old one to respect the new priority.
         if (auto optionalSecondsUntilSend = previouslyConvertedAttributionIter->value.convertAndGetEarliestTimeToSend(WTFMove(conversion))) {
             secondsUntilSend = *optionalSecondsUntilSend;
             ASSERT(secondsUntilSend != Seconds::infinity());
-            RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "Re-converted an ad click with a new one with conversion data: %{public}u and priority: %{public}u because it had higher priority.", conversionData, conversionPriority);
+
+            if (UNLIKELY(debugModeEnabled())) {
+                RELEASE_LOG_INFO(AdClickAttribution, "Re-converted an ad click with a new one with conversion data: %{public}u and priority: %{public}u because it had higher priority.", conversionData, conversionPriority);
+                m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::AdClickAttribution, MessageLevel::Info, makeString("[Ad Click Attribution] Re-converted an ad click with a new one with conversion data: '"_s, conversionData, "' and priority: '"_s, conversionPriority, "'' because it had higher priority."_s));
+            }
         }
     }
 
@@ -133,8 +160,9 @@ void AdClickAttributionManager::convert(const Source& source, const Destination&
     if (m_firePendingConversionRequestsTimer.isActive() && m_firePendingConversionRequestsTimer.nextFireInterval() < secondsUntilSend)
         return;
 
-    if (debugModeEnabled()) {
+    if (UNLIKELY(debugModeEnabled())) {
         RELEASE_LOG_INFO(AdClickAttribution, "Setting timer for firing conversion requests to the debug mode timeout of %{public}f seconds where the regular timeout would have been %{public}f seconds.", debugModeSecondsUntilSend.seconds(), secondsUntilSend.seconds());
+        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::AdClickAttribution, MessageLevel::Info, makeString("[Ad Click Attribution] Setting timer for firing conversion requests to the debug mode timeout of "_s, debugModeSecondsUntilSend.seconds(), " seconds where the regular timeout would have been "_s, secondsUntilSend.seconds(), " seconds."_s));
         secondsUntilSend = debugModeSecondsUntilSend;
     }
 
@@ -177,16 +205,25 @@ void AdClickAttributionManager::fireConversionRequest(const AdClickAttribution& 
     loadParameters.mainDocumentURL = WTFMove(conversionReferrerURL);
 #endif
 
-    RELEASE_LOG_INFO_IF(debugModeEnabled(), AdClickAttribution, "About to fire an attribution request for a conversion.");
+    if (UNLIKELY(debugModeEnabled())) {
+        RELEASE_LOG_INFO(AdClickAttribution, "About to fire an attribution request for a conversion.");
+        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::AdClickAttribution, MessageLevel::Error, "[Ad Click Attribution] About to fire an attribution request for a conversion."_s);
+    }
 
-    m_pingLoadFunction(WTFMove(loadParameters), [](const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) {
+    m_pingLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this)](const WebCore::ResourceError& error, const WebCore::ResourceResponse& response) {
+        if (!weakThis)
+            return;
+
+        if (UNLIKELY(weakThis->debugModeEnabled())) {
+            if (!error.isNull()) {
 #if PLATFORM(COCOA)
-        RELEASE_LOG_ERROR_IF(!error.isNull(), AdClickAttribution, "Received error: '%{public}s' for ad click attribution request.", error.localizedDescription().utf8().data());
+                RELEASE_LOG_ERROR(AdClickAttribution, "Received error: '%{public}s' for ad click attribution request.", error.localizedDescription().utf8().data());
 #else
-        RELEASE_LOG_ERROR_IF(!error.isNull(), AdClickAttribution, "Received error: '%s' for ad click attribution request.", error.localizedDescription().utf8().data());
+                RELEASE_LOG_ERROR(AdClickAttribution, "Received error: '%s' for ad click attribution request.", error.localizedDescription().utf8().data());
 #endif
-        UNUSED_PARAM(response);
-        UNUSED_PARAM(error);
+                weakThis->m_networkProcess->broadcastConsoleMessage(weakThis->m_sessionID, MessageSource::AdClickAttribution, MessageLevel::Error, makeString("[Ad Click Attribution] Received error: '"_s, error.localizedDescription(), "' for ad click attribution request."_s));
+            }
+        }
     });
 }
 

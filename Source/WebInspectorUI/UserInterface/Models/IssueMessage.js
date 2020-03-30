@@ -36,7 +36,7 @@ WI.IssueMessage = class IssueMessage extends WI.Object
         this._text = this._issueText();
 
         switch (this._consoleMessage.source) {
-        case "javascript":
+        case WI.ConsoleMessage.MessageSource.JS:
             // FIXME: It would be nice if we had this information (the specific type of JavaScript error)
             // as part of the data passed from WebCore, instead of having to determine it ourselves.
             var prefixRegex = /^([^:]+): (?:DOM Exception \d+: )?/;
@@ -48,27 +48,29 @@ WI.IssueMessage = class IssueMessage extends WI.Object
                 this._type = WI.IssueMessage.Type.OtherIssue;
             break;
 
-        case "css":
-        case "xml":
+        case WI.ConsoleMessage.MessageSource.CSS:
+        case WI.ConsoleMessage.MessageSource.XML:
             this._type = WI.IssueMessage.Type.PageIssue;
             break;
 
-        case "network":
+        case WI.ConsoleMessage.MessageSource.Network:
             this._type = WI.IssueMessage.Type.NetworkIssue;
             break;
 
-        case "security":
+        case WI.ConsoleMessage.MessageSource.Security:
             this._type = WI.IssueMessage.Type.SecurityIssue;
             break;
 
-        case "console-api":
-        case "storage":
-        case "appcache":
-        case "rendering":
-        case "other":
-        case "media":
-        case "mediasource":
-        case "webrtc":
+        case WI.ConsoleMessage.MessageSource.ConsoleAPI:
+        case WI.ConsoleMessage.MessageSource.Storage:
+        case WI.ConsoleMessage.MessageSource.Appcache:
+        case WI.ConsoleMessage.MessageSource.Rendering:
+        case WI.ConsoleMessage.MessageSource.Media:
+        case WI.ConsoleMessage.MessageSource.Mediasource:
+        case WI.ConsoleMessage.MessageSource.WebRTC:
+        case WI.ConsoleMessage.MessageSource.ITPDebug:
+        case WI.ConsoleMessage.MessageSource.AdClickAttribution:
+        case WI.ConsoleMessage.MessageSource.Other:
             this._type = WI.IssueMessage.Type.OtherIssue;
             break;
 

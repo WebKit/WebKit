@@ -59,6 +59,7 @@
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/Expected.h>
 #include <wtf/RunLoop.h>
 
 #if USE(QUICK_LOOK)
@@ -810,8 +811,12 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
     m_redirectResponse = redirectResponse;
 
     Optional<AdClickAttribution::Conversion> adClickConversion;
-    if (!sessionID().isEphemeral())
-        adClickConversion = AdClickAttribution::parseConversionRequest(redirectRequest.url());
+    if (!sessionID().isEphemeral()) {
+        if (auto result = AdClickAttribution::parseConversionRequest(redirectRequest.url()))
+            adClickConversion = result.value();
+        else if (!result.error().isEmpty())
+            addConsoleMessage(MessageSource::AdClickAttribution, MessageLevel::Error, result.error());
+    }
 
     auto maxAgeCap = validateCacheEntryForMaxAgeCapValidation(request, redirectRequest, redirectResponse);
     if (redirectResponse.source() == ResourceResponse::Source::Network && canUseCachedRedirect(request))

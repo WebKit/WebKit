@@ -36,6 +36,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteData.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
@@ -345,6 +346,8 @@ public:
     void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
     void hasAppBoundSession(PAL::SessionID, CompletionHandler<void(bool)>&&) const;
     void setInAppBrowserPrivacyEnabled(PAL::SessionID, bool enable, CompletionHandler<void()>&&);
+
+    void broadcastConsoleMessage(PAL::SessionID, JSC::MessageSource, JSC::MessageLevel, const String& message);
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
