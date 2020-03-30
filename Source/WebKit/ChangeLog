@@ -1,3 +1,31 @@
+2020-03-30  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r246188) WebProcess is launched too eagerly when [WKWebView _restoreSessionState] is called
+        https://bugs.webkit.org/show_bug.cgi?id=207908
+        <rdar://problem/59619323>
+
+        Reviewed by Darin Adler.
+
+        Since r246188, the WebProcess is launched eagerly when [WKWebView _restoreSessionState] is called. This is bad
+        for performance because we are unable to leverage the process cache at this point (since we don't know which
+        domain will be loaded).
+
+        This patch thus reverts r246188 and fixes what r246188 was trying to address in a different way. If the process
+        was not launched yet when restoreSessionState() is called, the session state properly gets sent to the WebProcess
+        after launch, via the WebPageCreationParameters. What was missing at that point was that the session state was
+        restore by an API Request. To fix this, we now pass an extra itemStatesWereRestoredByAPIRequest flag in
+        WebPageCreationParameters.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_processDisplayName):
+
 2020-03-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Minor code cleanup around WebDataListSuggestionsDropdown
