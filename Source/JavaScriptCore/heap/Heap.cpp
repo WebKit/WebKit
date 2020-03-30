@@ -86,6 +86,7 @@
 #include <wtf/ParallelVectorIterator.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RAMSize.h>
+#include <wtf/Scope.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/Threading.h>
 
@@ -1494,23 +1495,31 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         
     updateObjectCounts();
     endMarking();
-        
+
     if (UNLIKELY(m_verifier)) {
         m_verifier->gatherLiveCells(HeapVerifier::Phase::AfterMarking);
         m_verifier->verify(HeapVerifier::Phase::AfterMarking);
     }
         
-    if (vm().typeProfiler())
-        vm().typeProfiler()->invalidateTypeSetCache(vm());
+    {
+        auto* previous = Thread::current().setCurrentAtomStringTable(nullptr);
+        auto scopeExit = makeScopeExit([&] {
+            Thread::current().setCurrentAtomStringTable(previous);
+        });
 
-    m_structureIDTable.flushOldTables();
+        if (vm().typeProfiler())
+            vm().typeProfiler()->invalidateTypeSetCache(vm());
 
-    reapWeakHandles();
-    pruneStaleEntriesFromWeakGCMaps();
-    sweepArrayBuffers();
-    snapshotUnswept();
-    finalizeUnconditionalFinalizers(); // We rely on these unconditional finalizers running before clearCurrentlyExecuting since CodeBlock's finalizer relies on querying currently executing.
-    removeDeadCompilerWorklistEntries();
+        m_structureIDTable.flushOldTables();
+
+        reapWeakHandles();
+        pruneStaleEntriesFromWeakGCMaps();
+        sweepArrayBuffers();
+        snapshotUnswept();
+        finalizeUnconditionalFinalizers(); // We rely on these unconditional finalizers running before clearCurrentlyExecuting since CodeBlock's finalizer relies on querying currently executing.
+        removeDeadCompilerWorklistEntries();
+    }
+
     notifyIncrementalSweeper();
     
     m_codeBlocks->iterateCurrentlyExecuting(
