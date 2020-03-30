@@ -25,7 +25,7 @@
 </style>
 <script>
 if (window.internals)
-    internals.enableAutoSizeMode(true, 2000, 600);
+    internals.enableFixedWidthAutoSizeMode(true, 2000, 600);
 
 if (window.testRunner)
     testRunner.dumpAsText();
@@ -45,7 +45,7 @@ result.textContent = window.getComputedStyle(w100, null).getPropertyValue("width
     + window.getComputedStyle(w10, null).getPropertyValue("width") + " "  
 	+ window.getComputedStyle(w0, null).getPropertyValue("width");  
 if (window.internals)
-    internals.enableAutoSizeMode(false, 0, 0, 0, 0);
+    internals.enableFixedWidthAutoSizeMode(false, 0, 0, 0, 0);
 </script>
 </body>
 </html>

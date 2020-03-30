@@ -1344,6 +1344,9 @@ public:
     WebCore::IntSize minimumSizeForAutoLayout() const { return m_minimumSizeForAutoLayout; }
     void setMinimumSizeForAutoLayout(const WebCore::IntSize&);
 
+    WebCore::IntSize sizeToContentAutoSizeMaximumSize() const { return m_sizeToContentAutoSizeMaximumSize; }
+    void setSizeToContentAutoSizeMaximumSize(const WebCore::IntSize&);
+
     bool autoSizingShouldExpandToViewHeight() const { return m_autoSizingShouldExpandToViewHeight; }
     void setAutoSizingShouldExpandToViewHeight(bool);
 
@@ -2603,6 +2606,8 @@ private:
     bool m_suppressVisibilityUpdates { false };
     bool m_autoSizingShouldExpandToViewHeight { false };
     WebCore::IntSize m_minimumSizeForAutoLayout;
+    WebCore::IntSize m_sizeToContentAutoSizeMaximumSize;
+
     Optional<WebCore::IntSize> m_viewportSizeForCSSViewportUnits;
 
     // Visual viewports

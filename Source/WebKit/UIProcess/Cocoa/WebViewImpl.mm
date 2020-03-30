@@ -1926,6 +1926,21 @@ CGSize WebViewImpl::minimumSizeForAutoLayout() const
     return m_page->minimumSizeForAutoLayout();
 }
 
+void WebViewImpl::setSizeToContentAutoSizeMaximumSize(CGSize sizeToContentAutoSizeMaximumSize)
+{
+    bool expandsToFit = sizeToContentAutoSizeMaximumSize.width > 0 && sizeToContentAutoSizeMaximumSize.height > 0;
+
+    m_page->setSizeToContentAutoSizeMaximumSize(WebCore::IntSize(sizeToContentAutoSizeMaximumSize));
+    m_page->setMainFrameIsScrollable(!expandsToFit);
+
+    setClipsToVisibleRect(expandsToFit);
+}
+
+CGSize WebViewImpl::sizeToContentAutoSizeMaximumSize() const
+{
+    return m_page->sizeToContentAutoSizeMaximumSize();
+}
+
 void WebViewImpl::setShouldExpandToViewHeightForAutoLayout(bool shouldExpandToViewHeightForAutoLayout)
 {
     m_page->setAutoSizingShouldExpandToViewHeight(shouldExpandToViewHeightForAutoLayout);
@@ -1942,6 +1957,7 @@ void WebViewImpl::setIntrinsicContentSize(CGSize intrinsicContentSize)
     // so we can report that that dimension is flexible. If not, we need to report our intrinsic width
     // so that autolayout will know to provide space for us.
 
+    // FIXME: what to do here?
     CGSize intrinsicContentSizeAcknowledgingFlexibleWidth = intrinsicContentSize;
     if (intrinsicContentSize.width < m_page->minimumSizeForAutoLayout().width())
         intrinsicContentSizeAcknowledgingFlexibleWidth.width = NSViewNoIntrinsicMetric;

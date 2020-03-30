@@ -1507,7 +1507,15 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     RefPtr<FrameView> view = m_frame->coreFrame()->view();
     if (int width = webPage->minimumSizeForAutoLayout().width()) {
         int height = std::max(webPage->minimumSizeForAutoLayout().height(), 1);
-        view->enableAutoSizeMode(true, { width, height });
+        view->enableFixedWidthAutoSizeMode(true, { width, height });
+
+        if (webPage->autoSizingShouldExpandToViewHeight())
+            view->setAutoSizeFixedMinimumHeight(webPage->size().height());
+    }
+
+    IntSize sizeToContentAutoSizeMaximumSize = webPage->sizeToContentAutoSizeMaximumSize();
+    if (sizeToContentAutoSizeMaximumSize.width() && sizeToContentAutoSizeMaximumSize.height()) {
+        view->enableSizeToContentAutoSizeMode(true, sizeToContentAutoSizeMaximumSize);
 
         if (webPage->autoSizingShouldExpandToViewHeight())
             view->setAutoSizeFixedMinimumHeight(webPage->size().height());

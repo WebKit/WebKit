@@ -399,9 +399,11 @@ public:
     bool isVisuallyNonEmpty() const { return m_contentQualifiesAsVisuallyNonEmpty; }
     void checkAndDispatchDidReachVisuallyNonEmptyState();
 
-    WEBCORE_EXPORT void enableAutoSizeMode(bool enable, const IntSize& minSize);
+    WEBCORE_EXPORT void enableFixedWidthAutoSizeMode(bool enable, const IntSize& minSize);
+    WEBCORE_EXPORT void enableSizeToContentAutoSizeMode(bool enable, const IntSize& maxSize);
     WEBCORE_EXPORT void setAutoSizeFixedMinimumHeight(int);
-    bool isAutoSizeEnabled() const { return m_shouldAutoSize; }
+    bool isFixedWidthAutoSizeEnabled() const { return m_shouldAutoSize && m_autoSizeMode == AutoSizeMode::FixedWidth; }
+    bool isSizeToContentAutoSizeEnabled() const { return m_shouldAutoSize && m_autoSizeMode == AutoSizeMode::SizeToContent; }
     IntSize autoSizingIntrinsicContentSize() const { return m_autoSizeContentSize; }
 
     WEBCORE_EXPORT void forceLayout(bool allowSubtreeLayout = false);
@@ -704,7 +706,12 @@ private:
     void forceLayoutParentViewIfNeeded();
     void flushPostLayoutTasksQueue();
     void performPostLayoutTasks();
+
+    enum class AutoSizeMode : uint8_t { FixedWidth, SizeToContent };
+    void enableAutoSizeMode(bool enable, const IntSize& minSize, AutoSizeMode);
     void autoSizeIfEnabled();
+    void performFixedWidthAutoSize();
+    void performSizeToContentAutoSize();
 
     void applyRecursivelyWithVisibleRect(const WTF::Function<void (FrameView& frameView, const IntRect& visibleRect)>&);
     void resumeVisibleImageAnimations(const IntRect& visibleRect);
@@ -931,6 +938,7 @@ private:
     bool m_hasFlippedBlockRenderers { false };
     bool m_speculativeTilingDelayDisabledForTesting { false };
 
+    AutoSizeMode m_autoSizeMode { AutoSizeMode::FixedWidth };
     // If true, automatically resize the frame view around its content.
     bool m_shouldAutoSize { false };
     bool m_inAutoSize { false };

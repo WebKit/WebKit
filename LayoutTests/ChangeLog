@@ -1,3 +1,18 @@
+2020-03-29  Antoine Quint  <graouts@apple.com>
+
+        [AutoSizing] Bring back the old auto-sizing code as a deprecated codepath for compatibility reasons
+        https://bugs.webkit.org/show_bug.cgi?id=209669
+        <rdar://problem/60111081>
+
+        Reviewed by Alan Bujtas and Darin Adler.
+
+        The methods internals.enableAutoSizeMode() has changed to internals.enableFixedWidthAutoSizeMode().
+
+        * css3/viewport-percentage-lengths/vh-auto-size-expected.html:
+        * css3/viewport-percentage-lengths/vh-auto-size.html:
+        * fast/dynamic/crash-subtree-layout-when-auto-size-enabled.html:
+        * fast/dynamic/mail-autosize-viewport-unit.html:
+
 2020-03-29  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Gardening some tests related to vertical text baselines

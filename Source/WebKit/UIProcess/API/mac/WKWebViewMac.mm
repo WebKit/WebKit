@@ -1400,6 +1400,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _impl->setClipsToVisibleRect(expandsToFit);
 }
 
+- (CGSize)_sizeToContentAutoSizeMaximumSize
+{
+    return _page->minimumSizeForAutoLayout();
+}
+
+- (void)_setSizeToContentAutoSizeMaximumSize:(CGSize)size
+{
+    BOOL expandsToFit = size.width > 0 && size.height > 0;
+
+    _page->setSizeToContentAutoSizeMaximumSize(WebCore::IntSize(size.width, size.height));
+    _page->setMainFrameIsScrollable(!expandsToFit);
+
+    _impl->setClipsToVisibleRect(expandsToFit);
+}
+
 - (BOOL)_clipsToVisibleRect
 {
     return _impl->clipsToVisibleRect();

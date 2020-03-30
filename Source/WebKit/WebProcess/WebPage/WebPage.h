@@ -1065,6 +1065,9 @@ public:
     void setMinimumSizeForAutoLayout(const WebCore::IntSize&);
     WebCore::IntSize minimumSizeForAutoLayout() const { return m_minimumSizeForAutoLayout; }
 
+    void setSizeToContentAutoSizeMaximumSize(const WebCore::IntSize&);
+    WebCore::IntSize sizeToContentAutoSizeMaximumSize() const { return m_sizeToContentAutoSizeMaximumSize; }
+
     void setAutoSizingShouldExpandToViewHeight(bool shouldExpand);
     bool autoSizingShouldExpandToViewHeight() { return m_autoSizingShouldExpandToViewHeight; }
 
@@ -1907,6 +1910,7 @@ private:
     HashSet<unsigned long> m_trackedNetworkResourceRequestIdentifiers;
 
     WebCore::IntSize m_minimumSizeForAutoLayout;
+    WebCore::IntSize m_sizeToContentAutoSizeMaximumSize;
     bool m_autoSizingShouldExpandToViewHeight { false };
     Optional<WebCore::IntSize> m_viewportSizeForCSSViewportUnits;
 

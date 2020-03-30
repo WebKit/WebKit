@@ -7699,6 +7699,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
     parameters.mediaPlaybackIsSuspended = m_mediaPlaybackIsSuspended;
     parameters.minimumSizeForAutoLayout = m_minimumSizeForAutoLayout;
+    parameters.sizeToContentAutoSizeMaximumSize = m_sizeToContentAutoSizeMaximumSize;
     parameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;
     parameters.viewportSizeForCSSViewportUnits = m_viewportSizeForCSSViewportUnits;
     parameters.scrollPinningBehavior = m_scrollPinningBehavior;
@@ -8364,6 +8365,25 @@ void WebPageProxy::setMinimumSizeForAutoLayout(const IntSize& size)
 
 #if USE(APPKIT)
     if (m_minimumSizeForAutoLayout.width() <= 0)
+        didChangeIntrinsicContentSize(IntSize(-1, -1));
+#endif
+}
+
+void WebPageProxy::setSizeToContentAutoSizeMaximumSize(const IntSize& size)
+{
+    if (m_sizeToContentAutoSizeMaximumSize == size)
+        return;
+
+    m_sizeToContentAutoSizeMaximumSize = size;
+
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::SetSizeToContentAutoSizeMaximumSize(size));
+    m_drawingArea->sizeToContentAutoSizeMaximumSizeDidChange();
+
+#if USE(APPKIT)
+    if (m_sizeToContentAutoSizeMaximumSize.width() <= 0)
         didChangeIntrinsicContentSize(IntSize(-1, -1));
 #endif
 }

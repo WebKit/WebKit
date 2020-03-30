@@ -1268,6 +1268,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
     _data->_impl->setMinimumSizeForAutoLayout(NSSizeToCGSize(minimumSizeForAutoLayout));
 }
 
+- (NSSize)sizeToContentAutoSizeMaximumSize
+{
+    return NSSizeFromCGSize(_data->_impl->sizeToContentAutoSizeMaximumSize());
+}
+
+- (void)setSizeToContentAutoSizeMaximumSize:(NSSize)sizeToContentAutoSizeMaximumSize
+{
+    _data->_impl->setSizeToContentAutoSizeMaximumSize(NSSizeToCGSize(sizeToContentAutoSizeMaximumSize));
+}
+
 - (BOOL)shouldExpandToViewHeightForAutoLayout
 {
     return _data->_impl->shouldExpandToViewHeightForAutoLayout();

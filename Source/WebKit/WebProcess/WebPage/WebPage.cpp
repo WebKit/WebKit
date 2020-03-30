@@ -633,6 +633,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     updateIsInWindow(true);
 
     setMinimumSizeForAutoLayout(parameters.minimumSizeForAutoLayout);
+    setSizeToContentAutoSizeMaximumSize(parameters.sizeToContentAutoSizeMaximumSize);
     setAutoSizingShouldExpandToViewHeight(parameters.autoSizingShouldExpandToViewHeight);
     setViewportSizeForCSSViewportUnits(parameters.viewportSizeForCSSViewportUnits);
     
@@ -794,6 +795,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     }
 
     setMinimumSizeForAutoLayout(parameters.minimumSizeForAutoLayout);
+    setSizeToContentAutoSizeMaximumSize(parameters.sizeToContentAutoSizeMaximumSize);
 
     if (m_activityState != parameters.activityState)
         setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, Vector<CallbackID>());
@@ -5678,11 +5680,25 @@ void WebPage::setMinimumSizeForAutoLayout(const IntSize& size)
 
     m_minimumSizeForAutoLayout = size;
     if (size.width() <= 0) {
-        corePage()->mainFrame().view()->enableAutoSizeMode(false, { });
+        corePage()->mainFrame().view()->enableFixedWidthAutoSizeMode(false, { });
         return;
     }
 
-    corePage()->mainFrame().view()->enableAutoSizeMode(true, { size.width(), std::max(size.height(), 1) });
+    corePage()->mainFrame().view()->enableFixedWidthAutoSizeMode(true, { size.width(), std::max(size.height(), 1) });
+}
+
+void WebPage::setSizeToContentAutoSizeMaximumSize(const IntSize& size)
+{
+    if (m_sizeToContentAutoSizeMaximumSize == size)
+        return;
+
+    m_sizeToContentAutoSizeMaximumSize = size;
+    if (size.width() <= 0 || size.height() <= 0) {
+        corePage()->mainFrame().view()->enableSizeToContentAutoSizeMode(false, { });
+        return;
+    }
+
+    corePage()->mainFrame().view()->enableSizeToContentAutoSizeMode(true, size);
 }
 
 void WebPage::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)
@@ -6432,10 +6448,10 @@ void WebPage::removeAllUserContent()
 
 void WebPage::updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize& size)
 {
-    if (!minimumSizeForAutoLayout().width())
+    if (!minimumSizeForAutoLayout().width() && !sizeToContentAutoSizeMaximumSize().width() && !sizeToContentAutoSizeMaximumSize().height())
         return;
     ASSERT(mainFrameView());
-    ASSERT(mainFrameView()->isAutoSizeEnabled());
+    ASSERT(mainFrameView()->isFixedWidthAutoSizeEnabled() || mainFrameView()->isSizeToContentAutoSizeEnabled());
     ASSERT(!mainFrameView()->needsLayout());
     if (m_lastSentIntrinsicContentSize == size)
         return;

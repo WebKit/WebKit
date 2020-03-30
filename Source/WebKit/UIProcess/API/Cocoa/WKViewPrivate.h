@@ -58,6 +58,7 @@
 + (void)hideWordDefinitionWindow;
 
 @property (readwrite) NSSize minimumSizeForAutoLayout;
+@property (readwrite) NSSize sizeToContentAutoSizeMaximumSize;
 @property (readwrite) BOOL shouldClipToVisibleRect;
 @property (readwrite) BOOL shouldExpandToViewHeightForAutoLayout;
 @property (readonly, getter=isUsingUISideCompositing) BOOL usingUISideCompositing;

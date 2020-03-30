@@ -224,6 +224,8 @@ public:
 
     void setMinimumSizeForAutoLayout(CGSize);
     CGSize minimumSizeForAutoLayout() const;
+    void setSizeToContentAutoSizeMaximumSize(CGSize);
+    CGSize sizeToContentAutoSizeMaximumSize() const;
     void setShouldExpandToViewHeightForAutoLayout(bool);
     bool shouldExpandToViewHeightForAutoLayout() const;
     void setIntrinsicContentSize(CGSize);

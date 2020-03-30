@@ -1,3 +1,55 @@
+2020-03-29  Antoine Quint  <graouts@apple.com>
+
+        [AutoSizing] Bring back the old auto-sizing code as a deprecated codepath for compatibility reasons
+        https://bugs.webkit.org/show_bug.cgi?id=209669
+        <rdar://problem/60111081>
+
+        Reviewed by Alan Bujtas and Darin Adler.
+
+        We changed the auto-sizing code for webkit.org/b/196743 in r244098, but some clients need it and we bring it back
+        via a new dedicated -[WKWebView _setSizeToContentAutoSizeMaximumSize:] SPI.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView sizeToContentAutoSizeMaximumSize]):
+        (-[WKView setSizeToContentAutoSizeMaximumSize:]):
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView _sizeToContentAutoSizeMaximumSize]):
+        (-[WKWebView _setSizeToContentAutoSizeMaximumSize:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setSizeToContentAutoSizeMaximumSize):
+        (WebKit::WebViewImpl::sizeToContentAutoSizeMaximumSize const):
+        (WebKit::WebViewImpl::setIntrinsicContentSize):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChange):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::sizeToContentAutoSizeMaximumSize const):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChange):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_processDisplayName):
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::setMinimumSizeForAutoLayout):
+        (WebKit::WebPage::setSizeToContentAutoSizeMaximumSize):
+        (WebKit::WebPage::updateIntrinsicContentSizeIfNeeded):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::sizeToContentAutoSizeMaximumSize const):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+
 2020-03-29  Darin Adler  <darin@apple.com>
 
         Move TextIterator::rangeFromLocationAndLength off of live ranges

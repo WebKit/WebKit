@@ -90,6 +90,19 @@ void TiledCoreAnimationDrawingAreaProxy::minimumSizeForAutoLayoutDidChange()
     sendUpdateGeometry();
 }
 
+void TiledCoreAnimationDrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChange()
+{
+    if (!m_webPageProxy.hasRunningProcess())
+        return;
+
+    // We only want one UpdateGeometry message in flight at once, so if we've already sent one but
+    // haven't yet received the reply we'll just return early here.
+    if (m_isWaitingForDidUpdateGeometry)
+        return;
+
+    sendUpdateGeometry();
+}
+
 void TiledCoreAnimationDrawingAreaProxy::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
 {
     m_webPageProxy.enterAcceleratedCompositingMode(layerTreeContext);
@@ -107,10 +120,11 @@ void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
     m_isWaitingForDidUpdateGeometry = false;
 
     IntSize minimumSizeForAutoLayout = m_webPageProxy.minimumSizeForAutoLayout();
+    IntSize sizeToContentAutoSizeMaximumSize = m_webPageProxy.sizeToContentAutoSizeMaximumSize();
 
     // If the WKView was resized while we were waiting for a DidUpdateGeometry reply from the web process,
     // we need to resend the new size here.
-    if (m_lastSentSize != m_size || m_lastSentMinimumSizeForAutoLayout != minimumSizeForAutoLayout)
+    if (m_lastSentSize != m_size || m_lastSentMinimumSizeForAutoLayout != minimumSizeForAutoLayout || m_lastSentSizeToContentAutoSizeMaximumSize != sizeToContentAutoSizeMaximumSize)
         sendUpdateGeometry();
 }
 
@@ -123,6 +137,7 @@ void TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateActivityState(ActivityS
 void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
 {
     m_lastSentMinimumSizeForAutoLayout = m_webPageProxy.minimumSizeForAutoLayout();
+    m_lastSentSizeToContentAutoSizeMaximumSize = m_webPageProxy.sizeToContentAutoSizeMaximumSize();
     m_lastSentSize = m_size;
     m_isWaitingForDidUpdateGeometry = true;
 }

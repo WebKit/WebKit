@@ -491,7 +491,7 @@ void Internals::resetToConsistentState(Page& page)
         page.setTopContentInset(0);
         mainFrameView->setUseFixedLayout(false);
         mainFrameView->setFixedLayoutSize(IntSize());
-        mainFrameView->enableAutoSizeMode(false, { });
+        mainFrameView->enableFixedWidthAutoSizeMode(false, { });
 #if USE(COORDINATED_GRAPHICS)
         mainFrameView->setFixedVisibleContentRect(IntRect());
 #endif
@@ -3581,12 +3581,12 @@ void Internals::reloadExpiredOnly()
     frame()->loader().reload(ReloadOption::ExpiredOnly);
 }
 
-void Internals::enableAutoSizeMode(bool enabled, int width, int height)
+void Internals::enableFixedWidthAutoSizeMode(bool enabled, int width, int height)
 {
     auto* document = contextDocument();
     if (!document || !document->view())
         return;
-    document->view()->enableAutoSizeMode(enabled, { width, height });
+    document->view()->enableFixedWidthAutoSizeMode(enabled, { width, height });
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

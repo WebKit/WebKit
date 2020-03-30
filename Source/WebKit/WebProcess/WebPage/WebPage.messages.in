@@ -461,6 +461,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetAlwaysShowsVerticalScroller(bool alwaysShowsVerticalScroller)
 
     SetMinimumSizeForAutoLayout(WebCore::IntSize size)
+    SetSizeToContentAutoSizeMaximumSize(WebCore::IntSize size)
     SetAutoSizingShouldExpandToViewHeight(bool shouldExpand)
 
     SetViewportSizeForCSSViewportUnits(Optional<WebCore::IntSize> viewportSize)
