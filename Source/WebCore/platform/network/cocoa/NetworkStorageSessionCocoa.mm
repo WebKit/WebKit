@@ -688,8 +688,16 @@ void NetworkStorageSession::unregisterCookieChangeListenersIfNecessary()
     if (!m_didRegisterCookieListeners)
         return;
 
-    [nsCookieStorage() _setCookiesAddedHandler:nil onQueue:nil];
-    [nsCookieStorage() _setCookiesDeletedHandler:nil onQueue:nil];
+    if ([nsCookieStorage() respondsToSelector:@selector(_setCookiesChangedHandler:onQueue:)])
+        [nsCookieStorage() _setCookiesChangedHandler:nil onQueue:nil];
+    else
+        [nsCookieStorage() _setCookiesAddedHandler:nil onQueue:nil]; // Old SPI.
+
+    if ([nsCookieStorage() respondsToSelector:@selector(_setCookiesRemovedHandler:onQueue:)])
+        [nsCookieStorage() _setCookiesRemovedHandler:nil onQueue:nil];
+    else
+        [nsCookieStorage() _setCookiesDeletedHandler:nil onQueue:nil]; // Old SPI.
+
     [nsCookieStorage() _setSubscribedDomainsForCookieChanges:nil];
     m_didRegisterCookieListeners = false;
 }
