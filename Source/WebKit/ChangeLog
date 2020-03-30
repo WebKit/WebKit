@@ -1,3 +1,13 @@
+2020-03-29  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Mac Catalyst build after r258989
+        <https://bugs.webkit.org/show_bug.cgi?id=199960>
+
+        Remove code that has since been moved to WebPage::platformNeedsLayoutForEditorState().
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+
 2020-03-29  ddkilzer@apple.com  <ddkilzer@apple.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
 
         Build fix for: [iOS] Delay process suspension for a while after loading an app link

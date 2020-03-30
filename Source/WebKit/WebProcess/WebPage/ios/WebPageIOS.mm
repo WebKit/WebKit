@@ -260,14 +260,8 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     }
 
     // We only set the remaining EditorState entries if layout is done as a performance optimization
-    // to avoid the need to force a synchronous layout here to compute these entries. If we
-    // have a composition or are using a hardware keyboard then we send the full editor state
-    // immediately so that the UIProcess can update UI, including the position of the caret.
+    // to avoid the need to force a synchronous layout here to compute these entries.
     bool needsLayout = view->needsLayout();
-    bool requiresPostLayoutData = frame.editor().hasComposition();
-#if !PLATFORM(MACCATALYST)
-    requiresPostLayoutData |= m_keyboardIsAttached;
-#endif
     if (needsLayout || result.isMissingPostLayoutData)
         return;
 
