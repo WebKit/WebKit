@@ -1,3 +1,35 @@
+2020-03-30  Kate Cheney  <katherine_cheney@apple.com>
+
+        Known app-bound domain protocols should not check the app-bound domain list
+        https://bugs.webkit.org/show_bug.cgi?id=209755
+        <rdar://problem/60875376> 
+
+        Reviewed by Chris Dumez.
+
+        This patch checks if a url should be treated as app-bound based on
+        protocol before deciding to check the app-bound domain list.
+        It is wasteful to check the app-bound domain list when some protocols
+        are automatically considered app-bound.
+
+        Existing behavior should be maintained, this is tested by existing
+        In-App Browser Privacy layout and API tests.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+        (WebKit::shouldBeTreatedAsAppBound): Deleted.
+        We can remove the check for the url protocol here because we are
+        doing it instead in WebsiteDataStore::beginAppBoundDomainCheck.
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        Changed if PLATFORM(COCOA) to if PLATFORM(IOS_FAMILY) because it
+        is unnecessary to check the app-bound domain list for other
+        platforms (the values returned would be ignored in
+        setIsNavigatingToAppBoundDomain).
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::shouldTreatURLProtocolAsAppBound):
+        (WebKit::WebsiteDataStore::beginAppBoundDomainCheck):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-03-30  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r256756): -[WKPreferenceObserver init]: Instance variable used while 'self' is not set to the result of '[(super or self) init...]'

@@ -285,7 +285,7 @@ public:
     void hasAppBoundSession(CompletionHandler<void(bool)>&&) const;
     void setInAppBrowserPrivacyEnabled(bool enabled, CompletionHandler<void()>&&);
 
-    void beginAppBoundDomainCheck(WebCore::RegistrableDomain&&, WebFramePolicyListenerProxy&);
+    void beginAppBoundDomainCheck(const URL&, WebFramePolicyListenerProxy&);
     void appBoundDomainsForTesting(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
     void ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
     void reinitializeAppBoundDomains();

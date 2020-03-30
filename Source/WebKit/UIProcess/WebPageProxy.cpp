@@ -3125,13 +3125,6 @@ private:
     PolicyCheckIdentifier m_identifier;
 };
 
-#if PLATFORM(IOS_FAMILY)
-static bool shouldBeTreatedAsAppBound(const URL& requestURL)
-{
-    return requestURL.protocolIsAbout() || requestURL.protocolIsData() || requestURL.protocolIsBlob() || requestURL.isLocalFile();
-}
-#endif
-
 void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& requestURL, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -3139,9 +3132,6 @@ void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& 
         if (m_ignoresAppBoundDomains)
             return;
         WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN
-        if (isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No && shouldBeTreatedAsAppBound(requestURL))
-            isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
-
         if (isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No) {
             m_configuration->setWebViewCategory(WebViewCategory::InAppBrowser);
             m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::No;
@@ -5112,7 +5102,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         shouldExpectSafeBrowsingResult = ShouldExpectSafeBrowsingResult::No;
 
     ShouldExpectAppBoundDomainResult shouldExpectAppBoundDomainResult = ShouldExpectAppBoundDomainResult::No;
-#if PLATFORM(COCOA)
+#if PLATFORM(IOS_FAMILY)
     shouldExpectAppBoundDomainResult = ShouldExpectAppBoundDomainResult::Yes;
 #endif
     
@@ -5170,8 +5160,8 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     }, shouldExpectSafeBrowsingResult, shouldExpectAppBoundDomainResult));
     if (shouldExpectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::Yes)
         beginSafeBrowsingCheck(request.url(), frame.isMainFrame(), listener);
-#if PLATFORM(COCOA)
-    m_websiteDataStore->beginAppBoundDomainCheck(RegistrableDomain { request.url() }, listener);
+#if PLATFORM(IOS_FAMILY)
+    m_websiteDataStore->beginAppBoundDomainCheck(request.url(), listener);
 #endif
     API::Navigation* mainFrameNavigation = frame.isMainFrame() ? navigation.get() : nullptr;
     WebFrameProxy* originatingFrame = originatingFrameInfoData.frameID ? process->webFrame(*originatingFrameInfoData.frameID) : nullptr;

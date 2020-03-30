@@ -510,11 +510,21 @@ void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSe
     });
 }
 
-void WebsiteDataStore::beginAppBoundDomainCheck(WebCore::RegistrableDomain&& domain, WebFramePolicyListenerProxy& listener)
+static bool shouldTreatURLProtocolAsAppBound(const URL& requestURL)
+{
+    return requestURL.protocolIsAbout() || requestURL.protocolIsData() || requestURL.protocolIsBlob() || requestURL.isLocalFile();
+}
+
+void WebsiteDataStore::beginAppBoundDomainCheck(const URL& requestURL, WebFramePolicyListenerProxy& listener)
 {
     ASSERT(RunLoop::isMain());
 
-    ensureAppBoundDomains([domain = WTFMove(domain), listener = makeRef(listener)] (auto& domains) mutable {
+    if (shouldTreatURLProtocolAsAppBound(requestURL)) {
+        listener.didReceiveAppBoundDomainResult(true);
+        return;
+    }
+
+    ensureAppBoundDomains([domain = WebCore::RegistrableDomain(requestURL), listener = makeRef(listener)] (auto& domains) mutable {
         listener->didReceiveAppBoundDomainResult(domains.contains(domain));
     });
 }
