@@ -732,6 +732,8 @@ void NetworkConnectionToWebProcess::allCookiesDeleted()
 
 void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const String& path, SandboxExtension::Handle&& extensionHandle, const String& contentType)
 {
+    NETWORK_PROCESS_MESSAGE_CHECK(!url.isEmpty());
+
     auto* session = networkSession();
     if (!session)
         return;
