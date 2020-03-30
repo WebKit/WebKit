@@ -2876,8 +2876,8 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         if (match(RESERVED_IF_STRICT) && *m_token.m_data.ident == m_vm.propertyNames->staticKeyword) {
             SavePoint savePoint = createSavePoint(context);
             next();
-            if (match(OPENPAREN)) {
-                // Reparse "static()" as a method named "static".
+            if (match(OPENPAREN) || match(SEMICOLON) || match(EQUAL)) {
+                // Reparse "static()" as a method or "static" as a class field.
                 restoreSavePoint(context, savePoint);
             } else
                 tag = ClassElementTag::Static;

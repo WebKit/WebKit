@@ -1,3 +1,12 @@
+2020-03-30  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] Public class field should accept "static" as field name
+        https://bugs.webkit.org/show_bug.cgi?id=209703
+
+        Reviewed by Ross Kirsling.
+
+        * stress/class-fields-with-special-names.js: Added.
+
 2020-03-28  Caio Lima  <ticaiolima@gmail.com>
 
         stress/test-out-of-memory.js test gaderning
