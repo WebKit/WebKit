@@ -33,6 +33,7 @@
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/WTFString.h>
 
 static bool receivedAlert;
@@ -127,4 +128,23 @@ TEST(WebKit, CookieCacheSyncAcrossProcess)
         ++timeout;
     } while (cookieString != "" && timeout < 50);
     EXPECT_WK_STREQ("foo=bar", cookieString);
+}
+
+TEST(WebKit, CookieCachePruning)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto view = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    for (unsigned i = 0; i < 100; ++i) {
+        [view synchronouslyLoadHTMLString:@"foo" baseURL:[NSURL URLWithString:makeString("http://foo", i, ".example.com/")]];
+
+        __block bool doneEvaluatingJavaScript = false;
+        [view evaluateJavaScript:@"document.cookie;" completionHandler:^(id _Nullable cookie, NSError * _Nullable error) {
+            EXPECT_NULL(error);
+            EXPECT_TRUE([cookie isKindOfClass:[NSString class]]);
+            EXPECT_WK_STREQ("", (NSString *)cookie);
+            doneEvaluatingJavaScript = true;
+        }];
+        TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
+    }
 }
