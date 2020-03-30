@@ -1,3 +1,9 @@
+2020-03-30  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, add FIXME.
+
+        * runtime/IndexingType.h:
+
 2020-03-30  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] Public class field should accept "static" as field name

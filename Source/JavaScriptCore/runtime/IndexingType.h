@@ -85,6 +85,8 @@ static const IndexingType NumberOfArrayIndexingModes       = NumberOfIndexingSha
 
 // Additional flags for tracking the history of the type. These are usually
 // masked off unless you ask for them directly.
+// FIXME: We only seem to use MayHaveIndexedAccessors for checking if the prototype chain may intercept indexed properties. We should probably be able to compute that same information via (indexingShape != SlowPutArrayStorageShape || classInfo().getOwnPropertySlotByIndex != JSObject::getOwnPropertySlotByIndex || globalObject().isHavingABadTime()) since we will already get the structure in order to do the prototype chain walk.
+// See: https://bugs.webkit.org/show_bug.cgi?id=209757
 static const IndexingType MayHaveIndexedAccessors         = 0x20;
 
 // The IndexingType field of JSCells is stolen for locks and remembering if the object has been a
