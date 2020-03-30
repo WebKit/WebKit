@@ -2091,6 +2091,12 @@ webkit.org/b/163335 fast/loader/file-URL-with-port-number.html [ Timeout ]
 
 webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ ImageOnlyFailure ]
 webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]
+# r258990 made wpe's own baseline to fail, but it was already wrong.
+webkit.org/b/169909 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Failure ]
+
+webkit.org/b/209720 fast/css-generated-content/initial-letter-pagination-raised-rl.html [ ImageOnlyFailure ]
+webkit.org/b/209720 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
+webkit.org/b/209720 fast/writing-mode/vertical-baseline-alignment.html [ Failure ]
 
 webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
 

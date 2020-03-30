@@ -3910,6 +3910,10 @@ webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken-
 webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]
 webkit.org/b/169909 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Failure ]
 
+webkit.org/b/209720 fast/css-generated-content/initial-letter-pagination-raised-rl.html [ ImageOnlyFailure ]
+webkit.org/b/209720 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
+webkit.org/b/209720 fast/writing-mode/vertical-baseline-alignment.html [ Failure ]
+
 webkit.org/b/169910 fast/multicol/simple-line-layout-line-index-after-strut.html [ ImageOnlyFailure ]
 
 webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
