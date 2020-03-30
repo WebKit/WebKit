@@ -26,9 +26,7 @@
 #pragma once
 
 #include "SleepDisablerIdentifier.h"
-
 #include <pal/system/SleepDisabler.h>
-#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
