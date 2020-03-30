@@ -454,9 +454,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_hostFileDescriptor(WTFMove(parameters.hostFileDescriptor))
 #endif
     , m_webPageProxyIdentifier(parameters.webPageProxyIdentifier)
-#if ENABLE(VIEWPORT_RESIZING)
-    , m_shrinkToFitContentTimer(*this, &WebPage::shrinkToFitContentTimerFired, 0_s)
-#endif
 #if ENABLE(TEXT_AUTOSIZING)
     , m_textAutoSizingAdjustmentTimer(*this, &WebPage::textAutoSizingAdjustmentTimerFired)
 #endif
@@ -1457,10 +1454,6 @@ void WebPage::close()
     m_determinePrimarySnapshottedPlugInTimer.stop();
 #endif
 
-#if ENABLE(VIEWPORT_RESIZING)
-    m_shrinkToFitContentTimer.stop();
-#endif
-
 #if ENABLE(TEXT_AUTOSIZING)
     m_textAutoSizingAdjustmentTimer.stop();
 #endif
@@ -2072,7 +2065,16 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
 #endif
 
     send(Messages::WebPageProxy::PageScaleFactorDidChange(scale));
+    platformDidScalePage();
 }
+
+#if !PLATFORM(IOS_FAMILY)
+
+void WebPage::platformDidScalePage()
+{
+}
+
+#endif
 
 void WebPage::scalePageInViewCoordinates(double scale, IntPoint centerInViewCoordinates)
 {
@@ -5915,6 +5917,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_userHasChangedPageScaleFactor = false;
     m_estimatedLatency = Seconds(1.0 / 60);
     m_shouldRevealCurrentSelectionAfterInsertion = true;
+    m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage = WTF::nullopt;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     WebProcess::singleton().eventDispatcher().clearQueuedTouchEventsForPage(*this);
@@ -5941,10 +5944,6 @@ void WebPage::didCommitLoad(WebFrame* frame)
         viewportConfigurationChanged();
 #endif // ENABLE(META_VIEWPORT)
 
-#if ENABLE(VIEWPORT_RESIZING)
-    m_shrinkToFitContentTimer.stop();
-#endif
-
 #if ENABLE(TEXT_AUTOSIZING)
     m_textAutoSizingAdjustmentTimer.stop();
 #endif
@@ -5970,7 +5969,7 @@ void WebPage::didFinishDocumentLoad(WebFrame& frame)
         return;
 
 #if ENABLE(VIEWPORT_RESIZING)
-    scheduleShrinkToFitContent();
+    shrinkToFitContent(ZoomToInitialScale::Yes);
 #endif
 }
 
@@ -5985,12 +5984,10 @@ void WebPage::didFinishLoad(WebFrame& frame)
     m_readyToFindPrimarySnapshottedPlugin = true;
     LOG(Plugins, "Primary Plug-In Detection: triggering detection from didFinishLoad (marking as ready to detect).");
     m_determinePrimarySnapshottedPlugInTimer.startOneShot(0_s);
-#else
-    UNUSED_PARAM(frame);
 #endif
 
 #if ENABLE(VIEWPORT_RESIZING)
-    scheduleShrinkToFitContent();
+    shrinkToFitContent(ZoomToInitialScale::Yes);
 #endif
 }
 

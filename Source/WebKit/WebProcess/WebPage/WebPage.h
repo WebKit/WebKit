@@ -1366,9 +1366,7 @@ private:
 #endif
 
 #if ENABLE(VIEWPORT_RESIZING)
-    void scheduleShrinkToFitContent();
-    void shrinkToFitContentTimerFired();
-    bool immediatelyShrinkToFitContent();
+    void shrinkToFitContent(ZoomToInitialScale = ZoomToInitialScale::No);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_INTERACTION)
@@ -1718,6 +1716,8 @@ private:
     void sendMessageToWebExtensionWithReply(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
 #endif
 
+    void platformDidScalePage();
+
     WebCore::PageIdentifier m_identifier;
 
     std::unique_ptr<WebCore::Page> m_page;
@@ -1991,6 +1991,7 @@ private:
     TransactionID m_lastTransactionIDWithScaleChange;
 
     CompletionHandler<void(InteractionInformationAtPosition&&)> m_pendingSynchronousPositionInformationReply;
+    Optional<std::pair<TransactionID, double>> m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
 #endif
 
     WebCore::Timer m_layerVolatilityTimer;
@@ -2064,9 +2065,6 @@ private:
 #endif
     WebPageProxyIdentifier m_webPageProxyIdentifier;
     WebCore::IntSize m_lastSentIntrinsicContentSize;
-#if ENABLE(VIEWPORT_RESIZING)
-    WebCore::DeferrableOneShotTimer m_shrinkToFitContentTimer;
-#endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
 #endif
