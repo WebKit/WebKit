@@ -185,28 +185,6 @@ MOCK: submit_to_ews: 10001
 """
         self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
 
-    def test_upload_of_security_sensitive_patch_with_no_review_and_ews(self):
-        options = MockOptions()
-        options.cc = None
-        options.check_style = True
-        options.check_style_filter = None
-        options.comment = None
-        options.description = 'MOCK description'
-        options.non_interactive = False
-        options.request_commit = False
-        options.review = False
-        options.ews = True
-        options.sort_xcode_project = False
-        options.suggest_reviewers = False
-        expected_logs = """MOCK: user.open_url: file://...
-Was that diff correct?
-Obsoleting 1 old patch on bug 50007
-MOCK add_patch_to_bug: bug_id=50007, description=MOCK description, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=False
-MOCK: user.open_url: http://example.com/50007
-MOCK: submit_to_ews: 10008
-"""
-        self.assert_execute_outputs(Upload(), [50007], options=options, expected_logs=expected_logs)
-
     def test_mark_bug_fixed(self):
         tool = MockTool()
         tool._scm.last_svn_commit_log = lambda: "r9876 |"

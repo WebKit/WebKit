@@ -29,8 +29,6 @@
 
 import logging
 
-from webkitpy.common.net.bugzilla.attachment import Attachment
-
 _log = logging.getLogger(__name__)
 
 
@@ -63,9 +61,6 @@ class MockStatusServer(object):
         self._work_items = work_items
         _log.info("MOCK: update_work_items: %s %s" % (queue_name, high_priority_work_items + work_items))
 
-    def upload_attachment(self, attachment):
-        _log.info('MOCK: upload_attachment: {}'.format(attachment.id()))
-
     def submit_to_ews(self, patch_id):
         _log.info("MOCK: submit_to_old_ews: %s" % (patch_id))
 
@@ -78,9 +73,3 @@ class MockStatusServer(object):
 
     def results_url_for_status(self, status_id):
         return "http://dummy_url"
-
-    def fetch_attachment(self, attachment_id):
-        _log.info('MOCK: fetch_attachment: {}'.format(attachment_id))
-        attachment = Attachment({'id': 10008}, None)
-        attachment.content = lambda: 'Patch'
-        return attachment

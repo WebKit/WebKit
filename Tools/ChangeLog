@@ -1,3 +1,40 @@
+2020-03-30  Aakash Jain  <aakash_jain@apple.com>
+
+        Delete code for security EWS from old EWS
+        https://bugs.webkit.org/show_bug.cgi?id=209683
+
+        Reverted r232979, r233061, r233190, r233219, r233276 and r233288.
+
+        Rubber-stamped by Jonathan Bedard.
+
+        * QueueStatusServer/handlers/releasepatch.py: Reverted changes for security EWS in old EWS.
+        * QueueStatusServer/main.py:
+        * QueueStatusServer/config/authorization.py: Removed.
+        * QueueStatusServer/handlers/fetchattachment.py: Removed.
+        * QueueStatusServer/handlers/uploadattachment.py: Removed.
+        * QueueStatusServer/model/attachmentdata.py: Removed.
+        * QueueStatusServer/templates/uploadattachment.html: Removed.
+        * Scripts/webkitpy/common/net/bugzilla/constants.py: Removed.
+        * Scripts/webkitpy/common/net/bugzilla/attachment.py:
+        * Scripts/webkitpy/common/net/bugzilla/attachment_unittest.py:
+        * Scripts/webkitpy/common/net/bugzilla/bug.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        * Scripts/webkitpy/common/net/statusserver.py:
+        * Scripts/webkitpy/common/net/statusserver_mock.py:
+        * Scripts/webkitpy/tool/bot/feeders.py:
+        * Scripts/webkitpy/tool/bot/stylequeuetask.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py:
+
 2020-03-30  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Add user agent quirk for Red Hat Bugzilla

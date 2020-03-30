@@ -22,18 +22,9 @@
 
 import unittest
 
-from datetime import datetime
-from webkitpy.common.net.bugzilla.constants import BUGZILLA_DATE_FORMAT
-
 from webkitpy.common.net.bugzilla.attachment import Attachment
 
 
 class AttachmentTest(unittest.TestCase):
     def test_no_bug_id(self):
         self.assertEqual(Attachment({'id': 12345}, None).bug_id(), None)
-
-    def test_convert_to_json_and_back(self):
-        bugzilla_formatted_date_string = datetime.today().strftime(BUGZILLA_DATE_FORMAT)
-        expected_date = datetime.strptime(bugzilla_formatted_date_string, BUGZILLA_DATE_FORMAT)
-        attachment = Attachment({'attach_date': expected_date}, None)
-        self.assertEqual(Attachment.from_json(attachment.to_json()).attach_date(), expected_date)

@@ -39,7 +39,7 @@ from optparse import make_option
 
 from webkitpy.common.config.committervalidator import CommitterValidator
 from webkitpy.common.config.ports import DeprecatedPort
-from webkitpy.common.net.bugzilla import Bugzilla, Attachment
+from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.unicode_compatibility import BytesIO
 from webkitpy.tool.bot.botinfo import BotInfo
@@ -221,11 +221,7 @@ class AbstractPatchQueue(AbstractQueue):
             patch_id = self._tool.status_server.next_work_item(self.name)
             if not patch_id:
                 return None
-            try:
-                patch = self._tool.bugs.fetch_attachment(patch_id, throw_on_access_error=True)
-            except Bugzilla.AccessError as e:
-                if e.error_code == Bugzilla.AccessError.NOT_PERMITTED:
-                    patch = self._tool.status_server.fetch_attachment(patch_id)
+            patch = self._tool.bugs.fetch_attachment(patch_id)
             if not patch:
                 # FIXME: Using a fake patch because release_work_item has the wrong API.
                 # We also don't really need to release the lock (although that's fine),
@@ -329,18 +325,6 @@ class PatchProcessingQueue(AbstractPatchQueue):
         comment_text += BotInfo(self._tool, self._port.name()).summary_text()
         if self._can_access_bug(patch.bug_id()):
             self._tool.bugs.add_attachment_to_bug(patch.bug_id(), results_archive_file, description, filename="layout-test-results.zip", comment_text=comment_text)
-
-    def _refetch_patch(self, patch):
-        patch_id = patch.id()
-        try:
-            patch = self._tool.bugs.fetch_attachment(patch_id, throw_on_access_error=True)
-        except Bugzilla.AccessError as e:
-            # FIXME: Need a way to ask the status server to fetch the patch again. For now
-            # we return the attachment as it was when it was originally uploaded to the
-            # status server. See <https://bugs.webkit.org/show_bug.cgi?id=186817>.
-            if e.error_code == Bugzilla.AccessError.NOT_PERMITTED:
-                patch = self._tool.status_server.fetch_attachment(patch_id)
-        return patch
 
 
 class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTaskDelegate):
@@ -537,4 +521,4 @@ class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
         return None
 
     def refetch_patch(self, patch):
-        return super(StyleQueue, self)._refetch_patch(patch)
+        return self._tool.bugs.fetch_attachment(patch.id())

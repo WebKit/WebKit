@@ -154,7 +154,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         return self._group
 
     def refetch_patch(self, patch):
-        return super(AbstractEarlyWarningSystem, self)._refetch_patch(patch)
+        return self._tool.bugs.fetch_attachment(patch.id())
 
     def report_flaky_tests(self, patch, flaky_test_results, results_archive):
         pass

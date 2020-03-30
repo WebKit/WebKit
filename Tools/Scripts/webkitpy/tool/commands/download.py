@@ -218,35 +218,20 @@ class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
 
 class ProcessAttachmentsMixin(object):
     def _fetch_list_of_patches_to_process(self, options, args, tool):
-        patches = []
-        for patch_id in args:
-            try:
-                patch = tool.bugs.fetch_attachment(patch_id, throw_on_access_error=True)
-            except Bugzilla.AccessError as e:
-                if e.error_code == Bugzilla.AccessError.NOT_PERMITTED:
-                    patch = tool.status_server.fetch_attachment(patch_id)
-            if patch:
-                patches.append(patch)
-        return patches
+        return list(map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args))
 
 
 class ProcessBugsMixin(object):
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         all_patches = []
         for bug_id in args:
-            bug = tool.bugs.fetch_bug(bug_id)
-            if not bug:
-                continue
-            patches = bug.reviewed_patches()
+            patches = tool.bugs.fetch_bug(bug_id).reviewed_patches()
             _log.info("%s found on bug %s." % (pluralize(len(patches), "reviewed patch"), bug_id))
             all_patches += patches
         if not all_patches:
             _log.info("No reviewed patches found, looking for unreviewed patches.")
             for bug_id in args:
-                bug = tool.bugs.fetch_bug(bug_id)
-                if not bug:
-                    continue
-                patches = bug.patches()
+                patches = tool.bugs.fetch_bug(bug_id).patches()
                 _log.info("%s found on bug %s." % (pluralize(len(patches), "patch"), bug_id))
                 all_patches += patches
         return all_patches

@@ -35,7 +35,6 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 from handlers.activebots import ActiveBots
-from handlers.fetchattachment import FetchAttachment
 from handlers.gc import GC
 from handlers.nextpatch import NextPatch
 from handlers.patch import Patch
@@ -56,7 +55,6 @@ from handlers.syncqueuelogs import SyncQueueLogs
 from handlers.updatestatus import UpdateStatus
 from handlers.updatesvnrevision import UpdateSVNRevision
 from handlers.updateworkitems import UpdateWorkItems
-from handlers.uploadattachment import UploadAttachment
 
 
 webapp.template.register_template_library('filters.webkit_extras')
@@ -78,13 +76,11 @@ routes = [
     (r'/queue-status/(.*)', QueueStatus),
     (r'/queue-status-json/(.*)', QueueStatusJSON),
     (r'/next-patch/(.*)', NextPatch),
-    (r'/attachment/(.*)/(.*)', FetchAttachment),
     ('/release-patch', ReleasePatch),
     ('/release-lock', ReleaseLock),
     ('/update-status', UpdateStatus),
     ('/update-work-items', UpdateWorkItems),
     ('/update-svn-revision', UpdateSVNRevision),
-    ('/upload-attachment', UploadAttachment),
     ('/active-bots', ActiveBots),
     (r'/processing-times-json/(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)\-(\d+)', ProcessingTimesJSON),
 ]
