@@ -1,3 +1,16 @@
+2020-03-30  Kenneth Russell  <kbr@chromium.org>
+
+        [ macOS ] REGRESSION (r259139): webgl/2.0.0/conformance2/rendering/framebuffer-completeness-unaffected.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=209740
+
+        Reviewed by Dean Jackson.
+
+        Suppress framebuffer-completeness-unaffected.html on macOS until
+        root cause of differing behavior on differing graphics hardware is
+        identified.
+
+        * platform/mac/TestExpectations:
+
 2020-03-30  Jack Lee  <shihchieh_lee@apple.com>
 
         Division by zero in RenderBlockFlow::computeColumnCountAndWidth
