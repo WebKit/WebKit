@@ -4983,6 +4983,8 @@
 		C181735E205839F600DFDA65 /* DrawingAreaMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaMac.cpp; sourceTree = "<group>"; };
 		C18173602058424700DFDA65 /* DisplayLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayLink.h; sourceTree = "<group>"; };
 		C1817362205844A900DFDA65 /* DisplayLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayLink.cpp; sourceTree = "<group>"; };
+		C18FB51D242F9F76007E9875 /* WebSleepDisablerClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSleepDisablerClient.cpp; sourceTree = "<group>"; };
+		C18FB51E242F9F77007E9875 /* WebSleepDisablerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSleepDisablerClient.h; sourceTree = "<group>"; };
 		C1E123B920A11572002646F4 /* PDFContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFContextMenu.h; sourceTree = "<group>"; };
 		C517388012DF8F4F00EE3F47 /* DragControllerAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragControllerAction.h; sourceTree = "<group>"; };
 		C5237F5F12441CA300780472 /* WebEditorClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClientMac.mm; sourceTree = "<group>"; };
@@ -8701,6 +8703,8 @@
 				BC032D9110F437AF0058C15A /* WebProcess.h */,
 				BC3066B9125A436300E71278 /* WebProcess.messages.in */,
 				BCE0E424168B7A280057E66A /* WebProcessSupplement.h */,
+				C18FB51D242F9F76007E9875 /* WebSleepDisablerClient.cpp */,
+				C18FB51E242F9F77007E9875 /* WebSleepDisablerClient.h */,
 			);
 			path = WebProcess;
 			sourceTree = "<group>";

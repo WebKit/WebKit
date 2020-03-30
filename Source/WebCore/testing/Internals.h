@@ -35,6 +35,7 @@
 #include "OrientationNotifier.h"
 #include "PageConsoleClient.h"
 #include "RealtimeMediaSource.h"
+#include "SleepDisabler.h"
 #include "TextIndicator.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/Optional.h>
@@ -960,6 +961,9 @@ public:
 
     bool isRemoteUIAppForAccessibility();
 
+    unsigned createSleepDisabler(const String& reason, bool display);
+    bool destroySleepDisabler(unsigned identifier);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
@@ -981,6 +985,8 @@ private:
 
     std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
+
+    HashMap<unsigned, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
 };
 
 } // namespace WebCore

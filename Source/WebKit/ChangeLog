@@ -1,3 +1,37 @@
+2020-03-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [Cocoa] Sleep disabling should be performed in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=209676
+
+        Reviewed by Darin Adler.
+
+        Since sleep disabling is causing communication with the power management service, it should be performed in the UI process.
+        The UI process will be notified by the WebContent process about sleep disablers being created and destroyed, and will perform
+        the actual sleep disabling and enabling.
+
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _hasSleepDisabler]):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didCreateSleepDisabler):
+        (WebKit::WebProcessProxy::didDestroySleepDisabler):
+        (WebKit::WebProcessProxy::hasSleepDisabler):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/RemoteLegacyCDM.cpp:
+        * WebProcess/GPU/media/ios/RemoteMediaSessionHelper.cpp:
+        * WebProcess/GPU/media/ios/RemoteMediaSessionHelper.h:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        * WebProcess/WebSleepDisablerClient.cpp: Added.
+        (WebKit::WebSleepDisablerClient::didCreateSleepDisabler):
+        (WebKit::WebSleepDisablerClient::didDestroySleepDisabler):
+        * WebProcess/WebSleepDisablerClient.h: Added.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-03-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Datalist dropdown suggestions table can be scrolled too far

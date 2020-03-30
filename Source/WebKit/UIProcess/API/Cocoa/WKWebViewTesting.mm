@@ -220,4 +220,9 @@
     WebCore::clearApplicationBundleIdentifierTestingOverride();
 }
 
+- (BOOL)_hasSleepDisabler
+{
+    return _page && _page->process().hasSleepDisabler();
+}
+
 @end

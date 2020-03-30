@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY)
 
 #include "MessageReceiver.h"
+#include <WebCore/MediaPlaybackTargetContext.h>
 #include <WebCore/MediaSessionHelperIOS.h>
 
 namespace WebKit {

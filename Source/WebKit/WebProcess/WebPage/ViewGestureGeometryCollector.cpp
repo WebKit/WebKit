@@ -39,6 +39,7 @@
 #include <WebCore/HTMLTextFormControlElement.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/ImageDocument.h>
+#include <WebCore/Range.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/TextIterator.h>
 

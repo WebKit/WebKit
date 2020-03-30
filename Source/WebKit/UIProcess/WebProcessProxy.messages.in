@@ -80,4 +80,7 @@ messages -> WebProcessProxy LegacyReceiver {
     SendMessageToWebContext(struct WebKit::UserMessage userMessage)
     SendMessageToWebContextWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage) Async
 #endif
+
+    DidCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, String reason, bool display)
+    DidDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier)
 }

@@ -46,6 +46,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SharedStringHash.h>
+#include <WebCore/SleepDisabler.h>
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
@@ -378,6 +379,8 @@ public:
     void gpuProcessCrashed();
 #endif
 
+    bool hasSleepDisabler() const;
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
 
@@ -474,6 +477,9 @@ private:
     void sendMessageToWebContext(UserMessage&&);
     void sendMessageToWebContextWithReply(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
 #endif
+
+    void didCreateSleepDisabler(WebCore::SleepDisablerIdentifier, const String& reason, bool display);
+    void didDestroySleepDisabler(WebCore::SleepDisablerIdentifier);
 
     enum class IsWeak { No, Yes };
     template<typename T> class WeakOrStrongPtr {
@@ -580,6 +586,8 @@ private:
         WeakHashSet<WebProcessProxy> clientProcesses;
     };
     Optional<ServiceWorkerInformation> m_serviceWorkerInformation;
+
+    HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
 };
 
 } // namespace WebKit

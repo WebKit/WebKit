@@ -222,6 +222,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::ServiceWorkerOrClientData',
         'WebCore::ServiceWorkerOrClientIdentifier',
         'WebCore::ServiceWorkerRegistrationIdentifier',
+        'WebCore::SleepDisablerIdentifier',
         'WebCore::SWServerConnectionIdentifier',
         'WebKit::ActivityStateChangeID',
         'WebKit::AudioMediaStreamTrackRendererIdentifier',

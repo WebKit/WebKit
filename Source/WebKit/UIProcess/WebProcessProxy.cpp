@@ -1780,6 +1780,24 @@ void WebProcessProxy::didCreateContextInGPUProcessForVisibilityPropagation(Layer
 }
 #endif
 
+void WebProcessProxy::didCreateSleepDisabler(SleepDisablerIdentifier identifier, const String& reason, bool display)
+{
+    MESSAGE_CHECK(identifier);
+    auto sleepDisabler = makeUnique<WebCore::SleepDisabler>(reason.utf8().data(), display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System);
+    m_sleepDisablers.add(identifier, WTFMove(sleepDisabler));
+}
+
+void WebProcessProxy::didDestroySleepDisabler(SleepDisablerIdentifier identifier)
+{
+    MESSAGE_CHECK(identifier);
+    m_sleepDisablers.remove(identifier);
+}
+
+bool WebProcessProxy::hasSleepDisabler() const
+{
+    return !m_sleepDisablers.isEmpty();
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

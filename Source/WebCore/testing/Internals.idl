@@ -862,4 +862,7 @@ enum CompositingPolicy {
     boolean supportsPictureInPicture();
 
     boolean isRemoteUIAppForAccessibility();
+
+    unsigned long createSleepDisabler(DOMString reason, boolean display);
+    boolean destroySleepDisabler(unsigned long identifier);
 };

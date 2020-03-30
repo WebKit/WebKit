@@ -3988,6 +3988,9 @@
 		C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */; };
 		C11A9ECE21403A5C00CFB20A /* SwitchingGPUClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C11A9ECD21403A5C00CFB20A /* SwitchingGPUClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C14938072234551A000CD707 /* SpeechSynthesisClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C149380522342719000CD707 /* SpeechSynthesisClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C149D55D242EA6B9003EBB12 /* SleepDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = C149D55A242EA4F9003EBB12 /* SleepDisabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C149D55F242EA7B8003EBB12 /* SleepDisablerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C149D55B242EA4FA003EBB12 /* SleepDisablerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C149D567242EB84A003EBB12 /* SleepDisablerIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = C149D565242EB765003EBB12 /* SleepDisablerIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C1692DD223D23ABD006E88F7 /* SystemBattery.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1692DD123D23ABD006E88F7 /* SystemBattery.mm */; };
 		C1692DD523D23E08006E88F7 /* SystemBattery.h in Headers */ = {isa = PBXBuildFile; fileRef = C1692DD423D23AE0006E88F7 /* SystemBattery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C1E1D236203DF15400584665 /* ScreenProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = C1E1D235203DF15400584665 /* ScreenProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13587,8 +13590,13 @@
 		C11A9ED22140578B00CFB20A /* SwitchingGPUClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SwitchingGPUClient.cpp; sourceTree = "<group>"; };
 		C137846B242BEEBA00E86FA8 /* PlatformScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformScreen.cpp; sourceTree = "<group>"; };
 		C149380522342719000CD707 /* SpeechSynthesisClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeechSynthesisClient.h; sourceTree = "<group>"; };
+		C149D559242EA4F8003EBB12 /* SleepDisabler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SleepDisabler.cpp; sourceTree = "<group>"; };
+		C149D55A242EA4F9003EBB12 /* SleepDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SleepDisabler.h; sourceTree = "<group>"; };
+		C149D55B242EA4FA003EBB12 /* SleepDisablerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SleepDisablerClient.h; sourceTree = "<group>"; };
+		C149D565242EB765003EBB12 /* SleepDisablerIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SleepDisablerIdentifier.h; sourceTree = "<group>"; };
 		C1692DD123D23ABD006E88F7 /* SystemBattery.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemBattery.mm; sourceTree = "<group>"; };
 		C1692DD423D23AE0006E88F7 /* SystemBattery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemBattery.h; sourceTree = "<group>"; };
+		C18FB518242F9382007E9875 /* SleepDisablerClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SleepDisablerClient.cpp; sourceTree = "<group>"; };
 		C1E1D235203DF15400584665 /* ScreenProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenProperties.h; sourceTree = "<group>"; };
 		C2015C091BE6FE2C00822389 /* FontVariantBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontVariantBuilder.h; sourceTree = "<group>"; };
 		C20F4F6421DFBE5C0070C45A /* WHLSLTypeReference.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLTypeReference.cpp; sourceTree = "<group>"; };
@@ -26253,6 +26261,11 @@
 				834DFACE1F7DAE5700C2725B /* SharedStringHash.cpp */,
 				834DFACC1F7DAE5600C2725B /* SharedStringHash.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
+				C149D559242EA4F8003EBB12 /* SleepDisabler.cpp */,
+				C149D55A242EA4F9003EBB12 /* SleepDisabler.h */,
+				C18FB518242F9382007E9875 /* SleepDisablerClient.cpp */,
+				C149D55B242EA4FA003EBB12 /* SleepDisablerClient.h */,
+				C149D565242EB765003EBB12 /* SleepDisablerIdentifier.h */,
 				A334BD822194E4610000D77F /* SSLKeyGenerator.cpp */,
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
 				F433E9041DBBDBC200EF0D14 /* StaticPasteboard.cpp */,
@@ -32726,6 +32739,9 @@
 				9444CBD61D860C8B0073A074 /* SizesAttributeParser.h in Headers */,
 				9444CBD41D860C8B0073A074 /* SizesCalcParser.h in Headers */,
 				49E911CD0EF86D47009D0CAF /* SkewTransformOperation.h in Headers */,
+				C149D55D242EA6B9003EBB12 /* SleepDisabler.h in Headers */,
+				C149D55F242EA7B8003EBB12 /* SleepDisablerClient.h in Headers */,
+				C149D567242EB84A003EBB12 /* SleepDisablerIdentifier.h in Headers */,
 				4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */,
 				9B532EA41BA928570038A827 /* SlotAssignment.h in Headers */,
 				4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */,

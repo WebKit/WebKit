@@ -64,4 +64,5 @@
 + (void)_setApplicationBundleIdentifier:(NSString *)bundleIdentifier;
 + (void)_clearApplicationBundleIdentifierTestingOverride;
 
+- (BOOL)_hasSleepDisabler;
 @end

@@ -92,6 +92,7 @@
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SleepDisabler.h"
 #include "TimeRanges.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
@@ -99,7 +100,6 @@
 #include <JavaScriptCore/Uint8Array.h>
 #include <limits>
 #include <pal/SessionID.h>
-#include <pal/system/SleepDisabler.h>
 #include <wtf/Algorithms.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
@@ -6953,7 +6953,7 @@ void HTMLMediaElement::updateSleepDisabling()
     else if (shouldDisableSleep != SleepType::None) {
         auto type = shouldDisableSleep == SleepType::Display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System;
         if (!m_sleepDisabler || m_sleepDisabler->type() != type)
-            m_sleepDisabler = PAL::SleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback", type);
+            m_sleepDisabler = makeUnique<SleepDisabler>("com.apple.WebCore: HTMLMediaElement playback", type);
     }
 
     if (m_player)

@@ -5564,4 +5564,17 @@ String Internals::focusRingColor()
     return RenderTheme::singleton().focusRingColor(options).cssText();
 }
 
+unsigned Internals::createSleepDisabler(const String& reason, bool display)
+{
+    static unsigned lastUsedIdentifier = 0;
+    auto sleepDisabler = makeUnique<WebCore::SleepDisabler>(reason.utf8().data(), display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System);
+    m_sleepDisablers.add(++lastUsedIdentifier, WTFMove(sleepDisabler));
+    return lastUsedIdentifier;
+}
+
+bool Internals::destroySleepDisabler(unsigned identifier)
+{
+    return m_sleepDisablers.remove(identifier);
+}
+
 } // namespace WebCore

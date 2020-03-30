@@ -46,6 +46,7 @@
 #import "WebProcessCreationParameters.h"
 #import "WebProcessDataStoreParameters.h"
 #import "WebProcessProxyMessages.h"
+#import "WebSleepDisablerClient.h"
 #import "WebsiteDataStoreParameters.h"
 #import <JavaScriptCore/ConfigFile.h>
 #import <JavaScriptCore/Options.h>
@@ -63,10 +64,12 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/NSScrollerImpDetails.h>
+#import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/PerformanceLogging.h>
 #import <WebCore/PictureInPictureSupport.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SWContextManager.h>
+#import <WebCore/SystemBattery.h>
 #import <WebCore/UTIUtilities.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
@@ -129,11 +132,6 @@
 
 #if USE(OS_STATE)
 #import <os/state_private.h>
-#endif
-
-#if PLATFORM(COCOA)
-#import <WebCore/NetworkExtensionContentFilter.h>
-#import <WebCore/SystemBattery.h>
 #endif
 
 #if HAVE(CSCHECKFIXDISABLE)
@@ -317,6 +315,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         setVectorOfUTTypeItem(WTFMove(parameters.vectorOfUTTypeItem));
     }
 #endif
+
+    WebCore::sleepDisablerClient() = makeUnique<WebSleepDisablerClient>();
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)

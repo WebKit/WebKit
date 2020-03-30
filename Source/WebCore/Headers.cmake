@@ -1009,6 +1009,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SerializedPlatformDataCueValue.h
     platform/SharedBuffer.h
     platform/SharedStringHash.h
+    platform/SleepDisabler.h
+    platform/SleepDisablerClient.h
+    platform/SleepDisablerIdentifier.h
     platform/SuddenTermination.h
     platform/Supplementable.h
     platform/ThemeTypes.h

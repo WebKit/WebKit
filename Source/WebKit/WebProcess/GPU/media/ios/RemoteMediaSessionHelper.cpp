@@ -29,6 +29,8 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY)
 
 #include "Connection.h"
+#include "GPUConnectionToWebProcessMessages.h"
+#include "GPUProcessConnection.h"
 #include "RemoteMediaSessionHelperProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/MediaPlaybackTargetCocoa.h>
