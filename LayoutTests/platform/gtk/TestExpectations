@@ -1365,6 +1365,10 @@ webkit.org/b/209330 imported/w3c/web-platform-tests/css/css-cascade/all-prop-ini
 
 webkit.org/b/209403 fast/forms/placeholder-content-center.html [ ImageOnlyFailure ]
 
+webkit.org/b/209725 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Failure ]
+
+webkit.org/b/209727 fast/forms/placeholder-content-line-height.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
