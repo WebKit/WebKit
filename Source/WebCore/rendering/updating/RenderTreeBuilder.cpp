@@ -870,7 +870,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     // If child is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers.
     if (!parent.renderTreeBeingDestroyed() && child.isSelectionBorder())
-        parent.frame().selection().setNeedsSelectionUpdateForRenderTreeChange();
+        parent.frame().selection().setNeedsSelectionUpdate();
 
     child.resetFragmentedFlowStateOnRemoval();
 
