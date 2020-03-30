@@ -1,3 +1,10 @@
+2020-03-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, mark webrtc/datachannel/multiple-connections.html as slow.
+
+        * TestExpectations: Remove these entries since this is specific to macOS WK1.
+        * platform/mac-wk1/TestExpectations:
+
 2020-03-30  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Catalina wk2 ] tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability.html is flaky failing.

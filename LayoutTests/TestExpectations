@@ -1778,8 +1778,6 @@ webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [
 media/session [ Skip ]
 
 webrtc/simulcast-h264.html [ Slow ]
-[ Release ] webrtc/datachannel/multiple-connections.html [ Slow ]
-[ Debug ] webrtc/datachannel/multiple-connections.html [ Skip ]
 
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Slow ]
 webkit.org/b/171094 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Failure ]
