@@ -97,9 +97,9 @@ public:
     bool isAccessibilitySVGRoot() const override { return false; }
     bool isAccessibilitySVGElement() const override { return false; }
     bool isAccessibilityTableInstance() const override { return false; }
-    bool isAccessibilityProgressIndicatorInstance() const override { return false; }
-
     bool isAccessibilityTableColumnInstance() const override { return false; }
+    bool isAccessibilityProgressIndicatorInstance() const override { return false; }
+    bool isAXIsolatedObjectInstance() const override { return false; }
 
     bool isAttachmentElement() const override { return false; }
     bool isHeading() const override { return false; }
@@ -443,6 +443,9 @@ public:
     String actionVerb() const override;
     Widget* widget() const override { return nullptr; }
     PlatformWidget platformWidget() const override { return nullptr; }
+#if PLATFORM(COCOA)
+    RemoteAXObjectRef remoteParentObject() const override;
+#endif
     Widget* widgetForAttachmentView() const override { return nullptr; }
     Page* page() const override;
     Document* document() const override;

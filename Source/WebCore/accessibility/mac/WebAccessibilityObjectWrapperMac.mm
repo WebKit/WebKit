@@ -1873,18 +1873,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (id)remoteAccessibilityParentObject
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
-        auto* backingObject = protectedSelf.get().axBackingObject;
-        if (!backingObject)
-            return nil;
-
-        if (auto* document = backingObject->document()) {
-            if (auto* frame = document->frame())
-                return frame->loader().client().accessibilityRemoteObject();
-        }
-
-        return nil;
-    });
+    auto* backingObject = self.axBackingObject;
+    return backingObject ? backingObject->remoteParentObject() : nil;
 }
 
 static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityChildrenVector& vector)
@@ -2281,7 +2271,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (auto platformWidget = backingObject->platformWidget())
         return NSAccessibilityUnignoredAncestor(platformWidget);
 
-    return [self remoteAccessibilityParentObject];
+    return backingObject->remoteParentObject();
 }
 
 - (id)windowElement:(NSString*)attributeName

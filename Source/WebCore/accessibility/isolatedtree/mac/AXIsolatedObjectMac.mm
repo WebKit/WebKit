@@ -32,6 +32,14 @@
 
 namespace WebCore {
 
+RemoteAXObjectRef AXIsolatedObject::remoteParentObject() const
+{
+    auto* scrollView = Accessibility::findAncestor<AXCoreObject>(*this, true, [] (const AXCoreObject& object) {
+        return object.isScrollView();
+    });
+    return is<AXIsolatedObject>(scrollView) ? downcast<AXIsolatedObject>(scrollView)->propertyValue<RemoteAXObjectRef>(AXPropertyName::RemoteParentObject) : nil;
+}
+
 void AXIsolatedObject::attachPlatformWrapper(AccessibilityObjectWrapper* wrapper)
 {
     [wrapper attachIsolatedObject:this];

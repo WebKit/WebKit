@@ -147,8 +147,8 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::ValueForRange, object.valueForRange());
     setProperty(AXPropertyName::MaxValueForRange, object.maxValueForRange());
     setProperty(AXPropertyName::MinValueForRange, object.minValueForRange());
-    setProperty(AXPropertyName::SelectedRadioButton, object.selectedRadioButton());
-    setProperty(AXPropertyName::SelectedTabItem, object.selectedTabItem());
+    setObjectProperty(AXPropertyName::SelectedRadioButton, object.selectedRadioButton());
+    setObjectProperty(AXPropertyName::SelectedTabItem, object.selectedTabItem());
     setProperty(AXPropertyName::LayoutCount, object.layoutCount());
     setProperty(AXPropertyName::EstimatedLoadingProgress, object.estimatedLoadingProgress());
     setProperty(AXPropertyName::SupportsARIAOwns, object.supportsARIAOwns());
@@ -228,7 +228,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setObjectVectorProperty(AXPropertyName::ColumnHeaders, object.columnHeaders());
         setObjectVectorProperty(AXPropertyName::RowHeaders, object.rowHeaders());
         setObjectVectorProperty(AXPropertyName::VisibleRows, object.visibleRows());
-        setProperty(AXPropertyName::HeaderContainer, object.headerContainer());
+        setObjectProperty(AXPropertyName::HeaderContainer, object.headerContainer());
         setProperty(AXPropertyName::AXColumnCount, object.axColumnCount());
         setProperty(AXPropertyName::AXRowCount, object.axRowCount());
     }
@@ -246,7 +246,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     if (object.isTableColumn()) {
         setProperty(AXPropertyName::IsTableColumn, true);
         setProperty(AXPropertyName::ColumnIndex, object.columnIndex());
-        setProperty(AXPropertyName::ColumnHeader, object.columnHeader());
+        setObjectProperty(AXPropertyName::ColumnHeader, object.columnHeader());
     } else if (object.isTableRow()) {
         setProperty(AXPropertyName::IsTableRow, true);
         setProperty(AXPropertyName::RowIndex, object.rowIndex());
@@ -255,7 +255,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     if (object.isARIATreeGridRow()) {
         setProperty(AXPropertyName::IsARIATreeGridRow, true);
         setObjectVectorProperty(AXPropertyName::DisclosedRows, object.disclosedRows());
-        setProperty(AXPropertyName::DisclosedByRow, object.disclosedByRow());
+        setObjectProperty(AXPropertyName::DisclosedByRow, object.disclosedByRow());
     }
 
     if (object.isTreeItem())
@@ -375,8 +375,14 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setMathscripts(AXPropertyName::MathPostscripts, object);
     }
 
-    if (object.isScrollView())
-        m_platformWidget = object.platformWidget();
+    if (object.isScrollView()) {
+#if PLATFORM(COCOA)
+        setProperty(AXPropertyName::PlatformWidget, object.platformWidget());
+        setProperty(AXPropertyName::RemoteParentObject, object.remoteParentObject());
+#else
+        setProperty(AXPropertyName::PlatformWidget, object.platformWidget());
+#endif
+    }
 
     if (isRoot) {
         setObjectProperty(AXPropertyName::WebArea, object.webAreaObject());
@@ -1552,15 +1558,6 @@ Widget* AXIsolatedObject::widget() const
     if (auto* object = associatedAXObject())
         return object->widget();
     return nullptr;
-}
-
-PlatformWidget AXIsolatedObject::platformWidget() const
-{
-#if PLATFORM(COCOA)
-    return m_platformWidget.get();
-#else
-    return m_platformWidget;
-#endif
 }
 
 Widget* AXIsolatedObject::widgetForAttachmentView() const

@@ -1701,7 +1701,18 @@ ScrollView* AccessibilityObject::scrollViewAncestor() const
     
     return nullptr;
 }
-    
+
+#if PLATFORM(COCOA)
+RemoteAXObjectRef AccessibilityObject::remoteParentObject() const
+{
+    if (auto* document = this->document()) {
+        if (auto* frame = document->frame())
+            return frame->loader().client().accessibilityRemoteObject();
+    }
+    return nullptr;
+}
+#endif
+
 Document* AccessibilityObject::document() const
 {
     FrameView* frameView = documentFrameView();
