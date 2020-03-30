@@ -131,21 +131,6 @@
         "category": "css"
     },
     {
-        "name": "CSS Masking Level 1",
-        "url": "https://drafts.fxtf.org/css-masking-1/",
-        "status": {
-            "status": "In Development",
-            "enabled-by-default": true
-        },
-        "keywords": ["css masking", "clip-path", "clipping", "masking", "mask"],
-        "category": "css",
-        "contact": {
-            "name": "Dirk Schulze",
-            "twitter": "@dirkschulze",
-            "email": "dschulze@adobe.com"
-        }
-    },
-    {
         "name": "CSS Layout API Level 1",
         "status": {
             "status": "Under Consideration"
@@ -165,6 +150,21 @@
         "contact": {
             "name": "Oriol Brufau",
             "email": "obrufau@igalia.com"
+        }
+    },
+    {
+        "name": "CSS Masking Level 1",
+        "url": "https://drafts.fxtf.org/css-masking-1/",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": true
+        },
+        "keywords": ["css masking", "clip-path", "clipping", "masking", "mask"],
+        "category": "css",
+        "contact": {
+            "name": "Dirk Schulze",
+            "twitter": "@dirkschulze",
+            "email": "dschulze@adobe.com"
         }
     },
     {
@@ -530,8 +530,7 @@
     {
         "name": "Pointer Events Level 2",
         "status": {
-            "status": "In Development",
-            "enabled-by-default": false
+            "status": "Supported"
         },
         "url": "https://www.w3.org/TR/pointerevents/",
         "keywords": ["dom", "events", "touch", "mouse", "stylus"],
@@ -664,7 +663,7 @@
     {
         "name": "Web Animations",
         "status": {
-            "status": "Supported In Preview"
+            "status": "Supported"
         },
         "url": "https://www.w3.org/TR/web-animations-1/",
         "keywords": ["web animations"],
