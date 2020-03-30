@@ -1,3 +1,12 @@
+2020-03-30  Antti Koivisto  <antti@apple.com>
+
+        Update css/selectors WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=209726
+
+        Reviewed by Antoine Quint.
+
+        * TestExpectations:
+
 2020-03-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Can't create WebGL context after r259139

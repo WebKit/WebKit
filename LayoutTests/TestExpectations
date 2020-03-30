@@ -1082,6 +1082,10 @@ imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-ch
 imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-172a.xml [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-172b.xml [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-173a.xml [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-173b.xml [ ImageOnlyFailure ]
 
 # https://github.com/w3c/web-platform-tests/issues/8547
 imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-001.html [ Skip ]
@@ -1276,7 +1280,7 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-fonts/variations/var
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gpos-m2b.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gsub.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz.html [ Skip ]
-
+webkit.org/b/186045 imported/w3c/web-platform-tests/css/selectors/remove-hovered-element.html [ Skip ]
 
 # These W3C tests time out.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/autoplay-overrides-preload.html [ Skip ]

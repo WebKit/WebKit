@@ -1,0 +1,11 @@
+This test checks that :focus-visible matches after a keyboard event, even if the event handler calls preventDefault() on the event.
+Click "Click here and press right arrow.".
+Press the right arrow key.
+If "Focus moves here." has a red background, then the test result is FAILURE. If it has a green outline, then the test result is SUCCESS.
+
+Click here and press right arrow.  Focus moves here.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT :focus-visible matches even if preventDefault() is called Test timed out
+

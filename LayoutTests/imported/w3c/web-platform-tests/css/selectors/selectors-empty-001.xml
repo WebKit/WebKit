@@ -27,7 +27,7 @@
   <tests xmlns="http://www.example.org/" type="positive">
     <test1/>
     <test2></test2>
-    <test3><!--   --></test3>
+    <test3><!-- --></test3>
     <test4><?testfour?></test4>
     <test5 title="data"></test5>
   </tests>
@@ -35,12 +35,12 @@
     <test1><test1> </test1></test1>
     <test2>green!</test2>
     <test3>&gt;&lt;</test3>
-    <test4>&#x2603;</test4>
+    <test4>&#x2211;</test4>
     <test5><test5/></test5>
     <test6> </test6>
-    <test7> <!--   --></test7>
+    <test7> <!-- --></test7>
     <test8> <?testfour?></test8>
-    <test9><!--   --> </test9>
+    <test9><!-- --> </test9>
     <test10><?testfour?> </test10>
   </tests>
  </body>
