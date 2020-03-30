@@ -262,8 +262,7 @@
       ],
       "nicks" : [
          "gskachkov"
-      ],
-      "status" : "contributor"
+      ]
    },
    "Alex Christensen" : {
       "emails" : [
@@ -492,8 +491,7 @@
       "expertise" : "CSS, HTML DOM, Core DOM, Canvas, JavaScript DOM bindings, Memory use",
       "nicks" : [
          "kling"
-      ],
-      "status" : "contributor"
+      ]
    },
    "Andrei Bucur" : {
       "emails" : [
@@ -1249,12 +1247,12 @@
    },
    "Chris Lord" : {
       "emails" : [
-          "clord@igalia.com",
-          "chris@igalia.com",
-          "contact@chrislord.net"
+         "clord@igalia.com",
+         "chris@igalia.com",
+         "contact@chrislord.net"
       ],
       "nicks" : [
-          "cwiiis"
+         "cwiiis"
       ],
       "status" : "committer"
    },
@@ -1501,8 +1499,7 @@
       ],
       "nicks" : [
          "realdawei"
-      ],
-      "status" : "contributor"
+      ]
    },
    "David Grogan" : {
       "emails" : [
@@ -2279,6 +2276,14 @@
       ],
       "status" : "committer"
    },
+   "Guowei Yang" : {
+      "emails" : [
+         "guowei_yang@apple.com"
+      ],
+      "nicks" : [
+         "frank"
+      ]
+   },
    "Gurpreet Kaur" : {
       "emails" : [
          "gur.trio@gmail.com",
@@ -2299,8 +2304,7 @@
       "expertise" : "WebKitGTK API, Soup HTTP backend, Debian Packaging, A little bit of Epiphany",
       "nicks" : [
          "kov"
-      ],
-      "status" : "contributor"
+      ]
    },
    "Gwang Yoon Hwang" : {
       "emails" : [
@@ -2683,8 +2687,7 @@
       ],
       "nicks" : [
          "jmarcell"
-      ],
-      "status" : "contributor"
+      ]
    },
    "Javier Fernandez" : {
       "emails" : [
@@ -4190,8 +4193,7 @@
       "expertise" : "Accessibility",
       "nicks" : [
          "n_wang"
-      ],
-      "status" : "contributor"
+      ]
    },
    "Naoki Takano" : {
       "emails" : [
@@ -4962,8 +4964,7 @@
    "Shawn Roberts" : {
       "emails" : [
          "sroberts@apple.com"
-      ],
-      "status" : "contributor"
+      ]
    },
    "Shawn Singh" : {
       "emails" : [
@@ -5142,8 +5143,7 @@
       "expertise" : "JavaScript/ECMAScript, WebAssembly",
       "nicks" : [
          "sukol"
-      ],
-      "status" : "contributor"
+      ]
    },
    "Sungmann Cho" : {
       "emails" : [
@@ -5866,14 +5866,14 @@
       ]
    },
    "Zhifei Fang" : {
-     "emails" : [
+      "emails" : [
          "zhifei_fang@apple.com"
-     ],
-     "nicks" : [
+      ],
+      "nicks" : [
          "zhifei_fang",
          "z.f"
-     ],
-     "status" : "committer"
+      ],
+      "status" : "committer"
    },
    "Zoltan Arvai" : {
       "emails" : [
