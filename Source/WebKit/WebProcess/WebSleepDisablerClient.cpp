@@ -31,12 +31,12 @@
 
 namespace WebKit {
 
-void WebSleepDisablerClient::didCreateSleepDisabler(SleepDisablerIdentifier identifier, const String& reason, bool display)
+void WebSleepDisablerClient::didCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, const String& reason, bool display)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidCreateSleepDisabler(identifier, reason, display), 0);
 }
 
-void WebSleepDisablerClient::didDestroySleepDisabler(SleepDisablerIdentifier identifier)
+void WebSleepDisablerClient::didDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroySleepDisabler(identifier), 0);
 }

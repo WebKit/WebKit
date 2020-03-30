@@ -32,8 +32,8 @@ namespace WebKit {
 class WebSleepDisablerClient : public WebCore::SleepDisablerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    void didCreateSleepDisabler(SleepDisablerIdentifier, const String&, bool) override;
-    void didDestroySleepDisabler(SleepDisablerIdentifier) override;
+    void didCreateSleepDisabler(WebCore::SleepDisablerIdentifier, const String&, bool) override;
+    void didDestroySleepDisabler(WebCore::SleepDisablerIdentifier) override;
 };
 
 } // namespace WebKit

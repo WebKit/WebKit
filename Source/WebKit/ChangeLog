@@ -1,3 +1,12 @@
+2020-03-30  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed build fix after r259200.
+
+        * WebProcess/WebSleepDisablerClient.cpp:
+        (WebKit::WebSleepDisablerClient::didCreateSleepDisabler):
+        (WebKit::WebSleepDisablerClient::didDestroySleepDisabler):
+        * WebProcess/WebSleepDisablerClient.h:
+
 2020-03-30  Chris Dumez  <cdumez@apple.com>
 
         WebKit should take a foreground assertion for offscreen loads when the app is foreground
