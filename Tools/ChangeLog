@@ -1,3 +1,17 @@
+2020-03-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] REGRESSION(r258949) API test failures
+        https://bugs.webkit.org/show_bug.cgi?id=209702
+
+        Reviewed by Darin Adler.
+
+        After r258949, the preference observer is started when the app is activated, but since the app running
+        API tests is not being activated, the preference observer needs to be manually instantiated in each test.
+
+        * TestWebKitAPI/Tests/WebKit/PreferenceChanges.mm:
+        (-[WKTestPreferenceObserver preferenceDidChange:key:encodedValue:]):
+        (TEST):
+
 2020-03-28  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r257963) UI process crashes when setting navigation delegate inside navigation delegate callbacks

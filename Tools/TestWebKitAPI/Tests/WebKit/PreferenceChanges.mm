@@ -43,6 +43,7 @@ static bool done = false;
 - (void)preferenceDidChange:(NSString *)domain key:(NSString *)key encodedValue:(NSString *)encodedValue
 {
     done = true;
+    [super preferenceDidChange:domain key:key encodedValue:encodedValue];
 }
 @end
 
@@ -81,6 +82,8 @@ TEST(WebKit, PreferenceObserverArray)
 
 TEST(WebKit, PreferenceChanges)
 {
+    auto observer = adoptNS([[WKTestPreferenceObserver alloc] init]);
+
     CFPreferencesSetAppValue(testKey, CFSTR("1"), testDomain);
 
     EXPECT_EQ(1, CFPreferencesGetAppIntegerValue(testKey, testDomain, nullptr));
@@ -104,6 +107,8 @@ TEST(WebKit, PreferenceChanges)
 
 TEST(WebKit, PreferenceChangesArray)
 {
+    auto observer = adoptNS([[WKTestPreferenceObserver alloc] init]);
+
     NSArray *array = @[@1, @2, @3];
 
     auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:(NSString *)testDomain]);
@@ -136,6 +141,8 @@ TEST(WebKit, PreferenceChangesArray)
 
 TEST(WebKit, PreferenceChangesDictionary)
 {
+    auto observer = adoptNS([[WKTestPreferenceObserver alloc] init]);
+
     NSDictionary *dict = @{
         @"a" : @1,
         @"b" : @2,
@@ -175,6 +182,8 @@ TEST(WebKit, PreferenceChangesDictionary)
 
 TEST(WebKit, PreferenceChangesData)
 {
+    auto observer = adoptNS([[WKTestPreferenceObserver alloc] init]);
+
     NSData *data = [NSData dataWithBytes:"abc" length:3];
 
     auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:(NSString *)testDomain]);
@@ -207,6 +216,8 @@ TEST(WebKit, PreferenceChangesData)
 
 TEST(WebKit, PreferenceChangesDate)
 {
+    auto observer = adoptNS([[WKTestPreferenceObserver alloc] init]);
+
     NSDate *date = [NSDate dateWithTimeIntervalSinceNow:0];
 
     auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:(NSString *)testDomain]);
