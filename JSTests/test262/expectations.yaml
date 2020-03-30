@@ -1663,15 +1663,6 @@ test/built-ins/RegExp/prototype/Symbol.split/u-lastindex-adv-thru-failure.js:
 test/built-ins/RegExp/prototype/dotAll/cross-realm.js:
   default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/prototype/exec/S15.10.6.2_A5_T3.js:
-  default: "TypeError: null is not an object (evaluating '__executed[0]')"
-  strict mode: "TypeError: null is not an object (evaluating '__executed[0]')"
-test/built-ins/RegExp/prototype/exec/failure-lastindex-access.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/RegExp/prototype/exec/success-lastindex-access.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
@@ -1690,9 +1681,6 @@ test/built-ins/RegExp/prototype/source/cross-realm.js:
 test/built-ins/RegExp/prototype/sticky/cross-realm.js:
   default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/prototype/test/S15.10.6.3_A1_T22.js:
-  default: 'Test262Error: #1: __re = /(?:ab|cd)\d?/g; __re.lastIndex=-1; __executed = __re.test("aacd22 "); __executed === true'
-  strict mode: 'Test262Error: #1: __re = /(?:ab|cd)\d?/g; __re.lastIndex=-1; __executed = __re.test("aacd22 "); __executed === true'
 test/built-ins/RegExp/prototype/unicode/cross-realm.js:
   default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'

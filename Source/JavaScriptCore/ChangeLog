@@ -1,3 +1,32 @@
+2020-03-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        RegExp.prototype.exec must always access lastIndex
+        https://bugs.webkit.org/show_bug.cgi?id=209375
+
+        Reviewed by Saam Barati.
+
+        From https://tc39.es/ecma262/#sec-regexpbuiltinexec:
+          21.2.5.2.2 Runtime Semantics: RegExpBuiltinExec ( R, S )
+            ...
+            4. Let lastIndex be ? ToLength(? Get(R, "lastIndex")).
+            ...
+            8. If global is false and sticky is false, set lastIndex to 0.
+
+        That is, we're always obliged to verify that lastIndex is Number-coercible, even if we don't use the value.
+
+        DFG, in particular, must make sure strength reductions don't apply when lastIndex isn't an unsigned integer
+        (i.e., when user code has written something strange to it).
+        foldToConstant already has an early out for this, but it needs to apply to convertToStatic too.
+
+        Furthermore, ToLength clamps negative values to 0, so correct getRegExpObjectLastIndexAsUnsigned accordingly.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * runtime/RegExpObjectInlines.h:
+        (JSC::getRegExpObjectLastIndexAsUnsigned):
+        (JSC::RegExpObject::execInline):
+        (JSC::RegExpObject::matchInline):
+
 2020-03-30  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes late March 2020 edition

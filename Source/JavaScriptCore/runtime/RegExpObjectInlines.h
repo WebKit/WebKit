@@ -42,20 +42,14 @@ ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(
     unsigned lastIndex;
     if (LIKELY(jsLastIndex.isUInt32())) {
         lastIndex = jsLastIndex.asUInt32();
-        if (lastIndex > input.length()) {
-            scope.release();
-            regExpObject->setLastIndex(globalObject, 0);
+        if (lastIndex > input.length())
             return UINT_MAX;
-        }
     } else {
         double doubleLastIndex = jsLastIndex.toInteger(globalObject);
         RETURN_IF_EXCEPTION(scope, UINT_MAX);
-        if (doubleLastIndex < 0 || doubleLastIndex > input.length()) {
-            scope.release();
-            regExpObject->setLastIndex(globalObject, 0);
+        if (doubleLastIndex > input.length())
             return UINT_MAX;
-        }
-        lastIndex = static_cast<unsigned>(doubleLastIndex);
+        lastIndex = (doubleLastIndex < 0) ? 0 : static_cast<unsigned>(doubleLastIndex);
     }
     return lastIndex;
 }
@@ -70,14 +64,15 @@ inline JSValue RegExpObject::execInline(JSGlobalObject* globalObject, JSString* 
     RETURN_IF_EXCEPTION(scope, { });
 
     bool globalOrSticky = regExp->globalOrSticky();
+    unsigned lastIndex = getRegExpObjectLastIndexAsUnsigned(globalObject, this, input);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (lastIndex == UINT_MAX && globalOrSticky) {
+        scope.release();
+        setLastIndex(globalObject, 0);
+        return jsNull();
+    }
 
-    unsigned lastIndex;
-    if (globalOrSticky) {
-        lastIndex = getRegExpObjectLastIndexAsUnsigned(globalObject, this, input);
-        EXCEPTION_ASSERT(!scope.exception() || lastIndex == UINT_MAX);
-        if (lastIndex == UINT_MAX)
-            return jsNull();
-    } else
+    if (!globalOrSticky)
         lastIndex = 0;
     
     MatchResult result;
@@ -115,9 +110,12 @@ inline MatchResult RegExpObject::matchInline(
     }
 
     unsigned lastIndex = getRegExpObjectLastIndexAsUnsigned(globalObject, this, input);
-    EXCEPTION_ASSERT(!scope.exception() || (lastIndex == UINT_MAX));
-    if (lastIndex == UINT_MAX)
+    RETURN_IF_EXCEPTION(scope, { });
+    if (lastIndex == UINT_MAX) {
+        scope.release();
+        setLastIndex(globalObject, 0);
         return MatchResult::failed();
+    }
     
     MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, input, lastIndex);
     RETURN_IF_EXCEPTION(scope, { });

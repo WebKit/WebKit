@@ -535,6 +535,37 @@ private:
 
             ASSERT(m_node->op() != RegExpMatchFast);
 
+            // This will only work if we can prove what the value of lastIndex is. To do this
+            // safely, we need to execute the insertion set so that we see any previous strength
+            // reductions. This is needed for soundness since otherwise the effectfulness of any
+            // previous strength reductions would be invisible to us.
+            ASSERT(regExpObjectNode);
+            executeInsertionSet();
+            unsigned lastIndex = UINT_MAX;
+            for (unsigned otherNodeIndex = m_nodeIndex; otherNodeIndex--;) {
+                Node* otherNode = m_block->at(otherNodeIndex);
+                if (otherNode == regExpObjectNode) {
+                    lastIndex = 0;
+                    break;
+                }
+                if (otherNode->op() == SetRegExpObjectLastIndex
+                    && otherNode->child1() == regExpObjectNode
+                    && otherNode->child2()->isInt32Constant()
+                    && otherNode->child2()->asInt32() >= 0) {
+                    lastIndex = static_cast<unsigned>(otherNode->child2()->asInt32());
+                    break;
+                }
+                if (writesOverlap(m_graph, otherNode, RegExpObject_lastIndex))
+                    break;
+            }
+            if (lastIndex == UINT_MAX) {
+                if (verbose)
+                    dataLog("Giving up because the last index is not known.\n");
+                break;
+            }
+            if (!regExp->globalOrSticky())
+                lastIndex = 0;
+
             auto foldToConstant = [&] {
                 Node* stringNode = nullptr;
                 if (m_node->op() == RegExpExecNonGlobalOrSticky)
@@ -570,39 +601,6 @@ private:
                         dataLog("Giving up because of named capture groups.\n");
                     return false;
                 }
-
-                unsigned lastIndex;
-                if (regExp->globalOrSticky()) {
-                    // This will only work if we can prove what the value of lastIndex is. To do this
-                    // safely, we need to execute the insertion set so that we see any previous strength
-                    // reductions. This is needed for soundness since otherwise the effectfulness of any
-                    // previous strength reductions would be invisible to us.
-                    ASSERT(regExpObjectNode);
-                    executeInsertionSet();
-                    lastIndex = UINT_MAX;
-                    for (unsigned otherNodeIndex = m_nodeIndex; otherNodeIndex--;) {
-                        Node* otherNode = m_block->at(otherNodeIndex);
-                        if (otherNode == regExpObjectNode) {
-                            lastIndex = 0;
-                            break;
-                        }
-                        if (otherNode->op() == SetRegExpObjectLastIndex
-                            && otherNode->child1() == regExpObjectNode
-                            && otherNode->child2()->isInt32Constant()
-                            && otherNode->child2()->asInt32() >= 0) {
-                            lastIndex = static_cast<unsigned>(otherNode->child2()->asInt32());
-                            break;
-                        }
-                        if (writesOverlap(m_graph, otherNode, RegExpObject_lastIndex))
-                            break;
-                    }
-                    if (lastIndex == UINT_MAX) {
-                        if (verbose)
-                            dataLog("Giving up because the last index is not known.\n");
-                        return false;
-                    }
-                } else
-                    lastIndex = 0;
 
                 m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
 

@@ -1,3 +1,19 @@
+2020-03-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        RegExp.prototype.exec must always access lastIndex
+        https://bugs.webkit.org/show_bug.cgi?id=209375
+
+        Reviewed by Saam Barati.
+
+        * mozilla/ecma_3/RegExp/15.10.6.2-2.js:
+        Sync test with mozilla-central's copy.
+        (https://searchfox.org/mozilla-central/source/js/src/tests/non262/RegExp/15.10.6.2-2.js)
+
+        * stress/regexp-exec-always-accesses-lastindex.js: Added.
+
+        * test262/expectations.yaml:
+        Mark eight test cases as passing.
+
 2020-03-30  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] Public class field should accept "static" as field name
