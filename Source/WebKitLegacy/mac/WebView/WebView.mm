@@ -7278,12 +7278,9 @@ constexpr WebCore::TextCheckingType coreTextCheckingType(NSTextCheckingType type
 
 static WebCore::TextCheckingResult textCheckingResultFromNSTextCheckingResult(NSTextCheckingResult *nsResult)
 {
-    NSRange resultRange = nsResult.range;
-
     WebCore::TextCheckingResult result;
     result.type = coreTextCheckingType(nsResult.resultType);
-    result.location = resultRange.location;
-    result.length = resultRange.length;
+    result.range = nsResult.range;
     result.replacement = nsResult.replacementString;
     return result;
 }

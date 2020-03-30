@@ -34,8 +34,8 @@ body { margin: 10; padding: 0 }
             log("(0, 100): " + textInputController.attributedSubstringFromRange(0, 100).string());
             log("(5, 1): " + textInputController.attributedSubstringFromRange(5, 1).string());
             log("(5, 2): " + textInputController.attributedSubstringFromRange(5, 2).string());
-            log("(100, 0): " + textInputController.attributedSubstringFromRange(100, 0)); // should be undefined
-            log("(100, 100): " + textInputController.attributedSubstringFromRange(100, 100)); // should be undefined
+            log("(100, 0): " + textInputController.attributedSubstringFromRange(100, 0)); // should be empty
+            log("(100, 100): " + textInputController.attributedSubstringFromRange(100, 100)); // should be empty
             
             log("\nTesting proper space runs (1._2.__3.___4_5)");
             document.body.innerHTML = "1 &nbsp;2 &nbsp;&nbsp;3 &nbsp;&nbsp;&nbsp;4&nbsp;5";

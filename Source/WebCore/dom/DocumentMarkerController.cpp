@@ -60,7 +60,7 @@ void DocumentMarkerController::detach()
     m_possiblyExistingMarkerTypes = { };
 }
 
-Vector<RefPtr<Range>> DocumentMarkerController::collectTextRanges(const Range& range)
+Vector<RefPtr<Range>> DocumentMarkerController::collectTextRanges(const SimpleRange& range)
 {
     Vector<RefPtr<Range>> textRange;
     for (TextIterator textIterator(range); !textIterator.atEnd(); textIterator.advance())
@@ -68,13 +68,13 @@ Vector<RefPtr<Range>> DocumentMarkerController::collectTextRanges(const Range& r
     return textRange;
 }
 
-void DocumentMarkerController::addMarker(Range& range, DocumentMarker::MarkerType type, const String& description)
+void DocumentMarkerController::addMarker(const SimpleRange& range, DocumentMarker::MarkerType type, const String& description)
 {
     for (auto textPiece : collectTextRanges(range))
         addMarker(textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset(), description));
 }
 
-void DocumentMarkerController::addMarker(Range& range, DocumentMarker::MarkerType type)
+void DocumentMarkerController::addMarker(const SimpleRange& range, DocumentMarker::MarkerType type)
 {
     for (auto textPiece : collectTextRanges(range))
         addMarker(textPiece->startContainer(), DocumentMarker(type, textPiece->startOffset(), textPiece->endOffset()));
@@ -122,7 +122,7 @@ void DocumentMarkerController::addDictationPhraseWithAlternativesMarker(Range& r
     }
 }
 
-void DocumentMarkerController::addDictationResultMarker(Range& range, const RetainPtr<id>& metadata)
+void DocumentMarkerController::addDictationResultMarker(const SimpleRange& range, const RetainPtr<id>& metadata)
 {
     for (auto textPiece : collectTextRanges(range))
         addMarker(textPiece->startContainer(), DocumentMarker(DocumentMarker::DictationResult, textPiece->startOffset(), textPiece->endOffset(), String(), Vector<String>(), metadata));
@@ -139,7 +139,7 @@ void DocumentMarkerController::addDraggedContentMarker(Range& range)
 }
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
-void DocumentMarkerController::addPlatformTextCheckingMarker(Range& range, const String& key, const String& value)
+void DocumentMarkerController::addPlatformTextCheckingMarker(const SimpleRange& range, const String& key, const String& value)
 {
     for (auto textPiece : collectTextRanges(range)) {
         DocumentMarker::PlatformTextCheckingData textCheckingData { key, value };

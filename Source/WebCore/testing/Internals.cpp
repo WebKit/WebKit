@@ -2044,9 +2044,9 @@ ExceptionOr<void> Internals::invalidateControlTints()
     return { };
 }
 
-RefPtr<Range> Internals::rangeFromLocationAndLength(Element& scope, int rangeLocation, int rangeLength)
+RefPtr<Range> Internals::rangeFromLocationAndLength(Element& scope, unsigned rangeLocation, unsigned rangeLength)
 {
-    return TextIterator::rangeFromLocationAndLength(&scope, rangeLocation, rangeLength);
+    return createLiveRange(resolveCharacterRange(makeRangeSelectingNodeContents(scope), { rangeLocation, rangeLength }));
 }
 
 unsigned Internals::locationFromRange(Element& scope, const Range& range)
@@ -2075,9 +2075,9 @@ String Internals::rangeAsTextUsingBackwardsTextIterator(const Range& range)
     return plainTextUsingBackwardsTextIteratorForTesting(range);
 }
 
-Ref<Range> Internals::subrange(Range& range, int rangeLocation, int rangeLength)
+Ref<Range> Internals::subrange(Range& range, unsigned rangeLocation, unsigned rangeLength)
 {
-    return TextIterator::subrange(range, rangeLocation, rangeLength);
+    return createLiveRange(resolveCharacterRange(range, { rangeLocation, rangeLength }));
 }
 
 RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& searchRange, const String& text, unsigned targetOffset)
@@ -2432,8 +2432,7 @@ void Internals::handleAcceptedCandidate(const String& candidate, unsigned locati
 
     TextCheckingResult result;
     result.type = TextCheckingType::None;
-    result.location = location;
-    result.length = length;
+    result.range = { location, length };
     result.replacement = candidate;
     contextDocument()->frame()->editor().handleAcceptedCandidate(result);
 }

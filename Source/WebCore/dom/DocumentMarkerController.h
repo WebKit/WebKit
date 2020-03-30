@@ -40,6 +40,8 @@ class Node;
 class Range;
 class RenderedDocumentMarker;
 
+struct SimpleRange;
+
 class DocumentMarkerController {
     WTF_MAKE_NONCOPYABLE(DocumentMarkerController); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -48,20 +50,20 @@ public:
     ~DocumentMarkerController();
 
     void detach();
-    WEBCORE_EXPORT void addMarker(Range&, DocumentMarker::MarkerType);
-    WEBCORE_EXPORT void addMarker(Range&, DocumentMarker::MarkerType, const String& description);
+    WEBCORE_EXPORT void addMarker(const SimpleRange&, DocumentMarker::MarkerType);
+    WEBCORE_EXPORT void addMarker(const SimpleRange&, DocumentMarker::MarkerType, const String& description);
     void addMarkerToNode(Node&, unsigned startOffset, unsigned length, DocumentMarker::MarkerType);
     void addMarkerToNode(Node&, unsigned startOffset, unsigned length, DocumentMarker::MarkerType, DocumentMarker::Data&&);
     WEBCORE_EXPORT void addTextMatchMarker(const Range&, bool activeMatch);
 #if PLATFORM(IOS_FAMILY)
     void addMarker(Range&, DocumentMarker::MarkerType, const String& description, const Vector<String>& interpretations, const RetainPtr<id>& metadata);
     void addDictationPhraseWithAlternativesMarker(Range&, const Vector<String>& interpretations);
-    void addDictationResultMarker(Range&, const RetainPtr<id>& metadata);
+    void addDictationResultMarker(const SimpleRange&, const RetainPtr<id>& metadata);
 #endif
     void addDraggedContentMarker(Range&);
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
-    WEBCORE_EXPORT void addPlatformTextCheckingMarker(Range&, const String& key, const String& value);
+    WEBCORE_EXPORT void addPlatformTextCheckingMarker(const SimpleRange&, const String& key, const String& value);
 #endif
 
     void copyMarkers(Node& srcNode, unsigned startOffset, int length, Node& dstNode, int delta);
@@ -107,7 +109,7 @@ public:
 
 private:
     void addMarker(Node&, const DocumentMarker&);
-    Vector<RefPtr<Range>> collectTextRanges(const Range&);
+    Vector<RefPtr<Range>> collectTextRanges(const SimpleRange&);
 
     typedef Vector<RenderedDocumentMarker> MarkerList;
     typedef HashMap<RefPtr<Node>, std::unique_ptr<MarkerList>> MarkerMap;

@@ -73,12 +73,15 @@ static OptionSet<DocumentMarker::MarkerType> relevantMarkerTypes()
 Optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection(int64_t offset, uint64_t length)
 {
     Frame& frame = m_page.corePage()->focusController().focusedOrMainFrame();
-    const FrameSelection& frameSelection = frame.selection();
-    const VisibleSelection& selection = frameSelection.selection();
+    auto& frameSelection = frame.selection();
+    auto& selection = frameSelection.selection();
     if (selection.isNone())
         return WTF::nullopt;
 
     auto root = frameSelection.rootEditableElementOrDocumentElement();
+    if (!root)
+        return WTF::nullopt;
+
     auto range = selection.toNormalizedRange();
     range->collapse(true);
 
@@ -87,7 +90,7 @@ Optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProx
     TextIterator::getLocationAndLengthFromRange(root, range.get(), selectionLocation, selectionLength);
     selectionLocation += offset;
 
-    return {{ TextIterator::rangeFromLocationAndLength(root, selectionLocation, length), selectionLocation }};
+    return { { createLiveRange(resolveCharacterRange(makeRangeSelectingNodeContents(*root), { selectionLocation, length })), selectionLocation } };
 }
 
 void TextCheckingControllerProxy::replaceRelativeToSelection(AttributedString annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
@@ -95,6 +98,8 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(AttributedString an
     Frame& frame = m_page.corePage()->focusController().focusedOrMainFrame();
     FrameSelection& frameSelection = frame.selection();
     auto root = frameSelection.rootEditableElementOrDocumentElement();
+    if (!root)
+        return;
 
     auto rangeAndOffset = rangeAndOffsetRelativeToSelection(selectionOffset, length);
     if (!rangeAndOffset)
@@ -113,35 +118,36 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(AttributedString an
             auto replacementRange = rangeAndOffsetOfReplacement->range;
             if (replacementRange) {
                 bool restoreSelection = frameSelection.selection().isRange();
+
                 frame.editor().replaceRangeForSpellChecking(*replacementRange, [[annotatedString.string string] substringWithRange:NSMakeRange(relativeReplacementLocation, relativeReplacementLength + [annotatedString.string length] - length)]);
 
-                size_t selectionLocationToRestore = locationInRoot - selectionOffset;
-                if (restoreSelection && selectionLocationToRestore > locationInRoot + relativeReplacementLocation + relativeReplacementLength) {
-                    auto selectionToRestore = TextIterator::rangeFromLocationAndLength(root, selectionLocationToRestore, 0);
-                    frameSelection.moveTo(selectionToRestore.get());
+                if (restoreSelection) {
+                    uint64_t selectionLocationToRestore = locationInRoot - selectionOffset;
+                    if (selectionLocationToRestore > locationInRoot + relativeReplacementLocation + relativeReplacementLength) {
+                        auto selectionToRestore = createLiveRange(resolveCharacterRange(makeRangeSelectingNodeContents(*root), { selectionLocationToRestore, 0 }));
+                        frameSelection.moveTo(selectionToRestore.ptr());
+                    }
                 }
             }
         }
     }
 
     [annotatedString.string enumerateAttributesInRange:NSMakeRange(0, [annotatedString.string length]) options:0 usingBlock:^(NSDictionary<NSAttributedStringKey, id> *attrs, NSRange attributeRange, BOOL *stop) {
-        auto attributeCoreRange = TextIterator::rangeFromLocationAndLength(root, locationInRoot + attributeRange.location, attributeRange.length);
-        if (!attributeCoreRange)
-            return;
+        auto attributeCoreRange = resolveCharacterRange(makeRangeSelectingNodeContents(*root), { locationInRoot + attributeRange.location, attributeRange.length });
 
         [attrs enumerateKeysAndObjectsUsingBlock:^(NSAttributedStringKey key, id value, BOOL *stop) {
             if (![value isKindOfClass:[NSString class]])
                 return;
-            markers.addPlatformTextCheckingMarker(*attributeCoreRange, key, (NSString *)value);
+            markers.addPlatformTextCheckingMarker(attributeCoreRange, key, (NSString *)value);
 
             // FIXME: Switch to constants after rdar://problem/48914153 is resolved.
             if ([key isEqualToString:@"NSSpellingState"]) {
                 NSSpellingState spellingState = (NSSpellingState)[value integerValue];
                 if (spellingState & NSSpellingStateSpellingFlag)
-                    markers.addMarker(*attributeCoreRange, DocumentMarker::Spelling);
+                    markers.addMarker(attributeCoreRange, DocumentMarker::Spelling);
                 if (spellingState & NSSpellingStateGrammarFlag) {
                     NSString *userDescription = [attrs objectForKey:@"NSGrammarUserDescription"];
-                    markers.addMarker(*attributeCoreRange, DocumentMarker::Grammar, userDescription);
+                    markers.addMarker(attributeCoreRange, DocumentMarker::Grammar, userDescription);
                 }
             }
         }];
@@ -199,11 +205,11 @@ AttributedString TextCheckingControllerProxy::annotatedSubstringBetweenPositions
                 continue;
 
             auto& textCheckingData = WTF::get<DocumentMarker::PlatformTextCheckingData>(marker->data());
-            auto subrange = TextIterator::subrange(createLiveRange(currentTextRange), marker->startOffset(), marker->endOffset() - marker->startOffset());
+            auto subrange = resolveCharacterRange(currentTextRange, { marker->startOffset(), marker->endOffset() - marker->startOffset() });
 
             size_t subrangeLocation;
             size_t subrangeLength;
-            TextIterator::getLocationAndLengthFromRange(commonAncestor.get(), &subrange.get(), subrangeLocation, subrangeLength);
+            TextIterator::getLocationAndLengthFromRange(commonAncestor.get(), createLiveRange(subrange).ptr(), subrangeLocation, subrangeLength);
 
             ASSERT(subrangeLocation > entireRangeLocation);
             ASSERT(subrangeLocation + subrangeLength < entireRangeLength);

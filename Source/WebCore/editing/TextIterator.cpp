@@ -2343,18 +2343,12 @@ size_t SearchBuffer::length() const
 
 // --------
 
-CharacterCount characterCount(const SimpleRange& range, TextIteratorBehavior behavior)
+uint64_t characterCount(const SimpleRange& range, TextIteratorBehavior behavior)
 {
-    CharacterCount length = 0;
+    uint64_t length = 0;
     for (TextIterator it(range, behavior); !it.atEnd(); it.advance())
         length += it.text().length();
     return length;
-}
-
-Ref<Range> TextIterator::subrange(Range& entireRange, int characterOffset, int characterCount)
-{
-    CharacterIterator entireRangeIterator(entireRange);
-    return characterSubrange(entireRange.ownerDocument(), entireRangeIterator, characterOffset, characterCount);
 }
 
 static inline bool isInsideReplacedElement(TextIterator& iterator)
@@ -2365,86 +2359,65 @@ static inline bool isInsideReplacedElement(TextIterator& iterator)
     return node && isRendererReplacedElement(node->renderer());
 }
 
-RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool forSelectionPreservation)
+constexpr uint64_t clampedAdd(uint64_t a, uint64_t b)
 {
-    Ref<Range> resultRange = scope->document().createRange();
+    auto sum = a + b;
+    return sum >= a ? sum : std::numeric_limits<uint64_t>::max();
+}
 
-    int docTextPosition = 0;
-    int rangeEnd = rangeLocation + rangeLength;
-    bool startRangeFound = false;
+SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange range, TextIteratorBehavior behavior)
+{
+    auto resultRange = SimpleRange { range.location ? scope.end : scope.start, (range.location || range.length) ? scope.end : scope.start };
+    auto rangeEnd = clampedAdd(range.location, range.length);
+    uint64_t location = 0;
+    for (TextIterator it(scope, behavior); !it.atEnd(); it.advance()) {
+        unsigned length = it.text().length();
+        auto textRunRange = it.range();
 
-    Ref<Range> textRunRange = rangeOfContents(*scope);
-
-    TextIterator it(textRunRange, forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior);
-    
-    // FIXME: the atEnd() check shouldn't be necessary, workaround for <http://bugs.webkit.org/show_bug.cgi?id=6289>.
-    if (!rangeLocation && !rangeLength && it.atEnd()) {
-        resultRange->setStart(textRunRange->startContainer(), 0);
-        resultRange->setEnd(textRunRange->startContainer(), 0);
-        return resultRange;
-    }
-
-    for (; !it.atEnd(); it.advance()) {
-        int length = it.text().length();
-        textRunRange = createLiveRange(it.range());
-
-        bool foundStart = rangeLocation >= docTextPosition && rangeLocation <= docTextPosition + length;
-        bool foundEnd = rangeEnd >= docTextPosition && rangeEnd <= docTextPosition + length;
+        auto found = [&] (uint64_t targetLocation) -> bool {
+            return targetLocation >= location && targetLocation - location <= length;
+        };
+        bool foundStart = found(range.location);
+        bool foundEnd = found(rangeEnd);
 
         if (foundEnd) {
-            // FIXME: This is a workaround for the fact that the end of a run is often at the wrong
-            // position for emitted '\n's or if the renderer of the current node is a replaced element.
+            // FIXME: This is a workaround for the fact that the end of a run is often at the wrong position for emitted '\n's or if the renderer of the current node is a replaced element.
+            // FIXME: consider controlling this with TextIteratorBehavior instead of doing it unconditionally to help us eventually phase it out everywhere.
             if (length == 1 && (it.text()[0] == '\n' || isInsideReplacedElement(it))) {
                 it.advance();
-                if (!it.atEnd()) {
-                    auto start = it.range().start;
-                    textRunRange->setEnd(WTFMove(start.container), start.offset);
-                } else {
-                    Position runStart = textRunRange->startPosition();
-                    Position runEnd = VisiblePosition(runStart).next().deepEquivalent();
-                    if (runEnd.isNotNull())
-                        textRunRange->setEnd(*runEnd.containerNode(), runEnd.computeOffsetInContainerNode());
+                if (!it.atEnd())
+                    textRunRange.end = it.range().start;
+                else {
+                    if (auto end = makeBoundaryPoint(VisiblePosition(createLegacyEditingPosition(textRunRange.start)).next().deepEquivalent()))
+                        textRunRange.end = *end;
                 }
             }
         }
 
-        if (foundStart) {
-            startRangeFound = true;
-            if (textRunRange->startContainer().isTextNode()) {
-                int offset = rangeLocation - docTextPosition;
-                resultRange->setStart(textRunRange->startContainer(), offset + textRunRange->startOffset());
-            } else {
-                if (rangeLocation == docTextPosition)
-                    resultRange->setStart(textRunRange->startContainer(), textRunRange->startOffset());
-                else
-                    resultRange->setStart(textRunRange->endContainer(), textRunRange->endOffset());
+        auto boundary = [&] (uint64_t targetLocation) -> BoundaryPoint {
+            if (is<Text>(textRunRange.start.container)) {
+                ASSERT(targetLocation - location <= downcast<Text>(textRunRange.start.container.get()).length());
+                unsigned offset = textRunRange.start.offset + targetLocation - location;
+                return { textRunRange.start.container.copyRef(), offset };
             }
-        }
+            return targetLocation == location ? textRunRange.start : textRunRange.end;
+        };
 
+        if (foundStart)
+            resultRange.start = boundary(range.location);
         if (foundEnd) {
-            if (textRunRange->startContainer().isTextNode()) {
-                int offset = rangeEnd - docTextPosition;
-                resultRange->setEnd(textRunRange->startContainer(), offset + textRunRange->startOffset());
-            } else {
-                if (rangeEnd == docTextPosition)
-                    resultRange->setEnd(textRunRange->startContainer(), textRunRange->startOffset());
-                else
-                    resultRange->setEnd(textRunRange->endContainer(), textRunRange->endOffset());
-            }
-            docTextPosition += length;
+            resultRange.end = boundary(rangeEnd);
             break;
         }
 
-        docTextPosition += length;
+        location += length;
     }
-    
-    if (!startRangeFound)
-        return nullptr;
-    
-    if (rangeLength && rangeEnd > docTextPosition) // rangeEnd is out of bounds
-        resultRange->setEnd(textRunRange->endContainer(), textRunRange->endOffset());
-    
     return resultRange;
+}
+
+BoundaryPoint resolveCharacterLocation(const SimpleRange& scope, uint64_t location, TextIteratorBehavior behavior)
+{
+    return resolveCharacterRange(scope, { location, 0 }, behavior).start;
 }
 
 bool TextIterator::getLocationAndLengthFromRange(Node* scope, const Range* range, size_t& location, size_t& length)

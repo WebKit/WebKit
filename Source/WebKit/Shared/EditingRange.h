@@ -41,6 +41,7 @@ enum class EditingRangeIsRelativeTo : uint8_t {
     Paragraph,
 };
 
+// FIXME: Replace this with Optional<CharacterRange>.
 struct EditingRange {
     EditingRange()
         : location(notFound)

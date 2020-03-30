@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CharacterRange.h"
 #include "FindOptions.h"
 #include "LineLayoutTraversal.h"
 #include "SimpleRange.h"
@@ -102,10 +103,8 @@ public:
     const TextIteratorCopyableText& copyableText() const { ASSERT(!atEnd()); return m_copyableText; }
     void appendTextToStringBuilder(StringBuilder& builder) const { copyableText().appendToStringBuilder(builder); }
 
-    // FIXME: Move these to SimpleRange, CharacterRange, and CharacterCount and move out of this class to the top level (bottom of this file).
-    WEBCORE_EXPORT static RefPtr<Range> rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool spacesForReplacedElements = false);
+    // FIXME: Move this to SimpleRange and CharacterRange and move out of this class to the top level.
     WEBCORE_EXPORT static bool getLocationAndLengthFromRange(Node* scope, const Range*, size_t& location, size_t& length);
-    WEBCORE_EXPORT static Ref<Range> subrange(Range& entireRange, int characterOffset, int characterCount);
 
 private:
     void init();
@@ -289,13 +288,9 @@ private:
     bool m_didLookAhead { true };
 };
 
-using CharacterCount = std::size_t;
 
-struct CharacterRange {
-    CharacterCount location { 0 };
-    CharacterCount length { 0 };
-};
-
-WEBCORE_EXPORT CharacterCount characterCount(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
+WEBCORE_EXPORT uint64_t characterCount(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
+WEBCORE_EXPORT BoundaryPoint resolveCharacterLocation(const SimpleRange&, uint64_t, TextIteratorBehavior = TextIteratorDefaultBehavior);
+WEBCORE_EXPORT SimpleRange resolveCharacterRange(const SimpleRange&, CharacterRange, TextIteratorBehavior = TextIteratorDefaultBehavior);
 
 } // namespace WebCore

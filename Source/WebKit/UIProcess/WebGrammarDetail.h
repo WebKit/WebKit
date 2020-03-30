@@ -42,8 +42,8 @@ public:
     static Ref<WebGrammarDetail> create(int location, int length, API::Array* guesses, const String& userDescription);
     static Ref<WebGrammarDetail> create(const WebCore::GrammarDetail&);
 
-    int location() const { return m_grammarDetail.location; }
-    int length() const { return m_grammarDetail.length; }
+    int location() const { return m_grammarDetail.range.location; }
+    int length() const { return m_grammarDetail.range.length; }
     Ref<API::Array> guesses() const;
     const String& userDescription() const { return m_grammarDetail.userDescription; }
 

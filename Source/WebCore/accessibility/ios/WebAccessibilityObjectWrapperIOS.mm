@@ -2336,23 +2336,23 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return NSMakeRange(characterCount({ { *scope, 0 }, range.start }), characterCount(range));
 }
 
-- (RefPtr<Range>)_convertToDOMRange:(NSRange)nsrange
+- (RefPtr<Range>)_convertToDOMRange:(NSRange)range
 {
-    if (nsrange.location > INT_MAX)
+    if (range.location == NSNotFound)
         return nullptr;
-    if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
-        nsrange.length = INT_MAX - nsrange.location;
-        
+
     // our critical assumption is that we are only called by input methods that
     // concentrate on a given area containing the selection
     // We have to do this because of text fields and textareas. The DOM for those is not
     // directly in the document DOM, so serialization is problematic. Our solution is
     // to use the root editable element of the selection start as the positional base.
     // That fits with AppKit's idea of an input context.
-    Document* document = self.axBackingObject->document();
-    Element* selectionRoot = document->frame()->selection().selection().rootEditableElement();
-    Element* scope = selectionRoot ? selectionRoot : document->documentElement();
-    return TextIterator::rangeFromLocationAndLength(scope, nsrange.location, nsrange.length);
+    auto document = self.axBackingObject->document();
+    auto selectionRoot = document->frame()->selection().selection().rootEditableElement();
+    auto scope = selectionRoot ? selectionRoot : document->documentElement();
+    if (!scope)
+        return nullptr;
+    return createLiveRange(resolveCharacterRange(makeRangeSelectingNodeContents(*scope), range));
 }
 
 // This method is intended to take a text marker representing a VisiblePosition and convert it

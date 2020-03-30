@@ -1098,9 +1098,9 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
         size_t size = results.size();
         for (unsigned i = 0; i < size; i++) {
             const TextCheckingResult& result = results[i];
-            AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, @YES, NSMakeRange(result.location + range.location, result.length));
+            AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, @YES, NSMakeRange(result.range.location + range.location, result.range.length));
 #if PLATFORM(MAC)
-            AXAttributeStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, @YES, NSMakeRange(result.location + range.location, result.length));
+            AXAttributeStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, @YES, NSMakeRange(result.range.location + range.location, result.range.length));
 #endif
         }
         return;
@@ -3680,19 +3680,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     ASSERT(isMainThread());
 
-    Document* document = self.axBackingObject->document();
+    auto* document = self.axBackingObject->document();
     if (!document)
         return nil;
-    
-    RefPtr<Range> textRange = TextIterator::rangeFromLocationAndLength(document->documentElement(), textIndex, 0);
-    if (!textRange || !textRange->boundaryPointsValid())
+
+    auto* documentElement = document->documentElement();
+    if (!document)
         return nil;
-    
-    if (AXObjectCache* cache = self.axBackingObject->axObjectCache()) {
-        CharacterOffset characterOffset = cache->startOrEndCharacterOffsetForRange(textRange, true);
-        return [self textMarkerForCharacterOffset:characterOffset];
-    }
-    return nil;
+
+    auto* cache = self.axBackingObject->axObjectCache();
+    if (!cache)
+        return nil;
+
+    auto boundary = resolveCharacterLocation(makeRangeSelectingNodeContents(*documentElement), textIndex);
+    auto characterOffset = cache->startOrEndCharacterOffsetForRange(createLiveRange({ boundary, boundary }), true);
+    return [self textMarkerForCharacterOffset:characterOffset];
 }
 
 // The RTF representation of the text associated with this accessibility object that is

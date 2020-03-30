@@ -654,7 +654,7 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
     return updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), ParagraphGranularity);
 }
 
-static CharacterCount textDistance(const Position& start, const Position& end)
+static uint64_t textDistance(const Position& start, const Position& end)
 {
     auto startBoundary = makeBoundaryPoint(start);
     auto endBoundary = makeBoundaryPoint(end);

@@ -599,17 +599,17 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range& range, 
     SpellingCorrectionCommand::create(range.cloneRange(), alternative)->apply();
 
     // Recalculate pragraphRangeContainingCorrection, since SpellingCorrectionCommand modified the DOM, such that the original paragraphRangeContainingCorrection is no longer valid. Radar: 10305315 Bugzilla: 89526
-    auto updatedParagraphRangeContainingCorrection = TextIterator::rangeFromLocationAndLength(treeScopeRoot.ptr(), paragraphOffsetInTreeScope, correctionOffsetInParagraph + alternative.length());
-    if (!updatedParagraphRangeContainingCorrection)
+    auto updatedParagraphStartContainingCorrection = resolveCharacterLocation(makeRangeSelectingNodeContents(treeScopeRoot), paragraphOffsetInTreeScope);
+    auto updatedParagraphEndContainingCorrection = makeBoundaryPoint(m_frame.selection().selection().start());
+    if (!updatedParagraphEndContainingCorrection)
         return;
-    setEnd(updatedParagraphRangeContainingCorrection.get(), m_frame.selection().selection().start());
-    auto replacementRange = TextIterator::subrange(*updatedParagraphRangeContainingCorrection, correctionOffsetInParagraph, alternative.length());
+    auto replacementRange = resolveCharacterRange({ updatedParagraphStartContainingCorrection, *updatedParagraphEndContainingCorrection }, CharacterRange(correctionOffsetInParagraph, alternative.length()));
 
     // Check to see if replacement succeeded.
-    if (plainText(replacementRange.get()) != alternative)
+    if (plainText(replacementRange) != alternative)
         return;
 
-    auto& markers = replacementRange->ownerDocument().markers();
+    auto& markers = replacementRange.start.document().markers();
     for (auto markerType : markerTypesToAdd)
         markers.addMarker(replacementRange, markerType, markerDescriptionForAppliedAlternativeText(alternativeType, markerType));
 }

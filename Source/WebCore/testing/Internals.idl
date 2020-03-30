@@ -325,12 +325,12 @@ enum CompositingPolicy {
 
     [MayThrowException] void scrollElementToRect(Element element, long x, long y, long w, long h);
 
-    Range? rangeFromLocationAndLength(Element scope, long rangeLocation, long rangeLength);
+    Range? rangeFromLocationAndLength(Element scope, unsigned long rangeLocation, unsigned long rangeLength);
     unsigned long locationFromRange(Element scope, Range range);
     unsigned long lengthFromRange(Element scope, Range range);
     DOMString rangeAsText(Range range);
     DOMString rangeAsTextUsingBackwardsTextIterator(Range range);
-    Range subrange(Range range, long rangeLocation, long rangeLength);
+    Range subrange(Range range, unsigned long rangeLocation, unsigned long rangeLength);
     [MayThrowException] Range? rangeForDictionaryLookupAtLocation(long x, long y);
     Range? rangeOfStringNearLocation(Range range, DOMString text, long targetOffset);
 

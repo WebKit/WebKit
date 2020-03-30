@@ -553,7 +553,7 @@ void WebEditorClient::checkGrammarOfString(StringView text, Vector<WebCore::Gram
     *badGrammarLength = resultLength;
 }
 
-static CharacterCount insertionPointFromCurrentSelection(const VisibleSelection& currentSelection)
+static uint64_t insertionPointFromCurrentSelection(const VisibleSelection& currentSelection)
 {
     auto selectionStart = currentSelection.visibleStart();
     auto selectionStartBoundary = makeBoundaryPoint(selectionStart);

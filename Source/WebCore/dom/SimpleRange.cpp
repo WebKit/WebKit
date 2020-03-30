@@ -53,4 +53,23 @@ bool operator==(const SimpleRange& a, const SimpleRange& b)
     return a.start == b.start && a.end == b.end;
 }
 
+// FIXME: Node::isCharacterData should use an algorithm like this, since I'm assuming it's faster than the isCharacterDataNode virtual call in most cases.
+static bool fastIsCharacterData(const Node& node)
+{
+    return !node.isContainerNode() && (node.isTextNode() || node.isCharacterDataNode());
+}
+
+// FIXME: This should be Node::length since the DOM specification calls this a node's length.
+static unsigned length(const Node& node)
+{
+    if (fastIsCharacterData(node))
+        return downcast<CharacterData>(node).length();
+    return node.countChildNodes();
+}
+
+SimpleRange makeRangeSelectingNodeContents(Node& node)
+{
+    return { { node, 0 }, { node, length(node) } };
+}
+
 }

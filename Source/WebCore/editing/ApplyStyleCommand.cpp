@@ -283,12 +283,9 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
         nextParagraphStart = endOfParagraph(paragraphStart).next();
     }
     
-    {
-        auto startRange = TextIterator::rangeFromLocationAndLength(scope.get(), startIndex, 0, true);
-        auto endRange = TextIterator::rangeFromLocationAndLength(scope.get(), endIndex, 0, true);
-        if (startRange && endRange)
-            updateStartEnd(startRange->startPosition(), endRange->startPosition());
-    }
+    auto startPosition = createLegacyEditingPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), startIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
+    auto endPosition = createLegacyEditingPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), endIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
+    updateStartEnd(startPosition, endPosition);
 }
 
 static Ref<MutableStyleProperties> copyStyleOrCreateEmpty(const StyleProperties* style)

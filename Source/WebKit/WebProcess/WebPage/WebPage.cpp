@@ -5420,20 +5420,21 @@ void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
     if (!targetFrame)
         return;
 
-    const VisibleSelection& selection = targetFrame->selection().selection();
+    auto& selection = targetFrame->selection().selection();
     if (selection.isNone())
         return;
 
     auto selectionStart = selection.visibleStart();
     auto surroundingRange = makeRange(startOfEditableContent(selectionStart), selectionStart);
-    auto cursorPosition = WebCore::characterCount(*surroundingRange);
-    auto& rootNode = surroundingRange->startContainer().treeScope().rootNode();
-    auto selectionRange = TextIterator::rangeFromLocationAndLength(&rootNode, cursorPosition + offset, characterCount);
-    if (!selectionRange)
+    if (!surroundingRange)
         return;
 
+    auto& rootNode = surroundingRange->startContainer().treeScope().rootNode();
+    auto characterRange = WebCore::CharacterRange(WebCore::characterCount(*surroundingRange) + offset, characterCount);
+    auto selectionRange = resolveCharacterRange(makeRangeSelectingNodeContents(rootNode), characterRange);
+
     targetFrame->editor().setIgnoreSelectionChanges(true);
-    targetFrame->selection().setSelection(VisibleSelection(*selectionRange, SEL_DEFAULT_AFFINITY));
+    targetFrame->selection().setSelection(VisibleSelection(selectionRange, SEL_DEFAULT_AFFINITY));
     targetFrame->editor().deleteSelectionWithSmartDelete(false);
     targetFrame->editor().setIgnoreSelectionChanges(false);
     sendEditorStateUpdate();

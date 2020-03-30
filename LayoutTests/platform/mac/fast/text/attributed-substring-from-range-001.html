@@ -34,8 +34,8 @@ body { margin: 10; padding: 0 }
             log("(1, 100): " + textInputController.attributedSubstringFromRange(1, 100).string());
             log("(6, 1): " + textInputController.attributedSubstringFromRange(6, 1).string());
             log("(7, 1): " + textInputController.attributedSubstringFromRange(7, 1).string()); // should be empty
-            log("(100, 0): " + textInputController.attributedSubstringFromRange(100, 0)); // should be undefined
-            log("(100, 100): " + textInputController.attributedSubstringFromRange(100, 100)); // should be undefined
+            log("(100, 0): " + textInputController.attributedSubstringFromRange(100, 0)); // should be empty
+            log("(100, 100): " + textInputController.attributedSubstringFromRange(100, 100)); // should be empty
             
             document.body.innerHTML = "";
 

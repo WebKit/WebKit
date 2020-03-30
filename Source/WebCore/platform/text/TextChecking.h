@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,10 +31,9 @@
 
 #pragma once
 
+#include "CharacterRange.h"
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -63,16 +62,14 @@ enum TextCheckingProcessType {
 };
 
 struct GrammarDetail {
-    int location;
-    int length;
+    CharacterRange range;
     Vector<String> guesses;
     String userDescription;
 };
 
 struct TextCheckingResult {
     TextCheckingType type;
-    int location;
-    int length;
+    CharacterRange range;
     Vector<GrammarDetail> details;
     String replacement;
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,6 +117,8 @@
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/MediaConstraints.h>
 #endif
+
+// FIXME: Seems like we could use std::tuple to cut down the code below a lot!
 
 namespace IPC {
 using namespace WebCore;
@@ -248,6 +250,27 @@ bool ArgumentCoder<CacheQueryOptions>::decode(Decoder& decoder, CacheQueryOption
     options.ignoreVary = ignoreVary;
     options.cacheName = WTFMove(cacheName);
     return true;
+}
+
+void ArgumentCoder<CharacterRange>::encode(Encoder& encoder, const CharacterRange& range)
+{
+    encoder << static_cast<uint64_t>(range.location);
+    encoder << static_cast<uint64_t>(range.length);
+}
+
+Optional<CharacterRange> ArgumentCoder<CharacterRange>::decode(Decoder& decoder)
+{
+    Optional<uint64_t> location;
+    decoder >> location;
+    if (!location)
+        return WTF::nullopt;
+
+    Optional<uint64_t> length;
+    decoder >> length;
+    if (!length)
+        return WTF::nullopt;
+
+    return { { *location, *length } };
 }
 
 void ArgumentCoder<DOMCacheEngine::CacheInfo>::encode(Encoder& encoder, const DOMCacheEngine::CacheInfo& info)
@@ -2053,22 +2076,16 @@ bool ArgumentCoder<ShareDataWithParsedURL>::decode(Decoder& decoder, ShareDataWi
 
 void ArgumentCoder<GrammarDetail>::encode(Encoder& encoder, const GrammarDetail& detail)
 {
-    encoder << detail.location;
-    encoder << detail.length;
+    encoder << detail.range;
     encoder << detail.guesses;
     encoder << detail.userDescription;
 }
 
 Optional<GrammarDetail> ArgumentCoder<GrammarDetail>::decode(Decoder& decoder)
 {
-    Optional<int> location;
-    decoder >> location;
-    if (!location)
-        return WTF::nullopt;
-
-    Optional<int> length;
-    decoder >> length;
-    if (!length)
+    Optional<CharacterRange> range;
+    decoder >> range;
+    if (!range)
         return WTF::nullopt;
 
     Optional<Vector<String>> guesses;
@@ -2081,7 +2098,7 @@ Optional<GrammarDetail> ArgumentCoder<GrammarDetail>::decode(Decoder& decoder)
     if (!userDescription)
         return WTF::nullopt;
 
-    return {{ WTFMove(*location), WTFMove(*length), WTFMove(*guesses), WTFMove(*userDescription) }};
+    return { { *range, WTFMove(*guesses), WTFMove(*userDescription) } };
 }
 
 void ArgumentCoder<TextCheckingRequestData>::encode(Encoder& encoder, const TextCheckingRequestData& request)
@@ -2117,8 +2134,7 @@ bool ArgumentCoder<TextCheckingRequestData>::decode(Decoder& decoder, TextChecki
 void ArgumentCoder<TextCheckingResult>::encode(Encoder& encoder, const TextCheckingResult& result)
 {
     encoder.encodeEnum(result.type);
-    encoder << result.location;
-    encoder << result.length;
+    encoder << result.range;
     encoder << result.details;
     encoder << result.replacement;
 }
@@ -2129,14 +2145,9 @@ Optional<TextCheckingResult> ArgumentCoder<TextCheckingResult>::decode(Decoder& 
     if (!decoder.decodeEnum(type))
         return WTF::nullopt;
     
-    Optional<int> location;
-    decoder >> location;
-    if (!location)
-        return WTF::nullopt;
-
-    Optional<int> length;
-    decoder >> length;
-    if (!length)
+    Optional<CharacterRange> range;
+    decoder >> range;
+    if (!range)
         return WTF::nullopt;
 
     Optional<Vector<GrammarDetail>> details;
@@ -2149,7 +2160,7 @@ Optional<TextCheckingResult> ArgumentCoder<TextCheckingResult>::decode(Decoder& 
     if (!replacement)
         return WTF::nullopt;
 
-    return {{ WTFMove(type), WTFMove(*location), WTFMove(*length), WTFMove(*details), WTFMove(*replacement) }};
+    return { { type, *range, WTFMove(*details), WTFMove(*replacement) } };
 }
 
 void ArgumentCoder<UserStyleSheet>::encode(Encoder& encoder, const UserStyleSheet& userStyleSheet)

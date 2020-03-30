@@ -34,8 +34,7 @@ fast/events/do-not-drag-and-drop-data-detectors-link.html [ Pass ]
 
 http/tests/gzip-content-encoding [ Pass ]
 
-[ Sierra HighSierra ] http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Failure ]
-[ Mojave+ ] http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass ]
+http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass ]
 
 fast/text/mac [ Pass ]
 webkit.org/b/181964 fast/text/mac/select-character-before-zero-width-joiner.html [ ImageOnlyFailure ]
@@ -147,9 +146,6 @@ fast/mediastream/MediaStream-add-ended-tracks.html
 fast/mediastream/RTCPeerConnection-ice.html [ Skip ]
 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Skip ]
 fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
-
-[ HighSierra ] inspector/page/overrideSetting-ICECandidateFilteringEnabled.html [ Skip ]
-[ HighSierra ] inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Skip ]
 
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]
@@ -766,7 +762,7 @@ webkit.org/b/131855 media/event-attributes.html [ Pass Failure Timeout ]
 webkit.org/b/133363 media/video-rtl.html [ Pass ImageOnlyFailure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/align.html [ Pass Failure ]
 webkit.org/b/135071 media/video-seek-with-negative-playback.html [ Pass Timeout ]
-webkit.org/b/135160 [ Sierra+ ] media/track/track-in-band-subtitles-too-large.html [ Failure ]
+webkit.org/b/135160 media/track/track-in-band-subtitles-too-large.html [ Failure ]
 webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Failure ]
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Pass Timeout Crash ]
 webkit.org/b/139789 media/media-controls-timeline-updates.html [ Pass Failure ]
@@ -854,7 +850,7 @@ webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Skip ]
 webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Skip ]
 webkit.org/b/116266 media/video-controls-toggling.html [ Skip ]
 
-webkit.org/b/163231 [ Sierra+ ] media/controls/airplay-picker.html [ Pass Failure ]
+webkit.org/b/163231 media/controls/airplay-picker.html [ Pass Failure ]
 
 # --- End media tests ---
 webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
@@ -1013,7 +1009,6 @@ webkit.org/b/148636 inspector/css/selector-dynamic-specificity.html [ Pass Timeo
 webkit.org/b/148636 inspector/css/selector-specificity.html [ Pass Timeout ]
 webkit.org/b/158742 [ Debug ] inspector/debugger/break-in-constructor-before-super.html [ Pass Timeout ]
 webkit.org/b/163604 inspector/debugger/breakpoint-action-eval.html [ Pass Timeout ]
-webkit.org/b/168338 [ Sierra ] inspector/debugger/breakpoint-action-detach.html [ Pass Timeout ]
 webkit.org/b/165772 inspector/debugger/breakpoint-action-log.html [ Pass Failure ]
 webkit.org/b/161387 inspector/debugger/breakpoint-action-with-exception.html [ Pass Failure ]
 webkit.org/b/164293 [ Debug ] inspector/debugger/breakpoint-scope.html [ Pass Timeout ]
@@ -1059,7 +1054,7 @@ webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 # Touch events are not enabled on Mac
 webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Skip ]
 
-webkit.org/b/149819 [ Debug Sierra+ ] compositing/video/video-poster.html [ Pass Crash ]
+webkit.org/b/149819 [ Debug ] compositing/video/video-poster.html [ Pass Crash ]
 
 webkit.org/b/168953 [ Release ] compositing/video/video-poster.html [ Pass Failure ]
 
@@ -1096,21 +1091,21 @@ accessibility/mac/selection-element-tabbing-to-link.html [ Pass Failure ]
 
 webkit.org/b/152506 webgl/1.0.3/conformance/extensions/get-extension.html [ Pass Timeout ]
 
-webkit.org/b/154709 [ Sierra+ ] fast/text/crash-complex-text-surrogate.html [ Pass Failure ]
+webkit.org/b/154709 fast/text/crash-complex-text-surrogate.html [ Pass Failure ]
 
 webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
 
 webkit.org/b/155140 js/promises-tests/promises-tests-2-3-3.html [ Pass Failure ]
 webkit.org/b/187103 js/error-should-not-strong-reference-global-object.html [ Pass Failure Timeout ]
 
-webkit.org/b/155505 [ Sierra+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
-webkit.org/b/155505 [ Sierra+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
+webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
+webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
 
 webkit.org/b/154688 inspector/controller/runtime-controller.html [ Pass Timeout ]
 
-webkit.org/b/156112 [ Sierra+ ] media/audio-controls-rendering.html [ Pass Failure ]
-webkit.org/b/156112 [ Sierra+ ] media/controls-strict.html [ Pass Failure ]
-webkit.org/b/156112 [ Sierra+ ] media/controls-without-preload.html [ Pass Failure ]
+webkit.org/b/156112 media/audio-controls-rendering.html [ Pass Failure ]
+webkit.org/b/156112 media/controls-strict.html [ Pass Failure ]
+webkit.org/b/156112 media/controls-without-preload.html [ Pass Failure ]
 
 webkit.org/b/156351 storage/indexeddb/modern/autoincrement-abort-private.html [ Pass Timeout ]
 
@@ -1126,44 +1121,44 @@ webkit.org/b/158101 imported/blink/http/tests/plugins/get-url-notify-on-removal.
 webkit.org/b/158534 css3/filters/backdrop/dynamic-backdrop-filter-change.html [ Pass ImageOnlyFailure ]
 
 # These tests hardcode platform-specific font aliases.
-webkit.org/b/158649 [ Sierra+ ] fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
+webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Failure Timeout ]
 
-[ Sierra+ ] fast/css/appearance-apple-pay-button.html [ Pass ]
+fast/css/appearance-apple-pay-button.html [ Pass ]
 
 # <rdar://problem/23500327> storage/websql/alter-to-info-table.html
-[ Sierra+ ] storage/websql/alter-to-info-table.html [ Pass Failure ]
+storage/websql/alter-to-info-table.html [ Pass Failure ]
 
 # <rdar://problem/23504749> imported/w3c/web-platform-tests/xhr/response-method.htm failing
-[ Sierra+ ] imported/w3c/web-platform-tests/xhr/response-method.htm [ Pass Failure ]
+imported/w3c/web-platform-tests/xhr/response-method.htm [ Pass Failure ]
 
 # <rdar://problem/23505582> Fails on iMac10,1 and iMac11,1
-[ Sierra+ ] fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Pass Failure ]
+fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Pass Failure ]
 
 # Sierra supports true font feature coverage queries. We use the -coverage versions of these tests instead.
-[ Sierra+ ] css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
-[ Sierra+ ] css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
+css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
+css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
 
 # <rdar://problem/25279189> LayoutTest http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html is flaky
-[ Sierra+ ] http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Pass Failure ]
+http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Pass Failure ]
 
 # <rdar://problem/25780035> CSP does not ignore paths for media redirects
-[ Sierra+ ] http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html [ Skip ]
-[ Sierra+ ] http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html [ Skip ]
+http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html [ Skip ]
+http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html [ Skip ]
 
 # rdar://problem/26952627
-[ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ Pass ImageOnlyFailure ]
-[ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ Pass ImageOnlyFailure ]
+css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ Pass ImageOnlyFailure ]
+css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ Pass ImageOnlyFailure ]
 
 # rdar://problem/27141291
-[ Sierra+ ] editing/selection/triple-click-in-pre.html [ Failure ]
+editing/selection/triple-click-in-pre.html [ Failure ]
 
 # rdar://problem/31243824
 webkit.org/b/158747 media/restore-from-page-cache.html [ Pass Failure Crash ]
 
 # See also https://bugs.webkit.org/show_bug.cgi?id=162494
-webkit.org/b/151287 [ Sierra+ ] media/controls/inline-elements-dropoff-order.html [ Failure ]
+webkit.org/b/151287 media/controls/inline-elements-dropoff-order.html [ Failure ]
 
 webkit.org/b/158500 storage/indexeddb/database-close-private.html [ Pass Failure ]
 
@@ -1172,25 +1167,25 @@ webkit.org/b/163122 imported/blink/storage/indexeddb/blob-valid-after-deletion.h
 webkit.org/b/128312 media/video-load-preload-metadata.html [ Pass Failure ]
 
 # rdar://problem/27475162
-[ Sierra+ ] compositing/video/poster.html [ Pass ImageOnlyFailure ]
+compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-num-glyphs.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-2-3.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-2-4.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-2-5.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-2-6.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-2-7.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-2-8.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-2-9.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-2-3.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-2-4.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-2-5.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-2-6.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-2-7.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-2-8.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-2-9.html [ Pass ]
 
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-3.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-4.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-5.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-6.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-7.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-8.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-fe0f-9.html [ Pass ]
-webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-fe0f-3.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-fe0f-4.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-fe0f-5.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-fe0f-6.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-fe0f-7.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-fe0f-8.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender-fe0f-9.html [ Pass ]
+webkit.org/b/159755 fast/text/emoji-gender.html [ Pass ]
 
 webkit.org/b/161144 http/tests/media/hls/hls-accessiblity-describes-video-menu.html [ Skip ]
 
@@ -1198,17 +1193,13 @@ webkit.org/b/161883 imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruct
 
 webkit.org/b/162308 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Pass Failure ]
 
-webkit.org/b/162523 [ Sierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Pass Failure ]
+webkit.org/b/162523 imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Pass Failure ]
 
 webkit.org/b/162626 imported/w3c/web-platform-tests/media-source/mediasource-liveseekable.html [ Pass Failure ]
 
-webkit.org/b/162647 [ Sierra+ ] http/tests/xmlhttprequest/onabort-response-getters.html [ Pass Failure ]
+webkit.org/b/162647 http/tests/xmlhttprequest/onabort-response-getters.html [ Pass Failure ]
 
 webkit.org/b/162830 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Pass Timeout ]
-
-# Variation fonts are not implemented earlier than High Sierra.
-[ Sierra ] fast/text/variations [ Pass Failure ImageOnlyFailure ]
-[ Sierra ] animations/font-variations [ Pass Failure ImageOnlyFailure Timeout ]
 
 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Skip ]
 
@@ -1301,8 +1292,6 @@ webkit.org/b/170831 media/track/track-cue-rendering-rtl.html [ Pass Timeout ]
 
 webkit.org/b/165553 media/media-controls-timeline-updates-when-hovered.html [ Pass Failure ]
 
-webkit.org/b/171272 [ Sierra ] fast/text/kaithi.html [ ImageOnlyFailure ]
-
 webkit.org/b/171465 media/track/track-in-band-style.html [ Pass Timeout ]
 
 webkit.org/b/171760 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
@@ -1336,9 +1325,6 @@ media/modern-media-controls/media-documents/background-color-and-centering.html 
 webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Skip ]
 
 webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html [ Pass Failure Timeout ]
-
-webkit.org/b/173328 [ Sierra ] fast/text/system-font-fallback-emoji.html [ Failure ]
-webkit.org/b/173328 [ Sierra ] fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
 webkit.org/b/178083 media/media-source/media-source-paint-to-canvas.html [ Failure ]
 
@@ -1387,126 +1373,126 @@ webkit.org/b/161491 media/video-main-content-allow-then-scroll.html [ Pass Failu
 webkit.org/b/172052 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html [ Pass Failure ]
 
 # <rdar://problem/29031509> REGRESSION? (FontParser-195): svg/W3C-SVG-1.1/fonts-elem-* and svg/W3C-SVG-1.1/text-intro-* tests failing
-[ HighSierra+ ] svg/W3C-SVG-1.1/fonts-elem-01-t.svg [ Failure ]
-[ HighSierra+ ] svg/W3C-SVG-1.1/fonts-elem-02-t.svg [ Failure ]
-[ HighSierra+ ] svg/W3C-SVG-1.1/fonts-elem-03-b.svg [ Failure ]
-[ HighSierra+ ] svg/W3C-SVG-1.1/fonts-elem-07-b.svg [ Failure ]
-[ HighSierra+ ] svg/W3C-SVG-1.1/text-intro-01-t.svg [ Failure ]
-[ HighSierra+ ] svg/W3C-SVG-1.1/text-intro-02-b.svg [ Failure ]
-[ HighSierra+ ] svg/W3C-SVG-1.1/text-intro-03-b.svg [ Failure ]
-[ HighSierra+ ] svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
-[ HighSierra+ ] svg/batik/text/textEffect3.svg [ Failure ]
-[ HighSierra+ ] svg/batik/text/textPosition2.svg [ Failure ]
-[ HighSierra+ ] svg/custom/acid3-test-77.html [ Failure ]
-[ HighSierra+ ] svg/custom/svg-fonts-fallback.xhtml [ Failure ]
-[ HighSierra+ ] svg/wicd/test-rightsizing-b.xhtml [ Failure ]
-[ HighSierra+ ] fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure  ]
+svg/W3C-SVG-1.1/fonts-elem-01-t.svg [ Failure ]
+svg/W3C-SVG-1.1/fonts-elem-02-t.svg [ Failure ]
+svg/W3C-SVG-1.1/fonts-elem-03-b.svg [ Failure ]
+svg/W3C-SVG-1.1/fonts-elem-07-b.svg [ Failure ]
+svg/W3C-SVG-1.1/text-intro-01-t.svg [ Failure ]
+svg/W3C-SVG-1.1/text-intro-02-b.svg [ Failure ]
+svg/W3C-SVG-1.1/text-intro-03-b.svg [ Failure ]
+svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
+svg/batik/text/textEffect3.svg [ Failure ]
+svg/batik/text/textPosition2.svg [ Failure ]
+svg/custom/acid3-test-77.html [ Failure ]
+svg/custom/svg-fonts-fallback.xhtml [ Failure ]
+svg/wicd/test-rightsizing-b.xhtml [ Failure ]
+fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure  ]
 
 # <rdar://problem/30493910> REGRESSION: LayoutTest fast/writing-mode/broken-ideograph-small-caps.html failing
-[ HighSierra+ ] fast/writing-mode/broken-ideograph-small-caps.html [ Failure ImageOnlyFailure ]
+fast/writing-mode/broken-ideograph-small-caps.html [ Failure ImageOnlyFailure ]
 
 # <rdar://problem/30182401> REGRESSION: LayoutTest media/media-source/media-source-abort-resets-parser.html failing
-[ HighSierra+ ] media/media-source/media-source-abort-resets-parser.html [ Failure ]
+media/media-source/media-source-abort-resets-parser.html [ Failure ]
 
 # <rdar://problem/30517283> REGRESSION: LayoutTests security/block-test.html and security/block-test-no-port.html failing
-[ HighSierra+ ] security/block-test.html
-[ HighSierra+ ] security/block-test-no-port.html
+security/block-test.html
+security/block-test-no-port.html
 
 # <rdar://problem/31177990> REGRESSION: canvas/2d.gradient.* LayoutTests failing
 # These are imported tests, so we'll have to push changes back to W3C.
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.linear.transform.1.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.linear.transform.2.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.linear.transform.3.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.cone.bottom.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.cone.cylinder.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.cone.shape1.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.cone.top.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.inside1.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.inside2.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.inside3.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.outside1.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.outside2.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.outside3.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.radial.touch2.html [ Failure ]
-[ HighSierra+ ] fast/canvas/canvas-blending-fill-style.html [ Failure ]
-[ HighSierra+ ] fast/canvas/canvas-currentColor.html [ Failure ]
-[ HighSierra+ ] fast/canvas/set-colors.html [ Failure ]
+imported/w3c/canvas/2d.gradient.linear.transform.1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.linear.transform.2.html [ Failure ]
+imported/w3c/canvas/2d.gradient.linear.transform.3.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.bottom.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.cylinder.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.shape1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.top.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.inside1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.inside2.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.inside3.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.outside1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.outside2.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.outside3.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.touch2.html [ Failure ]
+fast/canvas/canvas-blending-fill-style.html [ Failure ]
+fast/canvas/canvas-currentColor.html [ Failure ]
+fast/canvas/set-colors.html [ Failure ]
 
 # <rdar://problem/31322425> REGRESSION: LayoutTest media/video-orientation.html is failing
-[ HighSierra+ ] media/video-orientation.html [ Failure ]
+media/video-orientation.html [ Failure ]
 
 # WebCryptoAPI features that enabled only for High Sierra/iOS 11
-[ HighSierra+ ] imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Pass Failure ]
-[ HighSierra+ ] imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-generate-export-key-jwk-sha384.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-generate-export-key-jwk-sha512.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-generate-export-key-pkcs8.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-generate-export-key-spki.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-generate-key.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-jwk-private-key.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-jwk-public-key-empty-usages.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-jwk-public-key-sha1.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-jwk-public-key-sha224.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-jwk-public-key-sha256.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-jwk-public-key-sha384.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-jwk-public-key-sha512.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-key-sign-large-salt.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-key-sign.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-key-verify.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-pkcs8-key.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-spki-key-empty-usages.html [ Pass ]
-[ HighSierra+ ] crypto/subtle/rsa-pss-import-spki-key.html [ Pass ]
-[ HighSierra+ ] crypto/workers/subtle/rsa-pss-import-key-sign.html [ Pass ]
-[ HighSierra+ ] crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
-[ HighSierra+ ] http/wpt/crypto/rsa-pss-crash.any.html [ Pass ]
-[ HighSierra+ ] http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha384.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha512.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-pkcs8.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-spki.html [ Pass ]
+crypto/subtle/rsa-pss-generate-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-private-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-empty-usages.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha1.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha224.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha256.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha384.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha512.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-sign-large-salt.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-sign.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-verify.html [ Pass ]
+crypto/subtle/rsa-pss-import-pkcs8-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-spki-key-empty-usages.html [ Pass ]
+crypto/subtle/rsa-pss-import-spki-key.html [ Pass ]
+crypto/workers/subtle/rsa-pss-import-key-sign.html [ Pass ]
+crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
+http/wpt/crypto/rsa-pss-crash.any.html [ Pass ]
+http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 
 # <rdar://problem/32352702> REGRESSION: fast/dom/HTMLMeterElement/meter-appearances LayoutTests failing
-[ HighSierra+ ] fast/dom/HTMLMeterElement/meter-appearances-capacity.html [ Failure ]
-[ HighSierra+ ] fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
+fast/dom/HTMLMeterElement/meter-appearances-capacity.html [ Failure ]
+fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
 
 # <rdar://problem/32620024> REGRESSION: LayoutTests canvas/philip/tests/2d.path.stroke.scale2.html and imported/w3c/canvas/2d.path.stroke.scale2.html are failing
-[ HighSierra+ ] canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
+canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
+imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
 
 # <rdar://problem/32799573> REGRESSION: LayoutTest fast/text/ipa-tone-letters.html is failing
-[ HighSierra+ ] fast/text/ipa-tone-letters.html [ Failure ]
+fast/text/ipa-tone-letters.html [ Failure ]
 
 # <rdar://problem/32799624> REGRESSION: LayoutTests css3/font-variant-petite-caps-synthesis-coverage.html and css3/font-variant-small-caps-synthesis-coverage.html are failing
-[ HighSierra+ ] css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
-[ HighSierra+ ] css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 
 # <rdar://problem/32799596> REGRESSION: LayoutTests canvas/philip/tests/2d.gradient.interpolate.solid.html and imported/w3c/canvas/2d.gradient.interpolate.solid.html failing
-[ HighSierra+ ] canvas/philip/tests/2d.gradient.interpolate.solid.html [ Failure ]
-[ HighSierra+ ] imported/w3c/canvas/2d.gradient.interpolate.solid.html [ Failure ]
+canvas/philip/tests/2d.gradient.interpolate.solid.html [ Failure ]
+imported/w3c/canvas/2d.gradient.interpolate.solid.html [ Failure ]
 
 # <rdar://problem/32800095> REGRESSION: LayoutTest imported/blink/fast/gradients/gradient-transparency.html is failing
-[ HighSierra+ ] imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
+imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
 
 # <rdar://problem/32826391> LayoutTest imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm is failing on High Sierra
-[ HighSierra+ ] imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
 
 # <rdar://problem/32864306> Unskip after bots have CTFontCopyPhysicalFont()
-[ HighSierra+ ] fast/text/system-font-japanese-synthetic-italic.html [ Pass ImageOnlyFailure ]
+fast/text/system-font-japanese-synthetic-italic.html [ Pass ImageOnlyFailure ]
 
 # This test makes sure that variation fonts are disabled on OSes which don't support them. So,
 # the test should be skipped on OSes which do support them. As soon as all OSes support them,
 # we should delete the test.
-[ HighSierra+ ] fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
+fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
 
 # <rdar://problem/33437597> Multiple imported/w3c/web-platform-tests/fetch are failing on High Sierra
-[ HighSierra+ ] imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
-[ HighSierra+ ] imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
 
 # <rdar://problem/33731086>
-[ HighSierra+ ] media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
+media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
 
 # <rdar://problem/33850189>
-[ HighSierra+ ] http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
+http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 
 webkit.org/b/177319 imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter.html [ Failure ]
 
@@ -1520,19 +1506,9 @@ webkit.org/b/177826 inspector/dom/csp-big5-hash.html [ Pass Timeout ]
 
 webkit.org/b/175998 http/tests/security/mixedContent/insecure-css-with-secure-cookies.html [ Pass Failure ]
 
-# AVContentKeySession not available pre-High Sierra
-[ Sierra ] platform/mac/media/encrypted-media/fps-createMediaKeys.html [ Skip ]
-[ Sierra ] platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Skip ]
-[ Sierra ] platform/mac/media/encrypted-media/fps-createSession.html [ Skip ]
-[ Sierra ] platform/mac/media/encrypted-media/fps-generateRequest.html [ Skip ]
-[ Sierra ] platform/mac/media/encrypted-media/fps-encrypted-event.html [ Skip ]
-
 # User-installed font infrastructure is ony present on certain OSes.
-webkit.org/b/180062 [ Sierra HighSierra ] fast/text/user-installed-fonts/disable.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow.html [ ImageOnlyFailure ]
-webkit.org/b/187228 [ Sierra HighSierra ] fast/text/user-installed-fonts/local.html [ ImageOnlyFailure ]
-
 
 webkit.org/b/180560 accessibility/mac/html5-input-number.html [ Pass Failure ]
 
@@ -1546,10 +1522,6 @@ webkit.org/b/181479 http/tests/misc/slow-loading-animated-image.html [ Pass Imag
 
 webkit.org/b/181494 accessibility/mac/aria-multiple-liveregions-notification.html [ Pass Failure ]
 
-# A lot of GPU hardware simply crashes with these tests, since they allocate a lot of memory.
-# They are enabled on systems that instead return GL_OUT_OF_MEMORY.
-[ Sierra ] fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Skip ]
-
 webkit.org/b/180260 http/wpt/resource-timing/rt-resources-per-worker.html [ Pass Failure ]
 
 webkit.org/b/181830 [ Debug ] media/video-main-content-allow-then-deny.html [ Pass Failure ]
@@ -1562,7 +1534,7 @@ webkit.org/b/181565 imported/w3c/web-platform-tests/media-source/mediasource-con
 
 webkit.org/b/181969 fast/events/message-port.html [ Skip ]
 
-webkit.org/b/181831 [ HighSierra+ ] fast/forms/searchfield-heights.html [ Pass Failure ]
+webkit.org/b/181831 fast/forms/searchfield-heights.html [ Pass Failure ]
 
 webkit.org/b/173946 [ Debug ] media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Pass Failure ]
 
@@ -1579,14 +1551,11 @@ webkit.org/b/183764 fast/css/apple-system-control-colors.html [ Pass ]
 
 webkit.org/b/184116 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm [ Pass Failure ]
 
-webkit.org/b/177616 [ HighSierra+ ] http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]
+webkit.org/b/177616 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]
 
 webkit.org/b/184610 media/video-volume-slider-drag.html [ Pass Timeout ]
 
 webkit.org/b/184612 media/audio-concurrent-supported.html [ Pass Failure ]
-
-# Font collections are not supported on every OS.
-webkit.org/b/184624 [ Sierra ] fast/text/font-collection.html [ ImageOnlyFailure ]
 
 webkit.org/b/184457 media/video-aspect-ratio.html [ Pass Failure ]
 
@@ -1598,13 +1567,6 @@ webkit.org/b/185659 [ Debug ] animations/needs-layout.html [ Pass ImageOnlyFailu
 
 # macOS doesn't have ICU v59
 webkit.org/b/185375 js/intl-numberformat-format-to-parts.html [ Failure ]
-
-# <= High Sierra doesn't support Modern EME
-[ HighSierra ] platform/mac/media/encrypted-media/fps-createMediaKeys.html [ Skip ]
-[ HighSierra ] platform/mac/media/encrypted-media/fps-createSession.html [ Skip ]
-[ HighSierra ] platform/mac/media/encrypted-media/fps-encrypted-event.html [ Skip ]
-[ HighSierra ] platform/mac/media/encrypted-media/fps-generateRequest.html [ Skip ]
-[ HighSierra ] platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Skip ]
 
 # Imported css-text test suite from WPT
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-010.html [ ImageOnlyFailure ]
@@ -1629,56 +1591,50 @@ fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
 
 webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html [ Pass Failure ]
 
-[ Mojave+ ] http/tests/cookies/same-site [ Pass ]
+http/tests/cookies/same-site [ Pass ]
 
 # FIXME: Mark as Pass once <rdar://problem/47165939> is fixed.
-[ Mojave+ ] http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
+http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
 
 # FIXME: Mark as Pass once the fix for <rdar://problem/42255251> is shipped.
-[ Mojave+ ] http/tests/cookies/same-site/set-first-party-cross-site-cookies.php [ Skip ]
-[ Mojave+ ] http/tests/cookies/same-site/set-first-party-same-site-cookies.php [ Skip ]
+http/tests/cookies/same-site/set-first-party-cross-site-cookies.php [ Skip ]
+http/tests/cookies/same-site/set-first-party-same-site-cookies.php [ Skip ]
 
 # <rdar://problem/36639117> REGRESSION (Mojave): LayoutTest svg/custom/subpaths-moveto-only-rendering.svg is failing
-[ Mojave+ ] svg/custom/subpaths-moveto-only-rendering.svg [ Failure ]
+svg/custom/subpaths-moveto-only-rendering.svg [ Failure ]
 
 # <rdar://problem/40498290> REGRESSION (Mojave): HTMLMeterElement LayoutTests failing
-[ Mojave+ ] fast/dom/HTMLMeterElement/meter-boundary-values.html [ Failure ]
-[ Mojave+ ] fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html [ Failure ]
-[ Mojave+ ] fast/dom/HTMLMeterElement/meter-element.html [ Failure ]
-[ Mojave+ ] fast/dom/HTMLMeterElement/meter-optimums.html [ Failure ]
-[ Mojave+ ] fast/dom/HTMLMeterElement/meter-styles.html [ Failure ]
+fast/dom/HTMLMeterElement/meter-boundary-values.html [ Failure ]
+fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html [ Failure ]
+fast/dom/HTMLMeterElement/meter-element.html [ Failure ]
+fast/dom/HTMLMeterElement/meter-optimums.html [ Failure ]
+fast/dom/HTMLMeterElement/meter-styles.html [ Failure ]
 
 # <rdar://problem/41103260> REGRESSION (Mojave): Three text tests failing with small antialiasing(?) diffs
-[ Mojave+ ] fast/inline/break-between-nobr.html [ ImageOnlyFailure ]
-[ Mojave+ ] imported/blink/fast/text/international/text-shaping-arabic.html [ ImageOnlyFailure ]
-[ Mojave+ ] imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]
-
-# < Mojave uses font smoothing.
-[ Sierra HighSierra ] compositing/contents-format/subpixel-antialiased-text.html [ ImageOnlyFailure ]
+fast/inline/break-between-nobr.html [ ImageOnlyFailure ]
+imported/blink/fast/text/international/text-shaping-arabic.html [ ImageOnlyFailure ]
+imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]
 
 # < Mojave doesn't support the CG needed for Conic Gradients
-[ Mojave+ ] http/wpt/css/css-images-4/conic-gradient-parsing.html [ Pass ]
-[ Mojave+ ] fast/gradients/conic-repeating.html [ Pass ]
-[ Mojave+ ] fast/gradients/conic.html [ Pass ]
-[ Mojave+ ] fast/gradients/conic-off-center.html [ Pass ]
-[ Mojave+ ] fast/gradients/conic-center-outside-box.html [ Pass ]
-[ Mojave+ ] fast/gradients/conic-extended-stops.html [ Pass ]
-[ Mojave+ ] fast/gradients/conic-from-angle.html [ Pass ]
-[ Mojave+ ] fast/gradients/conic-repeating-last-stop.html [ Pass ]
-[ Mojave+ ] fast/gradients/conic-gradient-alpha.html [ Pass ]
-[ Mojave+ ] fast/gradients/conic-gradient-extended-stops.html [ Pass ]
-[ Mojave+ ] fast/gradients/conic-gradient.html [ Pass ]
-[ Mojave+ ] fast/gradients/conic-two-hints.html [ Pass ]
+http/wpt/css/css-images-4/conic-gradient-parsing.html [ Pass ]
+fast/gradients/conic-repeating.html [ Pass ]
+fast/gradients/conic.html [ Pass ]
+fast/gradients/conic-off-center.html [ Pass ]
+fast/gradients/conic-center-outside-box.html [ Pass ]
+fast/gradients/conic-extended-stops.html [ Pass ]
+fast/gradients/conic-from-angle.html [ Pass ]
+fast/gradients/conic-repeating-last-stop.html [ Pass ]
+fast/gradients/conic-gradient-alpha.html [ Pass ]
+fast/gradients/conic-gradient-extended-stops.html [ Pass ]
+fast/gradients/conic-gradient.html [ Pass ]
+fast/gradients/conic-two-hints.html [ Pass ]
 [ Mojave ] imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ Pass ]
 
 # Dark Mode is Mojave and later.
-[ Mojave+ ] css-dark-mode [ Pass ]
-[ Mojave+ ] css-dark-mode/older-systems [ Skip ]
-[ Mojave+ ] inspector/css/force-page-appearance.html [ Pass ]
-[ Mojave+ ] editing/pasteboard/paste-dark-mode-color-filtered.html [ Pass ]
-
-# Test Dark Mode CSS support for light mode on older systems.
-[ Sierra HighSierra ] css-dark-mode/older-systems [ Pass ]
+css-dark-mode [ Pass ]
+css-dark-mode/older-systems [ Skip ]
+inspector/css/force-page-appearance.html [ Pass ]
+editing/pasteboard/paste-dark-mode-color-filtered.html [ Pass ]
 
 webkit.org/b/189686 webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Slow ]
 
@@ -1693,14 +1649,6 @@ webkit.org/b/183389 [ Debug ] fast/css/counters/element-removal-crash.xhtml [ Pa
 webkit.org/b/190892 [ Debug ] webgl/2.0.0/conformance2/textures/misc/tex-unpack-params.html [ Pass Slow ] 
 
 webkit.org/b/190976 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Pass Failure ]
-
-webkit.org/b/199275 [ HighSierra ] webgpu [ Skip ]
-webkit.org/b/199275 [ HighSierra ] inspector/canvas/create-context-webgpu.html [ Skip ]
-webkit.org/b/199275 [ HighSierra ] inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
-webkit.org/b/199275 [ HighSierra ] inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
-webkit.org/b/199275 [ HighSierra ] inspector/canvas/resolveContext-webgpu.html [ Skip ]
-webkit.org/b/199275 [ HighSierra ] inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
-webkit.org/b/199275 [ HighSierra ] inspector/canvas/updateShader-webgpu.html [ Skip ]
 
 webkit.org/b/189680 platform/mac/media/audio-session-category-video-paused.html [ Pass Timeout ]
 
@@ -1729,7 +1677,7 @@ webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling
 # Flaky for non MathML core.
 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/cramped-001.html [ Pass Failure ]
 
-webkit.org/b/19650 [ HighSierra+ ] accessibility/mac/press-not-work-for-disabled-menu-list.html [ Pass Failure ]
+webkit.org/b/19650 accessibility/mac/press-not-work-for-disabled-menu-list.html [ Pass Failure ]
 
 # Skip iOS-specific Pointer Events WPT tests.
 imported/w3c/web-platform-tests/pointerevents/pointerevent_change-touch-action-onpointerdown_touch.html [ Skip ]
@@ -1744,16 +1692,16 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_pen.html [
 
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
 
-webkit.org/b/136627 [ Mojave+ ] media/track/track-cue-rendering-vertical.html [ Failure ]
+webkit.org/b/136627 media/track/track-cue-rendering-vertical.html [ Failure ]
 
 # <rdar://problem/47088939>
-[ Mojave+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html  [ Failure ]
-[ Mojave+ ] webaudio/realtimeanalyser-fft-scaling.html [ Pass Failure ]
-[ Mojave+ ] webaudio/oscillator-sine.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html  [ Failure ]
+webaudio/realtimeanalyser-fft-scaling.html [ Pass Failure ]
+webaudio/oscillator-sine.html [ Skip ]
 
-webkit.org/b/199013 [ Debug Mojave+ ] imported/w3c/web-platform-tests/websockets/Create-Secure-verify-url-set-non-default-port.any.html [ Pass Failure ]
+webkit.org/b/199013 [ Debug ] imported/w3c/web-platform-tests/websockets/Create-Secure-verify-url-set-non-default-port.any.html [ Pass Failure ]
 
-webkit.org/b/190882 [ Mojave+ ] animations/change-one-anim.html [ Pass Failure ]
+webkit.org/b/190882 animations/change-one-anim.html [ Pass Failure ]
 
 # <rdar://problem/48781098>
 [ Catalina+ ] fast/images/animated-heics-draw.html [ Pass ]
@@ -1847,14 +1795,12 @@ webkit.org/b/202523 imported/w3c/web-platform-tests/2dcontext/path-objects/2d.pa
 
 webkit.org/b/202598 imported/w3c/web-platform-tests/2dcontext/line-styles/2d.line.cap.round.html [ Failure ]
 
-webkit.org/b/198867 [ Mojave+ ] webgl/many-contexts.html [ Skip ]
+webkit.org/b/198867 webgl/many-contexts.html [ Skip ]
 
 webkit.org/b/203171 inspector/layers/layers-for-node.html [ Pass Failure ]
 
 webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/before-load-001.html [ Failure ]
 
-webkit.org/b/203305 [ HighSierra Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-001.html [ Pass Failure ]
-webkit.org/b/203305 [ HighSierra Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
 webkit.org/b/203357 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/event-dispatch.tentative.html [ Pass Failure ]
 webkit.org/b/203356 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html [ Pass Failure ]
 
@@ -1870,7 +1816,7 @@ webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-6.html [ ImageOnlyFailu
 webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-8.html [ ImageOnlyFailure ]
 webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-9.html [ ImageOnlyFailure ]
 
-webkit.org/b/204246 [ Catalina ] editing/mac/selection/context-menu-select-editability.html [ Failure ]
+webkit.org/b/204246 [ Catalina ] editing/mac/selection/context-menu-select-editability.html [ Pass Failure ]
 
 webkit.org/b/204247 [ Catalina ] webaudio/silence-after-playback.html [ Failure ]
 
@@ -1885,20 +1831,20 @@ webkit.org/b/202064 webaudio/silent-audio-interrupted-in-background.html [ Pass 
 webkit.org/b/205757 webgl/1.0.3/conformance/textures/texture-upload-size.html [ Pass Timeout ]
 webkit.org/b/205756 webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader.html [ Pass Failure ]
 
-webkit.org/b/205862 [ Mojave+ ] webgpu/whlsl/while-loop-break.html [ Pass ImageOnlyFailure ]
-webkit.org/b/205865 [ Mojave+ ] webgpu/whlsl/ensure-proper-variable-lifetime-2.html [ Pass ImageOnlyFailure ]
-webkit.org/b/205867 [ Mojave+ ] webgpu/draw-indexed-triangles.html [ Pass ImageOnlyFailure ]
+webkit.org/b/205862 webgpu/whlsl/while-loop-break.html [ Pass ImageOnlyFailure ]
+webkit.org/b/205865 webgpu/whlsl/ensure-proper-variable-lifetime-2.html [ Pass ImageOnlyFailure ]
+webkit.org/b/205867 webgpu/draw-indexed-triangles.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/197204 webexposed/css-properties-behind-flags.html [ Pass Failure ]
 
 # The navigator.language tests rely on functionality only available in recent releases of macOS Catalina and onward.
-webkit.org/b/200043 [ Sierra HighSierra Mojave Catalina ] fast/text/international/system-language/navigator-language [ Pass Failure ]
+webkit.org/b/200043 [ Mojave Catalina ] fast/text/international/system-language/navigator-language [ Pass Failure ]
 
 webkit.org/b/204312 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure Pass ]
 
 # Locale-specific shaping is only enabled on certain OSes.
-webkit.org/b/77568 [ Sierra HighSierra Mojave Catalina ] fast/text/locale-shaping.html [ ImageOnlyFailure ]
-webkit.org/b/77568 [ Sierra HighSierra Mojave Catalina ] fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
+webkit.org/b/77568 [ Mojave Catalina ] fast/text/locale-shaping.html [ ImageOnlyFailure ]
+webkit.org/b/77568 [ Mojave Catalina ] fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
 
 webkit.org/b/203222 svg/wicd/rightsizing-grid.xhtml [ Pass Failure ]
 
@@ -2019,8 +1965,8 @@ webkit.org/b/209084 css3/selectors3/xml/css3-modsel-d4.xml [ Pass Failure ]
 webkit.org/b/207150 platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html [ Pass Failure ]
 
 # The line breaking rules changed in ICU 66. We've updated the tests to match, but old platforms won't get updated line breaking rules.
-webkit.org/b/209250 [ Sierra+ ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015.xht [ ImageOnlyFailure ]
-webkit.org/b/209250 [ Sierra+ ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015.xht [ ImageOnlyFailure ]
+webkit.org/b/209250 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015.xht [ ImageOnlyFailure ]
+webkit.org/b/209250 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015.xht [ ImageOnlyFailure ]
 
 webkit.org/b/207858 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
 

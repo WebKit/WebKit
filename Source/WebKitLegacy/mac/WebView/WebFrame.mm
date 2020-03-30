@@ -819,12 +819,10 @@ static NSURL *createUniqueWebDataURL();
     return [self _convertToDOMRange:nsrange rangeIsRelativeTo:WebRangeIsRelativeTo::EditableRoot];
 }
 
-- (RefPtr<WebCore::Range>)_convertToDOMRange:(NSRange)nsrange rangeIsRelativeTo:(WebRangeIsRelativeTo)rangeIsRelativeTo
+- (RefPtr<WebCore::Range>)_convertToDOMRange:(NSRange)range rangeIsRelativeTo:(WebRangeIsRelativeTo)rangeIsRelativeTo
 {
-    if (nsrange.location > INT_MAX)
+    if (range.location == NSNotFound)
         return nullptr;
-    if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
-        nsrange.length = INT_MAX - nsrange.location;
 
     if (rangeIsRelativeTo == WebRangeIsRelativeTo::EditableRoot) {
         // Our critical assumption is that this code path is only called by input methods that
@@ -836,7 +834,7 @@ static NSURL *createUniqueWebDataURL();
         auto* element = _private->coreFrame->selection().rootEditableElementOrDocumentElement();
         if (!element)
             return nullptr;
-        return WebCore::TextIterator::rangeFromLocationAndLength(element, nsrange.location, nsrange.length);
+        return createLiveRange(resolveCharacterRange(makeRangeSelectingNodeContents(*element), range));
     }
 
     ASSERT(rangeIsRelativeTo == WebRangeIsRelativeTo::Paragraph);
@@ -844,10 +842,9 @@ static NSURL *createUniqueWebDataURL();
     auto paragraphStart = makeBoundaryPoint(startOfParagraph(_private->coreFrame->selection().selection().visibleStart()));
     if (!paragraphStart)
         return nullptr;
-    auto& rootNode = paragraphStart->container->treeScope().rootNode();
 
-    auto paragraphStartIndex = WebCore::characterCount({ { rootNode, 0 }, *paragraphStart });
-    return WebCore::TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex + nsrange.location, nsrange.length);
+    auto scopeEnd = makeRangeSelectingNodeContents(paragraphStart->container->treeScope().rootNode()).end;
+    return createLiveRange(WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range));
 }
 
 - (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange

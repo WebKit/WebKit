@@ -142,14 +142,14 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
 
     NSRange rangeToPass = NSMakeRange(characterCount({ *fullCharacterStart, *positionBoundary }), 0);
     NSDictionary *options = nil;
-    NSRange extractedRange = tokenRange(plainText(fullCharacterRange.get()), rangeToPass, &options);
+    auto extractedRange = tokenRange(plainText(fullCharacterRange.get()), rangeToPass, &options);
 
     // tokenRange sometimes returns {NSNotFound, 0} if it was unable to determine a good string.
     // FIXME (159063): We shouldn't need to check for zero length here.
     if (extractedRange.location == NSNotFound || !extractedRange.length)
         return { nullptr, nil };
 
-    return { TextIterator::subrange(*fullCharacterRange, extractedRange.location, extractedRange.length), options };
+    return { createLiveRange(resolveCharacterRange(*fullCharacterRange, extractedRange)), options };
 }
 
 static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numberOfCharactersToExpand, NSInteger& charactersAddedBeforeStart, NSInteger& charactersAddedAfterEnd)

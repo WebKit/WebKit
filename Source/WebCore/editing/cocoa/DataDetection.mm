@@ -97,7 +97,7 @@ static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition 
         CFRange resultRangeInContext = DDResultGetRange(result);
         if (hitLocation >= resultRangeInContext.location && (hitLocation - resultRangeInContext.location) < resultRangeInContext.length) {
             mainResult = result;
-            mainResultRange = TextIterator::subrange(*contextRange, resultRangeInContext.location, resultRangeInContext.length);
+            mainResultRange = createLiveRange(resolveCharacterRange(*contextRange, resultRangeInContext));
             break;
         }
     }
@@ -508,9 +508,12 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
         Vector<RefPtr<Range>> fragmentRanges;
         RefPtr<Range> currentRange = createLiveRange(iterator.range());
         CFIndex fragmentIndex = queryRange.start.queryIndex;
-        if (fragmentIndex == queryRange.end.queryIndex)
-            fragmentRanges.append(TextIterator::subrange(*currentRange, queryRange.start.offset, queryRange.end.offset - queryRange.start.offset));
-        else {
+        if (fragmentIndex == queryRange.end.queryIndex) {
+            CharacterRange fragmentRange;
+            fragmentRange.location = queryRange.start.offset;
+            fragmentRange.length = queryRange.end.offset - queryRange.start.offset;
+            fragmentRanges.append(createLiveRange(resolveCharacterRange(*currentRange, fragmentRange)));
+        } else {
             if (!queryRange.start.offset)
                 fragmentRanges.append(currentRange);
             else

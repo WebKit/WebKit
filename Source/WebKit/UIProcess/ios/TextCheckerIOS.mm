@@ -212,8 +212,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
 
         TextCheckingResult result;
         result.type = TextCheckingType::Spelling;
-        result.location = misspelledRange.location;
-        result.length = misspelledRange.length;
+        result.range = misspelledRange;
         results.append(WTFMove(result));
 
         offsetSoFar = misspelledRange.location + misspelledRange.length;

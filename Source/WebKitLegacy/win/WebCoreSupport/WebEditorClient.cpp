@@ -790,14 +790,18 @@ void WebEditorClient::checkGrammarOfString(StringView text, Vector<GrammarDetail
         if (enumDetailsObj->Next(1, &detailObj, &fetched) != S_OK)
             break;
 
-        GrammarDetail detail;
-        if (FAILED(detailObj->length(&detail.length)))
+        int length;
+        if (FAILED(detailObj->length(&length)))
             continue;
-        if (FAILED(detailObj->location(&detail.location)))
+        int location;
+        if (FAILED(detailObj->location(&location)))
             continue;
         BString userDesc;
         if (FAILED(detailObj->userDescription(&userDesc)))
             continue;
+
+        GrammarDetail detail;
+        detail.range = CharacterRange(location, length);
         detail.userDescription = String(userDesc, SysStringLen(userDesc));
 
         COMPtr<IEnumSpellingGuesses> enumGuessesObj;
@@ -826,7 +830,7 @@ void WebEditorClient::updateSpellingUIWithGrammarString(const String& string, co
         guessesBSTRs.append(guess.release());
     }
     BString userDescriptionBSTR(detail.userDescription);
-    ed->updateSpellingUIWithGrammarString(BString(string), detail.location, detail.length, userDescriptionBSTR, guessesBSTRs.data(), (int)guessesBSTRs.size());
+    ed->updateSpellingUIWithGrammarString(BString(string), detail.range.location, detail.range.length, userDescriptionBSTR, guessesBSTRs.data(), (int)guessesBSTRs.size());
     for (unsigned i = 0; i < guessesBSTRs.size(); i++)
         SysFreeString(guessesBSTRs[i]);
 }

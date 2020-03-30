@@ -92,9 +92,6 @@ imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/006.h
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
 
-[ Sierra ] accessibility/mac/apple-pay-labels.html [ Skip ]
-[ HighSierra ] accessibility/mac/apple-pay-session-v4.html [ Skip ]
-
 # <a download> is not supported in WK1 yet.
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
@@ -238,26 +235,11 @@ webkit.org/b/155067 storage/indexeddb/transaction-abort-private.html [ Pass Cras
 
 webkit.org/b/172092 [ Debug ] fast/parser/adoption-agency-unload-iframe-4.html [ Pass Timeout ]
 
-webkit.org/b/178272 [ Sierra ] http/tests/media/video-redirect.html [ Pass Failure ]
-webkit.org/b/178272 [ Sierra ] http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Pass Failure ]
-webkit.org/b/178272 [ Sierra ] http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Pass Failure ]
-webkit.org/b/178272 [ Sierra ] http/tests/security/contentSecurityPolicy/video-with-http-url-allowed-by-csp-media-src-star.html [ Pass Failure ]
-webkit.org/b/178272 [ Sierra ] http/tests/security/local-video-source-from-remote.html [ Pass Failure ]
-webkit.org/b/178272 [ Sierra ] http/tests/security/video-cross-origin-accesssameorigin.html [ Pass Failure ]
-webkit.org/b/178272 [ Sierra ] http/tests/canvas/webgl/origin-clean-conformance.html [ Pass Timeout ]
-webkit.org/b/178272 [ Sierra ] http/tests/media/autoplay-if-audio-is-playing.html [ Pass Timeout ]
-webkit.org/b/178272 [ Sierra ] http/tests/media/video-load-twice.html [ Pass Timeout ]
-webkit.org/b/178272 [ Sierra ] http/tests/media/video-play-progress.html [ Pass Timeout ]
-webkit.org/b/178272 [ Sierra ] http/tests/security/canvas-remote-read-remote-video-localhost.html [ Pass Timeout ]
-webkit.org/b/178272 [ Sierra ] http/tests/security/canvas-remote-read-remote-video-redirect.html [ Pass Timeout ]
-webkit.org/b/178272 [ Sierra ] http/tests/security/video-cross-origin-caching.html [ Pass Timeout ]
 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ]
 
-# rdar://problem/20001985
-[ Sierra ] http/tests/xmlhttprequest/range-test.html [ Failure ]
-
 # rdar://problem/34716163 Breaks subsequent tests using response.xml
-[ HighSierra+ ] http/tests/xmlhttprequest/range-test.html [ Skip ]
+# FIXME: Should be fixed in Catalina; need to re-enable.
+http/tests/xmlhttprequest/range-test.html [ Skip ]
 
 # WK1 does not support sync XHR redirections as does WK2
 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-sync-xhr-in-main-frame.html [ Skip ]
@@ -413,7 +395,7 @@ http/tests/multipart/multipart-async-image.html
 
 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 
-[ Sierra+ ] css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
+css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
 webkit.org/b/152178 fast/replaced/replaced-breaking.html [ Failure ]
 
@@ -520,19 +502,19 @@ fast/repaint/vertical-text-repaint.html [ Pass Failure ]
 webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 
 # <rdar://problem/24818712>
-[ Sierra+ ] editing/spelling/spelling-insert-html.html [ Pass Timeout ]
+editing/spelling/spelling-insert-html.html [ Pass Timeout ]
 
 # <rdar://problem/26399598>
-[ Sierra+ ] editing/spelling/spellcheck-async.html [ Failure ]
-[ Sierra+ ] editing/spelling/spelling-unified-emulation.html [ Failure ]
+editing/spelling/spellcheck-async.html [ Failure ]
+editing/spelling/spelling-unified-emulation.html [ Failure ]
 
 # <rdar://problem/26050923> The result is probably still a pass, but we don't have a way
 # to have platform specific results that are different between WK1 and WK2.
-[ Sierra+ ] accessibility/mac/document-attributes.html [ Failure ]
-[ Sierra+ ] accessibility/parent-delete.html [ Failure ]
+accessibility/mac/document-attributes.html [ Failure ]
+accessibility/parent-delete.html [ Failure ]
 
 # rdar://problem/26478296
-[ Sierra+ ] svg/hixie/text/003.html [ Failure ]
+svg/hixie/text/003.html [ Failure ]
 
 webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.any.js [ Pass Failure ]
 
@@ -541,13 +523,13 @@ webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass 
 webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Pass Crash ]
 
 # rdar://problem/27723718
-[ Sierra+ ] imported/blink/compositing/child-transform-with-anchor-point.html [ ImageOnlyFailure ]
+imported/blink/compositing/child-transform-with-anchor-point.html [ ImageOnlyFailure ]
 
 webkit.org/b/161056 gamepad [ Skip ]
 
-webkit.org/b/162592 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-reflection.html [ Pass ImageOnlyFailure ]
-webkit.org/b/162591 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-reflection-add-backdrop.html [ Pass ImageOnlyFailure ]
-webkit.org/b/162591 [ Sierra+ ] css3/filters/backdrop/backdrop-filter-with-reflection-value-change.html [ Pass ImageOnlyFailure ]
+webkit.org/b/162592 css3/filters/backdrop/backdrop-filter-with-reflection.html [ Pass ImageOnlyFailure ]
+webkit.org/b/162591 css3/filters/backdrop/backdrop-filter-with-reflection-add-backdrop.html [ Pass ImageOnlyFailure ]
+webkit.org/b/162591 css3/filters/backdrop/backdrop-filter-with-reflection-value-change.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/161360 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html [ Pass Failure ]
 
@@ -576,7 +558,7 @@ webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 webkit.org/b/165541 compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]
 webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 
-webkit.org/b/154612 [ Sierra+ ] compositing/repaint/fixed-background-scroll.html [ Pass Failure ]
+webkit.org/b/154612 compositing/repaint/fixed-background-scroll.html [ Pass Failure ]
 
 webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
 
@@ -634,8 +616,6 @@ http/tests/preconnect [ Skip ]
 
 webkit.org/b/175345 fast/images/animated-gif-scrolling-crash.html [ Pass Timeout ]
 
-webkit.org/b/175554 [ Sierra ] fullscreen/full-screen-iframe-legacy.html [ Pass Failure ]
-
 webkit.org/b/174218 svg/animations/smil-leak-list-property-instances.svg [ Pass Failure ]
 
 webkit.org/b/172877 svg/as-image/svg-image-with-data-uri-background.html [ Pass ImageOnlyFailure ]
@@ -649,23 +629,23 @@ webkit.org/b/176920 imported/w3c/web-platform-tests/streams/piping/error-propaga
 webkit.org/b/175886 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 
 # <rdar://problem/29201698> DumpRenderTree crashed in com.apple.CoreGraphics: CGDataProviderCopyData + 377
-[ HighSierra+ ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Crash ]
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Crash ]
 
 # <rdar://problem/29031509> REGRESSION? (FontParser-195): svg/W3C-SVG-1.1/fonts-elem-* and svg/W3C-SVG-1.1/text-intro-* tests failing
-[ HighSierra+ ] svg/W3C-SVG-1.1/fonts-elem-04-b.svg [ Failure ]
+svg/W3C-SVG-1.1/fonts-elem-04-b.svg [ Failure ]
 
 # <rdar://problem/31893714> REGRESSION: LayoutTest fast/text/multiple-codeunit-vertical-upright.html is failing on WK1
-[ HighSierra+ ] fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
+fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
 
 # <rdar://problem/31895192> DumpRenderTree crashed in com.apple.ImageIO.framework: IIODictionary::getBoolForKey + 0
-[ HighSierra+ ] http/tests/misc/slow-loading-animated-image.html [ Skip ]
+http/tests/misc/slow-loading-animated-image.html [ Skip ]
 
 # <rdar://problem/33522420> Crash: Multiple Layout test in fast/events and fast/forms and fast/text are crashing
-[ HighSierra+ ] fast/events/keyboardevent-code.html [ Crash ]
-[ HighSierra+ ] fast/events/keyboardevent-key.html [ Crash ]
-[ HighSierra+ ] fast/events/keydown-leftright-keys.html [ Crash ]
-[ HighSierra+ ] fast/forms/textarea-maxlength.html [ Crash ]
-[ HighSierra+ ] fast/text/system-font-fallback-emoji.html [ Crash ]
+fast/events/keyboardevent-code.html [ Crash ]
+fast/events/keyboardevent-key.html [ Crash ]
+fast/events/keydown-leftright-keys.html [ Crash ]
+fast/forms/textarea-maxlength.html [ Crash ]
+fast/text/system-font-fallback-emoji.html [ Crash ]
 
 webkit.org/b/179775 imported/w3c/web-platform-tests/xhr/firing-events-http-no-content-length.html [ Pass Failure ]
 
@@ -731,32 +711,32 @@ webkit.org/b/187557 [ Debug ] media/media-fragments/TC0091.html [ Pass Failure ]
 webkit.org/b/187711 [ Debug ] svg/custom/linking-uri-01-b.svg [ Pass Failure ]
 
 # <rdar://problem/42625657>
-[ Mojave+ ] fast/images/animated-gif-paint-after-animation.html [ Skip ]
-[ Mojave+ ] fast/images/async-image-background-image-repeated.html [ Skip ]
-[ Mojave+ ] fast/images/async-image-background-image.html [ Skip ]
-[ Mojave+ ] fast/images/async-image-multiple-clients-repaint.html [ Skip ]
-[ Mojave+ ] fast/images/composited-animated-gif-outside-viewport.html [ Skip ]
-[ Mojave+ ] fast/images/decode-render-animated-image.html [ Skip ]
-[ Mojave+ ] fast/images/decode-render-static-image.html [ Skip ]
-[ Mojave+ ] fast/images/decoding-attribute-async-small-image.html [ Skip ]
-[ Mojave+ ] fast/images/decoding-attribute-dynamic-async-small-image.html [ Skip ]
-[ Mojave+ ] fast/images/sprite-sheet-image-draw.html [ Skip ]
+fast/images/animated-gif-paint-after-animation.html [ Skip ]
+fast/images/async-image-background-image-repeated.html [ Skip ]
+fast/images/async-image-background-image.html [ Skip ]
+fast/images/async-image-multiple-clients-repaint.html [ Skip ]
+fast/images/composited-animated-gif-outside-viewport.html [ Skip ]
+fast/images/decode-render-animated-image.html [ Skip ]
+fast/images/decode-render-static-image.html [ Skip ]
+fast/images/decoding-attribute-async-small-image.html [ Skip ]
+fast/images/decoding-attribute-dynamic-async-small-image.html [ Skip ]
+fast/images/sprite-sheet-image-draw.html [ Skip ]
 
 # <rdar://problem/42627562>
-[ Mojave+ ] media/video-restricted-invisible-autoplay-not-allowed-source.html [ Skip ]
-[ Mojave+ ] media/video-restricted-invisible-autoplay-not-allowed.html [ Skip ]
+media/video-restricted-invisible-autoplay-not-allowed-source.html [ Skip ]
+media/video-restricted-invisible-autoplay-not-allowed.html [ Skip ]
 
 # <rdar://problem/42736213>
-[ Mojave+ ] displaylists/canvas-display-list.html [ Failure ]
-[ Mojave+ ] displaylists/extent-includes-shadow.html [ Failure ]
-[ Mojave+ ] displaylists/extent-includes-transforms.html [ Failure ]
-[ Mojave+ ] displaylists/layer-dispay-list.html [ Failure ]
-[ Mojave+ ] displaylists/replay-skip-clipped-rect.html [ Failure ]
+displaylists/canvas-display-list.html [ Failure ]
+displaylists/extent-includes-shadow.html [ Failure ]
+displaylists/extent-includes-transforms.html [ Failure ]
+displaylists/layer-dispay-list.html [ Failure ]
+displaylists/replay-skip-clipped-rect.html [ Failure ]
 
 webkit.org/b/184611 compositing/layer-creation/fixed-overlap-extent.html [ Pass Failure ]
 
 # <rdar://problem/42904780>
-[ Mojave+ Release ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html [ Failure ]
+[ Release ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html [ Failure ]
 
 webkit.org/b/189087 svg/animations/animate-end-attribute-numeric-precision.html [ Pass Failure ]
 
@@ -772,7 +752,7 @@ webkit.org/b/191357 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavi
 
 webkit.org/b/189908 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Failure ]
 
-webkit.org/b/189756 [ Mojave+ ] compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ Pass ImageOnlyFailure ]
+webkit.org/b/189756 compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/189723 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Pass Failure ]
 
@@ -782,7 +762,7 @@ webkit.org/b/190832 [ Debug ] fast/forms/state-restore-to-non-edited-controls.ht
 
 webkit.org/b/190849 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Pass Failure ]
 
-webkit.org/b/186406 [ Mojave+ ] compositing/iframes/display-none-subframe.html [ Pass Failure ]
+webkit.org/b/186406 compositing/iframes/display-none-subframe.html [ Pass Failure ]
 
 webkit.org/b/190383 fast/images/animated-gif-loop-count.html [ Pass ImageOnlyFailure ]
 webkit.org/b/190383 fast/images/animated-png-loop-count.html [ Pass ImageOnlyFailure ]
@@ -790,7 +770,7 @@ webkit.org/b/190383 fast/images/animated-image-different-dest-size.html [ Pass I
 
 webkit.org/b/191639 imported/blink/compositing/squashing/squashing-into-ancestor-painted-layer.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/190627 [ Mojave+ ] compositing/masks/compositing-clip-path-change-no-repaint.html  [ Pass Failure ]
+webkit.org/b/190627 compositing/masks/compositing-clip-path-change-no-repaint.html  [ Pass Failure ]
 
 webkit.org/b/172384 fast/hidpi/hidpi-long-page-with-inset-element.html [ Skip ]
 
@@ -826,10 +806,10 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-set
 imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ ImageOnlyFailure ]
 
 # <rdar://problem/42625657> REGRESSION (Mojave): 12 fast/images tests timing out on WK1
-[ Mojave+ ] fast/images/animated-heics-draw.html [ Skip ]
-[ Mojave+ ] fast/images/animated-heics-verify.html [ Skip ]
+fast/images/animated-heics-draw.html [ Skip ]
+fast/images/animated-heics-verify.html [ Skip ]
 
-webkit.org/b/200002 [ Mojave+ Debug ] imported/blink/storage/indexeddb/blob-basics-metadata.html [ Timeout ]
+webkit.org/b/200002 [ Debug ] imported/blink/storage/indexeddb/blob-basics-metadata.html [ Timeout ]
 
 # Skip IsLoggedIn
 http/tests/is-logged-in/ [ Skip ]
@@ -849,7 +829,7 @@ webkit.org/b/203517 imported/w3c/web-platform-tests/css/css-sizing/dynamic-avail
 # Stale-while-revalidate is not supported on WK1
 imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]
 
-webkit.org/b/205314 [ Catalina ] editing/mac/input/firstrectforcharacterrange-styled.html [ Failure ]
+[ Mojave ] editing/mac/input/firstrectforcharacterrange-styled.html [ Failure ]
 
 webkit.org/b/205412 [ Mojave Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Timeout ]
 

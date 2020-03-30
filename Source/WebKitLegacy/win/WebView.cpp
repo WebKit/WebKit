@@ -7761,23 +7761,19 @@ HRESULT WebView::firstRectForCharacterRangeForTesting(UINT location, UINT length
     if (!m_page)
         return E_FAIL;
 
-    IntRect resultIntRect;
-    resultIntRect.setLocation(IntPoint(0, 0));
-    resultIntRect.setSize(IntSize(0, 0));
-    
-    if (location > INT_MAX)
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    auto* element = frame.selection().rootEditableElementOrDocumentElement();
+    if (!element)
         return E_FAIL;
-    if (length > INT_MAX || location + length > INT_MAX)
-        length = INT_MAX - location;
-        
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame.selection().rootEditableElementOrDocumentElement(), location, length);
+
+    auto characterRange = CharacterRange(location, length);
+    RefPtr<Range> range = createLiveRange(resolveCharacterRange(makeRangeSelectingNodeContents(*element), characterRange));
 
     if (!range)
         return E_FAIL;
-     
+
     IntRect rect = frame.editor().firstRectForRange(range.get());
-    resultIntRect = frame.view()->contentsToWindow(rect);
+    IntRect resultIntRect = frame.view()->contentsToWindow(rect);
 
     resultIntRect.scale(deviceScaleFactor());
 

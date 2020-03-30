@@ -226,7 +226,7 @@ bool operator<=(const Position&, const Position&);
 
 // FIXME: Consider renaming this to "make" instead of "create" since we normally use "create" for functions that allocate heap objects.
 Position createLegacyEditingPosition(Node*, unsigned offset);
-Position createLegacyEditingPosition(const BoundaryPoint&);
+WEBCORE_EXPORT Position createLegacyEditingPosition(const BoundaryPoint&);
 
 WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPoint(const Position&);
 

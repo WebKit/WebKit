@@ -1114,12 +1114,9 @@ VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& posi
 
 VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope)
 {
-    auto range = TextIterator::rangeFromLocationAndLength(scope, index, 0, true);
-    // Check for an invalid index. Certain editing operations invalidate indices because 
-    // of problems with TextIteratorEmitsCharactersBetweenAllVisiblePositions.
-    if (!range)
+    if (!scope)
         return { };
-    return { range->startPosition() };
+    return { createLegacyEditingPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), index, TextIteratorEmitsCharactersBetweenAllVisiblePositions)) };
 }
 
 VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int index)

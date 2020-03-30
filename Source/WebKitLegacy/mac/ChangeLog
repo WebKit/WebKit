@@ -1,3 +1,22 @@
+2020-03-29  Darin Adler  <darin@apple.com>
+
+        Move TextIterator::rangeFromLocationAndLength off of live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=209408
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::checkTextOfParagraph): Use CharacterRange,
+        resolveCharacterLocation/Range.
+        (WebEditorClient::checkGrammarOfString): Ditto.
+        (core): Ditto.
+        (WebEditorClient::updateSpellingUIWithGrammarString): Ditto.
+        (WebEditorClient::handleAcceptedCandidateWithSoftSpaces): Ditto.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _convertToDOMRange:rangeIsRelativeTo:]): Ditto.
+        * WebView/WebView.mm:
+        (textCheckingResultFromNSTextCheckingResult): Ditto.
+
 2020-03-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DragData::containsURL() should avoid reading URL strings from the pasteboard

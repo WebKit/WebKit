@@ -803,8 +803,7 @@ unsigned Page::countFindMatches(const String& target, FindOptions options, unsig
 
 struct FindReplacementRange {
     RefPtr<ContainerNode> root;
-    size_t location { notFound };
-    size_t length { 0 };
+    CharacterRange range;
 };
 
 static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges, const String& replacementText)
@@ -816,10 +815,10 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
         }).iterator->value;
 
         // Ensure that ranges are sorted by their end offsets, per editing container.
-        auto endOffsetForRange = range.location + range.length;
+        auto endOffsetForRange = range.range.location + range.range.length;
         auto insertionIndex = rangeList.size();
         for (auto iterator = rangeList.rbegin(); iterator != rangeList.rend(); ++iterator) {
-            auto endOffsetBeforeInsertionIndex = iterator->location + iterator->length;
+            auto endOffsetBeforeInsertionIndex = iterator->range.location + iterator->range.length;
             if (endOffsetForRange >= endOffsetBeforeInsertionIndex)
                 break;
             insertionIndex--;
@@ -862,11 +861,11 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
         // Iterate backwards through ranges when replacing text, such that earlier text replacements don't clobber replacement ranges later on.
         auto& ranges = rangesByContainerNode.find(container)->value;
         for (auto iterator = ranges.rbegin(); iterator != ranges.rend(); ++iterator) {
-            auto range = TextIterator::rangeFromLocationAndLength(container.get(), iterator->location, iterator->length);
-            if (!range || range->collapsed())
+            auto range = resolveCharacterRange(makeRangeSelectingNodeContents(*container), iterator->range);
+            if (range.collapsed())
                 continue;
 
-            frame->selection().setSelectedRange(range.get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+            frame->selection().setSelectedRange(createLiveRange(range).ptr(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
             frame->editor().replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
         }
     }
@@ -898,7 +897,7 @@ uint32_t Page::replaceRangesWithText(const Vector<Ref<Range>>& rangesToReplace, 
         if (replacementLocation == notFound || !replacementLength)
             continue;
 
-        replacementRanges.append({ WTFMove(highestRoot), replacementLocation, replacementLength });
+        replacementRanges.append({ WTFMove(highestRoot), { replacementLocation, replacementLength } });
     }
 
     replaceRanges(*this, replacementRanges, replacementText);

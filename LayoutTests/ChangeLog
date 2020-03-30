@@ -1,3 +1,55 @@
+2020-03-29  Darin Adler  <darin@apple.com>
+
+        Move TextIterator::rangeFromLocationAndLength off of live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=209408
+
+        Fix Mac-specific firstrectforcharacterrange-styled.html test
+        https://bugs.webkit.org/show_bug.cgi?id=205314
+        <rdar://problem/57990717>
+
+        Reviewed by Antti Koivisto.
+
+        * accessibility/mac/textmarker-for-index-out-of-bounds-crash-expected.txt:
+        * accessibility/mac/textmarker-for-index-out-of-bounds-crash.html:
+        Updated to expect textMarkerForIndex to clamp rather than returning something invalid.
+
+        * editing/mac/input/firstrectforcharacterrange-plain-expected.txt:
+        * editing/mac/input/firstrectforcharacterrange-plain.html:
+        Updated test output to include what is being tested, not just the test result.
+        Updated test results to expect clamping rather than an empty rectangle, for values
+        that are out of bounds. Also got rid of dumping of eidting callbacks since there is
+        no reason to include them in this test.
+
+        * editing/mac/input/firstrectforcharacterrange-styled-expected.txt:
+        * editing/mac/input/firstrectforcharacterrange-styled.html:
+        Ditto.
+
+        * platform/mac-wk1/TestExpectations: Since our oldest supported release is Mojave, deleted
+        all rules with Sierra or HighSierra conditionals since those conditions are always false,
+        and removed any conditionals that said Sierra+, HighSierra+, or Mojave+ because those
+        conditions are always true. One test, firstrectforcharacterrange-styled.html, had results
+        checked in that were correct for Mojave but incorrect for Catalina. For that test, the
+        results are now correct for Catalina, so updated expectations for that.
+
+        * platform/mac-wk2/TestExpectations: Ditto. Also some tests that claimed ImageOnlyFailure
+        are flaky and sometimes passing, so marked them for either Pass or ImageOnlyFailure.
+
+        * platform/mac/TestExpectations: Ditto. Also some tests marked Failure were flaky and
+        sometimes passing, so marked them for either Pass or Failure.
+
+        * platform/mac/editing/mac/input/firstrectforcharacterrange-styled-expected.txt: Removed.
+        This is already a Mac-specific test; it doesn't make sense to have an additional
+        Mac-specific overridden result since the base result is already Mac-specific.
+
+        * platform/mac/fast/text/attributed-substring-from-range-001-expected.txt:
+        * platform/mac/fast/text/attributed-substring-from-range-001.html:
+        Updated this test to expect the empty string, not "undefined" for an out of range,
+        since we now clamp instead of failing in such cases.
+
+        * platform/mac/fast/text/attributed-substring-from-range-expected.txt:
+        * platform/mac/fast/text/attributed-substring-from-range.html:
+        Ditto.
+
 2020-03-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Regression: fast/hidpi/image-srcset-svg-canvas-2x.html is failing consistently on iOS EWS

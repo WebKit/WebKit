@@ -261,8 +261,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 
     // We only set the remaining EditorState entries if layout is done as a performance optimization
     // to avoid the need to force a synchronous layout here to compute these entries.
-    bool needsLayout = view->needsLayout();
-    if (needsLayout || result.isMissingPostLayoutData)
+    if (view->needsLayout() || result.isMissingPostLayoutData)
         return;
 
     auto& postLayoutData = result.postLayoutData();
@@ -4070,8 +4069,9 @@ void WebPage::updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelt
         return;
     }
 
-    if (auto range = TextIterator::rangeFromLocationAndLength(root, newSelectionLocation.unsafeGet(), newSelectionLength.unsafeGet()))
-        frame->selection().setSelectedRange(range.get(), DOWNSTREAM, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
+    auto newSelectionRange = CharacterRange(newSelectionLocation.unsafeGet(), newSelectionLength.unsafeGet());
+    auto resolvedRange = resolveCharacterRange(makeRangeSelectingNodeContents(*root), newSelectionRange);
+    frame->selection().setSelectedRange(createLiveRange(resolvedRange).ptr(), DOWNSTREAM, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
 
     completionHandler();
 }
@@ -4186,16 +4186,15 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         RefPtr<ContainerNode> rootContainerNode = rootNode->isContainerNode() ? downcast<ContainerNode>(rootNode.get()) : rootNode->parentNode();
         TextIterator::getLocationAndLengthFromRange(rootContainerNode.get(), rangeOfInterest.get(), rangeOfInterestLocation, rangeOfInterestLength);
 
-        CheckedSize midpointLocation { rangeOfInterestLocation };
+        Checked<uint64_t, RecordOverflow> midpointLocation { rangeOfInterestLocation };
         midpointLocation += rangeOfInterestLength / 2;
         if (midpointLocation.hasOverflowed()) {
             completionHandler({ });
             return;
         }
 
-        auto midpointRange = TextIterator::rangeFromLocationAndLength(rootContainerNode.get(), midpointLocation.unsafeGet(), 0);
+        auto midpoint = createLegacyEditingPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*rootContainerNode), midpointLocation.unsafeGet()));
 
-        auto midpoint = midpointRange->startPosition();
         startOfRangeOfInterestInSelection = startOfWord(midpoint);
         if (startOfRangeOfInterestInSelection < rangeOfInterestStart) {
             startOfRangeOfInterestInSelection = endOfWord(midpoint);

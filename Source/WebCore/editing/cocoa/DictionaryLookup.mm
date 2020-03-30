@@ -287,10 +287,9 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
 
     RefPtr<Range> fullCharacterRange = makeRange(paragraphStart, paragraphEnd);
     String itemString = plainText(fullCharacterRange.get());
-    RetainPtr<RVItem> item = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:rangeToPass]);
-    NSRange highlightRange = item.get().highlightRange;
+    NSRange highlightRange = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:rangeToPass]).get().highlightRange;
 
-    return { TextIterator::subrange(*fullCharacterRange, highlightRange.location, highlightRange.length), nil };
+    return { createLiveRange(resolveCharacterRange(*fullCharacterRange, highlightRange)), nil };
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -358,13 +357,12 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
     NSRange selectedRange = [getRVSelectionClass() revealRangeAtIndex:hitIndex selectedRanges:@[[NSValue valueWithRange:selectionRange]] shouldUpdateSelection:nil];
 
     String itemString = plainText(*fullCharacterRange);
-    RetainPtr<RVItem> item = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:selectedRange]);
-    NSRange highlightRange = item.get().highlightRange;
+    auto highlightRange = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:selectedRange]).get().highlightRange;
 
     if (highlightRange.location == NSNotFound || !highlightRange.length)
         return { nullptr, nil };
     
-    return { TextIterator::subrange(*fullCharacterRange, highlightRange.location, highlightRange.length), nil };
+    return { createLiveRange(resolveCharacterRange(*fullCharacterRange, highlightRange)), nil };
     
     END_BLOCK_OBJC_EXCEPTIONS;
     

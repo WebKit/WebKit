@@ -44,8 +44,7 @@ Ref<WebGrammarDetail> WebGrammarDetail::create(const WebCore::GrammarDetail& gra
 
 WebGrammarDetail::WebGrammarDetail(int location, int length, API::Array* guesses, const String& userDescription)
 {
-    m_grammarDetail.location = location;
-    m_grammarDetail.length = length;
+    m_grammarDetail.range = WebCore::CharacterRange(location, length);
 
     size_t numGuesses = guesses->size();
     m_grammarDetail.guesses.reserveCapacity(numGuesses);

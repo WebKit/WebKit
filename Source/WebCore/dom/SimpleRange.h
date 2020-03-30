@@ -51,6 +51,8 @@ struct SimpleRange {
     SimpleRange(const Ref<Range>&);
 };
 
+WEBCORE_EXPORT SimpleRange makeRangeSelectingNodeContents(Node&);
+
 bool operator==(const SimpleRange&, const SimpleRange&);
 
 inline SimpleRange::SimpleRange(const Ref<Range>& range)

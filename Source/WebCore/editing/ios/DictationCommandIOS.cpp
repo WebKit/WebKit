@@ -48,7 +48,7 @@ DictationCommandIOS::DictationCommandIOS(Document& document, Vector<Vector<Strin
 
 void DictationCommandIOS::doApply()
 {
-    CharacterCount resultLength = 0;
+    uint64_t resultLength = 0;
     for (auto& interpretations : m_dictationPhrases) {
         const String& firstInterpretation = interpretations[0];
         resultLength += firstInterpretation.length();
@@ -72,11 +72,8 @@ void DictationCommandIOS::doApply()
     if (endOffset < resultLength)
         return;
 
-    auto resultRange = TextIterator::rangeFromLocationAndLength(root, endOffset - resultLength, endOffset);
-    if (!resultRange)
-        return;
-
-    document().markers().addDictationResultMarker(*resultRange, m_metadata);
+    auto resultRange = resolveCharacterRange(makeRangeSelectingNodeContents(*root), { endOffset - resultLength, endOffset });
+    document().markers().addDictationResultMarker(resultRange, m_metadata);
 }
 
 } // namespace WebCore

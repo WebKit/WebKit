@@ -33,42 +33,32 @@
 
 namespace WebKit {
 
-RefPtr<WebCore::Range> EditingRange::toRange(WebCore::Frame& frame, const EditingRange& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
+RefPtr<WebCore::Range> EditingRange::toRange(WebCore::Frame& frame, const EditingRange& editingRange, EditingRangeIsRelativeTo base)
 {
-    ASSERT(range.location != notFound);
+    ASSERT(editingRange.location != notFound);
+    WebCore::CharacterRange range { editingRange.location, editingRange.length };
 
-    // Sanitize the input, because TextIterator::rangeFromLocationAndLength takes signed integers.
-    if (range.location > INT_MAX)
-        return nullptr;
-    int length;
-    if (range.length <= INT_MAX && range.location + range.length <= INT_MAX)
-        length = static_cast<int>(range.length);
-    else
-        length = INT_MAX - range.location;
-
-    if (editingRangeIsRelativeTo == EditingRangeIsRelativeTo::EditableRoot) {
+    if (base == EditingRangeIsRelativeTo::EditableRoot) {
         // Our critical assumption is that this code path is called by input methods that
         // concentrate on a given area containing the selection.
         // We have to do this because of text fields and textareas. The DOM for those is not
         // directly in the document DOM, so serialization is problematic. Our solution is
         // to use the root editable element of the selection start as the positional base.
         // That fits with AppKit's idea of an input context.
-        return WebCore::TextIterator::rangeFromLocationAndLength(frame.selection().rootEditableElementOrDocumentElement(), static_cast<int>(range.location), length);
+        auto* element = frame.selection().rootEditableElementOrDocumentElement();
+        if (!element)
+            return nullptr;
+        return createLiveRange(resolveCharacterRange(makeRangeSelectingNodeContents(*element), range));
     }
 
-    ASSERT(editingRangeIsRelativeTo == EditingRangeIsRelativeTo::Paragraph);
+    ASSERT(base == EditingRangeIsRelativeTo::Paragraph);
 
-    auto& selection = frame.selection().selection();
-    if (!selection.toNormalizedRange())
-        return nullptr;
-
-    auto paragraphStart = makeBoundaryPoint(startOfParagraph(selection.visibleStart()));
+    auto paragraphStart = makeBoundaryPoint(startOfParagraph(frame.selection().selection().visibleStart()));
     if (!paragraphStart)
         return nullptr;
-    auto& rootNode = paragraphStart->container->treeScope().rootNode();
 
-    auto paragraphStartIndex = WebCore::characterCount({ { rootNode, 0 }, *paragraphStart });
-    return WebCore::TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex + range.location, length);
+    auto scopeEnd = makeRangeSelectingNodeContents(paragraphStart->container->treeScope().rootNode()).end;
+    return createLiveRange(WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range));
 }
 
 EditingRange EditingRange::fromRange(WebCore::Frame& frame, const WebCore::Range* range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)

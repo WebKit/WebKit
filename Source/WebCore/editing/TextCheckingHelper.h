@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -36,34 +36,28 @@ public:
     explicit TextCheckingParagraph(Ref<Range>&& checkingAndAutomaticReplacementRange);
     explicit TextCheckingParagraph(Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, RefPtr<Range>&& paragraphRange);
 
-    int rangeLength() const;
-    Ref<Range> subrange(int characterOffset, int characterCount) const;
-    ExceptionOr<int> offsetTo(const Position&) const;
+    uint64_t rangeLength() const;
+    Ref<Range> subrange(CharacterRange) const;
+    ExceptionOr<uint64_t> offsetTo(const Position&) const;
     void expandRangeToNextEnd();
 
-    // FIXME: Consider changing this to return a StringView.
-    const String& text() const;
-
-    // FIXME: Consider removing these and just having the caller use text() directly.
-    int textLength() const { return text().length(); }
-    String textSubstring(unsigned pos, unsigned len = UINT_MAX) const { return text().substring(pos, len); }
-    UChar textCharAt(int index) const { return text()[static_cast<unsigned>(index)]; }
+    StringView text() const;
 
     bool isEmpty() const;
 
-    int checkingStart() const;
-    int checkingEnd() const;
-    int checkingLength() const;
-    String checkingSubstring() const { return textSubstring(checkingStart(), checkingLength()); }
+    uint64_t checkingStart() const;
+    uint64_t checkingEnd() const;
+    uint64_t checkingLength() const;
+    StringView checkingSubstring() const { return text().substring(checkingStart(), checkingLength()); }
 
     // Determines the range in which we allow automatic text replacement. If an automatic replacement range is not passed to the
     // text checking paragraph, this defaults to the spell checking range.
-    int automaticReplacementStart() const;
-    int automaticReplacementLength() const;
+    uint64_t automaticReplacementStart() const;
+    uint64_t automaticReplacementLength() const;
 
-    bool checkingRangeMatches(int location, int length) const { return location == checkingStart() && length == checkingLength(); }
-    bool isCheckingRangeCoveredBy(int location, int length) const { return location <= checkingStart() && location + length >= checkingStart() + checkingLength(); }
-    bool checkingRangeCovers(int location, int length) const { return location < checkingEnd() && location + length > checkingStart(); }
+    bool checkingRangeMatches(CharacterRange range) const { return range.location == checkingStart() && range.length == checkingLength(); }
+    bool isCheckingRangeCoveredBy(CharacterRange range) const { return range.location <= checkingStart() && range.location + range.length >= checkingStart() + checkingLength(); }
+    bool checkingRangeCovers(CharacterRange range) const { return range.location < checkingEnd() && range.location + range.length > checkingStart(); }
     Range& paragraphRange() const;
 
 private:
@@ -75,11 +69,10 @@ private:
     mutable RefPtr<Range> m_paragraphRange;
     mutable RefPtr<Range> m_offsetAsRange;
     mutable String m_text;
-    mutable Optional<int> m_checkingStart;
-    mutable Optional<int> m_checkingEnd;
-    mutable Optional<int> m_checkingLength;
-    mutable Optional<int> m_automaticReplacementStart;
-    mutable Optional<int> m_automaticReplacementLength;
+    mutable Optional<uint64_t> m_checkingStart;
+    mutable Optional<uint64_t> m_checkingLength;
+    mutable Optional<uint64_t> m_automaticReplacementStart;
+    mutable Optional<uint64_t> m_automaticReplacementLength;
 };
 
 class TextCheckingHelper {
@@ -88,11 +81,11 @@ public:
     TextCheckingHelper(EditorClient&, Range&);
     ~TextCheckingHelper();
 
-    String findFirstMisspelling(int& firstMisspellingOffset, bool markAll, RefPtr<Range>& firstMisspellingRange);
-    String findFirstMisspellingOrBadGrammar(bool checkGrammar, bool& outIsSpelling, int& outFirstFoundOffset, GrammarDetail& outGrammarDetail);
+    String findFirstMisspelling(uint64_t& firstMisspellingOffset, bool markAll, RefPtr<Range>& firstMisspellingRange);
+    String findFirstMisspellingOrBadGrammar(bool checkGrammar, bool& outIsSpelling, uint64_t& outFirstFoundOffset, GrammarDetail& outGrammarDetail);
     void markAllMisspellings(RefPtr<Range>& firstMisspellingRange);
 #if USE(GRAMMAR_CHECKING)
-    String findFirstBadGrammar(GrammarDetail& outGrammarDetail, int& outGrammarPhraseOffset, bool markAll) const;
+    String findFirstBadGrammar(GrammarDetail& outGrammarDetail, uint64_t& outGrammarPhraseOffset, bool markAll) const;
     void markAllBadGrammar();
     bool isUngrammatical() const;
 #endif
@@ -104,7 +97,7 @@ private:
 
     bool unifiedTextCheckerEnabled() const;
 #if USE(GRAMMAR_CHECKING)
-    int findFirstGrammarDetail(const Vector<GrammarDetail>&, int badGrammarPhraseLocation, int startOffset, int endOffset, bool markAll) const;
+    int findFirstGrammarDetail(const Vector<GrammarDetail>&, uint64_t badGrammarPhraseLocation, uint64_t startOffset, uint64_t endOffset, bool markAll) const;
 #endif
 };
 
