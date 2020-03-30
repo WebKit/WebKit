@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2010 Research In Motion Limited. All rights reserved.
  *
@@ -345,7 +345,7 @@ inline int monthFromDayInYear(int dayInYear, bool leapYear)
         return 8;
     if (d < (step += 31))
         return 9;
-    if (d < (step += 30))
+    if (d < step + 30)
         return 10;
     return 11;
 }
