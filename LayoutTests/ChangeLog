@@ -1,3 +1,11 @@
+2020-03-29  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Mark WebGL tests as failures while we can't create a context
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-03-29  Darin Adler  <darin@apple.com>
 
         Move TextIterator::rangeFromLocationAndLength off of live ranges
