@@ -102,14 +102,13 @@ void WebCookieCache::clear()
 
 void WebCookieCache::clearForHost(const String& host)
 {
-    auto it = m_hostsWithInMemoryStorage.find(host);
-    if (it == m_hostsWithInMemoryStorage.end())
+    String removedHost = m_hostsWithInMemoryStorage.take(host);
+    if (removedHost.isNull())
         return;
 
-    m_hostsWithInMemoryStorage.remove(it);
-    inMemoryStorageSession().deleteCookiesForHostnames(Vector<String> { host });
+    inMemoryStorageSession().deleteCookiesForHostnames(Vector<String> { removedHost });
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnsubscribeFromCookieChangeNotifications(HashSet<String> { host }), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnsubscribeFromCookieChangeNotifications(HashSet<String> { removedHost }), 0);
 #endif
 }
 
@@ -118,10 +117,8 @@ void WebCookieCache::pruneCacheIfNecessary()
     // We may want to raise this limit if we start using the cache for third-party iframes.
     static const unsigned maxCachedHosts = 5;
 
-    while (m_hostsWithInMemoryStorage.size() >= maxCachedHosts) {
-        String hostToRemove = *m_hostsWithInMemoryStorage.random();
-        clearForHost(hostToRemove);
-    }
+    while (m_hostsWithInMemoryStorage.size() >= maxCachedHosts)
+        clearForHost(*m_hostsWithInMemoryStorage.random());
 }
 
 #if !PLATFORM(COCOA)
