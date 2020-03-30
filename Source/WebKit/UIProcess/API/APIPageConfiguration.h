@@ -164,7 +164,7 @@ private:
     RefPtr<WebsitePolicies> m_defaultWebsitePolicies;
 
 #if PLATFORM(IOS_FAMILY)
-    bool m_clientNavigationsRunAtForegroundPriority { true };
+    bool m_clientNavigationsRunAtForegroundPriority { false };
     bool m_alwaysRunsAtForegroundPriority { false };
     bool m_canShowWhileLocked { false };
     RetainPtr<_UIClickInteractionDriving> m_clickInteractionDriverForTesting;
