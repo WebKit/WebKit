@@ -35,6 +35,7 @@
 #include "DiagnosticLoggingClient.h"
 #include "DragClient.h"
 #include "EditorClient.h"
+#include "FrameLoaderClient.h"
 #include "LibWebRTCProvider.h"
 #include "MediaRecorderProvider.h"
 #include "PerformanceLoggingClient.h"

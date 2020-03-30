@@ -27,6 +27,7 @@
 #include "ElementAnimationRareData.h"
 
 #include "CSSAnimation.h"
+#include "CSSTransition.h"
 #include "KeyframeEffectStack.h"
 
 namespace WebCore {

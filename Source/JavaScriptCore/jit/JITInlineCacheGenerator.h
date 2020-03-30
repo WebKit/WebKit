@@ -35,6 +35,7 @@
 
 namespace JSC {
 
+class CacheableIdentifier;
 class CallSiteIndex;
 class CodeBlock;
 class StructureStubInfo;

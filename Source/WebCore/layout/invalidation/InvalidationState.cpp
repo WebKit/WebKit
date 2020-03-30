@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutInitialContainingBlock.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

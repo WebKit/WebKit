@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkDataTask.h"
 
+#include "AuthenticationManager.h"
 #include "NetworkDataTaskBlob.h"
 #include "NetworkLoadParameters.h"
 #include "NetworkSession.h"

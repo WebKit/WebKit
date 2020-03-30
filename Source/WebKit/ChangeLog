@@ -1,3 +1,12 @@
+2020-03-30  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes late March 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=209781
+
+        Unreviewed build fix.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+
 2020-03-30  Kate Cheney  <katherine_cheney@apple.com>
 
         Known app-bound domain protocols should not check the app-bound domain list

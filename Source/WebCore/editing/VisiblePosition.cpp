@@ -27,6 +27,7 @@
 #include "config.h"
 #include "VisiblePosition.h"
 
+#include "BoundaryPoint.h"
 #include "Document.h"
 #include "Editing.h"
 #include "FloatQuad.h"

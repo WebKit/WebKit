@@ -33,6 +33,7 @@
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
+#include "LayoutInitialContainingBlock.h"
 #include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 

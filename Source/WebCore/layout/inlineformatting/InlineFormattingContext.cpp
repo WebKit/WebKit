@@ -36,6 +36,7 @@
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
+#include "LayoutInitialContainingBlock.h"
 #include "LayoutInlineTextBox.h"
 #include "LayoutReplacedBox.h"
 #include "LayoutState.h"

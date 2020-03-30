@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SimpleRange.h"
 
+#include "CharacterData.h"
 #include "Range.h"
 
 namespace WebCore {

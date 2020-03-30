@@ -24,6 +24,7 @@
 #include "SVGClipPathElement.h"
 
 #include "Document.h"
+#include "ImageBuffer.h"
 #include "RenderSVGResourceClipper.h"
 #include "SVGNames.h"
 #include "StyleResolver.h"
