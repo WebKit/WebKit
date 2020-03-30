@@ -4659,11 +4659,9 @@ http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-ne
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html [ Pass ]
 
 # css-values passing for us
-imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-004.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-010.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-012.html [ Pass ]
 
 # PointerEvents not enabled globally, but enabled for GTK (EXPERIMENTAL_FEATURES)
