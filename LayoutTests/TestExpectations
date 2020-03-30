@@ -1087,6 +1087,9 @@ imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-172b.xml [ I
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-173a.xml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-173b.xml [ ImageOnlyFailure ]
 
+# ref for this is under a directory that is not yet imported
+webkit.org/b/209735 imported/w3c/web-platform-tests/css/selectors/root-siblings.htm [ Skip ]
+
 # https://github.com/w3c/web-platform-tests/issues/8547
 imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-005.html [ Skip ]

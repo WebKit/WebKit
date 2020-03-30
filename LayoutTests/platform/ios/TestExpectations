@@ -3515,3 +3515,6 @@ webkit.org/b/209250 imported/w3c/web-platform-tests/css/css-text/line-break/line
 webkit.org/b/209250 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015.xht [ ImageOnlyFailure ]
 
 webkit.org/b/207858 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
+
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-007.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-009.html [ Skip ]
