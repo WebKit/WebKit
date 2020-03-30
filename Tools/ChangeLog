@@ -1,3 +1,13 @@
+2020-03-30  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Add user agent quirk for Red Hat Bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=209484
+
+        Reviewed by Adrian Perez de Castro.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-03-30  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Sleep disabling should be performed in the UI process

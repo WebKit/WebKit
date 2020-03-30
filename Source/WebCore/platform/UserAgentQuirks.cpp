@@ -99,6 +99,11 @@ static bool urlRequiresFirefoxBrowser(const URL& url)
     if (domain == "drive.google.com")
         return true;
 
+    // Red Hat Bugzilla displays a warning page when performing searches with WebKitGTK's standard
+    // user agent.
+    if (domain == "bugzilla.redhat.com")
+        return true;
+
     return false;
 }
 

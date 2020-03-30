@@ -97,6 +97,7 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://accounts.youtube.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://docs.google.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://drive.google.com/");
+    assertUserAgentForURLHasFirefoxBrowserQuirk("http://bugzilla.redhat.com/");
 
     assertUserAgentForURLHasLinuxPlatformQuirk("http://www.google.com/");
     assertUserAgentForURLHasLinuxPlatformQuirk("http://www.google.es/");
