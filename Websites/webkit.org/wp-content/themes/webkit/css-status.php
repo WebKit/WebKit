@@ -1600,7 +1600,8 @@ function initializeStatusPage() {
     {
         (unprefixedPropertyObj['codegen-properties'].aliases = unprefixedPropertyObj['codegen-properties'].aliases || []).push(prefixedPropertyObj.name);
 
-        for (var valueObj of prefixedPropertyObj.values) {
+        var prefixedValues = Array.from(prefixedPropertyObj.values);
+        for (var valueObj of prefixedValues) {
             if (!findValueByName(unprefixedPropertyObj.values, valueObj.value))
                 prefixedPropertyObj.values.push(valueObj);
         }

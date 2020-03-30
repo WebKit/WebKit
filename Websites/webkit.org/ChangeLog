@@ -1,3 +1,17 @@
+2020-03-30  Simon Fraser  <simon.fraser@apple.com>
+
+        http://webkit.org/css-status/ hangs
+        https://bugs.webkit.org/show_bug.cgi?id=209746
+
+        Reviewed by Antoine Quint.
+        
+        A change to CSSProperties.json (probably text-orientation unprefixing) revealed an infinite loop
+        in mergeProperties() which kept appending values to prefixedPropertyObj.values.
+        
+        Fix by cloning the array before enumerating it.
+
+        * wp-content/themes/webkit/css-status.php:
+
 2020-02-26  Jon Davis  <jond@apple.com>
 
         Prevented text selection on logo and header navigation
