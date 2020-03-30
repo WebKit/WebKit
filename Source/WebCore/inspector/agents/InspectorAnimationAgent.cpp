@@ -116,11 +116,13 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
     const auto& parsedKeyframes = keyframeEffect.parsedKeyframes();
 
     if (is<DeclarativeAnimation>(keyframeEffect.animation())) {
-        ASSERT(keyframeEffect.target());
-        auto* renderer = keyframeEffect.target()->renderer();
+        auto& declarativeAnimation = downcast<DeclarativeAnimation>(*keyframeEffect.animation());
+
+        auto* target = keyframeEffect.target();
+        auto* renderer = keyframeEffect.renderer();
 
         // Synthesize CSS style declarations for each keyframe so the frontend can display them.
-        ComputedStyleExtractor computedStyleExtractor(keyframeEffect.target());
+        ComputedStyleExtractor computedStyleExtractor(target);
 
         for (size_t i = 0; i < blendingKeyframes.size(); ++i) {
             auto& blendingKeyframe = blendingKeyframes[i];
@@ -138,7 +140,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
             if (!timingFunction)
                 timingFunction = blendingKeyframe.timingFunction();
             if (!timingFunction)
-                timingFunction = downcast<DeclarativeAnimation>(*keyframeEffect.animation()).backingAnimation().timingFunction();
+                timingFunction = declarativeAnimation.backingAnimation().timingFunction();
             if (timingFunction)
                 keyframePayload->setEasing(timingFunction->cssText());
 

@@ -135,15 +135,14 @@ void WebAnimation::effectTimingDidChange(Optional<ComputedEffectTiming> previous
 {
     timingDidChange(DidSeek::No, SynchronouslyNotify::Yes);
 
+    if (previousTiming) {
+        auto* effect = this->effect();
+        ASSERT(effect);
+        if (previousTiming->progress != effect->getComputedTiming().progress)
+            effect->animationDidSeek();
+    }
+
     InspectorInstrumentation::didChangeWebAnimationEffectTiming(*this);
-
-    if (!previousTiming)
-        return;
-
-    auto* effect = this->effect();
-    ASSERT(effect);
-    if (previousTiming->progress != effect->getComputedTiming().progress)
-        effect->animationDidSeek();
 }
 
 void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)

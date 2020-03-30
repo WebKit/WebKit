@@ -581,8 +581,11 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
 
     // 3. For each keyframe in keyframes perform the following steps:
     if (is<DeclarativeAnimation>(animation())) {
-        auto* renderer = m_target->renderer();
-        auto computedStyleExtractor = ComputedStyleExtractor(m_target.get());
+        auto* target = this->target();
+        auto* renderer = this->renderer();
+
+        auto computedStyleExtractor = ComputedStyleExtractor(target);
+
         for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
             // 1. Initialize a dictionary object, output keyframe, using the following definition:
             //
