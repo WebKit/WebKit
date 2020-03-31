@@ -417,7 +417,7 @@ Optional<bool> InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& st
         return isAbove; // Ruby text is always over, so it cannot suppress emphasis marks under.
 
     RenderBlock* containingBlock = renderer().containingBlock();
-    if (!containingBlock->isRubyBase())
+    if (!containingBlock || !containingBlock->isRubyBase())
         return isAbove; // This text is not inside a ruby base, so it does not have ruby text over it.
 
     if (!is<RenderRubyRun>(*containingBlock->parent()))
