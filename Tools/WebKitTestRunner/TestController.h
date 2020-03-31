@@ -269,6 +269,7 @@ public:
     void clearPrevalentDomains();
     void getWebViewCategory();
     void setInAppBrowserPrivacyEnabled(bool);
+    void reinitializeAppBoundDomains();
 
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }
     void setOpenPanelFileURLs(WKArrayRef fileURLs) { m_openPanelFileURLs = fileURLs; }

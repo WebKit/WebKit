@@ -286,9 +286,12 @@ public:
     void beginAppBoundDomainCheck(WebCore::RegistrableDomain&&, WebFramePolicyListenerProxy&);
     void appBoundDomainsForTesting(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
     void ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
+    void reinitializeAppBoundDomains();
 
 private:
-    void initializeAppBoundDomains();
+    enum class ForceReinitialization : bool { No, Yes };
+    void initializeAppBoundDomains(ForceReinitialization = ForceReinitialization::No);
+
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
     void platformInitialize();

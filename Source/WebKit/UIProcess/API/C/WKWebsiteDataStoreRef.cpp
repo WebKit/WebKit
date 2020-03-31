@@ -725,3 +725,10 @@ void WKWebsiteDataStoreSetInAppBrowserPrivacyEnabled(WKWebsiteDataStoreRef dataS
         completionHandler(context);
     });
 }
+
+void WKWebsiteDataStoreReinitializeAppBoundDomains(WKWebsiteDataStoreRef dataStoreRef)
+{
+#if PLATFORM(COCOA)
+    WebKit::toImpl(dataStoreRef)->reinitializeAppBoundDomains();
+#endif
+}
