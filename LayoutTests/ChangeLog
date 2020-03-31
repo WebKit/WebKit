@@ -1,3 +1,26 @@
+2020-03-31  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, add missing expectation files
+        https://bugs.webkit.org/show_bug.cgi?id=209807
+
+        Unreviewed gardening.
+
+        * platform/wpe/fast/css/vertical-text-overflow-ellipsis-text-align-center-mixed-expected.txt: Added.
+        * platform/wpe/fast/css/vertical-text-overflow-ellipsis-text-align-justify-mixed-expected.txt: Added.
+        * platform/wpe/fast/css/vertical-text-overflow-ellipsis-text-align-left-mixed-expected.txt: Added.
+        * platform/wpe/fast/css/vertical-text-overflow-ellipsis-text-align-right-mixed-expected.txt: Added.
+        * platform/wpe/fast/html/details-marker-style-mixed-expected.txt: Added.
+        * platform/wpe/fast/html/details-writing-mode-mixed-expected.txt: Added.
+        * platform/wpe/fast/multicol/tall-image-behavior-lr-mixed-expected.txt: Added.
+        * platform/wpe/fast/writing-mode/background-vertical-lr-mixed-expected.txt: Added.
+        * platform/wpe/fast/writing-mode/background-vertical-rl-mixed-expected.txt: Added.
+        * platform/wpe/fast/writing-mode/basic-vertical-line-mixed-expected.txt: Added.
+        * platform/wpe/fast/writing-mode/border-styles-vertical-lr-mixed-expected.txt: Added.
+        * platform/wpe/fast/writing-mode/border-styles-vertical-rl-mixed-expected.txt: Added.
+        * platform/wpe/fast/writing-mode/vertical-baseline-alignment-mixed-expected.txt: Added.
+        * platform/wpe/fast/writing-mode/vertical-lr-replaced-selection-mixed-expected.txt: Added.
+        * platform/wpe/fast/writing-mode/vertical-rl-replaced-selection-mixed-expected.txt: Added.
+
 2020-03-31  youenn fablet  <youenn@apple.com>
 
         Fix SDP filtering after https://trac.webkit.org/changeset/258545
