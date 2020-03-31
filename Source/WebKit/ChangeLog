@@ -1,5 +1,38 @@
 2020-03-30  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r258530. rdar://problem/61082999
+
+    Crash under WebCookieCache::clearForHost()
+    https://bugs.webkit.org/show_bug.cgi?id=209149
+    <rdar://problem/60453086>
+    
+    Reviewed by Darin Adler.
+    
+    Alternative fix for Bug 209149 based on comments from Darin.
+    
+    * WebProcess/WebPage/WebCookieCache.cpp:
+    (WebKit::WebCookieCache::clearForHost):
+    (WebKit::WebCookieCache::pruneCacheIfNecessary):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258530 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-16  Chris Dumez  <cdumez@apple.com>
+
+            Crash under WebCookieCache::clearForHost()
+            https://bugs.webkit.org/show_bug.cgi?id=209149
+            <rdar://problem/60453086>
+
+            Reviewed by Darin Adler.
+
+            Alternative fix for Bug 209149 based on comments from Darin.
+
+            * WebProcess/WebPage/WebCookieCache.cpp:
+            (WebKit::WebCookieCache::clearForHost):
+            (WebKit::WebCookieCache::pruneCacheIfNecessary):
+
+2020-03-30  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r258521. rdar://problem/61082999
 
     Crash under WebCookieCache::clearForHost()
