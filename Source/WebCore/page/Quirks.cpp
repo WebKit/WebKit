@@ -332,6 +332,8 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
             return true;
         if (host == "nhl.com" || host.endsWith(".nhl.com"))
             return true;
+        if (host == "nba.com" || host.endsWith(".nba.com"))
+            return true;
         if (host.endsWith(".naver.com")) {
             // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
             if (host == "tv.naver.com")
