@@ -142,7 +142,8 @@ layer at (0,0) size 800x694
           RenderTableCol {DIV} at (0,0) size 0x0
       RenderBlock {DIV} at (0,554) size 784x0
         RenderTable at (0,0) size 0x0
-          RenderTableCol {DIV} at (0,0) size 0x0
+          RenderTableCol at (0,0) size 0x0
+            RenderTableCol {DIV} at (0,0) size 0x0
       RenderBlock {DIV} at (0,554) size 784x42
         RenderTable at (0,0) size 121x42
           RenderTableSection (anonymous) at (0,0) size 121x42

@@ -36,7 +36,7 @@ class RenderTableCol final : public RenderBox {
     WTF_MAKE_ISO_ALLOCATED(RenderTableCol);
 public:
     RenderTableCol(Element&, RenderStyle&&);
-    Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
+    RenderTableCol(Document&, RenderStyle&&);
 
     void clearPreferredLogicalWidthsDirtyBits();
 

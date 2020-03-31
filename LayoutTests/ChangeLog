@@ -1,3 +1,14 @@
+2020-03-31  Zalan Bujtas  <zalan@apple.com>
+
+        [Tables] Infinite recursion in RenderTreeBuilder::attach
+        https://bugs.webkit.org/show_bug.cgi?id=209771
+        <rdar://problem/59923112>
+
+        Reviewed by Simon Fraser.
+
+        * fast/table/anonymous-colgroup-simple-expected.txt: Added.
+        * fast/table/anonymous-colgroup-simple.html: Added.
+
 2020-03-31  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: [ iOS wk2 ] fast/forms/input-text-scroll-left-on-blur.html is flaky failing.

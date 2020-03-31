@@ -52,6 +52,14 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableR
         }
     }
 
+    auto createAnonymousTableCell = [&] (auto& parent) -> RenderTableCell& {
+        auto newCell = RenderTableCell::createAnonymousWithParentRenderer(parent);
+        auto& cell = *newCell;
+        m_builder.attach(parent, WTFMove(newCell), beforeChild);
+        beforeChild = nullptr;
+        return cell;
+    };
+
     auto* lastChild = beforeChild ? beforeChild : parent.lastCell();
     if (lastChild) {
         if (is<RenderTableCell>(*lastChild) && lastChild->isAnonymous() && !lastChild->isBeforeOrAfterContent()) {
@@ -63,25 +71,19 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableR
         // Try to find an anonymous container for the child.
         if (auto* lastChildParent = lastChild->parent()) {
             if (lastChildParent->isAnonymous() && !lastChildParent->isBeforeOrAfterContent()) {
+                // If beforeChild is inside an anonymous COLGROUP, create a cell for the new renderer.
+                if (is<RenderTableCol>(*lastChildParent))
+                    return createAnonymousTableCell(parent);
                 // If beforeChild is inside an anonymous cell, insert into the cell.
                 if (!is<RenderTableCell>(*lastChild))
                     return *lastChildParent;
                 // If beforeChild is inside an anonymous row, insert into the row.
-                if (is<RenderTableRow>(*lastChildParent)) {
-                    auto newCell = RenderTableCell::createAnonymousWithParentRenderer(parent);
-                    auto& cell = *newCell;
-                    m_builder.attach(*lastChildParent, WTFMove(newCell), beforeChild);
-                    beforeChild = nullptr;
-                    return cell;
-                }
+                if (is<RenderTableRow>(*lastChildParent))
+                    return createAnonymousTableCell(downcast<RenderTableRow>(*lastChildParent));
             }
         }
     }
-    auto newCell = RenderTableCell::createAnonymousWithParentRenderer(parent);
-    auto& cell = *newCell;
-    m_builder.attach(parent, WTFMove(newCell), beforeChild);
-    beforeChild = nullptr;
-    return cell;
+    return createAnonymousTableCell(parent);
 }
 
 RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableSection& parent, const RenderObject& child, RenderObject*& beforeChild)
@@ -121,8 +123,21 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableS
 
 RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable& parent, const RenderObject& child, RenderObject*& beforeChild)
 {
-    if (is<RenderTableCaption>(child) || is<RenderTableCol>(child) || is<RenderTableSection>(child))
+    if (is<RenderTableCaption>(child) || is<RenderTableSection>(child))
         return parent;
+
+    if (is<RenderTableCol>(child)) {
+        if (!child.node() || child.style().display() == DisplayType::TableColumnGroup) {
+            // COLGROUPs and anonymous RenderTableCols (generated wrappers for COLs) are direct children of the table renderer.
+            return parent;
+        }
+        auto newColGroup = createRenderer<RenderTableCol>(parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::TableColumnGroup));
+        newColGroup->initializeStyle();
+        auto& colGroup = *newColGroup;
+        m_builder.attach(parent, WTFMove(newColGroup), beforeChild);
+        beforeChild = nullptr;
+        return colGroup;
+    }
 
     auto* lastChild = parent.lastChild();
     if (!beforeChild && is<RenderTableSection>(lastChild) && lastChild->isAnonymous() && !lastChild->isBeforeContent())
@@ -143,10 +158,20 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
         && parentCandidate->style().display() != DisplayType::TableColumnGroup)
         parentCandidate = parentCandidate->parent();
 
-    if (parentCandidate && is<RenderTableSection>(*parentCandidate) && parentCandidate->isAnonymous() && !parent.isAfterContent(parentCandidate)) {
-        if (beforeChild == parentCandidate)
-            beforeChild = downcast<RenderTableSection>(*parentCandidate).firstRow();
-        return downcast<RenderElement>(*parentCandidate);
+    if (parentCandidate) {
+        if (beforeChild && !beforeChild->isAnonymous() && parentCandidate->parent() == &parent) {
+            auto* section = parentCandidate->previousSibling();
+            if (is<RenderTableSection>(section) && section->isAnonymous()) {
+                beforeChild = nullptr;
+                return downcast<RenderElement>(*section);
+            }
+        }
+
+        if (is<RenderTableSection>(*parentCandidate) && parentCandidate->isAnonymous() && !parent.isAfterContent(parentCandidate)) {
+            if (beforeChild == parentCandidate)
+                beforeChild = downcast<RenderTableSection>(*parentCandidate).firstRow();
+            return downcast<RenderElement>(*parentCandidate);
+        }
     }
 
     if (beforeChild && !is<RenderTableSection>(*beforeChild)
