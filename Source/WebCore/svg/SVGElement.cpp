@@ -838,8 +838,20 @@ Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType 
 {
     StyledElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     updateRelativeLengthsInformation();
-    buildPendingResourcesIfNeeded();
+
+    if (needsPendingResourceHandling() && insertionType.connectedToDocument && !isInShadowTree()) {
+        SVGDocumentExtensions& extensions = document().accessSVGExtensions();
+        String resourceId = getIdAttribute();
+        if (extensions.isIdOfPendingResource(resourceId))
+            return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+    }
+
     return InsertedIntoAncestorResult::Done;
+}
+
+void SVGElement::didFinishInsertingNode()
+{
+    buildPendingResourcesIfNeeded();
 }
 
 void SVGElement::buildPendingResourcesIfNeeded()
