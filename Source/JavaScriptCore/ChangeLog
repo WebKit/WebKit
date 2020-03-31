@@ -1,3 +1,38 @@
+2020-03-30  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Add support in named capture group identifiers for direct surrogate pairs
+        https://bugs.webkit.org/show_bug.cgi?id=178174
+
+        Reviewed by Darin Adler and Michael Saboff.
+
+        This change:
+
+        a) Adds support for unescaped astral symbols in RegExp identifier names [1],
+           aligning JSC with V8.
+
+        b) Rewords InvalidUnicodeEscape error code to be used for \uXXXX escapes in
+           Unicode patterns and named groups/references instead of InvalidIdentityEscape,
+           matching error messages in V8 and SpiderMonkey.
+
+        c) Adds hasError() checks after tryConsumeGroupName() so errors generated in
+           tryConsumeIdentifierCharacter() would not get overriden.
+
+        d) Removes code duplication by using tryConsumeUnicodeEscape() for parsing \u
+           in parseEscape(); cleans up parsing \u{} escapes a bit, preferring ASSERTs
+           over hasError() checks.
+
+        [1]: https://tc39.es/ecma262/#prod-RegExpIdentifierName
+
+        * yarr/YarrErrorCode.cpp:
+        (JSC::Yarr::errorMessage):
+        (JSC::Yarr::errorToThrow):
+        * yarr/YarrErrorCode.h:
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseEscape):
+        (JSC::Yarr::Parser::parseParenthesesBegin):
+        (JSC::Yarr::Parser::tryConsumeUnicodeEscape):
+        (JSC::Yarr::Parser::tryConsumeIdentifierCharacter):
+
 2020-03-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         RegExp.prototype.exec must always access lastIndex

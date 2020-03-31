@@ -1246,9 +1246,6 @@ test/built-ins/Proxy/set/trap-is-undefined-target-is-proxy.js:
 test/built-ins/Reflect/ownKeys/order-after-define-property.js:
   default: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
   strict mode: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
-test/built-ins/RegExp/named-groups/unicode-property-names.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
 test/built-ins/RegExp/property-escapes/generated/Alphabetic.js:
   default: 'Test262Error: `\p{Alphabetic}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{Alphabetic}` should match U+001CFA (`ᳺ`)'

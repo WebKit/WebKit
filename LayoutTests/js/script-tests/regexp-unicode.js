@@ -227,7 +227,7 @@ shouldBe('"this is b\ba test".match(/is b\\cha test/u)[0].length', '11');
 
 // Check that invalid unicode patterns throw exceptions
 shouldBe('new RegExp("\\\\/", "u").source', '"\\\\/"');
-shouldThrow('r = new RegExp("\\\\u{110000}", "u")', '"SyntaxError: Invalid regular expression: invalid Unicode {} escape"');
+shouldThrow('r = new RegExp("\\\\u{110000}", "u")', '"SyntaxError: Invalid regular expression: invalid Unicode code point \\\\u{} escape"');
 shouldThrow('r = new RegExp("\u{10405}{2147483648}", "u")', '"SyntaxError: Invalid regular expression: pattern exceeds string length limits"');
 shouldThrow('/{/u', '"SyntaxError: Invalid regular expression: incomplete {} quantifier for Unicode pattern"');
 shouldThrow('/[a-\\d]/u', '"SyntaxError: Invalid regular expression: invalid range in character class for Unicode pattern"');
@@ -250,11 +250,11 @@ shouldThrowInvalidEscape("[\\\\a]");
 shouldThrowInvalidEscape("[\\\\B]");
 shouldThrowInvalidEscape("\\\\x");
 shouldThrowInvalidEscape("[\\\\x]");
-shouldThrowInvalidEscape("\\\\u");
-shouldThrowInvalidEscape("[\\\\u]");
+shouldThrowInvalidEscape("\\\\u", '"SyntaxError: Invalid regular expression: invalid Unicode \\\\u escape"');
+shouldThrowInvalidEscape("[\\\\u]", '"SyntaxError: Invalid regular expression: invalid Unicode \\\\u escape"');
 
-shouldThrowInvalidEscape("\\\\u{", '"SyntaxError: Invalid regular expression: invalid Unicode {} escape"');
-shouldThrowInvalidEscape("\\\\u{\\udead", '"SyntaxError: Invalid regular expression: invalid Unicode {} escape"');
+shouldThrowInvalidEscape("\\\\u{", '"SyntaxError: Invalid regular expression: invalid Unicode code point \\\\u{} escape"');
+shouldThrowInvalidEscape("\\\\u{\\udead", '"SyntaxError: Invalid regular expression: invalid Unicode code point \\\\u{} escape"');
 
 // Check that invalid backreferences in unicode patterns throw exceptions.
 shouldThrow(`/\\1/u`);

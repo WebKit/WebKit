@@ -61,6 +61,10 @@ PASS let r = new RegExp("/(?<𐆐groupName1>abc)/u") threw exception SyntaxError
 PASS let r = new RegExp("/(?<g𐆛oupName1>abc)/u") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
 PASS let r = new RegExp("/(?<‌groupName1>abc)/u") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
 PASS let r = new RegExp("/(?<‍groupName1>abc)/u") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
+PASS /(?<\u>.)/u threw exception SyntaxError: Invalid regular expression: invalid Unicode \u escape.
+PASS /\k<\uzzz>/u threw exception SyntaxError: Invalid regular expression: invalid Unicode \u escape.
+PASS /(?<\u{>.)/u threw exception SyntaxError: Invalid regular expression: invalid Unicode code point \u{} escape.
+PASS /\k<\u{0>/u threw exception SyntaxError: Invalid regular expression: invalid Unicode code point \u{} escape.
 PASS "XzzXzz".match(/\k<z>X(?<z>z*)X\k<z>/) is ["XzzXzz", "zz"]
 PASS "XzzXzz".match(/\k<z>X(?<z>z*)X\k<z>/u) is ["XzzXzz", "zz"]
 PASS "1122332211".match(/\k<ones>\k<twos>\k<threes>(?<ones>1*)(?<twos>2*)(?<threes>3*)\k<threes>\k<twos>\k<ones>/) is ["1122332211", "11", "22", "3"]

@@ -51,6 +51,7 @@ enum class ErrorCode : uint8_t {
     CharacterClassRangeInvalid,
     EscapeUnterminated,
     InvalidUnicodeEscape,
+    InvalidUnicodeCodePointEscape,
     InvalidBackreference,
     InvalidNamedBackReference,
     InvalidIdentityEscape,

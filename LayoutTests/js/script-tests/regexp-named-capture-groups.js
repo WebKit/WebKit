@@ -104,6 +104,12 @@ shouldThrow('let r = new RegExp("/(?<g\u{1019b}oupName1>abc)/u")', '"SyntaxError
 shouldThrow('let r = new RegExp("/(?<\u200cgroupName1>abc)/u")', '"SyntaxError: Invalid regular expression: invalid group specifier name"');
 shouldThrow('let r = new RegExp("/(?<\u200dgroupName1>abc)/u")', '"SyntaxError: Invalid regular expression: invalid group specifier name"');
 
+// Check that invalid \u escape errors are not get overriden.
+shouldThrow('/(?<\\u>.)/u', '"SyntaxError: Invalid regular expression: invalid Unicode \\\\u escape"');
+shouldThrow('/\\k<\\uzzz>/u', '"SyntaxError: Invalid regular expression: invalid Unicode \\\\u escape"');
+shouldThrow('/(?<\\u{>.)/u', '"SyntaxError: Invalid regular expression: invalid Unicode code point \\\\u{} escape"');
+shouldThrow('/\\k<\\u{0>/u', '"SyntaxError: Invalid regular expression: invalid Unicode code point \\\\u{} escape"');
+
 // Check the named forward references work
 shouldBe('"XzzXzz".match(/\\\k<z>X(?<z>z*)X\\\k<z>/)', '["XzzXzz", "zz"]');
 shouldBe('"XzzXzz".match(/\\\k<z>X(?<z>z*)X\\\k<z>/u)', '["XzzXzz", "zz"]');

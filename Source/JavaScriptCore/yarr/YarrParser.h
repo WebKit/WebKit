@@ -438,6 +438,9 @@ private:
             ParseState state = saveState();
             if (!inCharacterClass && tryConsume('<')) {
                 auto groupName = tryConsumeGroupName();
+                if (hasError(m_errorCode))
+                    break;
+
                 if (groupName) {
                     if (m_captureGroupNames.contains(groupName.value())) {
                         delegate.atomNamedBackReference(groupName.value());
@@ -487,64 +490,11 @@ private:
 
         // UnicodeEscape
         case 'u': {
-            consume();
-            if (atEndOfPattern()) {
-                if (isIdentityEscapeAnError('u'))
-                    break;
-
-                delegate.atomPatternCharacter('u');
+            int codePoint = tryConsumeUnicodeEscape<UnicodeEscapeContext::CharacterEscape>();
+            if (hasError(m_errorCode))
                 break;
-            }
 
-            if (m_isUnicode && peek() == '{') {
-                consume();
-                UChar32 codePoint = 0;
-                do {
-                    if (atEndOfPattern() || !isASCIIHexDigit(peek())) {
-                        m_errorCode = ErrorCode::InvalidUnicodeEscape;
-                        break;
-                    }
-
-                    codePoint = (codePoint << 4) | toASCIIHexValue(consume());
-
-                    if (codePoint > UCHAR_MAX_VALUE)
-                        m_errorCode = ErrorCode::InvalidUnicodeEscape;
-                } while (!atEndOfPattern() && peek() != '}');
-                if (!atEndOfPattern() && peek() == '}')
-                    consume();
-                else if (!hasError(m_errorCode))
-                    m_errorCode = ErrorCode::InvalidUnicodeEscape;
-                if (hasError(m_errorCode))
-                    return false;
-
-                delegate.atomPatternCharacter(codePoint);
-                break;
-            }
-            int u = tryConsumeHex(4);
-            if (u == -1) {
-                if (isIdentityEscapeAnError('u'))
-                    break;
-
-                delegate.atomPatternCharacter('u');
-            } else {
-                // If we have the first of a surrogate pair, look for the second.
-                if (U16_IS_LEAD(u) && m_isUnicode && (patternRemaining() >= 6) && peek() == '\\') {
-                    ParseState state = saveState();
-                    consume();
-                    
-                    if (tryConsume('u')) {
-                        int surrogate2 = tryConsumeHex(4);
-                        if (U16_IS_TRAIL(surrogate2)) {
-                            u = U16_GET_SUPPLEMENTARY(u, surrogate2);
-                            delegate.atomPatternCharacter(u);
-                            break;
-                        }
-                    }
-
-                    restoreState(state);
-                }
-                delegate.atomPatternCharacter(u);
-            }
+            delegate.atomPatternCharacter(codePoint == -1 ? 'u' : codePoint);
             break;
         }
 
@@ -672,6 +622,9 @@ private:
 
             case '<': {
                 auto groupName = tryConsumeGroupName();
+                if (hasError(m_errorCode))
+                    break;
+
                 if (groupName) {
                     if (m_kIdentityEscapeSeen) {
                         m_errorCode = ErrorCode::InvalidNamedBackReference;
@@ -1009,70 +962,73 @@ private:
         return peek() - '0';
     }
 
+    enum class UnicodeEscapeContext : uint8_t { CharacterEscape, IdentifierName };
+
+    template<UnicodeEscapeContext context>
     int tryConsumeUnicodeEscape()
     {
-        if (!tryConsume('u'))
+        ASSERT(!hasError(m_errorCode));
+
+        if (!tryConsume('u') || atEndOfPattern()) {
+            if (m_isUnicode || context == UnicodeEscapeContext::IdentifierName)
+                m_errorCode = ErrorCode::InvalidUnicodeEscape;
             return -1;
+        }
 
         if (m_isUnicode && tryConsume('{')) {
             int codePoint = 0;
             do {
                 if (atEndOfPattern() || !isASCIIHexDigit(peek())) {
-                    m_errorCode = ErrorCode::InvalidUnicodeEscape;
+                    m_errorCode = ErrorCode::InvalidUnicodeCodePointEscape;
                     return -1;
                 }
 
                 codePoint = (codePoint << 4) | toASCIIHexValue(consume());
 
                 if (codePoint > UCHAR_MAX_VALUE) {
-                    m_errorCode = ErrorCode::InvalidUnicodeEscape;
+                    m_errorCode = ErrorCode::InvalidUnicodeCodePointEscape;
                     return -1;
                 }
             } while (!atEndOfPattern() && peek() != '}');
-            if (!atEndOfPattern() && peek() == '}')
-                consume();
-            else if (!hasError(m_errorCode))
-                m_errorCode = ErrorCode::InvalidUnicodeEscape;
-            if (hasError(m_errorCode))
+
+            if (!tryConsume('}')) {
+                m_errorCode = ErrorCode::InvalidUnicodeCodePointEscape; 
                 return -1;
+            }
 
             return codePoint;
         }
 
-        int u = tryConsumeHex(4);
-        if (u == -1)
+        int codeUnit = tryConsumeHex(4);
+        if (codeUnit == -1) {
+            if (m_isUnicode || context == UnicodeEscapeContext::IdentifierName)
+                m_errorCode = ErrorCode::InvalidUnicodeEscape;
             return -1;
+        }
 
         // If we have the first of a surrogate pair, look for the second.
-        if (U16_IS_LEAD(u) && m_isUnicode && (patternRemaining() >= 6) && peek() == '\\') {
+        if (U16_IS_LEAD(codeUnit) && m_isUnicode && patternRemaining() >= 6 && peek() == '\\') {
             ParseState state = saveState();
             consume();
 
             if (tryConsume('u')) {
                 int surrogate2 = tryConsumeHex(4);
-                if (U16_IS_TRAIL(surrogate2)) {
-                    u = U16_GET_SUPPLEMENTARY(u, surrogate2);
-                    return u;
-                }
+                if (U16_IS_TRAIL(surrogate2))
+                    return U16_GET_SUPPLEMENTARY(codeUnit, surrogate2);
             }
 
             restoreState(state);
         }
 
-        return u;
+        return codeUnit;
     }
 
     int tryConsumeIdentifierCharacter()
     {
-        int ch = peek();
+        if (tryConsume('\\'))
+            return tryConsumeUnicodeEscape<UnicodeEscapeContext::IdentifierName>();
 
-        if (ch == '\\') {
-            consume();
-            ch = tryConsumeUnicodeEscape();
-        } else
-            consume();
-
-        return ch;
+        return consumePossibleSurrogatePair();
     }
 
     bool isIdentifierStart(int ch)

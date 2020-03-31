@@ -1,3 +1,19 @@
+2020-03-30  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Add support in named capture group identifiers for direct surrogate pairs
+        https://bugs.webkit.org/show_bug.cgi?id=178174
+
+        Reviewed by Darin Adler and Michael Saboff.
+
+        Adjusted tests for error messages changes and added coverage for messages
+        of syntax errors due to invalid \u escapes inside named groups/references.
+
+        * js/regexp-named-capture-groups-expected.txt:
+        * js/regexp-unicode-expected.txt:
+        * js/regress-158080-expected.txt:
+        * js/script-tests/regexp-named-capture-groups.js:
+        * js/script-tests/regexp-unicode.js:
+
 2020-03-30  Devin Rousso  <drousso@apple.com>
 
         [CSS Selectors 4] Add support for `:is()` with the same logic for the existing `:matches()`
