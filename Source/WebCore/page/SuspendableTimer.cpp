@@ -38,7 +38,7 @@ SuspendableTimerBase::SuspendableTimerBase(ScriptExecutionContext* context)
 
 SuspendableTimerBase::~SuspendableTimerBase() = default;
 
-bool SuspendableTimerBase::hasPendingActivity() const
+bool SuspendableTimerBase::virtualHasPendingActivity() const
 {
     return isActive();
 }

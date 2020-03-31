@@ -308,7 +308,7 @@ void MessagePort::updateActivity(MessagePortChannelProvider::HasActivity hasActi
     m_isAskingRemoteAboutGC = false;
 }
 
-bool MessagePort::hasPendingActivity() const
+bool MessagePort::virtualHasPendingActivity() const
 {
     m_mightBeEligibleForGC = true;
 

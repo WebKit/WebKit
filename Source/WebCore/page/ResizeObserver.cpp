@@ -169,7 +169,7 @@ bool ResizeObserver::removeObservation(const Element& target)
     });
 }
 
-bool ResizeObserver::hasPendingActivity() const
+bool ResizeObserver::virtualHasPendingActivity() const
 {
     return (hasObservations() && m_document) || !m_activeObservations.isEmpty();
 }

@@ -400,7 +400,7 @@ const char* MediaStream::activeDOMObjectName() const
     return "MediaStream";
 }
 
-bool MediaStream::hasPendingActivity() const
+bool MediaStream::virtualHasPendingActivity() const
 {
     return m_isActive;
 }

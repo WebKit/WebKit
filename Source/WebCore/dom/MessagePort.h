@@ -82,12 +82,6 @@ public:
     WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
 
-    // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
-    void contextDestroyed() final;
-    void stop() final { close(); }
-    bool hasPendingActivity() const final;
-
     WEBCORE_EXPORT bool isLocallyReachable() const;
 
     // EventTargetWithInlineData.
@@ -103,6 +97,12 @@ private:
 
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
     bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) final;
+
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final;
+    void contextDestroyed() final;
+    void stop() final { close(); }
+    bool virtualHasPendingActivity() const final;
 
     void disentangle();
 

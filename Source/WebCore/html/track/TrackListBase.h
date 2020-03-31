@@ -65,8 +65,6 @@ public:
 
     bool isAnyTrackEnabled() const;
 
-    bool hasPendingActivity() const override;
-
 protected:
     TrackListBase(WeakPtr<HTMLMediaElement>, ScriptExecutionContext*);
 
@@ -77,6 +75,9 @@ protected:
 
 private:
     void scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&&);
+
+    // ActiveDOMObject.
+    bool virtualHasPendingActivity() const override;
 
     // EventTarget
     void refEventTarget() final { ref(); }

@@ -111,8 +111,6 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    bool hasPendingActivity() const final;
-
     static const MediaTime& currentTimeFudgeFactor();
     static bool contentTypeShouldGenerateTimestamps(const ContentType&);
 
@@ -127,8 +125,10 @@ public:
 private:
     explicit MediaSource(ScriptExecutionContext&);
 
+    // ActiveDOMObject.
     void stop() final;
     const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
     void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) final;
     void seekToTime(const MediaTime&) final;

@@ -248,7 +248,7 @@ void MediaDevices::scheduledEventTimerFired()
     dispatchEvent(Event::create(eventNames().devicechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-bool MediaDevices::hasPendingActivity() const
+bool MediaDevices::virtualHasPendingActivity() const
 {
     return !isContextStopped() && hasEventListeners(m_eventNames.devicechangeEvent);
 }

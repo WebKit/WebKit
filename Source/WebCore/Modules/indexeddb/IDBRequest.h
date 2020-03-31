@@ -125,8 +125,6 @@ public:
 
     IndexedDB::RequestType requestType() const { return m_requestType; }
 
-    bool hasPendingActivity() const final;
-
     void setTransactionOperationID(uint64_t transactionOperationID) { m_currentTransactionOperationID = transactionOperationID; }
 
 protected:
@@ -158,8 +156,11 @@ private:
 
     EventTargetInterface eventTargetInterface() const override;
 
+    // ActiveDOMObject.
+    bool virtualHasPendingActivity() const final;
     const char* activeDOMObjectName() const final;
     void stop() final;
+
     virtual void cancelForStop();
 
     void refEventTarget() final { ref(); }

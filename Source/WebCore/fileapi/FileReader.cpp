@@ -81,9 +81,9 @@ void FileReader::stop()
     m_state = DONE;
 }
 
-bool FileReader::hasPendingActivity() const
+bool FileReader::virtualHasPendingActivity() const
 {
-    return m_state == LOADING || ActiveDOMObject::hasPendingActivity();
+    return m_state == LOADING;
 }
 
 ExceptionOr<void> FileReader::readAsArrayBuffer(Blob* blob)

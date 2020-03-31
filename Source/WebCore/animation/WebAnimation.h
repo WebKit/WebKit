@@ -139,8 +139,6 @@ public:
     uint64_t globalPosition() const { return m_globalPosition; }
     void setGlobalPosition(uint64_t globalPosition) { m_globalPosition = globalPosition; }
 
-    bool hasPendingActivity() const final;
-
     virtual bool canHaveGlobalPosition() { return true; }
 
     // ContextDestructionObserver.
@@ -212,6 +210,7 @@ private:
     void suspend(ReasonForSuspension) final;
     void resume() final;
     void stop() final;
+    bool virtualHasPendingActivity() const final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return WebAnimationEventTargetInterfaceType; }

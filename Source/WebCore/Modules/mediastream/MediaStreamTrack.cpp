@@ -597,9 +597,9 @@ void MediaStreamTrack::suspend(ReasonForSuspension reason)
     queueTaskToDispatchEvent(*this, TaskSource::Networking, Event::create(eventNames().endedEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-bool MediaStreamTrack::hasPendingActivity() const
+bool MediaStreamTrack::virtualHasPendingActivity() const
 {
-    return !m_ended || ActiveDOMObject::hasPendingActivity();
+    return !m_ended;
 }
 
 AudioSourceProvider* MediaStreamTrack::audioSourceProvider()

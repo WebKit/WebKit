@@ -86,8 +86,6 @@ public:
 
     void* objectStoreAsOpaqueRoot() { return &m_objectStore; }
 
-    bool hasPendingActivity() const final;
-
 private:
     ExceptionOr<Ref<IDBRequest>> doCount(JSC::JSGlobalObject&, const IDBKeyRangeData&);
     ExceptionOr<Ref<IDBRequest>> doGet(JSC::JSGlobalObject&, ExceptionOr<IDBKeyRangeData>);
@@ -97,7 +95,9 @@ private:
     ExceptionOr<Ref<IDBRequest>> doGetAll(JSC::JSGlobalObject&, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
     ExceptionOr<Ref<IDBRequest>> doGetAllKeys(JSC::JSGlobalObject&, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
 
+    // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
     IDBIndexInfo m_info;
     IDBIndexInfo m_originalInfo;

@@ -315,12 +315,9 @@ const char* IDBTransaction::activeDOMObjectName() const
     return "IDBTransaction";
 }
 
-bool IDBTransaction::hasPendingActivity() const
+bool IDBTransaction::virtualHasPendingActivity() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()) || Thread::mayBeGCThread());
-    if (ActiveDOMObject::hasPendingActivity())
-        return true;
-
     return !m_contextStopped && m_state != IndexedDB::TransactionState::Finished;
 }
 

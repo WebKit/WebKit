@@ -55,7 +55,7 @@ public:
     void suspendIfNeeded();
     void assertSuspendIfNeededWasCalled() const;
 
-    virtual bool hasPendingActivity() const;
+    bool hasPendingActivity() const { return m_pendingActivityInstanceCount || virtualHasPendingActivity(); }
 
     // However, the suspend function will sometimes be called even if canSuspendForDocumentSuspension() returns false.
     // That happens in step-by-step JS debugging for example - in this case it would be incorrect
@@ -73,17 +73,21 @@ public:
     // It can, however, have a side effect of deleting an ActiveDOMObject.
     virtual void stop();
 
+    // FIXME: Drop this function.
+    // Call sites should be using makePendingActivity() or overriding virtualHasPendingActivity() instead.
     template<typename T> void setPendingActivity(T& thisObject)
     {
         ASSERT(&thisObject == this);
         thisObject.ref();
-        ++m_pendingActivityCount;
+        ++m_pendingActivityInstanceCount;
     }
 
+    // FIXME: Drop this function.
+    // Call sites should be using makePendingActivity() or overriding virtualHasPendingActivity() instead.
     template<typename T> void unsetPendingActivity(T& thisObject)
     {
-        ASSERT(m_pendingActivityCount > 0);
-        --m_pendingActivityCount;
+        ASSERT(m_pendingActivityInstanceCount > 0);
+        --m_pendingActivityInstanceCount;
         thisObject.deref();
     }
 
@@ -93,13 +97,13 @@ public:
         explicit PendingActivity(T& thisObject)
             : m_thisObject(thisObject)
         {
-            ++(m_thisObject->m_pendingActivityCount);
+            ++(m_thisObject->m_pendingActivityInstanceCount);
         }
 
         ~PendingActivity()
         {
-            ASSERT(m_thisObject->m_pendingActivityCount > 0);
-            --(m_thisObject->m_pendingActivityCount);
+            ASSERT(m_thisObject->m_pendingActivityInstanceCount > 0);
+            --(m_thisObject->m_pendingActivityInstanceCount);
         }
 
     private:
@@ -139,10 +143,14 @@ private:
     enum CheckedScriptExecutionContextType { CheckedScriptExecutionContext };
     ActiveDOMObject(ScriptExecutionContext*, CheckedScriptExecutionContextType);
 
+    // This is used by subclasses to indicate that they have pending activity, meaning that they would
+    // like the JS wrapper to stay alive (because they may still fire JS events).
+    virtual bool virtualHasPendingActivity() const { return false; }
+
     void queueTaskInEventLoop(TaskSource, Function<void ()>&&);
     void queueTaskToDispatchEventInternal(EventTarget&, TaskSource, Ref<Event>&&);
 
-    unsigned m_pendingActivityCount { 0 };
+    unsigned m_pendingActivityInstanceCount { 0 };
 #if ASSERT_ENABLED
     bool m_suspendIfNeededWasCalled { false };
     Ref<Thread> m_creationThread { Thread::current() };

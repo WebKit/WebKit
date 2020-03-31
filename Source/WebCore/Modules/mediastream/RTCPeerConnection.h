@@ -172,9 +172,6 @@ public:
 
     void clearController() { m_controller = nullptr; }
 
-    // ActiveDOMObject.
-    bool hasPendingActivity() const final;
-    
     Document* document();
 
     void doTask(Function<void()>&&);
@@ -212,6 +209,7 @@ private:
     const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
+    bool virtualHasPendingActivity() const final;
 
     void updateConnectionState();
     bool doClose();

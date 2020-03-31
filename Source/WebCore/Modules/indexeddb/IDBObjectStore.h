@@ -112,8 +112,6 @@ public:
     void visitReferencedIndexes(JSC::SlotVisitor&) const;
     void renameReferencedIndex(IDBIndex&, const String& newName);
 
-    bool hasPendingActivity() const final;
-
 private:
     enum class InlineKeyCheck { Perform, DoNotPerform };
     ExceptionOr<Ref<IDBRequest>> putOrAdd(JSC::JSGlobalObject&, JSC::JSValue, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, InlineKeyCheck);
@@ -124,7 +122,9 @@ private:
     ExceptionOr<Ref<IDBRequest>> doGetAll(JSC::JSGlobalObject&, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
     ExceptionOr<Ref<IDBRequest>> doGetAllKeys(JSC::JSGlobalObject&, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
 
+    // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
     IDBObjectStoreInfo m_info;
     IDBObjectStoreInfo m_originalInfo;

@@ -52,7 +52,7 @@ struct IntersectionObserverData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     // IntersectionObservers for which the node that owns this IntersectionObserverData is the root.
-    // An IntersectionObserver is only owned by a JavaScript wrapper. ActiveDOMObject::hasPendingActivity
+    // An IntersectionObserver is only owned by a JavaScript wrapper. ActiveDOMObject::virtualHasPendingActivity
     // is overridden to keep this wrapper alive while the observer has ongoing observations.
     Vector<WeakPtr<IntersectionObserver>> observers;
 
@@ -99,13 +99,13 @@ public:
     void appendQueuedEntry(Ref<IntersectionObserverEntry>&&);
     void notify();
 
-    // ActiveDOMObject.
-    bool hasPendingActivity() const override;
-    const char* activeDOMObjectName() const override;
-    void stop() override;
-
 private:
     IntersectionObserver(Document&, Ref<IntersectionObserverCallback>&&, ContainerNode* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds);
+
+    // ActiveDOMObject.
+    bool virtualHasPendingActivity() const override;
+    const char* activeDOMObjectName() const override;
+    void stop() override;
 
     bool removeTargetRegistration(Element&);
     void removeAllTargets();

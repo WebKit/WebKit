@@ -75,8 +75,6 @@ public:
 
     MediaStream& stream() { return m_stream.get(); }
 
-    bool hasPendingActivity() const final;
-
 private:
     MediaRecorder(Document&, Ref<MediaStream>&&, std::unique_ptr<MediaRecorderPrivate>&&, Options&& = { });
 
@@ -94,6 +92,7 @@ private:
     void suspend(ReasonForSuspension) final;
     void stop() final;
     const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
     
     void stopRecordingInternal();
 

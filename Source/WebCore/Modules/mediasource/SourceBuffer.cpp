@@ -535,7 +535,7 @@ MediaTime SourceBuffer::sourceBufferPrivateFastSeekTimeForMediaTime(const MediaT
     return seekTime;
 }
 
-bool SourceBuffer::hasPendingActivity() const
+bool SourceBuffer::virtualHasPendingActivity() const
 {
     return m_source || m_asyncEventQueue->hasPendingEvents();
 }

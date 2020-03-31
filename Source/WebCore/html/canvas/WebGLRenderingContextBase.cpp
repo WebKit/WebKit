@@ -5552,11 +5552,6 @@ void WebGLRenderingContextBase::detachAndRemoveAllObjects()
     }
 }
 
-bool WebGLRenderingContextBase::hasPendingActivity() const
-{
-    return false;
-}
-
 void WebGLRenderingContextBase::stop()
 {
     if (!isContextLost() && !m_isPendingPolicyResolution) {

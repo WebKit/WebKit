@@ -373,9 +373,6 @@ public:
     void recycleContext() override;
     void dispatchContextChangedNotification() override;
 
-    // ActiveDOMObject
-    bool hasPendingActivity() const final;
-
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
     WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGLOpenGL>&&, WebGLContextAttributes);

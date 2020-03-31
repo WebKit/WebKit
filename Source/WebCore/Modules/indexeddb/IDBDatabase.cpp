@@ -75,7 +75,7 @@ IDBDatabase::~IDBDatabase()
     m_connectionProxy->unregisterDatabaseConnection(*this);
 }
 
-bool IDBDatabase::hasPendingActivity() const
+bool IDBDatabase::virtualHasPendingActivity() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()) || Thread::mayBeGCThread());
 

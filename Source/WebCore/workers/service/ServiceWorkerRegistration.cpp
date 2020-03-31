@@ -211,12 +211,9 @@ void ServiceWorkerRegistration::stop()
     removeAllEventListeners();
 }
 
-bool ServiceWorkerRegistration::hasPendingActivity() const
+bool ServiceWorkerRegistration::virtualHasPendingActivity() const
 {
-    if (!m_isStopped && getNewestWorker() && hasEventListeners())
-        return true;
-
-    return ActiveDOMObject::hasPendingActivity();
+    return !m_isStopped && getNewestWorker() && hasEventListeners();
 }
 
 } // namespace WebCore

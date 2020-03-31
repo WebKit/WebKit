@@ -62,15 +62,13 @@ public:
     RefPtr<HTMLMediaElement> mediaElement() const;
     const AtomString& mediaElementCrossOriginAttribute() const;
 
-    // ActiveDOMObject.
-    bool hasPendingActivity() const final;
-
 private:
     HTMLTrackElement(const QualifiedName&, Document&);
     virtual ~HTMLTrackElement();
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 

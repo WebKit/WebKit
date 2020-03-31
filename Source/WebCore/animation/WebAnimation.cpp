@@ -1268,10 +1268,10 @@ void WebAnimation::stop()
     removeAllEventListeners();
 }
 
-bool WebAnimation::hasPendingActivity() const
+bool WebAnimation::virtualHasPendingActivity() const
 {
     // Keep the JS wrapper alive if the animation is considered relevant or could become relevant again by virtue of having a timeline.
-    return m_timeline || m_isRelevant || ActiveDOMObject::hasPendingActivity();
+    return m_timeline || m_isRelevant;
 }
 
 void WebAnimation::updateRelevance()

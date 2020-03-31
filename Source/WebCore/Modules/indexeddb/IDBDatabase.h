@@ -81,9 +81,6 @@ public:
     using ThreadSafeRefCounted<IDBDatabase>::ref;
     using ThreadSafeRefCounted<IDBDatabase>::deref;
 
-    const char* activeDOMObjectName() const final;
-    void stop() final;
-
     IDBDatabaseInfo& info() { return m_info; }
     uint64_t databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
 
@@ -108,8 +105,6 @@ public:
 
     void dispatchEvent(Event&) final;
 
-    bool hasPendingActivity() const final;
-
     void setIsContextSuspended(bool isContextSuspended) { m_isContextSuspended = isContextSuspended; }
     bool isContextSuspended() const { return m_isContextSuspended; }
 
@@ -117,6 +112,11 @@ private:
     IDBDatabase(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, const IDBResultData&);
 
     void didCommitOrAbortTransaction(IDBTransaction&);
+
+    // ActiveDOMObject.
+    bool virtualHasPendingActivity() const final;
+    const char* activeDOMObjectName() const final;
+    void stop() final;
 
     void maybeCloseInServer();
 

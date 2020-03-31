@@ -530,14 +530,10 @@ void RTCPeerConnection::resume()
     });
 }
 
-bool RTCPeerConnection::hasPendingActivity() const
+bool RTCPeerConnection::virtualHasPendingActivity() const
 {
     if (m_isStopped)
         return false;
-
-    // This returns true if we have pending promises to be resolved.
-    if (ActiveDOMObject::hasPendingActivity())
-        return true;
 
     // As long as the connection is not stopped and it has event listeners, it may dispatch events.
     return hasEventListeners();

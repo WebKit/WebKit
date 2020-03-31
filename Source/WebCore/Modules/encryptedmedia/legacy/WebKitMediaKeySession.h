@@ -62,8 +62,6 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    bool hasPendingActivity() const final;
-
 private:
     WebKitMediaKeySession(ScriptExecutionContext&, WebKitMediaKeys&, const String& keySystem);
     void keyRequestTimerFired();
@@ -76,8 +74,10 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    // ActiveDOMObject.
     void stop() final;
     const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
     EventTargetInterface eventTargetInterface() const final { return WebKitMediaKeySessionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }

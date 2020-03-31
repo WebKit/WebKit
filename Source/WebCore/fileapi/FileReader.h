@@ -76,15 +76,13 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    // ActiveDOMObject.
-    bool hasPendingActivity() const final;
-
 private:
     explicit FileReader(ScriptExecutionContext&);
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
     void stop() final;
+    bool virtualHasPendingActivity() const final;
 
     EventTargetInterface eventTargetInterface() const final { return FileReaderEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }

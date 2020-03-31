@@ -772,10 +772,10 @@ String MediaKeySession::mediaKeysStorageDirectory() const
     return FileSystem::pathByAppendingComponent(storageDirectory, document->securityOrigin().data().databaseIdentifier());
 }
 
-bool MediaKeySession::hasPendingActivity() const
+bool MediaKeySession::virtualHasPendingActivity() const
 {
     // A MediaKeySession object SHALL NOT be destroyed and SHALL continue to receive events if it is not closed and the MediaKeys object that created it remains accessible.
-    return (!m_closed && m_keys) || ActiveDOMObject::hasPendingActivity();
+    return !m_closed && m_keys;
 }
 
 const char* MediaKeySession::activeDOMObjectName() const

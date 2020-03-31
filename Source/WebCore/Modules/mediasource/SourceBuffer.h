@@ -130,8 +130,6 @@ public:
     MediaTime highestPresentationTimestamp() const;
     void readyStateChanged();
 
-    bool hasPendingActivity() const final;
-
     void trySignalAllSamplesEnqueued();
 
 #if !RELEASE_LOG_DISABLED
@@ -147,8 +145,10 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    // ActiveDOMObject.
     void stop() final;
     const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
     void sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment&) final;
     void sourceBufferPrivateDidReceiveSample(MediaSample&) final;

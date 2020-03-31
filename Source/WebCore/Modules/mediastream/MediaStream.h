@@ -105,9 +105,6 @@ public:
 
     Document* document() const;
 
-    // ActiveDOMObject API.
-    bool hasPendingActivity() const final;
-
     enum class StreamModifier { DomAPI, Platform };
     bool internalAddTrack(Ref<MediaStreamTrack>&&, StreamModifier);
     WEBCORE_EXPORT bool internalRemoveTrack(const String&, StreamModifier);
@@ -146,6 +143,7 @@ private:
     // ActiveDOMObject API.
     void stop() final;
     const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
     void updateActiveState();
     void activityEventTimerFired();

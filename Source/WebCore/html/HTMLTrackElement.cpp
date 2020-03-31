@@ -351,11 +351,8 @@ void HTMLTrackElement::eventListenersDidChange()
         || hasEventListeners(eventNames().loadEvent);
 }
 
-bool HTMLTrackElement::hasPendingActivity() const
+bool HTMLTrackElement::virtualHasPendingActivity() const
 {
-    if (ActiveDOMObject::hasPendingActivity())
-        return true;
-
     return m_hasRelevantLoadEventsListener && readyState() == HTMLTrackElement::LOADING;
 }
 

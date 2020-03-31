@@ -86,9 +86,6 @@ public:
 
     const Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>>& statuses() const { return m_statuses; }
 
-    // ActiveDOMObject
-    bool hasPendingActivity() const override;
-
 private:
     MediaKeySession(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     void enqueueMessage(MediaKeyMessageType, const SharedBuffer&);
@@ -108,7 +105,8 @@ private:
     void derefEventTarget() override { deref(); }
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const override;
+    const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper

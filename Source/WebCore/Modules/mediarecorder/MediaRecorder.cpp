@@ -232,9 +232,9 @@ void MediaRecorder::audioSamplesAvailable(MediaStreamTrackPrivate& track, const 
     m_private->audioSamplesAvailable(track, mediaTime, audioData, description, sampleCount);
 }
 
-bool MediaRecorder::hasPendingActivity() const
+bool MediaRecorder::virtualHasPendingActivity() const
 {
-    return ActiveDOMObject::hasPendingActivity() || m_state != RecordingState::Inactive;
+    return m_state != RecordingState::Inactive;
 }
 
 } // namespace WebCore

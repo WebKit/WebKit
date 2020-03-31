@@ -106,7 +106,7 @@ private:
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
     void stop() final;
-    bool hasPendingActivity() const final;
+    bool virtualHasPendingActivity() const final;
 
     // EventTargetWithInlineData.
     EventTargetInterface eventTargetInterface() const final { return MediaDevicesEventTargetInterfaceType; }

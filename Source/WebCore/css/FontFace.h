@@ -92,13 +92,13 @@ public:
     void ref() final { RefCounted::ref(); }
     void deref() final { RefCounted::deref(); }
 
-    bool hasPendingActivity() const final;
-
 private:
     explicit FontFace(CSSFontSelector&);
     explicit FontFace(CSSFontFace&);
 
+    // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
     // Callback for LoadedPromise.
     FontFace& loadedPromiseResolve();

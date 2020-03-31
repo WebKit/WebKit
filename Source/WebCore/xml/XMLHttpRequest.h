@@ -130,8 +130,6 @@ public:
 
     WEBCORE_EXPORT void setMaximumIntervalForUserGestureForwarding(double);
 
-    bool hasPendingActivity() const final;
-
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;
 
@@ -149,6 +147,7 @@ private:
     void resume() override;
     void stop() override;
     const char* activeDOMObjectName() const override;
+    bool virtualHasPendingActivity() const final;
 
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }

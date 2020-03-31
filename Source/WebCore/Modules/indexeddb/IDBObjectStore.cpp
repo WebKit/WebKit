@@ -75,7 +75,7 @@ const char* IDBObjectStore::activeDOMObjectName() const
     return "IDBObjectStore";
 }
 
-bool IDBObjectStore::hasPendingActivity() const
+bool IDBObjectStore::virtualHasPendingActivity() const
 {
     return m_transaction.hasPendingActivity();
 }

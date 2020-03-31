@@ -64,13 +64,13 @@ public:
     bool hasSkippedObservations() const { return m_hasSkippedObservations; }
     void setHasSkippedObservations(bool skipped) { m_hasSkippedObservations = skipped; }
 
-    // ActiveDOMObject.
-    bool hasPendingActivity() const override;
-    const char* activeDOMObjectName() const override;
-    void stop() override;
-
 private:
     ResizeObserver(Document&, Ref<ResizeObserverCallback>&&);
+
+    // ActiveDOMObject.
+    bool virtualHasPendingActivity() const override;
+    const char* activeDOMObjectName() const override;
+    void stop() override;
 
     bool removeTarget(Element&);
     void removeAllTargets();

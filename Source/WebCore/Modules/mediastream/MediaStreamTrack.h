@@ -149,9 +149,6 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    // ActiveDOMObject API.
-    bool hasPendingActivity() const final;
-
     void setIdForTesting(String&& id) { m_private->setIdForTesting(WTFMove(id)); }
 
     Document* document() const;
@@ -177,6 +174,7 @@ private:
     void stop() final { stopTrack(); }
     const char* activeDOMObjectName() const override;
     void suspend(ReasonForSuspension) final;
+    bool virtualHasPendingActivity() const final;
 
     // EventTarget
     void refEventTarget() final { ref(); }

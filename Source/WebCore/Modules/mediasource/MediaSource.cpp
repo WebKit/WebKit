@@ -971,10 +971,9 @@ void MediaSource::openIfInEndedState()
     m_private->unmarkEndOfStream();
 }
 
-bool MediaSource::hasPendingActivity() const
+bool MediaSource::virtualHasPendingActivity() const
 {
-    return m_private || m_asyncEventQueue->hasPendingEvents()
-        || ActiveDOMObject::hasPendingActivity();
+    return m_private || m_asyncEventQueue->hasPendingEvents();
 }
 
 void MediaSource::stop()

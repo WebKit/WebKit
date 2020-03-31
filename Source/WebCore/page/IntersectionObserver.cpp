@@ -286,7 +286,7 @@ void IntersectionObserver::notify()
     InspectorInstrumentation::didFireObserverCallback(*context);
 }
 
-bool IntersectionObserver::hasPendingActivity() const
+bool IntersectionObserver::virtualHasPendingActivity() const
 {
     return (hasObservationTargets() && trackingDocument()) || !m_queuedEntries.isEmpty();
 }

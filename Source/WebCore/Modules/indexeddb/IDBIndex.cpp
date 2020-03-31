@@ -62,7 +62,7 @@ const char* IDBIndex::activeDOMObjectName() const
     return "IDBIndex";
 }
 
-bool IDBIndex::hasPendingActivity() const
+bool IDBIndex::virtualHasPendingActivity() const
 {
     return m_objectStore.hasPendingActivity();
 }

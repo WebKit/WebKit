@@ -1177,11 +1177,8 @@ void XMLHttpRequest::eventListenersDidChange()
 
 // An XMLHttpRequest object must not be garbage collected if its state is either opened with the send() flag set, headers received, or loading, and
 // it has one or more event listeners registered whose type is one of readystatechange, progress, abort, error, load, timeout, and loadend.
-bool XMLHttpRequest::hasPendingActivity() const
+bool XMLHttpRequest::virtualHasPendingActivity() const
 {
-    if (ActiveDOMObject::hasPendingActivity())
-        return true;
-
     if (!m_hasRelevantEventListener && !(m_upload && m_upload->hasRelevantEventListener()))
         return false;
 
