@@ -901,6 +901,19 @@ WI.updateDockedState = function(side)
 
     if (!WI.dockedConfigurationSupportsSplitContentBrowser() && !WI.doesCurrentTabSupportSplitContentBrowser())
         WI.hideSplitConsole();
+
+    if (side === WI.DockConfiguration.Undocked && WI.Platform.name === "mac") {
+        // When undocking, the first visible focusable element steals focus. Undo this.
+        document.body.addEventListener("focusin", function(event) {
+            let firstFocusableElement = document.querySelector("[tabindex='0']:not(.hidden)");
+            if (firstFocusableElement === event.target) {
+                if (WI.previousFocusElement)
+                    WI.previousFocusElement.focus();
+                else
+                    event.target.blur();
+            }
+        }, {once: true, capture: true});
+    }
 };
 
 WI.resizeDockedFrameMouseDown = function(event)
