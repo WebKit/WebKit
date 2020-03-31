@@ -1,3 +1,23 @@
+2020-03-31  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: destroy WebIDBServer when session is removed in network process
+        https://bugs.webkit.org/show_bug.cgi?id=209606
+        <rdar://problem/59310081>
+
+        Reviewed by Geoffrey Garen.
+
+        Tested manually to verify WebIDBServer is removed and its thread ends when session is removed.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::~WebIDBServer):
+        (WebKit::WebIDBServer::addConnection):
+        (WebKit::WebIDBServer::removeConnection):
+        (WebKit::WebIDBServer::close):
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::connectionToWebProcessClosed):
+
 2020-03-31  Chris Dumez  <cdumez@apple.com>
 
         Regression(r253357) DeviceMotionEvent acceleration and rotationRate are null

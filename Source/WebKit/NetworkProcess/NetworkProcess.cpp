@@ -591,6 +591,8 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
 #endif
 
     m_storageManagerSet->remove(sessionID);
+    if (auto webIDBServer = m_webIDBServers.take(sessionID))
+        webIDBServer->close();
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -2634,7 +2636,8 @@ void NetworkProcess::getLocalStorageOriginDetails(PAL::SessionID sessionID, Comp
 void NetworkProcess::connectionToWebProcessClosed(IPC::Connection& connection, PAL::SessionID sessionID)
 {
     m_storageManagerSet->removeConnection(connection);
-    webIDBServer(sessionID).removeConnection(connection);
+    if (auto* webIDBServer = m_webIDBServers.get(sessionID))
+        webIDBServer->removeConnection(connection);
 }
 
 NetworkConnectionToWebProcess* NetworkProcess::webProcessConnection(ProcessIdentifier identifier) const

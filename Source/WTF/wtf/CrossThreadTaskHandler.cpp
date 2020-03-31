@@ -37,6 +37,9 @@ CrossThreadTaskHandler::CrossThreadTaskHandler(const char* threadName, Autodrain
     Locker<Lock> locker(m_taskThreadCreationLock);
     Thread::create(threadName, [this] {
         taskRunLoop();
+
+        if (m_completionCallback)
+            m_completionCallback();
     })->detach();
 }
 
@@ -87,6 +90,17 @@ void CrossThreadTaskHandler::handleTaskRepliesOnMainThread()
 
     while (auto task = m_taskReplyQueue.tryGetMessage())
         task->performTask();
+}
+
+void CrossThreadTaskHandler::setCompletionCallback(Function<void ()>&& completionCallback)
+{
+    m_completionCallback = WTFMove(completionCallback);
+}
+
+void CrossThreadTaskHandler::kill()
+{
+    m_taskQueue.kill();
+    m_taskReplyQueue.kill();
 }
 
 } // namespace WTF
