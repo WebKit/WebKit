@@ -27,7 +27,6 @@
 
 #include "WebsiteAutoplayPolicy.h"
 #include "WebsiteAutoplayQuirk.h"
-#include "WebsiteDataStoreParameters.h"
 #include "WebsiteLegacyOverflowScrollingTouchPolicy.h"
 #include "WebsiteMediaSourcePolicy.h"
 #include "WebsiteMetaViewportPolicy.h"
@@ -60,7 +59,6 @@ struct WebsitePoliciesData {
 #endif
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
-    Optional<WebsiteDataStoreParameters> websiteDataStoreParameters;
     String customUserAgent;
     String customUserAgentAsSiteSpecificQuirks;
     String customNavigatorPlatform;

@@ -32,6 +32,7 @@
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
+#include "NetworkSessionCreationParameters.h"
 #include "PingLoad.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"

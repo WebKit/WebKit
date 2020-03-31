@@ -542,10 +542,10 @@ void WebProcessProxy::removeVisitedLinkStoreUser(VisitedLinkStore& visitedLinkSt
     }
 }
 
-void WebProcessProxy::addWebUserContentControllerProxy(WebUserContentControllerProxy& proxy, WebPageCreationParameters& parameters)
+void WebProcessProxy::addWebUserContentControllerProxy(WebUserContentControllerProxy& proxy)
 {
     m_webUserContentControllerProxies.add(&proxy);
-    proxy.addProcess(*this, parameters);
+    proxy.addProcess(*this);
 }
 
 void WebProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy& proxy)

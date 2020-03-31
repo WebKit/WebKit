@@ -1,5 +1,80 @@
 2020-03-31  Alex Christensen  <achristensen@webkit.org>
 
+        Add SPI WKWebpagePreferences._userContentController
+        https://bugs.webkit.org/show_bug.cgi?id=209795
+
+        Reviewed by Tim Hatcher.
+
+        This will allow us to switch which WKUserContentController we are using at decidePolicyForNavigationAction time
+        like we do WKWebsiteDataStores.  This is only allowed with main frame navigations.
+
+        To do this I moved UserContentControllerParameters into their own struct.
+        I remove unused WebsitePoliciesData.websiteDataStoreParameters.
+        I pass an API::WebsitePolicies* further down the chain instead of switching to Optional<WebsitePoliciesData>,
+        which allows us to access the WebUserContentControllerProxy* from the former in WebPageProxy::creationParameters.
+        I removed an unused WebsitePolicies constructor.
+        I added a missing copied member variable in WebsitePolicies::copy.
+
+        * NetworkProcess/NetworkSession.cpp:
+        * Shared/UserContentControllerParameters.cpp: Added.
+        (WebKit::UserContentControllerParameters::encode const):
+        (WebKit::UserContentControllerParameters::decode):
+        * Shared/UserContentControllerParameters.h: Added.
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        * Shared/WebsitePoliciesData.h:
+        * Sources.txt:
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+        (API::WebsitePolicies::setUserContentController):
+        (API::WebsitePolicies::data):
+        (API::WebsitePolicies::WebsitePolicies): Deleted.
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageUpdateWebsitePolicies):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateWebpagePreferences:]):
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences _userContentController]):
+        (-[WKWebpagePreferences _setUserContentController:]):
+        * UIProcess/API/Cocoa/WKWebpagePreferencesPrivate.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::initializeWebPage):
+        (WebKit::ProvisionalPageProxy::goToBackForwardItem):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::parameters const):
+        (WebKit::WebUserContentControllerProxy::contentRuleListData const):
+        (WebKit::WebUserContentControllerProxy::contentRuleListData): Deleted.
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addWebUserContentControllerProxy):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_processDisplayName):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+
+2020-03-31  Alex Christensen  <achristensen@webkit.org>
+
         Remove call to PageConfiguration::setUserContentController added in r225765
         https://bugs.webkit.org/show_bug.cgi?id=209828
         <rdar://problem/61114052>

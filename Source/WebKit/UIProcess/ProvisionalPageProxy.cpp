@@ -27,6 +27,7 @@
 #include "ProvisionalPageProxy.h"
 
 #include "APINavigation.h"
+#include "APIWebsitePolicies.h"
 #include "DrawingAreaProxy.h"
 #include "FormDataReference.h"
 #include "Logging.h"
@@ -54,7 +55,7 @@ using namespace WebCore;
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(m_page.isAlwaysOnLoggingAllowed(), channel, "%p - ProvisionalPageProxy::" fmt, this, ##__VA_ARGS__)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(m_page.isAlwaysOnLoggingAllowed(), channel, "%p - ProvisionalPageProxy::" fmt, this, ##__VA_ARGS__)
 
-ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, std::unique_ptr<SuspendedPageProxy> suspendedPage, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest& request, ProcessSwapRequestedByClient processSwapRequestedByClient)
+ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, std::unique_ptr<SuspendedPageProxy> suspendedPage, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest& request, ProcessSwapRequestedByClient processSwapRequestedByClient, API::WebsitePolicies* websitePolicies)
     : m_page(page)
     , m_webPageID(suspendedPage ? suspendedPage->webPageID() : PageIdentifier::generate())
     , m_process(WTFMove(process))
@@ -88,7 +89,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
         m_process->frameCreated(suspendedPage->mainFrameID(), *m_mainFrame);
     }
 
-    initializeWebPage();
+    initializeWebPage(websitePolicies);
 
     m_page.inspectorController().didCreateProvisionalPage(*this);
 }
@@ -135,11 +136,11 @@ void ProvisionalPageProxy::cancel()
     didFailProvisionalLoadForFrame(m_mainFrame->frameID(), { }, { }, m_navigationID, m_provisionalLoadURL, error, WebCore::WillContinueLoading::No, UserData { }); // Will delete |this|.
 }
 
-void ProvisionalPageProxy::initializeWebPage()
+void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
     m_drawingArea = m_page.pageClient().createDrawingAreaProxy(m_process);
 
-    auto parameters = m_page.creationParameters(m_process, *m_drawingArea);
+    auto parameters = m_page.creationParameters(m_process, *m_drawingArea, WTFMove(websitePolicies));
     parameters.isProcessSwap = true;
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
     m_process->addVisitedLinkStoreUser(m_page.visitedLinkStore(), m_page.identifier());
@@ -168,7 +169,7 @@ void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::Res
     m_page.loadRequestWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, WTFMove(request), navigation.lastNavigationAction().shouldOpenExternalURLsPolicy, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, isNavigatingToAppBoundDomain, hasNavigatedAwayFromAppBoundDomain, WTFMove(websitePolicies));
 }
 
-void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebBackForwardListItem& item, Optional<WebsitePoliciesData>&& websitePolicies)
+void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebBackForwardListItem& item, RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "goToBackForwardItem: pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
 
@@ -179,8 +180,13 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
         }
         return &item != targetItem;
     });
+    
+    Optional<WebsitePoliciesData> websitePoliciesData;
+    if (websitePolicies)
+        websitePoliciesData = websitePolicies->data();
+    
     send(Messages::WebPage::UpdateBackForwardListForReattach(WTFMove(itemStates)));
-    send(Messages::WebPage::GoToBackForwardItem(navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), WebCore::ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies)));
+    send(Messages::WebPage::GoToBackForwardItem(navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), WebCore::ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePoliciesData)));
     m_process->startResponsivenessTimer();
 }
 

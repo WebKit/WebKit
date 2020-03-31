@@ -181,6 +181,7 @@ Shared/TouchBarMenuItemData.cpp
 Shared/URLSchemeTaskParameters.cpp
 Shared/UpdateInfo.cpp
 Shared/UserData.cpp
+Shared/UserContentControllerParameters.cpp
 Shared/WebBackForwardListItem.cpp
 Shared/WebCompiledContentRuleList.cpp
 Shared/WebCompiledContentRuleListData.cpp

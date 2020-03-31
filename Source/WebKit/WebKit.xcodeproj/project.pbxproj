@@ -4034,6 +4034,8 @@
 		5C8DD37D1FE4501100F2A556 /* APIWebsitePolicies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebsitePolicies.cpp; sourceTree = "<group>"; };
 		5C8DD37F1FE4519200F2A556 /* WebsiteAutoplayPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteAutoplayPolicy.h; sourceTree = "<group>"; };
 		5C8DD3811FE455CA00F2A556 /* WebsiteAutoplayQuirk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteAutoplayQuirk.h; sourceTree = "<group>"; };
+		5C9C5C022430535800BB6740 /* UserContentControllerParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentControllerParameters.h; sourceTree = "<group>"; };
+		5C9C5C032430535800BB6740 /* UserContentControllerParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentControllerParameters.cpp; sourceTree = "<group>"; };
 		5C9E56801DF7F05500C9EE33 /* WKWebsitePolicies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebsitePolicies.cpp; sourceTree = "<group>"; };
 		5C9E56811DF7F05500C9EE33 /* WKWebsitePolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebsitePolicies.h; sourceTree = "<group>"; };
 		5C9EF2E721F058F9003BDC56 /* NetworkStorageSessionProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkStorageSessionProvider.h; sourceTree = "<group>"; };
@@ -6044,6 +6046,8 @@
 				5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */,
 				5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */,
 				41FBE821206D87F6000F0741 /* UserContentControllerIdentifier.h */,
+				5C9C5C032430535800BB6740 /* UserContentControllerParameters.cpp */,
+				5C9C5C022430535800BB6740 /* UserContentControllerParameters.h */,
 				1AC1336518565B5700F3EC05 /* UserData.cpp */,
 				1AC1336618565B5700F3EC05 /* UserData.h */,
 				2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */,

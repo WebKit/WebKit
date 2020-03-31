@@ -2084,6 +2084,8 @@
 		5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIDelegate.mm; sourceTree = "<group>"; };
 		5CB5B3BD1FFC517E00C27BB0 /* FrameHandleSerialization.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FrameHandleSerialization.mm; sourceTree = "<group>"; };
 		5CB7AFDB23C451E400E49CF3 /* ResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceLoadDelegate.mm; sourceTree = "<group>"; };
+		5CBAA7F324327F6B00564A8B /* TestUIDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestUIDelegate.h; path = cocoa/TestUIDelegate.h; sourceTree = "<group>"; };
+		5CBAA7F424327F6B00564A8B /* TestUIDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestUIDelegate.mm; path = cocoa/TestUIDelegate.mm; sourceTree = "<group>"; };
 		5CCB10DD2134579C00AC5AF0 /* ResponsivenessTimerDoesntFireEarly.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResponsivenessTimerDoesntFireEarly.mm; sourceTree = "<group>"; };
 		5CCB10DE2134579D00AC5AF0 /* RestoreSessionStateWithoutNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RestoreSessionStateWithoutNavigation.mm; sourceTree = "<group>"; };
 		5CCB10DF2134579D00AC5AF0 /* ShouldGoToBackForwardListItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShouldGoToBackForwardListItem.mm; sourceTree = "<group>"; };
@@ -2901,6 +2903,8 @@
 				516281242325C17B00BB7E42 /* TestPDFDocument.mm */,
 				A14FC58D1B8AE36500D107EB /* TestProtocol.h */,
 				A14FC58E1B8AE36500D107EB /* TestProtocol.mm */,
+				5CBAA7F324327F6B00564A8B /* TestUIDelegate.h */,
+				5CBAA7F424327F6B00564A8B /* TestUIDelegate.mm */,
 				2EFF06D21D8AEDBB0004BB30 /* TestWKWebView.h */,
 				2EFF06D31D8AEDBB0004BB30 /* TestWKWebView.mm */,
 				7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */,

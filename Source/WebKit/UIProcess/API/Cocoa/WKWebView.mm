@@ -2315,9 +2315,11 @@ static RetainPtr<NSMutableArray> wkTextManipulationErrors(NSArray<_WKTextManipul
 
 - (void)_updateWebpagePreferences:(WKWebpagePreferences *)webpagePreferences
 {
-    auto data = webpagePreferences->_websitePolicies->data();
-    if (data.websiteDataStoreParameters)
+    if (webpagePreferences._websiteDataStore)
         [NSException raise:NSInvalidArgumentException format:@"Updating WKWebsiteDataStore is only supported during decidePolicyForNavigationAction."];
+    if (webpagePreferences._userContentController)
+        [NSException raise:NSInvalidArgumentException format:@"Updating WKUserContentController is only supported during decidePolicyForNavigationAction."];
+    auto data = webpagePreferences->_websitePolicies->data();
     _page->updateWebsitePolicies(WTFMove(data));
 }
 

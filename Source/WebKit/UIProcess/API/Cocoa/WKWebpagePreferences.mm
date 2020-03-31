@@ -27,6 +27,7 @@
 #import "WKWebpagePreferences.h"
 
 #import "APICustomHeaderFields.h"
+#import "WKUserContentControllerInternal.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebContentMode.h"
@@ -274,6 +275,16 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 - (void)_setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore
 {
     _websitePolicies->setWebsiteDataStore(websiteDataStore->_websiteDataStore.get());
+}
+
+- (WKUserContentController *)_userContentController
+{
+    return wrapper(_websitePolicies->userContentController());
+}
+
+- (void)_setUserContentController:(WKUserContentController *)userContentController
+{
+    _websitePolicies->setUserContentController(userContentController->_userContentControllerProxy.get());
 }
 
 - (void)_setCustomUserAgent:(NSString *)customUserAgent

@@ -367,8 +367,9 @@ bool WKPageWillHandleHorizontalScrollEvents(WKPageRef pageRef)
 
 void WKPageUpdateWebsitePolicies(WKPageRef pageRef, WKWebsitePoliciesRef websitePoliciesRef)
 {
+    RELEASE_ASSERT_WITH_MESSAGE(!toImpl(websitePoliciesRef)->websiteDataStore(), "Setting WebsitePolicies.websiteDataStore is only supported during WKFramePolicyListenerUseWithPolicies().");
+    RELEASE_ASSERT_WITH_MESSAGE(!toImpl(websitePoliciesRef)->userContentController(), "Setting WebsitePolicies.userContentController is only supported during WKFramePolicyListenerUseWithPolicies().");
     auto data = toImpl(websitePoliciesRef)->data();
-    RELEASE_ASSERT_WITH_MESSAGE(!data.websiteDataStoreParameters, "Setting WebsitePolicies.WebsiteDataStore is only supported during WKFramePolicyListenerUseWithPolicies().");
     toImpl(pageRef)->updateWebsitePolicies(WTFMove(data));
 }
 

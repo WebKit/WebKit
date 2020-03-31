@@ -129,13 +129,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << needsFontAttributes;
     encoder << iceCandidateFilteringEnabled;
     encoder << enumeratingAllNetworkInterfacesEnabled;
-    encoder << userContentWorlds;
-    encoder << userScripts;
-    encoder << userStyleSheets;
-    encoder << messageHandlers;
-#if ENABLE(CONTENT_EXTENSIONS)
-    encoder << contentRuleLists;
-#endif
+    encoder << userContentControllerParameters;
     encoder << backgroundColor;
     encoder << oldPageID;
     encoder << overriddenMediaType;
@@ -402,37 +396,11 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.enumeratingAllNetworkInterfacesEnabled))
         return WTF::nullopt;
 
-    Optional<Vector<std::pair<ContentWorldIdentifier, String>>> userContentWorlds;
-    decoder >> userContentWorlds;
-    if (!userContentWorlds)
+    Optional<UserContentControllerParameters> userContentControllerParameters;
+    decoder >> userContentControllerParameters;
+    if (!userContentControllerParameters)
         return WTF::nullopt;
-    parameters.userContentWorlds = WTFMove(*userContentWorlds);
-
-    Optional<Vector<WebUserScriptData>> userScripts;
-    decoder >> userScripts;
-    if (!userScripts)
-        return WTF::nullopt;
-    parameters.userScripts = WTFMove(*userScripts);
-    
-    Optional<Vector<WebUserStyleSheetData>> userStyleSheets;
-    decoder >> userStyleSheets;
-    if (!userStyleSheets)
-        return WTF::nullopt;
-    parameters.userStyleSheets = WTFMove(*userStyleSheets);
-    
-    Optional<Vector<WebScriptMessageHandlerData>> messageHandlers;
-    decoder >> messageHandlers;
-    if (!messageHandlers)
-        return WTF::nullopt;
-    parameters.messageHandlers = WTFMove(*messageHandlers);
-    
-#if ENABLE(CONTENT_EXTENSIONS)
-    Optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
-    decoder >> contentRuleLists;
-    if (!contentRuleLists)
-        return WTF::nullopt;
-    parameters.contentRuleLists = WTFMove(*contentRuleLists);
-#endif
+    parameters.userContentControllerParameters = WTFMove(*userContentControllerParameters);
 
     Optional<Optional<WebCore::Color>> backgroundColor;
     decoder >> backgroundColor;

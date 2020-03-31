@@ -26,22 +26,13 @@
 #include "config.h"
 #include "APIWebsitePolicies.h"
 
+#include "WebUserContentControllerProxy.h"
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
 
 namespace API {
 
 WebsitePolicies::WebsitePolicies() = default;
-
-WebsitePolicies::WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebKit::WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& legacyCustomHeaderFields, Vector<WebCore::CustomHeaderFields>&& customHeaderFields, WebKit::WebsitePopUpPolicy popUpPolicy, RefPtr<WebKit::WebsiteDataStore>&& websiteDataStore)
-    : m_contentBlockersEnabled(contentBlockersEnabled)
-    , m_allowedAutoplayQuirks(allowedAutoplayQuirks)
-    , m_autoplayPolicy(autoplayPolicy)
-    , m_legacyCustomHeaderFields(WTFMove(legacyCustomHeaderFields))
-    , m_customHeaderFields(WTFMove(customHeaderFields))
-    , m_popUpPolicy(popUpPolicy)
-    , m_websiteDataStore(WTFMove(websiteDataStore))
-{ }
 
 Ref<WebsitePolicies> WebsitePolicies::copy() const
 {
@@ -63,6 +54,8 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setSimulatedMouseEventsDispatchPolicy(m_simulatedMouseEventsDispatchPolicy);
     policies->setLegacyOverflowScrollingTouchPolicy(m_legacyOverflowScrollingTouchPolicy);
     policies->setAllowContentChangeObserverQuirk(m_allowContentChangeObserverQuirk);
+    policies->setWebsiteDataStore(m_websiteDataStore.get());
+    policies->setUserContentController(m_userContentController.get());
     
     Vector<WebCore::HTTPHeaderField> legacyCustomHeaderFields;
     legacyCustomHeaderFields.reserveInitialCapacity(m_legacyCustomHeaderFields.size());
@@ -89,6 +82,11 @@ void WebsitePolicies::setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&& web
     m_websiteDataStore = WTFMove(websiteDataStore);
 }
 
+void WebsitePolicies::setUserContentController(RefPtr<WebKit::WebUserContentControllerProxy>&& controller)
+{
+    m_userContentController = WTFMove(controller);
+}
+
 WebKit::WebsitePoliciesData WebsitePolicies::data()
 {
     bool hasLegacyCustomHeaderFields = legacyCustomHeaderFields().size();
@@ -108,7 +106,6 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
 #endif
         WTFMove(customHeaderFields),
         popUpPolicy(),
-        m_websiteDataStore ? Optional<WebKit::WebsiteDataStoreParameters> { m_websiteDataStore->parameters() } : WTF::nullopt,
         m_customUserAgent,
         m_customUserAgentAsSiteSpecificQuirks,
         m_customNavigatorPlatform,

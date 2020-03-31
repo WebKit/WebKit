@@ -69,7 +69,7 @@ using LayerHostingContextID = uint32_t;
 class ProvisionalPageProxy : public IPC::MessageReceiver, public IPC::MessageSender, public CanMakeWeakPtr<ProvisionalPageProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProvisionalPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient);
+    ProvisionalPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, API::WebsitePolicies*);
     ~ProvisionalPageProxy();
 
     WebPageProxy& page() const { return m_page; }
@@ -94,7 +94,7 @@ public:
 
     void loadData(API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, NavigatingToAppBoundDomain, NavigatedAwayFromAppBoundDomain, Optional<WebsitePoliciesData>&& = WTF::nullopt);
     void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, NavigatingToAppBoundDomain, NavigatedAwayFromAppBoundDomain, Optional<WebsitePoliciesData>&& = WTF::nullopt);
-    void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, Optional<WebsitePoliciesData>&&);
+    void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, RefPtr<API::WebsitePolicies>&&);
     void cancel();
 
     void unfreezeLayerTreeDueToSwipeAnimation();
@@ -143,7 +143,7 @@ private:
     void didCreateContextForVisibilityPropagation(LayerHostingContextID);
 #endif
 
-    void initializeWebPage();
+    void initializeWebPage(RefPtr<API::WebsitePolicies>&&);
     bool validateInput(WebCore::FrameIdentifier, const Optional<uint64_t>& navigationID = WTF::nullopt);
 
     WebPageProxy& m_page;

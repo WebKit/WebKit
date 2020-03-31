@@ -1,3 +1,20 @@
+2020-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI WKWebpagePreferences._userContentController
+        https://bugs.webkit.org/show_bug.cgi?id=209795
+
+        Reviewed by Tim Hatcher.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        (-[TestUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        * TestWebKitAPI/cocoa/TestUIDelegate.h: Added.
+        * TestWebKitAPI/cocoa/TestUIDelegate.mm: Added.
+        (-[TestUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[TestUIDelegate waitForAlert]):
+
 2020-03-31  Aakash Jain  <aakash_jain@apple.com>
 
         Delete code for security EWS from old EWS (follow-up fix)

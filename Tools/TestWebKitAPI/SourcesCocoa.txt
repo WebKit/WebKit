@@ -28,6 +28,7 @@ cocoa/PlatformUtilitiesCocoa.mm
 cocoa/TestCocoa.mm
 cocoa/TestNavigationDelegate.mm
 cocoa/TestProtocol.mm
+cocoa/TestUIDelegate.mm
 cocoa/TestWKWebView.mm
 
 Tests/WebKitCocoa/TLSDeprecation.mm

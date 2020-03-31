@@ -606,10 +606,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             apiWebsitePolicies = defaultWebsitePolicies;
 
         if (apiWebsitePolicies) {
-            if (auto* websiteDataStore = apiWebsitePolicies->websiteDataStore()) {
-                if (subframeNavigation)
-                    [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._websiteDataStore must be nil for subframe navigations."];
-            }
+            if (apiWebsitePolicies->websiteDataStore() && subframeNavigation)
+                [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._websiteDataStore must be nil for subframe navigations."];
+            if (apiWebsitePolicies->userContentController() && subframeNavigation)
+                [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._userContentController must be nil for subframe navigations."];
             if (!apiWebsitePolicies->customUserAgent().isNull() && subframeNavigation)
                 [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._customUserAgent must be nil for subframe navigations."];
             if (!apiWebsitePolicies->customNavigatorPlatform().isNull() && subframeNavigation)

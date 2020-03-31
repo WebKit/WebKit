@@ -27,7 +27,6 @@
 
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKWebpagePreferences.h>
-#import <WebKit/WKWebsiteDataStore.h>
 
 typedef NS_ENUM(NSInteger, _WKWebsiteAutoplayPolicy) {
     _WKWebsiteAutoplayPolicyDefault,
@@ -56,6 +55,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDeviceOrientationAndMotionAccessPolicy)
 } WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
 @class _WKCustomHeaderFields;
+@class WKUserContentController;
+@class WKWebsiteDataStore;
 
 @interface WKWebpagePreferences (WKPrivate)
 
@@ -65,6 +66,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDeviceOrientationAndMotionAccessPolicy)
 @property (nonatomic, copy, setter=_setCustomHeaderFields:) NSArray<_WKCustomHeaderFields *> *_customHeaderFields;
 @property (nonatomic, setter=_setPopUpPolicy:) _WKWebsitePopUpPolicy _popUpPolicy;
 @property (nonatomic, strong, setter=_setWebsiteDataStore:) WKWebsiteDataStore *_websiteDataStore;
+@property (nonatomic, strong, setter=_setUserContentController:) WKUserContentController *_userContentController WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, copy, setter=_setCustomUserAgent:) NSString *_customUserAgent;
 @property (nonatomic, copy, setter=_setCustomUserAgentAsSiteSpecificQuirks:) NSString *_customUserAgentAsSiteSpecificQuirks;
 @property (nonatomic, copy, setter=_setCustomNavigatorPlatform:) NSString *_customNavigatorPlatform;

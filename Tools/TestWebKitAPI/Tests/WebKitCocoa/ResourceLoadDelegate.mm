@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "TCPServer.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
@@ -77,24 +78,6 @@
 {
     if (_didCompleteWithError)
         _didCompleteWithError(webView, resourceLoad, error, response);
-}
-
-@end
-
-@interface TestUIDelegate : NSObject <WKUIDelegate>
-
-@property (nonatomic, copy) void (^runJavaScriptAlertPanelWithMessage)(WKWebView *, NSString *, WKFrameInfo *, void (^)(void));
-
-@end
-
-@implementation TestUIDelegate
-
-- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
-{
-    if (_runJavaScriptAlertPanelWithMessage)
-        _runJavaScriptAlertPanelWithMessage(webView, message, frame, completionHandler);
-    else
-        completionHandler();
 }
 
 @end

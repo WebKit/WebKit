@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKMutableDictionary.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -1722,4 +1723,60 @@ TEST(WebpagePreferences, WebsitePoliciesDataStore)
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_NE(pid1, [cookieWebView _webProcessIdentifier]);
+}
+
+TEST(WebpagePreferences, WebsitePoliciesUserContentController)
+{
+    auto makeScript = [] (NSString *script) {
+        return [[[WKUserScript alloc] initWithSource:script injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES] autorelease];
+    };
+    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration new] autorelease];
+    [configuration.userContentController addUserScript:makeScript(@"alert('testAlert1')")];
+    TestWKWebView *webView = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration] autorelease];
+    TestUIDelegate *uiDelegate = [[TestUIDelegate new] autorelease];
+    webView.UIDelegate = uiDelegate;
+    TestNavigationDelegate *navigationDelegate = [[TestNavigationDelegate new] autorelease];
+    __block bool iframeExceptionThrown = false;
+    __block RetainPtr<WKUserContentController> replacementUserContentController;
+    navigationDelegate.decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        if ([action.request.URL.path hasSuffix:@"/simple-iframe.html"])
+            return completionHandler(WKNavigationActionPolicyAllow, nil);
+        if ([action.request.URL.path hasSuffix:@"/simple.html"]) {
+            @try {
+                WKWebpagePreferences *preferences = [[WKWebpagePreferences new] autorelease];
+                preferences._userContentController = [[WKUserContentController new] autorelease];
+                return completionHandler(WKNavigationActionPolicyAllow, preferences);
+            } @catch (NSException *exception) {
+                iframeExceptionThrown = true;
+            }
+            return;
+        }
+        
+        EXPECT_TRUE([action.request.URL.path hasSuffix:@"/simple2.html"]);
+        WKWebpagePreferences *preferences = [[WKWebpagePreferences new] autorelease];
+        replacementUserContentController = adoptNS([WKUserContentController new]);
+        [replacementUserContentController addUserScript:makeScript(@"alert('testAlert2')")];
+        preferences._userContentController = replacementUserContentController.get();
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    webView.navigationDelegate = navigationDelegate;
+
+    [webView loadTestPageNamed:@"simple-iframe"];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "testAlert1");
+    TestWebKitAPI::Util::run(&iframeExceptionThrown);
+
+    [webView loadTestPageNamed:@"simple2"];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "testAlert2");
+
+    bool caughtException = false;
+    @try {
+        WKWebpagePreferences *preferences = [[WKWebpagePreferences new] autorelease];
+        preferences._userContentController = [[WKUserContentController new] autorelease];
+        [webView _updateWebpagePreferences:preferences];
+    } @catch (NSException *exception) {
+        caughtException = true;
+    }
+    EXPECT_TRUE(caughtException);
+
+    // FIXME: Make _addUserScriptImmediately work successfully after using WKWebpagePreferences._userContentController
 }

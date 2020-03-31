@@ -178,7 +178,7 @@ public:
     void addVisitedLinkStoreUser(VisitedLinkStore&, WebPageProxyIdentifier);
     void removeVisitedLinkStoreUser(VisitedLinkStore&, WebPageProxyIdentifier);
 
-    void addWebUserContentControllerProxy(WebUserContentControllerProxy&, WebPageCreationParameters&);
+    void addWebUserContentControllerProxy(WebUserContentControllerProxy&);
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
 
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(uint64_t);

@@ -62,6 +62,7 @@ class WebScriptMessageHandler;
 struct FrameInfoData;
 class WebCompiledContentRuleListData;
 struct WebPageCreationParameters;
+struct UserContentControllerParameters;
 enum class InjectUserScriptImmediately : bool;
 
 class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, private IPC::MessageReceiver {
@@ -75,7 +76,9 @@ public:
 
     static WebUserContentControllerProxy* get(UserContentControllerIdentifier);
 
-    void addProcess(WebProcessProxy&, WebPageCreationParameters&);
+    UserContentControllerParameters parameters() const;
+
+    void addProcess(WebProcessProxy&);
     void removeProcess(WebProcessProxy&);
 
     API::Array& userScripts() { return m_userScripts.get(); }
@@ -105,7 +108,7 @@ public:
     void removeContentRuleList(const String&);
     void removeAllContentRuleLists();
     const HashMap<String, RefPtr<API::ContentRuleList>>& contentExtensionRules() { return m_contentRuleLists; }
-    Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleListData();
+    Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleListData() const;
 #endif
 
     UserContentControllerIdentifier identifier() const { return m_identifier; }

@@ -96,37 +96,39 @@ void WebUserContentControllerProxy::removeNetworkProcess(NetworkProcessProxy& pr
 }
 #endif
 
-void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy, WebPageCreationParameters& parameters)
+void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy)
 {
     ASSERT(!m_processes.hasNullReferences());
 
     if (m_processes.add(webProcessProxy).isNewEntry)
         webProcessProxy.addMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), identifier(), *this);
+}
 
-    ASSERT(parameters.userContentWorlds.isEmpty());
+UserContentControllerParameters WebUserContentControllerProxy::parameters() const
+{
+    UserContentControllerParameters parameters;
+
     for (const auto& world : m_contentWorlds)
         parameters.userContentWorlds.append(world.key->worldData());
 
-    ASSERT(parameters.userScripts.isEmpty());
     for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
         parameters.userScripts.append({ userScript->identifier(), userScript->contentWorld().identifier(), userScript->userScript() });
 
-    ASSERT(parameters.userStyleSheets.isEmpty());
     for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
         parameters.userStyleSheets.append({ userStyleSheet->identifier(), userStyleSheet->contentWorld().identifier(), userStyleSheet->userStyleSheet() });
 
-    ASSERT(parameters.messageHandlers.isEmpty());
     for (auto& handler : m_scriptMessageHandlers.values())
         parameters.messageHandlers.append({ handler->identifier(), handler->world().identifier(), handler->name() });
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    ASSERT(parameters.contentRuleLists.isEmpty());
     parameters.contentRuleLists = contentRuleListData();
 #endif
+    
+    return parameters;
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-Vector<std::pair<String, WebCompiledContentRuleListData>> WebUserContentControllerProxy::contentRuleListData()
+Vector<std::pair<String, WebCompiledContentRuleListData>> WebUserContentControllerProxy::contentRuleListData() const
 {
     Vector<std::pair<String, WebCompiledContentRuleListData>> data;
     data.reserveInitialCapacity(m_contentRuleLists.size());

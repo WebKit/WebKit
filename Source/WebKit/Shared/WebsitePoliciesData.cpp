@@ -45,7 +45,6 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << allowedAutoplayQuirks;
     encoder << customHeaderFields;
     encoder << popUpPolicy;
-    encoder << websiteDataStoreParameters;
     encoder << customUserAgent;
     encoder << customUserAgentAsSiteSpecificQuirks;
     encoder << customNavigatorPlatform;
@@ -89,11 +88,6 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     Optional<WebsitePopUpPolicy> popUpPolicy;
     decoder >> popUpPolicy;
     if (!popUpPolicy)
-        return WTF::nullopt;
-
-    Optional<Optional<WebsiteDataStoreParameters>> websiteDataStoreParameters;
-    decoder >> websiteDataStoreParameters;
-    if (!websiteDataStoreParameters)
         return WTF::nullopt;
 
     Optional<String> customUserAgent;
@@ -150,7 +144,6 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
 #endif
         WTFMove(*customHeaderFields),
         WTFMove(*popUpPolicy),
-        WTFMove(*websiteDataStoreParameters),
         WTFMove(*customUserAgent),
         WTFMove(*customUserAgentAsSiteSpecificQuirks),
         WTFMove(*customNavigatorPlatform),

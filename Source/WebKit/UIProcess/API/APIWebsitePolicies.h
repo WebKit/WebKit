@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "WebContentMode.h"
+#include "WebUserContentControllerProxy.h"
 #include "WebsiteAutoplayPolicy.h"
 #include "WebsiteAutoplayQuirk.h"
 #include "WebsiteLegacyOverflowScrollingTouchPolicy.h"
@@ -56,6 +57,8 @@ public:
 
     Ref<WebsitePolicies> copy() const;
 
+    WebKit::WebsitePoliciesData data();
+
     bool contentBlockersEnabled() const { return m_contentBlockersEnabled; }
     void setContentBlockersEnabled(bool enabled) { m_contentBlockersEnabled = enabled; }
     
@@ -81,8 +84,9 @@ public:
 
     WebKit::WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
     void setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&&);
-
-    WebKit::WebsitePoliciesData data();
+    
+    WebKit::WebUserContentControllerProxy* userContentController() const { return m_userContentController.get(); }
+    void setUserContentController(RefPtr<WebKit::WebUserContentControllerProxy>&&);
 
     void setCustomUserAgent(const WTF::String& customUserAgent) { m_customUserAgent = customUserAgent; }
     const WTF::String& customUserAgent() const { return m_customUserAgent; }
@@ -121,8 +125,6 @@ public:
     void setAllowsContentJavaScript(WebCore::AllowsContentJavaScript allows) { m_allowsContentJavaScript = allows; }
 
 private:
-    WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk>, WebKit::WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&, Vector<WebCore::CustomHeaderFields>&&, WebKit::WebsitePopUpPolicy, RefPtr<WebKit::WebsiteDataStore>&&);
-
     bool m_contentBlockersEnabled { true };
     OptionSet<WebKit::WebsiteAutoplayQuirk> m_allowedAutoplayQuirks;
     WebKit::WebsiteAutoplayPolicy m_autoplayPolicy { WebKit::WebsiteAutoplayPolicy::Default };
@@ -133,6 +135,7 @@ private:
     Vector<WebCore::CustomHeaderFields> m_customHeaderFields;
     WebKit::WebsitePopUpPolicy m_popUpPolicy { WebKit::WebsitePopUpPolicy::Default };
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
+    RefPtr<WebKit::WebUserContentControllerProxy> m_userContentController;
     WTF::String m_customUserAgent;
     WTF::String m_customUserAgentAsSiteSpecificQuirks;
     WTF::String m_customNavigatorPlatform;
