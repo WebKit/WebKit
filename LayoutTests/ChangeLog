@@ -1,3 +1,12 @@
+2020-03-31  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac Debug ] ASSERTION FAILED: m_videoFullscreenMode on media/media-fullscreen-return-to-inline.html
+        https://bugs.webkit.org/show_bug.cgi?id=209823
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-03-31  Chris Lord  <clord@igalia.com>
 
         requestAnimationFrame and cancelAnimationFrame should be present on DedicatedWorkerGlobalScope
