@@ -1,3 +1,51 @@
+2020-03-31  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Several refactorings done in the MemoryPressureMonitor.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=209464
+
+        Reviewed by Adrian Perez de Castro.
+
+        1) toIntegralType() parses the C-string str interpreting its content
+        as an `unsigned long long int` which is more appropriate for
+        the size_t (unsigned integer type) variables used by the
+        MemoryPressureMonitor functions in counterpoint of atoll() what
+        returns a `long long int`.
+
+        This change also controls if the parsing was succesful. In negative
+        case returns `notSet`.
+
+        2) Added the getCgroupFileValue() function what encapsulates the
+        manipulation of the opened files in the `/sys/fs/cgroup` hierarchy.
+        This change simplify the code avoding unnecessary code repetion.
+
+        3) getCgroupControllerPath() now checks if there is a `name=systemd`
+        controller listed in the `/proc/self/cgroup`. This important for
+        cgroup v2 activated with `systemd.unified_cgroup_hierarchy=yes`
+        through the Linux kernel cmdline. The unified hierarchy simplies
+        path of the controllers under the same directory (check the
+        "Deprecated v1 Core Features" section in the Linux Kernel
+        documentation fir cgroup v2 [1]):
+
+            Multiple hierarchies including named ones are not supported
+
+        [1] https://www.kernel.org/doc/Documentation/cgroup-v2.txt
+
+        4) Because 3) the patch composited for cgroupV2 changes
+        getMemoryUsageWithCgroup() slightly. The name of the controller
+        is not needed anymore.
+
+        5) For cgroup v2, the MemoryTotal is calculated as the minimum
+        between memory.high and memory.max.
+
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        (WebKit::lowWatermarkPages):
+        (WebKit::getCgroupFileValue):
+        (WebKit::getMemoryTotalWithCgroup):
+        (WebKit::getMemoryUsageWithCgroup):
+        (WebKit::getCgroupControllerPath):
+        (WebKit::systemMemoryUsedAsPercentage):
+        (WebKit::getCgroupController): Deleted.
+
 2020-03-31  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Jumpy rendering of fixed-element layers while scrolling

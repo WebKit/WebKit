@@ -36,6 +36,7 @@
 #include <wtf/Threading.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
 
@@ -49,7 +50,7 @@ static const int s_memoryPresurePercentageThreshold = 90;
 static const int s_memoryPresurePercentageThresholdCritical = 95;
 // cgroups.7: The usual place for such mounts is under a tmpfs(5)
 // filesystem mounted at /sys/fs/cgroup.
-static const char* s_cgroupMemoryPath = "/sys/fs/cgroup/memory/%s/%s";
+static const char* s_cgroupMemoryPath = "/sys/fs/cgroup/%s/%s/%s";
 static const char* s_cgroupController = "/proc/self/cgroup";
 static const unsigned maxCgroupPath = 4096; // PATH_MAX = 4096 from (Linux) include/uapi/linux/limits.h
 
@@ -84,7 +85,10 @@ static size_t lowWatermarkPages()
                 low = notSet;
                 break;
             }
-            low += atoll(token);
+            bool ok = true;
+            auto value = toIntegralType<size_t>(token, strlen(token), &ok);
+            if (ok)
+                low += value;
             foundLow = true;
         }
     }
@@ -132,75 +136,75 @@ static size_t calculateMemoryAvailable(size_t memoryFree, size_t activeFile, siz
     return memoryAvailable;
 }
 
-size_t getMemoryTotalWithCgroup(CString memoryControllerName)
+
+size_t getCgroupFileValue(CString cgroupControllerName, CString cgroupControllerPath, CString cgroupFileName)
 {
     char buffer[128];
     char cgroupPath[maxCgroupPath];
     char* token;
     FILE* file;
+    bool ok = true;
+
+    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, cgroupControllerName.data(), cgroupControllerPath.data(), cgroupFileName.data());
+    file = fopen(cgroupPath, "r");
+    if (file) {
+        token = fgets(buffer, 128, file);
+        fclose(file);
+        size_t value = toIntegralType<size_t>(token, strlen(token), &ok);
+        if (!ok)
+            value = notSet;
+        return value;
+    }
+    return notSet;
+}
+
+size_t getMemoryTotalWithCgroup(CString memoryControllerName)
+{
+    size_t value = notSet;
 
     // Check memory limits in cgroupV2
-    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.memsw.max");
-    file = fopen(cgroupPath, "r");
-    if (file) {
-        token = fgets(buffer, 128, file);
-        fclose(file);
-        return atoll(token);
+    value = getCgroupFileValue("/", memoryControllerName, CString("memory.memsw.max"));
+    if (value != notSet)
+        return value;
+
+    value = getCgroupFileValue("/", memoryControllerName, CString("memory.max"));
+    size_t valueHigh = getCgroupFileValue("/", memoryControllerName, CString("memory.high"));
+    if (value != notSet && valueHigh != notSet) {
+        value = std::min(value, valueHigh);
+        return value;
     }
-    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.max");
-    file = fopen(cgroupPath, "r");
-    if (file) {
-        token = fgets(buffer, 128, file);
-        fclose(file);
-        return atoll(token);
-    }
+    if (valueHigh != notSet)
+        return valueHigh;
+    if (value != notSet)
+        return value;
 
     // Check memory limits in cgroupV1
-    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.memsw.limit_in_bytes");
-    file = fopen(cgroupPath, "r");
-    if (file) {
-        token = fgets(buffer, 128, file);
-        fclose(file);
-        return atoll(token);
-    }
-    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.limit_in_bytes");
-    file = fopen(cgroupPath, "r");
-    if (file) {
-        token = fgets(buffer, 128, file);
-        fclose(file);
-        return atoll(token);
-    }
-    return 0;
+    value = getCgroupFileValue("memory", memoryControllerName, CString("memory.memsw.limit_in_bytes"));
+    if (value != notSet)
+        return value;
+
+    value = getCgroupFileValue("memory", memoryControllerName, CString("memory.limit_in_bytes"));
+    if (value != notSet)
+        return value;
+
+    return value;
 }
 
 static size_t getMemoryUsageWithCgroup(CString memoryControllerName)
 {
-    char buffer[128];
-    char cgroupPath[maxCgroupPath];
-    char* token;
-    char* line;
-    FILE* fileCgroupPathUsageBytes;
+    size_t value = notSet;
 
     // Check memory limits in cgroupV2
-    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.current");
-    fileCgroupPathUsageBytes = fopen(cgroupPath, "r");
-    if (fileCgroupPathUsageBytes) {
-        line = fgets(buffer, 128, fileCgroupPathUsageBytes);
-        token = strtok(line, " ");
-        fclose(fileCgroupPathUsageBytes);
-        return atoll(token);
-    }
+    value = getCgroupFileValue("/", memoryControllerName, CString("memory.current"));
+    if (value != notSet)
+        return value;
 
     // Check memory limits in cgroupV1
-    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, memoryControllerName.data(), "memory.usage_in_bytes");
-    fileCgroupPathUsageBytes = fopen(cgroupPath, "r");
-    if (fileCgroupPathUsageBytes) {
-        line = fgets(buffer, 128, fileCgroupPathUsageBytes);
-        token = strtok(line, " ");
-        fclose(fileCgroupPathUsageBytes);
-        return atoll(token);
-    }
-    return 0;
+    value = getCgroupFileValue("memory", memoryControllerName, CString("memory.usage_in_bytes"));
+    if (value != notSet)
+        return value;
+
+    return notSet;
 }
 
 // This file describes control groups to which the process with
@@ -223,9 +227,9 @@ static size_t getMemoryUsageWithCgroup(CString memoryControllerName)
 // 2:cpuset:/
 // 1:name=systemd:/user.slice/user-1000.slice/user@1000.service/gnome-terminal-server.service
 // 0::/user.slice/user-1000.slice/user@1000.service/gnome-terminal-server.service
-static CString getCgroupController(const char* controllerName)
+static CString getCgroupControllerPath(const char* controllerName)
 {
-    CString memoryControllerName;
+    CString memoryControllerPath;
     FILE* file = fopen(s_cgroupController, "r");
     if (!file)
         return CString();
@@ -240,13 +244,17 @@ static CString getCgroupController(const char* controllerName)
         token = strtok(nullptr, ":");
         if (!strcmp(token, controllerName)) {
             token = strtok(nullptr, ":");
-            memoryControllerName = CString(token);
+            memoryControllerPath = CString(token);
             fclose(file);
-            return memoryControllerName;
+            return memoryControllerPath;
+        }
+        if (!strncmp(token, "name=systemd", 12)) {
+            token = strtok(nullptr, ":");
+            memoryControllerPath = CString(token);
         }
     }
     fclose(file);
-    return CString();
+    return memoryControllerPath;
 }
 
 
@@ -261,39 +269,52 @@ static int systemMemoryUsedAsPercentage()
     char buffer[128];
     while (char* line = fgets(buffer, 128, file)) {
         char* token = strtok(line, " ");
+        bool ok = true;
         if (!token)
             break;
 
         if (!strcmp(token, "MemAvailable:")) {
             if ((token = strtok(nullptr, " "))) {
-                memoryAvailable = atoll(token);
+                memoryAvailable = toIntegralType<size_t>(token, strlen(token), &ok);
+                if (!ok)
+                    memoryAvailable = notSet;
                 if (memoryTotal != notSet)
                     break;
             }
         } else if (!strcmp(token, "MemTotal:")) {
-            if ((token = strtok(nullptr, " ")))
-                memoryTotal = atoll(token);
-            else
+            if ((token = strtok(nullptr, " "))) {
+                memoryTotal = toIntegralType<size_t>(token, strlen(token), &ok);
+                if (!ok)
+                    memoryTotal = notSet;
+            } else
                 break;
         } else if (!strcmp(token, "MemFree:")) {
-            if ((token = strtok(nullptr, " ")))
-                memoryFree = atoll(token);
-            else
+            if ((token = strtok(nullptr, " "))) {
+                memoryFree = toIntegralType<size_t>(token, strlen(token), &ok);
+                if (!ok)
+                    memoryFree = notSet;
+            } else
                 break;
         } else if (!strcmp(token, "Active(file):")) {
-            if ((token = strtok(nullptr, " ")))
-                activeFile = atoll(token);
-            else
+            if ((token = strtok(nullptr, " "))) {
+                activeFile = toIntegralType<size_t>(token, strlen(token), &ok);
+                if (!ok)
+                    activeFile = notSet;
+            } else
                 break;
         } else if (!strcmp(token, "Inactive(file):")) {
-            if ((token = strtok(nullptr, " ")))
-                inactiveFile = atoll(token);
-            else
+            if ((token = strtok(nullptr, " "))) {
+                inactiveFile = toIntegralType<size_t>(token, strlen(token), &ok);
+                if (!ok)
+                    inactiveFile = notSet;
+            } else
                 break;
         } else if (!strcmp(token, "SReclaimable:")) {
-            if ((token = strtok(nullptr, " ")))
-                slabReclaimable = atoll(token);
-            else
+            if ((token = strtok(nullptr, " "))) {
+                slabReclaimable = toIntegralType<size_t>(token, strlen(token), &ok);
+                if (!ok)
+                    slabReclaimable = notSet;
+            } else
                 break;
         }
 
@@ -315,11 +336,11 @@ static int systemMemoryUsedAsPercentage()
         return -1;
 
     int memoryUsagePercentage = ((memoryTotal - memoryAvailable) * 100) / memoryTotal;
-    CString memoryControllerName = getCgroupController("memory");
-    if (!memoryControllerName.isNull()) {
-        memoryTotal = getMemoryTotalWithCgroup(memoryControllerName);
-        size_t memoryUsage = getMemoryUsageWithCgroup(memoryControllerName);
-        if (memoryTotal) {
+    CString memoryControllerPath = getCgroupControllerPath("memory");
+    if (!memoryControllerPath.isNull()) {
+        memoryTotal = getMemoryTotalWithCgroup(memoryControllerPath);
+        size_t memoryUsage = getMemoryUsageWithCgroup(memoryControllerPath);
+        if (memoryTotal != notSet && memoryUsage != notSet) {
             int memoryUsagePercentageWithCgroup = 100 * ((float) memoryUsage / (float) memoryTotal);
             if (memoryUsagePercentageWithCgroup > memoryUsagePercentage)
                 memoryUsagePercentage = memoryUsagePercentageWithCgroup;
