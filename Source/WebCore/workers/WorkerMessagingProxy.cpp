@@ -39,6 +39,7 @@
 #include "MessageEvent.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
+#include "Settings.h"
 #include "Worker.h"
 #include "WorkerInspectorProxy.h"
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -88,7 +89,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
 
     SocketProvider* socketProvider = document.socketProvider();
 
-    WorkerParameters params = { scriptURL, name, identifier, userAgent, isOnline, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, timeOrigin, referrerPolicy };
+    WorkerParameters params = { scriptURL, name, identifier, userAgent, isOnline, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, timeOrigin, referrerPolicy, document.settings().requestAnimationFrameEnabled() };
     auto thread = DedicatedWorkerThread::create(params, sourceCode, *this, *this, *this, startMode, document.topOrigin(), proxy, socketProvider, runtimeFlags);
 
     workerThreadCreated(thread.get());

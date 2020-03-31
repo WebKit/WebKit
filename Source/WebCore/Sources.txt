@@ -2568,6 +2568,7 @@ workers/AbstractWorker.cpp
 workers/DedicatedWorkerGlobalScope.cpp
 workers/DedicatedWorkerThread.cpp
 workers/Worker.cpp
+workers/WorkerAnimationController.cpp
 workers/WorkerConsoleClient.cpp
 workers/WorkerEventLoop.cpp
 workers/WorkerGlobalScope.cpp

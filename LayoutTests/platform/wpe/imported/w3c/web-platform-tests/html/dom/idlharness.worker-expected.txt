@@ -633,8 +633,8 @@ PASS DedicatedWorkerGlobalScope interface: operation postMessage(any, PostMessag
 PASS DedicatedWorkerGlobalScope interface: operation close() 
 PASS DedicatedWorkerGlobalScope interface: attribute onmessage 
 FAIL DedicatedWorkerGlobalScope interface: attribute onmessageerror assert_own_property: The global object must have a property "onmessageerror" expected property "onmessageerror" missing
-FAIL DedicatedWorkerGlobalScope interface: operation requestAnimationFrame(FrameRequestCallback) assert_own_property: global object missing non-static operation expected property "requestAnimationFrame" missing
-FAIL DedicatedWorkerGlobalScope interface: operation cancelAnimationFrame(unsigned long) assert_own_property: global object missing non-static operation expected property "cancelAnimationFrame" missing
+PASS DedicatedWorkerGlobalScope interface: operation requestAnimationFrame(FrameRequestCallback) 
+PASS DedicatedWorkerGlobalScope interface: operation cancelAnimationFrame(unsigned long) 
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Object.setPrototypeOf should throw a TypeError 
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via __proto__ should throw a TypeError 
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Reflect.setPrototypeOf should return false 
@@ -651,10 +651,10 @@ PASS DedicatedWorkerGlobalScope interface: calling postMessage(any, PostMessageO
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "close()" with the proper type 
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "onmessage" with the proper type 
 FAIL DedicatedWorkerGlobalScope interface: self must inherit property "onmessageerror" with the proper type assert_own_property: expected property "onmessageerror" missing
-FAIL DedicatedWorkerGlobalScope interface: self must inherit property "requestAnimationFrame(FrameRequestCallback)" with the proper type assert_own_property: expected property "requestAnimationFrame" missing
-FAIL DedicatedWorkerGlobalScope interface: calling requestAnimationFrame(FrameRequestCallback) on self with too few arguments must throw TypeError assert_own_property: expected property "requestAnimationFrame" missing
-FAIL DedicatedWorkerGlobalScope interface: self must inherit property "cancelAnimationFrame(unsigned long)" with the proper type assert_own_property: expected property "cancelAnimationFrame" missing
-FAIL DedicatedWorkerGlobalScope interface: calling cancelAnimationFrame(unsigned long) on self with too few arguments must throw TypeError assert_own_property: expected property "cancelAnimationFrame" missing
+PASS DedicatedWorkerGlobalScope interface: self must inherit property "requestAnimationFrame(FrameRequestCallback)" with the proper type 
+PASS DedicatedWorkerGlobalScope interface: calling requestAnimationFrame(FrameRequestCallback) on self with too few arguments must throw TypeError 
+PASS DedicatedWorkerGlobalScope interface: self must inherit property "cancelAnimationFrame(unsigned long)" with the proper type 
+PASS DedicatedWorkerGlobalScope interface: calling cancelAnimationFrame(unsigned long) on self with too few arguments must throw TypeError 
 PASS WorkerGlobalScope interface: self must inherit property "self" with the proper type 
 PASS WorkerGlobalScope interface: self must inherit property "location" with the proper type 
 PASS WorkerGlobalScope interface: self must inherit property "navigator" with the proper type 

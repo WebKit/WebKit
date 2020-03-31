@@ -141,6 +141,8 @@ public:
 
     ReferrerPolicy referrerPolicy() const final;
 
+    bool requestAnimationFrameEnabled() const { return m_requestAnimationFrameEnabled; }
+
 protected:
     WorkerGlobalScope(const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
@@ -220,6 +222,7 @@ private:
 #endif
     std::unique_ptr<CSSValuePool> m_cssValuePool;
     ReferrerPolicy m_referrerPolicy;
+    bool m_requestAnimationFrameEnabled;
 };
 
 } // namespace WebCore

@@ -42,6 +42,9 @@
     [CallWith=GlobalObject, MayThrowException] void postMessage(any message, sequence<object> transfer);
     [CallWith=GlobalObject, MayThrowException] void postMessage(any message, optional PostMessageOptions options);
 
+    [Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvas] long requestAnimationFrame(RequestAnimationFrameCallback callback); // FIXME: Should return an unsigned long.
+    [Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvas] void cancelAnimationFrame(long handle); // FIXME: handle should be an unsigned long.
+
     void close();
 
     attribute EventHandler onmessage;

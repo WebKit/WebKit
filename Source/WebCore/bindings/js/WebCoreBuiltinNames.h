@@ -264,6 +264,7 @@ namespace WebCore {
     macro(byobRequest) \
     macro(caches) \
     macro(cancel) \
+    macro(cancelAnimationFrame) \
     macro(cancelIdleCallback) \
     macro(cloneArrayBuffer) \
     macro(close) \
@@ -339,6 +340,7 @@ namespace WebCore {
     macro(readableStreamController) \
     macro(reader) \
     macro(readyPromiseCapability) \
+    macro(requestAnimationFrame) \
     macro(requestIdleCallback) \
     macro(response) \
     macro(responseCacheIsValid) \

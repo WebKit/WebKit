@@ -32,7 +32,9 @@
 
 #include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
+#include "DOMHighResTimeStamp.h"
 #include <wtf/RefCounted.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
@@ -44,6 +46,12 @@ public:
 
     int m_id;
     bool m_firedOrCancelled;
+
+    // Allow a little more than 60fps to make sure we can at least hit that frame rate.
+    static constexpr Seconds fullSpeedAnimationInterval { 15_ms };
+    // Allow a little more than 30fps to make sure we can at least hit that frame rate.
+    static constexpr Seconds halfSpeedThrottlingAnimationInterval { 30_ms };
+    static constexpr Seconds aggressiveThrottlingAnimationInterval { 10_s };
 };
 
 } // namespace WebCore

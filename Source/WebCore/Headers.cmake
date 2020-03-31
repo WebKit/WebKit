@@ -1486,6 +1486,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     testing/MockGamepad.h
     testing/MockGamepadProvider.h
 
+    workers/WorkerAnimationController.h
     workers/WorkerDebuggerProxy.h
     workers/WorkerLoaderProxy.h
     workers/WorkerRunLoop.h

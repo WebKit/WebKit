@@ -36,7 +36,11 @@
 #include "DOMWindow.h"
 #include "DedicatedWorkerThread.h"
 #include "MessageEvent.h"
+#include "RequestAnimationFrameCallback.h"
 #include "SecurityOrigin.h"
+#if ENABLE(OFFSCREEN_CANVAS)
+#include "WorkerAnimationController.h"
+#endif
 #include "WorkerObjectProxy.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -92,5 +96,20 @@ DedicatedWorkerThread& DedicatedWorkerGlobalScope::thread()
 {
     return static_cast<DedicatedWorkerThread&>(Base::thread());
 }
+
+#if ENABLE(OFFSCREEN_CANVAS)
+CallbackId DedicatedWorkerGlobalScope::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
+{
+    if (!m_workerAnimationController)
+        m_workerAnimationController = WorkerAnimationController::create(*this);
+    return m_workerAnimationController->requestAnimationFrame(WTFMove(callback));
+}
+
+void DedicatedWorkerGlobalScope::cancelAnimationFrame(CallbackId callbackId)
+{
+    if (m_workerAnimationController)
+        m_workerAnimationController->cancelAnimationFrame(callbackId);
+}
+#endif
 
 } // namespace WebCore

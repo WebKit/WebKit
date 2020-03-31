@@ -78,6 +78,7 @@ WorkerGlobalScope::WorkerGlobalScope(const WorkerParameters& params, Ref<Securit
     , m_socketProvider(socketProvider)
     , m_performance(Performance::create(this, params.timeOrigin))
     , m_referrerPolicy(params.referrerPolicy)
+    , m_requestAnimationFrameEnabled(params.requestAnimationFrameEnabled)
 {
 #if !ENABLE(INDEXED_DATABASE)
     UNUSED_PARAM(connectionProxy);

@@ -45,7 +45,14 @@ namespace WebCore {
 class ContentSecurityPolicyResponseHeaders;
 class DedicatedWorkerThread;
 class MessagePort;
+class RequestAnimationFrameCallback;
 class SerializedScriptValue;
+
+#if ENABLE(OFFSCREEN_CANVAS)
+class WorkerAnimationController;
+
+using CallbackId = int;
+#endif
 
 class DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(DedicatedWorkerGlobalScope);
@@ -59,6 +66,11 @@ public:
 
     DedicatedWorkerThread& thread();
 
+#if ENABLE(OFFSCREEN_CANVAS)
+    CallbackId requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
+    void cancelAnimationFrame(CallbackId);
+#endif
+
 private:
     using Base = WorkerGlobalScope;
 
@@ -69,6 +81,10 @@ private:
     EventTargetInterface eventTargetInterface() const final;
 
     String m_name;
+
+#if ENABLE(OFFSCREEN_CANVAS)
+    RefPtr<WorkerAnimationController> m_workerAnimationController;
+#endif
 };
 
 } // namespace WebCore
