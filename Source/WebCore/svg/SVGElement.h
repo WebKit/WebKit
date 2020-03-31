@@ -164,6 +164,7 @@ protected:
     bool isPresentationAttribute(const QualifiedName&) const override;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
+    void didFinishInsertingNode() override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void childrenChanged(const ChildChange&) override;
     virtual bool selfHasRelativeLengths() const { return false; }
