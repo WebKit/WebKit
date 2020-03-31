@@ -1,3 +1,16 @@
+2020-03-31  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION: ASSERTION FAILED: regExpObjectNode in JSC::DFG::StrengthReductionPhase::handleNode
+        https://bugs.webkit.org/show_bug.cgi?id=209824
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        It's true that we need to verify lastIndex even when a RegExp is neither global nor sticky,
+        but if DFG's already converted RegExpExec to RegExpExecNonGlobalOrSticky, that means we've thrown away
+        the RegExpObject node, so we shouldn't try to reverify lastIndex when we reconsider folding to constant.
+
 2020-03-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFGArrayMode::alreadyChecked should have NonArray check when ArrayMode is NonArray+SlowPutArrayStorage
