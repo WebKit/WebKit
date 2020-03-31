@@ -44,6 +44,7 @@ struct ResourceLoadStatisticsParameters {
     bool enableDebugMode { false };
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
+    WebCore::SameSiteStrictEnforcementEnabled sameSiteStrictEnforcementEnabled { WebCore::SameSiteStrictEnforcementEnabled::No };
 #endif
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
     WebCore::RegistrableDomain manualPrevalentResource { };
@@ -59,6 +60,7 @@ struct ResourceLoadStatisticsParameters {
         encoder << enableDebugMode;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         encoder << thirdPartyCookieBlockingMode;
+        encoder << sameSiteStrictEnforcementEnabled;
 #endif
         encoder << firstPartyWebsiteDataRemovalMode;
         encoder << manualPrevalentResource;
@@ -106,6 +108,11 @@ struct ResourceLoadStatisticsParameters {
         decoder >> thirdPartyCookieBlockingMode;
         if (!thirdPartyCookieBlockingMode)
             return WTF::nullopt;
+
+        Optional<WebCore::SameSiteStrictEnforcementEnabled> sameSiteStrictEnforcementEnabled;
+        decoder >> sameSiteStrictEnforcementEnabled;
+        if (!sameSiteStrictEnforcementEnabled)
+            return WTF::nullopt;
 #endif
 
         Optional<WebCore::FirstPartyWebsiteDataRemovalMode> firstPartyWebsiteDataRemovalMode;
@@ -128,6 +135,7 @@ struct ResourceLoadStatisticsParameters {
             WTFMove(*enableDebugMode),
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
             WTFMove(*thirdPartyCookieBlockingMode),
+            WTFMove(*sameSiteStrictEnforcementEnabled),
 #endif
             WTFMove(*firstPartyWebsiteDataRemovalMode),
             WTFMove(*manualPrevalentResource),

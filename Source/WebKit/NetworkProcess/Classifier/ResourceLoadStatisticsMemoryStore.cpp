@@ -474,6 +474,9 @@ void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const RegistrableDoma
             if (isRedirect || wasNavigatedAfterShortDelayWithoutUserInteraction) {
                 if (redirectingDomainStatistics.topFrameUniqueRedirectsTo.add(targetDomain).isNewEntry)
                     statisticsWereUpdated = true;
+                if (redirectingDomainStatistics.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement.add(targetDomain).isNewEntry)
+                    statisticsWereUpdated = true;
+                RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8().data(), targetDomain.string().utf8().data());
                 auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
                 if (targetStatistics.topFrameUniqueRedirectsFrom.add(sourceDomain).isNewEntry)
                     statisticsWereUpdated = true;
@@ -712,6 +715,7 @@ void ResourceLoadStatisticsMemoryStore::setTopFrameUniqueRedirectTo(const TopFra
 
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
     statistics.topFrameUniqueRedirectsTo.add(redirectDomain);
+    statistics.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement.add(redirectDomain);
     // For consistency, make sure we also have a statistics entry for the redirect domain.
     ensureResourceStatisticsForRegistrableDomain(redirectDomain);
 }
@@ -943,6 +947,19 @@ bool ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor(ResourceLoa
     return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, window);
 }
 
+bool ResourceLoadStatisticsMemoryStore::shouldEnforceSameSiteStrictFor(ResourceLoadStatistics& resourceStatistic, bool shouldCheckForGrandfathering)
+{
+    if (!isSameSiteStrictEnforcementEnabled() || (shouldCheckForGrandfathering && resourceStatistic.grandfathered))
+        return false;
+
+    if (resourceStatistic.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement.size() > parameters().minimumTopFrameRedirectsForSameSiteStrictEnforcement) {
+        resourceStatistic.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement.clear();
+        return true;
+    }
+
+    return false;
+}
+
 RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor()
 {
     ASSERT(!RunLoop::isMain());
@@ -961,9 +978,16 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryS
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
             toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);
             toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
-        } else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
-            toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
-            statistic.gotLinkDecorationFromPrevalentResource = false;
+        } else {
+            if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
+                toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
+                statistic.gotLinkDecorationFromPrevalentResource = false;
+            }
+            if (shouldEnforceSameSiteStrictFor(statistic, shouldCheckForGrandfathering)) {
+                toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic.registrableDomain);
+                RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Scheduled %" PUBLIC_LOG_STRING " to have its cookies set to SameSite=strict.", statistic.registrableDomain.string().utf8().data());
+
+            }
         }
 
         if (shouldClearGrandfathering && statistic.grandfathered)

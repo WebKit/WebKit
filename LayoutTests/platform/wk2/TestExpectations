@@ -735,6 +735,8 @@ http/tests/resourceLoadStatistics [ Pass ]
 
 # The SameSite cookie API is only available in macOS Catalina and above.
 http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Skip ]
+http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html [ Skip ]
+http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to-database.html [ Skip ]
 
 http/tests/websocket/connection-refusal-in-frame-resource-load-statistics.html [ Pass ]
 # These are only supported behind a compile time flag in macOS High Sierra + iOS 11, and above.

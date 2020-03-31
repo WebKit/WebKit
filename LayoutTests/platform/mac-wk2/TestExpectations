@@ -713,6 +713,8 @@ http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html 
 
 # The SameSite cookie API is only available in macOS Catalina and above.
 [ Catalina+ ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ]
+[ Catalina+ ] http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html [ Pass ]
+[ Catalina+ ] http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to-database.html [ Pass ]
 
 # Skipped in general expectations since they only work on iOS and Mac, WK2.
 media/deactivate-audio-session.html [ Pass ]

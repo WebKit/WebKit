@@ -1,3 +1,22 @@
+2020-03-30  John Wilander  <wilander@apple.com>
+
+        Experimental: Enforce SameSite=strict for domains classified as bounce trackers
+        https://bugs.webkit.org/show_bug.cgi?id=209761
+        <rdar://problem/59394943>
+
+        Reviewed by Brent Fulgham and Kate Cheney (informal).
+
+        * http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to-database.html: Added.
+        * http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html: Added.
+        * platform/ios/TestExpectations:
+            New test cases marked as pass for Catalina+ based on CFNetwork API availability.
+        * platform/mac-wk2/TestExpectations:
+            New test cases marked as pass for Catalina+ based on CFNetwork API availability.
+        * platform/wk2/TestExpectations:
+            New test cases marked as skip due to CFNetwork API availability.
+
 2020-03-30  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Add support in named capture group identifiers for direct surrogate pairs

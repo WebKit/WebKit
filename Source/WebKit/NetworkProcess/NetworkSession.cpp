@@ -86,6 +86,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_resourceLoadStatisticsManualPrevalentResource(parameters.resourceLoadStatisticsParameters.manualPrevalentResource)
     , m_enableResourceLoadStatisticsLogTestingEvent(parameters.resourceLoadStatisticsParameters.enableLogTestingEvent)
     , m_thirdPartyCookieBlockingMode(parameters.resourceLoadStatisticsParameters.thirdPartyCookieBlockingMode)
+    , m_sameSiteStrictEnforcementEnabled(parameters.resourceLoadStatisticsParameters.sameSiteStrictEnforcementEnabled)
     , m_firstPartyWebsiteDataRemovalMode(parameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode)
 #endif
     , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(networkProcess, parameters.sessionID))
@@ -200,6 +201,7 @@ void NetworkSession::recreateResourceLoadStatisticStore(CompletionHandler<void()
 void NetworkSession::forwardResourceLoadStatisticsSettings()
 {
     m_resourceLoadStatistics->setThirdPartyCookieBlockingMode(m_thirdPartyCookieBlockingMode);
+    m_resourceLoadStatistics->setSameSiteStrictEnforcementEnabled(m_sameSiteStrictEnforcementEnabled);
     m_resourceLoadStatistics->setFirstPartyWebsiteDataRemovalMode(m_firstPartyWebsiteDataRemovalMode, [] { });
 }
 
@@ -225,6 +227,12 @@ void NetworkSession::notifyPageStatisticsTelemetryFinished(unsigned numberOfPrev
 
 void NetworkSession::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
 {
+    if (auto* storageSession = networkStorageSession()) {
+        for (auto& domain : domains.domainsToEnforceSameSiteStrictFor)
+            storageSession->setAllCookiesToSameSiteStrict(domain, [] { });
+    }
+    domains.domainsToEnforceSameSiteStrictFor.clear();
+
     m_networkProcess->deleteAndRestrictWebsiteDataForRegistrableDomains(m_sessionID, dataTypes, WTFMove(domains), shouldNotifyPage, WTFMove(completionHandler));
 }
 
@@ -249,6 +257,14 @@ void NetworkSession::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMod
     m_thirdPartyCookieBlockingMode = blockingMode;
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->setThirdPartyCookieBlockingMode(blockingMode);
+}
+
+void NetworkSession::setShouldEnbleSameSiteStrictEnforcement(WebCore::SameSiteStrictEnforcementEnabled enabled)
+{
+    ASSERT(m_resourceLoadStatistics);
+    m_sameSiteStrictEnforcementEnabled = enabled;
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->setSameSiteStrictEnforcementEnabled(enabled);
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 

@@ -1,3 +1,85 @@
+2020-03-30  John Wilander  <wilander@apple.com>
+
+        Experimental: Enforce SameSite=strict for domains classified as bounce trackers
+        https://bugs.webkit.org/show_bug.cgi?id=209761
+        <rdar://problem/59394943>
+
+        Reviewed by Brent Fulgham and Kate Cheney (informal).
+
+        This experimental feature is part of Intelligent Tracking Prevention and only enabled if
+        ITP (Resource Load Statistics) are. A new enum WebCore::SameSiteStrictEnforcementEnabled
+        controls the new behavior with default setting WebCore::SameSiteStrictEnforcementEnabled::No.
+
+        The features keeps a separate count of topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement
+        which builds up to a threshold. Once a domain goes above the threshold, its cookies are
+        rewritten as SameSite=strict and the topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement
+        counter for that domain is reset, effectively giving the domain a new chance to change its
+        behavior.
+
+        Test infrastructure is added to allow for layout tests.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createUniqueIndices):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationships):
+        (WebKit::CompletionHandler<void):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::logFrameNavigation):
+        (WebKit::ResourceLoadStatisticsMemoryStore::setTopFrameUniqueRedirectTo):
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldEnforceSameSiteStrictFor):
+        (WebKit::ResourceLoadStatisticsMemoryStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        (WebKit::ResourceLoadStatisticsStore::setSameSiteStrictEnforcementEnabled):
+        (WebKit::ResourceLoadStatisticsStore::isSameSiteStrictEnforcementEnabled const):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setSameSiteStrictEnforcementEnabled):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        (WebKit::RegistrableDomainsToDeleteOrRestrictWebsiteDataFor::isolatedCopy const):
+        (WebKit::RegistrableDomainsToDeleteOrRestrictWebsiteDataFor::isEmpty const):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setShouldEnbleSameSiteStrictEnforcementForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+            Added SetShouldEnbleSameSiteStrictEnforcementForTesting.
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::forwardResourceLoadStatisticsSettings):
+        (WebKit::NetworkSession::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkSession::setShouldEnbleSameSiteStrictEnforcement):
+        * NetworkProcess/NetworkSession.h:
+        * Scripts/webkit/messages.py:
+            IPC instructions to find WebCore::SameSiteStrictEnforcementEnabled in
+            WebCore/NetworkStorageSession.h. 
+        * Shared/ResourceLoadStatisticsParameters.h:
+        (WebKit::ResourceLoadStatisticsParameters::encode const):
+        (WebKit::ResourceLoadStatisticsParameters::decode):
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::setIsLoadedWithNavigationShared):
+        (API::Navigation::isLoadedWithNavigationShared const):
+            Keeps track of how a navigation occurs to make sure that
+            WebPageProxy::logFrameNavigation() can capture navigations initiated by the
+            user through the hosting application.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setShouldEnbleSameSiteStrictEnforcementForTesting):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+            See comment above for API::Navigation.
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+            See comment above for API::Navigation.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldEnbleSameSiteStrictEnforcementForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-03-30  Andres Gonzalez  <andresg_22@apple.com>
 
         Cache [WKAccessibilityWebPageObject accessibilityParameterizedAttributeNames] to avoid hitting often the main thread in isolated tree mode.

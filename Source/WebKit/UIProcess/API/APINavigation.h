@@ -156,6 +156,9 @@ public:
 
     void setForegroundActivity(std::unique_ptr<WebKit::ProcessThrottler::ForegroundActivity>&& activity) { m_foregroundActivity = WTFMove(activity); }
 
+    void setIsLoadedWithNavigationShared(bool value) { m_isLoadedWithNavigationShared = value; }
+    bool isLoadedWithNavigationShared() const { return m_isLoadedWithNavigationShared; }
+
 private:
     explicit Navigation(WebKit::WebNavigationState&);
     Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&, WebKit::WebBackForwardListItem* fromItem);
@@ -178,6 +181,7 @@ private:
     bool m_userContentExtensionsEnabled { true };
     WebKit::WebContentMode m_effectiveContentMode { WebKit::WebContentMode::Recommended };
     std::unique_ptr<WebKit::ProcessThrottler::ForegroundActivity> m_foregroundActivity;
+    bool m_isLoadedWithNavigationShared { false };
 };
 
 } // namespace API

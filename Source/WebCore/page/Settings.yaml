@@ -910,6 +910,9 @@ isFirstPartyWebsiteDataRemovalLiveOnTestingEnabled:
 isFirstPartyWebsiteDataRemovalReproTestingEnabled:
   initial: false
 
+isSameSiteStrictEnforcementEnabled:
+  initial: false
+
 isLoggedInAPIEnabled:
   initial: false
 

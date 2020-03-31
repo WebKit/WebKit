@@ -599,6 +599,21 @@ void WebResourceLoadStatisticsStore::setThirdPartyCookieBlockingMode(ThirdPartyC
     });
 }
 
+void WebResourceLoadStatisticsStore::setSameSiteStrictEnforcementEnabled(SameSiteStrictEnforcementEnabled enabled)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral())
+        return;
+
+    postTask([this, enabled]() {
+        if (!m_statisticsStore)
+            return;
+
+        m_statisticsStore->setSameSiteStrictEnforcementEnabled(enabled);
+    });
+}
+
 void WebResourceLoadStatisticsStore::setFirstPartyWebsiteDataRemovalMode(FirstPartyWebsiteDataRemovalMode mode, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

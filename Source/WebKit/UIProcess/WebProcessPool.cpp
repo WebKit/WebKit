@@ -600,6 +600,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
 #endif
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
+    WebCore::SameSiteStrictEnforcementEnabled sameSiteStrictEnforcementEnabled = WebCore::SameSiteStrictEnforcementEnabled::No;
     WebCore::RegistrableDomain manualPrevalentResource { };
     WEB_PROCESS_POOL_ADDITIONS_2
     if (withWebsiteDataStore) {
@@ -613,6 +614,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             enableResourceLoadStatisticsDebugMode = networkSessionParameters.resourceLoadStatisticsParameters.enableDebugMode;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
             thirdPartyCookieBlockingMode = networkSessionParameters.resourceLoadStatisticsParameters.thirdPartyCookieBlockingMode;
+            sameSiteStrictEnforcementEnabled = networkSessionParameters.resourceLoadStatisticsParameters.sameSiteStrictEnforcementEnabled;
 #endif
             firstPartyWebsiteDataRemovalMode = networkSessionParameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode;
             manualPrevalentResource = networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource;
@@ -637,6 +639,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             enableResourceLoadStatisticsDebugMode = networkSessionParameters.resourceLoadStatisticsParameters.enableDebugMode;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
             thirdPartyCookieBlockingMode = networkSessionParameters.resourceLoadStatisticsParameters.thirdPartyCookieBlockingMode;
+            sameSiteStrictEnforcementEnabled = networkSessionParameters.resourceLoadStatisticsParameters.sameSiteStrictEnforcementEnabled;
 #endif
             firstPartyWebsiteDataRemovalMode = networkSessionParameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode;
             manualPrevalentResource = networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource;
@@ -675,6 +678,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         enableResourceLoadStatisticsDebugMode,
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         thirdPartyCookieBlockingMode,
+        sameSiteStrictEnforcementEnabled,
 #endif
         firstPartyWebsiteDataRemovalMode,
         manualPrevalentResource,

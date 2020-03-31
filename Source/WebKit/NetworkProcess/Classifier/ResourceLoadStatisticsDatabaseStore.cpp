@@ -81,6 +81,7 @@ constexpr auto insertObservedDomainQuery = "INSERT INTO ObservedDomains (registr
 constexpr auto insertTopLevelDomainQuery = "INSERT INTO TopLevelDomains VALUES (?)"_s;
 constexpr auto storageAccessUnderTopFrameDomainsQuery = "INSERT OR IGNORE INTO StorageAccessUnderTopFrameDomains (domainID, topLevelDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 constexpr auto topFrameUniqueRedirectsToQuery = "INSERT OR IGNORE into TopFrameUniqueRedirectsTo (sourceDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
+constexpr auto topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery = "INSERT OR IGNORE into TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement (sourceDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
 constexpr auto topFrameUniqueRedirectsFromQuery = "INSERT OR IGNORE INTO TopFrameUniqueRedirectsFrom (targetDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 constexpr auto topFrameLoadedThirdPartyScriptsQuery = "INSERT OR IGNORE into TopFrameLoadedThirdPartyScripts (topFrameDomainID, subresourceDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
 constexpr auto subresourceUniqueRedirectsFromQuery = "INSERT OR IGNORE INTO SubresourceUniqueRedirectsFrom (subresourceDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
@@ -138,6 +139,7 @@ const char* tables[] = {
     "TopLevelDomains",
     "StorageAccessUnderTopFrameDomains",
     "TopFrameUniqueRedirectsTo",
+    "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement",
     "TopFrameUniqueRedirectsFrom",
     "TopFrameLinkDecorationsFrom",
     "TopFrameLoadedThirdPartyScripts",
@@ -183,7 +185,12 @@ constexpr auto createTopFrameUniqueRedirectsTo = "CREATE TABLE TopFrameUniqueRed
     "sourceDomainID INTEGER NOT NULL, toDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(sourceDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
     "FOREIGN KEY(toDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
-    
+
+constexpr auto createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement = "CREATE TABLE TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement ("
+    "sourceDomainID INTEGER NOT NULL, toDomainID INTEGER NOT NULL, "
+    "FOREIGN KEY(sourceDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
+    "FOREIGN KEY(toDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
+
 constexpr auto createTopFrameUniqueRedirectsFrom = "CREATE TABLE TopFrameUniqueRedirectsFrom ("
     "targetDomainID INTEGER NOT NULL, fromDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(targetDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
@@ -222,6 +229,7 @@ constexpr auto createSubresourceUniqueRedirectsFrom = "CREATE TABLE SubresourceU
 // CREATE UNIQUE INDEX Queries
 constexpr auto createUniqueIndexStorageAccessUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS StorageAccessUnderTopFrameDomains_domainID_topLevelDomainID on StorageAccessUnderTopFrameDomains ( domainID, topLevelDomainID );"_s;
 constexpr auto createUniqueIndexTopFrameUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsTo_sourceDomainID_toDomainID on TopFrameUniqueRedirectsTo ( sourceDomainID, toDomainID );"_s;
+constexpr auto createUniqueIndexTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement_sourceDomainID_toDomainID on TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement ( sourceDomainID, toDomainID );"_s;
 constexpr auto createUniqueIndexTopFrameUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsFrom_targetDomainID_fromDomainID on TopFrameUniqueRedirectsFrom ( targetDomainID, fromDomainID );"_s;
 constexpr auto createUniqueIndexTopFrameLinkDecorationsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameLinkDecorationsFrom_toDomainID_fromDomainID on TopFrameLinkDecorationsFrom ( toDomainID, fromDomainID );"_s;
 constexpr auto createUniqueIndexTopFrameLoadedThirdPartyScripts = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameLoadedThirdPartyScripts_topFrameDomainID_subresourceDomainID on TopFrameLoadedThirdPartyScripts ( topFrameDomainID, subresourceDomainID );"_s;
@@ -412,6 +420,7 @@ bool ResourceLoadStatisticsDatabaseStore::createUniqueIndices()
 {
     if (!m_database.executeCommand(createUniqueIndexStorageAccessUnderTopFrameDomains)
         || !m_database.executeCommand(createUniqueIndexTopFrameUniqueRedirectsTo)
+        || !m_database.executeCommand(createUniqueIndexTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement)
         || !m_database.executeCommand(createUniqueIndexTopFrameUniqueRedirectsFrom)
         || !m_database.executeCommand(createUniqueIndexTopFrameLinkDecorationsFrom)
         || !m_database.executeCommand(createUniqueIndexTopFrameLoadedThirdPartyScripts)
@@ -446,6 +455,11 @@ bool ResourceLoadStatisticsDatabaseStore::createSchema()
 
     if (!m_database.executeCommand(createTopFrameUniqueRedirectsTo)) {
         LOG_ERROR("Could not create TopFrameUniqueRedirectsTo table in database (%i) - %s", m_database.lastError(), m_database.lastErrorMsg());
+        return false;
+    }
+
+    if (!m_database.executeCommand(createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement)) {
+        LOG_ERROR("Could not create TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement table in database (%i) - %s", m_database.lastError(), m_database.lastErrorMsg());
         return false;
     }
 
@@ -692,6 +706,7 @@ void ResourceLoadStatisticsDatabaseStore::insertDomainRelationships(const Resour
 
     insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, loadStatistics.storageAccessUnderTopFrameDomains, registrableDomainID.value());
     insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, loadStatistics.topFrameUniqueRedirectsTo, registrableDomainID.value());
+    insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, loadStatistics.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement, registrableDomainID.value());
     insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, loadStatistics.topFrameUniqueRedirectsFrom, registrableDomainID.value());
     insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, loadStatistics.subframeUnderTopFrameDomains, registrableDomainID.value());
     insertDomainRelationshipList(subresourceUnderTopFrameDomainsQuery, loadStatistics.subresourceUnderTopFrameDomains, registrableDomainID.value());
@@ -1612,6 +1627,8 @@ void ResourceLoadStatisticsDatabaseStore::logFrameNavigation(const RegistrableDo
                     return;
                 }
                 insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
+                insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
+                RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8().data(), targetDomain.string().utf8().data());
                 insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
                 statisticsWereUpdated = true;
             }
@@ -1646,6 +1663,28 @@ void ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration(con
     
     if (isPrevalentResource(fromDomain))
         setIsScheduledForAllButCookieDataRemoval(toDomain, true);
+}
+
+void ResourceLoadStatisticsDatabaseStore::clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto targetResult = ensureResourceStatisticsForRegistrableDomain(domain);
+    if (!targetResult.second) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement was not completed due to failed insert attempt", this);
+        completionHandler();
+        return;
+    }
+
+    SQLiteStatement removeRedirectsToSinceSameSite(m_database, "DELETE FROM TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement WHERE sourceDomainID = ?");
+    if (removeRedirectsToSinceSameSite.prepare() != SQLITE_OK
+        || removeRedirectsToSinceSameSite.bindInt(1, *targetResult.second) != SQLITE_OK
+        || removeRedirectsToSinceSameSite.step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+    }
+    
+    completionHandler();
 }
 
 void ResourceLoadStatisticsDatabaseStore::setUserInteraction(const RegistrableDomain& domain, bool hadUserInteraction, WallTime mostRecentInteraction)
@@ -1698,7 +1737,7 @@ void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const Registrable
     if (removeStorageAccess.prepare() != SQLITE_OK
         || removeStorageAccess.bindInt(1, *targetResult.second) != SQLITE_OK
         || removeStorageAccess.step() != SQLITE_DONE) {
-        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logUserInteraction failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearUserInteraction failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
 
@@ -2044,8 +2083,9 @@ void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo(const TopF
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo was not completed due to failed insert attempt", this);
         return;
     }
-    // For consistency, make sure we also have a statistics entry for the redirect domain.
+
     insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
+    insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom(const TopFrameDomain& topFrameDomain, const RedirectDomain& redirectDomain)
@@ -2257,7 +2297,8 @@ Vector<ResourceLoadStatisticsDatabaseStore::DomainData> ResourceLoadStatisticsDa
     ASSERT(!RunLoop::isMain());
     
     Vector<DomainData> results;
-    SQLiteStatement statement(m_database, "SELECT domainID, registrableDomain, mostRecentUserInteractionTime, hadUserInteraction, grandfathered, isScheduledForAllButCookieDataRemoval FROM ObservedDomains"_s);
+    SQLiteStatement statement(m_database, "SELECT domainID, registrableDomain, mostRecentUserInteractionTime, hadUserInteraction, grandfathered, isScheduledForAllButCookieDataRemoval, countOfTopFrameRedirects FROM ObservedDomains LEFT JOIN (SELECT sourceDomainID, COUNT(*) as countOfTopFrameRedirects from TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement GROUP BY sourceDomainID) as z ON z.sourceDomainID = domainID"_s);
+
     if (statement.prepare() != SQLITE_OK)
         return results;
     
@@ -2268,6 +2309,7 @@ Vector<ResourceLoadStatisticsDatabaseStore::DomainData> ResourceLoadStatisticsDa
             , statement.getColumnInt(3) ? true : false
             , statement.getColumnInt(4) ? true : false
             , statement.getColumnInt(5) ? true : false
+            , static_cast<unsigned>(statement.getColumnInt(6))
         });
     }
     
@@ -2380,6 +2422,19 @@ bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor(const Dom
     return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, window);
 }
 
+bool ResourceLoadStatisticsDatabaseStore::shouldEnforceSameSiteStrictFor(DomainData& resourceStatistic, bool shouldCheckForGrandfathering)
+{
+    if (!isSameSiteStrictEnforcementEnabled() || (shouldCheckForGrandfathering && resourceStatistic.grandfathered))
+        return false;
+
+    if (resourceStatistic.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement > parameters().minimumTopFrameRedirectsForSameSiteStrictEnforcement) {
+        clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement(resourceStatistic.registrableDomain, [] { });
+        return true;
+    }
+
+    return false;
+}
+
 RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabaseStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor()
 {
     ASSERT(!RunLoop::isMain());
@@ -2403,9 +2458,15 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
             toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);
             toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
-        } else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
-            toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
-            setIsScheduledForAllButCookieDataRemoval(statistic.registrableDomain, false);
+        } else {
+            if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
+                toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
+                setIsScheduledForAllButCookieDataRemoval(statistic.registrableDomain, false);
+            }
+            if (shouldEnforceSameSiteStrictFor(statistic, shouldCheckForGrandfathering)) {
+                toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic.registrableDomain);
+                RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Scheduled %" PUBLIC_LOG_STRING " to have its cookies set to SameSite=strict.", statistic.registrableDomain.string().utf8().data());
+            }
         }
         if (shouldClearGrandfathering && statistic.grandfathered)
             domainIDsToClearGrandfathering.append(statistic.domainID);
@@ -2695,6 +2756,7 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
 
     // Top frame stats
     appendSubStatisticList(builder, "TopFrameUniqueRedirectsTo", domain);
+    appendSubStatisticList(builder, "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement", domain);
     appendSubStatisticList(builder, "TopFrameUniqueRedirectsFrom", domain);
     appendSubStatisticList(builder, "TopFrameLinkDecorationsFrom", domain);
     appendSubStatisticList(builder, "TopFrameLoadedThirdPartyScripts", domain);

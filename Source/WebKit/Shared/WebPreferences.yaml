@@ -1928,6 +1928,13 @@ IsFirstPartyWebsiteDataRemovalReproTestingEnabled:
   humanReadableDescription: "Remove all non-cookie website data after just 30 seconds of no user interaction when Intelligent Tracking Prevention is enabled"
   category: internal
 
+IsSameSiteStrictEnforcementEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "SameSite strict enforcement (ITP)"
+  humanReadableDescription: "Enable SameSite strict enforcement to mitigate bounce tracking"
+  category: experimental
+
 IsLoggedInAPIEnabled:
     type: bool
     defaultValue: false

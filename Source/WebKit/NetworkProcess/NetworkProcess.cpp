@@ -1294,6 +1294,15 @@ void NetworkProcess::setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID se
     completionHandler();
 }
 
+void NetworkProcess::setShouldEnbleSameSiteStrictEnforcementForTesting(PAL::SessionID sessionID, WebCore::SameSiteStrictEnforcementEnabled enabled, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID))
+        networkSession->setShouldEnbleSameSiteStrictEnforcement(enabled);
+    else
+        ASSERT_NOT_REACHED();
+    completionHandler();
+}
+
 void NetworkProcess::setFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID sessionID, WebCore::FirstPartyWebsiteDataRemovalMode mode, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {

@@ -79,6 +79,7 @@ struct ResourceLoadStatistics {
 
     // Top frame stats
     HashSet<RegistrableDomain> topFrameUniqueRedirectsTo;
+    HashSet<RegistrableDomain> topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement;
     HashSet<RegistrableDomain> topFrameUniqueRedirectsFrom;
     HashSet<RegistrableDomain> topFrameLinkDecorationsFrom;
     bool gotLinkDecorationFromPrevalentResource { false };
