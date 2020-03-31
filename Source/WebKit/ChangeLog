@@ -1,3 +1,29 @@
+2020-03-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Jumpy rendering of fixed-element layers while scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=209466
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the Nicosia::SceneIntegration ownership into the
+        CompositingCoordinator class, along with the SceneIntegration::Client
+        inheritance. LayerTreeHost in turn now implements the updateScene()
+        method that triggers a scene update when invoked.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::CompositingCoordinator):
+        (WebKit::CompositingCoordinator::invalidate):
+        (WebKit::CompositingCoordinator::attachLayer):
+        (WebKit::CompositingCoordinator::requestUpdate):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::LayerTreeHost):
+        (WebKit::LayerTreeHost::~LayerTreeHost):
+        (WebKit::LayerTreeHost::updateScene):
+        (WebKit::LayerTreeHost::sceneIntegration): Deleted.
+        (WebKit::LayerTreeHost::requestUpdate): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.h:
+
 2020-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r258829): [CoordinatedGraphics] Web view not updated after cross site navigation with PSON enabled

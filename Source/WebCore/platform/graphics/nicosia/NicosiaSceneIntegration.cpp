@@ -29,10 +29,14 @@
 #include "config.h"
 #include "NicosiaSceneIntegration.h"
 
+#include "NicosiaPlatformLayer.h"
+#include "NicosiaScene.h"
+
 namespace Nicosia {
 
-SceneIntegration::SceneIntegration(Client& client)
+SceneIntegration::SceneIntegration(Scene& scene, Client& client)
 {
+    m_client.scene = makeRef(scene);
     m_client.object = &client;
 }
 
@@ -50,6 +54,7 @@ void SceneIntegration::setClient(Client& client)
 void SceneIntegration::invalidate()
 {
     LockHolder locker(m_client.lock);
+    m_client.scene = nullptr;
     m_client.object = nullptr;
 }
 
@@ -75,6 +80,16 @@ SceneIntegration::UpdateScope::UpdateScope(Ref<SceneIntegration>&& sceneIntegrat
 
 SceneIntegration::UpdateScope::~UpdateScope()
 {
+    if (!m_sceneIntegration->m_client.scene)
+        return;
+
+    m_sceneIntegration->m_client.scene->accessState(
+        [](Nicosia::Scene::State& state)
+        {
+            for (auto& compositionLayer : state.layers)
+                compositionLayer->flushState([](auto&) { });
+        });
+
     auto& sceneIntegrationObj = m_sceneIntegration.get();
     if (sceneIntegrationObj.m_client.object)
         sceneIntegrationObj.m_client.object->requestUpdate();

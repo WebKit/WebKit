@@ -90,7 +90,7 @@ void ScrollingTreePositionedNode::applyLayerPositions()
     layerPosition -= m_constraints.alignmentOffset();
 
     ASSERT(m_layer);
-    m_layer->accessStaging(
+    m_layer->updateState(
         [&layerPosition](Nicosia::CompositionLayer::LayerState& state)
         {
             state.position = layerPosition;

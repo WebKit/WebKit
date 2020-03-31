@@ -100,7 +100,7 @@ void ScrollingTreeFixedNode::applyLayerPositions()
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFixedNode " << scrollingNodeID() << " relatedNodeScrollPositionDidChange: viewportRectAtLastLayout " << m_constraints.viewportRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " layerPosition " << layerPosition);
 
     ASSERT(m_layer);
-    m_layer->accessStaging(
+    m_layer->updateState(
         [&layerPosition](Nicosia::CompositionLayer::LayerState& state)
         {
             state.position = layerPosition;

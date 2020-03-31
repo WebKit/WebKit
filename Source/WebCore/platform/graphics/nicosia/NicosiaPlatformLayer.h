@@ -282,13 +282,6 @@ public:
     }
 
     template<typename T>
-    void accessStaging(const T& functor)
-    {
-        LockHolder locker(PlatformLayer::m_state.lock);
-        functor(m_state.staging);
-    }
-
-    template<typename T>
     void accessCommitted(const T& functor)
     {
         LockHolder locker(PlatformLayer::m_state.lock);

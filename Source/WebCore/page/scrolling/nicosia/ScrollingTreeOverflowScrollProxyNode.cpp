@@ -84,7 +84,7 @@ void ScrollingTreeOverflowScrollProxyNode::applyLayerPositions()
     }
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeOverflowScrollProxyNode " << scrollingNodeID() << " applyLayerPositions: setting bounds origin to " << scrollOffset);
-    m_layer->accessStaging(
+    m_layer->updateState(
         [&scrollOffset](Nicosia::CompositionLayer::LayerState& state)
         {
             state.boundsOrigin = scrollOffset;
