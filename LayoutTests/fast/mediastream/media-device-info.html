@@ -6,11 +6,6 @@
     <script src="../../resources/testharness.js"></script>
     <script src="../../resources/testharnessreport.js"></script>
     <script>
-    var devices = [];
-
-    if (window.testRunner)
-        testRunner.setUserMediaPermission(true);
-
     promise_test((test) => {
         return navigator.mediaDevices.enumerateDevices()
             .then((devices) => {
@@ -33,6 +28,13 @@
             });
     }, "Test properties of MediaDeviceInfo");
 
+    promise_test(async (test) => {
+        await navigator.mediaDevices.enumerateDevices();
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        assert_equals(devices.length, 2);
+        assert_equals(devices[0].kind, "audioinput");
+        assert_equals(devices[1].kind, "videoinput");
+    }, "Ensure enumerateDevices exposes both microphone and camera");
     </script>
 </head>
 <body>

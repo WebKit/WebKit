@@ -1,3 +1,40 @@
+2020-03-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r258837. rdar://problem/61064858
+
+    MediaDevices::refreshDevices should take device type into account
+    https://bugs.webkit.org/show_bug.cgi?id=209417
+    <rdar://problem/60521332>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Now that we set deviceId to the empty string when media capture is not granted,
+    we can have two devices with the same ID. We also need to handle the device type.
+    
+    * Modules/mediastream/MediaDevices.cpp:
+    (WebCore::MediaDevices::refreshDevices):
+    
+    LayoutTests:
+    
+    * fast/mediastream/media-device-info-expected.txt:
+    * fast/mediastream/media-device-info.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258837 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-23  youenn fablet  <youenn@apple.com>
+
+            MediaDevices::refreshDevices should take device type into account
+            https://bugs.webkit.org/show_bug.cgi?id=209417
+            <rdar://problem/60521332>
+
+            Reviewed by Eric Carlson.
+
+            * fast/mediastream/media-device-info-expected.txt:
+            * fast/mediastream/media-device-info.html:
+
 2020-03-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening.
