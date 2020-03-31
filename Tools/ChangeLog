@@ -1,3 +1,17 @@
+2020-03-30  Peng Liu  <peng.liu6@apple.com>
+
+        PiP support of MiniBrowser is broken
+        https://bugs.webkit.org/show_bug.cgi?id=209749
+
+        Reviewed by Jer Noble.
+
+        Add com.apple.PIPAgent to the mach-lookup.global.name temporary exception entitlement.
+        * MiniBrowser/MiniBrowser.entitlements:
+        Fix an issue that the intended preferences are overwritten by default values
+        and enable the PiP support.
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate defaultConfiguration]):
+
 2020-03-30  Zhifei Fang  <zhifei_fang@apple.com>
 
         [results.webkit.org: Timeline]: Left side of the timeline scale is usually bigger than the right        

@@ -110,10 +110,6 @@ static WKWebsiteDataStore *persistentDataStore()
     if (!configuration) {
         configuration = [[WKWebViewConfiguration alloc] init];
         configuration.websiteDataStore = persistentDataStore();
-        configuration.preferences._fullScreenEnabled = YES;
-        configuration.preferences._developerExtrasEnabled = YES;
-        configuration.preferences._mediaDevicesEnabled = YES;
-        configuration.preferences._mockCaptureDevicesEnabled = YES;
 
         _WKProcessPoolConfiguration *processConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
         if (_settingsController.perWindowWebProcessesDisabled)
@@ -142,6 +138,12 @@ static WKWebsiteDataStore *persistentDataStore()
                 enabled = [feature defaultValue];
             [configuration.preferences _setEnabled:enabled forInternalDebugFeature:feature];
         }
+
+        configuration.preferences._fullScreenEnabled = YES;
+        configuration.preferences._allowsPictureInPictureMediaPlayback = YES;
+        configuration.preferences._developerExtrasEnabled = YES;
+        configuration.preferences._mediaDevicesEnabled = YES;
+        configuration.preferences._mockCaptureDevicesEnabled = YES;
     }
 
     configuration.suppressesIncrementalRendering = _settingsController.incrementalRenderingSuppressed;

@@ -14,6 +14,7 @@
 	<string>/</string>
 	<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
 	<array>
+		<string>com.apple.PIPAgent</string>
 		<string>com.apple.Safari.SafeBrowsing.Service</string>
 		<string>com.apple.WebKit.NetworkingDaemon</string>
 	</array>
