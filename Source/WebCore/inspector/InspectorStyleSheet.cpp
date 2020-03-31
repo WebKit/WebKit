@@ -1054,7 +1054,7 @@ static bool hasDynamicSpecificity(const CSSSelector& simpleSelector)
     for (const CSSSelector* selector = &simpleSelector; selector; selector = selector->tagHistory()) {
         if (selector->match() == CSSSelector::PseudoClass) {
             CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
-            if (pseudoClassType == CSSSelector::PseudoClassMatches)
+            if (pseudoClassType == CSSSelector::PseudoClassIs || pseudoClassType == CSSSelector::PseudoClassMatches)
                 return true;
             if (pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild) {
                 if (selector->selectorList())

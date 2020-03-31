@@ -1546,6 +1546,7 @@ webkit.org/b/151488 [ Debug ] imported/blink/editing/selection/deleteFromDocumen
 
 webkit.org/b/172337 imported/w3c/web-platform-tests/url/failure.html [ Pass Failure ]
 
+webkit.org/b/139634 [ Debug ] fast/selectors/is-backtracking.html [ Slow ]
 webkit.org/b/139634 [ Debug ] fast/selectors/matches-backtracking.html [ Slow ]
 webkit.org/b/139634 [ Debug ] fast/selectors/nth-child-of-register-requirement.html [ Slow ]
 webkit.org/b/139634 [ Debug ] fast/selectors/not-backtracking.html [ Slow ]

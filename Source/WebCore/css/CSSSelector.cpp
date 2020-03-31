@@ -120,8 +120,8 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
     case CSSSelector::PagePseudoClass:
         break;
     case CSSSelector::PseudoClass:
-        if (simpleSelector.pseudoClassType() == CSSSelector::PseudoClassMatches) {
-            ASSERT_WITH_MESSAGE(simpleSelector.selectorList() && simpleSelector.selectorList()->first(), "The parser should never generate a valid selector for an empty :matches().");
+        if (simpleSelector.pseudoClassType() == CSSSelector::PseudoClassIs || simpleSelector.pseudoClassType() == CSSSelector::PseudoClassMatches) {
+            ASSERT_WITH_MESSAGE(simpleSelector.selectorList() && simpleSelector.selectorList()->first(), "The parser should never generate a valid selector for an empty :is()/:matches().");
             if (!isComputingMaximumSpecificity)
                 return 0;
             return maxSpecificity(*simpleSelector.selectorList());
@@ -163,10 +163,10 @@ static unsigned simpleSelectorFunctionalPseudoClassStaticSpecificity(const CSSSe
 {
     if (simpleSelector.match() == CSSSelector::PseudoClass) {
         CSSSelector::PseudoClassType pseudoClassType = simpleSelector.pseudoClassType();
-        if (pseudoClassType == CSSSelector::PseudoClassMatches || pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild) {
+        if (pseudoClassType == CSSSelector::PseudoClassIs || pseudoClassType == CSSSelector::PseudoClassMatches || pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild) {
             const CSSSelectorList* selectorList = simpleSelector.selectorList();
             if (!selectorList) {
-                ASSERT_WITH_MESSAGE(pseudoClassType != CSSSelector::PseudoClassMatches, ":matches() should never be created without a valid selector list.");
+                ASSERT_WITH_MESSAGE(pseudoClassType != CSSSelector::PseudoClassIs && pseudoClassType != CSSSelector::PseudoClassMatches, ":is()/:matches() should never be created without a valid selector list.");
                 return 0;
             }
 
@@ -645,6 +645,12 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassOptional:
                 builder.appendLiteral(":optional");
                 break;
+            case CSSSelector::PseudoClassIs: {
+                builder.appendLiteral(":is(");
+                cs->selectorList()->buildSelectorsText(builder);
+                builder.append(')');
+                break;
+            }
             case CSSSelector::PseudoClassMatches: {
                 builder.appendLiteral(":matches(");
                 cs->selectorList()->buildSelectorsText(builder);

@@ -2,6 +2,8 @@
 <html>
 <head>
 <style>
+:is(div, article),                              /* dynamic, but statically always the same */
+:is(div, .foo, #bar, div#bar),                  /* dynamic, changing based on matched element */
 :matches(div, article),                         /* dynamic, but statically always the same */
 :matches(div, .foo, #bar, div#bar),             /* dynamic, changing based on matched element */
 div:nth-child(odd),                             /* static, no selector list */
@@ -9,6 +11,7 @@ div:nth-child(odd),                             /* static, no selector list */
 :nth-child(odd of div, .foo, #bar, div#bar),    /* dynamic, changing based on matched element */
 :nth-child(even of div, .foo, #bar, div#bar),   /* dynamic, changing based on matched element */
 :not(span, #missing),                           /* static, maximum in list */
+:not(:not(:is(div, .foo, #bar, div#bar))),      /* static, is() inside not() is maximized */
 :not(:not(:matches(div, .foo, #bar, div#bar))), /* static, matches() inside not() is maximized */
 * /* ignored */
 {

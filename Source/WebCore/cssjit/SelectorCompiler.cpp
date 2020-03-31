@@ -811,6 +811,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             return FunctionType::SimpleSelectorChecker;
         }
 
+    case CSSSelector::PseudoClassIs:
     case CSSSelector::PseudoClassMatches:
         {
             SelectorList matchesList;
@@ -836,7 +837,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                 if (localFunctionType == FunctionType::CannotCompile)
                     return FunctionType::CannotCompile;
 
-                // FIXME: Currently pseudo elements inside :matches are supported in non-JIT code.
+                // FIXME: Currently pseudo elements inside :is()/:matches() are supported in non-JIT code.
                 if (selectorFragments->first().pseudoElementSelector)
                     return FunctionType::CannotCompile;
 
@@ -858,7 +859,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             if (selectorFragments)
                 matchesList.removeLast();
 
-            // Since all selector list in :matches() cannot match anything, the whole :matches() filter cannot match anything.
+            // Since all selector list in :is()/:matches() cannot match anything, the whole :is()/:matches() filter cannot match anything.
             if (matchesList.isEmpty())
                 return FunctionType::CannotMatchAnything;
 

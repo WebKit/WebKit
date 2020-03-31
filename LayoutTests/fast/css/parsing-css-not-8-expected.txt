@@ -34,6 +34,8 @@ PASS document.querySelector(":not(foobar,foobar,})") threw exception SyntaxError
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,foobar,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,foobar,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,foobar,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,foobar,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -67,6 +69,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,.class,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,.class,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,.class,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,.class,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -102,6 +106,8 @@ PASS document.querySelector(":not(foobar,:last-child,})") threw exception Syntax
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:last-child,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:last-child,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:last-child,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:last-child,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -135,6 +141,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,foobar#id.class,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,foobar#id.class,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,foobar#id.class,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,foobar#id.class,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -170,6 +178,8 @@ PASS document.querySelector(":not(foobar,#id:empty,})") threw exception SyntaxEr
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,#id:empty,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,#id:empty,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,#id:empty,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,#id:empty,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -203,6 +213,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,a b,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,a b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,a b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,a b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -238,6 +250,8 @@ PASS document.querySelector(":not(foobar,a ~ b,})") threw exception SyntaxError:
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,a ~ b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,a ~ b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,a ~ b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,a ~ b,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -271,6 +285,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -306,9 +322,47 @@ PASS document.querySelector(":not(foobar,:nth-child(even of a, b, c),})") threw 
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:nth-child(even of a, b, c),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:nth-child(even of a, b, c),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:nth-child(even of a, b, c),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:nth-child(even of a, b, c),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),::first-line)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),::before)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),::after)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),[])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),))") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),{})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:not(:matches(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -339,6 +393,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:not(:matches(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:not(:matches(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar,:not(:matches(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar,:not(:matches(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -374,6 +430,8 @@ PASS document.querySelector(":not(.class,.class,})") threw exception SyntaxError
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,.class,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,.class,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,.class,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,.class,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -407,6 +465,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:last-child,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:last-child,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:last-child,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:last-child,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -442,6 +502,8 @@ PASS document.querySelector(":not(.class,foobar#id.class,})") threw exception Sy
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,foobar#id.class,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,foobar#id.class,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,foobar#id.class,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,foobar#id.class,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -475,6 +537,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,#id:empty,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,#id:empty,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,#id:empty,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,#id:empty,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -510,6 +574,8 @@ PASS document.querySelector(":not(.class,a b,})") threw exception SyntaxError: T
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,a b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,a b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,a b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,a b,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -543,6 +609,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,a ~ b,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,a ~ b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,a ~ b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,a ~ b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -578,6 +646,8 @@ PASS document.querySelector(":not(.class,:-webkit-any(.selector,#tama,#hanayo,#m
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -612,9 +682,47 @@ PASS document.querySelector(":not(.class,:nth-child(even of a, b, c),})") threw 
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:nth-child(even of a, b, c),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:nth-child(even of a, b, c),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:nth-child(even of a, b, c),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:nth-child(even of a, b, c),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),::first-line)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),::before)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),::after)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),[])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),))") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),{})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:not(:matches(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -645,6 +753,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:not(:matches(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:not(:matches(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(.class,:not(:matches(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(.class,:not(:matches(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -680,6 +790,8 @@ PASS document.querySelector(":not(:last-child,:last-child,})") threw exception S
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:last-child,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:last-child,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:last-child,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:last-child,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -713,6 +825,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,foobar#id.class,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,foobar#id.class,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,foobar#id.class,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,foobar#id.class,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -748,6 +862,8 @@ PASS document.querySelector(":not(:last-child,#id:empty,})") threw exception Syn
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,#id:empty,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,#id:empty,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,#id:empty,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,#id:empty,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -781,6 +897,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,a b,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,a b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,a b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,a b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -816,6 +934,8 @@ PASS document.querySelector(":not(:last-child,a ~ b,})") threw exception SyntaxE
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,a ~ b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,a ~ b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,a ~ b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,a ~ b,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -849,6 +969,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -884,9 +1006,47 @@ PASS document.querySelector(":not(:last-child,:nth-child(even of a, b, c),})") t
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:nth-child(even of a, b, c),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:nth-child(even of a, b, c),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:nth-child(even of a, b, c),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:nth-child(even of a, b, c),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),::first-line)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),::before)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),::after)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),[])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),))") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),{})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:not(:matches(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -917,6 +1077,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:not(:matches(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:not(:matches(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:last-child,:not(:matches(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:last-child,:not(:matches(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -952,6 +1114,8 @@ PASS document.querySelector(":not(foobar#id.class,foobar#id.class,})") threw exc
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,foobar#id.class,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,foobar#id.class,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,foobar#id.class,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,foobar#id.class,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -985,6 +1149,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,#id:empty,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,#id:empty,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,#id:empty,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,#id:empty,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1020,6 +1186,8 @@ PASS document.querySelector(":not(foobar#id.class,a b,})") threw exception Synta
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,a b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,a b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,a b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,a b,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -1053,6 +1221,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,a ~ b,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,a ~ b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,a ~ b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,a ~ b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1088,6 +1258,8 @@ PASS document.querySelector(":not(foobar#id.class,:-webkit-any(.selector,#tama,#
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -1122,9 +1294,47 @@ PASS document.querySelector(":not(foobar#id.class,:nth-child(even of a, b, c),})
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,:nth-child(even of a, b, c),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:nth-child(even of a, b, c),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,:nth-child(even of a, b, c),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,:nth-child(even of a, b, c),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),::first-line)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),::before)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),::after)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),[])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),))") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),{})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,:not(:matches(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1155,6 +1365,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,:not(:matches(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,:not(:matches(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(foobar#id.class,:not(:matches(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(foobar#id.class,:not(:matches(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1190,6 +1402,8 @@ PASS document.querySelector(":not(#id:empty,#id:empty,})") threw exception Synta
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,#id:empty,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,#id:empty,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,#id:empty,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,#id:empty,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -1223,6 +1437,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,a b,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,a b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,a b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,a b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1258,6 +1474,8 @@ PASS document.querySelector(":not(#id:empty,a ~ b,})") threw exception SyntaxErr
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,a ~ b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,a ~ b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,a ~ b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,a ~ b,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -1291,6 +1509,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1326,9 +1546,47 @@ PASS document.querySelector(":not(#id:empty,:nth-child(even of a, b, c),})") thr
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,:nth-child(even of a, b, c),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:nth-child(even of a, b, c),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,:nth-child(even of a, b, c),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,:nth-child(even of a, b, c),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),::first-line)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),::before)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),::after)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),[])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),))") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),{})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,:not(:matches(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1359,6 +1617,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,:not(:matches(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,:not(:matches(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(#id:empty,:not(:matches(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(#id:empty,:not(:matches(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1394,6 +1654,8 @@ PASS document.querySelector(":not(a b,a b,})") threw exception SyntaxError: The 
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,a b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,a b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,a b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,a b,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -1427,6 +1689,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,a ~ b,})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,a ~ b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,a ~ b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,a ~ b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1462,6 +1726,8 @@ PASS document.querySelector(":not(a b,:-webkit-any(.selector,#tama,#hanayo,#mido
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -1496,9 +1762,47 @@ PASS document.querySelector(":not(a b,:nth-child(even of a, b, c),})") threw exc
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,:nth-child(even of a, b, c),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:nth-child(even of a, b, c),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,:nth-child(even of a, b, c),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,:nth-child(even of a, b, c),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),::first-line)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),::before)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),::after)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),[])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),))") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),{})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,:not(:matches(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1529,6 +1833,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,:not(:matches(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,:not(:matches(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a b,:not(:matches(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a b,:not(:matches(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1564,6 +1870,8 @@ PASS document.querySelector(":not(a ~ b,a ~ b,})") threw exception SyntaxError: 
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,a ~ b,:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,a ~ b,:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,a ~ b,:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,a ~ b,:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -1597,6 +1905,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1632,9 +1942,47 @@ PASS document.querySelector(":not(a ~ b,:nth-child(even of a, b, c),})") threw e
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,:nth-child(even of a, b, c),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:nth-child(even of a, b, c),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,:nth-child(even of a, b, c),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,:nth-child(even of a, b, c),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),::first-line)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),::before)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),::after)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),[])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),))") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),{})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,:not(:matches(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1665,6 +2013,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,:not(:matches(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,:not(:matches(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(a ~ b,:not(:matches(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(a ~ b,:not(:matches(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1700,6 +2050,8 @@ PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
@@ -1734,9 +2086,47 @@ PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),::first-line)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),::before)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),::after)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),[])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),))") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),{})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1767,6 +2157,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:matches(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1802,9 +2194,47 @@ PASS document.querySelector(":not(:nth-child(even of a, b, c),:nth-child(even of
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:nth-child(even of a, b, c),:nth-child(even of a, b, c),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),::first-line)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),::before)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),::after)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),[])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),))") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),{})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1836,9 +2266,83 @@ PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:matches(coco
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:nth-child(even of a, b, c),:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),::first-line)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),::before)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),::after)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),[])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),))") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),{})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::first-line)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::before)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::after)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),[])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),))") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),{})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:is(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),::first-letter)") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
@@ -1869,6 +2373,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),})") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:not(:matches(cocoa, cappuccino)),:not(:matches(cocoa, cappuccino)),:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0

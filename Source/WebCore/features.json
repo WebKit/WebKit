@@ -814,6 +814,18 @@
         }
     },
     {
+        "name": "CSS Selector :is()",
+        "status": {
+            "status": "Supported",
+            "enabled-by-default": true
+        },
+        "url": "http://dev.w3.org/csswg/selectors-4/#matches",
+        "specification": "CSS Selectors Level 4",
+        "description": "The selector :is() takes a selector list as argument and is an element if any of them is (e.g. :is(article > section, #target)). When used for styling, the specificity of :is() is the higest specificity of all selectors in the selector list.",
+        "comment": "The pseudo classes <em>:visited</em> and <em>:link</em> are not supported inside :is()."
+    },
+    
+    {
         "name": "CSS Selector :lang() level 4",
         "status": {
             "status": "Supported",

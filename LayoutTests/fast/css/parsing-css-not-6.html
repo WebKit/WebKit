@@ -44,6 +44,7 @@ var validSelectors = [
     // Functional pseudo classes.
     ":-webkit-any(.selector,#tama,#hanayo,#midoriko)",
     ":not(:link)",
+    ":not(:is(cocoa, cappuccino))",
     ":not(:matches(cocoa, cappuccino))",
     ":nth-child(even of a, b, c)",
 ];
@@ -74,12 +75,14 @@ var invalidSelectors = [
 
     // Empty functional pseudo classes.
     ":not()",
+    ":is()",
     ":matches()",
     ":nth-child()",
     ":nth-child(2n of)",
 
     // Unbalanced parenthesized functional pseudo classes.
     ":not(",
+    ":is(",
     ":matches(",
     ":nth-child(2n+1 of",
 ];

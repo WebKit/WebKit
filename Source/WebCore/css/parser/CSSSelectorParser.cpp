@@ -495,6 +495,7 @@ static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassTy
 {
     switch (pseudoClassType) {
     case CSSSelector::PseudoClassNot:
+    case CSSSelector::PseudoClassIs:
     case CSSSelector::PseudoClassMatches:
     case CSSSelector::PseudoClassNthChild:
     case CSSSelector::PseudoClassNthLastChild:
@@ -632,6 +633,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             selector->setArgumentList(WTFMove(argumentList));
             return selector;
         }
+        case CSSSelector::PseudoClassIs:
         case CSSSelector::PseudoClassMatches: {
             auto selectorList = makeUnique<CSSSelectorList>();
             *selectorList = consumeComplexSelectorList(block);

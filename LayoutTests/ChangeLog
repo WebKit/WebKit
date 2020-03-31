@@ -1,3 +1,107 @@
+2020-03-30  Devin Rousso  <drousso@apple.com>
+
+        [CSS Selectors 4] Add support for `:is()` with the same logic for the existing `:matches()`
+        https://bugs.webkit.org/show_bug.cgi?id=209707
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/css-selector-text.html:
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-set-selector-text.html:
+        * fast/css/css-set-selector-text-expected.txt:
+        * fast/css/is-specificity-1.html: Copied from fast/css/matches-specificity-1.html.
+        * fast/css/is-specificity-1-expected.html: Copied from fast/css/matches-specificity-1-expected.html.
+        * fast/css/is-specificity-2.html: Copied from fast/css/matches-specificity-2.html.
+        * fast/css/is-specificity-2-expected.html: Copied from fast/css/matches-specificity-2-expected.html.
+        * fast/css/is-specificity-3.html: Copied from fast/css/matches-specificity-3.html.
+        * fast/css/is-specificity-3-expected.html: Copied from fast/css/matches-specificity-3-expected.html.
+        * fast/css/is-specificity-4.html: Copied from fast/css/matches-specificity-4.html.
+        * fast/css/is-specificity-4-expected.html: Copied from fast/css/matches-specificity-4-expected.html.
+        * fast/css/is-specificity-5.html: Copied from fast/css/matches-specificity-5.html.
+        * fast/css/is-specificity-5-expected.html: Copied from fast/css/matches-specificity-5-expected.html.
+        * fast/css/is-specificity-6.html: Copied from fast/css/matches-specificity-6.html.
+        * fast/css/is-specificity-6-expected.html: Copied from fast/css/matches-specificity-6-expected.html.
+        * fast/css/is-specificity-7.html: Copied from fast/css/matches-specificity-7.html.
+        * fast/css/is-specificity-7-expected.html: Copied from fast/css/matches-specificity-7-expected.html.
+        * fast/css/is-specificity-8.html: Copied from fast/css/matches-specificity-8.html.
+        * fast/css/is-specificity-8-expected.html: Copied from fast/css/matches-specificity-8-expected.html.
+        * fast/css/is-specificity-9.html: Copied from fast/css/matches-specificity-9.html.
+        * fast/css/is-specificity-9-expected.html: Copied from fast/css/matches-specificity-9-expected.html.
+        * fast/css/is-specificity-10.html: Copied from fast/css/matches-specificity-10.html.
+        * fast/css/is-specificity-10-expected.html: Copied from fast/css/matches-specificity-10-expected.html.
+        * fast/css/parsing-css-attribute-case-insensitive-value-1.html:
+        * fast/css/parsing-css-attribute-case-insensitive-value-1-expected.txt:
+        * fast/css/parsing-css-attribute-case-insensitive-value-4.html:
+        * fast/css/parsing-css-attribute-case-insensitive-value-4-expected.txt:
+        * fast/css/parsing-css-is-1.html: Coped from fast/css/parsing-css-matches-1.html.
+        * fast/css/parsing-css-is-1-expected.txt: Coped from fast/css/parsing-css-matches-1-expected.txt.
+        * fast/css/parsing-css-is-2.html: Coped from fast/css/parsing-css-matches-2.html.
+        * fast/css/parsing-css-is-2-expected.txt: Coped from fast/css/parsing-css-matches-2-expected.txt.
+        * fast/css/parsing-css-is-3.html: Coped from fast/css/parsing-css-matches-3.html.
+        * fast/css/parsing-css-is-3-expected.txt: Coped from fast/css/parsing-css-matches-3-expected.txt.
+        * fast/css/parsing-css-is-4.html: Coped from fast/css/parsing-css-matches-4.html.
+        * fast/css/parsing-css-is-4-expected.txt: Coped from fast/css/parsing-css-matches-4-expected.txt.
+        * fast/css/parsing-css-is-5.html: Coped from fast/css/parsing-css-matches-5.html.
+        * fast/css/parsing-css-is-5-expected.txt: Coped from fast/css/parsing-css-matches-5-expected.txt.
+        * fast/css/parsing-css-is-6.html: Coped from fast/css/parsing-css-matches-6.html.
+        * fast/css/parsing-css-is-6-expected.txt: Coped from fast/css/parsing-css-matches-6-expected.txt.
+        * fast/css/parsing-css-is-7.html: Coped from fast/css/parsing-css-matches-7.html.
+        * fast/css/parsing-css-is-7-expected.txt: Coped from fast/css/parsing-css-matches-7-expected.txt.
+        * fast/css/parsing-css-is-8.html: Coped from fast/css/parsing-css-matches-8.html.
+        * fast/css/parsing-css-is-8-expected.txt: Coped from fast/css/parsing-css-matches-8-expected.txt.
+        * fast/css/parsing-css-not-1.html:
+        * fast/css/parsing-css-not-1-expected.txt:
+        * fast/css/parsing-css-not-2.html:
+        * fast/css/parsing-css-not-2-expected.txt:
+        * fast/css/parsing-css-not-5.html:
+        * fast/css/parsing-css-not-5-expected.txt:
+        * fast/css/parsing-css-not-6.html:
+        * fast/css/parsing-css-not-6-expected.txt:
+        * fast/css/parsing-css-not-7.html:
+        * fast/css/parsing-css-not-7-expected.txt:
+        * fast/css/parsing-css-not-8.html:
+        * fast/css/parsing-css-not-8-expected.txt:
+        * fast/css/parsing-css-not-9.html:
+        * fast/css/parsing-css-not-9-expected.txt:
+        * fast/css/parsing-css-nth-child-of-4.html:
+        * fast/css/parsing-css-nth-child-of-4-expected.txt:
+        * fast/css/parsing-css-nth-last-child-of-4.html:
+        * fast/css/parsing-css-nth-last-child-of-4-expected.txt:
+        * fast/selectors/case-insensitive-attribute-register-requirement-1.html:
+        * fast/selectors/case-insensitive-attribute-register-requirement-1-expected.txt:
+        * fast/selectors/element-matches-attribute-ascii-case-insensitive-html-expected.txt:
+        * fast/selectors/element-matches-attribute-ascii-case-insensitive-html.html:
+        * fast/selectors/is-backtracking.html: Copied from fast/selectors/matches-backtracking.html.
+        * fast/selectors/is-backtracking-expected.txt: Copied from fast/selectors/matches-backtracking-expected.txt.
+        * fast/selectors/is-complex.html: Copied from fast/selectors/matches-complex.html.
+        * fast/selectors/is-complex-expected.txt: Copied from fast/selectors/matches-complex-expected.txt.
+        * fast/selectors/is-selector-list.html: Copied from fast/selectors/matches-selector-list.html.
+        * fast/selectors/is-selector-list-expected.txt: Copied from fast/selectors/matches-selector-list-expected.txt.
+        * fast/selectors/is-selector-list-ending-with-never-matching-selectors.html: Copied from fast/selectors/matches-selector-list-ending-with-never-matching-selectors.html.
+        * fast/selectors/is-selector-list-ending-with-never-matching-selectors-expected.txt: Copied from fast/selectors/matches-selector-list-ending-with-never-matching-selectors-expected.txt.
+        * fast/selectors/is-with-pseudo-element.html: Copied from fast/selectors/matches-with-pseudo-element.html.
+        * fast/selectors/is-with-pseudo-element-expected.html: Copied from fast/selectors/matches-with-pseudo-element-expected.html.
+        * fast/selectors/pseudo-element-inside-is.html: Copied from fast/selectors/pseudo-element-inside-matches.html.
+        * fast/selectors/pseudo-element-inside-is-expected.html: Copied from fast/selectors/pseudo-element-inside-matches-expected.html.
+        * fast/selectors/querySelector-attribute-ascii-case-insensitive-html.html:
+        * fast/selectors/querySelector-attribute-ascii-case-insensitive-html-expected.txt:
+        * fast/selectors/querySelector-is.html: Copied from fast/selectors/querySelector-matches.html.
+        * fast/selectors/querySelector-is-expected.txt: Copied from fast/selectors/querySelector-matches-expected.txt.
+        * fast/selectors/querySelector-tagname-case-sensitivity-svg-in-html.html:
+        * fast/selectors/querySelector-tagname-case-sensitivity-svg-in-html-expected.txt:
+        * fast/selectors/querySelector-tagname-case-sensitivity-svg-in-xhtml.xhtml:
+        * fast/selectors/querySelector-tagname-case-sensitivity-svg-in-xhtml-expected.txt:
+        * fast/selectors/querySelector-tagname-case-sensitivity-xml-in-html.html:
+        * fast/selectors/querySelector-tagname-case-sensitivity-xml-in-html-expected.txt:
+        * fast/selectors/querySelector-tagname-case-sensitivity-xml-in-xhtml.xhtml:
+        * fast/selectors/querySelector-tagname-case-sensitivity-xml-in-xhtml-expected.txt:
+        * inspector/css/selector-dynamic-specificity.html:
+        * inspector/css/selector-dynamic-specificity-expected.txt:
+
+        * TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-30  Simon Fraser  <simon.fraser@apple.com>
 
         scrollIntoView() erroneously scrolls non-containing block scrollers

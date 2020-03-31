@@ -36,16 +36,24 @@ var validSelectorsPart2 = [
     // Functional pseudo classes.
     ":-webkit-any(.selector,#tama,#hanayo,#midoriko)",
     ":nth-child(even of a, b, c)",
+    ":not(:is(cocoa, cappuccino))",
     ":not(:matches(cocoa, cappuccino))",
 ];
 
 var invalidSelectors = [
+    ":is(a, b, c::after)",
     ":matches(a, b, c::after)",
+    ":is(a, b, c:after)",
     ":matches(a, b, c:after)",
+    ":nth-child(2n+1 of d, e, :is(f, g, ::before))",
     ":nth-child(2n+1 of d, e, :matches(f, g, ::before))",
+    ":nth-child(2n+1 of d, e, :is(f, g, :before))",
     ":nth-child(2n+1 of d, e, :matches(f, g, :before))",
+    ":not(:is(a, b, c::after))",
     ":not(:matches(a, b, c::after))",
+    ":not(:is(a, b, c:after))",
     ":not(:matches(a, b, c:after))",
+    ":is(a, b, :is(c, d, :is(e, f, :is(g, h, i::after))))",
     ":matches(a, b, :matches(c, d, :matches(e, f, :matches(g, h, i::after))))",
 ];
 

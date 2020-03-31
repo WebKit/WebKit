@@ -86,6 +86,13 @@ testSelector(":root div RECT[class^=\"target\"]", [3, 6, 9]);
 
 debug("");
 debug("With functional pseudo classes.");
+testSelector(":root div :is(not-there, rect[class])", [1, 4, 7]);
+testSelector(":root div :is(not-there, Rect[class])", [2, 5, 8]);
+testSelector(":root div :is(not-there, RECT[class])", [3, 6, 9]);
+testSelector(":root div :is(not-there, rect[class^=\"target\"])", [1, 4, 7]);
+testSelector(":root div :is(not-there, Rect[class^=\"target\"])", [2, 5, 8]);
+testSelector(":root div :is(not-there, RECT[class^=\"target\"])", [3, 6, 9]);
+
 testSelector(":root div :matches(not-there, rect[class])", [1, 4, 7]);
 testSelector(":root div :matches(not-there, Rect[class])", [2, 5, 8]);
 testSelector(":root div :matches(not-there, RECT[class])", [3, 6, 9]);

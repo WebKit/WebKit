@@ -42,6 +42,8 @@ PASS document.querySelector(":not(})") threw exception SyntaxError: The string d
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:not())") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:is())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:matches())") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:nth-child())") threw exception SyntaxError: The string did not match the expected pattern..
@@ -49,6 +51,8 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:nth-child(2n of))") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":not(:is()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.querySelector(":not(:matches()") threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0

@@ -121,7 +121,8 @@ namespace WebCore {
             PseudoClassFullPageMedia,
             PseudoClassDefault,
             PseudoClassDisabled,
-            PseudoClassMatches,
+            PseudoClassIs,
+            PseudoClassMatches, // obsolete synonym for PseudoClassIs
             PseudoClassOptional,
             PseudoClassPlaceholderShown,
             PseudoClassRequired,
@@ -367,7 +368,7 @@ namespace WebCore {
             AtomString m_attributeCanonicalLocalName;
             AtomString m_argument; // Used for :contains and :nth-*
             std::unique_ptr<Vector<AtomString>> m_argumentList; // Used for :lang and ::part arguments.
-            std::unique_ptr<CSSSelectorList> m_selectorList; // Used for :matches() and :not().
+            std::unique_ptr<CSSSelectorList> m_selectorList; // Used for :is(), :matches(), and :not().
         
         private:
             RareData(AtomString&& value);

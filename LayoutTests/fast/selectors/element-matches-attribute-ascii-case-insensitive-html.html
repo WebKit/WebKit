@@ -42,6 +42,21 @@ testSelector('[DATA-ÆØÅ^="Web"]', [3, 4]);
 testSelector('[DATA-æØå^="Web"]', []);
 
 // Complex selectors.
+testSelector(':root :is(body, html) [data-æøå]', [1, 4]);
+testSelector(':root :is(body, html) [data-Æøå]', [2, 4]);
+testSelector(':root :is(body, html) [data-ÆØÅ]', [3, 4]);
+testSelector(':root :is(body, html) [data-æØå]', []);
+
+testSelector(':root :is(body, html) [Data-æøå="WebKit!"]', [1, 4]);
+testSelector(':root :is(body, html) [Data-Æøå="WebKit!"]', [2, 4]);
+testSelector(':root :is(body, html) [Data-ÆØÅ="WebKit!"]', [3, 4]);
+testSelector(':root :is(body, html) [Data-æØå="WebKit!"]', []);
+
+testSelector(':root :is(body, html) [DATA-æøå^="Web"]', [1, 4]);
+testSelector(':root :is(body, html) [DATA-Æøå^="Web"]', [2, 4]);
+testSelector(':root :is(body, html) [DATA-ÆØÅ^="Web"]', [3, 4]);
+testSelector(':root :is(body, html) [DATA-æØå^="Web"]', []);
+
 testSelector(':root :matches(body, html) [data-æøå]', [1, 4]);
 testSelector(':root :matches(body, html) [data-Æøå]', [2, 4]);
 testSelector(':root :matches(body, html) [data-ÆØÅ]', [3, 4]);

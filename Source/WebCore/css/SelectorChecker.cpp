@@ -274,7 +274,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     if (context.selector->match() == CSSSelector::PseudoElement) {
         if (context.selector->isCustomPseudoElement()) {
             // In functional pseudo class, custom pseudo elements are always disabled.
-            // FIXME: We should accept custom pseudo elements inside :matches().
+            // FIXME: We should accept custom pseudo elements inside :is()/:matches().
             if (context.inFunctionalPseudoClass)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
             if (ShadowRoot* root = context.element->containingShadowRoot()) {
@@ -829,6 +829,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 break; // FIXME: Add the support for specifying relations on ShadowRoot.
             return isFirstOfType(element, element.tagQName()) && isLastOfType(element, element.tagQName());
         }
+        case CSSSelector::PseudoClassIs:
         case CSSSelector::PseudoClassMatches:
             {
                 bool hasMatchedAnything = false;
@@ -846,7 +847,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                     unsigned localSpecificity = 0;
                     MatchResult result = matchRecursively(checkingContext, subcontext, localDynamicPseudoIdSet, localSpecificity);
 
-                    // Pseudo elements are not valid inside :matches
+                    // Pseudo elements are not valid inside :is()/:matches()
                     if (localDynamicPseudoIdSet)
                         continue;
 
