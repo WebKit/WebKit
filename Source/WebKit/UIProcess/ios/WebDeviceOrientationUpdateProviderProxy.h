@@ -49,7 +49,7 @@ public:
 private:
     // WebCore::WebCoreMotionManagerClient
     void orientationChanged(double, double, double, double, double) final;
-    void motionChanged(double, double, double, double, double, double, double, double, double) final;
+    void motionChanged(double, double, double, double, double, double, Optional<double>, Optional<double>, Optional<double>) final;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

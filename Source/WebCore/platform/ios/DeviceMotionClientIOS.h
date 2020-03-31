@@ -48,7 +48,7 @@ public:
     DeviceMotionData* lastMotion() const override;
     void deviceMotionControllerDestroyed() override;
 
-    void motionChanged(double, double, double, double, double, double, double, double, double) override;
+    void motionChanged(double, double, double, double, double, double, Optional<double>, Optional<double>, Optional<double>) override;
 
 private:
     WebCoreMotionManager* m_motionManager { nullptr };

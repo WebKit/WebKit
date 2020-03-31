@@ -1,3 +1,19 @@
+2020-03-31  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r253357) DeviceMotionEvent acceleration and rotationRate are null
+        https://bugs.webkit.org/show_bug.cgi?id=209831
+        <rdar://problem/60720953>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.h:
+        * UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.mm:
+        (WebKit::WebDeviceOrientationUpdateProviderProxy::motionChanged):
+        * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.cpp:
+        (WebKit::WebDeviceOrientationUpdateProvider::deviceMotionChanged):
+        * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.h:
+        * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.messages.in:
+
 2020-03-31  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI WKWebpagePreferences._userContentController

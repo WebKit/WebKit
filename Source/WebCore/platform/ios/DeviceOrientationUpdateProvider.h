@@ -44,7 +44,7 @@ public:
     virtual void stopUpdatingDeviceMotion(MotionManagerClient&) = 0;
 
     virtual void deviceOrientationChanged(double, double, double, double, double) = 0;
-    virtual void deviceMotionChanged(double, double, double, double, double, double, double, double, double) = 0;
+    virtual void deviceMotionChanged(double, double, double, double, double, double, Optional<double>, Optional<double>, Optional<double>) = 0;
     
 protected:
     DeviceOrientationUpdateProvider() = default;
