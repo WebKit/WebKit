@@ -1,5 +1,23 @@
 2020-03-31  Brent Fulgham  <bfulgham@apple.com>
 
+        Allow WKAppBoundDomains to be initialized with eTLD+1 only (no protocol)
+        https://bugs.webkit.org/show_bug.cgi?id=209839
+        <rdar://problem/61129400>
+
+        Reviewed by Darin Adler.
+
+        Create a convenience mode for WKAppBoundDomains that assumes https if the user does
+        not supply the full URL. This doesn't effect the behavior of the app-bound domains
+        because we only deal in RegistrableDomains.
+
+        Tested by TestWebKitAPI.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::initializeAppBoundDomains): If the protocol is missing from
+        a domain supplied by WKAppBoundDomains, assume it was https.
+
+2020-03-31  Brent Fulgham  <bfulgham@apple.com>
+
         [macOS] Update sandbox rules for correct sanitizer paths in current OS releases
         https://bugs.webkit.org/show_bug.cgi?id=209818
         <rdar://problem/58422996>

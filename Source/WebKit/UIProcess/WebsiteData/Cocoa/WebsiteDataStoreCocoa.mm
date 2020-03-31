@@ -486,6 +486,8 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
 
             for (NSString *domain in domains.get()) {
                 URL url { URL(), domain };
+                if (url.protocol().isEmpty())
+                    url.setProtocol("https"_s);
                 if (!url.isValid())
                     continue;
                 WebCore::RegistrableDomain appBoundDomain { url };

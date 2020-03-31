@@ -5,10 +5,11 @@
 	<key>WKAppBoundDomains</key>
 	<array>
 		<string>testDomain1</string>
-		<string>https://sub.domain.webkit.org/road/to/nowhere/</string>
-		<string>https://webkit.org</string>
-		<string>https://localhost:8000</string>
-		<string>http://localhost/road/to/nowhere/</string>
+		<string>apple.com</string>
+		<string>sub.domain.webkit.org/road/to/nowhere/</string>
+		<string>webkit.org</string>
+		<string>localhost:8000</string>
+		<string>localhost/road/to/nowhere/</string>
 		<string>file:///some/file</string>
 		<string>127.0.0.1</string>
 		<string></string>
