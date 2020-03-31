@@ -354,44 +354,6 @@ MediaStream& LibWebRTCMediaEndpoint::mediaStreamFromRTCStream(webrtc::MediaStrea
     return *mediaStream.iterator->value;
 }
 
-void LibWebRTCMediaEndpoint::addRemoteStream(webrtc::MediaStreamInterface&)
-{
-}
-
-void LibWebRTCMediaEndpoint::addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&& rtcReceiver, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& rtcStreams)
-{
-    ASSERT(rtcReceiver);
-    RefPtr<RTCRtpReceiver> receiver;
-    RefPtr<RealtimeMediaSource> remoteSource;
-
-    auto* rtcTrack = rtcReceiver->track().get();
-
-    switch (rtcReceiver->media_type()) {
-    case cricket::MEDIA_TYPE_DATA:
-        return;
-    case cricket::MEDIA_TYPE_AUDIO: {
-        rtc::scoped_refptr<webrtc::AudioTrackInterface> audioTrack = static_cast<webrtc::AudioTrackInterface*>(rtcTrack);
-        auto audioReceiver = m_peerConnectionBackend.audioReceiver(fromStdString(rtcTrack->id()));
-
-        receiver = WTFMove(audioReceiver.receiver);
-        audioReceiver.source->setSourceTrack(WTFMove(audioTrack));
-        break;
-    }
-    case cricket::MEDIA_TYPE_VIDEO: {
-        rtc::scoped_refptr<webrtc::VideoTrackInterface> videoTrack = static_cast<webrtc::VideoTrackInterface*>(rtcTrack);
-        auto videoReceiver = m_peerConnectionBackend.videoReceiver(fromStdString(rtcTrack->id()));
-
-        receiver = WTFMove(videoReceiver.receiver);
-        videoReceiver.source->setSourceTrack(WTFMove(videoTrack));
-        break;
-    }
-    }
-
-    receiver->setBackend(makeUnique<LibWebRTCRtpReceiverBackend>(WTFMove(rtcReceiver)));
-    auto& track = receiver->track();
-    addPendingTrackEvent(receiver.releaseNonNull(), track, rtcStreams, nullptr);
-}
-
 void LibWebRTCMediaEndpoint::addPendingTrackEvent(Ref<RTCRtpReceiver>&& receiver, MediaStreamTrack& track, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& rtcStreams, RefPtr<RTCRtpTransceiver>&& transceiver)
 {
     Vector<RefPtr<MediaStream>> streams;
@@ -524,21 +486,10 @@ std::unique_ptr<LibWebRTCRtpTransceiverBackend> LibWebRTCMediaEndpoint::transcei
     return nullptr;
 }
 
-
 void LibWebRTCMediaEndpoint::removeRemoteStream(webrtc::MediaStreamInterface& rtcStream)
 {
     bool removed = m_remoteStreamsById.remove(fromStdString(rtcStream.id()));
     ASSERT_UNUSED(removed, removed);
-}
-
-void LibWebRTCMediaEndpoint::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
-{
-    callOnMainThread([protectedThis = makeRef(*this), stream = WTFMove(stream)] {
-        if (protectedThis->isStopped())
-            return;
-        ASSERT(stream);
-        protectedThis->addRemoteStream(*stream.get());
-    });
 }
 
 void LibWebRTCMediaEndpoint::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)

@@ -122,7 +122,6 @@ private:
 
     // webrtc::PeerConnectionObserver API
     void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState) final;
-    void OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface>) final;
     void OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface>) final;
     void OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface>) final;
     void OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>) final;
@@ -140,8 +139,6 @@ private:
     void setLocalSessionDescriptionFailed(ExceptionCode, const char*);
     void setRemoteSessionDescriptionSucceeded();
     void setRemoteSessionDescriptionFailed(ExceptionCode, const char*);
-    void addRemoteStream(webrtc::MediaStreamInterface&);
-    void addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&&, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&);
     void removeRemoteStream(webrtc::MediaStreamInterface&);
     void newTransceiver(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>&&);
     void removeRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&&);
