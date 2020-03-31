@@ -135,12 +135,11 @@
 @property (nonatomic, readonly) UIEdgeInsets _computedObscuredInset;
 @property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
+@property (nonatomic, readonly) int32_t _deviceOrientation;
 
 - (BOOL)_effectiveAppearanceIsDark;
 - (BOOL)_effectiveUserInterfaceLevelIsElevated;
 
 @end
-
-int32_t deviceOrientation();
 
 #endif // PLATFORM(IOS_FAMILY)
