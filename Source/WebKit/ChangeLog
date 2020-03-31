@@ -1,5 +1,36 @@
 2020-03-30  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r258958. rdar://problem/61082960
+
+    Ignore in-app browser privacy checks for apps with com.apple.private.applemediaservices entitlement
+    https://bugs.webkit.org/show_bug.cgi?id=209509
+    <rdar://problem/60750956>
+    
+    Reviewed by Brent Fulgham.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::m_ignoresAppBoundDomains):
+    (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+    * UIProcess/WebPageProxy.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258958 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-24  Kate Cheney  <katherine_cheney@apple.com>
+
+            Ignore in-app browser privacy checks for apps with com.apple.private.applemediaservices entitlement
+            https://bugs.webkit.org/show_bug.cgi?id=209509
+            <rdar://problem/60750956>
+
+            Reviewed by Brent Fulgham.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::m_ignoresAppBoundDomains):
+            (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+            * UIProcess/WebPageProxy.h:
+
+2020-03-30  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r258821. rdar://problem/61082970
 
     Adopt -[UIWindowScene interfaceOrientation] when determining device orientation
