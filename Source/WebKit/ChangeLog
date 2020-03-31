@@ -1,3 +1,17 @@
+2020-03-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Cache [WKAccessibilityWebPageObject accessibilityParameterizedAttributeNames] to avoid hitting often the main thread in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=209767
+
+        Reviewed by Chris Fleizach.
+
+        [WKAccessibilityWebPageObject accessibilityParameterizedAttributeNames]
+        is called often in isolated tree mode causing a dispatch to the main thread.
+        This change caches this value so it doesn't keep hitting the main thread.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+
 2020-03-30  Chris Dumez  <cdumez@apple.com>
 
         WebKit should take a foreground assertion for offscreen loads when the app is foreground

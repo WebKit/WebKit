@@ -51,6 +51,12 @@
 
 namespace ax = WebCore::Accessibility;
 
+@interface WKAccessibilityWebPageObject()
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+@property (nonatomic, strong) NSArray *cachedParameterizedAttributeNames;
+#endif
+@end
+
 @implementation WKAccessibilityWebPageObject
 
 #define PROTECTED_SELF protectedSelf = RetainPtr<WKAccessibilityWebPageObject>(self)
@@ -86,17 +92,28 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)accessibilityParameterizedAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    return ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (id cachedNames = self.cachedParameterizedAttributeNames)
+        return cachedNames;
+#endif
+
+    id names = ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
         NSMutableArray *names = [NSMutableArray array];
         if (!protectedSelf->m_page)
             return names;
-        
-        if (auto corePage = protectedSelf->m_page->corePage()) {
+
+        if (auto* corePage = protectedSelf->m_page->corePage()) {
             for (auto& name : corePage->pageOverlayController().copyAccessibilityAttributesNames(true))
                 [names addObject:(NSString *)name];
         }
         return names;
     }).autorelease();
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    self.cachedParameterizedAttributeNames = names;
+#endif
+
+    return names;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
