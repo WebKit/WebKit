@@ -56,7 +56,7 @@ private:
 
     const char* activeDOMObjectName() const final;
 
-    bool hasPendingActivity() const final;
+    bool virtualHasPendingActivity() const final;
     void stop() final;
     void suspend(ReasonForSuspension) final;
     void resume() final;

@@ -61,7 +61,7 @@ const char* WorkerAnimationController::activeDOMObjectName() const
     return "WorkerAnimationController";
 }
 
-bool WorkerAnimationController::hasPendingActivity() const
+bool WorkerAnimationController::virtualHasPendingActivity() const
 {
     return m_animationTimer.isActive();
 }
