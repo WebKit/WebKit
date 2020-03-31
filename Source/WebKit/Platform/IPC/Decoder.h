@@ -78,7 +78,7 @@ public:
     }
     void markInvalid() { m_bufferPos = nullptr; }
 
-    bool decodeFixedLengthData(uint8_t*, size_t, unsigned alignment);
+    bool decodeFixedLengthData(uint8_t*, size_t, unsigned alignment) WARN_UNUSED_RETURN;
 
     // The data in the data reference here will only be valid for the lifetime of the ArgumentDecoder object.
     bool decodeVariableLengthByteArray(DataReference&);
