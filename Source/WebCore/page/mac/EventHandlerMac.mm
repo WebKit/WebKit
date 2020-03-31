@@ -984,7 +984,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
                 latchingState.setStartedGestureAtScrollLimit(false);
                 latchingState.setWheelEventElement(wheelEventTarget.get());
                 latchingState.setFrame(&m_frame);
-                latchingState.setScrollableContainer(scrollableContainer.copyRef());
+                latchingState.setScrollableContainer(scrollableContainer.get());
                 latchingState.setWidgetIsLatched(result.isOverWidget());
                 page->pushNewLatchingState(WTFMove(latchingState));
 

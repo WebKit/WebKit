@@ -2917,16 +2917,15 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
         filteredPlatformDelta.setHeight(platformWheelEvent->deltaY());
     }
 
+    RefPtr<Element> stopElement;
 #if ENABLE(WHEEL_EVENT_LATCHING)
     ScrollLatchingState* latchedState = m_frame.page() ? m_frame.page()->latchingState() : nullptr;
-    RefPtr<Element> stopElement = latchedState ? latchedState->previousWheelScrolledElement() : nullptr;
+    stopElement = latchedState ? latchedState->previousWheelScrolledElement() : nullptr;
 
     if (m_frame.page() && m_frame.page()->wheelEventDeltaFilter()->isFilteringDeltas()) {
         filteredPlatformDelta = m_frame.page()->wheelEventDeltaFilter()->filteredDelta();
         filteredVelocity = m_frame.page()->wheelEventDeltaFilter()->filteredVelocity();
     }
-#else
-    RefPtr<Element> stopElement;
 #endif
 
     if (handleWheelEventInAppropriateEnclosingBox(startNode, wheelEvent, stopElement, filteredPlatformDelta, filteredVelocity))
@@ -2934,7 +2933,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     if (latchedState && !latchedState->wheelEventElement())
-        latchedState->setPreviousWheelScrolledElement(WTFMove(stopElement));
+        latchedState->setPreviousWheelScrolledElement(stopElement.get());
 #endif
 }
 
