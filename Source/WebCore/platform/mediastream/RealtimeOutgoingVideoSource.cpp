@@ -78,6 +78,7 @@ void RealtimeOutgoingVideoSource::unobserveSource()
 
 void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
 {
+    ASSERT(isMainThread());
     ASSERT(!m_videoSource->hasObserver(*this));
     m_videoSource = WTFMove(newSource);
 
@@ -89,6 +90,12 @@ void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
 
 void RealtimeOutgoingVideoSource::applyRotation()
 {
+    if (!isMainThread()) {
+        callOnMainThread([this, protectedThis = makeRef(*this)] {
+            applyRotation();
+        });
+        return;
+    }
     if (m_areSinksAskingToApplyRotation)
         return;
 
