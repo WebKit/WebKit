@@ -1,5 +1,37 @@
 2020-03-30  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r258540. rdar://problem/61064830
+
+    [JSC] JSMapIterator and JSSetIterator are CellType
+    https://bugs.webkit.org/show_bug.cgi?id=209168
+    <rdar://problem/59705631>
+    
+    Reviewed by Saam Barati.
+    
+    They are JSCell, not JSObject since they are not used as a user-observable set/map iterators in JSC.
+    However, their JSType is ObjectType. They should use CellType instead.
+    
+    * runtime/JSMapIterator.h:
+    * runtime/JSSetIterator.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258540 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] JSMapIterator and JSSetIterator are CellType
+            https://bugs.webkit.org/show_bug.cgi?id=209168
+            <rdar://problem/59705631>
+
+            Reviewed by Saam Barati.
+
+            They are JSCell, not JSObject since they are not used as a user-observable set/map iterators in JSC.
+            However, their JSType is ObjectType. They should use CellType instead.
+
+            * runtime/JSMapIterator.h:
+            * runtime/JSSetIterator.h:
+
+2020-03-30  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r258452. rdar://problem/61064799
 
     Missing arithMode for ArithAbs and ArithNegate in DFGClobberize
