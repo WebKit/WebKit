@@ -1,3 +1,41 @@
+2020-03-30  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r258452. rdar://problem/61064792
+
+    Missing arithMode for ArithAbs and ArithNegate in DFGClobberize
+    https://bugs.webkit.org/show_bug.cgi?id=208685
+    <rdar://problem/60115088>
+    
+    Reviewed by Saam Barati.
+    
+    In the pure case of ArithNegate and ArithAbs in DFGClobberize, their PureValues did not include their
+    respective ArithMode. That means that e.g. a CheckOverflow ArithNegate/Abs could be considered equivalent
+    to an Unchecked version of the same node.
+    
+    Thanks to Samuel Groß of Google Project Zero for identifying this bug.
+    
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258452 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-13  Tadeu Zagallo  <tzagallo@apple.com>
+
+            Missing arithMode for ArithAbs and ArithNegate in DFGClobberize
+            https://bugs.webkit.org/show_bug.cgi?id=208685
+            <rdar://problem/60115088>
+
+            Reviewed by Saam Barati.
+
+            In the pure case of ArithNegate and ArithAbs in DFGClobberize, their PureValues did not include their
+            respective ArithMode. That means that e.g. a CheckOverflow ArithNegate/Abs could be considered equivalent
+            to an Unchecked version of the same node.
+
+            Thanks to Samuel Groß of Google Project Zero for identifying this bug.
+
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+
 2020-03-19  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r258062. rdar://problem/60396604
