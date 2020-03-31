@@ -1,3 +1,12 @@
+2020-03-31  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION: [ iOS wk2 ] fast/forms/input-text-scroll-left-on-blur.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209812
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-03-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Flaky Test: media/track/track-in-band-metadata-display-order.html

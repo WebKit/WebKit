@@ -1756,3 +1756,5 @@ webkit.org/b/209512 http/tests/cache/disk-cache/disk-cache-vary-cookie-private.h
 webkit.org/b/209520 http/wpt/fetch/dnt-header-after-redirection.html [ Pass Timeout ]
 
 webkit.org/b/209544 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure ]
+
+webkit.org/b/209812 fast/forms/input-text-scroll-left-on-blur.html [ Pass Failure ]
