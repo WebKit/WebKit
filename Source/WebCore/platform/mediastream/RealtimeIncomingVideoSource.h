@@ -58,8 +58,6 @@ public:
         stop();
     }
 
-    void setSourceTrack(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&);
-
 protected:
     RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
 

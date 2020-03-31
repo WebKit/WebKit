@@ -189,6 +189,19 @@ private:
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> m_track;
 };
 
+class MockMediaStreamTrack : public webrtc::MediaStreamTrackInterface {
+public:
+    MockMediaStreamTrack() = default;
+private:
+    std::string kind() const final { return "video"; }
+    std::string id() const final { return "mymocktrack"; }
+    bool enabled() const final { return true; }
+    bool set_enabled(bool) final { return true; }
+    TrackState state() const  { return TrackState::kLive; }
+    void RegisterObserver(webrtc::ObserverInterface*) final { }
+    void UnregisterObserver(webrtc::ObserverInterface*) final { }
+};
+
 class MockRtpReceiver : public webrtc::RtpReceiverInterface {
 private:
     cricket::MediaType media_type() const final { return cricket::MEDIA_TYPE_VIDEO; }
@@ -196,8 +209,15 @@ private:
     webrtc::RtpParameters GetParameters() const { return { }; }
     bool SetParameters(const webrtc::RtpParameters&) { return true; }
     void SetObserver(webrtc::RtpReceiverObserverInterface*) { }
-    rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track() const final { return { }; }
     void SetJitterBufferMinimumDelay(absl::optional<double>) final { }
+    rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track() const final
+    {
+        if (!m_track)
+            const_cast<MockRtpReceiver*>(this)->m_track = new rtc::RefCountedObject<MockMediaStreamTrack>();
+        return m_track;
+    }
+
+    rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> m_track;
 };
 
 class MockRtpTransceiver : public webrtc::RtpTransceiverInterface {
