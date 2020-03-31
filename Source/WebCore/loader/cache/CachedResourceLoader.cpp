@@ -813,8 +813,14 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     if (InspectorInstrumentation::willInterceptRequest(&frame, request.resourceRequest()))
         request.setCachingPolicy(CachingPolicy::DisallowCaching);
 
-    request.updateReferrerPolicy(document() ? document()->referrerPolicy() : ReferrerPolicy::NoReferrerWhenDowngrade);
     URL url = request.resourceRequest().url();
+    if (request.options().destination == FetchOptions::Destination::Document) {
+        // FIXME: Identify HSTS cases and avoid adding the header. <https://bugs.webkit.org/show_bug.cgi?id=157885>
+        if (!url.protocolIs("https"))
+            request.resourceRequest().setHTTPHeaderField(HTTPHeaderName::UpgradeInsecureRequests, "1"_s);
+    }
+
+    request.updateReferrerPolicy(document() ? document()->referrerPolicy() : ReferrerPolicy::NoReferrerWhenDowngrade);
 
     LOG(ResourceLoading, "CachedResourceLoader::requestResource '%.255s', charset '%s', priority=%d, forPreload=%u", url.stringCenterEllipsizedToLength().latin1().data(), request.charset().latin1().data(), request.priority() ? static_cast<int>(request.priority().value()) : -1, forPreload == ForPreload::Yes);
 

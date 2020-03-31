@@ -253,7 +253,6 @@ void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)
         auto origin = SecurityPolicy::generateOriginHeader(frameRequest.requester().referrerPolicy(), frameRequest.resourceRequest().url(), securityOrigin);
         frameRequest.resourceRequest().setHTTPOrigin(origin);
     }
-    FrameLoader::addHTTPUpgradeInsecureRequestsIfNeeded(frameRequest.resourceRequest());
 }
 
 }

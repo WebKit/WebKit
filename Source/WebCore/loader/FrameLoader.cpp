@@ -2885,9 +2885,6 @@ void FrameLoader::addExtraFieldsToMainResourceRequest(ResourceRequest& request)
     // FIXME: Using m_loadType seems wrong for some callers.
     // If we are only preparing to load the main resource, that is previous load's load type!
     addExtraFieldsToRequest(request, m_loadType, true);
-
-    // Upgrade-Insecure-Requests should only be added to main resource requests
-    addHTTPUpgradeInsecureRequestsIfNeeded(request);
 }
 
 ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const ResourceRequest& request, FrameLoadType loadType, bool isMainResource)
@@ -3000,16 +2997,6 @@ void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, con
         return;
     }
     request.setIsSameSite(areRegistrableDomainsEqual(initiator->siteForCookies(), request.url()));
-}
-
-void FrameLoader::addHTTPUpgradeInsecureRequestsIfNeeded(ResourceRequest& request)
-{
-    if (request.url().protocolIs("https")) {
-        // FIXME: Identify HSTS cases and avoid adding the header. <https://bugs.webkit.org/show_bug.cgi?id=157885>
-        return;
-    }
-
-    request.setHTTPHeaderField(HTTPHeaderName::UpgradeInsecureRequests, "1"_s);
 }
 
 void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& referrer, FrameLoadType loadType, Event* event, RefPtr<FormState>&& formState, CompletionHandler<void()>&& completionHandler)
@@ -3785,7 +3772,6 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
             auto origin = SecurityPolicy::generateOriginHeader(m_frame.document()->referrerPolicy(), request.url(), securityOrigin);
             request.setHTTPOrigin(origin);
         }
-        addHTTPUpgradeInsecureRequestsIfNeeded(request);
 
         // Make sure to add extra fields to the request after the Origin header is added for the FormData case.
         // See https://bugs.webkit.org/show_bug.cgi?id=22194 for more discussion.
@@ -4101,7 +4087,6 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
     String referrer = SecurityPolicy::generateReferrerHeader(openerFrame.document()->referrerPolicy(), request.resourceRequest().url(), openerFrame.loader().outgoingReferrer());
     if (!referrer.isEmpty())
         request.resourceRequest().setHTTPReferrer(referrer);
-    FrameLoader::addHTTPUpgradeInsecureRequestsIfNeeded(request.resourceRequest());
     FrameLoader::addSameSiteInfoToRequestIfNeeded(request.resourceRequest(), openerFrame.document());
 
     Page* oldPage = openerFrame.page();
