@@ -455,7 +455,6 @@ String PeerConnectionBackend::filterSDP(String&& sdp) const
                 sdp.replace(ipAddress, mdnsName);
                 filteredSDP.append(sdp);
             }
-            return;
         }
         filteredSDP.append('\n');
     });

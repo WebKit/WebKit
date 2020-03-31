@@ -153,6 +153,29 @@ promise_test((test) => {
     });
 }, "Basic data channel exchange from offerer to receiver 2");
 
+promise_test(async (test) => {
+    const pc = new RTCPeerConnection();
+    const channel = pc.createDataChannel('sendDataChannel');
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    const channel2 = pc.createDataChannel('sendDataChannel2');
+    const offer2 = await pc.createOffer();
+    const description = pc.localDescription;
+
+    // Make sure we can apply the filtered description.
+    await pc.setLocalDescription(description);
+
+    const lines = description.sdp.split('\r\n').filter(line => {
+        return line.indexOf('a=candidate') === 0;
+    });
+
+    assert_true(lines.length > 0, "candidates are gathered");
+    assert_true(lines[0].includes(' host '), "candidate is host");
+    assert_true(lines[0].includes('.local '), "candidate is mDNS");
+}, "Ensure that local description SDP filtering is correctly filtering mDNS local candidates");
+
     </script>
   </body>
 </html>

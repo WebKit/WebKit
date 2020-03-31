@@ -1,3 +1,13 @@
+2020-03-31  youenn fablet  <youenn@apple.com>
+
+        Fix SDP filtering after https://trac.webkit.org/changeset/258545
+        https://bugs.webkit.org/show_bug.cgi?id=209799
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/mdns-ice-candidates-expected.txt:
+        * webrtc/datachannel/mdns-ice-candidates.html:
+
 2020-03-31  Antti Koivisto  <antti@apple.com>
 
         Nullptr crash in InlineTextBox::emphasisMarkExistsAndIsAbove

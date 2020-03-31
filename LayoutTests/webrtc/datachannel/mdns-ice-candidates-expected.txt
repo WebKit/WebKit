@@ -4,4 +4,5 @@ PASS Basic data channel exchange from offerer to receiver
 PASS Basic data channel exchange from receiver to offerer 
 PASS Basic data channel exchange from offerer to receiver using UDP only 
 PASS Basic data channel exchange from offerer to receiver 2 
+PASS Ensure that local description SDP filtering is correctly filtering mDNS local candidates 
 
