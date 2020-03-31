@@ -1,3 +1,48 @@
+2020-03-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r258521. rdar://problem/61082999
+
+    Crash under WebCookieCache::clearForHost()
+    https://bugs.webkit.org/show_bug.cgi?id=209149
+    <rdar://problem/60453086>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebKit:
+    
+    Make sure WebCookieCache::pruneCacheIfNecessary() keeps alive the host String it is passing
+    to WebCookieCache::clearForHost(). Previously, it was merely deferencing a HashSet iterator
+    and passing that to clearForHost(). However, clearForHost() would then drop the String from
+    the HashSet and the host would no longer be valid.
+    
+    Change covered by new API test.
+    
+    * WebProcess/WebPage/WebCookieCache.cpp:
+    (WebKit::WebCookieCache::pruneCacheIfNecessary):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/CookiePrivateBrowsing.mm:
+    (TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258521 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-16  Chris Dumez  <cdumez@apple.com>
+
+            Crash under WebCookieCache::clearForHost()
+            https://bugs.webkit.org/show_bug.cgi?id=209149
+            <rdar://problem/60453086>
+
+            Reviewed by Alex Christensen.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/CookiePrivateBrowsing.mm:
+            (TEST):
+
 2020-03-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r258518. rdar://problem/60517387
