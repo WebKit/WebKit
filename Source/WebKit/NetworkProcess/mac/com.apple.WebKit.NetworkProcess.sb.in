@@ -355,7 +355,7 @@
        (home-regex (string-append "/Library/Preferences/ByHost/com\.apple\.ist\.ds\.appleconnect2\.production\." (uuid-regex-string) "\.plist$"))
 )
 
-(allow ipc-posix-shm-read* ipc-posix-shm-write-data
+(allow ipc-posix-shm-read* ipc-posix-shm-write-create ipc-posix-shm-write-data
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 (system-network)

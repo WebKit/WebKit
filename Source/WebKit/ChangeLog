@@ -1,3 +1,15 @@
+2020-03-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Add additional IPC permission needed by Security.framework
+        https://bugs.webkit.org/show_bug.cgi?id=209815
+        <rdar://problem/60892378>
+
+        Reviewed by Per Arne Vollan.
+
+        Add missing permission needed for recent macOS releases.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2020-03-31  Per Arne Vollan  <pvollan@apple.com>
 
         Silence preference write sandbox violations in the WebContent process
