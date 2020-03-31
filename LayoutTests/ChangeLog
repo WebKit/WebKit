@@ -1,3 +1,13 @@
+2020-03-31  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION: [ Mac wk2 Release ] Flaky crash in WebCore::MediaPlayer::createVideoFullscreenLayer
+        https://bugs.webkit.org/show_bug.cgi?id=209668
+        <rdar://problem/60976297>
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-03-31  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac Debug ] ASSERTION FAILED: m_videoFullscreenMode on media/media-fullscreen-return-to-inline.html

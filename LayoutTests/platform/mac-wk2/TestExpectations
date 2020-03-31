@@ -760,7 +760,7 @@ webkit.org/b/180982 [ Debug ] imported/w3c/web-platform-tests/service-workers/se
 
 webkit.org/b/182176 imported/w3c/web-platform-tests/service-workers/service-worker/appcache-ordering-main.https.html [ Skip ]
 
-webkit.org/b/183869 media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Pass Failure Crash ]
+webkit.org/b/183869 media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Pass Failure ]
 
 webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]
 
@@ -1038,7 +1038,5 @@ webkit.org/b/209622 http/tests/eventsource/eventsource-reconnect-during-navigate
 webkit.org/b/209624 [ Release ] tiled-drawing/scrolling/fixed/four-bars-zoomed.html [ Pass Failure ]
 
 webkit.org/b/209672 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Failure Crash ]
-
-webkit.org/b/209688 media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Pass Crash ]
 
 webkit.org/b/209769 [ Catalina ] tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability.html [ Pass Failure ]
