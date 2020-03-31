@@ -1,5 +1,14 @@
 2020-03-31  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ Mojave wk1 Release ] fast/canvas/webgl/texImage2D-mse-flipY-true.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=209837
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-03-31  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac wk1 Debug] inspector/injected-script/avoid-getter-invocation.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=209073
 
