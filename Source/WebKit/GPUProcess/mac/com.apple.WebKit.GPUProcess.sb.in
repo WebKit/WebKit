@@ -58,7 +58,7 @@
     (subpath "/System/Library/Frameworks")
     (subpath "/System/Library/PrivateFrameworks")
     (subpath "/usr/lib")
-    (literal "/usr/local/lib/sanitizers"))
+    (subpath "/usr/appleinternal/lib/sanitizers"))
 
 (allow file-read-metadata
     (literal "/etc")
