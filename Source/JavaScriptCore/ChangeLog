@@ -1,3 +1,17 @@
+2020-03-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFGArrayMode::alreadyChecked should have NonArray check when ArrayMode is NonArray+SlowPutArrayStorage
+        https://bugs.webkit.org/show_bug.cgi?id=209791
+
+        Reviewed by Saam Barati.
+
+        DFGArrayMode::alreadyChecked with NonArray+SlowPutArrayStorage should check NonArray condition.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::alreadyChecked const):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::arrayModesWithIndexingShapes const):
+
 2020-03-30  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Add support in named capture group identifiers for direct surrogate pairs
