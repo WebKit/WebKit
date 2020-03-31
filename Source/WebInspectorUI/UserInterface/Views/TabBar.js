@@ -705,7 +705,7 @@ WI.TabBar = class TabBar extends WI.View
             });
 
             for (let item of this._hiddenTabBarItems) {
-                contextMenu.appendItem(item.title, () => {
+                contextMenu.appendItem(item.displayName, () => {
                     this.selectTabBarItem(item, {
                         initiator: WI.TabBrowser.TabNavigationInitiator.ContextMenu
                     });
@@ -952,7 +952,7 @@ WI.TabBar = class TabBar extends WI.View
 
             let checked = !!openTabBarItem;
             let disabled = checked && this.normalTabCount === 1;
-            contextMenu.appendCheckboxItem(tabClass.tabInfo().title, () => {
+            contextMenu.appendCheckboxItem(tabClass.tabInfo().displayName, () => {
                 if (openTabBarItem)
                     this.removeTabBarItem(openTabBarItem);
                 else

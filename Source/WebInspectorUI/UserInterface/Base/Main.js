@@ -1945,7 +1945,7 @@ WI._tabBrowserSelectedTabContentViewDidChange = function(event)
 {
     let selectedTabBarItem = WI.tabBar.selectedTabBarItem;
     if (selectedTabBarItem) {
-        WI._contentElement.ariaLabel = selectedTabBarItem.title || "";
+        WI._contentElement.ariaLabel = selectedTabBarItem.displayName || "";
 
         if (selectedTabBarItem.representedObject.constructor.shouldSaveTab())
             WI._selectedTabIndexSetting.value = WI.tabBar.tabBarItems.indexOf(selectedTabBarItem);
