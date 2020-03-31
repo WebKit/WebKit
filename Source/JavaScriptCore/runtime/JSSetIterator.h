@@ -32,6 +32,8 @@
 namespace JSC {
 
 // Now, it is only used for serialization.
+// FIXME: We should use JSInternalFieldObjectImpl to implement real JSSetIterator used in JSC.
+// Currently, JSC is using final objects to implement SetIterator.
 class JSSetIterator final : public JSCell {
     typedef HashMapBucket<HashMapBucketDataKey> HashMapBucketType;
 public:
@@ -47,7 +49,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
     }
 
     static JSSetIterator* create(VM& vm, Structure* structure, JSSet* iteratedObject, IterationKind kind)

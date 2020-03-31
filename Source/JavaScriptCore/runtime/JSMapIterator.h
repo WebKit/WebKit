@@ -32,6 +32,8 @@
 namespace JSC {
 
 // Now, it is only used for serialization.
+// FIXME: We should use JSInternalFieldObjectImpl to implement real JSMapIterator used in JSC.
+// Currently, JSC is using final objects to implement MapIterator.
 class JSMapIterator final : public JSCell {
     typedef HashMapBucket<HashMapBucketDataKeyValue> HashMapBucketType;
 public:
@@ -47,7 +49,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
     }
 
     static JSMapIterator* create(VM& vm, Structure* structure, JSMap* iteratedObject, IterationKind kind)
