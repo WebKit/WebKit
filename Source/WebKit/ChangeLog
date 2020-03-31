@@ -1,3 +1,46 @@
+2020-03-31  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r258600. rdar://problem/61082995
+
+    Add internal debugging when initializing an app-bound session
+           https://bugs.webkit.org/show_bug.cgi?id=209190
+           <rdar://problem/60371620>
+    
+    Reviewed by Brent Fulgham.
+    
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+    (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+    * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (WebKit::SessionWrapper::initialize):
+    (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+    (WebKit::NetworkSessionCocoa::initializeEphemeralStatelessSession):
+    (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+    (WebKit::NetworkSessionCocoa::appBoundSession):
+    (WebKit::NetworkSessionCocoa::isolatedSession):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258600 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-17  Kate Cheney  <katherine_cheney@apple.com>
+
+           Add internal debugging when initializing an app-bound session
+           https://bugs.webkit.org/show_bug.cgi?id=209190
+           <rdar://problem/60371620>
+
+            Reviewed by Brent Fulgham.
+
+            * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+            (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+            * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (WebKit::SessionWrapper::initialize):
+            (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+            (WebKit::NetworkSessionCocoa::initializeEphemeralStatelessSession):
+            (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+            (WebKit::NetworkSessionCocoa::appBoundSession):
+            (WebKit::NetworkSessionCocoa::isolatedSession):
+
 2020-03-30  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r258958. rdar://problem/61082960
