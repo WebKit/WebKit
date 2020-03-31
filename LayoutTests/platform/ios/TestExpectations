@@ -3503,6 +3503,11 @@ webkit.org/b/207858 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-
 webkit.org/b/207858 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-webgl-canvas-rgba5551.html [ Pass Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-webgl-canvas.html [ Pass Failure ]
 
+# <rdar://problem/59635486> REGRESSION: http/wpt/webauthn/public-key-credential-get-success-local.https.html is crashing
+http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
+
+webkit.org/b/208023 fast/text/international/system-language/declarative-language.html [ Failure ]
+
 webkit.org/b/208053 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html [ Skip ]
 webkit.org/b/208053 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html [ Skip ]
 
