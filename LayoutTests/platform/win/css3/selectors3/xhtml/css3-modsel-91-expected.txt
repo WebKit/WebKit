@@ -1,9 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x34
-  RenderBlock {html} at (0,0) size 800x34
-    RenderBody {body} at (8,8) size 784x18
-      RenderInline {testa} at (0,0) size 304x18 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 304x18
-          text run at (0,0) width 304: "This paragraph should have a green background"
-      RenderText {#text} at (0,0) size 0x0
