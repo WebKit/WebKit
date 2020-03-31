@@ -1,3 +1,20 @@
+2020-03-31  Per Arne Vollan  <pvollan@apple.com>
+
+        Silence preference write sandbox violations in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=209806
+
+        Reviewed by Brent Fulgham.
+
+        When CFPrefs direct mode is enabled in the WebContent process, the UI process will notify the WebContent about preference changes.
+        When receiving these notifications, the WebContent process will  use the CFPrefs API to update the value of these preferences
+        in-process, which will also attempt to write these values to disk. Writing the preference values to disk is unnecessary, and will
+        also be denied by the sandbox, so the sandbox violations should be silenced.
+
+        No new tests, no behavior change.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-03-31  Devin Rousso  <drousso@apple.com>
 
         REGRESSION: (r259236) [ iOS and Catalina wk2 Debug ] ASSERTION FAILED: m_debugLoggingEnabled in WebKit::ResourceLoadStatisticsStore::debugBroadcastConsoleMessage

@@ -845,6 +845,11 @@
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
 )
 
+;; <rdar://problem/60983812>
+(deny file-write*
+    (home-subpath "/Library/Preferences/")
+    (with no-log))
+
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
