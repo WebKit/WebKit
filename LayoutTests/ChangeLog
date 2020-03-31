@@ -1,3 +1,48 @@
+2020-03-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r258282. rdar://problem/61082987
+
+    icloud.com Notes text in titles and headings is distorted
+    https://bugs.webkit.org/show_bug.cgi?id=208908
+    <rdar://problem/58874371>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    icloud.com Notes determines if a font has finished loading by measuring it repeatedly.
+    Depending on the state of the page, we may slice the text differently in different
+    circumstances. These slices are all supposed to sum together equivalently, but
+    floating point precision may cause the results to be slightly off.
+    
+    WidthIterator::applyFontTransforms() was summing a large list of numbers, and then
+    subtracting the same large list of numbers. A more robust design would be to sum
+    it twice, and then subtract the two sums.
+    
+    Test: fast/text/shaping-width-precision.html
+    
+    * platform/graphics/WidthIterator.cpp:
+    (WebCore::WidthIterator::applyFontTransforms):
+    
+    LayoutTests:
+    
+    * fast/text/shaping-width-precision-expected.txt: Added.
+    * fast/text/shaping-width-precision.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258282 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            icloud.com Notes text in titles and headings is distorted
+            https://bugs.webkit.org/show_bug.cgi?id=208908
+            <rdar://problem/58874371>
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/text/shaping-width-precision-expected.txt: Added.
+            * fast/text/shaping-width-precision.html: Added.
+
 2020-03-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Verification] Use the table wrapper box's offset when matching out-of-flow tables
