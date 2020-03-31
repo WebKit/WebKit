@@ -291,6 +291,10 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVRouteDetectorMultipleRoutesDe
 #define AVRouteDetectorMultipleRoutesDetectedDidChangeNotification PAL::get_AVFoundation_AVRouteDetectorMultipleRoutesDetectedDidChangeNotification()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionMediaServicesWereResetNotification, NSString *)
 #define AVAudioSessionMediaServicesWereResetNotification PAL::get_AVFoundation_AVAudioSessionMediaServicesWereResetNotification()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionRouteChangeNotification, NSString *)
+#define AVAudioSessionRouteChangeNotification PAL::get_AVFoundation_AVAudioSessionRouteChangeNotification()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionRouteChangeReasonKey, NSString *)
+#define AVAudioSessionRouteChangeReasonKey PAL::get_AVFoundation_AVAudioSessionRouteChangeReasonKey()
 #endif //  PLATFORM(IOS_FAMILY)
 
 #endif // USE(AVFOUNDATION)

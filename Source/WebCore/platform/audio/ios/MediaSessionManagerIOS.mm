@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,6 +120,26 @@ void MediaSessionManageriOS::providePresentingApplicationPID()
     MediaSessionHelper::sharedHelper().providePresentingApplicationPID(presentingApplicationPID());
 }
 
+bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSession& session)
+{
+    if (!PlatformMediaSessionManager::sessionWillBeginPlayback(session))
+        return false;
+
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
+    if (!m_playbackTarget) {
+        m_playbackTarget = MediaPlaybackTargetCocoa::create();
+        m_playbackTargetSupportsAirPlayVideo = m_playbackTarget->supportsRemoteVideoPlayback();
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER, m_playbackTargetSupportsAirPlayVideo);
+    if (m_playbackTargetSupportsAirPlayVideo)
+        session.setPlaybackTarget(*m_playbackTarget.copyRef());
+    session.setShouldPlayToPlaybackTarget(m_playbackTargetSupportsAirPlayVideo);
+#endif
+
+    return true;
+}
+
 void MediaSessionManageriOS::sessionWillEndPlayback(PlatformMediaSession& session, DelayCallingUpdateNowPlaying delayCallingUpdateNowPlaying)
 {
     MediaSessionManagerCocoa::sessionWillEndPlayback(session, delayCallingUpdateNowPlaying);
@@ -160,6 +180,12 @@ void MediaSessionManageriOS::activeAudioRouteDidChange(ShouldPause shouldPause)
 void MediaSessionManageriOS::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, Ref<MediaPlaybackTarget>&& playbackTarget)
 {
     ALWAYS_LOG(LOGIDENTIFIER, supportsAirPlayVideo);
+
+#if !PLATFORM(WATCHOS)
+    m_playbackTarget = playbackTarget.ptr();
+    m_playbackTargetSupportsAirPlayVideo = supportsAirPlayVideo == SupportsAirPlayVideo::Yes;
+#endif
+
     auto nowPlayingSession = nowPlayingEligibleSession();
     if (!nowPlayingSession)
         return;

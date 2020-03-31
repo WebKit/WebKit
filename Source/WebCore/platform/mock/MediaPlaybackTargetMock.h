@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,13 +40,14 @@ public:
 
     virtual ~MediaPlaybackTargetMock();
 
-    TargetType targetType() const override { return Mock; }
+    TargetType targetType() const final { return Mock; }
 
-    const MediaPlaybackTargetContext& targetContext() const override;
+    const MediaPlaybackTargetContext& targetContext() const final;
 
-    bool hasActiveRoute() const override { return !m_name.isEmpty(); }
+    bool hasActiveRoute() const final { return !m_name.isEmpty(); }
+    bool supportsRemoteVideoPlayback() const final { return !m_name.isEmpty(); }
 
-    String deviceName() const override { return m_name; }
+    String deviceName() const final { return m_name; }
 
     MediaPlaybackTargetContext::State state() const;
 

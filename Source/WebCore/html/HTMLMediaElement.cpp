@@ -1050,11 +1050,8 @@ void HTMLMediaElement::scheduleCheckPlaybackTargetCompatability()
 void HTMLMediaElement::checkPlaybackTargetCompatablity()
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    auto logSiteIdentifier = LOGIDENTIFIER;
-    ALWAYS_LOG(logSiteIdentifier, "task scheduled");
     if (m_isPlayingToWirelessTarget && !m_player->canPlayToWirelessPlaybackTarget()) {
-        UNUSED_PARAM(logSiteIdentifier);
-        INFO_LOG(logSiteIdentifier, "calling setShouldPlayToPlaybackTarget(false)");
+        INFO_LOG(LOGIDENTIFIER, "calling setShouldPlayToPlaybackTarget(false)");
         m_failedToPlayToWirelessTarget = true;
         m_player->setShouldPlayToPlaybackTarget(false);
     }
@@ -5850,12 +5847,18 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool is
 
 void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarget)
 {
-    m_playbackTargetIsWirelessQueue.enqueueTask([this, isPlayingToWirelessTarget] {
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    ALWAYS_LOG(logSiteIdentifier, isPlayingToWirelessTarget);
+    m_playbackTargetIsWirelessQueue.enqueueTask([this, isPlayingToWirelessTarget, logSiteIdentifier] {
+        UNUSED_PARAM(logSiteIdentifier);
+        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
+
         if (isPlayingToWirelessTarget == m_isPlayingToWirelessTarget)
             return;
+
         m_isPlayingToWirelessTarget = m_player && m_player->isCurrentPlaybackTargetWireless();
         m_remote->isPlayingToRemoteTargetChanged(m_isPlayingToWirelessTarget);
-        ALWAYS_LOG(LOGIDENTIFIER, m_isPlayingToWirelessTarget);
+        ALWAYS_LOG(logSiteIdentifier, m_isPlayingToWirelessTarget);
         configureMediaControls();
         m_mediaSession->isPlayingToWirelessPlaybackTargetChanged(m_isPlayingToWirelessTarget);
         m_mediaSession->canProduceAudioChanged();
@@ -5949,11 +5952,11 @@ void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
 
 void HTMLMediaElement::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& device)
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
     bool hasActiveRoute = device->hasActiveRoute();
+    ALWAYS_LOG(LOGIDENTIFIER, hasActiveRoute);
+
     if (m_player)
         m_player->setWirelessPlaybackTarget(WTFMove(device));
-
     m_remote->shouldPlayToRemoteTargetChanged(hasActiveRoute);
 }
 
@@ -5961,8 +5964,10 @@ void HTMLMediaElement::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
     ALWAYS_LOG(LOGIDENTIFIER, shouldPlay);
 
-    if (m_player)
+    if (m_player) {
         m_player->setShouldPlayToPlaybackTarget(shouldPlay);
+        setIsPlayingToWirelessTarget(m_player->isCurrentPlaybackTargetWireless());
+    }
 }
 
 void HTMLMediaElement::playbackTargetPickerWasDismissed()

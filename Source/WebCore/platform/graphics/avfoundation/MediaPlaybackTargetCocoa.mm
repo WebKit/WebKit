@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
-
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
@@ -46,6 +45,36 @@ MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(AVOutputContext *context)
 {
 }
 
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
+Ref<MediaPlaybackTarget> MediaPlaybackTargetCocoa::create()
+{
+    auto *routingContextUID = [[PAL::getAVAudioSessionClass() sharedInstance] routingContextUID];
+    return adoptRef(*new MediaPlaybackTargetCocoa([PAL::getAVOutputContextClass() outputContextForID:routingContextUID]));
+}
+#endif
+
+bool MediaPlaybackTargetCocoa::supportsRemoteVideoPlayback() const
+{
+    if (!m_outputContext)
+        return false;
+
+    if (![m_outputContext respondsToSelector:@selector(supportsMultipleOutputDevices)] || ![m_outputContext supportsMultipleOutputDevices] || ![m_outputContext respondsToSelector:@selector(outputDevices)]) {
+        if (auto *outputDevice = [m_outputContext outputDevice]) {
+            if (outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
+                return true;
+        }
+
+        return false;
+    }
+
+    for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
+        if (outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
+            return true;
+    }
+
+    return false;
+}
+
 MediaPlaybackTargetCocoa::~MediaPlaybackTargetCocoa()
 {
 }
@@ -58,7 +87,24 @@ const MediaPlaybackTargetContext& MediaPlaybackTargetCocoa::targetContext() cons
 
 bool MediaPlaybackTargetCocoa::hasActiveRoute() const
 {
-    return m_outputContext && m_outputContext.get().deviceName;
+    if (!m_outputContext)
+        return false;
+
+    if ([m_outputContext respondsToSelector:@selector(supportsMultipleOutputDevices)] && [m_outputContext supportsMultipleOutputDevices] && [m_outputContext respondsToSelector:@selector(outputDevices)]) {
+        for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
+            if (outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio))
+                return true;
+        }
+
+        return false;
+    }
+
+    if ([m_outputContext respondsToSelector:@selector(outputDevice)]) {
+        if (auto *outputDevice = [m_outputContext outputDevice])
+            return outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio);
+    }
+
+    return m_outputContext.get().deviceName;
 }
 
 String MediaPlaybackTargetCocoa::deviceName() const

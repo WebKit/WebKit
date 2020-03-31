@@ -68,7 +68,7 @@ protected:
     void addSession(PlatformMediaSession&) final;
     void setCurrentSession(PlatformMediaSession&) final;
 
-    bool sessionWillBeginPlayback(PlatformMediaSession&) final;
+    bool sessionWillBeginPlayback(PlatformMediaSession&) override;
     void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying) override;
     void sessionDidEndRemoteScrubbing(const PlatformMediaSession&) final;
     void clientCharacteristicsChanged(PlatformMediaSession&) final;

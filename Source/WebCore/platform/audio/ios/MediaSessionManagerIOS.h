@@ -53,7 +53,6 @@ public:
     bool hasWirelessTargetsAvailable() override;
     static WEBCORE_EXPORT void providePresentingApplicationPID();
 
-    using WeakValueType = MediaSessionHelperClient::WeakValueType;
     using MediaSessionHelperClient::weakPtrFactory;
 
 private:
@@ -61,10 +60,11 @@ private:
 
     MediaSessionManageriOS();
 
-    void resetRestrictions() override;
+    void resetRestrictions() final;
 
-    void configureWireLessTargetMonitoring() override;
+    void configureWireLessTargetMonitoring() final;
     void providePresentingApplicationPIDIfNecessary() final;
+    bool sessionWillBeginPlayback(PlatformMediaSession&) final;
     void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying) final;
 
     // AudioSession::InterruptionObserver
@@ -82,6 +82,11 @@ private:
     void isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit) final;
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaSessionManageriOS"; }
+#endif
+
+#if !PLATFORM(WATCHOS)
+    RefPtr<MediaPlaybackTarget> m_playbackTarget;
+    bool m_playbackTargetSupportsAirPlayVideo { false };
 #endif
 
     bool m_isMonitoringWirelessRoutes { false };

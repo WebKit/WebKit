@@ -1221,6 +1221,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setTextTrackRepresentation(TextTrackR
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void MediaPlayerPrivateMediaSourceAVFObjC::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_playbackTarget = WTFMove(target);
 }
 
@@ -1233,7 +1234,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldPlayToPlaybackTarget(bool sh
     m_shouldPlayToTarget = shouldPlayToTarget;
 
     if (m_player)
-        m_player->currentPlaybackTargetIsWirelessChanged(m_player->isCurrentPlaybackTargetWireless());
+        m_player->currentPlaybackTargetIsWirelessChanged(isCurrentPlaybackTargetWireless());
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless() const

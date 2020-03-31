@@ -56,10 +56,6 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedAttr
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedDidChangeNotification, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedNotificationParameter, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ServerConnectionDiedNotification, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ActiveAudioRouteDidChangeNotification, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ActiveAudioRouteDidChangeNotificationParameter_ShouldPause, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PickedRouteAttribute, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_RouteDescriptionKey_RouteSupportsAirPlayVideo, NSString *)
 #endif
 
 using namespace WebCore;
@@ -104,8 +100,10 @@ public:
 #if HAVE(CELESTIAL)
     void carPlayServerDied();
     void updateCarPlayIsConnected(Optional<bool>&&);
-    void activeAudioRouteDidChange(Optional<bool>&&);
-    void activeVideoRouteDidChange(Optional<bool>&&);
+#endif
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
+    void activeAudioRouteDidChange(bool);
+    void activeVideoRouteDidChange();
 #endif
 
 private:
@@ -257,18 +255,19 @@ void MediaSessionHelperiOS::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
     for (auto& client : m_clients)
         client.isPlayingToAutomotiveHeadUnitDidChange(m_isPlayingToAutomotiveHeadUnit ? PlayingToAutomotiveHeadUnit::Yes : PlayingToAutomotiveHeadUnit::No);
 }
+#endif // HAVE(CELESTIAL)
 
-void MediaSessionHelperiOS::activeAudioRouteDidChange(Optional<bool>&& shouldPause)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
+void MediaSessionHelperiOS::activeAudioRouteDidChange(bool shouldPause)
 {
     for (auto& client : m_clients)
-        client.activeAudioRouteDidChange(shouldPause.valueOr(false) ? ShouldPause::Yes : ShouldPause::No);
+        client.activeAudioRouteDidChange(shouldPause ? ShouldPause::Yes : ShouldPause::No);
 }
 
-void MediaSessionHelperiOS::activeVideoRouteDidChange(Optional<bool>&& supportsAirPlayVideo)
+void MediaSessionHelperiOS::activeVideoRouteDidChange()
 {
-    m_activeVideoRouteSupportsAirPlayVideo = supportsAirPlayVideo.valueOr(false);
-
-    auto playbackTarget = MediaPlaybackTargetCocoa::create([PAL::getAVOutputContextClass() sharedAudioPresentationOutputContext]);
+    auto playbackTarget = MediaPlaybackTargetCocoa::create();
+    m_activeVideoRouteSupportsAirPlayVideo = playbackTarget->supportsRemoteVideoPlayback();
     for (auto& client : m_clients)
         client.activeVideoRouteDidChange(m_activeVideoRouteSupportsAirPlayVideo ? SupportsAirPlayVideo::Yes : SupportsAirPlayVideo::No, playbackTarget.copyRef());
 }
@@ -328,13 +327,15 @@ void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
     [center addObserver:self selector:@selector(applicationWillResignActive:) name:WebUIApplicationWillResignActiveNotification object:nil];
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:PAL::get_UIKit_UIApplicationDidEnterBackgroundNotification() object:nil];
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:WebUIApplicationDidEnterBackgroundNotification object:nil];
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
+    [center addObserver:self selector:@selector(activeOutputDeviceDidChange:) name:PAL::get_AVFoundation_AVAudioSessionRouteChangeNotification() object:nil];
+#endif
+
 #if HAVE(CELESTIAL)
     if (canLoadAVSystemController_ServerConnectionDiedNotification())
         [center addObserver:self selector:@selector(carPlayServerDied:) name:getAVSystemController_ServerConnectionDiedNotification() object:nil];
     if (canLoadAVSystemController_CarPlayIsConnectedDidChangeNotification())
         [center addObserver:self selector:@selector(carPlayIsConnectedDidChange:) name:getAVSystemController_CarPlayIsConnectedDidChangeNotification() object:nil];
-    if (canLoadAVSystemController_ActiveAudioRouteDidChangeNotification())
-        [center addObserver:self selector:@selector(activeAudioRouteDidChange:) name:getAVSystemController_ActiveAudioRouteDidChangeNotification() object:nil];
 #endif
 
     // Now playing won't work unless we turn on the delivery of remote control events.
@@ -541,39 +542,25 @@ void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
             callback->updateCarPlayIsConnected(WTFMove(carPlayIsConnected));
     });
 }
+#endif // HAVE(CELESTIAL)
 
-- (void)activeAudioRouteDidChange:(NSNotification *)notification
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
+- (void)activeOutputDeviceDidChange:(NSNotification *)notification
 {
     if (!_callback)
         return;
 
-    UNUSED_PARAM(notification);
-    Optional<bool> shouldPause;
-    if (notification && canLoadAVSystemController_ActiveAudioRouteDidChangeNotificationParameter_ShouldPause()) {
-        NSNumber* nsShouldPause = [notification.userInfo valueForKey:getAVSystemController_ActiveAudioRouteDidChangeNotificationParameter_ShouldPause()];
-        if (nsShouldPause)
-            shouldPause = nsShouldPause.boolValue;
-    }
-
-    Optional<bool> supportsAirPlayVideo;
-    if (canLoadAVSystemController_PickedRouteAttribute() && canLoadAVSystemController_RouteDescriptionKey_RouteSupportsAirPlayVideo()) {
-        NSDictionary* pickedRoute = [[getAVSystemControllerClass() sharedAVSystemController] attributeForKey:getAVSystemController_PickedRouteAttribute()];
-        if ([pickedRoute isKindOfClass:NSDictionary.class]) {
-            NSNumber* nsSupportsAirPlayVideo = [pickedRoute valueForKey:getAVSystemController_RouteDescriptionKey_RouteSupportsAirPlayVideo()];
-            if (nsSupportsAirPlayVideo)
-                supportsAirPlayVideo = nsSupportsAirPlayVideo.boolValue;
-        }
-    }
-
-    callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = retainPtr(self), shouldPause = WTFMove(shouldPause), supportsAirPlayVideo = WTFMove(supportsAirPlayVideo)]() mutable {
+    bool shouldPause = [[notification.userInfo objectForKey:PAL::get_AVFoundation_AVAudioSessionRouteChangeReasonKey()] unsignedIntegerValue] == AVAudioSessionRouteChangeReasonOldDeviceUnavailable;
+    callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = retainPtr(self), shouldPause]() mutable {
         if (auto* callback = protectedSelf->_callback) {
-            callback->activeAudioRouteDidChange(WTFMove(shouldPause));
-            callback->activeVideoRouteDidChange(WTFMove(supportsAirPlayVideo));
+            callback->activeAudioRouteDidChange(shouldPause);
+            callback->activeVideoRouteDidChange();
         }
     });
 
 }
-#endif // HAVE(CELESTIAL)
+#endif
+
 @end
 
 #endif

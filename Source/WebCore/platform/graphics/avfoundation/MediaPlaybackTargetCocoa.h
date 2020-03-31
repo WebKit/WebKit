@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,14 +37,18 @@ class MediaPlaybackTargetCocoa : public MediaPlaybackTarget {
 public:
     WEBCORE_EXPORT static Ref<MediaPlaybackTarget> create(AVOutputContext *);
 
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
+    static Ref<MediaPlaybackTarget> create();
+#endif
+
     virtual ~MediaPlaybackTargetCocoa();
 
-    TargetType targetType() const override { return AVFoundation; }
+    TargetType targetType() const final { return AVFoundation; }
 
-    const MediaPlaybackTargetContext& targetContext() const override;
-    bool hasActiveRoute() const override;
-
-    String deviceName() const override;
+    const MediaPlaybackTargetContext& targetContext() const final;
+    bool hasActiveRoute() const final;
+    String deviceName() const final;
+    bool supportsRemoteVideoPlayback() const final;
 
     AVOutputContext *outputContext() const { return m_outputContext.get(); }
 
