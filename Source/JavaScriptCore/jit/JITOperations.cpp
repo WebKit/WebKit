@@ -678,11 +678,6 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(JSGlobalObject* globa
         repatchPutByID(globalObject, codeBlock, baseObject, structure, ident, slot, *stubInfo, Direct);
 }
 
-ALWAYS_INLINE static bool isStringOrSymbol(JSValue value)
-{
-    return value.isString() || value.isSymbol();
-}
-
 static void putByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, JSValue subscript, JSValue value, ByValInfo* byValInfo)
 {
     VM& vm = globalObject->vm();
@@ -716,7 +711,7 @@ static void putByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue
     // Don't put to an object if toString threw an exception.
     RETURN_IF_EXCEPTION(scope, void());
 
-    if (byValInfo->stubInfo && (!isStringOrSymbol(subscript) || byValInfo->cachedId != property))
+    if (byValInfo->stubInfo && (!CacheableIdentifier::isCacheableIdentifierCell(subscript) || byValInfo->cachedId.uid() != property))
         byValInfo->tookSlowPath = true;
 
     scope.release();
@@ -776,7 +771,7 @@ static void directPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, J
         return;
     }
 
-    if (byValInfo->stubInfo && (!isStringOrSymbol(subscript) || byValInfo->cachedId != property))
+    if (byValInfo->stubInfo && (!CacheableIdentifier::isCacheableIdentifierCell(subscript) || byValInfo->cachedId.uid() != property))
         byValInfo->tookSlowPath = true;
 
     scope.release();
@@ -827,14 +822,14 @@ static OptimizationResult tryPutByValOptimize(JSGlobalObject* globalObject, Call
             optimizationResult = OptimizationResult::GiveUp;
     }
 
-    if (baseValue.isObject() && isStringOrSymbol(subscript)) {
+    if (baseValue.isObject() && CacheableIdentifier::isCacheableIdentifierCell(subscript)) {
         const Identifier propertyName = subscript.toPropertyKey(globalObject);
         RETURN_IF_EXCEPTION(scope, OptimizationResult::GiveUp);
         if (subscript.isSymbol() || !parseIndex(propertyName)) {
             ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
-                if (byValInfo->cachedId == propertyName) {
+                if (byValInfo->cachedId.uid() == propertyName) {
                     JIT::compilePutByValWithCachedId<OpPutByVal>(vm, codeBlock, byValInfo, returnAddress, NotDirect, propertyName);
                     optimizationResult = OptimizationResult::Optimized;
                 } else {
@@ -842,12 +837,13 @@ static OptimizationResult tryPutByValOptimize(JSGlobalObject* globalObject, Call
                     optimizationResult = OptimizationResult::GiveUp;
                 }
             } else {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                byValInfo->seen = true;
-                byValInfo->cachedId = propertyName;
-                if (subscript.isSymbol())
-                    byValInfo->cachedSymbol.set(vm, codeBlock, asSymbol(subscript));
-                optimizationResult = OptimizationResult::SeenOnce;
+                {
+                    ConcurrentJSLocker locker(codeBlock->m_lock);
+                    byValInfo->seen = true;
+                    byValInfo->cachedId = CacheableIdentifier::createFromCell(subscript.asCell());
+                    optimizationResult = OptimizationResult::SeenOnce;
+                }
+                vm.heap.writeBarrier(codeBlock, subscript.asCell());
             }
         }
     }
@@ -916,14 +912,14 @@ static OptimizationResult tryDirectPutByValOptimize(JSGlobalObject* globalObject
         // If we failed to patch and we have some object that intercepts indexed get, then don't even wait until 10 times.
         if (optimizationResult != OptimizationResult::Optimized && object->structure(vm)->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
             optimizationResult = OptimizationResult::GiveUp;
-    } else if (isStringOrSymbol(subscript)) {
+    } else if (CacheableIdentifier::isCacheableIdentifierCell(subscript)) {
         const Identifier propertyName = subscript.toPropertyKey(globalObject);
         RETURN_IF_EXCEPTION(scope, OptimizationResult::GiveUp);
         if (subscript.isSymbol() || !parseIndex(propertyName)) {
             ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
-                if (byValInfo->cachedId == propertyName) {
+                if (byValInfo->cachedId.uid() == propertyName) {
                     JIT::compilePutByValWithCachedId<OpPutByValDirect>(vm, codeBlock, byValInfo, returnAddress, Direct, propertyName);
                     optimizationResult = OptimizationResult::Optimized;
                 } else {
@@ -931,12 +927,13 @@ static OptimizationResult tryDirectPutByValOptimize(JSGlobalObject* globalObject
                     optimizationResult = OptimizationResult::GiveUp;
                 }
             } else {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                byValInfo->seen = true;
-                byValInfo->cachedId = propertyName;
-                if (subscript.isSymbol())
-                    byValInfo->cachedSymbol.set(vm, codeBlock, asSymbol(subscript));
-                optimizationResult = OptimizationResult::SeenOnce;
+                {
+                    ConcurrentJSLocker locker(codeBlock->m_lock);
+                    byValInfo->seen = true;
+                    byValInfo->cachedId = CacheableIdentifier::createFromCell(subscript.asCell());
+                    optimizationResult = OptimizationResult::SeenOnce;
+                }
+                vm.heap.writeBarrier(codeBlock, subscript.asCell());
             }
         }
     }
