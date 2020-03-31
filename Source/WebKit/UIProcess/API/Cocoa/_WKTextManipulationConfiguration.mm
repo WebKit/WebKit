@@ -27,5 +27,14 @@
 #import "_WKTextManipulationConfiguration.h"
 
 @implementation _WKTextManipulationConfiguration
+
+- (void)dealloc
+{
+    [_exclusionRules release];
+    _exclusionRules = nil;
+
+    [super dealloc];
+}
+
 @end
 

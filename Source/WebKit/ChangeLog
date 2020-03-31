@@ -1,3 +1,15 @@
+2020-03-30  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r251574, r251600): _WKTextManipulationToken and _WKTextManipulationConfiguration are missing -dealloc
+        <https://webkit.org/b/209794>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/_WKTextManipulationConfiguration.mm:
+        (-[_WKTextManipulationConfiguration dealloc]): Add.
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.mm:
+        (-[_WKTextManipulationToken dealloc]): Add.
+
 2020-03-30  John Wilander  <wilander@apple.com>
 
         Experimental: Enforce SameSite=strict for domains classified as bounce trackers

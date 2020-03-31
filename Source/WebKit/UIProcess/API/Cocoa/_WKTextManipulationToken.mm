@@ -28,6 +28,16 @@
 
 @implementation _WKTextManipulationToken
 
+- (void)dealloc
+{
+    [_identifier release];
+    _identifier = nil;
+    [_content release];
+    _content = nil;
+
+    [super dealloc];
+}
+
 static BOOL isEqualOrBothNil(id a, id b)
 {
     if (a == b)
