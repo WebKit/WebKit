@@ -342,6 +342,9 @@ void DrawingAreaCoordinatedGraphics::setRootCompositingLayer(GraphicsLayer* grap
 
 void DrawingAreaCoordinatedGraphics::scheduleRenderingUpdate()
 {
+    if (m_layerTreeStateIsFrozen)
+        return;
+
     if (m_layerTreeHost)
         m_layerTreeHost->scheduleLayerFlush();
     else
@@ -594,6 +597,8 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
         m_layerTreeHost = nullptr;
         return;
 #endif
+        if (m_layerTreeStateIsFrozen)
+            m_layerTreeHost->setLayerFlushSchedulingEnabled(false);
         if (m_isPaintingSuspended)
             m_layerTreeHost->pauseRendering();
     }

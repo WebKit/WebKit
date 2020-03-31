@@ -1,3 +1,23 @@
+2020-03-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r258829): [CoordinatedGraphics] Web view not updated after cross site navigation with PSON enabled
+        https://bugs.webkit.org/show_bug.cgi?id=209741
+
+        Reviewed by Žan Doberšek.
+
+        Since r258829, the drawing area proxy of a provisional page ignores all messages until the load is
+        committed. This is causing 2 problems for coordinated graphics drawing area. When not in accelerated compositing
+        mode, Update message is sent before the commit is loaded, and the web process keeps waiting for the DidUpdate
+        response message forever. When accelerated compositing mode is forced, the EnterAcceleratedCompositing message
+        is also sent before the load is committed and ignored, so the UI process doesn't know it's in accelerated mode.
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::scheduleRenderingUpdate): Return early if layer tree is frozen. This
+        ensures that Update messages are not sent to the UI process while layer tree is frozen.
+        (WebKit::DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode): Disable layer flush on the newly
+        created LayerTreeHost if layer tree is frozen. This ensures that EnterAcceleratedCompositing message is sent
+        after the first layer flush once the layer tree is no longer frozen.
+
 2020-03-30  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r251574, r251600): _WKTextManipulationToken and _WKTextManipulationConfiguration are missing -dealloc
