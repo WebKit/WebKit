@@ -970,7 +970,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
             LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::platformPrepareForWheelEvents() - event" << wheelEvent << " found scrollableContainer" << ValueOrNull(scrollableContainer.get()) << " scrollableArea " << (scrollableArea ? scrollableArea.get() : nullptr));
         }
     }
-    
+
     Page* page = m_frame.page();
     if (scrollableArea && page && page->isMonitoringWheelEvents())
         scrollableArea->scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());

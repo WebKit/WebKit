@@ -1,3 +1,13 @@
+2020-03-30  Simon Fraser  <simon.fraser@apple.com>
+
+        scrollIntoView() erroneously scrolls non-containing block scrollers
+        https://bugs.webkit.org/show_bug.cgi?id=209715
+
+        Reviewed by Zalan Bujtas.
+
+        * http/wpt/css/cssom-view/scrollintoview-containingblock-chain-expected.txt: Added.
+        * http/wpt/css/cssom-view/scrollintoview-containingblock-chain.html: Added.
+
 2020-03-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, mark webrtc/datachannel/multiple-connections.html as slow.

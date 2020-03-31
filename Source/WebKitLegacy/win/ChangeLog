@@ -1,3 +1,13 @@
+2020-03-30  Simon Fraser  <simon.fraser@apple.com>
+
+        scrollIntoView() erroneously scrolls non-containing block scrollers
+        https://bugs.webkit.org/show_bug.cgi?id=209715
+
+        Reviewed by Zalan Bujtas.
+
+        * WebView.cpp:
+        (WebView::gesture):
+
 2020-03-29  Darin Adler  <darin@apple.com>
 
         Move TextIterator::rangeFromLocationAndLength off of live ranges

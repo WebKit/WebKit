@@ -2037,8 +2037,10 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
         IntSize logicalScrollDelta(-deltaX * scaleFactor, -deltaY * scaleFactor);
 
         RenderLayer* scrollableLayer = nullptr;
-        if (m_gestureTargetNode && m_gestureTargetNode->renderer() && m_gestureTargetNode->renderer()->enclosingLayer())
-            scrollableLayer = m_gestureTargetNode->renderer()->enclosingLayer()->enclosingScrollableLayer();
+        if (m_gestureTargetNode && m_gestureTargetNode->renderer()) {
+            if (auto* layer = m_gestureTargetNode->renderer()->enclosingLayer())
+                scrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::Yes);
+        }
 
         if (!scrollableLayer) {
             // We might directly hit the document without hitting any nodes

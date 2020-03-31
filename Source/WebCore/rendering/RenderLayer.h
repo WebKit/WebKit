@@ -85,6 +85,7 @@ class TransformationMatrix;
 
 enum BorderRadiusClippingRule { IncludeSelfForBorderRadius, DoNotIncludeSelfForBorderRadius };
 enum IncludeSelfOrNot { IncludeSelf, ExcludeSelf };
+enum CrossFrameBoundaries { No, Yes };
 
 enum RepaintStatus {
     NeedsNormalRepaint,
@@ -460,6 +461,9 @@ public:
     void setPostLayoutScrollPosition(Optional<ScrollPosition>);
     void applyPostLayoutScrollPositionIfNeeded();
 
+    // Returns the nearest enclosing layer that is scrollable.
+    RenderLayer* enclosingScrollableLayer(IncludeSelfOrNot, CrossFrameBoundaries) const;
+
     void availableContentSizeChanged(AvailableSizeChangeReason) override;
 
     enum AutoscrollStatus { NotInProgress, InProgress };
@@ -631,9 +635,8 @@ public:
     // Gets the nearest enclosing positioned ancestor layer (also includes
     // the <html> layer and the root layer).
     RenderLayer* enclosingAncestorForPosition(PositionType) const;
-
-    // Returns the nearest enclosing layer that is scrollable.
-    RenderLayer* enclosingScrollableLayer() const;
+    
+    RenderLayer* enclosingLayerInContainingBlockOrder() const;
 
     // The layer relative to which clipping rects for this layer are computed.
     RenderLayer* clippingRootForPainting() const;
