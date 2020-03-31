@@ -121,7 +121,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::IsValueAutofilled, object.isValueAutofilled());
     setProperty(AXPropertyName::IsVisible, object.isVisible());
     setProperty(AXPropertyName::IsVisited, object.isVisited());
-    setProperty(AXPropertyName::RelativeFrame, object.relativeFrame());
     setProperty(AXPropertyName::RoleDescription, object.roleDescription().isolatedCopy());
     setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
@@ -700,15 +699,17 @@ void AXIsolatedObject::colorValue(int& r, int& g, int& b) const
 
 AXCoreObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) const
 {
-    if (!relativeFrame().contains(point))
-        return nullptr;
-    for (const auto& childID : m_childrenIDs) {
-        auto child = tree()->nodeForID(childID);
-        ASSERT(child);
-        if (child && child->relativeFrame().contains(point))
-            return child->accessibilityHitTest(point);
-    }
-    return const_cast<AXIsolatedObject*>(this);
+    AXID axID = Accessibility::retrieveValueFromMainThread<AXID>([&point, this] () -> AXID {
+        if (auto* object = associatedAXObject()) {
+            object->updateChildrenIfNecessary();
+            if (auto* axObject = object->accessibilityHitTest(point))
+                return axObject->objectID();
+        }
+
+        return InvalidAXID;
+    });
+
+    return tree()->nodeForID(axID).get();
 }
 
 IntPoint AXIsolatedObject::intPointAttributeValue(AXPropertyName propertyName) const
@@ -908,6 +909,16 @@ void AXIsolatedObject::findMatchingObjects(AccessibilitySearchCriteria* criteria
 
     criteria->anchorObject = this;
     Accessibility::findMatchingObjects(*criteria, results);
+}
+
+FloatRect AXIsolatedObject::relativeFrame() const
+{
+    // Retrieve this on the main thread because we require the scroll ancestor to convert to the right scroll offset.
+    return Accessibility::retrieveValueFromMainThread<FloatRect>([this] () -> FloatRect {
+        if (auto* axObject = associatedAXObject())
+            return axObject->relativeFrame();
+        return { };
+    });
 }
 
 bool AXIsolatedObject::replaceTextInRange(const String&, const PlainTextRange&)

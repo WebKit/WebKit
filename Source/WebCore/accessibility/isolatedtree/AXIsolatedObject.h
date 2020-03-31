@@ -282,7 +282,6 @@ private:
         PosInSet,
         PreventKeyboardDOMEventDispatch,
         ReadOnlyValue,
-        RelativeFrame,
 #if PLATFORM(COCOA)
         RemoteParentObject,
 #endif
@@ -463,7 +462,7 @@ private:
     bool isRequired() const override { return boolAttributeValue(AXPropertyName::IsRequired); }
     bool supportsRequiredAttribute() const override { return boolAttributeValue(AXPropertyName::SupportsRequiredAttribute); }
     bool isExpanded() const override { return boolAttributeValue(AXPropertyName::IsExpanded); }
-    FloatRect relativeFrame() const override { return rectAttributeValue<FloatRect>(AXPropertyName::RelativeFrame); }
+    FloatRect relativeFrame() const override;
     bool supportsDatetimeAttribute() const override { return boolAttributeValue(AXPropertyName::SupportsDatetimeAttribute); }
     String datetimeAttributeValue() const override { return stringAttributeValue(AXPropertyName::DatetimeAttributeValue); }
     bool canSetFocusAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetFocusAttribute); }

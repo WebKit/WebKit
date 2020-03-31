@@ -1982,7 +1982,7 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     if (_AXUIElementRequestServicedBySecondaryAXThread())
         return [NSValue valueWithPoint:(NSPoint)self.axBackingObject->relativeFrame().location()];
 #endif
-        
+
     auto rect = snappedIntRect(self.axBackingObject->elementRect());
     
     // The Cocoa accessibility API wants the lower-left corner.
@@ -3063,7 +3063,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString:NSAccessibilityRelativeFrameAttribute])
-        return [NSValue valueWithRect:NSRectFromCGRect(backingObject->relativeFrame())];
+        return [NSValue valueWithRect:(NSRect)backingObject->relativeFrame()];
 
     if ([attributeName isEqualToString:@"AXErrorMessageElements"]) {
         AccessibilityObject::AccessibilityChildrenVector errorMessages;
@@ -3135,6 +3135,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     backingObject->updateChildrenIfNecessary();
     AXCoreObject* axObject = backingObject->accessibilityHitTest(IntPoint(point));
+
     if (axObject) {
         if (axObject->isAttachment() && [axObject->wrapper() attachmentView])
             return [axObject->wrapper() attachmentView];
