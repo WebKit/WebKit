@@ -1,3 +1,17 @@
+2020-03-31  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION: (r259236) [ iOS and Catalina wk2 Debug ] ASSERTION FAILED: m_debugLoggingEnabled in WebKit::ResourceLoadStatisticsStore::debugBroadcastConsoleMessage
+        https://bugs.webkit.org/show_bug.cgi?id=209810
+        <rdar://problem/61106971>
+
+        Unreviewed, covered by existing tests.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::debugBroadcastConsoleMessage):
+        Remove the assertion since `debugBroadcastConsoleMessage` is also called when turning off
+        debug logging mode via `setResourceLoadStatisticsDebugMode`. Fundamentally, it's just a
+        wrapper function for `broadcastConsoleMessage` anyways, so it doesn't need to be gated.
+
 2020-03-31  Pablo Saavedra  <psaavedra@igalia.com>
 
         Several refactorings done in the MemoryPressureMonitor.cpp

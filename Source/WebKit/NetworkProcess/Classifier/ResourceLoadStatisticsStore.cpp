@@ -588,8 +588,6 @@ void ResourceLoadStatisticsStore::didCreateNetworkProcess()
 
 void ResourceLoadStatisticsStore::debugBroadcastConsoleMessage(MessageSource source, MessageLevel level, const String& message)
 {
-    ASSERT(m_debugLoggingEnabled);
-
     if (!RunLoop::isMain()) {
         RunLoop::main().dispatch([&, weakThis = makeWeakPtr(*this), source = crossThreadCopy(source), level = crossThreadCopy(level), message = crossThreadCopy(message)]() {
             if (!weakThis)
