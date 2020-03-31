@@ -1,3 +1,12 @@
+2020-03-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ Catalina ] editing/mac/selection/context-menu-select-editability.html is failing on Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=204246
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Remove failure expectation since the test is now passing.
+
 2020-03-31  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mojave wk1 Release ] fast/canvas/webgl/texImage2D-mse-flipY-true.html is timing out.
