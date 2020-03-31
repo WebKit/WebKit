@@ -1,3 +1,19 @@
+2020-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Remove call to PageConfiguration::setUserContentController added in r225765
+        https://bugs.webkit.org/show_bug.cgi?id=209828
+        <rdar://problem/61114052>
+
+        Reviewed by Brian Weinstein.
+
+        r225765 added a way for a certain Mac application to use WKWebViewConfiguration._pageGroup to set its WKUserContentController.
+        That Mac application has transitioned to setting the WKUserContentController manually, and this workaround needs to be removed
+        for that application's WKUserContentControllers to continue working as desired.  I verified this fixes that application, and
+        it is the only user of WKWebViewConfiguration._pageGroup and all other applications will have no change in behavior.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setupPageConfiguration:]):
+
 2020-03-31  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Add additional IPC permission needed by Security.framework

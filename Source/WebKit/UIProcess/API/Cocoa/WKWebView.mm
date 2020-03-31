@@ -424,10 +424,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->setDefaultWebsitePolicies([_configuration defaultWebpagePreferences]->_websitePolicies.get());
 
 #if PLATFORM(MAC)
-    if (auto pageGroup = WebKit::toImpl([_configuration _pageGroup])) {
+    if (auto pageGroup = WebKit::toImpl([_configuration _pageGroup]))
         pageConfiguration->setPageGroup(pageGroup);
-        pageConfiguration->setUserContentController(&pageGroup->userContentController());
-    } else
+    else
 #endif
     {
         NSString *groupIdentifier = [_configuration _groupIdentifier];
