@@ -179,7 +179,7 @@ bool TrackListBase::isAnyTrackEnabled() const
 
 bool TrackListBase::virtualHasPendingActivity() const
 {
-    return m_asyncEventQueue->hasPendingEvents();
+    return m_asyncEventQueue->hasPendingActivity();
 }
 
 } // namespace WebCore

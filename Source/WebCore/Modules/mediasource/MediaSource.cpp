@@ -973,7 +973,7 @@ void MediaSource::openIfInEndedState()
 
 bool MediaSource::virtualHasPendingActivity() const
 {
-    return m_private || m_asyncEventQueue->hasPendingEvents();
+    return m_private || m_asyncEventQueue->hasPendingActivity();
 }
 
 void MediaSource::stop()

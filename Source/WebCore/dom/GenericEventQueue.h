@@ -50,12 +50,13 @@ public:
     void close();
 
     void cancelAllEvents();
-    bool hasPendingEvents() const;
     bool hasPendingEventsOfType(const AtomString&) const;
 
     void setPaused(bool);
 
     bool isSuspended() const { return m_isSuspended; }
+
+    bool hasPendingActivity() const;
 
 private:
     friend UniqueRef<MainThreadGenericEventQueue> WTF::makeUniqueRefWithoutFastMallocCheck<MainThreadGenericEventQueue, WebCore::EventTarget&>(WebCore::EventTarget&);
@@ -77,6 +78,7 @@ private:
     bool m_isClosed { false };
     bool m_isPausedByClient { false };
     bool m_isSuspended { false };
+    bool m_isFiringEvent { false };
 };
 
 } // namespace WebCore

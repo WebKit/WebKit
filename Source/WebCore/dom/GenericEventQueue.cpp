@@ -33,6 +33,7 @@
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include <wtf/MainThread.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -63,7 +64,9 @@ void MainThreadGenericEventQueue::dispatchOneEvent()
 {
     ASSERT(!m_pendingEvents.isEmpty());
 
+    SetForScope<bool> eventFiringScope(m_isFiringEvent, true);
     Ref<EventTarget> protect(m_owner);
+
     RefPtr<Event> event = m_pendingEvents.takeFirst();
     EventTarget& target = event->target() ? *event->target() : m_owner;
     ASSERT_WITH_MESSAGE(!target.scriptExecutionContext()->activeDOMObjectsAreStopped(),
@@ -86,9 +89,9 @@ void MainThreadGenericEventQueue::cancelAllEvents()
     m_pendingEvents.clear();
 }
 
-bool MainThreadGenericEventQueue::hasPendingEvents() const
+bool MainThreadGenericEventQueue::hasPendingActivity() const
 {
-    return !m_pendingEvents.isEmpty();
+    return !m_pendingEvents.isEmpty() || m_isFiringEvent;
 }
 
 bool MainThreadGenericEventQueue::hasPendingEventsOfType(const AtomString& type) const
