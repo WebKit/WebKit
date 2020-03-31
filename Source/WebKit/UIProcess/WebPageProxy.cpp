@@ -210,7 +210,6 @@
 #include <WebCore/RunLoopObserver.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <wtf/MachSendRight.h>
-#include <wtf/cocoa/Entitlements.h>
 #endif
 
 #if HAVE(TOUCH_BAR)
@@ -479,9 +478,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
     , m_resetRecentCrashCountTimer(RunLoop::main(), this, &WebPageProxy::resetRecentCrashCount)
     , m_tryCloseTimeoutTimer(RunLoop::main(), this, &WebPageProxy::tryCloseTimedOut)
-#if PLATFORM(COCOA)
-    , m_ignoresAppBoundDomains(m_configuration->ignoresAppBoundDomains() || WTF::processHasEntitlement("com.apple.private.applemediaservices"))
-#endif
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "constructor:");
 
@@ -3107,7 +3103,7 @@ static bool shouldBeTreatedAsAppBound(const URL& requestURL)
 void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& requestURL, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     if (isMainFrame && (m_preferences->isInAppBrowserPrivacyEnabled() || WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN_2)) {
-        if (m_ignoresAppBoundDomains)
+        if (m_configuration->ignoresAppBoundDomains())
             return;
         WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN
         if (isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No && shouldBeTreatedAsAppBound(requestURL))

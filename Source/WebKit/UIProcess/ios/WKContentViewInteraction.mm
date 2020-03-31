@@ -6851,48 +6851,40 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return WebCore::IOSApplication::isDataActivation();
 }
 
-- (RetainPtr<UIView>)_createPreviewContainerWithLayerName:(NSString *)layerName
-{
-    auto container = adoptNS([[UIView alloc] init]);
-    [container layer].anchorPoint = CGPointZero;
-    [container layer].name = layerName;
-    [_interactionViewsContainerView addSubview:container.get()];
-    return container;
-}
-
-- (UIView *)containerForDropPreviews
-{
-    if (!_dropPreviewContainerView)
-        _dropPreviewContainerView = [self _createPreviewContainerWithLayerName:@"Drop Preview Container"];
-
-    ASSERT([_dropPreviewContainerView superview]);
-    [_dropPreviewContainerView setHidden:NO];
-    return _dropPreviewContainerView.get();
-}
-
 - (UIView *)containerForDragPreviews
 {
-    if (!_dragPreviewContainerView)
-        _dragPreviewContainerView = [self _createPreviewContainerWithLayerName:@"Drag Preview Container"];
+    if (_dragPreviewContainerView) {
+        ASSERT([_dragPreviewContainerView superview]);
+        [_dragPreviewContainerView setHidden:NO];
+        return _dragPreviewContainerView.get();
+    }
 
-    ASSERT([_dragPreviewContainerView superview]);
-    [_dragPreviewContainerView setHidden:NO];
+    _dragPreviewContainerView = adoptNS([[UIView alloc] init]);
+    [_dragPreviewContainerView layer].anchorPoint = CGPointZero;
+    [_dragPreviewContainerView layer].name = @"Drag Preview Container";
+    [_interactionViewsContainerView addSubview:_dragPreviewContainerView.get()];
+
     return _dragPreviewContainerView.get();
 }
 
 - (UIView *)containerForContextMenuHintPreviews
 {
-    if (!_contextMenuHintContainerView)
-        _contextMenuHintContainerView = [self _createPreviewContainerWithLayerName:@"Context Menu Hint Preview Container"];
+    if (_contextMenuHintContainerView) {
+        ASSERT([_contextMenuHintContainerView superview]);
+        [_contextMenuHintContainerView setHidden:NO];
+        return _contextMenuHintContainerView.get();
+    }
 
-    ASSERT([_contextMenuHintContainerView superview]);
-    [_contextMenuHintContainerView setHidden:NO];
+    _contextMenuHintContainerView = adoptNS([[UIView alloc] init]);
+    [_contextMenuHintContainerView layer].anchorPoint = CGPointZero;
+    [_contextMenuHintContainerView layer].name = @"Context Menu Hint Container";
+    [_interactionViewsContainerView addSubview:_contextMenuHintContainerView.get()];
+
     return _contextMenuHintContainerView.get();
 }
 
 - (void)_hideTargetedPreviewContainerViews
 {
-    [_dropPreviewContainerView setHidden:YES];
     [_dragPreviewContainerView setHidden:YES];
     [_contextMenuHintContainerView setHidden:YES];
 }
@@ -7189,7 +7181,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     [_unselectedContentSnapshot setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
 
     [self insertSubview:_unselectedContentSnapshot.get() belowSubview:_visibleContentViewSnapshot.get()];
-    _dragDropInteractionState.deliverDelayedDropPreview(self, self.containerForDropPreviews, data.value());
+    _dragDropInteractionState.deliverDelayedDropPreview(self, self.containerForDragPreviews, data.value());
 }
 
 - (void)_didPerformDragOperation:(BOOL)handled
@@ -7878,7 +7870,6 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)dropInteraction:(UIDropInteraction *)interaction concludeDrop:(id <UIDropSession>)session
 {
-    [std::exchange(_dropPreviewContainerView, nil) removeFromSuperview];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [std::exchange(_unselectedContentSnapshot, nil) removeFromSuperview];
     _dragDropInteractionState.clearAllDelayedItemPreviewProviders();

@@ -32,7 +32,6 @@
 
 #include "ArithProfile.h"
 #include "BasicBlockLocation.h"
-#include "ByValInfo.h"
 #include "BytecodeDumper.h"
 #include "BytecodeGenerator.h"
 #include "BytecodeLivenessAnalysis.h"
@@ -1689,7 +1688,7 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
 #if ENABLE(JIT)
     if (auto* jitData = m_jitData.get()) {
         for (ByValInfo* byValInfo : jitData->m_byValInfos)
-            byValInfo->visitAggregate(visitor);
+            visitor.append(byValInfo->cachedSymbol);
         for (StructureStubInfo* stubInfo : jitData->m_stubInfos)
             stubInfo->visitAggregate(visitor);
     }

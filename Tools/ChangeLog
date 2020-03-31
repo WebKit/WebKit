@@ -1,4 +1,59 @@
-b"2020-03-30  Alan Coon  <alancoon@apple.com>\n\n        Cherry-pick r258659. rdar://problem/60560831\n\n    REGRESSION (r257214): Targeted preview animates to the wrong place when dropping in editable content\n    https://bugs.webkit.org/show_bug.cgi?id=209218\n    <rdar://problem/60560831>\n    \n    Reviewed by Tim Horton.\n    \n    Source/WebKit:\n    \n    In r257214, we split out the context menu hint preview container view into two views: one for drag and drop, and\n    another for the context menu hint. The container view used for both drag and drop previews was removed under\n    -cleanUpDragSourceSessionState, which is invoked after both drag and drop sessions have ended; however, in the\n    case of a drop in editable content where the drop preview is delayed, the drop animation can end up finishing\n    after -cleanUpDragSourceSessionState is invoked. This means we end up prematurely unparenting the preview\n    container, which results in a broken drop animation.\n    \n    To fix this, split the drag and drop container views further, into separate container views for dragging and for\n    dropping. The drag preview container will continue to be removed under -cleanUpDragSourceSessionState, and the\n    drop preview container will now be removed under the delegate call to -dropInteraction:concludeDrop:, which is\n    invoked by UIKit after all drop previews are finished animating.\n    \n    Covered by adding additional test assertions while running existing API tests (see Tools/ChangeLog for more\n    details).\n    \n    * UIProcess/ios/WKContentViewInteraction.h:\n    * UIProcess/ios/WKContentViewInteraction.mm:\n    (-[WKContentView _createPreviewContainerWithLayerName:]):\n    \n    Pull out common logic for creating and setting up a preview container view into a helper method. This is used by\n    the three methods below, which ensure container views for each of the types of previews we create when showing\n    the context menu, dragging an element, and dropping.\n    \n    (-[WKContentView containerForDropPreviews]):\n    (-[WKContentView containerForDragPreviews]):\n    (-[WKContentView containerForContextMenuHintPreviews]):\n    \n    Add a third preview container view for drop previews, and factor duplicated code in these three methods into a\n    common helper (see above).\n    \n    (-[WKContentView _hideTargetedPreviewContainerViews]):\n    (-[WKContentView _deliverDelayedDropPreviewIfPossible:]):\n    \n    Instead of using the container for drag previews, use the container for drop previews.\n    \n    (-[WKContentView dropInteraction:concludeDrop:]):\n    \n    Remove the drop preview container after the drop has concluded (i.e. all animations are complete).\n    \n    Tools:\n    \n    Augment the drag and drop test harness to verify that for all targeted previews, if they have container views,\n    those views must be parented (i.e. they must be connected to a UIWindow).\n    \n    * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:\n    (-[DragAndDropSimulator _concludeDropAndPerformOperationIfNecessary]):\n    (-[DragAndDropSimulator _expectNoDropPreviewsWithUnparentedContainerViews]):\n    (-[DragAndDropSimulator _invokeDropAnimationCompletionBlocksAndConcludeDrop]):\n    \n    \n    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258659 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n\n    2020-03-18  Wenson Hsieh  <wenson_hsieh@apple.com>\n\n            REGRESSION (r257214): Targeted preview animates to the wrong place when dropping in editable content\n            https://bugs.webkit.org/show_bug.cgi?id=209218\n            <rdar://problem/60560831>\n\n            Reviewed by Tim Horton.\n\n            Augment the drag and drop test harness to verify that for all targeted previews, if they have container views,\n            those views must be parented (i.e. they must be connected to a UIWindow).\n\n            * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:\n            (-[DragAndDropSimulator _concludeDropAndPerformOperationIfNecessary]):\n            (-[DragAndDropSimulator _expectNoDropPreviewsWithUnparentedContainerViews]):\n            (-[DragAndDropSimulator _invokeDropAnimationCompletionBlocksAndConcludeDrop]):\n\n    b'2020-03-30  Alan Coon  <alancoon@apple.com>\\n\\n        Cherry-pick r258521. rdar://problem/60453086\\n\\n    Crash under WebCookieCache::clearForHost()\\n    https://bugs.webkit.org/show_bug.cgi?id=209149\\n    <rdar://problem/60453086>\\n    \\n    Reviewed by Alex Christensen.\\n    \\n    Source/WebKit:\\n    \\n    Make sure WebCookieCache::pruneCacheIfNecessary() keeps alive the host String it is passing\\n    to WebCookieCache::clearForHost(). Previously, it was merely deferencing a HashSet iterator\\n    and passing that to clearForHost(). However, clearForHost() would then drop the String from\\n    the HashSet and the host would no longer be valid.\\n    \\n    Change covered by new API test.\\n    \\n    * WebProcess/WebPage/WebCookieCache.cpp:\\n    (WebKit::WebCookieCache::pruneCacheIfNecessary):\\n    \\n    Tools:\\n    \\n    Add API test coverage.\\n    \\n    * TestWebKitAPI/Tests/WebKitCocoa/CookiePrivateBrowsing.mm:\\n    (TEST):\\n    \\n    \\n    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258521 268f45cc-cd09-0410-ab3c-d52691b4dbfc\\n\\n    2020-03-16  Chris Dumez  <cdumez@apple.com>\\n\\n            Crash under WebCookieCache::clearForHost()\\n            https://bugs.webkit.org/show_bug.cgi?id=209149\\n            <rdar://problem/60453086>\\n\\n            Reviewed by Alex Christensen.\\n\\n            Add API test coverage.\\n\\n            * TestWebKitAPI/Tests/WebKitCocoa/CookiePrivateBrowsing.mm:\\n            (TEST):\\n\\n'2020-03-17  Alan Coon  <alancoon@apple.com>\n\n            Cherry-pick r258518. rdar://problem/60517387\n\n        [macOS] Accessibility sandbox regressions\n        https://bugs.webkit.org/show_bug.cgi?id=209065\n        Source/WebCore/PAL:\n\n\n        Reviewed by Brent Fulgham.\n\n        Add Accessibility notification name.\n\n        * pal/spi/cocoa/NSAccessibilitySPI.h:\n\n        Source/WebKit:\n\n        <rdar://problem/60202450>\n\n        Reviewed by Brent Fulgham.\n\n        When Accessibility is enabled, the WebContent process needs access to the preference service, since Accessibility\n        is relying on some advanced features of the service. Also, when CF prefs direct mode is enabled, the WebContent\n        sandbox needs to explicitly allow reading of the various plist files.\n\n        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:\n        (WebKit::WebProcessPool::registerNotificationObservers):\n        * WebProcess/com.apple.WebProcess.sb.in:\n\n        Tools:\n\n\n        Reviewed by Brent Fulgham.\n\n        * TestWebKitAPI/Tests/WebKit/EnableAccessibility.mm:\n        (TEST):\n        * TestWebKitAPI/Tests/WebKit/GrantAccessToPreferencesService.mm:\n        (TEST):\n\n\n\n        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258518 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n\n        2020-03-16  Per Arne Vollan  <pvollan@apple.com>\n\n                [macOS] Accessibility sandbox regressions\n                https://bugs.webkit.org/show_bug.cgi?id=209065\n\n                Reviewed by Brent Fulgham.\n\n                * TestWebKitAPI/Tests/WebKit/EnableAccessibility.mm:\n                (TEST):\n                * TestWebKitAPI/Tests/WebKit/GrantAccessToPreferencesService.mm:\n                (TEST):\n\n"2020-03-17  Alan Coon  <alancoon@apple.com>
+2020-03-17  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r258518. rdar://problem/60517387
+
+    [macOS] Accessibility sandbox regressions
+    https://bugs.webkit.org/show_bug.cgi?id=209065
+    Source/WebCore/PAL:
+    
+    
+    Reviewed by Brent Fulgham.
+    
+    Add Accessibility notification name.
+    
+    * pal/spi/cocoa/NSAccessibilitySPI.h:
+    
+    Source/WebKit:
+    
+    <rdar://problem/60202450>
+    
+    Reviewed by Brent Fulgham.
+    
+    When Accessibility is enabled, the WebContent process needs access to the preference service, since Accessibility
+    is relying on some advanced features of the service. Also, when CF prefs direct mode is enabled, the WebContent
+    sandbox needs to explicitly allow reading of the various plist files.
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::registerNotificationObservers):
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    Tools:
+    
+    
+    Reviewed by Brent Fulgham.
+    
+    * TestWebKitAPI/Tests/WebKit/EnableAccessibility.mm:
+    (TEST):
+    * TestWebKitAPI/Tests/WebKit/GrantAccessToPreferencesService.mm:
+    (TEST):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258518 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-16  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] Accessibility sandbox regressions
+            https://bugs.webkit.org/show_bug.cgi?id=209065
+
+            Reviewed by Brent Fulgham.
+
+            * TestWebKitAPI/Tests/WebKit/EnableAccessibility.mm:
+            (TEST):
+            * TestWebKitAPI/Tests/WebKit/GrantAccessToPreferencesService.mm:
+            (TEST):
+
+2020-03-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r258359. rdar://problem/60517387
 

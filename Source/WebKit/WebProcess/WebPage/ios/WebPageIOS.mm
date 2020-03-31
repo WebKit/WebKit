@@ -3441,7 +3441,8 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     m_page->updateRendering();
 
 #if ENABLE(VIEWPORT_RESIZING)
-    shrinkToFitContent();
+    if (immediatelyShrinkToFitContent())
+        viewportConfigurationChanged();
 #endif
 
     m_drawingArea->scheduleRenderingUpdate();
@@ -3526,34 +3527,48 @@ void WebPage::resetTextAutosizing()
 
 #if ENABLE(VIEWPORT_RESIZING)
 
-void WebPage::shrinkToFitContent(ZoomToInitialScale zoomToInitialScale)
+void WebPage::scheduleShrinkToFitContent()
 {
     if (m_isClosed)
         return;
 
+    m_shrinkToFitContentTimer.restart();
+}
+
+void WebPage::shrinkToFitContentTimerFired()
+{
+    if (immediatelyShrinkToFitContent())
+        viewportConfigurationChanged(ZoomToInitialScale::Yes);
+}
+
+bool WebPage::immediatelyShrinkToFitContent()
+{
+    if (m_isClosed)
+        return false;
+
     if (!m_page->settings().allowViewportShrinkToFitContent())
-        return;
+        return false;
 
     if (m_useTestingViewportConfiguration)
-        return;
+        return false;
 
     if (!shouldIgnoreMetaViewport())
-        return;
+        return false;
 
     if (!m_viewportConfiguration.viewportArguments().shrinkToFit)
-        return;
+        return false;
 
     if (m_viewportConfiguration.canIgnoreScalingConstraints())
-        return;
+        return false;
 
     auto mainFrame = makeRefPtr(m_mainFrame->coreFrame());
     if (!mainFrame)
-        return;
+        return false;
 
     auto view = makeRefPtr(mainFrame->view());
     auto mainDocument = makeRefPtr(mainFrame->document());
     if (!view || !mainDocument)
-        return;
+        return false;
 
     mainDocument->updateLayout();
 
@@ -3570,7 +3585,7 @@ void WebPage::shrinkToFitContent(ZoomToInitialScale zoomToInitialScale)
     int originalLayoutWidth = m_viewportConfiguration.layoutWidth();
     int originalHorizontalOverflowAmount = originalContentWidth - originalViewWidth;
     if (originalHorizontalOverflowAmount <= toleratedHorizontalScrollingDistance || originalLayoutWidth >= maximumExpandedLayoutWidth || originalContentWidth <= originalViewWidth || originalContentWidth > maximumContentWidthBeforeAvoidingShrinkToFit)
-        return;
+        return false;
 
     auto changeMinimumEffectiveDeviceWidth = [this, mainDocument] (int targetLayoutWidth) -> bool {
         if (m_viewportConfiguration.setMinimumEffectiveDeviceWidth(targetLayoutWidth)) {
@@ -3590,7 +3605,7 @@ void WebPage::shrinkToFitContent(ZoomToInitialScale zoomToInitialScale)
 
     // FIXME (197429): Consider additionally logging an error message to the console if a responsive meta viewport tag was used.
     RELEASE_LOG(ViewportSizing, "Shrink-to-fit: content width %d => %d; layout width %d => %d", originalContentWidth, view->contentsWidth(), originalLayoutWidth, m_viewportConfiguration.layoutWidth());
-    viewportConfigurationChanged(zoomToInitialScale);
+    return true;
 }
 
 #endif // ENABLE(VIEWPORT_RESIZING)
@@ -3801,37 +3816,21 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
     IntPoint scrollPosition = roundedIntPoint(visibleContentRectUpdateInfo.unobscuredContentRect().location());
 
-    bool pageHasBeenScaledSinceLastLayerTreeCommitThatChangedPageScale = ([&] {
-        if (!m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage)
-            return false;
+    bool hasSetPageScale = false;
+    if (scaleFromUIProcess) {
+        m_scaleWasSetByUIProcess = true;
+        m_hasStablePageScaleFactor = m_isInStableState;
 
-        if (areEssentiallyEqualAsFloat(scaleToUse, m_page->pageScaleFactor()))
-            return false;
+        m_dynamicSizeUpdateHistory.clear();
 
-        auto [transactionIdBeforeScalingPage, scaleBeforeScalingPage] = *m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
-        if (!areEssentiallyEqualAsFloat(scaleBeforeScalingPage, scaleToUse))
-            return false;
-
-        return transactionIdBeforeScalingPage >= visibleContentRectUpdateInfo.lastLayerTreeTransactionID();
-    })();
-
-    if (!pageHasBeenScaledSinceLastLayerTreeCommitThatChangedPageScale) {
-        bool hasSetPageScale = false;
-        if (scaleFromUIProcess) {
-            m_scaleWasSetByUIProcess = true;
-            m_hasStablePageScaleFactor = m_isInStableState;
-
-            m_dynamicSizeUpdateHistory.clear();
-
-            m_page->setPageScaleFactor(scaleFromUIProcess.value(), scrollPosition, m_isInStableState);
-            hasSetPageScale = true;
-            send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFromUIProcess.value()));
-        }
-
-        if (!hasSetPageScale && m_isInStableState) {
-            m_page->setPageScaleFactor(scaleToUse, scrollPosition, true);
-            hasSetPageScale = true;
-        }
+        m_page->setPageScaleFactor(scaleFromUIProcess.value(), scrollPosition, m_isInStableState);
+        hasSetPageScale = true;
+        send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFromUIProcess.value()));
+    }
+    
+    if (!hasSetPageScale && m_isInStableState) {
+        m_page->setPageScaleFactor(scaleToUse, scrollPosition, true);
+        hasSetPageScale = true;
     }
 
     auto& frame = m_page->mainFrame();
@@ -4247,12 +4246,6 @@ void WebPage::setShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCur
         return;
     m_page->revealCurrentSelection();
     scheduleFullEditorStateUpdate();
-}
-
-void WebPage::platformDidScalePage()
-{
-    auto transactionID = downcast<RemoteLayerTreeDrawingArea>(*m_drawingArea).lastCommittedTransactionID();
-    m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage = {{ transactionID, m_lastTransactionPageScaleFactor }};
 }
 
 #if USE(QUICK_LOOK)

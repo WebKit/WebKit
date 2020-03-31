@@ -185,7 +185,6 @@ WTF_EXTERN_C_END
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
 - (void)_handleHIDEvent:(IOHIDEventRef)event;
 - (void)handleKeyUIEvent:(UIEvent *)event;
-- (BOOL)_appAdoptsUISceneLifecycle;
 @end
 
 typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {
