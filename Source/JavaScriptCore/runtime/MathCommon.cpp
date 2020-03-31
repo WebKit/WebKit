@@ -450,14 +450,14 @@ double JIT_OPERATION operationMathPow(double x, double y)
     return mathPowInternal(x, y);
 }
 
-int32_t JIT_OPERATION operationToInt32(double value)
+UCPUStrictInt32 JIT_OPERATION operationToInt32(double value)
 {
-    return JSC::toInt32(value);
+    return toUCPUStrictInt32(JSC::toInt32(value));
 }
 
-int32_t JIT_OPERATION operationToInt32SensibleSlow(double number)
+UCPUStrictInt32 JIT_OPERATION operationToInt32SensibleSlow(double number)
 {
-    return toInt32Internal<ToInt32Mode::AfterSensibleConversionAttempt>(number);
+    return toUCPUStrictInt32(toInt32Internal<ToInt32Mode::AfterSensibleConversionAttempt>(number));
 }
 
 #if HAVE(ARM_IDIV_INSTRUCTIONS)

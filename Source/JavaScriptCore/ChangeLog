@@ -1,3 +1,73 @@
+2020-03-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce UCPUStrictInt32 for result type of DFG operations
+        https://bugs.webkit.org/show_bug.cgi?id=209832
+
+        Reviewed by Saam Barati.
+
+        Let's introduce UCPUStrictInt32 to DFG operations to offload StrictInt32 code into operations C++ code.
+        UCPUStrictInt32 is the same size to UCPURegister, and it is used for StrictInt32, which requires upper 32-bits
+        are zeroed.
+
+        * assembler/CPU.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileUInt32ToNumber):
+        (JSC::DFG::SpeculativeJIT::compileDoubleAsInt32):
+        (JSC::DFG::SpeculativeJIT::setIntTypedArrayLoadResult):
+        (JSC::DFG::SpeculativeJIT::compileBitwiseNot):
+        (JSC::DFG::SpeculativeJIT::compileBitwiseOp):
+        (JSC::DFG::SpeculativeJIT::compileShiftOp):
+        (JSC::DFG::SpeculativeJIT::compileArithAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithAbs):
+        (JSC::DFG::SpeculativeJIT::compileArithClz32):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        (JSC::DFG::SpeculativeJIT::compileArithRounding):
+        (JSC::DFG::SpeculativeJIT::compileArithMinMax):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileVarargsLength):
+        (JSC::DFG::SpeculativeJIT::compileGetRestLength):
+        (JSC::DFG::SpeculativeJIT::compileArrayIndexOf):
+        (JSC::DFG::SpeculativeJIT::compileGetEnumerableLength):
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentCountIncludingThis):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::strictInt32Result):
+        (JSC::DFG::SpeculativeJIT::int32Result): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileStringCodePointAt):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithClz32):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayIndexOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileVarargsLength):
+        (JSC::FTL::DFG::LowerDFGToB3::mapHashString):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMapHash):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasOwnProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOfCustom):
+        (JSC::FTL::DFG::LowerDFGToB3::doubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::sensibleDoubleToInt32):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationSwitchStringAndGetBranchOffset):
+        (JSC::FTL::operationTypeOfObjectAsTypeofType):
+        * ftl/FTLOperations.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * runtime/MathCommon.cpp:
+        (JSC::operationToInt32):
+        (JSC::operationToInt32SensibleSlow):
+        * runtime/MathCommon.h:
+        (JSC::toUCPUStrictInt32):
+
 2020-03-31  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION: ASSERTION FAILED: regExpObjectNode in JSC::DFG::StrengthReductionPhase::handleNode

@@ -768,7 +768,7 @@ public:
 
     // These method called to initialize the GenerationInfo
     // to describe the result of an operation.
-    void int32Result(GPRReg reg, Node* node, DataFormat format = DataFormatInt32, UseChildrenMode mode = CallUseChildren)
+    void strictInt32Result(GPRReg reg, Node* node, DataFormat format = DataFormatInt32, UseChildrenMode mode = CallUseChildren)
     {
         if (mode == CallUseChildren)
             useChildren(node);
@@ -791,9 +791,9 @@ public:
 #endif
         }
     }
-    void int32Result(GPRReg reg, Node* node, UseChildrenMode mode)
+    void strictInt32Result(GPRReg reg, Node* node, UseChildrenMode mode)
     {
-        int32Result(reg, node, DataFormatInt32, mode);
+        strictInt32Result(reg, node, DataFormatInt32, mode);
     }
     void int52Result(GPRReg reg, Node* node, DataFormat format, UseChildrenMode mode = CallUseChildren)
     {

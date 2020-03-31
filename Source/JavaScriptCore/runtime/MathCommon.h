@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CPU.h"
 #include <cmath>
 #include <wtf/Optional.h>
 
@@ -32,8 +33,8 @@ namespace JSC {
 
 const int32_t maxExponentForIntegerMathPow = 1000;
 double JIT_OPERATION operationMathPow(double x, double y) WTF_INTERNAL;
-int32_t JIT_OPERATION operationToInt32(double) WTF_INTERNAL;
-int32_t JIT_OPERATION operationToInt32SensibleSlow(double) WTF_INTERNAL;
+UCPUStrictInt32 JIT_OPERATION operationToInt32(double) WTF_INTERNAL;
+UCPUStrictInt32 JIT_OPERATION operationToInt32SensibleSlow(double) WTF_INTERNAL;
 
 constexpr double maxSafeInteger()
 {
@@ -154,6 +155,12 @@ inline uint32_t toUInt32(double number)
     // As commented in the spec, the operation of ToInt32 and ToUint32 only differ
     // in how the result is interpreted; see NOTEs in sections 9.5 and 9.6.
     return toInt32(number);
+}
+
+ALWAYS_INLINE constexpr UCPUStrictInt32 toUCPUStrictInt32(int32_t value)
+{
+    // StrictInt32 format requires that higher bits are all zeros even if value is negative.
+    return static_cast<UCPUStrictInt32>(static_cast<uint32_t>(value));
 }
 
 inline Optional<double> safeReciprocalForDivByConst(double constant)

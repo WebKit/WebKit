@@ -699,7 +699,7 @@ double JIT_OPERATION operationArithAbs(JSGlobalObject* globalObject, EncodedJSVa
     return fabs(a);
 }
 
-uint32_t JIT_OPERATION operationArithClz32(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
+UCPUStrictInt32 JIT_OPERATION operationArithClz32(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -708,8 +708,8 @@ uint32_t JIT_OPERATION operationArithClz32(JSGlobalObject* globalObject, Encoded
 
     JSValue op1 = JSValue::decode(encodedOp1);
     uint32_t value = op1.toUInt32(globalObject);
-    RETURN_IF_EXCEPTION(scope, 0);
-    return clz(value);
+    RETURN_IF_EXCEPTION(scope, { });
+    return toUCPUStrictInt32(clz(value));
 }
 
 double JIT_OPERATION operationArithFRound(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
@@ -2293,21 +2293,6 @@ JSCell* JIT_OPERATION operationTypeOfObject(JSGlobalObject* globalObject, JSCell
     return vm.smallStrings.objectString();
 }
 
-int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(JSGlobalObject* globalObject, JSCell* object)
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-
-    ASSERT(jsDynamicCast<JSObject*>(vm, object));
-    
-    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
-        return static_cast<int32_t>(TypeofType::Undefined);
-    if (object->isFunction(vm))
-        return static_cast<int32_t>(TypeofType::Function);
-    return static_cast<int32_t>(TypeofType::Object);
-}
-
 char* JIT_OPERATION operationAllocateSimplePropertyStorageWithInitialCapacity(VM* vmPointer)
 {
     VM& vm = *vmPointer;
@@ -2790,20 +2775,6 @@ char* JIT_OPERATION operationSwitchString(JSGlobalObject* globalObject, size_t t
     return callFrame->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(strImpl).executableAddress<char*>();
 }
 
-int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(JSGlobalObject* globalObject, size_t tableIndex, JSString* string)
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-
-    StringImpl* strImpl = string->value(globalObject).impl();
-
-    RETURN_IF_EXCEPTION(throwScope, 0);
-
-    return callFrame->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(strImpl, std::numeric_limits<int32_t>::min());
-}
-
 uintptr_t JIT_OPERATION operationCompareStringImplLess(StringImpl* a, StringImpl* b)
 {
     return codePointCompare(a, b) < 0;
@@ -2878,17 +2849,17 @@ void JIT_OPERATION operationThrowStackOverflowForVarargs(JSGlobalObject* globalO
     throwStackOverflowError(globalObject, scope);
 }
 
-int32_t JIT_OPERATION operationSizeOfVarargs(JSGlobalObject* globalObject, EncodedJSValue encodedArguments, uint32_t firstVarArgOffset)
+UCPUStrictInt32 JIT_OPERATION operationSizeOfVarargs(JSGlobalObject* globalObject, EncodedJSValue encodedArguments, uint32_t firstVarArgOffset)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue arguments = JSValue::decode(encodedArguments);
     
-    return sizeOfVarargs(globalObject, arguments, firstVarArgOffset);
+    return toUCPUStrictInt32(sizeOfVarargs(globalObject, arguments, firstVarArgOffset));
 }
 
-int32_t JIT_OPERATION operationHasOwnProperty(JSGlobalObject* globalObject, JSObject* thisObject, EncodedJSValue encodedKey)
+size_t JIT_OPERATION operationHasOwnProperty(JSGlobalObject* globalObject, JSObject* thisObject, EncodedJSValue encodedKey)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2909,7 +2880,7 @@ int32_t JIT_OPERATION operationHasOwnProperty(JSGlobalObject* globalObject, JSOb
     return result;
 }
 
-int32_t JIT_OPERATION operationNumberIsInteger(JSGlobalObject* globalObject, EncodedJSValue value)
+size_t JIT_OPERATION operationNumberIsInteger(JSGlobalObject* globalObject, EncodedJSValue value)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2917,7 +2888,7 @@ int32_t JIT_OPERATION operationNumberIsInteger(JSGlobalObject* globalObject, Enc
     return NumberConstructor::isIntegerImpl(JSValue::decode(value));
 }
 
-int32_t JIT_OPERATION operationArrayIndexOfString(JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index)
+UCPUStrictInt32 JIT_OPERATION operationArrayIndexOfString(JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2932,17 +2903,17 @@ int32_t JIT_OPERATION operationArrayIndexOfString(JSGlobalObject* globalObject, 
             continue;
         auto* string = asString(value);
         if (string == searchElement)
-            return index;
+            return toUCPUStrictInt32(index);
         if (string->equal(globalObject, searchElement)) {
             scope.assertNoException();
-            return index;
+            return toUCPUStrictInt32(index);
         }
         RETURN_IF_EXCEPTION(scope, { });
     }
-    return -1;
+    return toUCPUStrictInt32(-1);
 }
 
-int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index)
+UCPUStrictInt32 JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2960,12 +2931,12 @@ int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(JSGlobalObject
         bool isEqual = JSValue::strictEqual(globalObject, searchElement, value);
         RETURN_IF_EXCEPTION(scope, { });
         if (isEqual)
-            return index;
+            return toUCPUStrictInt32(index);
     }
-    return -1;
+    return toUCPUStrictInt32(-1);
 }
 
-int32_t JIT_OPERATION operationArrayIndexOfValueDouble(JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index)
+UCPUStrictInt32 JIT_OPERATION operationArrayIndexOfValueDouble(JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2974,7 +2945,7 @@ int32_t JIT_OPERATION operationArrayIndexOfValueDouble(JSGlobalObject* globalObj
     JSValue searchElement = JSValue::decode(encodedValue);
 
     if (!searchElement.isNumber())
-        return -1;
+        return toUCPUStrictInt32(-1);
     double number = searchElement.asNumber();
 
     int32_t length = butterfly->publicLength();
@@ -2982,9 +2953,9 @@ int32_t JIT_OPERATION operationArrayIndexOfValueDouble(JSGlobalObject* globalObj
     for (; index < length; ++index) {
         // This comparison ignores NaN.
         if (data[index] == number)
-            return index;
+            return toUCPUStrictInt32(index);
     }
-    return -1;
+    return toUCPUStrictInt32(-1);
 }
 
 void JIT_OPERATION operationLoadVarargs(JSGlobalObject* globalObject, int32_t firstElementDest, EncodedJSValue encodedArguments, uint32_t offset, uint32_t lengthIncludingThis, uint32_t mandatoryMinimum)
@@ -3330,13 +3301,13 @@ void JIT_OPERATION operationPutDynamicVarNonStrict(JSGlobalObject* globalObject,
     return putDynamicVar(globalObject, vm, scope, value, impl, getPutInfoBits, isStrictMode);
 }
 
-int32_t JIT_OPERATION operationMapHash(JSGlobalObject* globalObject, EncodedJSValue input)
+UCPUStrictInt32 JIT_OPERATION operationMapHash(JSGlobalObject* globalObject, EncodedJSValue input)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    return jsMapHash(globalObject, vm, JSValue::decode(input));
+    return toUCPUStrictInt32(jsMapHash(globalObject, vm, JSValue::decode(input)));
 }
 
 JSCell* JIT_OPERATION operationJSMapFindBucket(JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash)

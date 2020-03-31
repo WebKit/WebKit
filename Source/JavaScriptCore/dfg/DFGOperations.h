@@ -72,7 +72,7 @@ EncodedJSValue JIT_OPERATION operationValuePow(JSGlobalObject*, EncodedJSValue e
 EncodedJSValue JIT_OPERATION operationInc(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationDec(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 double JIT_OPERATION operationArithAbs(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
-uint32_t JIT_OPERATION operationArithClz32(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+UCPUStrictInt32 JIT_OPERATION operationArithClz32(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 double JIT_OPERATION operationArithFRound(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 double JIT_OPERATION operationArithSqrt(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 
@@ -211,7 +211,6 @@ double JIT_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
 size_t JIT_OPERATION operationObjectIsObject(JSGlobalObject*, JSCell*) WTF_INTERNAL;
 size_t JIT_OPERATION operationObjectIsFunction(JSGlobalObject*, JSCell*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationTypeOfObject(JSGlobalObject*, JSCell*) WTF_INTERNAL;
-int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(JSGlobalObject*, JSCell*) WTF_INTERNAL;
 char* JIT_OPERATION operationAllocateSimplePropertyStorageWithInitialCapacity(VM*) WTF_INTERNAL;
 char* JIT_OPERATION operationAllocateSimplePropertyStorage(VM*, size_t newSize) WTF_INTERNAL;
 char* JIT_OPERATION operationAllocateComplexPropertyStorageWithInitialCapacity(VM*, JSObject*) WTF_INTERNAL;
@@ -235,7 +234,7 @@ char* JIT_OPERATION operationInt32ToStringWithValidRadix(JSGlobalObject*, int32_
 char* JIT_OPERATION operationInt52ToStringWithValidRadix(JSGlobalObject*, int64_t, int32_t);
 char* JIT_OPERATION operationDoubleToStringWithValidRadix(JSGlobalObject*, double, int32_t);
 
-int32_t JIT_OPERATION operationMapHash(JSGlobalObject*, EncodedJSValue input);
+UCPUStrictInt32 JIT_OPERATION operationMapHash(JSGlobalObject*, EncodedJSValue input);
 JSCell* JIT_OPERATION operationJSMapFindBucket(JSGlobalObject*, JSCell*, EncodedJSValue, int32_t);
 JSCell* JIT_OPERATION operationJSSetFindBucket(JSGlobalObject*, JSCell*, EncodedJSValue, int32_t);
 
@@ -257,7 +256,6 @@ JSString* JIT_OPERATION operationStrCat2(JSGlobalObject*, EncodedJSValue, Encode
 JSString* JIT_OPERATION operationStrCat3(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 char* JIT_OPERATION operationFindSwitchImmTargetForDouble(VM*, EncodedJSValue, size_t tableIndex);
 char* JIT_OPERATION operationSwitchString(JSGlobalObject*, size_t tableIndex, JSString*);
-int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(JSGlobalObject*, size_t tableIndex, JSString*);
 uintptr_t JIT_OPERATION operationCompareStringImplLess(StringImpl*, StringImpl*);
 uintptr_t JIT_OPERATION operationCompareStringImplLessEq(StringImpl*, StringImpl*);
 uintptr_t JIT_OPERATION operationCompareStringImplGreater(StringImpl*, StringImpl*);
@@ -268,17 +266,16 @@ uintptr_t JIT_OPERATION operationCompareStringGreater(JSGlobalObject*, JSString*
 uintptr_t JIT_OPERATION operationCompareStringGreaterEq(JSGlobalObject*, JSString*, JSString*);
 void JIT_OPERATION operationNotifyWrite(VM*, WatchpointSet*);
 void JIT_OPERATION operationThrowStackOverflowForVarargs(JSGlobalObject*) WTF_INTERNAL;
-int32_t JIT_OPERATION operationSizeOfVarargs(JSGlobalObject*, EncodedJSValue arguments, uint32_t firstVarArgOffset);
+UCPUStrictInt32 JIT_OPERATION operationSizeOfVarargs(JSGlobalObject*, EncodedJSValue arguments, uint32_t firstVarArgOffset);
 void JIT_OPERATION operationLoadVarargs(JSGlobalObject*, int32_t firstElementDest, EncodedJSValue arguments, uint32_t offset, uint32_t length, uint32_t mandatoryMinimum);
 void JIT_OPERATION operationThrowDFG(JSGlobalObject*, EncodedJSValue);
 void JIT_OPERATION operationThrowStaticError(JSGlobalObject*, JSString*, uint32_t);
 
-int32_t JIT_OPERATION operationHasOwnProperty(JSGlobalObject*, JSObject*, EncodedJSValue);
+size_t JIT_OPERATION operationHasOwnProperty(JSGlobalObject*, JSObject*, EncodedJSValue);
 
-int32_t JIT_OPERATION operationArrayIndexOfString(JSGlobalObject*, Butterfly*, JSString*, int32_t);
-int32_t JIT_OPERATION operationArrayIndexOfValue(JSGlobalObject*, Butterfly*, EncodedJSValue, int32_t);
-int32_t JIT_OPERATION operationArrayIndexOfValueDouble(JSGlobalObject*, Butterfly*, EncodedJSValue, int32_t);
-int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(JSGlobalObject*, Butterfly*, EncodedJSValue, int32_t);
+UCPUStrictInt32 JIT_OPERATION operationArrayIndexOfString(JSGlobalObject*, Butterfly*, JSString*, int32_t);
+UCPUStrictInt32 JIT_OPERATION operationArrayIndexOfValueDouble(JSGlobalObject*, Butterfly*, EncodedJSValue, int32_t);
+UCPUStrictInt32 JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(JSGlobalObject*, Butterfly*, EncodedJSValue, int32_t);
 
 JSCell* JIT_OPERATION operationSpreadFastArray(JSGlobalObject*, JSCell*);
 JSCell* JIT_OPERATION operationSpreadGeneric(JSGlobalObject*, JSCell*);
@@ -294,7 +291,7 @@ void JIT_OPERATION operationPutDynamicVarNonStrict(JSGlobalObject*, JSObject* sc
 int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue);
 int64_t JIT_OPERATION operationConvertDoubleToInt52(double);
 
-int32_t JIT_OPERATION operationNumberIsInteger(JSGlobalObject*, EncodedJSValue);
+size_t JIT_OPERATION operationNumberIsInteger(JSGlobalObject*, EncodedJSValue);
 
 size_t JIT_OPERATION operationDefaultHasInstance(JSGlobalObject*, JSCell* value, JSCell* proto);
 

@@ -38,6 +38,8 @@ using CPURegister = int32_t;
 using UCPURegister = uint32_t;
 #endif
 
+using UCPUStrictInt32 = UCPURegister;
+
 constexpr bool isARMv7IDIVSupported()
 {
 #if HAVE(ARM_IDIV_INSTRUCTIONS)

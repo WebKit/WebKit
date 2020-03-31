@@ -1916,7 +1916,7 @@ void JIT_OPERATION operationPopScope(JSGlobalObject* globalObject, int32_t scope
     scopeSlot = scopeSlot.Register::scope()->next();
 }
 
-int32_t JIT_OPERATION operationInstanceOfCustom(JSGlobalObject* globalObject, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance)
+size_t JIT_OPERATION operationInstanceOfCustom(JSGlobalObject* globalObject, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);

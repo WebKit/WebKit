@@ -1851,7 +1851,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRTemporary result(this);
             m_jit.load32(JITCompiler::payloadFor(node->machineLocal()), result.gpr());
             
-            // Like int32Result, but don't useChildren - our children are phi nodes,
+            // Like strictInt32Result, but don't useChildren - our children are phi nodes,
             // and don't represent values within this dataflow with virtual registers.
             VirtualRegister virtualRegister = node->virtualRegister();
             m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
@@ -2366,7 +2366,7 @@ void SpeculativeJIT::compile(Node* node)
                         MacroAssembler::BaseIndex(
                             storageReg, propertyReg, MacroAssembler::TimesEight, PayloadOffset),
                         resultPayload.gpr());
-                    int32Result(resultPayload.gpr(), node);
+                    strictInt32Result(resultPayload.gpr(), node);
                     break;
                 }
                 
@@ -3045,7 +3045,7 @@ void SpeculativeJIT::compile(Node* node)
             
             m_jit.move(value.gpr(), result.gpr());
 
-            int32Result(result.gpr(), node);
+            strictInt32Result(result.gpr(), node);
             break;
         }
             
@@ -3059,7 +3059,7 @@ void SpeculativeJIT::compile(Node* node)
                 GPRReg resultGPR = result.gpr();
                 
                 m_jit.move(valueGPR, resultGPR);
-                int32Result(result.gpr(), node);
+                strictInt32Result(result.gpr(), node);
                 break;
             }
             
@@ -3739,7 +3739,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg resultGPR = result.gpr();
         callOperation(operationMapHash, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), inputRegs);
         m_jit.exceptionCheck();
-        int32Result(resultGPR, node);
+        strictInt32Result(resultGPR, node);
         break;
     }
 

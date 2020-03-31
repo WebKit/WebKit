@@ -2474,7 +2474,7 @@ private:
         }
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
         LValue argument = lowJSValue(m_node->child1());
-        LValue result = vmCall(Int32, operationArithClz32, weakPointer(globalObject), argument);
+        LValue result = m_out.castToInt32(vmCall(Int64, operationArithClz32, weakPointer(globalObject), argument));
         setInt32(result);
     }
     
@@ -5753,17 +5753,17 @@ private:
 
         case StringUse:
             ASSERT(m_node->arrayMode().type() == Array::Contiguous);
-            setInt32(vmCall(Int32, operationArrayIndexOfString, weakPointer(globalObject), storage, lowString(searchElementEdge), startIndex));
+            setInt32(m_out.castToInt32(vmCall(Int64, operationArrayIndexOfString, weakPointer(globalObject), storage, lowString(searchElementEdge), startIndex)));
             break;
 
         case UntypedUse:
             switch (m_node->arrayMode().type()) {
             case Array::Double:
-                setInt32(vmCall(Int32, operationArrayIndexOfValueDouble, weakPointer(globalObject), storage, lowJSValue(searchElementEdge), startIndex));
+                setInt32(m_out.castToInt32(vmCall(Int64, operationArrayIndexOfValueDouble, weakPointer(globalObject), storage, lowJSValue(searchElementEdge), startIndex)));
                 break;
             case Array::Int32:
             case Array::Contiguous:
-                setInt32(vmCall(Int32, operationArrayIndexOfValueInt32OrContiguous, weakPointer(globalObject), storage, lowJSValue(searchElementEdge), startIndex));
+                setInt32(m_out.castToInt32(vmCall(Int64, operationArrayIndexOfValueInt32OrContiguous, weakPointer(globalObject), storage, lowJSValue(searchElementEdge), startIndex)));
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -9832,9 +9832,7 @@ private:
         LoadVarargsData* data = m_node->loadVarargsData();
         LValue jsArguments = lowJSValue(m_node->argumentsChild());
 
-        LValue length = vmCall(
-            Int32, operationSizeOfVarargs, weakPointer(globalObject), jsArguments,
-            m_out.constInt32(data->offset));
+        LValue length = m_out.castToInt32(vmCall(Int64, operationSizeOfVarargs, weakPointer(globalObject), jsArguments, m_out.constInt32(data->offset)));
 
         LValue lengthIncludingThis = m_out.add(length, m_out.int32One);
 
@@ -10620,8 +10618,7 @@ private:
             unsure(slowCase), unsure(continuation));
 
         m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowResult = m_out.anchor(
-            vmCall(Int32, operationMapHash, weakPointer(globalObject), string));
+        ValueFromBlock slowResult = m_out.anchor(m_out.castToInt32(vmCall(Int64, operationMapHash, weakPointer(globalObject), string)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -10708,8 +10705,7 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowResult = m_out.anchor(
-            vmCall(Int32, operationMapHash, weakPointer(globalObject), value));
+        ValueFromBlock slowResult = m_out.anchor(m_out.castToInt32(vmCall(Int64, operationMapHash, weakPointer(globalObject), value)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -11383,7 +11379,7 @@ private:
 
         m_out.appendTo(slowCase, continuation);
         ValueFromBlock slowResult;
-        slowResult = m_out.anchor(vmCall(Int32, operationHasOwnProperty, weakPointer(globalObject), object, keyAsValue));
+        slowResult = m_out.anchor(m_out.notZero64(vmCall(Int64, operationHasOwnProperty, weakPointer(globalObject), object, keyAsValue)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -11561,7 +11557,7 @@ private:
         LValue constructor = lowCell(m_node->child2());
         LValue hasInstance = lowJSValue(m_node->child3());
 
-        setBoolean(m_out.logicalNot(m_out.equal(m_out.constInt32(0), vmCall(Int32, operationInstanceOfCustom, weakPointer(globalObject), value, constructor, hasInstance))));
+        setBoolean(m_out.notZero64(vmCall(Int64, operationInstanceOfCustom, weakPointer(globalObject), value, constructor, hasInstance)));
     }
     
     void compileCountExecution()
@@ -15919,7 +15915,7 @@ private:
         m_out.jump(continuation);
         
         m_out.appendTo(slowPath, continuation);
-        results.append(m_out.anchor(m_out.callWithoutSideEffects(Int32, operationToInt32, doubleValue)));
+        results.append(m_out.anchor(m_out.castToInt32(m_out.callWithoutSideEffects(Int64, operationToInt32, doubleValue))));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -15959,7 +15955,7 @@ private:
             rarely(slowPath), usually(continuation));
         
         LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
-        ValueFromBlock slowResult = m_out.anchor(m_out.callWithoutSideEffects(Int32, operationToInt32SensibleSlow, doubleValue));
+        ValueFromBlock slowResult = m_out.anchor(m_out.castToInt32(m_out.callWithoutSideEffects(Int64, operationToInt32SensibleSlow, doubleValue)));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);

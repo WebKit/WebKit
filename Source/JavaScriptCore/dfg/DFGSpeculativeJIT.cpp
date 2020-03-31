@@ -2160,7 +2160,7 @@ void SpeculativeJIT::compileGetCharCodeAt(Node* node)
 
     cont8Bit.link(&m_jit);
 
-    int32Result(scratchReg, m_currentNode);
+    strictInt32Result(scratchReg, m_currentNode);
 }
 
 void SpeculativeJIT::compileGetByValOnString(Node* node)
@@ -2344,7 +2344,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
         GPRReg op1GPR = op1.gpr();
         GPRReg resultGPR = result.gpr();
         m_jit.zeroExtend32ToPtr(op1GPR, resultGPR);
-        int32Result(resultGPR, node, DataFormatInt32);
+        strictInt32Result(resultGPR, node, DataFormatInt32);
         return;
     }
 #endif // USE(JSVALUE64)
@@ -2364,7 +2364,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
             addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
                 hasSensibleDoubleToInt() ? operationToInt32SensibleSlow : operationToInt32, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, gpr, fpr));
         }
-        int32Result(gpr, node);
+        strictInt32Result(gpr, node);
         return;
     }
     
@@ -2375,7 +2375,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
             SpeculateInt32Operand op1(this, node->child1(), ManualOperandSpeculation);
             GPRTemporary result(this, Reuse, op1);
             m_jit.move(op1.gpr(), result.gpr());
-            int32Result(result.gpr(), node, op1.format());
+            strictInt32Result(result.gpr(), node, op1.format());
             return;
         }
         case GeneratedOperandJSValue: {
@@ -2488,7 +2488,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                 converted.link(&m_jit);
             }
 #endif
-            int32Result(resultGpr, node);
+            strictInt32Result(resultGpr, node);
             return;
         }
         case GeneratedOperandTypeUnknown:
@@ -2540,7 +2540,7 @@ void SpeculativeJIT::compileUInt32ToNumber(Node* node)
 
     speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, result.gpr(), TrustedImm32(0)));
 
-    int32Result(result.gpr(), node, op1.format());
+    strictInt32Result(result.gpr(), node, op1.format());
 }
 
 void SpeculativeJIT::compileDoubleAsInt32(Node* node)
@@ -2560,7 +2560,7 @@ void SpeculativeJIT::compileDoubleAsInt32(Node* node)
         shouldCheckNegativeZero(node->arithMode()));
     speculationCheck(Overflow, JSValueRegs(), 0, failureCases);
 
-    int32Result(resultGPR, node);
+    strictInt32Result(resultGPR, node);
 }
 
 void SpeculativeJIT::compileDoubleRep(Node* node)
@@ -2917,14 +2917,14 @@ void SpeculativeJIT::loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg
 void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, GPRReg resultReg, TypedArrayType type, bool canSpeculate)
 {
     if (elementSize(type) < 4 || isSigned(type)) {
-        int32Result(resultReg, node);
+        strictInt32Result(resultReg, node);
         return;
     }
     
     ASSERT(elementSize(type) == 4 && !isSigned(type));
     if (node->shouldSpeculateInt32() && canSpeculate) {
         speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, resultReg, TrustedImm32(0)));
-        int32Result(resultReg, node);
+        strictInt32Result(resultReg, node);
         return;
     }
     
@@ -3574,7 +3574,7 @@ void SpeculativeJIT::compileBitwiseNot(Node* node)
 
     m_jit.not32(resultGPR);
 
-    int32Result(resultGPR, node);
+    strictInt32Result(resultGPR, node);
 }
 
 template<typename SnippetGenerator, J_JITOperation_GJJ snippetSlowPathFunction>
@@ -3730,7 +3730,7 @@ void SpeculativeJIT::compileBitwiseOp(Node* node)
 
         bitOp(op, leftChild->asInt32(), op2.gpr(), result.gpr());
 
-        int32Result(result.gpr(), node);
+        strictInt32Result(result.gpr(), node);
         return;
     }
 
@@ -3740,7 +3740,7 @@ void SpeculativeJIT::compileBitwiseOp(Node* node)
 
         bitOp(op, rightChild->asInt32(), op1.gpr(), result.gpr());
 
-        int32Result(result.gpr(), node);
+        strictInt32Result(result.gpr(), node);
         return;
     }
 
@@ -3752,7 +3752,7 @@ void SpeculativeJIT::compileBitwiseOp(Node* node)
     GPRReg reg2 = op2.gpr();
     bitOp(op, reg1, reg2, result.gpr());
 
-    int32Result(result.gpr(), node);
+    strictInt32Result(result.gpr(), node);
 }
 
 void SpeculativeJIT::emitUntypedRightShiftBitOp(Node* node)
@@ -3928,7 +3928,7 @@ void SpeculativeJIT::compileShiftOp(Node* node)
 
         shiftOp(op, op1.gpr(), rightChild->asInt32() & 0x1f, result.gpr());
 
-        int32Result(result.gpr(), node);
+        strictInt32Result(result.gpr(), node);
     } else {
         // Do not allow shift amount to be used as the result, MacroAssembler does not permit this.
         SpeculateInt32Operand op1(this, leftChild);
@@ -3939,7 +3939,7 @@ void SpeculativeJIT::compileShiftOp(Node* node)
         GPRReg reg2 = op2.gpr();
         shiftOp(op, reg1, reg2, result.gpr());
 
-        int32Result(result.gpr(), node);
+        strictInt32Result(result.gpr(), node);
     }
 }
 
@@ -4333,7 +4333,7 @@ void SpeculativeJIT::compileArithAdd(Node* node)
 
             if (!shouldCheckOverflow(node->arithMode())) {
                 m_jit.add32(Imm32(imm2), gpr1, gprResult);
-                int32Result(gprResult, node);
+                strictInt32Result(gprResult, node);
                 return;
             }
 
@@ -4344,7 +4344,7 @@ void SpeculativeJIT::compileArithAdd(Node* node)
             } else
                 speculationCheck(Overflow, JSValueRegs(), 0, check);
 
-            int32Result(gprResult, node);
+            strictInt32Result(gprResult, node);
             return;
         }
                 
@@ -4371,7 +4371,7 @@ void SpeculativeJIT::compileArithAdd(Node* node)
                 speculationCheck(Overflow, JSValueRegs(), 0, check);
         }
 
-        int32Result(gprResult, node);
+        strictInt32Result(gprResult, node);
         return;
     }
         
@@ -4437,7 +4437,7 @@ void SpeculativeJIT::compileArithAbs(Node* node)
         m_jit.xor32(scratch.gpr(), result.gpr());
         if (shouldCheckOverflow(node->arithMode()))
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Signed, result.gpr()));
-        int32Result(result.gpr(), node);
+        strictInt32Result(result.gpr(), node);
         break;
     }
 
@@ -4472,7 +4472,7 @@ void SpeculativeJIT::compileArithClz32(Node* node)
         GPRReg valueReg = value.gpr();
         GPRReg resultReg = result.gpr();
         m_jit.countLeadingZeros32(valueReg, resultReg);
-        int32Result(resultReg, node);
+        strictInt32Result(resultReg, node);
         return;
     }
     JSValueOperand op1(this, node->child1());
@@ -4482,7 +4482,7 @@ void SpeculativeJIT::compileArithClz32(Node* node)
     flushRegisters();
     callOperation(operationArithClz32, resultReg, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), op1Regs);
     m_jit.exceptionCheck();
-    int32Result(resultReg, node);
+    strictInt32Result(resultReg, node);
 }
 
 void SpeculativeJIT::compileArithDoubleUnaryOp(Node* node, double (*doubleFunction)(double), double (*operation)(JSGlobalObject*, EncodedJSValue))
@@ -4528,7 +4528,7 @@ void SpeculativeJIT::compileArithSub(Node* node)
                 speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr(), scratch.gpr()));
             }
 
-            int32Result(result.gpr(), node);
+            strictInt32Result(result.gpr(), node);
             return;
         }
             
@@ -4543,7 +4543,7 @@ void SpeculativeJIT::compileArithSub(Node* node)
             else
                 speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchSub32(MacroAssembler::Overflow, op2.gpr(), result.gpr()));
                 
-            int32Result(result.gpr(), node);
+            strictInt32Result(result.gpr(), node);
             return;
         }
             
@@ -4557,7 +4557,7 @@ void SpeculativeJIT::compileArithSub(Node* node)
         } else
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), op2.gpr(), result.gpr()));
 
-        int32Result(result.gpr(), node);
+        strictInt32Result(result.gpr(), node);
         return;
     }
         
@@ -4659,7 +4659,7 @@ void SpeculativeJIT::compileArithNegate(Node* node)
             m_jit.neg32(result.gpr());
         }
 
-        int32Result(result.gpr(), node);
+        strictInt32Result(result.gpr(), node);
         return;
     }
 
@@ -4894,7 +4894,7 @@ void SpeculativeJIT::compileArithMul(Node* node)
                 }
             }
 
-            int32Result(resultGPR, node);
+            strictInt32Result(resultGPR, node);
             return;
         }
         SpeculateInt32Operand op1(this, node->child1());
@@ -4923,7 +4923,7 @@ void SpeculativeJIT::compileArithMul(Node* node)
             resultNonZero.link(&m_jit);
         }
 
-        int32Result(result.gpr(), node);
+        strictInt32Result(result.gpr(), node);
         return;
     }
 
@@ -5215,7 +5215,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::NonZero, edx.gpr()));
         
         done.link(&m_jit);
-        int32Result(eax.gpr(), node);
+        strictInt32Result(eax.gpr(), node);
 #elif HAVE(ARM_IDIV_INSTRUCTIONS) || CPU(ARM64)
         SpeculateInt32Operand op1(this, node->child1());
         SpeculateInt32Operand op2(this, node->child2());
@@ -5244,7 +5244,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::NotEqual, multiplyAnswer.gpr(), op1GPR));
         }
 
-        int32Result(quotient.gpr(), node);
+        strictInt32Result(quotient.gpr(), node);
 #else
         RELEASE_ASSERT_NOT_REACHED();
 #endif
@@ -5392,7 +5392,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
                     numeratorPositive.link(&m_jit);
                 }
 
-                int32Result(resultGPR, node);
+                strictInt32Result(resultGPR, node);
                 return;
             }
         }
@@ -5431,7 +5431,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
                 if (op1SaveGPR != op1Gpr)
                     unlock(op1SaveGPR);
 
-                int32Result(edx.gpr(), node);
+                strictInt32Result(edx.gpr(), node);
                 return;
             }
         }
@@ -5528,7 +5528,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
             unlock(op1SaveGPR);
             
         done.link(&m_jit);
-        int32Result(edx.gpr(), node);
+        strictInt32Result(edx.gpr(), node);
 
 #elif HAVE(ARM_IDIV_INSTRUCTIONS) || CPU(ARM64)
         GPRTemporary temp(this);
@@ -5575,7 +5575,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
 
         done.link(&m_jit);
 
-        int32Result(quotientThenRemainderGPR, node);
+        strictInt32Result(quotientThenRemainderGPR, node);
 #else // not architecture that can do integer division
         RELEASE_ASSERT_NOT_REACHED();
 #endif
@@ -5622,7 +5622,7 @@ void SpeculativeJIT::compileArithRounding(Node* node)
                 m_jit.branchConvertDoubleToInt32(resultFPR, resultGPR, failureCases, scratchFPR, shouldCheckNegativeZero(node->arithRoundingMode()));
                 speculationCheck(Overflow, JSValueRegs(), node, failureCases);
 
-                int32Result(resultGPR, node);
+                strictInt32Result(resultGPR, node);
             } else
                 doubleResult(resultFPR, node);
         };
@@ -5782,7 +5782,7 @@ void SpeculativeJIT::compileArithMinMax(Node* node)
         } else
             op1Less.link(&m_jit);
 
-        int32Result(resultGPR, node);
+        strictInt32Result(resultGPR, node);
         break;
     }
 
@@ -6931,7 +6931,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     done.link(&m_jit);
     nullVector.link(&m_jit);
 
-    int32Result(vectorGPR, node);
+    strictInt32Result(vectorGPR, node);
 }
 
 void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node)
@@ -7108,7 +7108,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         GPRReg resultReg = result.gpr();
         m_jit.load32(MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength()), resultReg);
             
-        int32Result(resultReg, node);
+        strictInt32Result(resultReg, node);
         break;
     }
     case Array::ArrayStorage:
@@ -7121,7 +7121,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
             
         speculationCheck(Uncountable, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, resultReg, MacroAssembler::TrustedImm32(0)));
             
-        int32Result(resultReg, node);
+        strictInt32Result(resultReg, node);
         break;
     }
     case Array::String: {
@@ -7147,7 +7147,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
 
             done.link(&m_jit);
         }
-        int32Result(resultGPR, node);
+        strictInt32Result(resultGPR, node);
         break;
     }
     case Array::DirectArguments: {
@@ -7171,7 +7171,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         m_jit.load32(
             MacroAssembler::Address(baseReg, DirectArguments::offsetOfLength()), resultReg);
         
-        int32Result(resultReg, node);
+        strictInt32Result(resultReg, node);
         break;
     }
     case Array::ScopedArguments: {
@@ -7195,7 +7195,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         m_jit.load32(
             MacroAssembler::Address(baseReg, ScopedArguments::offsetOfTotalLength()), resultReg);
         
-        int32Result(resultReg, node);
+        strictInt32Result(resultReg, node);
         break;
     }
     default: {
@@ -7205,7 +7205,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
         m_jit.load32(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()), resultGPR);
-        int32Result(resultGPR, node);
+        strictInt32Result(resultGPR, node);
         break;
     } }
 }
@@ -7362,7 +7362,7 @@ void SpeculativeJIT::compileVarargsLength(Node* node)
 
     m_jit.add32(TrustedImm32(1), GPRInfo::returnValueGPR, argCountIncludingThisGPR);
 
-    int32Result(argCountIncludingThisGPR, node);  
+    strictInt32Result(argCountIncludingThisGPR, node);  
 }
 
 void SpeculativeJIT::compileLoadVarargs(Node* node)
@@ -8353,7 +8353,7 @@ void SpeculativeJIT::compileGetRestLength(Node* node)
     if (node->numberOfArgumentsToSkip())
         m_jit.sub32(TrustedImm32(node->numberOfArgumentsToSkip()), resultGPR);
     done.link(&m_jit);
-    int32Result(resultGPR, node);
+    strictInt32Result(resultGPR, node);
 }
 
 void SpeculativeJIT::emitPopulateSliceIndex(Edge& target, Optional<GPRReg> indexGPR, GPRReg lengthGPR, GPRReg resultGPR)
@@ -8610,7 +8610,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
             notFound.link(&m_jit);
             m_jit.move(TrustedImm32(-1), indexGPR);
             found.link(&m_jit);
-            int32Result(indexGPR, node);
+            strictInt32Result(indexGPR, node);
         };
 
         if (searchElementEdge.useKind() == Int32Use) {
@@ -8717,7 +8717,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         notFound.link(&m_jit);
         m_jit.move(TrustedImm32(-1), indexGPR);
         found.link(&m_jit);
-        int32Result(indexGPR, node);
+        strictInt32Result(indexGPR, node);
         return;
     }
 
@@ -8734,7 +8734,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         callOperation(operationArrayIndexOfString, lengthGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), storageGPR, searchElementGPR, indexGPR);
         m_jit.exceptionCheck();
 
-        int32Result(lengthGPR, node);
+        strictInt32Result(lengthGPR, node);
         return;
     }
 
@@ -8758,7 +8758,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         }
         m_jit.exceptionCheck();
 
-        int32Result(lengthGPR, node);
+        strictInt32Result(lengthGPR, node);
         return;
     }
 
@@ -12172,7 +12172,7 @@ void SpeculativeJIT::compileGetEnumerableLength(Node* node)
     GPRReg resultGPR = result.gpr();
 
     m_jit.load32(MacroAssembler::Address(enumerator.gpr(), JSPropertyNameEnumerator::indexedLengthOffset()), resultGPR);
-    int32Result(resultGPR, node);
+    strictInt32Result(resultGPR, node);
 }
 
 void SpeculativeJIT::compileHasGenericProperty(Node* node)
@@ -12477,7 +12477,7 @@ void SpeculativeJIT::compileGetArgumentCountIncludingThis(Node* node)
     else
         argumentCountRegister = CallFrameSlot::argumentCountIncludingThis;
     m_jit.load32(JITCompiler::payloadFor(argumentCountRegister), result.gpr());
-    int32Result(result.gpr(), node);
+    strictInt32Result(result.gpr(), node);
 }
 
 void SpeculativeJIT::compileSetArgumentCountIncludingThis(Node* node)

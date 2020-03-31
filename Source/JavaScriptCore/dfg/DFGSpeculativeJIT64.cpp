@@ -1959,7 +1959,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRTemporary result(this);
             m_jit.load32(JITCompiler::payloadFor(node->machineLocal()), result.gpr());
             
-            // Like int32Result, but don't useChildren - our children are phi nodes,
+            // Like strictInt32Result, but don't useChildren - our children are phi nodes,
             // and don't represent values within this dataflow with virtual registers.
             VirtualRegister virtualRegister = node->virtualRegister();
             m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
@@ -3391,7 +3391,7 @@ void SpeculativeJIT::compile(Node* node)
                 JSValueRegs(value.gpr()), node->child1(), SpecBoolean, m_jit.branchTest64(
                     JITCompiler::NonZero, result.gpr(), TrustedImm32(static_cast<int32_t>(~1))));
 
-            int32Result(result.gpr(), node);
+            strictInt32Result(result.gpr(), node);
             break;
         }
             
@@ -3402,7 +3402,7 @@ void SpeculativeJIT::compile(Node* node)
             if (!m_interpreter.needsTypeCheck(node->child1(), SpecBoolInt32 | SpecBoolean)) {
                 m_jit.move(value.gpr(), result.gpr());
                 m_jit.and32(TrustedImm32(1), result.gpr());
-                int32Result(result.gpr(), node);
+                strictInt32Result(result.gpr(), node);
                 break;
             }
             
@@ -4148,7 +4148,7 @@ void SpeculativeJIT::compile(Node* node)
 
             m_jit.move(inputGPR, resultGPR);
             m_jit.wangsInt64Hash(resultGPR, tempGPR);
-            int32Result(resultGPR, node);
+            strictInt32Result(resultGPR, node);
             break;
         }
         case CellUse:
@@ -4193,7 +4193,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.exceptionCheck();
 
             done.link(&m_jit);
-            int32Result(resultGPR, node);
+            strictInt32Result(resultGPR, node);
             break;
         }
         default:
@@ -4236,7 +4236,7 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.exceptionCheck();
 
         done.link(&m_jit);
-        int32Result(resultGPR, node);
+        strictInt32Result(resultGPR, node);
         break;
     }
 
@@ -4834,7 +4834,7 @@ void SpeculativeJIT::compile(Node* node)
                     m_jit.load8SignedExtendTo32(baseIndex, t2);
                 else
                     m_jit.load8(baseIndex, t2);
-                int32Result(t2, node);
+                strictInt32Result(t2, node);
                 break;
             case 2: {
                 auto emitLittleEndianLoad = [&] {
@@ -4863,7 +4863,7 @@ void SpeculativeJIT::compile(Node* node)
                     emitBigEndianLoad();
                     done.link(&m_jit);
                 }
-                int32Result(t2, node);
+                strictInt32Result(t2, node);
                 break;
             }
             case 4: {
@@ -4879,7 +4879,7 @@ void SpeculativeJIT::compile(Node* node)
                 }
 
                 if (data.isSigned)
-                    int32Result(t2, node);
+                    strictInt32Result(t2, node);
                 else
                     strictInt52Result(t2, node);
                 break;
@@ -5436,7 +5436,7 @@ void SpeculativeJIT::compileStringCodePointAt(Node* node)
     m_jit.getEffectiveAddress(CCallHelpers::BaseIndex(scratch1GPR, scratch3GPR, CCallHelpers::TimesOne, -U16_SURROGATE_OFFSET), scratch1GPR);
     done.link(&m_jit);
 
-    int32Result(scratch1GPR, m_currentNode);
+    strictInt32Result(scratch1GPR, m_currentNode);
 }
 
 void SpeculativeJIT::compileDeleteById(Node* node)

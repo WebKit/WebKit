@@ -42,6 +42,9 @@ void JIT_OPERATION operationPopulateObjectInOSR(JSGlobalObject*, ExitTimeObjectM
 
 void* JIT_OPERATION operationCompileFTLLazySlowPath(CallFrame*, unsigned) WTF_INTERNAL;
 
+int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(JSGlobalObject*, size_t tableIndex, JSString*) WTF_INTERNAL;
+int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(JSGlobalObject*, JSCell*) WTF_INTERNAL;
+
 } // extern "C"
 
 } } // namespace JSC::DFG
