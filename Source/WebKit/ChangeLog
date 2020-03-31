@@ -1,36 +1,69 @@
-b"2020-03-24  Alan Coon  <alancoon@apple.com>\n\n        Cherry-pick r258476. rdar://problem/60839077\n\n    Add missing checks needed for AppBound Quirk\n    https://bugs.webkit.org/show_bug.cgi?id=209117\n    <rdar://problem/60460097>\n    \n    Reviewed by John Wilander.\n    \n    The checks for the 'NeedsInAppBrowserPrivacyQuirks' flag added in r258101 was incomplete.\n    Source/WebCore:\n    \n    Two additional call sites need to check the state of the flag.\n    \n    * bindings/js/ScriptController.cpp:\n    (WebCore::ScriptController::executeScriptInWorld): Add missing check for the quirk.\n    * loader/FrameLoaderClient.h: Add new API for the 'NeedsInAppBrowserPrivacyQuirks'\n    debug flag.\n    * page/Frame.cpp:\n    (WebCore::Frame::injectUserScriptImmediately): Ditto.\n    \n    Source/WebKit:\n    \n    These changes let the WebFrameLoaderClient report the quirk state to WebCore code.\n    \n    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:\n    (WebKit::WebFrameLoaderClient::needsInAppBrowserPrivacyQuirks): Added.\n    * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:\n    * WebProcess/WebPage/WebPage.h:\n    (WebKit::WebPage::needsInAppBrowserPrivacyQuirks const): Added.\n    \n    \n    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258476 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n\n    2020-03-14  Brent Fulgham  <bfulgham@apple.com>\n\n            Add missing checks needed for AppBound Quirk\n            https://bugs.webkit.org/show_bug.cgi?id=209117\n            <rdar://problem/60460097>\n\n            Reviewed by John Wilander.\n\n            The checks for the 'NeedsInAppBrowserPrivacyQuirks' flag added in r258101 was incomplete.\n            These changes let the WebFrameLoaderClient report the quirk state to WebCore code.\n\n            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:\n            (WebKit::WebFrameLoaderClient::needsInAppBrowserPrivacyQuirks): Added.\n            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:\n            * WebProcess/WebPage/WebPage.h:\n            (WebKit::WebPage::needsInAppBrowserPrivacyQuirks const): Added.\n\n"2020-03-17  Alan Coon  <alancoon@apple.com>
+2020-03-30  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r258515. rdar://problem/60551856
+        Cherry-pick r258456. rdar://problem/61082974
 
-    [Cocoa] Crash under -[WKPreferenceObserver init]
-    https://bugs.webkit.org/show_bug.cgi?id=209145
+    Clean up sandbox violations found during testing
+    https://bugs.webkit.org/show_bug.cgi?id=209096
+    <rdar://problem/59931477>
     
-    Reviewed by Darin Adler.
+    Reviewed by Geoffrey Garen.
     
-    Handle the case when calling [NSUserDefaults initWithSuiteName:] did not succeed.
+    Remove telemetry from some items, and allow access to some IOKit properties
+    needed for media playback on macOS and iOS.
     
-    No new tests, since I have not been able to reproduce.
-    
-    * UIProcess/Cocoa/PreferenceObserver.mm:
-    (-[WKPreferenceObserver init]):
-    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    * WebProcess/com.apple.WebProcess.sb.in:
     
     
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258515 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258456 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2020-03-16  Per Arne Vollan  <pvollan@apple.com>
+    2020-03-13  Brent Fulgham  <bfulgham@apple.com>
 
-            [Cocoa] Crash under -[WKPreferenceObserver init]
-            https://bugs.webkit.org/show_bug.cgi?id=209145
+            Clean up sandbox violations found during testing
+            https://bugs.webkit.org/show_bug.cgi?id=209096
+            <rdar://problem/59931477>
 
-            Reviewed by Darin Adler.
+            Reviewed by Geoffrey Garen.
 
-            Handle the case when calling [NSUserDefaults initWithSuiteName:] did not succeed.
+            Remove telemetry from some items, and allow access to some IOKit properties
+            needed for media playback on macOS and iOS.
 
-            No new tests, since I have not been able to reproduce.
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+            * WebProcess/com.apple.WebProcess.sb.in:
 
-            * UIProcess/Cocoa/PreferenceObserver.mm:
-            (-[WKPreferenceObserver init]):
+    b"2020-03-24  Alan Coon  <alancoon@apple.com>\n\n        Cherry-pick r258476. rdar://problem/60839077\n\n    Add missing checks needed for AppBound Quirk\n    https://bugs.webkit.org/show_bug.cgi?id=209117\n    <rdar://problem/60460097>\n    \n    Reviewed by John Wilander.\n    \n    The checks for the 'NeedsInAppBrowserPrivacyQuirks' flag added in r258101 was incomplete.\n    Source/WebCore:\n    \n    Two additional call sites need to check the state of the flag.\n    \n    * bindings/js/ScriptController.cpp:\n    (WebCore::ScriptController::executeScriptInWorld): Add missing check for the quirk.\n    * loader/FrameLoaderClient.h: Add new API for the 'NeedsInAppBrowserPrivacyQuirks'\n    debug flag.\n    * page/Frame.cpp:\n    (WebCore::Frame::injectUserScriptImmediately): Ditto.\n    \n    Source/WebKit:\n    \n    These changes let the WebFrameLoaderClient report the quirk state to WebCore code.\n    \n    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:\n    (WebKit::WebFrameLoaderClient::needsInAppBrowserPrivacyQuirks): Added.\n    * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:\n    * WebProcess/WebPage/WebPage.h:\n    (WebKit::WebPage::needsInAppBrowserPrivacyQuirks const): Added.\n    \n    \n    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258476 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n\n    2020-03-14  Brent Fulgham  <bfulgham@apple.com>\n\n            Add missing checks needed for AppBound Quirk\n            https://bugs.webkit.org/show_bug.cgi?id=209117\n            <rdar://problem/60460097>\n\n            Reviewed by John Wilander.\n\n            The checks for the 'NeedsInAppBrowserPrivacyQuirks' flag added in r258101 was incomplete.\n            These changes let the WebFrameLoaderClient report the quirk state to WebCore code.\n\n            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:\n            (WebKit::WebFrameLoaderClient::needsInAppBrowserPrivacyQuirks): Added.\n            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:\n            * WebProcess/WebPage/WebPage.h:\n            (WebKit::WebPage::needsInAppBrowserPrivacyQuirks const): Added.\n\n"2020-03-17  Alan Coon  <alancoon@apple.com>
+
+            Cherry-pick r258515. rdar://problem/60551856
+
+        [Cocoa] Crash under -[WKPreferenceObserver init]
+        https://bugs.webkit.org/show_bug.cgi?id=209145
+
+        Reviewed by Darin Adler.
+
+        Handle the case when calling [NSUserDefaults initWithSuiteName:] did not succeed.
+
+        No new tests, since I have not been able to reproduce.
+
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (-[WKPreferenceObserver init]):
+
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258515 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2020-03-16  Per Arne Vollan  <pvollan@apple.com>
+
+                [Cocoa] Crash under -[WKPreferenceObserver init]
+                https://bugs.webkit.org/show_bug.cgi?id=209145
+
+                Reviewed by Darin Adler.
+
+                Handle the case when calling [NSUserDefaults initWithSuiteName:] did not succeed.
+
+                No new tests, since I have not been able to reproduce.
+
+                * UIProcess/Cocoa/PreferenceObserver.mm:
+                (-[WKPreferenceObserver init]):
 
 2020-03-17  Alan Coon  <alancoon@apple.com>
 
