@@ -123,8 +123,8 @@
 #define BCPU_X86_64 1
 #endif
 
-/* BCPU(ARM64) - Apple */
-#if (defined(__arm64__) && defined(__APPLE__)) || defined(__aarch64__)
+/* BCPU(ARM64) */
+#if defined(__arm64__) || defined(__aarch64__)
 #define BCPU_ARM64 1
 #endif
 
