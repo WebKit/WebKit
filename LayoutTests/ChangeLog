@@ -1,5 +1,14 @@
 2020-04-01  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ iOS wk2 ] crypto/subtle/rsa-indexeddb-non-exportable-private.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=209869
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-04-01  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mojave wk1 Release ] platform/mac/media/media-source/videoplaybackquality-decompressionsession.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=209866
 
