@@ -955,4 +955,28 @@ const char* HTMLCanvasElement::activeDOMObjectName() const
     return "HTMLCanvasElement";
 }
 
+bool HTMLCanvasElement::virtualHasPendingActivity() const
+{
+    if (isContextStopped())
+        return false;
+
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContextBase>(m_context.get())) {
+        // WebGL rendering context may fire contextlost / contextchange / contextrestored events at any point.
+        return m_hasRelevantWebGLEventListener && !downcast<WebGLRenderingContextBase>(*m_context).isContextUnrecoverablyLost();
+    }
+#endif
+
+    return false;
+}
+
+void HTMLCanvasElement::eventListenersDidChange()
+{
+#if ENABLE(WEBGL)
+    m_hasRelevantWebGLEventListener = hasEventListeners(eventNames().webglcontextchangedEvent)
+        || hasEventListeners(eventNames().webglcontextlostEvent)
+        || hasEventListeners(eventNames().webglcontextrestoredEvent);
+#endif
+}
+
 }

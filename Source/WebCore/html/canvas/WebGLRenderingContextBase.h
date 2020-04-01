@@ -359,6 +359,8 @@ public:
     
     unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
+    bool isContextUnrecoverablyLost() const;
+
     // Instanced Array helper functions.
     void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount);
     void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, GCGLsizei primcount);

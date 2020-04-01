@@ -133,7 +133,13 @@ private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
     bool isHTMLCanvasElement() const final { return true; }
+
+    // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
+
+    // EventTarget.
+    void eventListenersDidChange() final;
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
@@ -171,6 +177,9 @@ private:
     // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
     mutable bool m_hasCreatedImageBuffer { false };
     mutable bool m_didClearImageBuffer { false };
+#if ENABLE(WEBGL)
+    bool m_hasRelevantWebGLEventListener { false };
+#endif
 
     mutable RefPtr<Image> m_presentedImage;
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).

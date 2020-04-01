@@ -5502,6 +5502,11 @@ void WebGLRenderingContextBase::forceRestoreContext()
         m_restoreTimer.startOneShot(0_s);
 }
 
+bool WebGLRenderingContextBase::isContextUnrecoverablyLost() const
+{
+    return m_contextLost && !m_restoreAllowed;
+}
+
 PlatformLayer* WebGLRenderingContextBase::platformLayer() const
 {
     return (!isContextLost() && !m_isPendingPolicyResolution) ? m_context->platformLayer() : 0;
