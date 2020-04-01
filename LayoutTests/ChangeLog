@@ -1,3 +1,15 @@
+2020-04-01  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: m_wrapper on imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html
+        https://bugs.webkit.org/show_bug.cgi?id=209684
+        <rdar://problem/60987285>
+
+        Reviewed by Darin Adler.
+
+        Unmark the test as crashing.
+
+        * platform/mac/TestExpectations:
+
 2020-04-01  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] crypto/subtle/rsa-indexeddb-non-exportable-private.html is flaky timing out.

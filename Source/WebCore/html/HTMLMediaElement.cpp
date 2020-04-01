@@ -5761,7 +5761,10 @@ void HTMLMediaElement::resume()
 
 bool HTMLMediaElement::virtualHasPendingActivity() const
 {
-    return (hasAudio() && isPlaying()) || m_asyncEventQueue->hasPendingActivity() || m_playbackTargetIsWirelessQueue.hasPendingTasks() || m_creatingControls;
+    return m_creatingControls
+        || (m_asyncEventQueue->hasPendingActivity() || m_playbackTargetIsWirelessQueue.hasPendingTasks())
+        || (hasAudio() && isPlaying())
+        || (m_player && (!ended() || seeking() || m_networkState >= NETWORK_IDLE) && hasEventListeners());
 }
 
 void HTMLMediaElement::mediaVolumeDidChange()
