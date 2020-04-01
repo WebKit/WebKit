@@ -1,5 +1,14 @@
 2020-04-01  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ Mac wk1 Debug ] inspector/page/overrideSetting-ICECandidateFilteringEnabled.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=209882
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-04-01  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mac wk2 Debug ] webrtc/datachannel/multiple-connections.html is flaky timing out.
         https://bugs.webkit.org/show_bug.cgi?id=209878
 
