@@ -1,3 +1,13 @@
+2020-04-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup access to "com.apple.lsd.mapdb" in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=209814
+
+        Reviewed by Darin Adler.
+
+        * fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/mac/sandbox-mach-lookup.html:
+
 2020-04-01  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk1 Debug ] inspector/page/overrideSetting-ICECandidateFilteringEnabled.html is flaky timing out.

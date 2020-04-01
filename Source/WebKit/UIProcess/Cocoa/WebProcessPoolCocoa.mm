@@ -406,6 +406,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.systemHasBattery = systemHasBattery();
     parameters.mimeTypesMap = commonMimeTypesMap();
     parameters.mapUTIFromMIMEType = createUTIFromMIMETypeMap();
+
+    SandboxExtension::Handle mapDBHandle;
+    SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb", WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport);
+    parameters.mapDBExtensionHandle = WTFMove(mapDBHandle);
 #endif
     
 #if PLATFORM(IOS)
@@ -426,10 +430,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (WebCore::IOSApplication::isMobileSafari())
         parameters.vectorOfUTTypeItem = createVectorOfUTTypeItem();
 #endif
-
-    SandboxExtension::Handle mapDBHandle;
-    SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb", WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport);
-    parameters.mapDBExtensionHandle = WTFMove(mapDBHandle);
 #endif
     
     // Allow microphone access if either preference is set because WebRTC requires microphone access.

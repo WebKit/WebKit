@@ -134,10 +134,6 @@
 #import <os/state_private.h>
 #endif
 
-#if HAVE(CSCHECKFIXDISABLE)
-extern "C" void _CSCheckFixDisable();
-#endif
-
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
@@ -167,6 +163,18 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+    // Map Launch Services database. This should be done as early as possible, as the mapping will fail
+    // if 'com.apple.lsd.mapdb' is being accessed before this.
+    if (parameters.mapDBExtensionHandle) {
+        auto extension = SandboxExtension::create(WTFMove(*parameters.mapDBExtensionHandle));
+        bool ok = extension->consume();
+        ASSERT_UNUSED(ok, ok);
+        // Perform API calls which will communicate with the database mapping service, and map the database.
+        auto uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0));
+        ok = extension->revoke();
+        ASSERT_UNUSED(ok, ok);
+    }
+
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     WebCore::initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
     WebKit::initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
@@ -273,16 +281,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         SandboxExtension::consumePermanently(*parameters.neSessionManagerExtensionHandle);
     NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(parameters.neHelperExtensionHandle.hasValue() && parameters.neSessionManagerExtensionHandle.hasValue());
 
-    if (parameters.mapDBExtensionHandle) {
-        auto extension = SandboxExtension::create(WTFMove(*parameters.mapDBExtensionHandle));
-        bool ok = extension->consume();
-        ASSERT_UNUSED(ok, ok);
-        // Perform API calls which will communicate with the database mapping service, and map the database.
-        auto uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0));
-        ok = extension->revoke();
-        ASSERT_UNUSED(ok, ok);
-    }
-
     setSystemHasBattery(parameters.systemHasBattery);
 
     if (parameters.mimeTypesMap)
@@ -317,6 +315,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
     WebCore::sleepDisablerClient() = makeUnique<WebSleepDisablerClient>();
+
+    updateProcessName();
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
@@ -335,23 +335,26 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
     }
 }
 
-void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters&)
+void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if PLATFORM(MAC)
-#if HAVE(CSCHECKFIXDISABLE)
-    // _CSCheckFixDisable() needs to be called before checking in with Launch Services.
-    _CSCheckFixDisable();
-#endif
-    // This is necessary so that we are able to set the process' display name.
-    _RegisterApplication(nullptr, nullptr);
-
-    updateProcessName();
+    m_uiProcessName = parameters.uiProcessName;
+#else
+    UNUSED_PARAM(parameters);
 #endif
 }
 
 void WebProcess::updateProcessName()
 {
 #if PLATFORM(MAC)
+    static std::once_flag onceFlag;
+    std::call_once(
+        onceFlag,
+        [this] {
+            // Checking in with Launch Services is necessary to be able to set the process' display name.
+            launchServicesCheckIn();
+    });
+
     NSString *applicationName;
     switch (m_processType) {
     case ProcessType::Inspector:
@@ -521,8 +524,6 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
         launchServicesCheckIn();
     }
 #endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-
-    m_uiProcessName = parameters.uiProcessName;
 #endif // PLATFORM(MAC)
 
     if (parameters.extraInitializationData.get("inspector-process"_s) == "1")
