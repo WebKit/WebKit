@@ -2291,7 +2291,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 
         ensureElementRareData().setShadowRoot(WTFMove(newShadowRoot));
 
-        shadowRoot.setHost(this);
+        shadowRoot.setHost(makeWeakPtr<Element>(this));
         shadowRoot.setParentTreeScope(treeScope());
 
 #if ASSERT_ENABLED
