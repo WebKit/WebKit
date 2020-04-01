@@ -1,3 +1,37 @@
+2020-04-01  Paulo Matos  <pmatos@igalia.com>
+
+        [JSC] Reenable non-cloop LLint, JIT and DFG on 32-bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=191163
+
+        Reviewed by Adrian Perez de Castro.
+
+        Re-enable tests for 32bits.
+
+        * stress/op_add.js:
+        * stress/op_bitand.js:
+        * stress/op_bitor.js:
+        * stress/op_bitxor.js:
+        * stress/op_lshift-ConstVar.js:
+        * stress/op_lshift-VarConst.js:
+        * stress/op_lshift-VarVar.js:
+        * stress/op_mod-ConstVar.js:
+        * stress/op_mod-VarConst.js:
+        * stress/op_mod-VarVar.js:
+        * stress/op_mul-ConstVar.js:
+        * stress/op_mul-VarConst.js:
+        * stress/op_mul-VarVar.js:
+        * stress/op_rshift-ConstVar.js:
+        * stress/op_rshift-VarConst.js:
+        * stress/op_rshift-VarVar.js:
+        * stress/op_sub-ConstVar.js:
+        * stress/op_sub-VarConst.js:
+        * stress/op_sub-VarVar.js:
+        * stress/op_urshift-ConstVar.js:
+        * stress/op_urshift-VarConst.js:
+        * stress/op_urshift-VarVar.js:
+        * stress/spread-forward-call-varargs-stack-overflow.js:
+        * stress/value-to-boolean.js:
+
 2020-03-30  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Add support in named capture group identifiers for direct surrogate pairs
