@@ -1,3 +1,17 @@
+2020-04-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update baselines
+        https://bugs.webkit.org/show_bug.cgi?id=209852
+
+        Unreviewed gardening.
+
+        Update GTK baselines after r259296.
+
+        * platform/gtk/css2.1/20110323/margin-applies-to-006-expected.txt:
+        * platform/gtk/fast/forms/form-hides-table-expected.txt:
+        * platform/gtk/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/dom/appendCol1-expected.txt:
+
 2020-03-31  Zalan Bujtas  <zalan@apple.com>
 
         [MultiColumn] Call RenderTreeBuilder::multiColumnDescendantInserted only when the enclosing fragmented flow has changed
