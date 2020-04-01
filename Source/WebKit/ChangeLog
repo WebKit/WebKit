@@ -1,3 +1,22 @@
+2020-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Add type traits for ScrollableArea, and other cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=209838
+
+        Reviewed by Chris Dumez.
+
+        Because PDFPlugin inherits from both Plugin and ScrollableArea, expand out its SPECIALIZE_TYPE_TRAITS macros
+        and change the macros to use the isFoo() pattern.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (isType):
+        * WebProcess/Plugins/Plugin.h:
+        (WebKit::Plugin::isPluginProxy const):
+        (WebKit::Plugin::isNetscapePlugin const):
+        (WebKit::Plugin::isPDFPlugin const):
+        * WebProcess/Plugins/PluginProxy.h:
+
 2020-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Datalist option's label not used

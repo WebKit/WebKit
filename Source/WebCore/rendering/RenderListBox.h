@@ -62,10 +62,10 @@ public:
 
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override;
 
-    bool scrolledToTop() const override;
-    bool scrolledToBottom() const override;
-    bool scrolledToLeft() const override;
-    bool scrolledToRight() const override;
+    bool scrolledToTop() const final;
+    bool scrolledToBottom() const final;
+    bool scrolledToLeft() const final;
+    bool scrolledToRight() const final;
 
 private:
     void willBeDestroyed() override;
@@ -112,35 +112,35 @@ private:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     // ScrollableArea interface.
-    void setScrollOffset(const ScrollOffset&) override;
+    void setScrollOffset(const ScrollOffset&) final;
 
-    ScrollPosition scrollPosition() const override;
-    ScrollPosition minimumScrollPosition() const override;
-    ScrollPosition maximumScrollPosition() const override;
+    ScrollPosition scrollPosition() const final;
+    ScrollPosition minimumScrollPosition() const final;
+    ScrollPosition maximumScrollPosition() const final;
 
-    void invalidateScrollbarRect(Scrollbar&, const IntRect&) override;
-    bool isActive() const override;
-    bool isScrollCornerVisible() const override { return false; } // We don't support resize on list boxes yet. If we did these would have to change.
-    IntRect scrollCornerRect() const override { return IntRect(); }
-    void invalidateScrollCornerRect(const IntRect&) override { }
-    IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const override;
-    IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const override;
-    IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const override;
-    IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const override;
-    Scrollbar* verticalScrollbar() const override { return m_vBar.get(); }
-    IntSize contentsSize() const override;
-    IntSize visibleSize() const override { return IntSize(width(), height()); }
-    IntPoint lastKnownMousePosition() const override;
-    bool isHandlingWheelEvent() const override;
-    bool shouldSuspendScrollAnimations() const override;
-    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
+    void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
+    bool isActive() const final;
+    bool isScrollCornerVisible() const final { return false; } // We don't support resize on list boxes yet. If we did these would have to change.
+    IntRect scrollCornerRect() const final { return IntRect(); }
+    void invalidateScrollCornerRect(const IntRect&) final { }
+    IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const final;
+    IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const final;
+    IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const final;
+    IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const final;
+    Scrollbar* verticalScrollbar() const final { return m_vBar.get(); }
+    IntSize contentsSize() const final;
+    IntSize visibleSize() const final { return IntSize(width(), height()); }
+    IntPoint lastKnownMousePosition() const final;
+    bool isHandlingWheelEvent() const final;
+    bool shouldSuspendScrollAnimations() const final;
+    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
 
-    ScrollableArea* enclosingScrollableArea() const override;
-    bool isScrollableOrRubberbandable() override;
-    bool hasScrollableOrRubberbandableAncestor() override;
-    IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
-    bool usesMockScrollAnimator() const override;
-    void logMockScrollAnimatorMessage(const String&) const override;
+    ScrollableArea* enclosingScrollableArea() const final;
+    bool isScrollableOrRubberbandable() final;
+    bool hasScrollableOrRubberbandableAncestor() final;
+    IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
+    bool usesMockScrollAnimator() const final;
+    void logMockScrollAnimatorMessage(const String&) const final;
 
     // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     void scrollTo(int newOffset);
@@ -187,4 +187,7 @@ private:
 
 } // namepace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderListBox, isListBox())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderListBox)
+    static bool isType(const WebCore::RenderObject& widget) { return widget.isListBox(); }
+    static bool isType(const WebCore::ScrollableArea& area) { return area.isListBox(); }
+SPECIALIZE_TYPE_TRAITS_END()

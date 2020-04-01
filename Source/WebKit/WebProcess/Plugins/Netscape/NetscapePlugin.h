@@ -378,6 +378,6 @@ private:
 
 } // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_PLUGIN(NetscapePlugin, NetscapePluginType)
+SPECIALIZE_TYPE_TRAITS_PLUGIN(NetscapePlugin, isNetscapePlugin())
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

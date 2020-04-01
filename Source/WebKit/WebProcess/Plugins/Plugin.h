@@ -114,8 +114,11 @@ public:
 
     PluginType type() const { return m_type; }
 
-private:
+    bool isPluginProxy() const { return m_type == PluginProxyType; }
+    bool isNetscapePlugin() const { return m_type == NetscapePluginType; }
+    bool isPDFPlugin() const { return m_type == PDFPluginType; }
 
+private:
     // Initializes the plug-in. If the plug-in fails to initialize this should return false.
     // This is only called by the other initialize overload so it can be made private.
     virtual bool initialize(const Parameters&) = 0;
@@ -319,7 +322,7 @@ private:
     
 } // namespace WebKit
 
-#define SPECIALIZE_TYPE_TRAITS_PLUGIN(ToValueTypeName, SpecificPluginType) \
+#define SPECIALIZE_TYPE_TRAITS_PLUGIN(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
-static bool isType(const WebKit::Plugin& plugin) { return plugin.type() == WebKit::SpecificPluginType; } \
+static bool isType(const WebKit::Plugin& plugin) { return plugin.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()

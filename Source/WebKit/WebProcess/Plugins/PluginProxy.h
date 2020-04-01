@@ -232,7 +232,7 @@ private:
 
 } // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_PLUGIN(PluginProxy, PluginProxyType)
+SPECIALIZE_TYPE_TRAITS_PLUGIN(PluginProxy, isPluginProxy())
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 

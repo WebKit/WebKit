@@ -545,4 +545,7 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_WIDGET(ScrollView, isScrollView())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ScrollView)
+    static bool isType(const WebCore::Widget& widget) { return widget.isScrollView(); }
+    static bool isType(const WebCore::ScrollableArea& area) { return area.isScrollView(); }
+SPECIALIZE_TYPE_TRAITS_END()

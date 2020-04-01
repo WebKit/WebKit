@@ -950,7 +950,11 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
 {
     clearOrScheduleClearingLatchedStateIfNeeded(wheelEvent);
 
-    FrameView* view = m_frame.view();
+    auto* page = m_frame.page();
+    if (!page)
+        return;
+
+    auto* view = m_frame.view();
 
     if (!view)
         scrollableContainer = wheelEventTarget;
@@ -971,13 +975,12 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
         }
     }
 
-    Page* page = m_frame.page();
-    if (scrollableArea && page && page->isMonitoringWheelEvents())
+    if (scrollableArea && page->isMonitoringWheelEvents())
         scrollableArea->scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
 
-    ScrollLatchingState* latchingState = page ? page->latchingState() : nullptr;
+    auto* latchingState = page->latchingState();
     if (wheelEvent.shouldConsiderLatching()) {
-        if (scrollableContainer && scrollableArea && page) {
+        if (scrollableContainer && scrollableArea) {
             bool startingAtScrollLimit = scrolledToEdgeInDominantDirection(*scrollableContainer, *scrollableArea.get(), wheelEvent.deltaX(), wheelEvent.deltaY());
             if (!startingAtScrollLimit) {
                 auto latchingState = WTF::makeUnique<ScrollLatchingState>();

@@ -219,6 +219,7 @@ private:
     bool shouldAlwaysAutoStart() const final { return true; }
 
     // ScrollableArea functions.
+    bool isPDFPlugin() const final { return true; }
     WebCore::IntRect scrollCornerRect() const final;
     WebCore::ScrollableArea* enclosingScrollableArea() const final;
     bool isScrollableOrRubberbandable() final { return true; }
@@ -402,6 +403,9 @@ private:
 
 } // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_PLUGIN(PDFPlugin, PDFPluginType)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::PDFPlugin)
+    static bool isType(const WebKit::Plugin& plugin) { return plugin.isPDFPlugin(); }
+    static bool isType(const WebCore::ScrollableArea& area) { return area.isPDFPlugin(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(PDFKIT_PLUGIN)

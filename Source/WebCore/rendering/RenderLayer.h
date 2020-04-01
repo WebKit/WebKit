@@ -433,9 +433,9 @@ public:
 
     LayoutRect rect() const { return LayoutRect(location(), size()); }
 
-    IntSize visibleSize() const override;
-    IntSize contentsSize() const override;
-    IntSize reachableTotalContentsSize() const override;
+    IntSize visibleSize() const final;
+    IntSize contentsSize() const final;
+    IntSize reachableTotalContentsSize() const final;
 
     int scrollWidth() const;
     int scrollHeight() const;
@@ -445,7 +445,7 @@ public:
     // Scrolling methods for layers that can scroll their overflow.
     void scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea = nullptr);
 
-    bool requestScrollPositionUpdate(const ScrollPosition&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped) override;
+    bool requestScrollPositionUpdate(const ScrollPosition&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped) final;
 
     WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
     WEBCORE_EXPORT void scrollToOffsetWithAnimation(const ScrollOffset&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
@@ -464,7 +464,7 @@ public:
     // Returns the nearest enclosing layer that is scrollable.
     RenderLayer* enclosingScrollableLayer(IncludeSelfOrNot, CrossFrameBoundaries) const;
 
-    void availableContentSizeChanged(AvailableSizeChangeReason) override;
+    void availableContentSizeChanged(AvailableSizeChangeReason) final;
 
     enum AutoscrollStatus { NotInProgress, InProgress };
     // "absoluteRect" is in scaled document coordinates.
@@ -483,21 +483,21 @@ public:
     bool hasHorizontalScrollbar() const { return horizontalScrollbar(); }
     bool hasVerticalScrollbar() const { return verticalScrollbar(); }
 
-    bool horizontalScrollbarHiddenByStyle() const override;
-    bool verticalScrollbarHiddenByStyle() const override;
+    bool horizontalScrollbarHiddenByStyle() const final;
+    bool verticalScrollbarHiddenByStyle() const final;
 
     // ScrollableArea overrides
-    ScrollPosition scrollPosition() const override { return m_scrollPosition; }
+    ScrollPosition scrollPosition() const final { return m_scrollPosition; }
 
-    Scrollbar* horizontalScrollbar() const override { return m_hBar.get(); }
-    Scrollbar* verticalScrollbar() const override { return m_vBar.get(); }
-    ScrollableArea* enclosingScrollableArea() const override;
+    Scrollbar* horizontalScrollbar() const final { return m_hBar.get(); }
+    Scrollbar* verticalScrollbar() const final { return m_vBar.get(); }
+    ScrollableArea* enclosingScrollableArea() const final;
 
-    bool isScrollableOrRubberbandable() override;
-    bool hasScrollableOrRubberbandableAncestor() override;
+    bool isScrollableOrRubberbandable() final;
+    bool hasScrollableOrRubberbandableAncestor() final;
     bool useDarkAppearance() const final;
 #if ENABLE(CSS_SCROLL_SNAP)
-    void updateSnapOffsets() override;
+    void updateSnapOffsets() final;
 #endif
 
     bool requiresScrollPositionReconciliation() const { return m_requiresScrollPositionReconciliation; }
@@ -505,12 +505,12 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
 #if ENABLE(IOS_TOUCH_EVENTS)
-    bool handleTouchEvent(const PlatformTouchEvent&) override;
+    bool handleTouchEvent(const PlatformTouchEvent&) final;
 #endif
     
-    void didStartScroll() override;
-    void didEndScroll() override;
-    void didUpdateScroll() override;
+    void didStartScroll() final;
+    void didEndScroll() final;
+    void didUpdateScroll() final;
 #endif
 
     // Returns true when the layer could do touch scrolling, but doesn't look at whether there is actually scrollable overflow.
@@ -857,12 +857,12 @@ public:
     RenderLayerBacking* ensureBacking();
     void clearBacking(bool layerBeingDestroyed = false);
 
-    GraphicsLayer* layerForHorizontalScrollbar() const override;
-    GraphicsLayer* layerForVerticalScrollbar() const override;
-    GraphicsLayer* layerForScrollCorner() const override;
+    GraphicsLayer* layerForHorizontalScrollbar() const final;
+    GraphicsLayer* layerForVerticalScrollbar() const final;
+    GraphicsLayer* layerForScrollCorner() const final;
 
-    bool usesCompositedScrolling() const override;
-    bool usesAsyncScrolling() const override;
+    bool usesCompositedScrolling() const final;
+    bool usesAsyncScrolling() const final;
 
     bool hasCompositedScrollingAncestor() const { return m_hasCompositedScrollingAncestor; }
     void setHasCompositedScrollingAncestor(bool hasCompositedScrollingAncestor) { m_hasCompositedScrollingAncestor = hasCompositedScrollingAncestor; }
@@ -1106,31 +1106,32 @@ private:
     bool shouldBeSelfPaintingLayer() const;
 
     // ScrollableArea interface
-    void invalidateScrollbarRect(Scrollbar&, const IntRect&) override;
-    void invalidateScrollCornerRect(const IntRect&) override;
-    bool isActive() const override;
-    bool isScrollCornerVisible() const override;
-    IntRect scrollCornerRect() const override;
-    IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const override;
-    IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const override;
-    IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const override;
-    IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const override;
-    void setScrollOffset(const ScrollOffset&) override;
-    ScrollingNodeID scrollingNodeID() const override;
+    bool isRenderLayer() const final { return true; }
+    void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
+    void invalidateScrollCornerRect(const IntRect&) final;
+    bool isActive() const final;
+    bool isScrollCornerVisible() const final;
+    IntRect scrollCornerRect() const final;
+    IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const final;
+    IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const final;
+    IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const final;
+    IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const final;
+    void setScrollOffset(const ScrollOffset&) final;
+    ScrollingNodeID scrollingNodeID() const final;
 
-    IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
-    IntSize overhangAmount() const override;
-    IntPoint lastKnownMousePosition() const override;
-    bool isHandlingWheelEvent() const override;
-    bool shouldSuspendScrollAnimations() const override;
-    IntRect scrollableAreaBoundingBox(bool* isInsideFixed = nullptr) const override;
-    bool isRubberBandInProgress() const override;
-    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
+    IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const final;
+    IntSize overhangAmount() const final;
+    IntPoint lastKnownMousePosition() const final;
+    bool isHandlingWheelEvent() const final;
+    bool shouldSuspendScrollAnimations() const final;
+    IntRect scrollableAreaBoundingBox(bool* isInsideFixed = nullptr) const final;
+    bool isRubberBandInProgress() const final;
+    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
 #if ENABLE(CSS_SCROLL_SNAP)
-    bool isScrollSnapInProgress() const override;
+    bool isScrollSnapInProgress() const final;
 #endif
-    bool usesMockScrollAnimator() const override;
-    void logMockScrollAnimatorMessage(const String&) const override;
+    bool usesMockScrollAnimator() const final;
+    void logMockScrollAnimatorMessage(const String&) const final;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void registerAsTouchEventListenerForScrolling();
@@ -1426,3 +1427,7 @@ void showLayerTree(const WebCore::RenderLayer*);
 void showPaintOrderTree(const WebCore::RenderLayer*);
 void showLayerTree(const WebCore::RenderObject*);
 #endif
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderLayer)
+    static bool isType(const WebCore::ScrollableArea& area) { return area.isRenderLayer(); }
+SPECIALIZE_TYPE_TRAITS_END()
