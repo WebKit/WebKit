@@ -1,3 +1,30 @@
+2020-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make WebPasteboardProxy::didModifyContentsOfPasteboard robust when pasteboardName is null
+        https://bugs.webkit.org/show_bug.cgi?id=209848
+        <rdar://problem/61121810>
+
+        Reviewed by Megan Gardner and David Kilzer.
+
+        Add more IPC message checks in WebPasteboardProxy; see below for more detail.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+
+        Rename what is currently MESSAGE_CHECK to MESSAGE_CHECK_COMPLETION, and introduce two more message check macros:
+        MESSAGE_CHECK_WITH_RETURN_VALUE, which supports a return value, and MESSAGE_CHECK, which returns with no value.
+
+        (WebKit::WebPasteboardProxy::canAccessPasteboardData const):
+
+        Replace the early returns when pasteboardName is empty or when the web process for the given connection is null
+        with `MESSAGE_CHECK`s. When the web content process is well-behaved, these early returns should never be hit.
+
+        (WebKit::WebPasteboardProxy::didModifyContentsOfPasteboard):
+
+        Similarly, replace this early return with a message check, and additionally `MESSAGE_CHECK` when the pasteboard
+        name is empty. This addresses the main issue caught by this radar.
+
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+
 2020-04-01  Victor M. Jaquez <vjaquez@igalia.com>
 
         Bump libwebrtc to M82

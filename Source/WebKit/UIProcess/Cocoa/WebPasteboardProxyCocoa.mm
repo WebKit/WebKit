@@ -38,7 +38,9 @@
 #import <WebCore/SharedBuffer.h>
 #import <wtf/URL.h>
 
-#define MESSAGE_CHECK(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, (&connection), completion)
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (&connection))
+#define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, (&connection), returnValue)
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, (&connection), completion)
 
 namespace WebKit {
 using namespace WebCore;
@@ -73,14 +75,10 @@ void WebPasteboardProxy::revokeAccessToAllData(WebProcessProxy& process)
 
 bool WebPasteboardProxy::canAccessPasteboardData(IPC::Connection& connection, const String& pasteboardName) const
 {
-    if (pasteboardName.isEmpty()) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+    MESSAGE_CHECK_WITH_RETURN_VALUE(!pasteboardName.isEmpty(), false);
 
     auto* process = webProcessProxyForConnection(connection);
-    if (!process)
-        return false;
+    MESSAGE_CHECK_WITH_RETURN_VALUE(process, false);
 
     for (auto* page : process->pages()) {
         auto& preferences = page->preferences();
@@ -106,9 +104,10 @@ bool WebPasteboardProxy::canAccessPasteboardData(IPC::Connection& connection, co
 
 void WebPasteboardProxy::didModifyContentsOfPasteboard(IPC::Connection& connection, const String& pasteboardName, int64_t previousChangeCount, int64_t newChangeCount)
 {
+    MESSAGE_CHECK(!pasteboardName.isEmpty());
+
     auto* process = webProcessProxyForConnection(connection);
-    if (!process)
-        return;
+    MESSAGE_CHECK(process);
 
     auto changeCountAndProcesses = m_pasteboardNameToChangeCountAndProcessesMap.find(pasteboardName);
     if (changeCountAndProcesses != m_pasteboardNameToChangeCountAndProcessesMap.end() && previousChangeCount == changeCountAndProcesses->value.first) {
@@ -300,7 +299,7 @@ void WebPasteboardProxy::setPasteboardBufferForType(IPC::Connection& connection,
     }
 
     // SharedMemory::Handle::size() is rounded up to the nearest page.
-    MESSAGE_CHECK(size <= handle.size(), completionHandler(0));
+    MESSAGE_CHECK_COMPLETION(size <= handle.size(), completionHandler(0));
 
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
