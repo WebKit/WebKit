@@ -27,35 +27,56 @@
 
 #if OS(WINDOWS)
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #else
 #include <netinet/in.h>
 #endif
 
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
-class WEBCORE_EXPORT IPAddress {
+class IPAddress {
 public:
-    explicit IPAddress(const struct sockaddr_in& address)
+    static Optional<IPAddress> fromSockAddrIn6(const struct sockaddr_in6&);
+    explicit IPAddress(const struct in_addr& address)
+        : m_address(address)
     {
-        memset(&m_address, 0, sizeof(struct sockaddr_in));
-        m_address = address;
     }
 
-    const struct in_addr& getSinAddr() { return m_address.sin_addr; };
+    explicit IPAddress(const struct in6_addr& address)
+        : m_address(address)
+    {
+    }
+
+    bool isIPv4() const { return WTF::holds_alternative<struct in_addr>(m_address); }
+    bool isIPv6() const { return WTF::holds_alternative<struct in6_addr>(m_address); }
+
+    const struct in_addr& ipv4Address() const { return WTF::get<struct in_addr>(m_address); }
+    const struct in6_addr& ipv6Address() const { return WTF::get<struct in6_addr>(m_address); }
 
 private:
-    struct sockaddr_in m_address;
+    Variant<struct in_addr, struct in6_addr> m_address;
 };
 
 enum class DNSError { Unknown, CannotResolve, Cancelled };
 
-using DNSAddressesOrError = Expected<Vector<WebCore::IPAddress>, DNSError>;
-using DNSCompletionHandler = WTF::CompletionHandler<void(DNSAddressesOrError&&)>;
+using DNSAddressesOrError = Expected<Vector<IPAddress>, DNSError>;
+using DNSCompletionHandler = CompletionHandler<void(DNSAddressesOrError&&)>;
 
 WEBCORE_EXPORT void prefetchDNS(const String& hostname);
 WEBCORE_EXPORT void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandler&&);
 WEBCORE_EXPORT void stopResolveDNS(uint64_t identifier);
+
+inline Optional<IPAddress> IPAddress::fromSockAddrIn6(const struct sockaddr_in6& address)
+{
+    if (address.sin6_family == AF_INET6)
+        return IPAddress { address.sin6_addr };
+    if (address.sin6_family == AF_INET)
+        return IPAddress {reinterpret_cast<const struct sockaddr_in&>(address).sin_addr };
+    return { };
+}
 
 }
