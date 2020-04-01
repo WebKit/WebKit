@@ -1,3 +1,14 @@
+2020-03-31  Zalan Bujtas  <zalan@apple.com>
+
+        [MultiColumn] Call RenderTreeBuilder::multiColumnDescendantInserted only when the enclosing fragmented flow has changed
+        https://bugs.webkit.org/show_bug.cgi?id=209816
+        <rdar://problem/60742191>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/absolute-to-static-change-same-enclosing-flow-expected.txt: Added.
+        * fast/multicol/absolute-to-static-change-same-enclosing-flow.html: Added.
+
 2020-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Datalist option's label not used

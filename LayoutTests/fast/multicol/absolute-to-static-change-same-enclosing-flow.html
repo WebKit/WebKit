@@ -1,0 +1,18 @@
+<style>
+summary {
+  column-span: all;
+}
+#details { 
+  column-count: 2; 
+  position: absolute;
+}
+html {
+  column-count: 2;
+}
+</style>Pass if no crash or assert when the absolute positioned element becomes static and it still part of the same column fragment.<details id="details"><summary></detail><script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+details.style.columnCount = "1";
+details.style.position = "static";
+</script>

@@ -686,27 +686,29 @@ RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& paren
 
 void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement& child)
 {
-    auto* parent = child.parent();
     if (!child.isInline()) {
-        if (is<RenderBlock>(parent))
+        auto* currentEnclosingFragment = child.enclosingFragmentedFlow();
+        auto parent = makeWeakPtr(child.parent());
+        if (is<RenderBlock>(*parent))
             blockBuilder().childBecameNonInline(downcast<RenderBlock>(*parent), child);
         else if (is<RenderInline>(*parent))
             inlineBuilder().childBecameNonInline(downcast<RenderInline>(*parent), child);
+        // WARNING: original parent might be deleted at this point.
 
-        // childBecameNonInline might have re-parented us.
         if (auto* newParent = child.parent()) {
-            // We need to re-run the grid items placement if it had gained a new item.
-            if (newParent != parent && is<RenderGrid>(*newParent))
+            // childBecameNonInline might have re-parented us.
+            if (newParent != parent && is<RenderGrid>(*newParent)) {
+                // We need to re-run the grid items placement if it had gained a new item.
                 downcast<RenderGrid>(*newParent).dirtyGrid();
-            else if (auto* enclosingFragmentedFlow = newParent->enclosingFragmentedFlow()) {
-                if (is<RenderMultiColumnFlow>(*enclosingFragmentedFlow)) {
-                    // Let the fragmented flow know that it has a new in-flow descendant.
-                    multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow), child);
-                }
+            }
+            if (auto* newEnclosingFragmentedFlow = newParent->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(newEnclosingFragmentedFlow) && currentEnclosingFragment != newEnclosingFragmentedFlow) {
+                // Let the fragmented flow know that it has a new in-flow descendant.
+                multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*newEnclosingFragmentedFlow), child);
             }
         }
     } else {
         // An anonymous block must be made to wrap this inline.
+        auto* parent = child.parent();
         auto newBlock = downcast<RenderBlock>(*parent).createAnonymousBlock();
         auto& block = *newBlock;
         attachToRenderElementInternal(*parent, WTFMove(newBlock), &child);
