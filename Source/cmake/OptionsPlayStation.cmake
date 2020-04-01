@@ -79,6 +79,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
+# Default to hidden visibility
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+
 # Specify third party library directory
 if (NOT WEBKIT_LIBRARIES_DIR)
     if (DEFINED ENV{WEBKIT_LIBRARIES})
@@ -170,10 +174,12 @@ set(bmalloc_LIBRARY_TYPE OBJECT)
 set(WTF_LIBRARY_TYPE OBJECT)
 set(JavaScriptCore_LIBRARY_TYPE SHARED)
 
-# For the shared WebKit just link a STATIC WebCore since the exports from WebCore
-# and PAL are not needed.
-set(PAL_LIBRARY_TYPE STATIC)
-set(WebCore_LIBRARY_TYPE STATIC)
+# Create a shared WebKit
+#
+# Use OBJECT libraries for PAL and WebCore. The size of a libWebCore.a is too much
+# for ranlib.
+set(PAL_LIBRARY_TYPE OBJECT)
+set(WebCore_LIBRARY_TYPE OBJECT)
 set(WebKit_LIBRARY_TYPE SHARED)
 
 # Enable multi process builds for Visual Studio

@@ -1,3 +1,14 @@
+2020-04-01  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Use OBJECT libraries for WebCore and PAL
+        https://bugs.webkit.org/show_bug.cgi?id=209835
+
+        Reviewed by Ross Kirsling.
+
+        Use the object libraries when compiling TestWebCore.
+
+        * TestWebKitAPI/PlatformPlayStation.cmake:
+
 2020-04-01  Jack Lee  <shihchieh_lee@apple.com>
 
         Unreviewed, add new committer to contributors.json

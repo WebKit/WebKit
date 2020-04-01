@@ -46,7 +46,8 @@ public:
 #endif
 
 protected:
-    virtual ~MediaStrategy() = default;
+    MediaStrategy();
+    virtual ~MediaStrategy();
 };
 
 } // namespace WebCore

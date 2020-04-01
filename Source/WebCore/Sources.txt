@@ -1769,6 +1769,7 @@ platform/Logging.cpp
 platform/LowPowerModeNotifier.cpp
 platform/MIMETypeRegistry.cpp
 platform/MainThreadSharedTimer.cpp
+platform/MediaStrategy.cpp
 platform/NotImplemented.cpp
 platform/NowPlayingManager.cpp
 platform/Pasteboard.cpp

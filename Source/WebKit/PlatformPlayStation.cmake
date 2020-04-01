@@ -298,6 +298,13 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/C/playstation/WKView.h
 )
 
+# Both PAL and WebCore are built as object libraries. The WebKit:: interface
+# targets are used. A limitation of that is the object files are not propagated
+# so they are added here.
+list(APPEND WebKit_PRIVATE_LIBRARIES
+    $<TARGET_OBJECTS:PAL>
+)
+
 WEBKIT_MAKE_FORWARDING_HEADERS(WebKit
     TARGET_NAME WebKitFrameworkHeaders
     DESTINATION ${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit

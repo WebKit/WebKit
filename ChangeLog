@@ -1,3 +1,17 @@
+2020-04-01  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Use OBJECT libraries for WebCore and PAL
+        https://bugs.webkit.org/show_bug.cgi?id=209835
+
+        Reviewed by Ross Kirsling.
+
+        When compiling WebCore in debug mode ranlib was having issues with the size of
+        libWebCore.a. This is similar to what happened with Visual Studio and WinCairo.
+
+        Additionally hidden visibility defaults are added for the port.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2020-03-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Can't create WebGL context after r259139

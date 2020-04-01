@@ -22,6 +22,13 @@ list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
 )
 
+# Both PAL and WebCore are built as object libraries. The WebKit:: interface
+# targets are used. A limitation of that is the object files are not propagated
+# so they are added here.
+list(APPEND TestWebCore_PRIVATE_LIBRARIES
+    $<TARGET_OBJECTS:PAL>
+)
+
 # TestWebKit
 if (ENABLE_WEBKIT)
     add_dependencies(TestWebKitAPIBase WebKitFrameworkHeaders)
