@@ -1371,6 +1371,29 @@ webkit.org/b/209727 fast/forms/placeholder-content-line-height.html [ ImageOnlyF
 
 webkit.org/b/209801 imported/w3c/web-platform-tests/xhr/header-user-agent-sync.htm [ Failure ]
 
+# Tests failing in EWS but not in test bot.
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-media.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-range.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-redirect.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-request-headers.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-request-max-stale.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-revalidation-new-expire-header.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-validation-attachment.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-validation-no-body.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-validation.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-vary-no-body.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-vary.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cache/disk-cache/resource-becomes-uncacheable.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cookies/same-site/popup-cross-site-post.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cookies/same-site/popup-cross-site.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cookies/same-site/popup-same-site-post.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cookies/same-site/popup-same-site-via-same-site-redirect.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/cookies/same-site/popup-same-site.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -3189,6 +3212,14 @@ webkit.org/b/208000 [ Debug ] inspector/unit-tests/throttler.html [ Failure Time
 webkit.org/b/208000 [ Debug ] inspector/unit-tests/url-utilities.html [ Timeout ]
 
 # Tests timing out in EWS but not test-bot.
+webkit.org/b/209533 accessibility/ARIA-reflection.html [ Timeout Pass ]
+webkit.org/b/209533 accessibility/gtk/aria-activedescendant.html [ Timeout Pass ]
+webkit.org/b/209533 animations/3d/change-transform-in-end-event.html [ Timeout Pass ]
+webkit.org/b/209533 animations/CSSKeyframesRule-name-null.html [ Timeout Pass ]
+webkit.org/b/209533 animations/font-variations/font-stretch.html [ Timeout Pass ]
+webkit.org/b/209533 canvas/philip/tests/2d.canvas.readonly.html [ Timeout Pass ]
+webkit.org/b/209533 compositing/absolute-inside-out-of-view-fixed.html [ Timeout Pass ]
+webkit.org/b/209533 compositing/animation/animated-composited-inside-hidden.html [ Timeout Pass ]
 webkit.org/b/209533 fast/frames/exponential-frames.html [ Timeout Pass ]
 webkit.org/b/209533 http/tests/appcache/top-frame-2.html [ Timeout Pass ]
 webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Timeout Pass ]

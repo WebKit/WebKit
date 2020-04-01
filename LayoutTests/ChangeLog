@@ -1,3 +1,14 @@
+2020-04-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, failures in EWS GTK-WK2
+        https://bugs.webkit.org/show_bug.cgi?id=209855
+
+        Unreviewed gardening.
+
+        Garden failures happening in EWS GTK-WK2 but not in GTK test bot.
+
+        * platform/gtk/TestExpectations:
+
 2020-04-01  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Migration to version 0.2
