@@ -5089,7 +5089,6 @@ bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
     return ScrollableArea::handleWheelEvent(wheelEvent);
 }
 
-
 bool FrameView::isVerticalDocument() const
 {
     RenderView* renderView = this->renderView();
@@ -5443,6 +5442,12 @@ IntSize FrameView::viewportSizeForCSSViewportUnits() const
 bool FrameView::shouldPlaceBlockDirectionScrollbarOnLeft() const
 {
     return renderView() && renderView()->shouldPlaceBlockDirectionScrollbarOnLeft();
+}
+
+TextStream& operator<<(TextStream& ts, const FrameView& view)
+{
+    ts << "FrameView " << &view << " frame " << view.frame();
+    return ts;
 }
 
 } // namespace WebCore

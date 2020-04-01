@@ -106,6 +106,7 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - Frame::" fmt, this, ##__VA_ARGS__)
 
@@ -1050,6 +1051,12 @@ void Frame::selfOnlyDeref()
         dropChildren();
 
     deref();
+}
+
+TextStream& operator<<(TextStream& ts, const Frame& frame)
+{
+    ts << "Frame " << &frame << " view " << frame.view() << " (is main frame " << frame.isMainFrame() << ") " << (frame.document() ? frame.document()->documentURI() : emptyString());
+    return ts;
 }
 
 } // namespace WebCore

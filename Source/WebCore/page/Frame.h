@@ -59,6 +59,10 @@ namespace JSC { namespace Yarr {
 class RegularExpression;
 } }
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class CSSAnimationController;
@@ -411,6 +415,8 @@ inline Frame& Frame::mainFrame() const
 {
     return m_mainFrame;
 }
+
+WTF::TextStream& operator<<(WTF::TextStream&, const Frame&);
 
 } // namespace WebCore
 

@@ -49,6 +49,10 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class AXObjectCache;
@@ -953,6 +957,8 @@ inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
         return;
     m_visuallyNonEmptyPixelCount += size.width() * size.height();
 }
+
+WTF::TextStream& operator<<(WTF::TextStream&, const FrameView&);
 
 } // namespace WebCore
 
