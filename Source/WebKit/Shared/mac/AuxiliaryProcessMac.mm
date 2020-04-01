@@ -75,9 +75,6 @@ enum LSSessionID {
 typedef bool (^LSServerConnectionAllowedBlock) ( CFDictionaryRef optionsRef );
 extern "C" void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
 extern "C" CFDictionaryRef _LSApplicationCheckIn(LSSessionID sessionID, CFDictionaryRef applicationInfo);
-#if HAVE(CSCHECKFIXDISABLE)
-extern "C" void _CSCheckFixDisable();
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -154,11 +151,6 @@ static void initializeTimerCoalescingPolicy()
 
 void AuxiliaryProcess::launchServicesCheckIn()
 {
-#if HAVE(CSCHECKFIXDISABLE)
-    // _CSCheckFixDisable() needs to be called before checking in with Launch Services.
-    _CSCheckFixDisable();
-#endif
-
     _LSSetApplicationLaunchServicesServerConnectionStatus(0, 0);
     RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(kLSDefaultSessionID, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
 }

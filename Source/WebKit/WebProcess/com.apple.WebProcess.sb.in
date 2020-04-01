@@ -679,14 +679,8 @@
 #endif
     (global-name "com.apple.PowerManagement.control")
     (global-name "com.apple.coreservices.launchservicesd")
-    (global-name "com.apple.trustd.agent")
-)
-
-(deny mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600
-    (with telemetry-backtrace)
-#endif
     (global-name "com.apple.lsd.mapdb")
+    (global-name "com.apple.trustd.agent")
 )
 
 (allow mach-lookup
