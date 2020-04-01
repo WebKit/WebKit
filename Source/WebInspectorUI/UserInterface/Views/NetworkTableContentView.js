@@ -2167,12 +2167,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let duration = Date.now() - loadTimeStatistic.start;
 
         let delay = loadTimeStatistic.delay;
-        if (duration >= 1000) // 1 second
+        if (duration >= 1_000) // 1 second
             delay = 100;
-        else if (duration >= 60000) // 60 seconds
-            delay = 1000;
-        else if (duration >= 3600000) // 1 minute
-            delay = 10000;
+        else if (duration >= 60_000) // 60 seconds
+            delay = 1_000;
+        else if (duration >= 3_600_000) // 1 minute
+            delay = 10_000;
 
         if (delay !== loadTimeStatistic.delay) {
             loadTimeStatistic.delay = delay;
@@ -2189,7 +2189,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             loadTimeStatistic.container.hidden = !this._isShowingMainCollection();
 
         if (isNaN(mainFrameStartTime) || isNaN(mainFrameLoadEventTime)) {
-            this._updateStatistic("load-time", WI.UIString("Loading for %s"), Number.secondsToString(duration / 1000));
+            this._updateStatistic("load-time", WI.UIString("Loading for %s"), Number.secondsToString(duration / 1_000));
             return;
         }
 

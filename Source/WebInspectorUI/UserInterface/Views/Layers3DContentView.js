@@ -163,7 +163,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         window.matchMedia("(prefers-color-scheme: dark)").addListener(updateBackground);
         updateBackground();
 
-        this._camera = new THREE.PerspectiveCamera(45, this.element.offsetWidth / this.element.offsetHeight, 1, 100000);
+        this._camera = new THREE.PerspectiveCamera(45, this.element.offsetWidth / this.element.offsetHeight, 1, 100_000);
 
         this._controls = new THREE.OrbitControls(this._camera, this._renderer.domElement);
         this._controls.enableDamping = true;

@@ -60,7 +60,7 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         }
 
         // Periodic snapshots.
-        const snapshotInterval = 10000;
+        const snapshotInterval = 10_000;
         this._snapshotIntervalIdentifier = setInterval(this._takeHeapSnapshot.bind(this), snapshotInterval);
     }
 

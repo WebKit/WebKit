@@ -1440,6 +1440,6 @@ WI.TimelineManager.Event = {
     RecordingImported: "timeline-manager-recording-imported",
 };
 
-WI.TimelineManager.MaximumAutoRecordDuration = 90000; // 90 seconds
-WI.TimelineManager.MaximumAutoRecordDurationAfterLoadEvent = 10000; // 10 seconds
-WI.TimelineManager.DeadTimeRequiredToStopAutoRecordingEarly = 2000; // 2 seconds
+WI.TimelineManager.MaximumAutoRecordDuration = 90_000; // 90 seconds
+WI.TimelineManager.MaximumAutoRecordDurationAfterLoadEvent = 10_000; // 10 seconds
+WI.TimelineManager.DeadTimeRequiredToStopAutoRecordingEarly = 2_000; // 2 seconds

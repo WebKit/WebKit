@@ -102,7 +102,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
     {
         console.assert(this._pendingResponses.size >= 0);
 
-        if (messageObject.error && messageObject.error.code !== -32000)
+        if (messageObject.error && messageObject.error.code !== -32_000)
             console.error("Request with id = " + messageObject["id"] + " failed. " + JSON.stringify(messageObject.error));
 
         let sequenceId = messageObject["id"];

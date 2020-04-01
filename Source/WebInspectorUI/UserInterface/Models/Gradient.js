@@ -142,7 +142,7 @@ WI.Gradient = class Gradient
         return stops.map(function(stop, index) {
             var str = stop.color;
             if (stop.offset !== index / count)
-                str += " " + Math.round(stop.offset * 10000) / 100 + "%";
+                str += " " + Math.round(stop.offset * 10_000) / 100 + "%";
             return str;
         }).join(", ");
     }
