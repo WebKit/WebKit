@@ -38,7 +38,6 @@ class Element;
 class Frame;
 
 class ScrollLatchingState final {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     ScrollLatchingState();
     ~ScrollLatchingState();

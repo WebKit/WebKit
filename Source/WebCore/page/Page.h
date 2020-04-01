@@ -430,7 +430,9 @@ public:
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     ScrollLatchingState* latchingState();
-    void setLatchingState(std::unique_ptr<ScrollLatchingState>&&);
+    const Vector<ScrollLatchingState>& latchingStateStack() const { return m_latchingState; }
+    void pushNewLatchingState(ScrollLatchingState&&);
+    void popLatchingState();
     void resetLatchingState();
     void removeLatchingStateForTarget(Element&);
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
@@ -978,7 +980,7 @@ private:
 
     std::unique_ptr<PerformanceLogging> m_performanceLogging;
 #if ENABLE(WHEEL_EVENT_LATCHING)
-    std::unique_ptr<ScrollLatchingState> m_latchingState;
+    Vector<ScrollLatchingState> m_latchingState;
 #endif
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;

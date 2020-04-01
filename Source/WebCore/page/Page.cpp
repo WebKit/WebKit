@@ -2943,26 +2943,41 @@ void Page::applicationDidBecomeActive()
 #if ENABLE(WHEEL_EVENT_LATCHING)
 ScrollLatchingState* Page::latchingState()
 {
-    return m_latchingState.get();
+    if (m_latchingState.isEmpty())
+        return nullptr;
+
+    return &m_latchingState.last();
 }
 
-void Page::setLatchingState(std::unique_ptr<ScrollLatchingState>&& state)
+void Page::pushNewLatchingState(ScrollLatchingState&& state)
 {
-    m_latchingState = WTFMove(state);
+    m_latchingState.append(WTFMove(state));
 }
 
 void Page::resetLatchingState()
 {
-    m_latchingState = nullptr;
+    m_latchingState.clear();
+}
+
+void Page::popLatchingState()
+{
+    m_latchingState.removeLast();
+    LOG_WITH_STREAM(ScrollLatching, stream << "Page::popLatchingState() - new state " << m_latchingState);
 }
 
 void Page::removeLatchingStateForTarget(Element& targetNode)
 {
-    if (!m_latchingState)
+    if (m_latchingState.isEmpty())
         return;
 
-    if (m_latchingState->wheelEventElement() == &targetNode)
-        m_latchingState = nullptr;
+    m_latchingState.removeAllMatching([&targetNode] (ScrollLatchingState& state) {
+        auto* wheelElement = state.wheelEventElement();
+        if (!wheelElement)
+            return false;
+
+        return targetNode.isEqualNode(wheelElement);
+    });
+    LOG_WITH_STREAM(ScrollLatching, stream << "Page::removeLatchingStateForTarget() - new state " << m_latchingState);
 }
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 

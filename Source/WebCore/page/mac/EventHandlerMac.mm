@@ -983,23 +983,23 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
         if (scrollableContainer && scrollableArea) {
             bool startingAtScrollLimit = scrolledToEdgeInDominantDirection(*scrollableContainer, *scrollableArea.get(), wheelEvent.deltaX(), wheelEvent.deltaY());
             if (!startingAtScrollLimit) {
-                auto latchingState = WTF::makeUnique<ScrollLatchingState>();
-                latchingState->setStartedGestureAtScrollLimit(false);
-                latchingState->setWheelEventElement(wheelEventTarget.get());
-                latchingState->setFrame(&m_frame);
-                latchingState->setScrollableContainer(scrollableContainer.get());
-                latchingState->setWidgetIsLatched(result.isOverWidget());
-                page->setLatchingState(WTFMove(latchingState));
+                ScrollLatchingState latchingState;
+                latchingState.setStartedGestureAtScrollLimit(false);
+                latchingState.setWheelEventElement(wheelEventTarget.get());
+                latchingState.setFrame(&m_frame);
+                latchingState.setScrollableContainer(scrollableContainer.get());
+                latchingState.setWidgetIsLatched(result.isOverWidget());
+                page->pushNewLatchingState(WTFMove(latchingState));
 
                 page->wheelEventDeltaFilter()->beginFilteringDeltas();
                 isOverWidget = result.isOverWidget();
             }
 
-            LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::platformPrepareForWheelEvents() - considering latching for " << wheelEvent << ", at scroll limit " << startingAtScrollLimit << ", latching state " << ValueOrNull(page->latchingState()));
+            LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::platformPrepareForWheelEvents() - considering latching for " << wheelEvent << ", at scroll limit " << startingAtScrollLimit << ", latching state " << page->latchingStateStack());
         }
     } else if (wheelEvent.shouldResetLatching()) {
         clearLatchedState();
-        LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::platformPrepareForWheelEvents() - reset latching for event " << wheelEvent << " latching state " << ValueOrNull(page->latchingState()));
+        LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::platformPrepareForWheelEvents() - reset latching for event " << wheelEvent << " latching state " << page->latchingStateStack());
     }
 
     if (!wheelEvent.shouldResetLatching() && latchingState && latchingState->wheelEventElement()) {
