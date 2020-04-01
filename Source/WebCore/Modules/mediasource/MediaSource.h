@@ -122,6 +122,8 @@ public:
     void setLogIdentifier(const void*) final;
 #endif
 
+    void failedToCreateRenderer(RendererType) final;
+
 private:
     explicit MediaSource(ScriptExecutionContext&);
 

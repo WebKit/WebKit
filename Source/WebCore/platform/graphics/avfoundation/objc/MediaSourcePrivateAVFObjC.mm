@@ -325,6 +325,11 @@ WTFLogChannel& MediaSourcePrivateAVFObjC::logChannel() const
 }
 #endif
 
+void MediaSourcePrivateAVFObjC::failedToCreateRenderer(RendererType type)
+{
+    m_client->failedToCreateRenderer(type);
+}
+
 }
 
 #endif // ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
