@@ -279,6 +279,7 @@ public:
 
 #if ENABLE(DATALIST_ELEMENT)
     virtual std::unique_ptr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&) = 0;
+    virtual bool canShowDataListSuggestionLabels() const = 0;
 #endif
 
     virtual void runOpenPanel(Frame&, FileChooser&) = 0;

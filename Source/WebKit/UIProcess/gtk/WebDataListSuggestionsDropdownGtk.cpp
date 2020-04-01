@@ -120,7 +120,7 @@ void WebDataListSuggestionsDropdownGtk::show(WebCore::DataListSuggestionInformat
     for (const auto& suggestion : information.suggestions) {
         GtkTreeIter iter;
         gtk_list_store_append(model, &iter);
-        gtk_list_store_set(model, &iter, 0, suggestion.utf8().data(), -1);
+        gtk_list_store_set(model, &iter, 0, suggestion.value.utf8().data(), -1);
     }
 
     GtkRequisition treeViewRequisition;

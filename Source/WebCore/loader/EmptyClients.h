@@ -133,6 +133,7 @@ class EmptyChromeClient : public ChromeClient {
 
 #if ENABLE(DATALIST_ELEMENT)
     std::unique_ptr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&) final;
+    bool canShowDataListSuggestionLabels() const final { return false; }
 #endif
 
     void runOpenPanel(Frame&, FileChooser&) final;

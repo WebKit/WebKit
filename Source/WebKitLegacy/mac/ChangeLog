@@ -1,3 +1,15 @@
+2020-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Datalist option's label not used
+        https://bugs.webkit.org/show_bug.cgi?id=201768
+        <rdar://problem/55361186>
+
+        Reviewed by Darin Adler.
+
+        See WebCore/ChangeLog and WebKit/ChangeLog for more details.
+
+        * WebCoreSupport/WebChromeClient.h:
+
 2020-03-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to log messages from the network process

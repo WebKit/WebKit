@@ -34,16 +34,18 @@
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/NSColorSPI.h>
 
-static const CGFloat dropdownTopMargin = 3;
-static const CGFloat dropdownVerticalPadding = 4;
-static const CGFloat dropdownRowHeight = 20;
-static const size_t dropdownMaxSuggestions = 6;
+constexpr CGFloat dropdownTopMargin = 3;
+constexpr CGFloat dropdownVerticalPadding = 4;
+constexpr CGFloat dropdownRowHeightWithoutLabel = 20;
+constexpr CGFloat dropdownRowHeightWithLabel = 40;
+constexpr CGFloat maximumTotalHeightForDropdownCells = 120;
 static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionView";
 
 @interface WKDataListSuggestionWindow : NSWindow
 @end
 
 @interface WKDataListSuggestionView : NSTableCellView
+@property (nonatomic) BOOL shouldShowBottomDivider;
 @end
 
 @interface WKDataListSuggestionTableRowView : NSTableRowView
@@ -169,7 +171,9 @@ void WebDataListSuggestionsDropdownMac::close()
 @end
 
 @implementation WKDataListSuggestionView {
-    RetainPtr<NSTextField> _textField;
+    RetainPtr<NSTextField> _valueField;
+    RetainPtr<NSTextField> _labelField;
+    RetainPtr<NSView> _bottomDivider;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -177,31 +181,78 @@ void WebDataListSuggestionsDropdownMac::close()
     if (!(self = [super initWithFrame:frameRect]))
         return self;
 
-    _textField = adoptNS([[NSTextField alloc] initWithFrame:frameRect]);
-    self.textField = _textField.get();
+    _valueField = adoptNS([[NSTextField alloc] init]);
+    _labelField = adoptNS([[NSTextField alloc] init]);
+    _bottomDivider = adoptNS([[NSView alloc] init]);
+    [_bottomDivider setWantsLayer:YES];
+    [_bottomDivider setHidden:YES];
+    [_bottomDivider layer].backgroundColor = NSColor.separatorColor.CGColor;
+    [self addSubview:_bottomDivider.get()];
 
-    [self addSubview:self.textField];
+    auto setUpTextField = [&](NSTextField *textField) {
+        textField.editable = NO;
+        textField.bezeled = NO;
+        textField.font = [NSFont menuFontOfSize:0];
+        textField.drawsBackground = NO;
+        [self addSubview:textField];
+    };
 
+    setUpTextField(_valueField.get());
+    setUpTextField(_labelField.get());
     self.identifier = suggestionCellReuseIdentifier;
-    self.textField.editable = NO;
-    self.textField.bezeled = NO;
-    self.textField.font = [NSFont menuFontOfSize:0];
-    self.textField.drawsBackground = NO;
 
     return self;
 }
 
-- (void)setText:(NSString *)text
+- (void)layout
 {
-    self.textField.stringValue = text;
+    [super layout];
+
+    auto bounds = self.bounds;
+    auto width = bounds.size.width;
+    if (![_labelField isHidden]) {
+        auto halfOfHeight = bounds.size.height / 2;
+        [_valueField setFrame:NSMakeRect(0, halfOfHeight, width, halfOfHeight)];
+        [_labelField setFrame:NSMakeRect(0, 0, width, halfOfHeight)];
+    } else
+        [_valueField setFrame:bounds];
+
+    if (![_bottomDivider isHidden])
+        [_bottomDivider setFrame:NSMakeRect(0, 0, width, 0.5)];
+}
+
+- (void)setValue:(NSString *)value label:(NSString *)label
+{
+    if ([[_valueField stringValue] isEqualToString:value] && [[_labelField stringValue] isEqualToString:label])
+        return;
+
+    [_valueField setStringValue:value];
+    [_labelField setStringValue:label];
+    [_labelField setHidden:!label.length];
+    self.needsLayout = YES;
+}
+
+- (void)setShouldShowBottomDivider:(BOOL)showBottomDivider
+{
+    if ([_bottomDivider isHidden] == !showBottomDivider)
+        return;
+
+    [_bottomDivider setHidden:!showBottomDivider];
+    self.needsLayout = YES;
+}
+
+- (BOOL)shouldShowBottomDivider
+{
+    return [_bottomDivider isHidden];
 }
 
 - (void)setBackgroundStyle:(NSBackgroundStyle)backgroundStyle
 {
     [super setBackgroundStyle:backgroundStyle];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    self.textField.textColor = backgroundStyle == NSBackgroundStyleLight ? [NSColor textColor] : [NSColor alternateSelectedControlTextColor];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [_valueField setTextColor:backgroundStyle == NSBackgroundStyleLight ? NSColor.textColor : NSColor.alternateSelectedControlTextColor];
+    [_labelField setTextColor:NSColor.secondaryLabelColor];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (BOOL)acceptsFirstResponder
@@ -251,14 +302,22 @@ void WebDataListSuggestionsDropdownMac::close()
 
 @end
 
+static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggestion>& suggestions)
+{
+    return notFound != suggestions.findMatching([](auto& suggestion) {
+        return !suggestion.label.isEmpty();
+    });
+}
+
 @implementation WKDataListSuggestionsController {
     WeakPtr<WebKit::WebDataListSuggestionsDropdownMac> _dropdown;
-    Vector<String> _suggestions;
+    Vector<WebCore::DataListSuggestion> _suggestions;
     NSView *_presentingView;
 
     RetainPtr<NSScrollView> _scrollView;
     RetainPtr<WKDataListSuggestionWindow> _enclosingWindow;
     RetainPtr<WKDataListSuggestionTableView> _table;
+    BOOL _showDividersBetweenCells;
 }
 
 - (id)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(NSView *)presentingView
@@ -268,6 +327,7 @@ void WebDataListSuggestionsDropdownMac::close()
 
     _presentingView = presentingView;
     _suggestions = WTFMove(information.suggestions);
+    _showDividersBetweenCells = shouldShowDividersBetweenCells(_suggestions);
     _table = adoptNS([[WKDataListSuggestionTableView alloc] initWithElementRect:information.elementRect]);
 
     _enclosingWindow = adoptNS([[WKDataListSuggestionWindow alloc] initWithContentRect:NSZeroRect styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView) backing:NSBackingStoreBuffered defer:NO]);
@@ -302,7 +362,7 @@ void WebDataListSuggestionsDropdownMac::close()
     NSInteger selectedRow = [_table selectedRow];
 
     if (selectedRow >= 0 && static_cast<size_t>(selectedRow) < _suggestions.size())
-        return _suggestions.at(selectedRow);
+        return _suggestions.at(selectedRow).value;
 
     return String();
 }
@@ -310,6 +370,7 @@ void WebDataListSuggestionsDropdownMac::close()
 - (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information
 {
     _suggestions = WTFMove(information.suggestions);
+    _showDividersBetweenCells = shouldShowDividersBetweenCells(_suggestions);
     [_table reload];
 
     [_enclosingWindow setFrame:[self dropdownRectForElementRect:information.elementRect] display:YES];
@@ -339,6 +400,7 @@ void WebDataListSuggestionsDropdownMac::close()
         newSelection = (direction == "Up") ? (size - 1) : 0;
 
     [_table selectRowIndexes:[NSIndexSet indexSetWithIndex:newSelection] byExtendingSelection:NO];
+    [_table scrollRowToVisible:newSelection];
 
     // Notify accessibility clients of new selection.
     NSString *currentSelectedString = [self currentSelectedString];
@@ -369,8 +431,16 @@ void WebDataListSuggestionsDropdownMac::close()
 - (NSRect)dropdownRectForElementRect:(const WebCore::IntRect&)rect
 {
     NSRect windowRect = [[_presentingView window] convertRectToScreen:[_presentingView convertRect:rect toView:nil]];
-    auto visibleSuggestionCount = std::min(_suggestions.size(), dropdownMaxSuggestions);
-    CGFloat height = visibleSuggestionCount * (dropdownRowHeight + [_table intercellSpacing].height) + (dropdownVerticalPadding * 2);
+
+    CGFloat totalCellHeight = 0;
+    for (auto& suggestion : _suggestions)
+        totalCellHeight += suggestion.label.isEmpty() ? dropdownRowHeightWithoutLabel : dropdownRowHeightWithLabel;
+
+    CGFloat totalIntercellSpacingAndPadding = dropdownVerticalPadding * 2;
+    if (_suggestions.size() > 1)
+        totalIntercellSpacingAndPadding += (_suggestions.size() - 1) * [_table intercellSpacing].height;
+
+    CGFloat height = totalIntercellSpacingAndPadding + std::min(totalCellHeight, maximumTotalHeightForDropdownCells);
     return NSMakeRect(NSMinX(windowRect), NSMinY(windowRect) - height - dropdownTopMargin, rect.width(), height);
 }
 
@@ -404,7 +474,13 @@ void WebDataListSuggestionsDropdownMac::close()
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row
 {
-    return dropdownRowHeight;
+    auto suggestionIndex = static_cast<size_t>(row);
+    if (suggestionIndex >= _suggestions.size()) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    return _suggestions.at(suggestionIndex).label.isEmpty() ? dropdownRowHeightWithoutLabel : dropdownRowHeightWithLabel;
 }
 
 - (NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row
@@ -417,11 +493,13 @@ void WebDataListSuggestionsDropdownMac::close()
     WKDataListSuggestionView *result = [tableView makeViewWithIdentifier:suggestionCellReuseIdentifier owner:self];
 
     if (!result) {
-        result = [[[WKDataListSuggestionView alloc] initWithFrame:NSMakeRect(0, 0, tableView.frame.size.width, dropdownRowHeight)] autorelease];
+        result = [[[WKDataListSuggestionView alloc] init] autorelease];
         [result setIdentifier:suggestionCellReuseIdentifier];
     }
 
-    result.text = _suggestions.at(row);
+    auto& suggestion = _suggestions.at(row);
+    result.shouldShowBottomDivider = _showDividersBetweenCells && row < static_cast<NSInteger>(_suggestions.size() - 1);
+    [result setValue:suggestion.value label:suggestion.label];
 
     return result;
 }

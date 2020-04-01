@@ -828,7 +828,7 @@ void TextFieldInputType::updateAutoFillButton()
 
 void TextFieldInputType::listAttributeTargetChanged()
 {
-    m_cachedSuggestions = std::make_pair(String(), Vector<String>());
+    m_cachedSuggestions = { };
 
     if (!m_dataListDropdownIndicator)
         createDataListDropdownIndicator();
@@ -856,34 +856,39 @@ IntRect TextFieldInputType::elementRectInRootViewCoordinates() const
     return element()->document().view()->contentsToRootView(element()->renderer()->absoluteBoundingBoxRect());
 }
 
-Vector<String> TextFieldInputType::suggestions()
+Vector<DataListSuggestion> TextFieldInputType::suggestions()
 {
     // FIXME: Suggestions are "typing completions" and so should probably use the findPlainText algorithm rather than the simplistic "ignoring ASCII case" rules.
 
-    Vector<String> suggestions;
-    Vector<String> matchesContainingValue;
+    Vector<DataListSuggestion> suggestions;
+    Vector<DataListSuggestion> matchesContainingValue;
 
     String elementValue = element()->value();
 
     if (!m_cachedSuggestions.first.isNull() && equalIgnoringASCIICase(m_cachedSuggestions.first, elementValue))
         return m_cachedSuggestions.second;
 
+    auto* page = element()->document().page();
+    bool canShowLabels = page && page->chrome().client().canShowDataListSuggestionLabels();
     if (auto dataList = element()->dataList()) {
         for (auto& option : dataList->suggestions()) {
-            String value = option.value();
-            if (!element()->isValidValue(value))
+            DataListSuggestion suggestion;
+            suggestion.value = option.value();
+            if (!element()->isValidValue(suggestion.value))
                 continue;
-            value = sanitizeValue(value);
-            if (elementValue.isEmpty())
-                suggestions.append(value);
-            else if (value.startsWithIgnoringASCIICase(elementValue))
-                suggestions.append(value);
-            else if (value.containsIgnoringASCIICase(elementValue))
-                matchesContainingValue.append(value);
+            suggestion.value = sanitizeValue(suggestion.value);
+            suggestion.label = option.label();
+            if (suggestion.value == suggestion.label)
+                suggestion.label = { };
+
+            if (elementValue.isEmpty() || suggestion.value.startsWithIgnoringASCIICase(elementValue))
+                suggestions.append(WTFMove(suggestion));
+            else if (suggestion.value.containsIgnoringASCIICase(elementValue) || (canShowLabels && suggestion.label.containsIgnoringASCIICase(elementValue)))
+                matchesContainingValue.append(WTFMove(suggestion));
         }
     }
 
-    suggestions.appendVector(matchesContainingValue);
+    suggestions.appendVector(WTFMove(matchesContainingValue));
     m_cachedSuggestions = std::make_pair(elementValue, suggestions);
 
     return suggestions;
@@ -896,7 +901,7 @@ void TextFieldInputType::didSelectDataListOption(const String& selectedOption)
 
 void TextFieldInputType::didCloseSuggestions()
 {
-    m_cachedSuggestions = std::make_pair(String(), Vector<String>());
+    m_cachedSuggestions = { };
     m_suggestionPicker = nullptr;
     if (element()->renderer())
         element()->renderer()->repaint();

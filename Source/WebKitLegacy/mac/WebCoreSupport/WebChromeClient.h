@@ -144,6 +144,7 @@ private:
 
 #if ENABLE(DATALIST_ELEMENT)
     std::unique_ptr<WebCore::DataListSuggestionPicker> createDataListSuggestionPicker(WebCore::DataListSuggestionsClient&) final;
+    bool canShowDataListSuggestionLabels() const final { return false; }
 #endif
 
 #if ENABLE(POINTER_LOCK)

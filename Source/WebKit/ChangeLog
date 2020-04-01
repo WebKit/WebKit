@@ -1,3 +1,91 @@
+2020-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Datalist option's label not used
+        https://bugs.webkit.org/show_bug.cgi?id=201768
+        <rdar://problem/55361186>
+
+        Reviewed by Darin Adler.
+
+        Add support on macOS for showing option labels in datalist suggestions.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DataListSuggestionInformation>::encode): Deleted.
+        (IPC::ArgumentCoder<DataListSuggestionInformation>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+
+        Remove WebCoreArgumentCoders logic for encoding and decoding DataListSuggestionInformation. See
+        DataListSuggestionInformation.h in WebCore for more detail.
+
+        * UIProcess/gtk/WebDataListSuggestionsDropdownGtk.cpp:
+        (WebKit::WebDataListSuggestionsDropdownGtk::show):
+
+        Tweak GTK code to adjust for the change from `String` to `DataListSuggestion`.
+
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (-[WKDataListSuggestionsControl didSelectOptionAtIndex:]):
+        (-[WKDataListSuggestionsControl textSuggestions]):
+        (-[WKDataListSuggestionsControl suggestionAtIndex:]):
+
+        Adjust some iOS codepaths to use DataListSuggestion::value as the value string to display.
+
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+
+        Tweak several UI constants. A suggestion cell may now be either 20 or 40pt tall, depending on whether it has
+        label text to show.
+
+        Currently, the maximum combined height of the table view cells is 120 (not including spacing between cells and
+        vertical padding around the top and bottom of the table view), since the maximum number of cells to show is 6
+        and each cell is 20pt tall. Maintain this constant by making the maximum cell height 120, which accomodates
+        either three labeled cells, or 6 unlabeled cells (i.e. to match shipping behavior).
+
+        (-[WKDataListSuggestionView initWithFrame:]):
+        (-[WKDataListSuggestionView layout]):
+
+        Maintain two text fields or value and (optionally) label text: `_valueField` and `_labelField`. The value field
+        fills the bounds of the cell in the case where there is no label text, but fills only the top half of the cell
+        in the case where there is label text. The label field takes the bottom half of the cell in this case.
+
+        Additionally, add a divider view that may appear at the very bottom of each cell. This divider view is present
+        when one or more suggestions in the datalist are labeled.
+
+        (-[WKDataListSuggestionView setValue:label:]):
+
+        Renamed from -setText:. Add a label string argument as well.
+
+        (-[WKDataListSuggestionView setShouldShowBottomDivider:]):
+
+        Add getters and setters for the -shouldShowBottomDivider property, which can be used to make the divider view
+        visible or hidden.
+
+        (-[WKDataListSuggestionView shouldShowBottomDivider]):
+        (-[WKDataListSuggestionView setBackgroundStyle:]):
+
+        Use -[NSColor secondaryLabelColor] for the label text field.
+
+        (shouldShowDividersBetweenCells):
+
+        Add a helper method to determine whether the table view should be showing clear dividers between each item.
+        We only do so if there are one or more labels to be shown.
+
+        (-[WKDataListSuggestionsController initWithInformation:inView:]):
+        (-[WKDataListSuggestionsController currentSelectedString]):
+        (-[WKDataListSuggestionsController updateWithInformation:]):
+        (-[WKDataListSuggestionsController moveSelectionByDirection:]):
+
+        Drive-by fix: scroll to reveal each selected row when using the arrow keys to navigate between items.
+
+        (-[WKDataListSuggestionsController dropdownRectForElementRect:]):
+        (-[WKDataListSuggestionsController tableView:heightOfRow:]):
+
+        Return either `dropdownRowHeightWithoutLabel` or `dropdownRowHeightWithLabel`, depending on whether there is
+        label text to be shown in that suggestion cell.
+
+        (-[WKDataListSuggestionsController tableView:viewForTableColumn:row:]):
+        (-[WKDataListSuggestionView setText:]): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::canShowDataListSuggestionLabels const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2020-03-31  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny mach-lookup access to "com.apple.lsd.mapdb" in sandbox

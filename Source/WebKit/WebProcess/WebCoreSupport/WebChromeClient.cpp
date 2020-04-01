@@ -796,6 +796,15 @@ std::unique_ptr<DataListSuggestionPicker> WebChromeClient::createDataListSuggest
     return makeUnique<WebDataListSuggestionPicker>(m_page, client);
 }
 
+bool WebChromeClient::canShowDataListSuggestionLabels() const
+{
+#if PLATFORM(MAC)
+    return true;
+#else
+    return false;
+#endif
+}
+
 #endif
 
 void WebChromeClient::runOpenPanel(Frame& frame, FileChooser& fileChooser)

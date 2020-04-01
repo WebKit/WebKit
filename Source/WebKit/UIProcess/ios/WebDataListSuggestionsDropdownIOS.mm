@@ -42,7 +42,7 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 
 @interface WKDataListSuggestionsControl : NSObject {
     WeakPtr<WebKit::WebDataListSuggestionsDropdownIOS> _dropdown;
-    Vector<String> _suggestions;
+    Vector<WebCore::DataListSuggestion> _suggestions;
 }
 
 @property (nonatomic, weak) WKContentView *view;
@@ -159,7 +159,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 - (void)didSelectOptionAtIndex:(NSInteger)index
 {
-    _dropdown->didSelectOption(_suggestions[index]);
+    _dropdown->didSelectOption(_suggestions[index].value);
 }
 
 - (void)invalidate
@@ -171,7 +171,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     NSMutableArray *suggestions = [NSMutableArray array];
 
     for (const auto& suggestion : _suggestions) {
-        [suggestions addObject:[WKDataListTextSuggestion textSuggestionWithInputText:suggestion]];
+        [suggestions addObject:[WKDataListTextSuggestion textSuggestionWithInputText:suggestion.value]];
         if (suggestions.count == 3)
             break;
     }
@@ -186,7 +186,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 
 - (String)suggestionAtIndex:(NSInteger)index
 {
-    return _suggestions[index];
+    return _suggestions[index].value;
 }
 
 - (NSTextAlignment)textAlignment

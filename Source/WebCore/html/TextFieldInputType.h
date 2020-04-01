@@ -132,14 +132,14 @@ private:
 
     // DataListSuggestionsClient
     IntRect elementRectInRootViewCoordinates() const final;
-    Vector<String> suggestions() final;
+    Vector<DataListSuggestion> suggestions() final;
     void didSelectDataListOption(const String&) final;
     void didCloseSuggestions() final;
 
     void dataListButtonElementWasClicked() final;
     RefPtr<DataListButtonElement> m_dataListDropdownIndicator;
 
-    std::pair<String, Vector<String>> m_cachedSuggestions;
+    std::pair<String, Vector<DataListSuggestion>> m_cachedSuggestions;
     std::unique_ptr<DataListSuggestionPicker> m_suggestionPicker;
 #endif
 
