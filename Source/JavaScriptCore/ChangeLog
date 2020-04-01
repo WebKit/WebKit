@@ -1,3 +1,16 @@
+2020-04-01  Justin Michaud  <justin@justinmichaud.com>
+
+        Delete IC incorrectly caches for proxies
+        https://bugs.webkit.org/show_bug.cgi?id=209777
+
+        Reviewed by Mark Lam.
+
+        Proxy's do not change their structure ID when properties are added, so we cannot cache deletes
+        for them.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheDeleteBy):
+
 2020-04-01  Keith Miller  <keith_miller@apple.com>
 
         Bindings that override getOwnPropertySlotByIndex need to say they MayHaveIndexedAccessors

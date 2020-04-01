@@ -1,4 +1,4 @@
-//@ runDefault("--useBigInt=true")
+//@ requireOptions("--useBigInt=1")
 
 function assert(condition) {
     if (!condition)

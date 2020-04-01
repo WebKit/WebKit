@@ -750,7 +750,7 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
             return GiveUpOnCache;
 
         ASSERT(oldStructure);
-        if (!baseValue.isObject() || !oldStructure->propertyAccessesAreCacheable())
+        if (!baseValue.isObject() || !oldStructure->propertyAccessesAreCacheable() || oldStructure->isProxy())
             return GiveUpOnCache;
 
         if (!slot.isCacheableDelete())

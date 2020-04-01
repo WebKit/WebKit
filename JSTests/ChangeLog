@@ -1,3 +1,18 @@
+2020-04-01  Justin Michaud  <justin@justinmichaud.com>
+
+        Delete IC incorrectly caches for proxies
+        https://bugs.webkit.org/show_bug.cgi?id=209777
+
+        Reviewed by Mark Lam.
+
+        * stress/delete-property-ic-proxy.js: Added.
+        (obj1.this.foo1):
+        (foo1.foo2):
+        (foo1):
+        (foo2.foo3):
+        (foo2):
+        * stress/delete-property-inline-cache.js:
+
 2020-04-01  Paulo Matos  <pmatos@igalia.com>
 
         [JSC] Reenable non-cloop LLint, JIT and DFG on 32-bit platforms
