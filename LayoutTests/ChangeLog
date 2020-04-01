@@ -1,3 +1,13 @@
+2020-03-31  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup access to "com.apple.lsd.mapdb" in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=209814
+
+        Reviewed by Darin Adler.
+
+        * fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/mac/sandbox-mach-lookup.html:
+
 2020-03-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ Catalina ] editing/mac/selection/context-menu-select-editability.html is failing on Catalina

@@ -1,3 +1,30 @@
+2020-03-31  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup access to "com.apple.lsd.mapdb" in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=209814
+
+        Reviewed by Darin Adler.
+
+        This was done for iOS in <https://trac.webkit.org/changeset/258915>, and in order to be able to do this
+        on macOS, checking in with Launch Services and updating the process name needs to be done after the
+        Launch Services database mapping has been done in WebProcess::platformInitializeWebProcess. Also, the
+        previous call to RegisterApplication has been replaced with a call to launchServicesCheckIn, since
+        RegisterApplication is an AppKit function, and should be avoided since the WebContent process is not
+        a NSApplication anymore.
+
+        Test: fast/sandbox/mac/sandbox-mach-lookup.html
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::AuxiliaryProcess::launchServicesCheckIn):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::initializeProcessName):
+        (WebKit::WebProcess::updateProcessName):
+        (WebKit::WebProcess::platformInitializeProcess):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-03-31  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Fix build breaks after r259112
