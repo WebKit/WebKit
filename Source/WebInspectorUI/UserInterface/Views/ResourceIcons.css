@@ -96,7 +96,7 @@
 }
 
 .resource-icon.resource-type-websocket .icon {
-    content: url(../Images/WebSocket.svg#light);
+    content: url(../Images/DocumentIcons.svg#websocket-light);
 }
 
 .resource-icon.resource-type-ping .icon,
@@ -178,7 +178,7 @@
     }
 
     .resource-icon.resource-type-websocket .icon {
-        content: url(../Images/WebSocket.svg#dark);
+        content: url(../Images/DocumentIcons.svg#websocket-dark);
     }
 
     .resource-icon.resource-type-ping .icon,

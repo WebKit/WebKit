@@ -1,3 +1,17 @@
+2020-03-31  Jon Davis  <jond@apple.com>
+
+        Added new WebSocket icon
+        https://bugs.webkit.org/show_bug.cgi?id=209433
+
+        Reviewed by Joseph Pecoraro.
+
+        Drive-by: remove unused #doc-orig
+
+        * UserInterface/Images/DocumentIcons.svg:
+        * UserInterface/Views/ResourceIcons.css:
+        (.resource-icon.resource-type-websocket .icon):
+        (@media (prefers-color-scheme: dark) .resource-icon.resource-type-websocket .icon):
+
 2020-03-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: the Dock Side navigation item is automatically focused when Web Inspector is opened detached, preventing any global spacebar shortcuts from working

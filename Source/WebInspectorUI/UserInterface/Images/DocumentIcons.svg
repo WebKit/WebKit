@@ -110,11 +110,6 @@
             }
         </style>
     </defs>
-
-    <symbol id="doc-orig" stroke-width="1" viewBox="0 0 32 32">
-        <path fill="var(--corner)" stroke="var(--border)" d="M 4.5 0.503 L 15.769 0.503 C 16.023 0.503 16.268 0.600 16.454 0.774 L 27.185 10.859 C 27.386 11.048 27.5 11.312 27.5 11.588 L 27.5 31.503 L 4.5 31.503 L 4.5 0.503 Z"/>
-        <path fill="var(--paper)" stroke="var(--border)" d="M 13.079 0.502 C 16.632 0.502 17.505 0.466 17.505 3.336 L 17.505 10.503 L 24.573 10.503 C 27.378 10.503 27.5 12.824 27.5 15.711 L 27.5 31.502 L 4.5 31.502 L 4.5 0.502 L 13.079 0.502 Z"/>
-    </symbol>
     
     <symbol id="doc" stroke-width="1" viewBox="0 0 32 32">
         <path fill="var(--corner)" stroke="var(--border)" d="M 5.496 0.503 L 16.095 0.503 C 16.352 0.503 16.599 0.602 16.785 0.779 L 27.190 10.704 C 27.388 10.893 27.5 11.154 27.5 11.427 L 27.5 30.5 C 27.5 30.998 27.002 31.497 26.501 31.497 L 5.5 31.497 C 4.998 31.497 4.5 30.997 4.5 30.5 L 4.5 1.497 C 4.5 1.004 5 0.503 5.496 0.503 Z"/>
@@ -152,6 +147,14 @@
         <path d="M 15.999 19.096 C 17.036 19.096 17.880 19.940 17.880 20.977 C 17.880 22.015 17.036 22.858 15.999 22.858 C 14.962 22.858 14.118 22.015 14.118 20.977 C 14.118 19.940 14.962 19.096 15.999 19.096"/>
     </symbol>
 
+    <symbol id="websocket" stroke-width="1" viewBox="0 0 32 32">
+        <path fill="var(--corner)" fill-opacity="1" stroke="var(--border)" d="M 5.5 0.5 L 26.5 0.5 C 27 0.5 27.5 1 27.5 1.5 L 27.5 30.5 C 27.5 31 27 31.5 26.5 31.5 L 5.5 31.5 C 5 31.5 4.5 31 4.5 30.5 L 4.5 1.5 C 4.5 1 5 0.5 5.5 0.5 Z"/>
+        <polygon fill="var(--paper)" points="26 3 26 30 6 30 6 3"/>
+        <path fill="var(--js-color)" d="M 15.569 8.864 C 15.388 8.932 15.224 9.038 15.076 9.181 L 15.076 9.181 L 11.083 13.175 C 10.532 13.725 10.532 14.621 11.083 15.171 L 11.083 15.171 C 11.633 15.723 12.528 15.723 13.079 15.171 L 13.079 15.171 L 16.098 12.152 L 19.107 15.161 C 19.657 15.712 20.552 15.712 21.103 15.161 L 21.103 15.161 C 21.654 14.610 21.654 13.715 21.103 13.164 L 21.103 13.164 L 17.110 9.171 C 16.833 8.894 16.473 8.756 16.111 8.756 L 16.111 8.756 C 15.927 8.756 15.743 8.792 15.569 8.864 L 15.569 8.864 Z"/>
+        <path fill="var(--js-color)" d="M 14.758 16.941 C 14.758 17.692 15.367 18.297 16.114 18.297 L 16.114 18.297 C 16.861 18.297 17.470 17.692 17.470 16.941 L 17.470 16.941 C 17.470 16.188 16.861 15.585 16.114 15.585 L 16.114 15.585 C 15.367 15.585 14.758 16.188 14.758 16.941 L 14.758 16.941 Z"/>
+        <path fill="var(--js-color)" d="M 19.187 18.710 L 16.168 21.729 L 13.159 18.721 C 12.608 18.169 11.714 18.169 11.163 18.721 L 11.163 18.721 C 10.612 19.271 10.612 20.166 11.163 20.717 L 11.163 20.717 L 15.157 24.711 C 15.575 25.130 16.184 25.230 16.698 25.019 L 16.698 25.019 C 16.878 24.949 17.042 24.843 17.190 24.700 L 17.190 24.700 L 21.184 20.707 C 21.735 20.155 21.735 19.261 21.184 18.710 L 21.184 18.710 C 20.909 18.434 20.547 18.297 20.185 18.297 L 20.185 18.297 C 19.824 18.297 19.462 18.434 19.187 18.710 L 19.187 18.710 Z"/>
+    </symbol>
+
     <g id="generic-light" class="light"><use href="#doc"/></g>
     <g id="generic-light-override" class="light override"><use href="#doc"/></g>
     <g id="generic-dark" class="dark"><use href="#doc"/></g>
@@ -180,6 +183,8 @@
     <g id="markup-light-override" class="markup light override"><use href="#doc"/><use href="#markup"/></g>
     <g id="markup-dark" class="dark"><use href="#doc"/><use href="#markup"/></g>
     <g id="markup-dark-override" class="markup dark override"><use href="#doc"/><use href="#markup"/></g>
+    <g id="websocket-light" class="light"><use href="#websocket"/></g>
+    <g id="websocket-dark" class="dark"><use href="#websocket"/></g>
     <g id="worker-light" class="light"><use href="#doc"/><use href="#worker"/></g>
     <g id="worker-light-override" class="worker light override"><use href="#doc"/><use href="#worker"/></g>
     <g id="worker-dark" class="dark"><use href="#doc"/><use href="#worker"/></g>
