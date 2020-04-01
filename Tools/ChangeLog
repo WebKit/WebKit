@@ -1,3 +1,30 @@
+2020-03-31  Kate Cheney  <katherine_cheney@apple.com>
+
+        Requests for messageHandlers() in the DOMWindow should be ignored for non-app-bound navigations
+        https://bugs.webkit.org/show_bug.cgi?id=209836
+        <rdar://problem/61071607>
+
+        Reviewed by Brent Fulgham.
+
+        Most of this patch is changes to the tests, which formerly relied
+        on message handlers to test script injection protections. I rewrote
+        three tests to remove the use of message handlers which were used to
+        confirm normal script injection behavior before enabling In-App
+        Browser Privacy. Since normal script injection behavior is tested in
+        WKUserContentController.mm already it is unecessary to test here.
+
+        I removed one test, IgnoreAppBoundDomainsAcceptsUserScripts, which
+        fully relied on message handler use and could not be tested without
+        somehow disabling this feature.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (TEST):
+        (-[TestInAppBrowserScriptMessageHandler userContentController:didReceiveScriptMessage:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/in-app-browser-privacy-local-file.html:
+        Add a message handler to this page to demonstrate that message
+        handlers work for app-bound navigations (file:// protocol is always
+        app-bound).
+
 2020-03-31  Alex Christensen  <achristensen@webkit.org>
 
         Send correct UserContentControllerIdentifier after using SPI WKWebpagePreferences._userContentController

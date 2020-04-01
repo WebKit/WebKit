@@ -26,6 +26,12 @@
 #include "config.h"
 #include "WebKitNamespace.h"
 
+#include "FrameLoader.h"
+#include "FrameLoaderClient.h"
+#include "Logging.h"
+
+#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(frame() && frame()->isAlwaysOnLoggingAllowed(), channel, "%p - WebKitNamespace::" fmt, this, ##__VA_ARGS__)
+
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
 #include "DOMWindow.h"
@@ -44,9 +50,16 @@ WebKitNamespace::~WebKitNamespace() = default;
 
 UserMessageHandlersNamespace* WebKitNamespace::messageHandlers()
 {
+    if (frame() && frame()->loader().client().hasNavigatedAwayFromAppBoundDomain()) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "Ignoring messageHandlers() request for non app-bound domain");
+        return nullptr;
+    }
+
     return &m_messageHandlerNamespace.get();
 }
 
 } // namespace WebCore
 
 #endif // ENABLE(USER_MESSAGE_HANDLERS)
+
+#undef RELEASE_LOG_ERROR_IF_ALLOWED

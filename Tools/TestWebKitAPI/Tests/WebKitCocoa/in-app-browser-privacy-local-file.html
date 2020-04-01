@@ -2,4 +2,8 @@
 <html>
 <body>
 </body>
+<script>
+    if (window.webkit.messageHandlers)
+        window.webkit.messageHandlers.testHandler.postMessage('Passed');
+</script>
 </html>
