@@ -31,6 +31,7 @@ OBJC_CLASS UIColor;
 OBJC_CLASS WKColorButton;
 OBJC_CLASS WKColorMatrixView;
 OBJC_CLASS WKContentView;
+OBJC_CLASS WKColorPopover;
 
 @protocol WKColorMatrixViewDelegate
 - (void)colorMatrixView:(WKColorMatrixView *)matrixView didTapColorButton:(WKColorButton *)colorButton;
@@ -39,6 +40,7 @@ OBJC_CLASS WKContentView;
 
 @interface WKColorPicker : NSObject<WKFormControl, WKColorMatrixViewDelegate>
 - (instancetype)initWithView:(WKContentView *)view;
+- (instancetype)initWithView:(WKContentView *)view inPopover:(WKColorPopover *)popover;
 @end
 
 #endif // ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)

@@ -151,6 +151,7 @@ using namespace WebKit;
 
 @implementation WKColorPicker {
     WKContentView *_view;
+    __weak WKColorPopover *_popover;
     RetainPtr<UIView> _colorPicker;
 
     RetainPtr<UIView> _colorSelectionIndicator;
@@ -170,10 +171,17 @@ using namespace WebKit;
 
 - (instancetype)initWithView:(WKContentView *)view
 {
+    return [self initWithView:view inPopover:nil];
+}
+
+- (instancetype)initWithView:(WKContentView *)view inPopover:(WKColorPopover *)popover
+{
     if (!(self = [super init]))
         return nil;
 
     _view = view;
+    
+    _popover = popover;
 
     CGSize colorPickerSize;
     if (currentUserInterfaceIdiomIsPad())
@@ -296,6 +304,9 @@ using namespace WebKit;
 
     [self drawSelectionIndicatorForColorButton:colorButton];
     [self setControlValueFromUIColor:colorButton.color];
+#if PLATFORM(MACCATALYST)
+    [_popover dismissPopoverAnimated:NO];
+#endif
 }
 
 #pragma mark UIPanGestureRecognizer
