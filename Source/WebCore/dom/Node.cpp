@@ -1297,12 +1297,18 @@ Node::InsertedIntoAncestorResult Node::insertedIntoAncestor(InsertionType insert
     return InsertedIntoAncestorResult::Done;
 }
 
-void Node::removedFromAncestor(RemovalType removalType, ContainerNode&)
+void Node::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument)
         clearFlag(IsConnectedFlag);
     if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())
         clearFlag(IsInShadowTreeFlag);
+    if (removalType.disconnectedFromDocument) {
+        if (auto* document = &oldParentOfRemovedTree.treeScope().documentScope()) {
+            if (auto* cache = document->existingAXObjectCache())
+                cache->remove(*this);
+        }
+    }
 }
 
 bool Node::isRootEditableElement() const
