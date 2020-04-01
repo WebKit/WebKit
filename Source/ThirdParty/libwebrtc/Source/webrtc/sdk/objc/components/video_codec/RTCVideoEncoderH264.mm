@@ -48,7 +48,7 @@
 VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_Usage;
 VT_EXPORT const CFStringRef kVTCompressionPropertyKey_Usage;
 
-#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS) && !ENABLE_VCP_ENCODER
+#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS) && !HAVE_VTB_REQUIREDLOWLATENCY
 static inline bool isStandardFrameSize(int32_t width, int32_t height)
 {
     // FIXME: Envision relaxing this rule, something like width and height dividable by 4 or 8 should be good enough.
@@ -561,7 +561,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
                                                     nullptr);
   } else {
 #if ENABLE_VCP_ENCODER
-  status = webrtc::VCPCompressionSessionEncodeFrame(_vcpCompressionSession,
+    status = webrtc::VCPCompressionSessionEncodeFrame(_vcpCompressionSession,
                                                     pixelBuffer,
                                                     presentationTimeStamp,
                                                     kCMTimeInvalid,
@@ -715,12 +715,12 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
     auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
     CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_Usage, usage);
     CFRelease(usage);
-  }
-#endif
 #if ENABLE_VCP_VTB_ENCODER
-  if (_useVCP) {
     CFDictionarySetValue(encoderSpecs, kVTVideoEncoderList_EncoderID, CFSTR("com.apple.videotoolbox.videoencoder.h264.rtvc"));
+#endif
   }
+#elif HAVE_VTB_REQUIREDLOWLATENCY
+  CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
 #endif
 
   OSStatus status =
@@ -768,7 +768,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
                                nullptr,
                                &_vcpCompressionSession);
   }
-#else
+#elif !HAVE_VTB_REQUIREDLOWLATENCY
   if (status != noErr) {
     if (encoderSpecs) {
         CFRelease(encoderSpecs);
@@ -831,7 +831,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
                                  nullptr,
                                  &_vtCompressionSession);
   }
-#endif // ENABLE_VCP_ENCODER
+#endif // !HAVE_VTB_REQUIREDLOWLATENCY
 #endif // defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
   if (sourceAttributes) {
     CFRelease(sourceAttributes);

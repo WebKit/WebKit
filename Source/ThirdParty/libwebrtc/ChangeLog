@@ -1,3 +1,20 @@
+2020-04-01  Youenn Fablet  <youenn@apple.com>
+
+        Use kVTVideoEncoderSpecification_RequiredLowLatency instead of kVTVideoEncoderList_EncoderID
+        https://bugs.webkit.org/show_bug.cgi?id=209800
+
+        Reviewed by Eric Carlson.
+
+        For recent OS versions, disable use of VCP.
+        Instead, use VTB compression session with kVTVideoEncoderSpecification_RequiredLowLatency set to true.
+        We keep MacOS code path checking frame size for public builds running on devices without hardware encoders.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]):
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+        (isStandardFrameSize): Deleted.
+
 2020-03-27  youenn fablet  <youenn@apple.com>
 
         Bump boringssl version to M82
