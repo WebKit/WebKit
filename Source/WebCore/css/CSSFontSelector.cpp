@@ -64,7 +64,7 @@ static unsigned fontSelectorId;
 CSSFontSelector::CSSFontSelector(Document& document)
     : m_document(makeWeakPtr(document))
     , m_cssFontFaceSet(CSSFontFaceSet::create(this))
-    , m_beginLoadingTimer(*this, &CSSFontSelector::beginLoadTimerFired)
+    , m_beginLoadingTimer(&document, *this, &CSSFontSelector::beginLoadTimerFired)
     , m_uniqueId(++fontSelectorId)
     , m_version(0)
 {
@@ -72,6 +72,8 @@ CSSFontSelector::CSSFontSelector(Document& document)
     FontCache::singleton().addClient(*this);
     m_cssFontFaceSet->addClient(*this);
     LOG(Fonts, "CSSFontSelector %p ctor", this);
+
+    m_beginLoadingTimer.suspendIfNeeded();
 }
 
 CSSFontSelector::~CSSFontSelector()
@@ -336,7 +338,7 @@ void CSSFontSelector::clearDocument()
         return;
     }
 
-    m_beginLoadingTimer.stop();
+    m_beginLoadingTimer.cancel();
 
     CachedResourceLoader& cachedResourceLoader = m_document->cachedResourceLoader();
     for (auto& fontHandle : m_fontsToBeginLoading) {
