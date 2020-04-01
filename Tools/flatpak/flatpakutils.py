@@ -58,6 +58,17 @@ _log = logging.getLogger(__name__)
 
 FLATPAK_USER_DIR_PATH = os.path.realpath(os.path.join(scriptdir, "../../WebKitBuild", "UserFlatpak"))
 
+is_colored_output_supported = False
+try:
+    import curses
+    assert sys.stdout.isatty()
+    curses.setupterm()
+    assert curses.tigetnum("colors") > 0
+except Exception:
+    is_colored_output_supported = False
+else:
+    is_colored_output_supported = True
+
 class Colors:
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"
@@ -85,6 +96,25 @@ class Console:
         # as we use many subprocesses.
         sys.stdout.flush()
 
+    @classmethod
+    def colored_message_if_supported(cls, color, str_format, *args):
+        if args:
+            msg = str_format % args
+        else:
+            msg = str_format
+
+        if is_colored_output_supported:
+            cls.message("\n%s%s%s", color, msg, Colors.ENDC)
+        else:
+            cls.message(msg)
+
+    @classmethod
+    def error_message(cls, str_format, *args):
+        cls.colored_message_if_supported(Colors.FAIL, str_format, *args)
+
+    @classmethod
+    def warning_message(cls, str_format, *args):
+        cls.colored_message_if_supported(Colors.WARNING, str_format, *args)
 
 def check_flatpak(verbose=True):
     # Flatpak is only supported on Linux.
@@ -96,12 +126,12 @@ def check_flatpak(verbose=True):
             output = subprocess.check_output([app, "--version"])
         except (subprocess.CalledProcessError, OSError):
             if verbose:
-                Console.message("\n%sYou need to install %s >= %s"
-                                " to be able to use the '%s' script.\n\n"
-                                "You can find some informations about"
-                                " how to install it for your distribution at:\n"
-                                "    * http://flatpak.org/%s\n", Colors.FAIL,
-                                app, required_version, sys.argv[0], Colors.ENDC)
+                Console.error_message("You need to install %s >= %s"
+                                      " to be able to use the '%s' script.\n\n"
+                                      "You can find some informations about"
+                                      " how to install it for your distribution at:\n"
+                                      "    * http://flatpak.org/%s\n", app, required_version,
+                                      sys.argv[0])
             return False
 
         def comparable_version(version):
@@ -111,9 +141,8 @@ def check_flatpak(verbose=True):
         current = comparable_version(version)
         FLATPAK_VERSION[app] = current
         if current < comparable_version(required_version):
-            Console.message("\n%s%s %s required but %s found."
-                            " Please update and try again%s\n", Colors.FAIL,
-                            app, required_version, version, Colors.ENDC)
+            Console.error_message("%s %s required but %s found. Please update and try again\n",
+                                  app, required_version, version)
             return False
 
     return True
@@ -131,14 +160,14 @@ class FlatpakObject:
             Console.message(comment)
 
         command = ["flatpak", command]
-        if self.user:
-            res = subprocess.check_output(command + ["--help"]).decode("utf-8")
-            if "--user" in res:
-                command.append("--user")
-            if "--assumeyes" in res:
-                command.append("--assumeyes")
+        res = subprocess.check_output(command + ["--help"]).decode("utf-8")
+        if self.user and "--user" in res:
+            command.append("--user")
+        if "--assumeyes" in res:
+            command.append("--assumeyes")
         command.extend(args)
 
+        _log.debug("Executing %s" % ' '.join(command))
         if not show_output:
             return subprocess.check_output(command).decode("utf-8")
 
@@ -248,6 +277,23 @@ class FlatpakRepo(FlatpakObject):
         else:
             assert url
 
+        self._app_registry = {}
+        output = self.flatpak("list", "--columns=application,branch,origin")
+        for line in output.splitlines():
+            name, branch, origin = line.split("\t")
+            if origin != self.name:
+                continue
+            self._app_registry[name] = branch
+
+    def is_app_installed(self, name, branch=None):
+        if branch:
+            try:
+                return self._app_registry[name] == branch
+            except KeyError:
+                return False
+        else:
+            return name in self._app_registry.keys()
+
     @property
     def repo_file(self):
         if self._repo_file:
@@ -271,7 +317,6 @@ class FlatpakPackage(FlatpakObject):
         self.branch = str(branch)
         self.repo = repo
         self.arch = arch
-        self.hash = hash
 
     def __repr__(self):
         return "%s/%s/%s %s" % (self.name, self.arch, self.branch, self.repo.name)
@@ -297,28 +342,17 @@ class FlatpakPackage(FlatpakObject):
         if not self.repo:
             return False
 
-        args = ["install", self.repo.name, self.name, "--reinstall", self.branch, "--assumeyes"]
-        comment = "Installing from " + self.repo.name + " " + self.name + " " + self.arch + " " + self.branch
+        branch = self.branch
+        args = ("install", self.repo.name, self.name, "--reinstall", branch)
+        comment = "Installing from " + self.repo.name + " " + self.name + " " + self.arch + " " + branch
         self.flatpak(*args, show_output=True, comment=comment)
-        if self.hash:
-            args = ["update", "--commit", self.hash, self.name]
-            comment = "Updating to %s" % self.hash
-            self.flatpak(*args, show_output=True, comment=comment)
 
     def update(self):
         if not self.is_installed(self.branch):
             return self.install()
 
-        extra_args = []
         comment = "Updating %s" % self.name
-        if self.hash:
-            extra_args = ["--commit", self.hash]
-            comment += " to %s" % self.hash
-
-        extra_args.append("--assumeyes")
-
-        self.flatpak("update", self.name, self.branch, show_output=True,
-                     *extra_args, comment=comment)
+        self.flatpak("update", self.name, self.branch, show_output=True, comment=comment)
 
 
 @contextmanager
@@ -403,9 +437,7 @@ class WebkitFlatpak:
     def __init__(self):
         self.sdk_repo = None
         self.runtime = None
-        self.locale = None
         self.sdk = None
-        self.app = None
 
         self.verbose = False
         self.quiet = False
@@ -427,7 +459,7 @@ class WebkitFlatpak:
         self.build_gst = False
         self.build_all = False
 
-        self.sdk_branch = "0.1"
+        self.sdk_branch = "0.2"
         self.platform = "gtk"
         self.build_type = "Release"
         self.manifest_path = None
@@ -435,7 +467,6 @@ class WebkitFlatpak:
         self.build_name = None
         self.flatpak_root_path = None
         self.cache_path = None
-        self.app_module = None
         self.flatpak_default_args = []
         self.check_available = False
 
@@ -497,12 +528,7 @@ class WebkitFlatpak:
             return False
 
         self.finish_args = []
-        self.repos = FlatpakRepos()
-        self.sdk_repo = self.repos.add(
-            FlatpakRepo("webkit-sdk",
-                        url="https://software.igalia.com/webkit-sdk-repo/",
-                        repo_file="https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo")
-        )
+        self._reset_repository()
 
         try:
             with open(self.config_file) as config:
@@ -512,6 +538,14 @@ class WebkitFlatpak:
             pass
 
         return True
+
+    def _reset_repository(self):
+        self.repos = FlatpakRepos()
+        self.sdk_repo = self.repos.add(
+            FlatpakRepo("webkit-sdk",
+                        url="https://software.igalia.com/webkit-sdk-repo/",
+                        repo_file="https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo")
+        )
 
     def setup_builddir(self, **kwargs):
         if os.path.exists(os.path.join(self.flatpak_build_path, "metadata")):
@@ -529,7 +563,7 @@ class WebkitFlatpak:
         gst_dir = os.environ.get('GST_BUILD_PATH')
         if not gst_dir:
             if building:
-                Console.message("%s$GST_BUILD_PATH environment variable not set. Skipping gst-build%s\n", Colors.WARNING, Colors.ENDC)
+                Console.warning_message("$GST_BUILD_PATH environment variable not set. Skipping gst-build\n")
             return []
 
         if not os.path.exists(os.path.join(gst_dir, 'gst-env.py')):
@@ -719,7 +753,15 @@ class WebkitFlatpak:
         if self.update:
             Console.message("Updating Flatpak %s environment" % self.build_type)
             if not self.no_flatpak_update:
-                self.sdk_repo.flatpak("update")
+                repo = self.sdk_repo
+                repo.flatpak("update")
+                for package in self._get_packages():
+                    if package.name.startswith("org.webkit") and repo.is_app_installed(package.name) \
+                       and not repo.is_app_installed(package.name, branch=self.sdk_branch):
+                        Console.message("New SDK version available, removing local UserFlatpak directory before switching to new version")
+                        shutil.rmtree(self.flatpak_build_path)
+                        self._reset_repository()
+                        break
 
         return self.setup_dev_env()
 
@@ -727,8 +769,8 @@ class WebkitFlatpak:
         try:
             return self.main()
         except subprocess.CalledProcessError as error:
-            Console.message("\n%sThe following command returned a non-zero exit status: %s\n"
-                            "Output: %s%s", Colors.FAIL, ' '.join(error.cmd), error.output, Colors.ENDC)
+            Console.error_message("The following command returned a non-zero exit status: %s\n"
+                                  "Output: %s", ' '.join(error.cmd), error.output)
             return error.returncode
         return 0
 
@@ -753,6 +795,12 @@ class WebkitFlatpak:
             self.install_all()
             self.setup_icecc()
             self.save_config()
+
+        if not self.update:
+            for package in self._get_packages():
+                if package.name.startswith("org.webkit") and not package.is_installed(self.sdk_branch):
+                    Console.error_message("Flatpak package %s not installed. Please update your SDK: Tools/Scripts/update-webkit-flatpak", package)
+                    return 1
 
         build_type = "--debug" if self.debug else "--release"
 
@@ -786,11 +834,9 @@ class WebkitFlatpak:
     def _get_packages(self):
         self.runtime = FlatpakPackage("org.webkit.Platform", self.sdk_branch,
                                       self.sdk_repo, "x86_64")
-        self.locale = FlatpakPackage("org.webkit.Platform.Locale", self.sdk_branch,
-                                     self.sdk_repo, "x86_64")
         self.sdk = FlatpakPackage("org.webkit.Sdk", self.sdk_branch,
                                   self.sdk_repo, "x86_64")
-        packages = [self.runtime, self.locale, self.sdk]
+        packages = [self.runtime, self.sdk]
 
         # FIXME: For unknown reasons, the GL extension needs to be explicitely
         # installed for Flatpak 1.2.x to be able to make use of it. Seems like

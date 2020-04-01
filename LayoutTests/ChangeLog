@@ -1,3 +1,14 @@
+2020-04-01  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Migration to version 0.2
+        https://bugs.webkit.org/show_bug.cgi?id=209850
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * http/conf/flatpak-httpd.conf: Switch back to /usr/lib/apache2
+        path for modules. The 0.1 version of the SDK installed those in
+        /usr/ but in retrospective, this was a mistake.
+
 2020-04-01  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update baselines

@@ -1,3 +1,41 @@
+2020-04-01  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Migration to version 0.2
+        https://bugs.webkit.org/show_bug.cgi?id=209850
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Version 0.2 of the SDK is now built with Buildstream instead of
+        flatpak-builder. With this new version it will be easier to add
+        new dependencies and hack on dependencies shipped by the SDK.
+
+        Sadly I haven't found a nice way to upgrade smoothly without
+        removing the UserFlatpak directory. In theory this shouldn't be
+        needed but then old SDK branches would accumulate there, wasting
+        disk-space.
+
+        * flatpak/flatpakutils.py:
+        (Console):
+        (Console.colored_message):
+        (Console.error_message):
+        (Console.warning_message):
+        (check_flatpak):
+        (FlatpakObject.flatpak):
+        (FlatpakRepo.__init__):
+        (FlatpakRepo):
+        (FlatpakRepo.is_app_installed):
+        (FlatpakPackage.__init__):
+        (FlatpakPackage.install):
+        (FlatpakPackage.update):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak._reset_repository):
+        (WebkitFlatpak.setup_gstbuild):
+        (WebkitFlatpak.main):
+        (WebkitFlatpak.run):
+        (WebkitFlatpak.setup_dev_env):
+        (WebkitFlatpak._get_packages):
+
 2020-04-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MiniBrowser: valgrind claims 'Invalid write of size 8' on close
