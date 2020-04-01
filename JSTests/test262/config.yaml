@@ -115,8 +115,6 @@ skip:
     # https://bugs.webkit.org/show_bug.cgi?id=192920
     - test/intl402/PluralRules/prototype/resolvedOptions/order.js
     - test/intl402/PluralRules/prototype/resolvedOptions/pluralCategories.js
-    - test/intl402/NumberFormat/prototype/format/format-fraction-digits.js
-    - test/intl402/NumberFormat/prototype/format/format-significant-digits.js
 
     # https://bugs.webkit.org/show_bug.cgi?id=190800
     - test/built-ins/TypedArray/prototype/set/src-typedarray-big-throws.js

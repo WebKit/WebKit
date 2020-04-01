@@ -1,3 +1,17 @@
+2020-04-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Intl.NumberFormat.prototype.format must preserve sign of -0
+        https://bugs.webkit.org/show_bug.cgi?id=209880
+
+        Reviewed by Keith Miller.
+
+        The spec changed here two years ago:
+        https://github.com/tc39/ecma402/pull/232
+
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::formatNumber):
+        Do NOT throw away the sign of -0.
+
 2020-04-01  Justin Michaud  <justin@justinmichaud.com>
 
         Delete IC incorrectly caches for proxies

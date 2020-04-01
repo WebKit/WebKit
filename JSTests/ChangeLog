@@ -1,3 +1,16 @@
+2020-04-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Intl.NumberFormat.prototype.format must preserve sign of -0
+        https://bugs.webkit.org/show_bug.cgi?id=209880
+
+        Reviewed by Keith Miller.
+
+        * test262/config.yaml:
+        This test was skipped as ICU version-dependent, but it shouldn't be.
+
+        * test262/expectations.yaml:
+        Mark four test cases as passing.
+
 2020-04-01  Justin Michaud  <justin@justinmichaud.com>
 
         Delete IC incorrectly caches for proxies

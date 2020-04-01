@@ -1998,9 +1998,6 @@ test/intl402/NumberFormat/numbering-system-options.js:
 test/intl402/NumberFormat/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
-test/intl402/NumberFormat/prototype/format/format-negative-numbers.js:
-  default: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(«0», «0») to be false'
-  strict mode: 'Test262Error: Intl.NumberFormat is formatting 0 and -0 the same way. Expected SameValue(«0», «0») to be false'
 test/intl402/PluralRules/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'

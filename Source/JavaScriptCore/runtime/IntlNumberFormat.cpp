@@ -344,10 +344,6 @@ JSValue IntlNumberFormat::formatNumber(JSGlobalObject* globalObject, double numb
     if (!m_initializedNumberFormat)
         return throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s);
 
-    // Map negative zero to positive zero.
-    if (!number)
-        number = 0.0;
-
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> buffer(32);
     auto length = unum_formatDouble(m_numberFormat.get(), number, buffer.data(), buffer.size(), nullptr, &status);

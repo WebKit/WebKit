@@ -317,7 +317,7 @@ shouldBe("Intl.NumberFormat('en').format(NaN)", "'NaN'");
 shouldBe("Intl.NumberFormat('en').format(Infinity)", "'∞'");
 shouldBe("Intl.NumberFormat('en').format(-Infinity)", "'-∞'");
 shouldBe("Intl.NumberFormat('en').format(0)", "'0'");
-shouldBe("Intl.NumberFormat('en').format(-0)", "'0'");
+shouldBe("Intl.NumberFormat('en').format(-0)", "'-0'");
 shouldBe("Intl.NumberFormat('en').format(Number.MIN_VALUE)", "'0'");
 shouldBe("Intl.NumberFormat('en', { maximumSignificantDigits: 15 }).format(Number.MAX_VALUE)", "'179,769,313,486,232,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000'");
 
