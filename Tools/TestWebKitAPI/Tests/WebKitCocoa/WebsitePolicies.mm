@@ -1778,5 +1778,6 @@ TEST(WebpagePreferences, WebsitePoliciesUserContentController)
     }
     EXPECT_TRUE(caughtException);
 
-    // FIXME: Make _addUserScriptImmediately work successfully after using WKWebpagePreferences._userContentController
+    [replacementUserContentController _addUserScriptImmediately:makeScript(@"alert('testAlert3');")];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "testAlert3");
 }

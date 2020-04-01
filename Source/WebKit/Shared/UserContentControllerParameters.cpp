@@ -33,6 +33,7 @@ namespace WebKit {
 
 void UserContentControllerParameters::encode(IPC::Encoder& encoder) const
 {
+    encoder << identifier;
     encoder << userContentWorlds;
     encoder << userScripts;
     encoder << userStyleSheets;
@@ -44,6 +45,11 @@ void UserContentControllerParameters::encode(IPC::Encoder& encoder) const
 
 Optional<UserContentControllerParameters> UserContentControllerParameters::decode(IPC::Decoder& decoder)
 {
+    Optional<UserContentControllerIdentifier> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return WTF::nullopt;
+    
     Optional<Vector<std::pair<ContentWorldIdentifier, String>>> userContentWorlds;
     decoder >> userContentWorlds;
     if (!userContentWorlds)
@@ -72,6 +78,7 @@ Optional<UserContentControllerParameters> UserContentControllerParameters::decod
 #endif
 
     return {{
+        WTFMove(*identifier),
         WTFMove(*userContentWorlds),
         WTFMove(*userScripts),
         WTFMove(*userStyleSheets),

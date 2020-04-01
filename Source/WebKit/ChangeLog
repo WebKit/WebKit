@@ -1,3 +1,25 @@
+2020-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Send correct UserContentControllerIdentifier after using SPI WKWebpagePreferences._userContentController
+        https://bugs.webkit.org/show_bug.cgi?id=209833
+
+        Reviewed by Tim Hatcher.
+
+        Covered by an API test.  I knew something was broken in r259307 and this was it.
+
+        * Shared/UserContentControllerParameters.cpp:
+        (WebKit::UserContentControllerParameters::encode const):
+        (WebKit::UserContentControllerParameters::decode):
+        * Shared/UserContentControllerParameters.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::parameters const):
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+
 2020-03-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Deduplicate WebsiteDataStore::parameters() of Cocoa port and non-Cocoa port

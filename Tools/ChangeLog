@@ -1,3 +1,12 @@
+2020-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Send correct UserContentControllerIdentifier after using SPI WKWebpagePreferences._userContentController
+        https://bugs.webkit.org/show_bug.cgi?id=209833
+
+        Reviewed by Tim Hatcher.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+
 2020-03-31  Brent Fulgham  <bfulgham@apple.com>
 
         Allow WKAppBoundDomains to be initialized with eTLD+1 only (no protocol)

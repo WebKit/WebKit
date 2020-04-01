@@ -108,6 +108,8 @@ UserContentControllerParameters WebUserContentControllerProxy::parameters() cons
 {
     UserContentControllerParameters parameters;
 
+    parameters.identifier = identifier();
+    
     for (const auto& world : m_contentWorlds)
         parameters.userContentWorlds.append(world.key->worldData());
 

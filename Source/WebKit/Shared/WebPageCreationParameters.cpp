@@ -54,7 +54,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << userAgent;
     encoder << itemStatesWereRestoredByAPIRequest;
     encoder << itemStates;
-    encoder << userContentControllerID;
     encoder << visitedLinkTableID;
     encoder << canRunBeforeUnloadConfirmPanel;
     encoder << canRunModal;
@@ -217,12 +216,6 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!itemStates)
         return WTF::nullopt;
     parameters.itemStates = WTFMove(*itemStates);
-
-    Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
-    decoder >> userContentControllerIdentifier;
-    if (!userContentControllerIdentifier)
-        return WTF::nullopt;
-    parameters.userContentControllerID = *userContentControllerIdentifier;
 
     if (!decoder.decode(parameters.visitedLinkTableID))
         return WTF::nullopt;
