@@ -33,8 +33,7 @@ namespace webrtc {
 //  +-------+--------+------+---------+
 // The "," is a special event defined by the WebRTC spec. It means to delay for
 // 2 seconds before processing the next tone. We use -1 as its code.
-static const int kDtmfCodeTwoSecondDelay = -1;
-static const int kDtmfTwoSecondInMs = 2000;
+static const int kDtmfCommaDelay = -1;
 static const char kDtmfValidTones[] = ",0123456789*#ABCDabcd";
 static const char kDtmfTonesTable[] = ",0123456789*#ABCD";
 // The duration cannot be more than 6000ms or less than 40ms. The gap between
@@ -76,7 +75,8 @@ DtmfSender::DtmfSender(rtc::Thread* signaling_thread,
       signaling_thread_(signaling_thread),
       provider_(provider),
       duration_(kDtmfDefaultDurationMs),
-      inter_tone_gap_(kDtmfDefaultGapMs) {
+      inter_tone_gap_(kDtmfDefaultGapMs),
+      comma_delay_(kDtmfDefaultCommaDelayMs) {
   RTC_DCHECK(signaling_thread_);
   if (provider_) {
     RTC_DCHECK(provider_->GetOnDestroyedSignal());
@@ -107,11 +107,12 @@ bool DtmfSender::CanInsertDtmf() {
 
 bool DtmfSender::InsertDtmf(const std::string& tones,
                             int duration,
-                            int inter_tone_gap) {
+                            int inter_tone_gap,
+                            int comma_delay) {
   RTC_DCHECK(signaling_thread_->IsCurrent());
 
   if (duration > kDtmfMaxDurationMs || duration < kDtmfMinDurationMs ||
-      inter_tone_gap < kDtmfMinGapMs) {
+      inter_tone_gap < kDtmfMinGapMs || comma_delay < kDtmfMinGapMs) {
     RTC_LOG(LS_ERROR)
         << "InsertDtmf is called with invalid duration or tones gap. "
            "The duration cannot be more than "
@@ -130,6 +131,7 @@ bool DtmfSender::InsertDtmf(const std::string& tones,
   tones_ = tones;
   duration_ = duration;
   inter_tone_gap_ = inter_tone_gap;
+  comma_delay_ = comma_delay;
   // Clear the previous queue.
   dtmf_driver_.Clear();
   // Kick off a new DTMF task queue.
@@ -147,6 +149,10 @@ int DtmfSender::duration() const {
 
 int DtmfSender::inter_tone_gap() const {
   return inter_tone_gap_;
+}
+
+int DtmfSender::comma_delay() const {
+  return comma_delay_;
 }
 
 void DtmfSender::QueueInsertDtmf(const rtc::Location& posted_from,
@@ -180,10 +186,12 @@ void DtmfSender::DoInsertDtmf() {
   }
 
   int tone_gap = inter_tone_gap_;
-  if (code == kDtmfCodeTwoSecondDelay) {
-    // Special case defined by WebRTC - The character',' indicates a delay of 2
-    // seconds before processing the next character in the tones parameter.
-    tone_gap = kDtmfTwoSecondInMs;
+  if (code == kDtmfCommaDelay) {
+    // Special case defined by WebRTC - By default, the character ',' indicates
+    // a delay of 2 seconds before processing the next character in the tones
+    // parameter. The comma delay can be set to a non default value via
+    // InsertDtmf to comply with legacy WebRTC clients.
+    tone_gap = comma_delay_;
   } else {
     if (!provider_) {
       RTC_LOG(LS_ERROR) << "The DtmfProvider has been destroyed.";

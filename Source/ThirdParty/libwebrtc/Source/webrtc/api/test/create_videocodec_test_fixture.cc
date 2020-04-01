@@ -13,7 +13,6 @@
 #include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "api/test/videocodec_test_fixture.h"
 #include "modules/video_coding/codecs/test/videocodec_test_fixture_impl.h"
 
@@ -24,14 +23,14 @@ using Config = VideoCodecTestFixture::Config;
 
 std::unique_ptr<VideoCodecTestFixture> CreateVideoCodecTestFixture(
     const Config& config) {
-  return absl::make_unique<VideoCodecTestFixtureImpl>(config);
+  return std::make_unique<VideoCodecTestFixtureImpl>(config);
 }
 
 std::unique_ptr<VideoCodecTestFixture> CreateVideoCodecTestFixture(
     const Config& config,
     std::unique_ptr<VideoDecoderFactory> decoder_factory,
     std::unique_ptr<VideoEncoderFactory> encoder_factory) {
-  return absl::make_unique<VideoCodecTestFixtureImpl>(
+  return std::make_unique<VideoCodecTestFixtureImpl>(
       config, std::move(decoder_factory), std::move(encoder_factory));
 }
 

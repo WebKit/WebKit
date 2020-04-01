@@ -14,13 +14,14 @@
 #include <tuple>
 #include <utility>
 
-#include "absl/memory/memory.h"
+#include "api/ice_transport_factory.h"
 #include "media/base/fake_rtp.h"
 #include "p2p/base/fake_dtls_transport.h"
 #include "p2p/base/fake_ice_transport.h"
 #include "rtc_base/gunit.h"
 
 namespace cricket {
+namespace {
 using webrtc::SdpType;
 
 static const char kIceUfrag1[] = "U001";
@@ -41,12 +42,22 @@ struct NegotiateRoleParams {
   SdpType remote_type;
 };
 
+rtc::scoped_refptr<webrtc::IceTransportInterface> CreateIceTransport(
+    std::unique_ptr<FakeIceTransport> internal) {
+  if (!internal) {
+    return nullptr;
+  }
+
+  return new rtc::RefCountedObject<FakeIceTransportWrapper>(
+      std::move(internal));
+}
+
 class JsepTransport2Test : public ::testing::Test, public sigslot::has_slots<> {
  protected:
   std::unique_ptr<webrtc::SrtpTransport> CreateSdesTransport(
       rtc::PacketTransportInternal* rtp_packet_transport,
       rtc::PacketTransportInternal* rtcp_packet_transport) {
-    auto srtp_transport = absl::make_unique<webrtc::SrtpTransport>(
+    auto srtp_transport = std::make_unique<webrtc::SrtpTransport>(
         rtcp_packet_transport == nullptr);
 
     srtp_transport->SetRtpPacketTransport(rtp_packet_transport);
@@ -59,7 +70,7 @@ class JsepTransport2Test : public ::testing::Test, public sigslot::has_slots<> {
   std::unique_ptr<webrtc::DtlsSrtpTransport> CreateDtlsSrtpTransport(
       cricket::DtlsTransportInternal* rtp_dtls_transport,
       cricket::DtlsTransportInternal* rtcp_dtls_transport) {
-    auto dtls_srtp_transport = absl::make_unique<webrtc::DtlsSrtpTransport>(
+    auto dtls_srtp_transport = std::make_unique<webrtc::DtlsSrtpTransport>(
         rtcp_dtls_transport == nullptr);
     dtls_srtp_transport->SetDtlsTransports(rtp_dtls_transport,
                                            rtcp_dtls_transport);
@@ -70,18 +81,21 @@ class JsepTransport2Test : public ::testing::Test, public sigslot::has_slots<> {
   // FakeIceTransport.
   std::unique_ptr<JsepTransport> CreateJsepTransport2(bool rtcp_mux_enabled,
                                                       SrtpMode srtp_mode) {
-    auto ice = absl::make_unique<FakeIceTransport>(kTransportName,
-                                                   ICE_CANDIDATE_COMPONENT_RTP);
-    auto rtp_dtls_transport = absl::make_unique<FakeDtlsTransport>(ice.get());
+    auto ice_internal = std::make_unique<FakeIceTransport>(
+        kTransportName, ICE_CANDIDATE_COMPONENT_RTP);
+    auto rtp_dtls_transport =
+        std::make_unique<FakeDtlsTransport>(ice_internal.get());
+    auto ice = CreateIceTransport(std::move(ice_internal));
 
-    std::unique_ptr<FakeIceTransport> rtcp_ice;
+    std::unique_ptr<FakeIceTransport> rtcp_ice_internal;
     std::unique_ptr<FakeDtlsTransport> rtcp_dtls_transport;
     if (!rtcp_mux_enabled) {
-      rtcp_ice = absl::make_unique<FakeIceTransport>(
+      rtcp_ice_internal = std::make_unique<FakeIceTransport>(
           kTransportName, ICE_CANDIDATE_COMPONENT_RTCP);
       rtcp_dtls_transport =
-          absl::make_unique<FakeDtlsTransport>(rtcp_ice.get());
+          std::make_unique<FakeDtlsTransport>(rtcp_ice_internal.get());
     }
+    auto rtcp_ice = CreateIceTransport(std::move(rtcp_ice_internal));
 
     std::unique_ptr<webrtc::RtpTransport> unencrypted_rtp_transport;
     std::unique_ptr<webrtc::SrtpTransport> sdes_transport;
@@ -100,19 +114,15 @@ class JsepTransport2Test : public ::testing::Test, public sigslot::has_slots<> {
         RTC_NOTREACHED();
     }
 
-    // TODO(sukhanov): Currently there is no media_transport specific
-    // logic in jseptransport, so jseptransport unittests are created with
-    // media_transport = nullptr. In the future we will probably add
-    // more logic that require unit tests. Note that creation of media_transport
-    // is covered in jseptransportcontroller_unittest.
-    auto jsep_transport = absl::make_unique<JsepTransport>(
+    auto jsep_transport = std::make_unique<JsepTransport>(
         kTransportName, /*local_certificate=*/nullptr, std::move(ice),
         std::move(rtcp_ice), std::move(unencrypted_rtp_transport),
         std::move(sdes_transport), std::move(dtls_srtp_transport),
         /*datagram_rtp_transport=*/nullptr, std::move(rtp_dtls_transport),
         std::move(rtcp_dtls_transport),
-        /*media_transport=*/nullptr,
-        /*datagram_transport=*/nullptr);
+        /*sctp_transport=*/nullptr,
+        /*datagram_transport=*/nullptr,
+        /*data_channel_transport=*/nullptr);
 
     signal_rtcp_mux_active_received_ = false;
     jsep_transport->SignalRtcpMuxActive.connect(
@@ -1247,4 +1257,38 @@ INSTANTIATE_TEST_SUITE_P(
         std::make_tuple(Scenario::kDtlsBeforeCallerSetAnswer, false),
         std::make_tuple(Scenario::kDtlsAfterCallerSetAnswer, false)));
 
+// This test verifies the ICE parameters are properly applied to the transports.
+TEST_F(JsepTransport2Test, SetIceParametersWithRenomination) {
+  jsep_transport_ =
+      CreateJsepTransport2(/* rtcp_mux_enabled= */ true, SrtpMode::kDtlsSrtp);
+
+  JsepTransportDescription jsep_description;
+  jsep_description.transport_desc = TransportDescription(kIceUfrag1, kIcePwd1);
+  jsep_description.transport_desc.AddOption(ICE_OPTION_RENOMINATION);
+  ASSERT_TRUE(
+      jsep_transport_
+          ->SetLocalJsepTransportDescription(jsep_description, SdpType::kOffer)
+          .ok());
+  auto fake_ice_transport = static_cast<FakeIceTransport*>(
+      jsep_transport_->rtp_dtls_transport()->ice_transport());
+  EXPECT_EQ(ICEMODE_FULL, fake_ice_transport->remote_ice_mode());
+  EXPECT_EQ(kIceUfrag1, fake_ice_transport->ice_ufrag());
+  EXPECT_EQ(kIcePwd1, fake_ice_transport->ice_pwd());
+  EXPECT_TRUE(fake_ice_transport->ice_parameters().renomination);
+
+  jsep_description.transport_desc = TransportDescription(kIceUfrag2, kIcePwd2);
+  jsep_description.transport_desc.AddOption(ICE_OPTION_RENOMINATION);
+  ASSERT_TRUE(jsep_transport_
+                  ->SetRemoteJsepTransportDescription(jsep_description,
+                                                      SdpType::kAnswer)
+                  .ok());
+  fake_ice_transport = static_cast<FakeIceTransport*>(
+      jsep_transport_->rtp_dtls_transport()->ice_transport());
+  EXPECT_EQ(ICEMODE_FULL, fake_ice_transport->remote_ice_mode());
+  EXPECT_EQ(kIceUfrag2, fake_ice_transport->remote_ice_ufrag());
+  EXPECT_EQ(kIcePwd2, fake_ice_transport->remote_ice_pwd());
+  EXPECT_TRUE(fake_ice_transport->remote_ice_parameters().renomination);
+}
+
+}  // namespace
 }  // namespace cricket

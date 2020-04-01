@@ -296,9 +296,6 @@ typedef struct {
   uint16_t MaxBits;
 
   int16_t bitstr_seed;
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-  PostFiltBankstr interpolatorstr_obj;
-#endif
 
   IsacSaveEncoderData* SaveEnc_ptr;
   int16_t payloadLimitBytes30; /* Maximum allowed number of bits for a 30 msec
@@ -318,11 +315,6 @@ typedef struct {
   PostFiltBankstr postfiltbankstr_obj;
   PitchFiltstr pitchfiltstr_obj;
   PLCstr plcstr_obj; /* TS; for packet loss concealment */
-
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-  PreFiltBankstr decimatorstr_obj;
-#endif
-
 } IsacFixDecoderInstance;
 
 typedef struct {

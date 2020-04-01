@@ -16,7 +16,7 @@
 #include <memory>
 
 #include "api/array_view.h"
-#include "logging/rtc_event_log/events/rtc_event.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "rtc_base/buffer.h"
 
 namespace webrtc {

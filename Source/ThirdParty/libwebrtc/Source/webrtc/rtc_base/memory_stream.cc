@@ -111,14 +111,6 @@ bool MemoryStream::ReserveSize(size_t size) {
 
 MemoryStream::MemoryStream() {}
 
-MemoryStream::MemoryStream(const char* data) {
-  SetData(data, strlen(data));
-}
-
-MemoryStream::MemoryStream(const void* data, size_t length) {
-  SetData(data, length);
-}
-
 MemoryStream::~MemoryStream() {
   delete[] buffer_;
 }

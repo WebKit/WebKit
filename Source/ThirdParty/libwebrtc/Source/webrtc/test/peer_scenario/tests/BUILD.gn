@@ -9,7 +9,7 @@
 import("../../../webrtc.gni")
 
 if (rtc_include_tests) {
-  rtc_source_set("tests") {
+  rtc_library("tests") {
     testonly = true
     sources = [
       "peer_scenario_quality_test.cc",

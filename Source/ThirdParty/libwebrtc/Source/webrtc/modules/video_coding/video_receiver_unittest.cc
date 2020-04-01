@@ -9,7 +9,6 @@
  */
 
 #include "api/test/mock_video_decoder.h"
-#include "modules/video_coding/include/mock/mock_vcm_callbacks.h"
 #include "modules/video_coding/include/video_coding.h"
 #include "modules/video_coding/timing.h"
 #include "modules/video_coding/video_coding_impl.h"
@@ -24,6 +23,24 @@ using ::testing::NiceMock;
 namespace webrtc {
 namespace vcm {
 namespace {
+
+class MockPacketRequestCallback : public VCMPacketRequestCallback {
+ public:
+  MOCK_METHOD2(ResendPackets,
+               int32_t(const uint16_t* sequenceNumbers, uint16_t length));
+};
+
+class MockVCMReceiveCallback : public VCMReceiveCallback {
+ public:
+  MockVCMReceiveCallback() {}
+  virtual ~MockVCMReceiveCallback() {}
+
+  MOCK_METHOD4(
+      FrameToRender,
+      int32_t(VideoFrame&, absl::optional<uint8_t>, int32_t, VideoContentType));
+  MOCK_METHOD1(OnIncomingPayloadType, void(int));
+  MOCK_METHOD1(OnDecoderImplementationName, void(const char*));
+};
 
 class TestVideoReceiver : public ::testing::Test {
  protected:

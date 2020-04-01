@@ -28,7 +28,6 @@
 #include "modules/audio_processing/aec3/erle_estimator.h"
 #include "modules/audio_processing/aec3/filter_analyzer.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
-#include "modules/audio_processing/aec3/render_reverb_model.h"
 #include "modules/audio_processing/aec3/reverb_model_estimator.h"
 #include "modules/audio_processing/aec3/subtractor_output.h"
 #include "modules/audio_processing/aec3/subtractor_output_analyzer.h"
@@ -40,7 +39,7 @@ class ApmDataDumper;
 // Handles the state and the conditions for the echo removal functionality.
 class AecState {
  public:
-  explicit AecState(const EchoCanceller3Config& config);
+  AecState(const EchoCanceller3Config& config, size_t num_capture_channels);
   ~AecState();
 
   // Returns whether the echo subtractor can be used to determine the residual
@@ -56,9 +55,6 @@ class AecState {
            config_.filter.use_linear_filter;
   }
 
-  // Returns the estimated echo path gain.
-  float EchoPathGain() const { return filter_analyzer_.Gain(); }
-
   // Returns whether the render signal is currently active.
   bool ActiveRender() const { return blocks_with_active_render_ > 200; }
 
@@ -68,12 +64,12 @@ class AecState {
 
   // Returns whether the stationary properties of the signals are used in the
   // aec.
-  bool UseStationaryProperties() const {
+  bool UseStationarityProperties() const {
     return config_.echo_audibility.use_stationarity_properties;
   }
 
   // Returns the ERLE.
-  const std::array<float, kFftLengthBy2Plus1>& Erle() const {
+  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Erle() const {
     return erle_estimator_.Erle();
   }
 
@@ -95,7 +91,9 @@ class AecState {
   float ErlTimeDomain() const { return erl_estimator_.ErlTimeDomain(); }
 
   // Returns the delay estimate based on the linear filter.
-  int FilterDelayBlocks() const { return delay_state_.DirectPathFilterDelay(); }
+  int MinDirectPathFilterDelay() const {
+    return delay_state_.MinDirectPathFilterDelay();
+  }
 
   // Returns whether the capture signal is saturated.
   bool SaturatedCapture() const { return capture_signal_saturation_; }
@@ -129,18 +127,21 @@ class AecState {
   }
 
   // Updates the aec state.
-  void Update(const absl::optional<DelayEstimate>& external_delay,
-              const std::vector<std::array<float, kFftLengthBy2Plus1>>&
-                  adaptive_filter_frequency_response,
-              const std::vector<float>& adaptive_filter_impulse_response,
-              const RenderBuffer& render_buffer,
-              const std::array<float, kFftLengthBy2Plus1>& E2_main,
-              const std::array<float, kFftLengthBy2Plus1>& Y2,
-              const SubtractorOutput& subtractor_output,
-              rtc::ArrayView<const float> y);
+  // TODO(bugs.webrtc.org/10913): Compute multi-channel ERL.
+  void Update(
+      const absl::optional<DelayEstimate>& external_delay,
+      rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+          adaptive_filter_frequency_responses,
+      rtc::ArrayView<const std::vector<float>>
+          adaptive_filter_impulse_responses,
+      const RenderBuffer& render_buffer,
+      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> E2_main,
+      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
+      rtc::ArrayView<const SubtractorOutput> subtractor_output);
 
   // Returns filter length in blocks.
   int FilterLengthBlocks() const {
+    // All filters have the same length, so arbitrarily return channel 0 length.
     return filter_analyzer_.FilterLengthBlocks();
   }
 
@@ -148,6 +149,7 @@ class AecState {
   static int instance_count_;
   std::unique_ptr<ApmDataDumper> data_dumper_;
   const EchoCanceller3Config config_;
+  const size_t num_capture_channels_;
 
   // Class for controlling the transition from the intial state, which in turn
   // controls when the filter parameters for the initial state should be used.
@@ -179,7 +181,8 @@ class AecState {
   // AecState.
   class FilterDelay {
    public:
-    explicit FilterDelay(const EchoCanceller3Config& config);
+    FilterDelay(const EchoCanceller3Config& config,
+                size_t num_capture_channels);
 
     // Returns whether an external delay has been reported to the AecState (from
     // the delay estimator).
@@ -187,17 +190,25 @@ class AecState {
 
     // Returns the delay in blocks relative to the beginning of the filter that
     // corresponds to the direct path of the echo.
-    int DirectPathFilterDelay() const { return filter_delay_blocks_; }
+    rtc::ArrayView<const int> DirectPathFilterDelays() const {
+      return filter_delays_blocks_;
+    }
+
+    // Returns the minimum delay among the direct path delays relative to the
+    // beginning of the filter
+    int MinDirectPathFilterDelay() const { return min_filter_delay_; }
 
     // Updates the delay estimates based on new data.
-    void Update(const FilterAnalyzer& filter_analyzer,
-                const absl::optional<DelayEstimate>& external_delay,
-                size_t blocks_with_proper_filter_adaptation);
+    void Update(
+        rtc::ArrayView<const int> analyzer_filter_delay_estimates_blocks,
+        const absl::optional<DelayEstimate>& external_delay,
+        size_t blocks_with_proper_filter_adaptation);
 
    private:
     const int delay_headroom_samples_;
     bool external_delay_reported_ = false;
-    int filter_delay_blocks_ = 0;
+    std::vector<int> filter_delays_blocks_;
+    int min_filter_delay_ = 0;
     absl::optional<DelayEstimate> external_delay_;
   } delay_state_;
 
@@ -215,9 +226,9 @@ class AecState {
 
     // Updates the detection deciscion based on new data.
     void Update(int filter_delay_blocks,
-                bool consistent_filter,
-                bool converged_filter,
-                bool diverged_filter,
+                bool any_filter_consistent,
+                bool any_filter_converged,
+                bool all_filters_diverged,
                 bool active_render,
                 bool saturated_capture);
 
@@ -243,11 +254,18 @@ class AecState {
   // suppressor.
   class FilteringQualityAnalyzer {
    public:
-    FilteringQualityAnalyzer(const EchoCanceller3Config& config);
+    FilteringQualityAnalyzer(const EchoCanceller3Config& config,
+                             size_t num_capture_channels);
 
-    // Returns whether the the linear filter can be used for the echo
+    // Returns whether the linear filter can be used for the echo
     // canceller output.
-    bool LinearFilterUsable() const { return usable_linear_estimate_; }
+    bool LinearFilterUsable() const { return overall_usable_linear_estimates_; }
+
+    // Returns whether an individual filter output can be used for the echo
+    // canceller output.
+    const std::vector<bool>& UsableLinearFilterOutputs() const {
+      return usable_linear_filter_estimates_;
+    }
 
     // Resets the state of the analyzer.
     void Reset();
@@ -256,15 +274,16 @@ class AecState {
     void Update(bool active_render,
                 bool transparent_mode,
                 bool saturated_capture,
-                bool consistent_estimate_,
                 const absl::optional<DelayEstimate>& external_delay,
-                bool converged_filter);
+                bool any_filter_converged);
 
    private:
-    bool usable_linear_estimate_ = false;
+    const bool use_linear_filter_;
+    bool overall_usable_linear_estimates_ = false;
     size_t filter_update_blocks_since_reset_ = 0;
     size_t filter_update_blocks_since_start_ = 0;
     bool convergence_seen_ = false;
+    std::vector<bool> usable_linear_filter_estimates_;
   } filter_quality_state_;
 
   // Class for detecting whether the echo is to be considered to be
@@ -275,10 +294,10 @@ class AecState {
     bool SaturatedEcho() const { return saturated_echo_; }
 
     // Updates the detection decision based on new data.
-    void Update(rtc::ArrayView<const float> x,
+    void Update(rtc::ArrayView<const std::vector<float>> x,
                 bool saturated_capture,
                 bool usable_linear_estimate,
-                const SubtractorOutput& subtractor_output,
+                rtc::ArrayView<const SubtractorOutput> subtractor_output,
                 float echo_path_gain);
 
    private:
@@ -294,7 +313,7 @@ class AecState {
   absl::optional<DelayEstimate> external_delay_;
   EchoAudibility echo_audibility_;
   ReverbModelEstimator reverb_model_estimator_;
-  RenderReverbModel render_reverb_;
+  ReverbModel avg_render_reverb_;
   SubtractorOutputAnalyzer subtractor_output_analyzer_;
 };
 

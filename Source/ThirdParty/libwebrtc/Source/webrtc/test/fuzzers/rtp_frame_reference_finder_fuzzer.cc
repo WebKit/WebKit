@@ -8,28 +8,33 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/video_coding/rtp_frame_reference_finder.h"
+#include <memory>
 
-#include "absl/memory/memory.h"
+#include "api/rtp_packet_infos.h"
 #include "modules/video_coding/frame_object.h"
 #include "modules/video_coding/packet_buffer.h"
+#include "modules/video_coding/rtp_frame_reference_finder.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
 namespace {
-struct DataReader {
+class DataReader {
+ public:
   DataReader(const uint8_t* data, size_t size) : data_(data), size_(size) {}
 
-  void CopyTo(void* destination, size_t size) {
-    uint8_t* dest = reinterpret_cast<uint8_t*>(destination);
-    size_t num_bytes = std::min(size_ - offset_, size);
-    memcpy(dest, data_ + offset_, num_bytes);
+  template <typename T>
+  void CopyTo(T* object) {
+    static_assert(std::is_pod<T>(), "");
+    uint8_t* destination = reinterpret_cast<uint8_t*>(object);
+    size_t object_size = sizeof(T);
+    size_t num_bytes = std::min(size_ - offset_, object_size);
+    memcpy(destination, data_ + offset_, num_bytes);
     offset_ += num_bytes;
 
-    size -= num_bytes;
-    if (size > 0)
-      memset(dest + num_bytes, 0, size);
+    // If we did not have enough data, fill the rest with 0.
+    object_size -= num_bytes;
+    memset(destination + num_bytes, 0, object_size);
   }
 
   template <typename T>
@@ -47,6 +52,7 @@ struct DataReader {
 
   bool MoreToRead() { return offset_ < size_; }
 
+ private:
   const uint8_t* data_;
   size_t size_;
   size_t offset_ = 0;
@@ -57,61 +63,100 @@ class NullCallback : public video_coding::OnCompleteFrameCallback {
       std::unique_ptr<video_coding::EncodedFrame> frame) override {}
 };
 
-class FuzzyPacketBuffer : public video_coding::PacketBuffer {
- public:
-  explicit FuzzyPacketBuffer(DataReader* reader)
-      : PacketBuffer(nullptr, 2, 4, nullptr), reader(reader) {
-    switch (reader->GetNum<uint8_t>() % 3) {
-      case 0:
-        codec = kVideoCodecVP8;
-        break;
-      case 1:
-        codec = kVideoCodecVP9;
-        break;
-      case 2:
-        codec = kVideoCodecH264;
-        break;
-    }
+absl::optional<RTPVideoHeader::GenericDescriptorInfo>
+GenerateGenericFrameDependencies(DataReader* reader) {
+  absl::optional<RTPVideoHeader::GenericDescriptorInfo> result;
+  uint8_t flags = reader->GetNum<uint8_t>();
+  if (flags & 0b1000'0000) {
+    // i.e. with 50% chance there are no generic dependencies.
+    // in such case codec-specfic code path of the RtpFrameReferenceFinder will
+    // be validated.
+    return result;
   }
 
-  VCMPacket* GetPacket(uint16_t seq_num) override {
-    auto packet_it = packets.find(seq_num);
-    if (packet_it != packets.end())
-      return &packet_it->second;
+  result.emplace();
+  result->frame_id = reader->GetNum<int32_t>();
+  result->spatial_index = (flags & 0b0111'0000) >> 4;
+  result->temporal_index = (flags & 0b0000'1110) >> 1;
+  result->discardable = (flags & 0b0000'0001);
 
-    VCMPacket* packet = &packets[seq_num];
-    packet->codec = codec;
-    packet->markerBit = true;
-    reader->CopyTo(packet, sizeof(packet));
-    return packet;
+  // Larger than supported by the RtpFrameReferenceFinder.
+  int num_diffs = (reader->GetNum<uint8_t>() % 16);
+  for (int i = 0; i < num_diffs; ++i) {
+    result->dependencies.push_back(result->frame_id -
+                                   (reader->GetNum<uint16_t>() % (1 << 14)));
   }
 
-  bool GetBitstream(const video_coding::RtpFrameObject& frame,
-                    uint8_t* destination) override {
-    return true;
-  }
-
-  void ReturnFrame(video_coding::RtpFrameObject* frame) override {}
-
- private:
-  std::map<uint16_t, VCMPacket> packets;
-  VideoCodecType codec;
-  DataReader* const reader;
-};
+  return result;
+}
 }  // namespace
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  if (size > 20000) {
-    return;
-  }
   DataReader reader(data, size);
-  rtc::scoped_refptr<FuzzyPacketBuffer> pb(new FuzzyPacketBuffer(&reader));
   NullCallback cb;
   video_coding::RtpFrameReferenceFinder reference_finder(&cb);
 
+  auto codec = static_cast<VideoCodecType>(reader.GetNum<uint8_t>() % 5);
+
   while (reader.MoreToRead()) {
-    auto frame = absl::make_unique<video_coding::RtpFrameObject>(
-        pb, reader.GetNum<uint16_t>(), reader.GetNum<uint16_t>(), 0, 0, 0);
+    uint16_t first_seq_num = reader.GetNum<uint16_t>();
+    uint16_t last_seq_num = reader.GetNum<uint16_t>();
+    bool marker_bit = reader.GetNum<uint8_t>();
+
+    RTPVideoHeader video_header;
+    switch (reader.GetNum<uint8_t>() % 3) {
+      case 0:
+        video_header.frame_type = VideoFrameType::kEmptyFrame;
+        break;
+      case 1:
+        video_header.frame_type = VideoFrameType::kVideoFrameKey;
+        break;
+      case 2:
+        video_header.frame_type = VideoFrameType::kVideoFrameDelta;
+        break;
+    }
+
+    switch (codec) {
+      case kVideoCodecVP8:
+        reader.CopyTo(
+            &video_header.video_type_header.emplace<RTPVideoHeaderVP8>());
+        break;
+      case kVideoCodecVP9:
+        reader.CopyTo(
+            &video_header.video_type_header.emplace<RTPVideoHeaderVP9>());
+        break;
+      case kVideoCodecH264:
+        reader.CopyTo(
+            &video_header.video_type_header.emplace<RTPVideoHeaderH264>());
+        break;
+      default:
+        break;
+    }
+
+    reader.CopyTo(&video_header.frame_marking);
+    video_header.generic = GenerateGenericFrameDependencies(&reader);
+
+    // clang-format off
+    auto frame = std::make_unique<video_coding::RtpFrameObject>(
+        first_seq_num,
+        last_seq_num,
+        marker_bit,
+        /*times_nacked=*/0,
+        /*first_packet_received_time=*/0,
+        /*last_packet_received_time=*/0,
+        /*rtp_timestamp=*/0,
+        /*ntp_time_ms=*/0,
+        VideoSendTiming(),
+        /*payload_type=*/0,
+        codec,
+        kVideoRotation_0,
+        VideoContentType::UNSPECIFIED,
+        video_header,
+        /*color_space=*/absl::nullopt,
+        RtpPacketInfos(),
+        EncodedImageBuffer::Create(/*size=*/0));
+    // clang-format on
+
     reference_finder.ManageFrame(std::move(frame));
   }
 }

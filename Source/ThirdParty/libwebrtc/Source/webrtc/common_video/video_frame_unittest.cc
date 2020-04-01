@@ -490,7 +490,7 @@ TEST_P(TestPlanarYuvBuffer, PastesIntoBuffer) {
   }
 }
 
-INSTANTIATE_TEST_SUITE_P(,
+INSTANTIATE_TEST_SUITE_P(All,
                          TestPlanarYuvBuffer,
                          ::testing::Values(VideoFrameBuffer::Type::kI420,
                                            VideoFrameBuffer::Type::kI010));
@@ -517,5 +517,147 @@ INSTANTIATE_TEST_SUITE_P(
                                          kVideoRotation_270),
                        ::testing::Values(VideoFrameBuffer::Type::kI420,
                                          VideoFrameBuffer::Type::kI010)));
+
+TEST(TestUpdateRect, CanCompare) {
+  VideoFrame::UpdateRect a = {0, 0, 100, 200};
+  VideoFrame::UpdateRect b = {0, 0, 100, 200};
+  VideoFrame::UpdateRect c = {1, 0, 100, 200};
+  VideoFrame::UpdateRect d = {0, 1, 100, 200};
+  EXPECT_TRUE(a == b);
+  EXPECT_FALSE(a == c);
+  EXPECT_FALSE(a == d);
+}
+
+TEST(TestUpdateRect, ComputesIsEmpty) {
+  VideoFrame::UpdateRect a = {0, 0, 0, 0};
+  VideoFrame::UpdateRect b = {0, 0, 100, 200};
+  VideoFrame::UpdateRect c = {1, 100, 0, 0};
+  VideoFrame::UpdateRect d = {1, 100, 100, 200};
+  EXPECT_TRUE(a.IsEmpty());
+  EXPECT_FALSE(b.IsEmpty());
+  EXPECT_TRUE(c.IsEmpty());
+  EXPECT_FALSE(d.IsEmpty());
+}
+
+TEST(TestUpdateRectUnion, NonIntersecting) {
+  VideoFrame::UpdateRect a = {0, 0, 10, 20};
+  VideoFrame::UpdateRect b = {100, 200, 10, 20};
+  a.Union(b);
+  EXPECT_EQ(a, VideoFrame::UpdateRect({0, 0, 110, 220}));
+}
+
+TEST(TestUpdateRectUnion, Intersecting) {
+  VideoFrame::UpdateRect a = {0, 0, 10, 10};
+  VideoFrame::UpdateRect b = {5, 5, 30, 20};
+  a.Union(b);
+  EXPECT_EQ(a, VideoFrame::UpdateRect({0, 0, 35, 25}));
+}
+
+TEST(TestUpdateRectUnion, OneInsideAnother) {
+  VideoFrame::UpdateRect a = {0, 0, 100, 100};
+  VideoFrame::UpdateRect b = {5, 5, 30, 20};
+  a.Union(b);
+  EXPECT_EQ(a, VideoFrame::UpdateRect({0, 0, 100, 100}));
+}
+
+TEST(TestUpdateRectIntersect, NonIntersecting) {
+  VideoFrame::UpdateRect a = {0, 0, 10, 20};
+  VideoFrame::UpdateRect b = {100, 200, 10, 20};
+  a.Intersect(b);
+  EXPECT_EQ(a, VideoFrame::UpdateRect({0, 0, 0, 0}));
+}
+
+TEST(TestUpdateRectIntersect, Intersecting) {
+  VideoFrame::UpdateRect a = {0, 0, 10, 10};
+  VideoFrame::UpdateRect b = {5, 5, 30, 20};
+  a.Intersect(b);
+  EXPECT_EQ(a, VideoFrame::UpdateRect({5, 5, 5, 5}));
+}
+
+TEST(TestUpdateRectIntersect, OneInsideAnother) {
+  VideoFrame::UpdateRect a = {0, 0, 100, 100};
+  VideoFrame::UpdateRect b = {5, 5, 30, 20};
+  a.Intersect(b);
+  EXPECT_EQ(a, VideoFrame::UpdateRect({5, 5, 30, 20}));
+}
+
+TEST(TestUpdateRectScale, NoScale) {
+  const int width = 640;
+  const int height = 480;
+  VideoFrame::UpdateRect a = {100, 50, 100, 200};
+  VideoFrame::UpdateRect scaled =
+      a.ScaleWithFrame(width, height, 0, 0, width, height, width, height);
+  EXPECT_EQ(scaled, VideoFrame::UpdateRect({100, 50, 100, 200}));
+}
+
+TEST(TestUpdateRectScale, CropOnly) {
+  const int width = 640;
+  const int height = 480;
+  VideoFrame::UpdateRect a = {100, 50, 100, 200};
+  VideoFrame::UpdateRect scaled = a.ScaleWithFrame(
+      width, height, 10, 10, width - 20, height - 20, width - 20, height - 20);
+  EXPECT_EQ(scaled, VideoFrame::UpdateRect({90, 40, 100, 200}));
+}
+
+TEST(TestUpdateRectScale, CropOnlyToOddOffset) {
+  const int width = 640;
+  const int height = 480;
+  VideoFrame::UpdateRect a = {100, 50, 100, 200};
+  VideoFrame::UpdateRect scaled = a.ScaleWithFrame(
+      width, height, 5, 5, width - 10, height - 10, width - 10, height - 10);
+  EXPECT_EQ(scaled, VideoFrame::UpdateRect({94, 44, 102, 202}));
+}
+
+TEST(TestUpdateRectScale, ScaleByHalf) {
+  const int width = 640;
+  const int height = 480;
+  VideoFrame::UpdateRect a = {100, 60, 100, 200};
+  VideoFrame::UpdateRect scaled = a.ScaleWithFrame(
+      width, height, 0, 0, width, height, width / 2, height / 2);
+  // Scaled by half and +2 pixels in all directions.
+  EXPECT_EQ(scaled, VideoFrame::UpdateRect({48, 28, 54, 104}));
+}
+
+TEST(TestUpdateRectScale, CropToUnchangedRegionBelowUpdateRect) {
+  const int width = 640;
+  const int height = 480;
+  VideoFrame::UpdateRect a = {100, 60, 100, 200};
+  VideoFrame::UpdateRect scaled = a.ScaleWithFrame(
+      width, height, (width - 10) / 2, (height - 10) / 2, 10, 10, 10, 10);
+  // Update is out of the cropped frame.
+  EXPECT_EQ(scaled, VideoFrame::UpdateRect({0, 0, 0, 0}));
+}
+
+TEST(TestUpdateRectScale, CropToUnchangedRegionAboveUpdateRect) {
+  const int width = 640;
+  const int height = 480;
+  VideoFrame::UpdateRect a = {600, 400, 10, 10};
+  VideoFrame::UpdateRect scaled = a.ScaleWithFrame(
+      width, height, (width - 10) / 2, (height - 10) / 2, 10, 10, 10, 10);
+  // Update is out of the cropped frame.
+  EXPECT_EQ(scaled, VideoFrame::UpdateRect({0, 0, 0, 0}));
+}
+
+TEST(TestUpdateRectScale, CropInsideUpdate) {
+  const int width = 640;
+  const int height = 480;
+  VideoFrame::UpdateRect a = {300, 200, 100, 100};
+  VideoFrame::UpdateRect scaled = a.ScaleWithFrame(
+      width, height, (width - 10) / 2, (height - 10) / 2, 10, 10, 10, 10);
+  // Cropped frame is inside the update rect.
+  EXPECT_EQ(scaled, VideoFrame::UpdateRect({0, 0, 10, 10}));
+}
+
+TEST(TestUpdateRectScale, CropAndScaleByHalf) {
+  const int width = 640;
+  const int height = 480;
+  VideoFrame::UpdateRect a = {100, 60, 100, 200};
+  VideoFrame::UpdateRect scaled =
+      a.ScaleWithFrame(width, height, 10, 10, width - 20, height - 20,
+                       (width - 20) / 2, (height - 20) / 2);
+  // Scaled by half and +3 pixels in all directions, because of odd offset after
+  // crop and scale.
+  EXPECT_EQ(scaled, VideoFrame::UpdateRect({42, 22, 56, 106}));
+}
 
 }  // namespace webrtc

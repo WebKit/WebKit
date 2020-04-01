@@ -10,10 +10,10 @@
 
 #include "rtc_base/fake_ssl_identity.h"
 
+#include <memory>
 #include <string>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/message_digest.h"
 
@@ -29,7 +29,7 @@ FakeSSLCertificate::FakeSSLCertificate(const FakeSSLCertificate&) = default;
 FakeSSLCertificate::~FakeSSLCertificate() = default;
 
 std::unique_ptr<SSLCertificate> FakeSSLCertificate::Clone() const {
-  return absl::make_unique<FakeSSLCertificate>(*this);
+  return std::make_unique<FakeSSLCertificate>(*this);
 }
 
 std::string FakeSSLCertificate::ToPEMString() const {
@@ -77,13 +77,13 @@ FakeSSLIdentity::FakeSSLIdentity(const std::vector<std::string>& pem_strings) {
   std::vector<std::unique_ptr<SSLCertificate>> certs;
   certs.reserve(pem_strings.size());
   for (const std::string& pem_string : pem_strings) {
-    certs.push_back(absl::make_unique<FakeSSLCertificate>(pem_string));
+    certs.push_back(std::make_unique<FakeSSLCertificate>(pem_string));
   }
-  cert_chain_ = absl::make_unique<SSLCertChain>(std::move(certs));
+  cert_chain_ = std::make_unique<SSLCertChain>(std::move(certs));
 }
 
 FakeSSLIdentity::FakeSSLIdentity(const FakeSSLCertificate& cert)
-    : cert_chain_(absl::make_unique<SSLCertChain>(cert.Clone())) {}
+    : cert_chain_(std::make_unique<SSLCertChain>(cert.Clone())) {}
 
 FakeSSLIdentity::FakeSSLIdentity(const FakeSSLIdentity& o)
     : cert_chain_(o.cert_chain_->Clone()) {}

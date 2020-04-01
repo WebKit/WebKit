@@ -11,12 +11,11 @@
 package org.webrtc;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.robolectric.Shadows.shadowOf;
 
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
@@ -24,8 +23,6 @@ import android.media.MediaFormat;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 import org.chromium.testing.local.LocalRobolectricTestRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,8 +31,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowSystemClock;
-import org.webrtc.EglBase.Context;
 import org.webrtc.EncodedImage;
 import org.webrtc.EncodedImage.FrameType;
 import org.webrtc.FakeMediaCodecWrapper.State;
@@ -68,7 +63,7 @@ public class HardwareVideoEncoderTest {
     private boolean deliverEncodedImageDone = true;
 
     TestEncoder(MediaCodecWrapperFactory mediaCodecWrapperFactory, String codecName,
-        VideoCodecType codecType, Integer surfaceColorFormat, Integer yuvColorFormat,
+        VideoCodecMimeType codecType, Integer surfaceColorFormat, Integer yuvColorFormat,
         Map<String, String> params, int keyFrameIntervalSec, int forceKeyFrameIntervalMs,
         BitrateAdjuster bitrateAdjuster, EglBase14.Context sharedContext) {
       super(mediaCodecWrapperFactory, codecName, codecType, surfaceColorFormat, yuvColorFormat,
@@ -118,9 +113,9 @@ public class HardwareVideoEncoderTest {
   }
 
   private class TestEncoderBuilder {
-    private VideoCodecType codecType = VideoCodecType.VP8;
+    private VideoCodecMimeType codecType = VideoCodecMimeType.VP8;
 
-    public TestEncoderBuilder setCodecType(VideoCodecType codecType) {
+    public TestEncoderBuilder setCodecType(VideoCodecMimeType codecType) {
       this.codecType = codecType;
       return this;
     }
@@ -154,7 +149,7 @@ public class HardwareVideoEncoderTest {
   public void testInit() {
     // Set-up.
     HardwareVideoEncoder encoder =
-        new TestEncoderBuilder().setCodecType(VideoCodecType.VP8).build();
+        new TestEncoderBuilder().setCodecType(VideoCodecMimeType.VP8).build();
 
     // Test.
     assertThat(encoder.initEncode(TEST_ENCODER_SETTINGS, mockEncoderCallback))
@@ -170,7 +165,7 @@ public class HardwareVideoEncoderTest {
     assertThat(mediaFormat.getInteger(MediaFormat.KEY_HEIGHT))
         .isEqualTo(TEST_ENCODER_SETTINGS.height);
     assertThat(mediaFormat.getString(MediaFormat.KEY_MIME))
-        .isEqualTo(VideoCodecType.VP8.mimeType());
+        .isEqualTo(VideoCodecMimeType.VP8.mimeType());
 
     assertThat(fakeMediaCodecWrapper.getConfiguredFlags())
         .isEqualTo(MediaCodec.CONFIGURE_FLAG_ENCODE);

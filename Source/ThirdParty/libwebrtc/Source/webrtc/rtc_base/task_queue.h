@@ -62,7 +62,7 @@ namespace rtc {
 //       int count_ = 0;
 //     };
 //     ...
-//     queue_.PostDelayedTask(absl::make_unique<TimerTask>(), 1000);
+//     queue_.PostDelayedTask(std::make_unique<TimerTask>(), 1000);
 //
 // For more examples, see task_queue_unittests.cc.
 //

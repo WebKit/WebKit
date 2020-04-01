@@ -14,6 +14,7 @@
 #include <string>
 
 #include "rtc_base/stringize_macros.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
@@ -21,36 +22,37 @@ namespace rtc {
 // significantly brought to life.
 // This is a stripped down version of:
 // https://code.google.com/p/chromium/codesearch#chromium/src/base/location.h
-class Location {
+class RTC_EXPORT Location {
  public:
   // Constructor should be called with a long-lived char*, such as __FILE__.
   // It assumes the provided value will persist as a global constant, and it
   // will not make a copy of it.
-  //
-  // TODO(deadbeef): Tracing is currently limited to 2 arguments, which is
-  // why the file name and line number are combined into one argument.
-  //
-  // Once TracingV2 is available, separate the file name and line number.
-  Location(const char* function_name, const char* file_and_line);
-  Location();
-  Location(const Location& other);
-  Location& operator=(const Location& other);
+  Location(const char* function_name, const char* file_name, int line_number)
+      : function_name_(function_name),
+        file_name_(file_name),
+        line_number_(line_number) {}
+  Location() = default;
 
   const char* function_name() const { return function_name_; }
-  const char* file_and_line() const { return file_and_line_; }
+  const char* file_name() const { return file_name_; }
+  int line_number() const { return line_number_; }
+  // TODO(steveanton): Remove once all downstream users have been updated to use
+  // |file_name()| and/or |line_number()|.
+  const char* file_and_line() const { return file_name_; }
 
   std::string ToString() const;
 
  private:
-  const char* function_name_;
-  const char* file_and_line_;
+  const char* function_name_ = "Unknown";
+  const char* file_name_ = "Unknown";
+  int line_number_ = -1;
 };
 
 // Define a macro to record the current source location.
 #define RTC_FROM_HERE RTC_FROM_HERE_WITH_FUNCTION(__FUNCTION__)
 
 #define RTC_FROM_HERE_WITH_FUNCTION(function_name) \
-  ::rtc::Location(function_name, __FILE__ ":" RTC_STRINGIZE(__LINE__))
+  ::rtc::Location(function_name, __FILE__, __LINE__)
 
 }  // namespace rtc
 

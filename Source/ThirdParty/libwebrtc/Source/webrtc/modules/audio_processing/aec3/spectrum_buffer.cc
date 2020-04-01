@@ -14,14 +14,10 @@
 
 namespace webrtc {
 
-SpectrumBuffer::SpectrumBuffer(size_t size,
-                               size_t num_channels,
-                               size_t spectrum_length)
+SpectrumBuffer::SpectrumBuffer(size_t size, size_t num_channels)
     : size(static_cast<int>(size)),
       buffer(size,
-             std::vector<std::vector<float>>(
-                 num_channels,
-                 std::vector<float>(spectrum_length, 0.f))) {
+             std::vector<std::array<float, kFftLengthBy2Plus1>>(num_channels)) {
   for (auto& channel : buffer) {
     for (auto& c : channel) {
       std::fill(c.begin(), c.end(), 0.f);

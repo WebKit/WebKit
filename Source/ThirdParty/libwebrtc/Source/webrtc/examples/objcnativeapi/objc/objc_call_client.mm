@@ -10,6 +10,7 @@
 
 #include "examples/objcnativeapi/objc/objc_call_client.h"
 
+#include <memory>
 #include <utility>
 
 #import "sdk/objc/base/RTCVideoRenderer.h"
@@ -17,7 +18,6 @@
 #import "sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h"
 #import "sdk/objc/helpers/RTCCameraPreviewView.h"
 
-#include "absl/memory/memory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/peer_connection_interface.h"
@@ -59,7 +59,7 @@ class SetLocalSessionDescriptionObserver : public webrtc::SetSessionDescriptionO
 }  // namespace
 
 ObjCCallClient::ObjCCallClient()
-    : call_started_(false), pc_observer_(absl::make_unique<PCObserver>(this)) {
+    : call_started_(false), pc_observer_(std::make_unique<PCObserver>(this)) {
   thread_checker_.Detach();
   CreatePeerConnectionFactory();
 }
@@ -131,7 +131,7 @@ void ObjCCallClient::CreatePeerConnectionFactory() {
   RTC_LOG(LS_INFO) << "Media engine created: " << dependencies.media_engine.get();
   dependencies.call_factory = webrtc::CreateCallFactory();
   dependencies.event_log_factory =
-      absl::make_unique<webrtc::RtcEventLogFactory>(dependencies.task_queue_factory.get());
+      std::make_unique<webrtc::RtcEventLogFactory>(dependencies.task_queue_factory.get());
   pcf_ = webrtc::CreateModularPeerConnectionFactory(std::move(dependencies));
   RTC_LOG(LS_INFO) << "PeerConnectionFactory created: " << pcf_;
 }

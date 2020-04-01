@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 #include "modules/audio_coding/neteq/tools/audio_checksum.h"
 #include "modules/audio_coding/neteq/tools/encode_neteq_input.h"
@@ -133,20 +134,20 @@ void FuzzOneInputTest(const uint8_t* data, size_t size) {
   // kPayloadType is the payload type that will be used for encoding. Verify
   // that it is included in the standard decoder map, and that it points to the
   // expected decoder type.
-  RTC_CHECK_EQ(codecs.count(kPayloadType), 1);
-  RTC_CHECK(codecs[kPayloadType].first == NetEqDecoder::kDecoderPCM16Bswb32kHz);
+  const auto it = codecs.find(kPayloadType);
+  RTC_CHECK(it != codecs.end());
+  RTC_CHECK(it->second == SdpAudioFormat("L16", 32000, 1));
 
-  NetEqTest::ExtDecoderMap ext_codecs;
-
-  NetEqTest test(config, codecs, ext_codecs, std::move(input),
-                 std::move(output), callbacks);
+  NetEqTest test(config, CreateBuiltinAudioDecoderFactory(), codecs,
+                 /*text_log=*/nullptr, /*neteq_factory=*/nullptr,
+                 std::move(input), std::move(output), callbacks);
   test.Run();
 }
 
 }  // namespace test
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  if (size > 100000) {
+  if (size > 70000) {
     return;
   }
   test::FuzzOneInputTest(data, size);

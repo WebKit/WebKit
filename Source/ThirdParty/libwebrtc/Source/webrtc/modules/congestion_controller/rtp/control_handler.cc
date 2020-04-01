@@ -38,6 +38,7 @@ CongestionControlHandler::~CongestionControlHandler() {}
 void CongestionControlHandler::SetTargetRate(
     TargetTransferRate new_target_rate) {
   RTC_DCHECK_RUN_ON(&sequenced_checker_);
+  RTC_CHECK(new_target_rate.at_time.IsFinite());
   last_incoming_ = new_target_rate;
 }
 

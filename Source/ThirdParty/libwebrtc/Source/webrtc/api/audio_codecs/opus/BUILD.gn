@@ -12,7 +12,7 @@ if (is_android) {
   import("//build/config/android/rules.gni")
 }
 
-rtc_static_library("audio_encoder_opus_config") {
+rtc_library("audio_encoder_opus_config") {
   visibility = [ "*" ]
   sources = [
     "audio_encoder_multi_channel_opus_config.cc",
@@ -35,20 +35,14 @@ rtc_static_library("audio_encoder_opus_config") {
 
 rtc_source_set("audio_decoder_opus_config") {
   visibility = [ "*" ]
-  sources = [
-    "audio_decoder_multi_channel_opus_config.h",
-  ]
+  sources = [ "audio_decoder_multi_channel_opus_config.h" ]
 }
 
-rtc_source_set("audio_encoder_opus") {
+rtc_library("audio_encoder_opus") {
   visibility = [ "*" ]
   poisonous = [ "audio_codecs" ]
-  public = [
-    "audio_encoder_opus.h",
-  ]
-  sources = [
-    "audio_encoder_opus.cc",
-  ]
+  public = [ "audio_encoder_opus.h" ]
+  sources = [ "audio_encoder_opus.cc" ]
   deps = [
     ":audio_encoder_opus_config",
     "..:audio_codecs_api",
@@ -60,7 +54,7 @@ rtc_source_set("audio_encoder_opus") {
   ]
 }
 
-rtc_static_library("audio_decoder_opus") {
+rtc_library("audio_decoder_opus") {
   visibility = [ "*" ]
   poisonous = [ "audio_codecs" ]
   sources = [
@@ -72,21 +66,16 @@ rtc_static_library("audio_decoder_opus") {
     "../../../modules/audio_coding:webrtc_opus",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_source_set("audio_encoder_multiopus") {
+rtc_library("audio_encoder_multiopus") {
   visibility = [ "*" ]
   poisonous = [ "audio_codecs" ]
-  public = [
-    "audio_encoder_multi_channel_opus.h",
-  ]
-  sources = [
-    "audio_encoder_multi_channel_opus.cc",
-  ]
+  public = [ "audio_encoder_multi_channel_opus.h" ]
+  sources = [ "audio_encoder_multi_channel_opus.cc" ]
   deps = [
     "..:audio_codecs_api",
     "../../../modules/audio_coding:webrtc_multiopus",
@@ -97,7 +86,7 @@ rtc_source_set("audio_encoder_multiopus") {
   ]
 }
 
-rtc_static_library("audio_decoder_multiopus") {
+rtc_library("audio_decoder_multiopus") {
   visibility = [ "*" ]
   poisonous = [ "audio_codecs" ]
   sources = [

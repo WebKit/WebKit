@@ -11,7 +11,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "media/base/turnutils.h"
+#include "media/base/turn_utils.h"
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {

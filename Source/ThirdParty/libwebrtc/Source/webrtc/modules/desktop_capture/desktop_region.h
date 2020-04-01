@@ -67,7 +67,7 @@ class RTC_EXPORT DesktopRegion {
  public:
   // Iterator that can be used to iterate over rectangles of a DesktopRegion.
   // The region must not be mutated while the iterator is used.
-  class Iterator {
+  class RTC_EXPORT Iterator {
    public:
     explicit Iterator(const DesktopRegion& target);
     ~Iterator();

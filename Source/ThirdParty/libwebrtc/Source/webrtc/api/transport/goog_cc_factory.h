@@ -14,6 +14,7 @@
 
 #include "api/network_state_predictor.h"
 #include "api/transport/network_control.h"
+#include "rtc_base/deprecation.h"
 
 namespace webrtc {
 class RtcEventLog;

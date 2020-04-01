@@ -43,7 +43,9 @@ BitrateEstimator::BitrateEstimator(const WebRtcKeyValueConfig* key_value_config)
                             kMinRateWindowMs,
                             kMaxRateWindowMs),
       uncertainty_scale_("scale", 10.0),
-      uncertainty_scale_in_alr_("scale_alr", 10.0),
+      uncertainty_scale_in_alr_("scale_alr", uncertainty_scale_),
+      small_sample_uncertainty_scale_("scale_small", uncertainty_scale_),
+      small_sample_threshold_("small_thresh", DataSize::Zero()),
       uncertainty_symmetry_cap_("symmetry_cap", DataRate::Zero()),
       estimate_floor_("floor", DataRate::Zero()),
       current_window_ms_(0),
@@ -51,10 +53,11 @@ BitrateEstimator::BitrateEstimator(const WebRtcKeyValueConfig* key_value_config)
       bitrate_estimate_kbps_(-1.0f),
       bitrate_estimate_var_(50.0f) {
   // E.g WebRTC-BweThroughputWindowConfig/initial_window_ms:350,window_ms:250/
-  ParseFieldTrial({&initial_window_ms_, &noninitial_window_ms_,
-                   &uncertainty_scale_, &uncertainty_scale_in_alr_,
-                   &uncertainty_symmetry_cap_, &estimate_floor_},
-                  key_value_config->Lookup(kBweThroughputWindowConfig));
+  ParseFieldTrial(
+      {&initial_window_ms_, &noninitial_window_ms_, &uncertainty_scale_,
+       &uncertainty_scale_in_alr_, &small_sample_uncertainty_scale_,
+       &small_sample_threshold_, &uncertainty_symmetry_cap_, &estimate_floor_},
+      key_value_config->Lookup(kBweThroughputWindowConfig));
 }
 
 BitrateEstimator::~BitrateEstimator() = default;
@@ -65,8 +68,9 @@ void BitrateEstimator::Update(Timestamp at_time, DataSize amount, bool in_alr) {
   // we can use to initialize the estimate.
   if (bitrate_estimate_kbps_ < 0.f)
     rate_window_ms = initial_window_ms_.Get();
-  float bitrate_sample_kbps =
-      UpdateWindow(at_time.ms(), amount.bytes(), rate_window_ms);
+  bool is_small_sample = false;
+  float bitrate_sample_kbps = UpdateWindow(at_time.ms(), amount.bytes(),
+                                           rate_window_ms, &is_small_sample);
   if (bitrate_sample_kbps < 0.0f)
     return;
   if (bitrate_estimate_kbps_ < 0.0f) {
@@ -74,15 +78,19 @@ void BitrateEstimator::Update(Timestamp at_time, DataSize amount, bool in_alr) {
     bitrate_estimate_kbps_ = bitrate_sample_kbps;
     return;
   }
+  // Optionally use higher uncertainty for very small samples to avoid dropping
+  // estimate and for samples obtained in ALR.
+  float scale = uncertainty_scale_;
+  if (is_small_sample && bitrate_sample_kbps < bitrate_estimate_kbps_) {
+    scale = small_sample_uncertainty_scale_;
+  } else if (in_alr && bitrate_sample_kbps < bitrate_estimate_kbps_) {
+    // Optionally use higher uncertainty for samples obtained during ALR.
+    scale = uncertainty_scale_in_alr_;
+  }
   // Define the sample uncertainty as a function of how far away it is from the
   // current estimate. With low values of uncertainty_symmetry_cap_ we add more
   // uncertainty to increases than to decreases. For higher values we approach
   // symmetry.
-  float scale = uncertainty_scale_;
-  if (in_alr && bitrate_sample_kbps < bitrate_estimate_kbps_) {
-    // Optionally use higher uncertainty for samples obtained during ALR.
-    scale = uncertainty_scale_in_alr_;
-  }
   float sample_uncertainty =
       scale * std::abs(bitrate_estimate_kbps_ - bitrate_sample_kbps) /
       (bitrate_estimate_kbps_ +
@@ -108,7 +116,9 @@ void BitrateEstimator::Update(Timestamp at_time, DataSize amount, bool in_alr) {
 
 float BitrateEstimator::UpdateWindow(int64_t now_ms,
                                      int bytes,
-                                     int rate_window_ms) {
+                                     int rate_window_ms,
+                                     bool* is_small_sample) {
+  RTC_DCHECK(is_small_sample != nullptr);
   // Reset if time moves backwards.
   if (now_ms < prev_time_ms_) {
     prev_time_ms_ = -1;
@@ -126,6 +136,7 @@ float BitrateEstimator::UpdateWindow(int64_t now_ms,
   prev_time_ms_ = now_ms;
   float bitrate_sample = -1.0f;
   if (current_window_ms_ >= rate_window_ms) {
+    *is_small_sample = sum_ < small_sample_threshold_->bytes();
     bitrate_sample = 8.0f * sum_ / static_cast<float>(rate_window_ms);
     current_window_ms_ -= rate_window_ms;
     sum_ = 0;
@@ -137,12 +148,12 @@ float BitrateEstimator::UpdateWindow(int64_t now_ms,
 absl::optional<DataRate> BitrateEstimator::bitrate() const {
   if (bitrate_estimate_kbps_ < 0.f)
     return absl::nullopt;
-  return DataRate::kbps(bitrate_estimate_kbps_);
+  return DataRate::KilobitsPerSec(bitrate_estimate_kbps_);
 }
 
 absl::optional<DataRate> BitrateEstimator::PeekRate() const {
   if (current_window_ms_ > 0)
-    return DataSize::bytes(sum_) / TimeDelta::ms(current_window_ms_);
+    return DataSize::Bytes(sum_) / TimeDelta::Millis(current_window_ms_);
   return absl::nullopt;
 }
 

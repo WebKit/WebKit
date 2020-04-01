@@ -55,7 +55,7 @@ class ProbeControllerTest : public ::testing::Test {
 
   std::vector<ProbeClusterConfig> SetNetworkAvailable(bool available) {
     NetworkAvailability msg;
-    msg.at_time = Timestamp::ms(NowMs());
+    msg.at_time = Timestamp::Millis(NowMs());
     msg.network_available = available;
     return probe_controller_->OnNetworkAvailability(msg);
   }

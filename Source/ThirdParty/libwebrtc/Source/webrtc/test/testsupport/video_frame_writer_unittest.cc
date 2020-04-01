@@ -17,7 +17,6 @@
 #include <memory>
 #include <string>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "api/video/i420_buffer.h"
 #include "test/gtest.h"
@@ -110,7 +109,7 @@ class VideoFrameWriterTest : public ::testing::Test {
 class Y4mVideoFrameWriterTest : public VideoFrameWriterTest {
  protected:
   std::unique_ptr<VideoFrameWriter> CreateFrameWriter() override {
-    return absl::make_unique<Y4mVideoFrameWriterImpl>(
+    return std::make_unique<Y4mVideoFrameWriterImpl>(
         temp_filename_, kFrameWidth, kFrameHeight, kFrameRate);
   }
 };
@@ -118,8 +117,8 @@ class Y4mVideoFrameWriterTest : public VideoFrameWriterTest {
 class YuvVideoFrameWriterTest : public VideoFrameWriterTest {
  protected:
   std::unique_ptr<VideoFrameWriter> CreateFrameWriter() override {
-    return absl::make_unique<YuvVideoFrameWriterImpl>(
-        temp_filename_, kFrameWidth, kFrameHeight);
+    return std::make_unique<YuvVideoFrameWriterImpl>(temp_filename_,
+                                                     kFrameWidth, kFrameHeight);
   }
 };
 
@@ -140,8 +139,8 @@ TEST_F(Y4mVideoFrameWriterTest, WriteFrame) {
             GetFileSize(temp_filename_));
 
   std::unique_ptr<FrameReader> frame_reader =
-      absl::make_unique<Y4mFrameReaderImpl>(temp_filename_, kFrameWidth,
-                                            kFrameHeight);
+      std::make_unique<Y4mFrameReaderImpl>(temp_filename_, kFrameWidth,
+                                           kFrameHeight);
   ASSERT_TRUE(frame_reader->Init());
   AssertI420BuffersEq(frame_reader->ReadFrame(), expected_buffer);
   AssertI420BuffersEq(frame_reader->ReadFrame(), expected_buffer);
@@ -165,8 +164,8 @@ TEST_F(YuvVideoFrameWriterTest, WriteFrame) {
   EXPECT_EQ(2 * kFrameLength, GetFileSize(temp_filename_));
 
   std::unique_ptr<FrameReader> frame_reader =
-      absl::make_unique<YuvFrameReaderImpl>(temp_filename_, kFrameWidth,
-                                            kFrameHeight);
+      std::make_unique<YuvFrameReaderImpl>(temp_filename_, kFrameWidth,
+                                           kFrameHeight);
   ASSERT_TRUE(frame_reader->Init());
   AssertI420BuffersEq(frame_reader->ReadFrame(), expected_buffer);
   AssertI420BuffersEq(frame_reader->ReadFrame(), expected_buffer);

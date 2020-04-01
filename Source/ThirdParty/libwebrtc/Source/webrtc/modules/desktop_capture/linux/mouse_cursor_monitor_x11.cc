@@ -46,7 +46,7 @@ Window GetTopLevelWindow(Display* display, Window window) {
     if (!XQueryTree(display, window, &root, &parent, &children,
                     &num_children)) {
       RTC_LOG(LS_ERROR) << "Failed to query for child windows although window"
-                        << "does not have a valid WM_STATE.";
+                           "does not have a valid WM_STATE.";
       return None;
     }
     if (children)

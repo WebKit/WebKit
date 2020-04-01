@@ -18,143 +18,136 @@ namespace vp8 {
 namespace {
 const size_t kCommonPayloadHeaderLength = 3;
 const size_t kKeyPayloadHeaderLength = 10;
+const int kMbFeatureTreeProbs = 3;
+const int kNumMbSegments = 4;
+const int kNumRefLfDeltas = 4;
+const int kNumModeLfDeltas = 4;
+
 }  // namespace
 
-static uint32_t BSwap32(uint32_t x) {
-  return (x >> 24) | ((x >> 8) & 0xff00) | ((x << 8) & 0xff0000) | (x << 24);
-}
-
-static void VP8LoadFinalBytes(VP8BitReader* const br) {
-  // Only read 8bits at a time.
-  if (br->buf_ < br->buf_end_) {
-    br->bits_ += 8;
-    br->value_ = static_cast<uint32_t>(*br->buf_++) | (br->value_ << 8);
-  } else if (!br->eof_) {
-    br->value_ <<= 8;
-    br->bits_ += 8;
-    br->eof_ = 1;
-  }
-}
-
-static void VP8LoadNewBytes(VP8BitReader* const br) {
-  int BITS = 24;
-  // Read 'BITS' bits at a time.
-  if (br->buf_ + sizeof(uint32_t) <= br->buf_end_) {
-    uint32_t bits;
-    const uint32_t in_bits = *(const uint32_t*)(br->buf_);
-    br->buf_ += BITS >> 3;
-#if defined(WEBRTC_ARCH_BIG_ENDIAN)
-    bits = static_cast<uint32_t>(in_bits);
-    if (BITS != 8 * sizeof(uint32_t))
-      bits >>= (8 * sizeof(uint32_t) - BITS);
-#else
-    bits = BSwap32(in_bits);
-    bits >>= 32 - BITS;
-#endif
-    br->value_ = bits | (br->value_ << BITS);
-    br->bits_ += BITS;
-  } else {
-    VP8LoadFinalBytes(br);
-  }
-}
-
-static void VP8InitBitReader(VP8BitReader* const br,
-                             const uint8_t* const start,
-                             const uint8_t* const end) {
-  br->range_ = 255 - 1;
+// Bitstream parser according to
+// https://tools.ietf.org/html/rfc6386#section-7.3
+void VP8InitBitReader(VP8BitReader* const br,
+                      const uint8_t* start,
+                      const uint8_t* end) {
+  br->range_ = 255;
   br->buf_ = start;
   br->buf_end_ = end;
   br->value_ = 0;
-  br->bits_ = -8;  // To load the very first 8bits.
-  br->eof_ = 0;
-  VP8LoadNewBytes(br);
+  br->bits_ = 0;
+
+  // Read 2 bytes.
+  int i = 0;
+  while (++i <= 2) {
+    if (br->buf_ != br->buf_end_) {
+      br->value_ = br->value_ << 8 | *br->buf_++;
+    } else {
+      br->value_ = br->value_ << 8;
+    }
+  }
 }
 
-// Read a bit with proba 'prob'.
-static int VP8GetBit(VP8BitReader* const br, int prob) {
-  uint8_t range = br->range_;
-  if (br->bits_ < 0) {
-    VP8LoadNewBytes(br);
-    if (br->eof_)
-      return 0;
-  }
-  const int pos = br->bits_;
-  const uint8_t split = (range * prob) >> 8;
-  const uint8_t value = static_cast<uint8_t>(br->value_ >> pos);
-  int bit;
-  if (value > split) {
-    range -= split + 1;
-    br->value_ -= static_cast<uint32_t>(split + 1) << pos;
-    bit = 1;
+// Bit decoder according to https://tools.ietf.org/html/rfc6386#section-7.3
+// Reads one bit from the bitstream, given that it has probability prob/256 to
+// be 1.
+int Vp8BitReaderGetBool(VP8BitReader* br, int prob) {
+  uint32_t split = 1 + (((br->range_ - 1) * prob) >> 8);
+  uint32_t split_hi = split << 8;
+  int retval = 0;
+  if (br->value_ >= split_hi) {
+    retval = 1;
+    br->range_ -= split;
+    br->value_ -= split_hi;
   } else {
-    range = split;
-    bit = 0;
+    retval = 0;
+    br->range_ = split;
   }
-  if (range <= static_cast<uint8_t>(0x7e)) {
-    const int shift = kVP8Log2Range[range];
-    range = kVP8NewRange[range];
-    br->bits_ -= shift;
+
+  while (br->range_ < 128) {
+    br->value_ <<= 1;
+    br->range_ <<= 1;
+    if (++br->bits_ == 8) {
+      br->bits_ = 0;
+      if (br->buf_ != br->buf_end_) {
+        br->value_ |= *br->buf_++;
+      }
+    }
   }
-  br->range_ = range;
-  return bit;
+  return retval;
 }
 
-static uint32_t VP8GetValue(VP8BitReader* const br, int bits) {
+uint32_t VP8GetValue(VP8BitReader* br, int num_bits) {
   uint32_t v = 0;
-  while (bits-- > 0) {
-    v |= VP8GetBit(br, 0x80) << bits;
+  while (num_bits--) {
+    // According to https://tools.ietf.org/html/rfc6386
+    // Probability 128/256 is used to encode header fields.
+    v = (v << 1) | Vp8BitReaderGetBool(br, 128);
   }
   return v;
 }
 
-static uint32_t VP8Get(VP8BitReader* const br) {
-  return VP8GetValue(br, 1);
-}
-
-static int32_t VP8GetSignedValue(VP8BitReader* const br, int bits) {
-  const int value = VP8GetValue(br, bits);
-  return VP8Get(br) ? -value : value;
+// Not a read_signed_literal() from RFC 6386!
+// This one is used to read e.g. quantizer_update, which is written as:
+// L(num_bits), sign-bit.
+int32_t VP8GetSignedValue(VP8BitReader* br, int num_bits) {
+  int v = VP8GetValue(br, num_bits);
+  int sign = VP8GetValue(br, 1);
+  return sign ? -v : v;
 }
 
 static void ParseSegmentHeader(VP8BitReader* br) {
-  int use_segment = VP8Get(br);
+  int use_segment = VP8GetValue(br, 1);
   if (use_segment) {
-    int update_map = VP8Get(br);
-    if (VP8Get(br)) {
+    int update_map = VP8GetValue(br, 1);
+    if (VP8GetValue(br, 1)) {  // update_segment_feature_data.
+      VP8GetValue(br, 1);      // segment_feature_mode.
       int s;
-      VP8Get(br);
-      for (s = 0; s < NUM_MB_SEGMENTS; ++s) {
-        VP8Get(br) ? VP8GetSignedValue(br, 7) : 0;
+      for (s = 0; s < kNumMbSegments; ++s) {
+        bool quantizer_update = VP8GetValue(br, 1);
+        if (quantizer_update) {
+          VP8GetSignedValue(br, 7);
+        }
       }
-      for (s = 0; s < NUM_MB_SEGMENTS; ++s) {
-        VP8Get(br) ? VP8GetSignedValue(br, 6) : 0;
+      for (s = 0; s < kNumMbSegments; ++s) {
+        bool loop_filter_update = VP8GetValue(br, 1);
+        if (loop_filter_update) {
+          VP8GetSignedValue(br, 6);
+        }
       }
     }
     if (update_map) {
       int s;
-      for (s = 0; s < MB_FEATURE_TREE_PROBS; ++s) {
-        VP8Get(br) ? VP8GetValue(br, 8) : 255;
+      for (s = 0; s < kMbFeatureTreeProbs; ++s) {
+        bool segment_prob_update = VP8GetValue(br, 1);
+        if (segment_prob_update) {
+          VP8GetValue(br, 8);
+        }
       }
     }
   }
 }
 
 static void ParseFilterHeader(VP8BitReader* br) {
-  VP8Get(br);
-  VP8GetValue(br, 6);
-  VP8GetValue(br, 3);
-  int use_lf_delta = VP8Get(br);
-  if (use_lf_delta) {
-    if (VP8Get(br)) {
+  VP8GetValue(br, 1);  // filter_type.
+  VP8GetValue(br, 6);  // loop_filter_level.
+  VP8GetValue(br, 3);  // sharpness_level.
+
+  // mb_lf_adjustments.
+  int loop_filter_adj_enable = VP8GetValue(br, 1);
+  if (loop_filter_adj_enable) {
+    int mode_ref_lf_delta_update = VP8GetValue(br, 1);
+    if (mode_ref_lf_delta_update) {
       int i;
-      for (i = 0; i < NUM_REF_LF_DELTAS; ++i) {
-        if (VP8Get(br)) {
-          VP8GetSignedValue(br, 6);
+      for (i = 0; i < kNumRefLfDeltas; ++i) {
+        int ref_frame_delta_update_flag = VP8GetValue(br, 1);
+        if (ref_frame_delta_update_flag) {
+          VP8GetSignedValue(br, 6);  // delta_magnitude.
         }
       }
-      for (i = 0; i < NUM_MODE_LF_DELTAS; ++i) {
-        if (VP8Get(br)) {
-          VP8GetSignedValue(br, 6);
+      for (i = 0; i < kNumModeLfDeltas; ++i) {
+        int mb_mode_delta_update_flag = VP8GetValue(br, 1);
+        if (mb_mode_delta_update_flag) {
+          VP8GetSignedValue(br, 6);  // delta_magnitude.
         }
       }
     }
@@ -184,17 +177,18 @@ bool GetQp(const uint8_t* buf, size_t length, int* qp) {
   VP8InitBitReader(&br, buf, buf + partition_length);
   if (key_frame) {
     // Color space and pixel type.
-    VP8Get(&br);
-    VP8Get(&br);
+    VP8GetValue(&br, 1);
+    VP8GetValue(&br, 1);
   }
   ParseSegmentHeader(&br);
   ParseFilterHeader(&br);
-  // Number of coefficient data partitions.
+  // Parse log2_nbr_of_dct_partitions value.
   VP8GetValue(&br, 2);
   // Base QP.
   const int base_q0 = VP8GetValue(&br, 7);
-  if (br.eof_ == 1) {
-    RTC_LOG(LS_WARNING) << "Failed to get QP, end of file reached.";
+  if (br.buf_ == br.buf_end_) {
+    RTC_LOG(LS_WARNING) << "Failed to get QP, bitstream is truncated or"
+                           " corrupted.";
     return false;
   }
   *qp = base_q0;

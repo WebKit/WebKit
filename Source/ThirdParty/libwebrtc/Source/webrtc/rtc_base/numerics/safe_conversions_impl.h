@@ -101,13 +101,13 @@ struct RangeCheckImpl {};
 // Dst range always contains the result: nothing to check.
 template <typename Dst, typename Src, DstSign IsDstSigned, SrcSign IsSrcSigned>
 struct RangeCheckImpl<Dst, Src, IsDstSigned, IsSrcSigned, CONTAINS_RANGE> {
-  static RangeCheckResult Check(Src value) { return TYPE_VALID; }
+  static constexpr RangeCheckResult Check(Src value) { return TYPE_VALID; }
 };
 
 // Signed to signed narrowing.
 template <typename Dst, typename Src>
 struct RangeCheckImpl<Dst, Src, DST_SIGNED, SRC_SIGNED, OVERLAPS_RANGE> {
-  static RangeCheckResult Check(Src value) {
+  static constexpr RangeCheckResult Check(Src value) {
     typedef std::numeric_limits<Dst> DstLimits;
     return DstLimits::is_iec559
                ? BASE_NUMERIC_RANGE_CHECK_RESULT(
@@ -122,7 +122,7 @@ struct RangeCheckImpl<Dst, Src, DST_SIGNED, SRC_SIGNED, OVERLAPS_RANGE> {
 // Unsigned to unsigned narrowing.
 template <typename Dst, typename Src>
 struct RangeCheckImpl<Dst, Src, DST_UNSIGNED, SRC_UNSIGNED, OVERLAPS_RANGE> {
-  static RangeCheckResult Check(Src value) {
+  static constexpr RangeCheckResult Check(Src value) {
     typedef std::numeric_limits<Dst> DstLimits;
     return BASE_NUMERIC_RANGE_CHECK_RESULT(
         value <= static_cast<Src>(DstLimits::max()), true);
@@ -132,7 +132,7 @@ struct RangeCheckImpl<Dst, Src, DST_UNSIGNED, SRC_UNSIGNED, OVERLAPS_RANGE> {
 // Unsigned to signed.
 template <typename Dst, typename Src>
 struct RangeCheckImpl<Dst, Src, DST_SIGNED, SRC_UNSIGNED, OVERLAPS_RANGE> {
-  static RangeCheckResult Check(Src value) {
+  static constexpr RangeCheckResult Check(Src value) {
     typedef std::numeric_limits<Dst> DstLimits;
     return sizeof(Dst) > sizeof(Src)
                ? TYPE_VALID
@@ -144,14 +144,16 @@ struct RangeCheckImpl<Dst, Src, DST_SIGNED, SRC_UNSIGNED, OVERLAPS_RANGE> {
 // Signed to unsigned.
 template <typename Dst, typename Src>
 struct RangeCheckImpl<Dst, Src, DST_UNSIGNED, SRC_SIGNED, OVERLAPS_RANGE> {
-  static RangeCheckResult Check(Src value) {
-    typedef std::numeric_limits<Dst> DstLimits;
-    typedef std::numeric_limits<Src> SrcLimits;
-    // Compare based on max_exponent, which we must compute for integrals.
-    static const size_t kDstMaxExponent = sizeof(Dst) * 8;
-    static const size_t kSrcMaxExponent =
-        SrcLimits::is_iec559 ? SrcLimits::max_exponent : (sizeof(Src) * 8 - 1);
-    return (kDstMaxExponent >= kSrcMaxExponent)
+  typedef std::numeric_limits<Dst> DstLimits;
+  typedef std::numeric_limits<Src> SrcLimits;
+  // Compare based on max_exponent, which we must compute for integrals.
+  static constexpr size_t DstMaxExponent() { return sizeof(Dst) * 8; }
+  static constexpr size_t SrcMaxExponent() {
+    return SrcLimits::is_iec559 ? SrcLimits::max_exponent
+                                : (sizeof(Src) * 8 - 1);
+  }
+  static constexpr RangeCheckResult Check(Src value) {
+    return (DstMaxExponent() >= SrcMaxExponent())
                ? BASE_NUMERIC_RANGE_CHECK_RESULT(true,
                                                  value >= static_cast<Src>(0))
                : BASE_NUMERIC_RANGE_CHECK_RESULT(
@@ -161,7 +163,7 @@ struct RangeCheckImpl<Dst, Src, DST_UNSIGNED, SRC_SIGNED, OVERLAPS_RANGE> {
 };
 
 template <typename Dst, typename Src>
-inline RangeCheckResult RangeCheck(Src value) {
+inline constexpr RangeCheckResult RangeCheck(Src value) {
   static_assert(std::numeric_limits<Src>::is_specialized,
                 "argument must be numeric");
   static_assert(std::numeric_limits<Dst>::is_specialized,

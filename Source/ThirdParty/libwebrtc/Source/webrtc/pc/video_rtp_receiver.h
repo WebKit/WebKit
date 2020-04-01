@@ -18,6 +18,7 @@
 
 #include "absl/types/optional.h"
 #include "api/crypto/frame_decryptor_interface.h"
+#include "api/frame_transformer_interface.h"
 #include "api/media_stream_interface.h"
 #include "api/media_types.h"
 #include "api/rtp_parameters.h"
@@ -27,16 +28,16 @@
 #include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
 #include "media/base/media_channel.h"
-#include "media/base/video_broadcaster.h"
 #include "pc/jitter_buffer_delay_interface.h"
 #include "pc/rtp_receiver.h"
-#include "pc/video_track_source.h"
+#include "pc/video_rtp_track_source.h"
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
 
-class VideoRtpReceiver : public rtc::RefCountedObject<RtpReceiverInternal> {
+class VideoRtpReceiver : public rtc::RefCountedObject<RtpReceiverInternal>,
+                         public VideoRtpTrackSource::Callback {
  public:
   // An SSRC of 0 will create a receiver that will match the first SSRC it
   // sees. Must be called on signaling thread.
@@ -76,7 +77,6 @@ class VideoRtpReceiver : public rtc::RefCountedObject<RtpReceiverInternal> {
   std::string id() const override { return id_; }
 
   RtpParameters GetParameters() const override;
-  bool SetParameters(const RtpParameters& parameters) override;
 
   void SetFrameDecryptor(
       rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor) override;
@@ -84,9 +84,13 @@ class VideoRtpReceiver : public rtc::RefCountedObject<RtpReceiverInternal> {
   rtc::scoped_refptr<FrameDecryptorInterface> GetFrameDecryptor()
       const override;
 
+  void SetDepacketizerToDecoderFrameTransformer(
+      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) override;
+
   // RtpReceiverInternal implementation.
   void Stop() override;
   void SetupMediaChannel(uint32_t ssrc) override;
+  void SetupUnsignaledMediaChannel() override;
   uint32_t ssrc() const override { return ssrc_.value_or(0); }
   void NotifyFirstPacketReceived() override;
   void set_stream_ids(std::vector<std::string> stream_ids) override;
@@ -109,25 +113,17 @@ class VideoRtpReceiver : public rtc::RefCountedObject<RtpReceiverInternal> {
   std::vector<RtpSource> GetSources() const override;
 
  private:
-  class VideoRtpTrackSource : public VideoTrackSource {
-   public:
-    VideoRtpTrackSource() : VideoTrackSource(true /* remote */) {}
+  void RestartMediaChannel(absl::optional<uint32_t> ssrc);
+  void SetSink(rtc::VideoSinkInterface<VideoFrame>* sink)
+      RTC_RUN_ON(worker_thread_);
 
-    rtc::VideoSourceInterface<VideoFrame>* source() override {
-      return &broadcaster_;
-    }
-    rtc::VideoSinkInterface<VideoFrame>* sink() { return &broadcaster_; }
-
-   private:
-    // |broadcaster_| is needed since the decoder can only handle one sink.
-    // It might be better if the decoder can handle multiple sinks and consider
-    // the VideoSinkWants.
-    rtc::VideoBroadcaster broadcaster_;
-  };
-
-  bool SetSink(rtc::VideoSinkInterface<VideoFrame>* sink);
+  // VideoRtpTrackSource::Callback
+  void OnGenerateKeyFrame() override;
+  void OnEncodedSinkEnabled(bool enable) override;
+  void SetEncodedSinkEnabled(bool enable) RTC_RUN_ON(worker_thread_);
 
   rtc::Thread* const worker_thread_;
+
   const std::string id_;
   cricket::VideoMediaChannel* media_channel_ = nullptr;
   absl::optional<uint32_t> ssrc_;
@@ -136,15 +132,21 @@ class VideoRtpReceiver : public rtc::RefCountedObject<RtpReceiverInternal> {
   rtc::scoped_refptr<VideoRtpTrackSource> source_;
   rtc::scoped_refptr<VideoTrackInterface> track_;
   std::vector<rtc::scoped_refptr<MediaStreamInterface>> streams_;
-  bool stopped_ = false;
+  bool stopped_ = true;
   RtpReceiverObserverInterface* observer_ = nullptr;
   bool received_first_packet_ = false;
   int attachment_id_ = 0;
   rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor_;
   rtc::scoped_refptr<DtlsTransportInterface> dtls_transport_;
+  rtc::scoped_refptr<FrameTransformerInterface> frame_transformer_
+      RTC_GUARDED_BY(worker_thread_);
   // Allows to thread safely change jitter buffer delay. Handles caching cases
   // if |SetJitterBufferMinimumDelay| is called before start.
   rtc::scoped_refptr<JitterBufferDelayInterface> delay_;
+  // Records if we should generate a keyframe when |media_channel_| gets set up
+  // or switched.
+  bool saved_generate_keyframe_ RTC_GUARDED_BY(worker_thread_) = false;
+  bool saved_encoded_sink_enabled_ RTC_GUARDED_BY(worker_thread_) = false;
 };
 
 }  // namespace webrtc

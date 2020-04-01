@@ -54,15 +54,15 @@ class CoDelSimulation {
 // Class simulating a network link. This is a simple and naive solution just
 // faking capacity and adding an extra transport delay in addition to the
 // capacity introduced delay.
-class SimulatedNetwork : public NetworkBehaviorInterface {
+class SimulatedNetwork : public SimulatedNetworkInterface {
  public:
   using Config = BuiltInNetworkBehaviorConfig;
   explicit SimulatedNetwork(Config config, uint64_t random_seed = 1);
   ~SimulatedNetwork() override;
 
   // Sets a new configuration. This won't affect packets already in the pipe.
-  void SetConfig(const Config& config);
-  void PauseTransmissionUntil(int64_t until_us);
+  void SetConfig(const Config& config) override;
+  void PauseTransmissionUntil(int64_t until_us) override;
 
   // NetworkBehaviorInterface
   bool EnqueuePacket(PacketInFlightInfo packet) override;

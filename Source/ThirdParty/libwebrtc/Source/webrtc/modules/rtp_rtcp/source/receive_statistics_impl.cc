@@ -15,7 +15,6 @@
 #include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
@@ -296,7 +295,7 @@ bool StreamStatisticianImpl::IsRetransmitOfOldPacket(
 }
 
 std::unique_ptr<ReceiveStatistics> ReceiveStatistics::Create(Clock* clock) {
-  return absl::make_unique<ReceiveStatisticsImpl>(clock);
+  return std::make_unique<ReceiveStatisticsImpl>(clock);
 }
 
 ReceiveStatisticsImpl::ReceiveStatisticsImpl(Clock* clock)

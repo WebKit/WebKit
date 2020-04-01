@@ -21,23 +21,20 @@ namespace webrtc {
 
 class MockProcessThread : public ProcessThread {
  public:
-  // TODO(nisse): Valid overrides commented out, because the gmock
-  // methods don't use any override declarations, and we want to avoid
-  // warnings from -Winconsistent-missing-override. See
-  // http://crbug.com/428099.
-  MOCK_METHOD0(Start, void());
-  MOCK_METHOD0(Stop, void());
-  MOCK_METHOD1(WakeUp, void(Module* module));
-  MOCK_METHOD1(PostTask, void(QueuedTask* task));
-  MOCK_METHOD2(RegisterModule, void(Module* module, const rtc::Location&));
-  MOCK_METHOD1(DeRegisterModule, void(Module* module));
-
-  // MOCK_METHOD1 gets confused with mocking this method, so we work around it
-  // by overriding the method from the interface and forwarding the call to a
-  // mocked, simpler method.
-  void PostTask(std::unique_ptr<QueuedTask> task) /*override*/ {
-    PostTask(task.get());
-  }
+  MOCK_METHOD(void, Start, (), (override));
+  MOCK_METHOD(void, Stop, (), (override));
+  MOCK_METHOD(void, Delete, (), (override));
+  MOCK_METHOD(void, WakeUp, (Module*), (override));
+  MOCK_METHOD(void, PostTask, (std::unique_ptr<QueuedTask>), (override));
+  MOCK_METHOD(void,
+              PostDelayedTask,
+              (std::unique_ptr<QueuedTask>, uint32_t),
+              (override));
+  MOCK_METHOD(void,
+              RegisterModule,
+              (Module*, const rtc::Location&),
+              (override));
+  MOCK_METHOD(void, DeRegisterModule, (Module*), (override));
 };
 
 }  // namespace webrtc

@@ -164,6 +164,7 @@ class SctpTransport : public SctpTransportInternal,
                             size_t len,
                             const int64_t& packet_time_us,
                             int flags);
+  void OnClosed(rtc::PacketTransportInternal* transport);
 
   // Methods related to usrsctp callbacks.
   void OnSendThresholdCallback();

@@ -8,7 +8,7 @@
 
 import("../../../webrtc.gni")
 
-rtc_source_set("sigslot") {
+rtc_library("sigslot") {
   visibility = [ "*" ]
   sources = [
     "sigslot.cc",

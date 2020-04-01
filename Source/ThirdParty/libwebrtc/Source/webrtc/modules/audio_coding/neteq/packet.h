@@ -17,8 +17,8 @@
 #include <memory>
 
 #include "api/audio_codecs/audio_decoder.h"
+#include "api/neteq/tick_timer.h"
 #include "api/rtp_packet_info.h"
-#include "modules/audio_coding/neteq/tick_timer.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 

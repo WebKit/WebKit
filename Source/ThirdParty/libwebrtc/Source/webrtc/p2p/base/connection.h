@@ -11,23 +11,30 @@
 #ifndef P2P_BASE_CONNECTION_H_
 #define P2P_BASE_CONNECTION_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "absl/types/optional.h"
 #include "api/candidate.h"
+#include "api/transport/stun.h"
 #include "logging/rtc_event_log/ice_logger.h"
 #include "p2p/base/candidate_pair_interface.h"
 #include "p2p/base/connection_info.h"
-#include "p2p/base/stun.h"
+#include "p2p/base/p2p_transport_channel_ice_field_trials.h"
 #include "p2p/base/stun_request.h"
 #include "p2p/base/transport_description.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/message_handler.h"
+#include "rtc_base/network.h"
+#include "rtc_base/numerics/event_based_exponential_moving_average.h"
 #include "rtc_base/rate_tracker.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace cricket {
+
+// Version number for GOOG_PING, this is added to have the option of
+// adding other flavors in the future.
+constexpr int kGoogPingVersion = 1;
 
 // Connection and Port has circular dependencies.
 // So we use forward declaration rather than include.
@@ -79,11 +86,7 @@ class Connection : public CandidatePairInterface,
   ~Connection() override;
 
   // A unique ID assigned when the connection is created.
-  uint32_t id() { return id_; }
-
-  // The local port where this connection sends and receives packets.
-  Port* port() { return port_; }
-  const Port* port() const { return port_; }
+  uint32_t id() const { return id_; }
 
   // Implementation of virtual methods in CandidatePairInterface.
   // Returns the description of the local port
@@ -91,8 +94,13 @@ class Connection : public CandidatePairInterface,
   // Returns the description of the remote port to which we communicate.
   const Candidate& remote_candidate() const override;
 
+  // Return local network for this connection.
+  virtual const rtc::Network* network() const;
+  // Return generation for this connection.
+  virtual int generation() const;
+
   // Returns the pair priority.
-  uint64_t priority() const;
+  virtual uint64_t priority() const;
 
   enum WriteState {
     STATE_WRITABLE = 0,          // we have received ping responses recently
@@ -181,13 +189,6 @@ class Connection : public CandidatePairInterface,
   // a nomination value. The controlling agent gets its |acked_nomination_| set
   // when receiving a response to a nominating ping.
   bool nominated() const { return acked_nomination_ || remote_nomination_; }
-  // Public for unit tests.
-  void set_remote_nomination(uint32_t remote_nomination) {
-    remote_nomination_ = remote_nomination;
-  }
-  // Public for unit tests.
-  uint32_t acked_nomination() const { return acked_nomination_; }
-
   void set_remote_ice_mode(IceMode mode) { remote_ice_mode_ = mode; }
 
   int receiving_timeout() const;
@@ -231,7 +232,7 @@ class Connection : public CandidatePairInterface,
   void ReceivedPing(
       const absl::optional<std::string>& request_id = absl::nullopt);
   // Handles the binding request; sends a response if this is a valid request.
-  void HandleBindingRequest(IceMessage* msg);
+  void HandleStunBindingOrGoogPingRequest(IceMessage* msg);
   // Handles the piggyback acknowledgement of the lastest connectivity check
   // that the remote peer has received, if it is indicated in the incoming
   // connectivity check from the peer.
@@ -294,6 +295,30 @@ class Connection : public CandidatePairInterface,
 
   bool stable(int64_t now) const;
 
+  // Check if we sent |val| pings without receving a response.
+  bool TooManyOutstandingPings(const absl::optional<int>& val) const;
+
+  void SetIceFieldTrials(const IceFieldTrials* field_trials);
+  const rtc::EventBasedExponentialMovingAverage& GetRttEstimate() const {
+    return rtt_estimate_;
+  }
+
+  void SendStunBindingResponse(const StunMessage* request);
+  void SendGoogPingResponse(const StunMessage* request);
+  void SendResponseMessage(const StunMessage& response);
+
+  // An accessor for unit tests.
+  Port* PortForTest() { return port_; }
+  const Port* PortForTest() const { return port_; }
+
+  // Public for unit tests.
+  uint32_t acked_nomination() const { return acked_nomination_; }
+
+  // Public for unit tests.
+  void set_remote_nomination(uint32_t remote_nomination) {
+    remote_nomination_ = remote_nomination;
+  }
+
  protected:
   enum { MSG_DELETE = 0, MSG_FIRST_AVAILABLE };
 
@@ -327,6 +352,10 @@ class Connection : public CandidatePairInterface,
 
   void OnMessage(rtc::Message* pmsg) override;
 
+  // The local port where this connection sends and receives packets.
+  Port* port() { return port_; }
+  const Port* port() const { return port_; }
+
   uint32_t id_;
   Port* port_;
   size_t local_candidate_index_;
@@ -345,6 +374,10 @@ class Connection : public CandidatePairInterface,
   void LogCandidatePairConfig(webrtc::IceCandidatePairConfigType type);
   void LogCandidatePairEvent(webrtc::IceCandidatePairEventType type,
                              uint32_t transaction_id);
+
+  // Check if this IceMessage is identical
+  // to last message ack:ed STUN_BINDING_REQUEST.
+  bool ShouldSendGoogPing(const StunMessage* message);
 
   WriteState write_state_;
   bool receiving_;
@@ -402,8 +435,19 @@ class Connection : public CandidatePairInterface,
   absl::optional<webrtc::IceCandidatePairDescription> log_description_;
   webrtc::IceEventLog* ice_event_log_ = nullptr;
 
+  // GOOG_PING_REQUEST is sent in place of STUN_BINDING_REQUEST
+  // if configured via field trial, the remote peer supports it (signaled
+  // in STUN_BINDING) and if the last STUN BINDING is identical to the one
+  // that is about to be sent.
+  absl::optional<bool> remote_support_goog_ping_;
+  std::unique_ptr<StunMessage> cached_stun_binding_;
+
+  const IceFieldTrials* field_trials_;
+  rtc::EventBasedExponentialMovingAverage rtt_estimate_;
+
   friend class Port;
   friend class ConnectionRequest;
+  friend class P2PTransportChannel;
 };
 
 // ProxyConnection defers all the interesting work to the port.

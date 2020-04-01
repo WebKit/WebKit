@@ -10,12 +10,12 @@
 
 #include "rtc_base/message_handler.h"
 
-#include "rtc_base/message_queue.h"
+#include "rtc_base/thread.h"
 
 namespace rtc {
 
 MessageHandler::~MessageHandler() {
-  MessageQueueManager::Clear(this);
+  ThreadManager::Clear(this);
 }
 
 }  // namespace rtc

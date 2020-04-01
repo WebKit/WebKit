@@ -97,13 +97,12 @@ int Multiply(int a, int b) {
 
 // Try to catch any problem with scoped_refptr type deduction in rtc::Bind at
 // compile time.
-#define EXPECT_IS_CAPTURED_AS_PTR(T)                              \
-  static_assert(is_same<detail::PointerType<T>::type, T*>::value, \
-                "PointerTyp"                                      \
-                "e")
-#define EXPECT_IS_CAPTURED_AS_SCOPED_REFPTR(T)                        \
-  static_assert(                                                      \
-      is_same<detail::PointerType<T>::type, scoped_refptr<T>>::value, \
+#define EXPECT_IS_CAPTURED_AS_PTR(T)                                   \
+  static_assert(std::is_same<detail::PointerType<T>::type, T*>::value, \
+                "PointerType")
+#define EXPECT_IS_CAPTURED_AS_SCOPED_REFPTR(T)                             \
+  static_assert(                                                           \
+      std::is_same<detail::PointerType<T>::type, scoped_refptr<T>>::value, \
       "PointerType")
 
 EXPECT_IS_CAPTURED_AS_PTR(void);

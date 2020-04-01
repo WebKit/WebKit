@@ -46,20 +46,11 @@ VCMReceiver::VCMReceiver(VCMTiming* timing,
       timing_(timing),
       render_wait_event_(std::move(receiver_event)),
       max_video_delay_ms_(kMaxVideoDelayMs) {
-  Reset();
+  jitter_buffer_.Start();
 }
 
 VCMReceiver::~VCMReceiver() {
   render_wait_event_->Set();
-}
-
-void VCMReceiver::Reset() {
-  rtc::CritScope cs(&crit_sect_);
-  if (!jitter_buffer_.Running()) {
-    jitter_buffer_.Start();
-  } else {
-    jitter_buffer_.Flush();
-  }
 }
 
 int32_t VCMReceiver::InsertPacket(const VCMPacket& packet) {
@@ -82,11 +73,6 @@ int32_t VCMReceiver::InsertPacket(const VCMPacket& packet) {
     timing_->IncomingTimestamp(packet.timestamp, clock_->TimeInMilliseconds());
   }
   return VCM_OK;
-}
-
-void VCMReceiver::TriggerDecoderShutdown() {
-  jitter_buffer_.Stop();
-  render_wait_event_->Set();
 }
 
 VCMEncodedFrame* VCMReceiver::FrameForDecoding(uint16_t max_wait_time_ms,
@@ -128,7 +114,8 @@ VCMEncodedFrame* VCMReceiver::FrameForDecoding(uint16_t max_wait_time_ms,
     int frame_delay = static_cast<int>(std::abs(render_time_ms - now_ms));
     RTC_LOG(LS_WARNING)
         << "A frame about to be decoded is out of the configured "
-        << "delay bounds (" << frame_delay << " > " << max_video_delay_ms_
+           "delay bounds ("
+        << frame_delay << " > " << max_video_delay_ms_
         << "). Resetting the video jitter buffer.";
     timing_error = true;
   } else if (static_cast<int>(timing_->TargetVideoDelay()) >

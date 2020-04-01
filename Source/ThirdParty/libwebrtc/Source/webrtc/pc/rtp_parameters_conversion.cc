@@ -164,7 +164,7 @@ RTCErrorOr<C> ToCricketCodec(const RtpCodecParameters& codec) {
     }
     cricket_codec.AddFeedbackParam(result.MoveValue());
   }
-  cricket_codec.params.insert(codec.parameters.begin(), codec.parameters.end());
+  cricket_codec.params = codec.parameters;
   return std::move(cricket_codec);
 }
 
@@ -200,29 +200,6 @@ template RTCErrorOr<std::vector<cricket::AudioCodec>> ToCricketCodecs<
 template RTCErrorOr<std::vector<cricket::VideoCodec>> ToCricketCodecs<
     cricket::VideoCodec>(const std::vector<RtpCodecParameters>& codecs);
 
-RTCErrorOr<cricket::RtpHeaderExtensions> ToCricketRtpHeaderExtensions(
-    const std::vector<RtpHeaderExtensionParameters>& extensions) {
-  cricket::RtpHeaderExtensions cricket_extensions;
-  std::set<int> seen_header_extension_ids;
-  for (const RtpHeaderExtensionParameters& extension : extensions) {
-    if (extension.id < RtpHeaderExtensionParameters::kMinId ||
-        extension.id > RtpHeaderExtensionParameters::kMaxId) {
-      char buf[50];
-      rtc::SimpleStringBuilder sb(buf);
-      sb << "Invalid header extension id: " << extension.id;
-      LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_RANGE, sb.str());
-    }
-    if (!seen_header_extension_ids.insert(extension.id).second) {
-      char buf[50];
-      rtc::SimpleStringBuilder sb(buf);
-      sb << "Duplicate header extension id: " << extension.id;
-      LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_PARAMETER, sb.str());
-    }
-    cricket_extensions.push_back(extension);
-  }
-  return std::move(cricket_extensions);
-}
-
 RTCErrorOr<cricket::StreamParamsVec> ToCricketStreamParamsVec(
     const std::vector<RtpEncodingParameters>& encodings) {
   if (encodings.size() > 1u) {
@@ -234,17 +211,9 @@ RTCErrorOr<cricket::StreamParamsVec> ToCricketStreamParamsVec(
   }
   cricket::StreamParamsVec cricket_streams;
   const RtpEncodingParameters& encoding = encodings[0];
-  if (encoding.rtx && encoding.rtx->ssrc && !encoding.ssrc) {
-    LOG_AND_RETURN_ERROR(RTCErrorType::UNSUPPORTED_PARAMETER,
-                         "Setting an RTX SSRC explicitly while leaving the "
-                         "primary SSRC unset is not currently supported.");
-  }
   if (encoding.ssrc) {
     cricket::StreamParams stream_params;
     stream_params.add_ssrc(*encoding.ssrc);
-    if (encoding.rtx && encoding.rtx->ssrc) {
-      stream_params.AddFidSsrc(*encoding.ssrc, *encoding.rtx->ssrc);
-    }
     cricket_streams.push_back(std::move(stream_params));
   }
   return std::move(cricket_streams);
@@ -308,11 +277,6 @@ std::vector<RtpEncodingParameters> ToRtpEncodings(
   for (const cricket::StreamParams& stream_param : stream_params) {
     RtpEncodingParameters rtp_encoding;
     rtp_encoding.ssrc.emplace(stream_param.first_ssrc());
-    uint32_t rtx_ssrc = 0;
-    if (stream_param.GetFidSsrc(stream_param.first_ssrc(), &rtx_ssrc)) {
-      RtpRtxParameters rtx_param(rtx_ssrc);
-      rtp_encoding.rtx.emplace(rtx_param);
-    }
     rtp_encodings.push_back(std::move(rtp_encoding));
   }
   return rtp_encodings;
@@ -402,8 +366,7 @@ RtpCodecParameters ToRtpCodecParameters(const C& cricket_codec) {
     }
   }
   ToRtpCodecParametersTypeSpecific(cricket_codec, &codec_param);
-  codec_param.parameters.insert(cricket_codec.params.begin(),
-                                cricket_codec.params.end());
+  codec_param.parameters = cricket_codec.params;
   return codec_param;
 }
 

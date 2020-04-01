@@ -13,9 +13,9 @@
 #include <memory>
 #include <string>
 
+#include "api/task_queue/task_queue_base.h"
 #include "api/test/simulated_network.h"
 #include "test/call_test.h"
-#include "test/single_threaded_task_queue.h"
 
 namespace webrtc {
 namespace test {
@@ -39,11 +39,11 @@ class AudioBweTest : public test::EndToEndTest {
       TestAudioDeviceModule* send_audio_device,
       TestAudioDeviceModule* recv_audio_device) override;
 
-  test::PacketTransport* CreateSendTransport(
-      DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
+  std::unique_ptr<test::PacketTransport> CreateSendTransport(
+      TaskQueueBase* task_queue,
       Call* sender_call) override;
-  test::PacketTransport* CreateReceiveTransport(
-      DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue) override;
+  std::unique_ptr<test::PacketTransport> CreateReceiveTransport(
+      TaskQueueBase* task_queue) override;
 
   void PerformTest() override;
 

@@ -14,12 +14,10 @@ if (is_android) {
 
 rtc_source_set("audio_encoder_ilbc_config") {
   visibility = [ "*" ]
-  sources = [
-    "audio_encoder_ilbc_config.h",
-  ]
+  sources = [ "audio_encoder_ilbc_config.h" ]
 }
 
-rtc_static_library("audio_encoder_ilbc") {
+rtc_library("audio_encoder_ilbc") {
   visibility = [ "*" ]
   poisonous = [ "audio_codecs" ]
   sources = [
@@ -32,13 +30,12 @@ rtc_static_library("audio_encoder_ilbc") {
     "../../../modules/audio_coding:ilbc",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:safe_minmax",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_static_library("audio_decoder_ilbc") {
+rtc_library("audio_decoder_ilbc") {
   visibility = [ "*" ]
   poisonous = [ "audio_codecs" ]
   sources = [
@@ -49,7 +46,6 @@ rtc_static_library("audio_decoder_ilbc") {
     "..:audio_codecs_api",
     "../../../modules/audio_coding:ilbc",
     "../../../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]

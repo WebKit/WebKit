@@ -57,6 +57,23 @@
   }
 }
 
+- (NSArray<NSString *> *)streamIds {
+  std::vector<std::string> nativeStreamIds = _nativeRtpSender->stream_ids();
+  NSMutableArray *streamIds = [NSMutableArray arrayWithCapacity:nativeStreamIds.size()];
+  for (const auto &s : nativeStreamIds) {
+    [streamIds addObject:[NSString stringForStdString:s]];
+  }
+  return streamIds;
+}
+
+- (void)setStreamIds:(NSArray<NSString *> *)streamIds {
+  std::vector<std::string> nativeStreamIds;
+  for (NSString *streamId in streamIds) {
+    nativeStreamIds.push_back([streamId UTF8String]);
+  }
+  _nativeRtpSender->SetStreams(nativeStreamIds);
+}
+
 - (NSString *)description {
   return [NSString stringWithFormat:@"RTCRtpSender {\n  senderId: %@\n}",
       self.senderId];

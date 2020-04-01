@@ -19,7 +19,6 @@ namespace webrtc {
 class MockAgc : public Agc {
  public:
   virtual ~MockAgc() {}
-  MOCK_METHOD2(AnalyzePreproc, float(const int16_t* audio, size_t length));
   MOCK_METHOD3(Process,
                void(const int16_t* audio, size_t length, int sample_rate_hz));
   MOCK_METHOD1(GetRmsErrorDb, bool(int* error));

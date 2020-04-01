@@ -18,6 +18,7 @@
 #include "api/ref_counted_base.h"
 #include "api/rtp_packet_info.h"
 #include "api/scoped_refptr.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -29,7 +30,7 @@ namespace webrtc {
 // |std::move()|-ed as the per-packet information is transferred from one object
 // to another. But moving the info, instead of copying it, is not easily done
 // for the current video code.
-class RtpPacketInfos {
+class RTC_EXPORT RtpPacketInfos {
  public:
   using vector_type = std::vector<RtpPacketInfo>;
 

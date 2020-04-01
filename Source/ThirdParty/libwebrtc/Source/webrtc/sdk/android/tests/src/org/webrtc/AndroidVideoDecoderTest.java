@@ -11,17 +11,16 @@
 package org.webrtc;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.robolectric.Shadows.shadowOf;
 
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
@@ -63,7 +62,7 @@ public class AndroidVideoDecoderTest {
     private boolean deliverDecodedFrameDone = true;
 
     public TestDecoder(MediaCodecWrapperFactory mediaCodecFactory, String codecName,
-        VideoCodecType codecType, int colorFormat, EglBase.Context sharedContext) {
+        VideoCodecMimeType codecType, int colorFormat, EglBase.Context sharedContext) {
       super(mediaCodecFactory, codecName, codecType, colorFormat, sharedContext);
     }
 
@@ -144,10 +143,10 @@ public class AndroidVideoDecoderTest {
   }
 
   private class TestDecoderBuilder {
-    private VideoCodecType codecType = VideoCodecType.VP8;
+    private VideoCodecMimeType codecType = VideoCodecMimeType.VP8;
     private boolean useSurface = true;
 
-    public TestDecoderBuilder setCodecType(VideoCodecType codecType) {
+    public TestDecoderBuilder setCodecType(VideoCodecMimeType codecType) {
       this.codecType = codecType;
       return this;
     }
@@ -186,7 +185,7 @@ public class AndroidVideoDecoderTest {
 
   private EncodedImage createTestEncodedImage() {
     return EncodedImage.builder()
-        .setBuffer(ByteBuffer.wrap(ENCODED_TEST_DATA))
+        .setBuffer(ByteBuffer.wrap(ENCODED_TEST_DATA), null)
         .setFrameType(FrameType.VideoFrameKey)
         .setCompleteFrame(true)
         .createEncodedImage();
@@ -217,7 +216,8 @@ public class AndroidVideoDecoderTest {
   @Test
   public void testInit() {
     // Set-up.
-    AndroidVideoDecoder decoder = new TestDecoderBuilder().setCodecType(VideoCodecType.VP8).build();
+    AndroidVideoDecoder decoder =
+        new TestDecoderBuilder().setCodecType(VideoCodecMimeType.VP8).build();
 
     // Test.
     assertThat(decoder.initDecode(TEST_DECODER_SETTINGS, mockDecoderCallback))
@@ -233,7 +233,7 @@ public class AndroidVideoDecoderTest {
     assertThat(mediaFormat.getInteger(MediaFormat.KEY_HEIGHT))
         .isEqualTo(TEST_DECODER_SETTINGS.height);
     assertThat(mediaFormat.getString(MediaFormat.KEY_MIME))
-        .isEqualTo(VideoCodecType.VP8.mimeType());
+        .isEqualTo(VideoCodecMimeType.VP8.mimeType());
   }
 
   @Test

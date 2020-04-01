@@ -8,7 +8,7 @@
 
 import("../webrtc.gni")
 
-rtc_static_library("common_video") {
+rtc_library("common_video") {
   visibility = [ "*" ]
 
   sources = [
@@ -58,6 +58,7 @@ rtc_static_library("common_video") {
     "../rtc_base:checks",
     "../rtc_base:rtc_task_queue",
     "../rtc_base:safe_minmax",
+    "../rtc_base/system:rtc_export",
     "../system_wrappers:metrics",
     "//third_party/abseil-cpp/absl/types:optional",
     "//third_party/libyuv",
@@ -71,9 +72,7 @@ if (rtc_include_tests) {
     bundle_data("common_video_unittests_bundle_data") {
       testonly = true
       sources = common_video_resources
-      outputs = [
-        "{{bundle_resources_dir}}/{{source_file_part}}",
-      ]
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
     }
   }
 
@@ -109,11 +108,11 @@ if (rtc_include_tests) {
       "../rtc_base:rtc_base_tests_utils",
       "../system_wrappers:system_wrappers",
       "../test:fileutils",
+      "../test:frame_utils",
       "../test:test_main",
       "../test:test_support",
       "../test:video_test_common",
       "//testing/gtest",
-      "//third_party/abseil-cpp/absl/memory",
       "//third_party/libyuv",
     ]
 

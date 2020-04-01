@@ -32,7 +32,7 @@
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
 #include <webrtc/rtc_base/net_helpers.h>
-#include <webrtc/p2p/base/packet_socket_factory.h>
+#include <webrtc/api/packet_socket_factory.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {

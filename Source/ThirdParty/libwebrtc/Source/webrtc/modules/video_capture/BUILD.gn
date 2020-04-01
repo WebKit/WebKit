@@ -12,7 +12,7 @@ import("../../webrtc.gni")
 # Targets must link with either 'video_capture' or
 # 'video_capture_internal_impl' depending on whether they want to
 # use the internal capturer.
-rtc_static_library("video_capture_module") {
+rtc_library("video_capture_module") {
   visibility = [ "*" ]
   sources = [
     "device_info_impl.cc",
@@ -104,9 +104,7 @@ if (!build_with_chromium) {
 
   if (!is_android && rtc_include_tests) {
     rtc_test("video_capture_tests") {
-      sources = [
-        "test/video_capture_unittest.cc",
-      ]
+      sources = [ "test/video_capture_unittest.cc" ]
       ldflags = []
       if (is_linux || is_mac) {
         ldflags += [
@@ -132,6 +130,7 @@ if (!build_with_chromium) {
         "../../common_video",
         "../../rtc_base:rtc_base_approved",
         "../../system_wrappers",
+        "../../test:frame_utils",
         "../../test:test_support",
         "../../test:video_test_common",
         "../utility",

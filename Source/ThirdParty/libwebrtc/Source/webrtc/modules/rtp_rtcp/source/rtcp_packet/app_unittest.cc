@@ -53,7 +53,7 @@ constexpr uint8_t kPacketWithUnalignedPayload[] = {
 
 TEST(RtcpPacketAppTest, CreateWithoutData) {
   App app;
-  app.SetSsrc(kSenderSsrc);
+  app.SetSenderSsrc(kSenderSsrc);
   app.SetSubType(kSubtype);
   app.SetName(kName);
 
@@ -67,7 +67,7 @@ TEST(RtcpPacketAppTest, ParseWithoutData) {
   App parsed;
   EXPECT_TRUE(test::ParseSinglePacket(kPacketWithoutData, &parsed));
 
-  EXPECT_EQ(kSenderSsrc, parsed.ssrc());
+  EXPECT_EQ(kSenderSsrc, parsed.sender_ssrc());
   EXPECT_EQ(kSubtype, parsed.sub_type());
   EXPECT_EQ(kName, parsed.name());
   EXPECT_EQ(0u, parsed.data_size());
@@ -75,7 +75,7 @@ TEST(RtcpPacketAppTest, ParseWithoutData) {
 
 TEST(RtcpPacketAppTest, CreateWithData) {
   App app;
-  app.SetSsrc(kSenderSsrc);
+  app.SetSenderSsrc(kSenderSsrc);
   app.SetSubType(kSubtype);
   app.SetName(kName);
   app.SetData(kData, sizeof(kData));
@@ -90,7 +90,7 @@ TEST(RtcpPacketAppTest, ParseWithData) {
   App parsed;
   EXPECT_TRUE(test::ParseSinglePacket(kPacketWithData, &parsed));
 
-  EXPECT_EQ(kSenderSsrc, parsed.ssrc());
+  EXPECT_EQ(kSenderSsrc, parsed.sender_ssrc());
   EXPECT_EQ(kSubtype, parsed.sub_type());
   EXPECT_EQ(kName, parsed.name());
   EXPECT_THAT(make_tuple(parsed.data(), parsed.data_size()),

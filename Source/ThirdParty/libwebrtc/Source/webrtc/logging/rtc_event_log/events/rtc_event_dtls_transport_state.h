@@ -14,7 +14,7 @@
 #include <memory>
 
 #include "api/dtls_transport_interface.h"
-#include "logging/rtc_event_log/events/rtc_event.h"
+#include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 

@@ -11,9 +11,9 @@
 #include "modules/audio_device/win/core_audio_base_win.h"
 #include "modules/audio_device/audio_device_buffer.h"
 
+#include <memory>
 #include <string>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -54,6 +54,34 @@ const char* DirectionToString(CoreAudioBase::Direction direction) {
     default:
       return "Unkown";
   }
+}
+
+const char* RoleToString(const ERole role) {
+  switch (role) {
+    case eConsole:
+      return "Console";
+    case eMultimedia:
+      return "Multimedia";
+    case eCommunications:
+      return "Communications";
+    default:
+      return "Unsupported";
+  }
+}
+
+std::string IndexToString(int index) {
+  std::string ss = std::to_string(index);
+  switch (index) {
+    case kDefault:
+      ss += " (Default)";
+      break;
+    case kDefaultCommunications:
+      ss += " (Communications)";
+      break;
+    default:
+      break;
+  }
+  return ss;
 }
 
 const char* SessionStateToString(AudioSessionState state) {
@@ -204,15 +232,23 @@ bool CoreAudioBase::IsDefaultCommunicationsDevice(int index) const {
   return index == kDefaultCommunications;
 }
 
-bool CoreAudioBase::IsDefaultDevice(const std::string& device_id) const {
+bool CoreAudioBase::IsDefaultDeviceId(const std::string& device_id) const {
+  // Returns true if |device_id| corresponds to the id of the default
+  // device. Note that, if only one device is available (or if the user has not
+  // explicitly set a default device), |device_id| will also math
+  // IsDefaultCommunicationsDeviceId().
   return (IsInput() &&
           (device_id == core_audio_utility::GetDefaultInputDeviceID())) ||
          (IsOutput() &&
           (device_id == core_audio_utility::GetDefaultOutputDeviceID()));
 }
 
-bool CoreAudioBase::IsDefaultCommunicationsDevice(
+bool CoreAudioBase::IsDefaultCommunicationsDeviceId(
     const std::string& device_id) const {
+  // Returns true if |device_id| corresponds to the id of the default
+  // communication device. Note that, if only one device is available (or if
+  // the user has not explicitly set a communication device), |device_id| will
+  // also math IsDefaultDeviceId().
   return (IsInput() &&
           (device_id ==
            core_audio_utility::GetCommunicationsInputDeviceID())) ||
@@ -256,13 +292,14 @@ std::string CoreAudioBase::GetDeviceID(int index) const {
 
 int CoreAudioBase::SetDevice(int index) {
   RTC_DLOG(INFO) << __FUNCTION__ << "[" << DirectionToString(direction())
-                 << "]";
+                 << "]: index=" << IndexToString(index);
   if (initialized_) {
     return -1;
   }
 
   std::string device_id = GetDeviceID(index);
-  RTC_DLOG(INFO) << "index=" << index << " => device_id: " << device_id;
+  RTC_DLOG(INFO) << "index=" << IndexToString(index)
+                 << " => device_id: " << device_id;
   device_index_ = index;
   device_id_ = device_id;
 
@@ -273,7 +310,7 @@ int CoreAudioBase::DeviceName(int index,
                               std::string* name,
                               std::string* guid) const {
   RTC_DLOG(INFO) << __FUNCTION__ << "[" << DirectionToString(direction())
-                 << "]";
+                 << "]: index=" << IndexToString(index);
   if (index > NumberOfEnumeratedDevices() - 1) {
     RTC_LOG(LS_ERROR) << "Invalid device index";
     return -1;
@@ -282,7 +319,9 @@ int CoreAudioBase::DeviceName(int index,
   AudioDeviceNames device_names;
   bool ok = IsInput() ? core_audio_utility::GetInputDeviceNames(&device_names)
                       : core_audio_utility::GetOutputDeviceNames(&device_names);
-  if (!ok) {
+  // Validate the index one extra time in-case the size of the generated list
+  // did not match NumberOfEnumeratedDevices().
+  if (!ok || static_cast<int>(device_names.size()) <= index) {
     RTC_LOG(LS_ERROR) << "Failed to get the device name";
     return -1;
   }
@@ -291,7 +330,7 @@ int CoreAudioBase::DeviceName(int index,
   RTC_DLOG(INFO) << "name: " << *name;
   if (guid != nullptr) {
     *guid = device_names[index].unique_id;
-    RTC_DLOG(INFO) << "guid: " << guid;
+    RTC_DLOG(INFO) << "guid: " << *guid;
   }
   return 0;
 }
@@ -299,24 +338,26 @@ int CoreAudioBase::DeviceName(int index,
 bool CoreAudioBase::Init() {
   RTC_DLOG(INFO) << __FUNCTION__ << "[" << DirectionToString(direction())
                  << "]";
+  RTC_DCHECK_GE(device_index_, 0);
   RTC_DCHECK(!device_id_.empty());
   RTC_DCHECK(audio_device_buffer_);
   RTC_DCHECK(!audio_client_);
   RTC_DCHECK(!audio_session_control_.Get());
 
-  // Use an existing |device_id_| and set parameters which are required to
-  // create an audio client. It is up to the parent class to set |device_id_|.
-  std::string device_id = device_id_;
-  ERole role = eConsole;
-  if (IsDefaultDevice(device_id)) {
-    device_id = AudioDeviceName::kDefaultDeviceId;
+  // Use an existing combination of |device_index_| and |device_id_| to set
+  // parameters which are required to create an audio client. It is up to the
+  // parent class to set |device_index_| and |device_id_|.
+  std::string device_id = AudioDeviceName::kDefaultDeviceId;
+  ERole role = ERole();
+  if (IsDefaultDevice(device_index_)) {
     role = eConsole;
-  } else if (IsDefaultCommunicationsDevice(device_id)) {
-    device_id = AudioDeviceName::kDefaultCommunicationsDeviceId;
+  } else if (IsDefaultCommunicationsDevice(device_index_)) {
     role = eCommunications;
   } else {
-    RTC_DLOG(LS_WARNING) << "Not using a default device";
+    device_id = device_id_;
   }
+  RTC_LOG(LS_INFO) << "Unique device identifier: device_id=" << device_id
+                   << ", role=" << RoleToString(role);
 
   // Create an IAudioClient interface which enables us to create and initialize
   // an audio stream between an audio application and the audio engine.
@@ -391,7 +432,7 @@ bool CoreAudioBase::Init() {
   format_.dwChannelMask =
       format->nChannels == 1 ? KSAUDIO_SPEAKER_MONO : KSAUDIO_SPEAKER_STEREO;
   format_.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
-  RTC_DLOG(INFO) << core_audio_utility::WaveFormatExToString(&format_);
+  RTC_DLOG(INFO) << core_audio_utility::WaveFormatToString(&format_);
 
   // Verify that the format is supported but exclude the test if the default
   // sample rate has been overridden. If so, the WASAPI audio engine will do
@@ -516,7 +557,7 @@ bool CoreAudioBase::Start() {
   // Start an audio thread but only if one does not already exist (which is the
   // case during restart).
   if (!audio_thread_) {
-    audio_thread_ = absl::make_unique<rtc::PlatformThread>(
+    audio_thread_ = std::make_unique<rtc::PlatformThread>(
         Run, this, IsInput() ? "wasapi_capture_thread" : "wasapi_render_thread",
         rtc::kRealtimePriority);
     RTC_DCHECK(audio_thread_);

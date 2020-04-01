@@ -10,12 +10,15 @@
 
 #include "test/pc/e2e/analyzer/video/single_process_encoded_image_data_injector.h"
 
+#include <inttypes.h>
 #include <algorithm>
 #include <cstddef>
 
 #include "absl/memory/memory.h"
 #include "api/video/encoded_image.h"
+#include "modules/rtp_rtcp/source/byte_io.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -24,6 +27,13 @@ namespace {
 // Number of bytes from the beginning of the EncodedImage buffer that will be
 // used to store frame id and sub id.
 constexpr size_t kUsedBufferSize = 3;
+
+std::string UInt64ToHex(uint64_t value) {
+  char buffer[50];
+  snprintf(buffer, sizeof(buffer), "0x%016" PRIx64, value);
+
+  return std::string(buffer);
+}
 
 }  // namespace
 
@@ -56,6 +66,22 @@ EncodedImage SingleProcessEncodedImageDataInjector::InjectData(
   out.data()[insertion_pos] = id & 0x00ff;
   out.data()[insertion_pos + 1] = (id & 0xff00) >> 8;
   out.data()[insertion_pos + 2] = info.sub_id;
+
+  // Debug logging start
+  RTC_CHECK_GE(source.size(), 8);
+  DebugLogEntry entry;
+  entry.side = LogSide::kSend;
+  entry.frame_id = id;
+  entry.size = source.size();
+  entry.image_starting = ByteReader<uint64_t>::ReadBigEndian(source.data());
+  entry.image_ending =
+      ByteReader<uint64_t>::ReadBigEndian(&source.data()[source.size() - 8]);
+  {
+    rtc::CritScope crit(&debug_lock_);
+    debug_logs.push_back(entry);
+  }
+  // Debug logging end
+
   return out;
 }
 
@@ -68,6 +94,17 @@ EncodedImageExtractionResult SingleProcessEncodedImageDataInjector::ExtractData(
   // out will have a copy for it, so we can operate on the |out| buffer only.
   uint8_t* buffer = out.data();
   size_t size = out.size();
+
+  // Debug logging start
+  RTC_CHECK_GE(source.size(), 8);
+  DebugLogEntry entry;
+  entry.side = LogSide::kReceive;
+  entry.size = source.size();
+  entry.image_starting = ByteReader<uint64_t>::ReadBigEndian(source.data());
+  entry.image_ending =
+      ByteReader<uint64_t>::ReadBigEndian(&source.data()[source.size() - 8]);
+  bool is_debug_logged = false;
+  // Debug logging end
 
   // |pos| is pointing to end of current encoded image.
   size_t pos = size - 1;
@@ -86,12 +123,45 @@ EncodedImageExtractionResult SingleProcessEncodedImageDataInjector::ExtractData(
         << "Different frames encoded into single encoded image: " << *id
         << " vs " << next_id;
     id = next_id;
+
+    // Debug logging start
+    if (!is_debug_logged) {
+      entry.frame_id = next_id;
+      {
+        rtc::CritScope crit(&debug_lock_);
+        debug_logs.push_back(entry);
+      }
+      is_debug_logged = true;
+    }
+    // Debug logging end
+
     ExtractionInfo info;
     {
       rtc::CritScope crit(&lock_);
       auto ext_vector_it = extraction_cache_.find(next_id);
-      RTC_CHECK(ext_vector_it != extraction_cache_.end())
-          << "Unknown frame_id=" << next_id;
+      // We replace RTC_CHECK on if here to add some debug logging.
+      if (ext_vector_it == extraction_cache_.end()) {
+        {
+          rtc::CritScope crit(&debug_lock_);
+          RTC_LOG(INFO) << "##################################################";
+          RTC_LOG(INFO) << "# SingleProcessEncodedImageDataInjector crashed! #";
+          RTC_LOG(INFO) << "##################################################";
+          for (const auto& entry : debug_logs) {
+            RTC_LOG(INFO) << "## SPEIDI: Frame: " << entry.frame_id
+                          << "; Side: "
+                          << (entry.side == LogSide::kSend ? "kSend"
+                                                           : "kReceive")
+                          << "; Size: " << entry.size
+                          << "; EncodedImage starts with: "
+                          << UInt64ToHex(entry.image_starting)
+                          << "; EncodedImage ends with: "
+                          << UInt64ToHex(entry.image_ending);
+          }
+        }
+        RTC_CHECK(false) << "Unknown frame_id=" << next_id;
+      }
+      // RTC_CHECK(ext_vector_it != extraction_cache_.end())
+      //     << "Unknown frame_id=" << next_id;
 
       auto info_it = ext_vector_it->second.infos.find(sub_id);
       RTC_CHECK(info_it != ext_vector_it->second.infos.end())

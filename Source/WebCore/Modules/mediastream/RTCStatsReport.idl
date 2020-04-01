@@ -56,7 +56,6 @@ dictionary RTCStats {
 
 dictionary RTCRTPStreamStats : RTCStats {
     unsigned long ssrc;
-    DOMString associateStatsId;
     boolean isRemote = false;
     DOMString mediaType;
     DOMString trackId;

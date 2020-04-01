@@ -16,7 +16,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "api/units/time_delta.h"
 #include "p2p/base/basic_packet_socket_factory.h"
@@ -167,7 +166,7 @@ class TurnPortTest : public ::testing::Test,
     // Some code uses "last received time == 0" to represent "nothing received
     // so far", so we need to start the fake clock at a nonzero time...
     // TODO(deadbeef): Fix this.
-    fake_clock_.AdvanceTime(webrtc::TimeDelta::seconds(1));
+    fake_clock_.AdvanceTime(webrtc::TimeDelta::Seconds(1));
   }
 
   virtual void OnMessage(rtc::Message* msg) {
@@ -838,7 +837,7 @@ TEST_F(TurnPortTest, TestTurnAllocateWithLoggingId) {
   CreateTurnPort(kTurnUsername, kTurnPassword, kTurnUdpProtoAddr);
   turn_port_->SetTurnLoggingId("KESO");
   turn_server_.server()->SetStunMessageObserver(
-      absl::make_unique<TurnLoggingIdValidator>("KESO"));
+      std::make_unique<TurnLoggingIdValidator>("KESO"));
   turn_port_->PrepareAddress();
   EXPECT_TRUE_SIMULATED_WAIT(turn_ready_, kSimulatedRtt * 2, fake_clock_);
   ASSERT_EQ(1U, turn_port_->Candidates().size());
@@ -850,7 +849,7 @@ TEST_F(TurnPortTest, TestTurnAllocateWithLoggingId) {
 TEST_F(TurnPortTest, TestTurnAllocateWithoutLoggingId) {
   CreateTurnPort(kTurnUsername, kTurnPassword, kTurnUdpProtoAddr);
   turn_server_.server()->SetStunMessageObserver(
-      absl::make_unique<TurnLoggingIdValidator>(nullptr));
+      std::make_unique<TurnLoggingIdValidator>(nullptr));
   turn_port_->PrepareAddress();
   EXPECT_TRUE_SIMULATED_WAIT(turn_ready_, kSimulatedRtt * 2, fake_clock_);
   ASSERT_EQ(1U, turn_port_->Candidates().size());
@@ -932,9 +931,9 @@ TEST_F(TurnPortTest,
   EXPECT_EQ_SIMULATED_WAIT(error_event_.error_code, STUN_ERROR_GLOBAL_FAILURE,
                            kSimulatedRtt, fake_clock_);
   ASSERT_NE(error_event_.error_text.find("."), std::string::npos);
-  ASSERT_NE(
-      error_event_.host_candidate.find(kLocalAddr2.HostAsSensitiveURIString()),
-      std::string::npos);
+  ASSERT_NE(error_event_.address.find(kLocalAddr2.HostAsSensitiveURIString()),
+            std::string::npos);
+  ASSERT_NE(error_event_.port, 0);
   std::string server_url =
       "turn:" + kTurnTcpIntAddr.ToString() + "?transport=tcp";
   ASSERT_EQ(error_event_.url, server_url);

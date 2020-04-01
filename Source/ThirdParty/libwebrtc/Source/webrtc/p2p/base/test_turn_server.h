@@ -14,8 +14,8 @@
 #include <string>
 #include <vector>
 
+#include "api/transport/stun.h"
 #include "p2p/base/basic_packet_socket_factory.h"
-#include "p2p/base/stun.h"
 #include "p2p/base/turn_server.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/ssl_adapter.h"

@@ -13,9 +13,7 @@ rtc_source_set("unit_base") {
     "../../api/units:*",
     ":*",
   ]
-  sources = [
-    "unit_base.h",
-  ]
+  sources = [ "unit_base.h" ]
 
   deps = [
     "../../rtc_base:checks",
@@ -24,11 +22,9 @@ rtc_source_set("unit_base") {
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("units_unittests") {
+  rtc_library("units_unittests") {
     testonly = true
-    sources = [
-      "unit_base_unittest.cc",
-    ]
+    sources = [ "unit_base_unittest.cc" ]
     deps = [
       ":unit_base",
       "../../test:test_support",

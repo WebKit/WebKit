@@ -33,7 +33,7 @@ class RTC_EXPORT RTCStatsReport : public rtc::RefCountInterface {
  public:
   typedef std::map<std::string, std::unique_ptr<const RTCStats>> StatsMap;
 
-  class ConstIterator {
+  class RTC_EXPORT ConstIterator {
    public:
     ConstIterator(ConstIterator&& other);
     ~ConstIterator();

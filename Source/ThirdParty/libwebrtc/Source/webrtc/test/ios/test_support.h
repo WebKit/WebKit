@@ -11,6 +11,11 @@
 #ifndef TEST_IOS_TEST_SUPPORT_H_
 #define TEST_IOS_TEST_SUPPORT_H_
 
+#include <string>
+#include <vector>
+
+#include "absl/types/optional.h"
+
 namespace rtc {
 namespace test {
 // Launches an iOS app that serves as a host for a test suite.
@@ -20,7 +25,8 @@ void RunTestsFromIOSApp();
 void InitTestSuite(int (*test_suite)(void),
                    int argc,
                    char* argv[],
-                   bool save_chartjson_result);
+                   bool save_chartjson_result,
+                   absl::optional<std::vector<std::string>> metrics_to_plot);
 
 }  // namespace test
 }  // namespace rtc

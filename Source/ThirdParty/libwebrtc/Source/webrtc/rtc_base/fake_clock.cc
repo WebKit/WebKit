@@ -11,7 +11,7 @@
 #include "rtc_base/fake_clock.h"
 
 #include "rtc_base/checks.h"
-#include "rtc_base/message_queue.h"
+#include "rtc_base/thread.h"
 
 namespace rtc {
 
@@ -35,12 +35,12 @@ void ThreadProcessingFakeClock::SetTime(webrtc::Timestamp time) {
   clock_.SetTime(time);
   // If message queues are waiting in a socket select() with a timeout provided
   // by the OS, they should wake up and dispatch all messages that are ready.
-  MessageQueueManager::ProcessAllMessageQueuesForTesting();
+  ThreadManager::ProcessAllMessageQueuesForTesting();
 }
 
 void ThreadProcessingFakeClock::AdvanceTime(webrtc::TimeDelta delta) {
   clock_.AdvanceTime(delta);
-  MessageQueueManager::ProcessAllMessageQueuesForTesting();
+  ThreadManager::ProcessAllMessageQueuesForTesting();
 }
 
 ScopedBaseFakeClock::ScopedBaseFakeClock() {

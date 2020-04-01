@@ -20,6 +20,7 @@
 #include "api/crypto/frame_encryptor_interface.h"
 #include "api/dtls_transport_interface.h"
 #include "api/dtmf_sender_interface.h"
+#include "api/frame_transformer_interface.h"
 #include "api/media_stream_interface.h"
 #include "api/media_types.h"
 #include "api/proxy.h"
@@ -27,10 +28,11 @@
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
 #include "rtc_base/ref_count.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
-class RtpSenderInterface : public rtc::RefCountInterface {
+class RTC_EXPORT RtpSenderInterface : public rtc::RefCountInterface {
  public:
   // Returns true if successful in setting the track.
   // Fails if an audio track is set on a video RtpSender, or vice-versa.
@@ -92,6 +94,9 @@ class RtpSenderInterface : public rtc::RefCountInterface {
   // user. This can be used to update the state of the object.
   virtual rtc::scoped_refptr<FrameEncryptorInterface> GetFrameEncryptor() const;
 
+  virtual void SetEncoderToPacketizerFrameTransformer(
+      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer);
+
  protected:
   ~RtpSenderInterface() override = default;
 };
@@ -118,6 +123,9 @@ PROXY_METHOD1(void,
 PROXY_CONSTMETHOD0(rtc::scoped_refptr<FrameEncryptorInterface>,
                    GetFrameEncryptor)
 PROXY_METHOD1(void, SetStreams, const std::vector<std::string>&)
+PROXY_METHOD1(void,
+              SetEncoderToPacketizerFrameTransformer,
+              rtc::scoped_refptr<FrameTransformerInterface>)
 END_PROXY_MAP()
 
 }  // namespace webrtc

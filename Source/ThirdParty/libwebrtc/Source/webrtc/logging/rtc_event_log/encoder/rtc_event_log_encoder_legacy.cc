@@ -363,6 +363,7 @@ std::string RtcEventLogEncoderLegacy::Encode(const RtcEvent& event) {
       return EncodeVideoSendStreamConfig(rtc_event);
     }
     case RtcEvent::Type::RouteChangeEvent:
+    case RtcEvent::Type::RemoteEstimateEvent:
     case RtcEvent::Type::GenericPacketReceived:
     case RtcEvent::Type::GenericPacketSent:
     case RtcEvent::Type::GenericAckReceived:
@@ -673,7 +674,8 @@ std::string RtcEventLogEncoderLegacy::EncodeVideoSendStreamConfig(
     if (event.config().codecs.size() > 1) {
       RTC_LOG(WARNING)
           << "LogVideoSendStreamConfig currently only supports one "
-          << "codec. Logging codec :" << codec.payload_name;
+             "codec. Logging codec :"
+          << codec.payload_name;
       break;
     }
   }

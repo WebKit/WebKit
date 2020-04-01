@@ -15,6 +15,7 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "modules/audio_processing/aec3/alignment_mixer.h"
 #include "modules/audio_processing/aec3/clockdrift_detector.h"
 #include "modules/audio_processing/aec3/decimator.h"
 #include "modules/audio_processing/aec3/delay_estimate.h"
@@ -32,7 +33,8 @@ struct EchoCanceller3Config;
 class EchoPathDelayEstimator {
  public:
   EchoPathDelayEstimator(ApmDataDumper* data_dumper,
-                         const EchoCanceller3Config& config);
+                         const EchoCanceller3Config& config,
+                         size_t num_capture_channels);
   ~EchoPathDelayEstimator();
 
   // Resets the estimation. If the delay confidence is reset, the reset behavior
@@ -42,7 +44,7 @@ class EchoPathDelayEstimator {
   // Produce a delay estimate if such is avaliable.
   absl::optional<DelayEstimate> EstimateDelay(
       const DownsampledRenderBuffer& render_buffer,
-      rtc::ArrayView<const float> capture);
+      const std::vector<std::vector<float>>& capture);
 
   // Log delay estimator properties.
   void LogDelayEstimationProperties(int sample_rate_hz, size_t shift) const {
@@ -59,6 +61,7 @@ class EchoPathDelayEstimator {
   ApmDataDumper* const data_dumper_;
   const size_t down_sampling_factor_;
   const size_t sub_block_size_;
+  AlignmentMixer capture_mixer_;
   Decimator capture_decimator_;
   MatchedFilter matched_filter_;
   MatchedFilterLagAggregator matched_filter_lag_aggregator_;

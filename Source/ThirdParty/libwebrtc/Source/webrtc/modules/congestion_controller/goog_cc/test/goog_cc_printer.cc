@@ -70,7 +70,7 @@ GoogCcStatePrinter::GoogCcStatePrinter() {
 
 std::deque<FieldLogger*> GoogCcStatePrinter::CreateLoggers() {
   auto stable_estimate = [this] {
-    return DataRate::kbps(
+    return DataRate::KilobitsPerSec(
         controller_->delay_based_bwe_->rate_control_.link_capacity_
             .estimate_kbps_.value_or(-INFINITY));
   };
@@ -80,7 +80,7 @@ std::deque<FieldLogger*> GoogCcStatePrinter::CreateLoggers() {
   };
   auto trend = [this] {
     return reinterpret_cast<TrendlineEstimator*>(
-        controller_->delay_based_bwe_->delay_detector_.get());
+        controller_->delay_based_bwe_->active_delay_detector_);
   };
   auto acknowledged_rate = [this] {
     return controller_->acknowledged_bitrate_estimator_->bitrate();
@@ -91,9 +91,9 @@ std::deque<FieldLogger*> GoogCcStatePrinter::CreateLoggers() {
   };
   std::deque<FieldLogger*> loggers({
       Log("time", [=] { return target_.at_time; }),
-      Log("bandwidth", [=] { return target_.network_estimate.bandwidth; }),
       Log("rtt", [=] { return target_.network_estimate.round_trip_time; }),
       Log("target", [=] { return target_.target_rate; }),
+      Log("stable_target", [=] { return target_.stable_target_rate; }),
       Log("pacing", [=] { return pacing_.data_rate(); }),
       Log("padding", [=] { return pacing_.pad_rate(); }),
       Log("window", [=] { return congestion_window_; }),

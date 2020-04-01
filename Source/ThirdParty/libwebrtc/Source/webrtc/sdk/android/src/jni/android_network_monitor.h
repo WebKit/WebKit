@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "rtc_base/network_monitor.h"
 #include "rtc_base/thread_checker.h"
 #include "sdk/android/src/jni/jni_helpers.h"
@@ -61,8 +62,8 @@ struct NetworkInformation {
 class AndroidNetworkMonitor : public rtc::NetworkMonitorBase,
                               public rtc::NetworkBinderInterface {
  public:
-  explicit AndroidNetworkMonitor(JNIEnv* env,
-                                 const JavaRef<jobject>& j_application_context);
+  AndroidNetworkMonitor(JNIEnv* env,
+                        const JavaRef<jobject>& j_application_context);
   ~AndroidNetworkMonitor() override;
 
   // TODO(sakal): Remove once down stream dependencies have been updated.
@@ -94,6 +95,10 @@ class AndroidNetworkMonitor : public rtc::NetworkMonitorBase,
                                  const JavaRef<jobject>& j_caller,
                                  const JavaRef<jobjectArray>& j_network_infos);
 
+  // Visible for testing.
+  absl::optional<NetworkHandle> FindNetworkHandleFromAddress(
+      const rtc::IPAddress& address) const;
+
  private:
   void OnNetworkConnected_w(const NetworkInformation& network_info);
   void OnNetworkDisconnected_w(NetworkHandle network_handle);
@@ -107,6 +112,7 @@ class AndroidNetworkMonitor : public rtc::NetworkMonitorBase,
   std::map<std::string, rtc::AdapterType> vpn_underlying_adapter_type_by_name_;
   std::map<rtc::IPAddress, NetworkHandle> network_handle_by_address_;
   std::map<NetworkHandle, NetworkInformation> network_info_by_handle_;
+  bool find_network_handle_without_ipv6_temporary_part_;
 };
 
 class AndroidNetworkMonitorFactory : public rtc::NetworkMonitorFactory {

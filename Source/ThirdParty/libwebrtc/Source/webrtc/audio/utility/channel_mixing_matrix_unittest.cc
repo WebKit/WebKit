@@ -16,6 +16,7 @@
 #include "rtc_base/arraysize.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/field_trial.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -124,7 +125,9 @@ TEST(ChannelMixingMatrixTest, MonoToStereo) {
   EXPECT_EQ(1.0f, matrix[1][0]);
 }
 
-TEST(ChannelMixingMatrixTest, MonoToTwoOne) {
+TEST(ChannelMixingMatrixTest, MonoToTwoOneWithoutVoIPAdjustments) {
+  test::ScopedFieldTrials field_trials(
+      "WebRTC-VoIPChannelRemixingAdjustmentKillSwitch/Enabled/");
   ChannelLayout input_layout = CHANNEL_LAYOUT_MONO;
   ChannelLayout output_layout = CHANNEL_LAYOUT_2_1;
   ChannelMixingMatrix matrix_builder(
@@ -145,6 +148,157 @@ TEST(ChannelMixingMatrixTest, MonoToTwoOne) {
   EXPECT_EQ(1.0f, matrix[0][0]);
   EXPECT_EQ(1.0f, matrix[1][0]);
   EXPECT_EQ(0.0f, matrix[2][0]);
+}
+
+TEST(ChannelMixingMatrixTest, MonoToTwoOneWithVoIPAdjustments) {
+  ChannelLayout input_layout = CHANNEL_LAYOUT_MONO;
+  ChannelLayout output_layout = CHANNEL_LAYOUT_2_1;
+  ChannelMixingMatrix matrix_builder(
+      input_layout, ChannelLayoutToChannelCount(input_layout), output_layout,
+      ChannelLayoutToChannelCount(output_layout));
+  std::vector<std::vector<float>> matrix;
+  bool remapping = matrix_builder.CreateTransformationMatrix(&matrix);
+
+  //                         Input: mono
+  //                         CENTER
+  // Output: 2.1 FRONT_LEFT  1
+  //             FRONT_RIGHT 1
+  //             BACK_CENTER 0
+  //
+  EXPECT_TRUE(remapping);
+  EXPECT_EQ(3u, matrix.size());
+  EXPECT_EQ(1u, matrix[0].size());
+  EXPECT_EQ(1.0f, matrix[0][0]);
+  EXPECT_EQ(1.0f, matrix[1][0]);
+  EXPECT_EQ(0.0f, matrix[2][0]);
+}
+
+TEST(ChannelMixingMatrixTest, MonoToFiveOneWithoutVoIPAdjustments) {
+  test::ScopedFieldTrials field_trials(
+      "WebRTC-VoIPChannelRemixingAdjustmentKillSwitch/Enabled/");
+  ChannelLayout input_layout = CHANNEL_LAYOUT_MONO;
+  ChannelLayout output_layout = CHANNEL_LAYOUT_5_1;
+  const int input_channels = ChannelLayoutToChannelCount(input_layout);
+  const int output_channels = ChannelLayoutToChannelCount(output_layout);
+  ChannelMixingMatrix matrix_builder(input_layout, input_channels,
+                                     output_layout, output_channels);
+  std::vector<std::vector<float>> matrix;
+  bool remapping = matrix_builder.CreateTransformationMatrix(&matrix);
+  //                         Input: mono
+  //                         CENTER
+  // Output: 5.1 LEFT        0
+  //             RIGHT       0
+  //             CENTER      1
+  //             LFE         0
+  //             SIDE_LEFT   0
+  //             SIDE_RIGHT  0
+  //
+  EXPECT_TRUE(remapping);
+  EXPECT_EQ(static_cast<size_t>(output_channels), matrix.size());
+  for (int n = 0; n < output_channels; n++) {
+    EXPECT_EQ(static_cast<size_t>(input_channels), matrix[n].size());
+    if (n == CENTER) {
+      EXPECT_EQ(1.0f, matrix[CENTER][0]);
+    } else {
+      EXPECT_EQ(0.0f, matrix[n][0]);
+    }
+  }
+}
+
+TEST(ChannelMixingMatrixTest, MonoToFiveOneWithVoIPAdjustments) {
+  ChannelLayout input_layout = CHANNEL_LAYOUT_MONO;
+  ChannelLayout output_layout = CHANNEL_LAYOUT_5_1;
+  const int input_channels = ChannelLayoutToChannelCount(input_layout);
+  const int output_channels = ChannelLayoutToChannelCount(output_layout);
+  ChannelMixingMatrix matrix_builder(input_layout, input_channels,
+                                     output_layout, output_channels);
+  std::vector<std::vector<float>> matrix;
+  bool remapping = matrix_builder.CreateTransformationMatrix(&matrix);
+  //                         Input: mono
+  //                         CENTER
+  // Output: 5.1 LEFT        1
+  //             RIGHT       1
+  //             CENTER      0
+  //             LFE         0
+  //             SIDE_LEFT   0
+  //             SIDE_RIGHT  0
+  //
+  EXPECT_TRUE(remapping);
+  EXPECT_EQ(static_cast<size_t>(output_channels), matrix.size());
+  for (int n = 0; n < output_channels; n++) {
+    EXPECT_EQ(static_cast<size_t>(input_channels), matrix[n].size());
+    if (n == LEFT || n == RIGHT) {
+      EXPECT_EQ(1.0f, matrix[n][0]);
+    } else {
+      EXPECT_EQ(0.0f, matrix[n][0]);
+    }
+  }
+}
+
+TEST(ChannelMixingMatrixTest, MonoToSevenOneWithoutVoIPAdjustments) {
+  test::ScopedFieldTrials field_trials(
+      "WebRTC-VoIPChannelRemixingAdjustmentKillSwitch/Enabled/");
+  ChannelLayout input_layout = CHANNEL_LAYOUT_MONO;
+  ChannelLayout output_layout = CHANNEL_LAYOUT_7_1;
+  const int input_channels = ChannelLayoutToChannelCount(input_layout);
+  const int output_channels = ChannelLayoutToChannelCount(output_layout);
+  ChannelMixingMatrix matrix_builder(input_layout, input_channels,
+                                     output_layout, output_channels);
+  std::vector<std::vector<float>> matrix;
+  bool remapping = matrix_builder.CreateTransformationMatrix(&matrix);
+  //                         Input: mono
+  //                         CENTER
+  // Output: 7.1 LEFT        0
+  //             RIGHT       0
+  //             CENTER      1
+  //             LFE         0
+  //             SIDE_LEFT   0
+  //             SIDE_RIGHT  0
+  //             BACK_LEFT   0
+  //             BACK_RIGHT  0
+  //
+  EXPECT_TRUE(remapping);
+  EXPECT_EQ(static_cast<size_t>(output_channels), matrix.size());
+  for (int n = 0; n < output_channels; n++) {
+    EXPECT_EQ(static_cast<size_t>(input_channels), matrix[n].size());
+    if (n == CENTER) {
+      EXPECT_EQ(1.0f, matrix[CENTER][0]);
+    } else {
+      EXPECT_EQ(0.0f, matrix[n][0]);
+    }
+  }
+}
+
+TEST(ChannelMixingMatrixTest, MonoToSevenOneWithVoIPAdjustments) {
+  ChannelLayout input_layout = CHANNEL_LAYOUT_MONO;
+  ChannelLayout output_layout = CHANNEL_LAYOUT_7_1;
+  const int input_channels = ChannelLayoutToChannelCount(input_layout);
+  const int output_channels = ChannelLayoutToChannelCount(output_layout);
+  ChannelMixingMatrix matrix_builder(input_layout, input_channels,
+                                     output_layout, output_channels);
+  std::vector<std::vector<float>> matrix;
+  bool remapping = matrix_builder.CreateTransformationMatrix(&matrix);
+  //                         Input: mono
+  //                         CENTER
+  // Output: 7.1 LEFT        1
+  //             RIGHT       1
+  //             CENTER      0
+  //             LFE         0
+  //             SIDE_LEFT   0
+  //             SIDE_RIGHT  0
+  //             BACK_LEFT   0
+  //             BACK_RIGHT  0
+  //
+  EXPECT_TRUE(remapping);
+  EXPECT_EQ(static_cast<size_t>(output_channels), matrix.size());
+  for (int n = 0; n < output_channels; n++) {
+    EXPECT_EQ(static_cast<size_t>(input_channels), matrix[n].size());
+    if (n == LEFT || n == RIGHT) {
+      EXPECT_EQ(1.0f, matrix[n][0]);
+    } else {
+      EXPECT_EQ(0.0f, matrix[n][0]);
+    }
+  }
 }
 
 TEST(ChannelMixingMatrixTest, FiveOneToMono) {

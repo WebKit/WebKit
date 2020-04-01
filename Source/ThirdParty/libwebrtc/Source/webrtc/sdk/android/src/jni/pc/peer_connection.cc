@@ -32,7 +32,6 @@
 #include <string>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_event_log_output_file.h"
 #include "api/rtp_receiver_interface.h"
@@ -159,6 +158,8 @@ void JavaToNativeRTCConfiguration(
       Java_RTCConfiguration_getIceServers(jni, j_rtc_config);
   ScopedJavaLocalRef<jobject> j_continual_gathering_policy =
       Java_RTCConfiguration_getContinualGatheringPolicy(jni, j_rtc_config);
+  ScopedJavaLocalRef<jobject> j_turn_port_prune_policy =
+      Java_RTCConfiguration_getTurnPortPrunePolicy(jni, j_rtc_config);
   ScopedJavaLocalRef<jobject> j_turn_customizer =
       Java_RTCConfiguration_getTurnCustomizer(jni, j_rtc_config);
   ScopedJavaLocalRef<jobject> j_network_preference =
@@ -200,6 +201,8 @@ void JavaToNativeRTCConfiguration(
       Java_RTCConfiguration_getIceCandidatePoolSize(jni, j_rtc_config);
   rtc_config->prune_turn_ports =
       Java_RTCConfiguration_getPruneTurnPorts(jni, j_rtc_config);
+  rtc_config->turn_port_prune_policy =
+      JavaToNativePortPrunePolicy(jni, j_turn_port_prune_policy);
   rtc_config->presume_writable_when_fully_relayed =
       Java_RTCConfiguration_getPresumeWritableWhenFullyRelayed(jni,
                                                                j_rtc_config);
@@ -237,13 +240,6 @@ void JavaToNativeRTCConfiguration(
       Java_RTCConfiguration_getDisableIPv6OnWifi(jni, j_rtc_config);
   rtc_config->max_ipv6_networks =
       Java_RTCConfiguration_getMaxIPv6Networks(jni, j_rtc_config);
-  ScopedJavaLocalRef<jobject> j_ice_regather_interval_range =
-      Java_RTCConfiguration_getIceRegatherIntervalRange(jni, j_rtc_config);
-  if (!IsNull(jni, j_ice_regather_interval_range)) {
-    int min = Java_IntervalRange_getMin(jni, j_ice_regather_interval_range);
-    int max = Java_IntervalRange_getMax(jni, j_ice_regather_interval_range);
-    rtc_config->ice_regather_interval_range.emplace(min, max);
-  }
 
   rtc_config->turn_customizer = GetNativeTurnCustomizer(jni, j_turn_customizer);
 
@@ -275,6 +271,9 @@ void JavaToNativeRTCConfiguration(
                                                                 j_rtc_config);
   rtc_config->crypto_options =
       JavaToNativeOptionalCryptoOptions(jni, j_crypto_options);
+
+  rtc_config->allow_codec_switching = JavaToNativeOptionalBool(
+      jni, Java_RTCConfiguration_getAllowCodecSwitching(jni, j_rtc_config));
 
   ScopedJavaLocalRef<jstring> j_turn_logging_id =
       Java_RTCConfiguration_getTurnLoggingId(jni, j_rtc_config);
@@ -786,7 +785,7 @@ static jboolean JNI_PeerConnection_StartRtcEventLog(
     return false;
   }
   return ExtractNativePC(jni, j_pc)->StartRtcEventLog(
-      absl::make_unique<RtcEventLogOutputFile>(f, max_size));
+      std::make_unique<RtcEventLogOutputFile>(f, max_size));
 }
 
 static void JNI_PeerConnection_StopRtcEventLog(

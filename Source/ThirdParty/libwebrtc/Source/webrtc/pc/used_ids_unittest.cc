@@ -79,7 +79,7 @@ constexpr TestParams kOneByteTestParams = {
 constexpr TestParams kTwoByteTestParams = {
     UsedRtpHeaderExtensionIds::IdDomain::kTwoByteAllowed, 255};
 
-INSTANTIATE_TEST_SUITE_P(,
+INSTANTIATE_TEST_SUITE_P(All,
                          UsedRtpHeaderExtensionIdsTest,
                          ::testing::Values(kOneByteTestParams,
                                            kTwoByteTestParams));
@@ -152,7 +152,7 @@ TEST(UsedIdsDeathTest, DieWhenAllIdsAreOccupied) {
 }
 
 using UsedRtpHeaderExtensionIdsDeathTest = UsedRtpHeaderExtensionIdsTest;
-INSTANTIATE_TEST_SUITE_P(,
+INSTANTIATE_TEST_SUITE_P(All,
                          UsedRtpHeaderExtensionIdsDeathTest,
                          ::testing::Values(kOneByteTestParams,
                                            kTwoByteTestParams));

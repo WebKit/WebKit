@@ -275,7 +275,8 @@ void AudioManager::OnCacheAudioParameters(JNIEnv* env,
                                           jint input_buffer_size) {
   RTC_LOG(INFO)
       << "OnCacheAudioParameters: "
-      << "hardware_aec: " << static_cast<bool>(hardware_aec)
+         "hardware_aec: "
+      << static_cast<bool>(hardware_aec)
       << ", hardware_agc: " << static_cast<bool>(hardware_agc)
       << ", hardware_ns: " << static_cast<bool>(hardware_ns)
       << ", low_latency_output: " << static_cast<bool>(low_latency_output)

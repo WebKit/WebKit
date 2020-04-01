@@ -244,9 +244,11 @@ template <>
 absl::optional<double> ParseTypedParameter<double>(std::string str);
 template <>
 absl::optional<int> ParseTypedParameter<int>(std::string str);
-
 template <>
 absl::optional<unsigned> ParseTypedParameter<unsigned>(std::string str);
+template <>
+absl::optional<std::string> ParseTypedParameter<std::string>(std::string str);
+
 template <>
 absl::optional<absl::optional<bool>> ParseTypedParameter<absl::optional<bool>>(
     std::string str);
@@ -268,6 +270,8 @@ extern template class FieldTrialParameter<double>;
 extern template class FieldTrialParameter<int>;
 // Interpreted using sscanf %u.
 extern template class FieldTrialParameter<unsigned>;
+// Using the given value as is.
+extern template class FieldTrialParameter<std::string>;
 
 extern template class FieldTrialConstrained<double>;
 extern template class FieldTrialConstrained<int>;
@@ -277,6 +281,7 @@ extern template class FieldTrialOptional<double>;
 extern template class FieldTrialOptional<int>;
 extern template class FieldTrialOptional<unsigned>;
 extern template class FieldTrialOptional<bool>;
+extern template class FieldTrialOptional<std::string>;
 
 }  // namespace webrtc
 

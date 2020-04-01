@@ -14,6 +14,8 @@
 #include <memory>
 #include <vector>
 
+#include "absl/types/optional.h"
+#include "api/units/data_rate.h"
 #include "api/video_codecs/sdp_video_format.h"
 
 namespace webrtc {
@@ -37,6 +39,26 @@ class VideoEncoderFactory {
     bool has_internal_source;
   };
 
+  // An injectable class that is continuously updated with encoding conditions
+  // and selects the best encoder given those conditions.
+  class EncoderSelectorInterface {
+   public:
+    virtual ~EncoderSelectorInterface() {}
+
+    // Informs the encoder selector about which encoder that is currently being
+    // used.
+    virtual void OnCurrentEncoder(const SdpVideoFormat& format) = 0;
+
+    // Called every time the available bitrate is updated. Should return a
+    // non-empty if an encoder switch should be performed.
+    virtual absl::optional<SdpVideoFormat> OnAvailableBitrate(
+        const DataRate& rate) = 0;
+
+    // Called if the currently used encoder reports itself as broken. Should
+    // return a non-empty if an encoder switch should be performed.
+    virtual absl::optional<SdpVideoFormat> OnEncoderBroken() = 0;
+  };
+
   // Returns a list of supported video formats in order of preference, to use
   // for signaling etc.
   virtual std::vector<SdpVideoFormat> GetSupportedFormats() const = 0;
@@ -57,6 +79,10 @@ class VideoEncoderFactory {
   // Creates a VideoEncoder for the specified format.
   virtual std::unique_ptr<VideoEncoder> CreateVideoEncoder(
       const SdpVideoFormat& format) = 0;
+
+  virtual std::unique_ptr<EncoderSelectorInterface> GetEncoderSelector() const {
+    return nullptr;
+  }
 
   virtual ~VideoEncoderFactory() {}
 };

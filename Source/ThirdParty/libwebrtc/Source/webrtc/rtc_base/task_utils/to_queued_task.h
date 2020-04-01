@@ -15,7 +15,6 @@
 #include <type_traits>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "api/task_queue/queued_task.h"
 
 namespace webrtc {
@@ -57,13 +56,13 @@ class ClosureTaskWithCleanup : public ClosureTask<Closure> {
 // based parameters.
 template <typename Closure>
 std::unique_ptr<QueuedTask> ToQueuedTask(Closure&& closure) {
-  return absl::make_unique<webrtc_new_closure_impl::ClosureTask<Closure>>(
+  return std::make_unique<webrtc_new_closure_impl::ClosureTask<Closure>>(
       std::forward<Closure>(closure));
 }
 
 template <typename Closure, typename Cleanup>
 std::unique_ptr<QueuedTask> ToQueuedTask(Closure&& closure, Cleanup&& cleanup) {
-  return absl::make_unique<
+  return std::make_unique<
       webrtc_new_closure_impl::ClosureTaskWithCleanup<Closure, Cleanup>>(
       std::forward<Closure>(closure), std::forward<Cleanup>(cleanup));
 }

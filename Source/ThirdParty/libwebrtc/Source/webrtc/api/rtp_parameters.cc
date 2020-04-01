@@ -132,6 +132,9 @@ const char RtpExtension::kGenericFrameDescriptorUri00[] =
     "http://www.webrtc.org/experiments/rtp-hdrext/generic-frame-descriptor-00";
 const char RtpExtension::kGenericFrameDescriptorUri01[] =
     "http://www.webrtc.org/experiments/rtp-hdrext/generic-frame-descriptor-01";
+const char RtpExtension::kDependencyDescriptorUri[] =
+    "https://aomediacodec.github.io/av1-rtp-spec/"
+    "#dependency-descriptor-rtp-header-extension";
 const char RtpExtension::kGenericFrameDescriptorUri[] =
     "http://www.webrtc.org/experiments/rtp-hdrext/generic-frame-descriptor-00";
 
@@ -156,8 +159,7 @@ constexpr int RtpExtension::kOneByteHeaderExtensionMaxValueSize;
 bool RtpExtension::IsSupportedForAudio(const std::string& uri) {
   return uri == webrtc::RtpExtension::kAudioLevelUri ||
          uri == webrtc::RtpExtension::kAbsSendTimeUri ||
-         // TODO(bugs.webrtc.org/10739): Uncomment once the audio impl is ready.
-         // uri == webrtc::RtpExtension::kAbsoluteCaptureTimeUri ||
+         uri == webrtc::RtpExtension::kAbsoluteCaptureTimeUri ||
          uri == webrtc::RtpExtension::kTransportSequenceNumberUri ||
          uri == webrtc::RtpExtension::kTransportSequenceNumberV2Uri ||
          uri == webrtc::RtpExtension::kMidUri ||
@@ -168,8 +170,7 @@ bool RtpExtension::IsSupportedForAudio(const std::string& uri) {
 bool RtpExtension::IsSupportedForVideo(const std::string& uri) {
   return uri == webrtc::RtpExtension::kTimestampOffsetUri ||
          uri == webrtc::RtpExtension::kAbsSendTimeUri ||
-         // TODO(bugs.webrtc.org/10739): Uncomment once the video impl is ready.
-         // uri == webrtc::RtpExtension::kAbsoluteCaptureTimeUri ||
+         uri == webrtc::RtpExtension::kAbsoluteCaptureTimeUri ||
          uri == webrtc::RtpExtension::kVideoRotationUri ||
          uri == webrtc::RtpExtension::kTransportSequenceNumberUri ||
          uri == webrtc::RtpExtension::kTransportSequenceNumberV2Uri ||
@@ -180,6 +181,7 @@ bool RtpExtension::IsSupportedForVideo(const std::string& uri) {
          uri == webrtc::RtpExtension::kFrameMarkingUri ||
          uri == webrtc::RtpExtension::kGenericFrameDescriptorUri00 ||
          uri == webrtc::RtpExtension::kGenericFrameDescriptorUri01 ||
+         uri == webrtc::RtpExtension::kDependencyDescriptorUri ||
          uri == webrtc::RtpExtension::kColorSpaceUri ||
          uri == webrtc::RtpExtension::kRidUri ||
          uri == webrtc::RtpExtension::kRepairedRidUri;

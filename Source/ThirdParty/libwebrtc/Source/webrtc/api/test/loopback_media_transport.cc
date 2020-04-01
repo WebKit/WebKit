@@ -10,94 +10,16 @@
 
 #include "api/test/loopback_media_transport.h"
 
+#include <memory>
+
 #include "absl/algorithm/container.h"
-#include "absl/memory/memory.h"
 #include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
 namespace {
 
-// Wrapper used to hand out unique_ptrs to loopback media transports without
-// ownership changes.
-class WrapperMediaTransport : public MediaTransportInterface {
- public:
-  explicit WrapperMediaTransport(MediaTransportInterface* wrapped)
-      : wrapped_(wrapped) {}
-
-  RTCError SendAudioFrame(uint64_t channel_id,
-                          MediaTransportEncodedAudioFrame frame) override {
-    return wrapped_->SendAudioFrame(channel_id, std::move(frame));
-  }
-
-  RTCError SendVideoFrame(
-      uint64_t channel_id,
-      const MediaTransportEncodedVideoFrame& frame) override {
-    return wrapped_->SendVideoFrame(channel_id, frame);
-  }
-
-  void SetKeyFrameRequestCallback(
-      MediaTransportKeyFrameRequestCallback* callback) override {
-    wrapped_->SetKeyFrameRequestCallback(callback);
-  }
-
-  RTCError RequestKeyFrame(uint64_t channel_id) override {
-    return wrapped_->RequestKeyFrame(channel_id);
-  }
-
-  void SetReceiveAudioSink(MediaTransportAudioSinkInterface* sink) override {
-    wrapped_->SetReceiveAudioSink(sink);
-  }
-
-  void SetReceiveVideoSink(MediaTransportVideoSinkInterface* sink) override {
-    wrapped_->SetReceiveVideoSink(sink);
-  }
-
-  void AddTargetTransferRateObserver(
-      TargetTransferRateObserver* observer) override {
-    wrapped_->AddTargetTransferRateObserver(observer);
-  }
-
-  void RemoveTargetTransferRateObserver(
-      TargetTransferRateObserver* observer) override {
-    wrapped_->RemoveTargetTransferRateObserver(observer);
-  }
-
-  void SetMediaTransportStateCallback(
-      MediaTransportStateCallback* callback) override {
-    wrapped_->SetMediaTransportStateCallback(callback);
-  }
-
-  RTCError OpenChannel(int channel_id) override {
-    return wrapped_->OpenChannel(channel_id);
-  }
-
-  RTCError SendData(int channel_id,
-                    const SendDataParams& params,
-                    const rtc::CopyOnWriteBuffer& buffer) override {
-    return wrapped_->SendData(channel_id, params, buffer);
-  }
-
-  RTCError CloseChannel(int channel_id) override {
-    return wrapped_->CloseChannel(channel_id);
-  }
-
-  void SetDataSink(DataChannelSink* sink) override {
-    wrapped_->SetDataSink(sink);
-  }
-
-  bool IsReadyToSend() const override { return wrapped_->IsReadyToSend(); }
-
-  void SetAllocatedBitrateLimits(
-      const MediaTransportAllocatedBitrateLimits& limits) override {}
-
-  absl::optional<std::string> GetTransportParametersOffer() const override {
-    return wrapped_->GetTransportParametersOffer();
-  }
-
- private:
-  MediaTransportInterface* wrapped_;
-};
+constexpr size_t kLoopbackMaxDatagramSize = 1200;
 
 class WrapperDatagramTransport : public DatagramTransportInterface {
  public:
@@ -135,6 +57,10 @@ class WrapperDatagramTransport : public DatagramTransportInterface {
     return wrapped_->GetTransportParameters();
   }
 
+  RTCError SetRemoteTransportParameters(absl::string_view parameters) override {
+    return wrapped_->SetRemoteTransportParameters(parameters);
+  }
+
   // Data channel overrides.
   RTCError OpenChannel(int channel_id) override {
     return wrapped_->OpenChannel(channel_id);
@@ -163,10 +89,8 @@ class WrapperDatagramTransport : public DatagramTransportInterface {
 }  // namespace
 
 WrapperMediaTransportFactory::WrapperMediaTransportFactory(
-    MediaTransportInterface* wrapped_media_transport,
     DatagramTransportInterface* wrapped_datagram_transport)
-    : wrapped_media_transport_(wrapped_media_transport),
-      wrapped_datagram_transport_(wrapped_datagram_transport) {}
+    : wrapped_datagram_transport_(wrapped_datagram_transport) {}
 
 WrapperMediaTransportFactory::WrapperMediaTransportFactory(
     MediaTransportFactory* wrapped)
@@ -177,12 +101,7 @@ WrapperMediaTransportFactory::CreateMediaTransport(
     rtc::PacketTransportInternal* packet_transport,
     rtc::Thread* network_thread,
     const MediaTransportSettings& settings) {
-  created_transport_count_++;
-  if (wrapped_factory_) {
-    return wrapped_factory_->CreateMediaTransport(packet_transport,
-                                                  network_thread, settings);
-  }
-  return {absl::make_unique<WrapperMediaTransport>(wrapped_media_transport_)};
+  return RTCError(RTCErrorType::UNSUPPORTED_OPERATION);
 }
 
 RTCErrorOr<std::unique_ptr<DatagramTransportInterface>>
@@ -194,7 +113,7 @@ WrapperMediaTransportFactory::CreateDatagramTransport(
     return wrapped_factory_->CreateDatagramTransport(network_thread, settings);
   }
   return {
-      absl::make_unique<WrapperDatagramTransport>(wrapped_datagram_transport_)};
+      std::make_unique<WrapperDatagramTransport>(wrapped_datagram_transport_)};
 }
 
 std::string WrapperMediaTransportFactory::GetTransportName() const {
@@ -212,22 +131,14 @@ RTCErrorOr<std::unique_ptr<MediaTransportInterface>>
 WrapperMediaTransportFactory::CreateMediaTransport(
     rtc::Thread* network_thread,
     const MediaTransportSettings& settings) {
-  created_transport_count_++;
-  if (wrapped_factory_) {
-    return wrapped_factory_->CreateMediaTransport(network_thread, settings);
-  }
-  return {absl::make_unique<WrapperMediaTransport>(wrapped_media_transport_)};
+  return RTCError(RTCErrorType::UNSUPPORTED_OPERATION);
 }
 
 MediaTransportPair::MediaTransportPair(rtc::Thread* thread)
-    : first_(thread),
-      second_(thread),
-      first_datagram_transport_(thread),
+    : first_datagram_transport_(thread),
       second_datagram_transport_(thread),
-      first_factory_(&first_, &first_datagram_transport_),
-      second_factory_(&second_, &second_datagram_transport_) {
-  first_.Connect(&second_);
-  second_.Connect(&first_);
+      first_factory_(&first_datagram_transport_),
+      second_factory_(&second_datagram_transport_) {
   first_datagram_transport_.Connect(&second_datagram_transport_);
   second_datagram_transport_.Connect(&first_datagram_transport_);
 }
@@ -248,199 +159,10 @@ void MediaTransportPair::LoopbackDataChannelTransport::Connect(
   other_ = other;
 }
 
-MediaTransportPair::LoopbackMediaTransport::LoopbackMediaTransport(
-    rtc::Thread* thread)
-    : dc_transport_(thread), thread_(thread), other_(nullptr) {
-  RTC_LOG(LS_INFO) << "LoopbackMediaTransport";
-}
-
-MediaTransportPair::LoopbackMediaTransport::~LoopbackMediaTransport() {
-  RTC_LOG(LS_INFO) << "~LoopbackMediaTransport";
-  rtc::CritScope lock(&sink_lock_);
-  RTC_CHECK(audio_sink_ == nullptr);
-  RTC_CHECK(video_sink_ == nullptr);
-  RTC_CHECK(target_transfer_rate_observers_.empty());
-  RTC_CHECK(rtt_observers_.empty());
-}
-
-void MediaTransportPair::LoopbackMediaTransport::Connect(
-    LoopbackMediaTransport* other) {
-  other_ = other;
-  dc_transport_.Connect(&other->dc_transport_);
-}
-
-void MediaTransportPair::LoopbackMediaTransport::Connect(
-    rtc::PacketTransportInternal* packet_transport) {}
-
-absl::optional<std::string>
-MediaTransportPair::LoopbackMediaTransport::GetTransportParametersOffer()
-    const {
-  return "loopback-media-transport-parameters";
-}
-
-RTCError MediaTransportPair::LoopbackMediaTransport::SendAudioFrame(
-    uint64_t channel_id,
-    MediaTransportEncodedAudioFrame frame) {
-  {
-    rtc::CritScope lock(&stats_lock_);
-    ++stats_.sent_audio_frames;
-  }
-  invoker_.AsyncInvoke<void>(RTC_FROM_HERE, thread_, [this, channel_id, frame] {
-    other_->OnData(channel_id, frame);
-  });
-  return RTCError::OK();
-}
-
-RTCError MediaTransportPair::LoopbackMediaTransport::SendVideoFrame(
-    uint64_t channel_id,
-    const MediaTransportEncodedVideoFrame& frame) {
-  {
-    rtc::CritScope lock(&stats_lock_);
-    ++stats_.sent_video_frames;
-  }
-  // Ensure that we own the referenced data.
-  MediaTransportEncodedVideoFrame frame_copy = frame;
-  frame_copy.Retain();
-  invoker_.AsyncInvoke<void>(
-      RTC_FROM_HERE, thread_, [this, channel_id, frame_copy]() mutable {
-        other_->OnData(channel_id, std::move(frame_copy));
-      });
-  return RTCError::OK();
-}
-
-void MediaTransportPair::LoopbackMediaTransport::SetKeyFrameRequestCallback(
-    MediaTransportKeyFrameRequestCallback* callback) {
-  rtc::CritScope lock(&sink_lock_);
-  if (callback) {
-    RTC_CHECK(key_frame_callback_ == nullptr);
-  }
-  key_frame_callback_ = callback;
-}
-
-RTCError MediaTransportPair::LoopbackMediaTransport::RequestKeyFrame(
-    uint64_t channel_id) {
-  invoker_.AsyncInvoke<void>(RTC_FROM_HERE, thread_, [this, channel_id] {
-    other_->OnKeyFrameRequested(channel_id);
-  });
-  return RTCError::OK();
-}
-
-void MediaTransportPair::LoopbackMediaTransport::SetReceiveAudioSink(
-    MediaTransportAudioSinkInterface* sink) {
-  rtc::CritScope lock(&sink_lock_);
-  if (sink) {
-    RTC_CHECK(audio_sink_ == nullptr);
-  }
-  audio_sink_ = sink;
-}
-
-void MediaTransportPair::LoopbackMediaTransport::SetReceiveVideoSink(
-    MediaTransportVideoSinkInterface* sink) {
-  rtc::CritScope lock(&sink_lock_);
-  if (sink) {
-    RTC_CHECK(video_sink_ == nullptr);
-  }
-  video_sink_ = sink;
-}
-
-void MediaTransportPair::LoopbackMediaTransport::AddTargetTransferRateObserver(
-    TargetTransferRateObserver* observer) {
-  RTC_CHECK(observer);
-  {
-    rtc::CritScope cs(&sink_lock_);
-    RTC_CHECK(
-        !absl::c_linear_search(target_transfer_rate_observers_, observer));
-    target_transfer_rate_observers_.push_back(observer);
-  }
-  invoker_.AsyncInvoke<void>(RTC_FROM_HERE, thread_, [this] {
-    RTC_DCHECK_RUN_ON(thread_);
-    const DataRate kBitrate = DataRate::kbps(300);
-    const Timestamp now = Timestamp::us(rtc::TimeMicros());
-
-    TargetTransferRate transfer_rate;
-    transfer_rate.at_time = now;
-    transfer_rate.target_rate = kBitrate;
-    transfer_rate.network_estimate.at_time = now;
-    transfer_rate.network_estimate.round_trip_time = TimeDelta::ms(20);
-    transfer_rate.network_estimate.bwe_period = TimeDelta::seconds(3);
-    transfer_rate.network_estimate.bandwidth = kBitrate;
-
-    rtc::CritScope cs(&sink_lock_);
-
-    for (auto* o : target_transfer_rate_observers_) {
-      o->OnTargetTransferRate(transfer_rate);
-    }
-  });
-}
-
-void MediaTransportPair::LoopbackMediaTransport::
-    RemoveTargetTransferRateObserver(TargetTransferRateObserver* observer) {
-  rtc::CritScope cs(&sink_lock_);
-  auto it = absl::c_find(target_transfer_rate_observers_, observer);
-  if (it == target_transfer_rate_observers_.end()) {
-    RTC_LOG(LS_WARNING)
-        << "Attempt to remove an unknown TargetTransferRate observer";
-    return;
-  }
-  target_transfer_rate_observers_.erase(it);
-}
-
-void MediaTransportPair::LoopbackMediaTransport::AddRttObserver(
-    MediaTransportRttObserver* observer) {
-  RTC_CHECK(observer);
-  {
-    rtc::CritScope cs(&sink_lock_);
-    RTC_CHECK(!absl::c_linear_search(rtt_observers_, observer));
-    rtt_observers_.push_back(observer);
-  }
-  invoker_.AsyncInvoke<void>(RTC_FROM_HERE, thread_, [this] {
-    RTC_DCHECK_RUN_ON(thread_);
-
-    rtc::CritScope cs(&sink_lock_);
-    for (auto* o : rtt_observers_) {
-      o->OnRttUpdated(20);
-    }
-  });
-}
-
-void MediaTransportPair::LoopbackMediaTransport::RemoveRttObserver(
-    MediaTransportRttObserver* observer) {
-  rtc::CritScope cs(&sink_lock_);
-  auto it = absl::c_find(rtt_observers_, observer);
-  if (it == rtt_observers_.end()) {
-    RTC_LOG(LS_WARNING) << "Attempt to remove an unknown RTT observer";
-    return;
-  }
-  rtt_observers_.erase(it);
-}
-
-void MediaTransportPair::LoopbackMediaTransport::SetMediaTransportStateCallback(
-    MediaTransportStateCallback* callback) {
-  rtc::CritScope lock(&sink_lock_);
-  state_callback_ = callback;
-  invoker_.AsyncInvoke<void>(RTC_FROM_HERE, thread_, [this] {
-    RTC_DCHECK_RUN_ON(thread_);
-    OnStateChanged();
-  });
-}
-
-RTCError MediaTransportPair::LoopbackMediaTransport::OpenChannel(
-    int channel_id) {
-  // No-op.  No need to open channels for the loopback.
-  return dc_transport_.OpenChannel(channel_id);
-}
-
 RTCError MediaTransportPair::LoopbackDataChannelTransport::OpenChannel(
     int channel_id) {
   // No-op.  No need to open channels for the loopback.
   return RTCError::OK();
-}
-
-RTCError MediaTransportPair::LoopbackMediaTransport::SendData(
-    int channel_id,
-    const SendDataParams& params,
-    const rtc::CopyOnWriteBuffer& buffer) {
-  return dc_transport_.SendData(channel_id, params, buffer);
 }
 
 RTCError MediaTransportPair::LoopbackDataChannelTransport::SendData(
@@ -454,11 +176,6 @@ RTCError MediaTransportPair::LoopbackDataChannelTransport::SendData(
   return RTCError::OK();
 }
 
-RTCError MediaTransportPair::LoopbackMediaTransport::CloseChannel(
-    int channel_id) {
-  return dc_transport_.CloseChannel(channel_id);
-}
-
 RTCError MediaTransportPair::LoopbackDataChannelTransport::CloseChannel(
     int channel_id) {
   invoker_.AsyncInvoke<void>(RTC_FROM_HERE, thread_, [this, channel_id] {
@@ -469,15 +186,6 @@ RTCError MediaTransportPair::LoopbackDataChannelTransport::CloseChannel(
     }
   });
   return RTCError::OK();
-}
-
-void MediaTransportPair::LoopbackMediaTransport::SetDataSink(
-    DataChannelSink* sink) {
-  dc_transport_.SetDataSink(sink);
-}
-
-bool MediaTransportPair::LoopbackMediaTransport::IsReadyToSend() const {
-  return dc_transport_.IsReadyToSend();
 }
 
 void MediaTransportPair::LoopbackDataChannelTransport::SetDataSink(
@@ -494,58 +202,8 @@ bool MediaTransportPair::LoopbackDataChannelTransport::IsReadyToSend() const {
   return ready_to_send_;
 }
 
-void MediaTransportPair::LoopbackMediaTransport::SetState(
-    MediaTransportState state) {
-  invoker_.AsyncInvoke<void>(RTC_FROM_HERE, thread_, [this, state] {
-    RTC_DCHECK_RUN_ON(thread_);
-    state_ = state;
-    OnStateChanged();
-  });
-}
-
-void MediaTransportPair::LoopbackMediaTransport::FlushAsyncInvokes() {
-  invoker_.Flush(thread_);
-  dc_transport_.FlushAsyncInvokes();
-}
-
 void MediaTransportPair::LoopbackDataChannelTransport::FlushAsyncInvokes() {
   invoker_.Flush(thread_);
-}
-
-MediaTransportPair::Stats
-MediaTransportPair::LoopbackMediaTransport::GetStats() {
-  rtc::CritScope lock(&stats_lock_);
-  return stats_;
-}
-
-void MediaTransportPair::LoopbackMediaTransport::OnData(
-    uint64_t channel_id,
-    MediaTransportEncodedAudioFrame frame) {
-  {
-    rtc::CritScope lock(&sink_lock_);
-    if (audio_sink_) {
-      audio_sink_->OnData(channel_id, frame);
-    }
-  }
-  {
-    rtc::CritScope lock(&stats_lock_);
-    ++stats_.received_audio_frames;
-  }
-}
-
-void MediaTransportPair::LoopbackMediaTransport::OnData(
-    uint64_t channel_id,
-    MediaTransportEncodedVideoFrame frame) {
-  {
-    rtc::CritScope lock(&sink_lock_);
-    if (video_sink_) {
-      video_sink_->OnData(channel_id, frame);
-    }
-  }
-  {
-    rtc::CritScope lock(&stats_lock_);
-    ++stats_.received_video_frames;
-  }
 }
 
 void MediaTransportPair::LoopbackDataChannelTransport::OnData(
@@ -558,14 +216,6 @@ void MediaTransportPair::LoopbackDataChannelTransport::OnData(
   }
 }
 
-void MediaTransportPair::LoopbackMediaTransport::OnKeyFrameRequested(
-    int channel_id) {
-  rtc::CritScope lock(&sink_lock_);
-  if (key_frame_callback_) {
-    key_frame_callback_->OnKeyFrameRequested(channel_id);
-  }
-}
-
 void MediaTransportPair::LoopbackDataChannelTransport::OnRemoteCloseChannel(
     int channel_id) {
   rtc::CritScope lock(&sink_lock_);
@@ -573,15 +223,6 @@ void MediaTransportPair::LoopbackDataChannelTransport::OnRemoteCloseChannel(
     data_sink_->OnChannelClosing(channel_id);
     data_sink_->OnChannelClosed(channel_id);
   }
-}
-
-void MediaTransportPair::LoopbackMediaTransport::OnStateChanged() {
-  rtc::CritScope lock(&sink_lock_);
-  if (state_callback_) {
-    state_callback_->OnStateChanged(state_);
-  }
-
-  dc_transport_.OnReadyToSend(state_ == MediaTransportState::kWritable);
 }
 
 void MediaTransportPair::LoopbackDataChannelTransport::OnReadyToSend(
@@ -596,20 +237,22 @@ void MediaTransportPair::LoopbackDataChannelTransport::OnReadyToSend(
   });
 }
 
-void MediaTransportPair::LoopbackMediaTransport::SetAllocatedBitrateLimits(
-    const MediaTransportAllocatedBitrateLimits& limits) {}
-
 MediaTransportPair::LoopbackDatagramTransport::LoopbackDatagramTransport(
     rtc::Thread* thread)
-    : dc_transport_(thread) {}
+    : thread_(thread), dc_transport_(thread) {}
 
 void MediaTransportPair::LoopbackDatagramTransport::Connect(
     LoopbackDatagramTransport* other) {
+  other_ = other;
   dc_transport_.Connect(&other->dc_transport_);
 }
 
 void MediaTransportPair::LoopbackDatagramTransport::Connect(
-    rtc::PacketTransportInternal* packet_transport) {}
+    rtc::PacketTransportInternal* packet_transport) {
+  if (state_after_connect_) {
+    SetState(*state_after_connect_);
+  }
+}
 
 CongestionControlInterface*
 MediaTransportPair::LoopbackDatagramTransport::congestion_control() {
@@ -617,25 +260,59 @@ MediaTransportPair::LoopbackDatagramTransport::congestion_control() {
 }
 
 void MediaTransportPair::LoopbackDatagramTransport::SetTransportStateCallback(
-    MediaTransportStateCallback* callback) {}
+    MediaTransportStateCallback* callback) {
+  RTC_DCHECK_RUN_ON(thread_);
+  state_callback_ = callback;
+  if (state_callback_) {
+    state_callback_->OnStateChanged(state_);
+  }
+}
 
 RTCError MediaTransportPair::LoopbackDatagramTransport::SendDatagram(
     rtc::ArrayView<const uint8_t> data,
     DatagramId datagram_id) {
+  rtc::CopyOnWriteBuffer buffer;
+  buffer.SetData(data.data(), data.size());
+  invoker_.AsyncInvoke<void>(
+      RTC_FROM_HERE, thread_, [this, datagram_id, buffer = std::move(buffer)] {
+        RTC_DCHECK_RUN_ON(thread_);
+        other_->DeliverDatagram(std::move(buffer));
+        if (sink_) {
+          DatagramAck ack;
+          ack.datagram_id = datagram_id;
+          ack.receive_timestamp = Timestamp::Micros(rtc::TimeMicros());
+          sink_->OnDatagramAcked(ack);
+        }
+      });
   return RTCError::OK();
 }
 
 size_t MediaTransportPair::LoopbackDatagramTransport::GetLargestDatagramSize()
     const {
-  return 0;
+  return kLoopbackMaxDatagramSize;
 }
 
 void MediaTransportPair::LoopbackDatagramTransport::SetDatagramSink(
-    DatagramSinkInterface* sink) {}
+    DatagramSinkInterface* sink) {
+  RTC_DCHECK_RUN_ON(thread_);
+  sink_ = sink;
+}
 
 std::string
 MediaTransportPair::LoopbackDatagramTransport::GetTransportParameters() const {
   return transport_parameters_;
+}
+
+RTCError
+MediaTransportPair::LoopbackDatagramTransport::SetRemoteTransportParameters(
+    absl::string_view remote_parameters) {
+  RTC_DCHECK_RUN_ON(thread_);
+  if (transport_parameters_comparison_(GetTransportParameters(),
+                                       remote_parameters)) {
+    return RTCError::OK();
+  }
+  return RTCError(RTCErrorType::UNSUPPORTED_PARAMETER,
+                  "Incompatible remote transport parameters");
 }
 
 RTCError MediaTransportPair::LoopbackDatagramTransport::OpenChannel(
@@ -666,11 +343,31 @@ bool MediaTransportPair::LoopbackDatagramTransport::IsReadyToSend() const {
 
 void MediaTransportPair::LoopbackDatagramTransport::SetState(
     MediaTransportState state) {
+  invoker_.AsyncInvoke<void>(RTC_FROM_HERE, thread_, [this, state] {
+    RTC_DCHECK_RUN_ON(thread_);
+    state_ = state;
+    if (state_callback_) {
+      state_callback_->OnStateChanged(state_);
+    }
+  });
   dc_transport_.OnReadyToSend(state == MediaTransportState::kWritable);
+}
+
+void MediaTransportPair::LoopbackDatagramTransport::SetStateAfterConnect(
+    MediaTransportState state) {
+  state_after_connect_ = state;
 }
 
 void MediaTransportPair::LoopbackDatagramTransport::FlushAsyncInvokes() {
   dc_transport_.FlushAsyncInvokes();
+}
+
+void MediaTransportPair::LoopbackDatagramTransport::DeliverDatagram(
+    rtc::CopyOnWriteBuffer buffer) {
+  RTC_DCHECK_RUN_ON(thread_);
+  if (sink_) {
+    sink_->OnDatagramReceived(buffer);
+  }
 }
 
 }  // namespace webrtc

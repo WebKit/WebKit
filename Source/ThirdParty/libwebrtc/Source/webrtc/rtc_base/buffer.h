@@ -64,6 +64,7 @@ class BufferT {
 
  public:
   using value_type = T;
+  using const_iterator = const T*;
 
   // An empty BufferT.
   BufferT() : size_(0), capacity_(0), data_(nullptr) {

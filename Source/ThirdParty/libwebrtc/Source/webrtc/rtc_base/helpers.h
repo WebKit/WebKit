@@ -16,6 +16,8 @@
 
 #include <string>
 
+#include "rtc_base/system/rtc_export.h"
+
 namespace rtc {
 
 // For testing, we can return predictable data.
@@ -27,21 +29,21 @@ bool InitRandom(const char* seed, size_t len);
 
 // Generates a (cryptographically) random string of the given length.
 // We generate base64 values so that they will be printable.
-std::string CreateRandomString(size_t length);
+RTC_EXPORT std::string CreateRandomString(size_t length);
 
 // Generates a (cryptographically) random string of the given length.
 // We generate base64 values so that they will be printable.
 // Return false if the random number generator failed.
-bool CreateRandomString(size_t length, std::string* str);
+RTC_EXPORT bool CreateRandomString(size_t length, std::string* str);
 
 // Generates a (cryptographically) random string of the given length,
 // with characters from the given table. Return false if the random
 // number generator failed.
 // For ease of implementation, the function requires that the table
 // size evenly divide 256; otherwise, it returns false.
-bool CreateRandomString(size_t length,
-                        const std::string& table,
-                        std::string* str);
+RTC_EXPORT bool CreateRandomString(size_t length,
+                                   const std::string& table,
+                                   std::string* str);
 
 // Generates (cryptographically) random data of the given length.
 // Return false if the random number generator failed.
@@ -54,7 +56,7 @@ std::string CreateRandomUuid();
 uint32_t CreateRandomId();
 
 // Generates a 64 bit random id.
-uint64_t CreateRandomId64();
+RTC_EXPORT uint64_t CreateRandomId64();
 
 // Generates a random id > 0.
 uint32_t CreateRandomNonZeroId();

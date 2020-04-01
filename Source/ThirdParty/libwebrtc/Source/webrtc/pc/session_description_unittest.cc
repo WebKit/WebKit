@@ -9,7 +9,8 @@
  */
 #include "pc/session_description.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "test/gtest.h"
 
 namespace cricket {
@@ -66,7 +67,7 @@ TEST(SessionDescriptionTest, SetExtmapAllowMixed) {
 TEST(SessionDescriptionTest, SetExtmapAllowMixedPropagatesToMediaLevel) {
   SessionDescription session_desc;
   session_desc.AddContent("video", MediaProtocolType::kRtp,
-                          absl::make_unique<VideoContentDescription>());
+                          std::make_unique<VideoContentDescription>());
   MediaContentDescription* video_desc =
       session_desc.GetContentDescriptionByName("video");
 
@@ -107,7 +108,7 @@ TEST(SessionDescriptionTest, AddContentTransfersExtmapAllowMixedSetting) {
   SessionDescription session_desc;
   session_desc.set_extmap_allow_mixed(false);
   std::unique_ptr<MediaContentDescription> audio_desc =
-      absl::make_unique<AudioContentDescription>();
+      std::make_unique<AudioContentDescription>();
   audio_desc->set_extmap_allow_mixed_enum(MediaContentDescription::kMedia);
 
   // If session setting is false, media level setting is preserved when new
@@ -122,7 +123,7 @@ TEST(SessionDescriptionTest, AddContentTransfersExtmapAllowMixedSetting) {
   // content is added.
   session_desc.set_extmap_allow_mixed(true);
   std::unique_ptr<MediaContentDescription> video_desc =
-      absl::make_unique<VideoContentDescription>();
+      std::make_unique<VideoContentDescription>();
   session_desc.AddContent("video", MediaProtocolType::kRtp,
                           std::move(video_desc));
   EXPECT_EQ(MediaContentDescription::kSession,
@@ -131,7 +132,7 @@ TEST(SessionDescriptionTest, AddContentTransfersExtmapAllowMixedSetting) {
 
   // Session level setting overrides media level when new content is added.
   std::unique_ptr<MediaContentDescription> data_desc =
-      absl::make_unique<RtpDataContentDescription>();
+      std::make_unique<RtpDataContentDescription>();
   data_desc->set_extmap_allow_mixed_enum(MediaContentDescription::kMedia);
   session_desc.AddContent("data", MediaProtocolType::kRtp,
                           std::move(data_desc));

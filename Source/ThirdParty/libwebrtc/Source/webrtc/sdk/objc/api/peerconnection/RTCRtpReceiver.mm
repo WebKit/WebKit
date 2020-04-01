@@ -53,13 +53,6 @@ void RtpReceiverDelegateAdapter::OnFirstPacketReceived(
       initWithNativeParameters:_nativeRtpReceiver->GetParameters()];
 }
 
-- (void)setParameters:(RTCRtpParameters *)parameters {
-  if (!_nativeRtpReceiver->SetParameters(parameters.nativeParameters)) {
-    RTCLogError(@"RTCRtpReceiver(%p): Failed to set parameters: %@", self,
-        parameters);
-  }
-}
-
 - (nullable RTCMediaStreamTrack *)track {
   rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> nativeTrack(
     _nativeRtpReceiver->track());

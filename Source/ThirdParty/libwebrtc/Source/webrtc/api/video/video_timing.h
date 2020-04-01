@@ -29,16 +29,6 @@ struct VideoSendTiming {
     kInvalid = std::numeric_limits<uint8_t>::max()  // Invalid, ignore!
   };
 
-  // Offsets of the fields in the RTP header extension, counting from the first
-  // byte after the one-byte header.
-  static constexpr uint8_t kFlagsOffset = 0;
-  static constexpr uint8_t kEncodeStartDeltaOffset = 1;
-  static constexpr uint8_t kEncodeFinishDeltaOffset = 3;
-  static constexpr uint8_t kPacketizationFinishDeltaOffset = 5;
-  static constexpr uint8_t kPacerExitDeltaOffset = 7;
-  static constexpr uint8_t kNetworkTimestampDeltaOffset = 9;
-  static constexpr uint8_t kNetwork2TimestampDeltaOffset = 11;
-
   // Returns |time_ms - base_ms| capped at max 16-bit value.
   // Used to fill this data structure as per
   // https://webrtc.org/experiments/rtp-hdrext/video-timing/ extension stores

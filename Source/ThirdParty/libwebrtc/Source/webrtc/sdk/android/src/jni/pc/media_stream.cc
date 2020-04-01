@@ -10,7 +10,8 @@
 
 #include "sdk/android/src/jni/pc/media_stream.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "sdk/android/generated_peerconnection_jni/MediaStream_jni.h"
 #include "sdk/android/native_api/jni/java_types.h"
 #include "sdk/android/src/jni/jni_helpers.h"
@@ -25,7 +26,7 @@ JavaMediaStream::JavaMediaStream(
           env,
           Java_MediaStream_Constructor(env,
                                        jlongFromPointer(media_stream.get()))),
-      observer_(absl::make_unique<MediaStreamObserver>(media_stream)) {
+      observer_(std::make_unique<MediaStreamObserver>(media_stream)) {
   for (rtc::scoped_refptr<AudioTrackInterface> track :
        media_stream->GetAudioTracks()) {
     Java_MediaStream_addNativeAudioTrack(env, j_media_stream_,

@@ -72,6 +72,10 @@ class NativeAndroidVideoTrackSource {
         targetPortraitAspectRatio.height, maxPortraitPixelCount, maxFps);
   }
 
+  public void setIsScreencast(boolean isScreencast) {
+    nativeSetIsScreencast(nativeAndroidVideoTrackSource, isScreencast);
+  }
+
   @CalledByNative
   static VideoProcessor.FrameAdaptationParameters createFrameAdaptationParameters(int cropX,
       int cropY, int cropWidth, int cropHeight, int scaleWidth, int scaleHeight, long timestampNs,
@@ -80,6 +84,8 @@ class NativeAndroidVideoTrackSource {
         cropX, cropY, cropWidth, cropHeight, scaleWidth, scaleHeight, timestampNs, drop);
   }
 
+  private static native void nativeSetIsScreencast(
+      long nativeAndroidVideoTrackSource, boolean isScreencast);
   private static native void nativeSetState(long nativeAndroidVideoTrackSource, boolean isLive);
   private static native void nativeAdaptOutputFormat(long nativeAndroidVideoTrackSource,
       int landscapeWidth, int landscapeHeight, @Nullable Integer maxLandscapePixelCount,

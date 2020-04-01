@@ -14,7 +14,6 @@
 #include <string>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "media/sctp/sctp_transport_internal.h"
 #include "pc/sctp_utils.h"
 #include "rtc_base/checks.h"
@@ -262,6 +261,10 @@ void DataChannel::Close() {
   UpdateState();
 }
 
+RTCError DataChannel::error() const {
+  return error_;
+}
+
 bool DataChannel::Send(const DataBuffer& buffer) {
   buffered_amount_ += buffer.size();
   if (state_ != kOpen) {
@@ -284,7 +287,10 @@ bool DataChannel::Send(const DataBuffer& buffer) {
     if (!QueueSendDataMessage(buffer)) {
       RTC_LOG(LS_ERROR) << "Closing the DataChannel due to a failure to queue "
                            "additional data.";
-      CloseAbruptly();
+      // https://w3c.github.io/webrtc-pc/#dom-rtcdatachannel-send step 5
+      // Note that the spec doesn't explicitly say to close in this situation.
+      CloseAbruptlyWithError(RTCError(RTCErrorType::RESOURCE_EXHAUSTED,
+                                      "Unable to queue data for sending"));
     }
     return true;
   }
@@ -360,16 +366,21 @@ void DataChannel::OnTransportChannelCreated() {
   }
 }
 
-void DataChannel::OnTransportChannelDestroyed() {
-  // The SctpTransport is going away (for example, because the SCTP m= section
-  // was rejected), so we need to close abruptly.
-  CloseAbruptly();
+void DataChannel::OnTransportChannelClosed() {
+  // The SctpTransport is unusable (for example, because the SCTP m= section
+  // was rejected, or because the DTLS transport closed), so we need to close
+  // abruptly.
+  // Note: this needs to differentiate between normal close and error close.
+  // https://w3c.github.io/webrtc-pc/#announcing-a-data-channel-as-closed
+  CloseAbruptlyWithError(
+      RTCError(RTCErrorType::NETWORK_ERROR, "Transport channel closed"));
 }
 
 // The remote peer request that this channel shall be closed.
 void DataChannel::RemotePeerRequestClose() {
   RTC_DCHECK(data_channel_type_ == cricket::DCT_RTP);
-  CloseAbruptly();
+  // Close with error code explicitly set to OK.
+  CloseAbruptlyWithError(RTCError());
 }
 
 void DataChannel::SetSendSsrc(uint32_t send_ssrc) {
@@ -426,7 +437,7 @@ void DataChannel::OnDataReceived(const cricket::ReceiveDataParams& params,
   }
 
   bool binary = (params.type == cricket::DMT_BINARY);
-  auto buffer = absl::make_unique<DataBuffer>(payload, binary);
+  auto buffer = std::make_unique<DataBuffer>(payload, binary);
   if (state_ == kOpen && observer_) {
     ++messages_received_;
     bytes_received_ += buffer->size();
@@ -438,7 +449,9 @@ void DataChannel::OnDataReceived(const cricket::ReceiveDataParams& params,
 
       queued_received_data_.Clear();
       if (data_channel_type_ != cricket::DCT_RTP) {
-        CloseAbruptly();
+        CloseAbruptlyWithError(
+            RTCError(RTCErrorType::RESOURCE_EXHAUSTED,
+                     "Queued received data exceeds the max buffer size."));
       }
 
       return;
@@ -458,7 +471,7 @@ void DataChannel::OnChannelReady(bool writable) {
   UpdateState();
 }
 
-void DataChannel::CloseAbruptly() {
+void DataChannel::CloseAbruptlyWithError(RTCError error) {
   if (state_ == kClosed) {
     return;
   }
@@ -475,7 +488,15 @@ void DataChannel::CloseAbruptly() {
   // Still go to "kClosing" before "kClosed", since observers may be expecting
   // that.
   SetState(kClosing);
+  error_ = std::move(error);
   SetState(kClosed);
+}
+
+void DataChannel::CloseAbruptlyWithDataChannelFailure(
+    const std::string& message) {
+  RTCError error(RTCErrorType::OPERATION_ERROR_WITH_DATA, message);
+  error.set_error_detail(RTCErrorDetailType::DATA_CHANNEL_FAILURE);
+  CloseAbruptlyWithError(std::move(error));
 }
 
 void DataChannel::UpdateState() {
@@ -652,7 +673,8 @@ bool DataChannel::SendDataMessage(const DataBuffer& buffer,
   RTC_LOG(LS_ERROR) << "Closing the DataChannel due to a failure to send data, "
                        "send_result = "
                     << send_result;
-  CloseAbruptly();
+  CloseAbruptlyWithError(
+      RTCError(RTCErrorType::NETWORK_ERROR, "Failure to send data"));
 
   return false;
 }
@@ -663,7 +685,7 @@ bool DataChannel::QueueSendDataMessage(const DataBuffer& buffer) {
     RTC_LOG(LS_ERROR) << "Can't buffer any more data for the data channel.";
     return false;
   }
-  queued_send_data_.PushBack(absl::make_unique<DataBuffer>(buffer));
+  queued_send_data_.PushBack(std::make_unique<DataBuffer>(buffer));
   return true;
 }
 
@@ -678,7 +700,7 @@ void DataChannel::SendQueuedControlMessages() {
 }
 
 void DataChannel::QueueControlMessage(const rtc::CopyOnWriteBuffer& buffer) {
-  queued_control_data_.PushBack(absl::make_unique<DataBuffer>(buffer, true));
+  queued_control_data_.PushBack(std::make_unique<DataBuffer>(buffer, true));
 }
 
 bool DataChannel::SendControlMessage(const rtc::CopyOnWriteBuffer& buffer) {
@@ -700,7 +722,7 @@ bool DataChannel::SendControlMessage(const rtc::CopyOnWriteBuffer& buffer) {
   cricket::SendDataResult send_result = cricket::SDR_SUCCESS;
   bool retval = provider_->SendData(send_params, buffer, &send_result);
   if (retval) {
-    RTC_LOG(LS_INFO) << "Sent CONTROL message on channel " << config_.id;
+    RTC_LOG(LS_VERBOSE) << "Sent CONTROL message on channel " << config_.id;
 
     if (handshake_state_ == kHandshakeShouldSendAck) {
       handshake_state_ = kHandshakeReady;
@@ -713,7 +735,8 @@ bool DataChannel::SendControlMessage(const rtc::CopyOnWriteBuffer& buffer) {
     RTC_LOG(LS_ERROR) << "Closing the DataChannel due to a failure to send"
                          " the CONTROL message, send_result = "
                       << send_result;
-    CloseAbruptly();
+    CloseAbruptlyWithError(RTCError(RTCErrorType::NETWORK_ERROR,
+                                    "Failed to send a CONTROL message"));
   }
   return retval;
 }

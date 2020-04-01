@@ -174,8 +174,8 @@ TEST_F(DelayBasedBweTest, TestLongTimeoutAndWrap) {
 }
 
 TEST_F(DelayBasedBweTest, TestInitialOveruse) {
-  const DataRate kStartBitrate = DataRate::kbps(300);
-  const DataRate kInitialCapacity = DataRate::kbps(200);
+  const DataRate kStartBitrate = DataRate::KilobitsPerSec(300);
+  const DataRate kInitialCapacity = DataRate::KilobitsPerSec(200);
   const uint32_t kDummySsrc = 0;
   // High FPS to ensure that we send a lot of packets in a short time.
   const int kFps = 90;
@@ -222,8 +222,8 @@ class DelayBasedBweTestWithBackoffTimeoutExperiment : public DelayBasedBweTest {
 
 // This test subsumes and improves DelayBasedBweTest.TestInitialOveruse above.
 TEST_F(DelayBasedBweTestWithBackoffTimeoutExperiment, TestInitialOveruse) {
-  const DataRate kStartBitrate = DataRate::kbps(300);
-  const DataRate kInitialCapacity = DataRate::kbps(200);
+  const DataRate kStartBitrate = DataRate::KilobitsPerSec(300);
+  const DataRate kInitialCapacity = DataRate::KilobitsPerSec(200);
   const uint32_t kDummySsrc = 0;
   // High FPS to ensure that we send a lot of packets in a short time.
   const int kFps = 90;

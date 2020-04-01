@@ -13,7 +13,6 @@
 
 #include <queue>
 
-#include "modules/include/module_common_types.h"
 #include "rtc_base/numerics/percentile_filter.h"
 
 namespace webrtc {

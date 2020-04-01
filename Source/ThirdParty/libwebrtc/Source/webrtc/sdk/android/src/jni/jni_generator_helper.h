@@ -27,7 +27,16 @@
 
 #define BASE_EXPORT
 #define JNI_REGISTRATION_EXPORT __attribute__((visibility("default")))
+
+#if defined(WEBRTC_ARCH_X86)
+// Dalvik JIT generated code doesn't guarantee 16-byte stack alignment on
+// x86 - use force_align_arg_pointer to realign the stack at the JNI
+// boundary. crbug.com/655248
+#define JNI_GENERATOR_EXPORT \
+  __attribute__((force_align_arg_pointer)) extern "C" JNIEXPORT JNICALL
+#else
 #define JNI_GENERATOR_EXPORT extern "C" JNIEXPORT JNICALL
+#endif
 
 #define CHECK_EXCEPTION(jni)        \
   RTC_CHECK(!jni->ExceptionCheck()) \

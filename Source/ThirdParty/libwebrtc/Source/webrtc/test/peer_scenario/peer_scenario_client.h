@@ -20,7 +20,9 @@
 #include "absl/memory/memory.h"
 #include "api/peer_connection_interface.h"
 #include "api/test/network_emulation_manager.h"
+#include "api/test/time_controller.h"
 #include "pc/test/frame_generator_capturer_video_track_source.h"
+#include "test/logging/log_writer.h"
 
 namespace webrtc {
 namespace test {
@@ -47,8 +49,11 @@ class PeerScenarioClient {
         on_ice_gathering_change;
     std::vector<std::function<void(const IceCandidateInterface*)>>
         on_ice_candidate;
-    std::vector<std::function<
-        void(const std::string&, const std::string&, int, const std::string&)>>
+    std::vector<std::function<void(const std::string&,
+                                   int,
+                                   const std::string&,
+                                   int,
+                                   const std::string&)>>
         on_ice_candidate_error;
     std::vector<std::function<void(const std::vector<cricket::Candidate>&)>>
         on_ice_candidates_removed;
@@ -75,7 +80,9 @@ class PeerScenarioClient {
       };
       absl::optional<PulsedNoise> pulsed_noise = PulsedNoise();
     } audio;
-    std::string client_name;
+    struct Video {
+      bool use_fake_codecs = false;
+    } video;
     // The created endpoints can be accessed using the map key as |index| in
     // PeerScenarioClient::endpoint(index).
     std::map<int, EmulatedEndpointConfig> endpoints = {
@@ -91,8 +98,8 @@ class PeerScenarioClient {
   };
 
   struct AudioSendTrack {
-    AudioTrackInterface* track;
-    RtpSenderInterface* sender;
+    rtc::scoped_refptr<AudioTrackInterface> track;
+    rtc::scoped_refptr<RtpSenderInterface> sender;
   };
 
   struct VideoSendTrack {
@@ -102,9 +109,11 @@ class PeerScenarioClient {
     RtpSenderInterface* sender;
   };
 
-  PeerScenarioClient(NetworkEmulationManager* net,
-                     rtc::Thread* signaling_thread,
-                     Config config);
+  PeerScenarioClient(
+      NetworkEmulationManager* net,
+      rtc::Thread* signaling_thread,
+      std::unique_ptr<LogWriterFactoryInterface> log_writer_factory,
+      Config config);
 
   PeerConnectionFactoryInterface* factory() { return pc_factory_.get(); }
   PeerConnectionInterface* pc() {
@@ -142,11 +151,12 @@ class PeerScenarioClient {
 
  private:
   const std::map<int, EmulatedEndpoint*> endpoints_;
+  TaskQueueFactory* const task_queue_factory_;
   rtc::Thread* const signaling_thread_;
+  const std::unique_ptr<LogWriterFactoryInterface> log_writer_factory_;
   const std::unique_ptr<rtc::Thread> worker_thread_;
   CallbackHandlers handlers_ RTC_GUARDED_BY(signaling_thread_);
   const std::unique_ptr<PeerConnectionObserver> observer_;
-  TaskQueueFactory* task_queue_factory_;
   std::map<std::string, std::vector<rtc::VideoSinkInterface<VideoFrame>*>>
       track_id_to_video_sinks_ RTC_GUARDED_BY(signaling_thread_);
   std::list<std::unique_ptr<IceCandidateInterface>> pending_ice_candidates_

@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -39,6 +40,8 @@ class MockPeerConnectionInterface
                    MediaStreamTrackInterface*,
                    std::vector<MediaStreamInterface*>));
   MOCK_METHOD1(RemoveTrack, bool(RtpSenderInterface*));
+  MOCK_METHOD1(RemoveTrackNew,
+               RTCError(rtc::scoped_refptr<RtpSenderInterface>));
   MOCK_METHOD1(AddTransceiver,
                RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>>(
                    rtc::scoped_refptr<MediaStreamTrackInterface>));
@@ -91,6 +94,7 @@ class MockPeerConnectionInterface
                      const SessionDescriptionInterface*());
   MOCK_CONST_METHOD0(pending_remote_description,
                      const SessionDescriptionInterface*());
+  MOCK_METHOD0(RestartIce, void());
   MOCK_METHOD2(CreateOffer,
                void(CreateSessionDescriptionObserver*,
                     const RTCOfferAnswerOptions&));
@@ -116,14 +120,22 @@ class MockPeerConnectionInterface
   MOCK_METHOD1(SetBitrate, RTCError(const BitrateParameters&));
   MOCK_METHOD1(SetAudioPlayout, void(bool));
   MOCK_METHOD1(SetAudioRecording, void(bool));
+  MOCK_METHOD1(LookupDtlsTransportByMid,
+               rtc::scoped_refptr<DtlsTransportInterface>(const std::string&));
   MOCK_METHOD0(signaling_state, SignalingState());
   MOCK_METHOD0(ice_connection_state, IceConnectionState());
+  MOCK_METHOD0(standardized_ice_connection_state, IceConnectionState());
+  MOCK_METHOD0(peer_connection_state, PeerConnectionState());
   MOCK_METHOD0(ice_gathering_state, IceGatheringState());
+  MOCK_METHOD0(can_trickle_ice_candidates, absl::optional<bool>());
   MOCK_METHOD2(StartRtcEventLog,
                bool(std::unique_ptr<RtcEventLogOutput>, int64_t));
+  MOCK_METHOD1(StartRtcEventLog, bool(std::unique_ptr<RtcEventLogOutput>));
   MOCK_METHOD0(StopRtcEventLog, void());
   MOCK_METHOD0(Close, void());
 };
+
+static_assert(!std::is_abstract<MockPeerConnectionInterface>::value, "");
 
 }  // namespace webrtc
 

@@ -33,6 +33,7 @@
 #include "pc/simulcast_description.h"
 #include "rtc_base/deprecation.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
 
@@ -86,9 +87,15 @@ class MediaContentDescription {
 
   virtual bool has_codecs() const = 0;
 
-  virtual MediaContentDescription* Copy() const = 0;
-  virtual std::unique_ptr<MediaContentDescription> Clone() const {
-    return absl::WrapUnique(Copy());
+  RTC_DEPRECATED virtual MediaContentDescription* Copy() const {
+    return CloneInternal();
+  }
+  // Copy operator that returns an unique_ptr.
+  // Not a virtual function.
+  // If a type-specific variant of Clone() is desired, override it, or
+  // simply use std::make_unique<typename>(*this) instead of Clone().
+  std::unique_ptr<MediaContentDescription> Clone() const {
+    return absl::WrapUnique(CloneInternal());
   }
 
   // |protocol| is the expected media transport protocol, such as RTP/AVPF,
@@ -249,6 +256,13 @@ class MediaContentDescription {
     receive_rids_ = rids;
   }
 
+  virtual const absl::optional<std::string>& alt_protocol() const {
+    return alt_protocol_;
+  }
+  virtual void set_alt_protocol(const absl::optional<std::string>& protocol) {
+    alt_protocol_ = protocol;
+  }
+
  protected:
   bool rtcp_mux_ = false;
   bool rtcp_reduced_size_ = false;
@@ -270,6 +284,14 @@ class MediaContentDescription {
 
   SimulcastDescription simulcast_;
   std::vector<RidDescription> receive_rids_;
+
+  absl::optional<std::string> alt_protocol_;
+
+ private:
+  // Copy function that returns a raw pointer. Caller will assert ownership.
+  // Should only be called by the Clone() function. Must be implemented
+  // by each final subclass.
+  virtual MediaContentDescription* CloneInternal() const = 0;
 };
 
 // TODO(bugs.webrtc.org/8620): Remove this alias once downstream projects have
@@ -327,34 +349,46 @@ class AudioContentDescription : public MediaContentDescriptionImpl<AudioCodec> {
  public:
   AudioContentDescription() {}
 
-  virtual AudioContentDescription* Copy() const {
-    return new AudioContentDescription(*this);
+  RTC_DEPRECATED virtual AudioContentDescription* Copy() const {
+    return CloneInternal();
   }
   virtual MediaType type() const { return MEDIA_TYPE_AUDIO; }
   virtual AudioContentDescription* as_audio() { return this; }
   virtual const AudioContentDescription* as_audio() const { return this; }
+
+ private:
+  virtual AudioContentDescription* CloneInternal() const {
+    return new AudioContentDescription(*this);
+  }
 };
 
 class VideoContentDescription : public MediaContentDescriptionImpl<VideoCodec> {
  public:
-  virtual VideoContentDescription* Copy() const {
-    return new VideoContentDescription(*this);
+  RTC_DEPRECATED virtual VideoContentDescription* Copy() const {
+    return CloneInternal();
   }
   virtual MediaType type() const { return MEDIA_TYPE_VIDEO; }
   virtual VideoContentDescription* as_video() { return this; }
   virtual const VideoContentDescription* as_video() const { return this; }
+
+ private:
+  virtual VideoContentDescription* CloneInternal() const {
+    return new VideoContentDescription(*this);
+  }
 };
 
 class RtpDataContentDescription
     : public MediaContentDescriptionImpl<RtpDataCodec> {
  public:
   RtpDataContentDescription() {}
-  RtpDataContentDescription* Copy() const override {
-    return new RtpDataContentDescription(*this);
-  }
   MediaType type() const override { return MEDIA_TYPE_DATA; }
   RtpDataContentDescription* as_rtp_data() override { return this; }
   const RtpDataContentDescription* as_rtp_data() const override { return this; }
+
+ private:
+  RtpDataContentDescription* CloneInternal() const override {
+    return new RtpDataContentDescription(*this);
+  }
 };
 
 class SctpDataContentDescription : public MediaContentDescription {
@@ -365,9 +399,6 @@ class SctpDataContentDescription : public MediaContentDescription {
         use_sctpmap_(o.use_sctpmap_),
         port_(o.port_),
         max_message_size_(o.max_message_size_) {}
-  SctpDataContentDescription* Copy() const override {
-    return new SctpDataContentDescription(*this);
-  }
   MediaType type() const override { return MEDIA_TYPE_DATA; }
   SctpDataContentDescription* as_sctp() override { return this; }
   const SctpDataContentDescription* as_sctp() const override { return this; }
@@ -388,6 +419,9 @@ class SctpDataContentDescription : public MediaContentDescription {
   }
 
  private:
+  SctpDataContentDescription* CloneInternal() const override {
+    return new SctpDataContentDescription(*this);
+  }
   bool use_sctpmap_ = true;  // Note: "true" is no longer conformant.
   // Defaults should be constants imported from SCTP. Quick hack.
   int port_ = 5000;
@@ -411,7 +445,7 @@ constexpr MediaProtocolType NS_JINGLE_DRAFT_SCTP = MediaProtocolType::kSctp;
 // Represents a session description section. Most information about the section
 // is stored in the description, which is a subclass of MediaContentDescription.
 // Owns the description.
-class ContentInfo {
+class RTC_EXPORT ContentInfo {
  public:
   explicit ContentInfo(MediaProtocolType type) : type(type) {}
   ~ContentInfo();
@@ -431,8 +465,6 @@ class ContentInfo {
 
   void set_media_description(std::unique_ptr<MediaContentDescription> desc) {
     description_ = std::move(desc);
-    // For backwards compatibility only.
-    description = description_.get();
   }
 
   // TODO(bugs.webrtc.org/8620): Rename this to mid.
@@ -444,10 +476,6 @@ class ContentInfo {
  private:
   friend class SessionDescription;
   std::unique_ptr<MediaContentDescription> description_;
-
- public:
-  // Kept for backwards compatibility only.
-  MediaContentDescription* description = nullptr;
 };
 
 typedef std::vector<std::string> ContentNames;
@@ -505,8 +533,6 @@ class SessionDescription {
 
   std::unique_ptr<SessionDescription> Clone() const;
 
-  struct MediaTransportSetting;
-
   // Content accessors.
   const ContentInfos& contents() const { return contents_; }
   ContentInfos& contents() { return contents_; }
@@ -533,29 +559,6 @@ class SessionDescription {
                   bool bundle_only,
                   std::unique_ptr<MediaContentDescription> description);
   void AddContent(ContentInfo&& content);
-  RTC_DEPRECATED void AddContent(const std::string& name,
-                                 MediaProtocolType type,
-                                 MediaContentDescription* description) {
-    AddContent(name, type, absl::WrapUnique(description));
-  }
-  RTC_DEPRECATED void AddContent(const std::string& name,
-                                 MediaProtocolType type,
-                                 bool rejected,
-                                 MediaContentDescription* description) {
-    AddContent(name, type, rejected, absl::WrapUnique(description));
-  }
-  RTC_DEPRECATED void AddContent(const std::string& name,
-                                 MediaProtocolType type,
-                                 bool rejected,
-                                 bool bundle_only,
-                                 MediaContentDescription* description) {
-    AddContent(name, type, rejected, bundle_only,
-               absl::WrapUnique(description));
-  }
-
-  RTC_DEPRECATED void AddContent(ContentInfo* content) {
-    AddContent(std::move(*content));
-  }
 
   bool RemoveContentByName(const std::string& name);
 
@@ -617,32 +620,6 @@ class SessionDescription {
   }
   bool extmap_allow_mixed() const { return extmap_allow_mixed_; }
 
-  // Adds the media transport setting.
-  // Media transport name uniquely identifies the type of media transport.
-  // The name cannot be empty, or repeated in the previously added transport
-  // settings.
-  void AddMediaTransportSetting(const std::string& media_transport_name,
-                                const std::string& media_transport_setting) {
-    RTC_DCHECK(!media_transport_name.empty());
-    for (const auto& setting : media_transport_settings_) {
-      RTC_DCHECK(media_transport_name != setting.transport_name)
-          << "MediaTransportSetting was already registered, transport_name="
-          << setting.transport_name;
-    }
-    media_transport_settings_.push_back(
-        {media_transport_name, media_transport_setting});
-  }
-
-  // Gets the media transport settings, in order of preference.
-  const std::vector<MediaTransportSetting>& MediaTransportSettings() const {
-    return media_transport_settings_;
-  }
-
-  struct MediaTransportSetting {
-    std::string transport_name;
-    std::string transport_setting;
-  };
-
  private:
   SessionDescription(const SessionDescription&);
 
@@ -659,8 +636,6 @@ class SessionDescription {
   // correctly. If it's included in offer to us we will respond that we support
   // it.
   bool extmap_allow_mixed_ = false;
-
-  std::vector<MediaTransportSetting> media_transport_settings_;
 };
 
 // Indicates whether a session description was sent by the local client or

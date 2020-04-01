@@ -12,15 +12,19 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
+#include "api/task_queue/task_queue_factory.h"
+#include "api/task_queue/task_queue_test.h"
 #include "rtc_base/async_invoker.h"
 #include "rtc_base/async_udp_socket.h"
+#include "rtc_base/atomic_ops.h"
 #include "rtc_base/event.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/null_socket_server.h"
 #include "rtc_base/physical_socket_server.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/task_utils/to_queued_task.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
+#include "test/testsupport/rtc_expect_death.h"
 
 #if defined(WEBRTC_WIN)
 #include <comdef.h>  // NOLINT
@@ -28,6 +32,8 @@
 
 namespace rtc {
 namespace {
+
+using ::webrtc::ToQueuedTask;
 
 // Generates a sequence of numbers (collaboratively).
 class TestGenerator {
@@ -302,28 +308,37 @@ TEST(ThreadTest, Invoke) {
 }
 
 // Verifies that two threads calling Invoke on each other at the same time does
-// not deadlock.
-TEST(ThreadTest, TwoThreadsInvokeNoDeadlock) {
+// not deadlock but crash.
+#if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
+TEST(ThreadTest, TwoThreadsInvokeDeathTest) {
+  ::testing::GTEST_FLAG(death_test_style) = "threadsafe";
   AutoThread thread;
-  Thread* current_thread = Thread::Current();
-  ASSERT_TRUE(current_thread != nullptr);
-
+  Thread* main_thread = Thread::Current();
   auto other_thread = Thread::CreateWithSocketServer();
   other_thread->Start();
-
-  struct LocalFuncs {
-    static void Set(bool* out) { *out = true; }
-    static void InvokeSet(Thread* thread, bool* out) {
-      thread->Invoke<void>(RTC_FROM_HERE, Bind(&Set, out));
-    }
-  };
-
-  bool called = false;
-  other_thread->Invoke<void>(
-      RTC_FROM_HERE, Bind(&LocalFuncs::InvokeSet, current_thread, &called));
-
-  EXPECT_TRUE(called);
+  other_thread->Invoke<void>(RTC_FROM_HERE, [main_thread] {
+    RTC_EXPECT_DEATH(main_thread->Invoke<void>(RTC_FROM_HERE, [] {}), "loop");
+  });
 }
+
+TEST(ThreadTest, ThreeThreadsInvokeDeathTest) {
+  ::testing::GTEST_FLAG(death_test_style) = "threadsafe";
+  AutoThread thread;
+  Thread* first = Thread::Current();
+
+  auto second = Thread::Create();
+  second->Start();
+  auto third = Thread::Create();
+  third->Start();
+
+  second->Invoke<void>(RTC_FROM_HERE, [&] {
+    third->Invoke<void>(RTC_FROM_HERE, [&] {
+      RTC_EXPECT_DEATH(first->Invoke<void>(RTC_FROM_HERE, [] {}), "loop");
+    });
+  });
+}
+
+#endif
 
 // Verifies that if thread A invokes a call on thread B and thread C is trying
 // to invoke A at the same time, thread A does not handle C's invoke while
@@ -430,6 +445,194 @@ TEST(ThreadTest, SetNameOnSignalQueueDestroyed) {
   delete thread2;
 }
 
+class ThreadQueueTest : public ::testing::Test, public Thread {
+ public:
+  ThreadQueueTest() : Thread(SocketServer::CreateDefault(), true) {}
+  bool IsLocked_Worker() {
+    if (!CritForTest()->TryEnter()) {
+      return true;
+    }
+    CritForTest()->Leave();
+    return false;
+  }
+  bool IsLocked() {
+    // We have to do this on a worker thread, or else the TryEnter will
+    // succeed, since our critical sections are reentrant.
+    std::unique_ptr<Thread> worker(Thread::CreateWithSocketServer());
+    worker->Start();
+    return worker->Invoke<bool>(
+        RTC_FROM_HERE, rtc::Bind(&ThreadQueueTest::IsLocked_Worker, this));
+  }
+};
+
+struct DeletedLockChecker {
+  DeletedLockChecker(ThreadQueueTest* test, bool* was_locked, bool* deleted)
+      : test(test), was_locked(was_locked), deleted(deleted) {}
+  ~DeletedLockChecker() {
+    *deleted = true;
+    *was_locked = test->IsLocked();
+  }
+  ThreadQueueTest* test;
+  bool* was_locked;
+  bool* deleted;
+};
+
+static void DelayedPostsWithIdenticalTimesAreProcessedInFifoOrder(Thread* q) {
+  EXPECT_TRUE(q != nullptr);
+  int64_t now = TimeMillis();
+  q->PostAt(RTC_FROM_HERE, now, nullptr, 3);
+  q->PostAt(RTC_FROM_HERE, now - 2, nullptr, 0);
+  q->PostAt(RTC_FROM_HERE, now - 1, nullptr, 1);
+  q->PostAt(RTC_FROM_HERE, now, nullptr, 4);
+  q->PostAt(RTC_FROM_HERE, now - 1, nullptr, 2);
+
+  Message msg;
+  for (size_t i = 0; i < 5; ++i) {
+    memset(&msg, 0, sizeof(msg));
+    EXPECT_TRUE(q->Get(&msg, 0));
+    EXPECT_EQ(i, msg.message_id);
+  }
+
+  EXPECT_FALSE(q->Get(&msg, 0));  // No more messages
+}
+
+TEST_F(ThreadQueueTest, DelayedPostsWithIdenticalTimesAreProcessedInFifoOrder) {
+  Thread q(SocketServer::CreateDefault(), true);
+  DelayedPostsWithIdenticalTimesAreProcessedInFifoOrder(&q);
+
+  NullSocketServer nullss;
+  Thread q_nullss(&nullss, true);
+  DelayedPostsWithIdenticalTimesAreProcessedInFifoOrder(&q_nullss);
+}
+
+TEST_F(ThreadQueueTest, DisposeNotLocked) {
+  bool was_locked = true;
+  bool deleted = false;
+  DeletedLockChecker* d = new DeletedLockChecker(this, &was_locked, &deleted);
+  Dispose(d);
+  Message msg;
+  EXPECT_FALSE(Get(&msg, 0));
+  EXPECT_TRUE(deleted);
+  EXPECT_FALSE(was_locked);
+}
+
+class DeletedMessageHandler : public MessageHandler {
+ public:
+  explicit DeletedMessageHandler(bool* deleted) : deleted_(deleted) {}
+  ~DeletedMessageHandler() override { *deleted_ = true; }
+  void OnMessage(Message* msg) override {}
+
+ private:
+  bool* deleted_;
+};
+
+TEST_F(ThreadQueueTest, DiposeHandlerWithPostedMessagePending) {
+  bool deleted = false;
+  DeletedMessageHandler* handler = new DeletedMessageHandler(&deleted);
+  // First, post a dispose.
+  Dispose(handler);
+  // Now, post a message, which should *not* be returned by Get().
+  Post(RTC_FROM_HERE, handler, 1);
+  Message msg;
+  EXPECT_FALSE(Get(&msg, 0));
+  EXPECT_TRUE(deleted);
+}
+
+// Ensure that ProcessAllMessageQueues does its essential function; process
+// all messages (both delayed and non delayed) up until the current time, on
+// all registered message queues.
+TEST(ThreadManager, ProcessAllMessageQueues) {
+  Event entered_process_all_message_queues(true, false);
+  auto a = Thread::CreateWithSocketServer();
+  auto b = Thread::CreateWithSocketServer();
+  a->Start();
+  b->Start();
+
+  volatile int messages_processed = 0;
+  auto incrementer = [&messages_processed,
+                      &entered_process_all_message_queues] {
+    // Wait for event as a means to ensure Increment doesn't occur outside
+    // of ProcessAllMessageQueues. The event is set by a message posted to
+    // the main thread, which is guaranteed to be handled inside
+    // ProcessAllMessageQueues.
+    entered_process_all_message_queues.Wait(Event::kForever);
+    AtomicOps::Increment(&messages_processed);
+  };
+  auto event_signaler = [&entered_process_all_message_queues] {
+    entered_process_all_message_queues.Set();
+  };
+
+  // Post messages (both delayed and non delayed) to both threads.
+  a->PostTask(ToQueuedTask(incrementer));
+  b->PostTask(ToQueuedTask(incrementer));
+  a->PostDelayedTask(ToQueuedTask(incrementer), 0);
+  b->PostDelayedTask(ToQueuedTask(incrementer), 0);
+  rtc::Thread::Current()->PostTask(ToQueuedTask(event_signaler));
+
+  ThreadManager::ProcessAllMessageQueuesForTesting();
+  EXPECT_EQ(4, AtomicOps::AcquireLoad(&messages_processed));
+}
+
+// Test that ProcessAllMessageQueues doesn't hang if a thread is quitting.
+TEST(ThreadManager, ProcessAllMessageQueuesWithQuittingThread) {
+  auto t = Thread::CreateWithSocketServer();
+  t->Start();
+  t->Quit();
+  ThreadManager::ProcessAllMessageQueuesForTesting();
+}
+
+// Test that ProcessAllMessageQueues doesn't hang if a queue clears its
+// messages.
+TEST(ThreadManager, ProcessAllMessageQueuesWithClearedQueue) {
+  Event entered_process_all_message_queues(true, false);
+  auto t = Thread::CreateWithSocketServer();
+  t->Start();
+
+  auto clearer = [&entered_process_all_message_queues] {
+    // Wait for event as a means to ensure Clear doesn't occur outside of
+    // ProcessAllMessageQueues. The event is set by a message posted to the
+    // main thread, which is guaranteed to be handled inside
+    // ProcessAllMessageQueues.
+    entered_process_all_message_queues.Wait(Event::kForever);
+    rtc::Thread::Current()->Clear(nullptr);
+  };
+  auto event_signaler = [&entered_process_all_message_queues] {
+    entered_process_all_message_queues.Set();
+  };
+
+  // Post messages (both delayed and non delayed) to both threads.
+  t->PostTask(RTC_FROM_HERE, clearer);
+  rtc::Thread::Current()->PostTask(RTC_FROM_HERE, event_signaler);
+  ThreadManager::ProcessAllMessageQueuesForTesting();
+}
+
+class RefCountedHandler : public MessageHandler, public rtc::RefCountInterface {
+ public:
+  void OnMessage(Message* msg) override {}
+};
+
+class EmptyHandler : public MessageHandler {
+ public:
+  void OnMessage(Message* msg) override {}
+};
+
+TEST(ThreadManager, ClearReentrant) {
+  std::unique_ptr<Thread> t(Thread::Create());
+  EmptyHandler handler;
+  RefCountedHandler* inner_handler(
+      new rtc::RefCountedObject<RefCountedHandler>());
+  // When the empty handler is destroyed, it will clear messages queued for
+  // itself. The message to be cleared itself wraps a MessageHandler object
+  // (RefCountedHandler) so this will cause the message queue to be cleared
+  // again in a re-entrant fashion, which previously triggered a DCHECK.
+  // The inner handler will be removed in a re-entrant fashion from the
+  // message queue of the thread while the outer handler is removed, verifying
+  // that the iterator is not invalidated in "MessageQueue::Clear".
+  t->Post(RTC_FROM_HERE, inner_handler, 0);
+  t->Post(RTC_FROM_HERE, &handler, 0,
+          new ScopedRefMessageData<RefCountedHandler>(inner_handler));
+}
+
 class AsyncInvokeTest : public ::testing::Test {
  public:
   void IntCallback(int value) {
@@ -518,7 +721,7 @@ TEST_F(AsyncInvokeTest, KillInvokerDuringExecuteWithReentrantInvoke) {
   bool reentrant_functor_run = false;
 
   Thread* main = Thread::Current();
-  Thread thread(absl::make_unique<NullSocketServer>());
+  Thread thread(std::make_unique<NullSocketServer>());
   thread.Start();
   {
     AsyncInvoker invoker;
@@ -900,6 +1103,68 @@ TEST(ThreadPostTaskTest, InvokesInPostedOrder) {
   // Only if the chain is invoked in posted order will the last event be set.
   fourth.Wait(Event::kForever);
 }
+
+TEST(ThreadPostDelayedTaskTest, InvokesAsynchronously) {
+  std::unique_ptr<rtc::Thread> background_thread(rtc::Thread::Create());
+  background_thread->Start();
+
+  // The first event ensures that SendSingleMessage() is not blocking this
+  // thread. The second event ensures that the message is processed.
+  Event event_set_by_test_thread;
+  Event event_set_by_background_thread;
+  background_thread->PostDelayedTask(
+      RTC_FROM_HERE,
+      Bind(&WaitAndSetEvent, &event_set_by_test_thread,
+           &event_set_by_background_thread),
+      /*milliseconds=*/10);
+  event_set_by_test_thread.Set();
+  event_set_by_background_thread.Wait(Event::kForever);
+}
+
+TEST(ThreadPostDelayedTaskTest, InvokesInDelayOrder) {
+  ScopedFakeClock clock;
+  std::unique_ptr<rtc::Thread> background_thread(rtc::Thread::Create());
+  background_thread->Start();
+
+  Event first;
+  Event second;
+  Event third;
+  Event fourth;
+
+  background_thread->PostDelayedTask(RTC_FROM_HERE,
+                                     Bind(&WaitAndSetEvent, &third, &fourth),
+                                     /*milliseconds=*/11);
+  background_thread->PostDelayedTask(RTC_FROM_HERE,
+                                     Bind(&WaitAndSetEvent, &first, &second),
+                                     /*milliseconds=*/9);
+  background_thread->PostDelayedTask(RTC_FROM_HERE,
+                                     Bind(&WaitAndSetEvent, &second, &third),
+                                     /*milliseconds=*/10);
+
+  // All tasks have been posted before the first one is unblocked.
+  first.Set();
+  // Only if the chain is invoked in delay order will the last event be set.
+  clock.AdvanceTime(webrtc::TimeDelta::Millis(11));
+  EXPECT_TRUE(fourth.Wait(0));
+}
+
+class ThreadFactory : public webrtc::TaskQueueFactory {
+ public:
+  std::unique_ptr<webrtc::TaskQueueBase, webrtc::TaskQueueDeleter>
+  CreateTaskQueue(absl::string_view /* name */,
+                  Priority /*priority*/) const override {
+    std::unique_ptr<Thread> thread = Thread::Create();
+    thread->Start();
+    return std::unique_ptr<webrtc::TaskQueueBase, webrtc::TaskQueueDeleter>(
+        thread.release());
+  }
+};
+
+using ::webrtc::TaskQueueTest;
+
+INSTANTIATE_TEST_SUITE_P(RtcThread,
+                         TaskQueueTest,
+                         ::testing::Values(std::make_unique<ThreadFactory>));
 
 }  // namespace
 }  // namespace rtc

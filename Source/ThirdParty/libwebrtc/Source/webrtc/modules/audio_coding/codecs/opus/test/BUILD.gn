@@ -14,7 +14,7 @@ visibility = [
 ]
 
 if (rtc_include_tests) {
-  rtc_static_library("test") {
+  rtc_library("test") {
     testonly = true
 
     sources = [
@@ -30,11 +30,11 @@ if (rtc_include_tests) {
       "../../../../../common_audio",
       "../../../../../common_audio:common_audio_c",
       "../../../../../rtc_base:checks",
-      "../../../../../rtc_base/memory:aligned_array",
+      "../../../../../rtc_base/memory:aligned_malloc",
     ]
   }
 
-  rtc_source_set("test_unittest") {
+  rtc_library("test_unittest") {
     testonly = true
 
     sources = [

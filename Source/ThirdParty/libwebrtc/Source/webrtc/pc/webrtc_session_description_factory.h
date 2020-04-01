@@ -26,7 +26,6 @@
 #include "pc/peer_connection_internal.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/message_handler.h"
-#include "rtc_base/message_queue.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/rtc_certificate_generator.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"

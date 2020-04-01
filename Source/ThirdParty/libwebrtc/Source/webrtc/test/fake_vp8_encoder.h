@@ -32,10 +32,10 @@
 namespace webrtc {
 namespace test {
 
-class FakeVP8Encoder : public FakeEncoder {
+class FakeVp8Encoder : public FakeEncoder {
  public:
-  explicit FakeVP8Encoder(Clock* clock);
-  virtual ~FakeVP8Encoder() = default;
+  explicit FakeVp8Encoder(Clock* clock);
+  virtual ~FakeVp8Encoder() = default;
 
   int32_t InitEncode(const VideoCodec* config,
                      const Settings& settings) override;

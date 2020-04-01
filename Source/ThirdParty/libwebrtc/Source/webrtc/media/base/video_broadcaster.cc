@@ -15,6 +15,7 @@
 #include "absl/types/optional.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_rotation.h"
+#include "media/base/video_common.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -79,11 +80,11 @@ void VideoBroadcaster::OnFrame(const webrtc::VideoFrame& frame) {
               .set_id(frame.id())
               .build();
       sink_pair.sink->OnFrame(black_frame);
-    } else if (!previous_frame_sent_to_all_sinks_) {
-      // Since last frame was not sent to some sinks, full update is needed.
+    } else if (!previous_frame_sent_to_all_sinks_ && frame.has_update_rect()) {
+      // Since last frame was not sent to some sinks, no reliable update
+      // information is available, so we need to clear the update rect.
       webrtc::VideoFrame copy = frame;
-      copy.set_update_rect(
-          webrtc::VideoFrame::UpdateRect{0, 0, frame.width(), frame.height()});
+      copy.clear_update_rect();
       sink_pair.sink->OnFrame(copy);
     } else {
       sink_pair.sink->OnFrame(frame);
@@ -101,6 +102,7 @@ void VideoBroadcaster::OnDiscardedFrame() {
 void VideoBroadcaster::UpdateWants() {
   VideoSinkWants wants;
   wants.rotation_applied = false;
+  wants.resolution_alignment = 1;
   for (auto& sink : sink_pairs()) {
     // wants.rotation_applied == ANY(sink.wants.rotation_applied)
     if (sink.wants.rotation_applied) {
@@ -123,6 +125,8 @@ void VideoBroadcaster::UpdateWants() {
     if (sink.wants.max_framerate_fps < wants.max_framerate_fps) {
       wants.max_framerate_fps = sink.wants.max_framerate_fps;
     }
+    wants.resolution_alignment = cricket::LeastCommonMultiple(
+        wants.resolution_alignment, sink.wants.resolution_alignment);
   }
 
   if (wants.target_pixel_count &&

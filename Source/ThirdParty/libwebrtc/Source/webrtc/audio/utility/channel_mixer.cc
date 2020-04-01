@@ -8,8 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <cstring>
 #include "audio/utility/channel_mixer.h"
+
+#if defined(WEBRTC_WEBKIT_BUILD)
+#include <cstring>
+#endif
 
 #include "audio/utility/channel_mixing_matrix.h"
 #include "rtc_base/checks.h"

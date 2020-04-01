@@ -19,10 +19,10 @@
 #include "modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
 #include "modules/audio_coding/audio_network_adaptor/dtx_controller.h"
 #include "modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
-#include "modules/audio_coding/audio_network_adaptor/fec_controller_rplr_based.h"
 #include "modules/audio_coding/audio_network_adaptor/frame_length_controller.h"
 #include "modules/audio_coding/audio_network_adaptor/util/threshold_curve.h"
 #include "rtc_base/ignore_wundef.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
@@ -72,43 +72,6 @@ std::unique_ptr<FecControllerPlrBased> CreateFecControllerPlrBased(
                          fec_disabling_threshold.high_bandwidth_bps(),
                          fec_disabling_threshold.high_bandwidth_packet_loss()),
           config.time_constant_ms())));
-}
-
-std::unique_ptr<FecControllerRplrBased> CreateFecControllerRplrBased(
-    const audio_network_adaptor::config::FecControllerRplrBased& config,
-    bool initial_fec_enabled) {
-  RTC_CHECK(config.has_fec_enabling_threshold());
-  RTC_CHECK(config.has_fec_disabling_threshold());
-
-  auto& fec_enabling_threshold = config.fec_enabling_threshold();
-  RTC_CHECK(fec_enabling_threshold.has_low_bandwidth_bps());
-  RTC_CHECK(fec_enabling_threshold.has_low_bandwidth_recoverable_packet_loss());
-  RTC_CHECK(fec_enabling_threshold.has_high_bandwidth_bps());
-  RTC_CHECK(
-      fec_enabling_threshold.has_high_bandwidth_recoverable_packet_loss());
-
-  auto& fec_disabling_threshold = config.fec_disabling_threshold();
-  RTC_CHECK(fec_disabling_threshold.has_low_bandwidth_bps());
-  RTC_CHECK(
-      fec_disabling_threshold.has_low_bandwidth_recoverable_packet_loss());
-  RTC_CHECK(fec_disabling_threshold.has_high_bandwidth_bps());
-  RTC_CHECK(
-      fec_disabling_threshold.has_high_bandwidth_recoverable_packet_loss());
-
-  return std::unique_ptr<FecControllerRplrBased>(
-      new FecControllerRplrBased(FecControllerRplrBased::Config(
-          initial_fec_enabled,
-          ThresholdCurve(
-              fec_enabling_threshold.low_bandwidth_bps(),
-              fec_enabling_threshold.low_bandwidth_recoverable_packet_loss(),
-              fec_enabling_threshold.high_bandwidth_bps(),
-              fec_enabling_threshold.high_bandwidth_recoverable_packet_loss()),
-          ThresholdCurve(
-              fec_disabling_threshold.low_bandwidth_bps(),
-              fec_disabling_threshold.low_bandwidth_recoverable_packet_loss(),
-              fec_disabling_threshold.high_bandwidth_bps(),
-              fec_disabling_threshold
-                  .high_bandwidth_recoverable_packet_loss()))));
 }
 
 std::unique_ptr<FrameLengthController> CreateFrameLengthController(
@@ -291,9 +254,9 @@ std::unique_ptr<ControllerManager> ControllerManagerImpl::Create(
             controller_config.fec_controller(), initial_fec_enabled);
         break;
       case audio_network_adaptor::config::Controller::kFecControllerRplrBased:
-        controller = CreateFecControllerRplrBased(
-            controller_config.fec_controller_rplr_based(), initial_fec_enabled);
-        break;
+        // FecControllerRplrBased has been removed and can't be used anymore.
+        RTC_NOTREACHED();
+        continue;
       case audio_network_adaptor::config::Controller::kFrameLengthController:
         controller = CreateFrameLengthController(
             controller_config.frame_length_controller(),

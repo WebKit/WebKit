@@ -93,10 +93,13 @@ void SaturationProtector::Reset() {
 }
 
 void SaturationProtector::DebugDumpEstimate() const {
-  apm_data_dumper_->DumpRaw(
-      "agc2_adaptive_saturation_protector_delayed_peak_dbfs",
-      peak_enveloper_.Query());
-  apm_data_dumper_->DumpRaw("agc2_adaptive_saturation_margin_db", last_margin_);
+  if (apm_data_dumper_) {
+    apm_data_dumper_->DumpRaw(
+        "agc2_adaptive_saturation_protector_delayed_peak_dbfs",
+        peak_enveloper_.Query());
+    apm_data_dumper_->DumpRaw("agc2_adaptive_saturation_margin_db",
+                              last_margin_);
+  }
 }
 
 }  // namespace webrtc

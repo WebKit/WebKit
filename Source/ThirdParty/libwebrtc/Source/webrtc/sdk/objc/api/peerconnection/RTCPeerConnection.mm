@@ -28,8 +28,8 @@
 #include <memory>
 
 #include "api/jsep_ice_candidate.h"
-#include "api/media_transport_interface.h"
 #include "api/rtc_event_log_output_file.h"
+#include "api/transport/media/media_transport_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -236,11 +236,11 @@ void PeerConnectionDelegateAdapter::OnIceCandidatesRemoved(
 void PeerConnectionDelegateAdapter::OnIceSelectedCandidatePairChanged(
     const cricket::CandidatePairChangeEvent &event) {
   const auto &selected_pair = event.selected_candidate_pair;
-  auto local_candidate_wrapper = absl::make_unique<JsepIceCandidate>(
+  auto local_candidate_wrapper = std::make_unique<JsepIceCandidate>(
       selected_pair.local_candidate().transport_name(), -1, selected_pair.local_candidate());
   RTCIceCandidate *local_candidate =
       [[RTCIceCandidate alloc] initWithNativeCandidate:local_candidate_wrapper.release()];
-  auto remote_candidate_wrapper = absl::make_unique<JsepIceCandidate>(
+  auto remote_candidate_wrapper = std::make_unique<JsepIceCandidate>(
       selected_pair.remote_candidate().transport_name(), -1, selected_pair.remote_candidate());
   RTCIceCandidate *remote_candidate =
       [[RTCIceCandidate alloc] initWithNativeCandidate:remote_candidate_wrapper.release()];
@@ -307,6 +307,23 @@ void PeerConnectionDelegateAdapter::OnRemoveTrack(
                     constraints:(RTCMediaConstraints *)constraints
                        delegate:(id<RTCPeerConnectionDelegate>)delegate {
   NSParameterAssert(factory);
+  std::unique_ptr<webrtc::PeerConnectionDependencies> dependencies =
+      std::make_unique<webrtc::PeerConnectionDependencies>(nullptr);
+  return [self initWithDependencies:factory
+                      configuration:configuration
+                        constraints:constraints
+                       dependencies:std::move(dependencies)
+                           delegate:delegate];
+}
+
+- (instancetype)initWithDependencies:(RTCPeerConnectionFactory *)factory
+                       configuration:(RTCConfiguration *)configuration
+                         constraints:(RTCMediaConstraints *)constraints
+                        dependencies:
+                            (std::unique_ptr<webrtc::PeerConnectionDependencies>)dependencies
+                            delegate:(id<RTCPeerConnectionDelegate>)delegate {
+  NSParameterAssert(factory);
+  NSParameterAssert(dependencies.get());
   std::unique_ptr<webrtc::PeerConnectionInterface::RTCConfiguration> config(
       [configuration createNativeConfiguration]);
   if (!config) {
@@ -315,13 +332,12 @@ void PeerConnectionDelegateAdapter::OnRemoveTrack(
   if (self = [super init]) {
     _observer.reset(new webrtc::PeerConnectionDelegateAdapter(self));
     _nativeConstraints = constraints.nativeConstraints;
-    CopyConstraintsIntoRtcConfiguration(_nativeConstraints.get(),
-                                        config.get());
-    _peerConnection =
-        factory.nativeFactory->CreatePeerConnection(*config,
-                                                    nullptr,
-                                                    nullptr,
-                                                    _observer.get());
+    CopyConstraintsIntoRtcConfiguration(_nativeConstraints.get(), config.get());
+
+    webrtc::PeerConnectionDependencies deps = std::move(*dependencies.release());
+    deps.observer = _observer.get();
+    _peerConnection = factory.nativeFactory->CreatePeerConnection(*config, std::move(deps));
+
     if (!_peerConnection) {
       return nil;
     }
@@ -563,7 +579,7 @@ void PeerConnectionDelegateAdapter::OnRemoveTrack(
                                                  rtc::saturated_cast<size_t>(maxSizeInBytes);
 
   _hasStartedRtcEventLog = _peerConnection->StartRtcEventLog(
-      absl::make_unique<webrtc::RtcEventLogOutputFile>(f, max_size));
+      std::make_unique<webrtc::RtcEventLogOutputFile>(f, max_size));
   return _hasStartedRtcEventLog;
 }
 

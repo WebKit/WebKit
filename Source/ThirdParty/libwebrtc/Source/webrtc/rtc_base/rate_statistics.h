@@ -17,10 +17,18 @@
 #include <memory>
 
 #include "absl/types/optional.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
-class RateStatistics {
+// Class to estimate rates based on counts in a sequence of 1-millisecond
+// intervals.
+
+// This class uses int64 for all its numbers because some rates can be very
+// high; for instance, a 20 Mbit/sec video stream can wrap a 32-bit byte
+// counter in 14 minutes.
+
+class RTC_EXPORT RateStatistics {
  public:
   static constexpr float kBpsScale = 8000.0f;
 
@@ -41,7 +49,7 @@ class RateStatistics {
   void Reset();
 
   // Update rate with a new data point, moving averaging window as needed.
-  void Update(size_t count, int64_t now_ms);
+  void Update(int64_t count, int64_t now_ms);
 
   // Note that despite this being a const method, it still updates the internal
   // state (moves averaging window), but it doesn't make any alterations that
@@ -49,7 +57,7 @@ class RateStatistics {
   // from a monotonic clock. Ie, it doesn't matter if this call moves the
   // window, since any subsequent call to Update or Rate would still have moved
   // the window as much or more.
-  absl::optional<uint32_t> Rate(int64_t now_ms) const;
+  absl::optional<int64_t> Rate(int64_t now_ms) const;
 
   // Update the size of the averaging window. The maximum allowed value for
   // window_size_ms is max_window_size_ms as supplied in the constructor.
@@ -62,22 +70,26 @@ class RateStatistics {
   // Counters are kept in buckets (circular buffer), with one bucket
   // per millisecond.
   struct Bucket {
-    size_t sum;      // Sum of all samples in this bucket.
-    size_t samples;  // Number of samples in this bucket.
+    int64_t sum;  // Sum of all samples in this bucket.
+    int samples;  // Number of samples in this bucket.
   };
   std::unique_ptr<Bucket[]> buckets_;
 
   // Total count recorded in buckets.
-  size_t accumulated_count_;
+  int64_t accumulated_count_;
+
+  // True if accumulated_count_ has ever grown too large to be
+  // contained in its integer type.
+  bool overflow_ = false;
 
   // The total number of samples in the buckets.
-  size_t num_samples_;
+  int num_samples_;
 
   // Oldest time recorded in buckets.
   int64_t oldest_time_;
 
   // Bucket index of oldest counter recorded in buckets.
-  uint32_t oldest_index_;
+  int64_t oldest_index_;
 
   // To convert counts/ms to desired units
   const float scale_;

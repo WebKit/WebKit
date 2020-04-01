@@ -15,6 +15,7 @@
 
 #include "api/scoped_refptr.h"
 #include "rtc_base/ref_count.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -38,7 +39,7 @@ class I010BufferInterface;
 // performance by providing an optimized path without intermediate conversions.
 // Frame metadata such as rotation and timestamp are stored in
 // webrtc::VideoFrame, and not here.
-class VideoFrameBuffer : public rtc::RefCountInterface {
+class RTC_EXPORT VideoFrameBuffer : public rtc::RefCountInterface {
  public:
   // New frame buffer types will be added conservatively when there is an
   // opportunity to optimize the path between some pair of video source and
@@ -113,7 +114,7 @@ class PlanarYuv8Buffer : public PlanarYuvBuffer {
   ~PlanarYuv8Buffer() override {}
 };
 
-class I420BufferInterface : public PlanarYuv8Buffer {
+class RTC_EXPORT I420BufferInterface : public PlanarYuv8Buffer {
  public:
   Type type() const override;
 
@@ -127,7 +128,7 @@ class I420BufferInterface : public PlanarYuv8Buffer {
   ~I420BufferInterface() override {}
 };
 
-class I420ABufferInterface : public I420BufferInterface {
+class RTC_EXPORT I420ABufferInterface : public I420BufferInterface {
  public:
   Type type() const final;
   virtual const uint8_t* DataA() const = 0;

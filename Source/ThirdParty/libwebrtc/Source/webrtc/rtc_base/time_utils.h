@@ -14,10 +14,8 @@
 #include <stdint.h>
 #include <time.h>
 
-#include <string>
-
 #include "rtc_base/checks.h"
-#include "rtc_base/strings/string_builder.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
@@ -54,10 +52,10 @@ class ClockInterface {
 // TODO(deadbeef): Instead of having functions that access this global
 // ClockInterface, we may want to pass the ClockInterface into everything
 // that uses it, eliminating the need for a global variable and this function.
-ClockInterface* SetClockForTesting(ClockInterface* clock);
+RTC_EXPORT ClockInterface* SetClockForTesting(ClockInterface* clock);
 
 // Returns previously set clock, or nullptr if no custom clock is being used.
-ClockInterface* GetClockForTesting();
+RTC_EXPORT ClockInterface* GetClockForTesting();
 
 #if defined(WINUWP)
 // Synchronizes the current clock based upon an NTP server's epoch in
@@ -74,17 +72,17 @@ int64_t SystemTimeMillis();
 uint32_t Time32();
 
 // Returns the current time in milliseconds in 64 bits.
-int64_t TimeMillis();
+RTC_EXPORT int64_t TimeMillis();
 // Deprecated. Do not use this in any new code.
 inline int64_t Time() {
   return TimeMillis();
 }
 
 // Returns the current time in microseconds.
-int64_t TimeMicros();
+RTC_EXPORT int64_t TimeMicros();
 
 // Returns the current time in nanoseconds.
-int64_t TimeNanos();
+RTC_EXPORT int64_t TimeNanos();
 
 // Returns a future timestamp, 'elapsed' milliseconds from now.
 int64_t TimeAfter(int64_t elapsed);
@@ -135,34 +133,6 @@ int64_t TimeUTCMicros();
 // Return the number of milliseconds since January 1, 1970, UTC.
 // See above.
 int64_t TimeUTCMillis();
-
-// Interval of time from the range [min, max] inclusive.
-class IntervalRange {
- public:
-  IntervalRange() : min_(0), max_(0) {}
-  IntervalRange(int min, int max) : min_(min), max_(max) {
-    RTC_DCHECK_LE(min, max);
-  }
-
-  int min() const { return min_; }
-  int max() const { return max_; }
-
-  std::string ToString() const {
-    rtc::StringBuilder ss;
-    ss << "[" << min_ << "," << max_ << "]";
-    return ss.Release();
-  }
-
-  bool operator==(const IntervalRange& o) const {
-    return min_ == o.min_ && max_ == o.max_;
-  }
-
-  bool operator!=(const IntervalRange& o) const { return !operator==(o); }
-
- private:
-  int min_;
-  int max_;
-};
 
 }  // namespace rtc
 

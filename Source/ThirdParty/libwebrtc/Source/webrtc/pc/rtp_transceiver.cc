@@ -127,6 +127,11 @@ bool RtpTransceiver::RemoveReceiver(RtpReceiverInterface* receiver) {
     return false;
   }
   (*it)->internal()->Stop();
+  // After the receiver has been removed, there's no guarantee that the
+  // contained media channel isn't deleted shortly after this. To make sure that
+  // the receiver doesn't spontaneously try to use it's (potentially stale)
+  // media channel reference, we clear it out.
+  (*it)->internal()->SetMediaChannel(nullptr);
   receivers_.erase(it);
   return true;
 }

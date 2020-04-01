@@ -44,7 +44,7 @@ void TestUdpInternal(const SocketAddress& loopback) {
       main->socketserver()->CreateAsyncSocket(loopback.family(), SOCK_DGRAM);
   socket->Bind(loopback);
 
-  TestClient client(absl::make_unique<AsyncUDPSocket>(socket));
+  TestClient client(std::make_unique<AsyncUDPSocket>(socket));
   SocketAddress addr = client.address(), from;
   EXPECT_EQ(3, client.SendTo("foo", 3, addr));
   EXPECT_TRUE(client.CheckNextPacket("foo", 3, &from));

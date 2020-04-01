@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/running_statistics.h"
 
@@ -23,6 +24,11 @@ namespace webrtc {
 // while slightly adapting the interface.
 class SamplesStatsCounter {
  public:
+  struct StatsSample {
+    double value;
+    Timestamp time;
+  };
+
   SamplesStatsCounter();
   ~SamplesStatsCounter();
   SamplesStatsCounter(const SamplesStatsCounter&);
@@ -32,6 +38,7 @@ class SamplesStatsCounter {
 
   // Adds sample to the stats in amortized O(1) time.
   void AddSample(double value);
+  void AddSample(StatsSample sample);
 
   // Adds samples from another counter.
   void AddSamples(const SamplesStatsCounter& other);
@@ -80,11 +87,19 @@ class SamplesStatsCounter {
   // guarantees of order, so samples can be in different order comparing to in
   // which they were added into counter. Also return value will be invalidate
   // after call to any non const method.
-  rtc::ArrayView<const double> GetSamples() const { return samples_; }
+  rtc::ArrayView<const StatsSample> GetTimedSamples() const { return samples_; }
+  std::vector<double> GetSamples() const {
+    std::vector<double> out;
+    out.reserve(samples_.size());
+    for (const auto& sample : samples_) {
+      out.push_back(sample.value);
+    }
+    return out;
+  }
 
  private:
   RunningStatistics<double> stats_;
-  std::vector<double> samples_;
+  std::vector<StatsSample> samples_;
   bool sorted_ = false;
 };
 

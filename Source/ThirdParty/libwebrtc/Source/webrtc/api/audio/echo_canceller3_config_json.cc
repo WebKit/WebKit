@@ -32,8 +32,7 @@ void ReadParam(const Json::Value& root, std::string param_name, bool* param) {
 void ReadParam(const Json::Value& root, std::string param_name, size_t* param) {
   RTC_DCHECK(param);
   int v;
-  if (rtc::GetIntFromJsonObject(root, param_name, &v)) {
-    RTC_DCHECK_GE(v, 0);
+  if (rtc::GetIntFromJsonObject(root, param_name, &v) && v >= 0) {
     *param = v;
   }
 }
@@ -90,6 +89,41 @@ void ReadParam(const Json::Value& root,
     param->length_blocks = static_cast<size_t>(v[0]);
     param->rate = static_cast<float>(v[1]);
     param->noise_gate = static_cast<float>(v[2]);
+  }
+}
+
+void ReadParam(const Json::Value& root,
+               std::string param_name,
+               EchoCanceller3Config::Delay::AlignmentMixing* param) {
+  RTC_DCHECK(param);
+
+  Json::Value subsection;
+  if (rtc::GetValueFromJsonObject(root, param_name, &subsection)) {
+    ReadParam(subsection, "downmix", &param->downmix);
+    ReadParam(subsection, "adaptive_selection", &param->adaptive_selection);
+    ReadParam(subsection, "activity_power_threshold",
+              &param->activity_power_threshold);
+    ReadParam(subsection, "prefer_first_two_channels",
+              &param->prefer_first_two_channels);
+  }
+}
+
+void ReadParam(
+    const Json::Value& root,
+    std::string param_name,
+    EchoCanceller3Config::Suppressor::SubbandNearendDetection::SubbandRegion*
+        param) {
+  RTC_DCHECK(param);
+  Json::Value json_array;
+  if (rtc::GetValueFromJsonObject(root, param_name, &json_array)) {
+    std::vector<int> v;
+    rtc::JsonArrayToIntVector(json_array, &v);
+    if (v.size() != 2) {
+      RTC_LOG(LS_ERROR) << "Incorrect array size for " << param_name;
+      return;
+    }
+    param->low = static_cast<size_t>(v[0]);
+    param->high = static_cast<size_t>(v[1]);
   }
 }
 
@@ -171,6 +205,13 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
 
     ReadParam(section, "use_external_delay_estimator",
               &cfg.delay.use_external_delay_estimator);
+    ReadParam(section, "log_warning_on_delay_changes",
+              &cfg.delay.log_warning_on_delay_changes);
+
+    ReadParam(section, "render_alignment_mixing",
+              &cfg.delay.render_alignment_mixing);
+    ReadParam(section, "capture_alignment_mixing",
+              &cfg.delay.capture_alignment_mixing);
   }
 
   if (rtc::GetValueFromJsonObject(aec3_root, "filter", &section)) {
@@ -187,6 +228,8 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
     ReadParam(section, "enable_shadow_filter_output_usage",
               &cfg.filter.enable_shadow_filter_output_usage);
     ReadParam(section, "use_linear_filter", &cfg.filter.use_linear_filter);
+    ReadParam(section, "export_linear_aec_output",
+              &cfg.filter.export_linear_aec_output);
   }
 
   if (rtc::GetValueFromJsonObject(aec3_root, "erle", &section)) {
@@ -195,6 +238,10 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
     ReadParam(section, "max_h", &cfg.erle.max_h);
     ReadParam(section, "onset_detection", &cfg.erle.onset_detection);
     ReadParam(section, "num_sections", &cfg.erle.num_sections);
+    ReadParam(section, "clamp_quality_estimate_to_zero",
+              &cfg.erle.clamp_quality_estimate_to_zero);
+    ReadParam(section, "clamp_quality_estimate_to_one",
+              &cfg.erle.clamp_quality_estimate_to_one);
   }
 
   if (rtc::GetValueFromJsonObject(aec3_root, "ep_strength", &section)) {
@@ -230,6 +277,8 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.render_levels.poor_excitation_render_limit);
     ReadParam(section, "poor_excitation_render_limit_ds8",
               &cfg.render_levels.poor_excitation_render_limit_ds8);
+    ReadParam(section, "render_power_gain_db",
+              &cfg.render_levels.render_power_gain_db);
   }
 
   if (rtc::GetValueFromJsonObject(aec3_root, "echo_removal_control",
@@ -295,20 +344,39 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
           &cfg.suppressor.dominant_nearend_detection.use_during_initial_phase);
     }
 
+    if (rtc::GetValueFromJsonObject(section, "subband_nearend_detection",
+                                    &subsection)) {
+      ReadParam(
+          subsection, "nearend_average_blocks",
+          &cfg.suppressor.subband_nearend_detection.nearend_average_blocks);
+      ReadParam(subsection, "subband1",
+                &cfg.suppressor.subband_nearend_detection.subband1);
+      ReadParam(subsection, "subband2",
+                &cfg.suppressor.subband_nearend_detection.subband2);
+      ReadParam(subsection, "nearend_threshold",
+                &cfg.suppressor.subband_nearend_detection.nearend_threshold);
+      ReadParam(subsection, "snr_threshold",
+                &cfg.suppressor.subband_nearend_detection.snr_threshold);
+    }
+
+    ReadParam(section, "use_subband_nearend_detection",
+              &cfg.suppressor.use_subband_nearend_detection);
+
     if (rtc::GetValueFromJsonObject(section, "high_bands_suppression",
                                     &subsection)) {
       ReadParam(subsection, "enr_threshold",
                 &cfg.suppressor.high_bands_suppression.enr_threshold);
       ReadParam(subsection, "max_gain_during_echo",
                 &cfg.suppressor.high_bands_suppression.max_gain_during_echo);
+      ReadParam(subsection, "anti_howling_activation_threshold",
+                &cfg.suppressor.high_bands_suppression
+                     .anti_howling_activation_threshold);
+      ReadParam(subsection, "anti_howling_gain",
+                &cfg.suppressor.high_bands_suppression.anti_howling_gain);
     }
 
     ReadParam(section, "floor_first_increase",
               &cfg.suppressor.floor_first_increase);
-    ReadParam(section, "enforce_transparent",
-              &cfg.suppressor.enforce_transparent);
-    ReadParam(section, "enforce_empty_higher_bands",
-              &cfg.suppressor.enforce_empty_higher_bands);
   }
 }
 
@@ -350,8 +418,44 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
   ost << "\"initial\": " << config.delay.delay_selection_thresholds.initial
       << ",";
   ost << "\"converged\": " << config.delay.delay_selection_thresholds.converged;
-  ost << "}";
+  ost << "},";
 
+  ost << "\"use_external_delay_estimator\": "
+      << (config.delay.use_external_delay_estimator ? "true" : "false") << ",";
+  ost << "\"log_warning_on_delay_changes\": "
+      << (config.delay.log_warning_on_delay_changes ? "true" : "false") << ",";
+
+  ost << "\"render_alignment_mixing\": {";
+  ost << "\"downmix\": "
+      << (config.delay.render_alignment_mixing.downmix ? "true" : "false")
+      << ",";
+  ost << "\"adaptive_selection\": "
+      << (config.delay.render_alignment_mixing.adaptive_selection ? "true"
+                                                                  : "false")
+      << ",";
+  ost << "\"activity_power_threshold\": "
+      << config.delay.render_alignment_mixing.activity_power_threshold << ",";
+  ost << "\"prefer_first_two_channels\": "
+      << (config.delay.render_alignment_mixing.prefer_first_two_channels
+              ? "true"
+              : "false");
+  ost << "},";
+
+  ost << "\"capture_alignment_mixing\": {";
+  ost << "\"downmix\": "
+      << (config.delay.capture_alignment_mixing.downmix ? "true" : "false")
+      << ",";
+  ost << "\"adaptive_selection\": "
+      << (config.delay.capture_alignment_mixing.adaptive_selection ? "true"
+                                                                   : "false")
+      << ",";
+  ost << "\"activity_power_threshold\": "
+      << config.delay.capture_alignment_mixing.activity_power_threshold << ",";
+  ost << "\"prefer_first_two_channels\": "
+      << (config.delay.capture_alignment_mixing.prefer_first_two_channels
+              ? "true"
+              : "false");
+  ost << "}";
   ost << "},";
 
   ost << "\"filter\": {";
@@ -392,7 +496,12 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
   ost << "\"conservative_initial_phase\": "
       << (config.filter.conservative_initial_phase ? "true" : "false") << ",";
   ost << "\"enable_shadow_filter_output_usage\": "
-      << (config.filter.enable_shadow_filter_output_usage ? "true" : "false");
+      << (config.filter.enable_shadow_filter_output_usage ? "true" : "false")
+      << ",";
+  ost << "\"use_linear_filter\": "
+      << (config.filter.use_linear_filter ? "true" : "false") << ",";
+  ost << "\"export_linear_aec_output\": "
+      << (config.filter.export_linear_aec_output ? "true" : "false");
 
   ost << "},";
 
@@ -402,7 +511,11 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
   ost << "\"max_h\": " << config.erle.max_h << ",";
   ost << "\"onset_detection\": "
       << (config.erle.onset_detection ? "true" : "false") << ",";
-  ost << "\"num_sections\": " << config.erle.num_sections;
+  ost << "\"num_sections\": " << config.erle.num_sections << ",";
+  ost << "\"clamp_quality_estimate_to_zero\": "
+      << (config.erle.clamp_quality_estimate_to_zero ? "true" : "false") << ",";
+  ost << "\"clamp_quality_estimate_to_one\": "
+      << (config.erle.clamp_quality_estimate_to_one ? "true" : "false");
   ost << "},";
 
   ost << "\"ep_strength\": {";
@@ -441,7 +554,9 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
   ost << "\"poor_excitation_render_limit\": "
       << config.render_levels.poor_excitation_render_limit << ",";
   ost << "\"poor_excitation_render_limit_ds8\": "
-      << config.render_levels.poor_excitation_render_limit_ds8;
+      << config.render_levels.poor_excitation_render_limit_ds8 << ",";
+  ost << "\"render_power_gain_db\": "
+      << config.render_levels.render_power_gain_db;
   ost << "},";
 
   ost << "\"echo_removal_control\": {";
@@ -517,18 +632,38 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
   ost << "\"use_during_initial_phase\": "
       << config.suppressor.dominant_nearend_detection.use_during_initial_phase;
   ost << "},";
+  ost << "\"subband_nearend_detection\": {";
+  ost << "\"nearend_average_blocks\": "
+      << config.suppressor.subband_nearend_detection.nearend_average_blocks
+      << ",";
+  ost << "\"subband1\": [";
+  ost << config.suppressor.subband_nearend_detection.subband1.low << ",";
+  ost << config.suppressor.subband_nearend_detection.subband1.high;
+  ost << "],";
+  ost << "\"subband2\": [";
+  ost << config.suppressor.subband_nearend_detection.subband2.low << ",";
+  ost << config.suppressor.subband_nearend_detection.subband2.high;
+  ost << "],";
+  ost << "\"nearend_threshold\": "
+      << config.suppressor.subband_nearend_detection.nearend_threshold << ",";
+  ost << "\"snr_threshold\": "
+      << config.suppressor.subband_nearend_detection.snr_threshold;
+  ost << "},";
+  ost << "\"use_subband_nearend_detection\": "
+      << config.suppressor.use_subband_nearend_detection << ",";
   ost << "\"high_bands_suppression\": {";
   ost << "\"enr_threshold\": "
       << config.suppressor.high_bands_suppression.enr_threshold << ",";
   ost << "\"max_gain_during_echo\": "
-      << config.suppressor.high_bands_suppression.max_gain_during_echo;
-  ost << "},";
-  ost << "\"floor_first_increase\": " << config.suppressor.floor_first_increase
+      << config.suppressor.high_bands_suppression.max_gain_during_echo << ",";
+  ost << "\"anti_howling_activation_threshold\": "
+      << config.suppressor.high_bands_suppression
+             .anti_howling_activation_threshold
       << ",";
-  ost << "\"enforce_transparent\": "
-      << (config.suppressor.enforce_transparent ? "true" : "false") << ",";
-  ost << "\"enforce_empty_higher_bands\": "
-      << (config.suppressor.enforce_empty_higher_bands ? "true" : "false");
+  ost << "\"anti_howling_gain\": "
+      << config.suppressor.high_bands_suppression.anti_howling_gain;
+  ost << "},";
+  ost << "\"floor_first_increase\": " << config.suppressor.floor_first_increase;
   ost << "}";
   ost << "}";
   ost << "}";

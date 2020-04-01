@@ -17,6 +17,10 @@
 namespace webrtc {
 
 // Creates a new factory that can create the built-in types of audio decoders.
+// Note: This will link with all the code implementing those codecs, so if you
+// only need a subset of the codecs, consider using
+// CreateAudioDecoderFactory<...codecs listed here...>() or
+// CreateOpusAudioDecoderFactory() instead.
 rtc::scoped_refptr<AudioDecoderFactory> CreateBuiltinAudioDecoderFactory();
 
 }  // namespace webrtc

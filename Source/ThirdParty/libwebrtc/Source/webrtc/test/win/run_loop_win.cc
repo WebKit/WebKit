@@ -12,18 +12,18 @@
 #include <conio.h>
 #include <stdio.h>
 
+#include "rtc_base/task_queue_for_test.h"
 #include "test/run_loop.h"
 
 namespace webrtc {
 namespace test {
 
-void PressEnterToContinue(
-    DEPRECATED_SingleThreadedTaskQueueForTesting& task_queue) {
+void PressEnterToContinue(TaskQueueBase* task_queue) {
   puts(">> Press ENTER to continue...");
 
   while (!_kbhit() || _getch() != '\r') {
     // Drive the message loop for the thread running the task_queue
-    task_queue.SendTask([&]() {
+    SendTask(RTC_FROM_HERE, task_queue, [&]() {
       MSG msg;
       if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);

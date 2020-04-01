@@ -8,11 +8,9 @@
 
 import("../../../webrtc.gni")
 
-rtc_source_set("spl_sqrt_floor") {
+rtc_library("spl_sqrt_floor") {
   visibility = [ "../..:common_audio_c" ]
-  sources = [
-    "spl_sqrt_floor.h",
-  ]
+  sources = [ "spl_sqrt_floor.h" ]
   deps = []
   if (current_cpu == "arm") {
     sources += [ "spl_sqrt_floor_arm.S" ]

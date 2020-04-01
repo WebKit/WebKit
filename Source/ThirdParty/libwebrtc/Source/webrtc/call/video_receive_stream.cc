@@ -24,8 +24,13 @@ std::string VideoReceiveStream::Decoder::ToString() const {
   ss << "{payload_type: " << payload_type;
   ss << ", payload_name: " << video_format.name;
   ss << ", codec_params: {";
-  for (const auto& it : video_format.parameters)
-    ss << it.first << ": " << it.second;
+  for (auto it = video_format.parameters.begin();
+       it != video_format.parameters.end(); ++it) {
+    if (it != video_format.parameters.begin()) {
+      ss << ", ";
+    }
+    ss << it->first << ": " << it->second;
+  }
   ss << '}';
   ss << '}';
 
@@ -69,12 +74,8 @@ std::string VideoReceiveStream::Stats::ToString(int64_t time_ms) const {
 
 VideoReceiveStream::Config::Config(const Config&) = default;
 VideoReceiveStream::Config::Config(Config&&) = default;
-VideoReceiveStream::Config::Config(Transport* rtcp_send_transport,
-                                   MediaTransportConfig media_transport_config)
-    : rtcp_send_transport(rtcp_send_transport),
-      media_transport_config(media_transport_config) {}
 VideoReceiveStream::Config::Config(Transport* rtcp_send_transport)
-    : Config(rtcp_send_transport, MediaTransportConfig()) {}
+    : rtcp_send_transport(rtcp_send_transport) {}
 
 VideoReceiveStream::Config& VideoReceiveStream::Config::operator=(Config&&) =
     default;
@@ -117,7 +118,6 @@ std::string VideoReceiveStream::Config::Rtp::ToString() const {
   ss << "{receiver_reference_time_report: "
      << (rtcp_xr.receiver_reference_time_report ? "on" : "off");
   ss << '}';
-  ss << ", remb: " << (remb ? "on" : "off");
   ss << ", transport_cc: " << (transport_cc ? "on" : "off");
   ss << ", lntf: {enabled: " << (lntf.enabled ? "true" : "false") << '}';
   ss << ", nack: {rtp_history_ms: " << nack.rtp_history_ms << '}';

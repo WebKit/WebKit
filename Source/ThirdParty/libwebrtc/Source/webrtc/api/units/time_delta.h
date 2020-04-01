@@ -32,48 +32,38 @@ namespace webrtc {
 // microseconds (us).
 class TimeDelta final : public rtc_units_impl::RelativeUnit<TimeDelta> {
  public:
+  template <typename T>
+  static constexpr TimeDelta Seconds(T value) {
+    static_assert(std::is_arithmetic<T>::value, "");
+    return FromFraction(1'000'000, value);
+  }
+  template <typename T>
+  static constexpr TimeDelta Millis(T value) {
+    static_assert(std::is_arithmetic<T>::value, "");
+    return FromFraction(1'000, value);
+  }
+  template <typename T>
+  static constexpr TimeDelta Micros(T value) {
+    static_assert(std::is_arithmetic<T>::value, "");
+    return FromValue(value);
+  }
+
   TimeDelta() = delete;
-  template <int64_t seconds>
-  static constexpr TimeDelta Seconds() {
-    return FromStaticFraction<seconds, 1000000>();
-  }
-  template <int64_t ms>
-  static constexpr TimeDelta Millis() {
-    return FromStaticFraction<ms, 1000>();
-  }
-  template <int64_t us>
-  static constexpr TimeDelta Micros() {
-    return FromStaticValue<us>();
-  }
-  template <typename T>
-  static TimeDelta seconds(T seconds) {
-    static_assert(std::is_arithmetic<T>::value, "");
-    return FromFraction<1000000>(seconds);
-  }
-  template <typename T>
-  static TimeDelta ms(T milliseconds) {
-    static_assert(std::is_arithmetic<T>::value, "");
-    return FromFraction<1000>(milliseconds);
-  }
-  template <typename T>
-  static TimeDelta us(T microseconds) {
-    static_assert(std::is_arithmetic<T>::value, "");
-    return FromValue(microseconds);
-  }
+
   template <typename T = int64_t>
-  T seconds() const {
+  constexpr T seconds() const {
     return ToFraction<1000000, T>();
   }
   template <typename T = int64_t>
-  T ms() const {
+  constexpr T ms() const {
     return ToFraction<1000, T>();
   }
   template <typename T = int64_t>
-  T us() const {
+  constexpr T us() const {
     return ToValue<T>();
   }
   template <typename T = int64_t>
-  T ns() const {
+  constexpr T ns() const {
     return ToMultiple<1000, T>();
   }
 
@@ -87,7 +77,9 @@ class TimeDelta final : public rtc_units_impl::RelativeUnit<TimeDelta> {
     return ToValueOr(fallback_value);
   }
 
-  TimeDelta Abs() const { return TimeDelta::us(std::abs(us())); }
+  constexpr TimeDelta Abs() const {
+    return us() < 0 ? TimeDelta::Micros(-us()) : *this;
+  }
 
  private:
   friend class rtc_units_impl::UnitBase<TimeDelta>;

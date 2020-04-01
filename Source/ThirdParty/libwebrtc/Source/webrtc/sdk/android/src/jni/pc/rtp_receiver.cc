@@ -74,15 +74,6 @@ static jlong JNI_RtpReceiver_GetTrack(JNIEnv* jni,
           .release());
 }
 
-static jboolean JNI_RtpReceiver_SetParameters(
-    JNIEnv* jni,
-    jlong j_rtp_receiver_pointer,
-    const JavaParamRef<jobject>& j_parameters) {
-  RtpParameters parameters = JavaToNativeRtpParameters(jni, j_parameters);
-  return reinterpret_cast<RtpReceiverInterface*>(j_rtp_receiver_pointer)
-      ->SetParameters(parameters);
-}
-
 static ScopedJavaLocalRef<jobject> JNI_RtpReceiver_GetParameters(
     JNIEnv* jni,
     jlong j_rtp_receiver_pointer) {

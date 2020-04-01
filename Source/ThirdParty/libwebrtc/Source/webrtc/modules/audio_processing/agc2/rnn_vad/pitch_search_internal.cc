@@ -362,7 +362,7 @@ PitchInfo CheckLowerPitchPeriodsAndComputePitchGain(
     }
     RTC_DCHECK_NE(candidate_pitch_period, candidate_pitch_secondary_period)
         << "The lower pitch period and the additional sub-harmonic must not "
-        << "coincide.";
+           "coincide.";
     // Compute an auto-correlation score for the primary pitch candidate
     // |candidate_pitch_period| by also looking at its possible sub-harmonic
     // |candidate_pitch_secondary_period|.

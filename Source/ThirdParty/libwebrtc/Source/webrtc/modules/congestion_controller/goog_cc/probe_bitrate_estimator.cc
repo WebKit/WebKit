@@ -11,8 +11,8 @@
 #include "modules/congestion_controller/goog_cc/probe_bitrate_estimator.h"
 
 #include <algorithm>
+#include <memory>
 
-#include "absl/memory/memory.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
@@ -46,11 +46,11 @@ constexpr float kTargetUtilizationFraction = 0.95f;
 // The maximum time period over which the cluster history is retained.
 // This is also the maximum time period beyond which a probing burst is not
 // expected to last.
-constexpr TimeDelta kMaxClusterHistory = TimeDelta::Seconds<1>();
+constexpr TimeDelta kMaxClusterHistory = TimeDelta::Seconds(1);
 
 // The maximum time interval between first and the last probe on a cluster
 // on the sender side as well as the receive side.
-constexpr TimeDelta kMaxProbeInterval = TimeDelta::Seconds<1>();
+constexpr TimeDelta kMaxProbeInterval = TimeDelta::Seconds(1);
 
 }  // namespace
 
@@ -94,7 +94,7 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
       packet_feedback.sent_packet.pacing_info.probe_cluster_min_probes *
       kMinReceivedProbesRatio;
   DataSize min_size =
-      DataSize::bytes(
+      DataSize::Bytes(
           packet_feedback.sent_packet.pacing_info.probe_cluster_min_bytes) *
       kMinReceivedBytesRatio;
   if (cluster->num_probes < min_probes || cluster->size_total < min_size)
@@ -107,12 +107,14 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
       receive_interval <= TimeDelta::Zero() ||
       receive_interval > kMaxProbeInterval) {
     RTC_LOG(LS_INFO) << "Probing unsuccessful, invalid send/receive interval"
-                     << " [cluster id: " << cluster_id
-                     << "] [send interval: " << ToString(send_interval) << "]"
-                     << " [receive interval: " << ToString(receive_interval)
-                     << "]";
+                        " [cluster id: "
+                     << cluster_id
+                     << "] [send interval: " << ToString(send_interval)
+                     << "]"
+                        " [receive interval: "
+                     << ToString(receive_interval) << "]";
     if (event_log_) {
-      event_log_->Log(absl::make_unique<RtcEventProbeResultFailure>(
+      event_log_->Log(std::make_unique<RtcEventProbeResultFailure>(
           cluster_id, ProbeFailureReason::kInvalidSendReceiveInterval));
     }
     return absl::nullopt;
@@ -134,28 +136,33 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
   double ratio = receive_rate / send_rate;
   if (ratio > kMaxValidRatio) {
     RTC_LOG(LS_INFO) << "Probing unsuccessful, receive/send ratio too high"
-                     << " [cluster id: " << cluster_id
-                     << "] [send: " << ToString(send_size) << " / "
-                     << ToString(send_interval) << " = " << ToString(send_rate)
+                        " [cluster id: "
+                     << cluster_id << "] [send: " << ToString(send_size)
+                     << " / " << ToString(send_interval) << " = "
+                     << ToString(send_rate)
                      << "]"
-                     << " [receive: " << ToString(receive_size) << " / "
+                        " [receive: "
+                     << ToString(receive_size) << " / "
                      << ToString(receive_interval) << " = "
-                     << ToString(receive_rate) << " ]"
-                     << " [ratio: " << ToString(receive_rate) << " / "
-                     << ToString(send_rate) << " = " << ratio
-                     << " > kMaxValidRatio (" << kMaxValidRatio << ")]";
+                     << ToString(receive_rate)
+                     << " ]"
+                        " [ratio: "
+                     << ToString(receive_rate) << " / " << ToString(send_rate)
+                     << " = " << ratio << " > kMaxValidRatio ("
+                     << kMaxValidRatio << ")]";
     if (event_log_) {
-      event_log_->Log(absl::make_unique<RtcEventProbeResultFailure>(
+      event_log_->Log(std::make_unique<RtcEventProbeResultFailure>(
           cluster_id, ProbeFailureReason::kInvalidSendReceiveRatio));
     }
     return absl::nullopt;
   }
   RTC_LOG(LS_INFO) << "Probing successful"
-                   << " [cluster id: " << cluster_id
-                   << "] [send: " << ToString(send_size) << " / "
+                      " [cluster id: "
+                   << cluster_id << "] [send: " << ToString(send_size) << " / "
                    << ToString(send_interval) << " = " << ToString(send_rate)
                    << " ]"
-                   << " [receive: " << ToString(receive_size) << " / "
+                      " [receive: "
+                   << ToString(receive_size) << " / "
                    << ToString(receive_interval) << " = "
                    << ToString(receive_rate) << "]";
 
@@ -169,11 +176,10 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
   }
   if (event_log_) {
     event_log_->Log(
-        absl::make_unique<RtcEventProbeResultSuccess>(cluster_id, res.bps()));
+        std::make_unique<RtcEventProbeResultSuccess>(cluster_id, res.bps()));
   }
-  last_estimate_ = res;
   estimated_data_rate_ = res;
-  return res;
+  return *estimated_data_rate_;
 }
 
 absl::optional<DataRate>
@@ -181,10 +187,6 @@ ProbeBitrateEstimator::FetchAndResetLastEstimatedBitrate() {
   absl::optional<DataRate> estimated_data_rate = estimated_data_rate_;
   estimated_data_rate_.reset();
   return estimated_data_rate;
-}
-
-absl::optional<DataRate> ProbeBitrateEstimator::last_estimate() const {
-  return last_estimate_;
 }
 
 void ProbeBitrateEstimator::EraseOldClusters(Timestamp timestamp) {

@@ -16,23 +16,23 @@ import sys
 
 
 # TARGET_RE matches a GN target, and extracts the target name and the contents.
-TARGET_RE = re.compile(r'\d+\$(?P<indent>\s*)\w+\("(?P<target_name>\w+)"\) {'
+TARGET_RE = re.compile(r'(?P<indent>\s*)\w+\("(?P<target_name>\w+)"\) {'
                        r'(?P<target_contents>.*?)'
-                       r'\d+\$(?P=indent)}',
+                       r'(?P=indent)}',
                        re.MULTILINE | re.DOTALL)
 
 # SOURCES_RE matches a block of sources inside a GN target.
 SOURCES_RE = re.compile(r'sources \+?= \[(?P<sources>.*?)\]',
                         re.MULTILINE | re.DOTALL)
 
-ERROR_MESSAGE = ("{build_file_path}:{line_number} in target '{target_name}':\n"
+ERROR_MESSAGE = ("{build_file_path} in target '{target_name}':\n"
                  "  Source file '{source_file}'\n"
                  "  crosses boundary of package '{subpackage}'.")
 
 
 class PackageBoundaryViolation(
     collections.namedtuple('PackageBoundaryViolation',
-        'build_file_path line_number target_name source_file subpackage')):
+        'build_file_path target_name source_file subpackage')):
   def __str__(self):
     return ERROR_MESSAGE.format(**self._asdict())
 
@@ -42,7 +42,7 @@ def _BuildSubpackagesPattern(packages, query):
   of the given query."""
   query += os.path.sep
   length = len(query)
-  pattern = r'(?P<line_number>\d+)\$\s*"(?P<source_file>(?P<subpackage>'
+  pattern = r'\s*"(?P<source_file>(?P<subpackage>'
   pattern += '|'.join(re.escape(package[length:].replace(os.path.sep, '/'))
                       for package in packages if package.startswith(query))
   pattern += r')/[\w\./]*)"'
@@ -50,10 +50,9 @@ def _BuildSubpackagesPattern(packages, query):
 
 
 def _ReadFileAndPrependLines(file_path):
-  """Reads the contents of a file and prepends the line number to every line."""
+  """Reads the contents of a file."""
   with open(file_path) as f:
-    return "".join("{}${}".format(line_number, line)
-                   for line_number, line in enumerate(f, 1))
+    return "".join(f.readlines())
 
 
 def _CheckBuildFile(build_file_path, packages):
@@ -73,9 +72,8 @@ def _CheckBuildFile(build_file_path, packages):
       for subpackages_match in subpackages_re.finditer(sources):
         subpackage = subpackages_match.group('subpackage')
         source_file = subpackages_match.group('source_file')
-        line_number = subpackages_match.group('line_number')
         if subpackage:
-          yield PackageBoundaryViolation(build_file_path, line_number,
+          yield PackageBoundaryViolation(build_file_path,
                                          target_name, source_file, subpackage)
 
 

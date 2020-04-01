@@ -12,7 +12,8 @@
 #include <algorithm>
 #include <vector>
 
-#include "absl/memory/memory.h"
+#include <memory>
+#include "rtc_base/net_helper.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
@@ -29,6 +30,8 @@ SimulatedNetwork::Config CreateSimulationConfig(
   sim_config.packet_overhead = config.packet_overhead.bytes<int>();
   sim_config.codel_active_queue_management =
       config.codel_active_queue_management;
+  sim_config.queue_length_packets =
+      config.packet_queue_length_limit.value_or(0);
   return sim_config;
 }
 }  // namespace
@@ -41,7 +44,7 @@ SimulationNode::SimulationNode(NetworkSimulationConfig config,
 std::unique_ptr<SimulatedNetwork> SimulationNode::CreateBehavior(
     NetworkSimulationConfig config) {
   SimulatedNetwork::Config sim_config = CreateSimulationConfig(config);
-  return absl::make_unique<SimulatedNetwork>(sim_config);
+  return std::make_unique<SimulatedNetwork>(sim_config);
 }
 
 void SimulationNode::UpdateConfig(
@@ -83,49 +86,45 @@ bool NetworkNodeTransport::SendRtp(const uint8_t* packet,
   sent_packet.info.packet_type = rtc::PacketType::kData;
   sender_call_->OnSentPacket(sent_packet);
 
-  Timestamp send_time = Timestamp::ms(send_time_ms);
   rtc::CritScope crit(&crit_sect_);
-  if (!send_net_)
+  if (!endpoint_)
     return false;
-  rtc::CopyOnWriteBuffer buffer(packet, length,
-                                length + packet_overhead_.bytes());
-  buffer.SetSize(length + packet_overhead_.bytes());
-  send_net_->OnPacketReceived(
-      EmulatedIpPacket(local_address_, receiver_address_, buffer, send_time));
+  rtc::CopyOnWriteBuffer buffer(packet, length);
+  endpoint_->SendPacket(local_address_, remote_address_, buffer,
+                        packet_overhead_.bytes());
   return true;
 }
 
 bool NetworkNodeTransport::SendRtcp(const uint8_t* packet, size_t length) {
   rtc::CopyOnWriteBuffer buffer(packet, length);
-  Timestamp send_time = sender_clock_->CurrentTime();
   rtc::CritScope crit(&crit_sect_);
-  buffer.SetSize(length + packet_overhead_.bytes());
-  if (!send_net_)
+  if (!endpoint_)
     return false;
-  send_net_->OnPacketReceived(
-      EmulatedIpPacket(local_address_, receiver_address_, buffer, send_time));
+  endpoint_->SendPacket(local_address_, remote_address_, buffer,
+                        packet_overhead_.bytes());
   return true;
 }
 
-void NetworkNodeTransport::Connect(EmulatedNetworkNode* send_node,
-                                   rtc::IPAddress receiver_ip,
+void NetworkNodeTransport::Connect(EmulatedEndpoint* endpoint,
+                                   const rtc::SocketAddress& receiver_address,
                                    DataSize packet_overhead) {
   rtc::NetworkRoute route;
   route.connected = true;
-  route.local_network_id =
-      static_cast<uint16_t>(receiver_ip.v4AddressAsHostOrderInteger());
-  route.remote_network_id =
-      static_cast<uint16_t>(receiver_ip.v4AddressAsHostOrderInteger());
+  // We assume that the address will be unique in the lower bytes.
+  route.local_network_id = static_cast<uint16_t>(
+      receiver_address.ipaddr().v4AddressAsHostOrderInteger());
+  route.remote_network_id = static_cast<uint16_t>(
+      receiver_address.ipaddr().v4AddressAsHostOrderInteger());
+  route.packet_overhead = packet_overhead.bytes() +
+                          receiver_address.ipaddr().overhead() +
+                          cricket::kUdpHeaderSize;
   {
-    // Only IPv4 address is supported. We don't use full range of IPs in
-    // scenario framework and also we need a simple way to convert IP into
-    // network_id to signal network route.
-    RTC_CHECK_EQ(receiver_ip.family(), AF_INET);
-    RTC_CHECK_LE(receiver_ip.v4AddressAsHostOrderInteger(),
-                 std::numeric_limits<uint16_t>::max());
+    // Only IPv4 address is supported.
+    RTC_CHECK_EQ(receiver_address.family(), AF_INET);
     rtc::CritScope crit(&crit_sect_);
-    send_net_ = send_node;
-    receiver_address_ = rtc::SocketAddress(receiver_ip, 0);
+    endpoint_ = endpoint;
+    local_address_ = rtc::SocketAddress(endpoint_->GetPeerLocalAddress(), 0);
+    remote_address_ = receiver_address;
     packet_overhead_ = packet_overhead;
     current_network_route_ = route;
   }
@@ -140,7 +139,7 @@ void NetworkNodeTransport::Disconnect() {
   sender_call_->GetTransportControllerSend()->OnNetworkRouteChanged(
       kDummyTransportName, current_network_route_);
   current_network_route_ = {};
-  send_net_ = nullptr;
+  endpoint_ = nullptr;
 }
 
 }  // namespace test

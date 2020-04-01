@@ -174,7 +174,7 @@ class RTC_EXPORT BasicDesktopFrame : public DesktopFrame {
 };
 
 // A DesktopFrame that stores data in shared memory.
-class SharedMemoryDesktopFrame : public DesktopFrame {
+class RTC_EXPORT SharedMemoryDesktopFrame : public DesktopFrame {
  public:
   // May return nullptr if |shared_memory_factory| failed to create a
   // SharedMemory instance.

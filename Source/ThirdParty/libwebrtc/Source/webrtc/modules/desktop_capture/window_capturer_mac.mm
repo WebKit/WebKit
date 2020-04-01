@@ -22,7 +22,6 @@
 #include "modules/desktop_capture/mac/desktop_configuration.h"
 #include "modules/desktop_capture/mac/desktop_configuration_monitor.h"
 #include "modules/desktop_capture/mac/desktop_frame_cgimage.h"
-#include "modules/desktop_capture/mac/full_screen_chrome_window_detector.h"
 #include "modules/desktop_capture/mac/window_list_utils.h"
 #include "modules/desktop_capture/window_finder_mac.h"
 #include "rtc_base/constructor_magic.h"
@@ -48,10 +47,9 @@ bool IsWindowValid(CGWindowID id) {
 
 class WindowCapturerMac : public DesktopCapturer {
  public:
-  explicit WindowCapturerMac(rtc::scoped_refptr<FullScreenChromeWindowDetector>
-                                 full_screen_chrome_window_detector,
-                             rtc::scoped_refptr<DesktopConfigurationMonitor>
-                                 configuration_monitor);
+  explicit WindowCapturerMac(
+      rtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector,
+      rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor);
   ~WindowCapturerMac() override;
 
   // DesktopCapturer interface.
@@ -68,8 +66,7 @@ class WindowCapturerMac : public DesktopCapturer {
   // The window being captured.
   CGWindowID window_id_ = 0;
 
-  const rtc::scoped_refptr<FullScreenChromeWindowDetector>
-      full_screen_chrome_window_detector_;
+  rtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector_;
 
   const rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor_;
 
@@ -79,18 +76,16 @@ class WindowCapturerMac : public DesktopCapturer {
 };
 
 WindowCapturerMac::WindowCapturerMac(
-    rtc::scoped_refptr<FullScreenChromeWindowDetector>
-        full_screen_chrome_window_detector,
+    rtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector,
     rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor)
-    : full_screen_chrome_window_detector_(
-          std::move(full_screen_chrome_window_detector)),
+    : full_screen_window_detector_(std::move(full_screen_window_detector)),
       configuration_monitor_(std::move(configuration_monitor)),
       window_finder_(configuration_monitor_) {}
 
 WindowCapturerMac::~WindowCapturerMac() {}
 
 bool WindowCapturerMac::GetSourceList(SourceList* sources) {
-  return webrtc::GetWindowList(sources, true);
+  return webrtc::GetWindowList(sources, true, true);
 }
 
 bool WindowCapturerMac::SelectSource(SourceId id) {
@@ -163,12 +158,15 @@ void WindowCapturerMac::CaptureFrame() {
   }
 
   CGWindowID on_screen_window = window_id_;
-  if (full_screen_chrome_window_detector_) {
-    CGWindowID full_screen_window =
-        full_screen_chrome_window_detector_->FindFullScreenWindow(window_id_);
+  if (full_screen_window_detector_) {
+    full_screen_window_detector_->UpdateWindowListIfNeeded(
+        window_id_, [](DesktopCapturer::SourceList* sources) {
+          return webrtc::GetWindowList(sources, true, false);
+        });
 
-    if (full_screen_window != kCGNullWindowID)
-      on_screen_window = full_screen_window;
+    CGWindowID full_screen_window = full_screen_window_detector_->FindFullScreenWindow(window_id_);
+
+    if (full_screen_window != kCGNullWindowID) on_screen_window = full_screen_window;
   }
 
   std::unique_ptr<DesktopFrame> frame = DesktopFrameCGImage::CreateForWindow(on_screen_window);
@@ -186,9 +184,6 @@ void WindowCapturerMac::CaptureFrame() {
   frame->set_dpi(DesktopVector(kStandardDPI * scale_factor, kStandardDPI * scale_factor));
 
   callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
-
-  if (full_screen_chrome_window_detector_)
-    full_screen_chrome_window_detector_->UpdateWindowListIfNeeded(window_id_);
 }
 
 }  // namespace
@@ -196,9 +191,8 @@ void WindowCapturerMac::CaptureFrame() {
 // static
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawWindowCapturer(
     const DesktopCaptureOptions& options) {
-  return std::unique_ptr<DesktopCapturer>(
-      new WindowCapturerMac(options.full_screen_chrome_window_detector(),
-                            options.configuration_monitor()));
+  return std::unique_ptr<DesktopCapturer>(new WindowCapturerMac(
+      options.full_screen_window_detector(), options.configuration_monitor()));
 }
 
 }  // namespace webrtc

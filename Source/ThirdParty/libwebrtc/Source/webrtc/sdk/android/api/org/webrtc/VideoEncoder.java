@@ -11,8 +11,6 @@
 package org.webrtc;
 
 import android.support.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
 import org.webrtc.EncodedImage;
 
 /**
@@ -238,8 +236,14 @@ public interface VideoEncoder {
 
   public interface Callback {
     /**
-     * Call to return an encoded frame. It is safe to assume the byte buffer held by |frame| is not
-     * accessed after the call to this method returns.
+     * Old encoders assume that the byte buffer held by |frame| is not accessed after the call to
+     * this method returns. If the pipeline downstream needs to hold on to the buffer, it then has
+     * to make its own copy. We want to move to a model where no copying is needed, and instead use
+     * retain()/release() to signal to the encoder when it is safe to reuse the buffer.
+     *
+     * Over the transition, implementations of this class should use the maybeRetain() method if
+     * they want to keep a reference to the buffer, and fall back to copying if that method returns
+     * false.
      */
     void onEncodedFrame(EncodedImage frame, CodecSpecificInfo info);
   }

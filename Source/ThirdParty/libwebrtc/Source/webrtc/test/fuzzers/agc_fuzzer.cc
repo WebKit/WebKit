@@ -8,7 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/gain_control_impl.h"
 #include "modules/audio_processing/include/audio_processing.h"
@@ -19,13 +20,19 @@
 namespace webrtc {
 namespace {
 
-void FillAudioBuffer(test::FuzzDataHelper* fuzz_data, AudioBuffer* buffer) {
+void FillAudioBuffer(size_t sample_rate_hz,
+                     test::FuzzDataHelper* fuzz_data,
+                     AudioBuffer* buffer) {
   float* const* channels = buffer->channels_f();
   for (size_t i = 0; i < buffer->num_channels(); ++i) {
     for (size_t j = 0; j < buffer->num_frames(); ++j) {
       channels[i][j] =
           static_cast<float>(fuzz_data->ReadOrDefaultValue<int16_t>(0));
     }
+  }
+
+  if (sample_rate_hz != 16000) {
+    buffer->SplitIntoFrequencyBands();
   }
 }
 
@@ -60,9 +67,7 @@ void FuzzGainControllerConfig(test::FuzzDataHelper* fuzz_data,
   }
   gc->set_compression_gain_db(gain);
   gc->set_target_level_dbfs(target_level_dbfs);
-  gc->Enable(true);
 
-  static_cast<void>(gc->is_enabled());
   static_cast<void>(gc->mode());
   static_cast<void>(gc->analog_level_minimum());
   static_cast<void>(gc->analog_level_maximum());
@@ -75,13 +80,13 @@ void FuzzGainControllerConfig(test::FuzzDataHelper* fuzz_data,
 
 void FuzzGainController(test::FuzzDataHelper* fuzz_data, GainControlImpl* gci) {
   using Rate = ::webrtc::AudioProcessing::NativeRate;
-  const Rate rate_kinds[] = {Rate::kSampleRate8kHz, Rate::kSampleRate16kHz,
-                             Rate::kSampleRate32kHz, Rate::kSampleRate48kHz};
+  const Rate rate_kinds[] = {Rate::kSampleRate16kHz, Rate::kSampleRate32kHz,
+                             Rate::kSampleRate48kHz};
 
   const auto sample_rate_hz =
       static_cast<size_t>(fuzz_data->SelectOneOf(rate_kinds));
   const size_t samples_per_frame = sample_rate_hz / 100;
-  const bool num_channels = fuzz_data->ReadOrDefaultValue(true) ? 2 : 1;
+  const size_t num_channels = fuzz_data->ReadOrDefaultValue(true) ? 2 : 1;
 
   gci->Initialize(num_channels, sample_rate_hz);
   FuzzGainControllerConfig(fuzz_data, gci);
@@ -93,15 +98,15 @@ void FuzzGainController(test::FuzzDataHelper* fuzz_data, GainControlImpl* gci) {
   std::vector<int16_t> packed_render_audio(samples_per_frame);
 
   while (fuzz_data->CanReadBytes(1)) {
-    FillAudioBuffer(fuzz_data, &audio);
+    FillAudioBuffer(sample_rate_hz, fuzz_data, &audio);
 
     const bool stream_has_echo = fuzz_data->ReadOrDefaultValue(true);
-    gci->AnalyzeCaptureAudio(&audio);
+    gci->AnalyzeCaptureAudio(audio);
     gci->ProcessCaptureAudio(&audio, stream_has_echo);
 
-    FillAudioBuffer(fuzz_data, &audio);
+    FillAudioBuffer(sample_rate_hz, fuzz_data, &audio);
 
-    gci->PackRenderAudioBuffer(&audio, &packed_render_audio);
+    gci->PackRenderAudioBuffer(audio, &packed_render_audio);
     gci->ProcessRenderAudio(packed_render_audio);
   }
 }
@@ -113,9 +118,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     return;
   }
   test::FuzzDataHelper fuzz_data(rtc::ArrayView<const uint8_t>(data, size));
-  rtc::CriticalSection crit_capture;
-  rtc::CriticalSection crit_render;
-  auto gci = absl::make_unique<GainControlImpl>(&crit_render, &crit_capture);
+  auto gci = std::make_unique<GainControlImpl>();
   FuzzGainController(&fuzz_data, gci.get());
 }
 }  // namespace webrtc

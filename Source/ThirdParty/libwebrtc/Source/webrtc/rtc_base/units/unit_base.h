@@ -68,21 +68,21 @@ class UnitBase {
   constexpr bool operator<(const Unit_T& other) const {
     return value_ < other.value_;
   }
-  Unit_T RoundTo(const Unit_T& resolution) const {
+  constexpr Unit_T RoundTo(const Unit_T& resolution) const {
     RTC_DCHECK(IsFinite());
     RTC_DCHECK(resolution.IsFinite());
     RTC_DCHECK_GT(resolution.value_, 0);
     return Unit_T((value_ + resolution.value_ / 2) / resolution.value_) *
            resolution.value_;
   }
-  Unit_T RoundUpTo(const Unit_T& resolution) const {
+  constexpr Unit_T RoundUpTo(const Unit_T& resolution) const {
     RTC_DCHECK(IsFinite());
     RTC_DCHECK(resolution.IsFinite());
     RTC_DCHECK_GT(resolution.value_, 0);
     return Unit_T((value_ + resolution.value_ - 1) / resolution.value_) *
            resolution.value_;
   }
-  Unit_T RoundDownTo(const Unit_T& resolution) const {
+  constexpr Unit_T RoundDownTo(const Unit_T& resolution) const {
     RTC_DCHECK(IsFinite());
     RTC_DCHECK(resolution.IsFinite());
     RTC_DCHECK_GT(resolution.value_, 0);
@@ -90,26 +90,10 @@ class UnitBase {
   }
 
  protected:
-  template <int64_t value>
-  static constexpr Unit_T FromStaticValue() {
-    static_assert(value >= 0 || !Unit_T::one_sided, "");
-    static_assert(value > MinusInfinityVal(), "");
-    static_assert(value < PlusInfinityVal(), "");
-    return Unit_T(value);
-  }
-
-  template <int64_t fraction_value, int64_t Denominator>
-  static constexpr Unit_T FromStaticFraction() {
-    static_assert(fraction_value >= 0 || !Unit_T::one_sided, "");
-    static_assert(fraction_value > MinusInfinityVal() / Denominator, "");
-    static_assert(fraction_value < PlusInfinityVal() / Denominator, "");
-    return Unit_T(fraction_value * Denominator);
-  }
-
   template <
       typename T,
       typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
-  static Unit_T FromValue(T value) {
+  static constexpr Unit_T FromValue(T value) {
     if (Unit_T::one_sided)
       RTC_DCHECK_GE(value, 0);
     RTC_DCHECK_GT(value, MinusInfinityVal());
@@ -119,7 +103,7 @@ class UnitBase {
   template <typename T,
             typename std::enable_if<std::is_floating_point<T>::value>::type* =
                 nullptr>
-  static Unit_T FromValue(T value) {
+  static constexpr Unit_T FromValue(T value) {
     if (value == std::numeric_limits<T>::infinity()) {
       return PlusInfinity();
     } else if (value == -std::numeric_limits<T>::infinity()) {
@@ -131,26 +115,25 @@ class UnitBase {
   }
 
   template <
-      int64_t Denominator,
       typename T,
       typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
-  static Unit_T FromFraction(T value) {
+  static constexpr Unit_T FromFraction(int64_t denominator, T value) {
     if (Unit_T::one_sided)
       RTC_DCHECK_GE(value, 0);
-    RTC_DCHECK_GT(value, MinusInfinityVal() / Denominator);
-    RTC_DCHECK_LT(value, PlusInfinityVal() / Denominator);
-    return Unit_T(rtc::dchecked_cast<int64_t>(value * Denominator));
+    RTC_DCHECK_GT(value, MinusInfinityVal() / denominator);
+    RTC_DCHECK_LT(value, PlusInfinityVal() / denominator);
+    return Unit_T(rtc::dchecked_cast<int64_t>(value * denominator));
   }
-  template <int64_t Denominator,
-            typename T,
+  template <typename T,
             typename std::enable_if<std::is_floating_point<T>::value>::type* =
                 nullptr>
-  static Unit_T FromFraction(T value) {
-    return FromValue(value * Denominator);
+  static constexpr Unit_T FromFraction(int64_t denominator, T value) {
+    return FromValue(value * denominator);
   }
 
   template <typename T = int64_t>
-  typename std::enable_if<std::is_integral<T>::value, T>::type ToValue() const {
+  constexpr typename std::enable_if<std::is_integral<T>::value, T>::type
+  ToValue() const {
     RTC_DCHECK(IsFinite());
     return rtc::dchecked_cast<T>(value_);
   }
@@ -168,8 +151,8 @@ class UnitBase {
   }
 
   template <int64_t Denominator, typename T = int64_t>
-  typename std::enable_if<std::is_integral<T>::value, T>::type ToFraction()
-      const {
+  constexpr typename std::enable_if<std::is_integral<T>::value, T>::type
+  ToFraction() const {
     RTC_DCHECK(IsFinite());
     if (Unit_T::one_sided) {
       return rtc::dchecked_cast<T>(
@@ -193,8 +176,8 @@ class UnitBase {
   }
 
   template <int64_t Factor, typename T = int64_t>
-  typename std::enable_if<std::is_integral<T>::value, T>::type ToMultiple()
-      const {
+  constexpr typename std::enable_if<std::is_integral<T>::value, T>::type
+  ToMultiple() const {
     RTC_DCHECK_GE(ToValue(), std::numeric_limits<T>::min() / Factor);
     RTC_DCHECK_LE(ToValue(), std::numeric_limits<T>::max() / Factor);
     return rtc::dchecked_cast<T>(ToValue() * Factor);
@@ -218,9 +201,9 @@ class UnitBase {
     return std::numeric_limits<int64_t>::min();
   }
 
-  Unit_T& AsSubClassRef() { return reinterpret_cast<Unit_T&>(*this); }
+  constexpr Unit_T& AsSubClassRef() { return static_cast<Unit_T&>(*this); }
   constexpr const Unit_T& AsSubClassRef() const {
-    return reinterpret_cast<const Unit_T&>(*this);
+    return static_cast<const Unit_T&>(*this);
   }
   // Assumes that n >= 0 and d > 0.
   static constexpr int64_t DivRoundPositiveToNearest(int64_t n, int64_t d) {
@@ -240,14 +223,14 @@ class UnitBase {
 template <class Unit_T>
 class RelativeUnit : public UnitBase<Unit_T> {
  public:
-  Unit_T Clamped(Unit_T min_value, Unit_T max_value) const {
+  constexpr Unit_T Clamped(Unit_T min_value, Unit_T max_value) const {
     return std::max(min_value,
                     std::min(UnitBase<Unit_T>::AsSubClassRef(), max_value));
   }
-  void Clamp(Unit_T min_value, Unit_T max_value) {
+  constexpr void Clamp(Unit_T min_value, Unit_T max_value) {
     *this = Clamped(min_value, max_value);
   }
-  Unit_T operator+(const Unit_T other) const {
+  constexpr Unit_T operator+(const Unit_T other) const {
     if (this->IsPlusInfinity() || other.IsPlusInfinity()) {
       RTC_DCHECK(!this->IsMinusInfinity());
       RTC_DCHECK(!other.IsMinusInfinity());
@@ -259,7 +242,7 @@ class RelativeUnit : public UnitBase<Unit_T> {
     }
     return UnitBase<Unit_T>::FromValue(this->ToValue() + other.ToValue());
   }
-  Unit_T operator-(const Unit_T other) const {
+  constexpr Unit_T operator-(const Unit_T other) const {
     if (this->IsPlusInfinity() || other.IsMinusInfinity()) {
       RTC_DCHECK(!this->IsMinusInfinity());
       RTC_DCHECK(!other.IsPlusInfinity());
@@ -271,11 +254,11 @@ class RelativeUnit : public UnitBase<Unit_T> {
     }
     return UnitBase<Unit_T>::FromValue(this->ToValue() - other.ToValue());
   }
-  Unit_T& operator+=(const Unit_T other) {
+  constexpr Unit_T& operator+=(const Unit_T other) {
     *this = *this + other;
     return this->AsSubClassRef();
   }
-  Unit_T& operator-=(const Unit_T other) {
+  constexpr Unit_T& operator-=(const Unit_T other) {
     *this = *this - other;
     return this->AsSubClassRef();
   }
@@ -284,18 +267,18 @@ class RelativeUnit : public UnitBase<Unit_T> {
            other.template ToValue<double>();
   }
   template <typename T>
-  typename std::enable_if<std::is_arithmetic<T>::value, Unit_T>::type operator/(
-      const T& scalar) const {
+  constexpr typename std::enable_if<std::is_arithmetic<T>::value, Unit_T>::type
+  operator/(const T& scalar) const {
     return UnitBase<Unit_T>::FromValue(
         std::round(UnitBase<Unit_T>::template ToValue<int64_t>() / scalar));
   }
-  Unit_T operator*(const double scalar) const {
+  constexpr Unit_T operator*(double scalar) const {
     return UnitBase<Unit_T>::FromValue(std::round(this->ToValue() * scalar));
   }
-  Unit_T operator*(const int64_t scalar) const {
+  constexpr Unit_T operator*(int64_t scalar) const {
     return UnitBase<Unit_T>::FromValue(this->ToValue() * scalar);
   }
-  Unit_T operator*(const int32_t scalar) const {
+  constexpr Unit_T operator*(int32_t scalar) const {
     return UnitBase<Unit_T>::FromValue(this->ToValue() * scalar);
   }
 
@@ -304,17 +287,15 @@ class RelativeUnit : public UnitBase<Unit_T> {
 };
 
 template <class Unit_T>
-inline Unit_T operator*(const double scalar, const RelativeUnit<Unit_T> other) {
+inline constexpr Unit_T operator*(double scalar, RelativeUnit<Unit_T> other) {
   return other * scalar;
 }
 template <class Unit_T>
-inline Unit_T operator*(const int64_t scalar,
-                        const RelativeUnit<Unit_T> other) {
+inline constexpr Unit_T operator*(int64_t scalar, RelativeUnit<Unit_T> other) {
   return other * scalar;
 }
 template <class Unit_T>
-inline Unit_T operator*(const int32_t& scalar,
-                        const RelativeUnit<Unit_T> other) {
+inline constexpr Unit_T operator*(int32_t scalar, RelativeUnit<Unit_T> other) {
   return other * scalar;
 }
 

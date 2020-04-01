@@ -145,7 +145,8 @@ TEST(WPDTreeTest, CorrectnessBasedOnMatlabFiles) {
 
       ASSERT_EQ(kLeavesSamples, matlab_samples_read)
           << "Matlab test files are malformed.\n"
-          << "File: 3_" << i;
+             "File: 3_"
+          << i;
       // Get output data from the corresponding node
       const float* node_data = tree.NodeAt(kLevels, i)->data();
       // Compare with matlab files.

@@ -16,11 +16,6 @@
 
 #include <vector>
 
-#include "api/rtp_headers.h"
-#include "api/video/video_frame_type.h"
-#include "modules/include/module_common_types_public.h"
-#include "modules/include/module_fec_types.h"
-#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {

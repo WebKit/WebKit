@@ -149,6 +149,8 @@
       return webrtc::RtpTransceiverDirection::kRecvOnly;
     case RTCRtpTransceiverDirectionInactive:
       return webrtc::RtpTransceiverDirection::kInactive;
+    case RTCRtpTransceiverDirectionStopped:
+      return webrtc::RtpTransceiverDirection::kStopped;
   }
 }
 
@@ -163,6 +165,8 @@
       return RTCRtpTransceiverDirectionRecvOnly;
     case webrtc::RtpTransceiverDirection::kInactive:
       return RTCRtpTransceiverDirectionInactive;
+    case webrtc::RtpTransceiverDirection::kStopped:
+      return RTCRtpTransceiverDirectionStopped;
   }
 }
 

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/audio_processing/aec3/cascaded_biquad_filter.h"
+#include "modules/audio_processing/utility/cascaded_biquad_filter.h"
 
 #include <vector>
 
@@ -71,7 +71,7 @@ TEST(CascadedBiquadFilter, HighPassConfiguration) {
 }
 
 // Verifies that the reset functionality works as intended.
-TEST(CascadedBiquadFilter, HighPassConfiguration) {
+TEST(CascadedBiquadFilter, HighPassConfigurationResetFunctionality) {
   CascadedBiQuadFilter filter(kHighPassFilterCoefficients, 2);
 
   std::vector<float> values1(100, 1.f);

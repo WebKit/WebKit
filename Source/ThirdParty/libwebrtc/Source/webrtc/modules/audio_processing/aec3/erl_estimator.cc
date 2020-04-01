@@ -38,21 +38,69 @@ void ErlEstimator::Reset() {
   blocks_since_reset_ = 0;
 }
 
-void ErlEstimator::Update(bool converged_filter,
-                          rtc::ArrayView<const float> render_spectrum,
-                          rtc::ArrayView<const float> capture_spectrum) {
-  RTC_DCHECK_EQ(kFftLengthBy2Plus1, render_spectrum.size());
-  RTC_DCHECK_EQ(kFftLengthBy2Plus1, capture_spectrum.size());
-  const auto& X2 = render_spectrum;
-  const auto& Y2 = capture_spectrum;
+void ErlEstimator::Update(
+    const std::vector<bool>& converged_filters,
+    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> render_spectra,
+    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+        capture_spectra) {
+  const size_t num_capture_channels = converged_filters.size();
+  RTC_DCHECK_EQ(capture_spectra.size(), num_capture_channels);
 
   // Corresponds to WGN of power -46 dBFS.
   constexpr float kX2Min = 44015068.0f;
 
+  const auto first_converged_iter =
+      std::find(converged_filters.begin(), converged_filters.end(), true);
+  const bool any_filter_converged =
+      first_converged_iter != converged_filters.end();
+
   if (++blocks_since_reset_ < startup_phase_length_blocks__ ||
-      !converged_filter) {
+      !any_filter_converged) {
     return;
   }
+
+  // Use the maximum spectrum across capture and the maximum across render.
+  std::array<float, kFftLengthBy2Plus1> max_capture_spectrum_data;
+  std::array<float, kFftLengthBy2Plus1> max_capture_spectrum =
+      capture_spectra[/*channel=*/0];
+  if (num_capture_channels > 1) {
+    // Initialize using the first channel with a converged filter.
+    const size_t first_converged =
+        std::distance(converged_filters.begin(), first_converged_iter);
+    RTC_DCHECK_GE(first_converged, 0);
+    RTC_DCHECK_LT(first_converged, num_capture_channels);
+    max_capture_spectrum_data = capture_spectra[first_converged];
+
+    for (size_t ch = first_converged + 1; ch < num_capture_channels; ++ch) {
+      if (!converged_filters[ch]) {
+        continue;
+      }
+      for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+        max_capture_spectrum_data[k] =
+            std::max(max_capture_spectrum_data[k], capture_spectra[ch][k]);
+      }
+    }
+    max_capture_spectrum = max_capture_spectrum_data;
+  }
+
+  const size_t num_render_channels = render_spectra.size();
+  std::array<float, kFftLengthBy2Plus1> max_render_spectrum_data;
+  rtc::ArrayView<const float, kFftLengthBy2Plus1> max_render_spectrum =
+      render_spectra[/*channel=*/0];
+  if (num_render_channels > 1) {
+    std::copy(render_spectra[0].begin(), render_spectra[0].end(),
+              max_render_spectrum_data.begin());
+    for (size_t ch = 1; ch < num_render_channels; ++ch) {
+      for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+        max_render_spectrum_data[k] =
+            std::max(max_render_spectrum_data[k], render_spectra[ch][k]);
+      }
+    }
+    max_render_spectrum = max_render_spectrum_data;
+  }
+
+  const auto& X2 = max_render_spectrum;
+  const auto& Y2 = max_capture_spectrum;
 
   // Update the estimates in a maximum statistics manner.
   for (size_t k = 1; k < kFftLengthBy2; ++k) {

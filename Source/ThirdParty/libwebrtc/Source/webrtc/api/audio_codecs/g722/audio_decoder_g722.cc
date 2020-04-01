@@ -13,7 +13,6 @@
 #include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/g722/audio_decoder_g722.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -40,9 +39,9 @@ std::unique_ptr<AudioDecoder> AudioDecoderG722::MakeAudioDecoder(
     absl::optional<AudioCodecPairId> /*codec_pair_id*/) {
   switch (config.num_channels) {
     case 1:
-      return absl::make_unique<AudioDecoderG722Impl>();
+      return std::make_unique<AudioDecoderG722Impl>();
     case 2:
-      return absl::make_unique<AudioDecoderG722StereoImpl>();
+      return std::make_unique<AudioDecoderG722StereoImpl>();
     default:
       return nullptr;
   }

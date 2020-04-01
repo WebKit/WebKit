@@ -18,6 +18,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/** Corresponds to webrtc::DegradationPreference. */
+typedef NS_ENUM(NSInteger, RTCDegradationPreference) {
+  RTCDegradationPreferenceDisabled,
+  RTCDegradationPreferenceMaintainFramerate,
+  RTCDegradationPreferenceMaintainResolution,
+  RTCDegradationPreferenceBalanced
+};
+
 RTC_OBJC_EXPORT
 @interface RTCRtpParameters : NSObject
 
@@ -35,6 +43,12 @@ RTC_OBJC_EXPORT
 
 /** The negotiated set of send codecs in order of preference. */
 @property(nonatomic, copy) NSArray<RTCRtpCodecParameters *> *codecs;
+
+/**
+ * Degradation preference in case of CPU adaptation or constrained bandwidth.
+ * If nil, implementation default degradation preference will be used.
+ */
+@property(nonatomic, copy, nullable) NSNumber *degradationPreference;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 

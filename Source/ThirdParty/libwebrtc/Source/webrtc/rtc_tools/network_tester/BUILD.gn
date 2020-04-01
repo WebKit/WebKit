@@ -13,20 +13,16 @@ if (rtc_enable_protobuf) {
 
 if (rtc_enable_protobuf) {
   proto_library("network_tester_config_proto") {
-    sources = [
-      "network_tester_config.proto",
-    ]
+    sources = [ "network_tester_config.proto" ]
     proto_out_dir = "rtc_tools/network_tester"
   }
 
   proto_library("network_tester_packet_proto") {
-    sources = [
-      "network_tester_packet.proto",
-    ]
+    sources = [ "network_tester_packet.proto" ]
     proto_out_dir = "rtc_tools/network_tester"
   }
 
-  rtc_static_library("network_tester") {
+  rtc_library("network_tester") {
     sources = [
       "config_reader.cc",
       "config_reader.h",
@@ -48,12 +44,12 @@ if (rtc_enable_protobuf) {
       "../../p2p",
       "../../rtc_base",
       "../../rtc_base:checks",
+      "../../rtc_base:ignore_wundef",
       "../../rtc_base:protobuf_utils",
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_task_queue",
       "../../rtc_base/synchronization:sequence_checker",
       "../../rtc_base/third_party/sigslot",
-      "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/types:optional",
     ]
   }
@@ -67,18 +63,14 @@ if (rtc_enable_protobuf) {
     bundle_data("network_tester_unittests_bundle_data") {
       testonly = true
       sources = network_tester_unittests_resources
-      outputs = [
-        "{{bundle_resources_dir}}/{{source_file_part}}",
-      ]
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
     }
   }
 
-  rtc_source_set("network_tester_unittests") {
+  rtc_library("network_tester_unittests") {
     testonly = true
 
-    sources = [
-      "network_tester_unittest.cc",
-    ]
+    sources = [ "network_tester_unittest.cc" ]
 
     deps = [
       ":network_tester",
@@ -98,13 +90,9 @@ if (rtc_enable_protobuf) {
   }
 
   rtc_executable("network_tester_server") {
-    sources = [
-      "server.cc",
-    ]
+    sources = [ "server.cc" ]
 
-    deps = [
-      ":network_tester",
-    ]
+    deps = [ ":network_tester" ]
   }
 }
 
@@ -113,7 +101,7 @@ if (is_android) {
     testonly = true
     apk_name = "NetworkTesterMobile"
     android_manifest = "androidapp/AndroidManifest.xml"
-    min_sdk_version = 17
+    min_sdk_version = 16
     target_sdk_version = 24
 
     deps = [
@@ -129,7 +117,7 @@ if (is_android) {
     testonly = true
     android_manifest_for_lint = "androidapp/AndroidManifest.xml"
 
-    java_files = [
+    sources = [
       "androidapp/src/com/google/media/networktester/MainActivity.java",
       "androidapp/src/com/google/media/networktester/NetworkTester.java",
     ]
@@ -147,13 +135,9 @@ if (is_android) {
   }
 
   rtc_shared_library("network_tester_so") {
-    sources = [
-      "jni.cpp",
-    ]
+    sources = [ "jni.cpp" ]
 
-    deps = [
-      ":network_tester",
-    ]
+    deps = [ ":network_tester" ]
 
     suppressed_configs += [ "//build/config/android:hide_all_but_jni_onload" ]
     configs += [ "//build/config/android:hide_all_but_jni" ]

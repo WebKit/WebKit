@@ -13,15 +13,16 @@
 
 #include <utility>
 
+#include "api/function_view.h"
 #include "rtc_base/constructor_magic.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
 struct Message;
 
 // Messages get dispatched to a MessageHandler
-
-class MessageHandler {
+class RTC_EXPORT MessageHandler {
  public:
   virtual ~MessageHandler();
   virtual void OnMessage(Message* msg) = 0;
@@ -31,38 +32,6 @@ class MessageHandler {
 
  private:
   RTC_DISALLOW_COPY_AND_ASSIGN(MessageHandler);
-};
-
-// Helper class to facilitate executing a functor on a thread.
-template <class ReturnT, class FunctorT>
-class FunctorMessageHandler : public MessageHandler {
- public:
-  explicit FunctorMessageHandler(FunctorT&& functor)
-      : functor_(std::forward<FunctorT>(functor)) {}
-  virtual void OnMessage(Message* msg) { result_ = functor_(); }
-  const ReturnT& result() const { return result_; }
-
-  // Returns moved result. Should not call result() or MoveResult() again
-  // after this.
-  ReturnT MoveResult() { return std::move(result_); }
-
- private:
-  FunctorT functor_;
-  ReturnT result_;
-};
-
-// Specialization for ReturnT of void.
-template <class FunctorT>
-class FunctorMessageHandler<void, FunctorT> : public MessageHandler {
- public:
-  explicit FunctorMessageHandler(FunctorT&& functor)
-      : functor_(std::forward<FunctorT>(functor)) {}
-  virtual void OnMessage(Message* msg) { functor_(); }
-  void result() const {}
-  void MoveResult() {}
-
- private:
-  FunctorT functor_;
 };
 
 }  // namespace rtc

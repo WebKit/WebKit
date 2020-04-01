@@ -20,7 +20,8 @@
 #include <openssl/pem.h>
 #include <time.h>
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "rtc_base/checks.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
@@ -138,7 +139,7 @@ std::unique_ptr<OpenSSLCertificate> OpenSSLCertificate::Generate(
 #if !defined(NDEBUG)
   PrintCert(x509);
 #endif
-  auto ret = absl::make_unique<OpenSSLCertificate>(x509);
+  auto ret = std::make_unique<OpenSSLCertificate>(x509);
   X509_free(x509);
   return ret;
 }
@@ -158,7 +159,7 @@ std::unique_ptr<OpenSSLCertificate> OpenSSLCertificate::FromPEMString(
   if (!x509) {
     return nullptr;
   }
-  auto ret = absl::make_unique<OpenSSLCertificate>(x509);
+  auto ret = std::make_unique<OpenSSLCertificate>(x509);
   X509_free(x509);
   return ret;
 }
@@ -238,7 +239,7 @@ OpenSSLCertificate::~OpenSSLCertificate() {
 }
 
 std::unique_ptr<SSLCertificate> OpenSSLCertificate::Clone() const {
-  return absl::make_unique<OpenSSLCertificate>(x509_);
+  return std::make_unique<OpenSSLCertificate>(x509_);
 }
 
 std::string OpenSSLCertificate::ToPEMString() const {

@@ -278,4 +278,33 @@ TEST_F(RateStatisticsTest, HandlesQuietPeriods) {
   EXPECT_TRUE(static_cast<bool>(bitrate));
   EXPECT_EQ(0u, *bitrate);
 }
+
+TEST_F(RateStatisticsTest, HandlesBigNumbers) {
+  int64_t large_number = 0x100000000u;
+  int64_t now_ms = 0;
+  stats_.Update(large_number, now_ms++);
+  stats_.Update(large_number, now_ms);
+  EXPECT_TRUE(stats_.Rate(now_ms));
+  EXPECT_EQ(large_number * RateStatistics::kBpsScale, *stats_.Rate(now_ms));
+}
+
+TEST_F(RateStatisticsTest, HandlesTooLargeNumbers) {
+  int64_t very_large_number = std::numeric_limits<int64_t>::max();
+  int64_t now_ms = 0;
+  stats_.Update(very_large_number, now_ms++);
+  stats_.Update(very_large_number, now_ms);
+  // This should overflow the internal accumulator.
+  EXPECT_FALSE(stats_.Rate(now_ms));
+}
+
+TEST_F(RateStatisticsTest, HandlesSomewhatLargeNumbers) {
+  int64_t very_large_number = std::numeric_limits<int64_t>::max();
+  int64_t now_ms = 0;
+  stats_.Update(very_large_number / 4, now_ms++);
+  stats_.Update(very_large_number / 4, now_ms);
+  // This should generate a rate of more than int64_t max, but still
+  // accumulate less than int64_t overflow.
+  EXPECT_FALSE(stats_.Rate(now_ms));
+}
+
 }  // namespace

@@ -90,8 +90,15 @@ bool IsGcmCryptoSuiteName(const std::string& crypto_suite);
 
 enum SSLRole { SSL_CLIENT, SSL_SERVER };
 enum SSLMode { SSL_MODE_TLS, SSL_MODE_DTLS };
+
+// Note: TLS_10, TLS_11, and DTLS_10 will all be ignored, and only
+// DTLS1_2 will be accepted, if the trial flag
+// WebRTC-LegacyTlsProtocols/Disabled/ is passed in. Support for these
+// protocol versions will be completely removed in M84 or later.
+// TODO(https://bugs.webrtc.org/10261).
 enum SSLProtocolVersion {
-  SSL_PROTOCOL_TLS_10,
+  SSL_PROTOCOL_NOT_GIVEN = -1,
+  SSL_PROTOCOL_TLS_10 = 0,
   SSL_PROTOCOL_TLS_11,
   SSL_PROTOCOL_TLS_12,
   SSL_PROTOCOL_DTLS_10 = SSL_PROTOCOL_TLS_11,
@@ -187,7 +194,12 @@ class SSLStreamAdapter : public StreamAdapterInterface {
   // connection (e.g. 0x2F for "TLS_RSA_WITH_AES_128_CBC_SHA").
   virtual bool GetSslCipherSuite(int* cipher_suite);
 
-  virtual int GetSslVersion() const = 0;
+  // Retrieves the enum value for SSL version.
+  // Will return -1 until the version has been negotiated.
+  virtual SSLProtocolVersion GetSslVersion() const = 0;
+  // Retrieves the 2-byte version from the TLS protocol.
+  // Will return false until the version has been negotiated.
+  virtual bool GetSslVersionBytes(int* version) const = 0;
 
   // Key Exporter interface from RFC 5705
   // Arguments are:

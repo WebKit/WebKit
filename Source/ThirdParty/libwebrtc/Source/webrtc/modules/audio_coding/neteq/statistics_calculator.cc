@@ -193,6 +193,8 @@ void StatisticsCalculator::EndExpandEvent(int fs_hz) {
   if (event_duration_ms >= kInterruptionLenMs && decoded_output_played_) {
     lifetime_stats_.interruption_count++;
     lifetime_stats_.total_interruption_duration_ms += event_duration_ms;
+    RTC_HISTOGRAM_COUNTS("WebRTC.Audio.AudioInterruptionMs", event_duration_ms,
+                         /*min=*/150, /*max=*/5000, /*bucket_count=*/50);
   }
   concealed_samples_at_event_end_ = lifetime_stats_.concealed_samples;
 }
@@ -273,8 +275,11 @@ void StatisticsCalculator::IncreaseCounter(size_t num_samples, int fs_hz) {
 }
 
 void StatisticsCalculator::JitterBufferDelay(size_t num_samples,
-                                             uint64_t waiting_time_ms) {
+                                             uint64_t waiting_time_ms,
+                                             uint64_t target_delay_ms) {
   lifetime_stats_.jitter_buffer_delay_ms += waiting_time_ms * num_samples;
+  lifetime_stats_.jitter_buffer_target_delay_ms +=
+      target_delay_ms * num_samples;
   lifetime_stats_.jitter_buffer_emitted_count += num_samples;
 }
 
@@ -380,16 +385,6 @@ void StatisticsCalculator::GetNetworkStatistics(int fs_hz,
   // Reset counters.
   ResetMcu();
   Reset();
-}
-
-void StatisticsCalculator::PopulateDelayManagerStats(
-    int ms_per_packet,
-    const DelayManager& delay_manager,
-    NetEqNetworkStatistics* stats) {
-  RTC_DCHECK(stats);
-  stats->preferred_buffer_size_ms =
-      (delay_manager.TargetLevel() >> 8) * ms_per_packet;
-  stats->jitter_peaks_found = delay_manager.PeakFound();
 }
 
 NetEqLifetimeStatistics StatisticsCalculator::GetLifetimeStatistics() const {

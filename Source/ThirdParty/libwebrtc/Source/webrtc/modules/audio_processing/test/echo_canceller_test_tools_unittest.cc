@@ -68,4 +68,15 @@ TEST(EchoCancellerTestTools, RandomizeSampleVector) {
   EXPECT_NE(v, v_ref);
 }
 
+TEST(EchoCancellerTestTools, RandomizeSampleVectorWithAmplitude) {
+  Random random_generator(42U);
+  std::vector<float> v(50, 0.f);
+  RandomizeSampleVector(&random_generator, v, 1000.f);
+  EXPECT_GE(1000.f, *std::max_element(v.begin(), v.end()));
+  EXPECT_LE(-1000.f, *std::min_element(v.begin(), v.end()));
+  RandomizeSampleVector(&random_generator, v, 100.f);
+  EXPECT_GE(100.f, *std::max_element(v.begin(), v.end()));
+  EXPECT_LE(-100.f, *std::min_element(v.begin(), v.end()));
+}
+
 }  // namespace webrtc

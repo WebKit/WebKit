@@ -28,37 +28,27 @@ class ReverbModel {
   // Resets the state.
   void Reset();
 
-  // The methods AddReverbNoFreqShaping and AddReverb add the reverberation
-  // contribution to an input/output power spectrum
-  // Before applying the exponential reverberant model, the input power spectrum
-  // is pre-scaled. Use the method AddReverb when a different scaling should be
-  // applied per frequency and AddReverb_no_freq_shape if the same scaling
-  // should be used for all the frequencies.
-  void AddReverbNoFreqShaping(rtc::ArrayView<const float> power_spectrum,
-                              float power_spectrum_scaling,
-                              float reverb_decay,
-                              rtc::ArrayView<float> reverb_power_spectrum);
+  // Returns the reverb.
+  rtc::ArrayView<const float, kFftLengthBy2Plus1> reverb() const {
+    return reverb_;
+  }
 
-  void AddReverb(rtc::ArrayView<const float> power_spectrum,
-                 rtc::ArrayView<const float> freq_response_tail,
-                 float reverb_decay,
-                 rtc::ArrayView<float> reverb_power_spectrum);
+  // The methods UpdateReverbNoFreqShaping and UpdateReverb update the
+  // estimate of the reverberation contribution to an input/output power
+  // spectrum. Before applying the exponential reverberant model, the input
+  // power spectrum is pre-scaled. Use the method UpdateReverb when a different
+  // scaling should be applied per frequency and UpdateReverb_no_freq_shape if
+  // the same scaling should be used for all the frequencies.
+  void UpdateReverbNoFreqShaping(rtc::ArrayView<const float> power_spectrum,
+                                 float power_spectrum_scaling,
+                                 float reverb_decay);
 
-  // Updates the reverberation contributions without applying any shaping of the
-  // spectrum.
-  void UpdateReverbContributionsNoFreqShaping(
-      rtc::ArrayView<const float> power_spectrum,
-      float power_spectrum_scaling,
-      float reverb_decay);
-
-  // Returns the current power spectrum reverberation contributions.
-  rtc::ArrayView<const float> GetPowerSpectrum() const { return reverb_; }
+  // Update the reverb based on new data.
+  void UpdateReverb(rtc::ArrayView<const float> power_spectrum,
+                    rtc::ArrayView<const float> power_spectrum_scaling,
+                    float reverb_decay);
 
  private:
-  // Updates the reverberation contributions.
-  void UpdateReverbContributions(rtc::ArrayView<const float>& power_spectrum,
-                                 rtc::ArrayView<const float>& freq_resp_tail,
-                                 float reverb_decay);
 
   std::array<float, kFftLengthBy2Plus1> reverb_;
 };

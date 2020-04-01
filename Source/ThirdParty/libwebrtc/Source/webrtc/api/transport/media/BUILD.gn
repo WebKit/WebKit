@@ -8,24 +8,45 @@
 
 import("../../../webrtc.gni")
 
-rtc_source_set("audio_interfaces") {
+rtc_library("media_transport_interface") {
+  visibility = [ "*" ]
+  sources = [
+    "media_transport_config.cc",
+    "media_transport_config.h",
+    "media_transport_interface.cc",
+    "media_transport_interface.h",
+  ]
+  deps = [
+    ":audio_interfaces",
+    ":video_interfaces",
+    "..:datagram_transport_interface",
+    "..:network_control",
+    "../..:array_view",
+    "../..:rtc_error",
+    "../../..:webrtc_common",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:stringutils",
+    "../../units:data_rate",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("audio_interfaces") {
   visibility = [ "*" ]
   sources = [
     "audio_transport.cc",
     "audio_transport.h",
   ]
-  deps = [
-    "../..:array_view",
-  ]
+  deps = [ "../..:array_view" ]
 }
 
-rtc_source_set("video_interfaces") {
+rtc_library("video_interfaces") {
   visibility = [ "*" ]
   sources = [
     "video_transport.cc",
     "video_transport.h",
   ]
-  deps = [
-    "../../video:encoded_image",
-  ]
+  deps = [ "../../video:encoded_image" ]
 }

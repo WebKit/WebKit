@@ -8,7 +8,7 @@
 
 import("../../webrtc.gni")
 
-rtc_source_set("generic_frame_descriptor") {
+rtc_library("generic_frame_descriptor") {
   sources = [
     "generic_frame_info.cc",
     "generic_frame_info.h",
@@ -16,6 +16,7 @@ rtc_source_set("generic_frame_descriptor") {
 
   deps = [
     "../../api:array_view",
+    "../../api/transport/rtp:dependency_descriptor",
     "../../api/video:video_codec_constants",
     "../../rtc_base:checks",
     "//third_party/abseil-cpp/absl/container:inlined_vector",

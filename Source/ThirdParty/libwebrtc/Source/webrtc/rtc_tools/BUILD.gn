@@ -30,12 +30,16 @@ group("rtc_tools") {
   }
 
   if (rtc_include_tests) {
-    deps += [ ":tools_unittests" ]
+    deps += [
+      ":tools_unittests",
+      ":yuv_to_ivf_converter",
+    ]
     if (rtc_enable_protobuf) {
       if (!build_with_chromium) {
         deps += [ ":event_log_visualizer" ]
       }
       deps += [
+        ":audioproc_f",
         ":rtp_analyzer",
         ":unpack_aecdump",
         "network_tester",
@@ -44,7 +48,7 @@ group("rtc_tools") {
   }
 }
 
-rtc_static_library("video_file_reader") {
+rtc_library("video_file_reader") {
   sources = [
     "video_file_reader.cc",
     "video_file_reader.h",
@@ -61,7 +65,7 @@ rtc_static_library("video_file_reader") {
   ]
 }
 
-rtc_static_library("video_file_writer") {
+rtc_library("video_file_writer") {
   sources = [
     "video_file_writer.cc",
     "video_file_writer.h",
@@ -78,7 +82,8 @@ rtc_static_library("video_file_writer") {
   ]
 }
 
-rtc_static_library("video_quality_analysis") {
+rtc_library("video_quality_analysis") {
+  testonly = true
   sources = [
     "frame_analyzer/linear_least_squares.cc",
     "frame_analyzer/linear_least_squares.h",
@@ -110,9 +115,7 @@ rtc_static_library("video_quality_analysis") {
 rtc_executable("frame_analyzer") {
   visibility = [ "*" ]
   testonly = true
-  sources = [
-    "frame_analyzer/frame_analyzer.cc",
-  ]
+  sources = [ "frame_analyzer/frame_analyzer.cc" ]
 
   deps = [
     ":video_file_reader",
@@ -130,9 +133,7 @@ rtc_executable("frame_analyzer") {
 if (!build_with_chromium && !build_with_mozilla) {
   action("frame_analyzer_host") {
     script = "//tools_webrtc/executable_host_build.py"
-    outputs = [
-      "${root_out_dir}/frame_analyzer_host",
-    ]
+    outputs = [ "${root_out_dir}/frame_analyzer_host" ]
     args = [
       "--executable_name",
       "frame_analyzer",
@@ -140,9 +141,10 @@ if (!build_with_chromium && !build_with_mozilla) {
   }
 }
 
-# Only expose the targets needed by Chromium (e.g. frame_analyzer) to avoid
-# building a lot of redundant code as part of Chromium builds.
-if (!build_with_chromium) {
+if (!is_component_build) {
+  # This target can be built from Chromium but it doesn't support
+  # is_component_build=true because it depends on WebRTC testonly code
+  # which is not part of //third_party/webrtc_overrides:webrtc_component.
   rtc_executable("rtp_generator") {
     visibility = [ "*" ]
     testonly = true
@@ -153,6 +155,7 @@ if (!build_with_chromium) {
     ]
 
     deps = [
+      "../api:create_frame_generator",
       "../api:rtp_parameters",
       "../api:transport_api",
       "../api/rtc_event_log",
@@ -182,16 +185,66 @@ if (!build_with_chromium) {
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
       "//third_party/abseil-cpp/absl/flags:usage",
-      "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/strings",
     ]
+    if (build_with_chromium) {
+      # When building from Chromium, WebRTC's metrics and field trial
+      # implementations need to be replaced by the Chromium ones.
+      deps += [ "//third_party/webrtc_overrides:webrtc_component" ]
+    }
   }
 
+  # This target can be built from Chromium but it doesn't support
+  # is_component_build=true because it depends on WebRTC testonly code
+  # which is not part of //third_party/webrtc_overrides:webrtc_component.
+  rtc_executable("video_replay") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [ "video_replay.cc" ]
+    deps = [
+      "../api/rtc_event_log",
+      "../api/task_queue:default_task_queue_factory",
+      "../api/test/video:function_video_factory",
+      "../api/transport:field_trial_based_config",
+      "../api/video_codecs:video_codecs_api",
+      "../call",
+      "../call:call_interfaces",
+      "../common_video",
+      "../media:rtc_internal_video_codecs",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_json",
+      "../rtc_base:stringutils",
+      "../rtc_base:timeutils",
+      "../system_wrappers",
+      "../test:call_config_utils",
+      "../test:encoder_settings",
+      "../test:fake_video_codecs",
+      "../test:null_transport",
+      "../test:rtp_test_utils",
+      "../test:run_test",
+      "../test:run_test_interface",
+      "../test:test_common",
+      "../test:test_renderer",
+      "../test:test_support",
+      "../test:video_test_common",
+      "../test:video_test_support",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+    ]
+    if (build_with_chromium) {
+      # When building from Chromium, WebRTC's metrics and field trial
+      # implementations need to be replaced by the Chromium ones.
+      deps += [ "//third_party/webrtc_overrides:webrtc_component" ]
+    }
+  }
+}
+
+# Only expose the targets needed by Chromium (e.g. frame_analyzer) to avoid
+# building a lot of redundant code as part of Chromium builds.
+if (!build_with_chromium) {
   rtc_executable("psnr_ssim_analyzer") {
     testonly = true
-    sources = [
-      "psnr_ssim_analyzer/psnr_ssim_analyzer.cc",
-    ]
+    sources = [ "psnr_ssim_analyzer/psnr_ssim_analyzer.cc" ]
 
     deps = [
       ":video_file_reader",
@@ -205,7 +258,8 @@ if (!build_with_chromium) {
     ]
   }
 
-  rtc_static_library("reference_less_video_analysis_lib") {
+  rtc_library("reference_less_video_analysis_lib") {
+    testonly = true
     sources = [
       "frame_analyzer/reference_less_video_analysis_lib.cc",
       "frame_analyzer/reference_less_video_analysis_lib.h",
@@ -222,9 +276,7 @@ if (!build_with_chromium) {
 
   rtc_executable("reference_less_video_analysis") {
     testonly = true
-    sources = [
-      "frame_analyzer/reference_less_video_analysis.cc",
-    ]
+    sources = [ "frame_analyzer/reference_less_video_analysis.cc" ]
 
     deps = [
       ":reference_less_video_analysis_lib",
@@ -262,7 +314,7 @@ if (!build_with_chromium) {
       proto_out_dir = "rtc_tools/rtc_event_log_visualizer/proto"
     }
 
-    rtc_static_library("event_log_visualizer_utils") {
+    rtc_library("event_log_visualizer_utils") {
       visibility = [ "*" ]
       sources = [
         "rtc_event_log_visualizer/analyzer.cc",
@@ -277,10 +329,10 @@ if (!build_with_chromium) {
         "rtc_event_log_visualizer/plot_python.h",
         "rtc_event_log_visualizer/triage_notifications.h",
       ]
-      defines = [ "ENABLE_RTC_EVENT_LOG" ]
       deps = [
         ":chart_proto",
         "../api:function_view",
+        "../rtc_base:ignore_wundef",
 
         # TODO(kwiberg): Remove this dependency.
         "../api/audio_codecs:audio_codecs_api",
@@ -306,7 +358,7 @@ if (!build_with_chromium) {
         "../rtc_base:rtc_base_approved",
         "../rtc_base:rtc_numerics",
         "../rtc_base:stringutils",
-        "//third_party/abseil-cpp/absl/memory",
+        "//third_party/abseil-cpp/absl/algorithm:container",
         "//third_party/abseil-cpp/absl/strings",
       ]
     }
@@ -314,16 +366,56 @@ if (!build_with_chromium) {
 }
 
 if (rtc_include_tests) {
+  rtc_executable("yuv_to_ivf_converter") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [
+      "converter/yuv_to_ivf_converter.cc",
+    ]
+    deps = [
+      "../api:create_frame_generator",
+      "../api:frame_generator_api",
+      "../api/task_queue:default_task_queue_factory",
+      "../api/video:encoded_image",
+      "../api/video:video_frame",
+      "../api/video_codecs:video_codecs_api",
+      "../media:rtc_media_base",
+      "../modules/rtp_rtcp:rtp_rtcp_format",
+      "../modules/video_coding:video_codec_interface",
+      "../modules/video_coding:video_coding_utility",
+      "../modules/video_coding:webrtc_h264",
+      "../modules/video_coding:webrtc_vp8",
+      "../modules/video_coding:webrtc_vp9",
+      "../rtc_base:checks",
+      "../rtc_base:criticalsection",
+      "../rtc_base:logging",
+      "../rtc_base:rtc_event",
+      "../rtc_base:rtc_task_queue",
+      "../rtc_base/system:file_wrapper",
+      "../test:video_test_common",
+      "../test:video_test_support",
+      "//third_party/abseil-cpp/absl/debugging:failure_signal_handler",
+      "//third_party/abseil-cpp/absl/debugging:symbolize",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+      "//third_party/abseil-cpp/absl/strings",
+    ]
+  }
+
   if (rtc_enable_protobuf && !build_with_chromium) {
     rtc_executable("event_log_visualizer") {
       testonly = true
-      sources = [
-        "rtc_event_log_visualizer/main.cc",
+      sources = [ "rtc_event_log_visualizer/main.cc" ]
+      data = [
+        # If --wav_filename is not provided, event_log_visualizer uses
+        # EN_script2_F_sp2_B1.wav by default. This is a good default to use
+        # for example with flags --plot=all when there is no need to use a
+        # specific .wav file.
+        "../resources/audio_processing/conversational_speech/EN_script2_F_sp2_B1.wav",
       ]
-
-      defines = [ "ENABLE_RTC_EVENT_LOG" ]
       deps = [
         ":event_log_visualizer_utils",
+        "../api/neteq:neteq_api",
         "../api/rtc_event_log",
         "../logging:rtc_event_log_parser",
         "../modules/audio_coding:neteq",
@@ -355,9 +447,7 @@ if (rtc_include_tests) {
     bundle_data("tools_unittests_bundle_data") {
       testonly = true
       sources = tools_unittests_resources
-      outputs = [
-        "{{bundle_resources_dir}}/{{source_file_part}}",
-      ]
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
     }
   }
 
@@ -391,7 +481,6 @@ if (rtc_include_tests) {
       "../test:test_main",
       "../test:test_support",
       "//testing/gtest",
-      "//third_party/abseil-cpp/absl/memory",
       "//third_party/libyuv",
     ]
 
@@ -414,6 +503,17 @@ if (rtc_include_tests) {
   }
 
   if (rtc_enable_protobuf) {
+    rtc_executable("audioproc_f") {
+      testonly = true
+      sources = [ "audioproc_f/audioproc_float_main.cc" ]
+      deps = [
+        "../api:audioproc_f_api",
+        "../modules/audio_processing",
+        "../modules/audio_processing:api",
+        "../rtc_base:rtc_base_approved",
+      ]
+    }
+
     copy("rtp_analyzer") {
       sources = [
         "py_event_log_analyzer/misc.py",
@@ -421,20 +521,14 @@ if (rtc_include_tests) {
         "py_event_log_analyzer/rtp_analyzer.py",
         "py_event_log_analyzer/rtp_analyzer.sh",
       ]
-      outputs = [
-        "$root_build_dir/{{source_file_part}}",
-      ]
-      deps = [
-        "../logging:rtc_event_log_proto",
-      ]
+      outputs = [ "$root_build_dir/{{source_file_part}}" ]
+      deps = [ "../logging:rtc_event_log_proto" ]
     }  # rtp_analyzer
 
     rtc_executable("unpack_aecdump") {
       visibility = [ "*" ]
       testonly = true
-      sources = [
-        "unpack_aecdump/unpack.cc",
-      ]
+      sources = [ "unpack_aecdump/unpack.cc" ]
 
       deps = [
         "../api:function_view",
@@ -444,6 +538,7 @@ if (rtc_include_tests) {
         "../modules/audio_processing:audioproc_debug_proto",
         "../modules/audio_processing:audioproc_protobuf_utils",
         "../modules/audio_processing:audioproc_test_utils",
+        "../rtc_base:ignore_wundef",
         "../rtc_base:protobuf_utils",
         "../rtc_base:rtc_base_approved",
         "//third_party/abseil-cpp/absl/flags:flag",

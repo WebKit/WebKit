@@ -36,7 +36,6 @@ class SenderReport : public RtcpPacket {
   // Parse assumes header is already parsed and validated.
   bool Parse(const CommonHeader& packet);
 
-  void SetSenderSsrc(uint32_t ssrc) { sender_ssrc_ = ssrc; }
   void SetNtp(NtpTime ntp) { ntp_ = ntp; }
   void SetRtpTimestamp(uint32_t rtp_timestamp) {
     rtp_timestamp_ = rtp_timestamp;
@@ -51,7 +50,6 @@ class SenderReport : public RtcpPacket {
   bool SetReportBlocks(std::vector<ReportBlock> blocks);
   void ClearReportBlocks() { report_blocks_.clear(); }
 
-  uint32_t sender_ssrc() const { return sender_ssrc_; }
   NtpTime ntp() const { return ntp_; }
   uint32_t rtp_timestamp() const { return rtp_timestamp_; }
   uint32_t sender_packet_count() const { return sender_packet_count_; }
@@ -71,7 +69,6 @@ class SenderReport : public RtcpPacket {
  private:
   static constexpr size_t kSenderBaseLength = 24;
 
-  uint32_t sender_ssrc_;
   NtpTime ntp_;
   uint32_t rtp_timestamp_;
   uint32_t sender_packet_count_;

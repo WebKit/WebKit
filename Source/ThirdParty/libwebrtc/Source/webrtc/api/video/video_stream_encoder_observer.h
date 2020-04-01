@@ -15,6 +15,8 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_codec_constants.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/video_encoder_config.h"
 
@@ -57,7 +59,8 @@ class VideoStreamEncoderObserver : public CpuOveruseMetricsObserver {
     kSource,
     kEncoderQueue,
     kEncoder,
-    kMediaOptimization
+    kMediaOptimization,
+    kCongestionWindow
   };
 
   ~VideoStreamEncoderObserver() override = default;
@@ -87,6 +90,15 @@ class VideoStreamEncoderObserver : public CpuOveruseMetricsObserver {
   virtual void OnInitialQualityResolutionAdaptDown() = 0;
 
   virtual void OnSuspendChange(bool is_suspended) = 0;
+
+  virtual void OnBitrateAllocationUpdated(
+      const VideoCodec& codec,
+      const VideoBitrateAllocation& allocation) {}
+
+  // Informes observer if an internal encoder scaler has reduced video
+  // resolution or not. |is_scaled| is a flag indicating if the video is scaled
+  // down.
+  virtual void OnEncoderInternalScalerUpdate(bool is_scaled) {}
 
   // TODO(nisse): VideoStreamEncoder wants to query the stats, which makes this
   // not a pure observer. GetInputFrameRate is needed for the cpu adaptation, so

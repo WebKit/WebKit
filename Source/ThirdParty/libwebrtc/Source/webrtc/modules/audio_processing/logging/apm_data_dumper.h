@@ -242,7 +242,8 @@ class ApmDataDumper {
                int num_channels) {
 #if WEBRTC_APM_DEBUG_DUMP == 1
     if (recording_activated_) {
-      WavWriter* file = GetWavFile(name, sample_rate_hz, num_channels);
+      WavWriter* file = GetWavFile(name, sample_rate_hz, num_channels,
+                                   WavFile::SampleFormat::kFloat);
       file->WriteSamples(v, v_length);
     }
 #endif
@@ -271,7 +272,10 @@ class ApmDataDumper {
   std::unordered_map<std::string, std::unique_ptr<WavWriter>> wav_files_;
 
   FILE* GetRawFile(const char* name);
-  WavWriter* GetWavFile(const char* name, int sample_rate_hz, int num_channels);
+  WavWriter* GetWavFile(const char* name,
+                        int sample_rate_hz,
+                        int num_channels,
+                        WavFile::SampleFormat format);
 #endif
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(ApmDataDumper);
 };

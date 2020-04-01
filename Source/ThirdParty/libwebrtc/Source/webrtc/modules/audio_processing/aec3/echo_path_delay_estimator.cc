@@ -21,12 +21,15 @@ namespace webrtc {
 
 EchoPathDelayEstimator::EchoPathDelayEstimator(
     ApmDataDumper* data_dumper,
-    const EchoCanceller3Config& config)
+    const EchoCanceller3Config& config,
+    size_t num_capture_channels)
     : data_dumper_(data_dumper),
       down_sampling_factor_(config.delay.down_sampling_factor),
       sub_block_size_(down_sampling_factor_ != 0
                           ? kBlockSize / down_sampling_factor_
                           : kBlockSize),
+      capture_mixer_(num_capture_channels,
+                     config.delay.capture_alignment_mixing),
       capture_decimator_(down_sampling_factor_),
       matched_filter_(
           data_dumper_,
@@ -55,15 +58,16 @@ void EchoPathDelayEstimator::Reset(bool reset_delay_confidence) {
 
 absl::optional<DelayEstimate> EchoPathDelayEstimator::EstimateDelay(
     const DownsampledRenderBuffer& render_buffer,
-    rtc::ArrayView<const float> capture) {
-  RTC_DCHECK_EQ(kBlockSize, capture.size());
+    const std::vector<std::vector<float>>& capture) {
+  RTC_DCHECK_EQ(kBlockSize, capture[0].size());
 
   std::array<float, kBlockSize> downsampled_capture_data;
   rtc::ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
                                             sub_block_size_);
-  data_dumper_->DumpWav("aec3_capture_decimator_input", capture.size(),
-                        capture.data(), 16000, 1);
-  capture_decimator_.Decimate(capture, downsampled_capture);
+
+  std::array<float, kBlockSize> downmixed_capture;
+  capture_mixer_.ProduceOutput(capture, downmixed_capture);
+  capture_decimator_.Decimate(downmixed_capture, downsampled_capture);
   data_dumper_->DumpWav("aec3_capture_decimator_output",
                         downsampled_capture.size(), downsampled_capture.data(),
                         16000 / down_sampling_factor_, 1);

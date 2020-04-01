@@ -18,6 +18,7 @@
 #include "absl/types/optional.h"
 #include "api/rtp_headers.h"
 #include "rtc_base/deprecation.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -26,7 +27,7 @@ namespace webrtc {
 // used to carry per-packet information from when a packet is received until
 // the information is passed to |SourceTracker|.
 //
-class RtpPacketInfo {
+class RTC_EXPORT RtpPacketInfo {
  public:
   RtpPacketInfo();
 

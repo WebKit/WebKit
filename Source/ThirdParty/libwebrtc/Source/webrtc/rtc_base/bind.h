@@ -65,7 +65,6 @@
 #include <type_traits>
 
 #include "api/scoped_refptr.h"
-#include "rtc_base/template_util.h"
 
 #define NONAME
 
@@ -160,15 +159,12 @@ class MethodFunctor {
   MethodFunctor(MethodT method, ObjectT* object, Args... args)
       : method_(method), object_(object), args_(args...) {}
   R operator()() const {
-    return CallMethod(typename sequence_generator<sizeof...(Args)>::type());
+    return CallMethod(std::index_sequence_for<Args...>());
   }
 
  private:
-  // Use sequence_generator (see template_util.h) to expand a MethodFunctor
-  // with 2 arguments to (std::get<0>(args_), std::get<1>(args_)), for
-  // instance.
-  template <int... S>
-  R CallMethod(sequence<S...>) const {
+  template <size_t... S>
+  R CallMethod(std::index_sequence<S...>) const {
     return (object_->*method_)(std::get<S>(args_)...);
   }
 
@@ -185,15 +181,12 @@ class UnretainedMethodFunctor {
                           Args... args)
       : method_(method), object_(object.get()), args_(args...) {}
   R operator()() const {
-    return CallMethod(typename sequence_generator<sizeof...(Args)>::type());
+    return CallMethod(std::index_sequence_for<Args...>());
   }
 
  private:
-  // Use sequence_generator (see template_util.h) to expand an
-  // UnretainedMethodFunctor with 2 arguments to (std::get<0>(args_),
-  // std::get<1>(args_)), for instance.
-  template <int... S>
-  R CallMethod(sequence<S...>) const {
+  template <size_t... S>
+  R CallMethod(std::index_sequence<S...>) const {
     return (object_->*method_)(std::get<S>(args_)...);
   }
 
@@ -208,15 +201,12 @@ class Functor {
   Functor(const FunctorT& functor, Args... args)
       : functor_(functor), args_(args...) {}
   R operator()() const {
-    return CallFunction(typename sequence_generator<sizeof...(Args)>::type());
+    return CallFunction(std::index_sequence_for<Args...>());
   }
 
  private:
-  // Use sequence_generator (see template_util.h) to expand a Functor
-  // with 2 arguments to (std::get<0>(args_), std::get<1>(args_)), for
-  // instance.
-  template <int... S>
-  R CallFunction(sequence<S...>) const {
+  template <size_t... S>
+  R CallFunction(std::index_sequence<S...>) const {
     return functor_(std::get<S>(args_)...);
   }
 

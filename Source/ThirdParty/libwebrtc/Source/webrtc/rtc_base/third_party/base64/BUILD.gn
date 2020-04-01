@@ -8,10 +8,11 @@
 
 import("../../../webrtc.gni")
 
-rtc_source_set("base64") {
+rtc_library("base64") {
   visibility = [ "*" ]
   sources = [
     "base64.cc",
     "base64.h",
   ]
+  deps = [ "../../system:rtc_export" ]
 }

@@ -142,6 +142,8 @@ class DtlsTransport : public DtlsTransportInternal {
 
   bool SetSslMaxProtocolVersion(rtc::SSLProtocolVersion version) override;
 
+  // Find out which TLS version was negotiated
+  bool GetSslVersionBytes(int* version) const override;
   // Find out which DTLS-SRTP cipher was negotiated
   bool GetSrtpCryptoSuite(int* cipher) override;
 

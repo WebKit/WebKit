@@ -301,39 +301,6 @@ TEST(RtpParametersConversionTest, ToCricketCodecsDuplicatePayloadType) {
   EXPECT_TRUE(result.ok());
 }
 
-TEST(RtpParametersConversionTest, ToCricketRtpHeaderExtensions) {
-  std::vector<RtpHeaderExtensionParameters> extensions = {
-      {"http://example.com", 1},
-      {"urn:foo:bar", 14},
-      {"urn:first:two-byte-only:id", 15}};
-  auto result = ToCricketRtpHeaderExtensions(extensions);
-  ASSERT_TRUE(result.ok());
-  ASSERT_EQ(3u, result.value().size());
-  EXPECT_EQ("http://example.com", result.value()[0].uri);
-  EXPECT_EQ(1, result.value()[0].id);
-  EXPECT_EQ("urn:foo:bar", result.value()[1].uri);
-  EXPECT_EQ(14, result.value()[1].id);
-  EXPECT_EQ("urn:first:two-byte-only:id", result.value()[2].uri);
-  EXPECT_EQ(15, result.value()[2].id);
-}
-
-TEST(RtpParametersConversionTest, ToCricketRtpHeaderExtensionsErrors) {
-  // First, IDs outside the range 1-255.
-  std::vector<RtpHeaderExtensionParameters> extensions = {
-      {"http://example.com", 0}};
-  auto result = ToCricketRtpHeaderExtensions(extensions);
-  EXPECT_EQ(RTCErrorType::INVALID_RANGE, result.error().type());
-
-  extensions[0].id = 256;
-  result = ToCricketRtpHeaderExtensions(extensions);
-  EXPECT_EQ(RTCErrorType::INVALID_RANGE, result.error().type());
-
-  // Duplicate IDs.
-  extensions = {{"http://example.com", 1}, {"urn:foo:bar", 1}};
-  result = ToCricketRtpHeaderExtensions(extensions);
-  EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, result.error().type());
-}
-
 TEST(RtpParametersConversionTest, ToCricketStreamParamsVecSimple) {
   std::vector<RtpEncodingParameters> encodings;
   RtpEncodingParameters encoding;
@@ -344,23 +311,6 @@ TEST(RtpParametersConversionTest, ToCricketStreamParamsVecSimple) {
   ASSERT_EQ(1u, result.value().size());
   EXPECT_EQ(1u, result.value()[0].ssrcs.size());
   EXPECT_EQ(0xbaadf00d, result.value()[0].first_ssrc());
-}
-
-TEST(RtpParametersConversionTest, ToCricketStreamParamsVecWithRtx) {
-  std::vector<RtpEncodingParameters> encodings;
-  RtpEncodingParameters encoding;
-  // Test a corner case SSRC of 0.
-  encoding.ssrc.emplace(0u);
-  encoding.rtx.emplace(0xdeadbeef);
-  encodings.push_back(encoding);
-  auto result = ToCricketStreamParamsVec(encodings);
-  ASSERT_TRUE(result.ok());
-  ASSERT_EQ(1u, result.value().size());
-  EXPECT_EQ(2u, result.value()[0].ssrcs.size());
-  EXPECT_EQ(0u, result.value()[0].first_ssrc());
-  uint32_t rtx_ssrc = 0;
-  EXPECT_TRUE(result.value()[0].GetFidSsrc(0u, &rtx_ssrc));
-  EXPECT_EQ(0xdeadbeef, rtx_ssrc);
 }
 
 // No encodings should be accepted; an endpoint may want to prepare a
@@ -377,19 +327,9 @@ TEST(RtpParametersConversionTest, ToCricketStreamParamsVecNoEncodings) {
 TEST(RtpParametersConversionTest, ToCricketStreamParamsVecMissingSsrcs) {
   std::vector<RtpEncodingParameters> encodings = {{}};
   // Creates RtxParameters with empty SSRC.
-  encodings[0].rtx.emplace();
   auto result = ToCricketStreamParamsVec(encodings);
   ASSERT_TRUE(result.ok());
   EXPECT_EQ(0u, result.value().size());
-}
-
-// The media engine doesn't have a way of receiving an RTX SSRC that's known
-// with a primary SSRC that's unknown, so this should produce an error.
-TEST(RtpParametersConversionTest, ToStreamParamsWithPrimarySsrcSetAndRtxUnset) {
-  std::vector<RtpEncodingParameters> encodings = {{}};
-  encodings[0].rtx.emplace(0xdeadbeef);
-  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
-            ToCricketStreamParamsVec(encodings).error().type());
 }
 
 // TODO(deadbeef): Update this test when we support multiple encodings.
@@ -511,11 +451,9 @@ TEST(RtpParametersConversionTest, ToRtpEncodingsWithMultipleStreamParams) {
   cricket::StreamParamsVec streams;
   cricket::StreamParams stream1;
   stream1.ssrcs.push_back(1111u);
-  stream1.AddFidSsrc(1111u, 0xaaaaaaaa);
 
   cricket::StreamParams stream2;
   stream2.ssrcs.push_back(2222u);
-  stream2.AddFidSsrc(2222u, 0xaaaaaaab);
 
   streams.push_back(stream1);
   streams.push_back(stream2);
@@ -523,9 +461,7 @@ TEST(RtpParametersConversionTest, ToRtpEncodingsWithMultipleStreamParams) {
   auto rtp_encodings = ToRtpEncodings(streams);
   ASSERT_EQ(2u, rtp_encodings.size());
   EXPECT_EQ(1111u, rtp_encodings[0].ssrc);
-  EXPECT_EQ(0xaaaaaaaa, rtp_encodings[0].rtx->ssrc);
   EXPECT_EQ(2222u, rtp_encodings[1].ssrc);
-  EXPECT_EQ(0xaaaaaaab, rtp_encodings[1].rtx->ssrc);
 }
 
 TEST(RtpParametersConversionTest, ToAudioRtpCodecParameters) {

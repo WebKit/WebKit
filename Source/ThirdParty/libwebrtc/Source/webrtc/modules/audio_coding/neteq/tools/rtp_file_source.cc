@@ -18,7 +18,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
 #include "rtc_base/checks.h"
 #include "test/rtp_file_reader.h"
@@ -66,7 +65,7 @@ std::unique_ptr<Packet> RtpFileSource::NextPacket() {
     std::unique_ptr<uint8_t[]> packet_memory(new uint8_t[temp_packet.length]);
     memcpy(packet_memory.get(), temp_packet.data, temp_packet.length);
     RtpUtility::RtpHeaderParser parser(packet_memory.get(), temp_packet.length);
-    auto packet = absl::make_unique<Packet>(
+    auto packet = std::make_unique<Packet>(
         packet_memory.release(), temp_packet.length,
         temp_packet.original_length, temp_packet.time_ms, parser,
         &rtp_header_extension_map_);

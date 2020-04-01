@@ -214,8 +214,7 @@ bool AudioDeviceWindowsCore::CoreAudioIsSupported() {
   BOOL isVistaRTMorXP = VerifyVersionInfo(&osvi, dwTypeMask, dwlConditionMask);
   if (isVistaRTMorXP != 0) {
     RTC_LOG(LS_VERBOSE)
-        << "*** Windows Core Audio is only supported on Vista SP1 or later"
-        << " => will revert to the Wave API ***";
+        << "*** Windows Core Audio is only supported on Vista SP1 or later";
     return false;
   }
 
@@ -266,10 +265,10 @@ bool AudioDeviceWindowsCore::CoreAudioIsSupported() {
 
   if (FAILED(hr)) {
     RTC_LOG(LS_ERROR) << "AudioDeviceWindowsCore::CoreAudioIsSupported()"
-                      << " Failed to create the required COM object (hr=" << hr
-                      << ")";
+                         " Failed to create the required COM object (hr="
+                      << hr << ")";
     RTC_LOG(LS_VERBOSE) << "AudioDeviceWindowsCore::CoreAudioIsSupported()"
-                        << " CoCreateInstance(MMDeviceEnumerator) failed (hr="
+                           " CoCreateInstance(MMDeviceEnumerator) failed (hr="
                         << hr << ")";
 
     const DWORD dwFlags =
@@ -296,61 +295,25 @@ bool AudioDeviceWindowsCore::CoreAudioIsSupported() {
     MMDeviceIsAvailable = true;
     RTC_LOG(LS_VERBOSE)
         << "AudioDeviceWindowsCore::CoreAudioIsSupported()"
-        << " CoCreateInstance(MMDeviceEnumerator) succeeded (hr=" << hr << ")";
+           " CoCreateInstance(MMDeviceEnumerator) succeeded (hr="
+        << hr << ")";
     SAFE_RELEASE(pIMMD);
   }
 
   // 4) Verify that we can create and initialize our Core Audio class.
   //
-  // Also, perform a limited "API test" to ensure that Core Audio is supported
-  // for all devices.
-  //
   if (MMDeviceIsAvailable) {
     coreAudioIsSupported = false;
 
-    AudioDeviceWindowsCore* p = new AudioDeviceWindowsCore();
+    AudioDeviceWindowsCore* p = new (std::nothrow) AudioDeviceWindowsCore();
     if (p == NULL) {
       return false;
     }
 
     int ok(0);
-    int temp_ok(0);
-    bool available(false);
 
     if (p->Init() != InitStatus::OK) {
       ok |= -1;
-    }
-
-    int16_t numDevsRec = p->RecordingDevices();
-    for (uint16_t i = 0; i < numDevsRec; i++) {
-      ok |= p->SetRecordingDevice(i);
-      temp_ok = p->RecordingIsAvailable(available);
-      ok |= temp_ok;
-      ok |= (available == false);
-      if (available) {
-        ok |= p->InitMicrophone();
-      }
-      if (ok) {
-        RTC_LOG(LS_WARNING)
-            << "AudioDeviceWindowsCore::CoreAudioIsSupported()"
-            << " Failed to use Core Audio Recording for device id=" << i;
-      }
-    }
-
-    int16_t numDevsPlay = p->PlayoutDevices();
-    for (uint16_t i = 0; i < numDevsPlay; i++) {
-      ok |= p->SetPlayoutDevice(i);
-      temp_ok = p->PlayoutIsAvailable(available);
-      ok |= temp_ok;
-      ok |= (available == false);
-      if (available) {
-        ok |= p->InitSpeaker();
-      }
-      if (ok) {
-        RTC_LOG(LS_WARNING)
-            << "AudioDeviceWindowsCore::CoreAudioIsSupported()"
-            << " Failed to use Core Audio Playout for device id=" << i;
-      }
     }
 
     ok |= p->Terminate();
@@ -365,8 +328,7 @@ bool AudioDeviceWindowsCore::CoreAudioIsSupported() {
   if (coreAudioIsSupported) {
     RTC_LOG(LS_VERBOSE) << "*** Windows Core Audio is supported ***";
   } else {
-    RTC_LOG(LS_VERBOSE) << "*** Windows Core Audio is NOT supported"
-                        << " => will revert to the Wave API ***";
+    RTC_LOG(LS_VERBOSE) << "*** Windows Core Audio is NOT supported";
   }
 
   return (coreAudioIsSupported);
@@ -443,7 +405,7 @@ AudioDeviceWindowsCore::AudioDeviceWindowsCore()
       // Handle is valid (should only happen if OS larger than vista & win7).
       // Try to get the function addresses.
       RTC_LOG(LS_VERBOSE) << "AudioDeviceWindowsCore::AudioDeviceWindowsCore()"
-                          << " The Avrt DLL module is now loaded";
+                             " The Avrt DLL module is now loaded";
 
       _PAvRevertMmThreadCharacteristics =
           (PAvRevertMmThreadCharacteristics)GetProcAddress(
@@ -458,13 +420,13 @@ AudioDeviceWindowsCore::AudioDeviceWindowsCore()
           _PAvSetMmThreadCharacteristicsA && _PAvSetMmThreadPriority) {
         RTC_LOG(LS_VERBOSE)
             << "AudioDeviceWindowsCore::AudioDeviceWindowsCore()"
-            << " AvRevertMmThreadCharacteristics() is OK";
+               " AvRevertMmThreadCharacteristics() is OK";
         RTC_LOG(LS_VERBOSE)
             << "AudioDeviceWindowsCore::AudioDeviceWindowsCore()"
-            << " AvSetMmThreadCharacteristicsA() is OK";
+               " AvSetMmThreadCharacteristicsA() is OK";
         RTC_LOG(LS_VERBOSE)
             << "AudioDeviceWindowsCore::AudioDeviceWindowsCore()"
-            << " AvSetMmThreadPriority() is OK";
+               " AvSetMmThreadPriority() is OK";
         _winSupportAvrt = true;
       }
     }
@@ -574,10 +536,10 @@ AudioDeviceWindowsCore::~AudioDeviceWindowsCore() {
     if (!freeOK) {
       RTC_LOG(LS_WARNING)
           << "AudioDeviceWindowsCore::~AudioDeviceWindowsCore()"
-          << " failed to free the loaded Avrt DLL module correctly";
+             " failed to free the loaded Avrt DLL module correctly";
     } else {
       RTC_LOG(LS_WARNING) << "AudioDeviceWindowsCore::~AudioDeviceWindowsCore()"
-                          << " the Avrt DLL module is now unloaded";
+                             " the Avrt DLL module is now unloaded";
     }
   }
 }
@@ -692,7 +654,7 @@ int32_t AudioDeviceWindowsCore::InitSpeaker() {
     int16_t nDevices = PlayoutDevices();
     if (_outputDeviceIndex > (nDevices - 1)) {
       RTC_LOG(LS_ERROR) << "current device selection is invalid => unable to"
-                        << " initialize";
+                           " initialize";
       return -1;
     }
   }
@@ -761,7 +723,7 @@ int32_t AudioDeviceWindowsCore::InitMicrophone() {
     int16_t nDevices = RecordingDevices();
     if (_inputDeviceIndex > (nDevices - 1)) {
       RTC_LOG(LS_ERROR) << "current device selection is invalid => unable to"
-                        << " initialize";
+                           " initialize";
       return -1;
     }
   }
@@ -1917,8 +1879,8 @@ int32_t AudioDeviceWindowsCore::InitPlayout() {
           RTC_LOG(INFO) << "nChannels=" << Wfx.nChannels
                         << ", nSamplesPerSec=" << Wfx.nSamplesPerSec
                         << " is not supported. Closest match: "
-                        << "nChannels=" << pWfxClosestMatch->nChannels
-                        << ", nSamplesPerSec="
+                           "nChannels="
+                        << pWfxClosestMatch->nChannels << ", nSamplesPerSec="
                         << pWfxClosestMatch->nSamplesPerSec;
           CoTaskMemFree(pWfxClosestMatch);
           pWfxClosestMatch = NULL;
@@ -2238,8 +2200,8 @@ int32_t AudioDeviceWindowsCore::InitRecording() {
           RTC_LOG(INFO) << "nChannels=" << Wfx.Format.nChannels
                         << ", nSamplesPerSec=" << Wfx.Format.nSamplesPerSec
                         << " is not supported. Closest match: "
-                        << "nChannels=" << pWfxClosestMatch->nChannels
-                        << ", nSamplesPerSec="
+                           "nChannels="
+                        << pWfxClosestMatch->nChannels << ", nSamplesPerSec="
                         << pWfxClosestMatch->nSamplesPerSec;
           CoTaskMemFree(pWfxClosestMatch);
           pWfxClosestMatch = NULL;
@@ -2377,7 +2339,7 @@ int32_t AudioDeviceWindowsCore::StartRecording() {
         // give it render data to process.
         RTC_LOG(LS_ERROR)
             << "Playout must be started before recording when using"
-            << " the built-in AEC";
+               " the built-in AEC";
         return -1;
       }
     }
@@ -2610,7 +2572,7 @@ int32_t AudioDeviceWindowsCore::StopPlayout() {
       // playout to stop properly.
       RTC_LOG(LS_WARNING)
           << "Recording should be stopped before playout when using the"
-          << " built-in AEC";
+             " built-in AEC";
     }
 
     // Reset the playout delay value.
@@ -2861,7 +2823,7 @@ DWORD AudioDeviceWindowsCore::DoRenderThread() {
             _UnLock();
             RTC_LOG(LS_ERROR)
                 << "output state has been modified during unlocked"
-                << " period";
+                   " period";
             goto Exit;
           }
           if (nSamples != static_cast<int32_t>(_playBlockSize)) {
@@ -3300,7 +3262,7 @@ DWORD AudioDeviceWindowsCore::DoCaptureThread() {
             if (_ptrCaptureClient == NULL || _ptrClientIn == NULL) {
               _UnLock();
               RTC_LOG(LS_ERROR) << "input state has been modified during"
-                                << " unlocked period";
+                                   " unlocked period";
               goto Exit;
             }
           }
@@ -3321,7 +3283,7 @@ DWORD AudioDeviceWindowsCore::DoCaptureThread() {
         // IAudioClient::Stop, IAudioClient::Reset, and releasing the audio
         // client.
         RTC_LOG(LS_ERROR) << "IAudioCaptureClient::GetBuffer returned"
-                          << " AUDCLNT_E_BUFFER_ERROR, hr = 0x"
+                             " AUDCLNT_E_BUFFER_ERROR, hr = 0x"
                           << rtc::ToHex(hr);
         goto Exit;
       }
@@ -3854,14 +3816,16 @@ int32_t AudioDeviceWindowsCore::_GetDeviceName(IMMDevice* pDevice,
   if ((SUCCEEDED(hr)) && (VT_EMPTY == varName.vt)) {
     hr = E_FAIL;
     RTC_LOG(LS_ERROR) << "IPropertyStore::GetValue returned no value,"
-                      << " hr = 0x" << rtc::ToHex(hr);
+                         " hr = 0x"
+                      << rtc::ToHex(hr);
   }
 
   if ((SUCCEEDED(hr)) && (VT_LPWSTR != varName.vt)) {
     // The returned value is not a wide null terminated string.
     hr = E_UNEXPECTED;
     RTC_LOG(LS_ERROR) << "IPropertyStore::GetValue returned unexpected"
-                      << " type, hr = 0x" << rtc::ToHex(hr);
+                         " type, hr = 0x"
+                      << rtc::ToHex(hr);
   }
 
   if (SUCCEEDED(hr) && (varName.pwszVal != NULL)) {

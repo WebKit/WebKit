@@ -48,45 +48,6 @@ static void InitializeDecoderBitstream(size_t stream_size_bytes,
   memset(bitstream->stream, 0, sizeof(bitstream->stream));
 }
 
-/**************************************************************************
- * WebRtcIsacfix_AssignSize(...)
- *
- * Functions used when malloc is not allowed
- * Returns number of bytes needed to allocate for iSAC struct.
- *
- */
-
-int16_t WebRtcIsacfix_AssignSize(int *sizeinbytes) {
-  *sizeinbytes=sizeof(ISACFIX_SubStruct)*2/sizeof(int16_t);
-  return(0);
-}
-
-/***************************************************************************
- * WebRtcIsacfix_Assign(...)
- *
- * Functions used when malloc is not allowed
- * Place struct at given address
- *
- * If successful, Return 0, else Return -1
- */
-
-int16_t WebRtcIsacfix_Assign(ISACFIX_MainStruct **inst, void *ISACFIX_inst_Addr) {
-  if (ISACFIX_inst_Addr!=NULL) {
-    ISACFIX_SubStruct* self = ISACFIX_inst_Addr;
-    *inst = (ISACFIX_MainStruct*)self;
-    self->errorcode = 0;
-    self->initflag = 0;
-    self->ISACenc_obj.SaveEnc_ptr = NULL;
-    WebRtcIsacfix_InitBandwidthEstimator(&self->bwestimator_obj);
-    return(0);
-  } else {
-    return(-1);
-  }
-}
-
-
-#ifndef ISACFIX_NO_DYNAMIC_MEM
-
 /****************************************************************************
  * WebRtcIsacfix_Create(...)
  *
@@ -145,10 +106,6 @@ int16_t WebRtcIsacfix_CreateInternal(ISACFIX_MainStruct *ISAC_main_inst)
     return(-1);
   }
 }
-
-
-#endif
-
 
 
 /****************************************************************************
@@ -333,10 +290,6 @@ int16_t WebRtcIsacfix_EncoderInit(ISACFIX_MainStruct *ISAC_main_inst,
     ISAC_inst->ISACenc_obj.bitstr_obj.stream[k] = 0;
   }
 
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-  WebRtcIsacfix_InitPostFilterbank(&ISAC_inst->ISACenc_obj.interpolatorstr_obj);
-#endif
-
   InitFunctionPointers();
 
   return statusInit;
@@ -426,85 +379,6 @@ int WebRtcIsacfix_Encode(ISACFIX_MainStruct *ISAC_main_inst,
 }
 
 
-
-
-/****************************************************************************
- * WebRtcIsacfix_EncodeNb(...)
- *
- * This function encodes 10ms narrow band (8 kHz sampling) frame(s) and inserts
- * it into a package. Input speech length has to be 80 samples (10ms). The encoder
- * interpolates into wide-band (16 kHz sampling) buffers those
- * 10ms frames until it reaches the chosen Framesize (480 or 960 wide-band samples
- * corresponding to 30 or 60 ms frames), and then proceeds to the encoding.
- *
- * The function is enabled if WEBRTC_ISAC_FIX_NB_CALLS_ENABLED is defined
- *
- * Input:
- *      - ISAC_main_inst    : ISAC instance.
- *      - speechIn          : input speech vector.
- *
- * Output:
- *      - encoded           : the encoded data vector
- *
- * Return value:
- *                          : >0 - Length (in bytes) of coded data
- *                          :  0 - The buffer didn't reach the chosen framesize
- *                            so it keeps buffering speech samples.
- *                          : -1 - Error
- */
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-int16_t WebRtcIsacfix_EncodeNb(ISACFIX_MainStruct *ISAC_main_inst,
-                               const int16_t    *speechIn,
-                               int16_t          *encoded)
-{
-  ISACFIX_SubStruct *ISAC_inst;
-  int16_t stream_len;
-  int16_t speechInWB[FRAMESAMPLES_10ms];
-  int16_t Vector_Word16_1[FRAMESAMPLES_10ms/2];
-  int16_t Vector_Word16_2[FRAMESAMPLES_10ms/2];
-
-  int k;
-
-
-  /* typecast pointer to rela structure */
-  ISAC_inst = (ISACFIX_SubStruct *)ISAC_main_inst;
-
-
-  /* check if encoder initiated */
-  if ((ISAC_inst->initflag & 2) != 2) {
-    ISAC_inst->errorcode = ISAC_ENCODER_NOT_INITIATED;
-    return (-1);
-  }
-
-
-  /* Oversample to WB */
-
-  /* Form polyphase signals, and compensate for DC offset */
-  for (k=0;k<FRAMESAMPLES_10ms/2;k++) {
-    Vector_Word16_1[k] = speechIn[k] + 1;
-    Vector_Word16_2[k] = speechIn[k];
-  }
-  WebRtcIsacfix_FilterAndCombine2(Vector_Word16_1, Vector_Word16_2, speechInWB, &ISAC_inst->ISACenc_obj.interpolatorstr_obj, FRAMESAMPLES_10ms);
-
-
-  /* Encode WB signal */
-  stream_len = WebRtcIsacfix_EncodeImpl((int16_t*)speechInWB,
-                                        &ISAC_inst->ISACenc_obj,
-                                        &ISAC_inst->bwestimator_obj,
-                                        ISAC_inst->CodingMode);
-  if (stream_len<0) {
-    ISAC_inst->errorcode = - stream_len;
-    return -1;
-  }
-
-  write_be16(ISAC_inst->ISACenc_obj.bitstr_obj.stream,
-             stream_len,
-             (uint8_t*)encoded);
-  return stream_len;
-}
-#endif  /* WEBRTC_ISAC_FIX_NB_CALLS_ENABLED */
-
-
 /****************************************************************************
  * WebRtcIsacfix_GetNewBitStream(...)
  *
@@ -583,11 +457,6 @@ void WebRtcIsacfix_DecoderInit(ISACFIX_MainStruct *ISAC_main_inst)
 
   /* TS */
   WebRtcIsacfix_InitPlc( &ISAC_inst->ISACdec_obj.plcstr_obj );
-
-
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-  WebRtcIsacfix_InitPreFilterbank(&ISAC_inst->ISACdec_obj.decimatorstr_obj);
-#endif
 }
 
 
@@ -829,180 +698,6 @@ int WebRtcIsacfix_Decode(ISACFIX_MainStruct* ISAC_main_inst,
 
   return (int)number_of_samples;
 }
-
-
-
-
-
-/****************************************************************************
- * WebRtcIsacfix_DecodeNb(...)
- *
- * This function decodes a ISAC frame in narrow-band (8 kHz sampling).
- * Output speech length will be a multiple of 240 samples: 240 or 480 samples,
- * depending on the framesize (30 or 60 ms).
- *
- * The function is enabled if WEBRTC_ISAC_FIX_NB_CALLS_ENABLED is defined
- *
- * Input:
- *      - ISAC_main_inst    : ISAC instance.
- *      - encoded           : encoded ISAC frame(s)
- *      - len               : bytes in encoded vector
- *
- * Output:
- *      - decoded           : The decoded vector
- *
- * Return value             : >0 - number of samples in decoded vector
- *                            -1 - Error
- */
-
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-int WebRtcIsacfix_DecodeNb(ISACFIX_MainStruct* ISAC_main_inst,
-                           const uint16_t* encoded,
-                           size_t len,
-                           int16_t* decoded,
-                           int16_t* speechType)
-{
-  ISACFIX_SubStruct *ISAC_inst;
-  /* twice the number of samples (480 or 960), output from decoder */
-  /* that were actually used in the encoder/decoder (determined on the fly) */
-  size_t number_of_samples;
-  int declen_int = 0;
-  size_t declen;
-  int16_t dummy[FRAMESAMPLES/2];
-
-
-  /* typecast pointer to real structure */
-  ISAC_inst = (ISACFIX_SubStruct *)ISAC_main_inst;
-
-  /* check if decoder initiated */
-  if ((ISAC_inst->initflag & 1) != 1) {
-    ISAC_inst->errorcode = ISAC_DECODER_NOT_INITIATED;
-    return (-1);
-  }
-
-  if (len == 0) {
-    /* return error code if the packet length is null  or less */
-    ISAC_inst->errorcode = ISAC_EMPTY_PACKET;
-    return -1;
-  } else if (len > (STREAM_MAXW16<<1)) {
-    /* return error code if length of stream is too long */
-    ISAC_inst->errorcode = ISAC_LENGTH_MISMATCH;
-    return -1;
-  }
-
-  InitializeDecoderBitstream(len, &ISAC_inst->ISACdec_obj.bitstr_obj);
-
-  read_be16(encoded, len, ISAC_inst->ISACdec_obj.bitstr_obj.stream);
-
-  /* added for NetEq purposes (VAD/DTX related) */
-  *speechType=1;
-
-  declen_int = WebRtcIsacfix_DecodeImpl(decoded, &ISAC_inst->ISACdec_obj,
-                                        &number_of_samples);
-  if (declen_int < 0) {
-    /* Some error inside the decoder */
-    ISAC_inst->errorcode = -(int16_t)declen_int;
-    memset(decoded, 0, sizeof(int16_t) * FRAMESAMPLES);
-    return -1;
-  }
-  declen = (size_t)declen_int;
-
-  /* error check */
-
-  if (declen & 1) {
-    if (len != declen &&
-        len != declen +
-            ((ISAC_inst->ISACdec_obj.bitstr_obj.stream[declen >> 1]) & 0xFF)) {
-      ISAC_inst->errorcode = ISAC_LENGTH_MISMATCH;
-      memset(decoded, 0, sizeof(int16_t) * number_of_samples);
-      return -1;
-    }
-  } else {
-    if (len != declen &&
-        len != declen +
-            ((ISAC_inst->ISACdec_obj.bitstr_obj.stream[declen >>1]) >> 8)) {
-      ISAC_inst->errorcode = ISAC_LENGTH_MISMATCH;
-      memset(decoded, 0, sizeof(int16_t) * number_of_samples);
-      return -1;
-    }
-  }
-
-  WebRtcIsacfix_SplitAndFilter2(decoded, decoded, dummy, &ISAC_inst->ISACdec_obj.decimatorstr_obj);
-
-  if (number_of_samples>FRAMESAMPLES) {
-    WebRtcIsacfix_SplitAndFilter2(decoded + FRAMESAMPLES, decoded + FRAMESAMPLES/2,
-                                  dummy, &ISAC_inst->ISACdec_obj.decimatorstr_obj);
-  }
-
-  return (int)(number_of_samples / 2);
-}
-#endif /* WEBRTC_ISAC_FIX_NB_CALLS_ENABLED */
-
-
-/****************************************************************************
- * WebRtcIsacfix_DecodePlcNb(...)
- *
- * This function conducts PLC for ISAC frame(s) in narrow-band (8kHz sampling).
- * Output speech length  will be "240*noOfLostFrames" samples
- * that is equevalent of "30*noOfLostFrames" millisecond.
- *
- * The function is enabled if WEBRTC_ISAC_FIX_NB_CALLS_ENABLED is defined
- *
- * Input:
- *      - ISAC_main_inst    : ISAC instance.
- *      - noOfLostFrames    : Number of PLC frames (240 sample=30ms) to produce
- *
- * Output:
- *      - decoded           : The decoded vector
- *
- * Return value             : Number of samples in decoded PLC vector
- */
-
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-size_t WebRtcIsacfix_DecodePlcNb(ISACFIX_MainStruct* ISAC_main_inst,
-                                 int16_t* decoded,
-                                 size_t noOfLostFrames )
-{
-  size_t no_of_samples, declen, k;
-  int16_t outframeNB[FRAMESAMPLES];
-  int16_t outframeWB[FRAMESAMPLES];
-  int16_t dummy[FRAMESAMPLES/2];
-
-
-  ISACFIX_SubStruct *ISAC_inst;
-  /* typecast pointer to real structure */
-  ISAC_inst = (ISACFIX_SubStruct *)ISAC_main_inst;
-
-  /* Limit number of frames to two = 60 msec. Otherwise we exceed data vectors */
-  if (noOfLostFrames > 2){
-    noOfLostFrames = 2;
-  }
-
-  k = 0;
-  declen = 0;
-  while( noOfLostFrames > 0 )
-  {
-    WebRtcIsacfix_DecodePlcImpl(outframeWB, &ISAC_inst->ISACdec_obj,
-                                &no_of_samples);
-
-    WebRtcIsacfix_SplitAndFilter2(outframeWB, &(outframeNB[k*240]), dummy, &ISAC_inst->ISACdec_obj.decimatorstr_obj);
-
-    declen += no_of_samples;
-    noOfLostFrames--;
-    k++;
-  }
-
-  declen>>=1;
-
-  for (k=0;k<declen;k++) {
-    decoded[k] = outframeNB[k];
-  }
-
-  return declen;
-}
-#endif /* WEBRTC_ISAC_FIX_NB_CALLS_ENABLED */
-
-
 
 
 /****************************************************************************
@@ -1533,18 +1228,4 @@ int16_t WebRtcIsacfix_SetMaxRate(ISACFIX_MainStruct *ISAC_main_inst,
 void WebRtcIsacfix_version(char *version)
 {
   strcpy(version, "3.6.0");
-}
-
-void WebRtcIsacfix_GetBandwidthInfo(ISACFIX_MainStruct* ISAC_main_inst,
-                                    IsacBandwidthInfo* bwinfo) {
-  ISACFIX_SubStruct* inst = (ISACFIX_SubStruct*)ISAC_main_inst;
-  RTC_DCHECK_NE(0, inst->initflag & 1);  // Decoder initialized.
-  WebRtcIsacfixBw_GetBandwidthInfo(&inst->bwestimator_obj, bwinfo);
-}
-
-void WebRtcIsacfix_SetBandwidthInfo(ISACFIX_MainStruct* ISAC_main_inst,
-                                    const IsacBandwidthInfo* bwinfo) {
-  ISACFIX_SubStruct* inst = (ISACFIX_SubStruct*)ISAC_main_inst;
-  RTC_DCHECK_NE(0, inst->initflag & 2);  // Encoder initialized.
-  WebRtcIsacfixBw_SetBandwidthInfo(&inst->bwestimator_obj, bwinfo);
 }

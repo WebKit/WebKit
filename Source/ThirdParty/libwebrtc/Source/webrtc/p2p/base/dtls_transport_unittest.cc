@@ -15,7 +15,6 @@
 #include <set>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "p2p/base/fake_ice_transport.h"
 #include "p2p/base/packet_transport_internal.h"
 #include "rtc_base/checks.h"
@@ -88,9 +87,9 @@ class DtlsTestClient : public sigslot::has_slots<> {
     fake_ice_transport_->SignalReadPacket.connect(
         this, &DtlsTestClient::OnFakeIceTransportReadPacket);
 
-    dtls_transport_ = absl::make_unique<DtlsTransport>(
-        fake_ice_transport_.get(), webrtc::CryptoOptions(),
-        /*event_log=*/nullptr);
+    dtls_transport_ = std::make_unique<DtlsTransport>(fake_ice_transport_.get(),
+                                                      webrtc::CryptoOptions(),
+                                                      /*event_log=*/nullptr);
     dtls_transport_->SetSslMaxProtocolVersion(ssl_max_version_);
     // Note: Certificate may be null here if testing passthrough.
     dtls_transport_->SetLocalCertificate(certificate_);
@@ -585,9 +584,10 @@ TEST_F(DtlsTransportTest, TestRetransmissionSchedule) {
     // millisecond before the expected time and verify that no unexpected
     // retransmissions were sent. Then advance it the final millisecond and
     // verify that the expected retransmission was sent.
-    fake_clock_.AdvanceTime(webrtc::TimeDelta::ms(timeout_schedule_ms[i] - 1));
+    fake_clock_.AdvanceTime(
+        webrtc::TimeDelta::Millis(timeout_schedule_ms[i] - 1));
     EXPECT_EQ(expected_hellos, client1_.received_dtls_client_hellos());
-    fake_clock_.AdvanceTime(webrtc::TimeDelta::ms(1));
+    fake_clock_.AdvanceTime(webrtc::TimeDelta::Millis(1));
     EXPECT_EQ(++expected_hellos, client1_.received_dtls_client_hellos());
   }
 }

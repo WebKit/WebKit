@@ -12,7 +12,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/gunit.h"
@@ -133,7 +132,7 @@ class SignalThreadTest : public ::testing::Test, public sigslot::has_slots<> {
 class OwnerThread : public Thread, public sigslot::has_slots<> {
  public:
   explicit OwnerThread(SignalThreadTest* harness)
-      : Thread(absl::make_unique<NullSocketServer>()),
+      : Thread(std::make_unique<NullSocketServer>()),
         harness_(harness),
         has_run_(false) {}
 

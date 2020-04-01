@@ -14,7 +14,8 @@
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_frame_buffer.h"
-#include "rtc_base/numerics/samples_stats_counter.h"
+#include "rtc_base/numerics/event_rate_counter.h"
+#include "rtc_base/numerics/sample_stats.h"
 
 namespace webrtc {
 namespace test {
@@ -36,77 +37,6 @@ struct VideoFramePair {
   int repeated = 0;
 };
 
-template <typename T>
-class SampleStats;
-
-template <>
-class SampleStats<double> : public SamplesStatsCounter {
- public:
-  double Max();
-  double Mean();
-  double Median();
-  double Quantile(double quantile);
-  double Min();
-  double Variance();
-  double StandardDeviation();
-  int Count();
-};
-
-template <>
-class SampleStats<TimeDelta> {
- public:
-  void AddSample(TimeDelta delta);
-  void AddSampleMs(double delta_ms);
-  void AddSamples(const SampleStats<TimeDelta>& other);
-  bool IsEmpty();
-  TimeDelta Max();
-  TimeDelta Mean();
-  TimeDelta Median();
-  TimeDelta Quantile(double quantile);
-  TimeDelta Min();
-  TimeDelta Variance();
-  TimeDelta StandardDeviation();
-  int Count();
-
- private:
-  SampleStats<double> stats_;
-};
-
-template <>
-class SampleStats<DataRate> {
- public:
-  void AddSample(DataRate rate);
-  void AddSampleBps(double rate_bps);
-  void AddSamples(const SampleStats<DataRate>& other);
-  bool IsEmpty();
-  DataRate Max();
-  DataRate Mean();
-  DataRate Median();
-  DataRate Quantile(double quantile);
-  DataRate Min();
-  DataRate Variance();
-  DataRate StandardDeviation();
-  int Count();
-
- private:
-  SampleStats<double> stats_;
-};
-
-class EventRateCounter {
- public:
-  void AddEvent(Timestamp event_time);
-  void AddEvents(EventRateCounter other);
-  bool IsEmpty() const;
-  double Rate() const;
-  SampleStats<TimeDelta>& interval() { return interval_; }
-  int Count() const { return event_count_; }
-
- private:
-  Timestamp first_time_ = Timestamp::PlusInfinity();
-  Timestamp last_time_ = Timestamp::MinusInfinity();
-  int64_t event_count_ = 0;
-  SampleStats<TimeDelta> interval_;
-};
 
 struct VideoFramesStats {
   int count = 0;

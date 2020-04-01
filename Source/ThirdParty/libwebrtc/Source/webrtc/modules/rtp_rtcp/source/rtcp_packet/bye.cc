@@ -35,7 +35,7 @@ constexpr uint8_t Bye::kPacketType;
 //       +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
 // (opt) |     length    |               reason for leaving            ...
 //       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-Bye::Bye() : sender_ssrc_(0) {}
+Bye::Bye() = default;
 
 Bye::~Bye() = default;
 
@@ -61,10 +61,10 @@ bool Bye::Parse(const CommonHeader& packet) {
   }
   // Once sure packet is valid, copy values.
   if (src_count == 0) {  // A count value of zero is valid, but useless.
-    sender_ssrc_ = 0;
+    SetSenderSsrc(0);
     csrcs_.clear();
   } else {
-    sender_ssrc_ = ByteReader<uint32_t>::ReadBigEndian(payload);
+    SetSenderSsrc(ByteReader<uint32_t>::ReadBigEndian(payload));
     csrcs_.resize(src_count - 1);
     for (size_t i = 1; i < src_count; ++i)
       csrcs_[i - 1] = ByteReader<uint32_t>::ReadBigEndian(&payload[4 * i]);
@@ -92,7 +92,7 @@ bool Bye::Create(uint8_t* packet,
 
   CreateHeader(1 + csrcs_.size(), kPacketType, HeaderLength(), packet, index);
   // Store srcs of the leaving clients.
-  ByteWriter<uint32_t>::WriteBigEndian(&packet[*index], sender_ssrc_);
+  ByteWriter<uint32_t>::WriteBigEndian(&packet[*index], sender_ssrc());
   *index += sizeof(uint32_t);
   for (uint32_t csrc : csrcs_) {
     ByteWriter<uint32_t>::WriteBigEndian(&packet[*index], csrc);

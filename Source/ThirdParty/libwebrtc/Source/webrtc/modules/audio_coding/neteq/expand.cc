@@ -469,6 +469,14 @@ void Expand::AnalyzeSignal(int16_t* random_vector) {
 
   for (size_t channel_ix = 0; channel_ix < num_channels_; ++channel_ix) {
     ChannelParameters& parameters = channel_parameters_[channel_ix];
+    if (channel_ix > 0) {
+      // When channel_ix == 0, audio_history contains the correct audio. For the
+      // other cases, we will have to copy the correct channel into
+      // audio_history.
+      (*sync_buffer_)[channel_ix].CopyTo(signal_length, audio_history_position,
+                                         audio_history.get());
+    }
+
     // Calculate suitable scaling.
     int16_t signal_max = WebRtcSpl_MaxAbsValueW16(
         &audio_history[signal_length - correlation_length - start_index -

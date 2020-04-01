@@ -139,6 +139,7 @@ class TCPConnection : public Connection {
  protected:
   enum {
     MSG_TCPCONNECTION_DELAYED_ONCLOSE = Connection::MSG_FIRST_AVAILABLE,
+    MSG_TCPCONNECTION_FAILED_CREATE_SOCKET,
   };
 
   // Set waiting_for_stun_binding_complete_ to false to allow data packets in

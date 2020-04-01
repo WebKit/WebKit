@@ -11,13 +11,15 @@
 
 #include "api/test/create_network_emulation_manager.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "test/network/network_emulation_manager.h"
 
 namespace webrtc {
 
-std::unique_ptr<NetworkEmulationManager> CreateNetworkEmulationManager() {
-  return absl::make_unique<test::NetworkEmulationManagerImpl>();
+std::unique_ptr<NetworkEmulationManager> CreateNetworkEmulationManager(
+    TimeMode mode) {
+  return std::make_unique<test::NetworkEmulationManagerImpl>(mode);
 }
 
 }  // namespace webrtc

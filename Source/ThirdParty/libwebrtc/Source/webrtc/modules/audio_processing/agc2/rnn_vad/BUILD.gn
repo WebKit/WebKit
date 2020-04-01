@@ -8,11 +8,12 @@
 
 import("../../../../webrtc.gni")
 
-rtc_source_set("rnn_vad") {
+rtc_library("rnn_vad") {
   visibility = [ "../*" ]
   sources = [
     "auto_correlation.cc",
     "auto_correlation.h",
+    "common.cc",
     "common.h",
     "features_extraction.cc",
     "features_extraction.h",
@@ -33,18 +34,28 @@ rtc_source_set("rnn_vad") {
     "spectral_features_internal.h",
     "symmetric_matrix_buffer.h",
   ]
+
+  defines = []
+  if (rtc_build_with_neon && current_cpu != "arm64") {
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+    cflags = [ "-mfpu=neon" ]
+  }
+
   deps = [
     "..:biquad_filter",
     "../../../../api:array_view",
+    "../../../../api:function_view",
     "../../../../rtc_base:checks",
     "../../../../rtc_base:rtc_base_approved",
+    "../../../../rtc_base/system:arch",
+    "../../../../system_wrappers:cpu_features_api",
     "../../utility:pffft_wrapper",
     "//third_party/rnnoise:rnn_vad",
   ]
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("test_utils") {
+  rtc_library("test_utils") {
     testonly = true
     sources = [
       "test_utils.cc",
@@ -55,17 +66,18 @@ if (rtc_include_tests) {
       "../../../../api:array_view",
       "../../../../api:scoped_refptr",
       "../../../../rtc_base:checks",
+      "../../../../rtc_base/system:arch",
+      "../../../../system_wrappers:cpu_features_api",
       "../../../../test:fileutils",
       "../../../../test:test_support",
-      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 
   unittest_resources = [
     "../../../../resources/audio_processing/agc2/rnn_vad/band_energies.dat",
     "../../../../resources/audio_processing/agc2/rnn_vad/pitch_buf_24k.dat",
-    "../../../../resources/audio_processing/agc2/rnn_vad/pitch_search_int.dat",
     "../../../../resources/audio_processing/agc2/rnn_vad/pitch_lp_res.dat",
+    "../../../../resources/audio_processing/agc2/rnn_vad/pitch_search_int.dat",
     "../../../../resources/audio_processing/agc2/rnn_vad/samples.pcm",
     "../../../../resources/audio_processing/agc2/rnn_vad/vad_prob.dat",
   ]
@@ -74,13 +86,11 @@ if (rtc_include_tests) {
     bundle_data("unittests_bundle_data") {
       testonly = true
       sources = unittest_resources
-      outputs = [
-        "{{bundle_resources_dir}}/{{source_file_part}}",
-      ]
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
     }
   }
 
-  rtc_source_set("unittests") {
+  rtc_library("unittests") {
     testonly = true
     sources = [
       "auto_correlation_unittest.cc",
@@ -104,8 +114,10 @@ if (rtc_include_tests) {
       "../../../../common_audio/",
       "../../../../rtc_base:checks",
       "../../../../rtc_base:logging",
+      "../../../../rtc_base/system:arch",
       "../../../../test:test_support",
       "../../utility:pffft_wrapper",
+      "//third_party/abseil-cpp/absl/memory",
       "//third_party/rnnoise:rnn_vad",
     ]
     data = unittest_resources
@@ -116,9 +128,7 @@ if (rtc_include_tests) {
 
   rtc_executable("rnn_vad_tool") {
     testonly = true
-    sources = [
-      "rnn_vad_tool.cc",
-    ]
+    sources = [ "rnn_vad_tool.cc" ]
     deps = [
       ":rnn_vad",
       "../../../../api:array_view",

@@ -14,11 +14,12 @@
 #include <memory>
 #include <vector>
 
+#include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/simulated_network.h"
-#include "api/units/data_rate.h"
-#include "api/units/data_size.h"
+#include "api/test/time_controller.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/network.h"
+#include "rtc_base/network_constants.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
@@ -36,8 +37,7 @@ namespace webrtc {
 // Multiple networks can be joined into chain emulating a network path from
 // one peer to another.
 class EmulatedNetworkNode;
-// EmulatedEndpoint is and abstraction for network interface on device.
-class EmulatedEndpoint;
+
 // EmulatedRoute is handle for single route from one network interface on one
 // peer device to another network interface on another peer device.
 class EmulatedRoute;
@@ -52,39 +52,10 @@ struct EmulatedEndpointConfig {
   // Should endpoint be enabled or not, when it will be created.
   // Enabled endpoints will be available for webrtc to send packets.
   bool start_as_enabled = true;
+  // Network type which will be used to represent endpoint to WebRTC.
+  rtc::AdapterType type = rtc::AdapterType::ADAPTER_TYPE_UNKNOWN;
 };
 
-struct EmulatedNetworkStats {
-  int64_t packets_sent = 0;
-  DataSize bytes_sent = DataSize::Zero();
-  // Total amount of packets received with or without destination.
-  int64_t packets_received = 0;
-  // Total amount of bytes in received packets.
-  DataSize bytes_received = DataSize::Zero();
-  // Total amount of packets that were received, but no destination was found.
-  int64_t packets_dropped = 0;
-  // Total amount of bytes in dropped packets.
-  DataSize bytes_dropped = DataSize::Zero();
-
-  DataSize first_received_packet_size = DataSize::Zero();
-  DataSize first_sent_packet_size = DataSize::Zero();
-
-  Timestamp first_packet_sent_time = Timestamp::PlusInfinity();
-  Timestamp last_packet_sent_time = Timestamp::PlusInfinity();
-  Timestamp first_packet_received_time = Timestamp::PlusInfinity();
-  Timestamp last_packet_received_time = Timestamp::PlusInfinity();
-
-  DataRate AverageSendRate() const {
-    RTC_DCHECK_GE(packets_sent, 2);
-    return (bytes_sent - first_sent_packet_size) /
-           (last_packet_sent_time - first_packet_sent_time);
-  }
-  DataRate AverageReceiveRate() const {
-    RTC_DCHECK_GE(packets_received, 2);
-    return (bytes_received - first_received_packet_size) /
-           (last_packet_received_time - first_packet_received_time);
-  }
-};
 
 // Provide interface to obtain all required objects to inject network emulation
 // layer into PeerConnection. Also contains information about network interfaces
@@ -101,12 +72,43 @@ class EmulatedNetworkManagerInterface {
       std::function<void(EmulatedNetworkStats)> stats_callback) const = 0;
 };
 
+enum class TimeMode { kRealTime, kSimulated };
+
 // Provides an API for creating and configuring emulated network layer.
 // All objects returned by this API are owned by NetworkEmulationManager itself
 // and will be deleted when manager will be deleted.
 class NetworkEmulationManager {
  public:
+  // Helper struct to simplify creation of simulated network behaviors. Contains
+  // non-owning pointers as the underlying instances are owned by the manager.
+  struct SimulatedNetworkNode {
+    SimulatedNetworkInterface* simulation;
+    EmulatedNetworkNode* node;
+
+    class Builder {
+     public:
+      explicit Builder(NetworkEmulationManager* net) : net_(net) {}
+      Builder() : net_(nullptr) {}
+      Builder(const Builder&) = default;
+      // Sets the config state, note that this will replace any previously set
+      // values.
+      Builder& config(BuiltInNetworkBehaviorConfig config);
+      Builder& delay_ms(int queue_delay_ms);
+      Builder& capacity_kbps(int link_capacity_kbps);
+      Builder& capacity_Mbps(int link_capacity_Mbps);
+      Builder& loss(double loss_rate);
+      Builder& packet_queue_length(int max_queue_length_in_packets);
+      SimulatedNetworkNode Build() const;
+      SimulatedNetworkNode Build(NetworkEmulationManager* net) const;
+
+     private:
+      NetworkEmulationManager* const net_;
+      BuiltInNetworkBehaviorConfig config_;
+    };
+  };
   virtual ~NetworkEmulationManager() = default;
+
+  virtual TimeController* time_controller() = 0;
 
   // Creates an emulated network node, which represents single network in
   // the emulated network layer.
@@ -114,6 +116,8 @@ class NetworkEmulationManager {
       BuiltInNetworkBehaviorConfig config) = 0;
   virtual EmulatedNetworkNode* CreateEmulatedNode(
       std::unique_ptr<NetworkBehaviorInterface> network_behavior) = 0;
+
+  virtual SimulatedNetworkNode::Builder NodeBuilder() = 0;
 
   // Creates an emulated endpoint, which represents single network interface on
   // the peer's device.
@@ -149,10 +153,24 @@ class NetworkEmulationManager {
       EmulatedEndpoint* from,
       const std::vector<EmulatedNetworkNode*>& via_nodes,
       EmulatedEndpoint* to) = 0;
+
+  // Creates a route over the given |via_nodes| creating the required endpoints
+  // in the process. The returned EmulatedRoute pointer can be used in other
+  // calls as a transport route for message or cross traffic.
+  virtual EmulatedRoute* CreateRoute(
+      const std::vector<EmulatedNetworkNode*>& via_nodes) = 0;
+
   // Removes route previously created by CreateRoute(...).
   // Caller mustn't call this function with route, that have been already
   // removed earlier.
   virtual void ClearRoute(EmulatedRoute* route) = 0;
+
+  // Creates a simulated TCP connection using |send_route| for traffic and
+  // |ret_route| for feedback. This can be used to emulate HTTP cross traffic
+  // and to implement realistic reliable signaling over lossy networks.
+  // TODO(srte): Handle clearing of the routes involved.
+  virtual TcpMessageRoute* CreateTcpRoute(EmulatedRoute* send_route,
+                                          EmulatedRoute* ret_route) = 0;
 
   // Creates EmulatedNetworkManagerInterface which can be used then to inject
   // network emulation layer into PeerConnection. |endpoints| - are available

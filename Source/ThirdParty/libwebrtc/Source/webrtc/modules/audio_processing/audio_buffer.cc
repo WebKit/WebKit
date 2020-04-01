@@ -65,9 +65,8 @@ AudioBuffer::AudioBuffer(size_t input_num_frames,
       num_channels_(buffer_num_channels),
       num_bands_(NumBandsFromFramesPerChannel(buffer_num_frames_)),
       num_split_frames_(rtc::CheckedDivExact(buffer_num_frames_, num_bands_)),
-      data_(new ChannelBuffer<float>(buffer_num_frames_, buffer_num_channels_)),
-      output_buffer_(
-          new ChannelBuffer<float>(output_num_frames_, num_channels_)) {
+      data_(
+          new ChannelBuffer<float>(buffer_num_frames_, buffer_num_channels_)) {
   RTC_DCHECK_GT(input_num_frames_, 0);
   RTC_DCHECK_GT(buffer_num_frames_, 0);
   RTC_DCHECK_GT(output_num_frames_, 0);
@@ -182,6 +181,29 @@ void AudioBuffer::CopyTo(const StreamConfig& stream_config,
 
   for (size_t i = num_channels_; i < stream_config.num_channels(); ++i) {
     memcpy(data[i], data[0], output_num_frames_ * sizeof(**data));
+  }
+}
+
+void AudioBuffer::CopyTo(AudioBuffer* buffer) const {
+  RTC_DCHECK_EQ(buffer->num_frames(), output_num_frames_);
+
+  const bool resampling_needed = output_num_frames_ != buffer_num_frames_;
+  if (resampling_needed) {
+    for (size_t i = 0; i < num_channels_; ++i) {
+      output_resamplers_[i]->Resample(data_->channels()[i], buffer_num_frames_,
+                                      buffer->channels()[i],
+                                      buffer->num_frames());
+    }
+  } else {
+    for (size_t i = 0; i < num_channels_; ++i) {
+      memcpy(buffer->channels()[i], data_->channels()[i],
+             buffer_num_frames_ * sizeof(**buffer->channels()));
+    }
+  }
+
+  for (size_t i = num_channels_; i < buffer->num_channels(); ++i) {
+    memcpy(buffer->channels()[i], buffer->channels()[0],
+           output_num_frames_ * sizeof(**buffer->channels()));
   }
 }
 
@@ -347,10 +369,11 @@ void AudioBuffer::MergeFrequencyBands() {
   splitting_filter_->Synthesis(split_data_.get(), data_.get());
 }
 
-void AudioBuffer::ExportSplitChannelData(size_t channel,
-                                         int16_t* const* split_band_data) {
+void AudioBuffer::ExportSplitChannelData(
+    size_t channel,
+    int16_t* const* split_band_data) const {
   for (size_t k = 0; k < num_bands(); ++k) {
-    const float* band_data = split_bands(channel)[k];
+    const float* band_data = split_bands_const(channel)[k];
 
     RTC_DCHECK(split_band_data[k]);
     RTC_DCHECK(band_data);

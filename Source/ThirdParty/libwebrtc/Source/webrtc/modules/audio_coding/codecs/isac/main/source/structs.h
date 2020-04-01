@@ -304,7 +304,7 @@ typedef struct {
   int16_t maxRateInBytes;
 
   /*---
-    If set to 1 iSAC will not addapt the frame-size, if used in
+    If set to 1 iSAC will not adapt the frame-size, if used in
     channel-adaptive mode. The initial value will be used for all rates.
     ---*/
   int16_t enforceFrameSize;
@@ -312,7 +312,7 @@ typedef struct {
   /*-----
     This records the BWE index the encoder injected into the bit-stream.
     It will be used in RCU. The same BWE index of main payload will be in
-    the redundant payload. We can not retrive it from BWE because it is
+    the redundant payload. We can not retrieve it from BWE because it is
     a recursive procedure (WebRtcIsac_GetDownlinkBwJitIndexImpl) and has to be
     called only once per each encode.
     -----*/

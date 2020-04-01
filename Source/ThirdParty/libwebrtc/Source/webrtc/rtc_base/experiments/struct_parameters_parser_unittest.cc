@@ -19,7 +19,7 @@ struct DummyConfig {
   unsigned size = 3;
   bool ping = 0;
   absl::optional<TimeDelta> duration;
-  absl::optional<TimeDelta> latency = TimeDelta::ms(100);
+  absl::optional<TimeDelta> latency = TimeDelta::Millis(100);
   std::unique_ptr<StructParametersParser> Parser();
 };
 

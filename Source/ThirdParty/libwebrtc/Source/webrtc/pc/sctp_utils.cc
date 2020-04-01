@@ -169,8 +169,7 @@ bool WriteDataChannelOpenMessage(const std::string& label,
   }
 
   rtc::ByteBufferWriter buffer(NULL,
-                               20 + label.length() + config.protocol.length(),
-                               rtc::ByteBuffer::ORDER_NETWORK);
+                               20 + label.length() + config.protocol.length());
   // TODO(tommi): Add error handling and check resulting length.
   buffer.WriteUInt8(DATA_CHANNEL_OPEN_MESSAGE_TYPE);
   buffer.WriteUInt8(channel_type);
@@ -187,6 +186,35 @@ bool WriteDataChannelOpenMessage(const std::string& label,
 void WriteDataChannelOpenAckMessage(rtc::CopyOnWriteBuffer* payload) {
   uint8_t data = DATA_CHANNEL_OPEN_ACK_MESSAGE_TYPE;
   payload->SetData(&data, sizeof(data));
+}
+
+cricket::DataMessageType ToCricketDataMessageType(DataMessageType type) {
+  switch (type) {
+    case DataMessageType::kText:
+      return cricket::DMT_TEXT;
+    case DataMessageType::kBinary:
+      return cricket::DMT_BINARY;
+    case DataMessageType::kControl:
+      return cricket::DMT_CONTROL;
+    default:
+      return cricket::DMT_NONE;
+  }
+  return cricket::DMT_NONE;
+}
+
+DataMessageType ToWebrtcDataMessageType(cricket::DataMessageType type) {
+  switch (type) {
+    case cricket::DMT_TEXT:
+      return DataMessageType::kText;
+    case cricket::DMT_BINARY:
+      return DataMessageType::kBinary;
+    case cricket::DMT_CONTROL:
+      return DataMessageType::kControl;
+    case cricket::DMT_NONE:
+    default:
+      RTC_NOTREACHED();
+  }
+  return DataMessageType::kControl;
 }
 
 }  // namespace webrtc

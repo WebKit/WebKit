@@ -10,15 +10,14 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "api/audio_codecs/L16/audio_decoder_L16.h"
 #include "api/audio_codecs/L16/audio_encoder_L16.h"
 #include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_decoder_factory_template.h"
 #include "api/audio_codecs/audio_encoder_factory_template.h"
-#include "api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/audio_codecs/opus_audio_decoder_factory.h"
+#include "api/audio_codecs/opus_audio_encoder_factory.h"
 #include "media/sctp/sctp_transport_internal.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
@@ -223,7 +222,7 @@ std::unique_ptr<webrtc::AudioDecoder> CreateForwardingMockDecoder(
 
   const auto dec = real_decoder.get();  // For lambda capturing.
   auto mock_decoder =
-      absl::make_unique<ForwardingMockDecoder>(std::move(real_decoder));
+      std::make_unique<ForwardingMockDecoder>(std::move(real_decoder));
   EXPECT_CALL(*mock_decoder, Channels())
       .Times(AtLeast(1))
       .WillRepeatedly(Invoke([dec] { return dec->Channels(); }));
@@ -241,15 +240,6 @@ std::unique_ptr<webrtc::AudioDecoder> CreateForwardingMockDecoder(
   EXPECT_CALL(*mock_decoder, HasDecodePlc()).WillRepeatedly(Invoke([dec] {
     return dec->HasDecodePlc();
   }));
-  EXPECT_CALL(*mock_decoder, IncomingPacket(_, _, _, _, _))
-      .Times(AtLeast(1))
-      .WillRepeatedly(Invoke([dec](const uint8_t* payload, size_t payload_len,
-                                   uint16_t rtp_sequence_number,
-                                   uint32_t rtp_timestamp,
-                                   uint32_t arrival_timestamp) {
-        return dec->IncomingPacket(payload, payload_len, rtp_sequence_number,
-                                   rtp_timestamp, arrival_timestamp);
-      }));
   EXPECT_CALL(*mock_decoder, PacketDuration(_, _))
       .Times(AtLeast(1))
       .WillRepeatedly(Invoke([dec](const uint8_t* encoded, size_t encoded_len) {
@@ -368,8 +358,8 @@ struct AudioDecoderUnicornSparklesRainbow {
 
 TEST_P(PeerConnectionEndToEndTest, Call) {
   rtc::scoped_refptr<webrtc::AudioDecoderFactory> real_decoder_factory =
-      webrtc::CreateBuiltinAudioDecoderFactory();
-  CreatePcs(webrtc::CreateBuiltinAudioEncoderFactory(),
+      webrtc::CreateOpusAudioDecoderFactory();
+  CreatePcs(webrtc::CreateOpusAudioEncoderFactory(),
             CreateForwardingMockDecoderFactory(real_decoder_factory.get()));
   GetAndAddUserMedia();
   Negotiate();
@@ -378,8 +368,8 @@ TEST_P(PeerConnectionEndToEndTest, Call) {
 
 TEST_P(PeerConnectionEndToEndTest, CallWithSdesKeyNegotiation) {
   config_.enable_dtls_srtp = false;
-  CreatePcs(webrtc::CreateBuiltinAudioEncoderFactory(),
-            webrtc::CreateBuiltinAudioDecoderFactory());
+  CreatePcs(webrtc::CreateOpusAudioEncoderFactory(),
+            webrtc::CreateOpusAudioDecoderFactory());
   GetAndAddUserMedia();
   Negotiate();
   WaitForCallEstablished();
@@ -749,8 +739,8 @@ TEST_P(PeerConnectionEndToEndTest, TooManyDataChannelsOpenedBeforeConnecting) {
 
 TEST_P(PeerConnectionEndToEndTest, CanRestartIce) {
   rtc::scoped_refptr<webrtc::AudioDecoderFactory> real_decoder_factory =
-      webrtc::CreateBuiltinAudioDecoderFactory();
-  CreatePcs(webrtc::CreateBuiltinAudioEncoderFactory(),
+      webrtc::CreateOpusAudioDecoderFactory();
+  CreatePcs(webrtc::CreateOpusAudioEncoderFactory(),
             CreateForwardingMockDecoderFactory(real_decoder_factory.get()));
   GetAndAddUserMedia();
   Negotiate();

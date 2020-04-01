@@ -158,25 +158,51 @@ bool IvfFileWriter::WriteFrame(const EncodedImage& encoded_image,
   }
   last_timestamp_ = timestamp;
 
+  bool written_frames = false;
+  size_t max_sl_index = encoded_image.SpatialIndex().value_or(0);
+  const uint8_t* data = encoded_image.data();
+  for (size_t sl_idx = 0; sl_idx <= max_sl_index; ++sl_idx) {
+    size_t cur_size = encoded_image.SpatialLayerFrameSize(sl_idx).value_or(0);
+    if (cur_size > 0) {
+      written_frames = true;
+      if (!WriteOneSpatialLayer(timestamp, data, cur_size)) {
+        return false;
+      }
+      data += cur_size;
+    }
+  }
+
+  // If frame has only one spatial layer it won't have any spatial layers'
+  // sizes. Therefore this case should be addressed separately.
+  if (!written_frames) {
+    return WriteOneSpatialLayer(timestamp, data, encoded_image.size());
+  } else {
+    return true;
+  }
+}
+
+bool IvfFileWriter::WriteOneSpatialLayer(int64_t timestamp,
+                                         const uint8_t* data,
+                                         size_t size) {
   const size_t kFrameHeaderSize = 12;
   if (byte_limit_ != 0 &&
-      bytes_written_ + kFrameHeaderSize + encoded_image.size() > byte_limit_) {
+      bytes_written_ + kFrameHeaderSize + size > byte_limit_) {
     RTC_LOG(LS_WARNING) << "Closing IVF file due to reaching size limit: "
                         << byte_limit_ << " bytes.";
     Close();
     return false;
   }
   uint8_t frame_header[kFrameHeaderSize] = {};
-  ByteWriter<uint32_t>::WriteLittleEndian(
-      &frame_header[0], static_cast<uint32_t>(encoded_image.size()));
+  ByteWriter<uint32_t>::WriteLittleEndian(&frame_header[0],
+                                          static_cast<uint32_t>(size));
   ByteWriter<uint64_t>::WriteLittleEndian(&frame_header[4], timestamp);
   if (!file_.Write(frame_header, kFrameHeaderSize) ||
-      !file_.Write(encoded_image.data(), encoded_image.size())) {
+      !file_.Write(data, size)) {
     RTC_LOG(LS_ERROR) << "Unable to write frame to file.";
     return false;
   }
 
-  bytes_written_ += kFrameHeaderSize + encoded_image.size();
+  bytes_written_ += kFrameHeaderSize + size;
 
   ++num_frames_;
   return true;

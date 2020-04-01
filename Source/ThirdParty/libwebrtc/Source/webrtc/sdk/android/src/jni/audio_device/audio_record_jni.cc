@@ -158,6 +158,17 @@ int32_t AudioRecordJni::StopRecording() {
   if (!initialized_ || !recording_) {
     return 0;
   }
+  // Check if the audio source matched the activated recording session but only
+  // if a valid results exists to avoid invalid statistics.
+  if (Java_WebRtcAudioRecord_isAudioConfigVerified(env_, j_audio_record_)) {
+    const bool session_was_ok =
+        Java_WebRtcAudioRecord_isAudioSourceMatchingRecordingSession(
+            env_, j_audio_record_);
+    RTC_HISTOGRAM_BOOLEAN("WebRTC.Audio.SourceMatchesRecordingSession",
+                          session_was_ok);
+    RTC_LOG(INFO) << "HISTOGRAM(WebRTC.Audio.SourceMatchesRecordingSession): "
+                  << session_was_ok;
+  }
   if (!Java_WebRtcAudioRecord_stopRecording(env_, j_audio_record_)) {
     RTC_LOG(LS_ERROR) << "StopRecording failed";
     return -1;

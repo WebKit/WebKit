@@ -12,10 +12,10 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <memory>
 
-#include "absl/memory/memory.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log/rtc_event_log.h"
-#include "logging/rtc_event_log/events/rtc_event.h"
 #include "logging/rtc_event_log/events/rtc_event_alr_state.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -93,7 +93,7 @@ void AlrDetector::OnBytesSent(size_t bytes_sent, int64_t send_time_ms) {
   }
   if (event_log_ && state_changed) {
     event_log_->Log(
-        absl::make_unique<RtcEventAlrState>(alr_started_time_ms_.has_value()));
+        std::make_unique<RtcEventAlrState>(alr_started_time_ms_.has_value()));
   }
 }
 

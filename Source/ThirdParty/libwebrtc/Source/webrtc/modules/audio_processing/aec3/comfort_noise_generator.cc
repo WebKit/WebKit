@@ -92,39 +92,50 @@ void GenerateComfortNoise(Aec3Optimization optimization,
 
 }  // namespace
 
-ComfortNoiseGenerator::ComfortNoiseGenerator(Aec3Optimization optimization)
+ComfortNoiseGenerator::ComfortNoiseGenerator(Aec3Optimization optimization,
+                                             size_t num_capture_channels)
     : optimization_(optimization),
       seed_(42),
-      N2_initial_(new std::array<float, kFftLengthBy2Plus1>()) {
-  N2_initial_->fill(0.f);
-  Y2_smoothed_.fill(0.f);
-  N2_.fill(1.0e6f);
+      num_capture_channels_(num_capture_channels),
+      N2_initial_(
+          std::make_unique<std::vector<std::array<float, kFftLengthBy2Plus1>>>(
+              num_capture_channels_)),
+      Y2_smoothed_(num_capture_channels_),
+      N2_(num_capture_channels_) {
+  for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
+    (*N2_initial_)[ch].fill(0.f);
+    Y2_smoothed_[ch].fill(0.f);
+    N2_[ch].fill(1.0e6f);
+  }
 }
 
 ComfortNoiseGenerator::~ComfortNoiseGenerator() = default;
 
 void ComfortNoiseGenerator::Compute(
-    const AecState& aec_state,
-    const std::array<float, kFftLengthBy2Plus1>& capture_spectrum,
-    FftData* lower_band_noise,
-    FftData* upper_band_noise) {
-  RTC_DCHECK(lower_band_noise);
-  RTC_DCHECK(upper_band_noise);
+    bool saturated_capture,
+    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>>
+        capture_spectrum,
+    rtc::ArrayView<FftData> lower_band_noise,
+    rtc::ArrayView<FftData> upper_band_noise) {
   const auto& Y2 = capture_spectrum;
 
-  if (!aec_state.SaturatedCapture()) {
+  if (!saturated_capture) {
     // Smooth Y2.
-    std::transform(Y2_smoothed_.begin(), Y2_smoothed_.end(), Y2.begin(),
-                   Y2_smoothed_.begin(),
-                   [](float a, float b) { return a + 0.1f * (b - a); });
+    for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
+      std::transform(Y2_smoothed_[ch].begin(), Y2_smoothed_[ch].end(),
+                     Y2[ch].begin(), Y2_smoothed_[ch].begin(),
+                     [](float a, float b) { return a + 0.1f * (b - a); });
+    }
 
     if (N2_counter_ > 50) {
       // Update N2 from Y2_smoothed.
-      std::transform(N2_.begin(), N2_.end(), Y2_smoothed_.begin(), N2_.begin(),
-                     [](float a, float b) {
-                       return b < a ? (0.9f * b + 0.1f * a) * 1.0002f
-                                    : a * 1.0002f;
-                     });
+      for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
+        std::transform(N2_[ch].begin(), N2_[ch].end(), Y2_smoothed_[ch].begin(),
+                       N2_[ch].begin(), [](float a, float b) {
+                         return b < a ? (0.9f * b + 0.1f * a) * 1.0002f
+                                      : a * 1.0002f;
+                       });
+      }
     }
 
     if (N2_initial_) {
@@ -132,31 +143,38 @@ void ComfortNoiseGenerator::Compute(
         N2_initial_.reset();
       } else {
         // Compute the N2_initial from N2.
-        std::transform(
-            N2_.begin(), N2_.end(), N2_initial_->begin(), N2_initial_->begin(),
-            [](float a, float b) { return a > b ? b + 0.001f * (a - b) : a; });
+        for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
+          std::transform(N2_[ch].begin(), N2_[ch].end(),
+                         (*N2_initial_)[ch].begin(), (*N2_initial_)[ch].begin(),
+                         [](float a, float b) {
+                           return a > b ? b + 0.001f * (a - b) : a;
+                         });
+        }
+      }
+    }
+
+    // Limit the noise to a floor matching a WGN input of -96 dBFS.
+    constexpr float kNoiseFloor = 17.1267f;
+
+    for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
+      for (auto& n : N2_[ch]) {
+        n = std::max(n, kNoiseFloor);
+      }
+      if (N2_initial_) {
+        for (auto& n : (*N2_initial_)[ch]) {
+          n = std::max(n, kNoiseFloor);
+        }
       }
     }
   }
 
-  // Limit the noise to a floor matching a WGN input of -96 dBFS.
-  constexpr float kNoiseFloor = 17.1267f;
-
-  for (auto& n : N2_) {
-    n = std::max(n, kNoiseFloor);
-  }
-  if (N2_initial_) {
-    for (auto& n : *N2_initial_) {
-      n = std::max(n, kNoiseFloor);
-    }
-  }
-
   // Choose N2 estimate to use.
-  const std::array<float, kFftLengthBy2Plus1>& N2 =
-      N2_initial_ ? *N2_initial_ : N2_;
+  const auto& N2 = N2_initial_ ? (*N2_initial_) : N2_;
 
-  GenerateComfortNoise(optimization_, N2, &seed_, lower_band_noise,
-                       upper_band_noise);
+  for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
+    GenerateComfortNoise(optimization_, N2[ch], &seed_, &lower_band_noise[ch],
+                         &upper_band_noise[ch]);
+  }
 }
 
 }  // namespace webrtc

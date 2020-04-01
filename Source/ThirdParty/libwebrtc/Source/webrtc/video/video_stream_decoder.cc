@@ -10,15 +10,14 @@
 
 #include "video/video_stream_decoder.h"
 
-#include "modules/video_coding/include/video_coding.h"
-#include "modules/video_coding/video_coding_impl.h"
+#include "modules/video_coding/video_receiver2.h"
 #include "rtc_base/checks.h"
 #include "video/receive_statistics_proxy.h"
 
 namespace webrtc {
 
 VideoStreamDecoder::VideoStreamDecoder(
-    vcm::VideoReceiver* video_receiver,
+    VideoReceiver2* video_receiver,
     ReceiveStatisticsProxy* receive_statistics_proxy,
     rtc::VideoSinkInterface<VideoFrame>* incoming_video_stream)
     : video_receiver_(video_receiver),

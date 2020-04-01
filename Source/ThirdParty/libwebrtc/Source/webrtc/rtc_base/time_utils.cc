@@ -14,8 +14,6 @@
 #include <sys/time.h>
 #if defined(WEBRTC_MAC)
 #include <mach/mach_time.h>
-
-#include "rtc_base/numerics/safe_conversions.h"
 #endif
 #endif
 
@@ -30,6 +28,7 @@
 #endif
 
 #include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/time_utils.h"
 
 namespace rtc {

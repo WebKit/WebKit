@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "absl/types/optional.h"
+#include "api/video/video_source_interface.h"
 #include "media/base/video_common.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/critical_section.h"
@@ -30,9 +31,9 @@ namespace cricket {
 class VideoAdapter {
  public:
   VideoAdapter();
-  // The output frames will have height and width that is divisible by
-  // |required_resolution_alignment|.
-  explicit VideoAdapter(int required_resolution_alignment);
+  // The source requests output frames whose width and height are divisible
+  // by |source_resolution_alignment|.
+  explicit VideoAdapter(int source_resolution_alignment);
   virtual ~VideoAdapter();
 
   // Return the adapted resolution and cropping parameters given the
@@ -83,17 +84,16 @@ class VideoAdapter {
       const absl::optional<int>& max_fps);
 
   // Requests the output frame size from |AdaptFrameResolution| to have as close
-  // as possible to |target_pixel_count| pixels (if set) but no more than
-  // |max_pixel_count|.
-  // |max_framerate_fps| is essentially analogous to |max_pixel_count|, but for
-  // framerate rather than resolution.
-  // Set |max_pixel_count| and/or |max_framerate_fps| to
+  // as possible to |sink_wants.target_pixel_count| pixels (if set)
+  // but no more than |sink_wants.max_pixel_count|.
+  // |sink_wants.max_framerate_fps| is essentially analogous to
+  // |sink_wants.max_pixel_count|, but for framerate rather than resolution.
+  // Set |sink_wants.max_pixel_count| and/or |sink_wants.max_framerate_fps| to
   // std::numeric_limit<int>::max() if no upper limit is desired.
+  // The sink resolution alignment requirement is given by
+  // |sink_wants.resolution_alignment|.
   // Note: Should be called from the sink only.
-  void OnResolutionFramerateRequest(
-      const absl::optional<int>& target_pixel_count,
-      int max_pixel_count,
-      int max_framerate_fps);
+  void OnSinkWants(const rtc::VideoSinkWants& sink_wants);
 
  private:
   // Determine if frame should be dropped based on input fps and requested fps.
@@ -105,8 +105,15 @@ class VideoAdapter {
   int adaption_changes_;  // Number of changes in scale factor.
   int previous_width_;    // Previous adapter output width.
   int previous_height_;   // Previous adapter output height.
-  // Resolution must be divisible by this factor.
-  const int required_resolution_alignment_;
+  const bool variable_start_scale_factor_;
+
+  // The fixed source resolution alignment requirement.
+  const int source_resolution_alignment_;
+  // The currently applied resolution alignment, as given by the requirements:
+  //  - the fixed |source_resolution_alignment_|; and
+  //  - the latest |sink_wants.resolution_alignment|.
+  int resolution_alignment_ RTC_GUARDED_BY(critical_section_);
+
   // The target timestamp for the next frame based on requested format.
   absl::optional<int64_t> next_frame_timestamp_ns_
       RTC_GUARDED_BY(critical_section_);

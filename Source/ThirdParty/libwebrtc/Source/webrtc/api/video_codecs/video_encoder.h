@@ -34,6 +34,8 @@ class RTPFragmentationHeader;
 // TODO(pbos): Expose these through a public (root) header or change these APIs.
 struct CodecSpecificInfo;
 
+constexpr int kDefaultMinPixelsPerFrame = 320 * 180;
+
 class EncodedImageCallback {
  public:
   virtual ~EncodedImageCallback() {}
@@ -89,7 +91,7 @@ class RTC_EXPORT VideoEncoder {
   };
 
   // Quality scaling is enabled if thresholds are provided.
-  struct ScalingSettings {
+  struct RTC_EXPORT ScalingSettings {
    private:
     // Private magic type for kOff, implicitly convertible to
     // ScalingSettings.
@@ -115,7 +117,7 @@ class RTC_EXPORT VideoEncoder {
     // TODO(kthelgason): Lower this limit when better testing
     // on MediaCodec and fallback implementations are in place.
     // See https://bugs.chromium.org/p/webrtc/issues/detail?id=7206
-    int min_pixels_per_frame = 320 * 180;
+    int min_pixels_per_frame = kDefaultMinPixelsPerFrame;
 
    private:
     // Private constructor; to get an object without thresholds, use
@@ -141,10 +143,15 @@ class RTC_EXPORT VideoEncoder {
     int min_bitrate_bps = 0;
     // Recommended maximum bitrate.
     int max_bitrate_bps = 0;
+
+    bool operator==(const ResolutionBitrateLimits& rhs) const;
+    bool operator!=(const ResolutionBitrateLimits& rhs) const {
+      return !(*this == rhs);
+    }
   };
 
   // Struct containing metadata about the encoder implementing this interface.
-  struct EncoderInfo {
+  struct RTC_EXPORT EncoderInfo {
     static constexpr uint8_t kMaxFramerateFraction =
         std::numeric_limits<uint8_t>::max();
 
@@ -153,9 +160,21 @@ class RTC_EXPORT VideoEncoder {
 
     ~EncoderInfo();
 
+    std::string ToString() const;
+    bool operator==(const EncoderInfo& rhs) const;
+    bool operator!=(const EncoderInfo& rhs) const { return !(*this == rhs); }
+
     // Any encoder implementation wishing to use the WebRTC provided
     // quality scaler must populate this field.
     ScalingSettings scaling_settings;
+
+    // The width and height of the incoming video frames should be divisible
+    // by |requested_resolution_alignment|. If they are not, the encoder may
+    // drop the incoming frame.
+    // For example: With I420, this value would be a multiple of 2.
+    // Note that this field is unrelated to any horizontal or vertical stride
+    // requirements the encoder has on the incoming video frame buffers.
+    int requested_resolution_alignment;
 
     // If true, encoder supports working with a native handle (e.g. texture
     // handle for hw codecs) rather than requiring a raw I420 buffer.
@@ -216,9 +235,21 @@ class RTC_EXPORT VideoEncoder {
 
     // Recommended bitrate limits for different resolutions.
     std::vector<ResolutionBitrateLimits> resolution_bitrate_limits;
+
+    // Obtains the limits from |resolution_bitrate_limits| that best matches the
+    // |frame_size_pixels|.
+    absl::optional<ResolutionBitrateLimits>
+    GetEncoderBitrateLimitsForResolution(int frame_size_pixels) const;
+
+    // If true, this encoder has internal support for generating simulcast
+    // streams. Otherwise, an adapter class will be needed.
+    // Even if true, the config provided to InitEncode() might not be supported,
+    // in such case the encoder should return
+    // WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED.
+    bool supports_simulcast;
   };
 
-  struct RateControlParameters {
+  struct RTC_EXPORT RateControlParameters {
     RateControlParameters();
     RateControlParameters(const VideoBitrateAllocation& bitrate,
                           double framerate_fps);
@@ -239,6 +270,9 @@ class RTC_EXPORT VideoEncoder {
     // |bitrate.get_sum_bps()|, but may be higher if the application is not
     // network constrained.
     DataRate bandwidth_allocation;
+
+    bool operator==(const RateControlParameters& rhs) const;
+    bool operator!=(const RateControlParameters& rhs) const;
   };
 
   struct LossNotification {

@@ -15,6 +15,7 @@
 
 #include "api/test/network_emulation_manager.h"
 #include "api/test/peerconnection_quality_test_fixture.h"
+#include "rtc_base/critical_section.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -30,15 +31,23 @@ class NetworkQualityMetricsReporter
   // Network stats must be empty when this method will be invoked.
   void Start(absl::string_view test_case_name) override;
   void OnStatsReports(const std::string& pc_label,
-                      const StatsReports& reports) override {}
+                      const StatsReports& reports) override;
   void StopAndReportResults() override;
 
  private:
+  struct PCStats {
+    // TODO(nisse): Separate audio and video counters. Depends on standard stat
+    // counters, enabled by field trial "WebRTC-UseStandardBytesStats".
+    int64_t payload_bytes_received = 0;
+    int64_t payload_bytes_sent = 0;
+  };
+
   static EmulatedNetworkStats PopulateStats(
       EmulatedNetworkManagerInterface* network);
   void ReportStats(const std::string& network_label,
                    const EmulatedNetworkStats& stats,
                    int64_t packet_loss);
+  void ReportPCStats(const std::string& pc_label, const PCStats& stats);
   void ReportResult(const std::string& metric_name,
                     const std::string& network_label,
                     const double value,
@@ -49,6 +58,8 @@ class NetworkQualityMetricsReporter
 
   EmulatedNetworkManagerInterface* alice_network_;
   EmulatedNetworkManagerInterface* bob_network_;
+  rtc::CriticalSection lock_;
+  std::map<std::string, PCStats> pc_stats_ RTC_GUARDED_BY(lock_);
 };
 
 }  // namespace webrtc_pc_e2e

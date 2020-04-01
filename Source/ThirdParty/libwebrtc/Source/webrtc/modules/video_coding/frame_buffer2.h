@@ -58,14 +58,6 @@ class FrameBuffer {
 
   // Get the next frame for decoding. Will return at latest after
   // |max_wait_time_ms|.
-  //  - If a frame is available within |max_wait_time_ms| it will return
-  //    kFrameFound and set |frame_out| to the resulting frame.
-  //  - If no frame is available after |max_wait_time_ms| it will return
-  //    kTimeout.
-  //  - If the FrameBuffer is stopped then it will return kStopped.
-  ReturnReason NextFrame(int64_t max_wait_time_ms,
-                         std::unique_ptr<EncodedFrame>* frame_out,
-                         bool keyframe_required);
   void NextFrame(
       int64_t max_wait_time_ms,
       bool keyframe_required,
@@ -181,7 +173,6 @@ class FrameBuffer {
   int64_t latest_return_time_ms_ RTC_GUARDED_BY(crit_);
   bool keyframe_required_ RTC_GUARDED_BY(crit_);
 
-  rtc::Event new_continuous_frame_event_;
   VCMJitterEstimator jitter_estimator_ RTC_GUARDED_BY(crit_);
   VCMTiming* const timing_ RTC_GUARDED_BY(crit_);
   VCMInterFrameDelay inter_frame_delay_ RTC_GUARDED_BY(crit_);

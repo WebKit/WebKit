@@ -132,11 +132,11 @@ const char *kRTCFileLoggerRotatingLogPrefix = "rotating_log";
   std::unique_ptr<rtc::FileRotatingStreamReader> stream;
   switch(_rotationType) {
     case RTCFileLoggerTypeApp:
-      stream = absl::make_unique<rtc::FileRotatingStreamReader>(_dirPath.UTF8String,
-                                                                kRTCFileLoggerRotatingLogPrefix);
+      stream = std::make_unique<rtc::FileRotatingStreamReader>(_dirPath.UTF8String,
+                                                               kRTCFileLoggerRotatingLogPrefix);
       break;
     case RTCFileLoggerTypeCall:
-      stream = absl::make_unique<rtc::CallSessionFileRotatingStreamReader>(_dirPath.UTF8String);
+      stream = std::make_unique<rtc::CallSessionFileRotatingStreamReader>(_dirPath.UTF8String);
       break;
   }
   size_t bufferSize = stream->GetSize();

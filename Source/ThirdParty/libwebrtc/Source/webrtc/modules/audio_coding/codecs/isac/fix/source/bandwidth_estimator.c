@@ -819,22 +819,6 @@ int16_t WebRtcIsacfix_GetUplinkMaxDelay(const BwEstimatorstr* bweStr) {
              : clamp(bweStr->sendMaxDelayAvg >> 9, MIN_ISAC_MD, MAX_ISAC_MD);
 }
 
-void WebRtcIsacfixBw_GetBandwidthInfo(BwEstimatorstr* bweStr,
-                                   IsacBandwidthInfo* bwinfo) {
-  RTC_DCHECK(!bweStr->external_bw_info.in_use);
-  bwinfo->in_use = 1;
-  bwinfo->send_bw_avg = WebRtcIsacfix_GetUplinkBandwidth(bweStr);
-  bwinfo->send_max_delay_avg = WebRtcIsacfix_GetUplinkMaxDelay(bweStr);
-  bwinfo->bottleneck_idx = WebRtcIsacfix_GetDownlinkBwIndexImpl(bweStr);
-  bwinfo->jitter_info = 0;  // Not used.
-}
-
-void WebRtcIsacfixBw_SetBandwidthInfo(BwEstimatorstr* bweStr,
-                                   const IsacBandwidthInfo* bwinfo) {
-  memcpy(&bweStr->external_bw_info, bwinfo,
-         sizeof bweStr->external_bw_info);
-}
-
 /*
  * update long-term average bitrate and amount of data in buffer
  * returns minimum payload size (bytes)

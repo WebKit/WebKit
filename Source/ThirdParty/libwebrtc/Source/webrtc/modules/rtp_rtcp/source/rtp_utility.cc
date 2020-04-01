@@ -543,6 +543,10 @@ void RtpHeaderParser::ParseOneByteExtensionHeader(
           RTC_LOG(WARNING)
               << "RtpExtensionColorSpace unsupported by rtp header parser.";
           break;
+        case kRtpExtensionInbandComfortNoise:
+          RTC_LOG(WARNING) << "Inband comfort noise extension unsupported by "
+                              "rtp header parser.";
+          break;
         case kRtpExtensionNone:
         case kRtpExtensionNumberOfExtensions: {
           RTC_NOTREACHED() << "Invalid extension type: " << type;

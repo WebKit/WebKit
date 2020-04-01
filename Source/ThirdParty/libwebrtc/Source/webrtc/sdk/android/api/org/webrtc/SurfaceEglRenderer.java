@@ -24,7 +24,7 @@ import java.util.concurrent.CountDownLatch;
 public class SurfaceEglRenderer extends EglRenderer implements SurfaceHolder.Callback {
   private static final String TAG = "SurfaceEglRenderer";
 
-  // Callback for reporting renderer events. Read-only after initilization so no lock required.
+  // Callback for reporting renderer events. Read-only after initialization so no lock required.
   private RendererCommon.RendererEvents rendererEvents;
 
   private final Object layoutLock = new Object();

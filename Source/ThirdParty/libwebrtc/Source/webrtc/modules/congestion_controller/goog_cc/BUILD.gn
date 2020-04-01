@@ -16,7 +16,7 @@ config("bwe_test_logging") {
   }
 }
 
-rtc_static_library("goog_cc") {
+rtc_library("goog_cc") {
   configs += [ ":bwe_test_logging" ]
   sources = [
     "goog_cc_network_control.cc",
@@ -27,6 +27,7 @@ rtc_static_library("goog_cc") {
     ":alr_detector",
     ":delay_based_bwe",
     ":estimators",
+    ":loss_based_controller",
     ":probe_controller",
     ":pushback_controller",
     "../..:module_api",
@@ -40,6 +41,7 @@ rtc_static_library("goog_cc") {
     "../../../api/units:data_size",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
+    "../../../logging:rtc_event_bwe",
     "../../../logging:rtc_event_pacing",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
@@ -48,14 +50,12 @@ rtc_static_library("goog_cc") {
     "../../../rtc_base/experiments:field_trial_parser",
     "../../../rtc_base/experiments:rate_control_settings",
     "../../../system_wrappers",
-    "../../bitrate_controller",
     "../../remote_bitrate_estimator",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_source_set("link_capacity_estimator") {
+rtc_library("link_capacity_estimator") {
   sources = [
     "link_capacity_estimator.cc",
     "link_capacity_estimator.h",
@@ -67,7 +67,7 @@ rtc_source_set("link_capacity_estimator") {
   ]
 }
 
-rtc_source_set("pushback_controller") {
+rtc_library("pushback_controller") {
   sources = [
     "congestion_window_pushback_controller.cc",
     "congestion_window_pushback_controller.h",
@@ -82,7 +82,7 @@ rtc_source_set("pushback_controller") {
   ]
 }
 
-rtc_source_set("alr_detector") {
+rtc_library("alr_detector") {
   sources = [
     "alr_detector.cc",
     "alr_detector.h",
@@ -91,7 +91,6 @@ rtc_source_set("alr_detector") {
     "../../../api/rtc_event_log",
     "../../../api/transport:field_trial_based_config",
     "../../../api/transport:webrtc_key_value_config",
-    "../../../logging:rtc_event_log_api",
     "../../../logging:rtc_event_pacing",
     "../../../rtc_base:checks",
     "../../../rtc_base:safe_conversions",
@@ -99,15 +98,16 @@ rtc_source_set("alr_detector") {
     "../../../rtc_base/experiments:alr_experiment",
     "../../../rtc_base/experiments:field_trial_parser",
     "../../pacing:interval_budget",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
-rtc_source_set("estimators") {
+rtc_library("estimators") {
   configs += [ ":bwe_test_logging" ]
   sources = [
     "acknowledged_bitrate_estimator.cc",
     "acknowledged_bitrate_estimator.h",
+    "acknowledged_bitrate_estimator_interface.cc",
+    "acknowledged_bitrate_estimator_interface.h",
     "bitrate_estimator.cc",
     "bitrate_estimator.h",
     "delay_increase_detector_interface.h",
@@ -115,6 +115,8 @@ rtc_source_set("estimators") {
     "median_slope_estimator.h",
     "probe_bitrate_estimator.cc",
     "probe_bitrate_estimator.h",
+    "robust_throughput_estimator.cc",
+    "robust_throughput_estimator.h",
     "trendline_estimator.cc",
     "trendline_estimator.h",
   ]
@@ -135,12 +137,36 @@ rtc_source_set("estimators") {
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base/experiments:field_trial_parser",
     "../../remote_bitrate_estimator",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_source_set("delay_based_bwe") {
+rtc_library("loss_based_controller") {
+  configs += [ ":bwe_test_logging" ]
+  sources = [
+    "loss_based_bandwidth_estimation.cc",
+    "loss_based_bandwidth_estimation.h",
+    "send_side_bandwidth_estimation.cc",
+    "send_side_bandwidth_estimation.h",
+  ]
+  deps = [
+    "../../../api/rtc_event_log",
+    "../../../api/transport:network_control",
+    "../../../api/units:data_rate",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../logging:rtc_event_bwe",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base/experiments:field_trial_parser",
+    "../../../system_wrappers:field_trial",
+    "../../../system_wrappers:metrics",
+    "../../remote_bitrate_estimator",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("delay_based_bwe") {
   configs += [ ":bwe_test_logging" ]
   sources = [
     "delay_based_bwe.cc",
@@ -155,19 +181,17 @@ rtc_source_set("delay_based_bwe") {
     "../../../api/transport:network_control",
     "../../../api/transport:webrtc_key_value_config",
     "../../../logging:rtc_event_bwe",
-    "../../../logging:rtc_event_log_api",
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/experiments:field_trial_parser",
     "../../../system_wrappers:metrics",
     "../../pacing",
     "../../remote_bitrate_estimator",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_source_set("probe_controller") {
+rtc_library("probe_controller") {
   sources = [
     "probe_controller.cc",
     "probe_controller.h",
@@ -189,13 +213,12 @@ rtc_source_set("probe_controller") {
     "../../../rtc_base/experiments:field_trial_parser",
     "../../../rtc_base/system:unused",
     "../../../system_wrappers:metrics",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("test_goog_cc_printer") {
+  rtc_library("test_goog_cc_printer") {
     testonly = true
     sources = [
       "test/goog_cc_printer.cc",
@@ -216,7 +239,7 @@ if (rtc_include_tests) {
       "//third_party/abseil-cpp/absl/types:optional",
     ]
   }
-  rtc_source_set("goog_cc_unittests") {
+  rtc_library("goog_cc_unittests") {
     testonly = true
 
     sources = [
@@ -230,6 +253,8 @@ if (rtc_include_tests) {
       "median_slope_estimator_unittest.cc",
       "probe_bitrate_estimator_unittest.cc",
       "probe_controller_unittest.cc",
+      "robust_throughput_estimator_unittest.cc",
+      "send_side_bandwidth_estimation_unittest.cc",
       "trendline_estimator_unittest.cc",
     ]
     deps = [
@@ -237,8 +262,10 @@ if (rtc_include_tests) {
       ":delay_based_bwe",
       ":estimators",
       ":goog_cc",
+      ":loss_based_controller",
       ":probe_controller",
       ":pushback_controller",
+      "../../../api/rtc_event_log",
       "../../../api/transport:field_trial_based_config",
       "../../../api/transport:goog_cc",
       "../../../api/transport:network_control",
@@ -246,6 +273,7 @@ if (rtc_include_tests) {
       "../../../api/units:data_rate",
       "../../../api/units:timestamp",
       "../../../logging:mocks",
+      "../../../logging:rtc_event_bwe",
       "../../../rtc_base:checks",
       "../../../rtc_base:rtc_base_approved",
       "../../../rtc_base:rtc_base_tests_utils",
@@ -256,11 +284,6 @@ if (rtc_include_tests) {
       "../../../test/scenario",
       "../../pacing",
       "//testing/gmock",
-      "//third_party/abseil-cpp/absl/memory",
     ]
-  }
-
-  # TODO(srte): Remove this target when dependency in root BUILD is gone.
-  rtc_source_set("goog_cc_slow_tests") {
   }
 }

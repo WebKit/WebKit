@@ -33,8 +33,6 @@ class ProbeBitrateEstimator {
 
   absl::optional<DataRate> FetchAndResetLastEstimatedBitrate();
 
-  absl::optional<DataRate> last_estimate() const;
-
  private:
   struct AggregatedCluster {
     int num_probes = 0;
@@ -53,7 +51,6 @@ class ProbeBitrateEstimator {
   std::map<int, AggregatedCluster> clusters_;
   RtcEventLog* const event_log_;
   absl::optional<DataRate> estimated_data_rate_;
-  absl::optional<DataRate> last_estimate_;
 };
 
 }  // namespace webrtc

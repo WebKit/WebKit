@@ -21,14 +21,8 @@ namespace webrtc {
 AudioSendStream::Stats::Stats() = default;
 AudioSendStream::Stats::~Stats() = default;
 
-AudioSendStream::Config::Config(
-    Transport* send_transport,
-    const MediaTransportConfig& media_transport_config)
-    : send_transport(send_transport),
-      media_transport_config(media_transport_config) {}
-
 AudioSendStream::Config::Config(Transport* send_transport)
-    : Config(send_transport, MediaTransportConfig()) {}
+    : send_transport(send_transport) {}
 
 AudioSendStream::Config::~Config() = default;
 
@@ -38,7 +32,6 @@ std::string AudioSendStream::Config::ToString() const {
   ss << "{rtp: " << rtp.ToString();
   ss << ", rtcp_report_interval_ms: " << rtcp_report_interval_ms;
   ss << ", send_transport: " << (send_transport ? "(Transport)" : "null");
-  ss << ", media_transport_config: " << media_transport_config.DebugString();
   ss << ", min_bitrate_bps: " << min_bitrate_bps;
   ss << ", max_bitrate_bps: " << max_bitrate_bps;
   ss << ", send_codec_spec: "

@@ -10,7 +10,6 @@
 
 package org.appspot.apprtc;
 
-import android.content.Context;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import java.io.File;

@@ -14,9 +14,9 @@
 #include <string>
 
 #include "api/rtp_headers.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/task_queue.h"
 #include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
@@ -65,7 +65,7 @@ struct RtcpTransceiverConfig {
   Transport* outgoing_transport = nullptr;
 
   // Queue for scheduling delayed tasks, e.g. sending periodic compound packets.
-  rtc::TaskQueue* task_queue = nullptr;
+  TaskQueueBase* task_queue = nullptr;
 
   // Rtcp report block generator for outgoing receiver reports.
   ReceiveStatisticsProvider* receive_statistics = nullptr;
@@ -97,6 +97,10 @@ struct RtcpTransceiverConfig {
   // Estimate RTT as non-sender as described in
   // https://tools.ietf.org/html/rfc3611#section-4.4 and #section-4.5
   bool non_sender_rtt_measurement = false;
+
+  // Allows a REMB message to be sent immediately when SetRemb is called without
+  // having to wait for the next compount message to be sent.
+  bool send_remb_on_change = false;
 };
 
 }  // namespace webrtc

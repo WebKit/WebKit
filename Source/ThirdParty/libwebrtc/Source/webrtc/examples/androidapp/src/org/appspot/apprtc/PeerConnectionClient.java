@@ -13,7 +13,6 @@ package org.appspot.apprtc;
 import android.content.Context;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import java.io.File;
@@ -50,7 +49,6 @@ import org.webrtc.Logging;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.MediaStreamTrack;
-import org.webrtc.MediaStreamTrack.MediaType;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnection.IceConnectionState;
 import org.webrtc.PeerConnection.PeerConnectionState;
@@ -75,7 +73,9 @@ import org.webrtc.VideoTrack;
 import org.webrtc.audio.AudioDeviceModule;
 import org.webrtc.audio.JavaAudioDeviceModule;
 import org.webrtc.audio.JavaAudioDeviceModule.AudioRecordErrorCallback;
+import org.webrtc.audio.JavaAudioDeviceModule.AudioRecordStateCallback;
 import org.webrtc.audio.JavaAudioDeviceModule.AudioTrackErrorCallback;
+import org.webrtc.audio.JavaAudioDeviceModule.AudioTrackStateCallback;
 
 /**
  * Peer connection client implementation.
@@ -501,12 +501,40 @@ public class PeerConnectionClient {
       }
     };
 
+    // Set audio record state callbacks.
+    AudioRecordStateCallback audioRecordStateCallback = new AudioRecordStateCallback() {
+      @Override
+      public void onWebRtcAudioRecordStart() {
+        Log.i(TAG, "Audio recording starts");
+      }
+
+      @Override
+      public void onWebRtcAudioRecordStop() {
+        Log.i(TAG, "Audio recording stops");
+      }
+    };
+
+    // Set audio track state callbacks.
+    AudioTrackStateCallback audioTrackStateCallback = new AudioTrackStateCallback() {
+      @Override
+      public void onWebRtcAudioTrackStart() {
+        Log.i(TAG, "Audio playout starts");
+      }
+
+      @Override
+      public void onWebRtcAudioTrackStop() {
+        Log.i(TAG, "Audio playout stops");
+      }
+    };
+
     return JavaAudioDeviceModule.builder(appContext)
         .setSamplesReadyCallback(saveRecordedAudioToFile)
         .setUseHardwareAcousticEchoCanceler(!peerConnectionParameters.disableBuiltInAEC)
         .setUseHardwareNoiseSuppressor(!peerConnectionParameters.disableBuiltInNS)
         .setAudioRecordErrorCallback(audioRecordErrorCallback)
         .setAudioTrackErrorCallback(audioTrackErrorCallback)
+        .setAudioRecordStateCallback(audioRecordStateCallback)
+        .setAudioTrackStateCallback(audioTrackStateCallback)
         .createAudioDeviceModule();
   }
 

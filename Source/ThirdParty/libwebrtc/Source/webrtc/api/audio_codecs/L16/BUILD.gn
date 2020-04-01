@@ -12,7 +12,7 @@ if (is_android) {
   import("//build/config/android/rules.gni")
 }
 
-rtc_static_library("audio_encoder_L16") {
+rtc_library("audio_encoder_L16") {
   visibility = [ "*" ]
   poisonous = [ "audio_codecs" ]
   sources = [
@@ -25,13 +25,12 @@ rtc_static_library("audio_encoder_L16") {
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:safe_minmax",
     "../../../rtc_base/system:rtc_export",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_static_library("audio_decoder_L16") {
+rtc_library("audio_decoder_L16") {
   visibility = [ "*" ]
   poisonous = [ "audio_codecs" ]
   sources = [
@@ -43,7 +42,6 @@ rtc_static_library("audio_decoder_L16") {
     "../../../modules/audio_coding:pcm16b",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:rtc_export",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]

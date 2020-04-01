@@ -21,11 +21,13 @@ namespace webrtc {
 TEST(FilterAnalyzer, FilterResize) {
   EchoCanceller3Config c;
   std::vector<float> filter(65, 0.f);
-  FilterAnalyzer fa(c);
-  fa.SetRegionToAnalyze(filter);
-  fa.SetRegionToAnalyze(filter);
-  filter.resize(32);
-  fa.SetRegionToAnalyze(filter);
+  for (size_t num_capture_channels : {1, 2, 4}) {
+    FilterAnalyzer fa(c, num_capture_channels);
+    fa.SetRegionToAnalyze(filter.size());
+    fa.SetRegionToAnalyze(filter.size());
+    filter.resize(32);
+    fa.SetRegionToAnalyze(filter.size());
+  }
 }
 
 }  // namespace webrtc

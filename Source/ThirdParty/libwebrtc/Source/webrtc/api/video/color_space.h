@@ -15,6 +15,7 @@
 
 #include "absl/types/optional.h"
 #include "api/video/hdr_metadata.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -31,7 +32,7 @@ namespace webrtc {
 // E.2.1, "VUI parameters semantics", available from
 // https://www.itu.int/rec/T-REC-H.264.
 
-class ColorSpace {
+class RTC_EXPORT ColorSpace {
  public:
   enum class PrimaryID : uint8_t {
     // The indices are equal to the values specified in T-REC H.273 Table 2.

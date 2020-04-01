@@ -23,10 +23,11 @@
 
 #include "rtc_base/buffer.h"
 #include "rtc_base/constructor_magic.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
-struct SSLCertificateStats {
+struct RTC_EXPORT SSLCertificateStats {
   SSLCertificateStats(std::string&& fingerprint,
                       std::string&& fingerprint_algorithm,
                       std::string&& base64_certificate,
@@ -46,7 +47,7 @@ struct SSLCertificateStats {
 // The SSLCertificate object is pretty much immutable once created.
 // (The OpenSSL implementation only does reference counting and
 // possibly caching of intermediate results.)
-class SSLCertificate {
+class RTC_EXPORT SSLCertificate {
  public:
   // Parses and builds a certificate from a PEM encoded string.
   // Returns null on failure.
@@ -90,7 +91,7 @@ class SSLCertificate {
 // SSLCertChain is a simple wrapper for a vector of SSLCertificates. It serves
 // primarily to ensure proper memory management (especially deletion) of the
 // SSLCertificate pointers.
-class SSLCertChain final {
+class RTC_EXPORT SSLCertChain final {
  public:
   explicit SSLCertChain(std::unique_ptr<SSLCertificate> single_cert);
   explicit SSLCertChain(std::vector<std::unique_ptr<SSLCertificate>> certs);

@@ -118,16 +118,25 @@ void DtlsTransport::UpdateInformation() {
   if (internal_dtls_transport_) {
     if (internal_dtls_transport_->dtls_state() ==
         cricket::DTLS_TRANSPORT_CONNECTED) {
+      bool success = true;
       int ssl_cipher_suite;
-      if (internal_dtls_transport_->GetSslCipherSuite(&ssl_cipher_suite)) {
+      int tls_version;
+      int srtp_cipher;
+      success &= internal_dtls_transport_->GetSslVersionBytes(&tls_version);
+      success &= internal_dtls_transport_->GetSslCipherSuite(&ssl_cipher_suite);
+      success &= internal_dtls_transport_->GetSrtpCryptoSuite(&srtp_cipher);
+      if (success) {
         info_ = DtlsTransportInformation(
-            TranslateState(internal_dtls_transport_->dtls_state()),
-            ssl_cipher_suite,
+            TranslateState(internal_dtls_transport_->dtls_state()), tls_version,
+            ssl_cipher_suite, srtp_cipher,
             internal_dtls_transport_->GetRemoteSSLCertChain());
       } else {
+        RTC_LOG(LS_ERROR) << "DtlsTransport in connected state has incomplete "
+                             "TLS information";
         info_ = DtlsTransportInformation(
             TranslateState(internal_dtls_transport_->dtls_state()),
-            absl::nullopt, internal_dtls_transport_->GetRemoteSSLCertChain());
+            absl::nullopt, absl::nullopt, absl::nullopt,
+            internal_dtls_transport_->GetRemoteSSLCertChain());
       }
     } else {
       info_ = DtlsTransportInformation(

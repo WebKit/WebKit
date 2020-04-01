@@ -14,7 +14,6 @@
 #include <set>
 #include <string>
 
-#include "absl/memory/memory.h"
 #include "call/ssrc_binding_observer.h"
 #include "call/test/mock_rtp_packet_sink_interface.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
@@ -134,7 +133,7 @@ class RtpDemuxerTest : public ::testing::Test {
   std::unique_ptr<RtpPacketReceived> CreatePacket(
       uint32_t ssrc,
       RtpPacketReceived::ExtensionManager* extension_manager) {
-    auto packet = absl::make_unique<RtpPacketReceived>(extension_manager);
+    auto packet = std::make_unique<RtpPacketReceived>(extension_manager);
     packet->SetSsrc(ssrc);
     packet->SetSequenceNumber(next_sequence_number_++);
     return packet;

@@ -13,7 +13,7 @@ if (is_android) {
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("audio_codecs_api_unittests") {
+  rtc_library("audio_codecs_api_unittests") {
     testonly = true
     sources = [
       "audio_decoder_factory_template_unittest.cc",
@@ -38,7 +38,6 @@ if (rtc_include_tests) {
       "../isac:audio_encoder_isac_float",
       "../opus:audio_decoder_opus",
       "../opus:audio_encoder_opus",
-      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 }

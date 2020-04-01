@@ -13,6 +13,7 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
+#include <string>
 #include "api/function_view.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer.h"
@@ -24,17 +25,25 @@ namespace webrtc {
 // Iterates all on-screen windows in decreasing z-order and sends them
 // one-by-one to |on_window| function. If |on_window| returns false, this
 // function returns immediately. GetWindowList() returns false if native APIs
-// failed. Menus, dock, minimized windows (if |ignore_minimized| is true) and
-// any windows which do not have a valid window id or title will be ignored.
+// failed. Menus, dock (if |only_zero_layer|), minimized windows (if
+// |ignore_minimized| is true) and any windows which do not have a valid window
+// id or title will be ignored.
 bool GetWindowList(rtc::FunctionView<bool(CFDictionaryRef)> on_window,
-                   bool ignore_minimized);
+                   bool ignore_minimized,
+                   bool only_zero_layer);
 
 // Another helper function to get the on-screen windows.
-bool GetWindowList(DesktopCapturer::SourceList* windows, bool ignore_minimized);
+bool GetWindowList(DesktopCapturer::SourceList* windows,
+                   bool ignore_minimized,
+                   bool only_zero_layer);
 
 // Returns true if the window is occupying a full screen.
 bool IsWindowFullScreen(const MacDesktopConfiguration& desktop_config,
                         CFDictionaryRef window);
+
+// Returns true if the window is occupying a full screen.
+bool IsWindowFullScreen(const MacDesktopConfiguration& desktop_config,
+                        CGWindowID id);
 
 // Returns true if the |window| is on screen. This function returns false if
 // native APIs fail.

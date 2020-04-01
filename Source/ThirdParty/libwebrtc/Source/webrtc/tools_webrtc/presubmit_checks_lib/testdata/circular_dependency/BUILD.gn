@@ -2,13 +2,9 @@ toolchain("toolchain") {
 }
 
 static_library("foo") {
-  deps = [
-    ":bar",
-  ]
+  deps = [ ":bar" ]
 }
 
 static_library("bar") {
-  deps = [
-    ":foo",
-  ]
+  deps = [ ":foo" ]
 }

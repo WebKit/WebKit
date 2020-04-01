@@ -65,6 +65,8 @@ class SctpTransport : public SctpTransportInterface,
   void OnAssociationChangeCommunicationUp();
   void OnInternalClosingProcedureStartedRemotely(int sid);
   void OnInternalClosingProcedureComplete(int sid);
+  void OnDtlsStateChange(cricket::DtlsTransportInternal* transport,
+                         cricket::DtlsTransportState state);
 
   // Note - owner_thread never changes, but can't be const if we do
   // Invoke() on it.

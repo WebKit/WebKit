@@ -18,7 +18,6 @@
 #include "examples/peerconnection/client/flag_defs.h"
 #include "examples/peerconnection/client/linux/main_wnd.h"
 #include "examples/peerconnection/client/peer_connection_client.h"
-#include "rtc_base/message_queue.h"
 #include "rtc_base/physical_socket_server.h"
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/ssl_adapter.h"
@@ -32,9 +31,7 @@ class CustomSocketServer : public rtc::PhysicalSocketServer {
       : wnd_(wnd), conductor_(NULL), client_(NULL) {}
   virtual ~CustomSocketServer() {}
 
-  void SetMessageQueue(rtc::MessageQueue* queue) override {
-    message_queue_ = queue;
-  }
+  void SetMessageQueue(rtc::Thread* queue) override { message_queue_ = queue; }
 
   void set_client(PeerConnectionClient* client) { client_ = client; }
   void set_conductor(Conductor* conductor) { conductor_ = conductor; }
@@ -58,7 +55,7 @@ class CustomSocketServer : public rtc::PhysicalSocketServer {
   }
 
  protected:
-  rtc::MessageQueue* message_queue_;
+  rtc::Thread* message_queue_;
   GtkMainWnd* wnd_;
   Conductor* conductor_;
   PeerConnectionClient* client_;

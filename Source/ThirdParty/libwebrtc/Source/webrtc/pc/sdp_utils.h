@@ -17,17 +17,18 @@
 
 #include "api/jsep.h"
 #include "pc/session_description.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // Returns a copy of the given session description.
-std::unique_ptr<SessionDescriptionInterface> CloneSessionDescription(
+RTC_EXPORT std::unique_ptr<SessionDescriptionInterface> CloneSessionDescription(
     const SessionDescriptionInterface* sdesc);
 
 // Returns a copy of the given session description with the type changed.
-std::unique_ptr<SessionDescriptionInterface> CloneSessionDescriptionAsType(
-    const SessionDescriptionInterface* sdesc,
-    SdpType type);
+RTC_EXPORT std::unique_ptr<SessionDescriptionInterface>
+CloneSessionDescriptionAsType(const SessionDescriptionInterface* sdesc,
+                              SdpType type);
 
 // Function that takes a single session description content with its
 // corresponding transport and produces a boolean.

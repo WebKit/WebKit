@@ -16,9 +16,10 @@
 #include <string>
 #include <vector>
 
-#include "api/bitrate_constraints.h"
 #include "api/crypto/crypto_options.h"
 #include "api/crypto/frame_encryptor_interface.h"
+#include "api/frame_transformer_interface.h"
+#include "api/transport/bitrate_settings.h"
 #include "call/rtp_transport_controller_send_interface.h"
 #include "modules/pacing/packet_router.h"
 #include "rtc_base/network/sent_packet.h"
@@ -31,7 +32,7 @@ namespace webrtc {
 class MockRtpTransportControllerSend
     : public RtpTransportControllerSendInterface {
  public:
-  MOCK_METHOD9(
+  MOCK_METHOD10(
       CreateRtpVideoSender,
       RtpVideoSenderInterface*(std::map<uint32_t, RtpState>,
                                const std::map<uint32_t, RtpPayloadState>&,
@@ -41,7 +42,8 @@ class MockRtpTransportControllerSend
                                const RtpSenderObservers&,
                                RtcEventLog*,
                                std::unique_ptr<FecController>,
-                               const RtpSenderFrameEncryptionConfig&));
+                               const RtpSenderFrameEncryptionConfig&,
+                               rtc::scoped_refptr<FrameTransformerInterface>));
   MOCK_METHOD1(DestroyRtpVideoSender, void(RtpVideoSenderInterface*));
   MOCK_METHOD0(GetWorkerQueue, rtc::TaskQueue*());
   MOCK_METHOD0(packet_router, PacketRouter*());
@@ -49,11 +51,10 @@ class MockRtpTransportControllerSend
                NetworkStateEstimateObserver*());
   MOCK_METHOD0(transport_feedback_observer, TransportFeedbackObserver*());
   MOCK_METHOD0(packet_sender, RtpPacketSender*());
-  MOCK_METHOD3(SetAllocatedSendBitrateLimits, void(int, int, int));
+  MOCK_METHOD1(SetAllocatedSendBitrateLimits, void(BitrateAllocationLimits));
   MOCK_METHOD1(SetPacingFactor, void(float));
   MOCK_METHOD1(SetQueueTimeLimit, void(int));
-  MOCK_METHOD1(RegisterPacketFeedbackObserver, void(PacketFeedbackObserver*));
-  MOCK_METHOD1(DeRegisterPacketFeedbackObserver, void(PacketFeedbackObserver*));
+  MOCK_METHOD0(GetStreamFeedbackProvider, StreamFeedbackProvider*());
   MOCK_METHOD1(RegisterTargetTransferRateObserver,
                void(TargetTransferRateObserver*));
   MOCK_METHOD2(OnNetworkRouteChanged,
@@ -68,6 +69,7 @@ class MockRtpTransportControllerSend
   MOCK_METHOD1(SetClientBitratePreferences, void(const BitrateSettings&));
   MOCK_METHOD1(OnTransportOverheadChanged, void(size_t));
   MOCK_METHOD1(AccountForAudioPacketsInPacedSender, void(bool));
+  MOCK_METHOD0(IncludeOverheadInPacedSender, void());
   MOCK_METHOD1(OnReceivedPacket, void(const ReceivedPacket&));
 };
 }  // namespace webrtc

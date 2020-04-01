@@ -22,6 +22,7 @@ typedef NS_ENUM(NSInteger, RTCRtpTransceiverDirection) {
   RTCRtpTransceiverDirectionSendOnly,
   RTCRtpTransceiverDirectionRecvOnly,
   RTCRtpTransceiverDirectionInactive,
+  RTCRtpTransceiverDirectionStopped
 };
 
 /** Structure for initializing an RTCRtpTransceiver in a call to

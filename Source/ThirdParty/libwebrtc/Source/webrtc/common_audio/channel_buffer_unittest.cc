@@ -11,6 +11,7 @@
 #include "common_audio/channel_buffer.h"
 
 #include "test/gtest.h"
+#include "test/testsupport/rtc_expect_death.h"
 
 namespace webrtc {
 
@@ -54,12 +55,12 @@ TEST(IFChannelBufferTest, SettingNumChannelsOfOneChannelBufferSetsTheOther) {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 TEST(ChannelBufferTest, SetNumChannelsDeathTest) {
   ChannelBuffer<float> chb(kNumFrames, kMono);
-  EXPECT_DEATH(chb.set_num_channels(kStereo), "num_channels");
+  RTC_EXPECT_DEATH(chb.set_num_channels(kStereo), "num_channels");
 }
 
 TEST(IFChannelBufferTest, SetNumChannelsDeathTest) {
   IFChannelBuffer ifchb(kNumFrames, kMono);
-  EXPECT_DEATH(ifchb.ibuf()->set_num_channels(kStereo), "num_channels");
+  RTC_EXPECT_DEATH(ifchb.ibuf()->set_num_channels(kStereo), "num_channels");
 }
 #endif
 

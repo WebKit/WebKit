@@ -85,13 +85,18 @@ class VideoStreamEncoderInterface : public rtc::VideoSinkInterface<VideoFrame> {
 
   // Set the currently estimated network properties. A |target_bitrate|
   // of zero pauses the encoder.
+  // |stable_target_bitrate| is a filtered version of |target_bitrate|. It  is
+  // always less or equal to it. It can be used to avoid rapid changes of
+  // expensive encoding settings, such as resolution.
   // |link_allocation| is the bandwidth available for this video stream on the
   // network link. It is always at least |target_bitrate| but may be higher
   // if we are not network constrained.
   virtual void OnBitrateUpdated(DataRate target_bitrate,
+                                DataRate stable_target_bitrate,
                                 DataRate link_allocation,
                                 uint8_t fraction_lost,
-                                int64_t round_trip_time_ms) = 0;
+                                int64_t round_trip_time_ms,
+                                double cwnd_reduce_ratio) = 0;
 
   // Register observer for the bitrate allocation between the temporal
   // and spatial layers.

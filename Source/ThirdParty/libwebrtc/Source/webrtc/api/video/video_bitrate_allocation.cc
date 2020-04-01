@@ -18,7 +18,8 @@
 
 namespace webrtc {
 
-VideoBitrateAllocation::VideoBitrateAllocation() : sum_(0) {}
+VideoBitrateAllocation::VideoBitrateAllocation()
+    : sum_(0), is_bw_limited_(false) {}
 
 bool VideoBitrateAllocation::SetBitrate(size_t spatial_index,
                                         size_t temporal_index,
@@ -151,7 +152,7 @@ std::string VideoBitrateAllocation::ToString() const {
       break;
 
     const uint32_t layer_sum = GetSpatialLayerSum(si);
-    if (layer_sum == sum_) {
+    if (layer_sum == sum_ && si == 0) {
       ssb << " [";
     } else {
       if (si > 0)

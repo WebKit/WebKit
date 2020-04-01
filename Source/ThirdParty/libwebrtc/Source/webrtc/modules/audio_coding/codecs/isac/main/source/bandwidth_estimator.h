@@ -125,15 +125,6 @@ int32_t WebRtcIsac_GetUplinkBandwidth(const BwEstimatorstr* bwest_str);
 /* Returns the max delay value from the other side in ms */
 int32_t WebRtcIsac_GetUplinkMaxDelay(const BwEstimatorstr* bwest_str);
 
-/* Fills in an IsacExternalBandwidthInfo struct. */
-void WebRtcIsacBw_GetBandwidthInfo(BwEstimatorstr* bwest_str,
-                                   enum IsacSamplingRate decoder_sample_rate_hz,
-                                   IsacBandwidthInfo* bwinfo);
-
-/* Uses the values from an IsacExternalBandwidthInfo struct. */
-void WebRtcIsacBw_SetBandwidthInfo(BwEstimatorstr* bwest_str,
-                                   const IsacBandwidthInfo* bwinfo);
-
 /*
  * update amount of data in bottle neck buffer and burst handling
  * returns minimum payload size (bytes)

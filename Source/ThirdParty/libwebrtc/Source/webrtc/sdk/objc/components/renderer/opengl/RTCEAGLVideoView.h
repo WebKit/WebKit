@@ -35,6 +35,9 @@ NS_EXTENSION_UNAVAILABLE_IOS("Rendering not available in app extensions.")
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
                        shader:(id<RTCVideoViewShading>)shader NS_DESIGNATED_INITIALIZER;
 
+/** @abstract Wrapped RTCVideoRotation, or nil.
+ */
+@property(nonatomic, nullable) NSValue *rotationOverride;
 @end
 
 NS_ASSUME_NONNULL_END

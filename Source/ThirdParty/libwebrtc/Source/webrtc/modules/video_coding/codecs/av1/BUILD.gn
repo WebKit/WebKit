@@ -1,0 +1,37 @@
+# Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//third_party/libaom/options.gni")
+import("../../../../webrtc.gni")
+
+rtc_library("libaom_av1_decoder") {
+  visibility = [ "*" ]
+  poisonous = [ "software_video_codecs" ]
+  public = [ "libaom_av1_decoder.h" ]
+  deps = [
+    "../../../../api/video_codecs:video_codecs_api",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+  ]
+
+  if (enable_libaom_decoder) {
+    sources = [ "libaom_av1_decoder.cc" ]
+    deps += [
+      "../..:video_codec_interface",
+      "../../../../api:scoped_refptr",
+      "../../../../api/video:encoded_image",
+      "../../../../api/video:video_frame_i420",
+      "../../../../common_video",
+      "../../../../rtc_base:logging",
+      "//third_party/abseil-cpp/absl/types:optional",
+      "//third_party/libaom",
+      "//third_party/libyuv",
+    ]
+  } else {
+    sources = [ "libaom_av1_decoder_absent.cc" ]
+  }
+}

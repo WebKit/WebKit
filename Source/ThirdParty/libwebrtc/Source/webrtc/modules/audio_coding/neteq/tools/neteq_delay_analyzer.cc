@@ -18,7 +18,7 @@
 #include <utility>
 
 #include "absl/strings/string_view.h"
-#include "modules/include/module_common_types.h"
+#include "modules/include/module_common_types_public.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

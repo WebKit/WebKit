@@ -8,7 +8,7 @@
 
 import("../../../webrtc.gni")
 
-rtc_source_set("aecm_core") {
+rtc_library("aecm_core") {
   sources = [
     "aecm_core.cc",
     "aecm_core.h",

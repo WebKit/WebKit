@@ -10,27 +10,22 @@ import("../../../../webrtc.gni")
 
 group("conversational_speech") {
   testonly = true
-  deps = [
-    ":conversational_speech_generator",
-  ]
+  deps = [ ":conversational_speech_generator" ]
 }
 
 rtc_executable("conversational_speech_generator") {
   testonly = true
-  sources = [
-    "generator.cc",
-  ]
+  sources = [ "generator.cc" ]
   deps = [
     ":lib",
     "../../../../test:fileutils",
     "../../../../test:test_support",
     "//third_party/abseil-cpp/absl/flags:flag",
     "//third_party/abseil-cpp/absl/flags:parse",
-    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
-rtc_static_library("lib") {
+rtc_library("lib") {
   testonly = true
   sources = [
     "config.cc",
@@ -52,12 +47,11 @@ rtc_static_library("lib") {
     "../../../../rtc_base:checks",
     "../../../../rtc_base:rtc_base_approved",
     "../../../../test:fileutils",
-    "//third_party/abseil-cpp/absl/memory",
   ]
   visibility = [ ":*" ]  # Only targets in this file can depend on this.
 }
 
-rtc_source_set("unittest") {
+rtc_library("unittest") {
   testonly = true
   sources = [
     "generator_unittest.cc",

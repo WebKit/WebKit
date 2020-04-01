@@ -15,7 +15,6 @@
 
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/scoped_refptr.h"
-#include "modules/audio_coding/codecs/isac/locked_bandwidth_info.h"
 #include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
@@ -29,9 +28,6 @@ class AudioEncoderIsacT final : public AudioEncoder {
   //  - 32000 Hz, 30 ms, 10000-56000 bps (if T has super-wideband support)
   struct Config {
     bool IsOk() const;
-
-    rtc::scoped_refptr<LockedIsacBandwidthInfo> bwinfo;
-
     int payload_type = 103;
     int sample_rate_hz = 16000;
     int frame_size_ms = 30;
@@ -39,14 +35,6 @@ class AudioEncoderIsacT final : public AudioEncoder {
                                      // rate, in bits/s.
     int max_payload_size_bytes = -1;
     int max_bit_rate = -1;
-
-    // If true, the encoder will dynamically adjust frame size and bit rate;
-    // the configured values are then merely the starting point.
-    bool adaptive_mode = false;
-
-    // In adaptive mode, prevent adaptive changes to the frame size. (Not used
-    // in nonadaptive mode.)
-    bool enforce_frame_size = false;
   };
 
   explicit AudioEncoderIsacT(const Config& config);
@@ -74,7 +62,6 @@ class AudioEncoderIsacT final : public AudioEncoder {
 
   Config config_;
   typename T::instance_type* isac_state_ = nullptr;
-  rtc::scoped_refptr<LockedIsacBandwidthInfo> bwinfo_;
 
   // Have we accepted input but not yet emitted it in a packet?
   bool packet_in_progress_ = false;

@@ -12,14 +12,17 @@
 
 #include <cstdint>
 
+#include "modules/rtp_rtcp/source/time_util.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
 namespace {
-static const int kTimingLogIntervalMs = 10000;
-static const int kClocksOffsetSmoothingWindow = 100;
+
+constexpr int kMinimumNumberOfSamples = 2;
+constexpr int kTimingLogIntervalMs = 10000;
+constexpr int kClocksOffsetSmoothingWindow = 100;
 
 }  // namespace
 
@@ -35,9 +38,9 @@ RemoteNtpTimeEstimator::~RemoteNtpTimeEstimator() {}
 bool RemoteNtpTimeEstimator::UpdateRtcpTimestamp(int64_t rtt,
                                                  uint32_t ntp_secs,
                                                  uint32_t ntp_frac,
-                                                 uint32_t rtcp_timestamp) {
+                                                 uint32_t rtp_timestamp) {
   bool new_rtcp_sr = false;
-  if (!rtp_to_ntp_.UpdateMeasurements(ntp_secs, ntp_frac, rtcp_timestamp,
+  if (!rtp_to_ntp_.UpdateMeasurements(ntp_secs, ntp_frac, rtp_timestamp,
                                       &new_rtcp_sr)) {
     return false;
   }
@@ -47,8 +50,9 @@ bool RemoteNtpTimeEstimator::UpdateRtcpTimestamp(int64_t rtt,
   }
 
   // Update extrapolator with the new arrival time.
-  // The extrapolator assumes the TimeInMilliseconds time.
-  int64_t receiver_arrival_time_ms = clock_->TimeInMilliseconds();
+  // The extrapolator assumes the ntp time.
+  int64_t receiver_arrival_time_ms =
+      clock_->TimeInMilliseconds() + NtpOffsetMs();
   int64_t sender_send_time_ms = Clock::NtpToMs(ntp_secs, ntp_frac);
   int64_t sender_arrival_time_ms = sender_send_time_ms + rtt / 2;
   int64_t remote_to_local_clocks_offset =
@@ -65,21 +69,36 @@ int64_t RemoteNtpTimeEstimator::Estimate(uint32_t rtp_timestamp) {
 
   int64_t remote_to_local_clocks_offset =
       ntp_clocks_offset_estimator_.GetFilteredValue();
-  int64_t receiver_capture_ms =
+  int64_t receiver_capture_ntp_ms =
       sender_capture_ntp_ms + remote_to_local_clocks_offset;
+
+  // TODO(bugs.webrtc.org/11327): Clock::CurrentNtpInMilliseconds() was
+  // previously used to calculate the offset between the local and the remote
+  // clock. However, rtc::TimeMillis() + NtpOffsetMs() is now used as the local
+  // ntp clock value. To preserve the old behavior of this method, the return
+  // value is adjusted with the difference between the two local ntp clocks.
   int64_t now_ms = clock_->TimeInMilliseconds();
-  int64_t ntp_offset = clock_->CurrentNtpInMilliseconds() - now_ms;
-  int64_t receiver_capture_ntp_ms = receiver_capture_ms + ntp_offset;
+  int64_t offset_between_local_ntp_clocks =
+      clock_->CurrentNtpInMilliseconds() - now_ms - NtpOffsetMs();
+  receiver_capture_ntp_ms += offset_between_local_ntp_clocks;
 
   if (now_ms - last_timing_log_ms_ > kTimingLogIntervalMs) {
     RTC_LOG(LS_INFO) << "RTP timestamp: " << rtp_timestamp
                      << " in NTP clock: " << sender_capture_ntp_ms
-                     << " estimated time in receiver clock: "
-                     << receiver_capture_ms
-                     << " converted to NTP clock: " << receiver_capture_ntp_ms;
+                     << " estimated time in receiver NTP clock: "
+                     << receiver_capture_ntp_ms;
     last_timing_log_ms_ = now_ms;
   }
   return receiver_capture_ntp_ms;
+}
+
+absl::optional<int64_t>
+RemoteNtpTimeEstimator::EstimateRemoteToLocalClockOffsetMs() {
+  if (ntp_clocks_offset_estimator_.GetNumberOfSamplesStored() <
+      kMinimumNumberOfSamples) {
+    return absl::nullopt;
+  }
+  return ntp_clocks_offset_estimator_.GetFilteredValue();
 }
 
 }  // namespace webrtc

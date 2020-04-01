@@ -11,7 +11,6 @@
 package org.webrtc;
 
 import android.media.MediaRecorder;
-import android.support.annotation.Nullable;
 
 /**
  * Base interface for camera1 and camera2 implementations. Extends VideoCapturer with a
@@ -61,6 +60,12 @@ public interface CameraVideoCapturer extends VideoCapturer {
    * This function can be called from any thread.
    */
   void switchCamera(CameraSwitchHandler switchEventsHandler);
+
+  /**
+   * Switch camera to the specified camera id. This can only be called while the camera is running.
+   * This function can be called from any thread.
+   */
+  void switchCamera(CameraSwitchHandler switchEventsHandler, String cameraName);
 
   /**
    * MediaRecorder add/remove handler - one of these functions are invoked with the result of

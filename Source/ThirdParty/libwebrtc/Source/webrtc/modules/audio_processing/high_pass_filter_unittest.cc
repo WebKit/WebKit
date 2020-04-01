@@ -20,30 +20,63 @@
 namespace webrtc {
 namespace {
 
-// Process one frame of data and produce the output.
-std::vector<float> ProcessOneFrame(const std::vector<float>& frame_input,
-                                   const StreamConfig& stream_config,
-                                   HighPassFilter* high_pass_filter) {
+// Process one frame of data via the AudioBuffer interface and produce the
+// output.
+std::vector<float> ProcessOneFrameAsAudioBuffer(
+    const std::vector<float>& frame_input,
+    const StreamConfig& stream_config,
+    HighPassFilter* high_pass_filter) {
   AudioBuffer audio_buffer(
       stream_config.sample_rate_hz(), stream_config.num_channels(),
       stream_config.sample_rate_hz(), stream_config.num_channels(),
       stream_config.sample_rate_hz(), stream_config.num_channels());
 
   test::CopyVectorToAudioBuffer(stream_config, frame_input, &audio_buffer);
-  high_pass_filter->Process(&audio_buffer);
+  high_pass_filter->Process(&audio_buffer, /*use_split_band_data=*/false);
   std::vector<float> frame_output;
   test::ExtractVectorFromAudioBuffer(stream_config, &audio_buffer,
                                      &frame_output);
   return frame_output;
 }
 
+// Process one frame of data via the vector interface and produce the output.
+std::vector<float> ProcessOneFrameAsVector(
+    const std::vector<float>& frame_input,
+    const StreamConfig& stream_config,
+    HighPassFilter* high_pass_filter) {
+  std::vector<std::vector<float>> process_vector(
+      stream_config.num_channels(),
+      std::vector<float>(stream_config.num_frames()));
+
+  for (size_t k = 0; k < stream_config.num_frames(); ++k) {
+    for (size_t channel = 0; channel < stream_config.num_channels();
+         ++channel) {
+      process_vector[channel][k] =
+          frame_input[k * stream_config.num_channels() + channel];
+    }
+  }
+
+  high_pass_filter->Process(&process_vector);
+
+  std::vector<float> output;
+  for (size_t k = 0; k < stream_config.num_frames(); ++k) {
+    for (size_t channel = 0; channel < stream_config.num_channels();
+         ++channel) {
+      output.push_back(process_vector[channel][k]);
+    }
+  }
+
+  return process_vector[0];
+}
+
 // Processes a specified amount of frames, verifies the results and reports
 // any errors.
 void RunBitexactnessTest(int num_channels,
+                         bool use_audio_buffer_interface,
                          const std::vector<float>& input,
                          const std::vector<float>& reference) {
   const StreamConfig stream_config(16000, num_channels, false);
-  HighPassFilter high_pass_filter(num_channels);
+  HighPassFilter high_pass_filter(16000, num_channels);
 
   std::vector<float> output;
   const size_t num_frames_to_process =
@@ -55,8 +88,13 @@ void RunBitexactnessTest(int num_channels,
                             stream_config.num_channels() * frame_no,
         input.begin() + stream_config.num_frames() *
                             stream_config.num_channels() * (frame_no + 1));
-
-    output = ProcessOneFrame(frame_input, stream_config, &high_pass_filter);
+    if (use_audio_buffer_interface) {
+      output = ProcessOneFrameAsAudioBuffer(frame_input, stream_config,
+                                            &high_pass_filter);
+    } else {
+      output = ProcessOneFrameAsVector(frame_input, stream_config,
+                                       &high_pass_filter);
+    }
   }
 
   // Form vector to compare the reference to. Only the last frame processed
@@ -92,19 +130,36 @@ std::vector<float> CreateVector(const rtc::ArrayView<const float>& array_view) {
 }
 }  // namespace
 
-TEST(HighPassFilterAccuracyTest, Reset) {
+TEST(HighPassFilterAccuracyTest, ResetWithAudioBufferInterface) {
   const StreamConfig stream_config_stereo(16000, 2, false);
   const StreamConfig stream_config_mono(16000, 1, false);
   std::vector<float> x_mono(160, 1.f);
   std::vector<float> x_stereo(320, 1.f);
-  HighPassFilter lc(1);
-  std::vector<float> y = ProcessOneFrame(x_mono, stream_config_mono, &lc);
-  lc.Reset(2);
-  y = ProcessOneFrame(x_stereo, stream_config_stereo, &lc);
-  lc.Reset(1);
-  y = ProcessOneFrame(x_mono, stream_config_mono, &lc);
-  lc.Reset();
-  y = ProcessOneFrame(x_mono, stream_config_mono, &lc);
+  HighPassFilter hpf(16000, 1);
+  std::vector<float> y =
+      ProcessOneFrameAsAudioBuffer(x_mono, stream_config_mono, &hpf);
+  hpf.Reset(2);
+  y = ProcessOneFrameAsAudioBuffer(x_stereo, stream_config_stereo, &hpf);
+  hpf.Reset(1);
+  y = ProcessOneFrameAsAudioBuffer(x_mono, stream_config_mono, &hpf);
+  hpf.Reset();
+  y = ProcessOneFrameAsAudioBuffer(x_mono, stream_config_mono, &hpf);
+}
+
+TEST(HighPassFilterAccuracyTest, ResetWithVectorInterface) {
+  const StreamConfig stream_config_stereo(16000, 2, false);
+  const StreamConfig stream_config_mono(16000, 1, false);
+  std::vector<float> x_mono(160, 1.f);
+  std::vector<float> x_stereo(320, 1.f);
+  HighPassFilter hpf(16000, 1);
+  std::vector<float> y =
+      ProcessOneFrameAsVector(x_mono, stream_config_mono, &hpf);
+  hpf.Reset(2);
+  y = ProcessOneFrameAsVector(x_stereo, stream_config_stereo, &hpf);
+  hpf.Reset(1);
+  y = ProcessOneFrameAsVector(x_mono, stream_config_mono, &hpf);
+  hpf.Reset();
+  y = ProcessOneFrameAsVector(x_mono, stream_config_mono, &hpf);
 }
 
 TEST(HighPassFilterAccuracyTest, MonoInitial) {
@@ -140,9 +195,12 @@ TEST(HighPassFilterAccuracyTest, MonoInitial) {
                               0.073214f, -0.373256f, -0.115394f, 0.102109f,
                               0.976217f, 0.702270f,  -0.457697f, 0.757116f};
 
-  RunBitexactnessTest(
-      1, CreateVector(rtc::ArrayView<const float>(kReferenceInput)),
-      CreateVector(rtc::ArrayView<const float>(kReference)));
+  for (bool use_audio_buffer_interface : {true, false}) {
+    RunBitexactnessTest(
+        1, use_audio_buffer_interface,
+        CreateVector(rtc::ArrayView<const float>(kReferenceInput)),
+        CreateVector(rtc::ArrayView<const float>(kReference)));
+  }
 }
 
 TEST(HighPassFilterAccuracyTest, MonoConverged) {
@@ -232,9 +290,12 @@ TEST(HighPassFilterAccuracyTest, MonoConverged) {
                               0.127212f,  0.147464f,  -0.221733f, -0.004484f,
                               -0.535107f, 0.385999f,  -0.116346f, -0.265302f};
 
-  RunBitexactnessTest(
-      1, CreateVector(rtc::ArrayView<const float>(kReferenceInput)),
-      CreateVector(rtc::ArrayView<const float>(kReference)));
+  for (bool use_audio_buffer_interface : {true, false}) {
+    RunBitexactnessTest(
+        1, use_audio_buffer_interface,
+        CreateVector(rtc::ArrayView<const float>(kReferenceInput)),
+        CreateVector(rtc::ArrayView<const float>(kReference)));
+  }
 }
 
 }  // namespace webrtc

@@ -19,6 +19,7 @@
 #include "api/test/track_id_stream_label_map.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/numerics/samples_stats_counter.h"
+#include "test/testsupport/perf_test.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -51,7 +52,8 @@ class DefaultAudioQualityAnalyzer : public AudioQualityAnalyzerInterface {
   void ReportResult(const std::string& metric_name,
                     const std::string& stream_label,
                     const SamplesStatsCounter& counter,
-                    const std::string& unit) const;
+                    const std::string& unit,
+                    webrtc::test::ImproveDirection improve_direction) const;
 
   std::string test_case_name_;
   TrackIdStreamLabelMap* analyzer_helper_;

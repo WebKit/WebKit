@@ -211,14 +211,24 @@ int TCPPort::SendTo(const void* data,
       return SOCKET_ERROR;
     }
     socket = conn->socket();
+    if (!socket) {
+      // The failure to initialize should have been logged elsewhere,
+      // so this log is not important.
+      RTC_LOG(LS_INFO) << ToString()
+                       << ": Attempted to send to an uninitialized socket: "
+                       << addr.ToSensitiveString();
+      error_ = EHOSTUNREACH;
+      return SOCKET_ERROR;
+    }
   } else {
     socket = GetIncoming(addr);
-  }
-  if (!socket) {
-    RTC_LOG(LS_ERROR) << ToString()
-                      << ": Attempted to send to an unknown destination: "
-                      << addr.ToSensitiveString();
-    return SOCKET_ERROR;  // TODO(tbd): Set error_
+    if (!socket) {
+      RTC_LOG(LS_ERROR) << ToString()
+                        << ": Attempted to send to an unknown destination: "
+                        << addr.ToSensitiveString();
+      error_ = EHOSTUNREACH;
+      return SOCKET_ERROR;
+    }
   }
   rtc::PacketOptions modified_options(options);
   CopyPortInformationToPacketInfo(&modified_options.info_signaled_after_sent);
@@ -351,7 +361,7 @@ TCPConnection::TCPConnection(TCPPort* port,
     // Incoming connections should match one of the network addresses. Same as
     // what's being checked in OnConnect, but just DCHECKing here.
     RTC_LOG(LS_VERBOSE) << ToString() << ": socket ipaddr: "
-                        << socket_->GetLocalAddress().ToString()
+                        << socket_->GetLocalAddress().ToSensitiveString()
                         << ", port() Network:" << port->Network()->ToString();
     RTC_DCHECK(absl::c_any_of(
         port_->Network()->GetIPs(), [this](const rtc::InterfaceAddress& addr) {
@@ -450,21 +460,21 @@ void TCPConnection::OnConnect(rtc::AsyncPacketSocket* socket) {
   } else {
     if (socket->GetLocalAddress().IsLoopbackIP()) {
       RTC_LOG(LS_WARNING) << "Socket is bound to the address:"
-                          << socket_address.ipaddr().ToString()
+                          << socket_address.ipaddr().ToSensitiveString()
                           << ", rather than an address associated with network:"
                           << port_->Network()->ToString()
                           << ". Still allowing it since it's localhost.";
     } else if (IPIsAny(port_->Network()->GetBestIP())) {
       RTC_LOG(LS_WARNING)
           << "Socket is bound to the address:"
-          << socket_address.ipaddr().ToString()
+          << socket_address.ipaddr().ToSensitiveString()
           << ", rather than an address associated with network:"
           << port_->Network()->ToString()
           << ". Still allowing it since it's the 'any' address"
              ", possibly caused by multiple_routes being disabled.";
     } else {
       RTC_LOG(LS_WARNING) << "Dropping connection as TCP socket bound to IP "
-                          << socket_address.ipaddr().ToString()
+                          << socket_address.ipaddr().ToSensitiveString()
                           << ", rather than an address associated with network:"
                           << port_->Network()->ToString();
       OnClose(socket, 0);
@@ -514,6 +524,9 @@ void TCPConnection::OnMessage(rtc::Message* pmsg) {
         Destroy();
       }
       break;
+    case MSG_TCPCONNECTION_FAILED_CREATE_SOCKET:
+      FailAndPrune();
+      break;
     default:
       Connection::OnMessage(pmsg);
   }
@@ -550,7 +563,6 @@ void TCPConnection::OnReadyToSend(rtc::AsyncPacketSocket* socket) {
 
 void TCPConnection::CreateOutgoingTcpSocket() {
   RTC_DCHECK(outgoing_);
-  // TODO(guoweis): Handle failures here (unlikely since TCP).
   int opts = (remote_candidate().protocol() == SSLTCP_PROTOCOL_NAME)
                  ? rtc::PacketSocketFactory::OPT_TLS_FAKE
                  : 0;
@@ -571,6 +583,13 @@ void TCPConnection::CreateOutgoingTcpSocket() {
   } else {
     RTC_LOG(LS_WARNING) << ToString() << ": Failed to create connection to "
                         << remote_candidate().address().ToSensitiveString();
+    // We can't FailAndPrune directly here. FailAndPrune and deletes all
+    // the StunRequests from the request_map_. And if this is in the stack
+    // of Connection::Ping(), we are still using the request.
+    // Unwind the stack and defer the FailAndPrune.
+    set_state(IceCandidatePairState::FAILED);
+    port()->thread()->Post(RTC_FROM_HERE, this,
+                           MSG_TCPCONNECTION_FAILED_CREATE_SOCKET);
   }
 }
 

@@ -10,10 +10,10 @@
 
 #include <algorithm>
 
+#include "api/scoped_refptr.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/ulpfec_header_reader_writer.h"
-#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 
@@ -25,8 +25,9 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   packet.pkt = rtc::scoped_refptr<Packet>(new Packet());
   const size_t packet_size =
       std::min(size, static_cast<size_t>(IP_PACKET_SIZE));
-  memcpy(packet.pkt->data, data, packet_size);
-  packet.pkt->length = packet_size;
+  packet.pkt->data.SetSize(packet_size);
+  packet.pkt->data.EnsureCapacity(IP_PACKET_SIZE);
+  memcpy(packet.pkt->data.data(), data, packet_size);
 
   UlpfecHeaderReader ulpfec_reader;
   ulpfec_reader.ReadFecHeader(&packet);

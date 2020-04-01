@@ -8,7 +8,7 @@
 
 import("../../../webrtc.gni")
 
-rtc_static_library("pcc") {
+rtc_library("pcc") {
   sources = [
     "pcc_factory.cc",
     "pcc_factory.h",
@@ -18,11 +18,10 @@ rtc_static_library("pcc") {
     "../../../api/transport:network_control",
     "../../../api/units:time_delta",
     "../../../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
-rtc_static_library("pcc_controller") {
+rtc_library("pcc_controller") {
   sources = [
     "pcc_network_controller.cc",
     "pcc_network_controller.h",
@@ -38,12 +37,11 @@ rtc_static_library("pcc_controller") {
     "../../../api/units:timestamp",
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_static_library("monitor_interval") {
+rtc_library("monitor_interval") {
   sources = [
     "monitor_interval.cc",
     "monitor_interval.h",
@@ -58,7 +56,7 @@ rtc_static_library("monitor_interval") {
   ]
 }
 
-rtc_static_library("rtt_tracker") {
+rtc_library("rtt_tracker") {
   sources = [
     "rtt_tracker.cc",
     "rtt_tracker.h",
@@ -71,7 +69,7 @@ rtc_static_library("rtt_tracker") {
   ]
 }
 
-rtc_static_library("utility_function") {
+rtc_library("utility_function") {
   sources = [
     "utility_function.cc",
     "utility_function.h",
@@ -85,7 +83,7 @@ rtc_static_library("utility_function") {
   ]
 }
 
-rtc_static_library("bitrate_controller") {
+rtc_library("bitrate_controller") {
   sources = [
     "bitrate_controller.cc",
     "bitrate_controller.h",
@@ -96,13 +94,12 @@ rtc_static_library("bitrate_controller") {
     "../../../api/transport:network_control",
     "../../../api/units:data_rate",
     "../../../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("pcc_unittests") {
+  rtc_library("pcc_unittests") {
     testonly = true
     sources = [
       "bitrate_controller_unittest.cc",
@@ -126,7 +123,6 @@ if (rtc_include_tests) {
       "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
       "../../../test/scenario",
-      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 }

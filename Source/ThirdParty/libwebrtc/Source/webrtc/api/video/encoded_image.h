@@ -28,6 +28,7 @@
 #include "api/video/video_timing.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/checks.h"
+#include "rtc_base/deprecation.h"
 #include "rtc_base/ref_count.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -43,18 +44,12 @@ class EncodedImageBufferInterface : public rtc::RefCountInterface {
   // this non-const data method.
   virtual uint8_t* data() = 0;
   virtual size_t size() const = 0;
-  // TODO(bugs.webrtc.org/9378): Delete from this interface, together with
-  // EncodedImage::Allocate. Implemented properly only by the below concrete
-  // class
-  virtual void Realloc(size_t size) { RTC_NOTREACHED(); }
-  // Will be implemented by RefCountedObject, which also implements
-  // |rtc::RefCountInterface|.
-  virtual bool HasOneRef() const = 0;
 };
 
 // Basic implementation of EncodedImageBufferInterface.
-class EncodedImageBuffer : public EncodedImageBufferInterface {
+class RTC_EXPORT EncodedImageBuffer : public EncodedImageBufferInterface {
  public:
+  static rtc::scoped_refptr<EncodedImageBuffer> Create() { return Create(0); }
   static rtc::scoped_refptr<EncodedImageBuffer> Create(size_t size);
   static rtc::scoped_refptr<EncodedImageBuffer> Create(const uint8_t* data,
                                                        size_t size);
@@ -62,7 +57,7 @@ class EncodedImageBuffer : public EncodedImageBufferInterface {
   const uint8_t* data() const override;
   uint8_t* data() override;
   size_t size() const override;
-  void Realloc(size_t t) override;
+  void Realloc(size_t t);
 
  protected:
   explicit EncodedImageBuffer(size_t size);
@@ -98,6 +93,8 @@ class RTC_EXPORT EncodedImage {
   uint32_t Timestamp() const { return timestamp_rtp_; }
 
   void SetEncodeTime(int64_t encode_start_ms, int64_t encode_finish_ms);
+
+  int64_t NtpTimeMs() const { return ntp_time_ms_; }
 
   absl::optional<int> SpatialIndex() const { return spatial_index_; }
   void SetSpatialIndex(absl::optional<int> spatial_index) {
@@ -144,15 +141,23 @@ class RTC_EXPORT EncodedImage {
     capacity_ = capacity;
   }
 
-  // TODO(bugs.webrtc.org/9378): Delete; this method implies realloc, which
-  // should not be generally supported by the EncodedImageBufferInterface.
-  void Allocate(size_t capacity);
-
   void SetEncodedData(
       rtc::scoped_refptr<EncodedImageBufferInterface> encoded_data) {
     encoded_data_ = encoded_data;
     size_ = encoded_data->size();
     buffer_ = nullptr;
+  }
+
+  void ClearEncodedData() {
+    encoded_data_ = nullptr;
+    size_ = 0;
+    buffer_ = nullptr;
+    capacity_ = 0;
+  }
+
+  rtc::scoped_refptr<EncodedImageBufferInterface> GetEncodedData() const {
+    RTC_DCHECK(buffer_ == nullptr);
+    return encoded_data_;
   }
 
   // TODO(nisse): Delete, provide only read-only access to the buffer.
@@ -181,6 +186,7 @@ class RTC_EXPORT EncodedImage {
   uint32_t _encodedWidth = 0;
   uint32_t _encodedHeight = 0;
   // NTP time of the capture time in local timebase in milliseconds.
+  // TODO(minyue): make this member private.
   int64_t ntp_time_ms_ = 0;
   int64_t capture_time_ms_ = 0;
   VideoFrameType _frameType = VideoFrameType::kVideoFrameDelta;

@@ -21,7 +21,8 @@ extern int32_t WebRtcIsacfix_Log2Q8(uint32_t x);
 
 void WebRtcIsacfix_PCorr2Q32(const int16_t* in, int32_t* logcorQ8) {
   int16_t scaling,n,k;
-  int32_t ysum32,csum32, lys, lcs;
+  int32_t csum32, lys, lcs;
+  int64_t ysum64;
   const int32_t oneQ8 = 1 << 8;  // 1.00 in Q8
   const int16_t* x;
   const int16_t* inptr;
@@ -30,15 +31,15 @@ void WebRtcIsacfix_PCorr2Q32(const int16_t* in, int32_t* logcorQ8) {
   scaling = WebRtcSpl_GetScalingSquare((int16_t*)in,
                                        PITCH_CORR_LEN2,
                                        PITCH_CORR_LEN2);
-  ysum32 = 1;
+  ysum64 = 1;
   csum32 = 0;
   x = in + PITCH_MAX_LAG / 2 + 2;
   for (n = 0; n < PITCH_CORR_LEN2; n++) {
-    ysum32 += in[n] * in[n] >> scaling;  // Q0
+    ysum64 += in[n] * in[n] >> scaling;  // Q0
     csum32 += x[n] * in[n] >> scaling;  // Q0
   }
   logcorQ8 += PITCH_LAG_SPAN2 - 1;
-  lys = WebRtcIsacfix_Log2Q8((uint32_t)ysum32) >> 1; // Q8, sqrt(ysum)
+  lys = WebRtcIsacfix_Log2Q8((uint32_t)ysum64) >> 1; // Q8, sqrt(ysum)
   if (csum32 > 0) {
     lcs = WebRtcIsacfix_Log2Q8((uint32_t)csum32);  // 2log(csum) in Q8
     if (lcs > (lys + oneQ8)) {          // csum/sqrt(ysum) > 2 in Q8
@@ -53,9 +54,9 @@ void WebRtcIsacfix_PCorr2Q32(const int16_t* in, int32_t* logcorQ8) {
 
   for (k = 1; k < PITCH_LAG_SPAN2; k++) {
     inptr = &in[k];
-    ysum32 -= in[k - 1] * in[k - 1] >> scaling;
-    ysum32 += in[PITCH_CORR_LEN2 + k - 1] * in[PITCH_CORR_LEN2 + k - 1] >>
-        scaling;
+    ysum64 -= in[k - 1] * in[k - 1] >> scaling;
+    ysum64 += (int32_t)(in[PITCH_CORR_LEN2 + k - 1])
+        * in[PITCH_CORR_LEN2 + k - 1] >> scaling;
 
 #ifdef WEBRTC_HAS_NEON
     {
@@ -82,21 +83,22 @@ void WebRtcIsacfix_PCorr2Q32(const int16_t* in, int32_t* logcorQ8) {
       csum32 += vbuff[3];
     }
 #else
-    csum32 = 0;
+    int64_t csum64_tmp = 0;
     if(scaling == 0) {
       for (n = 0; n < PITCH_CORR_LEN2; n++) {
-        csum32 += x[n] * inptr[n];
+        csum64_tmp += (int32_t)(x[n]) * inptr[n];
       }
     } else {
       for (n = 0; n < PITCH_CORR_LEN2; n++) {
-        csum32 += (x[n] * inptr[n]) >> scaling;
+        csum64_tmp += ((int32_t)(x[n]) * inptr[n]) >> scaling;
       }
     }
+    csum32 = csum64_tmp;
 #endif
 
     logcorQ8--;
 
-    lys = WebRtcIsacfix_Log2Q8((uint32_t)ysum32) >> 1; // Q8, sqrt(ysum)
+    lys = WebRtcIsacfix_Log2Q8((uint32_t)ysum64) >> 1; // Q8, sqrt(ysum)
 
     if (csum32 > 0) {
       lcs = WebRtcIsacfix_Log2Q8((uint32_t)csum32);  // 2log(csum) in Q8

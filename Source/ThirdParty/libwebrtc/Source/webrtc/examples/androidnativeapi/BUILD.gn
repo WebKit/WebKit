@@ -8,9 +8,9 @@ if (is_android) {
     min_sdk_version = 19
     target_sdk_version = 27
 
-    java_files = [
-      "java/org/webrtc/examples/androidnativeapi/MainActivity.java",
+    sources = [
       "java/org/webrtc/examples/androidnativeapi/CallClient.java",
+      "java/org/webrtc/examples/androidnativeapi/MainActivity.java",
     ]
 
     deps = [
@@ -28,9 +28,7 @@ if (is_android) {
 
   generate_jni("generated_jni") {
     testonly = true
-    sources = [
-      "java/org/webrtc/examples/androidnativeapi/CallClient.java",
-    ]
+    sources = [ "java/org/webrtc/examples/androidnativeapi/CallClient.java" ]
     namespace = "webrtc_examples"
     jni_generator_include = "//sdk/android/src/jni/jni_generator_helper.h"
   }
@@ -62,7 +60,6 @@ if (is_android) {
       "//sdk/android:native_api_base",
       "//sdk/android:native_api_jni",
       "//sdk/android:native_api_video",
-      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 

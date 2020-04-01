@@ -86,6 +86,8 @@ void SctpTransport::SetDtlsTransport(
     if (internal_sctp_transport_) {
       if (transport) {
         internal_sctp_transport_->SetDtlsTransport(transport->internal());
+        transport->internal()->SignalDtlsState.connect(
+            this, &SctpTransport::OnDtlsStateChange);
         if (info_.state() == SctpTransportState::kNew) {
           next_state = SctpTransportState::kConnecting;
         }
@@ -160,6 +162,17 @@ void SctpTransport::OnAssociationChangeCommunicationUp() {
     }
   }
   UpdateInformation(SctpTransportState::kConnected);
+}
+
+void SctpTransport::OnDtlsStateChange(cricket::DtlsTransportInternal* transport,
+                                      cricket::DtlsTransportState state) {
+  RTC_DCHECK_RUN_ON(owner_thread_);
+  RTC_CHECK(transport == dtls_transport_->internal());
+  if (state == cricket::DTLS_TRANSPORT_CLOSED ||
+      state == cricket::DTLS_TRANSPORT_FAILED) {
+    UpdateInformation(SctpTransportState::kClosed);
+    // TODO(http://bugs.webrtc.org/11090): Close all the data channels
+  }
 }
 
 }  // namespace webrtc

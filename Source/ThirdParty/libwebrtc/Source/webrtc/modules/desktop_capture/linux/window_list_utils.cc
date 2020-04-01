@@ -61,7 +61,7 @@ DeferXFree::~DeferXFree() {
   if (!XQueryTree(cache->display(), window, &root, &parent, &children,
                   &num_children)) {
     RTC_LOG(LS_ERROR) << "Failed to query for child windows although window"
-                      << "does not have a valid WM_STATE.";
+                         "does not have a valid WM_STATE.";
     return 0;
   }
   ::Window app_window = 0;

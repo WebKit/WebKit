@@ -20,64 +20,54 @@
 
 #include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
+#include "modules/rtp_rtcp/source/video_fec_generator.h"
+#include "rtc_base/critical_section.h"
+#include "rtc_base/race_checker.h"
+#include "rtc_base/rate_statistics.h"
 
 namespace webrtc {
 
 class FlexfecSender;
 
-class RedPacket {
- public:
-  explicit RedPacket(size_t length);
-  ~RedPacket();
-
-  void CreateHeader(const uint8_t* rtp_header,
-                    size_t header_length,
-                    int red_payload_type,
-                    int payload_type);
-  void SetSeqNum(int seq_num);
-  void AssignPayload(const uint8_t* payload, size_t length);
-  void ClearMarkerBit();
-  uint8_t* data() const;
-  size_t length() const;
-
- private:
-  std::unique_ptr<uint8_t[]> data_;
-  size_t length_;
-  size_t header_length_;
-};
-
-class UlpfecGenerator {
+class UlpfecGenerator : public VideoFecGenerator {
   friend class FlexfecSender;
 
  public:
-  UlpfecGenerator();
+  UlpfecGenerator(int red_payload_type, int ulpfec_payload_type, Clock* clock);
   ~UlpfecGenerator();
 
-  void SetFecParameters(const FecProtectionParams& params);
+  FecType GetFecType() const override {
+    return VideoFecGenerator::FecType::kUlpFec;
+  }
+  absl::optional<uint32_t> FecSsrc() override { return absl::nullopt; }
+
+  void SetProtectionParameters(const FecProtectionParams& delta_params,
+                               const FecProtectionParams& key_params) override;
 
   // Adds a media packet to the internal buffer. When enough media packets
   // have been added, the FEC packets are generated and stored internally.
   // These FEC packets are then obtained by calling GetFecPacketsAsRed().
-  int AddRtpPacketAndGenerateFec(const uint8_t* data_buffer,
-                                 size_t payload_length,
-                                 size_t rtp_header_length);
-
-  // Returns true if there are generated FEC packets available.
-  bool FecAvailable() const;
-
-  size_t NumAvailableFecPackets() const;
+  void AddPacketAndGenerateFec(const RtpPacketToSend& packet) override;
 
   // Returns the overhead, per packet, for FEC (and possibly RED).
-  size_t MaxPacketOverhead() const;
+  size_t MaxPacketOverhead() const override;
 
-  // Returns generated FEC packets with RED headers added.
-  std::vector<std::unique_ptr<RedPacket>> GetUlpfecPacketsAsRed(
-      int red_payload_type,
-      int ulpfec_payload_type,
-      uint16_t first_seq_num);
+  std::vector<std::unique_ptr<RtpPacketToSend>> GetFecPackets() override;
+
+  // Current rate of FEC packets generated, including all RTP-level headers.
+  DataRate CurrentFecRate() const override;
 
  private:
-  explicit UlpfecGenerator(std::unique_ptr<ForwardErrorCorrection> fec);
+  struct Params {
+    Params();
+    Params(FecProtectionParams delta_params,
+           FecProtectionParams keyframe_params);
+
+    FecProtectionParams delta_params;
+    FecProtectionParams keyframe_params;
+  };
+
+  UlpfecGenerator(std::unique_ptr<ForwardErrorCorrection> fec, Clock* clock);
 
   // Overhead is defined as relative to the number of media packets, and not
   // relative to total number of packets. This definition is inherited from the
@@ -98,16 +88,31 @@ class UlpfecGenerator {
   // (e.g. (2k,2m) vs (k,m)) are generally more effective at recovering losses.
   bool MinimumMediaPacketsReached() const;
 
+  const FecProtectionParams& CurrentParams() const;
+
   void ResetState();
 
-  std::unique_ptr<ForwardErrorCorrection> fec_;
-  ForwardErrorCorrection::PacketList media_packets_;
-  size_t last_media_packet_rtp_header_length_;
-  std::list<ForwardErrorCorrection::Packet*> generated_fec_packets_;
-  int num_protected_frames_;
-  int min_num_media_packets_;
-  FecProtectionParams params_;
-  FecProtectionParams new_params_;
+  const int red_payload_type_;
+  const int ulpfec_payload_type_;
+  Clock* const clock_;
+
+  rtc::RaceChecker race_checker_;
+  const std::unique_ptr<ForwardErrorCorrection> fec_
+      RTC_GUARDED_BY(race_checker_);
+  ForwardErrorCorrection::PacketList media_packets_
+      RTC_GUARDED_BY(race_checker_);
+  absl::optional<RtpPacketToSend> last_media_packet_
+      RTC_GUARDED_BY(race_checker_);
+  std::list<ForwardErrorCorrection::Packet*> generated_fec_packets_
+      RTC_GUARDED_BY(race_checker_);
+  int num_protected_frames_ RTC_GUARDED_BY(race_checker_);
+  int min_num_media_packets_ RTC_GUARDED_BY(race_checker_);
+  Params current_params_ RTC_GUARDED_BY(race_checker_);
+  bool keyframe_in_process_ RTC_GUARDED_BY(race_checker_);
+
+  rtc::CriticalSection crit_;
+  absl::optional<Params> pending_params_ RTC_GUARDED_BY(crit_);
+  RateStatistics fec_bitrate_ RTC_GUARDED_BY(crit_);
 };
 
 }  // namespace webrtc

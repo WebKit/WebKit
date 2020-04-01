@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "api/audio/audio_mixer.h"
+#include "api/neteq/neteq_factory.h"
 #include "api/rtp_headers.h"
 #include "audio/audio_state.h"
 #include "call/audio_receive_stream.h"
@@ -47,6 +48,7 @@ class AudioReceiveStream final : public webrtc::AudioReceiveStream,
                      RtpStreamReceiverControllerInterface* receiver_controller,
                      PacketRouter* packet_router,
                      ProcessThread* module_process_thread,
+                     NetEqFactory* neteq_factory,
                      const webrtc::AudioReceiveStream::Config& config,
                      const rtc::scoped_refptr<webrtc::AudioState>& audio_state,
                      webrtc::RtcEventLog* event_log);
@@ -85,9 +87,12 @@ class AudioReceiveStream final : public webrtc::AudioReceiveStream,
   int PreferredSampleRate() const override;
 
   // Syncable
-  int id() const override;
+  uint32_t id() const override;
   absl::optional<Syncable::Info> GetInfo() const override;
-  uint32_t GetPlayoutTimestamp() const override;
+  bool GetPlayoutRtpTimestamp(uint32_t* rtp_timestamp,
+                              int64_t* time_ms) const override;
+  void SetEstimatedPlayoutNtpTimestampMs(int64_t ntp_timestamp_ms,
+                                         int64_t time_ms) override;
   void SetMinimumPlayoutDelay(int delay_ms) override;
 
   void AssociateSendStream(AudioSendStream* send_stream);

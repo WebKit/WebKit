@@ -12,12 +12,12 @@
 
 #include <stddef.h>
 
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "api/jsep.h"
 #include "api/jsep_session_description.h"
@@ -357,7 +357,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
   // is created regardless if it's identical to the previous one or not.
   // The |session_version_| is a uint64_t, the wrap around should not happen.
   RTC_DCHECK(session_version_ + 1 > session_version_);
-  auto offer = absl::make_unique<JsepSessionDescription>(
+  auto offer = std::make_unique<JsepSessionDescription>(
       SdpType::kOffer, std::move(desc), session_id_,
       rtc::ToString(session_version_++));
   if (pc_->local_description()) {
@@ -413,7 +413,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
   // Get a new version number by increasing the |session_version_answer_|.
   // The |session_version_| is a uint64_t, the wrap around should not happen.
   RTC_DCHECK(session_version_ + 1 > session_version_);
-  auto answer = absl::make_unique<JsepSessionDescription>(
+  auto answer = std::make_unique<JsepSessionDescription>(
       SdpType::kAnswer, std::move(desc), session_id_,
       rtc::ToString(session_version_++));
   if (pc_->local_description()) {

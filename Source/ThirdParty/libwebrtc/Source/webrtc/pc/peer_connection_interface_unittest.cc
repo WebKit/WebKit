@@ -19,7 +19,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/str_replace.h"
 #include "absl/types/optional.h"
 #include "api/audio/audio_mixer.h"
@@ -656,7 +655,7 @@ class PeerConnectionFactoryForTest : public webrtc::PeerConnectionFactory {
     dependencies.media_engine =
         cricket::CreateMediaEngine(std::move(media_deps));
     dependencies.call_factory = webrtc::CreateCallFactory();
-    dependencies.event_log_factory = absl::make_unique<RtcEventLogFactory>(
+    dependencies.event_log_factory = std::make_unique<RtcEventLogFactory>(
         dependencies.task_queue_factory.get());
 
     return new rtc::RefCountedObject<PeerConnectionFactoryForTest>(
@@ -1396,7 +1395,8 @@ TEST_P(PeerConnectionInterfaceTest,
   EXPECT_TRUE(raw_port_allocator->flags() & cricket::PORTALLOCATOR_DISABLE_TCP);
   EXPECT_TRUE(raw_port_allocator->flags() &
               cricket::PORTALLOCATOR_DISABLE_COSTLY_NETWORKS);
-  EXPECT_TRUE(raw_port_allocator->prune_turn_ports());
+  EXPECT_EQ(webrtc::PRUNE_BASED_ON_PRIORITY,
+            raw_port_allocator->turn_port_prune_policy());
 }
 
 // Check that GetConfiguration returns the configuration the PeerConnection was
@@ -1421,15 +1421,15 @@ TEST_P(PeerConnectionInterfaceTest, GetConfigurationAfterSetConfiguration) {
 
   PeerConnectionInterface::RTCConfiguration config = pc_->GetConfiguration();
   config.type = PeerConnectionInterface::kRelay;
-  config.use_media_transport = true;
-  config.use_media_transport_for_data_channels = true;
+  config.use_datagram_transport = true;
+  config.use_datagram_transport_for_data_channels = true;
   EXPECT_TRUE(pc_->SetConfiguration(config).ok());
 
   PeerConnectionInterface::RTCConfiguration returned_config =
       pc_->GetConfiguration();
   EXPECT_EQ(PeerConnectionInterface::kRelay, returned_config.type);
-  EXPECT_TRUE(returned_config.use_media_transport);
-  EXPECT_TRUE(returned_config.use_media_transport_for_data_channels);
+  EXPECT_TRUE(returned_config.use_datagram_transport);
+  EXPECT_TRUE(returned_config.use_datagram_transport_for_data_channels);
 }
 
 TEST_P(PeerConnectionInterfaceTest, SetConfigurationFailsAfterClose) {
@@ -2449,11 +2449,12 @@ TEST_P(PeerConnectionInterfaceTest, SetConfigurationChangesPruneTurnPortsFlag) {
   config.prune_turn_ports = false;
   CreatePeerConnection(config);
   config = pc_->GetConfiguration();
-  EXPECT_FALSE(port_allocator_->prune_turn_ports());
+  EXPECT_EQ(webrtc::NO_PRUNE, port_allocator_->turn_port_prune_policy());
 
   config.prune_turn_ports = true;
   EXPECT_TRUE(pc_->SetConfiguration(config).ok());
-  EXPECT_TRUE(port_allocator_->prune_turn_ports());
+  EXPECT_EQ(webrtc::PRUNE_BASED_ON_PRIORITY,
+            port_allocator_->turn_port_prune_policy());
 }
 
 // Test that the ice check interval can be changed. This does not verify that
@@ -3463,7 +3464,7 @@ TEST_P(PeerConnectionInterfaceTest,
   pc_->Close();
 
   EXPECT_FALSE(
-      pc_->StartRtcEventLog(absl::make_unique<webrtc::RtcEventLogOutputNull>(),
+      pc_->StartRtcEventLog(std::make_unique<webrtc::RtcEventLogOutputNull>(),
                             webrtc::RtcEventLog::kImmediateOutput));
   pc_->StopRtcEventLog();
 }
@@ -3484,7 +3485,10 @@ TEST_P(PeerConnectionInterfaceTest, OffersAndAnswersHaveTrickleIceOption) {
   EXPECT_TRUE(desc->transport_infos()[1].description.HasOption("trickle"));
 
   // Apply the offer as a remote description, then create an answer.
+  EXPECT_FALSE(pc_->can_trickle_ice_candidates());
   EXPECT_TRUE(DoSetRemoteDescription(std::move(offer)));
+  ASSERT_TRUE(pc_->can_trickle_ice_candidates());
+  EXPECT_TRUE(*(pc_->can_trickle_ice_candidates()));
   std::unique_ptr<SessionDescriptionInterface> answer;
   ASSERT_TRUE(DoCreateAnswer(&answer, &options));
   desc = answer->description();
@@ -3663,28 +3667,6 @@ TEST_P(PeerConnectionInterfaceTest, SetBitrateMaxNegativeFails) {
   PeerConnectionInterface::BitrateParameters bitrate;
   bitrate.max_bitrate_bps = -1;
   EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
-}
-
-// ice_regather_interval_range requires WebRTC to be configured for continual
-// gathering already.
-TEST_P(PeerConnectionInterfaceTest,
-       SetIceRegatherIntervalRangeWithoutContinualGatheringFails) {
-  PeerConnectionInterface::RTCConfiguration config;
-  config.ice_regather_interval_range.emplace(1000, 2000);
-  config.continual_gathering_policy =
-      PeerConnectionInterface::ContinualGatheringPolicy::GATHER_ONCE;
-  CreatePeerConnectionExpectFail(config);
-}
-
-// Ensures that there is no error when ice_regather_interval_range is set with
-// continual gathering enabled.
-TEST_P(PeerConnectionInterfaceTest,
-       SetIceRegatherIntervalRangeWithContinualGathering) {
-  PeerConnectionInterface::RTCConfiguration config;
-  config.ice_regather_interval_range.emplace(1000, 2000);
-  config.continual_gathering_policy =
-      PeerConnectionInterface::ContinualGatheringPolicy::GATHER_CONTINUALLY;
-  CreatePeerConnection(config);
 }
 
 // The current bitrate from BitrateSettings is currently clamped

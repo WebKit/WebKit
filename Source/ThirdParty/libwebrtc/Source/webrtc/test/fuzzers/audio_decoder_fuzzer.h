@@ -31,9 +31,6 @@ void FuzzAudioDecoder(DecoderFunctionType decode_type,
                       size_t max_decoded_bytes,
                       int16_t* decoded);
 
-void FuzzAudioDecoderIncomingPacket(const uint8_t* data,
-                                    size_t size,
-                                    AudioDecoder* decoder);
 }  // namespace webrtc
 
 #endif  // TEST_FUZZERS_AUDIO_DECODER_FUZZER_H_

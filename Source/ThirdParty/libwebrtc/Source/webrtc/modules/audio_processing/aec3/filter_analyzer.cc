@@ -47,91 +47,136 @@ size_t FindPeakIndex(rtc::ArrayView<const float> filter_time_domain,
 
 int FilterAnalyzer::instance_count_ = 0;
 
-FilterAnalyzer::FilterAnalyzer(const EchoCanceller3Config& config)
+FilterAnalyzer::FilterAnalyzer(const EchoCanceller3Config& config,
+                               size_t num_capture_channels)
     : data_dumper_(
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
       bounded_erl_(config.ep_strength.bounded_erl),
       default_gain_(config.ep_strength.default_gain),
-      h_highpass_(GetTimeDomainLength(config.filter.main.length_blocks), 0.f),
-      filter_length_blocks_(config.filter.main_initial.length_blocks),
-      consistent_filter_detector_(config) {
+      h_highpass_(num_capture_channels,
+                  std::vector<float>(
+                      GetTimeDomainLength(config.filter.main.length_blocks),
+                      0.f)),
+      filter_analysis_states_(num_capture_channels,
+                              FilterAnalysisState(config)),
+      filter_delays_blocks_(num_capture_channels, 0) {
   Reset();
 }
 
 FilterAnalyzer::~FilterAnalyzer() = default;
 
 void FilterAnalyzer::Reset() {
-  delay_blocks_ = 0;
   blocks_since_reset_ = 0;
-  gain_ = default_gain_;
-  peak_index_ = 0;
   ResetRegion();
-  consistent_filter_detector_.Reset();
+  for (auto& state : filter_analysis_states_) {
+    state.peak_index = 0;
+    state.gain = default_gain_;
+    state.consistent_filter_detector.Reset();
+  }
+  std::fill(filter_delays_blocks_.begin(), filter_delays_blocks_.end(), 0);
 }
 
-void FilterAnalyzer::Update(rtc::ArrayView<const float> filter_time_domain,
-                            const RenderBuffer& render_buffer) {
-  SetRegionToAnalyze(filter_time_domain);
-  AnalyzeRegion(filter_time_domain, render_buffer);
+void FilterAnalyzer::Update(
+    rtc::ArrayView<const std::vector<float>> filters_time_domain,
+    const RenderBuffer& render_buffer,
+    bool* any_filter_consistent,
+    float* max_echo_path_gain) {
+  RTC_DCHECK(any_filter_consistent);
+  RTC_DCHECK(max_echo_path_gain);
+  RTC_DCHECK_EQ(filters_time_domain.size(), filter_analysis_states_.size());
+  RTC_DCHECK_EQ(filters_time_domain.size(), h_highpass_.size());
+
+  ++blocks_since_reset_;
+  SetRegionToAnalyze(filters_time_domain[0].size());
+  AnalyzeRegion(filters_time_domain, render_buffer);
+
+  // Aggregate the results for all capture channels.
+  auto& st_ch0 = filter_analysis_states_[0];
+  *any_filter_consistent = st_ch0.consistent_estimate;
+  *max_echo_path_gain = st_ch0.gain;
+  min_filter_delay_blocks_ = filter_delays_blocks_[0];
+  for (size_t ch = 1; ch < filters_time_domain.size(); ++ch) {
+    auto& st_ch = filter_analysis_states_[ch];
+    *any_filter_consistent =
+        *any_filter_consistent || st_ch.consistent_estimate;
+    *max_echo_path_gain = std::max(*max_echo_path_gain, st_ch.gain);
+    min_filter_delay_blocks_ =
+        std::min(min_filter_delay_blocks_, filter_delays_blocks_[ch]);
+  }
 }
 
 void FilterAnalyzer::AnalyzeRegion(
-    rtc::ArrayView<const float> filter_time_domain,
+    rtc::ArrayView<const std::vector<float>> filters_time_domain,
     const RenderBuffer& render_buffer) {
-  RTC_DCHECK_LT(region_.start_sample_, filter_time_domain.size());
-  RTC_DCHECK_LT(peak_index_, filter_time_domain.size());
-  RTC_DCHECK_LT(region_.end_sample_, filter_time_domain.size());
-
   // Preprocess the filter to avoid issues with low-frequency components in the
   // filter.
-  PreProcessFilter(filter_time_domain);
-  data_dumper_->DumpRaw("aec3_linear_filter_processed_td", h_highpass_);
+  PreProcessFilters(filters_time_domain);
+  data_dumper_->DumpRaw("aec3_linear_filter_processed_td", h_highpass_[0]);
 
-  RTC_DCHECK_EQ(h_highpass_.size(), filter_time_domain.size());
+  constexpr float kOneByBlockSize = 1.f / kBlockSize;
+  for (size_t ch = 0; ch < filters_time_domain.size(); ++ch) {
+    RTC_DCHECK_LT(region_.start_sample_, filters_time_domain[ch].size());
+    RTC_DCHECK_LT(filter_analysis_states_[ch].peak_index,
+                  filters_time_domain[0].size());
+    RTC_DCHECK_LT(region_.end_sample_, filters_time_domain[ch].size());
 
-  peak_index_ = FindPeakIndex(h_highpass_, peak_index_, region_.start_sample_,
-                              region_.end_sample_);
-  delay_blocks_ = peak_index_ >> kBlockSizeLog2;
-  UpdateFilterGain(h_highpass_, peak_index_);
-  filter_length_blocks_ = filter_time_domain.size() * (1.f / kBlockSize);
+    auto& st_ch = filter_analysis_states_[ch];
+    RTC_DCHECK_EQ(h_highpass_[ch].size(), filters_time_domain[ch].size());
 
-  consistent_estimate_ = consistent_filter_detector_.Detect(
-      h_highpass_, region_, render_buffer.Block(-delay_blocks_)[0][0],
-      peak_index_, delay_blocks_);
+    st_ch.peak_index =
+        FindPeakIndex(h_highpass_[ch], st_ch.peak_index, region_.start_sample_,
+                      region_.end_sample_);
+    filter_delays_blocks_[ch] = st_ch.peak_index >> kBlockSizeLog2;
+    UpdateFilterGain(h_highpass_[ch], &st_ch);
+    st_ch.filter_length_blocks =
+        filters_time_domain[ch].size() * kOneByBlockSize;
+
+    st_ch.consistent_estimate = st_ch.consistent_filter_detector.Detect(
+        h_highpass_[ch], region_,
+        render_buffer.Block(-filter_delays_blocks_[ch])[0], st_ch.peak_index,
+        filter_delays_blocks_[ch]);
+  }
 }
 
 void FilterAnalyzer::UpdateFilterGain(
     rtc::ArrayView<const float> filter_time_domain,
-    size_t peak_index) {
+    FilterAnalysisState* st) {
   bool sufficient_time_to_converge =
-      ++blocks_since_reset_ > 5 * kNumBlocksPerSecond;
+      blocks_since_reset_ > 5 * kNumBlocksPerSecond;
 
-  if (sufficient_time_to_converge && consistent_estimate_) {
-    gain_ = fabsf(filter_time_domain[peak_index]);
+  if (sufficient_time_to_converge && st->consistent_estimate) {
+    st->gain = fabsf(filter_time_domain[st->peak_index]);
   } else {
-    if (gain_) {
-      gain_ = std::max(gain_, fabsf(filter_time_domain[peak_index]));
+    // TODO(peah): Verify whether this check against a float is ok.
+    if (st->gain) {
+      st->gain = std::max(st->gain, fabsf(filter_time_domain[st->peak_index]));
     }
   }
 
-  if (bounded_erl_ && gain_) {
-    gain_ = std::max(gain_, 0.01f);
+  if (bounded_erl_ && st->gain) {
+    st->gain = std::max(st->gain, 0.01f);
   }
 }
 
-void FilterAnalyzer::PreProcessFilter(
-    rtc::ArrayView<const float> filter_time_domain) {
-  RTC_DCHECK_GE(h_highpass_.capacity(), filter_time_domain.size());
-  h_highpass_.resize(filter_time_domain.size());
-  // Minimum phase high-pass filter with cutoff frequency at about 600 Hz.
-  constexpr std::array<float, 3> h = {{0.7929742f, -0.36072128f, -0.47047766f}};
+void FilterAnalyzer::PreProcessFilters(
+    rtc::ArrayView<const std::vector<float>> filters_time_domain) {
+  for (size_t ch = 0; ch < filters_time_domain.size(); ++ch) {
+    RTC_DCHECK_LT(region_.start_sample_, filters_time_domain[ch].size());
+    RTC_DCHECK_LT(region_.end_sample_, filters_time_domain[ch].size());
 
-  std::fill(h_highpass_.begin() + region_.start_sample_,
-            h_highpass_.begin() + region_.end_sample_ + 1, 0.f);
-  for (size_t k = std::max(h.size() - 1, region_.start_sample_);
-       k <= region_.end_sample_; ++k) {
-    for (size_t j = 0; j < h.size(); ++j) {
-      h_highpass_[k] += filter_time_domain[k - j] * h[j];
+    RTC_DCHECK_GE(h_highpass_[ch].capacity(), filters_time_domain[ch].size());
+    h_highpass_[ch].resize(filters_time_domain[ch].size());
+    // Minimum phase high-pass filter with cutoff frequency at about 600 Hz.
+    constexpr std::array<float, 3> h = {
+        {0.7929742f, -0.36072128f, -0.47047766f}};
+
+    std::fill(h_highpass_[ch].begin() + region_.start_sample_,
+              h_highpass_[ch].begin() + region_.end_sample_ + 1, 0.f);
+    for (size_t k = std::max(h.size() - 1, region_.start_sample_);
+         k <= region_.end_sample_; ++k) {
+      for (size_t j = 0; j < h.size(); ++j) {
+        h_highpass_[ch][k] += filters_time_domain[ch][k - j] * h[j];
+      }
     }
   }
 }
@@ -141,19 +186,17 @@ void FilterAnalyzer::ResetRegion() {
   region_.end_sample_ = 0;
 }
 
-void FilterAnalyzer::SetRegionToAnalyze(
-    rtc::ArrayView<const float> filter_time_domain) {
+void FilterAnalyzer::SetRegionToAnalyze(size_t filter_size) {
   constexpr size_t kNumberBlocksToUpdate = 1;
   auto& r = region_;
-  r.start_sample_ =
-      r.end_sample_ >= filter_time_domain.size() - 1 ? 0 : r.end_sample_ + 1;
+  r.start_sample_ = r.end_sample_ >= filter_size - 1 ? 0 : r.end_sample_ + 1;
   r.end_sample_ =
       std::min(r.start_sample_ + kNumberBlocksToUpdate * kBlockSize - 1,
-               filter_time_domain.size() - 1);
+               filter_size - 1);
 
   // Check range.
-  RTC_DCHECK_LT(r.start_sample_, filter_time_domain.size());
-  RTC_DCHECK_LT(r.end_sample_, filter_time_domain.size());
+  RTC_DCHECK_LT(r.start_sample_, filter_size);
+  RTC_DCHECK_LT(r.end_sample_, filter_size);
   RTC_DCHECK_LE(r.start_sample_, r.end_sample_);
 }
 
@@ -176,7 +219,7 @@ void FilterAnalyzer::ConsistentFilterDetector::Reset() {
 bool FilterAnalyzer::ConsistentFilterDetector::Detect(
     rtc::ArrayView<const float> filter_to_analyze,
     const FilterRegion& region,
-    rtc::ArrayView<const float> x_block,
+    rtc::ArrayView<const std::vector<float>> x_block,
     size_t peak_index,
     int delay_blocks) {
   if (region.start_sample_ == 0) {
@@ -212,9 +255,15 @@ bool FilterAnalyzer::ConsistentFilterDetector::Detect(
   }
 
   if (significant_peak_) {
-    const float x_energy = std::inner_product(x_block.begin(), x_block.end(),
-                                              x_block.begin(), 0.f);
-    const bool active_render_block = x_energy > active_render_threshold_;
+    bool active_render_block = false;
+    for (auto& x_channel : x_block) {
+      const float x_energy = std::inner_product(
+          x_channel.begin(), x_channel.end(), x_channel.begin(), 0.f);
+      if (x_energy > active_render_threshold_) {
+        active_render_block = true;
+        break;
+      }
+    }
 
     if (consistent_delay_reference_ == delay_blocks) {
       if (active_render_block) {

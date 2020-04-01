@@ -8,11 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "absl/memory/memory.h"
+#include <memory>
+
+#include "api/task_queue/task_queue_base.h"
 #include "call/call.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
+#include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "test/call_test.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
@@ -26,39 +31,33 @@ enum : int {  // The first valid value is 1.
 };
 }  // namespace
 
-class TransportFeedbackEndToEndTest : public test::CallTest {
- public:
-  TransportFeedbackEndToEndTest() {
-    RegisterRtpExtension(RtpExtension(RtpExtension::kTransportSequenceNumberUri,
-                                      kTransportSequenceNumberExtensionId));
-  }
-};
+TEST(TransportFeedbackMultiStreamTest, AssignsTransportSequenceNumbers) {
+  static constexpr int kSendRtxPayloadType = 98;
+  static constexpr int kDefaultTimeoutMs = 30 * 1000;
+  static constexpr int kNackRtpHistoryMs = 1000;
+  static constexpr uint32_t kSendRtxSsrcs[MultiStreamTester::kNumStreams] = {
+      0xBADCAFD, 0xBADCAFE, 0xBADCAFF};
 
-TEST_F(TransportFeedbackEndToEndTest, AssignsTransportSequenceNumbers) {
   class RtpExtensionHeaderObserver : public test::DirectTransport {
    public:
     RtpExtensionHeaderObserver(
-        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
+        TaskQueueBase* task_queue,
         Call* sender_call,
-        const uint32_t& first_media_ssrc,
         const std::map<uint32_t, uint32_t>& ssrc_map,
         const std::map<uint8_t, MediaType>& payload_type_map)
         : DirectTransport(task_queue,
-                          absl::make_unique<FakeNetworkPipe>(
+                          std::make_unique<FakeNetworkPipe>(
                               Clock::GetRealTimeClock(),
-                              absl::make_unique<SimulatedNetwork>(
+                              std::make_unique<SimulatedNetwork>(
                                   BuiltInNetworkBehaviorConfig())),
                           sender_call,
                           payload_type_map),
-          parser_(RtpHeaderParser::CreateForTest()),
-          first_media_ssrc_(first_media_ssrc),
           rtx_to_media_ssrcs_(ssrc_map),
-          padding_observed_(false),
           rtx_padding_observed_(false),
           retransmit_observed_(false),
           started_(false) {
-      parser_->RegisterRtpHeaderExtension(kRtpExtensionTransportSequenceNumber,
-                                          kTransportSequenceNumberExtensionId);
+      extensions_.Register<TransportSequenceNumber>(
+          kTransportSequenceNumberExtensionId);
     }
     virtual ~RtpExtensionHeaderObserver() {}
 
@@ -72,13 +71,14 @@ TEST_F(TransportFeedbackEndToEndTest, AssignsTransportSequenceNumbers) {
           return false;
 
         if (started_) {
-          RTPHeader header;
-          EXPECT_TRUE(parser_->Parse(data, length, &header));
+          RtpPacket rtp_packet(&extensions_);
+          EXPECT_TRUE(rtp_packet.Parse(data, length));
           bool drop_packet = false;
 
-          EXPECT_TRUE(header.extension.hasTransportSequenceNumber);
-          EXPECT_EQ(options.packet_id,
-                    header.extension.transportSequenceNumber);
+          uint16_t transport_sequence_number = 0;
+          EXPECT_TRUE(rtp_packet.GetExtension<TransportSequenceNumber>(
+              &transport_sequence_number));
+          EXPECT_EQ(options.packet_id, transport_sequence_number);
           if (!streams_observed_.empty()) {
             // Unwrap packet id and verify uniqueness.
             int64_t packet_id = unwrapper_.Unwrap(options.packet_id);
@@ -86,21 +86,22 @@ TEST_F(TransportFeedbackEndToEndTest, AssignsTransportSequenceNumbers) {
           }
 
           // Drop (up to) every 17th packet, so we get retransmits.
-          // Only drop media, and not on the first stream (otherwise it will be
-          // hard to distinguish from padding, which is always sent on the first
-          // stream).
-          if (header.payloadType != kSendRtxPayloadType &&
-              header.ssrc != first_media_ssrc_ &&
-              header.extension.transportSequenceNumber % 17 == 0) {
-            dropped_seq_[header.ssrc].insert(header.sequenceNumber);
+          // Only drop media, do not drop padding packets.
+          if (rtp_packet.PayloadType() != kSendRtxPayloadType &&
+              rtp_packet.payload_size() > 0 &&
+              transport_sequence_number % 17 == 0) {
+            dropped_seq_[rtp_packet.Ssrc()].insert(rtp_packet.SequenceNumber());
             drop_packet = true;
           }
 
-          if (header.payloadType == kSendRtxPayloadType) {
+          if (rtp_packet.payload_size() == 0) {
+            // Ignore padding packets.
+          } else if (rtp_packet.PayloadType() == kSendRtxPayloadType) {
             uint16_t original_sequence_number =
-                ByteReader<uint16_t>::ReadBigEndian(&data[header.headerLength]);
+                ByteReader<uint16_t>::ReadBigEndian(
+                    rtp_packet.payload().data());
             uint32_t original_ssrc =
-                rtx_to_media_ssrcs_.find(header.ssrc)->second;
+                rtx_to_media_ssrcs_.find(rtp_packet.Ssrc())->second;
             std::set<uint16_t>* seq_no_map = &dropped_seq_[original_ssrc];
             auto it = seq_no_map->find(original_sequence_number);
             if (it != seq_no_map->end()) {
@@ -110,7 +111,7 @@ TEST_F(TransportFeedbackEndToEndTest, AssignsTransportSequenceNumbers) {
               rtx_padding_observed_ = true;
             }
           } else {
-            streams_observed_.insert(header.ssrc);
+            streams_observed_.insert(rtp_packet.Ssrc());
           }
 
           if (IsDone())
@@ -146,16 +147,15 @@ TEST_F(TransportFeedbackEndToEndTest, AssignsTransportSequenceNumbers) {
       return done_.Wait(kDefaultTimeoutMs);
     }
 
+   private:
     rtc::CriticalSection lock_;
     rtc::Event done_;
-    std::unique_ptr<RtpHeaderParser> parser_;
+    RtpHeaderExtensionMap extensions_;
     SequenceNumberUnwrapper unwrapper_;
     std::set<int64_t> received_packed_ids_;
     std::set<uint32_t> streams_observed_;
     std::map<uint32_t, std::set<uint16_t>> dropped_seq_;
-    const uint32_t& first_media_ssrc_;
     const std::map<uint32_t, uint32_t>& rtx_to_media_ssrcs_;
-    bool padding_observed_;
     bool rtx_padding_observed_;
     bool retransmit_observed_;
     bool started_;
@@ -163,12 +163,8 @@ TEST_F(TransportFeedbackEndToEndTest, AssignsTransportSequenceNumbers) {
 
   class TransportSequenceNumberTester : public MultiStreamTester {
    public:
-    explicit TransportSequenceNumberTester(
-        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue)
-        : MultiStreamTester(task_queue),
-          first_media_ssrc_(0),
-          observer_(nullptr) {}
-    virtual ~TransportSequenceNumberTester() {}
+    TransportSequenceNumberTester() : observer_(nullptr) {}
+    ~TransportSequenceNumberTester() override = default;
 
    protected:
     void Wait() override {
@@ -200,9 +196,6 @@ TEST_F(TransportFeedbackEndToEndTest, AssignsTransportSequenceNumbers) {
       send_config->rtp.rtx.payload_type = kSendRtxPayloadType;
       rtx_to_media_ssrcs_[kSendRtxSsrcs[stream_index]] =
           send_config->rtp.ssrcs[0];
-
-      if (stream_index == 0)
-        first_media_ssrc_ = send_config->rtp.ssrcs[0];
     }
 
     void UpdateReceiveConfig(
@@ -216,29 +209,36 @@ TEST_F(TransportFeedbackEndToEndTest, AssignsTransportSequenceNumbers) {
       receive_config->renderer = &fake_renderer_;
     }
 
-    test::DirectTransport* CreateSendTransport(
-        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
+    std::unique_ptr<test::DirectTransport> CreateSendTransport(
+        TaskQueueBase* task_queue,
         Call* sender_call) override {
       std::map<uint8_t, MediaType> payload_type_map =
           MultiStreamTester::payload_type_map_;
       RTC_DCHECK(payload_type_map.find(kSendRtxPayloadType) ==
                  payload_type_map.end());
       payload_type_map[kSendRtxPayloadType] = MediaType::VIDEO;
-      observer_ = new RtpExtensionHeaderObserver(
-          task_queue, sender_call, first_media_ssrc_, rtx_to_media_ssrcs_,
-          payload_type_map);
-      return observer_;
+      auto observer = std::make_unique<RtpExtensionHeaderObserver>(
+          task_queue, sender_call, rtx_to_media_ssrcs_, payload_type_map);
+      observer_ = observer.get();
+      return observer;
     }
 
    private:
     test::FakeVideoRenderer fake_renderer_;
-    uint32_t first_media_ssrc_;
     std::map<uint32_t, uint32_t> rtx_to_media_ssrcs_;
     RtpExtensionHeaderObserver* observer_;
-  } tester(&task_queue_);
+  } tester;
 
   tester.RunTest();
 }
+
+class TransportFeedbackEndToEndTest : public test::CallTest {
+ public:
+  TransportFeedbackEndToEndTest() {
+    RegisterRtpExtension(RtpExtension(RtpExtension::kTransportSequenceNumberUri,
+                                      kTransportSequenceNumberExtensionId));
+  }
+};
 
 class TransportFeedbackTester : public test::EndToEndTest {
  public:
@@ -363,10 +363,9 @@ TEST_F(TransportFeedbackEndToEndTest,
 
    protected:
     Action OnSendRtp(const uint8_t* packet, size_t length) override {
-      RTPHeader header;
-      EXPECT_TRUE(parser_->Parse(packet, length, &header));
-      const bool only_padding =
-          header.headerLength + header.paddingLength == length;
+      RtpPacket rtp_packet;
+      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      const bool only_padding = rtp_packet.payload_size() == 0;
       rtc::CritScope lock(&crit_);
       // Padding is expected in congested state to probe for connectivity when
       // packets has been dropped.
@@ -443,8 +442,8 @@ TEST_F(TransportFeedbackEndToEndTest, TransportSeqNumOnAudioAndVideo) {
         : EndToEndTest(kDefaultTimeoutMs),
           video_observed_(false),
           audio_observed_(false) {
-      parser_->RegisterRtpHeaderExtension(kRtpExtensionTransportSequenceNumber,
-                                          kTransportSequenceNumberExtensionId);
+      extensions_.Register<TransportSequenceNumber>(
+          kTransportSequenceNumberExtensionId);
     }
 
     size_t GetNumVideoStreams() const override { return 1; }
@@ -462,17 +461,18 @@ TEST_F(TransportFeedbackEndToEndTest, TransportSeqNumOnAudioAndVideo) {
     }
 
     Action OnSendRtp(const uint8_t* packet, size_t length) override {
-      RTPHeader header;
-      EXPECT_TRUE(parser_->Parse(packet, length, &header));
-      EXPECT_TRUE(header.extension.hasTransportSequenceNumber);
+      RtpPacket rtp_packet(&extensions_);
+      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      uint16_t transport_sequence_number = 0;
+      EXPECT_TRUE(rtp_packet.GetExtension<TransportSequenceNumber>(
+          &transport_sequence_number));
       // Unwrap packet id and verify uniqueness.
-      int64_t packet_id =
-          unwrapper_.Unwrap(header.extension.transportSequenceNumber);
+      int64_t packet_id = unwrapper_.Unwrap(transport_sequence_number);
       EXPECT_TRUE(received_packet_ids_.insert(packet_id).second);
 
-      if (header.ssrc == kVideoSendSsrcs[0])
+      if (rtp_packet.Ssrc() == kVideoSendSsrcs[0])
         video_observed_ = true;
-      if (header.ssrc == kAudioSendSsrc)
+      if (rtp_packet.Ssrc() == kAudioSendSsrc)
         audio_observed_ = true;
       if (audio_observed_ && video_observed_ &&
           received_packet_ids_.size() >= kMinPacketsToWaitFor) {
@@ -500,6 +500,7 @@ TEST_F(TransportFeedbackEndToEndTest, TransportSeqNumOnAudioAndVideo) {
     bool audio_observed_;
     SequenceNumberUnwrapper unwrapper_;
     std::set<int64_t> received_packet_ids_;
+    RtpHeaderExtensionMap extensions_;
   } test;
 
   RunBaseTest(&test);

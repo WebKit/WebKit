@@ -31,7 +31,8 @@ enum class RtpTransceiverDirection {
   kSendRecv,
   kSendOnly,
   kRecvOnly,
-  kInactive
+  kInactive,
+  kStopped,
 };
 
 // Structure for initializing an RtpTransceiver in a call to
@@ -65,7 +66,7 @@ struct RTC_EXPORT RtpTransceiverInit final {
 //
 // WebRTC specification for RTCRtpTransceiver, the JavaScript analog:
 // https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiver
-class RtpTransceiverInterface : public rtc::RefCountInterface {
+class RTC_EXPORT RtpTransceiverInterface : public rtc::RefCountInterface {
  public:
   // Media type of the transceiver. Any sender(s)/receiver(s) will have this
   // type as well.

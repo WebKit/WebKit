@@ -12,7 +12,6 @@ package org.webrtc;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import java.util.List;
 
 public class UnityUtility {
   private static final String VIDEO_CAPTURER_THREAD_NAME = "VideoCapturerThread";

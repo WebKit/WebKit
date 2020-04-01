@@ -17,6 +17,8 @@
 #include <ctime>
 #include <string>
 
+#include "rtc_base/system/rtc_export.h"
+
 namespace rtc {
 
 class SSLCertChain;
@@ -46,7 +48,7 @@ struct RSAParams {
 
 enum ECCurve { EC_NIST_P256, /* EC_FANCY, */ EC_LAST };
 
-class KeyParams {
+class RTC_EXPORT KeyParams {
  public:
   // Generate a KeyParams object from a simple KeyType, using default params.
   explicit KeyParams(KeyType key_type = KT_DEFAULT);
@@ -95,7 +97,7 @@ struct SSLIdentityParams {
 // Our identity in an SSL negotiation: a keypair and certificate (both
 // with the same public key).
 // This too is pretty much immutable once created.
-class SSLIdentity {
+class RTC_EXPORT SSLIdentity {
  public:
   // Generates an identity (keypair and self-signed certificate). If
   // |common_name| is non-empty, it will be used for the certificate's subject

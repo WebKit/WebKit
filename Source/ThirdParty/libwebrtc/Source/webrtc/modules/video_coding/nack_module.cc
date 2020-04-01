@@ -13,8 +13,10 @@
 #include <algorithm>
 #include <limits>
 
+#include "api/units/timestamp.h"
 #include "modules/utility/include/process_thread.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/field_trial.h"
 
@@ -55,6 +57,37 @@ NackModule::NackInfo::NackInfo(uint16_t seq_num,
       sent_at_time(-1),
       retries(0) {}
 
+NackModule::BackoffSettings::BackoffSettings(TimeDelta min_retry,
+                                             TimeDelta max_rtt,
+                                             double base)
+    : min_retry_interval(min_retry), max_rtt(max_rtt), base(base) {}
+
+absl::optional<NackModule::BackoffSettings>
+NackModule::BackoffSettings::ParseFromFieldTrials() {
+  // Matches magic number in RTPSender::OnReceivedNack().
+  const TimeDelta kDefaultMinRetryInterval = TimeDelta::Millis(5);
+  // Upper bound on link-delay considered for exponential backoff.
+  // Selected so that cumulative delay with 1.25 base and 10 retries ends up
+  // below 3s, since above that there will be a FIR generated instead.
+  const TimeDelta kDefaultMaxRtt = TimeDelta::Millis(160);
+  // Default base for exponential backoff, adds 25% RTT delay for each retry.
+  const double kDefaultBase = 1.25;
+
+  FieldTrialParameter<bool> enabled("enabled", false);
+  FieldTrialParameter<TimeDelta> min_retry("min_retry",
+                                           kDefaultMinRetryInterval);
+  FieldTrialParameter<TimeDelta> max_rtt("max_rtt", kDefaultMaxRtt);
+  FieldTrialParameter<double> base("base", kDefaultBase);
+  ParseFieldTrial({&enabled, &min_retry, &max_rtt, &base},
+                  field_trial::FindFullName("WebRTC-ExponentialNackBackoff"));
+
+  if (enabled) {
+    return NackModule::BackoffSettings(min_retry.Get(), max_rtt.Get(),
+                                       base.Get());
+  }
+  return absl::nullopt;
+}
+
 NackModule::NackModule(Clock* clock,
                        NackSender* nack_sender,
                        KeyFrameRequestSender* keyframe_request_sender)
@@ -66,7 +99,8 @@ NackModule::NackModule(Clock* clock,
       rtt_ms_(kDefaultRttMs),
       newest_seq_num_(0),
       next_process_time_ms_(-1),
-      send_nack_delay_ms_(GetSendNackDelay()) {
+      send_nack_delay_ms_(GetSendNackDelay()),
+      backoff_settings_(BackoffSettings::ParseFromFieldTrials()) {
   RTC_DCHECK(clock_);
   RTC_DCHECK(nack_sender_);
   RTC_DCHECK(keyframe_request_sender_);
@@ -258,13 +292,26 @@ void NackModule::AddPacketsToNack(uint16_t seq_num_start,
 std::vector<uint16_t> NackModule::GetNackBatch(NackFilterOptions options) {
   bool consider_seq_num = options != kTimeOnly;
   bool consider_timestamp = options != kSeqNumOnly;
-  int64_t now_ms = clock_->TimeInMilliseconds();
+  Timestamp now = clock_->CurrentTime();
   std::vector<uint16_t> nack_batch;
   auto it = nack_list_.begin();
   while (it != nack_list_.end()) {
+    TimeDelta resend_delay = TimeDelta::Millis(rtt_ms_);
+    if (backoff_settings_) {
+      resend_delay =
+          std::max(resend_delay, backoff_settings_->min_retry_interval);
+      if (it->second.retries > 1) {
+        TimeDelta exponential_backoff =
+            std::min(TimeDelta::Millis(rtt_ms_), backoff_settings_->max_rtt) *
+            std::pow(backoff_settings_->base, it->second.retries - 1);
+        resend_delay = std::max(resend_delay, exponential_backoff);
+      }
+    }
+
     bool delay_timed_out =
-        now_ms - it->second.created_at_time >= send_nack_delay_ms_;
-    bool nack_on_rtt_passed = now_ms - it->second.sent_at_time >= rtt_ms_;
+        now.ms() - it->second.created_at_time >= send_nack_delay_ms_;
+    bool nack_on_rtt_passed =
+        now.ms() - it->second.sent_at_time >= resend_delay.ms();
     bool nack_on_seq_num_passed =
         it->second.sent_at_time == -1 &&
         AheadOrAt(newest_seq_num_, it->second.send_at_seq_num);
@@ -272,7 +319,7 @@ std::vector<uint16_t> NackModule::GetNackBatch(NackFilterOptions options) {
                             (consider_timestamp && nack_on_rtt_passed))) {
       nack_batch.emplace_back(it->second.seq_num);
       ++it->second.retries;
-      it->second.sent_at_time = now_ms;
+      it->second.sent_at_time = now.ms();
       if (it->second.retries >= kMaxNackRetries) {
         RTC_LOG(LS_WARNING) << "Sequence number " << it->second.seq_num
                             << " removed from NACK list due to max retries.";

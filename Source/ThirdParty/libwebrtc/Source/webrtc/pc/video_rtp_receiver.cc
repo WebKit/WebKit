@@ -42,7 +42,7 @@ VideoRtpReceiver::VideoRtpReceiver(
     const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams)
     : worker_thread_(worker_thread),
       id_(receiver_id),
-      source_(new RefCountedObject<VideoRtpTrackSource>()),
+      source_(new RefCountedObject<VideoRtpTrackSource>(this)),
       track_(VideoTrackProxy::Create(
           rtc::Thread::Current(),
           worker_thread,
@@ -66,6 +66,9 @@ VideoRtpReceiver::~VideoRtpReceiver() {
   // Since cricket::VideoRenderer is not reference counted,
   // we need to remove it from the channel before we are deleted.
   Stop();
+  // Make sure we can't be called by the |source_| anymore.
+  worker_thread_->Invoke<void>(RTC_FROM_HERE,
+                               [this] { source_->ClearCallback(); });
 }
 
 std::vector<std::string> VideoRtpReceiver::stream_ids() const {
@@ -75,29 +78,13 @@ std::vector<std::string> VideoRtpReceiver::stream_ids() const {
   return stream_ids;
 }
 
-bool VideoRtpReceiver::SetSink(rtc::VideoSinkInterface<VideoFrame>* sink) {
-  RTC_DCHECK(media_channel_);
-  RTC_DCHECK(ssrc_);
-  return worker_thread_->Invoke<bool>(
-      RTC_FROM_HERE, [&] { return media_channel_->SetSink(*ssrc_, sink); });
-}
-
 RtpParameters VideoRtpReceiver::GetParameters() const {
-  if (!media_channel_ || !ssrc_ || stopped_) {
+  if (!media_channel_ || stopped_) {
     return RtpParameters();
   }
   return worker_thread_->Invoke<RtpParameters>(RTC_FROM_HERE, [&] {
-    return media_channel_->GetRtpReceiveParameters(*ssrc_);
-  });
-}
-
-bool VideoRtpReceiver::SetParameters(const RtpParameters& parameters) {
-  TRACE_EVENT0("webrtc", "VideoRtpReceiver::SetParameters");
-  if (!media_channel_ || !ssrc_ || stopped_) {
-    return false;
-  }
-  return worker_thread_->Invoke<bool>(RTC_FROM_HERE, [&] {
-    return media_channel_->SetRtpReceiveParameters(*ssrc_, parameters);
+    return ssrc_ ? media_channel_->GetRtpReceiveParameters(*ssrc_)
+                 : media_channel_->GetDefaultRtpReceiveParameters();
   });
 }
 
@@ -117,21 +104,80 @@ VideoRtpReceiver::GetFrameDecryptor() const {
   return frame_decryptor_;
 }
 
+void VideoRtpReceiver::SetDepacketizerToDecoderFrameTransformer(
+    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) {
+  worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+    RTC_DCHECK_RUN_ON(worker_thread_);
+    frame_transformer_ = std::move(frame_transformer);
+    if (media_channel_ && ssrc_.has_value() && !stopped_) {
+      media_channel_->SetDepacketizerToDecoderFrameTransformer(
+          *ssrc_, frame_transformer_);
+    }
+  });
+}
+
 void VideoRtpReceiver::Stop() {
   // TODO(deadbeef): Need to do more here to fully stop receiving packets.
   if (stopped_) {
     return;
   }
   source_->SetState(MediaSourceInterface::kEnded);
-  if (!media_channel_ || !ssrc_) {
+  if (!media_channel_) {
     RTC_LOG(LS_WARNING) << "VideoRtpReceiver::Stop: No video channel exists.";
   } else {
-    // Allow that SetSink fail. This is the normal case when the underlying
+    // Allow that SetSink fails. This is the normal case when the underlying
     // media channel has already been deleted.
-    SetSink(nullptr);
+    worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+      RTC_DCHECK_RUN_ON(worker_thread_);
+      SetSink(nullptr);
+    });
   }
   delay_->OnStop();
   stopped_ = true;
+}
+
+void VideoRtpReceiver::RestartMediaChannel(absl::optional<uint32_t> ssrc) {
+  RTC_DCHECK(media_channel_);
+  if (!stopped_ && ssrc_ == ssrc) {
+    return;
+  }
+  worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+    RTC_DCHECK_RUN_ON(worker_thread_);
+    if (!stopped_) {
+      SetSink(nullptr);
+    }
+    bool encoded_sink_enabled = saved_encoded_sink_enabled_;
+    SetEncodedSinkEnabled(false);
+    stopped_ = false;
+
+    ssrc_ = ssrc;
+
+    SetSink(source_->sink());
+    if (encoded_sink_enabled) {
+      SetEncodedSinkEnabled(true);
+    }
+
+    if (frame_transformer_ && media_channel_ && ssrc_.has_value()) {
+      media_channel_->SetDepacketizerToDecoderFrameTransformer(
+          *ssrc_, frame_transformer_);
+    }
+  });
+
+  // Attach any existing frame decryptor to the media channel.
+  MaybeAttachFrameDecryptorToMediaChannel(
+      ssrc, worker_thread_, frame_decryptor_, media_channel_, stopped_);
+  // TODO(bugs.webrtc.org/8694): Stop using 0 to mean unsignalled SSRC
+  // value.
+  delay_->OnStart(media_channel_, ssrc.value_or(0));
+}
+
+void VideoRtpReceiver::SetSink(rtc::VideoSinkInterface<VideoFrame>* sink) {
+  RTC_DCHECK(media_channel_);
+  if (ssrc_) {
+    media_channel_->SetSink(*ssrc_, sink);
+    return;
+  }
+  media_channel_->SetDefaultSink(sink);
 }
 
 void VideoRtpReceiver::SetupMediaChannel(uint32_t ssrc) {
@@ -139,19 +185,15 @@ void VideoRtpReceiver::SetupMediaChannel(uint32_t ssrc) {
     RTC_LOG(LS_ERROR)
         << "VideoRtpReceiver::SetupMediaChannel: No video channel exists.";
   }
-  if (ssrc_ == ssrc) {
-    return;
-  }
-  if (ssrc_) {
-    SetSink(nullptr);
-  }
-  ssrc_ = ssrc;
-  SetSink(source_->sink());
-  // Attach any existing frame decryptor to the media channel.
-  MaybeAttachFrameDecryptorToMediaChannel(
-      ssrc_, worker_thread_, frame_decryptor_, media_channel_, stopped_);
+  RestartMediaChannel(ssrc);
+}
 
-  delay_->OnStart(media_channel_, ssrc);
+void VideoRtpReceiver::SetupUnsignaledMediaChannel() {
+  if (!media_channel_) {
+    RTC_LOG(LS_ERROR) << "VideoRtpReceiver::SetupUnsignaledMediaChannel: No "
+                         "video channel exists.";
+  }
+  RestartMediaChannel(absl::nullopt);
 }
 
 void VideoRtpReceiver::set_stream_ids(std::vector<std::string> stream_ids) {
@@ -207,7 +249,27 @@ void VideoRtpReceiver::SetJitterBufferMinimumDelay(
 void VideoRtpReceiver::SetMediaChannel(cricket::MediaChannel* media_channel) {
   RTC_DCHECK(media_channel == nullptr ||
              media_channel->media_type() == media_type());
-  media_channel_ = static_cast<cricket::VideoMediaChannel*>(media_channel);
+  worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+    RTC_DCHECK_RUN_ON(worker_thread_);
+    bool encoded_sink_enabled = saved_encoded_sink_enabled_;
+    if (encoded_sink_enabled && media_channel_) {
+      // Turn off the old sink, if any.
+      SetEncodedSinkEnabled(false);
+    }
+
+    media_channel_ = static_cast<cricket::VideoMediaChannel*>(media_channel);
+
+    if (media_channel_) {
+      if (saved_generate_keyframe_) {
+        // TODO(bugs.webrtc.org/8694): Stop using 0 to mean unsignalled SSRC
+        media_channel_->GenerateKeyFrame(ssrc_.value_or(0));
+        saved_generate_keyframe_ = false;
+      }
+      if (encoded_sink_enabled) {
+        SetEncodedSinkEnabled(true);
+      }
+    }
+  });
 }
 
 void VideoRtpReceiver::NotifyFirstPacketReceived() {
@@ -223,6 +285,46 @@ std::vector<RtpSource> VideoRtpReceiver::GetSources() const {
   }
   return worker_thread_->Invoke<std::vector<RtpSource>>(
       RTC_FROM_HERE, [&] { return media_channel_->GetSources(*ssrc_); });
+}
+
+void VideoRtpReceiver::OnGenerateKeyFrame() {
+  RTC_DCHECK_RUN_ON(worker_thread_);
+  if (!media_channel_) {
+    RTC_LOG(LS_ERROR)
+        << "VideoRtpReceiver::OnGenerateKeyFrame: No video channel exists.";
+    return;
+  }
+  // TODO(bugs.webrtc.org/8694): Stop using 0 to mean unsignalled SSRC
+  media_channel_->GenerateKeyFrame(ssrc_.value_or(0));
+  // We need to remember to request generation of a new key frame if the media
+  // channel changes, because there's no feedback whether the keyframe
+  // generation has completed on the channel.
+  saved_generate_keyframe_ = true;
+}
+
+void VideoRtpReceiver::OnEncodedSinkEnabled(bool enable) {
+  RTC_DCHECK_RUN_ON(worker_thread_);
+  SetEncodedSinkEnabled(enable);
+  // Always save the latest state of the callback in case the media_channel_
+  // changes.
+  saved_encoded_sink_enabled_ = enable;
+}
+
+void VideoRtpReceiver::SetEncodedSinkEnabled(bool enable) {
+  if (media_channel_) {
+    if (enable) {
+      // TODO(bugs.webrtc.org/8694): Stop using 0 to mean unsignalled SSRC
+      auto source = source_;
+      media_channel_->SetRecordableEncodedFrameCallback(
+          ssrc_.value_or(0),
+          [source = std::move(source)](const RecordableEncodedFrame& frame) {
+            source->BroadcastRecordableEncodedFrame(frame);
+          });
+    } else {
+      // TODO(bugs.webrtc.org/8694): Stop using 0 to mean unsignalled SSRC
+      media_channel_->ClearRecordableEncodedFrameCallback(ssrc_.value_or(0));
+    }
+  }
 }
 
 }  // namespace webrtc

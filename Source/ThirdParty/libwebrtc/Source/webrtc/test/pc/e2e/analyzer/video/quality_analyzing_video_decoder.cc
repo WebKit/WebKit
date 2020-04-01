@@ -12,9 +12,9 @@
 
 #include <cstdint>
 #include <cstring>
+#include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "api/video/i420_buffer.h"
 #include "modules/video_coding/include/video_error_codes.h"
@@ -35,7 +35,7 @@ QualityAnalyzingVideoDecoder::QualityAnalyzingVideoDecoder(
       delegate_(std::move(delegate)),
       extractor_(extractor),
       analyzer_(analyzer) {
-  analyzing_callback_ = absl::make_unique<DecoderCallback>(this);
+  analyzing_callback_ = std::make_unique<DecoderCallback>(this);
 }
 QualityAnalyzingVideoDecoder::~QualityAnalyzingVideoDecoder() = default;
 
@@ -87,7 +87,7 @@ int32_t QualityAnalyzingVideoDecoder::Decode(const EncodedImage& input_image,
   // We can safely dereference |origin_image|, because it can be removed from
   // the map only after |delegate_| Decode method will be invoked. Image will be
   // removed inside DecodedImageCallback, which can be done on separate thread.
-  analyzer_->OnFrameReceived(out.id, *origin_image);
+  analyzer_->OnFramePreDecode(out.id, *origin_image);
   int32_t result =
       delegate_->Decode(*origin_image, missing_frames, render_time_ms);
   if (result != WEBRTC_VIDEO_CODEC_OK) {
@@ -109,11 +109,15 @@ int32_t QualityAnalyzingVideoDecoder::RegisterDecodeCompleteCallback(
 }
 
 int32_t QualityAnalyzingVideoDecoder::Release() {
+  // Release decoder first. During release process it can still decode some
+  // frames, so we don't take a lock to prevent deadlock.
+  int32_t result = delegate_->Release();
+
   rtc::CritScope crit(&lock_);
   analyzing_callback_->SetDelegateCallback(nullptr);
   timestamp_to_frame_id_.clear();
   decoding_images_.clear();
-  return delegate_->Release();
+  return result;
 }
 
 bool QualityAnalyzingVideoDecoder::PrefersLateDecoding() const {
@@ -242,7 +246,7 @@ std::unique_ptr<VideoDecoder>
 QualityAnalyzingVideoDecoderFactory::CreateVideoDecoder(
     const SdpVideoFormat& format) {
   std::unique_ptr<VideoDecoder> decoder = delegate_->CreateVideoDecoder(format);
-  return absl::make_unique<QualityAnalyzingVideoDecoder>(
+  return std::make_unique<QualityAnalyzingVideoDecoder>(
       id_generator_->GetNextId(), std::move(decoder), extractor_, analyzer_);
 }
 
@@ -252,7 +256,7 @@ QualityAnalyzingVideoDecoderFactory::LegacyCreateVideoDecoder(
     const std::string& receive_stream_id) {
   std::unique_ptr<VideoDecoder> decoder =
       delegate_->LegacyCreateVideoDecoder(format, receive_stream_id);
-  return absl::make_unique<QualityAnalyzingVideoDecoder>(
+  return std::make_unique<QualityAnalyzingVideoDecoder>(
       id_generator_->GetNextId(), std::move(decoder), extractor_, analyzer_);
 }
 

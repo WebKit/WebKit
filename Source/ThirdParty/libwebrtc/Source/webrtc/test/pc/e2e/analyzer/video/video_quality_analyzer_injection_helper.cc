@@ -11,11 +11,13 @@
 #include "test/pc/e2e/analyzer/video/video_quality_analyzer_injection_helper.h"
 
 #include <utility>
+#include <vector>
 
 #include "absl/memory/memory.h"
 #include "test/pc/e2e/analyzer/video/quality_analyzing_video_decoder.h"
 #include "test/pc/e2e/analyzer/video/quality_analyzing_video_encoder.h"
 #include "test/pc/e2e/analyzer/video/simulcast_dummy_buffer_helper.h"
+#include "test/video_renderer.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -37,40 +39,32 @@ class VideoWriter final : public rtc::VideoSinkInterface<VideoFrame> {
   test::VideoFrameWriter* video_writer_;
 };
 
-// Intercepts generated frames and passes them also to video quality analyzer
-// and to provided sinks.
-class AnalyzingFrameGenerator final : public test::FrameGenerator {
+class AnalyzingFramePreprocessor
+    : public test::TestVideoCapturer::FramePreprocessor {
  public:
-  AnalyzingFrameGenerator(
+  AnalyzingFramePreprocessor(
       std::string stream_label,
-      std::unique_ptr<test::FrameGenerator> delegate,
       VideoQualityAnalyzerInterface* analyzer,
       std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>> sinks)
       : stream_label_(std::move(stream_label)),
-        delegate_(std::move(delegate)),
         analyzer_(analyzer),
         sinks_(std::move(sinks)) {}
-  ~AnalyzingFrameGenerator() override = default;
+  ~AnalyzingFramePreprocessor() override = default;
 
-  VideoFrame* NextFrame() override {
-    VideoFrame* frame = delegate_->NextFrame();
+  VideoFrame Preprocess(const VideoFrame& source_frame) override {
+    // Copy VideoFrame to be able to set id on it.
+    VideoFrame frame = source_frame;
+    uint16_t frame_id = analyzer_->OnFrameCaptured(stream_label_, frame);
+    frame.set_id(frame_id);
 
-    uint16_t frame_id = analyzer_->OnFrameCaptured(stream_label_, *frame);
-    frame->set_id(frame_id);
-
-    for (auto& listener : sinks_) {
-      listener->OnFrame(*frame);
+    for (auto& sink : sinks_) {
+      sink->OnFrame(frame);
     }
     return frame;
   }
 
-  void ChangeResolution(size_t width, size_t height) override {
-    delegate_->ChangeResolution(width, height);
-  }
-
  private:
   const std::string stream_label_;
-  std::unique_ptr<test::FrameGenerator> delegate_;
   VideoQualityAnalyzerInterface* const analyzer_;
   const std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>>
       sinks_;
@@ -94,8 +88,8 @@ class AnalyzingVideoSink final : public rtc::VideoSinkInterface<VideoFrame> {
       return;
     }
     analyzer_->OnFrameRendered(frame);
-    for (auto& listener : sinks_) {
-      listener->OnFrame(frame);
+    for (auto& sink : sinks_) {
+      sink->OnFrame(frame);
     }
   }
 
@@ -114,7 +108,7 @@ VideoQualityAnalyzerInjectionHelper::VideoQualityAnalyzerInjectionHelper(
     : analyzer_(std::move(analyzer)),
       injector_(injector),
       extractor_(extractor),
-      encoding_entities_id_generator_(absl::make_unique<IntIdGenerator>(1)) {
+      encoding_entities_id_generator_(std::make_unique<IntIdGenerator>(1)) {
   RTC_DCHECK(injector_);
   RTC_DCHECK(extractor_);
 }
@@ -127,7 +121,7 @@ VideoQualityAnalyzerInjectionHelper::WrapVideoEncoderFactory(
     double bitrate_multiplier,
     std::map<std::string, absl::optional<int>> stream_required_spatial_index)
     const {
-  return absl::make_unique<QualityAnalyzingVideoEncoderFactory>(
+  return std::make_unique<QualityAnalyzingVideoEncoderFactory>(
       std::move(delegate), bitrate_multiplier,
       std::move(stream_required_spatial_index),
       encoding_entities_id_generator_.get(), injector_, analyzer_.get());
@@ -136,34 +130,43 @@ VideoQualityAnalyzerInjectionHelper::WrapVideoEncoderFactory(
 std::unique_ptr<VideoDecoderFactory>
 VideoQualityAnalyzerInjectionHelper::WrapVideoDecoderFactory(
     std::unique_ptr<VideoDecoderFactory> delegate) const {
-  return absl::make_unique<QualityAnalyzingVideoDecoderFactory>(
+  return std::make_unique<QualityAnalyzingVideoDecoderFactory>(
       std::move(delegate), encoding_entities_id_generator_.get(), extractor_,
       analyzer_.get());
 }
 
-std::unique_ptr<test::FrameGenerator>
-VideoQualityAnalyzerInjectionHelper::WrapFrameGenerator(
-    std::string stream_label,
-    std::unique_ptr<test::FrameGenerator> delegate,
+std::unique_ptr<test::TestVideoCapturer::FramePreprocessor>
+VideoQualityAnalyzerInjectionHelper::CreateFramePreprocessor(
+    const VideoConfig& config,
     test::VideoFrameWriter* writer) const {
   std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>> sinks;
   if (writer) {
-    sinks.push_back(absl::make_unique<VideoWriter>(writer));
+    sinks.push_back(std::make_unique<VideoWriter>(writer));
   }
-  return absl::make_unique<AnalyzingFrameGenerator>(
-      std::move(stream_label), std::move(delegate), analyzer_.get(),
-      std::move(sinks));
+  if (config.show_on_screen) {
+    sinks.push_back(absl::WrapUnique(
+        test::VideoRenderer::Create((*config.stream_label + "-capture").c_str(),
+                                    config.width, config.height)));
+  }
+  return std::make_unique<AnalyzingFramePreprocessor>(
+      std::move(*config.stream_label), analyzer_.get(), std::move(sinks));
 }
 
 std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>
 VideoQualityAnalyzerInjectionHelper::CreateVideoSink(
+    const VideoConfig& config,
     test::VideoFrameWriter* writer) const {
   std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>> sinks;
   if (writer) {
-    sinks.push_back(absl::make_unique<VideoWriter>(writer));
+    sinks.push_back(std::make_unique<VideoWriter>(writer));
   }
-  return absl::make_unique<AnalyzingVideoSink>(analyzer_.get(),
-                                               std::move(sinks));
+  if (config.show_on_screen) {
+    sinks.push_back(absl::WrapUnique(
+        test::VideoRenderer::Create((*config.stream_label + "-render").c_str(),
+                                    config.width, config.height)));
+  }
+  return std::make_unique<AnalyzingVideoSink>(analyzer_.get(),
+                                              std::move(sinks));
 }
 
 void VideoQualityAnalyzerInjectionHelper::Start(std::string test_case_name,

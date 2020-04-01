@@ -60,6 +60,7 @@ class AudioState : public webrtc::AudioState {
 
  private:
   void UpdateAudioTransportWithSendingStreams();
+  void UpdateNullAudioPollerState();
 
   rtc::ThreadChecker thread_checker_;
   rtc::ThreadChecker process_thread_checker_;

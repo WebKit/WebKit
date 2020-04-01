@@ -28,9 +28,15 @@
 #include "rtc_base/numerics/samples_stats_counter.h"
 #include "rtc_base/platform_thread.h"
 #include "system_wrappers/include/clock.h"
+#include "test/testsupport/perf_test.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
+
+// WebRTC will request a key frame after 3 seconds if no frames were received.
+// We assume max frame rate ~60 fps, so 270 frames will cover max freeze without
+// key frame request.
+constexpr int kDefaultMaxFramesInFlightPerStream = 270;
 
 class RateCounter {
  public:
@@ -81,6 +87,8 @@ struct StreamStats {
   RateCounter encode_frame_rate;
   SamplesStatsCounter encode_time_ms;
   SamplesStatsCounter decode_time_ms;
+  // Time from last packet of frame is received until it's sent to the renderer.
+  SamplesStatsCounter receive_to_render_time_ms;
   // Max frames skipped between two nearest.
   SamplesStatsCounter skipped_between_rendered;
   // In the next 2 metrics freeze is a pause that is longer, than maximum:
@@ -102,27 +110,26 @@ struct AnalyzerStats {
   // Size of analyzer internal comparisons queue, measured when new element
   // id added to the queue.
   SamplesStatsCounter comparisons_queue_size;
-  // Amount of performed comparisons of 2 video frames from captured and
+  // Number of performed comparisons of 2 video frames from captured and
   // rendered streams.
   int64_t comparisons_done = 0;
-  // Amount of overloaded comparisons. Comparison is overloaded if it is queued
-  // when there are too many not processed comparisons in the queue. Overloaded
-  // comparison doesn't include metrics, that require heavy computations like
-  // SSIM and PSNR.
-  int64_t overloaded_comparisons_done = 0;
-};
-
-struct VideoBweStats {
-  SamplesStatsCounter available_send_bandwidth;
-  SamplesStatsCounter transmission_bitrate;
-  SamplesStatsCounter retransmission_bitrate;
-  SamplesStatsCounter actual_encode_bitrate;
-  SamplesStatsCounter target_encode_bitrate;
+  // Number of cpu overloaded comparisons. Comparison is cpu overloaded if it is
+  // queued when there are too many not processed comparisons in the queue.
+  // Overloaded comparison doesn't include metrics like SSIM and PSNR that
+  // require heavy computations.
+  int64_t cpu_overloaded_comparisons_done = 0;
+  // Number of memory overloaded comparisons. Comparison is memory overloaded if
+  // it is queued when its captured frame was already removed due to high memory
+  // usage for that video stream.
+  int64_t memory_overloaded_comparisons_done = 0;
 };
 
 class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
  public:
-  DefaultVideoQualityAnalyzer();
+  explicit DefaultVideoQualityAnalyzer(
+      bool heavy_metrics_computation_enabled = true,
+      int max_frames_in_flight_per_stream_count =
+          kDefaultMaxFramesInFlightPerStream);
   ~DefaultVideoQualityAnalyzer() override;
 
   void Start(std::string test_case_name, int max_threads_count) override;
@@ -132,8 +139,8 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   void OnFrameEncoded(uint16_t frame_id,
                       const EncodedImage& encoded_image) override;
   void OnFrameDropped(EncodedImageCallback::DropReason reason) override;
-  void OnFrameReceived(uint16_t frame_id,
-                       const EncodedImage& input_image) override;
+  void OnFramePreDecode(uint16_t frame_id,
+                        const EncodedImage& input_image) override;
   void OnFrameDecoded(const VideoFrame& frame,
                       absl::optional<int32_t> decode_time_ms,
                       absl::optional<uint8_t> qp) override;
@@ -142,10 +149,12 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   void OnDecoderError(uint16_t frame_id, int32_t error_code) override;
   void Stop() override;
   std::string GetStreamLabel(uint16_t frame_id) override;
+  void OnStatsReports(const std::string& pc_label,
+                      const StatsReports& stats_reports) override {}
 
   // Returns set of stream labels, that were met during test call.
   std::set<std::string> GetKnownVideoStreams() const;
-  const FrameCounters& GetGlobalCounters();
+  const FrameCounters& GetGlobalCounters() const;
   // Returns frame counter per stream label. Valid stream labels can be obtained
   // by calling GetKnownVideoStreams()
   const std::map<std::string, FrameCounters>& GetPerStreamCounters() const;
@@ -153,13 +162,6 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   // obtained by calling GetKnownVideoStreams()
   std::map<std::string, StreamStats> GetStats() const;
   AnalyzerStats GetAnalyzerStats() const;
-
-  // Will be called everytime new stats reports are available for the
-  // Peer Connection identified by |pc_label|.
-  void OnStatsReports(const std::string& pc_label,
-                      const StatsReports& stats_reports) override;
-
-  std::map<std::string, VideoBweStats> GetVideoBweStats() const;
 
  private:
   struct FrameStats {
@@ -171,13 +173,25 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
     Timestamp captured_time;
     Timestamp pre_encode_time = Timestamp::MinusInfinity();
     Timestamp encoded_time = Timestamp::MinusInfinity();
+    // Time when last packet of a frame was received.
     Timestamp received_time = Timestamp::MinusInfinity();
-    Timestamp decoded_time = Timestamp::MinusInfinity();
+    Timestamp decode_start_time = Timestamp::MinusInfinity();
+    Timestamp decode_end_time = Timestamp::MinusInfinity();
     Timestamp rendered_time = Timestamp::MinusInfinity();
     Timestamp prev_frame_rendered_time = Timestamp::MinusInfinity();
 
     absl::optional<int> rendered_frame_width = absl::nullopt;
     absl::optional<int> rendered_frame_height = absl::nullopt;
+  };
+
+  // Describes why comparison was done in overloaded mode (without calculating
+  // PSNR and SSIM).
+  enum class OverloadReason {
+    kNone,
+    // Not enough CPU to process all incoming comparisons.
+    kCpu,
+    // Not enough memory to store captured frames for all comparisons.
+    kMemory
   };
 
   // Represents comparison between two VideoFrames. Contains video frames itself
@@ -192,8 +206,8 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
     FrameComparison(absl::optional<VideoFrame> captured,
                     absl::optional<VideoFrame> rendered,
                     bool dropped,
-                    FrameStats frame_stats);
-    FrameComparison(bool dropped, FrameStats frameStats);
+                    FrameStats frame_stats,
+                    OverloadReason overload_reason);
 
     // Frames can be omitted if there too many computations waiting in the
     // queue.
@@ -204,10 +218,32 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
     // will be |absl::nullopt|.
     bool dropped;
     FrameStats frame_stats;
+    OverloadReason overload_reason;
   };
 
   // Represents a current state of video stream.
-  struct StreamState {
+  class StreamState {
+   public:
+    void PushBack(uint16_t frame_id) { frame_ids_.emplace_back(frame_id); }
+
+    uint16_t PopFront();
+
+    bool Empty() { return frame_ids_.empty(); }
+
+    uint16_t Front() { return frame_ids_.front(); }
+
+    int GetAliveFramesCount() { return frame_ids_.size() - dead_frames_count_; }
+
+    uint16_t MarkNextAliveFrameAsDead();
+
+    void set_last_rendered_frame_time(Timestamp time) {
+      last_rendered_frame_time_ = time;
+    }
+    absl::optional<Timestamp> last_rendered_frame_time() const {
+      return last_rendered_frame_time_;
+    }
+
+   private:
     // To correctly determine dropped frames we have to know sequence of frames
     // in each stream so we will keep a list of frame ids inside the stream.
     // When the frame is rendered, we will pop ids from the list for until id
@@ -219,8 +255,10 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
     // If we received frame with id frame_id3, then we will pop frame_id1 and
     // frame_id2 and consider that frames as dropped and then compare received
     // frame with the one from |captured_frames_in_flight_| with id frame_id3.
-    std::deque<uint16_t> frame_ids;
-    absl::optional<Timestamp> last_rendered_frame_time = absl::nullopt;
+    std::deque<uint16_t> frame_ids_;
+    // Count of dead frames in the beginning of the deque.
+    int dead_frames_count_;
+    absl::optional<Timestamp> last_rendered_frame_time_ = absl::nullopt;
   };
 
   enum State { kNew, kActive, kStopped };
@@ -234,20 +272,23 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   void ProcessComparison(const FrameComparison& comparison);
   // Report results for all metrics for all streams.
   void ReportResults();
-  static void ReportVideoBweResults(const std::string& test_case_name,
-                                    const VideoBweStats& video_bwe_stats);
-  static void ReportResults(const std::string& test_case_name,
-                            const StreamStats& stats,
-                            const FrameCounters& frame_counters);
+  void ReportResults(const std::string& test_case_name,
+                     const StreamStats& stats,
+                     const FrameCounters& frame_counters)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
   // Report result for single metric for specified stream.
   static void ReportResult(const std::string& metric_name,
                            const std::string& test_case_name,
                            const SamplesStatsCounter& counter,
-                           const std::string& unit);
+                           const std::string& unit,
+                           webrtc::test::ImproveDirection improve_direction =
+                               webrtc::test::ImproveDirection::kNone);
   // Returns name of current test case for reporting.
   std::string GetTestCaseName(const std::string& stream_label) const;
   Timestamp Now();
 
+  const bool heavy_metrics_computation_enabled_;
+  const int max_frames_in_flight_per_stream_count_;
   webrtc::Clock* const clock_;
   std::atomic<uint16_t> next_frame_id_{0};
 
@@ -257,7 +298,12 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   State state_ RTC_GUARDED_BY(lock_) = State::kNew;
   Timestamp start_time_ RTC_GUARDED_BY(lock_) = Timestamp::MinusInfinity();
   // Frames that were captured by all streams and still aren't rendered by any
-  // stream or deemed dropped.
+  // stream or deemed dropped. Frame with id X can be removed from this map if:
+  // 1. The frame with id X was received in OnFrameRendered
+  // 2. The frame with id Y > X was received in OnFrameRendered
+  // 3. Next available frame id for newly captured frame is X
+  // 4. There too many frames in flight for current video stream and X is the
+  //    oldest frame id in this stream.
   std::map<uint16_t, VideoFrame> captured_frames_in_flight_
       RTC_GUARDED_BY(lock_);
   // Global frames count for all video streams.
@@ -282,12 +328,6 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
       RTC_GUARDED_BY(comparison_lock_);
   std::deque<FrameComparison> comparisons_ RTC_GUARDED_BY(comparison_lock_);
   AnalyzerStats analyzer_stats_ RTC_GUARDED_BY(comparison_lock_);
-
-  rtc::CriticalSection video_bwe_stats_lock_;
-  // Map between a peer connection label (provided by the framework) and
-  // its video BWE stats.
-  std::map<std::string, VideoBweStats> video_bwe_stats_
-      RTC_GUARDED_BY(video_bwe_stats_lock_);
 
   std::vector<std::unique_ptr<rtc::PlatformThread>> thread_pool_;
   rtc::Event comparison_available_event_;

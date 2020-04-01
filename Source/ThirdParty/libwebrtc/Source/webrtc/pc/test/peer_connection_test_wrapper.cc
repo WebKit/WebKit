@@ -12,11 +12,11 @@
 
 #include <stddef.h>
 
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "api/audio/audio_mixer.h"
 #include "api/create_peerconnection_factory.h"
@@ -142,7 +142,7 @@ void PeerConnectionTestWrapper::OnAddTrack(
   if (receiver->track()->kind() == MediaStreamTrackInterface::kVideoKind) {
     auto* video_track =
         static_cast<VideoTrackInterface*>(receiver->track().get());
-    renderer_ = absl::make_unique<FakeVideoTrackRenderer>(video_track);
+    renderer_ = std::make_unique<FakeVideoTrackRenderer>(video_track);
   }
 }
 

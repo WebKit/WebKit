@@ -14,7 +14,9 @@
 #include <string.h>
 
 #include <memory>
+#include <vector>
 
+#include "api/array_view.h"
 #include "common_audio/include/audio_util.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/gtest_prod_util.h"
@@ -48,39 +50,59 @@ class ChannelBuffer {
         num_frames_per_band_(num_frames / num_bands),
         num_allocated_channels_(num_channels),
         num_channels_(num_channels),
-        num_bands_(num_bands) {
-    for (size_t i = 0; i < num_allocated_channels_; ++i) {
-      for (size_t j = 0; j < num_bands_; ++j) {
-        channels_[j * num_allocated_channels_ + i] =
-            &data_[i * num_frames_ + j * num_frames_per_band_];
-        bands_[i * num_bands_ + j] = channels_[j * num_allocated_channels_ + i];
+        num_bands_(num_bands),
+        bands_view_(num_allocated_channels_,
+                    std::vector<rtc::ArrayView<T>>(num_bands_)),
+        channels_view_(
+            num_bands_,
+            std::vector<rtc::ArrayView<T>>(num_allocated_channels_)) {
+    // Temporarily cast away const_ness to allow populating the array views.
+    auto* bands_view =
+        const_cast<std::vector<std::vector<rtc::ArrayView<T>>>*>(&bands_view_);
+    auto* channels_view =
+        const_cast<std::vector<std::vector<rtc::ArrayView<T>>>*>(
+            &channels_view_);
+
+    for (size_t ch = 0; ch < num_allocated_channels_; ++ch) {
+      for (size_t band = 0; band < num_bands_; ++band) {
+        (*channels_view)[band][ch] = rtc::ArrayView<T>(
+            &data_[ch * num_frames_ + band * num_frames_per_band_],
+            num_frames_per_band_);
+        (*bands_view)[ch][band] = channels_view_[band][ch];
+        channels_[band * num_allocated_channels_ + ch] =
+            channels_view_[band][ch].data();
+        bands_[ch * num_bands_ + band] =
+            channels_[band * num_allocated_channels_ + ch];
       }
     }
   }
 
-  // Returns a pointer array to the full-band channels (or lower band channels).
-  // Usage:
-  // channels()[channel][sample].
-  // Where:
-  // 0 <= channel < |num_allocated_channels_|
-  // 0 <= sample < |num_frames_|
-  T* const* channels() { return channels(0); }
-  const T* const* channels() const { return channels(0); }
-
-  // Returns a pointer array to the channels for a specific band.
-  // Usage:
-  // channels(band)[channel][sample].
+  // Returns a pointer array to the channels.
+  // If band is explicitly specificed, the channels for a specific band are
+  // returned and the usage becomes: channels(band)[channel][sample].
   // Where:
   // 0 <= band < |num_bands_|
   // 0 <= channel < |num_allocated_channels_|
   // 0 <= sample < |num_frames_per_band_|
-  const T* const* channels(size_t band) const {
+
+  // If band is not explicitly specified, the full-band channels (or lower band
+  // channels) are returned and the usage becomes: channels()[channel][sample].
+  // Where:
+  // 0 <= channel < |num_allocated_channels_|
+  // 0 <= sample < |num_frames_|
+  const T* const* channels(size_t band = 0) const {
     RTC_DCHECK_LT(band, num_bands_);
     return &channels_[band * num_allocated_channels_];
   }
-  T* const* channels(size_t band) {
+  T* const* channels(size_t band = 0) {
     const ChannelBuffer<T>* t = this;
     return const_cast<T* const*>(t->channels(band));
+  }
+  rtc::ArrayView<const rtc::ArrayView<T>> channels_view(size_t band = 0) {
+    return channels_view_[band];
+  }
+  rtc::ArrayView<const rtc::ArrayView<T>> channels_view(size_t band = 0) const {
+    return channels_view_[band];
   }
 
   // Returns a pointer array to the bands for a specific channel.
@@ -98,6 +120,13 @@ class ChannelBuffer {
   T* const* bands(size_t channel) {
     const ChannelBuffer<T>* t = this;
     return const_cast<T* const*>(t->bands(channel));
+  }
+
+  rtc::ArrayView<const rtc::ArrayView<T>> bands_view(size_t channel) {
+    return bands_view_[channel];
+  }
+  rtc::ArrayView<const rtc::ArrayView<T>> bands_view(size_t channel) const {
+    return bands_view_[channel];
   }
 
   // Sets the |slice| pointers to the |start_frame| position for each channel.
@@ -140,6 +169,8 @@ class ChannelBuffer {
   // Number of channels the user sees.
   size_t num_channels_;
   const size_t num_bands_;
+  const std::vector<std::vector<rtc::ArrayView<T>>> bands_view_;
+  const std::vector<std::vector<rtc::ArrayView<T>>> channels_view_;
 };
 
 // One int16_t and one float ChannelBuffer that are kept in sync. The sync is

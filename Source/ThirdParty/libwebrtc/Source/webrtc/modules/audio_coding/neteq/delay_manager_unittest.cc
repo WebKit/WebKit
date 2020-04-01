@@ -14,9 +14,9 @@
 
 #include <math.h>
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "modules/audio_coding/neteq/histogram.h"
-#include "modules/audio_coding/neteq/mock/mock_delay_peak_detector.h"
 #include "modules/audio_coding/neteq/mock/mock_histogram.h"
 #include "modules/audio_coding/neteq/mock/mock_statistics_calculator.h"
 #include "rtc_base/checks.h"
@@ -46,28 +46,23 @@ class DelayManagerTest : public ::testing::Test {
  protected:
   DelayManagerTest();
   virtual void SetUp();
-  virtual void TearDown();
   void RecreateDelayManager();
   void SetPacketAudioLength(int lengt_ms);
-  void InsertNextPacket();
+  absl::optional<int> InsertNextPacket();
   void IncreaseTime(int inc_ms);
 
   std::unique_ptr<DelayManager> dm_;
   TickTimer tick_timer_;
   MockStatisticsCalculator stats_;
-  MockDelayPeakDetector detector_;
   MockHistogram* mock_histogram_;
   uint16_t seq_no_;
   uint32_t ts_;
   bool enable_rtx_handling_ = false;
   bool use_mock_histogram_ = false;
-  DelayManager::HistogramMode histogram_mode_ =
-      DelayManager::HistogramMode::INTER_ARRIVAL_TIME;
 };
 
 DelayManagerTest::DelayManagerTest()
     : dm_(nullptr),
-      detector_(&tick_timer_, false),
       seq_no_(0x1234),
       ts_(0x12345678) {}
 
@@ -76,40 +71,33 @@ void DelayManagerTest::SetUp() {
 }
 
 void DelayManagerTest::RecreateDelayManager() {
-  EXPECT_CALL(detector_, Reset()).Times(1);
   if (use_mock_histogram_) {
     mock_histogram_ = new MockHistogram(kMaxIat, kForgetFactor);
     std::unique_ptr<Histogram> histogram(mock_histogram_);
-    dm_ = absl::make_unique<DelayManager>(
+    dm_ = std::make_unique<DelayManager>(
         kMaxNumberOfPackets, kMinDelayMs, kDefaultHistogramQuantile,
-        histogram_mode_, enable_rtx_handling_, &detector_, &tick_timer_,
-        &stats_, std::move(histogram));
+        enable_rtx_handling_, &tick_timer_, std::move(histogram));
   } else {
     dm_ = DelayManager::Create(kMaxNumberOfPackets, kMinDelayMs,
-                               enable_rtx_handling_, &detector_, &tick_timer_,
-                               &stats_);
+                               enable_rtx_handling_, &tick_timer_);
   }
 }
 
 void DelayManagerTest::SetPacketAudioLength(int lengt_ms) {
-  EXPECT_CALL(detector_, SetPacketAudioLength(lengt_ms));
   dm_->SetPacketAudioLength(lengt_ms);
 }
 
-void DelayManagerTest::InsertNextPacket() {
-  EXPECT_EQ(0, dm_->Update(seq_no_, ts_, kFs));
+absl::optional<int> DelayManagerTest::InsertNextPacket() {
+  auto relative_delay = dm_->Update(seq_no_, ts_, kFs);
   seq_no_ += 1;
   ts_ += kTsIncrement;
+  return relative_delay;
 }
 
 void DelayManagerTest::IncreaseTime(int inc_ms) {
   for (int t = 0; t < inc_ms; t += kTimeStepMs) {
     tick_timer_.Increment();
   }
-}
-
-void DelayManagerTest::TearDown() {
-  EXPECT_CALL(detector_, Die());
 }
 
 TEST_F(DelayManagerTest, CreateAndDestroy) {
@@ -119,21 +107,8 @@ TEST_F(DelayManagerTest, CreateAndDestroy) {
 
 TEST_F(DelayManagerTest, SetPacketAudioLength) {
   const int kLengthMs = 30;
-  // Expect DelayManager to pass on the new length to the detector object.
-  EXPECT_CALL(detector_, SetPacketAudioLength(kLengthMs)).Times(1);
   EXPECT_EQ(0, dm_->SetPacketAudioLength(kLengthMs));
   EXPECT_EQ(-1, dm_->SetPacketAudioLength(-1));  // Illegal parameter value.
-}
-
-TEST_F(DelayManagerTest, PeakFound) {
-  // Expect DelayManager to pass on the question to the detector.
-  // Call twice, and let the detector return true the first time and false the
-  // second time.
-  EXPECT_CALL(detector_, peak_found())
-      .WillOnce(Return(true))
-      .WillOnce(Return(false));
-  EXPECT_TRUE(dm_->PeakFound());
-  EXPECT_FALSE(dm_->PeakFound());
 }
 
 TEST_F(DelayManagerTest, UpdateNormal) {
@@ -143,10 +118,6 @@ TEST_F(DelayManagerTest, UpdateNormal) {
   // Advance time by one frame size.
   IncreaseTime(kFrameSizeMs);
   // Second packet arrival.
-  // Expect detector update method to be called once with inter-arrival time
-  // equal to 1 packet, and (base) target level equal to 1 as well.
-  // Return false to indicate no peaks found.
-  EXPECT_CALL(detector_, Update(1, false, 1)).WillOnce(Return(false));
   InsertNextPacket();
   EXPECT_EQ(1 << 8, dm_->TargetLevel());  // In Q8.
   EXPECT_EQ(1, dm_->base_target_level());
@@ -166,10 +137,6 @@ TEST_F(DelayManagerTest, UpdateLongInterArrivalTime) {
   // Advance time by two frame size.
   IncreaseTime(2 * kFrameSizeMs);
   // Second packet arrival.
-  // Expect detector update method to be called once with inter-arrival time
-  // equal to 1 packet, and (base) target level equal to 1 as well.
-  // Return false to indicate no peaks found.
-  EXPECT_CALL(detector_, Update(2, false, 2)).WillOnce(Return(false));
   InsertNextPacket();
   EXPECT_EQ(2 << 8, dm_->TargetLevel());  // In Q8.
   EXPECT_EQ(2, dm_->base_target_level());
@@ -182,51 +149,6 @@ TEST_F(DelayManagerTest, UpdateLongInterArrivalTime) {
   EXPECT_EQ(lower + (20 << 8) / kFrameSizeMs, higher);
 }
 
-TEST_F(DelayManagerTest, UpdatePeakFound) {
-  SetPacketAudioLength(kFrameSizeMs);
-  // First packet arrival.
-  InsertNextPacket();
-  // Advance time by one frame size.
-  IncreaseTime(kFrameSizeMs);
-  // Second packet arrival.
-  // Expect detector update method to be called once with inter-arrival time
-  // equal to 1 packet, and (base) target level equal to 1 as well.
-  // Return true to indicate that peaks are found. Let the peak height be 5.
-  EXPECT_CALL(detector_, Update(1, false, 1)).WillOnce(Return(true));
-  EXPECT_CALL(detector_, MaxPeakHeight()).WillOnce(Return(5));
-  InsertNextPacket();
-  EXPECT_EQ(5 << 8, dm_->TargetLevel());
-  EXPECT_EQ(1, dm_->base_target_level());  // Base target level is w/o peaks.
-  int lower, higher;
-  dm_->BufferLimits(&lower, &higher);
-  // Expect |lower| to be 75% of target level, and |higher| to be target level.
-  EXPECT_EQ((5 << 8) * 3 / 4, lower);
-  EXPECT_EQ(5 << 8, higher);
-}
-
-TEST_F(DelayManagerTest, TargetDelay) {
-  SetPacketAudioLength(kFrameSizeMs);
-  // First packet arrival.
-  InsertNextPacket();
-  // Advance time by one frame size.
-  IncreaseTime(kFrameSizeMs);
-  // Second packet arrival.
-  // Expect detector update method to be called once with inter-arrival time
-  // equal to 1 packet, and (base) target level equal to 1 as well.
-  // Return false to indicate no peaks found.
-  EXPECT_CALL(detector_, Update(1, false, 1)).WillOnce(Return(false));
-  InsertNextPacket();
-  const int kExpectedTarget = 1;
-  EXPECT_EQ(kExpectedTarget << 8, dm_->TargetLevel());  // In Q8.
-  EXPECT_EQ(1, dm_->base_target_level());
-  int lower, higher;
-  dm_->BufferLimits(&lower, &higher);
-  // Expect |lower| to be 75% of base target level, and |higher| to be
-  // lower + 20 ms headroom.
-  EXPECT_EQ((1 << 8) * 3 / 4, lower);
-  EXPECT_EQ(lower + (20 << 8) / kFrameSizeMs, higher);
-}
-
 TEST_F(DelayManagerTest, MaxDelay) {
   const int kExpectedTarget = 5;
   const int kTimeIncrement = kExpectedTarget * kFrameSizeMs;
@@ -234,12 +156,6 @@ TEST_F(DelayManagerTest, MaxDelay) {
   // First packet arrival.
   InsertNextPacket();
   // Second packet arrival.
-  // Expect detector update method to be called once with inter-arrival time
-  // equal to |kExpectedTarget| packet. Return true to indicate peaks found.
-  EXPECT_CALL(detector_, Update(kExpectedTarget, false, _))
-      .WillRepeatedly(Return(true));
-  EXPECT_CALL(detector_, MaxPeakHeight())
-      .WillRepeatedly(Return(kExpectedTarget));
   IncreaseTime(kTimeIncrement);
   InsertNextPacket();
 
@@ -264,12 +180,6 @@ TEST_F(DelayManagerTest, MinDelay) {
   // First packet arrival.
   InsertNextPacket();
   // Second packet arrival.
-  // Expect detector update method to be called once with inter-arrival time
-  // equal to |kExpectedTarget| packet. Return true to indicate peaks found.
-  EXPECT_CALL(detector_, Update(kExpectedTarget, false, _))
-      .WillRepeatedly(Return(true));
-  EXPECT_CALL(detector_, MaxPeakHeight())
-      .WillRepeatedly(Return(kExpectedTarget));
   IncreaseTime(kTimeIncrement);
   InsertNextPacket();
 
@@ -279,7 +189,7 @@ TEST_F(DelayManagerTest, MinDelay) {
   int kMinDelayPackets = kExpectedTarget + 2;
   int kMinDelayMs = kMinDelayPackets * kFrameSizeMs;
   dm_->SetMinimumDelay(kMinDelayMs);
-  IncreaseTime(kTimeIncrement);
+  IncreaseTime(kFrameSizeMs);
   InsertNextPacket();
   EXPECT_EQ(kMinDelayPackets << 8, dm_->TargetLevel());
 }
@@ -419,12 +329,6 @@ TEST_F(DelayManagerTest, BaseMinimumDelay) {
   // First packet arrival.
   InsertNextPacket();
   // Second packet arrival.
-  // Expect detector update method to be called once with inter-arrival time
-  // equal to |kExpectedTarget| packet. Return true to indicate peaks found.
-  EXPECT_CALL(detector_, Update(kExpectedTarget, false, _))
-      .WillRepeatedly(Return(true));
-  EXPECT_CALL(detector_, MaxPeakHeight())
-      .WillRepeatedly(Return(kExpectedTarget));
   IncreaseTime(kTimeIncrement);
   InsertNextPacket();
 
@@ -436,7 +340,7 @@ TEST_F(DelayManagerTest, BaseMinimumDelay) {
   EXPECT_TRUE(dm_->SetBaseMinimumDelay(kBaseMinimumDelayMs));
   EXPECT_EQ(dm_->GetBaseMinimumDelay(), kBaseMinimumDelayMs);
 
-  IncreaseTime(kTimeIncrement);
+  IncreaseTime(kFrameSizeMs);
   InsertNextPacket();
   EXPECT_EQ(dm_->GetBaseMinimumDelay(), kBaseMinimumDelayMs);
   EXPECT_EQ(kBaseMinimumDelayPackets << 8, dm_->TargetLevel());
@@ -449,12 +353,6 @@ TEST_F(DelayManagerTest, BaseMinimumDealyAffectTargetLevel) {
   // First packet arrival.
   InsertNextPacket();
   // Second packet arrival.
-  // Expect detector update method to be called once with inter-arrival time
-  // equal to |kExpectedTarget|. Return true to indicate peaks found.
-  EXPECT_CALL(detector_, Update(kExpectedTarget, false, _))
-      .WillRepeatedly(Return(true));
-  EXPECT_CALL(detector_, MaxPeakHeight())
-      .WillRepeatedly(Return(kExpectedTarget));
   IncreaseTime(kTimeIncrement);
   InsertNextPacket();
 
@@ -474,19 +372,10 @@ TEST_F(DelayManagerTest, BaseMinimumDealyAffectTargetLevel) {
   EXPECT_TRUE(dm_->SetBaseMinimumDelay(kBaseMinimumDelayMs));
   EXPECT_EQ(dm_->GetBaseMinimumDelay(), kBaseMinimumDelayMs);
 
-  IncreaseTime(kTimeIncrement);
+  IncreaseTime(kFrameSizeMs);
   InsertNextPacket();
   EXPECT_EQ(dm_->GetBaseMinimumDelay(), kBaseMinimumDelayMs);
   EXPECT_EQ(kBaseMinimumDelayPackets << 8, dm_->TargetLevel());
-}
-
-TEST_F(DelayManagerTest, UpdateReorderedPacket) {
-  SetPacketAudioLength(kFrameSizeMs);
-  InsertNextPacket();
-
-  // Insert packet that was sent before the previous packet.
-  EXPECT_CALL(detector_, Update(_, true, _));
-  EXPECT_EQ(0, dm_->Update(seq_no_ - 1, ts_ - kFrameSizeMs, kFs));
 }
 
 TEST_F(DelayManagerTest, EnableRtxHandling) {
@@ -500,22 +389,23 @@ TEST_F(DelayManagerTest, EnableRtxHandling) {
   InsertNextPacket();
 
   // Insert reordered packet.
-  EXPECT_CALL(*mock_histogram_, Add(3));
-  EXPECT_EQ(0, dm_->Update(seq_no_ - 3, ts_ - 3 * kFrameSizeMs, kFs));
+  EXPECT_CALL(*mock_histogram_, Add(2));
+  dm_->Update(seq_no_ - 3, ts_ - 3 * kFrameSizeMs, kFs);
 
   // Insert another reordered packet.
-  EXPECT_CALL(*mock_histogram_, Add(2));
-  EXPECT_EQ(0, dm_->Update(seq_no_ - 2, ts_ - 2 * kFrameSizeMs, kFs));
+  EXPECT_CALL(*mock_histogram_, Add(1));
+  dm_->Update(seq_no_ - 2, ts_ - 2 * kFrameSizeMs, kFs);
 
   // Insert the next packet in order and verify that the inter-arrival time is
   // estimated correctly.
   IncreaseTime(kFrameSizeMs);
-  EXPECT_CALL(*mock_histogram_, Add(1));
+  EXPECT_CALL(*mock_histogram_, Add(0));
   InsertNextPacket();
 }
 
 // Tests that skipped sequence numbers (simulating empty packets) are handled
 // correctly.
+// TODO(jakobi): Make delay manager independent of sequence numbers.
 TEST_F(DelayManagerTest, EmptyPacketsReported) {
   SetPacketAudioLength(kFrameSizeMs);
   // First packet arrival.
@@ -532,17 +422,13 @@ TEST_F(DelayManagerTest, EmptyPacketsReported) {
   }
 
   // Second packet arrival.
-  // Expect detector update method to be called once with inter-arrival time
-  // equal to 1 packet, and (base) target level equal to 1 as well.
-  // Return false to indicate no peaks found.
-  EXPECT_CALL(detector_, Update(1, false, 1)).WillOnce(Return(false));
   InsertNextPacket();
 
   EXPECT_EQ(1 << 8, dm_->TargetLevel());  // In Q8.
 }
 
-// Same as above, but do not call RegisterEmptyPacket. Observe the target level
-// increase dramatically.
+// Same as above, but do not call RegisterEmptyPacket. Target level stays the
+// same.
 TEST_F(DelayManagerTest, EmptyPacketsNotReported) {
   SetPacketAudioLength(kFrameSizeMs);
   // First packet arrival.
@@ -551,24 +437,19 @@ TEST_F(DelayManagerTest, EmptyPacketsNotReported) {
   // Advance time by one frame size.
   IncreaseTime(kFrameSizeMs);
 
-  // Advance the sequence number by 5, simulating that 5 empty packets were
+  // Advance the sequence number by 10, simulating that 10 empty packets were
   // received, but never inserted.
   seq_no_ += 10;
 
   // Second packet arrival.
-  // Expect detector update method to be called once with inter-arrival time
-  // equal to 1 packet, and (base) target level equal to 1 as well.
-  // Return false to indicate no peaks found.
-  EXPECT_CALL(detector_, Update(10, false, 10)).WillOnce(Return(false));
   InsertNextPacket();
 
-  // Note 10 times higher target value.
-  EXPECT_EQ(10 * 1 << 8, dm_->TargetLevel());  // In Q8.
+  EXPECT_EQ(1 << 8, dm_->TargetLevel());  // In Q8.
 }
 
 TEST_F(DelayManagerTest, Failures) {
   // Wrong sample rate.
-  EXPECT_EQ(-1, dm_->Update(0, 0, -1));
+  EXPECT_EQ(absl::nullopt, dm_->Update(0, 0, -1));
   // Wrong packet size.
   EXPECT_EQ(-1, dm_->SetPacketAudioLength(0));
   EXPECT_EQ(-1, dm_->SetPacketAudioLength(-1));
@@ -583,65 +464,11 @@ TEST_F(DelayManagerTest, Failures) {
   EXPECT_FALSE(dm_->SetMaximumDelay(60));
 }
 
-TEST_F(DelayManagerTest, TargetDelayGreaterThanOne) {
-  test::ScopedFieldTrials field_trial(
-      "WebRTC-Audio-NetEqForceTargetDelayPercentile/Enabled-0/");
-  RecreateDelayManager();
-  EXPECT_EQ(0, dm_->histogram_quantile());
-
-  SetPacketAudioLength(kFrameSizeMs);
-  // First packet arrival.
-  InsertNextPacket();
-  // Advance time by one frame size.
-  IncreaseTime(kFrameSizeMs);
-  // Second packet arrival.
-  // Expect detector update method to be called once with inter-arrival time
-  // equal to 1 packet.
-  EXPECT_CALL(detector_, Update(1, false, 1)).WillOnce(Return(false));
-  InsertNextPacket();
-  constexpr int kExpectedTarget = 1;
-  EXPECT_EQ(kExpectedTarget << 8, dm_->TargetLevel());  // In Q8.
-}
-
-TEST_F(DelayManagerTest, ForcedTargetDelayPercentile) {
-  {
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqForceTargetDelayPercentile/Enabled-95/");
-    RecreateDelayManager();
-    EXPECT_EQ(kDefaultHistogramQuantile, dm_->histogram_quantile());
-  }
-  {
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqForceTargetDelayPercentile/Enabled-99.95/");
-    RecreateDelayManager();
-    EXPECT_EQ(1073204953, dm_->histogram_quantile());  // 0.9995 in Q30.
-  }
-  {
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqForceTargetDelayPercentile/Disabled/");
-    RecreateDelayManager();
-    EXPECT_EQ(kDefaultHistogramQuantile, dm_->histogram_quantile());
-  }
-  {
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqForceTargetDelayPercentile/Enabled--1/");
-    EXPECT_EQ(kDefaultHistogramQuantile, dm_->histogram_quantile());
-  }
-  {
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqForceTargetDelayPercentile/Enabled-100.1/");
-    RecreateDelayManager();
-    EXPECT_EQ(kDefaultHistogramQuantile, dm_->histogram_quantile());
-  }
-}
-
 TEST_F(DelayManagerTest, DelayHistogramFieldTrial) {
   {
     test::ScopedFieldTrials field_trial(
         "WebRTC-Audio-NetEqDelayHistogram/Enabled-96-0.998/");
     RecreateDelayManager();
-    EXPECT_EQ(DelayManager::HistogramMode::RELATIVE_ARRIVAL_DELAY,
-              dm_->histogram_mode());
     EXPECT_EQ(1030792151, dm_->histogram_quantile());  // 0.96 in Q30.
     EXPECT_EQ(
         32702,
@@ -652,57 +479,12 @@ TEST_F(DelayManagerTest, DelayHistogramFieldTrial) {
     test::ScopedFieldTrials field_trial(
         "WebRTC-Audio-NetEqDelayHistogram/Enabled-97.5-0.998/");
     RecreateDelayManager();
-    EXPECT_EQ(DelayManager::HistogramMode::RELATIVE_ARRIVAL_DELAY,
-              dm_->histogram_mode());
     EXPECT_EQ(1046898278, dm_->histogram_quantile());  // 0.975 in Q30.
     EXPECT_EQ(
         32702,
         dm_->histogram()->base_forget_factor_for_testing());  // 0.998 in Q15.
     EXPECT_FALSE(dm_->histogram()->start_forget_weight_for_testing());
   }
-  {
-    // NetEqDelayHistogram should take precedence over
-    // NetEqForceTargetDelayPercentile.
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqForceTargetDelayPercentile/Enabled-99.95/"
-        "WebRTC-Audio-NetEqDelayHistogram/Enabled-96-0.998/");
-    RecreateDelayManager();
-    EXPECT_EQ(DelayManager::HistogramMode::RELATIVE_ARRIVAL_DELAY,
-              dm_->histogram_mode());
-    EXPECT_EQ(1030792151, dm_->histogram_quantile());  // 0.96 in Q30.
-    EXPECT_EQ(
-        32702,
-        dm_->histogram()->base_forget_factor_for_testing());  // 0.998 in Q15.
-    EXPECT_FALSE(dm_->histogram()->start_forget_weight_for_testing());
-  }
-  {
-    // Invalid parameters.
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqDelayHistogram/Enabled-96/");
-    RecreateDelayManager();
-    EXPECT_EQ(DelayManager::HistogramMode::RELATIVE_ARRIVAL_DELAY,
-              dm_->histogram_mode());
-    EXPECT_EQ(kDefaultHistogramQuantile,
-              dm_->histogram_quantile());  // 0.95 in Q30.
-    EXPECT_EQ(
-        kForgetFactor,
-        dm_->histogram()->base_forget_factor_for_testing());  // 0.9993 in Q15.
-    EXPECT_FALSE(dm_->histogram()->start_forget_weight_for_testing());
-  }
-  {
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqDelayHistogram/Disabled/");
-    RecreateDelayManager();
-    EXPECT_EQ(DelayManager::HistogramMode::INTER_ARRIVAL_TIME,
-              dm_->histogram_mode());
-    EXPECT_EQ(kDefaultHistogramQuantile,
-              dm_->histogram_quantile());  // 0.95 in Q30.
-    EXPECT_EQ(
-        kForgetFactor,
-        dm_->histogram()->base_forget_factor_for_testing());  // 0.9993 in Q15.
-    EXPECT_FALSE(dm_->histogram()->start_forget_weight_for_testing());
-  }
-
   // Test parameter for new call start adaptation.
   {
     test::ScopedFieldTrials field_trial(
@@ -724,8 +506,7 @@ TEST_F(DelayManagerTest, DelayHistogramFieldTrial) {
   }
 }
 
-TEST_F(DelayManagerTest, RelativeArrivalDelayMode) {
-  histogram_mode_ = DelayManager::HistogramMode::RELATIVE_ARRIVAL_DELAY;
+TEST_F(DelayManagerTest, RelativeArrivalDelay) {
   use_mock_histogram_ = true;
   RecreateDelayManager();
 
@@ -738,18 +519,17 @@ TEST_F(DelayManagerTest, RelativeArrivalDelayMode) {
 
   IncreaseTime(2 * kFrameSizeMs);
   EXPECT_CALL(*mock_histogram_, Add(1));  // 20ms delayed.
-  EXPECT_EQ(0, dm_->Update(seq_no_, ts_, kFs));
+  dm_->Update(seq_no_, ts_, kFs);
 
   IncreaseTime(2 * kFrameSizeMs);
   EXPECT_CALL(*mock_histogram_, Add(2));  // 40ms delayed.
-  EXPECT_EQ(0, dm_->Update(seq_no_ + 1, ts_ + kTsIncrement, kFs));
+  dm_->Update(seq_no_ + 1, ts_ + kTsIncrement, kFs);
 
   EXPECT_CALL(*mock_histogram_, Add(1));  // Reordered, 20ms delayed.
-  EXPECT_EQ(0, dm_->Update(seq_no_, ts_, kFs));
+  dm_->Update(seq_no_, ts_, kFs);
 }
 
 TEST_F(DelayManagerTest, MaxDelayHistory) {
-  histogram_mode_ = DelayManager::HistogramMode::RELATIVE_ARRIVAL_DELAY;
   use_mock_histogram_ = true;
   RecreateDelayManager();
 
@@ -767,70 +547,30 @@ TEST_F(DelayManagerTest, MaxDelayHistory) {
   IncreaseTime(kMaxHistoryMs + kFrameSizeMs);
   ts_ += kFs * kMaxHistoryMs / 1000;
   EXPECT_CALL(*mock_histogram_, Add(0));  // Not delayed.
-  EXPECT_EQ(0, dm_->Update(seq_no_, ts_, kFs));
+  dm_->Update(seq_no_, ts_, kFs);
 }
 
 TEST_F(DelayManagerTest, RelativeArrivalDelayStatistic) {
   SetPacketAudioLength(kFrameSizeMs);
-  InsertNextPacket();
-
+  EXPECT_EQ(absl::nullopt, InsertNextPacket());
   IncreaseTime(kFrameSizeMs);
-  EXPECT_CALL(stats_, RelativePacketArrivalDelay(0));
-  InsertNextPacket();
-
+  EXPECT_EQ(0, InsertNextPacket());
   IncreaseTime(2 * kFrameSizeMs);
-  EXPECT_CALL(stats_, RelativePacketArrivalDelay(20));
-  InsertNextPacket();
-}
 
-TEST_F(DelayManagerTest, DecelerationTargetLevelOffsetFieldTrial) {
-  {
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqDecelerationTargetLevelOffset/Enabled-105/");
-    RecreateDelayManager();
-    EXPECT_EQ(dm_->deceleration_target_level_offset_ms().value(), 105 << 8);
-  }
-  {
-    // Negative number.
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqDecelerationTargetLevelOffset/Enabled--105/");
-    RecreateDelayManager();
-    EXPECT_FALSE(dm_->deceleration_target_level_offset_ms().has_value());
-  }
-  {
-    // Disabled.
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqDecelerationTargetLevelOffset/Disabled/");
-    RecreateDelayManager();
-    EXPECT_FALSE(dm_->deceleration_target_level_offset_ms().has_value());
-  }
-  {
-    // Float number.
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqDecelerationTargetLevelOffset/Enabled-105.5/");
-    RecreateDelayManager();
-    EXPECT_EQ(dm_->deceleration_target_level_offset_ms().value(), 105 << 8);
-  }
-  {
-    // Several numbers.
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqDecelerationTargetLevelOffset/Enabled-20-40/");
-    RecreateDelayManager();
-    EXPECT_EQ(dm_->deceleration_target_level_offset_ms().value(), 20 << 8);
-  }
+  EXPECT_EQ(20, InsertNextPacket());
 }
 
 TEST_F(DelayManagerTest, DecelerationTargetLevelOffset) {
-  // Border value where 1/4 target buffer level meets
-  // WebRTC-Audio-NetEqDecelerationTargetLevelOffset.
-  constexpr int kBoarderTargetLevel = 100 * 4;
+  SetPacketAudioLength(kFrameSizeMs);
+
+  // Deceleration target level offset follows the value hardcoded in
+  // delay_manager.cc.
+  constexpr int kDecelerationTargetLevelOffsetMs = 85 << 8;  // In Q8.
+  // Border value where |x * 3/4 = target_level - x|.
+  constexpr int kBoarderTargetLevel = kDecelerationTargetLevelOffsetMs * 4;
   {
     // Test that for a low target level, default behaviour is intact.
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqDecelerationTargetLevelOffset/Enabled-100/");
-    const int target_level_ms = ((kBoarderTargetLevel - 1) << 8) / kFrameSizeMs;
-    RecreateDelayManager();
-    SetPacketAudioLength(kFrameSizeMs);
+    const int target_level_ms = kBoarderTargetLevel / kFrameSizeMs - 1;
 
     int lower, higher;  // In Q8.
     dm_->BufferLimits(target_level_ms, &lower, &higher);
@@ -842,56 +582,15 @@ TEST_F(DelayManagerTest, DecelerationTargetLevelOffset) {
 
   {
     // Test that for the high target level, |lower| is below target level by
-    // fixed constant (100 ms in this Field Trial setup).
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqDecelerationTargetLevelOffset/Enabled-100/");
-    const int target_level_ms = ((kBoarderTargetLevel + 1) << 8) / kFrameSizeMs;
-    RecreateDelayManager();
-    SetPacketAudioLength(kFrameSizeMs);
+    // fixed |kOffset|.
+    const int target_level_ms = kBoarderTargetLevel / kFrameSizeMs + 1;
 
     int lower, higher;  // In Q8.
     dm_->BufferLimits(target_level_ms, &lower, &higher);
 
-    EXPECT_EQ(target_level_ms - ((100 << 8) / kFrameSizeMs), lower);
+    EXPECT_EQ(target_level_ms - kDecelerationTargetLevelOffsetMs / kFrameSizeMs,
+              lower);
     EXPECT_EQ(target_level_ms, higher);
-  }
-
-  {
-    // Test that for the high target level, without Field Trial the behaviour
-    // will remain the same.
-    const int target_level_ms = ((kBoarderTargetLevel + 1) << 8) / kFrameSizeMs;
-    RecreateDelayManager();
-    SetPacketAudioLength(kFrameSizeMs);
-
-    int lower, higher;  // In Q8.
-    dm_->BufferLimits(target_level_ms, &lower, &higher);
-
-    // Default behaviour of taking 75% of target level.
-    EXPECT_EQ(target_level_ms * 3 / 4, lower);
-    EXPECT_EQ(target_level_ms, higher);
-  }
-}
-
-TEST_F(DelayManagerTest, ExtraDelay) {
-  {
-    // Default behavior. Insert two packets so that a new target level is
-    // calculated.
-    SetPacketAudioLength(kFrameSizeMs);
-    InsertNextPacket();
-    IncreaseTime(kFrameSizeMs);
-    InsertNextPacket();
-    EXPECT_EQ(dm_->TargetLevel(), 1 << 8);
-  }
-  {
-    // Add 80 ms extra delay and calculate a new target level.
-    test::ScopedFieldTrials field_trial(
-        "WebRTC-Audio-NetEqExtraDelay/Enabled-80/");
-    RecreateDelayManager();
-    SetPacketAudioLength(kFrameSizeMs);
-    InsertNextPacket();
-    IncreaseTime(kFrameSizeMs);
-    InsertNextPacket();
-    EXPECT_EQ(dm_->TargetLevel(), 5 << 8);
   }
 }
 

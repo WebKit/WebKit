@@ -19,6 +19,7 @@
 #include "modules/rtp_rtcp/source/rtp_sender.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/task_utils/to_queued_task.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/field_trial.h"
@@ -103,7 +104,7 @@ VideoSendStream::VideoSendStream(
             event_log, &config_, encoder_config.max_bitrate_bps,
             encoder_config.bitrate_priority, suspended_ssrcs,
             suspended_payload_states, encoder_config.content_type,
-            std::move(fec_controller), config_.media_transport));
+            std::move(fec_controller)));
       },
       [this]() { thread_sync_event_.Set(); }));
 
@@ -130,7 +131,23 @@ VideoSendStream::~VideoSendStream() {
 void VideoSendStream::UpdateActiveSimulcastLayers(
     const std::vector<bool> active_layers) {
   RTC_DCHECK_RUN_ON(&thread_checker_);
-  RTC_LOG(LS_INFO) << "VideoSendStream::UpdateActiveSimulcastLayers";
+
+  rtc::StringBuilder active_layers_string;
+  active_layers_string << "{";
+  for (size_t i = 0; i < active_layers.size(); ++i) {
+    if (active_layers[i]) {
+      active_layers_string << "1";
+    } else {
+      active_layers_string << "0";
+    }
+    if (i < active_layers.size() - 1) {
+      active_layers_string << ", ";
+    }
+  }
+  active_layers_string << "}";
+  RTC_LOG(LS_INFO) << "UpdateActiveSimulcastLayers: "
+                   << active_layers_string.str();
+
   VideoSendStreamImpl* send_stream = send_stream_.get();
   worker_queue_->PostTask([this, send_stream, active_layers] {
     send_stream->UpdateActiveSimulcastLayers(active_layers);

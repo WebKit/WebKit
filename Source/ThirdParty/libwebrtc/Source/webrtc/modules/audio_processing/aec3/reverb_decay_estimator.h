@@ -101,7 +101,7 @@ class ReverbDecayEstimator {
   int block_to_analyze_ = 0;
   int estimation_region_candidate_size_ = 0;
   bool estimation_region_identified_ = false;
-  std::array<float, kMaxAdaptiveFilterLength> previous_gains_;
+  std::vector<float> previous_gains_;
   float decay_;
   float tail_gain_ = 0.f;
   float smoothing_constant_ = 0.f;

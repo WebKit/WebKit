@@ -24,6 +24,7 @@ VideoStream::VideoStream()
       max_bitrate_bps(-1),
       scale_resolution_down_by(-1.),
       max_qp(-1),
+      num_temporal_layers(absl::nullopt),
       active(true) {}
 VideoStream::VideoStream(const VideoStream& other) = default;
 
@@ -39,7 +40,7 @@ std::string VideoStream::ToString() const {
   ss << ", target_bitrate_bps:" << target_bitrate_bps;
   ss << ", max_bitrate_bps:" << max_bitrate_bps;
   ss << ", max_qp: " << max_qp;
-  ss << ", num_temporal_layers: " << num_temporal_layers.value_or(0);
+  ss << ", num_temporal_layers: " << num_temporal_layers.value_or(1);
   ss << ", bitrate_priority: " << bitrate_priority.value_or(0);
   ss << ", active: " << active;
 

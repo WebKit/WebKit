@@ -42,6 +42,13 @@ struct RTC_EXPORT VideoSinkWants {
   absl::optional<int> target_pixel_count;
   // Tells the source the maximum framerate the sink wants.
   int max_framerate_fps = std::numeric_limits<int>::max();
+
+  // Tells the source that the sink wants width and height of the video frames
+  // to be divisible by |resolution_alignment|.
+  // For example: With I420, this value would be a multiple of 2.
+  // Note that this field is unrelated to any horizontal or vertical stride
+  // requirements the encoder has on the incoming video frame buffers.
+  int resolution_alignment = 1;
 };
 
 template <typename VideoFrameT>

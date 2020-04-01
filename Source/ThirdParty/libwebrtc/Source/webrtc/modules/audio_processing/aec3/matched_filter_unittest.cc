@@ -150,8 +150,8 @@ TEST(MatchedFilter, LagEstimation) {
     std::vector<std::vector<std::vector<float>>> render(
         kNumBands, std::vector<std::vector<float>>(
                        kNumChannels, std::vector<float>(kBlockSize, 0.f)));
-    std::array<float, kBlockSize> capture;
-    capture.fill(0.f);
+    std::vector<std::vector<float>> capture(
+        1, std::vector<float>(kBlockSize, 0.f));
     ApmDataDumper data_dumper(0);
     for (size_t delay_samples : {5, 64, 150, 200, 800, 1000}) {
       SCOPED_TRACE(ProduceDebugText(delay_samples, down_sampling_factor));
@@ -177,7 +177,7 @@ TEST(MatchedFilter, LagEstimation) {
             RandomizeSampleVector(&random_generator, render[band][channel]);
           }
         }
-        signal_delay_buffer.Delay(render[0][0], capture);
+        signal_delay_buffer.Delay(render[0][0], capture[0]);
         render_delay_buffer->Insert(render);
 
         if (k == 0) {
@@ -188,7 +188,7 @@ TEST(MatchedFilter, LagEstimation) {
         std::array<float, kBlockSize> downsampled_capture_data;
         rtc::ArrayView<float> downsampled_capture(
             downsampled_capture_data.data(), sub_block_size);
-        capture_decimator.Decimate(capture, downsampled_capture);
+        capture_decimator.Decimate(capture[0], downsampled_capture);
         filter.Update(render_delay_buffer->GetDownsampledRenderBuffer(),
                       downsampled_capture);
       }
@@ -312,8 +312,8 @@ TEST(MatchedFilter, LagNotUpdatedForLowLevelRender) {
     std::vector<std::vector<std::vector<float>>> render(
         kNumBands, std::vector<std::vector<float>>(
                        kNumChannels, std::vector<float>(kBlockSize, 0.f)));
-    std::array<float, kBlockSize> capture;
-    capture.fill(0.f);
+    std::vector<std::vector<float>> capture(
+        1, std::vector<float>(kBlockSize, 0.f));
     ApmDataDumper data_dumper(0);
     EchoCanceller3Config config;
     MatchedFilter filter(&data_dumper, DetectOptimization(), sub_block_size,
@@ -332,11 +332,11 @@ TEST(MatchedFilter, LagNotUpdatedForLowLevelRender) {
       for (auto& render_k : render[0][0]) {
         render_k *= 149.f / 32767.f;
       }
-      std::copy(render[0][0].begin(), render[0][0].end(), capture.begin());
+      std::copy(render[0][0].begin(), render[0][0].end(), capture[0].begin());
       std::array<float, kBlockSize> downsampled_capture_data;
       rtc::ArrayView<float> downsampled_capture(downsampled_capture_data.data(),
                                                 sub_block_size);
-      capture_decimator.Decimate(capture, downsampled_capture);
+      capture_decimator.Decimate(capture[0], downsampled_capture);
       filter.Update(render_delay_buffer->GetDownsampledRenderBuffer(),
                     downsampled_capture);
     }

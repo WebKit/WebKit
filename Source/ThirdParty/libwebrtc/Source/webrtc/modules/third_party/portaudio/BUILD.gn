@@ -8,7 +8,7 @@
 
 import("../../../webrtc.gni")
 
-rtc_source_set("mac_portaudio") {
+rtc_library("mac_portaudio") {
   visibility = [ "../../audio_device:*" ]
   sources = [
     "pa_memorybarrier.h",

@@ -11,8 +11,8 @@
 #include "modules/audio_processing/test/fake_recording_device.h"
 
 #include <algorithm>
+#include <memory>
 
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "modules/audio_processing/agc/gain_map_internal.h"
 #include "rtc_base/logging.h"
@@ -141,13 +141,13 @@ FakeRecordingDevice::FakeRecordingDevice(int initial_mic_level,
   switch (device_kind) {
     case 0:
       worker_ =
-          absl::make_unique<FakeRecordingDeviceIdentity>(initial_mic_level);
+          std::make_unique<FakeRecordingDeviceIdentity>(initial_mic_level);
       break;
     case 1:
-      worker_ = absl::make_unique<FakeRecordingDeviceLinear>(initial_mic_level);
+      worker_ = std::make_unique<FakeRecordingDeviceLinear>(initial_mic_level);
       break;
     case 2:
-      worker_ = absl::make_unique<FakeRecordingDeviceAgc1>(initial_mic_level);
+      worker_ = std::make_unique<FakeRecordingDeviceAgc1>(initial_mic_level);
       break;
     default:
       RTC_NOTREACHED();

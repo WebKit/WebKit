@@ -48,9 +48,6 @@ class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
 
   void SetUplinkPacketLossFraction(float uplink_packet_loss_fraction) override;
 
-  void SetUplinkRecoverablePacketLossFraction(
-      float uplink_recoverable_packet_loss_fraction) override;
-
   void SetRtt(int rtt_ms) override;
 
   void SetTargetAudioBitrate(int target_audio_bitrate_bps) override;

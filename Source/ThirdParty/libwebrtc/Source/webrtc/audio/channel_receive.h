@@ -22,8 +22,7 @@
 #include "api/call/audio_sink.h"
 #include "api/call/transport.h"
 #include "api/crypto/crypto_options.h"
-#include "api/media_transport_config.h"
-#include "api/media_transport_interface.h"
+#include "api/neteq/neteq_factory.h"
 #include "api/transport/rtp/rtp_source.h"
 #include "call/rtp_packet_sink_interface.h"
 #include "call/syncable.h"
@@ -54,7 +53,8 @@ struct CallReceiveStatistics {
   unsigned int cumulativeLost;
   unsigned int jitterSamples;
   int64_t rttMs;
-  size_t bytesReceived;
+  int64_t payload_bytes_rcvd = 0;
+  int64_t header_and_padding_bytes_rcvd = 0;
   int packetsReceived;
   // The capture ntp time (in local timebase) of the first played out audio
   // frame.
@@ -104,7 +104,12 @@ class ChannelReceiveInterface : public RtpPacketSinkInterface {
   // Audio+Video Sync.
   virtual uint32_t GetDelayEstimate() const = 0;
   virtual void SetMinimumPlayoutDelay(int delay_ms) = 0;
-  virtual uint32_t GetPlayoutTimestamp() const = 0;
+  virtual bool GetPlayoutRtpTimestamp(uint32_t* rtp_timestamp,
+                                      int64_t* time_ms) const = 0;
+  virtual void SetEstimatedPlayoutNtpTimestampMs(int64_t ntp_timestamp_ms,
+                                                 int64_t time_ms) = 0;
+  virtual absl::optional<int64_t> GetCurrentEstimatedPlayoutNtpTimestampMs(
+      int64_t now_ms) const = 0;
 
   // Audio quality.
   // Base minimum delay sets lower bound on minimum delay value which
@@ -137,8 +142,8 @@ class ChannelReceiveInterface : public RtpPacketSinkInterface {
 std::unique_ptr<ChannelReceiveInterface> CreateChannelReceive(
     Clock* clock,
     ProcessThread* module_process_thread,
+    NetEqFactory* neteq_factory,
     AudioDeviceModule* audio_device_module,
-    const MediaTransportConfig& media_transport_config,
     Transport* rtcp_send_transport,
     RtcEventLog* rtc_event_log,
     uint32_t local_ssrc,

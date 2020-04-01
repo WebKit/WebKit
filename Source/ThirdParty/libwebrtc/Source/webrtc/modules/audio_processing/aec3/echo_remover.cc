@@ -35,12 +35,28 @@
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/atomic_ops.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
 
 namespace {
+
+// Maximum number of channels for which the capture channel data is stored on
+// the stack. If the number of channels are larger than this, they are stored
+// using scratch memory that is pre-allocated on the heap. The reason for this
+// partitioning is not to waste heap space for handling the more common numbers
+// of channels, while at the same time not limiting the support for higher
+// numbers of channels by enforcing the capture channel data to be stored on the
+// stack using a fixed maximum value.
+constexpr size_t kMaxNumChannelsOnStack = 2;
+
+// Chooses the number of channels to store on the heap when that is required due
+// to the number of capture channels being larger than the pre-defined number
+// of channels to store on the stack.
+size_t NumChannelsOnHeap(size_t num_capture_channels) {
+  return num_capture_channels > kMaxNumChannelsOnStack ? num_capture_channels
+                                                       : 0;
+}
 
 void LinearEchoPower(const FftData& E,
                      const FftData& Y,
@@ -55,20 +71,25 @@ void LinearEchoPower(const FftData& E,
 void SignalTransition(rtc::ArrayView<const float> from,
                       rtc::ArrayView<const float> to,
                       rtc::ArrayView<float> out) {
-  constexpr size_t kTransitionSize = 30;
-  constexpr float kOneByTransitionSizePlusOne = 1.f / (kTransitionSize + 1);
+  if (from == to) {
+    RTC_DCHECK_EQ(to.size(), out.size());
+    std::copy(to.begin(), to.end(), out.begin());
+  } else {
+    constexpr size_t kTransitionSize = 30;
+    constexpr float kOneByTransitionSizePlusOne = 1.f / (kTransitionSize + 1);
 
-  RTC_DCHECK_EQ(from.size(), to.size());
-  RTC_DCHECK_EQ(from.size(), out.size());
-  RTC_DCHECK_LE(kTransitionSize, out.size());
+    RTC_DCHECK_EQ(from.size(), to.size());
+    RTC_DCHECK_EQ(from.size(), out.size());
+    RTC_DCHECK_LE(kTransitionSize, out.size());
 
-  for (size_t k = 0; k < kTransitionSize; ++k) {
-    float a = (k + 1) * kOneByTransitionSizePlusOne;
-    out[k] = a * to[k] + (1.f - a) * from[k];
+    for (size_t k = 0; k < kTransitionSize; ++k) {
+      float a = (k + 1) * kOneByTransitionSizePlusOne;
+      out[k] = a * to[k] + (1.f - a) * from[k];
+    }
+
+    std::copy(to.begin() + kTransitionSize, to.end(),
+              out.begin() + kTransitionSize);
   }
-
-  std::copy(to.begin() + kTransitionSize, to.end(),
-            out.begin() + kTransitionSize);
 }
 
 // Computes a windowed (square root Hanning) padded FFT and updates the related
@@ -89,6 +110,8 @@ class EchoRemoverImpl final : public EchoRemover {
                   size_t num_render_channels,
                   size_t num_capture_channels);
   ~EchoRemoverImpl() override;
+  EchoRemoverImpl(const EchoRemoverImpl&) = delete;
+  EchoRemoverImpl& operator=(const EchoRemoverImpl&) = delete;
 
   void GetMetrics(EchoControl::Metrics* metrics) const override;
 
@@ -100,6 +123,7 @@ class EchoRemoverImpl final : public EchoRemover {
       bool capture_signal_saturation,
       const absl::optional<DelayEstimate>& external_delay,
       RenderBuffer* render_buffer,
+      std::vector<std::vector<std::vector<float>>>* linear_output,
       std::vector<std::vector<std::vector<float>>>* capture) override;
 
   // Updates the status on whether echo leakage is detected in the output of the
@@ -133,15 +157,22 @@ class EchoRemoverImpl final : public EchoRemover {
   bool echo_leakage_detected_ = false;
   AecState aec_state_;
   EchoRemoverMetrics metrics_;
-  std::array<float, kFftLengthBy2> e_old_;
-  std::array<float, kFftLengthBy2> x_old_;
-  std::array<float, kFftLengthBy2> y_old_;
+  std::vector<std::array<float, kFftLengthBy2>> e_old_;
+  std::vector<std::array<float, kFftLengthBy2>> y_old_;
   size_t block_counter_ = 0;
   int gain_change_hangover_ = 0;
   bool main_filter_output_last_selected_ = true;
-  bool linear_filter_output_last_selected_ = true;
 
-  RTC_DISALLOW_COPY_AND_ASSIGN(EchoRemoverImpl);
+  std::vector<std::array<float, kFftLengthBy2>> e_heap_;
+  std::vector<std::array<float, kFftLengthBy2Plus1>> Y2_heap_;
+  std::vector<std::array<float, kFftLengthBy2Plus1>> E2_heap_;
+  std::vector<std::array<float, kFftLengthBy2Plus1>> R2_heap_;
+  std::vector<std::array<float, kFftLengthBy2Plus1>> S2_linear_heap_;
+  std::vector<FftData> Y_heap_;
+  std::vector<FftData> E_heap_;
+  std::vector<FftData> comfort_noise_heap_;
+  std::vector<FftData> high_band_comfort_noise_heap_;
+  std::vector<SubtractorOutput> subtractor_output_heap_;
 };
 
 int EchoRemoverImpl::instance_count_ = 0;
@@ -165,16 +196,30 @@ EchoRemoverImpl::EchoRemoverImpl(const EchoCanceller3Config& config,
                   num_capture_channels_,
                   data_dumper_.get(),
                   optimization_),
-      suppression_gain_(config_, optimization_, sample_rate_hz),
-      cng_(optimization_),
-      suppression_filter_(optimization_, sample_rate_hz_),
+      suppression_gain_(config_,
+                        optimization_,
+                        sample_rate_hz,
+                        num_capture_channels),
+      cng_(optimization_, num_capture_channels_),
+      suppression_filter_(optimization_,
+                          sample_rate_hz_,
+                          num_capture_channels_),
       render_signal_analyzer_(config_),
-      residual_echo_estimator_(config_),
-      aec_state_(config_) {
+      residual_echo_estimator_(config_, num_render_channels),
+      aec_state_(config_, num_capture_channels_),
+      e_old_(num_capture_channels_, {0.f}),
+      y_old_(num_capture_channels_, {0.f}),
+      e_heap_(NumChannelsOnHeap(num_capture_channels_), {0.f}),
+      Y2_heap_(NumChannelsOnHeap(num_capture_channels_)),
+      E2_heap_(NumChannelsOnHeap(num_capture_channels_)),
+      R2_heap_(NumChannelsOnHeap(num_capture_channels_)),
+      S2_linear_heap_(NumChannelsOnHeap(num_capture_channels_)),
+      Y_heap_(NumChannelsOnHeap(num_capture_channels_)),
+      E_heap_(NumChannelsOnHeap(num_capture_channels_)),
+      comfort_noise_heap_(NumChannelsOnHeap(num_capture_channels_)),
+      high_band_comfort_noise_heap_(NumChannelsOnHeap(num_capture_channels_)),
+      subtractor_output_heap_(NumChannelsOnHeap(num_capture_channels_)) {
   RTC_DCHECK(ValidFullBandRate(sample_rate_hz));
-  x_old_.fill(0.f);
-  y_old_.fill(0.f);
-  e_old_.fill(0.f);
 }
 
 EchoRemoverImpl::~EchoRemoverImpl() = default;
@@ -191,6 +236,7 @@ void EchoRemoverImpl::ProcessCapture(
     bool capture_signal_saturation,
     const absl::optional<DelayEstimate>& external_delay,
     RenderBuffer* render_buffer,
+    std::vector<std::vector<std::vector<float>>>* linear_output,
     std::vector<std::vector<std::vector<float>>>* capture) {
   ++block_counter_;
   const std::vector<std::vector<std::vector<float>>>& x =
@@ -204,15 +250,70 @@ void EchoRemoverImpl::ProcessCapture(
   RTC_DCHECK_EQ((*y)[0].size(), num_capture_channels_);
   RTC_DCHECK_EQ(x[0][0].size(), kBlockSize);
   RTC_DCHECK_EQ((*y)[0][0].size(), kBlockSize);
-  const std::vector<float>& x0 = x[0][0];
-  std::vector<float>& y0 = (*y)[0][0];
 
-  data_dumper_->DumpWav("aec3_echo_remover_capture_input", kBlockSize, &y0[0],
-                        16000, 1);
-  data_dumper_->DumpWav("aec3_echo_remover_render_input", kBlockSize, &x0[0],
-                        16000, 1);
-  data_dumper_->DumpRaw("aec3_echo_remover_capture_input", y0);
-  data_dumper_->DumpRaw("aec3_echo_remover_render_input", x0);
+  // Stack allocated data to use when the number of channels is low.
+  std::array<std::array<float, kFftLengthBy2>, kMaxNumChannelsOnStack> e_stack;
+  std::array<std::array<float, kFftLengthBy2Plus1>, kMaxNumChannelsOnStack>
+      Y2_stack;
+  std::array<std::array<float, kFftLengthBy2Plus1>, kMaxNumChannelsOnStack>
+      E2_stack;
+  std::array<std::array<float, kFftLengthBy2Plus1>, kMaxNumChannelsOnStack>
+      R2_stack;
+  std::array<std::array<float, kFftLengthBy2Plus1>, kMaxNumChannelsOnStack>
+      S2_linear_stack;
+  std::array<FftData, kMaxNumChannelsOnStack> Y_stack;
+  std::array<FftData, kMaxNumChannelsOnStack> E_stack;
+  std::array<FftData, kMaxNumChannelsOnStack> comfort_noise_stack;
+  std::array<FftData, kMaxNumChannelsOnStack> high_band_comfort_noise_stack;
+  std::array<SubtractorOutput, kMaxNumChannelsOnStack> subtractor_output_stack;
+
+  rtc::ArrayView<std::array<float, kFftLengthBy2>> e(e_stack.data(),
+                                                     num_capture_channels_);
+  rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> Y2(
+      Y2_stack.data(), num_capture_channels_);
+  rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> E2(
+      E2_stack.data(), num_capture_channels_);
+  rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2(
+      R2_stack.data(), num_capture_channels_);
+  rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> S2_linear(
+      S2_linear_stack.data(), num_capture_channels_);
+  rtc::ArrayView<FftData> Y(Y_stack.data(), num_capture_channels_);
+  rtc::ArrayView<FftData> E(E_stack.data(), num_capture_channels_);
+  rtc::ArrayView<FftData> comfort_noise(comfort_noise_stack.data(),
+                                        num_capture_channels_);
+  rtc::ArrayView<FftData> high_band_comfort_noise(
+      high_band_comfort_noise_stack.data(), num_capture_channels_);
+  rtc::ArrayView<SubtractorOutput> subtractor_output(
+      subtractor_output_stack.data(), num_capture_channels_);
+  if (NumChannelsOnHeap(num_capture_channels_) > 0) {
+    // If the stack-allocated space is too small, use the heap for storing the
+    // microphone data.
+    e = rtc::ArrayView<std::array<float, kFftLengthBy2>>(e_heap_.data(),
+                                                         num_capture_channels_);
+    Y2 = rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>>(
+        Y2_heap_.data(), num_capture_channels_);
+    E2 = rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>>(
+        E2_heap_.data(), num_capture_channels_);
+    R2 = rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>>(
+        R2_heap_.data(), num_capture_channels_);
+    S2_linear = rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>>(
+        S2_linear_heap_.data(), num_capture_channels_);
+    Y = rtc::ArrayView<FftData>(Y_heap_.data(), num_capture_channels_);
+    E = rtc::ArrayView<FftData>(E_heap_.data(), num_capture_channels_);
+    comfort_noise = rtc::ArrayView<FftData>(comfort_noise_heap_.data(),
+                                            num_capture_channels_);
+    high_band_comfort_noise = rtc::ArrayView<FftData>(
+        high_band_comfort_noise_heap_.data(), num_capture_channels_);
+    subtractor_output = rtc::ArrayView<SubtractorOutput>(
+        subtractor_output_heap_.data(), num_capture_channels_);
+  }
+
+  data_dumper_->DumpWav("aec3_echo_remover_capture_input", kBlockSize,
+                        &(*y)[0][0][0], 16000, 1);
+  data_dumper_->DumpWav("aec3_echo_remover_render_input", kBlockSize,
+                        &x[0][0][0], 16000, 1);
+  data_dumper_->DumpRaw("aec3_echo_remover_capture_input", (*y)[0][0]);
+  data_dumper_->DumpRaw("aec3_echo_remover_render_input", x[0][0]);
 
   aec_state_.UpdateCaptureSaturation(capture_signal_saturation);
 
@@ -222,7 +323,11 @@ void EchoRemoverImpl::ProcessCapture(
       if (gain_change_hangover_ == 0) {
         constexpr int kMaxBlocksPerFrame = 3;
         gain_change_hangover_ = kMaxBlocksPerFrame;
-        RTC_LOG(LS_INFO) << "Gain change detected at block " << block_counter_;
+        rtc::LoggingSeverity log_level =
+            config_.delay.log_warning_on_delay_changes ? rtc::LS_WARNING
+                                                       : rtc::LS_VERBOSE;
+        RTC_LOG_V(log_level)
+            << "Gain change detected at block " << block_counter_;
       } else {
         echo_path_variability.gain_change = false;
       }
@@ -240,86 +345,78 @@ void EchoRemoverImpl::ProcessCapture(
     --gain_change_hangover_;
   }
 
-  std::array<float, kFftLengthBy2Plus1> Y2;
-  std::array<float, kFftLengthBy2Plus1> E2;
-  std::array<float, kFftLengthBy2Plus1> R2;
-  std::array<float, kFftLengthBy2Plus1> S2_linear;
-  std::array<float, kFftLengthBy2Plus1> G;
-  float high_bands_gain;
-  FftData Y;
-  FftData E;
-  FftData comfort_noise;
-  FftData high_band_comfort_noise;
-  SubtractorOutput subtractor_output;
-
   // Analyze the render signal.
   render_signal_analyzer_.Update(*render_buffer,
-                                 aec_state_.FilterDelayBlocks());
+                                 aec_state_.MinDirectPathFilterDelay());
 
-  // Perform linear echo cancellation.
+  // State transition.
   if (aec_state_.TransitionTriggered()) {
     subtractor_.ExitInitialState();
     suppression_gain_.SetInitialState(false);
   }
 
-  // If the delay is known, use the echo subtractor.
-  subtractor_.Process(*render_buffer, y0, render_signal_analyzer_, aec_state_,
-                      &subtractor_output);
-  std::array<float, kBlockSize> e;
-  FormLinearFilterOutput(subtractor_output, e);
+  // Perform linear echo cancellation.
+  subtractor_.Process(*render_buffer, (*y)[0], render_signal_analyzer_,
+                      aec_state_, subtractor_output);
 
   // Compute spectra.
-  WindowedPaddedFft(fft_, y0, y_old_, &Y);
-  WindowedPaddedFft(fft_, e, e_old_, &E);
-  LinearEchoPower(E, Y, &S2_linear);
-  Y.Spectrum(optimization_, Y2);
-  E.Spectrum(optimization_, E2);
+  for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
+    FormLinearFilterOutput(subtractor_output[ch], e[ch]);
+    WindowedPaddedFft(fft_, (*y)[0][ch], y_old_[ch], &Y[ch]);
+    WindowedPaddedFft(fft_, e[ch], e_old_[ch], &E[ch]);
+    LinearEchoPower(E[ch], Y[ch], &S2_linear[ch]);
+    Y[ch].Spectrum(optimization_, Y2[ch]);
+    E[ch].Spectrum(optimization_, E2[ch]);
+  }
 
-  // Update the AEC state information.
-  aec_state_.Update(external_delay, subtractor_.FilterFrequencyResponse(),
-                    subtractor_.FilterImpulseResponse(), *render_buffer, E2, Y2,
-                    subtractor_output, y0);
-
-  // Choose the linear output.
-  data_dumper_->DumpWav("aec3_output_linear2", kBlockSize, &e[0], 16000, 1);
-  if (aec_state_.UseLinearFilterOutput()) {
-    if (!linear_filter_output_last_selected_) {
-      SignalTransition(y0, e, y0);
-    } else {
-      std::copy(e.begin(), e.end(), y0.begin());
-    }
-  } else {
-    if (linear_filter_output_last_selected_) {
-      SignalTransition(e, y0, y0);
+  // Optionally return the linear filter output.
+  if (linear_output) {
+    RTC_DCHECK_GE(1, linear_output->size());
+    RTC_DCHECK_EQ(num_capture_channels_, linear_output[0].size());
+    for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
+      RTC_DCHECK_EQ(kBlockSize, (*linear_output)[0][ch].size());
+      std::copy(e[ch].begin(), e[ch].end(), (*linear_output)[0][ch].begin());
     }
   }
-  linear_filter_output_last_selected_ = aec_state_.UseLinearFilterOutput();
+
+  // Update the AEC state information.
+  aec_state_.Update(external_delay, subtractor_.FilterFrequencyResponses(),
+                    subtractor_.FilterImpulseResponses(), *render_buffer, E2,
+                    Y2, subtractor_output);
+
+  // Choose the linear output.
   const auto& Y_fft = aec_state_.UseLinearFilterOutput() ? E : Y;
 
-  data_dumper_->DumpWav("aec3_output_linear", kBlockSize, &y0[0], 16000, 1);
+  data_dumper_->DumpWav("aec3_output_linear", kBlockSize, &(*y)[0][0][0], 16000,
+                        1);
+  data_dumper_->DumpWav("aec3_output_linear2", kBlockSize, &e[0][0], 16000, 1);
 
   // Estimate the residual echo power.
   residual_echo_estimator_.Estimate(aec_state_, *render_buffer, S2_linear, Y2,
-                                    &R2);
+                                    R2);
 
   // Estimate the comfort noise.
-  cng_.Compute(aec_state_, Y2, &comfort_noise, &high_band_comfort_noise);
+  cng_.Compute(aec_state_.SaturatedCapture(), Y2, comfort_noise,
+               high_band_comfort_noise);
+
+  // Suppressor nearend estimate.
+  if (aec_state_.UsableLinearEstimate()) {
+    // E2 is bound by Y2.
+    for (size_t ch = 0; ch < num_capture_channels_; ++ch) {
+      std::transform(E2[ch].begin(), E2[ch].end(), Y2[ch].begin(),
+                     E2[ch].begin(),
+                     [](float a, float b) { return std::min(a, b); });
+    }
+  }
+  const auto& nearend_spectrum = aec_state_.UsableLinearEstimate() ? E2 : Y2;
 
   // Suppressor echo estimate.
   const auto& echo_spectrum =
       aec_state_.UsableLinearEstimate() ? S2_linear : R2;
 
-  // Suppressor nearend estimate.
-  std::array<float, kFftLengthBy2Plus1> nearend_spectrum_bounded;
-  if (aec_state_.UsableLinearEstimate()) {
-    std::transform(E2.begin(), E2.end(), Y2.begin(),
-                   nearend_spectrum_bounded.begin(),
-                   [](float a, float b) { return std::min(a, b); });
-  }
-  auto& nearend_spectrum =
-      aec_state_.UsableLinearEstimate() ? nearend_spectrum_bounded : Y2;
-
-  // Compute and apply the suppression gain.
+  // Compute preferred gains.
+  float high_bands_gain;
+  std::array<float, kFftLengthBy2Plus1> G;
   suppression_gain_.GetGain(nearend_spectrum, echo_spectrum, R2,
                             cng_.NoiseSpectrum(), render_signal_analyzer_,
                             aec_state_, x, &high_bands_gain, &G);
@@ -328,30 +425,30 @@ void EchoRemoverImpl::ProcessCapture(
                                 high_bands_gain, Y_fft, y);
 
   // Update the metrics.
-  metrics_.Update(aec_state_, cng_.NoiseSpectrum(), G);
+  metrics_.Update(aec_state_, cng_.NoiseSpectrum()[0], G);
 
   // Debug outputs for the purpose of development and analysis.
   data_dumper_->DumpWav("aec3_echo_estimate", kBlockSize,
-                        &subtractor_output.s_main[0], 16000, 1);
-  data_dumper_->DumpRaw("aec3_output", y0);
+                        &subtractor_output[0].s_main[0], 16000, 1);
+  data_dumper_->DumpRaw("aec3_output", (*y)[0][0]);
   data_dumper_->DumpRaw("aec3_narrow_render",
                         render_signal_analyzer_.NarrowPeakBand() ? 1 : 0);
-  data_dumper_->DumpRaw("aec3_N2", cng_.NoiseSpectrum());
+  data_dumper_->DumpRaw("aec3_N2", cng_.NoiseSpectrum()[0]);
   data_dumper_->DumpRaw("aec3_suppressor_gain", G);
-  data_dumper_->DumpWav(
-      "aec3_output", rtc::ArrayView<const float>(&y0[0], kBlockSize), 16000, 1);
-  data_dumper_->DumpRaw("aec3_using_subtractor_output",
+  data_dumper_->DumpWav("aec3_output",
+                        rtc::ArrayView<const float>(&(*y)[0][0][0], kBlockSize),
+                        16000, 1);
+  data_dumper_->DumpRaw("aec3_using_subtractor_output[0]",
                         aec_state_.UseLinearFilterOutput() ? 1 : 0);
-  data_dumper_->DumpRaw("aec3_E2", E2);
-  data_dumper_->DumpRaw("aec3_S2_linear", S2_linear);
-  data_dumper_->DumpRaw("aec3_Y2", Y2);
+  data_dumper_->DumpRaw("aec3_E2", E2[0]);
+  data_dumper_->DumpRaw("aec3_S2_linear", S2_linear[0]);
+  data_dumper_->DumpRaw("aec3_Y2", Y2[0]);
   data_dumper_->DumpRaw(
-      "aec3_X2",
-      render_buffer->Spectrum(aec_state_.FilterDelayBlocks(), /*channel=*/0));
-  data_dumper_->DumpRaw("aec3_R2", R2);
-  data_dumper_->DumpRaw("aec3_R2_reverb",
-                        residual_echo_estimator_.GetReverbPowerSpectrum());
-  data_dumper_->DumpRaw("aec3_filter_delay", aec_state_.FilterDelayBlocks());
+      "aec3_X2", render_buffer->Spectrum(
+                     aec_state_.MinDirectPathFilterDelay())[/*channel=*/0]);
+  data_dumper_->DumpRaw("aec3_R2", R2[0]);
+  data_dumper_->DumpRaw("aec3_filter_delay",
+                        aec_state_.MinDirectPathFilterDelay());
   data_dumper_->DumpRaw("aec3_capture_saturation",
                         aec_state_.SaturatedCapture() ? 1 : 0);
 }
@@ -381,23 +478,11 @@ void EchoRemoverImpl::FormLinearFilterOutput(
     }
   }
 
-  if (use_main_output) {
-    if (!main_filter_output_last_selected_) {
-      SignalTransition(subtractor_output.e_shadow, subtractor_output.e_main,
-                       output);
-    } else {
-      std::copy(subtractor_output.e_main.begin(),
-                subtractor_output.e_main.end(), output.begin());
-    }
-  } else {
-    if (main_filter_output_last_selected_) {
-      SignalTransition(subtractor_output.e_main, subtractor_output.e_shadow,
-                       output);
-    } else {
-      std::copy(subtractor_output.e_shadow.begin(),
-                subtractor_output.e_shadow.end(), output.begin());
-    }
-  }
+  SignalTransition(
+      main_filter_output_last_selected_ ? subtractor_output.e_main
+                                        : subtractor_output.e_shadow,
+      use_main_output ? subtractor_output.e_main : subtractor_output.e_shadow,
+      output);
   main_filter_output_last_selected_ = use_main_output;
 }
 

@@ -12,7 +12,7 @@ adds the first use.
 ## **Allowed**
 
 * `absl::InlinedVector`
-* `absl::make_unique` and `absl::WrapUnique`
+* `absl::WrapUnique`
 * `absl::optional` and related stuff from `absl/types/optional.h`.
 * `absl::string_view`
 * The functions in `absl/strings/ascii.h`, `absl/strings/match.h`,
@@ -28,6 +28,10 @@ adds the first use.
 
 ## **Disallowed**
 
+### `absl::make_unique`
+
+*Use `std::make_unique` instead.*
+
 ### `absl::Mutex`
 
 *Use `rtc::CriticalSection` instead.*
@@ -36,7 +40,7 @@ Chromium has a ban on new static initializers, and `absl::Mutex` uses
 one. To make `absl::Mutex` available, we would need to nicely ask the
 Abseil team to remove that initializer (like they already did for a
 spinlock initializer). Additionally, `absl::Mutex` handles time in a
-way that may not be compaible with the rest of WebRTC.
+way that may not be compatible with the rest of WebRTC.
 
 ### `absl::Span`
 

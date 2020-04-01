@@ -19,6 +19,7 @@
 
 #include "api/crypto/frame_decryptor_interface.h"
 #include "api/dtls_transport_interface.h"
+#include "api/frame_transformer_interface.h"
 #include "api/media_stream_interface.h"
 #include "api/media_types.h"
 #include "api/proxy.h"
@@ -27,6 +28,7 @@
 #include "api/transport/rtp/rtp_source.h"
 #include "rtc_base/deprecation.h"
 #include "rtc_base/ref_count.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -44,7 +46,7 @@ class RtpReceiverObserverInterface {
   virtual ~RtpReceiverObserverInterface() {}
 };
 
-class RtpReceiverInterface : public rtc::RefCountInterface {
+class RTC_EXPORT RtpReceiverInterface : public rtc::RefCountInterface {
  public:
   virtual rtc::scoped_refptr<MediaStreamTrackInterface> track() const = 0;
 
@@ -75,8 +77,9 @@ class RtpReceiverInterface : public rtc::RefCountInterface {
   // but this API also applies them to receivers, similar to ORTC:
   // http://ortc.org/wp-content/uploads/2016/03/ortc.html#rtcrtpparameters*.
   virtual RtpParameters GetParameters() const = 0;
-  // Currently, doesn't support changing any parameters, but may in the future.
-  virtual bool SetParameters(const RtpParameters& parameters) = 0;
+  // TODO(dinosaurav): Delete SetParameters entirely after rolling to Chromium.
+  // Currently, doesn't support changing any parameters.
+  virtual bool SetParameters(const RtpParameters& parameters) { return false; }
 
   // Does not take ownership of observer.
   // Must call SetObserver(nullptr) before the observer is destroyed.
@@ -105,6 +108,12 @@ class RtpReceiverInterface : public rtc::RefCountInterface {
   // user. This can be used to update the state of the object.
   virtual rtc::scoped_refptr<FrameDecryptorInterface> GetFrameDecryptor() const;
 
+  // Sets a frame transformer between the depacketizer and the decoder to enable
+  // client code to transform received frames according to their own processing
+  // logic.
+  virtual void SetDepacketizerToDecoderFrameTransformer(
+      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer);
+
  protected:
   ~RtpReceiverInterface() override = default;
 };
@@ -122,7 +131,6 @@ PROXY_CONSTMETHOD0(std::vector<rtc::scoped_refptr<MediaStreamInterface>>,
 PROXY_CONSTMETHOD0(cricket::MediaType, media_type)
 PROXY_CONSTMETHOD0(std::string, id)
 PROXY_CONSTMETHOD0(RtpParameters, GetParameters)
-PROXY_METHOD1(bool, SetParameters, const RtpParameters&)
 PROXY_METHOD1(void, SetObserver, RtpReceiverObserverInterface*)
 PROXY_METHOD1(void, SetJitterBufferMinimumDelay, absl::optional<double>)
 PROXY_CONSTMETHOD0(std::vector<RtpSource>, GetSources)
@@ -131,6 +139,9 @@ PROXY_METHOD1(void,
               rtc::scoped_refptr<FrameDecryptorInterface>)
 PROXY_CONSTMETHOD0(rtc::scoped_refptr<FrameDecryptorInterface>,
                    GetFrameDecryptor)
+PROXY_METHOD1(void,
+              SetDepacketizerToDecoderFrameTransformer,
+              rtc::scoped_refptr<FrameTransformerInterface>)
 END_PROXY_MAP()
 
 }  // namespace webrtc

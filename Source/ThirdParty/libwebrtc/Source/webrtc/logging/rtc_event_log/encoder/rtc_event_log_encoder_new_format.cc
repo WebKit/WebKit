@@ -32,6 +32,7 @@
 #include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
+#include "logging/rtc_event_log/events/rtc_event_remote_estimate.h"
 #include "logging/rtc_event_log/events/rtc_event_route_change.h"
 #include "logging/rtc_event_log/events/rtc_event_rtcp_packet_incoming.h"
 #include "logging/rtc_event_log/events/rtc_event_rtcp_packet_outgoing.h"
@@ -686,6 +687,7 @@ std::string RtcEventLogEncoderNewFormat::EncodeBatch(
     std::vector<const RtcEventProbeResultFailure*> probe_result_failure_events;
     std::vector<const RtcEventProbeResultSuccess*> probe_result_success_events;
     std::vector<const RtcEventRouteChange*> route_change_events;
+    std::vector<const RtcEventRemoteEstimate*> remote_estimate_events;
     std::vector<const RtcEventRtcpPacketIncoming*> incoming_rtcp_packets;
     std::vector<const RtcEventRtcpPacketOutgoing*> outgoing_rtcp_packets;
     std::map<uint32_t /* SSRC */, std::vector<const RtcEventRtpPacketIncoming*>>
@@ -777,6 +779,12 @@ std::string RtcEventLogEncoderNewFormat::EncodeBatch(
           auto* rtc_event =
               static_cast<const RtcEventRouteChange* const>(it->get());
           route_change_events.push_back(rtc_event);
+          break;
+        }
+        case RtcEvent::Type::RemoteEstimateEvent: {
+          auto* rtc_event =
+              static_cast<const RtcEventRemoteEstimate* const>(it->get());
+          remote_estimate_events.push_back(rtc_event);
           break;
         }
         case RtcEvent::Type::RtcpPacketIncoming: {
@@ -873,6 +881,7 @@ std::string RtcEventLogEncoderNewFormat::EncodeBatch(
     EncodeProbeResultFailure(probe_result_failure_events, &event_stream);
     EncodeProbeResultSuccess(probe_result_success_events, &event_stream);
     EncodeRouteChange(route_change_events, &event_stream);
+    EncodeRemoteEstimate(remote_estimate_events, &event_stream);
     EncodeRtcpPacketIncoming(incoming_rtcp_packets, &event_stream);
     EncodeRtcpPacketOutgoing(outgoing_rtcp_packets, &event_stream);
     EncodeRtpPacketIncoming(incoming_rtp_packets, &event_stream);
@@ -1320,6 +1329,78 @@ void RtcEventLogEncoderNewFormat::EncodeRouteChange(
     proto_batch->set_overhead(base_event->overhead());
   }
   // TODO(terelius): Should we delta-compress this event type?
+}
+
+void RtcEventLogEncoderNewFormat::EncodeRemoteEstimate(
+    rtc::ArrayView<const RtcEventRemoteEstimate*> batch,
+    rtclog2::EventStream* event_stream) {
+  if (batch.empty())
+    return;
+
+  // Base event
+  const auto* const base_event = batch[0];
+  rtclog2::RemoteEstimates* proto_batch = event_stream->add_remote_estimates();
+
+  proto_batch->set_timestamp_ms(base_event->timestamp_ms());
+
+  absl::optional<uint64_t> base_link_capacity_lower;
+  if (base_event->link_capacity_lower_.IsFinite()) {
+    base_link_capacity_lower =
+        base_event->link_capacity_lower_.kbps<uint32_t>();
+    proto_batch->set_link_capacity_lower_kbps(*base_link_capacity_lower);
+  }
+  absl::optional<uint64_t> base_link_capacity_upper;
+  if (base_event->link_capacity_upper_.IsFinite()) {
+    base_link_capacity_upper =
+        base_event->link_capacity_upper_.kbps<uint32_t>();
+    proto_batch->set_link_capacity_upper_kbps(*base_link_capacity_upper);
+  }
+
+  if (batch.size() == 1)
+    return;
+
+  // Delta encoding
+  proto_batch->set_number_of_deltas(batch.size() - 1);
+  std::vector<absl::optional<uint64_t>> values(batch.size() - 1);
+  std::string encoded_deltas;
+
+  // timestamp_ms
+  for (size_t i = 0; i < values.size(); ++i) {
+    const auto* event = batch[i + 1];
+    values[i] = ToUnsigned(event->timestamp_ms());
+  }
+  encoded_deltas = EncodeDeltas(ToUnsigned(base_event->timestamp_ms()), values);
+  if (!encoded_deltas.empty()) {
+    proto_batch->set_timestamp_ms_deltas(encoded_deltas);
+  }
+
+  // link_capacity_lower_kbps
+  for (size_t i = 0; i < values.size(); ++i) {
+    const auto* event = batch[i + 1];
+    if (base_event->link_capacity_lower_.IsFinite()) {
+      values[i] = event->link_capacity_lower_.kbps<uint32_t>();
+    } else {
+      values[i].reset();
+    }
+  }
+  encoded_deltas = EncodeDeltas(base_link_capacity_lower, values);
+  if (!encoded_deltas.empty()) {
+    proto_batch->set_link_capacity_lower_kbps_deltas(encoded_deltas);
+  }
+
+  // link_capacity_upper_kbps
+  for (size_t i = 0; i < values.size(); ++i) {
+    const auto* event = batch[i + 1];
+    if (base_event->link_capacity_upper_.IsFinite()) {
+      values[i] = event->link_capacity_upper_.kbps<uint32_t>();
+    } else {
+      values[i].reset();
+    }
+  }
+  encoded_deltas = EncodeDeltas(base_link_capacity_upper, values);
+  if (!encoded_deltas.empty()) {
+    proto_batch->set_link_capacity_upper_kbps_deltas(encoded_deltas);
+  }
 }
 
 void RtcEventLogEncoderNewFormat::EncodeRtcpPacketIncoming(

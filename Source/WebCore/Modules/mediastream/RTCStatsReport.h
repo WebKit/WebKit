@@ -59,7 +59,6 @@ public:
 
     struct RTCRTPStreamStats : Stats {
         Optional<uint32_t> ssrc;
-        String associateStatsId;
         bool isRemote { false };
         String mediaType;
 

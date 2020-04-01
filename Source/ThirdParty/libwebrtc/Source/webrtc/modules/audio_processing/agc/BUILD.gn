@@ -8,31 +8,39 @@
 
 import("../../../webrtc.gni")
 
-rtc_source_set("agc") {
+rtc_source_set("gain_control_interface") {
+  sources = [ "gain_control.h" ]
+}
+
+rtc_library("agc") {
   sources = [
     "agc_manager_direct.cc",
     "agc_manager_direct.h",
   ]
   configs += [ "..:apm_debug_dump" ]
   deps = [
+    ":gain_control_interface",
     ":gain_map",
     ":level_estimation",
     "..:apm_logging",
-    "..:gain_control_interface",
+    "..:audio_buffer",
     "../../../common_audio",
     "../../../common_audio:common_audio_c",
     "../../../rtc_base:checks",
     "../../../rtc_base:gtest_prod",
     "../../../rtc_base:logging",
     "../../../rtc_base:macromagic",
+    "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:safe_minmax",
+    "../../../system_wrappers:field_trial",
     "../../../system_wrappers:metrics",
     "../agc2:level_estimation_agc",
     "../vad",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_source_set("level_estimation") {
+rtc_library("level_estimation") {
   sources = [
     "agc.cc",
     "agc.h",
@@ -48,7 +56,7 @@ rtc_source_set("level_estimation") {
   ]
 }
 
-rtc_source_set("agc_legacy_c") {
+rtc_library("agc_legacy_c") {
   visibility = [
     ":*",
     "..:*",
@@ -83,13 +91,11 @@ rtc_source_set("agc_legacy_c") {
 }
 
 rtc_source_set("gain_map") {
-  sources = [
-    "gain_map_internal.h",
-  ]
+  sources = [ "gain_map_internal.h" ]
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("agc_unittests") {
+  rtc_library("agc_unittests") {
     testonly = true
     sources = [
       "agc_manager_direct_unittest.cc",
@@ -100,8 +106,10 @@ if (rtc_include_tests) {
 
     deps = [
       ":agc",
+      ":gain_control_interface",
       ":level_estimation",
       "..:mocks",
+      "../../../test:field_trial",
       "../../../test:fileutils",
       "../../../test:test_support",
       "//testing/gtest",

@@ -24,7 +24,7 @@ namespace {
 const uint32_t kSenderSsrc = 0x12345678;
 const uint32_t kRemoteSsrcs[] = {0x23456789, 0x2345678a, 0x2345678b};
 const uint32_t kBitrateBps = 0x3fb93 * 2;  // 522022;
-const uint64_t kBitrateBps64bit = 0x3fb93ULL << 30;
+const int64_t kBitrateBps64bit = int64_t{0x3fb93} << 30;
 const uint8_t kPacket[] = {0x8f, 206,  0x00, 0x07, 0x12, 0x34, 0x56, 0x78,
                            0x00, 0x00, 0x00, 0x00, 'R',  'E',  'M',  'B',
                            0x03, 0x07, 0xfb, 0x93, 0x23, 0x45, 0x67, 0x89,

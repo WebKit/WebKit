@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/units/time_delta.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/rtpfb.h"
 
 namespace webrtc {
@@ -36,6 +37,7 @@ class TransportFeedback : public Rtpfb {
     uint16_t sequence_number() const { return sequence_number_; }
     int16_t delta_ticks() const { return delta_ticks_; }
     int32_t delta_us() const { return delta_ticks_ * kDeltaScaleFactor; }
+    TimeDelta delta() const { return TimeDelta::Micros(delta_us()); }
     bool received() const { return received_; }
 
    private:
@@ -76,9 +78,11 @@ class TransportFeedback : public Rtpfb {
 
   // Get the reference time in microseconds, including any precision loss.
   int64_t GetBaseTimeUs() const;
+  TimeDelta GetBaseTime() const;
 
   // Get the unwrapped delta between current base time and |prev_timestamp_us|.
   int64_t GetBaseDeltaUs(int64_t prev_timestamp_us) const;
+  TimeDelta GetBaseDelta(TimeDelta prev_timestamp) const;
 
   // Does the feedback packet contain timestamp information?
   bool IncludeTimestamps() const { return include_timestamps_; }

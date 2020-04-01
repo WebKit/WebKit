@@ -40,6 +40,11 @@ class PushResampler {
   int src_sample_rate_hz_;
   int dst_sample_rate_hz_;
   size_t num_channels_;
+  // Vector that is needed to provide the proper inputs and outputs to the
+  // interleave/de-interleave methods used in Resample. This needs to be
+  // heap-allocated on the state to support an arbitrary number of channels
+  // without doing run-time heap-allocations in the Resample method.
+  std::vector<T*> channel_data_array_;
 
   struct ChannelResampler {
     std::unique_ptr<PushSincResampler> resampler;

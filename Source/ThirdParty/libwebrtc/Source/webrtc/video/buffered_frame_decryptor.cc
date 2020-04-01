@@ -11,9 +11,11 @@
 #include "video/buffered_frame_decryptor.h"
 
 #include <utility>
+#include <vector>
 
+#include "modules/rtp_rtcp/source/rtp_descriptor_authentication.h"
+#include "modules/video_coding/frame_object.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/system/fallthrough.h"
 #include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
@@ -22,7 +24,7 @@ BufferedFrameDecryptor::BufferedFrameDecryptor(
     OnDecryptedFrameCallback* decrypted_frame_callback,
     OnDecryptionStatusChangeCallback* decryption_status_change_callback)
     : generic_descriptor_auth_experiment_(
-          field_trial::IsEnabled("WebRTC-GenericDescriptorAuth")),
+          !field_trial::IsDisabled("WebRTC-GenericDescriptorAuth")),
       decrypted_frame_callback_(decrypted_frame_callback),
       decryption_status_change_callback_(decryption_status_change_callback) {}
 
@@ -61,9 +63,7 @@ BufferedFrameDecryptor::FrameDecision BufferedFrameDecryptor::DecryptFrame(
     return FrameDecision::kStash;
   }
   // When using encryption we expect the frame to have the generic descriptor.
-  absl::optional<RtpGenericFrameDescriptor> descriptor =
-      frame->GetGenericFrameDescriptor();
-  if (!descriptor) {
+  if (frame->GetRtpVideoHeader().generic == absl::nullopt) {
     RTC_LOG(LS_ERROR) << "No generic frame descriptor found dropping frame.";
     return FrameDecision::kDrop;
   }
@@ -76,10 +76,10 @@ BufferedFrameDecryptor::FrameDecision BufferedFrameDecryptor::DecryptFrame(
   rtc::ArrayView<uint8_t> inline_decrypted_bitstream(frame->data(),
                                                      max_plaintext_byte_size);
 
-  // Only enable authenticating the header if the field trial is enabled.
-  rtc::ArrayView<const uint8_t> additional_data;
+  // Enable authenticating the header if the field trial isn't disabled.
+  std::vector<uint8_t> additional_data;
   if (generic_descriptor_auth_experiment_) {
-    additional_data = descriptor->GetByteRepresentation();
+    additional_data = RtpDescriptorAuthentication(frame->GetRtpVideoHeader());
   }
 
   // Attempt to decrypt the video frame.

@@ -79,7 +79,7 @@ int16_t WebRtcVad_FindMinimum(VadInstT* self,
       age[i]++;
     } else {
       // Too old value. Remove from memory and shift larger values downwards.
-      for (j = i; j < 16; j++) {
+      for (j = i; j < 15; j++) {
         smallest_values[j] = smallest_values[j + 1];
         age[j] = age[j + 1];
       }

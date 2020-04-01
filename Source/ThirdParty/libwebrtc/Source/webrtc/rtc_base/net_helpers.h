@@ -23,12 +23,14 @@
 #include "rtc_base/ip_address.h"
 #include "rtc_base/signal_thread.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
 // AsyncResolver will perform async DNS resolution, signaling the result on
 // the SignalDone from AsyncResolverInterface when the operation completes.
-class AsyncResolver : public SignalThread, public AsyncResolverInterface {
+class RTC_EXPORT AsyncResolver : public SignalThread,
+                                 public AsyncResolverInterface {
  public:
   AsyncResolver();
   ~AsyncResolver() override;

@@ -17,9 +17,11 @@
 
 #include "absl/types/optional.h"
 #include "api/rtc_event_log/rtc_event_log.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/test/video/function_video_decoder_factory.h"
 #include "api/test/video/function_video_encoder_factory.h"
+#include "api/transport/field_trial_based_config.h"
 #include "api/video/video_bitrate_allocator_factory.h"
 #include "call/call.h"
 #include "modules/audio_device/include/test_audio_device.h"
@@ -29,7 +31,6 @@
 #include "test/fake_vp8_encoder.h"
 #include "test/frame_generator_capturer.h"
 #include "test/rtp_rtcp_observer.h"
-#include "test/single_threaded_task_queue.h"
 
 namespace webrtc {
 namespace test {
@@ -173,8 +174,10 @@ class CallTest : public ::testing::Test {
   void SetVideoEncoderConfig(const VideoEncoderConfig& config);
   VideoSendStream* GetVideoSendStream();
   FlexfecReceiveStream::Config* GetFlexFecConfig();
+  TaskQueueBase* task_queue() { return task_queue_.get(); }
 
   Clock* const clock_;
+  const FieldTrialBasedConfig field_trials_;
 
   std::unique_ptr<TaskQueueFactory> task_queue_factory_;
   std::unique_ptr<webrtc::RtcEventLog> send_event_log_;
@@ -220,7 +223,6 @@ class CallTest : public ::testing::Test {
   rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory_;
   test::FakeVideoRenderer fake_renderer_;
 
-  DEPRECATED_SingleThreadedTaskQueueForTesting task_queue_;
 
  private:
   absl::optional<RtpExtension> GetRtpExtensionByUri(
@@ -229,6 +231,7 @@ class CallTest : public ::testing::Test {
   void AddRtpExtensionByUri(const std::string& uri,
                             std::vector<RtpExtension>* extensions) const;
 
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue_;
   std::vector<RtpExtension> rtp_extensions_;
   rtc::scoped_refptr<AudioProcessing> apm_send_;
   rtc::scoped_refptr<AudioProcessing> apm_recv_;
@@ -260,11 +263,11 @@ class BaseTest : public RtpRtcpObserver {
 
   virtual void OnCallsCreated(Call* sender_call, Call* receiver_call);
 
-  virtual test::PacketTransport* CreateSendTransport(
-      DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
+  virtual std::unique_ptr<test::PacketTransport> CreateSendTransport(
+      TaskQueueBase* task_queue,
       Call* sender_call);
-  virtual test::PacketTransport* CreateReceiveTransport(
-      DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue);
+  virtual std::unique_ptr<test::PacketTransport> CreateReceiveTransport(
+      TaskQueueBase* task_queue);
 
   virtual void ModifyVideoConfigs(
       VideoSendStream::Config* send_config,

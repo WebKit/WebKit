@@ -152,27 +152,27 @@ TEST(TimestampAlignerTest, ClipToMonotonous) {
   // {0, c1, c1 + c2}, we exhibit non-monotonous behaviour if and only
   // if c1 > s1 + 2 s2 + 4 c2.
   const int kNumSamples = 3;
-  const int64_t camera_time_us[kNumSamples] = {0, 80000, 90001};
-  const int64_t system_time_us[kNumSamples] = {0, 10000, 20000};
+  const int64_t kCaptureTimeUs[kNumSamples] = {0, 80000, 90001};
+  const int64_t kSystemTimeUs[kNumSamples] = {0, 10000, 20000};
   const int64_t expected_offset_us[kNumSamples] = {0, -35000, -46667};
 
   // Non-monotonic translated timestamps can happen when only for
   // translated timestamps in the future. Which is tolerated if
   // |timestamp_aligner.clip_bias_us| is large enough. Instead of
   // changing that private member for this test, just add the bias to
-  // |system_time_us| when calling ClipTimestamp.
+  // |kSystemTimeUs| when calling ClipTimestamp.
   const int64_t kClipBiasUs = 100000;
 
   bool did_clip = false;
   int64_t prev_timestamp_us = std::numeric_limits<int64_t>::min();
   for (int i = 0; i < kNumSamples; i++) {
     int64_t offset_us =
-        timestamp_aligner.UpdateOffset(camera_time_us[i], system_time_us[i]);
+        timestamp_aligner.UpdateOffset(kCaptureTimeUs[i], kSystemTimeUs[i]);
     EXPECT_EQ(offset_us, expected_offset_us[i]);
 
-    int64_t translated_timestamp_us = camera_time_us[i] + offset_us;
+    int64_t translated_timestamp_us = kCaptureTimeUs[i] + offset_us;
     int64_t clip_timestamp_us = timestamp_aligner.ClipTimestamp(
-        translated_timestamp_us, system_time_us[i] + kClipBiasUs);
+        translated_timestamp_us, kSystemTimeUs[i] + kClipBiasUs);
     if (translated_timestamp_us <= prev_timestamp_us) {
       did_clip = true;
       EXPECT_EQ(clip_timestamp_us,
@@ -184,6 +184,24 @@ TEST(TimestampAlignerTest, ClipToMonotonous) {
     prev_timestamp_us = clip_timestamp_us;
   }
   EXPECT_TRUE(did_clip);
+}
+
+TEST(TimestampAlignerTest, TranslateTimestampWithoutStateUpdate) {
+  TimestampAligner timestamp_aligner;
+
+  constexpr int kNumSamples = 4;
+  constexpr int64_t kCaptureTimeUs[kNumSamples] = {0, 80000, 90001, 100000};
+  constexpr int64_t kSystemTimeUs[kNumSamples] = {0, 10000, 20000, 30000};
+  constexpr int64_t kQueryCaptureTimeOffsetUs[kNumSamples] = {0, 123, -321,
+                                                              345};
+
+  for (int i = 0; i < kNumSamples; i++) {
+    int64_t reference_timestamp = timestamp_aligner.TranslateTimestamp(
+        kCaptureTimeUs[i], kSystemTimeUs[i]);
+    EXPECT_EQ(reference_timestamp - kQueryCaptureTimeOffsetUs[i],
+              timestamp_aligner.TranslateTimestamp(
+                  kCaptureTimeUs[i] - kQueryCaptureTimeOffsetUs[i]));
+  }
 }
 
 }  // namespace rtc

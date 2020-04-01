@@ -20,7 +20,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/data_channel_interface.h"
 #include "api/jsep_ice_candidate.h"
 #include "pc/stream_collection.h"
@@ -116,7 +115,7 @@ class MockPeerConnectionObserver : public PeerConnectionObserver {
     RTC_DCHECK(pc_);
     RTC_DCHECK(PeerConnectionInterface::kIceGatheringNew !=
                pc_->ice_gathering_state());
-    candidates_.push_back(absl::make_unique<JsepIceCandidate>(
+    candidates_.push_back(std::make_unique<JsepIceCandidate>(
         candidate->sdp_mid(), candidate->sdp_mline_index(),
         candidate->candidate()));
     callback_triggered_ = true;
@@ -272,6 +271,10 @@ class MockCreateSessionDescriptionObserver
 class MockSetSessionDescriptionObserver
     : public webrtc::SetSessionDescriptionObserver {
  public:
+  static rtc::scoped_refptr<MockSetSessionDescriptionObserver> Create() {
+    return new rtc::RefCountedObject<MockSetSessionDescriptionObserver>();
+  }
+
   MockSetSessionDescriptionObserver()
       : called_(false),
         error_("MockSetSessionDescriptionObserver not called") {}

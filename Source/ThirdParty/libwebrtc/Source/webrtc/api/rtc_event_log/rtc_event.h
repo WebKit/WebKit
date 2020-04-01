@@ -30,6 +30,7 @@ class RtcEvent {
   enum class Type {
     AlrStateEvent,
     RouteChangeEvent,
+    RemoteEstimateEvent,
     AudioNetworkAdaptation,
     AudioPlayout,
     AudioReceiveStreamConfig,

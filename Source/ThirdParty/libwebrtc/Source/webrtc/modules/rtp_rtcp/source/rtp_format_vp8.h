@@ -70,14 +70,5 @@ class RtpPacketizerVp8 : public RtpPacketizer {
   RTC_DISALLOW_COPY_AND_ASSIGN(RtpPacketizerVp8);
 };
 
-// Depacketizer for VP8.
-class RtpDepacketizerVp8 : public RtpDepacketizer {
- public:
-  ~RtpDepacketizerVp8() override = default;
-
-  bool Parse(ParsedPayload* parsed_payload,
-             const uint8_t* payload_data,
-             size_t payload_data_length) override;
-};
 }  // namespace webrtc
 #endif  // MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_VP8_H_

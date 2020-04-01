@@ -12,7 +12,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "pc/webrtc_sdp.h"
 
 namespace webrtc {
@@ -33,8 +32,8 @@ std::unique_ptr<IceCandidateInterface> CreateIceCandidate(
     const std::string& sdp_mid,
     int sdp_mline_index,
     const cricket::Candidate& candidate) {
-  return absl::make_unique<JsepIceCandidate>(sdp_mid, sdp_mline_index,
-                                             candidate);
+  return std::make_unique<JsepIceCandidate>(sdp_mid, sdp_mline_index,
+                                            candidate);
 }
 
 JsepIceCandidate::JsepIceCandidate(const std::string& sdp_mid,

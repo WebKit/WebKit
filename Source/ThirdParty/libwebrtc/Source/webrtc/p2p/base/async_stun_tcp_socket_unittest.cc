@@ -106,10 +106,10 @@ class AsyncStunTCPSocketTest : public ::testing::Test,
 
   bool Send(const void* data, size_t len) {
     rtc::PacketOptions options;
-    size_t ret =
+    int ret =
         send_socket_->Send(reinterpret_cast<const char*>(data), len, options);
     vss_->ProcessMessagesUntilIdle();
-    return (ret == len);
+    return (ret == static_cast<int>(len));
   }
 
   bool CheckData(const void* data, int len) {
@@ -224,10 +224,6 @@ TEST_F(AsyncStunTCPSocketTest, TestTooSmallMessageBuffer) {
 
 // Verifying a legal large turn message.
 TEST_F(AsyncStunTCPSocketTest, TestMaximumSizeTurnPacket) {
-  // We have problem in getting the SignalWriteEvent from the virtual socket
-  // server. So increasing the send buffer to 64k.
-  // TODO(mallinath) - Remove this setting after we fix vss issue.
-  vss_->set_send_buffer_capacity(64 * 1024);
   unsigned char packet[65539];
   packet[0] = 0x40;
   packet[1] = 0x00;
@@ -238,10 +234,6 @@ TEST_F(AsyncStunTCPSocketTest, TestMaximumSizeTurnPacket) {
 
 // Verifying a legal large stun message.
 TEST_F(AsyncStunTCPSocketTest, TestMaximumSizeStunPacket) {
-  // We have problem in getting the SignalWriteEvent from the virtual socket
-  // server. So increasing the send buffer to 64k.
-  // TODO(mallinath) - Remove this setting after we fix vss issue.
-  vss_->set_send_buffer_capacity(64 * 1024);
   unsigned char packet[65552];
   packet[0] = 0x00;
   packet[1] = 0x01;
@@ -250,8 +242,9 @@ TEST_F(AsyncStunTCPSocketTest, TestMaximumSizeStunPacket) {
   EXPECT_TRUE(Send(packet, sizeof(packet)));
 }
 
-// Investigate why WriteEvent is not signaled from VSS.
-TEST_F(AsyncStunTCPSocketTest, DISABLED_TestWithSmallSendBuffer) {
+// Test that a turn message is sent completely even if it exceeds the socket
+// send buffer capacity.
+TEST_F(AsyncStunTCPSocketTest, TestWithSmallSendBuffer) {
   vss_->set_send_buffer_capacity(1);
   Send(kTurnChannelDataMessageWithOddLength,
        sizeof(kTurnChannelDataMessageWithOddLength));

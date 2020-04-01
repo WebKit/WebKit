@@ -12,7 +12,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "sdk/android/src/jni/android_network_monitor.h"
 
 namespace webrtc {
@@ -20,13 +19,13 @@ namespace webrtc {
 std::unique_ptr<rtc::NetworkMonitorFactory> CreateAndroidNetworkMonitorFactory(
     JNIEnv* env,
     jobject application_context) {
-  return absl::make_unique<jni::AndroidNetworkMonitorFactory>(
+  return std::make_unique<jni::AndroidNetworkMonitorFactory>(
       env, JavaParamRef<jobject>(application_context));
 }
 
 std::unique_ptr<rtc::NetworkMonitorFactory>
 CreateAndroidNetworkMonitorFactory() {
-  return absl::make_unique<jni::AndroidNetworkMonitorFactory>();
+  return std::make_unique<jni::AndroidNetworkMonitorFactory>();
 }
 
 }  // namespace webrtc

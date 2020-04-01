@@ -286,19 +286,22 @@ void Merge::Downsample(const int16_t* input,
       num_coefficients, decimation_factor, kCompensateDelay);
   if (input_length <= length_limit) {
     // Not quite long enough, so we have to cheat a bit.
-    // If the input is really short, we'll just use the input length as is, and
-    // won't bother with correcting for the offset. This is clearly a
-    // pathological case, and the signal quality will suffer.
-    const size_t temp_len = input_length > signal_offset
-                                ? input_length - signal_offset
-                                : input_length;
+    // If the input is shorter than the offset, we consider the input to be 0
+    // length. This will cause us to skip the downsampling since it makes no
+    // sense anyway, and input_downsampled_ will be filled with zeros. This is
+    // clearly a pathological case, and the signal quality will suffer, but
+    // there is not much we can do.
+    const size_t temp_len =
+        input_length > signal_offset ? input_length - signal_offset : 0;
     // TODO(hlundin): Should |downsamp_temp_len| be corrected for round-off
     // errors? I.e., (temp_len + decimation_factor - 1) / decimation_factor?
     size_t downsamp_temp_len = temp_len / decimation_factor;
-    WebRtcSpl_DownsampleFast(&input[signal_offset], temp_len,
-                             input_downsampled_, downsamp_temp_len,
-                             filter_coefficients, num_coefficients,
-                             decimation_factor, kCompensateDelay);
+    if (downsamp_temp_len > 0) {
+      WebRtcSpl_DownsampleFast(&input[signal_offset], temp_len,
+                               input_downsampled_, downsamp_temp_len,
+                               filter_coefficients, num_coefficients,
+                               decimation_factor, kCompensateDelay);
+    }
     memset(&input_downsampled_[downsamp_temp_len], 0,
            sizeof(int16_t) * (kInputDownsampLength - downsamp_temp_len));
   } else {

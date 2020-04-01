@@ -12,7 +12,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/location.h"
 #include "rtc_base/null_socket_server.h"
@@ -128,7 +127,7 @@ void SignalThread::OnMessage(Message* msg) {
 }
 
 SignalThread::Worker::Worker(SignalThread* parent)
-    : Thread(absl::make_unique<NullSocketServer>(), /*do_init=*/false),
+    : Thread(std::make_unique<NullSocketServer>(), /*do_init=*/false),
       parent_(parent) {
   DoInit();
 }

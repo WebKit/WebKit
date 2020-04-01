@@ -10,9 +10,9 @@
 
 #include "call/degraded_call.h"
 
+#include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/location.h"
 
 namespace webrtc {
@@ -137,16 +137,16 @@ DegradedCall::DegradedCall(
       send_simulated_network_(nullptr),
       receive_config_(receive_config) {
   if (receive_config_) {
-    auto network = absl::make_unique<SimulatedNetwork>(*receive_config_);
+    auto network = std::make_unique<SimulatedNetwork>(*receive_config_);
     receive_simulated_network_ = network.get();
     receive_pipe_ =
-        absl::make_unique<webrtc::FakeNetworkPipe>(clock_, std::move(network));
+        std::make_unique<webrtc::FakeNetworkPipe>(clock_, std::move(network));
     receive_pipe_->SetReceiver(call_->Receiver());
   }
   if (send_config_) {
-    auto network = absl::make_unique<SimulatedNetwork>(*send_config_);
+    auto network = std::make_unique<SimulatedNetwork>(*send_config_);
     send_simulated_network_ = network.get();
-    send_pipe_ = absl::make_unique<FakeNetworkPipeOnTaskQueue>(
+    send_pipe_ = std::make_unique<FakeNetworkPipeOnTaskQueue>(
         task_queue_factory_, clock_, std::move(network));
   }
 }
@@ -156,7 +156,7 @@ DegradedCall::~DegradedCall() = default;
 AudioSendStream* DegradedCall::CreateAudioSendStream(
     const AudioSendStream::Config& config) {
   if (send_config_) {
-    auto transport_adapter = absl::make_unique<FakeNetworkPipeTransportAdapter>(
+    auto transport_adapter = std::make_unique<FakeNetworkPipeTransportAdapter>(
         send_pipe_.get(), call_.get(), clock_, config.send_transport);
     AudioSendStream::Config degrade_config = config;
     degrade_config.send_transport = transport_adapter.get();
@@ -190,7 +190,7 @@ VideoSendStream* DegradedCall::CreateVideoSendStream(
     VideoEncoderConfig encoder_config) {
   std::unique_ptr<FakeNetworkPipeTransportAdapter> transport_adapter;
   if (send_config_) {
-    transport_adapter = absl::make_unique<FakeNetworkPipeTransportAdapter>(
+    transport_adapter = std::make_unique<FakeNetworkPipeTransportAdapter>(
         send_pipe_.get(), call_.get(), clock_, config.send_transport);
     config.send_transport = transport_adapter.get();
   }
@@ -208,7 +208,7 @@ VideoSendStream* DegradedCall::CreateVideoSendStream(
     std::unique_ptr<FecController> fec_controller) {
   std::unique_ptr<FakeNetworkPipeTransportAdapter> transport_adapter;
   if (send_config_) {
-    transport_adapter = absl::make_unique<FakeNetworkPipeTransportAdapter>(
+    transport_adapter = std::make_unique<FakeNetworkPipeTransportAdapter>(
         send_pipe_.get(), call_.get(), clock_, config.send_transport);
     config.send_transport = transport_adapter.get();
   }

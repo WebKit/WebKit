@@ -10,7 +10,8 @@
 
 #include "api/audio_codecs/isac/audio_encoder_isac_float.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/isac/main/include/audio_encoder_isac.h"
 #include "rtc_base/string_to_number.h"
@@ -70,7 +71,7 @@ std::unique_ptr<AudioEncoder> AudioEncoderIsacFloat::MakeAudioEncoder(
   c.sample_rate_hz = config.sample_rate_hz;
   c.frame_size_ms = config.frame_size_ms;
   c.bit_rate = config.bit_rate;
-  return absl::make_unique<AudioEncoderIsacFloatImpl>(c);
+  return std::make_unique<AudioEncoderIsacFloatImpl>(c);
 }
 
 }  // namespace webrtc

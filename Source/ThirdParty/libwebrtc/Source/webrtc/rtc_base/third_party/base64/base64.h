@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 
+#include "rtc_base/system/rtc_export.h"
+
 namespace rtc {
 
 class Base64 {
@@ -56,14 +58,14 @@ class Base64 {
   // encoded characters.
   static bool IsBase64Encoded(const std::string& str);
 
-  static void EncodeFromArray(const void* data,
-                              size_t len,
-                              std::string* result);
-  static bool DecodeFromArray(const char* data,
-                              size_t len,
-                              DecodeFlags flags,
-                              std::string* result,
-                              size_t* data_used);
+  RTC_EXPORT static void EncodeFromArray(const void* data,
+                                         size_t len,
+                                         std::string* result);
+  RTC_EXPORT static bool DecodeFromArray(const char* data,
+                                         size_t len,
+                                         DecodeFlags flags,
+                                         std::string* result,
+                                         size_t* data_used);
   static bool DecodeFromArray(const char* data,
                               size_t len,
                               DecodeFlags flags,

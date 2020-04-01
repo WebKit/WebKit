@@ -34,6 +34,7 @@ static int (*g_test_suite)(void) = NULL;
 static int g_argc;
 static char **g_argv;
 static bool g_save_chartjson_result;
+static absl::optional<std::vector<std::string>> g_metrics_to_plot;
 
 @interface UIApplication (Testing)
 - (void)_terminateWithStatus:(int)status;
@@ -88,6 +89,9 @@ static bool g_save_chartjson_result;
           [NSString stdStringForString:outputPath]);
     }
   }
+  if (g_metrics_to_plot) {
+    webrtc::test::PrintPlottableResults(*g_metrics_to_plot);
+  }
 
   // If a test app is too fast, it will exit before Instruments has has a
   // a chance to initialize and no test results will be seen.
@@ -109,12 +113,16 @@ namespace test {
 
 // Note: This is not thread safe, and must be called from the same thread as
 // runTests above.
-void InitTestSuite(int (*test_suite)(void), int argc, char *argv[],
-                   bool save_chartjson_result) {
+void InitTestSuite(int (*test_suite)(void),
+                   int argc,
+                   char *argv[],
+                   bool save_chartjson_result,
+                   absl::optional<std::vector<std::string>> metrics_to_plot) {
   g_test_suite = test_suite;
   g_argc = argc;
   g_argv = argv;
   g_save_chartjson_result = save_chartjson_result;
+  g_metrics_to_plot = std::move(metrics_to_plot);
 }
 
 void RunTestsFromIOSApp() {

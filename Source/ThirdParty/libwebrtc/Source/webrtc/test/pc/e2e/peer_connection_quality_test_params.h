@@ -14,14 +14,13 @@
 #include <string>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/async_resolver_factory.h"
 #include "api/call/call_factory_interface.h"
 #include "api/fec_controller.h"
-#include "api/media_transport_interface.h"
 #include "api/rtc_event_log/rtc_event_log_factory_interface.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/test/peerconnection_quality_test_fixture.h"
+#include "api/transport/media/media_transport_interface.h"
 #include "api/transport/network_control.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
@@ -49,6 +48,7 @@ struct PeerConnectionFactoryComponents {
   std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory;
   std::unique_ptr<NetworkControllerFactoryInterface> network_controller_factory;
   std::unique_ptr<MediaTransportFactory> media_transport_factory;
+  std::unique_ptr<NetEqFactory> neteq_factory;
 
   // Will be passed to MediaEngineInterface, that will be used in
   // PeerConnectionFactory.
@@ -75,6 +75,7 @@ struct PeerConnectionComponents {
   std::unique_ptr<webrtc::AsyncResolverFactory> async_resolver_factory;
   std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator;
   std::unique_ptr<rtc::SSLCertificateVerifier> tls_cert_verifier;
+  std::unique_ptr<IceTransportFactory> ice_transport_factory;
 };
 
 // Contains all components, that can be overridden in peer connection. Also
@@ -83,9 +84,9 @@ struct InjectableComponents {
   explicit InjectableComponents(rtc::Thread* network_thread,
                                 rtc::NetworkManager* network_manager)
       : network_thread(network_thread),
-        pcf_dependencies(absl::make_unique<PeerConnectionFactoryComponents>()),
+        pcf_dependencies(std::make_unique<PeerConnectionFactoryComponents>()),
         pc_dependencies(
-            absl::make_unique<PeerConnectionComponents>(network_manager)) {
+            std::make_unique<PeerConnectionComponents>(network_manager)) {
     RTC_CHECK(network_thread);
   }
 

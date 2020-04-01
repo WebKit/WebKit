@@ -12,7 +12,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "modules/desktop_capture/cropped_desktop_frame.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame_win.h"
@@ -67,16 +66,6 @@ BOOL CALLBACK WindowsEnumerationHandler(HWND hwnd, LPARAM param) {
   if (wcscmp(class_name, L"Progman") == 0 || wcscmp(class_name, L"Button") == 0)
     return TRUE;
 
-  // Windows 8 introduced a "Modern App" identified by their class name being
-  // either ApplicationFrameWindow or windows.UI.Core.coreWindow. The
-  // associated windows cannot be captured, so we skip them.
-  // http://crbug.com/526883.
-  if (rtc::IsWindows8OrLater() &&
-      (wcscmp(class_name, L"ApplicationFrameWindow") == 0 ||
-       wcscmp(class_name, L"Windows.UI.Core.CoreWindow") == 0)) {
-    return TRUE;
-  }
-
   DesktopCapturer::Source window;
   window.id = reinterpret_cast<WindowId>(hwnd);
 
@@ -115,7 +104,7 @@ struct OwnedWindowCollectorContext : public SelectedWindowContext {
 BOOL CALLBACK OwnedWindowCollector(HWND hwnd, LPARAM param) {
   OwnedWindowCollectorContext* context =
       reinterpret_cast<OwnedWindowCollectorContext*>(param);
-  if (context->IsWindowSelected(hwnd)) {
+  if (hwnd == context->selected_window()) {
     // Windows are enumerated in top-down z-order, so we can stop enumerating
     // upon reaching the selected window.
     return FALSE;
@@ -129,7 +118,8 @@ BOOL CALLBACK OwnedWindowCollector(HWND hwnd, LPARAM param) {
   }
 
   // Owned windows that intersect the selected window should be captured.
-  if (context->IsWindowOwned(hwnd) && context->IsWindowOverlapping(hwnd)) {
+  if (context->IsWindowOwnedBySelectedWindow(hwnd) &&
+      context->IsWindowOverlappingSelectedWindow(hwnd)) {
     // Skip windows that draw shadows around menus. These "SysShadow" windows
     // would otherwise be captured as solid black bars with no transparency
     // gradient (since this capturer doesn't detect / respect variations in the
@@ -209,7 +199,7 @@ bool WindowCapturerWin::GetSourceList(SourceList* sources) {
     return false;
 
   for (auto it = result.begin(); it != result.end();) {
-    if (!window_capture_helper_.IsWindowOnCurrentDesktop(
+    if (!window_capture_helper_.IsWindowVisibleOnCurrentDesktop(
             reinterpret_cast<HWND>(it->id))) {
       it = result.erase(it);
     } else {
@@ -442,7 +432,7 @@ WindowCapturerWin::CaptureResults WindowCapturerWin::CaptureFrame(
 
       if (!owned_windows_.empty()) {
         if (!owned_window_capturer_) {
-          owned_window_capturer_ = absl::make_unique<WindowCapturerWin>();
+          owned_window_capturer_ = std::make_unique<WindowCapturerWin>();
         }
 
         // Owned windows are stored in top-down z-order, so this iterates in

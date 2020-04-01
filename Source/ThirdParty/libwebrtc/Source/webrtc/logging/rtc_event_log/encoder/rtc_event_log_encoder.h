@@ -15,7 +15,7 @@
 #include <memory>
 #include <string>
 
-#include "logging/rtc_event_log/events/rtc_event.h"
+#include "api/rtc_event_log/rtc_event.h"
 
 namespace webrtc {
 class RtcEventLogEncoder {

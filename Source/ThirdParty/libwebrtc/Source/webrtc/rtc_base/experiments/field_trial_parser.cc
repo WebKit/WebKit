@@ -86,6 +86,12 @@ void ParseFieldTrial(
     } else {
       RTC_LOG(LS_INFO) << "No field with key: '" << key
                        << "' (found in trial: \"" << trial_string << "\")";
+      std::string valid_keys;
+      for (const auto& f : field_map) {
+        valid_keys += f.first;
+        valid_keys += ", ";
+      }
+      RTC_LOG(LS_INFO) << "Valid keys are: " << valid_keys;
     }
   }
 
@@ -137,6 +143,11 @@ absl::optional<unsigned> ParseTypedParameter<unsigned>(std::string str) {
     }
   }
   return absl::nullopt;
+}
+
+template <>
+absl::optional<std::string> ParseTypedParameter<std::string>(std::string str) {
+  return std::move(str);
 }
 
 template <>
@@ -221,6 +232,7 @@ template class FieldTrialParameter<bool>;
 template class FieldTrialParameter<double>;
 template class FieldTrialParameter<int>;
 template class FieldTrialParameter<unsigned>;
+template class FieldTrialParameter<std::string>;
 
 template class FieldTrialConstrained<double>;
 template class FieldTrialConstrained<int>;
@@ -230,5 +242,6 @@ template class FieldTrialOptional<double>;
 template class FieldTrialOptional<int>;
 template class FieldTrialOptional<unsigned>;
 template class FieldTrialOptional<bool>;
+template class FieldTrialOptional<std::string>;
 
 }  // namespace webrtc

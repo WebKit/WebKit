@@ -18,6 +18,7 @@
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
@@ -96,10 +97,10 @@ class SSLAdapter : public AsyncSocketAdapter {
 
 // Call this on the main thread, before using SSL.
 // Call CleanupSSL when finished with SSL.
-bool InitializeSSL();
+RTC_EXPORT bool InitializeSSL();
 
 // Call to cleanup additional threads, and also the main thread.
-bool CleanupSSL();
+RTC_EXPORT bool CleanupSSL();
 
 }  // namespace rtc
 

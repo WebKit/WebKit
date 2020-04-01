@@ -9,11 +9,14 @@
  */
 
 #import <XCTest/XCTest.h>
+
+#include "api/task_queue/default_task_queue_factory.h"
+
 #import "sdk/objc/components/audio/RTCAudioSession+Private.h"
 #import "sdk/objc/native/api/audio_device_module.h"
 #import "sdk/objc/native/src/audio/audio_device_ios.h"
 
-@interface RTCAudioDeviceTests: XCTestCase {
+@interface RTCAudioDeviceTests : XCTestCase {
   rtc::scoped_refptr<webrtc::AudioDeviceModule> _audioDeviceModule;
   std::unique_ptr<webrtc::ios_adm::AudioDeviceIOS> _audio_device;
 }
@@ -35,9 +38,7 @@
 
   NSError *error = nil;
   [self.audioSession lockForConfiguration];
-  [self.audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
-                     withOptions:0
-                           error:&error];
+  [self.audioSession setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:0 error:&error];
   XCTAssertNil(error);
 
   [self.audioSession setMode:AVAudioSessionModeVoiceChat error:&error];
@@ -82,8 +83,10 @@
                 [self.audioSession.category isEqual:AVAudioSessionCategoryPlayback]);
   XCTAssertEqual(AVAudioSessionModeVoiceChat, self.audioSession.mode);
 
+  std::unique_ptr<webrtc::TaskQueueFactory> task_queue_factory =
+      webrtc::CreateDefaultTaskQueueFactory();
   std::unique_ptr<webrtc::AudioDeviceBuffer> audio_buffer;
-  audio_buffer.reset(new webrtc::AudioDeviceBuffer());
+  audio_buffer.reset(new webrtc::AudioDeviceBuffer(task_queue_factory.get()));
   _audio_device->AttachAudioBuffer(audio_buffer.get());
   XCTAssertEqual(webrtc::AudioDeviceGeneric::InitStatus::OK, _audio_device->Init());
   XCTAssertEqual(0, _audio_device->InitPlayout());
@@ -93,7 +96,7 @@
   [self.audioSession notifyDidBeginInterruption];
 
   // Wait for notification to propagate.
-  rtc::MessageQueueManager::ProcessAllMessageQueuesForTesting();
+  rtc::ThreadManager::ProcessAllMessageQueuesForTesting();
   XCTAssertTrue(_audio_device->IsInterrupted());
 
   // Force it for testing.
@@ -101,7 +104,7 @@
 
   [self.audioSession notifyDidEndInterruptionWithShouldResumeSession:YES];
   // Wait for notification to propagate.
-  rtc::MessageQueueManager::ProcessAllMessageQueuesForTesting();
+  rtc::ThreadManager::ProcessAllMessageQueuesForTesting();
   XCTAssertTrue(_audio_device->IsInterrupted());
 
   _audio_device->Init();

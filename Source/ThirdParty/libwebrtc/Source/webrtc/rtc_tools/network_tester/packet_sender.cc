@@ -15,7 +15,6 @@
 #include <string>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/task_queue/queued_task.h"
@@ -99,9 +98,9 @@ void PacketSender::StartSending() {
     RTC_DCHECK_RUN_ON(&worker_queue_checker_);
     sending_ = true;
   });
-  worker_queue_.PostTask(absl::make_unique<UpdateTestSettingTask>(
-      this, absl::make_unique<ConfigReader>(config_file_path_)));
-  worker_queue_.PostTask(absl::make_unique<SendPacketTask>(this));
+  worker_queue_.PostTask(std::make_unique<UpdateTestSettingTask>(
+      this, std::make_unique<ConfigReader>(config_file_path_)));
+  worker_queue_.PostTask(std::make_unique<SendPacketTask>(this));
 }
 
 void PacketSender::StopSending() {

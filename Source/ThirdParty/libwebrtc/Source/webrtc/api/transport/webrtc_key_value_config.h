@@ -13,6 +13,7 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -21,7 +22,7 @@ namespace webrtc {
 // particular key value mapping will be preserved over time and no announcements
 // will be made if they are changed. It's up to the library user to ensure that
 // the behavior does not break.
-class WebRtcKeyValueConfig {
+class RTC_EXPORT WebRtcKeyValueConfig {
  public:
   virtual ~WebRtcKeyValueConfig() = default;
   // The configured value for the given key. Defaults to an empty string.

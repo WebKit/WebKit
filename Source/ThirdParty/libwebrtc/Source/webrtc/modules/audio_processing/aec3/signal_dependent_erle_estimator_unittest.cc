@@ -44,13 +44,25 @@ void GetActiveFrame(std::vector<std::vector<std::vector<float>>>* x) {
 
 class TestInputs {
  public:
-  explicit TestInputs(const EchoCanceller3Config& cfg);
+  TestInputs(const EchoCanceller3Config& cfg,
+             size_t num_render_channels,
+             size_t num_capture_channels);
   ~TestInputs();
   const RenderBuffer& GetRenderBuffer() { return *render_buffer_; }
-  rtc::ArrayView<const float> GetX2() { return X2_; }
-  rtc::ArrayView<const float> GetY2() { return Y2_; }
-  rtc::ArrayView<const float> GetE2() { return E2_; }
-  std::vector<std::array<float, kFftLengthBy2Plus1>> GetH2() { return H2_; }
+  rtc::ArrayView<const float, kFftLengthBy2Plus1> GetX2() { return X2_; }
+  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetY2() const {
+    return Y2_;
+  }
+  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> GetE2() const {
+    return E2_;
+  }
+  rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+  GetH2() const {
+    return H2_;
+  }
+  const std::vector<bool>& GetConvergedFilters() const {
+    return converged_filters_;
+  }
   void Update();
 
  private:
@@ -59,24 +71,37 @@ class TestInputs {
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer_;
   RenderBuffer* render_buffer_;
   std::array<float, kFftLengthBy2Plus1> X2_;
-  std::array<float, kFftLengthBy2Plus1> Y2_;
-  std::array<float, kFftLengthBy2Plus1> E2_;
-  std::vector<std::array<float, kFftLengthBy2Plus1>> H2_;
+  std::vector<std::array<float, kFftLengthBy2Plus1>> Y2_;
+  std::vector<std::array<float, kFftLengthBy2Plus1>> E2_;
+  std::vector<std::vector<std::array<float, kFftLengthBy2Plus1>>> H2_;
   std::vector<std::vector<std::vector<float>>> x_;
+  std::vector<bool> converged_filters_;
 };
 
-TestInputs::TestInputs(const EchoCanceller3Config& cfg)
-    : render_delay_buffer_(RenderDelayBuffer::Create(cfg, 16000, 1)),
-      H2_(cfg.filter.main.length_blocks),
+TestInputs::TestInputs(const EchoCanceller3Config& cfg,
+                       size_t num_render_channels,
+                       size_t num_capture_channels)
+    : render_delay_buffer_(
+          RenderDelayBuffer::Create(cfg, 16000, num_render_channels)),
+      Y2_(num_capture_channels),
+      E2_(num_capture_channels),
+      H2_(num_capture_channels,
+          std::vector<std::array<float, kFftLengthBy2Plus1>>(
+              cfg.filter.main.length_blocks)),
       x_(1,
-         std::vector<std::vector<float>>(1,
-                                         std::vector<float>(kBlockSize, 0.f))) {
+         std::vector<std::vector<float>>(num_render_channels,
+                                         std::vector<float>(kBlockSize, 0.f))),
+      converged_filters_(num_capture_channels, true) {
   render_delay_buffer_->AlignFromDelay(4);
   render_buffer_ = render_delay_buffer_->GetRenderBuffer();
-  for (auto& H : H2_) {
-    H.fill(0.f);
+  for (auto& H2_ch : H2_) {
+    for (auto& H2_p : H2_ch) {
+      H2_p.fill(0.f);
+    }
   }
-  H2_[0].fill(1.0f);
+  for (auto& H2_p : H2_[0]) {
+    H2_p.fill(1.f);
+  }
 }
 
 TestInputs::~TestInputs() = default;
@@ -102,19 +127,32 @@ void TestInputs::UpdateCurrentPowerSpectra() {
   auto& X2 = spectrum_render_buffer.buffer[idx][/*channel=*/0];
   auto& X2_prev = spectrum_render_buffer.buffer[prev_idx][/*channel=*/0];
   std::copy(X2.begin(), X2.end(), X2_.begin());
-  RTC_DCHECK_EQ(X2.size(), Y2_.size());
-  for (size_t k = 0; k < X2.size(); ++k) {
-    E2_[k] = 0.01f * X2_prev[k];
-    Y2_[k] = X2[k] + E2_[k];
+  for (size_t ch = 0; ch < Y2_.size(); ++ch) {
+    RTC_DCHECK_EQ(X2.size(), Y2_[ch].size());
+    for (size_t k = 0; k < X2.size(); ++k) {
+      E2_[ch][k] = 0.01f * X2_prev[k];
+      Y2_[ch][k] = X2[k] + E2_[ch][k];
+    }
   }
 }
 
 }  // namespace
 
-TEST(SignalDependentErleEstimator, SweepSettings) {
+class SignalDependentErleEstimatorMultiChannel
+    : public ::testing::Test,
+      public ::testing::WithParamInterface<std::tuple<size_t, size_t>> {};
+
+INSTANTIATE_TEST_SUITE_P(MultiChannel,
+                         SignalDependentErleEstimatorMultiChannel,
+                         ::testing::Combine(::testing::Values(1, 2, 4),
+                                            ::testing::Values(1, 2, 4)));
+
+TEST_P(SignalDependentErleEstimatorMultiChannel, SweepSettings) {
+  const size_t num_render_channels = std::get<0>(GetParam());
+  const size_t num_capture_channels = std::get<1>(GetParam());
   EchoCanceller3Config cfg;
   size_t max_length_blocks = 50;
-  for (size_t blocks = 0; blocks < max_length_blocks; blocks = blocks + 10) {
+  for (size_t blocks = 1; blocks < max_length_blocks; blocks = blocks + 10) {
     for (size_t delay_headroom = 0; delay_headroom < 5; ++delay_headroom) {
       for (size_t num_sections = 2; num_sections < max_length_blocks;
            ++num_sections) {
@@ -124,14 +162,18 @@ TEST(SignalDependentErleEstimator, SweepSettings) {
         cfg.delay.delay_headroom_samples = delay_headroom * kBlockSize;
         cfg.erle.num_sections = num_sections;
         if (EchoCanceller3Config::Validate(&cfg)) {
-          SignalDependentErleEstimator s(cfg);
-          std::array<float, kFftLengthBy2Plus1> average_erle;
-          average_erle.fill(cfg.erle.max_l);
-          TestInputs inputs(cfg);
+          SignalDependentErleEstimator s(cfg, num_capture_channels);
+          std::vector<std::array<float, kFftLengthBy2Plus1>> average_erle(
+              num_capture_channels);
+          for (auto& e : average_erle) {
+            e.fill(cfg.erle.max_l);
+          }
+          TestInputs inputs(cfg, num_render_channels, num_capture_channels);
           for (size_t n = 0; n < 10; ++n) {
             inputs.Update();
             s.Update(inputs.GetRenderBuffer(), inputs.GetH2(), inputs.GetX2(),
-                     inputs.GetY2(), inputs.GetE2(), average_erle, true);
+                     inputs.GetY2(), inputs.GetE2(), average_erle,
+                     inputs.GetConvergedFilters());
           }
         }
       }
@@ -139,7 +181,9 @@ TEST(SignalDependentErleEstimator, SweepSettings) {
   }
 }
 
-TEST(SignalDependentErleEstimator, LongerRun) {
+TEST_P(SignalDependentErleEstimatorMultiChannel, LongerRun) {
+  const size_t num_render_channels = std::get<0>(GetParam());
+  const size_t num_capture_channels = std::get<1>(GetParam());
   EchoCanceller3Config cfg;
   cfg.filter.main.length_blocks = 2;
   cfg.filter.main_initial.length_blocks = 1;
@@ -147,14 +191,18 @@ TEST(SignalDependentErleEstimator, LongerRun) {
   cfg.delay.hysteresis_limit_blocks = 0;
   cfg.erle.num_sections = 2;
   EXPECT_EQ(EchoCanceller3Config::Validate(&cfg), true);
-  std::array<float, kFftLengthBy2Plus1> average_erle;
-  average_erle.fill(cfg.erle.max_l);
-  SignalDependentErleEstimator s(cfg);
-  TestInputs inputs(cfg);
+  std::vector<std::array<float, kFftLengthBy2Plus1>> average_erle(
+      num_capture_channels);
+  for (auto& e : average_erle) {
+    e.fill(cfg.erle.max_l);
+  }
+  SignalDependentErleEstimator s(cfg, num_capture_channels);
+  TestInputs inputs(cfg, num_render_channels, num_capture_channels);
   for (size_t n = 0; n < 200; ++n) {
     inputs.Update();
     s.Update(inputs.GetRenderBuffer(), inputs.GetH2(), inputs.GetX2(),
-             inputs.GetY2(), inputs.GetE2(), average_erle, true);
+             inputs.GetY2(), inputs.GetE2(), average_erle,
+             inputs.GetConvergedFilters());
   }
 }
 

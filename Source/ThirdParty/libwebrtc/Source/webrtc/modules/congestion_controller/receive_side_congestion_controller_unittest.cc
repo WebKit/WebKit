@@ -76,10 +76,10 @@ TEST(ReceiveSideCongestionControllerTest, OnReceivedPacketWithAbsSendTime) {
 TEST(ReceiveSideCongestionControllerTest, ConvergesToCapacity) {
   Scenario s("recieve_cc_unit/converge");
   NetworkSimulationConfig net_conf;
-  net_conf.bandwidth = DataRate::kbps(1000);
-  net_conf.delay = TimeDelta::ms(50);
+  net_conf.bandwidth = DataRate::KilobitsPerSec(1000);
+  net_conf.delay = TimeDelta::Millis(50);
   auto* client = s.CreateClient("send", [&](CallClientConfig* c) {
-    c->transport.rates.start_rate = DataRate::kbps(300);
+    c->transport.rates.start_rate = DataRate::KilobitsPerSec(300);
   });
 
   auto* route = s.CreateRoutes(client, {s.CreateSimulationNode(net_conf)},
@@ -88,17 +88,17 @@ TEST(ReceiveSideCongestionControllerTest, ConvergesToCapacity) {
   VideoStreamConfig video;
   video.stream.packet_feedback = false;
   s.CreateVideoStream(route->forward(), video);
-  s.RunFor(TimeDelta::seconds(30));
+  s.RunFor(TimeDelta::Seconds(30));
   EXPECT_NEAR(client->send_bandwidth().kbps(), 900, 150);
 }
 
 TEST(ReceiveSideCongestionControllerTest, IsFairToTCP) {
   Scenario s("recieve_cc_unit/tcp_fairness");
   NetworkSimulationConfig net_conf;
-  net_conf.bandwidth = DataRate::kbps(1000);
-  net_conf.delay = TimeDelta::ms(50);
+  net_conf.bandwidth = DataRate::KilobitsPerSec(1000);
+  net_conf.delay = TimeDelta::Millis(50);
   auto* client = s.CreateClient("send", [&](CallClientConfig* c) {
-    c->transport.rates.start_rate = DataRate::kbps(1000);
+    c->transport.rates.start_rate = DataRate::KilobitsPerSec(1000);
   });
   auto send_net = {s.CreateSimulationNode(net_conf)};
   auto ret_net = {s.CreateSimulationNode(net_conf)};
@@ -107,10 +107,8 @@ TEST(ReceiveSideCongestionControllerTest, IsFairToTCP) {
   VideoStreamConfig video;
   video.stream.packet_feedback = false;
   s.CreateVideoStream(route->forward(), video);
-  s.net()->StartFakeTcpCrossTraffic(s.net()->CreateRoute(send_net),
-                                    s.net()->CreateRoute(ret_net),
-                                    FakeTcpConfig());
-  s.RunFor(TimeDelta::seconds(30));
+  s.net()->StartFakeTcpCrossTraffic(send_net, ret_net, FakeTcpConfig());
+  s.RunFor(TimeDelta::Seconds(30));
   // For some reason we get outcompeted by TCP here, this should probably be
   // fixed and a lower bound should be added to the test.
   EXPECT_LT(client->send_bandwidth().kbps(), 750);

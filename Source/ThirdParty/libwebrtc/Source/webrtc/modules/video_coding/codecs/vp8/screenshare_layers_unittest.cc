@@ -17,7 +17,6 @@
 #include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/video_codecs/vp8_frame_config.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/libvpx_vp8_encoder.h"
@@ -114,7 +113,7 @@ class ScreenshareLayerTest : public ::testing::Test {
 
   Vp8FrameConfig NextFrameConfig(size_t stream_index, uint32_t timestamp) {
     int64_t timestamp_ms = timestamp / 90;
-    clock_.AdvanceTime(TimeDelta::ms(timestamp_ms - rtc::TimeMillis()));
+    clock_.AdvanceTime(TimeDelta::Millis(timestamp_ms - rtc::TimeMillis()));
     return layers_->NextFrameConfig(stream_index, timestamp);
   }
 
@@ -204,7 +203,7 @@ class ScreenshareLayerTest : public ::testing::Test {
   bool config_updated_;
 
   CodecSpecificInfo* IgnoredCodecSpecificInfo() {
-    ignored_codec_specific_info_ = absl::make_unique<CodecSpecificInfo>();
+    ignored_codec_specific_info_ = std::make_unique<CodecSpecificInfo>();
     return ignored_codec_specific_info_.get();
   }
 
@@ -218,14 +217,14 @@ TEST_F(ScreenshareLayerTest, 1Layer) {
   // One layer screenshare should not use the frame dropper as all frames will
   // belong to the base layer.
   const int kSingleLayerFlags = 0;
-  auto info = absl::make_unique<CodecSpecificInfo>();
+  auto info = std::make_unique<CodecSpecificInfo>();
   int flags = EncodeFrame(false, info.get());
   timestamp_ += kTimestampDelta5Fps;
   EXPECT_EQ(static_cast<uint8_t>(kNoTemporalIdx),
             info->codecSpecific.VP8.temporalIdx);
   EXPECT_FALSE(info->codecSpecific.VP8.layerSync);
 
-  info = absl::make_unique<CodecSpecificInfo>();
+  info = std::make_unique<CodecSpecificInfo>();
   flags = EncodeFrame(false, info.get());
   EXPECT_EQ(kSingleLayerFlags, flags);
   EXPECT_EQ(static_cast<uint8_t>(kNoTemporalIdx),
@@ -564,7 +563,7 @@ TEST_F(ScreenshareLayerTest, UpdatesHistograms) {
     } else {
       RTC_NOTREACHED() << "Unexpected flags";
     }
-    clock_.AdvanceTime(TimeDelta::ms(1000 / 5));
+    clock_.AdvanceTime(TimeDelta::Millis(1000 / 5));
   }
 
   EXPECT_TRUE(overshoot);
@@ -572,35 +571,41 @@ TEST_F(ScreenshareLayerTest, UpdatesHistograms) {
 
   layers_.reset();  // Histograms are reported on destruction.
 
-  EXPECT_EQ(1,
-            metrics::NumSamples("WebRTC.Video.Screenshare.Layer0.FrameRate"));
-  EXPECT_EQ(1,
-            metrics::NumSamples("WebRTC.Video.Screenshare.Layer1.FrameRate"));
-  EXPECT_EQ(1, metrics::NumSamples("WebRTC.Video.Screenshare.FramesPerDrop"));
-  EXPECT_EQ(1,
-            metrics::NumSamples("WebRTC.Video.Screenshare.FramesPerOvershoot"));
-  EXPECT_EQ(1, metrics::NumSamples("WebRTC.Video.Screenshare.Layer0.Qp"));
-  EXPECT_EQ(1, metrics::NumSamples("WebRTC.Video.Screenshare.Layer1.Qp"));
-  EXPECT_EQ(
+  EXPECT_METRIC_EQ(
+      1, metrics::NumSamples("WebRTC.Video.Screenshare.Layer0.FrameRate"));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumSamples("WebRTC.Video.Screenshare.Layer1.FrameRate"));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumSamples("WebRTC.Video.Screenshare.FramesPerDrop"));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumSamples("WebRTC.Video.Screenshare.FramesPerOvershoot"));
+  EXPECT_METRIC_EQ(1,
+                   metrics::NumSamples("WebRTC.Video.Screenshare.Layer0.Qp"));
+  EXPECT_METRIC_EQ(1,
+                   metrics::NumSamples("WebRTC.Video.Screenshare.Layer1.Qp"));
+  EXPECT_METRIC_EQ(
       1, metrics::NumSamples("WebRTC.Video.Screenshare.Layer0.TargetBitrate"));
-  EXPECT_EQ(
+  EXPECT_METRIC_EQ(
       1, metrics::NumSamples("WebRTC.Video.Screenshare.Layer1.TargetBitrate"));
 
-  EXPECT_GT(metrics::MinSample("WebRTC.Video.Screenshare.Layer0.FrameRate"), 1);
-  EXPECT_GT(metrics::MinSample("WebRTC.Video.Screenshare.Layer1.FrameRate"), 1);
-  EXPECT_GT(metrics::MinSample("WebRTC.Video.Screenshare.FramesPerDrop"), 1);
-  EXPECT_GT(metrics::MinSample("WebRTC.Video.Screenshare.FramesPerOvershoot"),
-            1);
-  EXPECT_EQ(1,
-            metrics::NumEvents("WebRTC.Video.Screenshare.Layer0.Qp", kTl0Qp));
-  EXPECT_EQ(1,
-            metrics::NumEvents("WebRTC.Video.Screenshare.Layer1.Qp", kTl1Qp));
-  EXPECT_EQ(1,
-            metrics::NumEvents("WebRTC.Video.Screenshare.Layer0.TargetBitrate",
-                               kDefaultTl0BitrateKbps));
-  EXPECT_EQ(1,
-            metrics::NumEvents("WebRTC.Video.Screenshare.Layer1.TargetBitrate",
-                               kDefaultTl1BitrateKbps));
+  EXPECT_METRIC_GT(
+      metrics::MinSample("WebRTC.Video.Screenshare.Layer0.FrameRate"), 1);
+  EXPECT_METRIC_GT(
+      metrics::MinSample("WebRTC.Video.Screenshare.Layer1.FrameRate"), 1);
+  EXPECT_METRIC_GT(metrics::MinSample("WebRTC.Video.Screenshare.FramesPerDrop"),
+                   1);
+  EXPECT_METRIC_GT(
+      metrics::MinSample("WebRTC.Video.Screenshare.FramesPerOvershoot"), 1);
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents("WebRTC.Video.Screenshare.Layer0.Qp", kTl0Qp));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents("WebRTC.Video.Screenshare.Layer1.Qp", kTl1Qp));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents("WebRTC.Video.Screenshare.Layer0.TargetBitrate",
+                            kDefaultTl0BitrateKbps));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents("WebRTC.Video.Screenshare.Layer1.TargetBitrate",
+                            kDefaultTl1BitrateKbps));
 }
 
 TEST_F(ScreenshareLayerTest, RespectsConfiguredFramerate) {
@@ -621,7 +626,7 @@ TEST_F(ScreenshareLayerTest, RespectsConfiguredFramerate) {
                             IgnoredCodecSpecificInfo());
     }
     timestamp += kFrameIntervalsMs * 90;
-    clock_.AdvanceTime(TimeDelta::ms(kFrameIntervalsMs));
+    clock_.AdvanceTime(TimeDelta::Millis(kFrameIntervalsMs));
 
     ++num_input_frames;
   }
@@ -639,7 +644,7 @@ TEST_F(ScreenshareLayerTest, RespectsConfiguredFramerate) {
                             IgnoredCodecSpecificInfo());
     }
     timestamp += kFrameIntervalsMs * 90 / 2;
-    clock_.AdvanceTime(TimeDelta::ms(kFrameIntervalsMs));
+    clock_.AdvanceTime(TimeDelta::Millis(kFrameIntervalsMs));
     ++num_input_frames;
   }
 

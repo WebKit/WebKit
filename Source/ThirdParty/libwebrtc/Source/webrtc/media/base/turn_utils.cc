@@ -10,7 +10,7 @@
 
 #include "media/base/turn_utils.h"
 
-#include "p2p/base/stun.h"
+#include "api/transport/stun.h"
 #include "rtc_base/byte_order.h"
 
 namespace cricket {

@@ -23,8 +23,17 @@
 
 // Convenience macro defining JNI-accessible methods in the org.webrtc package.
 // Eliminates unnecessary boilerplate and line-wraps, reducing visual clutter.
+#if defined(WEBRTC_ARCH_X86)
+// Dalvik JIT generated code doesn't guarantee 16-byte stack alignment on
+// x86 - use force_align_arg_pointer to realign the stack at the JNI
+// boundary. crbug.com/655248
+#define JNI_FUNCTION_DECLARATION(rettype, name, ...)                    \
+  __attribute__((force_align_arg_pointer)) extern "C" JNIEXPORT rettype \
+      JNICALL Java_org_webrtc_##name(__VA_ARGS__)
+#else
 #define JNI_FUNCTION_DECLARATION(rettype, name, ...) \
   extern "C" JNIEXPORT rettype JNICALL Java_org_webrtc_##name(__VA_ARGS__)
+#endif
 
 namespace webrtc {
 namespace jni {

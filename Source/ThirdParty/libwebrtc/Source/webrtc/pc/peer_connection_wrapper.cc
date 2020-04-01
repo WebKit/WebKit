@@ -125,6 +125,11 @@ PeerConnectionWrapper::CreateAnswerAndSetAsLocal(
   return answer;
 }
 
+std::unique_ptr<SessionDescriptionInterface>
+PeerConnectionWrapper::CreateRollback() {
+  return CreateSessionDescription(SdpType::kRollback, "");
+}
+
 std::unique_ptr<SessionDescriptionInterface> PeerConnectionWrapper::CreateSdp(
     rtc::FunctionView<void(CreateSessionDescriptionObserver*)> fn,
     std::string* error_out) {

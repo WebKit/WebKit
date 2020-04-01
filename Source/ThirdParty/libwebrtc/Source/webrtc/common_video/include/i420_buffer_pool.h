@@ -48,6 +48,11 @@ class I420BufferPool {
                                               int stride_u,
                                               int stride_v);
 
+  // Changes the max amount of buffers in the pool to the new value.
+  // Returns true if change was successful and false if the amount of already
+  // allocated buffers is bigger than new value.
+  bool Resize(size_t max_number_of_buffers);
+
   // Clears buffers_ and detaches the thread checker so that it can be reused
   // later from another thread.
   void Release();
@@ -66,7 +71,7 @@ class I420BufferPool {
   // has to do with "Use-of-uninitialized-value" on "Linux_msan_chrome".
   const bool zero_initialize_;
   // Max number of buffers this pool can have pending.
-  const size_t max_number_of_buffers_;
+  size_t max_number_of_buffers_;
 };
 
 }  // namespace webrtc

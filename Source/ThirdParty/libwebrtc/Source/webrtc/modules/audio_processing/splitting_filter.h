@@ -64,7 +64,7 @@ class SplittingFilter {
 
   const size_t num_bands_;
   std::vector<TwoBandsStates> two_bands_states_;
-  std::vector<std::unique_ptr<ThreeBandFilterBank>> three_band_filter_banks_;
+  std::vector<ThreeBandFilterBank> three_band_filter_banks_;
 };
 
 }  // namespace webrtc

@@ -16,7 +16,7 @@
 
 #include "audio/remix_resample.h"
 #include "audio/utility/audio_frame_operations.h"
-#include "call/audio_send_stream.h"
+#include "call/audio_sender.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -149,15 +149,15 @@ int32_t AudioTransportImpl::RecordedDataIsAvailable(
     typing_noise_detected_ = typing_detected;
 
     RTC_DCHECK_GT(audio_frame->samples_per_channel_, 0);
-    if (!sending_streams_.empty()) {
-      auto it = sending_streams_.begin();
-      while (++it != sending_streams_.end()) {
+    if (!audio_senders_.empty()) {
+      auto it = audio_senders_.begin();
+      while (++it != audio_senders_.end()) {
         std::unique_ptr<AudioFrame> audio_frame_copy(new AudioFrame());
         audio_frame_copy->CopyFrom(*audio_frame);
         (*it)->SendAudioData(std::move(audio_frame_copy));
       }
       // Send the original frame to the first stream w/o copying.
-      (*sending_streams_.begin())->SendAudioData(std::move(audio_frame));
+      (*audio_senders_.begin())->SendAudioData(std::move(audio_frame));
     }
   }
 
@@ -227,12 +227,11 @@ void AudioTransportImpl::PullRenderData(int bits_per_sample,
   RTC_DCHECK_EQ(output_samples, number_of_channels * number_of_frames);
 }
 
-void AudioTransportImpl::UpdateSendingStreams(
-    std::vector<AudioSendStream*> streams,
-    int send_sample_rate_hz,
-    size_t send_num_channels) {
+void AudioTransportImpl::UpdateAudioSenders(std::vector<AudioSender*> senders,
+                                            int send_sample_rate_hz,
+                                            size_t send_num_channels) {
   rtc::CritScope lock(&capture_lock_);
-  sending_streams_ = std::move(streams);
+  audio_senders_ = std::move(senders);
   send_sample_rate_hz_ = send_sample_rate_hz;
   send_num_channels_ = send_num_channels;
 }

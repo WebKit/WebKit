@@ -21,18 +21,18 @@ TEST(TimeUtilTest, TimeMicrosToNtpDoesntChangeBetweenRuns) {
   // TimeMicrosToNtp is not pure: it behave differently between different
   // execution of the program, but should behave same during same execution.
   const int64_t time_us = 12345;
-  clock.SetTime(Timestamp::us(2));
+  clock.SetTime(Timestamp::Micros(2));
   NtpTime time_ntp = TimeMicrosToNtp(time_us);
-  clock.SetTime(Timestamp::us(time_us));
+  clock.SetTime(Timestamp::Micros(time_us));
   EXPECT_EQ(TimeMicrosToNtp(time_us), time_ntp);
-  clock.SetTime(Timestamp::us(1000000));
+  clock.SetTime(Timestamp::Micros(1000000));
   EXPECT_EQ(TimeMicrosToNtp(time_us), time_ntp);
 }
 
 TEST(TimeUtilTest, TimeMicrosToNtpKeepsIntervals) {
   rtc::ScopedFakeClock clock;
   NtpTime time_ntp1 = TimeMicrosToNtp(rtc::TimeMicros());
-  clock.AdvanceTime(TimeDelta::ms(20));
+  clock.AdvanceTime(TimeDelta::Millis(20));
   NtpTime time_ntp2 = TimeMicrosToNtp(rtc::TimeMicros());
   EXPECT_EQ(time_ntp2.ToMs() - time_ntp1.ToMs(), 20);
 }

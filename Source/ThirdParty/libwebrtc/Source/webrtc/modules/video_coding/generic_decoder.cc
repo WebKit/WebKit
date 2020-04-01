@@ -18,17 +18,25 @@
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
 VCMDecodedFrameCallback::VCMDecodedFrameCallback(VCMTiming* timing,
                                                  Clock* clock)
-    : _clock(clock), _timing(timing), _timestampMap(kDecoderFrameMemoryLength) {
+    : _clock(clock),
+      _timing(timing),
+      _timestampMap(kDecoderFrameMemoryLength),
+      _extra_decode_time("t", absl::nullopt) {
   ntp_offset_ =
       _clock->CurrentNtpInMilliseconds() - _clock->TimeInMilliseconds();
+
+  ParseFieldTrial({&_extra_decode_time},
+                  field_trial::FindFullName("WebRTC-SlowDownDecoder"));
 }
 
 VCMDecodedFrameCallback::~VCMDecodedFrameCallback() {}
@@ -64,6 +72,11 @@ int32_t VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
 void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
                                       absl::optional<int32_t> decode_time_ms,
                                       absl::optional<uint8_t> qp) {
+  // Wait some extra time to simulate a slow decoder.
+  if (_extra_decode_time) {
+    rtc::Thread::SleepMs(_extra_decode_time->ms());
+  }
+
   RTC_DCHECK(_receiveCallback) << "Callback must not be null at this point";
   TRACE_EVENT_INSTANT1("webrtc", "VCMDecodedFrameCallback::Decoded",
                        "timestamp", decodedImage.timestamp());
@@ -86,11 +99,13 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   decodedImage.set_packet_infos(frameInfo->packet_infos);
   decodedImage.set_rotation(frameInfo->rotation);
 
-  const int64_t now_ms = _clock->TimeInMilliseconds();
+  const Timestamp now = _clock->CurrentTime();
+  RTC_DCHECK(frameInfo->decodeStart);
   if (!decode_time_ms) {
-    decode_time_ms = now_ms - frameInfo->decodeStartTimeMs;
+    decode_time_ms = (now - *frameInfo->decodeStart).ms();
   }
-  _timing->StopDecodeTimer(*decode_time_ms, now_ms);
+  _timing->StopDecodeTimer(*decode_time_ms, now.ms());
+  decodedImage.set_processing_time({*frameInfo->decodeStart, now});
 
   // Report timing information.
   TimingFrameInfo timing_frame_info;
@@ -134,8 +149,8 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   }
 
   timing_frame_info.flags = frameInfo->timing.flags;
-  timing_frame_info.decode_start_ms = frameInfo->decodeStartTimeMs;
-  timing_frame_info.decode_finish_ms = now_ms;
+  timing_frame_info.decode_start_ms = frameInfo->decodeStart->ms();
+  timing_frame_info.decode_finish_ms = now.ms();
   timing_frame_info.render_time_ms = frameInfo->renderTimeMs;
   timing_frame_info.rtp_timestamp = decodedImage.timestamp();
   timing_frame_info.receive_start_ms = frameInfo->timing.receive_start_ms;
@@ -197,10 +212,10 @@ int32_t VCMGenericDecoder::InitDecode(const VideoCodec* settings,
   return decoder_->InitDecode(settings, numberOfCores);
 }
 
-int32_t VCMGenericDecoder::Decode(const VCMEncodedFrame& frame, int64_t nowMs) {
+int32_t VCMGenericDecoder::Decode(const VCMEncodedFrame& frame, Timestamp now) {
   TRACE_EVENT1("webrtc", "VCMGenericDecoder::Decode", "timestamp",
                frame.Timestamp());
-  _frameInfos[_nextFrameInfoIdx].decodeStartTimeMs = nowMs;
+  _frameInfos[_nextFrameInfoIdx].decodeStart = now;
   _frameInfos[_nextFrameInfoIdx].renderTimeMs = frame.RenderTimeMs();
   _frameInfos[_nextFrameInfoIdx].rotation = frame.rotation();
   _frameInfos[_nextFrameInfoIdx].timing = frame.video_timing();

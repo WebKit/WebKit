@@ -50,10 +50,6 @@ int VideoEncoderWrapper::InitEncode(const VideoCodec* codec_settings,
   capabilities_ = settings.capabilities;
   number_of_cores_ = settings.number_of_cores;
   num_resets_ = 0;
-  {
-    rtc::CritScope lock(&encoder_queue_crit_);
-    encoder_queue_ = TaskQueueBase::Current();
-  }
 
   return InitEncodeInternal(jni);
 }
@@ -118,10 +114,6 @@ int32_t VideoEncoderWrapper::Release() {
   RTC_LOG(LS_INFO) << "release: " << status;
   frame_extra_infos_.clear();
   initialized_ = false;
-  {
-    rtc::CritScope lock(&encoder_queue_crit_);
-    encoder_queue_ = nullptr;
-  }
 
   return status;
 }
@@ -256,57 +248,49 @@ void VideoEncoderWrapper::OnEncodedFrame(
   int64_t capture_time_ns =
       GetJavaEncodedImageCaptureTimeNs(jni, j_encoded_image);
 
-  {
-    rtc::CritScope lock(&encoder_queue_crit_);
-    if (encoder_queue_ != nullptr) {
-      encoder_queue_->PostTask(ToQueuedTask([this, frame, capture_time_ns]() {
-        // Encoded frames are delivered in the order received, but some of them
-        // may be dropped, so remove records of frames older than the current
-        // one.
-        //
-        // NOTE: if the current frame is associated with Encoder A, in the time
-        // since this frame was received, Encoder A could have been
-        // Release()'ed, Encoder B InitEncode()'ed (due to reuse of Encoder A),
-        // and frames received by Encoder B. Thus there may be frame_extra_infos
-        // entries that don't belong to us, and we need to be careful not to
-        // remove them. Removing only those entries older than the current frame
-        // provides this guarantee.
-        while (!frame_extra_infos_.empty() &&
-               frame_extra_infos_.front().capture_time_ns < capture_time_ns) {
-          frame_extra_infos_.pop_front();
-        }
-        if (frame_extra_infos_.empty() ||
-            frame_extra_infos_.front().capture_time_ns != capture_time_ns) {
-          RTC_LOG(LS_WARNING)
-              << "Java encoder produced an unexpected frame with timestamp: "
-              << capture_time_ns;
-          return;
-        }
-        FrameExtraInfo frame_extra_info = std::move(frame_extra_infos_.front());
-        frame_extra_infos_.pop_front();
-
-        // This is a bit subtle. The |frame| variable from the lambda capture is
-        // const. Which implies that (i) we need to make a copy to be able to
-        // write to the metadata, and (ii) we should avoid using the .data()
-        // method (including implicit conversion to ArrayView) on the non-const
-        // copy, since that would trigget a copy operation on the underlying
-        // CopyOnWriteBuffer.
-        EncodedImage frame_copy = frame;
-
-        frame_copy.SetTimestamp(frame_extra_info.timestamp_rtp);
-        frame_copy.capture_time_ms_ =
-            capture_time_ns / rtc::kNumNanosecsPerMillisec;
-
-        RTPFragmentationHeader header = ParseFragmentationHeader(frame);
-        if (frame_copy.qp_ < 0)
-          frame_copy.qp_ = ParseQp(frame);
-
-        CodecSpecificInfo info(ParseCodecSpecificInfo(frame));
-
-        callback_->OnEncodedImage(frame_copy, &info, &header);
-      }));
-    }
+  // Encoded frames are delivered in the order received, but some of them
+  // may be dropped, so remove records of frames older than the current
+  // one.
+  //
+  // NOTE: if the current frame is associated with Encoder A, in the time
+  // since this frame was received, Encoder A could have been
+  // Release()'ed, Encoder B InitEncode()'ed (due to reuse of Encoder A),
+  // and frames received by Encoder B. Thus there may be frame_extra_infos
+  // entries that don't belong to us, and we need to be careful not to
+  // remove them. Removing only those entries older than the current frame
+  // provides this guarantee.
+  while (!frame_extra_infos_.empty() &&
+         frame_extra_infos_.front().capture_time_ns < capture_time_ns) {
+    frame_extra_infos_.pop_front();
   }
+  if (frame_extra_infos_.empty() ||
+      frame_extra_infos_.front().capture_time_ns != capture_time_ns) {
+    RTC_LOG(LS_WARNING)
+        << "Java encoder produced an unexpected frame with timestamp: "
+        << capture_time_ns;
+    return;
+  }
+  FrameExtraInfo frame_extra_info = std::move(frame_extra_infos_.front());
+  frame_extra_infos_.pop_front();
+
+  // This is a bit subtle. The |frame| variable from the lambda capture is
+  // const. Which implies that (i) we need to make a copy to be able to
+  // write to the metadata, and (ii) we should avoid using the .data()
+  // method (including implicit conversion to ArrayView) on the non-const
+  // copy, since that would trigget a copy operation on the underlying
+  // CopyOnWriteBuffer.
+  EncodedImage frame_copy = frame;
+
+  frame_copy.SetTimestamp(frame_extra_info.timestamp_rtp);
+  frame_copy.capture_time_ms_ = capture_time_ns / rtc::kNumNanosecsPerMillisec;
+
+  RTPFragmentationHeader header = ParseFragmentationHeader(frame);
+  if (frame_copy.qp_ < 0)
+    frame_copy.qp_ = ParseQp(frame);
+
+  CodecSpecificInfo info(ParseCodecSpecificInfo(frame));
+
+  callback_->OnEncodedImage(frame_copy, &info, &header);
 }
 
 int32_t VideoEncoderWrapper::HandleReturnCode(JNIEnv* jni,

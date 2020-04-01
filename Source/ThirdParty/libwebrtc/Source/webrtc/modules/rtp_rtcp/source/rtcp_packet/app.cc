@@ -37,7 +37,7 @@ constexpr size_t App::kMaxDataSize;
 //  8 |                   application-dependent data                ...
 //    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-App::App() : sub_type_(0), ssrc_(0), name_(0) {}
+App::App() : sub_type_(0), name_(0) {}
 
 App::~App() = default;
 
@@ -53,7 +53,7 @@ bool App::Parse(const CommonHeader& packet) {
     return false;
   }
   sub_type_ = packet.fmt();
-  ssrc_ = ByteReader<uint32_t>::ReadBigEndian(&packet.payload()[0]);
+  SetSenderSsrc(ByteReader<uint32_t>::ReadBigEndian(&packet.payload()[0]));
   name_ = ByteReader<uint32_t>::ReadBigEndian(&packet.payload()[4]);
   data_.SetData(packet.payload() + kAppBaseLength,
                 packet.payload_size_bytes() - kAppBaseLength);
@@ -89,7 +89,7 @@ bool App::Create(uint8_t* packet,
   const size_t index_end = *index + BlockLength();
   CreateHeader(sub_type_, kPacketType, HeaderLength(), packet, index);
 
-  ByteWriter<uint32_t>::WriteBigEndian(&packet[*index + 0], ssrc_);
+  ByteWriter<uint32_t>::WriteBigEndian(&packet[*index + 0], sender_ssrc());
   ByteWriter<uint32_t>::WriteBigEndian(&packet[*index + 4], name_);
   memcpy(&packet[*index + 8], data_.data(), data_.size());
   *index += (8 + data_.size());

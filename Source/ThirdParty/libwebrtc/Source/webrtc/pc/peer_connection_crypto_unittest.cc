@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <memory>
+
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
@@ -20,7 +22,6 @@
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
 #endif
-#include "absl/memory/memory.h"
 #include "pc/test/fake_audio_capture_module.h"
 #include "pc/test/fake_rtc_certificate_generator.h"
 #include "rtc_base/gunit.h"
@@ -65,9 +66,9 @@ class PeerConnectionCryptoBaseTest : public ::testing::Test {
   WrapperPtr CreatePeerConnection(
       const RTCConfiguration& config,
       std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_gen) {
-    auto fake_port_allocator = absl::make_unique<cricket::FakePortAllocator>(
+    auto fake_port_allocator = std::make_unique<cricket::FakePortAllocator>(
         rtc::Thread::Current(), nullptr);
-    auto observer = absl::make_unique<MockPeerConnectionObserver>();
+    auto observer = std::make_unique<MockPeerConnectionObserver>();
     RTCConfiguration modified_config = config;
     modified_config.sdp_semantics = sdp_semantics_;
     auto pc = pc_factory_->CreatePeerConnection(
@@ -78,8 +79,8 @@ class PeerConnectionCryptoBaseTest : public ::testing::Test {
     }
 
     observer->SetPeerConnectionInterface(pc.get());
-    return absl::make_unique<PeerConnectionWrapper>(pc_factory_, pc,
-                                                    std::move(observer));
+    return std::make_unique<PeerConnectionWrapper>(pc_factory_, pc,
+                                                   std::move(observer));
   }
 
   // Accepts the same arguments as CreatePeerConnection and adds default audio
@@ -591,7 +592,7 @@ TEST_P(PeerConnectionCryptoDtlsCertGenTest, TestCertificateGeneration) {
   RTCConfiguration config;
   config.enable_dtls_srtp.emplace(true);
   auto owned_fake_certificate_generator =
-      absl::make_unique<FakeRTCCertificateGenerator>();
+      std::make_unique<FakeRTCCertificateGenerator>();
   auto* fake_certificate_generator = owned_fake_certificate_generator.get();
   fake_certificate_generator->set_should_fail(cert_gen_result_ ==
                                               CertGenResult::kFail);

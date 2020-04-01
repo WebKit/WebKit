@@ -72,9 +72,11 @@ Vp9FrameBufferPool::GetFrameBuffer(size_t min_size) {
       allocated_buffers_.push_back(available_buffer);
       if (allocated_buffers_.size() > max_num_buffers_) {
         RTC_LOG(LS_WARNING)
-            << allocated_buffers_.size() << " Vp9FrameBuffers have been "
-            << "allocated by a Vp9FrameBufferPool (exceeding what is "
-            << "considered reasonable, " << max_num_buffers_ << ").";
+            << allocated_buffers_.size()
+            << " Vp9FrameBuffers have been "
+               "allocated by a Vp9FrameBufferPool (exceeding what is "
+               "considered reasonable, "
+            << max_num_buffers_ << ").";
 
         // TODO(phoglund): this limit is being hit in tests since Oct 5 2016.
         // See https://bugs.chromium.org/p/webrtc/issues/detail?id=6484.
@@ -97,6 +99,36 @@ int Vp9FrameBufferPool::GetNumBuffersInUse() const {
   return num_buffers_in_use;
 }
 
+bool Vp9FrameBufferPool::Resize(size_t max_number_of_buffers) {
+  rtc::CritScope cs(&buffers_lock_);
+  size_t used_buffers_count = 0;
+  for (const auto& buffer : allocated_buffers_) {
+    // If the buffer is in use, the ref count will be >= 2, one from the list we
+    // are looping over and one from the application. If the ref count is 1,
+    // then the list we are looping over holds the only reference and it's safe
+    // to reuse.
+    if (!buffer->HasOneRef()) {
+      used_buffers_count++;
+    }
+  }
+  if (used_buffers_count > max_number_of_buffers) {
+    return false;
+  }
+  max_num_buffers_ = max_number_of_buffers;
+
+  size_t buffers_to_purge = allocated_buffers_.size() - max_num_buffers_;
+  auto iter = allocated_buffers_.begin();
+  while (iter != allocated_buffers_.end() && buffers_to_purge > 0) {
+    if ((*iter)->HasOneRef()) {
+      iter = allocated_buffers_.erase(iter);
+      buffers_to_purge--;
+    } else {
+      ++iter;
+    }
+  }
+  return true;
+}
+
 void Vp9FrameBufferPool::ClearPool() {
   rtc::CritScope cs(&buffers_lock_);
   allocated_buffers_.clear();
@@ -108,6 +140,14 @@ int32_t Vp9FrameBufferPool::VpxGetFrameBuffer(void* user_priv,
                                               vpx_codec_frame_buffer* fb) {
   RTC_DCHECK(user_priv);
   RTC_DCHECK(fb);
+
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+  // Limit size of 8k YUV highdef frame
+  size_t size_limit = 7680 * 4320 * 3 / 2 * 2;
+  if (min_size > size_limit)
+    return -1;
+#endif
+
   Vp9FrameBufferPool* pool = static_cast<Vp9FrameBufferPool*>(user_priv);
 
   rtc::scoped_refptr<Vp9FrameBuffer> buffer = pool->GetFrameBuffer(min_size);

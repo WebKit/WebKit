@@ -36,6 +36,8 @@ class ChannelMixingMatrix {
   bool CreateTransformationMatrix(std::vector<std::vector<float>>* matrix);
 
  private:
+  const bool use_voip_channel_mapping_adjustments_;
+
   // Result transformation of input channels to output channels
   std::vector<std::vector<float>>* matrix_;
 

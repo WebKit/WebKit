@@ -47,7 +47,6 @@ group("examples") {
   if (is_linux || is_win) {
     deps += [
       ":peerconnection_server",
-      ":relayserver",
       ":stunserver",
       ":turnserver",
     ]
@@ -61,23 +60,19 @@ group("examples") {
   }
 }
 
-rtc_source_set("read_auth_file") {
+rtc_library("read_auth_file") {
   testonly = true
   sources = [
     "turnserver/read_auth_file.cc",
     "turnserver/read_auth_file.h",
   ]
-  deps = [
-    "../rtc_base",
-  ]
+  deps = [ "../rtc_base" ]
 }
 
 if (rtc_include_tests) {
   rtc_test("examples_unittests") {
     testonly = true
-    sources = [
-      "turnserver/read_auth_file_unittest.cc",
-    ]
+    sources = [ "turnserver/read_auth_file_unittest.cc" ]
     deps = [
       ":read_auth_file",
       "../test:test_main",
@@ -108,7 +103,7 @@ if (is_android) {
     testonly = true
     android_manifest_for_lint = "androidapp/AndroidManifest.xml"
 
-    java_files = [
+    sources = [
       "androidapp/src/org/appspot/apprtc/AppRTCAudioManager.java",
       "androidapp/src/org/appspot/apprtc/AppRTCBluetoothManager.java",
       "androidapp/src/org/appspot/apprtc/AppRTCClient.java",
@@ -121,9 +116,9 @@ if (is_android) {
       "androidapp/src/org/appspot/apprtc/DirectRTCClient.java",
       "androidapp/src/org/appspot/apprtc/HudFragment.java",
       "androidapp/src/org/appspot/apprtc/PeerConnectionClient.java",
+      "androidapp/src/org/appspot/apprtc/RecordedAudioToFileController.java",
       "androidapp/src/org/appspot/apprtc/RoomParametersFetcher.java",
       "androidapp/src/org/appspot/apprtc/RtcEventLog.java",
-      "androidapp/src/org/appspot/apprtc/RecordedAudioToFileController.java",
       "androidapp/src/org/appspot/apprtc/SettingsActivity.java",
       "androidapp/src/org/appspot/apprtc/SettingsFragment.java",
       "androidapp/src/org/appspot/apprtc/TCPChannelClient.java",
@@ -169,7 +164,7 @@ if (is_android) {
     min_sdk_version = 16
     target_sdk_version = 21
 
-    java_files = [
+    sources = [
       "androidtests/src/org/appspot/apprtc/test/PeerConnectionClientTest.java",
     ]
 
@@ -190,7 +185,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
     include_dirs = [ "objc/AppRTCMobile/common" ]
   }
 
-  rtc_static_library("apprtc_common") {
+  rtc_library("apprtc_common") {
     testonly = true
     sources = [
       "objc/AppRTCMobile/common/ARDUtilities.h",
@@ -200,13 +195,9 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
 
     if (is_ios) {
       # iOS must use WebRTC.framework which is dynamically linked.
-      deps = [
-        "../sdk:framework_objc+link",
-      ]
+      deps = [ "../sdk:framework_objc+link" ]
     } else {
-      deps = [
-        "../sdk:mac_framework_objc+link",
-      ]
+      deps = [ "../sdk:mac_framework_objc+link" ]
     }
   }
 
@@ -219,7 +210,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
     ]
   }
 
-  rtc_static_library("apprtc_signaling") {
+  rtc_library("apprtc_signaling") {
     testonly = true
     sources = [
       "objc/AppRTCMobile/ARDAppClient+Internal.h",
@@ -284,7 +275,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
   }
 
   if (is_ios) {
-    rtc_static_library("AppRTCMobile_lib") {
+    rtc_library("AppRTCMobile_lib") {
       # iOS must use WebRTC.framework which is dynamically linked.
       testonly = true
       sources = [
@@ -324,9 +315,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
 
     ios_app_bundle("AppRTCMobile") {
       testonly = true
-      sources = [
-        "objc/AppRTCMobile/ios/main.m",
-      ]
+      sources = [ "objc/AppRTCMobile/ios/main.m" ]
 
       info_plist = "objc/AppRTCMobile/ios/Info.plist"
 
@@ -355,31 +344,19 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
     if (rtc_apprtcmobile_broadcast_extension) {
       bundle_data("AppRTCMobileBroadcastUpload_extension_bundle") {
         testonly = true
-        public_deps = [
-          ":AppRTCMobileBroadcastUpload",
-        ]
-        sources = [
-          "$root_out_dir/AppRTCMobileBroadcastUpload.appex",
-        ]
-        outputs = [
-          "{{bundle_contents_dir}}/Plugins/{{source_file_part}}",
-        ]
+        public_deps = [ ":AppRTCMobileBroadcastUpload" ]  # no-presubmit-check TODO(webrtc:8603)
+        sources = [ "$root_out_dir/AppRTCMobileBroadcastUpload.appex" ]
+        outputs = [ "{{bundle_contents_dir}}/Plugins/{{source_file_part}}" ]
       }
 
       bundle_data("AppRTCMobileBroadcastSetupUI_extension_bundle") {
         testonly = true
-        public_deps = [
-          ":AppRTCMobileBroadcastSetupUI",
-        ]
-        sources = [
-          "$root_out_dir/AppRTCMobileBroadcastSetupUI.appex",
-        ]
-        outputs = [
-          "{{bundle_contents_dir}}/Plugins/{{source_file_part}}",
-        ]
+        public_deps = [ ":AppRTCMobileBroadcastSetupUI" ]  # no-presubmit-check TODO(webrtc:8603)
+        sources = [ "$root_out_dir/AppRTCMobileBroadcastSetupUI.appex" ]
+        outputs = [ "{{bundle_contents_dir}}/Plugins/{{source_file_part}}" ]
       }
 
-      rtc_static_library("AppRTCMobileBroadcastUpload_lib") {
+      rtc_library("AppRTCMobileBroadcastUpload_lib") {
         testonly = true
         sources = [
           "objc/AppRTCMobile/ios/broadcast_extension/ARDBroadcastSampleHandler.h",
@@ -418,9 +395,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
 
         libs = [ "ReplayKit.framework" ]
 
-        deps = [
-          ":AppRTCMobile_ios_bundle_data",
-        ]
+        deps = [ ":AppRTCMobile_ios_bundle_data" ]
       }
     }
 
@@ -448,12 +423,10 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "objc/Icon-180.png",
         "objc/Icon.png",
       ]
-      outputs = [
-        "{{bundle_resources_dir}}/{{source_file_part}}",
-      ]
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
     }
 
-    rtc_static_library("ObjCNativeAPIDemo_lib") {
+    rtc_library("ObjCNativeAPIDemo_lib") {
       testonly = true
       sources = [
         "objcnativeapi/objc/NADAppDelegate.h",
@@ -483,7 +456,6 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../sdk:ui_objc",
         "../sdk:videocapture_objc",
         "../sdk:videotoolbox_objc",
-        "//third_party/abseil-cpp/absl/memory",
       ]
 
       if (current_cpu == "arm64") {
@@ -493,18 +465,14 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
 
     ios_app_bundle("ObjCNativeAPIDemo") {
       testonly = true
-      sources = [
-        "objcnativeapi/objc/main.m",
-      ]
+      sources = [ "objcnativeapi/objc/main.m" ]
 
       info_plist = "objcnativeapi/Info.plist"
 
       configs += [ "..:common_config" ]
       public_configs = [ "..:common_inherited_config" ]
 
-      deps = [
-        ":ObjCNativeAPIDemo_lib",
-      ]
+      deps = [ ":ObjCNativeAPIDemo_lib" ]
 
       if (target_cpu == "x86") {
         deps += [ "//testing/iossim" ]
@@ -513,7 +481,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
   }
 
   if (is_mac) {
-    rtc_static_library("AppRTCMobile_lib") {
+    rtc_library("AppRTCMobile_lib") {
       testonly = true
       sources = [
         "objc/AppRTCMobile/mac/APPRTCAppDelegate.h",
@@ -533,9 +501,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
       testonly = true
       output_name = "AppRTCMobile"
 
-      sources = [
-        "objc/AppRTCMobile/mac/main.m",
-      ]
+      sources = [ "objc/AppRTCMobile/mac/main.m" ]
 
       public_configs = [ "..:common_inherited_config" ]
 
@@ -577,7 +543,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
     ]
   }
 
-  rtc_static_library("socketrocket") {
+  rtc_library("socketrocket") {
     testonly = true
     sources = [
       "objc/AppRTCMobile/third_party/SocketRocket/SRWebSocket.h",
@@ -596,7 +562,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
   if (rtc_include_tests) {
     # TODO(kthelgason): compile xctests on mac when chromium supports it.
     if (is_ios) {
-      rtc_source_set("apprtcmobile_test_sources") {
+      rtc_library("apprtcmobile_test_sources") {
         # iOS must use WebRTC.framework which is dynamically linked.
         testonly = true
         include_dirs = [
@@ -621,9 +587,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
 
       rtc_ios_xctest_test("apprtcmobile_tests") {
         info_plist = "objc/AppRTCMobile/ios/Info.plist"
-        sources = [
-          "objc/AppRTCMobile/tests/main.mm",
-        ]
+        sources = [ "objc/AppRTCMobile/tests/main.mm" ]
         deps = [
           ":AppRTCMobile_lib",
           ":apprtcmobile_test_sources",
@@ -652,6 +616,7 @@ if (is_linux || is_win) {
       "../api:audio_options_api",
       "../api:create_peerconnection_factory",
       "../api:libjingle_peerconnection_api",
+      "../api:media_stream_interface",
       "../api:scoped_refptr",
       "../api/audio:audio_mixer_api",
       "../api/audio_codecs:audio_codecs_api",
@@ -740,24 +705,9 @@ if (is_linux || is_win) {
       "//third_party/abseil-cpp/absl/flags:usage",
     ]
   }
-  rtc_executable("relayserver") {
-    testonly = true
-    sources = [
-      "relayserver/relayserver_main.cc",
-    ]
-    deps = [
-      "../p2p:p2p_server_utils",
-      "../p2p:rtc_p2p",
-      "../pc:rtc_pc",
-      "../rtc_base",
-      "../rtc_base:rtc_base_approved",
-    ]
-  }
   rtc_executable("turnserver") {
     testonly = true
-    sources = [
-      "turnserver/turnserver_main.cc",
-    ]
+    sources = [ "turnserver/turnserver_main.cc" ]
     deps = [
       ":read_auth_file",
       "../p2p:p2p_server_utils",
@@ -769,9 +719,7 @@ if (is_linux || is_win) {
   }
   rtc_executable("stunserver") {
     testonly = true
-    sources = [
-      "stunserver/stunserver_main.cc",
-    ]
+    sources = [ "stunserver/stunserver_main.cc" ]
     deps = [
       "../p2p:p2p_server_utils",
       "../p2p:rtc_p2p",
@@ -809,6 +757,7 @@ if (is_win || is_android) {
     deps = [
       "../api:create_peerconnection_factory",
       "../api:libjingle_peerconnection_api",
+      "../api:media_stream_interface",
       "../api/audio_codecs:builtin_audio_decoder_factory",
       "../api/audio_codecs:builtin_audio_encoder_factory",
       "../api/video:video_frame",
@@ -839,7 +788,7 @@ if (is_win || is_android) {
 
 if (is_android) {
   rtc_android_library("webrtc_unity_java") {
-    java_files = [ "unityplugin/java/src/org/webrtc/UnityUtility.java" ]
+    sources = [ "unityplugin/java/src/org/webrtc/UnityUtility.java" ]
     deps = [
       "../rtc_base:base_java",
       "../sdk/android:camera_java",
@@ -865,15 +814,32 @@ if (is_android) {
       "//third_party/android_deps:com_android_support_support_annotations_java",
     ]
   }
+
+  junit_binary("android_examples_junit_tests") {
+    sources = [
+      "androidjunit/src/org/appspot/apprtc/BluetoothManagerTest.java",
+      "androidjunit/src/org/appspot/apprtc/DirectRTCClientTest.java",
+      "androidjunit/src/org/appspot/apprtc/TCPChannelClientTest.java",
+    ]
+
+    deps = [
+      ":AppRTCMobile_javalib",
+      "//base:base_java_test_support",
+      "//third_party/google-truth:google_truth_java",
+    ]
+
+    additional_jar_files = [ [
+          "../sdk/android/tests/resources/robolectric.properties",
+          "robolectric.properties",
+        ] ]
+  }
 }
 
 if (!build_with_chromium) {
   # Doesn't build within Chrome on Win.
   rtc_executable("stun_prober") {
     testonly = true
-    sources = [
-      "stunprober/main.cc",
-    ]
+    sources = [ "stunprober/main.cc" ]
     deps = [
       "../p2p:libstunprober",
       "../p2p:rtc_p2p",

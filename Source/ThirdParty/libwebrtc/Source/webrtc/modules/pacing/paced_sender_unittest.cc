@@ -16,7 +16,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "modules/pacing/packet_router.h"
 #include "modules/utility/include/mock/mock_process_thread.h"
 #include "system_wrappers/include/clock.h"
@@ -29,17 +28,13 @@ using ::testing::_;
 using ::testing::Return;
 using ::testing::SaveArg;
 
+namespace webrtc {
 namespace {
 constexpr uint32_t kAudioSsrc = 12345;
 constexpr uint32_t kVideoSsrc = 234565;
 constexpr uint32_t kVideoRtxSsrc = 34567;
 constexpr uint32_t kFlexFecSsrc = 45678;
 constexpr size_t kDefaultPacketSize = 234;
-}  // namespace
-
-namespace webrtc {
-namespace test {
-
 
 // Mock callback implementing the raw api.
 class MockCallback : public PacketRouter {
@@ -52,67 +47,113 @@ class MockCallback : public PacketRouter {
       std::vector<std::unique_ptr<RtpPacketToSend>>(size_t target_size_bytes));
 };
 
-std::unique_ptr<RtpPacketToSend> BuildRtpPacket(RtpPacketToSend::Type type) {
-  auto packet = absl::make_unique<RtpPacketToSend>(nullptr);
-  packet->set_packet_type(type);
-  switch (type) {
-    case RtpPacketToSend::Type::kAudio:
-      packet->SetSsrc(kAudioSsrc);
-      break;
-    case RtpPacketToSend::Type::kVideo:
-      packet->SetSsrc(kVideoSsrc);
-      break;
-    case RtpPacketToSend::Type::kRetransmission:
-    case RtpPacketToSend::Type::kPadding:
-      packet->SetSsrc(kVideoRtxSsrc);
-      break;
-    case RtpPacketToSend::Type::kForwardErrorCorrection:
-      packet->SetSsrc(kFlexFecSsrc);
-      break;
+class ProcessModeTrials : public WebRtcKeyValueConfig {
+ public:
+  explicit ProcessModeTrials(bool dynamic_process) : mode_(dynamic_process) {}
+
+  std::string Lookup(absl::string_view key) const override {
+    if (key == "WebRTC-Pacer-DynamicProcess") {
+      return mode_ ? "Enabled" : "Disabled";
+    }
+    return "";
   }
 
-  packet->SetPayloadSize(kDefaultPacketSize);
-  return packet;
-}
+ private:
+  const bool mode_;
+};
+}  // namespace
 
-TEST(PacedSenderTest, PacesPackets) {
-  SimulatedClock clock(0);
-  MockCallback callback;
-  MockProcessThread process_thread;
-  Module* paced_module = nullptr;
-  EXPECT_CALL(process_thread, RegisterModule(_, _))
-      .WillOnce(SaveArg<0>(&paced_module));
-  PacedSender pacer(&clock, &callback, nullptr, nullptr, &process_thread);
-  EXPECT_CALL(process_thread, DeRegisterModule(paced_module)).Times(1);
+namespace test {
 
+class PacedSenderTest
+    : public ::testing::TestWithParam<PacingController::ProcessMode> {
+ public:
+  PacedSenderTest()
+      : clock_(0),
+        paced_module_(nullptr),
+        trials_(GetParam() == PacingController::ProcessMode::kDynamic) {}
+
+  void SetUp() override {
+    EXPECT_CALL(process_thread_, RegisterModule)
+        .WillOnce(SaveArg<0>(&paced_module_));
+
+    pacer_ = std::make_unique<PacedSender>(&clock_, &callback_, nullptr,
+                                           &trials_, &process_thread_);
+    EXPECT_CALL(process_thread_, WakeUp).WillRepeatedly([&](Module* module) {
+      clock_.AdvanceTimeMilliseconds(module->TimeUntilNextProcess());
+    });
+    EXPECT_CALL(process_thread_, DeRegisterModule(paced_module_)).Times(1);
+  }
+
+ protected:
+  std::unique_ptr<RtpPacketToSend> BuildRtpPacket(RtpPacketMediaType type) {
+    auto packet = std::make_unique<RtpPacketToSend>(nullptr);
+    packet->set_packet_type(type);
+    switch (type) {
+      case RtpPacketMediaType::kAudio:
+        packet->SetSsrc(kAudioSsrc);
+        break;
+      case RtpPacketMediaType::kVideo:
+        packet->SetSsrc(kVideoSsrc);
+        break;
+      case RtpPacketMediaType::kRetransmission:
+      case RtpPacketMediaType::kPadding:
+        packet->SetSsrc(kVideoRtxSsrc);
+        break;
+      case RtpPacketMediaType::kForwardErrorCorrection:
+        packet->SetSsrc(kFlexFecSsrc);
+        break;
+    }
+
+    packet->SetPayloadSize(kDefaultPacketSize);
+    return packet;
+  }
+
+  SimulatedClock clock_;
+  MockCallback callback_;
+  MockProcessThread process_thread_;
+  Module* paced_module_;
+  ProcessModeTrials trials_;
+  std::unique_ptr<PacedSender> pacer_;
+};
+
+TEST_P(PacedSenderTest, PacesPackets) {
   // Insert a number of packets, covering one second.
   static constexpr size_t kPacketsToSend = 42;
-  pacer.SetPacingRates(DataRate::bps(kDefaultPacketSize * 8 * kPacketsToSend),
-                       DataRate::Zero());
+  pacer_->SetPacingRates(
+      DataRate::BitsPerSec(kDefaultPacketSize * 8 * kPacketsToSend),
+      DataRate::Zero());
+  std::vector<std::unique_ptr<RtpPacketToSend>> packets;
   for (size_t i = 0; i < kPacketsToSend; ++i) {
-    pacer.EnqueuePacket(BuildRtpPacket(RtpPacketToSend::Type::kVideo));
+    packets.emplace_back(BuildRtpPacket(RtpPacketMediaType::kVideo));
   }
+  pacer_->EnqueuePackets(std::move(packets));
 
   // Expect all of them to be sent.
   size_t packets_sent = 0;
-  clock.AdvanceTimeMilliseconds(paced_module->TimeUntilNextProcess());
-  EXPECT_CALL(callback, SendPacket)
+  EXPECT_CALL(callback_, SendPacket)
       .WillRepeatedly(
           [&](std::unique_ptr<RtpPacketToSend> packet,
               const PacedPacketInfo& cluster_info) { ++packets_sent; });
 
-  const Timestamp start_time = clock.CurrentTime();
+  const Timestamp start_time = clock_.CurrentTime();
 
   while (packets_sent < kPacketsToSend) {
-    clock.AdvanceTimeMilliseconds(paced_module->TimeUntilNextProcess());
-    paced_module->Process();
+    clock_.AdvanceTimeMilliseconds(paced_module_->TimeUntilNextProcess());
+    paced_module_->Process();
   }
 
   // Packets should be sent over a period of close to 1s. Expect a little lower
   // than this since initial probing is a bit quicker.
-  TimeDelta duration = clock.CurrentTime() - start_time;
-  EXPECT_GT(duration, TimeDelta::ms(900));
+  TimeDelta duration = clock_.CurrentTime() - start_time;
+  EXPECT_GT(duration, TimeDelta::Millis(900));
 }
+
+INSTANTIATE_TEST_SUITE_P(
+    WithAndWithoutDynamicProcess,
+    PacedSenderTest,
+    ::testing::Values(PacingController::ProcessMode::kPeriodic,
+                      PacingController::ProcessMode::kDynamic));
 
 }  // namespace test
 }  // namespace webrtc

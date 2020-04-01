@@ -12,7 +12,6 @@
 
 #include "api/stats_types.h"
 #include "rtc_base/logging.h"
-#include "test/testsupport/perf_test.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -100,18 +99,21 @@ std::string DefaultAudioQualityAnalyzer::GetTestCaseName(
 }
 
 void DefaultAudioQualityAnalyzer::Stop() {
+  using ::webrtc::test::ImproveDirection;
   rtc::CritScope crit(&lock_);
   for (auto& item : streams_stats_) {
-    ReportResult("expand_rate", item.first, item.second.expand_rate,
-                 "unitless");
+    ReportResult("expand_rate", item.first, item.second.expand_rate, "unitless",
+                 ImproveDirection::kSmallerIsBetter);
     ReportResult("accelerate_rate", item.first, item.second.accelerate_rate,
-                 "unitless");
+                 "unitless", ImproveDirection::kSmallerIsBetter);
     ReportResult("preemptive_rate", item.first, item.second.preemptive_rate,
-                 "unitless");
+                 "unitless", ImproveDirection::kSmallerIsBetter);
     ReportResult("speech_expand_rate", item.first,
-                 item.second.speech_expand_rate, "unitless");
+                 item.second.speech_expand_rate, "unitless",
+                 ImproveDirection::kSmallerIsBetter);
     ReportResult("preferred_buffer_size_ms", item.first,
-                 item.second.preferred_buffer_size_ms, "ms");
+                 item.second.preferred_buffer_size_ms, "ms",
+                 ImproveDirection::kNone);
   }
 }
 
@@ -125,12 +127,13 @@ void DefaultAudioQualityAnalyzer::ReportResult(
     const std::string& metric_name,
     const std::string& stream_label,
     const SamplesStatsCounter& counter,
-    const std::string& unit) const {
+    const std::string& unit,
+    webrtc::test::ImproveDirection improve_direction) const {
   test::PrintResultMeanAndError(
       metric_name, /*modifier=*/"", GetTestCaseName(stream_label),
       counter.IsEmpty() ? 0 : counter.GetAverage(),
       counter.IsEmpty() ? 0 : counter.GetStandardDeviation(), unit,
-      /*important=*/false);
+      /*important=*/false, improve_direction);
 }
 
 }  // namespace webrtc_pc_e2e

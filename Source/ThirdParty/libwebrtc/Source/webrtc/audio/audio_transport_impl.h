@@ -25,7 +25,7 @@
 
 namespace webrtc {
 
-class AudioSendStream;
+class AudioSender;
 
 class AudioTransportImpl : public AudioTransport {
  public:
@@ -60,9 +60,9 @@ class AudioTransportImpl : public AudioTransport {
                       int64_t* elapsed_time_ms,
                       int64_t* ntp_time_ms) override;
 
-  void UpdateSendingStreams(std::vector<AudioSendStream*> streams,
-                            int send_sample_rate_hz,
-                            size_t send_num_channels);
+  void UpdateAudioSenders(std::vector<AudioSender*> senders,
+                          int send_sample_rate_hz,
+                          size_t send_num_channels);
   void SetStereoChannelSwapping(bool enable);
   bool typing_noise_detected() const;
 
@@ -72,7 +72,7 @@ class AudioTransportImpl : public AudioTransport {
 
   // Capture side.
   rtc::CriticalSection capture_lock_;
-  std::vector<AudioSendStream*> sending_streams_ RTC_GUARDED_BY(capture_lock_);
+  std::vector<AudioSender*> audio_senders_ RTC_GUARDED_BY(capture_lock_);
   int send_sample_rate_hz_ RTC_GUARDED_BY(capture_lock_) = 8000;
   size_t send_num_channels_ RTC_GUARDED_BY(capture_lock_) = 1;
   bool typing_noise_detected_ RTC_GUARDED_BY(capture_lock_) = false;

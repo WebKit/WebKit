@@ -23,6 +23,7 @@
 @synthesize headerExtensions = _headerExtensions;
 @synthesize encodings = _encodings;
 @synthesize codecs = _codecs;
+@synthesize degradationPreference = _degradationPreference;
 
 - (instancetype)init {
   return [super init];
@@ -54,6 +55,10 @@
                             initWithNativeParameters:codec]];
     }
     _codecs = codecs;
+
+    _degradationPreference = [RTCRtpParameters
+        degradationPreferenceFromNativeDegradationPreference:nativeParameters
+                                                                 .degradation_preference];
   }
   return self;
 }
@@ -71,7 +76,44 @@
   for (RTCRtpCodecParameters *codec in _codecs) {
     parameters.codecs.push_back(codec.nativeParameters);
   }
+  if (_degradationPreference) {
+    parameters.degradation_preference = [RTCRtpParameters
+        nativeDegradationPreferenceFromDegradationPreference:(RTCDegradationPreference)
+                                                                 _degradationPreference.intValue];
+  }
   return parameters;
+}
+
++ (webrtc::DegradationPreference)nativeDegradationPreferenceFromDegradationPreference:
+    (RTCDegradationPreference)degradationPreference {
+  switch (degradationPreference) {
+    case RTCDegradationPreferenceDisabled:
+      return webrtc::DegradationPreference::DISABLED;
+    case RTCDegradationPreferenceMaintainFramerate:
+      return webrtc::DegradationPreference::MAINTAIN_FRAMERATE;
+    case RTCDegradationPreferenceMaintainResolution:
+      return webrtc::DegradationPreference::MAINTAIN_RESOLUTION;
+    case RTCDegradationPreferenceBalanced:
+      return webrtc::DegradationPreference::BALANCED;
+  }
+}
+
++ (NSNumber *)degradationPreferenceFromNativeDegradationPreference:
+    (absl::optional<webrtc::DegradationPreference>)nativeDegradationPreference {
+  if (!nativeDegradationPreference.has_value()) {
+    return nil;
+  }
+
+  switch (*nativeDegradationPreference) {
+    case webrtc::DegradationPreference::DISABLED:
+      return @(RTCDegradationPreferenceDisabled);
+    case webrtc::DegradationPreference::MAINTAIN_FRAMERATE:
+      return @(RTCDegradationPreferenceMaintainFramerate);
+    case webrtc::DegradationPreference::MAINTAIN_RESOLUTION:
+      return @(RTCDegradationPreferenceMaintainResolution);
+    case webrtc::DegradationPreference::BALANCED:
+      return @(RTCDegradationPreferenceBalanced);
+  }
 }
 
 @end

@@ -10,8 +10,8 @@
 
 #import "voice_processing_audio_unit.h"
 
+#include "absl/base/macros.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/system/fallthrough.h"
 #include "system_wrappers/include/metrics.h"
 
 #import "base/RTCLogging.h"
@@ -446,12 +446,12 @@ void VoiceProcessingAudioUnit::DisposeAudioUnit() {
       case kStarted:
         Stop();
         // Fall through.
-        RTC_FALLTHROUGH();
+        ABSL_FALLTHROUGH_INTENDED;
       case kInitialized:
         Uninitialize();
         break;
       case kUninitialized:
-        RTC_FALLTHROUGH();
+        ABSL_FALLTHROUGH_INTENDED;
       case kInitRequired:
         break;
     }

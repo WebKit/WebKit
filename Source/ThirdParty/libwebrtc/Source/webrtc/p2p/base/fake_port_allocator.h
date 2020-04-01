@@ -48,15 +48,6 @@ class TestUDPPort : public UDPPort {
     }
     return port;
   }
-  void SendBindingResponse(StunMessage* request,
-                           const rtc::SocketAddress& addr) override {
-    UDPPort::SendBindingResponse(request, addr);
-    sent_binding_response_ = true;
-  }
-  bool sent_binding_response() { return sent_binding_response_; }
-  void set_sent_binding_response(bool response) {
-    sent_binding_response_ = response;
-  }
 
  protected:
   TestUDPPort(rtc::Thread* thread,
@@ -77,8 +68,6 @@ class TestUDPPort : public UDPPort {
                 password,
                 origin,
                 emit_localhost_for_anyaddress) {}
-
-  bool sent_binding_response_ = false;
 };
 
 // A FakePortAllocatorSession can be used with either a real or fake socket
@@ -142,10 +131,6 @@ class FakePortAllocatorSession : public PortAllocatorSession {
   bool IsGettingPorts() override { return running_; }
   void ClearGettingPorts() override { is_cleared = true; }
   bool IsCleared() const override { return is_cleared; }
-
-  void RegatherOnAllNetworks() override {
-    SignalIceRegathering(this, IceRegatheringReason::OCCASIONAL_REFRESH);
-  }
 
   void RegatherOnFailedNetworks() override {
     SignalIceRegathering(this, IceRegatheringReason::NETWORK_FAILURE);

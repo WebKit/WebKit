@@ -100,7 +100,7 @@
 #define SIMULATED_WAIT(ex, timeout, clock)                \
   for (int64_t start = rtc::TimeMillis();                 \
        !(ex) && rtc::TimeMillis() < start + (timeout);) { \
-    (clock).AdvanceTime(webrtc::TimeDelta::ms(1));        \
+    (clock).AdvanceTime(webrtc::TimeDelta::Millis(1));    \
   }
 
 // This returns the result of the test in res, so that we don't re-evaluate
@@ -111,7 +111,7 @@
     int64_t start = rtc::TimeMillis();                      \
     res = (ex);                                             \
     while (!res && rtc::TimeMillis() < start + (timeout)) { \
-      (clock).AdvanceTime(webrtc::TimeDelta::ms(1));        \
+      (clock).AdvanceTime(webrtc::TimeDelta::Millis(1));    \
       res = (ex);                                           \
     }                                                       \
   } while (0)

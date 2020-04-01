@@ -10,7 +10,8 @@
 
 #include "modules/video_coding/codecs/vp8/libvpx_interface.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -199,7 +200,7 @@ class LibvpxVp8Facade : public LibvpxInterface {
 }  // namespace
 
 std::unique_ptr<LibvpxInterface> LibvpxInterface::CreateEncoder() {
-  return absl::make_unique<LibvpxVp8Facade>();
+  return std::make_unique<LibvpxVp8Facade>();
 }
 
 }  // namespace webrtc

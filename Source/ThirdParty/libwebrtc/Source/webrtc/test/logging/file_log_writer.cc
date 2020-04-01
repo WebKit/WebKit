@@ -9,7 +9,8 @@
  */
 #include "test/logging/file_log_writer.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "test/testsupport/file_utils.h"
@@ -57,6 +58,6 @@ FileLogWriterFactory::~FileLogWriterFactory() {}
 
 std::unique_ptr<RtcEventLogOutput> FileLogWriterFactory::Create(
     std::string filename) {
-  return absl::make_unique<webrtc_impl::FileLogWriter>(base_path_ + filename);
+  return std::make_unique<webrtc_impl::FileLogWriter>(base_path_ + filename);
 }
 }  // namespace webrtc

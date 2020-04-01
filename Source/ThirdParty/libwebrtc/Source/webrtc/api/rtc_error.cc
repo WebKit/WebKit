@@ -10,12 +10,11 @@
 
 #include "api/rtc_error.h"
 
-#include "absl/strings/string_view.h"
 #include "rtc_base/arraysize.h"
 
 namespace {
 
-const absl::string_view kRTCErrorTypeNames[] = {
+const char* kRTCErrorTypeNames[] = {
     "NONE",
     "UNSUPPORTED_OPERATION",
     "UNSUPPORTED_PARAMETER",
@@ -27,18 +26,33 @@ const absl::string_view kRTCErrorTypeNames[] = {
     "NETWORK_ERROR",
     "RESOURCE_EXHAUSTED",
     "INTERNAL_ERROR",
+    "OPERATION_ERROR_WITH_DATA",
 };
-static_assert(static_cast<int>(webrtc::RTCErrorType::INTERNAL_ERROR) ==
-                  (arraysize(kRTCErrorTypeNames) - 1),
-              "kRTCErrorTypeNames must have as many strings as RTCErrorType "
-              "has values.");
+static_assert(
+    static_cast<int>(webrtc::RTCErrorType::OPERATION_ERROR_WITH_DATA) ==
+        (arraysize(kRTCErrorTypeNames) - 1),
+    "kRTCErrorTypeNames must have as many strings as RTCErrorType "
+    "has values.");
+
+const char* kRTCErrorDetailTypeNames[] = {
+    "NONE",
+    "DATA_CHANNEL_FAILURE",
+    "DTLS_FAILURE",
+    "FINGERPRINT_FAILURE",
+    "SCTP_FAILURE",
+    "SDP_SYNTAX_ERROR",
+    "HARDWARE_ENCODER_NOT_AVAILABLE",
+    "HARDWARE_ENCODER_ERROR",
+};
+static_assert(
+    static_cast<int>(webrtc::RTCErrorDetailType::HARDWARE_ENCODER_ERROR) ==
+        (arraysize(kRTCErrorDetailTypeNames) - 1),
+    "kRTCErrorDetailTypeNames must have as many strings as "
+    "RTCErrorDetailType has values.");
 
 }  // namespace
 
 namespace webrtc {
-
-RTCError::RTCError(RTCError&& other) = default;
-RTCError& RTCError::operator=(RTCError&& other) = default;
 
 // static
 RTCError RTCError::OK() {
@@ -53,9 +67,14 @@ void RTCError::set_message(std::string message) {
   message_ = std::move(message);
 }
 
-absl::string_view ToString(RTCErrorType error) {
+const char* ToString(RTCErrorType error) {
   int index = static_cast<int>(error);
   return kRTCErrorTypeNames[index];
+}
+
+const char* ToString(RTCErrorDetailType error) {
+  int index = static_cast<int>(error);
+  return kRTCErrorDetailTypeNames[index];
 }
 
 }  // namespace webrtc

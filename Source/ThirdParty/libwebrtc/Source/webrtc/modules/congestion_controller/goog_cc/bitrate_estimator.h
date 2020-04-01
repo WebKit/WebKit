@@ -38,12 +38,17 @@ class BitrateEstimator {
   virtual void ExpectFastRateChange();
 
  private:
-  float UpdateWindow(int64_t now_ms, int bytes, int rate_window_ms);
+  float UpdateWindow(int64_t now_ms,
+                     int bytes,
+                     int rate_window_ms,
+                     bool* is_small_sample);
   int sum_;
   FieldTrialConstrained<int> initial_window_ms_;
   FieldTrialConstrained<int> noninitial_window_ms_;
   FieldTrialParameter<double> uncertainty_scale_;
   FieldTrialParameter<double> uncertainty_scale_in_alr_;
+  FieldTrialParameter<double> small_sample_uncertainty_scale_;
+  FieldTrialParameter<DataSize> small_sample_threshold_;
   FieldTrialParameter<DataRate> uncertainty_symmetry_cap_;
   FieldTrialParameter<DataRate> estimate_floor_;
   int64_t current_window_ms_;

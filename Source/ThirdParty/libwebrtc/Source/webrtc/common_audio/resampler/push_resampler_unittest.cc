@@ -12,6 +12,7 @@
 
 #include "rtc_base/checks.h"  // RTC_DCHECK_IS_ON
 #include "test/gtest.h"
+#include "test/testsupport/rtc_expect_death.h"
 
 // Quality testing of PushResampler is handled through output_mixer_unittest.cc.
 
@@ -32,19 +33,20 @@ TEST(PushResamplerTest, VerifiesInputParameters) {
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 TEST(PushResamplerTest, VerifiesBadInputParameters1) {
   PushResampler<int16_t> resampler;
-  EXPECT_DEATH(resampler.InitializeIfNeeded(-1, 16000, 1),
-               "src_sample_rate_hz");
+  RTC_EXPECT_DEATH(resampler.InitializeIfNeeded(-1, 16000, 1),
+                   "src_sample_rate_hz");
 }
 
 TEST(PushResamplerTest, VerifiesBadInputParameters2) {
   PushResampler<int16_t> resampler;
-  EXPECT_DEATH(resampler.InitializeIfNeeded(16000, -1, 1),
-               "dst_sample_rate_hz");
+  RTC_EXPECT_DEATH(resampler.InitializeIfNeeded(16000, -1, 1),
+                   "dst_sample_rate_hz");
 }
 
 TEST(PushResamplerTest, VerifiesBadInputParameters3) {
   PushResampler<int16_t> resampler;
-  EXPECT_DEATH(resampler.InitializeIfNeeded(16000, 16000, 0), "num_channels");
+  RTC_EXPECT_DEATH(resampler.InitializeIfNeeded(16000, 16000, 0),
+                   "num_channels");
 }
 
 #endif

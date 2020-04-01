@@ -307,6 +307,20 @@ int32_t WebRtcOpus_GetBandwidth(OpusEncInst* inst);
 int16_t WebRtcOpus_SetBandwidth(OpusEncInst* inst, int32_t bandwidth);
 
 /*
+ * WebRtcOpus_GetInDtx(...)
+ *
+ * Gets the DTX state of the encoder.
+ *
+ * Input:
+ *      - inst   : Encoder context
+ *
+ * Return value  : -1 - Error.
+ *                 1  - Last encoded frame was comfort noise update during DTX.
+ *                 0  - Last encoded frame was encoded with encoder not in DTX.
+ */
+int32_t WebRtcOpus_GetInDtx(OpusEncInst* inst);
+
+/*
  * WebRtcOpus_SetForceChannels(...)
  *
  * If the encoder is initialized as a stereo encoder, Opus will by default
@@ -405,24 +419,6 @@ int WebRtcOpus_Decode(OpusDecInst* inst,
                       size_t encoded_bytes,
                       int16_t* decoded,
                       int16_t* audio_type);
-
-/****************************************************************************
- * WebRtcOpus_DecodePlc(...)
- *
- * This function processes PLC for opus frame(s).
- * Input:
- *        - inst                  : Decoder context
- *        - number_of_lost_frames : Number of PLC frames to produce
- *
- * Output:
- *        - decoded               : The decoded vector
- *
- * Return value                   : >0 - number of samples in decoded PLC vector
- *                                  -1 - Error
- */
-int WebRtcOpus_DecodePlc(OpusDecInst* inst,
-                         int16_t* decoded,
-                         int number_of_lost_frames);
 
 /****************************************************************************
  * WebRtcOpus_DecodeFec(...)

@@ -21,11 +21,13 @@ class MockTransport : public Transport {
   MockTransport();
   ~MockTransport();
 
-  MOCK_METHOD3(SendRtp,
-               bool(const uint8_t* data,
-                    size_t len,
-                    const PacketOptions& options));
-  MOCK_METHOD2(SendRtcp, bool(const uint8_t* data, size_t len));
+  MOCK_METHOD(bool,
+              SendRtp,
+              (const uint8_t*, size_t, const PacketOptions&),
+              (override));
+  MOCK_METHOD(bool, SendRtcp, (const uint8_t* data, size_t len), (override));
 };
+
 }  // namespace webrtc
+
 #endif  // TEST_MOCK_TRANSPORT_H_

@@ -19,8 +19,7 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "modules/audio_processing/include/gain_control.h"
-#include "rtc_base/constructor_magic.h"
+#include "modules/audio_processing/agc/gain_control.h"
 
 namespace webrtc {
 
@@ -36,55 +35,52 @@ class GainControlImpl : public GainControl {
   ~GainControlImpl() override;
 
   void ProcessRenderAudio(rtc::ArrayView<const int16_t> packed_render_audio);
-  int AnalyzeCaptureAudio(AudioBuffer* audio);
+  int AnalyzeCaptureAudio(const AudioBuffer& audio);
   int ProcessCaptureAudio(AudioBuffer* audio, bool stream_has_echo);
 
   void Initialize(size_t num_proc_channels, int sample_rate_hz);
 
-  static void PackRenderAudioBuffer(AudioBuffer* audio,
+  static void PackRenderAudioBuffer(const AudioBuffer& audio,
                                     std::vector<int16_t>* packed_buffer);
 
   // GainControl implementation.
-  bool is_enabled() const override;
   int stream_analog_level() const override;
-  bool is_limiter_enabled() const override;
-  Mode mode() const override;
-
-  int compression_gain_db() const override;
+  bool is_limiter_enabled() const override { return limiter_enabled_; }
+  Mode mode() const override { return mode_; }
+  int set_mode(Mode mode) override;
+  int compression_gain_db() const override { return compression_gain_db_; }
+  int set_analog_level_limits(int minimum, int maximum) override;
+  int set_compression_gain_db(int gain) override;
+  int set_target_level_dbfs(int level) override;
+  int enable_limiter(bool enable) override;
+  int set_stream_analog_level(int level) override;
 
  private:
-  class GainController;
+  struct MonoAgcState;
 
   // GainControl implementation.
-  int Enable(bool enable) override;
-  int set_stream_analog_level(int level) override;
-  int set_mode(Mode mode) override;
-  int set_target_level_dbfs(int level) override;
-  int target_level_dbfs() const override;
-  int set_compression_gain_db(int gain) override;
-  int enable_limiter(bool enable) override;
-  int set_analog_level_limits(int minimum, int maximum) override;
-  int analog_level_minimum() const override;
-  int analog_level_maximum() const override;
-  bool stream_is_saturated() const override;
+  int target_level_dbfs() const override { return target_level_dbfs_; }
+  int analog_level_minimum() const override { return minimum_capture_level_; }
+  int analog_level_maximum() const override { return maximum_capture_level_; }
+  bool stream_is_saturated() const override { return stream_is_saturated_; }
 
   int Configure();
 
   std::unique_ptr<ApmDataDumper> data_dumper_;
 
-  bool enabled_ = false;
-
+  const bool use_legacy_gain_applier_;
   Mode mode_;
   int minimum_capture_level_;
   int maximum_capture_level_;
   bool limiter_enabled_;
   int target_level_dbfs_;
   int compression_gain_db_;
-  int analog_capture_level_;
+  int analog_capture_level_ = 0;
   bool was_analog_level_set_;
   bool stream_is_saturated_;
 
-  std::vector<std::unique_ptr<GainController>> gain_controllers_;
+  std::vector<std::unique_ptr<MonoAgcState>> mono_agcs_;
+  std::vector<int> capture_levels_;
 
   absl::optional<size_t> num_proc_channels_;
   absl::optional<int> sample_rate_hz_;

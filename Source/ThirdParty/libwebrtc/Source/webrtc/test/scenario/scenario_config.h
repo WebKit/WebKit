@@ -17,20 +17,17 @@
 #include "absl/types/optional.h"
 #include "api/fec_controller.h"
 #include "api/rtp_parameters.h"
+#include "api/test/frame_generator_interface.h"
 #include "api/transport/network_control.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/video/video_codec_type.h"
-#include "test/frame_generator.h"
 #include "test/scenario/performance_stats.h"
 
 namespace webrtc {
 namespace test {
 struct PacketOverhead {
-  static constexpr size_t kIpv4 = 20;
-  static constexpr size_t kIpv6 = 40;
-  static constexpr size_t kUdp = 8;
   static constexpr size_t kSrtp = 10;
   static constexpr size_t kStun = 4;
   // TURN messages can be sent either with or without an establieshed channel.
@@ -38,23 +35,24 @@ struct PacketOverhead {
   // significantly more overhead.
   static constexpr size_t kTurnChannelMessage = 4;
   static constexpr size_t kTurnIndicationMessage = 36;
-  static constexpr size_t kDefault = kIpv4 + kUdp + kSrtp;
+  static constexpr size_t kDefault = kSrtp;
 };
 struct TransportControllerConfig {
   struct Rates {
     Rates();
     Rates(const Rates&);
     ~Rates();
-    DataRate min_rate = DataRate::kbps(30);
-    DataRate max_rate = DataRate::kbps(3000);
-    DataRate start_rate = DataRate::kbps(300);
+    DataRate min_rate = DataRate::KilobitsPerSec(30);
+    DataRate max_rate = DataRate::KilobitsPerSec(3000);
+    DataRate start_rate = DataRate::KilobitsPerSec(300);
   } rates;
   NetworkControllerFactoryInterface* cc_factory = nullptr;
-  TimeDelta state_log_interval = TimeDelta::ms(100);
+  TimeDelta state_log_interval = TimeDelta::Millis(100);
 };
 
 struct CallClientConfig {
   TransportControllerConfig transport;
+  const WebRtcKeyValueConfig* field_trials = nullptr;
 };
 
 struct PacketStreamConfig {
@@ -63,10 +61,10 @@ struct PacketStreamConfig {
   ~PacketStreamConfig();
   int frame_rate = 30;
   DataRate max_data_rate = DataRate::Infinity();
-  DataSize max_packet_size = DataSize::bytes(1400);
-  DataSize min_frame_size = DataSize::bytes(100);
+  DataSize max_packet_size = DataSize::Bytes(1400);
+  DataSize min_frame_size = DataSize::Bytes(100);
   double keyframe_multiplier = 1;
-  DataSize packet_overhead = DataSize::bytes(PacketOverhead::kDefault);
+  DataSize packet_overhead = DataSize::Bytes(PacketOverhead::kDefault);
 };
 
 struct VideoStreamConfig {
@@ -80,14 +78,14 @@ struct VideoStreamConfig {
       // Support for explicit frame triggers should be added here if needed.
     } capture = Capture::kGenerator;
     struct Slides {
-      TimeDelta change_interval = TimeDelta::seconds(10);
+      TimeDelta change_interval = TimeDelta::Seconds(10);
       struct Generator {
         int width = 1600;
         int height = 1200;
       } generator;
       struct Images {
         struct Crop {
-          TimeDelta scroll_duration = TimeDelta::seconds(0);
+          TimeDelta scroll_duration = TimeDelta::Seconds(0);
           absl::optional<int> width;
           absl::optional<int> height;
         } crop;
@@ -102,7 +100,7 @@ struct VideoStreamConfig {
       } images;
     } slides;
     struct Generator {
-      using PixelFormat = FrameGenerator::OutputType;
+      using PixelFormat = FrameGeneratorInterface::OutputType;
       PixelFormat pixel_format = PixelFormat::kI420;
       int width = 320;
       int height = 180;
@@ -160,7 +158,7 @@ struct VideoStreamConfig {
     bool packet_feedback = true;
     bool use_rtx = true;
     DataRate pad_to_rate = DataRate::Zero();
-    TimeDelta nack_history_time = TimeDelta::ms(1000);
+    TimeDelta nack_history_time = TimeDelta::Millis(1000);
     bool use_flexfec = false;
     bool use_ulpfec = false;
     FecControllerFactoryInterface* fec_controller_factory = nullptr;
@@ -192,6 +190,7 @@ struct AudioStreamConfig {
       DataRate min_rate_for_60_ms = DataRate::Zero();
       DataRate max_rate_for_120_ms = DataRate::Infinity();
     } frame;
+    std::string binary_proto;
   } adapt;
   struct Encoder {
     Encoder();
@@ -202,7 +201,7 @@ struct AudioStreamConfig {
     absl::optional<DataRate> fixed_rate;
     absl::optional<DataRate> min_rate;
     absl::optional<DataRate> max_rate;
-    TimeDelta initial_frame_length = TimeDelta::ms(20);
+    TimeDelta initial_frame_length = TimeDelta::Millis(20);
   } encoder;
   struct Stream {
     Stream();
@@ -223,6 +222,7 @@ struct NetworkSimulationConfig {
   TimeDelta delay_std_dev = TimeDelta::Zero();
   double loss_rate = 0;
   bool codel_active_queue_management = false;
+  absl::optional<int> packet_queue_length_limit;
   DataSize packet_overhead = DataSize::Zero();
 };
 }  // namespace test

@@ -10,14 +10,15 @@
 
 #include "sdk/objc/native/api/video_renderer.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "sdk/objc/native/src/objc_video_renderer.h"
 
 namespace webrtc {
 
 std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>> ObjCToNativeVideoRenderer(
     id<RTCVideoRenderer> objc_video_renderer) {
-  return absl::make_unique<ObjCVideoRenderer>(objc_video_renderer);
+  return std::make_unique<ObjCVideoRenderer>(objc_video_renderer);
 }
 
 }  // namespace webrtc

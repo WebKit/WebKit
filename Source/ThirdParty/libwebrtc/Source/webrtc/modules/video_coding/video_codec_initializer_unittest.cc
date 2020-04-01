@@ -351,14 +351,14 @@ TEST_F(VideoCodecInitializerTest, Vp9DeactivateLayers) {
   EXPECT_TRUE(codec_out_.spatialLayers[2].active);
 
   // Deactivate top layer.
-  config_.simulcast_layers[0].active = false;
+  config_.simulcast_layers[2].active = false;
   EXPECT_TRUE(InitializeCodec());
   EXPECT_TRUE(codec_out_.spatialLayers[0].active);
   EXPECT_TRUE(codec_out_.spatialLayers[1].active);
   EXPECT_FALSE(codec_out_.spatialLayers[2].active);
 
   // Deactivate middle layer.
-  config_.simulcast_layers[0].active = true;
+  config_.simulcast_layers[2].active = true;
   config_.simulcast_layers[1].active = false;
   EXPECT_TRUE(InitializeCodec());
   EXPECT_TRUE(codec_out_.spatialLayers[0].active);

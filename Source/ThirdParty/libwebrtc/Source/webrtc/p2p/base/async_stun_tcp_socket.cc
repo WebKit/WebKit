@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "p2p/base/stun.h"
+#include "api/transport/stun.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/network/sent_packet.h"

@@ -38,8 +38,7 @@ std::string OutputPath();
 // directory.
 std::string WorkingDir();
 
-// Returns a path to a resource file in [project-root]/resources/ dir.
-// Returns an absolute path
+// Returns a full path to a resource file in the resources_dir dir.
 //
 // Arguments:
 //    name - Name of the resource file. If a plain filename (no directory path)

@@ -27,7 +27,7 @@ class WindowCapturerTest : public ::testing::Test,
   void SetUp() override {
     capturer_ = DesktopCapturer::CreateWindowCapturer(
         DesktopCaptureOptions::CreateDefault());
-    RTC_DCHECK(capturer_);
+    ASSERT_TRUE(capturer_);
   }
 
   void TearDown() override {}

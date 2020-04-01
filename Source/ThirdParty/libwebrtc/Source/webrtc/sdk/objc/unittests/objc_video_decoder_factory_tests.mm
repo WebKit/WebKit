@@ -16,7 +16,6 @@
 #import "base/RTCVideoDecoder.h"
 #import "base/RTCVideoDecoderFactory.h"
 #include "media/base/codec.h"
-#include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/gunit.h"
@@ -71,6 +70,7 @@ TEST(ObjCVideoDecoderFactoryTest, DecodeReturnsOKOnSuccess) {
   std::unique_ptr<webrtc::VideoDecoder> decoder = GetObjCDecoder(CreateOKDecoderFactory());
 
   webrtc::EncodedImage encoded_image;
+  encoded_image.SetEncodedData(webrtc::EncodedImageBuffer::Create());
 
   EXPECT_EQ(decoder->Decode(encoded_image, false, 0), WEBRTC_VIDEO_CODEC_OK);
 }
@@ -79,6 +79,7 @@ TEST(ObjCVideoDecoderFactoryTest, DecodeReturnsErrorOnFail) {
   std::unique_ptr<webrtc::VideoDecoder> decoder = GetObjCDecoder(CreateErrorDecoderFactory());
 
   webrtc::EncodedImage encoded_image;
+  encoded_image.SetEncodedData(webrtc::EncodedImageBuffer::Create());
 
   EXPECT_EQ(decoder->Decode(encoded_image, false, 0), WEBRTC_VIDEO_CODEC_ERROR);
 }

@@ -22,17 +22,6 @@
 
 namespace cricket {
 
-// TODO(janahan): For now, a hard-coded ssrc is used as the video ssrc.
-// This is because when the video frame is passed to the mediaprocessor for
-// processing, it doesn't have the correct ssrc. Since currently only Tx
-// Video processing is supported, this is ok. When we switch over to trigger
-// from capturer, this should be fixed and this const removed.
-const uint32_t kDummyVideoSsrc = 0xFFFFFFFF;
-
-// Minimum interval is 10k fps.
-#define FPS_TO_INTERVAL(fps) \
-  (fps ? rtc::kNumNanosecsPerSec / fps : rtc::kNumNanosecsPerSec / 10000)
-
 //////////////////////////////////////////////////////////////////////////////
 // Definition of FourCC codes
 //////////////////////////////////////////////////////////////////////////////
@@ -223,6 +212,12 @@ struct RTC_EXPORT VideoFormat : VideoFormatPod {
   // Get a string presentation in the form of "fourcc width x height x fps"
   std::string ToString() const;
 };
+
+// Returns the largest positive integer that divides both |a| and |b|.
+int GreatestCommonDivisor(int a, int b);
+
+// Returns the smallest positive integer that is divisible by both |a| and |b|.
+int LeastCommonMultiple(int a, int b);
 
 }  // namespace cricket
 

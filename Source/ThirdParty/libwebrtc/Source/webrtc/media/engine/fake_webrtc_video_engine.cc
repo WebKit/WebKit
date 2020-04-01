@@ -11,8 +11,8 @@
 #include "media/engine/fake_webrtc_video_engine.h"
 
 #include <algorithm>
+#include <memory>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "media/base/codec.h"
 #include "media/base/media_constants.h"
@@ -98,7 +98,7 @@ FakeWebRtcVideoDecoderFactory::CreateVideoDecoder(
   if (IsFormatSupported(supported_codec_formats_, format)) {
     num_created_decoders_++;
     std::unique_ptr<FakeWebRtcVideoDecoder> decoder =
-        absl::make_unique<FakeWebRtcVideoDecoder>(this);
+        std::make_unique<FakeWebRtcVideoDecoder>(this);
     decoders_.push_back(decoder.get());
     return decoder;
   }
@@ -225,12 +225,11 @@ FakeWebRtcVideoEncoderFactory::CreateVideoEncoder(
       // encoders. Enter vp8_factory_mode so that we now create these encoders
       // instead of more adapters.
       vp8_factory_mode_ = true;
-      encoder =
-          absl::make_unique<webrtc::SimulcastEncoderAdapter>(this, format);
+      encoder = std::make_unique<webrtc::SimulcastEncoderAdapter>(this, format);
     } else {
       num_created_encoders_++;
       created_video_encoder_event_.Set();
-      encoder = absl::make_unique<FakeWebRtcVideoEncoder>(this);
+      encoder = std::make_unique<FakeWebRtcVideoEncoder>(this);
       encoders_.push_back(static_cast<FakeWebRtcVideoEncoder*>(encoder.get()));
     }
   }

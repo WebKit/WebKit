@@ -12,7 +12,6 @@ package org.webrtc;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import android.support.annotation.Nullable;
 import android.support.test.filters.SmallTest;

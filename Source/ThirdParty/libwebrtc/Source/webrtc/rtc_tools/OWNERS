@@ -1,7 +1,3 @@
-per-file BUILD.gn=*
-
-phoglund@webrtc.org
-oprypin@webrtc.org
 mbonadei@webrtc.org
 
 # For video analysis tools

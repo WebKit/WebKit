@@ -28,15 +28,10 @@ CongestionWindowPushbackController::CongestionWindowPushbackController(
               .find("Enabled") == 0),
       min_pushback_target_bitrate_bps_(
           RateControlSettings::ParseFromKeyValueConfig(key_value_config)
-              .CongestionWindowMinPushbackTargetBitrateBps()) {}
-
-CongestionWindowPushbackController::CongestionWindowPushbackController(
-    const WebRtcKeyValueConfig* key_value_config,
-    uint32_t min_pushback_target_bitrate_bps)
-    : add_pacing_(
-          key_value_config->Lookup("WebRTC-AddPacingToCongestionWindowPushback")
-              .find("Enabled") == 0),
-      min_pushback_target_bitrate_bps_(min_pushback_target_bitrate_bps) {}
+              .CongestionWindowMinPushbackTargetBitrateBps()),
+      current_data_window_(
+          RateControlSettings::ParseFromKeyValueConfig(key_value_config)
+              .CongestionWindowInitialDataWindow()) {}
 
 void CongestionWindowPushbackController::UpdateOutstandingData(
     int64_t outstanding_bytes) {
@@ -45,15 +40,6 @@ void CongestionWindowPushbackController::UpdateOutstandingData(
 void CongestionWindowPushbackController::UpdatePacingQueue(
     int64_t pacing_bytes) {
   pacing_bytes_ = pacing_bytes;
-}
-
-void CongestionWindowPushbackController::UpdateMaxOutstandingData(
-    size_t max_outstanding_bytes) {
-  DataSize data_window = DataSize::bytes(max_outstanding_bytes);
-  if (current_data_window_) {
-    data_window = (data_window + current_data_window_.value()) / 2;
-  }
-  current_data_window_ = data_window;
 }
 
 void CongestionWindowPushbackController::SetDataWindow(DataSize data_window) {

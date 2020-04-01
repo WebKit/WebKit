@@ -82,6 +82,10 @@ class AudioDeviceIOS : public AudioDeviceGeneric,
   // the log by using these dummy implementations instead.
   int32_t PlayoutDelay(uint16_t& delayMS) const override;
 
+  // No implementation for playout underrun on iOS. We override it to avoid a
+  // periodic log that it isn't available from the base class.
+  int32_t GetPlayoutUnderrunCount() const override { return -1; }
+
   // Native audio parameters stored during construction.
   // These methods are unique for the iOS implementation.
   int GetPlayoutAudioParameters(AudioParameters* params) const override;

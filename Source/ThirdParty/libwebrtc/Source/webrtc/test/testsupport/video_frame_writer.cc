@@ -13,9 +13,9 @@
 #include <cmath>
 #include <cstdlib>
 #include <limits>
+#include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
@@ -63,10 +63,10 @@ Y4mVideoFrameWriterImpl::Y4mVideoFrameWriterImpl(std::string output_file_name,
     : width_(width),
       height_(height),
       frame_writer_(
-          absl::make_unique<Y4mFrameWriterImpl>(std::move(output_file_name),
-                                                width_,
-                                                height_,
-                                                fps)) {
+          std::make_unique<Y4mFrameWriterImpl>(std::move(output_file_name),
+                                               width_,
+                                               height_,
+                                               fps)) {
   // Init underlying frame writer and ensure that it is operational.
   RTC_CHECK(frame_writer_->Init());
 }
@@ -90,9 +90,9 @@ YuvVideoFrameWriterImpl::YuvVideoFrameWriterImpl(std::string output_file_name,
     : width_(width),
       height_(height),
       frame_writer_(
-          absl::make_unique<YuvFrameWriterImpl>(std::move(output_file_name),
-                                                width_,
-                                                height_)) {
+          std::make_unique<YuvFrameWriterImpl>(std::move(output_file_name),
+                                               width_,
+                                               height_)) {
   // Init underlying frame writer and ensure that it is operational.
   RTC_CHECK(frame_writer_->Init());
 }

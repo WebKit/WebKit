@@ -192,6 +192,16 @@ class VideoTimingExtension {
   static constexpr const char kUri[] =
       "http://www.webrtc.org/experiments/rtp-hdrext/video-timing";
 
+  // Offsets of the fields in the RTP header extension, counting from the first
+  // byte after the one-byte header.
+  static constexpr uint8_t kFlagsOffset = 0;
+  static constexpr uint8_t kEncodeStartDeltaOffset = 1;
+  static constexpr uint8_t kEncodeFinishDeltaOffset = 3;
+  static constexpr uint8_t kPacketizationFinishDeltaOffset = 5;
+  static constexpr uint8_t kPacerExitDeltaOffset = 7;
+  static constexpr uint8_t kNetworkTimestampDeltaOffset = 9;
+  static constexpr uint8_t kNetwork2TimestampDeltaOffset = 11;
+
   static bool Parse(rtc::ArrayView<const uint8_t> data,
                     VideoSendTiming* timing);
   static size_t ValueSize(const VideoSendTiming&) { return kValueSizeBytes; }
@@ -204,7 +214,7 @@ class VideoTimingExtension {
   // Writes only single time delta to position idx.
   static bool Write(rtc::ArrayView<uint8_t> data,
                     uint16_t time_delta_ms,
-                    uint8_t idx);
+                    uint8_t offset);
 };
 
 class FrameMarkingExtension {
@@ -295,6 +305,24 @@ class RtpMid : public BaseRtpStringExtension {
  public:
   static constexpr RTPExtensionType kId = kRtpExtensionMid;
   static constexpr const char kUri[] = "urn:ietf:params:rtp-hdrext:sdes:mid";
+};
+
+class InbandComfortNoiseExtension {
+ public:
+  using value_type = absl::optional<uint8_t>;
+
+  static constexpr RTPExtensionType kId = kRtpExtensionInbandComfortNoise;
+  static constexpr uint8_t kValueSizeBytes = 1;
+  static constexpr const char kUri[] =
+      "http://www.webrtc.org/experiments/rtp-hdrext/inband-cn";
+
+  static bool Parse(rtc::ArrayView<const uint8_t> data,
+                    absl::optional<uint8_t>* level);
+  static size_t ValueSize(absl::optional<uint8_t> level) {
+    return kValueSizeBytes;
+  }
+  static bool Write(rtc::ArrayView<uint8_t> data,
+                    absl::optional<uint8_t> level);
 };
 
 }  // namespace webrtc

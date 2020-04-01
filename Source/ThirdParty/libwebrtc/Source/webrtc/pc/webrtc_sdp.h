@@ -22,11 +22,16 @@
 
 #include <string>
 
+#include "media/base/codec.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
 class Candidate;
 }  // namespace cricket
+
+namespace rtc {
+class StringBuilder;
+}  // namespace rtc
 
 namespace webrtc {
 class IceCandidateInterface;
@@ -94,6 +99,13 @@ RTC_EXPORT bool ParseCandidate(const std::string& message,
                                cricket::Candidate* candidate,
                                SdpParseError* error,
                                bool is_raw);
+
+// Generates an FMTP line based on |parameters|. Please note that some
+// parameters are not considered to be part of the FMTP line, see the function
+// IsFmtpParam(). Returns true if the set of FMTP parameters is nonempty, false
+// otherwise.
+bool WriteFmtpParameters(const cricket::CodecParameterMap& parameters,
+                         rtc::StringBuilder* os);
 
 }  // namespace webrtc
 

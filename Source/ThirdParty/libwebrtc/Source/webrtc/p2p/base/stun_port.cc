@@ -13,10 +13,10 @@
 #include <utility>
 #include <vector>
 
+#include "api/transport/stun.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/port_allocator.h"
-#include "p2p/base/stun.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/ip_address.h"
@@ -544,8 +544,9 @@ void UDPPort::OnStunBindingOrResolveRequestFailed(
   rtc::StringBuilder url;
   url << "stun:" << stun_server_addr.ToString();
   SignalCandidateError(
-      this, IceCandidateErrorEvent(GetLocalAddress().ToSensitiveString(),
-                                   url.str(), error_code, reason));
+      this, IceCandidateErrorEvent(GetLocalAddress().HostAsSensitiveURIString(),
+                                   GetLocalAddress().port(), url.str(),
+                                   error_code, reason));
   if (bind_request_failed_servers_.find(stun_server_addr) !=
       bind_request_failed_servers_.end()) {
     return;

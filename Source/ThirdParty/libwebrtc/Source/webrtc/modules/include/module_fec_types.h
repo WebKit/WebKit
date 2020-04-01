@@ -24,9 +24,9 @@ enum FecMaskType {
 
 // Struct containing forward error correction settings.
 struct FecProtectionParams {
-  int fec_rate;
-  int max_fec_frames;
-  FecMaskType fec_mask_type;
+  int fec_rate = 0;
+  int max_fec_frames = 0;
+  FecMaskType fec_mask_type = FecMaskType::kFecMaskRandom;
 };
 
 }  // namespace webrtc

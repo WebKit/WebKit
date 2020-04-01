@@ -45,11 +45,11 @@ namespace webrtc {
 
 namespace test {
 
-FakeVP8Encoder::FakeVP8Encoder(Clock* clock) : FakeEncoder(clock) {
+FakeVp8Encoder::FakeVp8Encoder(Clock* clock) : FakeEncoder(clock) {
   sequence_checker_.Detach();
 }
 
-int32_t FakeVP8Encoder::InitEncode(const VideoCodec* config,
+int32_t FakeVp8Encoder::InitEncode(const VideoCodec* config,
                                    const Settings& settings) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   auto result = FakeEncoder::InitEncode(config, settings);
@@ -64,13 +64,13 @@ int32_t FakeVP8Encoder::InitEncode(const VideoCodec* config,
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
-int32_t FakeVP8Encoder::Release() {
+int32_t FakeVp8Encoder::Release() {
   auto result = FakeEncoder::Release();
   sequence_checker_.Detach();
   return result;
 }
 
-void FakeVP8Encoder::PopulateCodecSpecific(CodecSpecificInfo* codec_specific,
+void FakeVp8Encoder::PopulateCodecSpecific(CodecSpecificInfo* codec_specific,
                                            size_t size_bytes,
                                            VideoFrameType frame_type,
                                            int stream_idx,
@@ -88,7 +88,7 @@ void FakeVP8Encoder::PopulateCodecSpecific(CodecSpecificInfo* codec_specific,
   }
 }
 
-std::unique_ptr<RTPFragmentationHeader> FakeVP8Encoder::EncodeHook(
+std::unique_ptr<RTPFragmentationHeader> FakeVp8Encoder::EncodeHook(
     EncodedImage* encoded_image,
     CodecSpecificInfo* codec_specific) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
@@ -107,7 +107,7 @@ std::unique_ptr<RTPFragmentationHeader> FakeVP8Encoder::EncodeHook(
   return nullptr;
 }
 
-VideoEncoder::EncoderInfo FakeVP8Encoder::GetEncoderInfo() const {
+VideoEncoder::EncoderInfo FakeVp8Encoder::GetEncoderInfo() const {
   EncoderInfo info;
   info.implementation_name = "FakeVp8Encoder";
   return info;

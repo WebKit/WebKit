@@ -23,17 +23,11 @@
 #include <type_traits>
 #include <utility>
 
-#if defined(WEBRTC_LINUX)
-#include <event2/event.h>
-#include <event2/event_compat.h>
-#include <event2/event_struct.h>
-#else
-#include "base/third_party/libevent/event.h"
-#endif
-#include "absl/memory/memory.h"
+#include "absl/container/inlined_vector.h"
 #include "absl/strings/string_view.h"
 #include "api/task_queue/queued_task.h"
 #include "api/task_queue/task_queue_base.h"
+#include "base/third_party/libevent/event.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/logging.h"
@@ -46,7 +40,7 @@
 namespace webrtc {
 namespace {
 constexpr char kQuit = 1;
-constexpr char kRunTask = 2;
+constexpr char kRunTasks = 2;
 
 using Priority = TaskQueueFactory::Priority;
 
@@ -137,7 +131,8 @@ class TaskQueueLibevent final : public TaskQueueBase {
   event wakeup_event_;
   rtc::PlatformThread thread_;
   rtc::CriticalSection pending_lock_;
-  std::list<std::unique_ptr<QueuedTask>> pending_ RTC_GUARDED_BY(pending_lock_);
+  absl::InlinedVector<std::unique_ptr<QueuedTask>, 4> pending_
+      RTC_GUARDED_BY(pending_lock_);
   // Holds a list of events pending timers for cleanup when the loop exits.
   std::list<TimerEvent*> pending_timers_;
 };
@@ -220,19 +215,26 @@ void TaskQueueLibevent::Delete() {
 }
 
 void TaskQueueLibevent::PostTask(std::unique_ptr<QueuedTask> task) {
-  QueuedTask* task_id = task.get();  // Only used for comparison.
   {
     rtc::CritScope lock(&pending_lock_);
+    bool had_pending_tasks = !pending_.empty();
     pending_.push_back(std::move(task));
+
+    // Only write to the pipe if there were no pending tasks before this one
+    // since the thread could be sleeping. If there were already pending tasks
+    // then we know there's either a pending write in the pipe or the thread has
+    // not yet processed the pending tasks. In either case, the thread will
+    // eventually wake up and process all pending tasks including this one.
+    if (had_pending_tasks) {
+      return;
+    }
   }
-  char message = kRunTask;
-  if (write(wakeup_pipe_in_, &message, sizeof(message)) != sizeof(message)) {
-    RTC_LOG(WARNING) << "Failed to queue task.";
-    rtc::CritScope lock(&pending_lock_);
-    pending_.remove_if([task_id](std::unique_ptr<QueuedTask>& t) {
-      return t.get() == task_id;
-    });
-  }
+
+  // Note: This behvior outlined above ensures we never fill up the pipe write
+  // buffer since there will only ever be 1 byte pending.
+  char message = kRunTasks;
+  RTC_CHECK_EQ(write(wakeup_pipe_in_, &message, sizeof(message)),
+               sizeof(message));
 }
 
 void TaskQueueLibevent::PostDelayedTask(std::unique_ptr<QueuedTask> task,
@@ -246,7 +248,7 @@ void TaskQueueLibevent::PostDelayedTask(std::unique_ptr<QueuedTask> task,
                   rtc::dchecked_cast<int>(milliseconds % 1000) * 1000};
     event_add(&timer->ev, &tv);
   } else {
-    PostTask(absl::make_unique<SetTimerTask>(std::move(task), milliseconds));
+    PostTask(std::make_unique<SetTimerTask>(std::move(task), milliseconds));
   }
 }
 
@@ -277,17 +279,21 @@ void TaskQueueLibevent::OnWakeup(int socket,
       me->is_active_ = false;
       event_base_loopbreak(me->event_base_);
       break;
-    case kRunTask: {
-      std::unique_ptr<QueuedTask> task;
+    case kRunTasks: {
+      absl::InlinedVector<std::unique_ptr<QueuedTask>, 4> tasks;
       {
         rtc::CritScope lock(&me->pending_lock_);
-        RTC_DCHECK(!me->pending_.empty());
-        task = std::move(me->pending_.front());
-        me->pending_.pop_front();
-        RTC_DCHECK(task.get());
+        tasks.swap(me->pending_);
       }
-      if (!task->Run())
-        task.release();
+      RTC_DCHECK(!tasks.empty());
+      for (auto& task : tasks) {
+        if (task->Run()) {
+          task.reset();
+        } else {
+          // |false| means the task should *not* be deleted.
+          task.release();
+        }
+      }
       break;
     }
     default:
@@ -321,7 +327,7 @@ class TaskQueueLibeventFactory final : public TaskQueueFactory {
 }  // namespace
 
 std::unique_ptr<TaskQueueFactory> CreateTaskQueueLibeventFactory() {
-  return absl::make_unique<TaskQueueLibeventFactory>();
+  return std::make_unique<TaskQueueLibeventFactory>();
 }
 
 }  // namespace webrtc

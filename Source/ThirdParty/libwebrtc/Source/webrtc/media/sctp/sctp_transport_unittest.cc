@@ -23,7 +23,6 @@
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/message_queue.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
 

@@ -10,10 +10,10 @@
 
 #include "call/receive_time_calculator.h"
 
+#include <memory>
 #include <string>
 #include <type_traits>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "system_wrappers/include/field_trial.h"
@@ -26,10 +26,10 @@ const char kBweReceiveTimeCorrection[] = "WebRTC-Bwe-ReceiveTimeFix";
 }  // namespace
 
 ReceiveTimeCalculatorConfig::ReceiveTimeCalculatorConfig()
-    : max_packet_time_repair("maxrep", TimeDelta::ms(2000)),
-      stall_threshold("stall", TimeDelta::ms(5)),
-      tolerance("tol", TimeDelta::ms(1)),
-      max_stall("maxstall", TimeDelta::seconds(5)) {
+    : max_packet_time_repair("maxrep", TimeDelta::Millis(2000)),
+      stall_threshold("stall", TimeDelta::Millis(5)),
+      tolerance("tol", TimeDelta::Millis(1)),
+      max_stall("maxstall", TimeDelta::Seconds(5)) {
   std::string trial_string =
       field_trial::FindFullName(kBweReceiveTimeCorrection);
   ParseFieldTrial(
@@ -47,7 +47,7 @@ std::unique_ptr<ReceiveTimeCalculator>
 ReceiveTimeCalculator::CreateFromFieldTrial() {
   if (!IsEnabled(kBweReceiveTimeCorrection))
     return nullptr;
-  return absl::make_unique<ReceiveTimeCalculator>();
+  return std::make_unique<ReceiveTimeCalculator>();
 }
 
 int64_t ReceiveTimeCalculator::ReconcileReceiveTimes(int64_t packet_time_us,

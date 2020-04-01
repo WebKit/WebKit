@@ -53,12 +53,13 @@ class BlockProcessor {
   virtual void GetMetrics(EchoControl::Metrics* metrics) const = 0;
 
   // Provides an optional external estimate of the audio buffer delay.
-  virtual void SetAudioBufferDelay(size_t delay_ms) = 0;
+  virtual void SetAudioBufferDelay(int delay_ms) = 0;
 
   // Processes a block of capture data.
   virtual void ProcessCapture(
       bool echo_path_gain_change,
       bool capture_signal_saturation,
+      std::vector<std::vector<std::vector<float>>>* linear_output,
       std::vector<std::vector<std::vector<float>>>* capture_block) = 0;
 
   // Buffers a block of render data supplied by a FrameBlocker object.

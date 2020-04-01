@@ -56,10 +56,12 @@ class DtmfSender : public DtmfSenderInterface, public sigslot::has_slots<> {
   bool CanInsertDtmf() override;
   bool InsertDtmf(const std::string& tones,
                   int duration,
-                  int inter_tone_gap) override;
+                  int inter_tone_gap,
+                  int comma_delay = kDtmfDefaultCommaDelayMs) override;
   std::string tones() const override;
   int duration() const override;
   int inter_tone_gap() const override;
+  int comma_delay() const override;
 
  protected:
   DtmfSender(rtc::Thread* signaling_thread, DtmfProviderInterface* provider);
@@ -83,6 +85,7 @@ class DtmfSender : public DtmfSenderInterface, public sigslot::has_slots<> {
   std::string tones_;
   int duration_;
   int inter_tone_gap_;
+  int comma_delay_;
   // Invoker for running delayed tasks which feed the DTMF provider one tone at
   // a time.
   rtc::AsyncInvoker dtmf_driver_;
@@ -96,10 +99,11 @@ PROXY_SIGNALING_THREAD_DESTRUCTOR()
 PROXY_METHOD1(void, RegisterObserver, DtmfSenderObserverInterface*)
 PROXY_METHOD0(void, UnregisterObserver)
 PROXY_METHOD0(bool, CanInsertDtmf)
-PROXY_METHOD3(bool, InsertDtmf, const std::string&, int, int)
+PROXY_METHOD4(bool, InsertDtmf, const std::string&, int, int, int)
 PROXY_CONSTMETHOD0(std::string, tones)
 PROXY_CONSTMETHOD0(int, duration)
 PROXY_CONSTMETHOD0(int, inter_tone_gap)
+PROXY_CONSTMETHOD0(int, comma_delay)
 END_PROXY_MAP()
 
 // Get DTMF code from the DTMF event character.

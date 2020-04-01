@@ -19,6 +19,8 @@
 #include <string>
 
 #include "api/scoped_refptr.h"
+#include "api/test/create_frame_generator.h"
+#include "api/test/frame_generator_interface.h"
 #include "api/video/video_frame_buffer.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -62,11 +64,13 @@ class FrameGeneratorTest : public ::testing::Test {
     fwrite(plane_buffer.get(), 1, uv_size, file);
   }
 
-  void CheckFrameAndMutate(VideoFrame* frame, uint8_t y, uint8_t u, uint8_t v) {
+  void CheckFrameAndMutate(const FrameGeneratorInterface::VideoFrameData& frame,
+                           uint8_t y,
+                           uint8_t u,
+                           uint8_t v) {
     // Check that frame is valid, has the correct color and timestamp are clean.
-    ASSERT_NE(nullptr, frame);
     rtc::scoped_refptr<I420BufferInterface> i420_buffer =
-        frame->video_frame_buffer()->ToI420();
+        frame.buffer->ToI420();
     const uint8_t* buffer;
     buffer = i420_buffer->DataY();
     for (int i = 0; i < y_size; ++i)
@@ -77,21 +81,13 @@ class FrameGeneratorTest : public ::testing::Test {
     buffer = i420_buffer->DataV();
     for (int i = 0; i < uv_size; ++i)
       ASSERT_EQ(v, buffer[i]);
-    EXPECT_EQ(0, frame->ntp_time_ms());
-    EXPECT_EQ(0, frame->render_time_ms());
-    EXPECT_EQ(0u, frame->timestamp());
-
-    // Mutate to something arbitrary non-zero.
-    frame->set_ntp_time_ms(11);
-    frame->set_timestamp_us(12);
-    frame->set_timestamp(13);
   }
 
-  uint64_t Hash(VideoFrame* frame) {
+  uint64_t Hash(const FrameGeneratorInterface::VideoFrameData& frame) {
     // Generate a 64-bit hash from the frame's buffer.
     uint64_t hash = 19;
     rtc::scoped_refptr<I420BufferInterface> i420_buffer =
-        frame->video_frame_buffer()->ToI420();
+        frame.buffer->ToI420();
     const uint8_t* buffer = i420_buffer->DataY();
     for (int i = 0; i < y_size; ++i) {
       hash = (37 * hash) + buffer[i];
@@ -114,17 +110,19 @@ class FrameGeneratorTest : public ::testing::Test {
 };
 
 TEST_F(FrameGeneratorTest, SingleFrameFile) {
-  std::unique_ptr<FrameGenerator> generator(FrameGenerator::CreateFromYuvFile(
-      std::vector<std::string>(1, one_frame_filename_), kFrameWidth,
-      kFrameHeight, 1));
+  std::unique_ptr<FrameGeneratorInterface> generator(
+      CreateFromYuvFileFrameGenerator(
+          std::vector<std::string>(1, one_frame_filename_), kFrameWidth,
+          kFrameHeight, 1));
   CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
   CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
 }
 
 TEST_F(FrameGeneratorTest, TwoFrameFile) {
-  std::unique_ptr<FrameGenerator> generator(FrameGenerator::CreateFromYuvFile(
-      std::vector<std::string>(1, two_frame_filename_), kFrameWidth,
-      kFrameHeight, 1));
+  std::unique_ptr<FrameGeneratorInterface> generator(
+      CreateFromYuvFileFrameGenerator(
+          std::vector<std::string>(1, two_frame_filename_), kFrameWidth,
+          kFrameHeight, 1));
   CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
   CheckFrameAndMutate(generator->NextFrame(), 127, 127, 127);
   CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
@@ -135,8 +133,8 @@ TEST_F(FrameGeneratorTest, MultipleFrameFiles) {
   files.push_back(two_frame_filename_);
   files.push_back(one_frame_filename_);
 
-  std::unique_ptr<FrameGenerator> generator(
-      FrameGenerator::CreateFromYuvFile(files, kFrameWidth, kFrameHeight, 1));
+  std::unique_ptr<FrameGeneratorInterface> generator(
+      CreateFromYuvFileFrameGenerator(files, kFrameWidth, kFrameHeight, 1));
   CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
   CheckFrameAndMutate(generator->NextFrame(), 127, 127, 127);
   CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
@@ -145,9 +143,10 @@ TEST_F(FrameGeneratorTest, MultipleFrameFiles) {
 
 TEST_F(FrameGeneratorTest, TwoFrameFileWithRepeat) {
   const int kRepeatCount = 3;
-  std::unique_ptr<FrameGenerator> generator(FrameGenerator::CreateFromYuvFile(
-      std::vector<std::string>(1, two_frame_filename_), kFrameWidth,
-      kFrameHeight, kRepeatCount));
+  std::unique_ptr<FrameGeneratorInterface> generator(
+      CreateFromYuvFileFrameGenerator(
+          std::vector<std::string>(1, two_frame_filename_), kFrameWidth,
+          kFrameHeight, kRepeatCount));
   for (int i = 0; i < kRepeatCount; ++i)
     CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
   for (int i = 0; i < kRepeatCount; ++i)
@@ -160,8 +159,9 @@ TEST_F(FrameGeneratorTest, MultipleFrameFilesWithRepeat) {
   std::vector<std::string> files;
   files.push_back(two_frame_filename_);
   files.push_back(one_frame_filename_);
-  std::unique_ptr<FrameGenerator> generator(FrameGenerator::CreateFromYuvFile(
-      files, kFrameWidth, kFrameHeight, kRepeatCount));
+  std::unique_ptr<FrameGeneratorInterface> generator(
+      CreateFromYuvFileFrameGenerator(files, kFrameWidth, kFrameHeight,
+                                      kRepeatCount));
   for (int i = 0; i < kRepeatCount; ++i)
     CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
   for (int i = 0; i < kRepeatCount; ++i)
@@ -174,9 +174,8 @@ TEST_F(FrameGeneratorTest, MultipleFrameFilesWithRepeat) {
 TEST_F(FrameGeneratorTest, SlideGenerator) {
   const int kGenCount = 9;
   const int kRepeatCount = 3;
-  std::unique_ptr<FrameGenerator> generator(
-      FrameGenerator::CreateSlideGenerator(kFrameWidth, kFrameHeight,
-                                           kRepeatCount));
+  std::unique_ptr<FrameGeneratorInterface> generator(
+      CreateSlideFrameGenerator(kFrameWidth, kFrameHeight, kRepeatCount));
   uint64_t hashes[kGenCount];
   for (int i = 0; i < kGenCount; ++i) {
     hashes[i] = Hash(generator->NextFrame());

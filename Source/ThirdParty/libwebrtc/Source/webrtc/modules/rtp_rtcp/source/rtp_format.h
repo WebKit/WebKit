@@ -42,7 +42,6 @@ class RtpPacketizer {
       PayloadSizeLimits limits,
       // Codec-specific details.
       const RTPVideoHeader& rtp_video_header,
-      VideoFrameType frame_type,
       const RTPFragmentationHeader* fragmentation);
 
   virtual ~RtpPacketizer() = default;
@@ -59,39 +58,6 @@ class RtpPacketizer {
   // Returns empty vector on failure.
   static std::vector<int> SplitAboutEqually(int payload_len,
                                             const PayloadSizeLimits& limits);
-};
-
-// TODO(sprang): Update the depacketizer to return a std::unqie_ptr with a copy
-// of the parsed payload, rather than just a pointer into the incoming buffer.
-// This way we can move some parsing out from the jitter buffer into here, and
-// the jitter buffer can just store that pointer rather than doing a copy there.
-class RtpDepacketizer {
- public:
-  struct ParsedPayload {
-    RTPVideoHeader& video_header() { return video; }
-    const RTPVideoHeader& video_header() const { return video; }
-
-    // TODO(bugs.webrtc.org/10397): These are temporary accessors, to enable
-    // move of the frame_type member to inside RTPVideoHeader, without breaking
-    // downstream code.
-    VideoFrameType FrameType() const { return video_header().frame_type; }
-    void SetFrameType(VideoFrameType type) { video_header().frame_type = type; }
-
-    RTPVideoHeader video;
-
-    const uint8_t* payload;
-    size_t payload_length;
-  };
-
-  // If type is not set, returns a raw depacketizer.
-  static RtpDepacketizer* Create(absl::optional<VideoCodecType> type);
-
-  virtual ~RtpDepacketizer() {}
-
-  // Parses the RTP payload, parsed result will be saved in |parsed_payload|.
-  virtual bool Parse(ParsedPayload* parsed_payload,
-                     const uint8_t* payload_data,
-                     size_t payload_data_length) = 0;
 };
 }  // namespace webrtc
 #endif  // MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H_

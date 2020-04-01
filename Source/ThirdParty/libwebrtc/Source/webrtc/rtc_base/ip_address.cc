@@ -53,6 +53,17 @@ uint32_t IPAddress::v4AddressAsHostOrderInteger() const {
   }
 }
 
+int IPAddress::overhead() const {
+  switch (family_) {
+    case AF_INET:  // IPv4
+      return 20;
+    case AF_INET6:  // IPv6
+      return 40;
+    default:
+      return 0;
+  }
+}
+
 bool IPAddress::IsNil() const {
   return IPIsUnspec(*this);
 }
@@ -396,7 +407,7 @@ IPAddress TruncateIP(const IPAddress& ip, int length) {
   return IPAddress();
 }
 
-int CountIPMaskBits(IPAddress mask) {
+int CountIPMaskBits(const IPAddress& mask) {
   uint32_t word_to_count = 0;
   int bits = 0;
   switch (mask.family()) {

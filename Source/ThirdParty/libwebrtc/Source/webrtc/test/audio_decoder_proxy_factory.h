@@ -15,7 +15,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 
@@ -43,7 +42,7 @@ class AudioDecoderProxyFactory : public AudioDecoderFactory {
   std::unique_ptr<AudioDecoder> MakeAudioDecoder(
       const SdpAudioFormat& /* format */,
       absl::optional<AudioCodecPairId> /* codec_pair_id */) override {
-    return absl::make_unique<DecoderProxy>(decoder_);
+    return std::make_unique<DecoderProxy>(decoder_);
   }
 
  private:

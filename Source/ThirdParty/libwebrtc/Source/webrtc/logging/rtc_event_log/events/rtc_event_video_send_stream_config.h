@@ -13,7 +13,7 @@
 
 #include <memory>
 
-#include "logging/rtc_event_log/events/rtc_event.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/rtc_stream_config.h"
 
 namespace webrtc {

@@ -34,6 +34,9 @@ class MockAudioEncoder : public AudioEncoder {
   MOCK_CONST_METHOD0(Num10MsFramesInNextPacket, size_t());
   MOCK_CONST_METHOD0(Max10MsFramesInAPacket, size_t());
   MOCK_CONST_METHOD0(GetTargetBitrate, int());
+  MOCK_CONST_METHOD0(GetFrameLengthRange,
+                     absl::optional<std::pair<TimeDelta, TimeDelta>>());
+
   MOCK_METHOD0(Reset, void());
   MOCK_METHOD1(SetFec, bool(bool enable));
   MOCK_METHOD1(SetDtx, bool(bool enable));

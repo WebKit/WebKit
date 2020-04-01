@@ -24,6 +24,8 @@
 // Extension of RTCMTLVideoView for testing purposes.
 @interface RTCMTLVideoView (Testing)
 
+@property(nonatomic, readonly) MTKView *metalView;
+
 + (BOOL)isMetalAvailable;
 + (UIView *)createMetalView:(CGRect)frame;
 + (id<RTCMTLRenderer>)createNV12Renderer;
@@ -109,7 +111,7 @@
   // given
   OCMStub([self.classMock isMetalAvailable]).andReturn(YES);
 
-  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
+  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
   self.frameMock = OCMClassMock([RTCVideoFrame class]);
 
   [[self.frameMock reject] buffer];
@@ -118,7 +120,7 @@
 
   // when
   [realView renderFrame:nil];
-  [realView drawInMTKView:nil];
+  [realView drawInMTKView:realView.metalView];
 
   // then
   [self.frameMock verify];
@@ -135,11 +137,11 @@
   OCMExpect([self.classMock createI420Renderer]).andReturn(self.rendererI420Mock);
   [[self.classMock reject] createNV12Renderer];
 
-  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
+  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
 
   // when
   [realView renderFrame:self.frameMock];
-  [realView drawInMTKView:nil];
+  [realView drawInMTKView:realView.metalView];
 
   // then
   [self.rendererI420Mock verify];
@@ -156,11 +158,11 @@
   OCMExpect([self.classMock createNV12Renderer]).andReturn(self.rendererNV12Mock);
   [[self.classMock reject] createI420Renderer];
 
-  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
+  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
 
   // when
   [realView renderFrame:self.frameMock];
-  [realView drawInMTKView:nil];
+  [realView drawInMTKView:realView.metalView];
 
   // then
   [self.rendererNV12Mock verify];
@@ -176,21 +178,21 @@
   OCMExpect([self.classMock createNV12Renderer]).andReturn(self.rendererNV12Mock);
   [[self.classMock reject] createI420Renderer];
 
-  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
+  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
 
   [realView renderFrame:self.frameMock];
-  [realView drawInMTKView:nil];
+  [realView drawInMTKView:realView.metalView];
   [self.rendererNV12Mock verify];
   [self.classMock verify];
 
   // Recreate view.
-  realView = [[RTCMTLVideoView alloc] init];
+  realView = [[RTCMTLVideoView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
   OCMExpect([self.rendererNV12Mock drawFrame:self.frameMock]);
   // View hould reinit renderer.
   OCMExpect([self.classMock createNV12Renderer]).andReturn(self.rendererNV12Mock);
 
   [realView renderFrame:self.frameMock];
-  [realView drawInMTKView:nil];
+  [realView drawInMTKView:realView.metalView];
   [self.rendererNV12Mock verify];
   [self.classMock verify];
 }
@@ -204,9 +206,9 @@
   OCMExpect([self.classMock createNV12Renderer]).andReturn(self.rendererNV12Mock);
   [[self.classMock reject] createI420Renderer];
 
-  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
+  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
   [realView renderFrame:self.frameMock];
-  [realView drawInMTKView:nil];
+  [realView drawInMTKView:realView.metalView];
 
   [self.rendererNV12Mock verify];
   [self.classMock verify];
@@ -214,7 +216,7 @@
   [[self.rendererNV12Mock reject] drawFrame:[OCMArg any]];
 
   [realView renderFrame:self.frameMock];
-  [realView drawInMTKView:nil];
+  [realView drawInMTKView:realView.metalView];
 
   [self.rendererNV12Mock verify];
 }
@@ -228,9 +230,9 @@
   OCMExpect([self.classMock createNV12Renderer]).andReturn(self.rendererNV12Mock);
   [[self.classMock reject] createI420Renderer];
 
-  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
+  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
   [realView renderFrame:self.frameMock];
-  [realView drawInMTKView:nil];
+  [realView drawInMTKView:realView.metalView];
 
   [self.rendererNV12Mock verify];
   [self.classMock verify];
@@ -240,7 +242,7 @@
   OCMExpect([self.rendererNV12Mock drawFrame:self.frameMock]);
 
   [realView renderFrame:self.frameMock];
-  [realView drawInMTKView:nil];
+  [realView drawInMTKView:realView.metalView];
 
   [self.rendererNV12Mock verify];
 }
@@ -252,7 +254,7 @@
   CGSize size = CGSizeMake(640, 480);
   OCMExpect([delegateMock videoView:[OCMArg any] didChangeVideoSize:size]);
 
-  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
+  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] initWithFrame:CGRectMake(0, 0, 640, 480)];
   realView.delegate = delegateMock;
   [realView setSize:size];
 

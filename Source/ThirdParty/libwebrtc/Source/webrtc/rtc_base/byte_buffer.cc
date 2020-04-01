@@ -16,41 +16,22 @@ namespace rtc {
 
 ByteBufferWriter::ByteBufferWriter() : ByteBufferWriterT() {}
 
-ByteBufferWriter::ByteBufferWriter(ByteOrder byte_order)
-    : ByteBufferWriterT(byte_order) {}
-
 ByteBufferWriter::ByteBufferWriter(const char* bytes, size_t len)
     : ByteBufferWriterT(bytes, len) {}
 
-ByteBufferWriter::ByteBufferWriter(const char* bytes,
-                                   size_t len,
-                                   ByteOrder byte_order)
-    : ByteBufferWriterT(bytes, len, byte_order) {}
-
-ByteBufferReader::ByteBufferReader(const char* bytes, size_t len)
-    : ByteBuffer(ORDER_NETWORK) {
+ByteBufferReader::ByteBufferReader(const char* bytes, size_t len) {
   Construct(bytes, len);
 }
 
-ByteBufferReader::ByteBufferReader(const char* bytes,
-                                   size_t len,
-                                   ByteOrder byte_order)
-    : ByteBuffer(byte_order) {
-  Construct(bytes, len);
-}
-
-ByteBufferReader::ByteBufferReader(const char* bytes)
-    : ByteBuffer(ORDER_NETWORK) {
+ByteBufferReader::ByteBufferReader(const char* bytes) {
   Construct(bytes, strlen(bytes));
 }
 
-ByteBufferReader::ByteBufferReader(const Buffer& buf)
-    : ByteBuffer(ORDER_NETWORK) {
+ByteBufferReader::ByteBufferReader(const Buffer& buf) {
   Construct(buf.data<char>(), buf.size());
 }
 
-ByteBufferReader::ByteBufferReader(const ByteBufferWriter& buf)
-    : ByteBuffer(buf.Order()) {
+ByteBufferReader::ByteBufferReader(const ByteBufferWriter& buf) {
   Construct(buf.Data(), buf.Length());
 }
 
@@ -76,7 +57,7 @@ bool ByteBufferReader::ReadUInt16(uint16_t* val) {
   if (!ReadBytes(reinterpret_cast<char*>(&v), 2)) {
     return false;
   } else {
-    *val = (Order() == ORDER_NETWORK) ? NetworkToHost16(v) : v;
+    *val = NetworkToHost16(v);
     return true;
   }
 }
@@ -87,14 +68,12 @@ bool ByteBufferReader::ReadUInt24(uint32_t* val) {
 
   uint32_t v = 0;
   char* read_into = reinterpret_cast<char*>(&v);
-  if (Order() == ORDER_NETWORK || IsHostBigEndian()) {
-    ++read_into;
-  }
+  ++read_into;
 
   if (!ReadBytes(read_into, 3)) {
     return false;
   } else {
-    *val = (Order() == ORDER_NETWORK) ? NetworkToHost32(v) : v;
+    *val = NetworkToHost32(v);
     return true;
   }
 }
@@ -107,7 +86,7 @@ bool ByteBufferReader::ReadUInt32(uint32_t* val) {
   if (!ReadBytes(reinterpret_cast<char*>(&v), 4)) {
     return false;
   } else {
-    *val = (Order() == ORDER_NETWORK) ? NetworkToHost32(v) : v;
+    *val = NetworkToHost32(v);
     return true;
   }
 }
@@ -120,7 +99,7 @@ bool ByteBufferReader::ReadUInt64(uint64_t* val) {
   if (!ReadBytes(reinterpret_cast<char*>(&v), 8)) {
     return false;
   } else {
-    *val = (Order() == ORDER_NETWORK) ? NetworkToHost64(v) : v;
+    *val = NetworkToHost64(v);
     return true;
   }
 }

@@ -17,7 +17,7 @@ namespace webrtc {
 namespace bbr {
 
 namespace {
-const Timestamp kTestStartTime = Timestamp::seconds(100000);
+const Timestamp kTestStartTime = Timestamp::Seconds(100000);
 }  // namespace
 
 TEST(LossRateFilterTest, AccumulatesToOne) {
@@ -25,7 +25,7 @@ TEST(LossRateFilterTest, AccumulatesToOne) {
   Timestamp current_time = kTestStartTime;
   for (int i = 0; i < 10; i++) {
     filter.UpdateWithLossStatus(current_time.ms(), 10, 10);
-    current_time += TimeDelta::seconds(1);
+    current_time += TimeDelta::Seconds(1);
   }
   EXPECT_NEAR(filter.GetLossRate(), 1.0, 0.01);
 }
@@ -35,7 +35,7 @@ TEST(LossRateFilterTest, StaysAtZero) {
   Timestamp current_time = kTestStartTime;
   for (int i = 0; i < 10; i++) {
     filter.UpdateWithLossStatus(current_time.ms(), 10, 0);
-    current_time += TimeDelta::seconds(1);
+    current_time += TimeDelta::Seconds(1);
   }
   EXPECT_NEAR(filter.GetLossRate(), 0.0, 0.01);
 }
@@ -46,12 +46,12 @@ TEST(LossRateFilterTest, VariesWithInput) {
   for (int j = 0; j < 10; j++) {
     for (int i = 0; i < 5; i++) {
       filter.UpdateWithLossStatus(current_time.ms(), 10, 10);
-      current_time += TimeDelta::seconds(1);
+      current_time += TimeDelta::Seconds(1);
     }
     EXPECT_NEAR(filter.GetLossRate(), 1.0, 0.1);
     for (int i = 0; i < 5; i++) {
       filter.UpdateWithLossStatus(current_time.ms(), 10, 0);
-      current_time += TimeDelta::seconds(1);
+      current_time += TimeDelta::Seconds(1);
     }
     EXPECT_NEAR(filter.GetLossRate(), 0.0, 0.1);
   }
@@ -63,7 +63,7 @@ TEST(LossRateFilterTest, DetectsChangingRate) {
   for (int per_decile = 0; per_decile < 10; per_decile += 1) {
     // Update every 200 ms for 2 seconds
     for (int i = 0; i < 10; i++) {
-      current_time += TimeDelta::ms(200);
+      current_time += TimeDelta::Millis(200);
       filter.UpdateWithLossStatus(current_time.ms(), 10, per_decile);
     }
     EXPECT_NEAR(filter.GetLossRate(), per_decile / 10.0, 0.05);

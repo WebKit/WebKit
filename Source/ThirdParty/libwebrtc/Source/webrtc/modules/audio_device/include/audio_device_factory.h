@@ -11,7 +11,8 @@
 #ifndef MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_FACTORY_H_
 #define MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_FACTORY_H_
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/include/audio_device.h"
 
@@ -29,7 +30,7 @@ namespace webrtc {
 //   rtc::scoped_refptr<AudioDeviceModule> CreateAudioDevice() {
 //     task_queue_factory_ = CreateDefaultTaskQueueFactory();
 //     // Tell COM that this thread shall live in the MTA.
-//     com_initializer_ = absl::make_unique<webrtc_win::ScopedCOMInitializer>(
+//     com_initializer_ = std::make_unique<webrtc_win::ScopedCOMInitializer>(
 //         webrtc_win::ScopedCOMInitializer::kMTA);
 //     if (!com_initializer_->Succeeded()) {
 //       return nullptr;

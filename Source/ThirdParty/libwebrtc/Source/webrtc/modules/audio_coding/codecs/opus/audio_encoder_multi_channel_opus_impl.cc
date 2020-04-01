@@ -24,7 +24,6 @@
 #include <string>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/opus/audio_coder_opus_common.h"
 #include "rtc_base/arraysize.h"
@@ -134,8 +133,8 @@ AudioEncoderMultiChannelOpusImpl::MakeAudioEncoder(
   if (!config.IsOk()) {
     return nullptr;
   }
-  return absl::make_unique<AudioEncoderMultiChannelOpusImpl>(config,
-                                                             payload_type);
+  return std::make_unique<AudioEncoderMultiChannelOpusImpl>(config,
+                                                            payload_type);
 }
 
 AudioEncoderMultiChannelOpusImpl::AudioEncoderMultiChannelOpusImpl(

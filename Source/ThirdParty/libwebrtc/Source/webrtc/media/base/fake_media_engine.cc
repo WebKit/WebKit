@@ -10,10 +10,10 @@
 
 #include "media/base/fake_media_engine.h"
 
+#include <memory>
 #include <utility>
 
 #include "absl/algorithm/container.h"
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "rtc_base/checks.h"
 
@@ -39,7 +39,8 @@ void FakeVoiceMediaChannel::VoiceChannelAudioSink::OnData(
     int bits_per_sample,
     int sample_rate,
     size_t number_of_channels,
-    size_t number_of_frames) {}
+    size_t number_of_frames,
+    absl::optional<int64_t> absolute_capture_timestamp_ms) {}
 void FakeVoiceMediaChannel::VoiceChannelAudioSink::OnClose() {
   source_ = nullptr;
 }
@@ -147,17 +148,17 @@ bool FakeVoiceMediaChannel::InsertDtmf(uint32_t ssrc,
   return true;
 }
 bool FakeVoiceMediaChannel::SetOutputVolume(uint32_t ssrc, double volume) {
-  if (0 == ssrc) {
-    std::map<uint32_t, double>::iterator it;
-    for (it = output_scalings_.begin(); it != output_scalings_.end(); ++it) {
-      it->second = volume;
-    }
-    return true;
-  } else if (output_scalings_.find(ssrc) != output_scalings_.end()) {
+  if (output_scalings_.find(ssrc) != output_scalings_.end()) {
     output_scalings_[ssrc] = volume;
     return true;
   }
   return false;
+}
+bool FakeVoiceMediaChannel::SetDefaultOutputVolume(double volume) {
+  for (auto& entry : output_scalings_) {
+    entry.second = volume;
+  }
+  return true;
 }
 bool FakeVoiceMediaChannel::GetOutputVolume(uint32_t ssrc, double* volume) {
   if (output_scalings_.find(ssrc) == output_scalings_.end())
@@ -187,6 +188,10 @@ bool FakeVoiceMediaChannel::GetStats(VoiceMediaInfo* info) {
 }
 void FakeVoiceMediaChannel::SetRawAudioSink(
     uint32_t ssrc,
+    std::unique_ptr<webrtc::AudioSinkInterface> sink) {
+  sink_ = std::move(sink);
+}
+void FakeVoiceMediaChannel::SetDefaultRawAudioSink(
     std::unique_ptr<webrtc::AudioSinkInterface> sink) {
   sink_ = std::move(sink);
 }
@@ -228,7 +233,7 @@ bool FakeVoiceMediaChannel::SetLocalSource(uint32_t ssrc, AudioSource* source) {
       RTC_CHECK(it->second->source() == source);
     } else {
       local_sinks_.insert(std::make_pair(
-          ssrc, absl::make_unique<VoiceChannelAudioSink>(source)));
+          ssrc, std::make_unique<VoiceChannelAudioSink>(source)));
     }
   } else {
     if (it != local_sinks_.end()) {
@@ -308,14 +313,15 @@ bool FakeVideoMediaChannel::GetSendCodec(VideoCodec* send_codec) {
 bool FakeVideoMediaChannel::SetSink(
     uint32_t ssrc,
     rtc::VideoSinkInterface<webrtc::VideoFrame>* sink) {
-  if (ssrc != 0 && sinks_.find(ssrc) == sinks_.end()) {
+  auto it = sinks_.find(ssrc);
+  if (it == sinks_.end()) {
     return false;
   }
-  if (ssrc != 0) {
-    sinks_[ssrc] = sink;
-  }
+  it->second = sink;
   return true;
 }
+void FakeVideoMediaChannel::SetDefaultSink(
+    rtc::VideoSinkInterface<webrtc::VideoFrame>* sink) {}
 bool FakeVideoMediaChannel::HasSink(uint32_t ssrc) const {
   return sinks_.find(ssrc) != sinks_.end() && sinks_.at(ssrc) != nullptr;
 }
@@ -400,10 +406,20 @@ bool FakeVideoMediaChannel::SetOptions(const VideoOptions& options) {
   options_ = options;
   return true;
 }
+
 bool FakeVideoMediaChannel::SetMaxSendBandwidth(int bps) {
   max_bps_ = bps;
   return true;
 }
+
+void FakeVideoMediaChannel::SetRecordableEncodedFrameCallback(
+    uint32_t ssrc,
+    std::function<void(const webrtc::RecordableEncodedFrame&)> callback) {}
+
+void FakeVideoMediaChannel::ClearRecordableEncodedFrameCallback(uint32_t ssrc) {
+}
+
+void FakeVideoMediaChannel::GenerateKeyFrame(uint32_t ssrc) {}
 
 FakeDataMediaChannel::FakeDataMediaChannel(void* unused,
                                            const DataOptions& options)
@@ -595,8 +611,8 @@ bool FakeVideoEngine::SetCapture(bool capture) {
 }
 
 FakeMediaEngine::FakeMediaEngine()
-    : CompositeMediaEngine(absl::make_unique<FakeVoiceEngine>(),
-                           absl::make_unique<FakeVideoEngine>()),
+    : CompositeMediaEngine(std::make_unique<FakeVoiceEngine>(),
+                           std::make_unique<FakeVideoEngine>()),
       voice_(static_cast<FakeVoiceEngine*>(&voice())),
       video_(static_cast<FakeVideoEngine*>(&video())) {}
 FakeMediaEngine::~FakeMediaEngine() {}

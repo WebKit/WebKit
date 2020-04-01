@@ -39,6 +39,7 @@
 #define ABSL_ALLOCATOR_NOTHROW 1
 #endif
 
+#define WEBRTC_WEBKIT_BUILD 1
 #define WEBRTC_POSIX 1
 #define _COMMON_INCLUDED_
 

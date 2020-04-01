@@ -26,6 +26,8 @@ namespace webrtc {
 // FakePeerConnectionBase then overriding the interesting methods. This class
 // takes care of providing default implementations for all the pure virtual
 // functions specified in the interfaces.
+// TODO(nisse): Try to replace this with DummyPeerConnection, from
+// api/test/ ?
 class FakePeerConnectionBase : public PeerConnectionInternal {
  public:
   // PeerConnectionInterface implementation.
@@ -49,6 +51,11 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
   }
 
   bool RemoveTrack(RtpSenderInterface* sender) override { return false; }
+
+  RTCError RemoveTrackNew(
+      rtc::scoped_refptr<RtpSenderInterface> sender) override {
+    return RTCError(RTCErrorType::UNSUPPORTED_OPERATION);
+  }
 
   RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>> AddTransceiver(
       rtc::scoped_refptr<MediaStreamTrackInterface> track) override {
@@ -198,12 +205,26 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
     return IceConnectionState::kIceConnectionNew;
   }
 
+  IceConnectionState standardized_ice_connection_state() override {
+    return IceConnectionState::kIceConnectionNew;
+  }
+
+  PeerConnectionState peer_connection_state() override {
+    return PeerConnectionState::kNew;
+  }
+
   IceGatheringState ice_gathering_state() override {
     return IceGatheringState::kIceGatheringNew;
   }
 
+  absl::optional<bool> can_trickle_ice_candidates() { return absl::nullopt; }
+
   bool StartRtcEventLog(std::unique_ptr<RtcEventLogOutput> output,
                         int64_t output_period_ms) override {
+    return false;
+  }
+
+  bool StartRtcEventLog(std::unique_ptr<RtcEventLogOutput> output) override {
     return false;
   }
 
@@ -236,10 +257,6 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
   std::vector<rtc::scoped_refptr<DataChannel>> sctp_data_channels()
       const override {
     return {};
-  }
-
-  absl::optional<std::string> sctp_content_name() const override {
-    return absl::nullopt;
   }
 
   absl::optional<std::string> sctp_transport_name() const override {

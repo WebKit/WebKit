@@ -23,7 +23,7 @@ int GetMinBitrateBps() {
 }
 
 DataRate GetMinBitrate() {
-  return DataRate::bps(GetMinBitrateBps());
+  return DataRate::BitsPerSec(GetMinBitrateBps());
 }
 
 }  // namespace congestion_controller

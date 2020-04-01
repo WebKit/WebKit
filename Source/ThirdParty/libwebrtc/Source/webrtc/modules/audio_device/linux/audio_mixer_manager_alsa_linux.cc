@@ -181,7 +181,8 @@ int32_t AudioMixerManagerLinuxALSA::OpenSpeaker(char* deviceName) {
   if (errVal < 0) {
     RTC_LOG(LS_ERROR)
         << "snd_mixer_selem_register(_outputMixerHandle, NULL, NULL), "
-        << "error: " << LATE(snd_strerror)(errVal);
+           "error: "
+        << LATE(snd_strerror)(errVal);
     _outputMixerHandle = NULL;
     return -1;
   }
@@ -262,7 +263,8 @@ int32_t AudioMixerManagerLinuxALSA::OpenMicrophone(char* deviceName) {
   if (errVal < 0) {
     RTC_LOG(LS_ERROR)
         << "snd_mixer_selem_register(_inputMixerHandle, NULL, NULL), "
-        << "error: " << LATE(snd_strerror)(errVal);
+           "error: "
+        << LATE(snd_strerror)(errVal);
 
     _inputMixerHandle = NULL;
     return -1;

@@ -17,7 +17,6 @@
 #import "api/peerconnection/RTCConfiguration+Private.h"
 #import "api/peerconnection/RTCConfiguration.h"
 #import "api/peerconnection/RTCIceServer.h"
-#import "api/peerconnection/RTCIntervalRange.h"
 #import "helpers/NSString+StdString.h"
 
 @interface RTCConfigurationTest : NSObject
@@ -30,7 +29,6 @@
 - (void)testConversionToNativeConfiguration {
   NSArray *urlStrings = @[ @"stun:stun1.example.net" ];
   RTCIceServer *server = [[RTCIceServer alloc] initWithURLStrings:urlStrings];
-  RTCIntervalRange *range = [[RTCIntervalRange alloc] initWithMin:0 max:100];
 
   RTCConfiguration *config = [[RTCConfiguration alloc] init];
   config.iceServers = @[ server ];
@@ -49,7 +47,6 @@
   config.continualGatheringPolicy =
       RTCContinualGatheringPolicyGatherContinually;
   config.shouldPruneTurnPorts = YES;
-  config.iceRegatherIntervalRange = range;
   config.cryptoOptions = [[RTCCryptoOptions alloc] initWithSrtpEnableGcmCryptoSuites:YES
                                                  srtpEnableAes128Sha1_32CryptoCipher:YES
                                               srtpEnableEncryptedRtpHeaderExtensions:YES
@@ -82,8 +79,6 @@
   EXPECT_EQ(webrtc::PeerConnectionInterface::GATHER_CONTINUALLY,
             nativeConfig->continual_gathering_policy);
   EXPECT_EQ(true, nativeConfig->prune_turn_ports);
-  EXPECT_EQ(range.min, nativeConfig->ice_regather_interval_range->min());
-  EXPECT_EQ(range.max, nativeConfig->ice_regather_interval_range->max());
   EXPECT_EQ(true, nativeConfig->crypto_options->srtp.enable_gcm_crypto_suites);
   EXPECT_EQ(true, nativeConfig->crypto_options->srtp.enable_aes128_sha1_32_crypto_cipher);
   EXPECT_EQ(true, nativeConfig->crypto_options->srtp.enable_encrypted_rtp_header_extensions);
@@ -95,7 +90,6 @@
 - (void)testNativeConversionToConfiguration {
   NSArray *urlStrings = @[ @"stun:stun1.example.net" ];
   RTCIceServer *server = [[RTCIceServer alloc] initWithURLStrings:urlStrings];
-  RTCIntervalRange *range = [[RTCIntervalRange alloc] initWithMin:0 max:100];
 
   RTCConfiguration *config = [[RTCConfiguration alloc] init];
   config.iceServers = @[ server ];
@@ -114,7 +108,6 @@
   config.continualGatheringPolicy =
       RTCContinualGatheringPolicyGatherContinually;
   config.shouldPruneTurnPorts = YES;
-  config.iceRegatherIntervalRange = range;
   config.cryptoOptions = [[RTCCryptoOptions alloc] initWithSrtpEnableGcmCryptoSuites:YES
                                                  srtpEnableAes128Sha1_32CryptoCipher:NO
                                               srtpEnableEncryptedRtpHeaderExtensions:NO
@@ -146,8 +139,6 @@
             newConfig.iceBackupCandidatePairPingInterval);
   EXPECT_EQ(config.continualGatheringPolicy, newConfig.continualGatheringPolicy);
   EXPECT_EQ(config.shouldPruneTurnPorts, newConfig.shouldPruneTurnPorts);
-  EXPECT_EQ(config.iceRegatherIntervalRange.min, newConfig.iceRegatherIntervalRange.min);
-  EXPECT_EQ(config.iceRegatherIntervalRange.max, newConfig.iceRegatherIntervalRange.max);
   EXPECT_EQ(config.cryptoOptions.srtpEnableGcmCryptoSuites,
             newConfig.cryptoOptions.srtpEnableGcmCryptoSuites);
   EXPECT_EQ(config.cryptoOptions.srtpEnableAes128Sha1_32CryptoCipher,

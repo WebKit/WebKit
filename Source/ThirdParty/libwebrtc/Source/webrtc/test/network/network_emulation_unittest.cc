@@ -14,13 +14,11 @@
 #include <memory>
 #include <set>
 
-#include "absl/memory/memory.h"
 #include "api/test/simulated_network.h"
 #include "api/units/time_delta.h"
 #include "call/simulated_network.h"
 #include "rtc_base/event.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/logging.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -30,8 +28,9 @@ namespace webrtc {
 namespace test {
 namespace {
 
-constexpr int kNetworkPacketWaitTimeoutMs = 100;
-constexpr int kStatsWaitTimeoutMs = 1000;
+constexpr TimeDelta kNetworkPacketWaitTimeout = TimeDelta::Millis(100);
+constexpr TimeDelta kStatsWaitTimeout = TimeDelta::Seconds(1);
+constexpr int kOverheadIpv4Udp = 20 + 8;
 
 class SocketReader : public sigslot::has_slots<> {
  public:
@@ -45,13 +44,12 @@ class SocketReader : public sigslot::has_slots<> {
 
   void OnReadEvent(rtc::AsyncSocket* socket) {
     RTC_DCHECK(socket_ == socket);
-    network_thread_->PostTask(RTC_FROM_HERE, [this]() {
-      int64_t timestamp;
-      len_ = socket_->Recv(buf_, size_, &timestamp);
+    RTC_DCHECK(network_thread_->IsCurrent());
+    int64_t timestamp;
+    len_ = socket_->Recv(buf_, size_, &timestamp);
 
-      rtc::CritScope crit(&lock_);
-      received_count_++;
-    });
+    rtc::CritScope crit(&lock_);
+    received_count_++;
   }
 
   int ReceivedCount() {
@@ -130,7 +128,7 @@ class NetworkEmulationManagerThreeNodesRoutingTest : public ::testing::Test {
         rtc::CopyOnWriteBuffer(10));
 
     // Sleep at the end to wait for async packets delivery.
-    SleepMs(kNetworkPacketWaitTimeoutMs);
+    emulation_.time_controller()->AdvanceTime(kNetworkPacketWaitTimeout);
   }
 
  private:
@@ -141,7 +139,7 @@ class NetworkEmulationManagerThreeNodesRoutingTest : public ::testing::Test {
   MockReceiver r_e1_e3_;
   MockReceiver r_e3_e1_;
 
-  NetworkEmulationManagerImpl emulation_;
+  NetworkEmulationManagerImpl emulation_{TimeMode::kRealTime};
   EmulatedEndpoint* e1_;
   EmulatedEndpoint* e2_;
   EmulatedEndpoint* e3_;
@@ -150,7 +148,7 @@ class NetworkEmulationManagerThreeNodesRoutingTest : public ::testing::Test {
 EmulatedNetworkNode* CreateEmulatedNodeWithDefaultBuiltInConfig(
     NetworkEmulationManager* emulation) {
   return emulation->CreateEmulatedNode(
-      absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
+      std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
 }
 
 }  // namespace
@@ -158,7 +156,7 @@ EmulatedNetworkNode* CreateEmulatedNodeWithDefaultBuiltInConfig(
 using ::testing::_;
 
 TEST(NetworkEmulationManagerTest, GeneratedIpv4AddressDoesNotCollide) {
-  NetworkEmulationManagerImpl network_manager;
+  NetworkEmulationManagerImpl network_manager(TimeMode::kRealTime);
   std::set<rtc::IPAddress> ips;
   EmulatedEndpointConfig config;
   config.generated_ip_family = EmulatedEndpointConfig::IpAddressFamily::kIpv4;
@@ -171,7 +169,7 @@ TEST(NetworkEmulationManagerTest, GeneratedIpv4AddressDoesNotCollide) {
 }
 
 TEST(NetworkEmulationManagerTest, GeneratedIpv6AddressDoesNotCollide) {
-  NetworkEmulationManagerImpl network_manager;
+  NetworkEmulationManagerImpl network_manager(TimeMode::kRealTime);
   std::set<rtc::IPAddress> ips;
   EmulatedEndpointConfig config;
   config.generated_ip_family = EmulatedEndpointConfig::IpAddressFamily::kIpv6;
@@ -184,12 +182,12 @@ TEST(NetworkEmulationManagerTest, GeneratedIpv6AddressDoesNotCollide) {
 }
 
 TEST(NetworkEmulationManagerTest, Run) {
-  NetworkEmulationManagerImpl network_manager;
+  NetworkEmulationManagerImpl network_manager(TimeMode::kRealTime);
 
   EmulatedNetworkNode* alice_node = network_manager.CreateEmulatedNode(
-      absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
+      std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
   EmulatedNetworkNode* bob_node = network_manager.CreateEmulatedNode(
-      absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
+      std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
   EmulatedEndpoint* alice_endpoint =
       network_manager.CreateEndpoint(EmulatedEndpointConfig());
   EmulatedEndpoint* bob_endpoint =
@@ -202,42 +200,49 @@ TEST(NetworkEmulationManagerTest, Run) {
   EmulatedNetworkManagerInterface* nt2 =
       network_manager.CreateEmulatedNetworkManagerInterface({bob_endpoint});
 
+  rtc::Thread* t1 = nt1->network_thread();
+  rtc::Thread* t2 = nt2->network_thread();
+
   rtc::CopyOnWriteBuffer data("Hello");
   for (uint64_t j = 0; j < 2; j++) {
-    auto* s1 = nt1->network_thread()->socketserver()->CreateAsyncSocket(
-        AF_INET, SOCK_DGRAM);
-    auto* s2 = nt2->network_thread()->socketserver()->CreateAsyncSocket(
-        AF_INET, SOCK_DGRAM);
+    auto* s1 = t1->socketserver()->CreateAsyncSocket(AF_INET, SOCK_DGRAM);
+    auto* s2 = t2->socketserver()->CreateAsyncSocket(AF_INET, SOCK_DGRAM);
 
-    SocketReader r1(s1, nt1->network_thread());
-    SocketReader r2(s2, nt2->network_thread());
+    SocketReader r1(s1, t1);
+    SocketReader r2(s2, t2);
 
     rtc::SocketAddress a1(alice_endpoint->GetPeerLocalAddress(), 0);
     rtc::SocketAddress a2(bob_endpoint->GetPeerLocalAddress(), 0);
 
-    s1->Bind(a1);
-    s2->Bind(a2);
+    t1->Invoke<void>(RTC_FROM_HERE, [&] {
+      s1->Bind(a1);
+      a1 = s1->GetLocalAddress();
+    });
+    t2->Invoke<void>(RTC_FROM_HERE, [&] {
+      s2->Bind(a2);
+      a2 = s2->GetLocalAddress();
+    });
 
-    s1->Connect(s2->GetLocalAddress());
-    s2->Connect(s1->GetLocalAddress());
+    t1->Invoke<void>(RTC_FROM_HERE, [&] { s1->Connect(a2); });
+    t2->Invoke<void>(RTC_FROM_HERE, [&] { s2->Connect(a1); });
 
     for (uint64_t i = 0; i < 1000; i++) {
-      nt1->network_thread()->PostTask(
-          RTC_FROM_HERE, [&]() { s1->Send(data.data(), data.size()); });
-      nt2->network_thread()->PostTask(
-          RTC_FROM_HERE, [&]() { s2->Send(data.data(), data.size()); });
+      t1->PostTask(RTC_FROM_HERE,
+                   [&]() { s1->Send(data.data(), data.size()); });
+      t2->PostTask(RTC_FROM_HERE,
+                   [&]() { s2->Send(data.data(), data.size()); });
     }
 
-    rtc::Event wait;
-    wait.Wait(1000);
+    network_manager.time_controller()->AdvanceTime(TimeDelta::Seconds(1));
+
     EXPECT_EQ(r1.ReceivedCount(), 1000);
     EXPECT_EQ(r2.ReceivedCount(), 1000);
 
-    delete s1;
-    delete s2;
+    t1->Invoke<void>(RTC_FROM_HERE, [&] { delete s1; });
+    t2->Invoke<void>(RTC_FROM_HERE, [&] { delete s2; });
   }
 
-  int64_t single_packet_size = data.size();
+  const int64_t single_packet_size = data.size() + kOverheadIpv4Udp;
   std::atomic<int> received_stats_count{0};
   nt1->GetStats([&](EmulatedNetworkStats st) {
     EXPECT_EQ(st.packets_sent, 2000l);
@@ -257,16 +262,18 @@ TEST(NetworkEmulationManagerTest, Run) {
     EXPECT_EQ(st.bytes_dropped.bytes(), 0l);
     received_stats_count++;
   });
-  ASSERT_EQ_WAIT(received_stats_count.load(), 2, kStatsWaitTimeoutMs);
+  ASSERT_EQ_SIMULATED_WAIT(received_stats_count.load(), 2,
+                           kStatsWaitTimeout.ms(),
+                           *network_manager.time_controller());
 }
 
 TEST(NetworkEmulationManagerTest, ThroughputStats) {
-  NetworkEmulationManagerImpl network_manager;
+  NetworkEmulationManagerImpl network_manager(TimeMode::kRealTime);
 
   EmulatedNetworkNode* alice_node = network_manager.CreateEmulatedNode(
-      absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
+      std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
   EmulatedNetworkNode* bob_node = network_manager.CreateEmulatedNode(
-      absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
+      std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
   EmulatedEndpoint* alice_endpoint =
       network_manager.CreateEndpoint(EmulatedEndpointConfig());
   EmulatedEndpoint* bob_endpoint =
@@ -279,50 +286,63 @@ TEST(NetworkEmulationManagerTest, ThroughputStats) {
   EmulatedNetworkManagerInterface* nt2 =
       network_manager.CreateEmulatedNetworkManagerInterface({bob_endpoint});
 
-  int64_t single_packet_size = 100;
-  rtc::CopyOnWriteBuffer data(single_packet_size);
-  auto* s1 = nt1->network_thread()->socketserver()->CreateAsyncSocket(
-      AF_INET, SOCK_DGRAM);
-  auto* s2 = nt2->network_thread()->socketserver()->CreateAsyncSocket(
-      AF_INET, SOCK_DGRAM);
+  rtc::Thread* t1 = nt1->network_thread();
+  rtc::Thread* t2 = nt2->network_thread();
 
-  SocketReader r1(s1, nt1->network_thread());
-  SocketReader r2(s2, nt2->network_thread());
+  constexpr int64_t kUdpPayloadSize = 100;
+  constexpr int64_t kSinglePacketSize = kUdpPayloadSize + kOverheadIpv4Udp;
+  rtc::CopyOnWriteBuffer data(kUdpPayloadSize);
+  auto* s1 = t1->socketserver()->CreateAsyncSocket(AF_INET, SOCK_DGRAM);
+  auto* s2 = t2->socketserver()->CreateAsyncSocket(AF_INET, SOCK_DGRAM);
+
+  SocketReader r1(s1, t1);
+  SocketReader r2(s2, t2);
 
   rtc::SocketAddress a1(alice_endpoint->GetPeerLocalAddress(), 0);
   rtc::SocketAddress a2(bob_endpoint->GetPeerLocalAddress(), 0);
 
-  s1->Bind(a1);
-  s2->Bind(a2);
+  t1->Invoke<void>(RTC_FROM_HERE, [&] {
+    s1->Bind(a1);
+    a1 = s1->GetLocalAddress();
+  });
+  t2->Invoke<void>(RTC_FROM_HERE, [&] {
+    s2->Bind(a2);
+    a2 = s2->GetLocalAddress();
+  });
 
-  s1->Connect(s2->GetLocalAddress());
-  s2->Connect(s1->GetLocalAddress());
+  t1->Invoke<void>(RTC_FROM_HERE, [&] { s1->Connect(a2); });
+  t2->Invoke<void>(RTC_FROM_HERE, [&] { s2->Connect(a1); });
 
-  // Send 10 packets for 1
-  rtc::Event wait;
-  for (uint64_t i = 0; i < 11; i++) {
-    nt1->network_thread()->PostTask(
-        RTC_FROM_HERE, [&]() { s1->Send(data.data(), data.size()); });
-    nt2->network_thread()->PostTask(
-        RTC_FROM_HERE, [&]() { s2->Send(data.data(), data.size()); });
-    wait.Wait(100);
+  // Send 11 packets, totalizing 1 second between the first and the last.
+  const int kNumPacketsSent = 11;
+  const TimeDelta kDelay = TimeDelta::Millis(100);
+  for (int i = 0; i < kNumPacketsSent; i++) {
+    t1->PostTask(RTC_FROM_HERE, [&]() { s1->Send(data.data(), data.size()); });
+    t2->PostTask(RTC_FROM_HERE, [&]() { s2->Send(data.data(), data.size()); });
+    network_manager.time_controller()->AdvanceTime(kDelay);
   }
 
   std::atomic<int> received_stats_count{0};
   nt1->GetStats([&](EmulatedNetworkStats st) {
-    EXPECT_EQ(st.packets_sent, 11l);
-    EXPECT_EQ(st.bytes_sent.bytes(), single_packet_size * 11l);
+    EXPECT_EQ(st.packets_sent, kNumPacketsSent);
+    EXPECT_EQ(st.bytes_sent.bytes(), kSinglePacketSize * kNumPacketsSent);
+
+    const double tolerance = 0.95;  // Accept 5% tolerance for timing.
     EXPECT_GE(st.last_packet_sent_time - st.first_packet_sent_time,
-              TimeDelta::seconds(1));
+              (kNumPacketsSent - 1) * kDelay * tolerance);
     EXPECT_GT(st.AverageSendRate().bps(), 0);
     received_stats_count++;
   });
-  ASSERT_EQ_WAIT(received_stats_count.load(), 1, kStatsWaitTimeoutMs);
+
+  ASSERT_EQ_SIMULATED_WAIT(received_stats_count.load(), 1,
+                           kStatsWaitTimeout.ms(),
+                           *network_manager.time_controller());
+
   EXPECT_EQ(r1.ReceivedCount(), 11);
   EXPECT_EQ(r2.ReceivedCount(), 11);
 
-  delete s1;
-  delete s2;
+  t1->Invoke<void>(RTC_FROM_HERE, [&] { delete s1; });
+  t2->Invoke<void>(RTC_FROM_HERE, [&] { delete s2; });
 }
 
 // Testing that packets are delivered via all routes using a routing scheme as

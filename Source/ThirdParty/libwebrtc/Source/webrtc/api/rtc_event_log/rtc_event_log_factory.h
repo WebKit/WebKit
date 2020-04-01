@@ -16,10 +16,11 @@
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtc_event_log/rtc_event_log_factory_interface.h"
 #include "api/task_queue/task_queue_factory.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
-class RtcEventLogFactory : public RtcEventLogFactoryInterface {
+class RTC_EXPORT RtcEventLogFactory : public RtcEventLogFactoryInterface {
  public:
   explicit RtcEventLogFactory(TaskQueueFactory* task_queue_factory);
   ~RtcEventLogFactory() override {}

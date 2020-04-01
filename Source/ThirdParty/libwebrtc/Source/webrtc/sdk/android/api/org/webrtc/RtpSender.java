@@ -11,6 +11,7 @@
 package org.webrtc;
 
 import android.support.annotation.Nullable;
+import java.util.List;
 
 /** Java wrapper for a C++ RtpSenderInterface. */
 public class RtpSender {
@@ -60,6 +61,16 @@ public class RtpSender {
   @Nullable
   public MediaStreamTrack track() {
     return cachedTrack;
+  }
+
+  public void setStreams(List<String> streamIds) {
+    checkRtpSenderExists();
+    nativeSetStreams(nativeRtpSender, streamIds);
+  }
+
+  public List<String> getStreams() {
+    checkRtpSenderExists();
+    return nativeGetStreams(nativeRtpSender);
   }
 
   public boolean setParameters(RtpParameters parameters) {
@@ -116,6 +127,10 @@ public class RtpSender {
   // This should increment the reference count of the track.
   // Will be released in dispose() or setTrack().
   private static native long nativeGetTrack(long rtpSender);
+
+  private static native void nativeSetStreams(long rtpSender, List<String> streamIds);
+
+  private static native List<String> nativeGetStreams(long rtpSender);
 
   // This should increment the reference count of the DTMF sender.
   // Will be released in dispose().

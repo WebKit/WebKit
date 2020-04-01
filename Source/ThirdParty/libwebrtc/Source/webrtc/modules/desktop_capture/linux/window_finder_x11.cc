@@ -14,7 +14,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "modules/desktop_capture/linux/window_list_utils.h"
 #include "rtc_base/checks.h"
 
@@ -47,7 +46,7 @@ std::unique_ptr<WindowFinder> WindowFinder::Create(
     return nullptr;
   }
 
-  return absl::make_unique<WindowFinderX11>(options.cache);
+  return std::make_unique<WindowFinderX11>(options.cache);
 }
 
 }  // namespace webrtc

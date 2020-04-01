@@ -22,7 +22,7 @@ static const int64_t kTimeUnset = -1;
 RateTracker::RateTracker(int64_t bucket_milliseconds, size_t bucket_count)
     : bucket_milliseconds_(bucket_milliseconds),
       bucket_count_(bucket_count),
-      sample_buckets_(new size_t[bucket_count + 1]),
+      sample_buckets_(new int64_t[bucket_count + 1]),
       total_sample_count_(0u),
       bucket_start_time_milliseconds_(kTimeUnset) {
   RTC_CHECK(bucket_milliseconds > 0);
@@ -76,10 +76,10 @@ double RateTracker::ComputeRateForInterval(
   size_t start_bucket = NextBucketIndex(current_bucket_ + buckets_to_skip);
   // Only count a portion of the first bucket according to how much of the
   // first bucket is within the current interval.
-  size_t total_samples = ((sample_buckets_[start_bucket] *
-                           (bucket_milliseconds_ - milliseconds_to_skip)) +
-                          (bucket_milliseconds_ >> 1)) /
-                         bucket_milliseconds_;
+  int64_t total_samples = ((sample_buckets_[start_bucket] *
+                            (bucket_milliseconds_ - milliseconds_to_skip)) +
+                           (bucket_milliseconds_ >> 1)) /
+                          bucket_milliseconds_;
   // All other buckets in the interval are counted in their entirety.
   for (size_t i = NextBucketIndex(start_bucket);
        i != NextBucketIndex(current_bucket_); i = NextBucketIndex(i)) {
@@ -103,11 +103,12 @@ double RateTracker::ComputeTotalRate() const {
              TimeDiff(current_time, initialization_time_milliseconds_));
 }
 
-size_t RateTracker::TotalSampleCount() const {
+int64_t RateTracker::TotalSampleCount() const {
   return total_sample_count_;
 }
 
-void RateTracker::AddSamples(size_t sample_count) {
+void RateTracker::AddSamples(int64_t sample_count) {
+  RTC_DCHECK_LE(0, sample_count);
   EnsureInitialized();
   int64_t current_time = Time();
   // Advance the current bucket as needed for the current time, and reset

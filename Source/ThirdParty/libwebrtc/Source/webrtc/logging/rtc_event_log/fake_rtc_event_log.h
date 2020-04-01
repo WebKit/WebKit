@@ -14,8 +14,8 @@
 #include <map>
 #include <memory>
 
+#include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log/rtc_event_log.h"
-#include "logging/rtc_event_log/events/rtc_event.h"
 #include "rtc_base/async_invoker.h"
 #include "rtc_base/thread.h"
 

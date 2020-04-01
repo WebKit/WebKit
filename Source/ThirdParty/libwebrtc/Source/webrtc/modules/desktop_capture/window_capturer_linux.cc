@@ -17,9 +17,9 @@
 #include "modules/desktop_capture/linux/window_capturer_pipewire.h"
 #endif  // defined(WEBRTC_USE_PIPEWIRE)
 
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
 #include "modules/desktop_capture/linux/window_capturer_x11.h"
-#endif  // defined(USE_X11)
+#endif  // defined(WEBRTC_USE_X11)
 
 namespace webrtc {
 
@@ -32,9 +32,9 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawWindowCapturer(
   }
 #endif  // defined(WEBRTC_USE_PIPEWIRE)
 
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
   return WindowCapturerX11::CreateRawWindowCapturer(options);
-#endif  // defined(USE_X11)
+#endif  // defined(WEBRTC_USE_X11)
 
   return nullptr;
 }

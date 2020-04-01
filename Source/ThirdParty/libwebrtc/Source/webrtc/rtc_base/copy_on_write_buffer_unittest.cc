@@ -319,4 +319,50 @@ TEST(CopyOnWriteBufferTest, TestBacketWrite) {
   EXPECT_EQ(0, memcmp(buf2.cdata(), kTestData, 3));
 }
 
+TEST(CopyOnWriteBufferTest, CreateSlice) {
+  CopyOnWriteBuffer buf(kTestData, 10, 10);
+  CopyOnWriteBuffer slice = buf.Slice(3, 4);
+  EXPECT_EQ(slice.size(), 4u);
+  EXPECT_EQ(0, memcmp(buf.cdata() + 3, slice.cdata(), 4));
+}
+
+TEST(CopyOnWriteBufferTest, NoCopyDataOnSlice) {
+  CopyOnWriteBuffer buf(kTestData, 10, 10);
+  CopyOnWriteBuffer slice = buf.Slice(3, 4);
+  EXPECT_EQ(buf.cdata() + 3, slice.cdata());
+}
+
+TEST(CopyOnWriteBufferTest, WritingCopiesData) {
+  CopyOnWriteBuffer buf(kTestData, 10, 10);
+  CopyOnWriteBuffer slice = buf.Slice(3, 4);
+  slice[0] = 0xaa;
+  EXPECT_NE(buf.cdata() + 3, slice.cdata());
+  EXPECT_EQ(0, memcmp(buf.cdata(), kTestData, 10));
+}
+
+TEST(CopyOnWriteBufferTest, WritingToBufferDoesntAffectsSlice) {
+  CopyOnWriteBuffer buf(kTestData, 10, 10);
+  CopyOnWriteBuffer slice = buf.Slice(3, 4);
+  buf[0] = 0xaa;
+  EXPECT_NE(buf.cdata() + 3, slice.cdata());
+  EXPECT_EQ(0, memcmp(slice.cdata(), kTestData + 3, 4));
+}
+
+TEST(CopyOnWriteBufferTest, SliceOfASlice) {
+  CopyOnWriteBuffer buf(kTestData, 10, 10);
+  CopyOnWriteBuffer slice = buf.Slice(3, 7);
+  CopyOnWriteBuffer slice2 = slice.Slice(2, 3);
+  EXPECT_EQ(slice2.size(), 3u);
+  EXPECT_EQ(slice.cdata() + 2, slice2.cdata());
+  EXPECT_EQ(buf.cdata() + 5, slice2.cdata());
+}
+
+TEST(CopyOnWriteBufferTest, SlicesAreIndependent) {
+  CopyOnWriteBuffer buf(kTestData, 10, 10);
+  CopyOnWriteBuffer slice = buf.Slice(3, 7);
+  CopyOnWriteBuffer slice2 = buf.Slice(3, 7);
+  slice2[0] = 0xaa;
+  EXPECT_EQ(buf.cdata() + 3, slice.cdata());
+}
+
 }  // namespace rtc

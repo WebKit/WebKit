@@ -81,6 +81,68 @@ class CoreAudioUtilityWinTest : public ::testing::Test {
   ScopedCOMInitializer com_init_;
 };
 
+TEST_F(CoreAudioUtilityWinTest, WaveFormatWrapper) {
+  // Use default constructor for WAVEFORMATEX and verify its size.
+  WAVEFORMATEX format = {};
+  core_audio_utility::WaveFormatWrapper wave_format(&format);
+  EXPECT_FALSE(wave_format.IsExtensible());
+  EXPECT_EQ(wave_format.size(), sizeof(WAVEFORMATEX));
+  EXPECT_EQ(wave_format->cbSize, 0);
+
+  // Ensure that the stand-alone WAVEFORMATEX structure has a valid format tag
+  // and that all accessors work.
+  format.wFormatTag = WAVE_FORMAT_PCM;
+  EXPECT_FALSE(wave_format.IsExtensible());
+  EXPECT_EQ(wave_format.size(), sizeof(WAVEFORMATEX));
+  EXPECT_EQ(wave_format.get()->wFormatTag, WAVE_FORMAT_PCM);
+  EXPECT_EQ(wave_format->wFormatTag, WAVE_FORMAT_PCM);
+
+  // Next, ensure that the size is valid. Stand-alone is not extended.
+  EXPECT_EQ(wave_format.size(), sizeof(WAVEFORMATEX));
+
+  // Verify format types for the stand-alone version.
+  EXPECT_TRUE(wave_format.IsPcm());
+  EXPECT_FALSE(wave_format.IsFloat());
+  format.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
+  EXPECT_TRUE(wave_format.IsFloat());
+}
+
+TEST_F(CoreAudioUtilityWinTest, WaveFormatWrapperExtended) {
+  // Use default constructor for WAVEFORMATEXTENSIBLE and verify that it
+  // results in same size as for WAVEFORMATEX even if the size of |format_ex|
+  // equals the size of WAVEFORMATEXTENSIBLE.
+  WAVEFORMATEXTENSIBLE format_ex = {};
+  core_audio_utility::WaveFormatWrapper wave_format_ex(&format_ex);
+  EXPECT_FALSE(wave_format_ex.IsExtensible());
+  EXPECT_EQ(wave_format_ex.size(), sizeof(WAVEFORMATEX));
+  EXPECT_EQ(wave_format_ex->cbSize, 0);
+
+  // Ensure that the extended structure has a valid format tag and that all
+  // accessors work.
+  format_ex.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+  EXPECT_FALSE(wave_format_ex.IsExtensible());
+  EXPECT_EQ(wave_format_ex.size(), sizeof(WAVEFORMATEX));
+  EXPECT_EQ(wave_format_ex->wFormatTag, WAVE_FORMAT_EXTENSIBLE);
+  EXPECT_EQ(wave_format_ex.get()->wFormatTag, WAVE_FORMAT_EXTENSIBLE);
+
+  // Next, ensure that the size is valid (sum of stand-alone and extended).
+  // Now the structure qualifies as extended.
+  format_ex.Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+  EXPECT_TRUE(wave_format_ex.IsExtensible());
+  EXPECT_EQ(wave_format_ex.size(), sizeof(WAVEFORMATEXTENSIBLE));
+  EXPECT_TRUE(wave_format_ex.GetExtensible());
+  EXPECT_EQ(wave_format_ex.GetExtensible()->Format.wFormatTag,
+            WAVE_FORMAT_EXTENSIBLE);
+
+  // Verify format types for the extended version.
+  EXPECT_FALSE(wave_format_ex.IsPcm());
+  format_ex.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
+  EXPECT_TRUE(wave_format_ex.IsPcm());
+  EXPECT_FALSE(wave_format_ex.IsFloat());
+  format_ex.SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
+  EXPECT_TRUE(wave_format_ex.IsFloat());
+}
+
 TEST_F(CoreAudioUtilityWinTest, NumberOfActiveDevices) {
   ABORT_TEST_IF_NOT(DevicesAvailable());
   int render_devices = core_audio_utility::NumberOfActiveDevices(eRender);
@@ -438,14 +500,20 @@ TEST_F(CoreAudioUtilityWinTest, GetSharedModeMixFormat) {
   EXPECT_TRUE(client.Get());
 
   // Perform a simple sanity test of the acquired format structure.
-  WAVEFORMATPCMEX format;
+  WAVEFORMATEXTENSIBLE format;
   EXPECT_TRUE(SUCCEEDED(
       core_audio_utility::GetSharedModeMixFormat(client.Get(), &format)));
-  EXPECT_GE(format.Format.nChannels, 1);
-  EXPECT_GE(format.Format.nSamplesPerSec, 8000u);
-  EXPECT_GE(format.Format.wBitsPerSample, 16);
-  EXPECT_GE(format.Samples.wValidBitsPerSample, 16);
-  EXPECT_EQ(format.Format.wFormatTag, WAVE_FORMAT_EXTENSIBLE);
+  core_audio_utility::WaveFormatWrapper wformat(&format);
+  EXPECT_GE(wformat->nChannels, 1);
+  EXPECT_GE(wformat->nSamplesPerSec, 8000u);
+  EXPECT_GE(wformat->wBitsPerSample, 16);
+  if (wformat.IsExtensible()) {
+    EXPECT_EQ(wformat->wFormatTag, WAVE_FORMAT_EXTENSIBLE);
+    EXPECT_GE(wformat->cbSize, 22);
+    EXPECT_GE(wformat.GetExtensible()->Samples.wValidBitsPerSample, 16);
+  } else {
+    EXPECT_EQ(wformat->cbSize, 0);
+  }
 }
 
 TEST_F(CoreAudioUtilityWinTest, IsFormatSupported) {
@@ -478,8 +546,8 @@ TEST_F(CoreAudioUtilityWinTest, GetDevicePeriod) {
 
   // Verify that the device periods are valid for the default render and
   // capture devices.
+  ComPtr<IAudioClient> client;
   for (size_t i = 0; i < arraysize(data_flow); ++i) {
-    ComPtr<IAudioClient> client;
     REFERENCE_TIME shared_time_period = 0;
     REFERENCE_TIME exclusive_time_period = 0;
     client = core_audio_utility::CreateClient(AudioDeviceName::kDefaultDeviceId,
@@ -498,25 +566,24 @@ TEST_F(CoreAudioUtilityWinTest, GetDevicePeriod) {
 TEST_F(CoreAudioUtilityWinTest, GetPreferredAudioParameters) {
   ABORT_TEST_IF_NOT(DevicesAvailable());
 
-  EDataFlow data_flow[] = {eRender, eCapture};
+  struct {
+    EDataFlow flow;
+    ERole role;
+  } data[] = {{eRender, eConsole},
+              {eRender, eCommunications},
+              {eCapture, eConsole},
+              {eCapture, eCommunications}};
 
-  // Verify that the preferred audio parameters are OK for the default render
-  // and capture devices.
-  for (size_t i = 0; i < arraysize(data_flow); ++i) {
-    webrtc::AudioParameters params;
+  // Verify that the preferred audio parameters are OK for all flow/role
+  // combinations above.
+  ComPtr<IAudioClient> client;
+  webrtc::AudioParameters params;
+  for (size_t i = 0; i < arraysize(data); ++i) {
+    client = core_audio_utility::CreateClient(AudioDeviceName::kDefaultDeviceId,
+                                              data[i].flow, data[i].role);
+    EXPECT_TRUE(client.Get());
     EXPECT_TRUE(SUCCEEDED(core_audio_utility::GetPreferredAudioParameters(
-        AudioDeviceName::kDefaultDeviceId, data_flow[i] == eRender, &params)));
-    EXPECT_TRUE(params.is_valid());
-    EXPECT_TRUE(params.is_complete());
-  }
-
-  // Verify that the preferred audio parameters are OK for the default
-  // communication devices.
-  for (size_t i = 0; i < arraysize(data_flow); ++i) {
-    webrtc::AudioParameters params;
-    EXPECT_TRUE(SUCCEEDED(core_audio_utility::GetPreferredAudioParameters(
-        AudioDeviceName::kDefaultCommunicationsDeviceId,
-        data_flow[i] == eRender, &params)));
+        client.Get(), &params)));
     EXPECT_TRUE(params.is_valid());
     EXPECT_TRUE(params.is_complete());
   }

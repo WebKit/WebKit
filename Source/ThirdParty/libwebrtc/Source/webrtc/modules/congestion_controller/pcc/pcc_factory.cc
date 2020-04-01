@@ -12,7 +12,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "modules/congestion_controller/pcc/pcc_network_controller.h"
 
 namespace webrtc {
@@ -21,7 +20,7 @@ PccNetworkControllerFactory::PccNetworkControllerFactory() {}
 
 std::unique_ptr<NetworkControllerInterface> PccNetworkControllerFactory::Create(
     NetworkControllerConfig config) {
-  return absl::make_unique<pcc::PccNetworkController>(config);
+  return std::make_unique<pcc::PccNetworkController>(config);
 }
 
 TimeDelta PccNetworkControllerFactory::GetProcessInterval() const {

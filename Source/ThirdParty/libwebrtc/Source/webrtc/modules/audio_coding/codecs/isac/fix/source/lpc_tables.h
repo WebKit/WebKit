@@ -77,7 +77,7 @@ extern const uint16_t* WebRtcIsacfix_kCdfShapePtr[KLT_NUM_MODELS][108];
 /* code length for all coefficients using different models */
 extern const int16_t WebRtcIsacfix_kCodeLenGainQ11[392];
 
-extern const int16_t WebRtcIsacfix_kCodeLenShapeQ11[577];
+extern const int16_t WebRtcIsacfix_kCodeLenShapeQ11[578];
 
 /* left KLT transforms */
 extern const int16_t WebRtcIsacfix_kT1GainQ15[KLT_NUM_MODELS][4];

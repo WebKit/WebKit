@@ -54,7 +54,7 @@ public interface VideoProcessor extends CapturerObserver {
 
   /**
    * Set the sink that receives the output from this processor. Null can be passed in to unregister
-   * a sink. After this call returns, no frames should be delivered to an unregistered sink.
+   * a sink.
    */
   void setSink(@Nullable VideoSink sink);
 

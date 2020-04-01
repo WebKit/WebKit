@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 #include "modules/audio_coding/neteq/tools/audio_checksum.h"
 #include "modules/audio_coding/neteq/tools/encode_neteq_input.h"
@@ -137,10 +138,17 @@ class FuzzSignalInput : public NetEqInput {
   int64_t next_output_event_ms_ = 0;
   int64_t output_event_period_ms_ = 10;
 };
+
+template <class T>
+bool MapHas(const std::map<int, T>& m, int key, const T& value) {
+  const auto it = m.find(key);
+  return (it != m.end() && it->second == value);
+}
+
 }  // namespace
 
 void FuzzOneInputTest(const uint8_t* data, size_t size) {
-  if (size < 1 || size > 90000) {
+  if (size < 1 || size > 65000) {
     return;
   }
 
@@ -169,22 +177,18 @@ void FuzzOneInputTest(const uint8_t* data, size_t size) {
   // rate_types contains the payload types that will be used for encoding.
   // Verify that they all are included in the standard decoder map, and that
   // they point to the expected decoder types.
-  RTC_CHECK_EQ(codecs.count(rate_types[0].second), 1);
-  RTC_CHECK(codecs[rate_types[0].second].first == NetEqDecoder::kDecoderPCM16B);
-  RTC_CHECK_EQ(codecs.count(rate_types[1].second), 1);
-  RTC_CHECK(codecs[rate_types[1].second].first ==
-            NetEqDecoder::kDecoderPCM16Bwb);
-  RTC_CHECK_EQ(codecs.count(rate_types[2].second), 1);
-  RTC_CHECK(codecs[rate_types[2].second].first ==
-            NetEqDecoder::kDecoderPCM16Bswb32kHz);
-  RTC_CHECK_EQ(codecs.count(rate_types[3].second), 1);
-  RTC_CHECK(codecs[rate_types[3].second].first ==
-            NetEqDecoder::kDecoderPCM16Bswb48kHz);
+  RTC_CHECK(
+      MapHas(codecs, rate_types[0].second, SdpAudioFormat("l16", 8000, 1)));
+  RTC_CHECK(
+      MapHas(codecs, rate_types[1].second, SdpAudioFormat("l16", 16000, 1)));
+  RTC_CHECK(
+      MapHas(codecs, rate_types[2].second, SdpAudioFormat("l16", 32000, 1)));
+  RTC_CHECK(
+      MapHas(codecs, rate_types[3].second, SdpAudioFormat("l16", 48000, 1)));
 
-  NetEqTest::ExtDecoderMap ext_codecs;
-
-  NetEqTest test(config, codecs, ext_codecs, std::move(input),
-                 std::move(output), callbacks);
+  NetEqTest test(config, CreateBuiltinAudioDecoderFactory(), codecs,
+                 /*text_log=*/nullptr, /*neteq_factory=*/nullptr,
+                 std::move(input), std::move(output), callbacks);
   test.Run();
 }
 

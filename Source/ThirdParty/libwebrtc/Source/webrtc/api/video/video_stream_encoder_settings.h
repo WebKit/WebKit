@@ -11,16 +11,31 @@
 #ifndef API_VIDEO_VIDEO_STREAM_ENCODER_SETTINGS_H_
 #define API_VIDEO_VIDEO_STREAM_ENCODER_SETTINGS_H_
 
+#include <string>
+
 #include "api/video/video_bitrate_allocator_factory.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/video_encoder_factory.h"
 
 namespace webrtc {
 
-class EncoderFailureCallback {
+class EncoderSwitchRequestCallback {
  public:
-  virtual ~EncoderFailureCallback() {}
-  virtual void OnEncoderFailure() = 0;
+  virtual ~EncoderSwitchRequestCallback() {}
+
+  struct Config {
+    std::string codec_name;
+    absl::optional<std::string> param;
+    absl::optional<std::string> value;
+  };
+
+  // Requests that encoder fallback is performed.
+  virtual void RequestEncoderFallback() = 0;
+
+  // Requests that a switch to a specific encoder is performed.
+  virtual void RequestEncoderSwitch(const Config& conf) = 0;
+
+  virtual void RequestEncoderSwitch(const SdpVideoFormat& format) = 0;
 };
 
 struct VideoStreamEncoderSettings {
@@ -35,8 +50,8 @@ struct VideoStreamEncoderSettings {
   // Ownership stays with WebrtcVideoEngine (delegated from PeerConnection).
   VideoEncoderFactory* encoder_factory = nullptr;
 
-  // Notifies the WebRtcVideoChannel that the currently used encoder is broken.
-  EncoderFailureCallback* encoder_failure_callback = nullptr;
+  // Requests the WebRtcVideoChannel to perform a codec switch.
+  EncoderSwitchRequestCallback* encoder_switch_request_callback = nullptr;
 
   // Ownership stays with WebrtcVideoEngine (delegated from PeerConnection).
   VideoBitrateAllocatorFactory* bitrate_allocator_factory = nullptr;

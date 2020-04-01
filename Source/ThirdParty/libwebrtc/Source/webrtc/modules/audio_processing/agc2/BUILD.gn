@@ -15,7 +15,7 @@ group("agc2") {
   ]
 }
 
-rtc_source_set("level_estimation_agc") {
+rtc_library("level_estimation_agc") {
   sources = [
     "adaptive_mode_level_estimator_agc.cc",
     "adaptive_mode_level_estimator_agc.h",
@@ -40,7 +40,7 @@ rtc_source_set("level_estimation_agc") {
   ]
 }
 
-rtc_source_set("adaptive_digital") {
+rtc_library("adaptive_digital") {
   sources = [
     "adaptive_agc.cc",
     "adaptive_agc.h",
@@ -71,7 +71,7 @@ rtc_source_set("adaptive_digital") {
   ]
 }
 
-rtc_source_set("biquad_filter") {
+rtc_library("biquad_filter") {
   visibility = [ "./*" ]
   sources = [
     "biquad_filter.cc",
@@ -83,7 +83,7 @@ rtc_source_set("biquad_filter") {
   ]
 }
 
-rtc_source_set("common") {
+rtc_library("common") {
   sources = [
     "agc2_common.cc",
     "agc2_common.h",
@@ -94,7 +94,7 @@ rtc_source_set("common") {
   ]
 }
 
-rtc_source_set("fixed_digital") {
+rtc_library("fixed_digital") {
   sources = [
     "fixed_digital_level_estimator.cc",
     "fixed_digital_level_estimator.h",
@@ -120,7 +120,7 @@ rtc_source_set("fixed_digital") {
   ]
 }
 
-rtc_source_set("gain_applier") {
+rtc_library("gain_applier") {
   sources = [
     "gain_applier.cc",
     "gain_applier.h",
@@ -133,7 +133,7 @@ rtc_source_set("gain_applier") {
   ]
 }
 
-rtc_source_set("noise_level_estimator") {
+rtc_library("noise_level_estimator") {
   sources = [
     "down_sampler.cc",
     "down_sampler.h",
@@ -158,7 +158,7 @@ rtc_source_set("noise_level_estimator") {
   configs += [ "..:apm_debug_dump" ]
 }
 
-rtc_source_set("rnn_vad_with_level") {
+rtc_library("rnn_vad_with_level") {
   sources = [
     "vad_with_level.cc",
     "vad_with_level.h",
@@ -172,7 +172,7 @@ rtc_source_set("rnn_vad_with_level") {
   ]
 }
 
-rtc_source_set("adaptive_digital_unittests") {
+rtc_library("adaptive_digital_unittests") {
   testonly = true
   configs += [ "..:apm_debug_dump" ]
 
@@ -197,18 +197,16 @@ rtc_source_set("adaptive_digital_unittests") {
   ]
 }
 
-rtc_source_set("biquad_filter_unittests") {
+rtc_library("biquad_filter_unittests") {
   testonly = true
-  sources = [
-    "biquad_filter_unittest.cc",
-  ]
+  sources = [ "biquad_filter_unittest.cc" ]
   deps = [
     ":biquad_filter",
     "../../../rtc_base:gunit_helpers",
   ]
 }
 
-rtc_source_set("fixed_digital_unittests") {
+rtc_library("fixed_digital_unittests") {
   testonly = true
   configs += [ "..:apm_debug_dump" ]
 
@@ -235,11 +233,10 @@ rtc_source_set("fixed_digital_unittests") {
     "../../../rtc_base:gunit_helpers",
     "../../../rtc_base:rtc_base_approved",
     "../../../system_wrappers:metrics",
-    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
-rtc_source_set("noise_estimator_unittests") {
+rtc_library("noise_estimator_unittests") {
   testonly = true
   configs += [ "..:apm_debug_dump" ]
 
@@ -259,11 +256,9 @@ rtc_source_set("noise_estimator_unittests") {
   ]
 }
 
-rtc_source_set("rnn_vad_with_level_unittests") {
+rtc_library("rnn_vad_with_level_unittests") {
   testonly = true
-  sources = [
-    "vad_with_level_unittest.cc",
-  ]
+  sources = [ "vad_with_level_unittest.cc" ]
   deps = [
     ":rnn_vad_with_level",
     "..:audio_frame_view",
@@ -271,7 +266,7 @@ rtc_source_set("rnn_vad_with_level_unittests") {
   ]
 }
 
-rtc_source_set("test_utils") {
+rtc_library("test_utils") {
   testonly = true
   visibility = [
     ":*",

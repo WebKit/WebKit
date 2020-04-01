@@ -7,16 +7,10 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 group("testdata") {
-  deps = [
-    ":dummy_target",
-  ]
+  deps = [ ":dummy_target" ]
 }
 
 static_library("dummy_target") {
-  sources = [
-    "dummy.cc",
-  ]
-  deps = [
-    "subdir",
-  ]
+  sources = [ "dummy.cc" ]
+  deps = [ "subdir" ]
 }

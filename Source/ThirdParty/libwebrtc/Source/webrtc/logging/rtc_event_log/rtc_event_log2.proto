@@ -38,6 +38,7 @@ message EventStream {
   repeated GenericPacketReceived generic_packets_received = 30;
   repeated GenericAckReceived generic_acks_received = 31;
   repeated RouteChange route_changes = 32;
+  repeated RemoteEstimates remote_estimates = 33;
 
   repeated AudioRecvStreamConfig audio_recv_stream_configs = 101;
   repeated AudioSendStreamConfig audio_send_stream_configs = 102;
@@ -663,4 +664,21 @@ message RouteChange {
   optional bool connected = 2;
   // required - The per packet data overhead for this route.
   optional uint32 overhead = 3;
+}
+
+message RemoteEstimates {
+  // required
+  optional int64 timestamp_ms = 1;
+  // optional - value used as a safe measure of available capacity.
+  optional uint32 link_capacity_lower_kbps = 2;
+  // optional - value used as limit for increasing bitrate.
+  optional uint32 link_capacity_upper_kbps = 3;
+
+  // optional - required if the batch contains delta encoded events.
+  optional uint32 number_of_deltas = 4;
+
+  // Delta encodings.
+  optional bytes timestamp_ms_deltas = 101;
+  optional bytes link_capacity_lower_kbps_deltas = 102;
+  optional bytes link_capacity_upper_kbps_deltas = 103;
 }

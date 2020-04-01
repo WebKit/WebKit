@@ -13,22 +13,18 @@
 #include <algorithm>
 #include <cmath>
 
-#ifdef WEBRTC_AGC_DEBUG_DUMP
-#include <cstdio>
-#endif
-
 #include "common_audio/include/audio_util.h"
+#include "modules/audio_processing/agc/gain_control.h"
 #include "modules/audio_processing/agc/gain_map_internal.h"
 #include "modules/audio_processing/agc2/adaptive_mode_level_estimator_agc.h"
-#include "modules/audio_processing/include/gain_control.h"
+#include "rtc_base/atomic_ops.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
+#include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
-
-int AgcManagerDirect::instance_counter_ = 0;
 
 namespace {
 
@@ -60,21 +56,48 @@ const int kMaxResidualGainChange = 15;
 // restrictions from clipping events.
 const int kSurplusCompressionGain = 6;
 
-// Maximum number of channels and number of samples per channel supported.
-constexpr size_t kMaxNumSamplesPerChannel = 1920;
-constexpr size_t kMaxNumChannels = 4;
-
-int ClampLevel(int mic_level) {
-  return rtc::SafeClamp(mic_level, kMinMicLevel, kMaxMicLevel);
+// Returns whether a fall-back solution to choose the maximum level should be
+// chosen.
+bool UseMaxAnalogChannelLevel() {
+  return field_trial::IsEnabled("WebRTC-UseMaxAnalogAgcChannelLevel");
 }
 
-int LevelFromGainError(int gain_error, int level) {
+// Returns kMinMicLevel if no field trial exists or if it has been disabled.
+// Returns a value between 0 and 255 depending on the field-trial string.
+// Example: 'WebRTC-Audio-AgcMinMicLevelExperiment/Enabled-80' => returns 80.
+int GetMinMicLevel() {
+  RTC_LOG(LS_INFO) << "[agc] GetMinMicLevel";
+  constexpr char kMinMicLevelFieldTrial[] =
+      "WebRTC-Audio-AgcMinMicLevelExperiment";
+  if (!webrtc::field_trial::IsEnabled(kMinMicLevelFieldTrial)) {
+    RTC_LOG(LS_INFO) << "[agc] Using default min mic level: " << kMinMicLevel;
+    return kMinMicLevel;
+  }
+  const auto field_trial_string =
+      webrtc::field_trial::FindFullName(kMinMicLevelFieldTrial);
+  int min_mic_level = -1;
+  sscanf(field_trial_string.c_str(), "Enabled-%d", &min_mic_level);
+  if (min_mic_level >= 0 && min_mic_level <= 255) {
+    RTC_LOG(LS_INFO) << "[agc] Experimental min mic level: " << min_mic_level;
+    return min_mic_level;
+  } else {
+    RTC_LOG(LS_WARNING) << "[agc] Invalid parameter for "
+                        << kMinMicLevelFieldTrial << ", ignored.";
+    return kMinMicLevel;
+  }
+}
+
+int ClampLevel(int mic_level, int min_mic_level) {
+  return rtc::SafeClamp(mic_level, min_mic_level, kMaxMicLevel);
+}
+
+int LevelFromGainError(int gain_error, int level, int min_mic_level) {
   RTC_DCHECK_GE(level, 0);
   RTC_DCHECK_LE(level, kMaxMicLevel);
   if (gain_error == 0) {
     return level;
   }
-  // TODO(ajm): Could be made more efficient with a binary search.
+
   int new_level = level;
   if (gain_error > 0) {
     while (kGainMap[new_level] - kGainMap[level] < gain_error &&
@@ -83,133 +106,60 @@ int LevelFromGainError(int gain_error, int level) {
     }
   } else {
     while (kGainMap[new_level] - kGainMap[level] > gain_error &&
-           new_level > kMinMicLevel) {
+           new_level > min_mic_level) {
       --new_level;
     }
   }
   return new_level;
 }
 
-int InitializeGainControl(GainControl* gain_control,
-                          bool disable_digital_adaptive) {
-  if (gain_control->set_mode(GainControl::kFixedDigital) != 0) {
-    RTC_LOG(LS_ERROR) << "set_mode(GainControl::kFixedDigital) failed.";
-    return -1;
+// Returns the proportion of samples in the buffer which are at full-scale
+// (and presumably clipped).
+float ComputeClippedRatio(const float* const* audio,
+                          size_t num_channels,
+                          size_t samples_per_channel) {
+  RTC_DCHECK_GT(samples_per_channel, 0);
+  int num_clipped = 0;
+  for (size_t ch = 0; ch < num_channels; ++ch) {
+    int num_clipped_in_ch = 0;
+    for (size_t i = 0; i < samples_per_channel; ++i) {
+      RTC_DCHECK(audio[ch]);
+      if (audio[ch][i] >= 32767.f || audio[ch][i] <= -32768.f) {
+        ++num_clipped_in_ch;
+      }
+    }
+    num_clipped = std::max(num_clipped, num_clipped_in_ch);
   }
-  const int target_level_dbfs = disable_digital_adaptive ? 0 : 2;
-  if (gain_control->set_target_level_dbfs(target_level_dbfs) != 0) {
-    RTC_LOG(LS_ERROR) << "set_target_level_dbfs() failed.";
-    return -1;
-  }
-  const int compression_gain_db =
-      disable_digital_adaptive ? 0 : kDefaultCompressionGain;
-  if (gain_control->set_compression_gain_db(compression_gain_db) != 0) {
-    RTC_LOG(LS_ERROR) << "set_compression_gain_db() failed.";
-    return -1;
-  }
-  const bool enable_limiter = !disable_digital_adaptive;
-  if (gain_control->enable_limiter(enable_limiter) != 0) {
-    RTC_LOG(LS_ERROR) << "enable_limiter() failed.";
-    return -1;
-  }
-  return 0;
+  return static_cast<float>(num_clipped) / (samples_per_channel);
 }
 
 }  // namespace
 
-// Facility for dumping debug audio files. All methods are no-ops in the
-// default case where WEBRTC_AGC_DEBUG_DUMP is undefined.
-class DebugFile {
-#ifdef WEBRTC_AGC_DEBUG_DUMP
- public:
-  explicit DebugFile(const char* filename) : file_(fopen(filename, "wb")) {
-    RTC_DCHECK(file_);
-  }
-  ~DebugFile() { fclose(file_); }
-  void Write(const int16_t* data, size_t length_samples) {
-    fwrite(data, 1, length_samples * sizeof(int16_t), file_);
-  }
-
- private:
-  FILE* file_;
-#else
- public:
-  explicit DebugFile(const char* filename) {}
-  ~DebugFile() {}
-  void Write(const int16_t* data, size_t length_samples) {}
-#endif  // WEBRTC_AGC_DEBUG_DUMP
-};
-
-AgcManagerDirect::AgcManagerDirect(GainControl* gctrl,
-                                   VolumeCallbacks* volume_callbacks,
-                                   int startup_min_level,
-                                   int clipped_level_min,
-                                   bool use_agc2_level_estimation,
-                                   bool disable_digital_adaptive)
-    : AgcManagerDirect(use_agc2_level_estimation ? nullptr : new Agc(),
-                       gctrl,
-                       volume_callbacks,
-                       startup_min_level,
-                       clipped_level_min,
-                       use_agc2_level_estimation,
-                       disable_digital_adaptive) {
-  RTC_DCHECK(agc_);
-}
-
-AgcManagerDirect::AgcManagerDirect(Agc* agc,
-                                   GainControl* gctrl,
-                                   VolumeCallbacks* volume_callbacks,
-                                   int startup_min_level,
-                                   int clipped_level_min)
-    : AgcManagerDirect(agc,
-                       gctrl,
-                       volume_callbacks,
-                       startup_min_level,
-                       clipped_level_min,
-                       false,
-                       false) {
-  RTC_DCHECK(agc_);
-}
-
-AgcManagerDirect::AgcManagerDirect(Agc* agc,
-                                   GainControl* gctrl,
-                                   VolumeCallbacks* volume_callbacks,
-                                   int startup_min_level,
-                                   int clipped_level_min,
-                                   bool use_agc2_level_estimation,
-                                   bool disable_digital_adaptive)
-    : data_dumper_(new ApmDataDumper(instance_counter_)),
-      agc_(agc),
-      gctrl_(gctrl),
-      volume_callbacks_(volume_callbacks),
-      frames_since_clipped_(kClippedWaitFrames),
-      level_(0),
+MonoAgc::MonoAgc(ApmDataDumper* data_dumper,
+                 int startup_min_level,
+                 int clipped_level_min,
+                 bool use_agc2_level_estimation,
+                 bool disable_digital_adaptive,
+                 int min_mic_level)
+    : min_mic_level_(min_mic_level),
+      disable_digital_adaptive_(disable_digital_adaptive),
       max_level_(kMaxMicLevel),
       max_compression_gain_(kMaxCompressionGain),
       target_compression_(kDefaultCompressionGain),
       compression_(target_compression_),
       compression_accumulator_(compression_),
-      capture_muted_(false),
-      check_volume_on_next_process_(true),  // Check at startup.
-      startup_(true),
-      use_agc2_level_estimation_(use_agc2_level_estimation),
-      disable_digital_adaptive_(disable_digital_adaptive),
-      startup_min_level_(ClampLevel(startup_min_level)),
-      clipped_level_min_(clipped_level_min),
-      file_preproc_(new DebugFile("agc_preproc.pcm")),
-      file_postproc_(new DebugFile("agc_postproc.pcm")) {
-  instance_counter_++;
-  if (use_agc2_level_estimation_) {
-    RTC_DCHECK(!agc);
-    agc_.reset(new AdaptiveModeLevelEstimatorAgc(data_dumper_.get()));
+      startup_min_level_(ClampLevel(startup_min_level, min_mic_level_)),
+      clipped_level_min_(clipped_level_min) {
+  if (use_agc2_level_estimation) {
+    agc_ = std::make_unique<AdaptiveModeLevelEstimatorAgc>(data_dumper);
   } else {
-    RTC_DCHECK(agc);
+    agc_ = std::make_unique<Agc>();
   }
 }
 
-AgcManagerDirect::~AgcManagerDirect() {}
+MonoAgc::~MonoAgc() = default;
 
-int AgcManagerDirect::Initialize() {
+void MonoAgc::Initialize() {
   max_level_ = kMaxMicLevel;
   max_compression_gain_ = kMaxCompressionGain;
   target_compression_ = disable_digital_adaptive_ ? 0 : kDefaultCompressionGain;
@@ -217,93 +167,12 @@ int AgcManagerDirect::Initialize() {
   compression_accumulator_ = compression_;
   capture_muted_ = false;
   check_volume_on_next_process_ = true;
-  // TODO(bjornv): Investigate if we need to reset |startup_| as well. For
-  // example, what happens when we change devices.
-
-  data_dumper_->InitiateNewSetOfRecordings();
-
-  return InitializeGainControl(gctrl_, disable_digital_adaptive_);
 }
 
-void AgcManagerDirect::AnalyzePreProcess(float* audio,
-                                         int num_channels,
-                                         size_t samples_per_channel) {
-  size_t length = num_channels * samples_per_channel;
-  if (capture_muted_) {
-    return;
-  }
-
-  std::array<int16_t, kMaxNumSamplesPerChannel * kMaxNumChannels> audio_data;
-  int16_t* audio_fix;
-  size_t safe_length;
-  if (audio) {
-    audio_fix = audio_data.data();
-    safe_length = std::min(audio_data.size(), length);
-    FloatS16ToS16(audio, length, audio_fix);
-  } else {
-    audio_fix = nullptr;
-    safe_length = length;
-  }
-
-  file_preproc_->Write(audio_fix, safe_length);
-
-  if (frames_since_clipped_ < kClippedWaitFrames) {
-    ++frames_since_clipped_;
-    return;
-  }
-
-  // Check for clipped samples, as the AGC has difficulty detecting pitch
-  // under clipping distortion. We do this in the preprocessing phase in order
-  // to catch clipped echo as well.
-  //
-  // If we find a sufficiently clipped frame, drop the current microphone level
-  // and enforce a new maximum level, dropped the same amount from the current
-  // maximum. This harsh treatment is an effort to avoid repeated clipped echo
-  // events. As compensation for this restriction, the maximum compression
-  // gain is increased, through SetMaxLevel().
-  float clipped_ratio = agc_->AnalyzePreproc(audio_fix, safe_length);
-  if (clipped_ratio > kClippedRatioThreshold) {
-    RTC_DLOG(LS_INFO) << "[agc] Clipping detected. clipped_ratio="
-                      << clipped_ratio;
-    // Always decrease the maximum level, even if the current level is below
-    // threshold.
-    SetMaxLevel(std::max(clipped_level_min_, max_level_ - kClippedLevelStep));
-    RTC_HISTOGRAM_BOOLEAN("WebRTC.Audio.AgcClippingAdjustmentAllowed",
-                          level_ - kClippedLevelStep >= clipped_level_min_);
-    if (level_ > clipped_level_min_) {
-      // Don't try to adjust the level if we're already below the limit. As
-      // a consequence, if the user has brought the level above the limit, we
-      // will still not react until the postproc updates the level.
-      SetLevel(std::max(clipped_level_min_, level_ - kClippedLevelStep));
-      // Reset the AGC since the level has changed.
-      agc_->Reset();
-    }
-    frames_since_clipped_ = 0;
-  }
-
-  if (audio) {
-    S16ToFloatS16(audio_fix, safe_length, audio);
-  }
-}
-
-void AgcManagerDirect::Process(const float* audio,
-                               size_t length,
-                               int sample_rate_hz) {
-  if (capture_muted_) {
-    return;
-  }
-
-  std::array<int16_t, kMaxNumSamplesPerChannel * kMaxNumChannels> audio_data;
-  const int16_t* audio_fix;
-  size_t safe_length;
-  if (audio) {
-    audio_fix = audio_data.data();
-    safe_length = std::min(audio_data.size(), length);
-    FloatS16ToS16(audio, length, audio_data.data());
-  } else {
-    audio_fix = nullptr;
-    safe_length = length;
-  }
+void MonoAgc::Process(const int16_t* audio,
+                      size_t samples_per_channel,
+                      int sample_rate_hz) {
+  new_compression_to_set_ = absl::nullopt;
 
   if (check_volume_on_next_process_) {
     check_volume_on_next_process_ = false;
@@ -312,21 +181,34 @@ void AgcManagerDirect::Process(const float* audio,
     CheckVolumeAndReset();
   }
 
-  agc_->Process(audio_fix, safe_length, sample_rate_hz);
+  agc_->Process(audio, samples_per_channel, sample_rate_hz);
 
   UpdateGain();
   if (!disable_digital_adaptive_) {
     UpdateCompressor();
   }
-
-  file_postproc_->Write(audio_fix, safe_length);
-
-  data_dumper_->DumpRaw("experimental_gain_control_compression_gain_db", 1,
-                        &compression_);
 }
 
-void AgcManagerDirect::SetLevel(int new_level) {
-  int voe_level = volume_callbacks_->GetMicVolume();
+void MonoAgc::HandleClipping() {
+  // Always decrease the maximum level, even if the current level is below
+  // threshold.
+  SetMaxLevel(std::max(clipped_level_min_, max_level_ - kClippedLevelStep));
+  if (log_to_histograms_) {
+    RTC_HISTOGRAM_BOOLEAN("WebRTC.Audio.AgcClippingAdjustmentAllowed",
+                          level_ - kClippedLevelStep >= clipped_level_min_);
+  }
+  if (level_ > clipped_level_min_) {
+    // Don't try to adjust the level if we're already below the limit. As
+    // a consequence, if the user has brought the level above the limit, we
+    // will still not react until the postproc updates the level.
+    SetLevel(std::max(clipped_level_min_, level_ - kClippedLevelStep));
+    // Reset the AGCs for all channels since the level has changed.
+    agc_->Reset();
+  }
+}
+
+void MonoAgc::SetLevel(int new_level) {
+  int voe_level = stream_analog_level_;
   if (voe_level == 0) {
     RTC_DLOG(LS_INFO)
         << "[agc] VolumeCallbacks returned level=0, taking no action.";
@@ -352,6 +234,7 @@ void AgcManagerDirect::SetLevel(int new_level) {
     // was manually adjusted. The compressor will still provide some of the
     // desired gain change.
     agc_->Reset();
+
     return;
   }
 
@@ -360,14 +243,13 @@ void AgcManagerDirect::SetLevel(int new_level) {
     return;
   }
 
-  volume_callbacks_->SetMicVolume(new_level);
-  RTC_DLOG(LS_INFO) << "[agc] voe_level=" << voe_level << ", "
-                    << "level_=" << level_ << ", "
-                    << "new_level=" << new_level;
+  stream_analog_level_ = new_level;
+  RTC_DLOG(LS_INFO) << "[agc] voe_level=" << voe_level << ", level_=" << level_
+                    << ", new_level=" << new_level;
   level_ = new_level;
 }
 
-void AgcManagerDirect::SetMaxLevel(int level) {
+void MonoAgc::SetMaxLevel(int level) {
   RTC_DCHECK_GE(level, clipped_level_min_);
   max_level_ = level;
   // Scale the |kSurplusCompressionGain| linearly across the restricted
@@ -381,7 +263,7 @@ void AgcManagerDirect::SetMaxLevel(int level) {
                     << ", max_compression_gain_=" << max_compression_gain_;
 }
 
-void AgcManagerDirect::SetCaptureMuted(bool muted) {
+void MonoAgc::SetCaptureMuted(bool muted) {
   if (capture_muted_ == muted) {
     return;
   }
@@ -393,12 +275,8 @@ void AgcManagerDirect::SetCaptureMuted(bool muted) {
   }
 }
 
-float AgcManagerDirect::voice_probability() {
-  return agc_->voice_probability();
-}
-
-int AgcManagerDirect::CheckVolumeAndReset() {
-  int level = volume_callbacks_->GetMicVolume();
+int MonoAgc::CheckVolumeAndReset() {
+  int level = stream_analog_level_;
   // Reasons for taking action at startup:
   // 1) A person starting a call is expected to be heard.
   // 2) Independent of interpretation of |level| == 0 we should raise it so the
@@ -415,11 +293,11 @@ int AgcManagerDirect::CheckVolumeAndReset() {
   }
   RTC_DLOG(LS_INFO) << "[agc] Initial GetMicVolume()=" << level;
 
-  int minLevel = startup_ ? startup_min_level_ : kMinMicLevel;
+  int minLevel = startup_ ? startup_min_level_ : min_mic_level_;
   if (level < minLevel) {
     level = minLevel;
     RTC_DLOG(LS_INFO) << "[agc] Initial volume too low, raising to " << level;
-    volume_callbacks_->SetMicVolume(level);
+    stream_analog_level_ = level;
   }
   agc_->Reset();
   level_ = level;
@@ -434,7 +312,7 @@ int AgcManagerDirect::CheckVolumeAndReset() {
 //
 // If the slider needs to be moved, we check first if the user has adjusted
 // it, in which case we take no action and cache the updated level.
-void AgcManagerDirect::UpdateGain() {
+void MonoAgc::UpdateGain() {
   int rms_error = 0;
   if (!agc_->GetRmsErrorDb(&rms_error)) {
     // No error update ready.
@@ -477,7 +355,7 @@ void AgcManagerDirect::UpdateGain() {
     return;
 
   int old_level = level_;
-  SetLevel(LevelFromGainError(residual_gain, level_));
+  SetLevel(LevelFromGainError(residual_gain, level_, min_mic_level_));
   if (old_level != level_) {
     // level_ was updated by SetLevel; log the new value.
     RTC_HISTOGRAM_COUNTS_LINEAR("WebRTC.Audio.AgcSetLevel", level_, 1,
@@ -487,7 +365,7 @@ void AgcManagerDirect::UpdateGain() {
   }
 }
 
-void AgcManagerDirect::UpdateCompressor() {
+void MonoAgc::UpdateCompressor() {
   calls_since_last_gain_log_++;
   if (calls_since_last_gain_log_ == 100) {
     calls_since_last_gain_log_ = 0;
@@ -524,9 +402,204 @@ void AgcManagerDirect::UpdateCompressor() {
                                 kMaxCompressionGain + 1);
     compression_ = new_compression;
     compression_accumulator_ = new_compression;
-    if (gctrl_->set_compression_gain_db(compression_) != 0) {
-      RTC_LOG(LS_ERROR) << "set_compression_gain_db(" << compression_
-                        << ") failed.";
+    new_compression_to_set_ = compression_;
+  }
+}
+
+int AgcManagerDirect::instance_counter_ = 0;
+
+AgcManagerDirect::AgcManagerDirect(Agc* agc,
+                                   int startup_min_level,
+                                   int clipped_level_min,
+                                   int sample_rate_hz)
+    : AgcManagerDirect(/*num_capture_channels*/ 1,
+                       startup_min_level,
+                       clipped_level_min,
+                       /*use_agc2_level_estimation*/ false,
+                       /*disable_digital_adaptive*/ false,
+                       sample_rate_hz) {
+  RTC_DCHECK(channel_agcs_[0]);
+  RTC_DCHECK(agc);
+  channel_agcs_[0]->set_agc(agc);
+}
+
+AgcManagerDirect::AgcManagerDirect(int num_capture_channels,
+                                   int startup_min_level,
+                                   int clipped_level_min,
+                                   bool use_agc2_level_estimation,
+                                   bool disable_digital_adaptive,
+                                   int sample_rate_hz)
+    : data_dumper_(
+          new ApmDataDumper(rtc::AtomicOps::Increment(&instance_counter_))),
+      use_min_channel_level_(!UseMaxAnalogChannelLevel()),
+      sample_rate_hz_(sample_rate_hz),
+      num_capture_channels_(num_capture_channels),
+      disable_digital_adaptive_(disable_digital_adaptive),
+      frames_since_clipped_(kClippedWaitFrames),
+      capture_muted_(false),
+      channel_agcs_(num_capture_channels),
+      new_compressions_to_set_(num_capture_channels) {
+  const int min_mic_level = GetMinMicLevel();
+  for (size_t ch = 0; ch < channel_agcs_.size(); ++ch) {
+    ApmDataDumper* data_dumper_ch = ch == 0 ? data_dumper_.get() : nullptr;
+
+    channel_agcs_[ch] = std::make_unique<MonoAgc>(
+        data_dumper_ch, startup_min_level, clipped_level_min,
+        use_agc2_level_estimation, disable_digital_adaptive_, min_mic_level);
+  }
+  RTC_DCHECK_LT(0, channel_agcs_.size());
+  channel_agcs_[0]->ActivateLogging();
+}
+
+AgcManagerDirect::~AgcManagerDirect() {}
+
+void AgcManagerDirect::Initialize() {
+  RTC_DLOG(LS_INFO) << "AgcManagerDirect::Initialize";
+  data_dumper_->InitiateNewSetOfRecordings();
+  for (size_t ch = 0; ch < channel_agcs_.size(); ++ch) {
+    channel_agcs_[ch]->Initialize();
+  }
+  capture_muted_ = false;
+
+  AggregateChannelLevels();
+}
+
+void AgcManagerDirect::SetupDigitalGainControl(
+    GainControl* gain_control) const {
+  RTC_DCHECK(gain_control);
+  if (gain_control->set_mode(GainControl::kFixedDigital) != 0) {
+    RTC_LOG(LS_ERROR) << "set_mode(GainControl::kFixedDigital) failed.";
+  }
+  const int target_level_dbfs = disable_digital_adaptive_ ? 0 : 2;
+  if (gain_control->set_target_level_dbfs(target_level_dbfs) != 0) {
+    RTC_LOG(LS_ERROR) << "set_target_level_dbfs() failed.";
+  }
+  const int compression_gain_db =
+      disable_digital_adaptive_ ? 0 : kDefaultCompressionGain;
+  if (gain_control->set_compression_gain_db(compression_gain_db) != 0) {
+    RTC_LOG(LS_ERROR) << "set_compression_gain_db() failed.";
+  }
+  const bool enable_limiter = !disable_digital_adaptive_;
+  if (gain_control->enable_limiter(enable_limiter) != 0) {
+    RTC_LOG(LS_ERROR) << "enable_limiter() failed.";
+  }
+}
+
+void AgcManagerDirect::AnalyzePreProcess(const AudioBuffer* audio) {
+  RTC_DCHECK(audio);
+  AnalyzePreProcess(audio->channels_const(), audio->num_frames());
+}
+
+void AgcManagerDirect::AnalyzePreProcess(const float* const* audio,
+                                         size_t samples_per_channel) {
+  RTC_DCHECK(audio);
+  AggregateChannelLevels();
+  if (capture_muted_) {
+    return;
+  }
+
+  if (frames_since_clipped_ < kClippedWaitFrames) {
+    ++frames_since_clipped_;
+    return;
+  }
+
+  // Check for clipped samples, as the AGC has difficulty detecting pitch
+  // under clipping distortion. We do this in the preprocessing phase in order
+  // to catch clipped echo as well.
+  //
+  // If we find a sufficiently clipped frame, drop the current microphone level
+  // and enforce a new maximum level, dropped the same amount from the current
+  // maximum. This harsh treatment is an effort to avoid repeated clipped echo
+  // events. As compensation for this restriction, the maximum compression
+  // gain is increased, through SetMaxLevel().
+  float clipped_ratio =
+      ComputeClippedRatio(audio, num_capture_channels_, samples_per_channel);
+
+  if (clipped_ratio > kClippedRatioThreshold) {
+    RTC_DLOG(LS_INFO) << "[agc] Clipping detected. clipped_ratio="
+                      << clipped_ratio;
+    for (auto& state_ch : channel_agcs_) {
+      state_ch->HandleClipping();
+    }
+    frames_since_clipped_ = 0;
+  }
+  AggregateChannelLevels();
+}
+
+void AgcManagerDirect::Process(const AudioBuffer* audio) {
+  AggregateChannelLevels();
+
+  if (capture_muted_) {
+    return;
+  }
+
+  for (size_t ch = 0; ch < channel_agcs_.size(); ++ch) {
+    int16_t* audio_use = nullptr;
+    std::array<int16_t, AudioBuffer::kMaxSampleRate / 100> audio_data;
+    int num_frames_per_band;
+    if (audio) {
+      FloatS16ToS16(audio->split_bands_const_f(ch)[0],
+                    audio->num_frames_per_band(), audio_data.data());
+      audio_use = audio_data.data();
+      num_frames_per_band = audio->num_frames_per_band();
+    } else {
+      // Only used for testing.
+      // TODO(peah): Change unittests to only allow on non-null audio input.
+      num_frames_per_band = 320;
+    }
+    channel_agcs_[ch]->Process(audio_use, num_frames_per_band, sample_rate_hz_);
+    new_compressions_to_set_[ch] = channel_agcs_[ch]->new_compression();
+  }
+
+  AggregateChannelLevels();
+}
+
+absl::optional<int> AgcManagerDirect::GetDigitalComressionGain() {
+  return new_compressions_to_set_[channel_controlling_gain_];
+}
+
+void AgcManagerDirect::SetCaptureMuted(bool muted) {
+  for (size_t ch = 0; ch < channel_agcs_.size(); ++ch) {
+    channel_agcs_[ch]->SetCaptureMuted(muted);
+  }
+  capture_muted_ = muted;
+}
+
+float AgcManagerDirect::voice_probability() const {
+  float max_prob = 0.f;
+  for (const auto& state_ch : channel_agcs_) {
+    max_prob = std::max(max_prob, state_ch->voice_probability());
+  }
+
+  return max_prob;
+}
+
+void AgcManagerDirect::set_stream_analog_level(int level) {
+  for (size_t ch = 0; ch < channel_agcs_.size(); ++ch) {
+    channel_agcs_[ch]->set_stream_analog_level(level);
+  }
+
+  AggregateChannelLevels();
+}
+
+void AgcManagerDirect::AggregateChannelLevels() {
+  stream_analog_level_ = channel_agcs_[0]->stream_analog_level();
+  channel_controlling_gain_ = 0;
+  if (use_min_channel_level_) {
+    for (size_t ch = 1; ch < channel_agcs_.size(); ++ch) {
+      int level = channel_agcs_[ch]->stream_analog_level();
+      if (level < stream_analog_level_) {
+        stream_analog_level_ = level;
+        channel_controlling_gain_ = static_cast<int>(ch);
+      }
+    }
+  } else {
+    for (size_t ch = 1; ch < channel_agcs_.size(); ++ch) {
+      int level = channel_agcs_[ch]->stream_analog_level();
+      if (level > stream_analog_level_) {
+        stream_analog_level_ = level;
+        channel_controlling_gain_ = static_cast<int>(ch);
+      }
     }
   }
 }

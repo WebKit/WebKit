@@ -87,7 +87,7 @@ std::unique_ptr<FlexfecReceiver> MaybeCreateFlexfecReceiver(
   if (config.payload_type < 0) {
     RTC_LOG(LS_WARNING)
         << "Invalid FlexFEC payload type given. "
-        << "This FlexfecReceiveStream will therefore be useless.";
+           "This FlexfecReceiveStream will therefore be useless.";
     return nullptr;
   }
   RTC_DCHECK_GE(config.payload_type, 0);
@@ -95,13 +95,13 @@ std::unique_ptr<FlexfecReceiver> MaybeCreateFlexfecReceiver(
   if (config.remote_ssrc == 0) {
     RTC_LOG(LS_WARNING)
         << "Invalid FlexFEC SSRC given. "
-        << "This FlexfecReceiveStream will therefore be useless.";
+           "This FlexfecReceiveStream will therefore be useless.";
     return nullptr;
   }
   if (config.protected_media_ssrcs.empty()) {
     RTC_LOG(LS_WARNING)
         << "No protected media SSRC supplied. "
-        << "This FlexfecReceiveStream will therefore be useless.";
+           "This FlexfecReceiveStream will therefore be useless.";
     return nullptr;
   }
 

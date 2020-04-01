@@ -17,6 +17,7 @@
 #include <set>
 #include <vector>
 
+#include "api/units/time_delta.h"
 #include "modules/include/module.h"
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/histogram.h"
@@ -64,6 +65,19 @@ class NackModule : public Module {
     int64_t sent_at_time;
     int retries;
   };
+
+  struct BackoffSettings {
+    BackoffSettings(TimeDelta min_retry, TimeDelta max_rtt, double base);
+    static absl::optional<BackoffSettings> ParseFromFieldTrials();
+
+    // Min time between nacks.
+    const TimeDelta min_retry_interval;
+    // Upper bound on link-delay considered for exponential backoff.
+    const TimeDelta max_rtt;
+    // Base for the exponential backoff.
+    const double base;
+  };
+
   void AddPacketsToNack(uint16_t seq_num_start, uint16_t seq_num_end)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
@@ -106,6 +120,8 @@ class NackModule : public Module {
 
   // Adds a delay before send nack on packet received.
   const int64_t send_nack_delay_ms_;
+
+  const absl::optional<BackoffSettings> backoff_settings_;
 };
 
 }  // namespace webrtc

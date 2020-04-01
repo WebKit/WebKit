@@ -41,11 +41,11 @@ class RateTracker {
   double ComputeTotalRate() const;
 
   // The total number of samples added.
-  size_t TotalSampleCount() const;
+  int64_t TotalSampleCount() const;
 
   // Reads the current time in order to determine the appropriate bucket for
   // these samples, and increments the count for that bucket by sample_count.
-  void AddSamples(size_t sample_count);
+  void AddSamples(int64_t sample_count);
 
  protected:
   // overrideable for tests
@@ -57,7 +57,7 @@ class RateTracker {
 
   const int64_t bucket_milliseconds_;
   const size_t bucket_count_;
-  size_t* sample_buckets_;
+  int64_t* sample_buckets_;
   size_t total_sample_count_;
   size_t current_bucket_;
   int64_t bucket_start_time_milliseconds_;

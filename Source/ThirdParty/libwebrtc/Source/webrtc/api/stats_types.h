@@ -24,11 +24,12 @@
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/ref_count.h"
 #include "rtc_base/string_encode.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 
-class StatsReport {
+class RTC_EXPORT StatsReport {
  public:
   // Indicates whether a track is for sending or receiving.
   // Used in reports for audio/video tracks.
@@ -241,7 +242,7 @@ class StatsReport {
     kStatsValueNameAudioDeviceUnderrunCounter,
   };
 
-  class IdBase : public rtc::RefCountInterface {
+  class RTC_EXPORT IdBase : public rtc::RefCountInterface {
    public:
     ~IdBase() override;
     StatsType type() const;
@@ -267,7 +268,7 @@ class StatsReport {
 
   typedef rtc::scoped_refptr<IdBase> Id;
 
-  struct Value {
+  struct RTC_EXPORT Value {
     enum Type {
       kInt,           // int.
       kInt64,         // int64_t.

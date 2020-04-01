@@ -173,8 +173,9 @@ TEST_F(FileUtilsTest, ResourcePathReturnsCorrectPath) {
 #endif
 
   ASSERT_THAT(result, EndsWith(expected_end));
-  ASSERT_TRUE(FileExists(result)) << "Expected " << result << " to exist; did "
-                                  << "ResourcePath return an incorrect path?";
+  ASSERT_TRUE(FileExists(result)) << "Expected " << result
+                                  << " to exist; did "
+                                     "ResourcePath return an incorrect path?";
 }
 
 TEST_F(FileUtilsTest, ResourcePathFromRootWorkingDir) {

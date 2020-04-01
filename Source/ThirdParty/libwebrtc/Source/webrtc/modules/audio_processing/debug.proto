@@ -80,11 +80,17 @@ message Config {
   // Next field number 21.
 }
 
+message PlayoutAudioDeviceInfo {
+  optional int32 id = 1;
+  optional int32 max_volume = 2;
+}
+
 message RuntimeSetting {
   optional float capture_pre_gain = 1;
   optional float custom_render_processing_setting = 2;
   optional float capture_fixed_post_gain = 3;
   optional int32 playout_volume_change = 4;
+  optional PlayoutAudioDeviceInfo playout_audio_device_change = 5;
 }
 
 message Event {

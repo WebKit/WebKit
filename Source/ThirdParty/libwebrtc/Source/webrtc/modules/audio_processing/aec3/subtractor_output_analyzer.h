@@ -11,32 +11,32 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_OUTPUT_ANALYZER_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_OUTPUT_ANALYZER_H_
 
+#include <vector>
+
 #include "modules/audio_processing/aec3/subtractor_output.h"
 
 namespace webrtc {
 
-// Class for analyzing the properties subtractor output
+// Class for analyzing the properties subtractor output.
 class SubtractorOutputAnalyzer {
  public:
-  SubtractorOutputAnalyzer();
+  explicit SubtractorOutputAnalyzer(size_t num_capture_channels);
   ~SubtractorOutputAnalyzer() = default;
 
   // Analyses the subtractor output.
-  void Update(const SubtractorOutput& subtractor_output);
+  void Update(rtc::ArrayView<const SubtractorOutput> subtractor_output,
+              bool* any_filter_converged,
+              bool* all_filters_diverged);
 
-  bool ConvergedFilter() const {
-    return main_filter_converged_ || shadow_filter_converged_;
+  const std::vector<bool>& ConvergedFilters() const {
+    return filters_converged_;
   }
-
-  bool DivergedFilter() const { return filter_diverged_; }
 
   // Handle echo path change.
   void HandleEchoPathChange();
 
  private:
-  bool shadow_filter_converged_ = false;
-  bool main_filter_converged_ = false;
-  bool filter_diverged_ = false;
+  std::vector<bool> filters_converged_;
 };
 
 }  // namespace webrtc

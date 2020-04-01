@@ -32,10 +32,6 @@ CryptoOptions CryptoOptions::NoGcm() {
 
 std::vector<int> CryptoOptions::GetSupportedDtlsSrtpCryptoSuites() const {
   std::vector<int> crypto_suites;
-  if (srtp.enable_gcm_crypto_suites) {
-    crypto_suites.push_back(rtc::SRTP_AEAD_AES_256_GCM);
-    crypto_suites.push_back(rtc::SRTP_AEAD_AES_128_GCM);
-  }
   // Note: SRTP_AES128_CM_SHA1_80 is what is required to be supported (by
   // draft-ietf-rtcweb-security-arch), but SRTP_AES128_CM_SHA1_32 is allowed as
   // well, and saves a few bytes per packet if it ends up selected.
@@ -44,7 +40,18 @@ std::vector<int> CryptoOptions::GetSupportedDtlsSrtpCryptoSuites() const {
   if (srtp.enable_aes128_sha1_32_crypto_cipher) {
     crypto_suites.push_back(rtc::SRTP_AES128_CM_SHA1_32);
   }
-  crypto_suites.push_back(rtc::SRTP_AES128_CM_SHA1_80);
+  if (srtp.enable_aes128_sha1_80_crypto_cipher) {
+    crypto_suites.push_back(rtc::SRTP_AES128_CM_SHA1_80);
+  }
+
+  // Note: GCM cipher suites are not the top choice since they increase the
+  // packet size. In order to negotiate them the other side must not support
+  // SRTP_AES128_CM_SHA1_80.
+  if (srtp.enable_gcm_crypto_suites) {
+    crypto_suites.push_back(rtc::SRTP_AEAD_AES_256_GCM);
+    crypto_suites.push_back(rtc::SRTP_AEAD_AES_128_GCM);
+  }
+  RTC_CHECK(!crypto_suites.empty());
   return crypto_suites;
 }
 
@@ -53,6 +60,7 @@ bool CryptoOptions::operator==(const CryptoOptions& other) const {
     struct Srtp {
       bool enable_gcm_crypto_suites;
       bool enable_aes128_sha1_32_crypto_cipher;
+      bool enable_aes128_sha1_80_crypto_cipher;
       bool enable_encrypted_rtp_header_extensions;
     } srtp;
     struct SFrame {
@@ -66,6 +74,8 @@ bool CryptoOptions::operator==(const CryptoOptions& other) const {
   return srtp.enable_gcm_crypto_suites == other.srtp.enable_gcm_crypto_suites &&
          srtp.enable_aes128_sha1_32_crypto_cipher ==
              other.srtp.enable_aes128_sha1_32_crypto_cipher &&
+         srtp.enable_aes128_sha1_80_crypto_cipher ==
+             other.srtp.enable_aes128_sha1_80_crypto_cipher &&
          srtp.enable_encrypted_rtp_header_extensions ==
              other.srtp.enable_encrypted_rtp_header_extensions &&
          sframe.require_frame_encryption ==

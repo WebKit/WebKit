@@ -13,9 +13,9 @@
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/mouse_cursor_monitor.h"
 
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
 #include "modules/desktop_capture/linux/mouse_cursor_monitor_x11.h"
-#endif  // defined(USE_X11)
+#endif  // defined(WEBRTC_USE_X11)
 
 namespace webrtc {
 
@@ -23,32 +23,32 @@ namespace webrtc {
 MouseCursorMonitor* MouseCursorMonitor::CreateForWindow(
     const DesktopCaptureOptions& options,
     WindowId window) {
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
   return MouseCursorMonitorX11::CreateForWindow(options, window);
 #else
   return nullptr;
-#endif  // defined(USE_X11)
+#endif  // defined(WEBRTC_USE_X11)
 }
 
 // static
 MouseCursorMonitor* MouseCursorMonitor::CreateForScreen(
     const DesktopCaptureOptions& options,
     ScreenId screen) {
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
   return MouseCursorMonitorX11::CreateForScreen(options, screen);
 #else
   return nullptr;
-#endif  // defined(USE_X11)
+#endif  // defined(WEBRTC_USE_X11)
 }
 
 // static
 std::unique_ptr<MouseCursorMonitor> MouseCursorMonitor::Create(
     const DesktopCaptureOptions& options) {
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
   return MouseCursorMonitorX11::Create(options);
 #else
   return nullptr;
-#endif  // defined(USE_X11)
+#endif  // defined(WEBRTC_USE_X11)
 }
 
 }  // namespace webrtc

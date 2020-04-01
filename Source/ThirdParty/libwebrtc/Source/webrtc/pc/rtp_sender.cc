@@ -38,20 +38,6 @@ int GenerateUniqueId() {
   return ++g_unique_id;
 }
 
-// Returns an true if any RtpEncodingParameters member that isn't implemented
-// contains a value.
-bool UnimplementedRtpEncodingParameterHasValue(
-    const RtpEncodingParameters& encoding_params) {
-  if (encoding_params.codec_payload_type.has_value() ||
-      encoding_params.fec.has_value() || encoding_params.rtx.has_value() ||
-      encoding_params.dtx.has_value() || encoding_params.ptime.has_value() ||
-      encoding_params.scale_framerate_down_by.has_value() ||
-      !encoding_params.dependency_rids.empty()) {
-    return true;
-  }
-  return false;
-}
-
 // Returns true if a "per-sender" encoding parameter contains a value that isn't
 // its default. Currently max_bitrate_bps and bitrate_priority both are
 // implemented "per-sender," meaning that these encoding parameters
@@ -64,7 +50,7 @@ bool UnimplementedRtpEncodingParameterHasValue(
 bool PerSenderRtpEncodingParameterHasValue(
     const RtpEncodingParameters& encoding_params) {
   if (encoding_params.bitrate_priority != kDefaultBitratePriority ||
-      encoding_params.network_priority != kDefaultBitratePriority) {
+      encoding_params.network_priority != Priority::kLow) {
     return true;
   }
   return false;
@@ -109,9 +95,6 @@ bool UnimplementedRtpParameterHasValue(const RtpParameters& parameters) {
     return true;
   }
   for (size_t i = 0; i < parameters.encodings.size(); ++i) {
-    if (UnimplementedRtpEncodingParameterHasValue(parameters.encodings[i])) {
-      return true;
-    }
     // Encoding parameters that are per-sender should only contain value at
     // index 0.
     if (i != 0 &&
@@ -314,6 +297,9 @@ void RtpSenderBase::SetSsrc(uint32_t ssrc) {
   if (frame_encryptor_) {
     SetFrameEncryptor(frame_encryptor_);
   }
+  if (frame_transformer_) {
+    SetEncoderToPacketizerFrameTransformer(frame_transformer_);
+  }
 }
 
 void RtpSenderBase::Stop() {
@@ -381,6 +367,17 @@ RTCError RtpSenderBase::DisableEncodingLayers(
   return result;
 }
 
+void RtpSenderBase::SetEncoderToPacketizerFrameTransformer(
+    rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) {
+  frame_transformer_ = std::move(frame_transformer);
+  if (media_channel_ && ssrc_ && !stopped_) {
+    worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+      media_channel_->SetEncoderToPacketizerFrameTransformer(
+          ssrc_, frame_transformer_);
+    });
+  }
+}
+
 LocalAudioSinkAdapter::LocalAudioSinkAdapter() : sink_(nullptr) {}
 
 LocalAudioSinkAdapter::~LocalAudioSinkAdapter() {
@@ -389,15 +386,17 @@ LocalAudioSinkAdapter::~LocalAudioSinkAdapter() {
     sink_->OnClose();
 }
 
-void LocalAudioSinkAdapter::OnData(const void* audio_data,
-                                   int bits_per_sample,
-                                   int sample_rate,
-                                   size_t number_of_channels,
-                                   size_t number_of_frames) {
+void LocalAudioSinkAdapter::OnData(
+    const void* audio_data,
+    int bits_per_sample,
+    int sample_rate,
+    size_t number_of_channels,
+    size_t number_of_frames,
+    absl::optional<int64_t> absolute_capture_timestamp_ms) {
   rtc::CritScope lock(&lock_);
   if (sink_) {
     sink_->OnData(audio_data, bits_per_sample, sample_rate, number_of_channels,
-                  number_of_frames);
+                  number_of_frames, absolute_capture_timestamp_ms);
   }
 }
 
@@ -607,6 +606,7 @@ void VideoRtpSender::SetSend() {
     options.is_screencast = source->is_screencast();
     options.video_noise_reduction = source->needs_denoising();
   }
+  options.content_hint = cached_track_content_hint_;
   switch (cached_track_content_hint_) {
     case VideoTrackInterface::ContentHint::kNone:
       break;

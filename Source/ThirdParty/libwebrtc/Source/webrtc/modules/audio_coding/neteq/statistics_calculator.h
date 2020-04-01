@@ -14,7 +14,7 @@
 #include <deque>
 #include <string>
 
-#include "modules/audio_coding/neteq/include/neteq.h"
+#include "api/neteq/neteq.h"
 #include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
@@ -83,7 +83,9 @@ class StatisticsCalculator {
   void IncreaseCounter(size_t num_samples, int fs_hz);
 
   // Update jitter buffer delay counter.
-  void JitterBufferDelay(size_t num_samples, uint64_t waiting_time_ms);
+  void JitterBufferDelay(size_t num_samples,
+                         uint64_t waiting_time_ms,
+                         uint64_t target_delay_ms);
 
   // Stores new packet waiting time in waiting time statistics.
   void StoreWaitingTime(int waiting_time_ms);
@@ -115,14 +117,6 @@ class StatisticsCalculator {
                             size_t num_samples_in_buffers,
                             size_t samples_per_packet,
                             NetEqNetworkStatistics* stats);
-
-  // Populates |preferred_buffer_size_ms|, |jitter_peaks_found| and
-  // |clockdrift_ppm| in |stats|. This is a convenience method, and does not
-  // strictly have to be in the StatisticsCalculator class, but it makes sense
-  // since all other stats fields are populated by that class.
-  static void PopulateDelayManagerStats(int ms_per_packet,
-                                        const DelayManager& delay_manager,
-                                        NetEqNetworkStatistics* stats);
 
   // Returns a copy of this class's lifetime statistics. These statistics are
   // never reset.

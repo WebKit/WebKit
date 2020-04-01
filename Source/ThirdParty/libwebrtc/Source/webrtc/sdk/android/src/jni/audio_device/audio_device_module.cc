@@ -10,9 +10,9 @@
 
 #include "sdk/android/src/jni/audio_device/audio_device_module.h"
 
+#include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/audio_device_buffer.h"
@@ -92,7 +92,7 @@ class AndroidAudioDeviceModule : public AudioDeviceModule {
     RTC_LOG(INFO) << __FUNCTION__;
     RTC_DCHECK(thread_checker_.IsCurrent());
     audio_device_buffer_ =
-        absl::make_unique<AudioDeviceBuffer>(task_queue_factory_.get());
+        std::make_unique<AudioDeviceBuffer>(task_queue_factory_.get());
     AttachAudioBuffer();
     if (initialized_) {
       return 0;

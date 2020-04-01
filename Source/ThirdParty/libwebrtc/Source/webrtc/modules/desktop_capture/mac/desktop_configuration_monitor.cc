@@ -54,8 +54,8 @@ void DesktopConfigurationMonitor::DisplaysReconfigured(
     CGDisplayChangeSummaryFlags flags) {
   TRACE_EVENT0("webrtc", "DesktopConfigurationMonitor::DisplaysReconfigured");
   RTC_LOG(LS_INFO) << "DisplaysReconfigured: "
-                   << "DisplayID " << display << "; ChangeSummaryFlags "
-                   << flags;
+                      "DisplayID "
+                   << display << "; ChangeSummaryFlags " << flags;
 
   if (flags & kCGDisplayBeginConfigurationFlag) {
     reconfiguring_displays_.insert(display);

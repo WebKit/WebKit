@@ -17,7 +17,6 @@
 #include <memory>
 #include <string>
 
-#include "absl/memory/memory.h"
 #include "api/task_queue/queued_task.h"
 #include "api/video/video_content_type.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
@@ -73,6 +72,11 @@ void FakeEncoder::SetMaxBitrate(int max_kbps) {
   SetRates(current_rate_settings_);
 }
 
+void FakeEncoder::SetQp(int qp) {
+  rtc::CritScope cs(&crit_sect_);
+  qp_ = qp;
+}
+
 int32_t FakeEncoder::InitEncode(const VideoCodec* config,
                                 const Settings& settings) {
   rtc::CritScope cs(&crit_sect_);
@@ -94,6 +98,7 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
   VideoCodecMode mode;
   bool keyframe;
   uint32_t counter;
+  absl::optional<int> qp;
   {
     rtc::CritScope cs(&crit_sect_);
     max_framerate = config_.maxFramerate;
@@ -110,6 +115,7 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
     keyframe = pending_keyframe_;
     pending_keyframe_ = false;
     counter = counter_++;
+    qp = qp_;
   }
 
   FrameInfo frame_info =
@@ -135,6 +141,8 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
                                              : VideoFrameType::kVideoFrameDelta;
     encoded._encodedWidth = simulcast_streams[i].width;
     encoded._encodedHeight = simulcast_streams[i].height;
+    if (qp)
+      encoded.qp_ = *qp;
     encoded.SetSpatialIndex(i);
     CodecSpecificInfo codec_specific;
     std::unique_ptr<RTPFragmentationHeader> fragmentation =
@@ -287,7 +295,7 @@ std::unique_ptr<RTPFragmentationHeader> FakeH264Encoder::EncodeHook(
     current_idr_counter = idr_counter_;
     ++idr_counter_;
   }
-  auto fragmentation = absl::make_unique<RTPFragmentationHeader>();
+  auto fragmentation = std::make_unique<RTPFragmentationHeader>();
 
   if (current_idr_counter % kIdrFrequency == 0 &&
       encoded_image->size() > kSpsSize + kPpsSize + 1) {
@@ -412,8 +420,7 @@ int32_t MultithreadedFakeH264Encoder::Encode(
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
 
-  queue->PostTask(
-      absl::make_unique<EncodeTask>(this, input_image, frame_types));
+  queue->PostTask(std::make_unique<EncodeTask>(this, input_image, frame_types));
 
   return WEBRTC_VIDEO_CODEC_OK;
 }

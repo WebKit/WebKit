@@ -41,6 +41,8 @@ const char CONNECTIONROLE_PASSIVE_STR[] = "passive";
 const char CONNECTIONROLE_ACTPASS_STR[] = "actpass";
 const char CONNECTIONROLE_HOLDCONN_STR[] = "holdconn";
 
+const char LOCAL_TLD[] = ".local";
+
 const int MIN_CHECK_RECEIVING_INTERVAL = 50;
 const int RECEIVING_TIMEOUT = MIN_CHECK_RECEIVING_INTERVAL * 50;
 const int RECEIVING_SWITCHING_DELAY = 1000;

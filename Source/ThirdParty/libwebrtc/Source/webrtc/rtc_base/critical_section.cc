@@ -216,13 +216,13 @@ CritScope::~CritScope() {
   cs_->Leave();
 }
 
-void GlobalLockPod::Lock() {
+void GlobalLock::Lock() {
 #if !defined(WEBRTC_WIN) && \
     (!defined(WEBRTC_MAC) || RTC_USE_NATIVE_MUTEX_ON_MAC)
   const struct timespec ts_null = {0};
 #endif
 
-  while (AtomicOps::CompareAndSwap(&lock_acquired, 0, 1)) {
+  while (AtomicOps::CompareAndSwap(&lock_acquired_, 0, 1)) {
 #if defined(WEBRTC_WIN)
     ::Sleep(0);
 #elif defined(WEBRTC_MAC) && !RTC_USE_NATIVE_MUTEX_ON_MAC
@@ -233,16 +233,12 @@ void GlobalLockPod::Lock() {
   }
 }
 
-void GlobalLockPod::Unlock() {
-  int old_value = AtomicOps::CompareAndSwap(&lock_acquired, 1, 0);
+void GlobalLock::Unlock() {
+  int old_value = AtomicOps::CompareAndSwap(&lock_acquired_, 1, 0);
   RTC_DCHECK_EQ(1, old_value) << "Unlock called without calling Lock first";
 }
 
-GlobalLock::GlobalLock() {
-  lock_acquired = 0;
-}
-
-GlobalLockScope::GlobalLockScope(GlobalLockPod* lock) : lock_(lock) {
+GlobalLockScope::GlobalLockScope(GlobalLock* lock) : lock_(lock) {
   lock_->Lock();
 }
 

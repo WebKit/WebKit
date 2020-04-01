@@ -8,38 +8,48 @@
 
 import("../../webrtc.gni")
 
-if (rtc_include_tests) {
-  rtc_source_set("time_controller") {
-    testonly = true
-    sources = [
-      "real_time_controller.cc",
-      "real_time_controller.h",
-      "simulated_time_controller.cc",
-      "simulated_time_controller.h",
-      "time_controller.h",
-    ]
+rtc_library("time_controller") {
+  testonly = true
+  sources = [
+    "external_time_controller.cc",
+    "external_time_controller.h",
+    "real_time_controller.cc",
+    "real_time_controller.h",
+    "simulated_process_thread.cc",
+    "simulated_process_thread.h",
+    "simulated_task_queue.cc",
+    "simulated_task_queue.h",
+    "simulated_thread.cc",
+    "simulated_thread.h",
+    "simulated_time_controller.cc",
+    "simulated_time_controller.h",
+  ]
 
-    deps = [
-      "../../api/task_queue",
-      "../../api/task_queue:default_task_queue_factory",
-      "../../api/units:time_delta",
-      "../../api/units:timestamp",
-      "../../modules:module_api",
-      "../../modules/utility:utility",
-      "../../rtc_base",
-      "../../rtc_base:rtc_base_tests_utils",
-      "../../rtc_base:rtc_event",
-      "../../rtc_base/synchronization:sequence_checker",
-      "../../rtc_base/synchronization:yield_policy",
-      "../../rtc_base/task_utils:to_queued_task",
-      "../../system_wrappers",
-      "//third_party/abseil-cpp/absl/memory",
-      "//third_party/abseil-cpp/absl/strings",
-    ]
-  }
-  rtc_source_set("time_controller_unittests") {
+  deps = [
+    "../../api:time_controller",
+    "../../api/task_queue",
+    "../../api/task_queue:default_task_queue_factory",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../modules:module_api",
+    "../../modules/utility:utility",
+    "../../rtc_base",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_tests_utils",
+    "../../rtc_base:rtc_event",
+    "../../rtc_base/synchronization:sequence_checker",
+    "../../rtc_base/synchronization:yield_policy",
+    "../../rtc_base/task_utils:to_queued_task",
+    "../../system_wrappers",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("time_controller_unittests") {
     testonly = true
     sources = [
+      "external_time_controller_unittest.cc",
       "simulated_time_controller_unittest.cc",
     ]
     deps = [
@@ -48,7 +58,6 @@ if (rtc_include_tests) {
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_task_queue",
       "../../rtc_base/task_utils:repeating_task",
-      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 }

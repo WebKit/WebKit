@@ -74,6 +74,8 @@ class DtlsTransportInternal : public rtc::PacketTransportInternal {
 
   virtual bool SetDtlsRole(rtc::SSLRole role) = 0;
 
+  // Finds out which TLS/DTLS version is running.
+  virtual bool GetSslVersionBytes(int* version) const = 0;
   // Finds out which DTLS-SRTP cipher was negotiated.
   // TODO(zhihuang): Remove this once all dependencies implement this.
   virtual bool GetSrtpCryptoSuite(int* cipher) = 0;

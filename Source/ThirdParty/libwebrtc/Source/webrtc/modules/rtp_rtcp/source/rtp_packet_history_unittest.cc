@@ -13,7 +13,6 @@
 #include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "system_wrappers/include/clock.h"
@@ -289,6 +288,38 @@ TEST_F(RtpPacketHistoryTest, RemovesOldestPacketWhenAtMaxCapacity) {
   // Oldest packet should be gone, but packet after than one still present.
   EXPECT_FALSE(hist_.GetPacketState(kStartSeqNum));
   EXPECT_TRUE(hist_.GetPacketState(To16u(kStartSeqNum + 1)));
+}
+
+TEST_F(RtpPacketHistoryTest, RemovesLowestPrioPaddingWhenAtMaxCapacity) {
+  // Tests the absolute upper bound on number of packets in the prioritized
+  // set of potential padding packets.
+  const size_t kMaxNumPackets = RtpPacketHistory::kMaxPaddingtHistory;
+  hist_.SetStorePacketsStatus(StorageMode::kStoreAndCull, kMaxNumPackets * 2);
+  hist_.SetRtt(1);
+
+  // Add packets until the max is reached, and then yet another one.
+  for (size_t i = 0; i < kMaxNumPackets + 1; ++i) {
+    std::unique_ptr<RtpPacketToSend> packet =
+        CreateRtpPacket(To16u(kStartSeqNum + i));
+    // Don't mark packets as sent, preventing them from being removed.
+    hist_.PutRtpPacket(std::move(packet), fake_clock_.TimeInMilliseconds());
+  }
+
+  // Advance time to allow retransmission/padding.
+  fake_clock_.AdvanceTimeMilliseconds(1);
+
+  // The oldest packet will be least prioritized and has fallen out of the
+  // priority set.
+  for (size_t i = kMaxNumPackets - 1; i > 0; --i) {
+    auto packet = hist_.GetPayloadPaddingPacket();
+    ASSERT_TRUE(packet);
+    EXPECT_EQ(packet->SequenceNumber(), To16u(kStartSeqNum + i + 1));
+  }
+
+  // Wrap around to newest padding packet again.
+  auto packet = hist_.GetPayloadPaddingPacket();
+  ASSERT_TRUE(packet);
+  EXPECT_EQ(packet->SequenceNumber(), To16u(kStartSeqNum + kMaxNumPackets));
 }
 
 TEST_F(RtpPacketHistoryTest, DontRemoveUnsentPackets) {
@@ -568,7 +599,7 @@ TEST_F(RtpPacketHistoryTest, GetPacketWithEncapsulation) {
       hist_.GetPacketAndMarkAsPending(
           kStartSeqNum, [](const RtpPacketToSend& packet) {
             auto encapsulated_packet =
-                absl::make_unique<RtpPacketToSend>(packet);
+                std::make_unique<RtpPacketToSend>(packet);
             encapsulated_packet->SetSsrc(packet.Ssrc() + 1);
             return encapsulated_packet;
           });
@@ -696,7 +727,7 @@ TEST_F(RtpPacketHistoryTest, PayloadPaddingWithEncapsulation) {
   // Get copy of packet, but with sequence number modified.
   auto padding_packet =
       hist_.GetPayloadPaddingPacket([&](const RtpPacketToSend& packet) {
-        auto encapsulated_packet = absl::make_unique<RtpPacketToSend>(packet);
+        auto encapsulated_packet = std::make_unique<RtpPacketToSend>(packet);
         encapsulated_packet->SetSequenceNumber(kStartSeqNum + 1);
         return encapsulated_packet;
       });
@@ -704,4 +735,49 @@ TEST_F(RtpPacketHistoryTest, PayloadPaddingWithEncapsulation) {
   EXPECT_EQ(padding_packet->SequenceNumber(), kStartSeqNum + 1);
 }
 
+TEST_F(RtpPacketHistoryTest, NackAfterAckIsNoop) {
+  hist_.SetStorePacketsStatus(StorageMode::kStoreAndCull, 2);
+  // Add two sent packets.
+  hist_.PutRtpPacket(CreateRtpPacket(kStartSeqNum),
+                     fake_clock_.TimeInMilliseconds());
+  hist_.PutRtpPacket(CreateRtpPacket(kStartSeqNum + 1),
+                     fake_clock_.TimeInMilliseconds());
+  // Remove newest one.
+  hist_.CullAcknowledgedPackets(std::vector<uint16_t>{kStartSeqNum + 1});
+  // Retransmission request for already acked packet, should be noop.
+  auto packet = hist_.GetPacketAndMarkAsPending(kStartSeqNum + 1);
+  EXPECT_EQ(packet.get(), nullptr);
+}
+
+TEST_F(RtpPacketHistoryTest, OutOfOrderInsertRemoval) {
+  hist_.SetStorePacketsStatus(StorageMode::kStoreAndCull, 10);
+
+  // Insert packets, out of order, including both forwards and backwards
+  // sequence number wraps.
+  const int seq_offsets[] = {0, 1, -1, 2, -2, 3, -3};
+  const int64_t start_time_ms = fake_clock_.TimeInMilliseconds();
+
+  for (int offset : seq_offsets) {
+    uint16_t seq_no = To16u(kStartSeqNum + offset);
+    std::unique_ptr<RtpPacketToSend> packet = CreateRtpPacket(seq_no);
+    packet->SetPayloadSize(50);
+    hist_.PutRtpPacket(std::move(packet), fake_clock_.TimeInMilliseconds());
+    hist_.GetPacketAndSetSendTime(seq_no);
+    fake_clock_.AdvanceTimeMilliseconds(33);
+  }
+
+  // Check packet are there and remove them in the same out-of-order fashion.
+  int64_t expected_time_offset_ms = 0;
+  for (int offset : seq_offsets) {
+    uint16_t seq_no = To16u(kStartSeqNum + offset);
+    absl::optional<RtpPacketHistory::PacketState> packet_state =
+        hist_.GetPacketState(seq_no);
+    ASSERT_TRUE(packet_state.has_value());
+    EXPECT_EQ(packet_state->send_time_ms,
+              start_time_ms + expected_time_offset_ms);
+    std::vector<uint16_t> acked_sequence_numbers = {seq_no};
+    hist_.CullAcknowledgedPackets(acked_sequence_numbers);
+    expected_time_offset_ms += 33;
+  }
+}
 }  // namespace webrtc

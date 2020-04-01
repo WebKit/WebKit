@@ -25,7 +25,7 @@ class AudioDeviceModule : public rtc::RefCountInterface {
   enum AudioLayer {
     kPlatformDefaultAudio = 0,
     kWindowsCoreAudio,
-    kWindowsCoreAudio2,  // experimental
+    kWindowsCoreAudio2,
     kLinuxAlsaAudio,
     kLinuxPulseAudio,
     kAndroidJavaAudio,

@@ -14,11 +14,9 @@
 #include <memory>
 #include <set>
 
-#include "absl/memory/memory.h"
 #include "api/transport/field_trial_based_config.h"
 #include "api/video_codecs/video_codec.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/playout_delay_oracle.h"
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
@@ -99,27 +97,22 @@ class SendTransport : public Transport {
 
 class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
  public:
-  explicit RtpRtcpModule(SimulatedClock* clock)
-      : receive_statistics_(ReceiveStatistics::Create(clock)),
-        remote_ssrc_(0),
+  RtpRtcpModule(SimulatedClock* clock, bool is_sender)
+      : is_sender_(is_sender),
+        receive_statistics_(ReceiveStatistics::Create(clock)),
         clock_(clock) {
     CreateModuleImpl();
     transport_.SimulateNetworkDelay(kOneWayNetworkDelayMs, clock);
   }
 
+  const bool is_sender_;
   RtcpPacketTypeCounter packets_sent_;
   RtcpPacketTypeCounter packets_received_;
   std::unique_ptr<ReceiveStatistics> receive_statistics_;
   SendTransport transport_;
   RtcpRttStatsTestImpl rtt_stats_;
   std::unique_ptr<ModuleRtpRtcpImpl> impl_;
-  uint32_t remote_ssrc_;
   int rtcp_report_interval_ms_ = 0;
-
-  void SetRemoteSsrc(uint32_t ssrc) {
-    remote_ssrc_ = ssrc;
-    impl_->SetRemoteSSRC(ssrc);
-  }
 
   void RtcpPacketTypesCounterUpdated(
       uint32_t ssrc,
@@ -129,7 +122,7 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
 
   RtcpPacketTypeCounter RtcpSent() {
     // RTCP counters for remote SSRC.
-    return counter_map_[remote_ssrc_];
+    return counter_map_[is_sender_ ? kReceiverSsrc : kSenderSsrc];
   }
 
   RtcpPacketTypeCounter RtcpReceived() {
@@ -158,9 +151,11 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
     config.rtcp_packet_type_counter_observer = this;
     config.rtt_stats = &rtt_stats_;
     config.rtcp_report_interval_ms = rtcp_report_interval_ms_;
-    config.local_media_ssrc = kSenderSsrc;
+    config.local_media_ssrc = is_sender_ ? kSenderSsrc : kReceiverSsrc;
+    config.need_rtp_packet_infos = true;
 
     impl_.reset(new ModuleRtpRtcpImpl(config));
+    impl_->SetRemoteSSRC(is_sender_ ? kReceiverSsrc : kSenderSsrc);
     impl_->SetRTCPStatus(RtcpMode::kCompound);
   }
 
@@ -172,32 +167,32 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver {
 class RtpRtcpImplTest : public ::testing::Test {
  protected:
   RtpRtcpImplTest()
-      : clock_(133590000000000), sender_(&clock_), receiver_(&clock_) {}
+      : clock_(133590000000000),
+        sender_(&clock_, /*is_sender=*/true),
+        receiver_(&clock_, /*is_sender=*/false) {}
 
   void SetUp() override {
     // Send module.
     EXPECT_EQ(0, sender_.impl_->SetSendingStatus(true));
     sender_.impl_->SetSendingMediaStatus(true);
-    sender_.SetRemoteSsrc(kReceiverSsrc);
     sender_.impl_->SetSequenceNumber(kSequenceNumber);
     sender_.impl_->SetStorePacketsStatus(true, 100);
 
-    sender_video_ = absl::make_unique<RTPSenderVideo>(
-        &clock_, sender_.impl_->RtpSender(), nullptr, &playout_delay_oracle_,
-        nullptr, false, false, FieldTrialBasedConfig());
+    FieldTrialBasedConfig field_trials;
+    RTPSenderVideo::Config video_config;
+    video_config.clock = &clock_;
+    video_config.rtp_sender = sender_.impl_->RtpSender();
+    video_config.field_trials = &field_trials;
+    sender_video_ = std::make_unique<RTPSenderVideo>(video_config);
 
     memset(&codec_, 0, sizeof(VideoCodec));
     codec_.plType = 100;
     codec_.width = 320;
     codec_.height = 180;
-    sender_video_->RegisterPayloadType(codec_.plType, "VP8",
-                                       /*raw_payload=*/false);
 
     // Receive module.
     EXPECT_EQ(0, receiver_.impl_->SetSendingStatus(false));
     receiver_.impl_->SetSendingMediaStatus(false);
-    receiver_.impl_->SetSSRC(kReceiverSsrc);
-    receiver_.SetRemoteSsrc(kSenderSsrc);
     // Transport settings.
     sender_.transport_.SetRtpRtcpModule(receiver_.impl_.get());
     receiver_.transport_.SetRtpRtcpModule(sender_.impl_.get());
@@ -205,7 +200,6 @@ class RtpRtcpImplTest : public ::testing::Test {
 
   SimulatedClock clock_;
   RtpRtcpModule sender_;
-  PlayoutDelayOracle playout_delay_oracle_;
   std::unique_ptr<RTPSenderVideo> sender_video_;
   RtpRtcpModule receiver_;
   VideoCodec codec_;
@@ -216,6 +210,7 @@ class RtpRtcpImplTest : public ::testing::Test {
     RTPVideoHeaderVP8 vp8_header = {};
     vp8_header.temporalIdx = tid;
     RTPVideoHeader rtp_video_header;
+    rtp_video_header.frame_type = VideoFrameType::kVideoFrameKey;
     rtp_video_header.width = codec_.width;
     rtp_video_header.height = codec_.height;
     rtp_video_header.rotation = kVideoRotation_0;
@@ -229,9 +224,8 @@ class RtpRtcpImplTest : public ::testing::Test {
 
     const uint8_t payload[100] = {0};
     EXPECT_TRUE(module->impl_->OnSendingRtpFrame(0, 0, codec_.plType, true));
-    EXPECT_TRUE(sender->SendVideo(VideoFrameType::kVideoFrameKey, codec_.plType,
-                                  0, 0, payload, sizeof(payload), nullptr,
-                                  &rtp_video_header, 0));
+    EXPECT_TRUE(sender->SendVideo(codec_.plType, VideoCodecType::kVideoCodecVP8,
+                                  0, 0, payload, nullptr, rtp_video_header, 0));
   }
 
   void IncomingRtcpNack(const RtpRtcpModule* module, uint16_t sequence_number) {
@@ -574,6 +568,63 @@ TEST_F(RtpRtcpImplTest, ConfigurableRtcpReportInterval) {
   clock_.AdvanceTimeMilliseconds(kVideoReportInterval / 2);
   sender_.impl_->Process();
   EXPECT_EQ(sender_.transport_.NumRtcpSent(), 2u);
+}
+
+TEST_F(RtpRtcpImplTest, StoresPacketInfoForSentPackets) {
+  const uint32_t kStartTimestamp = 1u;
+  SetUp();
+  sender_.impl_->SetStartTimestamp(kStartTimestamp);
+
+  PacedPacketInfo pacing_info;
+  RtpPacketToSend packet(nullptr);
+  packet.set_packet_type(RtpPacketToSend::Type::kVideo);
+  packet.SetSsrc(kSenderSsrc);
+
+  // Single-packet frame.
+  packet.SetTimestamp(1);
+  packet.SetSequenceNumber(1);
+  packet.set_first_packet_of_frame(true);
+  packet.SetMarker(true);
+  sender_.impl_->TrySendPacket(&packet, pacing_info);
+
+  std::vector<RtpSequenceNumberMap::Info> seqno_info =
+      sender_.impl_->GetSentRtpPacketInfos(std::vector<uint16_t>{1});
+
+  EXPECT_THAT(seqno_info, ElementsAre(RtpSequenceNumberMap::Info(
+                              /*timestamp=*/1 - kStartTimestamp,
+                              /*is_first=*/1,
+                              /*is_last=*/1)));
+
+  // Three-packet frame.
+  packet.SetTimestamp(2);
+  packet.SetSequenceNumber(2);
+  packet.set_first_packet_of_frame(true);
+  packet.SetMarker(false);
+  sender_.impl_->TrySendPacket(&packet, pacing_info);
+
+  packet.SetSequenceNumber(3);
+  packet.set_first_packet_of_frame(false);
+  sender_.impl_->TrySendPacket(&packet, pacing_info);
+
+  packet.SetSequenceNumber(4);
+  packet.SetMarker(true);
+  sender_.impl_->TrySendPacket(&packet, pacing_info);
+
+  seqno_info =
+      sender_.impl_->GetSentRtpPacketInfos(std::vector<uint16_t>{2, 3, 4});
+
+  EXPECT_THAT(seqno_info, ElementsAre(RtpSequenceNumberMap::Info(
+                                          /*timestamp=*/2 - kStartTimestamp,
+                                          /*is_first=*/1,
+                                          /*is_last=*/0),
+                                      RtpSequenceNumberMap::Info(
+                                          /*timestamp=*/2 - kStartTimestamp,
+                                          /*is_first=*/0,
+                                          /*is_last=*/0),
+                                      RtpSequenceNumberMap::Info(
+                                          /*timestamp=*/2 - kStartTimestamp,
+                                          /*is_first=*/0,
+                                          /*is_last=*/1)));
 }
 
 }  // namespace webrtc

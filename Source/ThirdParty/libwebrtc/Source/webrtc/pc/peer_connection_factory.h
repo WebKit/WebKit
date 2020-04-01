@@ -16,9 +16,9 @@
 #include <string>
 
 #include "api/media_stream_interface.h"
-#include "api/media_transport_interface.h"
 #include "api/peer_connection_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/transport/media/media_transport_interface.h"
 #include "media/sctp/sctp_transport_internal.h"
 #include "pc/channel_manager.h"
 #include "rtc_base/rtc_certificate_generator.h"
@@ -104,6 +104,8 @@ class PeerConnectionFactory : public PeerConnectionFactoryInterface {
   virtual ~PeerConnectionFactory();
 
  private:
+  bool IsTrialEnabled(absl::string_view key) const;
+
   std::unique_ptr<RtcEventLog> CreateRtcEventLog_w();
   std::unique_ptr<Call> CreateCall_w(RtcEventLog* event_log);
 
@@ -127,6 +129,8 @@ class PeerConnectionFactory : public PeerConnectionFactoryInterface {
   std::unique_ptr<NetworkControllerFactoryInterface>
       injected_network_controller_factory_;
   std::unique_ptr<MediaTransportFactory> media_transport_factory_;
+  std::unique_ptr<NetEqFactory> neteq_factory_;
+  const std::unique_ptr<WebRtcKeyValueConfig> trials_;
 };
 
 }  // namespace webrtc

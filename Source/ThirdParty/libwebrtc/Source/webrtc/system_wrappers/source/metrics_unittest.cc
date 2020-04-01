@@ -17,6 +17,7 @@ using ::testing::ElementsAre;
 using ::testing::IsEmpty;
 using ::testing::Pair;
 
+#if RTC_METRICS_ENABLED
 namespace webrtc {
 namespace {
 const int kSample = 22;
@@ -130,3 +131,4 @@ TEST_F(MetricsTest, RtcHistogramSparse_NonConstantNameWorks) {
 }
 
 }  // namespace webrtc
+#endif

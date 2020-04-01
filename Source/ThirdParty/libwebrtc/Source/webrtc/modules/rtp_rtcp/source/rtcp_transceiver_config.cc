@@ -58,7 +58,7 @@ bool RtcpTransceiverConfig::Validate() const {
                       << "ms between reports should be positive.";
     return false;
   }
-  if (schedule_periodic_compound_packets && !task_queue) {
+  if (schedule_periodic_compound_packets && task_queue == nullptr) {
     RTC_LOG(LS_ERROR) << debug_id
                       << "missing task queue for periodic compound packets";
     return false;

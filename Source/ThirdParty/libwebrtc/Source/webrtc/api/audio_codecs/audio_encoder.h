@@ -13,11 +13,13 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/call/bitrate_allocation.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/deprecation.h"
 
@@ -208,10 +210,7 @@ class AudioEncoder {
   virtual void OnReceivedUplinkPacketLossFraction(
       float uplink_packet_loss_fraction);
 
-  // Provides 1st-order-FEC-recoverable uplink packet loss rate to this encoder
-  // to allow it to adapt.
-  // |uplink_recoverable_packet_loss_fraction| is in the range [0.0, 1.0].
-  virtual void OnReceivedUplinkRecoverablePacketLossFraction(
+  RTC_DEPRECATED virtual void OnReceivedUplinkRecoverablePacketLossFraction(
       float uplink_recoverable_packet_loss_fraction);
 
   // Provides target audio bitrate to this encoder to allow it to adapt.
@@ -240,6 +239,12 @@ class AudioEncoder {
 
   // Get statistics related to audio network adaptation.
   virtual ANAStats GetANAStats() const;
+
+  // The range of frame lengths that are supported or nullopt if there's no sch
+  // information. This is used to calculated the full bitrate range, including
+  // overhead.
+  virtual absl::optional<std::pair<TimeDelta, TimeDelta>> GetFrameLengthRange()
+      const;
 
  protected:
   // Subclasses implement this to perform the actual encoding. Called by

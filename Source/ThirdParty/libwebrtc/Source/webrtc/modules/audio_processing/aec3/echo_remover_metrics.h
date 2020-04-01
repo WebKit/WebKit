@@ -52,8 +52,6 @@ class EchoRemoverMetrics {
   DbMetric erl_time_domain_;
   std::array<DbMetric, 2> erle_;
   DbMetric erle_time_domain_;
-  std::array<DbMetric, 2> comfort_noise_;
-  std::array<DbMetric, 2> suppressor_gain_;
   int active_render_count_ = 0;
   bool saturated_capture_ = false;
   bool metrics_reported_ = false;

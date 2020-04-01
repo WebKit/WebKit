@@ -14,12 +14,12 @@
 
 #include <memory>
 
+#include "absl/base/attributes.h"
+#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/transport/network_types.h"
 #include "api/transport/webrtc_key_value_config.h"
 
 namespace webrtc {
-// TODO(srte): Remove this forward declaration when this is in api.
-class RtcEventLog;
 
 class TargetTransferRateObserver {
  public:
@@ -61,32 +61,42 @@ class NetworkControllerInterface {
   virtual ~NetworkControllerInterface() = default;
 
   // Called when network availabilty changes.
-  virtual NetworkControlUpdate OnNetworkAvailability(NetworkAvailability) = 0;
+  virtual NetworkControlUpdate OnNetworkAvailability(NetworkAvailability)
+      ABSL_MUST_USE_RESULT = 0;
   // Called when the receiving or sending endpoint changes address.
-  virtual NetworkControlUpdate OnNetworkRouteChange(NetworkRouteChange) = 0;
+  virtual NetworkControlUpdate OnNetworkRouteChange(NetworkRouteChange)
+      ABSL_MUST_USE_RESULT = 0;
   // Called periodically with a periodicy as specified by
   // NetworkControllerFactoryInterface::GetProcessInterval.
-  virtual NetworkControlUpdate OnProcessInterval(ProcessInterval) = 0;
+  virtual NetworkControlUpdate OnProcessInterval(ProcessInterval)
+      ABSL_MUST_USE_RESULT = 0;
   // Called when remotely calculated bitrate is received.
-  virtual NetworkControlUpdate OnRemoteBitrateReport(RemoteBitrateReport) = 0;
+  virtual NetworkControlUpdate OnRemoteBitrateReport(RemoteBitrateReport)
+      ABSL_MUST_USE_RESULT = 0;
   // Called round trip time has been calculated by protocol specific mechanisms.
-  virtual NetworkControlUpdate OnRoundTripTimeUpdate(RoundTripTimeUpdate) = 0;
+  virtual NetworkControlUpdate OnRoundTripTimeUpdate(RoundTripTimeUpdate)
+      ABSL_MUST_USE_RESULT = 0;
   // Called when a packet is sent on the network.
-  virtual NetworkControlUpdate OnSentPacket(SentPacket) = 0;
+  virtual NetworkControlUpdate OnSentPacket(SentPacket)
+      ABSL_MUST_USE_RESULT = 0;
   // Called when a packet is received from the remote client.
-  virtual NetworkControlUpdate OnReceivedPacket(ReceivedPacket) = 0;
+  virtual NetworkControlUpdate OnReceivedPacket(ReceivedPacket)
+      ABSL_MUST_USE_RESULT = 0;
   // Called when the stream specific configuration has been updated.
-  virtual NetworkControlUpdate OnStreamsConfig(StreamsConfig) = 0;
+  virtual NetworkControlUpdate OnStreamsConfig(StreamsConfig)
+      ABSL_MUST_USE_RESULT = 0;
   // Called when target transfer rate constraints has been changed.
-  virtual NetworkControlUpdate OnTargetRateConstraints(
-      TargetRateConstraints) = 0;
+  virtual NetworkControlUpdate OnTargetRateConstraints(TargetRateConstraints)
+      ABSL_MUST_USE_RESULT = 0;
   // Called when a protocol specific calculation of packet loss has been made.
-  virtual NetworkControlUpdate OnTransportLossReport(TransportLossReport) = 0;
+  virtual NetworkControlUpdate OnTransportLossReport(TransportLossReport)
+      ABSL_MUST_USE_RESULT = 0;
   // Called with per packet feedback regarding receive time.
   virtual NetworkControlUpdate OnTransportPacketsFeedback(
-      TransportPacketsFeedback) = 0;
+      TransportPacketsFeedback) ABSL_MUST_USE_RESULT = 0;
   // Called with network state estimate updates.
-  virtual NetworkControlUpdate OnNetworkStateEstimate(NetworkStateEstimate) = 0;
+  virtual NetworkControlUpdate OnNetworkStateEstimate(NetworkStateEstimate)
+      ABSL_MUST_USE_RESULT = 0;
 };
 
 // NetworkControllerFactoryInterface is an interface for creating a network
@@ -110,7 +120,11 @@ class NetworkStateEstimator {
   // Gets the current best estimate according to the estimator.
   virtual absl::optional<NetworkStateEstimate> GetCurrentEstimate() = 0;
   // Called with per packet feedback regarding receive time.
+  // Used when the NetworkStateEstimator runs in the sending endpoint.
   virtual void OnTransportPacketsFeedback(const TransportPacketsFeedback&) = 0;
+  // Called with per packet feedback regarding receive time.
+  // Used when the NetworkStateEstimator runs in the receiving endpoint.
+  virtual void OnReceivedPacket(const PacketResult&) {}
   // Called when the receiving or sending endpoint changes address.
   virtual void OnRouteChange(const NetworkRouteChange&) = 0;
   virtual ~NetworkStateEstimator() = default;

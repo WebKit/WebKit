@@ -24,10 +24,10 @@ constexpr int kNotReceived = PacketDeliveryInfo::kNotReceived;
 }
 
 TEST(SimulatedNetworkTest, CodelDoesNothingAtCapacity) {
-  const TimeDelta kRuntime = TimeDelta::seconds(30);
+  const TimeDelta kRuntime = TimeDelta::Seconds(30);
 
-  DataRate link_capacity = DataRate::kbps(1000);
-  const DataSize packet_size = DataSize::bytes(1000);
+  DataRate link_capacity = DataRate::KilobitsPerSec(1000);
+  const DataSize packet_size = DataSize::Bytes(1000);
 
   SimulatedNetwork::Config config;
   config.codel_active_queue_management = true;
@@ -37,10 +37,10 @@ TEST(SimulatedNetworkTest, CodelDoesNothingAtCapacity) {
 
   // Need to round up here as otherwise we actually will choke.
   const TimeDelta packet_inverval =
-      packet_size / link_capacity + TimeDelta::ms(1);
+      packet_size / link_capacity + TimeDelta::Millis(1);
 
   // Send at capacity and see we get no loss.
-  Timestamp start_time = Timestamp::ms(0);
+  Timestamp start_time = Timestamp::Millis(0);
   Timestamp current_time = start_time;
   Timestamp next_packet_time = start_time;
   uint64_t next_id = 0;
@@ -56,7 +56,7 @@ TEST(SimulatedNetworkTest, CodelDoesNothingAtCapacity) {
     }
     Timestamp next_delivery = Timestamp::PlusInfinity();
     if (network.NextDeliveryTimeUs())
-      next_delivery = Timestamp::us(*network.NextDeliveryTimeUs());
+      next_delivery = Timestamp::Micros(*network.NextDeliveryTimeUs());
     current_time = std::min(next_packet_time, next_delivery);
     if (current_time >= next_delivery) {
       for (PacketDeliveryInfo packet :
@@ -77,11 +77,11 @@ TEST(SimulatedNetworkTest, CodelDoesNothingAtCapacity) {
 }
 
 TEST(SimulatedNetworkTest, CodelLimitsDelayAndDropsPacketsOnOverload) {
-  const TimeDelta kRuntime = TimeDelta::seconds(30);
-  const TimeDelta kCheckInterval = TimeDelta::ms(2000);
+  const TimeDelta kRuntime = TimeDelta::Seconds(30);
+  const TimeDelta kCheckInterval = TimeDelta::Millis(2000);
 
-  DataRate link_capacity = DataRate::kbps(1000);
-  const DataSize rough_packet_size = DataSize::bytes(1500);
+  DataRate link_capacity = DataRate::KilobitsPerSec(1000);
+  const DataSize rough_packet_size = DataSize::Bytes(1500);
   const double overload_rate = 1.5;
 
   SimulatedNetwork::Config config;
@@ -94,7 +94,7 @@ TEST(SimulatedNetworkTest, CodelLimitsDelayAndDropsPacketsOnOverload) {
   const DataSize packet_size = overload_rate * link_capacity * packet_inverval;
   // Send above capacity and see delays are still controlled at the cost of
   // packet loss.
-  Timestamp start_time = Timestamp::ms(0);
+  Timestamp start_time = Timestamp::Millis(0);
   Timestamp current_time = start_time;
   Timestamp next_packet_time = start_time;
   Timestamp last_check = start_time;
@@ -113,7 +113,7 @@ TEST(SimulatedNetworkTest, CodelLimitsDelayAndDropsPacketsOnOverload) {
     }
     Timestamp next_delivery = Timestamp::PlusInfinity();
     if (network.NextDeliveryTimeUs())
-      next_delivery = Timestamp::us(*network.NextDeliveryTimeUs());
+      next_delivery = Timestamp::Micros(*network.NextDeliveryTimeUs());
     current_time = std::min(next_packet_time, next_delivery);
     if (current_time >= next_delivery) {
       for (PacketDeliveryInfo packet :
@@ -130,7 +130,8 @@ TEST(SimulatedNetworkTest, CodelLimitsDelayAndDropsPacketsOnOverload) {
     if (current_time > last_check + kCheckInterval) {
       last_check = current_time;
       TimeDelta average_delay =
-          TimeDelta::us(absl::c_accumulate(delays_us, 0)) / delays_us.size();
+          TimeDelta::Micros(absl::c_accumulate(delays_us, 0)) /
+          delays_us.size();
       double loss_ratio = static_cast<double>(lost) / (lost + delays_us.size());
       EXPECT_LT(average_delay.ms(), 200)
           << "Time " << (current_time - start_time).ms() << "\n";

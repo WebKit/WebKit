@@ -13,12 +13,13 @@
 
 #include <deque>
 #include <map>
+#include <vector>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/event.h"
 #include "rtc_base/fake_clock.h"
-#include "rtc_base/message_queue.h"
+#include "rtc_base/message_handler.h"
 #include "rtc_base/socket_server.h"
 
 namespace rtc {
@@ -107,7 +108,7 @@ class VirtualSocketServer : public SocketServer, public sigslot::has_slots<> {
   AsyncSocket* CreateAsyncSocket(int family, int type) override;
 
   // SocketServer:
-  void SetMessageQueue(MessageQueue* queue) override;
+  void SetMessageQueue(Thread* queue) override;
   bool Wait(int cms, bool process_io) override;
   void WakeUp() override;
 
@@ -267,7 +268,7 @@ class VirtualSocketServer : public SocketServer, public sigslot::has_slots<> {
 
   // Used to implement Wait/WakeUp.
   Event wakeup_;
-  MessageQueue* msg_queue_;
+  Thread* msg_queue_;
   bool stop_on_idle_;
   in_addr next_ipv4_;
   in6_addr next_ipv6_;

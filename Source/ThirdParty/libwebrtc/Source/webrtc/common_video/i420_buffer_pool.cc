@@ -29,6 +29,36 @@ void I420BufferPool::Release() {
   buffers_.clear();
 }
 
+bool I420BufferPool::Resize(size_t max_number_of_buffers) {
+  RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
+  size_t used_buffers_count = 0;
+  for (const rtc::scoped_refptr<PooledI420Buffer>& buffer : buffers_) {
+    // If the buffer is in use, the ref count will be >= 2, one from the list we
+    // are looping over and one from the application. If the ref count is 1,
+    // then the list we are looping over holds the only reference and it's safe
+    // to reuse.
+    if (!buffer->HasOneRef()) {
+      used_buffers_count++;
+    }
+  }
+  if (used_buffers_count > max_number_of_buffers) {
+    return false;
+  }
+  max_number_of_buffers_ = max_number_of_buffers;
+
+  size_t buffers_to_purge = buffers_.size() - max_number_of_buffers_;
+  auto iter = buffers_.begin();
+  while (iter != buffers_.end() && buffers_to_purge > 0) {
+    if ((*iter)->HasOneRef()) {
+      iter = buffers_.erase(iter);
+      buffers_to_purge--;
+    } else {
+      ++iter;
+    }
+  }
+  return true;
+}
+
 rtc::scoped_refptr<I420Buffer> I420BufferPool::CreateBuffer(int width,
                                                             int height) {
   // Default stride_y is width, default uv stride is width / 2 (rounding up).

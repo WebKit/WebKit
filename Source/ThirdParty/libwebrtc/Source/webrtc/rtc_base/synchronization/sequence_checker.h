@@ -13,6 +13,7 @@
 #include "api/task_queue/task_queue_base.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/platform_thread_types.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -22,7 +23,7 @@ namespace webrtc {
 //
 // Note: You should almost always use the SequenceChecker class to get the
 // right version for your build configuration.
-class SequenceCheckerImpl {
+class RTC_EXPORT SequenceCheckerImpl {
  public:
   SequenceCheckerImpl();
   ~SequenceCheckerImpl();

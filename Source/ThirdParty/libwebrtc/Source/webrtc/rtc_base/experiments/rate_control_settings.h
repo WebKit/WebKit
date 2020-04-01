@@ -13,6 +13,7 @@
 
 #include "absl/types/optional.h"
 #include "api/transport/webrtc_key_value_config.h"
+#include "api/units/data_size.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder_config.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
@@ -23,6 +24,8 @@ struct CongestionWindowConfig {
   static constexpr char kKey[] = "WebRTC-CongestionWindow";
   absl::optional<int> queue_size_ms;
   absl::optional<int> min_bitrate_bps;
+  absl::optional<DataSize> initial_data_window;
+  bool drop_frame_only = false;
   std::unique_ptr<StructParametersParser> Parser();
   static CongestionWindowConfig Parse(absl::string_view config);
 };
@@ -42,6 +45,7 @@ struct VideoRateControlConfig {
   bool bitrate_adjuster = false;
   bool adjuster_use_headroom = false;
   bool vp8_s0_boost = true;
+  bool vp8_base_heavy_tl3_alloc = false;
   bool vp8_dynamic_rate = false;
   bool vp9_dynamic_rate = false;
 
@@ -63,7 +67,9 @@ class RateControlSettings final {
   bool UseCongestionWindow() const;
   int64_t GetCongestionWindowAdditionalTimeMs() const;
   bool UseCongestionWindowPushback() const;
+  bool UseCongestionWindowDropFrameOnly() const;
   uint32_t CongestionWindowMinPushbackTargetBitrateBps() const;
+  absl::optional<DataSize> CongestionWindowInitialDataWindow() const;
 
   absl::optional<double> GetPacingFactor() const;
   bool UseAlrProbing() const;
@@ -81,6 +87,8 @@ class RateControlSettings final {
   double GetSimulcastHysteresisFactor(VideoCodecMode mode) const;
   double GetSimulcastHysteresisFactor(
       VideoEncoderConfig::ContentType content_type) const;
+
+  bool Vp8BaseHeavyTl3RateAllocation() const;
 
   bool TriggerProbeOnMaxAllocatedBitrateChange() const;
   bool UseEncoderBitrateAdjuster() const;

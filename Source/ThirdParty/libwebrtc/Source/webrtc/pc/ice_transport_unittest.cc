@@ -14,7 +14,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/ice_transport_factory.h"
 #include "p2p/base/fake_ice_transport.h"
 #include "p2p/base/fake_port_allocator.h"
@@ -28,7 +27,7 @@ class IceTransportTest : public ::testing::Test {};
 
 TEST_F(IceTransportTest, CreateNonSelfDeletingTransport) {
   auto cricket_transport =
-      absl::make_unique<cricket::FakeIceTransport>("name", 0, nullptr);
+      std::make_unique<cricket::FakeIceTransport>("name", 0, nullptr);
   rtc::scoped_refptr<IceTransportWithPointer> ice_transport =
       new rtc::RefCountedObject<IceTransportWithPointer>(
           cricket_transport.get());
@@ -39,7 +38,7 @@ TEST_F(IceTransportTest, CreateNonSelfDeletingTransport) {
 
 TEST_F(IceTransportTest, CreateSelfDeletingTransport) {
   std::unique_ptr<cricket::FakePortAllocator> port_allocator(
-      absl::make_unique<cricket::FakePortAllocator>(nullptr, nullptr));
+      std::make_unique<cricket::FakePortAllocator>(nullptr, nullptr));
   IceTransportInit init;
   init.set_port_allocator(port_allocator.get());
   auto ice_transport = CreateIceTransport(std::move(init));

@@ -10,11 +10,19 @@ import("../../../webrtc.gni")
 
 rtc_source_set("rtp_source") {
   visibility = [ "*" ]
-  sources = [
-    "rtp_source.h",
-  ]
+  sources = [ "rtp_source.h" ]
   deps = [
+    "../../../api:rtp_headers",
     "../../../rtc_base:checks",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("dependency_descriptor") {
+  visibility = [ "*" ]
+  sources = [ "dependency_descriptor.h" ]
+  deps = [
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }

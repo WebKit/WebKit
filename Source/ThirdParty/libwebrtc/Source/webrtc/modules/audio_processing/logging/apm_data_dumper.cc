@@ -76,12 +76,14 @@ FILE* ApmDataDumper::GetRawFile(const char* name) {
 
 WavWriter* ApmDataDumper::GetWavFile(const char* name,
                                      int sample_rate_hz,
-                                     int num_channels) {
+                                     int num_channels,
+                                     WavFile::SampleFormat format) {
   std::string filename = FormFileName(output_dir_, name, instance_index_,
                                       recording_set_index_, ".wav");
   auto& f = wav_files_[filename];
   if (!f) {
-    f.reset(new WavWriter(filename.c_str(), sample_rate_hz, num_channels));
+    f.reset(
+        new WavWriter(filename.c_str(), sample_rate_hz, num_channels, format));
   }
   return f.get();
 }

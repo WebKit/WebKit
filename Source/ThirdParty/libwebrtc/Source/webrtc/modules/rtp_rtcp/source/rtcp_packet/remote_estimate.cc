@@ -25,7 +25,7 @@ namespace {
 
 static constexpr int kFieldValueSize = 3;
 static constexpr int kFieldSize = 1 + kFieldValueSize;
-static constexpr DataRate kDataRateResolution = DataRate::KilobitsPerSec<1>();
+static constexpr DataRate kDataRateResolution = DataRate::KilobitsPerSec(1);
 constexpr int64_t kMaxEncoded = (1 << (kFieldValueSize * 8)) - 1;
 
 class DataRateSerializer {
@@ -128,7 +128,7 @@ const RemoteEstimateSerializer* GetRemoteEstimateSerializer() {
 RemoteEstimate::RemoteEstimate() : serializer_(GetRemoteEstimateSerializer()) {
   SetSubType(kSubType);
   SetName(kName);
-  SetSsrc(0);
+  SetSenderSsrc(0);
 }
 
 RemoteEstimate::RemoteEstimate(App&& app)

@@ -33,6 +33,7 @@
 #include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
+#include "logging/rtc_event_log/events/rtc_event_remote_estimate.h"
 #include "logging/rtc_event_log/events/rtc_event_route_change.h"
 #include "logging/rtc_event_log/events/rtc_event_rtcp_packet_incoming.h"
 #include "logging/rtc_event_log/events/rtc_event_rtcp_packet_outgoing.h"
@@ -79,6 +80,7 @@ class EventGenerator {
   std::unique_ptr<RtcEventProbeResultFailure> NewProbeResultFailure();
   std::unique_ptr<RtcEventProbeResultSuccess> NewProbeResultSuccess();
   std::unique_ptr<RtcEventRouteChange> NewRouteChange();
+  std::unique_ptr<RtcEventRemoteEstimate> NewRemoteEstimate();
   std::unique_ptr<RtcEventRtcpPacketIncoming> NewRtcpPacketIncoming();
   std::unique_ptr<RtcEventRtcpPacketOutgoing> NewRtcpPacketOutgoing();
 
@@ -198,6 +200,10 @@ class EventVerifier {
   void VerifyLoggedRouteChangeEvent(
       const RtcEventRouteChange& original_event,
       const LoggedRouteChangeEvent& logged_event) const;
+
+  void VerifyLoggedRemoteEstimateEvent(
+      const RtcEventRemoteEstimate& original_event,
+      const LoggedRemoteEstimateEvent& logged_event) const;
 
   void VerifyLoggedRtpPacketIncoming(
       const RtcEventRtpPacketIncoming& original_event,

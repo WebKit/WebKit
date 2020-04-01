@@ -540,6 +540,16 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver {
       intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
       intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
       context.registerReceiver(this, intentFilter);
+      if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+        // Starting with Android Q (10), WIFI_P2P_CONNECTION_CHANGED_ACTION is no longer sticky.
+        // This means we have to explicitly request WifiP2pGroup info during initialization in order
+        // to get this data if we are already connected to a Wi-Fi Direct network.
+        WifiP2pManager manager =
+            (WifiP2pManager) context.getSystemService(Context.WIFI_P2P_SERVICE);
+        WifiP2pManager.Channel channel =
+            manager.initialize(context, context.getMainLooper(), null /* listener */);
+        manager.requestGroupInfo(channel, wifiP2pGroup -> { onWifiP2pGroupChange(wifiP2pGroup); });
+      }
     }
 
     // BroadcastReceiver

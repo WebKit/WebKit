@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <memory>
+
 #include "p2p/base/fake_port_allocator.h"
 #include "p2p/base/test_stun_server.h"
 #include "p2p/client/basic_port_allocator.h"
@@ -18,7 +20,6 @@
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
 #endif
-#include "absl/memory/memory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
@@ -27,6 +28,7 @@
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "pc/test/fake_audio_capture_module.h"
+#include "pc/test/mock_peer_connection_observers.h"
 #include "rtc_base/fake_network.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/strings/string_builder.h"
@@ -45,21 +47,26 @@ using ::testing::Pair;
 using ::testing::Values;
 
 constexpr int kIceCandidatesTimeout = 10000;
+constexpr int64_t kWaitTimeout = 10000;
 
 class PeerConnectionWrapperForIceTest : public PeerConnectionWrapper {
  public:
   using PeerConnectionWrapper::PeerConnectionWrapper;
 
-  // Adds a new ICE candidate to the first transport.
-  bool AddIceCandidate(cricket::Candidate* candidate) {
+  std::unique_ptr<IceCandidateInterface> CreateJsepCandidateForFirstTransport(
+      cricket::Candidate* candidate) {
     RTC_DCHECK(pc()->remote_description());
     const auto* desc = pc()->remote_description()->description();
     RTC_DCHECK(desc->contents().size() > 0);
     const auto& first_content = desc->contents()[0];
     candidate->set_transport_name(first_content.name);
-    std::unique_ptr<IceCandidateInterface> jsep_candidate =
-        CreateIceCandidate(first_content.name, -1, *candidate);
-    return pc()->AddIceCandidate(jsep_candidate.get());
+    return CreateIceCandidate(first_content.name, -1, *candidate);
+  }
+
+  // Adds a new ICE candidate to the first transport.
+  bool AddIceCandidate(cricket::Candidate* candidate) {
+    return pc()->AddIceCandidate(
+        CreateJsepCandidateForFirstTransport(candidate).get());
   }
 
   // Returns ICE candidates from the remote session description.
@@ -115,13 +122,13 @@ class PeerConnectionIceBaseTest : public ::testing::Test {
   WrapperPtr CreatePeerConnection(const RTCConfiguration& config) {
     auto* fake_network = NewFakeNetwork();
     auto port_allocator =
-        absl::make_unique<cricket::BasicPortAllocator>(fake_network);
+        std::make_unique<cricket::BasicPortAllocator>(fake_network);
     port_allocator->set_flags(cricket::PORTALLOCATOR_DISABLE_TCP |
                               cricket::PORTALLOCATOR_DISABLE_RELAY);
     port_allocator->set_step_delay(cricket::kMinimumStepDelay);
     RTCConfiguration modified_config = config;
     modified_config.sdp_semantics = sdp_semantics_;
-    auto observer = absl::make_unique<MockPeerConnectionObserver>();
+    auto observer = std::make_unique<MockPeerConnectionObserver>();
     auto port_allocator_copy = port_allocator.get();
     auto pc = pc_factory_->CreatePeerConnection(
         modified_config, std::move(port_allocator), nullptr, observer.get());
@@ -130,7 +137,7 @@ class PeerConnectionIceBaseTest : public ::testing::Test {
     }
 
     observer->SetPeerConnectionInterface(pc.get());
-    auto wrapper = absl::make_unique<PeerConnectionWrapperForIceTest>(
+    auto wrapper = std::make_unique<PeerConnectionWrapperForIceTest>(
         pc_factory_, pc, std::move(observer));
     wrapper->set_network(fake_network);
     wrapper->port_allocator_ = port_allocator_copy;
@@ -450,8 +457,9 @@ TEST_P(PeerConnectionIceTest, CannotAddCandidateWhenRemoteDescriptionNotSet) {
   caller->CreateOfferAndSetAsLocal();
 
   EXPECT_FALSE(caller->pc()->AddIceCandidate(jsep_candidate.get()));
-  EXPECT_THAT(webrtc::metrics::Samples("WebRTC.PeerConnection.AddIceCandidate"),
-              ElementsAre(Pair(kAddIceCandidateFailNoRemoteDescription, 2)));
+  EXPECT_METRIC_THAT(
+      webrtc::metrics::Samples("WebRTC.PeerConnection.AddIceCandidate"),
+      ElementsAre(Pair(kAddIceCandidateFailNoRemoteDescription, 2)));
 }
 
 TEST_P(PeerConnectionIceTest, CannotAddCandidateWhenPeerConnectionClosed) {
@@ -688,6 +696,130 @@ TEST_P(PeerConnectionIceTest, TwoTrickledCandidatesAddedToRemoteDescription) {
                       candidates[0]->candidate());
   EXPECT_PRED_FORMAT2(AssertCandidatesEqual, candidate2,
                       candidates[1]->candidate());
+}
+
+TEST_P(PeerConnectionIceTest, AsyncAddIceCandidateIsAddedToRemoteDescription) {
+  auto candidate = CreateLocalUdpCandidate(SocketAddress("1.1.1.1", 1111));
+
+  auto caller = CreatePeerConnectionWithAudioVideo();
+  auto callee = CreatePeerConnectionWithAudioVideo();
+
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+
+  auto jsep_candidate =
+      callee->CreateJsepCandidateForFirstTransport(&candidate);
+  bool operation_completed = false;
+  callee->pc()->AddIceCandidate(std::move(jsep_candidate),
+                                [&operation_completed](RTCError result) {
+                                  EXPECT_TRUE(result.ok());
+                                  operation_completed = true;
+                                });
+  EXPECT_TRUE_WAIT(operation_completed, kWaitTimeout);
+
+  auto candidates = callee->GetIceCandidatesFromRemoteDescription();
+  ASSERT_EQ(1u, candidates.size());
+  EXPECT_PRED_FORMAT2(AssertCandidatesEqual, candidate,
+                      candidates[0]->candidate());
+}
+
+TEST_P(PeerConnectionIceTest,
+       AsyncAddIceCandidateCompletesImmediatelyIfNoPendingOperation) {
+  auto candidate = CreateLocalUdpCandidate(SocketAddress("1.1.1.1", 1111));
+
+  auto caller = CreatePeerConnectionWithAudioVideo();
+  auto callee = CreatePeerConnectionWithAudioVideo();
+
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+
+  auto jsep_candidate =
+      callee->CreateJsepCandidateForFirstTransport(&candidate);
+  bool operation_completed = false;
+  callee->pc()->AddIceCandidate(
+      std::move(jsep_candidate),
+      [&operation_completed](RTCError result) { operation_completed = true; });
+  EXPECT_TRUE(operation_completed);
+}
+
+TEST_P(PeerConnectionIceTest,
+       AsyncAddIceCandidateCompletesWhenPendingOperationCompletes) {
+  auto candidate = CreateLocalUdpCandidate(SocketAddress("1.1.1.1", 1111));
+
+  auto caller = CreatePeerConnectionWithAudioVideo();
+  auto callee = CreatePeerConnectionWithAudioVideo();
+
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+
+  // Chain an operation that will block AddIceCandidate() from executing.
+  rtc::scoped_refptr<MockCreateSessionDescriptionObserver> answer_observer(
+      new rtc::RefCountedObject<MockCreateSessionDescriptionObserver>());
+  callee->pc()->CreateAnswer(answer_observer, RTCOfferAnswerOptions());
+
+  auto jsep_candidate =
+      callee->CreateJsepCandidateForFirstTransport(&candidate);
+  bool operation_completed = false;
+  callee->pc()->AddIceCandidate(
+      std::move(jsep_candidate),
+      [&operation_completed](RTCError result) { operation_completed = true; });
+  // The operation will not be able to complete until we EXPECT_TRUE_WAIT()
+  // allowing CreateAnswer() to complete.
+  EXPECT_FALSE(operation_completed);
+  EXPECT_TRUE_WAIT(answer_observer->called(), kWaitTimeout);
+  // As soon as it does, AddIceCandidate() will execute without delay, so it
+  // must also have completed.
+  EXPECT_TRUE(operation_completed);
+}
+
+TEST_P(PeerConnectionIceTest,
+       AsyncAddIceCandidateFailsBeforeSetRemoteDescription) {
+  auto candidate = CreateLocalUdpCandidate(SocketAddress("1.1.1.1", 1111));
+
+  auto caller = CreatePeerConnectionWithAudioVideo();
+  std::unique_ptr<IceCandidateInterface> jsep_candidate =
+      CreateIceCandidate(cricket::CN_AUDIO, 0, candidate);
+
+  bool operation_completed = false;
+  caller->pc()->AddIceCandidate(
+      std::move(jsep_candidate), [&operation_completed](RTCError result) {
+        EXPECT_FALSE(result.ok());
+        EXPECT_EQ(result.message(),
+                  std::string("Error processing ICE candidate"));
+        operation_completed = true;
+      });
+  EXPECT_TRUE_WAIT(operation_completed, kWaitTimeout);
+}
+
+TEST_P(PeerConnectionIceTest,
+       AsyncAddIceCandidateFailsIfPeerConnectionDestroyed) {
+  auto candidate = CreateLocalUdpCandidate(SocketAddress("1.1.1.1", 1111));
+
+  auto caller = CreatePeerConnectionWithAudioVideo();
+  auto callee = CreatePeerConnectionWithAudioVideo();
+
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+
+  // Chain an operation that will block AddIceCandidate() from executing.
+  rtc::scoped_refptr<MockCreateSessionDescriptionObserver> answer_observer(
+      new rtc::RefCountedObject<MockCreateSessionDescriptionObserver>());
+  callee->pc()->CreateAnswer(answer_observer, RTCOfferAnswerOptions());
+
+  auto jsep_candidate =
+      callee->CreateJsepCandidateForFirstTransport(&candidate);
+  bool operation_completed = false;
+  callee->pc()->AddIceCandidate(
+      std::move(jsep_candidate), [&operation_completed](RTCError result) {
+        EXPECT_FALSE(result.ok());
+        EXPECT_EQ(
+            result.message(),
+            std::string(
+                "AddIceCandidate failed because the session was shut down"));
+        operation_completed = true;
+      });
+  // The operation will not be able to run until EXPECT_TRUE_WAIT(), giving us
+  // time to remove all references to the PeerConnection.
+  EXPECT_FALSE(operation_completed);
+  // This should delete the callee PC.
+  callee = nullptr;
+  EXPECT_TRUE_WAIT(operation_completed, kWaitTimeout);
 }
 
 TEST_P(PeerConnectionIceTest, LocalDescriptionUpdatedWhenContinualGathering) {
@@ -1070,10 +1202,10 @@ TEST_P(PeerConnectionIceUfragPwdAnswerTest, TestIncludedInAnswer) {
   auto offer = caller->CreateOffer();
   auto* offer_transport_desc = GetFirstTransportDescription(offer.get());
   if (offer_new_ufrag_) {
-    offer_transport_desc->ice_ufrag += "_new";
+    offer_transport_desc->ice_ufrag += "+new";
   }
   if (offer_new_pwd_) {
-    offer_transport_desc->ice_pwd += "_new";
+    offer_transport_desc->ice_pwd += "+new";
   }
 
   ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
@@ -1116,8 +1248,8 @@ TEST_P(PeerConnectionIceTest,
 
   // Signal ICE restart on the first media section.
   auto* offer_transport_desc = GetFirstTransportDescription(offer.get());
-  offer_transport_desc->ice_ufrag += "_new";
-  offer_transport_desc->ice_pwd += "_new";
+  offer_transport_desc->ice_ufrag += "+new";
+  offer_transport_desc->ice_pwd += "+new";
 
   ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
 
@@ -1270,6 +1402,15 @@ TEST_P(PeerConnectionIceTest, IceCredentialsCreateAnswer) {
     EXPECT_EQ(transport_info->description.ice_ufrag, credentials[0].ufrag);
     EXPECT_EQ(transport_info->description.ice_pwd, credentials[0].pwd);
   }
+}
+
+// Regression test for https://bugs.chromium.org/p/webrtc/issues/detail?id=4728
+TEST_P(PeerConnectionIceTest, CloseDoesNotTransitionGatheringStateToComplete) {
+  auto pc = CreatePeerConnectionWithAudioVideo();
+  pc->pc()->Close();
+  EXPECT_FALSE(pc->IsIceGatheringDone());
+  EXPECT_EQ(PeerConnectionInterface::kIceGatheringNew,
+            pc->pc()->ice_gathering_state());
 }
 
 }  // namespace webrtc

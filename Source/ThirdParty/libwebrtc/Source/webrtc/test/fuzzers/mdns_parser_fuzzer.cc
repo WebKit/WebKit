@@ -11,7 +11,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "p2p/base/mdns_message.h"
 #include "rtc_base/message_buffer_reader.h"
 
@@ -19,7 +20,7 @@ namespace webrtc {
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
   MessageBufferReader buf(reinterpret_cast<const char*>(data), size);
-  auto mdns_msg = absl::make_unique<MdnsMessage>();
+  auto mdns_msg = std::make_unique<MdnsMessage>();
   mdns_msg->Read(&buf);
 }
 

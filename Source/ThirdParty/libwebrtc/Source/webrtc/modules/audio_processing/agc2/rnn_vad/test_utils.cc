@@ -10,8 +10,11 @@
 
 #include "modules/audio_processing/agc2/rnn_vad/test_utils.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "rtc_base/checks.h"
+#include "rtc_base/system/arch.h"
+#include "system_wrappers/include/cpu_features_wrapper.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -48,7 +51,7 @@ void ExpectNearAbsolute(rtc::ArrayView<const float> expected,
 
 std::pair<std::unique_ptr<BinaryFileReader<int16_t, float>>, const size_t>
 CreatePcmSamplesReader(const size_t frame_length) {
-  auto ptr = absl::make_unique<BinaryFileReader<int16_t, float>>(
+  auto ptr = std::make_unique<BinaryFileReader<int16_t, float>>(
       test::ResourcePath("audio_processing/agc2/rnn_vad/samples", "pcm"),
       frame_length);
   // The last incomplete frame is ignored.
@@ -57,14 +60,14 @@ CreatePcmSamplesReader(const size_t frame_length) {
 
 ReaderPairType CreatePitchBuffer24kHzReader() {
   constexpr size_t cols = 864;
-  auto ptr = absl::make_unique<BinaryFileReader<float>>(
+  auto ptr = std::make_unique<BinaryFileReader<float>>(
       ResourcePath("audio_processing/agc2/rnn_vad/pitch_buf_24k", "dat"), cols);
   return {std::move(ptr), rtc::CheckedDivExact(ptr->data_length(), cols)};
 }
 
 ReaderPairType CreateLpResidualAndPitchPeriodGainReader() {
   constexpr size_t num_lp_residual_coeffs = 864;
-  auto ptr = absl::make_unique<BinaryFileReader<float>>(
+  auto ptr = std::make_unique<BinaryFileReader<float>>(
       ResourcePath("audio_processing/agc2/rnn_vad/pitch_lp_res", "dat"),
       num_lp_residual_coeffs);
   return {std::move(ptr),
@@ -72,7 +75,7 @@ ReaderPairType CreateLpResidualAndPitchPeriodGainReader() {
 }
 
 ReaderPairType CreateVadProbsReader() {
-  auto ptr = absl::make_unique<BinaryFileReader<float>>(
+  auto ptr = std::make_unique<BinaryFileReader<float>>(
       test::ResourcePath("audio_processing/agc2/rnn_vad/vad_prob", "dat"));
   return {std::move(ptr), ptr->data_length()};
 }
@@ -100,6 +103,25 @@ rtc::ArrayView<const float, kNumPitchBufAutoCorrCoeffs>
 PitchTestData::GetPitchBufAutoCorrCoeffsView() const {
   return {test_data_.data() + kBufSize24kHz + kNumPitchBufSquareEnergies,
           kNumPitchBufAutoCorrCoeffs};
+}
+
+bool IsOptimizationAvailable(Optimization optimization) {
+  switch (optimization) {
+    case Optimization::kSse2:
+#if defined(WEBRTC_ARCH_X86_FAMILY)
+      return WebRtc_GetCPUInfo(kSSE2) != 0;
+#else
+      return false;
+#endif
+    case Optimization::kNeon:
+#if defined(WEBRTC_HAS_NEON)
+      return true;
+#else
+      return false;
+#endif
+    case Optimization::kNone:
+      return true;
+  }
 }
 
 }  // namespace test

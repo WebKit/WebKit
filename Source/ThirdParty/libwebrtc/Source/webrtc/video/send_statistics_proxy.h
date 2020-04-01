@@ -11,13 +11,17 @@
 #ifndef VIDEO_SEND_STATISTICS_PROXY_H_
 #define VIDEO_SEND_STATISTICS_PROXY_H_
 
+#include <array>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
+#include "api/video/video_codec_constants.h"
 #include "api/video/video_stream_encoder_observer.h"
+#include "api/video_codecs/video_encoder_config.h"
 #include "call/video_send_stream.h"
+#include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_coding_defines.h"
@@ -69,6 +73,12 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
   void OnAdaptationChanged(AdaptationReason reason,
                            const AdaptationSteps& cpu_counts,
                            const AdaptationSteps& quality_counts) override;
+
+  void OnBitrateAllocationUpdated(
+      const VideoCodec& codec,
+      const VideoBitrateAllocation& allocation) override;
+
+  void OnEncoderInternalScalerUpdate(bool is_scaled) override;
 
   void OnMinPixelLimitReached() override;
   void OnInitialQualityResolutionAdaptDown() override;
@@ -215,9 +225,7 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
 
   void SetAdaptTimer(const AdaptationSteps& counts, StatsTimer* timer)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
-  void UpdateAdaptationStats(const AdaptationSteps& cpu_counts,
-                             const AdaptationSteps& quality_counts)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  void UpdateAdaptationStats() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
   void TryUpdateInitialQualityResolutionAdaptUp(
       const AdaptationSteps& quality_counts)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
@@ -251,6 +259,18 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
 
   absl::optional<int64_t> last_outlier_timestamp_ RTC_GUARDED_BY(crit_);
 
+  int last_num_spatial_layers_ RTC_GUARDED_BY(crit_);
+  int last_num_simulcast_streams_ RTC_GUARDED_BY(crit_);
+  std::array<bool, kMaxSpatialLayers> last_spatial_layer_use_
+      RTC_GUARDED_BY(crit_);
+  // Indicates if the latest bitrate allocation had layers disabled by low
+  // available bandwidth.
+  bool bw_limited_layers_ RTC_GUARDED_BY(crit_);
+  // Indicastes if the encoder internally downscales input image.
+  bool internal_encoder_scaler_ RTC_GUARDED_BY(crit_);
+  AdaptationSteps cpu_counts_ RTC_GUARDED_BY(crit_);
+  AdaptationSteps quality_counts_ RTC_GUARDED_BY(crit_);
+
   struct EncoderChangeEvent {
     std::string previous_encoder_implementation;
     std::string new_encoder_implementation;
@@ -274,9 +294,8 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
     void InitializeBitrateCounters(const VideoSendStream::Stats& stats);
 
     bool InsertEncodedFrame(const EncodedImage& encoded_frame,
-                            int simulcast_idx,
-                            bool* is_limited_in_resolution);
-    void RemoveOld(int64_t now_ms, bool* is_limited_in_resolution);
+                            int simulcast_idx);
+    void RemoveOld(int64_t now_ms);
 
     const std::string uma_prefix_;
     Clock* const clock_;

@@ -388,7 +388,7 @@ AsyncSocket* NATSocketServer::CreateAsyncSocket(int family, int type) {
   return new NATSocket(this, family, type);
 }
 
-void NATSocketServer::SetMessageQueue(MessageQueue* queue) {
+void NATSocketServer::SetMessageQueue(Thread* queue) {
   msg_queue_ = queue;
   server_->SetMessageQueue(queue);
 }

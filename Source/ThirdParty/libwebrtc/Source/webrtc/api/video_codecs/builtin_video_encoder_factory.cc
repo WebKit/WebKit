@@ -10,9 +10,9 @@
 
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 
+#include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_encoder.h"
@@ -61,7 +61,7 @@ class BuiltinVideoEncoderFactory : public VideoEncoderFactory {
     std::unique_ptr<VideoEncoder> internal_encoder;
     if (IsFormatSupported(internal_encoder_factory_->GetSupportedFormats(),
                           format)) {
-      internal_encoder = absl::make_unique<EncoderSimulcastProxy>(
+      internal_encoder = std::make_unique<EncoderSimulcastProxy>(
           internal_encoder_factory_.get(), format);
     }
 
@@ -79,7 +79,7 @@ class BuiltinVideoEncoderFactory : public VideoEncoderFactory {
 }  // namespace
 
 std::unique_ptr<VideoEncoderFactory> CreateBuiltinVideoEncoderFactory() {
-  return absl::make_unique<BuiltinVideoEncoderFactory>();
+  return std::make_unique<BuiltinVideoEncoderFactory>();
 }
 
 }  // namespace webrtc

@@ -13,7 +13,6 @@
 #include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/thread_checker.h"
 
@@ -32,7 +31,7 @@ std::unique_ptr<TestDependencyFactory> TestDependencyFactory::instance_ =
 const TestDependencyFactory& TestDependencyFactory::GetInstance() {
   RTC_DCHECK(GetThreadChecker()->IsCurrent());
   if (instance_ == nullptr) {
-    instance_ = absl::make_unique<TestDependencyFactory>();
+    instance_ = std::make_unique<TestDependencyFactory>();
   }
   return *instance_;
 }

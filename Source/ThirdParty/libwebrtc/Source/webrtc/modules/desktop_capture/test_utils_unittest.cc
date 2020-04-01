@@ -24,8 +24,8 @@ namespace {
 void PaintDesktopFrame(DesktopFrame* frame,
                        DesktopVector pos,
                        RgbaColor color) {
-  RTC_DCHECK(frame);
-  RTC_DCHECK(DesktopRect::MakeSize(frame->size()).Contains(pos));
+  ASSERT_TRUE(frame);
+  ASSERT_TRUE(DesktopRect::MakeSize(frame->size()).Contains(pos));
   *reinterpret_cast<uint32_t*>(frame->GetFrameDataAtPos(pos)) =
       color.ToUInt32();
 }

@@ -44,7 +44,8 @@ int32_t TestPackStereo::SendData(const AudioFrameType frame_type,
                                  const uint8_t payload_type,
                                  const uint32_t timestamp,
                                  const uint8_t* payload_data,
-                                 const size_t payload_size) {
+                                 const size_t payload_size,
+                                 int64_t absolute_capture_timestamp_ms) {
   RTPHeader rtp_header;
   int32_t status = 0;
 

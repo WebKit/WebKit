@@ -7,8 +7,12 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 import("../../webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
 
-rtc_source_set("video_rtp_headers") {
+rtc_library("video_rtp_headers") {
   visibility = [ "*" ]
   sources = [
     "color_space.cc",
@@ -26,11 +30,12 @@ rtc_source_set("video_rtp_headers") {
   deps = [
     "..:array_view",
     "../../rtc_base:rtc_base_approved",
+    "../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_source_set("video_frame") {
+rtc_library("video_frame") {
   visibility = [ "*" ]
   sources = [
     "video_codec_type.h",
@@ -55,14 +60,33 @@ rtc_source_set("video_frame") {
   ]
 }
 
-rtc_source_set("video_frame_type") {
+if (is_android) {
+  java_cpp_enum("video_frame_enums") {
+    sources = [ "video_codec_type.h" ]
+  }
+}
+
+rtc_source_set("recordable_encoded_frame") {
   visibility = [ "*" ]
-  sources = [
-    "video_frame_type.h",
+  sources = [ "recordable_encoded_frame.h" ]
+
+  deps = [
+    ":encoded_image",
+    ":video_frame",
+    ":video_rtp_headers",
+    "..:array_view",
+    "..:scoped_refptr",
+    "../../rtc_base:refcount",
+    "../units:timestamp",
   ]
 }
 
-rtc_source_set("video_frame_i420") {
+rtc_source_set("video_frame_type") {
+  visibility = [ "*" ]
+  sources = [ "video_frame_type.h" ]
+}
+
+rtc_library("video_frame_i420") {
   visibility = [ "*" ]
   sources = [
     "i420_buffer.cc",
@@ -80,7 +104,7 @@ rtc_source_set("video_frame_i420") {
   ]
 }
 
-rtc_source_set("video_frame_i010") {
+rtc_library("video_frame_i010") {
   visibility = [ "*" ]
   sources = [
     "i010_buffer.cc",
@@ -98,7 +122,7 @@ rtc_source_set("video_frame_i010") {
   ]
 }
 
-rtc_source_set("encoded_image") {
+rtc_library("encoded_image") {
   visibility = [ "*" ]
   sources = [
     "encoded_image.cc",
@@ -114,33 +138,30 @@ rtc_source_set("encoded_image") {
     "..:scoped_refptr",
     "../..:webrtc_common",
     "../../rtc_base:checks",
+    "../../rtc_base:deprecation",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_source_set("encoded_frame") {
+rtc_library("encoded_frame") {
   visibility = [ "*" ]
   sources = [
     "encoded_frame.cc",
     "encoded_frame.h",
   ]
 
-  deps = [
-    "../../modules/video_coding:encoded_frame",
-  ]
+  deps = [ "../../modules/video_coding:encoded_frame" ]
 }
 
 rtc_source_set("video_codec_constants") {
   visibility = [ "*" ]
-  sources = [
-    "video_codec_constants.h",
-  ]
+  sources = [ "video_codec_constants.h" ]
   deps = []
 }
 
-rtc_source_set("video_bitrate_allocation") {
+rtc_library("video_bitrate_allocation") {
   visibility = [ "*" ]
   sources = [
     "video_bitrate_allocation.cc",
@@ -156,7 +177,7 @@ rtc_source_set("video_bitrate_allocation") {
   ]
 }
 
-rtc_source_set("video_bitrate_allocator") {
+rtc_library("video_bitrate_allocator") {
   visibility = [ "*" ]
   sources = [
     "video_bitrate_allocator.cc",
@@ -170,9 +191,7 @@ rtc_source_set("video_bitrate_allocator") {
 
 rtc_source_set("video_bitrate_allocator_factory") {
   visibility = [ "*" ]
-  sources = [
-    "video_bitrate_allocator_factory.h",
-  ]
+  sources = [ "video_bitrate_allocator_factory.h" ]
   deps = [
     ":video_bitrate_allocator",
     "../../rtc_base:rtc_base_approved",
@@ -182,9 +201,7 @@ rtc_source_set("video_bitrate_allocator_factory") {
 
 rtc_source_set("video_stream_decoder") {
   visibility = [ "*" ]
-  sources = [
-    "video_stream_decoder.h",
-  ]
+  sources = [ "video_stream_decoder.h" ]
 
   deps = [
     ":encoded_frame",
@@ -196,7 +213,7 @@ rtc_source_set("video_stream_decoder") {
   ]
 }
 
-rtc_source_set("video_stream_decoder_create") {
+rtc_library("video_stream_decoder_create") {
   visibility = [ "*" ]
   sources = [
     "video_stream_decoder_create.cc",
@@ -209,11 +226,10 @@ rtc_source_set("video_stream_decoder_create") {
     "../../video:video_stream_decoder_impl",
     "../task_queue",
     "../video_codecs:video_codecs_api",
-    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
-rtc_source_set("video_stream_encoder") {
+rtc_library("video_stream_encoder") {
   visibility = [ "*" ]
   sources = [
     "video_stream_encoder_interface.h",
@@ -223,8 +239,10 @@ rtc_source_set("video_stream_encoder") {
   ]
 
   deps = [
+    ":video_bitrate_allocation",
     ":video_bitrate_allocator",
     ":video_bitrate_allocator_factory",
+    ":video_codec_constants",
     ":video_frame",
     "..:rtp_parameters",
     "../:fec_controller_api",
@@ -235,7 +253,7 @@ rtc_source_set("video_stream_encoder") {
   ]
 }
 
-rtc_source_set("video_stream_encoder_create") {
+rtc_library("video_stream_encoder_create") {
   visibility = [ "*" ]
   sources = [
     "video_stream_encoder_create.cc",
@@ -247,13 +265,13 @@ rtc_source_set("video_stream_encoder_create") {
     ":video_stream_encoder",
     "../../api:scoped_refptr",
     "../../video:video_stream_encoder_impl",
+    "../../video/adaptation:video_adaptation",
     "../task_queue",
     "../video_codecs:video_codecs_api",
-    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
-rtc_static_library("builtin_video_bitrate_allocator_factory") {
+rtc_library("builtin_video_bitrate_allocator_factory") {
   visibility = [ "*" ]
   sources = [
     "builtin_video_bitrate_allocator_factory.cc",
@@ -269,18 +287,15 @@ rtc_static_library("builtin_video_bitrate_allocator_factory") {
     "../../media:rtc_media_base",
     "../../modules/video_coding:video_coding_utility",
     "../../modules/video_coding:webrtc_vp9_helpers",
-    "../../rtc_base/system:fallthrough",
     "../video_codecs:video_codecs_api",
-    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/base:core_headers",
   ]
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("video_unittests") {
+  rtc_library("video_unittests") {
     testonly = true
-    sources = [
-      "video_stream_decoder_create_unittest.cc",
-    ]
+    sources = [ "video_stream_decoder_create_unittest.cc" ]
     deps = [
       ":video_stream_decoder_create",
       "../../test:test_support",

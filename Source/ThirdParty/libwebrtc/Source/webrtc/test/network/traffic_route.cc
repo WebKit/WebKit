@@ -11,9 +11,9 @@
 #include "test/network/traffic_route.h"
 
 #include <algorithm>
+#include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
@@ -57,7 +57,7 @@ TrafficRoute::TrafficRoute(Clock* clock,
                            EmulatedNetworkReceiverInterface* receiver,
                            EmulatedEndpoint* endpoint)
     : clock_(clock), receiver_(receiver), endpoint_(endpoint) {
-  null_receiver_ = absl::make_unique<NullReceiver>();
+  null_receiver_ = std::make_unique<NullReceiver>();
   absl::optional<uint16_t> port =
       endpoint_->BindReceiver(0, null_receiver_.get());
   RTC_DCHECK(port);
@@ -73,7 +73,7 @@ void TrafficRoute::TriggerPacketBurst(size_t num_packets, size_t packet_size) {
 
 void TrafficRoute::NetworkDelayedAction(size_t packet_size,
                                         std::function<void()> action) {
-  auto action_receiver = absl::make_unique<ActionReceiver>(action, endpoint_);
+  auto action_receiver = std::make_unique<ActionReceiver>(action, endpoint_);
   absl::optional<uint16_t> port =
       endpoint_->BindReceiver(0, action_receiver.get());
   RTC_DCHECK(port);

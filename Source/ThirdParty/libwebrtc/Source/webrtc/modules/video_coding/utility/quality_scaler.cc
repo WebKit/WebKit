@@ -68,14 +68,12 @@ class QualityScaler::QpSmoother {
   rtc::ExpFilter smoother_;
 };
 
-QualityScaler::QualityScaler(rtc::TaskQueue* task_queue,
-                             AdaptationObserverInterface* observer,
+QualityScaler::QualityScaler(AdaptationObserverInterface* observer,
                              VideoEncoder::QpThresholds thresholds)
-    : QualityScaler(task_queue, observer, thresholds, kMeasureMs) {}
+    : QualityScaler(observer, thresholds, kMeasureMs) {}
 
 // Protected ctor, should not be called directly.
-QualityScaler::QualityScaler(rtc::TaskQueue* task_queue,
-                             AdaptationObserverInterface* observer,
+QualityScaler::QualityScaler(AdaptationObserverInterface* observer,
                              VideoEncoder::QpThresholds thresholds,
                              int64_t sampling_period_ms)
     : observer_(observer),
@@ -106,9 +104,10 @@ QualityScaler::QualityScaler(rtc::TaskQueue* task_queue,
   }
   RTC_DCHECK(observer_ != nullptr);
   check_qp_task_ = RepeatingTaskHandle::DelayedStart(
-      task_queue->Get(), TimeDelta::ms(GetSamplingPeriodMs()), [this]() {
+      TaskQueueBase::Current(), TimeDelta::Millis(GetSamplingPeriodMs()),
+      [this]() {
         CheckQp();
-        return TimeDelta::ms(GetSamplingPeriodMs());
+        return TimeDelta::Millis(GetSamplingPeriodMs());
       });
   RTC_LOG(LS_INFO) << "QP thresholds: low: " << thresholds_.low
                    << ", high: " << thresholds_.high;
@@ -164,6 +163,21 @@ void QualityScaler::ReportQp(int qp, int64_t time_sent_us) {
     qp_smoother_high_->Add(qp, time_sent_us);
   if (qp_smoother_low_)
     qp_smoother_low_->Add(qp, time_sent_us);
+}
+
+bool QualityScaler::QpFastFilterLow() const {
+  RTC_DCHECK_RUN_ON(&task_checker_);
+  size_t num_frames = config_.use_all_drop_reasons
+                          ? framedrop_percent_all_.Size()
+                          : framedrop_percent_media_opt_.Size();
+  const size_t kMinNumFrames = 10;
+  if (num_frames < kMinNumFrames) {
+    return false;  // Wait for more frames before making a decision.
+  }
+  absl::optional<int> avg_qp_high = qp_smoother_high_
+                                        ? qp_smoother_high_->GetAvg()
+                                        : average_qp_.GetAverageRoundedDown();
+  return (avg_qp_high) ? (avg_qp_high.value() <= thresholds_.low) : false;
 }
 
 void QualityScaler::CheckQp() {

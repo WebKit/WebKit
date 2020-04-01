@@ -19,24 +19,16 @@ namespace rtc {
 // Win32Window
 ///////////////////////////////////////////////////////////////////////////////
 
-static const wchar_t kWindowBaseClassName[] = L"WindowBaseClass";
+static const wchar_t kWindowBaseClassName[] = L"RtcWindowBaseClass";
 HINSTANCE Win32Window::instance_ = nullptr;
 ATOM Win32Window::window_class_ = 0;
 
 Win32Window::Win32Window() : wnd_(nullptr) {}
 
-Win32Window::~Win32Window() {
-  RTC_DCHECK(nullptr == wnd_);
-}
+Win32Window::~Win32Window() { RTC_DCHECK(nullptr == wnd_); }
 
-bool Win32Window::Create(HWND parent,
-                         const wchar_t* title,
-                         DWORD style,
-                         DWORD exstyle,
-                         int x,
-                         int y,
-                         int cx,
-                         int cy) {
+bool Win32Window::Create(HWND parent, const wchar_t* title, DWORD style,
+                         DWORD exstyle, int x, int y, int cx, int cy) {
   if (wnd_) {
     // Window already exists.
     return false;
@@ -51,8 +43,16 @@ bool Win32Window::Create(HWND parent,
       return false;
     }
 
-    // Class not registered, register it.
+    // Register or reregister the class as necessary.  window_class_ == nullptr
+    // is not an infallible indicator that the class is unregistered.
     WNDCLASSEXW wcex;
+    memset(&wcex, 0, sizeof(wcex));
+    wcex.cbSize = sizeof(wcex);
+    if (::GetClassInfoExW(instance_, kWindowBaseClassName, &wcex) &&
+        !::UnregisterClassW(kWindowBaseClassName, instance_)) {
+      RTC_LOG_GLE(LS_ERROR) << "UnregisterClass failed.";
+    }
+
     memset(&wcex, 0, sizeof(wcex));
     wcex.cbSize = sizeof(wcex);
     wcex.hInstance = instance_;
@@ -76,14 +76,14 @@ void Win32Window::Destroy() {
 
 void Win32Window::Shutdown() {
   if (window_class_) {
-    ::UnregisterClass(MAKEINTATOM(window_class_), instance_);
+    if (!::UnregisterClass(MAKEINTATOM(window_class_), instance_)) {
+      RTC_LOG_GLE(LS_ERROR) << "UnregisterClass failed.";
+    }
     window_class_ = 0;
   }
 }
 
-bool Win32Window::OnMessage(UINT uMsg,
-                            WPARAM wParam,
-                            LPARAM lParam,
+bool Win32Window::OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam,
                             LRESULT& result) {
   switch (uMsg) {
     case WM_CLOSE:
@@ -96,17 +96,13 @@ bool Win32Window::OnMessage(UINT uMsg,
   return false;
 }
 
-bool Win32Window::OnClose() {
-  return true;
-}
+bool Win32Window::OnClose() { return true; }
 
 void Win32Window::OnNcDestroy() {
   // Do nothing. }
 }
 
-LRESULT Win32Window::WndProc(HWND hwnd,
-                             UINT uMsg,
-                             WPARAM wParam,
+LRESULT Win32Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
                              LPARAM lParam) {
   Win32Window* that =
       reinterpret_cast<Win32Window*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));

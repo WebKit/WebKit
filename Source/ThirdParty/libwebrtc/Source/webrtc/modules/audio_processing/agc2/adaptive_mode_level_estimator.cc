@@ -100,10 +100,12 @@ void AdaptiveModeLevelEstimator::Reset() {
 }
 
 void AdaptiveModeLevelEstimator::DebugDumpEstimate() {
-  apm_data_dumper_->DumpRaw("agc2_adaptive_level_estimate_with_offset_dbfs",
-                            last_estimate_with_offset_dbfs_);
-  apm_data_dumper_->DumpRaw("agc2_adaptive_level_estimate_dbfs",
-                            LatestLevelEstimate());
+  if (apm_data_dumper_) {
+    apm_data_dumper_->DumpRaw("agc2_adaptive_level_estimate_with_offset_dbfs",
+                              last_estimate_with_offset_dbfs_);
+    apm_data_dumper_->DumpRaw("agc2_adaptive_level_estimate_dbfs",
+                              LatestLevelEstimate());
+  }
   saturation_protector_.DebugDumpEstimate();
 }
 }  // namespace webrtc

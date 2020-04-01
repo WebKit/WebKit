@@ -13,6 +13,8 @@
 
 #include <stddef.h>
 
+#include "rtc_base/system/rtc_export.h"
+
 namespace rtc {
 
 // Limits the rate of use to a certain maximum quantity per period of
@@ -21,7 +23,7 @@ namespace rtc {
 // It's implemented like a diet plan: You have so many calories per
 // day.  If you hit the limit, you can't eat any more until the next
 // day.
-class DataRateLimiter {
+class RTC_EXPORT DataRateLimiter {
  public:
   // For example, 100kb per second.
   DataRateLimiter(size_t max, double period)

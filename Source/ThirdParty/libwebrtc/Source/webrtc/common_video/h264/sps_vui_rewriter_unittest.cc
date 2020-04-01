@@ -349,7 +349,7 @@ TEST_P(SpsVuiRewriterTest, RewriteVui) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    ,
+    All,
     SpsVuiRewriterTest,
     ::testing::Values(
         std::make_tuple(kVuiNoFrameBuffering,

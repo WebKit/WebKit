@@ -13,15 +13,11 @@
 #include <algorithm>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/numerics/divide_round.h"
 #include "rtc_base/time_utils.h"
 
 namespace webrtc {
 namespace {
-// TODO(danilchap): Make generic, optimize and move to base.
-inline int64_t DivideRoundToNearest(int64_t x, uint32_t y) {
-  // Callers ensure x is positive and x + y / 2 doesn't overflow.
-  return (x + y / 2) / y;
-}
 
 int64_t NtpOffsetMsCalledOnce() {
   constexpr int64_t kNtpJan1970Sec = 2208988800;

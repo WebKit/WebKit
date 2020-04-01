@@ -11,9 +11,9 @@
 #include "video/frame_encode_metadata_writer.h"
 
 #include <algorithm>
+#include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "common_video/h264/sps_vui_rewriter.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/video_coding/include/video_coding_defines.h"
@@ -34,8 +34,6 @@ class EncodedImageBufferWrapper : public EncodedImageBufferInterface {
   const uint8_t* data() const override { return buffer_.data(); }
   uint8_t* data() override { return buffer_.data(); }
   size_t size() const override { return buffer_.size(); }
-
-  void Realloc(size_t t) override { RTC_NOTREACHED(); }
 
  private:
   rtc::Buffer buffer_;
@@ -107,7 +105,7 @@ void FrameEncodeMetadataWriter::OnEncodeStarted(const VideoFrame& frame) {
     // If stream is disabled due to low bandwidth OnEncodeStarted still will be
     // called and have to be ignored.
     if (timing_frames_info_[si].target_bitrate_bytes_per_sec == 0)
-      return;
+      continue;
     if (timing_frames_info_[si].frames.size() == kMaxEncodeStartTimeListSize) {
       ++stalled_encoder_logged_messages_;
       if (stalled_encoder_logged_messages_ <= kMessagesThrottlingThreshold ||
@@ -217,7 +215,7 @@ FrameEncodeMetadataWriter::UpdateBitstream(
 
   rtc::Buffer modified_buffer;
   std::unique_ptr<RTPFragmentationHeader> modified_fragmentation =
-      absl::make_unique<RTPFragmentationHeader>();
+      std::make_unique<RTPFragmentationHeader>();
   modified_fragmentation->CopyFrom(*fragmentation);
 
   // Make sure that the data is not copied if owned by EncodedImage.

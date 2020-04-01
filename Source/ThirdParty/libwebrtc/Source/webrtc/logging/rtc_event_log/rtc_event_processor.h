@@ -18,7 +18,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/function_view.h"
 #include "rtc_base/checks.h"
 
@@ -109,7 +108,7 @@ class RtcEventProcessor {
     if (iterable.begin() == iterable.end())
       return;
     event_lists_.push_back(
-        absl::make_unique<event_processor_impl::ProcessableEventList<
+        std::make_unique<event_processor_impl::ProcessableEventList<
             typename Iterable::const_iterator, typename Iterable::value_type>>(
             iterable.begin(), iterable.end(), handler,
             insertion_order_index_++));

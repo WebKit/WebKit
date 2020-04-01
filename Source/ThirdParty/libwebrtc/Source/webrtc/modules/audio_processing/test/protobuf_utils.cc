@@ -10,7 +10,8 @@
 
 #include "modules/audio_processing/test/protobuf_utils.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "rtc_base/system/arch.h"
 
 namespace {
@@ -27,7 +28,7 @@ size_t ReadMessageBytesFromString(std::stringstream* input,
   if (size <= 0)
     return 0;
 
-  *bytes = absl::make_unique<uint8_t[]>(size);
+  *bytes = std::make_unique<uint8_t[]>(size);
   input->read(reinterpret_cast<char*>(bytes->get()),
               size * sizeof((*bytes)[0]));
   size_read = input->gcount();
@@ -49,7 +50,7 @@ size_t ReadMessageBytesFromFile(FILE* file, std::unique_ptr<uint8_t[]>* bytes) {
   if (size <= 0)
     return 0;
 
-  *bytes = absl::make_unique<uint8_t[]>(size);
+  *bytes = std::make_unique<uint8_t[]>(size);
   return fread(bytes->get(), sizeof((*bytes)[0]), size, file);
 }
 

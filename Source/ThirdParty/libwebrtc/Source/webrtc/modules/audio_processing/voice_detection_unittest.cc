@@ -13,7 +13,7 @@
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/test/audio_buffer_tools.h"
 #include "modules/audio_processing/test/bitexactness_tools.h"
-#include "modules/audio_processing/voice_detection_impl.h"
+#include "modules/audio_processing/voice_detection.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -22,27 +22,24 @@ namespace {
 const int kNumFramesToProcess = 1000;
 
 // Process one frame of data and produce the output.
-void ProcessOneFrame(int sample_rate_hz,
+bool ProcessOneFrame(int sample_rate_hz,
                      AudioBuffer* audio_buffer,
-                     VoiceDetectionImpl* voice_detection) {
+                     VoiceDetection* voice_detection) {
   if (sample_rate_hz > AudioProcessing::kSampleRate16kHz) {
     audio_buffer->SplitIntoFrequencyBands();
   }
 
-  voice_detection->ProcessCaptureAudio(audio_buffer);
+  return voice_detection->ProcessCaptureAudio(audio_buffer);
 }
 
 // Processes a specified amount of frames, verifies the results and reports
 // any errors.
 void RunBitexactnessTest(int sample_rate_hz,
                          size_t num_channels,
-                         int frame_size_ms_reference,
-                         bool stream_has_voice_reference,
-                         VoiceDetection::Likelihood likelihood_reference) {
-  rtc::CriticalSection crit_capture;
-  VoiceDetectionImpl voice_detection(&crit_capture);
-  voice_detection.Initialize(sample_rate_hz > 16000 ? 16000 : sample_rate_hz);
-  voice_detection.Enable(true);
+                         bool stream_has_voice_reference) {
+  int sample_rate_to_use = std::min(sample_rate_hz, 16000);
+  VoiceDetection voice_detection(sample_rate_to_use,
+                                 VoiceDetection::kLowLikelihood);
 
   int samples_per_channel = rtc::CheckedDivExact(sample_rate_hz, 100);
   const StreamConfig capture_config(sample_rate_hz, num_channels, false);
@@ -53,6 +50,7 @@ void RunBitexactnessTest(int sample_rate_hz,
   test::InputAudioFile capture_file(
       test::GetApmCaptureTestVectorFileName(sample_rate_hz));
   std::vector<float> capture_input(samples_per_channel * num_channels);
+  bool stream_has_voice = false;
   for (int frame_no = 0; frame_no < kNumFramesToProcess; ++frame_no) {
     ReadFloatSamplesFromStereoFile(samples_per_channel, num_channels,
                                    &capture_file, capture_input);
@@ -60,64 +58,47 @@ void RunBitexactnessTest(int sample_rate_hz,
     test::CopyVectorToAudioBuffer(capture_config, capture_input,
                                   &capture_buffer);
 
-    ProcessOneFrame(sample_rate_hz, &capture_buffer, &voice_detection);
+    stream_has_voice =
+        ProcessOneFrame(sample_rate_hz, &capture_buffer, &voice_detection);
   }
 
-  int frame_size_ms = voice_detection.frame_size_ms();
-  bool stream_has_voice = voice_detection.stream_has_voice();
-  VoiceDetection::Likelihood likelihood = voice_detection.likelihood();
-
-  // Compare the outputs to the references.
-  EXPECT_EQ(frame_size_ms_reference, frame_size_ms);
   EXPECT_EQ(stream_has_voice_reference, stream_has_voice);
-  EXPECT_EQ(likelihood_reference, likelihood);
 }
 
-const int kFrameSizeMsReference = 10;
 const bool kStreamHasVoiceReference = true;
-const VoiceDetection::Likelihood kLikelihoodReference =
-    VoiceDetection::kLowLikelihood;
 
 }  // namespace
 
 TEST(VoiceDetectionBitExactnessTest, Mono8kHz) {
-  RunBitexactnessTest(8000, 1, kFrameSizeMsReference, kStreamHasVoiceReference,
-                      kLikelihoodReference);
+  RunBitexactnessTest(8000, 1, kStreamHasVoiceReference);
 }
 
 TEST(VoiceDetectionBitExactnessTest, Mono16kHz) {
-  RunBitexactnessTest(16000, 1, kFrameSizeMsReference, kStreamHasVoiceReference,
-                      kLikelihoodReference);
+  RunBitexactnessTest(16000, 1, kStreamHasVoiceReference);
 }
 
 TEST(VoiceDetectionBitExactnessTest, Mono32kHz) {
-  RunBitexactnessTest(32000, 1, kFrameSizeMsReference, kStreamHasVoiceReference,
-                      kLikelihoodReference);
+  RunBitexactnessTest(32000, 1, kStreamHasVoiceReference);
 }
 
 TEST(VoiceDetectionBitExactnessTest, Mono48kHz) {
-  RunBitexactnessTest(48000, 1, kFrameSizeMsReference, kStreamHasVoiceReference,
-                      kLikelihoodReference);
+  RunBitexactnessTest(48000, 1, kStreamHasVoiceReference);
 }
 
 TEST(VoiceDetectionBitExactnessTest, Stereo8kHz) {
-  RunBitexactnessTest(8000, 2, kFrameSizeMsReference, kStreamHasVoiceReference,
-                      kLikelihoodReference);
+  RunBitexactnessTest(8000, 2, kStreamHasVoiceReference);
 }
 
 TEST(VoiceDetectionBitExactnessTest, Stereo16kHz) {
-  RunBitexactnessTest(16000, 2, kFrameSizeMsReference, kStreamHasVoiceReference,
-                      kLikelihoodReference);
+  RunBitexactnessTest(16000, 2, kStreamHasVoiceReference);
 }
 
 TEST(VoiceDetectionBitExactnessTest, Stereo32kHz) {
-  RunBitexactnessTest(32000, 2, kFrameSizeMsReference, kStreamHasVoiceReference,
-                      kLikelihoodReference);
+  RunBitexactnessTest(32000, 2, kStreamHasVoiceReference);
 }
 
 TEST(VoiceDetectionBitExactnessTest, Stereo48kHz) {
-  RunBitexactnessTest(48000, 2, kFrameSizeMsReference, kStreamHasVoiceReference,
-                      kLikelihoodReference);
+  RunBitexactnessTest(48000, 2, kStreamHasVoiceReference);
 }
 
 }  // namespace webrtc

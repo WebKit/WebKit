@@ -261,7 +261,9 @@ def BuildDepsentryDict(deps_dict):
 def _FindChangedCipdPackages(path, old_pkgs, new_pkgs):
   pkgs_equal = ({p['package'] for p in old_pkgs} ==
       {p['package'] for p in new_pkgs})
-  assert pkgs_equal, 'Old: %s\n New: %s' % (old_pkgs, new_pkgs)
+  assert pkgs_equal, ('Old: %s\n New: %s.\nYou need to do a manual roll '
+                      'and remove/add entries in DEPS so the old and new '
+                      'list match.' % (old_pkgs, new_pkgs))
   for old_pkg in old_pkgs:
     for new_pkg in new_pkgs:
       old_version = old_pkg['version']
@@ -683,8 +685,9 @@ def main():
   removed_generated_android_deps, other_deps = FindRemovedDeps(webrtc_deps,
                                                                new_cr_deps)
   if other_deps:
-    raise RollError('WebRTC DEPS entries are missing from Chromium: %s. '
-          'Remove them or add them to DONT_AUTOROLL_THESE.' % other_deps)
+    raise RollError('WebRTC DEPS entries are missing from Chromium: %s.\n'
+          'Remove them or add them to either '
+          'WEBRTC_ONLY_DEPS or DONT_AUTOROLL_THESE.' % other_deps)
   clang_change = CalculateChangedClang(rev_update.new_chromium_rev)
   commit_msg = GenerateCommitMessage(
       rev_update, current_commit_pos, new_commit_pos, changed_deps,

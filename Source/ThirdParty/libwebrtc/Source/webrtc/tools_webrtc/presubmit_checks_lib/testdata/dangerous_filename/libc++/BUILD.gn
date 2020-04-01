@@ -7,7 +7,5 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 group("dummy_subpackage") {
-  sources = [
-    "dummy_subpackage.h",
-  ]
+  sources = [ "dummy_subpackage.h" ]
 }

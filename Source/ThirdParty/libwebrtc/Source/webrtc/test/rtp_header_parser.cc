@@ -11,7 +11,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_utility.h"
 #include "rtc_base/critical_section.h"
@@ -41,7 +40,7 @@ class RtpHeaderParserImpl : public RtpHeaderParser {
 };
 
 std::unique_ptr<RtpHeaderParser> RtpHeaderParser::CreateForTest() {
-  return absl::make_unique<RtpHeaderParserImpl>();
+  return std::make_unique<RtpHeaderParserImpl>();
 }
 
 RtpHeaderParserImpl::RtpHeaderParserImpl() {}

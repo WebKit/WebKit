@@ -44,14 +44,15 @@ const uint32_t kLegacyScreenshareTl0BitrateKbps = 200;
 const uint32_t kLegacyScreenshareTl1BitrateKbps = 1000;
 }  // namespace
 
-float SimulcastRateAllocator::GetTemporalRateAllocation(int num_layers,
-                                                        int temporal_id) {
+float SimulcastRateAllocator::GetTemporalRateAllocation(
+    int num_layers,
+    int temporal_id,
+    bool base_heavy_tl3_alloc) {
   RTC_CHECK_GT(num_layers, 0);
   RTC_CHECK_LE(num_layers, kMaxTemporalStreams);
   RTC_CHECK_GE(temporal_id, 0);
   RTC_CHECK_LT(temporal_id, num_layers);
-  if (num_layers == 3 &&
-      field_trial::IsEnabled("WebRTC-UseBaseHeavyVP8TL3RateAllocation")) {
+  if (num_layers == 3 && base_heavy_tl3_alloc) {
     return kBaseHeavy3TlRateAllocation[temporal_id];
   }
   return kLayerRateAllocation[num_layers - 1][temporal_id];
@@ -59,8 +60,8 @@ float SimulcastRateAllocator::GetTemporalRateAllocation(int num_layers,
 
 SimulcastRateAllocator::SimulcastRateAllocator(const VideoCodec& codec)
     : codec_(codec),
-      stable_rate_settings_(
-          StableTargetRateExperiment::ParseFromFieldTrials()) {}
+      stable_rate_settings_(StableTargetRateExperiment::ParseFromFieldTrials()),
+      rate_control_settings_(RateControlSettings::ParseFromFieldTrials()) {}
 
 SimulcastRateAllocator::~SimulcastRateAllocator() = default;
 
@@ -86,7 +87,7 @@ void SimulcastRateAllocator::DistributeAllocationToSimulcastLayers(
   DataRate left_in_stable_allocation = stable_bitrate;
 
   if (codec_.maxBitrate) {
-    DataRate max_rate = DataRate::kbps(codec_.maxBitrate);
+    DataRate max_rate = DataRate::KilobitsPerSec(codec_.maxBitrate);
     left_in_total_allocation = std::min(left_in_total_allocation, max_rate);
     left_in_stable_allocation = std::min(left_in_stable_allocation, max_rate);
   }
@@ -96,7 +97,8 @@ void SimulcastRateAllocator::DistributeAllocationToSimulcastLayers(
     if (codec_.active) {
       allocated_bitrates->SetBitrate(
           0, 0,
-          std::max(DataRate::kbps(codec_.minBitrate), left_in_total_allocation)
+          std::max(DataRate::KilobitsPerSec(codec_.minBitrate),
+                   left_in_total_allocation)
               .bps());
     }
     return;
@@ -128,7 +130,7 @@ void SimulcastRateAllocator::DistributeAllocationToSimulcastLayers(
   // Always allocate enough bitrate for the minimum bitrate of the first
   // active layer. Suspending below min bitrate is controlled outside the
   // codec implementation and is not overridden by this.
-  DataRate min_rate = DataRate::kbps(
+  DataRate min_rate = DataRate::KilobitsPerSec(
       codec_.simulcastStream[layer_index[active_layer]].minBitrate);
   left_in_total_allocation = std::max(left_in_total_allocation, min_rate);
   left_in_stable_allocation = std::max(left_in_stable_allocation, min_rate);
@@ -156,8 +158,8 @@ void SimulcastRateAllocator::DistributeAllocationToSimulcastLayers(
     }
     // If we can't allocate to the current layer we can't allocate to higher
     // layers because they require a higher minimum bitrate.
-    DataRate min_bitrate = DataRate::kbps(stream.minBitrate);
-    DataRate target_bitrate = DataRate::kbps(stream.targetBitrate);
+    DataRate min_bitrate = DataRate::KilobitsPerSec(stream.minBitrate);
+    DataRate target_bitrate = DataRate::KilobitsPerSec(stream.targetBitrate);
     double hysteresis_factor =
         codec_.mode == VideoCodecMode::kRealtimeVideo
             ? stable_rate_settings_.GetVideoHysteresisFactor()
@@ -166,6 +168,7 @@ void SimulcastRateAllocator::DistributeAllocationToSimulcastLayers(
       min_bitrate = std::min(hysteresis_factor * min_bitrate, target_bitrate);
     }
     if (left_in_stable_allocation < min_bitrate) {
+      allocated_bitrates->set_bw_limited(true);
       break;
     }
 
@@ -191,11 +194,11 @@ void SimulcastRateAllocator::DistributeAllocationToSimulcastLayers(
   //               better idea of possible performance implications.
   if (left_in_total_allocation > DataRate::Zero()) {
     const SimulcastStream& stream = codec_.simulcastStream[top_active_layer];
-    DataRate initial_layer_rate =
-        DataRate::bps(allocated_bitrates->GetSpatialLayerSum(top_active_layer));
-    DataRate additional_allocation =
-        std::min(left_in_total_allocation,
-                 DataRate::kbps(stream.maxBitrate) - initial_layer_rate);
+    DataRate initial_layer_rate = DataRate::BitsPerSec(
+        allocated_bitrates->GetSpatialLayerSum(top_active_layer));
+    DataRate additional_allocation = std::min(
+        left_in_total_allocation,
+        DataRate::KilobitsPerSec(stream.maxBitrate) - initial_layer_rate);
     allocated_bitrates->SetBitrate(
         top_active_layer, 0,
         (initial_layer_rate + additional_allocation).bps());
@@ -282,7 +285,10 @@ std::vector<uint32_t> SimulcastRateAllocator::DefaultTemporalLayerAllocation(
   std::vector<uint32_t> bitrates;
   for (size_t i = 0; i < num_temporal_layers; ++i) {
     float layer_bitrate =
-        bitrate_kbps * GetTemporalRateAllocation(num_temporal_layers, i);
+        bitrate_kbps *
+        GetTemporalRateAllocation(
+            num_temporal_layers, i,
+            rate_control_settings_.Vp8BaseHeavyTl3RateAllocation());
     bitrates.push_back(static_cast<uint32_t>(layer_bitrate + 0.5));
   }
 

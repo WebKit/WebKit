@@ -9,9 +9,11 @@
  */
 #include "test/logging/memory_log_writer.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+
 namespace webrtc {
 namespace {
 class MemoryLogWriter final : public RtcEventLogOutput {
@@ -28,8 +30,9 @@ class MemoryLogWriter final : public RtcEventLogOutput {
   bool Write(const std::string& value) override {
     size_t written;
     int error;
-    return buffer_.Write(value.data(), value.size(), &written, &error) ==
+    return buffer_.WriteAll(value.data(), value.size(), &written, &error) ==
            rtc::SR_SUCCESS;
+    RTC_DCHECK_EQ(value.size(), written);
   }
   void Flush() override {}
 
@@ -45,7 +48,7 @@ class MemoryLogWriterFactory : public LogWriterFactoryInterface {
       : target_(target) {}
   ~MemoryLogWriterFactory() final {}
   std::unique_ptr<RtcEventLogOutput> Create(std::string filename) override {
-    return absl::make_unique<MemoryLogWriter>(target_, filename);
+    return std::make_unique<MemoryLogWriter>(target_, filename);
   }
 
  private:
@@ -59,7 +62,7 @@ MemoryLogStorage::MemoryLogStorage() {}
 MemoryLogStorage::~MemoryLogStorage() {}
 
 std::unique_ptr<LogWriterFactoryInterface> MemoryLogStorage::CreateFactory() {
-  return absl::make_unique<MemoryLogWriterFactory>(&logs_);
+  return std::make_unique<MemoryLogWriterFactory>(&logs_);
 }
 
 // namespace webrtc_impl

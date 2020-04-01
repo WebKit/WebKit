@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "modules/desktop_capture/desktop_geometry.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -48,7 +49,7 @@ struct MacDisplayConfiguration {
 typedef std::vector<MacDisplayConfiguration> MacDisplayConfigurations;
 
 // Describes the configuration of the whole desktop.
-struct MacDesktopConfiguration {
+struct RTC_EXPORT MacDesktopConfiguration {
   // Used to request bottom-up or top-down coordinates.
   enum Origin { BottomLeftOrigin, TopLeftOrigin };
 

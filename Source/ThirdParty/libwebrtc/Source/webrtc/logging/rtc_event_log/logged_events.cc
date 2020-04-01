@@ -18,6 +18,10 @@ LoggedPacketInfo::LoggedPacketInfo(const LoggedRtpPacket& rtp,
     : ssrc(rtp.header.ssrc),
       stream_seq_no(rtp.header.sequenceNumber),
       size(static_cast<uint16_t>(rtp.total_length)),
+      payload_size(static_cast<uint16_t>(rtp.total_length -
+                                         rtp.header.paddingLength -
+                                         rtp.header.headerLength)),
+      padding_size(static_cast<uint16_t>(rtp.header.paddingLength)),
       payload_type(rtp.header.payloadType),
       media_type(media_type),
       rtx(rtx),
@@ -27,9 +31,25 @@ LoggedPacketInfo::LoggedPacketInfo(const LoggedRtpPacket& rtp,
           has_transport_seq_no ? rtp.header.extension.transportSequenceNumber
                                : 0)),
       capture_time(capture_time),
-      log_packet_time(Timestamp::us(rtp.log_time_us())) {}
+      log_packet_time(Timestamp::Micros(rtp.log_time_us())),
+      reported_send_time(rtp.header.extension.hasAbsoluteSendTime
+                             ? rtp.header.extension.GetAbsoluteSendTimestamp()
+                             : Timestamp::MinusInfinity()) {}
 
 LoggedPacketInfo::LoggedPacketInfo(const LoggedPacketInfo&) = default;
 
 LoggedPacketInfo::~LoggedPacketInfo() {}
+
+LoggedRtcpPacket::LoggedRtcpPacket(int64_t timestamp_us,
+                                   const uint8_t* packet,
+                                   size_t total_length)
+    : timestamp_us(timestamp_us), raw_data(packet, packet + total_length) {}
+LoggedRtcpPacket::LoggedRtcpPacket(int64_t timestamp_us,
+                                   const std::string& packet)
+    : timestamp_us(timestamp_us), raw_data(packet.size()) {
+  memcpy(raw_data.data(), packet.data(), packet.size());
+}
+LoggedRtcpPacket::LoggedRtcpPacket(const LoggedRtcpPacket& rhs) = default;
+LoggedRtcpPacket::~LoggedRtcpPacket() = default;
+
 }  // namespace webrtc

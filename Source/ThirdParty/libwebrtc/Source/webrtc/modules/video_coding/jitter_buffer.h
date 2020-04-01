@@ -18,8 +18,10 @@
 #include <vector>
 
 #include "modules/include/module_common_types.h"
+#include "modules/include/module_common_types_public.h"
 #include "modules/utility/include/process_thread.h"
 #include "modules/video_coding/decoding_state.h"
+#include "modules/video_coding/event_wrapper.h"
 #include "modules/video_coding/include/video_coding.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/inter_frame_delay.h"
@@ -28,7 +30,6 @@
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/thread_annotations.h"
-#include "system_wrappers/include/event_wrapper.h"
 
 namespace webrtc {
 

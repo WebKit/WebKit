@@ -43,7 +43,7 @@ constexpr size_t ExtendedReports::kMaxNumberOfDlrrItems;
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  :             type-specific block contents                      :
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-ExtendedReports::ExtendedReports() : sender_ssrc_(0) {}
+ExtendedReports::ExtendedReports() = default;
 ExtendedReports::ExtendedReports(const ExtendedReports& xr) = default;
 ExtendedReports::~ExtendedReports() = default;
 
@@ -56,7 +56,7 @@ bool ExtendedReports::Parse(const CommonHeader& packet) {
     return false;
   }
 
-  sender_ssrc_ = ByteReader<uint32_t>::ReadBigEndian(packet.payload());
+  SetSenderSsrc(ByteReader<uint32_t>::ReadBigEndian(packet.payload()));
   rrtr_block_.reset();
   dlrr_block_.ClearItems();
   target_bitrate_ = absl::nullopt;
@@ -136,7 +136,7 @@ bool ExtendedReports::Create(uint8_t* packet,
   size_t index_end = *index + BlockLength();
   const uint8_t kReserved = 0;
   CreateHeader(kReserved, kPacketType, HeaderLength(), packet, index);
-  ByteWriter<uint32_t>::WriteBigEndian(packet + *index, sender_ssrc_);
+  ByteWriter<uint32_t>::WriteBigEndian(packet + *index, sender_ssrc());
   *index += sizeof(uint32_t);
   if (rrtr_block_) {
     rrtr_block_->Create(packet + *index);

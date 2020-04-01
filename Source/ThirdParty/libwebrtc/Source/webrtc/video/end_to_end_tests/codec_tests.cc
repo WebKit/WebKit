@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "absl/memory/memory.h"
+#include <memory>
 #include "absl/types/optional.h"
 #include "api/test/video/function_video_encoder_factory.h"
 #include "api/video/color_space.h"
@@ -197,12 +197,12 @@ TEST_P(CodecEndToEndTest, SendsAndReceivesMultiplex) {
   InternalDecoderFactory internal_decoder_factory;
   test::FunctionVideoEncoderFactory encoder_factory(
       [&internal_encoder_factory]() {
-        return absl::make_unique<MultiplexEncoderAdapter>(
+        return std::make_unique<MultiplexEncoderAdapter>(
             &internal_encoder_factory, SdpVideoFormat(cricket::kVp9CodecName));
       });
   test::FunctionVideoDecoderFactory decoder_factory(
       [&internal_decoder_factory]() {
-        return absl::make_unique<MultiplexDecoderAdapter>(
+        return std::make_unique<MultiplexDecoderAdapter>(
             &internal_decoder_factory, SdpVideoFormat(cricket::kVp9CodecName));
       });
 
@@ -216,12 +216,12 @@ TEST_P(CodecEndToEndTest, SendsAndReceivesMultiplexVideoRotation90) {
   InternalDecoderFactory internal_decoder_factory;
   test::FunctionVideoEncoderFactory encoder_factory(
       [&internal_encoder_factory]() {
-        return absl::make_unique<MultiplexEncoderAdapter>(
+        return std::make_unique<MultiplexEncoderAdapter>(
             &internal_encoder_factory, SdpVideoFormat(cricket::kVp9CodecName));
       });
   test::FunctionVideoDecoderFactory decoder_factory(
       [&internal_decoder_factory]() {
-        return absl::make_unique<MultiplexDecoderAdapter>(
+        return std::make_unique<MultiplexDecoderAdapter>(
             &internal_decoder_factory, SdpVideoFormat(cricket::kVp9CodecName));
       });
   CodecObserver test(5, kVideoRotation_90, absl::nullopt, "multiplex",

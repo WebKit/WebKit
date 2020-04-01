@@ -8,8 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <memory>
+
 #include "absl/flags/flag.h"
-#include "absl/memory/memory.h"
 #include "api/test/create_network_emulation_manager.h"
 #include "api/test/create_peerconnection_quality_test_fixture.h"
 #include "api/test/network_emulation_manager.h"
@@ -81,7 +82,7 @@ CreateTestFixture(const std::string& test_case_name,
   fixture->AddPeer(network_links.second->network_thread(),
                    network_links.second->network_manager(), bob_configurer);
   fixture->AddQualityMetricsReporter(
-      absl::make_unique<webrtc_pc_e2e::NetworkQualityMetricsReporter>(
+      std::make_unique<webrtc_pc_e2e::NetworkQualityMetricsReporter>(
           network_links.first, network_links.second));
   return fixture;
 }
@@ -139,7 +140,7 @@ TEST(PCLowBandwidthAudioTest, PCGoodNetworkHighBitrate) {
         alice->SetAudioConfig(std::move(audio));
       },
       [](PeerConfigurer* bob) {});
-  fixture->Run(RunParams(TimeDelta::ms(
+  fixture->Run(RunParams(TimeDelta::Millis(
       absl::GetFlag(FLAGS_quick) ? kQuickTestDurationMs : kTestDurationMs)));
   LogTestResults();
 }
@@ -165,7 +166,7 @@ TEST(PCLowBandwidthAudioTest, PC40kbpsNetwork) {
         alice->SetAudioConfig(std::move(audio));
       },
       [](PeerConfigurer* bob) {});
-  fixture->Run(RunParams(TimeDelta::ms(
+  fixture->Run(RunParams(TimeDelta::Millis(
       absl::GetFlag(FLAGS_quick) ? kQuickTestDurationMs : kTestDurationMs)));
   LogTestResults();
 }

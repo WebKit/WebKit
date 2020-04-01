@@ -24,6 +24,12 @@
 
 namespace webrtc {
 
+namespace {
+// Buffer size for stereo 48 kHz audio.
+constexpr size_t kWebRtc10MsPcmAudio = 960;
+
+}  // namespace
+
 TestPacketization::TestPacketization(RTPStream* rtpStream, uint16_t frequency)
     : _rtpStream(rtpStream), _frequency(frequency), _seqNo(0) {}
 
@@ -33,7 +39,8 @@ int32_t TestPacketization::SendData(const AudioFrameType /* frameType */,
                                     const uint8_t payloadType,
                                     const uint32_t timeStamp,
                                     const uint8_t* payloadData,
-                                    const size_t payloadSize) {
+                                    const size_t payloadSize,
+                                    int64_t absolute_capture_timestamp_ms) {
   _rtpStream->Write(payloadType, timeStamp, _seqNo++, payloadData, payloadSize,
                     _frequency);
   return 1;
@@ -91,7 +98,7 @@ void Sender::Run() {
 }
 
 Receiver::Receiver()
-    : _playoutLengthSmpls(WEBRTC_10MS_PCM_AUDIO),
+    : _playoutLengthSmpls(kWebRtc10MsPcmAudio),
       _payloadSizeBytes(MAX_INCOMING_PAYLOAD) {}
 
 void Receiver::Setup(AudioCodingModule* acm,
@@ -138,7 +145,7 @@ void Receiver::Setup(AudioCodingModule* acm,
   _pcmFile.Open(file_name, 32000, "wb+");
 
   _realPayloadSizeBytes = 0;
-  _playoutBuffer = new int16_t[WEBRTC_10MS_PCM_AUDIO];
+  _playoutBuffer = new int16_t[kWebRtc10MsPcmAudio];
   _frequency = playSampFreq;
   _acm = acm;
   _firstTime = true;

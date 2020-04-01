@@ -23,29 +23,36 @@ TimestampAligner::TimestampAligner()
     : frames_seen_(0),
       offset_us_(0),
       clip_bias_us_(0),
-      prev_translated_time_us_(std::numeric_limits<int64_t>::min()) {}
+      prev_translated_time_us_(std::numeric_limits<int64_t>::min()),
+      prev_time_offset_us_(0) {}
 
 TimestampAligner::~TimestampAligner() {}
 
-int64_t TimestampAligner::TranslateTimestamp(int64_t camera_time_us,
+int64_t TimestampAligner::TranslateTimestamp(int64_t capturer_time_us,
                                              int64_t system_time_us) {
-  return ClipTimestamp(
-      camera_time_us + UpdateOffset(camera_time_us, system_time_us),
+  const int64_t translated_timestamp = ClipTimestamp(
+      capturer_time_us + UpdateOffset(capturer_time_us, system_time_us),
       system_time_us);
+  prev_time_offset_us_ = translated_timestamp - capturer_time_us;
+  return translated_timestamp;
 }
 
-int64_t TimestampAligner::UpdateOffset(int64_t camera_time_us,
+int64_t TimestampAligner::TranslateTimestamp(int64_t capturer_time_us) const {
+  return capturer_time_us + prev_time_offset_us_;
+}
+
+int64_t TimestampAligner::UpdateOffset(int64_t capturer_time_us,
                                        int64_t system_time_us) {
-  // Estimate the offset between system monotonic time and the capture
-  // time from the camera. The camera is assumed to provide more
+  // Estimate the offset between system monotonic time and the capturer's
+  // time. The capturer is assumed to provide more
   // accurate timestamps than we get from the system time. But the
-  // camera may use its own free-running clock with a large offset and
+  // capturer may use its own free-running clock with a large offset and
   // a small drift compared to the system clock. So the model is
   // basically
   //
   //   y_k = c_0 + c_1 * x_k + v_k
   //
-  // where x_k is the camera timestamp, believed to be accurate in its
+  // where x_k is the capturer's timestamp, believed to be accurate in its
   // own scale. y_k is our reading of the system clock. v_k is the
   // measurement noise, i.e., the delay from frame capture until the
   // system clock was read.
@@ -73,18 +80,18 @@ int64_t TimestampAligner::UpdateOffset(int64_t camera_time_us,
   // exponential averaging.
 
   // The input for averaging, y_k - x_k in the above notation.
-  int64_t diff_us = system_time_us - camera_time_us;
+  int64_t diff_us = system_time_us - capturer_time_us;
   // The deviation from the current average.
   int64_t error_us = diff_us - offset_us_;
 
   // If the current difference is far from the currently estimated
   // offset, the filter is reset. This could happen, e.g., if the
-  // camera clock is reset, or cameras are plugged in and out, or if
+  // capturer's clock is reset, cameras are plugged in and out, or
   // the application process is temporarily suspended. Expected to
   // happen for the very first timestamp (|frames_seen_| = 0). The
   // threshold of 300 ms should make this unlikely in normal
   // operation, and at the same time, converging gradually rather than
-  // resetting the filter should be tolerable for jumps in camera time
+  // resetting the filter should be tolerable for jumps in capturer's time
   // below this threshold.
   static const int64_t kResetThresholdUs = 300000;
   if (std::abs(error_us) > kResetThresholdUs) {
@@ -122,8 +129,8 @@ int64_t TimestampAligner::ClipTimestamp(int64_t filtered_time_us,
       // duplicate timestamps in case this function is called several times with
       // exactly the same |system_time_us|.
       RTC_LOG(LS_WARNING) << "too short translated timestamp interval: "
-                          << "system time (us) = " << system_time_us
-                          << ", interval (us) = "
+                             "system time (us) = "
+                          << system_time_us << ", interval (us) = "
                           << system_time_us - prev_translated_time_us_;
       time_us = system_time_us;
     }

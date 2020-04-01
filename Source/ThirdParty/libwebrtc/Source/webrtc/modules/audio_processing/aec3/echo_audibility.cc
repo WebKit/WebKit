@@ -29,18 +29,16 @@ EchoAudibility::EchoAudibility(bool use_render_stationarity_at_init)
 
 EchoAudibility::~EchoAudibility() = default;
 
-void EchoAudibility::Update(
-    const RenderBuffer& render_buffer,
-    rtc::ArrayView<const float> render_reverb_contribution_spectrum,
-    int delay_blocks,
-    bool external_delay_seen) {
+void EchoAudibility::Update(const RenderBuffer& render_buffer,
+                            rtc::ArrayView<const float> average_reverb,
+                            int delay_blocks,
+                            bool external_delay_seen) {
   UpdateRenderNoiseEstimator(render_buffer.GetSpectrumBuffer(),
                              render_buffer.GetBlockBuffer(),
                              external_delay_seen);
 
   if (external_delay_seen || use_render_stationarity_at_init_) {
-    UpdateRenderStationarityFlags(
-        render_buffer, render_reverb_contribution_spectrum, delay_blocks);
+    UpdateRenderStationarityFlags(render_buffer, average_reverb, delay_blocks);
   }
 }
 
@@ -52,18 +50,17 @@ void EchoAudibility::Reset() {
 
 void EchoAudibility::UpdateRenderStationarityFlags(
     const RenderBuffer& render_buffer,
-    rtc::ArrayView<const float> render_reverb_contribution_spectrum,
-    int delay_blocks) {
+    rtc::ArrayView<const float> average_reverb,
+    int min_channel_delay_blocks) {
   const SpectrumBuffer& spectrum_buffer = render_buffer.GetSpectrumBuffer();
-  int idx_at_delay =
-      spectrum_buffer.OffsetIndex(spectrum_buffer.read, delay_blocks);
+  int idx_at_delay = spectrum_buffer.OffsetIndex(spectrum_buffer.read,
+                                                 min_channel_delay_blocks);
 
-  int num_lookahead = render_buffer.Headroom() - delay_blocks + 1;
+  int num_lookahead = render_buffer.Headroom() - min_channel_delay_blocks + 1;
   num_lookahead = std::max(0, num_lookahead);
 
-  render_stationarity_.UpdateStationarityFlags(
-      spectrum_buffer, render_reverb_contribution_spectrum, idx_at_delay,
-      num_lookahead);
+  render_stationarity_.UpdateStationarityFlags(spectrum_buffer, average_reverb,
+                                               idx_at_delay, num_lookahead);
 }
 
 void EchoAudibility::UpdateRenderNoiseEstimator(
@@ -83,14 +80,15 @@ void EchoAudibility::UpdateRenderNoiseEstimator(
     for (int idx = render_spectrum_write_prev_.value();
          idx != render_spectrum_write_current;
          idx = spectrum_buffer.DecIndex(idx)) {
-      render_stationarity_.UpdateNoiseEstimator(
-          spectrum_buffer.buffer[idx][/*channel=*/0]);
+      render_stationarity_.UpdateNoiseEstimator(spectrum_buffer.buffer[idx]);
     }
   }
   render_spectrum_write_prev_ = render_spectrum_write_current;
 }
 
 bool EchoAudibility::IsRenderTooLow(const BlockBuffer& block_buffer) {
+  const int num_render_channels =
+      static_cast<int>(block_buffer.buffer[0][0].size());
   bool too_low = false;
   const int render_block_write_current = block_buffer.write;
   if (render_block_write_current == render_block_write_prev_) {
@@ -98,10 +96,16 @@ bool EchoAudibility::IsRenderTooLow(const BlockBuffer& block_buffer) {
   } else {
     for (int idx = render_block_write_prev_; idx != render_block_write_current;
          idx = block_buffer.IncIndex(idx)) {
-      auto block = block_buffer.buffer[idx][0][0];
-      auto r = std::minmax_element(block.cbegin(), block.cend());
-      float max_abs = std::max(std::fabs(*r.first), std::fabs(*r.second));
-      if (max_abs < 10) {
+      float max_abs_over_channels = 0.f;
+      for (int ch = 0; ch < num_render_channels; ++ch) {
+        auto block = block_buffer.buffer[idx][0][ch];
+        auto r = std::minmax_element(block.cbegin(), block.cend());
+        float max_abs_channel =
+            std::max(std::fabs(*r.first), std::fabs(*r.second));
+        max_abs_over_channels =
+            std::max(max_abs_over_channels, max_abs_channel);
+      }
+      if (max_abs_over_channels < 10.f) {
         too_low = true;  // Discards all blocks if one of them is too low.
         break;
       }

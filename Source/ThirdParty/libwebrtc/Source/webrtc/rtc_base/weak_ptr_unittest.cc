@@ -13,7 +13,6 @@
 #include <memory>
 #include <string>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/event.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "test/gtest.h"
@@ -205,7 +204,7 @@ template <class T>
 std::unique_ptr<T> NewObjectCreatedOnTaskQueue() {
   std::unique_ptr<T> obj;
   webrtc::TaskQueueForTest queue("NewObjectCreatedOnTaskQueue");
-  queue.SendTask([&] { obj = absl::make_unique<T>(); });
+  queue.SendTask([&] { obj = std::make_unique<T>(); }, RTC_FROM_HERE);
   return obj;
 }
 
@@ -223,15 +222,17 @@ TEST(WeakPtrTest, WeakPtrInitiateAndUseOnDifferentThreads) {
   // Test that it is OK to create a WeakPtr on one thread, but use it on
   // another. This tests that we do not trip runtime checks that ensure that a
   // WeakPtr is not used by multiple threads.
-  auto target = absl::make_unique<TargetWithFactory>();
+  auto target = std::make_unique<TargetWithFactory>();
   // Create weak ptr on main thread
   WeakPtr<Target> weak_ptr = target->factory.GetWeakPtr();
   webrtc::TaskQueueForTest queue("queue");
-  queue.SendTask([&] {
-    // Dereference and invalide weak_ptr on another thread.
-    EXPECT_EQ(weak_ptr.get(), target.get());
-    target.reset();
-  });
+  queue.SendTask(
+      [&] {
+        // Dereference and invalide weak_ptr on another thread.
+        EXPECT_EQ(weak_ptr.get(), target.get());
+        target.reset();
+      },
+      RTC_FROM_HERE);
 }
 
 }  // namespace rtc

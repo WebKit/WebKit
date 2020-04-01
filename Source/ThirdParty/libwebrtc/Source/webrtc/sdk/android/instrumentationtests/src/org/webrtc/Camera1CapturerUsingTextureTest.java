@@ -15,7 +15,6 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.filters.MediumTest;
 import android.support.test.filters.SmallTest;
-import java.io.IOException;
 import org.chromium.base.test.BaseJUnit4ClassRunner;
 import org.junit.After;
 import org.junit.Before;
@@ -108,6 +107,12 @@ public class Camera1CapturerUsingTextureTest {
   @MediumTest
   public void testSwitchVideoCapturer() throws InterruptedException {
     fixtures.switchCamera();
+  }
+
+  @Test
+  @MediumTest
+  public void testSwitchVideoCapturerToSpecificCameraName() throws InterruptedException {
+    fixtures.switchCamera(true /* specifyCameraName */);
   }
 
   @Test

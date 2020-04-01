@@ -51,7 +51,8 @@ class Channel : public AudioPacketizationCallback {
                    uint8_t payloadType,
                    uint32_t timeStamp,
                    const uint8_t* payloadData,
-                   size_t payloadSize) override;
+                   size_t payloadSize,
+                   int64_t absolute_capture_timestamp_ms) override;
 
   void RegisterReceiverACM(AudioCodingModule* acm);
 

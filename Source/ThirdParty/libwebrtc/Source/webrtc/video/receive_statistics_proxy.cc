@@ -20,6 +20,7 @@
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/time_utils.h"
 #include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -85,6 +86,8 @@ ReceiveStatisticsProxy::ReceiveStatisticsProxy(
     : clock_(clock),
       config_(*config),
       start_ms_(clock->TimeInMilliseconds()),
+      enable_decode_time_histograms_(
+          !field_trial::IsEnabled("WebRTC-DecodeTimeHistogramsKillSwitch")),
       last_sample_time_(clock->TimeInMilliseconds()),
       fps_threshold_(kLowFpsThreshold,
                      kHighFpsThreshold,
@@ -553,6 +556,72 @@ void ReceiveStatisticsProxy::UpdateFramerate(int64_t now_ms) const {
   stats_.network_frame_rate = static_cast<int>(framerate);
 }
 
+void ReceiveStatisticsProxy::UpdateDecodeTimeHistograms(
+    int width,
+    int height,
+    int decode_time_ms) const {
+  bool is_4k = (width == 3840 || width == 4096) && height == 2160;
+  bool is_hd = width == 1920 && height == 1080;
+  // Only update histograms for 4k/HD and VP9/H264.
+  if ((is_4k || is_hd) && (last_codec_type_ == kVideoCodecVP9 ||
+                           last_codec_type_ == kVideoCodecH264)) {
+    const std::string kDecodeTimeUmaPrefix =
+        "WebRTC.Video.DecodeTimePerFrameInMs.";
+
+    // Each histogram needs its own line for it to not be reused in the wrong
+    // way when the format changes.
+    if (last_codec_type_ == kVideoCodecVP9) {
+      bool is_sw_decoder =
+          stats_.decoder_implementation_name.compare(0, 6, "libvpx") == 0;
+      if (is_4k) {
+        if (is_sw_decoder)
+          RTC_HISTOGRAM_COUNTS_1000(kDecodeTimeUmaPrefix + "Vp9.4k.Sw",
+                                    decode_time_ms);
+        else
+          RTC_HISTOGRAM_COUNTS_1000(kDecodeTimeUmaPrefix + "Vp9.4k.Hw",
+                                    decode_time_ms);
+      } else {
+        if (is_sw_decoder)
+          RTC_HISTOGRAM_COUNTS_1000(kDecodeTimeUmaPrefix + "Vp9.Hd.Sw",
+                                    decode_time_ms);
+        else
+          RTC_HISTOGRAM_COUNTS_1000(kDecodeTimeUmaPrefix + "Vp9.Hd.Hw",
+                                    decode_time_ms);
+      }
+    } else {
+      bool is_sw_decoder =
+          stats_.decoder_implementation_name.compare(0, 6, "FFmpeg") == 0;
+      if (is_4k) {
+        if (is_sw_decoder)
+          RTC_HISTOGRAM_COUNTS_1000(kDecodeTimeUmaPrefix + "H264.4k.Sw",
+                                    decode_time_ms);
+        else
+          RTC_HISTOGRAM_COUNTS_1000(kDecodeTimeUmaPrefix + "H264.4k.Hw",
+                                    decode_time_ms);
+
+      } else {
+        if (is_sw_decoder)
+          RTC_HISTOGRAM_COUNTS_1000(kDecodeTimeUmaPrefix + "H264.Hd.Sw",
+                                    decode_time_ms);
+        else
+          RTC_HISTOGRAM_COUNTS_1000(kDecodeTimeUmaPrefix + "H264.Hd.Hw",
+                                    decode_time_ms);
+      }
+    }
+  }
+}
+
+absl::optional<int64_t>
+ReceiveStatisticsProxy::GetCurrentEstimatedPlayoutNtpTimestampMs(
+    int64_t now_ms) const {
+  if (!last_estimated_playout_ntp_timestamp_ms_ ||
+      !last_estimated_playout_time_ms_) {
+    return absl::nullopt;
+  }
+  int64_t elapsed_ms = now_ms - *last_estimated_playout_time_ms_;
+  return *last_estimated_playout_ntp_timestamp_ms_ + elapsed_ms;
+}
+
 VideoReceiveStream::Stats ReceiveStatisticsProxy::GetStats() const {
   rtc::CritScope lock(&crit_);
   // Get current frame rates here, as only updating them on new frames prevents
@@ -579,6 +648,8 @@ VideoReceiveStream::Stats ReceiveStatisticsProxy::GetStats() const {
       static_cast<double>(current_delay_counter_.Sum(1).value_or(0)) /
       rtc::kNumMillisecsPerSec;
   stats_.jitter_buffer_emitted_count = current_delay_counter_.NumSamples();
+  stats_.estimated_playout_ntp_timestamp_ms =
+      GetCurrentEstimatedPlayoutNtpTimestampMs(now_ms);
   return stats_;
 }
 
@@ -692,15 +763,24 @@ void ReceiveStatisticsProxy::OnDecodedFrame(const VideoFrame& frame,
   } else if (stats_.qp_sum) {
     RTC_LOG(LS_WARNING)
         << "QP sum was already set and no QP was given for a frame.";
+    stats_.qp_sum.reset();
   }
   decode_time_counter_.Add(decode_time_ms);
   stats_.decode_ms = decode_time_ms;
   stats_.total_decode_time_ms += decode_time_ms;
+  if (enable_decode_time_histograms_) {
+    UpdateDecodeTimeHistograms(frame.width(), frame.height(), decode_time_ms);
+  }
+
   last_content_type_ = content_type;
   decode_fps_estimator_.Update(1, now_ms);
   if (last_decoded_frame_time_ms_) {
     int64_t interframe_delay_ms = now_ms - *last_decoded_frame_time_ms_;
     RTC_DCHECK_GE(interframe_delay_ms, 0);
+    double interframe_delay = interframe_delay_ms / 1000.0;
+    stats_.total_inter_frame_delay += interframe_delay;
+    stats_.total_squared_inter_frame_delay +=
+        interframe_delay * interframe_delay;
     interframe_delay_max_moving_.Add(interframe_delay_ms, now_ms);
     content_specific_stats->interframe_delay_counter.Add(interframe_delay_ms);
     content_specific_stats->interframe_delay_percentiles.Add(
@@ -750,11 +830,14 @@ void ReceiveStatisticsProxy::OnRenderedFrame(const VideoFrame& frame) {
   QualitySample();
 }
 
-void ReceiveStatisticsProxy::OnSyncOffsetUpdated(int64_t sync_offset_ms,
+void ReceiveStatisticsProxy::OnSyncOffsetUpdated(int64_t video_playout_ntp_ms,
+                                                 int64_t sync_offset_ms,
                                                  double estimated_freq_khz) {
   rtc::CritScope lock(&crit_);
   sync_offset_counter_.Add(std::abs(sync_offset_ms));
   stats_.sync_offset_ms = sync_offset_ms;
+  last_estimated_playout_ntp_timestamp_ms_ = video_playout_ntp_ms;
+  last_estimated_playout_time_ms_ = clock_->TimeInMilliseconds();
 
   const double kMaxFreqKhz = 10000.0;
   int offset_khz = kMaxFreqKhz;

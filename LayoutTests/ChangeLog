@@ -1,3 +1,15 @@
+2020-04-01  youenn fablet  <youenn@apple.com>
+
+        Bump libwebrtc to M82
+        https://bugs.webkit.org/show_bug.cgi?id=209542
+
+        Reviewed by Eric Carlson.
+
+        This test is no longer feasible since TCP private IP address candidates are now no longer allowed.
+
+        * webrtc/datachannel/basic-tcp-expected.txt: Removed.
+        * webrtc/datachannel/basic-tcp.html: Removed.
+
 2020-04-01  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, failures in EWS GTK-WK2

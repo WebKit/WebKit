@@ -13,9 +13,9 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/mouse_cursor.h"
@@ -67,14 +67,19 @@ class DesktopFrameWithCursor : public DesktopFrame {
   // Takes ownership of |frame|.
   DesktopFrameWithCursor(std::unique_ptr<DesktopFrame> frame,
                          const MouseCursor& cursor,
-                         const DesktopVector& position);
+                         const DesktopVector& position,
+                         const DesktopRect& previous_cursor_rect,
+                         bool cursor_changed);
   ~DesktopFrameWithCursor() override;
+
+  DesktopRect cursor_rect() const { return cursor_rect_; }
 
  private:
   const std::unique_ptr<DesktopFrame> original_frame_;
 
   DesktopVector restore_position_;
   std::unique_ptr<DesktopFrame> restore_frame_;
+  DesktopRect cursor_rect_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(DesktopFrameWithCursor);
 };
@@ -82,7 +87,9 @@ class DesktopFrameWithCursor : public DesktopFrame {
 DesktopFrameWithCursor::DesktopFrameWithCursor(
     std::unique_ptr<DesktopFrame> frame,
     const MouseCursor& cursor,
-    const DesktopVector& position)
+    const DesktopVector& position,
+    const DesktopRect& previous_cursor_rect,
+    bool cursor_changed)
     : DesktopFrame(frame->size(),
                    frame->stride(),
                    frame->data(),
@@ -91,30 +98,37 @@ DesktopFrameWithCursor::DesktopFrameWithCursor(
   MoveFrameInfoFrom(original_frame_.get());
 
   DesktopVector image_pos = position.subtract(cursor.hotspot());
-  DesktopRect target_rect = DesktopRect::MakeSize(cursor.image()->size());
-  target_rect.Translate(image_pos);
-  DesktopVector target_origin = target_rect.top_left();
-  target_rect.IntersectWith(DesktopRect::MakeSize(size()));
+  cursor_rect_ = DesktopRect::MakeSize(cursor.image()->size());
+  cursor_rect_.Translate(image_pos);
+  DesktopVector cursor_origin = cursor_rect_.top_left();
+  cursor_rect_.IntersectWith(DesktopRect::MakeSize(size()));
 
-  if (target_rect.is_empty())
+  if (!previous_cursor_rect.equals(cursor_rect_)) {
+    mutable_updated_region()->AddRect(cursor_rect_);
+    mutable_updated_region()->AddRect(previous_cursor_rect);
+  } else if (cursor_changed) {
+    mutable_updated_region()->AddRect(cursor_rect_);
+  }
+
+  if (cursor_rect_.is_empty())
     return;
 
   // Copy original screen content under cursor to |restore_frame_|.
-  restore_position_ = target_rect.top_left();
-  restore_frame_.reset(new BasicDesktopFrame(target_rect.size()));
-  restore_frame_->CopyPixelsFrom(*this, target_rect.top_left(),
+  restore_position_ = cursor_rect_.top_left();
+  restore_frame_.reset(new BasicDesktopFrame(cursor_rect_.size()));
+  restore_frame_->CopyPixelsFrom(*this, cursor_rect_.top_left(),
                                  DesktopRect::MakeSize(restore_frame_->size()));
 
   // Blit the cursor.
-  uint8_t* target_rect_data = reinterpret_cast<uint8_t*>(data()) +
-                              target_rect.top() * stride() +
-                              target_rect.left() * DesktopFrame::kBytesPerPixel;
-  DesktopVector origin_shift = target_rect.top_left().subtract(target_origin);
-  AlphaBlend(target_rect_data, stride(),
+  uint8_t* cursor_rect_data =
+      reinterpret_cast<uint8_t*>(data()) + cursor_rect_.top() * stride() +
+      cursor_rect_.left() * DesktopFrame::kBytesPerPixel;
+  DesktopVector origin_shift = cursor_rect_.top_left().subtract(cursor_origin);
+  AlphaBlend(cursor_rect_data, stride(),
              cursor.image()->data() +
                  origin_shift.y() * cursor.image()->stride() +
                  origin_shift.x() * DesktopFrame::kBytesPerPixel,
-             cursor.image()->stride(), target_rect.size());
+             cursor.image()->stride(), cursor_rect_.size());
 }
 
 DesktopFrameWithCursor::~DesktopFrameWithCursor() {
@@ -144,6 +158,13 @@ DesktopAndCursorComposer::DesktopAndCursorComposer(
 
 DesktopAndCursorComposer::~DesktopAndCursorComposer() = default;
 
+std::unique_ptr<DesktopAndCursorComposer>
+DesktopAndCursorComposer::CreateWithoutMouseCursorMonitor(
+    std::unique_ptr<DesktopCapturer> desktop_capturer) {
+  return std::unique_ptr<DesktopAndCursorComposer>(
+      new DesktopAndCursorComposer(desktop_capturer.release(), nullptr));
+}
+
 void DesktopAndCursorComposer::Start(DesktopCapturer::Callback* callback) {
   callback_ = callback;
   if (mouse_monitor_)
@@ -166,6 +187,22 @@ void DesktopAndCursorComposer::SetExcludedWindow(WindowId window) {
   desktop_capturer_->SetExcludedWindow(window);
 }
 
+bool DesktopAndCursorComposer::GetSourceList(SourceList* sources) {
+  return desktop_capturer_->GetSourceList(sources);
+}
+
+bool DesktopAndCursorComposer::SelectSource(SourceId id) {
+  return desktop_capturer_->SelectSource(id);
+}
+
+bool DesktopAndCursorComposer::FocusOnSelectedSource() {
+  return desktop_capturer_->FocusOnSelectedSource();
+}
+
+bool DesktopAndCursorComposer::IsOccluded(const DesktopVector& pos) {
+  return desktop_capturer_->IsOccluded(pos);
+}
+
 void DesktopAndCursorComposer::OnCaptureResult(
     DesktopCapturer::Result result,
     std::unique_ptr<DesktopFrame> frame) {
@@ -185,8 +222,12 @@ void DesktopAndCursorComposer::OnCaptureResult(
       relative_position.set(relative_position.x() * scale,
                             relative_position.y() * scale);
 #endif
-      frame = absl::make_unique<DesktopFrameWithCursor>(
-          std::move(frame), *cursor_, relative_position);
+      auto frame_with_cursor = std::make_unique<DesktopFrameWithCursor>(
+          std::move(frame), *cursor_, relative_position, previous_cursor_rect_,
+          cursor_changed_);
+      previous_cursor_rect_ = frame_with_cursor->cursor_rect();
+      cursor_changed_ = false;
+      frame = std::move(frame_with_cursor);
     }
   }
 
@@ -194,13 +235,8 @@ void DesktopAndCursorComposer::OnCaptureResult(
 }
 
 void DesktopAndCursorComposer::OnMouseCursor(MouseCursor* cursor) {
+  cursor_changed_ = true;
   cursor_.reset(cursor);
-}
-
-void DesktopAndCursorComposer::OnMouseCursorPosition(
-    MouseCursorMonitor::CursorState state,
-    const DesktopVector& position) {
-  RTC_NOTREACHED();
 }
 
 void DesktopAndCursorComposer::OnMouseCursorPosition(

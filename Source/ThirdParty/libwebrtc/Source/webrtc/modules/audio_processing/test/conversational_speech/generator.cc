@@ -11,9 +11,10 @@
 #include <iostream>
 #include <vector>
 
+#include <memory>
+
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
-#include "absl/memory/memory.h"
 #include "modules/audio_processing/test/conversational_speech/config.h"
 #include "modules/audio_processing/test/conversational_speech/multiend_call.h"
 #include "modules/audio_processing/test/conversational_speech/simulator.h"
@@ -59,7 +60,7 @@ int main(int argc, char* argv[]) {
 
   // Parse timing and audio tracks.
   auto wavreader_factory =
-      absl::make_unique<conversational_speech::WavReaderFactory>();
+      std::make_unique<conversational_speech::WavReaderFactory>();
   conversational_speech::MultiEndCall multiend_call(
       timing, config.audiotracks_path(), std::move(wavreader_factory));
 

@@ -92,8 +92,8 @@ ReverbDecayEstimator::ReverbDecayEstimator(const EchoCanceller3Config& config)
                               kEarlyReverbMinSizeBlocks),
       late_reverb_start_(kEarlyReverbMinSizeBlocks),
       late_reverb_end_(kEarlyReverbMinSizeBlocks),
+      previous_gains_(config.filter.main.length_blocks, 0.f),
       decay_(std::fabs(config.ep_strength.default_len)) {
-  previous_gains_.fill(0.f);
   RTC_DCHECK_GT(config.filter.main.length_blocks,
                 static_cast<size_t>(kEarlyReverbMinSizeBlocks));
 }

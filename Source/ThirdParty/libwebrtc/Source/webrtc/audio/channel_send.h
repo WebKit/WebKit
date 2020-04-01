@@ -19,8 +19,6 @@
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/crypto/crypto_options.h"
 #include "api/function_view.h"
-#include "api/media_transport_config.h"
-#include "api/media_transport_interface.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp.h"
@@ -36,7 +34,8 @@ class RtpTransportControllerSendInterface;
 
 struct CallSendStatistics {
   int64_t rttMs;
-  size_t bytesSent;
+  int64_t payload_bytes_sent;
+  int64_t header_and_padding_bytes_sent;
   // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-retransmittedbytessent
   uint64_t retransmitted_bytes_sent;
   int packetsSent;
@@ -78,14 +77,8 @@ class ChannelSendInterface {
   virtual void CallEncoder(rtc::FunctionView<void(AudioEncoder*)> modifier) = 0;
 
   // Use 0 to indicate that the extension should not be registered.
-  virtual void SetRid(const std::string& rid,
-                      int extension_id,
-                      int repaired_extension_id) = 0;
-  virtual void SetMid(const std::string& mid, int extension_id) = 0;
   virtual void SetRTCP_CNAME(absl::string_view c_name) = 0;
-  virtual void SetExtmapAllowMixed(bool extmap_allow_mixed) = 0;
   virtual void SetSendAudioLevelIndicationStatus(bool enable, int id) = 0;
-  virtual void EnableSendTransportSequenceNumber(int id) = 0;
   virtual void RegisterSenderCongestionControlObjects(
       RtpTransportControllerSendInterface* transport,
       RtcpBandwidthObserver* bandwidth_observer) = 0;
@@ -105,9 +98,6 @@ class ChannelSendInterface {
       std::unique_ptr<AudioFrame> audio_frame) = 0;
   virtual RtpRtcp* GetRtpRtcp() const = 0;
 
-  virtual void OnTwccBasedUplinkPacketLossRate(float packet_loss_rate) = 0;
-  virtual void OnRecoverableUplinkPacketLossRate(
-      float recoverable_packet_loss_rate) = 0;
   // In RTP we currently rely on RTCP packets (|ReceivedRTCPPacket|) to inform
   // about RTT.
   // In media transport we rely on the TargetTransferRateObserver instead.
@@ -131,7 +121,6 @@ std::unique_ptr<ChannelSendInterface> CreateChannelSend(
     Clock* clock,
     TaskQueueFactory* task_queue_factory,
     ProcessThread* module_process_thread,
-    const MediaTransportConfig& media_transport_config,
     OverheadObserver* overhead_observer,
     Transport* rtp_transport,
     RtcpRttStats* rtcp_rtt_stats,

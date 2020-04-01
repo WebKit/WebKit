@@ -30,7 +30,7 @@ struct ThreadData {
 
 // The map of registered threads, and the lock that protects it. We create the
 // map on first use, and never destroy it.
-ABSL_CONST_INIT rtc::GlobalLockPod g_thread_registry_lock = {};
+ABSL_CONST_INIT rtc::GlobalLock g_thread_registry_lock;
 ABSL_CONST_INIT std::map<const ScopedRegisterThreadForDebugging*, ThreadData>*
     g_registered_threads = nullptr;
 

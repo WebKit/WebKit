@@ -68,14 +68,5 @@ class RtpPacketizerVp9 : public RtpPacketizer {
   RTC_DISALLOW_COPY_AND_ASSIGN(RtpPacketizerVp9);
 };
 
-class RtpDepacketizerVp9 : public RtpDepacketizer {
- public:
-  ~RtpDepacketizerVp9() override = default;
-
-  bool Parse(ParsedPayload* parsed_payload,
-             const uint8_t* payload,
-             size_t payload_length) override;
-};
-
 }  // namespace webrtc
 #endif  // MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_VP9_H_

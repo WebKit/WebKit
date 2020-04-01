@@ -64,7 +64,7 @@ void ExampleVideoQualityAnalyzer::OnFrameDropped(
   ++frames_dropped_;
 }
 
-void ExampleVideoQualityAnalyzer::OnFrameReceived(
+void ExampleVideoQualityAnalyzer::OnFramePreDecode(
     uint16_t frame_id,
     const webrtc::EncodedImage& encoded_image) {
   rtc::CritScope crit(&lock_);

@@ -29,7 +29,6 @@ TEST(CallConfigUtils, MarshalUnmarshalProcessSameObject) {
   recv_config.rtp.remote_ssrc = 100;
   recv_config.rtp.local_ssrc = 101;
   recv_config.rtp.rtcp_mode = RtcpMode::kCompound;
-  recv_config.rtp.remb = false;
   recv_config.rtp.transport_cc = false;
   recv_config.rtp.lntf.enabled = false;
   recv_config.rtp.nack.rtp_history_ms = 150;
@@ -53,7 +52,6 @@ TEST(CallConfigUtils, MarshalUnmarshalProcessSameObject) {
   EXPECT_EQ(recv_config.rtp.remote_ssrc, unmarshaled_config.rtp.remote_ssrc);
   EXPECT_EQ(recv_config.rtp.local_ssrc, unmarshaled_config.rtp.local_ssrc);
   EXPECT_EQ(recv_config.rtp.rtcp_mode, unmarshaled_config.rtp.rtcp_mode);
-  EXPECT_EQ(recv_config.rtp.remb, unmarshaled_config.rtp.remb);
   EXPECT_EQ(recv_config.rtp.transport_cc, unmarshaled_config.rtp.transport_cc);
   EXPECT_EQ(recv_config.rtp.lntf.enabled, unmarshaled_config.rtp.lntf.enabled);
   EXPECT_EQ(recv_config.rtp.nack.rtp_history_ms,

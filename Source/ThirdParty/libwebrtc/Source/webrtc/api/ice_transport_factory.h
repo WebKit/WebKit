@@ -11,47 +11,15 @@
 #ifndef API_ICE_TRANSPORT_FACTORY_H_
 #define API_ICE_TRANSPORT_FACTORY_H_
 
-#include "api/async_resolver_factory.h"
 #include "api/ice_transport_interface.h"
-#include "api/rtc_event_log/rtc_event_log.h"
 #include "api/scoped_refptr.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
 class PortAllocator;
-}
+}  // namespace cricket
 
 namespace webrtc {
-
-struct IceTransportInit final {
- public:
-  IceTransportInit() = default;
-  IceTransportInit(const IceTransportInit&) = delete;
-  IceTransportInit(IceTransportInit&&) = default;
-  IceTransportInit& operator=(const IceTransportInit&) = delete;
-  IceTransportInit& operator=(IceTransportInit&&) = default;
-
-  cricket::PortAllocator* port_allocator() { return port_allocator_; }
-  void set_port_allocator(cricket::PortAllocator* port_allocator) {
-    port_allocator_ = port_allocator;
-  }
-
-  AsyncResolverFactory* async_resolver_factory() {
-    return async_resolver_factory_;
-  }
-  void set_async_resolver_factory(
-      AsyncResolverFactory* async_resolver_factory) {
-    async_resolver_factory_ = async_resolver_factory;
-  }
-
-  RtcEventLog* event_log() { return event_log_; }
-  void set_event_log(RtcEventLog* event_log) { event_log_ = event_log; }
-
- private:
-  cricket::PortAllocator* port_allocator_ = nullptr;
-  AsyncResolverFactory* async_resolver_factory_ = nullptr;
-  RtcEventLog* event_log_ = nullptr;
-};
 
 // Static factory for an IceTransport object that can be created
 // without using a webrtc::PeerConnection.

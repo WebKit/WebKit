@@ -28,7 +28,7 @@ enum class Aec3Optimization { kNone, kSse2, kNeon };
 constexpr int kNumBlocksPerSecond = 250;
 
 constexpr int kMetricsReportingIntervalBlocks = 10 * kNumBlocksPerSecond;
-constexpr int kMetricsComputationBlocks = 11;
+constexpr int kMetricsComputationBlocks = 7;
 constexpr int kMetricsCollectionBlocks =
     kMetricsReportingIntervalBlocks - kMetricsComputationBlocks;
 
@@ -38,11 +38,11 @@ constexpr size_t kFftLengthBy2Minus1 = kFftLengthBy2 - 1;
 constexpr size_t kFftLength = 2 * kFftLengthBy2;
 constexpr size_t kFftLengthBy2Log2 = 6;
 
-constexpr int kMaxAdaptiveFilterLength = 50;
 constexpr int kRenderTransferQueueSizeFrames = 100;
 
 constexpr size_t kMaxNumBands = 3;
-constexpr size_t kSubFrameLength = 80;
+constexpr size_t kFrameSize = 160;
+constexpr size_t kSubFrameLength = kFrameSize / 2;
 
 constexpr size_t kBlockSize = kFftLengthBy2;
 constexpr size_t kBlockSizeLog2 = kFftLengthBy2Log2;

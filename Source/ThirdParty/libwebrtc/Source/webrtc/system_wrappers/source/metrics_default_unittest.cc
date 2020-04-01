@@ -17,6 +17,7 @@
 #include "system_wrappers/include/metrics.h"
 #include "test/gtest.h"
 
+#if RTC_METRICS_ENABLED
 namespace webrtc {
 
 namespace {
@@ -164,3 +165,4 @@ TEST_F(MetricsDefaultTest, TestMinMaxBucket) {
 }
 
 }  // namespace webrtc
+#endif

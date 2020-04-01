@@ -11,13 +11,11 @@
 #ifndef MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_H_
 #define MODULES_VIDEO_CODING_INCLUDE_VIDEO_CODING_H_
 
-#include "api/fec_controller.h"
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_codec.h"
 #include "modules/include/module.h"
-#include "modules/include/module_common_types.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/include/video_coding_defines.h"
-#include "rtc_base/deprecation.h"
 
 namespace webrtc {
 

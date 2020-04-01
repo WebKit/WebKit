@@ -13,12 +13,13 @@
 
 #include <memory>
 
-#include "modules/include/module_common_types.h"
+#include "api/units/time_delta.h"
 #include "modules/video_coding/encoded_frame.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/timestamp_map.h"
 #include "modules/video_coding/timing.h"
 #include "rtc_base/critical_section.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/thread_checker.h"
 
 namespace webrtc {
@@ -29,14 +30,14 @@ enum { kDecoderFrameMemoryLength = 10 };
 
 struct VCMFrameInformation {
   int64_t renderTimeMs;
-  int64_t decodeStartTimeMs;
+  absl::optional<Timestamp> decodeStart;
   void* userData;
   VideoRotation rotation;
   VideoContentType content_type;
   EncodedImage::Timing timing;
   int64_t ntp_time_ms;
   RtpPacketInfos packet_infos;
-  // ColorSpace is not storred here, as it might be modified by decoders.
+  // ColorSpace is not stored here, as it might be modified by decoders.
 };
 
 class VCMDecodedFrameCallback : public DecodedImageCallback {
@@ -71,6 +72,8 @@ class VCMDecodedFrameCallback : public DecodedImageCallback {
   rtc::CriticalSection lock_;
   VCMTimestampMap _timestampMap RTC_GUARDED_BY(lock_);
   int64_t ntp_offset_;
+  // Set by the field trial WebRTC-SlowDownDecoder to simulate a slow decoder.
+  FieldTrialOptional<TimeDelta> _extra_decode_time;
 };
 
 class VCMGenericDecoder {
@@ -89,7 +92,7 @@ class VCMGenericDecoder {
    *
    * inputVideoBuffer reference to encoded video frame
    */
-  int32_t Decode(const VCMEncodedFrame& inputFrame, int64_t nowMs);
+  int32_t Decode(const VCMEncodedFrame& inputFrame, Timestamp now);
 
   /**
    * Set decode callback. Deregistering while decoding is illegal.

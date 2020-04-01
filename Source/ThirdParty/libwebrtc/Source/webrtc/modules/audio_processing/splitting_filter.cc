@@ -12,6 +12,7 @@
 
 #include <array>
 
+#include "api/array_view.h"
 #include "common_audio/channel_buffer.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "rtc_base/checks.h"
@@ -27,16 +28,10 @@ constexpr size_t kTwoBandFilterSamplesPerFrame = 320;
 SplittingFilter::SplittingFilter(size_t num_channels,
                                  size_t num_bands,
                                  size_t num_frames)
-    : num_bands_(num_bands) {
+    : num_bands_(num_bands),
+      two_bands_states_(num_bands_ == 2 ? num_channels : 0),
+      three_band_filter_banks_(num_bands_ == 3 ? num_channels : 0) {
   RTC_CHECK(num_bands_ == 2 || num_bands_ == 3);
-  if (num_bands_ == 2) {
-    two_bands_states_.resize(num_channels);
-  } else if (num_bands_ == 3) {
-    for (size_t i = 0; i < num_channels; ++i) {
-      three_band_filter_banks_.push_back(std::unique_ptr<ThreeBandFilterBank>(
-          new ThreeBandFilterBank(num_frames)));
-    }
-  }
 }
 
 SplittingFilter::~SplittingFilter() = default;
@@ -105,18 +100,44 @@ void SplittingFilter::TwoBandsSynthesis(const ChannelBuffer<float>* bands,
 void SplittingFilter::ThreeBandsAnalysis(const ChannelBuffer<float>* data,
                                          ChannelBuffer<float>* bands) {
   RTC_DCHECK_EQ(three_band_filter_banks_.size(), data->num_channels());
+  RTC_DCHECK_LE(data->num_channels(), three_band_filter_banks_.size());
+  RTC_DCHECK_LE(data->num_channels(), bands->num_channels());
+  RTC_DCHECK_EQ(data->num_frames(), ThreeBandFilterBank::kFullBandSize);
+  RTC_DCHECK_EQ(bands->num_frames(), ThreeBandFilterBank::kFullBandSize);
+  RTC_DCHECK_EQ(bands->num_bands(), ThreeBandFilterBank::kNumBands);
+  RTC_DCHECK_EQ(bands->num_frames_per_band(),
+                ThreeBandFilterBank::kSplitBandSize);
+
   for (size_t i = 0; i < three_band_filter_banks_.size(); ++i) {
-    three_band_filter_banks_[i]->Analysis(data->channels()[i],
-                                          data->num_frames(), bands->bands(i));
+    three_band_filter_banks_[i].Analysis(
+        rtc::ArrayView<const float, ThreeBandFilterBank::kFullBandSize>(
+            data->channels_view()[i].data(),
+            ThreeBandFilterBank::kFullBandSize),
+        rtc::ArrayView<const rtc::ArrayView<float>,
+                       ThreeBandFilterBank::kNumBands>(
+            bands->bands_view(i).data(), ThreeBandFilterBank::kNumBands));
   }
 }
 
 void SplittingFilter::ThreeBandsSynthesis(const ChannelBuffer<float>* bands,
                                           ChannelBuffer<float>* data) {
   RTC_DCHECK_LE(data->num_channels(), three_band_filter_banks_.size());
+  RTC_DCHECK_LE(data->num_channels(), bands->num_channels());
+  RTC_DCHECK_LE(data->num_channels(), three_band_filter_banks_.size());
+  RTC_DCHECK_EQ(data->num_frames(), ThreeBandFilterBank::kFullBandSize);
+  RTC_DCHECK_EQ(bands->num_frames(), ThreeBandFilterBank::kFullBandSize);
+  RTC_DCHECK_EQ(bands->num_bands(), ThreeBandFilterBank::kNumBands);
+  RTC_DCHECK_EQ(bands->num_frames_per_band(),
+                ThreeBandFilterBank::kSplitBandSize);
+
   for (size_t i = 0; i < data->num_channels(); ++i) {
-    three_band_filter_banks_[i]->Synthesis(
-        bands->bands(i), bands->num_frames_per_band(), data->channels()[i]);
+    three_band_filter_banks_[i].Synthesis(
+        rtc::ArrayView<const rtc::ArrayView<float>,
+                       ThreeBandFilterBank::kNumBands>(
+            bands->bands_view(i).data(), ThreeBandFilterBank::kNumBands),
+        rtc::ArrayView<float, ThreeBandFilterBank::kFullBandSize>(
+            data->channels_view()[i].data(),
+            ThreeBandFilterBank::kFullBandSize));
   }
 }
 

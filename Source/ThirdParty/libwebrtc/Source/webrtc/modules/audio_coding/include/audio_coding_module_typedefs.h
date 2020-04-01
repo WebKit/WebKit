@@ -90,6 +90,8 @@ struct NetworkStatistics {
   uint64_t concealmentEvents;
   uint64_t jitterBufferDelayMs;
   uint64_t jitterBufferEmittedCount;
+  // Non standard stats propagated to spec complaint GetStats API.
+  uint64_t jitterBufferTargetDelayMs;
   uint64_t insertedSamplesForDeceleration;
   uint64_t removedSamplesForAcceleration;
   uint64_t fecPacketsReceived;

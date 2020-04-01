@@ -24,20 +24,23 @@ struct SupportedH264Profile {
 
 constexpr SupportedH264Profile kH264MaxSupportedProfiles[] = {
     // iPhones with at least iOS 9
-    {RTCDeviceTypeIPhoneXS, {kProfileHigh, kLevel5_2}},      // https://support.apple.com/kb/SP779
-    {RTCDeviceTypeIPhoneXSMax, {kProfileHigh, kLevel5_2}},   // https://support.apple.com/kb/SP780
-    {RTCDeviceTypeIPhoneXR, {kProfileHigh, kLevel5_2}},      // https://support.apple.com/kb/SP781
-    {RTCDeviceTypeIPhoneX, {kProfileHigh, kLevel5_2}},       // https://support.apple.com/kb/SP770
-    {RTCDeviceTypeIPhone8, {kProfileHigh, kLevel5_2}},       // https://support.apple.com/kb/SP767
-    {RTCDeviceTypeIPhone8Plus, {kProfileHigh, kLevel5_2}},   // https://support.apple.com/kb/SP768
-    {RTCDeviceTypeIPhone7, {kProfileHigh, kLevel5_1}},       // https://support.apple.com/kb/SP743
-    {RTCDeviceTypeIPhone7Plus, {kProfileHigh, kLevel5_1}},   // https://support.apple.com/kb/SP744
-    {RTCDeviceTypeIPhoneSE, {kProfileHigh, kLevel4_2}},      // https://support.apple.com/kb/SP738
-    {RTCDeviceTypeIPhone6S, {kProfileHigh, kLevel4_2}},      // https://support.apple.com/kb/SP726
-    {RTCDeviceTypeIPhone6SPlus, {kProfileHigh, kLevel4_2}},  // https://support.apple.com/kb/SP727
-    {RTCDeviceTypeIPhone6, {kProfileHigh, kLevel4_2}},       // https://support.apple.com/kb/SP705
-    {RTCDeviceTypeIPhone6Plus, {kProfileHigh, kLevel4_2}},   // https://support.apple.com/kb/SP706
-    {RTCDeviceTypeIPhone5SGSM, {kProfileHigh, kLevel4_2}},   // https://support.apple.com/kb/SP685
+    {RTCDeviceTypeIPhone11ProMax, {kProfileHigh, kLevel5_2}},  // https://support.apple.com/kb/SP806
+    {RTCDeviceTypeIPhone11Pro, {kProfileHigh, kLevel5_2}},     // https://support.apple.com/kb/SP805
+    {RTCDeviceTypeIPhone11, {kProfileHigh, kLevel5_2}},        // https://support.apple.com/kb/SP804
+    {RTCDeviceTypeIPhoneXS, {kProfileHigh, kLevel5_2}},        // https://support.apple.com/kb/SP779
+    {RTCDeviceTypeIPhoneXSMax, {kProfileHigh, kLevel5_2}},     // https://support.apple.com/kb/SP780
+    {RTCDeviceTypeIPhoneXR, {kProfileHigh, kLevel5_2}},        // https://support.apple.com/kb/SP781
+    {RTCDeviceTypeIPhoneX, {kProfileHigh, kLevel5_2}},         // https://support.apple.com/kb/SP770
+    {RTCDeviceTypeIPhone8, {kProfileHigh, kLevel5_2}},         // https://support.apple.com/kb/SP767
+    {RTCDeviceTypeIPhone8Plus, {kProfileHigh, kLevel5_2}},     // https://support.apple.com/kb/SP768
+    {RTCDeviceTypeIPhone7, {kProfileHigh, kLevel5_1}},         // https://support.apple.com/kb/SP743
+    {RTCDeviceTypeIPhone7Plus, {kProfileHigh, kLevel5_1}},     // https://support.apple.com/kb/SP744
+    {RTCDeviceTypeIPhoneSE, {kProfileHigh, kLevel4_2}},        // https://support.apple.com/kb/SP738
+    {RTCDeviceTypeIPhone6S, {kProfileHigh, kLevel4_2}},        // https://support.apple.com/kb/SP726
+    {RTCDeviceTypeIPhone6SPlus, {kProfileHigh, kLevel4_2}},    // https://support.apple.com/kb/SP727
+    {RTCDeviceTypeIPhone6, {kProfileHigh, kLevel4_2}},         // https://support.apple.com/kb/SP705
+    {RTCDeviceTypeIPhone6Plus, {kProfileHigh, kLevel4_2}},     // https://support.apple.com/kb/SP706
+    {RTCDeviceTypeIPhone5SGSM, {kProfileHigh, kLevel4_2}},     // https://support.apple.com/kb/SP685
     {RTCDeviceTypeIPhone5SGSM_CDMA,
      {kProfileHigh, kLevel4_2}},                           // https://support.apple.com/kb/SP685
     {RTCDeviceTypeIPhone5GSM, {kProfileHigh, kLevel4_1}},  // https://support.apple.com/kb/SP655
@@ -49,16 +52,24 @@ constexpr SupportedH264Profile kH264MaxSupportedProfiles[] = {
     {RTCDeviceTypeIPhone4S, {kProfileHigh, kLevel4_1}},  // https://support.apple.com/kb/SP643
 
     // iPods with at least iOS 9
+    {RTCDeviceTypeIPodTouch7G, {kProfileMain, kLevel4_1}},  // https://support.apple.com/kb/SP796
     {RTCDeviceTypeIPodTouch6G, {kProfileMain, kLevel4_1}},  // https://support.apple.com/kb/SP720
     {RTCDeviceTypeIPodTouch5G, {kProfileMain, kLevel3_1}},  // https://support.apple.com/kb/SP657
 
     // iPads with at least iOS 9
-    {RTCDeviceTypeIPad2Wifi, {kProfileHigh, kLevel4_1}},     // https://support.apple.com/kb/SP622
-    {RTCDeviceTypeIPad2GSM, {kProfileHigh, kLevel4_1}},      // https://support.apple.com/kb/SP622
-    {RTCDeviceTypeIPad2CDMA, {kProfileHigh, kLevel4_1}},     // https://support.apple.com/kb/SP622
-    {RTCDeviceTypeIPad2Wifi2, {kProfileHigh, kLevel4_1}},    // https://support.apple.com/kb/SP622
-    {RTCDeviceTypeIPadMiniWifi, {kProfileHigh, kLevel4_1}},  // https://support.apple.com/kb/SP661
-    {RTCDeviceTypeIPadMiniGSM, {kProfileHigh, kLevel4_1}},   // https://support.apple.com/kb/SP661
+    {RTCDeviceTypeIPadAir3Gen, {kProfileHigh, kLevel4_1}},   // https://support.apple.com/kb/SP787
+    {RTCDeviceTypeIPadMini5Gen, {kProfileHigh, kLevel4_1}},  // https://support.apple.com/kb/SP788
+    {RTCDeviceTypeIPadPro3Gen12Inch,
+     {kProfileHigh, kLevel5_2}},  // https://support.apple.com/kb/SP785
+    {RTCDeviceTypeIPadPro3Gen11Inch,
+     {kProfileHigh, kLevel5_2}},                               // https://support.apple.com/kb/SP784
+    {RTCDeviceTypeIPad7Gen10Inch, {kProfileHigh, kLevel4_1}},  // https://support.apple.com/kb/SP807
+    {RTCDeviceTypeIPad2Wifi, {kProfileHigh, kLevel4_1}},       // https://support.apple.com/kb/SP622
+    {RTCDeviceTypeIPad2GSM, {kProfileHigh, kLevel4_1}},        // https://support.apple.com/kb/SP622
+    {RTCDeviceTypeIPad2CDMA, {kProfileHigh, kLevel4_1}},       // https://support.apple.com/kb/SP622
+    {RTCDeviceTypeIPad2Wifi2, {kProfileHigh, kLevel4_1}},      // https://support.apple.com/kb/SP622
+    {RTCDeviceTypeIPadMiniWifi, {kProfileHigh, kLevel4_1}},    // https://support.apple.com/kb/SP661
+    {RTCDeviceTypeIPadMiniGSM, {kProfileHigh, kLevel4_1}},     // https://support.apple.com/kb/SP661
     {RTCDeviceTypeIPadMiniGSM_CDMA,
      {kProfileHigh, kLevel4_1}},                              // https://support.apple.com/kb/SP661
     {RTCDeviceTypeIPad3Wifi, {kProfileHigh, kLevel4_1}},      // https://support.apple.com/kb/SP647

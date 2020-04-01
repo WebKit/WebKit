@@ -18,7 +18,6 @@
 #include "absl/types/variant.h"
 #include "modules/include/module_common_types.h"
 #include "modules/include/module_common_types_public.h"
-#include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/jitter_buffer_common.h"

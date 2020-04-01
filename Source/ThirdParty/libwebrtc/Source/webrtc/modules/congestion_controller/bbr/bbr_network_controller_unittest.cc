@@ -32,8 +32,8 @@ namespace webrtc {
 namespace test {
 namespace {
 
-const DataRate kInitialBitrate = DataRate::kbps(60);
-const Timestamp kDefaultStartTime = Timestamp::ms(10000000);
+const DataRate kInitialBitrate = DataRate::KilobitsPerSec(60);
+const Timestamp kDefaultStartTime = Timestamp::Millis(10000000);
 
 constexpr double kDataRateMargin = 0.3;
 constexpr double kMinDataRateFactor = 1 - kDataRateMargin;
@@ -51,9 +51,12 @@ NetworkControllerConfig InitialConfig(
     int max_data_rate_kbps = 5 * kInitialBitrate.kbps()) {
   NetworkControllerConfig config;
   config.constraints.at_time = kDefaultStartTime;
-  config.constraints.min_data_rate = DataRate::kbps(min_data_rate_kbps);
-  config.constraints.max_data_rate = DataRate::kbps(max_data_rate_kbps);
-  config.constraints.starting_rate = DataRate::kbps(starting_bandwidth_kbps);
+  config.constraints.min_data_rate =
+      DataRate::KilobitsPerSec(min_data_rate_kbps);
+  config.constraints.max_data_rate =
+      DataRate::KilobitsPerSec(max_data_rate_kbps);
+  config.constraints.starting_rate =
+      DataRate::KilobitsPerSec(starting_bandwidth_kbps);
   return config;
 }
 
@@ -105,7 +108,7 @@ TEST_F(BbrNetworkControllerTest, SendsConfigurationOnNetworkRouteChanged) {
   EXPECT_TRUE(update.pacer_config.has_value());
   EXPECT_TRUE(update.congestion_window.has_value());
 
-  DataRate new_bitrate = DataRate::bps(200000);
+  DataRate new_bitrate = DataRate::BitsPerSec(200000);
   update = controller_->OnNetworkRouteChange(
       CreateRouteChange(kDefaultStartTime, new_bitrate));
   EXPECT_THAT(*update.target_rate, TargetRateCloseTo(new_bitrate));
@@ -121,42 +124,43 @@ TEST_F(BbrNetworkControllerTest, UpdatesTargetSendRate) {
   Scenario s("bbr_unit/updates_rate", false);
   CallClientConfig config;
   config.transport.cc_factory = &factory;
-  config.transport.rates.min_rate = DataRate::kbps(10);
-  config.transport.rates.max_rate = DataRate::kbps(1500);
-  config.transport.rates.start_rate = DataRate::kbps(300);
+  config.transport.rates.min_rate = DataRate::KilobitsPerSec(10);
+  config.transport.rates.max_rate = DataRate::KilobitsPerSec(1500);
+  config.transport.rates.start_rate = DataRate::KilobitsPerSec(300);
   auto send_net = s.CreateMutableSimulationNode([](NetworkSimulationConfig* c) {
-    c->bandwidth = DataRate::kbps(500);
-    c->delay = TimeDelta::ms(100);
+    c->bandwidth = DataRate::KilobitsPerSec(500);
+    c->delay = TimeDelta::Millis(100);
     c->loss_rate = 0.0;
   });
   auto ret_net = s.CreateMutableSimulationNode(
-      [](NetworkSimulationConfig* c) { c->delay = TimeDelta::ms(100); });
+      [](NetworkSimulationConfig* c) { c->delay = TimeDelta::Millis(100); });
   auto* client = s.CreateClient("send", config);
-  auto routes = s.CreateRoutes(client, {send_net->node()},
+  const DataSize kOverhead = DataSize::Bytes(38);  // IPV4 + UDP + SRTP
+  auto routes = s.CreateRoutes(client, {send_net->node()}, kOverhead,
                                s.CreateClient("recv", CallClientConfig()),
-                               {ret_net->node()});
+                               {ret_net->node()}, kOverhead);
   s.CreateVideoStream(routes->forward(), VideoStreamConfig());
 
-  s.RunFor(TimeDelta::seconds(25));
+  s.RunFor(TimeDelta::Seconds(25));
   EXPECT_NEAR(client->send_bandwidth().kbps(), 450, 100);
 
   send_net->UpdateConfig([](NetworkSimulationConfig* c) {
-    c->bandwidth = DataRate::kbps(800);
-    c->delay = TimeDelta::ms(100);
+    c->bandwidth = DataRate::KilobitsPerSec(800);
+    c->delay = TimeDelta::Millis(100);
   });
 
-  s.RunFor(TimeDelta::seconds(20));
+  s.RunFor(TimeDelta::Seconds(20));
   EXPECT_NEAR(client->send_bandwidth().kbps(), 750, 150);
 
   send_net->UpdateConfig([](NetworkSimulationConfig* c) {
-    c->bandwidth = DataRate::kbps(200);
-    c->delay = TimeDelta::ms(200);
+    c->bandwidth = DataRate::KilobitsPerSec(200);
+    c->delay = TimeDelta::Millis(200);
   });
   ret_net->UpdateConfig(
-      [](NetworkSimulationConfig* c) { c->delay = TimeDelta::ms(200); });
+      [](NetworkSimulationConfig* c) { c->delay = TimeDelta::Millis(200); });
 
-  s.RunFor(TimeDelta::seconds(40));
-  EXPECT_NEAR(client->send_bandwidth().kbps(), 200, 40);
+  s.RunFor(TimeDelta::Seconds(35));
+  EXPECT_NEAR(client->send_bandwidth().kbps(), 170, 50);
 }
 
 }  // namespace test

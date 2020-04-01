@@ -22,6 +22,7 @@
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "modules/rtp_rtcp/source/rtp_utility.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/critical_section.h"
 
 namespace webrtc {
 
@@ -62,128 +63,119 @@ constexpr uint32_t kUnknownSsrc = 0;
 
 }  // namespace
 
-RedPacket::RedPacket(size_t length)
-    : data_(new uint8_t[length]), length_(length), header_length_(0) {}
+UlpfecGenerator::Params::Params() = default;
+UlpfecGenerator::Params::Params(FecProtectionParams delta_params,
+                                FecProtectionParams keyframe_params)
+    : delta_params(delta_params), keyframe_params(keyframe_params) {}
 
-RedPacket::~RedPacket() = default;
-
-void RedPacket::CreateHeader(const uint8_t* rtp_header,
-                             size_t header_length,
-                             int red_payload_type,
-                             int payload_type) {
-  RTC_DCHECK_LE(header_length + kRedForFecHeaderLength, length_);
-  memcpy(data_.get(), rtp_header, header_length);
-  // Replace payload type.
-  data_[1] &= 0x80;
-  data_[1] += red_payload_type;
-  // Add RED header
-  // f-bit always 0
-  data_[header_length] = static_cast<uint8_t>(payload_type);
-  header_length_ = header_length + kRedForFecHeaderLength;
-}
-
-void RedPacket::SetSeqNum(int seq_num) {
-  RTC_DCHECK_GE(seq_num, 0);
-  RTC_DCHECK_LT(seq_num, 1 << 16);
-
-  ByteWriter<uint16_t>::WriteBigEndian(&data_[2], seq_num);
-}
-
-void RedPacket::AssignPayload(const uint8_t* payload, size_t length) {
-  RTC_DCHECK_LE(header_length_ + length, length_);
-  memcpy(data_.get() + header_length_, payload, length);
-}
-
-void RedPacket::ClearMarkerBit() {
-  data_[1] &= 0x7F;
-}
-
-uint8_t* RedPacket::data() const {
-  return data_.get();
-}
-
-size_t RedPacket::length() const {
-  return length_;
-}
-
-UlpfecGenerator::UlpfecGenerator()
-    : UlpfecGenerator(ForwardErrorCorrection::CreateUlpfec(kUnknownSsrc)) {}
-
-UlpfecGenerator::UlpfecGenerator(std::unique_ptr<ForwardErrorCorrection> fec)
-    : fec_(std::move(fec)),
-      last_media_packet_rtp_header_length_(0),
+UlpfecGenerator::UlpfecGenerator(int red_payload_type,
+                                 int ulpfec_payload_type,
+                                 Clock* clock)
+    : red_payload_type_(red_payload_type),
+      ulpfec_payload_type_(ulpfec_payload_type),
+      clock_(clock),
+      fec_(ForwardErrorCorrection::CreateUlpfec(kUnknownSsrc)),
       num_protected_frames_(0),
-      min_num_media_packets_(1) {
-  memset(&params_, 0, sizeof(params_));
-  memset(&new_params_, 0, sizeof(new_params_));
-}
+      min_num_media_packets_(1),
+      keyframe_in_process_(false),
+      fec_bitrate_(/*max_window_size_ms=*/1000, RateStatistics::kBpsScale) {}
+
+// Used by FlexFecSender, payload types are unused.
+UlpfecGenerator::UlpfecGenerator(std::unique_ptr<ForwardErrorCorrection> fec,
+                                 Clock* clock)
+    : red_payload_type_(0),
+      ulpfec_payload_type_(0),
+      clock_(clock),
+      fec_(std::move(fec)),
+      num_protected_frames_(0),
+      min_num_media_packets_(1),
+      keyframe_in_process_(false),
+      fec_bitrate_(/*max_window_size_ms=*/1000, RateStatistics::kBpsScale) {}
 
 UlpfecGenerator::~UlpfecGenerator() = default;
 
-void UlpfecGenerator::SetFecParameters(const FecProtectionParams& params) {
-  RTC_DCHECK_GE(params.fec_rate, 0);
-  RTC_DCHECK_LE(params.fec_rate, 255);
+void UlpfecGenerator::SetProtectionParameters(
+    const FecProtectionParams& delta_params,
+    const FecProtectionParams& key_params) {
+  RTC_DCHECK_GE(delta_params.fec_rate, 0);
+  RTC_DCHECK_LE(delta_params.fec_rate, 255);
+  RTC_DCHECK_GE(key_params.fec_rate, 0);
+  RTC_DCHECK_LE(key_params.fec_rate, 255);
   // Store the new params and apply them for the next set of FEC packets being
   // produced.
-  new_params_ = params;
-  if (params.fec_rate > kHighProtectionThreshold) {
-    min_num_media_packets_ = kMinMediaPackets;
-  } else {
-    min_num_media_packets_ = 1;
-  }
+  rtc::CritScope cs(&crit_);
+  pending_params_.emplace(delta_params, key_params);
 }
 
-int UlpfecGenerator::AddRtpPacketAndGenerateFec(const uint8_t* data_buffer,
-                                                size_t payload_length,
-                                                size_t rtp_header_length) {
+void UlpfecGenerator::AddPacketAndGenerateFec(const RtpPacketToSend& packet) {
+  RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
   RTC_DCHECK(generated_fec_packets_.empty());
+
   if (media_packets_.empty()) {
-    params_ = new_params_;
+    rtc::CritScope cs(&crit_);
+    if (pending_params_) {
+      current_params_ = *pending_params_;
+      pending_params_.reset();
+
+      if (CurrentParams().fec_rate > kHighProtectionThreshold) {
+        min_num_media_packets_ = kMinMediaPackets;
+      } else {
+        min_num_media_packets_ = 1;
+      }
+    }
+
+    keyframe_in_process_ = packet.is_key_frame();
   }
+  RTC_DCHECK_EQ(packet.is_key_frame(), keyframe_in_process_);
+
   bool complete_frame = false;
-  const bool marker_bit = (data_buffer[1] & kRtpMarkerBitMask) ? true : false;
+  const bool marker_bit = packet.Marker();
   if (media_packets_.size() < kUlpfecMaxMediaPackets) {
     // Our packet masks can only protect up to |kUlpfecMaxMediaPackets| packets.
-    std::unique_ptr<ForwardErrorCorrection::Packet> packet(
-        new ForwardErrorCorrection::Packet());
-    packet->length = payload_length + rtp_header_length;
-    memcpy(packet->data, data_buffer, packet->length);
-    media_packets_.push_back(std::move(packet));
-    // Keep track of the RTP header length, so we can copy the RTP header
-    // from |packet| to newly generated ULPFEC+RED packets.
-    RTC_DCHECK_GE(rtp_header_length, kRtpHeaderSize);
-    last_media_packet_rtp_header_length_ = rtp_header_length;
+    auto fec_packet = std::make_unique<ForwardErrorCorrection::Packet>();
+    fec_packet->data = packet.Buffer();
+    media_packets_.push_back(std::move(fec_packet));
+
+    // Keep a copy of the last RTP packet, so we can copy the RTP header
+    // from it when creating newly generated ULPFEC+RED packets.
+    RTC_DCHECK_GE(packet.headers_size(), kRtpHeaderSize);
+    last_media_packet_ = packet;
   }
+
   if (marker_bit) {
     ++num_protected_frames_;
     complete_frame = true;
   }
+
+  auto params = CurrentParams();
+
   // Produce FEC over at most |params_.max_fec_frames| frames, or as soon as:
   // (1) the excess overhead (actual overhead - requested/target overhead) is
   // less than |kMaxExcessOverhead|, and
   // (2) at least |min_num_media_packets_| media packets is reached.
   if (complete_frame &&
-      (num_protected_frames_ == params_.max_fec_frames ||
+      (num_protected_frames_ == params.max_fec_frames ||
        (ExcessOverheadBelowMax() && MinimumMediaPacketsReached()))) {
     // We are not using Unequal Protection feature of the parity erasure code.
     constexpr int kNumImportantPackets = 0;
     constexpr bool kUseUnequalProtection = false;
-    int ret = fec_->EncodeFec(media_packets_, params_.fec_rate,
-                              kNumImportantPackets, kUseUnequalProtection,
-                              params_.fec_mask_type, &generated_fec_packets_);
+    fec_->EncodeFec(media_packets_, params.fec_rate, kNumImportantPackets,
+                    kUseUnequalProtection, params.fec_mask_type,
+                    &generated_fec_packets_);
     if (generated_fec_packets_.empty()) {
       ResetState();
     }
-    return ret;
   }
-  return 0;
 }
 
 bool UlpfecGenerator::ExcessOverheadBelowMax() const {
-  return ((Overhead() - params_.fec_rate) < kMaxExcessOverhead);
+  RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
+
+  return ((Overhead() - CurrentParams().fec_rate) < kMaxExcessOverhead);
 }
 
 bool UlpfecGenerator::MinimumMediaPacketsReached() const {
+  RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
   float average_num_packets_per_frame =
       static_cast<float>(media_packets_.size()) / num_protected_frames_;
   int num_media_packets = static_cast<int>(media_packets_.size());
@@ -196,61 +188,79 @@ bool UlpfecGenerator::MinimumMediaPacketsReached() const {
   }
 }
 
-bool UlpfecGenerator::FecAvailable() const {
-  return !generated_fec_packets_.empty();
-}
-
-size_t UlpfecGenerator::NumAvailableFecPackets() const {
-  return generated_fec_packets_.size();
+const FecProtectionParams& UlpfecGenerator::CurrentParams() const {
+  RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
+  return keyframe_in_process_ ? current_params_.keyframe_params
+                              : current_params_.delta_params;
 }
 
 size_t UlpfecGenerator::MaxPacketOverhead() const {
+  RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
   return fec_->MaxPacketOverhead();
 }
 
-std::vector<std::unique_ptr<RedPacket>> UlpfecGenerator::GetUlpfecPacketsAsRed(
-    int red_payload_type,
-    int ulpfec_payload_type,
-    uint16_t first_seq_num) {
-  std::vector<std::unique_ptr<RedPacket>> red_packets;
-  red_packets.reserve(generated_fec_packets_.size());
-  RTC_DCHECK(!media_packets_.empty());
-  ForwardErrorCorrection::Packet* last_media_packet =
-      media_packets_.back().get();
-  uint16_t seq_num = first_seq_num;
+std::vector<std::unique_ptr<RtpPacketToSend>> UlpfecGenerator::GetFecPackets() {
+  RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
+  if (generated_fec_packets_.empty()) {
+    return std::vector<std::unique_ptr<RtpPacketToSend>>();
+  }
+
+  // Wrap FEC packet (including FEC headers) in a RED packet. Since the
+  // FEC packets in |generated_fec_packets_| don't have RTP headers, we
+  // reuse the header from the last media packet.
+  RTC_CHECK(last_media_packet_.has_value());
+  last_media_packet_->SetPayloadSize(0);
+
+  std::vector<std::unique_ptr<RtpPacketToSend>> fec_packets;
+  fec_packets.reserve(generated_fec_packets_.size());
+
+  size_t total_fec_size_bytes = 0;
   for (const auto* fec_packet : generated_fec_packets_) {
-    // Wrap FEC packet (including FEC headers) in a RED packet. Since the
-    // FEC packets in |generated_fec_packets_| don't have RTP headers, we
-    // reuse the header from the last media packet.
-    RTC_DCHECK_GT(last_media_packet_rtp_header_length_, 0);
-    std::unique_ptr<RedPacket> red_packet(
-        new RedPacket(last_media_packet_rtp_header_length_ +
-                      kRedForFecHeaderLength + fec_packet->length));
-    red_packet->CreateHeader(last_media_packet->data,
-                             last_media_packet_rtp_header_length_,
-                             red_payload_type, ulpfec_payload_type);
-    red_packet->SetSeqNum(seq_num++);
-    red_packet->ClearMarkerBit();
-    red_packet->AssignPayload(fec_packet->data, fec_packet->length);
-    red_packets.push_back(std::move(red_packet));
+    std::unique_ptr<RtpPacketToSend> red_packet =
+        std::make_unique<RtpPacketToSend>(*last_media_packet_);
+    red_packet->SetPayloadType(red_payload_type_);
+    red_packet->SetMarker(false);
+    uint8_t* payload_buffer = red_packet->SetPayloadSize(
+        kRedForFecHeaderLength + fec_packet->data.size());
+    // Primary RED header with F bit unset.
+    // See https://tools.ietf.org/html/rfc2198#section-3
+    payload_buffer[0] = ulpfec_payload_type_;  // RED header.
+    memcpy(&payload_buffer[1], fec_packet->data.data(),
+           fec_packet->data.size());
+    total_fec_size_bytes += red_packet->size();
+    red_packet->set_packet_type(RtpPacketMediaType::kForwardErrorCorrection);
+    red_packet->set_allow_retransmission(false);
+    fec_packets.push_back(std::move(red_packet));
   }
 
   ResetState();
 
-  return red_packets;
+  rtc::CritScope cs(&crit_);
+  fec_bitrate_.Update(total_fec_size_bytes, clock_->TimeInMilliseconds());
+
+  return fec_packets;
+}
+
+DataRate UlpfecGenerator::CurrentFecRate() const {
+  rtc::CritScope cs(&crit_);
+  return DataRate::BitsPerSec(
+      fec_bitrate_.Rate(clock_->TimeInMilliseconds()).value_or(0));
 }
 
 int UlpfecGenerator::Overhead() const {
+  RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
   RTC_DCHECK(!media_packets_.empty());
   int num_fec_packets =
-      fec_->NumFecPackets(media_packets_.size(), params_.fec_rate);
+      fec_->NumFecPackets(media_packets_.size(), CurrentParams().fec_rate);
+
   // Return the overhead in Q8.
   return (num_fec_packets << 8) / media_packets_.size();
 }
 
 void UlpfecGenerator::ResetState() {
+  RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
   media_packets_.clear();
-  last_media_packet_rtp_header_length_ = 0;
+  last_media_packet_.reset();
   generated_fec_packets_.clear();
   num_protected_frames_ = 0;
 }

@@ -135,9 +135,9 @@ class RTC_EXPORT DesktopCapturer {
   static std::unique_ptr<DesktopCapturer> CreateScreenCapturer(
       const DesktopCaptureOptions& options);
 
-#if defined(WEBRTC_USE_PIPEWIRE) || defined(USE_X11)
+#if defined(WEBRTC_USE_PIPEWIRE) || defined(WEBRTC_USE_X11)
   static bool IsRunningUnderWayland();
-#endif  // defined(WEBRTC_USE_PIPEWIRE) || defined(USE_X11)
+#endif  // defined(WEBRTC_USE_PIPEWIRE) || defined(WEBRTC_USE_X11)
 
  protected:
   // CroppingWindowCapturer needs to create raw capturers without wrappers, so

@@ -23,14 +23,14 @@ AsyncInvoker::AsyncInvoker()
 AsyncInvoker::~AsyncInvoker() {
   destroying_.store(true, std::memory_order_relaxed);
   // Messages for this need to be cleared *before* our destructor is complete.
-  MessageQueueManager::Clear(this);
+  ThreadManager::Clear(this);
   // And we need to wait for any invocations that are still in progress on
   // other threads. Using memory_order_acquire for synchronization with
   // AsyncClosure destructors.
   while (pending_invocations_.load(std::memory_order_acquire) > 0) {
     // If the destructor was called while AsyncInvoke was being called by
     // another thread, WITHIN an AsyncInvoked functor, it may do another
-    // Thread::Post even after we called MessageQueueManager::Clear(this). So
+    // Thread::Post even after we called ThreadManager::Clear(this). So
     // we need to keep calling Clear to discard these posts.
     Thread::Current()->Clear(this);
     invocation_complete_->Wait(Event::kForever);
@@ -68,7 +68,7 @@ void AsyncInvoker::Flush(Thread* thread, uint32_t id /*= MQID_ANY*/) {
 }
 
 void AsyncInvoker::Clear() {
-  MessageQueueManager::Clear(this);
+  ThreadManager::Clear(this);
 }
 
 void AsyncInvoker::DoInvoke(const Location& posted_from,

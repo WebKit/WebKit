@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC2_RNN_VAD_COMMON_H_
 #define MODULES_AUDIO_PROCESSING_AGC2_RNN_VAD_COMMON_H_
 
+#include <stddef.h>
+
 namespace webrtc {
 namespace rnn_vad {
 
@@ -62,6 +64,11 @@ static_assert(kCepstralCoeffsHistorySize > 2,
               "derivatives.");
 
 constexpr size_t kFeatureVectorSize = 42;
+
+enum class Optimization { kNone, kSse2, kNeon };
+
+// Detects what kind of optimizations to use for the code.
+Optimization DetectOptimization();
 
 }  // namespace rnn_vad
 }  // namespace webrtc

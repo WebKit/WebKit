@@ -13,6 +13,8 @@
 
 #include <memory>
 
+#include "absl/types/optional.h"
+#include "api/video/video_timing.h"
 #include "modules/video_coding/codec_timer.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/thread_annotations.h"

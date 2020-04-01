@@ -262,13 +262,6 @@ const ContentGroup* SessionDescription::GetGroupByName(
 }
 
 ContentInfo::~ContentInfo() {
-  if (description_ && description_.get() != description) {
-    // If description_ is null, we assume that a move operator
-    // has been applied.
-    RTC_LOG(LS_ERROR) << "ContentInfo::description has been updated by "
-                      << "assignment. This usage is deprecated.";
-    description_.reset(description);  // ensure that it is destroyed.
-  }
 }
 
 // Copy operator.
@@ -277,8 +270,7 @@ ContentInfo::ContentInfo(const ContentInfo& o)
       type(o.type),
       rejected(o.rejected),
       bundle_only(o.bundle_only),
-      description_(o.description_->Clone()),
-      description(description_.get()) {}
+      description_(o.description_->Clone()) {}
 
 ContentInfo& ContentInfo::operator=(const ContentInfo& o) {
   name = o.name;
@@ -286,29 +278,14 @@ ContentInfo& ContentInfo::operator=(const ContentInfo& o) {
   rejected = o.rejected;
   bundle_only = o.bundle_only;
   description_ = o.description_->Clone();
-  description = description_.get();
   return *this;
 }
 
 const MediaContentDescription* ContentInfo::media_description() const {
-  if (description_.get() != description) {
-    // Someone's updated |description|, or used a move operator
-    // on the record.
-    RTC_LOG(LS_ERROR) << "ContentInfo::description has been updated by "
-                      << "assignment. This usage is deprecated.";
-    const_cast<ContentInfo*>(this)->description_.reset(description);
-  }
   return description_.get();
 }
 
 MediaContentDescription* ContentInfo::media_description() {
-  if (description_.get() != description) {
-    // Someone's updated |description|, or used a move operator
-    // on the record.
-    RTC_LOG(LS_ERROR) << "ContentInfo::description has been updated by "
-                      << "assignment. This usage is deprecated.";
-    description_.reset(description);
-  }
   return description_.get();
 }
 

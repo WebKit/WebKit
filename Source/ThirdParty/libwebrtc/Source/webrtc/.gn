@@ -68,15 +68,11 @@ default_args = {
   android32_ndk_api_level = 16
   android64_ndk_api_level = 21
 
-  # WebRTC does not want to switch to C++14 yet.
-  use_cxx11 = true
-
-  # WebRTC relies on Chromium's Android test infrastructure.
-  use_cxx11_on_android = false
-
   # WebRTC does not provide the gflags dependency. Because libyuv uses it only
   # for unittests, it can be disabled (see third_party/libyuv/BUILD.gn)
   libyuv_use_gflags = false
+
+  enable_libaom_decoder = true
 
   gtest_enable_absl_printers = true
 }

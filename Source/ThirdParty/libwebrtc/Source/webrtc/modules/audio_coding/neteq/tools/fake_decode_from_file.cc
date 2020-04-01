@@ -100,7 +100,7 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
 
   uint32_t original_payload_size_bytes =
       ByteReader<uint32_t>::ReadLittleEndian(&encoded[8]);
-  if (original_payload_size_bytes == 1) {
+  if (original_payload_size_bytes <= 2) {
     // This is a comfort noise payload.
     RTC_DCHECK_GT(total_samples_to_decode, 0);
     std::fill_n(decoded, total_samples_to_decode, 0);
@@ -135,7 +135,7 @@ int FakeDecodeFromFile::PacketDuration(const uint8_t* encoded,
   if (  // Decoder is asked to produce codec-internal comfort noise
       encoded_len == 0 ||
       // Comfort noise payload
-      original_payload_size_bytes == 1 || samples_to_decode == 0 ||
+      original_payload_size_bytes <= 2 || samples_to_decode == 0 ||
       // Erroneous duration since it is not a multiple of 10ms
       samples_to_decode % rtc::CheckedDivExact(SampleRateHz(), 100) != 0) {
     if (last_decoded_length_ > 0) {

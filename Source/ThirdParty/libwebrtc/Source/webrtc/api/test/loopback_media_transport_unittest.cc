@@ -52,101 +52,7 @@ class MockStateCallback : public MediaTransportStateCallback {
   MOCK_METHOD1(OnStateChanged, void(MediaTransportState));
 };
 
-// Test only uses the sequence number.
-MediaTransportEncodedAudioFrame CreateAudioFrame(int sequence_number) {
-  static constexpr int kSamplingRateHz = 48000;
-  static constexpr int kStartingSampleIndex = 0;
-  static constexpr int kSamplesPerChannel = 480;
-  static constexpr int kPayloadType = 17;
-
-  return MediaTransportEncodedAudioFrame(
-      kSamplingRateHz, kStartingSampleIndex, kSamplesPerChannel,
-      sequence_number, MediaTransportEncodedAudioFrame::FrameType::kSpeech,
-      kPayloadType, std::vector<uint8_t>(kSamplesPerChannel));
-}
-
-MediaTransportEncodedVideoFrame CreateVideoFrame(
-    int frame_id,
-    const webrtc::EncodedImage& encoded_image) {
-  static constexpr int kPayloadType = 18;
-  return MediaTransportEncodedVideoFrame(frame_id, /*referenced_frame_ids=*/{},
-                                         kPayloadType, encoded_image);
-}
-
 }  // namespace
-
-TEST(LoopbackMediaTransport, AudioWithNoSinkSilentlyIgnored) {
-  std::unique_ptr<rtc::Thread> thread = rtc::Thread::Create();
-  thread->Start();
-  MediaTransportPair transport_pair(thread.get());
-  transport_pair.first()->SendAudioFrame(1, CreateAudioFrame(0));
-  transport_pair.second()->SendAudioFrame(2, CreateAudioFrame(0));
-  transport_pair.FlushAsyncInvokes();
-}
-
-TEST(LoopbackMediaTransport, AudioDeliveredToSink) {
-  std::unique_ptr<rtc::Thread> thread = rtc::Thread::Create();
-  thread->Start();
-  MediaTransportPair transport_pair(thread.get());
-  ::testing::StrictMock<MockMediaTransportAudioSinkInterface> sink;
-  EXPECT_CALL(sink,
-              OnData(1, ::testing::Property(
-                            &MediaTransportEncodedAudioFrame::sequence_number,
-                            ::testing::Eq(10))));
-  transport_pair.second()->SetReceiveAudioSink(&sink);
-  transport_pair.first()->SendAudioFrame(1, CreateAudioFrame(10));
-
-  transport_pair.FlushAsyncInvokes();
-  transport_pair.second()->SetReceiveAudioSink(nullptr);
-}
-
-TEST(LoopbackMediaTransport, VideoDeliveredToSink) {
-  std::unique_ptr<rtc::Thread> thread = rtc::Thread::Create();
-  thread->Start();
-  MediaTransportPair transport_pair(thread.get());
-  ::testing::StrictMock<MockMediaTransportVideoSinkInterface> sink;
-  constexpr uint8_t encoded_data[] = {1, 2, 3};
-  EncodedImage encoded_image;
-  encoded_image.SetEncodedData(
-      EncodedImageBuffer::Create(encoded_data, sizeof(encoded_data)));
-
-  EXPECT_CALL(sink, OnData(1, ::testing::Property(
-                                  &MediaTransportEncodedVideoFrame::frame_id,
-                                  ::testing::Eq(10))))
-      .WillOnce(::testing::Invoke(
-          [&encoded_image](int frame_id,
-                           const MediaTransportEncodedVideoFrame& frame) {
-            EXPECT_EQ(frame.encoded_image().data(), encoded_image.data());
-            EXPECT_EQ(frame.encoded_image().size(), encoded_image.size());
-          }));
-
-  transport_pair.second()->SetReceiveVideoSink(&sink);
-  transport_pair.first()->SendVideoFrame(1,
-                                         CreateVideoFrame(10, encoded_image));
-
-  transport_pair.FlushAsyncInvokes();
-  transport_pair.second()->SetReceiveVideoSink(nullptr);
-}
-
-TEST(LoopbackMediaTransport, VideoKeyFrameRequestDeliveredToCallback) {
-  std::unique_ptr<rtc::Thread> thread = rtc::Thread::Create();
-  thread->Start();
-  MediaTransportPair transport_pair(thread.get());
-  ::testing::StrictMock<MockMediaTransportKeyFrameRequestCallback> callback1;
-  ::testing::StrictMock<MockMediaTransportKeyFrameRequestCallback> callback2;
-  const uint64_t kFirstChannelId = 1111;
-  const uint64_t kSecondChannelId = 2222;
-
-  EXPECT_CALL(callback1, OnKeyFrameRequested(kSecondChannelId));
-  EXPECT_CALL(callback2, OnKeyFrameRequested(kFirstChannelId));
-  transport_pair.first()->SetKeyFrameRequestCallback(&callback1);
-  transport_pair.second()->SetKeyFrameRequestCallback(&callback2);
-
-  transport_pair.first()->RequestKeyFrame(kFirstChannelId);
-  transport_pair.second()->RequestKeyFrame(kSecondChannelId);
-
-  transport_pair.FlushAsyncInvokes();
-}
 
 TEST(LoopbackMediaTransport, DataDeliveredToSink) {
   std::unique_ptr<rtc::Thread> thread = rtc::Thread::Create();
@@ -154,7 +60,7 @@ TEST(LoopbackMediaTransport, DataDeliveredToSink) {
   MediaTransportPair transport_pair(thread.get());
 
   MockDataChannelSink sink;
-  transport_pair.first()->SetDataSink(&sink);
+  transport_pair.first_datagram_transport()->SetDataSink(&sink);
 
   const int channel_id = 1;
   EXPECT_CALL(
@@ -166,10 +72,11 @@ TEST(LoopbackMediaTransport, DataDeliveredToSink) {
   SendDataParams params;
   params.type = DataMessageType::kText;
   rtc::CopyOnWriteBuffer buffer("foo");
-  transport_pair.second()->SendData(channel_id, params, buffer);
+  transport_pair.second_datagram_transport()->SendData(channel_id, params,
+                                                       buffer);
 
   transport_pair.FlushAsyncInvokes();
-  transport_pair.first()->SetDataSink(nullptr);
+  transport_pair.first_datagram_transport()->SetDataSink(nullptr);
 }
 
 TEST(LoopbackMediaTransport, CloseDeliveredToSink) {
@@ -178,10 +85,10 @@ TEST(LoopbackMediaTransport, CloseDeliveredToSink) {
   MediaTransportPair transport_pair(thread.get());
 
   MockDataChannelSink first_sink;
-  transport_pair.first()->SetDataSink(&first_sink);
+  transport_pair.first_datagram_transport()->SetDataSink(&first_sink);
 
   MockDataChannelSink second_sink;
-  transport_pair.second()->SetDataSink(&second_sink);
+  transport_pair.second_datagram_transport()->SetDataSink(&second_sink);
 
   const int channel_id = 1;
   {
@@ -191,11 +98,11 @@ TEST(LoopbackMediaTransport, CloseDeliveredToSink) {
     EXPECT_CALL(first_sink, OnChannelClosed(channel_id));
   }
 
-  transport_pair.first()->CloseChannel(channel_id);
+  transport_pair.first_datagram_transport()->CloseChannel(channel_id);
 
   transport_pair.FlushAsyncInvokes();
-  transport_pair.first()->SetDataSink(nullptr);
-  transport_pair.second()->SetDataSink(nullptr);
+  transport_pair.first_datagram_transport()->SetDataSink(nullptr);
+  transport_pair.second_datagram_transport()->SetDataSink(nullptr);
 }
 
 TEST(LoopbackMediaTransport, InitialStateDeliveredWhenCallbackSet) {
@@ -206,7 +113,10 @@ TEST(LoopbackMediaTransport, InitialStateDeliveredWhenCallbackSet) {
   MockStateCallback state_callback;
   EXPECT_CALL(state_callback, OnStateChanged(MediaTransportState::kPending));
 
-  transport_pair.first()->SetMediaTransportStateCallback(&state_callback);
+  thread->Invoke<void>(RTC_FROM_HERE, [&transport_pair, &state_callback] {
+    transport_pair.first_datagram_transport()->SetTransportStateCallback(
+        &state_callback);
+  });
   transport_pair.FlushAsyncInvokes();
 }
 
@@ -221,7 +131,10 @@ TEST(LoopbackMediaTransport, ChangedStateDeliveredWhenCallbackSet) {
   MockStateCallback state_callback;
 
   EXPECT_CALL(state_callback, OnStateChanged(MediaTransportState::kWritable));
-  transport_pair.first()->SetMediaTransportStateCallback(&state_callback);
+  thread->Invoke<void>(RTC_FROM_HERE, [&transport_pair, &state_callback] {
+    transport_pair.first_datagram_transport()->SetTransportStateCallback(
+        &state_callback);
+  });
   transport_pair.FlushAsyncInvokes();
 }
 
@@ -234,7 +147,10 @@ TEST(LoopbackMediaTransport, StateChangeDeliveredToCallback) {
 
   EXPECT_CALL(state_callback, OnStateChanged(MediaTransportState::kPending));
   EXPECT_CALL(state_callback, OnStateChanged(MediaTransportState::kWritable));
-  transport_pair.first()->SetMediaTransportStateCallback(&state_callback);
+  thread->Invoke<void>(RTC_FROM_HERE, [&transport_pair, &state_callback] {
+    transport_pair.first_datagram_transport()->SetTransportStateCallback(
+        &state_callback);
+  });
   transport_pair.SetState(MediaTransportState::kWritable);
   transport_pair.FlushAsyncInvokes();
 }
@@ -247,9 +163,9 @@ TEST(LoopbackMediaTransport, NotReadyToSendWhenDataSinkSet) {
   MockDataChannelSink data_channel_sink;
   EXPECT_CALL(data_channel_sink, OnReadyToSend()).Times(0);
 
-  transport_pair.first()->SetDataSink(&data_channel_sink);
+  transport_pair.first_datagram_transport()->SetDataSink(&data_channel_sink);
   transport_pair.FlushAsyncInvokes();
-  transport_pair.first()->SetDataSink(nullptr);
+  transport_pair.first_datagram_transport()->SetDataSink(nullptr);
 }
 
 TEST(LoopbackMediaTransport, ReadyToSendWhenDataSinkSet) {
@@ -263,9 +179,9 @@ TEST(LoopbackMediaTransport, ReadyToSendWhenDataSinkSet) {
   MockDataChannelSink data_channel_sink;
   EXPECT_CALL(data_channel_sink, OnReadyToSend());
 
-  transport_pair.first()->SetDataSink(&data_channel_sink);
+  transport_pair.first_datagram_transport()->SetDataSink(&data_channel_sink);
   transport_pair.FlushAsyncInvokes();
-  transport_pair.first()->SetDataSink(nullptr);
+  transport_pair.first_datagram_transport()->SetDataSink(nullptr);
 }
 
 TEST(LoopbackMediaTransport, StateChangeDeliveredToDataSink) {
@@ -276,10 +192,10 @@ TEST(LoopbackMediaTransport, StateChangeDeliveredToDataSink) {
   MockDataChannelSink data_channel_sink;
   EXPECT_CALL(data_channel_sink, OnReadyToSend());
 
-  transport_pair.first()->SetDataSink(&data_channel_sink);
+  transport_pair.first_datagram_transport()->SetDataSink(&data_channel_sink);
   transport_pair.SetState(MediaTransportState::kWritable);
   transport_pair.FlushAsyncInvokes();
-  transport_pair.first()->SetDataSink(nullptr);
+  transport_pair.first_datagram_transport()->SetDataSink(nullptr);
 }
 
 }  // namespace webrtc

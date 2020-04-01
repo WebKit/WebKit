@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "pc/rtp_receiver.h"
 #include "test/gmock.h"
 
@@ -33,7 +34,6 @@ class MockRtpReceiverInternal : public RtpReceiverInternal {
   MOCK_CONST_METHOD0(media_type, cricket::MediaType());
   MOCK_CONST_METHOD0(id, std::string());
   MOCK_CONST_METHOD0(GetParameters, RtpParameters());
-  MOCK_METHOD1(SetParameters, bool(const RtpParameters&));
   MOCK_METHOD1(SetObserver, void(RtpReceiverObserverInterface*));
   MOCK_METHOD1(SetJitterBufferMinimumDelay, void(absl::optional<double>));
   MOCK_CONST_METHOD0(GetSources, std::vector<RtpSource>());
@@ -46,6 +46,7 @@ class MockRtpReceiverInternal : public RtpReceiverInternal {
   MOCK_METHOD0(Stop, void());
   MOCK_METHOD1(SetMediaChannel, void(cricket::MediaChannel*));
   MOCK_METHOD1(SetupMediaChannel, void(uint32_t));
+  MOCK_METHOD0(SetupUnsignaledMediaChannel, void());
   MOCK_CONST_METHOD0(ssrc, uint32_t());
   MOCK_METHOD0(NotifyFirstPacketReceived, void());
   MOCK_METHOD1(set_stream_ids, void(std::vector<std::string>));

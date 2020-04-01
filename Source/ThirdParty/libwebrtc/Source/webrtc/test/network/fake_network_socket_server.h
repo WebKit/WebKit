@@ -18,29 +18,22 @@
 #include "rtc_base/async_socket.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
-#include "rtc_base/message_queue.h"
-#include "rtc_base/socket.h"
-#include "rtc_base/socket_address.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "system_wrappers/include/clock.h"
-#include "test/network/fake_network_socket.h"
+#include "test/network/network_emulation.h"
 
 namespace webrtc {
 namespace test {
+class FakeNetworkSocket;
 
 // FakeNetworkSocketServer must outlive any sockets it creates.
 class FakeNetworkSocketServer : public rtc::SocketServer,
-                                public sigslot::has_slots<>,
-                                public SocketManager {
+                                public sigslot::has_slots<> {
  public:
-  FakeNetworkSocketServer(Clock* clock,
-                          EndpointsContainer* endpoints_controller);
+  explicit FakeNetworkSocketServer(EndpointsContainer* endpoints_controller);
   ~FakeNetworkSocketServer() override;
 
-  EmulatedEndpoint* GetEndpointNode(const rtc::IPAddress& ip) override;
-  void Unregister(SocketIoProcessor* io_processor) override;
-  void OnMessageQueueDestroyed();
 
   // rtc::SocketFactory methods:
   rtc::Socket* CreateSocket(int family, int type) override;
@@ -49,20 +42,24 @@ class FakeNetworkSocketServer : public rtc::SocketServer,
   // rtc::SocketServer methods:
   // Called by the network thread when this server is installed, kicking off the
   // message handler loop.
-  void SetMessageQueue(rtc::MessageQueue* msg_queue) override;
+  void SetMessageQueue(rtc::Thread* thread) override;
   bool Wait(int cms, bool process_io) override;
   void WakeUp() override;
 
- private:
-  Timestamp Now() const;
+ protected:
+  friend class FakeNetworkSocket;
+  EmulatedEndpointImpl* GetEndpointNode(const rtc::IPAddress& ip);
+  void Unregister(FakeNetworkSocket* socket);
 
-  Clock* const clock_;
+ private:
+  void OnMessageQueueDestroyed();
+
   const EndpointsContainer* endpoints_container_;
   rtc::Event wakeup_;
-  rtc::MessageQueue* msg_queue_;
+  rtc::Thread* thread_ = nullptr;
 
   rtc::CriticalSection lock_;
-  std::set<SocketIoProcessor*> io_processors_ RTC_GUARDED_BY(lock_);
+  std::vector<FakeNetworkSocket*> sockets_ RTC_GUARDED_BY(lock_);
 };
 
 }  // namespace test

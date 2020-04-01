@@ -23,6 +23,7 @@
 #include "rtc_base/critical_section.h"
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/socket_server.h"
+#include "rtc_base/system/rtc_export.h"
 
 #if defined(WEBRTC_POSIX)
 typedef int SOCKET;
@@ -61,7 +62,7 @@ class Dispatcher {
 };
 
 // A socket server that provides the real sockets of the underlying OS.
-class PhysicalSocketServer : public SocketServer {
+class RTC_EXPORT PhysicalSocketServer : public SocketServer {
  public:
   PhysicalSocketServer();
   ~PhysicalSocketServer() override;
@@ -198,11 +199,12 @@ class PhysicalSocket : public AsyncSocket, public sigslot::has_slots<> {
   virtual void EnableEvents(uint8_t events);
   virtual void DisableEvents(uint8_t events);
 
-  static int TranslateOption(Option opt, int* slevel, int* sopt);
+  int TranslateOption(Option opt, int* slevel, int* sopt);
 
   PhysicalSocketServer* ss_;
   SOCKET s_;
   bool udp_;
+  int family_ = 0;
   CriticalSection crit_;
   int error_ RTC_GUARDED_BY(crit_);
   ConnState state_;

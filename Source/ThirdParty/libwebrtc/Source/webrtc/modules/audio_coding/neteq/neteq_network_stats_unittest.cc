@@ -13,7 +13,9 @@
 #include "absl/memory/memory.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_decoder.h"
-#include "modules/audio_coding/neteq/include/neteq.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/neteq/neteq.h"
+#include "modules/audio_coding/neteq/default_neteq_factory.h"
 #include "modules/audio_coding/neteq/tools/rtp_generator.h"
 #include "rtc_base/ref_counted_object.h"
 #include "system_wrappers/include/clock.h"
@@ -22,6 +24,17 @@
 
 namespace webrtc {
 namespace test {
+
+namespace {
+
+std::unique_ptr<NetEq> CreateNetEq(
+    const NetEq::Config& config,
+    Clock* clock,
+    const rtc::scoped_refptr<AudioDecoderFactory>& decoder_factory) {
+  return DefaultNetEqFactory().CreateNetEq(config, decoder_factory, clock);
+}
+
+}  // namespace
 
 using ::testing::_;
 using ::testing::Return;
@@ -162,8 +175,7 @@ class NetEqNetworkStatsTest {
         packet_loss_interval_(0xffffffff) {
     NetEq::Config config;
     config.sample_rate_hz = format.clockrate_hz;
-    neteq_ = absl::WrapUnique(
-        NetEq::Create(config, Clock::GetRealTimeClock(), decoder_factory_));
+    neteq_ = CreateNetEq(config, Clock::GetRealTimeClock(), decoder_factory_);
     neteq_->RegisterPayloadType(kPayloadType, format);
   }
 
@@ -234,8 +246,7 @@ class NetEqNetworkStatsTest {
             kPayloadType, frame_size_samples_, &rtp_header_);
         if (!Lost(next_send_time)) {
           static const uint8_t payload[kPayloadSizeByte] = {0};
-          ASSERT_EQ(NetEq::kOK,
-                    neteq_->InsertPacket(rtp_header_, payload, next_send_time));
+          ASSERT_EQ(NetEq::kOK, neteq_->InsertPacket(rtp_header_, payload));
         }
       }
       bool muted = true;

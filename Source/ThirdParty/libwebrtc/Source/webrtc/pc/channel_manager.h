@@ -19,7 +19,7 @@
 
 #include "api/audio_options.h"
 #include "api/crypto/crypto_options.h"
-#include "api/media_transport_config.h"
+#include "api/transport/media/media_transport_config.h"
 #include "call/call.h"
 #include "media/base/codec.h"
 #include "media/base/media_channel.h"

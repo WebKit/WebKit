@@ -70,7 +70,7 @@ TEST(Normal, AvoidDivideByZero) {
   AudioMultiVector output(channels);
 
   // Zero input length.
-  EXPECT_EQ(0, normal.Process(input, 0, kModeExpand, &output));
+  EXPECT_EQ(0, normal.Process(input, 0, NetEq::Mode::kExpand, &output));
   EXPECT_EQ(0u, output.Size());
 
   // Try to make energy_length >> scaling = 0;
@@ -82,8 +82,8 @@ TEST(Normal, AvoidDivideByZero) {
   // will be zero, and scaling will be >= 6. Thus, energy_length >> scaling = 0,
   // and using this as a denominator would lead to problems.
   int input_size_samples = 63;
-  EXPECT_EQ(input_size_samples,
-            normal.Process(input, input_size_samples, kModeExpand, &output));
+  EXPECT_EQ(input_size_samples, normal.Process(input, input_size_samples,
+                                               NetEq::Mode::kExpand, &output));
 
   EXPECT_CALL(db, Die());      // Called when |db| goes out of scope.
   EXPECT_CALL(expand, Die());  // Called when |expand| goes out of scope.
@@ -106,7 +106,7 @@ TEST(Normal, InputLengthAndChannelsDoNotMatch) {
 
   // Let the number of samples be one sample less than 80 samples per channel.
   size_t input_len = 80 * channels - 1;
-  EXPECT_EQ(0, normal.Process(input, input_len, kModeExpand, &output));
+  EXPECT_EQ(0, normal.Process(input, input_len, NetEq::Mode::kExpand, &output));
   EXPECT_EQ(0u, output.Size());
 
   EXPECT_CALL(db, Die());      // Called when |db| goes out of scope.
@@ -132,8 +132,9 @@ TEST(Normal, LastModeExpand120msPacket) {
   EXPECT_CALL(expand, SetParametersForNormalAfterExpand());
   EXPECT_CALL(expand, Process(_)).WillOnce(Invoke(ExpandProcess120ms));
   EXPECT_CALL(expand, Reset());
-  EXPECT_EQ(static_cast<int>(kPacketsizeBytes),
-            normal.Process(input, kPacketsizeBytes, kModeExpand, &output));
+  EXPECT_EQ(
+      static_cast<int>(kPacketsizeBytes),
+      normal.Process(input, kPacketsizeBytes, NetEq::Mode::kExpand, &output));
 
   EXPECT_EQ(kPacketsizeBytes, output.Size());
 

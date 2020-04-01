@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <memory>
+
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
@@ -24,7 +26,6 @@
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
 #endif
-#include "absl/memory/memory.h"
 #include "pc/test/fake_audio_capture_module.h"
 #include "rtc_base/fake_network.h"
 #include "rtc_base/gunit.h"
@@ -185,11 +186,11 @@ class PeerConnectionBundleBaseTest : public ::testing::Test {
   WrapperPtr CreatePeerConnection(const RTCConfiguration& config) {
     auto* fake_network = NewFakeNetwork();
     auto port_allocator =
-        absl::make_unique<cricket::BasicPortAllocator>(fake_network);
+        std::make_unique<cricket::BasicPortAllocator>(fake_network);
     port_allocator->set_flags(cricket::PORTALLOCATOR_DISABLE_TCP |
                               cricket::PORTALLOCATOR_DISABLE_RELAY);
     port_allocator->set_step_delay(cricket::kMinimumStepDelay);
-    auto observer = absl::make_unique<MockPeerConnectionObserver>();
+    auto observer = std::make_unique<MockPeerConnectionObserver>();
     RTCConfiguration modified_config = config;
     modified_config.sdp_semantics = sdp_semantics_;
     auto pc = pc_factory_->CreatePeerConnection(
@@ -198,7 +199,7 @@ class PeerConnectionBundleBaseTest : public ::testing::Test {
       return nullptr;
     }
 
-    auto wrapper = absl::make_unique<PeerConnectionWrapperForBundleTest>(
+    auto wrapper = std::make_unique<PeerConnectionWrapperForBundleTest>(
         pc_factory_, pc, std::move(observer));
     wrapper->set_network(fake_network);
     return wrapper;

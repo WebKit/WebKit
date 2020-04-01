@@ -11,11 +11,9 @@
 package org.webrtc;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;

@@ -10,7 +10,8 @@
 
 #include "api/audio_codecs/isac/audio_encoder_isac_fix.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/isac/fix/include/audio_encoder_isacfix.h"
 #include "rtc_base/string_to_number.h"
@@ -55,8 +56,9 @@ std::unique_ptr<AudioEncoder> AudioEncoderIsacFix::MakeAudioEncoder(
   RTC_DCHECK(config.IsOk());
   AudioEncoderIsacFixImpl::Config c;
   c.frame_size_ms = config.frame_size_ms;
+  c.bit_rate = config.bit_rate;
   c.payload_type = payload_type;
-  return absl::make_unique<AudioEncoderIsacFixImpl>(c);
+  return std::make_unique<AudioEncoderIsacFixImpl>(c);
 }
 
 }  // namespace webrtc

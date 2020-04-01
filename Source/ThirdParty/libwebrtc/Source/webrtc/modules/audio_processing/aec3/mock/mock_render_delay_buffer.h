@@ -40,7 +40,7 @@ class MockRenderDelayBuffer : public RenderDelayBuffer {
   MOCK_CONST_METHOD0(GetDownsampledRenderBuffer,
                      const DownsampledRenderBuffer&());
   MOCK_CONST_METHOD1(CausalDelay, bool(size_t delay));
-  MOCK_METHOD1(SetAudioBufferDelay, void(size_t delay_ms));
+  MOCK_METHOD1(SetAudioBufferDelay, void(int delay_ms));
   MOCK_METHOD0(HasReceivedBufferDelay, bool());
 
  private:

@@ -126,7 +126,8 @@ int32_t AcmSendTestOldApi::SendData(AudioFrameType frame_type,
                                     uint8_t payload_type,
                                     uint32_t timestamp,
                                     const uint8_t* payload_data,
-                                    size_t payload_len_bytes) {
+                                    size_t payload_len_bytes,
+                                    int64_t absolute_capture_timestamp_ms) {
   // Store the packet locally.
   frame_type_ = frame_type;
   payload_type_ = payload_type;

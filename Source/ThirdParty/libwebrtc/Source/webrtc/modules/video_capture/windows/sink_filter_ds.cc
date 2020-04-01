@@ -14,6 +14,7 @@
 #include <initguid.h>
 
 #include <algorithm>
+#include <list>
 
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"

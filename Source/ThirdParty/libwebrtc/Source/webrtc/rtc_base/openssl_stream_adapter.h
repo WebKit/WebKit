@@ -20,7 +20,6 @@
 #include <vector>
 
 #include "rtc_base/buffer.h"
-#include "rtc_base/message_queue.h"
 #include "rtc_base/openssl_identity.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
@@ -96,8 +95,8 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter {
 
   bool GetSslCipherSuite(int* cipher) override;
 
-  int GetSslVersion() const override;
-
+  SSLProtocolVersion GetSslVersion() const override;
+  bool GetSslVersionBytes(int* version) const override;
   // Key Extractor interface
   bool ExportKeyingMaterial(const std::string& label,
                             const uint8_t* context,
@@ -217,6 +216,9 @@ class OpenSSLStreamAdapter final : public SSLStreamAdapter {
   // A 50-ms initial timeout ensures rapid setup on fast connections, but may
   // be too aggressive for low bandwidth links.
   int dtls_handshake_timeout_ms_ = 50;
+
+  // TODO(https://bugs.webrtc.org/10261): Completely remove this option in M84.
+  const bool support_legacy_tls_protocols_flag_;
 };
 
 /////////////////////////////////////////////////////////////////////////////

@@ -34,7 +34,6 @@ import org.chromium.base.test.params.ParameterSet;
 import org.chromium.base.test.params.ParameterizedRunner;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -96,7 +95,7 @@ public class HardwareVideoEncoderTest {
       bufferCopy.rewind();
 
       frameQueue.offer(EncodedImage.builder()
-                           .setBuffer(bufferCopy)
+                           .setBuffer(bufferCopy, null)
                            .setEncodedWidth(frame.encodedWidth)
                            .setEncodedHeight(frame.encodedHeight)
                            .setCaptureTimeNs(frame.captureTimeNs)

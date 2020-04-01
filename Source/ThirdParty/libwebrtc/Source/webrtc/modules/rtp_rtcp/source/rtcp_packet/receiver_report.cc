@@ -33,7 +33,7 @@ constexpr size_t ReceiverReport::kMaxNumberOfReportBlocks;
 //  |                         report block(s)                       |
 //  |                            ....                               |
 
-ReceiverReport::ReceiverReport() : sender_ssrc_(0) {}
+ReceiverReport::ReceiverReport() = default;
 
 ReceiverReport::ReceiverReport(const ReceiverReport& rhs) = default;
 
@@ -50,7 +50,7 @@ bool ReceiverReport::Parse(const CommonHeader& packet) {
     return false;
   }
 
-  sender_ssrc_ = ByteReader<uint32_t>::ReadBigEndian(packet.payload());
+  SetSenderSsrc(ByteReader<uint32_t>::ReadBigEndian(packet.payload()));
 
   const uint8_t* next_report_block = packet.payload() + kRrBaseLength;
 
@@ -80,7 +80,7 @@ bool ReceiverReport::Create(uint8_t* packet,
   }
   CreateHeader(report_blocks_.size(), kPacketType, HeaderLength(), packet,
                index);
-  ByteWriter<uint32_t>::WriteBigEndian(packet + *index, sender_ssrc_);
+  ByteWriter<uint32_t>::WriteBigEndian(packet + *index, sender_ssrc());
   *index += kRrBaseLength;
   for (const ReportBlock& block : report_blocks_) {
     block.Create(packet + *index);

@@ -12,11 +12,13 @@
 #define P2P_BASE_FAKE_ICE_TRANSPORT_H_
 
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 
 #include "absl/algorithm/container.h"
 #include "absl/types/optional.h"
+#include "api/ice_transport_interface.h"
 #include "p2p/base/ice_transport_internal.h"
 #include "rtc_base/async_invoker.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -110,10 +112,18 @@ class FakeIceTransport : public IceTransportInternal {
   int component() const override { return component_; }
   uint64_t IceTiebreaker() const { return tiebreaker_; }
   IceMode remote_ice_mode() const { return remote_ice_mode_; }
-  const std::string& ice_ufrag() const { return ice_ufrag_; }
-  const std::string& ice_pwd() const { return ice_pwd_; }
-  const std::string& remote_ice_ufrag() const { return remote_ice_ufrag_; }
-  const std::string& remote_ice_pwd() const { return remote_ice_pwd_; }
+  const std::string& ice_ufrag() const { return ice_parameters_.ufrag; }
+  const std::string& ice_pwd() const { return ice_parameters_.pwd; }
+  const std::string& remote_ice_ufrag() const {
+    return remote_ice_parameters_.ufrag;
+  }
+  const std::string& remote_ice_pwd() const {
+    return remote_ice_parameters_.pwd;
+  }
+  const IceParameters& ice_parameters() const { return ice_parameters_; }
+  const IceParameters& remote_ice_parameters() const {
+    return remote_ice_parameters_;
+  }
 
   IceTransportState GetState() const override {
     if (legacy_transport_state_) {
@@ -155,12 +165,10 @@ class FakeIceTransport : public IceTransportInternal {
     tiebreaker_ = tiebreaker;
   }
   void SetIceParameters(const IceParameters& ice_params) override {
-    ice_ufrag_ = ice_params.ufrag;
-    ice_pwd_ = ice_params.pwd;
+    ice_parameters_ = ice_params;
   }
   void SetRemoteIceParameters(const IceParameters& params) override {
-    remote_ice_ufrag_ = params.ufrag;
-    remote_ice_pwd_ = params.pwd;
+    remote_ice_parameters_ = params;
   }
 
   void SetRemoteIceMode(IceMode mode) override { remote_ice_mode_ = mode; }
@@ -310,10 +318,8 @@ class FakeIceTransport : public IceTransportInternal {
   IceConfig ice_config_;
   IceRole role_ = ICEROLE_UNKNOWN;
   uint64_t tiebreaker_ = 0;
-  std::string ice_ufrag_;
-  std::string ice_pwd_;
-  std::string remote_ice_ufrag_;
-  std::string remote_ice_pwd_;
+  IceParameters ice_parameters_;
+  IceParameters remote_ice_parameters_;
   IceMode remote_ice_mode_ = ICEMODE_FULL;
   size_t connection_count_ = 0;
   absl::optional<webrtc::IceTransportState> transport_state_;
@@ -328,6 +334,18 @@ class FakeIceTransport : public IceTransportInternal {
   std::map<rtc::Socket::Option, int> socket_options_;
   rtc::CopyOnWriteBuffer last_sent_packet_;
   rtc::Thread* const network_thread_;
+};
+
+class FakeIceTransportWrapper : public webrtc::IceTransportInterface {
+ public:
+  explicit FakeIceTransportWrapper(
+      std::unique_ptr<cricket::FakeIceTransport> internal)
+      : internal_(std::move(internal)) {}
+
+  cricket::IceTransportInternal* internal() override { return internal_.get(); }
+
+ private:
+  std::unique_ptr<cricket::FakeIceTransport> internal_;
 };
 
 }  // namespace cricket

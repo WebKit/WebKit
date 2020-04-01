@@ -20,13 +20,13 @@
 
 namespace cricket {
 
-RelayServerConfig::RelayServerConfig(RelayType type) : type(type) {}
+RelayServerConfig::RelayServerConfig() {}
 
 RelayServerConfig::RelayServerConfig(const rtc::SocketAddress& address,
                                      const std::string& username,
                                      const std::string& password,
                                      ProtocolType proto)
-    : type(RELAY_TURN), credentials(username, password) {
+    : credentials(username, password) {
   ports.push_back(ProtocolAddress(address, proto));
 }
 
@@ -116,11 +116,26 @@ void PortAllocator::set_restrict_ice_credentials_change(bool value) {
   restrict_ice_credentials_change_ = value;
 }
 
+// Deprecated
 bool PortAllocator::SetConfiguration(
     const ServerAddresses& stun_servers,
     const std::vector<RelayServerConfig>& turn_servers,
     int candidate_pool_size,
     bool prune_turn_ports,
+    webrtc::TurnCustomizer* turn_customizer,
+    const absl::optional<int>& stun_candidate_keepalive_interval) {
+  webrtc::PortPrunePolicy turn_port_prune_policy =
+      prune_turn_ports ? webrtc::PRUNE_BASED_ON_PRIORITY : webrtc::NO_PRUNE;
+  return SetConfiguration(stun_servers, turn_servers, candidate_pool_size,
+                          turn_port_prune_policy, turn_customizer,
+                          stun_candidate_keepalive_interval);
+}
+
+bool PortAllocator::SetConfiguration(
+    const ServerAddresses& stun_servers,
+    const std::vector<RelayServerConfig>& turn_servers,
+    int candidate_pool_size,
+    webrtc::PortPrunePolicy turn_port_prune_policy,
     webrtc::TurnCustomizer* turn_customizer,
     const absl::optional<int>& stun_candidate_keepalive_interval) {
   CheckRunOnValidThreadIfInitialized();
@@ -132,7 +147,7 @@ bool PortAllocator::SetConfiguration(
       (stun_servers != stun_servers_ || turn_servers != turn_servers_);
   stun_servers_ = stun_servers;
   turn_servers_ = turn_servers;
-  prune_turn_ports_ = prune_turn_ports;
+  turn_port_prune_policy_ = turn_port_prune_policy;
 
   if (candidate_pool_frozen_) {
     if (candidate_pool_size != candidate_pool_size_) {

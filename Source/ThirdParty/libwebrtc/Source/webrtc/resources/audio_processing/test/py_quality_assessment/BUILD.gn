@@ -11,9 +11,7 @@ import("../../../../webrtc.gni")
 if (rtc_include_tests) {
   copy("noise_tracks") {
     testonly = true
-    sources = [
-      "noise_tracks/city.wav",
-    ]
+    sources = [ "noise_tracks/city.wav" ]
     outputs = [
       "$root_build_dir/py_quality_assessment/noise_tracks/{{source_file_part}}",
     ]
@@ -21,11 +19,7 @@ if (rtc_include_tests) {
 
   copy("probing_signals") {
     testonly = true
-    sources = [
-      "probing_signals/tone-880.wav",
-    ]
-    outputs = [
-      "$root_build_dir/py_quality_assessment/probing_signals/{{source_file_part}}",
-    ]
+    sources = [ "probing_signals/tone-880.wav" ]
+    outputs = [ "$root_build_dir/py_quality_assessment/probing_signals/{{source_file_part}}" ]
   }  # probing_signals
 }

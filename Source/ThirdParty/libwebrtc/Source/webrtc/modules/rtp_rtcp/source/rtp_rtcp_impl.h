@@ -22,7 +22,6 @@
 #include "absl/types/optional.h"
 #include "api/rtp_headers.h"
 #include "api/video/video_bitrate_allocation.h"
-#include "modules/include/module_common_types.h"
 #include "modules/include/module_fec_types.h"
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp.h"
@@ -30,8 +29,10 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
 #include "modules/rtp_rtcp/source/rtcp_receiver.h"
 #include "modules/rtp_rtcp/source/rtcp_sender.h"
+#include "modules/rtp_rtcp/source/rtp_packet_history.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/rtp_rtcp/source/rtp_sender.h"
+#include "modules/rtp_rtcp/source/rtp_sender_egress.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/gtest_prod_util.h"
 
@@ -72,9 +73,9 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
   // Register RTP header extension.
   int32_t RegisterSendRtpHeaderExtension(RTPExtensionType type,
                                          uint8_t id) override;
-  bool RegisterRtpHeaderExtension(const std::string& uri, int id) override;
-
+  void RegisterRtpHeaderExtension(absl::string_view uri, int id) override;
   int32_t DeregisterSendRtpHeaderExtension(RTPExtensionType type) override;
+  void DeregisterSendRtpHeaderExtension(absl::string_view uri) override;
 
   bool SupportsPadding() const override;
   bool SupportsRtxPayloadPadding() const override;
@@ -95,10 +96,7 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
   RtpState GetRtpState() const override;
   RtpState GetRtxState() const override;
 
-  uint32_t SSRC() const override;
-
-  // Configure SSRC, default is a random number.
-  void SetSSRC(uint32_t ssrc) override;
+  uint32_t SSRC() const override { return rtcp_sender_.SSRC(); }
 
   void SetRid(const std::string& rid) override;
 
@@ -110,8 +108,7 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
 
   void SetRtxSendStatus(int mode) override;
   int RtxSendStatus() const override;
-
-  void SetRtxSsrc(uint32_t ssrc) override;
+  absl::optional<uint32_t> RtxSsrc() const override;
 
   void SetRtxSendPayloadType(int payload_type,
                              int associated_payload_type) override;
@@ -128,6 +125,8 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
 
   bool SendingMedia() const override;
 
+  bool IsAudioConfigured() const override;
+
   void SetAsPartOfAllocation(bool part_of_allocation) override;
 
   bool OnSendingRtpFrame(uint32_t timestamp,
@@ -138,9 +137,14 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
   bool TrySendPacket(RtpPacketToSend* packet,
                      const PacedPacketInfo& pacing_info) override;
 
+  void OnPacketsAcknowledged(
+      rtc::ArrayView<const uint16_t> sequence_numbers) override;
 
   std::vector<std::unique_ptr<RtpPacketToSend>> GeneratePadding(
       size_t target_size_bytes) override;
+
+  std::vector<RtpSequenceNumberMap::Info> GetSentRtpPacketInfos(
+      rtc::ArrayView<const uint16_t> sequence_numbers) const override;
 
   // RTCP part.
 
@@ -235,9 +239,9 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
 
   void SetReportBlockDataObserver(ReportBlockDataObserver* observer) override;
 
-  bool SendFeedbackPacket(const rtcp::TransportFeedback& packet) override;
-  bool SendNetworkStateEstimatePacket(
-      const rtcp::RemoteEstimate& packet) override;
+  void SendCombinedRtcpPacket(
+      std::vector<std::unique_ptr<rtcp::RtcpPacket>> rtcp_packets) override;
+
   // (APP) Application specific data.
   int32_t SetRTCPApplicationSpecificData(uint8_t sub_type,
                                          uint32_t name,
@@ -266,11 +270,6 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
                    uint32_t* fec_rate,
                    uint32_t* nackRate) const override;
 
-  void RegisterSendChannelRtpStatisticsCallback(
-      StreamDataCountersCallback* callback) override;
-  StreamDataCountersCallback* GetSendChannelRtpStatisticsCallback()
-      const override;
-
   void OnReceivedNack(
       const std::vector<uint16_t>& nack_sequence_numbers) override;
   void OnReceivedRtcpReportBlocks(
@@ -286,8 +285,12 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
  protected:
   bool UpdateRTCPReceiveInformationTimers();
 
-  RTPSender* rtp_sender() { return rtp_sender_.get(); }
-  const RTPSender* rtp_sender() const { return rtp_sender_.get(); }
+  RTPSender* rtp_sender() {
+    return rtp_sender_ ? &rtp_sender_->packet_generator : nullptr;
+  }
+  const RTPSender* rtp_sender() const {
+    return rtp_sender_ ? &rtp_sender_->packet_generator : nullptr;
+  }
 
   RTCPSender* rtcp_sender() { return &rtcp_sender_; }
   const RTCPSender* rtcp_sender() const { return &rtcp_sender_; }
@@ -297,17 +300,33 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
 
   Clock* clock() const { return clock_; }
 
+  DataRate SendRate() const;
+  DataRate NackOverheadRate() const;
+
  private:
   FRIEND_TEST_ALL_PREFIXES(RtpRtcpImplTest, Rtt);
   FRIEND_TEST_ALL_PREFIXES(RtpRtcpImplTest, RttForReceiverOnly);
-  void SetRtcpReceiverSsrcs(uint32_t main_ssrc);
+
+  struct RtpSenderContext {
+    explicit RtpSenderContext(const RtpRtcp::Configuration& config);
+    // Storage of packets, for retransmissions and padding, if applicable.
+    RtpPacketHistory packet_history;
+    // Handles final time timestamping/stats/etc and handover to Transport.
+    RtpSenderEgress packet_sender;
+    // If no paced sender configured, this class will be used to pass packets
+    // from |packet_generator_| to |packet_sender_|.
+    RtpSenderEgress::NonPacedPacketSender non_paced_sender;
+    // Handles creation of RTP packets to be sent.
+    RTPSender packet_generator;
+  };
 
   void set_rtt_ms(int64_t rtt_ms);
   int64_t rtt_ms() const;
 
   bool TimeToSendFullNackList(int64_t now) const;
 
-  std::unique_ptr<RTPSender> rtp_sender_;
+  std::unique_ptr<RtpSenderContext> rtp_sender_;
+
   RTCPSender rtcp_sender_;
   RTCPReceiver rtcp_receiver_;
 
@@ -323,8 +342,6 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
   uint16_t nack_last_seq_number_sent_;
 
   RemoteBitrateEstimator* const remote_bitrate_;
-
-  RtcpAckObserver* const ack_observer_;
 
   RtcpRttStats* const rtt_stats_;
 

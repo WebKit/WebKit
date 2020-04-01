@@ -87,7 +87,7 @@ public class AppRTCAudioManager {
   private AudioDevice userSelectedAudioDevice;
 
   // Contains speakerphone setting: auto, true or false
-  private final String useSpeakerphone;
+  @Nullable private final String useSpeakerphone;
 
   // Proximity sensor object. It measures the proximity of an object in cm
   // relative to the view screen of a device and can therefore be used to

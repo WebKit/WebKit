@@ -101,7 +101,6 @@ std::vector<const std::string*> GetStatsReferencedIds(const RTCStats& stats) {
   } else if (type == RTCInboundRTPStreamStats::kType ||
              type == RTCOutboundRTPStreamStats::kType) {
     const auto& rtp = static_cast<const RTCRTPStreamStats&>(stats);
-    AddIdIfDefined(rtp.associate_stats_id, &neighbor_ids);
     AddIdIfDefined(rtp.track_id, &neighbor_ids);
     AddIdIfDefined(rtp.transport_id, &neighbor_ids);
     AddIdIfDefined(rtp.codec_id, &neighbor_ids);
@@ -109,6 +108,7 @@ std::vector<const std::string*> GetStatsReferencedIds(const RTCStats& stats) {
       const auto& outbound_rtp =
           static_cast<const RTCOutboundRTPStreamStats&>(stats);
       AddIdIfDefined(outbound_rtp.media_source_id, &neighbor_ids);
+      AddIdIfDefined(outbound_rtp.remote_id, &neighbor_ids);
     }
   } else if (type == RTCRemoteInboundRtpStreamStats::kType) {
     const auto& remote_inbound_rtp =

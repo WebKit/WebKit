@@ -14,7 +14,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.support.test.filters.MediumTest;
 import android.support.test.filters.SmallTest;

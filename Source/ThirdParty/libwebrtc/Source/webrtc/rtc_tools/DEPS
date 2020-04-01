@@ -19,3 +19,14 @@ include_rules = [
   "+third_party/libyuv",
 ]
 
+specific_include_rules = {
+  ".*ivf_converter\.cc": [
+    "+absl/debugging/failure_signal_handler.h",
+    "+absl/debugging/symbolize.h",
+    "+modules/video_coding/codecs/vp8/include/vp8.h",
+    "+modules/video_coding/codecs/vp9/include/vp9.h",
+    "+modules/video_coding/include/video_error_codes.h",
+    "+modules/video_coding/utility/ivf_file_writer.h",
+    "+modules/video_coding/codecs/h264/include/h264.h",
+  ],
+}

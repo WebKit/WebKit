@@ -35,7 +35,7 @@ class ScreenCapturerTest : public ::testing::Test {
   void SetUp() override {
     capturer_ = DesktopCapturer::CreateScreenCapturer(
         DesktopCaptureOptions::CreateDefault());
-    RTC_DCHECK(capturer_);
+    ASSERT_TRUE(capturer_);
   }
 
  protected:

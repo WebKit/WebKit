@@ -15,7 +15,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
@@ -69,11 +68,11 @@ void TestLibYuv::SetUp() {
       test::ReadI420Buffer(width_, height_, source_file_));
 
   orig_frame_ =
-      absl::make_unique<VideoFrame>(VideoFrame::Builder()
-                                        .set_video_frame_buffer(buffer)
-                                        .set_rotation(webrtc::kVideoRotation_0)
-                                        .set_timestamp_us(0)
-                                        .build());
+      std::make_unique<VideoFrame>(VideoFrame::Builder()
+                                       .set_video_frame_buffer(buffer)
+                                       .set_rotation(webrtc::kVideoRotation_0)
+                                       .set_timestamp_us(0)
+                                       .build());
 }
 
 void TestLibYuv::TearDown() {

@@ -13,6 +13,7 @@
 
 #include <stdint.h>
 
+#include "absl/types/optional.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/numerics/moving_median_filter.h"
 #include "system_wrappers/include/rtp_to_ntp_estimator.h"
@@ -32,7 +33,7 @@ class RemoteNtpTimeEstimator {
   ~RemoteNtpTimeEstimator();
 
   // Updates the estimator with round trip time |rtt|, NTP seconds |ntp_secs|,
-  // NTP fraction |ntp_frac| and RTP timestamp |rtcp_timestamp|.
+  // NTP fraction |ntp_frac| and RTP timestamp |rtp_timestamp|.
   bool UpdateRtcpTimestamp(int64_t rtt,
                            uint32_t ntp_secs,
                            uint32_t ntp_frac,
@@ -41,6 +42,10 @@ class RemoteNtpTimeEstimator {
   // Estimates the NTP timestamp in local timebase from |rtp_timestamp|.
   // Returns the NTP timestamp in ms when success. -1 if failed.
   int64_t Estimate(uint32_t rtp_timestamp);
+
+  // Estimates the offset, in milliseconds, between the remote clock and the
+  // local one. This is equal to local NTP clock - remote NTP clock.
+  absl::optional<int64_t> EstimateRemoteToLocalClockOffsetMs();
 
  private:
   Clock* clock_;

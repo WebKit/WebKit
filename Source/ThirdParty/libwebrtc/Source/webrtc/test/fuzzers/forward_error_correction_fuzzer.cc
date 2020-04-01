@@ -10,10 +10,10 @@
 
 #include <memory>
 
+#include "api/scoped_refptr.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
-#include "rtc_base/bytebuffer.h"
-#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/byte_buffer.h"
 
 namespace webrtc {
 
@@ -56,7 +56,8 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         new ForwardErrorCorrection::RecoveredPacket();
     recovered_packet->pkt = rtc::scoped_refptr<ForwardErrorCorrection::Packet>(
         new ForwardErrorCorrection::Packet());
-    recovered_packet->pkt->length = kPacketSize;
+    recovered_packet->pkt->data.SetSize(kPacketSize);
+    memset(recovered_packet->pkt->data.data(), 0, kPacketSize);
     recovered_packet->ssrc = kMediaSsrc;
     recovered_packet->seq_num = media_seqnum++;
     recovered_packets.emplace_back(recovered_packet);
@@ -66,8 +67,9 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   ForwardErrorCorrection::ReceivedPacket received_packet;
   received_packet.pkt = rtc::scoped_refptr<ForwardErrorCorrection::Packet>(
       new ForwardErrorCorrection::Packet());
-  received_packet.pkt->length = kPacketSize;
-  uint8_t* packet_buffer = received_packet.pkt->data;
+  received_packet.pkt->data.SetSize(kPacketSize);
+  received_packet.pkt->data.EnsureCapacity(IP_PACKET_SIZE);
+  uint8_t* packet_buffer = received_packet.pkt->data.data();
   uint8_t reordering;
   uint16_t seq_num_diff;
   uint8_t packet_type;

@@ -12,26 +12,43 @@
 
 namespace webrtc {
 
-ReverbModelEstimator::ReverbModelEstimator(const EchoCanceller3Config& config)
-    : reverb_decay_estimator_(config) {}
+ReverbModelEstimator::ReverbModelEstimator(const EchoCanceller3Config& config,
+                                           size_t num_capture_channels)
+    : reverb_decay_estimators_(num_capture_channels),
+      reverb_frequency_responses_(num_capture_channels) {
+  for (size_t ch = 0; ch < reverb_decay_estimators_.size(); ++ch) {
+    reverb_decay_estimators_[ch] =
+        std::make_unique<ReverbDecayEstimator>(config);
+  }
+}
 
 ReverbModelEstimator::~ReverbModelEstimator() = default;
 
 void ReverbModelEstimator::Update(
-    rtc::ArrayView<const float> impulse_response,
-    const std::vector<std::array<float, kFftLengthBy2Plus1>>&
-        frequency_response,
-    const absl::optional<float>& linear_filter_quality,
-    int filter_delay_blocks,
-    bool usable_linear_estimate,
+    rtc::ArrayView<const std::vector<float>> impulse_responses,
+    rtc::ArrayView<const std::vector<std::array<float, kFftLengthBy2Plus1>>>
+        frequency_responses,
+    rtc::ArrayView<const absl::optional<float>> linear_filter_qualities,
+    rtc::ArrayView<const int> filter_delays_blocks,
+    const std::vector<bool>& usable_linear_estimates,
     bool stationary_block) {
-  // Estimate the frequency response for the reverb.
-  reverb_frequency_response_.Update(frequency_response, filter_delay_blocks,
-                                    linear_filter_quality, stationary_block);
+  const size_t num_capture_channels = reverb_decay_estimators_.size();
+  RTC_DCHECK_EQ(num_capture_channels, impulse_responses.size());
+  RTC_DCHECK_EQ(num_capture_channels, frequency_responses.size());
+  RTC_DCHECK_EQ(num_capture_channels, usable_linear_estimates.size());
 
-  // Estimate the reverb decay,
-  reverb_decay_estimator_.Update(impulse_response, linear_filter_quality,
-                                 filter_delay_blocks, usable_linear_estimate,
-                                 stationary_block);
+  for (size_t ch = 0; ch < num_capture_channels; ++ch) {
+    // Estimate the frequency response for the reverb.
+    reverb_frequency_responses_[ch].Update(
+        frequency_responses[ch], filter_delays_blocks[ch],
+        linear_filter_qualities[ch], stationary_block);
+
+    // Estimate the reverb decay,
+    reverb_decay_estimators_[ch]->Update(
+        impulse_responses[ch], linear_filter_qualities[ch],
+        filter_delays_blocks[ch], usable_linear_estimates[ch],
+        stationary_block);
+  }
 }
+
 }  // namespace webrtc

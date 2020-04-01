@@ -13,7 +13,7 @@
 #include <utility>
 #include <vector>
 
-#include "logging/rtc_event_log/events/rtc_event.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
 #include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_controller.h"
@@ -41,10 +41,7 @@ MATCHER_P(NetworkMetricsIs, metric, "") {
          arg.target_audio_bitrate_bps == metric.target_audio_bitrate_bps &&
          arg.rtt_ms == metric.rtt_ms &&
          arg.overhead_bytes_per_packet == metric.overhead_bytes_per_packet &&
-         arg.uplink_packet_loss_fraction ==
-             metric.uplink_packet_loss_fraction &&
-         arg.uplink_recoverable_packet_loss_fraction ==
-             metric.uplink_recoverable_packet_loss_fraction;
+         arg.uplink_packet_loss_fraction == metric.uplink_packet_loss_fraction;
 }
 
 MATCHER_P(IsRtcEventAnaConfigEqualTo, config, "") {
@@ -139,17 +136,6 @@ TEST(AudioNetworkAdaptorImplTest,
   states.audio_network_adaptor->SetUplinkPacketLossFraction(kPacketLoss);
 }
 
-TEST(AudioNetworkAdaptorImplTest,
-     UpdateNetworkMetricsIsCalledOnSetUplinkRecoverablePacketLossFraction) {
-  auto states = CreateAudioNetworkAdaptor();
-  constexpr float kRecoverablePacketLoss = 0.1f;
-  Controller::NetworkMetrics check;
-  check.uplink_recoverable_packet_loss_fraction = kRecoverablePacketLoss;
-  SetExpectCallToUpdateNetworkMetrics(states.mock_controllers, check);
-  states.audio_network_adaptor->SetUplinkRecoverablePacketLossFraction(
-      kRecoverablePacketLoss);
-}
-
 TEST(AudioNetworkAdaptorImplTest, UpdateNetworkMetricsIsCalledOnSetRtt) {
   auto states = CreateAudioNetworkAdaptor();
   constexpr int kRtt = 100;
@@ -192,7 +178,7 @@ TEST(AudioNetworkAdaptorImplTest,
       "WebRTC-Audio-BitrateAdaptation/Enabled/WebRTC-Audio-FecAdaptation/"
       "Enabled/");
   rtc::ScopedFakeClock fake_clock;
-  fake_clock.AdvanceTime(TimeDelta::ms(kClockInitialTimeMs));
+  fake_clock.AdvanceTime(TimeDelta::Millis(kClockInitialTimeMs));
   auto states = CreateAudioNetworkAdaptor();
   AudioEncoderRuntimeConfig config;
   config.bitrate_bps = 32000;
@@ -210,13 +196,12 @@ TEST(AudioNetworkAdaptorImplTest,
 TEST(AudioNetworkAdaptorImplTest,
      DumpNetworkMetricsIsCalledOnSetNetworkMetrics) {
   rtc::ScopedFakeClock fake_clock;
-  fake_clock.AdvanceTime(TimeDelta::ms(kClockInitialTimeMs));
+  fake_clock.AdvanceTime(TimeDelta::Millis(kClockInitialTimeMs));
 
   auto states = CreateAudioNetworkAdaptor();
 
   constexpr int kBandwidth = 16000;
   constexpr float kPacketLoss = 0.7f;
-  const auto kRecoverablePacketLoss = 0.2f;
   constexpr int kRtt = 100;
   constexpr int kTargetAudioBitrate = 15000;
   constexpr size_t kOverhead = 64;
@@ -229,36 +214,31 @@ TEST(AudioNetworkAdaptorImplTest,
               DumpNetworkMetrics(NetworkMetricsIs(check), timestamp_check));
   states.audio_network_adaptor->SetUplinkBandwidth(kBandwidth);
 
-  fake_clock.AdvanceTime(TimeDelta::ms(100));
+  fake_clock.AdvanceTime(TimeDelta::Millis(100));
   timestamp_check += 100;
   check.uplink_packet_loss_fraction = kPacketLoss;
   EXPECT_CALL(*states.mock_debug_dump_writer,
               DumpNetworkMetrics(NetworkMetricsIs(check), timestamp_check));
   states.audio_network_adaptor->SetUplinkPacketLossFraction(kPacketLoss);
 
-  fake_clock.AdvanceTime(TimeDelta::ms(50));
+  fake_clock.AdvanceTime(TimeDelta::Millis(50));
   timestamp_check += 50;
-  check.uplink_recoverable_packet_loss_fraction = kRecoverablePacketLoss;
-  EXPECT_CALL(*states.mock_debug_dump_writer,
-              DumpNetworkMetrics(NetworkMetricsIs(check), timestamp_check));
-  states.audio_network_adaptor->SetUplinkRecoverablePacketLossFraction(
-      kRecoverablePacketLoss);
 
-  fake_clock.AdvanceTime(TimeDelta::ms(200));
+  fake_clock.AdvanceTime(TimeDelta::Millis(200));
   timestamp_check += 200;
   check.rtt_ms = kRtt;
   EXPECT_CALL(*states.mock_debug_dump_writer,
               DumpNetworkMetrics(NetworkMetricsIs(check), timestamp_check));
   states.audio_network_adaptor->SetRtt(kRtt);
 
-  fake_clock.AdvanceTime(TimeDelta::ms(150));
+  fake_clock.AdvanceTime(TimeDelta::Millis(150));
   timestamp_check += 150;
   check.target_audio_bitrate_bps = kTargetAudioBitrate;
   EXPECT_CALL(*states.mock_debug_dump_writer,
               DumpNetworkMetrics(NetworkMetricsIs(check), timestamp_check));
   states.audio_network_adaptor->SetTargetAudioBitrate(kTargetAudioBitrate);
 
-  fake_clock.AdvanceTime(TimeDelta::ms(50));
+  fake_clock.AdvanceTime(TimeDelta::Millis(50));
   timestamp_check += 50;
   check.overhead_bytes_per_packet = kOverhead;
   EXPECT_CALL(*states.mock_debug_dump_writer,

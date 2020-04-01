@@ -31,6 +31,7 @@
 #include "logging/rtc_event_log/rtc_event_processor.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
 #include "modules/include/module_common_types.h"
+#include "modules/include/module_common_types_public.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/rtp_rtcp/include/rtp_cvo.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -42,6 +43,55 @@
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/sequence_number_util.h"
 #include "rtc_base/protobuf_utils.h"
+
+// These macros were added to convert existing code using RTC_CHECKs
+// to returning a Status object instead. Macros are necessary (over
+// e.g. helper functions) since we want to return from the current
+// function.
+#define RTC_PARSE_CHECK_OR_RETURN(X)                                        \
+  do {                                                                      \
+    if (!(X))                                                               \
+      return ParsedRtcEventLog::ParseStatus::Error(#X, __FILE__, __LINE__); \
+  } while (0)
+
+#define RTC_PARSE_CHECK_OR_RETURN_OP(OP, X, Y)                          \
+  do {                                                                  \
+    if (!((X)OP(Y)))                                                    \
+      return ParsedRtcEventLog::ParseStatus::Error(#X #OP #Y, __FILE__, \
+                                                   __LINE__);           \
+  } while (0)
+
+#define RTC_PARSE_CHECK_OR_RETURN_EQ(X, Y) \
+  RTC_PARSE_CHECK_OR_RETURN_OP(==, X, Y)
+
+#define RTC_PARSE_CHECK_OR_RETURN_NE(X, Y) \
+  RTC_PARSE_CHECK_OR_RETURN_OP(!=, X, Y)
+
+#define RTC_PARSE_CHECK_OR_RETURN_LT(X, Y) RTC_PARSE_CHECK_OR_RETURN_OP(<, X, Y)
+
+#define RTC_PARSE_CHECK_OR_RETURN_LE(X, Y) \
+  RTC_PARSE_CHECK_OR_RETURN_OP(<=, X, Y)
+
+#define RTC_PARSE_CHECK_OR_RETURN_GT(X, Y) RTC_PARSE_CHECK_OR_RETURN_OP(>, X, Y)
+
+#define RTC_PARSE_CHECK_OR_RETURN_GE(X, Y) \
+  RTC_PARSE_CHECK_OR_RETURN_OP(>=, X, Y)
+
+#define RTC_PARSE_WARN_AND_RETURN_SUCCESS_IF(X, M)      \
+  do {                                                  \
+    if (X) {                                            \
+      RTC_LOG(LS_WARNING) << (M);                       \
+      return ParsedRtcEventLog::ParseStatus::Success(); \
+    }                                                   \
+  } while (0)
+
+#define RTC_RETURN_IF_ERROR(X)                                 \
+  do {                                                         \
+    const ParsedRtcEventLog::ParseStatus _rtc_parse_status(X); \
+    if (!_rtc_parse_status.ok()) {                             \
+      return _rtc_parse_status;                                \
+    }                                                          \
+  } while (0)
 
 using webrtc_event_logging::ToSigned;
 using webrtc_event_logging::ToUnsigned;
@@ -56,6 +106,9 @@ constexpr size_t kSrtpOverhead = 10;
 constexpr size_t kStunOverhead = 4;
 constexpr uint16_t kDefaultOverhead =
     kUdpOverhead + kSrtpOverhead + kIpv4Overhead;
+
+constexpr char kIncompleteLogError[] =
+    "Could not parse the entire log. Only the beginning will be used.";
 
 struct MediaStreamInfo {
   MediaStreamInfo() = default;
@@ -243,7 +296,7 @@ IceCandidatePairEventType GetRuntimeIceCandidatePairEventType(
 // Reads a VarInt from |stream| and returns it. Also writes the read bytes to
 // |buffer| starting |bytes_written| bytes into the buffer. |bytes_written| is
 // incremented for each written byte.
-absl::optional<uint64_t> ParseVarInt(
+ParsedRtcEventLog::ParseStatusOr<uint64_t> ParseVarInt(
     std::istream& stream,  // no-presubmit-check TODO(webrtc:8982)
     char* buffer,
     size_t* bytes_written) {
@@ -254,9 +307,7 @@ absl::optional<uint64_t> ParseVarInt(
     // of each byte and shift them 7 bits for each byte read previously to get
     // the (unsigned) integer.
     int byte = stream.get();
-    if (stream.eof()) {
-      return absl::nullopt;
-    }
+    RTC_PARSE_CHECK_OR_RETURN(!stream.eof());
     RTC_DCHECK_GE(byte, 0);
     RTC_DCHECK_LE(byte, 255);
     varint |= static_cast<uint64_t>(byte & 0x7F) << (7 * bytes_read);
@@ -266,35 +317,37 @@ absl::optional<uint64_t> ParseVarInt(
       return varint;
     }
   }
-  return absl::nullopt;
+  RTC_PARSE_CHECK_OR_RETURN(false);
 }
 
-void GetHeaderExtensions(std::vector<RtpExtension>* header_extensions,
-                         const RepeatedPtrField<rtclog::RtpHeaderExtension>&
-                             proto_header_extensions) {
+ParsedRtcEventLog::ParseStatus GetHeaderExtensions(
+    std::vector<RtpExtension>* header_extensions,
+    const RepeatedPtrField<rtclog::RtpHeaderExtension>&
+        proto_header_extensions) {
   header_extensions->clear();
   for (auto& p : proto_header_extensions) {
-    RTC_CHECK(p.has_name());
-    RTC_CHECK(p.has_id());
+    RTC_PARSE_CHECK_OR_RETURN(p.has_name());
+    RTC_PARSE_CHECK_OR_RETURN(p.has_id());
     const std::string& name = p.name();
     int id = p.id();
     header_extensions->push_back(RtpExtension(name, id));
   }
+  return ParsedRtcEventLog::ParseStatus::Success();
 }
 
 template <typename ProtoType, typename LoggedType>
-void StoreRtpPackets(
+ParsedRtcEventLog::ParseStatus StoreRtpPackets(
     const ProtoType& proto,
     std::map<uint32_t, std::vector<LoggedType>>* rtp_packets_map) {
-  RTC_CHECK(proto.has_timestamp_ms());
-  RTC_CHECK(proto.has_marker());
-  RTC_CHECK(proto.has_payload_type());
-  RTC_CHECK(proto.has_sequence_number());
-  RTC_CHECK(proto.has_rtp_timestamp());
-  RTC_CHECK(proto.has_ssrc());
-  RTC_CHECK(proto.has_payload_size());
-  RTC_CHECK(proto.has_header_size());
-  RTC_CHECK(proto.has_padding_size());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_marker());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_payload_type());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_sequence_number());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_rtp_timestamp());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_payload_size());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_header_size());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_padding_size());
 
   // Base event
   {
@@ -330,16 +383,16 @@ void StoreRtpPackets(
           rtc::checked_cast<uint8_t>(proto.video_rotation()));
     }
     if (proto.has_audio_level()) {
-      RTC_CHECK(proto.has_voice_activity());
+      RTC_PARSE_CHECK_OR_RETURN(proto.has_voice_activity());
       header.extension.hasAudioLevel = true;
       header.extension.voiceActivity =
           rtc::checked_cast<bool>(proto.voice_activity());
       const uint8_t audio_level =
           rtc::checked_cast<uint8_t>(proto.audio_level());
-      RTC_CHECK_LE(audio_level, 0x7Fu);
+      RTC_PARSE_CHECK_OR_RETURN_LE(audio_level, 0x7Fu);
       header.extension.audioLevel = audio_level;
     } else {
-      RTC_CHECK(!proto.has_voice_activity());
+      RTC_PARSE_CHECK_OR_RETURN(!proto.has_voice_activity());
     }
     (*rtp_packets_map)[header.ssrc].emplace_back(
         proto.timestamp_ms() * 1000, header, proto.header_size(),
@@ -349,55 +402,55 @@ void StoreRtpPackets(
   const size_t number_of_deltas =
       proto.has_number_of_deltas() ? proto.number_of_deltas() : 0u;
   if (number_of_deltas == 0) {
-    return;
+    return ParsedRtcEventLog::ParseStatus::Success();
   }
 
   // timestamp_ms (event)
   std::vector<absl::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
-  RTC_CHECK_EQ(timestamp_ms_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // marker (RTP base)
   std::vector<absl::optional<uint64_t>> marker_values =
       DecodeDeltas(proto.marker_deltas(), proto.marker(), number_of_deltas);
-  RTC_CHECK_EQ(marker_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(marker_values.size(), number_of_deltas);
 
   // payload_type (RTP base)
   std::vector<absl::optional<uint64_t>> payload_type_values = DecodeDeltas(
       proto.payload_type_deltas(), proto.payload_type(), number_of_deltas);
-  RTC_CHECK_EQ(payload_type_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(payload_type_values.size(), number_of_deltas);
 
   // sequence_number (RTP base)
   std::vector<absl::optional<uint64_t>> sequence_number_values =
       DecodeDeltas(proto.sequence_number_deltas(), proto.sequence_number(),
                    number_of_deltas);
-  RTC_CHECK_EQ(sequence_number_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(sequence_number_values.size(), number_of_deltas);
 
   // rtp_timestamp (RTP base)
   std::vector<absl::optional<uint64_t>> rtp_timestamp_values = DecodeDeltas(
       proto.rtp_timestamp_deltas(), proto.rtp_timestamp(), number_of_deltas);
-  RTC_CHECK_EQ(rtp_timestamp_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(rtp_timestamp_values.size(), number_of_deltas);
 
   // ssrc (RTP base)
   std::vector<absl::optional<uint64_t>> ssrc_values =
       DecodeDeltas(proto.ssrc_deltas(), proto.ssrc(), number_of_deltas);
-  RTC_CHECK_EQ(ssrc_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(ssrc_values.size(), number_of_deltas);
 
   // payload_size (RTP base)
   std::vector<absl::optional<uint64_t>> payload_size_values = DecodeDeltas(
       proto.payload_size_deltas(), proto.payload_size(), number_of_deltas);
-  RTC_CHECK_EQ(payload_size_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(payload_size_values.size(), number_of_deltas);
 
   // header_size (RTP base)
   std::vector<absl::optional<uint64_t>> header_size_values = DecodeDeltas(
       proto.header_size_deltas(), proto.header_size(), number_of_deltas);
-  RTC_CHECK_EQ(header_size_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(header_size_values.size(), number_of_deltas);
 
   // padding_size (RTP base)
   std::vector<absl::optional<uint64_t>> padding_size_values = DecodeDeltas(
       proto.padding_size_deltas(), proto.padding_size(), number_of_deltas);
-  RTC_CHECK_EQ(padding_size_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(padding_size_values.size(), number_of_deltas);
 
   // transport_sequence_number (RTP extension)
   std::vector<absl::optional<uint64_t>> transport_sequence_number_values;
@@ -409,7 +462,8 @@ void StoreRtpPackets(
     transport_sequence_number_values =
         DecodeDeltas(proto.transport_sequence_number_deltas(),
                      base_transport_sequence_number, number_of_deltas);
-    RTC_CHECK_EQ(transport_sequence_number_values.size(), number_of_deltas);
+    RTC_PARSE_CHECK_OR_RETURN_EQ(transport_sequence_number_values.size(),
+                                 number_of_deltas);
   }
 
   // transmission_time_offset (RTP extension)
@@ -422,7 +476,8 @@ void StoreRtpPackets(
     transmission_time_offset_values =
         DecodeDeltas(proto.transmission_time_offset_deltas(),
                      unsigned_base_transmission_time_offset, number_of_deltas);
-    RTC_CHECK_EQ(transmission_time_offset_values.size(), number_of_deltas);
+    RTC_PARSE_CHECK_OR_RETURN_EQ(transmission_time_offset_values.size(),
+                                 number_of_deltas);
   }
 
   // absolute_send_time (RTP extension)
@@ -434,7 +489,8 @@ void StoreRtpPackets(
     absolute_send_time_values =
         DecodeDeltas(proto.absolute_send_time_deltas(), base_absolute_send_time,
                      number_of_deltas);
-    RTC_CHECK_EQ(absolute_send_time_values.size(), number_of_deltas);
+    RTC_PARSE_CHECK_OR_RETURN_EQ(absolute_send_time_values.size(),
+                                 number_of_deltas);
   }
 
   // video_rotation (RTP extension)
@@ -445,7 +501,8 @@ void StoreRtpPackets(
                                    : absl::optional<uint64_t>();
     video_rotation_values = DecodeDeltas(proto.video_rotation_deltas(),
                                          base_video_rotation, number_of_deltas);
-    RTC_CHECK_EQ(video_rotation_values.size(), number_of_deltas);
+    RTC_PARSE_CHECK_OR_RETURN_EQ(video_rotation_values.size(),
+                                 number_of_deltas);
   }
 
   // audio_level (RTP extension)
@@ -456,7 +513,7 @@ void StoreRtpPackets(
                                 : absl::optional<uint64_t>();
     audio_level_values = DecodeDeltas(proto.audio_level_deltas(),
                                       base_audio_level, number_of_deltas);
-    RTC_CHECK_EQ(audio_level_values.size(), number_of_deltas);
+    RTC_PARSE_CHECK_OR_RETURN_EQ(audio_level_values.size(), number_of_deltas);
   }
 
   // voice_activity (RTP extension)
@@ -467,23 +524,25 @@ void StoreRtpPackets(
                                    : absl::optional<uint64_t>();
     voice_activity_values = DecodeDeltas(proto.voice_activity_deltas(),
                                          base_voice_activity, number_of_deltas);
-    RTC_CHECK_EQ(voice_activity_values.size(), number_of_deltas);
+    RTC_PARSE_CHECK_OR_RETURN_EQ(voice_activity_values.size(),
+                                 number_of_deltas);
   }
 
   // Delta decoding
   for (size_t i = 0; i < number_of_deltas; ++i) {
-    RTC_CHECK(timestamp_ms_values[i].has_value());
-    RTC_CHECK(marker_values[i].has_value());
-    RTC_CHECK(payload_type_values[i].has_value());
-    RTC_CHECK(sequence_number_values[i].has_value());
-    RTC_CHECK(rtp_timestamp_values[i].has_value());
-    RTC_CHECK(ssrc_values[i].has_value());
-    RTC_CHECK(payload_size_values[i].has_value());
-    RTC_CHECK(header_size_values[i].has_value());
-    RTC_CHECK(padding_size_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(timestamp_ms_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(marker_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(payload_type_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(sequence_number_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(rtp_timestamp_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(ssrc_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(payload_size_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(header_size_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(padding_size_values[i].has_value());
 
     int64_t timestamp_ms;
-    RTC_CHECK(ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
 
     RTPHeader header;
     header.markerBit = rtc::checked_cast<bool>(*marker_values[i]);
@@ -506,8 +565,9 @@ void StoreRtpPackets(
         transmission_time_offset_values[i].has_value()) {
       header.extension.hasTransmissionTimeOffset = true;
       int32_t transmission_time_offset;
-      RTC_CHECK(ToSigned(transmission_time_offset_values[i].value(),
-                         &transmission_time_offset));
+      RTC_PARSE_CHECK_OR_RETURN(
+          ToSigned(transmission_time_offset_values[i].value(),
+                   &transmission_time_offset));
       header.extension.transmissionTimeOffset = transmission_time_offset;
     }
     if (absolute_send_time_values.size() > i &&
@@ -523,32 +583,34 @@ void StoreRtpPackets(
           rtc::checked_cast<uint8_t>(video_rotation_values[i].value()));
     }
     if (audio_level_values.size() > i && audio_level_values[i].has_value()) {
-      RTC_CHECK(voice_activity_values.size() > i &&
-                voice_activity_values[i].has_value());
+      RTC_PARSE_CHECK_OR_RETURN(voice_activity_values.size() > i &&
+                                voice_activity_values[i].has_value());
       header.extension.hasAudioLevel = true;
       header.extension.voiceActivity =
           rtc::checked_cast<bool>(voice_activity_values[i].value());
       const uint8_t audio_level =
           rtc::checked_cast<uint8_t>(audio_level_values[i].value());
-      RTC_CHECK_LE(audio_level, 0x7Fu);
+      RTC_PARSE_CHECK_OR_RETURN_LE(audio_level, 0x7Fu);
       header.extension.audioLevel = audio_level;
     } else {
-      RTC_CHECK(voice_activity_values.size() <= i ||
-                !voice_activity_values[i].has_value());
+      RTC_PARSE_CHECK_OR_RETURN(voice_activity_values.size() <= i ||
+                                !voice_activity_values[i].has_value());
     }
     (*rtp_packets_map)[header.ssrc].emplace_back(
         1000 * timestamp_ms, header, header.headerLength,
         payload_size_values[i].value() + header.headerLength +
             header.paddingLength);
   }
+  return ParsedRtcEventLog::ParseStatus::Success();
 }
 
 template <typename ProtoType, typename LoggedType>
-void StoreRtcpPackets(const ProtoType& proto,
-                      std::vector<LoggedType>* rtcp_packets,
-                      bool remove_duplicates) {
-  RTC_CHECK(proto.has_timestamp_ms());
-  RTC_CHECK(proto.has_raw_packet());
+ParsedRtcEventLog::ParseStatus StoreRtcpPackets(
+    const ProtoType& proto,
+    std::vector<LoggedType>* rtcp_packets,
+    bool remove_duplicates) {
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_raw_packet());
 
   // TODO(terelius): Incoming RTCP may be delivered once for audio and once
   // for video. As a work around, we remove the duplicated packets since they
@@ -564,26 +626,27 @@ void StoreRtcpPackets(const ProtoType& proto,
   const size_t number_of_deltas =
       proto.has_number_of_deltas() ? proto.number_of_deltas() : 0u;
   if (number_of_deltas == 0) {
-    return;
+    return ParsedRtcEventLog::ParseStatus::Success();
   }
 
   // timestamp_ms
   std::vector<absl::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
-  RTC_CHECK_EQ(timestamp_ms_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // raw_packet
-  RTC_CHECK(proto.has_raw_packet_blobs());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_raw_packet_blobs());
   std::vector<absl::string_view> raw_packet_values =
       DecodeBlobs(proto.raw_packet_blobs(), number_of_deltas);
-  RTC_CHECK_EQ(raw_packet_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(raw_packet_values.size(), number_of_deltas);
 
   // Delta decoding
   for (size_t i = 0; i < number_of_deltas; ++i) {
-    RTC_CHECK(timestamp_ms_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(timestamp_ms_values[i].has_value());
     int64_t timestamp_ms;
-    RTC_CHECK(ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
 
     // TODO(terelius): Incoming RTCP may be delivered once for audio and once
     // for video. As a work around, we remove the duplicated packets since they
@@ -599,9 +662,10 @@ void StoreRtcpPackets(const ProtoType& proto,
         reinterpret_cast<const uint8_t*>(raw_packet_values[i].data());
     rtcp_packets->emplace_back(1000 * timestamp_ms, data, data_size);
   }
+  return ParsedRtcEventLog::ParseStatus::Success();
 }
 
-void StoreRtcpBlocks(
+ParsedRtcEventLog::ParseStatus StoreRtcpBlocks(
     int64_t timestamp_us,
     const uint8_t* packet_begin,
     const uint8_t* packet_end,
@@ -617,7 +681,7 @@ void StoreRtcpBlocks(
   rtcp::CommonHeader header;
   for (const uint8_t* block = packet_begin; block < packet_end;
        block = header.NextPacket()) {
-    RTC_CHECK(header.Parse(block, packet_end - block));
+    RTC_PARSE_CHECK_OR_RETURN(header.Parse(block, packet_end - block));
     if (header.type() == rtcp::TransportFeedback::kPacketType &&
         header.fmt() == rtcp::TransportFeedback::kFeedbackMessageType) {
       LoggedRtcpPacketTransportFeedback parsed_block;
@@ -684,6 +748,7 @@ void StoreRtcpBlocks(
       }
     }
   }
+  return ParsedRtcEventLog::ParseStatus::Success();
 }
 
 }  // namespace
@@ -878,18 +943,6 @@ std::vector<RtpExtension> GetRuntimeRtpHeaderExtensionConfig(
 }
 // End of conversion functions.
 
-LoggedRtcpPacket::LoggedRtcpPacket(uint64_t timestamp_us,
-                                   const uint8_t* packet,
-                                   size_t total_length)
-    : timestamp_us(timestamp_us), raw_data(packet, packet + total_length) {}
-LoggedRtcpPacket::LoggedRtcpPacket(uint64_t timestamp_us,
-                                   const std::string& packet)
-    : timestamp_us(timestamp_us), raw_data(packet.size()) {
-  memcpy(raw_data.data(), packet.data(), packet.size());
-}
-LoggedRtcpPacket::LoggedRtcpPacket(const LoggedRtcpPacket& rhs) = default;
-LoggedRtcpPacket::~LoggedRtcpPacket() = default;
-
 ParsedRtcEventLog::~ParsedRtcEventLog() = default;
 
 ParsedRtcEventLog::LoggedRtpStreamIncoming::LoggedRtpStreamIncoming() = default;
@@ -958,9 +1011,11 @@ ParsedRtcEventLog::GetDefaultHeaderExtensionMap() {
 }
 
 ParsedRtcEventLog::ParsedRtcEventLog(
-    UnconfiguredHeaderExtensions parse_unconfigured_header_extensions)
+    UnconfiguredHeaderExtensions parse_unconfigured_header_extensions,
+    bool allow_incomplete_logs)
     : parse_unconfigured_header_extensions_(
-          parse_unconfigured_header_extensions) {
+          parse_unconfigured_header_extensions),
+      allow_incomplete_logs_(allow_incomplete_logs) {
   Clear();
 }
 
@@ -1026,27 +1081,29 @@ void ParsedRtcEventLog::Clear() {
   outgoing_rtp_extensions_maps_.clear();
 }
 
-bool ParsedRtcEventLog::ParseFile(const std::string& filename) {
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::ParseFile(
+    const std::string& filename) {
   std::ifstream file(  // no-presubmit-check TODO(webrtc:8982)
       filename, std::ios_base::in | std::ios_base::binary);
   if (!file.good() || !file.is_open()) {
     RTC_LOG(LS_WARNING) << "Could not open file for reading.";
-    return false;
+    RTC_PARSE_CHECK_OR_RETURN(file.good() && file.is_open());
   }
 
   return ParseStream(file);
 }
 
-bool ParsedRtcEventLog::ParseString(const std::string& s) {
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::ParseString(
+    const std::string& s) {
   std::istringstream stream(  // no-presubmit-check TODO(webrtc:8982)
       s, std::ios_base::in | std::ios_base::binary);
   return ParseStream(stream);
 }
 
-bool ParsedRtcEventLog::ParseStream(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::ParseStream(
     std::istream& stream) {  // no-presubmit-check TODO(webrtc:8982)
   Clear();
-  bool success = ParseStreamInternal(stream);
+  ParseStatus status = ParseStreamInternal(stream);
 
   // Cache the configured SSRCs.
   for (const auto& video_recv_config : video_recv_configs()) {
@@ -1103,22 +1160,24 @@ bool ParsedRtcEventLog::ParseStream(
     const int64_t timestamp_us = incoming.rtcp.timestamp_us;
     const uint8_t* packet_begin = incoming.rtcp.raw_data.data();
     const uint8_t* packet_end = packet_begin + incoming.rtcp.raw_data.size();
-    StoreRtcpBlocks(timestamp_us, packet_begin, packet_end, &incoming_sr_,
-                    &incoming_rr_, &incoming_xr_, &incoming_remb_,
-                    &incoming_nack_, &incoming_fir_, &incoming_pli_,
-                    &incoming_transport_feedback_,
-                    &incoming_loss_notification_);
+    auto status = StoreRtcpBlocks(
+        timestamp_us, packet_begin, packet_end, &incoming_sr_, &incoming_rr_,
+        &incoming_xr_, &incoming_remb_, &incoming_nack_, &incoming_fir_,
+        &incoming_pli_, &incoming_transport_feedback_,
+        &incoming_loss_notification_);
+    RTC_RETURN_IF_ERROR(status);
   }
 
   for (const auto& outgoing : outgoing_rtcp_packets_) {
     const int64_t timestamp_us = outgoing.rtcp.timestamp_us;
     const uint8_t* packet_begin = outgoing.rtcp.raw_data.data();
     const uint8_t* packet_end = packet_begin + outgoing.rtcp.raw_data.size();
-    StoreRtcpBlocks(timestamp_us, packet_begin, packet_end, &outgoing_sr_,
-                    &outgoing_rr_, &outgoing_xr_, &outgoing_remb_,
-                    &outgoing_nack_, &outgoing_fir_, &outgoing_pli_,
-                    &outgoing_transport_feedback_,
-                    &outgoing_loss_notification_);
+    auto status = StoreRtcpBlocks(
+        timestamp_us, packet_begin, packet_end, &outgoing_sr_, &outgoing_rr_,
+        &outgoing_xr_, &outgoing_remb_, &outgoing_nack_, &outgoing_fir_,
+        &outgoing_pli_, &outgoing_transport_feedback_,
+        &outgoing_loss_notification_);
+    RTC_RETURN_IF_ERROR(status);
   }
 
   // Store first and last timestamp events that might happen before the call is
@@ -1156,16 +1215,15 @@ bool ParsedRtcEventLog::ParseStream(
   StoreFirstAndLastTimestamp(generic_packets_received_);
   StoreFirstAndLastTimestamp(generic_acks_received_);
 
-  return success;
+  return status;
 }
 
-bool ParsedRtcEventLog::ParseStreamInternal(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::ParseStreamInternal(
     std::istream& stream) {  // no-presubmit-check TODO(webrtc:8982)
   constexpr uint64_t kMaxEventSize = 10000000;  // Sanity check.
   std::vector<char> buffer(0xFFFF);
 
   RTC_DCHECK(stream.good());
-
   while (1) {
     // Check whether we have reached end of file.
     stream.peek();
@@ -1180,65 +1238,81 @@ bool ParsedRtcEventLog::ParseStreamInternal(
     // number will be greater than 1.
     constexpr uint64_t kExpectedV1Tag = (1 << 3) | 2;
     size_t bytes_written = 0;
-    absl::optional<uint64_t> tag =
+    ParsedRtcEventLog::ParseStatusOr<uint64_t> tag =
         ParseVarInt(stream, buffer.data(), &bytes_written);
-    if (!tag) {
+    if (!tag.ok()) {
       RTC_LOG(LS_WARNING)
           << "Missing field tag from beginning of protobuf event.";
-      return false;
+      RTC_PARSE_WARN_AND_RETURN_SUCCESS_IF(allow_incomplete_logs_,
+                                           kIncompleteLogError);
+      return tag.status();
     }
     constexpr uint64_t kWireTypeMask = 0x07;
-    const uint64_t wire_type = *tag & kWireTypeMask;
+    const uint64_t wire_type = tag.value() & kWireTypeMask;
     if (wire_type != 2) {
       RTC_LOG(LS_WARNING) << "Expected field tag with wire type 2 (length "
                              "delimited message). Found wire type "
                           << wire_type;
-      return false;
+      RTC_PARSE_WARN_AND_RETURN_SUCCESS_IF(allow_incomplete_logs_,
+                                           kIncompleteLogError);
+      RTC_PARSE_CHECK_OR_RETURN_EQ(wire_type, 2);
     }
 
     // Read the length field.
-    absl::optional<uint64_t> message_length =
+    ParsedRtcEventLog::ParseStatusOr<uint64_t> message_length =
         ParseVarInt(stream, buffer.data(), &bytes_written);
-    if (!message_length) {
+    if (!message_length.ok()) {
       RTC_LOG(LS_WARNING) << "Missing message length after protobuf field tag.";
-      return false;
-    } else if (*message_length > kMaxEventSize) {
+      RTC_PARSE_WARN_AND_RETURN_SUCCESS_IF(allow_incomplete_logs_,
+                                           kIncompleteLogError);
+      return message_length.status();
+    } else if (message_length.value() > kMaxEventSize) {
       RTC_LOG(LS_WARNING) << "Protobuf message length is too large.";
-      return false;
+      RTC_PARSE_WARN_AND_RETURN_SUCCESS_IF(allow_incomplete_logs_,
+                                           kIncompleteLogError);
+      RTC_PARSE_CHECK_OR_RETURN_LE(message_length.value(), kMaxEventSize);
     }
 
     // Read the next protobuf event to a temporary char buffer.
-    if (buffer.size() < bytes_written + *message_length)
-      buffer.resize(bytes_written + *message_length);
-    stream.read(buffer.data() + bytes_written, *message_length);
-    if (stream.gcount() != static_cast<int>(*message_length)) {
-      RTC_LOG(LS_WARNING) << "Failed to read protobuf message from file.";
-      return false;
+    if (buffer.size() < bytes_written + message_length.value())
+      buffer.resize(bytes_written + message_length.value());
+    stream.read(buffer.data() + bytes_written, message_length.value());
+    if (stream.gcount() != static_cast<int>(message_length.value())) {
+      RTC_LOG(LS_WARNING) << "Failed to read protobuf message.";
+      RTC_PARSE_WARN_AND_RETURN_SUCCESS_IF(allow_incomplete_logs_,
+                                           kIncompleteLogError);
+      RTC_PARSE_CHECK_OR_RETURN(false);
     }
-    size_t buffer_size = bytes_written + *message_length;
+    size_t buffer_size = bytes_written + message_length.value();
 
-    if (*tag == kExpectedV1Tag) {
+    if (tag.value() == kExpectedV1Tag) {
       // Parse the protobuf event from the buffer.
       rtclog::EventStream event_stream;
       if (!event_stream.ParseFromArray(buffer.data(), buffer_size)) {
         RTC_LOG(LS_WARNING)
             << "Failed to parse legacy-format protobuf message.";
-        return false;
+        RTC_PARSE_WARN_AND_RETURN_SUCCESS_IF(allow_incomplete_logs_,
+                                             kIncompleteLogError);
+        RTC_PARSE_CHECK_OR_RETURN(false);
       }
 
-      RTC_CHECK_EQ(event_stream.stream_size(), 1);
-      StoreParsedLegacyEvent(event_stream.stream(0));
+      RTC_PARSE_CHECK_OR_RETURN_EQ(event_stream.stream_size(), 1);
+      auto status = StoreParsedLegacyEvent(event_stream.stream(0));
+      RTC_RETURN_IF_ERROR(status);
     } else {
       // Parse the protobuf event from the buffer.
       rtclog2::EventStream event_stream;
       if (!event_stream.ParseFromArray(buffer.data(), buffer_size)) {
         RTC_LOG(LS_WARNING) << "Failed to parse new-format protobuf message.";
-        return false;
+        RTC_PARSE_WARN_AND_RETURN_SUCCESS_IF(allow_incomplete_logs_,
+                                             kIncompleteLogError);
+        RTC_PARSE_CHECK_OR_RETURN(false);
       }
-      StoreParsedNewFormatEvent(event_stream);
+      auto status = StoreParsedNewFormatEvent(event_stream);
+      RTC_RETURN_IF_ERROR(status);
     }
   }
-  return true;
+  return ParseStatus::Success();
 }
 
 template <typename T>
@@ -1249,47 +1323,60 @@ void ParsedRtcEventLog::StoreFirstAndLastTimestamp(const std::vector<T>& v) {
   last_timestamp_ = std::max(last_timestamp_, v.back().log_time_us());
 }
 
-void ParsedRtcEventLog::StoreParsedLegacyEvent(const rtclog::Event& event) {
-  RTC_CHECK(event.has_type());
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreParsedLegacyEvent(
+    const rtclog::Event& event) {
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
   switch (event.type()) {
     case rtclog::Event::VIDEO_RECEIVER_CONFIG_EVENT: {
-      rtclog::StreamConfig config = GetVideoReceiveConfig(event);
-      video_recv_configs_.emplace_back(GetTimestamp(event), config);
-      if (!config.rtp_extensions.empty()) {
-        incoming_rtp_extensions_maps_[config.remote_ssrc] =
-            RtpHeaderExtensionMap(config.rtp_extensions);
-        incoming_rtp_extensions_maps_[config.rtx_ssrc] =
-            RtpHeaderExtensionMap(config.rtp_extensions);
-      }
+      auto config = GetVideoReceiveConfig(event);
+      if (!config.ok())
+        return config.status();
+
+      RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+      int64_t timestamp_us = event.timestamp_us();
+      video_recv_configs_.emplace_back(timestamp_us, config.value());
+      incoming_rtp_extensions_maps_[config.value().remote_ssrc] =
+          RtpHeaderExtensionMap(config.value().rtp_extensions);
+      incoming_rtp_extensions_maps_[config.value().rtx_ssrc] =
+          RtpHeaderExtensionMap(config.value().rtp_extensions);
       break;
     }
     case rtclog::Event::VIDEO_SENDER_CONFIG_EVENT: {
-      rtclog::StreamConfig config = GetVideoSendConfig(event);
-      video_send_configs_.emplace_back(GetTimestamp(event), config);
-      if (!config.rtp_extensions.empty()) {
-        outgoing_rtp_extensions_maps_[config.local_ssrc] =
-            RtpHeaderExtensionMap(config.rtp_extensions);
-        outgoing_rtp_extensions_maps_[config.rtx_ssrc] =
-            RtpHeaderExtensionMap(config.rtp_extensions);
-      }
+      auto config = GetVideoSendConfig(event);
+      if (!config.ok())
+        return config.status();
+
+      RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+      int64_t timestamp_us = event.timestamp_us();
+      video_send_configs_.emplace_back(timestamp_us, config.value());
+      outgoing_rtp_extensions_maps_[config.value().local_ssrc] =
+          RtpHeaderExtensionMap(config.value().rtp_extensions);
+      outgoing_rtp_extensions_maps_[config.value().rtx_ssrc] =
+          RtpHeaderExtensionMap(config.value().rtp_extensions);
       break;
     }
     case rtclog::Event::AUDIO_RECEIVER_CONFIG_EVENT: {
-      rtclog::StreamConfig config = GetAudioReceiveConfig(event);
-      audio_recv_configs_.emplace_back(GetTimestamp(event), config);
-      if (!config.rtp_extensions.empty()) {
-        incoming_rtp_extensions_maps_[config.remote_ssrc] =
-            RtpHeaderExtensionMap(config.rtp_extensions);
-      }
+      auto config = GetAudioReceiveConfig(event);
+      if (!config.ok())
+        return config.status();
+
+      RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+      int64_t timestamp_us = event.timestamp_us();
+      audio_recv_configs_.emplace_back(timestamp_us, config.value());
+      incoming_rtp_extensions_maps_[config.value().remote_ssrc] =
+          RtpHeaderExtensionMap(config.value().rtp_extensions);
       break;
     }
     case rtclog::Event::AUDIO_SENDER_CONFIG_EVENT: {
-      rtclog::StreamConfig config = GetAudioSendConfig(event);
-      audio_send_configs_.emplace_back(GetTimestamp(event), config);
-      if (!config.rtp_extensions.empty()) {
-        outgoing_rtp_extensions_maps_[config.local_ssrc] =
-            RtpHeaderExtensionMap(config.rtp_extensions);
-      }
+      auto config = GetAudioSendConfig(event);
+      if (!config.ok())
+        return config.status();
+      RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+      int64_t timestamp_us = event.timestamp_us();
+      audio_send_configs_.emplace_back(timestamp_us, config.value());
+      outgoing_rtp_extensions_maps_[config.value().local_ssrc] =
+          RtpHeaderExtensionMap(config.value().rtp_extensions);
       break;
     }
     case rtclog::Event::RTP_EVENT: {
@@ -1297,22 +1384,16 @@ void ParsedRtcEventLog::StoreParsedLegacyEvent(const rtclog::Event& event) {
       uint8_t header[IP_PACKET_SIZE];
       size_t header_length;
       size_t total_length;
-      const RtpHeaderExtensionMap* extension_map = GetRtpHeader(
-          event, &direction, header, &header_length, &total_length, nullptr);
+      ParseStatus status = GetRtpHeader(event, &direction, header,
+                                        &header_length, &total_length, nullptr);
+      RTC_RETURN_IF_ERROR(status);
+
+      uint32_t ssrc = ByteReader<uint32_t>::ReadBigEndian(header + 8);
+      const RtpHeaderExtensionMap* extension_map =
+          GetRtpHeaderExtensionMap(direction, ssrc);
       RtpUtility::RtpHeaderParser rtp_parser(header, header_length);
       RTPHeader parsed_header;
-
-      if (extension_map != nullptr) {
-        rtp_parser.Parse(&parsed_header, extension_map, true);
-      } else {
-        // Use the default extension map.
-        // TODO(terelius): This should be removed. GetRtpHeader will return the
-        // default map if the parser is configured for it.
-        // TODO(ivoc): Once configuration of audio streams is stored in the
-        //             event log, this can be removed.
-        //             Tracking bug: webrtc:6399
-        rtp_parser.Parse(&parsed_header, &default_extension_map_, true);
-      }
+      rtp_parser.Parse(&parsed_header, extension_map, /*header_only*/ true);
 
       // Since we give the parser only a header, there is no way for it to know
       // the padding length. The best solution would be to log the padding
@@ -1322,8 +1403,8 @@ void ParsedRtcEventLog::StoreParsedLegacyEvent(const rtclog::Event& event) {
       if ((header[0] & 0x20) != 0)
         parsed_header.paddingLength = total_length - header_length;
 
-      RTC_CHECK(event.has_timestamp_us());
-      uint64_t timestamp_us = event.timestamp_us();
+      RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+      int64_t timestamp_us = event.timestamp_us();
       if (direction == kIncomingPacket) {
         incoming_rtp_packets_map_[parsed_header.ssrc].push_back(
             LoggedRtpPacketIncoming(timestamp_us, parsed_header, header_length,
@@ -1339,9 +1420,11 @@ void ParsedRtcEventLog::StoreParsedLegacyEvent(const rtclog::Event& event) {
       PacketDirection direction;
       uint8_t packet[IP_PACKET_SIZE];
       size_t total_length;
-      GetRtcpPacket(event, &direction, packet, &total_length);
-      uint64_t timestamp_us = GetTimestamp(event);
-      RTC_CHECK_LE(total_length, IP_PACKET_SIZE);
+      auto status = GetRtcpPacket(event, &direction, packet, &total_length);
+      RTC_RETURN_IF_ERROR(status);
+      RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+      int64_t timestamp_us = event.timestamp_us();
+      RTC_PARSE_CHECK_OR_RETURN_LE(total_length, IP_PACKET_SIZE);
       if (direction == kIncomingPacket) {
         // Currently incoming RTCP packets are logged twice, both for audio and
         // video. Only act on one of them. Compare against the previous parsed
@@ -1360,104 +1443,123 @@ void ParsedRtcEventLog::StoreParsedLegacyEvent(const rtclog::Event& event) {
       break;
     }
     case rtclog::Event::LOG_START: {
-      start_log_events_.push_back(LoggedStartEvent(GetTimestamp(event)));
+      RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+      int64_t timestamp_us = event.timestamp_us();
+      start_log_events_.push_back(LoggedStartEvent(timestamp_us));
       break;
     }
     case rtclog::Event::LOG_END: {
-      stop_log_events_.push_back(LoggedStopEvent(GetTimestamp(event)));
+      RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+      int64_t timestamp_us = event.timestamp_us();
+      stop_log_events_.push_back(LoggedStopEvent(timestamp_us));
       break;
     }
     case rtclog::Event::AUDIO_PLAYOUT_EVENT: {
-      LoggedAudioPlayoutEvent playout_event = GetAudioPlayout(event);
+      auto status_or_value = GetAudioPlayout(event);
+      RTC_RETURN_IF_ERROR(status_or_value.status());
+      LoggedAudioPlayoutEvent playout_event = status_or_value.value();
       audio_playout_events_[playout_event.ssrc].push_back(playout_event);
       break;
     }
     case rtclog::Event::LOSS_BASED_BWE_UPDATE: {
-      bwe_loss_updates_.push_back(GetLossBasedBweUpdate(event));
+      auto status_or_value = GetLossBasedBweUpdate(event);
+      RTC_RETURN_IF_ERROR(status_or_value.status());
+      bwe_loss_updates_.push_back(status_or_value.value());
       break;
     }
     case rtclog::Event::DELAY_BASED_BWE_UPDATE: {
-      bwe_delay_updates_.push_back(GetDelayBasedBweUpdate(event));
+      auto status_or_value = GetDelayBasedBweUpdate(event);
+      RTC_RETURN_IF_ERROR(status_or_value.status());
+      bwe_delay_updates_.push_back(status_or_value.value());
       break;
     }
     case rtclog::Event::AUDIO_NETWORK_ADAPTATION_EVENT: {
-      LoggedAudioNetworkAdaptationEvent ana_event =
-          GetAudioNetworkAdaptation(event);
+      auto status_or_value = GetAudioNetworkAdaptation(event);
+      RTC_RETURN_IF_ERROR(status_or_value.status());
+      LoggedAudioNetworkAdaptationEvent ana_event = status_or_value.value();
       audio_network_adaptation_events_.push_back(ana_event);
       break;
     }
     case rtclog::Event::BWE_PROBE_CLUSTER_CREATED_EVENT: {
-      bwe_probe_cluster_created_events_.push_back(
-          GetBweProbeClusterCreated(event));
+      auto status_or_value = GetBweProbeClusterCreated(event);
+      RTC_RETURN_IF_ERROR(status_or_value.status());
+      bwe_probe_cluster_created_events_.push_back(status_or_value.value());
       break;
     }
     case rtclog::Event::BWE_PROBE_RESULT_EVENT: {
       // Probe successes and failures are currently stored in the same proto
       // message, we are moving towards separate messages. Probe results
       // therefore need special treatment in the parser.
-      RTC_CHECK(event.has_probe_result());
-      RTC_CHECK(event.probe_result().has_result());
+      RTC_PARSE_CHECK_OR_RETURN(event.has_probe_result());
+      RTC_PARSE_CHECK_OR_RETURN(event.probe_result().has_result());
       if (event.probe_result().result() == rtclog::BweProbeResult::SUCCESS) {
-        bwe_probe_success_events_.push_back(GetBweProbeSuccess(event));
+        auto status_or_value = GetBweProbeSuccess(event);
+        RTC_RETURN_IF_ERROR(status_or_value.status());
+        bwe_probe_success_events_.push_back(status_or_value.value());
       } else {
-        bwe_probe_failure_events_.push_back(GetBweProbeFailure(event));
+        auto status_or_value = GetBweProbeFailure(event);
+        RTC_RETURN_IF_ERROR(status_or_value.status());
+        bwe_probe_failure_events_.push_back(status_or_value.value());
       }
       break;
     }
     case rtclog::Event::ALR_STATE_EVENT: {
-      alr_state_events_.push_back(GetAlrState(event));
+      auto status_or_value = GetAlrState(event);
+      RTC_RETURN_IF_ERROR(status_or_value.status());
+      alr_state_events_.push_back(status_or_value.value());
       break;
     }
     case rtclog::Event::ICE_CANDIDATE_PAIR_CONFIG: {
-      ice_candidate_pair_configs_.push_back(GetIceCandidatePairConfig(event));
+      auto status_or_value = GetIceCandidatePairConfig(event);
+      RTC_RETURN_IF_ERROR(status_or_value.status());
+      ice_candidate_pair_configs_.push_back(status_or_value.value());
       break;
     }
     case rtclog::Event::ICE_CANDIDATE_PAIR_EVENT: {
-      ice_candidate_pair_events_.push_back(GetIceCandidatePairEvent(event));
+      auto status_or_value = GetIceCandidatePairEvent(event);
+      RTC_RETURN_IF_ERROR(status_or_value.status());
+      ice_candidate_pair_events_.push_back(status_or_value.value());
       break;
     }
     case rtclog::Event::UNKNOWN_EVENT: {
       break;
     }
   }
-}
-
-int64_t ParsedRtcEventLog::GetTimestamp(const rtclog::Event& event) const {
-  RTC_CHECK(event.has_timestamp_us());
-  return event.timestamp_us();
+  return ParseStatus::Success();
 }
 
 // The header must have space for at least IP_PACKET_SIZE bytes.
-const webrtc::RtpHeaderExtensionMap* ParsedRtcEventLog::GetRtpHeader(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::GetRtpHeader(
     const rtclog::Event& event,
     PacketDirection* incoming,
     uint8_t* header,
     size_t* header_length,
     size_t* total_length,
     int* probe_cluster_id) const {
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::RTP_EVENT);
-  RTC_CHECK(event.has_rtp_packet());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(), rtclog::Event::RTP_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_rtp_packet());
   const rtclog::RtpPacket& rtp_packet = event.rtp_packet();
   // Get direction of packet.
-  RTC_CHECK(rtp_packet.has_incoming());
+  RTC_PARSE_CHECK_OR_RETURN(rtp_packet.has_incoming());
   if (incoming != nullptr) {
     *incoming = rtp_packet.incoming() ? kIncomingPacket : kOutgoingPacket;
   }
   // Get packet length.
-  RTC_CHECK(rtp_packet.has_packet_length());
+  RTC_PARSE_CHECK_OR_RETURN(rtp_packet.has_packet_length());
   if (total_length != nullptr) {
     *total_length = rtp_packet.packet_length();
   }
   // Get header length.
-  RTC_CHECK(rtp_packet.has_header());
+  RTC_PARSE_CHECK_OR_RETURN(rtp_packet.has_header());
   if (header_length != nullptr) {
     *header_length = rtp_packet.header().size();
   }
   if (probe_cluster_id != nullptr) {
     if (rtp_packet.has_probe_cluster_id()) {
       *probe_cluster_id = rtp_packet.probe_cluster_id();
-      RTC_CHECK_NE(*probe_cluster_id, PacedPacketInfo::kNotAProbe);
+      RTC_PARSE_CHECK_OR_RETURN_NE(*probe_cluster_id,
+                                   PacedPacketInfo::kNotAProbe);
     } else {
       *probe_cluster_id = PacedPacketInfo::kNotAProbe;
     }
@@ -1465,96 +1567,108 @@ const webrtc::RtpHeaderExtensionMap* ParsedRtcEventLog::GetRtpHeader(
   // Get header contents.
   if (header != nullptr) {
     const size_t kMinRtpHeaderSize = 12;
-    RTC_CHECK_GE(rtp_packet.header().size(), kMinRtpHeaderSize);
-    RTC_CHECK_LE(rtp_packet.header().size(),
-                 static_cast<size_t>(IP_PACKET_SIZE));
+    RTC_PARSE_CHECK_OR_RETURN_GE(rtp_packet.header().size(), kMinRtpHeaderSize);
+    RTC_PARSE_CHECK_OR_RETURN_LE(rtp_packet.header().size(),
+                                 static_cast<size_t>(IP_PACKET_SIZE));
     memcpy(header, rtp_packet.header().data(), rtp_packet.header().size());
-    uint32_t ssrc = ByteReader<uint32_t>::ReadBigEndian(header + 8);
-    auto& extensions_maps = rtp_packet.incoming()
-                                ? incoming_rtp_extensions_maps_
-                                : outgoing_rtp_extensions_maps_;
-    auto it = extensions_maps.find(ssrc);
-    if (it != extensions_maps.end()) {
-      return &(it->second);
-    }
-    if (parse_unconfigured_header_extensions_ ==
-        UnconfiguredHeaderExtensions::kAttemptWebrtcDefaultConfig) {
-      RTC_LOG(LS_WARNING) << "Using default header extension map for SSRC "
-                          << ssrc;
-      extensions_maps.insert(std::make_pair(ssrc, default_extension_map_));
-      return &default_extension_map_;
-    }
   }
+  return ParseStatus::Success();
+}
+
+const RtpHeaderExtensionMap* ParsedRtcEventLog::GetRtpHeaderExtensionMap(
+    PacketDirection direction,
+    uint32_t ssrc) {
+  auto& extensions_maps = direction == PacketDirection::kIncomingPacket
+                              ? incoming_rtp_extensions_maps_
+                              : outgoing_rtp_extensions_maps_;
+  auto it = extensions_maps.find(ssrc);
+  if (it != extensions_maps.end()) {
+    return &(it->second);
+  }
+  if (parse_unconfigured_header_extensions_ ==
+      UnconfiguredHeaderExtensions::kAttemptWebrtcDefaultConfig) {
+    RTC_LOG(LS_WARNING) << "Using default header extension map for SSRC "
+                        << ssrc;
+    extensions_maps.insert(std::make_pair(ssrc, default_extension_map_));
+    return &default_extension_map_;
+  }
+  RTC_LOG(LS_WARNING) << "Not parsing header extensions for SSRC " << ssrc
+                      << ". No header extension map found.";
   return nullptr;
 }
 
 // The packet must have space for at least IP_PACKET_SIZE bytes.
-void ParsedRtcEventLog::GetRtcpPacket(const rtclog::Event& event,
-                                      PacketDirection* incoming,
-                                      uint8_t* packet,
-                                      size_t* length) const {
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::RTCP_EVENT);
-  RTC_CHECK(event.has_rtcp_packet());
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::GetRtcpPacket(
+    const rtclog::Event& event,
+    PacketDirection* incoming,
+    uint8_t* packet,
+    size_t* length) const {
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(), rtclog::Event::RTCP_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_rtcp_packet());
   const rtclog::RtcpPacket& rtcp_packet = event.rtcp_packet();
   // Get direction of packet.
-  RTC_CHECK(rtcp_packet.has_incoming());
+  RTC_PARSE_CHECK_OR_RETURN(rtcp_packet.has_incoming());
   if (incoming != nullptr) {
     *incoming = rtcp_packet.incoming() ? kIncomingPacket : kOutgoingPacket;
   }
   // Get packet length.
-  RTC_CHECK(rtcp_packet.has_packet_data());
+  RTC_PARSE_CHECK_OR_RETURN(rtcp_packet.has_packet_data());
   if (length != nullptr) {
     *length = rtcp_packet.packet_data().size();
   }
   // Get packet contents.
   if (packet != nullptr) {
-    RTC_CHECK_LE(rtcp_packet.packet_data().size(),
-                 static_cast<unsigned>(IP_PACKET_SIZE));
+    RTC_PARSE_CHECK_OR_RETURN_LE(rtcp_packet.packet_data().size(),
+                                 static_cast<unsigned>(IP_PACKET_SIZE));
     memcpy(packet, rtcp_packet.packet_data().data(),
            rtcp_packet.packet_data().size());
   }
+  return ParseStatus::Success();
 }
 
-rtclog::StreamConfig ParsedRtcEventLog::GetVideoReceiveConfig(
-    const rtclog::Event& event) const {
+ParsedRtcEventLog::ParseStatusOr<rtclog::StreamConfig>
+ParsedRtcEventLog::GetVideoReceiveConfig(const rtclog::Event& event) const {
   rtclog::StreamConfig config;
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::VIDEO_RECEIVER_CONFIG_EVENT);
-  RTC_CHECK(event.has_video_receiver_config());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(),
+                               rtclog::Event::VIDEO_RECEIVER_CONFIG_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_video_receiver_config());
   const rtclog::VideoReceiveConfig& receiver_config =
       event.video_receiver_config();
   // Get SSRCs.
-  RTC_CHECK(receiver_config.has_remote_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(receiver_config.has_remote_ssrc());
   config.remote_ssrc = receiver_config.remote_ssrc();
-  RTC_CHECK(receiver_config.has_local_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(receiver_config.has_local_ssrc());
   config.local_ssrc = receiver_config.local_ssrc();
   config.rtx_ssrc = 0;
   // Get RTCP settings.
-  RTC_CHECK(receiver_config.has_rtcp_mode());
+  RTC_PARSE_CHECK_OR_RETURN(receiver_config.has_rtcp_mode());
   config.rtcp_mode = GetRuntimeRtcpMode(receiver_config.rtcp_mode());
-  RTC_CHECK(receiver_config.has_remb());
+  RTC_PARSE_CHECK_OR_RETURN(receiver_config.has_remb());
   config.remb = receiver_config.remb();
 
   // Get RTX map.
   std::map<uint32_t, const rtclog::RtxConfig> rtx_map;
   for (int i = 0; i < receiver_config.rtx_map_size(); i++) {
     const rtclog::RtxMap& map = receiver_config.rtx_map(i);
-    RTC_CHECK(map.has_payload_type());
-    RTC_CHECK(map.has_config());
-    RTC_CHECK(map.config().has_rtx_ssrc());
-    RTC_CHECK(map.config().has_rtx_payload_type());
+    RTC_PARSE_CHECK_OR_RETURN(map.has_payload_type());
+    RTC_PARSE_CHECK_OR_RETURN(map.has_config());
+    RTC_PARSE_CHECK_OR_RETURN(map.config().has_rtx_ssrc());
+    RTC_PARSE_CHECK_OR_RETURN(map.config().has_rtx_payload_type());
     rtx_map.insert(std::make_pair(map.payload_type(), map.config()));
   }
 
   // Get header extensions.
-  GetHeaderExtensions(&config.rtp_extensions,
-                      receiver_config.header_extensions());
+  auto status = GetHeaderExtensions(&config.rtp_extensions,
+                                    receiver_config.header_extensions());
+  RTC_RETURN_IF_ERROR(status);
+
   // Get decoders.
   config.codecs.clear();
   for (int i = 0; i < receiver_config.decoders_size(); i++) {
-    RTC_CHECK(receiver_config.decoders(i).has_name());
-    RTC_CHECK(receiver_config.decoders(i).has_payload_type());
+    RTC_PARSE_CHECK_OR_RETURN(receiver_config.decoders(i).has_name());
+    RTC_PARSE_CHECK_OR_RETURN(receiver_config.decoders(i).has_payload_type());
     int rtx_payload_type = 0;
     auto rtx_it = rtx_map.find(receiver_config.decoders(i).payload_type());
     if (rtx_it != rtx_map.end()) {
@@ -1577,33 +1691,35 @@ rtclog::StreamConfig ParsedRtcEventLog::GetVideoReceiveConfig(
   return config;
 }
 
-rtclog::StreamConfig ParsedRtcEventLog::GetVideoSendConfig(
-    const rtclog::Event& event) const {
+ParsedRtcEventLog::ParseStatusOr<rtclog::StreamConfig>
+ParsedRtcEventLog::GetVideoSendConfig(const rtclog::Event& event) const {
   rtclog::StreamConfig config;
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::VIDEO_SENDER_CONFIG_EVENT);
-  RTC_CHECK(event.has_video_sender_config());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(),
+                               rtclog::Event::VIDEO_SENDER_CONFIG_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_video_sender_config());
   const rtclog::VideoSendConfig& sender_config = event.video_sender_config();
 
   // Get SSRCs.
-  RTC_CHECK_EQ(sender_config.ssrcs_size(), 1)
-      << "VideoSendStreamConfig no longer stores multiple SSRCs. If you are "
-         "analyzing a very old log, try building the parser from the same "
-         "WebRTC version.";
+  // VideoSendStreamConfig no longer stores multiple SSRCs. If you are
+  // analyzing a very old log, try building the parser from the same
+  // WebRTC version.
+  RTC_PARSE_CHECK_OR_RETURN_EQ(sender_config.ssrcs_size(), 1);
   config.local_ssrc = sender_config.ssrcs(0);
-  RTC_CHECK_LE(sender_config.rtx_ssrcs_size(), 1);
+  RTC_PARSE_CHECK_OR_RETURN_LE(sender_config.rtx_ssrcs_size(), 1);
   if (sender_config.rtx_ssrcs_size() == 1) {
     config.rtx_ssrc = sender_config.rtx_ssrcs(0);
   }
 
   // Get header extensions.
-  GetHeaderExtensions(&config.rtp_extensions,
-                      sender_config.header_extensions());
+  auto status = GetHeaderExtensions(&config.rtp_extensions,
+                                    sender_config.header_extensions());
+  RTC_RETURN_IF_ERROR(status);
 
   // Get the codec.
-  RTC_CHECK(sender_config.has_encoder());
-  RTC_CHECK(sender_config.encoder().has_name());
-  RTC_CHECK(sender_config.encoder().has_payload_type());
+  RTC_PARSE_CHECK_OR_RETURN(sender_config.has_encoder());
+  RTC_PARSE_CHECK_OR_RETURN(sender_config.encoder().has_name());
+  RTC_PARSE_CHECK_OR_RETURN(sender_config.encoder().has_payload_type());
   config.codecs.emplace_back(
       sender_config.encoder().name(), sender_config.encoder().payload_type(),
       sender_config.has_rtx_payload_type() ? sender_config.rtx_payload_type()
@@ -1611,99 +1727,113 @@ rtclog::StreamConfig ParsedRtcEventLog::GetVideoSendConfig(
   return config;
 }
 
-rtclog::StreamConfig ParsedRtcEventLog::GetAudioReceiveConfig(
-    const rtclog::Event& event) const {
+ParsedRtcEventLog::ParseStatusOr<rtclog::StreamConfig>
+ParsedRtcEventLog::GetAudioReceiveConfig(const rtclog::Event& event) const {
   rtclog::StreamConfig config;
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::AUDIO_RECEIVER_CONFIG_EVENT);
-  RTC_CHECK(event.has_audio_receiver_config());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(),
+                               rtclog::Event::AUDIO_RECEIVER_CONFIG_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_audio_receiver_config());
   const rtclog::AudioReceiveConfig& receiver_config =
       event.audio_receiver_config();
   // Get SSRCs.
-  RTC_CHECK(receiver_config.has_remote_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(receiver_config.has_remote_ssrc());
   config.remote_ssrc = receiver_config.remote_ssrc();
-  RTC_CHECK(receiver_config.has_local_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(receiver_config.has_local_ssrc());
   config.local_ssrc = receiver_config.local_ssrc();
   // Get header extensions.
-  GetHeaderExtensions(&config.rtp_extensions,
-                      receiver_config.header_extensions());
+  auto status = GetHeaderExtensions(&config.rtp_extensions,
+                                    receiver_config.header_extensions());
+  RTC_RETURN_IF_ERROR(status);
+
   return config;
 }
 
-rtclog::StreamConfig ParsedRtcEventLog::GetAudioSendConfig(
-    const rtclog::Event& event) const {
+ParsedRtcEventLog::ParseStatusOr<rtclog::StreamConfig>
+ParsedRtcEventLog::GetAudioSendConfig(const rtclog::Event& event) const {
   rtclog::StreamConfig config;
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::AUDIO_SENDER_CONFIG_EVENT);
-  RTC_CHECK(event.has_audio_sender_config());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(),
+                               rtclog::Event::AUDIO_SENDER_CONFIG_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_audio_sender_config());
   const rtclog::AudioSendConfig& sender_config = event.audio_sender_config();
   // Get SSRCs.
-  RTC_CHECK(sender_config.has_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(sender_config.has_ssrc());
   config.local_ssrc = sender_config.ssrc();
   // Get header extensions.
-  GetHeaderExtensions(&config.rtp_extensions,
-                      sender_config.header_extensions());
+  auto status = GetHeaderExtensions(&config.rtp_extensions,
+                                    sender_config.header_extensions());
+  RTC_RETURN_IF_ERROR(status);
+
   return config;
 }
 
-LoggedAudioPlayoutEvent ParsedRtcEventLog::GetAudioPlayout(
-    const rtclog::Event& event) const {
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::AUDIO_PLAYOUT_EVENT);
-  RTC_CHECK(event.has_audio_playout_event());
+ParsedRtcEventLog::ParseStatusOr<LoggedAudioPlayoutEvent>
+ParsedRtcEventLog::GetAudioPlayout(const rtclog::Event& event) const {
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(),
+                               rtclog::Event::AUDIO_PLAYOUT_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_audio_playout_event());
   const rtclog::AudioPlayoutEvent& playout_event = event.audio_playout_event();
   LoggedAudioPlayoutEvent res;
-  res.timestamp_us = GetTimestamp(event);
-  RTC_CHECK(playout_event.has_local_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+  res.timestamp_us = event.timestamp_us();
+  RTC_PARSE_CHECK_OR_RETURN(playout_event.has_local_ssrc());
   res.ssrc = playout_event.local_ssrc();
   return res;
 }
 
-LoggedBweLossBasedUpdate ParsedRtcEventLog::GetLossBasedBweUpdate(
-    const rtclog::Event& event) const {
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::LOSS_BASED_BWE_UPDATE);
-  RTC_CHECK(event.has_loss_based_bwe_update());
+ParsedRtcEventLog::ParseStatusOr<LoggedBweLossBasedUpdate>
+ParsedRtcEventLog::GetLossBasedBweUpdate(const rtclog::Event& event) const {
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(),
+                               rtclog::Event::LOSS_BASED_BWE_UPDATE);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_loss_based_bwe_update());
   const rtclog::LossBasedBweUpdate& loss_event = event.loss_based_bwe_update();
 
   LoggedBweLossBasedUpdate bwe_update;
-  bwe_update.timestamp_us = GetTimestamp(event);
-  RTC_CHECK(loss_event.has_bitrate_bps());
+  RTC_CHECK(event.has_timestamp_us());
+  bwe_update.timestamp_us = event.timestamp_us();
+  RTC_PARSE_CHECK_OR_RETURN(loss_event.has_bitrate_bps());
   bwe_update.bitrate_bps = loss_event.bitrate_bps();
-  RTC_CHECK(loss_event.has_fraction_loss());
+  RTC_PARSE_CHECK_OR_RETURN(loss_event.has_fraction_loss());
   bwe_update.fraction_lost = loss_event.fraction_loss();
-  RTC_CHECK(loss_event.has_total_packets());
+  RTC_PARSE_CHECK_OR_RETURN(loss_event.has_total_packets());
   bwe_update.expected_packets = loss_event.total_packets();
   return bwe_update;
 }
 
-LoggedBweDelayBasedUpdate ParsedRtcEventLog::GetDelayBasedBweUpdate(
-    const rtclog::Event& event) const {
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::DELAY_BASED_BWE_UPDATE);
-  RTC_CHECK(event.has_delay_based_bwe_update());
+ParsedRtcEventLog::ParseStatusOr<LoggedBweDelayBasedUpdate>
+ParsedRtcEventLog::GetDelayBasedBweUpdate(const rtclog::Event& event) const {
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(),
+                               rtclog::Event::DELAY_BASED_BWE_UPDATE);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_delay_based_bwe_update());
   const rtclog::DelayBasedBweUpdate& delay_event =
       event.delay_based_bwe_update();
 
   LoggedBweDelayBasedUpdate res;
-  res.timestamp_us = GetTimestamp(event);
-  RTC_CHECK(delay_event.has_bitrate_bps());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+  res.timestamp_us = event.timestamp_us();
+  RTC_PARSE_CHECK_OR_RETURN(delay_event.has_bitrate_bps());
   res.bitrate_bps = delay_event.bitrate_bps();
-  RTC_CHECK(delay_event.has_detector_state());
+  RTC_PARSE_CHECK_OR_RETURN(delay_event.has_detector_state());
   res.detector_state = GetRuntimeDetectorState(delay_event.detector_state());
   return res;
 }
 
-LoggedAudioNetworkAdaptationEvent ParsedRtcEventLog::GetAudioNetworkAdaptation(
-    const rtclog::Event& event) const {
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::AUDIO_NETWORK_ADAPTATION_EVENT);
-  RTC_CHECK(event.has_audio_network_adaptation());
+ParsedRtcEventLog::ParseStatusOr<LoggedAudioNetworkAdaptationEvent>
+ParsedRtcEventLog::GetAudioNetworkAdaptation(const rtclog::Event& event) const {
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(),
+                               rtclog::Event::AUDIO_NETWORK_ADAPTATION_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_audio_network_adaptation());
   const rtclog::AudioNetworkAdaptation& ana_event =
       event.audio_network_adaptation();
 
   LoggedAudioNetworkAdaptationEvent res;
-  res.timestamp_us = GetTimestamp(event);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+  res.timestamp_us = event.timestamp_us();
   if (ana_event.has_bitrate_bps())
     res.config.bitrate_bps = ana_event.bitrate_bps();
   if (ana_event.has_enable_fec())
@@ -1720,39 +1850,44 @@ LoggedAudioNetworkAdaptationEvent ParsedRtcEventLog::GetAudioNetworkAdaptation(
   return res;
 }
 
-LoggedBweProbeClusterCreatedEvent ParsedRtcEventLog::GetBweProbeClusterCreated(
-    const rtclog::Event& event) const {
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::BWE_PROBE_CLUSTER_CREATED_EVENT);
-  RTC_CHECK(event.has_probe_cluster());
+ParsedRtcEventLog::ParseStatusOr<LoggedBweProbeClusterCreatedEvent>
+ParsedRtcEventLog::GetBweProbeClusterCreated(const rtclog::Event& event) const {
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(),
+                               rtclog::Event::BWE_PROBE_CLUSTER_CREATED_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_probe_cluster());
   const rtclog::BweProbeCluster& pcc_event = event.probe_cluster();
   LoggedBweProbeClusterCreatedEvent res;
-  res.timestamp_us = GetTimestamp(event);
-  RTC_CHECK(pcc_event.has_id());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+  res.timestamp_us = event.timestamp_us();
+  RTC_PARSE_CHECK_OR_RETURN(pcc_event.has_id());
   res.id = pcc_event.id();
-  RTC_CHECK(pcc_event.has_bitrate_bps());
+  RTC_PARSE_CHECK_OR_RETURN(pcc_event.has_bitrate_bps());
   res.bitrate_bps = pcc_event.bitrate_bps();
-  RTC_CHECK(pcc_event.has_min_packets());
+  RTC_PARSE_CHECK_OR_RETURN(pcc_event.has_min_packets());
   res.min_packets = pcc_event.min_packets();
-  RTC_CHECK(pcc_event.has_min_bytes());
+  RTC_PARSE_CHECK_OR_RETURN(pcc_event.has_min_bytes());
   res.min_bytes = pcc_event.min_bytes();
   return res;
 }
 
-LoggedBweProbeFailureEvent ParsedRtcEventLog::GetBweProbeFailure(
-    const rtclog::Event& event) const {
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::BWE_PROBE_RESULT_EVENT);
-  RTC_CHECK(event.has_probe_result());
+ParsedRtcEventLog::ParseStatusOr<LoggedBweProbeFailureEvent>
+ParsedRtcEventLog::GetBweProbeFailure(const rtclog::Event& event) const {
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(),
+                               rtclog::Event::BWE_PROBE_RESULT_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_probe_result());
   const rtclog::BweProbeResult& pr_event = event.probe_result();
-  RTC_CHECK(pr_event.has_result());
-  RTC_CHECK_NE(pr_event.result(), rtclog::BweProbeResult::SUCCESS);
+  RTC_PARSE_CHECK_OR_RETURN(pr_event.has_result());
+  RTC_PARSE_CHECK_OR_RETURN_NE(pr_event.result(),
+                               rtclog::BweProbeResult::SUCCESS);
 
   LoggedBweProbeFailureEvent res;
-  res.timestamp_us = GetTimestamp(event);
-  RTC_CHECK(pr_event.has_id());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+  res.timestamp_us = event.timestamp_us();
+  RTC_PARSE_CHECK_OR_RETURN(pr_event.has_id());
   res.id = pr_event.id();
-  RTC_CHECK(pr_event.has_result());
+  RTC_PARSE_CHECK_OR_RETURN(pr_event.has_result());
   if (pr_event.result() ==
       rtclog::BweProbeResult::INVALID_SEND_RECEIVE_INTERVAL) {
     res.failure_reason = ProbeFailureReason::kInvalidSendReceiveInterval;
@@ -1764,91 +1899,101 @@ LoggedBweProbeFailureEvent ParsedRtcEventLog::GetBweProbeFailure(
   } else {
     RTC_NOTREACHED();
   }
-  RTC_CHECK(!pr_event.has_bitrate_bps());
+  RTC_PARSE_CHECK_OR_RETURN(!pr_event.has_bitrate_bps());
 
   return res;
 }
 
-LoggedBweProbeSuccessEvent ParsedRtcEventLog::GetBweProbeSuccess(
-    const rtclog::Event& event) const {
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::BWE_PROBE_RESULT_EVENT);
-  RTC_CHECK(event.has_probe_result());
+ParsedRtcEventLog::ParseStatusOr<LoggedBweProbeSuccessEvent>
+ParsedRtcEventLog::GetBweProbeSuccess(const rtclog::Event& event) const {
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(),
+                               rtclog::Event::BWE_PROBE_RESULT_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_probe_result());
   const rtclog::BweProbeResult& pr_event = event.probe_result();
-  RTC_CHECK(pr_event.has_result());
-  RTC_CHECK_EQ(pr_event.result(), rtclog::BweProbeResult::SUCCESS);
+  RTC_PARSE_CHECK_OR_RETURN(pr_event.has_result());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(pr_event.result(),
+                               rtclog::BweProbeResult::SUCCESS);
 
   LoggedBweProbeSuccessEvent res;
-  res.timestamp_us = GetTimestamp(event);
-  RTC_CHECK(pr_event.has_id());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+  res.timestamp_us = event.timestamp_us();
+  RTC_PARSE_CHECK_OR_RETURN(pr_event.has_id());
   res.id = pr_event.id();
-  RTC_CHECK(pr_event.has_bitrate_bps());
+  RTC_PARSE_CHECK_OR_RETURN(pr_event.has_bitrate_bps());
   res.bitrate_bps = pr_event.bitrate_bps();
 
   return res;
 }
 
-LoggedAlrStateEvent ParsedRtcEventLog::GetAlrState(
-    const rtclog::Event& event) const {
-  RTC_CHECK(event.has_type());
-  RTC_CHECK_EQ(event.type(), rtclog::Event::ALR_STATE_EVENT);
-  RTC_CHECK(event.has_alr_state());
+ParsedRtcEventLog::ParseStatusOr<LoggedAlrStateEvent>
+ParsedRtcEventLog::GetAlrState(const rtclog::Event& event) const {
+  RTC_PARSE_CHECK_OR_RETURN(event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(event.type(), rtclog::Event::ALR_STATE_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(event.has_alr_state());
   const rtclog::AlrState& alr_event = event.alr_state();
   LoggedAlrStateEvent res;
-  res.timestamp_us = GetTimestamp(event);
-  RTC_CHECK(alr_event.has_in_alr());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_timestamp_us());
+  res.timestamp_us = event.timestamp_us();
+  RTC_PARSE_CHECK_OR_RETURN(alr_event.has_in_alr());
   res.in_alr = alr_event.in_alr();
 
   return res;
 }
 
-LoggedIceCandidatePairConfig ParsedRtcEventLog::GetIceCandidatePairConfig(
+ParsedRtcEventLog::ParseStatusOr<LoggedIceCandidatePairConfig>
+ParsedRtcEventLog::GetIceCandidatePairConfig(
     const rtclog::Event& rtc_event) const {
-  RTC_CHECK(rtc_event.has_type());
-  RTC_CHECK_EQ(rtc_event.type(), rtclog::Event::ICE_CANDIDATE_PAIR_CONFIG);
+  RTC_PARSE_CHECK_OR_RETURN(rtc_event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(rtc_event.type(),
+                               rtclog::Event::ICE_CANDIDATE_PAIR_CONFIG);
   LoggedIceCandidatePairConfig res;
   const rtclog::IceCandidatePairConfig& config =
       rtc_event.ice_candidate_pair_config();
-  res.timestamp_us = GetTimestamp(rtc_event);
-  RTC_CHECK(config.has_config_type());
+  RTC_CHECK(rtc_event.has_timestamp_us());
+  res.timestamp_us = rtc_event.timestamp_us();
+  RTC_PARSE_CHECK_OR_RETURN(config.has_config_type());
   res.type = GetRuntimeIceCandidatePairConfigType(config.config_type());
-  RTC_CHECK(config.has_candidate_pair_id());
+  RTC_PARSE_CHECK_OR_RETURN(config.has_candidate_pair_id());
   res.candidate_pair_id = config.candidate_pair_id();
-  RTC_CHECK(config.has_local_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(config.has_local_candidate_type());
   res.local_candidate_type =
       GetRuntimeIceCandidateType(config.local_candidate_type());
-  RTC_CHECK(config.has_local_relay_protocol());
+  RTC_PARSE_CHECK_OR_RETURN(config.has_local_relay_protocol());
   res.local_relay_protocol =
       GetRuntimeIceCandidatePairProtocol(config.local_relay_protocol());
-  RTC_CHECK(config.has_local_network_type());
+  RTC_PARSE_CHECK_OR_RETURN(config.has_local_network_type());
   res.local_network_type =
       GetRuntimeIceCandidateNetworkType(config.local_network_type());
-  RTC_CHECK(config.has_local_address_family());
+  RTC_PARSE_CHECK_OR_RETURN(config.has_local_address_family());
   res.local_address_family =
       GetRuntimeIceCandidatePairAddressFamily(config.local_address_family());
-  RTC_CHECK(config.has_remote_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(config.has_remote_candidate_type());
   res.remote_candidate_type =
       GetRuntimeIceCandidateType(config.remote_candidate_type());
-  RTC_CHECK(config.has_remote_address_family());
+  RTC_PARSE_CHECK_OR_RETURN(config.has_remote_address_family());
   res.remote_address_family =
       GetRuntimeIceCandidatePairAddressFamily(config.remote_address_family());
-  RTC_CHECK(config.has_candidate_pair_protocol());
+  RTC_PARSE_CHECK_OR_RETURN(config.has_candidate_pair_protocol());
   res.candidate_pair_protocol =
       GetRuntimeIceCandidatePairProtocol(config.candidate_pair_protocol());
   return res;
 }
 
-LoggedIceCandidatePairEvent ParsedRtcEventLog::GetIceCandidatePairEvent(
+ParsedRtcEventLog::ParseStatusOr<LoggedIceCandidatePairEvent>
+ParsedRtcEventLog::GetIceCandidatePairEvent(
     const rtclog::Event& rtc_event) const {
-  RTC_CHECK(rtc_event.has_type());
-  RTC_CHECK_EQ(rtc_event.type(), rtclog::Event::ICE_CANDIDATE_PAIR_EVENT);
+  RTC_PARSE_CHECK_OR_RETURN(rtc_event.has_type());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(rtc_event.type(),
+                               rtclog::Event::ICE_CANDIDATE_PAIR_EVENT);
   LoggedIceCandidatePairEvent res;
   const rtclog::IceCandidatePairEvent& event =
       rtc_event.ice_candidate_pair_event();
-  res.timestamp_us = GetTimestamp(rtc_event);
-  RTC_CHECK(event.has_event_type());
+  RTC_CHECK(rtc_event.has_timestamp_us());
+  res.timestamp_us = rtc_event.timestamp_us();
+  RTC_PARSE_CHECK_OR_RETURN(event.has_event_type());
   res.type = GetRuntimeIceCandidatePairEventType(event.event_type());
-  RTC_CHECK(event.has_candidate_pair_id());
+  RTC_PARSE_CHECK_OR_RETURN(event.has_candidate_pair_id());
   res.candidate_pair_id = event.candidate_pair_id();
   // transaction_id is not supported by rtclog::Event
   res.transaction_id = 0;
@@ -1889,7 +2034,7 @@ std::vector<InferredRouteChangeEvent> ParsedRtcEventLog::GetRouteChanges()
     if (candidate.type == IceCandidatePairConfigType::kSelected) {
       InferredRouteChangeEvent route;
       route.route_id = candidate.candidate_pair_id;
-      route.log_time = Timestamp::ms(candidate.log_time_ms());
+      route.log_time = Timestamp::Millis(candidate.log_time_ms());
 
       route.send_overhead = kUdpOverhead + kSrtpOverhead + kIpv4Overhead;
       if (candidate.remote_address_family ==
@@ -1938,7 +2083,7 @@ std::vector<LoggedPacketInfo> ParsedRtcEventLog::GetPacketInfos(
     // If we have a large time delta, it can be caused by a gap in logging,
     // therefore we don't want to match up sequence numbers as we might have had
     // a wraparound.
-    if (new_log_time - last_log_time > TimeDelta::seconds(30)) {
+    if (new_log_time - last_log_time > TimeDelta::Seconds(30)) {
       seq_num_unwrapper = SequenceNumberUnwrapper();
       indices.clear();
     }
@@ -1947,7 +2092,7 @@ std::vector<LoggedPacketInfo> ParsedRtcEventLog::GetPacketInfos(
   };
 
   auto rtp_handler = [&](const LoggedRtpPacket& rtp) {
-    advance_time(Timestamp::ms(rtp.log_time_ms()));
+    advance_time(Timestamp::Millis(rtp.log_time_ms()));
     MediaStreamInfo* stream = &streams[rtp.header.ssrc];
     Timestamp capture_time = Timestamp::MinusInfinity();
     if (!stream->rtx) {
@@ -1962,7 +2107,7 @@ std::vector<LoggedPacketInfo> ParsedRtcEventLog::GetPacketInfos(
           kStartingCaptureTimeTicks +
           stream->unwrap_capture_ticks.Unwrap(rtp.header.timestamp);
       // TODO(srte): Use logged sample rate when it is added to the format.
-      capture_time = Timestamp::seconds(
+      capture_time = Timestamp::Seconds(
           capture_ticks /
           (stream->media_type == LoggedMediaType::kAudio ? 48000.0 : 90000.0));
     }
@@ -1990,7 +2135,7 @@ std::vector<LoggedPacketInfo> ParsedRtcEventLog::GetPacketInfos(
 
   auto feedback_handler =
       [&](const LoggedRtcpPacketTransportFeedback& logged_rtcp) {
-        auto log_feedback_time = Timestamp::ms(logged_rtcp.log_time_ms());
+        auto log_feedback_time = Timestamp::Millis(logged_rtcp.log_time_ms());
         advance_time(log_feedback_time);
         const auto& feedback = logged_rtcp.transport_feedback;
         // Add timestamp deltas to a local time base selected on first packet
@@ -1999,7 +2144,7 @@ std::vector<LoggedPacketInfo> ParsedRtcEventLog::GetPacketInfos(
         if (!last_feedback_base_time_us) {
           feedback_base_time = log_feedback_time;
         } else {
-          feedback_base_time += TimeDelta::us(
+          feedback_base_time += TimeDelta::Micros(
               feedback.GetBaseDeltaUs(*last_feedback_base_time_us));
         }
         last_feedback_base_time_us = feedback.GetBaseTimeUs();
@@ -2018,15 +2163,16 @@ std::vector<LoggedPacketInfo> ParsedRtcEventLog::GetPacketInfos(
           }
           LoggedPacketInfo* sent = &packets[it->second];
           if (log_feedback_time - sent->log_packet_time >
-              TimeDelta::seconds(60)) {
+              TimeDelta::Seconds(60)) {
             RTC_LOG(LS_WARNING)
                 << "Received very late feedback, possibly due to wraparound.";
             continue;
           }
           if (packet.received()) {
-            receive_timestamp += TimeDelta::us(packet.delta_us());
+            receive_timestamp += TimeDelta::Micros(packet.delta_us());
             if (sent->reported_recv_time.IsInfinite()) {
-              sent->reported_recv_time = Timestamp::ms(receive_timestamp.ms());
+              sent->reported_recv_time =
+                  Timestamp::Millis(receive_timestamp.ms());
               sent->log_feedback_time = log_feedback_time;
             }
           } else {
@@ -2101,12 +2247,12 @@ std::vector<LoggedIceEvent> ParsedRtcEventLog::GetIceEvents() const {
   std::vector<LoggedIceEvent> log_events;
   auto handle_check = [&](const LoggedIceCandidatePairEvent& check) {
     log_events.push_back(LoggedIceEvent{check.candidate_pair_id,
-                                        Timestamp::ms(check.log_time_ms()),
+                                        Timestamp::Millis(check.log_time_ms()),
                                         check_map[check.type]});
   };
   auto handle_config = [&](const LoggedIceCandidatePairConfig& conf) {
     log_events.push_back(LoggedIceEvent{conf.candidate_pair_id,
-                                        Timestamp::ms(conf.log_time_ms()),
+                                        Timestamp::Millis(conf.log_time_ms()),
                                         config_map[conf.type]});
   };
   RtcEventProcessor process;
@@ -2122,18 +2268,20 @@ const std::vector<MatchedSendArrivalTimes> GetNetworkTrace(
   for (auto& packet :
        parsed_log.GetPacketInfos(PacketDirection::kOutgoingPacket)) {
     if (packet.log_feedback_time.IsFinite()) {
-      rtp_rtcp_matched.emplace_back(
-          packet.log_feedback_time.ms(), packet.log_packet_time.ms(),
-          packet.reported_recv_time.ms_or(-1), packet.size);
+      rtp_rtcp_matched.emplace_back(packet.log_feedback_time.ms(),
+                                    packet.log_packet_time.ms(),
+                                    packet.reported_recv_time.ms_or(
+                                        MatchedSendArrivalTimes::kNotReceived),
+                                    packet.size);
     }
   }
   return rtp_rtcp_matched;
 }
 
 // Helper functions for new format start here
-void ParsedRtcEventLog::StoreParsedNewFormatEvent(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreParsedNewFormatEvent(
     const rtclog2::EventStream& stream) {
-  RTC_DCHECK_EQ(stream.stream_size(), 0);
+  RTC_DCHECK_EQ(stream.stream_size(), 0);  // No legacy format event.
 
   RTC_DCHECK_EQ(
       stream.incoming_rtp_packets_size() + stream.outgoing_rtp_packets_size() +
@@ -2147,7 +2295,8 @@ void ParsedRtcEventLog::StoreParsedNewFormatEvent(
           stream.audio_network_adaptations_size() +
           stream.probe_clusters_size() + stream.probe_success_size() +
           stream.probe_failure_size() + stream.alr_states_size() +
-          stream.route_changes_size() + stream.ice_candidate_configs_size() +
+          stream.route_changes_size() + stream.remote_estimates_size() +
+          stream.ice_candidate_configs_size() +
           stream.ice_candidate_events_size() +
           stream.audio_recv_stream_configs_size() +
           stream.audio_send_stream_configs_size() +
@@ -2159,78 +2308,84 @@ void ParsedRtcEventLog::StoreParsedNewFormatEvent(
       1u);
 
   if (stream.incoming_rtp_packets_size() == 1) {
-    StoreIncomingRtpPackets(stream.incoming_rtp_packets(0));
+    return StoreIncomingRtpPackets(stream.incoming_rtp_packets(0));
   } else if (stream.outgoing_rtp_packets_size() == 1) {
-    StoreOutgoingRtpPackets(stream.outgoing_rtp_packets(0));
+    return StoreOutgoingRtpPackets(stream.outgoing_rtp_packets(0));
   } else if (stream.incoming_rtcp_packets_size() == 1) {
-    StoreIncomingRtcpPackets(stream.incoming_rtcp_packets(0));
+    return StoreIncomingRtcpPackets(stream.incoming_rtcp_packets(0));
   } else if (stream.outgoing_rtcp_packets_size() == 1) {
-    StoreOutgoingRtcpPackets(stream.outgoing_rtcp_packets(0));
+    return StoreOutgoingRtcpPackets(stream.outgoing_rtcp_packets(0));
   } else if (stream.audio_playout_events_size() == 1) {
-    StoreAudioPlayoutEvent(stream.audio_playout_events(0));
+    return StoreAudioPlayoutEvent(stream.audio_playout_events(0));
   } else if (stream.begin_log_events_size() == 1) {
-    StoreStartEvent(stream.begin_log_events(0));
+    return StoreStartEvent(stream.begin_log_events(0));
   } else if (stream.end_log_events_size() == 1) {
-    StoreStopEvent(stream.end_log_events(0));
+    return StoreStopEvent(stream.end_log_events(0));
   } else if (stream.loss_based_bwe_updates_size() == 1) {
-    StoreBweLossBasedUpdate(stream.loss_based_bwe_updates(0));
+    return StoreBweLossBasedUpdate(stream.loss_based_bwe_updates(0));
   } else if (stream.delay_based_bwe_updates_size() == 1) {
-    StoreBweDelayBasedUpdate(stream.delay_based_bwe_updates(0));
+    return StoreBweDelayBasedUpdate(stream.delay_based_bwe_updates(0));
   } else if (stream.dtls_transport_state_events_size() == 1) {
-    StoreDtlsTransportState(stream.dtls_transport_state_events(0));
+    return StoreDtlsTransportState(stream.dtls_transport_state_events(0));
   } else if (stream.dtls_writable_states_size() == 1) {
-    StoreDtlsWritableState(stream.dtls_writable_states(0));
+    return StoreDtlsWritableState(stream.dtls_writable_states(0));
   } else if (stream.audio_network_adaptations_size() == 1) {
-    StoreAudioNetworkAdaptationEvent(stream.audio_network_adaptations(0));
+    return StoreAudioNetworkAdaptationEvent(
+        stream.audio_network_adaptations(0));
   } else if (stream.probe_clusters_size() == 1) {
-    StoreBweProbeClusterCreated(stream.probe_clusters(0));
+    return StoreBweProbeClusterCreated(stream.probe_clusters(0));
   } else if (stream.probe_success_size() == 1) {
-    StoreBweProbeSuccessEvent(stream.probe_success(0));
+    return StoreBweProbeSuccessEvent(stream.probe_success(0));
   } else if (stream.probe_failure_size() == 1) {
-    StoreBweProbeFailureEvent(stream.probe_failure(0));
+    return StoreBweProbeFailureEvent(stream.probe_failure(0));
   } else if (stream.alr_states_size() == 1) {
-    StoreAlrStateEvent(stream.alr_states(0));
+    return StoreAlrStateEvent(stream.alr_states(0));
   } else if (stream.route_changes_size() == 1) {
-    StoreRouteChangeEvent(stream.route_changes(0));
+    return StoreRouteChangeEvent(stream.route_changes(0));
+  } else if (stream.remote_estimates_size() == 1) {
+    return StoreRemoteEstimateEvent(stream.remote_estimates(0));
   } else if (stream.ice_candidate_configs_size() == 1) {
-    StoreIceCandidatePairConfig(stream.ice_candidate_configs(0));
+    return StoreIceCandidatePairConfig(stream.ice_candidate_configs(0));
   } else if (stream.ice_candidate_events_size() == 1) {
-    StoreIceCandidateEvent(stream.ice_candidate_events(0));
+    return StoreIceCandidateEvent(stream.ice_candidate_events(0));
   } else if (stream.audio_recv_stream_configs_size() == 1) {
-    StoreAudioRecvConfig(stream.audio_recv_stream_configs(0));
+    return StoreAudioRecvConfig(stream.audio_recv_stream_configs(0));
   } else if (stream.audio_send_stream_configs_size() == 1) {
-    StoreAudioSendConfig(stream.audio_send_stream_configs(0));
+    return StoreAudioSendConfig(stream.audio_send_stream_configs(0));
   } else if (stream.video_recv_stream_configs_size() == 1) {
-    StoreVideoRecvConfig(stream.video_recv_stream_configs(0));
+    return StoreVideoRecvConfig(stream.video_recv_stream_configs(0));
   } else if (stream.video_send_stream_configs_size() == 1) {
-    StoreVideoSendConfig(stream.video_send_stream_configs(0));
+    return StoreVideoSendConfig(stream.video_send_stream_configs(0));
   } else if (stream.generic_packets_received_size() == 1) {
-    StoreGenericPacketReceivedEvent(stream.generic_packets_received(0));
+    return StoreGenericPacketReceivedEvent(stream.generic_packets_received(0));
   } else if (stream.generic_packets_sent_size() == 1) {
-    StoreGenericPacketSentEvent(stream.generic_packets_sent(0));
+    return StoreGenericPacketSentEvent(stream.generic_packets_sent(0));
   } else if (stream.generic_acks_received_size() == 1) {
-    StoreGenericAckReceivedEvent(stream.generic_acks_received(0));
+    return StoreGenericAckReceivedEvent(stream.generic_acks_received(0));
   } else {
     RTC_NOTREACHED();
+    return ParseStatus::Success();
   }
 }
 
-void ParsedRtcEventLog::StoreAlrStateEvent(const rtclog2::AlrState& proto) {
-  RTC_CHECK(proto.has_timestamp_ms());
-  RTC_CHECK(proto.has_in_alr());
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreAlrStateEvent(
+    const rtclog2::AlrState& proto) {
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_in_alr());
   LoggedAlrStateEvent alr_event;
   alr_event.timestamp_us = proto.timestamp_ms() * 1000;
   alr_event.in_alr = proto.in_alr();
 
   alr_state_events_.push_back(alr_event);
   // TODO(terelius): Should we delta encode this event type?
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreRouteChangeEvent(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreRouteChangeEvent(
     const rtclog2::RouteChange& proto) {
-  RTC_CHECK(proto.has_timestamp_ms());
-  RTC_CHECK(proto.has_connected());
-  RTC_CHECK(proto.has_overhead());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_connected());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_overhead());
   LoggedRouteChangeEvent route_event;
   route_event.timestamp_ms = proto.timestamp_ms();
   route_event.connected = proto.connected();
@@ -2238,12 +2393,78 @@ void ParsedRtcEventLog::StoreRouteChangeEvent(
 
   route_change_events_.push_back(route_event);
   // TODO(terelius): Should we delta encode this event type?
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreAudioPlayoutEvent(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreRemoteEstimateEvent(
+    const rtclog2::RemoteEstimates& proto) {
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
+  // Base event
+  LoggedRemoteEstimateEvent base_event;
+  base_event.timestamp_ms = proto.timestamp_ms();
+
+  absl::optional<uint64_t> base_link_capacity_lower_kbps;
+  if (proto.has_link_capacity_lower_kbps()) {
+    base_link_capacity_lower_kbps = proto.link_capacity_lower_kbps();
+    base_event.link_capacity_lower =
+        DataRate::KilobitsPerSec(proto.link_capacity_lower_kbps());
+  }
+
+  absl::optional<uint64_t> base_link_capacity_upper_kbps;
+  if (proto.has_link_capacity_upper_kbps()) {
+    base_link_capacity_upper_kbps = proto.link_capacity_upper_kbps();
+    base_event.link_capacity_upper =
+        DataRate::KilobitsPerSec(proto.link_capacity_upper_kbps());
+  }
+
+  remote_estimate_events_.push_back(base_event);
+
+  const size_t number_of_deltas =
+      proto.has_number_of_deltas() ? proto.number_of_deltas() : 0u;
+  if (number_of_deltas == 0) {
+    return ParseStatus::Success();
+  }
+
+  // timestamp_ms
+  auto timestamp_ms_values =
+      DecodeDeltas(proto.timestamp_ms_deltas(),
+                   ToUnsigned(proto.timestamp_ms()), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
+
+  // link_capacity_lower_kbps
+  auto link_capacity_lower_kbps_values =
+      DecodeDeltas(proto.link_capacity_lower_kbps_deltas(),
+                   base_link_capacity_lower_kbps, number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(link_capacity_lower_kbps_values.size(),
+                               number_of_deltas);
+
+  // link_capacity_upper_kbps
+  auto link_capacity_upper_kbps_values =
+      DecodeDeltas(proto.link_capacity_upper_kbps_deltas(),
+                   base_link_capacity_upper_kbps, number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(link_capacity_upper_kbps_values.size(),
+                               number_of_deltas);
+
+  // Delta decoding
+  for (size_t i = 0; i < number_of_deltas; ++i) {
+    LoggedRemoteEstimateEvent event;
+    RTC_PARSE_CHECK_OR_RETURN(timestamp_ms_values[i].has_value());
+    event.timestamp_ms = *timestamp_ms_values[i];
+    if (link_capacity_lower_kbps_values[i])
+      event.link_capacity_lower =
+          DataRate::KilobitsPerSec(*link_capacity_lower_kbps_values[i]);
+    if (link_capacity_upper_kbps_values[i])
+      event.link_capacity_upper =
+          DataRate::KilobitsPerSec(*link_capacity_upper_kbps_values[i]);
+    remote_estimate_events_.push_back(event);
+  }
+  return ParseStatus::Success();
+}
+
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreAudioPlayoutEvent(
     const rtclog2::AudioPlayoutEvents& proto) {
-  RTC_CHECK(proto.has_timestamp_ms());
-  RTC_CHECK(proto.has_local_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_local_ssrc());
 
   // Base event
   auto map_it = audio_playout_events_[proto.local_ssrc()];
@@ -2253,81 +2474,89 @@ void ParsedRtcEventLog::StoreAudioPlayoutEvent(
   const size_t number_of_deltas =
       proto.has_number_of_deltas() ? proto.number_of_deltas() : 0u;
   if (number_of_deltas == 0) {
-    return;
+    return ParseStatus::Success();
   }
 
   // timestamp_ms
   std::vector<absl::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
-  RTC_CHECK_EQ(timestamp_ms_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // local_ssrc
   std::vector<absl::optional<uint64_t>> local_ssrc_values = DecodeDeltas(
       proto.local_ssrc_deltas(), proto.local_ssrc(), number_of_deltas);
-  RTC_CHECK_EQ(local_ssrc_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(local_ssrc_values.size(), number_of_deltas);
 
   // Delta decoding
   for (size_t i = 0; i < number_of_deltas; ++i) {
-    RTC_CHECK(timestamp_ms_values[i].has_value());
-    RTC_CHECK(local_ssrc_values[i].has_value());
-    RTC_CHECK_LE(local_ssrc_values[i].value(),
-                 std::numeric_limits<uint32_t>::max());
+    RTC_PARSE_CHECK_OR_RETURN(timestamp_ms_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(local_ssrc_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN_LE(local_ssrc_values[i].value(),
+                                 std::numeric_limits<uint32_t>::max());
 
     int64_t timestamp_ms;
-    RTC_CHECK(ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
 
     const uint32_t local_ssrc =
         static_cast<uint32_t>(local_ssrc_values[i].value());
     audio_playout_events_[local_ssrc].emplace_back(1000 * timestamp_ms,
                                                    local_ssrc);
   }
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreIncomingRtpPackets(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreIncomingRtpPackets(
     const rtclog2::IncomingRtpPackets& proto) {
-  StoreRtpPackets(proto, &incoming_rtp_packets_map_);
+  return StoreRtpPackets(proto, &incoming_rtp_packets_map_);
 }
 
-void ParsedRtcEventLog::StoreOutgoingRtpPackets(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreOutgoingRtpPackets(
     const rtclog2::OutgoingRtpPackets& proto) {
-  StoreRtpPackets(proto, &outgoing_rtp_packets_map_);
+  return StoreRtpPackets(proto, &outgoing_rtp_packets_map_);
 }
 
-void ParsedRtcEventLog::StoreIncomingRtcpPackets(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreIncomingRtcpPackets(
     const rtclog2::IncomingRtcpPackets& proto) {
-  StoreRtcpPackets(proto, &incoming_rtcp_packets_, /*remove_duplicates=*/true);
+  return StoreRtcpPackets(proto, &incoming_rtcp_packets_,
+                          /*remove_duplicates=*/true);
 }
 
-void ParsedRtcEventLog::StoreOutgoingRtcpPackets(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreOutgoingRtcpPackets(
     const rtclog2::OutgoingRtcpPackets& proto) {
-  StoreRtcpPackets(proto, &outgoing_rtcp_packets_, /*remove_duplicates=*/false);
+  return StoreRtcpPackets(proto, &outgoing_rtcp_packets_,
+                          /*remove_duplicates=*/false);
 }
 
-void ParsedRtcEventLog::StoreStartEvent(const rtclog2::BeginLogEvent& proto) {
-  RTC_CHECK(proto.has_timestamp_ms());
-  RTC_CHECK(proto.has_version());
-  RTC_CHECK(proto.has_utc_time_ms());
-  RTC_CHECK_EQ(proto.version(), 2);
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreStartEvent(
+    const rtclog2::BeginLogEvent& proto) {
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_version());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_utc_time_ms());
+  RTC_PARSE_CHECK_OR_RETURN_EQ(proto.version(), 2);
   LoggedStartEvent start_event(proto.timestamp_ms() * 1000,
                                proto.utc_time_ms());
 
   start_log_events_.push_back(start_event);
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreStopEvent(const rtclog2::EndLogEvent& proto) {
-  RTC_CHECK(proto.has_timestamp_ms());
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreStopEvent(
+    const rtclog2::EndLogEvent& proto) {
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   LoggedStopEvent stop_event(proto.timestamp_ms() * 1000);
 
   stop_log_events_.push_back(stop_event);
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreBweLossBasedUpdate(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreBweLossBasedUpdate(
     const rtclog2::LossBasedBweUpdates& proto) {
-  RTC_CHECK(proto.has_timestamp_ms());
-  RTC_CHECK(proto.has_bitrate_bps());
-  RTC_CHECK(proto.has_fraction_loss());
-  RTC_CHECK(proto.has_total_packets());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_bitrate_bps());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_fraction_loss());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_total_packets());
 
   // Base event
   bwe_loss_updates_.emplace_back(1000 * proto.timestamp_ms(),
@@ -2337,64 +2566,66 @@ void ParsedRtcEventLog::StoreBweLossBasedUpdate(
   const size_t number_of_deltas =
       proto.has_number_of_deltas() ? proto.number_of_deltas() : 0u;
   if (number_of_deltas == 0) {
-    return;
+    return ParseStatus::Success();
   }
 
   // timestamp_ms
   std::vector<absl::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
-  RTC_CHECK_EQ(timestamp_ms_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // bitrate_bps
   std::vector<absl::optional<uint64_t>> bitrate_bps_values = DecodeDeltas(
       proto.bitrate_bps_deltas(), proto.bitrate_bps(), number_of_deltas);
-  RTC_CHECK_EQ(bitrate_bps_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(bitrate_bps_values.size(), number_of_deltas);
 
   // fraction_loss
   std::vector<absl::optional<uint64_t>> fraction_loss_values = DecodeDeltas(
       proto.fraction_loss_deltas(), proto.fraction_loss(), number_of_deltas);
-  RTC_CHECK_EQ(fraction_loss_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(fraction_loss_values.size(), number_of_deltas);
 
   // total_packets
   std::vector<absl::optional<uint64_t>> total_packets_values = DecodeDeltas(
       proto.total_packets_deltas(), proto.total_packets(), number_of_deltas);
-  RTC_CHECK_EQ(total_packets_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(total_packets_values.size(), number_of_deltas);
 
   // Delta decoding
   for (size_t i = 0; i < number_of_deltas; ++i) {
-    RTC_CHECK(timestamp_ms_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(timestamp_ms_values[i].has_value());
     int64_t timestamp_ms;
-    RTC_CHECK(ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
 
-    RTC_CHECK(bitrate_bps_values[i].has_value());
-    RTC_CHECK_LE(bitrate_bps_values[i].value(),
-                 std::numeric_limits<uint32_t>::max());
+    RTC_PARSE_CHECK_OR_RETURN(bitrate_bps_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN_LE(bitrate_bps_values[i].value(),
+                                 std::numeric_limits<uint32_t>::max());
     const uint32_t bitrate_bps =
         static_cast<uint32_t>(bitrate_bps_values[i].value());
 
-    RTC_CHECK(fraction_loss_values[i].has_value());
-    RTC_CHECK_LE(fraction_loss_values[i].value(),
-                 std::numeric_limits<uint32_t>::max());
+    RTC_PARSE_CHECK_OR_RETURN(fraction_loss_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN_LE(fraction_loss_values[i].value(),
+                                 std::numeric_limits<uint32_t>::max());
     const uint32_t fraction_loss =
         static_cast<uint32_t>(fraction_loss_values[i].value());
 
-    RTC_CHECK(total_packets_values[i].has_value());
-    RTC_CHECK_LE(total_packets_values[i].value(),
-                 std::numeric_limits<uint32_t>::max());
+    RTC_PARSE_CHECK_OR_RETURN(total_packets_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN_LE(total_packets_values[i].value(),
+                                 std::numeric_limits<uint32_t>::max());
     const uint32_t total_packets =
         static_cast<uint32_t>(total_packets_values[i].value());
 
     bwe_loss_updates_.emplace_back(1000 * timestamp_ms, bitrate_bps,
                                    fraction_loss, total_packets);
   }
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreBweDelayBasedUpdate(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreBweDelayBasedUpdate(
     const rtclog2::DelayBasedBweUpdates& proto) {
-  RTC_CHECK(proto.has_timestamp_ms());
-  RTC_CHECK(proto.has_bitrate_bps());
-  RTC_CHECK(proto.has_detector_state());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_bitrate_bps());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_detector_state());
 
   // Base event
   const BandwidthUsage base_detector_state =
@@ -2405,39 +2636,40 @@ void ParsedRtcEventLog::StoreBweDelayBasedUpdate(
   const size_t number_of_deltas =
       proto.has_number_of_deltas() ? proto.number_of_deltas() : 0u;
   if (number_of_deltas == 0) {
-    return;
+    return ParseStatus::Success();
   }
 
   // timestamp_ms
   std::vector<absl::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
-  RTC_CHECK_EQ(timestamp_ms_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // bitrate_bps
   std::vector<absl::optional<uint64_t>> bitrate_bps_values = DecodeDeltas(
       proto.bitrate_bps_deltas(), proto.bitrate_bps(), number_of_deltas);
-  RTC_CHECK_EQ(bitrate_bps_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(bitrate_bps_values.size(), number_of_deltas);
 
   // detector_state
   std::vector<absl::optional<uint64_t>> detector_state_values = DecodeDeltas(
       proto.detector_state_deltas(),
       static_cast<uint64_t>(proto.detector_state()), number_of_deltas);
-  RTC_CHECK_EQ(detector_state_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(detector_state_values.size(), number_of_deltas);
 
   // Delta decoding
   for (size_t i = 0; i < number_of_deltas; ++i) {
-    RTC_CHECK(timestamp_ms_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(timestamp_ms_values[i].has_value());
     int64_t timestamp_ms;
-    RTC_CHECK(ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
 
-    RTC_CHECK(bitrate_bps_values[i].has_value());
-    RTC_CHECK_LE(bitrate_bps_values[i].value(),
-                 std::numeric_limits<uint32_t>::max());
+    RTC_PARSE_CHECK_OR_RETURN(bitrate_bps_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN_LE(bitrate_bps_values[i].value(),
+                                 std::numeric_limits<uint32_t>::max());
     const uint32_t bitrate_bps =
         static_cast<uint32_t>(bitrate_bps_values[i].value());
 
-    RTC_CHECK(detector_state_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(detector_state_values[i].has_value());
     const auto detector_state =
         static_cast<rtclog2::DelayBasedBweUpdates::DetectorState>(
             detector_state_values[i].value());
@@ -2445,62 +2677,66 @@ void ParsedRtcEventLog::StoreBweDelayBasedUpdate(
     bwe_delay_updates_.emplace_back(1000 * timestamp_ms, bitrate_bps,
                                     GetRuntimeDetectorState(detector_state));
   }
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreBweProbeClusterCreated(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreBweProbeClusterCreated(
     const rtclog2::BweProbeCluster& proto) {
   LoggedBweProbeClusterCreatedEvent probe_cluster;
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   probe_cluster.timestamp_us = proto.timestamp_ms() * 1000;
-  RTC_CHECK(proto.has_id());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_id());
   probe_cluster.id = proto.id();
-  RTC_CHECK(proto.has_bitrate_bps());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_bitrate_bps());
   probe_cluster.bitrate_bps = proto.bitrate_bps();
-  RTC_CHECK(proto.has_min_packets());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_min_packets());
   probe_cluster.min_packets = proto.min_packets();
-  RTC_CHECK(proto.has_min_bytes());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_min_bytes());
   probe_cluster.min_bytes = proto.min_bytes();
 
   bwe_probe_cluster_created_events_.push_back(probe_cluster);
 
   // TODO(terelius): Should we delta encode this event type?
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreBweProbeSuccessEvent(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreBweProbeSuccessEvent(
     const rtclog2::BweProbeResultSuccess& proto) {
   LoggedBweProbeSuccessEvent probe_result;
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   probe_result.timestamp_us = proto.timestamp_ms() * 1000;
-  RTC_CHECK(proto.has_id());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_id());
   probe_result.id = proto.id();
-  RTC_CHECK(proto.has_bitrate_bps());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_bitrate_bps());
   probe_result.bitrate_bps = proto.bitrate_bps();
 
   bwe_probe_success_events_.push_back(probe_result);
 
   // TODO(terelius): Should we delta encode this event type?
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreBweProbeFailureEvent(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreBweProbeFailureEvent(
     const rtclog2::BweProbeResultFailure& proto) {
   LoggedBweProbeFailureEvent probe_result;
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   probe_result.timestamp_us = proto.timestamp_ms() * 1000;
-  RTC_CHECK(proto.has_id());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_id());
   probe_result.id = proto.id();
-  RTC_CHECK(proto.has_failure());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_failure());
   probe_result.failure_reason = GetRuntimeProbeFailureReason(proto.failure());
 
   bwe_probe_failure_events_.push_back(probe_result);
 
   // TODO(terelius): Should we delta encode this event type?
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreGenericAckReceivedEvent(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreGenericAckReceivedEvent(
     const rtclog2::GenericAckReceived& proto) {
-  RTC_CHECK(proto.has_timestamp_ms());
-  RTC_CHECK(proto.has_packet_number());
-  RTC_CHECK(proto.has_acked_packet_number());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_packet_number());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_acked_packet_number());
   // receive_acked_packet_time_ms is optional.
 
   absl::optional<int64_t> base_receive_acked_packet_time_ms;
@@ -2514,26 +2750,27 @@ void ParsedRtcEventLog::StoreGenericAckReceivedEvent(
   const size_t number_of_deltas =
       proto.has_number_of_deltas() ? proto.number_of_deltas() : 0u;
   if (number_of_deltas == 0) {
-    return;
+    return ParseStatus::Success();
   }
 
   // timestamp_ms
   std::vector<absl::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
-  RTC_CHECK_EQ(timestamp_ms_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // packet_number
   std::vector<absl::optional<uint64_t>> packet_number_values =
       DecodeDeltas(proto.packet_number_deltas(),
                    ToUnsigned(proto.packet_number()), number_of_deltas);
-  RTC_CHECK_EQ(packet_number_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(packet_number_values.size(), number_of_deltas);
 
   // acked_packet_number
   std::vector<absl::optional<uint64_t>> acked_packet_number_values =
       DecodeDeltas(proto.acked_packet_number_deltas(),
                    ToUnsigned(proto.acked_packet_number()), number_of_deltas);
-  RTC_CHECK_EQ(acked_packet_number_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(acked_packet_number_values.size(),
+                               number_of_deltas);
 
   // optional receive_acked_packet_time_ms
   const absl::optional<uint64_t> unsigned_receive_acked_packet_time_ms_base =
@@ -2545,21 +2782,24 @@ void ParsedRtcEventLog::StoreGenericAckReceivedEvent(
       DecodeDeltas(proto.receive_acked_packet_time_ms_deltas(),
                    unsigned_receive_acked_packet_time_ms_base,
                    number_of_deltas);
-  RTC_CHECK_EQ(receive_acked_packet_time_ms_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(receive_acked_packet_time_ms_values.size(),
+                               number_of_deltas);
 
   for (size_t i = 0; i < number_of_deltas; i++) {
     int64_t timestamp_ms;
-    RTC_CHECK(ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
     int64_t packet_number;
-    RTC_CHECK(ToSigned(packet_number_values[i].value(), &packet_number));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(packet_number_values[i].value(), &packet_number));
     int64_t acked_packet_number;
-    RTC_CHECK(
+    RTC_PARSE_CHECK_OR_RETURN(
         ToSigned(acked_packet_number_values[i].value(), &acked_packet_number));
     absl::optional<int64_t> receive_acked_packet_time_ms;
 
     if (receive_acked_packet_time_ms_values[i].has_value()) {
       int64_t value;
-      RTC_CHECK(
+      RTC_PARSE_CHECK_OR_RETURN(
           ToSigned(receive_acked_packet_time_ms_values[i].value(), &value));
       receive_acked_packet_time_ms = value;
     }
@@ -2567,17 +2807,18 @@ void ParsedRtcEventLog::StoreGenericAckReceivedEvent(
                                       acked_packet_number,
                                       receive_acked_packet_time_ms});
   }
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreGenericPacketSentEvent(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreGenericPacketSentEvent(
     const rtclog2::GenericPacketSent& proto) {
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
 
   // Base event
-  RTC_CHECK(proto.has_packet_number());
-  RTC_CHECK(proto.has_overhead_length());
-  RTC_CHECK(proto.has_payload_length());
-  RTC_CHECK(proto.has_padding_length());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_packet_number());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_overhead_length());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_payload_length());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_padding_length());
 
   generic_packets_sent_.push_back(
       {proto.timestamp_ms() * 1000, proto.packet_number(),
@@ -2588,59 +2829,63 @@ void ParsedRtcEventLog::StoreGenericPacketSentEvent(
   const size_t number_of_deltas =
       proto.has_number_of_deltas() ? proto.number_of_deltas() : 0u;
   if (number_of_deltas == 0) {
-    return;
+    return ParseStatus::Success();
   }
 
   // timestamp_ms
   std::vector<absl::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
-  RTC_CHECK_EQ(timestamp_ms_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // packet_number
   std::vector<absl::optional<uint64_t>> packet_number_values =
       DecodeDeltas(proto.packet_number_deltas(),
                    ToUnsigned(proto.packet_number()), number_of_deltas);
-  RTC_CHECK_EQ(packet_number_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(packet_number_values.size(), number_of_deltas);
 
   std::vector<absl::optional<uint64_t>> overhead_length_values =
       DecodeDeltas(proto.overhead_length_deltas(), proto.overhead_length(),
                    number_of_deltas);
-  RTC_CHECK_EQ(overhead_length_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(overhead_length_values.size(), number_of_deltas);
 
   std::vector<absl::optional<uint64_t>> payload_length_values =
       DecodeDeltas(proto.payload_length_deltas(),
                    ToUnsigned(proto.payload_length()), number_of_deltas);
-  RTC_CHECK_EQ(payload_length_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(payload_length_values.size(), number_of_deltas);
 
   std::vector<absl::optional<uint64_t>> padding_length_values =
       DecodeDeltas(proto.padding_length_deltas(),
                    ToUnsigned(proto.padding_length()), number_of_deltas);
-  RTC_CHECK_EQ(padding_length_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(padding_length_values.size(), number_of_deltas);
 
   for (size_t i = 0; i < number_of_deltas; i++) {
     int64_t timestamp_ms;
-    RTC_CHECK(ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
     int64_t packet_number;
-    RTC_CHECK(ToSigned(packet_number_values[i].value(), &packet_number));
-    RTC_CHECK(overhead_length_values[i].has_value());
-    RTC_CHECK(payload_length_values[i].has_value());
-    RTC_CHECK(padding_length_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(packet_number_values[i].value(), &packet_number));
+    RTC_PARSE_CHECK_OR_RETURN(overhead_length_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(payload_length_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(padding_length_values[i].has_value());
     generic_packets_sent_.push_back(
         {timestamp_ms * 1000, packet_number,
          static_cast<size_t>(overhead_length_values[i].value()),
          static_cast<size_t>(payload_length_values[i].value()),
          static_cast<size_t>(padding_length_values[i].value())});
   }
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreGenericPacketReceivedEvent(
+ParsedRtcEventLog::ParseStatus
+ParsedRtcEventLog::StoreGenericPacketReceivedEvent(
     const rtclog2::GenericPacketReceived& proto) {
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
 
   // Base event
-  RTC_CHECK(proto.has_packet_number());
-  RTC_CHECK(proto.has_packet_length());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_packet_number());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_packet_length());
 
   generic_packets_received_.push_back({proto.timestamp_ms() * 1000,
                                        proto.packet_number(),
@@ -2649,40 +2894,45 @@ void ParsedRtcEventLog::StoreGenericPacketReceivedEvent(
   const size_t number_of_deltas =
       proto.has_number_of_deltas() ? proto.number_of_deltas() : 0u;
   if (number_of_deltas == 0) {
-    return;
+    return ParseStatus::Success();
   }
 
   // timestamp_ms
   std::vector<absl::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
-  RTC_CHECK_EQ(timestamp_ms_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // packet_number
   std::vector<absl::optional<uint64_t>> packet_number_values =
       DecodeDeltas(proto.packet_number_deltas(),
                    ToUnsigned(proto.packet_number()), number_of_deltas);
-  RTC_CHECK_EQ(packet_number_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(packet_number_values.size(), number_of_deltas);
 
   std::vector<absl::optional<uint64_t>> packet_length_values = DecodeDeltas(
       proto.packet_length_deltas(), proto.packet_length(), number_of_deltas);
-  RTC_CHECK_EQ(packet_length_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(packet_length_values.size(), number_of_deltas);
 
   for (size_t i = 0; i < number_of_deltas; i++) {
     int64_t timestamp_ms;
-    RTC_CHECK(ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
     int64_t packet_number;
-    RTC_CHECK(ToSigned(packet_number_values[i].value(), &packet_number));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(packet_number_values[i].value(), &packet_number));
     int32_t packet_length;
-    RTC_CHECK(ToSigned(packet_length_values[i].value(), &packet_length));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(packet_length_values[i].value(), &packet_length));
     generic_packets_received_.push_back(
         {timestamp_ms * 1000, packet_number, packet_length});
   }
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
+ParsedRtcEventLog::ParseStatus
+ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
     const rtclog2::AudioNetworkAdaptations& proto) {
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
 
   // Base event
   {
@@ -2695,7 +2945,7 @@ void ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
     }
     if (proto.has_uplink_packet_loss_fraction()) {
       float uplink_packet_loss_fraction;
-      RTC_CHECK(ParsePacketLossFractionFromProtoFormat(
+      RTC_PARSE_CHECK_OR_RETURN(ParsePacketLossFractionFromProtoFormat(
           proto.uplink_packet_loss_fraction(), &uplink_packet_loss_fraction));
       runtime_config.uplink_packet_loss_fraction = uplink_packet_loss_fraction;
     }
@@ -2716,14 +2966,14 @@ void ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
   const size_t number_of_deltas =
       proto.has_number_of_deltas() ? proto.number_of_deltas() : 0u;
   if (number_of_deltas == 0) {
-    return;
+    return ParseStatus::Success();
   }
 
   // timestamp_ms
   std::vector<absl::optional<uint64_t>> timestamp_ms_values =
       DecodeDeltas(proto.timestamp_ms_deltas(),
                    ToUnsigned(proto.timestamp_ms()), number_of_deltas);
-  RTC_CHECK_EQ(timestamp_ms_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(timestamp_ms_values.size(), number_of_deltas);
 
   // bitrate_bps
   const absl::optional<uint64_t> unsigned_base_bitrate_bps =
@@ -2732,7 +2982,7 @@ void ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
           : absl::optional<uint64_t>();
   std::vector<absl::optional<uint64_t>> bitrate_bps_values = DecodeDeltas(
       proto.bitrate_bps_deltas(), unsigned_base_bitrate_bps, number_of_deltas);
-  RTC_CHECK_EQ(bitrate_bps_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(bitrate_bps_values.size(), number_of_deltas);
 
   // frame_length_ms
   const absl::optional<uint64_t> unsigned_base_frame_length_ms =
@@ -2742,7 +2992,7 @@ void ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
   std::vector<absl::optional<uint64_t>> frame_length_ms_values =
       DecodeDeltas(proto.frame_length_ms_deltas(),
                    unsigned_base_frame_length_ms, number_of_deltas);
-  RTC_CHECK_EQ(frame_length_ms_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(frame_length_ms_values.size(), number_of_deltas);
 
   // uplink_packet_loss_fraction
   const absl::optional<uint64_t> uplink_packet_loss_fraction =
@@ -2752,7 +3002,8 @@ void ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
   std::vector<absl::optional<uint64_t>> uplink_packet_loss_fraction_values =
       DecodeDeltas(proto.uplink_packet_loss_fraction_deltas(),
                    uplink_packet_loss_fraction, number_of_deltas);
-  RTC_CHECK_EQ(uplink_packet_loss_fraction_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(uplink_packet_loss_fraction_values.size(),
+                               number_of_deltas);
 
   // enable_fec
   const absl::optional<uint64_t> enable_fec =
@@ -2760,7 +3011,7 @@ void ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
                              : absl::optional<uint64_t>();
   std::vector<absl::optional<uint64_t>> enable_fec_values =
       DecodeDeltas(proto.enable_fec_deltas(), enable_fec, number_of_deltas);
-  RTC_CHECK_EQ(enable_fec_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(enable_fec_values.size(), number_of_deltas);
 
   // enable_dtx
   const absl::optional<uint64_t> enable_dtx =
@@ -2768,7 +3019,7 @@ void ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
                              : absl::optional<uint64_t>();
   std::vector<absl::optional<uint64_t>> enable_dtx_values =
       DecodeDeltas(proto.enable_dtx_deltas(), enable_dtx, number_of_deltas);
-  RTC_CHECK_EQ(enable_dtx_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(enable_dtx_values.size(), number_of_deltas);
 
   // num_channels
   // Note: For delta encoding, all num_channel values, including the base,
@@ -2788,29 +3039,31 @@ void ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
       num_channels_values[i] = num_channels_values[i].value() + 1;
     }
   }
-  RTC_CHECK_EQ(num_channels_values.size(), number_of_deltas);
+  RTC_PARSE_CHECK_OR_RETURN_EQ(num_channels_values.size(), number_of_deltas);
 
   // Delta decoding
   for (size_t i = 0; i < number_of_deltas; ++i) {
-    RTC_CHECK(timestamp_ms_values[i].has_value());
+    RTC_PARSE_CHECK_OR_RETURN(timestamp_ms_values[i].has_value());
     int64_t timestamp_ms;
-    RTC_CHECK(ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
+    RTC_PARSE_CHECK_OR_RETURN(
+        ToSigned(timestamp_ms_values[i].value(), &timestamp_ms));
 
     AudioEncoderRuntimeConfig runtime_config;
     if (bitrate_bps_values[i].has_value()) {
       int signed_bitrate_bps;
-      RTC_CHECK(ToSigned(bitrate_bps_values[i].value(), &signed_bitrate_bps));
+      RTC_PARSE_CHECK_OR_RETURN(
+          ToSigned(bitrate_bps_values[i].value(), &signed_bitrate_bps));
       runtime_config.bitrate_bps = signed_bitrate_bps;
     }
     if (frame_length_ms_values[i].has_value()) {
       int signed_frame_length_ms;
-      RTC_CHECK(
+      RTC_PARSE_CHECK_OR_RETURN(
           ToSigned(frame_length_ms_values[i].value(), &signed_frame_length_ms));
       runtime_config.frame_length_ms = signed_frame_length_ms;
     }
     if (uplink_packet_loss_fraction_values[i].has_value()) {
       float uplink_packet_loss_fraction;
-      RTC_CHECK(ParsePacketLossFractionFromProtoFormat(
+      RTC_PARSE_CHECK_OR_RETURN(ParsePacketLossFractionFromProtoFormat(
           rtc::checked_cast<uint32_t>(
               uplink_packet_loss_fraction_values[i].value()),
           &uplink_packet_loss_fraction));
@@ -2831,77 +3084,81 @@ void ParsedRtcEventLog::StoreAudioNetworkAdaptationEvent(
     audio_network_adaptation_events_.emplace_back(1000 * timestamp_ms,
                                                   runtime_config);
   }
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreDtlsTransportState(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreDtlsTransportState(
     const rtclog2::DtlsTransportStateEvent& proto) {
   LoggedDtlsTransportState dtls_state;
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   dtls_state.timestamp_us = proto.timestamp_ms() * 1000;
 
-  RTC_CHECK(proto.has_dtls_transport_state());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_dtls_transport_state());
   dtls_state.dtls_transport_state =
       GetRuntimeDtlsTransportState(proto.dtls_transport_state());
 
   dtls_transport_states_.push_back(dtls_state);
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreDtlsWritableState(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreDtlsWritableState(
     const rtclog2::DtlsWritableState& proto) {
   LoggedDtlsWritableState dtls_writable_state;
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   dtls_writable_state.timestamp_us = proto.timestamp_ms() * 1000;
-  RTC_CHECK(proto.has_writable());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_writable());
   dtls_writable_state.writable = proto.writable();
 
   dtls_writable_states_.push_back(dtls_writable_state);
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreIceCandidatePairConfig(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreIceCandidatePairConfig(
     const rtclog2::IceCandidatePairConfig& proto) {
   LoggedIceCandidatePairConfig ice_config;
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   ice_config.timestamp_us = proto.timestamp_ms() * 1000;
 
-  RTC_CHECK(proto.has_config_type());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_config_type());
   ice_config.type = GetRuntimeIceCandidatePairConfigType(proto.config_type());
-  RTC_CHECK(proto.has_candidate_pair_id());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_candidate_pair_id());
   ice_config.candidate_pair_id = proto.candidate_pair_id();
-  RTC_CHECK(proto.has_local_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_local_candidate_type());
   ice_config.local_candidate_type =
       GetRuntimeIceCandidateType(proto.local_candidate_type());
-  RTC_CHECK(proto.has_local_relay_protocol());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_local_relay_protocol());
   ice_config.local_relay_protocol =
       GetRuntimeIceCandidatePairProtocol(proto.local_relay_protocol());
-  RTC_CHECK(proto.has_local_network_type());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_local_network_type());
   ice_config.local_network_type =
       GetRuntimeIceCandidateNetworkType(proto.local_network_type());
-  RTC_CHECK(proto.has_local_address_family());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_local_address_family());
   ice_config.local_address_family =
       GetRuntimeIceCandidatePairAddressFamily(proto.local_address_family());
-  RTC_CHECK(proto.has_remote_candidate_type());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_remote_candidate_type());
   ice_config.remote_candidate_type =
       GetRuntimeIceCandidateType(proto.remote_candidate_type());
-  RTC_CHECK(proto.has_remote_address_family());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_remote_address_family());
   ice_config.remote_address_family =
       GetRuntimeIceCandidatePairAddressFamily(proto.remote_address_family());
-  RTC_CHECK(proto.has_candidate_pair_protocol());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_candidate_pair_protocol());
   ice_config.candidate_pair_protocol =
       GetRuntimeIceCandidatePairProtocol(proto.candidate_pair_protocol());
 
   ice_candidate_pair_configs_.push_back(ice_config);
 
   // TODO(terelius): Should we delta encode this event type?
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreIceCandidateEvent(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreIceCandidateEvent(
     const rtclog2::IceCandidatePairEvent& proto) {
   LoggedIceCandidatePairEvent ice_event;
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   ice_event.timestamp_us = proto.timestamp_ms() * 1000;
-  RTC_CHECK(proto.has_event_type());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_event_type());
   ice_event.type = GetRuntimeIceCandidatePairEventType(proto.event_type());
-  RTC_CHECK(proto.has_candidate_pair_id());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_candidate_pair_id());
   ice_event.candidate_pair_id = proto.candidate_pair_id();
   // TODO(zstein): Make the transaction_id field required once all old versions
   // of the log (which don't have the field) are obsolete.
@@ -2911,16 +3168,17 @@ void ParsedRtcEventLog::StoreIceCandidateEvent(
   ice_candidate_pair_events_.push_back(ice_event);
 
   // TODO(terelius): Should we delta encode this event type?
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreVideoRecvConfig(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreVideoRecvConfig(
     const rtclog2::VideoRecvStreamConfig& proto) {
   LoggedVideoRecvConfig stream;
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   stream.timestamp_us = proto.timestamp_ms() * 1000;
-  RTC_CHECK(proto.has_remote_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_remote_ssrc());
   stream.config.remote_ssrc = proto.remote_ssrc();
-  RTC_CHECK(proto.has_local_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_local_ssrc());
   stream.config.local_ssrc = proto.local_ssrc();
   if (proto.has_rtx_ssrc()) {
     stream.config.rtx_ssrc = proto.rtx_ssrc();
@@ -2930,14 +3188,15 @@ void ParsedRtcEventLog::StoreVideoRecvConfig(
         GetRuntimeRtpHeaderExtensionConfig(proto.header_extensions());
   }
   video_recv_configs_.push_back(stream);
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreVideoSendConfig(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreVideoSendConfig(
     const rtclog2::VideoSendStreamConfig& proto) {
   LoggedVideoSendConfig stream;
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   stream.timestamp_us = proto.timestamp_ms() * 1000;
-  RTC_CHECK(proto.has_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_ssrc());
   stream.config.local_ssrc = proto.ssrc();
   if (proto.has_rtx_ssrc()) {
     stream.config.rtx_ssrc = proto.rtx_ssrc();
@@ -2947,36 +3206,39 @@ void ParsedRtcEventLog::StoreVideoSendConfig(
         GetRuntimeRtpHeaderExtensionConfig(proto.header_extensions());
   }
   video_send_configs_.push_back(stream);
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreAudioRecvConfig(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreAudioRecvConfig(
     const rtclog2::AudioRecvStreamConfig& proto) {
   LoggedAudioRecvConfig stream;
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   stream.timestamp_us = proto.timestamp_ms() * 1000;
-  RTC_CHECK(proto.has_remote_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_remote_ssrc());
   stream.config.remote_ssrc = proto.remote_ssrc();
-  RTC_CHECK(proto.has_local_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_local_ssrc());
   stream.config.local_ssrc = proto.local_ssrc();
   if (proto.has_header_extensions()) {
     stream.config.rtp_extensions =
         GetRuntimeRtpHeaderExtensionConfig(proto.header_extensions());
   }
   audio_recv_configs_.push_back(stream);
+  return ParseStatus::Success();
 }
 
-void ParsedRtcEventLog::StoreAudioSendConfig(
+ParsedRtcEventLog::ParseStatus ParsedRtcEventLog::StoreAudioSendConfig(
     const rtclog2::AudioSendStreamConfig& proto) {
   LoggedAudioSendConfig stream;
-  RTC_CHECK(proto.has_timestamp_ms());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_timestamp_ms());
   stream.timestamp_us = proto.timestamp_ms() * 1000;
-  RTC_CHECK(proto.has_ssrc());
+  RTC_PARSE_CHECK_OR_RETURN(proto.has_ssrc());
   stream.config.local_ssrc = proto.ssrc();
   if (proto.has_header_extensions()) {
     stream.config.rtp_extensions =
         GetRuntimeRtpHeaderExtensionConfig(proto.header_extensions());
   }
   audio_send_configs_.push_back(stream);
+  return ParseStatus::Success();
 }
 
 }  // namespace webrtc

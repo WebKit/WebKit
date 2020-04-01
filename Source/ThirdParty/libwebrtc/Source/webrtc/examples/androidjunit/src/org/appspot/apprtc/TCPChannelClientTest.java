@@ -15,7 +15,6 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import org.chromium.base.test.util.DisabledTest;
 import org.chromium.testing.local.LocalRobolectricTestRunner;
 import org.junit.After;
 import org.junit.Before;

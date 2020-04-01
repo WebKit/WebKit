@@ -80,7 +80,7 @@ void MainFilterUpdateGain::Compute(
   const auto& E2_main = subtractor_output.E2_main;
   const auto& E2_shadow = subtractor_output.E2_shadow;
   FftData* G = gain_fft;
-  auto X2 = render_power;
+  const auto& X2 = render_power;
 
   ++call_counter_;
 
@@ -100,43 +100,40 @@ void MainFilterUpdateGain::Compute(
     std::array<float, kFftLengthBy2Plus1> mu;
     // mu = H_error / (0.5* H_error* X2 + n * E2).
     for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
-      mu[k] = X2[k] > current_config_.noise_gate
-                  ? H_error_[k] / (0.5f * H_error_[k] * X2[k] +
-                                   size_partitions * E2_main[k])
-                  : 0.f;
+      if (X2[k] >= current_config_.noise_gate) {
+        mu[k] = H_error_[k] /
+                (0.5f * H_error_[k] * X2[k] + size_partitions * E2_main[k]);
+      } else {
+        mu[k] = 0.f;
+      }
     }
 
     // Avoid updating the filter close to narrow bands in the render signals.
     render_signal_analyzer.MaskRegionsAroundNarrowBands(&mu);
 
     // H_error = H_error - 0.5 * mu * X2 * H_error.
-    for (size_t k = 0; k < H_error_.size(); ++k) {
+    for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
       H_error_[k] -= 0.5f * mu[k] * X2[k] * H_error_[k];
     }
 
     // G = mu * E.
-    std::transform(mu.begin(), mu.end(), E_main.re.begin(), G->re.begin(),
-                   std::multiplies<float>());
-    std::transform(mu.begin(), mu.end(), E_main.im.begin(), G->im.begin(),
-                   std::multiplies<float>());
+    for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+      G->re[k] = mu[k] * E_main.re[k];
+      G->im[k] = mu[k] * E_main.im[k];
+    }
   }
 
   // H_error = H_error + factor * erl.
-  std::array<float, kFftLengthBy2Plus1> H_error_increase;
-  std::transform(E2_shadow.begin(), E2_shadow.end(), E2_main.begin(),
-                 H_error_increase.begin(), [&](float a, float b) {
-                   return a >= b ? current_config_.leakage_converged
-                                 : current_config_.leakage_diverged;
-                 });
-  std::transform(erl.begin(), erl.end(), H_error_increase.begin(),
-                 H_error_increase.begin(), std::multiplies<float>());
-  std::transform(H_error_.begin(), H_error_.end(), H_error_increase.begin(),
-                 H_error_.begin(), [&](float a, float b) {
-                   float error = a + b;
-                   error = std::max(error, current_config_.error_floor);
-                   error = std::min(error, current_config_.error_ceil);
-                   return error;
-                 });
+  for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+    if (E2_shadow[k] >= E2_main[k]) {
+      H_error_[k] += current_config_.leakage_converged * erl[k];
+    } else {
+      H_error_[k] += current_config_.leakage_diverged * erl[k];
+    }
+
+    H_error_[k] = std::max(H_error_[k], current_config_.error_floor);
+    H_error_[k] = std::min(H_error_[k], current_config_.error_ceil);
+  }
 
   data_dumper_->DumpRaw("aec3_main_gain_H_error", H_error_);
 }

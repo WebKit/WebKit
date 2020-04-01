@@ -78,6 +78,7 @@ public class Camera2Enumerator implements CameraEnumerator {
         == CameraMetadata.LENS_FACING_BACK;
   }
 
+  @Nullable
   @Override
   public List<CaptureFormat> getSupportedFormats(String deviceName) {
     return getSupportedFormats(context, deviceName);
@@ -165,11 +166,13 @@ public class Camera2Enumerator implements CameraEnumerator {
     }
   }
 
+  @Nullable
   static List<CaptureFormat> getSupportedFormats(Context context, String cameraId) {
     return getSupportedFormats(
         (CameraManager) context.getSystemService(Context.CAMERA_SERVICE), cameraId);
   }
 
+  @Nullable
   static List<CaptureFormat> getSupportedFormats(CameraManager cameraManager, String cameraId) {
     synchronized (cachedSupportedFormats) {
       if (cachedSupportedFormats.containsKey(cameraId)) {

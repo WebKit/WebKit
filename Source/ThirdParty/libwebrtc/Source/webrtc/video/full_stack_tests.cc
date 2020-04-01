@@ -14,7 +14,6 @@
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "api/test/simulated_network.h"
 #include "api/test/test_dependency_factory.h"
@@ -68,7 +67,7 @@ CreateVideoQualityTestFixture() {
   // The components will normally be nullptr (= use defaults), but it's possible
   // for external test runners to override the list of injected components.
   auto components = TestDependencyFactory::GetInstance().CreateComponents();
-  return absl::make_unique<VideoQualityTest>(std::move(components));
+  return std::make_unique<VideoQualityTest>(std::move(components));
 }
 
 // Takes the current active field trials set, and appends some new trials.
@@ -1164,6 +1163,23 @@ TEST(FullStackTest, VP9KSVC_3SL_Low) {
   simulcast.call.send_side_bwe = true;
   simulcast.video[0] = SvcVp9Video();
   simulcast.analyzer = {"vp9ksvc_3sl_low", 0.0, 0.0,
+                        kFullStackTestDurationSecs};
+  simulcast.ss[0] = {
+      std::vector<VideoStream>(),  0,    3, 0, InterLayerPredMode::kOnKeyPic,
+      std::vector<SpatialLayer>(), false};
+  fixture->RunWithAnalyzer(simulcast);
+}
+
+TEST(FullStackTest, VP9KSVC_3SL_Low_Bw_Limited) {
+  webrtc::test::ScopedFieldTrials override_trials(
+      AppendFieldTrials("WebRTC-Vp9IssueKeyFrameOnLayerDeactivation/Enabled/"
+                        "WebRTC-Vp9ExternalRefCtrl/Enabled/"));
+  auto fixture = CreateVideoQualityTestFixture();
+  ParamsWithLogging simulcast;
+  simulcast.config->link_capacity_kbps = 500;
+  simulcast.call.send_side_bwe = true;
+  simulcast.video[0] = SvcVp9Video();
+  simulcast.analyzer = {"vp9ksvc_3sl_low_bw_limited", 0.0, 0.0,
                         kFullStackTestDurationSecs};
   simulcast.ss[0] = {
       std::vector<VideoStream>(),  0,    3, 0, InterLayerPredMode::kOnKeyPic,

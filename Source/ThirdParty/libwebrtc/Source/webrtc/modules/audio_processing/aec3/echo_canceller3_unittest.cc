@@ -112,6 +112,7 @@ class CaptureTransportVerificationProcessor : public BlockProcessor {
   void ProcessCapture(
       bool level_change,
       bool saturated_microphone_signal,
+      std::vector<std::vector<std::vector<float>>>* linear_output,
       std::vector<std::vector<std::vector<float>>>* capture_block) override {}
 
   void BufferRender(
@@ -121,7 +122,7 @@ class CaptureTransportVerificationProcessor : public BlockProcessor {
 
   void GetMetrics(EchoControl::Metrics* metrics) const override {}
 
-  void SetAudioBufferDelay(size_t delay_ms) override {}
+  void SetAudioBufferDelay(int delay_ms) override {}
 
  private:
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(CaptureTransportVerificationProcessor);
@@ -137,6 +138,7 @@ class RenderTransportVerificationProcessor : public BlockProcessor {
   void ProcessCapture(
       bool level_change,
       bool saturated_microphone_signal,
+      std::vector<std::vector<std::vector<float>>>* linear_output,
       std::vector<std::vector<std::vector<float>>>* capture_block) override {
     std::vector<std::vector<std::vector<float>>> render_block =
         received_render_blocks_.front();
@@ -153,7 +155,7 @@ class RenderTransportVerificationProcessor : public BlockProcessor {
 
   void GetMetrics(EchoControl::Metrics* metrics) const override {}
 
-  void SetAudioBufferDelay(size_t delay_ms) override {}
+  void SetAudioBufferDelay(int delay_ms) override {}
 
  private:
   std::deque<std::vector<std::vector<std::vector<float>>>>
@@ -215,7 +217,7 @@ class EchoCanceller3Tester {
         std::unique_ptr<BlockProcessor>(
             new RenderTransportVerificationProcessor(num_bands_)));
 
-    std::vector<float> render_input;
+    std::vector<std::vector<float>> render_input(1);
     std::vector<float> capture_output;
     for (size_t frame_index = 0; frame_index < kNumFramesToProcess;
          ++frame_index) {
@@ -227,7 +229,7 @@ class EchoCanceller3Tester {
                          &render_buffer_.split_bands(0)[0], 0);
 
       for (size_t k = 0; k < frame_length_; ++k) {
-        render_input.push_back(render_buffer_.split_bands(0)[0][k]);
+        render_input[0].push_back(render_buffer_.split_bands(0)[0][k]);
       }
       aec3.AnalyzeRender(&render_buffer_);
       aec3.ProcessCapture(&capture_buffer_, false);
@@ -235,11 +237,11 @@ class EchoCanceller3Tester {
         capture_output.push_back(capture_buffer_.split_bands(0)[0][k]);
       }
     }
-    HighPassFilter hp_filter(1);
-    hp_filter.Process(render_input);
+    HighPassFilter hp_filter(16000, 1);
+    hp_filter.Process(&render_input);
 
     EXPECT_TRUE(
-        VerifyOutputFrameBitexactness(render_input, capture_output, -64));
+        VerifyOutputFrameBitexactness(render_input[0], capture_output, -64));
   }
 
   // Verifies that information about echo path changes are properly propagated
@@ -267,17 +269,17 @@ class EchoCanceller3Tester {
 
     switch (echo_path_change_test_variant) {
       case EchoPathChangeTestVariant::kNone:
-        EXPECT_CALL(*block_processor_mock, ProcessCapture(false, _, _))
+        EXPECT_CALL(*block_processor_mock, ProcessCapture(false, _, _, _))
             .Times(kExpectedNumBlocksToProcess);
         break;
       case EchoPathChangeTestVariant::kOneSticky:
-        EXPECT_CALL(*block_processor_mock, ProcessCapture(true, _, _))
+        EXPECT_CALL(*block_processor_mock, ProcessCapture(true, _, _, _))
             .Times(kExpectedNumBlocksToProcess);
         break;
       case EchoPathChangeTestVariant::kOneNonSticky:
-        EXPECT_CALL(*block_processor_mock, ProcessCapture(true, _, _))
+        EXPECT_CALL(*block_processor_mock, ProcessCapture(true, _, _, _))
             .Times(kNumFullBlocksPerFrame);
-        EXPECT_CALL(*block_processor_mock, ProcessCapture(false, _, _))
+        EXPECT_CALL(*block_processor_mock, ProcessCapture(false, _, _, _))
             .Times(kExpectedNumBlocksToProcess - kNumFullBlocksPerFrame);
         break;
     }
@@ -338,7 +340,7 @@ class EchoCanceller3Tester {
             new StrictMock<webrtc::test::MockBlockProcessor>());
     EXPECT_CALL(*block_processor_mock, BufferRender(_))
         .Times(kExpectedNumBlocksToProcess);
-    EXPECT_CALL(*block_processor_mock, ProcessCapture(_, _, _))
+    EXPECT_CALL(*block_processor_mock, ProcessCapture(_, _, _, _))
         .Times(kExpectedNumBlocksToProcess);
 
     switch (leakage_report_variant) {
@@ -429,21 +431,21 @@ class EchoCanceller3Tester {
 
     switch (saturation_variant) {
       case SaturationTestVariant::kNone:
-        EXPECT_CALL(*block_processor_mock, ProcessCapture(_, false, _))
+        EXPECT_CALL(*block_processor_mock, ProcessCapture(_, false, _, _))
             .Times(kExpectedNumBlocksToProcess);
         break;
       case SaturationTestVariant::kOneNegative: {
         ::testing::InSequence s;
-        EXPECT_CALL(*block_processor_mock, ProcessCapture(_, true, _))
+        EXPECT_CALL(*block_processor_mock, ProcessCapture(_, true, _, _))
             .Times(kNumFullBlocksPerFrame);
-        EXPECT_CALL(*block_processor_mock, ProcessCapture(_, false, _))
+        EXPECT_CALL(*block_processor_mock, ProcessCapture(_, false, _, _))
             .Times(kExpectedNumBlocksToProcess - kNumFullBlocksPerFrame);
       } break;
       case SaturationTestVariant::kOnePositive: {
         ::testing::InSequence s;
-        EXPECT_CALL(*block_processor_mock, ProcessCapture(_, true, _))
+        EXPECT_CALL(*block_processor_mock, ProcessCapture(_, true, _, _))
             .Times(kNumFullBlocksPerFrame);
-        EXPECT_CALL(*block_processor_mock, ProcessCapture(_, false, _))
+        EXPECT_CALL(*block_processor_mock, ProcessCapture(_, false, _, _))
             .Times(kExpectedNumBlocksToProcess - kNumFullBlocksPerFrame);
       } break;
     }
@@ -492,7 +494,7 @@ class EchoCanceller3Tester {
         std::unique_ptr<BlockProcessor>(
             new RenderTransportVerificationProcessor(num_bands_)));
 
-    std::vector<float> render_input;
+    std::vector<std::vector<float>> render_input(1);
     std::vector<float> capture_output;
 
     for (size_t frame_index = 0; frame_index < kRenderTransferQueueSizeFrames;
@@ -508,7 +510,7 @@ class EchoCanceller3Tester {
       }
 
       for (size_t k = 0; k < frame_length_; ++k) {
-        render_input.push_back(render_buffer_.split_bands(0)[0][k]);
+        render_input[0].push_back(render_buffer_.split_bands(0)[0][k]);
       }
       aec3.AnalyzeRender(&render_buffer_);
     }
@@ -528,11 +530,11 @@ class EchoCanceller3Tester {
         capture_output.push_back(capture_buffer_.split_bands(0)[0][k]);
       }
     }
-    HighPassFilter hp_filter(1);
-    hp_filter.Process(render_input);
+    HighPassFilter hp_filter(16000, 1);
+    hp_filter.Process(&render_input);
 
     EXPECT_TRUE(
-        VerifyOutputFrameBitexactness(render_input, capture_output, -64));
+        VerifyOutputFrameBitexactness(render_input[0], capture_output, -64));
   }
 
   // This test verifies that a buffer overrun in the render swapqueue is

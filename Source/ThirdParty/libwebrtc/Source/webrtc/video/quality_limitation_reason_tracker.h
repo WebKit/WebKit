@@ -21,12 +21,15 @@ namespace webrtc {
 // A tracker of quality limitation reasons. The quality limitation reason is the
 // primary reason for limiting resolution and/or framerate (such as CPU or
 // bandwidth limitations). The tracker keeps track of the current reason and the
-// duration of time spent in each reason. See qualityLimitationReason[1] and
-// qualityLimitationDurations[2] in the webrtc-stats spec.
+// duration of time spent in each reason. See qualityLimitationReason[1],
+// qualityLimitationDurations[2], and qualityLimitationResolutionChanges[3] in
+// the webrtc-stats spec.
 // [1]
 // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-qualitylimitationreason
 // [2]
 // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-qualitylimitationdurations
+// [3]
+// https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-qualitylimitationresolutionchanges
 class QualityLimitationReasonTracker {
  public:
   // The caller is responsible for making sure |clock| outlives the tracker.

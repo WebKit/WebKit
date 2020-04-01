@@ -18,12 +18,12 @@ namespace webrtc {
 namespace pcc {
 namespace test {
 namespace {
-const DataRate kTargetSendingRate = DataRate::kbps(300);
-const Timestamp kStartTime = Timestamp::us(0);
-const TimeDelta kPacketsDelta = TimeDelta::ms(1);
-const TimeDelta kIntervalDuration = TimeDelta::ms(100);
-const TimeDelta kDefaultDelay = TimeDelta::ms(100);
-const DataSize kDefaultPacketSize = DataSize::bytes(100);
+const DataRate kTargetSendingRate = DataRate::KilobitsPerSec(300);
+const Timestamp kStartTime = Timestamp::Micros(0);
+const TimeDelta kPacketsDelta = TimeDelta::Millis(1);
+const TimeDelta kIntervalDuration = TimeDelta::Millis(100);
+const TimeDelta kDefaultDelay = TimeDelta::Millis(100);
+const DataSize kDefaultPacketSize = DataSize::Bytes(100);
 constexpr double kDelayGradientThreshold = 0.01;
 
 std::vector<PacketResult> CreatePacketResults(

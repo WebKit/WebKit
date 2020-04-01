@@ -10,6 +10,8 @@
 
 #include "rtc_base/logging.h"
 
+#if RTC_LOG_ENABLED()
+
 #include <string.h>
 
 #include <algorithm>
@@ -198,34 +200,6 @@ TEST(LogTest, SingleStream) {
   EXPECT_EQ(sev, LogMessage::GetLogToStream(nullptr));
 }
 
-#if GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST(LogTest, Checks) {
-  EXPECT_DEATH(FATAL() << "message",
-               "\n\n#\n"
-               "# Fatal error in: \\S+, line \\w+\n"
-               "# last system error: \\w+\n"
-               "# Check failed: FATAL\\(\\)\n"
-               "# message");
-
-  int a = 1, b = 2;
-  EXPECT_DEATH(RTC_CHECK_EQ(a, b) << 1 << 2u,
-               "\n\n#\n"
-               "# Fatal error in: \\S+, line \\w+\n"
-               "# last system error: \\w+\n"
-               "# Check failed: a == b \\(1 vs. 2\\)\n"
-               "# 12");
-  RTC_CHECK_EQ(5, 5);
-
-  RTC_CHECK(true) << "Shouldn't crash" << 1;
-  EXPECT_DEATH(RTC_CHECK(false) << "Hi there!",
-               "\n\n#\n"
-               "# Fatal error in: \\S+, line \\w+\n"
-               "# last system error: \\w+\n"
-               "# Check failed: false\n"
-               "# Hi there!");
-}
-#endif
-
 // Test using multiple log streams. The INFO stream should get the INFO message,
 // the VERBOSE stream should get the INFO and the VERBOSE.
 // We should restore the correct global state at the end.
@@ -365,8 +339,10 @@ TEST(LogTest, Perf) {
   stream.Close();
 
   EXPECT_EQ(str.size(), (message.size() + logging_overhead) * kRepetitions);
-  RTC_LOG(LS_INFO) << "Total log time: " << TimeDiff(finish, start) << " ms "
-                   << " total bytes logged: " << str.size();
+  RTC_LOG(LS_INFO) << "Total log time: " << TimeDiff(finish, start)
+                   << " ms "
+                      " total bytes logged: "
+                   << str.size();
 }
 
 TEST(LogTest, EnumsAreSupported) {
@@ -384,3 +360,4 @@ TEST(LogTest, EnumsAreSupported) {
 }
 
 }  // namespace rtc
+#endif

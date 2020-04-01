@@ -33,13 +33,13 @@ void LogBasedNetworkControllerSimulation::ProcessUntil(Timestamp to_time) {
   if (last_process_.IsInfinite()) {
     NetworkControllerConfig config;
     config.constraints.at_time = to_time;
-    config.constraints.min_data_rate = DataRate::kbps(30);
-    config.constraints.starting_rate = DataRate::kbps(300);
+    config.constraints.min_data_rate = DataRate::KilobitsPerSec(30);
+    config.constraints.starting_rate = DataRate::KilobitsPerSec(300);
     config.event_log = &null_event_log_;
     controller_ = factory_->Create(config);
   }
   if (last_process_.IsInfinite() ||
-      to_time - last_process_ > TimeDelta::seconds(1)) {
+      to_time - last_process_ > TimeDelta::Seconds(1)) {
     last_process_ = to_time;
     current_time_ = to_time;
     ProcessInterval msg;
@@ -107,7 +107,7 @@ void LogBasedNetworkControllerSimulation::OnPacketSent(
 
 void LogBasedNetworkControllerSimulation::OnFeedback(
     const LoggedRtcpPacketTransportFeedback& feedback) {
-  auto feedback_time = Timestamp::ms(feedback.log_time_ms());
+  auto feedback_time = Timestamp::Millis(feedback.log_time_ms());
   ProcessUntil(feedback_time);
   auto msg = transport_feedback_.ProcessTransportFeedback(
       feedback.transport_feedback, feedback_time);
@@ -119,7 +119,7 @@ void LogBasedNetworkControllerSimulation::OnReceiverReport(
     const LoggedRtcpPacketReceiverReport& report) {
   if (report.rr.report_blocks().empty())
     return;
-  auto report_time = Timestamp::ms(report.log_time_ms());
+  auto report_time = Timestamp::Millis(report.log_time_ms());
   ProcessUntil(report_time);
   int packets_delta = 0;
   int lost_delta = 0;
@@ -150,7 +150,7 @@ void LogBasedNetworkControllerSimulation::OnReceiverReport(
           CompactNtp(TimeMicrosToNtp(report.log_time_us()));
       uint32_t rtt_ntp =
           receive_time_ntp - rb.delay_since_last_sr() - rb.last_sr();
-      rtt = std::min(rtt, TimeDelta::ms(CompactNtpRttToMs(rtt_ntp)));
+      rtt = std::min(rtt, TimeDelta::Millis(CompactNtpRttToMs(rtt_ntp)));
     }
   }
   if (rtt.IsFinite()) {
@@ -164,12 +164,12 @@ void LogBasedNetworkControllerSimulation::OnReceiverReport(
 void LogBasedNetworkControllerSimulation::OnIceConfig(
     const LoggedIceCandidatePairConfig& candidate) {
   if (candidate.type == IceCandidatePairConfigType::kSelected) {
-    auto log_time = Timestamp::us(candidate.log_time_us());
+    auto log_time = Timestamp::Micros(candidate.log_time_us());
     ProcessUntil(log_time);
     NetworkRouteChange msg;
     msg.at_time = log_time;
-    msg.constraints.min_data_rate = DataRate::kbps(30);
-    msg.constraints.starting_rate = DataRate::kbps(300);
+    msg.constraints.min_data_rate = DataRate::KilobitsPerSec(30);
+    msg.constraints.starting_rate = DataRate::KilobitsPerSec(300);
     msg.constraints.at_time = log_time;
     HandleStateUpdate(controller_->OnNetworkRouteChange(msg));
   }

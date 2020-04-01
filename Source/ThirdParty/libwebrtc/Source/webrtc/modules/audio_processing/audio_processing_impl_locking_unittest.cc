@@ -30,16 +30,15 @@ class AudioProcessingImplLockTest;
 
 // Type of the render thread APM API call to use in the test.
 enum class RenderApiImpl {
-  ProcessReverseStreamImpl1,
-  ProcessReverseStreamImpl2,
-  AnalyzeReverseStreamImpl
+  ProcessReverseStreamImplAudioFrame,
+  ProcessReverseStreamImplStreamConfig,
+  AnalyzeReverseStreamImplStreamConfig,
 };
 
 // Type of the capture thread APM API call to use in the test.
 enum class CaptureApiImpl {
-  ProcessStreamImpl1,
-  ProcessStreamImpl2,
-  ProcessStreamImpl3
+  ProcessStreamImplAudioFrame,
+  ProcessStreamImplStreamConfig
 };
 
 // The runtime parameter setting scheme to use in the test.
@@ -138,15 +137,18 @@ struct TestConfig {
       // Only test 16 kHz for this test suite.
       test_config.initial_sample_rate_hz = 16000;
 
-      // Create test config for the second processing API function set.
+      // Create test config for the AudioFrame processing API function set.
       test_config.render_api_function =
-          RenderApiImpl::ProcessReverseStreamImpl2;
-      test_config.capture_api_function = CaptureApiImpl::ProcessStreamImpl2;
-
-      // Create test config for the first processing API function set.
+          RenderApiImpl::ProcessReverseStreamImplAudioFrame;
+      test_config.capture_api_function =
+          CaptureApiImpl::ProcessStreamImplAudioFrame;
       test_configs.push_back(test_config);
-      test_config.render_api_function = RenderApiImpl::AnalyzeReverseStreamImpl;
-      test_config.capture_api_function = CaptureApiImpl::ProcessStreamImpl3;
+
+      // Create test config for the StreamConfig processing API function set.
+      test_config.render_api_function =
+          RenderApiImpl::ProcessReverseStreamImplStreamConfig;
+      test_config.capture_api_function =
+          CaptureApiImpl::ProcessStreamImplStreamConfig;
       test_configs.push_back(test_config);
     }
 
@@ -165,16 +167,16 @@ struct TestConfig {
       };
 
       const AllowedApiCallCombinations api_calls[] = {
-          {RenderApiImpl::ProcessReverseStreamImpl1,
-           CaptureApiImpl::ProcessStreamImpl1},
-          {RenderApiImpl::ProcessReverseStreamImpl2,
-           CaptureApiImpl::ProcessStreamImpl2},
-          {RenderApiImpl::ProcessReverseStreamImpl2,
-           CaptureApiImpl::ProcessStreamImpl3},
-          {RenderApiImpl::AnalyzeReverseStreamImpl,
-           CaptureApiImpl::ProcessStreamImpl2},
-          {RenderApiImpl::AnalyzeReverseStreamImpl,
-           CaptureApiImpl::ProcessStreamImpl3}};
+          {RenderApiImpl::ProcessReverseStreamImplAudioFrame,
+           CaptureApiImpl::ProcessStreamImplAudioFrame},
+          {RenderApiImpl::ProcessReverseStreamImplStreamConfig,
+           CaptureApiImpl::ProcessStreamImplStreamConfig},
+          {RenderApiImpl::AnalyzeReverseStreamImplStreamConfig,
+           CaptureApiImpl::ProcessStreamImplStreamConfig},
+          {RenderApiImpl::ProcessReverseStreamImplAudioFrame,
+           CaptureApiImpl::ProcessStreamImplStreamConfig},
+          {RenderApiImpl::ProcessReverseStreamImplStreamConfig,
+           CaptureApiImpl::ProcessStreamImplAudioFrame}};
       std::vector<TestConfig> out;
       for (auto api_call : api_calls) {
         test_config.render_api_function = api_call.render_api;
@@ -249,8 +251,10 @@ struct TestConfig {
         add_aec_settings(add_processing_apis(test_config))));
   }
 
-  RenderApiImpl render_api_function = RenderApiImpl::ProcessReverseStreamImpl2;
-  CaptureApiImpl capture_api_function = CaptureApiImpl::ProcessStreamImpl2;
+  RenderApiImpl render_api_function =
+      RenderApiImpl::ProcessReverseStreamImplStreamConfig;
+  CaptureApiImpl capture_api_function =
+      CaptureApiImpl::ProcessStreamImplStreamConfig;
   RuntimeParameterSettingScheme runtime_parameter_setting_scheme =
       RuntimeParameterSettingScheme::ExtremeStreamMetadataChangeScheme;
   int initial_sample_rate_hz = 16000;
@@ -535,32 +539,18 @@ bool AudioProcessingImplLockTest::MaybeEndTest() {
 void AudioProcessingImplLockTest::SetUp() {
   test_config_ = static_cast<TestConfig>(GetParam());
 
-  ASSERT_EQ(apm_->kNoError, apm_->gain_control()->Enable(true));
-
-  ASSERT_EQ(apm_->kNoError,
-            apm_->gain_control()->set_mode(GainControl::kAdaptiveDigital));
-  ASSERT_EQ(apm_->kNoError, apm_->gain_control()->Enable(true));
-
   AudioProcessing::Config apm_config = apm_->GetConfig();
   apm_config.echo_canceller.enabled =
       (test_config_.aec_type != AecType::AecTurnedOff);
   apm_config.echo_canceller.mobile_mode =
       (test_config_.aec_type == AecType::BasicWebRtcAecSettingsWithAecMobile);
+  apm_config.gain_controller1.enabled = true;
+  apm_config.gain_controller1.mode =
+      AudioProcessing::Config::GainController1::kAdaptiveDigital;
   apm_config.noise_suppression.enabled = true;
   apm_config.voice_detection.enabled = true;
   apm_config.level_estimation.enabled = true;
   apm_->ApplyConfig(apm_config);
-
-  Config config;
-  config.Set<ExtendedFilter>(
-      new ExtendedFilter(test_config_.aec_type ==
-                         AecType::BasicWebRtcAecSettingsWithExtentedFilter));
-
-  config.Set<DelayAgnostic>(
-      new DelayAgnostic(test_config_.aec_type ==
-                        AecType::BasicWebRtcAecSettingsWithDelayAgnosticAec));
-
-  apm_->SetExtraOptions(config);
 }
 
 void AudioProcessingImplLockTest::TearDown() {
@@ -590,14 +580,11 @@ void StatsProcessor::Process() {
   } else {
     EXPECT_FALSE(apm_config.echo_canceller.enabled);
   }
-  EXPECT_TRUE(apm_->gain_control()->is_enabled());
+  EXPECT_TRUE(apm_config.gain_controller1.enabled);
   EXPECT_TRUE(apm_config.noise_suppression.enabled);
 
-  // The below return values are not testable.
-  apm_->noise_suppression()->speech_probability();
-  apm_->voice_detection()->is_enabled();
-
-  apm_->GetStatistics(/*has_remote_tracks=*/true);
+  // The below return value is not testable.
+  apm_->GetStatistics();
 }
 
 const float CaptureProcessor::kCaptureInputFloatLevel = 0.03125f;
@@ -647,7 +634,7 @@ void CaptureProcessor::PrepareFrame() {
   // Restrict to a common fixed sample rate if the AudioFrame
   // interface is used.
   if (test_config_->capture_api_function ==
-      CaptureApiImpl::ProcessStreamImpl1) {
+      CaptureApiImpl::ProcessStreamImplAudioFrame) {
     frame_data_.input_sample_rate_hz = test_config_->initial_sample_rate_hz;
     frame_data_.output_sample_rate_hz = test_config_->initial_sample_rate_hz;
   }
@@ -698,22 +685,15 @@ void CaptureProcessor::CallApmCaptureSide() {
   apm_->set_stream_delay_ms(30);
 
   // Set the analog level.
-  apm_->gain_control()->set_stream_analog_level(80);
+  apm_->set_stream_analog_level(80);
 
   // Call the specified capture side API processing method.
   int result = AudioProcessing::kNoError;
   switch (test_config_->capture_api_function) {
-    case CaptureApiImpl::ProcessStreamImpl1:
+    case CaptureApiImpl::ProcessStreamImplAudioFrame:
       result = apm_->ProcessStream(&frame_data_.frame);
       break;
-    case CaptureApiImpl::ProcessStreamImpl2:
-      result = apm_->ProcessStream(
-          &frame_data_.input_frame[0], frame_data_.input_samples_per_channel,
-          frame_data_.input_sample_rate_hz, frame_data_.input_channel_layout,
-          frame_data_.output_sample_rate_hz, frame_data_.output_channel_layout,
-          &frame_data_.output_frame[0]);
-      break;
-    case CaptureApiImpl::ProcessStreamImpl3:
+    case CaptureApiImpl::ProcessStreamImplStreamConfig:
       result = apm_->ProcessStream(
           &frame_data_.input_frame[0], frame_data_.input_stream_config,
           frame_data_.output_stream_config, &frame_data_.output_frame[0]);
@@ -723,7 +703,7 @@ void CaptureProcessor::CallApmCaptureSide() {
   }
 
   // Retrieve the new analog level.
-  apm_->gain_control()->stream_analog_level();
+  apm_->recommended_stream_analog_level();
 
   // Check the return code for error.
   ASSERT_EQ(AudioProcessing::kNoError, result);
@@ -836,15 +816,10 @@ void CaptureProcessor::ApplyRuntimeSettingScheme() {
         ASSERT_EQ(AudioProcessing::Error::kNoError,
                   apm_->set_stream_delay_ms(30));
         apm_->set_stream_key_pressed(true);
-        apm_->set_delay_offset_ms(15);
-        EXPECT_EQ(apm_->delay_offset_ms(), 15);
       } else {
         ASSERT_EQ(AudioProcessing::Error::kNoError,
                   apm_->set_stream_delay_ms(50));
         apm_->set_stream_key_pressed(false);
-        apm_->set_delay_offset_ms(20);
-        EXPECT_EQ(apm_->delay_offset_ms(), 20);
-        apm_->delay_offset_ms();
       }
       break;
     default:
@@ -914,7 +889,7 @@ void RenderProcessor::PrepareFrame() {
   // Restrict to a common fixed sample rate if the AudioFrame interface is
   // used.
   if ((test_config_->render_api_function ==
-       RenderApiImpl::ProcessReverseStreamImpl1) ||
+       RenderApiImpl::ProcessReverseStreamImplAudioFrame) ||
       (test_config_->aec_type !=
        AecType::BasicWebRtcAecSettingsWithAecMobile)) {
     frame_data_.input_sample_rate_hz = test_config_->initial_sample_rate_hz;
@@ -966,18 +941,17 @@ void RenderProcessor::CallApmRenderSide() {
   // Call the specified render side API processing method.
   int result = AudioProcessing::kNoError;
   switch (test_config_->render_api_function) {
-    case RenderApiImpl::ProcessReverseStreamImpl1:
+    case RenderApiImpl::ProcessReverseStreamImplAudioFrame:
       result = apm_->ProcessReverseStream(&frame_data_.frame);
       break;
-    case RenderApiImpl::ProcessReverseStreamImpl2:
+    case RenderApiImpl::ProcessReverseStreamImplStreamConfig:
       result = apm_->ProcessReverseStream(
           &frame_data_.input_frame[0], frame_data_.input_stream_config,
           frame_data_.output_stream_config, &frame_data_.output_frame[0]);
       break;
-    case RenderApiImpl::AnalyzeReverseStreamImpl:
-      result = apm_->AnalyzeReverseStream(
-          &frame_data_.input_frame[0], frame_data_.input_samples_per_channel,
-          frame_data_.input_sample_rate_hz, frame_data_.input_channel_layout);
+    case RenderApiImpl::AnalyzeReverseStreamImplStreamConfig:
+      result = apm_->AnalyzeReverseStream(&frame_data_.input_frame[0],
+                                          frame_data_.input_stream_config);
       break;
     default:
       FAIL();

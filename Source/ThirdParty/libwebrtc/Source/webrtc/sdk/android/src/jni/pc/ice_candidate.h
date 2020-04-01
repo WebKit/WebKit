@@ -71,6 +71,10 @@ JavaToNativeContinualGatheringPolicy(
     JNIEnv* jni,
     const JavaRef<jobject>& j_gathering_policy);
 
+webrtc::PortPrunePolicy JavaToNativePortPrunePolicy(
+    JNIEnv* jni,
+    const JavaRef<jobject>& j_port_prune_policy);
+
 PeerConnectionInterface::TlsCertPolicy JavaToNativeTlsCertPolicy(
     JNIEnv* jni,
     const JavaRef<jobject>& j_ice_server_tls_cert_policy);

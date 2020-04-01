@@ -22,42 +22,6 @@ extern "C" {
 #endif
 
 /******************************************************************************
- * WebRtcIsac_AssignSize(...)
- *
- * This function returns the size of the ISAC instance, so that the instance
- * can be created outside iSAC.
- *
- * Input:
- *        - samplingRate      : sampling rate of the input/output audio.
- *
- * Output:
- *        - sizeinbytes       : number of bytes needed to allocate for the
- *                              instance.
- *
- * Return value               : 0 - Ok
- *                             -1 - Error
- */
-
-int16_t WebRtcIsac_AssignSize(int* sizeinbytes);
-
-/******************************************************************************
- * WebRtcIsac_Assign(...)
- *
- * This function assignes the memory already created to the ISAC instance.
- *
- * Input:
- *        - *ISAC_main_inst   : a pointer to the coder instance.
- *        - samplingRate      : sampling rate of the input/output audio.
- *        - ISAC_inst_Addr    : the already allocated memory, where we put the
- *                              iSAC structure.
- *
- * Return value               : 0 - Ok
- *                             -1 - Error
- */
-
-int16_t WebRtcIsac_Assign(ISACStruct** ISAC_main_inst, void* ISAC_inst_Addr);
-
-/******************************************************************************
  * WebRtcIsac_Create(...)
  *
  * This function creates an ISAC instance, which will contain the state
@@ -288,7 +252,7 @@ int16_t WebRtcIsac_ControlBwe(ISACStruct* ISAC_main_inst,
  *
  */
 
-int16_t WebRtcIsac_ReadFrameLen(ISACStruct* ISAC_main_inst,
+int16_t WebRtcIsac_ReadFrameLen(const ISACStruct* ISAC_main_inst,
                                 const uint8_t* encoded,
                                 int16_t* frameLength);
 
@@ -641,14 +605,6 @@ int WebRtcIsac_DecodeRcu(ISACStruct* ISAC_main_inst,
                          size_t len,
                          int16_t* decoded,
                          int16_t* speechType);
-
-/* Fills in an IsacBandwidthInfo struct. |inst| should be a decoder. */
-void WebRtcIsac_GetBandwidthInfo(ISACStruct* inst, IsacBandwidthInfo* bwinfo);
-
-/* Uses the values from an IsacBandwidthInfo struct. |inst| should be an
-   encoder. */
-void WebRtcIsac_SetBandwidthInfo(ISACStruct* inst,
-                                 const IsacBandwidthInfo* bwinfo);
 
 /* If |inst| is a decoder but not an encoder: tell it what sample rate the
    encoder is using, for bandwidth estimation purposes. */

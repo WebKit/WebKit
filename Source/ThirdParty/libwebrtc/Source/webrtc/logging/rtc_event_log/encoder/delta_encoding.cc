@@ -447,7 +447,7 @@ FixedLengthDeltaEncoder::FixedLengthDeltaEncoder(
     : params_(params), base_(base), values_(values) {
   RTC_DCHECK(!values_.empty());
   writer_ =
-      absl::make_unique<BitWriter>(OutputLengthBytes(existent_values_count));
+      std::make_unique<BitWriter>(OutputLengthBytes(existent_values_count));
 }
 
 std::string FixedLengthDeltaEncoder::Encode() {
@@ -723,7 +723,7 @@ std::unique_ptr<FixedLengthDeltaDecoder> FixedLengthDeltaDecoder::Create(
     return nullptr;
   }
 
-  auto reader = absl::make_unique<rtc::BitBuffer>(
+  auto reader = std::make_unique<rtc::BitBuffer>(
       reinterpret_cast<const uint8_t*>(&input[0]), input.length());
 
   // Encoding type

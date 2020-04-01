@@ -64,7 +64,8 @@ int32_t TestPack::SendData(AudioFrameType frame_type,
                            uint8_t payload_type,
                            uint32_t timestamp,
                            const uint8_t* payload_data,
-                           size_t payload_size) {
+                           size_t payload_size,
+                           int64_t absolute_capture_timestamp_ms) {
   RTPHeader rtp_header;
   int32_t status;
 

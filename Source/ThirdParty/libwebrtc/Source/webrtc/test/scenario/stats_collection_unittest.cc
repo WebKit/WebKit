@@ -31,7 +31,7 @@ void CreateAnalyzedStream(Scenario* s,
                       {s->CreateSimulationNode(NetworkSimulationConfig())});
   auto* video = s->CreateVideoStream(route->forward(), config);
   auto* audio = s->CreateAudioStream(route->forward(), AudioStreamConfig());
-  s->Every(TimeDelta::seconds(1), [=] {
+  s->Every(TimeDelta::Seconds(1), [=] {
     collectors->call.AddStats(caller->GetStats());
     collectors->audio_receive.AddStats(audio->receive()->GetStats());
     collectors->video_send.AddStats(video->send()->GetStats(), s->Now());
@@ -46,9 +46,9 @@ TEST(ScenarioAnalyzerTest, PsnrIsHighWhenNetworkIsGood) {
   {
     Scenario s;
     NetworkSimulationConfig good_network;
-    good_network.bandwidth = DataRate::kbps(1000);
+    good_network.bandwidth = DataRate::KilobitsPerSec(1000);
     CreateAnalyzedStream(&s, good_network, &analyzer, &stats);
-    s.RunFor(TimeDelta::seconds(3));
+    s.RunFor(TimeDelta::Seconds(3));
   }
   // This is a change detecting test, the targets are based on previous runs and
   // might change due to changes in configuration and encoder etc. The main
@@ -67,10 +67,10 @@ TEST(ScenarioAnalyzerTest, PsnrIsLowWhenNetworkIsBad) {
   {
     Scenario s;
     NetworkSimulationConfig bad_network;
-    bad_network.bandwidth = DataRate::kbps(100);
+    bad_network.bandwidth = DataRate::KilobitsPerSec(100);
     bad_network.loss_rate = 0.02;
     CreateAnalyzedStream(&s, bad_network, &analyzer, &stats);
-    s.RunFor(TimeDelta::seconds(3));
+    s.RunFor(TimeDelta::Seconds(3));
   }
   // This is a change detecting test, the targets are based on previous runs and
   // might change due to changes in configuration and encoder etc.
@@ -78,7 +78,7 @@ TEST(ScenarioAnalyzerTest, PsnrIsLowWhenNetworkIsBad) {
   EXPECT_NEAR(stats.call.stats().target_rate.Mean().kbps(), 75, 50);
   EXPECT_NEAR(stats.video_send.stats().media_bitrate.Mean().kbps(), 100, 50);
   EXPECT_NEAR(stats.video_receive.stats().resolution.Mean(), 180, 10);
-  EXPECT_NEAR(stats.audio_receive.stats().jitter_buffer.Mean().ms(), 45, 25);
+  EXPECT_NEAR(stats.audio_receive.stats().jitter_buffer.Mean().ms(), 200, 150);
 }
 
 TEST(ScenarioAnalyzerTest, CountsCapturedButNotRendered) {
@@ -87,10 +87,10 @@ TEST(ScenarioAnalyzerTest, CountsCapturedButNotRendered) {
   {
     Scenario s;
     NetworkSimulationConfig long_delays;
-    long_delays.delay = TimeDelta::seconds(5);
+    long_delays.delay = TimeDelta::Seconds(5);
     CreateAnalyzedStream(&s, long_delays, &analyzer, &stats);
     // Enough time to send frames but not enough to deliver.
-    s.RunFor(TimeDelta::ms(100));
+    s.RunFor(TimeDelta::Millis(100));
   }
   EXPECT_GE(analyzer.stats().capture.count, 1);
   EXPECT_EQ(analyzer.stats().render.count, 0);

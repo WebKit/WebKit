@@ -13,6 +13,7 @@
 #include <cmath>
 
 #include "absl/algorithm/container.h"
+#include "rtc_base/time_utils.h"
 
 namespace webrtc {
 
@@ -26,8 +27,12 @@ SamplesStatsCounter& SamplesStatsCounter::operator=(SamplesStatsCounter&&) =
     default;
 
 void SamplesStatsCounter::AddSample(double value) {
-  stats_.AddSample(value);
-  samples_.push_back(value);
+  AddSample(StatsSample{value, Timestamp::Micros(rtc::TimeMicros())});
+}
+
+void SamplesStatsCounter::AddSample(StatsSample sample) {
+  stats_.AddSample(sample.value);
+  samples_.push_back(sample);
   sorted_ = false;
 }
 
@@ -42,7 +47,9 @@ double SamplesStatsCounter::GetPercentile(double percentile) {
   RTC_CHECK_GE(percentile, 0);
   RTC_CHECK_LE(percentile, 1);
   if (!sorted_) {
-    absl::c_sort(samples_);
+    absl::c_sort(samples_, [](const StatsSample& a, const StatsSample& b) {
+      return a.value < b.value;
+    });
     sorted_ = true;
   }
   const double raw_rank = percentile * (samples_.size() - 1);
@@ -61,16 +68,17 @@ double SamplesStatsCounter::GetPercentile(double percentile) {
   RTC_DCHECK_LT(fract_part, 1);
   RTC_DCHECK(rank + fract_part == raw_rank);
 
-  const double low = samples_[rank];
-  const double high = samples_[std::min(rank + 1, samples_.size() - 1)];
+  const double low = samples_[rank].value;
+  const double high = samples_[std::min(rank + 1, samples_.size() - 1)].value;
   return low + fract_part * (high - low);
 }
 
 SamplesStatsCounter operator*(const SamplesStatsCounter& counter,
                               double value) {
   SamplesStatsCounter out;
-  for (auto& sample : counter.GetSamples()) {
-    out.AddSample(sample * value);
+  for (const auto& sample : counter.GetTimedSamples()) {
+    out.AddSample(
+        SamplesStatsCounter::StatsSample{sample.value * value, sample.time});
   }
   return out;
 }
@@ -78,8 +86,9 @@ SamplesStatsCounter operator*(const SamplesStatsCounter& counter,
 SamplesStatsCounter operator/(const SamplesStatsCounter& counter,
                               double value) {
   SamplesStatsCounter out;
-  for (auto& sample : counter.GetSamples()) {
-    out.AddSample(sample / value);
+  for (const auto& sample : counter.GetTimedSamples()) {
+    out.AddSample(
+        SamplesStatsCounter::StatsSample{sample.value / value, sample.time});
   }
   return out;
 }

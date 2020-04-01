@@ -63,6 +63,10 @@ bool BlankDetectorDesktopCapturerWrapper::FocusOnSelectedSource() {
   return capturer_->FocusOnSelectedSource();
 }
 
+bool BlankDetectorDesktopCapturerWrapper::IsOccluded(const DesktopVector& pos) {
+  return capturer_->IsOccluded(pos);
+}
+
 void BlankDetectorDesktopCapturerWrapper::OnCaptureResult(
     Result result,
     std::unique_ptr<DesktopFrame> frame) {

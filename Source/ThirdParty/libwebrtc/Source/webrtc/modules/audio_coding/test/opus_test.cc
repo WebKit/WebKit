@@ -299,8 +299,19 @@ void OpusTest::Run(TestPackStereo* channel,
                 opus_mono_decoder_, bitstream, bitstream_len_byte,
                 &out_audio[decoded_samples * channels], &audio_type);
           } else {
-            decoded_samples += WebRtcOpus_DecodePlc(
-                opus_mono_decoder_, &out_audio[decoded_samples * channels], 1);
+            // Call decoder PLC.
+            constexpr int kPlcDurationMs = 10;
+            constexpr int kPlcSamples = 48 * kPlcDurationMs;
+            size_t total_plc_samples = 0;
+            while (total_plc_samples < frame_length) {
+              int ret = WebRtcOpus_Decode(
+                  opus_mono_decoder_, NULL, 0,
+                  &out_audio[decoded_samples * channels], &audio_type);
+              EXPECT_EQ(ret, kPlcSamples);
+              decoded_samples += ret;
+              total_plc_samples += ret;
+            }
+            EXPECT_EQ(total_plc_samples, frame_length);
           }
         } else {
           if (!lost_packet) {
@@ -308,15 +319,25 @@ void OpusTest::Run(TestPackStereo* channel,
                 opus_stereo_decoder_, bitstream, bitstream_len_byte,
                 &out_audio[decoded_samples * channels], &audio_type);
           } else {
-            decoded_samples +=
-                WebRtcOpus_DecodePlc(opus_stereo_decoder_,
-                                     &out_audio[decoded_samples * channels], 1);
+            // Call decoder PLC.
+            constexpr int kPlcDurationMs = 10;
+            constexpr int kPlcSamples = 48 * kPlcDurationMs;
+            size_t total_plc_samples = 0;
+            while (total_plc_samples < frame_length) {
+              int ret = WebRtcOpus_Decode(
+                  opus_stereo_decoder_, NULL, 0,
+                  &out_audio[decoded_samples * channels], &audio_type);
+              EXPECT_EQ(ret, kPlcSamples);
+              decoded_samples += ret;
+              total_plc_samples += ret;
+            }
+            EXPECT_EQ(total_plc_samples, frame_length);
           }
         }
 
         // Send data to the channel. "channel" will handle the loss simulation.
         channel->SendData(AudioFrameType::kAudioFrameSpeech, payload_type_,
-                          rtp_timestamp_, bitstream, bitstream_len_byte);
+                          rtp_timestamp_, bitstream, bitstream_len_byte, 0);
         if (first_packet) {
           first_packet = false;
           start_time_stamp = rtp_timestamp_;

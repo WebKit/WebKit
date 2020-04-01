@@ -8,7 +8,7 @@
 
 import("../../../webrtc.gni")
 
-rtc_static_library("bbr") {
+rtc_library("bbr") {
   sources = [
     "bbr_factory.cc",
     "bbr_factory.h",
@@ -18,11 +18,10 @@ rtc_static_library("bbr") {
     "../../../api/transport:network_control",
     "../../../api/units:time_delta",
     "../../../rtc_base:rtc_base_approved",
-    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
-rtc_source_set("bbr_controller") {
+rtc_library("bbr_controller") {
   visibility = [ ":*" ]
   sources = [
     "bbr_network_controller.cc",
@@ -37,13 +36,13 @@ rtc_source_set("bbr_controller") {
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/experiments:field_trial_parser",
-    "../../../rtc_base/system:fallthrough",
     "../../../system_wrappers:field_trial",
+    "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_source_set("bandwidth_sampler") {
+rtc_library("bandwidth_sampler") {
   visibility = [ ":*" ]
   sources = [
     "bandwidth_sampler.cc",
@@ -61,7 +60,7 @@ rtc_source_set("bandwidth_sampler") {
   ]
 }
 
-rtc_source_set("data_transfer_tracker") {
+rtc_library("data_transfer_tracker") {
   visibility = [ ":*" ]
   sources = [
     "data_transfer_tracker.cc",
@@ -78,25 +77,19 @@ rtc_source_set("data_transfer_tracker") {
 
 rtc_source_set("packet_number_indexed_queue") {
   visibility = [ ":*" ]
-  sources = [
-    "packet_number_indexed_queue.h",
-  ]
-  deps = [
-    "../../../rtc_base:checks",
-  ]
+  sources = [ "packet_number_indexed_queue.h" ]
+  deps = [ "../../../rtc_base:checks" ]
 }
 
-rtc_source_set("loss_rate_filter") {
+rtc_library("loss_rate_filter") {
   visibility = [ ":*" ]
   sources = [
     "loss_rate_filter.cc",
     "loss_rate_filter.h",
   ]
-  deps = [
-    "//third_party/abseil-cpp/absl/types:optional",
-  ]
+  deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
-rtc_source_set("rtt_stats") {
+rtc_library("rtt_stats") {
   visibility = [ ":*" ]
   sources = [
     "rtt_stats.cc",
@@ -111,12 +104,10 @@ rtc_source_set("rtt_stats") {
 }
 rtc_source_set("windowed_filter") {
   visibility = [ ":*" ]
-  sources = [
-    "windowed_filter.h",
-  ]
+  sources = [ "windowed_filter.h" ]
 }
 if (rtc_include_tests) {
-  rtc_source_set("bbr_unittests") {
+  rtc_library("bbr_unittests") {
     testonly = true
     sources = [
       "bandwidth_sampler_unittest.cc",

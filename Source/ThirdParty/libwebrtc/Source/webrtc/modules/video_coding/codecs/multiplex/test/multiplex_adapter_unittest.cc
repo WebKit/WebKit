@@ -15,7 +15,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_video_decoder_factory.h"
@@ -65,13 +64,13 @@ class TestMultiplexAdapter : public VideoCodecUnitTest,
 
  protected:
   std::unique_ptr<VideoDecoder> CreateDecoder() override {
-    return absl::make_unique<MultiplexDecoderAdapter>(
+    return std::make_unique<MultiplexDecoderAdapter>(
         decoder_factory_.get(), SdpVideoFormat(kMultiplexAssociatedCodecName),
         supports_augmenting_data_);
   }
 
   std::unique_ptr<VideoEncoder> CreateEncoder() override {
-    return absl::make_unique<MultiplexEncoderAdapter>(
+    return std::make_unique<MultiplexEncoderAdapter>(
         encoder_factory_.get(), SdpVideoFormat(kMultiplexAssociatedCodecName),
         supports_augmenting_data_);
   }
@@ -95,7 +94,7 @@ class TestMultiplexAdapter : public VideoCodecUnitTest,
     rtc::scoped_refptr<AugmentedVideoFrameBuffer> augmented_video_frame_buffer =
         new rtc::RefCountedObject<AugmentedVideoFrameBuffer>(
             video_buffer, std::move(data), 16);
-    return absl::make_unique<VideoFrame>(
+    return std::make_unique<VideoFrame>(
         VideoFrame::Builder()
             .set_video_frame_buffer(augmented_video_frame_buffer)
             .set_timestamp_rtp(video_frame->timestamp())
@@ -106,21 +105,20 @@ class TestMultiplexAdapter : public VideoCodecUnitTest,
   }
 
   std::unique_ptr<VideoFrame> CreateI420AInputFrame() {
-    VideoFrame* input_frame = NextInputFrame();
+    VideoFrame input_frame = NextInputFrame();
     rtc::scoped_refptr<webrtc::I420BufferInterface> yuv_buffer =
-        input_frame->video_frame_buffer()->ToI420();
+        input_frame.video_frame_buffer()->ToI420();
     rtc::scoped_refptr<I420ABufferInterface> yuva_buffer = WrapI420ABuffer(
         yuv_buffer->width(), yuv_buffer->height(), yuv_buffer->DataY(),
         yuv_buffer->StrideY(), yuv_buffer->DataU(), yuv_buffer->StrideU(),
         yuv_buffer->DataV(), yuv_buffer->StrideV(), yuv_buffer->DataY(),
         yuv_buffer->StrideY(), rtc::KeepRefUntilDone(yuv_buffer));
-    return absl::make_unique<VideoFrame>(
-        VideoFrame::Builder()
-            .set_video_frame_buffer(yuva_buffer)
-            .set_timestamp_rtp(123)
-            .set_timestamp_ms(345)
-            .set_rotation(kVideoRotation_0)
-            .build());
+    return std::make_unique<VideoFrame>(VideoFrame::Builder()
+                                            .set_video_frame_buffer(yuva_buffer)
+                                            .set_timestamp_rtp(123)
+                                            .set_timestamp_ms(345)
+                                            .set_rotation(kVideoRotation_0)
+                                            .build());
   }
 
   std::unique_ptr<VideoFrame> CreateInputFrame(bool contains_alpha) {
@@ -128,14 +126,14 @@ class TestMultiplexAdapter : public VideoCodecUnitTest,
     if (contains_alpha) {
       video_frame = CreateI420AInputFrame();
     } else {
-      VideoFrame* next_frame = NextInputFrame();
-      video_frame = absl::make_unique<VideoFrame>(
+      VideoFrame next_frame = NextInputFrame();
+      video_frame = std::make_unique<VideoFrame>(
           VideoFrame::Builder()
-              .set_video_frame_buffer(next_frame->video_frame_buffer())
-              .set_timestamp_rtp(next_frame->timestamp())
-              .set_timestamp_ms(next_frame->render_time_ms())
-              .set_rotation(next_frame->rotation())
-              .set_id(next_frame->id())
+              .set_video_frame_buffer(next_frame.video_frame_buffer())
+              .set_timestamp_rtp(next_frame.timestamp())
+              .set_timestamp_ms(next_frame.render_time_ms())
+              .set_rotation(next_frame.rotation())
+              .set_id(next_frame.id())
               .build());
     }
     if (supports_augmenting_data_) {
@@ -172,12 +170,12 @@ class TestMultiplexAdapter : public VideoCodecUnitTest,
         yuva_buffer->StrideA(), yuva_buffer->DataU(), yuva_buffer->StrideU(),
         yuva_buffer->DataV(), yuva_buffer->StrideV(),
         rtc::KeepRefUntilDone(video_frame_buffer));
-    return absl::make_unique<VideoFrame>(VideoFrame::Builder()
-                                             .set_video_frame_buffer(axx_buffer)
-                                             .set_timestamp_rtp(123)
-                                             .set_timestamp_ms(345)
-                                             .set_rotation(kVideoRotation_0)
-                                             .build());
+    return std::make_unique<VideoFrame>(VideoFrame::Builder()
+                                            .set_video_frame_buffer(axx_buffer)
+                                            .set_timestamp_rtp(123)
+                                            .set_timestamp_ms(345)
+                                            .set_rotation(kVideoRotation_0)
+                                            .build());
   }
 
  private:

@@ -20,6 +20,49 @@
 
 namespace webrtc {
 namespace jni {
+namespace {
+class VideoEncoderSelectorWrapper
+    : public VideoEncoderFactory::EncoderSelectorInterface {
+ public:
+  VideoEncoderSelectorWrapper(JNIEnv* jni,
+                              const JavaRef<jobject>& encoder_selector)
+      : encoder_selector_(jni, encoder_selector) {}
+
+  void OnCurrentEncoder(const SdpVideoFormat& format) override {
+    JNIEnv* jni = AttachCurrentThreadIfNeeded();
+    ScopedJavaLocalRef<jobject> j_codec_info =
+        SdpVideoFormatToVideoCodecInfo(jni, format);
+    Java_VideoEncoderSelector_onCurrentEncoder(jni, encoder_selector_,
+                                               j_codec_info);
+  }
+
+  absl::optional<SdpVideoFormat> OnAvailableBitrate(
+      const DataRate& rate) override {
+    JNIEnv* jni = AttachCurrentThreadIfNeeded();
+    ScopedJavaLocalRef<jobject> codec_info =
+        Java_VideoEncoderSelector_onAvailableBitrate(jni, encoder_selector_,
+                                                     rate.kbps<int>());
+    if (codec_info.is_null()) {
+      return absl::nullopt;
+    }
+    return VideoCodecInfoToSdpVideoFormat(jni, codec_info);
+  }
+
+  absl::optional<SdpVideoFormat> OnEncoderBroken() override {
+    JNIEnv* jni = AttachCurrentThreadIfNeeded();
+    ScopedJavaLocalRef<jobject> codec_info =
+        Java_VideoEncoderSelector_onEncoderBroken(jni, encoder_selector_);
+    if (codec_info.is_null()) {
+      return absl::nullopt;
+    }
+    return VideoCodecInfoToSdpVideoFormat(jni, codec_info);
+  }
+
+ private:
+  const ScopedJavaGlobalRef<jobject> encoder_selector_;
+};
+
+}  // namespace
 
 VideoEncoderFactoryWrapper::VideoEncoderFactoryWrapper(
     JNIEnv* jni,
@@ -71,6 +114,18 @@ VideoEncoderFactory::CodecInfo VideoEncoderFactoryWrapper::QueryVideoEncoder(
   codec_info.is_hardware_accelerated = IsHardwareVideoEncoder(jni, encoder);
   codec_info.has_internal_source = false;
   return codec_info;
+}
+
+std::unique_ptr<VideoEncoderFactory::EncoderSelectorInterface>
+VideoEncoderFactoryWrapper::GetEncoderSelector() const {
+  JNIEnv* jni = AttachCurrentThreadIfNeeded();
+  ScopedJavaLocalRef<jobject> selector =
+      Java_VideoEncoderFactory_getEncoderSelector(jni, encoder_factory_);
+  if (selector.is_null()) {
+    return nullptr;
+  }
+
+  return std::make_unique<VideoEncoderSelectorWrapper>(jni, selector);
 }
 
 }  // namespace jni

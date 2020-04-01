@@ -70,8 +70,6 @@ class Aec3RenderQueueItemVerifier {
 // Main class for the echo canceller3.
 // It does 4 things:
 // -Receives 10 ms frames of band-split audio.
-// -Optionally applies an anti-hum (high-pass) filter on the
-// received signals.
 // -Provides the lower level echo canceller functionality with
 // blocks of 64 samples of audio data.
 // -Partially handles the jitter in the render and capture API
@@ -106,10 +104,16 @@ class EchoCanceller3 : public EchoControl {
   // Processes the split-band domain capture signal in order to remove any echo
   // present in the signal.
   void ProcessCapture(AudioBuffer* capture, bool level_change) override;
+  // As above, but also returns the linear filter output.
+  void ProcessCapture(AudioBuffer* capture,
+                      AudioBuffer* linear_output,
+                      bool level_change) override;
   // Collect current metrics from the echo canceller.
   Metrics GetMetrics() const override;
   // Provides an optional external estimate of the audio buffer delay.
-  void SetAudioBufferDelay(size_t delay_ms) override;
+  void SetAudioBufferDelay(int delay_ms) override;
+
+  bool ActiveProcessing() const override;
 
   // Signals whether an external detector has detected echo leakage from the
   // echo canceller.
@@ -119,6 +123,11 @@ class EchoCanceller3 : public EchoControl {
     RTC_DCHECK_RUNS_SERIALIZED(&capture_race_checker_);
     block_processor_->UpdateEchoLeakageStatus(leakage_detected);
   }
+
+  // Produces a default configuration that is suitable for a certain combination
+  // of render and capture channels.
+  static EchoCanceller3Config CreateDefaultConfig(size_t num_render_channels,
+                                                  size_t num_capture_channels);
 
  private:
   class RenderWriter;
@@ -147,6 +156,8 @@ class EchoCanceller3 : public EchoControl {
   const int num_bands_;
   const size_t num_render_channels_;
   const size_t num_capture_channels_;
+  std::unique_ptr<BlockFramer> linear_output_framer_
+      RTC_GUARDED_BY(capture_race_checker_);
   BlockFramer output_framer_ RTC_GUARDED_BY(capture_race_checker_);
   FrameBlocker capture_blocker_ RTC_GUARDED_BY(capture_race_checker_);
   FrameBlocker render_blocker_ RTC_GUARDED_BY(capture_race_checker_);
@@ -161,13 +172,18 @@ class EchoCanceller3 : public EchoControl {
       false;
   std::vector<std::vector<std::vector<float>>> render_block_
       RTC_GUARDED_BY(capture_race_checker_);
+  std::unique_ptr<std::vector<std::vector<std::vector<float>>>>
+      linear_output_block_ RTC_GUARDED_BY(capture_race_checker_);
   std::vector<std::vector<std::vector<float>>> capture_block_
       RTC_GUARDED_BY(capture_race_checker_);
   std::vector<std::vector<rtc::ArrayView<float>>> render_sub_frame_view_
       RTC_GUARDED_BY(capture_race_checker_);
+  std::vector<std::vector<rtc::ArrayView<float>>> linear_output_sub_frame_view_
+      RTC_GUARDED_BY(capture_race_checker_);
   std::vector<std::vector<rtc::ArrayView<float>>> capture_sub_frame_view_
       RTC_GUARDED_BY(capture_race_checker_);
-  BlockDelayBuffer block_delay_buffer_ RTC_GUARDED_BY(capture_race_checker_);
+  std::unique_ptr<BlockDelayBuffer> block_delay_buffer_
+      RTC_GUARDED_BY(capture_race_checker_);
   ApiCallJitterMetrics api_call_metrics_ RTC_GUARDED_BY(capture_race_checker_);
 };
 }  // namespace webrtc

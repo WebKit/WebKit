@@ -30,7 +30,7 @@
 #include "LibWebRTCResolverIdentifier.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <webrtc/rtc_base/net_helpers.h>
-#include <webrtc/p2p/base/packet_socket_factory.h>
+#include <webrtc/api/packet_socket_factory.h>
 #include <wtf/Vector.h>
 
 namespace IPC {

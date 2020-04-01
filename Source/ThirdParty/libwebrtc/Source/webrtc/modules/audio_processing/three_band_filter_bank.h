@@ -11,13 +11,24 @@
 #ifndef MODULES_AUDIO_PROCESSING_THREE_BAND_FILTER_BANK_H_
 #define MODULES_AUDIO_PROCESSING_THREE_BAND_FILTER_BANK_H_
 
+#include <array>
 #include <cstring>
 #include <memory>
 #include <vector>
 
-#include "common_audio/sparse_fir_filter.h"
+#include "api/array_view.h"
 
 namespace webrtc {
+
+constexpr int kSparsity = 4;
+constexpr int kStrideLog2 = 2;
+constexpr int kStride = 1 << kStrideLog2;
+constexpr int kNumZeroFilters = 2;
+constexpr int kFilterSize = 4;
+constexpr int kMemorySize = kFilterSize * kStride - 1;
+static_assert(kMemorySize == 15,
+              "The memory size must be sufficient to provide memory for the "
+              "shifted filters");
 
 // An implementation of a 3-band FIR filter-bank with DCT modulation, similar to
 // the proposed in "Multirate Signal Processing for Communication Systems" by
@@ -34,34 +45,31 @@ namespace webrtc {
 // depending on the input signal after compensating for the delay.
 class ThreeBandFilterBank final {
  public:
-  explicit ThreeBandFilterBank(size_t length);
+  static const int kNumBands = 3;
+  static const int kFullBandSize = 480;
+  static const int kSplitBandSize =
+      ThreeBandFilterBank::kFullBandSize / ThreeBandFilterBank::kNumBands;
+  static const int kNumNonZeroFilters =
+      kSparsity * ThreeBandFilterBank::kNumBands - kNumZeroFilters;
+
+  ThreeBandFilterBank();
   ~ThreeBandFilterBank();
 
-  // Splits |in| into 3 downsampled frequency bands in |out|.
-  // |length| is the |in| length. Each of the 3 bands of |out| has to have a
-  // length of |length| / 3.
-  void Analysis(const float* in, size_t length, float* const* out);
+  // Splits |in| of size kFullBandSize into 3 downsampled frequency bands in
+  // |out|, each of size 160.
+  void Analysis(rtc::ArrayView<const float, kFullBandSize> in,
+                rtc::ArrayView<const rtc::ArrayView<float>, kNumBands> out);
 
-  // Merges the 3 downsampled frequency bands in |in| into |out|.
-  // |split_length| is the length of each band of |in|. |out| has to have at
-  // least a length of 3 * |split_length|.
-  void Synthesis(const float* const* in, size_t split_length, float* out);
+  // Merges the 3 downsampled frequency bands in |in|, each of size 160, into
+  // |out|, which is of size kFullBandSize.
+  void Synthesis(rtc::ArrayView<const rtc::ArrayView<float>, kNumBands> in,
+                 rtc::ArrayView<float, kFullBandSize> out);
 
  private:
-  void DownModulate(const float* in,
-                    size_t split_length,
-                    size_t offset,
-                    float* const* out);
-  void UpModulate(const float* const* in,
-                  size_t split_length,
-                  size_t offset,
-                  float* out);
-
-  std::vector<float> in_buffer_;
-  std::vector<float> out_buffer_;
-  std::vector<std::unique_ptr<SparseFIRFilter>> analysis_filters_;
-  std::vector<std::unique_ptr<SparseFIRFilter>> synthesis_filters_;
-  std::vector<std::vector<float>> dct_modulation_;
+  std::array<std::array<float, kMemorySize>, kNumNonZeroFilters>
+      state_analysis_;
+  std::array<std::array<float, kMemorySize>, kNumNonZeroFilters>
+      state_synthesis_;
 };
 
 }  // namespace webrtc

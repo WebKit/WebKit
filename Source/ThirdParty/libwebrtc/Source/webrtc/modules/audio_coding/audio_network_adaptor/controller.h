@@ -23,7 +23,6 @@ class Controller {
     ~NetworkMetrics();
     absl::optional<int> uplink_bandwidth_bps;
     absl::optional<float> uplink_packet_loss_fraction;
-    absl::optional<float> uplink_recoverable_packet_loss_fraction;
     absl::optional<int> target_audio_bitrate_bps;
     absl::optional<int> rtt_ms;
     absl::optional<size_t> overhead_bytes_per_packet;

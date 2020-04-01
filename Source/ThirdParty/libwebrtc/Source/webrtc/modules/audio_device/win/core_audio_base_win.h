@@ -117,8 +117,8 @@ class CoreAudioBase : public IAudioSessionEvents {
   bool IsOutput() const;
   bool IsDefaultDevice(int index) const;
   bool IsDefaultCommunicationsDevice(int index) const;
-  bool IsDefaultDevice(const std::string& device_id) const;
-  bool IsDefaultCommunicationsDevice(const std::string& device_id) const;
+  bool IsDefaultDeviceId(const std::string& device_id) const;
+  bool IsDefaultCommunicationsDeviceId(const std::string& device_id) const;
   EDataFlow GetDataFlow() const;
   bool IsRestarting() const;
   int64_t TimeSinceStart() const;
@@ -151,7 +151,7 @@ class CoreAudioBase : public IAudioSessionEvents {
   ScopedHandle restart_event_;
   int64_t start_time_ = 0;
   std::string device_id_;
-  int device_index_;
+  int device_index_ = -1;
   // Used by the IAudioSessionEvents implementations. Currently only utilized
   // for debugging purposes.
   LONG ref_count_ = 1;

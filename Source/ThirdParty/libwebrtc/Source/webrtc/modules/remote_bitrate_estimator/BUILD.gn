@@ -8,7 +8,7 @@
 
 import("../../webrtc.gni")
 
-rtc_static_library("remote_bitrate_estimator") {
+rtc_library("remote_bitrate_estimator") {
   visibility = [ "*" ]
   sources = [
     "aimd_rate_control.cc",
@@ -64,7 +64,7 @@ rtc_static_library("remote_bitrate_estimator") {
 }
 
 if (!build_with_chromium) {
-  rtc_source_set("bwe_rtp") {
+  rtc_library("bwe_rtp") {
     testonly = true
     sources = [
       "tools/bwe_rtp.cc",
@@ -82,9 +82,7 @@ if (!build_with_chromium) {
 
   rtc_executable("rtp_to_text") {
     testonly = true
-    sources = [
-      "tools/rtp_to_text.cc",
-    ]
+    sources = [ "tools/rtp_to_text.cc" ]
     deps = [
       ":bwe_rtp",
       "../../modules/rtp_rtcp",
@@ -96,7 +94,7 @@ if (!build_with_chromium) {
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("remote_bitrate_estimator_unittests") {
+  rtc_library("remote_bitrate_estimator_unittests") {
     testonly = true
 
     sources = [
@@ -114,6 +112,8 @@ if (rtc_include_tests) {
       "..:module_api_public",
       "../..:webrtc_common",
       "../../api/transport:field_trial_based_config",
+      "../../api/transport:mock_network_control",
+      "../../api/transport:network_control",
       "../../rtc_base",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",

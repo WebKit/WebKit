@@ -8,12 +8,10 @@
 import("../../webrtc.gni")
 
 group("utility") {
-  deps = [
-    ":audio_frame_operations",
-  ]
+  deps = [ ":audio_frame_operations" ]
 }
 
-rtc_static_library("audio_frame_operations") {
+rtc_library("audio_frame_operations") {
   visibility = [ "*" ]
   sources = [
     "audio_frame_operations.cc",
@@ -30,11 +28,12 @@ rtc_static_library("audio_frame_operations") {
     "../../rtc_base:checks",
     "../../rtc_base:deprecation",
     "../../rtc_base:rtc_base_approved",
+    "../../system_wrappers:field_trial",
   ]
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("utility_tests") {
+  rtc_library("utility_tests") {
     testonly = true
     sources = [
       "audio_frame_operations_unittest.cc",
@@ -46,6 +45,7 @@ if (rtc_include_tests) {
       "../../api/audio:audio_frame_api",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
+      "../../test:field_trial",
       "../../test:test_support",
       "//testing/gtest",
     ]

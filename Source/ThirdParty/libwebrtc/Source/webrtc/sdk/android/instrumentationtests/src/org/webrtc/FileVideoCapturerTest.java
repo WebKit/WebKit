@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import org.chromium.base.test.BaseJUnit4ClassRunner;
 import org.junit.Before;
 import org.junit.Test;

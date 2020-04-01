@@ -10,7 +10,8 @@
 
 // TODO(zijiehe): Implement ScreenDrawerMac
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "modules/desktop_capture/screen_drawer.h"
 #include "modules/desktop_capture/screen_drawer_lock_posix.h"
 
@@ -18,7 +19,7 @@ namespace webrtc {
 
 // static
 std::unique_ptr<ScreenDrawerLock> ScreenDrawerLock::Create() {
-  return absl::make_unique<ScreenDrawerLockPosix>();
+  return std::make_unique<ScreenDrawerLockPosix>();
 }
 
 // static

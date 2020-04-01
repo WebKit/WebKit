@@ -37,7 +37,7 @@ class TestVCMReceiver : public ::testing::Test {
         new StreamGenerator(0, clock_->TimeInMilliseconds()));
   }
 
-  virtual void SetUp() { receiver_.Reset(); }
+  virtual void SetUp() {}
 
   int32_t InsertPacket(int index) {
     VCMPacket packet;
@@ -350,8 +350,8 @@ class FrameInjectEvent : public EventWrapper {
 
   bool Set() override { return true; }
 
-  EventTypeWrapper Wait(unsigned long max_time) override {  // NOLINT
-    if (clock_->AdvanceTimeMilliseconds(max_time, stop_on_frame_) &&
+  EventTypeWrapper Wait(int max_time_ms) override {
+    if (clock_->AdvanceTimeMilliseconds(max_time_ms, stop_on_frame_) &&
         stop_on_frame_) {
       return EventTypeWrapper::kEventSignaled;
     } else {
@@ -378,7 +378,7 @@ class VCMReceiverTimingTest : public ::testing::Test {
             std::unique_ptr<EventWrapper>(
                 new FrameInjectEvent(&clock_, true))) {}
 
-  virtual void SetUp() { receiver_.Reset(); }
+  virtual void SetUp() {}
 
   SimulatedClockWithFrames clock_;
   StreamGenerator stream_generator_;

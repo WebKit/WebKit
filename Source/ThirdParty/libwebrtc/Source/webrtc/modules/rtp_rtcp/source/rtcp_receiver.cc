@@ -18,7 +18,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_bitrate_allocator.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
@@ -66,6 +65,21 @@ const size_t kMaxNumberOfStoredRrtrs = 200;
 
 constexpr int32_t kDefaultVideoReportInterval = 1000;
 constexpr int32_t kDefaultAudioReportInterval = 5000;
+
+std::set<uint32_t> GetRegisteredSsrcs(const RtpRtcp::Configuration& config) {
+  std::set<uint32_t> ssrcs;
+  ssrcs.insert(config.local_media_ssrc);
+  if (config.rtx_send_ssrc) {
+    ssrcs.insert(*config.rtx_send_ssrc);
+  }
+  if (config.fec_generator) {
+    absl::optional<uint32_t> flexfec_ssrc = config.fec_generator->FecSsrc();
+    if (flexfec_ssrc) {
+      ssrcs.insert(*flexfec_ssrc);
+    }
+  }
+  return ssrcs;
+}
 }  // namespace
 
 struct RTCPReceiver::PacketInformation {
@@ -127,6 +141,8 @@ RTCPReceiver::RTCPReceiver(const RtpRtcp::Configuration& config,
     : clock_(config.clock),
       receiver_only_(config.receiver_only),
       rtp_rtcp_(owner),
+      main_ssrc_(config.local_media_ssrc),
+      registered_ssrcs_(GetRegisteredSsrcs(config)),
       rtcp_bandwidth_observer_(config.bandwidth_callback),
       rtcp_intra_frame_observer_(config.intra_frame_callback),
       rtcp_loss_notification_observer_(config.rtcp_loss_notification_observer),
@@ -138,7 +154,6 @@ RTCPReceiver::RTCPReceiver(const RtpRtcp::Configuration& config,
                               : (config.audio ? kDefaultAudioReportInterval
                                               : kDefaultVideoReportInterval)),
       // TODO(bugs.webrtc.org/10774): Remove fallback.
-      main_ssrc_(config.local_media_ssrc.value_or(0)),
       remote_ssrc_(0),
       remote_sender_rtp_time_(0),
       xr_rrtr_status_(false),
@@ -153,27 +168,18 @@ RTCPReceiver::RTCPReceiver(const RtpRtcp::Configuration& config,
       num_skipped_packets_(0),
       last_skipped_packets_warning_ms_(clock_->TimeInMilliseconds()) {
   RTC_DCHECK(owner);
-  if (config.local_media_ssrc) {
-    registered_ssrcs_.insert(*config.local_media_ssrc);
-  }
-  if (config.rtx_send_ssrc) {
-    registered_ssrcs_.insert(*config.rtx_send_ssrc);
-  }
-  if (config.flexfec_sender) {
-    registered_ssrcs_.insert(config.flexfec_sender->ssrc());
-  }
 }
 
 RTCPReceiver::~RTCPReceiver() {}
 
-void RTCPReceiver::IncomingPacket(const uint8_t* packet, size_t packet_size) {
-  if (packet_size == 0) {
+void RTCPReceiver::IncomingPacket(rtc::ArrayView<const uint8_t> packet) {
+  if (packet.empty()) {
     RTC_LOG(LS_WARNING) << "Incoming empty RTCP packet";
     return;
   }
 
   PacketInformation packet_information;
-  if (!ParseCompoundPacket(packet, packet + packet_size, &packet_information))
+  if (!ParseCompoundPacket(packet, &packet_information))
     return;
   TriggerCallbacksFromRtcpPacket(packet_information);
 }
@@ -193,13 +199,6 @@ void RTCPReceiver::SetRemoteSSRC(uint32_t ssrc) {
 uint32_t RTCPReceiver::RemoteSSRC() const {
   rtc::CritScope lock(&rtcp_receiver_lock_);
   return remote_ssrc_;
-}
-
-void RTCPReceiver::SetSsrcs(uint32_t main_ssrc,
-                            const std::set<uint32_t>& registered_ssrcs) {
-  rtc::CritScope lock(&rtcp_receiver_lock_);
-  main_ssrc_ = main_ssrc;
-  registered_ssrcs_ = registered_ssrcs;
 }
 
 int32_t RTCPReceiver::RTT(uint32_t remote_ssrc,
@@ -326,18 +325,17 @@ std::vector<ReportBlockData> RTCPReceiver::GetLatestReportBlockData() const {
   return result;
 }
 
-bool RTCPReceiver::ParseCompoundPacket(const uint8_t* packet_begin,
-                                       const uint8_t* packet_end,
+bool RTCPReceiver::ParseCompoundPacket(rtc::ArrayView<const uint8_t> packet,
                                        PacketInformation* packet_information) {
   rtc::CritScope lock(&rtcp_receiver_lock_);
 
   CommonHeader rtcp_block;
-  for (const uint8_t* next_block = packet_begin; next_block != packet_end;
+  for (const uint8_t* next_block = packet.begin(); next_block != packet.end();
        next_block = rtcp_block.NextPacket()) {
-    ptrdiff_t remaining_blocks_size = packet_end - next_block;
+    ptrdiff_t remaining_blocks_size = packet.end() - next_block;
     RTC_DCHECK_GT(remaining_blocks_size, 0);
     if (!rtcp_block.Parse(next_block, remaining_blocks_size)) {
-      if (next_block == packet_begin) {
+      if (next_block == packet.begin()) {
         // Failed to parse 1st header, nothing was extracted from this packet.
         RTC_LOG(LS_WARNING) << "Incoming invalid RTCP packet";
         return false;
@@ -911,7 +909,7 @@ void RTCPReceiver::HandlePsfbApp(const CommonHeader& rtcp_block,
   }
 
   {
-    auto loss_notification = absl::make_unique<rtcp::LossNotification>();
+    auto loss_notification = std::make_unique<rtcp::LossNotification>();
     if (loss_notification->Parse(rtcp_block)) {
       packet_information->packet_type_flags |= kRtcpLossNotification;
       packet_information->loss_notification = std::move(loss_notification);

@@ -12,7 +12,9 @@ package org.webrtc;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.webrtc.RendererCommon.ScalingType.*;
+import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_BALANCED;
+import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_FILL;
+import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_FIT;
 import static org.webrtc.RendererCommon.getDisplaySize;
 import static org.webrtc.RendererCommon.getLayoutMatrix;
 

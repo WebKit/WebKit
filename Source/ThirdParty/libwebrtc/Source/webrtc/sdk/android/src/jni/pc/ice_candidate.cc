@@ -194,6 +194,25 @@ JavaToNativeContinualGatheringPolicy(
   return PeerConnectionInterface::GATHER_ONCE;
 }
 
+webrtc::PortPrunePolicy JavaToNativePortPrunePolicy(
+    JNIEnv* jni,
+    const JavaRef<jobject>& j_port_prune_policy) {
+  std::string enum_name = GetJavaEnumName(jni, j_port_prune_policy);
+  if (enum_name == "NO_PRUNE") {
+    return webrtc::NO_PRUNE;
+  }
+  if (enum_name == "PRUNE_BASED_ON_PRIORITY") {
+    return webrtc::PRUNE_BASED_ON_PRIORITY;
+  }
+  if (enum_name == "KEEP_FIRST_READY") {
+    return webrtc::KEEP_FIRST_READY;
+  }
+
+  RTC_CHECK(false) << " Unexpected PortPrunePolicy enum name " << enum_name;
+
+  return webrtc::NO_PRUNE;
+}
+
 PeerConnectionInterface::TlsCertPolicy JavaToNativeTlsCertPolicy(
     JNIEnv* jni,
     const JavaRef<jobject>& j_ice_server_tls_cert_policy) {

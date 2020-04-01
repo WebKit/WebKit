@@ -30,7 +30,7 @@
 namespace webrtc {
 namespace {
 
-constexpr TimeDelta kDefaultRtt = TimeDelta::Millis<200>();
+constexpr TimeDelta kDefaultRtt = TimeDelta::Millis(200);
 constexpr double kDefaultBackoffFactor = 0.85;
 
 constexpr char kBweBackOffFactorExperiment[] = "WebRTC-BweBackOffFactor";
@@ -38,6 +38,11 @@ constexpr char kBweBackOffFactorExperiment[] = "WebRTC-BweBackOffFactor";
 bool IsEnabled(const WebRtcKeyValueConfig& field_trials,
                absl::string_view key) {
   return field_trials.Lookup(key).find("Enabled") == 0;
+}
+
+bool IsNotDisabled(const WebRtcKeyValueConfig& field_trials,
+                   absl::string_view key) {
+  return field_trials.Lookup(key).find("Disabled") != 0;
 }
 
 double ReadBackoffFactor(const WebRtcKeyValueConfig& key_value_config) {
@@ -68,7 +73,7 @@ AimdRateControl::AimdRateControl(const WebRtcKeyValueConfig* key_value_config)
 AimdRateControl::AimdRateControl(const WebRtcKeyValueConfig* key_value_config,
                                  bool send_side)
     : min_configured_bitrate_(congestion_controller::GetMinBitrate()),
-      max_configured_bitrate_(DataRate::kbps(30000)),
+      max_configured_bitrate_(DataRate::KilobitsPerSec(30000)),
       current_bitrate_(max_configured_bitrate_),
       latest_estimated_throughput_(current_bitrate_),
       link_capacity_(),
@@ -87,29 +92,24 @@ AimdRateControl::AimdRateControl(const WebRtcKeyValueConfig* key_value_config,
       no_bitrate_increase_in_alr_(
           IsEnabled(*key_value_config,
                     "WebRTC-DontIncreaseDelayBasedBweInAlr")),
-      smoothing_experiment_(
-          IsEnabled(*key_value_config, "WebRTC-Audio-BandwidthSmoothing")),
       estimate_bounded_backoff_(
-          IsEnabled(*key_value_config, "WebRTC-Bwe-EstimateBoundedBackoff")),
+          IsNotDisabled(*key_value_config,
+                        "WebRTC-Bwe-EstimateBoundedBackoff")),
       estimate_bounded_increase_(
-          IsEnabled(*key_value_config, "WebRTC-Bwe-EstimateBoundedIncrease")),
+          IsNotDisabled(*key_value_config,
+                        "WebRTC-Bwe-EstimateBoundedIncrease")),
       initial_backoff_interval_("initial_backoff_interval"),
-      low_throughput_threshold_("low_throughput", DataRate::Zero()),
-      capacity_deviation_ratio_threshold_("cap_thr", 0.2),
-      capacity_limit_deviation_factor_("cap_lim", 1) {
+      link_capacity_fix_("link_capacity_fix") {
   // E.g
-  // WebRTC-BweAimdRateControlConfig/initial_backoff_interval:100ms,
-  // low_throughput:50kbps/
-  ParseFieldTrial({&initial_backoff_interval_, &low_throughput_threshold_},
+  // WebRTC-BweAimdRateControlConfig/initial_backoff_interval:100ms/
+  ParseFieldTrial({&initial_backoff_interval_, &link_capacity_fix_},
                   key_value_config->Lookup("WebRTC-BweAimdRateControlConfig"));
   if (initial_backoff_interval_) {
     RTC_LOG(LS_INFO) << "Using aimd rate control with initial back-off interval"
-                     << " " << ToString(*initial_backoff_interval_) << ".";
+                        " "
+                     << ToString(*initial_backoff_interval_) << ".";
   }
   RTC_LOG(LS_INFO) << "Using aimd rate control with back off factor " << beta_;
-  ParseFieldTrial(
-      {&capacity_deviation_ratio_threshold_, &capacity_limit_deviation_factor_},
-      key_value_config->Lookup("WebRTC-Bwe-AimdRateControl-NetworkState"));
 }
 
 AimdRateControl::~AimdRateControl() {}
@@ -132,18 +132,18 @@ bool AimdRateControl::ValidEstimate() const {
 TimeDelta AimdRateControl::GetFeedbackInterval() const {
   // Estimate how often we can send RTCP if we allocate up to 5% of bandwidth
   // to feedback.
-  const DataSize kRtcpSize = DataSize::bytes(80);
+  const DataSize kRtcpSize = DataSize::Bytes(80);
   const DataRate rtcp_bitrate = current_bitrate_ * 0.05;
   const TimeDelta interval = kRtcpSize / rtcp_bitrate;
-  const TimeDelta kMinFeedbackInterval = TimeDelta::ms(200);
-  const TimeDelta kMaxFeedbackInterval = TimeDelta::ms(1000);
+  const TimeDelta kMinFeedbackInterval = TimeDelta::Millis(200);
+  const TimeDelta kMaxFeedbackInterval = TimeDelta::Millis(1000);
   return interval.Clamped(kMinFeedbackInterval, kMaxFeedbackInterval);
 }
 
 bool AimdRateControl::TimeToReduceFurther(Timestamp at_time,
                                           DataRate estimated_throughput) const {
   const TimeDelta bitrate_reduction_interval =
-      rtt_.Clamped(TimeDelta::ms(10), TimeDelta::ms(200));
+      rtt_.Clamped(TimeDelta::Millis(10), TimeDelta::Millis(200));
   if (at_time - time_last_bitrate_change_ >= bitrate_reduction_interval) {
     return true;
   }
@@ -160,7 +160,7 @@ bool AimdRateControl::InitialTimeToReduceFurther(Timestamp at_time) const {
   if (!initial_backoff_interval_) {
     return ValidEstimate() &&
            TimeToReduceFurther(at_time,
-                               LatestEstimate() / 2 - DataRate::bps(1));
+                               LatestEstimate() / 2 - DataRate::BitsPerSec(1));
   }
   // TODO(terelius): We could use the RTT (clamped to suitable limits) instead
   // of a fixed bitrate_reduction_interval.
@@ -187,7 +187,7 @@ DataRate AimdRateControl::Update(const RateControlInput* input,
   // second.
   // TODO(bugs.webrtc.org/9379): The comment above doesn't match to the code.
   if (!bitrate_is_initialized_) {
-    const TimeDelta kInitializationTime = TimeDelta::seconds(5);
+    const TimeDelta kInitializationTime = TimeDelta::Seconds(5);
     RTC_DCHECK_LE(kBitrateWindowMs, kInitializationTime.ms());
     if (time_first_throughput_estimate_.IsInfinite()) {
       if (input->estimated_throughput)
@@ -200,7 +200,7 @@ DataRate AimdRateControl::Update(const RateControlInput* input,
     }
   }
 
-  current_bitrate_ = ChangeBitrate(current_bitrate_, *input, at_time);
+  ChangeBitrate(*input, at_time);
   return current_bitrate_;
 }
 
@@ -211,7 +211,7 @@ void AimdRateControl::SetInApplicationLimitedRegion(bool in_alr) {
 void AimdRateControl::SetEstimate(DataRate bitrate, Timestamp at_time) {
   bitrate_is_initialized_ = true;
   DataRate prev_bitrate = current_bitrate_;
-  current_bitrate_ = ClampBitrate(bitrate, bitrate);
+  current_bitrate_ = ClampBitrate(bitrate);
   time_last_bitrate_change_ = at_time;
   if (current_bitrate_ < prev_bitrate) {
     time_last_bitrate_decrease_ = at_time;
@@ -225,14 +225,14 @@ void AimdRateControl::SetNetworkStateEstimate(
 
 double AimdRateControl::GetNearMaxIncreaseRateBpsPerSecond() const {
   RTC_DCHECK(!current_bitrate_.IsZero());
-  const TimeDelta kFrameInterval = TimeDelta::seconds(1) / 30;
+  const TimeDelta kFrameInterval = TimeDelta::Seconds(1) / 30;
   DataSize frame_size = current_bitrate_ * kFrameInterval;
-  const DataSize kPacketSize = DataSize::bytes(1200);
+  const DataSize kPacketSize = DataSize::Bytes(1200);
   double packets_per_frame = std::ceil(frame_size / kPacketSize);
   DataSize avg_packet_size = frame_size / packets_per_frame;
 
   // Approximate the over-use estimator delay to 100 ms.
-  TimeDelta response_time = rtt_ + TimeDelta::ms(100);
+  TimeDelta response_time = rtt_ + TimeDelta::Millis(100);
   if (in_experiment_)
     response_time = response_time * 2;
   double increase_rate_bps_per_second =
@@ -242,23 +242,22 @@ double AimdRateControl::GetNearMaxIncreaseRateBpsPerSecond() const {
 }
 
 TimeDelta AimdRateControl::GetExpectedBandwidthPeriod() const {
-  const TimeDelta kMinPeriod =
-      smoothing_experiment_ ? TimeDelta::ms(500) : TimeDelta::seconds(2);
-  const TimeDelta kDefaultPeriod = TimeDelta::seconds(3);
-  const TimeDelta kMaxPeriod = TimeDelta::seconds(50);
+  const TimeDelta kMinPeriod = TimeDelta::Seconds(2);
+  const TimeDelta kDefaultPeriod = TimeDelta::Seconds(3);
+  const TimeDelta kMaxPeriod = TimeDelta::Seconds(50);
 
   double increase_rate_bps_per_second = GetNearMaxIncreaseRateBpsPerSecond();
   if (!last_decrease_)
-    return smoothing_experiment_ ? kMinPeriod : kDefaultPeriod;
+    return kDefaultPeriod;
   double time_to_recover_decrease_seconds =
       last_decrease_->bps() / increase_rate_bps_per_second;
-  TimeDelta period = TimeDelta::seconds(time_to_recover_decrease_seconds);
+  TimeDelta period = TimeDelta::Seconds(time_to_recover_decrease_seconds);
   return period.Clamped(kMinPeriod, kMaxPeriod);
 }
 
-DataRate AimdRateControl::ChangeBitrate(DataRate new_bitrate,
-                                        const RateControlInput& input,
-                                        Timestamp at_time) {
+void AimdRateControl::ChangeBitrate(const RateControlInput& input,
+                                    Timestamp at_time) {
+  absl::optional<DataRate> new_bitrate;
   DataRate estimated_throughput =
       input.estimated_throughput.value_or(latest_estimated_throughput_);
   if (input.estimated_throughput)
@@ -269,9 +268,15 @@ DataRate AimdRateControl::ChangeBitrate(DataRate new_bitrate,
   // we will end up with a valid estimate.
   if (!bitrate_is_initialized_ &&
       input.bw_state != BandwidthUsage::kBwOverusing)
-    return current_bitrate_;
+    return;
 
   ChangeState(input, at_time);
+
+  // We limit the new bitrate based on the troughput to avoid unlimited bitrate
+  // increases. We allow a bit more lag at very low rates to not too easily get
+  // stuck if the encoder produces uneven outputs.
+  const DataRate troughput_based_limit =
+      1.5 * estimated_throughput + DataRate::KilobitsPerSec(10);
 
   switch (rate_control_state_) {
     case kRcHold:
@@ -284,7 +289,11 @@ DataRate AimdRateControl::ChangeBitrate(DataRate new_bitrate,
       // Do not increase the delay based estimate in alr since the estimator
       // will not be able to get transport feedback necessary to detect if
       // the new estimate is correct.
-      if (!(send_side_ && in_alr_ && no_bitrate_increase_in_alr_)) {
+      // If we have previously increased above the limit (for instance due to
+      // probing), we don't allow further changes.
+      if (current_bitrate_ < troughput_based_limit &&
+          !(send_side_ && in_alr_ && no_bitrate_increase_in_alr_)) {
+        DataRate increased_bitrate = DataRate::MinusInfinity();
         if (link_capacity_.has_estimate()) {
           // The link_capacity estimate is reset if the measured throughput
           // is too far from the estimate. We can therefore assume that our
@@ -292,59 +301,49 @@ DataRate AimdRateControl::ChangeBitrate(DataRate new_bitrate,
           // increase.
           DataRate additive_increase =
               AdditiveRateIncrease(at_time, time_last_bitrate_change_);
-          new_bitrate += additive_increase;
+          increased_bitrate = current_bitrate_ + additive_increase;
         } else {
           // If we don't have an estimate of the link capacity, use faster ramp
           // up to discover the capacity.
           DataRate multiplicative_increase = MultiplicativeRateIncrease(
-              at_time, time_last_bitrate_change_, new_bitrate);
-          new_bitrate += multiplicative_increase;
+              at_time, time_last_bitrate_change_, current_bitrate_);
+          increased_bitrate = current_bitrate_ + multiplicative_increase;
         }
+        new_bitrate = std::min(increased_bitrate, troughput_based_limit);
       }
 
       time_last_bitrate_change_ = at_time;
       break;
 
-    case kRcDecrease:
-      // TODO(srte): Remove when |estimate_bounded_backoff_| has been validated.
-      if (network_estimate_ && capacity_deviation_ratio_threshold_ &&
-          !estimate_bounded_backoff_) {
-        estimated_throughput = std::max(estimated_throughput,
-                                        network_estimate_->link_capacity_lower);
-      }
-      if (estimated_throughput > low_throughput_threshold_) {
-        // Set bit rate to something slightly lower than the measured throughput
-        // to get rid of any self-induced delay.
-        new_bitrate = estimated_throughput * beta_;
-        if (new_bitrate > current_bitrate_) {
-          // Avoid increasing the rate when over-using.
-          if (link_capacity_.has_estimate()) {
-            new_bitrate = beta_ * link_capacity_.estimate();
-          }
-        }
-        if (estimate_bounded_backoff_ && network_estimate_) {
-          new_bitrate = std::max(
-              new_bitrate, network_estimate_->link_capacity_lower * beta_);
-        }
-      } else {
-        new_bitrate = estimated_throughput;
+    case kRcDecrease: {
+      DataRate decreased_bitrate = DataRate::PlusInfinity();
+
+      // Set bit rate to something slightly lower than the measured throughput
+      // to get rid of any self-induced delay.
+      decreased_bitrate = estimated_throughput * beta_;
+      if (decreased_bitrate > current_bitrate_ && !link_capacity_fix_) {
+        // TODO(terelius): The link_capacity estimate may be based on old
+        // throughput measurements. Relying on them may lead to unnecessary
+        // BWE drops.
         if (link_capacity_.has_estimate()) {
-          new_bitrate = std::max(new_bitrate, link_capacity_.estimate());
+          decreased_bitrate = beta_ * link_capacity_.estimate();
         }
-        new_bitrate = std::min(new_bitrate, low_throughput_threshold_.Get());
       }
-      new_bitrate = std::min(new_bitrate, current_bitrate_);
+      if (estimate_bounded_backoff_ && network_estimate_) {
+        decreased_bitrate = std::max(
+            decreased_bitrate, network_estimate_->link_capacity_lower * beta_);
+      }
+
+      // Avoid increasing the rate when over-using.
+      if (decreased_bitrate < current_bitrate_) {
+        new_bitrate = decreased_bitrate;
+      }
 
       if (bitrate_is_initialized_ && estimated_throughput < current_bitrate_) {
-        constexpr double kDegradationFactor = 0.9;
-        if (smoothing_experiment_ &&
-            new_bitrate < kDegradationFactor * beta_ * current_bitrate_) {
-          // If bitrate decreases more than a normal back off after overuse, it
-          // indicates a real network degradation. We do not let such a decrease
-          // to determine the bandwidth estimation period.
-          last_decrease_ = absl::nullopt;
+        if (!new_bitrate.has_value()) {
+          last_decrease_ = DataRate::Zero();
         } else {
-          last_decrease_ = current_bitrate_ - new_bitrate;
+          last_decrease_ = current_bitrate_ - *new_bitrate;
         }
       }
       if (estimated_throughput < link_capacity_.LowerBound()) {
@@ -360,32 +359,16 @@ DataRate AimdRateControl::ChangeBitrate(DataRate new_bitrate,
       time_last_bitrate_change_ = at_time;
       time_last_bitrate_decrease_ = at_time;
       break;
-
+    }
     default:
       assert(false);
   }
-  return ClampBitrate(new_bitrate, estimated_throughput);
+
+  current_bitrate_ = ClampBitrate(new_bitrate.value_or(current_bitrate_));
 }
 
-DataRate AimdRateControl::ClampBitrate(DataRate new_bitrate,
-                                       DataRate estimated_throughput) const {
-  // Allow the estimate to increase as long as alr is not detected to ensure
-  // that there is no BWE values that can make the estimate stuck at a too
-  // low bitrate. If an encoder can not produce the bitrate necessary to
-  // fully use the capacity, alr will sooner or later trigger.
-  if (!(send_side_ && no_bitrate_increase_in_alr_)) {
-    // Don't change the bit rate if the send side is too far off.
-    // We allow a bit more lag at very low rates to not too easily get stuck if
-    // the encoder produces uneven outputs.
-    const DataRate max_bitrate =
-        1.5 * estimated_throughput + DataRate::kbps(10);
-    if (new_bitrate > current_bitrate_ && new_bitrate > max_bitrate) {
-      new_bitrate = std::max(current_bitrate_, max_bitrate);
-    }
-  }
-
-  if (network_estimate_ &&
-      (estimate_bounded_increase_ || capacity_limit_deviation_factor_)) {
+DataRate AimdRateControl::ClampBitrate(DataRate new_bitrate) const {
+  if (estimate_bounded_increase_ && network_estimate_) {
     DataRate upper_bound = network_estimate_->link_capacity_upper;
     new_bitrate = std::min(new_bitrate, upper_bound);
   }
@@ -403,7 +386,7 @@ DataRate AimdRateControl::MultiplicativeRateIncrease(
     alpha = pow(alpha, std::min(time_since_last_update.seconds<double>(), 1.0));
   }
   DataRate multiplicative_increase =
-      std::max(current_bitrate * (alpha - 1.0), DataRate::bps(1000));
+      std::max(current_bitrate * (alpha - 1.0), DataRate::BitsPerSec(1000));
   return multiplicative_increase;
 }
 
@@ -412,7 +395,7 @@ DataRate AimdRateControl::AdditiveRateIncrease(Timestamp at_time,
   double time_period_seconds = (at_time - last_time).seconds<double>();
   double data_rate_increase_bps =
       GetNearMaxIncreaseRateBpsPerSecond() * time_period_seconds;
-  return DataRate::bps(data_rate_increase_bps);
+  return DataRate::BitsPerSec(data_rate_increase_bps);
 }
 
 void AimdRateControl::ChangeState(const RateControlInput& input,

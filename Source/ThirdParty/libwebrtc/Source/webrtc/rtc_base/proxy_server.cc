@@ -12,7 +12,7 @@
 
 #include <stddef.h>
 
-#include "absl/memory/memory.h"
+#include <memory>
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/socket_factory.h"
@@ -51,7 +51,7 @@ void ProxyServer::OnAcceptEvent(AsyncSocket* socket) {
   if (ext_socket) {
     ext_socket->Bind(ext_ip_);
     bindings_.emplace_back(
-        absl::make_unique<ProxyBinding>(wrapped_socket, ext_socket));
+        std::make_unique<ProxyBinding>(wrapped_socket, ext_socket));
   } else {
     RTC_LOG(LS_ERROR)
         << "Unable to create external socket on proxy accept event";

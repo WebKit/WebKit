@@ -97,22 +97,4 @@ bool RtpGenericFrameDescriptor::AddFrameDependencyDiff(uint16_t fdiff) {
   return true;
 }
 
-void RtpGenericFrameDescriptor::SetByteRepresentation(
-    rtc::ArrayView<const uint8_t> byte_representation) {
-  RTC_CHECK(!byte_representation.empty());
-  byte_representation_.assign(byte_representation.begin(),
-                              byte_representation.end());
-  // Clear end_of_subframe bit.
-  // Because ByteRepresentation is used for frame authentication, bit describing
-  // position of the packet in the frame shouldn't be part of it.
-  // This match RtpVideoSender where descriptor is passed for authentication
-  // before end_of_subframe bit is decided and set, i.e. it is always 0.
-  byte_representation_[0] &= ~0x40;
-}
-
-rtc::ArrayView<const uint8_t>
-RtpGenericFrameDescriptor::GetByteRepresentation() {
-  return byte_representation_;
-}
-
 }  // namespace webrtc

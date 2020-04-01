@@ -78,7 +78,7 @@ TEST(WavWriterTest, MAYBE_CPP) {
       // clang-format on
   };
   static const size_t kContentSize =
-      kWavHeaderSize + kNumSamples * sizeof(int16_t) + sizeof(kMetadata);
+      kPcmWavHeaderSize + kNumSamples * sizeof(int16_t) + sizeof(kMetadata);
   static_assert(sizeof(kExpectedContents) == kContentSize, "content size");
   EXPECT_EQ(kContentSize, test::GetFileSize(outfile));
   FILE* f = fopen(outfile.c_str(), "rb");
@@ -103,43 +103,75 @@ TEST(WavWriterTest, MAYBE_CPP) {
 
 // Write a larger WAV file. You can listen to this file to sanity-check it.
 TEST(WavWriterTest, LargeFile) {
-  std::string outfile = test::OutputPath() + "wavtest3.wav";
-  static const int kSampleRate = 8000;
-  static const size_t kNumChannels = 2;
-  static const size_t kNumSamples = 3 * kSampleRate * kNumChannels;
-  float samples[kNumSamples];
-  for (size_t i = 0; i < kNumSamples; i += kNumChannels) {
-    // A nice periodic beeping sound.
-    static const double kToneHz = 440;
-    const double t = static_cast<double>(i) / (kNumChannels * kSampleRate);
-    const double x =
-        std::numeric_limits<int16_t>::max() * std::sin(t * kToneHz * 2 * M_PI);
-    samples[i] = std::pow(std::sin(t * 2 * 2 * M_PI), 10) * x;
-    samples[i + 1] = std::pow(std::cos(t * 2 * 2 * M_PI), 10) * x;
-  }
-  {
-    WavWriter w(outfile, kSampleRate, kNumChannels);
-    EXPECT_EQ(kSampleRate, w.sample_rate());
-    EXPECT_EQ(kNumChannels, w.num_channels());
-    EXPECT_EQ(0u, w.num_samples());
-    w.WriteSamples(samples, kNumSamples);
-    EXPECT_EQ(kNumSamples, w.num_samples());
-  }
-  EXPECT_EQ(sizeof(int16_t) * kNumSamples + kWavHeaderSize,
-            test::GetFileSize(outfile));
+  constexpr int kSampleRate = 8000;
+  constexpr size_t kNumChannels = 2;
+  constexpr size_t kNumSamples = 3 * kSampleRate * kNumChannels;
+  for (WavFile::SampleFormat wav_format :
+       {WavFile::SampleFormat::kInt16, WavFile::SampleFormat::kFloat}) {
+    for (WavFile::SampleFormat write_format :
+         {WavFile::SampleFormat::kInt16, WavFile::SampleFormat::kFloat}) {
+      for (WavFile::SampleFormat read_format :
+           {WavFile::SampleFormat::kInt16, WavFile::SampleFormat::kFloat}) {
+        std::string outfile = test::OutputPath() + "wavtest3.wav";
+        float samples[kNumSamples];
+        for (size_t i = 0; i < kNumSamples; i += kNumChannels) {
+          // A nice periodic beeping sound.
+          static const double kToneHz = 440;
+          const double t =
+              static_cast<double>(i) / (kNumChannels * kSampleRate);
+          const double x = std::numeric_limits<int16_t>::max() *
+                           std::sin(t * kToneHz * 2 * M_PI);
+          samples[i] = std::pow(std::sin(t * 2 * 2 * M_PI), 10) * x;
+          samples[i + 1] = std::pow(std::cos(t * 2 * 2 * M_PI), 10) * x;
+        }
+        {
+          WavWriter w(outfile, kSampleRate, kNumChannels, wav_format);
+          EXPECT_EQ(kSampleRate, w.sample_rate());
+          EXPECT_EQ(kNumChannels, w.num_channels());
+          EXPECT_EQ(0u, w.num_samples());
+          if (write_format == WavFile::SampleFormat::kFloat) {
+            float truncated_samples[kNumSamples];
+            for (size_t k = 0; k < kNumSamples; ++k) {
+              truncated_samples[k] = static_cast<int16_t>(samples[k]);
+            }
+            w.WriteSamples(truncated_samples, kNumSamples);
+          } else {
+            w.WriteSamples(samples, kNumSamples);
+          }
+          EXPECT_EQ(kNumSamples, w.num_samples());
+        }
+        if (wav_format == WavFile::SampleFormat::kFloat) {
+          EXPECT_EQ(sizeof(float) * kNumSamples + kIeeeFloatWavHeaderSize,
+                    test::GetFileSize(outfile));
+        } else {
+          EXPECT_EQ(sizeof(int16_t) * kNumSamples + kPcmWavHeaderSize,
+                    test::GetFileSize(outfile));
+        }
 
-  {
-    WavReader r(outfile);
-    EXPECT_EQ(kSampleRate, r.sample_rate());
-    EXPECT_EQ(kNumChannels, r.num_channels());
-    EXPECT_EQ(kNumSamples, r.num_samples());
+        {
+          WavReader r(outfile);
+          EXPECT_EQ(kSampleRate, r.sample_rate());
+          EXPECT_EQ(kNumChannels, r.num_channels());
+          EXPECT_EQ(kNumSamples, r.num_samples());
 
-    float read_samples[kNumSamples];
-    EXPECT_EQ(kNumSamples, r.ReadSamples(kNumSamples, read_samples));
-    for (size_t i = 0; i < kNumSamples; ++i)
-      EXPECT_NEAR(samples[i], read_samples[i], 1);
-
-    EXPECT_EQ(0u, r.ReadSamples(kNumSamples, read_samples));
+          if (read_format == WavFile::SampleFormat::kFloat) {
+            float read_samples[kNumSamples];
+            EXPECT_EQ(kNumSamples, r.ReadSamples(kNumSamples, read_samples));
+            for (size_t i = 0; i < kNumSamples; ++i) {
+              EXPECT_NEAR(samples[i], read_samples[i], 1);
+            }
+            EXPECT_EQ(0u, r.ReadSamples(kNumSamples, read_samples));
+          } else {
+            int16_t read_samples[kNumSamples];
+            EXPECT_EQ(kNumSamples, r.ReadSamples(kNumSamples, read_samples));
+            for (size_t i = 0; i < kNumSamples; ++i) {
+              EXPECT_NEAR(samples[i], static_cast<float>(read_samples[i]), 1);
+            }
+            EXPECT_EQ(0u, r.ReadSamples(kNumSamples, read_samples));
+          }
+        }
+      }
+    }
   }
 }
 
@@ -188,7 +220,7 @@ TEST(WavReaderTest, MAYBE_CPPReset) {
       // clang-format on
   };
   static const size_t kContentSize =
-      kWavHeaderSize + kNumSamples * sizeof(int16_t) + sizeof(kMetadata);
+      kPcmWavHeaderSize + kNumSamples * sizeof(int16_t) + sizeof(kMetadata);
   static_assert(sizeof(kExpectedContents) == kContentSize, "content size");
   EXPECT_EQ(kContentSize, test::GetFileSize(outfile));
   FILE* f = fopen(outfile.c_str(), "rb");

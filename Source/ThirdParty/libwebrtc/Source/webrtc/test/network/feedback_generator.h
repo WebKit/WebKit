@@ -44,7 +44,6 @@ class FeedbackGeneratorImpl
 
  private:
   Config conf_;
-  GlobalSimulatedTimeController time_controller_;
   ::webrtc::test::NetworkEmulationManagerImpl net_;
   SimulatedNetwork* const send_link_;
   SimulatedNetwork* const ret_link_;

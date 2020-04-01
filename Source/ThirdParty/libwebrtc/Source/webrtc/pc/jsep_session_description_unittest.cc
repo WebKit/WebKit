@@ -18,7 +18,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/candidate.h"
 #include "api/jsep.h"
 #include "api/jsep_ice_candidate.h"
@@ -57,12 +56,12 @@ static const uint32_t kCandidateGeneration = 2;
 // In SDP this is described by two m lines, one audio and one video.
 static std::unique_ptr<cricket::SessionDescription>
 CreateCricketSessionDescription() {
-  auto desc = absl::make_unique<cricket::SessionDescription>();
+  auto desc = std::make_unique<cricket::SessionDescription>();
 
   // AudioContentDescription
-  auto audio = absl::make_unique<cricket::AudioContentDescription>();
+  auto audio = std::make_unique<cricket::AudioContentDescription>();
   // VideoContentDescription
-  auto video = absl::make_unique<cricket::VideoContentDescription>();
+  auto video = std::make_unique<cricket::VideoContentDescription>();
 
   audio->AddCodec(cricket::AudioCodec(103, "ISAC", 16000, 0, 0));
   desc->AddContent(cricket::CN_AUDIO, MediaProtocolType::kRtp,
@@ -95,7 +94,7 @@ class JsepSessionDescriptionTest : public ::testing::Test {
     candidate_ = candidate;
     const std::string session_id = rtc::ToString(rtc::CreateRandomId64());
     const std::string session_version = rtc::ToString(rtc::CreateRandomId());
-    jsep_desc_ = absl::make_unique<JsepSessionDescription>(SdpType::kOffer);
+    jsep_desc_ = std::make_unique<JsepSessionDescription>(SdpType::kOffer);
     ASSERT_TRUE(jsep_desc_->Initialize(CreateCricketSessionDescription(),
                                        session_id, session_version));
   }
@@ -109,7 +108,7 @@ class JsepSessionDescriptionTest : public ::testing::Test {
 
   std::unique_ptr<SessionDescriptionInterface> DeSerialize(
       const std::string& sdp) {
-    auto jsep_desc = absl::make_unique<JsepSessionDescription>(SdpType::kOffer);
+    auto jsep_desc = std::make_unique<JsepSessionDescription>(SdpType::kOffer);
     EXPECT_TRUE(webrtc::SdpDeserialize(sdp, jsep_desc.get(), nullptr));
     return std::move(jsep_desc);
   }

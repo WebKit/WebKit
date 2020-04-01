@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/test/frame_generator_interface.h"
 #include "api/video_codecs/video_decoder.h"
 #include "api/video_codecs/video_encoder.h"
 #include "modules/video_coding/include/video_codec_interface.h"
@@ -22,7 +23,6 @@
 #include "rtc_base/critical_section.h"
 #include "rtc_base/event.h"
 #include "rtc_base/thread_annotations.h"
-#include "test/frame_generator.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -77,7 +77,7 @@ class VideoCodecUnitTest : public ::testing::Test {
 
   virtual void ModifyCodecSettings(VideoCodec* codec_settings);
 
-  VideoFrame* NextInputFrame();
+  VideoFrame NextInputFrame();
 
   // Helper method for waiting a single encoded frame.
   bool WaitForEncodedFrame(EncodedImage* frame,
@@ -101,7 +101,7 @@ class VideoCodecUnitTest : public ::testing::Test {
 
   std::unique_ptr<VideoEncoder> encoder_;
   std::unique_ptr<VideoDecoder> decoder_;
-  std::unique_ptr<test::FrameGenerator> input_frame_generator_;
+  std::unique_ptr<test::FrameGeneratorInterface> input_frame_generator_;
 
  private:
   FakeEncodeCompleteCallback encode_complete_callback_;

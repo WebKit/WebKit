@@ -14,7 +14,6 @@
 #include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/array_view.h"
 #include "api/call/transport.h"
 #include "api/rtp_headers.h"
@@ -89,7 +88,7 @@ class FlexfecReceiveStreamTest : public ::testing::Test {
   FlexfecReceiveStreamTest()
       : config_(CreateDefaultConfig(&rtcp_send_transport_)) {
     EXPECT_CALL(process_thread_, RegisterModule(_, _)).Times(1);
-    receive_stream_ = absl::make_unique<FlexfecReceiveStreamImpl>(
+    receive_stream_ = std::make_unique<FlexfecReceiveStreamImpl>(
         Clock::GetRealTimeClock(), &rtp_stream_receiver_controller_, config_,
         &recovered_packet_receiver_, &rtt_stats_, &process_thread_);
   }

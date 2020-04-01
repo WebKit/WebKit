@@ -22,6 +22,7 @@ class NetworkControllerFactoryInterface;
 class VideoEncoderFactory;
 class VideoDecoderFactory;
 class AudioProcessing;
+struct PeerConnectionDependencies;
 
 }  // namespace webrtc
 
@@ -87,6 +88,16 @@ NS_ASSUME_NONNULL_BEGIN
                         decoderFactory:(nullable id<RTCVideoDecoderFactory>)decoderFactory
                  mediaTransportFactory:
                      (std::unique_ptr<webrtc::MediaTransportFactory>)mediaTransportFactory;
+
+/** Initialize an RTCPeerConnection with a configuration, constraints, and
+ *  dependencies.
+ */
+- (RTCPeerConnection *)
+    peerConnectionWithDependencies:(RTCConfiguration *)configuration
+                       constraints:(RTCMediaConstraints *)constraints
+                      dependencies:(std::unique_ptr<webrtc::PeerConnectionDependencies>)dependencies
+                          delegate:(nullable id<RTCPeerConnectionDelegate>)delegate;
+
 @end
 
 NS_ASSUME_NONNULL_END

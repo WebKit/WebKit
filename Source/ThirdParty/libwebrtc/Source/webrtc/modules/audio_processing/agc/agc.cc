@@ -33,17 +33,7 @@ Agc::Agc()
       histogram_(LoudnessHistogram::Create(kNumAnalysisFrames)),
       inactive_histogram_(LoudnessHistogram::Create()) {}
 
-Agc::~Agc() {}
-
-float Agc::AnalyzePreproc(const int16_t* audio, size_t length) {
-  RTC_DCHECK_GT(length, 0);
-  size_t num_clipped = 0;
-  for (size_t i = 0; i < length; ++i) {
-    if (audio[i] == 32767 || audio[i] == -32768)
-      ++num_clipped;
-  }
-  return 1.0f * num_clipped / length;
-}
+Agc::~Agc() = default;
 
 void Agc::Process(const int16_t* audio, size_t length, int sample_rate_hz) {
   vad_.ProcessChunk(audio, length, sample_rate_hz);

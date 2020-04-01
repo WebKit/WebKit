@@ -18,7 +18,8 @@
 
 namespace webrtc {
 
-std::unique_ptr<NetworkEmulationManager> CreateNetworkEmulationManager();
+std::unique_ptr<NetworkEmulationManager> CreateNetworkEmulationManager(
+    TimeMode mode = TimeMode::kRealTime);
 
 }  // namespace webrtc
 

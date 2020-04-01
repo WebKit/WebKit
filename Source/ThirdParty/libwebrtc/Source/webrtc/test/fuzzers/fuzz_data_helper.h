@@ -92,7 +92,7 @@ class FuzzDataHelper {
 
   size_t BytesRead() const { return data_ix_; }
 
-  size_t BytesLeft() const { return data_.size() - data_ix_; };
+  size_t BytesLeft() const { return data_.size() - data_ix_; }
 
  private:
   rtc::ArrayView<const uint8_t> data_;

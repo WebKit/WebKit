@@ -151,6 +151,9 @@ class PitchTestData {
   std::array<float, kPitchTestDataSize> test_data_;
 };
 
+// Returns true if the given optimization is available.
+bool IsOptimizationAvailable(Optimization optimization);
+
 }  // namespace test
 }  // namespace rnn_vad
 }  // namespace webrtc

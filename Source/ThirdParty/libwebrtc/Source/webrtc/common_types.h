@@ -89,8 +89,16 @@ typedef SpatialLayer SimulcastStream;
 // Note: Given that this gets embedded in a union, it is up-to the owner to
 // initialize these values.
 struct PlayoutDelay {
+  PlayoutDelay(int min_ms, int max_ms) : min_ms(min_ms), max_ms(max_ms) {}
   int min_ms;
   int max_ms;
+
+  static PlayoutDelay Noop() { return PlayoutDelay(-1, -1); }
+
+  bool IsNoop() const { return min_ms == -1 && max_ms == -1; }
+  bool operator==(const PlayoutDelay& rhs) const {
+    return min_ms == rhs.min_ms && max_ms == rhs.max_ms;
+  }
 };
 
 }  // namespace webrtc

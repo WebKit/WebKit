@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <numeric>
 
+#include "modules/audio_processing/aec3/aec_state.h"
 #include "rtc_base/random.h"
 #include "rtc_base/system/arch.h"
 #include "system_wrappers/include/cpu_features_wrapper.h"
@@ -30,52 +31,39 @@ float Power(const FftData& N) {
 
 }  // namespace
 
-#if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-
-TEST(ComfortNoiseGenerator, NullLowerBandNoise) {
-  std::array<float, kFftLengthBy2Plus1> N2;
-  FftData noise;
-  EXPECT_DEATH(
-      ComfortNoiseGenerator(DetectOptimization())
-          .Compute(AecState(EchoCanceller3Config{}), N2, nullptr, &noise),
-      "");
-}
-
-TEST(ComfortNoiseGenerator, NullUpperBandNoise) {
-  std::array<float, kFftLengthBy2Plus1> N2;
-  FftData noise;
-  EXPECT_DEATH(
-      ComfortNoiseGenerator(DetectOptimization())
-          .Compute(AecState(EchoCanceller3Config{}), N2, &noise, nullptr),
-      "");
-}
-
-#endif
-
 TEST(ComfortNoiseGenerator, CorrectLevel) {
-  ComfortNoiseGenerator cng(DetectOptimization());
-  AecState aec_state(EchoCanceller3Config{});
+  constexpr size_t kNumChannels = 5;
+  ComfortNoiseGenerator cng(DetectOptimization(), kNumChannels);
+  AecState aec_state(EchoCanceller3Config{}, kNumChannels);
 
-  std::array<float, kFftLengthBy2Plus1> N2;
-  N2.fill(1000.f * 1000.f);
+  std::vector<std::array<float, kFftLengthBy2Plus1>> N2(kNumChannels);
+  std::vector<FftData> n_lower(kNumChannels);
+  std::vector<FftData> n_upper(kNumChannels);
 
-  FftData n_lower;
-  FftData n_upper;
-  n_lower.re.fill(0.f);
-  n_lower.im.fill(0.f);
-  n_upper.re.fill(0.f);
-  n_upper.im.fill(0.f);
+  for (size_t ch = 0; ch < kNumChannels; ++ch) {
+    N2[ch].fill(1000.f * 1000.f / (ch + 1));
+    n_lower[ch].re.fill(0.f);
+    n_lower[ch].im.fill(0.f);
+    n_upper[ch].re.fill(0.f);
+    n_upper[ch].im.fill(0.f);
+  }
 
   // Ensure instantaneous updata to nonzero noise.
-  cng.Compute(aec_state, N2, &n_lower, &n_upper);
-  EXPECT_LT(0.f, Power(n_lower));
-  EXPECT_LT(0.f, Power(n_upper));
+  cng.Compute(false, N2, n_lower, n_upper);
+
+  for (size_t ch = 0; ch < kNumChannels; ++ch) {
+    EXPECT_LT(0.f, Power(n_lower[ch]));
+    EXPECT_LT(0.f, Power(n_upper[ch]));
+  }
 
   for (int k = 0; k < 10000; ++k) {
-    cng.Compute(aec_state, N2, &n_lower, &n_upper);
+    cng.Compute(false, N2, n_lower, n_upper);
   }
-  EXPECT_NEAR(2.f * N2[0], Power(n_lower), N2[0] / 10.f);
-  EXPECT_NEAR(2.f * N2[0], Power(n_upper), N2[0] / 10.f);
+
+  for (size_t ch = 0; ch < kNumChannels; ++ch) {
+    EXPECT_NEAR(2.f * N2[ch][0], Power(n_lower[ch]), N2[ch][0] / 10.f);
+    EXPECT_NEAR(2.f * N2[ch][0], Power(n_upper[ch]), N2[ch][0] / 10.f);
+  }
 }
 
 }  // namespace aec3

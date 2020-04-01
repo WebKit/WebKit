@@ -14,7 +14,6 @@
 #include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/video_encoder_factory.h"
 
@@ -31,7 +30,12 @@ const VideoEncoder::Capabilities kCapabilities(false);
 class VideoEncoderProxyFactory final : public VideoEncoderFactory {
  public:
   explicit VideoEncoderProxyFactory(VideoEncoder* encoder)
+      : VideoEncoderProxyFactory(encoder, nullptr) {}
+
+  explicit VideoEncoderProxyFactory(VideoEncoder* encoder,
+                                    EncoderSelectorInterface* encoder_selector)
       : encoder_(encoder),
+        encoder_selector_(encoder_selector),
         num_simultaneous_encoder_instances_(0),
         max_num_simultaneous_encoder_instances_(0) {
     codec_info_.is_hardware_accelerated = false;
@@ -54,7 +58,16 @@ class VideoEncoderProxyFactory final : public VideoEncoderFactory {
     max_num_simultaneous_encoder_instances_ =
         std::max(max_num_simultaneous_encoder_instances_,
                  num_simultaneous_encoder_instances_);
-    return absl::make_unique<EncoderProxy>(encoder_, this);
+    return std::make_unique<EncoderProxy>(encoder_, this);
+  }
+
+  std::unique_ptr<EncoderSelectorInterface> GetEncoderSelector()
+      const override {
+    if (encoder_selector_ != nullptr) {
+      return std::make_unique<EncoderSelectorProxy>(encoder_selector_);
+    }
+
+    return nullptr;
   }
 
   void SetIsHardwareAccelerated(bool is_hardware_accelerated) {
@@ -118,7 +131,30 @@ class VideoEncoderProxyFactory final : public VideoEncoderFactory {
     VideoEncoderProxyFactory* const encoder_factory_;
   };
 
+  class EncoderSelectorProxy final : public EncoderSelectorInterface {
+   public:
+    explicit EncoderSelectorProxy(EncoderSelectorInterface* encoder_selector)
+        : encoder_selector_(encoder_selector) {}
+
+    void OnCurrentEncoder(const SdpVideoFormat& format) override {
+      encoder_selector_->OnCurrentEncoder(format);
+    }
+
+    absl::optional<SdpVideoFormat> OnAvailableBitrate(
+        const DataRate& rate) override {
+      return encoder_selector_->OnAvailableBitrate(rate);
+    }
+
+    absl::optional<SdpVideoFormat> OnEncoderBroken() override {
+      return encoder_selector_->OnEncoderBroken();
+    }
+
+   private:
+    EncoderSelectorInterface* const encoder_selector_;
+  };
+
   VideoEncoder* const encoder_;
+  EncoderSelectorInterface* const encoder_selector_;
   CodecInfo codec_info_;
 
   int num_simultaneous_encoder_instances_;

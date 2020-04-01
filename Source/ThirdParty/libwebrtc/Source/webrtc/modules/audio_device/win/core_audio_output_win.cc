@@ -10,7 +10,8 @@
 
 #include "modules/audio_device/win/core_audio_output_win.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "modules/audio_device/audio_device_buffer.h"
 #include "modules/audio_device/fine_audio_buffer.h"
 #include "rtc_base/bind.h"
@@ -60,12 +61,16 @@ int CoreAudioOutput::NumDevices() const {
 
 int CoreAudioOutput::SetDevice(int index) {
   RTC_DLOG(INFO) << __FUNCTION__ << ": " << index;
+  RTC_DCHECK_GE(index, 0);
   RTC_DCHECK_RUN_ON(&thread_checker_);
   return CoreAudioBase::SetDevice(index);
 }
 
 int CoreAudioOutput::SetDevice(AudioDeviceModule::WindowsDeviceType device) {
-  RTC_DLOG(INFO) << __FUNCTION__ << ": " << device;
+  RTC_DLOG(INFO) << __FUNCTION__ << ": "
+                 << ((device == AudioDeviceModule::kDefaultDevice)
+                         ? "Default"
+                         : "DefaultCommunication");
   RTC_DCHECK_RUN_ON(&thread_checker_);
   return SetDevice((device == AudioDeviceModule::kDefaultDevice) ? 0 : 1);
 }
@@ -120,7 +125,7 @@ int CoreAudioOutput::InitPlayout() {
   // of samples (and not only multiple of 10ms) to match the optimal
   // buffer size per callback used by Core Audio.
   // TODO(henrika): can we share one FineAudioBuffer with the input side?
-  fine_audio_buffer_ = absl::make_unique<FineAudioBuffer>(audio_device_buffer_);
+  fine_audio_buffer_ = std::make_unique<FineAudioBuffer>(audio_device_buffer_);
 
   // Create an IAudioRenderClient for an initialized IAudioClient.
   // The IAudioRenderClient interface enables us to write output data to
@@ -372,8 +377,8 @@ int CoreAudioOutput::EstimateOutputLatencyMillis(uint64_t device_frequency) {
 
     // Convert latency in number of frames into milliseconds.
     webrtc::TimeDelta delay =
-        webrtc::TimeDelta::us(delay_frames * rtc::kNumMicrosecsPerSec /
-                              format_.Format.nSamplesPerSec);
+        webrtc::TimeDelta::Micros(delay_frames * rtc::kNumMicrosecsPerSec /
+                                  format_.Format.nSamplesPerSec);
     delay_ms = delay.ms();
   }
   return delay_ms;

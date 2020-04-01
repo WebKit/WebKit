@@ -10,7 +10,8 @@
 
 #include "modules/video_coding/codecs/vp8/include/temporal_layers_checker.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/default_temporal_layers.h"
 #include "rtc_base/logging.h"
@@ -22,11 +23,11 @@ TemporalLayersChecker::CreateTemporalLayersChecker(Vp8TemporalLayersType type,
                                                    int num_temporal_layers) {
   switch (type) {
     case Vp8TemporalLayersType::kFixedPattern:
-      return absl::make_unique<DefaultTemporalLayersChecker>(
+      return std::make_unique<DefaultTemporalLayersChecker>(
           num_temporal_layers);
     case Vp8TemporalLayersType::kBitrateDynamic:
       // Conference mode temporal layering for screen content in base stream.
-      return absl::make_unique<TemporalLayersChecker>(num_temporal_layers);
+      return std::make_unique<TemporalLayersChecker>(num_temporal_layers);
   }
 }
 

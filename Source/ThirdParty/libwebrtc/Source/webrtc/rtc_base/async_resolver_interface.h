@@ -12,12 +12,13 @@
 #define RTC_BASE_ASYNC_RESOLVER_INTERFACE_H_
 
 #include "rtc_base/socket_address.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {
 
 // This interface defines the methods to resolve the address asynchronously.
-class AsyncResolverInterface {
+class RTC_EXPORT AsyncResolverInterface {
  public:
   AsyncResolverInterface();
   virtual ~AsyncResolverInterface();

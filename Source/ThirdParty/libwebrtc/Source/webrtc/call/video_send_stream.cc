@@ -75,14 +75,10 @@ std::string VideoSendStream::Stats::ToString(int64_t time_ms) const {
 
 VideoSendStream::Config::Config(const Config&) = default;
 VideoSendStream::Config::Config(Config&&) = default;
-VideoSendStream::Config::Config(Transport* send_transport,
-                                MediaTransportInterface* media_transport)
+VideoSendStream::Config::Config(Transport* send_transport)
     : rtp(),
       encoder_settings(VideoEncoder::Capabilities(rtp.lntf.enabled)),
-      send_transport(send_transport),
-      media_transport(media_transport) {}
-VideoSendStream::Config::Config(Transport* send_transport)
-    : Config(send_transport, nullptr) {}
+      send_transport(send_transport) {}
 
 VideoSendStream::Config& VideoSendStream::Config::operator=(Config&&) = default;
 VideoSendStream::Config::Config::~Config() = default;
@@ -95,7 +91,6 @@ std::string VideoSendStream::Config::ToString() const {
   ss << ", rtp: " << rtp.ToString();
   ss << ", rtcp_report_interval_ms: " << rtcp_report_interval_ms;
   ss << ", send_transport: " << (send_transport ? "(Transport)" : "nullptr");
-  ss << ", media_transport: " << (media_transport ? "(Transport)" : "nullptr");
   ss << ", render_delay_ms: " << render_delay_ms;
   ss << ", target_delay_ms: " << target_delay_ms;
   ss << ", suspend_below_min_bitrate: "

@@ -32,7 +32,9 @@
 namespace webrtc {
 
 class RealTimeClock : public Clock {
-  Timestamp CurrentTime() override { return Timestamp::us(rtc::TimeMicros()); }
+  Timestamp CurrentTime() override {
+    return Timestamp::Micros(rtc::TimeMicros());
+  }
   // Return a timestamp in milliseconds relative to some arbitrary source; the
   // source is fixed for this clock.
   int64_t TimeInMilliseconds() override { return rtc::TimeMillis(); }
@@ -237,7 +239,7 @@ Clock* Clock::GetRealTimeClock() {
 }
 
 SimulatedClock::SimulatedClock(int64_t initial_time_us)
-    : SimulatedClock(Timestamp::us(initial_time_us)) {}
+    : SimulatedClock(Timestamp::Micros(initial_time_us)) {}
 
 SimulatedClock::SimulatedClock(Timestamp initial_time)
     : time_(initial_time), lock_(RWLockWrapper::CreateRWLock()) {}
@@ -262,11 +264,11 @@ int64_t SimulatedClock::CurrentNtpInMilliseconds() {
 }
 
 void SimulatedClock::AdvanceTimeMilliseconds(int64_t milliseconds) {
-  AdvanceTime(TimeDelta::ms(milliseconds));
+  AdvanceTime(TimeDelta::Millis(milliseconds));
 }
 
 void SimulatedClock::AdvanceTimeMicroseconds(int64_t microseconds) {
-  AdvanceTime(TimeDelta::us(microseconds));
+  AdvanceTime(TimeDelta::Micros(microseconds));
 }
 
 void SimulatedClock::AdvanceTime(TimeDelta delta) {

@@ -27,7 +27,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import org.chromium.base.test.BaseJUnit4ClassRunner;
 import org.junit.After;
 import org.junit.Before;

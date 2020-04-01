@@ -12,7 +12,7 @@ if (is_android) {
   import("//build/config/android/rules.gni")
 }
 
-rtc_static_library("audio") {
+rtc_library("audio") {
   sources = [
     "audio_level.cc",
     "audio_level.h",
@@ -33,17 +33,12 @@ rtc_static_library("audio") {
     "null_audio_poller.h",
     "remix_resample.cc",
     "remix_resample.h",
-    "transport_feedback_packet_loss_tracker.cc",
-    "transport_feedback_packet_loss_tracker.h",
   ]
 
   deps = [
     "../api:array_view",
     "../api:call_api",
     "../api:function_view",
-
-    # For api/crypto/crypto_options.h
-    "../api:libjingle_peerconnection_api",
     "../api:rtp_headers",
     "../api:rtp_parameters",
     "../api:scoped_refptr",
@@ -52,9 +47,14 @@ rtc_static_library("audio") {
     "../api/audio:audio_frame_api",
     "../api/audio:audio_mixer_api",
     "../api/audio_codecs:audio_codecs_api",
+    "../api/crypto:frame_decryptor_interface",
+    "../api/crypto:frame_encryptor_interface",
+    "../api/crypto:options",
+    "../api/neteq:neteq_api",
     "../api/rtc_event_log",
     "../api/task_queue",
     "../api/transport/rtp:rtp_source",
+    "../call:audio_sender_interface",
     "../call:bitrate_allocator",
     "../call:call_interfaces",
     "../call:rtp_interfaces",
@@ -69,7 +69,6 @@ rtc_static_library("audio") {
     "../modules/audio_device",
     "../modules/audio_processing",
     "../modules/audio_processing:api",
-    "../modules/bitrate_controller",
     "../modules/pacing",
     "../modules/remote_bitrate_estimator",
     "../modules/rtp_rtcp",
@@ -82,7 +81,7 @@ rtc_static_library("audio") {
     "../rtc_base:rtc_base_approved",
     "../rtc_base:rtc_task_queue",
     "../rtc_base:safe_minmax",
-    "../rtc_base/experiments:audio_allocation_settings",
+    "../rtc_base/experiments:field_trial_parser",
     "../system_wrappers",
     "../system_wrappers:field_trial",
     "../system_wrappers:metrics",
@@ -92,7 +91,7 @@ rtc_static_library("audio") {
   ]
 }
 if (rtc_include_tests) {
-  rtc_source_set("audio_end_to_end_test") {
+  rtc_library("audio_end_to_end_test") {
     testonly = true
 
     sources = [
@@ -102,16 +101,16 @@ if (rtc_include_tests) {
     deps = [
       ":audio",
       "../api:simulated_network_api",
+      "../api/task_queue",
       "../call:fake_network",
       "../call:simulated_network",
       "../system_wrappers",
       "../test:test_common",
       "../test:test_support",
-      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 
-  rtc_source_set("audio_tests") {
+  rtc_library("audio_tests") {
     testonly = true
 
     sources = [
@@ -122,14 +121,11 @@ if (rtc_include_tests) {
       "mock_voe_channel_proxy.h",
       "remix_resample_unittest.cc",
       "test/audio_stats_test.cc",
-      "test/media_transport_test.cc",
-      "transport_feedback_packet_loss_tracker_unittest.cc",
     ]
     deps = [
       ":audio",
       ":audio_end_to_end_test",
       "../api:libjingle_peerconnection_api",
-      "../api:loopback_media_transport",
       "../api:mock_audio_mixer",
       "../api:mock_frame_decryptor",
       "../api:mock_frame_encryptor",
@@ -167,12 +163,12 @@ if (rtc_include_tests) {
       "../system_wrappers",
       "../test:audio_codec_mocks",
       "../test:field_trial",
+      "../test:mock_transport",
       "../test:rtp_test_utils",
       "../test:test_common",
       "../test:test_support",
       "utility:utility_tests",
       "//testing/gtest",
-      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 
@@ -204,7 +200,6 @@ if (rtc_include_tests) {
         "../test/pc/e2e:network_quality_metrics_reporter",
         "//testing/gtest",
         "//third_party/abseil-cpp/absl/flags:flag",
-        "//third_party/abseil-cpp/absl/memory",
       ]
       if (is_android) {
         deps += [ "//testing/android/native_test:native_test_native_code" ]
@@ -219,9 +214,7 @@ if (rtc_include_tests) {
     group("low_bandwidth_audio_perf_test") {
       testonly = true
 
-      deps = [
-        ":low_bandwidth_audio_test",
-      ]
+      deps = [ ":low_bandwidth_audio_test" ]
 
       data = [
         "test/low_bandwidth_audio_test.py",
@@ -256,7 +249,7 @@ if (rtc_include_tests) {
     }
   }
 
-  rtc_source_set("audio_perf_tests") {
+  rtc_library("audio_perf_tests") {
     testonly = true
 
     sources = [
@@ -274,16 +267,12 @@ if (rtc_include_tests) {
       "../system_wrappers",
       "../test:field_trial",
       "../test:fileutils",
-      "../test:single_threaded_task_queue",
       "../test:test_common",
       "../test:test_main",
       "../test:test_support",
       "//testing/gtest",
-      "//third_party/abseil-cpp/absl/memory",
     ]
 
-    data = [
-      "//resources/voice_engine/audio_dtx16.wav",
-    ]
+    data = [ "//resources/voice_engine/audio_dtx16.wav" ]
   }
 }

@@ -643,10 +643,9 @@ AudioDeviceModuleIOS::AudioDeviceModuleIOS()
   }
 
   int32_t AudioDeviceModuleIOS::GetPlayoutUnderrunCount() const {
-    RTC_LOG(INFO) << __FUNCTION__;
+    // Don't log here, as this method can be called very often.
     CHECKinitialized_();
     int32_t ok = audio_device_->GetPlayoutUnderrunCount();
-    RTC_LOG(INFO) << "output: " << ok;
     return ok;
   }
 

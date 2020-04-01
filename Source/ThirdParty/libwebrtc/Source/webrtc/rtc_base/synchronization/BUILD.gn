@@ -12,16 +12,10 @@ if (is_android) {
   import("//build/config/android/rules.gni")
 }
 
-rtc_source_set("rw_lock_wrapper") {
-  public = [
-    "rw_lock_wrapper.h",
-  ]
-  sources = [
-    "rw_lock_wrapper.cc",
-  ]
-  deps = [
-    "..:macromagic",
-  ]
+rtc_library("rw_lock_wrapper") {
+  public = [ "rw_lock_wrapper.h" ]
+  sources = [ "rw_lock_wrapper.cc" ]
+  deps = [ "..:macromagic" ]
   if (is_win) {
     sources += [
       "rw_lock_win.cc",
@@ -36,7 +30,7 @@ rtc_source_set("rw_lock_wrapper") {
   }
 }
 
-rtc_source_set("sequence_checker") {
+rtc_library("sequence_checker") {
   sources = [
     "sequence_checker.cc",
     "sequence_checker.h",
@@ -47,10 +41,11 @@ rtc_source_set("sequence_checker") {
     "..:macromagic",
     "..:platform_thread_types",
     "../../api/task_queue",
+    "../system:rtc_export",
   ]
 }
 
-rtc_source_set("yield_policy") {
+rtc_library("yield_policy") {
   sources = [
     "yield_policy.cc",
     "yield_policy.h",
@@ -63,11 +58,9 @@ rtc_source_set("yield_policy") {
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("synchronization_unittests") {
+  rtc_library("synchronization_unittests") {
     testonly = true
-    sources = [
-      "yield_policy_unittest.cc",
-    ]
+    sources = [ "yield_policy_unittest.cc" ]
     deps = [
       ":yield_policy",
       "..:rtc_event",
@@ -75,12 +68,10 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_source_set("sequence_checker_unittests") {
+  rtc_library("sequence_checker_unittests") {
     testonly = true
 
-    sources = [
-      "sequence_checker_unittest.cc",
-    ]
+    sources = [ "sequence_checker_unittest.cc" ]
     deps = [
       ":sequence_checker",
       "..:checks",
@@ -89,7 +80,6 @@ if (rtc_include_tests) {
       "../../api:function_view",
       "../../test:test_main",
       "../../test:test_support",
-      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 }

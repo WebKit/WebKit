@@ -48,6 +48,9 @@ extern const char CONNECTIONROLE_PASSIVE_STR[];
 extern const char CONNECTIONROLE_ACTPASS_STR[];
 extern const char CONNECTIONROLE_HOLDCONN_STR[];
 
+// RFC 6762, the .local pseudo-top-level domain used for mDNS names.
+extern const char LOCAL_TLD[];
+
 // Constants for time intervals are in milliseconds unless otherwise stated.
 //
 // Most of the following constants are the default values of IceConfig

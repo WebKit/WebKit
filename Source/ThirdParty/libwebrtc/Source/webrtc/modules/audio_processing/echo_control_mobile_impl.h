@@ -54,7 +54,6 @@ class EchoControlMobileImpl {
 
   void ProcessRenderAudio(rtc::ArrayView<const int16_t> packed_render_audio);
   int ProcessCaptureAudio(AudioBuffer* audio, int stream_delay_ms);
-  void CopyLowPassReference(AudioBuffer* audio);
 
   void Initialize(int sample_rate_hz,
                   size_t num_reverse_channels,
@@ -79,7 +78,7 @@ class EchoControlMobileImpl {
 
   std::vector<std::unique_ptr<Canceller>> cancellers_;
   std::unique_ptr<StreamProperties> stream_properties_;
-  std::array<std::array<int16_t, 160>, 2> low_pass_reference_;
+  std::vector<std::array<int16_t, 160>> low_pass_reference_;
   bool reference_copied_ = false;
 };
 }  // namespace webrtc

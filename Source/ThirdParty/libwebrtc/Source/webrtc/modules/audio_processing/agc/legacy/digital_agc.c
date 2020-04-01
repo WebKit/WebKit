@@ -15,9 +15,6 @@
 #include "modules/audio_processing/agc/legacy/digital_agc.h"
 
 #include <string.h>
-#ifdef WEBRTC_AGC_DEBUG_DUMP
-#include <stdio.h>
-#endif
 
 #include "rtc_base/checks.h"
 #include "modules/audio_processing/agc/legacy/gain_control.h"
@@ -254,9 +251,6 @@ int32_t WebRtcAgc_InitDigital(DigitalAgc* stt, int16_t agcMode) {
   stt->gain = 65536;
   stt->gatePrevious = 0;
   stt->agcMode = agcMode;
-#ifdef WEBRTC_AGC_DEBUG_DUMP
-  stt->frameCounter = 0;
-#endif
 
   // initialize VADs
   WebRtcAgc_InitVad(&stt->vadNearend);
@@ -275,27 +269,25 @@ int32_t WebRtcAgc_AddFarendToDigital(DigitalAgc* stt,
   return 0;
 }
 
-int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
-                                 const int16_t* const* in_near,
-                                 size_t num_bands,
-                                 int16_t* const* out,
-                                 uint32_t FS,
-                                 int16_t lowlevelSignal) {
-  // array for gains (one value per ms, incl start & end)
-  int32_t gains[11];
-
-  int32_t out_tmp, tmp32;
+// Gains is an 11 element long array (one value per ms, incl start & end).
+int32_t WebRtcAgc_ComputeDigitalGains(DigitalAgc* stt,
+                                      const int16_t* const* in_near,
+                                      size_t num_bands,
+                                      uint32_t FS,
+                                      int16_t lowlevelSignal,
+                                      int32_t gains[11]) {
+  int32_t tmp32;
   int32_t env[10];
   int32_t max_nrg;
   int32_t cur_level;
-  int32_t gain32, delta;
+  int32_t gain32;
   int16_t logratio;
   int16_t lower_thr, upper_thr;
   int16_t zeros = 0, zeros_fast, frac = 0;
   int16_t decay;
   int16_t gate, gain_adj;
   int16_t k;
-  size_t n, i, L;
+  size_t n, L;
   int16_t L2;  // samples/subframe
 
   // determine number of samples per ms
@@ -309,14 +301,8 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
     return -1;
   }
 
-  for (i = 0; i < num_bands; ++i) {
-    if (in_near[i] != out[i]) {
-      // Only needed if they don't already point to the same place.
-      memcpy(out[i], in_near[i], 10 * L * sizeof(in_near[i][0]));
-    }
-  }
   // VAD for near end
-  logratio = WebRtcAgc_ProcessVad(&stt->vadNearend, out[0], L * 10);
+  logratio = WebRtcAgc_ProcessVad(&stt->vadNearend, in_near[0], L * 10);
 
   // Account for far end VAD
   if (stt->vadFarend.counter > 10) {
@@ -358,18 +344,13 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
       decay = 0;
     }
   }
-#ifdef WEBRTC_AGC_DEBUG_DUMP
-  stt->frameCounter++;
-  fprintf(stt->logFile, "%5.2f\t%d\t%d\t%d\t", (float)(stt->frameCounter) / 100,
-          logratio, decay, stt->vadNearend.stdLongTerm);
-#endif
   // Find max amplitude per sub frame
   // iterate over sub frames
   for (k = 0; k < 10; k++) {
     // iterate over samples
     max_nrg = 0;
     for (n = 0; n < L; n++) {
-      int32_t nrg = out[0][k * L + n] * out[0][k * L + n];
+      int32_t nrg = in_near[0][k * L + n] * in_near[0][k * L + n];
       if (nrg > max_nrg) {
         max_nrg = nrg;
       }
@@ -416,12 +397,6 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
     tmp32 = ((stt->gainTable[zeros - 1] - stt->gainTable[zeros]) *
              (int64_t)frac) >> 12;
     gains[k + 1] = stt->gainTable[zeros] + tmp32;
-#ifdef WEBRTC_AGC_DEBUG_DUMP
-    if (k == 0) {
-      fprintf(stt->logFile, "%d\t%d\t%d\t%d\t%d\n", env[0], cur_level,
-              stt->capacitorFast, stt->capacitorSlow, zeros);
-    }
-#endif
   }
 
   // Gate processing (lower gain during absence of speech)
@@ -498,20 +473,47 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
   // save start gain for next frame
   stt->gain = gains[10];
 
+  return 0;
+}
+
+int32_t WebRtcAgc_ApplyDigitalGains(const int32_t gains[11], size_t num_bands,
+                                    uint32_t FS, const int16_t* const* in_near,
+                                    int16_t* const* out) {
   // Apply gain
   // handle first sub frame separately
-  delta = (gains[1] - gains[0]) * (1 << (4 - L2));
-  gain32 = gains[0] * (1 << 4);
+  size_t L;
+  int16_t L2;  // samples/subframe
+
+  // determine number of samples per ms
+  if (FS == 8000) {
+    L = 8;
+    L2 = 3;
+  } else if (FS == 16000 || FS == 32000 || FS == 48000) {
+    L = 16;
+    L2 = 4;
+  } else {
+    return -1;
+  }
+
+  for (size_t i = 0; i < num_bands; ++i) {
+    if (in_near[i] != out[i]) {
+      // Only needed if they don't already point to the same place.
+      memcpy(out[i], in_near[i], 10 * L * sizeof(in_near[i][0]));
+    }
+  }
+
   // iterate over samples
-  for (n = 0; n < L; n++) {
-    for (i = 0; i < num_bands; ++i) {
-      out_tmp = (int64_t)out[i][n] * ((gain32 + 127) >> 7) >> 16;
+  int32_t delta = (gains[1] - gains[0]) * (1 << (4 - L2));
+  int32_t gain32 = gains[0] * (1 << 4);
+  for (size_t n = 0; n < L; n++) {
+    for (size_t i = 0; i < num_bands; ++i) {
+      int32_t out_tmp = (int64_t)out[i][n] * ((gain32 + 127) >> 7) >> 16;
       if (out_tmp > 4095) {
         out[i][n] = (int16_t)32767;
       } else if (out_tmp < -4096) {
         out[i][n] = (int16_t)-32768;
       } else {
-        tmp32 = ((int64_t)out[i][n] * (gain32 >> 4)) >> 16;
+        int32_t tmp32 = ((int64_t)out[i][n] * (gain32 >> 4)) >> 16;
         out[i][n] = (int16_t)tmp32;
       }
     }
@@ -519,12 +521,12 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
     gain32 += delta;
   }
   // iterate over subframes
-  for (k = 1; k < 10; k++) {
+  for (int k = 1; k < 10; k++) {
     delta = (gains[k + 1] - gains[k]) * (1 << (4 - L2));
     gain32 = gains[k] * (1 << 4);
     // iterate over samples
-    for (n = 0; n < L; n++) {
-      for (i = 0; i < num_bands; ++i) {
+    for (size_t n = 0; n < L; n++) {
+      for (size_t i = 0; i < num_bands; ++i) {
         int64_t tmp64 = ((int64_t)(out[i][k * L + n])) * (gain32 >> 4);
         tmp64 = tmp64 >> 16;
         if (tmp64 > 32767) {
@@ -540,7 +542,6 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
       gain32 += delta;
     }
   }
-
   return 0;
 }
 

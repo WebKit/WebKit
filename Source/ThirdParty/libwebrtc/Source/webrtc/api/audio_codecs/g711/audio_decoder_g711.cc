@@ -13,7 +13,6 @@
 #include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/g711/audio_decoder_pcm.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -49,9 +48,9 @@ std::unique_ptr<AudioDecoder> AudioDecoderG711::MakeAudioDecoder(
   RTC_DCHECK(config.IsOk());
   switch (config.type) {
     case Config::Type::kPcmU:
-      return absl::make_unique<AudioDecoderPcmU>(config.num_channels);
+      return std::make_unique<AudioDecoderPcmU>(config.num_channels);
     case Config::Type::kPcmA:
-      return absl::make_unique<AudioDecoderPcmA>(config.num_channels);
+      return std::make_unique<AudioDecoderPcmA>(config.num_channels);
     default:
       return nullptr;
   }

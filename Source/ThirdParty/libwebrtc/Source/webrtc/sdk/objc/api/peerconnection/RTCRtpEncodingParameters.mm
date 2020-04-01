@@ -56,7 +56,8 @@
     if (nativeParameters.ssrc) {
       _ssrc = [NSNumber numberWithUnsignedLong:*nativeParameters.ssrc];
     }
-    _networkPriority = nativeParameters.network_priority;
+    _networkPriority =
+        [RTCRtpEncodingParameters priorityFromNativePriority:nativeParameters.network_priority];
   }
   return self;
 }
@@ -86,8 +87,35 @@
   if (_ssrc != nil) {
     parameters.ssrc = absl::optional<uint32_t>(_ssrc.unsignedLongValue);
   }
-  parameters.network_priority = _networkPriority;
+  parameters.network_priority =
+      [RTCRtpEncodingParameters nativePriorityFromPriority:_networkPriority];
   return parameters;
+}
+
++ (webrtc::Priority)nativePriorityFromPriority:(RTCPriority)networkPriority {
+  switch (networkPriority) {
+    case RTCPriorityVeryLow:
+      return webrtc::Priority::kVeryLow;
+    case RTCPriorityLow:
+      return webrtc::Priority::kLow;
+    case RTCPriorityMedium:
+      return webrtc::Priority::kMedium;
+    case RTCPriorityHigh:
+      return webrtc::Priority::kHigh;
+  }
+}
+
++ (RTCPriority)priorityFromNativePriority:(webrtc::Priority)nativePriority {
+  switch (nativePriority) {
+    case webrtc::Priority::kVeryLow:
+      return RTCPriorityVeryLow;
+    case webrtc::Priority::kLow:
+      return RTCPriorityLow;
+    case webrtc::Priority::kMedium:
+      return RTCPriorityMedium;
+    case webrtc::Priority::kHigh:
+      return RTCPriorityHigh;
+  }
 }
 
 @end

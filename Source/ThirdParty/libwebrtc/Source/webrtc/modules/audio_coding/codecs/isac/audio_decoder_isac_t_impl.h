@@ -22,16 +22,11 @@ bool AudioDecoderIsacT<T>::Config::IsOk() const {
 
 template <typename T>
 AudioDecoderIsacT<T>::AudioDecoderIsacT(const Config& config)
-    : sample_rate_hz_(config.sample_rate_hz), bwinfo_(config.bwinfo) {
+    : sample_rate_hz_(config.sample_rate_hz) {
   RTC_CHECK(config.IsOk()) << "Unsupported sample rate "
                            << config.sample_rate_hz;
   RTC_CHECK_EQ(0, T::Create(&isac_state_));
   T::DecoderInit(isac_state_);
-  if (bwinfo_) {
-    IsacBandwidthInfo bi;
-    T::GetBandwidthInfo(isac_state_, &bi);
-    bwinfo_->Set(bi);
-  }
   RTC_CHECK_EQ(0, T::SetDecSampRate(isac_state_, sample_rate_hz_));
 }
 
@@ -67,23 +62,6 @@ size_t AudioDecoderIsacT<T>::DecodePlc(size_t num_frames, int16_t* decoded) {
 template <typename T>
 void AudioDecoderIsacT<T>::Reset() {
   T::DecoderInit(isac_state_);
-}
-
-template <typename T>
-int AudioDecoderIsacT<T>::IncomingPacket(const uint8_t* payload,
-                                         size_t payload_len,
-                                         uint16_t rtp_sequence_number,
-                                         uint32_t rtp_timestamp,
-                                         uint32_t arrival_timestamp) {
-  int ret = T::UpdateBwEstimate(isac_state_, payload, payload_len,
-                                rtp_sequence_number, rtp_timestamp,
-                                arrival_timestamp);
-  if (bwinfo_) {
-    IsacBandwidthInfo bwinfo;
-    T::GetBandwidthInfo(isac_state_, &bwinfo);
-    bwinfo_->Set(bwinfo);
-  }
-  return ret;
 }
 
 template <typename T>

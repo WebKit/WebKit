@@ -1,0 +1,71 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("resource_adaptation") {
+  sources = [
+    "encoder_settings.cc",
+    "encoder_settings.h",
+    "new_resource_adaptation_processor_poc.cc",
+    "new_resource_adaptation_processor_poc.h",
+    "resource.cc",
+    "resource.h",
+    "resource_adaptation_processor_interface.cc",
+    "resource_adaptation_processor_interface.h",
+    "resource_consumer.cc",
+    "resource_consumer.h",
+    "resource_consumer_configuration.cc",
+    "resource_consumer_configuration.h",
+    "video_source_restrictions.cc",
+    "video_source_restrictions.h",
+  ]
+  deps = [
+    "../../api:rtp_parameters",
+    "../../api/video:video_frame",
+    "../../api/video_codecs:video_codecs_api",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("resource_adaptation_tests") {
+    testonly = true
+
+    sources = [
+      "new_resource_adaptation_processor_poc_unittest.cc",
+      "resource_unittest.cc",
+    ]
+    deps = [
+      ":resource_adaptation",
+      ":resource_adaptation_test_utilities",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base_approved",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
+  }
+
+  rtc_source_set("resource_adaptation_test_utilities") {
+    testonly = true
+
+    sources = [
+      "test/fake_resource.cc",
+      "test/fake_resource.h",
+      "test/fake_resource_consumer_configuration.cc",
+      "test/fake_resource_consumer_configuration.h",
+    ]
+    deps = [
+      ":resource_adaptation",
+      "../../rtc_base:rtc_base_approved",
+    ]
+  }
+}

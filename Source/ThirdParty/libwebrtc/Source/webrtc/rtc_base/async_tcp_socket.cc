@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "api/array_view.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -147,33 +148,42 @@ int AsyncTCPSocketBase::SendTo(const void* pv,
   return -1;
 }
 
-int AsyncTCPSocketBase::SendRaw(const void* pv, size_t cb) {
-  if (outbuf_.size() + cb > max_outsize_) {
-    socket_->SetError(EMSGSIZE);
-    return -1;
-  }
-
-  RTC_DCHECK(!listen_);
-  outbuf_.AppendData(static_cast<const uint8_t*>(pv), cb);
-
-  return FlushOutBuffer();
-}
-
 int AsyncTCPSocketBase::FlushOutBuffer() {
   RTC_DCHECK(!listen_);
-  int res = socket_->Send(outbuf_.data(), outbuf_.size());
-  if (res <= 0) {
-    return res;
+  RTC_DCHECK_GT(outbuf_.size(), 0);
+  rtc::ArrayView<uint8_t> view = outbuf_;
+  int res;
+  while (view.size() > 0) {
+    res = socket_->Send(view.data(), view.size());
+    if (res <= 0) {
+      break;
+    }
+    if (static_cast<size_t>(res) > view.size()) {
+      RTC_NOTREACHED();
+      res = -1;
+      break;
+    }
+    view = view.subview(res);
   }
-  if (static_cast<size_t>(res) > outbuf_.size()) {
-    RTC_NOTREACHED();
-    return -1;
+  if (res > 0) {
+    // The output buffer may have been written out over multiple partial Send(),
+    // so reconstruct the total written length.
+    RTC_DCHECK_EQ(view.size(), 0);
+    res = outbuf_.size();
+    outbuf_.Clear();
+  } else {
+    // There was an error when calling Send(), so there will still be data left
+    // to send at a later point.
+    RTC_DCHECK_GT(view.size(), 0);
+    // In the special case of EWOULDBLOCK, signal that we had a partial write.
+    if (socket_->GetError() == EWOULDBLOCK) {
+      res = outbuf_.size() - view.size();
+    }
+    if (view.size() < outbuf_.size()) {
+      memmove(outbuf_.data(), view.data(), view.size());
+      outbuf_.SetSize(view.size());
+    }
   }
-  size_t new_size = outbuf_.size() - res;
-  if (new_size > 0) {
-    memmove(outbuf_.data(), outbuf_.data() + res, new_size);
-  }
-  outbuf_.SetSize(new_size);
   return res;
 }
 

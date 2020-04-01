@@ -13,12 +13,14 @@
 
 #include <vector>
 
+#include "rtc_base/system/rtc_export.h"
+
 namespace webrtc {
 
 // CryptoOptions defines advanced cryptographic settings for native WebRTC.
 // These settings must be passed into PeerConnectionFactoryInterface::Options
 // and are only applicable to native use cases of WebRTC.
-struct CryptoOptions {
+struct RTC_EXPORT CryptoOptions {
   CryptoOptions();
   CryptoOptions(const CryptoOptions& other);
   ~CryptoOptions();
@@ -46,6 +48,10 @@ struct CryptoOptions {
     // during negotiation. It will only be used if both peers support it and no
     // other ciphers get preferred.
     bool enable_aes128_sha1_32_crypto_cipher = false;
+
+    // The most commonly used cipher. Can be disabled, mostly for testing
+    // purposes.
+    bool enable_aes128_sha1_80_crypto_cipher = true;
 
     // If set to true, encrypted RTP header extensions as defined in RFC 6904
     // will be negotiated. They will only be used if both peers support them.

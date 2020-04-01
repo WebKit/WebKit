@@ -134,6 +134,9 @@ class SctpTransportInternal {
   // Parameter is SID; fired when closing procedure is complete (both incoming
   // and outgoing streams reset).
   sigslot::signal1<int> SignalClosingProcedureComplete;
+  // Fired when the underlying DTLS transport has closed due to an error
+  // or an incoming DTLS disconnect.
+  sigslot::signal0<> SignalClosedAbruptly;
 
   // Helper for debugging.
   virtual void set_debug_name_for_testing(const char* debug_name) = 0;

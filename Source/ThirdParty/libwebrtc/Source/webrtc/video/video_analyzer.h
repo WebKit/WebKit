@@ -16,11 +16,17 @@
 #include <string>
 #include <vector>
 
+#include "api/task_queue/task_queue_base.h"
 #include "api/video/video_source_interface.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
+#include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
+#include "rtc_base/event.h"
 #include "rtc_base/numerics/running_statistics.h"
+#include "rtc_base/platform_thread.h"
 #include "rtc_base/time_utils.h"
 #include "test/layer_filtering_transport.h"
 #include "test/rtp_file_writer.h"
+#include "test/testsupport/perf_test.h"
 
 namespace webrtc {
 
@@ -45,7 +51,7 @@ class VideoAnalyzer : public PacketReceiver,
                 bool is_quick_test_enabled,
                 Clock* clock,
                 std::string rtp_dump_name,
-                test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue);
+                TaskQueueBase* task_queue);
   ~VideoAnalyzer();
 
   virtual void SetReceiver(PacketReceiver* receiver);
@@ -169,9 +175,7 @@ class VideoAnalyzer : public PacketReceiver,
     VideoFrame frame;
   };
 
-  bool IsInSelectedSpatialAndTemporalLayer(const uint8_t* packet,
-                                           size_t length,
-                                           const RTPHeader& header);
+  bool IsInSelectedSpatialAndTemporalLayer(const RtpPacket& rtp_packet);
 
   void AddFrameComparison(const VideoFrame& reference,
                           const VideoFrame& render,
@@ -192,11 +196,16 @@ class VideoAnalyzer : public PacketReceiver,
   bool FrameProcessed();
   void PrintResults();
   void PerformFrameComparison(const FrameComparison& comparison);
-  void PrintResult(const char* result_type, Statistics stats, const char* unit);
-  void PrintResultWithExternalMean(const char* result_type,
-                                   double mean,
-                                   Statistics stats,
-                                   const char* unit);
+  void PrintResult(const char* result_type,
+                   Statistics stats,
+                   const char* unit,
+                   webrtc::test::ImproveDirection improve_direction);
+  void PrintResultWithExternalMean(
+      const char* result_type,
+      double mean,
+      Statistics stats,
+      const char* unit,
+      webrtc::test::ImproveDirection improve_direction);
   void PrintSamplesToFile(void);
   void AddCapturedFrameForComparison(const VideoFrame& video_frame);
 
@@ -286,14 +295,13 @@ class VideoAnalyzer : public PacketReceiver,
   std::deque<FrameComparison> comparisons_ RTC_GUARDED_BY(comparison_lock_);
   bool quit_ RTC_GUARDED_BY(comparison_lock_);
   rtc::Event done_;
-  test::DEPRECATED_SingleThreadedTaskQueueForTesting::TaskId
-      stats_polling_task_id_ RTC_GUARDED_BY(comparison_lock_);
-  bool stop_stats_poller_ RTC_GUARDED_BY(comparison_lock_);
 
+  std::unique_ptr<VideoRtpDepacketizer> vp8_depacketizer_;
+  std::unique_ptr<VideoRtpDepacketizer> vp9_depacketizer_;
   std::unique_ptr<test::RtpFileWriter> rtp_file_writer_;
   Clock* const clock_;
   const int64_t start_ms_;
-  test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue_;
+  TaskQueueBase* task_queue_;
 };
 
 }  // namespace webrtc

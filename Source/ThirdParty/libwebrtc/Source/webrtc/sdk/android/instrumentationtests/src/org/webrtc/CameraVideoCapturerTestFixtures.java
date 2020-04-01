@@ -15,18 +15,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.media.CamcorderProfile;
-import android.os.Environment;
 import android.support.annotation.Nullable;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import org.chromium.base.test.BaseJUnit4ClassRunner;
-import org.junit.runner.RunWith;
 import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
 import org.webrtc.VideoFrame;
 
@@ -479,6 +472,10 @@ class CameraVideoCapturerTestFixtures {
   }
 
   public void switchCamera() throws InterruptedException {
+    switchCamera(false /* specifyCameraName */);
+  }
+
+  public void switchCamera(boolean specifyCameraName) throws InterruptedException {
     if (!testObjectFactory.haveTwoCameras()) {
       Logging.w(
           TAG, "Skipping test switch video capturer because the device doesn't have two cameras.");
@@ -494,18 +491,25 @@ class CameraVideoCapturerTestFixtures {
     // Array with one element to avoid final problem in nested classes.
     final boolean[] cameraSwitchSuccessful = new boolean[1];
     final CountDownLatch barrier = new CountDownLatch(1);
-    capturerInstance.capturer.switchCamera(new CameraVideoCapturer.CameraSwitchHandler() {
-      @Override
-      public void onCameraSwitchDone(boolean isFrontCamera) {
-        cameraSwitchSuccessful[0] = true;
-        barrier.countDown();
-      }
-      @Override
-      public void onCameraSwitchError(String errorDescription) {
-        cameraSwitchSuccessful[0] = false;
-        barrier.countDown();
-      }
-    });
+    final CameraVideoCapturer.CameraSwitchHandler cameraSwitchHandler =
+        new CameraVideoCapturer.CameraSwitchHandler() {
+          @Override
+          public void onCameraSwitchDone(boolean isFrontCamera) {
+            cameraSwitchSuccessful[0] = true;
+            barrier.countDown();
+          }
+          @Override
+          public void onCameraSwitchError(String errorDescription) {
+            cameraSwitchSuccessful[0] = false;
+            barrier.countDown();
+          }
+        };
+    if (specifyCameraName) {
+      String expectedCameraName = testObjectFactory.cameraEnumerator.getDeviceNames()[1];
+      capturerInstance.capturer.switchCamera(cameraSwitchHandler, expectedCameraName);
+    } else {
+      capturerInstance.capturer.switchCamera(cameraSwitchHandler);
+    }
     // Wait until the camera has been switched.
     barrier.await();
 

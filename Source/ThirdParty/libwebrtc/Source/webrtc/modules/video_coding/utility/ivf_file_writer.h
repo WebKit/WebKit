@@ -42,6 +42,9 @@ class IvfFileWriter {
   bool WriteHeader();
   bool InitFromFirstFrame(const EncodedImage& encoded_image,
                           VideoCodecType codec_type);
+  bool WriteOneSpatialLayer(int64_t timestamp,
+                            const uint8_t* data,
+                            size_t size);
 
   VideoCodecType codec_type_;
   size_t bytes_written_;

@@ -19,7 +19,9 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   const int sample_rate_hz = size % 2 == 0 ? 16000 : 32000;     // 16 or 32 kHz.
   static const size_t kAllocatedOuputSizeSamples = 32000 / 10;  // 100 ms.
   int16_t output[kAllocatedOuputSizeSamples];
-  AudioDecoderIsacFloatImpl dec(sample_rate_hz);
+  AudioDecoderIsacFloatImpl::Config c;
+  c.sample_rate_hz = sample_rate_hz;
+  AudioDecoderIsacFloatImpl dec(c);
   FuzzAudioDecoder(DecoderFunctionType::kNormalDecode, data, size, &dec,
                    sample_rate_hz, sizeof(output), output);
 }

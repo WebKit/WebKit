@@ -42,10 +42,7 @@ constexpr size_t SenderReport::kSenderBaseLength;
 // 24 +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
 
 SenderReport::SenderReport()
-    : sender_ssrc_(0),
-      rtp_timestamp_(0),
-      sender_packet_count_(0),
-      sender_octet_count_(0) {}
+    : rtp_timestamp_(0), sender_packet_count_(0), sender_octet_count_(0) {}
 
 SenderReport::SenderReport(const SenderReport&) = default;
 SenderReport::SenderReport(SenderReport&&) = default;
@@ -64,7 +61,7 @@ bool SenderReport::Parse(const CommonHeader& packet) {
   }
   // Read SenderReport header.
   const uint8_t* const payload = packet.payload();
-  sender_ssrc_ = ByteReader<uint32_t>::ReadBigEndian(&payload[0]);
+  SetSenderSsrc(ByteReader<uint32_t>::ReadBigEndian(&payload[0]));
   uint32_t secs = ByteReader<uint32_t>::ReadBigEndian(&payload[4]);
   uint32_t frac = ByteReader<uint32_t>::ReadBigEndian(&payload[8]);
   ntp_.Set(secs, frac);
@@ -102,7 +99,7 @@ bool SenderReport::Create(uint8_t* packet,
   CreateHeader(report_blocks_.size(), kPacketType, HeaderLength(), packet,
                index);
   // Write SenderReport header.
-  ByteWriter<uint32_t>::WriteBigEndian(&packet[*index + 0], sender_ssrc_);
+  ByteWriter<uint32_t>::WriteBigEndian(&packet[*index + 0], sender_ssrc());
   ByteWriter<uint32_t>::WriteBigEndian(&packet[*index + 4], ntp_.seconds());
   ByteWriter<uint32_t>::WriteBigEndian(&packet[*index + 8], ntp_.fractions());
   ByteWriter<uint32_t>::WriteBigEndian(&packet[*index + 12], rtp_timestamp_);

@@ -12,6 +12,7 @@
 
 #include <utility>
 
+#include "api/test/create_frame_generator.h"
 #include "api/video_codecs/video_encoder.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/video_coding/include/video_error_codes.h"
@@ -73,9 +74,9 @@ void VideoCodecUnitTest::SetUp() {
 
   ModifyCodecSettings(&codec_settings_);
 
-  input_frame_generator_ = test::FrameGenerator::CreateSquareGenerator(
+  input_frame_generator_ = test::CreateSquareFrameGenerator(
       codec_settings_.width, codec_settings_.height,
-      test::FrameGenerator::OutputType::kI420, absl::optional<int>());
+      test::FrameGeneratorInterface::OutputType::kI420, absl::optional<int>());
 
   encoder_ = CreateEncoder();
   decoder_ = CreateDecoder();
@@ -93,13 +94,18 @@ void VideoCodecUnitTest::SetUp() {
 
 void VideoCodecUnitTest::ModifyCodecSettings(VideoCodec* codec_settings) {}
 
-VideoFrame* VideoCodecUnitTest::NextInputFrame() {
-  VideoFrame* input_frame = input_frame_generator_->NextFrame();
+VideoFrame VideoCodecUnitTest::NextInputFrame() {
+  test::FrameGeneratorInterface::VideoFrameData frame_data =
+      input_frame_generator_->NextFrame();
+  VideoFrame input_frame = VideoFrame::Builder()
+                               .set_video_frame_buffer(frame_data.buffer)
+                               .set_update_rect(frame_data.update_rect)
+                               .build();
 
   const uint32_t timestamp =
       last_input_frame_timestamp_ +
       kVideoPayloadTypeFrequency / codec_settings_.maxFramerate;
-  input_frame->set_timestamp(timestamp);
+  input_frame.set_timestamp(timestamp);
 
   last_input_frame_timestamp_ = timestamp;
   return input_frame;

@@ -61,7 +61,15 @@ class RtcpTransceiverImpl {
   void SendNack(uint32_t ssrc, std::vector<uint16_t> sequence_numbers);
 
   void SendPictureLossIndication(uint32_t ssrc);
-  void SendFullIntraRequest(rtc::ArrayView<const uint32_t> ssrcs);
+  // If new_request is true then requested sequence no. will increase for each
+  // requested ssrc.
+  void SendFullIntraRequest(rtc::ArrayView<const uint32_t> ssrcs,
+                            bool new_request);
+
+  // SendCombinedRtcpPacket ignores rtcp mode and does not send a compound
+  // message. https://tools.ietf.org/html/rfc4585#section-3.1
+  void SendCombinedRtcpPacket(
+      std::vector<std::unique_ptr<rtcp::RtcpPacket>> rtcp_packets);
 
  private:
   class PacketSender;

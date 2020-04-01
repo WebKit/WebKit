@@ -16,7 +16,6 @@
 #include <limits>
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/time_utils.h"
 
 namespace webrtc {
@@ -75,7 +74,7 @@ void ApiCallStatistics::PrintReport() const {
 
 void ApiCallStatistics::WriteReportToFile(const std::string& filename) const {
   std::unique_ptr<std::ofstream> out =
-      absl::make_unique<std::ofstream>(filename);
+      std::make_unique<std::ofstream>(filename);
   for (auto v : calls_) {
     if (v.call_type == CallType::kRender) {
       *out << "render, ";

@@ -34,6 +34,14 @@ PROXY_WORKER_METHOD2(void,
 PROXY_WORKER_METHOD1(void, RemoveSink, rtc::VideoSinkInterface<VideoFrame>*)
 PROXY_METHOD1(void, RegisterObserver, ObserverInterface*)
 PROXY_METHOD1(void, UnregisterObserver, ObserverInterface*)
+PROXY_CONSTMETHOD0(bool, SupportsEncodedOutput)
+PROXY_WORKER_METHOD0(void, GenerateKeyFrame)
+PROXY_WORKER_METHOD1(void,
+                     AddEncodedSink,
+                     rtc::VideoSinkInterface<RecordableEncodedFrame>*)
+PROXY_WORKER_METHOD1(void,
+                     RemoveEncodedSink,
+                     rtc::VideoSinkInterface<RecordableEncodedFrame>*)
 END_PROXY_MAP()
 
 }  // namespace webrtc

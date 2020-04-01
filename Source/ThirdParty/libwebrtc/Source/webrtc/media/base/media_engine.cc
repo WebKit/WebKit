@@ -70,7 +70,13 @@ webrtc::RTCError CheckRtpParametersValues(
       LOG_AND_RETURN_ERROR(
           RTCErrorType::INVALID_RANGE,
           "Attempted to set RtpParameters scale_resolution_down_by to an "
-          "invalid number. scale_resolution_down_by must be >= 1.0");
+          "invalid value. scale_resolution_down_by must be >= 1.0");
+    }
+    if (rtp_parameters.encodings[i].max_framerate &&
+        *rtp_parameters.encodings[i].max_framerate < 0.0) {
+      LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_RANGE,
+                           "Attempted to set RtpParameters max_framerate to an "
+                           "invalid value. max_framerate must be >= 0.0");
     }
     if (rtp_parameters.encodings[i].min_bitrate_bps &&
         rtp_parameters.encodings[i].max_bitrate_bps) {

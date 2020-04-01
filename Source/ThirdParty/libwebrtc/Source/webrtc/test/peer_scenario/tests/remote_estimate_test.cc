@@ -41,7 +41,7 @@ absl::optional<RTPHeaderExtension> GetRtpPacketExtensions(
 }  // namespace
 
 TEST(RemoteEstimateEndToEnd, OfferedCapabilityIsInAnswer) {
-  PeerScenario s;
+  PeerScenario s(*test_info_);
 
   auto* caller = s.CreateClient(PeerScenarioClient::Config());
   auto* callee = s.CreateClient(PeerScenarioClient::Config());
@@ -54,7 +54,7 @@ TEST(RemoteEstimateEndToEnd, OfferedCapabilityIsInAnswer) {
 
   auto signaling = s.ConnectSignaling(caller, callee, send_link, ret_link);
   caller->CreateVideo("VIDEO", PeerScenarioClient::VideoSendTrackConfig());
-  rtc::Event offer_exchange_done;
+  std::atomic<bool> offer_exchange_done(false);
   signaling.NegotiateSdp(
       [](SessionDescriptionInterface* offer) {
         for (auto& cont : offer->description()->contents()) {
@@ -65,16 +65,15 @@ TEST(RemoteEstimateEndToEnd, OfferedCapabilityIsInAnswer) {
         for (auto& cont : answer.description()->contents()) {
           EXPECT_TRUE(cont.media_description()->remote_estimate());
         }
-        offer_exchange_done.Set();
+        offer_exchange_done = true;
       });
   RTC_CHECK(s.WaitAndProcess(&offer_exchange_done));
 }
 
 TEST(RemoteEstimateEndToEnd, AudioUsesAbsSendTimeExtension) {
-  ScopedFieldTrials trials("WebRTC-KeepAbsSendTimeExtension/Enabled/");
   // Defined before PeerScenario so it gets destructed after, to avoid use after free.
-  rtc::Event received_abs_send_time;
-  PeerScenario s;
+  std::atomic<bool> received_abs_send_time(false);
+  PeerScenario s(*test_info_);
 
   auto* caller = s.CreateClient(PeerScenarioClient::Config());
   auto* callee = s.CreateClient(PeerScenarioClient::Config());
@@ -89,7 +88,7 @@ TEST(RemoteEstimateEndToEnd, AudioUsesAbsSendTimeExtension) {
   caller->CreateAudio("AUDIO", cricket::AudioOptions());
   signaling.StartIceSignaling();
   RtpHeaderExtensionMap extension_map;
-  rtc::Event offer_exchange_done;
+  std::atomic<bool> offer_exchange_done(false);
   signaling.NegotiateSdp(
       [&extension_map](SessionDescriptionInterface* offer) {
         extension_map = AudioExtensions(*offer);
@@ -98,7 +97,7 @@ TEST(RemoteEstimateEndToEnd, AudioUsesAbsSendTimeExtension) {
       [&](const SessionDescriptionInterface& answer) {
         EXPECT_TRUE(AudioExtensions(answer).IsRegistered(
             kRtpExtensionAbsoluteSendTime));
-        offer_exchange_done.Set();
+        offer_exchange_done = true;
       });
   RTC_CHECK(s.WaitAndProcess(&offer_exchange_done));
   send_node->router()->SetWatcher(
@@ -111,7 +110,7 @@ TEST(RemoteEstimateEndToEnd, AudioUsesAbsSendTimeExtension) {
           auto extensions = GetRtpPacketExtensions(packet.data, extension_map);
           if (extensions) {
             EXPECT_TRUE(extensions->hasAbsoluteSendTime);
-            received_abs_send_time.Set();
+            received_abs_send_time = true;
           }
         }
       });

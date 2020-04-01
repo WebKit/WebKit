@@ -13,7 +13,6 @@
 #include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/g722/audio_encoder_g722.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -62,7 +61,7 @@ std::unique_ptr<AudioEncoder> AudioEncoderG722::MakeAudioEncoder(
     int payload_type,
     absl::optional<AudioCodecPairId> /*codec_pair_id*/) {
   RTC_DCHECK(config.IsOk());
-  return absl::make_unique<AudioEncoderG722Impl>(config, payload_type);
+  return std::make_unique<AudioEncoderG722Impl>(config, payload_type);
 }
 
 }  // namespace webrtc

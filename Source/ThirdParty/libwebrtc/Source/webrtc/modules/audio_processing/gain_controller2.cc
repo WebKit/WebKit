@@ -27,8 +27,11 @@ GainController2::GainController2()
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
       gain_applier_(/*hard_clip_samples=*/false,
                     /*initial_gain_factor=*/0.f),
-      adaptive_agc_(new AdaptiveAgc(data_dumper_.get())),
-      limiter_(static_cast<size_t>(48000), data_dumper_.get(), "Agc2") {}
+      limiter_(static_cast<size_t>(48000), data_dumper_.get(), "Agc2") {
+  if (config_.adaptive_digital.enabled) {
+    adaptive_agc_.reset(new AdaptiveAgc(data_dumper_.get()));
+  }
+}
 
 GainController2::~GainController2() = default;
 
@@ -47,14 +50,14 @@ void GainController2::Process(AudioBuffer* audio) {
                                     audio->num_frames());
   // Apply fixed gain first, then the adaptive one.
   gain_applier_.ApplyGain(float_frame);
-  if (config_.adaptive_digital.enabled) {
+  if (adaptive_agc_) {
     adaptive_agc_->Process(float_frame, limiter_.LastAudioLevel());
   }
   limiter_.Process(float_frame);
 }
 
 void GainController2::NotifyAnalogLevel(int level) {
-  if (analog_level_ != level && config_.adaptive_digital.enabled) {
+  if (analog_level_ != level && adaptive_agc_) {
     adaptive_agc_->Reset();
   }
   analog_level_ = level;
@@ -72,7 +75,11 @@ void GainController2::ApplyConfig(
     limiter_.Reset();
   }
   gain_applier_.SetGainFactor(DbToRatio(config_.fixed_digital.gain_db));
-  adaptive_agc_.reset(new AdaptiveAgc(data_dumper_.get(), config_));
+  if (config_.adaptive_digital.enabled) {
+    adaptive_agc_.reset(new AdaptiveAgc(data_dumper_.get(), config_));
+  } else {
+    adaptive_agc_.reset();
+  }
 }
 
 bool GainController2::Validate(
@@ -100,15 +107,15 @@ std::string GainController2::ToString(
   // clang-format off
   // clang formatting doesn't respect custom nested style.
   ss << "{"
-     << "enabled: " << (config.enabled ? "true" : "false") << ", "
-     << "fixed_digital: {gain_db: " << config.fixed_digital.gain_db << "}, "
-     << "adaptive_digital: {"
-      << "enabled: "
-        << (config.adaptive_digital.enabled ? "true" : "false") << ", "
-      << "level_estimator: " << adaptive_digital_level_estimator << ", "
-      << "extra_saturation_margin_db:"
-        << config.adaptive_digital.extra_saturation_margin_db << "}"
-      << "}";
+        "enabled: " << (config.enabled ? "true" : "false") << ", "
+        "fixed_digital: {gain_db: " << config.fixed_digital.gain_db << "}, "
+        "adaptive_digital: {"
+          "enabled: "
+            << (config.adaptive_digital.enabled ? "true" : "false") << ", "
+          "level_estimator: " << adaptive_digital_level_estimator << ", "
+          "extra_saturation_margin_db:"
+            << config.adaptive_digital.extra_saturation_margin_db << "}"
+          "}";
   // clang-format on
   return ss.Release();
 }

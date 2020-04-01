@@ -20,6 +20,28 @@ namespace jni {
 
 namespace {
 
+webrtc::DegradationPreference JavaToNativeDegradationPreference(
+    JNIEnv* jni,
+    const JavaRef<jobject>& j_degradation_preference) {
+  std::string enum_name = GetJavaEnumName(jni, j_degradation_preference);
+
+  if (enum_name == "DISABLED")
+    return webrtc::DegradationPreference::DISABLED;
+
+  if (enum_name == "MAINTAIN_FRAMERATE")
+    return webrtc::DegradationPreference::MAINTAIN_FRAMERATE;
+
+  if (enum_name == "MAINTAIN_RESOLUTION")
+    return webrtc::DegradationPreference::MAINTAIN_RESOLUTION;
+
+  if (enum_name == "BALANCED")
+    return webrtc::DegradationPreference::BALANCED;
+
+  RTC_CHECK(false) << "Unexpected DegradationPreference enum_name "
+                   << enum_name;
+  return webrtc::DegradationPreference::DISABLED;
+}
+
 ScopedJavaLocalRef<jobject> NativeToJavaRtpEncodingParameter(
     JNIEnv* env,
     const RtpEncodingParameters& encoding) {
@@ -103,6 +125,13 @@ RtpParameters JavaToNativeRtpParameters(JNIEnv* jni,
       Java_RtpParameters_getTransactionId(jni, j_parameters);
   parameters.transaction_id = JavaToNativeString(jni, j_transaction_id);
 
+  ScopedJavaLocalRef<jobject> j_degradation_preference =
+      Java_RtpParameters_getDegradationPreference(jni, j_parameters);
+  if (!IsNull(jni, j_degradation_preference)) {
+    parameters.degradation_preference =
+        JavaToNativeDegradationPreference(jni, j_degradation_preference);
+  }
+
   ScopedJavaLocalRef<jobject> j_rtcp =
       Java_RtpParameters_getRtcp(jni, j_parameters);
   ScopedJavaLocalRef<jstring> j_rtcp_cname = Java_Rtcp_getCname(jni, j_rtcp);
@@ -158,6 +187,10 @@ ScopedJavaLocalRef<jobject> NativeToJavaRtpParameters(
     const RtpParameters& parameters) {
   return Java_RtpParameters_Constructor(
       env, NativeToJavaString(env, parameters.transaction_id),
+      parameters.degradation_preference.has_value()
+          ? Java_DegradationPreference_fromNativeIndex(
+                env, static_cast<int>(*parameters.degradation_preference))
+          : nullptr,
       NativeToJavaRtpRtcpParameters(env, parameters.rtcp),
       NativeToJavaList(env, parameters.header_extensions,
                        &NativeToJavaRtpHeaderExtensionParameter),

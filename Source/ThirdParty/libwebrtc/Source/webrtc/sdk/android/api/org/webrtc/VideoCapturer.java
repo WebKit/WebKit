@@ -11,7 +11,6 @@
 package org.webrtc;
 
 import android.content.Context;
-import java.util.List;
 
 // Base interface for all VideoCapturers to implement.
 public interface VideoCapturer {

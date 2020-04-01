@@ -260,30 +260,6 @@ TEST_F(TransportDescriptionFactoryTest, TestAnswerNoOpaqueTransportParameters) {
 }
 
 TEST_F(TransportDescriptionFactoryTest,
-       TestAnswerDifferentOpaqueTransportParameters) {
-  OpaqueTransportParameters offer_params;
-  offer_params.protocol = "fake";
-  offer_params.parameters = "foobar";
-
-  TransportOptions options;
-  options.opaque_parameters = offer_params;
-
-  std::unique_ptr<TransportDescription> offer =
-      f1_.CreateOffer(options, NULL, &ice_credentials_);
-
-  OpaqueTransportParameters answer_params;
-  answer_params.protocol = "fake";
-  answer_params.parameters = "baz";
-
-  options.opaque_parameters = answer_params;
-  std::unique_ptr<TransportDescription> answer =
-      f2_.CreateAnswer(offer.get(), options, true, NULL, &ice_credentials_);
-
-  CheckDesc(answer.get(), "", "", "", "");
-  EXPECT_EQ(answer->opaque_parameters, absl::nullopt);
-}
-
-TEST_F(TransportDescriptionFactoryTest,
        TestAnswerNoOpaqueTransportParametersInOffer) {
   std::unique_ptr<TransportDescription> offer =
       f1_.CreateOffer(TransportOptions(), NULL, &ice_credentials_);

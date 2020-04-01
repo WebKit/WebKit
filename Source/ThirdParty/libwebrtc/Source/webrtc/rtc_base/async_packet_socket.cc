@@ -10,8 +10,6 @@
 
 #include "rtc_base/async_packet_socket.h"
 
-#include "rtc_base/net_helper.h"
-
 namespace rtc {
 
 PacketTimeUpdateParams::PacketTimeUpdateParams() = default;
@@ -35,12 +33,7 @@ void CopySocketInformationToPacketInfo(size_t packet_size_bytes,
                                        bool is_connectionless,
                                        rtc::PacketInfo* info) {
   info->packet_size_bytes = packet_size_bytes;
-  // TODO(srte): Make sure that the family of the local socket is always set
-  // in the VirtualSocket implementation and remove this check.
-  int family = socket_from.GetLocalAddress().family();
-  if (family != 0) {
-    info->ip_overhead_bytes = cricket::GetIpOverhead(family);
-  }
+  info->ip_overhead_bytes = socket_from.GetLocalAddress().ipaddr().overhead();
 }
 
 }  // namespace rtc

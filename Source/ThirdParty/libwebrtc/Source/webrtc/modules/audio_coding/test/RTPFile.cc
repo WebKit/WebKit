@@ -20,7 +20,6 @@
 #include <arpa/inet.h>
 #endif
 
-#include "modules/include/module_common_types.h"
 // TODO(tlegrand): Consider removing usage of gtest.
 #include "test/gtest.h"
 

@@ -13,12 +13,12 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstdio>
+#include <memory>
 #include <string>
 #include <utility>
 
-#include "absl/memory/memory.h"
+#include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log/rtc_event_log.h"
-#include "logging/rtc_event_log/events/rtc_event.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
 #include "modules/congestion_controller/goog_cc/trendline_estimator.h"
 #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
@@ -28,19 +28,52 @@
 
 namespace webrtc {
 namespace {
-constexpr TimeDelta kStreamTimeOut = TimeDelta::Seconds<2>();
+constexpr TimeDelta kStreamTimeOut = TimeDelta::Seconds(2);
 constexpr int kTimestampGroupLengthMs = 5;
 constexpr int kAbsSendTimeFraction = 18;
 constexpr int kAbsSendTimeInterArrivalUpshift = 8;
 constexpr int kInterArrivalShift =
     kAbsSendTimeFraction + kAbsSendTimeInterArrivalUpshift;
+constexpr int kTimestampGroupTicks =
+    (kTimestampGroupLengthMs << kInterArrivalShift) / 1000;
 constexpr double kTimestampToMs =
     1000.0 / static_cast<double>(1 << kInterArrivalShift);
+
 // This ssrc is used to fulfill the current API but will be removed
 // after the API has been changed.
 constexpr uint32_t kFixedSsrc = 0;
-
 }  // namespace
+
+constexpr char BweIgnoreSmallPacketsSettings::kKey[];
+constexpr char BweSeparateAudioPacketsSettings::kKey[];
+
+BweIgnoreSmallPacketsSettings::BweIgnoreSmallPacketsSettings(
+    const WebRtcKeyValueConfig* key_value_config) {
+  Parser()->Parse(
+      key_value_config->Lookup(BweIgnoreSmallPacketsSettings::kKey));
+}
+
+std::unique_ptr<StructParametersParser>
+BweIgnoreSmallPacketsSettings::Parser() {
+  return StructParametersParser::Create("smoothing", &smoothing_factor,     //
+                                        "fraction_large", &fraction_large,  //
+                                        "large", &large_threshold,          //
+                                        "small", &small_threshold);
+}
+
+BweSeparateAudioPacketsSettings::BweSeparateAudioPacketsSettings(
+    const WebRtcKeyValueConfig* key_value_config) {
+  Parser()->Parse(
+      key_value_config->Lookup(BweSeparateAudioPacketsSettings::kKey));
+}
+
+std::unique_ptr<StructParametersParser>
+BweSeparateAudioPacketsSettings::Parser() {
+  return StructParametersParser::Create(      //
+      "enabled", &enabled,                    //
+      "packet_threshold", &packet_threshold,  //
+      "time_threshold", &time_threshold);
+}
 
 DelayBasedBwe::Result::Result()
     : updated(false),
@@ -56,25 +89,40 @@ DelayBasedBwe::Result::Result(bool probe, DataRate target_bitrate)
       recovered_from_overuse(false),
       backoff_in_alr(false) {}
 
-DelayBasedBwe::Result::~Result() {}
-
 DelayBasedBwe::DelayBasedBwe(const WebRtcKeyValueConfig* key_value_config,
                              RtcEventLog* event_log,
                              NetworkStatePredictor* network_state_predictor)
     : event_log_(event_log),
       key_value_config_(key_value_config),
+      ignore_small_(key_value_config),
+      fraction_large_packets_(0.5),
+      separate_audio_(key_value_config),
+      audio_packets_since_last_video_(0),
+      last_video_packet_recv_time_(Timestamp::MinusInfinity()),
       network_state_predictor_(network_state_predictor),
-      inter_arrival_(),
-      delay_detector_(
+      video_inter_arrival_(),
+      video_delay_detector_(
           new TrendlineEstimator(key_value_config_, network_state_predictor_)),
+      audio_inter_arrival_(),
+      audio_delay_detector_(
+          new TrendlineEstimator(key_value_config_, network_state_predictor_)),
+      active_delay_detector_(video_delay_detector_.get()),
       last_seen_packet_(Timestamp::MinusInfinity()),
       uma_recorded_(false),
       rate_control_(key_value_config, /*send_side=*/true),
       prev_bitrate_(DataRate::Zero()),
+      has_once_detected_overuse_(false),
       prev_state_(BandwidthUsage::kBwNormal),
       alr_limited_backoff_enabled_(
           key_value_config->Lookup("WebRTC-Bwe-AlrLimitedBackoff")
-              .find("Enabled") == 0) {}
+              .find("Enabled") == 0) {
+  RTC_LOG(LS_INFO) << "Initialized DelayBasedBwe with small packet filtering "
+                   << ignore_small_.Parser()->Encode()
+                   << ", separate audio overuse detection"
+                   << separate_audio_.Parser()->Encode()
+                   << " and alr limited backoff "
+                   << (alr_limited_backoff_enabled_ ? "enabled" : "disabled");
+}
 
 DelayBasedBwe::~DelayBasedBwe() {}
 
@@ -103,15 +151,15 @@ DelayBasedBwe::Result DelayBasedBwe::IncomingPacketFeedbackVector(
   }
   bool delayed_feedback = true;
   bool recovered_from_overuse = false;
-  BandwidthUsage prev_detector_state = delay_detector_->State();
+  BandwidthUsage prev_detector_state = active_delay_detector_->State();
   for (const auto& packet_feedback : packet_feedback_vector) {
     delayed_feedback = false;
     IncomingPacketFeedback(packet_feedback, msg.feedback_time);
     if (prev_detector_state == BandwidthUsage::kBwUnderusing &&
-        delay_detector_->State() == BandwidthUsage::kBwNormal) {
+        active_delay_detector_->State() == BandwidthUsage::kBwNormal) {
       recovered_from_overuse = true;
     }
-    prev_detector_state = delay_detector_->State();
+    prev_detector_state = active_delay_detector_->State();
   }
 
   if (delayed_feedback) {
@@ -131,13 +179,56 @@ void DelayBasedBwe::IncomingPacketFeedback(const PacketResult& packet_feedback,
   // Reset if the stream has timed out.
   if (last_seen_packet_.IsInfinite() ||
       at_time - last_seen_packet_ > kStreamTimeOut) {
-    inter_arrival_.reset(
-        new InterArrival((kTimestampGroupLengthMs << kInterArrivalShift) / 1000,
-                         kTimestampToMs, true));
-    delay_detector_.reset(
+    video_inter_arrival_.reset(
+        new InterArrival(kTimestampGroupTicks, kTimestampToMs, true));
+    video_delay_detector_.reset(
         new TrendlineEstimator(key_value_config_, network_state_predictor_));
+    audio_inter_arrival_.reset(
+        new InterArrival(kTimestampGroupTicks, kTimestampToMs, true));
+    audio_delay_detector_.reset(
+        new TrendlineEstimator(key_value_config_, network_state_predictor_));
+    active_delay_detector_ = video_delay_detector_.get();
   }
   last_seen_packet_ = at_time;
+
+  // Ignore "small" packets if many/most packets in the call are "large". The
+  // packet size may have a significant effect on the propagation delay,
+  // especially at low bandwidths. Variations in packet size will then show up
+  // as noise in the delay measurement. By default, we include all packets.
+  DataSize packet_size = packet_feedback.sent_packet.size;
+  if (!ignore_small_.small_threshold.IsZero()) {
+    double is_large =
+        static_cast<double>(packet_size >= ignore_small_.large_threshold);
+    fraction_large_packets_ +=
+        ignore_small_.smoothing_factor * (is_large - fraction_large_packets_);
+    if (packet_size <= ignore_small_.small_threshold &&
+        fraction_large_packets_ >= ignore_small_.fraction_large) {
+      return;
+    }
+  }
+
+  // As an alternative to ignoring small packets, we can separate audio and
+  // video packets for overuse detection.
+  InterArrival* inter_arrival_for_packet = video_inter_arrival_.get();
+  DelayIncreaseDetectorInterface* delay_detector_for_packet =
+      video_delay_detector_.get();
+  if (separate_audio_.enabled) {
+    if (packet_feedback.sent_packet.audio) {
+      inter_arrival_for_packet = audio_inter_arrival_.get();
+      delay_detector_for_packet = audio_delay_detector_.get();
+      audio_packets_since_last_video_++;
+      if (audio_packets_since_last_video_ > separate_audio_.packet_threshold &&
+          packet_feedback.receive_time - last_video_packet_recv_time_ >
+              separate_audio_.time_threshold) {
+        active_delay_detector_ = audio_delay_detector_.get();
+      }
+    } else {
+      audio_packets_since_last_video_ = 0;
+      last_video_packet_recv_time_ =
+          std::max(last_video_packet_recv_time_, packet_feedback.receive_time);
+      active_delay_detector_ = video_delay_detector_.get();
+    }
+  }
 
   uint32_t send_time_24bits =
       static_cast<uint32_t>(
@@ -150,18 +241,17 @@ void DelayBasedBwe::IncomingPacketFeedback(const PacketResult& packet_feedback,
   // so wrapping works properly.
   uint32_t timestamp = send_time_24bits << kAbsSendTimeInterArrivalUpshift;
 
-  uint32_t ts_delta = 0;
-  int64_t t_delta = 0;
+  uint32_t timestamp_delta = 0;
+  int64_t recv_delta_ms = 0;
   int size_delta = 0;
-  bool calculated_deltas = inter_arrival_->ComputeDeltas(
+  bool calculated_deltas = inter_arrival_for_packet->ComputeDeltas(
       timestamp, packet_feedback.receive_time.ms(), at_time.ms(),
-      packet_feedback.sent_packet.size.bytes(), &ts_delta, &t_delta,
-      &size_delta);
-  double ts_delta_ms = (1000.0 * ts_delta) / (1 << kInterArrivalShift);
-  delay_detector_->Update(
-      t_delta, ts_delta_ms, packet_feedback.sent_packet.send_time.ms(),
-      packet_feedback.receive_time.ms(),
-      packet_feedback.sent_packet.size.bytes(), calculated_deltas);
+      packet_size.bytes(), &timestamp_delta, &recv_delta_ms, &size_delta);
+  double send_delta_ms = (1000.0 * timestamp_delta) / (1 << kInterArrivalShift);
+  delay_detector_for_packet->Update(recv_delta_ms, send_delta_ms,
+                                    packet_feedback.sent_packet.send_time.ms(),
+                                    packet_feedback.receive_time.ms(),
+                                    packet_size.bytes(), calculated_deltas);
 }
 
 DataRate DelayBasedBwe::TriggerOveruse(Timestamp at_time,
@@ -180,8 +270,8 @@ DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
   Result result;
 
   // Currently overusing the bandwidth.
-  if (delay_detector_->State() == BandwidthUsage::kBwOverusing) {
-    if (in_alr && alr_limited_backoff_enabled_) {
+  if (active_delay_detector_->State() == BandwidthUsage::kBwOverusing) {
+    if (has_once_detected_overuse_ && in_alr && alr_limited_backoff_enabled_) {
       if (rate_control_.TimeToReduceFurther(at_time, prev_bitrate_)) {
         result.updated =
             UpdateEstimate(at_time, prev_bitrate_, &result.target_bitrate);
@@ -202,6 +292,7 @@ DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
       result.probe = false;
       result.target_bitrate = rate_control_.LatestEstimate();
     }
+    has_once_detected_overuse_ = true;
   } else {
     if (probe_bitrate) {
       result.probe = true;
@@ -214,7 +305,7 @@ DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
       result.recovered_from_overuse = recovered_from_overuse;
     }
   }
-  BandwidthUsage detector_state = delay_detector_->State();
+  BandwidthUsage detector_state = active_delay_detector_->State();
   if ((result.updated && prev_bitrate_ != result.target_bitrate) ||
       detector_state != prev_state_) {
     DataRate bitrate = result.updated ? result.target_bitrate : prev_bitrate_;
@@ -222,7 +313,7 @@ DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
     BWE_TEST_LOGGING_PLOT(1, "target_bitrate_bps", at_time.ms(), bitrate.bps());
 
     if (event_log_) {
-      event_log_->Log(absl::make_unique<RtcEventBweUpdateDelayBased>(
+      event_log_->Log(std::make_unique<RtcEventBweUpdateDelayBased>(
           bitrate.bps(), detector_state));
     }
 
@@ -235,7 +326,7 @@ DelayBasedBwe::Result DelayBasedBwe::MaybeUpdateEstimate(
 bool DelayBasedBwe::UpdateEstimate(Timestamp at_time,
                                    absl::optional<DataRate> acked_bitrate,
                                    DataRate* target_rate) {
-  const RateControlInput input(delay_detector_->State(), acked_bitrate);
+  const RateControlInput input(active_delay_detector_->State(), acked_bitrate);
   *target_rate = rate_control_.Update(&input, at_time);
   return rate_control_.ValidEstimate();
 }

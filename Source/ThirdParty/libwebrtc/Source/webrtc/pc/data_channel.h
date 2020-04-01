@@ -146,6 +146,7 @@ class DataChannel : public DataChannelInterface, public sigslot::has_slots<> {
   virtual uint64_t buffered_amount() const;
   virtual void Close();
   virtual DataState state() const { return state_; }
+  virtual RTCError error() const;
   virtual uint32_t messages_sent() const { return messages_sent_; }
   virtual uint64_t bytes_sent() const { return bytes_sent_; }
   virtual uint32_t messages_received() const { return messages_received_; }
@@ -157,7 +158,11 @@ class DataChannel : public DataChannelInterface, public sigslot::has_slots<> {
   // be removed, or SCTP data channels when the underlying SctpTransport is
   // being destroyed.
   // It is also called by the PeerConnection if SCTP ID assignment fails.
-  void CloseAbruptly();
+  void CloseAbruptlyWithError(RTCError error);
+  // Specializations of CloseAbruptlyWithError
+  void CloseAbruptlyWithDataChannelFailure(const std::string& message);
+  void CloseAbruptlyWithSctpCauseCode(const std::string& message,
+                                      uint16_t cause_code);
 
   // Called when the channel's ready to use.  That can happen when the
   // underlying DataMediaChannel becomes ready, or when this channel is a new
@@ -185,10 +190,10 @@ class DataChannel : public DataChannelInterface, public sigslot::has_slots<> {
   // Called when the transport channel is created.
   // Only needs to be called for SCTP data channels.
   void OnTransportChannelCreated();
-  // Called when the transport channel is destroyed.
+  // Called when the transport channel is unusable.
   // This method makes sure the DataChannel is disconnected and changes state
   // to kClosed.
-  void OnTransportChannelDestroyed();
+  void OnTransportChannelClosed();
 
   /*******************************************
    * The following methods are for RTP only. *
@@ -277,6 +282,7 @@ class DataChannel : public DataChannelInterface, public sigslot::has_slots<> {
   InternalDataChannelInit config_;
   DataChannelObserver* observer_;
   DataState state_;
+  RTCError error_;
   uint32_t messages_sent_;
   uint64_t bytes_sent_;
   uint32_t messages_received_;
@@ -319,6 +325,7 @@ PROXY_CONSTMETHOD0(std::string, protocol)
 PROXY_CONSTMETHOD0(bool, negotiated)
 PROXY_CONSTMETHOD0(int, id)
 PROXY_CONSTMETHOD0(DataState, state)
+PROXY_CONSTMETHOD0(RTCError, error)
 PROXY_CONSTMETHOD0(uint32_t, messages_sent)
 PROXY_CONSTMETHOD0(uint64_t, bytes_sent)
 PROXY_CONSTMETHOD0(uint32_t, messages_received)

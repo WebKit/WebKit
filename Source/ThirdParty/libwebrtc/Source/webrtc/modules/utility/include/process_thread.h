@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "api/task_queue/queued_task.h"
+#include "api/task_queue/task_queue_base.h"
 
 namespace rtc {
 class Location;
@@ -26,9 +27,9 @@ class Module;
 // interface.  There exists one override besides ProcessThreadImpl,
 // MockProcessThread, but when looking at how it is used, it seems
 // a nullptr might suffice (or simply an actual ProcessThread instance).
-class ProcessThread {
+class ProcessThread : public TaskQueueBase {
  public:
-  virtual ~ProcessThread();
+  ~ProcessThread() override;
 
   static std::unique_ptr<ProcessThread> Create(const char* thread_name);
 
@@ -44,14 +45,6 @@ class ProcessThread {
   // return 0 from TimeUntilNextProcess on the worker thread at that point).
   // Can be called on any thread.
   virtual void WakeUp(Module* module) = 0;
-
-  // Queues a task object to run on the worker thread.  Ownership of the
-  // task object is transferred to the ProcessThread and the object will
-  // either be deleted after running on the worker thread, or on the
-  // construction thread of the ProcessThread instance, if the task did not
-  // get a chance to run (e.g. posting the task while shutting down or when
-  // the thread never runs).
-  virtual void PostTask(std::unique_ptr<QueuedTask> task) = 0;
 
   // Adds a module that will start to receive callbacks on the worker thread.
   // Can be called from any thread.

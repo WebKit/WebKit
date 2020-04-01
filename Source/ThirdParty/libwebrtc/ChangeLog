@@ -1,3 +1,16 @@
+2020-04-01  youenn fablet  <youenn@apple.com> and Victor M. Jaquez <vjaquez@igalia.com>
+
+        Bump libwebrtc to M82
+        https://bugs.webkit.org/show_bug.cgi?id=209542
+
+        Reviewed by Eric Carlson.
+
+        * CMakeLists.txt:
+        * Source/webrtc: Updated.
+        * Source/webrtc/audio/utility/channel_mixer.cc: Added cstring.h include.
+        * Source/webrtc/modules/audio_processing/aec3/reverb_model_estimator.h: Added memoty.h include.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-04-01  Youenn Fablet  <youenn@apple.com>
 
         Use kVTVideoEncoderSpecification_RequiredLowLatency instead of kVTVideoEncoderList_EncoderID

@@ -8,7 +8,7 @@
 
 import("../../../webrtc.gni")
 
-rtc_static_library("aec3") {
+rtc_library("aec3") {
   visibility = [ "*" ]
   configs += [ "..:apm_debug_dump" ]
   sources = [
@@ -22,6 +22,8 @@ rtc_static_library("aec3") {
     "aec3_fft.h",
     "aec_state.cc",
     "aec_state.h",
+    "alignment_mixer.cc",
+    "alignment_mixer.h",
     "api_call_jitter_metrics.cc",
     "api_call_jitter_metrics.h",
     "block_buffer.cc",
@@ -41,6 +43,8 @@ rtc_static_library("aec3") {
     "decimator.cc",
     "decimator.h",
     "delay_estimate.h",
+    "dominant_nearend_detector.cc",
+    "dominant_nearend_detector.h",
     "downsampled_render_buffer.cc",
     "downsampled_render_buffer.h",
     "echo_audibility.cc",
@@ -76,6 +80,7 @@ rtc_static_library("aec3") {
     "matched_filter_lag_aggregator.h",
     "moving_average.cc",
     "moving_average.h",
+    "nearend_detector.h",
     "render_buffer.cc",
     "render_buffer.h",
     "render_delay_buffer.cc",
@@ -84,8 +89,6 @@ rtc_static_library("aec3") {
     "render_delay_controller.h",
     "render_delay_controller_metrics.cc",
     "render_delay_controller_metrics.h",
-    "render_reverb_model.cc",
-    "render_reverb_model.h",
     "render_signal_analyzer.cc",
     "render_signal_analyzer.h",
     "residual_echo_estimator.cc",
@@ -108,6 +111,8 @@ rtc_static_library("aec3") {
     "stationarity_estimator.h",
     "subband_erle_estimator.cc",
     "subband_erle_estimator.h",
+    "subband_nearend_detector.cc",
+    "subband_nearend_detector.h",
     "subtractor.cc",
     "subtractor.h",
     "subtractor_output.cc",
@@ -149,7 +154,7 @@ rtc_static_library("aec3") {
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("aec3_unittests") {
+  rtc_library("aec3_unittests") {
     testonly = true
 
     configs += [ "..:apm_debug_dump" ]
@@ -191,6 +196,7 @@ if (rtc_include_tests) {
         "adaptive_fir_filter_unittest.cc",
         "aec3_fft_unittest.cc",
         "aec_state_unittest.cc",
+        "alignment_mixer_unittest.cc",
         "api_call_jitter_metrics_unittest.cc",
         "block_delay_buffer_unittest.cc",
         "block_framer_unittest.cc",

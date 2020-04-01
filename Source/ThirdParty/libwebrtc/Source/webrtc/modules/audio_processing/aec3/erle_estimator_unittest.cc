@@ -16,32 +16,36 @@
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
 #include "modules/audio_processing/aec3/spectrum_buffer.h"
 #include "rtc_base/random.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
 namespace {
-
 constexpr int kLowFrequencyLimit = kFftLengthBy2 / 2;
 constexpr float kTrueErle = 10.f;
 constexpr float kTrueErleOnsets = 1.0f;
 constexpr float kEchoPathGain = 3.f;
 
-void VerifyErleBands(rtc::ArrayView<const float> erle,
-                     float reference_lf,
-                     float reference_hf) {
-  std::for_each(
-      erle.begin(), erle.begin() + kLowFrequencyLimit,
-      [reference_lf](float a) { EXPECT_NEAR(reference_lf, a, 0.001); });
-  std::for_each(
-      erle.begin() + kLowFrequencyLimit, erle.end(),
-      [reference_hf](float a) { EXPECT_NEAR(reference_hf, a, 0.001); });
+void VerifyErleBands(
+    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> erle,
+    float reference_lf,
+    float reference_hf) {
+  for (size_t ch = 0; ch < erle.size(); ++ch) {
+    std::for_each(
+        erle[ch].begin(), erle[ch].begin() + kLowFrequencyLimit,
+        [reference_lf](float a) { EXPECT_NEAR(reference_lf, a, 0.001); });
+    std::for_each(
+        erle[ch].begin() + kLowFrequencyLimit, erle[ch].end(),
+        [reference_hf](float a) { EXPECT_NEAR(reference_hf, a, 0.001); });
+  }
 }
 
-void VerifyErle(rtc::ArrayView<const float> erle,
-                float erle_time_domain,
-                float reference_lf,
-                float reference_hf) {
+void VerifyErle(
+    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> erle,
+    float erle_time_domain,
+    float reference_lf,
+    float reference_hf) {
   VerifyErleBands(erle, reference_lf, reference_hf);
   EXPECT_NEAR(reference_lf, erle_time_domain, 0.5);
 }
@@ -65,156 +69,198 @@ void FormFarendTimeFrame(std::vector<std::vector<std::vector<float>>>* x) {
 }
 
 void FormFarendFrame(const RenderBuffer& render_buffer,
+                     float erle,
                      std::array<float, kFftLengthBy2Plus1>* X2,
-                     std::array<float, kFftLengthBy2Plus1>* E2,
-                     std::array<float, kFftLengthBy2Plus1>* Y2,
-                     float erle) {
+                     rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> E2,
+                     rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> Y2) {
   const auto& spectrum_buffer = render_buffer.GetSpectrumBuffer();
-  const auto& X2_from_buffer =
-      spectrum_buffer.buffer[spectrum_buffer.write][/*channel=*/0];
-  std::copy(X2_from_buffer.begin(), X2_from_buffer.end(), X2->begin());
-  std::transform(X2->begin(), X2->end(), Y2->begin(),
-                 [](float a) { return a * kEchoPathGain * kEchoPathGain; });
-  std::transform(Y2->begin(), Y2->end(), E2->begin(),
-                 [erle](float a) { return a / erle; });
+  const int num_render_channels = spectrum_buffer.buffer[0].size();
+  const int num_capture_channels = Y2.size();
 
-}  // namespace
+  X2->fill(0.f);
+  for (int ch = 0; ch < num_render_channels; ++ch) {
+    for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+      (*X2)[k] += spectrum_buffer.buffer[spectrum_buffer.write][ch][k] /
+                  num_render_channels;
+    }
+  }
 
-void FormNearendFrame(std::vector<std::vector<std::vector<float>>>* x,
-                      std::array<float, kFftLengthBy2Plus1>* X2,
-                      std::array<float, kFftLengthBy2Plus1>* E2,
-                      std::array<float, kFftLengthBy2Plus1>* Y2) {
+  for (int ch = 0; ch < num_capture_channels; ++ch) {
+    std::transform(X2->begin(), X2->end(), Y2[ch].begin(),
+                   [](float a) { return a * kEchoPathGain * kEchoPathGain; });
+    std::transform(Y2[ch].begin(), Y2[ch].end(), E2[ch].begin(),
+                   [erle](float a) { return a / erle; });
+  }
+}
+
+void FormNearendFrame(
+    std::vector<std::vector<std::vector<float>>>* x,
+    std::array<float, kFftLengthBy2Plus1>* X2,
+    rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> E2,
+    rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> Y2) {
   for (size_t band = 0; band < x->size(); ++band) {
-    for (size_t channel = 0; channel < (*x)[band].size(); ++channel) {
-      std::fill((*x)[band][channel].begin(), (*x)[band][channel].end(), 0.f);
-      X2->fill(0.f);
-      Y2->fill(500.f * 1000.f * 1000.f);
-      E2->fill((*Y2)[0]);
+    for (size_t ch = 0; ch < (*x)[band].size(); ++ch) {
+      std::fill((*x)[band][ch].begin(), (*x)[band][ch].end(), 0.f);
+    }
+  }
+
+  X2->fill(0.f);
+  for (size_t ch = 0; ch < Y2.size(); ++ch) {
+    Y2[ch].fill(500.f * 1000.f * 1000.f);
+    E2[ch].fill(Y2[ch][0]);
+  }
+}
+
+void GetFilterFreq(
+    size_t delay_headroom_samples,
+    rtc::ArrayView<std::vector<std::array<float, kFftLengthBy2Plus1>>>
+        filter_frequency_response) {
+  const size_t delay_headroom_blocks = delay_headroom_samples / kBlockSize;
+  for (size_t ch = 0; ch < filter_frequency_response[0].size(); ++ch) {
+    for (auto& block_freq_resp : filter_frequency_response) {
+      block_freq_resp[ch].fill(0.f);
+    }
+
+    for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+      filter_frequency_response[delay_headroom_blocks][ch][k] = kEchoPathGain;
     }
   }
 }
 
-void GetFilterFreq(std::vector<std::array<float, kFftLengthBy2Plus1>>&
-                       filter_frequency_response,
-                   size_t delay_headroom_samples) {
-  const size_t delay_headroom_blocks = delay_headroom_samples / kBlockSize;
-  for (auto& block_freq_resp : filter_frequency_response) {
-    block_freq_resp.fill(0.f);
-  }
-
-  for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
-    filter_frequency_response[delay_headroom_blocks][k] = kEchoPathGain;
-  }
-}
-
 }  // namespace
 
-TEST(ErleEstimator, VerifyErleIncreaseAndHold) {
-  std::array<float, kFftLengthBy2Plus1> X2;
-  std::array<float, kFftLengthBy2Plus1> E2;
-  std::array<float, kFftLengthBy2Plus1> Y2;
-  constexpr size_t kNumChannels = 1;
+class ErleEstimatorMultiChannel
+    : public ::testing::Test,
+      public ::testing::WithParamInterface<std::tuple<size_t, size_t>> {};
+
+INSTANTIATE_TEST_SUITE_P(MultiChannel,
+                         ErleEstimatorMultiChannel,
+                         ::testing::Combine(::testing::Values(1, 2, 4, 8),
+                                            ::testing::Values(1, 2, 8)));
+
+TEST_P(ErleEstimatorMultiChannel, VerifyErleIncreaseAndHold) {
+  const size_t num_render_channels = std::get<0>(GetParam());
+  const size_t num_capture_channels = std::get<1>(GetParam());
   constexpr int kSampleRateHz = 48000;
   constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
 
+  std::array<float, kFftLengthBy2Plus1> X2;
+  std::vector<std::array<float, kFftLengthBy2Plus1>> E2(num_capture_channels);
+  std::vector<std::array<float, kFftLengthBy2Plus1>> Y2(num_capture_channels);
+  std::vector<bool> converged_filters(num_capture_channels, true);
+
   EchoCanceller3Config config;
+  config.erle.onset_detection = true;
+
   std::vector<std::vector<std::vector<float>>> x(
       kNumBands, std::vector<std::vector<float>>(
-                     kNumChannels, std::vector<float>(kBlockSize, 0.f)));
-  std::vector<std::array<float, kFftLengthBy2Plus1>> filter_frequency_response(
-      config.filter.main.length_blocks);
+                     num_render_channels, std::vector<float>(kBlockSize, 0.f)));
+  std::vector<std::vector<std::array<float, kFftLengthBy2Plus1>>>
+  filter_frequency_response(
+      config.filter.main.length_blocks,
+      std::vector<std::array<float, kFftLengthBy2Plus1>>(num_capture_channels));
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create(config, kSampleRateHz, kNumChannels));
+      RenderDelayBuffer::Create(config, kSampleRateHz, num_render_channels));
 
-  GetFilterFreq(filter_frequency_response, config.delay.delay_headroom_samples);
+  GetFilterFreq(config.delay.delay_headroom_samples, filter_frequency_response);
 
-  ErleEstimator estimator(0, config);
+  ErleEstimator estimator(0, config, num_capture_channels);
 
   FormFarendTimeFrame(&x);
   render_delay_buffer->Insert(x);
   render_delay_buffer->PrepareCaptureProcessing();
   // Verifies that the ERLE estimate is properly increased to higher values.
-  FormFarendFrame(*render_delay_buffer->GetRenderBuffer(), &X2, &E2, &Y2,
-                  kTrueErle);
+  FormFarendFrame(*render_delay_buffer->GetRenderBuffer(), kTrueErle, &X2, E2,
+                  Y2);
   for (size_t k = 0; k < 200; ++k) {
     render_delay_buffer->Insert(x);
     render_delay_buffer->PrepareCaptureProcessing();
     estimator.Update(*render_delay_buffer->GetRenderBuffer(),
-                     filter_frequency_response, X2, Y2, E2, true, true);
+                     filter_frequency_response, X2, Y2, E2, converged_filters);
   }
   VerifyErle(estimator.Erle(), std::pow(2.f, estimator.FullbandErleLog2()),
              config.erle.max_l, config.erle.max_h);
 
-  FormNearendFrame(&x, &X2, &E2, &Y2);
+  FormNearendFrame(&x, &X2, E2, Y2);
   // Verifies that the ERLE is not immediately decreased during nearend
   // activity.
   for (size_t k = 0; k < 50; ++k) {
     render_delay_buffer->Insert(x);
     render_delay_buffer->PrepareCaptureProcessing();
     estimator.Update(*render_delay_buffer->GetRenderBuffer(),
-                     filter_frequency_response, X2, Y2, E2, true, true);
+                     filter_frequency_response, X2, Y2, E2, converged_filters);
   }
   VerifyErle(estimator.Erle(), std::pow(2.f, estimator.FullbandErleLog2()),
              config.erle.max_l, config.erle.max_h);
 }
 
-TEST(ErleEstimator, VerifyErleTrackingOnOnsets) {
-  constexpr size_t kNumChannels = 1;
+TEST_P(ErleEstimatorMultiChannel, VerifyErleTrackingOnOnsets) {
+  const size_t num_render_channels = std::get<0>(GetParam());
+  const size_t num_capture_channels = std::get<1>(GetParam());
   constexpr int kSampleRateHz = 48000;
   constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
+
   std::array<float, kFftLengthBy2Plus1> X2;
-  std::array<float, kFftLengthBy2Plus1> E2;
-  std::array<float, kFftLengthBy2Plus1> Y2;
+  std::vector<std::array<float, kFftLengthBy2Plus1>> E2(num_capture_channels);
+  std::vector<std::array<float, kFftLengthBy2Plus1>> Y2(num_capture_channels);
+  std::vector<bool> converged_filters(num_capture_channels, true);
   EchoCanceller3Config config;
+  config.erle.onset_detection = true;
   std::vector<std::vector<std::vector<float>>> x(
       kNumBands, std::vector<std::vector<float>>(
-                     kNumChannels, std::vector<float>(kBlockSize, 0.f)));
-  std::vector<std::array<float, kFftLengthBy2Plus1>> filter_frequency_response(
-      config.filter.main.length_blocks);
-
+                     num_render_channels, std::vector<float>(kBlockSize, 0.f)));
+  std::vector<std::vector<std::array<float, kFftLengthBy2Plus1>>>
+  filter_frequency_response(
+      config.filter.main.length_blocks,
+      std::vector<std::array<float, kFftLengthBy2Plus1>>(num_capture_channels));
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create(config, kSampleRateHz, kNumChannels));
+      RenderDelayBuffer::Create(config, kSampleRateHz, num_render_channels));
 
-  GetFilterFreq(filter_frequency_response, config.delay.delay_headroom_samples);
+  GetFilterFreq(config.delay.delay_headroom_samples, filter_frequency_response);
 
-  ErleEstimator estimator(0, config);
+  ErleEstimator estimator(/*startup_phase_length_blocks=*/0, config,
+                          num_capture_channels);
 
   FormFarendTimeFrame(&x);
   render_delay_buffer->Insert(x);
   render_delay_buffer->PrepareCaptureProcessing();
 
   for (size_t burst = 0; burst < 20; ++burst) {
-    FormFarendFrame(*render_delay_buffer->GetRenderBuffer(), &X2, &E2, &Y2,
-                    kTrueErleOnsets);
+    FormFarendFrame(*render_delay_buffer->GetRenderBuffer(), kTrueErleOnsets,
+                    &X2, E2, Y2);
     for (size_t k = 0; k < 10; ++k) {
       render_delay_buffer->Insert(x);
       render_delay_buffer->PrepareCaptureProcessing();
       estimator.Update(*render_delay_buffer->GetRenderBuffer(),
-                       filter_frequency_response, X2, Y2, E2, true, true);
+                       filter_frequency_response, X2, Y2, E2,
+                       converged_filters);
     }
-    FormFarendFrame(*render_delay_buffer->GetRenderBuffer(), &X2, &E2, &Y2,
-                    kTrueErle);
+    FormFarendFrame(*render_delay_buffer->GetRenderBuffer(), kTrueErle, &X2, E2,
+                    Y2);
     for (size_t k = 0; k < 200; ++k) {
       render_delay_buffer->Insert(x);
       render_delay_buffer->PrepareCaptureProcessing();
       estimator.Update(*render_delay_buffer->GetRenderBuffer(),
-                       filter_frequency_response, X2, Y2, E2, true, true);
+                       filter_frequency_response, X2, Y2, E2,
+                       converged_filters);
     }
-    FormNearendFrame(&x, &X2, &E2, &Y2);
+    FormNearendFrame(&x, &X2, E2, Y2);
     for (size_t k = 0; k < 300; ++k) {
       render_delay_buffer->Insert(x);
       render_delay_buffer->PrepareCaptureProcessing();
       estimator.Update(*render_delay_buffer->GetRenderBuffer(),
-                       filter_frequency_response, X2, Y2, E2, true, true);
+                       filter_frequency_response, X2, Y2, E2,
+                       converged_filters);
     }
   }
   VerifyErleBands(estimator.ErleOnsets(), config.erle.min, config.erle.min);
-  FormNearendFrame(&x, &X2, &E2, &Y2);
+  FormNearendFrame(&x, &X2, E2, Y2);
   for (size_t k = 0; k < 1000; k++) {
     estimator.Update(*render_delay_buffer->GetRenderBuffer(),
-                     filter_frequency_response, X2, Y2, E2, true, true);
+                     filter_frequency_response, X2, Y2, E2, converged_filters);
   }
-  // Verifies that during ne activity, Erle converges to the Erle for onsets.
+  // Verifies that during ne activity, Erle converges to the Erle for
+  // onsets.
   VerifyErle(estimator.Erle(), std::pow(2.f, estimator.FullbandErleLog2()),
              config.erle.min, config.erle.min);
 }

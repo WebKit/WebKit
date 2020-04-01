@@ -13,7 +13,7 @@ if (is_android) {
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("audio_api_unittests") {
+  rtc_library("audio_api_unittests") {
     testonly = true
     sources = [
       "audio_frame_unittest.cc",

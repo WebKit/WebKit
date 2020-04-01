@@ -8,10 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "absl/memory/memory.h"
+#include <memory>
+
+#include "api/task_queue/task_queue_base.h"
 #include "api/test/simulated_network.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "test/call_test.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
@@ -66,9 +69,7 @@ TEST_F(ProbingEndToEndTest, InitialProbing) {
 
   class InitialProbingTest : public ProbingTest {
    public:
-    explicit InitialProbingTest(
-        bool* success,
-        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue)
+    explicit InitialProbingTest(bool* success, TaskQueueBase* task_queue)
         : ProbingTest(300000), success_(success), task_queue_(task_queue) {
       *success_ = false;
     }
@@ -80,8 +81,8 @@ TEST_F(ProbingEndToEndTest, InitialProbing) {
           break;
 
         Call::Stats stats;
-        task_queue_->SendTask(
-            [this, &stats]() { stats = sender_call_->GetStats(); });
+        SendTask(RTC_FROM_HERE, task_queue_,
+                 [this, &stats]() { stats = sender_call_->GetStats(); });
         // Initial probing is done with a x3 and x6 multiplier of the start
         // bitrate, so a x4 multiplier is a high enough threshold.
         if (stats.send_bandwidth_bps > 4 * 300000) {
@@ -94,13 +95,13 @@ TEST_F(ProbingEndToEndTest, InitialProbing) {
    private:
     const int kTimeoutMs = 1000;
     bool* const success_;
-    test::DEPRECATED_SingleThreadedTaskQueueForTesting* const task_queue_;
+    TaskQueueBase* const task_queue_;
   };
 
   bool success = false;
   const int kMaxAttempts = 3;
   for (int i = 0; i < kMaxAttempts; ++i) {
-    InitialProbingTest test(&success, &task_queue_);
+    InitialProbingTest test(&success, task_queue());
     RunBaseTest(&test);
     if (success)
       return;
@@ -121,9 +122,7 @@ TEST_F(ProbingEndToEndTest, TriggerMidCallProbing) {
 
   class TriggerMidCallProbingTest : public ProbingTest {
    public:
-    TriggerMidCallProbingTest(
-        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
-        bool* success)
+    TriggerMidCallProbingTest(TaskQueueBase* task_queue, bool* success)
         : ProbingTest(300000), success_(success), task_queue_(task_queue) {}
 
     void PerformTest() override {
@@ -134,15 +133,15 @@ TEST_F(ProbingEndToEndTest, TriggerMidCallProbing) {
           break;
 
         Call::Stats stats;
-        task_queue_->SendTask(
-            [this, &stats]() { stats = sender_call_->GetStats(); });
+        SendTask(RTC_FROM_HERE, task_queue_,
+                 [this, &stats]() { stats = sender_call_->GetStats(); });
 
         switch (state_) {
           case 0:
             if (stats.send_bandwidth_bps > 5 * 300000) {
               BitrateConstraints bitrate_config;
               bitrate_config.max_bitrate_bps = 100000;
-              task_queue_->SendTask([this, &bitrate_config]() {
+              SendTask(RTC_FROM_HERE, task_queue_, [this, &bitrate_config]() {
                 sender_call_->GetTransportControllerSend()
                     ->SetSdpBitrateParameters(bitrate_config);
               });
@@ -153,7 +152,7 @@ TEST_F(ProbingEndToEndTest, TriggerMidCallProbing) {
             if (stats.send_bandwidth_bps < 110000) {
               BitrateConstraints bitrate_config;
               bitrate_config.max_bitrate_bps = 2500000;
-              task_queue_->SendTask([this, &bitrate_config]() {
+              SendTask(RTC_FROM_HERE, task_queue_, [this, &bitrate_config]() {
                 sender_call_->GetTransportControllerSend()
                     ->SetSdpBitrateParameters(bitrate_config);
               });
@@ -176,13 +175,13 @@ TEST_F(ProbingEndToEndTest, TriggerMidCallProbing) {
    private:
     const int kTimeoutMs = 5000;
     bool* const success_;
-    test::DEPRECATED_SingleThreadedTaskQueueForTesting* const task_queue_;
+    TaskQueueBase* const task_queue_;
   };
 
   bool success = false;
   const int kMaxAttempts = 3;
   for (int i = 0; i < kMaxAttempts; ++i) {
-    TriggerMidCallProbingTest test(&task_queue_, &success);
+    TriggerMidCallProbingTest test(task_queue(), &success);
     RunBaseTest(&test);
     if (success)
       return;
@@ -201,9 +200,7 @@ TEST_F(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
 
   class ReconfigureTest : public ProbingTest {
    public:
-    ReconfigureTest(
-        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
-        bool* success)
+    ReconfigureTest(TaskQueueBase* task_queue, bool* success)
         : ProbingTest(50000), task_queue_(task_queue), success_(success) {}
 
     void ModifyVideoConfigs(
@@ -219,17 +216,17 @@ TEST_F(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
       send_stream_ = send_stream;
     }
 
-    test::PacketTransport* CreateSendTransport(
-        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
+    std::unique_ptr<test::PacketTransport> CreateSendTransport(
+        TaskQueueBase* task_queue,
         Call* sender_call) override {
       auto network =
-          absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig());
+          std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig());
       send_simulated_network_ = network.get();
-      return new test::PacketTransport(
+      return std::make_unique<test::PacketTransport>(
           task_queue, sender_call, this, test::PacketTransport::kSender,
           CallTest::payload_type_map_,
-          absl::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
-                                             std::move(network)));
+          std::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
+                                            std::move(network)));
     }
 
     void PerformTest() override {
@@ -241,8 +238,8 @@ TEST_F(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
           break;
 
         Call::Stats stats;
-        task_queue_->SendTask(
-            [this, &stats]() { stats = sender_call_->GetStats(); });
+        SendTask(RTC_FROM_HERE, task_queue_,
+                 [this, &stats]() { stats = sender_call_->GetStats(); });
 
         switch (state_) {
           case 0:
@@ -282,7 +279,7 @@ TEST_F(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
               // should trigger an allocation probe and fast ramp-up.
               encoder_config_->max_bitrate_bps = 2000000;
               encoder_config_->simulcast_layers[0].max_bitrate_bps = 1200000;
-              task_queue_->SendTask([this]() {
+              SendTask(RTC_FROM_HERE, task_queue_, [this]() {
                 send_stream_->ReconfigureVideoEncoder(encoder_config_->Copy());
               });
               max_allocation_change_time_ms = clock_->TimeInMilliseconds();
@@ -306,7 +303,7 @@ TEST_F(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
     const int kTimeoutMs = 10000;
     const int kRampUpMaxDurationMs = 500;
 
-    test::DEPRECATED_SingleThreadedTaskQueueForTesting* const task_queue_;
+    TaskQueueBase* const task_queue_;
     bool* const success_;
     SimulatedNetwork* send_simulated_network_;
     VideoSendStream* send_stream_;
@@ -316,7 +313,7 @@ TEST_F(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
   bool success = false;
   const int kMaxAttempts = 3;
   for (int i = 0; i < kMaxAttempts; ++i) {
-    ReconfigureTest test(&task_queue_, &success);
+    ReconfigureTest test(task_queue(), &success);
     RunBaseTest(&test);
     if (success) {
       return;

@@ -12,6 +12,8 @@
 
 #include <memory>
 
+#include "api/test/create_frame_generator.h"
+#include "api/test/frame_generator_interface.h"
 #include "api/test/mock_video_decoder.h"
 #include "api/test/mock_video_encoder.h"
 #include "api/video_codecs/video_encoder.h"
@@ -48,7 +50,6 @@ constexpr int64_t kTestNtpTimeMs = 456;
 constexpr int64_t kInitialTimestampMs = 789;
 constexpr int kNumCores = 1;
 constexpr size_t kMaxPayloadSize = 1440;
-constexpr int kDefaultMinPixelsPerFrame = 320 * 180;
 constexpr int kWidth = 172;
 constexpr int kHeight = 144;
 constexpr float kFramerateFps = 30;
@@ -205,7 +206,7 @@ TEST_F(TestVp8Impl, DynamicSetRates) {
       static_cast<double>(codec_settings_.maxFramerate);
 
   // Set rates with no headroom.
-  rate_settings.bandwidth_allocation = DataRate::bps(kBitrateBps);
+  rate_settings.bandwidth_allocation = DataRate::BitsPerSec(kBitrateBps);
   EXPECT_CALL(
       *vpx,
       codec_enc_config_set(
@@ -220,7 +221,7 @@ TEST_F(TestVp8Impl, DynamicSetRates) {
   encoder.SetRates(rate_settings);
 
   // Set rates with max headroom.
-  rate_settings.bandwidth_allocation = DataRate::bps(kBitrateBps * 2);
+  rate_settings.bandwidth_allocation = DataRate::BitsPerSec(kBitrateBps * 2);
   EXPECT_CALL(
       *vpx, codec_enc_config_set(
                 _, AllOf(Field(&vpx_codec_enc_cfg_t::rc_target_bitrate,
@@ -234,7 +235,8 @@ TEST_F(TestVp8Impl, DynamicSetRates) {
   encoder.SetRates(rate_settings);
 
   // Set rates with headroom half way.
-  rate_settings.bandwidth_allocation = DataRate::bps((3 * kBitrateBps) / 2);
+  rate_settings.bandwidth_allocation =
+      DataRate::BitsPerSec((3 * kBitrateBps) / 2);
   EXPECT_CALL(
       *vpx,
       codec_enc_config_set(
@@ -256,12 +258,11 @@ TEST_F(TestVp8Impl, EncodeFrameAndRelease) {
 
   EncodedImage encoded_frame;
   CodecSpecificInfo codec_specific_info;
-  EncodeAndWaitForFrame(*NextInputFrame(), &encoded_frame,
-                        &codec_specific_info);
+  EncodeAndWaitForFrame(NextInputFrame(), &encoded_frame, &codec_specific_info);
 
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Release());
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_UNINITIALIZED,
-            encoder_->Encode(*NextInputFrame(), nullptr));
+            encoder_->Encode(NextInputFrame(), nullptr));
 }
 
 TEST_F(TestVp8Impl, InitDecode) {
@@ -271,13 +272,13 @@ TEST_F(TestVp8Impl, InitDecode) {
 }
 
 TEST_F(TestVp8Impl, OnEncodedImageReportsInfo) {
-  VideoFrame* input_frame = NextInputFrame();
-  input_frame->set_timestamp(kInitialTimestampRtp);
-  input_frame->set_timestamp_us(kInitialTimestampMs *
-                                rtc::kNumMicrosecsPerMillisec);
+  VideoFrame input_frame = NextInputFrame();
+  input_frame.set_timestamp(kInitialTimestampRtp);
+  input_frame.set_timestamp_us(kInitialTimestampMs *
+                               rtc::kNumMicrosecsPerMillisec);
   EncodedImage encoded_frame;
   CodecSpecificInfo codec_specific_info;
-  EncodeAndWaitForFrame(*input_frame, &encoded_frame, &codec_specific_info);
+  EncodeAndWaitForFrame(input_frame, &encoded_frame, &codec_specific_info);
 
   EXPECT_EQ(kInitialTimestampRtp, encoded_frame.Timestamp());
   EXPECT_EQ(kWidth, static_cast<int>(encoded_frame._encodedWidth));
@@ -285,10 +286,10 @@ TEST_F(TestVp8Impl, OnEncodedImageReportsInfo) {
 }
 
 TEST_F(TestVp8Impl, DecodedQpEqualsEncodedQp) {
-  VideoFrame* input_frame = NextInputFrame();
+  VideoFrame input_frame = NextInputFrame();
   EncodedImage encoded_frame;
   CodecSpecificInfo codec_specific_info;
-  EncodeAndWaitForFrame(*input_frame, &encoded_frame, &codec_specific_info);
+  EncodeAndWaitForFrame(input_frame, &encoded_frame, &codec_specific_info);
 
   // First frame should be a key frame.
   encoded_frame._frameType = VideoFrameType::kVideoFrameKey;
@@ -298,7 +299,7 @@ TEST_F(TestVp8Impl, DecodedQpEqualsEncodedQp) {
   ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
   ASSERT_TRUE(decoded_frame);
   ASSERT_TRUE(decoded_qp);
-  EXPECT_GT(I420PSNR(input_frame, decoded_frame.get()), 36);
+  EXPECT_GT(I420PSNR(&input_frame, decoded_frame.get()), 36);
   EXPECT_EQ(encoded_frame.qp_, *decoded_qp);
 }
 
@@ -376,13 +377,13 @@ TEST_F(TestVp8Impl, ChecksSimulcastSettings) {
 #define MAYBE_AlignedStrideEncodeDecode AlignedStrideEncodeDecode
 #endif
 TEST_F(TestVp8Impl, MAYBE_AlignedStrideEncodeDecode) {
-  VideoFrame* input_frame = NextInputFrame();
-  input_frame->set_timestamp(kInitialTimestampRtp);
-  input_frame->set_timestamp_us(kInitialTimestampMs *
-                                rtc::kNumMicrosecsPerMillisec);
+  VideoFrame input_frame = NextInputFrame();
+  input_frame.set_timestamp(kInitialTimestampRtp);
+  input_frame.set_timestamp_us(kInitialTimestampMs *
+                               rtc::kNumMicrosecsPerMillisec);
   EncodedImage encoded_frame;
   CodecSpecificInfo codec_specific_info;
-  EncodeAndWaitForFrame(*input_frame, &encoded_frame, &codec_specific_info);
+  EncodeAndWaitForFrame(input_frame, &encoded_frame, &codec_specific_info);
 
   // First frame should be a key frame.
   encoded_frame._frameType = VideoFrameType::kVideoFrameKey;
@@ -394,7 +395,7 @@ TEST_F(TestVp8Impl, MAYBE_AlignedStrideEncodeDecode) {
   ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
   ASSERT_TRUE(decoded_frame);
   // Compute PSNR on all planes (faster than SSIM).
-  EXPECT_GT(I420PSNR(input_frame, decoded_frame.get()), 36);
+  EXPECT_GT(I420PSNR(&input_frame, decoded_frame.get()), 36);
   EXPECT_EQ(kInitialTimestampRtp, decoded_frame->timestamp());
 }
 
@@ -404,10 +405,10 @@ TEST_F(TestVp8Impl, MAYBE_AlignedStrideEncodeDecode) {
 #define MAYBE_DecodeWithACompleteKeyFrame DecodeWithACompleteKeyFrame
 #endif
 TEST_F(TestVp8Impl, MAYBE_DecodeWithACompleteKeyFrame) {
-  VideoFrame* input_frame = NextInputFrame();
+  VideoFrame input_frame = NextInputFrame();
   EncodedImage encoded_frame;
   CodecSpecificInfo codec_specific_info;
-  EncodeAndWaitForFrame(*input_frame, &encoded_frame, &codec_specific_info);
+  EncodeAndWaitForFrame(input_frame, &encoded_frame, &codec_specific_info);
 
   // Setting complete to false -> should return an error.
   encoded_frame._completeFrame = false;
@@ -425,7 +426,7 @@ TEST_F(TestVp8Impl, MAYBE_DecodeWithACompleteKeyFrame) {
   absl::optional<uint8_t> decoded_qp;
   ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
   ASSERT_TRUE(decoded_frame);
-  EXPECT_GT(I420PSNR(input_frame, decoded_frame.get()), 36);
+  EXPECT_GT(I420PSNR(&input_frame, decoded_frame.get()), 36);
 }
 
 TEST_F(TestVp8Impl, EncoderWith2TemporalLayers) {
@@ -436,16 +437,15 @@ TEST_F(TestVp8Impl, EncoderWith2TemporalLayers) {
   // Temporal layer 0.
   EncodedImage encoded_frame;
   CodecSpecificInfo codec_specific_info;
-  EncodeAndWaitForFrame(*NextInputFrame(), &encoded_frame,
-                        &codec_specific_info);
+  EncodeAndWaitForFrame(NextInputFrame(), &encoded_frame, &codec_specific_info);
 
   EXPECT_EQ(0, codec_specific_info.codecSpecific.VP8.temporalIdx);
   // Temporal layer 1.
-  EncodeAndExpectFrameWith(*NextInputFrame(), 1);
+  EncodeAndExpectFrameWith(NextInputFrame(), 1);
   // Temporal layer 0.
-  EncodeAndExpectFrameWith(*NextInputFrame(), 0);
+  EncodeAndExpectFrameWith(NextInputFrame(), 0);
   // Temporal layer 1.
-  EncodeAndExpectFrameWith(*NextInputFrame(), 1);
+  EncodeAndExpectFrameWith(NextInputFrame(), 1);
 }
 
 TEST_F(TestVp8Impl, ScalingDisabledIfAutomaticResizeOff) {
@@ -489,9 +489,9 @@ TEST_F(TestVp8Impl, DontDropKeyframes) {
 
   // Reset the frame generator with large number of squares, leading to lots of
   // details and high probability of overshoot.
-  input_frame_generator_ = test::FrameGenerator::CreateSquareGenerator(
+  input_frame_generator_ = test::CreateSquareFrameGenerator(
       codec_settings_.width, codec_settings_.height,
-      test::FrameGenerator::OutputType::kI420,
+      test::FrameGeneratorInterface::OutputType::kI420,
       /* num_squares = */ absl::optional<int>(300));
 
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
@@ -505,11 +505,11 @@ TEST_F(TestVp8Impl, DontDropKeyframes) {
 
   EncodedImage encoded_frame;
   CodecSpecificInfo codec_specific_info;
-  EncodeAndWaitForFrame(*NextInputFrame(), &encoded_frame, &codec_specific_info,
+  EncodeAndWaitForFrame(NextInputFrame(), &encoded_frame, &codec_specific_info,
                         true);
-  EncodeAndExpectFrameWith(*NextInputFrame(), 0, true);
-  EncodeAndExpectFrameWith(*NextInputFrame(), 0, true);
-  EncodeAndExpectFrameWith(*NextInputFrame(), 0, true);
+  EncodeAndExpectFrameWith(NextInputFrame(), 0, true);
+  EncodeAndExpectFrameWith(NextInputFrame(), 0, true);
+  EncodeAndExpectFrameWith(NextInputFrame(), 0, true);
 }
 
 TEST_F(TestVp8Impl, KeepsTimestampOnReencode) {
@@ -547,7 +547,7 @@ TEST_F(TestVp8Impl, KeepsTimestampOnReencode) {
 
   auto delta_frame =
       std::vector<VideoFrameType>{VideoFrameType::kVideoFrameDelta};
-  encoder.Encode(*NextInputFrame(), &delta_frame);
+  encoder.Encode(NextInputFrame(), &delta_frame);
 }
 
 TEST_F(TestVp8Impl, GetEncoderInfoFpsAllocationNoLayers) {

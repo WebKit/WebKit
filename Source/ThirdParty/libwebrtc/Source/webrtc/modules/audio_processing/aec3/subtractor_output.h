@@ -19,7 +19,8 @@
 
 namespace webrtc {
 
-// Stores the values being returned from the echo subtractor.
+// Stores the values being returned from the echo subtractor for a single
+// capture channel.
 struct SubtractorOutput {
   SubtractorOutput();
   ~SubtractorOutput();

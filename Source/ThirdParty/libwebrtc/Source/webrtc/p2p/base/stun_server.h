@@ -16,7 +16,7 @@
 
 #include <memory>
 
-#include "p2p/base/stun.h"
+#include "api/transport/stun.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/socket_address.h"

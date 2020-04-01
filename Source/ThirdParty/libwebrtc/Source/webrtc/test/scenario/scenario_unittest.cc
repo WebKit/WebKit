@@ -22,7 +22,7 @@ TEST(ScenarioTest, StartsAndStopsWithoutErrors) {
   std::atomic<bool> bitrate_changed(false);
   Scenario s;
   CallClientConfig call_client_config;
-  call_client_config.transport.rates.start_rate = DataRate::kbps(300);
+  call_client_config.transport.rates.start_rate = DataRate::KilobitsPerSec(300);
   auto* alice = s.CreateClient("alice", call_client_config);
   auto* bob = s.CreateClient("bob", call_client_config);
   NetworkSimulationConfig network_config;
@@ -35,8 +35,8 @@ TEST(ScenarioTest, StartsAndStopsWithoutErrors) {
   s.CreateVideoStream(route->reverse(), video_stream_config);
 
   AudioStreamConfig audio_stream_config;
-  audio_stream_config.encoder.min_rate = DataRate::kbps(6);
-  audio_stream_config.encoder.max_rate = DataRate::kbps(64);
+  audio_stream_config.encoder.min_rate = DataRate::KilobitsPerSec(6);
+  audio_stream_config.encoder.max_rate = DataRate::KilobitsPerSec(64);
   audio_stream_config.encoder.allocate_bitrate = true;
   audio_stream_config.stream.in_bandwidth_estimation = false;
   s.CreateAudioStream(route->forward(), audio_stream_config);
@@ -48,12 +48,12 @@ TEST(ScenarioTest, StartsAndStopsWithoutErrors) {
 
   s.NetworkDelayedAction({alice_net, bob_net}, 100,
                          [&packet_received] { packet_received = true; });
-  s.Every(TimeDelta::ms(10), [alice, bob, &bitrate_changed] {
+  s.Every(TimeDelta::Millis(10), [alice, bob, &bitrate_changed] {
     if (alice->GetStats().send_bandwidth_bps != 300000 &&
         bob->GetStats().send_bandwidth_bps != 300000)
       bitrate_changed = true;
   });
-  s.RunUntil(TimeDelta::seconds(2), TimeDelta::ms(5),
+  s.RunUntil(TimeDelta::Seconds(2), TimeDelta::Millis(5),
              [&bitrate_changed, &packet_received] {
                return packet_received && bitrate_changed;
              });
@@ -66,8 +66,8 @@ void SetupVideoCall(Scenario& s, VideoQualityAnalyzer* analyzer) {
   auto* alice = s.CreateClient("alice", call_config);
   auto* bob = s.CreateClient("bob", call_config);
   NetworkSimulationConfig network_config;
-  network_config.bandwidth = DataRate::kbps(1000);
-  network_config.delay = TimeDelta::ms(50);
+  network_config.bandwidth = DataRate::KilobitsPerSec(1000);
+  network_config.delay = TimeDelta::Millis(50);
   auto alice_net = s.CreateSimulationNode(network_config);
   auto bob_net = s.CreateSimulationNode(network_config);
   auto route = s.CreateRoutes(alice, {alice_net}, bob, {bob_net});
@@ -88,24 +88,18 @@ void SetupVideoCall(Scenario& s, VideoQualityAnalyzer* analyzer) {
 }
 }  // namespace
 
-// TODO(bugs.webrtc.org/10515): Remove this when performance has been improved.
-#if defined(WEBRTC_IOS) && defined(WEBRTC_ARCH_ARM64) && !defined(NDEBUG)
-#define MAYBE_SimTimeEncoding DISABLED_SimTimeEncoding
-#else
-#define MAYBE_SimTimeEncoding SimTimeEncoding
-#endif
-TEST(ScenarioTest, MAYBE_SimTimeEncoding) {
+TEST(ScenarioTest, SimTimeEncoding) {
   VideoQualityAnalyzerConfig analyzer_config;
   analyzer_config.psnr_coverage = 0.1;
   VideoQualityAnalyzer analyzer(analyzer_config);
   {
     Scenario s("scenario/encode_sim", false);
     SetupVideoCall(s, &analyzer);
-    s.RunFor(TimeDelta::seconds(60));
+    s.RunFor(TimeDelta::Seconds(2));
   }
   // Regression tests based on previous runs.
   EXPECT_EQ(analyzer.stats().lost_count, 0);
-  EXPECT_NEAR(analyzer.stats().psnr_with_freeze.Mean(), 38, 2);
+  EXPECT_NEAR(analyzer.stats().psnr_with_freeze.Mean(), 38, 5);
 }
 
 // TODO(bugs.webrtc.org/10515): Remove this when performance has been improved.
@@ -121,7 +115,7 @@ TEST(ScenarioTest, MAYBE_RealTimeEncoding) {
   {
     Scenario s("scenario/encode_real", true);
     SetupVideoCall(s, &analyzer);
-    s.RunFor(TimeDelta::seconds(10));
+    s.RunFor(TimeDelta::Seconds(2));
   }
   // Regression tests based on previous runs.
   EXPECT_LT(analyzer.stats().lost_count, 2);
@@ -131,7 +125,7 @@ TEST(ScenarioTest, MAYBE_RealTimeEncoding) {
 TEST(ScenarioTest, SimTimeFakeing) {
   Scenario s("scenario/encode_sim", false);
   SetupVideoCall(s, nullptr);
-  s.RunFor(TimeDelta::seconds(10));
+  s.RunFor(TimeDelta::Seconds(2));
 }
 
 TEST(ScenarioTest, WritesToRtcEventLog) {
@@ -139,7 +133,7 @@ TEST(ScenarioTest, WritesToRtcEventLog) {
   {
     Scenario s(storage.CreateFactory(), false);
     SetupVideoCall(s, nullptr);
-    s.RunFor(TimeDelta::seconds(1));
+    s.RunFor(TimeDelta::Seconds(1));
   }
   auto logs = storage.logs();
   // We expect that a rtc event log has been created and that it has some data.

@@ -11,6 +11,7 @@
 #include "modules/rtp_rtcp/source/rtcp_sender.h"
 
 #include <memory>
+#include <utility>
 
 #include "absl/base/macros.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -444,7 +445,7 @@ TEST_F(RtcpSenderTest, RembNotIncludedBeforeSet) {
 }
 
 TEST_F(RtcpSenderTest, RembNotIncludedAfterUnset) {
-  const uint64_t kBitrate = 261011;
+  const int64_t kBitrate = 261011;
   const std::vector<uint32_t> kSsrcs = {kRemoteSsrc, kRemoteSsrc + 1};
   rtcp_sender_->SetRTCPStatus(RtcpMode::kReducedSize);
   rtcp_sender_->SetRemb(kBitrate, kSsrcs);
@@ -460,7 +461,7 @@ TEST_F(RtcpSenderTest, RembNotIncludedAfterUnset) {
 }
 
 TEST_F(RtcpSenderTest, SendRemb) {
-  const uint64_t kBitrate = 261011;
+  const int64_t kBitrate = 261011;
   const std::vector<uint32_t> kSsrcs = {kRemoteSsrc, kRemoteSsrc + 1};
   rtcp_sender_->SetRTCPStatus(RtcpMode::kReducedSize);
   rtcp_sender_->SetRemb(kBitrate, kSsrcs);
@@ -824,29 +825,21 @@ TEST_F(RtcpSenderTest, DoesntSchedulesInitialReportWhenSsrcSetOnConstruction) {
   EXPECT_FALSE(rtcp_sender_->TimeToSendRTCPReport(false));
 }
 
-TEST_F(RtcpSenderTest, DoesntSchedulesInitialReportOnFirstSetSsrc) {
-  // Set up without first SSRC not set at construction.
-  RtpRtcp::Configuration configuration = GetDefaultConfig();
-  configuration.local_media_ssrc = absl::nullopt;
-
-  rtcp_sender_.reset(new RTCPSender(configuration));
-  rtcp_sender_->SetRemoteSSRC(kRemoteSsrc);
-  rtcp_sender_->SetTimestampOffset(kStartRtpTimestamp);
-  rtcp_sender_->SetLastRtpTime(kRtpTimestamp, clock_.TimeInMilliseconds(),
-                               /*payload_type=*/0);
+TEST_F(RtcpSenderTest, SendsCombinedRtcpPacket) {
   rtcp_sender_->SetRTCPStatus(RtcpMode::kReducedSize);
 
-  // Set SSRC for the first time. New report should not be scheduled.
-  rtcp_sender_->SetSSRC(kSenderSsrc);
-  clock_.AdvanceTimeMilliseconds(100);
-  EXPECT_FALSE(rtcp_sender_->TimeToSendRTCPReport(false));
-}
+  std::vector<std::unique_ptr<rtcp::RtcpPacket>> packets;
+  auto transport_feedback = std::make_unique<rtcp::TransportFeedback>();
+  transport_feedback->AddReceivedPacket(321, 10000);
+  packets.push_back(std::move(transport_feedback));
+  auto remote_estimate = std::make_unique<rtcp::RemoteEstimate>();
+  packets.push_back(std::move(remote_estimate));
+  rtcp_sender_->SendCombinedRtcpPacket(std::move(packets));
 
-TEST_F(RtcpSenderTest, SchedulesReportOnSsrcChange) {
-  rtcp_sender_->SetRTCPStatus(RtcpMode::kReducedSize);
-  rtcp_sender_->SetSSRC(kSenderSsrc + 1);
-  clock_.AdvanceTimeMilliseconds(100);
-  EXPECT_TRUE(rtcp_sender_->TimeToSendRTCPReport(false));
+  EXPECT_EQ(parser()->transport_feedback()->num_packets(), 1);
+  EXPECT_EQ(parser()->transport_feedback()->sender_ssrc(), kSenderSsrc);
+  EXPECT_EQ(parser()->app()->num_packets(), 1);
+  EXPECT_EQ(parser()->app()->sender_ssrc(), kSenderSsrc);
 }
 
 }  // namespace webrtc

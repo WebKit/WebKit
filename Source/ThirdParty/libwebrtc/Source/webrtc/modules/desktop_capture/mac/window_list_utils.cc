@@ -15,8 +15,11 @@
 #include <algorithm>
 #include <cmath>
 #include <iterator>
+#include <limits>
 #include <list>
 #include <map>
+#include <memory>
+#include <utility>
 
 #include "rtc_base/checks.h"
 
@@ -78,7 +81,8 @@ bool GetWindowRef(CGWindowID id,
 }  // namespace
 
 bool GetWindowList(rtc::FunctionView<bool(CFDictionaryRef)> on_window,
-                   bool ignore_minimized) {
+                   bool ignore_minimized,
+                   bool only_zero_layer) {
   RTC_DCHECK(on_window);
 
   // Only get on screen, non-desktop windows.
@@ -122,7 +126,7 @@ bool GetWindowList(rtc::FunctionView<bool(CFDictionaryRef)> on_window,
     if (!CFNumberGetValue(window_layer, kCFNumberIntType, &layer)) {
       continue;
     }
-    if (layer != 0) {
+    if (only_zero_layer && layer != 0) {
       continue;
     }
 
@@ -151,7 +155,8 @@ bool GetWindowList(rtc::FunctionView<bool(CFDictionaryRef)> on_window,
 }
 
 bool GetWindowList(DesktopCapturer::SourceList* windows,
-                   bool ignore_minimized) {
+                   bool ignore_minimized,
+                   bool only_zero_layer) {
   // Use a std::list so that iterators are preversed upon insertion and
   // deletion.
   std::list<DesktopCapturer::Source> sources;
@@ -201,7 +206,7 @@ bool GetWindowList(DesktopCapturer::SourceList* windows,
         }
         return true;
       },
-      ignore_minimized);
+      ignore_minimized, only_zero_layer);
 
   if (!ret)
     return false;
@@ -236,6 +241,15 @@ bool IsWindowFullScreen(const MacDesktopConfiguration& desktop_config,
     }
   }
 
+  return fullscreen;
+}
+
+bool IsWindowFullScreen(const MacDesktopConfiguration& desktop_config,
+                        CGWindowID id) {
+  bool fullscreen = false;
+  GetWindowRef(id, [&](CFDictionaryRef window) {
+    fullscreen = IsWindowFullScreen(desktop_config, window);
+  });
   return fullscreen;
 }
 

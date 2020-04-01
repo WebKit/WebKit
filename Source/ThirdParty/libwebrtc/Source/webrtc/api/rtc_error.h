@@ -17,7 +17,7 @@
 #include <string>
 #include <utility>  // For std::move.
 
-#include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/system/rtc_export.h"
@@ -74,6 +74,25 @@ enum class RTCErrorType {
   // The operation failed due to an internal error.
   // Maps to OperationError DOMException.
   INTERNAL_ERROR,
+
+  // An error occured that has additional data.
+  // The additional data is specified in
+  // https://w3c.github.io/webrtc-pc/#rtcerror-interface
+  // Maps to RTCError DOMException.
+  OPERATION_ERROR_WITH_DATA,
+};
+
+// Detail information, showing what further information should be present.
+// https://w3c.github.io/webrtc-pc/#rtcerrordetailtype-enum
+enum class RTCErrorDetailType {
+  NONE,
+  DATA_CHANNEL_FAILURE,
+  DTLS_FAILURE,
+  FINGERPRINT_FAILURE,
+  SCTP_FAILURE,
+  SDP_SYNTAX_ERROR,
+  HARDWARE_ENCODER_NOT_AVAILABLE,
+  HARDWARE_ENCODER_ERROR,
 };
 
 // Roughly corresponds to RTCError in the web api. Holds an error type, a
@@ -92,15 +111,13 @@ class RTC_EXPORT RTCError {
   RTCError(RTCErrorType type, std::string message)
       : type_(type), message_(std::move(message)) {}
 
-  // Delete the copy constructor and assignment operator; there aren't any use
-  // cases where you should need to copy an RTCError, as opposed to moving it.
-  // Can revisit this decision if use cases arise in the future.
-  RTCError(const RTCError& other) = delete;
-  RTCError& operator=(const RTCError& other) = delete;
-
-  // Move constructor and move-assignment operator.
-  RTCError(RTCError&& other);
-  RTCError& operator=(RTCError&& other);
+  // In many use cases, it is better to use move than copy,
+  // but copy and assignment are provided for those cases that need it.
+  // Note that this has extra overhead because it copies strings.
+  RTCError(const RTCError& other) = default;
+  RTCError(RTCError&&) = default;
+  RTCError& operator=(const RTCError& other) = default;
+  RTCError& operator=(RTCError&&) = default;
 
   // Identical to default constructed error.
   //
@@ -118,6 +135,13 @@ class RTC_EXPORT RTCError {
 
   void set_message(std::string message);
 
+  RTCErrorDetailType error_detail() const { return error_detail_; }
+  void set_error_detail(RTCErrorDetailType detail) { error_detail_ = detail; }
+  absl::optional<uint16_t> sctp_cause_code() { return sctp_cause_code_; }
+  void set_sctp_cause_code(uint16_t cause_code) {
+    sctp_cause_code_ = cause_code;
+  }
+
   // Convenience method for situations where you only care whether or not an
   // error occurred.
   bool ok() const { return type_ == RTCErrorType::NONE; }
@@ -125,19 +149,28 @@ class RTC_EXPORT RTCError {
  private:
   RTCErrorType type_ = RTCErrorType::NONE;
   std::string message_;
+  RTCErrorDetailType error_detail_ = RTCErrorDetailType::NONE;
+  absl::optional<uint16_t> sctp_cause_code_;
 };
 
 // Outputs the error as a friendly string. Update this method when adding a new
 // error type.
 //
-// Only intended to be used for logging/diagnostics. The string_view points
+// Only intended to be used for logging/diagnostics. The returned char* points
 // to literal string that lives for the whole duration of the program.
-absl::string_view ToString(RTCErrorType error);
+RTC_EXPORT const char* ToString(RTCErrorType error);
+RTC_EXPORT const char* ToString(RTCErrorDetailType error);
 
 #ifdef UNIT_TEST
 inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
     std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
     RTCErrorType error) {
+  return stream << ToString(error);
+}
+
+inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
+    std::ostream& stream,         // no-presubmit-check TODO(webrtc:8982)
+    RTCErrorDetailType error) {
   return stream << ToString(error);
 }
 #endif  // UNIT_TEST

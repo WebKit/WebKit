@@ -12,8 +12,6 @@ package org.webrtc;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Matrix;
-import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;

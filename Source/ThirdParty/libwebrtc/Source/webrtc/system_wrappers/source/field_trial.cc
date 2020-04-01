@@ -17,6 +17,7 @@
 #include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/string_encode.h"
 
 // Simple field trial implementation, which allows client to
 // specify desired flags in InitFieldTrialsFromString.
@@ -36,7 +37,7 @@ constexpr char kPersistentStringSeparator = '/';
 //
 //  E.g. invalid config:
 //    "WebRTC-experiment1/Enabled"  (note missing / separator at the end).
-bool FieldTrialsStringIsValid(const absl::string_view trials) {
+bool FieldTrialsStringIsValidInternal(const absl::string_view trials) {
   if (trials.empty())
     return true;
 
@@ -68,6 +69,38 @@ bool FieldTrialsStringIsValid(const absl::string_view trials) {
   return true;
 }
 }  // namespace
+
+bool FieldTrialsStringIsValid(const char* trials_string) {
+  return FieldTrialsStringIsValidInternal(trials_string);
+}
+
+void InsertOrReplaceFieldTrialStringsInMap(
+    std::map<std::string, std::string>* fieldtrial_map,
+    const absl::string_view trials_string) {
+  if (FieldTrialsStringIsValidInternal(trials_string)) {
+    std::vector<std::string> tokens;
+    rtc::split(std::string(trials_string), '/', &tokens);
+    // Skip last token which is empty due to trailing '/'.
+    for (size_t idx = 0; idx < tokens.size() - 1; idx += 2) {
+      (*fieldtrial_map)[tokens[idx]] = tokens[idx + 1];
+    }
+  } else {
+    RTC_DCHECK(false) << "Invalid field trials string:" << trials_string;
+  }
+}
+
+std::string MergeFieldTrialsStrings(const char* first, const char* second) {
+  std::map<std::string, std::string> fieldtrial_map;
+  InsertOrReplaceFieldTrialStringsInMap(&fieldtrial_map, first);
+  InsertOrReplaceFieldTrialStringsInMap(&fieldtrial_map, second);
+
+  // Merge into fieldtrial string.
+  std::string merged = "";
+  for (auto const& fieldtrial : fieldtrial_map) {
+    merged += fieldtrial.first + '/' + fieldtrial.second + '/';
+  }
+  return merged;
+}
 
 std::string FindFullName(const std::string& name) {
   if (trials_init_string == NULL)
@@ -107,7 +140,7 @@ void InitFieldTrialsFromString(const char* trials_string) {
   RTC_LOG(LS_INFO) << "Setting field trial string:" << trials_string;
 #ifndef WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT
   if (trials_string) {
-    RTC_DCHECK(FieldTrialsStringIsValid(trials_string))
+    RTC_DCHECK(FieldTrialsStringIsValidInternal(trials_string))
         << "Invalid field trials string:" << trials_string;
   };
 #endif  // WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT

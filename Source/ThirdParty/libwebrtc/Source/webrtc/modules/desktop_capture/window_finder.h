@@ -23,7 +23,7 @@
 
 namespace webrtc {
 
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
 class XAtomCache;
 #endif
 
@@ -46,7 +46,7 @@ class WindowFinder {
     Options(const Options& other);
     Options(Options&& other);
 
-#if defined(USE_X11)
+#if defined(WEBRTC_USE_X11)
     XAtomCache* cache = nullptr;
 #endif
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)

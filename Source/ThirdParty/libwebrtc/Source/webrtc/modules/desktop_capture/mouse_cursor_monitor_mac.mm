@@ -24,7 +24,6 @@
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/mac/desktop_configuration.h"
 #include "modules/desktop_capture/mac/desktop_configuration_monitor.h"
-#include "modules/desktop_capture/mac/full_screen_chrome_window_detector.h"
 #include "modules/desktop_capture/mac/window_list_utils.h"
 #include "modules/desktop_capture/mouse_cursor.h"
 
@@ -79,21 +78,16 @@ class MouseCursorMonitorMac : public MouseCursorMonitor {
   Callback* callback_;
   Mode mode_;
   __strong NSImage* last_cursor_;
-  rtc::scoped_refptr<FullScreenChromeWindowDetector>
-      full_screen_chrome_window_detector_;
 };
 
-MouseCursorMonitorMac::MouseCursorMonitorMac(
-    const DesktopCaptureOptions& options,
-    CGWindowID window_id,
-    ScreenId screen_id)
+MouseCursorMonitorMac::MouseCursorMonitorMac(const DesktopCaptureOptions& options,
+                                             CGWindowID window_id,
+                                             ScreenId screen_id)
     : configuration_monitor_(options.configuration_monitor()),
       window_id_(window_id),
       screen_id_(screen_id),
       callback_(NULL),
-      mode_(SHAPE_AND_POSITION),
-      full_screen_chrome_window_detector_(
-          options.full_screen_chrome_window_detector()) {
+      mode_(SHAPE_AND_POSITION) {
   assert(window_id == kCGNullWindowID || screen_id == kInvalidScreenId);
 }
 

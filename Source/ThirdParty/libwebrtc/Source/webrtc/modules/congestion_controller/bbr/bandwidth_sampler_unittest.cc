@@ -36,13 +36,13 @@ const int64_t kRegularPacketSizeBytes = 1280;
 static_assert((kRegularPacketSizeBytes & 31) == 0,
               "kRegularPacketSizeBytes has to be five times divisible by 2");
 
-const DataSize kRegularPacketSize = DataSize::bytes(kRegularPacketSizeBytes);
+const DataSize kRegularPacketSize = DataSize::Bytes(kRegularPacketSizeBytes);
 
 // A test fixture with utility methods for BandwidthSampler tests.
 class BandwidthSamplerTest : public ::testing::Test {
  protected:
   BandwidthSamplerTest()
-      : clock_(Timestamp::seconds(100)), bytes_in_flight_(DataSize::Zero()) {}
+      : clock_(Timestamp::Seconds(100)), bytes_in_flight_(DataSize::Zero()) {}
 
   Timestamp clock_;
   BandwidthSampler sampler_;
@@ -99,9 +99,9 @@ class BandwidthSamplerTest : public ::testing::Test {
 
 // Test the sampler in a simple stop-and-wait sender setting.
 TEST_F(BandwidthSamplerTest, SendAndWait) {
-  TimeDelta time_between_packets = TimeDelta::ms(10);
+  TimeDelta time_between_packets = TimeDelta::Millis(10);
   DataRate expected_bandwidth =
-      kRegularPacketSize * 100 / TimeDelta::seconds(1);
+      kRegularPacketSize * 100 / TimeDelta::Seconds(1);
 
   // Send packets at the constant bandwidth.
   for (int64_t i = 1; i < 20; i++) {
@@ -128,7 +128,7 @@ TEST_F(BandwidthSamplerTest, SendAndWait) {
 // Test the sampler during regular windowed sender scenario with fixed
 // CWND of 20.
 TEST_F(BandwidthSamplerTest, SendPaced) {
-  const TimeDelta time_between_packets = TimeDelta::ms(1);
+  const TimeDelta time_between_packets = TimeDelta::Millis(1);
   DataRate expected_bandwidth = kRegularPacketSize / time_between_packets;
 
   Send40PacketsAndAckFirst20(time_between_packets);
@@ -146,7 +146,7 @@ TEST_F(BandwidthSamplerTest, SendPaced) {
 
 // Test the sampler in a scenario where 50% of packets is consistently lost.
 TEST_F(BandwidthSamplerTest, SendWithLosses) {
-  const TimeDelta time_between_packets = TimeDelta::ms(1);
+  const TimeDelta time_between_packets = TimeDelta::Millis(1);
   DataRate expected_bandwidth = kRegularPacketSize / time_between_packets * 0.5;
 
   // Send 20 packets, each 1 ms apart.
@@ -185,7 +185,7 @@ TEST_F(BandwidthSamplerTest, SendWithLosses) {
 // Simulate a situation where ACKs arrive in burst and earlier than usual, thus
 // producing an ACK rate which is higher than the original send rate.
 TEST_F(BandwidthSamplerTest, CompressedAck) {
-  const TimeDelta time_between_packets = TimeDelta::ms(1);
+  const TimeDelta time_between_packets = TimeDelta::Millis(1);
   DataRate expected_bandwidth = kRegularPacketSize / time_between_packets;
 
   Send40PacketsAndAckFirst20(time_between_packets);
@@ -195,7 +195,7 @@ TEST_F(BandwidthSamplerTest, CompressedAck) {
 
   // Ack the packets 21 to 40 almost immediately at once.
   DataRate last_bandwidth = DataRate::Zero();
-  TimeDelta ridiculously_small_time_delta = TimeDelta::us(20);
+  TimeDelta ridiculously_small_time_delta = TimeDelta::Micros(20);
   for (int64_t i = 21; i <= 40; i++) {
     last_bandwidth = AckPacket(i);
     clock_ += ridiculously_small_time_delta;
@@ -207,7 +207,7 @@ TEST_F(BandwidthSamplerTest, CompressedAck) {
 
 // Tests receiving ACK packets in the reverse order.
 TEST_F(BandwidthSamplerTest, ReorderedAck) {
-  const TimeDelta time_between_packets = TimeDelta::ms(1);
+  const TimeDelta time_between_packets = TimeDelta::Millis(1);
   DataRate expected_bandwidth = kRegularPacketSize / time_between_packets;
 
   Send40PacketsAndAckFirst20(time_between_packets);
@@ -234,7 +234,7 @@ TEST_F(BandwidthSamplerTest, ReorderedAck) {
 
 // Test the app-limited logic.
 TEST_F(BandwidthSamplerTest, AppLimited) {
-  const TimeDelta time_between_packets = TimeDelta::ms(1);
+  const TimeDelta time_between_packets = TimeDelta::Millis(1);
   DataRate expected_bandwidth = kRegularPacketSize / time_between_packets;
 
   Send40PacketsAndAckFirst20(time_between_packets);
@@ -249,7 +249,7 @@ TEST_F(BandwidthSamplerTest, AppLimited) {
   }
 
   // Enter quiescence.
-  clock_ += TimeDelta::seconds(1);
+  clock_ += TimeDelta::Seconds(1);
 
   // Send packets 41 to 60, all of which would be marked as app-limited.
   for (int64_t i = 41; i <= 60; i++) {
@@ -282,8 +282,8 @@ TEST_F(BandwidthSamplerTest, AppLimited) {
 
 // Test the samples taken at the first flight of packets sent.
 TEST_F(BandwidthSamplerTest, FirstRoundTrip) {
-  const TimeDelta time_between_packets = TimeDelta::ms(1);
-  const TimeDelta rtt = TimeDelta::ms(800);
+  const TimeDelta time_between_packets = TimeDelta::Millis(1);
+  const TimeDelta rtt = TimeDelta::Millis(800);
   const int num_packets = 10;
   const DataSize num_bytes = kRegularPacketSize * num_packets;
   const DataRate real_bandwidth = num_bytes / rtt;
@@ -321,7 +321,7 @@ TEST_F(BandwidthSamplerTest, RemoveObsoletePackets) {
   SendPacket(4);
   SendPacket(5);
 
-  clock_ += TimeDelta::ms(100);
+  clock_ += TimeDelta::Millis(100);
 
   EXPECT_EQ(5u, BandwidthSamplerPeer::GetNumberOfTrackedPackets(sampler_));
   sampler_.RemoveObsoletePackets(4);

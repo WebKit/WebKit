@@ -10,14 +10,13 @@
 #ifndef TEST_RUN_LOOP_H_
 #define TEST_RUN_LOOP_H_
 
-#include "test/single_threaded_task_queue.h"
+#include "api/task_queue/task_queue_base.h"
 
 namespace webrtc {
 namespace test {
 
 // Blocks until the user presses enter.
-void PressEnterToContinue(
-    DEPRECATED_SingleThreadedTaskQueueForTesting& task_queue);
+void PressEnterToContinue(TaskQueueBase* task_queue);
 
 }  // namespace test
 }  // namespace webrtc

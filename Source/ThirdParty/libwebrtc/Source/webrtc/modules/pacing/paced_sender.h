@@ -72,7 +72,8 @@ class PacedSender : public Module,
 
   // Adds the packet to the queue and calls PacketRouter::SendPacket() when
   // it's time to send.
-  void EnqueuePacket(std::unique_ptr<RtpPacketToSend> packet) override;
+  void EnqueuePackets(
+      std::vector<std::unique_ptr<RtpPacketToSend>> packet) override;
 
   // Methods implementing RtpPacketPacer:
 
@@ -96,10 +97,12 @@ class PacedSender : public Module,
   // at high priority.
   void SetAccountForAudioPackets(bool account_for_audio) override;
 
+  void SetIncludeOverhead() override;
+  void SetTransportOverhead(DataSize overhead_per_packet) override;
+
   // Returns the time since the oldest queued packet was enqueued.
   TimeDelta OldestPacketWaitTime() const override;
 
-  size_t QueueSizePackets() const override;
   DataSize QueueSizeData() const override;
 
   // Returns the time when the first packet was sent;
@@ -134,9 +137,10 @@ class PacedSender : public Module,
   // Called when the prober is associated with a process thread.
   void ProcessThreadAttached(ProcessThread* process_thread) override;
 
- private:
-  // Methods implementing PacedSenderController:PacketSender.
+  // In dynamic process mode, refreshes the next process time.
+  void MaybeWakupProcessThread();
 
+  // Methods implementing PacedSenderController:PacketSender.
   void SendRtpPacket(std::unique_ptr<RtpPacketToSend> packet,
                      const PacedPacketInfo& cluster_info) override
       RTC_EXCLUSIVE_LOCKS_REQUIRED(critsect_);
@@ -163,8 +167,10 @@ class PacedSender : public Module,
   } module_proxy_{this};
 
   rtc::CriticalSection critsect_;
+  const PacingController::ProcessMode process_mode_;
   PacingController pacing_controller_ RTC_GUARDED_BY(critsect_);
 
+  Clock* const clock_;
   PacketRouter* const packet_router_;
   ProcessThread* const process_thread_;
 };

@@ -13,7 +13,6 @@ package org.webrtc.voiceengine;
 import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.AudioEffect;
 import android.media.audiofx.AudioEffect.Descriptor;
-import android.media.audiofx.AutomaticGainControl;
 import android.media.audiofx.NoiseSuppressor;
 import android.os.Build;
 import android.support.annotation.Nullable;

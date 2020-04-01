@@ -10,7 +10,8 @@
 
 #include "api/audio_codecs/audio_decoder_factory_template.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "api/audio_codecs/L16/audio_decoder_L16.h"
 #include "api/audio_codecs/g711/audio_decoder_g711.h"
 #include "api/audio_codecs/g722/audio_decoder_g722.h"
@@ -65,7 +66,7 @@ struct AudioDecoderFakeApi {
   static std::unique_ptr<AudioDecoder> MakeAudioDecoder(
       const Config&,
       absl::optional<AudioCodecPairId> /*codec_pair_id*/ = absl::nullopt) {
-    auto dec = absl::make_unique<testing::StrictMock<MockAudioDecoder>>();
+    auto dec = std::make_unique<testing::StrictMock<MockAudioDecoder>>();
     EXPECT_CALL(*dec, SampleRateHz())
         .WillOnce(::testing::Return(Params::CodecInfo().sample_rate_hz));
     EXPECT_CALL(*dec, Die());

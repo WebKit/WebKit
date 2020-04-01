@@ -37,13 +37,13 @@ class PortAllocatorTest : public ::testing::Test, public sigslot::has_slots<> {
   void SetConfigurationWithPoolSize(int candidate_pool_size) {
     EXPECT_TRUE(allocator_->SetConfiguration(
         cricket::ServerAddresses(), std::vector<cricket::RelayServerConfig>(),
-        candidate_pool_size, false));
+        candidate_pool_size, webrtc::NO_PRUNE));
   }
 
   void SetConfigurationWithPoolSizeExpectFailure(int candidate_pool_size) {
     EXPECT_FALSE(allocator_->SetConfiguration(
         cricket::ServerAddresses(), std::vector<cricket::RelayServerConfig>(),
-        candidate_pool_size, false));
+        candidate_pool_size, webrtc::NO_PRUNE));
   }
 
   std::unique_ptr<cricket::FakePortAllocatorSession> CreateSession(
@@ -114,16 +114,16 @@ TEST_F(PortAllocatorTest, CreateSession) {
 TEST_F(PortAllocatorTest, SetConfigurationUpdatesIceServers) {
   cricket::ServerAddresses stun_servers_1 = {stun_server_1};
   std::vector<cricket::RelayServerConfig> turn_servers_1 = {turn_server_1};
-  EXPECT_TRUE(
-      allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 0, false));
+  EXPECT_TRUE(allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 0,
+                                           webrtc::NO_PRUNE));
   EXPECT_EQ(stun_servers_1, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_1, allocator_->turn_servers());
 
   // Update with a different set of servers.
   cricket::ServerAddresses stun_servers_2 = {stun_server_2};
   std::vector<cricket::RelayServerConfig> turn_servers_2 = {turn_server_2};
-  EXPECT_TRUE(
-      allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 0, false));
+  EXPECT_TRUE(allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 0,
+                                           webrtc::NO_PRUNE));
   EXPECT_EQ(stun_servers_2, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_2, allocator_->turn_servers());
 }
@@ -179,14 +179,16 @@ TEST_F(PortAllocatorTest,
        SetConfigurationRecreatesPooledSessionsWhenIceServersChange) {
   cricket::ServerAddresses stun_servers_1 = {stun_server_1};
   std::vector<cricket::RelayServerConfig> turn_servers_1 = {turn_server_1};
-  allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 1, false);
+  allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 1,
+                               webrtc::NO_PRUNE);
   EXPECT_EQ(stun_servers_1, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_1, allocator_->turn_servers());
 
   // Update with a different set of servers (and also change pool size).
   cricket::ServerAddresses stun_servers_2 = {stun_server_2};
   std::vector<cricket::RelayServerConfig> turn_servers_2 = {turn_server_2};
-  allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 2, false);
+  allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 2,
+                               webrtc::NO_PRUNE);
   EXPECT_EQ(stun_servers_2, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_2, allocator_->turn_servers());
   auto session_1 = TakePooledSession();
@@ -207,7 +209,8 @@ TEST_F(PortAllocatorTest,
        SetConfigurationDoesNotRecreatePooledSessionsAfterFreezeCandidatePool) {
   cricket::ServerAddresses stun_servers_1 = {stun_server_1};
   std::vector<cricket::RelayServerConfig> turn_servers_1 = {turn_server_1};
-  allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 1, false);
+  allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 1,
+                               webrtc::NO_PRUNE);
   EXPECT_EQ(stun_servers_1, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_1, allocator_->turn_servers());
 
@@ -215,7 +218,8 @@ TEST_F(PortAllocatorTest,
   allocator_->FreezeCandidatePool();
   cricket::ServerAddresses stun_servers_2 = {stun_server_2};
   std::vector<cricket::RelayServerConfig> turn_servers_2 = {turn_server_2};
-  allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 2, false);
+  allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 2,
+                               webrtc::NO_PRUNE);
   EXPECT_EQ(stun_servers_2, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_2, allocator_->turn_servers());
   auto session = TakePooledSession();

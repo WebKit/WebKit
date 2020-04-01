@@ -10,11 +10,11 @@
 
 #include "rtc_base/ssl_certificate.h"
 
+#include <memory>
 #include <string>
 #include <utility>
 
 #include "absl/algorithm/container.h"
-#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/openssl_certificate.h"
 #include "rtc_base/ssl_fingerprint.h"
@@ -65,9 +65,9 @@ std::unique_ptr<SSLCertificateStats> SSLCertificate::GetStats() const {
   std::string der_base64;
   Base64::EncodeFromArray(der_buffer.data(), der_buffer.size(), &der_base64);
 
-  return absl::make_unique<SSLCertificateStats>(std::move(fingerprint),
-                                                std::move(digest_algorithm),
-                                                std::move(der_base64), nullptr);
+  return std::make_unique<SSLCertificateStats>(std::move(fingerprint),
+                                               std::move(digest_algorithm),
+                                               std::move(der_base64), nullptr);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ std::unique_ptr<SSLCertChain> SSLCertChain::Clone() const {
       certs_, new_certs.begin(),
       [](const std::unique_ptr<SSLCertificate>& cert)
           -> std::unique_ptr<SSLCertificate> { return cert->Clone(); });
-  return absl::make_unique<SSLCertChain>(std::move(new_certs));
+  return std::make_unique<SSLCertChain>(std::move(new_certs));
 }
 
 std::unique_ptr<SSLCertificateStats> SSLCertChain::GetStats() const {

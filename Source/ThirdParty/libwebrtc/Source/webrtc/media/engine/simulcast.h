@@ -15,31 +15,33 @@
 
 #include <vector>
 
+#include "api/units/data_rate.h"
 #include "api/video_codecs/video_encoder_config.h"
 
 namespace cricket {
 
 // Gets the total maximum bitrate for the |streams|.
-int GetTotalMaxBitrateBps(const std::vector<webrtc::VideoStream>& streams);
+webrtc::DataRate GetTotalMaxBitrate(
+    const std::vector<webrtc::VideoStream>& streams);
 
-// Adds any bitrate of |max_bitrate_bps| that is above the total maximum bitrate
-// for the |layers| to the highest quality layer.
-void BoostMaxSimulcastLayer(int max_bitrate_bps,
+// Adds any bitrate of |max_bitrate| that is above the total maximum bitrate for
+// the |layers| to the highest quality layer.
+void BoostMaxSimulcastLayer(webrtc::DataRate max_bitrate,
                             std::vector<webrtc::VideoStream>* layers);
 
 // Round size to nearest simulcast-friendly size
 int NormalizeSimulcastSize(int size, size_t simulcast_layers);
 
 // Gets simulcast settings.
-// TODO(asapersson): Remove max_bitrate_bps and max_framerate.
 std::vector<webrtc::VideoStream> GetSimulcastConfig(
+    size_t min_layers,
     size_t max_layers,
     int width,
     int height,
     double bitrate_priority,
     int max_qp,
     bool is_screenshare_with_conference_mode,
-    bool temporal_layers_supported = true);
+    bool temporal_layers_supported);
 
 // Gets the simulcast config layers for a non-screensharing case.
 std::vector<webrtc::VideoStream> GetNormalSimulcastLayers(
@@ -48,7 +50,8 @@ std::vector<webrtc::VideoStream> GetNormalSimulcastLayers(
     int height,
     double bitrate_priority,
     int max_qp,
-    bool temporal_layers_supported = true);
+    bool temporal_layers_supported,
+    bool base_heavy_tl3_rate_alloc);
 
 // Gets simulcast config layers for screenshare settings.
 std::vector<webrtc::VideoStream> GetScreenshareLayers(
@@ -57,7 +60,8 @@ std::vector<webrtc::VideoStream> GetScreenshareLayers(
     int height,
     double bitrate_priority,
     int max_qp,
-    bool temporal_layers_supported = true);
+    bool temporal_layers_supported,
+    bool base_heavy_tl3_rate_alloc);
 
 }  // namespace cricket
 

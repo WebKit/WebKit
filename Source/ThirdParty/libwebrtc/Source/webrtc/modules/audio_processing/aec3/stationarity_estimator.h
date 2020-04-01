@@ -35,7 +35,8 @@ class StationarityEstimator {
   void Reset();
 
   // Update just the noise estimator. Usefull until the delay is known
-  void UpdateNoiseEstimator(rtc::ArrayView<const float> spectrum);
+  void UpdateNoiseEstimator(
+      rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> spectrum);
 
   // Update the flag indicating whether this current frame is stationary. For
   // getting a more robust estimation, it looks at future and/or past frames.
@@ -61,7 +62,7 @@ class StationarityEstimator {
   // Get an estimation of the stationarity for the current band by looking
   // at the past/present/future available data.
   bool EstimateBandStationarity(const SpectrumBuffer& spectrum_buffer,
-                                rtc::ArrayView<const float> reverb,
+                                rtc::ArrayView<const float> average_reverb,
                                 const std::array<int, kWindowLength>& indexes,
                                 size_t band) const;
 
@@ -85,7 +86,8 @@ class StationarityEstimator {
     void Reset();
 
     // Update the noise power spectrum with a new frame.
-    void Update(rtc::ArrayView<const float> spectrum);
+    void Update(
+        rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> spectrum);
 
     // Get the noise estimation power spectrum.
     rtc::ArrayView<const float> Spectrum() const { return noise_spectrum_; }

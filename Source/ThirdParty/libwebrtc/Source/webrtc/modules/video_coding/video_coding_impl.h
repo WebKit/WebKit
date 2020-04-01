@@ -71,8 +71,6 @@ class VideoReceiver : public Module {
 
   int32_t Decode(uint16_t maxWaitTimeMs);
 
-  int32_t Decode(const webrtc::VCMEncodedFrame* frame);
-
   int32_t IncomingPacket(const uint8_t* incomingPayload,
                          size_t payloadLength,
                          const RTPHeader& rtp_header,
@@ -85,14 +83,6 @@ class VideoReceiver : public Module {
   int64_t TimeUntilNextProcess() override;
   void Process() override;
   void ProcessThreadAttached(ProcessThread* process_thread) override;
-
-  void TriggerDecoderShutdown();
-
-  // Notification methods that are used to check our internal state and validate
-  // threading assumptions. These are called by VideoReceiveStream.
-  // See |IsDecoderThreadRunning()| for more details.
-  void DecoderThreadStarting();
-  void DecoderThreadStopped();
 
  protected:
   int32_t Decode(const webrtc::VCMEncodedFrame& frame);
@@ -144,9 +134,6 @@ class VideoReceiver : public Module {
   ProcessThread* process_thread_ = nullptr;
   bool is_attached_to_process_thread_
       RTC_GUARDED_BY(construction_thread_checker_) = false;
-#if RTC_DCHECK_IS_ON
-  bool decoder_thread_is_running_ = false;
-#endif
 };
 
 }  // namespace vcm

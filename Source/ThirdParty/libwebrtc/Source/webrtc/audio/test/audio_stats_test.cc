@@ -46,7 +46,7 @@ class NoLossTest : public AudioEndToEndTest {
 
   void OnStreamsStopped() override {
     AudioSendStream::Stats send_stats = send_stream()->GetStats();
-    EXPECT_PRED2(IsNear, kBytesSent, send_stats.bytes_sent);
+    EXPECT_PRED2(IsNear, kBytesSent, send_stats.payload_bytes_sent);
     EXPECT_PRED2(IsNear, kPacketsSent, send_stats.packets_sent);
     EXPECT_EQ(0, send_stats.packets_lost);
     EXPECT_EQ(0.0f, send_stats.fraction_lost);
@@ -66,7 +66,7 @@ class NoLossTest : public AudioEndToEndTest {
     EXPECT_EQ(false, send_stats.typing_noise_detected);
 
     AudioReceiveStream::Stats recv_stats = receive_stream()->GetStats();
-    EXPECT_PRED2(IsNear, kBytesSent, recv_stats.bytes_rcvd);
+    EXPECT_PRED2(IsNear, kBytesSent, recv_stats.payload_bytes_rcvd);
     EXPECT_PRED2(IsNear, kPacketsSent, recv_stats.packets_rcvd);
     EXPECT_EQ(0u, recv_stats.packets_lost);
     EXPECT_EQ("opus", send_stats.codec_name);

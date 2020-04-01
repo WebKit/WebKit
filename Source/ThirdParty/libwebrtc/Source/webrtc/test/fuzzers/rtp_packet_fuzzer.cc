@@ -10,38 +10,40 @@
 
 #include <bitset>
 
+#include "absl/types/optional.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
-
-// We decide which header extensions to register by reading two bytes
+// We decide which header extensions to register by reading four bytes
 // from the beginning of |data| and interpreting it as a bitmask over
-// the RTPExtensionType enum. This assert ensures two bytes are enough.
-static_assert(kRtpExtensionNumberOfExtensions <= 16,
+// the RTPExtensionType enum. This assert ensures four bytes are enough.
+static_assert(kRtpExtensionNumberOfExtensions <= 32,
               "Insufficient bits read to configure all header extensions. Add "
               "an extra byte and update the switches.");
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  if (size <= 2)
+  if (size <= 4)
     return;
 
-  // Don't use the configuration bytes as part of the packet.
-  std::bitset<16> extensionMask(*reinterpret_cast<const uint16_t*>(data));
-  data += 2;
-  size -= 2;
+  // Don't use the configuration byte as part of the packet.
+  std::bitset<32> extensionMask(*reinterpret_cast<const uint32_t*>(data));
+  data += 4;
+  size -= 4;
 
-  RtpPacketReceived::ExtensionManager extensions;
-  // Skip i = 0 since it maps to ExtensionNone and extension id = 0 is invalid.
+  RtpPacketReceived::ExtensionManager extensions(/*extmap_allow_mixed=*/true);
+  // Start at local_id = 1 since 0 is an invalid extension id.
+  int local_id = 1;
+  // Skip i = 0 since it maps to kRtpExtensionNone.
   for (int i = 1; i < kRtpExtensionNumberOfExtensions; i++) {
     RTPExtensionType extension_type = static_cast<RTPExtensionType>(i);
-    if (extensionMask[i] && extension_type != kRtpExtensionNone) {
+    if (extensionMask[i]) {
       // Extensions are registered with an ID, which you signal to the
       // peer so they know what to expect. This code only cares about
-      // parsing so the value of the ID isn't relevant; we use i.
-      extensions.RegisterByType(i, extension_type);
+      // parsing so the value of the ID isn't relevant.
+      extensions.RegisterByType(local_id++, extension_type);
     }
   }
 
@@ -77,6 +79,11 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         uint32_t sendtime;
         packet.GetExtension<AbsoluteSendTime>(&sendtime);
         break;
+      case kRtpExtensionAbsoluteCaptureTime: {
+        AbsoluteCaptureTime extension;
+        packet.GetExtension<AbsoluteCaptureTimeExtension>(&extension);
+        break;
+      }
       case kRtpExtensionVideoRotation:
         uint8_t rotation;
         packet.GetExtension<VideoOrientation>(&rotation);
@@ -85,10 +92,18 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         uint16_t seqnum;
         packet.GetExtension<TransportSequenceNumber>(&seqnum);
         break;
-      case kRtpExtensionPlayoutDelay:
-        PlayoutDelay playout;
+      case kRtpExtensionTransportSequenceNumber02: {
+        uint16_t seqnum;
+        absl::optional<FeedbackRequest> feedback_request;
+        packet.GetExtension<TransportSequenceNumberV2>(&seqnum,
+                                                       &feedback_request);
+        break;
+      }
+      case kRtpExtensionPlayoutDelay: {
+        PlayoutDelay playout = PlayoutDelay::Noop();
         packet.GetExtension<PlayoutDelayLimits>(&playout);
         break;
+      }
       case kRtpExtensionVideoContentType:
         VideoContentType content_type;
         packet.GetExtension<VideoContentTypeExtension>(&content_type);
@@ -116,17 +131,34 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         packet.GetExtension<RtpMid>(&mid);
         break;
       }
-      case kRtpExtensionGenericFrameDescriptor: {
+      case kRtpExtensionGenericFrameDescriptor00: {
         RtpGenericFrameDescriptor descriptor;
-        packet.GetExtension<RtpGenericFrameDescriptorExtension>(&descriptor);
+        packet.GetExtension<RtpGenericFrameDescriptorExtension00>(&descriptor);
         break;
       }
-      case kRtpExtensionHdrMetadata: {
-        HdrMetadata hdr_metadata;
-        packet.GetExtension<HdrMetadataExtension>(&hdr_metadata);
+      case kRtpExtensionGenericFrameDescriptor01: {
+        RtpGenericFrameDescriptor descriptor;
+        packet.GetExtension<RtpGenericFrameDescriptorExtension01>(&descriptor);
         break;
       }
+      case kRtpExtensionColorSpace: {
+        ColorSpace color_space;
+        packet.GetExtension<ColorSpaceExtension>(&color_space);
+        break;
+      }
+      case kRtpExtensionInbandComfortNoise: {
+        absl::optional<uint8_t> noise_level;
+        packet.GetExtension<InbandComfortNoiseExtension>(&noise_level);
+        break;
+      }
+      case kRtpExtensionGenericFrameDescriptor02:
+        // This extension requires state to read and so complicated that
+        // deserves own fuzzer.
+        break;
     }
   }
+
+  // Check that zero-ing mutable extensions wouldn't cause any problems.
+  packet.ZeroMutableExtensions();
 }
 }  // namespace webrtc

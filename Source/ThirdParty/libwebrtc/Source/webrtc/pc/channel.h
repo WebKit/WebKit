@@ -19,9 +19,10 @@
 #include <vector>
 
 #include "api/call/audio_sink.h"
+#include "api/function_view.h"
 #include "api/jsep.h"
-#include "api/media_transport_config.h"
 #include "api/rtp_receiver_interface.h"
+#include "api/transport/media/media_transport_config.h"
 #include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
 #include "call/rtp_packet_sink_interface.h"
@@ -74,8 +75,7 @@ class BaseChannel : public ChannelInterface,
                     public rtc::MessageHandler,
                     public sigslot::has_slots<>,
                     public MediaChannel::NetworkInterface,
-                    public webrtc::RtpPacketSinkInterface,
-                    public webrtc::MediaTransportNetworkChangeCallback {
+                    public webrtc::RtpPacketSinkInterface {
  public:
   // If |srtp_required| is true, the channel will not send or receive any
   // RTP/RTCP packets without using SRTP (either using SDES or DTLS-SRTP).
@@ -156,11 +156,6 @@ class BaseChannel : public ChannelInterface,
   // Fired on the network thread.
   sigslot::signal1<const std::string&> SignalRtcpMuxFullyActive;
 
-  // Returns media transport, can be null if media transport is not available.
-  webrtc::MediaTransportInterface* media_transport() {
-    return media_transport_config_.media_transport;
-  }
-
   // From RtpTransport - public for testing only
   void OnTransportReadyToSend(bool ready);
 
@@ -221,16 +216,6 @@ class BaseChannel : public ChannelInterface,
                   rtc::CopyOnWriteBuffer* packet,
                   const rtc::PacketOptions& options);
 
-  void OnRtcpPacketReceived(rtc::CopyOnWriteBuffer* packet,
-                            int64_t packet_time_us);
-
-  void OnPacketReceived(bool rtcp,
-                        const rtc::CopyOnWriteBuffer& packet,
-                        int64_t packet_time_us);
-  void ProcessPacket(bool rtcp,
-                     const rtc::CopyOnWriteBuffer& packet,
-                     int64_t packet_time_us);
-
   void EnableMedia_w();
   void DisableMedia_w();
 
@@ -243,6 +228,7 @@ class BaseChannel : public ChannelInterface,
 
   bool AddRecvStream_w(const StreamParams& sp);
   bool RemoveRecvStream_w(uint32_t ssrc);
+  void ResetUnsignaledRecvStream_w();
   bool AddSendStream_w(const StreamParams& sp);
   bool RemoveSendStream_w(uint32_t ssrc);
 
@@ -274,12 +260,15 @@ class BaseChannel : public ChannelInterface,
   void OnMessage(rtc::Message* pmsg) override;
 
   // Helper function template for invoking methods on the worker thread.
-  template <class T, class FunctorT>
-  T InvokeOnWorker(const rtc::Location& posted_from, const FunctorT& functor) {
+  template <class T>
+  T InvokeOnWorker(const rtc::Location& posted_from,
+                   rtc::FunctionView<T()> functor) {
     return worker_thread_->Invoke<T>(posted_from, functor);
   }
 
   void AddHandledPayloadType(int payload_type);
+
+  void ClearHandledPayloadTypes();
 
   void UpdateRtpHeaderExtensionMap(
       const RtpHeaderExtensions& header_extensions);
@@ -292,11 +281,7 @@ class BaseChannel : public ChannelInterface,
   bool ConnectToRtpTransport();
   void DisconnectFromRtpTransport();
   void SignalSentPacket_n(const rtc::SentPacket& sent_packet);
-  void SignalSentPacket_w(const rtc::SentPacket& sent_packet);
   bool IsReadyToSendMedia_n() const;
-
-  // MediaTransportNetworkChangeCallback override.
-  void OnNetworkRouteChanged(const rtc::NetworkRoute& network_route) override;
 
   rtc::Thread* const worker_thread_;
   rtc::Thread* const network_thread_;
@@ -345,8 +330,7 @@ class BaseChannel : public ChannelInterface,
 
 // VoiceChannel is a specialization that adds support for early media, DTMF,
 // and input/output level monitoring.
-class VoiceChannel : public BaseChannel,
-                     public webrtc::AudioPacketReceivedObserver {
+class VoiceChannel : public BaseChannel {
  public:
   VoiceChannel(rtc::Thread* worker_thread,
                rtc::Thread* network_thread,
@@ -379,8 +363,6 @@ class VoiceChannel : public BaseChannel,
   bool SetRemoteContent_w(const MediaContentDescription* content,
                           webrtc::SdpType type,
                           std::string* error_desc) override;
-
-  void OnFirstAudioPacketReceived(int64_t channel_id) override;
 
   // Last AudioSendParameters sent down to the media_channel() via
   // SetSendParameters.
@@ -506,7 +488,7 @@ class RtpDataChannel : public BaseChannel {
 
   // overrides from BaseChannel
   // Checks that data channel type is RTP.
-  bool CheckDataChannelTypeFromContent(const RtpDataContentDescription* content,
+  bool CheckDataChannelTypeFromContent(const MediaContentDescription* content,
                                        std::string* error_desc);
   bool SetLocalContent_w(const MediaContentDescription* content,
                          webrtc::SdpType type,

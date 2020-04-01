@@ -8,7 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "sdk/android/generated_java_audio_jni/JavaAudioDeviceModule_jni.h"
 #include "sdk/android/src/jni/audio_device/audio_record_jni.h"
 #include "sdk/android/src/jni/audio_device/audio_track_jni.h"
@@ -33,11 +34,11 @@ static jlong JNI_JavaAudioDeviceModule_CreateAudioDeviceModule(
                      output_sample_rate, j_use_stereo_input,
                      j_use_stereo_output, &input_parameters,
                      &output_parameters);
-  auto audio_input = absl::make_unique<AudioRecordJni>(
+  auto audio_input = std::make_unique<AudioRecordJni>(
       env, input_parameters, kHighLatencyModeDelayEstimateInMilliseconds,
       j_webrtc_audio_record);
-  auto audio_output = absl::make_unique<AudioTrackJni>(env, output_parameters,
-                                                       j_webrtc_audio_track);
+  auto audio_output = std::make_unique<AudioTrackJni>(env, output_parameters,
+                                                      j_webrtc_audio_track);
   return jlongFromPointer(CreateAudioDeviceModuleFromInputAndOutput(
                               AudioDeviceModule::kAndroidJavaAudio,
                               j_use_stereo_input, j_use_stereo_output,

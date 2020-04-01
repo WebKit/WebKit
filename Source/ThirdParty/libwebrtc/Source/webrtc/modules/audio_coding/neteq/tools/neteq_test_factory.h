@@ -16,6 +16,7 @@
 
 #include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
+#include "test/field_trial.h"
 
 namespace webrtc {
 namespace test {
@@ -122,29 +123,46 @@ class NetEqTestFactory {
     // Maximum allowed number of packets in the buffer.
     static constexpr int default_max_nr_packets_in_buffer() { return 50; }
     int max_nr_packets_in_buffer = default_max_nr_packets_in_buffer();
+    // Number of dummy packets to put in the packet buffer at the start of the
+    // simulation.
+    static constexpr int default_initial_dummy_packets() { return 0; }
+    int initial_dummy_packets = default_initial_dummy_packets();
+    // Number of getAudio events to skip at the start of the simulation.
+    static constexpr int default_skip_get_audio_events() { return 0; }
+    int skip_get_audio_events = default_skip_get_audio_events();
     // Enables jitter buffer fast accelerate.
     bool enable_fast_accelerate = false;
-    // Path to the output text log file that describes the simulation on a
-    // step-by-step basis.
+    // Dumps events that describes the simulation on a step-by-step basis.
+    bool textlog = false;
+    // If specified and |textlog| is true, the output of |textlog| is written to
+    // the specified file name.
     absl::optional<std::string> textlog_filename;
     // Base name for the output script files for plotting the delay profile.
     absl::optional<std::string> plot_scripts_basename;
     // Path to the output audio file.
     absl::optional<std::string> output_audio_filename;
+    // Field trials to use during the simulation.
+    std::string field_trial_string;
   };
 
   std::unique_ptr<NetEqTest> InitializeTestFromFile(
       const std::string& input_filename,
+      NetEqFactory* neteq_factory,
       const Config& config);
   std::unique_ptr<NetEqTest> InitializeTestFromString(
       const std::string& input_string,
+      NetEqFactory* neteq_factory,
       const Config& config);
 
  private:
   std::unique_ptr<NetEqTest> InitializeTest(std::unique_ptr<NetEqInput> input,
+                                            NetEqFactory* neteq_factory,
                                             const Config& config);
   std::unique_ptr<SsrcSwitchDetector> ssrc_switch_detector_;
   std::unique_ptr<NetEqStatsPlotter> stats_plotter_;
+  // The field trials are stored in the test factory, because neteq_test is not
+  // in a testonly target, and therefore cannot use ScopedFieldTrials.
+  std::unique_ptr<ScopedFieldTrials> field_trials_;
 };
 
 }  // namespace test

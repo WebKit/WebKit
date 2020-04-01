@@ -274,7 +274,7 @@ bool SocketAddress::FromSockAddr(const sockaddr_in& saddr) {
 }
 
 static size_t ToSockAddrStorageHelper(sockaddr_storage* addr,
-                                      IPAddress ip,
+                                      const IPAddress& ip,
                                       uint16_t port,
                                       int scope_id) {
   memset(addr, 0, sizeof(sockaddr_storage));

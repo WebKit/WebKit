@@ -31,7 +31,7 @@ class MockRenderDelayController : public RenderDelayController {
                absl::optional<DelayEstimate>(
                    const DownsampledRenderBuffer& render_buffer,
                    size_t render_delay_buffer_delay,
-                   rtc::ArrayView<const float> capture));
+                   const std::vector<std::vector<float>>& capture));
   MOCK_CONST_METHOD0(HasClockdrift, bool());
 };
 

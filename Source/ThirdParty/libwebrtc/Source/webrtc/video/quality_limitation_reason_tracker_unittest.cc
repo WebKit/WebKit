@@ -105,7 +105,7 @@ TEST_P(QualityLimitationReasonTrackerTestWithParamReason,
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    ,
+    All,
     QualityLimitationReasonTrackerTestWithParamReason,
     ::testing::Values(QualityLimitationReason::kNone,       // "/0"
                       QualityLimitationReason::kCpu,        // "/1"

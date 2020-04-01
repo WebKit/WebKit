@@ -16,11 +16,11 @@
 #include <string>
 #include <vector>
 
-#include "api/bitrate_constraints.h"
 #include "api/fec_controller.h"
 #include "api/media_types.h"
 #include "api/network_state_predictor.h"
 #include "api/test/simulated_network.h"
+#include "api/transport/bitrate_settings.h"
 #include "api/transport/network_control.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_config.h"

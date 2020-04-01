@@ -68,7 +68,7 @@ class RtpGenericFrameDescriptorExtensionTest
   const int version_;
 };
 
-INSTANTIATE_TEST_SUITE_P(,
+INSTANTIATE_TEST_SUITE_P(All,
                          RtpGenericFrameDescriptorExtensionTest,
                          ::testing::Values(0, 1));
 

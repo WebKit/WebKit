@@ -34,14 +34,15 @@ namespace {
 class RenderDelayControllerImpl final : public RenderDelayController {
  public:
   RenderDelayControllerImpl(const EchoCanceller3Config& config,
-                            int sample_rate_hz);
+                            int sample_rate_hz,
+                            size_t num_capture_channels);
   ~RenderDelayControllerImpl() override;
   void Reset(bool reset_delay_confidence) override;
   void LogRenderCall() override;
   absl::optional<DelayEstimate> GetDelay(
       const DownsampledRenderBuffer& render_buffer,
       size_t render_delay_buffer_delay,
-      rtc::ArrayView<const float> capture) override;
+      const std::vector<std::vector<float>>& capture) override;
   bool HasClockdrift() const override;
 
  private:
@@ -89,13 +90,14 @@ int RenderDelayControllerImpl::instance_count_ = 0;
 
 RenderDelayControllerImpl::RenderDelayControllerImpl(
     const EchoCanceller3Config& config,
-    int sample_rate_hz)
+    int sample_rate_hz,
+    size_t num_capture_channels)
     : data_dumper_(
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
       hysteresis_limit_blocks_(
           static_cast<int>(config.delay.hysteresis_limit_blocks)),
       delay_headroom_samples_(config.delay.delay_headroom_samples),
-      delay_estimator_(data_dumper_.get(), config),
+      delay_estimator_(data_dumper_.get(), config, num_capture_channels),
       last_delay_estimate_quality_(DelayEstimate::Quality::kCoarse) {
   RTC_DCHECK(ValidFullBandRate(sample_rate_hz));
   delay_estimator_.LogDelayEstimationProperties(sample_rate_hz, 0);
@@ -118,8 +120,8 @@ void RenderDelayControllerImpl::LogRenderCall() {}
 absl::optional<DelayEstimate> RenderDelayControllerImpl::GetDelay(
     const DownsampledRenderBuffer& render_buffer,
     size_t render_delay_buffer_delay,
-    rtc::ArrayView<const float> capture) {
-  RTC_DCHECK_EQ(kBlockSize, capture.size());
+    const std::vector<std::vector<float>>& capture) {
+  RTC_DCHECK_EQ(kBlockSize, capture[0].size());
   ++capture_call_counter_;
 
   auto delay_samples = delay_estimator_.EstimateDelay(render_buffer, capture);
@@ -181,8 +183,10 @@ bool RenderDelayControllerImpl::HasClockdrift() const {
 
 RenderDelayController* RenderDelayController::Create(
     const EchoCanceller3Config& config,
-    int sample_rate_hz) {
-  return new RenderDelayControllerImpl(config, sample_rate_hz);
+    int sample_rate_hz,
+    size_t num_capture_channels) {
+  return new RenderDelayControllerImpl(config, sample_rate_hz,
+                                       num_capture_channels);
 }
 
 }  // namespace webrtc

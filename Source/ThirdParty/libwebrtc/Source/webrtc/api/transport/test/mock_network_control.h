@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+ *  Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
@@ -11,16 +11,20 @@
 #ifndef API_TRANSPORT_TEST_MOCK_NETWORK_CONTROL_H_
 #define API_TRANSPORT_TEST_MOCK_NETWORK_CONTROL_H_
 
-#include "api/transport/include/network_control.h"
+#include "api/transport/network_control.h"
 #include "test/gmock.h"
 
 namespace webrtc {
-namespace test {
-class MockTargetTransferRateObserver : public TargetTransferRateObserver {
+
+class MockNetworkStateEstimator : public NetworkStateEstimator {
  public:
-  MOCK_METHOD1(OnTargetTransferRate, void(TargetTransferRate));
+  MOCK_METHOD0(GetCurrentEstimate, absl::optional<NetworkStateEstimate>());
+  MOCK_METHOD1(OnTransportPacketsFeedback,
+               void(const TransportPacketsFeedback&));
+  MOCK_METHOD1(OnReceivedPacket, void(const PacketResult&));
+  MOCK_METHOD1(OnRouteChange, void(const NetworkRouteChange&));
 };
-}  // namespace test
+
 }  // namespace webrtc
 
 #endif  // API_TRANSPORT_TEST_MOCK_NETWORK_CONTROL_H_

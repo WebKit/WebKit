@@ -23,7 +23,7 @@ RtcEventVideoSendStreamConfig::RtcEventVideoSendStreamConfig(
 RtcEventVideoSendStreamConfig::RtcEventVideoSendStreamConfig(
     const RtcEventVideoSendStreamConfig& other)
     : RtcEvent(other.timestamp_us_),
-      config_(absl::make_unique<rtclog::StreamConfig>(*other.config_)) {}
+      config_(std::make_unique<rtclog::StreamConfig>(*other.config_)) {}
 
 RtcEventVideoSendStreamConfig::~RtcEventVideoSendStreamConfig() = default;
 

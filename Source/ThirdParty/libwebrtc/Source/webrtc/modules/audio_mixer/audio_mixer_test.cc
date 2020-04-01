@@ -144,9 +144,14 @@ int main(int argc, char* argv[]) {
   // Print stats.
   std::cout << "Limiting is: " << (absl::GetFlag(FLAGS_limiter) ? "on" : "off")
             << "\n"
-            << "Channels: " << num_channels << "\n"
-            << "Rate: " << sample_rate << "\n"
-            << "Number of input streams: " << input_files.size() << "\n";
+               "Channels: "
+            << num_channels
+            << "\n"
+               "Rate: "
+            << sample_rate
+            << "\n"
+               "Number of input streams: "
+            << input_files.size() << "\n";
   for (const auto& source : sources) {
     std::cout << "\t" << source.ToString() << "\n";
   }

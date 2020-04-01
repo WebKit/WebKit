@@ -123,21 +123,6 @@ void WebRtcIsacfix_FilterAndCombine1(int16_t* tempin_ch1,
                                      int16_t* out16,
                                      PostFiltBankstr* postfiltdata);
 
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-
-void WebRtcIsacfix_SplitAndFilter2(int16_t* in,
-                                   int16_t* LP16,
-                                   int16_t* HP16,
-                                   PreFiltBankstr* prefiltdata);
-
-void WebRtcIsacfix_FilterAndCombine2(int16_t* tempin_ch1,
-                                     int16_t* tempin_ch2,
-                                     int16_t* out16,
-                                     PostFiltBankstr* postfiltdata,
-                                     int16_t len);
-
-#endif
-
 /* normalized lattice filters */
 
 void WebRtcIsacfix_NormLatticeFilterMa(size_t orderCoef,

@@ -10,9 +10,7 @@
 
 package org.webrtc;
 
-import java.util.ArrayList;
 import java.util.IdentityHashMap;
-import java.util.List;
 
 /** Java version of VideoTrackInterface. */
 public class VideoTrack extends MediaStreamTrack {

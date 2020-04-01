@@ -8,7 +8,7 @@
 
 import("../../../webrtc.gni")
 
-rtc_source_set("g722_3p") {
+rtc_library("g722_3p") {
   poisonous = [ "audio_codecs" ]
   sources = [
     "g722_decode.c",

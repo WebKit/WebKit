@@ -17,7 +17,7 @@ TEST(FeedbackGeneratorTest, ReportsFeedbackForSentPackets) {
   auto gen = CreateFeedbackGenerator(FeedbackGenerator::Config());
   for (int i = 0; i < 10; ++i) {
     gen->SendPacket(kPacketSize);
-    gen->Sleep(TimeDelta::ms(50));
+    gen->Sleep(TimeDelta::Millis(50));
   }
   auto feedback_list = gen->PopFeedback();
   EXPECT_GT(feedback_list.size(), 0u);

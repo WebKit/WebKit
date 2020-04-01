@@ -20,8 +20,9 @@
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/function_view.h"
+#include "api/neteq/neteq.h"
+#include "api/neteq/neteq_factory.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
-#include "modules/audio_coding/neteq/include/neteq.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -32,8 +33,6 @@ class AudioEncoder;
 class AudioFrame;
 struct RTPHeader;
 
-#define WEBRTC_10MS_PCM_AUDIO 960  // 16 bits super wideband 48 kHz
-
 // Callback class used for sending data ready to be packetized
 class AudioPacketizationCallback {
  public:
@@ -43,15 +42,21 @@ class AudioPacketizationCallback {
                            uint8_t payload_type,
                            uint32_t timestamp,
                            const uint8_t* payload_data,
-                           size_t payload_len_bytes) = 0;
-};
-
-// Callback class used for reporting VAD decision
-class ACMVADCallback {
- public:
-  virtual ~ACMVADCallback() {}
-
-  virtual int32_t InFrameType(AudioFrameType frame_type) = 0;
+                           size_t payload_len_bytes,
+                           int64_t absolute_capture_timestamp_ms) {
+    // TODO(bugs.webrtc.org/10739): Deprecate the old SendData and make this one
+    // pure virtual.
+    return SendData(frame_type, payload_type, timestamp, payload_data,
+                    payload_len_bytes);
+  }
+  virtual int32_t SendData(AudioFrameType frame_type,
+                           uint8_t payload_type,
+                           uint32_t timestamp,
+                           const uint8_t* payload_data,
+                           size_t payload_len_bytes) {
+    RTC_NOTREACHED() << "This method must be overridden, or not used.";
+    return -1;
+  }
 };
 
 class AudioCodingModule {
@@ -68,6 +73,7 @@ class AudioCodingModule {
     NetEq::Config neteq_config;
     Clock* clock;
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory;
+    NetEqFactory* neteq_factory = nullptr;
   };
 
   static AudioCodingModule* Create(const Config& config);
@@ -145,26 +151,6 @@ class AudioCodingModule {
   // This is only used in test code that rely on old ACM APIs.
   // TODO(minyue): Remove it when possible.
   virtual int SetPacketLossRate(int packet_loss_rate) = 0;
-
-  ///////////////////////////////////////////////////////////////////////////
-  //   (VAD) Voice Activity Detection
-  //
-
-  ///////////////////////////////////////////////////////////////////////////
-  // int32_t RegisterVADCallback()
-  // Call this method to register a callback function which is called
-  // any time that ACM encounters an empty frame. That is a frame which is
-  // recognized inactive. Depending on the codec WebRtc VAD or internal codec
-  // VAD is employed to identify a frame as active/inactive.
-  //
-  // Input:
-  //   -vad_callback        : pointer to a callback function.
-  //
-  // Return value:
-  //   -1 if failed to register the callback function.
-  //    0 if the callback function is registered successfully.
-  //
-  virtual int32_t RegisterVADCallback(ACMVADCallback* vad_callback) = 0;
 
   ///////////////////////////////////////////////////////////////////////////
   //   Receiver

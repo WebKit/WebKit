@@ -70,9 +70,6 @@ class RtpGenericFrameDescriptor {
   // Returns false on failure, i.e. number of dependencies is too large.
   bool AddFrameDependencyDiff(uint16_t fdiff);
 
-  void SetByteRepresentation(rtc::ArrayView<const uint8_t> representation);
-  rtc::ArrayView<const uint8_t> GetByteRepresentation();
-
  private:
   bool beginning_of_subframe_ = false;
   bool end_of_subframe_ = false;
@@ -86,8 +83,6 @@ class RtpGenericFrameDescriptor {
   uint16_t frame_deps_id_diffs_[kMaxNumFrameDependencies];
   int width_ = 0;
   int height_ = 0;
-
-  std::vector<uint8_t> byte_representation_;
 };
 
 }  // namespace webrtc

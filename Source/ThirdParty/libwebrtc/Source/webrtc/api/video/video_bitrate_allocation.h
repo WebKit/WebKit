@@ -80,9 +80,15 @@ class RTC_EXPORT VideoBitrateAllocation {
 
   std::string ToString() const;
 
+  // Indicates if the allocation has some layers/streams disabled due to
+  // low available bandwidth.
+  void set_bw_limited(bool limited) { is_bw_limited_ = limited; }
+  bool is_bw_limited() const { return is_bw_limited_; }
+
  private:
   uint32_t sum_;
   absl::optional<uint32_t> bitrates_[kMaxSpatialLayers][kMaxTemporalStreams];
+  bool is_bw_limited_;
 };
 
 }  // namespace webrtc

@@ -26,7 +26,7 @@ namespace webrtc {
 
 int Normal::Process(const int16_t* input,
                     size_t length,
-                    Modes last_mode,
+                    NetEq::Mode last_mode,
                     AudioMultiVector* output) {
   if (length == 0) {
     // Nothing to process.
@@ -52,7 +52,7 @@ int Normal::Process(const int16_t* input,
 
   // Check if last RecOut call resulted in an Expand. If so, we have to take
   // care of some cross-fading and unmuting.
-  if (last_mode == kModeExpand) {
+  if (last_mode == NetEq::Mode::kExpand) {
     // Generate interpolation data using Expand.
     // First, set Expand parameters to appropriate values.
     expand_->SetParametersForNormalAfterExpand();
@@ -144,7 +144,7 @@ int Normal::Process(const int16_t* input,
       RTC_DCHECK_GT(win_up_Q14,
                     (1 << 14) - 32);  // Worst case rouding is a length of 34
     }
-  } else if (last_mode == kModeRfc3389Cng) {
+  } else if (last_mode == NetEq::Mode::kRfc3389Cng) {
     RTC_DCHECK_EQ(output->Channels(), 1);  // Not adapted for multi-channel yet.
     static const size_t kCngLength = 48;
     RTC_DCHECK_LE(8 * fs_mult, kCngLength);

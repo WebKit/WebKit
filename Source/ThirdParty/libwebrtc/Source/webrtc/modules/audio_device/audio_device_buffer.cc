@@ -413,11 +413,19 @@ void AudioDeviceBuffer::LogStats(LogState state) {
                                abs_diff_rate_in_percent);
       RTC_LOG(INFO) << "[REC : " << time_since_last << "msec, "
                     << rec_sample_rate / 1000 << "kHz] callbacks: "
-                    << stats.rec_callbacks - last_stats_.rec_callbacks << ", "
-                    << "samples: " << diff_samples << ", "
-                    << "rate: " << static_cast<int>(rate + 0.5) << ", "
-                    << "rate diff: " << abs_diff_rate_in_percent << "%, "
-                    << "level: " << stats.max_rec_level;
+                    << stats.rec_callbacks - last_stats_.rec_callbacks
+                    << ", "
+                       "samples: "
+                    << diff_samples
+                    << ", "
+                       "rate: "
+                    << static_cast<int>(rate + 0.5)
+                    << ", "
+                       "rate diff: "
+                    << abs_diff_rate_in_percent
+                    << "%, "
+                       "level: "
+                    << stats.max_rec_level;
     }
 
     diff_samples = stats.play_samples - last_stats_.play_samples;
@@ -431,11 +439,19 @@ void AudioDeviceBuffer::LogStats(LogState state) {
                                abs_diff_rate_in_percent);
       RTC_LOG(INFO) << "[PLAY: " << time_since_last << "msec, "
                     << play_sample_rate / 1000 << "kHz] callbacks: "
-                    << stats.play_callbacks - last_stats_.play_callbacks << ", "
-                    << "samples: " << diff_samples << ", "
-                    << "rate: " << static_cast<int>(rate + 0.5) << ", "
-                    << "rate diff: " << abs_diff_rate_in_percent << "%, "
-                    << "level: " << stats.max_play_level;
+                    << stats.play_callbacks - last_stats_.play_callbacks
+                    << ", "
+                       "samples: "
+                    << diff_samples
+                    << ", "
+                       "rate: "
+                    << static_cast<int>(rate + 0.5)
+                    << ", "
+                       "rate diff: "
+                    << abs_diff_rate_in_percent
+                    << "%, "
+                       "level: "
+                    << stats.max_play_level;
     }
   }
   last_stats_ = stats;

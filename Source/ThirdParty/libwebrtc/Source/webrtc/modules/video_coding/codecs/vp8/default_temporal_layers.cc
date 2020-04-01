@@ -18,7 +18,6 @@
 #include <utility>
 #include <vector>
 
-#include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
@@ -165,6 +164,12 @@ DefaultTemporalLayers::GetDependencyInfo(size_t num_layers) {
         // TL1  references 'last' and references and updates 'golden'.
         // TL2 references both 'last' & 'golden' and references and updates
         // 'arf'.
+        //     2-------2       2-------2       2
+        //    /     __/       /     __/       /
+        //   /   __1         /   __1         /
+        //  /___/           /___/           /
+        // 0---------------0---------------0-----
+        // 0   1   2   3   4   5   6   7   8   9 ...
         return {{"SSS", {kReferenceAndUpdate, kNone, kNone}},
                 {"--S", {kReference, kNone, kUpdate}},
                 {"-DR", {kReference, kUpdate, kNone}},
@@ -175,6 +180,12 @@ DefaultTemporalLayers::GetDependencyInfo(size_t num_layers) {
         // TL0 also references and updates the 'last' buffer.
         // TL1 also references 'last' and references and updates 'golden'.
         // TL2 references both 'last' and 'golden' but updates no buffer.
+        //     2     __2  _____2     __2       2
+        //    /     /____/    /     /         /
+        //   /     1---------/-----1         /
+        //  /_____/         /_____/         /
+        // 0---------------0---------------0-----
+        // 0   1   2   3   4   5   6   7   8   9 ...
         return {{"SSS", {kReferenceAndUpdate, kNone, kNone}},
                 {"--D", {kReference, kNone, kNone, kFreezeEntropy}},
                 {"-SS", {kReference, kUpdate, kNone}},
@@ -555,10 +566,14 @@ void DefaultTemporalLayers::OnEncodeDone(size_t stream_index,
   // subsequent frames.
   if (is_keyframe) {
     info->template_structure = GetTemplateStructure(num_layers_);
+    generic_frame_info.decode_target_indications =
+        temporal_pattern_.front().decode_target_indications;
+    generic_frame_info.temporal_id = 0;
+  } else {
+    generic_frame_info.decode_target_indications =
+        frame.dependency_info.decode_target_indications;
+    generic_frame_info.temporal_id = frame_config.packetizer_temporal_idx;
   }
-  generic_frame_info.decode_target_indications =
-      frame.dependency_info.decode_target_indications;
-  generic_frame_info.temporal_id = frame_config.packetizer_temporal_idx;
 
   if (!frame.expired) {
     for (Vp8BufferReference buffer : kAllBuffers) {
@@ -613,15 +628,25 @@ FrameDependencyStructure DefaultTemporalLayers::GetTemplateStructure(
       return template_structure;
     }
     case 3: {
-      template_structure.templates = {
-          Builder().T(0).Dtis("SSS").Build(),
-          Builder().T(0).Dtis("SSS").Fdiffs({4}).Build(),
-          Builder().T(0).Dtis("SRR").Fdiffs({4}).Build(),
-          Builder().T(1).Dtis("-SR").Fdiffs({2}).Build(),
-          Builder().T(1).Dtis("-DR").Fdiffs({2, 4}).Build(),
-          Builder().T(2).Dtis("--D").Fdiffs({1}).Build(),
-          Builder().T(2).Dtis("--D").Fdiffs({1, 3}).Build(),
-      };
+      if (field_trial::IsEnabled("WebRTC-UseShortVP8TL3Pattern")) {
+        template_structure.templates = {
+            Builder().T(0).Dtis("SSS").Build(),
+            Builder().T(0).Dtis("SSS").Fdiffs({4}).Build(),
+            Builder().T(1).Dtis("-DR").Fdiffs({2}).Build(),
+            Builder().T(2).Dtis("--S").Fdiffs({1}).Build(),
+            Builder().T(2).Dtis("--D").Fdiffs({1, 2}).Build(),
+        };
+      } else {
+        template_structure.templates = {
+            Builder().T(0).Dtis("SSS").Build(),
+            Builder().T(0).Dtis("SSS").Fdiffs({4}).Build(),
+            Builder().T(0).Dtis("SRR").Fdiffs({4}).Build(),
+            Builder().T(1).Dtis("-SS").Fdiffs({2}).Build(),
+            Builder().T(1).Dtis("-DS").Fdiffs({2, 4}).Build(),
+            Builder().T(2).Dtis("--D").Fdiffs({1}).Build(),
+            Builder().T(2).Dtis("--D").Fdiffs({1, 3}).Build(),
+        };
+      }
       return template_structure;
     }
     case 4: {

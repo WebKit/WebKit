@@ -6,12 +6,10 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-rtc_static_library("webrtc") {
+rtc_library("webrtc") {
   sources = [
     "call.h",
     "dummy_source.h",
   ]
-  deps = [
-    "call",
-  ]
+  deps = [ "call" ]
 }

@@ -67,7 +67,7 @@ class RTC_EXPORT StunProber : public sigslot::has_slots<> {
     virtual void OnFinished(StunProber* prober, StunProber::Status status) = 0;
   };
 
-  struct Stats {
+  struct RTC_EXPORT Stats {
     Stats();
     ~Stats();
 

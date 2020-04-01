@@ -110,6 +110,45 @@ TEST(RateControlSettingsTest, LibvpxTrustedRateController) {
   EXPECT_TRUE(settings_after.LibvpxVp9TrustedRateController());
 }
 
+TEST(RateControlSettingsTest, Vp8BaseHeavyTl3RateAllocationLegacyKey) {
+  const RateControlSettings settings_before =
+      RateControlSettings::ParseFromFieldTrials();
+  EXPECT_FALSE(settings_before.Vp8BaseHeavyTl3RateAllocation());
+
+  test::ScopedFieldTrials field_trials(
+      "WebRTC-UseBaseHeavyVP8TL3RateAllocation/Enabled/");
+  const RateControlSettings settings_after =
+      RateControlSettings::ParseFromFieldTrials();
+  EXPECT_TRUE(settings_after.Vp8BaseHeavyTl3RateAllocation());
+}
+
+TEST(RateControlSettingsTest,
+     Vp8BaseHeavyTl3RateAllocationVideoRateControlKey) {
+  const RateControlSettings settings_before =
+      RateControlSettings::ParseFromFieldTrials();
+  EXPECT_FALSE(settings_before.Vp8BaseHeavyTl3RateAllocation());
+
+  test::ScopedFieldTrials field_trials(
+      "WebRTC-VideoRateControl/vp8_base_heavy_tl3_alloc:1/");
+  const RateControlSettings settings_after =
+      RateControlSettings::ParseFromFieldTrials();
+  EXPECT_TRUE(settings_after.Vp8BaseHeavyTl3RateAllocation());
+}
+
+TEST(RateControlSettingsTest,
+     Vp8BaseHeavyTl3RateAllocationVideoRateControlKeyOverridesLegacyKey) {
+  const RateControlSettings settings_before =
+      RateControlSettings::ParseFromFieldTrials();
+  EXPECT_FALSE(settings_before.Vp8BaseHeavyTl3RateAllocation());
+
+  test::ScopedFieldTrials field_trials(
+      "WebRTC-UseBaseHeavyVP8TL3RateAllocation/Enabled/WebRTC-VideoRateControl/"
+      "vp8_base_heavy_tl3_alloc:0/");
+  const RateControlSettings settings_after =
+      RateControlSettings::ParseFromFieldTrials();
+  EXPECT_FALSE(settings_after.Vp8BaseHeavyTl3RateAllocation());
+}
+
 TEST(RateControlSettingsTest, GetSimulcastHysteresisFactor) {
   const RateControlSettings settings_before =
       RateControlSettings::ParseFromFieldTrials();

@@ -10,7 +10,6 @@
 
 package org.webrtc;
 
-import android.annotation.TargetApi;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo.CodecCapabilities;
 import android.media.MediaFormat;
@@ -57,7 +56,7 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
 
   private final MediaCodecWrapperFactory mediaCodecWrapperFactory;
   private final String codecName;
-  private final VideoCodecType codecType;
+  private final VideoCodecMimeType codecType;
 
   private static class FrameInfo {
     final long decodeStartTimeMs;
@@ -130,7 +129,7 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
   @Nullable private MediaCodecWrapper codec;
 
   AndroidVideoDecoder(MediaCodecWrapperFactory mediaCodecWrapperFactory, String codecName,
-      VideoCodecType codecType, int colorFormat, @Nullable EglBase.Context sharedContext) {
+      VideoCodecMimeType codecType, int colorFormat, @Nullable EglBase.Context sharedContext) {
     if (!isSupportedColorFormat(colorFormat)) {
       throw new IllegalArgumentException("Unsupported color format: " + colorFormat);
     }
@@ -464,7 +463,10 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
   private void deliverByteFrame(
       int result, MediaCodec.BufferInfo info, int rotation, Integer decodeTimeMs) {
     // Load dimensions from shared memory under the dimension lock.
-    int width, height, stride, sliceHeight;
+    int width;
+    int height;
+    int stride;
+    int sliceHeight;
     synchronized (dimensionLock) {
       width = this.width;
       height = this.height;

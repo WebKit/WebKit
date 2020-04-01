@@ -55,9 +55,4 @@ TEST_F(VieKeyRequestTest, TooManyOnReceivedIntraFrameRequest) {
   encoder_rtcp_feedback_.OnReceivedIntraFrameRequest(kSsrc);
 }
 
-TEST_F(VieKeyRequestTest, TriggerRequestFromMediaTransport) {
-  EXPECT_CALL(encoder_, SendKeyFrame()).Times(1);
-  encoder_rtcp_feedback_.OnKeyFrameRequested(kSsrc);
-}
-
 }  // namespace webrtc

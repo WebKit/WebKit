@@ -133,10 +133,12 @@ class DtmfSenderTest : public ::testing::Test {
 
   // Constructs a list of DtmfInfo from |tones|, |duration| and
   // |inter_tone_gap|.
-  void GetDtmfInfoFromString(const std::string& tones,
-                             int duration,
-                             int inter_tone_gap,
-                             std::vector<FakeDtmfProvider::DtmfInfo>* dtmfs) {
+  void GetDtmfInfoFromString(
+      const std::string& tones,
+      int duration,
+      int inter_tone_gap,
+      std::vector<FakeDtmfProvider::DtmfInfo>* dtmfs,
+      int comma_delay = webrtc::DtmfSender::kDtmfDefaultCommaDelayMs) {
     // Init extra_delay as -inter_tone_gap - duration to ensure the first
     // DtmfInfo's gap field will be 0.
     int extra_delay = -1 * (inter_tone_gap + duration);
@@ -147,7 +149,7 @@ class DtmfSenderTest : public ::testing::Test {
       int code = 0;
       webrtc::GetDtmfCode(tone, &code);
       if (tone == ',') {
-        extra_delay = 2000;  // 2 seconds
+        extra_delay = comma_delay;
       } else {
         dtmfs->push_back(FakeDtmfProvider::DtmfInfo(
             code, duration, duration + inter_tone_gap + extra_delay));
@@ -165,11 +167,14 @@ class DtmfSenderTest : public ::testing::Test {
   }
 
   // Verify the provider got all the expected calls.
-  void VerifyOnProvider(const std::string& tones,
-                        int duration,
-                        int inter_tone_gap) {
+  void VerifyOnProvider(
+      const std::string& tones,
+      int duration,
+      int inter_tone_gap,
+      int comma_delay = webrtc::DtmfSender::kDtmfDefaultCommaDelayMs) {
     std::vector<FakeDtmfProvider::DtmfInfo> dtmf_queue_ref;
-    GetDtmfInfoFromString(tones, duration, inter_tone_gap, &dtmf_queue_ref);
+    GetDtmfInfoFromString(tones, duration, inter_tone_gap, &dtmf_queue_ref,
+                          comma_delay);
     VerifyOnProvider(dtmf_queue_ref);
   }
 
@@ -310,15 +315,33 @@ TEST_F(DtmfSenderTest, InsertEmptyTonesToCancelPreviousTask) {
   VerifyOnObserver("1");
 }
 
-TEST_F(DtmfSenderTest, InsertDtmfWithCommaAsDelay) {
+TEST_F(DtmfSenderTest, InsertDtmfWithDefaultCommaDelay) {
   std::string tones = "3,4";
   int duration = 100;
   int inter_tone_gap = 50;
+  int default_comma_delay = webrtc::DtmfSender::kDtmfDefaultCommaDelayMs;
+  EXPECT_EQ(dtmf_->comma_delay(), default_comma_delay);
   EXPECT_TRUE(dtmf_->InsertDtmf(tones, duration, inter_tone_gap));
   EXPECT_TRUE_SIMULATED_WAIT(observer_->completed(), kMaxWaitMs, fake_clock_);
 
   VerifyOnProvider(tones, duration, inter_tone_gap);
   VerifyOnObserver(tones);
+  EXPECT_EQ(dtmf_->comma_delay(), default_comma_delay);
+}
+
+TEST_F(DtmfSenderTest, InsertDtmfWithNonDefaultCommaDelay) {
+  std::string tones = "3,4";
+  int duration = 100;
+  int inter_tone_gap = 50;
+  int default_comma_delay = webrtc::DtmfSender::kDtmfDefaultCommaDelayMs;
+  int comma_delay = 500;
+  EXPECT_EQ(dtmf_->comma_delay(), default_comma_delay);
+  EXPECT_TRUE(dtmf_->InsertDtmf(tones, duration, inter_tone_gap, comma_delay));
+  EXPECT_TRUE_SIMULATED_WAIT(observer_->completed(), kMaxWaitMs, fake_clock_);
+
+  VerifyOnProvider(tones, duration, inter_tone_gap, comma_delay);
+  VerifyOnObserver(tones);
+  EXPECT_EQ(dtmf_->comma_delay(), comma_delay);
 }
 
 TEST_F(DtmfSenderTest, TryInsertDtmfWhenItDoesNotWork) {
@@ -337,6 +360,7 @@ TEST_F(DtmfSenderTest, InsertDtmfWithInvalidDurationOrGap) {
   EXPECT_FALSE(dtmf_->InsertDtmf(tones, 6001, inter_tone_gap));
   EXPECT_FALSE(dtmf_->InsertDtmf(tones, 39, inter_tone_gap));
   EXPECT_FALSE(dtmf_->InsertDtmf(tones, duration, 29));
+  EXPECT_FALSE(dtmf_->InsertDtmf(tones, duration, inter_tone_gap, 29));
 
   EXPECT_TRUE(dtmf_->InsertDtmf(tones, duration, inter_tone_gap));
 }

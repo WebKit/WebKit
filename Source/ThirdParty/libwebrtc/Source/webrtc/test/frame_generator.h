@@ -14,100 +14,148 @@
 #include <string>
 #include <vector>
 
+#include "api/scoped_refptr.h"
+#include "api/test/frame_generator_interface.h"
+#include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
 #include "api/video/video_source_interface.h"
 #include "rtc_base/critical_section.h"
+#include "rtc_base/random.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
-class Clock;
 namespace test {
 
-// FrameForwarder can be used as an implementation
-// of rtc::VideoSourceInterface<VideoFrame> where the caller controls when
-// a frame should be forwarded to its sink.
-// Currently this implementation only support one sink.
-class FrameForwarder : public rtc::VideoSourceInterface<VideoFrame> {
+// SquareGenerator is a FrameGenerator that draws a given amount of randomly
+// sized and colored squares. Between each new generated frame, the squares
+// are moved slightly towards the lower right corner.
+class SquareGenerator : public FrameGeneratorInterface {
  public:
-  FrameForwarder();
-  ~FrameForwarder() override;
-  // Forwards |video_frame| to the registered |sink_|.
-  virtual void IncomingCapturedFrame(const VideoFrame& video_frame);
-  rtc::VideoSinkWants sink_wants() const;
-  bool has_sinks() const;
+  SquareGenerator(int width, int height, OutputType type, int num_squares);
 
- protected:
-  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
-                       const rtc::VideoSinkWants& wants) override;
-  void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override;
+  void ChangeResolution(size_t width, size_t height) override;
+  VideoFrameData NextFrame() override;
 
-  rtc::CriticalSection crit_;
-  rtc::VideoSinkInterface<VideoFrame>* sink_ RTC_GUARDED_BY(crit_);
-  rtc::VideoSinkWants sink_wants_ RTC_GUARDED_BY(crit_);
-};
+ private:
+  rtc::scoped_refptr<I420Buffer> CreateI420Buffer(int width, int height);
 
-class FrameGenerator {
- public:
-  virtual ~FrameGenerator() = default;
+  class Square {
+   public:
+    Square(int width, int height, int seed);
 
-  // Returns video frame that remains valid until next call.
-  // TODO(kron): Return rtc::scoped_refptr<VideoFrameBuffer> instead of
-  // VideoFrame* and populate the VideoFrame struct in FrameGeneratorCapturer
-  // using VideoFrame::Builder.
-  virtual VideoFrame* NextFrame() = 0;
+    void Draw(const rtc::scoped_refptr<VideoFrameBuffer>& frame_buffer);
 
-  // Change the capture resolution.
-  virtual void ChangeResolution(size_t width, size_t height);
-
-  enum class OutputType {
-    kI420,
-    // TODO(srte): Remove alias when downstream is updated.
-    I420 = kI420,
-    kI420A,
-    kI010
+   private:
+    Random random_generator_;
+    int x_;
+    int y_;
+    const int length_;
+    const uint8_t yuv_y_;
+    const uint8_t yuv_u_;
+    const uint8_t yuv_v_;
+    const uint8_t yuv_a_;
   };
 
-  // Creates a frame generator that produces frames with small squares that
-  // move randomly towards the lower right corner.
-  // |type| has the default value OutputType::I420. |num_squares| has the
-  // default value 10.
-  static std::unique_ptr<FrameGenerator> CreateSquareGenerator(
-      int width,
-      int height,
-      absl::optional<OutputType> type,
-      absl::optional<int> num_squares);
-
-  // Creates a frame generator that repeatedly plays a set of yuv files.
-  // The frame_repeat_count determines how many times each frame is shown,
-  // with 1 = show each frame once, etc.
-  static std::unique_ptr<FrameGenerator> CreateFromYuvFile(
-      std::vector<std::string> files,
-      size_t width,
-      size_t height,
-      int frame_repeat_count);
-
-  // Creates a frame generator which takes a set of yuv files (wrapping a
-  // frame generator created by CreateFromYuvFile() above), but outputs frames
-  // that have been cropped to specified resolution: source_width/source_height
-  // is the size of the source images, target_width/target_height is the size of
-  // the cropped output. For each source image read, the cropped viewport will
-  // be scrolled top to bottom/left to right for scroll_tim_ms milliseconds.
-  // After that the image will stay in place for pause_time_ms milliseconds,
-  // and then this will be repeated with the next file from the input set.
-  static std::unique_ptr<FrameGenerator> CreateScrollingInputFromYuvFiles(
-      Clock* clock,
-      std::vector<std::string> filenames,
-      size_t source_width,
-      size_t source_height,
-      size_t target_width,
-      size_t target_height,
-      int64_t scroll_time_ms,
-      int64_t pause_time_ms);
-
-  // Creates a frame generator that produces randomly generated slides.
-  // frame_repeat_count determines how many times each slide is shown.
-  static std::unique_ptr<FrameGenerator>
-  CreateSlideGenerator(int width, int height, int frame_repeat_count);
+  rtc::CriticalSection crit_;
+  const OutputType type_;
+  int width_ RTC_GUARDED_BY(&crit_);
+  int height_ RTC_GUARDED_BY(&crit_);
+  std::vector<std::unique_ptr<Square>> squares_ RTC_GUARDED_BY(&crit_);
 };
+
+class YuvFileGenerator : public FrameGeneratorInterface {
+ public:
+  YuvFileGenerator(std::vector<FILE*> files,
+                   size_t width,
+                   size_t height,
+                   int frame_repeat_count);
+
+  ~YuvFileGenerator();
+
+  VideoFrameData NextFrame() override;
+  void ChangeResolution(size_t width, size_t height) override {
+    RTC_NOTREACHED();
+  }
+
+ private:
+  // Returns true if the new frame was loaded.
+  // False only in case of a single file with a single frame in it.
+  bool ReadNextFrame();
+
+  size_t file_index_;
+  size_t frame_index_;
+  const std::vector<FILE*> files_;
+  const size_t width_;
+  const size_t height_;
+  const size_t frame_size_;
+  const std::unique_ptr<uint8_t[]> frame_buffer_;
+  const int frame_display_count_;
+  int current_display_count_;
+  rtc::scoped_refptr<I420Buffer> last_read_buffer_;
+};
+
+// SlideGenerator works similarly to YuvFileGenerator but it fills the frames
+// with randomly sized and colored squares instead of reading their content
+// from files.
+class SlideGenerator : public FrameGeneratorInterface {
+ public:
+  SlideGenerator(int width, int height, int frame_repeat_count);
+
+  VideoFrameData NextFrame() override;
+  void ChangeResolution(size_t width, size_t height) override {
+    RTC_NOTREACHED();
+  }
+
+ private:
+  // Generates some randomly sized and colored squares scattered
+  // over the frame.
+  void GenerateNewFrame();
+
+  const int width_;
+  const int height_;
+  const int frame_display_count_;
+  int current_display_count_;
+  Random random_generator_;
+  rtc::scoped_refptr<I420Buffer> buffer_;
+};
+
+class ScrollingImageFrameGenerator : public FrameGeneratorInterface {
+ public:
+  ScrollingImageFrameGenerator(Clock* clock,
+                               const std::vector<FILE*>& files,
+                               size_t source_width,
+                               size_t source_height,
+                               size_t target_width,
+                               size_t target_height,
+                               int64_t scroll_time_ms,
+                               int64_t pause_time_ms);
+  ~ScrollingImageFrameGenerator() override = default;
+
+  VideoFrameData NextFrame() override;
+  void ChangeResolution(size_t width, size_t height) override {
+    RTC_NOTREACHED();
+  }
+
+ private:
+  void UpdateSourceFrame(size_t frame_num);
+  void CropSourceToScrolledImage(double scroll_factor);
+
+  Clock* const clock_;
+  const int64_t start_time_;
+  const int64_t scroll_time_;
+  const int64_t pause_time_;
+  const size_t num_frames_;
+  const int target_width_;
+  const int target_height_;
+
+  size_t current_frame_num_;
+  bool prev_frame_not_scrolled_;
+  VideoFrameData current_source_frame_;
+  VideoFrameData current_frame_;
+  YuvFileGenerator file_generator_;
+};
+
 }  // namespace test
 }  // namespace webrtc
 

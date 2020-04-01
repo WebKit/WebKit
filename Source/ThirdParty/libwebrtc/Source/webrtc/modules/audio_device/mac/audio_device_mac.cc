@@ -15,7 +15,8 @@
 #include <mach/mach.h>         // mach_task_self()
 #include <sys/sysctl.h>        // sysctlbyname()
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "modules/audio_device/audio_device_config.h"
 #include "modules/third_party/portaudio/pa_ringbuffer.h"
 #include "rtc_base/arraysize.h"
@@ -1033,7 +1034,7 @@ int32_t AudioDeviceMac::InitPlayout() {
 
   if (_outStreamFormat.mFormatFlags & kAudioFormatFlagIsNonInterleaved) {
     RTC_LOG(LS_ERROR) << "Non-interleaved audio data is not supported."
-                      << "AudioHardware streams should not have this format.";
+                         "AudioHardware streams should not have this format.";
     return -1;
   }
 
@@ -1332,7 +1333,7 @@ int32_t AudioDeviceMac::StopRecording() {
       if (!_stopEventRec.Wait(2000)) {
         rtc::CritScope critScoped(&_critSect);
         RTC_LOG(LS_WARNING) << "Timed out stopping the capture IOProc."
-                            << "We may have failed to detect a device removal.";
+                               "We may have failed to detect a device removal.";
         WEBRTC_CA_LOG_WARN(AudioDeviceStop(_inputDeviceID, _inDeviceIOProcID));
         WEBRTC_CA_LOG_WARN(
             AudioDeviceDestroyIOProcID(_inputDeviceID, _inDeviceIOProcID));
@@ -1360,7 +1361,7 @@ int32_t AudioDeviceMac::StopRecording() {
       if (!_stopEvent.Wait(2000)) {
         rtc::CritScope critScoped(&_critSect);
         RTC_LOG(LS_WARNING) << "Timed out stopping the shared IOProc."
-                            << "We may have failed to detect a device removal.";
+                               "We may have failed to detect a device removal.";
         // We assume rendering on a shared device has stopped as well if
         // the IOProc times out.
         WEBRTC_CA_LOG_WARN(AudioDeviceStop(_outputDeviceID, _deviceIOProcID));
@@ -1467,7 +1468,7 @@ int32_t AudioDeviceMac::StopPlayout() {
     if (!_stopEvent.Wait(2000)) {
       rtc::CritScope critScoped(&_critSect);
       RTC_LOG(LS_WARNING) << "Timed out stopping the render IOProc."
-                          << "We may have failed to detect a device removal.";
+                             "We may have failed to detect a device removal.";
 
       // We assume capturing on a shared device has stopped as well if the
       // IOProc times out.
@@ -1557,7 +1558,7 @@ int32_t AudioDeviceMac::GetNumberDevices(const AudioObjectPropertyScope scope,
   }
 
   UInt32 numberDevices = size / sizeof(AudioDeviceID);
-  const auto deviceIds = absl::make_unique<AudioDeviceID[]>(numberDevices);
+  const auto deviceIds = std::make_unique<AudioDeviceID[]>(numberDevices);
   AudioBufferList* bufferList = NULL;
   UInt32 numberScopedDevices = 0;
 

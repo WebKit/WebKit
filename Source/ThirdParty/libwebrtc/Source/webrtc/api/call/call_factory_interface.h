@@ -13,6 +13,8 @@
 
 #include <memory>
 
+#include "rtc_base/system/rtc_export.h"
+
 namespace webrtc {
 
 // These classes are not part of the API, and are treated as opaque pointers.
@@ -29,7 +31,7 @@ class CallFactoryInterface {
   virtual Call* CreateCall(const CallConfig& config) = 0;
 };
 
-std::unique_ptr<CallFactoryInterface> CreateCallFactory();
+RTC_EXPORT std::unique_ptr<CallFactoryInterface> CreateCallFactory();
 
 }  // namespace webrtc
 

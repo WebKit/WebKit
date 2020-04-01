@@ -11,7 +11,8 @@
 #ifndef P2P_BASE_TEST_TURN_CUSTOMIZER_H_
 #define P2P_BASE_TEST_TURN_CUSTOMIZER_H_
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "api/turn_customizer.h"
 #include "rtc_base/gunit.h"
 
@@ -33,7 +34,7 @@ class TestTurnCustomizer : public webrtc::TurnCustomizer {
 
     ASSERT_NE(0, message->type());
     if (add_counter_) {
-      message->AddAttribute(absl::make_unique<cricket::StunUInt32Attribute>(
+      message->AddAttribute(std::make_unique<cricket::StunUInt32Attribute>(
           STUN_ATTR_COUNTER, modify_cnt_));
     }
     return;

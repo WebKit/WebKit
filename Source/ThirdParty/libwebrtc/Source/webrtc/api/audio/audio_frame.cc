@@ -41,6 +41,7 @@ void AudioFrame::ResetWithoutMuting() {
   vad_activity_ = kVadUnknown;
   profile_timestamp_ms_ = 0;
   packet_infos_ = RtpPacketInfos();
+  absolute_capture_timestamp_ms_ = absl::nullopt;
 }
 
 void AudioFrame::UpdateFrame(uint32_t timestamp,
@@ -86,6 +87,7 @@ void AudioFrame::CopyFrom(const AudioFrame& src) {
   vad_activity_ = src.vad_activity_;
   num_channels_ = src.num_channels_;
   channel_layout_ = src.channel_layout_;
+  absolute_capture_timestamp_ms_ = src.absolute_capture_timestamp_ms();
 
   const size_t length = samples_per_channel_ * num_channels_;
   RTC_CHECK_LE(length, kMaxDataSizeSamples);

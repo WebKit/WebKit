@@ -141,7 +141,6 @@ int64_t VideoReceiver::TimeUntilNextProcess() {
 int32_t VideoReceiver::RegisterReceiveCallback(
     VCMReceiveCallback* receiveCallback) {
   RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(!IsDecoderThreadRunning());
   // This value is set before the decoder thread starts and unset after
   // the decoder thread has been stopped.
   _decodedFrameCallback.SetUserReceiveCallback(receiveCallback);
@@ -152,7 +151,6 @@ int32_t VideoReceiver::RegisterReceiveCallback(
 void VideoReceiver::RegisterExternalDecoder(VideoDecoder* externalDecoder,
                                             uint8_t payloadType) {
   RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(!IsDecoderThreadRunning());
   if (externalDecoder == nullptr) {
     RTC_CHECK(_codecDataBase.DeregisterExternalDecoder(payloadType));
     return;
@@ -164,7 +162,7 @@ void VideoReceiver::RegisterExternalDecoder(VideoDecoder* externalDecoder,
 int32_t VideoReceiver::RegisterFrameTypeCallback(
     VCMFrameTypeCallback* frameTypeCallback) {
   RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(!IsDecoderThreadRunning() && !is_attached_to_process_thread_);
+  RTC_DCHECK(!is_attached_to_process_thread_);
   // This callback is used on the module thread, but since we don't get
   // callbacks on the module thread while the decoder thread isn't running
   // (and this function must not be called when the decoder is running),
@@ -176,42 +174,13 @@ int32_t VideoReceiver::RegisterFrameTypeCallback(
 int32_t VideoReceiver::RegisterPacketRequestCallback(
     VCMPacketRequestCallback* callback) {
   RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(!IsDecoderThreadRunning() && !is_attached_to_process_thread_);
+  RTC_DCHECK(!is_attached_to_process_thread_);
   // This callback is used on the module thread, but since we don't get
   // callbacks on the module thread while the decoder thread isn't running
   // (and this function must not be called when the decoder is running),
   // we don't need a lock here.
   _packetRequestCallback = callback;
   return VCM_OK;
-}
-
-void VideoReceiver::TriggerDecoderShutdown() {
-  RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(IsDecoderThreadRunning());
-  _receiver.TriggerDecoderShutdown();
-}
-
-void VideoReceiver::DecoderThreadStarting() {
-  RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(!IsDecoderThreadRunning());
-  if (process_thread_ && !is_attached_to_process_thread_) {
-    process_thread_->RegisterModule(this, RTC_FROM_HERE);
-  }
-#if RTC_DCHECK_IS_ON
-  decoder_thread_is_running_ = true;
-#endif
-}
-
-void VideoReceiver::DecoderThreadStopped() {
-  RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(IsDecoderThreadRunning());
-  if (process_thread_ && is_attached_to_process_thread_) {
-    process_thread_->DeRegisterModule(this);
-  }
-#if RTC_DCHECK_IS_ON
-  decoder_thread_is_running_ = false;
-  decoder_thread_checker_.Detach();
-#endif
 }
 
 // Decode next frame, blocking.
@@ -263,20 +232,8 @@ int32_t VideoReceiver::Decode(uint16_t maxWaitTimeMs) {
   return ret;
 }
 
-// Used for the new jitter buffer.
-// TODO(philipel): Clean up among the Decode functions as we replace
-//                 VCMEncodedFrame with FrameObject.
-int32_t VideoReceiver::Decode(const webrtc::VCMEncodedFrame* frame) {
-  RTC_DCHECK_RUN_ON(&decoder_thread_checker_);
-  return Decode(*frame);
-}
-
 int32_t VideoReceiver::RequestKeyFrame() {
   RTC_DCHECK_RUN_ON(&module_thread_checker_);
-
-  // Since we deregister from the module thread when the decoder thread isn't
-  // running, we should get no calls here if decoding isn't being done.
-  RTC_DCHECK(IsDecoderThreadRunning());
 
   TRACE_EVENT0("webrtc", "RequestKeyFrame");
   if (_frameTypeCallback != nullptr) {
@@ -302,7 +259,7 @@ int32_t VideoReceiver::Decode(const VCMEncodedFrame& frame) {
   if (decoder == nullptr) {
     return VCM_NO_CODEC_REGISTERED;
   }
-  return decoder->Decode(frame, clock_->TimeInMilliseconds());
+  return decoder->Decode(frame, clock_->CurrentTime());
 }
 
 // Register possible receive codecs, can be called multiple times
@@ -310,7 +267,6 @@ int32_t VideoReceiver::RegisterReceiveCodec(const VideoCodec* receiveCodec,
                                             int32_t numberOfCores,
                                             bool requireKeyFrame) {
   RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(!IsDecoderThreadRunning());
   if (receiveCodec == nullptr) {
     return VCM_PARAMETER_ERROR;
   }
@@ -361,20 +317,11 @@ void VideoReceiver::SetNackSettings(size_t max_nack_list_size,
                                     int max_packet_age_to_nack,
                                     int max_incomplete_time_ms) {
   RTC_DCHECK_RUN_ON(&construction_thread_checker_);
-  RTC_DCHECK(!IsDecoderThreadRunning());
   if (max_nack_list_size != 0) {
     max_nack_list_size_ = max_nack_list_size;
   }
   _receiver.SetNackSettings(max_nack_list_size, max_packet_age_to_nack,
                             max_incomplete_time_ms);
-}
-
-bool VideoReceiver::IsDecoderThreadRunning() {
-#if RTC_DCHECK_IS_ON
-  return decoder_thread_is_running_;
-#else
-  return true;
-#endif
 }
 
 }  // namespace vcm

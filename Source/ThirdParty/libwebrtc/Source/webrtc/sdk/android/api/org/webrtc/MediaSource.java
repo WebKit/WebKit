@@ -25,9 +25,11 @@ public class MediaSource {
     }
   }
 
+  private final RefCountDelegate refCountDelegate;
   private long nativeSource;
 
   public MediaSource(long nativeSource) {
+    refCountDelegate = new RefCountDelegate(() -> JniCommon.nativeReleaseRef(nativeSource));
     this.nativeSource = nativeSource;
   }
 
@@ -38,7 +40,7 @@ public class MediaSource {
 
   public void dispose() {
     checkMediaSourceExists();
-    JniCommon.nativeReleaseRef(nativeSource);
+    refCountDelegate.release();
     nativeSource = 0;
   }
 
@@ -46,6 +48,20 @@ public class MediaSource {
   protected long getNativeMediaSource() {
     checkMediaSourceExists();
     return nativeSource;
+  }
+
+  /**
+   * Runs code in {@code runnable} holding a reference to the media source. If the object has
+   * already been released, does nothing.
+   */
+  void runWithReference(Runnable runnable) {
+    if (refCountDelegate.safeRetain()) {
+      try {
+        runnable.run();
+      } finally {
+        refCountDelegate.release();
+      }
+    }
   }
 
   private void checkMediaSourceExists() {

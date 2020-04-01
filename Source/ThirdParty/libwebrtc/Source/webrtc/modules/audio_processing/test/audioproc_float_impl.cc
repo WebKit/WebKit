@@ -40,6 +40,7 @@ ABSL_FLAG(std::string,
           artificial_nearend,
           "",
           "Artificial nearend wav filename");
+ABSL_FLAG(std::string, linear_aec_output, "", "Linear AEC output wav filename");
 ABSL_FLAG(int,
           output_num_channels,
           kParameterNotSpecifiedValue,
@@ -101,6 +102,10 @@ ABSL_FLAG(int,
           kParameterNotSpecifiedValue,
           "Activate (1) or deactivate(0) the transient suppressor");
 ABSL_FLAG(int,
+          analog_agc,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) the transient suppressor");
+ABSL_FLAG(int,
           vad,
           kParameterNotSpecifiedValue,
           "Activate (1) or deactivate(0) the voice activity detector");
@@ -114,45 +119,15 @@ ABSL_FLAG(bool,
           "Activate all of the default components (will be overridden by any "
           "other settings)");
 ABSL_FLAG(int,
-          aec_suppression_level,
-          kParameterNotSpecifiedValue,
-          "Set the aec suppression level (0-2)");
-ABSL_FLAG(int,
-          delay_agnostic,
-          kParameterNotSpecifiedValue,
-          "Activate (1) or deactivate(0) the AEC delay agnostic mode");
-ABSL_FLAG(int,
-          extended_filter,
-          kParameterNotSpecifiedValue,
-          "Activate (1) or deactivate(0) the AEC extended filter mode");
-ABSL_FLAG(int,
-          use_legacy_aec,
-          kParameterNotSpecifiedValue,
-          "Activate (1) or deactivate(0) the legacy AEC");
-ABSL_FLAG(int,
-          experimental_agc,
-          kParameterNotSpecifiedValue,
-          "Activate (1) or deactivate(0) the experimental AGC");
-ABSL_FLAG(int,
-          experimental_agc_disable_digital_adaptive,
+          analog_agc_disable_digital_adaptive,
           kParameterNotSpecifiedValue,
           "Force-deactivate (1) digital adaptation in "
           "experimental AGC. Digital adaptation is active by default (0).");
 ABSL_FLAG(int,
-          experimental_agc_analyze_before_aec,
-          kParameterNotSpecifiedValue,
-          "Make level estimation happen before AEC"
-          " in the experimental AGC. After AEC is the default (0)");
-ABSL_FLAG(int,
-          experimental_agc_agc2_level_estimator,
+          analog_agc_agc2_level_estimator,
           kParameterNotSpecifiedValue,
           "AGC2 level estimation"
           " in the experimental AGC. AGC1 level estimation is the default (0)");
-ABSL_FLAG(
-    int,
-    refined_adaptive_filter,
-    kParameterNotSpecifiedValue,
-    "Activate (1) or deactivate(0) the refined adaptive filter functionality");
 ABSL_FLAG(int,
           agc_mode,
           kParameterNotSpecifiedValue,
@@ -186,13 +161,19 @@ ABSL_FLAG(float,
           kParameterNotSpecifiedValue,
           "Pre-amplifier gain factor (linear) to apply");
 ABSL_FLAG(int,
-          vad_likelihood,
-          kParameterNotSpecifiedValue,
-          "Specify the VAD likelihood (0-3)");
-ABSL_FLAG(int,
           ns_level,
           kParameterNotSpecifiedValue,
           "Specify the NS level (0-3)");
+ABSL_FLAG(int,
+          ns_analysis_on_linear_aec_output,
+          kParameterNotSpecifiedValue,
+          "Specifies whether the noise suppression analysis is done on the "
+          "linear AEC output");
+ABSL_FLAG(int,
+          maximum_internal_processing_rate,
+          kParameterNotSpecifiedValue,
+          "Set a maximum internal processing rate (32000 or 48000) to override "
+          "the default rate");
 ABSL_FLAG(int,
           stream_delay,
           kParameterNotSpecifiedValue,
@@ -210,6 +191,16 @@ ABSL_FLAG(int,
           simulate_mic_gain,
           0,
           "Activate (1) or deactivate(0) the analog mic gain simulation");
+ABSL_FLAG(int,
+          multi_channel_render,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) multi-channel render processing in "
+          "APM pipeline");
+ABSL_FLAG(int,
+          multi_channel_capture,
+          kParameterNotSpecifiedValue,
+          "Activate (1) or deactivate(0) multi-channel capture processing in "
+          "APM pipeline");
 ABSL_FLAG(int,
           simulated_mic_kind,
           kParameterNotSpecifiedValue,
@@ -260,6 +251,10 @@ ABSL_FLAG(std::string,
           dump_data_output_dir,
           "",
           "Internal data dump output directory");
+ABSL_FLAG(bool,
+          float_wav_output,
+          false,
+          "Produce floating point wav output files.");
 
 namespace webrtc {
 namespace test {
@@ -333,8 +328,8 @@ SimulationSettings CreateSettings() {
   if (absl::GetFlag(FLAGS_all_default)) {
     settings.use_le = true;
     settings.use_vad = true;
-    settings.use_ie = false;
     settings.use_ts = true;
+    settings.use_analog_agc = true;
     settings.use_ns = true;
     settings.use_hpf = true;
     settings.use_agc = true;
@@ -356,6 +351,8 @@ SimulationSettings CreateSettings() {
                         &settings.reverse_output_filename);
   SetSettingIfSpecified(absl::GetFlag(FLAGS_artificial_nearend),
                         &settings.artificial_nearend_filename);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_linear_aec_output),
+                        &settings.linear_aec_output_filename);
   SetSettingIfSpecified(absl::GetFlag(FLAGS_output_num_channels),
                         &settings.output_num_channels);
   SetSettingIfSpecified(absl::GetFlag(FLAGS_reverse_output_num_channels),
@@ -376,29 +373,14 @@ SimulationSettings CreateSettings() {
   SetSettingIfFlagSet(absl::GetFlag(FLAGS_hpf), &settings.use_hpf);
   SetSettingIfFlagSet(absl::GetFlag(FLAGS_ns), &settings.use_ns);
   SetSettingIfFlagSet(absl::GetFlag(FLAGS_ts), &settings.use_ts);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_analog_agc),
+                      &settings.use_analog_agc);
   SetSettingIfFlagSet(absl::GetFlag(FLAGS_vad), &settings.use_vad);
   SetSettingIfFlagSet(absl::GetFlag(FLAGS_le), &settings.use_le);
-  SetSettingIfSpecified(absl::GetFlag(FLAGS_aec_suppression_level),
-                        &settings.aec_suppression_level);
-  SetSettingIfFlagSet(absl::GetFlag(FLAGS_delay_agnostic),
-                      &settings.use_delay_agnostic);
-  SetSettingIfFlagSet(absl::GetFlag(FLAGS_extended_filter),
-                      &settings.use_extended_filter);
-  SetSettingIfFlagSet(absl::GetFlag(FLAGS_refined_adaptive_filter),
-                      &settings.use_refined_adaptive_filter);
-
-  SetSettingIfFlagSet(absl::GetFlag(FLAGS_use_legacy_aec),
-                      &settings.use_legacy_aec);
-  SetSettingIfFlagSet(absl::GetFlag(FLAGS_experimental_agc),
-                      &settings.use_experimental_agc);
-  SetSettingIfFlagSet(
-      absl::GetFlag(FLAGS_experimental_agc_disable_digital_adaptive),
-      &settings.experimental_agc_disable_digital_adaptive);
-  SetSettingIfFlagSet(absl::GetFlag(FLAGS_experimental_agc_analyze_before_aec),
-                      &settings.experimental_agc_analyze_before_aec);
-  SetSettingIfFlagSet(
-      absl::GetFlag(FLAGS_experimental_agc_agc2_level_estimator),
-      &settings.use_experimental_agc_agc2_level_estimator);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_analog_agc_disable_digital_adaptive),
+                      &settings.analog_agc_disable_digital_adaptive);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_analog_agc_agc2_level_estimator),
+                      &settings.use_analog_agc_agc2_level_estimator);
   SetSettingIfSpecified(absl::GetFlag(FLAGS_agc_mode), &settings.agc_mode);
   SetSettingIfSpecified(absl::GetFlag(FLAGS_agc_target_level),
                         &settings.agc_target_level);
@@ -414,15 +396,15 @@ SimulationSettings CreateSettings() {
       absl::GetFlag(FLAGS_agc2_adaptive_level_estimator));
   SetSettingIfSpecified(absl::GetFlag(FLAGS_pre_amplifier_gain_factor),
                         &settings.pre_amplifier_gain_factor);
-  SetSettingIfSpecified(absl::GetFlag(FLAGS_vad_likelihood),
-                        &settings.vad_likelihood);
   SetSettingIfSpecified(absl::GetFlag(FLAGS_ns_level), &settings.ns_level);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_ns_analysis_on_linear_aec_output),
+                      &settings.ns_analysis_on_linear_aec_output);
+  SetSettingIfSpecified(absl::GetFlag(FLAGS_maximum_internal_processing_rate),
+                        &settings.maximum_internal_processing_rate);
   SetSettingIfSpecified(absl::GetFlag(FLAGS_stream_delay),
                         &settings.stream_delay);
   SetSettingIfFlagSet(absl::GetFlag(FLAGS_use_stream_delay),
                       &settings.use_stream_delay);
-  SetSettingIfSpecified(absl::GetFlag(FLAGS_stream_drift_samples),
-                        &settings.stream_drift_samples);
   SetSettingIfSpecified(absl::GetFlag(FLAGS_custom_call_order_file),
                         &settings.call_order_input_filename);
   SetSettingIfSpecified(absl::GetFlag(FLAGS_output_custom_call_order_file),
@@ -430,6 +412,10 @@ SimulationSettings CreateSettings() {
   SetSettingIfSpecified(absl::GetFlag(FLAGS_aec_settings),
                         &settings.aec_settings_filename);
   settings.initial_mic_level = absl::GetFlag(FLAGS_initial_mic_level);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_multi_channel_render),
+                      &settings.multi_channel_render);
+  SetSettingIfFlagSet(absl::GetFlag(FLAGS_multi_channel_capture),
+                      &settings.multi_channel_capture);
   settings.simulate_mic_gain = absl::GetFlag(FLAGS_simulate_mic_gain);
   SetSettingIfSpecified(absl::GetFlag(FLAGS_simulated_mic_kind),
                         &settings.simulated_mic_kind);
@@ -449,6 +435,9 @@ SimulationSettings CreateSettings() {
   settings.dump_internal_data = absl::GetFlag(FLAGS_dump_data);
   SetSettingIfSpecified(absl::GetFlag(FLAGS_dump_data_output_dir),
                         &settings.dump_internal_data_output_dir);
+  settings.wav_output_format = absl::GetFlag(FLAGS_float_wav_output)
+                                   ? WavFile::SampleFormat::kFloat
+                                   : WavFile::SampleFormat::kInt16;
 
   return settings;
 }
@@ -496,6 +485,11 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
         "aec dump input string!\n");
   }
 
+  ReportConditionalErrorAndExit(settings.use_aec && !(*settings.use_aec) &&
+                                    settings.linear_aec_output_filename,
+                                "Error: The linear AEC ouput filename cannot "
+                                "be specified without the AEC being active");
+
   ReportConditionalErrorAndExit(
       settings.use_aec && *settings.use_aec && settings.use_aecm &&
           *settings.use_aecm,
@@ -520,13 +514,6 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
           *settings.reverse_output_num_channels <= 0,
       "Error: --reverse_output_num_channels must be positive!\n");
 
-  ReportConditionalErrorAndExit(settings.aec_suppression_level &&
-                                    ((*settings.aec_suppression_level) < 1 ||
-                                     (*settings.aec_suppression_level) > 2),
-                                "Error: --aec_suppression_level must be "
-                                "specified between 1 and 2. 0 is "
-                                "deprecated.\n");
-
   ReportConditionalErrorAndExit(
       settings.agc_target_level && ((*settings.agc_target_level) < 0 ||
                                     (*settings.agc_target_level) > 31),
@@ -541,11 +528,6 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
       settings.agc2_fixed_gain_db && ((*settings.agc2_fixed_gain_db) < 0 ||
                                       (*settings.agc2_fixed_gain_db) > 90),
       "Error: --agc2_fixed_gain_db must be specified between 0 and 90.\n");
-
-  ReportConditionalErrorAndExit(
-      settings.vad_likelihood &&
-          ((*settings.vad_likelihood) < 0 || (*settings.vad_likelihood) > 3),
-      "Error: --vad_likelihood must be specified between 0 and 3.\n");
 
   ReportConditionalErrorAndExit(
       settings.ns_level &&
@@ -609,6 +591,11 @@ void PerformBasicParameterSanityChecks(const SimulationSettings& settings) {
       settings.artificial_nearend_filename &&
           !valid_wav_name(*settings.artificial_nearend_filename),
       "Error: --artifical_nearend must be a valid .wav file name.\n");
+
+  ReportConditionalErrorAndExit(
+      settings.linear_aec_output_filename &&
+          (!valid_wav_name(*settings.linear_aec_output_filename)),
+      "Error: --linear_aec_output must be a valid .wav file name.\n");
 
   ReportConditionalErrorAndExit(
       WEBRTC_APM_DEBUG_DUMP == 0 && settings.dump_internal_data,

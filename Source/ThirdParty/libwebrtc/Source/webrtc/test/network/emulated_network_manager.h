@@ -15,13 +15,13 @@
 #include <vector>
 
 #include "api/test/network_emulation_manager.h"
+#include "api/test/time_controller.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/network.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_checker.h"
-#include "test/network/fake_network_socket_server.h"
 #include "test/network/network_emulation.h"
 
 namespace webrtc {
@@ -32,20 +32,23 @@ class EmulatedNetworkManager : public rtc::NetworkManagerBase,
                                public sigslot::has_slots<>,
                                public EmulatedNetworkManagerInterface {
  public:
-  EmulatedNetworkManager(Clock* clock,
+  EmulatedNetworkManager(TimeController* time_controller,
                          TaskQueueForTest* task_queue,
                          EndpointsContainer* endpoints_container);
 
-  void EnableEndpoint(EmulatedEndpoint* endpoint);
-  void DisableEndpoint(EmulatedEndpoint* endpoint);
+  void EnableEndpoint(EmulatedEndpointImpl* endpoint);
+  void DisableEndpoint(EmulatedEndpointImpl* endpoint);
 
   // NetworkManager interface. All these methods are supposed to be called from
   // the same thread.
   void StartUpdating() override;
   void StopUpdating() override;
 
+  // We don't support any address interfaces in the network emulation framework.
+  void GetAnyAddressNetworks(NetworkList* networks) override {}
+
   // EmulatedNetworkManagerInterface API
-  rtc::Thread* network_thread() override { return &network_thread_; }
+  rtc::Thread* network_thread() override { return network_thread_.get(); }
   rtc::NetworkManager* network_manager() override { return this; }
   void GetStats(
       std::function<void(EmulatedNetworkStats)> stats_callback) const override;
@@ -56,8 +59,7 @@ class EmulatedNetworkManager : public rtc::NetworkManagerBase,
 
   TaskQueueForTest* const task_queue_;
   EndpointsContainer* const endpoints_container_;
-  FakeNetworkSocketServer socket_server_;
-  rtc::Thread network_thread_;
+  std::unique_ptr<rtc::Thread> network_thread_;
 
   bool sent_first_update_ RTC_GUARDED_BY(network_thread_);
   int start_count_ RTC_GUARDED_BY(network_thread_);

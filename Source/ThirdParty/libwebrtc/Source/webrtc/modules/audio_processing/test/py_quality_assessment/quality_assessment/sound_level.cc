@@ -76,9 +76,14 @@ int main(int argc, char* argv[]) {
   // Write config to file.
   std::ofstream out_config(config_output_file);
   out_config << "{"
-             << "'frame_len_ms': " << absl::GetFlag(FLAGS_f) << ", "
-             << "'attack_ms': " << absl::GetFlag(FLAGS_a) << ", "
-             << "'decay_ms': " << absl::GetFlag(FLAGS_d) << "}\n";
+                "'frame_len_ms': "
+             << absl::GetFlag(FLAGS_f)
+             << ", "
+                "'attack_ms': "
+             << absl::GetFlag(FLAGS_a)
+             << ", "
+                "'decay_ms': "
+             << absl::GetFlag(FLAGS_d) << "}\n";
   out_config.close();
 
   // Measure level frame-by-frame.

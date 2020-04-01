@@ -15,7 +15,6 @@
 namespace webrtc {
 
 const char AudioDeviceName::kDefaultDeviceId[] = "default";
-const char AudioDeviceName::kDefaultCommunicationsDeviceId[] = "communications";
 
 AudioDeviceName::AudioDeviceName(std::string device_name, std::string unique_id)
     : device_name(std::move(device_name)), unique_id(std::move(unique_id)) {}

@@ -10,7 +10,8 @@
 
 #include "api/audio_codecs/L16/audio_encoder_L16.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 #include "modules/audio_coding/codecs/pcm16b/pcm16b_common.h"
@@ -63,7 +64,7 @@ std::unique_ptr<AudioEncoder> AudioEncoderL16::MakeAudioEncoder(
   c.num_channels = config.num_channels;
   c.frame_size_ms = config.frame_size_ms;
   c.payload_type = payload_type;
-  return absl::make_unique<AudioEncoderPcm16B>(c);
+  return std::make_unique<AudioEncoderPcm16B>(c);
 }
 
 }  // namespace webrtc

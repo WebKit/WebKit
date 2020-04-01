@@ -16,6 +16,7 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/call/bitrate_allocation.h"
 #include "api/fec_controller_override.h"
 #include "call/rtp_config.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -49,9 +50,7 @@ class RtpVideoSenderInterface : public EncodedImageCallback,
 
   virtual void OnBitrateAllocationUpdated(
       const VideoBitrateAllocation& bitrate) = 0;
-  virtual void OnBitrateUpdated(uint32_t bitrate_bps,
-                                uint8_t fraction_loss,
-                                int64_t rtt,
+  virtual void OnBitrateUpdated(BitrateAllocationUpdate update,
                                 int framerate) = 0;
   virtual void OnTransportOverheadChanged(
       size_t transport_overhead_bytes_per_packet) = 0;

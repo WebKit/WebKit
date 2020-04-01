@@ -538,16 +538,8 @@ TEST(IsacFixTest, Kenny) {
 
   /* Initialize the ISAC and BN structs */
   if (testNum != 8) {
-    if (1) {
-      err = WebRtcIsacfix_Create(&ISAC_main_inst);
-    } else {
-      /* Test the Assign functions */
-      int sss;
-      void* ppp;
-      err = WebRtcIsacfix_AssignSize(&sss);
-      ppp = malloc(sss);
-      err = WebRtcIsacfix_Assign(&ISAC_main_inst, ppp);
-    }
+    err = WebRtcIsacfix_Create(&ISAC_main_inst);
+
     /* Error check */
     if (err < 0) {
       printf("\n\n Error in create.\n\n");
@@ -673,12 +665,7 @@ TEST(IsacFixTest, Kenny) {
             }
           }
         } else {
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-          stream_len_int =
-              WebRtcIsacfix_EncodeNb(ISAC_main_inst, shortdata, streamdata);
-#else
           stream_len_int = -1;
-#endif
         }
       } else {
         break;
@@ -794,12 +781,7 @@ TEST(IsacFixTest, Kenny) {
           declen = static_cast<int>(
               WebRtcIsacfix_DecodePlc(ISAC_main_inst, decoded, prevFrameSize));
         } else {
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-          declen = static_cast<int>(WebRtcIsacfix_DecodePlcNb(
-              ISAC_main_inst, decoded, prevFrameSize));
-#else
           declen = -1;
-#endif
         }
         lostPackets++;
       } else {
@@ -823,12 +805,7 @@ TEST(IsacFixTest, Kenny) {
           prevFrameSize = static_cast<size_t>(declen / 480);
 
         } else {
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-          declen = WebRtcIsacfix_DecodeNb(ISAC_main_inst, streamdata,
-                                          stream_len, decoded, speechType);
-#else
           declen = -1;
-#endif
           prevFrameSize = static_cast<size_t>(declen / 240);
         }
       }

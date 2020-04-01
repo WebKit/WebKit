@@ -11,9 +11,9 @@
 #include "video/encoder_bitrate_adjuster.h"
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "rtc_base/experiments/rate_control_settings.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
@@ -87,7 +87,7 @@ VideoBitrateAllocation EncoderBitrateAdjuster::AdjustRateAllocation(
         ++active_tls_[si];
         if (!overshoot_detectors_[si][ti]) {
           overshoot_detectors_[si][ti] =
-              absl::make_unique<EncoderOvershootDetector>(kWindowSizeMs);
+              std::make_unique<EncoderOvershootDetector>(kWindowSizeMs);
           frames_since_layout_change_ = 0;
         }
       } else if (overshoot_detectors_[si][ti]) {
@@ -109,7 +109,7 @@ VideoBitrateAllocation EncoderBitrateAdjuster::AdjustRateAllocation(
     LayerRateInfo& layer_info = layer_infos.back();
 
     layer_info.target_rate =
-        DataRate::bps(rates.bitrate.GetSpatialLayerSum(si));
+        DataRate::BitsPerSec(rates.bitrate.GetSpatialLayerSum(si));
 
     // Adjustment is done per spatial layer only (not per temporal layer).
     if (frames_since_layout_change_ < kMinFramesSinceLayoutChange) {
@@ -186,8 +186,8 @@ VideoBitrateAllocation EncoderBitrateAdjuster::AdjustRateAllocation(
   // Available link headroom that can be used to fill wanted overshoot.
   DataRate available_headroom = DataRate::Zero();
   if (utilize_bandwidth_headroom_) {
-    available_headroom =
-        rates.bandwidth_allocation - DataRate::bps(rates.bitrate.get_sum_bps());
+    available_headroom = rates.bandwidth_allocation -
+                         DataRate::BitsPerSec(rates.bitrate.get_sum_bps());
   }
 
   // All wanted overshoots are satisfied in the same proportion based on
@@ -214,7 +214,7 @@ VideoBitrateAllocation EncoderBitrateAdjuster::AdjustRateAllocation(
 
     if (min_bitrates_bps_[si] > 0 &&
         layer_info.target_rate > DataRate::Zero() &&
-        DataRate::bps(min_bitrates_bps_[si]) < layer_info.target_rate) {
+        DataRate::BitsPerSec(min_bitrates_bps_[si]) < layer_info.target_rate) {
       // Make sure rate adjuster doesn't push target bitrate below minimum.
       utilization_factor =
           std::min(utilization_factor, layer_info.target_rate.bps<double>() /
@@ -236,7 +236,7 @@ VideoBitrateAllocation EncoderBitrateAdjuster::AdjustRateAllocation(
     // Populate the adjusted allocation with determined utilization factor.
     if (active_tls_[si] == 1 &&
         layer_info.target_rate >
-            DataRate::bps(rates.bitrate.GetBitrate(si, 0))) {
+            DataRate::BitsPerSec(rates.bitrate.GetBitrate(si, 0))) {
       // Bitrate allocation indicates temporal layer usage, but encoder
       // does not seem to support it. Pipe all bitrate into a single
       // overshoot detector.
@@ -283,11 +283,15 @@ VideoBitrateAllocation EncoderBitrateAdjuster::AdjustRateAllocation(
             VideoEncoder::EncoderInfo::kMaxFramerateFraction;
 
         overshoot_detectors_[si][ti]->SetTargetRate(
-            DataRate::bps(layer_bitrate_bps),
+            DataRate::BitsPerSec(layer_bitrate_bps),
             fps_fraction * rates.framerate_fps, now_ms);
       }
     }
   }
+
+  // Since no spatial layers or streams are toggled by the adjustment
+  // bw-limited flag stays the same.
+  adjusted_allocation.set_bw_limited(rates.bitrate.is_bw_limited());
 
   return adjusted_allocation;
 }

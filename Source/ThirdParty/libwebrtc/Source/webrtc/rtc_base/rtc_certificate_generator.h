@@ -18,6 +18,7 @@
 #include "rtc_base/ref_count.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_identity.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread.h"
 
 namespace rtc {
@@ -53,7 +54,8 @@ class RTCCertificateGeneratorInterface {
 // The static function |GenerateCertificate| generates a certificate on the
 // current thread. The |RTCCertificateGenerator| instance generates certificates
 // asynchronously on the worker thread with |GenerateCertificateAsync|.
-class RTCCertificateGenerator : public RTCCertificateGeneratorInterface {
+class RTC_EXPORT RTCCertificateGenerator
+    : public RTCCertificateGeneratorInterface {
  public:
   // Generates a certificate on the current thread. Returns null on failure.
   // If |expires_ms| is specified, the certificate will expire in approximately

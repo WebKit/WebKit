@@ -57,6 +57,7 @@
 @synthesize delegate = _delegate;
 @synthesize videoFrame = _videoFrame;
 @synthesize glkView = _glkView;
+@synthesize rotationOverride = _rotationOverride;
 
 - (instancetype)initWithFrame:(CGRect)frame {
   return [self initWithFrame:frame shader:[[RTCDefaultShader alloc] init]];
@@ -137,6 +138,11 @@
   return YES;
 }
 
+- (void)setMultipleTouchEnabled:(BOOL)multipleTouchEnabled {
+    [super setMultipleTouchEnabled:multipleTouchEnabled];
+    _glkView.multipleTouchEnabled = multipleTouchEnabled;
+}
+
 - (void)dealloc {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   UIApplicationState appState =
@@ -180,6 +186,10 @@
   if (!frame || frame.timeStampNs == _lastDrawnFrameTimeStampNs) {
     return;
   }
+  RTCVideoRotation rotation = frame.rotation;
+  if(_rotationOverride != nil) {
+    [_rotationOverride getValue: &rotation];
+  }
   [self ensureGLContext];
   glClear(GL_COLOR_BUFFER_BIT);
   if ([frame.buffer isKindOfClass:[RTCCVPixelBuffer class]]) {
@@ -190,7 +200,7 @@
       [_nv12TextureCache uploadFrameToTextures:frame];
       [_shader applyShadingForFrameWithWidth:frame.width
                                       height:frame.height
-                                    rotation:frame.rotation
+                                    rotation:rotation
                                       yPlane:_nv12TextureCache.yTexture
                                      uvPlane:_nv12TextureCache.uvTexture];
       [_nv12TextureCache releaseTextures];
@@ -204,7 +214,7 @@
     [_i420TextureCache uploadFrameToTextures:frame];
     [_shader applyShadingForFrameWithWidth:frame.width
                                     height:frame.height
-                                  rotation:frame.rotation
+                                  rotation:rotation
                                     yPlane:_i420TextureCache.yTexture
                                     uPlane:_i420TextureCache.uTexture
                                     vPlane:_i420TextureCache.vTexture];

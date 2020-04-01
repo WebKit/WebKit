@@ -43,6 +43,7 @@ specific_include_rules = {
   ".*\.h": [
     "+rtc_base/checks.h",
     "+rtc_base/system/rtc_export.h",
+    "+rtc_base/system/rtc_export_template.h",
     "+rtc_base/units/unit_base.h",
     "+rtc_base/deprecation.h",
   ],
@@ -87,6 +88,10 @@ specific_include_rules = {
 
   "fec_controller\.h": [
     "+modules/include/module_fec_types.h",
+  ],
+
+  "frame_transformer_interface\.h": [
+    "+rtc_base/ref_count.h",
   ],
 
   "ice_transport_interface\.h": [
@@ -139,7 +144,6 @@ specific_include_rules = {
   "proxy\.h": [
     "+rtc_base/event.h",
     "+rtc_base/message_handler.h",  # Inherits from it.
-    "+rtc_base/message_queue.h",    # Inherits from MessageData.
     "+rtc_base/ref_counted_object.h",
     "+rtc_base/thread.h",
   ],
@@ -262,6 +266,10 @@ specific_include_rules = {
 
   "test_dependency_factory\.h": [
     "+rtc_base/thread_checker.h",
+  ],
+
+  "time_controller\.h": [
+    "+rtc_base/thread.h",
   ],
 
   "videocodec_test_fixture\.h": [

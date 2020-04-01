@@ -15,7 +15,6 @@
 #import "RTCMacros.h"
 
 @class RTCIceServer;
-@class RTCIntervalRange;
 
 /**
  * Represents the ice transport policy. This exposes the same states in C++,
@@ -157,13 +156,6 @@ RTC_OBJC_EXPORT
  */
 @property(nonatomic, copy, nullable) NSNumber *iceCheckMinInterval;
 
-/** ICE Periodic Regathering
- *  If set, WebRTC will periodically create and propose candidates without
- *  starting a new ICE generation. The regathering happens continuously with
- *  interval specified in milliseconds by the uniform distribution [a, b].
- */
-@property(nonatomic, strong, nullable) RTCIntervalRange *iceRegatherIntervalRange;
-
 /** Configure the SDP semantics used by this PeerConnection. Note that the
  *  WebRTC 1.0 specification requires UnifiedPlan semantics. The
  *  RTCRtpTransceiver API is only available with UnifiedPlan semantics.
@@ -193,6 +185,12 @@ RTC_OBJC_EXPORT
  *  workaround for crbug.com/835958
  */
 @property(nonatomic, assign) BOOL activeResetSrtpParams;
+
+/** If the remote side support mid-stream codec switches then allow encoder
+ *  switching to be performed.
+ */
+
+@property(nonatomic, assign) BOOL allowCodecSwitching;
 
 /**
  * If MediaTransportFactory is provided in PeerConnectionFactory, this flag informs PeerConnection

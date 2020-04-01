@@ -15,6 +15,7 @@
 
 #include "absl/types/optional.h"
 #include "call/call.h"
+#include "rtc_base/thread.h"
 #include "test/logging/log_writer.h"
 #include "test/scenario/performance_stats.h"
 

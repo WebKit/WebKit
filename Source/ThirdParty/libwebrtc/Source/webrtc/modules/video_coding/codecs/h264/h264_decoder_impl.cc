@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <memory>
 
 extern "C" {
 #include "third_party/ffmpeg/libavcodec/avcodec.h"
@@ -25,7 +26,6 @@ extern "C" {
 #include "third_party/ffmpeg/libavutil/imgutils.h"
 }  // extern "C"
 
-#include "absl/memory/memory.h"
 #include "api/video/color_space.h"
 #include "api/video/i010_buffer.h"
 #include "api/video/i420_buffer.h"
@@ -130,13 +130,13 @@ int H264DecoderImpl::AVGetBuffer2(AVCodecContext* context,
   // Refactor to do not use a VideoFrame object at all.
   av_frame->buf[0] = av_buffer_create(
       av_frame->data[kYPlaneIndex], total_size, AVFreeBuffer2,
-      static_cast<void*>(absl::make_unique<VideoFrame>(
-                             VideoFrame::Builder()
-                                 .set_video_frame_buffer(frame_buffer)
-                                 .set_rotation(kVideoRotation_0)
-                                 .set_timestamp_us(0)
-                                 .build())
-                             .release()),
+      static_cast<void*>(
+          std::make_unique<VideoFrame>(VideoFrame::Builder()
+                                           .set_video_frame_buffer(frame_buffer)
+                                           .set_rotation(kVideoRotation_0)
+                                           .set_timestamp_us(0)
+                                           .build())
+              .release()),
       0);
   RTC_CHECK(av_frame->buf[0]);
   return 0;
@@ -151,9 +151,7 @@ void H264DecoderImpl::AVFreeBuffer2(void* opaque, uint8_t* data) {
 }
 
 H264DecoderImpl::H264DecoderImpl()
-    : kEnable8bitHdrFix_(
-          !field_trial::IsEnabled("WebRTC-8bitH264HdrKillSwitch")),
-      pool_(true),
+    : pool_(true),
       decoded_image_callback_(nullptr),
       has_reported_init_(false),
       has_reported_error_(false) {}
@@ -220,6 +218,12 @@ int32_t H264DecoderImpl::InitDecode(const VideoCodec* codec_settings,
   }
 
   av_frame_.reset(av_frame_alloc());
+
+  if (codec_settings && codec_settings->buffer_pool_size) {
+    if (!pool_.Resize(*codec_settings->buffer_pool_size)) {
+      return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
+    }
+  }
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -284,16 +288,6 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
   // the input one.
   RTC_DCHECK_EQ(av_frame_->reordered_opaque, frame_timestamp_us);
 
-  // Obtain the |video_frame| containing the decoded image.
-  VideoFrame* input_frame =
-      static_cast<VideoFrame*>(av_buffer_get_opaque(av_frame_->buf[0]));
-  RTC_DCHECK(input_frame);
-  const webrtc::I420BufferInterface* i420_buffer =
-      input_frame->video_frame_buffer()->GetI420();
-  RTC_CHECK_EQ(av_frame_->data[kYPlaneIndex], i420_buffer->DataY());
-  RTC_CHECK_EQ(av_frame_->data[kUPlaneIndex], i420_buffer->DataU());
-  RTC_CHECK_EQ(av_frame_->data[kVPlaneIndex], i420_buffer->DataV());
-
   absl::optional<uint8_t> qp;
   // TODO(sakal): Maybe it is possible to get QP directly from FFmpeg.
   h264_bitstream_parser_.ParseBitstream(input_image.data(), input_image.size());
@@ -302,44 +296,47 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
     qp.emplace(qp_int);
   }
 
-  rtc::scoped_refptr<VideoFrameBuffer> decoded_buffer;
+  // Obtain the |video_frame| containing the decoded image.
+  VideoFrame* input_frame =
+      static_cast<VideoFrame*>(av_buffer_get_opaque(av_frame_->buf[0]));
+  RTC_DCHECK(input_frame);
+  const webrtc::I420BufferInterface* i420_buffer =
+      input_frame->video_frame_buffer()->GetI420();
+
+  // When needed, FFmpeg applies cropping by moving plane pointers and adjusting
+  // frame width/height. Ensure that cropped buffers lie within the allocated
+  // memory.
+  RTC_DCHECK_LE(av_frame_->width, i420_buffer->width());
+  RTC_DCHECK_LE(av_frame_->height, i420_buffer->height());
+  RTC_DCHECK_GE(av_frame_->data[kYPlaneIndex], i420_buffer->DataY());
+  RTC_DCHECK_LE(
+      av_frame_->data[kYPlaneIndex] +
+          av_frame_->linesize[kYPlaneIndex] * av_frame_->height,
+      i420_buffer->DataY() + i420_buffer->StrideY() * i420_buffer->height());
+  RTC_DCHECK_GE(av_frame_->data[kUPlaneIndex], i420_buffer->DataU());
+  RTC_DCHECK_LE(av_frame_->data[kUPlaneIndex] +
+                    av_frame_->linesize[kUPlaneIndex] * av_frame_->height / 2,
+                i420_buffer->DataU() +
+                    i420_buffer->StrideU() * i420_buffer->height() / 2);
+  RTC_DCHECK_GE(av_frame_->data[kVPlaneIndex], i420_buffer->DataV());
+  RTC_DCHECK_LE(av_frame_->data[kVPlaneIndex] +
+                    av_frame_->linesize[kVPlaneIndex] * av_frame_->height / 2,
+                i420_buffer->DataV() +
+                    i420_buffer->StrideV() * i420_buffer->height() / 2);
+
+  auto cropped_buffer = WrapI420Buffer(
+      av_frame_->width, av_frame_->height, av_frame_->data[kYPlaneIndex],
+      av_frame_->linesize[kYPlaneIndex], av_frame_->data[kUPlaneIndex],
+      av_frame_->linesize[kUPlaneIndex], av_frame_->data[kVPlaneIndex],
+      av_frame_->linesize[kVPlaneIndex], rtc::KeepRefUntilDone(i420_buffer));
 
   // Pass on color space from input frame if explicitly specified.
   const ColorSpace& color_space =
       input_image.ColorSpace() ? *input_image.ColorSpace()
                                : ExtractH264ColorSpace(av_context_.get());
-  // 8-bit HDR is currently not being rendered correctly in Chrome on Windows.
-  // If the ColorSpace transfer function is set to ST2084, convert the 8-bit
-  // buffer to a 10-bit buffer. This way 8-bit HDR content is rendered correctly
-  // in Chrome. This is a temporary fix until the root cause has been fixed in
-  // Chrome/WebRTC.
-  // TODO(chromium:956468): Remove this code and fix the underlying problem.
-  bool hdr_color_space =
-      color_space.transfer() == ColorSpace::TransferID::kSMPTEST2084;
-  if (kEnable8bitHdrFix_ && hdr_color_space) {
-    auto i010_buffer = I010Buffer::Copy(*i420_buffer);
-    // Crop image, see comment below.
-    decoded_buffer = WrapI010Buffer(
-        av_frame_->width, av_frame_->height, i010_buffer->DataY(),
-        i010_buffer->StrideY(), i010_buffer->DataU(), i010_buffer->StrideU(),
-        i010_buffer->DataV(), i010_buffer->StrideV(),
-        rtc::KeepRefUntilDone(i010_buffer));
-  } else if (av_frame_->width != i420_buffer->width() ||
-             av_frame_->height != i420_buffer->height()) {
-    // The decoded image may be larger than what is supposed to be visible, see
-    // |AVGetBuffer2|'s use of |avcodec_align_dimensions|. This crops the image
-    // without copying the underlying buffer.
-    decoded_buffer = WrapI420Buffer(
-        av_frame_->width, av_frame_->height, i420_buffer->DataY(),
-        i420_buffer->StrideY(), i420_buffer->DataU(), i420_buffer->StrideU(),
-        i420_buffer->DataV(), i420_buffer->StrideV(),
-        rtc::KeepRefUntilDone(i420_buffer));
-  } else {
-    decoded_buffer = input_frame->video_frame_buffer();
-  }
 
   VideoFrame decoded_frame = VideoFrame::Builder()
-                                 .set_video_frame_buffer(decoded_buffer)
+                                 .set_video_frame_buffer(cropped_buffer)
                                  .set_timestamp_rtp(input_image.Timestamp())
                                  .set_color_space(color_space)
                                  .build();

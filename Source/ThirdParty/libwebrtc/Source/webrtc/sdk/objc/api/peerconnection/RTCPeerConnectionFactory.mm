@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <memory>
+
 #import "RTCPeerConnectionFactory+Native.h"
 #import "RTCPeerConnectionFactory+Private.h"
 #import "RTCPeerConnectionFactoryOptions+Private.h"
@@ -28,7 +30,6 @@
 #import "components/video_codec/RTCVideoEncoderFactoryH264.h"
 // The no-media version PeerConnectionFactory doesn't depend on these files, but the gn check tool
 // is not smart enough to take the #ifdef into account.
-#include "absl/memory/memory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"     // nogncheck
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"     // nogncheck
 #include "api/rtc_event_log/rtc_event_log_factory.h"
@@ -51,8 +52,7 @@
 // C++ target.
 // TODO(zhihuang): Remove nogncheck once MediaEngineInterface is moved to C++
 // API layer.
-#include "absl/memory/memory.h"
-#include "api/media_transport_interface.h"
+#include "api/transport/media/media_transport_interface.h"
 #include "media/engine/webrtc_media_engine.h"  // nogncheck
 
 @implementation RTCPeerConnectionFactory {
@@ -231,7 +231,7 @@
     dependencies.media_engine = cricket::CreateMediaEngine(std::move(media_deps));
     dependencies.call_factory = webrtc::CreateCallFactory();
     dependencies.event_log_factory =
-        absl::make_unique<webrtc::RtcEventLogFactory>(dependencies.task_queue_factory.get());
+        std::make_unique<webrtc::RtcEventLogFactory>(dependencies.task_queue_factory.get());
     dependencies.network_controller_factory = std::move(networkControllerFactory);
     dependencies.media_transport_factory = std::move(mediaTransportFactory);
 #endif
@@ -294,6 +294,18 @@
                                       configuration:configuration
                                         constraints:constraints
                                            delegate:delegate];
+}
+
+- (RTCPeerConnection *)
+    peerConnectionWithDependencies:(RTCConfiguration *)configuration
+                       constraints:(RTCMediaConstraints *)constraints
+                      dependencies:(std::unique_ptr<webrtc::PeerConnectionDependencies>)dependencies
+                          delegate:(id<RTCPeerConnectionDelegate>)delegate {
+  return [[RTCPeerConnection alloc] initWithDependencies:self
+                                           configuration:configuration
+                                             constraints:constraints
+                                            dependencies:std::move(dependencies)
+                                                delegate:delegate];
 }
 
 - (void)setOptions:(nonnull RTCPeerConnectionFactoryOptions *)options {

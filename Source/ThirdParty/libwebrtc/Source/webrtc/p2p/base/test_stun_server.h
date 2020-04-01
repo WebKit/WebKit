@@ -11,7 +11,7 @@
 #ifndef P2P_BASE_TEST_STUN_SERVER_H_
 #define P2P_BASE_TEST_STUN_SERVER_H_
 
-#include "p2p/base/stun.h"
+#include "api/transport/stun.h"
 #include "p2p/base/stun_server.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/socket_address.h"

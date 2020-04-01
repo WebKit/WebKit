@@ -29,21 +29,17 @@ class CongestionWindowPushbackController {
  public:
   explicit CongestionWindowPushbackController(
       const WebRtcKeyValueConfig* key_value_config);
-  CongestionWindowPushbackController(
-      const WebRtcKeyValueConfig* key_value_config,
-      uint32_t min_pushback_target_bitrate_bps);
   void UpdateOutstandingData(int64_t outstanding_bytes);
   void UpdatePacingQueue(int64_t pacing_bytes);
-  void UpdateMaxOutstandingData(size_t max_outstanding_bytes);
   uint32_t UpdateTargetBitrate(uint32_t bitrate_bps);
   void SetDataWindow(DataSize data_window);
 
  private:
+  const bool add_pacing_;
+  const uint32_t min_pushback_target_bitrate_bps_;
   absl::optional<DataSize> current_data_window_;
   int64_t outstanding_bytes_ = 0;
   int64_t pacing_bytes_ = 0;
-  const bool add_pacing_;
-  const uint32_t min_pushback_target_bitrate_bps_;
   double encoding_rate_ratio_ = 1.0;
 };
 

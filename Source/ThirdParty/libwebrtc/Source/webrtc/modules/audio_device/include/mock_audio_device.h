@@ -14,6 +14,7 @@
 #include <string>
 
 #include "modules/audio_device/include/audio_device.h"
+#include "rtc_base/ref_counted_object.h"
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -21,9 +22,15 @@ namespace test {
 
 class MockAudioDeviceModule : public AudioDeviceModule {
  public:
-  // RefCounted
-  MOCK_CONST_METHOD0(AddRef, void());
-  MOCK_CONST_METHOD0(Release, rtc::RefCountReleaseStatus());
+  static rtc::scoped_refptr<MockAudioDeviceModule> CreateNice() {
+    return new rtc::RefCountedObject<
+        ::testing::NiceMock<MockAudioDeviceModule>>();
+  }
+  static rtc::scoped_refptr<MockAudioDeviceModule> CreateStrict() {
+    return new rtc::RefCountedObject<
+        ::testing::StrictMock<MockAudioDeviceModule>>();
+  }
+
   // AudioDeviceModule.
   MOCK_CONST_METHOD1(ActiveAudioLayer, int32_t(AudioLayer* audioLayer));
   MOCK_METHOD1(RegisterAudioCallback, int32_t(AudioTransport* audioCallback));

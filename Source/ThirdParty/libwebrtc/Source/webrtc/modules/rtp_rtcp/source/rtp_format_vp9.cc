@@ -12,7 +12,9 @@
 
 #include <string.h>
 
+#include "api/video/video_codec_constants.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/rtp_rtcp/source/video_rtp_depacketizer_vp9.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/checks.h"
@@ -279,175 +281,41 @@ bool WriteSsData(const RTPVideoHeaderVP9& vp9, rtc::BitBufferWriter* writer) {
   return true;
 }
 
-// Picture ID:
-//
-//      +-+-+-+-+-+-+-+-+
-// I:   |M| PICTURE ID  |   M:0 => picture id is 7 bits.
-//      +-+-+-+-+-+-+-+-+   M:1 => picture id is 15 bits.
-// M:   | EXTENDED PID  |
-//      +-+-+-+-+-+-+-+-+
-//
-bool ParsePictureId(rtc::BitBuffer* parser, RTPVideoHeaderVP9* vp9) {
-  uint32_t picture_id;
-  uint32_t m_bit;
-  RETURN_FALSE_ON_ERROR(parser->ReadBits(&m_bit, 1));
-  if (m_bit) {
-    RETURN_FALSE_ON_ERROR(parser->ReadBits(&picture_id, 15));
-    vp9->max_picture_id = kMaxTwoBytePictureId;
-  } else {
-    RETURN_FALSE_ON_ERROR(parser->ReadBits(&picture_id, 7));
-    vp9->max_picture_id = kMaxOneBytePictureId;
+// TODO(https://bugs.webrtc.org/11319):
+// Workaround for switching off spatial layers on the fly.
+// Sent layers must start from SL0 on RTP layer, but can start from any
+// spatial layer because WebRTC-SVC api isn't implemented yet and
+// current API to invoke SVC is not flexible enough.
+RTPVideoHeaderVP9 RemoveInactiveSpatialLayers(
+    const RTPVideoHeaderVP9& original_header) {
+  RTPVideoHeaderVP9 hdr(original_header);
+  if (original_header.first_active_layer == 0)
+    return hdr;
+  for (size_t i = hdr.first_active_layer; i < hdr.num_spatial_layers; ++i) {
+    hdr.width[i - hdr.first_active_layer] = hdr.width[i];
+    hdr.height[i - hdr.first_active_layer] = hdr.height[i];
   }
-  vp9->picture_id = picture_id;
-  return true;
-}
-
-// Layer indices (flexible mode):
-//
-//      +-+-+-+-+-+-+-+-+
-// L:   |  T  |U|  S  |D|
-//      +-+-+-+-+-+-+-+-+
-//
-bool ParseLayerInfoCommon(rtc::BitBuffer* parser, RTPVideoHeaderVP9* vp9) {
-  uint32_t t, u_bit, s, d_bit;
-  RETURN_FALSE_ON_ERROR(parser->ReadBits(&t, 3));
-  RETURN_FALSE_ON_ERROR(parser->ReadBits(&u_bit, 1));
-  RETURN_FALSE_ON_ERROR(parser->ReadBits(&s, 3));
-  RETURN_FALSE_ON_ERROR(parser->ReadBits(&d_bit, 1));
-  vp9->temporal_idx = t;
-  vp9->temporal_up_switch = u_bit ? true : false;
-  vp9->spatial_idx = s;
-  vp9->inter_layer_predicted = d_bit ? true : false;
-  return true;
-}
-
-// Layer indices (non-flexible mode):
-//
-//      +-+-+-+-+-+-+-+-+
-// L:   |  T  |U|  S  |D|
-//      +-+-+-+-+-+-+-+-+
-//      |   TL0PICIDX   |
-//      +-+-+-+-+-+-+-+-+
-//
-bool ParseLayerInfoNonFlexibleMode(rtc::BitBuffer* parser,
-                                   RTPVideoHeaderVP9* vp9) {
-  uint8_t tl0picidx;
-  RETURN_FALSE_ON_ERROR(parser->ReadUInt8(&tl0picidx));
-  vp9->tl0_pic_idx = tl0picidx;
-  return true;
-}
-
-bool ParseLayerInfo(rtc::BitBuffer* parser, RTPVideoHeaderVP9* vp9) {
-  if (!ParseLayerInfoCommon(parser, vp9))
-    return false;
-
-  if (vp9->flexible_mode)
-    return true;
-
-  return ParseLayerInfoNonFlexibleMode(parser, vp9);
-}
-
-// Reference indices:
-//
-//      +-+-+-+-+-+-+-+-+                P=1,F=1: At least one reference index
-// P,F: | P_DIFF      |N|  up to 3 times          has to be specified.
-//      +-+-+-+-+-+-+-+-+                    N=1: An additional P_DIFF follows
-//                                                current P_DIFF.
-//
-bool ParseRefIndices(rtc::BitBuffer* parser, RTPVideoHeaderVP9* vp9) {
-  if (vp9->picture_id == kNoPictureId)
-    return false;
-
-  vp9->num_ref_pics = 0;
-  uint32_t n_bit;
-  do {
-    if (vp9->num_ref_pics == kMaxVp9RefPics)
-      return false;
-
-    uint32_t p_diff;
-    RETURN_FALSE_ON_ERROR(parser->ReadBits(&p_diff, 7));
-    RETURN_FALSE_ON_ERROR(parser->ReadBits(&n_bit, 1));
-
-    vp9->pid_diff[vp9->num_ref_pics] = p_diff;
-    uint32_t scaled_pid = vp9->picture_id;
-    if (p_diff > scaled_pid) {
-      // TODO(asapersson): Max should correspond to the picture id of last wrap.
-      scaled_pid += vp9->max_picture_id + 1;
-    }
-    vp9->ref_picture_id[vp9->num_ref_pics++] = scaled_pid - p_diff;
-  } while (n_bit);
-
-  return true;
-}
-
-// Scalability structure (SS).
-//
-//      +-+-+-+-+-+-+-+-+
-// V:   | N_S |Y|G|-|-|-|
-//      +-+-+-+-+-+-+-+-+              -|
-// Y:   |     WIDTH     | (OPTIONAL)    .
-//      +               +               .
-//      |               | (OPTIONAL)    .
-//      +-+-+-+-+-+-+-+-+               . N_S + 1 times
-//      |     HEIGHT    | (OPTIONAL)    .
-//      +               +               .
-//      |               | (OPTIONAL)    .
-//      +-+-+-+-+-+-+-+-+              -|
-// G:   |      N_G      | (OPTIONAL)
-//      +-+-+-+-+-+-+-+-+                           -|
-// N_G: |  T  |U| R |-|-| (OPTIONAL)                 .
-//      +-+-+-+-+-+-+-+-+              -|            . N_G times
-//      |    P_DIFF     | (OPTIONAL)    . R times    .
-//      +-+-+-+-+-+-+-+-+              -|           -|
-//
-bool ParseSsData(rtc::BitBuffer* parser, RTPVideoHeaderVP9* vp9) {
-  uint32_t n_s, y_bit, g_bit;
-  RETURN_FALSE_ON_ERROR(parser->ReadBits(&n_s, 3));
-  RETURN_FALSE_ON_ERROR(parser->ReadBits(&y_bit, 1));
-  RETURN_FALSE_ON_ERROR(parser->ReadBits(&g_bit, 1));
-  RETURN_FALSE_ON_ERROR(parser->ConsumeBits(3));
-  vp9->num_spatial_layers = n_s + 1;
-  vp9->spatial_layer_resolution_present = y_bit ? true : false;
-  vp9->gof.num_frames_in_gof = 0;
-
-  if (y_bit) {
-    for (size_t i = 0; i < vp9->num_spatial_layers; ++i) {
-      RETURN_FALSE_ON_ERROR(parser->ReadUInt16(&vp9->width[i]));
-      RETURN_FALSE_ON_ERROR(parser->ReadUInt16(&vp9->height[i]));
-    }
+  for (size_t i = hdr.num_spatial_layers - hdr.first_active_layer;
+       i < hdr.num_spatial_layers; ++i) {
+    hdr.width[i] = 0;
+    hdr.height[i] = 0;
   }
-  if (g_bit) {
-    uint8_t n_g;
-    RETURN_FALSE_ON_ERROR(parser->ReadUInt8(&n_g));
-    vp9->gof.num_frames_in_gof = n_g;
-  }
-  for (size_t i = 0; i < vp9->gof.num_frames_in_gof; ++i) {
-    uint32_t t, u_bit, r;
-    RETURN_FALSE_ON_ERROR(parser->ReadBits(&t, 3));
-    RETURN_FALSE_ON_ERROR(parser->ReadBits(&u_bit, 1));
-    RETURN_FALSE_ON_ERROR(parser->ReadBits(&r, 2));
-    RETURN_FALSE_ON_ERROR(parser->ConsumeBits(2));
-    vp9->gof.temporal_idx[i] = t;
-    vp9->gof.temporal_up_switch[i] = u_bit ? true : false;
-    vp9->gof.num_ref_pics[i] = r;
-
-    for (uint8_t p = 0; p < vp9->gof.num_ref_pics[i]; ++p) {
-      uint8_t p_diff;
-      RETURN_FALSE_ON_ERROR(parser->ReadUInt8(&p_diff));
-      vp9->gof.pid_diff[i][p] = p_diff;
-    }
-  }
-  return true;
+  hdr.num_spatial_layers -= hdr.first_active_layer;
+  hdr.spatial_idx -= hdr.first_active_layer;
+  hdr.first_active_layer = 0;
+  return hdr;
 }
 }  // namespace
 
 RtpPacketizerVp9::RtpPacketizerVp9(rtc::ArrayView<const uint8_t> payload,
                                    PayloadSizeLimits limits,
                                    const RTPVideoHeaderVP9& hdr)
-    : hdr_(hdr),
+    : hdr_(RemoveInactiveSpatialLayers(hdr)),
       header_size_(PayloadDescriptorLengthMinusSsData(hdr_)),
       first_packet_extra_header_size_(SsDataLength(hdr_)),
       remaining_payload_(payload) {
+  RTC_DCHECK_EQ(hdr_.first_active_layer, 0);
+
   limits.max_payload_len -= header_size_;
   limits.first_packet_reduction_len += first_packet_extra_header_size_;
   limits.single_packet_reduction_len += first_packet_extra_header_size_;
@@ -580,83 +448,4 @@ bool RtpPacketizerVp9::WriteHeader(bool layer_begin,
   return true;
 }
 
-bool RtpDepacketizerVp9::Parse(ParsedPayload* parsed_payload,
-                               const uint8_t* payload,
-                               size_t payload_length) {
-  RTC_DCHECK(parsed_payload != nullptr);
-  if (payload_length == 0) {
-    RTC_LOG(LS_ERROR) << "Payload length is zero.";
-    return false;
-  }
-
-  // Parse mandatory first byte of payload descriptor.
-  rtc::BitBuffer parser(payload, payload_length);
-  uint32_t i_bit, p_bit, l_bit, f_bit, b_bit, e_bit, v_bit, z_bit;
-  RETURN_FALSE_ON_ERROR(parser.ReadBits(&i_bit, 1));
-  RETURN_FALSE_ON_ERROR(parser.ReadBits(&p_bit, 1));
-  RETURN_FALSE_ON_ERROR(parser.ReadBits(&l_bit, 1));
-  RETURN_FALSE_ON_ERROR(parser.ReadBits(&f_bit, 1));
-  RETURN_FALSE_ON_ERROR(parser.ReadBits(&b_bit, 1));
-  RETURN_FALSE_ON_ERROR(parser.ReadBits(&e_bit, 1));
-  RETURN_FALSE_ON_ERROR(parser.ReadBits(&v_bit, 1));
-  RETURN_FALSE_ON_ERROR(parser.ReadBits(&z_bit, 1));
-
-  // Parsed payload.
-  parsed_payload->video_header().width = 0;
-  parsed_payload->video_header().height = 0;
-  parsed_payload->video_header().simulcastIdx = 0;
-  parsed_payload->video_header().codec = kVideoCodecVP9;
-
-  parsed_payload->video_header().frame_type =
-      p_bit ? VideoFrameType::kVideoFrameDelta : VideoFrameType::kVideoFrameKey;
-
-  auto& vp9_header = parsed_payload->video_header()
-                         .video_type_header.emplace<RTPVideoHeaderVP9>();
-  vp9_header.InitRTPVideoHeaderVP9();
-  vp9_header.inter_pic_predicted = p_bit ? true : false;
-  vp9_header.flexible_mode = f_bit ? true : false;
-  vp9_header.beginning_of_frame = b_bit ? true : false;
-  vp9_header.end_of_frame = e_bit ? true : false;
-  vp9_header.ss_data_available = v_bit ? true : false;
-  vp9_header.non_ref_for_inter_layer_pred = z_bit ? true : false;
-
-  // Parse fields that are present.
-  if (i_bit && !ParsePictureId(&parser, &vp9_header)) {
-    RTC_LOG(LS_ERROR) << "Failed parsing VP9 picture id.";
-    return false;
-  }
-  if (l_bit && !ParseLayerInfo(&parser, &vp9_header)) {
-    RTC_LOG(LS_ERROR) << "Failed parsing VP9 layer info.";
-    return false;
-  }
-  if (p_bit && f_bit && !ParseRefIndices(&parser, &vp9_header)) {
-    RTC_LOG(LS_ERROR) << "Failed parsing VP9 ref indices.";
-    return false;
-  }
-  if (v_bit) {
-    if (!ParseSsData(&parser, &vp9_header)) {
-      RTC_LOG(LS_ERROR) << "Failed parsing VP9 SS data.";
-      return false;
-    }
-    if (vp9_header.spatial_layer_resolution_present) {
-      // TODO(asapersson): Add support for spatial layers.
-      parsed_payload->video_header().width = vp9_header.width[0];
-      parsed_payload->video_header().height = vp9_header.height[0];
-    }
-  }
-  parsed_payload->video_header().is_first_packet_in_frame =
-      b_bit && (!l_bit || !vp9_header.inter_layer_predicted);
-
-  uint64_t rem_bits = parser.RemainingBitCount();
-  RTC_DCHECK_EQ(rem_bits % 8, 0);
-  parsed_payload->payload_length = rem_bits / 8;
-  if (parsed_payload->payload_length == 0) {
-    RTC_LOG(LS_ERROR) << "Failed parsing VP9 payload data.";
-    return false;
-  }
-  parsed_payload->payload =
-      payload + payload_length - parsed_payload->payload_length;
-
-  return true;
-}
 }  // namespace webrtc

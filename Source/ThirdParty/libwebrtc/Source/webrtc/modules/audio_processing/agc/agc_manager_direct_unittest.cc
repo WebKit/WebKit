@@ -10,8 +10,10 @@
 
 #include "modules/audio_processing/agc/agc_manager_direct.h"
 
+#include "modules/audio_processing/agc/gain_control.h"
 #include "modules/audio_processing/agc/mock_agc.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
+#include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -30,15 +32,27 @@ const int kSamplesPerChannel = kSampleRateHz / 100;
 const int kInitialVolume = 128;
 constexpr int kClippedMin = 165;  // Arbitrary, but different from the default.
 const float kAboveClippedThreshold = 0.2f;
+const int kMinMicLevel = 12;
 
-class TestVolumeCallbacks : public VolumeCallbacks {
+class MockGainControl : public GainControl {
  public:
-  TestVolumeCallbacks() : volume_(0) {}
-  void SetMicVolume(int volume) override { volume_ = volume; }
-  int GetMicVolume() override { return volume_; }
-
- private:
-  int volume_;
+  virtual ~MockGainControl() {}
+  MOCK_METHOD0(Initialize, void());
+  MOCK_CONST_METHOD0(is_enabled, bool());
+  MOCK_METHOD1(set_stream_analog_level, int(int level));
+  MOCK_CONST_METHOD0(stream_analog_level, int());
+  MOCK_METHOD1(set_mode, int(Mode mode));
+  MOCK_CONST_METHOD0(mode, Mode());
+  MOCK_METHOD1(set_target_level_dbfs, int(int level));
+  MOCK_CONST_METHOD0(target_level_dbfs, int());
+  MOCK_METHOD1(set_compression_gain_db, int(int gain));
+  MOCK_CONST_METHOD0(compression_gain_db, int());
+  MOCK_METHOD1(enable_limiter, int(bool enable));
+  MOCK_CONST_METHOD0(is_limiter_enabled, bool());
+  MOCK_METHOD2(set_analog_level_limits, int(int minimum, int maximum));
+  MOCK_CONST_METHOD0(analog_level_minimum, int());
+  MOCK_CONST_METHOD0(analog_level_maximum, int());
+  MOCK_CONST_METHOD0(stream_is_saturated, bool());
 };
 
 }  // namespace
@@ -47,9 +61,15 @@ class AgcManagerDirectTest : public ::testing::Test {
  protected:
   AgcManagerDirectTest()
       : agc_(new MockAgc),
-        manager_(agc_, &gctrl_, &volume_, kInitialVolume, kClippedMin) {
+        manager_(agc_, kInitialVolume, kClippedMin, kSampleRateHz),
+        audio(kNumChannels),
+        audio_data(kNumChannels * kSamplesPerChannel, 0.f) {
     ExpectInitialize();
     manager_.Initialize();
+    manager_.SetupDigitalGainControl(&gctrl_);
+    for (size_t ch = 0; ch < kNumChannels; ++ch) {
+      audio[ch] = &audio_data[ch * kSamplesPerChannel];
+    }
   }
 
   void FirstProcess() {
@@ -59,12 +79,12 @@ class AgcManagerDirectTest : public ::testing::Test {
   }
 
   void SetVolumeAndProcess(int volume) {
-    volume_.SetMicVolume(volume);
+    manager_.set_stream_analog_level(volume);
     FirstProcess();
   }
 
   void ExpectCheckVolumeAndReset(int volume) {
-    volume_.SetMicVolume(volume);
+    manager_.set_stream_analog_level(volume);
     EXPECT_CALL(*agc_, Reset());
   }
 
@@ -78,25 +98,40 @@ class AgcManagerDirectTest : public ::testing::Test {
   void CallProcess(int num_calls) {
     for (int i = 0; i < num_calls; ++i) {
       EXPECT_CALL(*agc_, Process(_, _, _)).WillOnce(Return());
-      manager_.Process(nullptr, kSamplesPerChannel, kSampleRateHz);
+      manager_.Process(nullptr);
+      absl::optional<int> new_digital_gain =
+          manager_.GetDigitalComressionGain();
+      if (new_digital_gain) {
+        gctrl_.set_compression_gain_db(*new_digital_gain);
+      }
     }
   }
 
-  void CallPreProc(int num_calls) {
+  void CallPreProc(int num_calls, float clipped_ratio) {
+    RTC_DCHECK_GE(1.f, clipped_ratio);
+    const int num_clipped = kSamplesPerChannel * clipped_ratio;
+    std::fill(audio_data.begin(), audio_data.end(), 0.f);
+    for (size_t ch = 0; ch < kNumChannels; ++ch) {
+      for (int k = 0; k < num_clipped; ++k) {
+        audio[ch][k] = 32767.f;
+      }
+    }
+
     for (int i = 0; i < num_calls; ++i) {
-      manager_.AnalyzePreProcess(nullptr, kNumChannels, kSamplesPerChannel);
+      manager_.AnalyzePreProcess(audio.data(), kSamplesPerChannel);
     }
   }
 
   MockAgc* agc_;
-  test::MockGainControl gctrl_;
-  TestVolumeCallbacks volume_;
+  MockGainControl gctrl_;
   AgcManagerDirect manager_;
+  std::vector<float*> audio;
+  std::vector<float> audio_data;
 };
 
 TEST_F(AgcManagerDirectTest, StartupMinVolumeConfigurationIsRespected) {
   FirstProcess();
-  EXPECT_EQ(kInitialVolume, volume_.GetMicVolume());
+  EXPECT_EQ(kInitialVolume, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, MicVolumeResponseToRmsError) {
@@ -116,12 +151,12 @@ TEST_F(AgcManagerDirectTest, MicVolumeResponseToRmsError) {
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(11), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(130, volume_.GetMicVolume());
+  EXPECT_EQ(130, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(20), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(168, volume_.GetMicVolume());
+  EXPECT_EQ(168, manager_.stream_analog_level());
 
   // Inside the compressor's window; no change of volume.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
@@ -135,17 +170,17 @@ TEST_F(AgcManagerDirectTest, MicVolumeResponseToRmsError) {
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-1), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(167, volume_.GetMicVolume());
+  EXPECT_EQ(167, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-1), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(163, volume_.GetMicVolume());
+  EXPECT_EQ(163, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-9), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(129, volume_.GetMicVolume());
+  EXPECT_EQ(129, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, MicVolumeIsLimited) {
@@ -155,60 +190,60 @@ TEST_F(AgcManagerDirectTest, MicVolumeIsLimited) {
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(30), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(183, volume_.GetMicVolume());
+  EXPECT_EQ(183, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(30), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(243, volume_.GetMicVolume());
+  EXPECT_EQ(243, manager_.stream_analog_level());
 
   // Won't go higher than the maximum.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(30), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(255, volume_.GetMicVolume());
+  EXPECT_EQ(255, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-1), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(254, volume_.GetMicVolume());
+  EXPECT_EQ(254, manager_.stream_analog_level());
 
   // Maximum downwards change is limited.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-40), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(194, volume_.GetMicVolume());
+  EXPECT_EQ(194, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-40), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(137, volume_.GetMicVolume());
+  EXPECT_EQ(137, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-40), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(88, volume_.GetMicVolume());
+  EXPECT_EQ(88, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-40), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(54, volume_.GetMicVolume());
+  EXPECT_EQ(54, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-40), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(33, volume_.GetMicVolume());
+  EXPECT_EQ(33, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-40), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(18, volume_.GetMicVolume());
+  EXPECT_EQ(18, manager_.stream_analog_level());
 
   // Won't go lower than the minimum.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-40), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(12, volume_.GetMicVolume());
+  EXPECT_EQ(12, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, CompressorStepsTowardsTarget) {
@@ -333,7 +368,11 @@ TEST_F(AgcManagerDirectTest, CompressorReachesMinimum) {
 
 TEST_F(AgcManagerDirectTest, NoActionWhileMuted) {
   manager_.SetCaptureMuted(true);
-  manager_.Process(nullptr, kSamplesPerChannel, kSampleRateHz);
+  manager_.Process(nullptr);
+  absl::optional<int> new_digital_gain = manager_.GetDigitalComressionGain();
+  if (new_digital_gain) {
+    gctrl_.set_compression_gain_db(*new_digital_gain);
+  }
 }
 
 TEST_F(AgcManagerDirectTest, UnmutingChecksVolumeWithoutRaising) {
@@ -345,7 +384,7 @@ TEST_F(AgcManagerDirectTest, UnmutingChecksVolumeWithoutRaising) {
   // SetMicVolume should not be called.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_)).WillOnce(Return(false));
   CallProcess(1);
-  EXPECT_EQ(127, volume_.GetMicVolume());
+  EXPECT_EQ(127, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, UnmutingRaisesTooLowVolume) {
@@ -356,7 +395,7 @@ TEST_F(AgcManagerDirectTest, UnmutingRaisesTooLowVolume) {
   ExpectCheckVolumeAndReset(11);
   EXPECT_CALL(*agc_, GetRmsErrorDb(_)).WillOnce(Return(false));
   CallProcess(1);
-  EXPECT_EQ(12, volume_.GetMicVolume());
+  EXPECT_EQ(12, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, ManualLevelChangeResultsInNoSetMicCall) {
@@ -372,24 +411,24 @@ TEST_F(AgcManagerDirectTest, ManualLevelChangeResultsInNoSetMicCall) {
 
   // GetMicVolume returns a value outside of the quantization slack, indicating
   // a manual volume change.
-  ASSERT_NE(volume_.GetMicVolume(), 154);
-  volume_.SetMicVolume(154);
+  ASSERT_NE(manager_.stream_analog_level(), 154);
+  manager_.set_stream_analog_level(154);
   CallProcess(1);
-  EXPECT_EQ(154, volume_.GetMicVolume());
+  EXPECT_EQ(154, manager_.stream_analog_level());
 
   // Do the same thing, except downwards now.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-1), Return(true)));
-  volume_.SetMicVolume(100);
+  manager_.set_stream_analog_level(100);
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
   CallProcess(1);
-  EXPECT_EQ(100, volume_.GetMicVolume());
+  EXPECT_EQ(100, manager_.stream_analog_level());
 
   // And finally verify the AGC continues working without a manual change.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-1), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(99, volume_.GetMicVolume());
+  EXPECT_EQ(99, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, RecoveryAfterManualLevelChangeFromMax) {
@@ -400,25 +439,25 @@ TEST_F(AgcManagerDirectTest, RecoveryAfterManualLevelChangeFromMax) {
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillRepeatedly(DoAll(SetArgPointee<0>(30), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(183, volume_.GetMicVolume());
+  EXPECT_EQ(183, manager_.stream_analog_level());
   CallProcess(1);
-  EXPECT_EQ(243, volume_.GetMicVolume());
+  EXPECT_EQ(243, manager_.stream_analog_level());
   CallProcess(1);
-  EXPECT_EQ(255, volume_.GetMicVolume());
+  EXPECT_EQ(255, manager_.stream_analog_level());
 
   // Manual change does not result in SetMicVolume call.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-1), Return(true)));
-  volume_.SetMicVolume(50);
+  manager_.set_stream_analog_level(50);
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
   CallProcess(1);
-  EXPECT_EQ(50, volume_.GetMicVolume());
+  EXPECT_EQ(50, manager_.stream_analog_level());
 
   // Continues working as usual afterwards.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(20), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(69, volume_.GetMicVolume());
+  EXPECT_EQ(69, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, RecoveryAfterManualLevelChangeBelowMin) {
@@ -428,131 +467,112 @@ TEST_F(AgcManagerDirectTest, RecoveryAfterManualLevelChangeBelowMin) {
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-1), Return(true)));
   // Don't set to zero, which will cause AGC to take no action.
-  volume_.SetMicVolume(1);
+  manager_.set_stream_analog_level(1);
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
   CallProcess(1);
-  EXPECT_EQ(1, volume_.GetMicVolume());
+  EXPECT_EQ(1, manager_.stream_analog_level());
 
   // Continues working as usual afterwards.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(11), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(2, volume_.GetMicVolume());
+  EXPECT_EQ(2, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(30), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(11, volume_.GetMicVolume());
+  EXPECT_EQ(11, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(20), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(18, volume_.GetMicVolume());
+  EXPECT_EQ(18, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, NoClippingHasNoImpact) {
   FirstProcess();
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _)).WillRepeatedly(Return(0));
-  CallPreProc(100);
-  EXPECT_EQ(128, volume_.GetMicVolume());
+  CallPreProc(100, 0);
+  EXPECT_EQ(128, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, ClippingUnderThresholdHasNoImpact) {
   FirstProcess();
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _)).WillOnce(Return(0.099));
-  CallPreProc(1);
-  EXPECT_EQ(128, volume_.GetMicVolume());
+  CallPreProc(1, 0.099);
+  EXPECT_EQ(128, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, ClippingLowersVolume) {
   SetVolumeAndProcess(255);
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _)).WillOnce(Return(0.101));
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
-  CallPreProc(1);
-  EXPECT_EQ(240, volume_.GetMicVolume());
+  CallPreProc(1, 0.2);
+  EXPECT_EQ(240, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, WaitingPeriodBetweenClippingChecks) {
   SetVolumeAndProcess(255);
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
-  CallPreProc(1);
-  EXPECT_EQ(240, volume_.GetMicVolume());
+  CallPreProc(1, kAboveClippedThreshold);
+  EXPECT_EQ(240, manager_.stream_analog_level());
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillRepeatedly(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(0);
-  CallPreProc(300);
-  EXPECT_EQ(240, volume_.GetMicVolume());
+  CallPreProc(300, kAboveClippedThreshold);
+  EXPECT_EQ(240, manager_.stream_analog_level());
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
-  CallPreProc(1);
-  EXPECT_EQ(225, volume_.GetMicVolume());
+  CallPreProc(1, kAboveClippedThreshold);
+  EXPECT_EQ(225, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, ClippingLoweringIsLimited) {
   SetVolumeAndProcess(180);
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
-  CallPreProc(1);
-  EXPECT_EQ(kClippedMin, volume_.GetMicVolume());
+  CallPreProc(1, kAboveClippedThreshold);
+  EXPECT_EQ(kClippedMin, manager_.stream_analog_level());
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillRepeatedly(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(0);
-  CallPreProc(1000);
-  EXPECT_EQ(kClippedMin, volume_.GetMicVolume());
+  CallPreProc(1000, kAboveClippedThreshold);
+  EXPECT_EQ(kClippedMin, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, ClippingMaxIsRespectedWhenEqualToLevel) {
   SetVolumeAndProcess(255);
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
-  CallPreProc(1);
-  EXPECT_EQ(240, volume_.GetMicVolume());
+  CallPreProc(1, kAboveClippedThreshold);
+  EXPECT_EQ(240, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillRepeatedly(DoAll(SetArgPointee<0>(30), Return(true)));
   CallProcess(10);
-  EXPECT_EQ(240, volume_.GetMicVolume());
+  EXPECT_EQ(240, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, ClippingMaxIsRespectedWhenHigherThanLevel) {
   SetVolumeAndProcess(200);
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
-  CallPreProc(1);
-  EXPECT_EQ(185, volume_.GetMicVolume());
+  CallPreProc(1, kAboveClippedThreshold);
+  EXPECT_EQ(185, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillRepeatedly(DoAll(SetArgPointee<0>(40), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(240, volume_.GetMicVolume());
+  EXPECT_EQ(240, manager_.stream_analog_level());
   CallProcess(10);
-  EXPECT_EQ(240, volume_.GetMicVolume());
+  EXPECT_EQ(240, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, MaxCompressionIsIncreasedAfterClipping) {
   SetVolumeAndProcess(210);
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
-  CallPreProc(1);
-  EXPECT_EQ(195, volume_.GetMicVolume());
+  CallPreProc(1, kAboveClippedThreshold);
+  EXPECT_EQ(195, manager_.stream_analog_level());
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(11), Return(true)))
@@ -576,36 +596,26 @@ TEST_F(AgcManagerDirectTest, MaxCompressionIsIncreasedAfterClipping) {
   CallProcess(1);
 
   // Continue clipping until we hit the maximum surplus compression.
-  CallPreProc(300);
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
+  CallPreProc(300, kAboveClippedThreshold);
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
-  CallPreProc(1);
-  EXPECT_EQ(180, volume_.GetMicVolume());
+  CallPreProc(1, kAboveClippedThreshold);
+  EXPECT_EQ(180, manager_.stream_analog_level());
 
-  CallPreProc(300);
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
+  CallPreProc(300, kAboveClippedThreshold);
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
-  CallPreProc(1);
-  EXPECT_EQ(kClippedMin, volume_.GetMicVolume());
+  CallPreProc(1, kAboveClippedThreshold);
+  EXPECT_EQ(kClippedMin, manager_.stream_analog_level());
 
   // Current level is now at the minimum, but the maximum allowed level still
   // has more to decrease.
-  CallPreProc(300);
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
-  CallPreProc(1);
+  CallPreProc(300, kAboveClippedThreshold);
+  CallPreProc(1, kAboveClippedThreshold);
 
-  CallPreProc(300);
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
-  CallPreProc(1);
+  CallPreProc(300, kAboveClippedThreshold);
+  CallPreProc(1, kAboveClippedThreshold);
 
-  CallPreProc(300);
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
-  CallPreProc(1);
+  CallPreProc(300, kAboveClippedThreshold);
+  CallPreProc(1, kAboveClippedThreshold);
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(16), Return(true)))
@@ -629,47 +639,43 @@ TEST_F(AgcManagerDirectTest, MaxCompressionIsIncreasedAfterClipping) {
 TEST_F(AgcManagerDirectTest, UserCanRaiseVolumeAfterClipping) {
   SetVolumeAndProcess(225);
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
-  CallPreProc(1);
-  EXPECT_EQ(210, volume_.GetMicVolume());
+  CallPreProc(1, kAboveClippedThreshold);
+  EXPECT_EQ(210, manager_.stream_analog_level());
 
   // High enough error to trigger a volume check.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(14), Return(true)));
   // User changed the volume.
-  volume_.SetMicVolume(250);
+  manager_.set_stream_analog_level(250);
   EXPECT_CALL(*agc_, Reset()).Times(AtLeast(1));
   CallProcess(1);
-  EXPECT_EQ(250, volume_.GetMicVolume());
+  EXPECT_EQ(250, manager_.stream_analog_level());
 
   // Move down...
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(-10), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(210, volume_.GetMicVolume());
+  EXPECT_EQ(210, manager_.stream_analog_level());
   // And back up to the new max established by the user.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(40), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(250, volume_.GetMicVolume());
+  EXPECT_EQ(250, manager_.stream_analog_level());
   // Will not move above new maximum.
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillOnce(DoAll(SetArgPointee<0>(30), Return(true)));
   CallProcess(1);
-  EXPECT_EQ(250, volume_.GetMicVolume());
+  EXPECT_EQ(250, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, ClippingDoesNotPullLowVolumeBackUp) {
   SetVolumeAndProcess(80);
 
-  EXPECT_CALL(*agc_, AnalyzePreproc(_, _))
-      .WillOnce(Return(kAboveClippedThreshold));
   EXPECT_CALL(*agc_, Reset()).Times(0);
-  int initial_volume = volume_.GetMicVolume();
-  CallPreProc(1);
-  EXPECT_EQ(initial_volume, volume_.GetMicVolume());
+  int initial_volume = manager_.stream_analog_level();
+  CallPreProc(1, kAboveClippedThreshold);
+  EXPECT_EQ(initial_volume, manager_.stream_analog_level());
 }
 
 TEST_F(AgcManagerDirectTest, TakesNoActionOnZeroMicVolume) {
@@ -677,20 +683,18 @@ TEST_F(AgcManagerDirectTest, TakesNoActionOnZeroMicVolume) {
 
   EXPECT_CALL(*agc_, GetRmsErrorDb(_))
       .WillRepeatedly(DoAll(SetArgPointee<0>(30), Return(true)));
-  volume_.SetMicVolume(0);
+  manager_.set_stream_analog_level(0);
   CallProcess(10);
-  EXPECT_EQ(0, volume_.GetMicVolume());
+  EXPECT_EQ(0, manager_.stream_analog_level());
 }
 
 TEST(AgcManagerDirectStandaloneTest, DisableDigitalDisablesDigital) {
   auto agc = std::unique_ptr<Agc>(new ::testing::NiceMock<MockAgc>());
-  test::MockGainControl gctrl;
-  TestVolumeCallbacks volume;
-
-  AgcManagerDirect manager(agc.release(), &gctrl, &volume, kInitialVolume,
+  MockGainControl gctrl;
+  AgcManagerDirect manager(/* num_capture_channels */ 1, kInitialVolume,
                            kClippedMin,
                            /* use agc2 level estimation */ false,
-                           /* disable digital adaptive */ true);
+                           /* disable digital adaptive */ true, kSampleRateHz);
 
   EXPECT_CALL(gctrl, set_mode(GainControl::kFixedDigital));
   EXPECT_CALL(gctrl, set_target_level_dbfs(0));
@@ -698,6 +702,66 @@ TEST(AgcManagerDirectStandaloneTest, DisableDigitalDisablesDigital) {
   EXPECT_CALL(gctrl, enable_limiter(false));
 
   manager.Initialize();
+  manager.SetupDigitalGainControl(&gctrl);
+}
+
+TEST(AgcManagerDirectStandaloneTest, AgcMinMicLevelExperiment) {
+  auto agc_man = std::unique_ptr<AgcManagerDirect>(new AgcManagerDirect(
+      /* num_capture_channels */ 1, kInitialVolume, kClippedMin, true, true,
+      kSampleRateHz));
+  EXPECT_EQ(agc_man->channel_agcs_[0]->min_mic_level(), kMinMicLevel);
+  EXPECT_EQ(agc_man->channel_agcs_[0]->startup_min_level(), kInitialVolume);
+  {
+    test::ScopedFieldTrials field_trial(
+        "WebRTC-Audio-AgcMinMicLevelExperiment/Disabled/");
+    agc_man.reset(new AgcManagerDirect(
+        /* num_capture_channels */ 1, kInitialVolume, kClippedMin, true, true,
+        kSampleRateHz));
+    EXPECT_EQ(agc_man->channel_agcs_[0]->min_mic_level(), kMinMicLevel);
+    EXPECT_EQ(agc_man->channel_agcs_[0]->startup_min_level(), kInitialVolume);
+  }
+  {
+    // Valid range of field-trial parameter is [0,255].
+    test::ScopedFieldTrials field_trial(
+        "WebRTC-Audio-AgcMinMicLevelExperiment/Enabled-256/");
+    agc_man.reset(new AgcManagerDirect(
+        /* num_capture_channels */ 1, kInitialVolume, kClippedMin, true, true,
+        kSampleRateHz));
+    EXPECT_EQ(agc_man->channel_agcs_[0]->min_mic_level(), kMinMicLevel);
+    EXPECT_EQ(agc_man->channel_agcs_[0]->startup_min_level(), kInitialVolume);
+  }
+  {
+    test::ScopedFieldTrials field_trial(
+        "WebRTC-Audio-AgcMinMicLevelExperiment/Enabled--1/");
+    agc_man.reset(new AgcManagerDirect(
+        /* num_capture_channels */ 1, kInitialVolume, kClippedMin, true, true,
+        kSampleRateHz));
+    EXPECT_EQ(agc_man->channel_agcs_[0]->min_mic_level(), kMinMicLevel);
+    EXPECT_EQ(agc_man->channel_agcs_[0]->startup_min_level(), kInitialVolume);
+  }
+  {
+    // Verify that a valid experiment changes the minimum microphone level.
+    // The start volume is larger than the min level and should therefore not
+    // be changed.
+    test::ScopedFieldTrials field_trial(
+        "WebRTC-Audio-AgcMinMicLevelExperiment/Enabled-50/");
+    agc_man.reset(new AgcManagerDirect(
+        /* num_capture_channels */ 1, kInitialVolume, kClippedMin, true, true,
+        kSampleRateHz));
+    EXPECT_EQ(agc_man->channel_agcs_[0]->min_mic_level(), 50);
+    EXPECT_EQ(agc_man->channel_agcs_[0]->startup_min_level(), kInitialVolume);
+  }
+  {
+    // Use experiment to reduce the default minimum microphone level, start at
+    // a lower level and ensure that the startup level is increased to the min
+    // level set by the experiment.
+    test::ScopedFieldTrials field_trial(
+        "WebRTC-Audio-AgcMinMicLevelExperiment/Enabled-50/");
+    agc_man.reset(new AgcManagerDirect(/* num_capture_channels */ 1, 30,
+                                       kClippedMin, true, true, kSampleRateHz));
+    EXPECT_EQ(agc_man->channel_agcs_[0]->min_mic_level(), 50);
+    EXPECT_EQ(agc_man->channel_agcs_[0]->startup_min_level(), 50);
+  }
 }
 
 }  // namespace webrtc

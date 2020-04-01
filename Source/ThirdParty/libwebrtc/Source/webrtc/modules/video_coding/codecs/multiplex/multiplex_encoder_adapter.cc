@@ -16,6 +16,7 @@
 #include "api/video_codecs/video_encoder.h"
 #include "common_video/include/video_frame_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "media/base/video_common.h"
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/codecs/multiplex/include/augmented_video_frame_buffer.h"
 #include "rtc_base/keep_ref_until_done.h"
@@ -101,6 +102,7 @@ int MultiplexEncoderAdapter::InitEncode(
 
   encoder_info_ = EncoderInfo();
   encoder_info_.implementation_name = "MultiplexEncoderAdapter (";
+  encoder_info_.requested_resolution_alignment = 1;
   // This needs to be false so that we can do the split in Encode().
   encoder_info_.supports_native_handle = false;
 
@@ -132,6 +134,11 @@ int MultiplexEncoderAdapter::InitEncode(
       encoder_info_.is_hardware_accelerated |=
           encoder_impl_info.is_hardware_accelerated;
     }
+
+    encoder_info_.requested_resolution_alignment = cricket::LeastCommonMultiple(
+        encoder_info_.requested_resolution_alignment,
+        encoder_impl_info.requested_resolution_alignment);
+
     encoder_info_.has_internal_source = false;
 
     encoders_.emplace_back(std::move(encoder));
@@ -235,7 +242,7 @@ void MultiplexEncoderAdapter::SetRates(
         bitrate_allocation,
         static_cast<uint32_t>(encoders_.size() * parameters.framerate_fps),
         parameters.bandwidth_allocation -
-            DataRate::bps(augmenting_data_size_)));
+            DataRate::BitsPerSec(augmenting_data_size_)));
   }
 }
 

@@ -125,12 +125,6 @@ void AudioEncoderCopyRed::OnReceivedUplinkPacketLossFraction(
       uplink_packet_loss_fraction);
 }
 
-void AudioEncoderCopyRed::OnReceivedUplinkRecoverablePacketLossFraction(
-    float uplink_recoverable_packet_loss_fraction) {
-  speech_encoder_->OnReceivedUplinkRecoverablePacketLossFraction(
-      uplink_recoverable_packet_loss_fraction);
-}
-
 void AudioEncoderCopyRed::OnReceivedUplinkBandwidth(
     int target_audio_bitrate_bps,
     absl::optional<int64_t> bwe_period_ms) {

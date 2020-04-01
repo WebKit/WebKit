@@ -130,5 +130,29 @@ void JNI_YuvHelper_I420Rotate(JNIEnv* jni,
                      static_cast<libyuv::RotationMode>(rotation_mode));
 }
 
+void JNI_YuvHelper_ABGRToI420(JNIEnv* jni,
+                              const JavaParamRef<jobject>& j_src,
+                              jint src_stride,
+                              const JavaParamRef<jobject>& j_dst_y,
+                              jint dst_stride_y,
+                              const JavaParamRef<jobject>& j_dst_u,
+                              jint dst_stride_u,
+                              const JavaParamRef<jobject>& j_dst_v,
+                              jint dst_stride_v,
+                              jint src_width,
+                              jint src_height) {
+  const uint8_t* src =
+      static_cast<const uint8_t*>(jni->GetDirectBufferAddress(j_src.obj()));
+  uint8_t* dst_y =
+      static_cast<uint8_t*>(jni->GetDirectBufferAddress(j_dst_y.obj()));
+  uint8_t* dst_u =
+      static_cast<uint8_t*>(jni->GetDirectBufferAddress(j_dst_u.obj()));
+  uint8_t* dst_v =
+      static_cast<uint8_t*>(jni->GetDirectBufferAddress(j_dst_v.obj()));
+
+  libyuv::ABGRToI420(src, src_stride, dst_y, dst_stride_y, dst_u, dst_stride_u,
+                     dst_v, dst_stride_v, src_width, src_height);
+}
+
 }  // namespace jni
 }  // namespace webrtc

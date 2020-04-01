@@ -27,15 +27,15 @@ enum class ConfigOptionID {
   kNetEqCapacityConfig,    // Deprecated
   kNetEqFastAccelerate,    // Deprecated
   kVoicePacing,            // Deprecated
-  kExtendedFilter,
-  kDelayAgnostic,
+  kExtendedFilter,         // Deprecated
+  kDelayAgnostic,          // Deprecated
   kExperimentalAgc,
   kExperimentalNs,
-  kBeamforming,      // Deprecated
-  kIntelligibility,  // Deprecated
-  kEchoCanceller3,   // Deprecated
-  kAecRefinedAdaptiveFilter,
-  kLevelControl  // Deprecated
+  kBeamforming,               // Deprecated
+  kIntelligibility,           // Deprecated
+  kEchoCanceller3,            // Deprecated
+  kAecRefinedAdaptiveFilter,  // Deprecated
+  kLevelControl               // Deprecated
 };
 
 // Class Config is designed to ease passing a set of options across webrtc code.

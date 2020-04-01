@@ -10,7 +10,8 @@
 
 #include "modules/audio_processing/include/audio_generator_factory.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "common_audio/wav_file.h"
 #include "modules/audio_processing/audio_generator/file_audio_generator.h"
 
@@ -19,7 +20,7 @@ namespace webrtc {
 std::unique_ptr<AudioGenerator> AudioGeneratorFactory::Create(
     const std::string& file_name) {
   std::unique_ptr<WavReader> input_audio_file(new WavReader(file_name));
-  return absl::make_unique<FileAudioGenerator>(std::move(input_audio_file));
+  return std::make_unique<FileAudioGenerator>(std::move(input_audio_file));
 }
 
 }  // namespace webrtc

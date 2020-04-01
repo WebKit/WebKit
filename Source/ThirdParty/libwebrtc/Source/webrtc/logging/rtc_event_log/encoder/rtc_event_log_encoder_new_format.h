@@ -28,6 +28,7 @@ class EventStream;  // Auto-generated from protobuf.
 
 class RtcEventAlrState;
 class RtcEventRouteChange;
+class RtcEventRemoteEstimate;
 class RtcEventAudioNetworkAdaptation;
 class RtcEventAudioPlayout;
 class RtcEventAudioReceiveStreamConfig;
@@ -123,6 +124,8 @@ class RtcEventLogEncoderNewFormat final : public RtcEventLogEncoder {
       rtclog2::EventStream* event_stream);
   void EncodeRouteChange(rtc::ArrayView<const RtcEventRouteChange*> batch,
                          rtclog2::EventStream* event_stream);
+  void EncodeRemoteEstimate(rtc::ArrayView<const RtcEventRemoteEstimate*> batch,
+                            rtclog2::EventStream* event_stream);
   void EncodeRtcpPacketIncoming(
       rtc::ArrayView<const RtcEventRtcpPacketIncoming*> batch,
       rtclog2::EventStream* event_stream);

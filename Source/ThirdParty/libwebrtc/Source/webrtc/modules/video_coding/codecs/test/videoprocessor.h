@@ -19,7 +19,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "api/task_queue/queued_task.h"
 #include "api/task_queue/task_queue_base.h"
@@ -98,7 +97,7 @@ class VideoProcessor {
 
       // Post the callback to the right task queue, if needed.
       if (!task_queue_->IsCurrent()) {
-        task_queue_->PostTask(absl::make_unique<EncodeCallbackTask>(
+        task_queue_->PostTask(std::make_unique<EncodeCallbackTask>(
             video_processor_, encoded_image, codec_specific_info));
         return Result(Result::OK, 0);
       }

@@ -66,8 +66,6 @@ static inline void fillRTCRTPStreamStats(RTCStatsReport::RTCRTPStreamStats& stat
 
     if (rtcStats.ssrc.is_defined())
         stats.ssrc = *rtcStats.ssrc;
-    if (rtcStats.associate_stats_id.is_defined())
-        stats.associateStatsId = fromStdString(*rtcStats.associate_stats_id);
     if (rtcStats.is_remote.is_defined())
         stats.isRemote = *rtcStats.is_remote;
     if (rtcStats.media_type.is_defined())

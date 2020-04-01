@@ -16,7 +16,7 @@
 // Field trials allow webrtc clients (such as Chrome) to turn on feature code
 // in binaries out in the field and gather information with that.
 //
-// By default WebRTC provides an implementaion of field trials that can be
+// By default WebRTC provides an implementation of field trials that can be
 // found in system_wrappers/source/field_trial.cc. If clients want to provide
 // a custom version, they will have to:
 //
@@ -45,10 +45,10 @@
 //
 // Notes:
 //   - NOT every feature is a candidate to be controlled by this mechanism as
-//     it may require negotation between involved parties (e.g. SDP).
+//     it may require negotiation between involved parties (e.g. SDP).
 //
 // TODO(andresp): since chrome --force-fieldtrials does not marks the trial
-//     as active it does not gets propaged to renderer process. For now one
+//     as active it does not get propagated to the renderer process. For now one
 //     needs to push a config with start_active:true or run a local finch
 //     server.
 //
@@ -83,6 +83,18 @@ inline bool IsDisabled(const char* name) {
 void InitFieldTrialsFromString(const char* trials_string);
 
 const char* GetFieldTrialString();
+
+#ifndef WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT
+// Validates the given field trial string.
+bool FieldTrialsStringIsValid(const char* trials_string);
+
+// Merges two field trial strings.
+//
+// If a key (trial) exists twice with conflicting values (groups), the value
+// in 'second' takes precedence.
+// Shall only be called with valid FieldTrial strings.
+std::string MergeFieldTrialsStrings(const char* first, const char* second);
+#endif  // WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT
 
 }  // namespace field_trial
 }  // namespace webrtc

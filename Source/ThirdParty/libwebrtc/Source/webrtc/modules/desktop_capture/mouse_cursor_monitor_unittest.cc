@@ -34,11 +34,6 @@ class MouseCursorMonitorTest : public ::testing::Test,
     cursor_image_.reset(cursor_image);
   }
 
-  void OnMouseCursorPosition(MouseCursorMonitor::CursorState state,
-                             const DesktopVector& position) override {
-    RTC_NOTREACHED();
-  }
-
   void OnMouseCursorPosition(const DesktopVector& position) override {
     position_ = position;
     position_received_ = true;

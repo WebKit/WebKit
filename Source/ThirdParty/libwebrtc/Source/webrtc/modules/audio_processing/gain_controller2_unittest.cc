@@ -11,8 +11,8 @@
 #include "modules/audio_processing/gain_controller2.h"
 
 #include <algorithm>
+#include <memory>
 
-#include "absl/memory/memory.h"
 #include "api/array_view.h"
 #include "modules/audio_processing/agc2/agc2_testing_common.h"
 #include "modules/audio_processing/audio_buffer.h"
@@ -62,7 +62,7 @@ AudioProcessing::Config::GainController2 CreateAgc2FixedDigitalModeConfig(
 std::unique_ptr<GainController2> CreateAgc2FixedDigitalMode(
     float fixed_gain_db,
     size_t sample_rate_hz) {
-  auto agc2 = absl::make_unique<GainController2>();
+  auto agc2 = std::make_unique<GainController2>();
   agc2->ApplyConfig(CreateAgc2FixedDigitalModeConfig(fixed_gain_db));
   agc2->Initialize(sample_rate_hz);
   return agc2;

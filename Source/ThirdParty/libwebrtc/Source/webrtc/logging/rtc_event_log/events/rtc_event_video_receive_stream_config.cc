@@ -26,7 +26,7 @@ RtcEventVideoReceiveStreamConfig::RtcEventVideoReceiveStreamConfig(
 RtcEventVideoReceiveStreamConfig::RtcEventVideoReceiveStreamConfig(
     const RtcEventVideoReceiveStreamConfig& other)
     : RtcEvent(other.timestamp_us_),
-      config_(absl::make_unique<rtclog::StreamConfig>(*other.config_)) {}
+      config_(std::make_unique<rtclog::StreamConfig>(*other.config_)) {}
 
 RtcEventVideoReceiveStreamConfig::~RtcEventVideoReceiveStreamConfig() = default;
 

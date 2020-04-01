@@ -11,7 +11,7 @@
 #include "modules/video_coding/decoding_state.h"
 
 #include "common_video/h264/h264_common.h"
-#include "modules/include/module_common_types.h"
+#include "modules/include/module_common_types_public.h"
 #include "modules/video_coding/frame_buffer.h"
 #include "modules/video_coding/jitter_buffer_common.h"
 #include "modules/video_coding/packet.h"
@@ -297,7 +297,7 @@ bool VCMDecodingState::UsingFlexibleMode(const VCMFrameBuffer* frame) const {
       frame->CodecSpecific()->codecSpecific.VP9.flexible_mode;
   if (is_flexible_mode && frame->PictureId() == kNoPictureId) {
     RTC_LOG(LS_WARNING) << "Frame is marked as using flexible mode but no"
-                        << "picture id is set.";
+                           "picture id is set.";
     return false;
   }
   return is_flexible_mode;

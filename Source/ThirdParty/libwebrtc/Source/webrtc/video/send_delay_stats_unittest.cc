@@ -123,9 +123,11 @@ TEST_F(SendDelayStatsTest, HistogramsAreUpdated) {
     EXPECT_TRUE(OnSentPacket(id));
   }
   stats_.reset();
-  EXPECT_EQ(2, metrics::NumSamples("WebRTC.Video.SendDelayInMs"));
-  EXPECT_EQ(1, metrics::NumEvents("WebRTC.Video.SendDelayInMs", kDelayMs1));
-  EXPECT_EQ(1, metrics::NumEvents("WebRTC.Video.SendDelayInMs", kDelayMs2));
+  EXPECT_METRIC_EQ(2, metrics::NumSamples("WebRTC.Video.SendDelayInMs"));
+  EXPECT_METRIC_EQ(1,
+                   metrics::NumEvents("WebRTC.Video.SendDelayInMs", kDelayMs1));
+  EXPECT_METRIC_EQ(1,
+                   metrics::NumEvents("WebRTC.Video.SendDelayInMs", kDelayMs2));
 }
 
 }  // namespace webrtc

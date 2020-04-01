@@ -31,13 +31,11 @@ class App : public RtcpPacket {
   // Parse assumes header is already parsed and validated.
   bool Parse(const CommonHeader& packet);
 
-  void SetSsrc(uint32_t ssrc) { ssrc_ = ssrc; }
   void SetSubType(uint8_t subtype);
   void SetName(uint32_t name) { name_ = name; }
   void SetData(const uint8_t* data, size_t data_length);
 
   uint8_t sub_type() const { return sub_type_; }
-  uint32_t ssrc() const { return ssrc_; }
   uint32_t name() const { return name_; }
   size_t data_size() const { return data_.size(); }
   const uint8_t* data() const { return data_.data(); }
@@ -60,7 +58,6 @@ class App : public RtcpPacket {
   static constexpr size_t kMaxDataSize = 0xffff * 4 - kAppBaseLength;
 
   uint8_t sub_type_;
-  uint32_t ssrc_;
   uint32_t name_;
   rtc::Buffer data_;
 };

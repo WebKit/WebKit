@@ -23,7 +23,8 @@ int32_t Channel::SendData(AudioFrameType frameType,
                           uint8_t payloadType,
                           uint32_t timeStamp,
                           const uint8_t* payloadData,
-                          size_t payloadSize) {
+                          size_t payloadSize,
+                          int64_t absolute_capture_timestamp_ms) {
   RTPHeader rtp_header;
   int32_t status;
   size_t payloadDataSize = payloadSize;

@@ -213,6 +213,14 @@ class ArrayView final : public impl::ArrayViewBase<T, Size> {
       : ArrayView(u.data(), u.size()) {
     static_assert(U::size() == Size, "Sizes must match exactly");
   }
+  template <
+      typename U,
+      typename std::enable_if<Size != impl::kArrayViewVarSize &&
+                              HasDataAndSize<U, T>::value>::type* = nullptr>
+  ArrayView(const U& u)  // NOLINT(runtime/explicit)
+      : ArrayView(u.data(), u.size()) {
+    static_assert(U::size() == Size, "Sizes must match exactly");
+  }
 
   // (Only if size is variable.) Construct an ArrayView from any type U that
   // has a size() method whose return value converts implicitly to size_t, and

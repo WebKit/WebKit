@@ -18,7 +18,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "media/base/fake_media_engine.h"
 #include "pc/stream_collection.h"
 #include "pc/test/fake_data_channel_provider.h"
@@ -138,9 +137,9 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase {
       const std::string& transport_name) {
     RTC_DCHECK(!voice_channel_);
     auto voice_media_channel =
-        absl::make_unique<FakeVoiceMediaChannelForStats>();
+        std::make_unique<FakeVoiceMediaChannelForStats>();
     auto* voice_media_channel_ptr = voice_media_channel.get();
-    voice_channel_ = absl::make_unique<cricket::VoiceChannel>(
+    voice_channel_ = std::make_unique<cricket::VoiceChannel>(
         worker_thread_, network_thread_, signaling_thread_,
         std::move(voice_media_channel), mid, kDefaultSrtpRequired,
         webrtc::CryptoOptions(), &ssrc_generator_);
@@ -156,9 +155,9 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase {
       const std::string& transport_name) {
     RTC_DCHECK(!video_channel_);
     auto video_media_channel =
-        absl::make_unique<FakeVideoMediaChannelForStats>();
+        std::make_unique<FakeVideoMediaChannelForStats>();
     auto video_media_channel_ptr = video_media_channel.get();
-    video_channel_ = absl::make_unique<cricket::VideoChannel>(
+    video_channel_ = std::make_unique<cricket::VideoChannel>(
         worker_thread_, network_thread_, signaling_thread_,
         std::move(video_media_channel), mid, kDefaultSrtpRequired,
         webrtc::CryptoOptions(), &ssrc_generator_);

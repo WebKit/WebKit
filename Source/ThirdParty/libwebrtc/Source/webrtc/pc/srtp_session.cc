@@ -10,6 +10,7 @@
 
 #include "pc/srtp_session.h"
 
+#include "absl/base/attributes.h"
 #include "media/base/rtp_utils.h"
 #include "pc/external_hmac.h"
 #include "rtc_base/critical_section.h"
@@ -362,8 +363,13 @@ bool SrtpSession::UpdateKey(int type,
   return DoSetKey(type, cs, key, len, extension_ids);
 }
 
-int g_libsrtp_usage_count = 0;
-rtc::GlobalLockPod g_libsrtp_lock;
+ABSL_CONST_INIT int g_libsrtp_usage_count = 0;
+ABSL_CONST_INIT rtc::GlobalLock g_libsrtp_lock;
+
+void ProhibitLibsrtpInitialization() {
+  rtc::GlobalLockScope ls(&g_libsrtp_lock);
+  ++g_libsrtp_usage_count;
+}
 
 // static
 bool SrtpSession::IncrementLibsrtpUsageCountAndMaybeInit() {

@@ -16,7 +16,7 @@ config("bwe_test_logging") {
   }
 }
 
-rtc_source_set("control_handler") {
+rtc_library("control_handler") {
   visibility = [ "*" ]
   sources = [
     "control_handler.cc",
@@ -33,7 +33,6 @@ rtc_source_set("control_handler") {
     "../../../rtc_base/synchronization:sequence_checker",
     "../../../system_wrappers:field_trial",
     "../../pacing",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 
@@ -41,17 +40,17 @@ rtc_source_set("control_handler") {
     deps += [ "../../../rtc_base" ]
   }
 }
-rtc_static_library("transport_feedback") {
+rtc_library("transport_feedback") {
   visibility = [ "*" ]
   sources = [
-    "send_time_history.cc",
-    "send_time_history.h",
     "transport_feedback_adapter.cc",
     "transport_feedback_adapter.h",
+    "transport_feedback_demuxer.cc",
+    "transport_feedback_demuxer.h",
   ]
 
   deps = [
-    "../..:module_api",
+    "../..:module_api_public",
     "../../../api/transport:network_control",
     "../../../api/units:data_size",
     "../../../api/units:timestamp",
@@ -61,18 +60,18 @@ rtc_static_library("transport_feedback") {
     "../../../system_wrappers",
     "../../../system_wrappers:field_trial",
     "../../rtp_rtcp:rtp_rtcp_format",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("congestion_controller_unittests") {
+  rtc_library("congestion_controller_unittests") {
     testonly = true
 
     sources = [
-      "congestion_controller_unittests_helper.cc",
-      "congestion_controller_unittests_helper.h",
-      "send_time_history_unittest.cc",
       "transport_feedback_adapter_unittest.cc",
+      "transport_feedback_demuxer_unittest.cc",
     ]
     deps = [
       ":transport_feedback",
@@ -87,7 +86,6 @@ if (rtc_include_tests) {
       "../../../test:field_trial",
       "../../../test:test_support",
       "../../pacing",
-      "../../pacing:mock_paced_sender",
       "../../remote_bitrate_estimator",
       "../../rtp_rtcp:rtp_rtcp_format",
       "//testing/gmock",

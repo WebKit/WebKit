@@ -27,7 +27,6 @@
 
 namespace webrtc {
 namespace {
-
 // Method for performing the simulations needed to test the main filter update
 // gain functionality.
 void RunFilterUpdateTest(int num_blocks_to_process,
@@ -41,14 +40,14 @@ void RunFilterUpdateTest(int num_blocks_to_process,
   ApmDataDumper data_dumper(42);
   EchoCanceller3Config config;
   config.filter.main.length_blocks = filter_length_blocks;
-  AdaptiveFirFilter main_filter(config.filter.main.length_blocks,
-                                config.filter.main.length_blocks,
-                                config.filter.config_change_duration_blocks, 1,
-                                1, DetectOptimization(), &data_dumper);
-  AdaptiveFirFilter shadow_filter(config.filter.shadow.length_blocks,
-                                  config.filter.shadow.length_blocks,
-                                  config.filter.config_change_duration_blocks,
-                                  1, 1, DetectOptimization(), &data_dumper);
+  AdaptiveFirFilter main_filter(
+      config.filter.main.length_blocks, config.filter.main.length_blocks,
+      config.filter.config_change_duration_blocks, num_render_channels,
+      DetectOptimization(), &data_dumper);
+  AdaptiveFirFilter shadow_filter(
+      config.filter.shadow.length_blocks, config.filter.shadow.length_blocks,
+      config.filter.config_change_duration_blocks, num_render_channels,
+      DetectOptimization(), &data_dumper);
   Aec3Fft fft;
 
   constexpr int kSampleRateHz = 48000;
@@ -64,7 +63,6 @@ void RunFilterUpdateTest(int num_blocks_to_process,
       std::vector<std::vector<float>>(num_render_channels,
                                       std::vector<float>(kBlockSize, 0.f)));
   std::array<float, kBlockSize> y;
-  AecState aec_state(config);
   RenderSignalAnalyzer render_signal_analyzer(config);
   std::array<float, kFftLength> s;
   FftData S;
@@ -154,105 +152,119 @@ TEST(ShadowFilterUpdateGain, NullDataOutputGain) {
 
 #endif
 
+class ShadowFilterUpdateGainOneTwoEightRenderChannels
+    : public ::testing::Test,
+      public ::testing::WithParamInterface<size_t> {};
+
+INSTANTIATE_TEST_SUITE_P(MultiChannel,
+                         ShadowFilterUpdateGainOneTwoEightRenderChannels,
+                         ::testing::Values(1, 2, 8));
+
 // Verifies that the gain formed causes the filter using it to converge.
-TEST(ShadowFilterUpdateGain, GainCausesFilterToConverge) {
+TEST_P(ShadowFilterUpdateGainOneTwoEightRenderChannels,
+       GainCausesFilterToConverge) {
+  const size_t num_render_channels = GetParam();
   std::vector<int> blocks_with_echo_path_changes;
   std::vector<int> blocks_with_saturation;
 
-  // TODO(http://bugs.webrtc.org/10913): Test multiple render channel counts.
-  for (size_t num_render_channels : {1}) {
-    for (size_t filter_length_blocks : {12, 20, 30}) {
-      for (size_t delay_samples : {0, 64, 150, 200, 301}) {
-        SCOPED_TRACE(ProduceDebugText(delay_samples, filter_length_blocks));
+  for (size_t filter_length_blocks : {12, 20, 30}) {
+    for (size_t delay_samples : {0, 64, 150, 200, 301}) {
+      SCOPED_TRACE(ProduceDebugText(delay_samples, filter_length_blocks));
 
-        std::array<float, kBlockSize> e;
-        std::array<float, kBlockSize> y;
-        FftData G;
+      std::array<float, kBlockSize> e;
+      std::array<float, kBlockSize> y;
+      FftData G;
 
-        RunFilterUpdateTest(1000, delay_samples, num_render_channels,
-                            filter_length_blocks, blocks_with_saturation, &e,
-                            &y, &G);
+      RunFilterUpdateTest(5000, delay_samples, num_render_channels,
+                          filter_length_blocks, blocks_with_saturation, &e, &y,
+                          &G);
 
-        // Verify that the main filter is able to perform well.
-        // Use different criteria to take overmodelling into account.
-        if (filter_length_blocks == 12) {
-          EXPECT_LT(
-              1000 * std::inner_product(e.begin(), e.end(), e.begin(), 0.f),
-              std::inner_product(y.begin(), y.end(), y.begin(), 0.f));
-        } else {
-          EXPECT_LT(std::inner_product(e.begin(), e.end(), e.begin(), 0.f),
-                    std::inner_product(y.begin(), y.end(), y.begin(), 0.f));
-        }
+      // Verify that the main filter is able to perform well.
+      // Use different criteria to take overmodelling into account.
+      if (filter_length_blocks == 12) {
+        EXPECT_LT(1000 * std::inner_product(e.begin(), e.end(), e.begin(), 0.f),
+                  std::inner_product(y.begin(), y.end(), y.begin(), 0.f));
+      } else {
+        EXPECT_LT(std::inner_product(e.begin(), e.end(), e.begin(), 0.f),
+                  std::inner_product(y.begin(), y.end(), y.begin(), 0.f));
       }
     }
   }
 }
 
-// Verifies that the magnitude of the gain on average decreases for a
-// persistently exciting signal.
-TEST(ShadowFilterUpdateGain, DecreasingGain) {
-  // TODO(http://bugs.webrtc.org/10913): Test multiple render channel counts.
-  for (size_t num_render_channels : {1}) {
-    for (size_t filter_length_blocks : {12, 20, 30}) {
-      SCOPED_TRACE(ProduceDebugText(filter_length_blocks));
-      std::vector<int> blocks_with_echo_path_changes;
-      std::vector<int> blocks_with_saturation;
-
-      std::array<float, kBlockSize> e;
-      std::array<float, kBlockSize> y;
-      FftData G_a;
-      FftData G_b;
-      FftData G_c;
-      std::array<float, kFftLengthBy2Plus1> G_a_power;
-      std::array<float, kFftLengthBy2Plus1> G_b_power;
-      std::array<float, kFftLengthBy2Plus1> G_c_power;
-
-      RunFilterUpdateTest(100, 65, num_render_channels, filter_length_blocks,
-                          blocks_with_saturation, &e, &y, &G_a);
-      RunFilterUpdateTest(200, 65, num_render_channels, filter_length_blocks,
-                          blocks_with_saturation, &e, &y, &G_b);
-      RunFilterUpdateTest(300, 65, num_render_channels, filter_length_blocks,
-                          blocks_with_saturation, &e, &y, &G_c);
-
-      G_a.Spectrum(Aec3Optimization::kNone, G_a_power);
-      G_b.Spectrum(Aec3Optimization::kNone, G_b_power);
-      G_c.Spectrum(Aec3Optimization::kNone, G_c_power);
-
-      EXPECT_GT(std::accumulate(G_a_power.begin(), G_a_power.end(), 0.),
-                std::accumulate(G_b_power.begin(), G_b_power.end(), 0.));
-
-      EXPECT_GT(std::accumulate(G_b_power.begin(), G_b_power.end(), 0.),
-                std::accumulate(G_c_power.begin(), G_c_power.end(), 0.));
-    }
-  }
-}
-
 // Verifies that the gain is zero when there is saturation.
-TEST(ShadowFilterUpdateGain, SaturationBehavior) {
+TEST_P(ShadowFilterUpdateGainOneTwoEightRenderChannels, SaturationBehavior) {
+  const size_t num_render_channels = GetParam();
   std::vector<int> blocks_with_echo_path_changes;
   std::vector<int> blocks_with_saturation;
   for (int k = 99; k < 200; ++k) {
     blocks_with_saturation.push_back(k);
   }
-  // TODO(http://bugs.webrtc.org/10913): Test multiple render channel counts.
-  for (size_t num_render_channels : {1}) {
-    for (size_t filter_length_blocks : {12, 20, 30}) {
-      SCOPED_TRACE(ProduceDebugText(filter_length_blocks));
+  for (size_t filter_length_blocks : {12, 20, 30}) {
+    SCOPED_TRACE(ProduceDebugText(filter_length_blocks));
 
-      std::array<float, kBlockSize> e;
-      std::array<float, kBlockSize> y;
-      FftData G_a;
-      FftData G_a_ref;
-      G_a_ref.re.fill(0.f);
-      G_a_ref.im.fill(0.f);
+    std::array<float, kBlockSize> e;
+    std::array<float, kBlockSize> y;
+    FftData G_a;
+    FftData G_a_ref;
+    G_a_ref.re.fill(0.f);
+    G_a_ref.im.fill(0.f);
 
-      RunFilterUpdateTest(100, 65, num_render_channels, filter_length_blocks,
-                          blocks_with_saturation, &e, &y, &G_a);
+    RunFilterUpdateTest(100, 65, num_render_channels, filter_length_blocks,
+                        blocks_with_saturation, &e, &y, &G_a);
 
-      EXPECT_EQ(G_a_ref.re, G_a.re);
-      EXPECT_EQ(G_a_ref.im, G_a.im);
-    }
+    EXPECT_EQ(G_a_ref.re, G_a.re);
+    EXPECT_EQ(G_a_ref.im, G_a.im);
   }
 }
 
+class ShadowFilterUpdateGainOneTwoFourRenderChannels
+    : public ::testing::Test,
+      public ::testing::WithParamInterface<size_t> {};
+
+INSTANTIATE_TEST_SUITE_P(
+    MultiChannel,
+    ShadowFilterUpdateGainOneTwoFourRenderChannels,
+    ::testing::Values(1, 2, 4),
+    [](const ::testing::TestParamInfo<
+        ShadowFilterUpdateGainOneTwoFourRenderChannels::ParamType>& info) {
+      return (rtc::StringBuilder() << "Render" << info.param).str();
+    });
+
+// Verifies that the magnitude of the gain on average decreases for a
+// persistently exciting signal.
+TEST_P(ShadowFilterUpdateGainOneTwoFourRenderChannels, DecreasingGain) {
+  const size_t num_render_channels = GetParam();
+  for (size_t filter_length_blocks : {12, 20, 30}) {
+    SCOPED_TRACE(ProduceDebugText(filter_length_blocks));
+    std::vector<int> blocks_with_echo_path_changes;
+    std::vector<int> blocks_with_saturation;
+
+    std::array<float, kBlockSize> e;
+    std::array<float, kBlockSize> y;
+    FftData G_a;
+    FftData G_b;
+    FftData G_c;
+    std::array<float, kFftLengthBy2Plus1> G_a_power;
+    std::array<float, kFftLengthBy2Plus1> G_b_power;
+    std::array<float, kFftLengthBy2Plus1> G_c_power;
+
+    RunFilterUpdateTest(100, 65, num_render_channels, filter_length_blocks,
+                        blocks_with_saturation, &e, &y, &G_a);
+    RunFilterUpdateTest(200, 65, num_render_channels, filter_length_blocks,
+                        blocks_with_saturation, &e, &y, &G_b);
+    RunFilterUpdateTest(300, 65, num_render_channels, filter_length_blocks,
+                        blocks_with_saturation, &e, &y, &G_c);
+
+    G_a.Spectrum(Aec3Optimization::kNone, G_a_power);
+    G_b.Spectrum(Aec3Optimization::kNone, G_b_power);
+    G_c.Spectrum(Aec3Optimization::kNone, G_c_power);
+
+    EXPECT_GT(std::accumulate(G_a_power.begin(), G_a_power.end(), 0.),
+              std::accumulate(G_b_power.begin(), G_b_power.end(), 0.));
+
+    EXPECT_GT(std::accumulate(G_b_power.begin(), G_b_power.end(), 0.),
+              std::accumulate(G_c_power.begin(), G_c_power.end(), 0.));
+  }
+}
 }  // namespace webrtc

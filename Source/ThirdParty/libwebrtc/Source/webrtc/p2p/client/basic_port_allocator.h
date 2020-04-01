@@ -20,7 +20,6 @@
 #include "p2p/client/relay_port_factory_interface.h"
 #include "p2p/client/turn_port_factory.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/message_queue.h"
 #include "rtc_base/network.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread.h"
@@ -41,11 +40,6 @@ class RTC_EXPORT BasicPortAllocator : public PortAllocator {
   BasicPortAllocator(rtc::NetworkManager* network_manager,
                      rtc::PacketSocketFactory* socket_factory,
                      const ServerAddresses& stun_servers);
-  BasicPortAllocator(rtc::NetworkManager* network_manager,
-                     const ServerAddresses& stun_servers,
-                     const rtc::SocketAddress& relay_address_udp,
-                     const rtc::SocketAddress& relay_address_tcp,
-                     const rtc::SocketAddress& relay_address_ssl);
   ~BasicPortAllocator() override;
 
   // Set to kDefaultNetworkIgnoreMask by default.
@@ -82,8 +76,6 @@ class RTC_EXPORT BasicPortAllocator : public PortAllocator {
   }
 
  private:
-  void Construct();
-
   void OnIceRegathering(PortAllocatorSession* session,
                         IceRegatheringReason reason);
 
@@ -94,7 +86,6 @@ class RTC_EXPORT BasicPortAllocator : public PortAllocator {
 
   rtc::NetworkManager* network_manager_;
   rtc::PacketSocketFactory* socket_factory_;
-  bool allow_tcp_listen_;
   int network_ignore_mask_ = rtc::kDefaultNetworkIgnoreMask;
 
   // This is the factory being used.
@@ -150,7 +141,6 @@ class RTC_EXPORT BasicPortAllocatorSession : public PortAllocatorSession,
   std::vector<Candidate> ReadyCandidates() const override;
   bool CandidatesAllocationDone() const override;
   void RegatherOnFailedNetworks() override;
-  void RegatherOnAllNetworks() override;
   void GetCandidateStatsFromReadyPorts(
       CandidateStatsList* candidate_stats_list) const override;
   void SetStunKeepaliveIntervalForReadyPorts(
@@ -267,6 +257,7 @@ class RTC_EXPORT BasicPortAllocatorSession : public PortAllocatorSession,
   Port* GetBestTurnPortForNetwork(const std::string& network_name) const;
   // Returns true if at least one TURN port is pruned.
   bool PruneTurnPorts(Port* newly_pairable_turn_port);
+  bool PruneNewlyPairableTurnPort(PortData* newly_pairable_turn_port);
 
   BasicPortAllocator* allocator_;
   rtc::Thread* network_thread_;
@@ -279,8 +270,8 @@ class RTC_EXPORT BasicPortAllocatorSession : public PortAllocatorSession,
   std::vector<AllocationSequence*> sequences_;
   std::vector<PortData> ports_;
   uint32_t candidate_filter_ = CF_ALL;
-  // Whether to prune low-priority ports, taken from the port allocator.
-  bool prune_turn_ports_;
+  // Policy on how to prune turn ports, taken from the port allocator.
+  webrtc::PortPrunePolicy turn_port_prune_policy_;
   SessionState state_ = SessionState::CLEARED;
 
   friend class AllocationSequence;
@@ -294,6 +285,7 @@ struct RTC_EXPORT PortConfiguration : public rtc::MessageData {
   ServerAddresses stun_servers;
   std::string username;
   std::string password;
+  bool use_turn_server_as_stun_server_disabled = false;
 
   typedef std::vector<RelayServerConfig> RelayList;
   RelayList relays;
@@ -319,11 +311,10 @@ struct RTC_EXPORT PortConfiguration : public rtc::MessageData {
   // Determines whether the given relay server supports the given protocol.
   bool SupportsProtocol(const RelayServerConfig& relay,
                         ProtocolType type) const;
-  bool SupportsProtocol(RelayType turn_type, ProtocolType type) const;
+  bool SupportsProtocol(ProtocolType type) const;
   // Helper method returns the server addresses for the matching RelayType and
   // Protocol type.
-  ServerAddresses GetRelayServerAddresses(RelayType turn_type,
-                                          ProtocolType type) const;
+  ServerAddresses GetRelayServerAddresses(ProtocolType type) const;
 };
 
 class UDPPort;
@@ -391,7 +382,6 @@ class AllocationSequence : public rtc::MessageHandler,
   void CreateTCPPorts();
   void CreateStunPorts();
   void CreateRelayPorts();
-  void CreateGturnPort(const RelayServerConfig& config);
 
   void OnReadPacket(rtc::AsyncPacketSocket* socket,
                     const char* data,

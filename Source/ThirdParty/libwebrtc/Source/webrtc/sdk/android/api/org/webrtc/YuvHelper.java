@@ -102,6 +102,13 @@ public class YuvHelper {
     nativeCopyPlane(src, srcStride, dst, dstStride, width, height);
   }
 
+  /** Converts ABGR little endian (rgba in memory) to I420. */
+  public static void ABGRToI420(ByteBuffer src, int srcStride, ByteBuffer dstY, int dstStrideY,
+      ByteBuffer dstU, int dstStrideU, ByteBuffer dstV, int dstStrideV, int width, int height) {
+    nativeABGRToI420(
+        src, srcStride, dstY, dstStrideY, dstU, dstStrideU, dstV, dstStrideV, width, height);
+  }
+
   public static void I420Copy(ByteBuffer srcY, int srcStrideY, ByteBuffer srcU, int srcStrideU,
       ByteBuffer srcV, int srcStrideV, ByteBuffer dstY, int dstStrideY, ByteBuffer dstU,
       int dstStrideU, ByteBuffer dstV, int dstStrideV, int width, int height) {
@@ -136,4 +143,7 @@ public class YuvHelper {
       int srcStrideU, ByteBuffer srcV, int srcStrideV, ByteBuffer dstY, int dstStrideY,
       ByteBuffer dstU, int dstStrideU, ByteBuffer dstV, int dstStrideV, int srcWidth, int srcHeight,
       int rotationMode);
+  private static native void nativeABGRToI420(ByteBuffer src, int srcStride, ByteBuffer dstY,
+      int dstStrideY, ByteBuffer dstU, int dstStrideU, ByteBuffer dstV, int dstStrideV, int width,
+      int height);
 }

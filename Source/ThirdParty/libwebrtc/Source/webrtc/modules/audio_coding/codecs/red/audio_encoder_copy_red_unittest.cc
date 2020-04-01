@@ -17,6 +17,7 @@
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
 #include "test/mock_audio_encoder.h"
+#include "test/testsupport/rtc_expect_death.h"
 
 using ::testing::_;
 using ::testing::InSequence;
@@ -285,17 +286,17 @@ class AudioEncoderCopyRedDeathTest : public AudioEncoderCopyRedTest {
 
 TEST_F(AudioEncoderCopyRedDeathTest, WrongFrameSize) {
   num_audio_samples_10ms *= 2;  // 20 ms frame.
-  EXPECT_DEATH(Encode(), "");
+  RTC_EXPECT_DEATH(Encode(), "");
   num_audio_samples_10ms = 0;  // Zero samples.
-  EXPECT_DEATH(Encode(), "");
+  RTC_EXPECT_DEATH(Encode(), "");
 }
 
 TEST_F(AudioEncoderCopyRedDeathTest, NullSpeechEncoder) {
   AudioEncoderCopyRed* red = NULL;
   AudioEncoderCopyRed::Config config;
   config.speech_encoder = NULL;
-  EXPECT_DEATH(red = new AudioEncoderCopyRed(std::move(config)),
-               "Speech encoder not provided.");
+  RTC_EXPECT_DEATH(red = new AudioEncoderCopyRed(std::move(config)),
+                   "Speech encoder not provided.");
   // The delete operation is needed to avoid leak reports from memcheck.
   delete red;
 }

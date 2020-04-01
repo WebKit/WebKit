@@ -57,10 +57,6 @@
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/inline.h"
 
-#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
-#include "rtc_base/logging_mac.h"
-#endif  // WEBRTC_MAC
-
 #if !defined(NDEBUG) || defined(DLOG_ALWAYS_ON)
 #define RTC_DLOG_IS_ON 1
 #else

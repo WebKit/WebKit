@@ -118,7 +118,7 @@ class SctpTransportTest : public ::testing::Test {
 
   void AddDtlsTransport() {
     std::unique_ptr<cricket::DtlsTransportInternal> cricket_transport =
-        absl::make_unique<FakeDtlsTransport>(
+        std::make_unique<FakeDtlsTransport>(
             "audio", cricket::ICE_CANDIDATE_COMPONENT_RTP);
     dtls_transport_ =
         new rtc::RefCountedObject<DtlsTransport>(std::move(cricket_transport));
@@ -193,6 +193,19 @@ TEST_F(SctpTransportTest, MaxChannelsSignalled) {
   EXPECT_TRUE(observer_.LastReceivedInformation().MaxChannels());
   EXPECT_EQ(kTestMaxSctpStreams,
             *(observer_.LastReceivedInformation().MaxChannels()));
+}
+
+TEST_F(SctpTransportTest, CloseWhenTransportCloses) {
+  CreateTransport();
+  transport()->RegisterObserver(observer());
+  AddDtlsTransport();
+  CompleteSctpHandshake();
+  ASSERT_EQ_WAIT(SctpTransportState::kConnected, observer_.State(),
+                 kDefaultTimeout);
+  static_cast<cricket::FakeDtlsTransport*>(dtls_transport_->internal())
+      ->SetDtlsState(cricket::DTLS_TRANSPORT_CLOSED);
+  ASSERT_EQ_WAIT(SctpTransportState::kClosed, observer_.State(),
+                 kDefaultTimeout);
 }
 
 }  // namespace webrtc

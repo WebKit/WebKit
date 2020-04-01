@@ -77,7 +77,7 @@ bool Packet::ExtractRedHeaders(std::list<RTPHeader*>* headers) const {
   // +-+-+-+-+-+-+-+-+
   //
 
-  assert(payload_);
+  RTC_DCHECK(payload_);
   const uint8_t* payload_ptr = payload_;
   const uint8_t* payload_end_ptr = payload_ptr + payload_length_bytes_;
 
@@ -93,7 +93,7 @@ bool Packet::ExtractRedHeaders(std::list<RTPHeader*>* headers) const {
     payload_ptr += 4;
   }
   // Last header.
-  assert(payload_ptr < payload_end_ptr);
+  RTC_DCHECK_LT(payload_ptr, payload_end_ptr);
   if (payload_ptr >= payload_end_ptr) {
     return false;  // Payload too short.
   }
@@ -124,12 +124,12 @@ bool Packet::ParseHeader(const RtpHeaderParser& parser,
   if (!valid_header && !header_only_with_padding) {
     return false;
   }
-  assert(header_.headerLength <= packet_length_bytes_);
+  RTC_DCHECK_LE(header_.headerLength, packet_length_bytes_);
   payload_ = &payload_memory_[header_.headerLength];
-  assert(packet_length_bytes_ >= header_.headerLength);
+  RTC_DCHECK_GE(packet_length_bytes_, header_.headerLength);
   payload_length_bytes_ = packet_length_bytes_ - header_.headerLength;
   RTC_CHECK_GE(virtual_packet_length_bytes_, packet_length_bytes_);
-  assert(virtual_packet_length_bytes_ >= header_.headerLength);
+  RTC_DCHECK_GE(virtual_packet_length_bytes_, header_.headerLength);
   virtual_payload_length_bytes_ =
       virtual_packet_length_bytes_ - header_.headerLength;
   return true;

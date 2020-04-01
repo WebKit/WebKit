@@ -18,15 +18,25 @@
 #include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // iSAC encoder API (fixed-point implementation) for use as a template
 // parameter to CreateAudioEncoderFactory<...>().
-struct AudioEncoderIsacFix {
+struct RTC_EXPORT AudioEncoderIsacFix {
   struct Config {
-    bool IsOk() const { return frame_size_ms == 30 || frame_size_ms == 60; }
+    bool IsOk() const {
+      if (frame_size_ms != 30 && frame_size_ms != 60) {
+        return false;
+      }
+      if (bit_rate < 10000 || bit_rate > 32000) {
+        return false;
+      }
+      return true;
+    }
     int frame_size_ms = 30;
+    int bit_rate = 32000;  // Limit on short-term average bit rate, in bits/s.
   };
   static absl::optional<Config> SdpToConfig(const SdpAudioFormat& audio_format);
   static void AppendSupportedEncoders(std::vector<AudioCodecSpec>* specs);

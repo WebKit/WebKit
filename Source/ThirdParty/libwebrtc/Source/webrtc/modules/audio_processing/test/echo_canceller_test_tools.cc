@@ -15,8 +15,15 @@
 namespace webrtc {
 
 void RandomizeSampleVector(Random* random_generator, rtc::ArrayView<float> v) {
+  RandomizeSampleVector(random_generator, v,
+                        /*amplitude=*/32767.f);
+}
+
+void RandomizeSampleVector(Random* random_generator,
+                           rtc::ArrayView<float> v,
+                           float amplitude) {
   for (auto& v_k : v) {
-    v_k = 2 * 32767.f * random_generator->Rand<float>() - 32767.f;
+    v_k = 2 * amplitude * random_generator->Rand<float>() - amplitude;
   }
 }
 

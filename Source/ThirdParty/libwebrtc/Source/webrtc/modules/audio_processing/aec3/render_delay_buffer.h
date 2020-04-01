@@ -71,7 +71,7 @@ class RenderDelayBuffer {
   static int DelayEstimatorOffset(const EchoCanceller3Config& config);
 
   // Provides an optional external estimate of the audio buffer delay.
-  virtual void SetAudioBufferDelay(size_t delay_ms) = 0;
+  virtual void SetAudioBufferDelay(int delay_ms) = 0;
 
   // Returns whether an external delay estimate has been reported via
   // SetAudioBufferDelay.

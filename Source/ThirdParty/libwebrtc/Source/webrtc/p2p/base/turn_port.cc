@@ -11,14 +11,16 @@
 #include "p2p/base/turn_port.h"
 
 #include <functional>
+#include <memory>
 #include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "absl/memory/memory.h"
+#include "absl/strings/match.h"
 #include "absl/types/optional.h"
+#include "api/transport/stun.h"
 #include "p2p/base/connection.h"
-#include "p2p/base/stun.h"
+#include "p2p/base/p2p_constants.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
@@ -467,21 +469,21 @@ void TurnPort::OnSocketConnect(rtc::AsyncPacketSocket* socket) {
                       })) {
     if (socket->GetLocalAddress().IsLoopbackIP()) {
       RTC_LOG(LS_WARNING) << "Socket is bound to the address:"
-                          << socket_address.ipaddr().ToString()
+                          << socket_address.ipaddr().ToSensitiveString()
                           << ", rather than an address associated with network:"
                           << Network()->ToString()
                           << ". Still allowing it since it's localhost.";
     } else if (IPIsAny(Network()->GetBestIP())) {
       RTC_LOG(LS_WARNING)
           << "Socket is bound to the address:"
-          << socket_address.ipaddr().ToString()
+          << socket_address.ipaddr().ToSensitiveString()
           << ", rather than an address associated with network:"
           << Network()->ToString()
           << ". Still allowing it since it's the 'any' address"
              ", possibly caused by multiple_routes being disabled.";
     } else {
       RTC_LOG(LS_WARNING) << "Socket is bound to the address:"
-                          << socket_address.ipaddr().ToString()
+                          << socket_address.ipaddr().ToSensitiveString()
                           << ", rather than an address associated with network:"
                           << Network()->ToString() << ". Discarding TURN port.";
       OnAllocateError(
@@ -497,7 +499,8 @@ void TurnPort::OnSocketConnect(rtc::AsyncPacketSocket* socket) {
   }
 
   RTC_LOG(LS_INFO) << "TurnPort connected to "
-                   << socket->GetRemoteAddress().ToString() << " using tcp.";
+                   << socket->GetRemoteAddress().ToSensitiveString()
+                   << " using tcp.";
   SendRequest(new TurnAllocateRequest(this), 0);
 }
 
@@ -539,11 +542,18 @@ Connection* TurnPort::CreateConnection(const Candidate& remote_candidate,
                                        CandidateOrigin origin) {
   // TURN-UDP can only connect to UDP candidates.
   if (!SupportsProtocol(remote_candidate.protocol())) {
-    return NULL;
+    return nullptr;
   }
 
   if (state_ == STATE_DISCONNECTED || state_ == STATE_RECEIVEONLY) {
-    return NULL;
+    return nullptr;
+  }
+
+  // If the remote endpoint signaled us an mDNS candidate, we do not form a pair
+  // with the relay candidate to avoid IP leakage in the CreatePermission
+  // request.
+  if (absl::EndsWith(remote_candidate.address().hostname(), LOCAL_TLD)) {
+    return nullptr;
   }
 
   // A TURN port will have two candiates, STUN and TURN. STUN may not
@@ -567,7 +577,7 @@ Connection* TurnPort::CreateConnection(const Candidate& remote_candidate,
       return conn;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 bool TurnPort::FailAndPruneConnection(const rtc::SocketAddress& address) {
@@ -619,7 +629,7 @@ int TurnPort::SendTo(const void* data,
   TurnEntry* entry = FindEntry(addr);
   if (!entry) {
     RTC_LOG(LS_ERROR) << "Did not find the TurnEntry for address "
-                      << addr.ToString();
+                      << addr.ToSensitiveString();
     return 0;
   }
 
@@ -663,8 +673,9 @@ bool TurnPort::HandleIncomingPacket(rtc::AsyncPacketSocket* socket,
   if (remote_addr != server_address_.address) {
     RTC_LOG(LS_WARNING) << ToString()
                         << ": Discarding TURN message from unknown address: "
-                        << remote_addr.ToString() << " server_address_: "
-                        << server_address_.address.ToString();
+                        << remote_addr.ToSensitiveString()
+                        << " server_address_: "
+                        << server_address_.address.ToSensitiveString();
     return false;
   }
 
@@ -874,7 +885,8 @@ void TurnPort::OnAllocateError(int error_code, const std::string& reason) {
   thread()->Post(RTC_FROM_HERE, this, MSG_ALLOCATE_ERROR);
   SignalCandidateError(
       this,
-      IceCandidateErrorEvent(GetLocalAddress().ToSensitiveString(),
+      IceCandidateErrorEvent(GetLocalAddress().HostAsSensitiveURIString(),
+                             GetLocalAddress().port(),
                              ReconstructedServerUrl(true /* use_hostname */),
                              error_code, reason));
 }
@@ -1105,12 +1117,12 @@ void TurnPort::SendRequest(StunRequest* req, int delay) {
 void TurnPort::AddRequestAuthInfo(StunMessage* msg) {
   // If we've gotten the necessary data from the server, add it to our request.
   RTC_DCHECK(!hash_.empty());
-  msg->AddAttribute(absl::make_unique<StunByteStringAttribute>(
+  msg->AddAttribute(std::make_unique<StunByteStringAttribute>(
       STUN_ATTR_USERNAME, credentials_.username));
   msg->AddAttribute(
-      absl::make_unique<StunByteStringAttribute>(STUN_ATTR_REALM, realm_));
+      std::make_unique<StunByteStringAttribute>(STUN_ATTR_REALM, realm_));
   msg->AddAttribute(
-      absl::make_unique<StunByteStringAttribute>(STUN_ATTR_NONCE, nonce_));
+      std::make_unique<StunByteStringAttribute>(STUN_ATTR_NONCE, nonce_));
   const bool success = msg->AddMessageIntegrity(hash());
   RTC_DCHECK(success);
 }
@@ -1212,8 +1224,9 @@ bool TurnPort::CreateOrRefreshEntry(const rtc::SocketAddress& addr,
 
     if (webrtc::field_trial::IsEnabled("WebRTC-TurnAddMultiMapping")) {
       if (entry->get_remote_ufrag() != remote_ufrag) {
-        RTC_LOG(LS_INFO) << ToString() << ": remote ufrag updated."
-                         << " Sending new permission request";
+        RTC_LOG(LS_INFO) << ToString()
+                         << ": remote ufrag updated."
+                            " Sending new permission request";
         entry->set_remote_ufrag(remote_ufrag);
         entry->SendCreatePermissionRequest(0);
       }
@@ -1323,7 +1336,7 @@ bool TurnPort::TurnCustomizerAllowChannelData(const void* data,
 
 void TurnPort::MaybeAddTurnLoggingId(StunMessage* msg) {
   if (!turn_logging_id_.empty()) {
-    msg->AddAttribute(absl::make_unique<StunByteStringAttribute>(
+    msg->AddAttribute(std::make_unique<StunByteStringAttribute>(
         STUN_ATTR_TURN_LOGGING_ID, turn_logging_id_));
   }
 }
@@ -1525,7 +1538,7 @@ void TurnRefreshRequest::Prepare(StunMessage* request) {
   request->SetType(TURN_REFRESH_REQUEST);
   if (lifetime_ > -1) {
     request->AddAttribute(
-        absl::make_unique<StunUInt32Attribute>(STUN_ATTR_LIFETIME, lifetime_));
+        std::make_unique<StunUInt32Attribute>(STUN_ATTR_LIFETIME, lifetime_));
   }
 
   port_->AddRequestAuthInfo(request);
@@ -1610,10 +1623,10 @@ TurnCreatePermissionRequest::TurnCreatePermissionRequest(
 void TurnCreatePermissionRequest::Prepare(StunMessage* request) {
   // Create the request as indicated in RFC5766, Section 9.1.
   request->SetType(TURN_CREATE_PERMISSION_REQUEST);
-  request->AddAttribute(absl::make_unique<StunXorAddressAttribute>(
+  request->AddAttribute(std::make_unique<StunXorAddressAttribute>(
       STUN_ATTR_XOR_PEER_ADDRESS, ext_addr_));
   if (webrtc::field_trial::IsEnabled("WebRTC-TurnAddMultiMapping")) {
-    request->AddAttribute(absl::make_unique<cricket::StunByteStringAttribute>(
+    request->AddAttribute(std::make_unique<cricket::StunByteStringAttribute>(
         STUN_ATTR_MULTI_MAPPING, remote_ufrag_));
   }
   port_->AddRequestAuthInfo(request);
@@ -1682,9 +1695,9 @@ TurnChannelBindRequest::TurnChannelBindRequest(
 void TurnChannelBindRequest::Prepare(StunMessage* request) {
   // Create the request as indicated in RFC5766, Section 11.1.
   request->SetType(TURN_CHANNEL_BIND_REQUEST);
-  request->AddAttribute(absl::make_unique<StunUInt32Attribute>(
+  request->AddAttribute(std::make_unique<StunUInt32Attribute>(
       STUN_ATTR_CHANNEL_NUMBER, channel_id_ << 16));
-  request->AddAttribute(absl::make_unique<StunXorAddressAttribute>(
+  request->AddAttribute(std::make_unique<StunXorAddressAttribute>(
       STUN_ATTR_XOR_PEER_ADDRESS, ext_addr_));
   port_->AddRequestAuthInfo(request);
   port_->TurnCustomizerMaybeModifyOutgoingStunMessage(request);
@@ -1778,10 +1791,10 @@ int TurnEntry::Send(const void* data,
     TurnMessage msg;
     msg.SetType(TURN_SEND_INDICATION);
     msg.SetTransactionID(rtc::CreateRandomString(kStunTransactionIdLength));
-    msg.AddAttribute(absl::make_unique<StunXorAddressAttribute>(
+    msg.AddAttribute(std::make_unique<StunXorAddressAttribute>(
         STUN_ATTR_XOR_PEER_ADDRESS, ext_addr_));
     msg.AddAttribute(
-        absl::make_unique<StunByteStringAttribute>(STUN_ATTR_DATA, data, size));
+        std::make_unique<StunByteStringAttribute>(STUN_ATTR_DATA, data, size));
 
     port_->TurnCustomizerMaybeModifyOutgoingStunMessage(&msg);
 

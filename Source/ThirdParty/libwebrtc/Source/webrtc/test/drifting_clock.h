@@ -19,16 +19,16 @@ namespace webrtc {
 namespace test {
 class DriftingClock : public Clock {
  public:
-  // TODO(danilchap): Make this constants constexpr when it would be supported.
-  static const float kDoubleSpeed;  // 2.0f;
-  static const float kNoDrift;      // 1.0f;
-  static const float kHalfSpeed;    // 0.5f;
+  static constexpr float kNoDrift = 1.0f;
 
   DriftingClock(Clock* clock, float speed);
 
-  // TODO(danilchap): Make this functions constexpr when it would be supported.
-  static float PercentsFaster(float percent) { return 1.0f + percent / 100.0f; }
-  static float PercentsSlower(float percent) { return 1.0f - percent / 100.0f; }
+  static constexpr float PercentsFaster(float percent) {
+    return 1.0f + percent / 100.0f;
+  }
+  static constexpr float PercentsSlower(float percent) {
+    return 1.0f - percent / 100.0f;
+  }
 
   Timestamp CurrentTime() override;
   NtpTime CurrentNtpTime() override;

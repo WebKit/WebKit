@@ -16,9 +16,9 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "api/rtp_headers.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/test/simulated_network.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_encoder_config.h"
@@ -40,7 +40,6 @@
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
 #include "test/rtp_rtcp_observer.h"
-#include "test/single_threaded_task_queue.h"
 
 namespace webrtc {
 namespace {
@@ -159,17 +158,17 @@ class RtcpXrObserver : public test::EndToEndTest {
     return enable_zero_target_bitrate_ ? 2 : 1;
   }
 
-  test::PacketTransport* CreateSendTransport(
-      test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
+  std::unique_ptr<test::PacketTransport> CreateSendTransport(
+      TaskQueueBase* task_queue,
       Call* sender_call) {
     auto network =
-        absl::make_unique<SimulatedNetwork>(forward_transport_config_);
+        std::make_unique<SimulatedNetwork>(forward_transport_config_);
     send_simulated_network_ = network.get();
-    return new test::PacketTransport(
+    return std::make_unique<test::PacketTransport>(
         task_queue, sender_call, this, test::PacketTransport::kSender,
         test::CallTest::payload_type_map_,
-        absl::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
-                                           std::move(network)));
+        std::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
+                                          std::move(network)));
   }
 
   void ModifyVideoConfigs(

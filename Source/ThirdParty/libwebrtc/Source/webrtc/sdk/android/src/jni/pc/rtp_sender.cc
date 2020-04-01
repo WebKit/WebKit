@@ -45,6 +45,26 @@ jlong JNI_RtpSender_GetTrack(JNIEnv* jni,
           .release());
 }
 
+static void JNI_RtpSender_SetStreams(
+    JNIEnv* jni,
+    jlong j_rtp_sender_pointer,
+    const JavaParamRef<jobject>& j_stream_labels) {
+  reinterpret_cast<RtpSenderInterface*>(j_rtp_sender_pointer)
+      ->SetStreams(JavaListToNativeVector<std::string, jstring>(
+          jni, j_stream_labels, &JavaToNativeString));
+}
+
+ScopedJavaLocalRef<jobject> JNI_RtpSender_GetStreams(
+    JNIEnv* jni,
+    jlong j_rtp_sender_pointer) {
+  ScopedJavaLocalRef<jstring> (*convert_function)(JNIEnv*, const std::string&) =
+      &NativeToJavaString;
+  return NativeToJavaList(
+      jni,
+      reinterpret_cast<RtpSenderInterface*>(j_rtp_sender_pointer)->stream_ids(),
+      convert_function);
+}
+
 jlong JNI_RtpSender_GetDtmfSender(JNIEnv* jni,
                                   jlong j_rtp_sender_pointer) {
   return jlongFromPointer(

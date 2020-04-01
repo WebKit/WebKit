@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+#include "api/array_view.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp.h"
@@ -37,7 +38,7 @@ class TargetBitrate;
 class TmmbItem;
 }  // namespace rtcp
 
-class RTCPReceiver {
+class RTCPReceiver final {
  public:
   class ModuleRtpRtcp {
    public:
@@ -53,13 +54,15 @@ class RTCPReceiver {
   };
 
   RTCPReceiver(const RtpRtcp::Configuration& config, ModuleRtpRtcp* owner);
-  virtual ~RTCPReceiver();
+  ~RTCPReceiver();
 
-  void IncomingPacket(const uint8_t* packet, size_t packet_size);
+  void IncomingPacket(const uint8_t* packet, size_t packet_size) {
+    IncomingPacket(rtc::MakeArrayView(packet, packet_size));
+  }
+  void IncomingPacket(rtc::ArrayView<const uint8_t> packet);
 
   int64_t LastReceivedReportBlockMs() const;
 
-  void SetSsrcs(uint32_t main_ssrc, const std::set<uint32_t>& registered_ssrcs);
   void SetRemoteSSRC(uint32_t ssrc);
   uint32_t RemoteSSRC() const;
 
@@ -125,8 +128,7 @@ class RTCPReceiver {
   // RTCP report blocks map mapped by source SSRC.
   using ReportBlockMap = std::map<uint32_t, ReportBlockDataMap>;
 
-  bool ParseCompoundPacket(const uint8_t* packet_begin,
-                           const uint8_t* packet_end,
+  bool ParseCompoundPacket(rtc::ArrayView<const uint8_t> packet,
                            PacketInformation* packet_information);
 
   void TriggerCallbacksFromRtcpPacket(
@@ -215,6 +217,8 @@ class RTCPReceiver {
   Clock* const clock_;
   const bool receiver_only_;
   ModuleRtpRtcp* const rtp_rtcp_;
+  const uint32_t main_ssrc_;
+  const std::set<uint32_t> registered_ssrcs_;
 
   rtc::CriticalSection feedbacks_lock_;
   RtcpBandwidthObserver* const rtcp_bandwidth_observer_;
@@ -226,9 +230,7 @@ class RTCPReceiver {
   const int report_interval_ms_;
 
   rtc::CriticalSection rtcp_receiver_lock_;
-  uint32_t main_ssrc_ RTC_GUARDED_BY(rtcp_receiver_lock_);
   uint32_t remote_ssrc_ RTC_GUARDED_BY(rtcp_receiver_lock_);
-  std::set<uint32_t> registered_ssrcs_ RTC_GUARDED_BY(rtcp_receiver_lock_);
 
   // Received sender report.
   NtpTime remote_sender_ntp_time_ RTC_GUARDED_BY(rtcp_receiver_lock_);

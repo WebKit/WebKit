@@ -28,29 +28,30 @@ TEST(FrequencyTest, ConstExpr) {
 
 TEST(FrequencyTest, GetBackSameValues) {
   const int64_t kValue = 31;
-  EXPECT_EQ(Frequency::hertz(kValue).hertz<int64_t>(), kValue);
+  EXPECT_EQ(Frequency::Hertz(kValue).hertz<int64_t>(), kValue);
   EXPECT_EQ(Frequency::Zero().hertz<int64_t>(), 0);
 }
 
 TEST(FrequencyTest, GetDifferentPrefix) {
   const int64_t kValue = 30000;
-  EXPECT_EQ(Frequency::millihertz(kValue).hertz<int64_t>(), kValue / 1000);
-  EXPECT_EQ(Frequency::hertz(kValue).millihertz(), kValue * 1000);
+  EXPECT_EQ(Frequency::MilliHertz(kValue).hertz<int64_t>(), kValue / 1000);
+  EXPECT_EQ(Frequency::Hertz(kValue).millihertz(), kValue * 1000);
+  EXPECT_EQ(Frequency::KiloHertz(kValue).hertz(), kValue * 1000);
 }
 
 TEST(FrequencyTest, IdentityChecks) {
   const int64_t kValue = 31;
   EXPECT_TRUE(Frequency::Zero().IsZero());
-  EXPECT_FALSE(Frequency::hertz(kValue).IsZero());
+  EXPECT_FALSE(Frequency::Hertz(kValue).IsZero());
 
   EXPECT_TRUE(Frequency::PlusInfinity().IsInfinite());
   EXPECT_TRUE(Frequency::MinusInfinity().IsInfinite());
   EXPECT_FALSE(Frequency::Zero().IsInfinite());
-  EXPECT_FALSE(Frequency::hertz(kValue).IsInfinite());
+  EXPECT_FALSE(Frequency::Hertz(kValue).IsInfinite());
 
   EXPECT_FALSE(Frequency::PlusInfinity().IsFinite());
   EXPECT_FALSE(Frequency::MinusInfinity().IsFinite());
-  EXPECT_TRUE(Frequency::hertz(kValue).IsFinite());
+  EXPECT_TRUE(Frequency::Hertz(kValue).IsFinite());
   EXPECT_TRUE(Frequency::Zero().IsFinite());
 
   EXPECT_TRUE(Frequency::PlusInfinity().IsPlusInfinity());
@@ -63,19 +64,19 @@ TEST(FrequencyTest, IdentityChecks) {
 TEST(FrequencyTest, ComparisonOperators) {
   const int64_t kSmall = 42;
   const int64_t kLarge = 45;
-  const Frequency small = Frequency::hertz(kSmall);
-  const Frequency large = Frequency::hertz(kLarge);
+  const Frequency small = Frequency::Hertz(kSmall);
+  const Frequency large = Frequency::Hertz(kLarge);
 
-  EXPECT_EQ(Frequency::Zero(), Frequency::hertz(0));
+  EXPECT_EQ(Frequency::Zero(), Frequency::Hertz(0));
   EXPECT_EQ(Frequency::PlusInfinity(), Frequency::PlusInfinity());
-  EXPECT_EQ(small, Frequency::hertz(kSmall));
-  EXPECT_LE(small, Frequency::hertz(kSmall));
-  EXPECT_GE(small, Frequency::hertz(kSmall));
-  EXPECT_NE(small, Frequency::hertz(kLarge));
-  EXPECT_LE(small, Frequency::hertz(kLarge));
-  EXPECT_LT(small, Frequency::hertz(kLarge));
-  EXPECT_GE(large, Frequency::hertz(kSmall));
-  EXPECT_GT(large, Frequency::hertz(kSmall));
+  EXPECT_EQ(small, Frequency::Hertz(kSmall));
+  EXPECT_LE(small, Frequency::Hertz(kSmall));
+  EXPECT_GE(small, Frequency::Hertz(kSmall));
+  EXPECT_NE(small, Frequency::Hertz(kLarge));
+  EXPECT_LE(small, Frequency::Hertz(kLarge));
+  EXPECT_LT(small, Frequency::Hertz(kLarge));
+  EXPECT_GE(large, Frequency::Hertz(kSmall));
+  EXPECT_GT(large, Frequency::Hertz(kSmall));
   EXPECT_LT(Frequency::Zero(), small);
 
   EXPECT_GT(Frequency::PlusInfinity(), large);
@@ -83,11 +84,11 @@ TEST(FrequencyTest, ComparisonOperators) {
 }
 
 TEST(FrequencyTest, Clamping) {
-  const Frequency upper = Frequency::hertz(800);
-  const Frequency lower = Frequency::hertz(100);
-  const Frequency under = Frequency::hertz(100);
-  const Frequency inside = Frequency::hertz(500);
-  const Frequency over = Frequency::hertz(1000);
+  const Frequency upper = Frequency::Hertz(800);
+  const Frequency lower = Frequency::Hertz(100);
+  const Frequency under = Frequency::Hertz(100);
+  const Frequency inside = Frequency::Hertz(500);
+  const Frequency over = Frequency::Hertz(1000);
   EXPECT_EQ(under.Clamped(lower, upper), lower);
   EXPECT_EQ(inside.Clamped(lower, upper), inside);
   EXPECT_EQ(over.Clamped(lower, upper), upper);
@@ -106,40 +107,40 @@ TEST(FrequencyTest, Clamping) {
 TEST(FrequencyTest, MathOperations) {
   const int64_t kValueA = 457;
   const int64_t kValueB = 260;
-  const Frequency frequency_a = Frequency::hertz(kValueA);
-  const Frequency frequency_b = Frequency::hertz(kValueB);
+  const Frequency frequency_a = Frequency::Hertz(kValueA);
+  const Frequency frequency_b = Frequency::Hertz(kValueB);
   EXPECT_EQ((frequency_a + frequency_b).hertz<int64_t>(), kValueA + kValueB);
   EXPECT_EQ((frequency_a - frequency_b).hertz<int64_t>(), kValueA - kValueB);
 
-  EXPECT_EQ((Frequency::hertz(kValueA) * kValueB).hertz<int64_t>(),
+  EXPECT_EQ((Frequency::Hertz(kValueA) * kValueB).hertz<int64_t>(),
             kValueA * kValueB);
 
   EXPECT_EQ((frequency_b / 10).hertz<int64_t>(), kValueB / 10);
   EXPECT_EQ(frequency_b / frequency_a, static_cast<double>(kValueB) / kValueA);
 
-  Frequency mutable_frequency = Frequency::hertz(kValueA);
-  mutable_frequency += Frequency::hertz(kValueB);
-  EXPECT_EQ(mutable_frequency, Frequency::hertz(kValueA + kValueB));
-  mutable_frequency -= Frequency::hertz(kValueB);
-  EXPECT_EQ(mutable_frequency, Frequency::hertz(kValueA));
+  Frequency mutable_frequency = Frequency::Hertz(kValueA);
+  mutable_frequency += Frequency::Hertz(kValueB);
+  EXPECT_EQ(mutable_frequency, Frequency::Hertz(kValueA + kValueB));
+  mutable_frequency -= Frequency::Hertz(kValueB);
+  EXPECT_EQ(mutable_frequency, Frequency::Hertz(kValueA));
 }
 TEST(FrequencyTest, Rounding) {
-  const Frequency freq_high = Frequency::hertz(23.976);
+  const Frequency freq_high = Frequency::Hertz(23.976);
   EXPECT_EQ(freq_high.hertz(), 24);
-  EXPECT_EQ(freq_high.RoundDownTo(Frequency::hertz(1)), Frequency::hertz(23));
-  EXPECT_EQ(freq_high.RoundTo(Frequency::hertz(1)), Frequency::hertz(24));
-  EXPECT_EQ(freq_high.RoundUpTo(Frequency::hertz(1)), Frequency::hertz(24));
+  EXPECT_EQ(freq_high.RoundDownTo(Frequency::Hertz(1)), Frequency::Hertz(23));
+  EXPECT_EQ(freq_high.RoundTo(Frequency::Hertz(1)), Frequency::Hertz(24));
+  EXPECT_EQ(freq_high.RoundUpTo(Frequency::Hertz(1)), Frequency::Hertz(24));
 
-  const Frequency freq_low = Frequency::hertz(23.4);
+  const Frequency freq_low = Frequency::Hertz(23.4);
   EXPECT_EQ(freq_low.hertz(), 23);
-  EXPECT_EQ(freq_low.RoundDownTo(Frequency::hertz(1)), Frequency::hertz(23));
-  EXPECT_EQ(freq_low.RoundTo(Frequency::hertz(1)), Frequency::hertz(23));
-  EXPECT_EQ(freq_low.RoundUpTo(Frequency::hertz(1)), Frequency::hertz(24));
+  EXPECT_EQ(freq_low.RoundDownTo(Frequency::Hertz(1)), Frequency::Hertz(23));
+  EXPECT_EQ(freq_low.RoundTo(Frequency::Hertz(1)), Frequency::Hertz(23));
+  EXPECT_EQ(freq_low.RoundUpTo(Frequency::Hertz(1)), Frequency::Hertz(24));
 }
 
 TEST(FrequencyTest, InfinityOperations) {
   const double kValue = 267;
-  const Frequency finite = Frequency::hertz(kValue);
+  const Frequency finite = Frequency::Hertz(kValue);
   EXPECT_TRUE((Frequency::PlusInfinity() + finite).IsPlusInfinity());
   EXPECT_TRUE((Frequency::PlusInfinity() - finite).IsPlusInfinity());
   EXPECT_TRUE((finite + Frequency::PlusInfinity()).IsPlusInfinity());
@@ -152,8 +153,9 @@ TEST(FrequencyTest, InfinityOperations) {
 }
 
 TEST(UnitConversionTest, TimeDeltaAndFrequency) {
-  EXPECT_EQ(1 / Frequency::hertz(50), TimeDelta::ms(20));
-  EXPECT_EQ(1 / TimeDelta::ms(20), Frequency::hertz(50));
+  EXPECT_EQ(1 / Frequency::Hertz(50), TimeDelta::Millis(20));
+  EXPECT_EQ(1 / TimeDelta::Millis(20), Frequency::Hertz(50));
+  EXPECT_EQ(Frequency::KiloHertz(200) * TimeDelta::Millis(2), 400.0);
 }
 }  // namespace test
 }  // namespace webrtc

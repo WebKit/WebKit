@@ -107,7 +107,8 @@ class AcmReceiverTestOldApi : public AudioPacketizationCallback,
                uint8_t payload_type,
                uint32_t timestamp,
                const uint8_t* payload_data,
-               size_t payload_len_bytes) override {
+               size_t payload_len_bytes,
+               int64_t absolute_capture_timestamp_ms) override {
     if (frame_type == AudioFrameType::kEmptyFrame)
       return 0;
 
@@ -289,7 +290,8 @@ TEST_F(AcmReceiverTestPostDecodeVadPassiveOldApi, MAYBE_PostdecodingVad) {
   constexpr int payload_type = 34;
   const SdpAudioFormat codec = {"L16", 16000, 1};
   const AudioCodecInfo info = SetEncoder(payload_type, codec);
-  encoder_factory_->QueryAudioEncoder(codec).value();
+  auto const value = encoder_factory_->QueryAudioEncoder(codec);
+  ASSERT_TRUE(value.has_value());
   receiver_->SetCodecs({{payload_type, codec}});
   const int kNumPackets = 5;
   AudioFrame frame;

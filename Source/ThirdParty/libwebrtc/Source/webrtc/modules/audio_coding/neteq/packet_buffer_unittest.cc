@@ -12,12 +12,13 @@
 
 #include "modules/audio_coding/neteq/packet_buffer.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/mock/mock_decoder_database.h"
 #include "modules/audio_coding/neteq/mock/mock_statistics_calculator.h"
 #include "modules/audio_coding/neteq/packet.h"
-#include "modules/audio_coding/neteq/tick_timer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -704,7 +705,7 @@ TEST(PacketBuffer, GetSpanSamples) {
   Packet packet_1 = gen.NextPacket(kPayloadSizeBytes, nullptr);
 
   std::unique_ptr<MockEncodedAudioFrame> mock_audio_frame =
-      absl::make_unique<MockEncodedAudioFrame>();
+      std::make_unique<MockEncodedAudioFrame>();
   EXPECT_CALL(*mock_audio_frame, Duration())
       .WillRepeatedly(Return(kFrameSizeSamples));
   Packet packet_2 =

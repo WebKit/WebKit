@@ -78,8 +78,6 @@ TEST_F(ConfigEndToEndTest, VerifyDefaultVideoReceiveConfigParameters) {
       << "Reduced-size RTCP require rtcp-rsize to be negotiated.";
   EXPECT_FALSE(default_receive_config.rtp.lntf.enabled)
       << "Enabling LNTF require rtcp-fb: goog-lntf negotiation.";
-  EXPECT_FALSE(default_receive_config.rtp.remb)
-      << "REMB require rtcp-fb: goog-remb to be negotiated.";
   EXPECT_FALSE(
       default_receive_config.rtp.rtcp_xr.receiver_reference_time_report)
       << "RTCP XR settings require rtcp-xr to be negotiated.";

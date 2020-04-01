@@ -26,7 +26,7 @@
 
 namespace {
 const int kAllowedErrorMillisecs = 30;
-const int kProcessingTimeMillisecs = 300;
+const int kProcessingTimeMillisecs = 500;
 const int kWorkingThreads = 2;
 
 // Consumes approximately kProcessingTimeMillisecs of CPU time in single thread.
@@ -77,10 +77,11 @@ TEST(CpuTimeTest, MAYBE_TEST(TwoThreads)) {
       GetProcessCpuTimeNanos() - process_start_time_nanos;
   int64_t thread_duration_nanos =
       GetThreadCpuTimeNanos() - thread_start_time_nanos;
-  // This thread did almost nothing.
+  // This thread did almost nothing. Definetly less work than kProcessingTime.
   // Therefore GetThreadCpuTime is not a wall clock.
   EXPECT_LE(thread_duration_nanos,
-            kAllowedErrorMillisecs * kNumNanosecsPerMillisec);
+            (kProcessingTimeMillisecs - kAllowedErrorMillisecs) *
+                kNumNanosecsPerMillisec);
   // Total process time is at least twice working threads' CPU time.
   // Therefore process and thread times are correctly related.
   EXPECT_GE(process_duration_nanos,
@@ -97,7 +98,8 @@ TEST(CpuTimeTest, MAYBE_TEST(Sleeping)) {
   // Sleeping should not introduce any additional CPU time.
   // Therefore GetProcessCpuTime is not a wall clock.
   EXPECT_LE(process_duration_nanos,
-            kWorkingThreads * kAllowedErrorMillisecs * kNumNanosecsPerMillisec);
+            (kProcessingTimeMillisecs - kAllowedErrorMillisecs) *
+                kNumNanosecsPerMillisec);
 }
 
 }  // namespace rtc

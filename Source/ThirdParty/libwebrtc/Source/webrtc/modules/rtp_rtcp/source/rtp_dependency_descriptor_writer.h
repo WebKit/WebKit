@@ -10,38 +10,75 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_DEPENDENCY_DESCRIPTOR_WRITER_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_DEPENDENCY_DESCRIPTOR_WRITER_H_
 
+#include <cstddef>
 #include <cstdint>
+#include <vector>
 
 #include "api/array_view.h"
-#include "common_video/generic_frame_descriptor/generic_frame_info.h"
+#include "api/transport/rtp/dependency_descriptor.h"
+#include "rtc_base/bit_buffer.h"
 
 namespace webrtc {
-// Serialize DependencyDescriptor with respect to set FrameDependencyStructure.
 class RtpDependencyDescriptorWriter {
  public:
+  // Assumes |structure| and |descriptor| are valid and
+  // |descriptor| matches the |structure|.
+  RtpDependencyDescriptorWriter(rtc::ArrayView<uint8_t> data,
+                                const FrameDependencyStructure& structure,
+                                const DependencyDescriptor& descriptor);
+
+  // Serializes DependencyDescriptor rtp header extension.
+  // Returns false if |data| is too small to serialize the |descriptor|.
+  bool Write();
+
   // Returns minimum number of bits needed to serialize descriptor with respect
-  // to current FrameDependencyStructure. Returns 0 if |descriptor| can't be
-  // serialized.
-  size_t ValueSizeBits(const DependencyDescriptor& descriptor) const {
-    // TODO(bugs.webrtc.org/10342): Implement.
-    return 0;
-  }
-  size_t ValueSizeBytes(const DependencyDescriptor& descriptor) const {
-    return (ValueSizeBits(descriptor) + 7) / 8;
-  }
+  // to the |structure|. Returns 0 if |descriptor| can't be serialized.
+  int ValueSizeBits() const;
 
-  bool Write(const DependencyDescriptor& frame_info,
-             rtc::ArrayView<uint8_t> raw_data) const {
-    // TODO(bugs.webrtc.org/10342): Implement.
-    return false;
-  }
+ private:
+  // Used both as pointer to the template and as index in the templates vector.
+  using TemplateIterator = std::vector<FrameDependencyTemplate>::const_iterator;
+  struct TemplateMatch {
+    TemplateIterator template_position;
+    bool need_custom_dtis;
+    bool need_custom_fdiffs;
+    bool need_custom_chains;
+    // Size in bits to store frame-specific details, i.e.
+    // excluding mandatory fields and template dependency structure.
+    int extra_size_bits;
+  };
+  int StructureSizeBits() const;
+  TemplateMatch CalculateMatch(TemplateIterator frame_template) const;
+  void FindBestTemplate();
+  bool ShouldWriteActiveDecodeTargetsBitmask() const;
+  bool HasExtendedFields() const;
+  uint64_t TemplateId() const;
 
-  // Sets FrameDependencyStructure to derive individual descriptors from.
-  // Returns false on failure, e.g. structure is invalid or oversized.
-  bool SetStructure(const FrameDependencyStructure& structure) {
-    // TODO(bugs.webrtc.org/10342): Implement.
-    return false;
-  }
+  void WriteBits(uint64_t val, size_t bit_count);
+  void WriteNonSymmetric(uint32_t value, uint32_t num_values);
+
+  // Functions to read template dependency structure.
+  void WriteTemplateDependencyStructure();
+  void WriteTemplateLayers();
+  void WriteTemplateDtis();
+  void WriteTemplateFdiffs();
+  void WriteTemplateChains();
+  void WriteResolutions();
+
+  // Function to read details for the current frame.
+  void WriteMandatoryFields();
+  void WriteExtendedFields();
+  void WriteFrameDependencyDefinition();
+
+  void WriteFrameDtis();
+  void WriteFrameFdiffs();
+  void WriteFrameChains();
+
+  bool build_failed_ = false;
+  const DependencyDescriptor& descriptor_;
+  const FrameDependencyStructure& structure_;
+  rtc::BitBufferWriter bit_writer_;
+  TemplateMatch best_template_;
 };
 
 }  // namespace webrtc

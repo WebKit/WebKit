@@ -17,7 +17,7 @@
 
 namespace rtc {
 
-class MessageQueue;
+class Thread;
 // Needs to be forward declared because there's a circular dependency between
 // NetworkMonitor and Thread.
 // TODO(deadbeef): Fix this.
@@ -36,7 +36,7 @@ class SocketServer : public SocketFactory {
   // When the socket server is installed into a Thread, this function is
   // called to allow the socket server to use the thread's message queue for
   // any messaging that it might need to perform.
-  virtual void SetMessageQueue(MessageQueue* queue) {}
+  virtual void SetMessageQueue(Thread* queue) {}
 
   // Sleeps until:
   //  1) cms milliseconds have elapsed (unless cms == kForever)

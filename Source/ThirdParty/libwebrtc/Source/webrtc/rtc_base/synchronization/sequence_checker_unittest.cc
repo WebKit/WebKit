@@ -13,7 +13,6 @@
 #include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "api/function_view.h"
 #include "rtc_base/event.h"
 #include "rtc_base/platform_thread.h"
@@ -67,7 +66,7 @@ TEST(SequenceCheckerTest, CallsAllowedOnSameThread) {
 }
 
 TEST(SequenceCheckerTest, DestructorAllowedOnDifferentThread) {
-  auto sequence_checker = absl::make_unique<SequenceChecker>();
+  auto sequence_checker = std::make_unique<SequenceChecker>();
   RunOnDifferentThread([&] {
     // Verify that the destructor doesn't assert when called on a different
     // thread.
@@ -85,16 +84,20 @@ TEST(SequenceCheckerTest, DetachFromThreadAndUseOnTaskQueue) {
   SequenceChecker sequence_checker;
   sequence_checker.Detach();
   TaskQueueForTest queue;
-  queue.SendTask([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); });
+  queue.SendTask([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); },
+                 RTC_FROM_HERE);
 }
 
 TEST(SequenceCheckerTest, DetachFromTaskQueueAndUseOnThread) {
   TaskQueueForTest queue;
-  queue.SendTask([] {
-    SequenceChecker sequence_checker;
-    sequence_checker.Detach();
-    RunOnDifferentThread([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); });
-  });
+  queue.SendTask(
+      [] {
+        SequenceChecker sequence_checker;
+        sequence_checker.Detach();
+        RunOnDifferentThread(
+            [&] { EXPECT_TRUE(sequence_checker.IsCurrent()); });
+      },
+      RTC_FROM_HERE);
 }
 
 TEST(SequenceCheckerTest, MethodNotAllowedOnDifferentThreadInDebug) {
@@ -107,7 +110,8 @@ TEST(SequenceCheckerTest, MethodNotAllowedOnDifferentTaskQueueInDebug) {
   SequenceChecker sequence_checker;
   TaskQueueForTest queue;
   queue.SendTask(
-      [&] { EXPECT_EQ(sequence_checker.IsCurrent(), !RTC_DCHECK_IS_ON); });
+      [&] { EXPECT_EQ(sequence_checker.IsCurrent(), !RTC_DCHECK_IS_ON); },
+      RTC_FROM_HERE);
 }
 
 TEST(SequenceCheckerTest, DetachFromTaskQueueInDebug) {
@@ -115,13 +119,15 @@ TEST(SequenceCheckerTest, DetachFromTaskQueueInDebug) {
   sequence_checker.Detach();
 
   TaskQueueForTest queue1;
-  queue1.SendTask([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); });
+  queue1.SendTask([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); },
+                  RTC_FROM_HERE);
 
   // IsCurrent should return false in debug builds after moving to
   // another task queue.
   TaskQueueForTest queue2;
   queue2.SendTask(
-      [&] { EXPECT_EQ(sequence_checker.IsCurrent(), !RTC_DCHECK_IS_ON); });
+      [&] { EXPECT_EQ(sequence_checker.IsCurrent(), !RTC_DCHECK_IS_ON); },
+      RTC_FROM_HERE);
 }
 
 class TestAnnotations {
@@ -148,7 +154,7 @@ TEST(SequenceCheckerTest, TestAnnotations) {
 void TestAnnotationsOnWrongQueue() {
   TestAnnotations annotations;
   TaskQueueForTest queue;
-  queue.SendTask([&] { annotations.ModifyTestVar(); });
+  queue.SendTask([&] { annotations.ModifyTestVar(); }, RTC_FROM_HERE);
 }
 
 #if RTC_DCHECK_IS_ON

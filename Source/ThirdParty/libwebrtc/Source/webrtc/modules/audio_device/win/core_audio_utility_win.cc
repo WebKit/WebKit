@@ -157,50 +157,46 @@ std::string ChannelMaskToString(DWORD channel_mask) {
 #define AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM 0x80000000
 #endif
 
-// Converts from channel mask to DirectSound speaker configuration.
-// The values below are copied from ksmedia.h.
-// Example: KSAUDIO_SPEAKER_STEREO = (SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT).
-const char* DirectSoundConfigToString(DWORD channel_mask) {
-  switch (channel_mask) {
-    case KSAUDIO_SPEAKER_DIRECTOUT:
-      return "KSAUDIO_DIRECTOUT";
-    case KSAUDIO_SPEAKER_MONO:
-      // Front center (C)
-      return "KSAUDIO_MONO";
-    case KSAUDIO_SPEAKER_1POINT1:
-      return "KSAUDIO_1POINT1";
-    case KSAUDIO_SPEAKER_STEREO:
-      // Front left (L), front right (R).
-      return "KSAUDIO_STEREO";
-    case KSAUDIO_SPEAKER_2POINT1:
-      return "KSAUDIO_2POINT1";
-    case KSAUDIO_SPEAKER_3POINT0:
-      return "KSAUDIO_3POINT0";
-    case KSAUDIO_SPEAKER_3POINT1:
-      return "KSAUDIO_3POINT1";
-    case KSAUDIO_SPEAKER_QUAD:
-      // L, R, back left (Lb), back right (Rb).
-      return "KSAUDIO_QUAD";
-    case KSAUDIO_SPEAKER_SURROUND:
-      // L, R, front center (C), back center (Cb).
-      return "KSAUDIO_SURROUND";
-    case KSAUDIO_SPEAKER_5POINT0:
-      return "KSAUDIO_5POINT0";
-    case KSAUDIO_SPEAKER_5POINT1:
-      return "KSAUDIO_5POINT1";
-    case KSAUDIO_SPEAKER_7POINT0:
-      return "KSAUDIO_7POINT0";
-    case KSAUDIO_SPEAKER_7POINT1:
-      // L, R, C, Lb, Rb, front left-of-center, front right-of-center, LFE.
-      return "KSAUDIO_7POINT1";
-    case KSAUDIO_SPEAKER_5POINT1_SURROUND:
-      // L, R, C, side left (Ls), side right (Rs), LFE.
-      return "KSAUDIO_5POINT1_SURROUND";
-    case KSAUDIO_SPEAKER_7POINT1_SURROUND:
-      // L, R, C, Lb, Rb, Ls, Rs, LFE.
-      return "KSAUDIO_7POINT1_SURROUND";
+// Converts the most common format tags defined in mmreg.h into string
+// equivalents. Mainly intended for log messages.
+const char* WaveFormatTagToString(WORD format_tag) {
+  switch (format_tag) {
+    case WAVE_FORMAT_UNKNOWN:
+      return "WAVE_FORMAT_UNKNOWN";
+    case WAVE_FORMAT_PCM:
+      return "WAVE_FORMAT_PCM";
+    case WAVE_FORMAT_IEEE_FLOAT:
+      return "WAVE_FORMAT_IEEE_FLOAT";
+    case WAVE_FORMAT_EXTENSIBLE:
+      return "WAVE_FORMAT_EXTENSIBLE";
     default:
-      return "KSAUDIO_INVALID";
+      return "UNKNOWN";
+  }
+}
+
+const char* RoleToString(const ERole role) {
+  switch (role) {
+    case eConsole:
+      return "Console";
+    case eMultimedia:
+      return "Multimedia";
+    case eCommunications:
+      return "Communications";
+    default:
+      return "Unsupported";
+  }
+}
+
+const char* FlowToString(const EDataFlow flow) {
+  switch (flow) {
+    case eRender:
+      return "Render";
+    case eCapture:
+      return "Capture";
+    case eAll:
+      return "Render or Capture";
+    default:
+      return "Unsupported";
   }
 }
 
@@ -287,7 +283,10 @@ bool IsDeviceActive(IMMDevice* device) {
 ComPtr<IMMDevice> CreateDeviceInternal(const std::string& device_id,
                                        EDataFlow data_flow,
                                        ERole role) {
-  RTC_DLOG(INFO) << "CreateDeviceInternal: " << role;
+  RTC_DLOG(INFO) << "CreateDeviceInternal: "
+                    "id="
+                 << device_id << ", flow=" << FlowToString(data_flow)
+                 << ", role=" << RoleToString(role);
   ComPtr<IMMDevice> audio_endpoint_device;
 
   // Create the IMMDeviceEnumerator interface.
@@ -297,6 +296,13 @@ ComPtr<IMMDevice> CreateDeviceInternal(const std::string& device_id,
 
   _com_error error(S_FALSE);
   if (device_id == AudioDeviceName::kDefaultDeviceId) {
+    // Get the default audio endpoint for the specified data-flow direction and
+    // role. Note that, if only a single rendering or capture device is
+    // available, the system always assigns all three rendering or capture roles
+    // to that device. If the method fails to find a rendering or capture device
+    // for the specified role, this means that no rendering or capture device is
+    // available at all. If no device is available, the method sets the output
+    // pointer to NULL and returns ERROR_NOT_FOUND.
     error = device_enum->GetDefaultAudioEndpoint(
         data_flow, role, audio_endpoint_device.GetAddressOf());
     if (FAILED(error.Error())) {
@@ -305,6 +311,8 @@ ComPtr<IMMDevice> CreateDeviceInternal(const std::string& device_id,
           << ErrorToString(error);
     }
   } else {
+    // Ask for an audio endpoint device that is identified by an endpoint ID
+    // string.
     error = device_enum->GetDevice(rtc::ToUtf16(device_id).c_str(),
                                    audio_endpoint_device.GetAddressOf());
     if (FAILED(error.Error())) {
@@ -315,7 +323,7 @@ ComPtr<IMMDevice> CreateDeviceInternal(const std::string& device_id,
 
   // Verify that the audio endpoint device is active, i.e., that the audio
   // adapter that connects to the endpoint device is present and enabled.
-  if (SUCCEEDED(error.Error()) &&
+  if (SUCCEEDED(error.Error()) && !audio_endpoint_device.Get() &&
       !IsDeviceActive(audio_endpoint_device.Get())) {
     RTC_LOG(LS_WARNING) << "Selected endpoint device is not active";
     audio_endpoint_device.Reset();
@@ -465,73 +473,124 @@ ComPtr<IMMDeviceCollection> CreateCollectionInternal(EDataFlow data_flow) {
 
 bool GetDeviceNamesInternal(EDataFlow data_flow,
                             webrtc::AudioDeviceNames* device_names) {
-  // Always add the default device in index 0 and the default communication
-  // device as index 1 in the vector. The name of the default device starts
-  // with "Default - " and the default communication device starts with
-  // "Communication - ".
-  //  Example of friendly name: "Default - Headset (SB Arena Headset)"
-  ERole role[] = {eConsole, eCommunications};
-  ComPtr<IMMDevice> default_device;
-  AudioDeviceName default_device_name;
-  for (size_t i = 0; i < arraysize(role); ++i) {
-    default_device = CreateDeviceInternal(AudioDeviceName::kDefaultDeviceId,
-                                          data_flow, role[i]);
-    std::string device_name;
-    device_name += (role[i] == eConsole ? "Default - " : "Communication - ");
-    device_name += GetDeviceFriendlyNameInternal(default_device.Get());
-    std::string unique_id = GetDeviceIdInternal(default_device.Get());
-
-    default_device_name.device_name = std::move(device_name);
-    default_device_name.unique_id = std::move(unique_id);
-    RTC_DLOG(INFO) << "friendly name: " << default_device_name.device_name;
-    RTC_DLOG(INFO) << "unique id    : " << default_device_name.unique_id;
-    // Add combination of user-friendly and unique name to the output list.
-    device_names->emplace_back(default_device_name);
-  }
-
-  // Next, add all active input devices on index 2 and above. Note that,
-  // one device can have more than one role. Hence, if only one input device
-  // is present, the output vector will contain three elements all with the
-  // same unique ID but with different names.
-  // Example (one capture device but three elements in device_names):
-  //   0: friendly name: Default - Headset (SB Arena Headset)
-  //   0: unique id    : {0.0.1.00000000}.{822d99bb-d9b0-4f6f-b2a5-cd1be220d338}
-  //   1: friendly name: Communication - Headset (SB Arena Headset)
-  //   1: unique id    : {0.0.1.00000000}.{822d99bb-d9b0-4f6f-b2a5-cd1be220d338}
-  //   2: friendly name: Headset (SB Arena Headset)
-  //   2: unique id    : {0.0.1.00000000}.{822d99bb-d9b0-4f6f-b2a5-cd1be220d338}
+  RTC_DLOG(LS_INFO) << "GetDeviceNamesInternal: flow="
+                    << FlowToString(data_flow);
 
   // Generate a collection of active audio endpoint devices for the specified
   // direction.
   ComPtr<IMMDeviceCollection> collection = CreateCollectionInternal(data_flow);
   if (!collection.Get()) {
+    RTC_LOG(LS_ERROR) << "Failed to create a collection of active devices";
     return false;
   }
 
-  // Retrieve the number of active audio devices for the specified direction.
+  // Retrieve the number of active (present, not disabled and plugged in) audio
+  // devices for the specified direction.
   UINT number_of_active_devices = 0;
-  collection->GetCount(&number_of_active_devices);
-  if (number_of_active_devices == 0) {
-    return true;
+  _com_error error = collection->GetCount(&number_of_active_devices);
+  if (FAILED(error.Error())) {
+    RTC_LOG(LS_ERROR) << "IMMDeviceCollection::GetCount failed: "
+                      << ErrorToString(error);
+    return false;
   }
 
-  // Loop over all active devices and add friendly name and unique ID to the
-  // |device_names| list which already contains two elements
-  RTC_DCHECK_EQ(device_names->size(), 2);
+  if (number_of_active_devices == 0) {
+    RTC_DLOG(LS_WARNING) << "Found no active devices";
+    return false;
+  }
+
+  // Loop over all active devices and add friendly name and unique id to the
+  // |device_names| queue. For now, devices are added at indexes 0, 1, ..., N-1
+  // but they will be moved to 2,3,..., N+1 at the next stage when default and
+  // default communication devices are added at index 0 and 1.
+  ComPtr<IMMDevice> audio_device;
   for (UINT i = 0; i < number_of_active_devices; ++i) {
     // Retrieve a pointer to the specified item in the device collection.
-    ComPtr<IMMDevice> audio_device;
-    _com_error error = collection->Item(i, audio_device.GetAddressOf());
-    if (FAILED(error.Error()))
+    error = collection->Item(i, audio_device.GetAddressOf());
+    if (FAILED(error.Error())) {
+      // Skip this item and try to get the next item instead; will result in an
+      // incomplete list of devices.
+      RTC_LOG(LS_WARNING) << "IMMDeviceCollection::Item failed: "
+                          << ErrorToString(error);
       continue;
+    }
+    if (!audio_device.Get()) {
+      RTC_LOG(LS_WARNING) << "Invalid audio device";
+      continue;
+    }
+
     // Retrieve the complete device name for the given audio device endpoint.
     AudioDeviceName device_name(
         GetDeviceFriendlyNameInternal(audio_device.Get()),
         GetDeviceIdInternal(audio_device.Get()));
-    RTC_DLOG(INFO) << "friendly name: " << device_name.device_name;
-    RTC_DLOG(INFO) << "unique id    : " << device_name.unique_id;
     // Add combination of user-friendly and unique name to the output list.
-    device_names->emplace_back(device_name);
+    device_names->push_back(device_name);
+  }
+
+  // Log a warning of the list of device is not complete but let's keep on
+  // trying to add default and default communications device at the front.
+  if (device_names->size() != number_of_active_devices) {
+    RTC_DLOG(LS_WARNING)
+        << "List of device names does not contain all active devices";
+  }
+
+  // Avoid adding default and default communication devices if no active device
+  // could be added to the queue. We might as well break here and return false
+  // since no active devices were identified.
+  if (device_names->empty()) {
+    RTC_DLOG(LS_ERROR) << "List of active devices is empty";
+    return false;
+  }
+
+  // Prepend the queue with two more elements: one for the default device and
+  // one for the default communication device (can correspond to the same unique
+  // id if only one active device exists). The first element (index 0) is the
+  // default device and the second element (index 1) is the default
+  // communication device.
+  ERole role[] = {eCommunications, eConsole};
+  ComPtr<IMMDevice> default_device;
+  AudioDeviceName default_device_name;
+  for (size_t i = 0; i < arraysize(role); ++i) {
+    default_device = CreateDeviceInternal(AudioDeviceName::kDefaultDeviceId,
+                                          data_flow, role[i]);
+    if (!default_device.Get()) {
+      // Add empty strings to device name if the device could not be created.
+      RTC_DLOG(LS_WARNING) << "Failed to add device with role: "
+                           << RoleToString(role[i]);
+      default_device_name.device_name = std::string();
+      default_device_name.unique_id = std::string();
+    } else {
+      // Populate the device name with friendly name and unique id.
+      std::string device_name;
+      device_name += (role[i] == eConsole ? "Default - " : "Communication - ");
+      device_name += GetDeviceFriendlyNameInternal(default_device.Get());
+      std::string unique_id = GetDeviceIdInternal(default_device.Get());
+      default_device_name.device_name = std::move(device_name);
+      default_device_name.unique_id = std::move(unique_id);
+    }
+
+    // Add combination of user-friendly and unique name to the output queue.
+    // The last element (<=> eConsole) will be at the front of the queue, hence
+    // at index 0. Empty strings will be added for cases where no default
+    // devices were found.
+    device_names->push_front(default_device_name);
+  }
+
+  // Example of log output when only one device is active. Note that the queue
+  // contains two extra elements at index 0 (Default) and 1 (Communication) to
+  // allow selection of device by role instead of id. All elements corresponds
+  // the same unique id.
+  // [0] friendly name: Default - Headset Microphone (2- Arctis 7 Chat)
+  // [0] unique id    : {0.0.1.00000000}.{ff9eed76-196e-467a-b295-26986e69451c}
+  // [1] friendly name: Communication - Headset Microphone (2- Arctis 7 Chat)
+  // [1] unique id    : {0.0.1.00000000}.{ff9eed76-196e-467a-b295-26986e69451c}
+  // [2] friendly name: Headset Microphone (2- Arctis 7 Chat)
+  // [2] unique id    : {0.0.1.00000000}.{ff9eed76-196e-467a-b295-26986e69451c}
+  for (size_t i = 0; i < device_names->size(); ++i) {
+    RTC_DLOG(INFO) << "[" << i
+                   << "] friendly name: " << (*device_names)[i].device_name;
+    RTC_DLOG(INFO) << "[" << i
+                   << "] unique id    : " << (*device_names)[i].unique_id;
   }
 
   return true;
@@ -583,6 +642,31 @@ HRESULT GetPreferredAudioParametersInternal(IAudioClient* client,
 }  // namespace
 
 namespace core_audio_utility {
+
+// core_audio_utility::WaveFormatWrapper implementation.
+WAVEFORMATEXTENSIBLE* WaveFormatWrapper::GetExtensible() const {
+  RTC_CHECK(IsExtensible());
+  return reinterpret_cast<WAVEFORMATEXTENSIBLE*>(ptr_);
+}
+
+bool WaveFormatWrapper::IsExtensible() const {
+  return ptr_->wFormatTag == WAVE_FORMAT_EXTENSIBLE && ptr_->cbSize >= 22;
+}
+
+bool WaveFormatWrapper::IsPcm() const {
+  return IsExtensible() ? GetExtensible()->SubFormat == KSDATAFORMAT_SUBTYPE_PCM
+                        : ptr_->wFormatTag == WAVE_FORMAT_PCM;
+}
+
+bool WaveFormatWrapper::IsFloat() const {
+  return IsExtensible()
+             ? GetExtensible()->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT
+             : ptr_->wFormatTag == WAVE_FORMAT_IEEE_FLOAT;
+}
+
+size_t WaveFormatWrapper::size() const {
+  return sizeof(*ptr_) + ptr_->cbSize;
+}
 
 bool IsSupported() {
   RTC_DLOG(INFO) << "IsSupported";
@@ -714,12 +798,14 @@ EDataFlow GetDataFlow(IMMDevice* device) {
 bool GetInputDeviceNames(webrtc::AudioDeviceNames* device_names) {
   RTC_DLOG(INFO) << "GetInputDeviceNames";
   RTC_DCHECK(device_names);
+  RTC_DCHECK(device_names->empty());
   return GetDeviceNamesInternal(eCapture, device_names);
 }
 
 bool GetOutputDeviceNames(webrtc::AudioDeviceNames* device_names) {
   RTC_DLOG(INFO) << "GetOutputDeviceNames";
   RTC_DCHECK(device_names);
+  RTC_DCHECK(device_names->empty());
   return GetDeviceNamesInternal(eRender, device_names);
 }
 
@@ -882,7 +968,7 @@ HRESULT GetBufferSizeLimits(IAudioClient2* client,
     // This API seems to be supported in off-load mode only but it is not
     // documented as a valid error code. Making a special note about it here.
     RTC_LOG(LS_ERROR) << "IAudioClient2::GetBufferSizeLimits failed: "
-                      << "AUDCLNT_E_OFFLOAD_MODE_ONLY";
+                         "AUDCLNT_E_OFFLOAD_MODE_ONLY";
   } else if (FAILED(error.Error())) {
     RTC_LOG(LS_ERROR) << "IAudioClient2::GetBufferSizeLimits failed: "
                       << ErrorToString(error);
@@ -899,19 +985,52 @@ HRESULT GetSharedModeMixFormat(IAudioClient* client,
                                WAVEFORMATEXTENSIBLE* format) {
   RTC_DLOG(INFO) << "GetSharedModeMixFormat";
   RTC_DCHECK(client);
-  ScopedCoMem<WAVEFORMATEXTENSIBLE> format_ex;
+
+  // The GetMixFormat method retrieves the stream format that the audio engine
+  // uses for its internal processing of shared-mode streams. The method
+  // allocates the storage for the structure and this memory will be released
+  // when |mix_format| goes out of scope. The GetMixFormat method retrieves a
+  // format descriptor that is in the form of a WAVEFORMATEXTENSIBLE structure
+  // instead of a standalone WAVEFORMATEX structure. The method outputs a
+  // pointer to the WAVEFORMATEX structure that is embedded at the start of
+  // this WAVEFORMATEXTENSIBLE structure.
+  // Note that, crbug/803056 indicates that some devices can return a format
+  // where only the WAVEFORMATEX parts is initialized and we must be able to
+  // account for that.
+  ScopedCoMem<WAVEFORMATEXTENSIBLE> mix_format;
   _com_error error =
-      client->GetMixFormat(reinterpret_cast<WAVEFORMATEX**>(&format_ex));
+      client->GetMixFormat(reinterpret_cast<WAVEFORMATEX**>(&mix_format));
   if (FAILED(error.Error())) {
     RTC_LOG(LS_ERROR) << "IAudioClient::GetMixFormat failed: "
                       << ErrorToString(error);
     return error.Error();
   }
 
-  size_t bytes = sizeof(WAVEFORMATEX) + format_ex->Format.cbSize;
-  RTC_DCHECK_EQ(bytes, sizeof(WAVEFORMATEXTENSIBLE));
-  memcpy(format, format_ex, bytes);
-  RTC_DLOG(INFO) << WaveFormatExToString(format);
+  // Use a wave format wrapper to make things simpler.
+  WaveFormatWrapper wrapped_format(mix_format.Get());
+
+  // Verify that the reported format can be mixed by the audio engine in
+  // shared mode.
+  if (!wrapped_format.IsPcm() && !wrapped_format.IsFloat()) {
+    RTC_DLOG(LS_ERROR)
+        << "Only pure PCM or float audio streams can be mixed in shared mode";
+    return AUDCLNT_E_UNSUPPORTED_FORMAT;
+  }
+
+  // Log a warning for the rare case where |mix_format| only contains a
+  // stand-alone WAVEFORMATEX structure but don't return.
+  if (!wrapped_format.IsExtensible()) {
+    RTC_DLOG(WARNING)
+        << "The returned format contains no extended information. "
+           "The size is "
+        << wrapped_format.size() << " bytes.";
+  }
+
+  // Copy the correct number of bytes into |*format| taking into account if
+  // the returned structure is correctly extended or not.
+  RTC_CHECK_LE(wrapped_format.size(), sizeof(WAVEFORMATEXTENSIBLE));
+  memcpy(format, wrapped_format.get(), wrapped_format.size());
+  RTC_DLOG(INFO) << WaveFormatToString(format);
 
   return error.Error();
 }
@@ -921,7 +1040,7 @@ bool IsFormatSupported(IAudioClient* client,
                        const WAVEFORMATEXTENSIBLE* format) {
   RTC_DLOG(INFO) << "IsFormatSupported";
   RTC_DCHECK(client);
-  ScopedCoMem<WAVEFORMATEXTENSIBLE> closest_match;
+  ScopedCoMem<WAVEFORMATEX> closest_match;
   // This method provides a way for a client to determine, before calling
   // IAudioClient::Initialize, whether the audio engine supports a particular
   // stream format or not. In shared mode, the audio engine always supports
@@ -929,7 +1048,9 @@ bool IsFormatSupported(IAudioClient* client,
   // TODO(henrika): verify support for exclusive mode as well?
   _com_error error = client->IsFormatSupported(
       share_mode, reinterpret_cast<const WAVEFORMATEX*>(format),
-      reinterpret_cast<WAVEFORMATEX**>(&closest_match));
+      &closest_match);
+  RTC_LOG(INFO) << WaveFormatToString(
+      const_cast<WAVEFORMATEXTENSIBLE*>(format));
   if ((error.Error() == S_OK) && (closest_match == nullptr)) {
     RTC_DLOG(INFO)
         << "The audio endpoint device supports the specified stream format";
@@ -938,7 +1059,7 @@ bool IsFormatSupported(IAudioClient* client,
     // only be triggered for shared mode.
     RTC_LOG(LS_WARNING)
         << "Exact format is not supported, but a closest match exists";
-    RTC_LOG(INFO) << WaveFormatExToString(closest_match);
+    RTC_LOG(INFO) << WaveFormatToString(closest_match.Get());
   } else if ((error.Error() == AUDCLNT_E_UNSUPPORTED_FORMAT) &&
              (closest_match == nullptr)) {
     // The audio engine does not support the caller-specified format or any
@@ -1018,31 +1139,6 @@ HRESULT GetSharedModeEnginePeriod(IAudioClient3* client3,
   *min_period_in_frames = min_period;
   *max_period_in_frames = max_period;
   return error.Error();
-}
-
-HRESULT GetPreferredAudioParameters(const std::string& device_id,
-                                    bool is_output_device,
-                                    AudioParameters* params) {
-  RTC_DLOG(INFO) << "GetPreferredAudioParameters: " << is_output_device;
-  EDataFlow data_flow = is_output_device ? eRender : eCapture;
-  ComPtr<IMMDevice> device;
-  if (device_id == AudioDeviceName::kDefaultCommunicationsDeviceId) {
-    device = CreateDeviceInternal(AudioDeviceName::kDefaultDeviceId, data_flow,
-                                  eCommunications);
-  } else {
-    // If |device_id| equals AudioDeviceName::kDefaultDeviceId, a default
-    // device will be created.
-    device = CreateDeviceInternal(device_id, data_flow, eConsole);
-  }
-  if (!device.Get()) {
-    return E_FAIL;
-  }
-
-  ComPtr<IAudioClient> client(CreateClientInternal(device.Get()));
-  if (!client.Get())
-    return E_FAIL;
-
-  return GetPreferredAudioParametersInternal(client.Get(), params, -1);
 }
 
 HRESULT GetPreferredAudioParameters(IAudioClient* client,
@@ -1376,37 +1472,40 @@ bool FillRenderEndpointBufferWithSilence(IAudioClient* client,
   return true;
 }
 
-std::string WaveFormatExToString(const WAVEFORMATEXTENSIBLE* format) {
-  RTC_DCHECK_EQ(format->Format.wFormatTag, WAVE_FORMAT_EXTENSIBLE);
+std::string WaveFormatToString(const WaveFormatWrapper format) {
   char ss_buf[1024];
   rtc::SimpleStringBuilder ss(ss_buf);
-  ss.AppendFormat("wFormatTag: WAVE_FORMAT_EXTENSIBLE");
-  ss.AppendFormat(", nChannels: %d", format->Format.nChannels);
-  ss.AppendFormat(", nSamplesPerSec: %d", format->Format.nSamplesPerSec);
-  ss.AppendFormat(", nAvgBytesPerSec: %d", format->Format.nAvgBytesPerSec);
-  ss.AppendFormat(", nBlockAlign: %d", format->Format.nBlockAlign);
-  ss.AppendFormat(", wBitsPerSample: %d", format->Format.wBitsPerSample);
-  ss.AppendFormat(", cbSize: %d", format->Format.cbSize);
-  ss.AppendFormat(", wValidBitsPerSample: %d",
-                  format->Samples.wValidBitsPerSample);
-  ss.AppendFormat(", dwChannelMask: 0x%X", format->dwChannelMask);
-  if (format->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) {
-    ss << ", SubFormat: KSDATAFORMAT_SUBTYPE_PCM";
-  } else if (format->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT) {
-    ss << ", SubFormat: KSDATAFORMAT_SUBTYPE_IEEE_FLOAT";
+  // Start with the WAVEFORMATEX part (which always exists).
+  ss.AppendFormat("wFormatTag: %s (0x%X)",
+                  WaveFormatTagToString(format->wFormatTag),
+                  format->wFormatTag);
+  ss.AppendFormat(", nChannels: %d", format->nChannels);
+  ss.AppendFormat(", nSamplesPerSec: %d", format->nSamplesPerSec);
+  ss.AppendFormat(", nAvgBytesPerSec: %d", format->nAvgBytesPerSec);
+  ss.AppendFormat(", nBlockAlign: %d", format->nBlockAlign);
+  ss.AppendFormat(", wBitsPerSample: %d", format->wBitsPerSample);
+  ss.AppendFormat(", cbSize: %d", format->cbSize);
+  if (!format.IsExtensible())
+    return ss.str();
+
+  // Append the WAVEFORMATEXTENSIBLE part (which we know exists).
+  ss.AppendFormat(
+      " [+] wValidBitsPerSample: %d, dwChannelMask: %s",
+      format.GetExtensible()->Samples.wValidBitsPerSample,
+      ChannelMaskToString(format.GetExtensible()->dwChannelMask).c_str());
+  if (format.IsPcm()) {
+    ss.AppendFormat("%s", ", SubFormat: KSDATAFORMAT_SUBTYPE_PCM");
+  } else if (format.IsFloat()) {
+    ss.AppendFormat("%s", ", SubFormat: KSDATAFORMAT_SUBTYPE_IEEE_FLOAT");
   } else {
-    ss << ", SubFormat: NOT_SUPPORTED";
+    ss.AppendFormat("%s", ", SubFormat: NOT_SUPPORTED");
   }
-  ss.AppendFormat("\nChannel configuration: %s",
-                  ChannelMaskToString(format->dwChannelMask).c_str());
-  ss.AppendFormat("\nDirectSound configuration : %s",
-                  DirectSoundConfigToString(format->dwChannelMask));
   return ss.str();
 }
 
 webrtc::TimeDelta ReferenceTimeToTimeDelta(REFERENCE_TIME time) {
   // Each unit of reference time is 100 nanoseconds <=> 0.1 microsecond.
-  return webrtc::TimeDelta::us(0.1 * time + 0.5);
+  return webrtc::TimeDelta::Micros(0.1 * time + 0.5);
 }
 
 double FramesToMilliseconds(uint32_t num_frames, uint16_t sample_rate) {

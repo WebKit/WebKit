@@ -28,8 +28,6 @@ ShadowFilterUpdateGain::ShadowFilterUpdateGain(
 }
 
 void ShadowFilterUpdateGain::HandleEchoPathChange() {
-  // TODO(peah): Check whether this counter should instead be initialized to a
-  // large value.
   poor_signal_excitation_counter_ = 0;
   call_counter_ = 0;
 }
@@ -60,19 +58,23 @@ void ShadowFilterUpdateGain::Compute(
 
   // Compute mu.
   std::array<float, kFftLengthBy2Plus1> mu;
-  auto X2 = render_power;
-  std::transform(X2.begin(), X2.end(), mu.begin(), [&](float a) {
-    return a > current_config_.noise_gate ? current_config_.rate / a : 0.f;
-  });
+  const auto& X2 = render_power;
+  for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+    if (X2[k] > current_config_.noise_gate) {
+      mu[k] = current_config_.rate / X2[k];
+    } else {
+      mu[k] = 0.f;
+    }
+  }
 
   // Avoid updating the filter close to narrow bands in the render signals.
   render_signal_analyzer.MaskRegionsAroundNarrowBands(&mu);
 
   // G = mu * E * X2.
-  std::transform(mu.begin(), mu.end(), E_shadow.re.begin(), G->re.begin(),
-                 std::multiplies<float>());
-  std::transform(mu.begin(), mu.end(), E_shadow.im.begin(), G->im.begin(),
-                 std::multiplies<float>());
+  for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+    G->re[k] = mu[k] * E_shadow.re[k];
+    G->im[k] = mu[k] * E_shadow.im[k];
+  }
 }
 
 void ShadowFilterUpdateGain::UpdateCurrentConfig() {

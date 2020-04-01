@@ -12,6 +12,7 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_DECIMATOR_H_
 
 #include <array>
+#include <vector>
 
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"

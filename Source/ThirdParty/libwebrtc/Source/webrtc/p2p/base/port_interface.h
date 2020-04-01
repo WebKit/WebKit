@@ -105,9 +105,6 @@ class PortInterface {
 
   // Sends a response message (normal or error) to the given request.  One of
   // these methods should be called as a response to SignalUnknownAddress.
-  // NOTE: You MUST call CreateConnection BEFORE SendBindingResponse.
-  virtual void SendBindingResponse(StunMessage* request,
-                                   const rtc::SocketAddress& addr) = 0;
   virtual void SendBindingErrorResponse(StunMessage* request,
                                         const rtc::SocketAddress& addr,
                                         int error_code,

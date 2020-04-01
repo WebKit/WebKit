@@ -36,13 +36,10 @@ class ExtendedReports : public RtcpPacket {
   // Parse assumes header is already parsed and validated.
   bool Parse(const CommonHeader& packet);
 
-  void SetSenderSsrc(uint32_t ssrc) { sender_ssrc_ = ssrc; }
-
   void SetRrtr(const Rrtr& rrtr);
   bool AddDlrrItem(const ReceiveTimeInfo& time_info);
   void SetTargetBitrate(const TargetBitrate& target_bitrate);
 
-  uint32_t sender_ssrc() const { return sender_ssrc_; }
   const absl::optional<Rrtr>& rrtr() const { return rrtr_block_; }
   const Dlrr& dlrr() const { return dlrr_block_; }
   const absl::optional<TargetBitrate>& target_bitrate() const {
@@ -68,7 +65,6 @@ class ExtendedReports : public RtcpPacket {
   void ParseVoipMetricBlock(const uint8_t* block, uint16_t block_length);
   void ParseTargetBitrateBlock(const uint8_t* block, uint16_t block_length);
 
-  uint32_t sender_ssrc_;
   absl::optional<Rrtr> rrtr_block_;
   Dlrr dlrr_block_;  // Dlrr without items treated same as no dlrr block.
   absl::optional<TargetBitrate> target_bitrate_;

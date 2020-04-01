@@ -12,7 +12,8 @@
 
 #include <utility>
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "api/peer_connection_interface.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/task_queue/default_task_queue_factory.h"
@@ -75,7 +76,7 @@ class SetLocalSessionDescriptionObserver
 }  // namespace
 
 AndroidCallClient::AndroidCallClient()
-    : call_started_(false), pc_observer_(absl::make_unique<PCObserver>(this)) {
+    : call_started_(false), pc_observer_(std::make_unique<PCObserver>(this)) {
   thread_checker_.Detach();
   CreatePeerConnectionFactory();
 }
@@ -155,15 +156,15 @@ void AndroidCallClient::CreatePeerConnectionFactory() {
   pcf_deps.signaling_thread = signaling_thread_.get();
   pcf_deps.task_queue_factory = webrtc::CreateDefaultTaskQueueFactory();
   pcf_deps.call_factory = webrtc::CreateCallFactory();
-  pcf_deps.event_log_factory = absl::make_unique<webrtc::RtcEventLogFactory>(
+  pcf_deps.event_log_factory = std::make_unique<webrtc::RtcEventLogFactory>(
       pcf_deps.task_queue_factory.get());
 
   cricket::MediaEngineDependencies media_deps;
   media_deps.task_queue_factory = pcf_deps.task_queue_factory.get();
   media_deps.video_encoder_factory =
-      absl::make_unique<webrtc::InternalEncoderFactory>();
+      std::make_unique<webrtc::InternalEncoderFactory>();
   media_deps.video_decoder_factory =
-      absl::make_unique<webrtc::InternalDecoderFactory>();
+      std::make_unique<webrtc::InternalDecoderFactory>();
   webrtc::SetMediaEngineDefaults(&media_deps);
   pcf_deps.media_engine = cricket::CreateMediaEngine(std::move(media_deps));
   RTC_LOG(LS_INFO) << "Media engine created: " << pcf_deps.media_engine.get();

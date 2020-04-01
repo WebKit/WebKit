@@ -25,8 +25,7 @@ VCMEncodedFrame::VCMEncodedFrame()
       _renderTimeMs(-1),
       _payloadType(0),
       _missingFrame(false),
-      _codec(kVideoCodecGeneric),
-      _rotation_set(false) {
+      _codec(kVideoCodecGeneric) {
   _codecSpecificInfo.codecType = kVideoCodecGeneric;
 }
 
@@ -52,7 +51,6 @@ void VCMEncodedFrame::Reset() {
   rotation_ = kVideoRotation_0;
   content_type_ = VideoContentType::UNSPECIFIED;
   timing_.flags = VideoSendTiming::kInvalid;
-  _rotation_set = false;
 }
 
 void VCMEncodedFrame::CopyCodecSpecific(const RTPVideoHeader* header) {
@@ -158,16 +156,6 @@ void VCMEncodedFrame::CopyCodecSpecific(const RTPVideoHeader* header) {
         break;
       }
     }
-  }
-}
-
-void VCMEncodedFrame::VerifyAndAllocate(size_t minimumSize) {
-  size_t old_capacity = capacity();
-  if (minimumSize > old_capacity) {
-    // TODO(nisse): EncodedImage::Allocate is implemented as a realloc
-    // operation, and is deprecated. Refactor to use EncodedImageBuffer::Realloc
-    // instead.
-    Allocate(minimumSize);
   }
 }
 

@@ -11,27 +11,33 @@
 #ifndef MODULES_VIDEO_CODING_H264_SPS_PPS_TRACKER_H_
 #define MODULES_VIDEO_CODING_H264_SPS_PPS_TRACKER_H_
 
+#include <cstddef>
 #include <cstdint>
 #include <map>
 #include <memory>
 #include <vector>
 
-#include "modules/include/module_common_types.h"
+#include "api/array_view.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
+#include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
-
-class VCMPacket;
-
 namespace video_coding {
 
 class H264SpsPpsTracker {
  public:
   enum PacketAction { kInsert, kDrop, kRequestKeyframe };
+  struct FixedBitstream {
+    PacketAction action;
+    rtc::CopyOnWriteBuffer bitstream;
+  };
 
   H264SpsPpsTracker();
   ~H264SpsPpsTracker();
 
-  PacketAction CopyAndFixBitstream(VCMPacket* packet);
+  // Returns fixed bitstream and modifies |video_header|.
+  FixedBitstream CopyAndFixBitstream(rtc::ArrayView<const uint8_t> bitstream,
+                                     RTPVideoHeader* video_header);
 
   void InsertSpsPpsNalus(const std::vector<uint8_t>& sps,
                          const std::vector<uint8_t>& pps);

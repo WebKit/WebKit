@@ -78,8 +78,8 @@ class VideoQualityAnalyzerInterface : public StatsObserverInterface {
   // Will be called for each frame dropped by encoder.
   virtual void OnFrameDropped(EncodedImageCallback::DropReason reason) {}
   // Will be called before calling the decoder.
-  virtual void OnFrameReceived(uint16_t frame_id,
-                               const EncodedImage& encoded_image) {}
+  virtual void OnFramePreDecode(uint16_t frame_id,
+                                const EncodedImage& encoded_image) {}
   // Will be called after decoding the frame. |decode_time_ms| is a decode
   // time provided by decoder itself. If decoder doesn’t produce such
   // information can be omitted.

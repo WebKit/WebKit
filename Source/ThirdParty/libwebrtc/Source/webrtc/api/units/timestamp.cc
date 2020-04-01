@@ -22,10 +22,12 @@ std::string ToString(Timestamp value) {
   } else if (value.IsMinusInfinity()) {
     sb << "-inf ms";
   } else {
-    if (value.ms() % 1000 == 0)
-      sb << value.seconds() << " s";
-    else
+    if (value.us() == 0 || (value.us() % 1000) != 0)
+      sb << value.us() << " us";
+    else if (value.ms() % 1000 != 0)
       sb << value.ms() << " ms";
+    else
+      sb << value.seconds() << " s";
   }
   return sb.str();
 }

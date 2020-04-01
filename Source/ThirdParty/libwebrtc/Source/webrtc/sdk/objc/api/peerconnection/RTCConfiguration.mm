@@ -15,7 +15,6 @@
 #import "RTCCertificate.h"
 #import "RTCConfiguration+Native.h"
 #import "RTCIceServer+Private.h"
-#import "RTCIntervalRange+Private.h"
 #import "base/RTCLogging.h"
 
 #include "rtc_base/rtc_certificate_generator.h"
@@ -48,10 +47,10 @@
 @synthesize shouldSurfaceIceCandidatesOnIceTransportTypeChanged =
     _shouldSurfaceIceCandidatesOnIceTransportTypeChanged;
 @synthesize iceCheckMinInterval = _iceCheckMinInterval;
-@synthesize iceRegatherIntervalRange = _iceRegatherIntervalRange;
 @synthesize sdpSemantics = _sdpSemantics;
 @synthesize turnCustomizer = _turnCustomizer;
 @synthesize activeResetSrtpParams = _activeResetSrtpParams;
+@synthesize allowCodecSwitching = _allowCodecSwitching;
 @synthesize useMediaTransport = _useMediaTransport;
 @synthesize useMediaTransportForDataChannels = _useMediaTransportForDataChannels;
 @synthesize cryptoOptions = _cryptoOptions;
@@ -117,11 +116,6 @@
       _iceCheckMinInterval =
           [NSNumber numberWithInt:*config.ice_check_min_interval];
     }
-    if (config.ice_regather_interval_range) {
-      const rtc::IntervalRange &nativeIntervalRange = config.ice_regather_interval_range.value();
-      _iceRegatherIntervalRange =
-          [[RTCIntervalRange alloc] initWithNativeIntervalRange:nativeIntervalRange];
-    }
     _sdpSemantics = [[self class] sdpSemanticsForNativeSdpSemantics:config.sdp_semantics];
     _turnCustomizer = config.turn_customizer;
     _activeResetSrtpParams = config.active_reset_srtp_params;
@@ -138,6 +132,7 @@
     }
     _rtcpAudioReportIntervalMs = config.audio_rtcp_report_interval_ms();
     _rtcpVideoReportIntervalMs = config.video_rtcp_report_interval_ms();
+    _allowCodecSwitching = config.allow_codec_switching.value_or(false);
   }
   return self;
 }
@@ -145,7 +140,7 @@
 - (NSString *)description {
   static NSString *formatString = @"RTCConfiguration: "
                                   @"{\n%@\n%@\n%@\n%@\n%@\n%@\n%@\n%@\n%d\n%d\n%d\n%d\n%d\n%d\n"
-                                  @"%d\n%@\n%@\n%d\n%d\n%d\n%d\n%d\n%@\n}\n";
+                                  @"%d\n%@\n%d\n%d\n%d\n%d\n%d\n%@\n}\n";
 
   return [NSString
       stringWithFormat:formatString,
@@ -166,7 +161,6 @@
                        _shouldPresumeWritableWhenFullyRelayed,
                        _shouldSurfaceIceCandidatesOnIceTransportTypeChanged,
                        _iceCheckMinInterval,
-                       _iceRegatherIntervalRange,
                        _disableLinkLocalNetworks,
                        _disableIPV6,
                        _disableIPV6OnWiFi,
@@ -249,12 +243,6 @@
   if (_iceCheckMinInterval != nil) {
     nativeConfig->ice_check_min_interval = absl::optional<int>(_iceCheckMinInterval.intValue);
   }
-  if (_iceRegatherIntervalRange != nil) {
-    std::unique_ptr<rtc::IntervalRange> nativeIntervalRange(
-        _iceRegatherIntervalRange.nativeIntervalRange);
-    nativeConfig->ice_regather_interval_range =
-        absl::optional<rtc::IntervalRange>(*nativeIntervalRange);
-  }
   nativeConfig->sdp_semantics = [[self class] nativeSdpSemanticsForSdpSemantics:_sdpSemantics];
   if (_turnCustomizer) {
     nativeConfig->turn_customizer = _turnCustomizer;
@@ -274,6 +262,7 @@
   }
   nativeConfig->set_audio_rtcp_report_interval_ms(_rtcpAudioReportIntervalMs);
   nativeConfig->set_video_rtcp_report_interval_ms(_rtcpVideoReportIntervalMs);
+  nativeConfig->allow_codec_switching = _allowCodecSwitching;
   return nativeConfig.release();
 }
 

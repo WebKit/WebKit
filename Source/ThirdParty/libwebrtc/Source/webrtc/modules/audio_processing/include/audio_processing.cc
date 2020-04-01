@@ -11,6 +11,7 @@
 #include "modules/audio_processing/include/audio_processing.h"
 
 #include "rtc_base/strings/string_builder.h"
+#include "rtc_base/system/arch.h"
 
 namespace webrtc {
 namespace {
@@ -51,26 +52,47 @@ std::string GainController2LevelEstimatorToString(
   }
 }
 
+int GetDefaultMaxInternalRate() {
+#ifdef WEBRTC_ARCH_ARM_FAMILY
+  return 32000;
+#else
+  return 48000;
+#endif
+}
+
 }  // namespace
 
 void CustomProcessing::SetRuntimeSetting(
     AudioProcessing::RuntimeSetting setting) {}
 
+AudioProcessing::Config::Pipeline::Pipeline()
+    : maximum_internal_processing_rate(GetDefaultMaxInternalRate()) {}
+
 std::string AudioProcessing::Config::ToString() const {
   char buf[1024];
   rtc::SimpleStringBuilder builder(buf);
   builder << "AudioProcessing::Config{ "
-          << "pre_amplifier: { enabled: " << pre_amplifier.enabled
+             "pipeline: {"
+             "maximum_internal_processing_rate: "
+          << pipeline.maximum_internal_processing_rate
+          << ", multi_channel_render: " << pipeline.multi_channel_render
+          << ", "
+             ", multi_channel_capture: "
+          << pipeline.multi_channel_capture
+          << "}, "
+             "pre_amplifier: { enabled: "
+          << pre_amplifier.enabled
           << ", fixed_gain_factor: " << pre_amplifier.fixed_gain_factor
           << " }, high_pass_filter: { enabled: " << high_pass_filter.enabled
           << " }, echo_canceller: { enabled: " << echo_canceller.enabled
           << ", mobile_mode: " << echo_canceller.mobile_mode
-          << ", legacy_moderate_suppression_level: "
-          << echo_canceller.legacy_moderate_suppression_level
-          << ", use_legacy_aec: " << echo_canceller.use_legacy_aec
+          << ", enforce_high_pass_filtering: "
+          << echo_canceller.enforce_high_pass_filtering
           << " }, noise_suppression: { enabled: " << noise_suppression.enabled
           << ", level: "
           << NoiseSuppressionLevelToString(noise_suppression.level)
+          << " }, transient_suppression: { enabled: "
+          << transient_suppression.enabled
           << " }, voice_detection: { enabled: " << voice_detection.enabled
           << " }, gain_controller1: { enabled: " << gain_controller1.enabled
           << ", mode: " << GainController1ModeToString(gain_controller1.mode)

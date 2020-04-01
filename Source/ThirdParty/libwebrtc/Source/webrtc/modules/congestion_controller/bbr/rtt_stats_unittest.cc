@@ -34,20 +34,20 @@ TEST_F(RttStatsTest, DefaultsBeforeUpdate) {
 
 TEST_F(RttStatsTest, SmoothedRtt) {
   // Verify that ack_delay is corrected for in Smoothed RTT.
-  rtt_stats_.UpdateRtt(TimeDelta::ms(300), TimeDelta::ms(100),
-                       Timestamp::ms(0));
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.latest_rtt());
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.smoothed_rtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(300), TimeDelta::Millis(100),
+                       Timestamp::Millis(0));
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.latest_rtt());
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.smoothed_rtt());
   // Verify that effective RTT of zero does not change Smoothed RTT.
-  rtt_stats_.UpdateRtt(TimeDelta::ms(200), TimeDelta::ms(200),
-                       Timestamp::ms(0));
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.latest_rtt());
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.smoothed_rtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(200), TimeDelta::Millis(200),
+                       Timestamp::Millis(0));
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.latest_rtt());
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.smoothed_rtt());
   // Verify that large erroneous ack_delay does not change Smoothed RTT.
-  rtt_stats_.UpdateRtt(TimeDelta::ms(200), TimeDelta::ms(300),
-                       Timestamp::ms(0));
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.latest_rtt());
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.smoothed_rtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(200), TimeDelta::Millis(300),
+                       Timestamp::Millis(0));
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.latest_rtt());
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.smoothed_rtt());
 }
 
 // Ensure that the potential rounding artifacts in EWMA calculation do not cause
@@ -56,7 +56,8 @@ TEST_F(RttStatsTest, SmoothedRttStability) {
   for (int64_t time = 3; time < 20000; time++) {
     RttStats stats;
     for (int64_t i = 0; i < 100; i++) {
-      stats.UpdateRtt(TimeDelta::us(time), TimeDelta::ms(0), Timestamp::ms(0));
+      stats.UpdateRtt(TimeDelta::Micros(time), TimeDelta::Millis(0),
+                      Timestamp::Millis(0));
       int64_t time_delta_us = stats.smoothed_rtt().us() - time;
       ASSERT_LE(std::abs(time_delta_us), 1);
     }
@@ -65,42 +66,44 @@ TEST_F(RttStatsTest, SmoothedRttStability) {
 
 TEST_F(RttStatsTest, PreviousSmoothedRtt) {
   // Verify that ack_delay is corrected for in Smoothed RTT.
-  rtt_stats_.UpdateRtt(TimeDelta::ms(300), TimeDelta::ms(100),
-                       Timestamp::ms(0));
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.latest_rtt());
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.smoothed_rtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(300), TimeDelta::Millis(100),
+                       Timestamp::Millis(0));
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.latest_rtt());
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.smoothed_rtt());
   EXPECT_EQ(TimeDelta::Zero(), rtt_stats_.previous_srtt());
   // Ensure the previous SRTT is 200ms after a 100ms sample.
-  rtt_stats_.UpdateRtt(TimeDelta::ms(100), TimeDelta::Zero(), Timestamp::ms(0));
-  EXPECT_EQ(TimeDelta::ms(100), rtt_stats_.latest_rtt());
-  EXPECT_EQ(TimeDelta::us(187500).us(), rtt_stats_.smoothed_rtt().us());
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.previous_srtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(100), TimeDelta::Zero(),
+                       Timestamp::Millis(0));
+  EXPECT_EQ(TimeDelta::Millis(100), rtt_stats_.latest_rtt());
+  EXPECT_EQ(TimeDelta::Micros(187500).us(), rtt_stats_.smoothed_rtt().us());
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.previous_srtt());
 }
 
 TEST_F(RttStatsTest, MinRtt) {
-  rtt_stats_.UpdateRtt(TimeDelta::ms(200), TimeDelta::Zero(), Timestamp::ms(0));
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.min_rtt());
-  rtt_stats_.UpdateRtt(TimeDelta::ms(10), TimeDelta::Zero(),
-                       Timestamp::ms(0) + TimeDelta::ms(10));
-  EXPECT_EQ(TimeDelta::ms(10), rtt_stats_.min_rtt());
-  rtt_stats_.UpdateRtt(TimeDelta::ms(50), TimeDelta::Zero(),
-                       Timestamp::ms(0) + TimeDelta::ms(20));
-  EXPECT_EQ(TimeDelta::ms(10), rtt_stats_.min_rtt());
-  rtt_stats_.UpdateRtt(TimeDelta::ms(50), TimeDelta::Zero(),
-                       Timestamp::ms(0) + TimeDelta::ms(30));
-  EXPECT_EQ(TimeDelta::ms(10), rtt_stats_.min_rtt());
-  rtt_stats_.UpdateRtt(TimeDelta::ms(50), TimeDelta::Zero(),
-                       Timestamp::ms(0) + TimeDelta::ms(40));
-  EXPECT_EQ(TimeDelta::ms(10), rtt_stats_.min_rtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(200), TimeDelta::Zero(),
+                       Timestamp::Millis(0));
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.min_rtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(10), TimeDelta::Zero(),
+                       Timestamp::Millis(0) + TimeDelta::Millis(10));
+  EXPECT_EQ(TimeDelta::Millis(10), rtt_stats_.min_rtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(50), TimeDelta::Zero(),
+                       Timestamp::Millis(0) + TimeDelta::Millis(20));
+  EXPECT_EQ(TimeDelta::Millis(10), rtt_stats_.min_rtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(50), TimeDelta::Zero(),
+                       Timestamp::Millis(0) + TimeDelta::Millis(30));
+  EXPECT_EQ(TimeDelta::Millis(10), rtt_stats_.min_rtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(50), TimeDelta::Zero(),
+                       Timestamp::Millis(0) + TimeDelta::Millis(40));
+  EXPECT_EQ(TimeDelta::Millis(10), rtt_stats_.min_rtt());
   // Verify that ack_delay does not go into recording of min_rtt_.
-  rtt_stats_.UpdateRtt(TimeDelta::ms(7), TimeDelta::ms(2),
-                       Timestamp::ms(0) + TimeDelta::ms(50));
-  EXPECT_EQ(TimeDelta::ms(7), rtt_stats_.min_rtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(7), TimeDelta::Millis(2),
+                       Timestamp::Millis(0) + TimeDelta::Millis(50));
+  EXPECT_EQ(TimeDelta::Millis(7), rtt_stats_.min_rtt());
 }
 
 TEST_F(RttStatsTest, ExpireSmoothedMetrics) {
-  TimeDelta initial_rtt = TimeDelta::ms(10);
-  rtt_stats_.UpdateRtt(initial_rtt, TimeDelta::Zero(), Timestamp::ms(0));
+  TimeDelta initial_rtt = TimeDelta::Millis(10);
+  rtt_stats_.UpdateRtt(initial_rtt, TimeDelta::Zero(), Timestamp::Millis(0));
   EXPECT_EQ(initial_rtt, rtt_stats_.min_rtt());
   EXPECT_EQ(initial_rtt, rtt_stats_.smoothed_rtt());
 
@@ -108,7 +111,7 @@ TEST_F(RttStatsTest, ExpireSmoothedMetrics) {
 
   // Update once with a 20ms RTT.
   TimeDelta doubled_rtt = 2 * initial_rtt;
-  rtt_stats_.UpdateRtt(doubled_rtt, TimeDelta::Zero(), Timestamp::ms(0));
+  rtt_stats_.UpdateRtt(doubled_rtt, TimeDelta::Zero(), Timestamp::Millis(0));
   EXPECT_EQ(1.125 * initial_rtt, rtt_stats_.smoothed_rtt());
 
   // Expire the smoothed metrics, increasing smoothed rtt and mean deviation.
@@ -119,7 +122,7 @@ TEST_F(RttStatsTest, ExpireSmoothedMetrics) {
   // Now go back down to 5ms and expire the smoothed metrics, and ensure the
   // mean deviation increases to 15ms.
   TimeDelta half_rtt = 0.5 * initial_rtt;
-  rtt_stats_.UpdateRtt(half_rtt, TimeDelta::Zero(), Timestamp::ms(0));
+  rtt_stats_.UpdateRtt(half_rtt, TimeDelta::Zero(), Timestamp::Millis(0));
   EXPECT_GT(doubled_rtt, rtt_stats_.smoothed_rtt());
   EXPECT_LT(initial_rtt, rtt_stats_.mean_deviation());
 }
@@ -127,29 +130,30 @@ TEST_F(RttStatsTest, ExpireSmoothedMetrics) {
 TEST_F(RttStatsTest, UpdateRttWithBadSendDeltas) {
   // Make sure we ignore bad RTTs.
 
-  TimeDelta initial_rtt = TimeDelta::ms(10);
-  rtt_stats_.UpdateRtt(initial_rtt, TimeDelta::Zero(), Timestamp::ms(0));
+  TimeDelta initial_rtt = TimeDelta::Millis(10);
+  rtt_stats_.UpdateRtt(initial_rtt, TimeDelta::Zero(), Timestamp::Millis(0));
   EXPECT_EQ(initial_rtt, rtt_stats_.min_rtt());
   EXPECT_EQ(initial_rtt, rtt_stats_.smoothed_rtt());
 
   std::vector<TimeDelta> bad_send_deltas;
   bad_send_deltas.push_back(TimeDelta::Zero());
   bad_send_deltas.push_back(TimeDelta::PlusInfinity());
-  bad_send_deltas.push_back(TimeDelta::us(-1000));
+  bad_send_deltas.push_back(TimeDelta::Micros(-1000));
 
   for (TimeDelta bad_send_delta : bad_send_deltas) {
-    rtt_stats_.UpdateRtt(bad_send_delta, TimeDelta::Zero(), Timestamp::ms(0));
+    rtt_stats_.UpdateRtt(bad_send_delta, TimeDelta::Zero(),
+                         Timestamp::Millis(0));
     EXPECT_EQ(initial_rtt, rtt_stats_.min_rtt());
     EXPECT_EQ(initial_rtt, rtt_stats_.smoothed_rtt());
   }
 }
 
 TEST_F(RttStatsTest, ResetAfterConnectionMigrations) {
-  rtt_stats_.UpdateRtt(TimeDelta::ms(300), TimeDelta::ms(100),
-                       Timestamp::ms(0));
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.latest_rtt());
-  EXPECT_EQ(TimeDelta::ms(200), rtt_stats_.smoothed_rtt());
-  EXPECT_EQ(TimeDelta::ms(300), rtt_stats_.min_rtt());
+  rtt_stats_.UpdateRtt(TimeDelta::Millis(300), TimeDelta::Millis(100),
+                       Timestamp::Millis(0));
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.latest_rtt());
+  EXPECT_EQ(TimeDelta::Millis(200), rtt_stats_.smoothed_rtt());
+  EXPECT_EQ(TimeDelta::Millis(300), rtt_stats_.min_rtt());
 
   // Reset rtt stats on connection migrations.
   rtt_stats_.OnConnectionMigration();

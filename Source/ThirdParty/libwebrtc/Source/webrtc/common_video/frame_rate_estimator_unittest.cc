@@ -16,7 +16,7 @@
 
 namespace webrtc {
 namespace {
-constexpr TimeDelta kDefaultWindow = TimeDelta::Millis<1000>();
+constexpr TimeDelta kDefaultWindow = TimeDelta::Millis(1000);
 }
 
 class FrameRateEstimatorTest : public ::testing::Test {
@@ -32,7 +32,7 @@ TEST_F(FrameRateEstimatorTest, NoEstimateWithLessThanTwoFrames) {
   EXPECT_FALSE(estimator_.GetAverageFps());
   estimator_.OnFrame(clock_.CurrentTime());
   EXPECT_FALSE(estimator_.GetAverageFps());
-  clock_.AdvanceTime(TimeDelta::ms(33));
+  clock_.AdvanceTime(TimeDelta::Millis(33));
   EXPECT_FALSE(estimator_.GetAverageFps());
 }
 
@@ -46,7 +46,7 @@ TEST_F(FrameRateEstimatorTest, NoEstimateWithZeroSpan) {
 TEST_F(FrameRateEstimatorTest, SingleSpanFps) {
   const double kExpectedFps = 30.0;
   estimator_.OnFrame(clock_.CurrentTime());
-  clock_.AdvanceTime(TimeDelta::seconds(1) / kExpectedFps);
+  clock_.AdvanceTime(TimeDelta::Seconds(1) / kExpectedFps);
   estimator_.OnFrame(clock_.CurrentTime());
   EXPECT_NEAR(*estimator_.GetAverageFps(), kExpectedFps, 0.001);
 }
@@ -61,11 +61,11 @@ TEST_F(FrameRateEstimatorTest, AverageFps) {
   const Timestamp start_time = clock_.CurrentTime();
   while (clock_.CurrentTime() - start_time < kDefaultWindow / 2) {
     estimator_.OnFrame(clock_.CurrentTime());
-    clock_.AdvanceTime(TimeDelta::seconds(1) / kLowFps);
+    clock_.AdvanceTime(TimeDelta::Seconds(1) / kLowFps);
   }
   while (clock_.CurrentTime() - start_time < kDefaultWindow) {
     estimator_.OnFrame(clock_.CurrentTime());
-    clock_.AdvanceTime(TimeDelta::seconds(1) / kHighFps);
+    clock_.AdvanceTime(TimeDelta::Seconds(1) / kHighFps);
   }
 
   EXPECT_NEAR(*estimator_.GetAverageFps(), kExpectedFps, 0.001);
@@ -81,13 +81,13 @@ TEST_F(FrameRateEstimatorTest, CullsOldFramesFromAveragingWindow) {
 
   // Oldest frame should just be pushed out the window, leaving a single frame
   // => no estimate possible.
-  clock_.AdvanceTime(TimeDelta::us(1));
+  clock_.AdvanceTime(TimeDelta::Micros(1));
   EXPECT_FALSE(estimator_.GetAverageFps(clock_.CurrentTime()));
 }
 
 TEST_F(FrameRateEstimatorTest, Reset) {
   estimator_.OnFrame(clock_.CurrentTime());
-  clock_.AdvanceTime(TimeDelta::seconds(1) / 30);
+  clock_.AdvanceTime(TimeDelta::Seconds(1) / 30);
   estimator_.OnFrame(clock_.CurrentTime());
   EXPECT_TRUE(estimator_.GetAverageFps());
 
@@ -95,7 +95,7 @@ TEST_F(FrameRateEstimatorTest, Reset) {
   // new frame.
   estimator_.Reset();
   EXPECT_FALSE(estimator_.GetAverageFps());
-  clock_.AdvanceTime(TimeDelta::seconds(1) / 30);
+  clock_.AdvanceTime(TimeDelta::Seconds(1) / 30);
   estimator_.OnFrame(clock_.CurrentTime());
   EXPECT_FALSE(estimator_.GetAverageFps());
 }

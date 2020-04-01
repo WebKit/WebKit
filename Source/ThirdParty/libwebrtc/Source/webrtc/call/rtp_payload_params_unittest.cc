@@ -160,7 +160,7 @@ TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_H264) {
   h264info->temporal_idx = kNoTemporalIdx;
 
   RTPVideoHeader header =
-      params.GetRtpVideoHeader(encoded_image, &codec_info, kDontCare);
+      params.GetRtpVideoHeader(encoded_image, &codec_info, 10);
 
   EXPECT_EQ(0, header.simulcastIdx);
   EXPECT_EQ(kVideoCodecH264, header.codec);
@@ -172,7 +172,7 @@ TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_H264) {
   h264info->base_layer_sync = true;
   h264info->idr_frame = false;
 
-  header = params.GetRtpVideoHeader(encoded_image, &codec_info, kDontCare);
+  header = params.GetRtpVideoHeader(encoded_image, &codec_info, 20);
 
   EXPECT_EQ(kVideoCodecH264, header.codec);
   EXPECT_EQ(header.frame_marking.tl0_pic_idx, kInitialTl0PicIdx1);
@@ -185,7 +185,7 @@ TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_H264) {
   h264info->base_layer_sync = false;
   h264info->idr_frame = true;
 
-  header = params.GetRtpVideoHeader(encoded_image, &codec_info, kDontCare);
+  header = params.GetRtpVideoHeader(encoded_image, &codec_info, 30);
 
   EXPECT_EQ(kVideoCodecH264, header.codec);
   EXPECT_EQ(header.frame_marking.tl0_pic_idx, kInitialTl0PicIdx1 + 1);
@@ -327,18 +327,24 @@ TEST(RtpPayloadParamsTest, PictureIdForOldGenericFormat) {
   EncodedImage encoded_image;
   CodecSpecificInfo codec_info;
   codec_info.codecType = kVideoCodecGeneric;
+  encoded_image._frameType = VideoFrameType::kVideoFrameKey;
 
   RtpPayloadParams params(kSsrc1, &state);
   RTPVideoHeader header =
-      params.GetRtpVideoHeader(encoded_image, &codec_info, kDontCare);
+      params.GetRtpVideoHeader(encoded_image, &codec_info, 10);
 
   EXPECT_EQ(kVideoCodecGeneric, header.codec);
-  ASSERT_TRUE(header.generic);
-  EXPECT_EQ(0, header.generic->frame_id);
+  const auto* generic =
+      absl::get_if<RTPVideoHeaderLegacyGeneric>(&header.video_type_header);
+  ASSERT_TRUE(generic);
+  EXPECT_EQ(0, generic->picture_id);
 
-  header = params.GetRtpVideoHeader(encoded_image, &codec_info, kDontCare);
-  ASSERT_TRUE(header.generic);
-  EXPECT_EQ(1, header.generic->frame_id);
+  encoded_image._frameType = VideoFrameType::kVideoFrameDelta;
+  header = params.GetRtpVideoHeader(encoded_image, &codec_info, 20);
+  generic =
+      absl::get_if<RTPVideoHeaderLegacyGeneric>(&header.video_type_header);
+  ASSERT_TRUE(generic);
+  EXPECT_EQ(1, generic->picture_id);
 }
 
 TEST(RtpPayloadParamsTest, GenericDescriptorForGenericCodec) {
@@ -365,6 +371,50 @@ TEST(RtpPayloadParamsTest, GenericDescriptorForGenericCodec) {
   ASSERT_TRUE(header.generic);
   EXPECT_EQ(1, header.generic->frame_id);
   EXPECT_THAT(header.generic->dependencies, ElementsAre(0));
+}
+
+TEST(RtpPayloadParamsTest, SetsGenericFromGenericFrameInfo) {
+  test::ScopedFieldTrials generic_picture_id(
+      "WebRTC-GenericDescriptor/Enabled/");
+  RtpPayloadState state;
+  EncodedImage encoded_image;
+  CodecSpecificInfo codec_info;
+
+  RtpPayloadParams params(kSsrc1, &state);
+
+  encoded_image._frameType = VideoFrameType::kVideoFrameKey;
+  codec_info.generic_frame_info =
+      GenericFrameInfo::Builder().S(1).T(0).Dtis("S").Build();
+  codec_info.generic_frame_info->encoder_buffers = {
+      {/*id=*/0, /*referenced=*/false, /*updated=*/true}};
+  RTPVideoHeader key_header =
+      params.GetRtpVideoHeader(encoded_image, &codec_info, /*frame_id=*/1);
+
+  ASSERT_TRUE(key_header.generic);
+  EXPECT_EQ(key_header.generic->spatial_index, 1);
+  EXPECT_EQ(key_header.generic->temporal_index, 0);
+  EXPECT_EQ(key_header.generic->frame_id, 1);
+  EXPECT_THAT(key_header.generic->dependencies, IsEmpty());
+  EXPECT_THAT(key_header.generic->decode_target_indications,
+              ElementsAre(DecodeTargetIndication::kSwitch));
+  EXPECT_FALSE(key_header.generic->discardable);
+
+  encoded_image._frameType = VideoFrameType::kVideoFrameDelta;
+  codec_info.generic_frame_info =
+      GenericFrameInfo::Builder().S(2).T(3).Dtis("D").Build();
+  codec_info.generic_frame_info->encoder_buffers = {
+      {/*id=*/0, /*referenced=*/true, /*updated=*/false}};
+  RTPVideoHeader delta_header =
+      params.GetRtpVideoHeader(encoded_image, &codec_info, /*frame_id=*/3);
+
+  ASSERT_TRUE(delta_header.generic);
+  EXPECT_EQ(delta_header.generic->spatial_index, 2);
+  EXPECT_EQ(delta_header.generic->temporal_index, 3);
+  EXPECT_EQ(delta_header.generic->frame_id, 3);
+  EXPECT_THAT(delta_header.generic->dependencies, ElementsAre(1));
+  EXPECT_THAT(delta_header.generic->decode_target_indications,
+              ElementsAre(DecodeTargetIndication::kDiscardable));
+  EXPECT_TRUE(delta_header.generic->discardable);
 }
 
 class RtpPayloadParamsVp8ToGenericTest : public ::testing::Test {
@@ -397,7 +447,6 @@ class RtpPayloadParamsVp8ToGenericTest : public ::testing::Test {
         params_.GetRtpVideoHeader(encoded_image, &codec_info, shared_frame_id);
 
     ASSERT_TRUE(header.generic);
-    EXPECT_TRUE(header.generic->higher_spatial_layers.empty());
     EXPECT_EQ(header.generic->spatial_index, 0);
 
     EXPECT_EQ(header.generic->frame_id, shared_frame_id);
@@ -494,7 +543,6 @@ class RtpPayloadParamsH264ToGenericTest : public ::testing::Test {
         params_.GetRtpVideoHeader(encoded_image, &codec_info, shared_frame_id);
 
     ASSERT_TRUE(header.generic);
-    EXPECT_TRUE(header.generic->higher_spatial_layers.empty());
     EXPECT_EQ(header.generic->spatial_index, 0);
 
     EXPECT_EQ(header.generic->frame_id, shared_frame_id);

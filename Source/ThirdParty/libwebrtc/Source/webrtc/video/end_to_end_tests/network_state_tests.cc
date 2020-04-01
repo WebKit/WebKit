@@ -8,11 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "api/test/simulated_network.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/call_test.h"
 #include "test/fake_encoder.h"
@@ -86,23 +89,25 @@ void NetworkStateEndToEndTest::VerifyNewVideoSendStreamsRespectNetworkState(
     Transport* transport) {
   test::VideoEncoderProxyFactory encoder_factory(encoder);
 
-  task_queue_.SendTask([this, network_to_bring_up, &encoder_factory,
-                        transport]() {
-    CreateSenderCall(Call::Config(send_event_log_.get()));
-    sender_call_->SignalChannelNetworkState(network_to_bring_up, kNetworkUp);
+  SendTask(RTC_FROM_HERE, task_queue(),
+           [this, network_to_bring_up, &encoder_factory, transport]() {
+             CreateSenderCall(Call::Config(send_event_log_.get()));
+             sender_call_->SignalChannelNetworkState(network_to_bring_up,
+                                                     kNetworkUp);
 
-    CreateSendConfig(1, 0, 0, transport);
-    GetVideoSendConfig()->encoder_settings.encoder_factory = &encoder_factory;
-    CreateVideoStreams();
-    CreateFrameGeneratorCapturer(kDefaultFramerate, kDefaultWidth,
-                                 kDefaultHeight);
+             CreateSendConfig(1, 0, 0, transport);
+             GetVideoSendConfig()->encoder_settings.encoder_factory =
+                 &encoder_factory;
+             CreateVideoStreams();
+             CreateFrameGeneratorCapturer(kDefaultFramerate, kDefaultWidth,
+                                          kDefaultHeight);
 
-    Start();
-  });
+             Start();
+           });
 
   SleepMs(kSilenceTimeoutMs);
 
-  task_queue_.SendTask([this]() {
+  SendTask(RTC_FROM_HERE, task_queue(), [this]() {
     Stop();
     DestroyStreams();
     DestroyCalls();
@@ -114,28 +119,30 @@ void NetworkStateEndToEndTest::VerifyNewVideoReceiveStreamsRespectNetworkState(
     Transport* transport) {
   std::unique_ptr<test::DirectTransport> sender_transport;
 
-  task_queue_.SendTask([this, &sender_transport, network_to_bring_up,
-                        transport]() {
-    CreateCalls();
-    receiver_call_->SignalChannelNetworkState(network_to_bring_up, kNetworkUp);
-    sender_transport = absl::make_unique<test::DirectTransport>(
-        &task_queue_,
-        absl::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
-                                           absl::make_unique<SimulatedNetwork>(
+  SendTask(
+      RTC_FROM_HERE, task_queue(),
+      [this, &sender_transport, network_to_bring_up, transport]() {
+        CreateCalls();
+        receiver_call_->SignalChannelNetworkState(network_to_bring_up,
+                                                  kNetworkUp);
+        sender_transport = std::make_unique<test::DirectTransport>(
+            task_queue(),
+            std::make_unique<FakeNetworkPipe>(
+                Clock::GetRealTimeClock(), std::make_unique<SimulatedNetwork>(
                                                BuiltInNetworkBehaviorConfig())),
-        sender_call_.get(), payload_type_map_);
-    sender_transport->SetReceiver(receiver_call_->Receiver());
-    CreateSendConfig(1, 0, 0, sender_transport.get());
-    CreateMatchingReceiveConfigs(transport);
-    CreateVideoStreams();
-    CreateFrameGeneratorCapturer(kDefaultFramerate, kDefaultWidth,
-                                 kDefaultHeight);
-    Start();
-  });
+            sender_call_.get(), payload_type_map_);
+        sender_transport->SetReceiver(receiver_call_->Receiver());
+        CreateSendConfig(1, 0, 0, sender_transport.get());
+        CreateMatchingReceiveConfigs(transport);
+        CreateVideoStreams();
+        CreateFrameGeneratorCapturer(kDefaultFramerate, kDefaultWidth,
+                                     kDefaultHeight);
+        Start();
+      });
 
   SleepMs(kSilenceTimeoutMs);
 
-  task_queue_.SendTask([this, &sender_transport]() {
+  SendTask(RTC_FROM_HERE, task_queue(), [this, &sender_transport]() {
     Stop();
     DestroyStreams();
     sender_transport.reset();
@@ -155,8 +162,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
   static const int kNumAcceptedDowntimeRtcp = 1;
   class NetworkStateTest : public test::EndToEndTest, public test::FakeEncoder {
    public:
-    explicit NetworkStateTest(
-        test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue)
+    explicit NetworkStateTest(TaskQueueBase* task_queue)
         : EndToEndTest(kDefaultTimeoutMs),
           FakeEncoder(Clock::GetRealTimeClock()),
           task_queue_(task_queue),
@@ -172,9 +178,9 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
 
     Action OnSendRtp(const uint8_t* packet, size_t length) override {
       rtc::CritScope lock(&test_crit_);
-      RTPHeader header;
-      EXPECT_TRUE(parser_->Parse(packet, length, &header));
-      if (length == header.headerLength + header.paddingLength)
+      RtpPacket rtp_packet;
+      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      if (rtp_packet.payload_size() == 0)
         ++sender_padding_;
       ++sender_rtp_;
       packet_event_.Set();
@@ -216,7 +222,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
       EXPECT_TRUE(encoded_frames_.Wait(kDefaultTimeoutMs))
           << "No frames received by the encoder.";
 
-      task_queue_->SendTask([this]() {
+      SendTask(RTC_FROM_HERE, task_queue_, [this]() {
         // Wait for packets from both sender/receiver.
         WaitForPacketsOrSilence(false, false);
 
@@ -333,7 +339,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
       }
     }
 
-    test::DEPRECATED_SingleThreadedTaskQueueForTesting* const task_queue_;
+    TaskQueueBase* const task_queue_;
     rtc::CriticalSection test_crit_;
     rtc::Event encoded_frames_;
     rtc::Event packet_event_;
@@ -346,7 +352,7 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
     int sender_rtcp_ RTC_GUARDED_BY(test_crit_);
     int receiver_rtcp_ RTC_GUARDED_BY(test_crit_);
     int down_frames_ RTC_GUARDED_BY(test_crit_);
-  } test(&task_queue_);
+  } test(task_queue());
 
   RunBaseTest(&test);
 }

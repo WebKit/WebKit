@@ -11,11 +11,11 @@
 #include "modules/desktop_capture/win/screen_capturer_win_directx.h"
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "rtc_base/checks.h"
@@ -124,7 +124,7 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
   frames_.MoveToNextFrame();
   if (!frames_.current_frame()) {
     frames_.ReplaceCurrentFrame(
-        absl::make_unique<DxgiFrame>(shared_memory_factory_.get()));
+        std::make_unique<DxgiFrame>(shared_memory_factory_.get()));
   }
 
   DxgiDuplicatorController::Result result;

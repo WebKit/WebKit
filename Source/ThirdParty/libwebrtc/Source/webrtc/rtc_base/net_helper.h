@@ -21,8 +21,8 @@ extern const char TCP_PROTOCOL_NAME[];
 extern const char SSLTCP_PROTOCOL_NAME[];
 extern const char TLS_PROTOCOL_NAME[];
 
-// Get the network layer overhead per packet based on the IP address family.
-int GetIpOverhead(int addr_family);
+constexpr int kTcpHeaderSize = 20;
+constexpr int kUdpHeaderSize = 8;
 
 // Get the transport layer overhead per packet based on the protocol.
 int GetProtocolOverhead(const std::string& protocol);

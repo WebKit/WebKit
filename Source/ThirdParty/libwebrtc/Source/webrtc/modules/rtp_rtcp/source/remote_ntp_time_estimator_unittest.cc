@@ -9,17 +9,21 @@
  */
 
 #include "modules/rtp_rtcp/include/remote_ntp_time_estimator.h"
-
+#include "absl/types/optional.h"
+#include "modules/rtp_rtcp/source/time_util.h"
 #include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/ntp_time.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
-static const int64_t kTestRtt = 10;
-static const int64_t kLocalClockInitialTimeMs = 123;
-static const int64_t kRemoteClockInitialTimeMs = 345;
-static const uint32_t kTimestampOffset = 567;
+constexpr int64_t kTestRtt = 10;
+constexpr int64_t kLocalClockInitialTimeMs = 123;
+constexpr int64_t kRemoteClockInitialTimeMs = 345;
+constexpr uint32_t kTimestampOffset = 567;
+constexpr int64_t kRemoteToLocalClockOffsetMs =
+    kLocalClockInitialTimeMs - kRemoteClockInitialTimeMs;
 
 class RemoteNtpTimeEstimatorTest : public ::testing::Test {
  protected:
@@ -39,9 +43,13 @@ class RemoteNtpTimeEstimatorTest : public ::testing::Test {
            kTimestampOffset;
   }
 
+  NtpTime GetRemoteNtpTime() {
+    return TimeMicrosToNtp(remote_clock_.TimeInMicroseconds());
+  }
+
   void SendRtcpSr() {
     uint32_t rtcp_timestamp = GetRemoteTimestamp();
-    NtpTime ntp = remote_clock_.CurrentNtpTime();
+    NtpTime ntp = GetRemoteNtpTime();
 
     AdvanceTimeMilliseconds(kTestRtt / 2);
     ReceiveRtcpSr(kTestRtt, rtcp_timestamp, ntp.seconds(), ntp.fractions());
@@ -53,7 +61,7 @@ class RemoteNtpTimeEstimatorTest : public ::testing::Test {
     int64_t ntp_error_fractions =
         ntp_error_ms * static_cast<int64_t>(NtpTime::kFractionsPerSecond) /
         1000;
-    NtpTime ntp(static_cast<uint64_t>(remote_clock_.CurrentNtpTime()) +
+    NtpTime ntp(static_cast<uint64_t>(GetRemoteNtpTime()) +
                 ntp_error_fractions);
     AdvanceTimeMilliseconds(kTestRtt / 2 + networking_delay_ms);
     ReceiveRtcpSr(kTestRtt, rtcp_timestamp, ntp.seconds(), ntp.fractions());
@@ -96,6 +104,7 @@ TEST_F(RemoteNtpTimeEstimatorTest, Estimate) {
   // Local peer needs at least 2 RTCP SR to calculate the capture time.
   const int64_t kNotEnoughRtcpSr = -1;
   EXPECT_EQ(kNotEnoughRtcpSr, estimator_->Estimate(rtp_timestamp));
+  EXPECT_EQ(absl::nullopt, estimator_->EstimateRemoteToLocalClockOffsetMs());
 
   AdvanceTimeMilliseconds(800);
   // Remote sends second RTCP SR.
@@ -103,36 +112,24 @@ TEST_F(RemoteNtpTimeEstimatorTest, Estimate) {
 
   // Local peer gets enough RTCP SR to calculate the capture time.
   EXPECT_EQ(capture_ntp_time_ms, estimator_->Estimate(rtp_timestamp));
+  EXPECT_EQ(kRemoteToLocalClockOffsetMs,
+            estimator_->EstimateRemoteToLocalClockOffsetMs());
 }
 
 TEST_F(RemoteNtpTimeEstimatorTest, AveragesErrorsOut) {
   // Remote peer sends first 10 RTCP SR without errors.
-  AdvanceTimeMilliseconds(1000);
-  SendRtcpSr();
-  AdvanceTimeMilliseconds(1000);
-  SendRtcpSr();
-  AdvanceTimeMilliseconds(1000);
-  SendRtcpSr();
-  AdvanceTimeMilliseconds(1000);
-  SendRtcpSr();
-  AdvanceTimeMilliseconds(1000);
-  SendRtcpSr();
-  AdvanceTimeMilliseconds(1000);
-  SendRtcpSr();
-  AdvanceTimeMilliseconds(1000);
-  SendRtcpSr();
-  AdvanceTimeMilliseconds(1000);
-  SendRtcpSr();
-  AdvanceTimeMilliseconds(1000);
-  SendRtcpSr();
-  AdvanceTimeMilliseconds(1000);
-  SendRtcpSr();
+  for (int i = 0; i < 10; ++i) {
+    AdvanceTimeMilliseconds(1000);
+    SendRtcpSr();
+  }
 
   AdvanceTimeMilliseconds(150);
   uint32_t rtp_timestamp = GetRemoteTimestamp();
   int64_t capture_ntp_time_ms = local_clock_.CurrentNtpInMilliseconds();
   // Local peer gets enough RTCP SR to calculate the capture time.
   EXPECT_EQ(capture_ntp_time_ms, estimator_->Estimate(rtp_timestamp));
+  EXPECT_EQ(kRemoteToLocalClockOffsetMs,
+            estimator_->EstimateRemoteToLocalClockOffsetMs());
 
   // Remote sends corrupted RTCP SRs
   AdvanceTimeMilliseconds(1000);
@@ -147,6 +144,8 @@ TEST_F(RemoteNtpTimeEstimatorTest, AveragesErrorsOut) {
 
   // Errors should be averaged out.
   EXPECT_EQ(capture_ntp_time_ms, estimator_->Estimate(rtp_timestamp));
+  EXPECT_EQ(kRemoteToLocalClockOffsetMs,
+            estimator_->EstimateRemoteToLocalClockOffsetMs());
 }
 
 }  // namespace webrtc

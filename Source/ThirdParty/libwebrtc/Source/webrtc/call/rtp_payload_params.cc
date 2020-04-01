@@ -14,6 +14,7 @@
 
 #include <algorithm>
 
+#include "absl/algorithm/container.h"
 #include "absl/container/inlined_vector.h"
 #include "absl/types/variant.h"
 #include "api/video/video_timing.h"
@@ -21,6 +22,7 @@
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
+#include "modules/video_coding/frame_dependencies_calculator.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -61,6 +63,7 @@ void PopulateRtpWithCodecSpecifics(const CodecSpecificInfo& info,
           info.codecSpecific.VP9.inter_layer_predicted;
       vp9_header.gof_idx = info.codecSpecific.VP9.gof_idx;
       vp9_header.num_spatial_layers = info.codecSpecific.VP9.num_spatial_layers;
+      vp9_header.first_active_layer = info.codecSpecific.VP9.first_active_layer;
       if (vp9_header.num_spatial_layers > 1) {
         vp9_header.spatial_idx = spatial_index.value_or(kNoSpatialIdx);
       } else {
@@ -137,7 +140,7 @@ RtpPayloadParams::RtpPayloadParams(const uint32_t ssrc,
       generic_picture_id_experiment_(
           field_trial::IsEnabled("WebRTC-GenericPictureId")),
       generic_descriptor_experiment_(
-          field_trial::IsEnabled("WebRTC-GenericDescriptor")) {
+          !field_trial::IsDisabled("WebRTC-GenericDescriptor")) {
   for (auto& spatial_layer : last_shared_frame_id_)
     spatial_layer.fill(-1);
 
@@ -162,6 +165,7 @@ RTPVideoHeader RtpPayloadParams::GetRtpVideoHeader(
     PopulateRtpWithCodecSpecifics(*codec_specific_info, image.SpatialIndex(),
                                   &rtp_video_header);
   }
+  rtp_video_header.frame_type = image._frameType,
   rtp_video_header.rotation = image.rotation_;
   rtp_video_header.content_type = image.content_type_;
   rtp_video_header.playout_delay = image.playout_delay_;
@@ -239,22 +243,43 @@ void RtpPayloadParams::SetCodecSpecific(RTPVideoHeader* rtp_video_header,
       rtp_video_header->frame_marking.tl0_pic_idx = state_.tl0_pic_idx;
     }
   }
-  // There are currently two generic descriptors in WebRTC. The old descriptor
-  // can not share a picture id space between simulcast streams, so we use the
-  // |picture_id| in this case. We let the |picture_id| tag along in |frame_id|
-  // until the old generic format can be removed.
-  // TODO(philipel): Remove this when the new generic format has been fully
-  //                 implemented.
   if (generic_picture_id_experiment_ &&
       rtp_video_header->codec == kVideoCodecGeneric) {
-    rtp_video_header->generic.emplace().frame_id = state_.picture_id;
+    rtp_video_header->video_type_header.emplace<RTPVideoHeaderLegacyGeneric>()
+        .picture_id = state_.picture_id;
   }
+}
+
+RTPVideoHeader::GenericDescriptorInfo
+RtpPayloadParams::GenericDescriptorFromFrameInfo(
+    const GenericFrameInfo& frame_info,
+    int64_t frame_id,
+    VideoFrameType frame_type) {
+  RTPVideoHeader::GenericDescriptorInfo generic;
+  generic.frame_id = frame_id;
+  generic.dependencies = dependencies_calculator_.FromBuffersUsage(
+      frame_type, frame_id, frame_info.encoder_buffers);
+  generic.spatial_index = frame_info.spatial_id;
+  generic.temporal_index = frame_info.temporal_id;
+  generic.decode_target_indications = frame_info.decode_target_indications;
+  generic.discardable =
+      absl::c_linear_search(frame_info.decode_target_indications,
+                            DecodeTargetIndication::kDiscardable);
+  return generic;
 }
 
 void RtpPayloadParams::SetGeneric(const CodecSpecificInfo* codec_specific_info,
                                   int64_t frame_id,
                                   bool is_keyframe,
                                   RTPVideoHeader* rtp_video_header) {
+  if (codec_specific_info && codec_specific_info->generic_frame_info &&
+      !codec_specific_info->generic_frame_info->encoder_buffers.empty()) {
+    rtp_video_header->generic =
+        GenericDescriptorFromFrameInfo(*codec_specific_info->generic_frame_info,
+                                       frame_id, rtp_video_header->frame_type);
+    return;
+  }
+
   switch (rtp_video_header->codec) {
     case VideoCodecType::kVideoCodecGeneric:
       GenericToGeneric(frame_id, is_keyframe, rtp_video_header);
@@ -266,7 +291,8 @@ void RtpPayloadParams::SetGeneric(const CodecSpecificInfo* codec_specific_info,
       }
       return;
     case VideoCodecType::kVideoCodecVP9:
-      // TODO(philipel): Implement VP9 to new generic descriptor.
+    case VideoCodecType::kVideoCodecAV1:
+      // TODO(philipel): Implement VP9 and AV1 to generic descriptor.
       return;
     case VideoCodecType::kVideoCodecH264:
       if (codec_specific_info) {

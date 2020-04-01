@@ -61,7 +61,6 @@ class AsyncTCPSocketBase : public AsyncPacketSocket {
   static AsyncSocket* ConnectSocket(AsyncSocket* socket,
                                     const SocketAddress& bind_address,
                                     const SocketAddress& remote_address);
-  virtual int SendRaw(const void* pv, size_t cb);
   int FlushOutBuffer();
   // Add data to |outbuf_|.
   void AppendToOutBuffer(const void* pv, size_t cb);

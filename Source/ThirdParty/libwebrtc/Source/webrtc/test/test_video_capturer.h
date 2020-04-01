@@ -18,18 +18,29 @@
 #include "api/video/video_source_interface.h"
 #include "media/base/video_adapter.h"
 #include "media/base/video_broadcaster.h"
+#include "rtc_base/critical_section.h"
 
 namespace webrtc {
 namespace test {
 
 class TestVideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
  public:
-  TestVideoCapturer();
+  class FramePreprocessor {
+   public:
+    virtual ~FramePreprocessor() = default;
+
+    virtual VideoFrame Preprocess(const VideoFrame& frame) = 0;
+  };
+
   ~TestVideoCapturer() override;
 
   void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
                        const rtc::VideoSinkWants& wants) override;
   void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override;
+  void SetFramePreprocessor(std::unique_ptr<FramePreprocessor> preprocessor) {
+    rtc::CritScope crit(&lock_);
+    preprocessor_ = std::move(preprocessor);
+  }
 
  protected:
   void OnFrame(const VideoFrame& frame);
@@ -37,7 +48,10 @@ class TestVideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
 
  private:
   void UpdateVideoAdapter();
+  VideoFrame MaybePreprocess(const VideoFrame& frame);
 
+  rtc::CriticalSection lock_;
+  std::unique_ptr<FramePreprocessor> preprocessor_ RTC_GUARDED_BY(lock_);
   rtc::VideoBroadcaster broadcaster_;
   cricket::VideoAdapter video_adapter_;
 };

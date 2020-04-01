@@ -13,7 +13,6 @@
 #include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -70,14 +69,14 @@ std::unique_ptr<AudioEncoder> AudioEncoderG711::MakeAudioEncoder(
       impl_config.num_channels = config.num_channels;
       impl_config.frame_size_ms = config.frame_size_ms;
       impl_config.payload_type = payload_type;
-      return absl::make_unique<AudioEncoderPcmU>(impl_config);
+      return std::make_unique<AudioEncoderPcmU>(impl_config);
     }
     case Config::Type::kPcmA: {
       AudioEncoderPcmA::Config impl_config;
       impl_config.num_channels = config.num_channels;
       impl_config.frame_size_ms = config.frame_size_ms;
       impl_config.payload_type = payload_type;
-      return absl::make_unique<AudioEncoderPcmA>(impl_config);
+      return std::make_unique<AudioEncoderPcmA>(impl_config);
     }
     default: {
       return nullptr;

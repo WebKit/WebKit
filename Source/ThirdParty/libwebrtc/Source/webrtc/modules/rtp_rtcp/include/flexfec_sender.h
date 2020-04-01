@@ -16,12 +16,14 @@
 #include <vector>
 
 #include "api/array_view.h"
-#include "modules/include/module_common_types.h"
+#include "api/rtp_parameters.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
 #include "modules/rtp_rtcp/source/ulpfec_generator.h"
+#include "modules/rtp_rtcp/source/video_fec_generator.h"
 #include "rtc_base/random.h"
+#include "rtc_base/rate_statistics.h"
 
 namespace webrtc {
 
@@ -31,7 +33,7 @@ class RtpPacketToSend;
 // Note that this class is not thread safe, and thus requires external
 // synchronization. Currently, this is done using the lock in PayloadRouter.
 
-class FlexfecSender {
+class FlexfecSender : public VideoFecGenerator {
  public:
   FlexfecSender(int payload_type,
                 uint32_t ssrc,
@@ -43,26 +45,28 @@ class FlexfecSender {
                 Clock* clock);
   ~FlexfecSender();
 
-  uint32_t ssrc() const { return ssrc_; }
+  FecType GetFecType() const override {
+    return VideoFecGenerator::FecType::kFlexFec;
+  }
+  absl::optional<uint32_t> FecSsrc() override { return ssrc_; }
 
   // Sets the FEC rate, max frames sent before FEC packets are sent,
   // and what type of generator matrices are used.
-  void SetFecParameters(const FecProtectionParams& params);
+  void SetProtectionParameters(const FecProtectionParams& delta_params,
+                               const FecProtectionParams& key_params) override;
 
   // Adds a media packet to the internal buffer. When enough media packets
   // have been added, the FEC packets are generated and stored internally.
   // These FEC packets are then obtained by calling GetFecPackets().
-  // Returns true if the media packet was successfully added.
-  bool AddRtpPacketAndGenerateFec(const RtpPacketToSend& packet);
-
-  // Returns true if there are generated FEC packets available.
-  bool FecAvailable() const;
+  void AddPacketAndGenerateFec(const RtpPacketToSend& packet) override;
 
   // Returns generated FlexFEC packets.
-  std::vector<std::unique_ptr<RtpPacketToSend>> GetFecPackets();
+  std::vector<std::unique_ptr<RtpPacketToSend>> GetFecPackets() override;
 
   // Returns the overhead, per packet, for FlexFEC.
-  size_t MaxPacketOverhead() const;
+  size_t MaxPacketOverhead() const override;
+
+  DataRate CurrentFecRate() const override;
 
   // Only called on the VideoSendStream queue, after operation has shut down.
   RtpState GetRtpState();
@@ -87,6 +91,9 @@ class FlexfecSender {
   UlpfecGenerator ulpfec_generator_;
   const RtpHeaderExtensionMap rtp_header_extension_map_;
   const size_t header_extensions_size_;
+
+  rtc::CriticalSection crit_;
+  RateStatistics fec_bitrate_ RTC_GUARDED_BY(crit_);
 };
 
 }  // namespace webrtc

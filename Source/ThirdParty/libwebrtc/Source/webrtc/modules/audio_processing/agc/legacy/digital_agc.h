@@ -11,9 +11,6 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC_LEGACY_DIGITAL_AGC_H_
 #define MODULES_AUDIO_PROCESSING_AGC_LEGACY_DIGITAL_AGC_H_
 
-#ifdef WEBRTC_AGC_DEBUG_DUMP
-#include <stdio.h>
-#endif
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 
 // the 32 most significant bits of A(19) * B(26) >> 13
@@ -44,20 +41,22 @@ typedef struct {
   int16_t agcMode;
   AgcVad vadNearend;
   AgcVad vadFarend;
-#ifdef WEBRTC_AGC_DEBUG_DUMP
-  FILE* logFile;
-  int frameCounter;
-#endif
 } DigitalAgc;
 
 int32_t WebRtcAgc_InitDigital(DigitalAgc* digitalAgcInst, int16_t agcMode);
 
-int32_t WebRtcAgc_ProcessDigital(DigitalAgc* digitalAgcInst,
-                                 const int16_t* const* inNear,
-                                 size_t num_bands,
-                                 int16_t* const* out,
-                                 uint32_t FS,
-                                 int16_t lowLevelSignal);
+int32_t WebRtcAgc_ComputeDigitalGains(DigitalAgc* digitalAgcInst,
+                                      const int16_t* const* inNear,
+                                      size_t num_bands,
+                                      uint32_t FS,
+                                      int16_t lowLevelSignal,
+                                      int32_t gains[11]);
+
+int32_t WebRtcAgc_ApplyDigitalGains(const int32_t gains[11],
+                                    size_t num_bands,
+                                    uint32_t FS,
+                                    const int16_t* const* in_near,
+                                    int16_t* const* out);
 
 int32_t WebRtcAgc_AddFarendToDigital(DigitalAgc* digitalAgcInst,
                                      const int16_t* inFar,

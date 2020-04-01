@@ -12,7 +12,6 @@
 #include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "modules/video_coding/jitter_estimator.h"
@@ -31,7 +30,7 @@ class TestVCMJitterEstimator : public ::testing::Test {
   TestVCMJitterEstimator() : fake_clock_(0) {}
 
   virtual void SetUp() {
-    estimator_ = absl::make_unique<VCMJitterEstimator>(&fake_clock_);
+    estimator_ = std::make_unique<VCMJitterEstimator>(&fake_clock_);
   }
 
   void AdvanceClock(int64_t microseconds) {

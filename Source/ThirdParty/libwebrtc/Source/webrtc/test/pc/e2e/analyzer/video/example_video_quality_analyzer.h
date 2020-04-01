@@ -40,8 +40,8 @@ class ExampleVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   void OnFrameEncoded(uint16_t frame_id,
                       const EncodedImage& encoded_image) override;
   void OnFrameDropped(EncodedImageCallback::DropReason reason) override;
-  void OnFrameReceived(uint16_t frame_id,
-                       const EncodedImage& encoded_image) override;
+  void OnFramePreDecode(uint16_t frame_id,
+                        const EncodedImage& encoded_image) override;
   void OnFrameDecoded(const VideoFrame& frame,
                       absl::optional<int32_t> decode_time_ms,
                       absl::optional<uint8_t> qp) override;

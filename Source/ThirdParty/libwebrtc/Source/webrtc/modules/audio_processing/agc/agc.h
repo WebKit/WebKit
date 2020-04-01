@@ -24,9 +24,6 @@ class Agc {
   Agc();
   virtual ~Agc();
 
-  // Returns the proportion of samples in the buffer which are at full-scale
-  // (and presumably clipped).
-  virtual float AnalyzePreproc(const int16_t* audio, size_t length);
   // |audio| must be mono; in a multi-channel stream, provide the first (usually
   // left) channel.
   virtual void Process(const int16_t* audio, size_t length, int sample_rate_hz);

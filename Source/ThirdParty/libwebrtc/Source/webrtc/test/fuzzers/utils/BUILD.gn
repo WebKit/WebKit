@@ -1,0 +1,43 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("rtp_replayer") {
+  testonly = true
+  sources = [
+    "rtp_replayer.cc",
+    "rtp_replayer.h",
+  ]
+  deps = [
+    "../../../api/rtc_event_log",
+    "../../../api/task_queue:default_task_queue_factory",
+    "../../../api/test/video:function_video_factory",
+    "../../../api/transport:field_trial_based_config",
+    "../../../api/video_codecs:video_codecs_api",
+    "../../../call",
+    "../../../call:call_interfaces",
+    "../../../common_video",
+    "../../../media:rtc_internal_video_codecs",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:rtc_base_tests_utils",
+    "../../../rtc_base:rtc_json",
+    "../../../system_wrappers",
+    "../../../test:call_config_utils",
+    "../../../test:encoder_settings",
+    "../../../test:fake_video_codecs",
+    "../../../test:null_transport",
+    "../../../test:rtp_test_utils",
+    "../../../test:run_test",
+    "../../../test:run_test_interface",
+    "../../../test:test_renderer",
+    "../../../test:test_support",
+    "../../../test:video_test_common",
+  ]
+}

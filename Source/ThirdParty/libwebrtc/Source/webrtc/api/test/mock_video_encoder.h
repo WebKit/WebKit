@@ -51,6 +51,10 @@ class MockVideoEncoder : public VideoEncoder {
   MOCK_METHOD0(Release, int32_t());
   MOCK_METHOD0(Reset, int32_t());
   MOCK_METHOD1(SetRates, void(const RateControlParameters& parameters));
+  MOCK_METHOD1(OnPacketLossRateUpdate, void(float packet_loss_rate));
+  MOCK_METHOD1(OnRttUpdate, void(int64_t rtt_ms));
+  MOCK_METHOD1(OnLossNotification,
+               void(const LossNotification& loss_notification));
   MOCK_CONST_METHOD0(GetEncoderInfo, EncoderInfo(void));
 };
 

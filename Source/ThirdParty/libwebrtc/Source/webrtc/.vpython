@@ -31,6 +31,12 @@ wheel: <
   version: "version:5.2.2"
 >
 
+# Used by tools_webrtc/perf/webrtc_dashboard_upload.py.
+wheel: <
+  name: "infra/python/wheels/httplib2-py2_py3"
+  version: "version:0.10.3"
+>
+
 # Used by:
 #   build/toolchain/win
 wheel: <

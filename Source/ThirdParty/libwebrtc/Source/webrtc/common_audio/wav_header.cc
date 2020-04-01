@@ -26,20 +26,28 @@
 namespace webrtc {
 namespace {
 
+#ifndef WEBRTC_ARCH_LITTLE_ENDIAN
+#error "Code not working properly for big endian platforms."
+#endif
+
+#pragma pack(2)
 struct ChunkHeader {
   uint32_t ID;
   uint32_t Size;
 };
 static_assert(sizeof(ChunkHeader) == 8, "ChunkHeader size");
 
+#pragma pack(2)
 struct RiffHeader {
   ChunkHeader header;
   uint32_t Format;
 };
+static_assert(sizeof(RiffHeader) == sizeof(ChunkHeader) + 4, "RiffHeader size");
 
 // We can't nest this definition in WavHeader, because VS2013 gives an error
 // on sizeof(WavHeader::fmt): "error C2070: 'unknown': illegal sizeof operand".
-struct FmtSubchunk {
+#pragma pack(2)
+struct FmtPcmSubchunk {
   ChunkHeader header;
   uint16_t AudioFormat;
   uint16_t NumChannels;
@@ -48,60 +56,108 @@ struct FmtSubchunk {
   uint16_t BlockAlign;
   uint16_t BitsPerSample;
 };
-static_assert(sizeof(FmtSubchunk) == 24, "FmtSubchunk size");
-const uint32_t kFmtSubchunkSize = sizeof(FmtSubchunk) - sizeof(ChunkHeader);
+static_assert(sizeof(FmtPcmSubchunk) == 24, "FmtPcmSubchunk size");
+const uint32_t kFmtPcmSubchunkSize =
+    sizeof(FmtPcmSubchunk) - sizeof(ChunkHeader);
 
-// Simple wav header. It does not include chunks that are not essential to read
-// audio samples.
-struct WavHeader {
-  WavHeader(const WavHeader&) = default;
-  WavHeader& operator=(const WavHeader&) = default;
+// Pack struct to avoid additional padding bytes.
+#pragma pack(2)
+struct FmtIeeeFloatSubchunk {
+  ChunkHeader header;
+  uint16_t AudioFormat;
+  uint16_t NumChannels;
+  uint32_t SampleRate;
+  uint32_t ByteRate;
+  uint16_t BlockAlign;
+  uint16_t BitsPerSample;
+  uint16_t ExtensionSize;
+};
+static_assert(sizeof(FmtIeeeFloatSubchunk) == 26, "FmtIeeeFloatSubchunk size");
+const uint32_t kFmtIeeeFloatSubchunkSize =
+    sizeof(FmtIeeeFloatSubchunk) - sizeof(ChunkHeader);
+
+// Simple PCM wav header. It does not include chunks that are not essential to
+// read audio samples.
+#pragma pack(2)
+struct WavHeaderPcm {
+  WavHeaderPcm(const WavHeaderPcm&) = default;
+  WavHeaderPcm& operator=(const WavHeaderPcm&) = default;
   RiffHeader riff;
-  FmtSubchunk fmt;
+  FmtPcmSubchunk fmt;
   struct {
     ChunkHeader header;
   } data;
 };
-static_assert(sizeof(WavHeader) == kWavHeaderSize, "no padding in header");
+static_assert(sizeof(WavHeaderPcm) == kPcmWavHeaderSize,
+              "no padding in header");
 
-#ifdef WEBRTC_ARCH_LITTLE_ENDIAN
-static inline void WriteLE16(uint16_t* f, uint16_t x) {
-  *f = x;
-}
-static inline void WriteLE32(uint32_t* f, uint32_t x) {
-  *f = x;
-}
-static inline void WriteFourCC(uint32_t* f, char a, char b, char c, char d) {
-  *f = static_cast<uint32_t>(a) | static_cast<uint32_t>(b) << 8 |
-       static_cast<uint32_t>(c) << 16 | static_cast<uint32_t>(d) << 24;
+// IEEE Float Wav header, includes extra chunks necessary for proper non-PCM
+// WAV implementation.
+#pragma pack(2)
+struct WavHeaderIeeeFloat {
+  WavHeaderIeeeFloat(const WavHeaderIeeeFloat&) = default;
+  WavHeaderIeeeFloat& operator=(const WavHeaderIeeeFloat&) = default;
+  RiffHeader riff;
+  FmtIeeeFloatSubchunk fmt;
+  struct {
+    ChunkHeader header;
+    uint32_t SampleLength;
+  } fact;
+  struct {
+    ChunkHeader header;
+  } data;
+};
+static_assert(sizeof(WavHeaderIeeeFloat) == kIeeeFloatWavHeaderSize,
+              "no padding in header");
+
+uint32_t PackFourCC(char a, char b, char c, char d) {
+  uint32_t packed_value =
+      static_cast<uint32_t>(a) | static_cast<uint32_t>(b) << 8 |
+      static_cast<uint32_t>(c) << 16 | static_cast<uint32_t>(d) << 24;
+  return packed_value;
 }
 
-static inline uint16_t ReadLE16(uint16_t x) {
-  return x;
-}
-static inline uint32_t ReadLE32(uint32_t x) {
-  return x;
-}
-static inline std::string ReadFourCC(uint32_t x) {
+std::string ReadFourCC(uint32_t x) {
   return std::string(reinterpret_cast<char*>(&x), 4);
 }
-#else
-#error "Write be-to-le conversion functions"
-#endif
 
-static inline uint32_t RiffChunkSize(size_t bytes_in_payload) {
-  return static_cast<uint32_t>(bytes_in_payload + kWavHeaderSize -
+uint16_t MapWavFormatToHeaderField(WavFormat format) {
+  switch (format) {
+    case WavFormat::kWavFormatPcm:
+      return 1;
+    case WavFormat::kWavFormatIeeeFloat:
+      return 3;
+    case WavFormat::kWavFormatALaw:
+      return 6;
+    case WavFormat::kWavFormatMuLaw:
+      return 7;
+  }
+  RTC_CHECK(false);
+}
+
+WavFormat MapHeaderFieldToWavFormat(uint16_t format_header_value) {
+  if (format_header_value == 1) {
+    return WavFormat::kWavFormatPcm;
+  }
+  if (format_header_value == 3) {
+    return WavFormat::kWavFormatIeeeFloat;
+  }
+
+  RTC_CHECK(false) << "Unsupported WAV format";
+}
+
+uint32_t RiffChunkSize(size_t bytes_in_payload, size_t header_size) {
+  return static_cast<uint32_t>(bytes_in_payload + header_size -
                                sizeof(ChunkHeader));
 }
 
-static inline uint32_t ByteRate(size_t num_channels,
-                                int sample_rate,
-                                size_t bytes_per_sample) {
+uint32_t ByteRate(size_t num_channels,
+                  int sample_rate,
+                  size_t bytes_per_sample) {
   return static_cast<uint32_t>(num_channels * sample_rate * bytes_per_sample);
 }
 
-static inline uint16_t BlockAlign(size_t num_channels,
-                                  size_t bytes_per_sample) {
+uint16_t BlockAlign(size_t num_channels, size_t bytes_per_sample) {
   return static_cast<uint16_t>(num_channels * bytes_per_sample);
 }
 
@@ -109,7 +165,7 @@ static inline uint16_t BlockAlign(size_t num_channels,
 // first byte of the sought chunk data. If not found, the end of the file is
 // reached.
 bool FindWaveChunk(ChunkHeader* chunk_header,
-                   ReadableWav* readable,
+                   WavHeaderReader* readable,
                    const std::string sought_chunk_id) {
   RTC_DCHECK_EQ(sought_chunk_id.size(), 4);
   while (true) {
@@ -124,17 +180,17 @@ bool FindWaveChunk(ChunkHeader* chunk_header,
   }
 }
 
-bool ReadFmtChunkData(FmtSubchunk* fmt_subchunk, ReadableWav* readable) {
+bool ReadFmtChunkData(FmtPcmSubchunk* fmt_subchunk, WavHeaderReader* readable) {
   // Reads "fmt " chunk payload.
-  if (readable->Read(&(fmt_subchunk->AudioFormat), kFmtSubchunkSize) !=
-      kFmtSubchunkSize)
+  if (readable->Read(&(fmt_subchunk->AudioFormat), kFmtPcmSubchunkSize) !=
+      kFmtPcmSubchunkSize)
     return false;
-  const uint32_t fmt_size = ReadLE32(fmt_subchunk->header.Size);
-  if (fmt_size != kFmtSubchunkSize) {
+  const uint32_t fmt_size = fmt_subchunk->header.Size;
+  if (fmt_size != kFmtPcmSubchunkSize) {
     // There is an optional two-byte extension field permitted to be present
     // with PCM, but which must be zero.
     int16_t ext_size;
-    if (kFmtSubchunkSize + sizeof(ext_size) != fmt_size)
+    if (kFmtPcmSubchunkSize + sizeof(ext_size) != fmt_size)
       return false;
     if (readable->Read(&ext_size, sizeof(ext_size)) != sizeof(ext_size))
       return false;
@@ -144,7 +200,89 @@ bool ReadFmtChunkData(FmtSubchunk* fmt_subchunk, ReadableWav* readable) {
   return true;
 }
 
-}  // namespace
+void WritePcmWavHeader(size_t num_channels,
+                       int sample_rate,
+                       size_t bytes_per_sample,
+                       size_t num_samples,
+                       uint8_t* buf,
+                       size_t* header_size) {
+  RTC_CHECK(buf);
+  RTC_CHECK(header_size);
+  *header_size = kPcmWavHeaderSize;
+  auto header = rtc::MsanUninitialized<WavHeaderPcm>({});
+  const size_t bytes_in_payload = bytes_per_sample * num_samples;
+
+  header.riff.header.ID = PackFourCC('R', 'I', 'F', 'F');
+  header.riff.header.Size = RiffChunkSize(bytes_in_payload, *header_size);
+  header.riff.Format = PackFourCC('W', 'A', 'V', 'E');
+  header.fmt.header.ID = PackFourCC('f', 'm', 't', ' ');
+  header.fmt.header.Size = kFmtPcmSubchunkSize;
+  header.fmt.AudioFormat = MapWavFormatToHeaderField(WavFormat::kWavFormatPcm);
+  header.fmt.NumChannels = static_cast<uint16_t>(num_channels);
+  header.fmt.SampleRate = sample_rate;
+  header.fmt.ByteRate = ByteRate(num_channels, sample_rate, bytes_per_sample);
+  header.fmt.BlockAlign = BlockAlign(num_channels, bytes_per_sample);
+  header.fmt.BitsPerSample = static_cast<uint16_t>(8 * bytes_per_sample);
+  header.data.header.ID = PackFourCC('d', 'a', 't', 'a');
+  header.data.header.Size = static_cast<uint32_t>(bytes_in_payload);
+
+  // Do an extra copy rather than writing everything to buf directly, since buf
+  // might not be correctly aligned.
+  memcpy(buf, &header, *header_size);
+}
+
+void WriteIeeeFloatWavHeader(size_t num_channels,
+                             int sample_rate,
+                             size_t bytes_per_sample,
+                             size_t num_samples,
+                             uint8_t* buf,
+                             size_t* header_size) {
+  RTC_CHECK(buf);
+  RTC_CHECK(header_size);
+  *header_size = kIeeeFloatWavHeaderSize;
+  auto header = rtc::MsanUninitialized<WavHeaderIeeeFloat>({});
+  const size_t bytes_in_payload = bytes_per_sample * num_samples;
+
+  header.riff.header.ID = PackFourCC('R', 'I', 'F', 'F');
+  header.riff.header.Size = RiffChunkSize(bytes_in_payload, *header_size);
+  header.riff.Format = PackFourCC('W', 'A', 'V', 'E');
+  header.fmt.header.ID = PackFourCC('f', 'm', 't', ' ');
+  header.fmt.header.Size = kFmtIeeeFloatSubchunkSize;
+  header.fmt.AudioFormat =
+      MapWavFormatToHeaderField(WavFormat::kWavFormatIeeeFloat);
+  header.fmt.NumChannels = static_cast<uint16_t>(num_channels);
+  header.fmt.SampleRate = sample_rate;
+  header.fmt.ByteRate = ByteRate(num_channels, sample_rate, bytes_per_sample);
+  header.fmt.BlockAlign = BlockAlign(num_channels, bytes_per_sample);
+  header.fmt.BitsPerSample = static_cast<uint16_t>(8 * bytes_per_sample);
+  header.fmt.ExtensionSize = 0;
+  header.fact.header.ID = PackFourCC('f', 'a', 'c', 't');
+  header.fact.header.Size = 4;
+  header.fact.SampleLength = static_cast<uint32_t>(num_channels * num_samples);
+  header.data.header.ID = PackFourCC('d', 'a', 't', 'a');
+  header.data.header.Size = static_cast<uint32_t>(bytes_in_payload);
+
+  // Do an extra copy rather than writing everything to buf directly, since buf
+  // might not be correctly aligned.
+  memcpy(buf, &header, *header_size);
+}
+
+// Returns the number of bytes per sample for the format.
+size_t GetFormatBytesPerSample(WavFormat format) {
+  switch (format) {
+    case WavFormat::kWavFormatPcm:
+      // Other values may be OK, but for now we're conservative.
+      return 2;
+    case WavFormat::kWavFormatALaw:
+    case WavFormat::kWavFormatMuLaw:
+      return 1;
+    case WavFormat::kWavFormatIeeeFloat:
+      return 4;
+    default:
+      RTC_CHECK(false);
+      return 2;
+  }
+}
 
 bool CheckWavParameters(size_t num_channels,
                         int sample_rate,
@@ -169,14 +307,18 @@ bool CheckWavParameters(size_t num_channels,
 
   // format and bytes_per_sample must agree.
   switch (format) {
-    case kWavFormatPcm:
+    case WavFormat::kWavFormatPcm:
       // Other values may be OK, but for now we're conservative:
       if (bytes_per_sample != 1 && bytes_per_sample != 2)
         return false;
       break;
-    case kWavFormatALaw:
-    case kWavFormatMuLaw:
+    case WavFormat::kWavFormatALaw:
+    case WavFormat::kWavFormatMuLaw:
       if (bytes_per_sample != 1)
+        return false;
+      break;
+    case WavFormat::kWavFormatIeeeFloat:
+      if (bytes_per_sample != 4)
         return false;
       break;
     default:
@@ -185,7 +327,7 @@ bool CheckWavParameters(size_t num_channels,
 
   // The number of bytes in the file, not counting the first ChunkHeader, must
   // be less than 2^32; otherwise, the ChunkSize field overflows.
-  const size_t header_size = kWavHeaderSize - sizeof(ChunkHeader);
+  const size_t header_size = kPcmWavHeaderSize - sizeof(ChunkHeader);
   const size_t max_samples =
       (std::numeric_limits<uint32_t>::max() - header_size) / bytes_per_sample;
   if (num_samples > max_samples)
@@ -198,48 +340,47 @@ bool CheckWavParameters(size_t num_channels,
   return true;
 }
 
-void WriteWavHeader(uint8_t* buf,
-                    size_t num_channels,
-                    int sample_rate,
-                    WavFormat format,
-                    size_t bytes_per_sample,
-                    size_t num_samples) {
-  RTC_CHECK(CheckWavParameters(num_channels, sample_rate, format,
-                               bytes_per_sample, num_samples));
+}  // namespace
 
-  auto header = rtc::MsanUninitialized<WavHeader>({});
-  const size_t bytes_in_payload = bytes_per_sample * num_samples;
-
-  WriteFourCC(&header.riff.header.ID, 'R', 'I', 'F', 'F');
-  WriteLE32(&header.riff.header.Size, RiffChunkSize(bytes_in_payload));
-  WriteFourCC(&header.riff.Format, 'W', 'A', 'V', 'E');
-
-  WriteFourCC(&header.fmt.header.ID, 'f', 'm', 't', ' ');
-  WriteLE32(&header.fmt.header.Size, kFmtSubchunkSize);
-  WriteLE16(&header.fmt.AudioFormat, format);
-  WriteLE16(&header.fmt.NumChannels, static_cast<uint16_t>(num_channels));
-  WriteLE32(&header.fmt.SampleRate, sample_rate);
-  WriteLE32(&header.fmt.ByteRate,
-            ByteRate(num_channels, sample_rate, bytes_per_sample));
-  WriteLE16(&header.fmt.BlockAlign, BlockAlign(num_channels, bytes_per_sample));
-  WriteLE16(&header.fmt.BitsPerSample,
-            static_cast<uint16_t>(8 * bytes_per_sample));
-
-  WriteFourCC(&header.data.header.ID, 'd', 'a', 't', 'a');
-  WriteLE32(&header.data.header.Size, static_cast<uint32_t>(bytes_in_payload));
-
-  // Do an extra copy rather than writing everything to buf directly, since buf
-  // might not be correctly aligned.
-  memcpy(buf, &header, kWavHeaderSize);
+bool CheckWavParameters(size_t num_channels,
+                        int sample_rate,
+                        WavFormat format,
+                        size_t num_samples) {
+  return CheckWavParameters(num_channels, sample_rate, format,
+                            GetFormatBytesPerSample(format), num_samples);
 }
 
-bool ReadWavHeader(ReadableWav* readable,
+void WriteWavHeader(size_t num_channels,
+                    int sample_rate,
+                    WavFormat format,
+                    size_t num_samples,
+                    uint8_t* buf,
+                    size_t* header_size) {
+  RTC_CHECK(buf);
+  RTC_CHECK(header_size);
+
+  const size_t bytes_per_sample = GetFormatBytesPerSample(format);
+  RTC_CHECK(CheckWavParameters(num_channels, sample_rate, format,
+                               bytes_per_sample, num_samples));
+  if (format == WavFormat::kWavFormatPcm) {
+    WritePcmWavHeader(num_channels, sample_rate, bytes_per_sample, num_samples,
+                      buf, header_size);
+  } else {
+    RTC_CHECK_EQ(format, WavFormat::kWavFormatIeeeFloat);
+    WriteIeeeFloatWavHeader(num_channels, sample_rate, bytes_per_sample,
+                            num_samples, buf, header_size);
+  }
+}
+
+bool ReadWavHeader(WavHeaderReader* readable,
                    size_t* num_channels,
                    int* sample_rate,
                    WavFormat* format,
                    size_t* bytes_per_sample,
-                   size_t* num_samples) {
-  auto header = rtc::MsanUninitialized<WavHeader>({});
+                   size_t* num_samples,
+                   int64_t* data_start_pos) {
+  // Read using the PCM header, even though it might be float Wav file
+  auto header = rtc::MsanUninitialized<WavHeaderPcm>({});
 
   // Read RIFF chunk.
   if (readable->Read(&header.riff, sizeof(header.riff)) != sizeof(header.riff))
@@ -267,26 +408,34 @@ bool ReadWavHeader(ReadableWav* readable,
   }
 
   // Parse needed fields.
-  *format = static_cast<WavFormat>(ReadLE16(header.fmt.AudioFormat));
-  *num_channels = ReadLE16(header.fmt.NumChannels);
-  *sample_rate = ReadLE32(header.fmt.SampleRate);
-  *bytes_per_sample = ReadLE16(header.fmt.BitsPerSample) / 8;
-  const size_t bytes_in_payload = ReadLE32(header.data.header.Size);
+  *format = MapHeaderFieldToWavFormat(header.fmt.AudioFormat);
+  *num_channels = header.fmt.NumChannels;
+  *sample_rate = header.fmt.SampleRate;
+  *bytes_per_sample = header.fmt.BitsPerSample / 8;
+  const size_t bytes_in_payload = header.data.header.Size;
   if (*bytes_per_sample == 0)
     return false;
   *num_samples = bytes_in_payload / *bytes_per_sample;
 
-  if (ReadLE32(header.riff.header.Size) < RiffChunkSize(bytes_in_payload))
+  const size_t header_size = *format == WavFormat::kWavFormatPcm
+                                 ? kPcmWavHeaderSize
+                                 : kIeeeFloatWavHeaderSize;
+
+  if (header.riff.header.Size < RiffChunkSize(bytes_in_payload, header_size))
     return false;
-  if (ReadLE32(header.fmt.ByteRate) !=
+  if (header.fmt.ByteRate !=
       ByteRate(*num_channels, *sample_rate, *bytes_per_sample))
     return false;
-  if (ReadLE16(header.fmt.BlockAlign) !=
-      BlockAlign(*num_channels, *bytes_per_sample))
+  if (header.fmt.BlockAlign != BlockAlign(*num_channels, *bytes_per_sample))
     return false;
 
-  return CheckWavParameters(*num_channels, *sample_rate, *format,
-                            *bytes_per_sample, *num_samples);
+  if (!CheckWavParameters(*num_channels, *sample_rate, *format,
+                          *bytes_per_sample, *num_samples)) {
+    return false;
+  }
+
+  *data_start_pos = readable->GetPosition();
+  return true;
 }
 
 }  // namespace webrtc

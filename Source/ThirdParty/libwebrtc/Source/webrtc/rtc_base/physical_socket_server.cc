@@ -140,6 +140,7 @@ bool PhysicalSocket::Create(int family, int type) {
   Close();
   s_ = ::socket(family, type, 0);
   udp_ = (SOCK_DGRAM == type);
+  family_ = family;
   UpdateLastError();
   if (udp_) {
     SetEnabledEvents(DE_READ | DE_WRITE);
@@ -148,7 +149,7 @@ bool PhysicalSocket::Create(int family, int type) {
 }
 
 SocketAddress PhysicalSocket::GetLocalAddress() const {
-  sockaddr_storage addr_storage = {0};
+  sockaddr_storage addr_storage = {};
   socklen_t addrlen = sizeof(addr_storage);
   sockaddr* addr = reinterpret_cast<sockaddr*>(&addr_storage);
   int result = ::getsockname(s_, addr, &addrlen);
@@ -163,7 +164,7 @@ SocketAddress PhysicalSocket::GetLocalAddress() const {
 }
 
 SocketAddress PhysicalSocket::GetRemoteAddress() const {
-  sockaddr_storage addr_storage = {0};
+  sockaddr_storage addr_storage = {};
   socklen_t addrlen = sizeof(addr_storage);
   sockaddr* addr = reinterpret_cast<sockaddr*>(&addr_storage);
   int result = ::getpeername(s_, addr, &addrlen);
@@ -289,9 +290,17 @@ int PhysicalSocket::GetOption(Option opt, int* value) {
     return -1;
   socklen_t optlen = sizeof(*value);
   int ret = ::getsockopt(s_, slevel, sopt, (SockOptArg)value, &optlen);
-  if (ret != -1 && opt == OPT_DONTFRAGMENT) {
+  if (ret == -1) {
+    return -1;
+  }
+  if (opt == OPT_DONTFRAGMENT) {
 #if defined(WEBRTC_LINUX) && !defined(WEBRTC_ANDROID)
     *value = (*value != IP_PMTUDISC_DONT) ? 1 : 0;
+#endif
+  } else if (opt == OPT_DSCP) {
+#if defined(WEBRTC_POSIX)
+    // unshift DSCP value to get six most significant bits of IP DiffServ field
+    *value >>= 2;
 #endif
   }
   return ret;
@@ -306,7 +315,18 @@ int PhysicalSocket::SetOption(Option opt, int value) {
 #if defined(WEBRTC_LINUX) && !defined(WEBRTC_ANDROID)
     value = (value) ? IP_PMTUDISC_DO : IP_PMTUDISC_DONT;
 #endif
+  } else if (opt == OPT_DSCP) {
+#if defined(WEBRTC_POSIX)
+    // shift DSCP value to fit six most significant bits of IP DiffServ field
+    value <<= 2;
+#endif
   }
+#if defined(WEBRTC_POSIX)
+  if (sopt == IPV6_TCLASS) {
+    // Set the IPv4 option in all cases to support dual-stack sockets.
+    ::setsockopt(s_, IPPROTO_IP, IP_TOS, (SockOptArg)&value, sizeof(value));
+  }
+#endif
   return ::setsockopt(s_, slevel, sopt, (SockOptArg)&value, sizeof(value));
 }
 
@@ -554,8 +574,19 @@ int PhysicalSocket::TranslateOption(Option opt, int* slevel, int* sopt) {
       *sopt = TCP_NODELAY;
       break;
     case OPT_DSCP:
+#if defined(WEBRTC_POSIX)
+      if (family_ == AF_INET6) {
+        *slevel = IPPROTO_IPV6;
+        *sopt = IPV6_TCLASS;
+      } else {
+        *slevel = IPPROTO_IP;
+        *sopt = IP_TOS;
+      }
+      break;
+#else
       RTC_LOG(LS_WARNING) << "Socket::OPT_DSCP not supported.";
       return -1;
+#endif
     case OPT_RTP_SENDTIME_EXTN_ID:
       return -1;  // No logging is necessary as this not a OS socket option.
     default:
@@ -606,7 +637,7 @@ bool SocketDispatcher::Initialize() {
 #elif defined(WEBRTC_POSIX)
   fcntl(s_, F_SETFL, fcntl(s_, F_GETFL, 0) | O_NONBLOCK);
 #endif
-#if defined(WEBRTC_IOS)
+#if defined(WEBRTC_IOS) || (defined(WEBRTC_MAC) && defined(WEBRTC_WEBKIT_BUILD))
   // iOS may kill sockets when the app is moved to the background
   // (specifically, if the app doesn't use the "voip" UIBackgroundMode). When
   // we attempt to write to such a socket, SIGPIPE will be raised, which by
@@ -1271,8 +1302,8 @@ void PhysicalSocketServer::Remove(Dispatcher* pdispatcher) {
     if (!pending_add_dispatchers_.erase(pdispatcher) &&
         dispatchers_.find(pdispatcher) == dispatchers_.end()) {
       RTC_LOG(LS_WARNING) << "PhysicalSocketServer asked to remove a unknown "
-                          << "dispatcher, potentially from a duplicate call to "
-                          << "Add.";
+                             "dispatcher, potentially from a duplicate call to "
+                             "Add.";
       return;
     }
 
@@ -1280,7 +1311,7 @@ void PhysicalSocketServer::Remove(Dispatcher* pdispatcher) {
   } else if (!dispatchers_.erase(pdispatcher)) {
     RTC_LOG(LS_WARNING)
         << "PhysicalSocketServer asked to remove a unknown "
-        << "dispatcher, potentially from a duplicate call to Add.";
+           "dispatcher, potentially from a duplicate call to Add.";
     return;
   }
 #if defined(WEBRTC_USE_EPOLL)

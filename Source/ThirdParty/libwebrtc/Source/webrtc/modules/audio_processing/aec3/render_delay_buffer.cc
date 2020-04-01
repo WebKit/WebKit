@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <numeric>
 #include <vector>
@@ -22,6 +23,7 @@
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec3_fft.h"
+#include "modules/audio_processing/aec3/alignment_mixer.h"
 #include "modules/audio_processing/aec3/block_buffer.h"
 #include "modules/audio_processing/aec3/decimator.h"
 #include "modules/audio_processing/aec3/downsampled_render_buffer.h"
@@ -62,7 +64,7 @@ class RenderDelayBufferImpl final : public RenderDelayBuffer {
   }
 
   int BufferLatency() const;
-  void SetAudioBufferDelay(size_t delay_ms) override;
+  void SetAudioBufferDelay(int delay_ms) override;
   bool HasReceivedBufferDelay() override;
 
  private:
@@ -70,6 +72,8 @@ class RenderDelayBufferImpl final : public RenderDelayBuffer {
   std::unique_ptr<ApmDataDumper> data_dumper_;
   const Aec3Optimization optimization_;
   const EchoCanceller3Config config_;
+  const float render_linear_amplitude_gain_;
+  const rtc::LoggingSeverity delay_log_level_;
   size_t down_sampling_factor_;
   const int sub_block_size_;
   BlockBuffer blocks_;
@@ -78,6 +82,7 @@ class RenderDelayBufferImpl final : public RenderDelayBuffer {
   absl::optional<size_t> delay_;
   RenderBuffer echo_remover_buffer_;
   DownsampledRenderBuffer low_rate_;
+  AlignmentMixer render_mixer_;
   Decimator render_decimator_;
   const Aec3Fft fft_;
   std::vector<float> render_ds_;
@@ -89,7 +94,7 @@ class RenderDelayBufferImpl final : public RenderDelayBuffer {
   int64_t render_call_counter_ = 0;
   bool render_activity_ = false;
   size_t render_activity_counter_ = 0;
-  absl::optional<size_t> external_audio_buffer_delay_;
+  absl::optional<int> external_audio_buffer_delay_;
   bool external_audio_buffer_delay_verified_after_reset_ = false;
   size_t min_latency_blocks_ = 0;
   size_t excess_render_detection_counter_ = 0;
@@ -117,6 +122,11 @@ RenderDelayBufferImpl::RenderDelayBufferImpl(const EchoCanceller3Config& config,
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
       optimization_(DetectOptimization()),
       config_(config),
+      render_linear_amplitude_gain_(
+          std::pow(10.0f, config_.render_levels.render_power_gain_db / 20.f)),
+      delay_log_level_(config_.delay.log_warning_on_delay_changes
+                           ? rtc::LS_WARNING
+                           : rtc::LS_VERBOSE),
       down_sampling_factor_(config.delay.down_sampling_factor),
       sub_block_size_(static_cast<int>(down_sampling_factor_ > 0
                                            ? kBlockSize / down_sampling_factor_
@@ -127,12 +137,13 @@ RenderDelayBufferImpl::RenderDelayBufferImpl(const EchoCanceller3Config& config,
               NumBandsForRate(sample_rate_hz),
               num_render_channels,
               kBlockSize),
-      spectra_(blocks_.buffer.size(), num_render_channels, kFftLengthBy2Plus1),
+      spectra_(blocks_.buffer.size(), num_render_channels),
       ffts_(blocks_.buffer.size(), num_render_channels),
       delay_(config_.delay.default_delay),
       echo_remover_buffer_(&blocks_, &spectra_, &ffts_),
       low_rate_(GetDownSampledBufferSize(down_sampling_factor_,
                                          config.delay.num_filters)),
+      render_mixer_(num_render_channels, config.delay.render_alignment_mixing),
       render_decimator_(down_sampling_factor_),
       fft_(),
       render_ds_(sub_block_size_, 0.f),
@@ -161,7 +172,7 @@ void RenderDelayBufferImpl::Reset() {
 
   // Check for any external audio buffer delay and whether it is feasible.
   if (external_audio_buffer_delay_) {
-    const size_t headroom = 2;
+    const int headroom = 2;
     size_t audio_buffer_delay_to_set;
     // Minimum delay is 1 (like the low-rate render buffer).
     if (*external_audio_buffer_delay_ <= headroom) {
@@ -199,7 +210,7 @@ RenderDelayBuffer::BufferingEvent RenderDelayBufferImpl::Insert(
     } else {
       if (++num_api_calls_in_a_row_ > max_observed_jitter_) {
         max_observed_jitter_ = num_api_calls_in_a_row_;
-        RTC_LOG(LS_INFO)
+        RTC_LOG_V(delay_log_level_)
             << "New max number api jitter observed at render block "
             << render_call_counter_ << ":  " << num_api_calls_in_a_row_
             << " blocks";
@@ -245,7 +256,7 @@ RenderDelayBufferImpl::PrepareCaptureProcessing() {
     } else {
       if (++num_api_calls_in_a_row_ > max_observed_jitter_) {
         max_observed_jitter_ = num_api_calls_in_a_row_;
-        RTC_LOG(LS_INFO)
+        RTC_LOG_V(delay_log_level_)
             << "New max number api jitter observed at capture block "
             << capture_call_counter_ << ":  " << num_api_calls_in_a_row_
             << " blocks";
@@ -256,15 +267,15 @@ RenderDelayBufferImpl::PrepareCaptureProcessing() {
   if (DetectExcessRenderBlocks()) {
     // Too many render blocks compared to capture blocks. Risk of delay ending
     // up before the filter used by the delay estimator.
-    RTC_LOG(LS_INFO) << "Excess render blocks detected at block "
-                     << capture_call_counter_;
+    RTC_LOG_V(delay_log_level_)
+        << "Excess render blocks detected at block " << capture_call_counter_;
     Reset();
     event = BufferingEvent::kRenderOverrun;
   } else if (RenderUnderrun()) {
     // Don't increment the read indices of the low rate buffer if there is a
     // render underrun.
-    RTC_LOG(LS_INFO) << "Render buffer underrun detected at block "
-                     << capture_call_counter_;
+    RTC_LOG_V(delay_log_level_)
+        << "Render buffer underrun detected at block " << capture_call_counter_;
     IncrementReadIndices();
     // Incrementing the buffer index without increasing the low rate buffer
     // index means that the delay is reduced by one.
@@ -293,9 +304,10 @@ bool RenderDelayBufferImpl::AlignFromDelay(size_t delay) {
   if (!external_audio_buffer_delay_verified_after_reset_ &&
       external_audio_buffer_delay_ && delay_) {
     int difference = static_cast<int>(delay) - static_cast<int>(*delay_);
-    RTC_LOG(LS_INFO) << "Mismatch between first estimated delay after reset "
-                        "and externally reported audio buffer delay: "
-                     << difference << " blocks";
+    RTC_LOG_V(delay_log_level_)
+        << "Mismatch between first estimated delay after reset "
+           "and externally reported audio buffer delay: "
+        << difference << " blocks";
     external_audio_buffer_delay_verified_after_reset_ = true;
   }
   if (delay_ && *delay_ == delay) {
@@ -313,15 +325,15 @@ bool RenderDelayBufferImpl::AlignFromDelay(size_t delay) {
   return true;
 }
 
-void RenderDelayBufferImpl::SetAudioBufferDelay(size_t delay_ms) {
+void RenderDelayBufferImpl::SetAudioBufferDelay(int delay_ms) {
   if (!external_audio_buffer_delay_) {
-    RTC_LOG(LS_INFO)
+    RTC_LOG_V(delay_log_level_)
         << "Receiving a first externally reported audio buffer delay of "
         << delay_ms << " ms.";
   }
 
   // Convert delay from milliseconds to blocks (rounded down).
-  external_audio_buffer_delay_ = delay_ms >> 2;
+  external_audio_buffer_delay_ = delay_ms / 4;
 }
 
 bool RenderDelayBufferImpl::HasReceivedBufferDelay() {
@@ -347,7 +359,8 @@ int RenderDelayBufferImpl::ComputeDelay() const {
 
 // Set the read indices according to the delay.
 void RenderDelayBufferImpl::ApplyTotalDelay(int delay) {
-  RTC_LOG(LS_INFO) << "Applying total delay of " << delay << " blocks.";
+  RTC_LOG_V(delay_log_level_)
+      << "Applying total delay of " << delay << " blocks.";
   blocks_.read = blocks_.OffsetIndex(blocks_.write, -delay);
   spectra_.read = spectra_.OffsetIndex(spectra_.write, delay);
   ffts_.read = ffts_.OffsetIndex(ffts_.write, delay);
@@ -371,20 +384,38 @@ void RenderDelayBufferImpl::InsertBlock(
   auto& ds = render_ds_;
   auto& f = ffts_;
   auto& s = spectra_;
+  const size_t num_bands = b.buffer[b.write].size();
+  const size_t num_render_channels = b.buffer[b.write][0].size();
   RTC_DCHECK_EQ(block.size(), b.buffer[b.write].size());
-  for (size_t k = 0; k < block.size(); ++k) {
-    RTC_DCHECK_EQ(block[k].size(), b.buffer[b.write][k].size());
-    std::copy(block[k].begin(), block[k].end(), b.buffer[b.write][k].begin());
+  for (size_t band = 0; band < num_bands; ++band) {
+    RTC_DCHECK_EQ(block[band].size(), num_render_channels);
+    RTC_DCHECK_EQ(b.buffer[b.write][band].size(), num_render_channels);
+    for (size_t ch = 0; ch < num_render_channels; ++ch) {
+      RTC_DCHECK_EQ(block[band][ch].size(), b.buffer[b.write][band][ch].size());
+      std::copy(block[band][ch].begin(), block[band][ch].end(),
+                b.buffer[b.write][band][ch].begin());
+    }
   }
 
-  data_dumper_->DumpWav("aec3_render_decimator_input", block[0][0].size(),
-                        block[0][0].data(), 16000, 1);
-  render_decimator_.Decimate(block[0][0], ds);
+  if (render_linear_amplitude_gain_ != 1.f) {
+    for (size_t band = 0; band < num_bands; ++band) {
+      for (size_t ch = 0; ch < num_render_channels; ++ch) {
+        for (size_t k = 0; k < 64; ++k) {
+          b.buffer[b.write][band][ch][k] *= render_linear_amplitude_gain_;
+        }
+      }
+    }
+  }
+
+  std::array<float, kBlockSize> downmixed_render;
+  render_mixer_.ProduceOutput(b.buffer[b.write][0], downmixed_render);
+  render_decimator_.Decimate(downmixed_render, ds);
   data_dumper_->DumpWav("aec3_render_decimator_output", ds.size(), ds.data(),
                         16000 / down_sampling_factor_, 1);
   std::copy(ds.rbegin(), ds.rend(), lr.buffer.begin() + lr.write);
-  for (size_t channel = 0; channel < block[0].size(); ++channel) {
-    fft_.PaddedFft(block[0][channel], b.buffer[previous_write][0][channel],
+  for (size_t channel = 0; channel < b.buffer[b.write][0].size(); ++channel) {
+    fft_.PaddedFft(b.buffer[b.write][0][channel],
+                   b.buffer[previous_write][0][channel],
                    &f.buffer[f.write][channel]);
     f.buffer[f.write][channel].Spectrum(optimization_,
                                         s.buffer[s.write][channel]);

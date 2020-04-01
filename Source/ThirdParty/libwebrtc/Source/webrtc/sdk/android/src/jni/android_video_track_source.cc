@@ -52,7 +52,7 @@ AndroidVideoTrackSource::AndroidVideoTrackSource(rtc::Thread* signaling_thread,
 AndroidVideoTrackSource::~AndroidVideoTrackSource() = default;
 
 bool AndroidVideoTrackSource::is_screencast() const {
-  return is_screencast_;
+  return is_screencast_.load();
 }
 
 absl::optional<bool> AndroidVideoTrackSource::needs_denoising() const {
@@ -84,6 +84,11 @@ AndroidVideoTrackSource::SourceState AndroidVideoTrackSource::state() const {
 
 bool AndroidVideoTrackSource::remote() const {
   return false;
+}
+
+void AndroidVideoTrackSource::SetIsScreencast(JNIEnv* env,
+                                              jboolean j_is_screencast) {
+  is_screencast_.store(j_is_screencast);
 }
 
 ScopedJavaLocalRef<jobject> AndroidVideoTrackSource::AdaptFrame(

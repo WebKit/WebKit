@@ -194,6 +194,9 @@ bool RtpDataMediaChannel::RemoveRecvStream(uint32_t ssrc) {
   return true;
 }
 
+// Not implemented.
+void RtpDataMediaChannel::ResetUnsignaledRecvStream() {}
+
 void RtpDataMediaChannel::OnPacketReceived(rtc::CopyOnWriteBuffer packet,
                                            int64_t /* packet_time_us */) {
   RtpHeader header;
@@ -316,8 +319,8 @@ bool RtpDataMediaChannel::SendData(const SendDataParams& params,
   packet.AppendData(payload);
 
   RTC_LOG(LS_VERBOSE) << "Sent RTP data packet: "
-                      << " stream=" << found_stream->id
-                      << " ssrc=" << header.ssrc
+                         " stream="
+                      << found_stream->id << " ssrc=" << header.ssrc
                       << ", seqnum=" << header.seq_num
                       << ", timestamp=" << header.timestamp
                       << ", len=" << payload.size();

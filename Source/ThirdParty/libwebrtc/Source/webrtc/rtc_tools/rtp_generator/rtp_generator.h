@@ -28,7 +28,6 @@
 #include "call/video_send_stream.h"
 #include "media/engine/webrtc_video_engine.h"
 #include "rtc_base/constructor_magic.h"
-#include "test/frame_generator.h"
 #include "test/frame_generator_capturer.h"
 #include "test/rtp_file_reader.h"
 #include "test/rtp_file_writer.h"

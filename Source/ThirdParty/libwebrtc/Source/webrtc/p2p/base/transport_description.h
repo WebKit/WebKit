@@ -17,8 +17,10 @@
 
 #include "absl/algorithm/container.h"
 #include "absl/types/optional.h"
+#include "api/rtc_error.h"
 #include "p2p/base/p2p_constants.h"
 #include "rtc_base/ssl_fingerprint.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
 
@@ -56,6 +58,12 @@ enum ConnectionRole {
 };
 
 struct IceParameters {
+  // Constructs an IceParameters from a user-provided ufrag/pwd combination.
+  // Returns a SyntaxError if the ufrag or pwd are malformed.
+  static RTC_EXPORT webrtc::RTCErrorOr<IceParameters> Parse(
+      absl::string_view raw_ufrag,
+      absl::string_view raw_pwd);
+
   // TODO(honghaiz): Include ICE mode in this structure to match the ORTC
   // struct:
   // http://ortc.org/wp-content/uploads/2016/03/ortc.html#idl-def-RTCIceParameters
@@ -75,6 +83,10 @@ struct IceParameters {
   bool operator!=(const IceParameters& other) const {
     return !(*this == other);
   }
+
+  // Validate IceParameters, returns a SyntaxError if the ufrag or pwd are
+  // malformed.
+  webrtc::RTCError Validate() const;
 };
 
 extern const char CONNECTIONROLE_ACTIVE_STR[];
@@ -134,7 +146,7 @@ struct TransportDescription {
   }
   bool secure() const { return identity_fingerprint != nullptr; }
 
-  IceParameters GetIceParameters() {
+  IceParameters GetIceParameters() const {
     return IceParameters(ice_ufrag, ice_pwd,
                          HasOption(ICE_OPTION_RENOMINATION));
   }

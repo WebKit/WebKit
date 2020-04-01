@@ -22,14 +22,14 @@ both.
 
 ### C++ version
 
-WebRTC is written in C++11, but with some restrictions:
+WebRTC is written in C++14, but with some restrictions:
 
-* We only allow the subset of C++11 (language and library) in the
-  “allowed” section of [this Chromium page][chromium-cpp11].
-* We only allow the subset of C++11 that is also valid C++14;
-  otherwise, users would not be able to compile WebRTC in C++14 mode.
+* We only allow the subset of C++14 (language and library) that is not
+  banned by Chromium; see [this page][chromium-cpp].
+* We only allow the subset of C++14 that is also valid C++17;
+  otherwise, users would not be able to compile WebRTC in C++17 mode.
 
-[chromium-cpp11]: https://chromium-cpp.appspot.com/
+[chromium-cpp]: https://chromium-cpp.appspot.com/
 
 ### Abseil
 
@@ -60,6 +60,16 @@ build targets that don’t pull in definitions for everything they
 declare.
 
 [Examples and exceptions](style-guide/h-cc-pairs.md).
+
+### TODO comments
+
+Follow the [Google style][goog-style-todo]. When referencing a WebRTC bug,
+prefer the url form, e.g.
+```
+// TODO(bugs.webrtc.org/12345): Delete the hack when blocking bugs are resolved.
+```
+
+[goog-style-todo]: https://google.github.io/styleguide/cppguide.html#TODO_Comments
 
 ### ArrayView
 

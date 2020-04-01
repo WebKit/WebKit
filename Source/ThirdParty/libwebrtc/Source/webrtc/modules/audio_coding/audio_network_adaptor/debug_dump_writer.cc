@@ -105,11 +105,6 @@ void DebugDumpWriterImpl::DumpNetworkMetrics(
   if (metrics.rtt_ms)
     dump_metrics->set_rtt_ms(*metrics.rtt_ms);
 
-  if (metrics.uplink_recoverable_packet_loss_fraction) {
-    dump_metrics->set_uplink_recoverable_packet_loss_fraction(
-        *metrics.uplink_recoverable_packet_loss_fraction);
-  }
-
   DumpEventToFile(event, &dump_file_);
 #endif  // WEBRTC_ENABLE_PROTOBUF
 }

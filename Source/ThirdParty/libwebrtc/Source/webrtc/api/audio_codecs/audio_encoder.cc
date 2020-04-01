@@ -82,7 +82,9 @@ void AudioEncoder::OnReceivedUplinkPacketLossFraction(
     float uplink_packet_loss_fraction) {}
 
 void AudioEncoder::OnReceivedUplinkRecoverablePacketLossFraction(
-    float uplink_recoverable_packet_loss_fraction) {}
+    float uplink_recoverable_packet_loss_fraction) {
+  RTC_NOTREACHED();
+}
 
 void AudioEncoder::OnReceivedTargetAudioBitrate(int target_audio_bitrate_bps) {
   OnReceivedUplinkBandwidth(target_audio_bitrate_bps, absl::nullopt);
@@ -106,6 +108,11 @@ void AudioEncoder::SetReceiverFrameLengthRange(int min_frame_length_ms,
 
 ANAStats AudioEncoder::GetANAStats() const {
   return ANAStats();
+}
+
+absl::optional<std::pair<TimeDelta, TimeDelta>>
+AudioEncoder::GetFrameLengthRange() const {
+  return absl::nullopt;
 }
 
 }  // namespace webrtc

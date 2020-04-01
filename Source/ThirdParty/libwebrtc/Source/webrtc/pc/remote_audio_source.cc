@@ -12,10 +12,10 @@
 
 #include <stddef.h>
 
+#include <memory>
 #include <string>
 
 #include "absl/algorithm/container.h"
-#include "absl/memory/memory.h"
 #include "api/scoped_refptr.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/constructor_magic.h"
@@ -63,7 +63,7 @@ RemoteAudioSource::~RemoteAudioSource() {
 }
 
 void RemoteAudioSource::Start(cricket::VoiceMediaChannel* media_channel,
-                              uint32_t ssrc) {
+                              absl::optional<uint32_t> ssrc) {
   RTC_DCHECK_RUN_ON(main_thread_);
   RTC_DCHECK(media_channel);
 
@@ -71,18 +71,22 @@ void RemoteAudioSource::Start(cricket::VoiceMediaChannel* media_channel,
   // notified when a channel goes out of scope (signaled when "AudioDataProxy"
   // is destroyed).
   worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
-    media_channel->SetRawAudioSink(ssrc,
-                                   absl::make_unique<AudioDataProxy>(this));
+    ssrc ? media_channel->SetRawAudioSink(
+               *ssrc, std::make_unique<AudioDataProxy>(this))
+         : media_channel->SetDefaultRawAudioSink(
+               std::make_unique<AudioDataProxy>(this));
   });
 }
 
 void RemoteAudioSource::Stop(cricket::VoiceMediaChannel* media_channel,
-                             uint32_t ssrc) {
+                             absl::optional<uint32_t> ssrc) {
   RTC_DCHECK_RUN_ON(main_thread_);
   RTC_DCHECK(media_channel);
 
-  worker_thread_->Invoke<void>(
-      RTC_FROM_HERE, [&] { media_channel->SetRawAudioSink(ssrc, nullptr); });
+  worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+    ssrc ? media_channel->SetRawAudioSink(*ssrc, nullptr)
+         : media_channel->SetDefaultRawAudioSink(nullptr);
+  });
 }
 
 MediaSourceInterface::SourceState RemoteAudioSource::state() const {
@@ -140,8 +144,11 @@ void RemoteAudioSource::OnData(const AudioSinkInterface::Data& audio) {
   // Called on the externally-owned audio callback thread, via/from webrtc.
   rtc::CritScope lock(&sink_lock_);
   for (auto* sink : sinks_) {
+    // When peerconnection acts as an audio source, it should not provide
+    // absolute capture timestamp.
     sink->OnData(audio.data, 16, audio.sample_rate, audio.channels,
-                 audio.samples_per_channel);
+                 audio.samples_per_channel,
+                 /*absolute_capture_timestamp_ms=*/absl::nullopt);
   }
 }
 

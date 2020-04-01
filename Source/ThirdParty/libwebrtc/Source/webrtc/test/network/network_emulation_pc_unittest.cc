@@ -11,7 +11,6 @@
 #include <cstdint>
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "api/call/call_factory_interface.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
@@ -57,7 +56,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
   pcf_deps.task_queue_factory = CreateDefaultTaskQueueFactory();
   pcf_deps.call_factory = CreateCallFactory();
   pcf_deps.event_log_factory =
-      absl::make_unique<RtcEventLogFactory>(pcf_deps.task_queue_factory.get());
+      std::make_unique<RtcEventLogFactory>(pcf_deps.task_queue_factory.get());
   pcf_deps.network_thread = network_thread;
   pcf_deps.signaling_thread = signaling_thread;
   cricket::MediaEngineDependencies media_deps;
@@ -79,7 +78,7 @@ rtc::scoped_refptr<PeerConnectionInterface> CreatePeerConnection(
     rtc::NetworkManager* network_manager) {
   PeerConnectionDependencies pc_deps(observer);
   auto port_allocator =
-      absl::make_unique<cricket::BasicPortAllocator>(network_manager);
+      std::make_unique<cricket::BasicPortAllocator>(network_manager);
 
   // This test does not support TCP
   int flags = cricket::PORTALLOCATOR_DISABLE_TCP;
@@ -100,12 +99,12 @@ TEST(NetworkEmulationManagerPCTest, Run) {
   signaling_thread->Start();
 
   // Setup emulated network
-  NetworkEmulationManagerImpl emulation;
+  NetworkEmulationManagerImpl emulation(TimeMode::kRealTime);
 
   EmulatedNetworkNode* alice_node = emulation.CreateEmulatedNode(
-      absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
+      std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
   EmulatedNetworkNode* bob_node = emulation.CreateEmulatedNode(
-      absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
+      std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig()));
   EmulatedEndpoint* alice_endpoint =
       emulation.CreateEndpoint(EmulatedEndpointConfig());
   EmulatedEndpoint* bob_endpoint =
@@ -122,12 +121,12 @@ TEST(NetworkEmulationManagerPCTest, Run) {
   rtc::scoped_refptr<PeerConnectionFactoryInterface> alice_pcf;
   rtc::scoped_refptr<PeerConnectionInterface> alice_pc;
   std::unique_ptr<MockPeerConnectionObserver> alice_observer =
-      absl::make_unique<MockPeerConnectionObserver>();
+      std::make_unique<MockPeerConnectionObserver>();
 
   rtc::scoped_refptr<PeerConnectionFactoryInterface> bob_pcf;
   rtc::scoped_refptr<PeerConnectionInterface> bob_pc;
   std::unique_ptr<MockPeerConnectionObserver> bob_observer =
-      absl::make_unique<MockPeerConnectionObserver>();
+      std::make_unique<MockPeerConnectionObserver>();
 
   signaling_thread->Invoke<void>(RTC_FROM_HERE, [&]() {
     alice_pcf = CreatePeerConnectionFactory(signaling_thread.get(),
@@ -142,11 +141,11 @@ TEST(NetworkEmulationManagerPCTest, Run) {
   });
 
   std::unique_ptr<PeerConnectionWrapper> alice =
-      absl::make_unique<PeerConnectionWrapper>(alice_pcf, alice_pc,
-                                               std::move(alice_observer));
+      std::make_unique<PeerConnectionWrapper>(alice_pcf, alice_pc,
+                                              std::move(alice_observer));
   std::unique_ptr<PeerConnectionWrapper> bob =
-      absl::make_unique<PeerConnectionWrapper>(bob_pcf, bob_pc,
-                                               std::move(bob_observer));
+      std::make_unique<PeerConnectionWrapper>(bob_pcf, bob_pc,
+                                              std::move(bob_observer));
 
   signaling_thread->Invoke<void>(RTC_FROM_HERE, [&]() {
     rtc::scoped_refptr<webrtc::AudioSourceInterface> source =

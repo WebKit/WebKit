@@ -512,11 +512,9 @@ int32_t MediaCodecVideoEncoder::InitEncodeInternal(int width,
   frames_received_since_last_key_ = kMinKeyFrameInterval;
 
   // We enforce no extra stride/padding in the format creation step.
-  ScopedJavaLocalRef<jobject> j_video_codec_enum =
-      Java_VideoCodecType_fromNativeIndex(jni, codec_type);
   const bool encode_status = Java_MediaCodecVideoEncoder_initEncode(
-      jni, j_media_codec_video_encoder_, j_video_codec_enum, profile_, width,
-      height, kbps, fps, use_surface);
+      jni, j_media_codec_video_encoder_, codec_type, profile_, width, height,
+      kbps, fps, use_surface);
 
   if (!encode_status) {
     ALOGE << "Failed to configure encoder.";
@@ -649,7 +647,8 @@ int32_t MediaCodecVideoEncoder::Encode(
   if (input_frame_infos_.size() > MAX_ENCODER_Q_SIZE) {
     ALOGD << "Already " << input_frame_infos_.size()
           << " frames in the queue, dropping"
-          << ". TS: " << static_cast<int>(current_timestamp_us_ / 1000)
+             ". TS: "
+          << static_cast<int>(current_timestamp_us_ / 1000)
           << ". Fps: " << last_set_fps_
           << ". Consecutive drops: " << consecutive_full_queue_frame_drops_;
     current_timestamp_us_ += rtc::kNumMicrosecsPerSec / last_set_fps_;
@@ -989,7 +988,7 @@ bool MediaCodecVideoEncoder::DeliverPendingOutputs(JNIEnv* jni) {
     EncodedImageCallback::Result callback_result(
         EncodedImageCallback::Result::OK);
     if (callback_) {
-      auto image = absl::make_unique<EncodedImage>();
+      auto image = std::make_unique<EncodedImage>();
       // The corresponding (and deprecated) java classes are not prepared for
       // late calls to releaseOutputBuffer, so to keep things simple, make a
       // copy here, and call releaseOutputBuffer before returning.
@@ -1134,8 +1133,10 @@ void MediaCodecVideoEncoder::LogStatistics(bool force_log) {
         (current_frames_ * 1000 + statistic_time_ms / 2) / statistic_time_ms;
     ALOGD << "Encoded frames: " << frames_encoded_
           << ". Bitrate: " << current_bitrate
-          << ", target: " << last_set_bitrate_kbps_ << " kbps"
-          << ", fps: " << current_fps << ", encTime: "
+          << ", target: " << last_set_bitrate_kbps_
+          << " kbps"
+             ", fps: "
+          << current_fps << ", encTime: "
           << (current_encoding_time_ms_ / current_frames_divider)
           << ". QP: " << (current_acc_qp_ / current_frames_divider)
           << " for last " << statistic_time_ms << " ms.";

@@ -10,7 +10,8 @@
 
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 
-#include "absl/memory/memory.h"
+#include <memory>
+
 #include "api/video_codecs/sdp_video_format.h"
 #include "modules/video_coding/codecs/vp9/vp9_impl.h"
 #include "rtc_base/checks.h"
@@ -46,7 +47,7 @@ std::vector<SdpVideoFormat> SupportedVP9Codecs() {
 
 std::unique_ptr<VP9Encoder> VP9Encoder::Create() {
 #ifdef RTC_ENABLE_VP9
-  return absl::make_unique<VP9EncoderImpl>(cricket::VideoCodec());
+  return std::make_unique<VP9EncoderImpl>(cricket::VideoCodec());
 #else
   RTC_NOTREACHED();
   return nullptr;
@@ -56,7 +57,7 @@ std::unique_ptr<VP9Encoder> VP9Encoder::Create() {
 std::unique_ptr<VP9Encoder> VP9Encoder::Create(
     const cricket::VideoCodec& codec) {
 #ifdef RTC_ENABLE_VP9
-  return absl::make_unique<VP9EncoderImpl>(codec);
+  return std::make_unique<VP9EncoderImpl>(codec);
 #else
   RTC_NOTREACHED();
   return nullptr;
@@ -65,7 +66,7 @@ std::unique_ptr<VP9Encoder> VP9Encoder::Create(
 
 std::unique_ptr<VP9Decoder> VP9Decoder::Create() {
 #ifdef RTC_ENABLE_VP9
-  return absl::make_unique<VP9DecoderImpl>();
+  return std::make_unique<VP9DecoderImpl>();
 #else
   RTC_NOTREACHED();
   return nullptr;

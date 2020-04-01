@@ -43,6 +43,8 @@ class DesktopVector {
     return DesktopVector(x() - other.x(), y() - other.y());
   }
 
+  DesktopVector operator-() const { return DesktopVector(-x_, -y_); }
+
  private:
   int32_t x_;
   int32_t y_;

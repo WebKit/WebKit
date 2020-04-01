@@ -10,6 +10,7 @@
 
 #include "test/rtp_file_reader.h"
 
+#include <assert.h>
 #include <stdio.h>
 
 #include <map>

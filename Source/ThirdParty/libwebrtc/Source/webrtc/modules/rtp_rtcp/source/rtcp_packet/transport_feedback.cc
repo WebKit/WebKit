@@ -262,7 +262,7 @@ void TransportFeedback::LastChunk::DecodeRunLength(uint16_t chunk,
 }
 
 TransportFeedback::TransportFeedback()
-    : TransportFeedback(/*include_timestamps=*/true, /*include_lost*/ false) {}
+    : TransportFeedback(/*include_timestamps=*/true, /*include_lost=*/true) {}
 
 TransportFeedback::TransportFeedback(bool include_timestamps, bool include_lost)
     : include_lost_(include_lost),
@@ -335,9 +335,12 @@ bool TransportFeedback::AddReceivedPacket(uint16_t sequence_number,
     uint16_t last_seq_no = next_seq_no - 1;
     if (!IsNewerSequenceNumber(sequence_number, last_seq_no))
       return false;
-    for (; next_seq_no != sequence_number; ++next_seq_no)
+    for (; next_seq_no != sequence_number; ++next_seq_no) {
       if (!AddDeltaSize(0))
         return false;
+      if (include_lost_)
+        all_packets_.emplace_back(next_seq_no);
+    }
   }
 
   DeltaSize delta_size = (delta >= 0 && delta <= 0xff) ? 1 : 2;
@@ -345,6 +348,8 @@ bool TransportFeedback::AddReceivedPacket(uint16_t sequence_number,
     return false;
 
   received_packets_.emplace_back(sequence_number, delta);
+  if (include_lost_)
+    all_packets_.emplace_back(sequence_number, delta);
   last_timestamp_us_ += delta * kDeltaScaleFactor;
   if (include_timestamps_) {
     size_bytes_ += delta_size;
@@ -371,6 +376,10 @@ int64_t TransportFeedback::GetBaseTimeUs() const {
   return static_cast<int64_t>(base_time_ticks_) * kBaseScaleFactor;
 }
 
+TimeDelta TransportFeedback::GetBaseTime() const {
+  return TimeDelta::Micros(GetBaseTimeUs());
+}
+
 int64_t TransportFeedback::GetBaseDeltaUs(int64_t prev_timestamp_us) const {
   int64_t delta = GetBaseTimeUs() - prev_timestamp_us;
 
@@ -381,6 +390,10 @@ int64_t TransportFeedback::GetBaseDeltaUs(int64_t prev_timestamp_us) const {
     delta += kTimeWrapPeriodUs;  // Wrap forwards.
   }
   return delta;
+}
+
+TimeDelta TransportFeedback::GetBaseDelta(TimeDelta prev_timestamp) const {
+  return TimeDelta::Micros(GetBaseDeltaUs(prev_timestamp.us()));
 }
 
 // De-serialize packet.

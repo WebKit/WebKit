@@ -19,6 +19,7 @@
 #include "modules/video_coding/internal_defines.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/rate_control_settings.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
@@ -244,12 +245,13 @@ bool VCMNackMethod::UpdateParameters(
   return true;
 }
 
-VCMFecMethod::VCMFecMethod() : VCMProtectionMethod() {
+VCMFecMethod::VCMFecMethod()
+    : VCMProtectionMethod(),
+      rate_control_settings_(RateControlSettings::ParseFromFieldTrials()) {
   _type = kFec;
 }
-VCMFecMethod::~VCMFecMethod() {
-  //
-}
+
+VCMFecMethod::~VCMFecMethod() = default;
 
 uint8_t VCMFecMethod::BoostCodeRateKey(uint8_t packetFrameDelta,
                                        uint8_t packetFrameKey) const {
@@ -443,7 +445,8 @@ int VCMFecMethod::BitsPerFrame(const VCMProtectionParameters* parameters) {
   // layer.
   const float bitRateRatio =
       webrtc::SimulcastRateAllocator::GetTemporalRateAllocation(
-          parameters->numLayers, 0);
+          parameters->numLayers, 0,
+          rate_control_settings_.Vp8BaseHeavyTl3RateAllocation());
   float frameRateRatio = powf(1 / 2.0, parameters->numLayers - 1);
   float bitRate = parameters->bitRate * bitRateRatio;
   float frameRate = parameters->frameRate * frameRateRatio;

@@ -315,10 +315,11 @@ TEST_F(CallStatsTest, ProducesHistogramMetrics) {
   process_thread_->Stop();
   call_stats_.UpdateHistogramsForTest();
 
-  EXPECT_EQ(1, metrics::NumSamples(
-                   "WebRTC.Video.AverageRoundTripTimeInMilliseconds"));
-  EXPECT_EQ(1, metrics::NumEvents(
-                   "WebRTC.Video.AverageRoundTripTimeInMilliseconds", kRtt));
+  EXPECT_METRIC_EQ(1, metrics::NumSamples(
+                          "WebRTC.Video.AverageRoundTripTimeInMilliseconds"));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents("WebRTC.Video.AverageRoundTripTimeInMilliseconds",
+                            kRtt));
 }
 
 }  // namespace webrtc

@@ -16,6 +16,7 @@
 #include <string>
 
 #include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
@@ -23,7 +24,7 @@ class RTCCertificate;
 class SSLCertificate;
 class SSLIdentity;
 
-struct SSLFingerprint {
+struct RTC_EXPORT SSLFingerprint {
   // TODO(steveanton): Remove once downstream projects have moved off of this.
   static SSLFingerprint* Create(const std::string& algorithm,
                                 const rtc::SSLIdentity* identity);

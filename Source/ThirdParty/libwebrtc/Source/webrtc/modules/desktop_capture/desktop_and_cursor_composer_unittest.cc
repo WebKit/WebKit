@@ -85,6 +85,20 @@ DesktopFrame* CreateTestFrame() {
   return frame;
 }
 
+MouseCursor* CreateTestCursor(DesktopVector hotspot) {
+  std::unique_ptr<DesktopFrame> image(
+      new BasicDesktopFrame(DesktopSize(kCursorWidth, kCursorHeight)));
+  uint32_t* data = reinterpret_cast<uint32_t*>(image->data());
+  // Set four pixels near the hotspot and leave all other blank.
+  for (int y = 0; y < kTestCursorSize; ++y) {
+    for (int x = 0; x < kTestCursorSize; ++x) {
+      data[(hotspot.y() + y) * kCursorWidth + (hotspot.x() + x)] =
+          kTestCursorData[y][x];
+    }
+  }
+  return new MouseCursor(image.release(), hotspot);
+}
+
 class FakeScreenCapturer : public DesktopCapturer {
  public:
   FakeScreenCapturer() {}
@@ -131,21 +145,8 @@ class FakeMouseMonitor : public MouseCursorMonitor {
 
   void Capture() override {
     if (changed_) {
-      std::unique_ptr<DesktopFrame> image(
-          new BasicDesktopFrame(DesktopSize(kCursorWidth, kCursorHeight)));
-      uint32_t* data = reinterpret_cast<uint32_t*>(image->data());
-
-      // Set four pixels near the hotspot and leave all other blank.
-      for (int y = 0; y < kTestCursorSize; ++y) {
-        for (int x = 0; x < kTestCursorSize; ++x) {
-          data[(hotspot_.y() + y) * kCursorWidth + (hotspot_.x() + x)] =
-              kTestCursorData[y][x];
-        }
-      }
-
-      callback_->OnMouseCursor(new MouseCursor(image.release(), hotspot_));
+      callback_->OnMouseCursor(CreateTestCursor(hotspot_));
     }
-
     callback_->OnMouseCursorPosition(position_);
   }
 
@@ -184,9 +185,9 @@ void VerifyFrame(const DesktopFrame& frame,
 class DesktopAndCursorComposerTest : public ::testing::Test,
                                      public DesktopCapturer::Callback {
  public:
-  DesktopAndCursorComposerTest()
+  DesktopAndCursorComposerTest(bool include_cursor = true)
       : fake_screen_(new FakeScreenCapturer()),
-        fake_cursor_(new FakeMouseMonitor()),
+        fake_cursor_(include_cursor ? new FakeMouseMonitor() : nullptr),
         blender_(fake_screen_, fake_cursor_) {
     blender_.Start(this);
   }
@@ -204,6 +205,13 @@ class DesktopAndCursorComposerTest : public ::testing::Test,
 
   DesktopAndCursorComposer blender_;
   std::unique_ptr<DesktopFrame> frame_;
+};
+
+class DesktopAndCursorComposerNoCursorMonitorTest
+    : public DesktopAndCursorComposerTest {
+ public:
+  DesktopAndCursorComposerNoCursorMonitorTest()
+      : DesktopAndCursorComposerTest(false) {}
 };
 
 TEST_F(DesktopAndCursorComposerTest, CursorShouldBeIgnoredIfNoFrameCaptured) {
@@ -322,6 +330,84 @@ TEST_F(DesktopAndCursorComposerTest, CursorIncluded) {
     frame_.reset();
     VerifyFrame(*frame, MouseCursorMonitor::OUTSIDE, DesktopVector());
   }
+}
+
+TEST_F(DesktopAndCursorComposerNoCursorMonitorTest,
+       UpdatedRegionIncludesOldAndNewCursorRectsIfMoved) {
+  std::unique_ptr<SharedDesktopFrame> frame(
+      SharedDesktopFrame::Wrap(CreateTestFrame()));
+  DesktopRect first_cursor_rect;
+  {
+    // Block to scope test_cursor, which is invalidated by OnMouseCursor.
+    MouseCursor* test_cursor = CreateTestCursor(DesktopVector(0, 0));
+    first_cursor_rect = DesktopRect::MakeSize(test_cursor->image()->size());
+    blender_.OnMouseCursor(test_cursor);
+  }
+  blender_.OnMouseCursorPosition(DesktopVector(0, 0));
+  fake_screen_->SetNextFrame(frame->Share());
+  blender_.CaptureFrame();
+
+  DesktopVector cursor_move_offset(1, 1);
+  DesktopRect second_cursor_rect = first_cursor_rect;
+  second_cursor_rect.Translate(cursor_move_offset);
+  blender_.OnMouseCursorPosition(cursor_move_offset);
+  fake_screen_->SetNextFrame(frame->Share());
+  blender_.CaptureFrame();
+
+  EXPECT_TRUE(frame->updated_region().is_empty());
+  DesktopRegion expected_region;
+  expected_region.AddRect(first_cursor_rect);
+  expected_region.AddRect(second_cursor_rect);
+  EXPECT_TRUE(frame_->updated_region().Equals(expected_region));
+}
+
+TEST_F(DesktopAndCursorComposerNoCursorMonitorTest,
+       UpdatedRegionIncludesOldAndNewCursorRectsIfShapeChanged) {
+  std::unique_ptr<SharedDesktopFrame> frame(
+      SharedDesktopFrame::Wrap(CreateTestFrame()));
+  DesktopRect first_cursor_rect;
+  {
+    // Block to scope test_cursor, which is invalidated by OnMouseCursor.
+    MouseCursor* test_cursor = CreateTestCursor(DesktopVector(0, 0));
+    first_cursor_rect = DesktopRect::MakeSize(test_cursor->image()->size());
+    blender_.OnMouseCursor(test_cursor);
+  }
+  blender_.OnMouseCursorPosition(DesktopVector(0, 0));
+  fake_screen_->SetNextFrame(frame->Share());
+  blender_.CaptureFrame();
+
+  // Create a second cursor, the same shape as the first. Since the code doesn't
+  // compare the cursor pixels, this is sufficient, and avoids needing two test
+  // cursor bitmaps.
+  DesktopRect second_cursor_rect;
+  {
+    MouseCursor* test_cursor = CreateTestCursor(DesktopVector(0, 0));
+    second_cursor_rect = DesktopRect::MakeSize(test_cursor->image()->size());
+    blender_.OnMouseCursor(test_cursor);
+  }
+  fake_screen_->SetNextFrame(frame->Share());
+  blender_.CaptureFrame();
+
+  EXPECT_TRUE(frame->updated_region().is_empty());
+  DesktopRegion expected_region;
+  expected_region.AddRect(first_cursor_rect);
+  expected_region.AddRect(second_cursor_rect);
+  EXPECT_TRUE(frame_->updated_region().Equals(expected_region));
+}
+
+TEST_F(DesktopAndCursorComposerNoCursorMonitorTest,
+       UpdatedRegionUnchangedIfCursorUnchanged) {
+  std::unique_ptr<SharedDesktopFrame> frame(
+      SharedDesktopFrame::Wrap(CreateTestFrame()));
+  blender_.OnMouseCursor(CreateTestCursor(DesktopVector(0, 0)));
+  blender_.OnMouseCursorPosition(DesktopVector(0, 0));
+  fake_screen_->SetNextFrame(frame->Share());
+  blender_.CaptureFrame();
+  fake_screen_->SetNextFrame(frame->Share());
+  blender_.CaptureFrame();
+
+  EXPECT_TRUE(frame->updated_region().is_empty());
+  EXPECT_TRUE(frame_->updated_region().is_empty());
 }
 
 }  // namespace webrtc

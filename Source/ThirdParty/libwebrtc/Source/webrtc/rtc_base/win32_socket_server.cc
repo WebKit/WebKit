@@ -698,7 +698,7 @@ AsyncSocket* Win32SocketServer::CreateAsyncSocket(int family, int type) {
   return nullptr;
 }
 
-void Win32SocketServer::SetMessageQueue(MessageQueue* queue) {
+void Win32SocketServer::SetMessageQueue(Thread* queue) {
   message_queue_ = queue;
 }
 

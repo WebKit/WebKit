@@ -153,11 +153,11 @@ TEST_F(SrtpSessionTest, TestTamperReject) {
   rtp_packet_[0] = 0x12;
   rtcp_packet_[1] = 0x34;
   EXPECT_FALSE(s2_.UnprotectRtp(rtp_packet_, rtp_len_, &out_len));
-  EXPECT_THAT(
+  EXPECT_METRIC_THAT(
       webrtc::metrics::Samples("WebRTC.PeerConnection.SrtpUnprotectError"),
       ElementsAre(Pair(srtp_err_status_bad_param, 1)));
   EXPECT_FALSE(s2_.UnprotectRtcp(rtcp_packet_, rtcp_len_, &out_len));
-  EXPECT_THAT(
+  EXPECT_METRIC_THAT(
       webrtc::metrics::Samples("WebRTC.PeerConnection.SrtcpUnprotectError"),
       ElementsAre(Pair(srtp_err_status_auth_fail, 1)));
 }
@@ -170,11 +170,11 @@ TEST_F(SrtpSessionTest, TestUnencryptReject) {
   EXPECT_TRUE(s2_.SetRecv(SRTP_AES128_CM_SHA1_80, kTestKey1, kTestKeyLen,
                           kEncryptedHeaderExtensionIds));
   EXPECT_FALSE(s2_.UnprotectRtp(rtp_packet_, rtp_len_, &out_len));
-  EXPECT_THAT(
+  EXPECT_METRIC_THAT(
       webrtc::metrics::Samples("WebRTC.PeerConnection.SrtpUnprotectError"),
       ElementsAre(Pair(srtp_err_status_auth_fail, 1)));
   EXPECT_FALSE(s2_.UnprotectRtcp(rtcp_packet_, rtcp_len_, &out_len));
-  EXPECT_THAT(
+  EXPECT_METRIC_THAT(
       webrtc::metrics::Samples("WebRTC.PeerConnection.SrtcpUnprotectError"),
       ElementsAre(Pair(srtp_err_status_cant_check, 1)));
 }

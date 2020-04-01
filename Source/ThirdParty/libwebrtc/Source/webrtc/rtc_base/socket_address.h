@@ -16,6 +16,7 @@
 #include <ostream>  // no-presubmit-check TODO(webrtc:8982)
 #endif              // UNIT_TEST
 #include "rtc_base/ip_address.h"
+#include "rtc_base/system/rtc_export.h"
 
 #undef SetPort
 
@@ -25,7 +26,7 @@ struct sockaddr_storage;
 namespace rtc {
 
 // Records an IP address and port.
-class SocketAddress {
+class RTC_EXPORT SocketAddress {
  public:
   // Creates a nil address.
   SocketAddress();
@@ -193,8 +194,8 @@ class SocketAddress {
   bool literal_;  // Indicates that 'hostname_' contains a literal IP string.
 };
 
-bool SocketAddressFromSockAddrStorage(const sockaddr_storage& saddr,
-                                      SocketAddress* out);
+RTC_EXPORT bool SocketAddressFromSockAddrStorage(const sockaddr_storage& saddr,
+                                                 SocketAddress* out);
 SocketAddress EmptySocketAddressWithFamily(int family);
 
 }  // namespace rtc

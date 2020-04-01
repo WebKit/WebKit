@@ -27,6 +27,7 @@
 *~
 .*.sw?
 .cipd
+.clangd
 .classpath
 .cproject
 .gdb_history

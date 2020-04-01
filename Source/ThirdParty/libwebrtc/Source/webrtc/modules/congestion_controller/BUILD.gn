@@ -16,7 +16,7 @@ config("bwe_test_logging") {
   }
 }
 
-rtc_static_library("congestion_controller") {
+rtc_library("congestion_controller") {
   visibility = [ "*" ]
   configs += [ ":bwe_test_logging" ]
   sources = [
@@ -27,6 +27,7 @@ rtc_static_library("congestion_controller") {
   deps = [
     "..:module_api",
     "../../api/transport:field_trial_based_config",
+    "../../api/transport:network_control",
     "../pacing",
     "../remote_bitrate_estimator",
     "../rtp_rtcp:rtp_rtcp_format",
@@ -38,12 +39,10 @@ rtc_static_library("congestion_controller") {
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("congestion_controller_unittests") {
+  rtc_library("congestion_controller_unittests") {
     testonly = true
 
-    sources = [
-      "receive_side_congestion_controller_unittest.cc",
-    ]
+    sources = [ "receive_side_congestion_controller_unittest.cc" ]
     deps = [
       ":congestion_controller",
       "../../system_wrappers",

@@ -11,6 +11,8 @@
 #import <Foundation/Foundation.h>
 #import <OCMock/OCMock.h>
 
+#include <vector>
+
 #include "rtc_base/gunit.h"
 
 #import "components/audio/RTCAudioSession+Private.h"
@@ -19,6 +21,8 @@
 #import "components/audio/RTCAudioSessionConfiguration.h"
 
 @interface RTCAudioSession (UnitTesting)
+
+@property(nonatomic, readonly) std::vector<__weak id<RTCAudioSessionDelegate> > delegates;
 
 - (instancetype)initWithAudioSession:(id)audioSession;
 

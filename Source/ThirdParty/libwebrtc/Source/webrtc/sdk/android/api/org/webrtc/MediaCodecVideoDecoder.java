@@ -10,7 +10,6 @@
 
 package org.webrtc;
 
-import android.graphics.SurfaceTexture;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecInfo.CodecCapabilities;
@@ -134,19 +133,6 @@ public class MediaCodecVideoDecoder {
   private static final String FORMAT_KEY_CROP_RIGHT = "crop-right";
   private static final String FORMAT_KEY_CROP_TOP = "crop-top";
   private static final String FORMAT_KEY_CROP_BOTTOM = "crop-bottom";
-
-  // Tracks webrtc::VideoCodecType.
-  public enum VideoCodecType {
-    VIDEO_CODEC_UNKNOWN,
-    VIDEO_CODEC_VP8,
-    VIDEO_CODEC_VP9,
-    VIDEO_CODEC_H264;
-
-    @CalledByNative("VideoCodecType")
-    static VideoCodecType fromNativeIndex(int nativeIndex) {
-      return values()[nativeIndex];
-    }
-  }
 
   // Timeout for input buffer dequeue.
   private static final int DEQUEUE_INPUT_TIMEOUT = 500000;
@@ -423,7 +409,7 @@ public class MediaCodecVideoDecoder {
   }
 
   @CalledByNativeUnchecked
-  private boolean initDecode(VideoCodecType type, int width, int height) {
+  private boolean initDecode(@VideoCodecType int type, int width, int height) {
     if (mediaCodecThread != null) {
       throw new RuntimeException("initDecode: Forgot to release()?");
     }

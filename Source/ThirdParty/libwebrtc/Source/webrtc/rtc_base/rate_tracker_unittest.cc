@@ -166,4 +166,13 @@ TEST(RateTrackerTest, TestGetUnitSecondsAfterInitialValue) {
   EXPECT_DOUBLE_EQ(1234.0, tracker.ComputeRateForInterval(1000));
 }
 
+TEST(RateTrackerTest, TestLargeNumbers) {
+  RateTrackerForTest tracker;
+  const uint64_t large_number = 0x100000000;
+  tracker.AddSamples(large_number);
+  tracker.AdvanceTime(1000);
+  tracker.AddSamples(large_number);
+  EXPECT_DOUBLE_EQ(large_number * 2, tracker.ComputeRate());
+}
+
 }  // namespace rtc

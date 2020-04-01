@@ -301,7 +301,7 @@ SSLIdentity* OpenSSLIdentity::FromPEMChainStrings(
   }
 
   return new OpenSSLIdentity(std::move(key_pair),
-                             absl::make_unique<SSLCertChain>(std::move(certs)));
+                             std::make_unique<SSLCertChain>(std::move(certs)));
 }
 
 const OpenSSLCertificate& OpenSSLIdentity::certificate() const {

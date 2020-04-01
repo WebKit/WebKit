@@ -12,7 +12,8 @@
 
 namespace cricket {
 
-VideoOptions::VideoOptions() = default;
+VideoOptions::VideoOptions()
+    : content_hint(webrtc::VideoTrackInterface::ContentHint::kNone) {}
 VideoOptions::~VideoOptions() = default;
 
 MediaChannel::MediaChannel(const MediaConfig& config)
@@ -46,6 +47,15 @@ void MediaChannel::SetFrameDecryptor(
     rtc::scoped_refptr<webrtc::FrameDecryptorInterface> frame_decryptor) {
   // Placeholder should be pure virtual once internal supports it.
 }
+
+void MediaChannel::SetVideoCodecSwitchingEnabled(bool enabled) {}
+
+void MediaChannel::SetEncoderToPacketizerFrameTransformer(
+    uint32_t ssrc,
+    rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer) {}
+void MediaChannel::SetDepacketizerToDecoderFrameTransformer(
+    uint32_t ssrc,
+    rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer) {}
 
 MediaSenderInfo::MediaSenderInfo() = default;
 MediaSenderInfo::~MediaSenderInfo() = default;

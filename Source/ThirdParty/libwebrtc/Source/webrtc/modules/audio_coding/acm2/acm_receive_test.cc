@@ -19,7 +19,6 @@
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
 #include "modules/audio_coding/neteq/tools/packet_source.h"
-#include "modules/include/module_common_types.h"
 #include "test/gtest.h"
 
 namespace webrtc {

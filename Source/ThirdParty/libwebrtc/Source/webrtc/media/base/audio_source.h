@@ -13,6 +13,8 @@
 
 #include <cstddef>
 
+#include "absl/types/optional.h"
+
 namespace cricket {
 
 // Abstract interface for providing the audio data.
@@ -23,11 +25,13 @@ class AudioSource {
   class Sink {
    public:
     // Callback to receive data from the AudioSource.
-    virtual void OnData(const void* audio_data,
-                        int bits_per_sample,
-                        int sample_rate,
-                        size_t number_of_channels,
-                        size_t number_of_frames) = 0;
+    virtual void OnData(
+        const void* audio_data,
+        int bits_per_sample,
+        int sample_rate,
+        size_t number_of_channels,
+        size_t number_of_frames,
+        absl::optional<int64_t> absolute_capture_timestamp_ms) = 0;
 
     // Called when the AudioSource is going away.
     virtual void OnClose() = 0;

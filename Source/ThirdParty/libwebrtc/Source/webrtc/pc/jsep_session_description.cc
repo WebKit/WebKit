@@ -12,7 +12,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "p2p/base/port.h"
 #include "pc/media_session.h"
 #include "pc/webrtc_sdp.h"
@@ -152,9 +151,11 @@ std::unique_ptr<SessionDescriptionInterface> CreateSessionDescription(
     SdpType type,
     const std::string& sdp,
     SdpParseError* error_out) {
-  auto jsep_desc = absl::make_unique<JsepSessionDescription>(type);
-  if (!SdpDeserialize(sdp, jsep_desc.get(), error_out)) {
-    return nullptr;
+  auto jsep_desc = std::make_unique<JsepSessionDescription>(type);
+  if (type != SdpType::kRollback) {
+    if (!SdpDeserialize(sdp, jsep_desc.get(), error_out)) {
+      return nullptr;
+    }
   }
   return std::move(jsep_desc);
 }
@@ -164,7 +165,7 @@ std::unique_ptr<SessionDescriptionInterface> CreateSessionDescription(
     const std::string& session_id,
     const std::string& session_version,
     std::unique_ptr<cricket::SessionDescription> description) {
-  auto jsep_description = absl::make_unique<JsepSessionDescription>(type);
+  auto jsep_description = std::make_unique<JsepSessionDescription>(type);
   bool initialize_success = jsep_description->Initialize(
       std::move(description), session_id, session_version);
   RTC_DCHECK(initialize_success);

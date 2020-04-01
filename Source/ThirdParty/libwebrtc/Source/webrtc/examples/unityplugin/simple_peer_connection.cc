@@ -133,10 +133,10 @@ bool SimplePeerConnection::InitializePeerConnection(const char** turn_urls,
         webrtc::CreateBuiltinAudioDecoderFactory(),
         std::unique_ptr<webrtc::VideoEncoderFactory>(
             new webrtc::MultiplexEncoderFactory(
-                absl::make_unique<webrtc::InternalEncoderFactory>())),
+                std::make_unique<webrtc::InternalEncoderFactory>())),
         std::unique_ptr<webrtc::VideoDecoderFactory>(
             new webrtc::MultiplexDecoderFactory(
-                absl::make_unique<webrtc::InternalDecoderFactory>())),
+                std::make_unique<webrtc::InternalDecoderFactory>())),
         nullptr, nullptr);
   }
   if (!g_peer_connection_factory.get()) {
@@ -342,7 +342,8 @@ bool SimplePeerConnection::SetRemoteDescription(const char* type,
       webrtc::CreateSessionDescription(sdp_type, remote_desc, &error));
   if (!session_description) {
     RTC_LOG(WARNING) << "Can't parse received session description message. "
-                     << "SdpParseError was: " << error.description;
+                        "SdpParseError was: "
+                     << error.description;
     return false;
   }
   RTC_LOG(INFO) << " Received session description :" << remote_desc;
@@ -363,7 +364,8 @@ bool SimplePeerConnection::AddIceCandidate(const char* candidate,
       webrtc::CreateIceCandidate(sdp_mid, sdp_mlineindex, candidate, &error));
   if (!ice_candidate.get()) {
     RTC_LOG(WARNING) << "Can't parse received candidate message. "
-                     << "SdpParseError was: " << error.description;
+                        "SdpParseError was: "
+                     << error.description;
     return false;
   }
   if (!peer_connection_->AddIceCandidate(ice_candidate.get())) {

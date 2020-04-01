@@ -13,7 +13,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "api/video/video_source_interface.h"
 #include "media/base/fake_frame_source.h"
 #include "media/base/video_broadcaster.h"
@@ -44,12 +43,12 @@ class FakePeriodicVideoSource final
             config.height,
             config.frame_interval_ms * rtc::kNumMicrosecsPerMillisec,
             config.timestamp_offset_ms * rtc::kNumMicrosecsPerMillisec),
-        task_queue_(absl::make_unique<TaskQueueForTest>(
+        task_queue_(std::make_unique<TaskQueueForTest>(
             "FakePeriodicVideoTrackSource")) {
     thread_checker_.Detach();
     frame_source_.SetRotation(config.rotation);
 
-    TimeDelta frame_interval = TimeDelta::ms(config.frame_interval_ms);
+    TimeDelta frame_interval = TimeDelta::Millis(config.frame_interval_ms);
     RepeatingTaskHandle::Start(task_queue_->Get(), [this, frame_interval] {
       if (broadcaster_.wants().rotation_applied) {
         broadcaster_.OnFrame(frame_source_.GetFrameRotationApplied());

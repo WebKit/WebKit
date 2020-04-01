@@ -43,10 +43,114 @@ void GetRenderIndexesToAnalyze(
   *idx_stop = spectrum_buffer.OffsetIndex(spectrum_buffer.read, window_end + 1);
 }
 
+// Estimates the residual echo power based on the echo return loss enhancement
+// (ERLE) and the linear power estimate.
+void LinearEstimate(
+    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> S2_linear,
+    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> erle,
+    rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2) {
+  RTC_DCHECK_EQ(S2_linear.size(), erle.size());
+  RTC_DCHECK_EQ(S2_linear.size(), R2.size());
+
+  const size_t num_capture_channels = R2.size();
+  for (size_t ch = 0; ch < num_capture_channels; ++ch) {
+    for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+      RTC_DCHECK_LT(0.f, erle[ch][k]);
+      R2[ch][k] = S2_linear[ch][k] / erle[ch][k];
+    }
+  }
+}
+
+// Estimates the residual echo power based on an uncertainty estimate of the
+// echo return loss enhancement (ERLE) and the linear power estimate.
+void LinearEstimate(
+    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> S2_linear,
+    float erle_uncertainty,
+    rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2) {
+  RTC_DCHECK_EQ(S2_linear.size(), R2.size());
+
+  const size_t num_capture_channels = R2.size();
+  for (size_t ch = 0; ch < num_capture_channels; ++ch) {
+    for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+      R2[ch][k] = S2_linear[ch][k] * erle_uncertainty;
+    }
+  }
+}
+
+// Estimates the residual echo power based on the estimate of the echo path
+// gain.
+void NonLinearEstimate(
+    float echo_path_gain,
+    const std::array<float, kFftLengthBy2Plus1>& X2,
+    rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2) {
+  const size_t num_capture_channels = R2.size();
+  for (size_t ch = 0; ch < num_capture_channels; ++ch) {
+    for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+      R2[ch][k] = X2[k] * echo_path_gain;
+    }
+  }
+}
+
+// Applies a soft noise gate to the echo generating power.
+void ApplyNoiseGate(const EchoCanceller3Config::EchoModel& config,
+                    rtc::ArrayView<float, kFftLengthBy2Plus1> X2) {
+  for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+    if (config.noise_gate_power > X2[k]) {
+      X2[k] = std::max(0.f, X2[k] - config.noise_gate_slope *
+                                        (config.noise_gate_power - X2[k]));
+    }
+  }
+}
+
+// Estimates the echo generating signal power as gated maximal power over a
+// time window.
+void EchoGeneratingPower(size_t num_render_channels,
+                         const SpectrumBuffer& spectrum_buffer,
+                         const EchoCanceller3Config::EchoModel& echo_model,
+                         int filter_delay_blocks,
+                         rtc::ArrayView<float, kFftLengthBy2Plus1> X2) {
+  int idx_stop;
+  int idx_start;
+  GetRenderIndexesToAnalyze(spectrum_buffer, echo_model, filter_delay_blocks,
+                            &idx_start, &idx_stop);
+
+  std::fill(X2.begin(), X2.end(), 0.f);
+  if (num_render_channels == 1) {
+    for (int k = idx_start; k != idx_stop; k = spectrum_buffer.IncIndex(k)) {
+      for (size_t j = 0; j < kFftLengthBy2Plus1; ++j) {
+        X2[j] = std::max(X2[j], spectrum_buffer.buffer[k][/*channel=*/0][j]);
+      }
+    }
+  } else {
+    for (int k = idx_start; k != idx_stop; k = spectrum_buffer.IncIndex(k)) {
+      std::array<float, kFftLengthBy2Plus1> render_power;
+      render_power.fill(0.f);
+      for (size_t ch = 0; ch < num_render_channels; ++ch) {
+        const auto& channel_power = spectrum_buffer.buffer[k][ch];
+        for (size_t j = 0; j < kFftLengthBy2Plus1; ++j) {
+          render_power[j] += channel_power[j];
+        }
+      }
+      for (size_t j = 0; j < kFftLengthBy2Plus1; ++j) {
+        X2[j] = std::max(X2[j], render_power[j]);
+      }
+    }
+  }
+}
+
+// Chooses the echo path gain to use.
+float GetEchoPathGain(const AecState& aec_state,
+                      const EchoCanceller3Config::EpStrength& config) {
+  float gain_amplitude =
+      aec_state.TransparentMode() ? 0.01f : config.default_gain;
+  return gain_amplitude * gain_amplitude;
+}
+
 }  // namespace
 
-ResidualEchoEstimator::ResidualEchoEstimator(const EchoCanceller3Config& config)
-    : config_(config) {
+ResidualEchoEstimator::ResidualEchoEstimator(const EchoCanceller3Config& config,
+                                             size_t num_render_channels)
+    : config_(config), num_render_channels_(num_render_channels) {
   Reset();
 }
 
@@ -55,72 +159,78 @@ ResidualEchoEstimator::~ResidualEchoEstimator() = default;
 void ResidualEchoEstimator::Estimate(
     const AecState& aec_state,
     const RenderBuffer& render_buffer,
-    const std::array<float, kFftLengthBy2Plus1>& S2_linear,
-    const std::array<float, kFftLengthBy2Plus1>& Y2,
-    std::array<float, kFftLengthBy2Plus1>* R2) {
-  RTC_DCHECK(R2);
+    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> S2_linear,
+    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
+    rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2) {
+  RTC_DCHECK_EQ(R2.size(), Y2.size());
+  RTC_DCHECK_EQ(R2.size(), S2_linear.size());
+
+  const size_t num_capture_channels = R2.size();
 
   // Estimate the power of the stationary noise in the render signal.
-  RenderNoisePower(render_buffer, &X2_noise_floor_, &X2_noise_floor_counter_);
+  UpdateRenderNoisePower(render_buffer);
 
   // Estimate the residual echo power.
   if (aec_state.UsableLinearEstimate()) {
-    LinearEstimate(S2_linear, aec_state.Erle(), aec_state.ErleUncertainty(),
-                   R2);
-
     // When there is saturated echo, assume the same spectral content as is
     // present in the microphone signal.
     if (aec_state.SaturatedEcho()) {
-      std::copy(Y2.begin(), Y2.end(), R2->begin());
+      for (size_t ch = 0; ch < num_capture_channels; ++ch) {
+        std::copy(Y2[ch].begin(), Y2[ch].end(), R2[ch].begin());
+      }
+    } else {
+      absl::optional<float> erle_uncertainty = aec_state.ErleUncertainty();
+      if (erle_uncertainty) {
+        LinearEstimate(S2_linear, *erle_uncertainty, R2);
+      } else {
+        LinearEstimate(S2_linear, aec_state.Erle(), R2);
+      }
     }
 
-    // Adds the estimated unmodelled echo power to the residual echo power
-    // estimate.
-    echo_reverb_.AddReverb(
-        render_buffer.Spectrum(aec_state.FilterLengthBlocks() + 1,
-                               /*channel=*/0),
-        aec_state.GetReverbFrequencyResponse(), aec_state.ReverbDecay(), *R2);
+    AddReverb(ReverbType::kLinear, aec_state, render_buffer, R2);
   } else {
-    // Estimate the echo generating signal power.
-    std::array<float, kFftLengthBy2Plus1> X2;
-
-    EchoGeneratingPower(render_buffer.GetSpectrumBuffer(), config_.echo_model,
-                        aec_state.FilterDelayBlocks(),
-                        !aec_state.UseStationaryProperties(), &X2);
-
-    // Subtract the stationary noise power to avoid stationary noise causing
-    // excessive echo suppression.
-    std::transform(X2.begin(), X2.end(), X2_noise_floor_.begin(), X2.begin(),
-                   [&](float a, float b) {
-                     return std::max(
-                         0.f, a - config_.echo_model.stationary_gate_slope * b);
-                   });
-
-    float echo_path_gain;
-    echo_path_gain =
-        aec_state.TransparentMode() ? 0.01f : config_.ep_strength.default_gain;
-    NonLinearEstimate(echo_path_gain, X2, R2);
+    const float echo_path_gain =
+        GetEchoPathGain(aec_state, config_.ep_strength);
 
     // When there is saturated echo, assume the same spectral content as is
     // present in the microphone signal.
     if (aec_state.SaturatedEcho()) {
-      std::copy(Y2.begin(), Y2.end(), R2->begin());
+      for (size_t ch = 0; ch < num_capture_channels; ++ch) {
+        std::copy(Y2[ch].begin(), Y2[ch].end(), R2[ch].begin());
+      }
+    } else {
+      // Estimate the echo generating signal power.
+      std::array<float, kFftLengthBy2Plus1> X2;
+      EchoGeneratingPower(num_render_channels_,
+                          render_buffer.GetSpectrumBuffer(), config_.echo_model,
+                          aec_state.MinDirectPathFilterDelay(), X2);
+      if (!aec_state.UseStationarityProperties()) {
+        ApplyNoiseGate(config_.echo_model, X2);
+      }
+
+      // Subtract the stationary noise power to avoid stationary noise causing
+      // excessive echo suppression.
+      for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+        X2[k] -= config_.echo_model.stationary_gate_slope * X2_noise_floor_[k];
+        X2[k] = std::max(0.f, X2[k]);
+      }
+
+      NonLinearEstimate(echo_path_gain, X2, R2);
     }
 
-    if (!(aec_state.TransparentMode())) {
-      echo_reverb_.AddReverbNoFreqShaping(
-          render_buffer.Spectrum(aec_state.FilterDelayBlocks() + 1,
-                                 /*channel=*/0),
-          echo_path_gain * echo_path_gain, aec_state.ReverbDecay(), *R2);
+    if (!aec_state.TransparentMode()) {
+      AddReverb(ReverbType::kNonLinear, aec_state, render_buffer, R2);
     }
   }
 
-  if (aec_state.UseStationaryProperties()) {
+  if (aec_state.UseStationarityProperties()) {
     // Scale the echo according to echo audibility.
     std::array<float, kFftLengthBy2Plus1> residual_scaling;
     aec_state.GetResidualEchoScaling(residual_scaling);
-    for (size_t k = 0; k < R2->size(); ++k) {
-      (*R2)[k] *= residual_scaling[k];
+    for (size_t ch = 0; ch < num_capture_channels; ++ch) {
+      for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+        R2[ch][k] *= residual_scaling[k];
+      }
     }
   }
 }
@@ -131,92 +241,92 @@ void ResidualEchoEstimator::Reset() {
   X2_noise_floor_.fill(config_.echo_model.min_noise_floor_power);
 }
 
-void ResidualEchoEstimator::LinearEstimate(
-    const std::array<float, kFftLengthBy2Plus1>& S2_linear,
-    const std::array<float, kFftLengthBy2Plus1>& erle,
-    absl::optional<float> erle_uncertainty,
-    std::array<float, kFftLengthBy2Plus1>* R2) {
-  if (erle_uncertainty) {
-    for (size_t k = 0; k < R2->size(); ++k) {
-      (*R2)[k] = S2_linear[k] * *erle_uncertainty;
-    }
-  } else {
-    std::transform(erle.begin(), erle.end(), S2_linear.begin(), R2->begin(),
-                   [](float a, float b) {
-                     RTC_DCHECK_LT(0.f, a);
-                     return b / a;
-                   });
-  }
-}
-
-void ResidualEchoEstimator::NonLinearEstimate(
-    float echo_path_gain,
-    const std::array<float, kFftLengthBy2Plus1>& X2,
-    std::array<float, kFftLengthBy2Plus1>* R2) {
-  // Compute preliminary residual echo.
-  std::transform(X2.begin(), X2.end(), R2->begin(), [echo_path_gain](float a) {
-    return a * echo_path_gain * echo_path_gain;
-  });
-}
-
-void ResidualEchoEstimator::EchoGeneratingPower(
-    const SpectrumBuffer& spectrum_buffer,
-    const EchoCanceller3Config::EchoModel& echo_model,
-    int filter_delay_blocks,
-    bool apply_noise_gating,
-    std::array<float, kFftLengthBy2Plus1>* X2) const {
-  int idx_stop, idx_start;
-
-  RTC_DCHECK(X2);
-  GetRenderIndexesToAnalyze(spectrum_buffer, config_.echo_model,
-                            filter_delay_blocks, &idx_start, &idx_stop);
-
-  X2->fill(0.f);
-  for (int k = idx_start; k != idx_stop; k = spectrum_buffer.IncIndex(k)) {
-    std::transform(X2->begin(), X2->end(),
-                   spectrum_buffer.buffer[k][/*channel=*/0].begin(),
-                   X2->begin(),
-                   [](float a, float b) { return std::max(a, b); });
-  }
-
-  if (apply_noise_gating) {
-    // Apply soft noise gate.
-    std::for_each(X2->begin(), X2->end(), [&](float& a) {
-      if (config_.echo_model.noise_gate_power > a) {
-        a = std::max(0.f, a - config_.echo_model.noise_gate_slope *
-                                  (config_.echo_model.noise_gate_power - a));
+void ResidualEchoEstimator::UpdateRenderNoisePower(
+    const RenderBuffer& render_buffer) {
+  std::array<float, kFftLengthBy2Plus1> render_power_data;
+  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> X2 =
+      render_buffer.Spectrum(0);
+  rtc::ArrayView<const float, kFftLengthBy2Plus1> render_power =
+      X2[/*channel=*/0];
+  if (num_render_channels_ > 1) {
+    render_power_data.fill(0.f);
+    for (size_t ch = 0; ch < num_render_channels_; ++ch) {
+      const auto& channel_power = X2[ch];
+      for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+        render_power_data[k] += channel_power[k];
       }
-    });
+    }
+    render_power = render_power_data;
   }
-}
-
-void ResidualEchoEstimator::RenderNoisePower(
-    const RenderBuffer& render_buffer,
-    std::array<float, kFftLengthBy2Plus1>* X2_noise_floor,
-    std::array<int, kFftLengthBy2Plus1>* X2_noise_floor_counter) const {
-  RTC_DCHECK(X2_noise_floor);
-  RTC_DCHECK(X2_noise_floor_counter);
-
-  const auto render_power = render_buffer.Spectrum(0, /*channel=*/0);
-  RTC_DCHECK_EQ(X2_noise_floor->size(), render_power.size());
-  RTC_DCHECK_EQ(X2_noise_floor_counter->size(), render_power.size());
 
   // Estimate the stationary noise power in a minimum statistics manner.
-  for (size_t k = 0; k < render_power.size(); ++k) {
+  for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
     // Decrease rapidly.
-    if (render_power[k] < (*X2_noise_floor)[k]) {
-      (*X2_noise_floor)[k] = render_power[k];
-      (*X2_noise_floor_counter)[k] = 0;
+    if (render_power[k] < X2_noise_floor_[k]) {
+      X2_noise_floor_[k] = render_power[k];
+      X2_noise_floor_counter_[k] = 0;
     } else {
       // Increase in a delayed, leaky manner.
-      if ((*X2_noise_floor_counter)[k] >=
+      if (X2_noise_floor_counter_[k] >=
           static_cast<int>(config_.echo_model.noise_floor_hold)) {
-        (*X2_noise_floor)[k] =
-            std::max((*X2_noise_floor)[k] * 1.1f,
-                     config_.echo_model.min_noise_floor_power);
+        X2_noise_floor_[k] = std::max(X2_noise_floor_[k] * 1.1f,
+                                      config_.echo_model.min_noise_floor_power);
       } else {
-        ++(*X2_noise_floor_counter)[k];
+        ++X2_noise_floor_counter_[k];
       }
+    }
+  }
+}
+
+// Adds the estimated power of the reverb to the residual echo power.
+void ResidualEchoEstimator::AddReverb(
+    ReverbType reverb_type,
+    const AecState& aec_state,
+    const RenderBuffer& render_buffer,
+    rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2) {
+  const size_t num_capture_channels = R2.size();
+
+  // Choose reverb partition based on what type of echo power model is used.
+  const size_t first_reverb_partition =
+      reverb_type == ReverbType::kLinear
+          ? aec_state.FilterLengthBlocks() + 1
+          : aec_state.MinDirectPathFilterDelay() + 1;
+
+  // Compute render power for the reverb.
+  std::array<float, kFftLengthBy2Plus1> render_power_data;
+  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> X2 =
+      render_buffer.Spectrum(first_reverb_partition);
+  rtc::ArrayView<const float, kFftLengthBy2Plus1> render_power =
+      X2[/*channel=*/0];
+  if (num_render_channels_ > 1) {
+    render_power_data.fill(0.f);
+    for (size_t ch = 0; ch < num_render_channels_; ++ch) {
+      const auto& channel_power = X2[ch];
+      for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+        render_power_data[k] += channel_power[k];
+      }
+    }
+    render_power = render_power_data;
+  }
+
+  // Update the reverb estimate.
+  if (reverb_type == ReverbType::kLinear) {
+    echo_reverb_.UpdateReverb(render_power,
+                              aec_state.GetReverbFrequencyResponse(),
+                              aec_state.ReverbDecay());
+  } else {
+    const float echo_path_gain =
+        GetEchoPathGain(aec_state, config_.ep_strength);
+    echo_reverb_.UpdateReverbNoFreqShaping(render_power, echo_path_gain,
+                                           aec_state.ReverbDecay());
+  }
+
+  // Add the reverb power.
+  rtc::ArrayView<const float, kFftLengthBy2Plus1> reverb_power =
+      echo_reverb_.reverb();
+  for (size_t ch = 0; ch < num_capture_channels; ++ch) {
+    for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
+      R2[ch][k] += reverb_power[k];
     }
   }
 }

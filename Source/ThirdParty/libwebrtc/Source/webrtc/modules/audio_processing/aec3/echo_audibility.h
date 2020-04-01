@@ -28,10 +28,13 @@ class EchoAudibility {
   explicit EchoAudibility(bool use_render_stationarity_at_init);
   ~EchoAudibility();
 
+  EchoAudibility(const EchoAudibility&) = delete;
+  EchoAudibility& operator=(const EchoAudibility&) = delete;
+
   // Feed new render data to the echo audibility estimator.
   void Update(const RenderBuffer& render_buffer,
-              rtc::ArrayView<const float> render_reverb_contribution_spectrum,
-              int delay_blocks,
+              rtc::ArrayView<const float> average_reverb,
+              int min_channel_delay_blocks,
               bool external_delay_seen);
   // Get the residual echo scaling.
   void GetResidualEchoScaling(bool filter_has_had_time_to_converge,
@@ -57,10 +60,9 @@ class EchoAudibility {
   void Reset();
 
   // Updates the render stationarity flags for the current frame.
-  void UpdateRenderStationarityFlags(
-      const RenderBuffer& render_buffer,
-      rtc::ArrayView<const float> render_reverb_contribution_spectrum,
-      int delay_blocks);
+  void UpdateRenderStationarityFlags(const RenderBuffer& render_buffer,
+                                     rtc::ArrayView<const float> average_reverb,
+                                     int delay_blocks);
 
   // Updates the noise estimator with the new render data since the previous
   // call to this method.
@@ -77,7 +79,6 @@ class EchoAudibility {
   bool non_zero_render_seen_;
   const bool use_render_stationarity_at_init_;
   StationarityEstimator render_stationarity_;
-  RTC_DISALLOW_COPY_AND_ASSIGN(EchoAudibility);
 };
 
 }  // namespace webrtc

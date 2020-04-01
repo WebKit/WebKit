@@ -77,6 +77,18 @@ class SingleProcessEncodedImageDataInjector : public EncodedImageDataInjector,
     std::map<uint8_t, ExtractionInfo> infos;
   };
 
+  enum class LogSide { kSend, kReceive };
+
+  struct DebugLogEntry {
+    uint16_t frame_id;
+    LogSide side;
+    size_t size;
+    uint64_t image_starting;
+    uint64_t image_ending;
+  };
+  rtc::CriticalSection debug_lock_;
+  std::vector<DebugLogEntry> debug_logs RTC_GUARDED_BY(debug_lock_);
+
   rtc::CriticalSection lock_;
   // Stores a mapping from frame id to extraction info for spatial layers
   // for this frame id. There can be a lot of them, because if frame was

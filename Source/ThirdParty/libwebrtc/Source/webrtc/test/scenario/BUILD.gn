@@ -8,7 +8,7 @@
 
 import("../../webrtc.gni")
 
-rtc_source_set("column_printer") {
+rtc_library("column_printer") {
   testonly = true
   sources = [
     "column_printer.cc",
@@ -35,20 +35,16 @@ if (is_ios) {
   bundle_data("scenario_resources_bundle_data") {
     testonly = true
     sources = scenario_resources
-    outputs = [
-      "{{bundle_resources_dir}}/{{source_file_part}}",
-    ]
+    outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
   }
   bundle_data("scenario_unittest_resources_bundle_data") {
     testonly = true
     sources = scenario_unittest_resources
-    outputs = [
-      "{{bundle_resources_dir}}/{{source_file_part}}",
-    ]
+    outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
   }
 }
 if (rtc_include_tests) {
-  rtc_source_set("scenario") {
+  rtc_library("scenario") {
     testonly = true
     sources = [
       "audio_stream.cc",
@@ -80,10 +76,14 @@ if (rtc_include_tests) {
       "../:test_common",
       "../:test_support",
       "../:video_test_common",
+      "../../api:create_frame_generator",
       "../../api:fec_controller_api",
+      "../../api:frame_generator_api",
       "../../api:libjingle_peerconnection_api",
       "../../api:rtc_event_log_output_file",
       "../../api:rtp_parameters",
+      "../../api:time_controller",
+      "../../api:time_controller",
       "../../api:transport_api",
       "../../api/audio_codecs:builtin_audio_decoder_factory",
       "../../api/audio_codecs:builtin_audio_encoder_factory",
@@ -159,9 +159,10 @@ if (rtc_include_tests) {
       deps += [ ":scenario_resources_bundle_data" ]
     }
   }
-  rtc_source_set("scenario_unittests") {
+  rtc_library("scenario_unittests") {
     testonly = true
     sources = [
+      "performance_stats_unittest.cc",
       "scenario_unittest.cc",
       "stats_collection_unittest.cc",
       "video_stream_unittest.cc",
@@ -177,7 +178,6 @@ if (rtc_include_tests) {
       "../../test:test_support",
       "../logging:log_writer",
       "//testing/gmock",
-      "//third_party/abseil-cpp/absl/memory",
     ]
     data = scenario_unittest_resources
     if (is_ios) {

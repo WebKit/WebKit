@@ -14,7 +14,6 @@
 
 #include <list>
 
-#include "modules/include/module_common_types.h"
 #include "modules/video_coding/packet.h"
 #include "test/gtest.h"
 

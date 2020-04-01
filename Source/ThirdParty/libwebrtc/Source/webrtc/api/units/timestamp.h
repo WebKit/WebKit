@@ -28,46 +28,34 @@ namespace webrtc {
 // difference of two Timestamps results in a TimeDelta.
 class Timestamp final : public rtc_units_impl::UnitBase<Timestamp> {
  public:
+  template <typename T>
+  static constexpr Timestamp Seconds(T value) {
+    static_assert(std::is_arithmetic<T>::value, "");
+    return FromFraction(1'000'000, value);
+  }
+  template <typename T>
+  static constexpr Timestamp Millis(T value) {
+    static_assert(std::is_arithmetic<T>::value, "");
+    return FromFraction(1'000, value);
+  }
+  template <typename T>
+  static constexpr Timestamp Micros(T value) {
+    static_assert(std::is_arithmetic<T>::value, "");
+    return FromValue(value);
+  }
+
   Timestamp() = delete;
 
-  template <int64_t seconds>
-  static constexpr Timestamp Seconds() {
-    return FromStaticFraction<seconds, 1000000>();
-  }
-  template <int64_t ms>
-  static constexpr Timestamp Millis() {
-    return FromStaticFraction<ms, 1000>();
-  }
-  template <int64_t us>
-  static constexpr Timestamp Micros() {
-    return FromStaticValue<us>();
-  }
-
-  template <typename T>
-  static Timestamp seconds(T seconds) {
-    static_assert(std::is_arithmetic<T>::value, "");
-    return FromFraction<1000000>(seconds);
-  }
-  template <typename T>
-  static Timestamp ms(T milliseconds) {
-    static_assert(std::is_arithmetic<T>::value, "");
-    return FromFraction<1000>(milliseconds);
-  }
-  template <typename T>
-  static Timestamp us(T microseconds) {
-    static_assert(std::is_arithmetic<T>::value, "");
-    return FromValue(microseconds);
-  }
   template <typename T = int64_t>
-  T seconds() const {
+  constexpr T seconds() const {
     return ToFraction<1000000, T>();
   }
   template <typename T = int64_t>
-  T ms() const {
+  constexpr T ms() const {
     return ToFraction<1000, T>();
   }
   template <typename T = int64_t>
-  T us() const {
+  constexpr T us() const {
     return ToValue<T>();
   }
 
@@ -81,7 +69,7 @@ class Timestamp final : public rtc_units_impl::UnitBase<Timestamp> {
     return ToValueOr(fallback_value);
   }
 
-  Timestamp operator+(const TimeDelta delta) const {
+  constexpr Timestamp operator+(const TimeDelta delta) const {
     if (IsPlusInfinity() || delta.IsPlusInfinity()) {
       RTC_DCHECK(!IsMinusInfinity());
       RTC_DCHECK(!delta.IsMinusInfinity());
@@ -91,9 +79,9 @@ class Timestamp final : public rtc_units_impl::UnitBase<Timestamp> {
       RTC_DCHECK(!delta.IsPlusInfinity());
       return MinusInfinity();
     }
-    return Timestamp::us(us() + delta.us());
+    return Timestamp::Micros(us() + delta.us());
   }
-  Timestamp operator-(const TimeDelta delta) const {
+  constexpr Timestamp operator-(const TimeDelta delta) const {
     if (IsPlusInfinity() || delta.IsMinusInfinity()) {
       RTC_DCHECK(!IsMinusInfinity());
       RTC_DCHECK(!delta.IsPlusInfinity());
@@ -103,9 +91,9 @@ class Timestamp final : public rtc_units_impl::UnitBase<Timestamp> {
       RTC_DCHECK(!delta.IsMinusInfinity());
       return MinusInfinity();
     }
-    return Timestamp::us(us() - delta.us());
+    return Timestamp::Micros(us() - delta.us());
   }
-  TimeDelta operator-(const Timestamp other) const {
+  constexpr TimeDelta operator-(const Timestamp other) const {
     if (IsPlusInfinity() || other.IsMinusInfinity()) {
       RTC_DCHECK(!IsMinusInfinity());
       RTC_DCHECK(!other.IsPlusInfinity());
@@ -115,13 +103,13 @@ class Timestamp final : public rtc_units_impl::UnitBase<Timestamp> {
       RTC_DCHECK(!other.IsMinusInfinity());
       return TimeDelta::MinusInfinity();
     }
-    return TimeDelta::us(us() - other.us());
+    return TimeDelta::Micros(us() - other.us());
   }
-  Timestamp& operator-=(const TimeDelta delta) {
+  constexpr Timestamp& operator-=(const TimeDelta delta) {
     *this = *this - delta;
     return *this;
   }
-  Timestamp& operator+=(const TimeDelta delta) {
+  constexpr Timestamp& operator+=(const TimeDelta delta) {
     *this = *this + delta;
     return *this;
   }

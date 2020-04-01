@@ -60,6 +60,9 @@ class NetEqSimulator {
     int packet_size_ms = 0;
   };
 
+  // Runs the simulation until the end. Returns the duration of the produced
+  // audio in ms.
+  virtual int64_t Run() = 0;
   // Runs the simulation until we hit the next GetAudio event. If the simulation
   // is finished, is_simulation_finished will be set to true in the returned
   // SimulationStepResult.

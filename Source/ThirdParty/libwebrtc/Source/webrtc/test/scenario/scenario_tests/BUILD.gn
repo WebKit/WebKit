@@ -11,9 +11,7 @@ import("../../../webrtc.gni")
 if (rtc_include_tests) {
   rtc_test("scenario_tests") {
     testonly = true
-    sources = [
-      "bbr_performance.cc",
-    ]
+    sources = [ "bbr_performance.cc" ]
     deps = [
       "../:scenario",
       "../..:test_main",

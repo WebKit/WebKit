@@ -92,7 +92,7 @@ void FrameBuffer::StartWaitForNextFrameOnQueue() {
   RTC_DCHECK(!callback_task_.Running());
   int64_t wait_ms = FindNextFrame(clock_->TimeInMilliseconds());
   callback_task_ = RepeatingTaskHandle::DelayedStart(
-      callback_queue_->Get(), TimeDelta::ms(wait_ms), [this] {
+      callback_queue_->Get(), TimeDelta::Millis(wait_ms), [this] {
         // If this task has not been cancelled, we did not get any new frames
         // while waiting. Continue with frame delivery.
         rtc::CritScope lock(&crit_);
@@ -111,53 +111,9 @@ void FrameBuffer::StartWaitForNextFrameOnQueue() {
           // means that the frame buffer was cleared between creation and
           // execution of this task. Continue waiting for the remaining time.
           int64_t wait_ms = FindNextFrame(clock_->TimeInMilliseconds());
-          return TimeDelta::ms(wait_ms);
+          return TimeDelta::Millis(wait_ms);
         }
       });
-}
-
-FrameBuffer::ReturnReason FrameBuffer::NextFrame(
-    int64_t max_wait_time_ms,
-    std::unique_ptr<EncodedFrame>* frame_out,
-    bool keyframe_required) {
-  TRACE_EVENT0("webrtc", "FrameBuffer::NextFrame");
-  int64_t latest_return_time_ms =
-      clock_->TimeInMilliseconds() + max_wait_time_ms;
-  int64_t wait_ms = max_wait_time_ms;
-  int64_t now_ms = 0;
-
-  do {
-    now_ms = clock_->TimeInMilliseconds();
-    {
-      rtc::CritScope lock(&crit_);
-      new_continuous_frame_event_.Reset();
-      if (stopped_)
-        return kStopped;
-
-      keyframe_required_ = keyframe_required;
-      latest_return_time_ms_ = latest_return_time_ms;
-      wait_ms = FindNextFrame(now_ms);
-    }
-  } while (new_continuous_frame_event_.Wait(wait_ms));
-
-  {
-    rtc::CritScope lock(&crit_);
-
-    if (!frames_to_decode_.empty()) {
-      frame_out->reset(GetNextFrame());
-      return kFrameFound;
-    }
-  }
-
-  if (latest_return_time_ms - clock_->TimeInMilliseconds() > 0) {
-    // If |next_frame_it_ == frames_.end()| and there is still time left, it
-    // means that the frame buffer was cleared as the thread in this function
-    // was waiting to acquire |crit_| in order to return. Wait for the
-    // remaining time and then return.
-    return NextFrame(latest_return_time_ms - now_ms, frame_out,
-                     keyframe_required);
-  }
-  return kTimeout;
 }
 
 int64_t FrameBuffer::FindNextFrame(int64_t now_ms) {
@@ -350,7 +306,8 @@ bool FrameBuffer::HasBadRenderTiming(const EncodedFrame& frame,
     int frame_delay = static_cast<int>(std::abs(render_time_ms - now_ms));
     RTC_LOG(LS_WARNING)
         << "A frame about to be decoded is out of the configured "
-        << "delay bounds (" << frame_delay << " > " << kMaxVideoDelayMs
+           "delay bounds ("
+        << frame_delay << " > " << kMaxVideoDelayMs
         << "). Resetting the video jitter buffer.";
     return true;
   }
@@ -378,7 +335,6 @@ void FrameBuffer::Stop() {
   TRACE_EVENT0("webrtc", "FrameBuffer::Stop");
   rtc::CritScope lock(&crit_);
   stopped_ = true;
-  new_continuous_frame_event_.Set();
   CancelCallback();
 }
 
@@ -482,14 +438,14 @@ int64_t FrameBuffer::InsertFrame(std::unique_ptr<EncodedFrame> frame) {
                           << id.picture_id << ":"
                           << static_cast<int>(id.spatial_layer)
                           << ") but buffer is full, clearing"
-                          << " buffer and inserting the frame.";
+                             " buffer and inserting the frame.";
       ClearFramesAndHistory();
     } else {
       RTC_LOG(LS_WARNING) << "Frame with (picture_id:spatial_id) ("
                           << id.picture_id << ":"
                           << static_cast<int>(id.spatial_layer)
                           << ") could not be inserted due to the frame "
-                          << "buffer being full, dropping frame.";
+                             "buffer being full, dropping frame.";
       return last_continuous_picture_id;
     }
   }
@@ -562,8 +518,6 @@ int64_t FrameBuffer::InsertFrame(std::unique_ptr<EncodedFrame> frame) {
 
     // Since we now have new continuous frames there might be a better frame
     // to return from NextFrame.
-    new_continuous_frame_event_.Set();
-
     if (callback_queue_) {
       callback_queue_->PostTask([this] {
         rtc::CritScope lock(&crit_);
@@ -662,7 +616,7 @@ bool FrameBuffer::UpdateFrameInfoWithIncomingFrame(const EncodedFrame& frame,
               << "Frame with (picture_id:spatial_id) (" << id.picture_id << ":"
               << static_cast<int>(id.spatial_layer)
               << ") depends on a non-decoded frame more previous than"
-              << " the last decoded frame, dropping frame.";
+                 " the last decoded frame, dropping frame.";
           last_log_non_decoded_ms_ = now_ms;
         }
         return false;
@@ -750,6 +704,8 @@ void FrameBuffer::ClearFramesAndHistory() {
   decoded_frames_history_.Clear();
 }
 
+// TODO(philipel): Avoid the concatenation of frames here, by replacing
+// NextFrame and GetNextFrame with methods returning multiple frames.
 EncodedFrame* FrameBuffer::CombineAndDeleteFrames(
     const std::vector<EncodedFrame*>& frames) const {
   RTC_DCHECK(!frames.empty());
@@ -759,10 +715,12 @@ EncodedFrame* FrameBuffer::CombineAndDeleteFrames(
   for (size_t i = 0; i < frames.size(); ++i) {
     total_length += frames[i]->size();
   }
-  first_frame->VerifyAndAllocate(total_length);
-
+  auto encoded_image_buffer = EncodedImageBuffer::Create(total_length);
+  uint8_t* buffer = encoded_image_buffer->data();
   first_frame->SetSpatialLayerFrameSize(first_frame->id.spatial_layer,
                                         first_frame->size());
+  memcpy(buffer, first_frame->data(), first_frame->size());
+  buffer += first_frame->size();
 
   // Spatial index of combined frame is set equal to spatial index of its top
   // spatial layer.
@@ -775,7 +733,6 @@ EncodedFrame* FrameBuffer::CombineAndDeleteFrames(
       last_frame->video_timing().receive_finish_ms;
 
   // Append all remaining frames to the first one.
-  uint8_t* buffer = first_frame->data() + first_frame->size();
   for (size_t i = 1; i < frames.size(); ++i) {
     EncodedFrame* next_frame = frames[i];
     first_frame->SetSpatialLayerFrameSize(next_frame->id.spatial_layer,
@@ -784,7 +741,7 @@ EncodedFrame* FrameBuffer::CombineAndDeleteFrames(
     buffer += next_frame->size();
     delete next_frame;
   }
-  first_frame->set_size(total_length);
+  first_frame->SetEncodedData(encoded_image_buffer);
   return first_frame;
 }
 

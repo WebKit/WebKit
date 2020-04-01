@@ -11,8 +11,8 @@
 #include "modules/video_coding/codecs/vp8/default_temporal_layers.h"
 
 #include <cstdint>
+#include <memory>
 
-#include "absl/memory/memory.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/vp8_frame_config.h"
@@ -20,6 +20,7 @@
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "test/field_trial.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "vpx/vp8cx.h"
 
@@ -28,6 +29,9 @@
 namespace webrtc {
 namespace test {
 namespace {
+
+using ::testing::Each;
+
 enum {
   kTemporalUpdateLast = VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF |
                         VP8_EFLAG_NO_REF_GF | VP8_EFLAG_NO_REF_ARF,
@@ -114,7 +118,7 @@ class TemporalLayersTest : public ::testing::Test {
   ~TemporalLayersTest() override = default;
 
   CodecSpecificInfo* IgnoredCodecSpecificInfo() {
-    codec_specific_info_ = absl::make_unique<CodecSpecificInfo>();
+    codec_specific_info_ = std::make_unique<CodecSpecificInfo>();
     return codec_specific_info_.get();
   }
 
@@ -674,6 +678,11 @@ TEST_F(TemporalLayersTest, KeyFrame) {
         << "Key frame should be marked layer sync.";
     EXPECT_EQ(0, info.codecSpecific.VP8.temporalIdx)
         << "Key frame should always be packetized as layer 0";
+    EXPECT_EQ(0, info.generic_frame_info->temporal_id)
+        << "Key frame should always be packetized as layer 0";
+    EXPECT_THAT(info.generic_frame_info->decode_target_indications,
+                Each(DecodeTargetIndication::kSwitch))
+        << "Key frame is universal switch";
     EXPECT_TRUE(checker.CheckTemporalConfig(true, tl_config));
   }
 }

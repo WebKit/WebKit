@@ -98,7 +98,6 @@ VideoFrameType ConvertToVideoFrameType(EVideoFrameType type) {
 // is updated to point to each fragment, with offsets and lengths set as to
 // exclude the start codes.
 static void RtpFragmentize(EncodedImage* encoded_image,
-                           const VideoFrameBuffer& frame_buffer,
                            SFrameBSInfo* info,
                            RTPFragmentationHeader* frag_header) {
   // Calculate minimum buffer size required to hold encoded data.
@@ -296,7 +295,7 @@ int32_t H264EncoderImpl::InitEncode(const VideoCodec* inst,
   SimulcastRateAllocator init_allocator(codec_);
   VideoBitrateAllocation allocation =
       init_allocator.Allocate(VideoBitrateAllocationParameters(
-          DataRate::kbps(codec_.startBitrate), codec_.maxFramerate));
+          DataRate::KilobitsPerSec(codec_.startBitrate), codec_.maxFramerate));
   SetRates(RateControlParameters(allocation, codec_.maxFramerate));
   return WEBRTC_VIDEO_CODEC_OK;
 }
@@ -379,7 +378,7 @@ int32_t H264EncoderImpl::Encode(
   if (!encoded_image_callback_) {
     RTC_LOG(LS_WARNING)
         << "InitEncode() has been called, but a callback function "
-        << "has not been set with RegisterEncodeCompleteCallback()";
+           "has not been set with RegisterEncodeCompleteCallback()";
     ReportError();
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
@@ -487,7 +486,7 @@ int32_t H264EncoderImpl::Encode(
     // Split encoded image up into fragments. This also updates
     // |encoded_image_|.
     RTPFragmentationHeader frag_header;
-    RtpFragmentize(&encoded_images_[i], *frame_buffer, &info, &frag_header);
+    RtpFragmentize(&encoded_images_[i], &info, &frag_header);
 
     // Encoder can skip frames to save bandwidth in which case
     // |encoded_images_[i]._length| == 0.
@@ -623,6 +622,7 @@ VideoEncoder::EncoderInfo H264EncoderImpl::GetEncoderInfo() const {
       VideoEncoder::ScalingSettings(kLowH264QpThreshold, kHighH264QpThreshold);
   info.is_hardware_accelerated = false;
   info.has_internal_source = false;
+  info.supports_simulcast = true;
   return info;
 }
 

@@ -187,7 +187,7 @@ VoiceChannel* ChannelManager::CreateVoiceChannel(
     return nullptr;
   }
 
-  auto voice_channel = absl::make_unique<VoiceChannel>(
+  auto voice_channel = std::make_unique<VoiceChannel>(
       worker_thread_, network_thread_, signaling_thread,
       absl::WrapUnique(media_channel), content_name, srtp_required,
       crypto_options, ssrc_generator);
@@ -259,7 +259,7 @@ VideoChannel* ChannelManager::CreateVideoChannel(
     return nullptr;
   }
 
-  auto video_channel = absl::make_unique<VideoChannel>(
+  auto video_channel = std::make_unique<VideoChannel>(
       worker_thread_, network_thread_, signaling_thread,
       absl::WrapUnique(media_channel), content_name, srtp_required,
       crypto_options, ssrc_generator);
@@ -320,7 +320,7 @@ RtpDataChannel* ChannelManager::CreateRtpDataChannel(
     return nullptr;
   }
 
-  auto data_channel = absl::make_unique<RtpDataChannel>(
+  auto data_channel = std::make_unique<RtpDataChannel>(
       worker_thread_, network_thread_, signaling_thread,
       absl::WrapUnique(media_channel), content_name, srtp_required,
       crypto_options, ssrc_generator);

@@ -27,11 +27,7 @@ bool SelectedWindowContext::IsSelectedWindowValid() const {
   return selected_window_thread_id_ != 0;
 }
 
-bool SelectedWindowContext::IsWindowSelected(HWND hwnd) const {
-  return hwnd == selected_window_;
-}
-
-bool SelectedWindowContext::IsWindowOwned(HWND hwnd) const {
+bool SelectedWindowContext::IsWindowOwnedBySelectedWindow(HWND hwnd) const {
   // This check works for drop-down menus & dialog pop-up windows. It doesn't
   // work for context menus or tooltips, which are handled differently below.
   if (GetAncestor(hwnd, GA_ROOTOWNER) == selected_window_) {
@@ -48,9 +44,13 @@ bool SelectedWindowContext::IsWindowOwned(HWND hwnd) const {
          enumerated_window_thread_id == selected_window_thread_id_;
 }
 
-bool SelectedWindowContext::IsWindowOverlapping(HWND hwnd) const {
-  return window_capture_helper_->IsWindowIntersectWithSelectedWindow(
-      hwnd, selected_window_, selected_window_rect_);
+bool SelectedWindowContext::IsWindowOverlappingSelectedWindow(HWND hwnd) const {
+  return window_capture_helper_->AreWindowsOverlapping(hwnd, selected_window_,
+                                                       selected_window_rect_);
+}
+
+HWND SelectedWindowContext::selected_window() const {
+  return selected_window_;
 }
 
 WindowCaptureHelperWin* SelectedWindowContext::window_capture_helper() const {

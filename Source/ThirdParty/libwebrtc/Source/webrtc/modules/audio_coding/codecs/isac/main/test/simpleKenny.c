@@ -110,9 +110,6 @@ int main(int argc, char* argv[]) {
 
   /* handling wrong input arguments in the command line */
   if (argc < 5) {
-    int size;
-    WebRtcIsac_AssignSize(&size);
-
     printf("\n\nWrong number of arguments or flag values.\n\n");
 
     printf("Usage:\n\n");
@@ -140,7 +137,6 @@ int main(int argc, char* argv[]) {
     printf("-dec............ the input file is a bit-stream, decode it.\n\n");
     printf("Example usage:\n\n");
     printf("%s speechIn.pcm speechOut.pcm -B 40000 -fs 32\n\n", argv[0]);
-    printf("structure size %d bytes\n", size);
 
     exit(0);
   }

@@ -327,6 +327,32 @@ class ScopedHandle {
 // These methods are based on media::CoreAudioUtil in Chrome.
 namespace core_audio_utility {
 
+// Helper class which automates casting between WAVEFORMATEX and
+// WAVEFORMATEXTENSIBLE raw pointers using implicit constructors and
+// operator overloading. Note that, no memory is allocated by this utility
+// structure. It only serves as a handle (or a wrapper) of the structure
+// provided to it at construction.
+class WaveFormatWrapper {
+ public:
+  WaveFormatWrapper(WAVEFORMATEXTENSIBLE* p)
+      : ptr_(reinterpret_cast<WAVEFORMATEX*>(p)) {}
+  WaveFormatWrapper(WAVEFORMATEX* p) : ptr_(p) {}
+  ~WaveFormatWrapper() = default;
+
+  operator WAVEFORMATEX*() const { return ptr_; }
+  WAVEFORMATEX* operator->() const { return ptr_; }
+  WAVEFORMATEX* get() const { return ptr_; }
+  WAVEFORMATEXTENSIBLE* GetExtensible() const;
+
+  bool IsExtensible() const;
+  bool IsPcm() const;
+  bool IsFloat() const;
+  size_t size() const;
+
+ private:
+  WAVEFORMATEX* ptr_;
+};
+
 // Returns true if Windows Core Audio is supported.
 // Always verify that this method returns true before using any of the
 // other methods in this class.
@@ -482,14 +508,11 @@ HRESULT GetSharedModeEnginePeriod(IAudioClient3* client3,
                                   uint32_t* min_period_in_frames,
                                   uint32_t* max_period_in_frames);
 
-// Get the preferred audio parameters for the given |device_id| or |client|
-// corresponding to the stream format that the audio engine uses for its
-// internal processing of shared-mode streams. The acquired values should only
-// be utilized for shared mode streamed since there are no preferred settings
-// for an exclusive mode stream.
-HRESULT GetPreferredAudioParameters(const std::string& device_id,
-                                    bool is_output_device,
-                                    webrtc::AudioParameters* params);
+// Get the preferred audio parameters for the given |client| corresponding to
+// the stream format that the audio engine uses for its internal processing of
+// shared-mode streams. The acquired values should only be utilized for shared
+// mode streamed since there are no preferred settings for an exclusive mode
+// stream.
 HRESULT GetPreferredAudioParameters(IAudioClient* client,
                                     webrtc::AudioParameters* params);
 // As above but override the preferred sample rate and use |sample_rate|
@@ -576,8 +599,10 @@ Microsoft::WRL::ComPtr<ISimpleAudioVolume> CreateSimpleAudioVolume(
 // given by |render_client|.
 bool FillRenderEndpointBufferWithSilence(IAudioClient* client,
                                          IAudioRenderClient* render_client);
-// Transforms a WAVEFORMATEXTENSIBLE struct to a human-readable string.
-std::string WaveFormatExToString(const WAVEFORMATEXTENSIBLE* format);
+
+// Prints/logs all fields of the format structure in |format|.
+// Also supports extended versions (WAVEFORMATEXTENSIBLE).
+std::string WaveFormatToString(const WaveFormatWrapper format);
 
 // Converts Windows internal REFERENCE_TIME (100 nanosecond units) into
 // generic webrtc::TimeDelta which then can be converted to any time unit.

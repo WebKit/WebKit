@@ -10,12 +10,14 @@
 #ifndef CALL_CALL_CONFIG_H_
 #define CALL_CALL_CONFIG_H_
 
-#include "api/bitrate_constraints.h"
 #include "api/fec_controller.h"
+#include "api/neteq/neteq_factory.h"
 #include "api/network_state_predictor.h"
 #include "api/rtc_error.h"
 #include "api/task_queue/task_queue_factory.h"
+#include "api/transport/bitrate_settings.h"
 #include "api/transport/network_control.h"
+#include "api/transport/webrtc_key_value_config.h"
 #include "call/audio_state.h"
 
 namespace webrtc {
@@ -56,6 +58,13 @@ struct CallConfig {
 
   // Network controller factory to use for this call.
   NetworkControllerFactoryInterface* network_controller_factory = nullptr;
+
+  // NetEq factory to use for this call.
+  NetEqFactory* neteq_factory = nullptr;
+
+  // Key-value mapping of internal configurations to apply,
+  // e.g. field trials.
+  const WebRtcKeyValueConfig* trials = nullptr;
 };
 
 }  // namespace webrtc

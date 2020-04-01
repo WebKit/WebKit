@@ -11,12 +11,8 @@
 package com.google.media.networktester;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ParcelFileDescriptor;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -25,7 +21,7 @@ import android.widget.Button;
 public class MainActivity extends Activity {
   Button startButton;
   Button stopButton;
-  NetworkTester networkTester = null;
+  NetworkTester networkTester;
   Handler mainThreadHandler;
 
   @Override

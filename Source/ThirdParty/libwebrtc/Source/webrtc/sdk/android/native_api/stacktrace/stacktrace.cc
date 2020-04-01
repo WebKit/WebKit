@@ -26,6 +26,7 @@
 #undef DS
 #endif
 
+#include "absl/base/attributes.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
@@ -91,7 +92,7 @@ struct SignalHandlerOutputState {
 };
 
 // Global lock to ensure only one thread gets interrupted at a time.
-rtc::GlobalLockPod g_signal_handler_lock;
+ABSL_CONST_INIT rtc::GlobalLock g_signal_handler_lock;
 // Argument passed to the ThreadSignalHandler() from the sampling thread to the
 // sampled (stopped) thread. This value is set just before sending signal to the
 // thread and reset when handler is done.

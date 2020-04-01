@@ -12,7 +12,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "modules/congestion_controller/bbr/bbr_network_controller.h"
 
 namespace webrtc {
@@ -21,7 +20,7 @@ BbrNetworkControllerFactory::BbrNetworkControllerFactory() {}
 
 std::unique_ptr<NetworkControllerInterface> BbrNetworkControllerFactory::Create(
     NetworkControllerConfig config) {
-  return absl::make_unique<bbr::BbrNetworkController>(config);
+  return std::make_unique<bbr::BbrNetworkController>(config);
 }
 
 TimeDelta BbrNetworkControllerFactory::GetProcessInterval() const {

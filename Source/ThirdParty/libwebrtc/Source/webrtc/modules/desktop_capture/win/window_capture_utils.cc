@@ -238,7 +238,7 @@ bool WindowCaptureHelperWin::IsWindowChromeNotification(HWND hwnd) {
 // of using ScreenCapturer, rather than let the false-positive cases (target
 // windows is only covered by borders or shadow of other windows, but we treat
 // it as overlapping) impact the user experience.
-bool WindowCaptureHelperWin::IsWindowIntersectWithSelectedWindow(
+bool WindowCaptureHelperWin::AreWindowsOverlapping(
     HWND hwnd,
     HWND selected_hwnd,
     const DesktopRect& selected_window_rect) {

@@ -19,6 +19,8 @@
 #include "api/video_codecs/video_encoder.h"
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
 #include "modules/include/module_common_types.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -67,6 +69,7 @@ struct CodecSpecificInfoVP9 {
 
   // SS data.
   size_t num_spatial_layers;  // Always populated.
+  size_t first_active_layer;
   bool spatial_layer_resolution_present;
   uint16_t width[kMaxVp9NumberOfSpatialLayers];
   uint16_t height[kMaxVp9NumberOfSpatialLayers];

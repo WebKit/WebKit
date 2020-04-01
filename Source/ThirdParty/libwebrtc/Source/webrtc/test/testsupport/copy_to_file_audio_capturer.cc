@@ -10,9 +10,8 @@
 
 #include "test/testsupport/copy_to_file_audio_capturer.h"
 
+#include <memory>
 #include <utility>
-
-#include "absl/memory/memory.h"
 
 namespace webrtc {
 namespace test {
@@ -21,9 +20,9 @@ CopyToFileAudioCapturer::CopyToFileAudioCapturer(
     std::unique_ptr<TestAudioDeviceModule::Capturer> delegate,
     std::string stream_dump_file_name)
     : delegate_(std::move(delegate)),
-      wav_writer_(absl::make_unique<WavWriter>(std::move(stream_dump_file_name),
-                                               delegate_->SamplingFrequency(),
-                                               delegate_->NumChannels())) {}
+      wav_writer_(std::make_unique<WavWriter>(std::move(stream_dump_file_name),
+                                              delegate_->SamplingFrequency(),
+                                              delegate_->NumChannels())) {}
 CopyToFileAudioCapturer::~CopyToFileAudioCapturer() = default;
 
 int CopyToFileAudioCapturer::SamplingFrequency() const {

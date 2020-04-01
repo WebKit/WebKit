@@ -33,11 +33,9 @@
 #include "media/engine/unhandled_packets_buffer.h"
 #include "rtc_base/async_invoker.h"
 #include "rtc_base/critical_section.h"
-#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/network_route.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 class VideoDecoderFactory;
@@ -50,17 +48,6 @@ class Thread;
 }  // namespace rtc
 
 namespace cricket {
-
-struct MinVideoBitrateConfig {
-  webrtc::FieldTrialParameter<webrtc::DataRate> min_video_bitrate;
-
-  MinVideoBitrateConfig()
-      : min_video_bitrate("br", webrtc::DataRate::bps(kMinVideoBitrateBps)) {
-    webrtc::ParseFieldTrial(
-        {&min_video_bitrate},
-        webrtc::field_trial::FindFullName(kMinVideoBitrateExperiment));
-  }
-};
 
 class WebRtcVideoChannel;
 
@@ -122,7 +109,7 @@ class WebRtcVideoEngine : public VideoEngineInterface {
 
 class WebRtcVideoChannel : public VideoMediaChannel,
                            public webrtc::Transport,
-                           public webrtc::EncoderFailureCallback {
+                           public webrtc::EncoderSwitchRequestCallback {
  public:
   WebRtcVideoChannel(
       webrtc::Call* call,
@@ -142,9 +129,7 @@ class WebRtcVideoChannel : public VideoMediaChannel,
       uint32_t ssrc,
       const webrtc::RtpParameters& parameters) override;
   webrtc::RtpParameters GetRtpReceiveParameters(uint32_t ssrc) const override;
-  bool SetRtpReceiveParameters(
-      uint32_t ssrc,
-      const webrtc::RtpParameters& parameters) override;
+  webrtc::RtpParameters GetDefaultRtpReceiveParameters() const override;
   bool GetSendCodec(VideoCodec* send_codec) override;
   bool SetSend(bool send) override;
   bool SetVideoSend(
@@ -156,15 +141,16 @@ class WebRtcVideoChannel : public VideoMediaChannel,
   bool AddRecvStream(const StreamParams& sp) override;
   bool AddRecvStream(const StreamParams& sp, bool default_stream);
   bool RemoveRecvStream(uint32_t ssrc) override;
+  void ResetUnsignaledRecvStream() override;
   bool SetSink(uint32_t ssrc,
                rtc::VideoSinkInterface<webrtc::VideoFrame>* sink) override;
+  void SetDefaultSink(
+      rtc::VideoSinkInterface<webrtc::VideoFrame>* sink) override;
   void FillBitrateInfo(BandwidthEstimationInfo* bwe_info) override;
   bool GetStats(VideoMediaInfo* info) override;
 
   void OnPacketReceived(rtc::CopyOnWriteBuffer packet,
                         int64_t packet_time_us) override;
-  void OnRtcpReceived(rtc::CopyOnWriteBuffer packet,
-                      int64_t packet_time_us) override;
   void OnReadyToSend(bool ready) override;
   void OnNetworkRouteChanged(const std::string& transport_name,
                              const rtc::NetworkRoute& network_route) override;
@@ -185,6 +171,8 @@ class WebRtcVideoChannel : public VideoMediaChannel,
   void SetFrameEncryptor(uint32_t ssrc,
                          rtc::scoped_refptr<webrtc::FrameEncryptorInterface>
                              frame_encryptor) override;
+
+  void SetVideoCodecSwitchingEnabled(bool enabled) override;
 
   bool SetBaseMinimumPlayoutDelayMs(uint32_t ssrc, int delay_ms) override;
 
@@ -221,11 +209,38 @@ class WebRtcVideoChannel : public VideoMediaChannel,
   // This method does nothing unless unknown_ssrc_packet_buffer_ is configured.
   void BackfillBufferedPackets(rtc::ArrayView<const uint32_t> ssrcs);
 
-  // Implements webrtc::EncoderFailureCallback.
-  void OnEncoderFailure() override;
+  // Implements webrtc::EncoderSwitchRequestCallback.
+  void RequestEncoderFallback() override;
+
+  // TODO(bugs.webrtc.org/11341) : Remove this version of RequestEncoderSwitch.
+  void RequestEncoderSwitch(
+      const EncoderSwitchRequestCallback::Config& conf) override;
+  void RequestEncoderSwitch(const webrtc::SdpVideoFormat& format) override;
+
+  void SetRecordableEncodedFrameCallback(
+      uint32_t ssrc,
+      std::function<void(const webrtc::RecordableEncodedFrame&)> callback)
+      override;
+  void ClearRecordableEncodedFrameCallback(uint32_t ssrc) override;
+  void GenerateKeyFrame(uint32_t ssrc) override;
+
+  void SetEncoderToPacketizerFrameTransformer(
+      uint32_t ssrc,
+      rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer)
+      override;
+  void SetDepacketizerToDecoderFrameTransformer(
+      uint32_t ssrc,
+      rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer)
+      override;
 
  private:
   class WebRtcVideoReceiveStream;
+
+  // Finds VideoReceiveStream corresponding to ssrc. Aware of unsignalled ssrc
+  // handling.
+  WebRtcVideoReceiveStream* FindReceiveStream(uint32_t ssrc)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(thread_checker_);
+
   struct VideoCodecSettings {
     VideoCodecSettings();
 
@@ -330,6 +345,10 @@ class WebRtcVideoChannel : public VideoMediaChannel,
     VideoSenderInfo GetVideoSenderInfo(bool log_stats);
     void FillBitrateInfo(BandwidthEstimationInfo* bwe_info);
 
+    void SetEncoderToPacketizerFrameTransformer(
+        rtc::scoped_refptr<webrtc::FrameTransformerInterface>
+            frame_transformer);
+
    private:
     // Parameters needed to reconstruct the underlying stream.
     // webrtc::VideoSendStream doesn't support setting a lot of options on the
@@ -392,8 +411,6 @@ class WebRtcVideoChannel : public VideoMediaChannel,
 
     bool sending_ RTC_GUARDED_BY(&thread_checker_);
 
-    const bool use_standard_bytes_stats_;
-
     // In order for the |invoker_| to protect other members from being
     // destructed as they are used in asynchronous tasks it has to be destructed
     // first.
@@ -427,7 +444,6 @@ class WebRtcVideoChannel : public VideoMediaChannel,
     // TODO(deadbeef): Move these feedback parameters into the recv parameters.
     void SetFeedbackParameters(bool lntf_enabled,
                                bool nack_enabled,
-                               bool remb_enabled,
                                bool transport_cc_enabled,
                                webrtc::RtcpMode rtcp_mode);
     void SetRecvParameters(const ChangedRecvParameters& recv_params);
@@ -445,6 +461,15 @@ class WebRtcVideoChannel : public VideoMediaChannel,
     void SetSink(rtc::VideoSinkInterface<webrtc::VideoFrame>* sink);
 
     VideoReceiverInfo GetVideoReceiverInfo(bool log_stats);
+
+    void SetRecordableEncodedFrameCallback(
+        std::function<void(const webrtc::RecordableEncodedFrame&)> callback);
+    void ClearRecordableEncodedFrameCallback();
+    void GenerateKeyFrame();
+
+    void SetDepacketizerToDecoderFrameTransformer(
+        rtc::scoped_refptr<webrtc::FrameTransformerInterface>
+            frame_transformer);
 
    private:
     void RecreateWebRtcVideoStream();
@@ -484,8 +509,6 @@ class WebRtcVideoChannel : public VideoMediaChannel,
     // Start NTP time is estimated as current remote NTP time (estimated from
     // RTCP) minus the elapsed time, as soon as remote NTP time is available.
     int64_t estimated_remote_start_ntp_time_ms_ RTC_GUARDED_BY(sink_lock_);
-
-    const bool use_standard_bytes_stats_;
   };
 
   void Construct(webrtc::Call* call, WebRtcVideoEngine* engine);
@@ -586,6 +609,10 @@ class WebRtcVideoChannel : public VideoMediaChannel,
   std::unique_ptr<UnhandledPacketsBuffer> unknown_ssrc_packet_buffer_
       RTC_GUARDED_BY(thread_checker_);
 
+  bool allow_codec_switching_ = false;
+  absl::optional<EncoderSwitchRequestCallback::Config>
+      requested_encoder_switch_;
+
   // In order for the |invoker_| to protect other members from being destructed
   // as they are used in asynchronous tasks it has to be destructed first.
   rtc::AsyncInvoker invoker_;
@@ -604,6 +631,19 @@ class EncoderStreamFactory
       int width,
       int height,
       const webrtc::VideoEncoderConfig& encoder_config) override;
+
+  std::vector<webrtc::VideoStream> CreateDefaultVideoStreams(
+      int width,
+      int height,
+      const webrtc::VideoEncoderConfig& encoder_config,
+      const absl::optional<webrtc::DataRate>& experimental_min_bitrate) const;
+
+  std::vector<webrtc::VideoStream>
+  CreateSimulcastOrConfereceModeScreenshareStreams(
+      int width,
+      int height,
+      const webrtc::VideoEncoderConfig& encoder_config,
+      const absl::optional<webrtc::DataRate>& experimental_min_bitrate) const;
 
   const std::string codec_name_;
   const int max_qp_;

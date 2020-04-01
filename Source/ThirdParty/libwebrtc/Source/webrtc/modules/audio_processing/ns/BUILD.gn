@@ -1,0 +1,102 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_static_library("ns") {
+  visibility = [ "*" ]
+  configs += [ "..:apm_debug_dump" ]
+  sources = [
+    "fast_math.cc",
+    "fast_math.h",
+    "histograms.cc",
+    "histograms.h",
+    "noise_estimator.cc",
+    "noise_estimator.h",
+    "noise_suppressor.cc",
+    "noise_suppressor.h",
+    "ns_common.h",
+    "ns_config.h",
+    "ns_fft.cc",
+    "ns_fft.h",
+    "prior_signal_model.cc",
+    "prior_signal_model.h",
+    "prior_signal_model_estimator.cc",
+    "prior_signal_model_estimator.h",
+    "quantile_noise_estimator.cc",
+    "quantile_noise_estimator.h",
+    "signal_model.cc",
+    "signal_model.h",
+    "signal_model_estimator.cc",
+    "signal_model_estimator.h",
+    "speech_probability_estimator.cc",
+    "speech_probability_estimator.h",
+    "suppression_params.cc",
+    "suppression_params.h",
+    "wiener_filter.cc",
+    "wiener_filter.h",
+  ]
+
+  defines = []
+  if (rtc_build_with_neon && current_cpu != "arm64") {
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+    cflags = [ "-mfpu=neon" ]
+  }
+
+  deps = [
+    "..:apm_logging",
+    "..:audio_buffer",
+    "..:high_pass_filter",
+    "../../../api:array_view",
+    "../../../common_audio:common_audio_c",
+    "../../../common_audio/third_party/fft4g",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_minmax",
+    "../../../rtc_base/system:arch",
+    "../../../system_wrappers:cpu_features_api",
+    "../../../system_wrappers:field_trial",
+    "../../../system_wrappers:metrics",
+    "../utility:cascaded_biquad_filter",
+    "../utility:ooura_fft",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("ns_unittests") {
+    testonly = true
+
+    configs += [ "..:apm_debug_dump" ]
+    sources = [ "noise_suppressor_unittest.cc" ]
+
+    deps = [
+      ":ns",
+      "..:apm_logging",
+      "..:audio_buffer",
+      "..:audio_processing",
+      "..:audio_processing_unittests",
+      "..:high_pass_filter",
+      "../../../api:array_view",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../rtc_base:safe_minmax",
+      "../../../rtc_base/system:arch",
+      "../../../system_wrappers:cpu_features_api",
+      "../../../test:test_support",
+      "../utility:cascaded_biquad_filter",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
+
+    defines = []
+
+    if (rtc_enable_protobuf) {
+      sources += []
+    }
+  }
+}

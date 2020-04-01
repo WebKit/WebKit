@@ -26,10 +26,10 @@ class SelectedWindowContext {
 
   bool IsSelectedWindowValid() const;
 
-  bool IsWindowSelected(HWND hwnd) const;
-  bool IsWindowOwned(HWND hwnd) const;
-  bool IsWindowOverlapping(HWND hwnd) const;
+  bool IsWindowOwnedBySelectedWindow(HWND hwnd) const;
+  bool IsWindowOverlappingSelectedWindow(HWND hwnd) const;
 
+  HWND selected_window() const;
   WindowCaptureHelperWin* window_capture_helper() const;
 
  private:

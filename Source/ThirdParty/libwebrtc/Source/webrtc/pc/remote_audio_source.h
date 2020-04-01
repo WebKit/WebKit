@@ -14,6 +14,7 @@
 #include <list>
 #include <string>
 
+#include "absl/types/optional.h"
 #include "api/call/audio_sink.h"
 #include "api/notifier.h"
 #include "pc/channel.h"
@@ -37,8 +38,10 @@ class RemoteAudioSource : public Notifier<AudioSourceInterface>,
 
   // Register and unregister remote audio source with the underlying media
   // engine.
-  void Start(cricket::VoiceMediaChannel* media_channel, uint32_t ssrc);
-  void Stop(cricket::VoiceMediaChannel* media_channel, uint32_t ssrc);
+  void Start(cricket::VoiceMediaChannel* media_channel,
+             absl::optional<uint32_t> ssrc);
+  void Stop(cricket::VoiceMediaChannel* media_channel,
+            absl::optional<uint32_t> ssrc);
 
   // MediaSourceInterface implementation.
   MediaSourceInterface::SourceState state() const override;

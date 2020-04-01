@@ -158,6 +158,33 @@ TEST(VideoBroadcasterTest, AppliesMinOfSinkWantsMaxFramerate) {
   EXPECT_EQ(30, broadcaster.wants().max_framerate_fps);
 }
 
+TEST(VideoBroadcasterTest,
+     AppliesLeastCommonMultipleOfSinkWantsResolutionAlignment) {
+  VideoBroadcaster broadcaster;
+  EXPECT_EQ(broadcaster.wants().resolution_alignment, 1);
+
+  FakeVideoRenderer sink1;
+  VideoSinkWants wants1;
+  wants1.resolution_alignment = 2;
+  broadcaster.AddOrUpdateSink(&sink1, wants1);
+  EXPECT_EQ(broadcaster.wants().resolution_alignment, 2);
+
+  FakeVideoRenderer sink2;
+  VideoSinkWants wants2;
+  wants2.resolution_alignment = 3;
+  broadcaster.AddOrUpdateSink(&sink2, wants2);
+  EXPECT_EQ(broadcaster.wants().resolution_alignment, 6);
+
+  FakeVideoRenderer sink3;
+  VideoSinkWants wants3;
+  wants3.resolution_alignment = 4;
+  broadcaster.AddOrUpdateSink(&sink3, wants3);
+  EXPECT_EQ(broadcaster.wants().resolution_alignment, 12);
+
+  broadcaster.RemoveSink(&sink2);
+  EXPECT_EQ(broadcaster.wants().resolution_alignment, 4);
+}
+
 TEST(VideoBroadcasterTest, SinkWantsBlackFrames) {
   VideoBroadcaster broadcaster;
   EXPECT_TRUE(!broadcaster.wants().black_frames);

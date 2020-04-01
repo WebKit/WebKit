@@ -8,9 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <memory>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/test/create_videocodec_test_fixture.h"
 #include "media/base/media_constants.h"
 #include "modules/video_coding/codecs/test/videocodec_test_fixture_impl.h"
@@ -39,7 +39,7 @@ VideoCodecTestFixture::Config CreateConfig() {
 
 TEST(VideoCodecTestOpenH264, ConstantHighBitrate) {
   auto frame_checker =
-      absl::make_unique<VideoCodecTestFixtureImpl::H264KeyframeChecker>();
+      std::make_unique<VideoCodecTestFixtureImpl::H264KeyframeChecker>();
   auto config = CreateConfig();
   config.SetCodecSettings(cricket::kH264CodecName, 1, 1, 1, false, true, false,
                           kCifWidth, kCifHeight);
@@ -60,7 +60,7 @@ TEST(VideoCodecTestOpenH264, ConstantHighBitrate) {
 // large frames into multiple slices and limit length of NAL units.
 TEST(VideoCodecTestOpenH264, SingleNalUnit) {
   auto frame_checker =
-      absl::make_unique<VideoCodecTestFixtureImpl::H264KeyframeChecker>();
+      std::make_unique<VideoCodecTestFixtureImpl::H264KeyframeChecker>();
   auto config = CreateConfig();
   config.h264_codec_settings.packetization_mode =
       H264PacketizationMode::SingleNalUnit;

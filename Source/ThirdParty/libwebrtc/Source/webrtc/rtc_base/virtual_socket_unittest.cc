@@ -32,7 +32,6 @@
 #include "rtc_base/location.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/message_handler.h"
-#include "rtc_base/message_queue.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/test_client.h"
@@ -57,7 +56,7 @@ using webrtc::testing::StreamSink;
 struct Sender : public MessageHandler {
   Sender(Thread* th, AsyncSocket* s, uint32_t rt)
       : thread(th),
-        socket(absl::make_unique<AsyncUDPSocket>(s)),
+        socket(std::make_unique<AsyncUDPSocket>(s)),
         done(false),
         rate(rt),
         count(0) {
@@ -103,7 +102,7 @@ struct Sender : public MessageHandler {
 struct Receiver : public MessageHandler, public sigslot::has_slots<> {
   Receiver(Thread* th, AsyncSocket* s, uint32_t bw)
       : thread(th),
-        socket(absl::make_unique<AsyncUDPSocket>(s)),
+        socket(std::make_unique<AsyncUDPSocket>(s)),
         bandwidth(bw),
         done(false),
         count(0),
@@ -201,8 +200,8 @@ class VirtualSocketServerTest : public ::testing::Test {
     socket->Bind(EmptySocketAddressWithFamily(default_route.family()));
     SocketAddress client1_any_addr = socket->GetLocalAddress();
     EXPECT_TRUE(client1_any_addr.IsAnyIP());
-    auto client1 = absl::make_unique<TestClient>(
-        absl::make_unique<AsyncUDPSocket>(socket), &fake_clock_);
+    auto client1 = std::make_unique<TestClient>(
+        std::make_unique<AsyncUDPSocket>(socket), &fake_clock_);
 
     // Create client2 bound to the default route.
     AsyncSocket* socket2 =
@@ -210,8 +209,8 @@ class VirtualSocketServerTest : public ::testing::Test {
     socket2->Bind(SocketAddress(default_route, 0));
     SocketAddress client2_addr = socket2->GetLocalAddress();
     EXPECT_FALSE(client2_addr.IsAnyIP());
-    auto client2 = absl::make_unique<TestClient>(
-        absl::make_unique<AsyncUDPSocket>(socket2), &fake_clock_);
+    auto client2 = std::make_unique<TestClient>(
+        std::make_unique<AsyncUDPSocket>(socket2), &fake_clock_);
 
     // Client1 sends to client2, client2 should see the default route as
     // client1's address.
@@ -234,12 +233,12 @@ class VirtualSocketServerTest : public ::testing::Test {
     // Make sure VSS didn't switch families on us.
     EXPECT_EQ(server_addr.family(), initial_addr.family());
 
-    auto client1 = absl::make_unique<TestClient>(
-        absl::make_unique<AsyncUDPSocket>(socket), &fake_clock_);
+    auto client1 = std::make_unique<TestClient>(
+        std::make_unique<AsyncUDPSocket>(socket), &fake_clock_);
     AsyncSocket* socket2 =
         ss_.CreateAsyncSocket(initial_addr.family(), SOCK_DGRAM);
-    auto client2 = absl::make_unique<TestClient>(
-        absl::make_unique<AsyncUDPSocket>(socket2), &fake_clock_);
+    auto client2 = std::make_unique<TestClient>(
+        std::make_unique<AsyncUDPSocket>(socket2), &fake_clock_);
 
     SocketAddress client2_addr;
     EXPECT_EQ(3, client2->SendTo("foo", 3, server_addr));
@@ -252,7 +251,7 @@ class VirtualSocketServerTest : public ::testing::Test {
 
     SocketAddress empty = EmptySocketAddressWithFamily(initial_addr.family());
     for (int i = 0; i < 10; i++) {
-      client2 = absl::make_unique<TestClient>(
+      client2 = std::make_unique<TestClient>(
           absl::WrapUnique(AsyncUDPSocket::Create(&ss_, empty)), &fake_clock_);
 
       SocketAddress next_client2_addr;
@@ -838,13 +837,13 @@ class VirtualSocketServerTest : public ::testing::Test {
     AsyncSocket* socket = ss_.CreateAsyncSocket(AF_INET, SOCK_DGRAM);
     socket->Bind(server_addr);
     SocketAddress bound_server_addr = socket->GetLocalAddress();
-    auto client1 = absl::make_unique<TestClient>(
-        absl::make_unique<AsyncUDPSocket>(socket), &fake_clock_);
+    auto client1 = std::make_unique<TestClient>(
+        std::make_unique<AsyncUDPSocket>(socket), &fake_clock_);
 
     AsyncSocket* socket2 = ss_.CreateAsyncSocket(AF_INET, SOCK_DGRAM);
     socket2->Bind(client_addr);
-    auto client2 = absl::make_unique<TestClient>(
-        absl::make_unique<AsyncUDPSocket>(socket2), &fake_clock_);
+    auto client2 = std::make_unique<TestClient>(
+        std::make_unique<AsyncUDPSocket>(socket2), &fake_clock_);
     SocketAddress client2_addr;
 
     if (shouldSucceed) {
@@ -1049,8 +1048,8 @@ TEST_F(VirtualSocketServerTest, SetSendingBlockedWithUdpSocket) {
       ss_.CreateAsyncSocket(kIPv4AnyAddress.family(), SOCK_DGRAM));
   socket1->Bind(kIPv4AnyAddress);
   socket2->Bind(kIPv4AnyAddress);
-  auto client1 = absl::make_unique<TestClient>(
-      absl::make_unique<AsyncUDPSocket>(socket1), &fake_clock_);
+  auto client1 = std::make_unique<TestClient>(
+      std::make_unique<AsyncUDPSocket>(socket1), &fake_clock_);
 
   ss_.SetSendingBlocked(true);
   EXPECT_EQ(-1, client1->SendTo("foo", 3, socket2->GetLocalAddress()));

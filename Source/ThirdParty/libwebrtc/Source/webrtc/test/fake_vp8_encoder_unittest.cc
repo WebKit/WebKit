@@ -13,7 +13,6 @@
 #include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "api/test/create_simulcast_test_fixture.h"
 #include "api/test/simulcast_test_fixture.h"
 #include "api/test/video/function_video_decoder_factory.h"
@@ -28,12 +27,12 @@ namespace {
 
 std::unique_ptr<SimulcastTestFixture> CreateSpecificSimulcastTestFixture() {
   std::unique_ptr<VideoEncoderFactory> encoder_factory =
-      absl::make_unique<FunctionVideoEncoderFactory>([]() {
-        return absl::make_unique<FakeVP8Encoder>(Clock::GetRealTimeClock());
+      std::make_unique<FunctionVideoEncoderFactory>([]() {
+        return std::make_unique<FakeVp8Encoder>(Clock::GetRealTimeClock());
       });
   std::unique_ptr<VideoDecoderFactory> decoder_factory =
-      absl::make_unique<FunctionVideoDecoderFactory>(
-          []() { return absl::make_unique<FakeVp8Decoder>(); });
+      std::make_unique<FunctionVideoDecoderFactory>(
+          []() { return std::make_unique<FakeVp8Decoder>(); });
   return CreateSimulcastTestFixture(std::move(encoder_factory),
                                     std::move(decoder_factory),
                                     SdpVideoFormat("VP8"));

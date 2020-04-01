@@ -585,6 +585,13 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
     [self resetCompressionSessionWithPixelFormat:[self pixelFormatOfFrame:frame]];
 
     return WEBRTC_VIDEO_CODEC_NO_OUTPUT;
+  } else if (status == kVTVideoEncoderMalfunctionErr) {
+    // Sometimes the encoder malfunctions and needs to be restarted.
+    RTC_LOG(LS_ERROR)
+        << "Encountered video encoder malfunction error. Resetting compression session.";
+    [self resetCompressionSessionWithPixelFormat:[self pixelFormatOfFrame:frame]];
+
+    return WEBRTC_VIDEO_CODEC_NO_OUTPUT;
   } else if (status != noErr) {
     RTC_LOG(LS_ERROR) << "Failed to encode frame with code: " << status;
     return WEBRTC_VIDEO_CODEC_ERROR;
@@ -985,9 +992,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
     RTC_LOG(LS_INFO) << "Generated keyframe";
   }
 
-  // Convert the sample buffer into a buffer suitable for RTP packetization.
-  // TODO(tkchin): Allocate buffers through a pool.
-  std::unique_ptr<rtc::Buffer> buffer(new rtc::Buffer());
+  __block std::unique_ptr<rtc::Buffer> buffer = std::make_unique<rtc::Buffer>();
   RTCRtpFragmentationHeader *header;
   {
     std::unique_ptr<webrtc::RTPFragmentationHeader> header_cpp;
@@ -1000,7 +1005,12 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
   }
 
   RTCEncodedImage *frame = [[RTCEncodedImage alloc] init];
-  frame.buffer = [NSData dataWithBytesNoCopy:buffer->data() length:buffer->size() freeWhenDone:NO];
+  // This assumes ownership of `buffer` and is responsible for freeing it when done.
+  frame.buffer = [[NSData alloc] initWithBytesNoCopy:buffer->data()
+                                              length:buffer->size()
+                                         deallocator:^(void *bytes, NSUInteger size) {
+                                           buffer.reset();
+                                         }];
   frame.encodedWidth = width;
   frame.encodedHeight = height;
   frame.completeFrame = YES;

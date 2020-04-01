@@ -29,9 +29,6 @@ class AudioNetworkAdaptor {
   virtual void SetUplinkPacketLossFraction(
       float uplink_packet_loss_fraction) = 0;
 
-  virtual void SetUplinkRecoverablePacketLossFraction(
-      float uplink_recoverable_packet_loss_fraction) = 0;
-
   virtual void SetRtt(int rtt_ms) = 0;
 
   virtual void SetTargetAudioBitrate(int target_audio_bitrate_bps) = 0;

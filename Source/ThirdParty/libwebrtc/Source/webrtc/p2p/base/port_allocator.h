@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "api/transport/enums.h"
 #include "p2p/base/port.h"
 #include "p2p/base/port_interface.h"
 #include "rtc_base/helpers.h"
@@ -148,7 +149,7 @@ struct RelayCredentials {
 typedef std::vector<ProtocolAddress> PortList;
 // TODO(deadbeef): Rename to TurnServerConfig.
 struct RTC_EXPORT RelayServerConfig {
-  explicit RelayServerConfig(RelayType type);
+  RelayServerConfig();
   RelayServerConfig(const rtc::SocketAddress& address,
                     const std::string& username,
                     const std::string& password,
@@ -169,12 +170,11 @@ struct RTC_EXPORT RelayServerConfig {
   ~RelayServerConfig();
 
   bool operator==(const RelayServerConfig& o) const {
-    return type == o.type && ports == o.ports && credentials == o.credentials &&
+    return ports == o.ports && credentials == o.credentials &&
            priority == o.priority;
   }
   bool operator!=(const RelayServerConfig& o) const { return !(*this == o); }
 
-  RelayType type;
   PortList ports;
   RelayCredentials credentials;
   int priority = 0;
@@ -240,8 +240,6 @@ class RTC_EXPORT PortAllocatorSession : public sigslot::has_slots<> {
   // network. Only if all networks of an interface have no connection, the
   // implementation should start re-gathering on all networks of that interface.
   virtual void RegatherOnFailedNetworks() {}
-  // Re-gathers candidates on all networks.
-  virtual void RegatherOnAllNetworks() {}
   // Get candidate-level stats from all candidates on the ready ports and return
   // the stats to the given list.
   virtual void GetCandidateStatsFromReadyPorts(
@@ -360,10 +358,18 @@ class RTC_EXPORT PortAllocator : public sigslot::has_slots<> {
   // created or destroyed as necessary.
   //
   // Returns true if the configuration could successfully be changed.
+  // Deprecated
   bool SetConfiguration(const ServerAddresses& stun_servers,
                         const std::vector<RelayServerConfig>& turn_servers,
                         int candidate_pool_size,
                         bool prune_turn_ports,
+                        webrtc::TurnCustomizer* turn_customizer = nullptr,
+                        const absl::optional<int>&
+                            stun_candidate_keepalive_interval = absl::nullopt);
+  bool SetConfiguration(const ServerAddresses& stun_servers,
+                        const std::vector<RelayServerConfig>& turn_servers,
+                        int candidate_pool_size,
+                        webrtc::PortPrunePolicy turn_port_prune_policy,
                         webrtc::TurnCustomizer* turn_customizer = nullptr,
                         const absl::optional<int>&
                             stun_candidate_keepalive_interval = absl::nullopt);
@@ -555,9 +561,15 @@ class RTC_EXPORT PortAllocator : public sigslot::has_slots<> {
   // TODO(qingsi): Remove this after Chromium migrates to the new method.
   void set_candidate_filter(uint32_t filter) { SetCandidateFilter(filter); }
 
+  // Deprecated (by the next method).
   bool prune_turn_ports() const {
     CheckRunOnValidThreadIfInitialized();
-    return prune_turn_ports_;
+    return turn_port_prune_policy_ == webrtc::PRUNE_BASED_ON_PRIORITY;
+  }
+
+  webrtc::PortPrunePolicy turn_port_prune_policy() const {
+    CheckRunOnValidThreadIfInitialized();
+    return turn_port_prune_policy_;
   }
 
   // Gets/Sets the Origin value used for WebRTC STUN requests.
@@ -634,7 +646,7 @@ class RTC_EXPORT PortAllocator : public sigslot::has_slots<> {
   int candidate_pool_size_ = 0;  // Last value passed into SetConfiguration.
   std::vector<std::unique_ptr<PortAllocatorSession>> pooled_sessions_;
   bool candidate_pool_frozen_ = false;
-  bool prune_turn_ports_ = false;
+  webrtc::PortPrunePolicy turn_port_prune_policy_ = webrtc::NO_PRUNE;
 
   // Customizer for TURN messages.
   // The instance is owned by application and will be shared among

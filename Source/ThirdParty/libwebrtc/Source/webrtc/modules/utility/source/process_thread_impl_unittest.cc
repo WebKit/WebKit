@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "api/task_queue/queued_task.h"
+#include "api/task_queue/task_queue_test.h"
 #include "modules/include/module.h"
 #include "rtc_base/location.h"
 #include "rtc_base/time_utils.h"
@@ -309,5 +310,22 @@ TEST(ProcessThreadImpl, PostTask) {
   EXPECT_TRUE(task_ran.Wait(kEventWaitTimeout));
   thread.Stop();
 }
+
+class ProcessThreadFactory : public TaskQueueFactory {
+ public:
+  ~ProcessThreadFactory() override = default;
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> CreateTaskQueue(
+      absl::string_view name,
+      Priority priority) const override {
+    ProcessThreadImpl* process_thread = new ProcessThreadImpl("thread");
+    process_thread->Start();
+    return std::unique_ptr<TaskQueueBase, TaskQueueDeleter>(process_thread);
+  }
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    ProcessThread,
+    TaskQueueTest,
+    testing::Values(std::make_unique<ProcessThreadFactory>));
 
 }  // namespace webrtc

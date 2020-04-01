@@ -16,26 +16,41 @@
 
 namespace webrtc {
 
-SubtractorOutputAnalyzer::SubtractorOutputAnalyzer() {}
+SubtractorOutputAnalyzer::SubtractorOutputAnalyzer(size_t num_capture_channels)
+    : filters_converged_(num_capture_channels, false) {}
 
 void SubtractorOutputAnalyzer::Update(
-    const SubtractorOutput& subtractor_output) {
-  const float y2 = subtractor_output.y2;
-  const float e2_main = subtractor_output.e2_main;
-  const float e2_shadow = subtractor_output.e2_shadow;
+    rtc::ArrayView<const SubtractorOutput> subtractor_output,
+    bool* any_filter_converged,
+    bool* all_filters_diverged) {
+  RTC_DCHECK(any_filter_converged);
+  RTC_DCHECK(all_filters_diverged);
+  RTC_DCHECK_EQ(subtractor_output.size(), filters_converged_.size());
 
-  constexpr float kConvergenceThreshold = 50 * 50 * kBlockSize;
-  main_filter_converged_ = e2_main < 0.5f * y2 && y2 > kConvergenceThreshold;
-  shadow_filter_converged_ =
-      e2_shadow < 0.05f * y2 && y2 > kConvergenceThreshold;
-  float min_e2 = std::min(e2_main, e2_shadow);
-  filter_diverged_ = min_e2 > 1.5f * y2 && y2 > 30.f * 30.f * kBlockSize;
+  *any_filter_converged = false;
+  *all_filters_diverged = true;
+
+  for (size_t ch = 0; ch < subtractor_output.size(); ++ch) {
+    const float y2 = subtractor_output[ch].y2;
+    const float e2_main = subtractor_output[ch].e2_main;
+    const float e2_shadow = subtractor_output[ch].e2_shadow;
+
+    constexpr float kConvergenceThreshold = 50 * 50 * kBlockSize;
+    bool main_filter_converged =
+        e2_main < 0.5f * y2 && y2 > kConvergenceThreshold;
+    bool shadow_filter_converged =
+        e2_shadow < 0.05f * y2 && y2 > kConvergenceThreshold;
+    float min_e2 = std::min(e2_main, e2_shadow);
+    bool filter_diverged = min_e2 > 1.5f * y2 && y2 > 30.f * 30.f * kBlockSize;
+    filters_converged_[ch] = main_filter_converged || shadow_filter_converged;
+
+    *any_filter_converged = *any_filter_converged || filters_converged_[ch];
+    *all_filters_diverged = *all_filters_diverged && filter_diverged;
+  }
 }
 
 void SubtractorOutputAnalyzer::HandleEchoPathChange() {
-  shadow_filter_converged_ = false;
-  main_filter_converged_ = false;
-  filter_diverged_ = false;
+  std::fill(filters_converged_.begin(), filters_converged_.end(), false);
 }
 
 }  // namespace webrtc

@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "p2p/base/port_allocator.h"
 #include "rtc_base/checks.h"
@@ -31,6 +30,7 @@
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/string_utils.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/third_party/base64/base64.h"
 #include "system_wrappers/include/field_trial.h"
 
@@ -129,6 +129,8 @@ const int DEFAULT_RTT = 3000;  // 3 seconds
 const int MINIMUM_RTT = 100;    // 0.1 seconds
 const int MAXIMUM_RTT = 60000;  // 60 seconds
 
+const int DEFAULT_RTT_ESTIMATE_HALF_TIME_MS = 500;
+
 // Computes our estimate of the RTT given the current estimate.
 inline int ConservativeRTTEstimate(int rtt) {
   return rtc::SafeClamp(2 * rtt, MINIMUM_RTT, MAXIMUM_RTT);
@@ -139,11 +141,22 @@ const int RTT_RATIO = 3;  // 3 : 1
 
 constexpr int64_t kMinExtraPingDelayMs = 100;
 
+// Default field trials.
+const cricket::IceFieldTrials kDefaultFieldTrials;
+
+constexpr int kSupportGoogPingVersionRequestIndex =
+    static_cast<int>(cricket::IceGoogMiscInfoBindingRequestAttributeIndex::
+                         SUPPORT_GOOG_PING_VERSION);
+
+constexpr int kSupportGoogPingVersionResponseIndex =
+    static_cast<int>(cricket::IceGoogMiscInfoBindingResponseAttributeIndex::
+                         SUPPORT_GOOG_PING_VERSION);
+
 }  // namespace
 
 namespace cricket {
 
-// A ConnectionRequest is a simple STUN ping used to determine writability.
+// A ConnectionRequest is a STUN binding used to determine writability.
 ConnectionRequest::ConnectionRequest(Connection* connection)
     : StunRequest(new IceMessage()), connection_(connection) {}
 
@@ -156,45 +169,45 @@ void ConnectionRequest::Prepare(StunMessage* request) {
   // receiver side. The attribute is retrieved then by iterating and matching
   // over all parsed attributes. See StunMessage::GetAttribute.
   request->AddAttribute(
-      absl::make_unique<StunByteStringAttribute>(STUN_ATTR_USERNAME, username));
+      std::make_unique<StunByteStringAttribute>(STUN_ATTR_USERNAME, username));
 
   // connection_ already holds this ping, so subtract one from count.
   if (connection_->port()->send_retransmit_count_attribute()) {
-    request->AddAttribute(absl::make_unique<StunUInt32Attribute>(
+    request->AddAttribute(std::make_unique<StunUInt32Attribute>(
         STUN_ATTR_RETRANSMIT_COUNT,
         static_cast<uint32_t>(connection_->pings_since_last_response_.size() -
                               1)));
   }
   uint32_t network_info = connection_->port()->Network()->id();
   network_info = (network_info << 16) | connection_->port()->network_cost();
-  request->AddAttribute(absl::make_unique<StunUInt32Attribute>(
+  request->AddAttribute(std::make_unique<StunUInt32Attribute>(
       STUN_ATTR_NETWORK_INFO, network_info));
 
   if (webrtc::field_trial::IsEnabled(
           "WebRTC-PiggybackIceCheckAcknowledgement") &&
       connection_->last_ping_id_received()) {
-    request->AddAttribute(absl::make_unique<StunByteStringAttribute>(
+    request->AddAttribute(std::make_unique<StunByteStringAttribute>(
         STUN_ATTR_LAST_ICE_CHECK_RECEIVED,
         connection_->last_ping_id_received().value()));
   }
 
   // Adding ICE_CONTROLLED or ICE_CONTROLLING attribute based on the role.
   if (connection_->port()->GetIceRole() == ICEROLE_CONTROLLING) {
-    request->AddAttribute(absl::make_unique<StunUInt64Attribute>(
+    request->AddAttribute(std::make_unique<StunUInt64Attribute>(
         STUN_ATTR_ICE_CONTROLLING, connection_->port()->IceTiebreaker()));
     // We should have either USE_CANDIDATE attribute or ICE_NOMINATION
     // attribute but not both. That was enforced in p2ptransportchannel.
     if (connection_->use_candidate_attr()) {
       request->AddAttribute(
-          absl::make_unique<StunByteStringAttribute>(STUN_ATTR_USE_CANDIDATE));
+          std::make_unique<StunByteStringAttribute>(STUN_ATTR_USE_CANDIDATE));
     }
     if (connection_->nomination() &&
         connection_->nomination() != connection_->acked_nomination()) {
-      request->AddAttribute(absl::make_unique<StunUInt32Attribute>(
+      request->AddAttribute(std::make_unique<StunUInt32Attribute>(
           STUN_ATTR_NOMINATION, connection_->nomination()));
     }
   } else if (connection_->port()->GetIceRole() == ICEROLE_CONTROLLED) {
-    request->AddAttribute(absl::make_unique<StunUInt64Attribute>(
+    request->AddAttribute(std::make_unique<StunUInt64Attribute>(
         STUN_ATTR_ICE_CONTROLLED, connection_->port()->IceTiebreaker()));
   } else {
     RTC_NOTREACHED();
@@ -213,13 +226,28 @@ void ConnectionRequest::Prepare(StunMessage* request) {
   uint32_t prflx_priority =
       type_preference << 24 |
       (connection_->local_candidate().priority() & 0x00FFFFFF);
-  request->AddAttribute(absl::make_unique<StunUInt32Attribute>(
+  request->AddAttribute(std::make_unique<StunUInt32Attribute>(
       STUN_ATTR_PRIORITY, prflx_priority));
 
-  // Adding Message Integrity attribute.
-  request->AddMessageIntegrity(connection_->remote_candidate().password());
-  // Adding Fingerprint.
-  request->AddFingerprint();
+  if (connection_->field_trials_->enable_goog_ping &&
+      !connection_->remote_support_goog_ping_.has_value()) {
+    // Check if remote supports GOOG PING by announcing which version we
+    // support. This is sent on all STUN_BINDING_REQUEST until we get a
+    // STUN_BINDING_RESPONSE.
+    auto list =
+        StunAttribute::CreateUInt16ListAttribute(STUN_ATTR_GOOG_MISC_INFO);
+    list->AddTypeAtIndex(kSupportGoogPingVersionRequestIndex, kGoogPingVersion);
+    request->AddAttribute(std::move(list));
+  }
+
+  if (connection_->ShouldSendGoogPing(request)) {
+    request->SetType(GOOG_PING_REQUEST);
+    request->ClearAttributes();
+    request->AddMessageIntegrity32(connection_->remote_candidate().password());
+  } else {
+    request->AddMessageIntegrity(connection_->remote_candidate().password());
+    request->AddFingerprint();
+  }
 }
 
 void ConnectionRequest::OnResponse(StunMessage* response) {
@@ -268,7 +296,9 @@ Connection::Connection(Port* port,
       last_ping_response_received_(0),
       reported_(false),
       state_(IceCandidatePairState::WAITING),
-      time_created_ms_(rtc::TimeMillis()) {
+      time_created_ms_(rtc::TimeMillis()),
+      field_trials_(&kDefaultFieldTrials),
+      rtt_estimate_(DEFAULT_RTT_ESTIMATE_HALF_TIME_MS) {
   // All of our connections start in WAITING state.
   // TODO(mallinath) - Start connections from STATE_FROZEN.
   // Wire up to send stun packets
@@ -285,6 +315,14 @@ const Candidate& Connection::local_candidate() const {
 
 const Candidate& Connection::remote_candidate() const {
   return remote_candidate_;
+}
+
+const rtc::Network* Connection::network() const {
+  return port()->Network();
+}
+
+int Connection::generation() const {
+  return port()->generation();
 }
 
 uint64_t Connection::priority() const {
@@ -384,6 +422,11 @@ int Connection::receiving_timeout() const {
   return receiving_timeout_.value_or(WEAK_CONNECTION_RECEIVE_TIMEOUT);
 }
 
+void Connection::SetIceFieldTrials(const IceFieldTrials* field_trials) {
+  field_trials_ = field_trials;
+  rtt_estimate_.SetHalfTime(field_trials->rtt_estimate_halftime_ms);
+}
+
 void Connection::OnSendStunPacket(const void* data,
                                   size_t size,
                                   StunRequest* req) {
@@ -432,11 +475,11 @@ void Connection::OnReadPacket(const char* data,
     rtc::LoggingSeverity sev = (!writable() ? rtc::LS_INFO : rtc::LS_VERBOSE);
     switch (msg->type()) {
       case STUN_BINDING_REQUEST:
-        RTC_LOG_V(sev) << ToString() << ": Received STUN ping, id="
-                       << rtc::hex_encode(msg->transaction_id());
-
+        RTC_LOG_V(sev) << ToString() << ": Received "
+                       << StunMethodToString(msg->type())
+                       << ", id=" << rtc::hex_encode(msg->transaction_id());
         if (remote_ufrag == remote_candidate_.username()) {
-          HandleBindingRequest(msg.get());
+          HandleStunBindingOrGoogPingRequest(msg.get());
         } else {
           // The packet had the right local username, but the remote username
           // was not the right one for the remote address.
@@ -468,7 +511,16 @@ void Connection::OnReadPacket(const char* data,
       case STUN_BINDING_INDICATION:
         ReceivedPing(msg->transaction_id());
         break;
-
+      case GOOG_PING_REQUEST:
+        HandleStunBindingOrGoogPingRequest(msg.get());
+        break;
+      case GOOG_PING_RESPONSE:
+      case GOOG_PING_ERROR_RESPONSE:
+        if (msg->ValidateMessageIntegrity32(data, size,
+                                            remote_candidate().password())) {
+          requests_.CheckResponse(msg.get());
+        }
+        break;
       default:
         RTC_NOTREACHED();
         break;
@@ -476,7 +528,7 @@ void Connection::OnReadPacket(const char* data,
   }
 }
 
-void Connection::HandleBindingRequest(IceMessage* msg) {
+void Connection::HandleStunBindingOrGoogPingRequest(IceMessage* msg) {
   // This connection should now be receiving.
   ReceivedPing(msg->transaction_id());
   if (webrtc::field_trial::IsEnabled("WebRTC-ExtraICEPing") &&
@@ -489,27 +541,29 @@ void Connection::HandleBindingRequest(IceMessage* msg) {
       if (last_ping_sent_ + kMinExtraPingDelayMs <= now) {
         RTC_LOG(LS_INFO) << ToString()
                          << "WebRTC-ExtraICEPing/Sending extra ping"
-                         << " last_ping_sent_: " << last_ping_sent_
-                         << " now: " << now
+                            " last_ping_sent_: "
+                         << last_ping_sent_ << " now: " << now
                          << " (diff: " << (now - last_ping_sent_) << ")";
         Ping(now);
       } else {
         RTC_LOG(LS_INFO) << ToString()
                          << "WebRTC-ExtraICEPing/Not sending extra ping"
-                         << " last_ping_sent_: " << last_ping_sent_
-                         << " now: " << now
+                            " last_ping_sent_: "
+                         << last_ping_sent_ << " now: " << now
                          << " (diff: " << (now - last_ping_sent_) << ")";
       }
     }
   }
 
   const rtc::SocketAddress& remote_addr = remote_candidate_.address();
-  const std::string& remote_ufrag = remote_candidate_.username();
-  // Check for role conflicts.
-  if (!port_->MaybeIceRoleConflict(remote_addr, msg, remote_ufrag)) {
-    // Received conflicting role from the peer.
-    RTC_LOG(LS_INFO) << "Received conflicting role from the peer.";
-    return;
+  if (msg->type() == STUN_BINDING_REQUEST) {
+    // Check for role conflicts.
+    const std::string& remote_ufrag = remote_candidate_.username();
+    if (!port_->MaybeIceRoleConflict(remote_addr, msg, remote_ufrag)) {
+      // Received conflicting role from the peer.
+      RTC_LOG(LS_INFO) << "Received conflicting role from the peer.";
+      return;
+    }
   }
 
   stats_.recv_ping_requests++;
@@ -517,7 +571,12 @@ void Connection::HandleBindingRequest(IceMessage* msg) {
                         msg->reduced_transaction_id());
 
   // This is a validated stun request from remote peer.
-  port_->SendBindingResponse(msg, remote_addr);
+  if (msg->type() == STUN_BINDING_REQUEST) {
+    SendStunBindingResponse(msg);
+  } else {
+    RTC_DCHECK(msg->type() == GOOG_PING_REQUEST);
+    SendGoogPingResponse(msg);
+  }
 
   // If it timed out on writing check, start up again
   if (!pruned_ && write_state_ == STATE_WRITE_TIMEOUT) {
@@ -565,6 +624,104 @@ void Connection::HandleBindingRequest(IceMessage* msg) {
   if (webrtc::field_trial::IsEnabled(
           "WebRTC-PiggybackIceCheckAcknowledgement")) {
     HandlePiggybackCheckAcknowledgementIfAny(msg);
+  }
+}
+
+void Connection::SendStunBindingResponse(const StunMessage* request) {
+  RTC_DCHECK(request->type() == STUN_BINDING_REQUEST);
+
+  // Retrieve the username from the request.
+  const StunByteStringAttribute* username_attr =
+      request->GetByteString(STUN_ATTR_USERNAME);
+  RTC_DCHECK(username_attr != NULL);
+  if (username_attr == NULL) {
+    // No valid username, skip the response.
+    return;
+  }
+
+  // Fill in the response message.
+  StunMessage response;
+  response.SetType(STUN_BINDING_RESPONSE);
+  response.SetTransactionID(request->transaction_id());
+  const StunUInt32Attribute* retransmit_attr =
+      request->GetUInt32(STUN_ATTR_RETRANSMIT_COUNT);
+  if (retransmit_attr) {
+    // Inherit the incoming retransmit value in the response so the other side
+    // can see our view of lost pings.
+    response.AddAttribute(std::make_unique<StunUInt32Attribute>(
+        STUN_ATTR_RETRANSMIT_COUNT, retransmit_attr->value()));
+
+    if (retransmit_attr->value() > CONNECTION_WRITE_CONNECT_FAILURES) {
+      RTC_LOG(LS_INFO)
+          << ToString()
+          << ": Received a remote ping with high retransmit count: "
+          << retransmit_attr->value();
+    }
+  }
+
+  response.AddAttribute(std::make_unique<StunXorAddressAttribute>(
+      STUN_ATTR_XOR_MAPPED_ADDRESS, remote_candidate_.address()));
+
+  if (field_trials_->announce_goog_ping) {
+    // Check if request contains a announce-request.
+    auto goog_misc = request->GetUInt16List(STUN_ATTR_GOOG_MISC_INFO);
+    if (goog_misc != nullptr &&
+        goog_misc->Size() >= kSupportGoogPingVersionRequestIndex &&
+        // Which version can we handle...currently any >= 1
+        goog_misc->GetType(kSupportGoogPingVersionRequestIndex) >= 1) {
+      auto list =
+          StunAttribute::CreateUInt16ListAttribute(STUN_ATTR_GOOG_MISC_INFO);
+      list->AddTypeAtIndex(kSupportGoogPingVersionResponseIndex,
+                           kGoogPingVersion);
+      response.AddAttribute(std::move(list));
+    }
+  }
+
+  response.AddMessageIntegrity(local_candidate().password());
+  response.AddFingerprint();
+
+  SendResponseMessage(response);
+}
+
+void Connection::SendGoogPingResponse(const StunMessage* request) {
+  RTC_DCHECK(request->type() == GOOG_PING_REQUEST);
+
+  // Fill in the response message.
+  StunMessage response;
+  response.SetType(GOOG_PING_RESPONSE);
+  response.SetTransactionID(request->transaction_id());
+  response.AddMessageIntegrity32(local_candidate().password());
+  SendResponseMessage(response);
+}
+
+void Connection::SendResponseMessage(const StunMessage& response) {
+  // Where I send the response.
+  const rtc::SocketAddress& addr = remote_candidate_.address();
+
+  // Send the response message.
+  rtc::ByteBufferWriter buf;
+  response.Write(&buf);
+  rtc::PacketOptions options(port_->StunDscpValue());
+  options.info_signaled_after_sent.packet_type =
+      rtc::PacketType::kIceConnectivityCheckResponse;
+  auto err = port_->SendTo(buf.Data(), buf.Length(), addr, options, false);
+  if (err < 0) {
+    RTC_LOG(LS_ERROR) << ToString() << ": Failed to send "
+                      << StunMethodToString(response.type())
+                      << ", to=" << addr.ToSensitiveString() << ", err=" << err
+                      << ", id=" << rtc::hex_encode(response.transaction_id());
+  } else {
+    // Log at LS_INFO if we send a stun ping response on an unwritable
+    // connection.
+    rtc::LoggingSeverity sev = (!writable()) ? rtc::LS_INFO : rtc::LS_VERBOSE;
+    RTC_LOG_V(sev) << ToString() << ": Sent "
+                   << StunMethodToString(response.type())
+                   << ", to=" << addr.ToSensitiveString()
+                   << ", id=" << rtc::hex_encode(response.transaction_id());
+
+    stats_.sent_ping_responses++;
+    LogCandidatePairEvent(webrtc::IceCandidatePairEventType::kCheckResponseSent,
+                          response.reduced_transaction_id());
   }
 }
 
@@ -701,7 +858,8 @@ void Connection::ReceivedPing(const absl::optional<std::string>& request_id) {
 }
 
 void Connection::HandlePiggybackCheckAcknowledgementIfAny(StunMessage* msg) {
-  RTC_DCHECK(msg->type() == STUN_BINDING_REQUEST);
+  RTC_DCHECK(msg->type() == STUN_BINDING_REQUEST ||
+             msg->type() == GOOG_PING_REQUEST);
   const StunByteStringAttribute* last_ice_check_received_attr =
       msg->GetByteString(STUN_ATTR_LAST_ICE_CHECK_RECEIVED);
   if (last_ice_check_received_attr) {
@@ -734,11 +892,13 @@ void Connection::ReceivedPingResponse(
     acked_nomination_ = nomination.value();
   }
 
+  int64_t now = rtc::TimeMillis();
   total_round_trip_time_ms_ += rtt;
   current_round_trip_time_ms_ = static_cast<uint32_t>(rtt);
+  rtt_estimate_.AddSample(now, rtt);
 
   pings_since_last_response_.clear();
-  last_ping_response_received_ = rtc::TimeMillis();
+  last_ping_response_received_ = now;
   UpdateReceiving(last_ping_response_received_);
   set_write_state(STATE_WRITABLE);
   set_state(IceCandidatePairState::SUCCEEDED);
@@ -894,8 +1054,9 @@ void Connection::OnConnectionRequestResponse(ConnectionRequest* request,
   if (RTC_LOG_CHECK_LEVEL_V(sev)) {
     std::string pings;
     PrintPingsSinceLastResponse(&pings, 5);
-    RTC_LOG_V(sev) << ToString() << ": Received STUN ping response, id="
-                   << rtc::hex_encode(request->id())
+    RTC_LOG_V(sev) << ToString() << ": Received "
+                   << StunMethodToString(response->type())
+                   << ", id=" << rtc::hex_encode(request->id())
                    << ", code=0"  // Makes logging easier to parse.
                       ", rtt="
                    << rtt << ", pings_since_last_response=" << pings;
@@ -915,17 +1076,39 @@ void Connection::OnConnectionRequestResponse(ConnectionRequest* request,
       webrtc::IceCandidatePairEventType::kCheckResponseReceived,
       response->reduced_transaction_id());
 
-  MaybeUpdateLocalCandidate(request, response);
+  if (request->msg()->type() == STUN_BINDING_REQUEST) {
+    if (!remote_support_goog_ping_.has_value()) {
+      auto goog_misc = response->GetUInt16List(STUN_ATTR_GOOG_MISC_INFO);
+      if (goog_misc != nullptr &&
+          goog_misc->Size() >= kSupportGoogPingVersionResponseIndex) {
+        // The remote peer has indicated that it {does/does not} supports
+        // GOOG_PING.
+        remote_support_goog_ping_ =
+            goog_misc->GetType(kSupportGoogPingVersionResponseIndex) >=
+            kGoogPingVersion;
+      } else {
+        remote_support_goog_ping_ = false;
+      }
+    }
+
+    MaybeUpdateLocalCandidate(request, response);
+
+    if (field_trials_->enable_goog_ping && remote_support_goog_ping_) {
+      cached_stun_binding_ = request->msg()->Clone();
+    }
+  }
 }
 
 void Connection::OnConnectionRequestErrorResponse(ConnectionRequest* request,
                                                   StunMessage* response) {
   int error_code = response->GetErrorCodeValue();
-  RTC_LOG(LS_WARNING) << ToString() << ": Received STUN error response id="
-                      << rtc::hex_encode(request->id())
+  RTC_LOG(LS_WARNING) << ToString() << ": Received "
+                      << StunMethodToString(response->type())
+                      << " id=" << rtc::hex_encode(request->id())
                       << " code=" << error_code
                       << " rtt=" << request->Elapsed();
 
+  cached_stun_binding_.reset();
   if (error_code == STUN_ERROR_UNKNOWN_ATTRIBUTE ||
       error_code == STUN_ERROR_SERVER_ERROR ||
       error_code == STUN_ERROR_UNAUTHORIZED) {
@@ -934,6 +1117,8 @@ void Connection::OnConnectionRequestErrorResponse(ConnectionRequest* request,
     // Race failure, retry
   } else if (error_code == STUN_ERROR_ROLE_CONFLICT) {
     HandleRoleConflictFromPeer();
+  } else if (request->msg()->type() == GOOG_PING_REQUEST) {
+    // Race, retry.
   } else {
     // This is not a valid connection.
     RTC_LOG(LS_ERROR) << ToString()
@@ -954,8 +1139,9 @@ void Connection::OnConnectionRequestTimeout(ConnectionRequest* request) {
 void Connection::OnConnectionRequestSent(ConnectionRequest* request) {
   // Log at LS_INFO if we send a ping on an unwritable connection.
   rtc::LoggingSeverity sev = !writable() ? rtc::LS_INFO : rtc::LS_VERBOSE;
-  RTC_LOG_V(sev) << ToString()
-                 << ": Sent STUN ping, id=" << rtc::hex_encode(request->id())
+  RTC_LOG_V(sev) << ToString() << ": Sent "
+                 << StunMethodToString(request->msg()->type())
+                 << ", id=" << rtc::hex_encode(request->id())
                  << ", use_candidate=" << use_candidate_attr()
                  << ", nomination=" << nomination();
   stats_.sent_ping_requests_total++;
@@ -1118,6 +1304,34 @@ bool Connection::missing_responses(int64_t now) const {
 
   int64_t waiting = now - pings_since_last_response_[0].sent_time;
   return waiting > 2 * rtt();
+}
+
+bool Connection::TooManyOutstandingPings(
+    const absl::optional<int>& max_outstanding_pings) const {
+  if (!max_outstanding_pings.has_value()) {
+    return false;
+  }
+  if (static_cast<int>(pings_since_last_response_.size()) <
+      *max_outstanding_pings) {
+    return false;
+  }
+  return true;
+}
+
+bool Connection::ShouldSendGoogPing(const StunMessage* message) {
+  if (remote_support_goog_ping_ == true && cached_stun_binding_ &&
+      cached_stun_binding_->EqualAttributes(message, [](int type) {
+        // Ignore these attributes.
+        // NOTE: Consider what to do if adding more content to
+        // STUN_ATTR_GOOG_MISC_INFO
+        return type != STUN_ATTR_FINGERPRINT &&
+               type != STUN_ATTR_MESSAGE_INTEGRITY &&
+               type != STUN_ATTR_RETRANSMIT_COUNT &&
+               type != STUN_ATTR_GOOG_MISC_INFO;
+      })) {
+    return true;
+  }
+  return false;
 }
 
 ProxyConnection::ProxyConnection(Port* port,

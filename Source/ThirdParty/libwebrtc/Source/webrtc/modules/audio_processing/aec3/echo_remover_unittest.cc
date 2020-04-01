@@ -26,7 +26,6 @@
 
 namespace webrtc {
 namespace {
-
 std::string ProduceDebugText(int sample_rate_hz) {
   rtc::StringBuilder ss;
   ss << "Sample rate: " << sample_rate_hz;
@@ -41,43 +40,48 @@ std::string ProduceDebugText(int sample_rate_hz, int delay) {
 
 }  // namespace
 
+class EchoRemoverMultiChannel
+    : public ::testing::Test,
+      public ::testing::WithParamInterface<std::tuple<size_t, size_t>> {};
+
+INSTANTIATE_TEST_SUITE_P(MultiChannel,
+                         EchoRemoverMultiChannel,
+                         ::testing::Combine(::testing::Values(1, 2, 8),
+                                            ::testing::Values(1, 2, 8)));
+
 // Verifies the basic API call sequence
-TEST(EchoRemover, BasicApiCalls) {
+TEST_P(EchoRemoverMultiChannel, BasicApiCalls) {
+  const size_t num_render_channels = std::get<0>(GetParam());
+  const size_t num_capture_channels = std::get<1>(GetParam());
   absl::optional<DelayEstimate> delay_estimate;
   for (auto rate : {16000, 32000, 48000}) {
-    for (size_t num_render_channels : {1, 2, 8}) {
-      for (size_t num_capture_channels : {1, 2, 8}) {
-        SCOPED_TRACE(ProduceDebugText(rate));
-        std::unique_ptr<EchoRemover> remover(
-            EchoRemover::Create(EchoCanceller3Config(), rate,
-                                num_render_channels, num_capture_channels));
-        std::unique_ptr<RenderDelayBuffer> render_buffer(
-            RenderDelayBuffer::Create(EchoCanceller3Config(), rate,
-                                      num_render_channels));
+    SCOPED_TRACE(ProduceDebugText(rate));
+    std::unique_ptr<EchoRemover> remover(
+        EchoRemover::Create(EchoCanceller3Config(), rate, num_render_channels,
+                            num_capture_channels));
+    std::unique_ptr<RenderDelayBuffer> render_buffer(RenderDelayBuffer::Create(
+        EchoCanceller3Config(), rate, num_render_channels));
 
-        std::vector<std::vector<std::vector<float>>> render(
-            NumBandsForRate(rate),
-            std::vector<std::vector<float>>(
-                num_render_channels, std::vector<float>(kBlockSize, 0.f)));
-        std::vector<std::vector<std::vector<float>>> capture(
-            NumBandsForRate(rate),
-            std::vector<std::vector<float>>(
-                num_capture_channels, std::vector<float>(kBlockSize, 0.f)));
-        for (size_t k = 0; k < 100; ++k) {
-          EchoPathVariability echo_path_variability(
-              k % 3 == 0 ? true : false,
-              k % 5 == 0
-                  ? EchoPathVariability::DelayAdjustment::kNewDetectedDelay
-                  : EchoPathVariability::DelayAdjustment::kNone,
-              false);
-          render_buffer->Insert(render);
-          render_buffer->PrepareCaptureProcessing();
+    std::vector<std::vector<std::vector<float>>> render(
+        NumBandsForRate(rate),
+        std::vector<std::vector<float>>(num_render_channels,
+                                        std::vector<float>(kBlockSize, 0.f)));
+    std::vector<std::vector<std::vector<float>>> capture(
+        NumBandsForRate(rate),
+        std::vector<std::vector<float>>(num_capture_channels,
+                                        std::vector<float>(kBlockSize, 0.f)));
+    for (size_t k = 0; k < 100; ++k) {
+      EchoPathVariability echo_path_variability(
+          k % 3 == 0 ? true : false,
+          k % 5 == 0 ? EchoPathVariability::DelayAdjustment::kNewDetectedDelay
+                     : EchoPathVariability::DelayAdjustment::kNone,
+          false);
+      render_buffer->Insert(render);
+      render_buffer->PrepareCaptureProcessing();
 
-          remover->ProcessCapture(echo_path_variability,
-                                  k % 2 == 0 ? true : false, delay_estimate,
-                                  render_buffer->GetRenderBuffer(), &capture);
-        }
-      }
+      remover->ProcessCapture(echo_path_variability, k % 2 == 0 ? true : false,
+                              delay_estimate, render_buffer->GetRenderBuffer(),
+                              nullptr, &capture);
     }
   }
 }
@@ -107,10 +111,10 @@ TEST(EchoRemover, WrongCaptureBlockSize) {
                                    1, std::vector<float>(kBlockSize - 1, 0.f)));
     EchoPathVariability echo_path_variability(
         false, EchoPathVariability::DelayAdjustment::kNone, false);
-    EXPECT_DEATH(
-        remover->ProcessCapture(echo_path_variability, false, delay_estimate,
-                                render_buffer->GetRenderBuffer(), &capture),
-        "");
+    EXPECT_DEATH(remover->ProcessCapture(
+                     echo_path_variability, false, delay_estimate,
+                     render_buffer->GetRenderBuffer(), nullptr, &capture),
+                 "");
   }
 }
 
@@ -131,10 +135,10 @@ TEST(EchoRemover, DISABLED_WrongCaptureNumBands) {
                                         std::vector<float>(kBlockSize, 0.f)));
     EchoPathVariability echo_path_variability(
         false, EchoPathVariability::DelayAdjustment::kNone, false);
-    EXPECT_DEATH(
-        remover->ProcessCapture(echo_path_variability, false, delay_estimate,
-                                render_buffer->GetRenderBuffer(), &capture),
-        "");
+    EXPECT_DEATH(remover->ProcessCapture(
+                     echo_path_variability, false, delay_estimate,
+                     render_buffer->GetRenderBuffer(), nullptr, &capture),
+                 "");
   }
 }
 
@@ -147,10 +151,10 @@ TEST(EchoRemover, NullCapture) {
       RenderDelayBuffer::Create(EchoCanceller3Config(), 16000, 1));
   EchoPathVariability echo_path_variability(
       false, EchoPathVariability::DelayAdjustment::kNone, false);
-  EXPECT_DEATH(
-      remover->ProcessCapture(echo_path_variability, false, delay_estimate,
-                              render_buffer->GetRenderBuffer(), nullptr),
-      "");
+  EXPECT_DEATH(remover->ProcessCapture(
+                   echo_path_variability, false, delay_estimate,
+                   render_buffer->GetRenderBuffer(), nullptr, nullptr),
+               "");
 }
 
 #endif
@@ -222,7 +226,8 @@ TEST(EchoRemover, BasicEchoRemoval) {
           render_buffer->PrepareCaptureProcessing();
 
           remover->ProcessCapture(echo_path_variability, false, delay_estimate,
-                                  render_buffer->GetRenderBuffer(), &y);
+                                  render_buffer->GetRenderBuffer(), nullptr,
+                                  &y);
 
           if (k > kNumBlocksToProcess / 2) {
             output_energy = std::inner_product(y[0][0].begin(), y[0][0].end(),

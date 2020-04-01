@@ -8,7 +8,7 @@
 
 import("../../webrtc.gni")
 
-rtc_source_set("data_rate") {
+rtc_library("data_rate") {
   visibility = [ "*" ]
   sources = [
     "data_rate.cc",
@@ -26,7 +26,7 @@ rtc_source_set("data_rate") {
   ]
 }
 
-rtc_source_set("data_size") {
+rtc_library("data_size") {
   visibility = [ "*" ]
   sources = [
     "data_size.cc",
@@ -41,7 +41,7 @@ rtc_source_set("data_size") {
   ]
 }
 
-rtc_source_set("time_delta") {
+rtc_library("time_delta") {
   visibility = [ "*" ]
   sources = [
     "time_delta.cc",
@@ -56,7 +56,7 @@ rtc_source_set("time_delta") {
   ]
 }
 
-rtc_source_set("frequency") {
+rtc_library("frequency") {
   visibility = [ "*" ]
   sources = [
     "frequency.cc",
@@ -72,7 +72,7 @@ rtc_source_set("frequency") {
   ]
 }
 
-rtc_source_set("timestamp") {
+rtc_library("timestamp") {
   visibility = [ "*" ]
   sources = [
     "timestamp.cc",
@@ -89,7 +89,7 @@ rtc_source_set("timestamp") {
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("units_unittests") {
+  rtc_library("units_unittests") {
     testonly = true
     sources = [
       "data_rate_unittest.cc",

@@ -29,7 +29,6 @@ class RWLockWin : public RWLockWrapper {
 
  private:
   RWLockWin();
-  static bool LoadModule();
 
   SRWLOCK lock_;
 };

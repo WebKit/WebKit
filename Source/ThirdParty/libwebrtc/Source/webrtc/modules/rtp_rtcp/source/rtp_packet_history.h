@@ -11,6 +11,7 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_PACKET_HISTORY_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_PACKET_HISTORY_H_
 
+#include <deque>
 #include <map>
 #include <memory>
 #include <set>
@@ -53,6 +54,8 @@ class RtpPacketHistory {
 
   // Maximum number of packets we ever allow in the history.
   static constexpr size_t kMaxCapacity = 9600;
+  // Maximum number of entries in prioritized queue of padding packets.
+  static constexpr size_t kMaxPaddingtHistory = 63;
   // Don't remove packets within max(1000ms, 3x RTT).
   static constexpr int64_t kMinPacketDurationMs = 1000;
   static constexpr int kMinPacketDurationRtt = 3;
@@ -171,8 +174,6 @@ class RtpPacketHistory {
     bool operator()(StoredPacket* lhs, StoredPacket* rhs) const;
   };
 
-  using StoredPacketIterator = std::map<uint16_t, StoredPacket>::iterator;
-
   // Helper method used by GetPacketAndSetSendTime() and GetPacketState() to
   // check if packet has too recently been sent.
   bool VerifyRtt(const StoredPacket& packet, int64_t now_ms) const
@@ -181,7 +182,11 @@ class RtpPacketHistory {
   void CullOldPackets(int64_t now_ms) RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
   // Removes the packet from the history, and context/mapping that has been
   // stored. Returns the RTP packet instance contained within the StoredPacket.
-  std::unique_ptr<RtpPacketToSend> RemovePacket(StoredPacketIterator packet)
+  std::unique_ptr<RtpPacketToSend> RemovePacket(int packet_index)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
+  int GetPacketIndex(uint16_t sequence_number) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
+  StoredPacket* GetStoredPacket(uint16_t sequence_number)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
   static PacketState StoredPacketToPacketState(
       const StoredPacket& stored_packet);
@@ -192,18 +197,19 @@ class RtpPacketHistory {
   StorageMode mode_ RTC_GUARDED_BY(lock_);
   int64_t rtt_ms_ RTC_GUARDED_BY(lock_);
 
-  // Map from rtp sequence numbers to stored packet.
-  std::map<uint16_t, StoredPacket> packet_history_ RTC_GUARDED_BY(lock_);
+  // Queue of stored packets, ordered by sequence number, with older packets in
+  // the front and new packets being added to the back. Note that there may be
+  // wrap-arounds so the back may have a lower sequence number.
+  // Packets may also be removed out-of-order, in which case there will be
+  // instances of StoredPacket with |packet_| set to nullptr. The first and last
+  // entry in the queue will however always be populated.
+  std::deque<StoredPacket> packet_history_ RTC_GUARDED_BY(lock_);
 
   // Total number of packets with inserted.
   uint64_t packets_inserted_ RTC_GUARDED_BY(lock_);
   // Objects from |packet_history_| ordered by "most likely to be useful", used
   // in GetPayloadPaddingPacket().
   PacketPrioritySet padding_priority_ RTC_GUARDED_BY(lock_);
-
-  // The earliest packet in the history. This might not be the lowest sequence
-  // number, in case there is a wraparound.
-  absl::optional<uint16_t> start_seqno_ RTC_GUARDED_BY(lock_);
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RtpPacketHistory);
 };

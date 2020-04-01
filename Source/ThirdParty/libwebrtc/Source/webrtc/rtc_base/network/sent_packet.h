@@ -15,6 +15,7 @@
 #include <stdint.h>
 
 #include "absl/types/optional.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
@@ -35,7 +36,7 @@ enum class PacketInfoProtocolType {
   kTls,
 };
 
-struct PacketInfo {
+struct RTC_EXPORT PacketInfo {
   PacketInfo();
   PacketInfo(const PacketInfo& info);
   ~PacketInfo();
@@ -51,7 +52,7 @@ struct PacketInfo {
   size_t ip_overhead_bytes = 0;
 };
 
-struct SentPacket {
+struct RTC_EXPORT SentPacket {
   SentPacket();
   SentPacket(int64_t packet_id, int64_t send_time_ms);
   SentPacket(int64_t packet_id,

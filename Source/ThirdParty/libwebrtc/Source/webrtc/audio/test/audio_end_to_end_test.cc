@@ -11,8 +11,9 @@
 #include "audio/test/audio_end_to_end_test.h"
 
 #include <algorithm>
+#include <memory>
 
-#include "absl/memory/memory.h"
+#include "api/task_queue/task_queue_base.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
 #include "system_wrappers/include/sleep.h"
@@ -62,25 +63,25 @@ void AudioEndToEndTest::OnFakeAudioDevicesCreated(
   send_audio_device_ = send_audio_device;
 }
 
-test::PacketTransport* AudioEndToEndTest::CreateSendTransport(
-    DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue,
+std::unique_ptr<test::PacketTransport> AudioEndToEndTest::CreateSendTransport(
+    TaskQueueBase* task_queue,
     Call* sender_call) {
-  return new test::PacketTransport(
+  return std::make_unique<test::PacketTransport>(
       task_queue, sender_call, this, test::PacketTransport::kSender,
       test::CallTest::payload_type_map_,
-      absl::make_unique<FakeNetworkPipe>(
+      std::make_unique<FakeNetworkPipe>(
           Clock::GetRealTimeClock(),
-          absl::make_unique<SimulatedNetwork>(GetNetworkPipeConfig())));
+          std::make_unique<SimulatedNetwork>(GetNetworkPipeConfig())));
 }
 
-test::PacketTransport* AudioEndToEndTest::CreateReceiveTransport(
-    DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue) {
-  return new test::PacketTransport(
+std::unique_ptr<test::PacketTransport>
+AudioEndToEndTest::CreateReceiveTransport(TaskQueueBase* task_queue) {
+  return std::make_unique<test::PacketTransport>(
       task_queue, nullptr, this, test::PacketTransport::kReceiver,
       test::CallTest::payload_type_map_,
-      absl::make_unique<FakeNetworkPipe>(
+      std::make_unique<FakeNetworkPipe>(
           Clock::GetRealTimeClock(),
-          absl::make_unique<SimulatedNetwork>(GetNetworkPipeConfig())));
+          std::make_unique<SimulatedNetwork>(GetNetworkPipeConfig())));
 }
 
 void AudioEndToEndTest::ModifyAudioConfigs(

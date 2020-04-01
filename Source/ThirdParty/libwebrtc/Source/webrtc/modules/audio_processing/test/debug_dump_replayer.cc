@@ -10,7 +10,6 @@
 
 #include "modules/audio_processing/test/debug_dump_replayer.h"
 
-#include "modules/audio_processing/echo_cancellation_impl.h"
 #include "modules/audio_processing/test/protobuf_utils.h"
 #include "modules/audio_processing/test/runtime_setting_util.h"
 #include "rtc_base/checks.h"
@@ -119,8 +118,7 @@ void DebugDumpReplayer::OnStreamEvent(const audioproc::Stream& msg) {
   // APM should have been created.
   RTC_CHECK(apm_.get());
 
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               apm_->gain_control()->set_stream_analog_level(msg.level()));
+  apm_->set_stream_analog_level(msg.level());
   RTC_CHECK_EQ(AudioProcessing::kNoError,
                apm_->set_stream_delay_ms(msg.delay()));
 
@@ -182,20 +180,7 @@ void DebugDumpReplayer::MaybeRecreateApm(const audioproc::Config& msg) {
   // These configurations cannot be changed on the fly.
   Config config;
   RTC_CHECK(msg.has_aec_delay_agnostic_enabled());
-  config.Set<DelayAgnostic>(
-      new DelayAgnostic(msg.aec_delay_agnostic_enabled()));
-
-  RTC_CHECK(msg.has_noise_robust_agc_enabled());
-  config.Set<ExperimentalAgc>(
-      new ExperimentalAgc(msg.noise_robust_agc_enabled()));
-
-  RTC_CHECK(msg.has_transient_suppression_enabled());
-  config.Set<ExperimentalNs>(
-      new ExperimentalNs(msg.transient_suppression_enabled()));
-
   RTC_CHECK(msg.has_aec_extended_filter_enabled());
-  config.Set<ExtendedFilter>(
-      new ExtendedFilter(msg.aec_extended_filter_enabled()));
 
   // We only create APM once, since changes on these fields should not
   // happen in current implementation.
@@ -212,12 +197,6 @@ void DebugDumpReplayer::ConfigureApm(const audioproc::Config& msg) {
   RTC_CHECK(msg.has_aecm_enabled());
   apm_config.echo_canceller.enabled = msg.aec_enabled() || msg.aecm_enabled();
   apm_config.echo_canceller.mobile_mode = msg.aecm_enabled();
-
-  RTC_CHECK(msg.has_aec_suppression_level());
-  apm_config.echo_canceller.legacy_moderate_suppression_level =
-      static_cast<EchoCancellationImpl::SuppressionLevel>(
-          msg.aec_suppression_level()) ==
-      EchoCancellationImpl::SuppressionLevel::kModerateSuppression;
 
   // HPF configs.
   RTC_CHECK(msg.has_hpf_enabled());
@@ -237,21 +216,25 @@ void DebugDumpReplayer::ConfigureApm(const audioproc::Config& msg) {
       static_cast<AudioProcessing::Config::NoiseSuppression::Level>(
           msg.ns_level());
 
-  apm_->ApplyConfig(apm_config);
+  // TS configs.
+  RTC_CHECK(msg.has_transient_suppression_enabled());
+  apm_config.transient_suppression.enabled =
+      msg.transient_suppression_enabled();
 
   // AGC configs.
   RTC_CHECK(msg.has_agc_enabled());
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               apm_->gain_control()->Enable(msg.agc_enabled()));
-
   RTC_CHECK(msg.has_agc_mode());
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               apm_->gain_control()->set_mode(
-                   static_cast<GainControl::Mode>(msg.agc_mode())));
-
   RTC_CHECK(msg.has_agc_limiter_enabled());
-  RTC_CHECK_EQ(AudioProcessing::kNoError,
-               apm_->gain_control()->enable_limiter(msg.agc_limiter_enabled()));
+  apm_config.gain_controller1.enabled = msg.agc_enabled();
+  apm_config.gain_controller1.mode =
+      static_cast<AudioProcessing::Config::GainController1::Mode>(
+          msg.agc_mode());
+  apm_config.gain_controller1.enable_limiter = msg.agc_limiter_enabled();
+  RTC_CHECK(msg.has_noise_robust_agc_enabled());
+  apm_config.gain_controller1.analog_gain_controller.enabled =
+      msg.noise_robust_agc_enabled();
+
+  apm_->ApplyConfig(apm_config);
 }
 
 void DebugDumpReplayer::LoadNextMessage() {

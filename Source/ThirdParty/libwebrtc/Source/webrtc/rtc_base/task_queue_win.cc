@@ -24,10 +24,10 @@
 #include <string.h>
 
 #include <algorithm>
+#include <memory>
 #include <queue>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "api/task_queue/queued_task.h"
 #include "api/task_queue/task_queue_base.h"
@@ -134,11 +134,15 @@ class MultimediaTimer {
   }
 
   void Cancel() {
-    ::ResetEvent(event_);
     if (timer_id_) {
       ::timeKillEvent(timer_id_);
       timer_id_ = 0;
     }
+    // Now that timer is killed and not able to set the event, reset the event.
+    // Doing it in opposite order is racy because event may be set between
+    // event was reset and timer is killed leaving MultimediaTimer in surprising
+    // state where both event is set and timer is canceled.
+    ::ResetEvent(event_);
   }
 
   HANDLE* event_for_wait() { return &event_; }
@@ -406,7 +410,7 @@ class TaskQueueWinFactory : public TaskQueueFactory {
 }  // namespace
 
 std::unique_ptr<TaskQueueFactory> CreateTaskQueueWinFactory() {
-  return absl::make_unique<TaskQueueWinFactory>();
+  return std::make_unique<TaskQueueWinFactory>();
 }
 
 }  // namespace webrtc

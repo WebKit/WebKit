@@ -11,7 +11,7 @@
 
 #include "api/array_view.h"
 #include "modules/audio_processing/audio_buffer.h"
-#include "modules/audio_processing/level_estimator_impl.h"
+#include "modules/audio_processing/level_estimator.h"
 #include "modules/audio_processing/test/audio_buffer_tools.h"
 #include "modules/audio_processing/test/bitexactness_tools.h"
 #include "test/gtest.h"
@@ -26,11 +26,7 @@ const int kNumFramesToProcess = 1000;
 void RunBitexactnessTest(int sample_rate_hz,
                          size_t num_channels,
                          int rms_reference) {
-  rtc::CriticalSection crit_capture;
-  LevelEstimatorImpl level_estimator(&crit_capture);
-  level_estimator.Initialize();
-  level_estimator.Enable(true);
-
+  LevelEstimator level_estimator;
   int samples_per_channel = rtc::CheckedDivExact(sample_rate_hz, 100);
   StreamConfig capture_config(sample_rate_hz, num_channels, false);
   AudioBuffer capture_buffer(

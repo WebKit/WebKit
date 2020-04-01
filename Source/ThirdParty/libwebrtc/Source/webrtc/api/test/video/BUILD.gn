@@ -8,7 +8,7 @@
 
 import("../../../webrtc.gni")
 
-rtc_source_set("function_video_factory") {
+rtc_library("function_video_factory") {
   visibility = [ "*" ]
   testonly = true
   public = [
@@ -19,6 +19,5 @@ rtc_source_set("function_video_factory") {
   deps = [
     "../../../rtc_base:checks",
     "../../video_codecs:video_codecs_api",
-    "//third_party/abseil-cpp/absl/memory",
   ]
 }

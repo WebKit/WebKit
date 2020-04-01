@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "api/task_queue/queued_task.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -21,7 +22,7 @@ namespace webrtc {
 // in FIFO order and that tasks never overlap. Tasks may always execute on the
 // same worker thread and they may not. To DCHECK that tasks are executing on a
 // known task queue, use IsCurrent().
-class RTC_LOCKABLE TaskQueueBase {
+class RTC_LOCKABLE RTC_EXPORT TaskQueueBase {
  public:
   // Starts destruction of the task queue.
   // On return ensures no task are running and no new tasks are able to start

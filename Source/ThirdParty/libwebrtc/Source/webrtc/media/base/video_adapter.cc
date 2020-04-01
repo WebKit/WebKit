@@ -21,11 +21,19 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace {
+
 struct Fraction {
   int numerator;
   int denominator;
+
+  void DivideByGcd() {
+    int g = cricket::GreatestCommonDivisor(numerator, denominator);
+    numerator /= g;
+    denominator /= g;
+  }
 
   // Determines number of output pixels if both width and height of an input of
   // |input_pixels| pixels is scaled with the fraction numerator / denominator.
@@ -45,11 +53,17 @@ int roundUp(int value_to_round, int multiple, int max_value) {
 
 // Generates a scale factor that makes |input_pixels| close to |target_pixels|,
 // but no higher than |max_pixels|.
-Fraction FindScale(int input_pixels, int target_pixels, int max_pixels) {
+Fraction FindScale(int input_width,
+                   int input_height,
+                   int target_pixels,
+                   int max_pixels,
+                   bool variable_start_scale_factor) {
   // This function only makes sense for a positive target.
   RTC_DCHECK_GT(target_pixels, 0);
   RTC_DCHECK_GT(max_pixels, 0);
   RTC_DCHECK_GE(max_pixels, target_pixels);
+
+  const int input_pixels = input_width * input_height;
 
   // Don't scale up original.
   if (target_pixels >= input_pixels)
@@ -57,6 +71,19 @@ Fraction FindScale(int input_pixels, int target_pixels, int max_pixels) {
 
   Fraction current_scale = Fraction{1, 1};
   Fraction best_scale = Fraction{1, 1};
+
+  if (variable_start_scale_factor) {
+    // Start scaling down by 2/3 depending on |input_width| and |input_height|.
+    if (input_width % 3 == 0 && input_height % 3 == 0) {
+      // 2/3 (then alternates 3/4, 2/3, 3/4,...).
+      current_scale = Fraction{6, 6};
+    }
+    if (input_width % 9 == 0 && input_height % 9 == 0) {
+      // 2/3, 2/3 (then alternates 3/4, 2/3, 3/4,...).
+      current_scale = Fraction{36, 36};
+    }
+  }
+
   // The minimum (absolute) difference between the number of output pixels and
   // the target pixel count.
   int min_pixel_diff = std::numeric_limits<int>::max();
@@ -65,7 +92,7 @@ Fraction FindScale(int input_pixels, int target_pixels, int max_pixels) {
     min_pixel_diff = std::abs(input_pixels - target_pixels);
   }
 
-  // Alternately scale down by 2/3 and 3/4. This results in fractions which are
+  // Alternately scale down by 3/4 and 2/3. This results in fractions which are
   // effectively scalable. For instance, starting at 1280x720 will result in
   // the series (3/4) => 960x540, (1/2) => 640x360, (3/8) => 480x270,
   // (1/4) => 320x180, (3/16) => 240x125, (1/8) => 160x90.
@@ -90,6 +117,7 @@ Fraction FindScale(int input_pixels, int target_pixels, int max_pixels) {
       }
     }
   }
+  best_scale.DivideByGcd();
 
   return best_scale;
 }
@@ -97,14 +125,17 @@ Fraction FindScale(int input_pixels, int target_pixels, int max_pixels) {
 
 namespace cricket {
 
-VideoAdapter::VideoAdapter(int required_resolution_alignment)
+VideoAdapter::VideoAdapter(int source_resolution_alignment)
     : frames_in_(0),
       frames_out_(0),
       frames_scaled_(0),
       adaption_changes_(0),
       previous_width_(0),
       previous_height_(0),
-      required_resolution_alignment_(required_resolution_alignment),
+      variable_start_scale_factor_(webrtc::field_trial::IsEnabled(
+          "WebRTC-Video-VariableStartScaleFactor")),
+      source_resolution_alignment_(source_resolution_alignment),
+      resolution_alignment_(source_resolution_alignment),
       resolution_request_target_pixel_count_(std::numeric_limits<int>::max()),
       resolution_request_max_pixel_count_(std::numeric_limits<int>::max()),
       max_framerate_request_(std::numeric_limits<int>::max()) {}
@@ -196,7 +227,8 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
                        << " Input: " << in_width << "x" << in_height
                        << " timestamp: " << in_timestamp_ns
                        << " Output fps: " << max_framerate_request_ << "/"
-                       << max_fps_.value_or(-1);
+                       << max_fps_.value_or(-1)
+                       << " alignment: " << resolution_alignment_;
     }
 
     // Drop frame.
@@ -217,25 +249,23 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
     *cropped_height =
         std::min(in_height, static_cast<int>(in_width / requested_aspect));
   }
-  const Fraction scale = FindScale((*cropped_width) * (*cropped_height),
-                                   target_pixel_count, max_pixel_count);
-  // Adjust cropping slightly to get even integer output size and a perfect
-  // scale factor. Make sure the resulting dimensions are aligned correctly
-  // to be nice to hardware encoders.
-  *cropped_width =
-      roundUp(*cropped_width,
-              scale.denominator * required_resolution_alignment_, in_width);
-  *cropped_height =
-      roundUp(*cropped_height,
-              scale.denominator * required_resolution_alignment_, in_height);
+  const Fraction scale =
+      FindScale(*cropped_width, *cropped_height, target_pixel_count,
+                max_pixel_count, variable_start_scale_factor_);
+  // Adjust cropping slightly to get correctly aligned output size and a perfect
+  // scale factor.
+  *cropped_width = roundUp(*cropped_width,
+                           scale.denominator * resolution_alignment_, in_width);
+  *cropped_height = roundUp(
+      *cropped_height, scale.denominator * resolution_alignment_, in_height);
   RTC_DCHECK_EQ(0, *cropped_width % scale.denominator);
   RTC_DCHECK_EQ(0, *cropped_height % scale.denominator);
 
   // Calculate final output size.
   *out_width = *cropped_width / scale.denominator * scale.numerator;
   *out_height = *cropped_height / scale.denominator * scale.numerator;
-  RTC_DCHECK_EQ(0, *out_width % required_resolution_alignment_);
-  RTC_DCHECK_EQ(0, *out_height % required_resolution_alignment_);
+  RTC_DCHECK_EQ(0, *out_width % resolution_alignment_);
+  RTC_DCHECK_EQ(0, *out_height % resolution_alignment_);
 
   ++frames_out_;
   if (scale.numerator != scale.denominator)
@@ -251,7 +281,8 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
                      << " Scale: " << scale.numerator << "/"
                      << scale.denominator << " Output: " << *out_width << "x"
                      << *out_height << " fps: " << max_framerate_request_ << "/"
-                     << max_fps_.value_or(-1);
+                     << max_fps_.value_or(-1)
+                     << " alignment: " << resolution_alignment_;
   }
 
   previous_width_ = *out_width;
@@ -309,15 +340,15 @@ void VideoAdapter::OnOutputFormatRequest(
   next_frame_timestamp_ns_ = absl::nullopt;
 }
 
-void VideoAdapter::OnResolutionFramerateRequest(
-    const absl::optional<int>& target_pixel_count,
-    int max_pixel_count,
-    int max_framerate_fps) {
+void VideoAdapter::OnSinkWants(const rtc::VideoSinkWants& sink_wants) {
   rtc::CritScope cs(&critical_section_);
-  resolution_request_max_pixel_count_ = max_pixel_count;
+  resolution_request_max_pixel_count_ = sink_wants.max_pixel_count;
   resolution_request_target_pixel_count_ =
-      target_pixel_count.value_or(resolution_request_max_pixel_count_);
-  max_framerate_request_ = max_framerate_fps;
+      sink_wants.target_pixel_count.value_or(
+          resolution_request_max_pixel_count_);
+  max_framerate_request_ = sink_wants.max_framerate_fps;
+  resolution_alignment_ = cricket::LeastCommonMultiple(
+      source_resolution_alignment_, sink_wants.resolution_alignment);
 }
 
 }  // namespace cricket

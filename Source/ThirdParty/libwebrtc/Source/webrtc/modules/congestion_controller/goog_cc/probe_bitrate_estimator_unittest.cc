@@ -35,14 +35,14 @@ class TestProbeBitrateEstimator : public ::testing::Test {
                          int64_t arrival_time_ms,
                          int min_probes = kDefaultMinProbes,
                          int min_bytes = kDefaultMinBytes) {
-    const Timestamp kReferenceTime = Timestamp::seconds(1000);
+    const Timestamp kReferenceTime = Timestamp::Seconds(1000);
     PacketResult feedback;
     feedback.sent_packet.send_time =
-        kReferenceTime + TimeDelta::ms(send_time_ms);
-    feedback.sent_packet.size = DataSize::bytes(size_bytes);
+        kReferenceTime + TimeDelta::Millis(send_time_ms);
+    feedback.sent_packet.size = DataSize::Bytes(size_bytes);
     feedback.sent_packet.pacing_info =
         PacedPacketInfo(probe_cluster_id, min_probes, min_bytes);
-    feedback.receive_time = kReferenceTime + TimeDelta::ms(arrival_time_ms);
+    feedback.receive_time = kReferenceTime + TimeDelta::Millis(arrival_time_ms);
     measured_data_rate_ =
         probe_bitrate_estimator_.HandleProbeAndEstimateBitrate(feedback);
   }

@@ -13,7 +13,6 @@
 
 #include "api/video/video_frame.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
-#include "modules/include/module_common_types.h"
 
 namespace webrtc {
 

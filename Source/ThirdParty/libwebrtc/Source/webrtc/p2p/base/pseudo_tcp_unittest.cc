@@ -23,7 +23,6 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/memory_stream.h"
 #include "rtc_base/message_handler.h"
-#include "rtc_base/message_queue.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"

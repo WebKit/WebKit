@@ -15,7 +15,7 @@ group("audio_mixer") {
   ]
 }
 
-rtc_static_library("audio_mixer_impl") {
+rtc_library("audio_mixer_impl") {
   visibility = [ "*" ]
   sources = [
     "audio_mixer_impl.cc",
@@ -52,11 +52,10 @@ rtc_static_library("audio_mixer_impl") {
     "../audio_processing:apm_logging",
     "../audio_processing:audio_frame_view",
     "../audio_processing/agc2:fixed_digital",
-    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
-rtc_static_library("audio_frame_manipulator") {
+rtc_library("audio_frame_manipulator") {
   visibility = [
     ":*",
     "../../modules:*",
@@ -76,7 +75,7 @@ rtc_static_library("audio_frame_manipulator") {
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("audio_mixer_test_utils") {
+  rtc_library("audio_mixer_test_utils") {
     testonly = true
 
     sources = [
@@ -96,7 +95,7 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_source_set("audio_mixer_unittests") {
+  rtc_library("audio_mixer_unittests") {
     testonly = true
 
     sources = [
@@ -116,15 +115,12 @@ if (rtc_include_tests) {
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:task_queue_for_test",
       "../../test:test_support",
-      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 
   rtc_executable("audio_mixer_test") {
     testonly = true
-    sources = [
-      "audio_mixer_test.cc",
-    ]
+    sources = [ "audio_mixer_test.cc" ]
 
     deps = [
       ":audio_mixer_impl",

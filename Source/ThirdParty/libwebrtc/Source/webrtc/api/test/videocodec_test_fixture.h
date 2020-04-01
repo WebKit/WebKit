@@ -129,6 +129,9 @@ class VideoCodecTestFixture {
     // Print out frame level stats.
     bool print_frame_level_stats = false;
 
+    // Path to a directory where encoded or/and decoded video should be saved.
+    std::string output_path;
+
     // Should video be saved persistently to disk for post-run visualization?
     struct VisualizationParams {
       bool save_encoded_ivf = false;

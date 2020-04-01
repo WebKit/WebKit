@@ -38,19 +38,11 @@ class Histogram {
   // distribution.
   virtual int Quantile(int probability);
 
-  // Apply compression or stretching to the histogram.
-  virtual void Scale(int old_bucket_width, int new_bucket_width);
-
   // Returns the number of buckets in the histogram.
   virtual int NumBuckets() const;
 
   // Returns the probability for each bucket in Q30.
   std::vector<int> buckets() const { return buckets_; }
-
-  // Made public for testing.
-  static std::vector<int> ScaleBuckets(const std::vector<int>& buckets,
-                                       int old_bucket_width,
-                                       int new_bucket_width);
 
   // Accessors only intended for testing purposes.
   int base_forget_factor_for_testing() const { return base_forget_factor_; }

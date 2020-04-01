@@ -11,7 +11,6 @@
 package org.webrtc;
 
 import android.content.Context;
-import org.webrtc.Logging;
 
 /**
  * Class for storing the application context and retrieving it in a static context. Similar to

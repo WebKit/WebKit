@@ -9,7 +9,5 @@
 # "libc++" is considered a "dangerous filename" because it's an invalid regex.
 
 target("dummy_target") {
-  sources = [
-    "libc++/dummy_subpackage_file.h",
-  ]
+  sources = [ "libc++/dummy_subpackage_file.h" ]
 }

@@ -9,12 +9,10 @@
 import("../webrtc.gni")
 
 group("stats") {
-  deps = [
-    ":rtc_stats",
-  ]
+  deps = [ ":rtc_stats" ]
 }
 
-rtc_static_library("rtc_stats") {
+rtc_library("rtc_stats") {
   visibility = [ "*" ]
   cflags = []
   sources = [
@@ -30,7 +28,7 @@ rtc_static_library("rtc_stats") {
   ]
 }
 
-rtc_source_set("rtc_stats_test_utils") {
+rtc_library("rtc_stats_test_utils") {
   visibility = [ "*" ]
   cflags = []
   sources = [

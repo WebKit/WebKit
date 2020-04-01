@@ -22,7 +22,7 @@ using CodecImpl = VideoStreamConfig::Encoder::Implementation;
 }  // namespace
 
 TEST(VideoStreamTest, ReceivesFramesFromFileBasedStreams) {
-  TimeDelta kRunTime = TimeDelta::ms(500);
+  TimeDelta kRunTime = TimeDelta::Millis(500);
   std::vector<int> kFrameRates = {15, 30};
   std::deque<std::atomic<int>> frame_counts(2);
   frame_counts[0] = 0;
@@ -68,7 +68,7 @@ TEST(VideoStreamTest, ReceivesFramesFromFileBasedStreams) {
 }
 
 TEST(VideoStreamTest, RecievesVp8SimulcastFrames) {
-  TimeDelta kRunTime = TimeDelta::ms(500);
+  TimeDelta kRunTime = TimeDelta::Millis(500);
   int kFrameRate = 30;
 
   std::deque<std::atomic<int>> frame_counts(3);
@@ -125,9 +125,12 @@ TEST(VideoStreamTest, SendsNacksOnLoss) {
                      {s.CreateSimulationNode(NetworkSimulationConfig())});
   // NACK retransmissions are enabled by default.
   auto video = s.CreateVideoStream(route->forward(), VideoStreamConfig());
-  s.RunFor(TimeDelta::seconds(1));
-  auto stream_stats = video->send()->GetStats().substreams.begin()->second;
-  EXPECT_GT(stream_stats.rtp_stats.retransmitted.packets, 0u);
+  s.RunFor(TimeDelta::Seconds(1));
+  int retransmit_packets = 0;
+  for (const auto& substream : video->send()->GetStats().substreams) {
+    retransmit_packets += substream.second.rtp_stats.retransmitted.packets;
+  }
+  EXPECT_GT(retransmit_packets, 0);
 }
 
 TEST(VideoStreamTest, SendsFecWithUlpFec) {
@@ -136,6 +139,7 @@ TEST(VideoStreamTest, SendsFecWithUlpFec) {
       s.CreateRoutes(s.CreateClient("caller", CallClientConfig()),
                      {s.CreateSimulationNode([](NetworkSimulationConfig* c) {
                        c->loss_rate = 0.1;
+                       c->delay = TimeDelta::Millis(100);
                      })},
                      s.CreateClient("callee", CallClientConfig()),
                      {s.CreateSimulationNode(NetworkSimulationConfig())});
@@ -144,7 +148,7 @@ TEST(VideoStreamTest, SendsFecWithUlpFec) {
     c->encoder.codec = VideoStreamConfig::Encoder::Codec::kVideoCodecVP8;
     c->stream.use_ulpfec = true;
   });
-  s.RunFor(TimeDelta::seconds(5));
+  s.RunFor(TimeDelta::Seconds(5));
   VideoSendStream::Stats video_stats = video->send()->GetStats();
   EXPECT_GT(video_stats.substreams.begin()->second.rtp_stats.fec.packets, 0u);
 }
@@ -154,13 +158,14 @@ TEST(VideoStreamTest, SendsFecWithFlexFec) {
       s.CreateRoutes(s.CreateClient("caller", CallClientConfig()),
                      {s.CreateSimulationNode([](NetworkSimulationConfig* c) {
                        c->loss_rate = 0.1;
+                       c->delay = TimeDelta::Millis(100);
                      })},
                      s.CreateClient("callee", CallClientConfig()),
                      {s.CreateSimulationNode(NetworkSimulationConfig())});
   auto video = s.CreateVideoStream(route->forward(), [&](VideoStreamConfig* c) {
     c->stream.use_flexfec = true;
   });
-  s.RunFor(TimeDelta::seconds(5));
+  s.RunFor(TimeDelta::Seconds(5));
   VideoSendStream::Stats video_stats = video->send()->GetStats();
   EXPECT_GT(video_stats.substreams.begin()->second.rtp_stats.fec.packets, 0u);
 }

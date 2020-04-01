@@ -40,8 +40,8 @@ struct CallTestConfig {
     Scenario()
         : random_seed("rs", 1),
           return_traffic("ret"),
-          capacity("bw", DataRate::kbps(300)),
-          propagation_delay("dl", TimeDelta::ms(100)),
+          capacity("bw", DataRate::KilobitsPerSec(300)),
+          propagation_delay("dl", TimeDelta::Millis(100)),
           cross_traffic("ct", DataRate::Zero()),
           delay_noise("dn", TimeDelta::Zero()),
           loss_rate("pl", 0) {}
@@ -60,7 +60,7 @@ struct CallTestConfig {
     Tuning()
         : use_bbr("bbr"),
           bbr_no_target_rate("notr"),
-          bbr_initial_window("iw", DataSize::bytes(8000)),
+          bbr_initial_window("iw", DataSize::Bytes(8000)),
           bbr_encoder_gain("eg", 0.8) {}
     void Parse(std::string config_str) {
       ParseFieldTrial(
@@ -151,8 +151,8 @@ TEST_P(BbrScenarioTest, ReceivesVideo) {
   if (conf_.tuning.use_bbr) {
     call_config.transport.cc_factory = &bbr_factory;
   }
-  call_config.transport.rates.min_rate = DataRate::kbps(30);
-  call_config.transport.rates.max_rate = DataRate::kbps(1800);
+  call_config.transport.rates.min_rate = DataRate::KilobitsPerSec(30);
+  call_config.transport.rates.max_rate = DataRate::KilobitsPerSec(1800);
 
   CallClient* alice = s.CreateClient("send", call_config);
   CallClient* bob = s.CreateClient("return", call_config);
@@ -168,12 +168,12 @@ TEST_P(BbrScenarioTest, ReceivesVideo) {
 
   VideoStreamPair* alice_video =
       s.CreateVideoStream(route->forward(), [&](VideoStreamConfig* c) {
-        c->encoder.fake.max_rate = DataRate::kbps(1800);
+        c->encoder.fake.max_rate = DataRate::KilobitsPerSec(1800);
       });
   s.CreateAudioStream(route->forward(), [&](AudioStreamConfig* c) {
     if (conf_.tuning.use_bbr) {
       c->stream.in_bandwidth_estimation = true;
-      c->encoder.fixed_rate = DataRate::kbps(31);
+      c->encoder.fixed_rate = DataRate::KilobitsPerSec(31);
     }
   });
 
@@ -181,12 +181,12 @@ TEST_P(BbrScenarioTest, ReceivesVideo) {
   if (conf_.scenario.return_traffic) {
     bob_video =
         s.CreateVideoStream(route->reverse(), [&](VideoStreamConfig* c) {
-          c->encoder.fake.max_rate = DataRate::kbps(1800);
+          c->encoder.fake.max_rate = DataRate::KilobitsPerSec(1800);
         });
     s.CreateAudioStream(route->reverse(), [&](AudioStreamConfig* c) {
       if (conf_.tuning.use_bbr) {
         c->stream.in_bandwidth_estimation = true;
-        c->encoder.fixed_rate = DataRate::kbps(31);
+        c->encoder.fixed_rate = DataRate::KilobitsPerSec(31);
       }
     });
   }
@@ -196,7 +196,7 @@ TEST_P(BbrScenarioTest, ReceivesVideo) {
   auto* cross_traffic = s.net()->CreateRandomWalkCrossTraffic(
       s.net()->CreateTrafficRoute({send_net->node()}), cross_config);
 
-  s.CreatePrinter("send.stats.txt", TimeDelta::ms(100),
+  s.CreatePrinter("send.stats.txt", TimeDelta::Millis(100),
                   {alice->StatsPrinter(), alice_video->send()->StatsPrinter(),
                    cross_traffic->StatsPrinter(), send_net->ConfigPrinter()});
 
@@ -205,9 +205,9 @@ TEST_P(BbrScenarioTest, ReceivesVideo) {
       ret_net->ConfigPrinter()};
   if (bob_video)
     return_printers.push_back(bob_video->send()->StatsPrinter());
-  s.CreatePrinter("return.stats.txt", TimeDelta::ms(100), return_printers);
+  s.CreatePrinter("return.stats.txt", TimeDelta::Millis(100), return_printers);
 
-  s.RunFor(TimeDelta::ms(kRunTimeMs));
+  s.RunFor(TimeDelta::Millis(kRunTimeMs));
 }
 
 INSTANTIATE_TEST_SUITE_P(Selected,

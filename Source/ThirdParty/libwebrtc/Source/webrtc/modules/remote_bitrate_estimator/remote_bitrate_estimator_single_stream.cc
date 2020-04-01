@@ -31,7 +31,7 @@ namespace {
 absl::optional<DataRate> OptionalRateFromOptionalBps(
     absl::optional<int> bitrate_bps) {
   if (bitrate_bps) {
-    return DataRate::bps(*bitrate_bps);
+    return DataRate::BitsPerSec(*bitrate_bps);
   } else {
     return absl::nullopt;
   }
@@ -146,7 +146,8 @@ void RemoteBitrateEstimatorSingleStream::IncomingPacket(
     if (incoming_bitrate_bps &&
         (prior_state != BandwidthUsage::kBwOverusing ||
          GetRemoteRate()->TimeToReduceFurther(
-             Timestamp::ms(now_ms), DataRate::bps(*incoming_bitrate_bps)))) {
+             Timestamp::Millis(now_ms),
+             DataRate::BitsPerSec(*incoming_bitrate_bps)))) {
       // The first overuse should immediately trigger a new estimate.
       // We also have to update the estimate immediately if we are overusing
       // and the target bitrate is too high compared to what we are receiving.
@@ -203,7 +204,7 @@ void RemoteBitrateEstimatorSingleStream::UpdateEstimate(int64_t now_ms) {
   const RateControlInput input(
       bw_state, OptionalRateFromOptionalBps(incoming_bitrate_.Rate(now_ms)));
   uint32_t target_bitrate =
-      remote_rate->Update(&input, Timestamp::ms(now_ms)).bps<uint32_t>();
+      remote_rate->Update(&input, Timestamp::Millis(now_ms)).bps<uint32_t>();
   if (remote_rate->ValidEstimate()) {
     process_interval_ms_ = remote_rate->GetFeedbackInterval().ms();
     RTC_DCHECK_GT(process_interval_ms_, 0);
@@ -217,7 +218,7 @@ void RemoteBitrateEstimatorSingleStream::UpdateEstimate(int64_t now_ms) {
 void RemoteBitrateEstimatorSingleStream::OnRttUpdate(int64_t avg_rtt_ms,
                                                      int64_t max_rtt_ms) {
   rtc::CritScope cs(&crit_sect_);
-  GetRemoteRate()->SetRtt(TimeDelta::ms(avg_rtt_ms));
+  GetRemoteRate()->SetRtt(TimeDelta::Millis(avg_rtt_ms));
 }
 
 void RemoteBitrateEstimatorSingleStream::RemoveStream(unsigned int ssrc) {
@@ -264,7 +265,7 @@ AimdRateControl* RemoteBitrateEstimatorSingleStream::GetRemoteRate() {
 
 void RemoteBitrateEstimatorSingleStream::SetMinBitrate(int min_bitrate_bps) {
   rtc::CritScope cs(&crit_sect_);
-  remote_rate_->SetMinBitrate(DataRate::bps(min_bitrate_bps));
+  remote_rate_->SetMinBitrate(DataRate::BitsPerSec(min_bitrate_bps));
 }
 
 }  // namespace webrtc

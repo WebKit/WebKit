@@ -26,8 +26,6 @@ class MockAudioDecoder : public AudioDecoder {
   MOCK_CONST_METHOD0(HasDecodePlc, bool());
   MOCK_METHOD2(DecodePlc, size_t(size_t, int16_t*));
   MOCK_METHOD0(Reset, void());
-  MOCK_METHOD5(IncomingPacket,
-               int(const uint8_t*, size_t, uint16_t, uint32_t, uint32_t));
   MOCK_METHOD0(ErrorCode, int());
   MOCK_CONST_METHOD2(PacketDuration, int(const uint8_t*, size_t));
   MOCK_CONST_METHOD0(Channels, size_t());

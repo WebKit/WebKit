@@ -15,18 +15,16 @@ import static android.media.AudioManager.MODE_IN_COMMUNICATION;
 import static android.media.AudioManager.MODE_NORMAL;
 import static android.media.AudioManager.MODE_RINGTONE;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.AudioDeviceInfo;
+import android.media.AudioFormat;
 import android.media.AudioManager;
-import android.media.AudioRecordingConfiguration;
 import android.media.MediaRecorder.AudioSource;
 import android.os.Build;
-import android.os.Process;
 import java.lang.Thread;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import org.webrtc.Logging;
 
 final class WebRtcAudioUtils {
@@ -65,6 +63,130 @@ final class WebRtcAudioUtils {
     logAudioStateBasic(tag, context, audioManager);
     logAudioStateVolume(tag, audioManager);
     logAudioDeviceInfo(tag, audioManager);
+  }
+
+  // Converts AudioDeviceInfo types to local string representation.
+  static String deviceTypeToString(int type) {
+    switch (type) {
+      case AudioDeviceInfo.TYPE_UNKNOWN:
+        return "TYPE_UNKNOWN";
+      case AudioDeviceInfo.TYPE_BUILTIN_EARPIECE:
+        return "TYPE_BUILTIN_EARPIECE";
+      case AudioDeviceInfo.TYPE_BUILTIN_SPEAKER:
+        return "TYPE_BUILTIN_SPEAKER";
+      case AudioDeviceInfo.TYPE_WIRED_HEADSET:
+        return "TYPE_WIRED_HEADSET";
+      case AudioDeviceInfo.TYPE_WIRED_HEADPHONES:
+        return "TYPE_WIRED_HEADPHONES";
+      case AudioDeviceInfo.TYPE_LINE_ANALOG:
+        return "TYPE_LINE_ANALOG";
+      case AudioDeviceInfo.TYPE_LINE_DIGITAL:
+        return "TYPE_LINE_DIGITAL";
+      case AudioDeviceInfo.TYPE_BLUETOOTH_SCO:
+        return "TYPE_BLUETOOTH_SCO";
+      case AudioDeviceInfo.TYPE_BLUETOOTH_A2DP:
+        return "TYPE_BLUETOOTH_A2DP";
+      case AudioDeviceInfo.TYPE_HDMI:
+        return "TYPE_HDMI";
+      case AudioDeviceInfo.TYPE_HDMI_ARC:
+        return "TYPE_HDMI_ARC";
+      case AudioDeviceInfo.TYPE_USB_DEVICE:
+        return "TYPE_USB_DEVICE";
+      case AudioDeviceInfo.TYPE_USB_ACCESSORY:
+        return "TYPE_USB_ACCESSORY";
+      case AudioDeviceInfo.TYPE_DOCK:
+        return "TYPE_DOCK";
+      case AudioDeviceInfo.TYPE_FM:
+        return "TYPE_FM";
+      case AudioDeviceInfo.TYPE_BUILTIN_MIC:
+        return "TYPE_BUILTIN_MIC";
+      case AudioDeviceInfo.TYPE_FM_TUNER:
+        return "TYPE_FM_TUNER";
+      case AudioDeviceInfo.TYPE_TV_TUNER:
+        return "TYPE_TV_TUNER";
+      case AudioDeviceInfo.TYPE_TELEPHONY:
+        return "TYPE_TELEPHONY";
+      case AudioDeviceInfo.TYPE_AUX_LINE:
+        return "TYPE_AUX_LINE";
+      case AudioDeviceInfo.TYPE_IP:
+        return "TYPE_IP";
+      case AudioDeviceInfo.TYPE_BUS:
+        return "TYPE_BUS";
+      case AudioDeviceInfo.TYPE_USB_HEADSET:
+        return "TYPE_USB_HEADSET";
+      default:
+        return "TYPE_UNKNOWN";
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.N)
+  public static String audioSourceToString(int source) {
+    // AudioSource.UNPROCESSED requires API level 29. Use local define instead.
+    final int VOICE_PERFORMANCE = 10;
+    switch (source) {
+      case AudioSource.DEFAULT:
+        return "DEFAULT";
+      case AudioSource.MIC:
+        return "MIC";
+      case AudioSource.VOICE_UPLINK:
+        return "VOICE_UPLINK";
+      case AudioSource.VOICE_DOWNLINK:
+        return "VOICE_DOWNLINK";
+      case AudioSource.VOICE_CALL:
+        return "VOICE_CALL";
+      case AudioSource.CAMCORDER:
+        return "CAMCORDER";
+      case AudioSource.VOICE_RECOGNITION:
+        return "VOICE_RECOGNITION";
+      case AudioSource.VOICE_COMMUNICATION:
+        return "VOICE_COMMUNICATION";
+      case AudioSource.UNPROCESSED:
+        return "UNPROCESSED";
+      case VOICE_PERFORMANCE:
+        return "VOICE_PERFORMANCE";
+      default:
+        return "INVALID";
+    }
+  }
+
+  public static String channelMaskToString(int mask) {
+    // For input or AudioRecord, the mask should be AudioFormat#CHANNEL_IN_MONO or
+    // AudioFormat#CHANNEL_IN_STEREO. AudioFormat#CHANNEL_IN_MONO is guaranteed to work on all
+    // devices.
+    switch (mask) {
+      case AudioFormat.CHANNEL_IN_STEREO:
+        return "IN_STEREO";
+      case AudioFormat.CHANNEL_IN_MONO:
+        return "IN_MONO";
+      default:
+        return "INVALID";
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.N)
+  public static String audioEncodingToString(int enc) {
+    switch (enc) {
+      case AudioFormat.ENCODING_INVALID:
+        return "INVALID";
+      case AudioFormat.ENCODING_PCM_16BIT:
+        return "PCM_16BIT";
+      case AudioFormat.ENCODING_PCM_8BIT:
+        return "PCM_8BIT";
+      case AudioFormat.ENCODING_PCM_FLOAT:
+        return "PCM_FLOAT";
+      case AudioFormat.ENCODING_AC3:
+        return "AC3";
+      case AudioFormat.ENCODING_E_AC3:
+        return "AC3";
+      case AudioFormat.ENCODING_DTS:
+        return "DTS";
+      case AudioFormat.ENCODING_DTS_HD:
+        return "DTS_HD";
+      case AudioFormat.ENCODING_MP3:
+        return "MP3";
+      default:
+        return "Invalid encoding: " + enc;
+    }
   }
 
   // Reports basic audio statistics.
@@ -178,60 +300,6 @@ final class WebRtcAudioUtils {
         return "STREAM_SYSTEM";
       default:
         return "STREAM_INVALID";
-    }
-  }
-
-  // Converts AudioDeviceInfo types to local string representation.
-  private static String deviceTypeToString(int type) {
-    switch (type) {
-      case AudioDeviceInfo.TYPE_UNKNOWN:
-        return "TYPE_UNKNOWN";
-      case AudioDeviceInfo.TYPE_BUILTIN_EARPIECE:
-        return "TYPE_BUILTIN_EARPIECE";
-      case AudioDeviceInfo.TYPE_BUILTIN_SPEAKER:
-        return "TYPE_BUILTIN_SPEAKER";
-      case AudioDeviceInfo.TYPE_WIRED_HEADSET:
-        return "TYPE_WIRED_HEADSET";
-      case AudioDeviceInfo.TYPE_WIRED_HEADPHONES:
-        return "TYPE_WIRED_HEADPHONES";
-      case AudioDeviceInfo.TYPE_LINE_ANALOG:
-        return "TYPE_LINE_ANALOG";
-      case AudioDeviceInfo.TYPE_LINE_DIGITAL:
-        return "TYPE_LINE_DIGITAL";
-      case AudioDeviceInfo.TYPE_BLUETOOTH_SCO:
-        return "TYPE_BLUETOOTH_SCO";
-      case AudioDeviceInfo.TYPE_BLUETOOTH_A2DP:
-        return "TYPE_BLUETOOTH_A2DP";
-      case AudioDeviceInfo.TYPE_HDMI:
-        return "TYPE_HDMI";
-      case AudioDeviceInfo.TYPE_HDMI_ARC:
-        return "TYPE_HDMI_ARC";
-      case AudioDeviceInfo.TYPE_USB_DEVICE:
-        return "TYPE_USB_DEVICE";
-      case AudioDeviceInfo.TYPE_USB_ACCESSORY:
-        return "TYPE_USB_ACCESSORY";
-      case AudioDeviceInfo.TYPE_DOCK:
-        return "TYPE_DOCK";
-      case AudioDeviceInfo.TYPE_FM:
-        return "TYPE_FM";
-      case AudioDeviceInfo.TYPE_BUILTIN_MIC:
-        return "TYPE_BUILTIN_MIC";
-      case AudioDeviceInfo.TYPE_FM_TUNER:
-        return "TYPE_FM_TUNER";
-      case AudioDeviceInfo.TYPE_TV_TUNER:
-        return "TYPE_TV_TUNER";
-      case AudioDeviceInfo.TYPE_TELEPHONY:
-        return "TYPE_TELEPHONY";
-      case AudioDeviceInfo.TYPE_AUX_LINE:
-        return "TYPE_AUX_LINE";
-      case AudioDeviceInfo.TYPE_IP:
-        return "TYPE_IP";
-      case AudioDeviceInfo.TYPE_BUS:
-        return "TYPE_BUS";
-      case AudioDeviceInfo.TYPE_USB_HEADSET:
-        return "TYPE_USB_HEADSET";
-      default:
-        return "TYPE_UNKNOWN";
     }
   }
 

@@ -17,6 +17,7 @@
 #include <memory>
 
 #include "modules/video_coding/internal_defines.h"
+#include "rtc_base/experiments/rate_control_settings.h"
 #include "rtc_base/numerics/exp_filter.h"
 
 namespace webrtc {
@@ -183,6 +184,8 @@ class VCMFecMethod : public VCMProtectionMethod {
   enum { kMaxBytesPerFrameForFecLow = 400 };
   // Max bytes/frame for frame size larger than VGA, ~200k at 25fps.
   enum { kMaxBytesPerFrameForFecHigh = 1000 };
+
+  const RateControlSettings rate_control_settings_;
 };
 
 class VCMNackFecMethod : public VCMFecMethod {

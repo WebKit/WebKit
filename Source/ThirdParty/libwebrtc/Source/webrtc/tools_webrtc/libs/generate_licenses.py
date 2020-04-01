@@ -36,14 +36,17 @@ LIB_TO_LICENSES_DICT = {
     'abseil-cpp': ['third_party/abseil-cpp/LICENSE'],
     'android_ndk': ['third_party/android_ndk/NOTICE'],
     'android_sdk': ['third_party/android_sdk/LICENSE'],
-    'auto': ['third_party/auto/src/LICENSE.txt'],
+    'auto': ['third_party/android_deps/libs/'
+             'com_google_auto_service_auto_service/LICENSE'],
     'bazel': ['third_party/bazel/LICENSE'],
     'boringssl': ['third_party/boringssl/src/LICENSE'],
-    'errorprone': ['third_party/errorprone/LICENSE'],
+    'errorprone': ['third_party/android_deps/libs/'
+                   'com_google_errorprone_error_prone_core/LICENSE'],
     'fiat': ['third_party/boringssl/src/third_party/fiat/LICENSE'],
     'guava': ['third_party/guava/LICENSE'],
     'ijar': ['third_party/ijar/LICENSE'],
     'jsoncpp': ['third_party/jsoncpp/LICENSE'],
+    'libaom': ['third_party/libaom/source/libaom/LICENSE'],
     'libc++': ['buildtools/third_party/libc++/trunk/LICENSE.TXT'],
     'libc++abi': ['buildtools/third_party/libc++abi/trunk/LICENSE.TXT'],
     'libevent': ['base/third_party/libevent/LICENSE'],
@@ -66,6 +69,10 @@ LIB_TO_LICENSES_DICT = {
     'g722': ['modules/third_party/g722/LICENSE'],
     'fft4g': ['common_audio/third_party/fft4g/LICENSE'],
     'spl_sqrt_floor': ['common_audio/third_party/spl_sqrt_floor/LICENSE'],
+
+    # TODO(bugs.webrtc.org/1110): Remove this hack. This is not a lib.
+    # For some reason it is listed as so in _GetThirdPartyLibraries.
+    'android_deps': [],
 
     # Compile time dependencies, no license needed:
     'yasm': [],

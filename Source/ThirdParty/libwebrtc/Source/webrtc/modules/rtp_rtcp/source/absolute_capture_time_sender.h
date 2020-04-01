@@ -41,8 +41,8 @@ namespace webrtc {
 class AbsoluteCaptureTimeSender {
  public:
   static constexpr TimeDelta kInterpolationMaxInterval =
-      TimeDelta::Millis<1000>();
-  static constexpr TimeDelta kInterpolationMaxError = TimeDelta::Millis<1>();
+      TimeDelta::Millis(1000);
+  static constexpr TimeDelta kInterpolationMaxError = TimeDelta::Millis(1);
 
   explicit AbsoluteCaptureTimeSender(Clock* clock);
 

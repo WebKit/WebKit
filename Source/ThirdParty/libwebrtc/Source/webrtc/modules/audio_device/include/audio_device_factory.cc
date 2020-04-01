@@ -10,6 +10,8 @@
 
 #include "modules/audio_device/include/audio_device_factory.h"
 
+#include <memory>
+
 #if defined(WEBRTC_WIN)
 #include "modules/audio_device/win/audio_device_module_win.h"
 #include "modules/audio_device/win/core_audio_input_win.h"
@@ -17,7 +19,6 @@
 #include "modules/audio_device/win/core_audio_utility_win.h"
 #endif
 
-#include "absl/memory/memory.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "rtc_base/logging.h"
 
@@ -44,8 +45,8 @@ CreateWindowsCoreAudioAudioDeviceModuleForTest(
     return nullptr;
   }
   return CreateWindowsCoreAudioAudioDeviceModuleFromInputAndOutput(
-      absl::make_unique<webrtc_win::CoreAudioInput>(automatic_restart),
-      absl::make_unique<webrtc_win::CoreAudioOutput>(automatic_restart),
+      std::make_unique<webrtc_win::CoreAudioInput>(automatic_restart),
+      std::make_unique<webrtc_win::CoreAudioOutput>(automatic_restart),
       task_queue_factory);
 }
 

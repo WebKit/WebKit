@@ -10,16 +10,28 @@
 
 #include "modules/audio_processing/agc2/rnn_vad/rnn.h"
 
+// Defines WEBRTC_ARCH_X86_FAMILY, used below.
+#include "rtc_base/system/arch.h"
+
+#if defined(WEBRTC_HAS_NEON)
+#include <arm_neon.h>
+#endif
+#if defined(WEBRTC_ARCH_X86_FAMILY)
+#include <emmintrin.h>
+#endif
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <numeric>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "third_party/rnnoise/src/rnn_activations.h"
 #include "third_party/rnnoise/src/rnn_vad_weights.h"
 
 namespace webrtc {
 namespace rnn_vad {
+namespace {
 
 using rnnoise::kWeightsScale;
 
@@ -44,21 +56,228 @@ using rnnoise::kOutputLayerOutputSize;
 static_assert(kOutputLayerOutputSize <= kFullyConnectedLayersMaxUnits,
               "Increase kFullyConnectedLayersMaxUnits.");
 
-using rnnoise::RectifiedLinearUnit;
 using rnnoise::SigmoidApproximated;
 using rnnoise::TansigApproximated;
+
+inline float RectifiedLinearUnit(float x) {
+  return x < 0.f ? 0.f : x;
+}
+
+std::vector<float> GetScaledParams(rtc::ArrayView<const int8_t> params) {
+  std::vector<float> scaled_params(params.size());
+  std::transform(params.begin(), params.end(), scaled_params.begin(),
+                 [](int8_t x) -> float {
+                   return rnnoise::kWeightsScale * static_cast<float>(x);
+                 });
+  return scaled_params;
+}
+
+// TODO(bugs.chromium.org/10480): Hard-code optimized layout and remove this
+// function to improve setup time.
+// Casts and scales |weights| and re-arranges the layout.
+std::vector<float> GetPreprocessedFcWeights(
+    rtc::ArrayView<const int8_t> weights,
+    size_t output_size) {
+  if (output_size == 1) {
+    return GetScaledParams(weights);
+  }
+  // Transpose, scale and cast.
+  const size_t input_size = rtc::CheckedDivExact(weights.size(), output_size);
+  std::vector<float> w(weights.size());
+  for (size_t o = 0; o < output_size; ++o) {
+    for (size_t i = 0; i < input_size; ++i) {
+      w[o * input_size + i] = rnnoise::kWeightsScale *
+                              static_cast<float>(weights[i * output_size + o]);
+    }
+  }
+  return w;
+}
+
+constexpr size_t kNumGruGates = 3;  // Update, reset, output.
+
+// TODO(bugs.chromium.org/10480): Hard-coded optimized layout and remove this
+// function to improve setup time.
+// Casts and scales |tensor_src| for a GRU layer and re-arranges the layout.
+// It works both for weights, recurrent weights and bias.
+std::vector<float> GetPreprocessedGruTensor(
+    rtc::ArrayView<const int8_t> tensor_src,
+    size_t output_size) {
+  // Transpose, cast and scale.
+  // |n| is the size of the first dimension of the 3-dim tensor |weights|.
+  const size_t n =
+      rtc::CheckedDivExact(tensor_src.size(), output_size * kNumGruGates);
+  const size_t stride_src = kNumGruGates * output_size;
+  const size_t stride_dst = n * output_size;
+  std::vector<float> tensor_dst(tensor_src.size());
+  for (size_t g = 0; g < kNumGruGates; ++g) {
+    for (size_t o = 0; o < output_size; ++o) {
+      for (size_t i = 0; i < n; ++i) {
+        tensor_dst[g * stride_dst + o * n + i] =
+            rnnoise::kWeightsScale *
+            static_cast<float>(
+                tensor_src[i * stride_src + g * output_size + o]);
+      }
+    }
+  }
+  return tensor_dst;
+}
+
+void ComputeGruUpdateResetGates(size_t input_size,
+                                size_t output_size,
+                                rtc::ArrayView<const float> weights,
+                                rtc::ArrayView<const float> recurrent_weights,
+                                rtc::ArrayView<const float> bias,
+                                rtc::ArrayView<const float> input,
+                                rtc::ArrayView<const float> state,
+                                rtc::ArrayView<float> gate) {
+  for (size_t o = 0; o < output_size; ++o) {
+    gate[o] = bias[o];
+    for (size_t i = 0; i < input_size; ++i) {
+      gate[o] += input[i] * weights[o * input_size + i];
+    }
+    for (size_t s = 0; s < output_size; ++s) {
+      gate[o] += state[s] * recurrent_weights[o * output_size + s];
+    }
+    gate[o] = SigmoidApproximated(gate[o]);
+  }
+}
+
+void ComputeGruOutputGate(size_t input_size,
+                          size_t output_size,
+                          rtc::ArrayView<const float> weights,
+                          rtc::ArrayView<const float> recurrent_weights,
+                          rtc::ArrayView<const float> bias,
+                          rtc::ArrayView<const float> input,
+                          rtc::ArrayView<const float> state,
+                          rtc::ArrayView<const float> reset,
+                          rtc::ArrayView<float> gate) {
+  for (size_t o = 0; o < output_size; ++o) {
+    gate[o] = bias[o];
+    for (size_t i = 0; i < input_size; ++i) {
+      gate[o] += input[i] * weights[o * input_size + i];
+    }
+    for (size_t s = 0; s < output_size; ++s) {
+      gate[o] += state[s] * recurrent_weights[o * output_size + s] * reset[s];
+    }
+    gate[o] = RectifiedLinearUnit(gate[o]);
+  }
+}
+
+// Gated recurrent unit (GRU) layer un-optimized implementation.
+void ComputeGruLayerOutput(size_t input_size,
+                           size_t output_size,
+                           rtc::ArrayView<const float> input,
+                           rtc::ArrayView<const float> weights,
+                           rtc::ArrayView<const float> recurrent_weights,
+                           rtc::ArrayView<const float> bias,
+                           rtc::ArrayView<float> state) {
+  RTC_DCHECK_EQ(input_size, input.size());
+  // Stride and offset used to read parameter arrays.
+  const size_t stride_in = input_size * output_size;
+  const size_t stride_out = output_size * output_size;
+
+  // Update gate.
+  std::array<float, kRecurrentLayersMaxUnits> update;
+  ComputeGruUpdateResetGates(
+      input_size, output_size, weights.subview(0, stride_in),
+      recurrent_weights.subview(0, stride_out), bias.subview(0, output_size),
+      input, state, update);
+
+  // Reset gate.
+  std::array<float, kRecurrentLayersMaxUnits> reset;
+  ComputeGruUpdateResetGates(
+      input_size, output_size, weights.subview(stride_in, stride_in),
+      recurrent_weights.subview(stride_out, stride_out),
+      bias.subview(output_size, output_size), input, state, reset);
+
+  // Output gate.
+  std::array<float, kRecurrentLayersMaxUnits> output;
+  ComputeGruOutputGate(
+      input_size, output_size, weights.subview(2 * stride_in, stride_in),
+      recurrent_weights.subview(2 * stride_out, stride_out),
+      bias.subview(2 * output_size, output_size), input, state, reset, output);
+
+  // Update output through the update gates and update the state.
+  for (size_t o = 0; o < output_size; ++o) {
+    output[o] = update[o] * state[o] + (1.f - update[o]) * output[o];
+    state[o] = output[o];
+  }
+}
+
+// Fully connected layer un-optimized implementation.
+void ComputeFullyConnectedLayerOutput(
+    size_t input_size,
+    size_t output_size,
+    rtc::ArrayView<const float> input,
+    rtc::ArrayView<const float> bias,
+    rtc::ArrayView<const float> weights,
+    rtc::FunctionView<float(float)> activation_function,
+    rtc::ArrayView<float> output) {
+  RTC_DCHECK_EQ(input.size(), input_size);
+  RTC_DCHECK_EQ(bias.size(), output_size);
+  RTC_DCHECK_EQ(weights.size(), input_size * output_size);
+  for (size_t o = 0; o < output_size; ++o) {
+    output[o] = bias[o];
+    // TODO(bugs.chromium.org/9076): Benchmark how different layouts for
+    // |weights_| change the performance across different platforms.
+    for (size_t i = 0; i < input_size; ++i) {
+      output[o] += input[i] * weights[o * input_size + i];
+    }
+    output[o] = activation_function(output[o]);
+  }
+}
+
+#if defined(WEBRTC_ARCH_X86_FAMILY)
+// Fully connected layer SSE2 implementation.
+void ComputeFullyConnectedLayerOutputSse2(
+    size_t input_size,
+    size_t output_size,
+    rtc::ArrayView<const float> input,
+    rtc::ArrayView<const float> bias,
+    rtc::ArrayView<const float> weights,
+    rtc::FunctionView<float(float)> activation_function,
+    rtc::ArrayView<float> output) {
+  RTC_DCHECK_EQ(input.size(), input_size);
+  RTC_DCHECK_EQ(bias.size(), output_size);
+  RTC_DCHECK_EQ(weights.size(), input_size * output_size);
+  const size_t input_size_by_4 = input_size >> 2;
+  const size_t offset = input_size & ~3;
+  __m128 sum_wx_128;
+  const float* v = reinterpret_cast<const float*>(&sum_wx_128);
+  for (size_t o = 0; o < output_size; ++o) {
+    // Perform 128 bit vector operations.
+    sum_wx_128 = _mm_set1_ps(0);
+    const float* x_p = input.data();
+    const float* w_p = weights.data() + o * input_size;
+    for (size_t i = 0; i < input_size_by_4; ++i, x_p += 4, w_p += 4) {
+      sum_wx_128 = _mm_add_ps(sum_wx_128,
+                              _mm_mul_ps(_mm_loadu_ps(x_p), _mm_loadu_ps(w_p)));
+    }
+    // Perform non-vector operations for any remaining items, sum up bias term
+    // and results from the vectorized code, and apply the activation function.
+    output[o] = activation_function(
+        std::inner_product(input.begin() + offset, input.end(),
+                           weights.begin() + o * input_size + offset,
+                           bias[o] + v[0] + v[1] + v[2] + v[3]));
+  }
+}
+#endif
+
+}  // namespace
 
 FullyConnectedLayer::FullyConnectedLayer(
     const size_t input_size,
     const size_t output_size,
     const rtc::ArrayView<const int8_t> bias,
     const rtc::ArrayView<const int8_t> weights,
-    float (*const activation_function)(float))
+    rtc::FunctionView<float(float)> activation_function,
+    Optimization optimization)
     : input_size_(input_size),
       output_size_(output_size),
-      bias_(bias),
-      weights_(weights),
-      activation_function_(activation_function) {
+      bias_(GetScaledParams(bias)),
+      weights_(GetPreprocessedFcWeights(weights, output_size)),
+      activation_function_(activation_function),
+      optimization_(optimization) {
   RTC_DCHECK_LE(output_size_, kFullyConnectedLayersMaxUnits)
       << "Static over-allocation of fully-connected layers output vectors is "
          "not sufficient.";
@@ -75,16 +294,24 @@ rtc::ArrayView<const float> FullyConnectedLayer::GetOutput() const {
 }
 
 void FullyConnectedLayer::ComputeOutput(rtc::ArrayView<const float> input) {
-  // TODO(bugs.chromium.org/9076): Optimize using SSE/AVX fused multiply-add
-  // operations.
-  for (size_t o = 0; o < output_size_; ++o) {
-    output_[o] = bias_[o];
-    // TODO(bugs.chromium.org/9076): Benchmark how different layouts for
-    // |weights_| change the performance across different platforms.
-    for (size_t i = 0; i < input_size_; ++i) {
-      output_[o] += input[i] * weights_[i * output_size_ + o];
-    }
-    output_[o] = (*activation_function_)(kWeightsScale * output_[o]);
+  switch (optimization_) {
+#if defined(WEBRTC_ARCH_X86_FAMILY)
+    case Optimization::kSse2:
+      ComputeFullyConnectedLayerOutputSse2(input_size_, output_size_, input,
+                                           bias_, weights_,
+                                           activation_function_, output_);
+      break;
+#endif
+#if defined(WEBRTC_HAS_NEON)
+    case Optimization::kNeon:
+      // TODO(bugs.chromium.org/10480): Handle Optimization::kNeon.
+      ComputeFullyConnectedLayerOutput(input_size_, output_size_, input, bias_,
+                                       weights_, activation_function_, output_);
+      break;
+#endif
+    default:
+      ComputeFullyConnectedLayerOutput(input_size_, output_size_, input, bias_,
+                                       weights_, activation_function_, output_);
   }
 }
 
@@ -94,23 +321,25 @@ GatedRecurrentLayer::GatedRecurrentLayer(
     const rtc::ArrayView<const int8_t> bias,
     const rtc::ArrayView<const int8_t> weights,
     const rtc::ArrayView<const int8_t> recurrent_weights,
-    float (*const activation_function)(float))
+    Optimization optimization)
     : input_size_(input_size),
       output_size_(output_size),
-      bias_(bias),
-      weights_(weights),
-      recurrent_weights_(recurrent_weights),
-      activation_function_(activation_function) {
+      bias_(GetPreprocessedGruTensor(bias, output_size)),
+      weights_(GetPreprocessedGruTensor(weights, output_size)),
+      recurrent_weights_(
+          GetPreprocessedGruTensor(recurrent_weights, output_size)),
+      optimization_(optimization) {
   RTC_DCHECK_LE(output_size_, kRecurrentLayersMaxUnits)
       << "Static over-allocation of recurrent layers state vectors is not "
-      << "sufficient.";
-  RTC_DCHECK_EQ(3 * output_size_, bias_.size())
+         "sufficient.";
+  RTC_DCHECK_EQ(kNumGruGates * output_size_, bias_.size())
       << "Mismatching output size and bias terms array size.";
-  RTC_DCHECK_EQ(3 * input_size_ * output_size_, weights_.size())
+  RTC_DCHECK_EQ(kNumGruGates * input_size_ * output_size_, weights_.size())
       << "Mismatching input-output size and weight coefficients array size.";
-  RTC_DCHECK_EQ(3 * input_size_ * output_size_, recurrent_weights_.size())
+  RTC_DCHECK_EQ(kNumGruGates * output_size_ * output_size_,
+                recurrent_weights_.size())
       << "Mismatching input-output size and recurrent weight coefficients array"
-      << " size.";
+         " size.";
   Reset();
 }
 
@@ -125,63 +354,25 @@ void GatedRecurrentLayer::Reset() {
 }
 
 void GatedRecurrentLayer::ComputeOutput(rtc::ArrayView<const float> input) {
-  // TODO(bugs.chromium.org/9076): Optimize using SSE/AVX fused multiply-add
-  // operations.
-  // Stride and offset used to read parameter arrays.
-  const size_t stride = 3 * output_size_;
-  size_t offset = 0;
-
-  // Compute update gates.
-  std::array<float, kRecurrentLayersMaxUnits> update;
-  for (size_t o = 0; o < output_size_; ++o) {
-    update[o] = bias_[o];
-    // TODO(bugs.chromium.org/9076): Benchmark how different layouts for
-    // |weights_| and |recurrent_weights_| change the performance across
-    // different platforms.
-    for (size_t i = 0; i < input_size_; ++i) {  // Add input.
-      update[o] += input[i] * weights_[i * stride + o];
-    }
-    for (size_t s = 0; s < output_size_; ++s) {
-      update[o] += state_[s] * recurrent_weights_[s * stride + o];
-    }  // Add state.
-    update[o] = SigmoidApproximated(kWeightsScale * update[o]);
+  switch (optimization_) {
+#if defined(WEBRTC_ARCH_X86_FAMILY)
+    case Optimization::kSse2:
+      // TODO(bugs.chromium.org/10480): Handle Optimization::kSse2.
+      ComputeGruLayerOutput(input_size_, output_size_, input, weights_,
+                            recurrent_weights_, bias_, state_);
+      break;
+#endif
+#if defined(WEBRTC_HAS_NEON)
+    case Optimization::kNeon:
+      // TODO(bugs.chromium.org/10480): Handle Optimization::kNeon.
+      ComputeGruLayerOutput(input_size_, output_size_, input, weights_,
+                            recurrent_weights_, bias_, state_);
+      break;
+#endif
+    default:
+      ComputeGruLayerOutput(input_size_, output_size_, input, weights_,
+                            recurrent_weights_, bias_, state_);
   }
-
-  // Compute reset gates.
-  offset += output_size_;
-  std::array<float, kRecurrentLayersMaxUnits> reset;
-  for (size_t o = 0; o < output_size_; ++o) {
-    reset[o] = bias_[offset + o];
-    for (size_t i = 0; i < input_size_; ++i) {  // Add input.
-      reset[o] += input[i] * weights_[offset + i * stride + o];
-    }
-    for (size_t s = 0; s < output_size_; ++s) {  // Add state.
-      reset[o] += state_[s] * recurrent_weights_[offset + s * stride + o];
-    }
-    reset[o] = SigmoidApproximated(kWeightsScale * reset[o]);
-  }
-
-  // Compute output.
-  offset += output_size_;
-  std::array<float, kRecurrentLayersMaxUnits> output;
-  for (size_t o = 0; o < output_size_; ++o) {
-    output[o] = bias_[offset + o];
-    for (size_t i = 0; i < input_size_; ++i) {  // Add input.
-      output[o] += input[i] * weights_[offset + i * stride + o];
-    }
-    for (size_t s = 0; s < output_size_;
-         ++s) {  // Add state through reset gates.
-      output[o] +=
-          state_[s] * recurrent_weights_[offset + s * stride + o] * reset[s];
-    }
-    output[o] = (*activation_function_)(kWeightsScale * output[o]);
-    // Update output through the update gates.
-    output[o] = update[o] * state_[o] + (1.f - update[o]) * output[o];
-  }
-
-  // Update the state. Not done in the previous loop since that would pollute
-  // the current state and lead to incorrect output values.
-  std::copy(output.begin(), output.end(), state_.begin());
 }
 
 RnnBasedVad::RnnBasedVad()
@@ -189,18 +380,20 @@ RnnBasedVad::RnnBasedVad()
                    kInputLayerOutputSize,
                    kInputDenseBias,
                    kInputDenseWeights,
-                   TansigApproximated),
+                   TansigApproximated,
+                   DetectOptimization()),
       hidden_layer_(kInputLayerOutputSize,
                     kHiddenLayerOutputSize,
                     kHiddenGruBias,
                     kHiddenGruWeights,
                     kHiddenGruRecurrentWeights,
-                    RectifiedLinearUnit),
+                    DetectOptimization()),
       output_layer_(kHiddenLayerOutputSize,
                     kOutputLayerOutputSize,
                     kOutputDenseBias,
                     kOutputDenseWeights,
-                    SigmoidApproximated) {
+                    SigmoidApproximated,
+                    DetectOptimization()) {
   // Input-output chaining size checks.
   RTC_DCHECK_EQ(input_layer_.output_size(), hidden_layer_.input_size())
       << "The input and the hidden layers sizes do not match.";

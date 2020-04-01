@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+../../libwebrtc.xcodeproj/project.pbxproj #!/usr/bin/env python
 
 #  Copyright 2017 The WebRTC project authors. All Rights Reserved.
 #
@@ -160,7 +160,7 @@ class CheckNoMixingSourcesTest(unittest.TestCase):
 
   def testNoErrorIfSourcesAreInExclusiveIfBranches(self):
     self._GenerateBuildFile(textwrap.dedent("""
-      rtc_source_set("bar_foo") {
+      rtc_library("bar_foo") {
         if (is_win) {
           sources = [
             "bar.cc",
@@ -172,7 +172,7 @@ class CheckNoMixingSourcesTest(unittest.TestCase):
           ],
         }
       }
-      rtc_source_set("foo_bar") {
+      rtc_library("foo_bar") {
         if (is_win) {
           sources = [
             "foo.cc",
@@ -193,7 +193,7 @@ class CheckNoMixingSourcesTest(unittest.TestCase):
 
   def testErrorIfSourcesAreNotInExclusiveIfBranches(self):
     self._GenerateBuildFile(textwrap.dedent("""
-      rtc_source_set("bar_foo") {
+      rtc_library("bar_foo") {
         if (is_win) {
           sources = [
             "bar.cc",
@@ -205,7 +205,7 @@ class CheckNoMixingSourcesTest(unittest.TestCase):
           ],
         }
       }
-      rtc_source_set("foo_bar") {
+      rtc_library("foo_bar") {
         if (is_win) {
           sources = [
             "foo.cc",
@@ -246,7 +246,7 @@ class CheckNoMixingSourcesTest(unittest.TestCase):
           "%s",
         ],
       }
-      rtc_source_set("foo_bar") {
+      rtc_library("foo_bar") {
         sources = [
           "%s",
           "%s",

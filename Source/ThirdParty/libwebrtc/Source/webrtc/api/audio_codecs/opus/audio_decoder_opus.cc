@@ -14,7 +14,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
 
@@ -73,8 +72,8 @@ std::unique_ptr<AudioDecoder> AudioDecoderOpus::MakeAudioDecoder(
     Config config,
     absl::optional<AudioCodecPairId> /*codec_pair_id*/) {
   RTC_DCHECK(config.IsOk());
-  return absl::make_unique<AudioDecoderOpusImpl>(config.num_channels,
-                                                 config.sample_rate_hz);
+  return std::make_unique<AudioDecoderOpusImpl>(config.num_channels,
+                                                config.sample_rate_hz);
 }
 
 }  // namespace webrtc

@@ -12,10 +12,10 @@
 
 #include <ctype.h>
 #include <cstdint>
+#include <memory>
 #include <string>
 
 #include "absl/algorithm/container.h"
-#include "absl/memory/memory.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/rtc_certificate.h"
@@ -46,7 +46,7 @@ std::unique_ptr<SSLFingerprint> SSLFingerprint::Create(
   if (!ret) {
     return nullptr;
   }
-  return absl::make_unique<SSLFingerprint>(
+  return std::make_unique<SSLFingerprint>(
       algorithm, ArrayView<const uint8_t>(digest_val, digest_len));
 }
 
@@ -71,7 +71,7 @@ std::unique_ptr<SSLFingerprint> SSLFingerprint::CreateUniqueFromRfc4572(
   if (!value_len)
     return nullptr;
 
-  return absl::make_unique<SSLFingerprint>(
+  return std::make_unique<SSLFingerprint>(
       algorithm,
       ArrayView<const uint8_t>(reinterpret_cast<uint8_t*>(value), value_len));
 }

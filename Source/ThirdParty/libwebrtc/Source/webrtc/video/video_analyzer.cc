@@ -16,11 +16,13 @@
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
-#include "modules/rtp_rtcp/source/rtp_format.h"
-#include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "modules/rtp_rtcp/source/create_video_rtp_depacketizer.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "rtc_base/cpu_time.h"
 #include "rtc_base/format_macros.h"
 #include "rtc_base/memory_usage.h"
+#include "rtc_base/task_queue_for_test.h"
+#include "rtc_base/task_utils/repeating_task.h"
 #include "system_wrappers/include/cpu_info.h"
 #include "test/call_test.h"
 #include "test/testsupport/file_utils.h"
@@ -36,7 +38,7 @@ ABSL_FLAG(bool,
 
 namespace webrtc {
 namespace {
-constexpr int kSendStatsPollingIntervalMs = 1000;
+constexpr TimeDelta kSendStatsPollingInterval = TimeDelta::Seconds(1);
 constexpr size_t kMaxComparisons = 10;
 // How often is keep alive message printed.
 constexpr int kKeepAliveIntervalSeconds = 30;
@@ -50,23 +52,22 @@ bool IsFlexfec(int payload_type) {
 }
 }  // namespace
 
-VideoAnalyzer::VideoAnalyzer(
-    test::LayerFilteringTransport* transport,
-    const std::string& test_label,
-    double avg_psnr_threshold,
-    double avg_ssim_threshold,
-    int duration_frames,
-    FILE* graph_data_output_file,
-    const std::string& graph_title,
-    uint32_t ssrc_to_analyze,
-    uint32_t rtx_ssrc_to_analyze,
-    size_t selected_stream,
-    int selected_sl,
-    int selected_tl,
-    bool is_quick_test_enabled,
-    Clock* clock,
-    std::string rtp_dump_name,
-    test::DEPRECATED_SingleThreadedTaskQueueForTesting* task_queue)
+VideoAnalyzer::VideoAnalyzer(test::LayerFilteringTransport* transport,
+                             const std::string& test_label,
+                             double avg_psnr_threshold,
+                             double avg_ssim_threshold,
+                             int duration_frames,
+                             FILE* graph_data_output_file,
+                             const std::string& graph_title,
+                             uint32_t ssrc_to_analyze,
+                             uint32_t rtx_ssrc_to_analyze,
+                             size_t selected_stream,
+                             int selected_sl,
+                             int selected_tl,
+                             bool is_quick_test_enabled,
+                             Clock* clock,
+                             std::string rtp_dump_name,
+                             TaskQueueBase* task_queue)
     : transport_(transport),
       receiver_(nullptr),
       call_(nullptr),
@@ -108,6 +109,8 @@ VideoAnalyzer::VideoAnalyzer(
       is_quick_test_enabled_(is_quick_test_enabled),
       quit_(false),
       done_(true, false),
+      vp8_depacketizer_(CreateVideoRtpDepacketizer(kVideoCodecVP8)),
+      vp9_depacketizer_(CreateVideoRtpDepacketizer(kVideoCodecVP9)),
       clock_(clock),
       start_ms_(clock->TimeInMilliseconds()),
       task_queue_(task_queue) {
@@ -220,18 +223,18 @@ PacketReceiver::DeliveryStatus VideoAnalyzer::DeliverPacket(
     rtp_file_writer_->WritePacket(&p);
   }
 
-  RtpUtility::RtpHeaderParser parser(packet.cdata(), packet.size());
-  RTPHeader header;
-  parser.Parse(&header);
-  if (!IsFlexfec(header.payloadType) && (header.ssrc == ssrc_to_analyze_ ||
-                                         header.ssrc == rtx_ssrc_to_analyze_)) {
+  RtpPacket rtp_packet;
+  rtp_packet.Parse(packet);
+  if (!IsFlexfec(rtp_packet.PayloadType()) &&
+      (rtp_packet.Ssrc() == ssrc_to_analyze_ ||
+       rtp_packet.Ssrc() == rtx_ssrc_to_analyze_)) {
     // Ignore FlexFEC timestamps, to avoid collisions with media timestamps.
     // (FlexFEC and media are sent on different SSRCs, which have different
     // timestamps spaces.)
     // Also ignore packets from wrong SSRC, but include retransmits.
     rtc::CritScope lock(&crit_);
     int64_t timestamp =
-        wrap_handler_.Unwrap(header.timestamp - rtp_timestamp_delta_);
+        wrap_handler_.Unwrap(rtp_packet.Timestamp() - rtp_timestamp_delta_);
     recv_times_[timestamp] = clock_->CurrentNtpInMilliseconds();
   }
 
@@ -261,32 +264,31 @@ void VideoAnalyzer::PostEncodeOnFrame(size_t stream_id, uint32_t timestamp) {
 bool VideoAnalyzer::SendRtp(const uint8_t* packet,
                             size_t length,
                             const PacketOptions& options) {
-  RtpUtility::RtpHeaderParser parser(packet, length);
-  RTPHeader header;
-  parser.Parse(&header);
+  RtpPacket rtp_packet;
+  rtp_packet.Parse(packet, length);
 
   int64_t current_time = clock_->CurrentNtpInMilliseconds();
 
   bool result = transport_->SendRtp(packet, length, options);
   {
     rtc::CritScope lock(&crit_);
-    if (rtp_timestamp_delta_ == 0 && header.ssrc == ssrc_to_analyze_) {
+    if (rtp_timestamp_delta_ == 0 && rtp_packet.Ssrc() == ssrc_to_analyze_) {
       RTC_CHECK(static_cast<bool>(first_sent_timestamp_));
-      rtp_timestamp_delta_ = header.timestamp - *first_sent_timestamp_;
+      rtp_timestamp_delta_ = rtp_packet.Timestamp() - *first_sent_timestamp_;
     }
 
-    if (!IsFlexfec(header.payloadType) && header.ssrc == ssrc_to_analyze_) {
+    if (!IsFlexfec(rtp_packet.PayloadType()) &&
+        rtp_packet.Ssrc() == ssrc_to_analyze_) {
       // Ignore FlexFEC timestamps, to avoid collisions with media timestamps.
       // (FlexFEC and media are sent on different SSRCs, which have different
       // timestamps spaces.)
       // Also ignore packets from wrong SSRC and retransmits.
       int64_t timestamp =
-          wrap_handler_.Unwrap(header.timestamp - rtp_timestamp_delta_);
+          wrap_handler_.Unwrap(rtp_packet.Timestamp() - rtp_timestamp_delta_);
       send_times_[timestamp] = current_time;
 
-      if (IsInSelectedSpatialAndTemporalLayer(packet, length, header)) {
-        encoded_frame_sizes_[timestamp] +=
-            length - (header.headerLength + header.paddingLength);
+      if (IsInSelectedSpatialAndTemporalLayer(rtp_packet)) {
+        encoded_frame_sizes_[timestamp] += rtp_packet.payload_size();
       }
     }
   }
@@ -343,12 +345,11 @@ void VideoAnalyzer::Wait() {
   // at time-out check if frames_processed is going up. If so, give it more
   // time, otherwise fail. Hopefully this will reduce test flakiness.
 
-  {
-    rtc::CritScope lock(&comparison_lock_);
-    stop_stats_poller_ = false;
-    stats_polling_task_id_ = task_queue_->PostDelayedTask(
-        [this]() { PollStats(); }, kSendStatsPollingIntervalMs);
-  }
+  RepeatingTaskHandle stats_polling_task = RepeatingTaskHandle::DelayedStart(
+      task_queue_, kSendStatsPollingInterval, [this] {
+        PollStats();
+        return kSendStatsPollingInterval;
+      });
 
   int last_frames_processed = -1;
   int last_frames_captured = -1;
@@ -393,11 +394,7 @@ void VideoAnalyzer::Wait() {
   if (iteration > 0)
     printf("- Farewell, sweet Concorde!\n");
 
-  {
-    rtc::CritScope lock(&comparison_lock_);
-    stop_stats_poller_ = true;
-    task_queue_->CancelTask(stats_polling_task_id_);
-  }
+  SendTask(RTC_FROM_HERE, task_queue_, [&] { stats_polling_task.Stop(); });
 
   PrintResults();
   if (graph_data_output_file_)
@@ -432,51 +429,35 @@ double VideoAnalyzer::GetCpuUsagePercent() {
 }
 
 bool VideoAnalyzer::IsInSelectedSpatialAndTemporalLayer(
-    const uint8_t* packet,
-    size_t length,
-    const RTPHeader& header) {
-  if (header.payloadType != test::CallTest::kPayloadTypeVP9 &&
-      header.payloadType != test::CallTest::kPayloadTypeVP8) {
-    return true;
-  } else {
-    // Get VP8 and VP9 specific header to check layers indexes.
-    const uint8_t* payload = packet + header.headerLength;
-    const size_t payload_length = length - header.headerLength;
-    const size_t payload_data_length = payload_length - header.paddingLength;
-    const bool is_vp8 = header.payloadType == test::CallTest::kPayloadTypeVP8;
-    std::unique_ptr<RtpDepacketizer> depacketizer(
-        RtpDepacketizer::Create(is_vp8 ? kVideoCodecVP8 : kVideoCodecVP9));
-    RtpDepacketizer::ParsedPayload parsed_payload;
-    bool result =
-        depacketizer->Parse(&parsed_payload, payload, payload_data_length);
-    RTC_DCHECK(result);
+    const RtpPacket& rtp_packet) {
+  if (rtp_packet.PayloadType() == test::CallTest::kPayloadTypeVP8) {
+    auto parsed_payload = vp8_depacketizer_->Parse(rtp_packet.PayloadBuffer());
+    RTC_DCHECK(parsed_payload);
+    const auto& vp8_header = absl::get<RTPVideoHeaderVP8>(
+        parsed_payload->video_header.video_type_header);
+    int temporal_idx = vp8_header.temporalIdx;
+    return selected_tl_ < 0 || temporal_idx == kNoTemporalIdx ||
+           temporal_idx <= selected_tl_;
+  }
 
-    int temporal_idx;
-    int spatial_idx;
-    if (is_vp8) {
-      temporal_idx = absl::get<RTPVideoHeaderVP8>(
-                         parsed_payload.video_header().video_type_header)
-                         .temporalIdx;
-      spatial_idx = kNoTemporalIdx;
-    } else {
-      const auto& vp9_header = absl::get<RTPVideoHeaderVP9>(
-          parsed_payload.video_header().video_type_header);
-      temporal_idx = vp9_header.temporal_idx;
-      spatial_idx = vp9_header.spatial_idx;
-    }
-
+  if (rtp_packet.PayloadType() == test::CallTest::kPayloadTypeVP9) {
+    auto parsed_payload = vp9_depacketizer_->Parse(rtp_packet.PayloadBuffer());
+    RTC_DCHECK(parsed_payload);
+    const auto& vp9_header = absl::get<RTPVideoHeaderVP9>(
+        parsed_payload->video_header.video_type_header);
+    int temporal_idx = vp9_header.temporal_idx;
+    int spatial_idx = vp9_header.spatial_idx;
     return (selected_tl_ < 0 || temporal_idx == kNoTemporalIdx ||
             temporal_idx <= selected_tl_) &&
            (selected_sl_ < 0 || spatial_idx == kNoSpatialIdx ||
             spatial_idx <= selected_sl_);
   }
+
+  return true;
 }
 
 void VideoAnalyzer::PollStats() {
   rtc::CritScope crit(&comparison_lock_);
-  if (stop_stats_poller_) {
-    return;
-  }
 
   Call::Stats call_stats = call_->GetStats();
   send_bandwidth_bps_.AddSample(call_stats.send_bandwidth_bps);
@@ -543,9 +524,6 @@ void VideoAnalyzer::PollStats() {
   }
 
   memory_usage_.AddSample(rtc::GetProcessResidentSizeBytes());
-
-  stats_polling_task_id_ = task_queue_->PostDelayedTask(
-      [this]() { PollStats(); }, kSendStatsPollingIntervalMs);
 }
 
 void VideoAnalyzer::FrameComparisonThread(void* obj) {
@@ -622,6 +600,8 @@ bool VideoAnalyzer::FrameProcessed() {
 }
 
 void VideoAnalyzer::PrintResults() {
+  using ::webrtc::test::ImproveDirection;
+
   StopMeasuringCpuProcessTime();
   int dropped_frames_diff;
   {
@@ -630,24 +610,36 @@ void VideoAnalyzer::PrintResults() {
                           dropped_frames_before_rendering_ + frames_.size();
   }
   rtc::CritScope crit(&comparison_lock_);
-  PrintResult("psnr", psnr_, "dB");
-  PrintResult("ssim", ssim_, "unitless");
-  PrintResult("sender_time", sender_time_, "ms");
-  PrintResult("receiver_time", receiver_time_, "ms");
-  PrintResult("network_time", network_time_, "ms");
-  PrintResult("total_delay_incl_network", end_to_end_, "ms");
-  PrintResult("time_between_rendered_frames", rendered_delta_, "ms");
-  PrintResult("encode_frame_rate", encode_frame_rate_, "fps");
-  PrintResult("encode_time", encode_time_ms_, "ms");
-  PrintResult("media_bitrate", media_bitrate_bps_, "bps");
-  PrintResult("fec_bitrate", fec_bitrate_bps_, "bps");
-  PrintResult("send_bandwidth", send_bandwidth_bps_, "bps");
-  PrintResult("pixels_per_frame", pixels_, "count");
+  PrintResult("psnr", psnr_, "dB", ImproveDirection::kBiggerIsBetter);
+  PrintResult("ssim", ssim_, "unitless", ImproveDirection::kBiggerIsBetter);
+  PrintResult("sender_time", sender_time_, "ms",
+              ImproveDirection::kSmallerIsBetter);
+  PrintResult("receiver_time", receiver_time_, "ms",
+              ImproveDirection::kSmallerIsBetter);
+  PrintResult("network_time", network_time_, "ms",
+              ImproveDirection::kSmallerIsBetter);
+  PrintResult("total_delay_incl_network", end_to_end_, "ms",
+              ImproveDirection::kSmallerIsBetter);
+  PrintResult("time_between_rendered_frames", rendered_delta_, "ms",
+              ImproveDirection::kSmallerIsBetter);
+  PrintResult("encode_frame_rate", encode_frame_rate_, "fps",
+              ImproveDirection::kBiggerIsBetter);
+  PrintResult("encode_time", encode_time_ms_, "ms",
+              ImproveDirection::kSmallerIsBetter);
+  PrintResult("media_bitrate", media_bitrate_bps_, "bps",
+              ImproveDirection::kNone);
+  PrintResult("fec_bitrate", fec_bitrate_bps_, "bps", ImproveDirection::kNone);
+  PrintResult("send_bandwidth", send_bandwidth_bps_, "bps",
+              ImproveDirection::kNone);
+  PrintResult("pixels_per_frame", pixels_, "count",
+              ImproveDirection::kBiggerIsBetter);
 
   test::PrintResult("decode_frame_rate", "", test_label_.c_str(),
-                    decode_frame_rate_, "fps", false);
+                    decode_frame_rate_, "fps", false,
+                    ImproveDirection::kBiggerIsBetter);
   test::PrintResult("render_frame_rate", "", test_label_.c_str(),
-                    render_frame_rate_, "fps", false);
+                    render_frame_rate_, "fps", false,
+                    ImproveDirection::kBiggerIsBetter);
 
   // Record the time from the last freeze until the last rendered frame to
   // ensure we cover the full timespan of the session. Otherwise the metric
@@ -655,7 +647,8 @@ void VideoAnalyzer::PrintResults() {
   time_between_freezes_.AddSample(last_render_time_ - last_unfreeze_time_ms_);
 
   // Freeze metrics.
-  PrintResult("time_between_freezes", time_between_freezes_, "ms");
+  PrintResult("time_between_freezes", time_between_freezes_, "ms",
+              ImproveDirection::kBiggerIsBetter);
 
   const double freeze_count_double = static_cast<double>(freeze_count_);
   const double total_freezes_duration_ms_double =
@@ -667,7 +660,7 @@ void VideoAnalyzer::PrintResults() {
     test::PrintResult(
         "freeze_duration_ratio", "", test_label_.c_str(),
         total_freezes_duration_ms_double / total_frames_duration_ms_double,
-        "unitless", false);
+        "unitless", false, ImproveDirection::kSmallerIsBetter);
     RTC_DCHECK_LE(total_freezes_duration_ms_double,
                   total_frames_duration_ms_double);
 
@@ -677,7 +670,7 @@ void VideoAnalyzer::PrintResults() {
     if (total_frames_duration_min > 0) {
       test::PrintResult("freeze_count_per_minute", "", test_label_.c_str(),
                         freeze_count_double / total_frames_duration_min,
-                        "unitless", false);
+                        "unitless", false, ImproveDirection::kSmallerIsBetter);
     }
   }
 
@@ -685,35 +678,37 @@ void VideoAnalyzer::PrintResults() {
                     freeze_count_double > 0
                         ? total_freezes_duration_ms_double / freeze_count_double
                         : 0,
-                    "ms", false);
+                    "ms", false, ImproveDirection::kSmallerIsBetter);
 
   if (1000 * sum_squared_frame_durations_ > 0) {
     test::PrintResult(
         "harmonic_frame_rate", "", test_label_.c_str(),
         total_frames_duration_ms_double / (1000 * sum_squared_frame_durations_),
-        "fps", false);
+        "fps", false, ImproveDirection::kBiggerIsBetter);
   }
 
   if (worst_frame_) {
     test::PrintResult("min_psnr", "", test_label_.c_str(), worst_frame_->psnr,
-                      "dB", false);
+                      "dB", false, ImproveDirection::kBiggerIsBetter);
   }
 
   if (receive_stream_ != nullptr) {
     PrintResultWithExternalMean("decode_time", mean_decode_time_ms_,
-                                decode_time_ms_, "ms");
+                                decode_time_ms_, "ms",
+                                ImproveDirection::kSmallerIsBetter);
   }
   dropped_frames_ += dropped_frames_diff;
   test::PrintResult("dropped_frames", "", test_label_.c_str(), dropped_frames_,
-                    "count", false);
+                    "count", false, ImproveDirection::kSmallerIsBetter);
   test::PrintResult("cpu_usage", "", test_label_.c_str(), GetCpuUsagePercent(),
-                    "%", false);
+                    "%", false, ImproveDirection::kSmallerIsBetter);
 
 #if defined(WEBRTC_WIN)
   // On Linux and Mac in Resident Set some unused pages may be counted.
   // Therefore this metric will depend on order in which tests are run and
   // will be flaky.
-  PrintResult("memory_usage", memory_usage_, "sizeInBytes");
+  PrintResult("memory_usage", memory_usage_, "sizeInBytes",
+              ImproveDirection::kSmallerIsBetter);
 #endif
 
   // Saving only the worst frame for manual analysis. Intention here is to
@@ -731,9 +726,12 @@ void VideoAnalyzer::PrintResults() {
   }
 
   if (audio_receive_stream_ != nullptr) {
-    PrintResult("audio_expand_rate", audio_expand_rate_, "unitless");
-    PrintResult("audio_accelerate_rate", audio_accelerate_rate_, "unitless");
-    PrintResult("audio_jitter_buffer", audio_jitter_buffer_ms_, "ms");
+    PrintResult("audio_expand_rate", audio_expand_rate_, "unitless",
+                ImproveDirection::kSmallerIsBetter);
+    PrintResult("audio_accelerate_rate", audio_accelerate_rate_, "unitless",
+                ImproveDirection::kSmallerIsBetter);
+    PrintResult("audio_jitter_buffer", audio_jitter_buffer_ms_, "ms",
+                ImproveDirection::kNone);
   }
 
   //  Disable quality check for quick test, as quality checks may fail
@@ -813,18 +811,22 @@ void VideoAnalyzer::PerformFrameComparison(
   encoded_frame_size_.AddSample(comparison.encoded_frame_size);
 }
 
-void VideoAnalyzer::PrintResult(const char* result_type,
-                                Statistics stats,
-                                const char* unit) {
+void VideoAnalyzer::PrintResult(
+    const char* result_type,
+    Statistics stats,
+    const char* unit,
+    webrtc::test::ImproveDirection improve_direction) {
   test::PrintResultMeanAndError(
       result_type, "", test_label_.c_str(), stats.GetMean().value_or(0),
-      stats.GetStandardDeviation().value_or(0), unit, false);
+      stats.GetStandardDeviation().value_or(0), unit, false, improve_direction);
 }
 
-void VideoAnalyzer::PrintResultWithExternalMean(const char* result_type,
-                                                double mean,
-                                                Statistics stats,
-                                                const char* unit) {
+void VideoAnalyzer::PrintResultWithExternalMean(
+    const char* result_type,
+    double mean,
+    Statistics stats,
+    const char* unit,
+    webrtc::test::ImproveDirection improve_direction) {
   // If the true mean is different than the sample mean, the sample variance is
   // too low. The sample variance given a known mean is obtained by adding the
   // squared error between the true mean and the sample mean.
@@ -833,7 +835,8 @@ void VideoAnalyzer::PrintResultWithExternalMean(const char* result_type,
           ? *stats.GetVariance() + pow(mean - *stats.GetMean(), 2.0)
           : 0.0;
   test::PrintResultMeanAndError(result_type, "", test_label_.c_str(), mean,
-                                std::sqrt(compensated_variance), unit, false);
+                                std::sqrt(compensated_variance), unit, false,
+                                improve_direction);
 }
 
 void VideoAnalyzer::PrintSamplesToFile() {

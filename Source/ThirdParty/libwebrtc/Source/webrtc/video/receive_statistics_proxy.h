@@ -18,6 +18,7 @@
 
 #include "absl/types/optional.h"
 #include "call/video_receive_stream.h"
+#include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/numerics/histogram_percentile_counter.h"
@@ -51,7 +52,9 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
                       absl::optional<uint8_t> qp,
                       int32_t decode_time_ms,
                       VideoContentType content_type);
-  void OnSyncOffsetUpdated(int64_t sync_offset_ms, double estimated_freq_khz);
+  void OnSyncOffsetUpdated(int64_t video_playout_ntp_ms,
+                           int64_t sync_offset_ms,
+                           double estimated_freq_khz);
   void OnRenderedFrame(const VideoFrame& frame);
   void OnIncomingPayloadType(int payload_type);
   void OnDecoderImplementationName(const char* implementation_name);
@@ -127,6 +130,14 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   void UpdateFramerate(int64_t now_ms) const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
+  void UpdateDecodeTimeHistograms(int width,
+                                  int height,
+                                  int decode_time_ms) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
+  absl::optional<int64_t> GetCurrentEstimatedPlayoutNtpTimestampMs(
+      int64_t now_ms) const RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
   Clock* const clock_;
   // Ownership of this object lies with the owner of the ReceiveStatisticsProxy
   // instance.  Lifetime is guaranteed to outlive |this|.
@@ -137,6 +148,7 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   // then no longer store a pointer to the object).
   const VideoReceiveStream::Config& config_;
   const int64_t start_ms_;
+  const bool enable_decode_time_histograms_;
 
   rtc::CriticalSection crit_;
   int64_t last_sample_time_ RTC_GUARDED_BY(crit_);
@@ -180,6 +192,10 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   mutable rtc::MovingMaxCounter<TimingFrameInfo> timing_frame_info_counter_
       RTC_GUARDED_BY(&crit_);
   absl::optional<int> num_unique_frames_ RTC_GUARDED_BY(crit_);
+  absl::optional<int64_t> last_estimated_playout_ntp_timestamp_ms_
+      RTC_GUARDED_BY(&crit_);
+  absl::optional<int64_t> last_estimated_playout_time_ms_
+      RTC_GUARDED_BY(&crit_);
   rtc::ThreadChecker decode_thread_;
   rtc::ThreadChecker network_thread_;
   rtc::ThreadChecker main_thread_;

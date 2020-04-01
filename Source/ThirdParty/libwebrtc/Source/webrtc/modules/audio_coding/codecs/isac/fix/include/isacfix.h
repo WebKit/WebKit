@@ -23,34 +23,6 @@ typedef struct {
 extern "C" {
 #endif
 
-/**************************************************************************
- * WebRtcIsacfix_AssignSize(...)
- *
- *  Functions used when malloc is not allowed
- *  Output the number of bytes needed to allocate for iSAC struct.
- *
- */
-
-int16_t WebRtcIsacfix_AssignSize(int* sizeinbytes);
-
-/**************************************************************************
- * WebRtcIsacfix_Assign(...)
- *
- * Functions used when malloc is not allowed, it
- * places a struct at the given address.
- *
- * Input:
- *      - *ISAC_main_inst   : a pointer to the coder instance.
- *      - ISACFIX_inst_Addr : address of the memory where a space is
- *                            for iSAC structure.
- *
- * Return value             : 0 - Ok
- *                           -1 - Error
- */
-
-int16_t WebRtcIsacfix_Assign(ISACFIX_MainStruct** inst,
-                             void* ISACFIX_inst_Addr);
-
 /****************************************************************************
  * WebRtcIsacfix_Create(...)
  *
@@ -125,36 +97,6 @@ int16_t WebRtcIsacfix_EncoderInit(ISACFIX_MainStruct* ISAC_main_inst,
 int WebRtcIsacfix_Encode(ISACFIX_MainStruct* ISAC_main_inst,
                          const int16_t* speechIn,
                          uint8_t* encoded);
-
-/****************************************************************************
- * WebRtcIsacfix_EncodeNb(...)
- *
- * This function encodes 10ms narrow band (8 kHz sampling) frame(s) and inserts
- * it into a package. Input speech length has to be 80 samples (10ms). The
- * encoder interpolates into wide-band (16 kHz sampling) buffers those 10ms
- * frames until it reaches the chosen Framesize (480 or 960 wide-band samples
- * corresponding to 30 or 60 ms frames), and then proceeds to the encoding.
- *
- * The function is enabled if WEBRTC_ISAC_FIX_NB_CALLS_ENABLED is defined
- *
- * Input:
- *      - ISAC_main_inst    : ISAC instance.
- *      - speechIn          : input speech vector.
- *
- * Output:
- *      - encoded           : the encoded data vector
- *
- * Return value             : >0 - Length (in bytes) of coded data
- *                             0 - The buffer didn't reach the chosen framesize
- *                                 so it keeps buffering speech samples.
- *                            -1 - Error
- */
-
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-int16_t WebRtcIsacfix_EncodeNb(ISACFIX_MainStruct* ISAC_main_inst,
-                               const int16_t* speechIn,
-                               int16_t* encoded);
-#endif  //  WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
 
 /****************************************************************************
  * WebRtcIsacfix_DecoderInit(...)
@@ -240,61 +182,6 @@ int WebRtcIsacfix_Decode(ISACFIX_MainStruct* ISAC_main_inst,
                          size_t len,
                          int16_t* decoded,
                          int16_t* speechType);
-
-/****************************************************************************
- * WebRtcIsacfix_DecodeNb(...)
- *
- * This function decodes a ISAC frame in narrow-band (8 kHz sampling).
- * Output speech length will be a multiple of 240 samples: 240 or 480 samples,
- * depending on the framesize (30 or 60 ms).
- *
- * The function is enabled if WEBRTC_ISAC_FIX_NB_CALLS_ENABLED is defined
- *
- * Input:
- *      - ISAC_main_inst    : ISAC instance.
- *      - encoded           : encoded ISAC frame(s)
- *      - len               : bytes in encoded vector
- *
- * Output:
- *      - decoded           : The decoded vector
- *
- * Return value             : >0 - number of samples in decoded vector
- *                            -1 - Error
- */
-
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-int WebRtcIsacfix_DecodeNb(ISACFIX_MainStruct* ISAC_main_inst,
-                           const uint16_t* encoded,
-                           size_t len,
-                           int16_t* decoded,
-                           int16_t* speechType);
-#endif  //  WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-
-/****************************************************************************
- * WebRtcIsacfix_DecodePlcNb(...)
- *
- * This function conducts PLC for ISAC frame(s) in narrow-band (8kHz sampling).
- * Output speech length  will be "240*noOfLostFrames" samples
- * that equevalent of "30*noOfLostFrames" millisecond.
- *
- * The function is enabled if WEBRTC_ISAC_FIX_NB_CALLS_ENABLED is defined
- *
- * Input:
- *      - ISAC_main_inst    : ISAC instance.
- *      - noOfLostFrames    : Number of PLC frames (240 sample=30ms) to produce
- *                            NOTE! Maximum number is 2 (480 samples = 60ms)
- *
- * Output:
- *      - decoded           : The decoded vector
- *
- * Return value             : Number of samples in decoded PLC vector
- */
-
-#ifdef WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
-size_t WebRtcIsacfix_DecodePlcNb(ISACFIX_MainStruct* ISAC_main_inst,
-                                 int16_t* decoded,
-                                 size_t noOfLostFrames);
-#endif  // WEBRTC_ISAC_FIX_NB_CALLS_ENABLED
 
 /****************************************************************************
  * WebRtcIsacfix_DecodePlc(...)
@@ -591,14 +478,6 @@ int16_t WebRtcIsacfix_ReadBwIndex(const uint8_t* encoded,
  */
 
 int16_t WebRtcIsacfix_GetNewFrameLen(ISACFIX_MainStruct* ISAC_main_inst);
-
-/* Fills in an IsacBandwidthInfo struct. */
-void WebRtcIsacfix_GetBandwidthInfo(ISACFIX_MainStruct* ISAC_main_inst,
-                                    IsacBandwidthInfo* bwinfo);
-
-/* Uses the values from an IsacBandwidthInfo struct. */
-void WebRtcIsacfix_SetBandwidthInfo(ISACFIX_MainStruct* ISAC_main_inst,
-                                    const IsacBandwidthInfo* bwinfo);
 
 #if defined(__cplusplus)
 }

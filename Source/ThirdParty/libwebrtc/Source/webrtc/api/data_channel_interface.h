@@ -20,9 +20,11 @@
 #include <string>
 
 #include "absl/types/optional.h"
+#include "api/rtc_error.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/ref_count.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -96,7 +98,7 @@ class DataChannelObserver {
   virtual ~DataChannelObserver() = default;
 };
 
-class DataChannelInterface : public rtc::RefCountInterface {
+class RTC_EXPORT DataChannelInterface : public rtc::RefCountInterface {
  public:
   // C++ version of: https://www.w3.org/TR/webrtc/#idl-def-rtcdatachannelstate
   // Unlikely to change, but keep in sync with DataChannel.java:State and
@@ -153,6 +155,10 @@ class DataChannelInterface : public rtc::RefCountInterface {
   // determined, and until then this will return -1.
   virtual int id() const = 0;
   virtual DataState state() const = 0;
+  // When state is kClosed, and the DataChannel was not closed using
+  // the closing procedure, returns the error information about the closing.
+  // The default implementation returns "no error".
+  virtual RTCError error() const { return RTCError(); }
   virtual uint32_t messages_sent() const = 0;
   virtual uint64_t bytes_sent() const = 0;
   virtual uint32_t messages_received() const = 0;
