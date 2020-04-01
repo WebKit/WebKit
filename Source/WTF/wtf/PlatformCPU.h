@@ -112,8 +112,8 @@
 #define WTF_CPU_KNOWN 1
 #endif
 
-/* CPU(ARM64) - Apple */
-#if (defined(__arm64__) && defined(__APPLE__)) || defined(__aarch64__)
+/* CPU(ARM64) */
+#if defined(__arm64__) || defined(__aarch64__)
 #define WTF_CPU_ARM64 1
 #define WTF_CPU_KNOWN 1
 
