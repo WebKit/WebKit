@@ -1,3 +1,24 @@
+2020-03-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Deduplicate WebsiteDataStore::parameters() of Cocoa port and non-Cocoa port
+        https://bugs.webkit.org/show_bug.cgi?id=209644
+
+        Reviewed by Youenn Fablet.
+
+        WinCairo WTR was failing an assertion ensuring
+        ResourceLoadStatistics was enabled in
+        NetworkSession::setThirdPartyCookieBlockingMode while running
+        LayoutTests with useEphemeralSession=true becuase
+        ResourceLoadStatisticsParameters was not set in
+        WebsiteDataStoreParameters.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters): Added.
+        (WebKit::WebsiteDataStore::parameters): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-03-31  Brent Fulgham  <bfulgham@apple.com>
 
         Allow WKAppBoundDomains to be initialized with eTLD+1 only (no protocol)

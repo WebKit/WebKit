@@ -301,9 +301,7 @@ private:
     void platformDestroy();
     static void platformRemoveRecentSearches(WallTime);
 
-#if USE(CURL) || USE(SOUP)
     void platformSetNetworkParameters(WebsiteDataStoreParameters&);
-#endif
 
     WebsiteDataStore();
 

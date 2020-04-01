@@ -90,11 +90,9 @@ WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlocking
 }
 #endif
 
-WebsiteDataStoreParameters WebsiteDataStore::parameters()
+void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& parameters)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-
-    resolveDirectoriesIfNecessary();
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     bool shouldLogCookieInformation = false;
@@ -154,16 +152,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!httpsProxy.isValid() && (isSafari || isMiniBrowser))
         httpsProxy = URL(URL(), [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey]);
 
-    auto resourceLoadStatisticsDirectory = m_configuration->resourceLoadStatisticsDirectory();
-    SandboxExtension::Handle resourceLoadStatisticsDirectoryHandle;
-    if (!resourceLoadStatisticsDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(resourceLoadStatisticsDirectory, resourceLoadStatisticsDirectoryHandle);
-
-    auto networkCacheDirectory = resolvedNetworkCacheDirectory();
-    SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
-    if (!networkCacheDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(networkCacheDirectory, networkCacheDirectoryExtensionHandle);
-
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     String alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
@@ -175,53 +163,24 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
     bool isInAppBrowserPrivacyEnabled = [defaults boolForKey:[NSString stringWithFormat:@"WebKitDebug%@", WebPreferencesKey::isInAppBrowserPrivacyEnabledKey().createCFString().get()]];
     
-    WebsiteDataStoreParameters parameters;
-
-    ResourceLoadStatisticsParameters resourceLoadStatisticsParameters {
-        WTFMove(resourceLoadStatisticsDirectory),
-        WTFMove(resourceLoadStatisticsDirectoryHandle),
-        resourceLoadStatisticsEnabled(),
-        isItpStateExplicitlySet(),
-        hasStatisticsTestingCallback(),
-        shouldIncludeLocalhostInResourceLoadStatistics,
-        enableResourceLoadStatisticsDebugMode,
-        thirdPartyCookieBlockingMode(),
-        sameSiteStrictEnforcementEnabled,
-        firstPartyWebsiteDataRemovalMode,
-        WTFMove(resourceLoadStatisticsManualPrevalentResource),
-    };
-    
-    parameters.networkSessionParameters = NetworkSessionCreationParameters {
-        m_sessionID,
-        configuration().boundInterfaceIdentifier(),
-        configuration().allowsCellularAccess() ? AllowsCellularAccess::Yes : AllowsCellularAccess::No,
-        configuration().proxyConfiguration(),
-        configuration().sourceApplicationBundleIdentifier(),
-        configuration().sourceApplicationSecondaryIdentifier(),
-        shouldLogCookieInformation,
-        Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. },
-        WTFMove(httpProxy),
-        WTFMove(httpsProxy),
+    parameters.networkSessionParameters.proxyConfiguration = configuration().proxyConfiguration();
+    parameters.networkSessionParameters.sourceApplicationBundleIdentifier = configuration().sourceApplicationBundleIdentifier();
+    parameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = configuration().sourceApplicationSecondaryIdentifier();
+    parameters.networkSessionParameters.shouldLogCookieInformation = shouldLogCookieInformation;
+    parameters.networkSessionParameters.loadThrottleLatency = Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. };
+    parameters.networkSessionParameters.httpProxy = WTFMove(httpProxy);
+    parameters.networkSessionParameters.httpsProxy = WTFMove(httpsProxy);
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
-        WTFMove(alternativeServiceStorageDirectory),
-        WTFMove(alternativeServiceStorageDirectoryExtensionHandle),
-        WTFMove(http3Enabled),
+    parameters.networkSessionParameters.alternativeServiceDirectory = WTFMove(alternativeServiceStorageDirectory);
+    parameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle = WTFMove(alternativeServiceStorageDirectoryExtensionHandle);
+    parameters.networkSessionParameters.http3Enabled = WTFMove(http3Enabled);
 #endif
-        m_configuration->deviceManagementRestrictionsEnabled(),
-        m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting(),
-        WTFMove(networkCacheDirectory),
-        WTFMove(networkCacheDirectoryExtensionHandle),
-        m_configuration->dataConnectionServiceType(),
-        m_configuration->fastServerTrustEvaluationEnabled(),
-        m_configuration->networkCacheSpeculativeValidationEnabled(),
-        m_configuration->testingSessionEnabled(),
-        m_configuration->staleWhileRevalidateEnabled(),
-        m_configuration->testSpeedMultiplier(),
-        m_configuration->suppressesConnectionTerminationOnSystemChange(),
-        m_configuration->allowsServerPreconnect(),
-        isInAppBrowserPrivacyEnabled,
-        WTFMove(resourceLoadStatisticsParameters)
-    };
+    parameters.networkSessionParameters.isInAppBrowserPrivacyEnabled = isInAppBrowserPrivacyEnabled;
+    parameters.networkSessionParameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost = shouldIncludeLocalhostInResourceLoadStatistics;
+    parameters.networkSessionParameters.resourceLoadStatisticsParameters.enableDebugMode = enableResourceLoadStatisticsDebugMode;
+    parameters.networkSessionParameters.resourceLoadStatisticsParameters.sameSiteStrictEnforcementEnabled = sameSiteStrictEnforcementEnabled;
+    parameters.networkSessionParameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode = firstPartyWebsiteDataRemovalMode;
+    parameters.networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource = WTFMove(resourceLoadStatisticsManualPrevalentResource);
 
     auto cookieFile = resolvedCookieStorageFile();
 
@@ -233,39 +192,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     }
 
     parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;
-    parameters.networkSessionParameters.sourceApplicationBundleIdentifier = configuration().sourceApplicationBundleIdentifier();
-    parameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = configuration().sourceApplicationSecondaryIdentifier();
-
-    parameters.pendingCookies = copyToVector(m_pendingCookies);
 
     if (!cookieFile.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(FileSystem::directoryName(cookieFile), parameters.cookieStoragePathExtensionHandle);
-
-#if ENABLE(INDEXED_DATABASE)
-    parameters.indexedDatabaseDirectory = resolvedIndexedDatabaseDirectory();
-    if (!parameters.indexedDatabaseDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
-#endif
-
-#if ENABLE(SERVICE_WORKER)
-    parameters.serviceWorkerRegistrationDirectory = resolvedServiceWorkerRegistrationDirectory();
-    if (!parameters.serviceWorkerRegistrationDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
-    parameters.serviceWorkerProcessTerminationDelayEnabled = m_configuration->serviceWorkerProcessTerminationDelayEnabled();
-#endif
-
-    parameters.localStorageDirectory = resolvedLocalStorageDirectory();
-    if (!parameters.localStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
-
-    parameters.cacheStorageDirectory = cacheStorageDirectory();
-    if (!parameters.cacheStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.cacheStorageDirectory, parameters.cacheStorageDirectoryExtensionHandle);
-
-    parameters.perOriginStorageQuota = perOriginStorageQuota();
-    parameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();
-
-    return parameters;
 }
 
 bool WebsiteDataStore::http3Enabled()
