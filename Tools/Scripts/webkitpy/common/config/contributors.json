@@ -2533,6 +2533,15 @@
       ],
       "status" : "reviewer"
    },
+   "Jack Lee" : {
+      "emails" : [
+         "shihchieh_lee@apple.com"
+      ],
+      "nicks" : [
+         "jackl"
+      ],
+      "status" : "committer"
+   },
    "Jacky Jiang" : {
       "emails" : [
          "jkjiang@webkit.org",

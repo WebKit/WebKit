@@ -1,3 +1,9 @@
+2020-04-01  Jack Lee  <shihchieh_lee@apple.com>
+
+        Unreviewed, add new committer to contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-04-01  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Migration to version 0.2
