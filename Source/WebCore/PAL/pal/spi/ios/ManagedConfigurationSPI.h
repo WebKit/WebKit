@@ -31,8 +31,7 @@
 // block to make them suitable for C++ use.
 WTF_EXTERN_C_BEGIN
 
-#import <ManagedConfiguration/MCFeatures.h>
-#import <ManagedConfiguration/MCProfileConnection.h>
+#import <ManagedConfiguration/ManagedConfiguration.h>
 
 WTF_EXTERN_C_END
 
