@@ -3124,6 +3124,50 @@ TEST(ProcessSwap, NavigateCrossSiteBeforePageLoadEnd)
     EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [[webView URL] absoluteString]);
 }
 
+static void runCancelCrossSiteProvisionalLoadTest(ShouldEnablePSON shouldEnablePSON)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().processSwapsOnNavigation = shouldEnablePSON == ShouldEnablePSON::Yes;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    failed = false;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_FALSE(failed);
+
+    navigationDelegate->didStartProvisionalNavigationHandler = ^{
+        [webView stopLoading];
+    };
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&failed);
+    failed = false;
+}
+
+TEST(ProcessSwap, CancelCrossSiteProvisionalLoadWithoutPSON)
+{
+    runCancelCrossSiteProvisionalLoadTest(ShouldEnablePSON::No);
+}
+
+TEST(ProcessSwap, CancelCrossSiteProvisionalLoadWithPSON)
+{
+    runCancelCrossSiteProvisionalLoadTest(ShouldEnablePSON::Yes);
+}
 
 TEST(ProcessSwap, DoSameSiteNavigationAfterCrossSiteProvisionalLoadStarted)
 {

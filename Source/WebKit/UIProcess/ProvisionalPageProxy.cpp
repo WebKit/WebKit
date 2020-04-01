@@ -133,7 +133,14 @@ void ProvisionalPageProxy::cancel()
     ASSERT(m_mainFrame);
     auto error = WebKit::cancelledError(m_request);
     error.setType(WebCore::ResourceError::Type::Cancellation);
-    didFailProvisionalLoadForFrame(m_mainFrame->frameID(), { }, { }, m_navigationID, m_provisionalLoadURL, error, WebCore::WillContinueLoading::No, UserData { }); // Will delete |this|.
+    FrameInfoData frameInfo {
+        true, // isMainFrame
+        m_request,
+        SecurityOriginData::fromURL(m_request.url()),
+        m_mainFrame->frameID(),
+        WTF::nullopt,
+    };
+    didFailProvisionalLoadForFrame(m_mainFrame->frameID(), WTFMove(frameInfo), ResourceRequest { m_request }, m_navigationID, m_provisionalLoadURL, error, WebCore::WillContinueLoading::No, UserData { }); // Will delete |this|.
 }
 
 void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& websitePolicies)
