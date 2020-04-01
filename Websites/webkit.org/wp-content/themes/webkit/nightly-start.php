@@ -289,16 +289,6 @@ hr {
         </symbol>
     </defs>
 </svg>
-<?php if ( (int)$build < (int)$latest ):
-    $prompt_text = "Please be sure you are running the latest WebKit Nightly build before continuing to test.";
-    if (!empty($build))
-        $prompt_meta = get_post_meta(get_the_ID(), 'prompt', true);
-    if (!empty($prompt_meta)) $prompt_text = $prompt_meta;
-?>
-<div class="update-nag">
-    <p><a href="<?php echo esc_url($latest_nightly_build[2]); ?>"><?php echo esc_html($prompt_text); ?></a></p>
-</div>
-<?php endif; ?>
 
     <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 
