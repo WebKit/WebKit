@@ -21,6 +21,11 @@ list(APPEND GPUProcess_SOURCES
 )
 
 list(APPEND WebKit_SOURCES
+    GPUProcess/media/playstation/RemoteMediaPlayerProxyPlayStation.cpp
+
+    GPUProcess/playstation/GPUProcessMainPlayStation.cpp
+    GPUProcess/playstation/GPUProcessPlayStation.cpp
+
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
     NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
 
@@ -100,6 +105,8 @@ list(APPEND WebKit_SOURCES
     UIProcess/playstation/WebPageProxyPlayStation.cpp
     UIProcess/playstation/WebProcessPoolPlayStation.cpp
 
+    WebProcess/GPU/media/playstation/VideoLayerRemotePlayStation.cpp
+
     WebProcess/InjectedBundle/playstation/InjectedBundlePlayStation.cpp
 
     WebProcess/WebCoreSupport/curl/WebFrameNetworkingContext.cpp
@@ -121,6 +128,7 @@ list(APPEND WebKit_SOURCES
 list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/curl"
     "${WEBKIT_DIR}/Platform/IPC/unix"
+    "${WEBKIT_DIR}/Platform/generic"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/libwpe"

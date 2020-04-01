@@ -1,5 +1,39 @@
 2020-04-01  Don Olmstead  <don.olmstead@sony.com>
 
+        [GPUP][PlayStation] Enable GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=209865
+
+        Reviewed by Eric Carlson.
+
+        A generic LayerHostingContext is provided in this patch. It may make sense for
+        this to be platform specific but it may also be possible to have some shared
+        implementation with Cocoa ports. Once there are more implementations that
+        can be decided.
+
+        Add stubs for building out the GPU Process on the PlayStation port. No
+        implementation is provided at this time but the GPU Process will compile
+        and link with these changes.
+
+        * GPUProcess/media/playstation/RemoteMediaPlayerProxyPlayStation.cpp: Added.
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged):
+        (WebKit::RemoteMediaPlayerProxy::enterFullscreen):
+        (WebKit::RemoteMediaPlayerProxy::exitFullscreen):
+        * GPUProcess/playstation/GPUProcessMainPlayStation.cpp: Added.
+        (WebKit::initializeAuxiliaryProcess<GPUProcess>):
+        (WebKit::GPUProcessMain):
+        * GPUProcess/playstation/GPUProcessPlayStation.cpp: Added.
+        (WebKit::GPUProcess::initializeProcess):
+        (WebKit::GPUProcess::initializeProcessName):
+        (WebKit::GPUProcess::initializeSandbox):
+        * Platform/generic/LayerHostingContext.h: Added.
+        * PlatformPlayStation.cmake:
+        * WebProcess/GPU/media/playstation/VideoLayerRemotePlayStation.cpp: Added.
+        (WebKit::createVideoLayerRemote):
+
+2020-04-01  Don Olmstead  <don.olmstead@sony.com>
+
         [PlayStation] Use OBJECT libraries for WebCore and PAL
         https://bugs.webkit.org/show_bug.cgi?id=209835
 
