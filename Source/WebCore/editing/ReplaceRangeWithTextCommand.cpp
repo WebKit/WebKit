@@ -63,8 +63,7 @@ void ReplaceRangeWithTextCommand::doApply()
     if (!frame().selection().shouldChangeSelection(selection))
         return;
 
-    String previousText = plainText(m_rangeToBeReplaced.get());
-    if (!previousText.length())
+    if (!characterCount(*m_rangeToBeReplaced))
         return;
 
     applyCommandToComposite(SetSelectionCommand::create(selection, FrameSelection::defaultSetSelectionOptions()));

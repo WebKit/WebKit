@@ -68,9 +68,14 @@ static unsigned length(const Node& node)
     return node.countChildNodes();
 }
 
+static BoundaryPoint makeBoundaryPointAfterNodeContents(Node& node)
+{
+    return { node, length(node) };
+}
+
 SimpleRange makeRangeSelectingNodeContents(Node& node)
 {
-    return { { node, 0 }, { node, length(node) } };
+    return { makeBoundaryPointBeforeNodeContents(node), makeBoundaryPointAfterNodeContents(node) };
 }
 
 }

@@ -286,7 +286,7 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
     NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, selectionCharacterCount);
 
     RefPtr<Range> fullCharacterRange = makeRange(paragraphStart, paragraphEnd);
-    String itemString = plainText(fullCharacterRange.get());
+    String itemString = plainText(*fullCharacterRange);
     NSRange highlightRange = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:rangeToPass]).get().highlightRange;
 
     return { createLiveRange(resolveCharacterRange(*fullCharacterRange, highlightRange)), nil };

@@ -884,22 +884,10 @@ uint32_t Page::replaceRangesWithText(const Vector<Ref<Range>>& rangesToReplace, 
 
     for (auto& range : rangesToReplace) {
         auto highestRoot = makeRefPtr(highestEditableRoot(range->startPosition()));
-        if (!highestRoot || highestRoot != highestEditableRoot(range->endPosition()))
+        if (!highestRoot || highestRoot != highestEditableRoot(range->endPosition()) || !highestRoot->document().frame())
             continue;
-
-        auto frame = makeRefPtr(highestRoot->document().frame());
-        if (!frame)
-            continue;
-
-        size_t replacementLocation = notFound;
-        size_t replacementLength = 0;
-        if (!TextIterator::getLocationAndLengthFromRange(highestRoot.get(), range.ptr(), replacementLocation, replacementLength))
-            continue;
-
-        if (replacementLocation == notFound || !replacementLength)
-            continue;
-
-        replacementRanges.append({ WTFMove(highestRoot), { replacementLocation, replacementLength } });
+        auto scope = makeRangeSelectingNodeContents(*highestRoot);
+        replacementRanges.append({ WTFMove(highestRoot), characterRange(scope, range) });
     }
 
     replaceRanges(*this, replacementRanges, replacementText);

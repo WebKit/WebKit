@@ -45,6 +45,7 @@ class TextCheckerClient;
 class VisibleSelection;
 
 struct DictationAlternative;
+struct SimpleRange;
 struct TextCheckingResult;
 
 #if USE(AUTOCORRECTION_PANEL)
@@ -88,7 +89,7 @@ public:
     bool isAutomaticSpellingCorrectionEnabled() UNLESS_ENABLED({ return false; })
     bool shouldRemoveMarkersUponEditing();
 
-    void recordAutocorrectionResponse(AutocorrectionResponse, const String& replacedString, Range* replacementRange) UNLESS_ENABLED({ UNUSED_PARAM(replacedString); UNUSED_PARAM(replacementRange); })
+    void recordAutocorrectionResponse(AutocorrectionResponse, const String& replacedString, const SimpleRange& replacementRange) UNLESS_ENABLED({ UNUSED_PARAM(replacedString); UNUSED_PARAM(replacementRange); })
     void markReversed(Range& changedRange) UNLESS_ENABLED({ UNUSED_PARAM(changedRange); })
     void markCorrection(Range& replacedRange, const String& replacedString) UNLESS_ENABLED({ UNUSED_PARAM(replacedRange); UNUSED_PARAM(replacedString); })
 

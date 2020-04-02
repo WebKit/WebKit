@@ -664,7 +664,7 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
                 // style update/layout here. See also AXObjectCache::deferTextChangedIfNeeded().
                 ASSERT_WITH_SECURITY_IMPLICATION(!nodeDocument->childNeedsStyleRecalc());
                 ASSERT_WITH_SECURITY_IMPLICATION(!nodeDocument->view()->layoutContext().isInRenderTreeLayout());
-                return plainText(textRange.get(), textIteratorBehaviorForTextRange());
+                return plainText(*textRange, textIteratorBehaviorForTextRange());
             }
         }
     
@@ -2081,16 +2081,15 @@ bool AccessibilityRenderObject::nodeIsTextControl(const Node* node) const
     return false;
 }
 
-IntRect AccessibilityRenderObject::boundsForRects(LayoutRect const& rect1, LayoutRect const& rect2, RefPtr<Range> const& dataRange)
+static IntRect boundsForRects(const LayoutRect& rect1, const LayoutRect& rect2, const SimpleRange& dataRange)
 {
     LayoutRect ourRect = rect1;
     ourRect.unite(rect2);
-    
-    // if the rectangle spans lines and contains multiple text chars, use the range's bounding box intead
+
+    // If the rectangle spans lines and contains multiple text characters, use the range's bounding box intead.
     if (rect1.maxY() != rect2.maxY()) {
-        LayoutRect boundingBox = dataRange->absoluteBoundingBox();
-        String rangeString = plainText(dataRange.get());
-        if (rangeString.length() > 1 && !boundingBox.isEmpty())
+        LayoutRect boundingBox = createLiveRange(dataRange)->absoluteBoundingBox();
+        if (characterCount(dataRange) > 1 && !boundingBox.isEmpty())
             ourRect = boundingBox;
     }
 
@@ -2120,8 +2119,7 @@ IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePo
         }
     }
     
-    RefPtr<Range> dataRange = makeRange(range.start, range.end);
-    return boundsForRects(rect1, rect2, dataRange);
+    return boundsForRects(rect1, rect2, *makeRange(range.start, range.end));
 }
 
 IntRect AccessibilityRenderObject::boundsForRange(const RefPtr<Range> range) const
@@ -2152,7 +2150,7 @@ IntRect AccessibilityRenderObject::boundsForRange(const RefPtr<Range> range) con
         }
     }
     
-    return boundsForRects(rect1, rect2, range);
+    return boundsForRects(rect1, rect2, *range);
 }
 
 bool AccessibilityRenderObject::isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange& range) const

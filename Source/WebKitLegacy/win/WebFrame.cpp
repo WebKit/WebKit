@@ -1923,13 +1923,15 @@ HRESULT WebFrame::string(_Deref_opt_out_ BSTR* result)
 
     *result = nullptr;
 
-    Frame* coreFrame = core(this);
-    if (!coreFrame)
+    auto* frame = core(this);
+    if (!frame)
         return E_UNEXPECTED;
 
-    RefPtr<Range> allRange(rangeOfContents(*coreFrame->document()));
-    String allString = plainText(allRange.get());
-    *result = BString(allString).release();
+    auto* document = frame->document();
+    if (!document)
+        return E_FAIL;
+
+    *result = BString(plainText(makeRangeSelectingNodeContents(*document))).release();
     return S_OK;
 }
 

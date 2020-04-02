@@ -2592,8 +2592,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
         return;
     
     // Get the misspelled word.
-    const String misspelledWord = plainText(misspellingRange.get());
-    String autocorrectedString = textChecker()->getAutoCorrectSuggestionForMisspelledWord(misspelledWord);
+    String autocorrectedString = textChecker()->getAutoCorrectSuggestionForMisspelledWord(plainText(*misspellingRange));
 
     // If autocorrected word is non empty, replace the misspelled word by this word.
     if (!autocorrectedString.isEmpty()) {
@@ -2773,21 +2772,19 @@ void Editor::replaceRangeForSpellChecking(Range& rangeToReplace, const String& r
     SpellingCorrectionCommand::create(rangeToReplace, replacement)->apply();
 }
 
-static void correctSpellcheckingPreservingTextCheckingParagraph(TextCheckingParagraph& paragraph, Range& rangeToReplace, const String& replacement, CharacterRange resultRange)
+static void correctSpellcheckingPreservingTextCheckingParagraph(TextCheckingParagraph& paragraph, Range& rangeToReplace, const String& replacement, CharacterRange resultCharacterRange)
 {
-    auto& scope = downcast<ContainerNode>(paragraph.paragraphRange().startContainer().rootNode());
-
-    size_t paragraphLocation;
-    size_t paragraphLength;
-    TextIterator::getLocationAndLengthFromRange(&scope, &paragraph.paragraphRange(), paragraphLocation, paragraphLength);
+    auto scopeNode = makeRef(downcast<ContainerNode>(paragraph.paragraphRange().startContainer().rootNode()));
+    auto paragraphCharacterRange = characterRange(makeBoundaryPointBeforeNodeContents(scopeNode), paragraph.paragraphRange());
 
     SpellingCorrectionCommand::create(rangeToReplace, replacement)->apply();
 
     // TextCheckingParagraph may be orphaned after SpellingCorrectionCommand mutated DOM.
     // See <rdar://10305315>, http://webkit.org/b/89526.
 
-    auto newParagraphRange = resolveCharacterRange(makeRangeSelectingNodeContents(scope), { paragraphLocation, paragraphLength + replacement.length() - resultRange.length });
-    auto spellCheckingRange = resolveCharacterRange(newParagraphRange, { resultRange.location, replacement.length() });
+    paragraphCharacterRange.length += replacement.length() - resultCharacterRange.length;
+    auto newParagraphRange = resolveCharacterRange(makeRangeSelectingNodeContents(scopeNode), paragraphCharacterRange);
+    auto spellCheckingRange = resolveCharacterRange(newParagraphRange, { resultCharacterRange.location, replacement.length() });
     paragraph = TextCheckingParagraph(createLiveRange(spellCheckingRange), createLiveRange(spellCheckingRange), createLiveRange(newParagraphRange));
 }
 
@@ -2885,7 +2882,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
             if (!(shouldPerformReplacement || shouldCheckForCorrection || shouldMarkLink) || !doReplacement)
                 continue;
 
-            String replacedString = plainText(rangeToReplace.ptr());
+            String replacedString = plainText(rangeToReplace);
             const bool existingMarkersPermitReplacement = m_alternativeTextController->processMarkersOnTextToBeReplacedByResult(results[i], rangeToReplace, replacedString);
             if (!existingMarkersPermitReplacement)
                 continue;
@@ -2931,7 +2928,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
 
                 if (resultType == TextCheckingType::Correction) {
                     auto replacementRange = paragraph.subrange({ resultLocation, replacement.length() });
-                    m_alternativeTextController->recordAutocorrectionResponse(AutocorrectionResponse::Accepted, replacedString, replacementRange.ptr());
+                    m_alternativeTextController->recordAutocorrectionResponse(AutocorrectionResponse::Accepted, replacedString, replacementRange.get());
 
                     // Add a marker so that corrections can easily be undone and won't be re-corrected.
                     m_alternativeTextController->markCorrection(replacementRange, replacedString);
@@ -2966,10 +2963,10 @@ void Editor::changeBackToReplacedString(const String& replacedString)
         return;
 
     RefPtr<Range> selection = selectedRange();
-    if (!shouldInsertText(replacedString, selection.get(), EditorInsertAction::Pasted))
+    if (!selection || !shouldInsertText(replacedString, selection.get(), EditorInsertAction::Pasted))
         return;
     
-    m_alternativeTextController->recordAutocorrectionResponse(AutocorrectionResponse::Reverted, replacedString, selection.get());
+    m_alternativeTextController->recordAutocorrectionResponse(AutocorrectionResponse::Reverted, replacedString, *selection);
     TextCheckingParagraph paragraph(*selection);
     replaceSelectionWithText(replacedString, SelectReplacement::No, SmartReplace::No, EditAction::Insert);
     auto changedRange = paragraph.subrange(CharacterRange(paragraph.checkingStart(), replacedString.length()));
@@ -3201,7 +3198,7 @@ void Editor::transpose()
     VisibleSelection newSelection(*range, DOWNSTREAM);
 
     // Transpose the two characters.
-    String text = plainText(range.get());
+    String text = plainText(*range);
     if (text.length() != 2)
         return;
     String transposed = text.right(1) + text.left(1);
@@ -3221,7 +3218,7 @@ void Editor::transpose()
 
 void Editor::addRangeToKillRing(const Range& range, KillRingInsertionMode mode)
 {
-    addTextToKillRing(plainText(&range), mode);
+    addTextToKillRing(plainText(range), mode);
 }
 
 void Editor::addTextToKillRing(const String& text, KillRingInsertionMode mode)
@@ -3975,7 +3972,7 @@ String Editor::stringForCandidateRequest() const
     const VisibleSelection& selection = m_frame.selection().selection();
     RefPtr<Range> rangeForCurrentlyTypedString = candidateRangeForSelection(m_frame);
     if (rangeForCurrentlyTypedString && candidateWouldReplaceText(selection))
-        return plainText(rangeForCurrentlyTypedString.get());
+        return plainText(*rangeForCurrentlyTypedString);
 
     return String();
 }

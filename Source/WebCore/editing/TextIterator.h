@@ -34,23 +34,27 @@
 
 namespace WebCore {
 
-class Range;
 class RenderTextFragment;
 
-// FIXME: Delete this overload after moving all the callers to the SimpleRange version.
-WEBCORE_EXPORT String plainText(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
+// Character ranges based on characters from the text iterator.
+WEBCORE_EXPORT uint64_t characterCount(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
+CharacterRange characterRange(const BoundaryPoint& start, const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
+CharacterRange characterRange(const SimpleRange& scope, const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
+BoundaryPoint resolveCharacterLocation(const SimpleRange& scope, uint64_t, TextIteratorBehavior = TextIteratorDefaultBehavior);
+WEBCORE_EXPORT SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange, TextIteratorBehavior = TextIteratorDefaultBehavior);
 
+// Text from the text iterator.
 WEBCORE_EXPORT String plainText(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
-WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
-WEBCORE_EXPORT String plainTextUsingBackwardsTextIteratorForTesting(const SimpleRange&);
-
-SimpleRange findPlainText(const SimpleRange&, const String&, FindOptions);
-WEBCORE_EXPORT SimpleRange findClosestPlainText(const SimpleRange&, const String&, FindOptions, unsigned);
 WEBCORE_EXPORT bool hasAnyPlainText(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
+WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
+
+// Find within the document, based on the text from the text iterator.
+SimpleRange findPlainText(const SimpleRange&, const String&, FindOptions);
+WEBCORE_EXPORT SimpleRange findClosestPlainText(const SimpleRange&, const String&, FindOptions, uint64_t targetCharacterOffset);
 bool containsPlainText(const String& document, const String&, FindOptions); // Lets us use the search algorithm on a string.
 WEBCORE_EXPORT String foldQuoteMarks(const String&);
 
-// FIXME: Move this somewhere else in the editing directory. It doesn't belong here.
+// FIXME: Move this somewhere else in the editing directory. It doesn't belong in the header with TextIterator.
 bool isRendererReplacedElement(RenderObject*);
 
 // FIXME: Move each iterator class into a separate header file.
@@ -102,9 +106,6 @@ public:
 
     const TextIteratorCopyableText& copyableText() const { ASSERT(!atEnd()); return m_copyableText; }
     void appendTextToStringBuilder(StringBuilder& builder) const { copyableText().appendToStringBuilder(builder); }
-
-    // FIXME: Move this to SimpleRange and CharacterRange and move out of this class to the top level.
-    WEBCORE_EXPORT static bool getLocationAndLengthFromRange(Node* scope, const Range*, size_t& location, size_t& length);
 
 private:
     void init();
@@ -173,10 +174,10 @@ private:
 // chunks so as to optimize for performance of the iteration.
 class SimplifiedBackwardsTextIterator {
 public:
-    explicit SimplifiedBackwardsTextIterator(const SimpleRange&);
+    WEBCORE_EXPORT explicit SimplifiedBackwardsTextIterator(const SimpleRange&);
 
     bool atEnd() const { return !m_positionNode; }
-    void advance();
+    WEBCORE_EXPORT void advance();
 
     StringView text() const { ASSERT(!atEnd()); return m_text; }
     WEBCORE_EXPORT SimpleRange range() const;
@@ -288,9 +289,19 @@ private:
     bool m_didLookAhead { true };
 };
 
+inline CharacterRange characterRange(const BoundaryPoint& start, const SimpleRange& range, TextIteratorBehavior behavior)
+{
+    return { characterCount({ start, range.start }, behavior), characterCount(range, behavior) };
+}
 
-WEBCORE_EXPORT uint64_t characterCount(const SimpleRange&, TextIteratorBehavior = TextIteratorDefaultBehavior);
-WEBCORE_EXPORT BoundaryPoint resolveCharacterLocation(const SimpleRange&, uint64_t, TextIteratorBehavior = TextIteratorDefaultBehavior);
-WEBCORE_EXPORT SimpleRange resolveCharacterRange(const SimpleRange&, CharacterRange, TextIteratorBehavior = TextIteratorDefaultBehavior);
+inline CharacterRange characterRange(const SimpleRange& scope, const SimpleRange& range, TextIteratorBehavior behavior)
+{
+    return characterRange(scope.start, range, behavior);
+}
+
+inline BoundaryPoint resolveCharacterLocation(const SimpleRange& scope, uint64_t location, TextIteratorBehavior behavior)
+{
+    return resolveCharacterRange(scope, { location, 0 }, behavior).start;
+}
 
 } // namespace WebCore

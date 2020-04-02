@@ -187,7 +187,7 @@ Range& TextCheckingParagraph::offsetAsRange() const
 StringView TextCheckingParagraph::text() const
 {
     if (m_text.isNull())
-        m_text = plainText(&paragraphRange());
+        m_text = plainText(paragraphRange());
     return m_text; 
 }
 
@@ -337,7 +337,7 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
             lastIteration = true;
         }
         if (currentStartOffset < currentEndOffset) {
-            String paragraphString = plainText(paragraphRange.ptr());
+            String paragraphString = plainText(paragraphRange);
             if (paragraphString.length() > 0) {
                 bool foundGrammar = false;
                 uint64_t spellingLocation = 0;

@@ -76,7 +76,7 @@ PASS internals.countFindMatches('in-shadow', []) is 2
 PASS internals.countFindMatches('in-', ['DoNotTraverseFlatTree']) is 2
 PASS internals.countFindMatches('in-', []) is 4
 PASS internals.countFindMatches('in-shadow in-document', ['DoNotTraverseFlatTree']) is 0
-PASS internals.countFindMatches('in-shadow in-document', []) is 0
+PASS internals.countFindMatches('in-shadow in-document', []) is 1
 PASS rangeText(internals.rangeOfString('inside-display-none', null, [])) is null
 PASS successfullyParsed is true
 

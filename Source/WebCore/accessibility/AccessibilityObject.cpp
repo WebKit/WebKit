@@ -1443,79 +1443,47 @@ VisiblePosition AccessibilityObject::previousLineStartPosition(const VisiblePosi
     return startPosition;
 }
 
-VisiblePosition AccessibilityObject::nextSentenceEndPosition(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::nextSentenceEndPosition(const VisiblePosition& position) const
 {
     // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
-    if (visiblePos.isNull())
-        return VisiblePosition();
 
-    // make sure we move off of a sentence end
-    VisiblePosition nextVisiblePos = visiblePos.next();
-    if (nextVisiblePos.isNull())
-        return VisiblePosition();
+    // Make sure we move off of a sentence end.
+    auto nextPosition = position.next();
+    auto lineRange = makeRange(startOfLine(nextPosition), endOfLine(nextPosition));
+    if (!lineRange)
+        return { };
 
-    // an empty line is considered a sentence. If it's skipped, then the sentence parser will not
-    // see this empty line.  Instead, return the end position of the empty line.
-    VisiblePosition endPosition;
-    
-    String lineString = plainText(makeRange(startOfLine(nextVisiblePos), endOfLine(nextVisiblePos)).get());
-    if (lineString.isEmpty())
-        endPosition = nextVisiblePos;
-    else
-        endPosition = endOfSentence(nextVisiblePos);
-
-    return endPosition;
+    // An empty line is considered a sentence. If it's skipped, then the sentence parser will not
+    // see this empty line. Instead, return the end position of the empty line.
+    // FIXME: It would be more efficient to use hasAnyPlainText instead of plainText.isEmpty.
+    return plainText(*lineRange).isEmpty() ? nextPosition : endOfSentence(nextPosition);
 }
 
-VisiblePosition AccessibilityObject::previousSentenceStartPosition(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::previousSentenceStartPosition(const VisiblePosition& position) const
 {
     // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
-    if (visiblePos.isNull())
-        return VisiblePosition();
 
-    // make sure we move off of a sentence start
-    VisiblePosition previousVisiblePos = visiblePos.previous();
-    if (previousVisiblePos.isNull())
-        return VisiblePosition();
+    // Make sure we move off of a sentence start.
+    auto previousPosition = position.previous();
+    auto lineRange = makeRange(startOfLine(previousPosition), endOfLine(previousPosition));
+    if (!lineRange)
+        return { };
 
-    // treat empty line as a separate sentence.
-    VisiblePosition startPosition;
-    
-    String lineString = plainText(makeRange(startOfLine(previousVisiblePos), endOfLine(previousVisiblePos)).get());
-    if (lineString.isEmpty())
-        startPosition = previousVisiblePos;
-    else
-        startPosition = startOfSentence(previousVisiblePos);
-
-    return startPosition;
+    // Treat empty line as a separate sentence.
+    // FIXME: It would be more efficient to use hasAnyPlainText instead of plainText.isEmpty.
+    return plainText(*lineRange).isEmpty() ? previousPosition : startOfSentence(previousPosition);
 }
 
-VisiblePosition AccessibilityObject::nextParagraphEndPosition(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::nextParagraphEndPosition(const VisiblePosition& position) const
 {
-    if (visiblePos.isNull())
-        return VisiblePosition();
-
-    // make sure we move off of a paragraph end
-    VisiblePosition nextPos = visiblePos.next();
-    if (nextPos.isNull())
-        return VisiblePosition();
-
-    return endOfParagraph(nextPos);
+    return endOfParagraph(position.next());
 }
 
-VisiblePosition AccessibilityObject::previousParagraphStartPosition(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::previousParagraphStartPosition(const VisiblePosition& position) const
 {
-    if (visiblePos.isNull())
-        return VisiblePosition();
-
-    // make sure we move off of a paragraph start
-    VisiblePosition previousPos = visiblePos.previous();
-    if (previousPos.isNull())
-        return VisiblePosition();
-
-    return startOfParagraph(previousPos);
+    return startOfParagraph(position.previous());
 }
 
 AccessibilityObject* AccessibilityObject::accessibilityObjectForPosition(const VisiblePosition& visiblePos) const

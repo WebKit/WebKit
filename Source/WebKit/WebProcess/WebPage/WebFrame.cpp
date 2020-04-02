@@ -362,20 +362,15 @@ String WebFrame::contentsAsString() const
         return builder.toString();
     }
 
-    Document* document = m_coreFrame->document();
+    auto document = m_coreFrame->document();
     if (!document)
         return String();
 
-    RefPtr<Element> documentElement = document->documentElement();
+    auto documentElement = document->documentElement();
     if (!documentElement)
         return String();
 
-    RefPtr<Range> range = document->createRange();
-
-    if (range->selectNode(*documentElement).hasException())
-        return String();
-
-    return plainText(range.get());
+    return plainText(makeRangeSelectingNodeContents(*documentElement));
 }
 
 String WebFrame::selectionAsString() const 

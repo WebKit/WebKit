@@ -1,3 +1,18 @@
+2020-04-01  Darin Adler  <darin@apple.com>
+
+        Remove all uses of live ranges from TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=209723
+
+        Reviewed by Antti Koivisto.
+
+        * WebFrame.cpp:
+        (WebFrame::string): Use a SimpleRange instead of a live range
+        to call plainText.
+        * WebView.cpp:
+        (WebView::selectedRangeForTesting): Use a SimpleRange instead
+        of a live range to call characterRange instead of
+        TextIterator::getLocationAndLengthFromRange.
+
 2020-03-30  Simon Fraser  <simon.fraser@apple.com>
 
         scrollIntoView() erroneously scrolls non-containing block scrollers

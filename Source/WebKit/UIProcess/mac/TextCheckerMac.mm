@@ -436,18 +436,13 @@ void TextChecker::updateSpellingUIWithMisspelledWord(SpellDocumentTag, const Str
 void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
     auto corrections = adoptNS([[NSMutableArray alloc] init]);
-    for (auto& guess : grammarDetail.guesses) {
-        NSString *guessNSString = guess;
-        [corrections addObject:guessNSString];
-    }
-
-    NSString *descriptionNSString = grammarDetail.userDescription;
+    for (auto& guess : grammarDetail.guesses)
+        [corrections addObject:guess];
     NSDictionary *detail = @{
         NSGrammarRange : [NSValue valueWithRange:grammarDetail.range],
-        NSGrammarUserDescription : descriptionNSString,
+        NSGrammarUserDescription : grammarDetail.userDescription,
         NSGrammarCorrections : corrections.get(),
     };
-
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:detail];
 }
 

@@ -46,7 +46,6 @@
 #include "HTMLTextFormControlElement.h"
 #include "InlineTextBox.h"
 #include "NodeTraversal.h"
-#include "Range.h"
 #include "RenderImage.h"
 #include "RenderIterator.h"
 #include "RenderTableCell.h"
@@ -141,8 +140,8 @@ private:
 
 // --------
 
-static constexpr unsigned bitsInWord = sizeof(unsigned) * 8;
-static constexpr unsigned bitInWordMask = bitsInWord - 1;
+constexpr unsigned bitsInWord = sizeof(unsigned) * 8;
+constexpr unsigned bitInWordMask = bitsInWord - 1;
 
 void BitStack::push(bool bit)
 {
@@ -1435,24 +1434,6 @@ void CharacterIterator::advance(int count)
     m_runOffset = 0;
 }
 
-static Ref<Range> characterSubrange(Document& document, CharacterIterator& it, int offset, int length)
-{
-    it.advance(offset);
-    if (it.atEnd())
-        return Range::create(document);
-
-    auto start = it.range().start;
-
-    if (length > 1)
-        it.advance(length - 1);
-    if (it.atEnd())
-        return Range::create(document);
-
-    auto end = it.range().end;
-
-    return createLiveRange(SimpleRange { start, end });
-}
-
 BackwardsCharacterIterator::BackwardsCharacterIterator(const SimpleRange& range)
     : m_underlyingIterator(range)
 {
@@ -1623,7 +1604,7 @@ String foldQuoteMarks(const String& stringToFold)
 
 #if !UCONFIG_NO_COLLATION
 
-const size_t minimumSearchBufferSize = 8192;
+constexpr size_t minimumSearchBufferSize = 8192;
 
 #ifndef NDEBUG
 static bool searcherInUse;
@@ -1876,7 +1857,7 @@ static bool isNonLatin1Separator(UChar32 character)
 
 static inline bool isSeparator(UChar32 character)
 {
-    static const bool latin1SeparatorTable[256] = {
+    static constexpr bool latin1SeparatorTable[256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // space ! " # $ % & ' ( ) * + , - . /
@@ -2276,7 +2257,7 @@ inline size_t SearchBuffer::append(const UChar* characters, size_t length)
         append(characters[0], true);
         return 1;
     }
-    const int maxFoldedCharacters = 16; // sensible maximum is 3, this should be more than enough
+    constexpr int maxFoldedCharacters = 16; // sensible maximum is 3, this should be more than enough
     UChar foldedCharacters[maxFoldedCharacters];
     UErrorCode status = U_ZERO_ERROR;
     int numFoldedCharacters = u_strFoldCase(foldedCharacters, maxFoldedCharacters, characters, 1, U_FOLD_CASE_DEFAULT, &status);
@@ -2415,31 +2396,6 @@ SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange range
     return resultRange;
 }
 
-BoundaryPoint resolveCharacterLocation(const SimpleRange& scope, uint64_t location, TextIteratorBehavior behavior)
-{
-    return resolveCharacterRange(scope, { location, 0 }, behavior).start;
-}
-
-bool TextIterator::getLocationAndLengthFromRange(Node* scope, const Range* range, size_t& location, size_t& length)
-{
-    location = notFound;
-    length = 0;
-
-    // The critical assumption is that this only gets called with ranges that
-    // concentrate on a given area containing the selection root. This is done
-    // because of text fields and textareas. The DOM for those is not directly
-    // in the document DOM, so ensure that the range does not cross a boundary
-    // of one of those.
-    if (&range->startContainer() != scope && !range->startContainer().isDescendantOf(scope))
-        return false;
-    if (&range->endContainer() != scope && !range->endContainer().isDescendantOf(scope))
-        return false;
-
-    location = characterCount({ { *scope, 0 }, { range->startContainer(), range->startOffset() } });
-    length = characterCount({ { *scope, 0 }, { range->endContainer(), range->endOffset() } }) - location;
-    return true;
-}
-
 // --------
 
 bool hasAnyPlainText(const SimpleRange& range, TextIteratorBehavior behavior)
@@ -2454,7 +2410,7 @@ bool hasAnyPlainText(const SimpleRange& range, TextIteratorBehavior behavior)
 String plainText(const SimpleRange& range, TextIteratorBehavior defaultBehavior, bool isDisplayString)
 {
     // The initial buffer size can be critical for performance: https://bugs.webkit.org/show_bug.cgi?id=81192
-    static const unsigned initialCapacity = 1 << 15;
+    constexpr unsigned initialCapacity = 1 << 15;
 
     auto document = makeRef(range.start.document());
 
@@ -2481,30 +2437,9 @@ String plainText(const SimpleRange& range, TextIteratorBehavior defaultBehavior,
     return result;
 }
 
-String plainText(const Range* range, TextIteratorBehavior defaultBehavior, bool isDisplayString)
-{
-    if (!range)
-        return emptyString();
-    return plainText(*range, defaultBehavior, isDisplayString);
-}
-
-String plainTextUsingBackwardsTextIteratorForTesting(const SimpleRange& range)
-{
-    String result;
-    for (SimplifiedBackwardsTextIterator backwardsIterator(createLiveRange(range)); !backwardsIterator.atEnd(); backwardsIterator.advance())
-        result.insert(backwardsIterator.text().toString(), 0);
-    return result;
-}
-
 String plainTextReplacingNoBreakSpace(const SimpleRange& range, TextIteratorBehavior defaultBehavior, bool isDisplayString)
 {
     return plainText(range, defaultBehavior, isDisplayString).replace(noBreakSpace, ' ');
-}
-
-static SimpleRange collapsedToBoundary(const SimpleRange& range, bool forward)
-{
-    auto& boundary = forward ? range.end : range.start;
-    return { boundary, boundary };
 }
 
 static TextIteratorBehavior findIteratorOptions(FindOptions options)
@@ -2515,20 +2450,19 @@ static TextIteratorBehavior findIteratorOptions(FindOptions options)
     return iteratorOptions;
 }
 
-static void findPlainTextMatches(const SimpleRange& range, const String& target, FindOptions options, const WTF::Function<bool(size_t, size_t)>& match)
+static void forEachMatch(const SimpleRange& range, const String& target, FindOptions options, const Function<bool(CharacterRange)>& match)
 {
     SearchBuffer buffer(target, options);
     if (buffer.needsMoreContext()) {
-        Ref<Range> beforeStartRange = range.start.document().createRange();
-        beforeStartRange->setEnd(range.start.container.copyRef(), range.start.offset);
-        for (SimplifiedBackwardsTextIterator backwardsIterator(beforeStartRange.get()); !backwardsIterator.atEnd(); backwardsIterator.advance()) {
+        auto beforeStartRange = SimpleRange { makeBoundaryPointBeforeNodeContents(range.start.document()), range.start };
+        for (SimplifiedBackwardsTextIterator backwardsIterator(beforeStartRange); !backwardsIterator.atEnd(); backwardsIterator.advance()) {
             buffer.prependContext(backwardsIterator.text());
             if (!buffer.needsMoreContext())
                 break;
         }
     }
 
-    CharacterIterator findIterator(createLiveRange(range), findIteratorOptions(options));
+    CharacterIterator findIterator(range, findIteratorOptions(options));
     while (!findIterator.atEnd()) {
         findIterator.advance(buffer.append(findIterator.text()));
         while (1) {
@@ -2543,53 +2477,69 @@ static void findPlainTextMatches(const SimpleRange& range, const String& target,
             }
             size_t lastCharacterInBufferOffset = findIterator.characterOffset();
             ASSERT(lastCharacterInBufferOffset >= matchStartOffset);
-            if (match(lastCharacterInBufferOffset - matchStartOffset, newMatchLength))
+            if (match(CharacterRange(lastCharacterInBufferOffset - matchStartOffset, newMatchLength)))
                 return;
         }
     }
 }
 
-static SimpleRange rangeForMatch(const SimpleRange& range, FindOptions options, size_t matchStart, size_t matchLength, bool searchForward)
+static SimpleRange rangeForMatch(const SimpleRange& range, FindOptions options, CharacterRange match)
 {
-    if (!matchLength)
-        return collapsedToBoundary(range, searchForward);
-    CharacterIterator rangeComputeIterator(createLiveRange(range), findIteratorOptions(options));
-    return characterSubrange(range.start.document(), rangeComputeIterator, matchStart, matchLength);
-}
-
-SimpleRange findClosestPlainText(const SimpleRange& range, const String& target, FindOptions options, unsigned targetOffset)
-{
-    size_t matchStart = 0;
-    size_t matchLength = 0;
-    size_t distance = std::numeric_limits<size_t>::max();
-    auto match = [targetOffset, &distance, &matchStart, &matchLength] (size_t start, size_t length) {
-        size_t newDistance = std::min(abs(static_cast<signed>(start - targetOffset)), abs(static_cast<signed>(start + length - targetOffset)));
-        if (newDistance < distance) {
-            matchStart = start;
-            matchLength = length;
-            distance = newDistance;
-        }
-        return false;
+    auto noMatchResult = [&] () {
+        auto& boundary = options.contains(Backwards) ? range.start : range.end;
+        return SimpleRange { boundary, boundary };
     };
 
-    findPlainTextMatches(range, target, options, WTFMove(match));
-    return rangeForMatch(range, options, matchStart, matchLength, !options.contains(Backwards));
+    if (!match.length)
+        return noMatchResult();
+
+    CharacterIterator it(range, findIteratorOptions(options));
+
+    it.advance(match.location);
+    if (it.atEnd())
+        return noMatchResult();
+    auto start = it.range().start;
+
+    it.advance(match.length - 1);
+    if (it.atEnd())
+        return noMatchResult();
+
+    return { WTFMove(start), it.range().end };
+}
+
+SimpleRange findClosestPlainText(const SimpleRange& range, const String& target, FindOptions options, uint64_t targetOffset)
+{
+    CharacterRange closestMatch;
+    uint64_t closestMatchDistance = std::numeric_limits<uint64_t>::max();
+    forEachMatch(range, target, options, [&] (CharacterRange match) {
+        auto distance = [] (uint64_t a, uint64_t b) -> uint64_t {
+            return std::abs(static_cast<int64_t>(a - b));
+        };
+        auto matchDistance = std::min(distance(match.location, targetOffset), distance(match.location + match.length, targetOffset));
+        if (matchDistance > closestMatchDistance)
+            return false;
+        if (matchDistance == closestMatchDistance && !options.contains(Backwards))
+            return false;
+        closestMatch = match;
+        if (!matchDistance && !options.contains(Backwards))
+            return true;
+        closestMatchDistance = matchDistance;
+        return false;
+    });
+    return rangeForMatch(range, options, closestMatch);
 }
 
 SimpleRange findPlainText(const SimpleRange& range, const String& target, FindOptions options)
 {
-    bool searchForward = !options.contains(Backwards);
-    size_t matchStart = 0;
-    size_t matchLength = 0;
-    auto match = [searchForward, &matchStart, &matchLength] (size_t start, size_t length) {
-        matchStart = start;
-        matchLength = length;
-        // Look for the last match when searching backwards instead.
-        return searchForward;
-    };
-
-    findPlainTextMatches(range, target, options, WTFMove(match));
-    return rangeForMatch(range, options, matchStart, matchLength, searchForward);
+    // When searching forward stop since we want the first match.
+    // When searching backward keep going since we want the last match.
+    bool stopAfterFindingMatch = !options.contains(Backwards);
+    CharacterRange lastMatchFound;
+    forEachMatch(range, target, options, [&] (CharacterRange match) {
+        lastMatchFound = match;
+        return stopAfterFindingMatch;
+    });
+    return rangeForMatch(range, options, lastMatchFound);
 }
 
 bool containsPlainText(const String& document, const String& target, FindOptions options)

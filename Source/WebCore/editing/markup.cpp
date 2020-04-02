@@ -435,7 +435,12 @@ String StyledMarkupAccumulator::renderedTextRespectingRange(const Text& text)
             behavior = TextIteratorBehavesAsIfNodesFollowing;
     }
 
-    return plainText(Range::create(text.document(), start, end).ptr(), behavior);
+    auto startBoundary = makeBoundaryPoint(start);
+    auto endBoundary = makeBoundaryPoint(end);
+    if (!startBoundary || !endBoundary)
+        return emptyString();
+
+    return plainText({ WTFMove(*startBoundary), WTFMove(*endBoundary) }, behavior);
 }
 
 String StyledMarkupAccumulator::textContentRespectingRange(const Text& text)

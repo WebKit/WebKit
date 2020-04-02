@@ -2051,18 +2051,12 @@ RefPtr<Range> Internals::rangeFromLocationAndLength(Element& scope, unsigned ran
 
 unsigned Internals::locationFromRange(Element& scope, const Range& range)
 {
-    size_t location = 0;
-    size_t unusedLength = 0;
-    TextIterator::getLocationAndLengthFromRange(&scope, &range, location, unusedLength);
-    return location;
+    return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), range).location);
 }
 
 unsigned Internals::lengthFromRange(Element& scope, const Range& range)
 {
-    size_t unusedLocation = 0;
-    size_t length = 0;
-    TextIterator::getLocationAndLengthFromRange(&scope, &range, unusedLocation, length);
-    return length;
+    return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), range).length);
 }
 
 String Internals::rangeAsText(const Range& range)
@@ -2072,7 +2066,10 @@ String Internals::rangeAsText(const Range& range)
 
 String Internals::rangeAsTextUsingBackwardsTextIterator(const Range& range)
 {
-    return plainTextUsingBackwardsTextIteratorForTesting(range);
+    String result;
+    for (SimplifiedBackwardsTextIterator backwardsIterator(range); !backwardsIterator.atEnd(); backwardsIterator.advance())
+        result.insert(backwardsIterator.text().toString(), 0);
+    return result;
 }
 
 Ref<Range> Internals::subrange(Range& range, unsigned rangeLocation, unsigned rangeLength)

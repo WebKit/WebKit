@@ -587,7 +587,9 @@ static NSURL *createUniqueWebDataURL();
 
 - (NSString *)_stringForRange:(DOMRange *)range
 {
-    return plainText(core(range), WebCore::TextIteratorDefaultBehavior, true);
+    if (!range)
+        return @"";
+    return plainText(*core(range), WebCore::TextIteratorDefaultBehavior, true);
 }
 
 - (OptionSet<WebCore::PaintBehavior>)_paintBehaviorForDestinationContext:(CGContextRef)context
@@ -806,12 +808,15 @@ static NSURL *createUniqueWebDataURL();
     if (!range)
         return NSMakeRange(NSNotFound, 0);
 
-    size_t location = 0;
-    size_t length = 0;
-    if (!WebCore::TextIterator::getLocationAndLengthFromRange(_private->coreFrame->selection().rootEditableElementOrDocumentElement(), range, location, length))
+    auto frame = _private->coreFrame;
+    if (!frame)
         return NSMakeRange(NSNotFound, 0);
 
-    return NSMakeRange(location, length);
+    auto* element = frame->selection().rootEditableElementOrDocumentElement();
+    if (!element)
+        return NSMakeRange(NSNotFound, 0);
+
+    return characterRange(makeBoundaryPointBeforeNodeContents(*element), *range);
 }
 
 - (RefPtr<WebCore::Range>)_convertToDOMRange:(NSRange)nsrange

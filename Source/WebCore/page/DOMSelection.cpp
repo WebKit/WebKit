@@ -448,7 +448,8 @@ String DOMSelection::toString()
     auto* frame = this->frame();
     if (!frame)
         return String();
-    return plainText(frame->selection().selection().toNormalizedRange().get());
+    auto range = frame->selection().selection().toNormalizedRange();
+    return range ? plainText(*range) : emptyString();
 }
 
 Node* DOMSelection::shadowAdjustedNode(const Position& position) const

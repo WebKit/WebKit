@@ -730,7 +730,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
 
     // There are no phrases with alternatives, so there is just one interpretation.
     if (markersInRoot.isEmpty())
-        return [NSArray arrayWithObject:plainText(rangeOfRootContents.ptr())];
+        return [NSArray arrayWithObject:plainText(rangeOfRootContents)];
 
     // The number of interpretations will be i1 * i2 * ... * iN, where iX is the number of interpretations for the Xth phrase with alternatives.
     size_t interpretationsCount = 1;
@@ -752,7 +752,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
             // First, add text that precede the marker.
             if (precedingTextStartPosition != createLegacyEditingPosition(node, marker->startOffset())) {
                 auto precedingTextRange = Range::create(*document(), precedingTextStartPosition, createLegacyEditingPosition(node, marker->startOffset()));
-                String precedingText = plainText(precedingTextRange.ptr());
+                String precedingText = plainText(precedingTextRange);
                 if (!precedingText.isEmpty()) {
                     for (auto& interpretation : interpretations)
                         append(interpretation, precedingText);

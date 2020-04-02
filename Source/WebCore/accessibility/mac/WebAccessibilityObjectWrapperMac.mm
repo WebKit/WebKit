@@ -3636,21 +3636,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     ASSERT(isMainThread());
     
-    NSRange result = NSMakeRange(NSNotFound, 0);
     if (!range)
-        return result;
+        return NSMakeRange(NSNotFound, 0);
     
-    Document* document = self.axBackingObject->document();
+    auto document = self.axBackingObject->document();
     if (!document)
-        return result;
-    
-    size_t location;
-    size_t length;
-    TextIterator::getLocationAndLengthFromRange(document->documentElement(), range, location, length);
-    result.location = location;
-    result.length = length;
-    
-    return result;
+        return NSMakeRange(NSNotFound, 0);
+
+    auto documentElement = document->documentElement();
+    if (!documentElement)
+        return NSMakeRange(NSNotFound, 0);
+
+    return characterRange(makeBoundaryPointBeforeNodeContents(*documentElement), *range);
 }
 
 - (NSInteger)_indexForTextMarker:(id)marker

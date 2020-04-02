@@ -113,11 +113,11 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
             auto clonedRange = surroundingRange->cloneRange();
             surroundingRange->setEnd(compositionRange->startPosition());
             clonedRange->setStart(compositionRange->endPosition());
-            postLayoutData.surroundingContext = plainText(surroundingRange.get()) + plainText(clonedRange.ptr());
+            postLayoutData.surroundingContext = plainText(*surroundingRange) + plainText(clonedRange);
             postLayoutData.surroundingContextCursorPosition = characterCount(*surroundingRange);
             postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;
         } else {
-            postLayoutData.surroundingContext = plainText(surroundingRange.get());
+            postLayoutData.surroundingContext = plainText(*surroundingRange);
             if (surroundingStart.isNull() || selectionStart.isNull())
                 postLayoutData.surroundingContextCursorPosition = 0;
             else

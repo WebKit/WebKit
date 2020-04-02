@@ -87,17 +87,16 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
     auto selectionEnd = selection.visibleEnd();
 
     // As context, we are going to use the surrounding paragraphs of text.
-    auto paragraphStart = startOfParagraph(selectionStart);
-    auto paragraphEnd = endOfParagraph(selectionEnd);
-    if (paragraphStart.isNull() || paragraphEnd.isNull())
+    auto paragraphStart = makeBoundaryPoint(startOfParagraph(selectionStart));
+    auto paragraphEnd = makeBoundaryPoint(endOfParagraph(selectionEnd));
+    if (!paragraphStart || !paragraphEnd)
         return { nullptr, nil };
 
-    auto lengthToSelectionStart = characterCount({ *makeBoundaryPoint(paragraphStart), *makeBoundaryPoint(selectionStart) });
-    auto selectionCharacterCount = characterCount({ *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selectionEnd) });
-    NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, selectionCharacterCount);
+    auto selectionRange = SimpleRange { *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selectionEnd) };
+    auto paragraphRange = SimpleRange { *paragraphStart, *paragraphEnd };
 
     NSDictionary *options = nil;
-    tokenRange(plainText(makeRange(paragraphStart, paragraphEnd).get()), rangeToPass, &options);
+    tokenRange(plainText(paragraphRange), characterRange(paragraphRange, selectionRange), &options);
 
     return { selectedRange, options };
 }
@@ -142,7 +141,7 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
 
     NSRange rangeToPass = NSMakeRange(characterCount({ *fullCharacterStart, *positionBoundary }), 0);
     NSDictionary *options = nil;
-    auto extractedRange = tokenRange(plainText(fullCharacterRange.get()), rangeToPass, &options);
+    auto extractedRange = tokenRange(plainText(*fullCharacterRange), rangeToPass, &options);
 
     // tokenRange sometimes returns {NSNotFound, 0} if it was unable to determine a good string.
     // FIXME (159063): We shouldn't need to check for zero length here.

@@ -33,9 +33,10 @@ OBJC_CLASS NSAttributedString;
 namespace WebKit {
 
 struct AttributedString {
-    AttributedString()
-    {
-    }
+    RetainPtr<NSAttributedString> string;
+    RetainPtr<NSDictionary> documentAttributes;
+
+    AttributedString() = default;
 
 #if defined(__OBJC__)
     AttributedString(NSAttributedString *attributedString, NSDictionary *documentAttributes = nil)
@@ -44,22 +45,26 @@ struct AttributedString {
     {
     }
 
+    AttributedString(RetainPtr<NSAttributedString>&& attributedString, RetainPtr<NSDictionary>&& documentAttributes = { })
+        : string(WTFMove(attributedString))
+        , documentAttributes(WTFMove(documentAttributes))
+    {
+    }
+
     operator NSAttributedString *() const
     {
         return string.get();
     }
 #endif
-
-    RetainPtr<NSAttributedString> string;
-    RetainPtr<NSDictionary> documentAttributes;
 };
 
 }
 
 namespace IPC {
+
 template<> struct ArgumentCoder<WebKit::AttributedString> {
     static void encode(Encoder&, const WebKit::AttributedString&);
     static Optional<WebKit::AttributedString> decode(Decoder&);
 };
-}
 
+}

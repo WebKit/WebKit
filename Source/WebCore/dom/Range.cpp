@@ -951,7 +951,7 @@ String Range::text() const
     // FIXME: As with innerText, we'd like this to work even if there are no render objects.
     startContainer().document().updateLayout();
 
-    return plainText(this);
+    return plainText(*this);
 }
 
 // https://w3c.github.io/DOM-Parsing/#widl-Range-createContextualFragment-DocumentFragment-DOMString-fragment

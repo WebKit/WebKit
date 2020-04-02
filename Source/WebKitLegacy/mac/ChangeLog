@@ -1,3 +1,20 @@
+2020-04-01  Darin Adler  <darin@apple.com>
+
+        Remove all uses of live ranges from TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=209723
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::updateSpellingUIWithGrammarString): Remove some unnecessary
+        use of local variabels for NSString.
+        (WebEditorClient::requestCandidatesForSelection): Pass a reference to a live
+        range to plainText.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringForRange:]): Ditto.
+        (-[WebFrame _convertToNSRange:]): Use characterRange instead of
+        TextIterator::getLocationAndLengthFromRange.
+
 2020-04-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLFormElement should use WeakPtr to keep track of its associated elements

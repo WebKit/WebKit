@@ -431,7 +431,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
             if (auto* element = document.documentElement())
                 selectedRange->selectNode(*element);
         }
-        m_client.speak(plainText(selectedRange.get()));
+        m_client.speak(plainText(*selectedRange));
         break;
     }
     case ContextMenuItemTagStopSpeaking:

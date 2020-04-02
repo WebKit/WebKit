@@ -1039,14 +1039,11 @@ Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stri
 void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
     NSMutableArray *corrections = [NSMutableArray array];
-    for (auto& guess : grammarDetail.guesses) {
-        NSString *guessNSString = guess;
-        [corrections addObject:guessNSString];
-    }
-    NSString *descriptionNSString = grammarDetail.userDescription;
+    for (auto& guess : grammarDetail.guesses)
+        [corrections addObject:guess];
     NSDictionary *dictionary = @{
         NSGrammarRange : [NSValue valueWithRange:grammarDetail.range],
-        NSGrammarUserDescription : descriptionNSString,
+        NSGrammarUserDescription : grammarDetail.userDescription,
         NSGrammarCorrections : corrections,
     };
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:dictionary];
@@ -1122,9 +1119,11 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
     auto selectionStart = selection.visibleStart();
     auto selectionStartOffsetInParagraph = characterCount({ *makeBoundaryPoint(startOfParagraph(selectionStart)), *makeBoundaryPoint(selectionStart) });
     auto selectionLength = characterCount({ *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selection.visibleEnd()) });
+    auto contextRangeForCandidateRequest = frame->editor().contextRangeForCandidateRequest();
+    String contextForCandidateReqeuest = contextRangeForCandidateRequest ? plainText(*contextRangeForCandidateRequest) : String();
 
     m_rangeForCandidates = NSMakeRange(selectionStartOffsetInParagraph, selectionLength);
-    m_paragraphContextForCandidateRequest = plainText(frame->editor().contextRangeForCandidateRequest().get());
+    m_paragraphContextForCandidateRequest = contextForCandidateReqeuest;
 
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
     auto weakEditor = makeWeakPtr(*this);

@@ -130,9 +130,11 @@ void AlternativeTextController::applyPendingCorrection(const VisibleSelection& s
     VisiblePosition startOfSelection = selectionAfterTyping.visibleStart();
     VisibleSelection currentWord = VisibleSelection(startOfWord(startOfSelection, LeftWordIfOnBoundary), endOfWord(startOfSelection, RightWordIfOnBoundary));
     if (currentWord.visibleEnd() == startOfSelection) {
-        String wordText = plainText(currentWord.toNormalizedRange().get());
-        if (wordText.length() > 0 && isAmbiguousBoundaryCharacter(wordText[wordText.length() - 1]))
-            doApplyCorrection = false;
+        if (auto wordRange = currentWord.firstRange()) {
+            String wordText = plainText(*wordRange);
+            if (!wordText.isEmpty() && isAmbiguousBoundaryCharacter(wordText[wordText.length() - 1]))
+                doApplyCorrection = false;
+        }
     }
     if (doApplyCorrection)
         handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeTextAccepted)); 
@@ -155,7 +157,7 @@ void AlternativeTextController::show(Range& rangeToReplace, const String& replac
     FloatRect boundingBox = rootViewRectForRange(&rangeToReplace);
     if (boundingBox.isEmpty())
         return;
-    m_originalText = plainText(&rangeToReplace);
+    m_originalText = plainText(rangeToReplace);
     m_rangeWithAlternative = &rangeToReplace;
     m_details = replacement;
     m_isActive = true;
@@ -249,7 +251,7 @@ void AlternativeTextController::timerFired()
         if (replacementString.isEmpty())
             break;
         m_isActive = true;
-        m_originalText = plainText(m_rangeWithAlternative.get());
+        m_originalText = plainText(*m_rangeWithAlternative);
         FloatRect boundingBox = rootViewRectForRange(m_rangeWithAlternative.get());
         if (!boundingBox.isEmpty()) {
             if (AlternativeTextClient* client = alternativeTextClient())
@@ -258,9 +260,9 @@ void AlternativeTextController::timerFired()
     }
         break;
     case AlternativeTextTypeSpellingSuggestions: {
-        if (!m_rangeWithAlternative || plainText(m_rangeWithAlternative.get()) != m_originalText)
+        if (!m_rangeWithAlternative || plainText(*m_rangeWithAlternative) != m_originalText)
             break;
-        String paragraphText = plainText(&TextCheckingParagraph(*m_rangeWithAlternative).paragraphRange());
+        String paragraphText = plainText(TextCheckingParagraph(*m_rangeWithAlternative).paragraphRange());
         Vector<String> suggestions;
         textChecker()->getGuessesForWord(m_originalText, paragraphText, m_frame.selection().selection(), suggestions);
         if (suggestions.isEmpty()) {
@@ -303,7 +305,7 @@ void AlternativeTextController::handleAlternativeTextUIResult(const String& resu
     if (!rangeWithAlternative || m_frame.document() != &rangeWithAlternative->ownerDocument())
         return;
 
-    String currentWord = plainText(rangeWithAlternative);
+    String currentWord = plainText(*rangeWithAlternative);
     // Check to see if the word we are about to correct has been changed between timer firing and callback being triggered.
     if (currentWord != m_originalText)
         return;
@@ -416,7 +418,7 @@ TextCheckerClient* AlternativeTextController::textChecker()
     return nullptr;
 }
 
-void AlternativeTextController::recordAutocorrectionResponse(AutocorrectionResponse response, const String& replacedString, Range* replacementRange)
+void AlternativeTextController::recordAutocorrectionResponse(AutocorrectionResponse response, const String& replacedString, const SimpleRange& replacementRange)
 {
     if (auto client = alternativeTextClient())
         client->recordAutocorrectionResponse(response, replacedString, plainText(replacementRange));
@@ -475,7 +477,7 @@ void AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionA
         return;
 
     auto precedingCharacterRange = Range::create(*m_frame.document(), precedingCharacterPosition, endOfSelection);
-    String string = plainText(precedingCharacterRange.ptr());
+    String string = plainText(precedingCharacterRange);
     if (string.isEmpty() || !deprecatedIsEditingWhitespace(string[string.length() - 1]))
         return;
 
@@ -524,7 +526,7 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
         return false;
     Node* node = endOfWordPosition.containerNode();
     auto wordRange = Range::create(*m_frame.document(), node, marker.startOffset(), node, marker.endOffset());
-    String currentWord = plainText(wordRange.ptr());
+    String currentWord = plainText(wordRange);
     if (!currentWord.length())
         return false;
     m_originalText = currentWord;

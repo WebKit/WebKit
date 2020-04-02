@@ -99,7 +99,7 @@ bool SpellingCorrectionCommand::willApplyCommand()
 
 void SpellingCorrectionCommand::doApply()
 {
-    m_corrected = plainText(m_rangeToBeCorrected.ptr());
+    m_corrected = plainText(m_rangeToBeCorrected);
     if (!m_corrected.length())
         return;
 

@@ -154,9 +154,11 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     if (!selectionStartBoundary || !selectionEnd || !paragraphStart)
         return;
 
+    auto contextRangeForCandidateRequest = frame.editor().contextRangeForCandidateRequest();
+
     postLayoutData.candidateRequestStartPosition = characterCount({ *paragraphStart, *selectionStartBoundary });
     postLayoutData.selectedTextLength = characterCount({ *selectionStartBoundary, *selectionEnd });
-    postLayoutData.paragraphContextForCandidateRequest = plainText(frame.editor().contextRangeForCandidateRequest().get());
+    postLayoutData.paragraphContextForCandidateRequest = contextRangeForCandidateRequest ? plainText(*contextRangeForCandidateRequest) : String();
     postLayoutData.stringForCandidateRequest = frame.editor().stringForCandidateRequest();
 
     IntRect rectForSelectionCandidates;

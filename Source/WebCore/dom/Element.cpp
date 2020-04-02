@@ -3197,7 +3197,7 @@ String Element::innerText()
     if (!renderer())
         return textContent(true);
 
-    return plainText(rangeOfContents(*this).ptr());
+    return plainText(makeRangeSelectingNodeContents(*this));
 }
 
 String Element::outerText()

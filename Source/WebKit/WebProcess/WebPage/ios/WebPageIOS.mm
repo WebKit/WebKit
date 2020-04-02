@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -4041,38 +4041,28 @@ void WebPage::removeTextPlaceholder(const WebCore::ElementContext& placeholder, 
 
 void WebPage::updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&& completionHandler)
 {
-    Ref<Frame> frame = corePage()->focusController().focusedOrMainFrame();
-    VisibleSelection selection = frame->selection().selection();
-    if (selection.isNone()) {
+    auto frame = makeRef(corePage()->focusController().focusedOrMainFrame());
+    auto root = makeRefPtr(frame->selection().rootEditableElementOrDocumentElement());
+    auto selectionRange = frame->selection().selection().toNormalizedRange();
+    if (!root || !selectionRange) {
         completionHandler();
         return;
     }
 
-    auto root = frame->selection().rootEditableElementOrDocumentElement();
-    auto range = selection.toNormalizedRange();
-    if (!root || !range) {
-        completionHandler();
-        return;
-    }
-
-    size_t selectionLocation;
-    size_t selectionLength;
-    TextIterator::getLocationAndLengthFromRange(root, range.get(), selectionLocation, selectionLength);
-
-    CheckedInt64 newSelectionLocation { selectionLocation };
-    CheckedInt64 newSelectionLength { selectionLength };
+    auto scope = makeRangeSelectingNodeContents(*root);
+    auto selectionCharacterRange = characterRange(scope, *selectionRange);
+    CheckedInt64 newSelectionLocation { selectionCharacterRange.location };
+    CheckedInt64 newSelectionLength { selectionCharacterRange.length };
     newSelectionLocation += locationDelta;
     newSelectionLength += lengthDelta;
-
     if (newSelectionLocation.hasOverflowed() || newSelectionLength.hasOverflowed()) {
         completionHandler();
         return;
     }
 
     auto newSelectionRange = CharacterRange(newSelectionLocation.unsafeGet(), newSelectionLength.unsafeGet());
-    auto resolvedRange = resolveCharacterRange(makeRangeSelectingNodeContents(*root), newSelectionRange);
-    frame->selection().setSelectedRange(createLiveRange(resolvedRange).ptr(), DOWNSTREAM, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
-
+    auto updatedSelectionRange = resolveCharacterRange(makeRangeSelectingNodeContents(*root), newSelectionRange);
+    frame->selection().setSelectedRange(createLiveRange(updatedSelectionRange).ptr(), DOWNSTREAM, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
     completionHandler();
 }
 
@@ -4175,25 +4165,25 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         startOfRangeOfInterestInSelection = rangeOfInterestStart > selectionStart ? rangeOfInterestStart : selectionStart;
         endOfRangeOfInterestInSelection = rangeOfInterestEnd < selectionEnd ? rangeOfInterestEnd : selectionEnd;
     } else {
-        size_t rangeOfInterestLocation;
-        size_t rangeOfInterestLength;
-        RefPtr<Node> rootNode = rangeOfInterest->commonAncestorContainer();
+        auto rootNode = makeRefPtr(rangeOfInterest->commonAncestorContainer());
         if (!rootNode) {
             completionHandler({ });
             return;
         }
+        auto rootContainerNode = rootNode->isContainerNode() ? downcast<ContainerNode>(rootNode.get()) : rootNode->parentNode();
+        if (!rootContainerNode) {
+            completionHandler({ });
+            return;
+        }
+        auto scope = makeRangeSelectingNodeContents(*rootContainerNode);
 
-        RefPtr<ContainerNode> rootContainerNode = rootNode->isContainerNode() ? downcast<ContainerNode>(rootNode.get()) : rootNode->parentNode();
-        TextIterator::getLocationAndLengthFromRange(rootContainerNode.get(), rangeOfInterest.get(), rangeOfInterestLocation, rangeOfInterestLength);
-
-        Checked<uint64_t, RecordOverflow> midpointLocation { rangeOfInterestLocation };
-        midpointLocation += rangeOfInterestLength / 2;
+        auto characterRangeOfInterest = characterRange(scope, *rangeOfInterest);
+        auto midpointLocation = checkedSum<uint64_t>(characterRangeOfInterest.location, characterRangeOfInterest.length / 2);
         if (midpointLocation.hasOverflowed()) {
             completionHandler({ });
             return;
         }
-
-        auto midpoint = createLegacyEditingPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*rootContainerNode), midpointLocation.unsafeGet()));
+        auto midpoint = createLegacyEditingPosition(resolveCharacterLocation(scope, midpointLocation.unsafeGet()));
 
         startOfRangeOfInterestInSelection = startOfWord(midpoint);
         if (startOfRangeOfInterestInSelection < rangeOfInterestStart) {
@@ -4201,7 +4191,6 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
             if (startOfRangeOfInterestInSelection > rangeOfInterestEnd)
                 startOfRangeOfInterestInSelection = midpoint;
         }
-
         endOfRangeOfInterestInSelection = startOfRangeOfInterestInSelection;
     }
 

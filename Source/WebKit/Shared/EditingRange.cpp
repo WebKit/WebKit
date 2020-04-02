@@ -65,16 +65,15 @@ EditingRange EditingRange::fromRange(WebCore::Frame& frame, const WebCore::Range
 {
     ASSERT(editingRangeIsRelativeTo == EditingRangeIsRelativeTo::EditableRoot);
 
-    size_t location = 0;
-    size_t length = 0;
-    if (!range || !WebCore::TextIterator::getLocationAndLengthFromRange(frame.selection().rootEditableElementOrDocumentElement(), range, location, length))
+    if (!range)
         return { };
 
-    EditingRange editingRange(location, length);
-    if (!editingRange.isValid())
+    auto* element = frame.selection().rootEditableElementOrDocumentElement();
+    if (!element)
         return { };
 
-    return editingRange;
+    auto relativeRange = characterRange(makeBoundaryPointBeforeNodeContents(*element), *range);
+    return EditingRange(relativeRange.location, relativeRange.length);
 }
 
 } // namespace WebKit

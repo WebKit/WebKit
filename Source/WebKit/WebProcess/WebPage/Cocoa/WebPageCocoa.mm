@@ -239,12 +239,9 @@ void WebPage::getContentsAsAttributedString(CompletionHandler<void(const Attribu
     }
 
     NSDictionary* documentAttributes = nil;
+    auto attributedString = attributedStringFromRange(rangeOfContents(*documentElement), &documentAttributes);
 
-    AttributedString result;
-    result.string = attributedStringFromRange(rangeOfContents(*documentElement), &documentAttributes);
-    result.documentAttributes = documentAttributes;
-
-    completionHandler({ result });
+    completionHandler({ WTFMove(attributedString), WTFMove(documentAttributes) });
 }
 
 void WebPage::setRemoteObjectRegistry(WebRemoteObjectRegistry* registry)

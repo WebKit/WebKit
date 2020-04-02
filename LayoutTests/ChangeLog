@@ -1,3 +1,14 @@
+2020-04-01  Darin Adler  <darin@apple.com>
+
+        Remove all uses of live ranges from TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=209723
+
+        Reviewed by Antti Koivisto.
+
+        * editing/text-iterator/find-string-on-flat-tree-expected.txt:
+        * editing/text-iterator/find-string-on-flat-tree.html:
+        Updated test for a progress where we properly find strings across a shadow boundary.
+
 2020-04-02  David Kilzer  <ddkilzer@apple.com>
 
         API::PageConfiguration may have conflicting preference values between WebPreferences and WebPreferencesStore::ValueMap instance variables

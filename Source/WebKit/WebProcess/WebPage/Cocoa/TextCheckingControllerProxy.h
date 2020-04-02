@@ -52,7 +52,7 @@ public:
     TextCheckingControllerProxy(WebPage&);
     ~TextCheckingControllerProxy();
 
-    AttributedString annotatedSubstringBetweenPositions(const WebCore::VisiblePosition&, const WebCore::VisiblePosition&);
+    static AttributedString annotatedSubstringBetweenPositions(const WebCore::VisiblePosition&, const WebCore::VisiblePosition&);
 
 private:
     // IPC::MessageReceiver
@@ -65,8 +65,8 @@ private:
     Optional<RangeAndOffset> rangeAndOffsetRelativeToSelection(int64_t offset, uint64_t length);
 
     // Message handlers.
-    void replaceRelativeToSelection(AttributedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength);
-    void removeAnnotationRelativeToSelection(String annotationName, int64_t selectionOffset, uint64_t length);
+    void replaceRelativeToSelection(const AttributedString&, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength);
+    void removeAnnotationRelativeToSelection(const String& annotationName, int64_t selectionOffset, uint64_t length);
 
     WebPage& m_page;
 };

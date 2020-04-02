@@ -36,12 +36,10 @@ class VisibleSelection;
 enum class IncludeImagesInAttributedString { Yes, No };
 
 NSAttributedString *attributedStringFromSelection(const VisibleSelection&, NSDictionary** documentAttributes = nullptr);
-
-// For testing purpose only
 WEBCORE_EXPORT NSAttributedString *attributedStringBetweenStartAndEnd(const Position&, const Position&, NSDictionary** documentAttributes = nullptr);
-
 WEBCORE_EXPORT NSAttributedString *attributedStringFromRange(Range&, NSDictionary** documentAttributes = nullptr);
-#if !PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(MAC)
 WEBCORE_EXPORT NSAttributedString *editingAttributedStringFromRange(Range&, IncludeImagesInAttributedString = IncludeImagesInAttributedString::Yes);
 #endif
 

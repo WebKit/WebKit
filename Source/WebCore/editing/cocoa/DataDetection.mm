@@ -70,10 +70,10 @@ using namespace HTMLNames;
 
 static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition position, RefPtr<Range> contextRange, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
 {
-    String fullPlainTextString = plainText(contextRange.get());
     auto start = contextRange->startPosition();
     if (start.isNull() || position.isNull())
         return nil;
+    String fullPlainTextString = plainText(*contextRange);
     CFIndex hitLocation = characterCount({ *makeBoundaryPoint(start), *makeBoundaryPoint(position) });
 
     auto scanner = adoptCF(DDScannerCreate(DDScannerTypeStandard, 0, nullptr));

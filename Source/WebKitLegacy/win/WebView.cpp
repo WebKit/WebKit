@@ -7801,14 +7801,16 @@ HRESULT WebView::selectedRangeForTesting(_Out_ UINT* location, _Out_ UINT* lengt
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     RefPtr<Range> range = frame.editor().selectedRange();
+    if (!range)
+        return E_FAIL;
 
-    size_t locationSize;
-    size_t lengthSize;
-    if (range && TextIterator::getLocationAndLengthFromRange(frame.selection().rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize)) {
-        *location = static_cast<UINT>(locationSize);
-        *length = static_cast<UINT>(lengthSize);
-    }
+    auto* element = frame.selection().rootEditableElementOrDocumentElement();
+    if (!element)
+        return E_FAIL;
 
+    auto relativeRange = characterRange(makeBoundaryPointBeforeNodeContents(*element), *range);
+    *location = static_cast<UINT>(relativeRange.location);
+    *length = static_cast<UINT>(relativeRange.length);
     return S_OK;
 }
 

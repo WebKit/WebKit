@@ -293,8 +293,6 @@ private:
     bool canHavePlainText() const;
     // Special handling of click point for links.
     IntPoint linkClickPoint();
-    // Rects utilities.
-    static IntRect boundsForRects(LayoutRect const&, LayoutRect const&, RefPtr<Range> const&);
 };
 
 } // namespace WebCore

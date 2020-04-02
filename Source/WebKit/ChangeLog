@@ -1,3 +1,57 @@
+2020-04-01  Darin Adler  <darin@apple.com>
+
+        Remove all uses of live ranges from TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=209723
+
+        Reviewed by Antti Koivisto.
+
+        * Shared/EditingRange.cpp:
+        (WebKit::EditingRange::fromRange): Use characterRange.
+
+        * Shared/mac/AttributedString.h: Added a constructor that takes rvalue
+        references so we can initialize this slightly more efficiently.
+
+        * Shared/mac/AttributedString.mm:
+        (IPC::ArgumentCoder<WebKit::AttributedString>::decode): Pass rvalue
+        references when creating an AttributedString.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString): Simplify the
+        code to remove some local variables that weren't helpful.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.h: Made the
+        annotatedSubstringBetweenPositions a static member function. Also used
+        const& argument types to cut down on reference count churn a bit.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection):
+        Streamlined and made this use characterCount instead of
+        TextIterator::getLocationAndLengthFromRange.
+        (WebKit::TextCheckingControllerProxy::replaceRelativeToSelection): Tweaked
+        the argument type.
+        (WebKit::TextCheckingControllerProxy::removeAnnotationRelativeToSelection):
+        Ditto. Also removed some unnecessary use of NSString.
+        (WebKit::TextCheckingControllerProxy::annotatedSubstringBetweenPositions):
+        Rewrote to no longer use live ranges.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::getContentsAsAttributedString): Use construction and
+        rvalue references to tigten things up a bit.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::contentsAsString const): Use a SimpleRange instead of
+        a live range to pass to plainText.
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::getPlatformEditorState const): Pass references to
+        live ranges to plainText.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateSelectionWithDelta): Rewrote to minimize use of
+        live ranges.
+        (WebKit::WebPage::requestDocumentEditingContext): Ditto.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getPlatformEditorState const): Pass reference to
+        a live range to plainText.
+
 2020-04-02  David Kilzer  <ddkilzer@apple.com>
 
         API::PageConfiguration may have conflicting preference values between WebPreferences and WebPreferencesStore::ValueMap instance variables

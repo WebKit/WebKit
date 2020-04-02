@@ -45,7 +45,7 @@ Optional<WebKit::AttributedString> ArgumentCoder<WebKit::AttributedString>::deco
     RetainPtr<NSDictionary> documentAttributes;
     if (!IPC::decode(decoder, documentAttributes))
         return WTF::nullopt;
-    return WebKit::AttributedString { attributedString.get(), documentAttributes.get() };
+    return { { WTFMove(attributedString), WTFMove(documentAttributes) } };
 }
 
 }

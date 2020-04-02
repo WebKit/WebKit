@@ -160,7 +160,7 @@ else {
     shouldBe("internals.countFindMatches('in-', [])", "4");
 
     shouldBe("internals.countFindMatches('in-shadow in-document', ['DoNotTraverseFlatTree'])", "0");
-    shouldBe("internals.countFindMatches('in-shadow in-document', [])", "0");
+    shouldBe("internals.countFindMatches('in-shadow in-document', [])", "1");
 
     shouldBe("rangeText(internals.rangeOfString('inside-display-none', null, []))", "null");
 
