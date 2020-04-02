@@ -1760,3 +1760,5 @@ webkit.org/b/209544 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure
 webkit.org/b/209812 fast/forms/input-text-scroll-left-on-blur.html [ Pass Failure ]
 
 webkit.org/b/209869 crypto/subtle/rsa-indexeddb-non-exportable-private.html [ Pass Timeout ]
+
+webkit.org/b/209908 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout ]
