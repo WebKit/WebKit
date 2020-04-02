@@ -103,10 +103,18 @@ CFTypeRef _LSCopyApplicationInformationItem(LSSessionID, LSASNRef, CFTypeRef);
 
 OSStatus _RegisterApplication(CFDictionaryRef, ProcessSerialNumber*);
 
-typedef bool (^LSServerConnectionAllowedBlock) (CFDictionaryRef optionsRef);
-extern "C" void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
-extern "C" CFDictionaryRef _LSApplicationCheckIn(LSSessionID sessionID, CFDictionaryRef applicationInfo);
-
 WTF_EXTERN_C_END
 
 #endif // PLATFORM(MAC)
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+
+WTF_EXTERN_C_BEGIN
+
+typedef bool (^LSServerConnectionAllowedBlock) (CFDictionaryRef optionsRef);
+void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
+CFDictionaryRef _LSApplicationCheckIn(LSSessionID sessionID, CFDictionaryRef applicationInfo);
+
+WTF_EXTERN_C_END
+
+#endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
