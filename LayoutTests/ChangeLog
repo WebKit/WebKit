@@ -1,3 +1,17 @@
+2020-04-02  Chris Dumez  <cdumez@apple.com>
+
+        [ Mac wk1 ] fast/loader/child-frame-add-after-back-forward.html  is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=209621
+        <rdar://problem/60937276>
+
+        Reviewed by Jonathan Bedard.
+
+        Update empty-document-goes-back.html to schedule the history.back() call *after* the load
+        event has been fired, so that a HistoryItem has actually been created.
+
+        * fast/loader/resources/empty-document-goes-back.html:
+        * platform/mac-wk1/TestExpectations:
+
 2020-04-02  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk2 Debug ] webrtc/datachannel/multiple-connections.html is flaky timing out.
