@@ -136,6 +136,8 @@ private:
     void didSelectDataListOption(const String&) final;
     void didCloseSuggestions() final;
 
+    static bool shouldOnlyShowDataListDropdownButtonWhenFocusedOrEdited();
+
     void dataListButtonElementWasClicked() final;
     RefPtr<DataListButtonElement> m_dataListDropdownIndicator;
 
