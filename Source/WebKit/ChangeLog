@@ -1,3 +1,15 @@
+2020-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] [2.28.0] The Yelp build crashes if DISPLAY is not set
+        https://bugs.webkit.org/show_bug.cgi?id=209431
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Remove the assert when display is not X11 nor Wayland, and simply return false to ensure acceleration is not used.
+
+        * UIProcess/gtk/AcceleratedBackingStore.cpp:
+        (WebKit::AcceleratedBackingStore::checkRequirements):
+
 2020-04-01  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] UTI from MIME type cache can be removed after r258915

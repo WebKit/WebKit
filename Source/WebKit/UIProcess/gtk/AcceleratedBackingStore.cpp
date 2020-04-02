@@ -53,7 +53,6 @@ bool AcceleratedBackingStore::checkRequirements()
         return AcceleratedBackingStoreX11::checkRequirements();
 #endif
 
-    RELEASE_ASSERT_NOT_REACHED();
     return false;
 }
 
