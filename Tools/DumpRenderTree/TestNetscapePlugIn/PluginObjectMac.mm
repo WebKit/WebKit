@@ -26,6 +26,7 @@
 #include "PluginObject.h"
 
 #include <QuartzCore/QuartzCore.h>
+#include <wtf/RetainPtr.h>
 
 @interface TestPluginLayer : CALayer
 @end
@@ -44,7 +45,7 @@
 
 CFTypeRef createCoreAnimationLayer()
 {
-    CALayer *caLayer = [[TestPluginLayer alloc] init];
+    RetainPtr<CALayer> caLayer = adoptNS([[TestPluginLayer alloc] init]);
 
     NSNull *nullValue = [NSNull null];
     NSDictionary *actions = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -93,5 +94,5 @@ CFTypeRef createCoreAnimationLayer()
                                                       attribute:kCAConstraintMaxX]];
 
     [caLayer addSublayer:sublayer];
-    return CFBridgingRetain(caLayer);
+    return CFBridgingRetain(caLayer.get());
 }

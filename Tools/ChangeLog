@@ -1,5 +1,15 @@
 2020-04-02  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r234685): Leak of CALayer in createCoreAnimationLayer() in PluginObjectMac.mm
+        <https://webkit.org/b/209915>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObjectMac.mm:
+        (createCoreAnimationLayer): Use RetainPtr<> to fix leak.
+
+2020-04-02  David Kilzer  <ddkilzer@apple.com>
+
         API::PageConfiguration may have conflicting preference values between WebPreferences and WebPreferencesStore::ValueMap instance variables
         <https://webkit.org/b/209678>
         <rdar://problem/60981271>
