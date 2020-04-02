@@ -3053,6 +3053,9 @@ void HTMLMediaElement::seekTask()
             scheduleEvent(eventNames().seekingEvent);
             scheduleTimeupdateEvent(false);
             scheduleEvent(eventNames().seekedEvent);
+
+            if (document().quirks().needsCanPlayAfterSeekedQuirk() && m_readyState > HAVE_CURRENT_DATA)
+                scheduleEvent(eventNames().canplayEvent);
         }
         clearSeeking();
         return;
@@ -3100,6 +3103,9 @@ void HTMLMediaElement::finishSeek()
 
     // 17 - Queue a task to fire a simple event named seeked at the element.
     scheduleEvent(eventNames().seekedEvent);
+
+    if (document().quirks().needsCanPlayAfterSeekedQuirk() && m_readyState > HAVE_CURRENT_DATA)
+        scheduleEvent(eventNames().canplayEvent);
 
     if (m_mediaSession)
         m_mediaSession->clientCharacteristicsChanged();

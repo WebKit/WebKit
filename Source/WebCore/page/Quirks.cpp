@@ -721,4 +721,19 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
 #endif
 }
 
+bool Quirks::needsCanPlayAfterSeekedQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (m_needsCanPlayAfterSeekedQuirk)
+        return *m_needsCanPlayAfterSeekedQuirk;
+
+    auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
+
+    m_needsCanPlayAfterSeekedQuirk = domain == "hulu.com" || domain.endsWith(".hulu.com");
+
+    return m_needsCanPlayAfterSeekedQuirk.value();
+}
+
 }

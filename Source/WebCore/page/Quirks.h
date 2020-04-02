@@ -93,6 +93,8 @@ public:
 
     bool shouldDisableElementFullscreenQuirk() const;
 
+    bool needsCanPlayAfterSeekedQuirk() const;
+
 private:
     bool needsQuirks() const;
 
@@ -114,6 +116,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     mutable Optional<bool> m_shouldDispatchSimulatedMouseEventsQuirk;
 #endif
+    mutable Optional<bool> m_needsCanPlayAfterSeekedQuirk;
 };
 
 }
