@@ -1255,8 +1255,8 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             paintInfo.eventRegionContext->unite(borderRegion, style());
         }
 
-        // No need to check descendants if we don't have overflow and the area is already covered.
-        bool needsTraverseDescendants = hasVisualOverflow() || !paintInfo.eventRegionContext->contains(enclosingIntRect(borderRect));
+        // No need to check descendants if we don't have overflow and don't contain floats and the area is already covered.
+        bool needsTraverseDescendants = hasVisualOverflow() || containsFloats() || !paintInfo.eventRegionContext->contains(enclosingIntRect(borderRect));
 #if PLATFORM(IOS_FAMILY)
         needsTraverseDescendants = needsTraverseDescendants || document().mayHaveElementsWithNonAutoTouchAction();
 #endif
@@ -1289,8 +1289,8 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         paintSelection(paintInfo, scrolledOffset); // Fill in gaps in selection on lines and between blocks.
 
     // 4. paint floats.
-    if (paintPhase == PaintPhase::Float || paintPhase == PaintPhase::Selection || paintPhase == PaintPhase::TextClip)
-        paintFloats(paintInfo, scrolledOffset, paintPhase == PaintPhase::Selection || paintPhase == PaintPhase::TextClip);
+    if (paintPhase == PaintPhase::Float || paintPhase == PaintPhase::Selection || paintPhase == PaintPhase::TextClip || paintPhase == PaintPhase::EventRegion)
+        paintFloats(paintInfo, scrolledOffset, paintPhase == PaintPhase::Selection || paintPhase == PaintPhase::TextClip || paintPhase == PaintPhase::EventRegion);
 
     // 5. paint outline.
     if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && hasOutline() && style().visibility() == Visibility::Visible)

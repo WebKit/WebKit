@@ -1,3 +1,21 @@
+2020-04-02  Daniel Bates  <dabates@apple.com>
+
+        Traverse float descendants when computing event and touch-action regions
+        https://bugs.webkit.org/show_bug.cgi?id=209896
+        <rdar://problem/61196287>
+
+        Reviewed by Antti Koivisto.
+
+        Add tests to ensure that floating objects are considered when computing the
+        event region and touch-action regions. Without this change, event-region-float.html
+        would not create an event region at all and touch-action-region-float.html
+        would not list the floating objects with "touch-action: none".
+
+        * fast/scrolling/ios/event-region-float-expected.txt: Added.
+        * fast/scrolling/ios/event-region-float.html: Added.
+        * pointerevents/ios/touch-action-region-float-expected.txt: Added.
+        * pointerevents/ios/touch-action-region-float.html: Added.
+
 2020-04-02  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk1 Debug ] inspector/css/add-css-property.html is flaky timing out.
