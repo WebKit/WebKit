@@ -1,3 +1,20 @@
+2020-04-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, fix libwebrtc build with GCC 9 after the M82 bump.
+
+        GCC 9 fails to process the FrameGeneratorCapturerConfig::ImageSlides::Crop
+        class, throwing an error due to the default member initializer for the
+        `scroll_duration` member being required before the end of the
+        encapsulating FrameGeneratorCapturerConfig::ImageSlides class.
+
+        This can be avoided by default-initializing the
+        FrameGeneratorCapturerConfig::ImageSlides::Crop member variable instead
+        of specific members of that class.
+
+        Similar fix will be pushed to the upstream repository.
+
+        * Source/webrtc/test/frame_generator_capturer.h:
+
 2020-04-01  youenn fablet  <youenn@apple.com> and Victor M. Jaquez <vjaquez@igalia.com>
 
         Bump libwebrtc to M82

@@ -66,10 +66,10 @@ struct FrameGeneratorCapturerConfig {
     int framerate = 30;
     TimeDelta change_interval = TimeDelta::Seconds(10);
     struct Crop {
-      TimeDelta scroll_duration = TimeDelta::Seconds(0);
+      TimeDelta scroll_duration;
       absl::optional<int> width;
       absl::optional<int> height;
-    } crop;
+    } crop = { TimeDelta::Seconds(0), { }, { } };
     int width = 1850;
     int height = 1110;
     std::vector<std::string> paths = {
