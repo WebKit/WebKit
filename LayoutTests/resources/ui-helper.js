@@ -43,6 +43,15 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async waitForScrollCompletion()
+    {
+        return new Promise(resolve => {
+            eventSender.callAfterScrollingCompletes(() => {
+                requestAnimationFrame(resolve);
+            });
+        });
+    }
+
     static async animationFrame()
     {
         return new Promise(requestAnimationFrame);
