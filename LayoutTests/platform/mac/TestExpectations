@@ -1974,6 +1974,4 @@ webkit.org/b/208023 [ Catalina ] fast/text/international/system-language/declara
 
 webkit.org/b/209740 webgl/2.0.0/conformance2/rendering/framebuffer-completeness-unaffected.html [ Failure ]
 
-webkit.org/b/209878  [ Debug ] webrtc/datachannel/multiple-connections.html [ Slow ]
-
 webkit.org/b/209908 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout ]
