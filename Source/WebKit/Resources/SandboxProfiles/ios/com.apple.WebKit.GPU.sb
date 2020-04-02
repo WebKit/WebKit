@@ -436,16 +436,10 @@
 
 (deny file-write-mount file-write-unmount)
 
-(allow file-read-metadata (with no-times)
-       (vnode-type DIRECTORY))
-(with-filter (apple-signed-executable?)
-  (allow file-read-metadata
-         (vnode-type DIRECTORY)))
+(allow file-read-metadata
+    (vnode-type DIRECTORY))
 
-(with-filter (apple-signed-executable?)
-  (managed-configuration-read "CloudConfigurationDetails.plist")
-  (managed-configuration-read "CloudConfigurationSetAsideDetails.plist")
-  (mobile-preferences-read "com.apple.security"))
+(mobile-preferences-read "com.apple.security")
 
 (with-filter (system-attribute apple-internal)
   (mobile-preferences-read "com.apple.PrototypeTools"))
@@ -651,9 +645,6 @@
 (allow process-info-dirtycontrol (target self))
 (allow process-info-rusage (target self))
 (allow process-info-codesignature (target self))
-
-(with-filter (apple-signed-executable?)
-    (mobile-preferences-read "com.apple.demo-settings"))
 
 ;;;
 ;;; End common.sb content

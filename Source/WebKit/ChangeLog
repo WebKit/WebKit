@@ -1,3 +1,27 @@
+2020-04-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Remove use of 'apple-signed-executable?' from Sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=209914
+        <rdar://problem/45088481>
+
+        Reviewed by Per Arne Vollan.
+
+        Some of the rules imported from the system sandbox make decisions based on whether the software is
+        an apple-signed executable or not. This predicate is not relevant for the WebKit processes, and
+        should be removed (it is always apple-signed).
+
+        This patch makes the following changes:
+        1. Removes all uses of 'apple-signed-executable?' (since it is always true for WebKit).
+        2. Removed two iCloud preference reads that are not used in WebKit.
+        3. Switches from the deprecated 'com.apple.ReportCrash.SimulateCrash' XPC service to its
+        correct name 'com.apple.osanalytics.osanalyticshelper'.
+
+        Covered by existing regression tests.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-04-01  Darin Adler  <darin@apple.com>
 
         Remove all uses of live ranges from TextIterator
