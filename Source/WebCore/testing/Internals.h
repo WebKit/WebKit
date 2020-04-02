@@ -952,7 +952,6 @@ public:
 
     String mediaMIMETypeForExtension(const String& extension);
 
-    String getUTIFromMIMEType(const String& mimeType);
     String getUTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI);
 
     bool supportsPictureInPicture();

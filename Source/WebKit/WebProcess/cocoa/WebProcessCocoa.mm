@@ -285,8 +285,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     if (parameters.mimeTypesMap)
         overriddenMimeTypesMap() = WTFMove(parameters.mimeTypesMap);
-
-    setUTIFromMIMETypeMap(WTFMove(parameters.mapUTIFromMIMEType));
 #endif
 
 #if PLATFORM(IOS_FAMILY)

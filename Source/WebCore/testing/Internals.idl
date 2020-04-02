@@ -856,7 +856,6 @@ enum CompositingPolicy {
 
     DOMString mediaMIMETypeForExtension(DOMString extension);
 
-    DOMString getUTIFromMIMEType(DOMString mimeType);
     DOMString getUTIFromTag(DOMString tagClass, DOMString tag, DOMString conformingToUTI);
 
     boolean supportsPictureInPicture();

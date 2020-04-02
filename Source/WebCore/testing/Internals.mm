@@ -102,11 +102,6 @@ String Internals::encodedPreferenceValue(const String& domain, const String& key
     return encodedString;
 }
 
-String Internals::getUTIFromMIMEType(const String& mimeType)
-{
-    return UTIFromMIMEType(mimeType);
-}
-
 String Internals::getUTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI)
 {
     return UTIFromTag(tagClass, tag, conformingToUTI);

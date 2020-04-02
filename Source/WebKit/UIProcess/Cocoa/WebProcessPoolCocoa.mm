@@ -405,7 +405,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     }
     parameters.systemHasBattery = systemHasBattery();
     parameters.mimeTypesMap = commonMimeTypesMap();
-    parameters.mapUTIFromMIMEType = createUTIFromMIMETypeMap();
 
     SandboxExtension::Handle mapDBHandle;
     SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb", WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport);

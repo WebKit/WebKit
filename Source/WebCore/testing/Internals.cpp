@@ -5532,11 +5532,6 @@ String Internals::encodedPreferenceValue(const String&, const String&)
     return emptyString();
 }
 
-String Internals::getUTIFromMIMEType(const String&)
-{
-    return emptyString();
-}
-
 String Internals::getUTIFromTag(const String&, const String&, const String&)
 {
     return emptyString();

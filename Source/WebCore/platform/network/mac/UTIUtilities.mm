@@ -26,7 +26,6 @@
 #import "config.h"
 #import "UTIUtilities.h"
 
-#import "MIMETypeRegistry.h"
 #import <wtf/MainThread.h>
 #import <wtf/TinyLRUCache.h>
 #import <wtf/text/StringHash.h>
@@ -41,8 +40,6 @@
 #else
 #define ADDITIONAL_UTI_MAPPINGS
 #endif
-
-#define EMPTY_MIME_TYPE_STRING "emptyMimeType"_s
 
 namespace WebCore {
 
@@ -117,30 +114,14 @@ static String UTIFromUnknownMIMEType(const String& mimeType)
     return mapEntry->value;
 }
 
-static Optional<HashMap<String, String>>& mapUTIFromMIMEType()
-{
-    static NeverDestroyed<Optional<HashMap<String, String>>> map;
-    return map;
-}
-
 struct UTIFromMIMETypeCachePolicy : TinyLRUCachePolicy<String, String> {
 public:
     static String createValueForKey(const String& mimeType)
     {
-        String key = mimeType;
-        if (mapUTIFromMIMEType().hasValue()) {
-            if (key.isEmpty())
-                key = EMPTY_MIME_TYPE_STRING;
-            const auto& it = mapUTIFromMIMEType()->find(key);
-            if (it != mapUTIFromMIMEType()->end())
-                return it->value;
-            WTFLogAlways("UTI for MIME type %s not found.", key.utf8().data());
-            return UTIFromUnknownMIMEType(key);
-        }
-        auto type = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, key.createCFString().get(), 0));
+        auto type = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString().get(), 0));
         if (type)
             return type.get();
-        return UTIFromUnknownMIMEType(key);
+        return UTIFromUnknownMIMEType(mimeType);
     }
 };
 
@@ -165,41 +146,6 @@ String UTIFromTag(const String& tagClass, const String& tag, const String& confo
 {
     auto u = adoptCF(UTTypeCreatePreferredIdentifierForTag(tagClass.createCFString().get(), tag.createCFString().get(), conformingToUTI.createCFString().get()));
     return String(u.get());
-}
-
-static const Vector<String>& additionalMIMETypes()
-{
-    static NeverDestroyed<Vector<String>> mimeTypes = std::initializer_list<String> {
-        "application/zip"_s,
-    };
-    return mimeTypes;
-}
-
-const HashMap<String, String>& createUTIFromMIMETypeMap()
-{
-    static NeverDestroyed<HashMap<String, String>> map = [] {
-        HashMap<String, String> cache;
-        for (auto mimeType : MIMETypeRegistry::supportedImageMIMETypes())
-            cache.add(mimeType, UTIFromMIMEType(mimeType));
-        for (auto mimeType : MIMETypeRegistry::supportedNonImageMIMETypes())
-            cache.add(mimeType, UTIFromMIMEType(mimeType));
-        for (auto mimeType : MIMETypeRegistry::unsupportedTextMIMETypes())
-            cache.add(mimeType, UTIFromMIMEType(mimeType));
-        for (auto mimeType : MIMETypeRegistry::supportedMediaMIMETypes())
-            cache.add(mimeType, UTIFromMIMEType(mimeType));
-        for (auto mimeType : MIMETypeRegistry::pdfMIMETypes())
-            cache.add(mimeType, UTIFromMIMEType(mimeType));
-        for (auto mimeType : additionalMIMETypes())
-            cache.add(mimeType, UTIFromMIMEType(mimeType));
-        cache.add(EMPTY_MIME_TYPE_STRING, UTIFromMIMEType(emptyString()));
-        return cache;
-    }();
-    return map;
-}
-
-void setUTIFromMIMETypeMap(HashMap<String, String>&& map)
-{
-    mapUTIFromMIMEType() = WTFMove(map);
 }
 
 }
