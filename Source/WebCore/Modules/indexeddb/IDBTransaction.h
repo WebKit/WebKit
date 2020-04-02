@@ -262,7 +262,7 @@ private:
     HashSet<RefPtr<IDBRequest>> m_openRequests;
     RefPtr<IDBRequest> m_currentlyCompletingRequest;
 
-    bool m_contextStopped { false };
+    bool m_isStopped { false };
     bool m_didDispatchAbortOrCommit { false };
 
     uint64_t m_lastWriteOperationID { 0 };

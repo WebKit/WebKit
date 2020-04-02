@@ -95,8 +95,6 @@ private:
     RefPtr<ServiceWorker> m_installingWorker;
     RefPtr<ServiceWorker> m_waitingWorker;
     RefPtr<ServiceWorker> m_activeWorker;
-
-    bool m_isStopped { false };
 };
 
 } // namespace WebCore

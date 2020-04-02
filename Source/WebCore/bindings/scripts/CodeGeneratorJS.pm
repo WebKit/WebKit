@@ -4774,7 +4774,8 @@ sub GenerateImplementation
         if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
             push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
             $emittedJSCast = 1;
-            push(@implContent, "    if (js${interfaceName}->wrapped().hasPendingActivity()) {\n");
+            push(@implContent, "    auto& wrapped = js${interfaceName}->wrapped();\n");
+            push(@implContent, "    if (!wrapped.isContextStopped() && wrapped.hasPendingActivity()) {\n");
             push(@implContent, "        if (UNLIKELY(reason))\n");
             push(@implContent, "            *reason = \"ActiveDOMObject with pending activity\";\n");
             push(@implContent, "        return true;\n");

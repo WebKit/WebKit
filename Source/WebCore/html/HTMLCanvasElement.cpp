@@ -957,9 +957,6 @@ const char* HTMLCanvasElement::activeDOMObjectName() const
 
 bool HTMLCanvasElement::virtualHasPendingActivity() const
 {
-    if (isContextStopped())
-        return false;
-
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContextBase>(m_context.get())) {
         // WebGL rendering context may fire contextlost / contextchange / contextrestored events at any point.

@@ -250,7 +250,7 @@ void MediaDevices::scheduledEventTimerFired()
 
 bool MediaDevices::virtualHasPendingActivity() const
 {
-    return !isContextStopped() && hasEventListeners(m_eventNames.devicechangeEvent);
+    return hasEventListeners(m_eventNames.devicechangeEvent);
 }
 
 const char* MediaDevices::activeDOMObjectName() const

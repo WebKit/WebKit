@@ -144,7 +144,6 @@ protected:
     bool m_shouldExposeTransactionToDOM { true };
     RefPtr<DOMException> m_domError;
     IndexedDB::RequestType m_requestType { IndexedDB::RequestType::Other };
-    bool m_contextStopped { false };
     Event* m_openDatabaseSuccessEvent { nullptr };
 
 private:

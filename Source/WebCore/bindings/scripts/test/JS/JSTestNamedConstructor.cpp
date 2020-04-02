@@ -253,7 +253,8 @@ void JSTestNamedConstructor::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 bool JSTestNamedConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason)
 {
     auto* jsTestNamedConstructor = jsCast<JSTestNamedConstructor*>(handle.slot()->asCell());
-    if (jsTestNamedConstructor->wrapped().hasPendingActivity()) {
+    auto& wrapped = jsTestNamedConstructor->wrapped();
+    if (!wrapped.isContextStopped() && wrapped.hasPendingActivity()) {
         if (UNLIKELY(reason))
             *reason = "ActiveDOMObject with pending activity";
         return true;

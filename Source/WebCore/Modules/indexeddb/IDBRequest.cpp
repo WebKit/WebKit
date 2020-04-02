@@ -262,21 +262,18 @@ const char* IDBRequest::activeDOMObjectName() const
 bool IDBRequest::virtualHasPendingActivity() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()) || Thread::mayBeGCThread());
-    return !m_contextStopped && m_hasPendingActivity;
+    return m_hasPendingActivity;
 }
 
 void IDBRequest::stop()
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
-    ASSERT(!m_contextStopped);
 
     cancelForStop();
 
     removeAllEventListeners();
 
     clearWrappers();
-
-    m_contextStopped = true;
 }
 
 void IDBRequest::cancelForStop()
@@ -287,7 +284,7 @@ void IDBRequest::cancelForStop()
 void IDBRequest::enqueueEvent(Ref<Event>&& event)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
-    if (m_contextStopped)
+    if (isContextStopped())
         return;
 
     queueTaskToDispatchEvent(*this, TaskSource::DatabaseAccess, WTFMove(event));
@@ -299,7 +296,7 @@ void IDBRequest::dispatchEvent(Event& event)
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(m_hasPendingActivity);
-    ASSERT(!m_contextStopped);
+    ASSERT(!isContextStopped());
 
     auto protectedThis = makeRef(*this);
     m_dispatchingEvent = true;

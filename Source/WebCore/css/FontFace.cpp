@@ -488,7 +488,7 @@ const char* FontFace::activeDOMObjectName() const
 
 bool FontFace::virtualHasPendingActivity() const
 {
-    return !isContextStopped() && m_mayLoadedPromiseBeScriptObservable && !m_loadedPromise->isFulfilled();
+    return m_mayLoadedPromiseBeScriptObservable && !m_loadedPromise->isFulfilled();
 }
 
 }

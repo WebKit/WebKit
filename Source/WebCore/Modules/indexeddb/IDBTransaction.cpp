@@ -318,7 +318,7 @@ const char* IDBTransaction::activeDOMObjectName() const
 bool IDBTransaction::virtualHasPendingActivity() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()) || Thread::mayBeGCThread());
-    return !m_contextStopped && m_state != IndexedDB::TransactionState::Finished;
+    return m_state != IndexedDB::TransactionState::Finished;
 }
 
 void IDBTransaction::stop()
@@ -328,12 +328,12 @@ void IDBTransaction::stop()
 
     // IDBDatabase::stop() calls IDBTransaction::stop() for each of its active transactions.
     // Since the order of calling ActiveDOMObject::stop() is random, we might already have been stopped.
-    if (m_contextStopped)
+    if (m_isStopped)
         return;
 
     removeAllEventListeners();
 
-    m_contextStopped = true;
+    m_isStopped = true;
 
     if (isVersionChange())
         m_openDBRequest = nullptr;
@@ -518,7 +518,7 @@ void IDBTransaction::notifyDidAbort(const IDBError& error)
     m_idbError = error;
     fireOnAbort();
 
-    if (isVersionChange() && !m_contextStopped) {
+    if (isVersionChange() && !isContextStopped()) {
         ASSERT(m_openDBRequest);
         m_openDBRequest->fireErrorAfterVersionChangeCompletion();
     }
@@ -573,7 +573,7 @@ void IDBTransaction::enqueueEvent(Ref<Event>&& event)
     ASSERT(m_state != IndexedDB::TransactionState::Finished);
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
-    if (!scriptExecutionContext() || m_contextStopped)
+    if (!scriptExecutionContext() || isContextStopped())
         return;
 
     queueTaskToDispatchEvent(*this, TaskSource::DatabaseAccess, WTFMove(event));
@@ -585,7 +585,7 @@ void IDBTransaction::dispatchEvent(Event& event)
 
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(scriptExecutionContext());
-    ASSERT(!m_contextStopped);
+    ASSERT(!isContextStopped());
     ASSERT(event.type() == eventNames().completeEvent || event.type() == eventNames().abortEvent);
 
     auto protectedThis = makeRef(*this);
