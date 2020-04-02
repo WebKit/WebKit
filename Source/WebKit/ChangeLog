@@ -1,3 +1,23 @@
+2020-04-02  David Kilzer  <ddkilzer@apple.com>
+
+        WebPageProxy attachment methods should return early if attachment element is not enabled
+        <https://webkit.org/b/209451>
+        <rdar://problem/60253260>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::registerAttachmentIdentifierFromData):
+        (WebKit::WebPageProxy::registerAttachmentIdentifierFromFilePath):
+        (WebKit::WebPageProxy::registerAttachmentIdentifier):
+        (WebKit::WebPageProxy::registerAttachmentsFromSerializedData):
+        (WebKit::WebPageProxy::cloneAttachmentData):
+        (WebKit::WebPageProxy::serializedAttachmentDataForIdentifiers):
+        (WebKit::WebPageProxy::didInsertAttachmentWithIdentifier):
+        - Add a message check for the attachment element being enabled.
+        (WebKit::WebPageProxy::didRemoveAttachmentWithIdentifier): Ditto.
+        - Also add a missing message check to validate `identifier`.
+
 2020-04-02  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Replace UIKit background task with a RunningBoard FinishTaskInterruptable assertion
