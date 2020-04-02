@@ -1819,9 +1819,8 @@ void DocumentLoader::startLoadingMainResource()
 #endif
 
     // Make sure we re-apply the user agent to the Document's ResourceRequest upon reload in case the embedding
-    // application has changed it.
+    // application has changed it, by clearing the previous user agent value here and applying the new value in CachedResourceLoader.
     m_request.clearHTTPUserAgent();
-    frameLoader()->addExtraFieldsToMainResourceRequest(m_request);
 
     ASSERT(timing().startTime());
     ASSERT(timing().fetchStart());

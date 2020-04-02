@@ -222,7 +222,6 @@ public:
     void detachViewsAndDocumentLoader();
 
     void addExtraFieldsToSubresourceRequest(ResourceRequest&);
-    void addExtraFieldsToMainResourceRequest(ResourceRequest&);
     
     static void addSameSiteInfoToRequestIfNeeded(ResourceRequest&, const Document* initiator = nullptr);
 

@@ -1521,7 +1521,9 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader)
     FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "load (DocumentLoader): frame load started");
 
     ResourceRequest& r = newDocumentLoader.request();
-    addExtraFieldsToMainResourceRequest(r);
+    // FIXME: Using m_loadType seems wrong here.
+    // If we are only preparing to load the main resource, that is previous load's load type!
+    addExtraFieldsToRequest(r, m_loadType, true);
     FrameLoadType type;
 
     if (shouldTreatURLAsSameAsCurrent(newDocumentLoader.originalRequest().url())) {
@@ -2874,17 +2876,10 @@ void FrameLoader::detachViewsAndDocumentLoader()
     setDocumentLoader(nullptr);
     m_client->detachedFromParent3();
 }
-    
+
 void FrameLoader::addExtraFieldsToSubresourceRequest(ResourceRequest& request)
 {
     addExtraFieldsToRequest(request, m_loadType, false);
-}
-
-void FrameLoader::addExtraFieldsToMainResourceRequest(ResourceRequest& request)
-{
-    // FIXME: Using m_loadType seems wrong for some callers.
-    // If we are only preparing to load the main resource, that is previous load's load type!
-    addExtraFieldsToRequest(request, m_loadType, true);
 }
 
 ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const ResourceRequest& request, FrameLoadType loadType, bool isMainResource)
