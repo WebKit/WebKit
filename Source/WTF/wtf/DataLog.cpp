@@ -133,9 +133,7 @@ void setDataFile(const char* path)
             if (pathCharactersAvailable) {
                 int pidTextLength = snprintf(nextDest, pathCharactersAvailable, "%d", getCurrentProcessID());
 
-                if (pidTextLength < 0 || static_cast<size_t>(pidTextLength) >= pathCharactersAvailable)
-                    pathCharactersAvailable = 0;
-                else {
+                if (pidTextLength >= 0 && static_cast<size_t>(pidTextLength) < pathCharactersAvailable) {
                     pathCharactersAvailable -= static_cast<size_t>(pidTextLength);
                     nextDest += pidTextLength;
                     strncpy(nextDest, pidFormat + 4, pathCharactersAvailable);
