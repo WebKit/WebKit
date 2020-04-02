@@ -1,3 +1,13 @@
+2020-04-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Allow WebKit to use camera in multi-tasking mode
+        https://bugs.webkit.org/show_bug.cgi?id=209904
+
+        Reviewed by Youenn Fablet.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2020-04-01  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.
