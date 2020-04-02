@@ -109,6 +109,12 @@ WTF_EXTERN_C_END
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
+#if PLATFORM(MACCATALYST) && USE(APPLE_INTERNAL_SDK)
+enum LSSessionID {
+    kLSDefaultSessionID = -2,
+};
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 typedef bool (^LSServerConnectionAllowedBlock) (CFDictionaryRef optionsRef);

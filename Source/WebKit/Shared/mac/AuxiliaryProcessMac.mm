@@ -67,12 +67,6 @@
 #define USE_CACHE_COMPILED_SANDBOX 0
 #endif
 
-#if PLATFORM(MACCATALYST) && USE(APPLE_INTERNAL_SDK)
-enum LSSessionID {
-    kLSDefaultSessionID = -2,
-};
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
