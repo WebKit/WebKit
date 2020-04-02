@@ -68,7 +68,7 @@ private:
     SliderThumbElement& typedSliderThumbElement() const;
 
 #if ENABLE(DATALIST_ELEMENT)
-    void listAttributeTargetChanged() final;
+    void dataListMayHaveChanged() final;
     void updateTickMarkValues();
     Optional<Decimal> findClosestTickMarkValue(const Decimal&) final;
 

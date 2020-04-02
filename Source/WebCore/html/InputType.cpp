@@ -926,7 +926,7 @@ String InputType::defaultToolTip() const
 }
 
 #if ENABLE(DATALIST_ELEMENT)
-void InputType::listAttributeTargetChanged()
+void InputType::dataListMayHaveChanged()
 {
 }
 

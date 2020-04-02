@@ -276,7 +276,7 @@ public:
 #if ENABLE(DATALIST_ELEMENT)
     WEBCORE_EXPORT RefPtr<HTMLElement> list() const;
     RefPtr<HTMLDataListElement> dataList() const;
-    void listAttributeTargetChanged();
+    void dataListMayHaveChanged();
 #endif
 
     Vector<Ref<HTMLInputElement>> radioButtonGroup() const;

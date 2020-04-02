@@ -301,7 +301,7 @@ public:
     void dispatchSimulatedClickIfActive(KeyboardEvent&) const;
 
 #if ENABLE(DATALIST_ELEMENT)
-    virtual void listAttributeTargetChanged();
+    virtual void dataListMayHaveChanged();
     virtual Optional<Decimal> findClosestTickMarkValue(const Decimal&);
 #endif
 

@@ -374,7 +374,7 @@ bool RangeInputType::shouldRespectListAttribute()
 }
 
 #if ENABLE(DATALIST_ELEMENT)
-void RangeInputType::listAttributeTargetChanged()
+void RangeInputType::dataListMayHaveChanged()
 {
     m_tickMarkValuesDirty = true;
     RefPtr<HTMLElement> sliderTrackElement = this->sliderTrackElement();

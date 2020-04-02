@@ -835,7 +835,7 @@ void TextFieldInputType::updateAutoFillButton()
 
 #if ENABLE(DATALIST_ELEMENT)
 
-void TextFieldInputType::listAttributeTargetChanged()
+void TextFieldInputType::dataListMayHaveChanged()
 {
     m_cachedSuggestions = { };
 

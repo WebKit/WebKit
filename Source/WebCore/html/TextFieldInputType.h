@@ -126,7 +126,7 @@ private:
 #if ENABLE(DATALIST_ELEMENT)
     void createDataListDropdownIndicator();
     bool isPresentingAttachedView() const final;
-    void listAttributeTargetChanged() final;
+    void dataListMayHaveChanged() final;
     void displaySuggestions(DataListSuggestionActivationType);
     void closeSuggestions();
 

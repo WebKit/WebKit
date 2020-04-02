@@ -798,7 +798,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomStrin
         m_hasNonEmptyList = !value.isEmpty();
         if (m_hasNonEmptyList) {
             resetListAttributeTargetObserver();
-            listAttributeTargetChanged();
+            dataListMayHaveChanged();
         }
     }
 #endif
@@ -1552,6 +1552,10 @@ void HTMLInputElement::didFinishInsertingNode()
     HTMLTextFormControlElement::didFinishInsertingNode();
     if (isInTreeScope() && !form())
         addToRadioButtonGroup();
+#if ENABLE(DATALIST_ELEMENT)
+    if (isConnected() && m_hasNonEmptyList)
+        dataListMayHaveChanged();
+#endif
 }
 
 void HTMLInputElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -1653,9 +1657,9 @@ void HTMLInputElement::resetListAttributeTargetObserver()
         m_listAttributeTargetObserver = nullptr;
 }
 
-void HTMLInputElement::listAttributeTargetChanged()
+void HTMLInputElement::dataListMayHaveChanged()
 {
-    m_inputType->listAttributeTargetChanged();
+    m_inputType->dataListMayHaveChanged();
 }
 
 #endif // ENABLE(DATALIST_ELEMENT)
@@ -1965,7 +1969,7 @@ ListAttributeTargetObserver::ListAttributeTargetObserver(const AtomString& id, H
 
 void ListAttributeTargetObserver::idTargetChanged()
 {
-    m_element->listAttributeTargetChanged();
+    m_element->dataListMayHaveChanged();
 }
 #endif
 
