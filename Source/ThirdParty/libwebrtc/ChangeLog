@@ -1,3 +1,15 @@
+2020-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix after r259385.
+
+        Reviewed by David Kilzer, Youenn Fablet.
+
+        Convert isStandardFrameSize() into a lambda function since it only has one call site.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+        (isStandardFrameSize): Deleted.
+
 2020-04-02  Youenn Fablet  <youenn@apple.com>
 
         Temporarily restrict kVTVideoEncoderSpecification_RequiredLowLatency use to iOS
