@@ -1253,9 +1253,9 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
             return nil;
 
         RefPtr<Range> range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
-        NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
         if (!range)
             return nil;
+        NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
         TextIterator it(*range);
         while (!it.atEnd()) {
             Node& node = it.range().start.container;
