@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,6 +154,7 @@ private:
     HashMap<JSCell*, RootData> m_rootData;
     HashMap<JSCell*, void*> m_wrappedObjectPointers;
     HashMap<JSCell*, String> m_cellLabels;
+    HashSet<JSCell*> m_appendedCells;
     SnapshotType m_snapshotType;
 };
 

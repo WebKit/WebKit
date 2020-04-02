@@ -1,3 +1,30 @@
+2020-04-02  Mark Lam  <mark.lam@apple.com>
+
+        HeapSnapshotBuilder::analyzeNode() should filter out duplicate cells.
+        https://bugs.webkit.org/show_bug.cgi?id=209929
+        <rdar://problem/60974478>
+
+        Reviewed by Keith Miller.
+
+        HeapSnapshot::finalize() assumes that its list of cells contain no duplicate cells.
+        HeapSnapshot::appendNode() expects to only be called once for a cell.  It doesn't
+        check for duplicates.
+
+        However, with the concurrent GC marker, there’s a racy chance that the same cell
+        is visited more than once by SlotVisitor, and therefore, SlotVisitor may call
+        HeapSnapshotBuilder::analyzeNode() (and HeapSnapshot::appendNode()) more than once
+        for the same cell.
+
+        The easiest and cleanest fix for this is to simply keep a HashSet of appended
+        cells in HeapSnapshotBuilder while it is building the snapshot.  We can then use
+        the hash set to filter out already appended cells, and avoid adding duplicates to
+        the HeapSnapshot.
+
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::buildSnapshot):
+        (JSC::HeapSnapshotBuilder::analyzeNode):
+        * heap/HeapSnapshotBuilder.h:
+
 2020-04-02  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Enable offlineasm debug annotations for GCC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,8 +73,12 @@ void HeapSnapshotBuilder::buildSnapshot()
         m_profiler.vm().heap.collectNow(Sync, CollectionScope::Full);
         m_profiler.setActiveHeapAnalyzer(nullptr);
     }
-    m_snapshot->finalize();
 
+    {
+        auto locker = holdLock(m_buildingNodeMutex);
+        m_appendedCells.clear();
+        m_snapshot->finalize();
+    }
     m_profiler.appendSnapshot(WTFMove(m_snapshot));
 }
 
@@ -89,6 +93,9 @@ void HeapSnapshotBuilder::analyzeNode(JSCell* cell)
         return;
 
     auto locker = holdLock(m_buildingNodeMutex);
+    auto addResult = m_appendedCells.add(cell);
+    if (!addResult.isNewEntry)
+        return;
     m_snapshot->appendNode(HeapSnapshotNode(cell, getNextObjectIdentifier()));
 }
 
