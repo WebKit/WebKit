@@ -48,4 +48,9 @@
 - (void)invalidate;
 @end
 
+@protocol RBSAssertionObserving <NSObject>
+- (void)assertionWillInvalidate:(RBSAssertion *)assertion;
+- (void)assertion:(RBSAssertion *)assertion didInvalidateWithError:(NSError *)error;
+@end
+
 #endif

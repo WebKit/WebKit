@@ -1,3 +1,28 @@
+2020-04-02  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Replace UIKit background task with a RunningBoard FinishTaskInterruptable assertion
+        https://bugs.webkit.org/show_bug.cgi?id=209825
+        <rdar://problem/61118503>
+
+        Reviewed by Geoffrey Garen.
+
+        Replace UIKit background task with a RunningBoard FinishTaskInterruptable assertion on iOS.
+        Our UIProcess gets terminated too frequently when the UIKit background task expires when
+        the UIProcess holds it for longer than 30 seconds in the background. The RunningBoard
+        FinishTaskInterruptable assertion is supposed to be equivalent but would cause suspension
+        of our UIProcess on expiration, instead of termination.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _scheduleReleaseTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _cancelPendingReleaseTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _hasBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager assertionWillInvalidate:]):
+        (-[WKProcessAssertionBackgroundTaskManager assertion:didInvalidateWithError:]):
+        (-[WKProcessAssertionBackgroundTaskManager _handleBackgroundTaskExpiration]):
+        (-[WKProcessAssertionBackgroundTaskManager _releaseBackgroundTask]):
+
 2020-04-02  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Allow use of syscall from the WebContent sandbox

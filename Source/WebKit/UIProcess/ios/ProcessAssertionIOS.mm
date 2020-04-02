@@ -30,6 +30,7 @@
 
 #import "AssertionServicesSPI.h"
 #import "Logging.h"
+#import "RunningBoardServicesSPI.h"
 #import "WebProcessPool.h"
 #import <UIKit/UIApplication.h>
 #import <wtf/HashMap.h>
@@ -44,7 +45,12 @@ using WebKit::ProcessAndUIAssertion;
 // on the expiration handler getting called).
 static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
-@interface WKProcessAssertionBackgroundTaskManager : NSObject
+@interface WKProcessAssertionBackgroundTaskManager
+#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+    : NSObject <RBSAssertionObserving>
+#else
+    : NSObject
+#endif
 
 + (WKProcessAssertionBackgroundTaskManager *)shared;
 
@@ -55,7 +61,12 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
 @implementation WKProcessAssertionBackgroundTaskManager
 {
+#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+    RetainPtr<RBSAssertion> _backgroundTask;
+#else
     UIBackgroundTaskIdentifier _backgroundTask;
+#endif
+
     WeakHashSet<ProcessAndUIAssertion> _assertionsNeedingBackgroundTask;
     BOOL _applicationIsBackgrounded;
     dispatch_block_t _pendingTaskReleaseTask;
@@ -73,7 +84,9 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
     if (!self)
         return nil;
 
+#if !HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
     _backgroundTask = UIBackgroundTaskInvalid;
+#endif
 
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:^(NSNotification *) {
         _applicationIsBackgrounded = NO;
@@ -84,7 +97,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:^(NSNotification *) {
         _applicationIsBackgrounded = YES;
         
-        if (_backgroundTask == UIBackgroundTaskInvalid)
+        if (![self _hasBackgroundTask])
             WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
     }];
 
@@ -132,7 +145,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
     if (_pendingTaskReleaseTask)
         return;
 
-    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _scheduleReleaseTask because the expiration handler has been called", self);
+    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: _scheduleReleaseTask because the expiration handler has been called", self);
     _pendingTaskReleaseTask = dispatch_block_create((dispatch_block_flags_t)0, ^{
         _pendingTaskReleaseTask = nil;
         [self _releaseBackgroundTask];
@@ -149,57 +162,105 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
     if (!_pendingTaskReleaseTask)
         return;
 
-    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - _cancelPendingReleaseTask because the application is foreground again", self);
+    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: _cancelPendingReleaseTask because the application is foreground again", self);
     dispatch_block_cancel(_pendingTaskReleaseTask);
     _pendingTaskReleaseTask = nil;
 }
 
+- (BOOL)_hasBackgroundTask
+{
+#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+    return !!_backgroundTask;
+#else
+    return _backgroundTask != UIBackgroundTaskInvalid;
+#endif
+}
+
 - (void)_updateBackgroundTask
 {
-    if (!_assertionsNeedingBackgroundTask.computesEmpty() && _backgroundTask == UIBackgroundTaskInvalid) {
+    if (!_assertionsNeedingBackgroundTask.computesEmpty() && ![self _hasBackgroundTask]) {
         if (_applicationIsBackgrounded) {
             RELEASE_LOG_ERROR(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: Ignored request to start a new background task because the application is already in the background", self);
             return;
         }
-        RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - beginBackgroundTaskWithName", self);
+        RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: beginBackgroundTaskWithName", self);
+#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+        RBSTarget *target = [RBSTarget currentProcess];
+        RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:@"com.apple.common" name:@"FinishTaskInterruptable"];
+        _backgroundTask = adoptNS([[RBSAssertion alloc] initWithExplanation:@"WebKit UIProcess background task" target:target attributes:@[domainAttribute]]);
+        [_backgroundTask addObserver:self];
+
+        NSError *acquisitionError = nil;
+        if (![_backgroundTask acquireWithError:&acquisitionError])
+            RELEASE_LOG_ERROR(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: Failed to acquire FinishTaskInterruptable assertion for own process, error: %{public}@", acquisitionError);
+        else
+            RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: Successfully took a FinishTaskInterruptable assertion for own process");
+#else
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
-            RELEASE_LOG_ERROR(ProcessSuspension, "Background task expired while holding WebKit ProcessAssertion (isMainThread? %d).", RunLoop::isMain());
-            if (!_applicationIsBackgrounded) {
-                // We've received the invalidation warning after the app has become foreground again. In this case, we should not
-                // warn clients of imminent suspension. To be safe (avoid potential killing), we end the task right away and call
-                // _updateBackgroundTask asynchronously to start a new task if necessary.
-                [self _releaseBackgroundTask];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self _updateBackgroundTask];
-                });
-                return;
-            }
-
-            // The expiration handler gets called on a non-main thread when the underlying assertion could not be taken (rdar://problem/27278419).
-            if (RunLoop::isMain())
-                [self _notifyAssertionsOfImminentSuspension];
-            else {
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    [self _notifyAssertionsOfImminentSuspension];
-                });
-            }
-
-            [self _scheduleReleaseTask];
+            [self _handleBackgroundTaskExpiration];
         }];
+#endif
     } else if (_assertionsNeedingBackgroundTask.computesEmpty())
         [self _releaseBackgroundTask];
 }
 
+#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+- (void)assertionWillInvalidate:(RBSAssertion *)assertion
+{
+    ASSERT(assertion == _backgroundTask.get());
+    [self _handleBackgroundTaskExpiration];
+}
+
+- (void)assertion:(RBSAssertion *)assertion didInvalidateWithError:(NSError *)error
+{
+    ASSERT(assertion == _backgroundTask.get());
+    RELEASE_LOG_ERROR(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: FinishTaskInterruptable assertion was invalidated, error: %{public}@", error);
+}
+#endif
+
+- (void)_handleBackgroundTaskExpiration
+{
+    RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: Background task expired while holding WebKit ProcessAssertion (isMainThread? %d).", RunLoop::isMain());
+    if (!_applicationIsBackgrounded) {
+        // We've received the invalidation warning after the app has become foreground again. In this case, we should not
+        // warn clients of imminent suspension. To be safe (avoid potential killing), we end the task right away and call
+        // _updateBackgroundTask asynchronously to start a new task if necessary.
+        [self _releaseBackgroundTask];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self _updateBackgroundTask];
+        });
+        return;
+    }
+
+    // The expiration handler gets called on a non-main thread when the underlying assertion could not be taken (rdar://problem/27278419).
+    if (RunLoop::isMain())
+        [self _notifyAssertionsOfImminentSuspension];
+    else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self _notifyAssertionsOfImminentSuspension];
+        });
+    }
+
+    [self _scheduleReleaseTask];
+}
+
 - (void)_releaseBackgroundTask
 {
-    if (_backgroundTask == UIBackgroundTaskInvalid)
+    if (![self _hasBackgroundTask])
         return;
 
-    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - endBackgroundTask", self);
+    RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: endBackgroundTask", self);
     if (_applicationIsBackgrounded)
         WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
+
+#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+    [_backgroundTask removeObserver:self];
+    [_backgroundTask invalidate];
+    _backgroundTask = nullptr;
+#else
     [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
     _backgroundTask = UIBackgroundTaskInvalid;
+#endif
 }
 
 @end
