@@ -36,6 +36,8 @@
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
+#include "Timer.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -60,7 +62,7 @@ public:
     SWServerWorker(const SWServerWorker&) = delete;
     WEBCORE_EXPORT ~SWServerWorker();
 
-    void terminate();
+    WEBCORE_EXPORT void terminate(CompletionHandler<void()>&& = [] { });
 
     WEBCORE_EXPORT void whenActivated(CompletionHandler<void(bool)>&&);
 
@@ -126,6 +128,11 @@ private:
 
     void callWhenActivatedHandler(bool success);
 
+    void startTermination(CompletionHandler<void()>&&);
+    void terminationCompleted();
+    void terminationTimerFired();
+    void callTerminationCallbacks();
+
     WeakPtr<SWServer> m_server;
     ServiceWorkerRegistrationKey m_registrationKey;
     WeakPtr<SWServerRegistration> m_registration;
@@ -142,6 +149,8 @@ private:
     HashMap<URL, ServiceWorkerContextData::ImportedScript> m_scriptResourceMap;
     bool m_shouldSkipHandleFetch;
     bool m_hasTimedOutAnyFetchTasks { false };
+    Vector<CompletionHandler<void()>> m_terminationCallbacks;
+    Timer m_terminationTimer;
 };
 
 } // namespace WebCore

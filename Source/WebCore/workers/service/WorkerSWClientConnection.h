@@ -51,7 +51,6 @@ private:
     void postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&&, const ServiceWorkerOrClientIdentifier& source) final;
     SWServerConnectionIdentifier serverConnectionIdentifier() const final;
     bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const final;
-    void syncTerminateWorker(ServiceWorkerIdentifier) final;
     void registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData&, const Optional<ServiceWorkerRegistrationIdentifier>&, const String& userAgent) final;
     void unregisterServiceWorkerClient(DocumentIdentifier) final;
     void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) final;

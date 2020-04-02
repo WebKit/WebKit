@@ -1,12 +1,12 @@
 let state = "WaitingForHang";
 
-navigator.serviceWorker.addEventListener("message", function(event) {
+navigator.serviceWorker.addEventListener("message", async function(event) {
     log(event.data);
     if (state === "WaitingForHang") {
         log("PASS: ServiceWorker received message: " + event.data);
         log("Service Worker should now be hung");
         log("Terminating service worker...")
-        internals.terminateServiceWorker(worker);
+        await internals.terminateServiceWorker(worker);
         log("Terminated service worker.");
         state = "WaitingForMessageAfterTerminatingHungServiceWorker"
         handle = setInterval(function() {

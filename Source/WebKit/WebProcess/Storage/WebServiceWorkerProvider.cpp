@@ -70,6 +70,11 @@ void WebServiceWorkerProvider::updateThrottleState(bool isThrottleable)
         connection.updateThrottleState();
 }
 
+void WebServiceWorkerProvider::terminateWorkerForTesting(WebCore::ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& callback)
+{
+    WebProcess::singleton().ensureNetworkProcessConnection().serviceWorkerConnection().terminateWorkerForTesting(identifier, WTFMove(callback));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -102,7 +102,6 @@ public:
         WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerFetchResult&);
         WEBCORE_EXPORT void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
         WEBCORE_EXPORT void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
-        WEBCORE_EXPORT void syncTerminateWorker(ServiceWorkerIdentifier);
         WEBCORE_EXPORT void whenRegistrationReady(uint64_t registrationReadyRequestIdentifier, const SecurityOriginData& topOrigin, const URL& clientURL);
 
         WEBCORE_EXPORT void storeRegistrationsOnDisk(CompletionHandler<void()>&&);
@@ -152,8 +151,6 @@ public:
     void startScriptFetch(const ServiceWorkerJobData&, bool shouldRefreshCache);
 
     void updateWorker(const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&, const String& referrerPolicy, WorkerType, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
-    void terminateWorker(SWServerWorker&);
-    WEBCORE_EXPORT void syncTerminateWorker(SWServerWorker&);
     void fireInstallEvent(SWServerWorker&);
     void fireActivateEvent(SWServerWorker&);
 
@@ -215,6 +212,8 @@ public:
 
     WEBCORE_EXPORT void handleLowMemoryWarning();
 
+    static constexpr Seconds defaultTerminationDelay = 10_s;
+
 private:
     void scriptFetchFinished(const ServiceWorkerFetchResult&);
 
@@ -235,12 +234,6 @@ private:
     void forEachClientForOrigin(const ClientOrigin&, const WTF::Function<void(ServiceWorkerClientData&)>&);
 
     void performGetOriginsWithRegistrationsCallbacks();
-
-    enum TerminationMode {
-        Synchronous,
-        Asynchronous,
-    };
-    void terminateWorkerInternal(SWServerWorker&, TerminationMode);
 
     void contextConnectionCreated(SWServerToContextConnection&);
 

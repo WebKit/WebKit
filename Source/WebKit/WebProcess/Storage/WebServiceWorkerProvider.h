@@ -53,6 +53,7 @@ private:
     WebServiceWorkerProvider();
 
     WebCore::SWClientConnection& serviceWorkerConnection() final;
+    void terminateWorkerForTesting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&) final;
 }; // class WebServiceWorkerProvider
 
 } // namespace WebKit

@@ -41,7 +41,7 @@ messages -> WebSWServerConnection NotRefCounted {
     RegisterServiceWorkerClient(struct WebCore::SecurityOriginData topOrigin, struct WebCore::ServiceWorkerClientData data, Optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier, String userAgent)
     UnregisterServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier identifier)
 
-    SyncTerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> () Synchronous
+    TerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> () Async
 
     SetThrottleState(bool isThrottleable)
     StoreRegistrationsOnDisk() -> () Async

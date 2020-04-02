@@ -1,9 +1,9 @@
 var messageNumber = 1;
-navigator.serviceWorker.addEventListener("message", function(event) {
+navigator.serviceWorker.addEventListener("message", async function(event) {
     log("PASS: Client received message from service worker, origin: " + event.origin);
     log(event.data);
     if (messageNumber == 1) {
-        window.internals.terminateServiceWorker(event.source);
+        await window.internals.terminateServiceWorker(event.source);
         event.source.postMessage("Message 2");
         messageNumber++;
     } else

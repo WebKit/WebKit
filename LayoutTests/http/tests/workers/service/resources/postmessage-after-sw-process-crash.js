@@ -2,7 +2,7 @@ let serviceWorkerHasReceivedState = false;
 let worker = null;
 let remainingAttempts = 1000; // We try for 10 seconds before timing out.
 
-navigator.serviceWorker.addEventListener("message", function(event) {
+navigator.serviceWorker.addEventListener("message", async function(event) {
     if (!serviceWorkerHasReceivedState) {
         if (!event.data) {
             log("FAIL: service worker did not receive the state");
@@ -12,7 +12,7 @@ navigator.serviceWorker.addEventListener("message", function(event) {
         serviceWorkerHasReceivedState = true;
 
         log("* Simulating Service Worker process crash");
-        testRunner.terminateServiceWorkers();
+        await testRunner.terminateServiceWorkers();
 
         handle = setInterval(function() {
             remainingAttempts--;

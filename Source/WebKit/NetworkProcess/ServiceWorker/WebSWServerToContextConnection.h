@@ -87,11 +87,11 @@ private:
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier) final;
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier) final;
     void terminateWorker(WebCore::ServiceWorkerIdentifier) final;
-    void syncTerminateWorker(WebCore::ServiceWorkerIdentifier) final;
     void findClientByIdentifierCompleted(uint64_t requestIdentifier, const Optional<WebCore::ServiceWorkerClientData>&, bool hasSecurityError) final;
     void matchAllCompleted(uint64_t requestIdentifier, const Vector<WebCore::ServiceWorkerClientData>&) final;
 
     void connectionIsNoLongerNeeded() final;
+    void terminateDueToUnresponsiveness() final;
 
     void connectionClosed();
 

@@ -784,7 +784,7 @@ public:
 #if ENABLE(SERVICE_WORKER)
     using HasRegistrationPromise = DOMPromiseDeferred<IDLBoolean>;
     void hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&&);
-    void terminateServiceWorker(ServiceWorker&);
+    void terminateServiceWorker(ServiceWorker&, DOMPromiseDeferred<void>&&);
     void isServiceWorkerRunning(ServiceWorker&, DOMPromiseDeferred<IDLBoolean>&&);
 #endif
 

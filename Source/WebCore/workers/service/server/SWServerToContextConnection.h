@@ -54,7 +54,6 @@ public:
     virtual void fireInstallEvent(ServiceWorkerIdentifier) = 0;
     virtual void fireActivateEvent(ServiceWorkerIdentifier) = 0;
     virtual void terminateWorker(ServiceWorkerIdentifier) = 0;
-    virtual void syncTerminateWorker(ServiceWorkerIdentifier) = 0;
     virtual void findClientByIdentifierCompleted(uint64_t requestIdentifier, const Optional<ServiceWorkerClientData>&, bool hasSecurityError) = 0;
     virtual void matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>&) = 0;
 
@@ -75,6 +74,7 @@ public:
     const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
 
     virtual void connectionIsNoLongerNeeded() = 0;
+    virtual void terminateDueToUnresponsiveness() = 0;
 
 protected:
     WEBCORE_EXPORT explicit SWServerToContextConnection(RegistrableDomain&&);

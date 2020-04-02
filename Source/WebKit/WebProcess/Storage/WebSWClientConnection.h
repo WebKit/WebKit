@@ -62,10 +62,10 @@ public:
 
     void connectionToServerLost();
 
-    void syncTerminateWorker(WebCore::ServiceWorkerIdentifier) final;
-
     bool isThrottleable() const { return m_isThrottleable; }
     void updateThrottleState();
+
+    void terminateWorkerForTesting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
 
 private:
     WebSWClientConnection();

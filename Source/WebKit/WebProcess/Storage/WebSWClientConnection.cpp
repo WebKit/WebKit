@@ -243,9 +243,9 @@ void WebSWClientConnection::clear()
     clearPendingJobs();
 }
 
-void WebSWClientConnection::syncTerminateWorker(ServiceWorkerIdentifier identifier)
+void WebSWClientConnection::terminateWorkerForTesting(ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& callback)
 {
-    sendSync(Messages::WebSWServerConnection::SyncTerminateWorkerFromClient { identifier }, Messages::WebSWServerConnection::SyncTerminateWorkerFromClient::Reply());
+    sendWithAsyncReply(Messages::WebSWServerConnection::TerminateWorkerFromClient { identifier }, WTFMove(callback));
 }
 
 void WebSWClientConnection::isServiceWorkerRunning(ServiceWorkerIdentifier identifier, CompletionHandler<void(bool)>&& callback)

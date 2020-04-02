@@ -5152,12 +5152,11 @@ void Internals::hasServiceWorkerRegistration(const String& clientURL, HasRegistr
     });
 }
 
-void Internals::terminateServiceWorker(ServiceWorker& worker)
+void Internals::terminateServiceWorker(ServiceWorker& worker, DOMPromiseDeferred<void>&& promise)
 {
-    if (!contextDocument())
-        return;
-
-    ServiceWorkerProvider::singleton().serviceWorkerConnection().syncTerminateWorker(worker.identifier());
+    ServiceWorkerProvider::singleton().terminateWorkerForTesting(worker.identifier(), [promise = WTFMove(promise)]() mutable {
+        promise.resolve();
+    });
 }
 
 void Internals::isServiceWorkerRunning(ServiceWorker& worker, DOMPromiseDeferred<IDLBoolean>&& promise)

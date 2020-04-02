@@ -1,3 +1,30 @@
+2020-04-02  youenn fablet  <youenn@apple.com>
+
+        Remove synchronous termination of service workers
+        https://bugs.webkit.org/show_bug.cgi?id=209666
+
+        Reviewed by Chris Dumez.
+
+        Update IPC code according removal of synchronous termination of service worker.
+        Implement async-with-reply termination instead.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::terminateWorkerFromClient):
+        (WebKit::WebSWServerConnection::fetchTaskTimedOut):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::terminateDueToUnresponsiveness):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        * WebProcess/Storage/WebServiceWorkerProvider.h:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::terminateWorkerForTesting):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2020-04-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Public API should not allow trying to register a special URI scheme

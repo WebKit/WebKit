@@ -456,10 +456,12 @@ void WebSWServerConnection::contextConnectionCreated(SWServerToContextConnection
         m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::RegisterServiceWorkerClientProcess { identifier(), connection.webProcessIdentifier() }, 0);
 }
 
-void WebSWServerConnection::syncTerminateWorkerFromClient(ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+void WebSWServerConnection::terminateWorkerFromClient(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& callback)
 {
-    syncTerminateWorker(WTFMove(identifier));
-    completionHandler();
+    auto* worker = server().workerByID(serviceWorkerIdentifier);
+    if (!worker)
+        return callback();
+    worker->terminate(WTFMove(callback));
 }
 
 void WebSWServerConnection::isServiceWorkerRunning(ServiceWorkerIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
@@ -485,8 +487,7 @@ void WebSWServerConnection::fetchTaskTimedOut(ServiceWorkerIdentifier serviceWor
         return;
 
     worker->setHasTimedOutAnyFetchTasks();
-    if (worker->isRunning())
-        server().syncTerminateWorker(*worker);
+    worker->terminate();
 }
 
 } // namespace WebKit

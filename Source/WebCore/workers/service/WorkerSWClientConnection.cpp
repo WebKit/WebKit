@@ -155,14 +155,6 @@ bool WorkerSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const Sec
     return true;
 }
 
-void WorkerSWClientConnection::syncTerminateWorker(ServiceWorkerIdentifier identifier)
-{
-    callOnMainThread([identifier]() mutable {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
-        connection.syncTerminateWorker(identifier);
-    });
-}
-
 void WorkerSWClientConnection::registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData& data, const Optional<ServiceWorkerRegistrationIdentifier>& identifier, const String& userAgent)
 {
     callOnMainThread([topOrigin = topOrigin.isolatedCopy(), data = crossThreadCopy(data), identifier, userAgent = crossThreadCopy(userAgent)] {

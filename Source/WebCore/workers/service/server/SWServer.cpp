@@ -49,8 +49,6 @@
 
 namespace WebCore {
 
-static Seconds terminationDelay { 10_s };
-
 SWServer::Connection::Connection(SWServer& server, Identifier identifier)
     : m_server(server)
     , m_identifier(identifier)
@@ -79,7 +77,7 @@ SWServer::~SWServer()
             runningWorkers.append(worker.ptr());
     }
     for (auto& runningWorker : runningWorkers)
-        terminateWorker(*runningWorker);
+        runningWorker->terminate();
 
     allServers().remove(this);
 }
@@ -305,12 +303,6 @@ void SWServer::Connection::addServiceWorkerRegistrationInServer(ServiceWorkerReg
 void SWServer::Connection::removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
     m_server.removeClientServiceWorkerRegistration(*this, identifier);
-}
-
-void SWServer::Connection::syncTerminateWorker(ServiceWorkerIdentifier identifier)
-{
-    if (auto* worker = m_server.workerByID(identifier))
-        m_server.syncTerminateWorker(*worker);
 }
 
 SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, SoftUpdateCallback&& softUpdateCallback, CreateContextConnectionCallback&& callback)
@@ -733,43 +725,6 @@ bool SWServer::runServiceWorker(ServiceWorkerIdentifier identifier)
     return true;
 }
 
-void SWServer::terminateWorker(SWServerWorker& worker)
-{
-    terminateWorkerInternal(worker, Asynchronous);
-}
-
-void SWServer::syncTerminateWorker(SWServerWorker& worker)
-{
-    terminateWorkerInternal(worker, Synchronous);
-}
-
-void SWServer::terminateWorkerInternal(SWServerWorker& worker, TerminationMode mode)
-{
-    ASSERT(m_runningOrTerminatingWorkers.get(worker.identifier()) == &worker);
-    ASSERT(worker.isRunning());
-
-    RELEASE_LOG(ServiceWorker, "%p - SWServer::terminateWorkerInternal: Terminating service worker %llu", this, worker.identifier().toUInt64());
-
-    worker.setState(SWServerWorker::State::Terminating);
-
-    auto* contextConnection = worker.contextConnection();
-    ASSERT(contextConnection);
-    if (!contextConnection) {
-        LOG_ERROR("Request to terminate a worker whose context connection does not exist");
-        workerContextTerminated(worker);
-        return;
-    }
-
-    switch (mode) {
-    case Asynchronous:
-        contextConnection->terminateWorker(worker.identifier());
-        break;
-    case Synchronous:
-        contextConnection->syncTerminateWorker(worker.identifier());
-        break;
-    };
-}
-
 void SWServer::markAllWorkersForRegistrableDomainAsTerminated(const RegistrableDomain& registrableDomain)
 {
     Vector<SWServerWorker*> terminatedWorkers;
@@ -917,7 +872,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
                     workersToTerminate.append(worker.ptr());
             }
             for (auto* worker : workersToTerminate)
-                terminateWorker(*worker);
+                worker->terminate();
 
             if (!m_clientsByRegistrableDomain.contains(clientRegistrableDomain)) {
                 if (auto* connection = contextConnectionForRegistrableDomain(clientRegistrableDomain)) {
@@ -928,7 +883,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
 
             m_clientIdentifiersPerOrigin.remove(clientOrigin);
         });
-        iterator->value.terminateServiceWorkersTimer->startOneShot(m_isProcessTerminationDelayEnabled && !MemoryPressureHandler::singleton().isUnderMemoryPressure() ? terminationDelay : 0_s);
+        iterator->value.terminateServiceWorkersTimer->startOneShot(m_isProcessTerminationDelayEnabled && !MemoryPressureHandler::singleton().isUnderMemoryPressure() ? defaultTerminationDelay : 0_s);
     }
 
     auto clientsByRegistrableDomainIterator = m_clientsByRegistrableDomain.find(clientRegistrableDomain);
