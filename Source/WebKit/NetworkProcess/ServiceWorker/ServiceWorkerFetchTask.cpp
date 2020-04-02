@@ -94,6 +94,7 @@ void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorker
 void ServiceWorkerFetchTask::contextClosed()
 {
     RELEASE_LOG_IF_ALLOWED("contextClosed: (m_isDone=%d, m_wasHandled=%d)", m_isDone, m_wasHandled);
+    m_serviceWorkerConnection = nullptr;
     if (m_isDone)
         return;
 
