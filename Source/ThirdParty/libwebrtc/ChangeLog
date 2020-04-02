@@ -1,3 +1,13 @@
+2020-04-02  Youenn Fablet  <youenn@apple.com>
+
+        Temporarily restrict kVTVideoEncoderSpecification_RequiredLowLatency use to iOS
+        https://bugs.webkit.org/show_bug.cgi?id=209902
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        Our setup with this key does not work yet on MacOS, disable it for now on MacOS.
+
 2020-04-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, fix libwebrtc build with GCC 9 after the M82 bump.
