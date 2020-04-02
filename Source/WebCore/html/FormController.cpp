@@ -286,9 +286,10 @@ static inline void recordFormStructure(const HTMLFormElement& form, StringBuilde
     auto& controls = form.unsafeAssociatedElements();
     builder.appendLiteral(" [");
     for (size_t i = 0, namedControls = 0; i < controls.size() && namedControls < namedControlsToBeRecorded; ++i) {
-        if (!controls[i]->isFormControlElementWithState())
+        auto* formAssociatedElement = controls[i]->asFormAssociatedElement();
+        if (!formAssociatedElement->isFormControlElementWithState())
             continue;
-        RefPtr<HTMLFormControlElementWithState> control = static_cast<HTMLFormControlElementWithState*>(controls[i]);
+        RefPtr<HTMLFormControlElementWithState> control = static_cast<HTMLFormControlElementWithState*>(formAssociatedElement);
         if (!ownerFormForState(*control))
             continue;
         AtomString name = control->name();

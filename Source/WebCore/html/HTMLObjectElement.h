@@ -58,6 +58,7 @@ public:
 
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*);
+    ~HTMLObjectElement();
 
     int defaultTabIndex() const final;
 

@@ -76,6 +76,11 @@ Ref<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, D
     return result;
 }
 
+HTMLObjectElement::~HTMLObjectElement()
+{
+    clearForm();
+}
+
 int HTMLObjectElement::defaultTabIndex() const
 {
     return 0;

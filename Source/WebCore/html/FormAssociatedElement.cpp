@@ -58,7 +58,7 @@ FormAssociatedElement::FormAssociatedElement(HTMLFormElement* form)
 
 FormAssociatedElement::~FormAssociatedElement()
 {
-    setForm(nullptr);
+    RELEASE_ASSERT(!m_form);
 }
 
 void FormAssociatedElement::didMoveToNewDocument(Document&)

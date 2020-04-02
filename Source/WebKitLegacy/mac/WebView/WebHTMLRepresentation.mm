@@ -284,12 +284,11 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
         return nil;
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    auto& elements = formElement->unsafeAssociatedElements();
     AtomString targetName = name;
-    for (unsigned i = 0; i < elements.size(); i++) {
-        FormAssociatedElement& element = *elements[i];
-        if (element.name() == targetName)
-            return kit(&element.asHTMLElement());
+    for (auto& weakElement : formElement->unsafeAssociatedElements()) {
+        auto element = makeRefPtr(weakElement.get());
+        if (element->asFormAssociatedElement()->name() == targetName)
+            return kit(element.get());
     }
     return nil;
 }
@@ -334,10 +333,10 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
     NSMutableArray *results = nil;
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    auto& elements = formElement->unsafeAssociatedElements();
-    for (unsigned i = 0; i < elements.size(); i++) {
-        if (elements[i]->isEnumeratable()) { // Skip option elements, other duds
-            DOMElement *element = kit(&elements[i]->asHTMLElement());
+    for (auto& weakElement : formElement->unsafeAssociatedElements()) {
+        auto coreElement = makeRefPtr(weakElement.get());
+        if (coreElement->asFormAssociatedElement()->isEnumeratable()) { // Skip option elements, other duds
+            DOMElement *element = kit(coreElement.get());
             if (!results)
                 results = [NSMutableArray arrayWithObject:element];
             else

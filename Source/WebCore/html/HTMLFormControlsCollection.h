@@ -54,9 +54,6 @@ private:
     void invalidateCacheForDocument(Document&) override;
     void updateNamedElementCache() const override;
 
-    const Vector<FormAssociatedElement*>& unsafeFormControlElements() const;
-    Vector<Ref<FormAssociatedElement>> copyFormControlElementsVector() const;
-
     mutable Element* m_cachedElement;
     mutable unsigned m_cachedElementOffsetInArray;
 };

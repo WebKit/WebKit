@@ -76,9 +76,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
 
 HTMLFormControlElement::~HTMLFormControlElement()
 {
-    // The calls willChangeForm() and didChangeForm() are virtual, we want the
-    // form to be reset while this object still exists.
-    setForm(nullptr);
+    clearForm();
 }
 
 String HTMLFormControlElement::formEnctype() const

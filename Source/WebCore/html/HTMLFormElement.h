@@ -115,7 +115,7 @@ public:
 
     RadioButtonGroups& radioButtonGroups() { return m_radioButtonGroups; }
 
-    WEBCORE_EXPORT const Vector<FormAssociatedElement*>& unsafeAssociatedElements() const;
+    WEBCORE_EXPORT const Vector<WeakPtr<HTMLElement>>& unsafeAssociatedElements() const;
     Vector<Ref<FormAssociatedElement>> copyAssociatedElementsVector() const;
     const Vector<WeakPtr<HTMLImageElement>>& imageElements() const { return m_imageElements; }
 
@@ -174,7 +174,7 @@ private:
 
     unsigned m_associatedElementsBeforeIndex { 0 };
     unsigned m_associatedElementsAfterIndex { 0 };
-    Vector<FormAssociatedElement*> m_associatedElements;
+    Vector<WeakPtr<HTMLElement>> m_associatedElements;
     Vector<WeakPtr<HTMLImageElement>> m_imageElements;
     WeakHashSet<HTMLFormControlElement> m_invalidAssociatedFormControls;
     WeakPtr<FormSubmission> m_plannedFormSubmission;

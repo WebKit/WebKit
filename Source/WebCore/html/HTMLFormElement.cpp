@@ -84,8 +84,13 @@ HTMLFormElement::~HTMLFormElement()
         document().unregisterForDocumentSuspensionCallbacks(*this);
 
     m_defaultButton = nullptr;
-    for (auto& associatedElement : m_associatedElements)
+    for (auto& weakElement : m_associatedElements) {
+        auto element = makeRefPtr(weakElement.get());
+        ASSERT(element);
+        auto* associatedElement = element->asFormAssociatedElement();
+        ASSERT(associatedElement);
         associatedElement->formWillBeDestroyed();
+    }
     for (auto& imageElement : m_imageElements)
         imageElement->m_form = nullptr;
 }
@@ -136,7 +141,7 @@ Node::InsertedIntoAncestorResult HTMLFormElement::insertedIntoAncestor(Insertion
 void HTMLFormElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     Node& root = traverseToRootNode(); // Do not rely on rootNode() because our IsInTreeScope is outdated.
-    Vector<FormAssociatedElement*> associatedElements(m_associatedElements);
+    auto associatedElements = copyAssociatedElementsVector();
     for (auto& associatedElement : associatedElements)
         associatedElement->formOwnerRemovedFromTree(root);
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
@@ -154,7 +159,11 @@ void HTMLFormElement::handleLocalEvents(Event& event, EventInvokePhase phase)
 unsigned HTMLFormElement::length() const
 {
     unsigned length = 0;
-    for (auto& associatedElement : m_associatedElements) {
+    for (auto& weakElement : m_associatedElements) {
+        auto element = makeRefPtr(weakElement.get());
+        ASSERT(element);
+        auto* associatedElement = element->asFormAssociatedElement();
+        ASSERT(associatedElement);
         if (associatedElement->isEnumeratable())
             ++length;
     }
@@ -310,11 +319,11 @@ StringPairVector HTMLFormElement::textFieldValues() const
 {
     StringPairVector result;
     result.reserveInitialCapacity(m_associatedElements.size());
-    for (auto& associatedElement : m_associatedElements) {
-        auto& element = associatedElement->asHTMLElement();
+    for (auto& weakElement : m_associatedElements) {
+        auto element = makeRefPtr(weakElement.get());
         if (!is<HTMLInputElement>(element))
             continue;
-        auto& input = downcast<HTMLInputElement>(element);
+        auto& input = downcast<HTMLInputElement>(*element);
         if (!input.isTextField())
             continue;
         result.uncheckedAppend({ input.name().string(), input.value() });
@@ -397,9 +406,11 @@ void HTMLFormElement::resetAssociatedFormControlElements()
     // the reset operation.
     Vector<Ref<HTMLFormControlElement>> associatedFormControlElements;
     associatedFormControlElements.reserveInitialCapacity(m_associatedElements.size());
-    for (auto* element : m_associatedElements) {
+    for (auto& weakElement : m_associatedElements) {
+        auto* element = weakElement.get();
+        ASSERT(element);
         if (is<HTMLFormControlElement>(element))
-            associatedFormControlElements.uncheckedAppend(*downcast<HTMLFormControlElement>(element));
+            associatedFormControlElements.uncheckedAppend(downcast<HTMLFormControlElement>(*element));
     }
     
     for (auto& associatedFormControlElement : associatedFormControlElements)
@@ -469,7 +480,7 @@ unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, un
     while (left != right) {
         unsigned middle = left + ((right - left) / 2);
         ASSERT(middle < m_associatedElementsBeforeIndex || middle >= m_associatedElementsAfterIndex);
-        position = element->compareDocumentPosition(m_associatedElements[middle]->asHTMLElement());
+        position = element->compareDocumentPosition(*m_associatedElements[middle]);
         if (position & DOCUMENT_POSITION_FOLLOWING)
             right = middle;
         else
@@ -477,7 +488,7 @@ unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, un
     }
     
     ASSERT(left < m_associatedElementsBeforeIndex || left >= m_associatedElementsAfterIndex);
-    position = element->compareDocumentPosition(m_associatedElements[left]->asHTMLElement());
+    position = element->compareDocumentPosition(*m_associatedElements[left]);
     if (position & DOCUMENT_POSITION_FOLLOWING)
         return left;
     return left + 1;
@@ -533,7 +544,7 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
 
 void HTMLFormElement::registerFormElement(FormAssociatedElement* e)
 {
-    m_associatedElements.insert(formElementIndex(e), e);
+    m_associatedElements.insert(formElementIndex(e), makeWeakPtr(e->asHTMLElement()));
 
     if (is<HTMLFormControlElement>(e)) {
         HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*e);
@@ -548,7 +559,7 @@ void HTMLFormElement::registerFormElement(FormAssociatedElement* e)
 
 void HTMLFormElement::removeFormElement(FormAssociatedElement* e)
 {
-    unsigned index = m_associatedElements.find(e);
+    unsigned index = m_associatedElements.find(&e->asHTMLElement());
     ASSERT_WITH_SECURITY_IMPLICATION(index < m_associatedElements.size());
     if (index < m_associatedElementsBeforeIndex)
         --m_associatedElementsBeforeIndex;
@@ -730,14 +741,11 @@ bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<HTML
     Ref<HTMLFormElement> protectedThis(*this);
     // Copy m_associatedElements because event handlers called from
     // HTMLFormControlElement::checkValidity() might change m_associatedElements.
-    Vector<RefPtr<FormAssociatedElement>> elements;
-    elements.reserveCapacity(m_associatedElements.size());
-    for (auto& associatedElement : m_associatedElements)
-        elements.append(associatedElement);
+    auto elements = copyAssociatedElementsVector();
     bool hasInvalidControls = false;
     for (auto& element : elements) {
-        if (element->form() == this && is<HTMLFormControlElement>(*element)) {
-            HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*element);
+        if (element->form() == this && is<HTMLFormControlElement>(element.get())) {
+            HTMLFormControlElement& control = downcast<HTMLFormControlElement>(element.get());
             if (!control.checkValidity(&unhandledInvalidControls) && control.form() == this)
                 hasInvalidControls = true;
         }
@@ -764,7 +772,7 @@ void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem* item) const
     ASSERT_WITH_SECURITY_IMPLICATION(element.form() == this);
 
     if (item->isFormAssociatedElement()) {
-        ASSERT_WITH_SECURITY_IMPLICATION(m_associatedElements.find(static_cast<FormAssociatedElement*>(item)) != notFound);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_associatedElements.find(&element) != notFound);
         return;
     }
 
@@ -865,7 +873,7 @@ void HTMLFormElement::finishParsingChildren()
     document().formController().restoreControlStateIn(*this);
 }
 
-const Vector<FormAssociatedElement*>& HTMLFormElement::unsafeAssociatedElements() const
+const Vector<WeakPtr<HTMLElement>>& HTMLFormElement::unsafeAssociatedElements() const
 {
     ASSERT(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
     return m_associatedElements;
@@ -873,8 +881,13 @@ const Vector<FormAssociatedElement*>& HTMLFormElement::unsafeAssociatedElements(
 
 Vector<Ref<FormAssociatedElement>> HTMLFormElement::copyAssociatedElementsVector() const
 {
-    return WTF::map(m_associatedElements, [] (auto* rawElement) {
-        return Ref<FormAssociatedElement>(*rawElement);
+    return WTF::map(m_associatedElements, [] (auto& weakElement) {
+        auto element = makeRefPtr(weakElement.get());
+        ASSERT(element);
+        auto* formAssociatedElement = element->asFormAssociatedElement();
+        ASSERT(formAssociatedElement);
+        return Ref<FormAssociatedElement>(*formAssociatedElement);
+        
     });
 }
 
