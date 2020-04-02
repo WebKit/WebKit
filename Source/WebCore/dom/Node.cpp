@@ -1304,10 +1304,8 @@ void Node::removedFromAncestor(RemovalType removalType, ContainerNode& oldParent
     if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())
         clearFlag(IsInShadowTreeFlag);
     if (removalType.disconnectedFromDocument) {
-        if (auto* document = &oldParentOfRemovedTree.treeScope().documentScope()) {
-            if (auto* cache = document->existingAXObjectCache())
-                cache->remove(*this);
-        }
+        if (auto* cache = oldParentOfRemovedTree.document().existingAXObjectCache())
+            cache->remove(*this);
     }
 }
 
