@@ -887,7 +887,6 @@ Vector<Ref<FormAssociatedElement>> HTMLFormElement::copyAssociatedElementsVector
         auto* formAssociatedElement = element->asFormAssociatedElement();
         ASSERT(formAssociatedElement);
         return Ref<FormAssociatedElement>(*formAssociatedElement);
-        
     });
 }
 
