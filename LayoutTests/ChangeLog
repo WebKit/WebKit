@@ -1,3 +1,12 @@
+2020-04-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] svg/as-background-image/tiled-background-image.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=209885
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Mark test as flaky.
+
 2020-04-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         Intl.NumberFormat.prototype.format must preserve sign of -0
