@@ -1,3 +1,25 @@
+2020-04-02  David Kilzer  <ddkilzer@apple.com>
+
+        API::PageConfiguration may have conflicting preference values between WebPreferences and WebPreferencesStore::ValueMap instance variables
+        <https://webkit.org/b/209678>
+        <rdar://problem/60981271>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKit/mac/GetBackingScaleFactor.mm:
+        (TestWebKitAPI::TEST):
+        - Fix WKView constructor to pass a valid WKPageGroupRef.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+        - Remove support for custom "enableUndoManagerAPI" setting since
+          layout tests should use "internal:UndoManagerAPIEnabled"
+          instead.
+
 2020-04-02  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to restrict loading to main resources or non-network loads

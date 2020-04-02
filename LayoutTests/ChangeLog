@@ -1,3 +1,22 @@
+2020-04-02  David Kilzer  <ddkilzer@apple.com>
+
+        API::PageConfiguration may have conflicting preference values between WebPreferences and WebPreferencesStore::ValueMap instance variables
+        <https://webkit.org/b/209678>
+        <rdar://problem/60981271>
+
+        Reviewed by Brent Fulgham.
+
+        * editing/undo-manager/undo-manager-add-item-exceptions.html:
+        * editing/undo-manager/undo-manager-add-item.html:
+        * editing/undo-manager/undo-manager-delete-stale-undo-items.html:
+        * editing/undo-manager/undo-manager-interfaces.html:
+        * editing/undo-manager/undo-manager-item-labels.html:
+        * editing/undo-manager/undo-manager-keeps-wrapper-alive.html:
+        * editing/undo-manager/undo-manager-undo-redo-after-garbage-collection.html:
+        - Fix tests to use "internal:UndoManagerAPIEnabled=true" instead
+          of custom "enableUndoManagerAPI=true" setting, which is being
+          removed since it doesn't work after the changes to WebKit.
+
 2020-04-02  Chris Dumez  <cdumez@apple.com>
 
         [ Mac wk1 ] fast/loader/child-frame-add-after-back-forward.html  is flaky timing out.

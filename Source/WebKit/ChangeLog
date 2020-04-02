@@ -1,3 +1,54 @@
+2020-04-02  David Kilzer  <ddkilzer@apple.com>
+
+        API::PageConfiguration may have conflicting preference values between WebPreferences and WebPreferencesStore::ValueMap instance variables
+        <https://webkit.org/b/209678>
+        <rdar://problem/60981271>
+
+        Reviewed by Brent Fulgham.
+
+        We fix this bug by removing
+        API::PageConfiguration::m_preferenceValues and
+        WebPageProxy::m_configurationPreferenceValues, and instead set
+        values directly on the WebPreferences object, which holds values
+        in its WebPreferencesStore instance variable.  This change only
+        requires that the API::PageConfiguration object has
+        m_preferences set to a valid WebPreferences object before using
+        the settings APIs.
+
+        Covered by WKAttachment TestWebKitAPI tests and
+        editing/undo-manager layout tests, among others.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        - Remove use of m_preferenceValues instance variable.
+        * UIProcess/API/APIPageConfiguration.h:
+        - Update headers after removing WebPreferencesStore.h.
+        (API::PageConfiguration::preferenceValues): Delete.
+        - Remove use of m_preferenceValues instance variable.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setupPageConfiguration:]):
+        - Switch to use WebPreferences methods for settings.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        - Create WebPreferences object for API::PageConfiguration
+          object.  This is what WebProcessPool::createWebPage() does
+          when creating a WebPageProxy object.
+        - Switch to use WebPreferences method to set
+          SystemLayoutDirection.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        - Remove initialization of m_configurationPreferenceValues.
+        - Switch to use WebPreferences method to set
+          DisableScreenSizeOverride.
+        (WebKit::WebPageProxy::preferencesStore const):
+        - Simplify this method after removing
+          m_configurationPreferenceValues.
+        * UIProcess/WebPageProxy.h:
+        - Remove m_configurationPreferenceValues.
+
 2020-04-02  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Remove redundant call to check in with Launch Services

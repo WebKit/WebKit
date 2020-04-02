@@ -1484,8 +1484,6 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableEditableImages = parseBooleanTestHeaderValue(value);
         else if (key == "editable")
             testOptions.editable = parseBooleanTestHeaderValue(value);
-        else if (key == "enableUndoManagerAPI")
-            testOptions.enableUndoManagerAPI = parseBooleanTestHeaderValue(value);
         else if (key == "shouldHandleRunOpenPanel")
             testOptions.shouldHandleRunOpenPanel = parseBooleanTestHeaderValue(value);
         else if (key == "shouldPresentPopovers")

@@ -68,7 +68,8 @@ TEST(WebKit, GetBackingScaleFactor)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("GetBackingScaleFactorTest"));
     setInjectedBundleClient(context.get());
-    RetainPtr<WKView> view = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) contextRef:context.get() pageGroupRef:0]);
+    auto pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("GetBackingScaleFactorPageGroup").get()));
+    auto view = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) contextRef:context.get() pageGroupRef:pageGroup.get()]);
     [[view browsingContextController] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
 
     RetainPtr<SyntheticBackingScaleFactorWindow> window1 = createWindow();

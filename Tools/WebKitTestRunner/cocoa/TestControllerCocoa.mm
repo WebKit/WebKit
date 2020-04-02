@@ -149,9 +149,6 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     if (options.enableEditableImages)
         [copiedConfiguration _setEditableImagesEnabled:YES];
 
-    if (options.enableUndoManagerAPI)
-        [copiedConfiguration _setUndoManagerAPIEnabled:YES];
-
     if (options.useEphemeralSession) {
         auto ephemeralWebsiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
         [ephemeralWebsiteDataStore _setResourceLoadStatisticsEnabled:YES];

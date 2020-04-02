@@ -474,7 +474,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_isSmartInsertDeleteEnabled(TextChecker::isSmartInsertDeleteEnabled())
 #endif
     , m_pageLoadState(*this)
-    , m_configurationPreferenceValues(m_configuration->preferenceValues())
     , m_inspectorController(makeUnique<WebPageInspectorController>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
     , m_inspectorDebuggable(makeUnique<WebPageDebuggable>(*this))
@@ -517,7 +516,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
 
 #if PLATFORM(IOS_FAMILY)
-    DeprecatedGlobalSettings::setDisableScreenSizeOverride(preferencesStore().getBoolValueForKey(WebPreferencesKey::disableScreenSizeOverrideKey()));
+    DeprecatedGlobalSettings::setDisableScreenSizeOverride(m_preferences->disableScreenSizeOverride());
 #endif
 
 #if PLATFORM(COCOA)
@@ -2765,14 +2764,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 
 WebPreferencesStore WebPageProxy::preferencesStore() const
 {
-    if (m_configurationPreferenceValues.isEmpty())
-        return m_preferences->store();
-
-    WebPreferencesStore store = m_preferences->store();
-    for (const auto& preference : m_configurationPreferenceValues)
-        store.m_values.set(preference.key, preference.value);
-
-    return store;
+    return m_preferences->store();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

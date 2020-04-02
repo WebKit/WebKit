@@ -26,11 +26,12 @@
 #pragma once
 
 #include "APIObject.h"
-#include "WebPreferencesStore.h"
 #include "WebViewCategory.h"
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_PROTOCOL(_UIClickInteractionDriving);
@@ -76,8 +77,6 @@ public:
 
     WebKit::WebPreferences* preferences();
     void setPreferences(WebKit::WebPreferences*);
-
-    WebKit::WebPreferencesStore::ValueMap& preferenceValues() { return m_preferenceValues; }
 
     WebKit::WebPageProxy* relatedPage() const;
     void setRelatedPage(WebKit::WebPageProxy*);
@@ -162,7 +161,6 @@ private:
     RefPtr<WebKit::WebUserContentControllerProxy> m_userContentController;
     RefPtr<WebKit::WebPageGroup> m_pageGroup;
     RefPtr<WebKit::WebPreferences> m_preferences;
-    WebKit::WebPreferencesStore::ValueMap m_preferenceValues;
     RefPtr<WebKit::WebPageProxy> m_relatedPage;
     RefPtr<WebKit::VisitedLinkStore> m_visitedLinkStore;
 
