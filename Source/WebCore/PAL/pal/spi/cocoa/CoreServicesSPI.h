@@ -25,10 +25,4 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
-
-#include <CarbonCore/RuntimePriv.h>
-
-#endif
-
 extern "C" void _CSCheckFixDisable();
