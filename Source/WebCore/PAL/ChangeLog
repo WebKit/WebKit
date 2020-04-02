@@ -1,3 +1,16 @@
+2020-04-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Remove redundant call to check in with Launch Services
+        https://bugs.webkit.org/show_bug.cgi?id=209911
+
+        Reviewed by Darin Adler.
+
+        Move declarations to SPI header files.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/CoreServicesSPI.h: Added.
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
 2020-04-02  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Allow WebKit to use camera in multi-tasking mode

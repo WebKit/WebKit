@@ -31,6 +31,7 @@
 
 #if PLATFORM(MAC)
 #import <CoreServices/CoreServicesPriv.h>
+#import <LaunchServices/LSApplicationServicesPriv.h>
 #elif PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/LSAppLinkPriv.h>
 #elif PLATFORM(IOS)
@@ -102,6 +103,10 @@ OSStatus _LSSetApplicationInformationItem(LSSessionID, LSASNRef, CFStringRef key
 CFTypeRef _LSCopyApplicationInformationItem(LSSessionID, LSASNRef, CFTypeRef);
 
 OSStatus _RegisterApplication(CFDictionaryRef, ProcessSerialNumber*);
+
+typedef bool (^LSServerConnectionAllowedBlock) (CFDictionaryRef optionsRef);
+extern "C" void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
+extern "C" CFDictionaryRef _LSApplicationCheckIn(LSSessionID sessionID, CFDictionaryRef applicationInfo);
 
 WTF_EXTERN_C_END
 

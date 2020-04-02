@@ -41,6 +41,7 @@
 #import <mach/mach.h>
 #import <mach/task.h>
 #import <pal/crypto/CryptoDigest.h>
+#import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pwd.h>
 #import <stdlib.h>
@@ -70,13 +71,6 @@
 enum LSSessionID {
     kLSDefaultSessionID = -2,
 };
-#endif
-
-typedef bool (^LSServerConnectionAllowedBlock) ( CFDictionaryRef optionsRef );
-extern "C" void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
-extern "C" CFDictionaryRef _LSApplicationCheckIn(LSSessionID sessionID, CFDictionaryRef applicationInfo);
-#if HAVE(CSCHECKFIXDISABLE)
-extern "C" void _CSCheckFixDisable();
 #endif
 
 namespace WebKit {

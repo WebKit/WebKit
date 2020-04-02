@@ -77,6 +77,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -230,6 +231,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
     // Need to initialize accessibility for VoiceOver to work when the WebContent process is using NSRunLoop.
     // Currently, it is also needed to allocate and initialize an NSApplication object.
+    // This method call will also call RegisterApplication, so there is no need for us to call this or
+    // check in with Launch Services
     [NSApplication _accessibilityInitialize];
 #endif
 
@@ -274,7 +277,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         SandboxExtension::consumePermanently(parameters.dynamicMachExtensionHandles[i]);
 #endif
     
-#if PLATFORM(COCOA)
     if (parameters.neHelperExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.neHelperExtensionHandle);
     if (parameters.neSessionManagerExtensionHandle)
@@ -285,18 +287,15 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     if (parameters.mimeTypesMap)
         overriddenMimeTypesMap() = WTFMove(parameters.mimeTypesMap);
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     RenderThemeIOS::setCSSValueToSystemColorMap(WTFMove(parameters.cssValueToSystemColorMap));
     RenderThemeIOS::setFocusRingColor(parameters.focusRingColor);
 #endif
 
-#if PLATFORM(COCOA)
     // FIXME(207716): The following should be removed when the GPU process is complete.
     for (size_t i = 0, size = parameters.mediaExtensionHandles.size(); i < size; ++i)
         SandboxExtension::consumePermanently(parameters.mediaExtensionHandles[i]);
-#endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
     if (parameters.preferencesExtensionHandle) {
@@ -345,14 +344,6 @@ void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParam
 void WebProcess::updateProcessName()
 {
 #if PLATFORM(MAC)
-    static std::once_flag onceFlag;
-    std::call_once(
-        onceFlag,
-        [this] {
-            // Checking in with Launch Services is necessary to be able to set the process' display name.
-            launchServicesCheckIn();
-    });
-
     NSString *applicationName;
     switch (m_processType) {
     case ProcessType::Inspector:
@@ -545,6 +536,12 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
 
 #if HAVE(APP_SSO)
     [NSURLSession _disableAppSSO];
+#endif
+
+#if HAVE(CSCHECKFIXDISABLE)
+    // _CSCheckFixDisable() needs to be called before checking in with Launch Services. The WebContent process is checking in
+    // with Launch Services in WebProcess::platformInitializeWebProcess when calling +[NSApplication _accessibilityInitialize].
+    _CSCheckFixDisable();
 #endif
 }
 

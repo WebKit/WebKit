@@ -1,3 +1,21 @@
+2020-04-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Remove redundant call to check in with Launch Services
+        https://bugs.webkit.org/show_bug.cgi?id=209911
+
+        Reviewed by Darin Adler.
+
+        There is no need to explicitly check in with Launch Services or call RegisterApplication in the WebContent process,
+        since this is handled when calling [NSApplication _accessibilityInitialize].
+
+        No new tests, since this only removes a redundant call, and should be covered by existing tests.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::updateProcessName):
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2020-04-02  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to restrict loading to main resources or non-network loads
