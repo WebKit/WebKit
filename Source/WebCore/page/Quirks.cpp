@@ -426,6 +426,15 @@ bool Quirks::shouldMakeTouchEventNonCancelableForTarget(EventTarget* target) con
 
     return false;
 }
+
+bool Quirks::shouldPreventPointerMediaQueryFromEvaluatingToCoarse() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "shutterstock.com") || host.endsWithIgnoringASCIICase(".shutterstock.com");
+}
 #endif
 
 bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const

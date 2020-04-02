@@ -43,6 +43,7 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformScreen.h"
+#include "Quirks.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -747,15 +748,19 @@ static bool anyHoverEvaluate(CSSValue* value, const CSSToLengthConversionData&, 
     return keyword == CSSValueHover;
 }
 
-static bool pointerEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix)
+static bool pointerEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
     if (!is<CSSPrimitiveValue>(value))
         return true;
 
     auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
 #if ENABLE(TOUCH_EVENTS)
-    if (screenIsTouchPrimaryInputDevice())
-        return keyword == CSSValueCoarse;
+    if (screenIsTouchPrimaryInputDevice()) {
+        if (!frame.document() || !frame.document()->quirks().shouldPreventPointerMediaQueryFromEvaluatingToCoarse())
+            return keyword == CSSValueCoarse;
+    }
+#else
+    UNUSED_PARAM(frame);
 #endif
     return keyword == CSSValueFine;
 }
