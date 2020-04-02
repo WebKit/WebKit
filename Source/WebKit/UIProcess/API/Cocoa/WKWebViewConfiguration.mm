@@ -913,6 +913,26 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _pageConfiguration->setCORSDisablingPatterns(WTFMove(vector));
 }
 
+- (void)_setLoadsFromNetwork:(BOOL)loads
+{
+    _pageConfiguration->setLoadsFromNetwork(loads);
+}
+
+- (BOOL)_loadsFromNetwork
+{
+    return _pageConfiguration->loadsFromNetwork();
+}
+
+- (void)_setLoadsSubresources:(BOOL)loads
+{
+    _pageConfiguration->setLoadsSubresources(loads);
+}
+
+- (BOOL)_loadsSubresources
+{
+    return _pageConfiguration->loadsSubresources();
+}
+
 - (void)_setCrossOriginAccessControlCheckEnabled:(BOOL)enabled
 {
     _pageConfiguration->setCrossOriginAccessControlCheckEnabled(enabled);

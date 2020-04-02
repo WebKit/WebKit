@@ -290,6 +290,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     , m_deviceOrientationUpdateProvider(WTFMove(pageConfiguration.deviceOrientationUpdateProvider))
 #endif
+    , m_loadsSubresources(pageConfiguration.loadsSubresources)
+    , m_loadsFromNetwork(pageConfiguration.loadsFromNetwork)
 {
     updateTimerThrottlingState();
 

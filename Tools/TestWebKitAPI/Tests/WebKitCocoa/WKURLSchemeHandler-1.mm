@@ -1004,6 +1004,118 @@ TEST(URLSchemeHandler, DisableCORSScript)
     EXPECT_FALSE(loadFail);
 }
 
+TEST(URLSchemeHandler, LoadsFromNetwork)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { {{ "Access-Control-Allow-Origin", "*" }}, "test content" } }
+    });
+
+    bool loadSuccess = false;
+    bool loadFail = false;
+    bool done = false;
+
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+
+    WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
+
+    [handler setStartURLSchemeTaskHandler:[&](WKWebView *, id<WKURLSchemeTask> task) {
+        if ([task.request.URL.path isEqualToString:@"/main.html"]) {
+            NSData *data = [[NSString stringWithFormat:@"<script>"
+                "fetch('http://127.0.0.1:%d/').then(()=>{"
+                    "fetch('/loadSuccess')"
+                "}).catch(()=>{"
+                    "var ws = new WebSocket('ws://127.0.0.1:%d');"
+                    "ws.onerror = function() { fetch('/loadFail') };"
+                "})"
+                "</script>", server.port(), server.port()] dataUsingEncoding:NSUTF8StringEncoding];
+            [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil] autorelease]];
+            [task didReceiveData:data];
+            [task didFinish];
+        } else if ([task.request.URL.path isEqualToString:@"/loadSuccess"]) {
+            loadSuccess = true;
+            done = true;
+        } else if ([task.request.URL.path isEqualToString:@"/loadFail"]) {
+            loadFail = true;
+            done = true;
+        } else
+            ASSERT_NOT_REACHED();
+    }];
+    
+    {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host1/main.html"]]];
+        TestWebKitAPI::Util::run(&done);
+    }
+    EXPECT_TRUE(loadSuccess);
+    EXPECT_FALSE(loadFail);
+    EXPECT_EQ(server.totalRequests(), 1u);
+    
+    loadSuccess = false;
+    loadFail = false;
+    done = false;
+
+    configuration._loadsFromNetwork = NO;
+    {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host1/main.html"]]];
+        TestWebKitAPI::Util::run(&done);
+    }
+    EXPECT_FALSE(loadSuccess);
+    EXPECT_TRUE(loadFail);
+    EXPECT_EQ(server.totalRequests(), 1u);
+}
+
+TEST(URLSchemeHandler, LoadsSubresources)
+{
+    bool loadedImage = false;
+    bool loadedIFrame = false;
+
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+
+    WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
+
+    [handler setStartURLSchemeTaskHandler:[&](WKWebView *, id<WKURLSchemeTask> task) {
+        NSString *response = nil;
+        if ([task.request.URL.path isEqualToString:@"/main.html"])
+            response = @"<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>";
+        else if ([task.request.URL.path isEqualToString:@"/imgsrc"]) {
+            response = @"image content";
+            loadedImage = true;
+        } else if ([task.request.URL.path isEqualToString:@"/iframesrc"]) {
+            response = @"iframe content";
+            loadedIFrame = true;
+        } else
+            ASSERT_NOT_REACHED();
+        [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:response.length textEncodingName:nil] autorelease]];
+        [task didReceiveData:[response dataUsingEncoding:NSUTF8StringEncoding]];
+        [task didFinish];
+    }];
+    
+    {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host1/main.html"]]];
+        TestWebKitAPI::Util::run(&loadedImage);
+        TestWebKitAPI::Util::run(&loadedIFrame);
+    }
+    
+    loadedImage = false;
+    loadedIFrame = false;
+
+    configuration._loadsSubresources = NO;
+    {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+        auto delegate = adoptNS([TestNavigationDelegate new]);
+        webView.get().navigationDelegate = delegate.get();
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host1/main.html"]]];
+        [delegate waitForDidFinishNavigation];
+        TestWebKitAPI::Util::spinRunLoop(100);
+        EXPECT_FALSE(loadedIFrame);
+        EXPECT_FALSE(loadedImage);
+    }
+}
+
 #endif // HAVE(NETWORK_FRAMEWORK)
 
 @interface FrameSchemeHandler : NSObject <WKURLSchemeHandler>

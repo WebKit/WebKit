@@ -529,6 +529,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
     pageConfiguration.corsDisablingPatterns = WTFMove(parameters.corsDisablingPatterns);
+    pageConfiguration.loadsSubresources = parameters.loadsSubresources;
+    pageConfiguration.loadsFromNetwork = parameters.loadsFromNetwork;
+
     if (!parameters.crossOriginAccessControlCheckEnabled)
         CrossOriginAccessControlCheckDisabler::singleton().setCrossOriginAccessControlCheckEnabled(false);
 

@@ -1,3 +1,16 @@
+2020-04-02  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to restrict loading to main resources or non-network loads
+        https://bugs.webkit.org/show_bug.cgi?id=209893
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        (TestWebKitAPI::HTTPServer::totalRequests const):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::respondToRequests):
+
 2020-04-02  Kate Cheney  <katherine_cheney@apple.com>
 
         Add additional WKAppBoundDomains to TestWebKitAPI's expectations after initializing eTLD+1 by default

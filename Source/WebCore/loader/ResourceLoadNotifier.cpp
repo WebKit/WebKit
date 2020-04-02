@@ -109,6 +109,13 @@ void ResourceLoadNotifier::didFailToLoad(ResourceLoader* loader, const ResourceE
 
 void ResourceLoadNotifier::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
+    bool pageIsProvisionallyLoading = false;
+    if (auto* frameLoader = loader ? loader->frameLoader() : nullptr)
+        pageIsProvisionallyLoading = frameLoader->provisionalDocumentLoader() == loader;
+
+    if (pageIsProvisionallyLoading)
+        m_initialRequestIdentifier = identifier;
+
     m_frame.loader().client().assignIdentifierToInitialRequest(identifier, loader, request);
 }
 
@@ -126,6 +133,14 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
     if (m_frame.loader().documentLoader())
         m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url());
 
+    if (auto* page = m_frame.page()) {
+        if (!page->loadsSubresources()) {
+            if (!m_frame.isMainFrame() || (m_initialRequestIdentifier && *m_initialRequestIdentifier != identifier))
+                request = { };
+        } else if (!page->loadsFromNetwork() && request.url().protocolIsInHTTPFamily())
+            request = { };
+    }
+    
     // Notifying the FrameLoaderClient may cause the frame to be destroyed.
     Ref<Frame> protect(m_frame);
     m_frame.loader().client().dispatchWillSendRequest(loader, identifier, request, redirectResponse);

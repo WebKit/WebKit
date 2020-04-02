@@ -133,6 +133,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << oldPageID;
     encoder << overriddenMediaType;
     encoder << corsDisablingPatterns;
+    encoder << loadsSubresources;
+    encoder << loadsFromNetwork;
     encoder << crossOriginAccessControlCheckEnabled;
     encoder << processDisplayName;
 
@@ -415,6 +417,18 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!corsDisablingPatterns)
         return WTF::nullopt;
     parameters.corsDisablingPatterns = WTFMove(*corsDisablingPatterns);
+
+    Optional<bool> loadsSubresources;
+    decoder >> loadsSubresources;
+    if (!loadsSubresources)
+        return WTF::nullopt;
+    parameters.loadsSubresources = *loadsSubresources;
+
+    Optional<bool> loadsFromNetwork;
+    decoder >> loadsFromNetwork;
+    if (!loadsFromNetwork)
+        return WTF::nullopt;
+    parameters.loadsFromNetwork = *loadsFromNetwork;
 
     Optional<bool> crossOriginAccessControlCheckEnabled;
     decoder >> crossOriginAccessControlCheckEnabled;

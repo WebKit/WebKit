@@ -702,6 +702,9 @@ public:
     bool isOnlyNonUtilityPage() const;
     bool isUtilityPage() const { return m_isUtilityPage; }
 
+    bool loadsSubresources() const { return m_loadsSubresources; }
+    bool loadsFromNetwork() const { return m_loadsFromNetwork; }
+
     bool isLowPowerModeEnabled() const;
     WEBCORE_EXPORT void setLowPowerModeEnabledOverrideForTesting(Optional<bool>);
 
@@ -1010,6 +1013,8 @@ private:
     Vector<UserContentURLPattern> m_corsDisablingPatterns;
     Vector<UserStyleSheet> m_userStyleSheetsPendingInjection;
     bool m_shouldFireResizeEvents { true };
+    bool m_loadsSubresources { true };
+    bool m_loadsFromNetwork { true };
 };
 
 inline PageGroup& Page::group()

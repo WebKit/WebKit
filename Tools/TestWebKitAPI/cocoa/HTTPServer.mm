@@ -100,6 +100,8 @@ void HTTPServer::respondToRequests(nw_connection_t connection)
         });
         request.append('\0');
 
+        m_totalRequests++;
+
         const char* getPathPrefix = "GET ";
         const char* postPathPrefix = "POST ";
         const char* pathSuffix = " HTTP/1.1\r\n";

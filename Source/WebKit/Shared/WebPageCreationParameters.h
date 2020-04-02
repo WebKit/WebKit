@@ -202,6 +202,9 @@ struct WebPageCreationParameters {
 
     String overriddenMediaType;
     Vector<String> corsDisablingPatterns;
+    bool loadsSubresources { true };
+    bool loadsFromNetwork { true };
+
     bool crossOriginAccessControlCheckEnabled { true };
     String processDisplayName;
 

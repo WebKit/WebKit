@@ -127,6 +127,8 @@ public:
 #endif
     Vector<String> corsDisablingPatterns;
     UniqueRef<MediaRecorderProvider> mediaRecorderProvider;
+    bool loadsSubresources { true };
+    bool loadsFromNetwork { true };
 };
 
 }

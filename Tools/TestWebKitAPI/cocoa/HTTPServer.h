@@ -43,6 +43,7 @@ public:
     HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http);
     uint16_t port() const;
     NSURLRequest *request() const;
+    size_t totalRequests() const { return m_totalRequests; }
     
 private:
     void respondToRequests(nw_connection_t);
@@ -50,6 +51,7 @@ private:
     RetainPtr<nw_listener_t> m_listener;
     const Protocol m_protocol;
     const HashMap<String, HTTPResponse> m_requestResponseMap;
+    size_t m_totalRequests { 0 };
 };
 
 struct HTTPServer::HTTPResponse {

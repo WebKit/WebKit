@@ -149,7 +149,13 @@ public:
 
     bool ignoresAppBoundDomains() const { return m_ignoresAppBoundDomains; }
     void setIgnoresAppBoundDomains(bool shouldIgnore) { m_ignoresAppBoundDomains = shouldIgnore; }
-    
+
+    bool loadsSubresources() const { return m_loadsSubresources; }
+    void setLoadsSubresources(bool loads) { m_loadsSubresources = loads; }
+
+    bool loadsFromNetwork() const { return m_loadsFromNetwork; }
+    void setLoadsFromNetwork(bool loads) { m_loadsFromNetwork = loads; }
+
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -191,6 +197,8 @@ private:
     WTF::String m_processDisplayName;
     WebKit::WebViewCategory m_webViewCategory { WebKit::WebViewCategory::AppBoundDomain };
     bool m_ignoresAppBoundDomains { false };
+    bool m_loadsSubresources { true };
+    bool m_loadsFromNetwork { true };
 };
 
 } // namespace API
