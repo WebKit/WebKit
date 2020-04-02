@@ -1,3 +1,33 @@
+2020-04-02  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Enable offlineasm debug annotations for GCC
+        https://bugs.webkit.org/show_bug.cgi?id=207119
+
+        Reviewed by Darin Adler.
+
+        This simply reuses the existing code that generates debug
+        annotations, adding two workarounds for limitations in GCC and
+        GDB.
+
+        First, the .file directives that offlineasm inserts in inline asm
+        use file slots that conflict with those in the compilation unit
+        that includes LLIntAssembly.h (specifically,
+        LowLevelInterpreter.cpp). Clang's built-in assembler will
+        transparently fix that for us, but for GCC we need to
+        post-process the generated assembler.
+
+        Unfortunately, cmake doesn't allow us to introduce a compiler wrapper for a
+        single source file, so we need to create a separate target for it.  This
+        wrapping only happens when building with GCC and the user has explicitly
+        requested debug information, either by selecting a Debug/RelWithDebInfo build
+        or setting GCC_OFFLINEASM_SOURCE_MAP.
+
+        Second, GDB will only look at the line table for a compilation unit if
+        it can first resolve the address to one of the known symbols in the
+        file. Introduce marker symbols to work around this bug.
+
+        * CMakeLists.txt:
+
 2020-04-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         Intl.NumberFormat.prototype.format must preserve sign of -0

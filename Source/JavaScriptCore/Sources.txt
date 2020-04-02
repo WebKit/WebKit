@@ -675,8 +675,6 @@ llint/LLIntEntrypoint.cpp
 llint/LLIntExceptions.cpp
 llint/LLIntSlowPaths.cpp
 llint/LLIntThunks.cpp
-// FIXME: We can't bundle this file due to a clang bug.
-llint/LowLevelInterpreter.cpp @no-unify
 
 parser/Lexer.cpp
 parser/ModuleAnalyzer.cpp

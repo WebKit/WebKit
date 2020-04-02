@@ -382,6 +382,17 @@
 #define WARN_UNUSED_RETURN
 #endif
 
+/* DEBUGGER_ANNOTATION_MARKER */
+
+#if !defined(DEBUGGER_ANNOTATION_MARKER) && COMPILER(GCC)
+#define DEBUGGER_ANNOTATION_MARKER(name) \
+    __attribute__((__no_reorder__)) void name(void) { __asm__(""); }
+#endif
+
+#if !defined(DEBUGGER_ANNOTATION_MARKER)
+#define DEBUGGER_ANNOTATION_MARKER(name)
+#endif
+
 #if !defined(__has_include) && COMPILER(MSVC)
 #define __has_include(path) 0
 #endif
