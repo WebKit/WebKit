@@ -377,7 +377,7 @@ EventHandler::EventHandler(Frame& frame)
     , m_hoverTimer(*this, &EventHandler::hoverTimerFired)
     , m_cursorUpdateTimer(*this, &EventHandler::cursorUpdateTimerFired)
 #if PLATFORM(MAC)
-    , m_pendingMomentumWheelEventsTimer(*this, &EventHandler::clearLatchedState)
+    , m_clearLatchingStateTimer(*this, &EventHandler::clearLatchedStateTimerFired)
 #endif
     , m_autoscrollController(makeUnique<AutoscrollController>())
 #if !ENABLE(IOS_TOUCH_EVENTS)
@@ -2711,19 +2711,25 @@ bool EventHandler::shouldSwapScrollDirection(const HitTestResult&, const Platfor
 
 #endif
 
+void EventHandler::clearLatchedStateTimerFired()
+{
+    LOG(ScrollLatching, "EventHandler %p clearLatchedStateTimerFired()", this);
+    clearLatchedState();
+}
+
 #if !PLATFORM(MAC)
 
-void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent&, const HitTestResult&, RefPtr<Element>&, RefPtr<ContainerNode>&, WeakPtr<ScrollableArea>&, bool&)
+void EventHandler::determineWheelEventTarget(const PlatformWheelEvent&, const HitTestResult&, RefPtr<Element>&, RefPtr<ContainerNode>&, WeakPtr<ScrollableArea>&, bool&)
 {
 }
 
-void EventHandler::platformRecordWheelEvent(const PlatformWheelEvent& event)
+void EventHandler::recordWheelEventForDeltaFilter(const PlatformWheelEvent& event)
 {
     if (auto* page = m_frame.page())
         page->wheelEventDeltaFilter()->updateFromDelta(FloatSize(event.deltaX(), event.deltaY()));
 }
 
-bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& event, ContainerNode*, const WeakPtr<ScrollableArea>&)
+bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& event, ContainerNode*, const WeakPtr<ScrollableArea>&)
 {
     Ref<Frame> protectedFrame(m_frame);
 
@@ -2740,7 +2746,7 @@ bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelE
     return true;
 }
 
-void EventHandler::platformNotifyIfEndGesture(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&)
+void EventHandler::processWheelEventForScrollSnap(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&)
 {
 }
 
@@ -2801,7 +2807,7 @@ bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, con
     if (scrollableArea)
         scrollableArea->setScrollShouldClearLatchedState(false);
 
-    platformNotifyIfEndGesture(event, scrollableArea);
+    processWheelEventForScrollSnap(event, scrollableArea);
 
     if (!widget->platformWidget())
         return true;
@@ -2848,7 +2854,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     RefPtr<ContainerNode> scrollableContainer;
     WeakPtr<ScrollableArea> scrollableArea;
     bool isOverWidget = result.isOverWidget();
-    platformPrepareForWheelEvents(event, result, element, scrollableContainer, scrollableArea, isOverWidget);
+    determineWheelEventTarget(event, result, element, scrollableContainer, scrollableArea, isOverWidget);
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     if (event.phase() == PlatformWheelEventPhaseNone && event.momentumPhase() == PlatformWheelEventPhaseNone && m_frame.page())
@@ -2858,7 +2864,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     // FIXME: It should not be necessary to do this mutation here.
     // Instead, the handlers should know convert vertical scrolls appropriately.
     PlatformWheelEvent adjustedEvent = shouldSwapScrollDirection(result, event) ? event.copySwappingDirection() : event;
-    platformRecordWheelEvent(adjustedEvent);
+    recordWheelEventForDeltaFilter(adjustedEvent);
 
     if (element) {
         if (isOverWidget) {
@@ -2876,7 +2882,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
                 scrollableArea->setScrollShouldClearLatchedState(false);
             }
 
-            platformNotifyIfEndGesture(adjustedEvent, scrollableArea);
+            processWheelEventForScrollSnap(adjustedEvent, scrollableArea);
             return true;
         }
     }
@@ -2884,8 +2890,8 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     if (scrollableArea)
         scrollableArea->setScrollShouldClearLatchedState(false);
 
-    bool handledEvent = platformCompleteWheelEvent(adjustedEvent, scrollableContainer.get(), scrollableArea);
-    platformNotifyIfEndGesture(adjustedEvent, scrollableArea);
+    bool handledEvent = processWheelEventForScrolling(adjustedEvent, scrollableContainer.get(), scrollableArea);
+    processWheelEventForScrollSnap(adjustedEvent, scrollableArea);
     return handledEvent;
 }
 
