@@ -1,3 +1,13 @@
+2020-04-01  Jonathan Bedard  <jbedard@apple.com>
+
+        run-javascriptcore-tests: runJSCStressTests shouldn't exit the program
+        https://bugs.webkit.org/show_bug.cgi?id=209887
+
+        Reviewed by Darin Adler.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Exit the function, not the program.
+
 2020-04-01  Chris Dumez  <cdumez@apple.com>
 
         Regression(r257963) didFailProvisionalNavigation delegate no longer gets called when cancelling a cross-site provisional navigation

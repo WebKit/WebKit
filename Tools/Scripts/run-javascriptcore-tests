@@ -810,7 +810,7 @@ sub runJSCStressTests
     }
 
     if (!$hasTestsToRun) {
-        exit(0);
+        return;
     }
 
     print "Running: " . join(" ", @jscStressDriverCmd) . "\n";
