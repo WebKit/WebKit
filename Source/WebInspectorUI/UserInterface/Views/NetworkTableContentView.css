@@ -349,6 +349,7 @@ body[dir=rtl] .network-table .waterfall .block {
     padding-top: 1px;
     -webkit-padding-start: 4px;
     -webkit-user-select: all;
+    font-variant-numeric: tabular-nums;
 }
 
 @media (prefers-color-scheme: dark) {

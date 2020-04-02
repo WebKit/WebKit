@@ -1,3 +1,13 @@
+2020-04-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Network tab summary bar jiggles
+        https://bugs.webkit.org/show_bug.cgi?id=209927
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table > .statistics > .statistic > .text):
+
 2020-04-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Use ECMAScript Numeric Separators for numbers with 5 or more digits
