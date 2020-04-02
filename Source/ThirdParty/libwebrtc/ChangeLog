@@ -1,3 +1,9 @@
+2020-04-02  Keith Rollin  <krollin@apple.com>
+
+        Sort libwebrtc Xcode project file
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix after r259385.
