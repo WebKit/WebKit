@@ -385,7 +385,7 @@ private:
 
     void dispatchDidCommitLoad(Optional<HasInsecureContent> initialHasInsecureContent, Optional<UsedLegacyTLS> initialUsedLegacyTLS);
 
-    void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, RefPtr<FormState>&&, AllowNavigationToInvalidURL, ShouldTreatAsContinuingLoad, CompletionHandler<void()>&& = [] { }); // Calls continueLoadAfterNavigationPolicy
+    void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, RefPtr<FormState>&&, AllowNavigationToInvalidURL, CompletionHandler<void()>&& = [] { }); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader&); // Calls loadWithDocumentLoader
 
     void loadWithNavigationAction(const ResourceRequest&, NavigationAction&&, LockHistory, FrameLoadType, RefPtr<FormState>&&, AllowNavigationToInvalidURL, const String& downloadAttribute = { }, CompletionHandler<void()>&& = [] { }); // Calls loadWithDocumentLoader

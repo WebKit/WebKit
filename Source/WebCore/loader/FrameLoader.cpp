@@ -1513,7 +1513,7 @@ void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, Navig
     if (m_documentLoader)
         loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
 
-    loadWithDocumentLoader(loader.ptr(), type, WTFMove(formState), allowNavigationToInvalidURL, ShouldTreatAsContinuingLoad::No, WTFMove(completionHandler));
+    loadWithDocumentLoader(loader.ptr(), type, WTFMove(formState), allowNavigationToInvalidURL, WTFMove(completionHandler));
 }
 
 void FrameLoader::load(DocumentLoader& newDocumentLoader)
@@ -1556,10 +1556,10 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader)
         type = FrameLoadType::Reload;
     }
 
-    loadWithDocumentLoader(&newDocumentLoader, type, nullptr, AllowNavigationToInvalidURL::Yes, ShouldTreatAsContinuingLoad::No);
+    loadWithDocumentLoader(&newDocumentLoader, type, nullptr, AllowNavigationToInvalidURL::Yes);
 }
 
-void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, RefPtr<FormState>&& formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldTreatAsContinuingLoad, CompletionHandler<void()>&& completionHandler)
+void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, RefPtr<FormState>&& formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, CompletionHandler<void()>&& completionHandler)
 {
     FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "loadWithDocumentLoader: frame load started");
 
@@ -1760,7 +1760,7 @@ void FrameLoader::reloadWithOverrideEncoding(const String& encoding)
 
     loader->setOverrideEncoding(encoding);
 
-    loadWithDocumentLoader(loader.ptr(), FrameLoadType::Reload, { }, AllowNavigationToInvalidURL::Yes, ShouldTreatAsContinuingLoad::No);
+    loadWithDocumentLoader(loader.ptr(), FrameLoadType::Reload, { }, AllowNavigationToInvalidURL::Yes);
 }
 
 void FrameLoader::reload(OptionSet<ReloadOption> options)
@@ -1811,7 +1811,7 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
         return FrameLoadType::Reload;
     };
     
-    loadWithDocumentLoader(loader.ptr(), frameLoadTypeForReloadOptions(options), { }, AllowNavigationToInvalidURL::Yes, ShouldTreatAsContinuingLoad::No);
+    loadWithDocumentLoader(loader.ptr(), frameLoadTypeForReloadOptions(options), { }, AllowNavigationToInvalidURL::Yes);
 }
 
 void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItemPolicy, StopLoadingPolicy stopLoadingPolicy)
@@ -3736,7 +3736,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
         documentLoader->setTriggeringAction(WTFMove(action));
 
         documentLoader->setLastCheckedRequest(ResourceRequest());
-        loadWithDocumentLoader(documentLoader, loadType, { }, AllowNavigationToInvalidURL::Yes, shouldTreatAsContinuingLoad);
+        loadWithDocumentLoader(documentLoader, loadType, { }, AllowNavigationToInvalidURL::Yes);
         return;
     }
 
