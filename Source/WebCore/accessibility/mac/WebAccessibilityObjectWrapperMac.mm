@@ -1255,7 +1255,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
         RefPtr<Range> range = [protectedSelf rangeForTextMarkerRange:textMarkerRange];
         if (!range)
             return nil;
-        NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] init];
+        auto attrString = adoptNS([[NSMutableAttributedString alloc] init]);
         TextIterator it(*range);
         while (!it.atEnd()) {
             Node& node = it.range().start.container;
@@ -1265,8 +1265,8 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
                 // Add the text of the list marker item if necessary.
                 String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(createLegacyEditingPosition(it.range().start)));
                 if (!listMarkerText.isEmpty())
-                    AXAttributedStringAppendText(attrString, &node, listMarkerText, spellCheck);
-                AXAttributedStringAppendText(attrString, &node, it.text(), spellCheck);
+                    AXAttributedStringAppendText(attrString.get(), &node, listMarkerText, spellCheck);
+                AXAttributedStringAppendText(attrString.get(), &node, it.text(), spellCheck);
             } else {
                 Node* replacedNode = it.node();
                 NSString *attachmentString = nsStringForReplacedNode(replacedNode);
@@ -1281,13 +1281,13 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
 
                     // add the attachment attribute
                     AccessibilityObject* obj = replacedNode->renderer()->document().axObjectCache()->getOrCreate(replacedNode->renderer());
-                    AXAttributeStringSetElement(attrString, NSAccessibilityAttachmentTextAttribute, obj, attrStringRange);
+                    AXAttributeStringSetElement(attrString.get(), NSAccessibilityAttachmentTextAttribute, obj, attrStringRange);
                 }
             }
             it.advance();
         }
 
-        return [attrString autorelease];
+        return attrString.autorelease();
     });
 }
 
