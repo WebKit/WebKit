@@ -44,7 +44,7 @@
        (subpath "/System/Library/Frameworks")
        (subpath "/System/Library/PrivateFrameworks")
        (subpath "/usr/lib")
-       (literal "/usr/local/lib/sanitizers") ;; FIXME(209820)
+       (subpath "/usr/local/lib/sanitizers") ;; FIXME(209820)
        (subpath "/usr/appleinternal/lib/sanitizers"))
 
 (allow file-read-metadata
@@ -87,7 +87,7 @@
        (literal "/dev/dtracehelper"))
 
 (allow file-read*
-       (literal "/usr/local/lib/sanitizers") ;; FIXME(209820)
+       (subpath "/usr/local/lib/sanitizers") ;; FIXME(209820)
        (subpath "/usr/appleinternal/lib/sanitizers"))
 
 (allow file-write-create

@@ -1,5 +1,19 @@
 2020-04-03  Brent Fulgham  <bfulgham@apple.com>
 
+        [macOS] Update sandbox rules for correct sanitizer paths in current OS releases
+        https://bugs.webkit.org/show_bug.cgi?id=209818
+        <rdar://problem/58422996>
+
+        Unreviewed follow-up based on feedback from the sanitizer team.
+
+        The change in r259317 left the original, incorrect, 'literal' form of the path, rather
+        than the correct 'subpath' form. This corrects that issue.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2020-04-03  Brent Fulgham  <bfulgham@apple.com>
+
         Remove unneeded sandbox access to some file paths
         https://bugs.webkit.org/show_bug.cgi?id=209938
         <rdar://problem/59529620>
