@@ -1,3 +1,19 @@
+2020-04-03  Kate Cheney  <katherine_cheney@apple.com>
+
+        Prevent non app-bound domain cookies from being read or set using API calls
+        https://bugs.webkit.org/show_bug.cgi?id=209926
+        <rdar://problem/61071428>
+
+        Reviewed by Brady Eidson.
+
+        Added 3 new API tests to test that non app-bound cookies are not being
+        set or returned via API calls. Also added a function to reset state
+        between tests for internal debugging.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (setUpCookieTest):
+        (TEST):
+
 2020-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add more logging to help diagnose <webkit.org/b/209685>

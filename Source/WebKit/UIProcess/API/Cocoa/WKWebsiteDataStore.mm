@@ -613,7 +613,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_appBoundDomains:(void (^)(NSArray<NSString *> *))completionHandler
 {
-    _websiteDataStore->appBoundDomainsForTesting([completionHandler = makeBlockPtr(completionHandler)](auto& domains) mutable {
+    _websiteDataStore->getAppBoundDomains([completionHandler = makeBlockPtr(completionHandler)](auto& domains) mutable {
         Vector<RefPtr<API::Object>> apiDomains;
         apiDomains.reserveInitialCapacity(domains.size());
         for (auto& domain : domains)

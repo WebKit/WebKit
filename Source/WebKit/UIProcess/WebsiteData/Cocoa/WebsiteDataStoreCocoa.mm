@@ -466,8 +466,10 @@ void WebsiteDataStore::beginAppBoundDomainCheck(const URL& requestURL, WebFrameP
     });
 }
 
-void WebsiteDataStore::appBoundDomainsForTesting(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&& completionHandler) const
+void WebsiteDataStore::getAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&& completionHandler) const
 {
+    ASSERT(RunLoop::isMain());
+
     ensureAppBoundDomains([completionHandler = WTFMove(completionHandler)] (auto& domains) mutable {
         completionHandler(domains);
     });

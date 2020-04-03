@@ -77,6 +77,8 @@ public:
     void cookiesDidChange();
     void cookieManagerDestroyed();
 
+    void filterAppBoundCookies(const Vector<WebCore::Cookie>&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
+
 private:
     HTTPCookieStore(WebKit::WebsiteDataStore&);
 
