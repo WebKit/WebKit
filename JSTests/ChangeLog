@@ -1,5 +1,41 @@
 2020-04-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r256766. rdar://problem/61231942
+
+    [Wasm] REGRESSION(r256665): Wasm->JS call IC needs to save memory size register
+    https://bugs.webkit.org/show_bug.cgi?id=207849
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * wasm/regress/regress-256665.js: Added.
+    (f):
+    
+    Source/JavaScriptCore:
+    
+    When generating the call IC, we should select the callee saves using BoundsChecking mode in order
+    to obey to the calling conventions described in r256665. Currently, we won't restore the memory size
+    register when calling the Wasm LLInt through the call IC.
+    
+    * wasm/js/WebAssemblyFunction.cpp:
+    (JSC::WebAssemblyFunction::calleeSaves const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256766 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-17  Tadeu Zagallo  <tzagallo@apple.com>
+
+            [Wasm] REGRESSION(r256665): Wasm->JS call IC needs to save memory size register
+            https://bugs.webkit.org/show_bug.cgi?id=207849
+
+            Reviewed by Mark Lam.
+
+            * wasm/regress/regress-256665.js: Added.
+            (f):
+
+2020-04-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256698. rdar://problem/61231902
 
     Unreviewed: fix broken tests added in r256665
