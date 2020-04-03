@@ -117,7 +117,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
             postLayoutData.surroundingContextCursorPosition = characterCount(*surroundingRange);
             postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;
         } else {
-            postLayoutData.surroundingContext = plainText(*surroundingRange);
+            postLayoutData.surroundingContext = surroundingRange ? plainText(*surroundingRange) : emptyString();
             if (surroundingStart.isNull() || selectionStart.isNull())
                 postLayoutData.surroundingContextCursorPosition = 0;
             else
