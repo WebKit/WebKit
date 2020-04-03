@@ -48,34 +48,6 @@
 VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_Usage;
 VT_EXPORT const CFStringRef kVTCompressionPropertyKey_Usage;
 
-#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS) && !HAVE_VTB_REQUIREDLOWLATENCY
-static inline bool isStandardFrameSize(int32_t width, int32_t height)
-{
-    // FIXME: Envision relaxing this rule, something like width and height dividable by 4 or 8 should be good enough.
-    if (width == 1280)
-        return height == 720;
-    if (width == 720)
-        return height == 1280;
-    if (width == 960)
-        return height == 540;
-    if (width == 540)
-        return height == 960;
-    if (width == 640)
-        return height == 480;
-    if (width == 480)
-        return height == 640;
-    if (width == 288)
-        return height == 352;
-    if (width == 352)
-        return height == 288;
-    if (width == 320)
-        return height == 240;
-    if (width == 240)
-        return height == 320;
-    return false;
-}
-#endif
-
 @interface RTCVideoEncoderH264 ()
 
 - (void)frameWasEncoded:(OSStatus)status
@@ -785,6 +757,31 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
       CFRelease(sourceAttributes);
       sourceAttributes = nullptr;
     }
+
+    auto isStandardFrameSize = [](int32_t width, int32_t height) {
+        // FIXME: Envision relaxing this rule, something like width and height dividable by 4 or 8 should be good enough.
+        if (width == 1280)
+            return height == 720;
+        if (width == 720)
+            return height == 1280;
+        if (width == 960)
+            return height == 540;
+        if (width == 540)
+            return height == 960;
+        if (width == 640)
+            return height == 480;
+        if (width == 480)
+            return height == 640;
+        if (width == 288)
+            return height == 352;
+        if (width == 352)
+            return height == 288;
+        if (width == 320)
+            return height == 240;
+        if (width == 240)
+            return height == 320;
+        return false;
+    };
 
     if (!isStandardFrameSize(_width, _height)) {
       _disableEncoding = true;

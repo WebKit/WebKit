@@ -1,5 +1,33 @@
 2020-04-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r259397. rdar://problem/61273057
+
+    Build fix after r259385.
+    
+    Reviewed by David Kilzer, Youenn Fablet.
+    
+    Convert isStandardFrameSize() into a lambda function since it only has one call site.
+    
+    * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+    (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+    (isStandardFrameSize): Deleted.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259397 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+            Build fix after r259385.
+
+            Reviewed by David Kilzer, Youenn Fablet.
+
+            Convert isStandardFrameSize() into a lambda function since it only has one call site.
+
+            * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+            (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+            (isStandardFrameSize): Deleted.
+
+2020-04-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r259458. rdar://problem/61265583
 
     Remove rtpplay.exe from the libwebrtc source folder
