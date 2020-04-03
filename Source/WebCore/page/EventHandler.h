@@ -209,13 +209,6 @@ public:
     void defaultWheelEventHandler(Node*, WheelEvent&);
     bool handlePasteGlobalSelection(const PlatformMouseEvent&);
 
-    void determineWheelEventTarget(const PlatformWheelEvent&, const HitTestResult&, RefPtr<Element>& eventTarget, RefPtr<ContainerNode>& scrollableContainer, WeakPtr<ScrollableArea>&, bool& isOverWidget);
-    void recordWheelEventForDeltaFilter(const PlatformWheelEvent&);
-    bool processWheelEventForScrolling(const PlatformWheelEvent&, ContainerNode* scrollableContainer, const WeakPtr<ScrollableArea>&);
-    void processWheelEventForScrollSnap(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&);
-
-    bool platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget&, ContainerNode* scrollableContainer);
-
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
     using TouchArray = Vector<RefPtr<Touch>>;
     using EventTargetTouchMap = HashMap<EventTarget*, TouchArray*>;
@@ -448,8 +441,15 @@ private:
     bool passWidgetMouseDownEventToWidget(RenderWidget*);
 
     bool passMouseDownEventToWidget(Widget*);
-    bool widgetDidHandleWheelEvent(const PlatformWheelEvent&, Widget&);
+
+    bool passWheelEventToWidget(const PlatformWheelEvent&, Widget&);
+    void determineWheelEventTarget(const PlatformWheelEvent&, const HitTestResult&, RefPtr<Element>& eventTarget, RefPtr<ContainerNode>& scrollableContainer, WeakPtr<ScrollableArea>&, bool& isOverWidget);
+    void recordWheelEventForDeltaFilter(const PlatformWheelEvent&);
+    bool processWheelEventForScrolling(const PlatformWheelEvent&, ContainerNode* scrollableContainer, const WeakPtr<ScrollableArea>&);
+    void processWheelEventForScrollSnap(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&);
     bool completeWidgetWheelEvent(const PlatformWheelEvent&, const WeakPtr<Widget>&, const WeakPtr<ScrollableArea>&, ContainerNode*);
+
+    bool platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget&, ContainerNode* scrollableContainer);
 
     void defaultSpaceEventHandler(KeyboardEvent&);
     void defaultBackspaceEventHandler(KeyboardEvent&);

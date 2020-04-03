@@ -467,7 +467,7 @@ static void selfRetainingNSScrollViewScrollWheel(NSScrollView *self, SEL selecto
         CFRelease((__bridge CFTypeRef)self);
 }
 
-bool EventHandler::widgetDidHandleWheelEvent(const PlatformWheelEvent& wheelEvent, Widget& widget)
+bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, Widget& widget)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

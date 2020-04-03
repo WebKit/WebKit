@@ -418,7 +418,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
     return false;
 }
 
-bool EventHandler::widgetDidHandleWheelEvent(const PlatformWheelEvent&, Widget& widget)
+bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget& widget)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

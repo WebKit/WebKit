@@ -2869,7 +2869,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     if (element) {
         if (isOverWidget) {
             if (WeakPtr<Widget> widget = widgetForElement(*element)) {
-                if (widgetDidHandleWheelEvent(event, *widget.get()))
+                if (passWheelEventToWidget(event, *widget.get()))
                     return completeWidgetWheelEvent(adjustedEvent, widget, scrollableArea, scrollableContainer.get());
             }
         }
@@ -4370,7 +4370,7 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
     return true;
 }
 
-bool EventHandler::widgetDidHandleWheelEvent(const PlatformWheelEvent& event, Widget& widget)
+bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& event, Widget& widget)
 {
     if (!is<FrameView>(widget))
         return false;
