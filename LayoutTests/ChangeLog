@@ -1,3 +1,13 @@
+2020-04-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to the runningboard service in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=209933
+
+        Reviewed by Brent Fulgham.
+
+        * fast/sandbox/ios/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/ios/sandbox-mach-lookup.html:
+
 2020-04-03  Sihui Liu  <sihui_liu@apple.com>
 
         Flaky Test: storage/indexeddb/cursor-request-cycle.html
