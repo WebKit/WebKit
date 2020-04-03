@@ -22,8 +22,7 @@ RTC_OBJC_EXPORT
 __attribute__((objc_runtime_name("WK_RTCDefaultVideoEncoderFactory")))
 @interface RTCDefaultVideoEncoderFactory : NSObject <RTCVideoEncoderFactory>
 
-@property(nonatomic, retain) RTCVideoCodecInfo *preferredCodec;
-
+- (id)initWithH265:(bool)supportH265;
 + (NSArray<RTCVideoCodecInfo *> *)supportedCodecs;
 
 @end

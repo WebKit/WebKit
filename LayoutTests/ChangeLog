@@ -1,3 +1,14 @@
+2020-04-03  youenn fablet  <youenn@apple.com>
+
+        Add initial support for WebRTC HEVC
+        https://bugs.webkit.org/show_bug.cgi?id=204283
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+        * webrtc/h265-expected.txt: Added.
+        * webrtc/h265.html: Added.
+
 2020-04-02  John Wilander  <wilander@apple.com>
 
         Add SPI to configure WebsiteDataStores with a URL for standalone web applications and use it to disable first-party website data removal in ITP

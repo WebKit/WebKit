@@ -236,8 +236,8 @@ public:
 #if ENABLE(WEB_RTC)
     bool webRTCDTMFEnabled() const { return m_isWebRTCDTMFEnabled; }
     void setWebRTCDTMFEnabled(bool isEnabled) { m_isWebRTCDTMFEnabled = isEnabled; }
-    bool webRTCVP8CodecEnabled() const { return m_isWebRTCVP8CodecEnabled; }
-    void setWebRTCVP8CodecEnabled(bool isEnabled) { m_isWebRTCVP8CodecEnabled = isEnabled; }
+    bool webRTCH265CodecEnabled() const { return m_isWebRTCH265CodecEnabled; }
+    void setWebRTCH265CodecEnabled(bool isEnabled) { m_isWebRTCH265CodecEnabled = isEnabled; }
     bool peerConnectionEnabled() const { return m_isPeerConnectionEnabled; }
     void setPeerConnectionEnabled(bool isEnabled) { m_isPeerConnectionEnabled = isEnabled; }
     bool webRTCMDNSICECandidatesEnabled() const { return m_isWebRTCMDNSICECandidatesEnabled; }
@@ -502,7 +502,7 @@ private:
 
 #if ENABLE(WEB_RTC)
     bool m_isWebRTCDTMFEnabled { true };
-    bool m_isWebRTCVP8CodecEnabled { true };
+    bool m_isWebRTCH265CodecEnabled { true };
     bool m_isPeerConnectionEnabled { true };
     bool m_isWebRTCMDNSICECandidatesEnabled { false };
     bool m_isWebRTCH264SimulcastEnabled { true };

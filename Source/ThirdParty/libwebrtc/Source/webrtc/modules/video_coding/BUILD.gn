@@ -14,6 +14,14 @@ rtc_library("encoded_frame") {
     "encoded_frame.cc",
     "encoded_frame.h",
   ]
+
+  if (rtc_use_h265) {
+    sources += [
+      "h265_vps_sps_pps_tracker.cc",
+      "h265_vps_sps_pps_tracker.h",
+    ]
+  }
+
   deps = [
     ":codec_globals_headers",
     ":video_codec_interface",

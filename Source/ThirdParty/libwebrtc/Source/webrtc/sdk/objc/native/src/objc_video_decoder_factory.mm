@@ -97,7 +97,10 @@ std::unique_ptr<VideoDecoder> ObjCVideoDecoderFactory::CreateVideoDecoder(
     if ([codecName isEqualToString:codecInfo.name]) {
       id<RTCVideoDecoder> decoder = [decoder_factory_ createDecoder:codecInfo];
 
-      if ([decoder isKindOfClass:[RTCWrappedNativeVideoDecoder class]]) {
+      // Because of symbol conflict, isKindOfClass doesn't work as expected.
+      // See https://bugs.webkit.org/show_bug.cgi?id=198782.
+      // if ([decoder isKindOfClass:[RTCWrappedNativeVideoDecoder class]]) {
+      if ([codecName isEqual:@"VP8"] || [codecName isEqual:@"VP9"]) {
         return [(RTCWrappedNativeVideoDecoder *)decoder releaseWrappedDecoder];
       } else {
         return std::unique_ptr<ObjCVideoDecoder>(new ObjCVideoDecoder(decoder));

@@ -3665,6 +3665,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     if (m_drawingArea)
         m_drawingArea->updatePreferences(store);
 
+#if USE(LIBWEBRTC)
+    m_page->libWebRTCProvider().supportsH265(RuntimeEnabledFeatures::sharedFeatures().webRTCH265CodecEnabled());
+#endif
+
 #if ENABLE(GPU_PROCESS)
     // FIXME: useGPUProcessForMedia should be a RuntimeEnabledFeature since it's global.
     static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(settings.useGPUProcessForMedia());

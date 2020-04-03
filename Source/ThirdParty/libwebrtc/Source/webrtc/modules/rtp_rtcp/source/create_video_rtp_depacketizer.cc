@@ -13,6 +13,9 @@
 #include <memory>
 
 #include "api/video/video_codec_type.h"
+#ifndef DISABLE_H265
+#include "modules/rtp_rtcp/source/rtp_format_h265.h"
+#endif
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_av1.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_generic.h"
@@ -27,6 +30,10 @@ std::unique_ptr<VideoRtpDepacketizer> CreateVideoRtpDepacketizer(
   switch (codec) {
     case kVideoCodecH264:
       return std::make_unique<VideoRtpDepacketizerH264>();
+#ifndef DISABLE_H265
+    case kVideoCodecH265:
+      return std::make_unique<VideoRtpDepacketizerH265>();
+#endif
     case kVideoCodecVP8:
       return std::make_unique<VideoRtpDepacketizerVp8>();
     case kVideoCodecVP9:

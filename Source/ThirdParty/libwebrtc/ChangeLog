@@ -1,3 +1,126 @@
+2020-04-03  youenn fablet  <youenn@apple.com>
+
+        Add initial support for WebRTC HEVC
+        https://bugs.webkit.org/show_bug.cgi?id=204283
+
+        Reviewed by Eric Carlson.
+
+        Add H265 packetization/depacketization and ObjC H265 encoder/decoder.
+        Support is switchable using a boolean given to the decoder/encoder factories.
+
+        * Source/webrtc/api/video/video_codec_type.h:
+        * Source/webrtc/api/video_codecs/video_codec.cc:
+        * Source/webrtc/api/video_codecs/video_codec.h:
+        (webrtc::VideoCodecH265::operator!= const):
+        * Source/webrtc/api/video_codecs/video_encoder.cc:
+        * Source/webrtc/api/video_codecs/video_encoder.h:
+        * Source/webrtc/api/video_codecs/video_encoder_config.cc:
+        * Source/webrtc/api/video_codecs/video_encoder_config.h:
+        * Source/webrtc/build_overrides/build.gni:
+        * Source/webrtc/call/rtp_payload_params.cc:
+        * Source/webrtc/common_video/BUILD.gn:
+        * Source/webrtc/common_video/h265/h265_common.cc: Added.
+        * Source/webrtc/common_video/h265/h265_common.h: Added.
+        * Source/webrtc/common_video/h265/h265_pps_parser.cc: Added.
+        * Source/webrtc/common_video/h265/h265_pps_parser.h: Added.
+        * Source/webrtc/common_video/h265/h265_sps_parser.cc: Added.
+        * Source/webrtc/common_video/h265/h265_sps_parser.h: Added.
+        * Source/webrtc/common_video/h265/h265_vps_parser.cc: Added.
+        * Source/webrtc/common_video/h265/h265_vps_parser.h: Added.
+        * Source/webrtc/media/base/media_constants.cc:
+        * Source/webrtc/media/base/media_constants.h:
+        * Source/webrtc/modules/rtp_rtcp/BUILD.gn:
+        * Source/webrtc/modules/rtp_rtcp/source/create_video_rtp_depacketizer.cc:
+        * Source/webrtc/modules/rtp_rtcp/source/h265_sps_parser.cc: Added.
+        * Source/webrtc/modules/rtp_rtcp/source/h265_sps_parser.h: Added.
+        (webrtc::H265SpsParser::width):
+        (webrtc::H265SpsParser::height):
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_format.cc:
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_format_h265.cc: Added.
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_format_h265.h: Added.
+        (webrtc::RtpPacketizerH265::Packet::Packet):
+        (webrtc::RtpPacketizerH265::PacketUnit::PacketUnit):
+        (webrtc::VideoRtpDepacketizerH265::~VideoRtpDepacketizerH265):
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_sender_video.cc:
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_video_header.h:
+        * Source/webrtc/modules/video_coding/BUILD.gn:
+        * Source/webrtc/modules/video_coding/codecs/h265/include/h265_globals.h: Added.
+        * Source/webrtc/modules/video_coding/encoded_frame.cc:
+        * Source/webrtc/modules/video_coding/h265_vps_sps_pps_tracker.cc: Added.
+        * Source/webrtc/modules/video_coding/h265_vps_sps_pps_tracker.h: Added.
+        * Source/webrtc/modules/video_coding/include/video_codec_interface.h:
+        * Source/webrtc/modules/video_coding/jitter_buffer_common.h:
+        * Source/webrtc/modules/video_coding/packet.cc:
+        * Source/webrtc/modules/video_coding/packet_buffer.cc:
+        * Source/webrtc/modules/video_coding/session_info.cc:
+        * Source/webrtc/modules/video_coding/session_info.h:
+        * Source/webrtc/rtc_base/experiments/min_video_bitrate_experiment.cc:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::createWebKitEncoderFactory):
+        (webrtc::createWebKitDecoderFactory):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH265+Private.h: Copied from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH265.h: Added.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH265.mm: Added.
+        (-[RTCCodecSpecificInfoH265 nativeCodecSpecificInfo]):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.m:
+        (-[RTCDefaultVideoDecoderFactory initWithH265:]):
+        (-[RTCDefaultVideoDecoderFactory supportedCodecs]):
+        (-[RTCDefaultVideoDecoderFactory createDecoder:]):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.m:
+        (-[RTCDefaultVideoEncoderFactory initWithH265:]):
+        (+[RTCDefaultVideoEncoderFactory supportedCodecs]):
+        (-[RTCDefaultVideoEncoderFactory createEncoder:]):
+        (-[RTCDefaultVideoEncoderFactory supportedCodecs]):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCH265ProfileLevelId.h: Copied from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCH265ProfileLevelId.mm: Added.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.h: Copied from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm: Added.
+        (RTCH265FrameDecodeParams::RTCH265FrameDecodeParams):
+        (h265DecompressionOutputCallback):
+        (-[RTCVideoDecoderH265 init]):
+        (-[RTCVideoDecoderH265 dealloc]):
+        (-[RTCVideoDecoderH265 startDecodeWithNumberOfCores:]):
+        (-[RTCVideoDecoderH265 decode:missingFrames:codecSpecificInfo:renderTimeMs:]):
+        (-[RTCVideoDecoderH265 setCallback:]):
+        (-[RTCVideoDecoderH265 releaseDecoder]):
+        (-[RTCVideoDecoderH265 resetDecompressionSession]):
+        (-[RTCVideoDecoderH265 configureDecompressionSession]):
+        (-[RTCVideoDecoderH265 destroyDecompressionSession]):
+        (-[RTCVideoDecoderH265 setVideoFormat:]):
+        (-[RTCVideoDecoderH265 implementationName]):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH265.h: Copied from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH265.mm: Added.
+        (-[RTCVideoEncoderH265 initWithCodecInfo:]):
+        (-[RTCVideoEncoderH265 dealloc]):
+        (-[RTCVideoEncoderH265 startEncodeWithSettings:numberOfCores:]):
+        (-[RTCVideoEncoderH265 encode:codecSpecificInfo:frameTypes:]):
+        (-[RTCVideoEncoderH265 setCallback:]):
+        (-[RTCVideoEncoderH265 setBitrate:framerate:]):
+        (-[RTCVideoEncoderH265 releaseEncoder]):
+        (-[RTCVideoEncoderH265 resetCompressionSession]):
+        (-[RTCVideoEncoderH265 configureCompressionSession]):
+        (-[RTCVideoEncoderH265 destroyCompressionSession]):
+        (-[RTCVideoEncoderH265 implementationName]):
+        (-[RTCVideoEncoderH265 setBitrateBps:]):
+        (-[RTCVideoEncoderH265 setEncoderBitrateBps:]):
+        (-[RTCVideoEncoderH265 frameWasEncoded:flags:sampleBuffer:width:height:renderTimeMs:timestamp:rotation:]):
+        (-[RTCVideoEncoderH265 scalingSettings]):
+        * Source/webrtc/sdk/objc/components/video_codec/nalu_rewriter.cc:
+        * Source/webrtc/sdk/objc/components/video_codec/nalu_rewriter.h:
+        * Source/webrtc/sdk/objc/native/src/objc_video_decoder_factory.mm:
+        (webrtc::ObjCVideoDecoderFactory::CreateVideoDecoder):
+        * Source/webrtc/sdk/objc/native/src/objc_video_encoder_factory.mm:
+        (webrtc::ObjCVideoEncoderFactory::CreateVideoEncoder):
+        * Source/webrtc/video/rtp_video_stream_receiver.cc:
+        * Source/webrtc/video/rtp_video_stream_receiver.h:
+        * Source/webrtc/video/send_statistics_proxy.cc:
+        * Source/webrtc/video/video_receive_stream.cc:
+        * Source/webrtc/video/video_stream_encoder.cc:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-04-02  Keith Rollin  <krollin@apple.com>
 
         Sort libwebrtc Xcode project file

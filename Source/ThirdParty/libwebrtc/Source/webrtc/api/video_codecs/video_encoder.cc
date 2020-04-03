@@ -60,6 +60,23 @@ VideoCodecH264 VideoEncoder::GetDefaultH264Settings() {
   return h264_settings;
 }
 
+#ifndef DISABLE_H265
+VideoCodecH265 VideoEncoder::GetDefaultH265Settings() {
+  VideoCodecH265 h265_settings;
+  memset(&h265_settings, 0, sizeof(h265_settings));
+
+  // h265_settings.profile = kProfileBase;
+  h265_settings.frameDroppingOn = true;
+  h265_settings.keyFrameInterval = 3000;
+  h265_settings.spsData = nullptr;
+  h265_settings.spsLen = 0;
+  h265_settings.ppsData = nullptr;
+  h265_settings.ppsLen = 0;
+
+  return h265_settings;
+}
+#endif
+
 VideoEncoder::ScalingSettings::ScalingSettings() = default;
 
 VideoEncoder::ScalingSettings::ScalingSettings(KOff) : ScalingSettings() {}

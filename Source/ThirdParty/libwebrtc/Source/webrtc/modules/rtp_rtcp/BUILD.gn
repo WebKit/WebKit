@@ -236,6 +236,17 @@ rtc_library("rtp_rtcp") {
     defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
   }
 
+  if (rtc_use_h265) {
+    sources += [
+      "source/rtp_format_h265.cc",
+      "source/rtp_format_h265.h",
+    ]
+  }
+
+  if (!rtc_use_h265) {
+    defines += ["DISABLE_H265"]
+  }
+
   deps = [
     ":rtp_rtcp_format",
     ":rtp_video_header",

@@ -327,7 +327,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #endif
 
 #if USE(LIBWEBRTC)
-    m_libWebRTCProvider->supportsVP8(RuntimeEnabledFeatures::sharedFeatures().webRTCVP8CodecEnabled());
+    m_libWebRTCProvider->supportsH265(RuntimeEnabledFeatures::sharedFeatures().webRTCH265CodecEnabled());
 #endif
 
     m_corsDisablingPatterns.reserveInitialCapacity(pageConfiguration.corsDisablingPatterns.size());

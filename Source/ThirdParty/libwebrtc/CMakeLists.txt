@@ -1404,6 +1404,7 @@ target_compile_options(webrtc PRIVATE
 
 target_compile_definitions(webrtc PRIVATE
   OPENSSL_NO_ASM
+  DISABLE_H265
   DYNAMIC_ANNOTATIONS_ENABLED=1
   EXPAT_RELATIVE_PATH
   HAVE_LRINT

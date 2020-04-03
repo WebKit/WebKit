@@ -38,6 +38,9 @@
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
 #include "modules/video_coding/h264_sps_pps_tracker.h"
 #include "modules/video_coding/loss_notification_controller.h"
+#ifndef DISABLE_H265
+#include "modules/video_coding/h265_vps_sps_pps_tracker.h"
+#endif
 #include "modules/video_coding/packet_buffer.h"
 #include "modules/video_coding/rtp_frame_reference_finder.h"
 #include "modules/video_coding/unique_timestamp_counter.h"
@@ -316,6 +319,10 @@ class RtpVideoStreamReceiver : public LossNotificationSender,
 
   // Maps payload id to the depacketizer.
   std::map<uint8_t, std::unique_ptr<VideoRtpDepacketizer>> payload_type_map_;
+
+#ifndef DISABLE_H265
+  video_coding::H265VpsSpsPpsTracker h265_tracker_;
+#endif
 
   // TODO(johan): Remove pt_codec_params_ once
   // https://bugs.chromium.org/p/webrtc/issues/detail?id=6883 is resolved.

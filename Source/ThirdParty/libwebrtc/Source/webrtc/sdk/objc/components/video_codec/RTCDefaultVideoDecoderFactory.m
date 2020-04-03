@@ -18,8 +18,23 @@
 #if defined(RTC_ENABLE_VP9)
 #import "api/video_codec/RTCVideoDecoderVP9.h"
 #endif
+#if !defined(RTC_DISABLE_H265)
+#import "RTCH265ProfileLevelId.h"
+#import "RTCVideoDecoderH265.h"
+#endif
 
-@implementation RTCDefaultVideoDecoderFactory
+@implementation RTCDefaultVideoDecoderFactory {
+  bool _supportH265;
+}
+
+- (id)initWithH265:(bool)supportH265
+{
+  self = [super init];
+  if (self) {
+      _supportH265 = supportH265;
+  }
+  return self;
+}
 
 - (NSArray<RTCVideoCodecInfo *> *)supportedCodecs {
   NSDictionary<NSString *, NSString *> *constrainedHighParams = @{
@@ -42,13 +57,30 @@
 
   RTCVideoCodecInfo *vp8Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp8Name];
 
+#if !defined(RTC_DISABLE_H265)
+  RTCVideoCodecInfo *h265Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecH265Name];
+#endif
+ 
 #if defined(RTC_ENABLE_VP9)
   RTCVideoCodecInfo *vp9Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name];
 #endif
 
+  if (!_supportH265) {
+    return @[
+      constrainedHighInfo,
+      constrainedBaselineInfo,
+      vp8Info,
+#if defined(RTC_ENABLE_VP9)
+      vp9Info,
+#endif
+    ];
+  }
   return @[
     constrainedHighInfo,
     constrainedBaselineInfo,
+#if !defined(RTC_DISABLE_H265)
+    h265Info,
+#endif
     vp8Info,
 #if defined(RTC_ENABLE_VP9)
     vp9Info,
@@ -61,6 +93,10 @@
     return [[RTCVideoDecoderH264 alloc] init];
   } else if ([info.name isEqualToString:kRTCVideoCodecVp8Name]) {
     return [RTCVideoDecoderVP8 vp8Decoder];
+#if !defined(RTC_DISABLE_H265)
+  } else if ([info.name isEqualToString:kRTCVideoCodecH265Name]) {
+    return [[RTCVideoDecoderH265 alloc] init];
+#endif
 #if defined(RTC_ENABLE_VP9)
   } else if ([info.name isEqualToString:kRTCVideoCodecVp9Name]) {
     return [RTCVideoDecoderVP9 vp9Decoder];

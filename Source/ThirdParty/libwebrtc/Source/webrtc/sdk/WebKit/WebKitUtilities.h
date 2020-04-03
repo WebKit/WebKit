@@ -39,7 +39,7 @@ class VideoDecoderFactory;
 class VideoEncoderFactory;
 class VideoFrame;
 
-enum class WebKitCodecSupport { H264, H264AndVP8 };
+enum class WebKitCodecSupport { H264VP8AndH265, H264AndVP8 };
 
 std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitCodecSupport);
 std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitCodecSupport);

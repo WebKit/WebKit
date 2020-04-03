@@ -581,14 +581,14 @@ InterruptAudioOnPageVisibilityChangeEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(MEDIA_STREAM)
 
-WebRTCVP8CodecEnabled:
+WebRTCH265CodecEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: false
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
-  humanReadableName: "WebRTC VP8 codec"
-  humanReadableDescription: "Enable WebRTC VP8 codec"
-  category: internal
+  humanReadableName: "WebRTC H265 codec"
+  humanReadableDescription: "Enable WebRTC H265 codec"
+  category: experimental
 
 WebRTCPlatformCodecsInGPUProcessEnabled:
   type: bool

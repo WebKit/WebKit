@@ -18,10 +18,23 @@
 #if defined(RTC_ENABLE_VP9)
 #import "api/video_codec/RTCVideoEncoderVP9.h"
 #endif
+#if !defined(DISABLE_H265)
+#import "RTCH265ProfileLevelId.h"
+#import "RTCVideoEncoderH265.h"
+#endif
 
-@implementation RTCDefaultVideoEncoderFactory
+@implementation RTCDefaultVideoEncoderFactory {
+  bool _supportH265;
+}
 
-@synthesize preferredCodec;
+- (id)initWithH265:(bool)supportH265
+{
+  self = [super init];
+  if (self) {
+      _supportH265 = supportH265;
+  }
+  return self;
+}
 
 + (NSArray<RTCVideoCodecInfo *> *)supportedCodecs {
   NSDictionary<NSString *, NSString *> *constrainedHighParams = @{
@@ -42,6 +55,10 @@
       [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecH264Name
                                    parameters:constrainedBaselineParams];
 
+#if !defined(DISABLE_H265)
+  RTCVideoCodecInfo *h265Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecH265Name];
+#endif
+
   RTCVideoCodecInfo *vp8Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp8Name];
 
 #if defined(RTC_ENABLE_VP9)
@@ -51,6 +68,9 @@
   return @[
     constrainedHighInfo,
     constrainedBaselineInfo,
+#if !defined(DISABLE_H265)
+    h265Info,
+#endif
     vp8Info,
 #if defined(RTC_ENABLE_VP9)
     vp9Info,
@@ -67,6 +87,12 @@
   } else if ([info.name isEqualToString:kRTCVideoCodecVp9Name]) {
     return [RTCVideoEncoderVP9 vp9Encoder];
 #endif
+#if !defined(DISABLE_H265)
+  } else if (@available(iOS 11, *)) {
+    if ([info.name isEqualToString:kRTCVideoCodecH265Name]) {
+      return [[RTCVideoEncoderH265 alloc] initWithCodecInfo:info];
+    }
+#endif
   }
 
   return nil;
@@ -76,12 +102,9 @@
   NSMutableArray<RTCVideoCodecInfo *> *codecs = [[[self class] supportedCodecs] mutableCopy];
 
   NSMutableArray<RTCVideoCodecInfo *> *orderedCodecs = [NSMutableArray array];
-  NSUInteger index = [codecs indexOfObject:self.preferredCodec];
-  if (index != NSNotFound) {
-    [orderedCodecs addObject:[codecs objectAtIndex:index]];
-    [codecs removeObjectAtIndex:index];
-  }
   [orderedCodecs addObjectsFromArray:codecs];
+  if (!_supportH265)
+    [orderedCodecs removeObjectAtIndex:0];
 
   return [orderedCodecs copy];
 }

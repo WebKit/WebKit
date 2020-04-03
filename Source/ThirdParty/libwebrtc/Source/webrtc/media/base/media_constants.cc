@@ -107,6 +107,9 @@ const char kVp8CodecName[] = "VP8";
 const char kVp9CodecName[] = "VP9";
 const char kAv1CodecName[] = "AV1X";
 const char kH264CodecName[] = "H264";
+#ifndef DISABLE_H265
+const char kH265CodecName[] = "H265";
+#endif
 
 // RFC 6184 RTP Payload Format for H.264 video
 const char kH264FmtpProfileLevelId[] = "profile-level-id";
@@ -114,6 +117,13 @@ const char kH264FmtpLevelAsymmetryAllowed[] = "level-asymmetry-allowed";
 const char kH264FmtpPacketizationMode[] = "packetization-mode";
 const char kH264FmtpSpropParameterSets[] = "sprop-parameter-sets";
 const char kH264ProfileLevelConstrainedBaseline[] = "42e01f";
+#ifndef DISABLE_H265
+// RFC 7798 RTP Payload Format for H.265 video
+const char kH265FmtpProfileSpace[] = "profile-space";
+const char kH265FmtpProfileId[] = "profile-id";
+const char kH265FmtpTierFlag[] = "tier-flag";
+const char kH265FmtpLevelId[] = "level-id";
+#endif
 
 const int kDefaultVideoMaxFramerate = 60;
 

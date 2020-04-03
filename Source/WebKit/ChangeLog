@@ -1,3 +1,16 @@
+2020-04-03  youenn fablet  <youenn@apple.com>
+
+        Add initial support for WebRTC HEVC
+        https://bugs.webkit.org/show_bug.cgi?id=204283
+
+        Reviewed by Eric Carlson.
+
+        Remove VP8 runtime flag and add a H365 runtime flag instead.
+
+        * Shared/WebPreferences.yaml:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2020-04-03  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         FileSystem handle leaks in CurlCacheManager and NetworkCacheData when failed to open a file

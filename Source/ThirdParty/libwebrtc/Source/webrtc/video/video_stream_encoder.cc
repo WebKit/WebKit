@@ -100,7 +100,13 @@ bool RequiresEncoderReset(const VideoCodec& prev_send_codec,
         return true;
       }
       break;
-
+#ifndef DISABLE_H265
+    case kVideoCodecH265:
+      if (new_send_codec.H265() != prev_send_codec.H265()) {
+        return true;
+      }
+      break;
+#endif
     default:
       break;
   }
@@ -1403,6 +1409,9 @@ EncodedImageCallback::Result VideoStreamEncoder::OnEncodedImage(
   if (codec_specific_info &&
       (codec_specific_info->codecType == kVideoCodecVP8 ||
        codec_specific_info->codecType == kVideoCodecH264 ||
+#ifndef DISABLE_H265
+       codec_specific_info->codecType == kVideoCodecH265 ||
+#endif
        codec_specific_info->codecType == kVideoCodecGeneric)) {
     simulcast_id = encoded_image.SpatialIndex().value_or(0);
   }

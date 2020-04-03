@@ -116,7 +116,7 @@ std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitCo
     });
 #endif
 
-    auto internalFactory = ObjCToNativeVideoEncoderFactory(codecSupport == WebKitCodecSupport::H264AndVP8 ? [[RTCDefaultVideoEncoderFactory alloc] init] : [[RTCVideoEncoderFactoryH264 alloc] init]);
+    auto internalFactory = ObjCToNativeVideoEncoderFactory([[RTCDefaultVideoEncoderFactory alloc] initWithH265: codecSupport == WebKitCodecSupport::H264VP8AndH265]);
     return std::make_unique<VideoEncoderFactoryWithSimulcast>(std::move(internalFactory));
 }
 
@@ -271,7 +271,7 @@ std::unique_ptr<VideoDecoder> RemoteVideoDecoderFactory::CreateVideoDecoder(cons
 
 std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitCodecSupport codecSupport)
 {
-    auto internalFactory = ObjCToNativeVideoDecoderFactory(codecSupport == WebKitCodecSupport::H264AndVP8 ? [[RTCDefaultVideoDecoderFactory alloc] init] : [[RTCVideoDecoderFactoryH264 alloc] init]);
+    auto internalFactory = ObjCToNativeVideoDecoderFactory([[RTCDefaultVideoDecoderFactory alloc] initWithH265: codecSupport == WebKitCodecSupport::H264VP8AndH265]);
     if (videoDecoderCallbacks().createCallback)
         return std::make_unique<RemoteVideoDecoderFactory>(std::move(internalFactory));
     return internalFactory;
