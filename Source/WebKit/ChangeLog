@@ -1,5 +1,38 @@
 2020-04-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r258902. rdar://problem/61231866
+
+    IPC::Decoder::decodeFixedLengthData() should be marked WARN_UNUSED_RETURN
+    <https://webkit.org/b/209448>
+    <rdar://problem/60797998>
+    
+    Reviewed by Chris Dumez.
+    
+    * Platform/IPC/ArgumentCoders.h:
+    (struct VectorArgumentCoder::decode):
+    - Check the return value of Decoder::decodeFixedLengthData().
+    * Platform/IPC/Decoder.h:
+    (IPC::Decoder::decodeFixedLengthData): Add WARN_UNUSED_RETURN.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258902 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-23  David Kilzer  <ddkilzer@apple.com>
+
+            IPC::Decoder::decodeFixedLengthData() should be marked WARN_UNUSED_RETURN
+            <https://webkit.org/b/209448>
+            <rdar://problem/60797998>
+
+            Reviewed by Chris Dumez.
+
+            * Platform/IPC/ArgumentCoders.h:
+            (struct VectorArgumentCoder::decode):
+            - Check the return value of Decoder::decodeFixedLengthData().
+            * Platform/IPC/Decoder.h:
+            (IPC::Decoder::decodeFixedLengthData): Add WARN_UNUSED_RETURN.
+
+2020-04-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r258814. rdar://problem/61231972
 
     decodeSharedBuffer() in WebCoreArgumentCoders.cpp should validate `bufferSize`

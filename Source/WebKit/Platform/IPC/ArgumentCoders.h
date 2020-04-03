@@ -330,7 +330,10 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
         Vector<T, inlineCapacity, OverflowHandler, minCapacity> temp;
         temp.grow(size);
 
-        decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T), alignof(T));
+        if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T), alignof(T))) {
+            decoder.markInvalid();
+            return false;
+        }
 
         vector.swap(temp);
         return true;
@@ -352,9 +355,12 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
         
         Vector<T, inlineCapacity, OverflowHandler, minCapacity> vector;
         vector.grow(size);
-        
-        decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(vector.data()), size * sizeof(T), alignof(T));
-        
+
+        if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(vector.data()), size * sizeof(T), alignof(T))) {
+            decoder.markInvalid();
+            return WTF::nullopt;
+        }
+
         return vector;
     }
 };
