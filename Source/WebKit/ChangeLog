@@ -1,3 +1,18 @@
+2020-04-03  youenn fablet  <youenn@apple.com>
+
+        ServiceWorkerFetchTask::timeoutTimerFired should not call contextClosed
+        https://bugs.webkit.org/show_bug.cgi?id=209906
+        <rdar://problem/61207801>
+
+        Reviewed by Chris Dumez.
+
+        Covered by http/tests/workers/service/basic-timeout.https.html no longer crashing.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::timeoutTimerFired):
+        We should not call contextClosed now that we are nullying m_swServerConnection in contextClosed.
+        Instead, we should just call cannotHandle since the timer can only fire if we have not yet received any response.
+
 2020-04-03  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed fix after r259382

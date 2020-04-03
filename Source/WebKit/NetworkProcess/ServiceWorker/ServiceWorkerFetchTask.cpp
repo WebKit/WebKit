@@ -247,11 +247,13 @@ void ServiceWorkerFetchTask::continueFetchTaskWith(ResourceRequest&& request)
 
 void ServiceWorkerFetchTask::timeoutTimerFired()
 {
-    softUpdateIfNeeded();
-
+    ASSERT(!m_isDone);
+    ASSERT(!m_wasHandled);
     RELEASE_LOG_ERROR_IF_ALLOWED("timeoutTimerFired: (hasServiceWorkerConnection=%d)", !!m_serviceWorkerConnection);
 
-    contextClosed();
+    softUpdateIfNeeded();
+
+    cannotHandle();
 
     if (m_swServerConnection)
         m_swServerConnection->fetchTaskTimedOut(serviceWorkerIdentifier());
