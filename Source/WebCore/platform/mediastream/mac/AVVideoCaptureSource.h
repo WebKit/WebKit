@@ -57,7 +57,6 @@ public:
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
 
-    enum class InterruptionReason { None, VideoNotAllowedInBackground, AudioInUse, VideoInUse, VideoNotAllowedInSideBySide };
     void captureSessionBeginInterruption(RetainPtr<NSNotification>);
     void captureSessionEndInterruption(RetainPtr<NSNotification>);
     void deviceDisconnected(RetainPtr<NSNotification>);
@@ -134,8 +133,8 @@ private:
     RefPtr<AVVideoPreset> m_currentPreset;
     IntSize m_currentSize;
     double m_currentFrameRate;
-    InterruptionReason m_interruption { InterruptionReason::None };
     int m_framesToDropAtStartup { 0 };
+    bool m_interrupted { false };
     bool m_isRunning { false };
 };
 

@@ -130,13 +130,6 @@ AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* device, String&& id,
     , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(device)
 {
-#if PLATFORM(IOS_FAMILY)
-    static_assert(static_cast<int>(InterruptionReason::VideoNotAllowedInBackground) == static_cast<int>(AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground), "InterruptionReason::VideoNotAllowedInBackground is not AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground as expected");
-    static_assert(static_cast<int>(InterruptionReason::VideoNotAllowedInSideBySide) == AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps, "InterruptionReason::VideoNotAllowedInSideBySide is not AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps as expected");
-    static_assert(static_cast<int>(InterruptionReason::VideoInUse) == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient, "InterruptionReason::VideoInUse is not AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient as expected");
-    static_assert(static_cast<int>(InterruptionReason::AudioInUse) == AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient, "InterruptionReason::AudioInUse is not AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient as expected");
-#endif
-
     [m_device.get() addObserver:m_objcObserver.get() forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:(void *)nil];
 }
 
@@ -191,7 +184,8 @@ void AVVideoCaptureSource::stopProducingData()
     if ([m_session isRunning])
         [m_session stopRunning];
 
-    m_interruption = InterruptionReason::None;
+    m_interrupted = false;
+
 #if PLATFORM(IOS_FAMILY)
     clearSession();
 #endif
@@ -572,7 +566,7 @@ void AVVideoCaptureSource::captureDeviceSuspendedDidChange()
 
 bool AVVideoCaptureSource::interrupted() const
 {
-    if (m_interruption != InterruptionReason::None)
+    if (m_interrupted)
         return true;
 
     return RealtimeMediaSource::interrupted();
@@ -617,21 +611,13 @@ void AVVideoCaptureSource::captureSessionRuntimeError(RetainPtr<NSError> error)
 void AVVideoCaptureSource::captureSessionBeginInterruption(RetainPtr<NSNotification> notification)
 {
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, [notification.get().userInfo[AVCaptureSessionInterruptionReasonKey] integerValue]);
-    m_interruption = static_cast<AVVideoCaptureSource::InterruptionReason>([notification.get().userInfo[AVCaptureSessionInterruptionReasonKey] integerValue]);
+    m_interrupted = true;
 }
 
 void AVVideoCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotification>)
 {
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
-
-    InterruptionReason reason = m_interruption;
-
-    m_interruption = InterruptionReason::None;
-    if (reason != InterruptionReason::VideoNotAllowedInSideBySide || m_isRunning || !m_session)
-        return;
-
-    [m_session startRunning];
-    m_isRunning = [m_session isRunning];
+    m_interrupted = false;
 }
 #endif
 
@@ -702,21 +688,22 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
         return;
 
     id newValue = [change valueForKey:NSKeyValueChangeNewKey];
-
     bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
 
 #if !RELEASE_LOG_DISABLED
-    if (m_callback->loggerPtr() && m_callback->logger().willLog(m_callback->logChannel(), WTFLogLevel::Debug)) {
+    if (m_callback->loggerPtr()) {
         auto identifier = Logger::LogSiteIdentifier("AVVideoCaptureSource", "observeValueForKeyPath", m_callback->logIdentifier());
-
         RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
-        m_callback->logger().debug(m_callback->logChannel(), identifier, "did change '", [keyPath UTF8String], "' to ", [valueString.get() UTF8String]);
+        m_callback->logger().logAlways(m_callback->logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "' to ", [valueString.get() UTF8String]);
     }
 #endif
 
-    if (!willChange && [keyPath isEqualToString:@"running"])
+    if (willChange)
+        return;
+
+    if ([keyPath isEqualToString:@"running"])
         m_callback->captureSessionIsRunningDidChange([newValue boolValue]);
-    if (!willChange && [keyPath isEqualToString:@"suspended"])
+    if ([keyPath isEqualToString:@"suspended"])
         m_callback->captureDeviceSuspendedDidChange();
 }
 
