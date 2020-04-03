@@ -504,8 +504,7 @@ void NetworkProcessProxy::resourceLoadDidReceiveChallenge(WebPageProxyIdentifier
     if (!page)
         return;
 
-    auto challengeProxy = AuthenticationChallengeProxy::create(WTFMove(challenge), 0, *connection(), nullptr);
-    page->resourceLoadDidReceiveChallenge(WTFMove(loadInfo), challengeProxy.get());
+    page->resourceLoadDidReceiveChallenge(WTFMove(loadInfo), WTFMove(challenge));
 }
 
 void NetworkProcessProxy::resourceLoadDidReceiveResponse(WebPageProxyIdentifier pageID, ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response)

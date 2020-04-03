@@ -29,8 +29,11 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 
+namespace WebCore {
+class AuthenticationChallenge;
+}
+
 namespace WebKit {
-class AuthenticationChallengeProxy;
 struct ResourceLoadInfo;
 }
 
@@ -42,7 +45,7 @@ public:
 
     virtual void didSendRequest(WebKit::ResourceLoadInfo&&, WebCore::ResourceRequest&&) const = 0;
     virtual void didPerformHTTPRedirection(WebKit::ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&) const = 0;
-    virtual void didReceiveChallenge(WebKit::ResourceLoadInfo&&, WebKit::AuthenticationChallengeProxy&) const = 0;
+    virtual void didReceiveChallenge(WebKit::ResourceLoadInfo&&, WebCore::AuthenticationChallenge&&) const = 0;
     virtual void didReceiveResponse(WebKit::ResourceLoadInfo&&, WebCore::ResourceResponse&&) const = 0;
     virtual void didCompleteWithError(WebKit::ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&) const = 0;
 };

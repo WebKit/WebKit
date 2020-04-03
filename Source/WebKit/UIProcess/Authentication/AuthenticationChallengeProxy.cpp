@@ -45,7 +45,7 @@ namespace WebKit {
 
 AuthenticationChallengeProxy::AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID, Ref<IPC::Connection>&& connection, WeakPtr<SecKeyProxyStore>&& secKeyProxyStore)
     : m_coreAuthenticationChallenge(WTFMove(authenticationChallenge))
-    , m_listener(AuthenticationDecisionListener::create(challengeID ? CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>([challengeID, connection = WTFMove(connection), secKeyProxyStore = WTFMove(secKeyProxyStore)](AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) {
+    , m_listener(AuthenticationDecisionListener::create([challengeID, connection = WTFMove(connection), secKeyProxyStore = WTFMove(secKeyProxyStore)](AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) {
 #if HAVE(SEC_KEY_PROXY)
         if (secKeyProxyStore && secKeyProxyStore->initialize(credential)) {
             sendClientCertificateCredentialOverXpc(connection, *secKeyProxyStore, challengeID, credential);
@@ -53,8 +53,9 @@ AuthenticationChallengeProxy::AuthenticationChallengeProxy(WebCore::Authenticati
         }
 #endif
         connection->send(Messages::AuthenticationManager::CompleteAuthenticationChallenge(challengeID, disposition, credential), 0);
-    }) : nullptr))
+    }))
 {
+    ASSERT(challengeID);
 }
 
 WebCredential* AuthenticationChallengeProxy::proposedCredential() const
