@@ -1,3 +1,35 @@
+2020-04-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r254724. rdar://problem/61231960
+
+    IPC hardening for WebPageProxy::SetPromisedDataForImage message
+    https://bugs.webkit.org/show_bug.cgi?id=206380
+    <rdar://problem/58625196>
+    
+    Reviewed by Geoffrey Garen.
+    
+    IPC hardening for WebPageProxy::SetPromisedDataForImage message. Make sure the shared memory handle sent over IPC is not null
+    and null check the SharedMemory object after calling SharedMemory::map().
+    
+    * UIProcess/mac/WebPageProxyMac.mm:
+    (WebKit::WebPageProxy::setPromisedDataForImage):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@254724 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-16  Chris Dumez  <cdumez@apple.com>
+
+            IPC hardening for WebPageProxy::SetPromisedDataForImage message
+            https://bugs.webkit.org/show_bug.cgi?id=206380
+            <rdar://problem/58625196>
+
+            Reviewed by Geoffrey Garen.
+
+            IPC hardening for WebPageProxy::SetPromisedDataForImage message. Make sure the shared memory handle sent over IPC is not null
+            and null check the SharedMemory object after calling SharedMemory::map().
+
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (WebKit::WebPageProxy::setPromisedDataForImage):
+
 2020-02-26  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r257013. rdar://problem/59789392
