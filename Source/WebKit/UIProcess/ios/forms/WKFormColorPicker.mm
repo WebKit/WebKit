@@ -306,6 +306,7 @@ using namespace WebKit;
     [self setControlValueFromUIColor:colorButton.color];
 #if PLATFORM(MACCATALYST)
     [_popover dismissPopoverAnimated:NO];
+    [_view accessoryDone];
 #endif
 }
 

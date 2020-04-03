@@ -1,3 +1,17 @@
+2020-04-03  Megan Gardner  <megan_gardner@apple.com>
+
+        Color Form Control does not come up on second selection in macCatalyst
+        https://bugs.webkit.org/show_bug.cgi?id=209939
+        <rdar://problem/61131345>
+
+        Reviewed by Wenson Hsieh.
+
+        On selection and manual dismissal of the form, we need to also call accessoryDone,
+        as the UIKit callbacks are not called on manual dismissal.
+
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        (-[WKColorPicker colorMatrixView:didTapColorButton:]):
+
 2020-04-03  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Update sandbox rules for correct sanitizer paths in current OS releases
