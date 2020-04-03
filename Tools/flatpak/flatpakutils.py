@@ -793,7 +793,8 @@ class WebkitFlatpak:
     def setup_dev_env(self):
         if not os.path.exists(os.path.join(self.flatpak_build_path, "runtime", "org.webkit.Sdk")) or self.update or self.build_all:
             self.install_all()
-            self.setup_icecc()
+            if self.use_icecream:
+                self.setup_icecc()
             self.save_config()
 
         if not self.update:
