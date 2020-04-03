@@ -455,7 +455,9 @@ IGNORE_WARNINGS_END
     } else {
         _dragSession = adoptNS([[MockDragSession alloc] initWithWindow:[_webView window] allowMove:self.shouldAllowMoveOperation]);
         [_dragSession setMockLocationInWindow:_startLocation];
+        NSLog(@"%s - preparing for drag session", __PRETTY_FUNCTION__);
         [(id <UIDragInteractionDelegate_ForWebKitOnly>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] prepareForSession:_dragSession.get() completion:[strongSelf = retainPtr(self)] {
+            NSLog(@"%s - done preparing for drag session with phase: %ld", __PRETTY_FUNCTION__, strongSelf->_phase);
             if (strongSelf->_phase == DragAndDropPhaseCancelled)
                 return;
 
@@ -602,6 +604,7 @@ IGNORE_WARNINGS_END
         return;
     }
 
+    NSLog(@"%s - phase: %ld", __PRETTY_FUNCTION__, _phase);
     switch (_phase) {
     case DragAndDropPhaseBeginning: {
         NSMutableArray<NSItemProvider *> *itemProviders = [NSMutableArray array];

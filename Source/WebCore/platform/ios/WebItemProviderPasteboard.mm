@@ -492,7 +492,6 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 
 - (void)updateSupportedTypeIdentifiers:(NSArray<NSString *> *)types
 {
-    NSLog(@"%s => %@", __PRETTY_FUNCTION__, types);
     _supportedTypeIdentifiers = types;
 }
 

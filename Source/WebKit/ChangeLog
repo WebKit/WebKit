@@ -1,3 +1,36 @@
+2020-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add more logging to help diagnose <webkit.org/b/209685>
+        https://bugs.webkit.org/show_bug.cgi?id=209988
+
+        Reviewed by Timothy Hatcher.
+
+        Replace logging that was previously added in r259465 with different logging. The fact that the prior logging
+        never showed up in the failing tests suggests that the problem happens earlier than I had expected, so we need
+        to ensure that codepaths for preparing and beginning a drag session are logged instead.
+
+        This turns several existing `RELEASE_LOG`s in WKContentView into `NSLog`s, so that they will show up in test
+        failure output when run on the bots.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didHandleAdditionalDragItemsRequest:]):
+        (-[WKContentView _didHandleDragStartRequest:]):
+        (-[WKContentView cleanUpDragSourceSessionState]):
+        (-[WKContentView _didPerformDragOperation:]):
+        (-[WKContentView _prepareToDragPromisedAttachment:]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView dragInteraction:itemsForBeginningSession:]):
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+        (-[WKContentView dragInteraction:sessionWillBegin:]):
+        (-[WKContentView dragInteraction:session:didEndWithOperation:]):
+        (-[WKContentView dragInteraction:item:willAnimateCancelWithAnimator:]):
+        (-[WKContentView dropInteraction:canHandleSession:]):
+        (-[WKContentView dropInteraction:sessionDidEnter:]):
+        (-[WKContentView dropInteraction:sessionDidUpdate:]):
+        (-[WKContentView dropInteraction:sessionDidExit:]):
+        (-[WKContentView dropInteraction:performDrop:]):
+        (-[WKContentView dropInteraction:sessionDidEnd:]):
+
 2020-04-03  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Give RunningBoard entitlement to all our child processes

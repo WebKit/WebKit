@@ -1972,7 +1972,7 @@ TEST(DragAndDropTests, DataTransferSetDataValidURL)
     [webView stringByEvaluatingJavaScript:@"writeCustomData = true"];
 
     __block bool done = false;
-    [simulator.get() setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
+    [simulator setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
     {
         EXPECT_EQ(1UL, session.items.count);
         auto *item = session.items[0].itemProvider;
@@ -2009,7 +2009,7 @@ TEST(DragAndDropTests, DataTransferSetDataUnescapedURL)
     [webView stringByEvaluatingJavaScript:@"writeCustomData = true"];
 
     __block bool done = false;
-    [simulator.get() setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
+    [simulator setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
     {
         EXPECT_EQ(1UL, session.items.count);
         auto *item = session.items[0].itemProvider;
@@ -2070,7 +2070,7 @@ TEST(DragAndDropTests, DataTransferSanitizeHTML)
     [webView stringByEvaluatingJavaScript:@"writeCustomData = true"];
 
     __block bool done = false;
-    [simulator.get() setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
+    [simulator setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
     {
         EXPECT_EQ(1UL, session.items.count);
         auto *item = session.items[0].itemProvider;
