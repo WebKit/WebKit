@@ -1,3 +1,21 @@
+2020-04-03  Tim Horton  <timothy_horton@apple.com>
+
+        Add a visual debug indicator for locating and identifying all kinds of WebViews
+        https://bugs.webkit.org/show_bug.cgi?id=209982
+        <rdar://problem/60339870>
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        Adopt for WebView on macOS (UIWebView will install it itself on iOS).
+
+        * WebView/WebViewPrivate.h:
+        Expose _installVisualIdentificationOverlayForViewIfNeeded:kind: for UIWebView's use.
+        It is slightly unfortunate to expose SPI that uses UIView from a framework
+        underneath UIKit, but there is no other single place where this code can live
+        and not be a minor layering problem. Since it's debug UI, it seems passable.
+
 2020-04-03  David Kilzer  <ddkilzer@apple.com>
 
         [Xcode] Replace ASAN_OTHER_CFLAGS and ASAN_OTHER_CPLUSPLUSFLAGS with $(inherited)

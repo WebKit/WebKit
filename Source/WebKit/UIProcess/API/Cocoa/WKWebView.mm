@@ -127,6 +127,7 @@
 #import <WebCore/StringUtilities.h>
 #import <WebCore/TextManipulationController.h>
 #import <WebCore/ViewportArguments.h>
+#import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/WritingMode.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/HashMap.h>
@@ -403,6 +404,8 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
         _page->setURLSchemeHandlerForScheme(WebKit::WebURLSchemeHandlerCocoa::create(static_cast<WebKit::WebURLSchemeHandlerCocoa&>(pair.value.get()).apiHandler()), pair.key);
 
     pageToViewMap().add(_page.get(), self);
+
+    [WebViewVisualIdentificationOverlay installForWebViewIfNeeded:self kind:@"WKWebView" deprecated:NO];
 
 #if PLATFORM(IOS_FAMILY)
     auto timeNow = MonotonicTime::now();

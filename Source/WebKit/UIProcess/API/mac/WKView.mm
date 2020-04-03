@@ -43,6 +43,7 @@
 #import "WebProcessPool.h"
 #import "WebViewImpl.h"
 #import "_WKLinkIconParametersInternal.h"
+#import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebKit/WKDragDestinationAction.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/BlockPtr.h>
@@ -963,6 +964,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _data->_impl = makeUnique<WebKit::WebViewImpl>(self, nullptr, processPool.get(), WTFMove(configuration));
 
     [self maybeInstallIconLoadingClient];
+    [WebViewVisualIdentificationOverlay installForWebViewIfNeeded:self kind:@"WKView" deprecated:YES];
 
     return self;
 }

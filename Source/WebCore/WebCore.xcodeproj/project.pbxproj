@@ -752,6 +752,7 @@
 		2D6F3E911C1ECB2F0061DBD4 /* MockPageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6F3E8B1C1ECB1C0061DBD4 /* MockPageOverlay.h */; };
 		2D70BA1318074DDF0001908A /* PlatformCALayerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D70BA1218074DDF0001908A /* PlatformCALayerCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D76BB821945632400CFD29A /* RunLoopObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D76BB801945632400CFD29A /* RunLoopObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D7DA0F22435EB1900F048D1 /* WebViewVisualIdentificationOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7DA0EF2435EB1700F048D1 /* WebViewVisualIdentificationOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D7ED0AB1BAE99170043B3E5 /* TimerEventBasedMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7ED0A91BAE99170043B3E5 /* TimerEventBasedMock.h */; };
 		2D81E1CF21A78CC200A32CF4 /* InsertEditableImageCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D81E1CD21A78CC200A32CF4 /* InsertEditableImageCommand.h */; };
 		2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8287F516E4A0380086BD00 /* HitTestLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6859,6 +6860,8 @@
 		2D70BA1418074F850001908A /* PlatformCALayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayer.cpp; sourceTree = "<group>"; };
 		2D76BB801945632400CFD29A /* RunLoopObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoopObserver.h; sourceTree = "<group>"; };
 		2D76BB8319456F8100CFD29A /* RunLoopObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoopObserver.cpp; sourceTree = "<group>"; };
+		2D7DA0EF2435EB1700F048D1 /* WebViewVisualIdentificationOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewVisualIdentificationOverlay.h; sourceTree = "<group>"; };
+		2D7DA0F12435EB1800F048D1 /* WebViewVisualIdentificationOverlay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewVisualIdentificationOverlay.mm; sourceTree = "<group>"; };
 		2D7ED0A91BAE99170043B3E5 /* TimerEventBasedMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerEventBasedMock.h; sourceTree = "<group>"; };
 		2D81E1CB21A78CC100A32CF4 /* InsertEditableImageCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InsertEditableImageCommand.cpp; sourceTree = "<group>"; };
 		2D81E1CD21A78CC200A32CF4 /* InsertEditableImageCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertEditableImageCommand.h; sourceTree = "<group>"; };
@@ -22955,6 +22958,8 @@
 			children = (
 				A1763F3D1E205234001D58DE /* WebArchiveDumpSupport.h */,
 				A1763F3C1E205234001D58DE /* WebArchiveDumpSupport.mm */,
+				2D7DA0EF2435EB1700F048D1 /* WebViewVisualIdentificationOverlay.h */,
+				2D7DA0F12435EB1800F048D1 /* WebViewVisualIdentificationOverlay.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -33435,6 +33440,7 @@
 				31DEA4561B39F4D900F77178 /* WebSystemBackdropLayer.h in Headers */,
 				0F580FA31496939100FB5BD8 /* WebTiledBackingLayer.h in Headers */,
 				3F42B31D1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h in Headers */,
+				2D7DA0F22435EB1900F048D1 /* WebViewVisualIdentificationOverlay.h in Headers */,
 				F12171F616A8CF0B000053CA /* WebVTTElement.h in Headers */,
 				5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */,
 				B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */,

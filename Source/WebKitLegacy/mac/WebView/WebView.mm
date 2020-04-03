@@ -221,6 +221,7 @@
 #import <WebCore/ValidationBubble.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreView.h>
+#import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/Widget.h>
 #import <WebKitLegacy/DOM.h>
 #import <WebKitLegacy/DOMExtensions.h>
@@ -1600,6 +1601,10 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
     _private->page->settings().setContentDispositionAttachmentSandboxEnabled(true);
+
+#if PLATFORM(MAC)
+    [WebViewVisualIdentificationOverlay installForWebViewIfNeeded:self kind:@"WebView" deprecated:YES];
+#endif
 }
 
 - (id)_initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName
@@ -10218,6 +10223,11 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 {
     if (auto* page = core(self))
         page->revealCurrentSelection();
+}
+
+- (void)_installVisualIdentificationOverlayForViewIfNeeded:(id)view kind:(NSString *)kind
+{
+    [WebViewVisualIdentificationOverlay installForWebViewIfNeeded:static_cast<UIView *>(view) kind:kind deprecated:YES];
 }
 
 @end

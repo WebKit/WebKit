@@ -1088,6 +1088,9 @@ typedef struct WebEdgeInsets {
 @interface WebView (WebViewIOSAdditions)
 - (NSArray<DOMElement *> *)_editableElementsInRect:(CGRect)rect;
 - (void)revealCurrentSelection;
+
+// View must be a UIView.
+- (void)_installVisualIdentificationOverlayForViewIfNeeded:(id)view kind:(NSString *)kind;
 @end
 
 #endif
