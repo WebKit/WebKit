@@ -6422,19 +6422,25 @@ void Document::dispatchPopstateEvent(RefPtr<SerializedScriptValue>&& stateObject
 
 void Document::addMediaCanStartListener(MediaCanStartListener& listener)
 {
-    ASSERT(!m_mediaCanStartListeners.contains(&listener));
-    m_mediaCanStartListeners.add(&listener);
+    ASSERT(!m_mediaCanStartListeners.contains(listener));
+    m_mediaCanStartListeners.add(listener);
 }
 
 void Document::removeMediaCanStartListener(MediaCanStartListener& listener)
 {
-    ASSERT(m_mediaCanStartListeners.contains(&listener));
-    m_mediaCanStartListeners.remove(&listener);
+    ASSERT(m_mediaCanStartListeners.contains(listener));
+    m_mediaCanStartListeners.remove(listener);
 }
 
 MediaCanStartListener* Document::takeAnyMediaCanStartListener()
 {
-    return m_mediaCanStartListeners.takeAny();
+    if (m_mediaCanStartListeners.computesEmpty())
+        return nullptr;
+
+    MediaCanStartListener* listener = m_mediaCanStartListeners.begin().get();
+    m_mediaCanStartListeners.remove(*listener);
+
+    return listener;
 }
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)

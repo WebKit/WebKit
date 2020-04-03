@@ -1825,7 +1825,7 @@ private:
 
     RenderPtr<RenderView> m_renderView;
 
-    HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
+    WeakHashSet<MediaCanStartListener> m_mediaCanStartListeners;
 
 #if ENABLE(FULLSCREEN_API)
     UniqueRef<FullscreenManager> m_fullscreenManager;
