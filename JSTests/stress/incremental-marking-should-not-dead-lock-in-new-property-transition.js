@@ -1,4 +1,4 @@
-//@ skip if $hostOS == "playstation" or $architecture == "arm"
+//@ skip if $hostOS == "playstation"
 //@ runDefault("--gcIncrementScale=100", "--gcIncrementBytes=10", "--numberOfGCMarkers=1")
 
 let a = [];

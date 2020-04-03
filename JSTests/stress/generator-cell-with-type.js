@@ -1,5 +1,5 @@
-// This test takes too long on arm and mips devices.
-//@ skip if ["arm", "mips"].include?($architecture)
+// This test takes too long on mips devices.
+//@ skip if ["mips"].include?($architecture)
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);
