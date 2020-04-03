@@ -1,3 +1,18 @@
+2020-04-03  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove _setIsNavigatingToAppBoundDomain testing SPI
+        https://bugs.webkit.org/show_bug.cgi?id=209973
+        <rdar://problem/61264350>
+
+        Reviewed by David Kilzer.
+
+        This SPI is no longer needed to set a webView as navigating to an
+        app-bound domain. We can now load a local file instead.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/in-app-browser-privacy-local-file.html:
+
 2020-04-03  David Kilzer  <ddkilzer@apple.com>
 
         [Xcode] Replace ASAN_OTHER_CFLAGS and ASAN_OTHER_CPLUSPLUSFLAGS with $(inherited)

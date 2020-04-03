@@ -2702,13 +2702,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     });
 }
 
-- (void)_setIsNavigatingToAppBoundDomain:(BOOL)isNavigatingToAppBoundDomain completionHandler:(void (^)(void))completionHandler
-{
-    _page->setIsNavigatingToAppBoundDomainTesting(isNavigatingToAppBoundDomain, [completionHandler = makeBlockPtr(completionHandler)]() {
-        completionHandler();
-    });
-}
-
 - (id <_WKInputDelegate>)_inputDelegate
 {
     return _inputDelegate.getAutoreleased();

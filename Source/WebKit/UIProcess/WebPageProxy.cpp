@@ -3142,11 +3142,6 @@ void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& 
 #endif
 }
 
-void WebPageProxy::setIsNavigatingToAppBoundDomainTesting(bool isNavigatingToAppBoundDomain, CompletionHandler<void()>&& completionHandler)
-{
-    sendWithAsyncReply(Messages::WebPage::SetIsNavigatingToAppBoundDomainTesting(isNavigatingToAppBoundDomain), WTFMove(completionHandler));
-}
-
 void WebPageProxy::isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(m_isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::Yes);

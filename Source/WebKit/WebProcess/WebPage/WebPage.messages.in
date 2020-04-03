@@ -602,6 +602,4 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetShouldFireResizeEvents(bool shouldFireResizeEvents)
 
     SetHasResourceLoadClient(bool has)
-    SetIsNavigatingToAppBoundDomainTesting(bool isNavigatingToAppBoundDomain) -> () Async
-
 }

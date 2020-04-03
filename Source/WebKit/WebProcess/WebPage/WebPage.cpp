@@ -7039,12 +7039,6 @@ bool WebPage::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
     return false;
 }
 
-void WebPage::setIsNavigatingToAppBoundDomainTesting(bool isNavigatingToAppBoundDomain, CompletionHandler<void()>&& completionHandler)
-{
-    m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No;
-    completionHandler();
-}
-
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

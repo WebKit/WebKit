@@ -236,11 +236,9 @@ TEST(InAppBrowserPrivacy, SwapBackToAppBoundRejectsUserScript)
     isDone = false;
     TestWebKitAPI::Util::run(&isDone);
 
-    isDone = false;
-    [webView _setIsNavigatingToAppBoundDomain:YES completionHandler: ^(void) {
-        isDone = true;
-    }];
-    TestWebKitAPI::Util::run(&isDone);
+    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"in-app-browser-privacy-local-file" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
     
     isDone = false;
     [configuration.userContentController _addUserScriptImmediately:userScript.get()];

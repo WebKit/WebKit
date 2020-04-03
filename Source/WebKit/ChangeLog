@@ -1,3 +1,27 @@
+2020-04-03  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove _setIsNavigatingToAppBoundDomain testing SPI
+        https://bugs.webkit.org/show_bug.cgi?id=209973
+        <rdar://problem/61264350>
+
+        Reviewed by David Kilzer.
+
+        This SPI is no longer needed to set a webView as navigating to an
+        app-bound domain. We can now load a local file instead.
+
+        No new tests, confirmed behavior by existing tests.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setIsNavigatingToAppBoundDomain:completionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainTesting): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setIsNavigatingToAppBoundDomainTesting): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-04-03  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed sandbox compile fix.
