@@ -1939,12 +1939,22 @@ LayoutUnit RenderBlockFlow::adjustForUnsplittableChild(RenderBox& child, LayoutU
 bool RenderBlockFlow::pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const
 {
     bool checkFragment = false;
-    for (LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment); pageLogicalHeight;
-        pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment)) {
+    auto* fragmentedFlow = enclosingFragmentedFlow();
+    RenderFragmentContainer* currentFragmentContainer = nullptr;
+    for (auto pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment); pageLogicalHeight; pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment)) {
         if (minimumLogicalHeight <= pageLogicalHeight)
             return true;
-        if (!hasNextPage(logicalOffset + adjustment))
+        auto adjustedOffset = logicalOffset + adjustment;
+        if (!hasNextPage(adjustedOffset))
             return false;
+        if (fragmentedFlow) {
+            // While in layout and the columnsets are not balanced yet, we keep finding the same (infinite tall) column over and over again.
+            auto* nextFragmentContainer = fragmentedFlow->fragmentAtBlockOffset(this, adjustedOffset, true);
+            ASSERT(nextFragmentContainer);
+            if (nextFragmentContainer == currentFragmentContainer)
+                return false;
+            currentFragmentContainer = nextFragmentContainer;
+        }
         adjustment += pageLogicalHeight;
         checkFragment = true;
     }
