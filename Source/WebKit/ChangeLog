@@ -1,3 +1,18 @@
+2020-04-03  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        FileSystem handle leaks in CurlCacheManager and NetworkCacheData when failed to open a file
+        https://bugs.webkit.org/show_bug.cgi?id=209949
+
+        Reviewed by Fujii Hironori.
+
+        A file handle of FileSystem is not closed when the file handle doesn't
+        return its status. The handle should be released before returning.
+
+        No new tests, no behavior change.
+
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::mapFile):
+
 2020-04-03  Peng Liu  <peng.liu6@apple.com>
 
         WebCore::HTMLMediaElement::mediaCanStart crashes

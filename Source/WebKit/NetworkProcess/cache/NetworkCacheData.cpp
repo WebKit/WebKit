@@ -84,8 +84,10 @@ Data mapFile(const char* path)
     if (!FileSystem::isHandleValid(file))
         return { };
     long long size;
-    if (!FileSystem::getFileSize(file, size))
+    if (!FileSystem::getFileSize(file, size)) {
+        FileSystem::closeFile(file);
         return { };
+    }
     return adoptAndMapFile(file, 0, size);
 }
 

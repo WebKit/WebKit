@@ -112,6 +112,7 @@ void CurlCacheManager::loadIndex()
     long long filesize = -1;
     if (!FileSystem::getFileSize(indexFilePath, filesize)) {
         LOG(Network, "Cache Error: Could not get file size of %s\n", indexFilePath.latin1().data());
+        FileSystem::closeFile(indexFile);
         return;
     }
 
