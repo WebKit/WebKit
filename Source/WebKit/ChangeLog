@@ -1,3 +1,15 @@
+2020-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add logging to help diagnose <webkit.org/b/209685>
+        https://bugs.webkit.org/show_bug.cgi?id=209967
+
+        Reviewed by Darin Adler.
+
+        See WebCore/ChangeLog.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dropInteraction:sessionDidUpdate:]):
+
 2020-04-03  youenn fablet  <youenn@apple.com>
 
         ServiceWorkerFetchTask::timeoutTimerFired should not call contextClosed

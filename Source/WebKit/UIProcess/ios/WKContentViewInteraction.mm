@@ -7829,6 +7829,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     if ([delegate respondsToSelector:@selector(_webView:willUpdateDropProposalToProposal:forSession:)])
         proposal = [delegate _webView:self.webView willUpdateDropProposalToProposal:proposal.get() forSession:session];
 
+    NSLog(@"%s => %lu", __PRETTY_FUNCTION__, [proposal operation]);
     return proposal.autorelease();
 }
 
