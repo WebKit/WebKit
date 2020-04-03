@@ -447,8 +447,6 @@ public:
     bool closedCaptionsVisible() const override;
     void setClosedCaptionsVisible(bool) override;
 
-    MediaControls* mediaControls() const;
-
     void sourceWasRemoved(HTMLSourceElement&);
     void sourceWasAdded(HTMLSourceElement&);
 
@@ -508,13 +506,10 @@ public:
     MediaPlayer::Preload preloadValue() const { return m_preload; }
     MediaElementSession& mediaSession() const { return *m_mediaSession; }
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     void pageScaleFactorChanged();
     void userInterfaceLayoutDirectionChanged();
     WEBCORE_EXPORT String getCurrentMediaControlsStatus();
-
     MediaControlsHost* mediaControlsHost() { return m_mediaControlsHost.get(); }
-#endif
 
     bool isDisablingSleep() const { return m_sleepDisabler.get(); }
 
@@ -613,11 +608,9 @@ protected:
 
     SecurityOriginData documentSecurityOrigin() const final;
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     bool mediaControlsDependOnPageScaleFactor() const { return m_mediaControlsDependOnPageScaleFactor; }
     void setMediaControlsDependOnPageScaleFactor(bool);
     void updateMediaControlsAfterPresentationModeChange();
-#endif
 
     void scheduleEvent(const AtomString&);
 
@@ -852,8 +845,6 @@ private:
     void invalidateCachedTime() const;
     void refreshCachedTime() const;
 
-    bool hasMediaControls() const;
-    bool createMediaControls();
     void configureMediaControls();
 
     void prepareMediaFragmentURI();
@@ -873,11 +864,9 @@ private:
     enum class SleepType { None, Display, System };
     SleepType shouldDisableSleep() const;
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     void didAddUserAgentShadowRoot(ShadowRoot&) override;
     DOMWrapperWorld& ensureIsolatedWorld();
     bool ensureMediaControlsInjectedScript();
-#endif
 
     PlatformMediaSession::MediaType mediaType() const override;
     PlatformMediaSession::MediaType presentationType() const override;
@@ -1115,10 +1104,8 @@ private:
     bool m_hasEverHadAudio : 1;
     bool m_hasEverHadVideo : 1;
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     bool m_mediaControlsDependOnPageScaleFactor : 1;
     bool m_haveSetUpCaptionContainer : 1;
-#endif
 
     bool m_isScrubbingRemotely : 1;
     bool m_waitingToEnterFullscreen : 1;
@@ -1192,11 +1179,9 @@ private:
     const void* m_logIdentifier;
 #endif
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     friend class MediaControlsHost;
     RefPtr<MediaControlsHost> m_mediaControlsHost;
     RefPtr<DOMWrapperWorld> m_isolatedWorld;
-#endif
 
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaStream> m_mediaStreamSrcObject;

@@ -48,14 +48,12 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "LocalizedStrings.h"
-#import "MediaControlElements.h"
 #import "Page.h"
 #import "PaintInfo.h"
 #import "PathUtilities.h"
 #import "RenderAttachment.h"
 #import "RenderLayer.h"
 #import "RenderMedia.h"
-#import "RenderMediaControls.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
 #import "RenderSnapshottedPlugIn.h"
@@ -296,31 +294,21 @@ NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
     return ThemeMac::ensuredView(&o.view().frameView(), states);
 }
 
-#if ENABLE(VIDEO)
-
 String RenderThemeMac::mediaControlsStyleSheet()
 {
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (m_legacyMediaControlsStyleSheet.isEmpty())
         m_legacyMediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsApple" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil];
     return m_legacyMediaControlsStyleSheet;
-#else
-    return emptyString();
-#endif
 }
 
 String RenderThemeMac::modernMediaControlsStyleSheet()
 {
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
         if (m_mediaControlsStyleSheet.isEmpty())
             m_mediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"modern-media-controls" ofType:@"css" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil];
         return m_mediaControlsStyleSheet;
     }
     return emptyString();
-#else
-    return emptyString();
-#endif
 }
 
 void RenderThemeMac::purgeCaches()
@@ -335,7 +323,6 @@ void RenderThemeMac::purgeCaches()
 
 String RenderThemeMac::mediaControlsScript()
 {
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
         if (m_mediaControlsScript.isEmpty()) {
             NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
@@ -353,26 +340,17 @@ String RenderThemeMac::mediaControlsScript()
         m_legacyMediaControlsScript = makeString(String { localizedStrings }, String { script });
     }
     return m_legacyMediaControlsScript;
-#else
-    return emptyString();
-#endif
 }
 
 String RenderThemeMac::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
 {
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (!RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
         return emptyString();
 
     NSString *directory = @"modern-media-controls/images";
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
     return [[NSData dataWithContentsOfFile:[bundle pathForResource:iconName ofType:iconType inDirectory:directory]] base64EncodedStringWithOptions:0];
-#else
-    return emptyString();
-#endif
 }
-
-#endif // ENABLE(VIDEO)
 
 #if ENABLE(SERVICE_CONTROLS)
 

@@ -4528,12 +4528,7 @@ ExceptionOr<String> Internals::pathStringWithShrinkWrappedRects(const Vector<dou
 
 String Internals::getCurrentMediaControlsStatusForElement(HTMLMediaElement& mediaElement)
 {
-#if !ENABLE(MEDIA_CONTROLS_SCRIPT)
-    UNUSED_PARAM(mediaElement);
-    return String();
-#else
     return mediaElement.getCurrentMediaControlsStatus();
-#endif
 }
 
 #if !PLATFORM(COCOA)

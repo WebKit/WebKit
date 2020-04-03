@@ -638,7 +638,6 @@
 		1D9F0FC12122029B005D8FD4 /* ShareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DC55400211BA8C8004B780E /* ShareData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1DBC1B562347B3D200B901AF /* PictureInPictureObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DBC1B552347B3D200B901AF /* PictureInPictureObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1F36EA9C1E21BA1700621E25 /* WebBackgroundTaskController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F36EA9A1E21BA1700621E25 /* WebBackgroundTaskController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1F3C3BEB135CAF3C00B8C1AC /* MediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3C3BE9135CAF3C00B8C1AC /* MediaControls.h */; };
 		1F72BF0B187FD45C0009BCB3 /* TileControllerMemoryHandlerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1F8756B21E22C3350042C40D /* WebSQLiteDatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F8756B11E22BEEF0042C40D /* WebSQLiteDatabaseTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1FAFBF1915A5FA7400083A20 /* UTIUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FAFBF1615A5FA5200083A20 /* UTIUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1086,7 +1085,7 @@
 		416E6FE91BBD12E5000A6043 /* ReadableStreamBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B03D8061BB3110D00B764D8 /* ReadableStreamBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E6FE91BBD12E5000A6053 /* WritableStreamBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B03D8061BB3110D00B764E8 /* WritableStreamBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416FD25F240FA4E5006661D8 /* NowPlayingInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 416FD25D240EE1AE006661D8 /* NowPlayingInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		417253AB1354BBBC00360F2A /* MediaControlElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 417253A91354BBBC00360F2A /* MediaControlElements.h */; };
+		417253AB1354BBBC00360F2A /* MediaControlTextTrackContainerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 417253A91354BBBC00360F2A /* MediaControlTextTrackContainerElement.h */; };
 		417612AF1E3A994000C3D81D /* LibWebRTCMediaEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 417612AB1E3A993B00C3D81D /* LibWebRTCMediaEndpoint.cpp */; };
 		417612B01E3A994000C3D81D /* LibWebRTCMediaEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 417612AC1E3A993B00C3D81D /* LibWebRTCMediaEndpoint.h */; };
 		417612B11E3A994000C3D81D /* LibWebRTCPeerConnectionBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 417612AD1E3A993B00C3D81D /* LibWebRTCPeerConnectionBackend.cpp */; };
@@ -4566,7 +4565,6 @@
 		DE5F86591FA2AF24006DB63B /* UnifiedSource61-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = DE5F863A1FA2AF07006DB63B /* UnifiedSource61-mm.mm */; };
 		DE7710861FA2F0D600460016 /* WebArchiveDumpSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1763F3C1E205234001D58DE /* WebArchiveDumpSupport.mm */; };
 		DEBCCDD216646E8200A452E1 /* RenderMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = DE49B308165F2FE10010338D /* RenderMediaControls.h */; };
-		DEBCCDD416646EAF00A452E1 /* MediaControlElementTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = DE49B300165F2FC60010338D /* MediaControlElementTypes.h */; };
 		DECA7D931F9E67B500E3B661 /* UnifiedSource131.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DECA7D6D1F9E61CF00E3B661 /* UnifiedSource131.cpp */; };
 		DECA7D941F9E67B500E3B661 /* UnifiedSource132.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DECA7D7E1F9E61E300E3B661 /* UnifiedSource132.cpp */; };
 		DECA7D951F9E67B500E3B661 /* UnifiedSource133.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DECA7D801F9E61E500E3B661 /* UnifiedSource133.cpp */; };
@@ -6634,8 +6632,6 @@
 		1DEF06DE233D2E1C00EE228D /* DocumentPictureInPicture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentPictureInPicture.idl; sourceTree = "<group>"; };
 		1F36EA9A1E21BA1700621E25 /* WebBackgroundTaskController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackgroundTaskController.h; sourceTree = "<group>"; };
 		1F36EA9B1E21BA1700621E25 /* WebBackgroundTaskController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebBackgroundTaskController.mm; sourceTree = "<group>"; };
-		1F3C3BE8135CAF3C00B8C1AC /* MediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControls.cpp; sourceTree = "<group>"; };
-		1F3C3BE9135CAF3C00B8C1AC /* MediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControls.h; sourceTree = "<group>"; };
 		1F72BF08187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileControllerMemoryHandlerIOS.cpp; sourceTree = "<group>"; };
 		1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileControllerMemoryHandlerIOS.h; sourceTree = "<group>"; };
 		1F8756B01E22BEEF0042C40D /* WebSQLiteDatabaseTrackerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSQLiteDatabaseTrackerClient.mm; sourceTree = "<group>"; };
@@ -7448,8 +7444,8 @@
 		416E29A5102FA962007FC14E /* WorkerReportingProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerReportingProxy.h; sourceTree = "<group>"; };
 		416FD25D240EE1AE006661D8 /* NowPlayingInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NowPlayingInfo.h; sourceTree = "<group>"; };
 		4170A2E91D8C0CC000318452 /* JSDOMWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWrapper.cpp; sourceTree = "<group>"; };
-		417253A81354BBBC00360F2A /* MediaControlElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlElements.cpp; sourceTree = "<group>"; };
-		417253A91354BBBC00360F2A /* MediaControlElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlElements.h; sourceTree = "<group>"; };
+		417253A81354BBBC00360F2A /* MediaControlTextTrackContainerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlTextTrackContainerElement.cpp; sourceTree = "<group>"; };
+		417253A91354BBBC00360F2A /* MediaControlTextTrackContainerElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlTextTrackContainerElement.h; sourceTree = "<group>"; };
 		417612AB1E3A993B00C3D81D /* LibWebRTCMediaEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCMediaEndpoint.cpp; path = libwebrtc/LibWebRTCMediaEndpoint.cpp; sourceTree = "<group>"; };
 		417612AC1E3A993B00C3D81D /* LibWebRTCMediaEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCMediaEndpoint.h; path = libwebrtc/LibWebRTCMediaEndpoint.h; sourceTree = "<group>"; };
 		417612AD1E3A993B00C3D81D /* LibWebRTCPeerConnectionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCPeerConnectionBackend.cpp; path = libwebrtc/LibWebRTCPeerConnectionBackend.cpp; sourceTree = "<group>"; };
@@ -14573,8 +14569,6 @@
 		DBFCB0EBFF5CD77EBEB3595F /* RenderMathMLPadded.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLPadded.cpp; sourceTree = "<group>"; };
 		DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreObjCExtras.h; sourceTree = "<group>"; };
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
-		DE49B2FF165F2FC60010338D /* MediaControlElementTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlElementTypes.cpp; sourceTree = "<group>"; };
-		DE49B300165F2FC60010338D /* MediaControlElementTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlElementTypes.h; sourceTree = "<group>"; };
 		DE49B307165F2FE10010338D /* RenderMediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMediaControls.cpp; sourceTree = "<group>"; };
 		DE49B308165F2FE10010338D /* RenderMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMediaControls.h; sourceTree = "<group>"; };
 		DE5F83B21FA18676006DB63A /* UnifiedSource301.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource301.cpp; path = "DerivedSources/WebCore/unified-sources/UnifiedSource301.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -18251,12 +18245,8 @@
 				A7C9ABF71357A3BF00F5503F /* DetailsMarkerControl.h */,
 				510192D318B6B9B7007FC7A1 /* ImageControlsRootElement.cpp */,
 				510192D418B6B9B7007FC7A1 /* ImageControlsRootElement.h */,
-				417253A81354BBBC00360F2A /* MediaControlElements.cpp */,
-				417253A91354BBBC00360F2A /* MediaControlElements.h */,
-				DE49B2FF165F2FC60010338D /* MediaControlElementTypes.cpp */,
-				DE49B300165F2FC60010338D /* MediaControlElementTypes.h */,
-				1F3C3BE8135CAF3C00B8C1AC /* MediaControls.cpp */,
-				1F3C3BE9135CAF3C00B8C1AC /* MediaControls.h */,
+				417253A81354BBBC00360F2A /* MediaControlTextTrackContainerElement.cpp */,
+				417253A91354BBBC00360F2A /* MediaControlTextTrackContainerElement.h */,
 				E4E243821DAB953E00C26E4B /* meterElementShadow.css */,
 				A715E650134BBBEC00D8E713 /* ProgressShadowElement.cpp */,
 				A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */,
@@ -31820,12 +31810,10 @@
 				CDCC9BCF22387E9A00FFB51C /* MediaCapabilitiesDecodingInfo.h in Headers */,
 				CDCC9BD122387EAA00FFB51C /* MediaCapabilitiesEncodingInfo.h in Headers */,
 				078E093A17D16E1C00420AA1 /* MediaConstraints.h in Headers */,
-				417253AB1354BBBC00360F2A /* MediaControlElements.h in Headers */,
-				DEBCCDD416646EAF00A452E1 /* MediaControlElementTypes.h in Headers */,
 				CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */,
 				CDF65CCA145B448800C4C7AA /* MediaControllerInterface.h in Headers */,
-				1F3C3BEB135CAF3C00B8C1AC /* MediaControls.h in Headers */,
 				CDAB6D2917C7DE6C00C60B34 /* MediaControlsHost.h in Headers */,
+				417253AB1354BBBC00360F2A /* MediaControlTextTrackContainerElement.h in Headers */,
 				CDF2B004181F059C00F2B424 /* MediaDescription.h in Headers */,
 				15145B901B3A1CE000662BF7 /* MediaDeviceInfo.h in Headers */,
 				5EA725D31ACABD4700EAD17B /* MediaDevices.h in Headers */,

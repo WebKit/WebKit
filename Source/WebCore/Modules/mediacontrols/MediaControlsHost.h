@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
@@ -104,4 +102,3 @@ private:
 
 }
 
-#endif

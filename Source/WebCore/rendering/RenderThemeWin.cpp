@@ -42,10 +42,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/win/GDIObject.h>
 
-#if ENABLE(VIDEO)
-#include "RenderMediaControls.h"
-#endif
-
 #include <tchar.h>
 
 /* 
@@ -845,10 +841,6 @@ void RenderThemeWin::adjustSliderThumbSize(RenderStyle& style, const Element*) c
         style.setWidth(Length(sliderThumbWidth, Fixed));
         style.setHeight(Length(sliderThumbHeight, Fixed));
     }
-#if ENABLE(VIDEO) && USE(CG)
-    else if (part == MediaSliderThumbPart || part == MediaVolumeSliderThumbPart) 
-        RenderMediaControls::adjustMediaSliderThumbSize(style);
-#endif
 }
 
 bool RenderThemeWin::paintSearchField(const RenderObject& o, const PaintInfo& i, const IntRect& r)

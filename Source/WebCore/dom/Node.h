@@ -198,8 +198,6 @@ public:
     bool isAfterPseudoElement() const { return pseudoId() == PseudoId::After; }
     PseudoId pseudoId() const { return (isElementNode() && hasCustomStyleResolveCallbacks()) ? customPseudoId() : PseudoId::None; }
 
-    virtual bool isMediaControlElement() const { return false; }
-    virtual bool isMediaControls() const { return false; }
 #if ENABLE(VIDEO_TRACK)
     virtual bool isWebVTTElement() const { return false; }
 #endif

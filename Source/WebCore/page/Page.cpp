@@ -1067,15 +1067,11 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
 #endif
     }
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (inStableState) {
         forEachMediaElement([] (HTMLMediaElement& element) {
             element.pageScaleFactorChanged();
         });
     }
-#else
-    UNUSED_PARAM(inStableState);
-#endif
 }
 
 void Page::setDelegatesScaling(bool delegatesScaling)
@@ -1122,11 +1118,9 @@ void Page::setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInte
 
     m_userInterfaceLayoutDirection = userInterfaceLayoutDirection;
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     forEachMediaElement([] (HTMLMediaElement& element) {
         element.userInterfaceLayoutDirectionChanged();
     });
-#endif
 }
 
 #if ENABLE(VIDEO)

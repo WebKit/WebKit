@@ -1358,30 +1358,21 @@ void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontC
     fontDescription.setItalic(normalItalicValue());
 }
 
-#if ENABLE(VIDEO)
 String RenderThemeIOS::mediaControlsStyleSheet()
 {
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (m_legacyMediaControlsStyleSheet.isEmpty())
         m_legacyMediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsiOS" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil];
     return m_legacyMediaControlsStyleSheet;
-#else
-    return emptyString();
-#endif
 }
 
 String RenderThemeIOS::modernMediaControlsStyleSheet()
 {
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
         if (m_mediaControlsStyleSheet.isEmpty())
             m_mediaControlsStyleSheet = [NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"modern-media-controls" ofType:@"css" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil];
         return m_mediaControlsStyleSheet;
     }
     return emptyString();
-#else
-    return emptyString();
-#endif
 }
 
 void RenderThemeIOS::purgeCaches()
@@ -1394,7 +1385,6 @@ void RenderThemeIOS::purgeCaches()
 
 String RenderThemeIOS::mediaControlsScript()
 {
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
         if (m_mediaControlsScript.isEmpty()) {
             NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
@@ -1419,26 +1409,17 @@ String RenderThemeIOS::mediaControlsScript()
         m_legacyMediaControlsScript = scriptBuilder.toString();
     }
     return m_legacyMediaControlsScript;
-#else
-    return emptyString();
-#endif
 }
 
 String RenderThemeIOS::mediaControlsBase64StringForIconNameAndType(const String& iconName, const String& iconType)
 {
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (!RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
         return emptyString();
 
     String directory = "modern-media-controls/images";
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
     return [[NSData dataWithContentsOfFile:[bundle pathForResource:iconName ofType:iconType inDirectory:directory]] base64EncodedStringWithOptions:0];
-#else
-    return emptyString();
-#endif
 }
-
-#endif // ENABLE(VIDEO)
 
 struct CSSValueIDAndSelector {
     CSSValueID cssValueID;

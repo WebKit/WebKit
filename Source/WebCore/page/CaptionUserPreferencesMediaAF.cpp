@@ -36,7 +36,6 @@
 #include "HTMLMediaElement.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
-#include "MediaControlElements.h"
 #include "TextTrackList.h"
 #include "UserStyleSheetTypes.h"
 #include <algorithm>

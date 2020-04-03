@@ -35,7 +35,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
-#include "MediaControlElements.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderStyle.h"

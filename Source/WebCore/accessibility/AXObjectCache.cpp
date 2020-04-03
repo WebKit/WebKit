@@ -44,7 +44,6 @@
 #include "AccessibilityListBox.h"
 #include "AccessibilityListBoxOption.h"
 #include "AccessibilityMathMLElement.h"
-#include "AccessibilityMediaControls.h"
 #include "AccessibilityMediaObject.h"
 #include "AccessibilityMenuList.h"
 #include "AccessibilityMenuListOption.h"
@@ -75,6 +74,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
+#include "HTMLMediaElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -111,10 +111,6 @@
 
 #include <wtf/DataLog.h>
 #include <wtf/SetForScope.h>
-
-#if ENABLE(VIDEO)
-#include "MediaControlElements.h"
-#endif
 
 #if COMPILER(MSVC)
 // See https://msdn.microsoft.com/en-us/library/1wea5zwe.aspx
@@ -527,12 +523,6 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
 #if PLATFORM(IOS_FAMILY)
     if (is<HTMLMediaElement>(node) && nodeHasRole(node, nullAtom()))
         return AccessibilityMediaObject::create(renderer);
-#endif
-
-#if ENABLE(VIDEO)
-    // media controls
-    if (node && node->isMediaControlElement())
-        return AccessibilityMediaControl::create(renderer);
 #endif
 
     if (is<RenderSVGRoot>(*renderer))

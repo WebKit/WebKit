@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-
 #import "QuickTimePluginReplacement.h"
 
 #import "CommonVM.h"
@@ -437,4 +435,3 @@ JSC::JSValue JSQuickTimePluginReplacement::errorLog(JSC::JSGlobalObject& state) 
 
 }
 
-#endif

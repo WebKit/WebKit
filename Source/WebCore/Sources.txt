@@ -447,7 +447,6 @@ accessibility/AccessibilityList.cpp
 accessibility/AccessibilityListBox.cpp
 accessibility/AccessibilityListBoxOption.cpp
 accessibility/AccessibilityMathMLElement.cpp
-accessibility/AccessibilityMediaControls.cpp
 accessibility/AccessibilityMenuList.cpp
 accessibility/AccessibilityMenuListOption.cpp
 accessibility/AccessibilityMenuListPopup.cpp
@@ -1368,9 +1367,7 @@ html/parser/XSSAuditorDelegate.cpp
 html/shadow/AutoFillButtonElement.cpp
 html/shadow/DataListButtonElement.cpp
 html/shadow/DetailsMarkerControl.cpp
-html/shadow/MediaControlElementTypes.cpp
-html/shadow/MediaControlElements.cpp
-html/shadow/MediaControls.cpp
+html/shadow/MediaControlTextTrackContainerElement.cpp
 html/shadow/ProgressShadowElement.cpp
 html/shadow/SliderThumbElement.cpp
 html/shadow/SpinButtonElement.cpp
@@ -2191,7 +2188,6 @@ rendering/RenderListItem.cpp
 rendering/RenderListMarker.cpp
 rendering/RenderMarquee.cpp
 rendering/RenderMedia.cpp
-rendering/RenderMediaControls.cpp
 rendering/RenderMenuList.cpp
 rendering/RenderMeter.cpp
 rendering/RenderMultiColumnFlow.cpp

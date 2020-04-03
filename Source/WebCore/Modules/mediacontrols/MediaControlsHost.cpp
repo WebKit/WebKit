@@ -25,14 +25,12 @@
 
 #include "config.h"
 
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-
 #include "MediaControlsHost.h"
 
 #include "CaptionUserPreferences.h"
 #include "HTMLMediaElement.h"
 #include "Logging.h"
-#include "MediaControlElements.h"
+#include "MediaControlTextTrackContainerElement.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "RenderTheme.h"
@@ -159,10 +157,9 @@ void MediaControlsHost::setSelectedTextTrack(TextTrack* track)
 
 Element* MediaControlsHost::textTrackContainer()
 {
-    if (!m_textTrackContainer && m_mediaElement) {
-        m_textTrackContainer = MediaControlTextTrackContainerElement::create(m_mediaElement->document());
-        m_textTrackContainer->setMediaController(m_mediaElement.get());
-    }
+    if (!m_textTrackContainer && m_mediaElement)
+        m_textTrackContainer = MediaControlTextTrackContainerElement::create(m_mediaElement->document(), *m_mediaElement);
+
     return m_textTrackContainer.get();
 }
 
@@ -321,5 +318,3 @@ bool MediaControlsHost::compactMode() const
 }
 
 }
-
-#endif

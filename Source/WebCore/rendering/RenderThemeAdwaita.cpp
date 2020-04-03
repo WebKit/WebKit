@@ -31,7 +31,7 @@
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
-#include "MediaControlElements.h"
+#include "MediaControlTextTrackContainerElement.h"
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
@@ -492,9 +492,21 @@ bool RenderThemeAdwaita::paintSliderThumb(const RenderObject& renderObject, cons
 }
 
 #if ENABLE(VIDEO)
+static RefPtr<HTMLMediaElement> parentMediaElement(const Node* node)
+{
+    if (!node)
+        return nullptr;
+    RefPtr<Node> mediaNode = node->shadowHost();
+    if (!mediaNode)
+        mediaNode = const_cast<Node*>(node);
+    if (!is<HTMLMediaElement>(*mediaNode))
+        return nullptr;
+    return downcast<HTMLMediaElement>(mediaNode.get());
+}
+
 bool RenderThemeAdwaita::paintMediaSliderTrack(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    auto mediaElement = parentMediaElement(renderObject);
+    auto mediaElement = parentMediaElement(renderObject.node());
     if (!mediaElement)
         return false;
 
@@ -542,7 +554,7 @@ bool RenderThemeAdwaita::paintMediaSliderTrack(const RenderObject& renderObject,
 
 bool RenderThemeAdwaita::paintMediaVolumeSliderTrack(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    auto mediaElement = parentMediaElement(renderObject);
+    auto mediaElement = parentMediaElement(renderObject.node());
     if (!mediaElement)
         return false;
 
