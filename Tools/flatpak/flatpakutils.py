@@ -471,11 +471,6 @@ class WebkitFlatpak:
 
         build_root = os.path.join(self.source_root, 'WebKitBuild')
         self.build_path = os.path.join(build_root, self.platform, self.build_type)
-        try:
-            os.makedirs(self.build_path)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise e
         self.config_file = os.path.join(self.flatpak_build_path, 'webkit_flatpak_config.json')
 
         Console.quiet = self.quiet
@@ -580,10 +575,18 @@ class WebkitFlatpak:
                            # white-list it in /run, hoping this is the right
                            # path.
                            "--bind-mount=/run/systemd/journal=/run/systemd/journal",
-                           "--bind-mount=%s=%s" % (self.sandbox_source_root, self.source_root),
-                           # We mount WebKitBuild/PORTNAME/BuildType to /app/webkit/WebKitBuild/BuildType
-                           # so we can build WPE and GTK in a same source tree.
-                           "--bind-mount=%s=%s" % (sandbox_build_path, self.build_path)]
+                           "--bind-mount=%s=%s" % (self.sandbox_source_root, self.source_root)]
+
+        if args and args[0].endswith("build-webkit"):
+            # Ensure self.build_path exists.
+            try:
+                os.makedirs(self.build_path)
+            except OSError as e:
+                if e.errno != errno.EEXIST:
+                    raise e
+            # We mount WebKitBuild/PORTNAME/BuildType to /app/webkit/WebKitBuild/BuildType
+            # so we can build WPE and GTK in a same source tree.
+            flatpak_command.append("--bind-mount=%s=%s" % (sandbox_build_path, self.build_path))
 
         forwarded = {
             "WEBKIT_TOP_LEVEL": "/app/",
