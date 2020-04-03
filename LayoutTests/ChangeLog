@@ -1,3 +1,16 @@
+2020-04-02  John Wilander  <wilander@apple.com>
+
+        Rebase expectation files for anchor tag tests with line number output
+        https://bugs.webkit.org/show_bug.cgi?id=209945
+        <rdar://problem/61237662>
+
+        Unreviewed test gardening.
+
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt:
+            Rebased since the lines of the console output have changed.
+        * http/tests/security/anchor-download-block-crossorigin-expected.txt:
+            Rebased since the lines of the console output have changed.
+
 2020-04-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Crash in RenderMenuList::didUpdateActiveOption.
