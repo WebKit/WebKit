@@ -1,3 +1,14 @@
+2020-04-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Filter some capture device names
+        https://bugs.webkit.org/show_bug.cgi?id=209941
+        <rdar://problem/59141886>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/anonymize-device-name-expected.txt: Added.
+        * fast/mediastream/anonymize-device-name.html: Added.
+
 2020-04-03  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to the runningboard service in the WebContent process

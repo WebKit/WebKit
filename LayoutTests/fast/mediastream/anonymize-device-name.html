@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+    
+    promise_test(async (test) => {
+        
+        const originalLabel = "WebKit's AirPods";
+        const anonymizedLabel = "AirPods";
+
+        if (window.testRunner) {
+            testRunner.setUserMediaPermission(true);
+            testRunner.addMockMicrophoneDevice("id-1", originalLabel);
+        }
+
+        let devices = await navigator.mediaDevices.enumerateDevices();
+        for (const device of devices)
+            assert_false(!!device.label.length, "navigator.mediaDevices revealed device name before getUserMedia()");
+
+        let stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:true })
+
+        for (const track of stream.getAudioTracks()) {
+            assert_false(track.label == originalLabel, "navigator.mediaDevices did not anonymize audio track label at all");
+            if (track.label.indexOf("AirPods") != -1)
+                assert_true(track.label == anonymizedLabel, "navigator.mediaDevices did not anonymize audio track label correctly");
+        }
+
+        devices = await navigator.mediaDevices.enumerateDevices();
+        const microphones = devices.filter(({kind}) => kind == "audioinput");
+        for (const microphone of microphones) {
+            const { kind, label, deviceId } = microphone;
+            if (kind != "audioinput")
+                continue;
+
+            assert_false(label == originalLabel, "navigator.mediaDevices did not anonymize microphone label at all");
+            if (label.indexOf("AirPods") != -1)
+                assert_true(label == anonymizedLabel, "navigator.mediaDevices did not anonymize microphone label correctly");
+        }
+
+    }, "enumerateDevices() anonymizes microphone and track labels correctly");
+
+    </script>
+</head>
+<body>
+</body>
+</html>
