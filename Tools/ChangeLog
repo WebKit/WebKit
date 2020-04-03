@@ -1,3 +1,16 @@
+2020-04-03  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Display list of test failures along-with the layout-test build step
+        https://bugs.webkit.org/show_bug.cgi?id=209912
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTests._addToLog):
+        (RunWebKitTests.commandComplete): Add list of test failures to 'test-failures' log which is displayed in UI.
+        (ReRunWebKitTests.commandComplete): Ditto.
+        (RunWebKitTestsWithoutPatch.commandComplete): Ditto.
+
 2020-04-03  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r259453): [Flatpak SDK] Build directory no longer bind-mounted when running tests
