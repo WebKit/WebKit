@@ -345,8 +345,15 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         eglContextAttributes.append(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
         eglContextAttributes.append(EGL_FALSE);
     }
-    eglContextAttributes.append(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
-    eglContextAttributes.append(EGL_TRUE);
+    if (!sharedContext) {
+        // The shared context is only non-null when creating a context
+        // on behalf of the VideoTextureCopier. WebGL-specific rendering
+        // feedback loop validation does not work in multi-context
+        // scenarios, and must be disabled for the VideoTextureCopier's
+        // context.
+        eglContextAttributes.append(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
+        eglContextAttributes.append(EGL_TRUE);
+    }
     // WebGL requires that all resources are cleared at creation.
     eglContextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
     eglContextAttributes.append(EGL_TRUE);

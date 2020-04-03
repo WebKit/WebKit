@@ -379,18 +379,18 @@ static const Vector<GLfloat> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRa
 VideoTextureCopierCV::VideoTextureCopierCV(GraphicsContextGLOpenGL& context)
     : m_sharedContext(context)
     , m_context(GraphicsContextGLOpenGL::createShared(context))
-    , m_framebuffer(context.createFramebuffer())
+    , m_framebuffer(m_context->createFramebuffer())
 {
 }
 
 VideoTextureCopierCV::~VideoTextureCopierCV()
 {
     if (m_vertexBuffer)
-        m_context->deleteProgram(m_vertexBuffer);
+        m_context->deleteBuffer(m_vertexBuffer);
     if (m_program)
         m_context->deleteProgram(m_program);
     if (m_yuvVertexBuffer)
-        m_context->deleteProgram(m_yuvVertexBuffer);
+        m_context->deleteBuffer(m_yuvVertexBuffer);
     if (m_yuvProgram)
         m_context->deleteProgram(m_yuvProgram);
     m_context->deleteFramebuffer(m_framebuffer);
@@ -847,6 +847,7 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
         LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - Unable to create framebuffer for outputTexture.", this);
         return false;
     }
+    m_context->bindTexture(GraphicsContextGL::TEXTURE_2D, 0);
 
     m_context->useProgram(m_yuvProgram);
     m_context->viewport(0, 0, width, height);
@@ -1026,6 +1027,7 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(PlatformGLObject vi
         LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - Unable to create framebuffer for outputTexture.", this);
         return false;
     }
+    m_context->bindTexture(GraphicsContextGL::TEXTURE_2D, 0);
 
     m_context->useProgram(m_program);
     m_context->viewport(0, 0, width, height);

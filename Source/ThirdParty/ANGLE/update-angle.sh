@@ -62,15 +62,19 @@ COMMIT_HASH=`git rev-parse HEAD`
 echo "$COMMIT_HASH"
 echo ""
 
+echo "Generating commit.h"
+./src/commit_id.py gen commit.h.TEMP
+
 echo "Applying WebKit's local ANGLE changes to the old ANGLE version."
 git checkout -B downstream-changes "$PREVIOUS_COMMIT_HASH"
 pushd .. &> /dev/null
 git checkout HEAD -- ANGLE
 popd &> /dev/null
 
-echo "Copying src/commit.h to src/id/commit.h"
+echo "Copying commit.h to src/id/commit.h"
 mkdir -p src/id
-git show origin/master:src/commit.h > src/id/commit.h
+cp commit.h.TEMP src/id/commit.h
+rm commit.h.TEMP
 
 echo "Updating ANGLE.plist commit hashes."
 sed -i.bak -e "s/\([^a-z0-9]\)[a-z0-9]\{40\}\([^a-z0-9]\)/\1$COMMIT_HASH\2/g" ANGLE.plist

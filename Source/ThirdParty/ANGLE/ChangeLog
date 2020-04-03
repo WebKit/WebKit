@@ -1,3 +1,16 @@
+2020-04-03  Kenneth Russell  <kbr@chromium.org>
+
+        Fix bugs related to VideoTextureCopierCV and ANGLE roll script
+        https://bugs.webkit.org/show_bug.cgi?id=209943
+
+        Reviewed by Dean Jackson.
+
+        Update the update-angle.sh script to take into account the new
+        procedure for generating ANGLE's commit ID header file. This
+        enables ANGLE rolls into WebKit again.
+
+        * update-angle.sh:
+
 2020-04-03  Keith Rollin  <krollin@apple.com>
 
         Do not link with OpenGL on Apple platforms
