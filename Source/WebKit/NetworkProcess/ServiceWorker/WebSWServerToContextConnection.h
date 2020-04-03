@@ -90,7 +90,6 @@ private:
     void syncTerminateWorker(WebCore::ServiceWorkerIdentifier) final;
     void findClientByIdentifierCompleted(uint64_t requestIdentifier, const Optional<WebCore::ServiceWorkerClientData>&, bool hasSecurityError) final;
     void matchAllCompleted(uint64_t requestIdentifier, const Vector<WebCore::ServiceWorkerClientData>&) final;
-    void claimCompleted(uint64_t requestIdentifier) final;
 
     void connectionIsNoLongerNeeded() final;
 

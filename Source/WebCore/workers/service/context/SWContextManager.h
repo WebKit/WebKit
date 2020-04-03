@@ -63,7 +63,7 @@ public:
         using FindClientByIdentifierCallback = CompletionHandler<void(ExceptionOr<Optional<ServiceWorkerClientData>>&&)>;
         virtual void findClientByIdentifier(ServiceWorkerIdentifier, ServiceWorkerClientIdentifier, FindClientByIdentifierCallback&&) = 0;
         virtual void matchAll(ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&) = 0;
-        virtual void claim(ServiceWorkerIdentifier, CompletionHandler<void()>&&) = 0;
+        virtual void claim(ServiceWorkerIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&&) = 0;
 
         virtual void didFailHeartBeatCheck(ServiceWorkerIdentifier) = 0;
 
