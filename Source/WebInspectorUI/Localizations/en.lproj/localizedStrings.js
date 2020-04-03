@@ -448,9 +448,9 @@ localizedStrings["Dynamically calculated for the selected element and did not ma
 /* Label for a guide within the color picker */
 localizedStrings["Edge of sRGB color space"] = "Edge of sRGB color space";
 localizedStrings["Edit"] = "Edit";
+localizedStrings["Edit %s"] = "Edit %s";
 localizedStrings["Edit Breakpoint\u2026"] = "Edit Breakpoint\u2026";
 localizedStrings["Edit Local Override\u2026"] = "Edit Local Override\u2026";
-localizedStrings["Edit \u201C%s\u201D"] = "Edit \u201C%s\u201D";
 localizedStrings["Edit \u201Cbox-shadow\u201D"] = "Edit \u201Cbox-shadow\u201D";
 localizedStrings["Edit \u201Ccubic-bezier\u201D function"] = "Edit \u201Ccubic-bezier\u201D function";
 localizedStrings["Edit \u201Cspring\u201D function"] = "Edit \u201Cspring\u201D function";
