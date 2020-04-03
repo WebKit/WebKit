@@ -1359,11 +1359,6 @@ static std::string parseStringTestHeaderValueAsRelativePath(const std::string& v
     return toSTD(adoptWK(WKURLCopyPath(relativeURL.get())));
 }
 
-static std::string parseStringTestHeaderValueAsURL(const std::string& value)
-{
-    return toSTD(adoptWK(WKURLCopyString(createTestURL(value.c_str()))));
-}
-
 static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std::string& pathOrURL, const std::string& absolutePath)
 {
     std::string filename = absolutePath;
@@ -1517,9 +1512,7 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableCaptureAudioInGPUProcess = parseBooleanTestHeaderValue(value);
         else if (key == "allowTopNavigationToDataURLs")
             testOptions.allowTopNavigationToDataURLs = parseBooleanTestHeaderValue(value);
-        else if (key == "standaloneWebApplicationURL")
-            testOptions.standaloneWebApplicationURL = parseStringTestHeaderValueAsURL(value);
-
+        
         pairStart = pairEnd + 1;
     }
 }

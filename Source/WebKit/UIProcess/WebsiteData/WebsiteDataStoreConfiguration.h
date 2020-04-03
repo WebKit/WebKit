@@ -153,10 +153,6 @@ public:
     bool allowsServerPreconnect() const { return m_allowsServerPreconnect; }
     void setAllowsServerPreconnect(bool allows) { m_allowsServerPreconnect = allows; }
 
-    
-    const URL& standaloneApplicationURL() const { return m_standaloneApplicationURL; }
-    void setStandaloneApplicationURL(URL&& url) { m_standaloneApplicationURL = WTFMove(url); }
-
 private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
@@ -199,7 +195,6 @@ private:
     bool m_suppressesConnectionTerminationOnSystemChange { false };
     bool m_allowsServerPreconnect { true };
     unsigned m_testSpeedMultiplier { 1 };
-    URL m_standaloneApplicationURL;
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif
