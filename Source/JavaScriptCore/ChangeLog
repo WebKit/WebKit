@@ -1,3 +1,18 @@
+2020-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] TypedArray#subarray should throw OOM error gracefully
+        https://bugs.webkit.org/show_bug.cgi?id=209974
+        <rdar://problem/61253901>
+
+        Reviewed by Mark Lam.
+
+        After r259069 change, possiblySharedBuffer can return nullptr if OOM happens.
+        However, TypedArray#subarray didn't handle this case properly. This patch throws
+        an OOM error appropriately if possiblySharedBuffer returns nullptr in TypedArray#subarray.
+
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+
 2020-04-03  David Kilzer  <ddkilzer@apple.com>
 
         [Xcode] Replace ASAN_OTHER_CFLAGS and ASAN_OTHER_CPLUSPLUSFLAGS with $(inherited)

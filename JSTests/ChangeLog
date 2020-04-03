@@ -1,3 +1,17 @@
+2020-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] TypedArray#subarray should throw OOM error gracefully
+        https://bugs.webkit.org/show_bug.cgi?id=209974
+        <rdar://problem/61253901>
+
+        Reviewed by Mark Lam.
+
+        * stress/typed-array-subarray-can-throw-oom-error.js: Added.
+        (foo):
+        (canThrow):
+        (bar):
+        (get bar):
+
 2020-04-03  Paulo Matos  <pmatos@igalia.com>
 
         Re-enable previously skipped arm tests

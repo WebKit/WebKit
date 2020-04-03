@@ -542,6 +542,10 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     unsigned length = end - begin;
 
     RefPtr<ArrayBuffer> arrayBuffer = thisObject->possiblySharedBuffer();
+    if (UNLIKELY(!arrayBuffer)) {
+        throwOutOfMemoryError(globalObject, scope);
+        return encodedJSValue();
+    }
     RELEASE_ASSERT(thisLength == thisObject->length());
 
     unsigned newByteOffset = thisObject->byteOffset() + offset * ViewClass::elementSize;
