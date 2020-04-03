@@ -14,49 +14,33 @@ store = db.createObjectStore('store')
 
 onOpen():
 db = event.target.result
-tx = db.transaction('store')
+tx = db.transaction('store', 'readonly')
 store = tx.objectStore('store')
-cursorRequest = store.openCursor()
+Create 1000 cursorRequests and check their results in otherRequestSuccess().
 otherRequest = store.get(0)
 
-openCursorRequestSuccess():
-Result will be checked later, to ensure that lazy access is safe
-
 otherRequestSuccess():
-Verify that the request's result can be accessed lazily:
+Verify that results of openCursor requests can be accessed lazily.
 gc()
-cursor = cursorRequest.result
-PASS cursor is non-null.
-PASS cursor.key is "key1"
-PASS cursor.value is "value1"
-cursorRequest.extra = 123
-cursor.extra = 456
-Ensure request is not released if cursor is still around.
-cursorRequest = null
+Ensure requests are not released if cursors are still around.
+cursorRequests = null
 gc()
-PASS cursorRequestObservation.wasCollected is false
-cursor.continue()
-cursor = null
+PASS isAnyCollected(cursorRequestObservers) is false
+Ensure requests are not released if they are pending.
+cursors = null
 gc()
-PASS cursorObservation.wasCollected is false
-PASS cursorRequestObservation.wasCollected is false
+PASS isAnyCollected(cursorObservers) is false
+PASS isAnyCollected(cursorRequestObservers) is false
 finalRequest = store.get(0)
 
-cursorContinueSuccess():
-cursor = event.target.result
-PASS cursor is non-null.
-PASS cursor.key is "key2"
-PASS cursor.value is "value2"
-PASS event.target.extra is 123
-PASS cursor.extra is 456
-
 finalRequestSuccess():
-PASS cursor.key is "key2"
-PASS cursor.value is "value2"
-cursor = null
+Ensure requests and cursors are released.
+PASS cursors is non-null.
+PASS cursors.length is 1000
+cursors = null
 gc()
-PASS cursorRequestObservation.wasCollected is true
-PASS cursorObservation.wasCollected is true
+PASS isAnyCollected(cursorObservers) is true
+PASS isAnyCollected(cursorRequestObservers) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -16,69 +16,103 @@ function prepareDatabase(evt)
     store.put("value2", "key2");
 }
 
+function checkCursor(cursor, target, message)
+{
+    if (!cursor)
+        testFailed(message + ": cursor is null");
+    if (cursor.key != target.key)
+        testFailed(message + ": cursor.key is " + cursor.key + ", should be " + target.key);
+    if (cursor.value != target.value)
+        testFailed(message + ": cursor.value is " + cursor.value + ", should be " + target.value);
+    if (cursor.extra != target.extra)
+        testFailed(message + ": cursor.extra is " + cursor.extra + ", should be " + target.extra);
+}
+
+function isAnyCollected(observers)
+{
+    for (let observer of observers) {
+        if (observer.wasCollected)
+            return true;
+    }
+    return false;
+}
+
 function onOpen(evt)
 {
     preamble(evt);
     evalAndLog("db = event.target.result");
-    evalAndLog("tx = db.transaction('store')");
+    evalAndLog("tx = db.transaction('store', 'readonly')");
     evalAndLog("store = tx.objectStore('store')");
 
-    evalAndLog("cursorRequest = store.openCursor()");
-    cursorRequest.onsuccess = function openCursorRequestSuccess(evt) {
-        preamble(evt);
-        debug("Result will be checked later, to ensure that lazy access is safe");
-    };
+    debug("Create 1000 cursorRequests and check their results in otherRequestSuccess().");
+    cursorRequests = [];
+    cursorRequestObservers = [];
+    for (let i = 0; i < 1000; ++i) {
+        cursorRequest = store.openCursor();
+        cursorRequests.push(cursorRequest);
+        cursorRequestObservers.push(internals.observeGC(cursorRequest));
+        cursorRequest = null;
+    }
 
     evalAndLog("otherRequest = store.get(0)");
+
     otherRequest.onsuccess = function otherRequestSuccess(evt) {
         preamble(evt);
 
-        debug("Verify that the request's result can be accessed lazily:");
+        debug("Verify that results of openCursor requests can be accessed lazily.");
         evalAndLog("gc()");
 
-        evalAndLog("cursor = cursorRequest.result");
-        shouldBeNonNull("cursor");
-        shouldBeEqualToString("cursor.key", "key1");
-        shouldBeEqualToString("cursor.value", "value1");
-        evalAndLog("cursorRequest.extra = 123");
-        evalAndLog("cursor.extra = 456");
+        cursors = [];
+        cursorObservers = [];
+        var target = { key:"key1", value:"value1" };
+        for (var i = 0; i < cursorRequests.length; i++) {
+            cursor = cursorRequests[i].result;
+            checkCursor(cursor, target, "Examine cursorRequests[" + i + "]");
+            cursorRequests[i].extra = "123";
+            cursor.extra = "456";
+            cursors.push(cursor);
+            cursorObservers.push(internals.observeGC(cursor));
+            cursor = null;
 
-        // Assign a new handler to inspect the request and cursor indirectly.
-        cursorRequest.onsuccess = function cursorContinueSuccess(evt) {
-            preamble(evt);
-            evalAndLog("cursor = event.target.result");
-            shouldBeNonNull("cursor");
-            shouldBeEqualToString("cursor.key", "key2");
-            shouldBeEqualToString("cursor.value", "value2");
-            shouldBe("event.target.extra", "123");
-            shouldBe("cursor.extra", "456");
-        };
+            // Assign a new handler to inspect the request and cursor indirectly.
+            cursorRequests[i].onsuccess = (event)=>{
+                cursor = event.target.result;
+                var target = { key: "key2", value:"value2", extra:"456" };
+                checkCursor(cursor, target, "Examine cursor after continue()");
+                if (event.target.extra != "123") {
+                    testFailed("Examine cursor after continue(): event.target.extra is " + event.target.extra + ", should be 123");
+                }
+                cursors.push(cursor);
+            };
+        }
 
-        debug("Ensure request is not released if cursor is still around.");
-        cursorRequestObservation = internals.observeGC(cursorRequest);
-        evalAndLog("cursorRequest = null");
+        debug("Ensure requests are not released if cursors are still around.");
+        evalAndLog("cursorRequests = null");
         evalAndLog("gc()");
-        shouldBeFalse("cursorRequestObservation.wasCollected");
+        shouldBeFalse("isAnyCollected(cursorRequestObservers)");
 
-        evalAndLog("cursor.continue()");
+        for (var i = 0; i < cursors.length; i++) {
+            cursors[i].continue();
+        }
 
-        cursorObservation = internals.observeGC(cursor);
-        evalAndLog("cursor = null");
+        debug("Ensure requests are not released if they are pending.");
+        evalAndLog("cursors = null"); 
         evalAndLog("gc()");
-        shouldBeFalse("cursorObservation.wasCollected");
-        shouldBeFalse("cursorRequestObservation.wasCollected");
+        shouldBeFalse("isAnyCollected(cursorObservers)");
+        shouldBeFalse("isAnyCollected(cursorRequestObservers)");
+        cursors = []; 
 
         evalAndLog("finalRequest = store.get(0)");
         finalRequest.onsuccess = function finalRequestSuccess(evt) {
             preamble(evt);
-            shouldBeEqualToString("cursor.key", "key2");
-            shouldBeEqualToString("cursor.value", "value2");
-
-            cursorObservation = internals.observeGC(cursor);
-            evalAndLog("cursor = null");
+            debug("Ensure requests and cursors are released.");
+            shouldBeNonNull("cursors");
+            shouldBe("cursors.length", "1000");
+            evalAndLog("cursors = null");
             evalAndLog("gc()");
-            shouldBeTrue("cursorRequestObservation.wasCollected");
-            shouldBeTrue("cursorObservation.wasCollected");
+
+            shouldBeTrue("isAnyCollected(cursorObservers)");
+            shouldBeTrue("isAnyCollected(cursorRequestObservers)");
         };
     };
 

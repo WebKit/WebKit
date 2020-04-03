@@ -1,3 +1,26 @@
+2020-04-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Flaky Test: storage/indexeddb/cursor-request-cycle.html
+        https://bugs.webkit.org/show_bug.cgi?id=209796
+        <rdar://problem/60171737>
+
+        Reviewed by Geoffrey Garen.
+
+        gc() does not guarantee all objects to be collected in our current implementation. So, instead of verifying all
+        cursor and request objects are released, we now only check if any of them is collected, which is enough to show
+        there is no ref cycle.
+
+        * storage/indexeddb/cursor-request-cycle-expected.txt:
+        * storage/indexeddb/cursor-request-cycle-private-expected.txt:
+        * storage/indexeddb/resources/cursor-request-cycle.js:
+        (checkCursor):
+        (isAnyCollected):
+        (onOpen.otherRequest.onsuccess.otherRequestSuccess.finalRequest.onsuccess):
+        (onOpen.otherRequest.onsuccess):
+        (onOpen):
+        (onOpen.cursorRequest.onsuccess): Deleted.
+        (onOpen.otherRequest.onsuccess.otherRequestSuccess.cursorRequest.onsuccess): Deleted.
+
 2020-04-03  Zalan Bujtas  <zalan@apple.com>
 
         [MultiColumn] Infinite loop in RenderBlockFlow::pushToNextPageWithMinimumLogicalHeight
