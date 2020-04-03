@@ -2081,7 +2081,7 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell.log('stdio', stdout='Unexpected failure.') +
             2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Patch does not apply')
+        self.expectOutcome(result=FAILURE, state_string='svn-apply failed to apply patch to trunk')
         rc = self.runStep()
         self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
         self.assertEqual(self.getProperty('build_finish_summary'), None)
@@ -2100,10 +2100,10 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell.log('stdio', stdout='Unexpected failure.') +
             2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Patch does not apply')
+        self.expectOutcome(result=FAILURE, state_string='svn-apply failed to apply patch to trunk')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Attachment 1234 does not apply')
-        self.assertEqual(self.getProperty('build_finish_summary'), 'Patch 1234 does not apply')
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Tools/Scripts/svn-apply failed to apply attachment 1234 to trunk.\nPlease resolve the conflicts and upload a new patch.')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Tools/Scripts/svn-apply failed to apply patch 1234 to trunk')
         return rc
 
 

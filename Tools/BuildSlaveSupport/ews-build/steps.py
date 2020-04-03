@@ -222,16 +222,17 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {u'step': u'Patch does not apply'}
+            return {u'step': u'svn-apply failed to apply patch to trunk'}
         return super(ApplyPatch, self).getResultSummary()
 
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)
         patch_id = self.getProperty('patch_id', '')
         if rc == FAILURE:
-            message = 'Patch {} does not apply'.format(patch_id)
+            message = 'Tools/Scripts/svn-apply failed to apply patch {} to trunk'.format(patch_id)
             if self.getProperty('buildername', '').lower() == 'commit-queue':
-                self.setProperty('bugzilla_comment_text', message.replace('Patch', 'Attachment'))
+                comment_text = '{}.\nPlease resolve the conflicts and upload a new patch.'.format(message.replace('patch', 'attachment'))
+                self.setProperty('bugzilla_comment_text', comment_text)
                 self.setProperty('build_finish_summary', message)
                 self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
             else:

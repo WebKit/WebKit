@@ -1,3 +1,15 @@
+2020-04-03  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Improve error message when patch fails to apply to trunk
+        https://bugs.webkit.org/show_bug.cgi?id=209965
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ApplyPatch.getResultSummary): Improved error message.
+        (ApplyPatch.evaluateCommand): Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2020-04-03  Sihui Liu  <sihui_liu@apple.com>
 
         ASSERTION FAILED: m_delegate in IDBConnectionToClient::identifier()
