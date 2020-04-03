@@ -1,3 +1,99 @@
+2020-04-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r256665. rdar://problem/61231902
+
+    [WASM] Wasm interpreter's calling convention doesn't match Wasm JIT's convention.
+    https://bugs.webkit.org/show_bug.cgi?id=207727
+    
+    JSTests:
+    
+    Reviewed by Mark Lam.
+    
+    * wasm/regress/llint-callee-saves-with-fast-memory.js: Added.
+    * wasm/regress/llint-callee-saves-without-fast-memory.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    Reviewed by Mark Lam.
+    
+    The Wasm JIT has unusual calling conventions, which were further complicated by the addition
+    of the interpreter, and the interpreter did not correctly follow these conventions (by incorrectly
+    saving and restoring the callee save registers used for the memory base and size). Here's a summary
+    of the calling convention:
+    
+    - When entering Wasm from JS, the wrapper must:
+        - Preserve the base and size when entering LLInt regardless of the mode. (Prior to this
+          patch we only preserved the base in Signaling mode)
+        - Preserve the memory base in either mode, and the size for BoundsChecking.
+    - Both tiers must preserve every *other* register they use. e.g. the LLInt must preserve PB
+      and wasmInstance, but must *not* preserve memoryBase and memorySize.
+    - Changes to memoryBase and memorySize are visible to the caller. This means that:
+        - Intra-module calls can assume these registers are up-to-date even if the memory was
+          resized. The only exception here is if the LLInt calls a signaling JIT, in which case
+          the JIT will not update the size register, since it won't be using it.
+        - Inter-module and JS calls require the caller to reload these registers. These calls may
+          result in memory changes (e.g. the callee may call memory.grow).
+        - A Signaling JIT caller must be aware that the LLInt may trash the size register, since
+          it always bounds checks.
+    
+    * llint/WebAssembly.asm:
+    * wasm/WasmAirIRGenerator.cpp:
+    (JSC::Wasm::AirIRGenerator::addCall):
+    * wasm/WasmB3IRGenerator.cpp:
+    (JSC::Wasm::B3IRGenerator::addCall):
+    * wasm/WasmCallee.cpp:
+    (JSC::Wasm::LLIntCallee::calleeSaveRegisters):
+    * wasm/WasmCallingConvention.h:
+    * wasm/WasmLLIntPlan.cpp:
+    (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+    * wasm/WasmMemoryInformation.cpp:
+    (JSC::Wasm::PinnedRegisterInfo::get):
+    (JSC::Wasm::getPinnedRegisters): Deleted.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256665 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-14  Tadeu Zagallo  <tzagallo@apple.com> and Michael Saboff  <msaboff@apple.com>
+
+            [WASM] Wasm interpreter's calling convention doesn't match Wasm JIT's convention.
+            https://bugs.webkit.org/show_bug.cgi?id=207727
+
+            Reviewed by Mark Lam.
+
+            The Wasm JIT has unusual calling conventions, which were further complicated by the addition
+            of the interpreter, and the interpreter did not correctly follow these conventions (by incorrectly
+            saving and restoring the callee save registers used for the memory base and size). Here's a summary
+            of the calling convention:
+
+            - When entering Wasm from JS, the wrapper must:
+                - Preserve the base and size when entering LLInt regardless of the mode. (Prior to this
+                  patch we only preserved the base in Signaling mode)
+                - Preserve the memory base in either mode, and the size for BoundsChecking.
+            - Both tiers must preserve every *other* register they use. e.g. the LLInt must preserve PB
+              and wasmInstance, but must *not* preserve memoryBase and memorySize.
+            - Changes to memoryBase and memorySize are visible to the caller. This means that:
+                - Intra-module calls can assume these registers are up-to-date even if the memory was
+                  resized. The only exception here is if the LLInt calls a signaling JIT, in which case
+                  the JIT will not update the size register, since it won't be using it.
+                - Inter-module and JS calls require the caller to reload these registers. These calls may
+                  result in memory changes (e.g. the callee may call memory.grow).
+                - A Signaling JIT caller must be aware that the LLInt may trash the size register, since
+                  it always bounds checks.
+
+            * llint/WebAssembly.asm:
+            * wasm/WasmAirIRGenerator.cpp:
+            (JSC::Wasm::AirIRGenerator::addCall):
+            * wasm/WasmB3IRGenerator.cpp:
+            (JSC::Wasm::B3IRGenerator::addCall):
+            * wasm/WasmCallee.cpp:
+            (JSC::Wasm::LLIntCallee::calleeSaveRegisters):
+            * wasm/WasmCallingConvention.h:
+            * wasm/WasmLLIntPlan.cpp:
+            (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+            * wasm/WasmMemoryInformation.cpp:
+            (JSC::Wasm::PinnedRegisterInfo::get):
+            (JSC::Wasm::getPinnedRegisters): Deleted.
+
 2020-03-30  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r258540. rdar://problem/61064824
