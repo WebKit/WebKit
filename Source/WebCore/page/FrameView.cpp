@@ -3800,8 +3800,22 @@ void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
 
 ScrollableArea* FrameView::enclosingScrollableArea() const
 {
-    // FIXME: Walk up the frame tree and look for a scrollable parent frame or RenderLayer.
-    return nullptr;
+    if (frame().isMainFrame())
+        return nullptr;
+
+    auto* ownerElement = frame().ownerElement();
+    if (!ownerElement)
+        return nullptr;
+
+    auto* ownerRenderer = ownerElement->renderer();
+    if (!ownerRenderer)
+        return nullptr;
+
+    auto* layer = ownerRenderer->enclosingLayer();
+    if (!layer)
+        return nullptr;
+
+    return layer->enclosingScrollableLayer(IncludeSelfOrNot::IncludeSelf, CrossFrameBoundaries::No);
 }
 
 IntRect FrameView::scrollableAreaBoundingBox(bool*) const

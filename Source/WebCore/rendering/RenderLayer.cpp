@@ -3598,12 +3598,10 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 
 ScrollableArea* RenderLayer::enclosingScrollableArea() const
 {
-    if (RenderLayer* scrollableLayer = enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::Yes))
+    if (auto* scrollableLayer = enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::No))
         return scrollableLayer;
 
-    // FIXME: We should return the frame view here (or possibly an ancestor frame view,
-    // if the frame view isn't scrollable.
-    return nullptr;
+    return &renderer().view().frameView();
 }
 
 bool RenderLayer::isScrollableOrRubberbandable()
