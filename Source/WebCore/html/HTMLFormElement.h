@@ -156,7 +156,9 @@ private:
 
     RefPtr<HTMLElement> elementFromPastNamesMap(const AtomString&) const;
     void addToPastNamesMap(FormNamedItem*, const AtomString& pastName);
+#if ASSERT_ENABLED
     void assertItemCanBeInPastNamesMap(FormNamedItem*) const;
+#endif
     void removeFromPastNamesMap(FormNamedItem*);
 
     bool matchesValidPseudoClass() const final;
@@ -164,10 +166,8 @@ private:
 
     void resetAssociatedFormControlElements();
 
-    typedef HashMap<RefPtr<AtomStringImpl>, FormNamedItem*> PastNamesMap;
-
     FormSubmission::Attributes m_attributes;
-    std::unique_ptr<PastNamesMap> m_pastNamesMap;
+    HashMap<AtomString, WeakPtr<HTMLElement>> m_pastNamesMap;
 
     RadioButtonGroups m_radioButtonGroups;
     mutable WeakPtr<HTMLFormControlElement> m_defaultButton;

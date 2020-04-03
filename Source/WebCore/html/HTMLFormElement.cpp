@@ -504,7 +504,7 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
     // for performance consideration.
     if (associatedHTMLElement.hasAttributeWithoutSynchronization(formAttr) && associatedHTMLElement.isConnected()) {
         unsigned short position = compareDocumentPosition(associatedHTMLElement);
-        ASSERT_WITH_SECURITY_IMPLICATION(!(position & DOCUMENT_POSITION_DISCONNECTED));
+        ASSERT(!(position & DOCUMENT_POSITION_DISCONNECTED));
         if (position & DOCUMENT_POSITION_PRECEDING) {
             ++m_associatedElementsBeforeIndex;
             ++m_associatedElementsAfterIndex;
@@ -560,7 +560,7 @@ void HTMLFormElement::registerFormElement(FormAssociatedElement* e)
 void HTMLFormElement::removeFormElement(FormAssociatedElement* e)
 {
     unsigned index = m_associatedElements.find(&e->asHTMLElement());
-    ASSERT_WITH_SECURITY_IMPLICATION(index < m_associatedElements.size());
+    ASSERT(index < m_associatedElements.size());
     if (index < m_associatedElementsBeforeIndex)
         --m_associatedElementsBeforeIndex;
     if (index < m_associatedElementsAfterIndex)
@@ -764,58 +764,56 @@ bool HTMLFormElement::reportValidity()
     return validateInteractively();
 }
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
 void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem* item) const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(item);
+    ASSERT(item);
     HTMLElement& element = item->asHTMLElement();
-    ASSERT_WITH_SECURITY_IMPLICATION(element.form() == this);
+    ASSERT(element.form() == this);
 
     if (item->isFormAssociatedElement()) {
-        ASSERT_WITH_SECURITY_IMPLICATION(m_associatedElements.find(&element) != notFound);
+        ASSERT(m_associatedElements.find(&element) != notFound);
         return;
     }
 
-    ASSERT_WITH_SECURITY_IMPLICATION(element.hasTagName(imgTag));
-    ASSERT_WITH_SECURITY_IMPLICATION(m_imageElements.find(&downcast<HTMLImageElement>(element)) != notFound);
-}
-#else
-inline void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem*) const
-{
+    ASSERT(element.hasTagName(imgTag));
+    ASSERT(m_imageElements.find(&downcast<HTMLImageElement>(element)) != notFound);
 }
 #endif
 
 RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomString& pastName) const
 {
-    if (pastName.isEmpty() || !m_pastNamesMap)
+    if (pastName.isEmpty() || m_pastNamesMap.isEmpty())
         return nullptr;
-    FormNamedItem* item = m_pastNamesMap->get(pastName.impl());
-    if (!item)
+    auto weakElement = m_pastNamesMap.get(pastName);
+    if (!weakElement)
         return nullptr;
-    assertItemCanBeInPastNamesMap(item);
-    return &item->asHTMLElement();
+    auto element = makeRefPtr(weakElement.get());
+#if ASSERT_ENABLED
+    assertItemCanBeInPastNamesMap(element->asFormNamedItem());
+#endif
+    return element;
 }
 
 void HTMLFormElement::addToPastNamesMap(FormNamedItem* item, const AtomString& pastName)
 {
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     assertItemCanBeInPastNamesMap(item);
+#endif
     if (pastName.isEmpty())
         return;
-    if (!m_pastNamesMap)
-        m_pastNamesMap = makeUnique<PastNamesMap>();
-    m_pastNamesMap->set(pastName.impl(), item);
+    m_pastNamesMap.set(pastName.impl(), makeWeakPtr(item->asHTMLElement()));
 }
 
 void HTMLFormElement::removeFromPastNamesMap(FormNamedItem* item)
 {
     ASSERT(item);
-    if (!m_pastNamesMap)
+    if (m_pastNamesMap.isEmpty())
         return;
 
-    for (auto& pastName : m_pastNamesMap->values()) {
-        if (pastName == item)
-            pastName = nullptr; // Keep looping. Single element can have multiple names.
-    }
+    m_pastNamesMap.removeIf([&element = item->asHTMLElement()] (auto& iterator) {
+        return iterator.value == &element;
+    });
 }
 
 bool HTMLFormElement::matchesValidPseudoClass() const
