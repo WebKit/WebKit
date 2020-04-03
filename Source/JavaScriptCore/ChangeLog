@@ -1,3 +1,174 @@
+2020-04-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r259355. rdar://problem/61269744
+
+    Bindings that override getOwnPropertySlotByIndex need to say they MayHaveIndexedAccessors
+    https://bugs.webkit.org/show_bug.cgi?id=209762
+    
+    Reviewed by Darin Adler.
+    
+    Source/JavaScriptCore:
+    
+    Change indexingType to indexingModeIncludingHistory to more
+    clearly indicate the expected range of possible valid values.
+    
+    * runtime/StructureInlines.h:
+    (JSC::Structure::create):
+    
+    Source/WebCore:
+    
+    There may be places where we rely on this for semantic
+    correctness. I couldn't find any right now but we might as
+    well be conservative since this isn't a performance regression.
+    
+    * bindings/js/JSDOMWindowProperties.h:
+    * bindings/scripts/CodeGeneratorJS.pm:
+    (GenerateHeader):
+    * bindings/scripts/test/JS/JSInterfaceName.h:
+    (WebCore::JSInterfaceName::createStructure):
+    * bindings/scripts/test/JS/JSMapLike.h:
+    (WebCore::JSMapLike::createStructure):
+    * bindings/scripts/test/JS/JSReadOnlyMapLike.h:
+    (WebCore::JSReadOnlyMapLike::createStructure):
+    * bindings/scripts/test/JS/JSReadOnlySetLike.h:
+    (WebCore::JSReadOnlySetLike::createStructure):
+    * bindings/scripts/test/JS/JSSetLike.h:
+    (WebCore::JSSetLike::createStructure):
+    * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+    (WebCore::JSTestActiveDOMObject::createStructure):
+    * bindings/scripts/test/JS/JSTestCEReactions.h:
+    (WebCore::JSTestCEReactions::createStructure):
+    * bindings/scripts/test/JS/JSTestCEReactionsStringifier.h:
+    (WebCore::JSTestCEReactionsStringifier::createStructure):
+    * bindings/scripts/test/JS/JSTestCallTracer.h:
+    (WebCore::JSTestCallTracer::createStructure):
+    * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h:
+    (WebCore::JSTestClassWithJSBuiltinConstructor::createStructure):
+    * bindings/scripts/test/JS/JSTestDOMJIT.h:
+    (WebCore::JSTestDOMJIT::createStructure):
+    * bindings/scripts/test/JS/JSTestEnabledBySetting.h:
+    (WebCore::JSTestEnabledBySetting::createStructure):
+    * bindings/scripts/test/JS/JSTestEnabledForContext.h:
+    (WebCore::JSTestEnabledForContext::createStructure):
+    * bindings/scripts/test/JS/JSTestEventConstructor.h:
+    (WebCore::JSTestEventConstructor::createStructure):
+    * bindings/scripts/test/JS/JSTestEventTarget.h:
+    (WebCore::JSTestEventTarget::createStructure):
+    * bindings/scripts/test/JS/JSTestException.h:
+    (WebCore::JSTestException::createStructure):
+    * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+    (WebCore::JSTestGenerateIsReachable::createStructure):
+    * bindings/scripts/test/JS/JSTestGlobalObject.h:
+    (WebCore::JSTestGlobalObject::createStructure):
+    * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.h:
+    (WebCore::JSTestIndexedSetterNoIdentifier::createStructure):
+    * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.h:
+    (WebCore::JSTestIndexedSetterThrowingException::createStructure):
+    * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.h:
+    (WebCore::JSTestIndexedSetterWithIdentifier::createStructure):
+    * bindings/scripts/test/JS/JSTestInterface.h:
+    * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.h:
+    (WebCore::JSTestInterfaceLeadingUnderscore::createStructure):
+    * bindings/scripts/test/JS/JSTestIterable.h:
+    (WebCore::JSTestIterable::createStructure):
+    * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.h:
+    (WebCore::JSTestJSBuiltinConstructor::createStructure):
+    * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+    (WebCore::JSTestMediaQueryListListener::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.h:
+    (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.h:
+    (WebCore::JSTestNamedAndIndexedSetterThrowingException::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.h:
+    (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+    (WebCore::JSTestNamedConstructor::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.h:
+    (WebCore::JSTestNamedDeleterNoIdentifier::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.h:
+    (WebCore::JSTestNamedDeleterThrowingException::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.h:
+    (WebCore::JSTestNamedDeleterWithIdentifier::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.h:
+    (WebCore::JSTestNamedDeleterWithIndexedGetter::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedGetterCallWith.h:
+    (WebCore::JSTestNamedGetterCallWith::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.h:
+    (WebCore::JSTestNamedGetterNoIdentifier::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.h:
+    (WebCore::JSTestNamedGetterWithIdentifier::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.h:
+    (WebCore::JSTestNamedSetterNoIdentifier::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.h:
+    (WebCore::JSTestNamedSetterThrowingException::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.h:
+    (WebCore::JSTestNamedSetterWithIdentifier::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.h:
+    (WebCore::JSTestNamedSetterWithIndexedGetter::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.h:
+    (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.h:
+    (WebCore::JSTestNamedSetterWithOverrideBuiltins::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.h:
+    (WebCore::JSTestNamedSetterWithUnforgableProperties::createStructure):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.h:
+    (WebCore::JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::createStructure):
+    * bindings/scripts/test/JS/JSTestNode.h:
+    * bindings/scripts/test/JS/JSTestObj.h:
+    (WebCore::JSTestObj::createStructure):
+    * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+    (WebCore::JSTestOverloadedConstructors::createStructure):
+    * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.h:
+    (WebCore::JSTestOverloadedConstructorsWithSequence::createStructure):
+    * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+    (WebCore::JSTestOverrideBuiltins::createStructure):
+    * bindings/scripts/test/JS/JSTestPluginInterface.h:
+    (WebCore::JSTestPluginInterface::createStructure):
+    * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.h:
+    (WebCore::JSTestPromiseRejectionEvent::createStructure):
+    * bindings/scripts/test/JS/JSTestSerialization.h:
+    (WebCore::JSTestSerialization::createStructure):
+    * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.h:
+    (WebCore::JSTestSerializationIndirectInheritance::createStructure):
+    * bindings/scripts/test/JS/JSTestSerializationInherit.h:
+    (WebCore::JSTestSerializationInherit::createStructure):
+    * bindings/scripts/test/JS/JSTestSerializationInheritFinal.h:
+    (WebCore::JSTestSerializationInheritFinal::createStructure):
+    * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+    (WebCore::JSTestSerializedScriptValueInterface::createStructure):
+    * bindings/scripts/test/JS/JSTestStringifier.h:
+    (WebCore::JSTestStringifier::createStructure):
+    * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.h:
+    (WebCore::JSTestStringifierAnonymousOperation::createStructure):
+    * bindings/scripts/test/JS/JSTestStringifierNamedOperation.h:
+    (WebCore::JSTestStringifierNamedOperation::createStructure):
+    * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.h:
+    (WebCore::JSTestStringifierOperationImplementedAs::createStructure):
+    * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.h:
+    (WebCore::JSTestStringifierOperationNamedToString::createStructure):
+    * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.h:
+    (WebCore::JSTestStringifierReadOnlyAttribute::createStructure):
+    * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.h:
+    (WebCore::JSTestStringifierReadWriteAttribute::createStructure):
+    * bindings/scripts/test/JS/JSTestTypedefs.h:
+    (WebCore::JSTestTypedefs::createStructure):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259355 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-01  Keith Miller  <keith_miller@apple.com>
+
+            Bindings that override getOwnPropertySlotByIndex need to say they MayHaveIndexedAccessors
+            https://bugs.webkit.org/show_bug.cgi?id=209762
+
+            Reviewed by Darin Adler.
+
+            Change indexingType to indexingModeIncludingHistory to more
+            clearly indicate the expected range of possible valid values.
+
+            * runtime/StructureInlines.h:
+            (JSC::Structure::create):
+
 2020-03-30  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r258540. rdar://problem/61064830
