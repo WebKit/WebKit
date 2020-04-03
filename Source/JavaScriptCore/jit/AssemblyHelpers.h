@@ -985,6 +985,15 @@ public:
     Jump branchIfFunction(GPRReg cellGPR) { return branchIfType(cellGPR, JSFunctionType); }
     Jump branchIfNotFunction(GPRReg cellGPR) { return branchIfNotType(cellGPR, JSFunctionType); }
     
+    void isEmpty(GPRReg gpr, GPRReg dst)
+    {
+#if USE(JSVALUE64)
+        test64(NonZero, gpr, TrustedImm32(-1), dst);
+#else
+        compare32(Equal, gpr, TrustedImm32(JSValue::EmptyValueTag), dst);
+#endif
+    }
+
     Jump branchIfEmpty(GPRReg gpr)
     {
 #if USE(JSVALUE64)

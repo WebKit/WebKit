@@ -1,5 +1,84 @@
 2020-04-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r258901. rdar://problem/61231922
+
+    HasIndexedProperty should know about sane chain
+    https://bugs.webkit.org/show_bug.cgi?id=209457
+    
+    Reviewed by Saam Barati.
+    
+    This patch makes it so HasIndexedProperty is aware of
+    sane chain. This is useful because, most of the time we do an
+    indexed in it is on an array. If the array has a sane chain (i.e.
+    no indexed properties on it's prototypes and has the default
+    prototype chain) then we can just test for the index being a hole.
+    
+    Note, we could also just convert OOB indices into false but that
+    should happen in another patch.
+    https://bugs.webkit.org/show_bug.cgi?id=209456
+    
+    I didn't add any tests because it turns out we already have a ton.
+    I know this because I broke most of them repeatedly... >.>
+    
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    * dfg/DFGFixupPhase.cpp:
+    (JSC::DFG::FixupPhase::fixupNode):
+    (JSC::DFG::FixupPhase::setSaneChainIfPossible):
+    (JSC::DFG::FixupPhase::convertToHasIndexedProperty):
+    * dfg/DFGNodeType.h:
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+    (JSC::FTL::DFG::LowerDFGToB3::speculateAndJump):
+    * jit/AssemblyHelpers.h:
+    (JSC::AssemblyHelpers::isEmpty):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258901 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-23  Keith Miller  <keith_miller@apple.com>
+
+            HasIndexedProperty should know about sane chain
+            https://bugs.webkit.org/show_bug.cgi?id=209457
+
+            Reviewed by Saam Barati.
+
+            This patch makes it so HasIndexedProperty is aware of
+            sane chain. This is useful because, most of the time we do an
+            indexed in it is on an array. If the array has a sane chain (i.e.
+            no indexed properties on it's prototypes and has the default
+            prototype chain) then we can just test for the index being a hole.
+
+            Note, we could also just convert OOB indices into false but that
+            should happen in another patch.
+            https://bugs.webkit.org/show_bug.cgi?id=209456
+
+            I didn't add any tests because it turns out we already have a ton.
+            I know this because I broke most of them repeatedly... >.>
+
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            (JSC::DFG::FixupPhase::setSaneChainIfPossible):
+            (JSC::DFG::FixupPhase::convertToHasIndexedProperty):
+            * dfg/DFGNodeType.h:
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+            (JSC::FTL::DFG::LowerDFGToB3::speculateAndJump):
+            * jit/AssemblyHelpers.h:
+            (JSC::AssemblyHelpers::isEmpty):
+
+2020-04-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r256766. rdar://problem/61231942
 
     [Wasm] REGRESSION(r256665): Wasm->JS call IC needs to save memory size register

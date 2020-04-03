@@ -13545,6 +13545,7 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
         GPRReg scratchGPR = scratch.gpr();
 
         MacroAssembler::Jump outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, indexGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+
         if (mode.isInBounds())
             speculationCheck(OutOfBounds, JSValueRegs(), nullptr, outOfBounds);
         else
@@ -13552,11 +13553,20 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
 
 #if USE(JSVALUE64)
         m_jit.load64(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), scratchGPR);
-        slowCases.append(m_jit.branchIfEmpty(scratchGPR));
 #else
         m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), scratchGPR);
-        slowCases.append(m_jit.branchIfEmpty(scratchGPR));
 #endif
+
+        if (mode.isSaneChain()) {
+            m_jit.isEmpty(scratchGPR, resultGPR);
+            break;
+        }
+
+        MacroAssembler::Jump isHole = m_jit.branchIfEmpty(scratchGPR);
+        if (!mode.isInBounds())
+            slowCases.append(isHole);
+        else
+            speculationCheck(LoadFromHole, JSValueRegs(), nullptr, isHole);
         m_jit.move(TrustedImm32(1), resultGPR);
         break;
     }
@@ -13568,13 +13578,24 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
         GPRReg storageGPR = storage.gpr();
 
         MacroAssembler::Jump outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, indexGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+
         if (mode.isInBounds())
             speculationCheck(OutOfBounds, JSValueRegs(), nullptr, outOfBounds);
         else
             slowCases.append(outOfBounds);
 
         m_jit.loadDouble(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), scratchFPR);
-        slowCases.append(m_jit.branchIfNaN(scratchFPR));
+
+        if (mode.isSaneChain()) {
+            m_jit.compareDouble(MacroAssembler::DoubleEqualAndOrdered, scratchFPR, scratchFPR, resultGPR);
+            break;
+        }
+
+        MacroAssembler::Jump isHole = m_jit.branchIfNaN(scratchFPR);
+        if (!mode.isInBounds())
+            slowCases.append(isHole);
+        else
+            speculationCheck(LoadFromHole, JSValueRegs(), nullptr, isHole);
         m_jit.move(TrustedImm32(1), resultGPR);
         break;
     }
@@ -13594,11 +13615,20 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
 
 #if USE(JSVALUE64)
         m_jit.load64(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, ArrayStorage::vectorOffset()), scratchGPR);
-        slowCases.append(m_jit.branchIfEmpty(scratchGPR));
 #else
         m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), scratchGPR);
-        slowCases.append(m_jit.branchIfEmpty(scratchGPR));
 #endif
+
+        if (mode.isSaneChain()) {
+            m_jit.isEmpty(scratchGPR, resultGPR);
+            break;
+        }
+
+        MacroAssembler::Jump isHole = m_jit.branchIfEmpty(scratchGPR);
+        if (!mode.isInBounds() || mode.isSaneChain())
+            slowCases.append(isHole);
+        else
+            speculationCheck(LoadFromHole, JSValueRegs(), nullptr, isHole);
         m_jit.move(TrustedImm32(1), resultGPR);
         break;
     }
