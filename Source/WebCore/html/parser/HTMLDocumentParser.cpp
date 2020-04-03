@@ -314,7 +314,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     if (shouldResume)
         m_parserScheduler->scheduleForResume();
 
-    if (isWaitingForScripts()) {
+    if (isWaitingForScripts() && !isDetached()) {
         ASSERT(m_tokenizer.isInDataState());
         if (!m_preloadScanner) {
             m_preloadScanner = makeUnique<HTMLPreloadScanner>(m_options, document()->url(), document()->deviceScaleFactor());
@@ -372,7 +372,7 @@ void HTMLDocumentParser::insert(SegmentedString&& source)
     m_input.insertAtCurrentInsertionPoint(WTFMove(source));
     pumpTokenizerIfPossible(ForceSynchronous);
 
-    if (isWaitingForScripts()) {
+    if (isWaitingForScripts() && !isDetached()) {
         // Check the document.write() output with a separate preload scanner as
         // the main scanner can't deal with insertions.
         if (!m_insertionPreloadScanner)
