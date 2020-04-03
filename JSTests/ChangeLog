@@ -1,3 +1,13 @@
+2020-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        TypedArray's [[DefineOwnProperty]] is incorrect with partial descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=188875
+
+        Reviewed by Ross Kirsling.
+
+        * stress/typedarray-configure-index.js:
+        * test262/expectations.yaml: Mark 10 test cases as passing.
+
 2020-04-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         Intl.NumberFormat.prototype.format must preserve sign of -0
