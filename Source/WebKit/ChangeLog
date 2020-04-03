@@ -1,5 +1,41 @@
 2020-04-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r258401. rdar://problem/61231940
+
+    WebPageProxy::SetPromisedDataForImage should validate its `imageSize` and `archiveSize` parameters
+    <https://webkit.org/b/209029>
+    <rdar://problem/60181394>
+    
+    Reviewed by Youenn Fablet.
+    
+    * UIProcess/mac/WebPageProxyMac.mm:
+    (WebKit::WebPageProxy::setPromisedDataForImage):
+    - Validate `imageSize` and `archiveSize` using MESSAGE_CHECK().
+    - Add static_cast<size_t>() to `imageSize` and `archiveSize`
+      parameters to denote type change.
+    - Add nullptr check for SharedMemory::map() result with
+      `archiveHandle`.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258401 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-13  David Kilzer  <ddkilzer@apple.com>
+
+            WebPageProxy::SetPromisedDataForImage should validate its `imageSize` and `archiveSize` parameters
+            <https://webkit.org/b/209029>
+            <rdar://problem/60181394>
+
+            Reviewed by Youenn Fablet.
+
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (WebKit::WebPageProxy::setPromisedDataForImage):
+            - Validate `imageSize` and `archiveSize` using MESSAGE_CHECK().
+            - Add static_cast<size_t>() to `imageSize` and `archiveSize`
+              parameters to denote type change.
+            - Add nullptr check for SharedMemory::map() result with
+              `archiveHandle`.
+
+2020-04-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r254724. rdar://problem/61231960
 
     IPC hardening for WebPageProxy::SetPromisedDataForImage message
