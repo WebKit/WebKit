@@ -1,3 +1,21 @@
+2020-04-03  David Kilzer  <ddkilzer@apple.com>
+
+        [Cocoa] Update MESSAGE_CHECK macros used in WebProcessProxy::didCreateSleepDisabler/WebProcessProxy::didDestroySleepDisabler
+        <https://webkit.org/b/209981>
+        <rdar://problem/61237674>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didCreateSleepDisabler):
+        - Remove MESSAGE_CHECK for `identifier` since decoding detects
+          invalid values.
+        - Add MESSAGE_CHECK for `reason` since a NULL string would cause
+          CFStringCreateWithCString() to crash later.
+        (WebKit::WebProcessProxy::didDestroySleepDisabler):
+        - Remove MESSAGE_CHECK for `identifier` since decoding detects
+          invalid values.
+
 2020-04-03  Megan Gardner  <megan_gardner@apple.com>
 
         Color Form Control does not come up on second selection in macCatalyst
