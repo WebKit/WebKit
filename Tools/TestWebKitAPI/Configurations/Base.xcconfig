@@ -102,10 +102,8 @@ EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_COCOA_TOUCH));
 EXCLUDED_SOURCE_FILE_NAMES_ = *IOS.h *IOS.cpp *IOS.mm;
 EXCLUDED_SOURCE_FILE_NAMES_cocoatouch = *Mac.h *Mac.cpp *Mac.mm */mac/*;
 
-OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS) --system-header-prefix=WebKit/;
+OTHER_CFLAGS = $(inherited) --system-header-prefix=WebKit/;
 OTHER_CFLAGS[sdk=macosx*] = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
-OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS);
-OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
 
 WK_COCOA_TOUCH = $(WK_COCOA_TOUCH_$(WK_PLATFORM_NAME));
 WK_COCOA_TOUCH_iphoneos = cocoatouch;

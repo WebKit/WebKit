@@ -54,8 +54,7 @@ SKIP_INSTALL_YES = NO;
 
 CLANG_ENABLE_OBJC_ARC = YES;
 
-OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS) -isystem icu;
-OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
+OTHER_CFLAGS = $(inherited) -isystem icu;
 
 // Explicitly add the PrivateHeaders directory to the search path so that generated header files can be found in production builds.
 HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" "${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}" "$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders" $(inherited);

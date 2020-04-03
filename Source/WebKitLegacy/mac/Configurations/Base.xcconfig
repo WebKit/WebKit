@@ -122,9 +122,7 @@ SDKROOT = macosx.internal;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 
-OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
-OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
-OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
+OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
 WK_COCOA_TOUCH = $(WK_COCOA_TOUCH_$(WK_PLATFORM_NAME));
 WK_COCOA_TOUCH_iphoneos = cocoatouch;

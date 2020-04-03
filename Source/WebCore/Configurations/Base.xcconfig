@@ -122,9 +122,7 @@ DEAD_CODE_STRIPPING = $(DEAD_CODE_STRIPPING_$(CURRENT_VARIANT));
 
 SDKROOT = macosx.internal;
 
-OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
-OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
-OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
+OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
 // This is required to make LLVM_TARGET_TRIPLE_SUFFIX propagate into scripts.
 LLVM_TARGET_TRIPLE_SUFFIX = $(inherited);

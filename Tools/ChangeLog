@@ -1,3 +1,30 @@
+2020-04-03  David Kilzer  <ddkilzer@apple.com>
+
+        [Xcode] Replace ASAN_OTHER_CFLAGS and ASAN_OTHER_CPLUSPLUSFLAGS with $(inherited)
+        <https://webkit.org/b/209963>
+        <rdar://problem/61257504>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * asan/asan.xcconfig:
+        - Use $(inherited) to get rid of custom ASAN_OTHER_CFLAGS and
+          ASAN_OTHER_CPLUSPLUSFLAGS.  Note that ASAN_OTHER_LDFLAGS had
+          been previously removed in r179312, but not in the other
+          *.xcconfig files.
+
+        * ContentExtensionTester/Configurations/Base.xcconfig:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * ImageDiff/cg/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * MobileMiniBrowser/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * WebEditingTester/Configurations/Base.xcconfig:
+        * WebKitLauncher/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * lldb/lldbWebKitTester/Configurations/Base.xcconfig:
+        - Remove ASAN_OTHER_CFLAGS, ASAN_OTHER_CPLUSPLUSFLAGS and
+          ASAN_OTHER_LDFLAGS.
+
 2020-04-03  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Improve error message when patch fails to apply to trunk
