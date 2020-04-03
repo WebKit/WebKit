@@ -1,3 +1,17 @@
+2020-04-03  Keith Rollin  <krollin@apple.com>
+
+        Do not link with OpenGL on Apple platforms
+        https://bugs.webkit.org/show_bug.cgi?id=209946
+        <rdar://problem/61237956>
+
+        Reviewed by Sam Weinig.
+
+        OpenGL is not used in our build of ANGLE. Attempting to link with it
+        causes warnings, which can turn into errors in some cases (in
+        particular, when building with Xcode's "new" build system).
+
+        * ANGLE.xcodeproj/project.pbxproj:
+
 2020-04-03  David Kilzer  <ddkilzer@apple.com>
 
         [Xcode] Replace ASAN_OTHER_CFLAGS and ASAN_OTHER_CPLUSPLUSFLAGS with $(inherited)

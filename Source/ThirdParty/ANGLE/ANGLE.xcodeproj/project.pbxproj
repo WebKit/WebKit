@@ -452,7 +452,6 @@
 		5CB301461DE39F1A00D2C405 /* VertexArrayGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB301131DE39F1A00D2C405 /* VertexArrayGL.h */; };
 		5CB3014F1DE39F4700D2C405 /* DisplayCGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB301491DE39F4700D2C405 /* DisplayCGL.h */; };
 		5CB301511DE39F4700D2C405 /* PbufferSurfaceCGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB3014B1DE39F4700D2C405 /* PbufferSurfaceCGL.h */; };
-		5CB304921DE4156200D2C405 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CB3048D1DE4144400D2C405 /* OpenGL.framework */; };
 		5CB304931DE4156B00D2C405 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CB3048F1DE4145500D2C405 /* QuartzCore.framework */; };
 		5CB304941DE4157200D2C405 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CB3048B1DE4143500D2C405 /* CoreGraphics.framework */; };
 		5CB304961DE4157B00D2C405 /* entry_points_egl_ext.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB300BC1DE39E7500D2C405 /* entry_points_egl_ext.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1518,7 +1517,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CB304941DE4157200D2C405 /* CoreGraphics.framework in Frameworks */,
-				5CB304921DE4156200D2C405 /* OpenGL.framework in Frameworks */,
 				5CB304931DE4156B00D2C405 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
