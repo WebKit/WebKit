@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../resources/js-test.js"></script>
+<script src="../resources/js-test-pre.js"></script>
 <script>
     jsTestIsAsync = true;
 
@@ -12,7 +12,7 @@
         var accessibleMenulist = accessibilityController.focusedElement;
 
         function listener(notification) {
-            document.getElementById("console").innerText += "Got notification: " + notification + "\n";
+            debug("MenuList received notification: " + notification);
             accessibleMenulist.removeNotificationListener(listener);
             finishJSTest();
         }
@@ -20,15 +20,11 @@
 
         // Change the selected index.
         menulist.selectedIndex = 1;
-
-        // Make the test finish quickly whether we get the notification or not.
-        window.setTimeout(function() {
-            finishJSTest();
-        }, 10);
     }
 
     if (window.testRunner && window.accessibilityController) {
         window.addEventListener('load', function() {
+            debug("Load event notification received.");
             setTimeout(runTest, 10);
         }, false);
     }
@@ -45,5 +41,6 @@
 <p id="description"></p>
 <div id="console"></div>
 
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

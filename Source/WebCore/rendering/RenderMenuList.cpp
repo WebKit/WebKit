@@ -420,8 +420,9 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
     if (listIndex < 0 || listIndex >= static_cast<int>(selectElement().listItems().size()))
         return;
 
-    if (auto* menuList = downcast<AccessibilityMenuList>(axCache->get(this)))
-        menuList->didUpdateActiveOption(optionIndex);
+    auto* axObject = axCache->get(this);
+    if (is<AccessibilityMenuList>(axObject))
+        downcast<AccessibilityMenuList>(*axObject).didUpdateActiveOption(optionIndex);
 }
 
 String RenderMenuList::itemText(unsigned listIndex) const

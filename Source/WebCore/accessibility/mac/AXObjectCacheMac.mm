@@ -341,6 +341,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
             macNotification = (id)kAXMenuClosedNotification;
             break;
         case AXMenuListItemSelected:
+        case AXMenuListValueChanged:
             macNotification = (id)kAXMenuItemSelectedNotification;
             break;
         case AXPressDidSucceed:
