@@ -1,3 +1,18 @@
+2020-04-03  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Give RunningBoard entitlement to all our child processes
+        https://bugs.webkit.org/show_bug.cgi?id=209986
+        <rdar://problem/61275270>
+
+        Reviewed by Geoffrey Garen.
+
+        Give RunningBoard entitlement to all our child processes on iOS. As we are
+        transitioning to RunningBoard process assertions, it is important for the
+        target process of those assertion to have the 
+        com.apple.runningboard.assertions.webkit entitlement.
+
+        * Scripts/process-entitlements.sh:
+
 2020-04-03  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r259440.
