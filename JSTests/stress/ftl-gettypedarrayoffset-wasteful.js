@@ -1,5 +1,3 @@
-// https://bugs.webkit.org/show_bug.cgi?id=198754
-//@ skip if $architecture == "arm" and $hostOS == "linux"
 function foo(x){
     return x.byteOffset
 }
