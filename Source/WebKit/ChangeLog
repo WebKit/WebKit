@@ -1,3 +1,16 @@
+2020-04-03  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed fix after r259382
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_register_uri_scheme): Change g_return_if_fail()
+        calls to actually check that the passed scheme is not one of the
+        special ones.
+
 2020-04-03  youenn fablet  <youenn@apple.com>
 
         Add initial support for WebRTC HEVC

@@ -1232,12 +1232,12 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
     g_return_if_fail(callback);
 
     // List from Source/WTF/URLParser.cpp, enum Scheme.
-    g_return_if_fail(!g_ascii_strcasecmp(scheme, "ws"));
-    g_return_if_fail(!g_ascii_strcasecmp(scheme, "wss"));
-    g_return_if_fail(!g_ascii_strcasecmp(scheme, "file"));
-    g_return_if_fail(!g_ascii_strcasecmp(scheme, "ftp"));
-    g_return_if_fail(!g_ascii_strcasecmp(scheme, "http"));
-    g_return_if_fail(!g_ascii_strcasecmp(scheme, "https"));
+    g_return_if_fail(g_ascii_strcasecmp(scheme, "ws") != 0);
+    g_return_if_fail(g_ascii_strcasecmp(scheme, "wss") != 0);
+    g_return_if_fail(g_ascii_strcasecmp(scheme, "file") != 0);
+    g_return_if_fail(g_ascii_strcasecmp(scheme, "ftp") != 0);
+    g_return_if_fail(g_ascii_strcasecmp(scheme, "http") != 0);
+    g_return_if_fail(g_ascii_strcasecmp(scheme, "https") != 0);
 
     auto handler = WebKitURISchemeHandler::create(context, callback, userData, destroyNotify);
     auto addResult = context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), WTFMove(handler));
