@@ -1,3 +1,15 @@
+2020-04-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [ iOS wk2 ] fast/images/exif-orientation-background-image-repeat.html is flaky failing.
+        <rdar://problem/60921187>
+
+        Unreviewed test gardening.
+
+        Add "image-rendering: pixelated;" to the elements which render images to avoid unintended anti-aliasing.
+
+        * fast/images/exif-orientation-background-image-repeat-expected.html:
+        * fast/images/exif-orientation-background-image-repeat.html:
+
 2020-04-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS wk2 Debug] imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/cramped-001.html is failing
