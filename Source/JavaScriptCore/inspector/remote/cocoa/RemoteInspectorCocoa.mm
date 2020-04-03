@@ -142,7 +142,7 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
         // To make this work we will need to change m_automaticInspectionCandidateTargetIdentifier to be a per-thread value.
         // Multiple attempts on the same thread should not be possible because our nested run loop is in a special RWI mode.
         if (m_automaticInspectionPaused) {
-            LOG_ERROR("Skipping Automatic Inspection Candidate with pageId(%u) because we are already paused waiting for pageId(%u)", targetIdentifier, m_automaticInspectionCandidateTargetIdentifier);
+            WTFLogAlways("Skipping Automatic Inspection Candidate with pageId(%u) because we are already paused waiting for pageId(%u)", targetIdentifier, m_automaticInspectionCandidateTargetIdentifier);
             pushListingsSoon();
             return;
         }
@@ -157,15 +157,11 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
         }
 
         // In case debuggers fail to respond, or we cannot connect to webinspectord, automatically continue after a short period of time.
-#if PLATFORM(WATCHOS)
-        int64_t debuggerTimeoutDelay = 5;
-#else
-        int64_t debuggerTimeoutDelay = 1;
-#endif
+        int64_t debuggerTimeoutDelay = 10;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, debuggerTimeoutDelay * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             LockHolder lock(m_mutex);
             if (m_automaticInspectionCandidateTargetIdentifier == targetIdentifier) {
-                LOG_ERROR("Skipping Automatic Inspection Candidate with pageId(%u) because we failed to receive a response in time.", m_automaticInspectionCandidateTargetIdentifier);
+                WTFLogAlways("Skipping Automatic Inspection Candidate with pageId(%u) because we failed to receive a response in time.", m_automaticInspectionCandidateTargetIdentifier);
                 m_automaticInspectionPaused = false;
             }
         });
