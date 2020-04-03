@@ -438,6 +438,9 @@ void DocumentLoader::finishedLoading()
         // DocumentWriter::begin() gets called and creates the Document.
         if (!m_gotFirstByte)
             commitData(0, 0);
+        
+        if (!frameLoader())
+            return;
         frameLoader()->client().finishedLoading(this);
     }
 
@@ -474,6 +477,8 @@ bool DocumentLoader::isPostOrRedirectAfterPost(const ResourceRequest& newRequest
 
 void DocumentLoader::handleSubstituteDataLoadNow()
 {
+    Ref<DocumentLoader> protectedThis = makeRef(*this);
+    
     ResourceResponse response = m_substituteData.response();
     if (response.url().isEmpty())
         response = ResourceResponse(m_request.url(), m_substituteData.mimeType(), m_substituteData.content()->size(), m_substituteData.textEncoding());

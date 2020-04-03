@@ -705,6 +705,8 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
 
 void FrameLoader::receivedFirstData()
 {
+    auto protectedFrame = makeRef(m_frame);
+    
     dispatchDidCommitLoad(WTF::nullopt, WTF::nullopt);
     dispatchDidClearWindowObjectsInAllWorlds();
     dispatchGlobalObjectAvailableInAllWorlds();
