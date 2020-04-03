@@ -1,3 +1,9 @@
+2020-04-03  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed sandbox compile fix.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-04-03  David Kilzer  <ddkilzer@apple.com>
 
         [Cocoa] Update MESSAGE_CHECK macros used in WebProcessProxy::didCreateSleepDisabler/WebProcessProxy::didDestroySleepDisabler

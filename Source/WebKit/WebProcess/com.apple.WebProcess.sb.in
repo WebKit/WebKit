@@ -75,9 +75,8 @@
     (literal "/dev/urandom"))
 
 (deny file-read*
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600
     (with telemetry-backtrace)
-    (with report)
 #endif
     (literal "/private/etc/master.passwd")
     (literal "/private/etc/passwd"))
