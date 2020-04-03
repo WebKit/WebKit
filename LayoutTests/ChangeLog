@@ -1,5 +1,53 @@
 2020-04-03  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r258799. rdar://problem/61231946
+
+    Content-Type & Nosniff Ignored on XML External Entity Resources
+    <https://webkit.org/b/191171>
+    <rdar://problem/45763222>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Test: http/tests/security/contentTypeOptions/nosniff-xml-external-entity.xhtml
+    
+    * platform/MIMETypeRegistry.cpp:
+    (WebCore::MIMETypeRegistry::isXMLEntityMIMEType): Add.
+    * platform/MIMETypeRegistry.h:
+    (WebCore::MIMETypeRegistry::isXMLEntityMIMEType): Add.
+    - Checks for XML external entity MIME types.
+    
+    * xml/parser/XMLDocumentParserLibxml2.cpp:
+    (WebCore::externalEntityMimeTypeAllowedByNosniff): Add.
+    - Checks whether the MIME type is valid based on the presence of
+      the "X-Content-Type-Options: nosniff" header.
+    (WebCore::openFunc):
+    - Drop the contents of the resource that was returned and print
+      an error message to the Web Inspector console if
+      externalEntityMimeTypeAllowedByNosniff() says the MIME type is
+      not allowed.
+    
+    LayoutTests:
+    
+    * http/tests/security/contentTypeOptions/nosniff-xml-external-entity-expected.txt: Add.
+    * http/tests/security/contentTypeOptions/nosniff-xml-external-entity.xhtml: Add.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258799 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-20  David Kilzer  <ddkilzer@apple.com>
+
+            Content-Type & Nosniff Ignored on XML External Entity Resources
+            <https://webkit.org/b/191171>
+            <rdar://problem/45763222>
+
+            Reviewed by Darin Adler.
+
+            * http/tests/security/contentTypeOptions/nosniff-xml-external-entity-expected.txt: Add.
+            * http/tests/security/contentTypeOptions/nosniff-xml-external-entity.xhtml: Add.
+
+2020-04-03  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r258741. rdar://problem/61231885
 
     Sanitize suggested download filename received from web process
