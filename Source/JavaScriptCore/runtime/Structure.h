@@ -43,7 +43,6 @@
 #include "TinyBloomFilter.h"
 #include "Watchpoint.h"
 #include "WriteBarrierInlines.h"
-#include <wtf/CompactRefPtrTuple.h>
 #include <wtf/PrintStream.h>
 
 namespace WTF {
@@ -261,18 +260,9 @@ public:
     {
         return typeInfo().getOwnPropertySlotIsImpure();
     }
-
-    TypeInfo::OutOfLineTypeFlags outOfLineTypeFlags() const
-    {
-#if CPU(ADDRESS64)
-        return m_outOfLineTypeFlagsAndPropertyTableUnsafe.type();
-#else
-        return m_outOfLineTypeFlags;
-#endif
-    }
     
     // Type accessors.
-    TypeInfo typeInfo() const { return m_blob.typeInfo(outOfLineTypeFlags()); }
+    TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
 
     IndexingType indexingType() const { return m_blob.indexingModeIncludingHistory() & AllWritableArrayTypes; }
@@ -327,24 +317,24 @@ public:
     
     bool hasRareData() const
     {
-        return isRareData(cachedPrototypeChainOrRareData());
+        return isRareData(m_previousOrRareData.get());
     }
 
     StructureRareData* rareData()
     {
         ASSERT(hasRareData());
-        return static_cast<StructureRareData*>(cachedPrototypeChainOrRareData());
+        return static_cast<StructureRareData*>(m_previousOrRareData.get());
     }
 
     const StructureRareData* rareData() const
     {
         ASSERT(hasRareData());
-        return static_cast<const StructureRareData*>(cachedPrototypeChainOrRareData());
+        return static_cast<const StructureRareData*>(m_previousOrRareData.get());
     }
 
     const StructureRareData* rareDataConcurrently() const
     {
-        JSCell* cell = cachedPrototypeChainOrRareData();
+        JSCell* cell = m_previousOrRareData.get();
         if (isRareData(cell))
             return static_cast<StructureRareData*>(cell);
         return nullptr;
@@ -357,21 +347,21 @@ public:
         return rareData();
     }
     
-    Structure* previousID(VM& vm) const
+    Structure* previousID() const
     {
-        if (!m_previousID)
-            return nullptr;
-        return vm.getStructure(m_previousID);
+        ASSERT(structure()->classInfo() == info());
+        // This is so written because it's used concurrently. We only load from m_previousOrRareData
+        // once, and this load is guaranteed atomic.
+        JSCell* cell = m_previousOrRareData.get();
+        if (isRareData(cell))
+            return static_cast<StructureRareData*>(cell)->previousID();
+        return static_cast<Structure*>(cell);
     }
     bool transitivelyTransitionedFrom(Structure* structureToFind);
 
     PropertyOffset maxOffset() const
     {
-#if CPU(ADDRESS64)
-        uint16_t maxOffset = m_maxOffsetAndTransitionPropertyName.type();
-#else
         uint16_t maxOffset = m_maxOffset;
-#endif
         if (maxOffset == shortInvalidOffset)
             return invalidOffset;
         if (maxOffset == useRareDataFlag)
@@ -381,45 +371,22 @@ public:
 
     void setMaxOffset(VM& vm, PropertyOffset offset)
     {
-        ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-        auto commit = [&](uint16_t value) {
-#if CPU(ADDRESS64)
-            m_maxOffsetAndTransitionPropertyName.setType(value);
-#else
-            m_maxOffset = value;
-#endif
-        };
-
-        if (offset == invalidOffset) {
-            commit(shortInvalidOffset);
-            return;
-        }
-        if (offset < useRareDataFlag && offset < shortInvalidOffset) {
-            commit(offset);
-            return;
-        }
-#if CPU(ADDRESS64)
-        uint16_t maxOffset = m_maxOffsetAndTransitionPropertyName.type();
-#else
-        uint16_t maxOffset = m_maxOffset;
-#endif
-        if (maxOffset == useRareDataFlag) {
+        if (offset == invalidOffset)
+            m_maxOffset = shortInvalidOffset;
+        else if (offset < useRareDataFlag && offset < shortInvalidOffset)
+            m_maxOffset = offset;
+        else if (m_maxOffset == useRareDataFlag)
             rareData()->m_maxOffset = offset;
-            return;
+        else {
+            ensureRareData(vm)->m_maxOffset = offset;
+            WTF::storeStoreFence();
+            m_maxOffset = useRareDataFlag;
         }
-
-        ensureRareData(vm)->m_maxOffset = offset;
-        WTF::storeStoreFence();
-        commit(useRareDataFlag);
     }
 
     PropertyOffset transitionOffset() const
     {
-#if CPU(ADDRESS64)
-        uint16_t transitionOffset = m_transitionOffsetAndClassInfo.type();
-#else
         uint16_t transitionOffset = m_transitionOffset;
-#endif
         if (transitionOffset == shortInvalidOffset)
             return invalidOffset;
         if (transitionOffset == useRareDataFlag)
@@ -429,36 +396,17 @@ public:
 
     void setTransitionOffset(VM& vm, PropertyOffset offset)
     {
-        ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-        auto commit = [&](uint16_t value) {
-#if CPU(ADDRESS64)
-            m_transitionOffsetAndClassInfo.setType(value);
-#else
-            m_transitionOffset = value;
-#endif
-        };
-
-        if (offset == invalidOffset) {
-            commit(shortInvalidOffset);
-            return;
-        }
-        if (offset < useRareDataFlag && offset < shortInvalidOffset) {
-            commit(offset);
-            return;
-        }
-#if CPU(ADDRESS64)
-        uint16_t transitionOffset = m_transitionOffsetAndClassInfo.type();
-#else
-        uint16_t transitionOffset = m_transitionOffset;
-#endif
-        if (transitionOffset == useRareDataFlag) {
+        if (offset == invalidOffset)
+            m_transitionOffset = shortInvalidOffset;
+        else if (offset < useRareDataFlag && offset < shortInvalidOffset)
+            m_transitionOffset = offset;
+        else if (m_transitionOffset == useRareDataFlag)
             rareData()->m_transitionOffset = offset;
-            return;
+        else {
+            ensureRareData(vm)->m_transitionOffset = offset;
+            WTF::storeStoreFence();
+            m_transitionOffset = useRareDataFlag;
         }
-
-        ensureRareData(vm)->m_transitionOffset = offset;
-        WTF::storeStoreFence();
-        commit(useRareDataFlag);
     }
 
     static unsigned outOfLineCapacity(PropertyOffset maxOffset)
@@ -494,18 +442,17 @@ public:
     {
         return outOfLineSize(maxOffset());
     }
-    bool hasInlineStorage() const { return !!inlineCapacity(); }
+    bool hasInlineStorage() const
+    {
+        return !!m_inlineCapacity;
+    }
     unsigned inlineCapacity() const
     {
-#if CPU(ADDRESS64)
-        return static_cast<uint8_t>(m_inlineCapacityAndCachedPrototypeChainOrRareData.type());
-#else
         return m_inlineCapacity;
-#endif
     }
     unsigned inlineSize() const
     {
-        return std::min<unsigned>(maxOffset() + 1, inlineCapacity());
+        return std::min<unsigned>(maxOffset() + 1, m_inlineCapacity);
     }
     unsigned totalStorageCapacity() const
     {
@@ -517,12 +464,12 @@ public:
     {
         return JSC::isValidOffset(offset)
             && offset <= maxOffset()
-            && (offset < static_cast<int>(inlineCapacity()) || offset >= firstOutOfLineOffset);
+            && (offset < m_inlineCapacity || offset >= firstOutOfLineOffset);
     }
 
     bool hijacksIndexingHeader() const
     {
-        return isTypedView(classInfo()->typedArrayStorageType);
+        return isTypedView(m_classInfo->typedArrayStorageType);
     }
     
     bool couldHaveIndexingHeader() const
@@ -592,14 +539,7 @@ public:
 
     void setObjectToStringValue(JSGlobalObject*, VM&, JSString* value, PropertySlot toStringTagSymbolSlot);
 
-    const ClassInfo* classInfo() const
-    {
-#if CPU(ADDRESS64)
-        return m_transitionOffsetAndClassInfo.pointer();
-#else
-        return m_classInfo;
-#endif
-    }
+    const ClassInfo* classInfo() const { return m_classInfo; }
 
     static ptrdiff_t structureIDOffset()
     {
@@ -616,39 +556,29 @@ public:
         return OBJECT_OFFSETOF(Structure, m_globalObject);
     }
 
-    static ptrdiff_t offsetOfClassInfo()
+    static ptrdiff_t classInfoOffset()
     {
-#if CPU(ADDRESS64)
-        return OBJECT_OFFSETOF(Structure, m_transitionOffsetAndClassInfo);
-#else
         return OBJECT_OFFSETOF(Structure, m_classInfo);
-#endif
     }
-
+        
     static ptrdiff_t indexingModeIncludingHistoryOffset()
     {
         return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::indexingModeIncludingHistoryOffset();
     }
-
-#if CPU(LITTLE_ENDIAN)
-    static ptrdiff_t offsetOfInlineCapacity()
+    
+    static ptrdiff_t propertyTableUnsafeOffset()
     {
-#if CPU(ADDRESS64)
-        return OBJECT_OFFSETOF(Structure, m_inlineCapacityAndCachedPrototypeChainOrRareData) + CompactPointerTuple<JSCell*, uint16_t>::offsetOfType();
-#else
-        return OBJECT_OFFSETOF(Structure, m_inlineCapacity);
-#endif
-
+        return OBJECT_OFFSETOF(Structure, m_propertyTableUnsafe);
     }
-#endif
 
-    static ptrdiff_t offsetOfCachedPrototypeChainOrRareData()
+    static ptrdiff_t inlineCapacityOffset()
     {
-#if CPU(ADDRESS64)
-        return OBJECT_OFFSETOF(Structure, m_inlineCapacityAndCachedPrototypeChainOrRareData);
-#else
-        return OBJECT_OFFSETOF(Structure, m_cachedPrototypeChainOrRareData);
-#endif
+        return OBJECT_OFFSETOF(Structure, m_inlineCapacity);
+    }
+
+    static ptrdiff_t previousOrRareDataOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_previousOrRareData);
     }
 
     static Structure* createStructure(VM&);
@@ -727,16 +657,11 @@ public:
     
     static void dumpContextHeader(PrintStream&);
     
-    static bool shouldConvertToPolyProto(const Structure* a, const Structure* b);
+    ConcurrentJSLock& lock() { return m_lock; }
 
-    UniquedStringImpl* transitionPropertyName() const
-    {
-#if CPU(ADDRESS64)
-        return m_maxOffsetAndTransitionPropertyName.pointer();
-#else
-        return m_transitionPropertyName.get();
-#endif
-    }
+    unsigned propertyHash() const { return m_propertyHash; }
+
+    static bool shouldConvertToPolyProto(const Structure* a, const Structure* b);
 
     struct PropertyHashEntry {
         const HashTable* table;
@@ -747,25 +672,6 @@ public:
     DECLARE_EXPORT_INFO;
 
 private:
-    bool ruleOutUnseenProperty(UniquedStringImpl*) const;
-#if CPU(ADDRESS64)
-    // As a propertyHash, 64bit environment uses 16bit property-hash + seenProperties set.
-    uintptr_t propertyHash() const { return m_propertyHashAndSeenProperties.data(); }
-#else
-    uint32_t propertyHash() const { return m_propertyHash; }
-#endif
-    TinyBloomFilter seenProperties() const;
-    void addPropertyHashAndSeenProperty(unsigned, UniquedStringImpl*);
-
-    void setTransitionPropertyName(const AbstractLocker&, UniquedStringImpl* transitionPropertyName)
-    {
-#if CPU(ADDRESS64)
-        m_maxOffsetAndTransitionPropertyName.setPointer(transitionPropertyName);
-#else
-        m_transitionPropertyName = transitionPropertyName;
-#endif
-    }
-
     typedef enum { 
         NoneDictionaryKind = 0,
         CachedDictionaryKind = 1,
@@ -782,7 +688,6 @@ public:
     {\
         m_bitField &= ~(s_##lowerName##Mask << offset);\
         m_bitField |= (newValue & s_##lowerName##Mask) << offset;\
-        ASSERT(newValue == lowerName());\
     }
 
     DEFINE_BITFIELD(DictionaryKind, dictionaryKind, DictionaryKind, 2, 0);
@@ -790,18 +695,18 @@ public:
     DEFINE_BITFIELD(bool, hasGetterSetterProperties, HasGetterSetterProperties, 1, 3);
     DEFINE_BITFIELD(bool, hasReadOnlyOrGetterSetterPropertiesExcludingProto, HasReadOnlyOrGetterSetterPropertiesExcludingProto, 1, 4);
     DEFINE_BITFIELD(bool, isQuickPropertyAccessAllowedForEnumeration, IsQuickPropertyAccessAllowedForEnumeration, 1, 5);
-    DEFINE_BITFIELD(unsigned, transitionPropertyAttributes, TransitionPropertyAttributes, 8, 6);
-    DEFINE_BITFIELD(bool, didPreventExtensions, DidPreventExtensions, 1, 14);
-    DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 15);
-    DEFINE_BITFIELD(bool, staticPropertiesReified, StaticPropertiesReified, 1, 16);
-    DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 17);
-    DEFINE_BITFIELD(bool, hasCustomGetterSetterProperties, HasCustomGetterSetterProperties, 1, 18);
-    DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 19);
-    DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 20);
-    DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 21);
-    DEFINE_BITFIELD(bool, protectPropertyTableWhileTransitioning, ProtectPropertyTableWhileTransitioning, 1, 22);
-    DEFINE_BITFIELD(bool, hasUnderscoreProtoPropertyExcludingOriginalProto, HasUnderscoreProtoPropertyExcludingOriginalProto, 1, 23);
-    DEFINE_BITFIELD(bool, isPropertyDeletionTransition, IsPropertyDeletionTransition, 1, 24);
+    DEFINE_BITFIELD(unsigned, transitionPropertyAttributes, TransitionPropertyAttributes, 14, 6);
+    DEFINE_BITFIELD(bool, didPreventExtensions, DidPreventExtensions, 1, 20);
+    DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);
+    DEFINE_BITFIELD(bool, staticPropertiesReified, StaticPropertiesReified, 1, 22);
+    DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 23);
+    DEFINE_BITFIELD(bool, hasCustomGetterSetterProperties, HasCustomGetterSetterProperties, 1, 24);
+    DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 25);
+    DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 26);
+    DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 27);
+    DEFINE_BITFIELD(bool, protectPropertyTableWhileTransitioning, ProtectPropertyTableWhileTransitioning, 1, 28);
+    DEFINE_BITFIELD(bool, hasUnderscoreProtoPropertyExcludingOriginalProto, HasUnderscoreProtoPropertyExcludingOriginalProto, 1, 29);
+    DEFINE_BITFIELD(bool, isPropertyDeletionTransition, IsPropertyDeletionTransition, 1, 30);
 
     static_assert(s_bitWidthOfTransitionPropertyAttributes <= sizeof(TransitionPropertyAttributes) * 8);
 
@@ -821,7 +726,7 @@ private:
     // and the list of structures that we visited before we got to it. If it returns a
     // non-null structure, it will also lock the structure that it returns; it is your job
     // to unlock it.
-    void findStructuresAndMapForMaterialization(VM&, Vector<Structure*, 8>& structures, Structure*&, PropertyTable*&);
+    void findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, Structure*&, PropertyTable*&);
     
     static Structure* toDictionaryTransition(VM&, Structure*, DictionaryKind, DeferredStructureTransitionWatchpointFire* = nullptr);
 
@@ -838,9 +743,9 @@ private:
     // This may grab the lock, or not. Do not call when holding the Structure's lock.
     PropertyTable* ensurePropertyTableIfNotEmpty(VM& vm)
     {
-        if (PropertyTable* result = propertyTableUnsafeOrNull())
+        if (PropertyTable* result = m_propertyTableUnsafe.get())
             return result;
-        if (!previousID(vm))
+        if (!previousID())
             return nullptr;
         return materializePropertyTable(vm);
     }
@@ -848,37 +753,39 @@ private:
     // This may grab the lock, or not. Do not call when holding the Structure's lock.
     PropertyTable* ensurePropertyTable(VM& vm)
     {
-        if (PropertyTable* result = propertyTableUnsafeOrNull())
+        if (PropertyTable* result = m_propertyTableUnsafe.get())
             return result;
         return materializePropertyTable(vm);
     }
     
-    PropertyTable* propertyTableUnsafeOrNull() const
+    PropertyTable* propertyTableOrNull() const
     {
-#if CPU(ADDRESS64)
-        return m_outOfLineTypeFlagsAndPropertyTableUnsafe.pointer();
-#else
         return m_propertyTableUnsafe.get();
-#endif
     }
     
     // This will grab the lock. Do not call when holding the Structure's lock.
     JS_EXPORT_PRIVATE PropertyTable* materializePropertyTable(VM&, bool setPropertyTable = true);
     
     void setPropertyTable(VM& vm, PropertyTable* table);
-    void clearPropertyTable();
     
     PropertyTable* takePropertyTableOrCloneIfPinned(VM&);
     PropertyTable* copyPropertyTableForPinning(VM&);
 
     void setPreviousID(VM&, Structure*);
-    void clearPreviousID();
+
+    void clearPreviousID()
+    {
+        if (hasRareData())
+            rareData()->clearPreviousID();
+        else
+            m_previousOrRareData.clear();
+    }
 
     int transitionCountEstimate() const
     {
         // Since the number of transitions is often the same as the last offset (except if there are deletes)
         // we keep the size of Structure down by not storing both.
-        return numberOfSlotsForMaxOffset(maxOffset(), inlineCapacity());
+        return numberOfSlotsForMaxOffset(maxOffset(), m_inlineCapacity);
     }
 
     bool isValid(JSGlobalObject*, StructureChain* cachedPrototypeChain, JSObject* base) const;
@@ -889,7 +796,7 @@ private:
     
     bool isRareData(JSCell* cell) const
     {
-        return cell && cell->type() == StructureRareDataType;
+        return cell && cell->structureID() != structureID();
     }
 
     template<typename DetailsFunc>
@@ -900,79 +807,48 @@ private:
     
     void startWatchingInternalProperties(VM&);
 
-    StructureChain* cachedPrototypeChain() const;
-    void setCachedPrototypeChain(VM&, StructureChain*);
-
-    void setOutOfLineTypeFlags(TypeInfo::OutOfLineTypeFlags);
-    void setClassInfo(const ClassInfo*);
-    void setInlineCapacity(uint8_t);
-
-    JSCell* cachedPrototypeChainOrRareData() const
-    {
-#if CPU(ADDRESS64)
-        return m_inlineCapacityAndCachedPrototypeChainOrRareData.pointer();
-#else
-        return m_cachedPrototypeChainOrRareData.get();
-#endif
-    }
-
     static constexpr int s_maxTransitionLength = 64;
     static constexpr int s_maxTransitionLengthForNonEvalPutById = 512;
 
     // These need to be properly aligned at the beginning of the 'Structure'
     // part of the object.
     StructureIDBlob m_blob;
+    TypeInfo::OutOfLineTypeFlags m_outOfLineTypeFlags;
 
-    // The property table pointer should be accessed through ensurePropertyTable(). During GC, m_propertyTableUnsafe field part may be set to 0 by another thread.
-    // During a Heap Snapshot GC we avoid clearing the table so it is safe to use.
-#if CPU(ADDRESS64)
-public:
-    static constexpr uintptr_t classInfoMask = CompactPointerTuple<const ClassInfo*, uint16_t>::pointerMask;
-    static constexpr uintptr_t cachedPrototypeChainOrRareDataMask = CompactPointerTuple<JSCell*, uint16_t>::pointerMask;
-private:
-    // Structure is one of the most frequently allocated data structure. Moreover, Structure tends to be alive a long time!
-    // This motivates extra complicated hack which optimizes sizeof(Structure).
-    //
-    // We combine 16bit data and 64bit pointer into one pointer-size field to (1) save memory while (2) not losing atomic load/store.
-    // The key here is analyzing data access patterns carefully. They are categoriezed into three types.
-    //     1. ImmutableAfterConstruction
-    //     2. MutableFromAnyThread
-    //     3. MutableFromMainThread
-    //  We assume that loading happens from any threads. Under this assumption, MutableFromAnyThread + (MutableFromMainThread / MutableFromAnyThread) is the pair which is racy.
-    //  Other pairs works well. We carefully put assertions to setters, analyze access patterns and pick appropriate pairs in Structure fields.
-    CompactPointerTuple<PropertyTable*, TypeInfo::OutOfLineTypeFlags> m_outOfLineTypeFlagsAndPropertyTableUnsafe; // ImmutableAfterConstruction(m_outOfLineTypeFlags) and MutableFromAnyThread(m_propertyTableUnsafe).
-    CompactRefPtrTuple<UniquedStringImpl, uint16_t> m_maxOffsetAndTransitionPropertyName; // MutableFromMainThread(m_maxOffset) and MutableFromMainThread(m_transitionPropertyName).
-    CompactPointerTuple<const ClassInfo*, uint16_t> m_transitionOffsetAndClassInfo; // MutableFromMainThread(m_transitionOffset) and ImmutableAfterConstruction(m_classInfo).
-    CompactPointerTuple<JSCell*, uint16_t> m_inlineCapacityAndCachedPrototypeChainOrRareData; // ImmutableAfterConstruction(m_inlineCapacity) and MutableFromMainThread(m_cachedPrototypeChainOrRareData).
-    CompactPointerTuple<UniquedStringImpl*, uint16_t> m_propertyHashAndSeenProperties; // MutableFromMainThread(m_propertyHash) and MutableFromMainThread(m_seenProperties).
-#else
-    TypeInfo::OutOfLineTypeFlags m_outOfLineTypeFlags { 0 };
-    uint8_t m_inlineCapacity { 0 };
-    uint32_t m_propertyHash { 0 };
-    uint16_t m_transitionOffset { 0 };
-    uint16_t m_maxOffset { 0 };
-    WriteBarrier<PropertyTable> m_propertyTableUnsafe;
-    const ClassInfo* m_classInfo { nullptr };
-    WriteBarrier<JSCell> m_cachedPrototypeChainOrRareData;
-    uintptr_t m_seenProperties { 0 };
-    RefPtr<UniquedStringImpl> m_transitionPropertyName;
-#endif
-    StructureID m_previousID { 0 };
-    uint32_t m_bitField { 0 };
+    uint8_t m_inlineCapacity;
 
-    StructureTransitionTable m_transitionTable;
+    ConcurrentJSLock m_lock;
+
+    uint32_t m_bitField;
+
     WriteBarrier<JSGlobalObject> m_globalObject;
     WriteBarrier<Unknown> m_prototype;
+    mutable WriteBarrier<StructureChain> m_cachedPrototypeChain;
+
+    WriteBarrier<JSCell> m_previousOrRareData;
+
+    RefPtr<UniquedStringImpl> m_transitionPropertyName;
+
+    const ClassInfo* m_classInfo;
+
+    StructureTransitionTable m_transitionTable;
+
+    // Should be accessed through ensurePropertyTable(). During GC, it may be set to 0 by another thread.
+    // During a Heap Snapshot GC we avoid clearing the table so it is safe to use.
+    WriteBarrier<PropertyTable> m_propertyTableUnsafe;
 
     mutable InlineWatchpointSet m_transitionWatchpointSet;
 
     COMPILE_ASSERT(firstOutOfLineOffset < 256, firstOutOfLineOffset_fits);
 
+    uint16_t m_transitionOffset;
+    uint16_t m_maxOffset;
+
+    uint32_t m_propertyHash;
+    TinyBloomFilter m_seenProperties;
+
     friend class VMInspector;
     friend class JSDollarVMHelper;
 };
-#if CPU(ADDRESS64)
-static_assert(sizeof(Structure) <= 96, "Do not increase sizeof(Structure), it immediately causes memory regression");
-#endif
 
 } // namespace JSC

@@ -150,7 +150,7 @@ class StructureTransitionTable {
         // We encode (2) and (3) into (1)'s empty bits since a pointer is 48bit and lower 3 bits are usable because of alignment.
         struct Key {
             friend struct Hash;
-            static_assert(OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) <= 48);
+            static_assert(WTF_OS_CONSTANT_EFFECTIVE_ADDRESS_WIDTH <= 48);
             static constexpr uintptr_t isAdditionMask = 1ULL;
             static constexpr uintptr_t stringMask = ((1ULL << 48) - 1) & (~isAdditionMask);
             static constexpr unsigned attributesShift = 48;

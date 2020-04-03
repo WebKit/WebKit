@@ -1,3 +1,130 @@
+2020-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, partially reverting Structure change due to Speedometer2 regression
+        https://bugs.webkit.org/show_bug.cgi?id=207827
+
+        Not reverting WTF changes.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::createTransition):
+        (JSC::AccessCase::createDelete):
+        (JSC::AccessCase::propagateTransitions const):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::structure const):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckSubClass):
+        (JSC::DFG::SpeculativeJIT::compileObjectKeys):
+        (JSC::DFG::SpeculativeJIT::compileCreateThis):
+        (JSC::DFG::SpeculativeJIT::compileCreatePromise):
+        (JSC::DFG::SpeculativeJIT::compileCreateInternalFieldObject):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectKeys):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        (JSC::FTL::DFG::LowerDFGToB3::loadStructureClassInfo): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::loadStructureCachedPrototypeChainOrRareData): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitLoadClassInfoFromStructure): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheDeleteBy):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createStructure):
+        * runtime/ConcurrentJSLock.h:
+        (JSC::ConcurrentJSLockerBase::ConcurrentJSLockerBase):
+        (JSC::GCSafeConcurrentJSLocker::GCSafeConcurrentJSLocker):
+        (JSC::GCSafeConcurrentJSLocker::~GCSafeConcurrentJSLocker):
+        (JSC::ConcurrentJSLocker::ConcurrentJSLocker):
+        (JSC::GCSafeConcurrentJSLockerImpl::GCSafeConcurrentJSLockerImpl): Deleted.
+        (JSC::GCSafeConcurrentJSLockerImpl::~GCSafeConcurrentJSLockerImpl): Deleted.
+        (JSC::ConcurrentJSLockerImpl::ConcurrentJSLockerImpl): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::shiftButterflyAfterFlattening):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirectConcurrently const):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::prepareToPutDirectWithoutTransition):
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::contains const):
+        (JSC::StructureTransitionTable::get const):
+        (JSC::StructureTransitionTable::add):
+        (JSC::Structure::dumpStatistics):
+        (JSC::Structure::Structure):
+        (JSC::Structure::create):
+        (JSC::Structure::findStructuresAndMapForMaterialization):
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::addPropertyTransitionToExistingStructureImpl):
+        (JSC::Structure::addPropertyTransitionToExistingStructureConcurrently):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::removePropertyTransitionFromExistingStructureConcurrently):
+        (JSC::Structure::removeNewPropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::takePropertyTableOrCloneIfPinned):
+        (JSC::Structure::nonPropertyTransitionSlow):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::pin):
+        (JSC::Structure::pinForCaching):
+        (JSC::Structure::allocateRareData):
+        (JSC::Structure::ensurePropertyReplacementWatchpointSet):
+        (JSC::Structure::copyPropertyTableForPinning):
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        (JSC::Structure::visitChildren):
+        (JSC::Structure::canCachePropertyNameEnumerator const):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+        (JSC::Structure::forEachPropertyConcurrently):
+        (JSC::Structure::transitivelyTransitionedFrom):
+        (JSC::Structure::prototypeChain const):
+        (JSC::Structure::propertyReplacementWatchpointSet):
+        (JSC::Structure::checkOffsetConsistency const):
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        (JSC::Structure::removePropertyWithoutTransition):
+        (JSC::Structure::setPropertyTable):
+        (JSC::Structure::setPreviousID):
+        (JSC::Structure::ruleOutUnseenProperty const): Deleted.
+        (JSC::Structure::seenProperties const): Deleted.
+        (JSC::Structure::addPropertyHashAndSeenProperty): Deleted.
+        (JSC::Structure::cachedPrototypeChain const): Deleted.
+        (JSC::Structure::setCachedPrototypeChain): Deleted.
+        (JSC::Structure::clearPropertyTable): Deleted.
+        (JSC::Structure::setOutOfLineTypeFlags): Deleted.
+        (JSC::Structure::setInlineCapacity): Deleted.
+        (JSC::Structure::setClassInfo): Deleted.
+        (JSC::Structure::clearPreviousID): Deleted.
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::createStructure):
+        (JSC::StructureRareData::create):
+        (JSC::StructureRareData::StructureRareData):
+        (JSC::StructureRareData::visitChildren):
+        * runtime/StructureRareData.h:
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::setPreviousID):
+        (JSC::StructureRareData::clearPreviousID):
+        (JSC::StructureRareData::setCachedPrototypeChain): Deleted.
+        * runtime/StructureTransitionTable.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVMHelper::functionGetStructureTransitionList):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
 2020-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         TypedArray's [[DefineOwnProperty]] is incorrect with partial descriptors

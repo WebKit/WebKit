@@ -139,11 +139,11 @@ namespace JSC { namespace FTL {
     macro(StringImpl_data, StringImpl::dataOffset()) \
     macro(StringImpl_hashAndFlags, StringImpl::flagsOffset()) \
     macro(StringImpl_length, StringImpl::lengthMemoryOffset()) \
-    macro(Structure_classInfo, Structure::offsetOfClassInfo()) \
+    macro(Structure_classInfo, Structure::classInfoOffset()) \
     macro(Structure_globalObject, Structure::globalObjectOffset()) \
     macro(Structure_indexingModeIncludingHistory, Structure::indexingModeIncludingHistoryOffset()) \
-    macro(Structure_inlineCapacity, Structure::offsetOfInlineCapacity()) \
-    macro(Structure_cachedPrototypeChainOrRareData, Structure::offsetOfCachedPrototypeChainOrRareData()) \
+    macro(Structure_inlineCapacity, Structure::inlineCapacityOffset()) \
+    macro(Structure_previousOrRareData, Structure::previousOrRareDataOffset()) \
     macro(Structure_prototype, Structure::prototypeOffset()) \
     macro(Structure_structureID, Structure::structureIDOffset()) \
     macro(StructureRareData_cachedOwnKeys, StructureRareData::offsetOfCachedOwnKeys()) \

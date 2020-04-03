@@ -35,7 +35,6 @@ namespace JSC {
 
 class JSPropertyNameEnumerator;
 class Structure;
-class StructureChain;
 class ObjectToStringAdaptiveInferredPropertyValueWatchpoint;
 class ObjectToStringAdaptiveStructureWatchpoint;
 
@@ -50,7 +49,7 @@ public:
         return &vm.structureRareDataSpace;
     }
 
-    static StructureRareData* create(VM&, StructureChain*);
+    static StructureRareData* create(VM&, Structure*);
 
     static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
@@ -59,11 +58,12 @@ public:
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
-    StructureChain* cachedPrototypeChain() const
+    Structure* previousID() const
     {
-        return m_cachedPrototypeChain.get();
+        return m_previous.get();
     }
-    void setCachedPrototypeChain(VM&, StructureChain*);
+    void setPreviousID(VM&, Structure*);
+    void clearPreviousID();
 
     JSString* objectToStringValue() const;
     void setObjectToStringValue(JSGlobalObject*, VM&, Structure* baseStructure, JSString* value, PropertySlot toStringTagSymbolSlot);
@@ -102,9 +102,9 @@ private:
 
     void clearObjectToStringValue();
 
-    StructureRareData(VM&, StructureChain*);
+    StructureRareData(VM&, Structure*);
 
-    WriteBarrier<StructureChain> m_cachedPrototypeChain;
+    WriteBarrier<Structure> m_previous;
     WriteBarrier<JSString> m_objectToStringValue;
     // FIXME: We should have some story for clearing these property names caches in GC.
     // https://bugs.webkit.org/show_bug.cgi?id=192659

@@ -1535,14 +1535,6 @@ public:
     
     void emitLoadStructure(VM&, RegisterID source, RegisterID dest, RegisterID scratch);
 
-    void emitLoadClassInfoFromStructure(RegisterID structure, RegisterID dst)
-    {
-        loadPtr(Address(structure, Structure::offsetOfClassInfo()), dst);
-#if CPU(ADDRESS64)
-        andPtr(TrustedImmPtr(bitwise_cast<void*>(Structure::classInfoMask)), dst);
-#endif
-    }
-
     void emitStoreStructureWithTypeInfo(TrustedImmPtr structure, RegisterID dest, RegisterID)
     {
         emitStoreStructureWithTypeInfo(*this, structure, dest);

@@ -855,7 +855,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                 Structure* a = vm.heap.structureIDTable().get(oldStructureID);
                 Structure* b = baseValue.asCell()->structure(vm);
                 if (slot.type() == PutPropertySlot::NewProperty)
-                    b = b->previousID(vm);
+                    b = b->previousID();
 
                 if (Structure::shouldConvertToPolyProto(a, b)) {
                     a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
@@ -876,9 +876,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()) {
             if (slot.type() == PutPropertySlot::NewProperty) {
                 GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm.heap);
-                if (!newStructure->isDictionary() && newStructure->previousID(vm)->outOfLineCapacity() == newStructure->outOfLineCapacity()) {
-                    ASSERT(oldStructure == newStructure->previousID(vm));
-                    if (oldStructure == newStructure->previousID(vm)) {
+                if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity()) {
+                    ASSERT(oldStructure == newStructure->previousID());
+                    if (oldStructure == newStructure->previousID()) {
                         ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
 
                         bool sawPolyProto = false;

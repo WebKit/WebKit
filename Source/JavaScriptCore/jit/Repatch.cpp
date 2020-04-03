@@ -618,7 +618,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                 if (baseValue.asCell()->structure(vm) != newStructure)
                     return GiveUpOnCache;
 
-                ASSERT(newStructure->previousID(vm) == oldStructure);
+                ASSERT(newStructure->previousID() == oldStructure);
                 ASSERT(!newStructure->isDictionary());
                 ASSERT(newStructure->isObject());
                 
@@ -766,7 +766,7 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
             if (!newStructure->propertyAccessesAreCacheable() || newStructure->isDictionary())
                 return GiveUpOnCache;
             ASSERT(newOffset == slot.cachedOffset());
-            ASSERT(newStructure->previousID(vm) == oldStructure);
+            ASSERT(newStructure->previousID() == oldStructure);
             ASSERT(newStructure->isPropertyDeletionTransition());
             ASSERT(newStructure->isObject());
             ASSERT(isValidOffset(newOffset));

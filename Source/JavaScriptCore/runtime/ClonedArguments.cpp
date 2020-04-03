@@ -153,7 +153,7 @@ Structure* ClonedArguments::createStructure(VM& vm, JSGlobalObject* globalObject
     Structure* structure = Structure::create(vm, globalObject, prototype, TypeInfo(ClonedArgumentsType, StructureFlags), info(), indexingType);
     structure->addPropertyWithoutTransition(
         vm, vm.propertyNames->length, static_cast<unsigned>(PropertyAttribute::DontEnum),
-        [&](const GCSafeConcurrentJSCellLocker&, PropertyOffset offset, PropertyOffset newMaxOffset) {
+        [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset, PropertyOffset newMaxOffset) {
             RELEASE_ASSERT(offset == clonedArgumentsLengthPropertyOffset);
             structure->setMaxOffset(vm, newMaxOffset);
         });

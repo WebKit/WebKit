@@ -810,7 +810,7 @@ public:
     {
         structure(vm)->flattenDictionaryStructure(vm, this);
     }
-    void shiftButterflyAfterFlattening(const GCSafeConcurrentJSCellLocker&, VM&, Structure*, size_t outOfLineCapacityAfter);
+    void shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM&, Structure* structure, size_t outOfLineCapacityAfter);
 
     JSGlobalObject* globalObject() const
     {
@@ -1326,7 +1326,7 @@ inline JSValue JSObject::getPrototype(VM& vm, JSGlobalObject* globalObject)
 // flatten an object.
 inline JSValue JSObject::getDirectConcurrently(Structure* structure, PropertyOffset offset) const
 {
-    ConcurrentJSCellLocker locker(structure->cellLock());
+    ConcurrentJSLocker locker(structure->lock());
     if (!structure->isValidOffset(offset))
         return { };
     return getDirect(offset);

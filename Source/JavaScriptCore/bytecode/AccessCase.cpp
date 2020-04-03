@@ -112,7 +112,7 @@ std::unique_ptr<AccessCase> AccessCase::createTransition(
     VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* oldStructure, Structure* newStructure,
     const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
 {
-    RELEASE_ASSERT(oldStructure == newStructure->previousID(vm));
+    RELEASE_ASSERT(oldStructure == newStructure->previousID());
 
     // Skip optimizing the case where we need a realloc, if we don't have
     // enough registers to make it happen.
@@ -128,7 +128,7 @@ std::unique_ptr<AccessCase> AccessCase::createTransition(
 std::unique_ptr<AccessCase> AccessCase::createDelete(
     VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* oldStructure, Structure* newStructure)
 {
-    RELEASE_ASSERT(oldStructure == newStructure->previousID(vm));
+    RELEASE_ASSERT(oldStructure == newStructure->previousID());
     // We do not cache this case so that we do not need to check the jscell, e.g. TypedArray cells require a check for neutering status.
     // See the Delete code below.
     if (!newStructure->canCacheDeleteIC())
@@ -742,7 +742,7 @@ bool AccessCase::propagateTransitions(SlotVisitor& visitor) const
     switch (m_type) {
     case Transition:
     case Delete:
-        if (visitor.vm().heap.isMarked(m_structure->previousID(visitor.vm())))
+        if (visitor.vm().heap.isMarked(m_structure->previousID()))
             visitor.appendUnbarriered(m_structure.get());
         else
             result = false;

@@ -30,7 +30,6 @@ enum JSType : uint8_t {
     LastMaybeFalsyCellPrimitive = BigIntType,
     SymbolType,
 
-    StructureRareDataType,
     GetterSetterType,
     CustomGetterSetterType,
     APIValueWrapperType,

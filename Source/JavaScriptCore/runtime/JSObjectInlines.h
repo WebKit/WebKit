@@ -216,7 +216,7 @@ ALWAYS_INLINE PropertyOffset JSObject::prepareToPutDirectWithoutTransition(VM& v
     PropertyOffset result;
     structure->addPropertyWithoutTransition(
         vm, propertyName, attributes,
-        [&](const GCSafeConcurrentJSCellLocker&, PropertyOffset offset, PropertyOffset newMaxOffset) {
+        [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset, PropertyOffset newMaxOffset) {
             unsigned newOutOfLineCapacity = Structure::outOfLineCapacity(newMaxOffset);
             if (newOutOfLineCapacity != oldOutOfLineCapacity) {
                 Butterfly* butterfly = allocateMoreOutOfLineStorage(vm, oldOutOfLineCapacity, newOutOfLineCapacity);

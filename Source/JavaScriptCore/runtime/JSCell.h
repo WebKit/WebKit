@@ -24,7 +24,6 @@
 
 #include "CallData.h"
 #include "CellState.h"
-#include "ConcurrentJSLock.h"
 #include "ConstructData.h"
 #include "EnumerationMode.h"
 #include "Heap.h"
@@ -289,9 +288,6 @@ private:
     JS_EXPORT_PRIVATE void lockSlow();
     JS_EXPORT_PRIVATE void unlockSlow();
 };
-
-using ConcurrentJSCellLocker = ConcurrentJSLockerImpl<JSCellLock>;
-using GCSafeConcurrentJSCellLocker = GCSafeConcurrentJSLockerImpl<JSCellLock>;
 
 // FIXME: Refer to Subspace by reference.
 // https://bugs.webkit.org/show_bug.cgi?id=166988

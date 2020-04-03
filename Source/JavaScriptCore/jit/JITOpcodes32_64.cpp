@@ -1093,7 +1093,7 @@ void JIT::emit_op_create_this(const Instruction* currentInstruction)
     JumpList slowCases;
     auto butterfly = TrustedImmPtr(nullptr);
     emitAllocateJSObject(resultReg, JITAllocator::variable(), allocatorReg, structureReg, butterfly, scratchReg, slowCases);
-    load8(Address(structureReg, Structure::offsetOfInlineCapacity()), scratchReg);
+    load8(Address(structureReg, Structure::inlineCapacityOffset()), scratchReg);
     emitInitializeInlineStorage(resultReg, scratchReg);
     addSlowCase(slowCases);
     emitStoreCell(bytecode.m_dst, resultReg);
