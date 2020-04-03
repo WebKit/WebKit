@@ -25,19 +25,19 @@
 messages -> WebSWServerToContextConnection NotRefCounted {
     # When possible, these messages can be implemented directly by WebCore::SWServerToContextConnection
 
-    ScriptContextFailedToStart(Optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String message);
-    ScriptContextStarted(Optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool doesHandleFetch);
-    DidFinishInstall(Optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful);
-    DidFinishActivation(WebCore::ServiceWorkerIdentifier identifier);
-    SetServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier identifier, bool hasPendingEvents);
+    ScriptContextFailedToStart(Optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String message)
+    ScriptContextStarted(Optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool doesHandleFetch)
+    DidFinishInstall(Optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
+    DidFinishActivation(WebCore::ServiceWorkerIdentifier identifier)
+    SetServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier identifier, bool hasPendingEvents)
     SkipWaiting(WebCore::ServiceWorkerIdentifier identifier) -> () Async
-    WorkerTerminated(WebCore::ServiceWorkerIdentifier identifier);
-    FindClientByIdentifier(uint64_t requestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientIdentifier clientIdentifier);
+    WorkerTerminated(WebCore::ServiceWorkerIdentifier identifier)
+    FindClientByIdentifier(uint64_t requestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientIdentifier clientIdentifier)
     MatchAll(uint64_t matchAllRequestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientQueryOptions options);
-    Claim(uint64_t claimRequestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier);
-    SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, URL scriptURL, String script, URL responseURL, String mimeType);
+    Claim(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier) -> (Optional<WebCore::ExceptionData> result) Async
+    SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, URL scriptURL, String script, URL responseURL, String mimeType)
     PostMessageToServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier source, String sourceOrigin)
-    DidFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier identifier);
+    DidFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier identifier)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

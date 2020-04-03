@@ -122,11 +122,6 @@ void WebSWServerToContextConnection::matchAllCompleted(uint64_t requestIdentifie
     send(Messages::WebSWContextManagerConnection::MatchAllCompleted { requestIdentifier, clientsData });
 }
 
-void WebSWServerToContextConnection::claimCompleted(uint64_t requestIdentifier)
-{
-    send(Messages::WebSWContextManagerConnection::ClaimCompleted { requestIdentifier });
-}
-
 void WebSWServerToContextConnection::connectionIsNoLongerNeeded()
 {
     m_connection.serverToContextConnectionNoLongerNeeded();

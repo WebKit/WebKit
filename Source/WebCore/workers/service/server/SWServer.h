@@ -29,6 +29,7 @@
 
 #include "ClientOrigin.h"
 #include "DocumentIdentifier.h"
+#include "ExceptionOr.h"
 #include "SWServerWorker.h"
 #include "SecurityOriginData.h"
 #include "ServiceWorkerClientData.h"
@@ -176,7 +177,7 @@ public:
     void didFinishActivation(SWServerWorker&);
     void workerContextTerminated(SWServerWorker&);
     void matchAll(SWServerWorker&, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
-    void claim(SWServerWorker&);
+    Optional<ExceptionData> claim(SWServerWorker&);
 
     WEBCORE_EXPORT static HashSet<SWServer*>& allServers();
 

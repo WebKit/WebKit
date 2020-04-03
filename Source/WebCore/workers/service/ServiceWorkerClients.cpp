@@ -116,20 +116,17 @@ void ServiceWorkerClients::claim(ScriptExecutionContext& context, Ref<DeferredPr
 
     auto serviceWorkerIdentifier = serviceWorkerGlobalScope.thread().identifier();
 
-    if (!serviceWorkerGlobalScope.registration().active() || serviceWorkerGlobalScope.registration().active()->identifier() != serviceWorkerIdentifier) {
-        promise->reject(Exception { InvalidStateError, "Service worker is not active"_s });
-        return;
-    }
-
     auto promisePointer = promise.ptr();
     m_pendingPromises.add(promisePointer, WTFMove(promise));
 
     callOnMainThread([promisePointer, serviceWorkerIdentifier] () mutable {
         auto connection = SWContextManager::singleton().connection();
-        connection->claim(serviceWorkerIdentifier, [promisePointer, serviceWorkerIdentifier] () mutable {
-            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer] (auto& scope) mutable {
-                if (auto promise = scope.clients().m_pendingPromises.take(promisePointer))
-                    promise.value()->resolve();
+        connection->claim(serviceWorkerIdentifier, [promisePointer, serviceWorkerIdentifier](auto&& result) mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, result = isolatedCopy(WTFMove(result))](auto& scope) mutable {
+                if (auto promise = scope.clients().m_pendingPromises.take(promisePointer)) {
+                    DOMPromiseDeferred<void> pendingPromise { WTFMove(promise.value()) };
+                    pendingPromise.settle(WTFMove(result));
+                }
             });
         });
     });

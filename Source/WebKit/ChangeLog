@@ -1,3 +1,70 @@
+2020-04-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r256900. rdar://problem/61269733
+
+    SWServer::claim should check for the service worker to be active
+    https://bugs.webkit.org/show_bug.cgi?id=207739
+    <rdar://problem/45441129>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    claim is only working for service workers that are active.
+    But there might be a time when a service worker is active in its web process but redundant in networking process.
+    Thus, we need to move the check from WebProcess to NetworkProcess.
+    
+    * workers/service/ServiceWorkerClients.cpp:
+    (WebCore::ServiceWorkerClients::claim):
+    * workers/service/context/SWContextManager.h:
+    * workers/service/server/SWServer.cpp:
+    (WebCore::SWServer::claim):
+    * workers/service/server/SWServer.h:
+    * workers/service/server/SWServerToContextConnection.cpp:
+    (WebCore::SWServerToContextConnection::claim):
+    * workers/service/server/SWServerToContextConnection.h:
+    * workers/service/server/SWServerWorker.cpp:
+    (WebCore::SWServerWorker::claim): Deleted.
+    * workers/service/server/SWServerWorker.h:
+    (WebCore::SWServerWorker::isActive const):
+    
+    Source/WebKit:
+    
+    Use Async Reply to remove the need for a map and passing integers around.
+    
+    * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+    (WebKit::WebSWServerToContextConnection::claimCompleted): Deleted.
+    * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+    * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+    * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+    (WebKit::WebSWContextManagerConnection::claim):
+    (WebKit::WebSWContextManagerConnection::claimCompleted): Deleted.
+    * WebProcess/Storage/WebSWContextManagerConnection.h:
+    * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256900 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-18  Youenn Fablet  <youenn@apple.com>
+
+            SWServer::claim should check for the service worker to be active
+            https://bugs.webkit.org/show_bug.cgi?id=207739
+            <rdar://problem/45441129>
+
+            Reviewed by Alex Christensen.
+
+            Use Async Reply to remove the need for a map and passing integers around.
+
+            * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+            (WebKit::WebSWServerToContextConnection::claimCompleted): Deleted.
+            * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+            * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+            * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+            (WebKit::WebSWContextManagerConnection::claim):
+            (WebKit::WebSWContextManagerConnection::claimCompleted): Deleted.
+            * WebProcess/Storage/WebSWContextManagerConnection.h:
+            * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2020-03-30  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r259056. rdar://problem/61064876
