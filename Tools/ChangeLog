@@ -1,3 +1,17 @@
+2020-04-03  Sihui Liu  <sihui_liu@apple.com>
+
+        ASSERTION FAILED: m_delegate in IDBConnectionToClient::identifier()
+        https://bugs.webkit.org/show_bug.cgi?id=209891
+        <rdar://problem/59293891>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/KillWebProcessWithOpenConnection-1.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/KillWebProcessWithOpenConnection-2.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/WebProcessKillIDBCleanup.mm:
+        (TEST):
+
 2020-04-03  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Display list of test failures along-with the layout-test build step

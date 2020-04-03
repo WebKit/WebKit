@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script>
+var request = window.indexedDB.open("TestIndexedDB");
+request.onsuccess = () => {
+    window.webkit.messageHandlers.testHandler.postMessage("Open Succeeded");
+}
+request.onerror = () => {
+    window.webkit.messageHandlers.testHandler.postMessage("Open Failed");
+}
+</script>
