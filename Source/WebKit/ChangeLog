@@ -1,3 +1,18 @@
+2020-04-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove unneeded sandbox access to some file paths
+        https://bugs.webkit.org/show_bug.cgi?id=209938
+        <rdar://problem/59529620>
+
+        Reviewed by Per Arne Vollan.
+
+        Remove unnecessary access to some locations in /etc. These may have been needed in
+        the past, but the WebContent process no longer requires this access. We should
+        remove it.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-04-03  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to the runningboard service in the WebContent process
