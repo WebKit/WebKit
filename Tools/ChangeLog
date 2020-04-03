@@ -1,3 +1,26 @@
+2020-04-03  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] build-webkit --flatpak-cmakeargs option is ignored
+        https://bugs.webkit.org/show_bug.cgi?id=209648
+
+        Reviewed by Žan Doberšek.
+
+        This patch removes redundant options from webkit-flatpak,
+        correctly handles the cmakeargs option and reduces the amount of
+        `flatpak list` calls performed.
+
+        * flatpak/flatpakutils.py:
+        (check_flatpak):
+        (FlatpakPackages.__init__):
+        (FlatpakPackage.is_installed):
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.main):
+        (WebkitFlatpak.setup_dev_env):
+        (WebkitFlatpak.run_gdb):
+
 2020-04-03  Diego Pino Garcia  <dpino@igalia.com>
 
         [Flatpak SDK] Call setup_icecc only if use_icecream is defined

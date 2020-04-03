@@ -130,7 +130,7 @@ def check_flatpak(verbose=True):
                                       " to be able to use the '%s' script.\n\n"
                                       "You can find some informations about"
                                       " how to install it for your distribution at:\n"
-                                      "    * http://flatpak.org/%s\n", app, required_version,
+                                      "    * https://flatpak.org/%s\n", app, required_version,
                                       sys.argv[0])
             return False
 
@@ -181,11 +181,8 @@ class FlatpakPackages(FlatpakObject):
 
         self.repos = repos
 
-        self.packages = self.__detect_runtimes()
-
-    def __detect_packages(self, *args):
         packs = []
-        out = self.flatpak("list", "--columns=application,arch,branch,origin", *args)
+        out = self.flatpak("list", "--columns=application,arch,branch,origin", "-a")
         package_defs = [line for line in out.split("\n") if line]
         for package_def in package_defs:
             name, arch, branch, origin = package_def.split("\t")
@@ -195,10 +192,7 @@ class FlatpakPackages(FlatpakObject):
 
             packs.append(FlatpakPackage(name, branch, repo, arch))
 
-        return packs
-
-    def __detect_runtimes(self):
-        return self.__detect_packages("--runtime")
+        self.packages = packs
 
     def __iter__(self):
         for package in self.packages:
@@ -329,11 +323,8 @@ class FlatpakPackage(FlatpakObject):
             # Bundle installed from file
             return True
 
-        self.repo.repos.update()
         for package in self.repo.repos.packages:
-            if package.name == self.name and \
-                    package.branch == branch and \
-                    package.arch == self.arch:
+            if package.name == self.name and package.branch == branch and package.arch == self.arch:
                 return True
 
         return False
@@ -380,32 +371,22 @@ class WebkitFlatpak:
         general.add_argument('--verbose', action='store_true',
                              help='Show debug message')
         general.add_argument("--debug",
-                             help="Compile with Debug configuration, also installs Sdk debug symboles.",
+                             help="Compile with Debug configuration, also installs Sdk debug symbols.",
                              action="store_true")
         general.add_argument("--release", help="Compile with Release configuration.", action="store_true")
-        general.add_argument('--platform', action='store', help='Platform to use (e.g., "mac-lion")'),
         general.add_argument('--gtk', action='store_const', dest='platform', const='gtk',
-                             help='Alias for --platform=gtk')
+                             help='Setup build directory for the GTK port')
         general.add_argument('--wpe', action='store_const', dest='platform', const='wpe',
-                             help=('Alias for --platform=wpe'))
-        general.add_argument("-nf", "--no-flatpak-update", dest="no_flatpak_update",
-                             action="store_true",
-                             help="Do not update flaptak runtime/sdk")
+                             help=('Setup build directory for the WPE port'))
         general.add_argument("-u", "--update", dest="update",
                              action="store_true",
-                             help="Update the runtime/sdk/app and rebuild the development environment if needed")
-        general.add_argument("-b", "--build-webkit", dest="build_webkit",
-                             action="store_true",
-                             help="Force rebuilding the app.")
+                             help="Update the SDK")
         general.add_argument("-bgst", "--build-gst", dest="build_gst",
                              action="store_true",
                              help="Force rebuilding gst-build, repository path is defined by the `GST_BUILD_PATH` environment variable.")
         general.add_argument("-q", "--quiet", dest="quiet",
                              action="store_true",
                              help="Do not print anything")
-        general.add_argument("-t", "--tests", dest="run_tests",
-                             nargs=argparse.REMAINDER,
-                             help="Run LayoutTests")
         general.add_argument("-c", "--command",
                              nargs=argparse.REMAINDER,
                              help="The command to run in the sandbox",
@@ -420,12 +401,8 @@ class WebkitFlatpak:
         debugoptions.add_argument("-m", "--coredumpctl-matches", default="", help='Arguments to pass to gdb.')
 
         buildoptions = parser.add_argument_group("Extra build arguments")
-        buildoptions.add_argument("--makeargs", help="Optional Makefile flags")
         buildoptions.add_argument("--cmakeargs",
                                   help="One or more optional CMake flags (e.g. --cmakeargs=\"-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local\")")
-
-        general.add_argument("--clean", dest="clean", action="store_true",
-                             help="Clean previous builds and restart from scratch")
 
         _, self.args = parser.parse_known_args(args=args, namespace=self)
 
@@ -443,35 +420,20 @@ class WebkitFlatpak:
         self.quiet = False
         self.update = False
         self.args = []
-        self.finish_args = None
         self.gdb_stack_trace = False
 
-        self.no_flatpak_update = False
         self.release = False
         self.debug = False
-        self.clean = False
-        self.run_tests = None
         self.source_root = os.path.normpath(os.path.abspath(os.path.join(scriptdir, '../../')))
         # Where the source folder is mounted inside the sandbox.
         self.sandbox_source_root = "/app/webkit"
 
-        self.build_webkit = False
         self.build_gst = False
-        self.build_all = False
 
         self.sdk_branch = "0.2"
         self.platform = "gtk"
         self.build_type = "Release"
-        self.manifest_path = None
-        self.name = None
-        self.build_name = None
-        self.flatpak_root_path = None
-        self.cache_path = None
-        self.flatpak_default_args = []
         self.check_available = False
-
-        # Default application to run in the sandbox
-        self.command = None
         self.user_command = []
 
         # debug options
@@ -480,7 +442,6 @@ class WebkitFlatpak:
 
         # Extra build options
         self.cmakeargs = ""
-        self.makeargs = ""
 
         self.use_icecream = False
         self.icc_version = None
@@ -501,16 +462,10 @@ class WebkitFlatpak:
             self.debug = port.default_configuration() == "Debug"
 
         self.build_type = "Debug" if self.debug else "Release"
-
         self.platform = self.platform.upper()
 
         if self.gdb is None and '--gdb' in sys.argv:
             self.gdb = True
-
-        self.command = "%s %s %s" % (os.path.join(self.sandbox_source_root,
-                                                  "Tools/Scripts/run-minibrowser"),
-                                     "--" + self.platform.lower(),
-                                     " --debug" if self.debug else " --release")
 
         self.flatpak_build_path = os.environ["FLATPAK_USER_DIR"]
 
@@ -527,7 +482,6 @@ class WebkitFlatpak:
         if not check_flatpak():
             return False
 
-        self.finish_args = []
         self._reset_repository()
 
         try:
@@ -722,9 +676,8 @@ class WebkitFlatpak:
         gst_env = []
         if not kwargs.get('building_gst'):
             gst_env = self.setup_gstbuild(building)
-        flatpak_command += self.finish_args + extra_flatpak_args + \
-            [self.flatpak_build_path] + gst_env + args
 
+        flatpak_command += extra_flatpak_args + [self.flatpak_build_path] + gst_env + args
         _log.debug('Running in sandbox: %s\n' % ' '.join(flatpak_command))
 
         try:
@@ -744,24 +697,19 @@ class WebkitFlatpak:
         if not self.clean_args():
             return 1
 
-        if self.clean:
-            if os.path.exists(self.flatpak_build_path):
-                shutil.rmtree(self.flatpak_build_path)
-            if os.path.exists(self.build_path):
-                shutil.rmtree(self.build_path)
-
         if self.update:
             Console.message("Updating Flatpak %s environment" % self.build_type)
-            if not self.no_flatpak_update:
-                repo = self.sdk_repo
-                repo.flatpak("update")
-                for package in self._get_packages():
-                    if package.name.startswith("org.webkit") and repo.is_app_installed(package.name) \
-                       and not repo.is_app_installed(package.name, branch=self.sdk_branch):
-                        Console.message("New SDK version available, removing local UserFlatpak directory before switching to new version")
-                        shutil.rmtree(self.flatpak_build_path)
-                        self._reset_repository()
-                        break
+            repo = self.sdk_repo
+            repo.flatpak("update")
+            for package in self._get_packages():
+                if package.name.startswith("org.webkit") and repo.is_app_installed(package.name) \
+                   and not repo.is_app_installed(package.name, branch=self.sdk_branch):
+                    Console.message("New SDK version available, removing local UserFlatpak directory before switching to new version")
+                    shutil.rmtree(self.flatpak_build_path)
+                    self._reset_repository()
+                    break
+                elif not repo.is_app_installed(package.name):
+                    package.install()
 
         return self.setup_dev_env()
 
@@ -791,7 +739,7 @@ class WebkitFlatpak:
             self.icc_version = os.path.join(self.source_root, icc_version_filename)
 
     def setup_dev_env(self):
-        if not os.path.exists(os.path.join(self.flatpak_build_path, "runtime", "org.webkit.Sdk")) or self.update or self.build_all:
+        if not os.path.exists(os.path.join(self.flatpak_build_path, "runtime", "org.webkit.Sdk")) or self.update:
             self.install_all()
             if self.use_icecream:
                 self.setup_icecc()
@@ -803,31 +751,17 @@ class WebkitFlatpak:
                     Console.error_message("Flatpak package %s not installed. Please update your SDK: Tools/Scripts/update-webkit-flatpak", package)
                     return 1
 
-        build_type = "--debug" if self.debug else "--release"
-
-        if self.build_webkit:
-            builder = [
-                os.path.join(self.sandbox_source_root, 'Tools/Scripts/build-webkit'),
-                build_type, '--' + self.platform.lower()]
-            if self.makeargs:
-                builder.append("--makeargs=%s" % self.makeargs)
-            if self.cmakeargs:
-                builder.append("--cmakeargs=%s" % self.cmakeargs)
-            Console.message("Building webkit")
-            res = self.run_in_sandbox(*builder)
-
-            if res:
-                return res
-
-        if self.run_tests is not None:
-            test_launcher = [os.path.join(self.sandbox_source_root, 'Tools/Scripts/run-webkit-tests'),
-                             build_type, '--' + self.platform.lower()] + self.run_tests
-            return self.run_in_sandbox(*test_launcher)
-        elif self.gdb or self.gdb_stack_trace:
+        if self.gdb or self.gdb_stack_trace:
             return self.run_gdb()
         elif self.user_command:
+            program = self.user_command[0]
+            if program.endswith("build-webkit"):
+                Console.message("Building webkit")
+                if self.cmakeargs:
+                    self.user_command.append("--cmakeargs=%s" % self.cmakeargs)
+
             return self.run_in_sandbox(*self.user_command)
-        elif not self.update and not self.build_webkit and not self.build_gst:
+        elif not self.update and not self.build_gst:
             return self.run_in_sandbox()
 
         return 0
@@ -868,7 +802,7 @@ class WebkitFlatpak:
             try:
                 subprocess.check_output(['which', 'coredumpctl'])
             except subprocess.CalledProcessError as e:
-                sys.stderr.write("'coredumpctl' not present on the system, can't run. (%s)\n" % e)
+                Console.message("'coredumpctl' not present on the system, can't run. (%s)\n", e)
                 return e.returncode
 
         # We need access to the host from the sandbox to run.
@@ -884,7 +818,7 @@ class WebkitFlatpak:
                     with open(stderr.name, 'r') as stderrf:
                         stderr = stderrf.read()
                     cmd = ' '.join(err.cmd)
-                    sys.stderr.write("'%s' returned a non-zero exit code. Stderr: %s" % (cmd, stderr))
+                    Console.message("'%s' returned a non-zero exit code. Stderr: %s", cmd, stderr)
                     return err.returncode
 
                 with open(stderr.name, 'r') as stderrf:
