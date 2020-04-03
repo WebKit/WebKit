@@ -584,9 +584,11 @@ class WebkitFlatpak:
             except OSError as e:
                 if e.errno != errno.EEXIST:
                     raise e
-            # We mount WebKitBuild/PORTNAME/BuildType to /app/webkit/WebKitBuild/BuildType
-            # so we can build WPE and GTK in a same source tree.
-            flatpak_command.append("--bind-mount=%s=%s" % (sandbox_build_path, self.build_path))
+
+        # We mount WebKitBuild/PORTNAME/BuildType to /app/webkit/WebKitBuild/BuildType
+        # so we can build WPE and GTK in a same source tree.
+        # The bind-mount is always needed, not only when running build-webkit.
+        flatpak_command.append("--bind-mount=%s=%s" % (sandbox_build_path, self.build_path))
 
         forwarded = {
             "WEBKIT_TOP_LEVEL": "/app/",

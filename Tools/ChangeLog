@@ -1,3 +1,15 @@
+2020-04-03  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r259453): [Flatpak SDK] Build directory no longer bind-mounted when running tests
+        https://bugs.webkit.org/show_bug.cgi?id=209960
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The bind-mount is always needed, not only when running build-webkit.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-04-03  Diego Pino Garcia  <dpino@igalia.com>
 
         [Flatpak SDK] Create platform/Release directory only when build-webkit is called
