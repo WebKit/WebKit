@@ -1,3 +1,18 @@
+2020-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] canonicalizeLocaleList should gracefully throw OOM error if input + error message is too large
+        https://bugs.webkit.org/show_bug.cgi?id=209971
+        <rdar://problem/61258621>
+
+        Reviewed by Mark Lam.
+
+        canonicalizeLocaleList generates error-message with input. If input is too large, error-message string
+        generation could fail due to OOM. We should gracefully throw OOM error instead of crashing. This strategy
+        follows to `createError`'s error-message generation: if error-message generation fails, throwing OOM error.
+
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalizeLocaleList):
+
 2020-04-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         Move Intl tests from LayoutTests to JSTests

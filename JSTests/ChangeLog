@@ -1,3 +1,14 @@
+2020-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] canonicalizeLocaleList should gracefully throw OOM error if input + error message is too large
+        https://bugs.webkit.org/show_bug.cgi?id=209971
+        <rdar://problem/61258621>
+
+        Reviewed by Mark Lam.
+
+        * stress/intl-canonicalize-locale-list-error-oom.js: Added.
+        (shouldThrow):
+
 2020-04-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         Move Intl tests from LayoutTests to JSTests

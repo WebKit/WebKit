@@ -633,7 +633,7 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
 
             if (!kValue.isString() && !kValue.isObject()) {
                 throwTypeError(globalObject, scope, "locale value must be a string or object"_s);
-                return Vector<String>();
+                return { };
             }
 
             JSString* tag = kValue.toString(globalObject);
@@ -644,8 +644,13 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
 
             String canonicalizedTag = canonicalizeLanguageTag(tagValue);
             if (canonicalizedTag.isNull()) {
-                throwException(globalObject, scope, createRangeError(globalObject, "invalid language tag: " + tagValue));
-                return Vector<String>();
+                String errorMessage = tryMakeString("invalid language tag: ", tagValue);
+                if (UNLIKELY(!errorMessage)) {
+                    throwException(globalObject, scope, createOutOfMemoryError(globalObject));
+                    return { };
+                }
+                throwException(globalObject, scope, createRangeError(globalObject, errorMessage));
+                return { };
             }
 
             if (seenSet.add(canonicalizedTag).isNewEntry)
