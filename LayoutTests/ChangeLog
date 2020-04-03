@@ -1,3 +1,44 @@
+2020-04-03  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r258459. rdar://problem/61231983
+
+    SVGMatrix should have the access right of its owner SVGTransform always
+    https://bugs.webkit.org/show_bug.cgi?id=207462
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    The SVGMatrix needs to be reattached to its owner SVGTransform when the
+    access right of this owner changes. The access right of the owner changes
+    when it gets attached to or detached from a higher level owner.
+    
+    Test: svg/dom/SVGTransformList-anim-read-only.html
+    
+    * svg/SVGTransform.h:
+    * svg/properties/SVGProperty.h:
+    (WebCore::SVGProperty::attach):
+    (WebCore::SVGProperty::detach):
+    (WebCore::SVGProperty::reattach):
+    
+    LayoutTests:
+    
+    * svg/dom/SVGTransformList-anim-read-only-expected.txt: Added.
+    * svg/dom/SVGTransformList-anim-read-only.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258459 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-13  Said Abou-Hallawa  <said@apple.com>
+
+            SVGMatrix should have the access right of its owner SVGTransform always
+            https://bugs.webkit.org/show_bug.cgi?id=207462
+
+            Reviewed by Simon Fraser.
+
+            * svg/dom/SVGTransformList-anim-read-only-expected.txt: Added.
+            * svg/dom/SVGTransformList-anim-read-only.html: Added.
+
 2020-03-27  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r256627. rdar://problem/60919944

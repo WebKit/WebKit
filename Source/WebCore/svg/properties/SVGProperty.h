@@ -36,7 +36,7 @@ public:
 
     // Managing the relationship with the owner.
     bool isAttached() const { return m_owner; }
-    void attach(SVGPropertyOwner* owner, SVGPropertyAccess access)
+    virtual void attach(SVGPropertyOwner* owner, SVGPropertyAccess access)
     {
         ASSERT(!m_owner);
         ASSERT(m_state == SVGPropertyState::Clean);
@@ -44,10 +44,17 @@ public:
         m_access = access;
     }
 
-    void detach()
+    virtual void detach()
     {
         m_owner = nullptr;
         m_access = SVGPropertyAccess::ReadWrite;
+        m_state = SVGPropertyState::Clean;
+    }
+
+    void reattach(SVGPropertyOwner* owner, SVGPropertyAccess access)
+    {
+        ASSERT_UNUSED(owner, owner == m_owner);
+        m_access = access;
         m_state = SVGPropertyState::Clean;
     }
 
