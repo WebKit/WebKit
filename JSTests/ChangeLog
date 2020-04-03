@@ -1,3 +1,30 @@
+2020-04-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move Intl tests from LayoutTests to JSTests
+        https://bugs.webkit.org/show_bug.cgi?id=209922
+
+        Reviewed by Yusuke Suzuki.
+
+        Intl doesn't depend on WebCore, so these tests shouldn't be layout tests.
+        (They do, however, require one method to be added to $vm.)
+
+        Since LayoutTests/js has its own test harness, I've also migrated each test case to use simpler assertions.
+
+        * stress/array-to-locale-string.js: Removed -- subsumed by the following test.
+        * stress/array-toLocaleString.js: Added.
+        * stress/date-toLocaleString.js: Added.
+        * stress/intl-collator.js: Added.
+        * stress/intl-datetimeformat.js: Added.
+        * stress/intl-default-locale.js: Added.
+        * stress/intl-numberformat-format-to-parts.js: Added.
+        * stress/intl-numberformat.js: Added.
+        * stress/intl-object.js: Added.
+        * stress/intl-pluralrules.js: Added.
+        * stress/number-toLocaleString.js: Added.
+        * stress/string-localeCompare.js: Added.
+        * stress/string-toLocaleLowerCase.js: Added.
+        * stress/string-toLocaleUpperCase.js: Added.
+
 2020-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] TypedArray#subarray should throw OOM error gracefully

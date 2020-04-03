@@ -1564,9 +1564,6 @@ webkit.org/b/170830 inspector/sampling-profiler/named-function-expression.html [
 
 webkit.org/b/185659 [ Debug ] animations/needs-layout.html [ Pass ImageOnlyFailure ]
 
-# macOS doesn't have ICU v59
-webkit.org/b/185375 js/intl-numberformat-format-to-parts.html [ Failure ]
-
 # Imported css-text test suite from WPT
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-010.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-opclns-011.html [ ImageOnlyFailure ]
@@ -1717,9 +1714,6 @@ webkit.org/b/190882 animations/change-one-anim.html [ Pass Failure ]
 
 # <rdar://problem/50383285>
 [ Catalina+ ] imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-line-break-001.html [ ImageOnlyFailure ]
-
-# <rdar://problem/51055223>
-[ Catalina+ ] js/intl-numberformat.html [ Failure ]
 
 # <rdar://problem/51762717>
 [ Catalina+ ] http/wpt/resource-timing/rt-cors.html [ Pass Failure ]

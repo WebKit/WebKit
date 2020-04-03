@@ -82,9 +82,6 @@ imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-off
 imported/w3c/web-platform-tests/wasm/wasm_stream_instantiate_test.html  [ Skip ]
 imported/w3c/web-platform-tests/wasm/wasm_stream_compile_test.html  [ Skip ]
 
-# macOS doesn't have ICU v59
-webkit.org/b/185375 js/intl-numberformat-format-to-parts.html [ Failure ]
-
 # Imported css-text test suite from WPT
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-001.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-002.html [ ImageOnlyFailure ]

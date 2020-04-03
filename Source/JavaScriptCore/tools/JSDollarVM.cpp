@@ -56,6 +56,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/CPUTime.h>
 #include <wtf/DataLog.h>
+#include <wtf/Language.h>
 #include <wtf/ProcessID.h>
 #include <wtf/StringPrintStream.h>
 
@@ -2937,6 +2938,27 @@ static EncodedJSValue JSC_HOST_CALL functionRejectPromiseAsHandled(JSGlobalObjec
     return JSValue::encode(jsUndefined());
 }
 
+static EncodedJSValue JSC_HOST_CALL functionSetUserPreferredLanguages(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSArray* array = jsDynamicCast<JSArray*>(vm, callFrame->argument(0));
+    if (!array)
+        return throwVMTypeError(globalObject, scope, "Expected first argument to be an array"_s);
+
+    Vector<String> languages;
+    unsigned length = array->length();
+    for (size_t i = 0; i < length; i++) {
+        String language = array->get(globalObject, i).toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        languages.append(language);
+    }
+
+    overrideUserPreferredLanguages(languages);
+    return JSValue::encode(jsUndefined());
+}
+
 void JSDollarVM::finishCreation(VM& vm)
 {
     DollarVMAssertScope assertScope;
@@ -3072,6 +3094,8 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "hasOwnLengthProperty", functionHasOwnLengthProperty, 1);
     addFunction(vm, "rejectPromiseAsHandled", functionRejectPromiseAsHandled, 1);
+
+    addFunction(vm, "setUserPreferredLanguages", functionSetUserPreferredLanguages, 1);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

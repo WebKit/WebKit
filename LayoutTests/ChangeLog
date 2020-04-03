@@ -1,3 +1,53 @@
+2020-04-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move Intl tests from LayoutTests to JSTests
+        https://bugs.webkit.org/show_bug.cgi?id=209922
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/array-toLocaleString-expected.txt: Removed.
+        * js/array-toLocaleString.html: Removed.
+        * js/date-toLocaleString-expected.txt: Removed.
+        * js/date-toLocaleString.html: Removed.
+        * js/intl-collator-expected.txt: Removed.
+        * js/intl-collator.html: Removed.
+        * js/intl-datetimeformat-expected.txt: Removed.
+        * js/intl-datetimeformat.html: Removed.
+        * js/intl-default-locale-expected.txt: Removed.
+        * js/intl-default-locale.html: Removed.
+        * js/intl-expected.txt: Removed.
+        * js/intl-numberformat-expected.txt: Removed.
+        * js/intl-numberformat-format-to-parts-expected.txt: Removed.
+        * js/intl-numberformat-format-to-parts.html: Removed.
+        * js/intl-numberformat.html: Removed.
+        * js/intl-pluralrules-expected.txt: Removed.
+        * js/intl-pluralrules.html: Removed.
+        * js/intl.html: Removed.
+        * js/number-toLocaleString-expected.txt: Removed.
+        * js/number-toLocaleString.html: Removed.
+        * js/script-tests/array-toLocaleString.js: Removed.
+        * js/script-tests/date-toLocaleString.js: Removed.
+        * js/script-tests/intl-collator.js: Removed.
+        * js/script-tests/intl-datetimeformat.js: Removed.
+        * js/script-tests/intl-numberformat-format-to-parts.js: Removed.
+        * js/script-tests/intl-numberformat.js: Removed.
+        * js/script-tests/intl-pluralrules.js: Removed.
+        * js/script-tests/intl.js: Removed.
+        * js/script-tests/number-toLocaleString.js: Removed.
+        * js/script-tests/string-localeCompare.js: Removed.
+        * js/script-tests/string-toLocaleLowerCase.js: Removed.
+        * js/script-tests/string-toLocaleUpperCase.js: Removed.
+        * js/string-localeCompare-expected.txt: Removed.
+        * js/string-localeCompare.html: Removed.
+        * js/string-toLocaleLowerCase-expected.txt: Removed.
+        * js/string-toLocaleLowerCase.html: Removed.
+        * js/string-toLocaleUpperCase-expected.txt: Removed.
+        * js/string-toLocaleUpperCase.html: Removed.
+        * platform/ios-simulator/TestExpectations: Removed expectations.
+        * platform/ios/TestExpectations: Removed expectations.
+        * platform/mac/TestExpectations: Removed expectations.
+        * platform/win/TestExpectations: Removed expectations.
+
 2020-04-03  Eric Carlson  <eric.carlson@apple.com>
 
         Filter some capture device names

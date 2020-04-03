@@ -3244,9 +3244,6 @@ media/video-played-collapse.html [ Failure ]
 media/video-played-ranges-1.html [ Failure ]
 media/video-played-reset.html [ Failure ]
 
-# <rdar://problem/51055223> (iOS 13): jsc-layout-tests.yaml/js/script-tests/intl-numberformat.js.layout is failing
-js/intl-numberformat.html [ Failure ]
-
 # <rdar://problem/50892567> REGRESSION (iOS 13): CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.WebKit: _ZN6WebKit19fallbackIconForFileEP5NSURL
 fast/forms/file/file-reset-in-change-using-open-panel-with-icon.html [ Skip ]
 

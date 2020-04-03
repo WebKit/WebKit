@@ -1,3 +1,15 @@
+2020-04-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move Intl tests from LayoutTests to JSTests
+        https://bugs.webkit.org/show_bug.cgi?id=209922
+
+        Reviewed by Yusuke Suzuki.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionSetUserPreferredLanguages):
+        (JSC::JSDollarVM::finishCreation):
+        Add $vm.setUserPreferredLanguages, as needed by stress/intl-default-locale.js.
+
 2020-04-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: increase the auto-inspect debugger timeout delay to account for slower networks/devices
