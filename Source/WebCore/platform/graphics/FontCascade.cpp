@@ -822,8 +822,10 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
                 continue;
             if (supplementaryCharacter < 0x116D0) // Takri
                 return Complex;
-            if (supplementaryCharacter < 0x11C00)
+            if (supplementaryCharacter < 0x11740)
                 continue;
+            if (supplementaryCharacter < 0x11C00) // Ahom, Dogra, Dives Akuru, Nandinagari, Zanabazar Square, Soyombo, Warang Citi, Pau Cin Hau
+                return Complex;
             if (supplementaryCharacter < 0x11C70) // Bhaiksuki
                 return Complex;
             if (supplementaryCharacter < 0x11CC0) // Marchen
