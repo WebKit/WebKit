@@ -1,3 +1,5 @@
+//@ skip if ["arm", "mips"].include?($architecture)
+
 function foo() {
   Object.freeze(arguments);
 }
