@@ -40,7 +40,6 @@ function testInvalidIdentifierPartUnicodeEscapeSequence(sequence)
     shouldThrow('codeUnits(function x\\u' + sequence + '(){}.name.substring(1))');
 }
 
-testStringUnicodeEscapeSequence("", "0075");
 testStringUnicodeEscapeSequence("{0}", "0000");
 testStringUnicodeEscapeSequence("{41}", "0041");
 testStringUnicodeEscapeSequence("{D800}", "D800");
@@ -62,6 +61,7 @@ testStringUnicodeEscapeSequence("{10ffff}", "DBFF,DFFF");
 testStringUnicodeEscapeSequence("{00000000000000000000000010FFFF}", "DBFF,DFFF");
 testStringUnicodeEscapeSequence("{00000000000000000000000010ffff}", "DBFF,DFFF");
 
+testInvalidStringUnicodeEscapeSequence("");
 testInvalidStringUnicodeEscapeSequence("x");
 testInvalidStringUnicodeEscapeSequence("{");
 testInvalidStringUnicodeEscapeSequence("{}");

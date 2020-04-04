@@ -1233,7 +1233,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
 }
 
 template <typename T>
-template <bool shouldBuildStrings, LexerEscapeParseMode escapeParseMode> ALWAYS_INLINE auto Lexer<T>::parseComplexEscape(bool strictMode, T stringQuoteCharacter) -> StringParseResult
+template <bool shouldBuildStrings> ALWAYS_INLINE auto Lexer<T>::parseComplexEscape(bool strictMode) -> StringParseResult
 {
     if (m_current == 'x') {
         shift();
@@ -1262,12 +1262,6 @@ template <bool shouldBuildStrings, LexerEscapeParseMode escapeParseMode> ALWAYS_
 
     if (m_current == 'u') {
         shift();
-
-        if (escapeParseMode == LexerEscapeParseMode::String && m_current == stringQuoteCharacter) {
-            if (shouldBuildStrings)
-                record16('u');
-            return StringParsedSuccessfully;
-        }
 
         auto character = parseUnicodeEscape();
         if (character.isValid()) {
@@ -1361,7 +1355,7 @@ template <bool shouldBuildStrings> auto Lexer<T>::parseStringSlowCase(JSTokenDat
             } else if (UNLIKELY(isLineTerminator(m_current)))
                 shiftLineTerminator();
             else {
-                StringParseResult result = parseComplexEscape<shouldBuildStrings, LexerEscapeParseMode::String>(strictMode, stringQuoteCharacter);
+                StringParseResult result = parseComplexEscape<shouldBuildStrings>(strictMode);
                 if (result != StringParsedSuccessfully)
                     return result;
             }
@@ -1429,7 +1423,7 @@ typename Lexer<T>::StringParseResult Lexer<T>::parseTemplateLiteral(JSTokenData*
                     shiftLineTerminator();
             } else {
                 bool strictMode = true;
-                StringParseResult result = parseComplexEscape<true, LexerEscapeParseMode::Template>(strictMode, '`');
+                StringParseResult result = parseComplexEscape<true>(strictMode);
                 if (result != StringParsedSuccessfully) {
                     if (rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings && result == StringCannotBeParsed)
                         parseCookedFailed = true;

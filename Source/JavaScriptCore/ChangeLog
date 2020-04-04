@@ -1,3 +1,23 @@
+2020-04-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        '\u' should throw an early SyntaxError exception, but instead evaluates to 'u'
+        https://bugs.webkit.org/show_bug.cgi?id=198790
+
+        Reviewed by Yusuke Suzuki.
+
+        This change removes special-case for '\u', invoking parseUnicodeEscape() right away,
+        aligning string literals with ES6 template literals. parseComplexEscape() method
+        signature is greatly simplified, JSC is aligned with V8 and SpiderMonkey.
+
+        Grammar: https://tc39.es/ecma262/#prod-UnicodeEscapeSequence
+        (Hex4Digits or '{' is required, otherwise parsing fails)
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::parseComplexEscape):
+        (JSC::Lexer<T>::parseStringSlowCase):
+        (JSC::Lexer<T>::parseTemplateLiteral):
+        * parser/Lexer.h:
+
 2020-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] canonicalizeLocaleList should gracefully throw OOM error if input + error message is too large

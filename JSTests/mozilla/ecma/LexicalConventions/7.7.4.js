@@ -190,7 +190,8 @@ function getTestCases() {
     array[item++] = new TestCase( SECTION, "\\p",    "p",        "\p" );
     array[item++] = new TestCase( SECTION, "\\q",    "q",        "\q" );
     array[item++] = new TestCase( SECTION, "\\s",    "s",        "\s" );
-    array[item++] = new TestCase( SECTION, "\\u",    "u",        "\u" );
+// Invalid Unicode escapes are syntax error; these are covered in the test262 suite.
+//    array[item++] = new TestCase( SECTION, "\\u",    "u",        "\u" );
 
     array[item++] = new TestCase( SECTION, "\\w",    "w",        "\w" );
 // Invalid hex escapes are syntax error; these are covered in the sputnik test suite.

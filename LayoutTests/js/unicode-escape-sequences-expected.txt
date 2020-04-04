@@ -3,7 +3,6 @@ Test of Unicode escape sequences in string literals and identifiers, especially 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS codeUnits("\u") is "0075"
 PASS codeUnits("\u{0}") is "0000"
 PASS codeUnits("\u{41}") is "0041"
 PASS codeUnits("\u{D800}") is "D800"
@@ -24,6 +23,7 @@ PASS codeUnits("\u{10FFFF}") is "DBFF,DFFF"
 PASS codeUnits("\u{10ffff}") is "DBFF,DFFF"
 PASS codeUnits("\u{00000000000000000000000010FFFF}") is "DBFF,DFFF"
 PASS codeUnits("\u{00000000000000000000000010ffff}") is "DBFF,DFFF"
+PASS codeUnits("\u") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.
 PASS codeUnits("\ux") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.
 PASS codeUnits("\u{") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.
 PASS codeUnits("\u{}") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.

@@ -1,3 +1,13 @@
+2020-04-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        '\u' should throw an early SyntaxError exception, but instead evaluates to 'u'
+        https://bugs.webkit.org/show_bug.cgi?id=198790
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/script-tests/unicode-escape-sequences.js:
+        * js/unicode-escape-sequences-expected.txt:
+
 2020-04-04  Antti Koivisto  <antti@apple.com>
 
         Implement the css-color-4 behavior for inheritance of currentColor

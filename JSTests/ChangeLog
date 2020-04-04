@@ -1,3 +1,14 @@
+2020-04-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        '\u' should throw an early SyntaxError exception, but instead evaluates to 'u'
+        https://bugs.webkit.org/show_bug.cgi?id=198790
+
+        Reviewed by Yusuke Suzuki.
+
+        * mozilla/ecma/Array/15.4.5.1-1.js:
+        * mozilla/ecma/LexicalConventions/7.7.4.js:
+        * test262/expectations.yaml: Mark 4 test cases as passing.
+
 2020-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, skip stress/typed-array-subarray-can-throw-oom-error.js on memory-limited archs, and mark it slow

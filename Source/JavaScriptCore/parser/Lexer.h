@@ -38,8 +38,6 @@ enum class LexerFlags : uint8_t {
     DontBuildKeywords = 1 << 2
 };
 
-enum class LexerEscapeParseMode { Template, String };
-
 struct ParsedUnicodeEscapeValue;
 
 bool isLexerKeyword(const Identifier&);
@@ -176,7 +174,7 @@ private:
     template <bool shouldBuildStrings> NEVER_INLINE StringParseResult parseStringSlowCase(JSTokenData*, bool strictMode);
 
 
-    template <bool shouldBuildStrings, LexerEscapeParseMode escapeParseMode> ALWAYS_INLINE StringParseResult parseComplexEscape(bool strictMode, T stringQuoteCharacter);
+    template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseComplexEscape(bool strictMode);
     ALWAYS_INLINE StringParseResult parseTemplateLiteral(JSTokenData*, RawStringsBuildMode);
     
     using NumberParseResult = Variant<double, const Identifier*>;
