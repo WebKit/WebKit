@@ -1,4 +1,5 @@
-//@ skip if ["arm", "mips"].include?($architecture)
+//@ skip if $memoryLimited
+//@ slow!
 
 function foo() {
   Object.freeze(arguments);
