@@ -88,11 +88,6 @@
         "The regular setter on RenderStyle will only be called if",
         "StyleResolver::applyPropertyToRegularStyle() returns true.",
         "",
-        "* no-default-color:",
-        "Should only be used with \"VisitedLinkColorSupport\". It indicates that when",
-        "setting the inherited value, it will not fallback to using the parent's",
-        "\"color\" property if the inherited color is invalid.",
-        "",
         "* font-property:",
         "Indicates that this CSS property is font-related. It must have corresponding",
         "methods on the FontDescription class.",
@@ -184,7 +179,7 @@
         "caret-color" : {
             "inherited": true,
             "codegen-properties": {
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true
             },
             "specification": {
@@ -196,7 +191,6 @@
             "inherited": true,
             "codegen-properties": {
                 "visited-link-color-support": true,
-                "no-default-color": true,
                 "high-priority": true
             },
             "status": {
@@ -1059,8 +1053,7 @@
         },
         "background-color": {
             "codegen-properties": {
-                "visited-link-color-support": true,
-                "no-default-color": true
+                "visited-link-color-support": true
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1420,7 +1413,7 @@
         },
         "border-bottom-color": {
             "codegen-properties": {
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true
             },
             "specification": {
@@ -1773,7 +1766,7 @@
         },
         "border-left-color": {
             "codegen-properties": {
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true
             },
             "specification": {
@@ -1841,7 +1834,7 @@
         },
         "border-right-color": {
             "codegen-properties": {
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true
             },
             "specification": {
@@ -1922,7 +1915,7 @@
         },
         "border-top-color": {
             "codegen-properties": {
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true
             },
             "specification": {
@@ -3196,7 +3189,7 @@
         },
         "outline-color": {
             "codegen-properties": {
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true
             },
             "specification": {
@@ -3743,7 +3736,7 @@
             "inherited": true,
             "codegen-properties": {
                 "custom": "Value",
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true
             },
             "status": "supported",
@@ -4841,7 +4834,7 @@
                 "aliases": [
                     "-webkit-column-rule-color"
                 ],
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true
             },
             "specification":  {
@@ -6175,7 +6168,7 @@
         },
         "text-decoration-color": {
             "codegen-properties": {
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true,
                 "aliases": [
                     "-webkit-text-decoration-color"
@@ -6288,7 +6281,7 @@
                     "-epub-text-emphasis-color",
                     "text-emphasis-color"
                 ],
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true
             },
             "status": {
@@ -6335,7 +6328,7 @@
         "-webkit-text-fill-color": {
             "inherited": true,
             "codegen-properties": {
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true
             },
             "status": {
@@ -6366,7 +6359,7 @@
         "-webkit-text-stroke-color": {
             "inherited": true,
             "codegen-properties": {
-                "initial": "invalidColor",
+                "initial": "currentColor",
                 "visited-link-color-support": true
             },
             "status": {

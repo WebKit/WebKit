@@ -111,7 +111,7 @@ Ref<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(Style::Builde
 {
     auto result = hasColorDerivedFromElement() ? clone(*this) : makeRef(*this);
     resolveStopColors(result->m_stops, [&](const CSSPrimitiveValue& colorValue) {
-        return builderState.colorFromPrimitiveValue(colorValue);
+        return builderState.colorFromPrimitiveValueWithResolvedCurrentColor(colorValue);
     });
     return result;
 }

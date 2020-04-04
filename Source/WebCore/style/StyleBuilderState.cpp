@@ -267,7 +267,7 @@ bool BuilderState::createFilterOperations(const CSSValue& inValue, FilterOperati
             int blur = item.blur ? item.blur->computeLength<int>(cssToLengthConversionData()) : 0;
             Color color;
             if (item.color)
-                color = colorFromPrimitiveValue(*item.color);
+                color = colorFromPrimitiveValueWithResolvedCurrentColor(*item.color);
 
             operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparent));
             break;
@@ -312,12 +312,23 @@ Color BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value, bool
         return RenderTheme::singleton().focusRingColor(document().styleColorOptions(&m_style));
     case CSSValueCurrentcolor:
         // Color is an inherited property so depending on it effectively makes the property inherited.
-        // FIXME: Setting the flag as a side effect of calling this function is a bit oblique. Can we do better?
         m_style.setHasExplicitlyInheritedProperties();
-        return m_style.color();
+        return RenderStyle::currentColor();
     default:
         return StyleColor::colorFromKeyword(identifier, document().styleColorOptions(&m_style));
     }
+}
+
+Color BuilderState::colorFromPrimitiveValueWithResolvedCurrentColor(const CSSPrimitiveValue& value) const
+{
+    // FIXME: 'currentcolor' should be resolved at use time to make it inherit correctly. https://bugs.webkit.org/show_bug.cgi?id=210005
+    if (value.valueID() == CSSValueCurrentcolor) {
+        // Color is an inherited property so depending on it effectively makes the property inherited.
+        m_style.setHasExplicitlyInheritedProperties();
+        return m_style.color();
+    }
+
+    return colorFromPrimitiveValue(value);
 }
 
 void BuilderState::registerContentAttribute(const AtomString& attributeLocalName)

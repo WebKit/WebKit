@@ -819,9 +819,10 @@ inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState,
         ShadowStyle shadowStyle = shadowValue.style && shadowValue.style->valueID() == CSSValueInset ? ShadowStyle::Inset : ShadowStyle::Normal;
         Color color;
         if (shadowValue.color)
-            color = builderState.colorFromPrimitiveValue(*shadowValue.color);
+            color = builderState.colorFromPrimitiveValueWithResolvedCurrentColor(*shadowValue.color);
         else
             color = builderState.style().color();
+
         auto shadowData = makeUnique<ShadowData>(LayoutPoint(x, y), blur, spread, shadowStyle, property == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
         if (property == CSSPropertyTextShadow)
             builderState.style().setTextShadow(WTFMove(shadowData), !isFirstEntry); // add to the list if this is not the first entry

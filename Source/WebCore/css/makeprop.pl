@@ -77,7 +77,6 @@ my %styleBuilderOptions = (
     "initial" => 1,
     "longhands" => 1,
     "name-for-methods" => 1,
-    "no-default-color" => 1,
     "svg" => 1,
     "skip-builder" => 1,
     "setter" => 1,
@@ -980,10 +979,6 @@ sub generateInheritValueSetter {
     $setterContent .= $indent . "    }\n";
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"visited-link-color-support"}) {
     $setterContent .= $indent . "    Color color = " . $parentStyle . "." . $getter . "();\n";
-    if (!exists($propertiesWithStyleBuilderOptions{$name}{"no-default-color"})) {
-      $setterContent .= $indent . "    if (!color.isValid())\n";
-      $setterContent .= $indent . "        color = " . $parentStyle . ".color();\n";
-    }
     $setterContent .= generateColorValueSetter($name, "color", $indent . "    ");
     $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"animatable"}) {

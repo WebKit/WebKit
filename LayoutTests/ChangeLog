@@ -1,3 +1,27 @@
+2020-04-04  Antti Koivisto  <antti@apple.com>
+
+        Implement the css-color-4 behavior for inheritance of currentColor
+        https://bugs.webkit.org/show_bug.cgi?id=193171
+        <rdar://problem/47287516>
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        * fast/borders/border-color-inherit-expected.html: Copied from LayoutTests/fast/borders/border-color-inherit.html.
+        * fast/borders/border-color-inherit.html:
+
+        Fix for the new behavior and make it a reftest.
+
+        * fast/css/webkit-text-fill-color-inherit.html:
+        * platform/gtk/fast/borders/border-color-inherit-expected.png: Removed.
+        * platform/gtk/fast/borders/border-color-inherit-expected.txt: Removed.
+        * platform/ios/fast/borders/border-color-inherit-expected.txt: Removed.
+        * platform/mac/fast/borders/border-color-inherit-expected.png: Removed.
+        * platform/mac/fast/borders/border-color-inherit-expected.txt: Removed.
+        * platform/win/fast/borders/border-color-inherit-expected.txt: Removed.
+        * platform/wincairo/fast/borders/border-color-inherit-expected.txt: Removed.
+        * platform/wpe/fast/borders/border-color-inherit-expected.txt: Removed.
+
 2020-04-04  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r259095): ASSERTION FAILED: m_videoFullscreenMode != VideoFullscreenModeNone seen with TestWebKitAPI.WebKitLegacy.AudioSessionCategoryIOS

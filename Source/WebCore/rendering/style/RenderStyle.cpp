@@ -1953,7 +1953,8 @@ Color RenderStyle::colorIncludingFallback(CSSPropertyID colorProperty, bool visi
     BorderStyle borderStyle = BorderStyle::None;
     switch (colorProperty) {
     case CSSPropertyBackgroundColor:
-        return visitedLink ? visitedLinkBackgroundColor() : backgroundColor(); // Background color doesn't fall back.
+        result = visitedLink ? visitedLinkBackgroundColor() : backgroundColor();
+        break;
     case CSSPropertyBorderLeftColor:
         result = visitedLink ? visitedLinkBorderLeftColor() : borderLeftColor();
         borderStyle = borderLeftStyle();
@@ -2009,6 +2010,14 @@ Color RenderStyle::colorIncludingFallback(CSSPropertyID colorProperty, bool visi
             result = visitedLink ? visitedLinkColor() : color();
     }
     return result;
+}
+
+Color RenderStyle::colorResolvingCurrentColor(const Color& color) const
+{
+    if (color == currentColor())
+        return this->color();
+
+    return color;
 }
 
 Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty) const

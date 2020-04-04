@@ -2456,7 +2456,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             break;
 
         case CSSPropertyBackgroundColor:
-            return cssValuePool.createColorValue(m_allowVisitedStyle? style.visitedDependentColor(CSSPropertyBackgroundColor) : style.backgroundColor());
+            return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBackgroundColor)) : currentColorOrValidColor(&style, style.backgroundColor());
         case CSSPropertyBackgroundImage:
         case CSSPropertyWebkitMaskImage: {
             auto& layers = propertyID == CSSPropertyWebkitMaskImage ? style.maskLayers() : style.backgroundLayers();
