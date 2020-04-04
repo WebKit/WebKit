@@ -68,7 +68,7 @@ public:
 
     void didReceiveSessionMessage(IPC::Connection&, IPC::Decoder&);
 
-    void addSession(RemoteCDMInstanceSessionIdentifier, Ref<RemoteCDMInstanceSession>&&);
+    void addSession(Ref<RemoteCDMInstanceSession>&&);
     void removeSession(RemoteCDMInstanceSessionIdentifier);
 
 private:

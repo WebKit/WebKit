@@ -91,7 +91,7 @@ RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
     if (!id)
         return nullptr;
     auto session = RemoteCDMInstanceSession::create(makeWeakPtr(m_factory.get()), WTFMove(id));
-    m_factory->addSession(session->identifier(), session.copyRef());
+    m_factory->addSession(session.copyRef());
     return session;
 }
 

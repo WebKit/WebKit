@@ -78,10 +78,10 @@ std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem)
     return RemoteCDM::create(makeWeakPtr(this), WTFMove(id), WTFMove(configuration));
 }
 
-void RemoteCDMFactory::addSession(RemoteCDMInstanceSessionIdentifier id, Ref<RemoteCDMInstanceSession>&& session)
+void RemoteCDMFactory::addSession(Ref<RemoteCDMInstanceSession>&& session)
 {
-    ASSERT(!m_sessions.contains(id));
-    m_sessions.set(id, WTFMove(session));
+    ASSERT(!m_sessions.contains(session->identifier()));
+    m_sessions.set(session->identifier(), WTFMove(session));
 }
 
 void RemoteCDMFactory::removeSession(RemoteCDMInstanceSessionIdentifier id)

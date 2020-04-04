@@ -1,3 +1,20 @@
+2020-04-04  David Kilzer  <ddkilzer@apple.com>
+
+        [GPUP] Remove unnecessary RemoteCDMInstanceSessionIdentifier argument from RemoteCDMFactory::addSession()
+        <https://webkit.org/b/210006>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/GPU/media/RemoteCDMFactory.cpp:
+        (WebKit::RemoteCDMFactory::addSession):
+        - Remove argument. Use `session` parameter to retrieve the ID.
+        * WebProcess/GPU/media/RemoteCDMFactory.h:
+        (WebKit::RemoteCDMFactory::addSession):
+        - Remove argument.
+        * WebProcess/GPU/media/RemoteCDMInstance.cpp:
+        (WebKit::RemoteCDMInstance::createSession):
+        - Remove argument.
+
 2020-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add even more logging to try and diagnose <webkit.org/b/209685>
