@@ -1,3 +1,16 @@
+2020-04-03  David Kilzer  <ddkilzer@apple.com>
+
+        WebPlatformStrategies::{readBufferFromPasteboard,bufferForType} should validate their `size` parameter
+        <https://webkit.org/b/209997>
+        <rdar://problem/60890565>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::bufferForType):
+        (WebKit::WebPlatformStrategies::readBufferFromPasteboard):
+        - Validate the `size` parameter.
+
 2020-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         The IPC message “registerAttachmentsFromSerializedData" should be capitalized

@@ -136,6 +136,9 @@ RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const String&
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardBufferForType(pasteboardName, pasteboardType), Messages::WebPasteboardProxy::GetPasteboardBufferForType::Reply(handle, size), 0);
     if (handle.isNull())
         return nullptr;
+    // SharedMemory::Handle::size() is rounded up to the nearest page.
+    if (!size || size > handle.size())
+        return nullptr;
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
 }
@@ -377,6 +380,14 @@ RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(si
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadBufferFromPasteboard(index, pasteboardType, pasteboardName), Messages::WebPasteboardProxy::ReadBufferFromPasteboard::Reply(handle, size), 0);
     if (handle.isNull())
         return nullptr;
+#if OS(DARWIN) || OS(WINDOWS)
+    // SharedMemory::Handle::size() is rounded up to the nearest page.
+    if (!size || size > handle.size())
+        return nullptr;
+#else
+    if (!size)
+        return nullptr;
+#endif
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
 }
