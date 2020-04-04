@@ -856,6 +856,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
 - (void)stageRegistrationLists:(NSArray<WebItemProviderRegistrationInfoList *> *)lists
 {
     ASSERT(lists.count);
+    NSLog(@"%s - %@", __PRETTY_FUNCTION__, lists);
     _stagedRegistrationInfoLists = lists;
 }
 

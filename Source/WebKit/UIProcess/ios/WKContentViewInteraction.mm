@@ -7065,7 +7065,7 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
     auto stagedDragSource = _dragDropInteractionState.stagedDragSource();
     NSArray *dragItemsToAdd = [self _itemsForBeginningOrAddingToSessionWithRegistrationLists:registrationLists stagedDragSource:stagedDragSource];
 
-    NSLog(@"Drag session: %p adding %tu items", _dragDropInteractionState.dragSession(), dragItemsToAdd.count);
+    RELEASE_LOG(DragAndDrop, "Drag session: %p adding %tu items", _dragDropInteractionState.dragSession(), dragItemsToAdd.count);
     _dragDropInteractionState.clearStagedDragSource(dragItemsToAdd.count ? WebKit::DragDropInteractionState::DidBecomeActive::Yes : WebKit::DragDropInteractionState::DidBecomeActive::No);
 
     completion(dragItemsToAdd);
@@ -7134,7 +7134,7 @@ static UIDropOperation dropOperationForWebCoreDragOperation(WebCore::DragOperati
         return;
 
     if (_dragDropInteractionState.dragSession() || _dragDropInteractionState.isPerformingDrop())
-        NSLog(@"Cleaning up dragging state (has pending operation: %d)", [[WebItemProviderPasteboard sharedInstance] hasPendingOperation]);
+        RELEASE_LOG(DragAndDrop, "Cleaning up dragging state (has pending operation: %d)", [[WebItemProviderPasteboard sharedInstance] hasPendingOperation]);
 
     if (![[WebItemProviderPasteboard sharedInstance] hasPendingOperation]) {
         // If we're performing a drag operation, don't clear out the pasteboard yet, since another web view may still require access to it.
@@ -7218,7 +7218,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)_didPerformDragOperation:(BOOL)handled
 {
-    NSLog(@"Finished performing drag controller operation (handled: %d)", handled);
+    RELEASE_LOG(DragAndDrop, "Finished performing drag controller operation (handled: %d)", handled);
     [[WebItemProviderPasteboard sharedInstance] decrementPendingOperationCount];
     id <UIDropSession> dropSession = _dragDropInteractionState.dropSession();
     if ([self.webViewUIDelegate respondsToSelector:@selector(_webView:dataInteractionOperationWasHandled:forSession:itemProviders:)])
@@ -7264,7 +7264,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     auto numberOfAdditionalTypes = info.additionalTypes.size();
     ASSERT(numberOfAdditionalTypes == info.additionalData.size());
 
-    NSLog(@"Drag session: %p preparing to drag blob: %s with attachment identifier: %s", session.get(), info.blobURL.string().utf8().data(), info.attachmentIdentifier.utf8().data());
+    RELEASE_LOG(DragAndDrop, "Drag session: %p preparing to drag blob: %s with attachment identifier: %s", session.get(), info.blobURL.string().utf8().data(), info.attachmentIdentifier.utf8().data());
 
     NSString *utiType = info.contentType;
     NSString *fileName = info.fileName;
@@ -7296,7 +7296,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
         auto attachment = strongSelf->_page->attachmentForIdentifier(info.attachmentIdentifier);
         if (attachment && attachment->fileWrapper()) {
-            NSLog(@"Drag session: %p delivering promised attachment: %s at path: %@", session.get(), info.attachmentIdentifier.utf8().data(), destinationURL.path);
+            RELEASE_LOG(DragAndDrop, "Drag session: %p delivering promised attachment: %s at path: %@", session.get(), info.attachmentIdentifier.utf8().data(), destinationURL.path);
             NSError *fileWrapperError = nil;
             if ([attachment->fileWrapper() writeToURL:destinationURL options:0 originalContentsURL:nil error:&fileWrapperError])
                 callback(destinationURL, nil);
@@ -7619,10 +7619,10 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 {
     [self _cancelLongPressGestureRecognizer];
 
-    NSLog(@"Preparing for drag session: %p", session);
+    RELEASE_LOG(DragAndDrop, "Preparing for drag session: %p", session);
     if (self.currentDragOrDropSession) {
         // FIXME: Support multiple simultaneous drag sessions in the future.
-        NSLog(@"Drag session failed: %p (a current drag session already exists)", session);
+        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (a current drag session already exists)", session);
         completion();
         return;
     }
@@ -7634,20 +7634,20 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     auto dragOrigin = WebCore::roundedIntPoint([session locationInView:self]);
     _page->requestDragStart(dragOrigin, WebCore::roundedIntPoint([self convertPoint:dragOrigin toView:self.window]), self._allowedDragSourceActions);
 
-    NSLog(@"Drag session requested: %p at origin: {%d, %d}", session, dragOrigin.x(), dragOrigin.y());
+    RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%d, %d}", session, dragOrigin.x(), dragOrigin.y());
 }
 
 - (NSArray<UIDragItem *> *)dragInteraction:(UIDragInteraction *)interaction itemsForBeginningSession:(id <UIDragSession>)session
 {
     ASSERT(interaction == _dragInteraction);
-    NSLog(@"Drag items requested for session: %p", session);
+    RELEASE_LOG(DragAndDrop, "Drag items requested for session: %p", session);
     if (_dragDropInteractionState.dragSession() != session) {
-        NSLog(@"Drag session failed: %p (delegate session does not match %p)", session, _dragDropInteractionState.dragSession());
+        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (delegate session does not match %p)", session, _dragDropInteractionState.dragSession());
         return @[ ];
     }
 
     if (!_dragDropInteractionState.hasStagedDragSource()) {
-        NSLog(@"Drag session failed: %p (missing staged drag source)", session);
+        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (missing staged drag source)", session);
         return @[ ];
     }
 
@@ -7657,7 +7657,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     if (![dragItems count])
         _page->dragCancelled();
 
-    NSLog(@"Drag session: %p starting with %tu items", session, [dragItems count]);
+    RELEASE_LOG(DragAndDrop, "Drag session: %p starting with %tu items", session, [dragItems count]);
     _dragDropInteractionState.clearStagedDragSource([dragItems count] ? WebKit::DragDropInteractionState::DidBecomeActive::Yes : WebKit::DragDropInteractionState::DidBecomeActive::No);
 
     return dragItems;
@@ -7676,7 +7676,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)dragInteraction:(UIDragInteraction *)interaction willAnimateLiftWithAnimator:(id <UIDragAnimating>)animator session:(id <UIDragSession>)session
 {
-    NSLog(@"Drag session willAnimateLiftWithAnimator: %p", session);
+    RELEASE_LOG(DragAndDrop, "Drag session willAnimateLiftWithAnimator: %p", session);
     if (_dragDropInteractionState.anyActiveDragSourceIs(WebCore::DragSourceActionSelection)) {
         [self cancelActiveTextInteractionGestures];
         if (!_shouldRestoreCalloutBarAfterDrop) {
@@ -7693,21 +7693,21 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         UNUSED_PARAM(session);
 #endif
         if (finalPosition == UIViewAnimatingPositionStart) {
-            NSLog(@"Drag session ended at start: %p", session);
+            RELEASE_LOG(DragAndDrop, "Drag session ended at start: %p", session);
             // The lift was canceled, so -dropInteraction:sessionDidEnd: will never be invoked. This is the last chance to clean up.
             [protectedSelf cleanUpDragSourceSessionState];
             page->dragEnded(positionForDragEnd, positionForDragEnd, WebCore::DragOperationNone);
         }
 #if !RELEASE_LOG_DISABLED
         else
-            NSLog(@"Drag session did not end at start: %p", session);
+            RELEASE_LOG(DragAndDrop, "Drag session did not end at start: %p", session);
 #endif
     }];
 }
 
 - (void)dragInteraction:(UIDragInteraction *)interaction sessionWillBegin:(id <UIDragSession>)session
 {
-    NSLog(@"Drag session beginning: %p", session);
+    RELEASE_LOG(DragAndDrop, "Drag session beginning: %p", session);
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:dataInteraction:sessionWillBegin:)])
         [uiDelegate _webView:self.webView dataInteraction:interaction sessionWillBegin:session];
@@ -7719,7 +7719,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)dragInteraction:(UIDragInteraction *)interaction session:(id <UIDragSession>)session didEndWithOperation:(UIDropOperation)operation
 {
-    NSLog(@"Drag session ended: %p (with operation: %tu, performing operation: %d, began dragging: %d)", session, operation, _dragDropInteractionState.isPerformingDrop(), _dragDropInteractionState.didBeginDragging());
+    RELEASE_LOG(DragAndDrop, "Drag session ended: %p (with operation: %tu, performing operation: %d, began dragging: %d)", session, operation, _dragDropInteractionState.isPerformingDrop(), _dragDropInteractionState.didBeginDragging());
 
     [self _restoreCalloutBarIfNeeded];
 
@@ -7753,9 +7753,9 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item willAnimateCancelWithAnimator:(id <UIDragAnimating>)animator
 {
-    NSLog(@"Drag interaction willAnimateCancelWithAnimator");
+    RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator");
     [animator addCompletion:[protectedSelf = retainPtr(self), page = _page] (UIViewAnimatingPosition finalPosition) {
-        NSLog(@"Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
+        RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
         page->dragCancelled();
         if (auto completion = protectedSelf->_dragDropInteractionState.takeDragCancelSetDownBlock()) {
             page->callAfterNextPresentationUpdate([completion] (WebKit::CallbackBase::Error) {
@@ -7785,14 +7785,14 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 {
     // FIXME: Support multiple simultaneous drop sessions in the future.
     id <UIDragDropSession> dragOrDropSession = self.currentDragOrDropSession;
-    NSLog(@"Can handle drag session: %p with local session: %p existing session: %p?", session, session.localDragSession, dragOrDropSession);
+    RELEASE_LOG(DragAndDrop, "Can handle drag session: %p with local session: %p existing session: %p?", session, session.localDragSession, dragOrDropSession);
 
     return !dragOrDropSession || session.localDragSession == dragOrDropSession;
 }
 
 - (void)dropInteraction:(UIDropInteraction *)interaction sessionDidEnter:(id <UIDropSession>)session
 {
-    NSLog(@"Drop session entered: %p with %tu items", session, session.items.count);
+    RELEASE_LOG(DragAndDrop, "Drop session entered: %p with %tu items", session, session.items.count);
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:[self _dragDestinationActionForDropSession:session]];
 
     _dragDropInteractionState.dropSessionDidEnterOrUpdate(session, dragData);
@@ -7834,7 +7834,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)dropInteraction:(UIDropInteraction *)interaction sessionDidExit:(id <UIDropSession>)session
 {
-    NSLog(@"Drop session exited: %p with %tu items", session, session.items.count);
+    RELEASE_LOG(DragAndDrop, "Drop session exited: %p with %tu items", session, session.items.count);
     [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session)];
 
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
@@ -7866,14 +7866,14 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
     BOOL shouldSnapshotView = ![self _handleDropByInsertingImagePlaceholders:itemProviders session:session];
 
-    NSLog(@"Loading data from %tu item providers for session: %p", itemProviders.count, session);
+    RELEASE_LOG(DragAndDrop, "Loading data from %tu item providers for session: %p", itemProviders.count, session);
     // Always loading content from the item provider ensures that the web process will be allowed to call back in to the UI
     // process to access pasteboard contents at a later time. Ideally, we only need to do this work if we're over a file input
     // or the page prevented default on `dragover`, but without this, dropping into a normal editable areas will fail due to
     // item providers not loading any data.
     RetainPtr<WKContentView> retainedSelf(self);
     [[WebItemProviderPasteboard sharedInstance] doAfterLoadingProvidedContentIntoFileURLs:[retainedSelf, capturedDragData = WTFMove(dragData), shouldSnapshotView] (NSArray *fileURLs) mutable {
-        NSLog(@"Loaded data into %tu files", fileURLs.count);
+        RELEASE_LOG(DragAndDrop, "Loaded data into %tu files", fileURLs.count);
         Vector<String> filenames;
         for (NSURL *fileURL in fileURLs)
             filenames.append([fileURL path]);
@@ -7935,7 +7935,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)dropInteraction:(UIDropInteraction *)interaction sessionDidEnd:(id <UIDropSession>)session
 {
-    NSLog(@"Drop session ended: %p (performing operation: %d, began dragging: %d)", session, _dragDropInteractionState.isPerformingDrop(), _dragDropInteractionState.didBeginDragging());
+    RELEASE_LOG(DragAndDrop, "Drop session ended: %p (performing operation: %d, began dragging: %d)", session, _dragDropInteractionState.isPerformingDrop(), _dragDropInteractionState.didBeginDragging());
     if (_dragDropInteractionState.isPerformingDrop()) {
         // In the case where we are performing a drop, wait until after the drop is handled in the web process to reset drag and drop interaction state.
         return;

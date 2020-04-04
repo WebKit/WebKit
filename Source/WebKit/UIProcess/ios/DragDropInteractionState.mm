@@ -339,6 +339,7 @@ void DragDropInteractionState::dropSessionDidEnterOrUpdate(id <UIDropSession> se
 
 void DragDropInteractionState::stageDragItem(const DragItem& item, UIImage *dragImage)
 {
+    NSLog(@"%s - source action := %02x", __PRETTY_FUNCTION__, item.sourceAction);
     static NSInteger currentDragSourceItemIdentifier = 0;
 
     m_adjustedPositionForDragEnd = item.eventPositionInContentCoordinates;
@@ -363,6 +364,9 @@ bool DragDropInteractionState::hasStagedDragSource() const
 
 void DragDropInteractionState::clearStagedDragSource(DidBecomeActive didBecomeActive)
 {
+    if (m_stagedDragSource)
+        NSLog(@"%s - source action := %02x", __PRETTY_FUNCTION__, m_stagedDragSource->action);
+
     if (didBecomeActive == DidBecomeActive::Yes)
         m_activeDragSources.append(stagedDragSource());
     m_stagedDragSource = WTF::nullopt;
