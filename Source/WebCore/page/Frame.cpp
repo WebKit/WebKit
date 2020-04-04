@@ -619,9 +619,14 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
     if (loader().stateMachine().creatingInitialEmptyDocument() && !settings().shouldInjectUserScriptsInInitialEmptyDocument())
         return;
 
-    m_page->userContentProvider().forEachUserScript([this, protectedThis = makeRef(*this), injectionTime](DOMWrapperWorld& world, const UserScript& script) {
-        if (script.injectionTime() == injectionTime)
-            injectUserScriptImmediately(world, script);
+    bool pageWasNotified = m_page->hasBeenNotifiedToInjectUserScripts();
+    m_page->userContentProvider().forEachUserScript([this, protectedThis = makeRef(*this), injectionTime, pageWasNotified] (DOMWrapperWorld& world, const UserScript& script) {
+        if (script.injectionTime() == injectionTime) {
+            if (script.waitForNotificationBeforeInjecting() == WaitForNotificationBeforeInjecting::Yes && !pageWasNotified)
+                m_page->addUserScriptAwaitingNotification(world, script);
+            else
+                injectUserScriptImmediately(world, script);
+        }
     });
 }
 
@@ -637,7 +642,7 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
     auto* document = this->document();
     if (!document)
         return;
-    if (script.injectedFrames() == InjectInTopFrameOnly && !isMainFrame())
+    if (script.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly && !isMainFrame())
         return;
     if (!UserContentURLPattern::matchesPatterns(document->url(), script.whitelist(), script.blacklist()))
         return;

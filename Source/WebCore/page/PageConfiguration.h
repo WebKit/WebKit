@@ -129,6 +129,7 @@ public:
     UniqueRef<MediaRecorderProvider> mediaRecorderProvider;
     bool loadsSubresources { true };
     bool loadsFromNetwork { true };
+    bool userScriptsShouldWaitUntilNotification { true };
 };
 
 }

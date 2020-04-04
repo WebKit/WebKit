@@ -7768,6 +7768,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     parameters.overriddenMediaType = m_overriddenMediaType;
     parameters.corsDisablingPatterns = m_configuration->corsDisablingPatterns();
+    parameters.userScriptsShouldWaitUntilNotification = m_configuration->userScriptsShouldWaitUntilNotification();
     parameters.loadsFromNetwork = m_configuration->loadsFromNetwork();
     parameters.loadsSubresources = m_configuration->loadsSubresources();
     parameters.crossOriginAccessControlCheckEnabled = m_configuration->crossOriginAccessControlCheckEnabled();
@@ -8189,6 +8190,19 @@ bool WebPageProxy::willHandleHorizontalScrollEvents() const
 void WebPageProxy::updateWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 {
     send(Messages::WebPage::UpdateWebsitePolicies(websitePolicies));
+}
+
+void WebPageProxy::notifyUserScripts()
+{
+    m_userScriptsNotified = true;
+    send(Messages::WebPage::NotifyUserScripts());
+}
+
+bool WebPageProxy::userScriptsNeedNotification() const
+{
+    if (!m_configuration->userScriptsShouldWaitUntilNotification())
+        return false;
+    return !m_userScriptsNotified;
 }
 
 void WebPageProxy::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)

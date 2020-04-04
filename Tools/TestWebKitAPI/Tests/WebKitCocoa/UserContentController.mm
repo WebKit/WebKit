@@ -28,10 +28,13 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKUserScript.h>
 #import <WebKit/WKUserScriptPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserContentWorld.h>
@@ -810,4 +813,34 @@ TEST(WKUserContentController, InjectUserScriptImmediately)
     [webView reload];
     waitForMessages(6);
     compareMessages({"start all", "start all", "end main", "start all", "end main", "start all"});
+}
+
+TEST(WKUserContentController, UserScriptNotification)
+{
+    WKUserScript *waitsForNotification = [[[WKUserScript alloc] _initWithSource:@"alert('waited for notification')" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES legacyWhitelist:[NSArray array] legacyBlacklist:[NSArray array] associatedURL:[NSURL URLWithString:@"test:///script"] contentWorld:[WKContentWorld defaultClientWorld] deferRunningUntilNotification:YES] autorelease];
+    WKUserScript *documentEnd = [[[WKUserScript alloc] initWithSource:@"alert('document parsing ended')" injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES] autorelease];
+
+    TestWKWebView *webView1 = [[TestWKWebView new] autorelease];
+    EXPECT_TRUE(webView1._deferrableUserScriptsNeedNotification);
+    [webView1.configuration.userContentController addUserScript:waitsForNotification];
+    [webView1.configuration.userContentController addUserScript:documentEnd];
+    TestUIDelegate *delegate = [[TestUIDelegate new] autorelease];
+    webView1.UIDelegate = delegate;
+    [webView1 loadTestPageNamed:@"simple"];
+    EXPECT_WK_STREQ([delegate waitForAlert], "document parsing ended");
+    [webView1 _notifyUserScripts];
+    EXPECT_FALSE(webView1._deferrableUserScriptsNeedNotification);
+    EXPECT_WK_STREQ([delegate waitForAlert], "waited for notification");
+
+    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration new] autorelease];
+    EXPECT_TRUE(configuration._deferrableUserScriptsShouldWaitUntilNotification);
+    configuration._deferrableUserScriptsShouldWaitUntilNotification = NO;
+    TestWKWebView *webView2 = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration] autorelease];
+    EXPECT_FALSE(webView2._deferrableUserScriptsNeedNotification);
+    [webView2.configuration.userContentController addUserScript:waitsForNotification];
+    [webView2.configuration.userContentController addUserScript:documentEnd];
+    webView2.UIDelegate = delegate;
+    [webView2 loadTestPageNamed:@"simple"];
+    EXPECT_WK_STREQ([delegate waitForAlert], "waited for notification");
+    EXPECT_WK_STREQ([delegate waitForAlert], "document parsing ended");
 }

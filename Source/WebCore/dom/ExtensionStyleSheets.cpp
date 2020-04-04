@@ -138,7 +138,7 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
         if (userStyleSheet.pageID())
             return;
 
-        if (userStyleSheet.injectedFrames() == InjectInTopFrameOnly && m_document.ownerElement())
+        if (userStyleSheet.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly && m_document.ownerElement())
             return;
 
         if (!UserContentURLPattern::matchesPatterns(m_document.url(), userStyleSheet.whitelist(), userStyleSheet.blacklist()))

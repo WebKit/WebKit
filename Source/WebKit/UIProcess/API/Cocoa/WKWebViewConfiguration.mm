@@ -933,6 +933,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _pageConfiguration->loadsSubresources();
 }
 
+- (BOOL)_deferrableUserScriptsShouldWaitUntilNotification
+{
+    return _pageConfiguration->userScriptsShouldWaitUntilNotification();
+}
+
+- (void)_setDeferrableUserScriptsShouldWaitUntilNotification:(BOOL)value
+{
+    _pageConfiguration->setUserScriptsShouldWaitUntilNotification(value);
+}
+
 - (void)_setCrossOriginAccessControlCheckEnabled:(BOOL)enabled
 {
     _pageConfiguration->setCrossOriginAccessControlCheckEnabled(enabled);

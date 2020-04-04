@@ -1,3 +1,14 @@
+2020-04-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to make WKUserScripts wait for a notification
+        https://bugs.webkit.org/show_bug.cgi?id=209845
+        <rdar://problem/60342299>
+
+        Reviewed by Chris Dumez.
+
+        * WebView/WebView.mm:
+        (-[WebView _injectOutlookQuirksScript]):
+
 2020-04-03  Tim Horton  <timothy_horton@apple.com>
 
         Add a visual debug indicator for locating and identifying all kinds of WebViews

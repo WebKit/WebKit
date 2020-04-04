@@ -135,6 +135,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << corsDisablingPatterns;
     encoder << loadsSubresources;
     encoder << loadsFromNetwork;
+    encoder << userScriptsShouldWaitUntilNotification;
     encoder << crossOriginAccessControlCheckEnabled;
     encoder << processDisplayName;
 
@@ -430,6 +431,12 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     parameters.loadsFromNetwork = *loadsFromNetwork;
 
+    Optional<bool> userScriptsShouldWaitUntilNotification;
+    decoder >> userScriptsShouldWaitUntilNotification;
+    if (!userScriptsShouldWaitUntilNotification)
+        return WTF::nullopt;
+    parameters.userScriptsShouldWaitUntilNotification = *userScriptsShouldWaitUntilNotification;
+    
     Optional<bool> crossOriginAccessControlCheckEnabled;
     decoder >> crossOriginAccessControlCheckEnabled;
     if (!crossOriginAccessControlCheckEnabled)

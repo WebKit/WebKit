@@ -202,6 +202,7 @@ struct WebPageCreationParameters {
 
     String overriddenMediaType;
     Vector<String> corsDisablingPatterns;
+    bool userScriptsShouldWaitUntilNotification { true };
     bool loadsSubresources { true };
     bool loadsFromNetwork { true };
 

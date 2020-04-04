@@ -7006,8 +7006,8 @@ HRESULT WebView::addUserScriptToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWo
 
     WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
     auto userScript = makeUnique<UserScript>(source, toURL(url), toStringVector(whitelist, whitelistCount),
-        toStringVector(blacklist, blacklistCount), injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd,
-        injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
+        toStringVector(blacklist, blacklistCount), injectionTime == WebInjectAtDocumentStart ? UserScriptInjectionTime::DocumentStart : UserScriptInjectionTime::DocumentEnd,
+        injectedFrames == WebInjectInAllFrames ? UserContentInjectedFrames::InjectInAllFrames : UserContentInjectedFrames::InjectInTopFrameOnly, WaitForNotificationBeforeInjecting::No);
     viewGroup->userContentController().addUserScript(world->world(), WTFMove(userScript));
     return S_OK;
 }
@@ -7033,7 +7033,7 @@ HRESULT WebView::addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScri
 
     WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
     auto styleSheet = makeUnique<UserStyleSheet>(source, toURL(url), toStringVector(whitelist, whitelistCount), toStringVector(blacklist, blacklistCount),
-        injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly, UserStyleUserLevel);
+        injectedFrames == WebInjectInAllFrames ? UserContentInjectedFrames::InjectInAllFrames : UserContentInjectedFrames::InjectInTopFrameOnly, UserStyleUserLevel);
     viewGroup->userContentController().addUserStyleSheet(world->world(), WTFMove(styleSheet), InjectInExistingDocuments);
     return S_OK;
 }

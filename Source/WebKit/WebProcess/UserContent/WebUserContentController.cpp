@@ -392,7 +392,7 @@ void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& 
                 return;
 
             auto& mainFrame = page.mainFrame();
-            if (userScript.injectedFrames() == InjectInTopFrameOnly) {
+            if (userScript.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly) {
                 mainFrame.injectUserScriptImmediately(world.coreWorld(), userScript);
                 return;
             }

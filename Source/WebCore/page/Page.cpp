@@ -124,6 +124,7 @@
 #include "UserContentProvider.h"
 #include "UserContentURLPattern.h"
 #include "UserInputBridge.h"
+#include "UserScript.h"
 #include "UserStyleSheet.h"
 #include "ValidationMessageClient.h"
 #include "VisitedLinkState.h"
@@ -337,6 +338,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
             m_corsDisablingPatterns.uncheckedAppend(WTFMove(parsedPattern));
     }
     m_corsDisablingPatterns.shrinkToFit();
+    
+    if (!pageConfiguration.userScriptsShouldWaitUntilNotification)
+        m_hasBeenNotifiedToInjectUserScripts = true;
 }
 
 Page::~Page()
@@ -2473,6 +2477,20 @@ UserContentProvider& Page::userContentProvider()
     return m_userContentProvider;
 }
 
+void Page::notifyToInjectUserScripts()
+{
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (const auto& pair : m_userScriptsAwaitingNotification)
+            frame->injectUserScriptImmediately(pair.first, pair.second.get());
+    }
+    m_userScriptsAwaitingNotification.clear();
+}
+
+void Page::addUserScriptAwaitingNotification(DOMWrapperWorld& world, const UserScript& script)
+{
+    m_userScriptsAwaitingNotification.append({ makeRef(world), makeUniqueRef<UserScript>(script) });
+}
+
 void Page::setUserContentProvider(Ref<UserContentProvider>&& userContentProvider)
 {
     m_userContentProvider->removePage(*this);
@@ -3073,7 +3091,7 @@ void Page::injectUserStyleSheet(UserStyleSheet& userStyleSheet)
         return;
     }
 
-    if (userStyleSheet.injectedFrames() == InjectInTopFrameOnly) {
+    if (userStyleSheet.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly) {
         if (auto* document = m_mainFrame->document())
             document->extensionStyleSheets().injectPageSpecificUserStyleSheet(userStyleSheet);
     } else {
@@ -3092,7 +3110,7 @@ void Page::removeInjectedUserStyleSheet(UserStyleSheet& userStyleSheet)
         return;
     }
 
-    if (userStyleSheet.injectedFrames() == InjectInTopFrameOnly) {
+    if (userStyleSheet.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly) {
         if (auto* document = m_mainFrame->document())
             document->extensionStyleSheets().removePageSpecificUserStyleSheet(userStyleSheet);
     } else {

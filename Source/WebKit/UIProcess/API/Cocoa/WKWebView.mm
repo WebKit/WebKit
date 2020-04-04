@@ -2326,6 +2326,16 @@ static RetainPtr<NSMutableArray> wkTextManipulationErrors(NSArray<_WKTextManipul
     _page->updateWebsitePolicies(WTFMove(data));
 }
 
+- (void)_notifyUserScripts
+{
+    _page->notifyUserScripts();
+}
+
+- (BOOL)_deferrableUserScriptsNeedNotification
+{
+    return _page->userScriptsNeedNotification();
+}
+
 - (BOOL)_allowsRemoteInspection
 {
 #if ENABLE(REMOTE_INSPECTOR)

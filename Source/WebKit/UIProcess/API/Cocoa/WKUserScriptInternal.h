@@ -41,23 +41,21 @@ inline WebCore::UserScriptInjectionTime toWebCoreUserScriptInjectionTime(WKUserS
 {
     switch (injectionTime) {
     case WKUserScriptInjectionTimeAtDocumentStart:
-        return WebCore::InjectAtDocumentStart;
-
+        return WebCore::UserScriptInjectionTime::DocumentStart;
     case WKUserScriptInjectionTimeAtDocumentEnd:
-        return WebCore::InjectAtDocumentEnd;
+        return WebCore::UserScriptInjectionTime::DocumentEnd;
     }
 
     ASSERT_NOT_REACHED();
-    return WebCore::InjectAtDocumentEnd;
+    return WebCore::UserScriptInjectionTime::DocumentEnd;
 }
 
 inline WKUserScriptInjectionTime toWKUserScriptInjectionTime(WebCore::UserScriptInjectionTime injectionTime)
 {
     switch (injectionTime) {
-    case WebCore::InjectAtDocumentStart:
+    case WebCore::UserScriptInjectionTime::DocumentStart:
         return WKUserScriptInjectionTimeAtDocumentStart;
-
-    case WebCore::InjectAtDocumentEnd:
+    case WebCore::UserScriptInjectionTime::DocumentEnd:
         return WKUserScriptInjectionTimeAtDocumentEnd;
     }
 

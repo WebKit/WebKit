@@ -50,12 +50,12 @@ static inline UserContentInjectedFrames toUserContentInjectedFrames(WebKitUserCo
 {
     switch (injectedFrames) {
     case WEBKIT_USER_CONTENT_INJECT_TOP_FRAME:
-        return InjectInTopFrameOnly;
+        return UserContentInjectedFrames::InjectInTopFrameOnly;
     case WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES:
-        return InjectInAllFrames;
+        return UserContentInjectedFrames::InjectInAllFrames;
     default:
         ASSERT_NOT_REACHED();
-        return InjectInAllFrames;
+        return UserContentInjectedFrames::InjectInAllFrames;
     }
 }
 
@@ -76,12 +76,12 @@ static inline UserScriptInjectionTime toUserScriptInjectionTime(WebKitUserScript
 {
     switch (injectionTime) {
     case WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START:
-        return InjectAtDocumentStart;
+        return UserScriptInjectionTime::DocumentStart;
     case WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END:
-        return InjectAtDocumentEnd;
+        return UserScriptInjectionTime::DocumentEnd;
     default:
         ASSERT_NOT_REACHED();
-        return InjectAtDocumentStart;
+        return UserScriptInjectionTime::DocumentStart;
     }
 }
 
@@ -214,7 +214,7 @@ struct _WebKitUserScript {
             String::fromUTF8(source), URL { },
             toStringVector(whitelist), toStringVector(blacklist),
             toUserScriptInjectionTime(injectionTime),
-            toUserContentInjectedFrames(injectedFrames) }, world)))
+            toUserContentInjectedFrames(injectedFrames), WebCore::WaitForNotificationBeforeInjecting::No }, world)))
         , referenceCount(1)
     {
     }

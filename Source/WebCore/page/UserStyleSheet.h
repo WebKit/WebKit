@@ -38,7 +38,7 @@ class UserStyleSheet {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     UserStyleSheet()
-        : m_injectedFrames(InjectInAllFrames)
+        : m_injectedFrames(UserContentInjectedFrames::InjectInAllFrames)
         , m_level(UserStyleUserLevel)
     {
     }

@@ -49,11 +49,12 @@ Optional<WebUserScriptData> WebUserScriptData::decode(IPC::Decoder& decoder)
     if (!worldIdentifier)
         return WTF::nullopt;
     
-    WebCore::UserScript userScript;
-    if (!decoder.decode(userScript))
+    Optional<WebCore::UserScript> userScript;
+    decoder >> userScript;
+    if (!userScript)
         return WTF::nullopt;
     
-    return {{ WTFMove(*identifier), WTFMove(*worldIdentifier), WTFMove(userScript) }};
+    return {{ WTFMove(*identifier), WTFMove(*worldIdentifier), WTFMove(*userScript) }};
 }
 
 void WebUserStyleSheetData::encode(IPC::Encoder& encoder) const

@@ -611,6 +611,8 @@ public:
     bool willHandleHorizontalScrollEvents() const;
 
     void updateWebsitePolicies(WebsitePoliciesData&&);
+    void notifyUserScripts();
+    bool userScriptsNeedNotification() const;
 
     bool canShowMIMEType(const String& mimeType);
 
@@ -2772,6 +2774,7 @@ private:
     NavigatingToAppBoundDomain m_isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
     NavigatedAwayFromAppBoundDomain m_hasNavigatedAwayFromAppBoundDomain { NavigatedAwayFromAppBoundDomain::No };
     bool m_ignoresAppBoundDomains { false };
+    bool m_userScriptsNotified { false };
 };
 
 } // namespace WebKit

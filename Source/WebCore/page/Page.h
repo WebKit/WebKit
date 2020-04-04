@@ -140,6 +140,7 @@ class StorageNamespaceProvider;
 class UserContentProvider;
 class UserContentURLPattern;
 class UserInputBridge;
+class UserScript;
 class UserStyleSheet;
 class ValidationMessageClient;
 class VisibleSelection;
@@ -734,6 +735,10 @@ public:
     bool shouldFireResizeEvents() const { return m_shouldFireResizeEvents; }
     void setShouldFireResizeEvents(bool shouldFireResizeEvents) { m_shouldFireResizeEvents = shouldFireResizeEvents; }
 
+    bool hasBeenNotifiedToInjectUserScripts() const { return m_hasBeenNotifiedToInjectUserScripts; }
+    WEBCORE_EXPORT void notifyToInjectUserScripts();
+    void addUserScriptAwaitingNotification(DOMWrapperWorld&, const UserScript&);
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1015,6 +1020,8 @@ private:
     bool m_shouldFireResizeEvents { true };
     bool m_loadsSubresources { true };
     bool m_loadsFromNetwork { true };
+    bool m_hasBeenNotifiedToInjectUserScripts { false };
+    Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 };
 
 inline PageGroup& Page::group()

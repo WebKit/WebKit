@@ -36,15 +36,16 @@ class UserScript final : public ObjectImpl<Object::Type::UserScript>, public Ide
 public:
     static WTF::URL generateUniqueURL();
 
-    static Ref<UserScript> create(WebCore::UserScript userScript, API::ContentWorld& world)
+    static Ref<UserScript> create(WebCore::UserScript&& userScript, API::ContentWorld& world)
     {
         return adoptRef(*new UserScript(WTFMove(userScript), world));
     }
 
     UserScript(WebCore::UserScript, API::ContentWorld&);
 
+    WebCore::UserScript& userScript() { return m_userScript; }
     const WebCore::UserScript& userScript() const { return m_userScript; }
-    
+
     ContentWorld& contentWorld() { return m_world; }
     const ContentWorld& contentWorld() const { return m_world; }
     
