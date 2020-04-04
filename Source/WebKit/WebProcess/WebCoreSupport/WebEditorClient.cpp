@@ -169,7 +169,7 @@ void WebEditorClient::registerAttachmentIdentifier(const String& identifier, con
 
 void WebEditorClient::registerAttachments(Vector<WebCore::SerializedAttachmentData>&& data)
 {
-    m_page->send(Messages::WebPageProxy::registerAttachmentsFromSerializedData(WTFMove(data)));
+    m_page->send(Messages::WebPageProxy::RegisterAttachmentsFromSerializedData(WTFMove(data)));
 }
 
 void WebEditorClient::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& filePath)
