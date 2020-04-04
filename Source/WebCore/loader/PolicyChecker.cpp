@@ -203,7 +203,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     auto requestIdentifier = PolicyCheckIdentifier::create();
     m_delegateIsDecidingNavigationPolicy = true;
     String suggestedFilename = action.downloadAttribute().isEmpty() ? nullAtom() : action.downloadAttribute();
-    FramePolicyFunction decisionHandler = [this, function = WTFMove(function), request = ResourceRequest(request), formState = WTFMove(formState), suggestedFilename = WTFMove(suggestedFilename),
+    FramePolicyFunction decisionHandler = [this, function = WTFMove(function), request = ResourceRequest(request), formState = std::exchange(formState, nullptr), suggestedFilename = WTFMove(suggestedFilename),
          blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension), requestIdentifier, isInitialEmptyDocumentLoad] (PolicyAction policyAction, PolicyCheckIdentifier responseIdentifier) mutable {
         if (!responseIdentifier.isValidFor(requestIdentifier)) {
             RELEASE_LOG_IF_ALLOWED("checkNavigationPolicy: ignoring because response is not valid for request");
