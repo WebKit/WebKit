@@ -10,7 +10,7 @@ info: |
 
     ...
     8. If numberingSystem is not undefined, then
-        a. If numberingSystem does not match the [(3*8alphanum) *("-" (3*8alphanum))] sequence, throw a RangeError exception.
+        a. If numberingSystem does not match the type sequence (from UTS 35 Unicode Locale Identifier, section 3.2), throw a RangeError exception.
 
 features: [Intl.RelativeTimeFormat]
 ---*/
@@ -34,6 +34,8 @@ const invalidNumberingSystemOptions = [
   "latn-ca",
   "latn-ca-",
   "latn-ca-gregory",
+  "latné",
+  "latn编号",
 ];
 for (const numberingSystem of invalidNumberingSystemOptions) {
   assert.throws(RangeError, function() {

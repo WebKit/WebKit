@@ -1,7 +1,7 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 9.5.15
+esid: sec-proxycreate
 description: >
     A Proxy exotic object is only callable if the given target is callable.
 info: |
@@ -22,5 +22,5 @@ features: [Proxy]
 var p = new Proxy({}, {});
 
 assert.throws(TypeError, function() {
-  p.call();
+  p();
 });

@@ -33,10 +33,8 @@ includes: [async-gc.js]
 var cleanupCallback = 0;
 var called = 0;
 
-// both this cb and the finalizationRegistry callback are not exhausting the iterator to prevent
-// the target cell from being removed from the finalizationRegistry.[[Cells]].
-// More info at %FinalizationRegistryCleanupIteratorPrototype%.next ( )
-function cb() {
+function cb(holding) {
+  assert.sameValue(holding, 'a');
   called += 1;
 }
 
@@ -54,14 +52,17 @@ function emptyCells() {
   return prom;
 }
 
-// Let's add some async ticks, as the cleanupCallback is not meant to interrupt
-// synchronous operations.
-async function fn() {
+emptyCells()
+  .then(async function() {
   await Promise.resolve(1);
 
   finalizationRegistry.cleanupSome(cb);
+
+  // cleanupSome will be invoked if there are empty cells left. If the
+  // cleanupCallback already ran, then cb won't be called.
+  let expectedCalled = cleanupCallback === 1 ? 0 : 1;
   // This asserts the registered object was emptied in the previous GC.
-  assert.sameValue(called, 1, 'cleanupSome callback for the first time');
+  assert.sameValue(called, expectedCalled, 'cleanupSome callback for the first time');
 
   // At this point, we can't assert if cleanupCallback was called, because it's
   // optional. Although, we can finally assert it's not gonna be called anymore
@@ -71,8 +72,8 @@ async function fn() {
   assert(cleanupCallback >= 0, 'cleanupCallback might be 0');
   assert(cleanupCallback <= 1, 'cleanupCallback might be 1');
 
-  // Restoring the cleanupCallback variable to 0 will help us asserting the finalizationRegistry
-  // callback is not called again.
+  // Restoring the cleanupCallback variable to 0 will help us asserting the
+  // finalizationRegistry callback is not called again.
   cleanupCallback = 0;
 
   await $262.gc();
@@ -80,9 +81,7 @@ async function fn() {
 
   finalizationRegistry.cleanupSome(cb);
 
-  // This cb is called again because finalizationRegistry still holds an emptied cell, but it's
-  // not yet removed from the 
-  assert.sameValue(called, 2, 'cleanupSome callback for the second time');
+  assert.sameValue(called, expectedCalled, 'cleanupSome callback is not called anymore, no empty cells');
   assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #1');
 
   await $262.gc();
@@ -90,46 +89,9 @@ async function fn() {
 
   finalizationRegistry.cleanupSome(cb);
 
-  assert.sameValue(called, 3, 'cleanupSome callback for the third time');
+  assert.sameValue(called, expectedCalled, 'cleanupSome callback is not called again #2');
   assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #2');
 
   await $262.gc();
-}
-
-emptyCells()
-  .then(async function() {
-    await fn();// tick
-    await Promise.resolve(4); // tick
-
-    assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #3');
-
-    finalizationRegistry.cleanupSome(cb);
-
-    assert.sameValue(called, 4, 'cleanupSome callback for the fourth time');
-    assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #4');
-    
-    await $262.gc();
-
-    // Now we are exhausting the iterator, so cleanupSome callback will also not be called.
-    finalizationRegistry.cleanupSome(iterator => {
-      var exhausted = [...iterator];
-      assert.sameValue(exhausted.length, 1);
-      assert.sameValue(exhausted[0], 'a');
-      called += 1;
-    });
-
-    assert.sameValue(called, 5, 'cleanupSome callback for the fifth time');
-    assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #4');
-
-    await $262.gc();
-
-    await Promise.resolve(5); // tick
-    await await Promise.resolve(6); // more ticks
-    await await await Promise.resolve(7); // even more ticks
-
-    finalizationRegistry.cleanupSome(cb);
-
-    assert.sameValue(called, 5, 'cleanupSome callback is not called anymore, no empty cells');
-    assert.sameValue(cleanupCallback, 0, 'cleanupCallback is not called again #5');
   })
   .then($DONE, resolveAsyncGC);

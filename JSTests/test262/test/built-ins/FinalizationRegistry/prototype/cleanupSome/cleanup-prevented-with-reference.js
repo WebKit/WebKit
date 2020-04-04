@@ -18,9 +18,9 @@ includes: [async-gc.js]
 flags: [async, non-deterministic]
 ---*/
 
-var holdingsList;
-function cb(iterator) {
-  holdingsList = [...iterator];
+var holdingsList = [];
+function cb(holding) {
+  holdingsList.push(holding);
 };
 var finalizationRegistry = new FinalizationRegistry(function() {});
 

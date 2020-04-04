@@ -2,10 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-regular-expressions-patterns
-es6id: B.1.4
 description: Legacy Octal Escape Sequence
 info: |
-    CharacterEscape[U]::
+    CharacterEscape[U] ::
         ControlEscape
         c ControlLetter
         0 [lookahead ∉ DecimalDigit]
@@ -14,12 +13,16 @@ info: |
         [~U] LegacyOctalEscapeSequence
         IdentityEscape[?U]
 
-    The production CharacterEscape::LegacyOctalEscapeSequence evaluates by
+    LegacyOctalEscapeSequence ::
+        OctalDigit [lookahead ∉ OctalDigit]
+        ZeroToThree OctalDigit [lookahead ∉ OctalDigit]
+        FourToSeven OctalDigit
+        ZeroToThree OctalDigit OctalDigit
+
+    The production CharacterEscape :: LegacyOctalEscapeSequence evaluates by
     evaluating the SV of the LegacyOctalEscapeSequence (see B.1.2) and
     returning its character result.
 ---*/
-
-var match;
 
 assert.sameValue(/\1/.exec('\x01')[0], '\x01', '\\1');
 assert.sameValue(/\2/.exec('\x02')[0], '\x02', '\\2');
@@ -41,7 +44,7 @@ assert.sameValue(/\47/.exec('\x27')[0], '\x27', '\\47');
 assert.sameValue(/\70/.exec('\x38')[0], '\x38', '\\70');
 assert.sameValue(/\77/.exec('\x3f')[0], '\x3f', '\\77');
 
-// Sequence is bounded according to the String Value (not number of characters)
+// Sequence is bounded according to the String Value
 assert.sameValue(/\400/.exec('\x200')[0], '\x200', '\\400');
 assert.sameValue(/\470/.exec('\x270')[0], '\x270', '\\470');
 assert.sameValue(/\700/.exec('\x380')[0], '\x380', '\\700');
@@ -54,8 +57,14 @@ assert.sameValue(/\070/.exec('\x38')[0], '\x38', '\\070');
 assert.sameValue(/\300/.exec('\xc0')[0], '\xc0', '\\300');
 assert.sameValue(/\307/.exec('\xc7')[0], '\xc7', '\\307');
 assert.sameValue(/\370/.exec('\xf8')[0], '\xf8', '\\370');
+assert.sameValue(/\377/.exec('\xff')[0], '\xff', '\\377');
 
-match = /(.)\1/.exec('a\x01 aa');
+// Sequence is 3 characters max, including leading zeros
+assert.sameValue(/\0111/.exec('\x091')[0], '\x091', '\\0111');
+assert.sameValue(/\0022/.exec('\x022')[0], '\x022', '\\0022');
+assert.sameValue(/\0003/.exec('\x003')[0], '\x003', '\\0003');
+
+var match = /(.)\1/.exec('a\x01 aa');
 assert.sameValue(
   match[0], 'aa', 'DecimalEscape takes precedence over LegacyOctalEscapeSequence'
 );

@@ -17,8 +17,13 @@ skip:
     - class-static-fields-private
     - class-static-methods-private
     - host-gc-required
+    # https://bugs.webkit.org/show_bug.cgi?id=202475
     - regexp-match-indices
     - top-level-await
+    # https://bugs.webkit.org/show_bug.cgi?id=209716
+    - logical-assignment-operators
+    # https://bugs.webkit.org/show_bug.cgi?id=202566
+    - Promise.any
     - AggregateError
     - FinalizationRegistry
     - Intl.DateTimeFormat-datetimestyle
@@ -153,7 +158,3 @@ skip:
     # These tests timeout even with --timeout parameter set
     # https://bugs.webkit.org/show_bug.cgi?id=208639
     - test/built-ins/Array/prototype/lastIndexOf/length-near-integer-limit.js
-
-    # https://bugs.webkit.org/show_bug.cgi?id=143511
-    - test/built-ins/JSON/stringify/replacer-function-stack-overflow.js
-    - test/built-ins/JSON/stringify/value-tojson-stack-overflow.js

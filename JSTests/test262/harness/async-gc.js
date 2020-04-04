@@ -21,10 +21,10 @@ function asyncGC(...targets) {
   targets = null;
 
   return Promise.resolve('tick').then(() => asyncGCDeref()).then(() => {
-    var names;
+    var names = [];
 
     // consume iterator to capture names
-    finalizationRegistry.cleanupSome(iter => { names = [...iter]; });
+    finalizationRegistry.cleanupSome(name => { names.push(name); });
 
     if (!names || names.length != length) {
       throw asyncGC.notCollected;

@@ -39,46 +39,28 @@ function emptyCells() {
   return prom;
 }
 
-var tests = [];
-
-tests.push(emptyCells().then(function() {
+emptyCells().then(function() {
   called = 0;
   assert.sameValue(finalizationRegistry.cleanupSome(cb), undefined, 'regular callback');
   assert.sameValue(called, 1);
-}));
-
-tests.push(emptyCells().then(function() {
+}).then(emptyCells).then(function() {
   called = 0;
   assert.sameValue(finalizationRegistry.cleanupSome(fn), undefined, 'regular callback, same FG cleanup function');
   assert.sameValue(called, 1);
-}));
-
-tests.push(emptyCells().then(function() {
+}).then(emptyCells).then(function() {
   called = 0;
   assert.sameValue(finalizationRegistry.cleanupSome(), undefined, 'undefined (implicit) callback, defer to FB callback');
   assert.sameValue(called, 1);
-}));
-
-tests.push(emptyCells().then(function() {
+}).then(emptyCells).then(function() {
   called = 0;
   assert.sameValue(finalizationRegistry.cleanupSome(undefined), undefined, 'undefined (explicit) callback, defer to FB callback');
   assert.sameValue(called, 1);
-}));
-
-tests.push(emptyCells().then(function() {
-  assert.sameValue(finalizationRegistry.cleanupSome(() => 1), undefined, 'arrow function');  
-}));
-
-tests.push(emptyCells().then(function() {
+}).then(emptyCells).then(function() {
+  assert.sameValue(finalizationRegistry.cleanupSome(() => 1), undefined, 'arrow function');
+}).then(emptyCells).then(function() {
   assert.sameValue(finalizationRegistry.cleanupSome(async function() {}), undefined, 'async function');
-}));
-
-tests.push(emptyCells().then(function() {
+}).then(emptyCells).then(function() {
   assert.sameValue(finalizationRegistry.cleanupSome(function *() {}), undefined, 'generator');
-}));
-
-tests.push(emptyCells().then(function() {
+}).then(emptyCells).then(function() {
   assert.sameValue(finalizationRegistry.cleanupSome(async function *() {}), undefined, 'async generator');
-}));
-
-Promise.all(tests).then(() => { $DONE(); }, resolveAsyncGC);
+}).then($DONE, resolveAsyncGC);

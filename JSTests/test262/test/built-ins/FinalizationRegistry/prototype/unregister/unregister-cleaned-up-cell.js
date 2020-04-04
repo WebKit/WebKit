@@ -15,18 +15,11 @@ info: |
   CleanupFinalizationRegistry ( finalizationRegistry [ , callback ] )
 
   ...
-  3. Let iterator be ! CreateFinalizationRegistryCleanupIterator(finalizationRegistry).
-  ...
-  6. Let result be Call(callback, undefined, « iterator »).
-  ...
-
-  %FinalizationRegistryCleanupIteratorPrototype%.next ( )
-
-  8. If finalizationRegistry.[[Cells]] contains a Record cell such that cell.[[Target]] is empty,
+  3. While finalizationRegistry.[[Cells]] contains a Record cell such that cell.[[WeakRefTarget]] is ~empty~, then an implementation may perform the following steps,
     a. Choose any such cell.
     b. Remove cell from finalizationRegistry.[[Cells]].
-    c. Return CreateIterResultObject(cell.[[Holdings]], false).
-  9. Otherwise, return CreateIterResultObject(undefined, true).
+    c. Perform ? Call(callback, undefined, << cell.[[HeldValue]] >>).
+  ...
 
   FinalizationRegistry.prototype.unregister ( unregisterToken )
 
@@ -57,10 +50,10 @@ function emptyCells() {
 
 emptyCells().then(function() {
   var called = 0;
-  var holdings;
-  finalizationRegistry.cleanupSome(function cb(iterator) {
+  var holdings = [];
+  finalizationRegistry.cleanupSome(function cb(holding) {
     called += 1;
-    holdings = [...iterator];
+    holdings.push(holding);
   });
 
   assert.sameValue(called, 1);

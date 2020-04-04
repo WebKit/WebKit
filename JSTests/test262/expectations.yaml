@@ -609,6 +609,9 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
   default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
+test/annexB/language/literals/regexp/legacy-octal-escape.js:
+  default: "TypeError: null is not an object (evaluating '/\\0111/.exec('\\x091')[0]')"
+  strict mode: "TypeError: null is not an object (evaluating '/\\0111/.exec('\\x091')[0]')"
 test/annexB/language/statements/for-of/iterator-close-return-emulates-undefined-throws-when-called.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1219,6 +1222,15 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
+test/built-ins/Proxy/create-handler-is-revoked-proxy.js:
+  default: "TypeError: A Proxy's 'handler' shouldn't be a revoked Proxy"
+  strict mode: "TypeError: A Proxy's 'handler' shouldn't be a revoked Proxy"
+test/built-ins/Proxy/create-target-is-revoked-function-proxy.js:
+  default: "TypeError: A Proxy's 'target' shouldn't be a revoked Proxy"
+  strict mode: "TypeError: A Proxy's 'target' shouldn't be a revoked Proxy"
+test/built-ins/Proxy/create-target-is-revoked-proxy.js:
+  default: "TypeError: A Proxy's 'target' shouldn't be a revoked Proxy"
+  strict mode: "TypeError: A Proxy's 'target' shouldn't be a revoked Proxy"
 test/built-ins/Proxy/defineProperty/trap-is-undefined-target-is-proxy.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1234,6 +1246,12 @@ test/built-ins/Proxy/getOwnPropertyDescriptor/trap-is-undefined-target-is-proxy.
 test/built-ins/Proxy/ownKeys/trap-is-undefined-target-is-proxy.js:
   default: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
   strict mode: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
+test/built-ins/Proxy/set/trap-is-missing-receiver-multiple-calls-index.js:
+  default: 'Test262Error: Expected [0] and [0, 0, 0] to have the same contents. getOwnPropertyDescriptor: key present on [[ProxyTarget]]'
+  strict mode: 'TypeError: Attempted to assign to readonly property.'
+test/built-ins/Proxy/set/trap-is-missing-receiver-multiple-calls.js:
+  default: 'Test262Error: Expected [foo] and [foo, foo, foo] to have the same contents. getOwnPropertyDescriptor: key present on [[ProxyTarget]]'
+  strict mode: 'TypeError: Attempted to assign to readonly property.'
 test/built-ins/Proxy/set/trap-is-missing-target-is-proxy.js:
   default: 'Test262Error: Expected SameValue(«0», «1») to be true'
   strict mode: 'TypeError: Attempting to change configurable attribute of unconfigurable property.'
@@ -1926,9 +1944,12 @@ test/intl402/Collator/usage-de.js:
 test/intl402/DateTimeFormat/constructor-calendar-numberingSystem-order.js:
   default: 'Test262Error: Expected [localeMatcher, hour12] and [localeMatcher, calendar, numberingSystem, hour12] to have the same contents. '
   strict mode: 'Test262Error: Expected [localeMatcher, hour12] and [localeMatcher, calendar, numberingSystem, hour12] to have the same contents. '
-test/intl402/DateTimeFormat/invalid-numbering-system-calendar-options.js:
-  default: 'Test262Error: Invalid numberingSystem value ab was not rejected. Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Invalid numberingSystem value ab was not rejected. Expected a RangeError to be thrown but no exception was thrown at all'
+test/intl402/DateTimeFormat/constructor-options-calendar-invalid.js:
+  default: 'Test262Error: new Intl.DateTimeFormat("en", {calendar: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: new Intl.DateTimeFormat("en", {calendar: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
+test/intl402/DateTimeFormat/constructor-options-numberingSystem-invalid.js:
+  default: 'Test262Error: new Intl.DateTimeFormat("en", {numberingSystem: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: new Intl.DateTimeFormat("en", {numberingSystem: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/DateTimeFormat/numbering-system-calendar-options.js:
   default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
   strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
@@ -1971,12 +1992,12 @@ test/intl402/Intl/getCanonicalLocales/preferred-variant.js:
 test/intl402/NumberFormat/constructor-numberingSystem-order.js:
   default: 'Test262Error: Expected [localeMatcher, style] and [localeMatcher, numberingSystem, style] to have the same contents. '
   strict mode: 'Test262Error: Expected [localeMatcher, style] and [localeMatcher, numberingSystem, style] to have the same contents. '
+test/intl402/NumberFormat/constructor-options-numberingSystem-invalid.js:
+  default: 'Test262Error: new Intl.NumberFormat("en", {numberingSystem: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: new Intl.NumberFormat("en", {numberingSystem: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/NumberFormat/constructor-options-throwing-getters.js:
   default: 'Test262Error: Exception from numberingSystem getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Exception from numberingSystem getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
-test/intl402/NumberFormat/invalid-numbering-system-options.js:
-  default: 'Test262Error: Invalid numberingSystem value ab was not rejected. Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Invalid numberingSystem value ab was not rejected. Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/NumberFormat/numbering-system-options.js:
   default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
   strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
@@ -2128,9 +2149,6 @@ test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-f
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/eval-code/direct/new.target-arrow.js:
-  default: 'Test262Error: Expected SameValue(«function ReferenceError() {'
-  strict mode: 'Test262Error: Expected SameValue(«function ReferenceError() {'
 test/language/eval-code/direct/non-definable-function-with-function.js:
   default: 'Test262Error: Expected SameValue(«[object Object]», «undefined») to be true'
 test/language/eval-code/direct/non-definable-function-with-variable.js:
@@ -3207,6 +3225,12 @@ test/language/identifiers/start-unicode-13.0.0.js:
 test/language/literals/regexp/u-astral-char-class-invert.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
+test/language/literals/string/unicode-escape-no-hex-err-double.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/literals/string/unicode-escape-no-hex-err-single.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/module-code/eval-rqstd-once.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/eval-rqstd-order.js:
@@ -3611,6 +3635,9 @@ test/language/statements/for-of/head-lhs-non-asnmt-trgt.js:
 test/language/statements/for-of/head-var-no-expr.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-of/iterator-close-throw-get-method-abrupt.js:
+  default: 'Test262Error: Expected a Test262Error but got a Object'
+  strict mode: 'Test262Error: Expected a Test262Error but got a Object'
 test/language/statements/for-of/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for/head-lhs-let.js:

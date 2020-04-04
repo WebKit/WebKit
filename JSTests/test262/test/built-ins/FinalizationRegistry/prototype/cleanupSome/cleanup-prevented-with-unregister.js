@@ -46,7 +46,7 @@ emptyCells().then(function() {
   var res = finalizationRegistry.unregister(token);
   assert.sameValue(res, true, 'unregister target before iterating over it in cleanup');
 
-  finalizationRegistry.cleanupSome(function cb(iterator) {
+  finalizationRegistry.cleanupSome(function cb(holding) {
     called += 1;
   });
   
