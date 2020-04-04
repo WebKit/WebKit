@@ -545,6 +545,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (!this._anonymousScriptsFolderTreeElement.parent) {
                 let index = insertionIndexForObjectInListSortedByFunction(this._anonymousScriptsFolderTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
                 this._resourcesTreeOutline.insertChild(this._anonymousScriptsFolderTreeElement, index);
+                this._resourcesTreeOutline.disclosureButtons = true;
             }
 
             this._anonymousScriptsFolderTreeElement.representedObject.add(representedObject);
@@ -569,6 +570,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (!this._anonymousStyleSheetsFolderTreeElement.parent) {
                 let index = insertionIndexForObjectInListSortedByFunction(this._anonymousStyleSheetsFolderTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
                 this._resourcesTreeOutline.insertChild(this._anonymousStyleSheetsFolderTreeElement, index);
+                this._resourcesTreeOutline.disclosureButtons = true;
             }
 
            let cssStyleSheetTreeElement = new WI.CSSStyleSheetTreeElement(representedObject);
@@ -982,6 +984,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (!parentTreeElement.parent) {
             let index = insertionIndexForObjectInListSortedByFunction(parentTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
             this._resourcesTreeOutline.insertChild(parentTreeElement, index);
+            this._resourcesTreeOutline.disclosureButtons = true;
         }
 
         let treeElement = new WI.CSSStyleSheetTreeElement(styleSheet);
@@ -1046,6 +1049,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (!parentFolderTreeElement.parent) {
                 let index = insertionIndexForObjectInListSortedByFunction(parentFolderTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
                 this._resourcesTreeOutline.insertChild(parentFolderTreeElement, index);
+                this._resourcesTreeOutline.disclosureButtons = true;
             }
 
             parentFolderTreeElement.appendChild(scriptTreeElement);
