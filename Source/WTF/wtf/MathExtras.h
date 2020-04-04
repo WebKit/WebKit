@@ -391,6 +391,19 @@ inline void decomposeDouble(double number, bool& sign, int32_t& exponent, uint64
         mantissa |= 0x10000000000000ull;
 }
 
+template<typename T> constexpr unsigned countOfBits = sizeof(T) * CHAR_BIT;
+template<typename T> constexpr unsigned countOfMagnitudeBits = countOfBits<T> - std::is_signed_v<T>;
+
+constexpr float powerOfTwo(unsigned e)
+{
+    float p = 1;
+    while (e--)
+        p *= 2;
+    return p;
+}
+
+template<typename T> constexpr float maxPlusOne = powerOfTwo(countOfMagnitudeBits<T>);
+
 // Calculate d % 2^{64}.
 inline void doubleToInteger(double d, unsigned long long& value)
 {
@@ -398,7 +411,7 @@ inline void doubleToInteger(double d, unsigned long long& value)
         value = 0;
     else {
         // -2^{64} < fmodValue < 2^{64}.
-        double fmodValue = fmod(trunc(d), std::numeric_limits<unsigned long long>::max() + 1.0);
+        double fmodValue = fmod(trunc(d), maxPlusOne<unsigned long long>);
         if (fmodValue >= 0) {
             // 0 <= fmodValue < 2^{64}.
             // 0 <= value < 2^{64}. This cast causes no loss.

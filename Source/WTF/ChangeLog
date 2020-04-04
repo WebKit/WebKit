@@ -1,3 +1,43 @@
+2020-04-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Clang 10] Fix -Wimplicit-int-float-conversion compilation warnings in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=209955
+
+        Reviewed by Darin Adler.
+
+        Clang 10 reports a compilation warning for int to float
+        conversions losing the precision. The warning is often reported
+        for code converting a floating point value to an integer value.
+        For example:
+
+        > Optional<int> positive_float_to_int(float f) {
+        >     if (f > INT_MAX)
+        >         return nullopt;
+        >     return static_cast<int>(f);
+        > }
+
+        INT_MAX is implicitly converted float, but float can't keep the
+        precision of such large value. And, C++ spec doesn't specify
+        whether it would be rounded up or down. Above code should be
+        rewritten to:
+
+        > Optional<int> positive_float_to_int(float f) {
+        >     if (f >= pow(2, 31))
+        >         return nullopt;
+        >     return static_cast<int>(f);
+        > }
+
+        Instead of using pow, this change added a template variable
+        maxPlusOne<T>.
+
+        * wtf/MathExtras.h:
+        (powerOfTwo): Added.
+        (doubleToInteger): Added.
+        (maxPlusOne): Added.
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::createWithFloat):
+        (WTF::MediaTime::createWithDouble):
+
 2020-04-03  David Kilzer  <ddkilzer@apple.com>
 
         [Xcode] Replace ASAN_OTHER_CFLAGS and ASAN_OTHER_CPLUSPLUSFLAGS with $(inherited)

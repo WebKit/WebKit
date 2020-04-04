@@ -95,14 +95,14 @@ MediaTime MediaTime::createWithFloat(float floatTime, uint32_t timeScale)
         return invalidTime();
     if (std::isinf(floatTime))
         return std::signbit(floatTime) ? negativeInfiniteTime() : positiveInfiniteTime();
-    if (floatTime > std::numeric_limits<int64_t>::max())
+    if (floatTime >= maxPlusOne<int64_t>)
         return positiveInfiniteTime();
     if (floatTime < std::numeric_limits<int64_t>::min())
         return negativeInfiniteTime();
     if (!timeScale)
         return std::signbit(floatTime) ? negativeInfiniteTime() : positiveInfiniteTime();
 
-    while (floatTime * timeScale > std::numeric_limits<int64_t>::max())
+    while (floatTime * timeScale >= maxPlusOne<int64_t>)
         timeScale /= 2;
     return MediaTime(static_cast<int64_t>(floatTime * timeScale), timeScale, Valid);
 }
@@ -125,14 +125,14 @@ MediaTime MediaTime::createWithDouble(double doubleTime, uint32_t timeScale)
         return invalidTime();
     if (std::isinf(doubleTime))
         return std::signbit(doubleTime) ? negativeInfiniteTime() : positiveInfiniteTime();
-    if (doubleTime > std::numeric_limits<int64_t>::max())
+    if (doubleTime >= maxPlusOne<int64_t>)
         return positiveInfiniteTime();
     if (doubleTime < std::numeric_limits<int64_t>::min())
         return negativeInfiniteTime();
     if (!timeScale)
         return std::signbit(doubleTime) ? negativeInfiniteTime() : positiveInfiniteTime();
 
-    while (doubleTime * timeScale > std::numeric_limits<int64_t>::max())
+    while (doubleTime * timeScale >= maxPlusOne<int64_t>)
         timeScale /= 2;
     return MediaTime(static_cast<int64_t>(std::round(doubleTime * timeScale)), timeScale, Valid);
 }
