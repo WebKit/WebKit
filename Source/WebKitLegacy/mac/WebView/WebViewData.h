@@ -316,11 +316,12 @@ private:
     NSPasteboard *insertionPasteboard;
     RetainPtr<NSImage> _mainFrameIcon;
 #endif
-            
+
     NSSize lastLayoutSize;
 
 #if ENABLE(VIDEO)
-    WebVideoFullscreenController *fullscreenController;
+    RetainPtr<WebVideoFullscreenController> fullscreenController;
+    Vector<RetainPtr<WebVideoFullscreenController>> fullscreenControllersExiting;
 #endif
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)

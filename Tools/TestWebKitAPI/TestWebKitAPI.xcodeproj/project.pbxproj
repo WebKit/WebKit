@@ -113,6 +113,8 @@
 		1CF59AE221E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */; };
 		1CF59AE321E68932006E37EC /* ForceLightAppearanceInBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */; };
 		1CF59AE521E6977D006E37EC /* dark-mode.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CF59AE421E696FB006E37EC /* dark-mode.html */; };
+		1D67BFDC2433E0A7006B5047 /* PreemptVideoFullscreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1D67BFDB2433E0A7006B5047 /* PreemptVideoFullscreen.mm */; };
+		1D67BFDD2433EE66006B5047 /* two-videos.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1D67BFD92433DFD8006B5047 /* two-videos.html */; };
 		1F83571B1D3FFB2300E3967B /* WKBackForwardList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F83571A1D3FFB0E00E3967B /* WKBackForwardList.mm */; };
 		26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */; };
 		26F52EAD1828827B0023D412 /* geolocationGetCurrentPosition.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EAC1828820E0023D412 /* geolocationGetCurrentPosition.html */; };
@@ -1518,6 +1520,7 @@
 				F41AB9AA1EF4696B0083FA08 /* textarea-to-input.html in Copy Resources */,
 				C22FA32D228F8AEB009D7988 /* TextWidth.html in Copy Resources */,
 				F4451C761EB8FD890020C5DA /* two-paragraph-contenteditable.html in Copy Resources */,
+				1D67BFDD2433EE66006B5047 /* two-videos.html in Copy Resources */,
 				C540F784152E5A9A00A40C8C /* verboseMarkup.html in Copy Resources */,
 				CD57779D211CE91F001B371E /* video-with-audio-and-web-audio.html in Copy Resources */,
 				CDC8E4941BC6F10800594FEC /* video-with-audio.html in Copy Resources */,
@@ -1664,6 +1667,8 @@
 		1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ForceLightAppearanceInBundle.mm; sourceTree = "<group>"; };
 		1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ForceLightAppearanceInBundle_Bundle.mm; sourceTree = "<group>"; };
 		1CF59AE421E696FB006E37EC /* dark-mode.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "dark-mode.html"; sourceTree = "<group>"; };
+		1D67BFD92433DFD8006B5047 /* two-videos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "two-videos.html"; sourceTree = "<group>"; };
+		1D67BFDB2433E0A7006B5047 /* PreemptVideoFullscreen.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PreemptVideoFullscreen.mm; sourceTree = "<group>"; };
 		1F83571A1D3FFB0E00E3967B /* WKBackForwardList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKBackForwardList.mm; path = Tests/WebKit/WKBackForwardList.mm; sourceTree = SOURCE_ROOT; };
 		260BA5781B1D2E7B004FA07C /* DFACombiner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFACombiner.cpp; sourceTree = "<group>"; };
 		260BA57A1B1D2EE2004FA07C /* DFAHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFAHelpers.h; sourceTree = "<group>"; };
@@ -4326,6 +4331,7 @@
 				CDC8E49A1BC728FE00594FEC /* Resources */,
 				CDC8E4851BC5B19400594FEC /* AudioSessionCategoryIOS.mm */,
 				E35FC7B122B82A6D00F32F98 /* JSLockTakesWebThreadLock.mm */,
+				1D67BFDB2433E0A7006B5047 /* PreemptVideoFullscreen.mm */,
 				CDC0932A21C872C10030C4B0 /* ScrollingDoesNotPauseMedia.mm */,
 				F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */,
 				0F4FFA9D1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm */,
@@ -4337,6 +4343,7 @@
 			isa = PBXGroup;
 			children = (
 				CD9E292D1C90C1BA000BB800 /* audio-only.html */,
+				1D67BFD92433DFD8006B5047 /* two-videos.html */,
 				CDC8E4891BC5C96200594FEC /* video-with-audio.html */,
 				CDC8E48A1BC5C96200594FEC /* video-with-audio.mp4 */,
 				CD321B031E3A84B700EB21C8 /* video-with-muted-audio-and-webaudio.html */,
@@ -5002,6 +5009,7 @@
 				7CCE7EA61A411A0F00447C4C /* PlatformUtilitiesMac.mm in Sources */,
 				7CCE7EA71A411A1300447C4C /* PlatformWebViewMac.mm in Sources */,
 				83BAEE8D1EF4625500DDE894 /* PluginLoadClientPolicies.mm in Sources */,
+				1D67BFDC2433E0A7006B5047 /* PreemptVideoFullscreen.mm in Sources */,
 				C15CBB3F23FB177A00300CC7 /* PreferenceChanges.mm in Sources */,
 				7CCE7F261A411AF600447C4C /* Preferences.mm in Sources */,
 				CD227E44211A4D5D00D285AF /* PreferredAudioBufferSize.mm in Sources */,

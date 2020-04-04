@@ -1,3 +1,17 @@
+2020-04-04  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r259095): ASSERTION FAILED: m_videoFullscreenMode != VideoFullscreenModeNone seen with TestWebKitAPI.WebKitLegacy.AudioSessionCategoryIOS
+        https://bugs.webkit.org/show_bug.cgi?id=209680
+
+        Reviewed by Jer Noble.
+
+        With this patch, the WebKit-Legacy can support multiple video elements request
+        to enter video fullscreen almost at the same time, and only the last one will succeed.
+        Also, this patch fixes webkit.org/b/209610 for WebKit-Legacy.
+
+        * WebView/WebView.mm:
+        * WebView/WebViewData.h:
+
 2020-04-03  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to make WKUserScripts wait for a notification

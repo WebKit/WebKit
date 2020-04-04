@@ -260,6 +260,9 @@ void VideoFullscreenControllerContext::requestVideoContentLayer()
         [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent)];
         m_fullscreenModel->setVideoFullscreenLayer(videoFullscreenLayer.get(), [protectedThis = WTFMove(protectedThis), this] () mutable {
             dispatch_async(dispatch_get_main_queue(), [protectedThis = WTFMove(protectedThis), this] {
+                if (!m_interface)
+                    return;
+
                 m_interface->setHasVideoContentLayer(true);
             });
         });
@@ -277,6 +280,9 @@ void VideoFullscreenControllerContext::returnVideoContentLayer()
         [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent)];
         m_fullscreenModel->setVideoFullscreenLayer(nil, [protectedThis = WTFMove(protectedThis), this] () mutable {
             dispatch_async(dispatch_get_main_queue(), [protectedThis = WTFMove(protectedThis), this] {
+                if (!m_interface)
+                    return;
+
                 m_interface->setHasVideoContentLayer(false);
             });
         });

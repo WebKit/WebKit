@@ -1,3 +1,20 @@
+2020-04-04  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r259095): ASSERTION FAILED: m_videoFullscreenMode != VideoFullscreenModeNone seen with TestWebKitAPI.WebKitLegacy.AudioSessionCategoryIOS
+        https://bugs.webkit.org/show_bug.cgi?id=209680
+
+        Reviewed by Jer Noble.
+
+        Add an API test for the video fullscreen support of WebKitLegacy on iOS.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/PreemptVideoFullscreen.mm: Added.
+        (-[VideoFullscreenStressUIWebViewDelegate webViewDidFinishLoad:]):
+        (-[VideoFullscreenStressUIWebViewDelegate uiWebView:didCommitLoadForFrame:]):
+        (-[VideoFullscreenStressUIWebViewDelegate handleEvent:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/two-videos.html: Added.
+
 2020-04-03  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to make WKUserScripts wait for a notification

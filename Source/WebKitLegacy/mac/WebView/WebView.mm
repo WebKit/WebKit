@@ -9336,12 +9336,11 @@ bool LayerFlushController::flushLayers()
 
         // First exit Fullscreen for the old videoElement.
         [_private->fullscreenController videoElement]->exitFullscreen();
-        // This previous call has to trigger _exitFullscreen,
-        // which has to clear _private->fullscreenController.
-        ASSERT(!_private->fullscreenController);
+        _private->fullscreenControllersExiting.append(std::exchange(_private->fullscreenController, nil));
     }
+
     if (!_private->fullscreenController) {
-        _private->fullscreenController = [[WebVideoFullscreenController alloc] init];
+        _private->fullscreenController = adoptNS([[WebVideoFullscreenController alloc] init]);
         [_private->fullscreenController setVideoElement:videoElement];
 #if PLATFORM(IOS_FAMILY)
         [_private->fullscreenController enterFullscreen:(UIView *)[[[self window] hostLayer] delegate] mode:mode];
@@ -9355,11 +9354,21 @@ bool LayerFlushController::flushLayers()
 
 - (void)_exitVideoFullscreen
 {
-    if (!_private->fullscreenController)
+    if (!_private->fullscreenController && _private->fullscreenControllersExiting.isEmpty())
         return;
-    [_private->fullscreenController exitFullscreen];
-    [_private->fullscreenController release];
+
+    if (!_private->fullscreenControllersExiting.isEmpty()) {
+        auto controller = _private->fullscreenControllersExiting.first();
+        _private->fullscreenControllersExiting.remove(0);
+
+        [controller exitFullscreen];
+        return;
+    }
+
+    auto fullscreenController = _private->fullscreenController;
     _private->fullscreenController = nil;
+
+    [fullscreenController exitFullscreen];
 }
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
