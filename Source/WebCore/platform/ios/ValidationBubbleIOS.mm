@@ -29,11 +29,93 @@
 
 #import "ValidationBubble.h"
 
+#import <UIKit/UIGeometry.h>
+#import <objc/message.h>
+#import <objc/runtime.h>
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
+
+static const CGFloat validationBubbleHorizontalPadding = 17;
+static const CGFloat validationBubbleVerticalPadding = 9;
+static const CGFloat validationBubbleMaxLabelWidth = 300;
+
+@interface WebValidationBubbleViewController : UIViewController
+@property (nonatomic, readonly) UILabel *label;
+@property (nonatomic, readonly) CGRect labelFrame;
+@end
+
+static void invokeUIViewControllerSelector(id instance, SEL selector)
+{
+    objc_super superClass { instance, PAL::getUIViewControllerClass() };
+    auto superclassFunction = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
+    superclassFunction(&superClass, selector);
+}
+
+static void WebValidationBubbleViewController_dealloc(WebValidationBubbleViewController *instance, SEL)
+{
+    [instance.label release];
+    [instance setValue:nil forKey:@"_label"];
+
+    invokeUIViewControllerSelector(instance, @selector(dealloc));
+}
+
+static void WebValidationBubbleViewController_viewDidLoad(WebValidationBubbleViewController *instance, SEL)
+{
+    invokeUIViewControllerSelector(instance, @selector(viewDidLoad));
+
+    UILabel *label = [PAL::allocUILabelInstance() init];
+    label.font = [PAL::getUIFontClass() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleCallout()];
+    label.lineBreakMode = NSLineBreakByTruncatingTail;
+    label.numberOfLines = 4;
+    [instance.view addSubview:label];
+    [instance setValue:label forKey:@"_label"];
+}
+
+static void WebValidationBubbleViewController_viewWillLayoutSubviews(WebValidationBubbleViewController *instance, SEL)
+{
+    invokeUIViewControllerSelector(instance, @selector(viewWillLayoutSubviews));
+
+    instance.label.frame = instance.labelFrame;
+}
+
+static void WebValidationBubbleViewController_viewSafeAreaInsetsDidChange(WebValidationBubbleViewController *instance, SEL)
+{
+    invokeUIViewControllerSelector(instance, @selector(viewSafeAreaInsetsDidChange));
+
+    instance.label.frame = instance.labelFrame;
+}
+
+static CGRect WebValidationBubbleViewController_labelFrame(WebValidationBubbleViewController *instance, SEL)
+{
+    auto frameWithPadding = UIEdgeInsetsInsetRect(instance.view.bounds, instance.view.safeAreaInsets);
+    return UIEdgeInsetsInsetRect(frameWithPadding, UIEdgeInsetsMake(validationBubbleVerticalPadding, validationBubbleHorizontalPadding, validationBubbleVerticalPadding, validationBubbleHorizontalPadding));
+}
+
+static UILabel *WebValidationBubbleViewController_label(WebValidationBubbleViewController *instance, SEL)
+{
+    return [instance valueForKey:@"_label"];
+}
+
+static WebValidationBubbleViewController *allocWebValidationBubbleViewControllerInstance()
+{
+    static Class theClass = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        theClass = objc_allocateClassPair(PAL::getUIViewControllerClass(), "WebValidationBubbleViewController", 0);
+        class_addMethod(theClass, @selector(dealloc), (IMP)WebValidationBubbleViewController_dealloc, "v@:");
+        class_addMethod(theClass, @selector(viewDidLoad), (IMP)WebValidationBubbleViewController_viewDidLoad, "v@:");
+        class_addMethod(theClass, @selector(viewWillLayoutSubviews), (IMP)WebValidationBubbleViewController_viewWillLayoutSubviews, "v@:");
+        class_addMethod(theClass, @selector(viewSafeAreaInsetsDidChange), (IMP)WebValidationBubbleViewController_viewSafeAreaInsetsDidChange, "v@:");
+        class_addMethod(theClass, @selector(label), (IMP)WebValidationBubbleViewController_label, "v@:");
+        class_addMethod(theClass, @selector(labelFrame), (IMP)WebValidationBubbleViewController_labelFrame, "v@:");
+        class_addIvar(theClass, "_label", sizeof(UILabel *), log2(sizeof(UILabel *)), "@");
+        objc_registerClassPair(theClass);
+    });
+    return (WebValidationBubbleViewController *)[theClass alloc];
+}
 
 @interface WebValidationBubbleTapRecognizer : NSObject
 @end
@@ -87,34 +169,19 @@
 
 namespace WebCore {
 
-static const CGFloat horizontalPadding = 17;
-static const CGFloat verticalPadding = 9;
-static const CGFloat maxLabelWidth = 300;
-
-ValidationBubble::ValidationBubble(UIView* view, const String& message, const Settings&)
+ValidationBubble::ValidationBubble(UIView *view, const String& message, const Settings&)
     : m_view(view)
     , m_message(message)
 {
-    m_popoverController = adoptNS([PAL::allocUIViewControllerInstance() init]);
+    m_popoverController = adoptNS([allocWebValidationBubbleViewControllerInstance() init]);
     [m_popoverController setModalPresentationStyle:UIModalPresentationPopover];
-
-    RetainPtr<UIView> popoverView = adoptNS([PAL::allocUIViewInstance() initWithFrame:CGRectZero]);
-    [m_popoverController setView:popoverView.get()];
     m_tapRecognizer = adoptNS([[WebValidationBubbleTapRecognizer alloc] initWithPopoverController:m_popoverController.get()]);
 
-    RetainPtr<UILabel> label = adoptNS([PAL::allocUILabelInstance() initWithFrame:CGRectZero]);
-    [label setText:message];
-    [label setFont:[PAL::getUIFontClass() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleCallout()]];
-    m_fontSize = [[label font] pointSize];
-    [label setLineBreakMode:NSLineBreakByTruncatingTail];
-    [label setNumberOfLines:4];
-    [popoverView addSubview:label.get()];
-
-    CGSize labelSize = [label sizeThatFits:CGSizeMake(maxLabelWidth, CGFLOAT_MAX)];
-    [label setFrame:CGRectMake(horizontalPadding, verticalPadding, labelSize.width, labelSize.height)];
-    [popoverView setFrame:CGRectMake(horizontalPadding, verticalPadding, labelSize.width + horizontalPadding * 2, labelSize.height + verticalPadding * 2)];
-
-    [m_popoverController setPreferredContentSize:popoverView.get().frame.size];
+    UILabel *label = [m_popoverController label];
+    label.text = message;
+    m_fontSize = label.font.pointSize;
+    CGSize labelSize = [label sizeThatFits:CGSizeMake(validationBubbleMaxLabelWidth, CGFLOAT_MAX)];
+    [m_popoverController setPreferredContentSize:CGSizeMake(labelSize.width + validationBubbleHorizontalPadding * 2, labelSize.height + validationBubbleVerticalPadding * 2)];
 }
 
 ValidationBubble::~ValidationBubble()
@@ -132,7 +199,7 @@ void ValidationBubble::show()
     RefPtr<ValidationBubble> protectedThis(this);
     [m_presentingViewController presentViewController:m_popoverController.get() animated:NO completion:[protectedThis]() {
         // Hide this popover from VoiceOver and instead announce the message.
-        [protectedThis->m_popoverController.get().view setAccessibilityElementsHidden:YES];
+        [protectedThis->m_popoverController view].accessibilityElementsHidden = YES;
     }];
 
     PAL::softLinkUIKitUIAccessibilityPostNotification(PAL::get_UIKit_UIAccessibilityAnnouncementNotification(), m_message);
@@ -148,7 +215,7 @@ static UIViewController *fallbackViewController(UIView *view)
     return nil;
 }
 
-void ValidationBubble::setAnchorRect(const IntRect& anchorRect, UIViewController* presentingViewController)
+void ValidationBubble::setAnchorRect(const IntRect& anchorRect, UIViewController *presentingViewController)
 {
     if (!presentingViewController)
         presentingViewController = fallbackViewController(m_view);
@@ -156,9 +223,7 @@ void ValidationBubble::setAnchorRect(const IntRect& anchorRect, UIViewController
     UIPopoverPresentationController *presentationController = [m_popoverController popoverPresentationController];
     m_popoverDelegate = adoptNS([[WebValidationBubbleDelegate alloc] init]);
     presentationController.delegate = m_popoverDelegate.get();
-    presentationController.passthroughViews = [NSArray arrayWithObjects:presentingViewController.view, m_view, nil];
-
-    presentationController.permittedArrowDirections = UIPopoverArrowDirectionUp;
+    presentationController.passthroughViews = @[ presentingViewController.view, m_view ];
     presentationController.sourceView = m_view;
     presentationController.sourceRect = CGRectMake(anchorRect.x(), anchorRect.y(), anchorRect.width(), anchorRect.height());
     m_presentingViewController = presentingViewController;
