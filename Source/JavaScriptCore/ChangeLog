@@ -1,3 +1,17 @@
+2020-04-05  Keith Miller  <keith_miller@apple.com>
+
+        ensureStillAliveHere can take the value in any location
+        https://bugs.webkit.org/show_bug.cgi?id=210028
+
+        Reviewed by Mark Lam.
+
+        It shouldn't matter if the value is on the stack or in a register
+        because we're not going to do anything with it. Also, there's no
+        reason to clobber memory.
+
+        * runtime/EnsureStillAliveHere.h:
+        (JSC::ensureStillAliveHere):
+
 2020-04-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, adding missing header inclusions to get

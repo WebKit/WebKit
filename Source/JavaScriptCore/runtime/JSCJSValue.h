@@ -642,9 +642,9 @@ bool sameValue(JSGlobalObject*, JSValue a, JSValue b);
 ALWAYS_INLINE void ensureStillAliveHere(JSValue value)
 {
 #if USE(JSVALUE64)
-    asm volatile ("" : : "r"(bitwise_cast<uint64_t>(value)) : "memory");
+    asm volatile ("" : : "g"(bitwise_cast<uint64_t>(value)) : );
 #else
-    asm volatile ("" : : "r"(value.payload()) : "memory");
+    asm volatile ("" : : "g"(value.payload()) : );
 #endif
 }
 #else
