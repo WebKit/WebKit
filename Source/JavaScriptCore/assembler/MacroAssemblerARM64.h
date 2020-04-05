@@ -2033,7 +2033,7 @@ public:
                 // next csel has all arguments equal to elseCase.
                 // If the compare is ordered, dest is unchanged and NE decides
                 // what value to set.
-                m_assembler.csel<datasize>(thenCase, elseCase, thenCase, Assembler::ConditionNE);
+                m_assembler.csel<datasize>(thenCase, elseCase, thenCase, Assembler::ConditionVS);
                 m_assembler.csel<datasize>(dest, thenCase, elseCase, Assembler::ConditionNE);
             } else {
                 move(elseCase, dest);
