@@ -399,6 +399,7 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 @implementation TestWKWebView {
     RetainPtr<TestWKWebViewHostWindow> _hostWindow;
     RetainPtr<TestMessageHandler> _testHandler;
+    RetainPtr<WKUserScript> _onloadScript;
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<ClassMethodSwizzler> _sharedCalloutBarSwizzler;
     InputSessionChangeCount _inputSessionChangeCount;
@@ -502,15 +503,13 @@ static UICalloutBar *suppressUICalloutBar()
 
 - (void)performAfterLoading:(dispatch_block_t)actions
 {
-    TestMessageHandler *handler = [[TestMessageHandler alloc] init];
-    [handler addMessage:@"loaded" withHandler:actions];
-
-    NSString *onloadScript = @"window.onload = () => window.webkit.messageHandlers.onloadHandler.postMessage('loaded')";
-    WKUserScript *script = [[WKUserScript alloc] initWithSource:onloadScript injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
-
-    WKUserContentController* contentController = [[self configuration] userContentController];
-    [contentController addUserScript:script];
-    [contentController addScriptMessageHandler:handler name:@"onloadHandler"];
+    NSString *const viewDidLoadMessage = @"TestWKWebViewDidLoad";
+    if (!_onloadScript) {
+        NSString *onloadScript = [NSString stringWithFormat:@"window.addEventListener('load', () => window.webkit.messageHandlers.testHandler.postMessage('%@'), true /* useCapture */)", viewDidLoadMessage];
+        _onloadScript = adoptNS([[WKUserScript alloc] initWithSource:onloadScript injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
+        [self.configuration.userContentController addUserScript:_onloadScript.get()];
+    }
+    [self performAfterReceivingMessage:viewDidLoadMessage action:actions];
 }
 
 - (void)waitForNextPresentationUpdate

@@ -78,7 +78,11 @@
 - (void)clearMessageHandlers:(NSArray *)messageNames;
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
 - (void)waitForMessage:(NSString *)message;
+
+// This function waits until a DOM load event is fired.
+// FIXME: Rename this function to better describe what "after loading" means.
 - (void)performAfterLoading:(dispatch_block_t)actions;
+
 - (void)waitForNextPresentationUpdate;
 - (void)forceDarkMode;
 - (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName;

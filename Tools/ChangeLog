@@ -1,3 +1,35 @@
+2020-04-05  Daniel Bates  <dabates@apple.com>
+
+        RequestTextInputContext.Simple iframe sub-tests may sometimes fail
+        https://bugs.webkit.org/show_bug.cgi?id=210010
+        <rdar://problem/61303697>
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        Make the iframe sub tests wait until the DOM Load event has fired in the main frame.
+        When it fires this means that all immediate child frames (like the one added by these
+        sub tests) have fired their DOM Load event. This ensures deterministic results.
+
+        Also while I am here, extract out the iframe sub-tests into their own TEST() method
+        for testing and debugging convenience. I also fixed up -performAfterLoading so that
+        it wouldn't leak the user script string and made it work if called more than once in the
+        same TEST() by caching this script and only adding it to the user content controller
+        once. Moreover, removed duplication by writing it in terms of -performAfterReceivingMessage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (TEST):
+        (webViewLoadHTMLStringAndWaitForDOMLoadEvent): Helper function to load an HTML string
+        into a web view and wait until a DOM Load event is fired at the main frame.
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView performAfterLoading:]): Modernized and simplified. Modified user script
+        to use addEventListener() instead of onload as the latter overrides any existing load handler.
+        This user script is also added only to the main frame since all existing callers just
+        want to know that all main frame and immediate child frames loaded. Also listen for the load
+        event during the capture phase, which is a tiny bit faster to receive, instead of the bubbling
+        phase. See second paragraph above for more details on the changes I made to this function.
+
+
 2020-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a fourth round of logging to help diagnose <webkit.org/b/209685>

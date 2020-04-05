@@ -97,23 +97,6 @@ TEST(RequestTextInputContext, Simple)
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[0].boundingRect);
 
-    // Basic inputs inside subframe.
-
-    [webView synchronouslyLoadHTMLString:applyIframe(@"<input type='text' style='width: 50px; height: 50px;'>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
-    EXPECT_EQ(1UL, contexts.count);
-    EXPECT_EQ(CGRectMake(0, 200, 50, 50), contexts[0].boundingRect);
-
-    [webView synchronouslyLoadHTMLString:applyIframe(@"<textarea style='width: 100px; height: 100px;'></textarea>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
-    EXPECT_EQ(1UL, contexts.count);
-    EXPECT_EQ(CGRectMake(0, 200, 100, 100), contexts[0].boundingRect);
-
-    [webView synchronouslyLoadHTMLString:applyIframe(@"<div contenteditable style='width: 100px; height: 100px;'></div>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
-    EXPECT_EQ(1UL, contexts.count);
-    EXPECT_EQ(CGRectMake(0, 200, 100, 100), contexts[0].boundingRect);
-
     // Read only inputs; should not be included.
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;' readonly>")];
@@ -165,6 +148,39 @@ TEST(RequestTextInputContext, Simple)
     EXPECT_EQ(2UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 0, 50, 50), contexts[0].boundingRect);
     EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[1].boundingRect);
+}
+
+// Consider moving this to TestWKWebView if it could be useful to other tests.
+static void webViewLoadHTMLStringAndWaitForDOMLoadEvent(TestWKWebView *webView, NSString *htmlString)
+{
+    ASSERT(webView); // Make passing a nil web view a more obvious failure than a hang.
+    bool didFireDOMLoadEvent = false;
+    [webView performAfterLoading:[&] { didFireDOMLoadEvent = true; }];
+    [webView loadHTMLString:htmlString baseURL:nil];
+    TestWebKitAPI::Util::run(&didFireDOMLoadEvent);
+}
+
+TEST(RequestTextInputContext, Iframe)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    NSArray<_WKTextInputContext *> *contexts;
+
+    webViewLoadHTMLStringAndWaitForDOMLoadEvent(webView.get(), applyIframe(@"<input type='text' style='width: 50px; height: 50px;'>"));
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    EXPECT_EQ(CGRectMake(0, 200, 50, 50), contexts[0].boundingRect);
+
+    webViewLoadHTMLStringAndWaitForDOMLoadEvent(webView.get(), applyIframe(@"<textarea style='width: 100px; height: 100px;'></textarea>"));
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    EXPECT_EQ(CGRectMake(0, 200, 100, 100), contexts[0].boundingRect);
+
+    webViewLoadHTMLStringAndWaitForDOMLoadEvent(webView.get(), applyIframe(@"<div contenteditable style='width: 100px; height: 100px;'></div>"));
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    EXPECT_EQ(CGRectMake(0, 200, 100, 100), contexts[0].boundingRect);
 }
 
 TEST(RequestTextInputContext, DISABLED_FocusTextInputContext)
