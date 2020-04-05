@@ -1,3 +1,28 @@
+2020-04-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Octal escapes should be max 3 digits and syntax errors in Unicode patterns
+        https://bugs.webkit.org/show_bug.cgi?id=167067
+
+        Reviewed by Ross Kirsling.
+
+        This patch:
+
+        a) Adds SyntaxError for octal escapes in Unicode patterns, while preserving /\0/u
+        being parsed as null character escape. Grammar: https://tc39.es/ecma262/#prod-CharacterEscape
+
+        b) Limits consumeOctal() to 3 digits only, preventing it from consuming leading zeros.
+        Grammar: https://tc39.es/ecma262/#prod-annexB-LegacyOctalEscapeSequence
+
+        Both changes align JSC with V8 and SpiderMonkey.
+
+        * yarr/YarrErrorCode.cpp:
+        (JSC::Yarr::errorMessage):
+        (JSC::Yarr::errorToThrow):
+        * yarr/YarrErrorCode.h:
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseEscape):
+        (JSC::Yarr::Parser::consumeOctal):
+
 2020-04-04  Keith Miller  <keith_miller@apple.com>
 
         copy jsc CLI into JavaScriptCore.framework earlier

@@ -994,11 +994,11 @@ var results = ["aabb", "b"];
 shouldBe('regex63.exec(input0);', 'results');
 
 var regex64 = /abc\0def\00pqr\000xyz\0000AB/;
-var input0 = "abc\0def\0pqr\0xyz\0AB";
-var results = ["abc\0def\0pqr\0xyz\0AB"];
+var input0 = "abc\0def\0pqr\0xyz\0" + "0AB";
+var results = ["abc\0def\0pqr\0xyz\0" + "0AB"];
 shouldBe('regex64.exec(input0);', 'results');
-var input1 = "abc456 abc\0def\0pqr\0xyz\0ABCDE";
-var results = ["abc\0def\0pqr\0xyz\0AB"];
+var input1 = "abc456 abc\0def\0pqr\0xyz\0" + "0ABCDE";
+var results = ["abc\0def\0pqr\0xyz\0" + "0AB"];
 shouldBe('regex64.exec(input1);', 'results');
 
 var regex65 = /abc\x0def\x00pqr\x000xyz\x0000AB/;

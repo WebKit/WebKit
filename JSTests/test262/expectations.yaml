@@ -609,9 +609,6 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
   default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/annexB/language/literals/regexp/legacy-octal-escape.js:
-  default: "TypeError: null is not an object (evaluating '/\\0111/.exec('\\x091')[0]')"
-  strict mode: "TypeError: null is not an object (evaluating '/\\0111/.exec('\\x091')[0]')"
 test/annexB/language/statements/for-of/iterator-close-return-emulates-undefined-throws-when-called.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1702,9 +1699,6 @@ test/built-ins/RegExp/prototype/unicode/cross-realm.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/RegExp/unicode_restricted_octal_escape.js:
-  default: 'Test262Error: RegExp("[\1]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: RegExp("[\1]", "u"):  Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/built-ins/Set/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object Set]», «[object Set]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object Set]», «[object Set]») to be true'

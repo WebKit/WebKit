@@ -56,6 +56,7 @@ const char* errorMessage(ErrorCode error)
         REGEXP_ERROR_PREFIX "invalid backreference for Unicode pattern",            // InvalidBackreference
         REGEXP_ERROR_PREFIX "invalid \\k<> named backreference",                    // InvalidNamedBackReference
         REGEXP_ERROR_PREFIX "invalid escaped character for Unicode pattern",        // InvalidIdentityEscape
+        REGEXP_ERROR_PREFIX "invalid octal escape for Unicode pattern",             // InvalidOctalEscape
         REGEXP_ERROR_PREFIX "invalid \\c escape for Unicode pattern",               // InvalidControlLetterEscape
         REGEXP_ERROR_PREFIX "invalid property expression",                          // InvalidUnicodePropertyExpression
         REGEXP_ERROR_PREFIX "too many nested disjunctions",                         // TooManyDisjunctions
@@ -92,6 +93,7 @@ JSObject* errorToThrow(JSGlobalObject* globalObject, ErrorCode error)
     case ErrorCode::InvalidBackreference:
     case ErrorCode::InvalidNamedBackReference:
     case ErrorCode::InvalidIdentityEscape:
+    case ErrorCode::InvalidOctalEscape:
     case ErrorCode::InvalidControlLetterEscape:
     case ErrorCode::InvalidUnicodePropertyExpression:
     case ErrorCode::OffsetTooLarge:

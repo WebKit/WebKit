@@ -232,6 +232,9 @@ shouldThrow('r = new RegExp("\u{10405}{2147483648}", "u")', '"SyntaxError: Inval
 shouldThrow('/{/u', '"SyntaxError: Invalid regular expression: incomplete {} quantifier for Unicode pattern"');
 shouldThrow('/[a-\\d]/u', '"SyntaxError: Invalid regular expression: invalid range in character class for Unicode pattern"');
 shouldThrow('/]/u', '"SyntaxError: Invalid regular expression: unmatched ] or } bracket for Unicode pattern"');
+shouldThrow('/\\5/u', '"SyntaxError: Invalid regular expression: invalid backreference for Unicode pattern"');
+shouldThrow('/\\01/u', '"SyntaxError: Invalid regular expression: invalid octal escape for Unicode pattern"');
+shouldThrow('/[\\23]/u', '"SyntaxError: Invalid regular expression: invalid octal escape for Unicode pattern"');
 shouldThrow('/\\c9/u', '"SyntaxError: Invalid regular expression: invalid \\\\c escape for Unicode pattern"');
 
 var invalidEscapeException = "SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern";

@@ -322,6 +322,23 @@ private:
             delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::WordClassID, true);
             break;
 
+        case '0': {
+            consume();
+
+            if (!peekIsDigit()) {
+                delegate.atomPatternCharacter(0);
+                break;
+            }
+
+            if (m_isUnicode) {
+                m_errorCode = ErrorCode::InvalidOctalEscape;
+                break;
+            }
+
+            delegate.atomPatternCharacter(consumeOctal(2));
+            break;
+        }
+
         // DecimalEscape
         case '1':
         case '2':
@@ -332,7 +349,7 @@ private:
         case '7':
         case '8':
         case '9': {
-            // To match Firefox, we parse an invalid backreference in the range [1-7] as an octal escape.
+            // For non-Unicode patterns, invalid backreferences are parsed as octal or decimal escapes.
             // First, try to parse this as backreference.
             if (!inCharacterClass) {
                 ParseState state = saveState();
@@ -345,22 +362,20 @@ private:
                 }
 
                 restoreState(state);
+                if (m_isUnicode) {
+                    m_errorCode = ErrorCode::InvalidBackreference;
+                    break;
+                }
             }
 
-            // Not a backreference, and not octal. Just a number.
-            if (peek() >= '8') {
-                delegate.atomPatternCharacter(consume());
+            if (m_isUnicode) {
+                m_errorCode = ErrorCode::InvalidOctalEscape;
                 break;
             }
 
-            // Fall-through to handle this as an octal escape.
-            FALLTHROUGH;
-        }
-
-        // Octal escape
-        case '0':
-            delegate.atomPatternCharacter(consumeOctal());
+            delegate.atomPatternCharacter(peek() < '8' ? consumeOctal(3) : consume());
             break;
+        }
 
         // ControlEscape
         case 'f':
@@ -1066,14 +1081,13 @@ private:
         return n.hasOverflowed() ? quantifyInfinite : n.unsafeGet();
     }
 
-    unsigned consumeOctal()
+    // https://tc39.es/ecma262/#prod-annexB-LegacyOctalEscapeSequence
+    unsigned consumeOctal(unsigned count)
     {
-        ASSERT(WTF::isASCIIOctalDigit(peek()));
-
-        unsigned n = consumeDigit();
-        while (n < 32 && !atEndOfPattern() && WTF::isASCIIOctalDigit(peek()))
-            n = n * 8 + consumeDigit();
-        return n;
+        unsigned octal = 0;
+        while (count-- && octal < 32 && !atEndOfPattern() && WTF::isASCIIOctalDigit(peek()))
+            octal = octal * 8 + consumeDigit();
+        return octal;
     }
 
     bool tryConsume(UChar ch)
