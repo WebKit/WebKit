@@ -170,12 +170,12 @@
         _page->process().sendProcessDidResume();
 }
 
-- (void)_setAssertionStateForTesting:(int)value
+- (void)_setAssertionTypeForTesting:(int)value
 {
     if (!_page)
         return;
 
-    _page->process().setAssertionStateForTesting(static_cast<WebKit::AssertionState>(value));
+    _page->process().setAssertionTypeForTesting(static_cast<WebKit::ProcessAssertionType>(value));
 }
 
 - (BOOL)_hasServiceWorkerBackgroundActivityForTesting

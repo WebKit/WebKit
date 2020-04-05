@@ -2354,12 +2354,12 @@ void WebProcessPool::setWebProcessHasUploads(ProcessIdentifier processID)
         ensureNetworkProcess().takeUploadAssertion();
         
         ASSERT(!m_uiProcessUploadAssertion);
-        m_uiProcessUploadAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
+        m_uiProcessUploadAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking);
     }
     
     auto result = m_processesWithUploads.add(processID, nullptr);
     ASSERT(result.isNewEntry);
-    result.iterator->value = makeUnique<ProcessAssertion>(process->processIdentifier(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
+    result.iterator->value = makeUnique<ProcessAssertion>(process->processIdentifier(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking);
 }
 
 void WebProcessPool::clearWebProcessHasUploads(ProcessIdentifier processID)
@@ -2396,16 +2396,16 @@ void WebProcessPool::setWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifi
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "setWebProcessIsPlayingAudibleMedia: The number of processes playing audible media is now one. Taking UI process assertion.");
 
         ASSERT(!m_uiProcessMediaPlaybackAssertion);
-        m_uiProcessMediaPlaybackAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit Media Playback"_s, AssertionState::Foreground, AssertionReason::MediaPlayback);
+        m_uiProcessMediaPlaybackAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback);
 #if ENABLE(GPU_PROCESS)
         if (GPUProcessProxy::singletonIfCreated())
-            m_gpuProcessMediaPlaybackAssertion = makeUnique<ProcessAssertion>(GPUProcessProxy::singleton().processIdentifier(), "WebKit Media Playback"_s, AssertionState::Foreground, AssertionReason::MediaPlayback);
+            m_gpuProcessMediaPlaybackAssertion = makeUnique<ProcessAssertion>(GPUProcessProxy::singleton().processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback);
 #endif
     }
 
     auto result = m_processesPlayingAudibleMedia.add(processID, nullptr);
     ASSERT(result.isNewEntry);
-    result.iterator->value = makeUnique<ProcessAssertion>(process->processIdentifier(), "WebKit Media Playback"_s, AssertionState::Foreground, AssertionReason::MediaPlayback);
+    result.iterator->value = makeUnique<ProcessAssertion>(process->processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback);
 }
 
 void WebProcessPool::clearWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifier processID)

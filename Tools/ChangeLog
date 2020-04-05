@@ -1,3 +1,13 @@
+2020-04-04  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Simplify ProcessAssertion class in preparation for switch to RunningBoard
+        https://bugs.webkit.org/show_bug.cgi?id=209984
+        <rdar://problem/61273941>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2020-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add even more logging to try and diagnose <webkit.org/b/209685>

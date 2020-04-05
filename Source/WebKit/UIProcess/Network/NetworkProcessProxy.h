@@ -239,7 +239,6 @@ private:
 
     // ProcessThrottlerClient
     void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
-    void didSetAssertionState(AssertionState) final;
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

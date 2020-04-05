@@ -57,7 +57,7 @@
 - (void)_processDidResumeForTesting;
 @property (nonatomic, readonly) BOOL _hasServiceWorkerBackgroundActivityForTesting;
 @property (nonatomic, readonly) BOOL _hasServiceWorkerForegroundActivityForTesting;
-- (void)_setAssertionStateForTesting:(int)state;
+- (void)_setAssertionTypeForTesting:(int)type;
 
 - (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action;
 

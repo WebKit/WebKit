@@ -107,10 +107,10 @@ public:
     bool shouldBeRunnable() const { return m_foregroundActivities.size() || m_backgroundActivities.size(); }
 
 private:
-    AssertionState expectedAssertionState();
+    ProcessAssertionType expectedAssertionType();
     void updateAssertionIfNeeded();
-    void updateAssertionStateNow();
-    void setAssertionState(AssertionState);
+    void updateAssertionTypeNow();
+    void setAssertionType(ProcessAssertionType);
     void prepareToSuspendTimeoutTimerFired();
     void sendPrepareToSuspendIPC(IsSuspensionImminent);
     void processReadyToSuspend();

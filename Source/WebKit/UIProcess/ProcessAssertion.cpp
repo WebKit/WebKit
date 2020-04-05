@@ -32,22 +32,12 @@
 
 namespace WebKit {
 
-ProcessAssertion::ProcessAssertion(ProcessID, const String&, AssertionState assertionState)
-    : m_assertionState(assertionState)
-{
-}
-
-ProcessAssertion::ProcessAssertion(pid_t pid, const String& name, AssertionState assertionState, AssertionReason)
-    : m_assertionState(assertionState)
+ProcessAssertion::ProcessAssertion(ProcessID, const String&, ProcessAssertionType assertionType)
+    : m_assertionType(assertionType)
 {
 }
 
 ProcessAssertion::~ProcessAssertion() = default;
-
-void ProcessAssertion::setState(AssertionState assertionState)
-{
-    m_assertionState = assertionState;
-}
 
 } // namespace WebKit
 

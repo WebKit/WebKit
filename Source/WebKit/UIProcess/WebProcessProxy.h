@@ -313,7 +313,7 @@ public:
     // ProcessThrottlerClient
     void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
     void sendProcessDidResume() final;
-    void didSetAssertionState(AssertionState) final;
+    void didSetAssertionType(ProcessAssertionType) final;
 
 #if PLATFORM(COCOA)
     enum SandboxExtensionType : uint32_t {
@@ -360,7 +360,7 @@ public:
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
 #endif
-    void setAssertionStateForTesting(AssertionState state) { didSetAssertionState(state); }
+    void setAssertionTypeForTesting(ProcessAssertionType type) { didSetAssertionType(type); }
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     UserMediaCaptureManagerProxy* userMediaCaptureManagerProxy() { return m_userMediaCaptureManagerProxy.get(); }

@@ -1665,15 +1665,15 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(bool useSeparateServi
 
     waitUntilServiceWorkerProcessCount(processPool, 1);
 
-    [webView _setAssertionStateForTesting: 1];
+    [webView _setAssertionTypeForTesting: 1];
     waitUntilServiceWorkerProcessForegroundActivityState(webView.get(), false);
     waitUntilServiceWorkerProcessBackgroundActivityState(webView.get(), true);
 
-    [webView _setAssertionStateForTesting: 3];
+    [webView _setAssertionTypeForTesting: 3];
     waitUntilServiceWorkerProcessForegroundActivityState(webView.get(), true);
     waitUntilServiceWorkerProcessBackgroundActivityState(webView.get(), false);
 
-    [webView _setAssertionStateForTesting: 0];
+    [webView _setAssertionTypeForTesting: 0];
     waitUntilServiceWorkerProcessBackgroundActivityState(webView.get(), false);
     waitUntilServiceWorkerProcessForegroundActivityState(webView.get(), false);
 
@@ -1685,19 +1685,19 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(bool useSeparateServi
     webView = nullptr;
 
     // The service worker process should take activity based on webView2 process.
-    [webView2 _setAssertionStateForTesting: 1];
+    [webView2 _setAssertionTypeForTesting: 1];
     while (webView2.get()._hasServiceWorkerForegroundActivityForTesting || !webView2.get()._hasServiceWorkerBackgroundActivityForTesting) {
-        [webView2 _setAssertionStateForTesting: 1];
+        [webView2 _setAssertionTypeForTesting: 1];
         TestWebKitAPI::Util::spinRunLoop(1);
     }
 
     while (!webView2.get()._hasServiceWorkerForegroundActivityForTesting || webView2.get()._hasServiceWorkerBackgroundActivityForTesting) {
-        [webView2 _setAssertionStateForTesting: 3];
+        [webView2 _setAssertionTypeForTesting: 3];
         TestWebKitAPI::Util::spinRunLoop(1);
     }
 
     while (webView2.get()._hasServiceWorkerForegroundActivityForTesting || webView2.get()._hasServiceWorkerBackgroundActivityForTesting) {
-        [webView2 _setAssertionStateForTesting: 0];
+        [webView2 _setAssertionTypeForTesting: 0];
         TestWebKitAPI::Util::spinRunLoop(1);
     }
 }

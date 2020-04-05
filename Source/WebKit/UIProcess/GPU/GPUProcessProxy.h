@@ -92,7 +92,6 @@ private:
 
     // ProcessThrottlerClient
     void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final { }
-    void didSetAssertionState(AssertionState) final { }
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;

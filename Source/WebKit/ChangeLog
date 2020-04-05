@@ -1,3 +1,81 @@
+2020-04-04  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Simplify ProcessAssertion class in preparation for switch to RunningBoard
+        https://bugs.webkit.org/show_bug.cgi?id=209984
+        <rdar://problem/61273941>
+
+        Reviewed by Darin Adler.
+
+        Simplify ProcessAssertion class in preparation for switch to RunningBoard. There
+        is a slight mismatch between the way BKS and RunningBoard process assertion API.
+        This refactoring makes it so that we can use the same ProcessAssertion class in
+        WebKit to work with either BKS or RunningBoard. Support for RunningBoard will
+        come later.
+
+        In particular, the following changes were made:
+        - Replace AssertionState & AssertionReason enums with a single ProcessAssertionType
+          one since RunningBoard does not have 2 separate concepts.
+        - Drop ProcessAssertion::setState() since it is not possible to change the flags
+          on an existing RunningBoard assertion. Instead, we are expected to create a
+          brand new process assertion of the expected type.
+
+        * NetworkProcess/Downloads/DownloadMap.cpp:
+        (WebKit::DownloadMap::add):
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::ConnectionTerminationWatchdog::ConnectionTerminationWatchdog):
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _setAssertionTypeForTesting:]):
+        (-[WKWebView _setAssertionStateForTesting:]): Deleted.
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendProcessDidResume):
+        (WebKit::NetworkProcessProxy::takeUploadAssertion):
+        (WebKit::NetworkProcessProxy::didSetAssertionState): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::setState): Deleted.
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::type const):
+        (WebKit::ProcessAssertion::state const): Deleted.
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::expectedAssertionType):
+        (WebKit::ProcessThrottler::updateAssertionTypeNow):
+        (WebKit::ProcessThrottler::setAssertionType):
+        (WebKit::ProcessThrottler::updateAssertionIfNeeded):
+        (WebKit::ProcessThrottler::didConnectToProcess):
+        (WebKit::ProcessThrottler::prepareToSuspendTimeoutTimerFired):
+        (WebKit::ProcessThrottler::processReadyToSuspend):
+        (WebKit::ProcessThrottler::sendPrepareToSuspendIPC):
+        (WebKit::ProcessThrottler::expectedAssertionState): Deleted.
+        (WebKit::ProcessThrottler::updateAssertionStateNow): Deleted.
+        (WebKit::ProcessThrottler::setAssertionState): Deleted.
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/ProcessThrottlerClient.h:
+        (WebKit::ProcessThrottlerClient::didSetAssertionType):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setWebProcessHasUploads):
+        (WebKit::WebProcessPool::setWebProcessIsPlayingAudibleMedia):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didSetAssertionType):
+        (WebKit::WebProcessProxy::didSetAssertionState): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::setAssertionTypeForTesting):
+        (WebKit::WebProcessProxy::setAssertionStateForTesting): Deleted.
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::flagsForAssertionType):
+        (WebKit::toBKSProcessAssertionReason):
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAndUIAssertion::updateRunInBackgroundCount):
+        (WebKit::ProcessAndUIAssertion::ProcessAndUIAssertion):
+        (WebKit::flagsForState): Deleted.
+        (WebKit::reasonForState): Deleted.
+        (WebKit::ProcessAssertion::setState): Deleted.
+        (WebKit::ProcessAndUIAssertion::setState): Deleted.
+
 2020-04-04  David Kilzer  <ddkilzer@apple.com>
 
         [GPUP] Remove unnecessary RemoteCDMInstanceSessionIdentifier argument from RemoteCDMFactory::addSession()

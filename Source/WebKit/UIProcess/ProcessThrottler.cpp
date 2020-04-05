@@ -86,29 +86,31 @@ void ProcessThrottler::invalidateAllActivities()
     PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivities: END");
 }
     
-AssertionState ProcessThrottler::expectedAssertionState()
+ProcessAssertionType ProcessThrottler::expectedAssertionType()
 {
     if (!m_foregroundActivities.isEmpty())
-        return AssertionState::Foreground;
+        return ProcessAssertionType::Foreground;
     if (!m_backgroundActivities.isEmpty())
-        return AssertionState::Background;
-    return AssertionState::Suspended;
+        return ProcessAssertionType::Background;
+    return ProcessAssertionType::Suspended;
 }
     
-void ProcessThrottler::updateAssertionStateNow()
+void ProcessThrottler::updateAssertionTypeNow()
 {
-    setAssertionState(expectedAssertionState());
+    setAssertionType(expectedAssertionType());
 }
 
-void ProcessThrottler::setAssertionState(AssertionState newState)
+void ProcessThrottler::setAssertionType(ProcessAssertionType newType)
 {
-    RELEASE_ASSERT(m_assertion);
-    if (m_assertion->state() == newState)
+    if (m_assertion && m_assertion->type() == newType)
         return;
 
-    PROCESSTHROTTLER_RELEASE_LOG("setAssertionState: Updating process assertion state to %u (foregroundActivities: %u, backgroundActivities: %u)", newState, m_foregroundActivities.size(), m_backgroundActivities.size());
-    m_assertion->setState(newState);
-    m_process.didSetAssertionState(newState);
+    PROCESSTHROTTLER_RELEASE_LOG("setAssertionType: Updating process assertion type to %u (foregroundActivities: %u, backgroundActivities: %u)", newType, m_foregroundActivities.size(), m_backgroundActivities.size());
+    if (m_shouldTakeUIBackgroundAssertion)
+        m_assertion = makeUnique<ProcessAndUIAssertion>(m_processIdentifier, "Web content visibility"_s, newType);
+    else
+        m_assertion = makeUnique<ProcessAssertion>(m_processIdentifier, "Web content visibility"_s, newType);
+    m_process.didSetAssertionType(newType);
 }
     
 void ProcessThrottler::updateAssertionIfNeeded()
@@ -117,8 +119,8 @@ void ProcessThrottler::updateAssertionIfNeeded()
         return;
 
     if (shouldBeRunnable()) {
-        if (m_assertion->state() == AssertionState::Suspended || m_pendingRequestToSuspendID) {
-            if (m_assertion->state() == AssertionState::Suspended)
+        if (m_assertion->type() == ProcessAssertionType::Suspended || m_pendingRequestToSuspendID) {
+            if (m_assertion->type() == ProcessAssertionType::Suspended)
                 PROCESSTHROTTLER_RELEASE_LOG("updateAssertionIfNeeded: sending ProcessDidResume IPC because the process was suspended");
             else
                 PROCESSTHROTTLER_RELEASE_LOG("updateAssertionIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend: %" PRIu64, *m_pendingRequestToSuspendID);
@@ -129,14 +131,14 @@ void ProcessThrottler::updateAssertionIfNeeded()
         // If the process is currently runnable but will be suspended then first give it a chance to complete what it was doing
         // and clean up - move it to the background and send it a message to notify. Schedule a timeout so it can't stay running
         // in the background for too long.
-        if (m_assertion->state() != AssertionState::Suspended) {
+        if (m_assertion->type() != ProcessAssertionType::Suspended) {
             m_prepareToSuspendTimeoutTimer.startOneShot(processSuspensionTimeout);
             sendPrepareToSuspendIPC(IsSuspensionImminent::No);
             return;
         }
     }
 
-    updateAssertionStateNow();
+    updateAssertionTypeNow();
 }
 
 void ProcessThrottler::didConnectToProcess(ProcessID pid)
@@ -144,13 +146,9 @@ void ProcessThrottler::didConnectToProcess(ProcessID pid)
     PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("didConnectToProcess:", pid);
     RELEASE_ASSERT(!m_assertion);
 
-    if (m_shouldTakeUIBackgroundAssertion)
-        m_assertion = makeUnique<ProcessAndUIAssertion>(pid, "Web content visibility"_s, expectedAssertionState());
-    else
-        m_assertion = makeUnique<ProcessAssertion>(pid, "Web content visibility"_s, expectedAssertionState());
-
     m_processIdentifier = pid;
-    m_process.didSetAssertionState(expectedAssertionState());
+    setAssertionType(expectedAssertionType());
+    RELEASE_ASSERT(m_assertion);
     m_assertion->setClient(*this);
 }
     
@@ -158,7 +156,7 @@ void ProcessThrottler::prepareToSuspendTimeoutTimerFired()
 {
     PROCESSTHROTTLER_RELEASE_LOG("prepareToSuspendTimeoutTimerFired: Updating process assertion to allow suspension");
     RELEASE_ASSERT(m_pendingRequestToSuspendID);
-    updateAssertionStateNow();
+    updateAssertionTypeNow();
 }
     
 void ProcessThrottler::processReadyToSuspend()
@@ -168,8 +166,8 @@ void ProcessThrottler::processReadyToSuspend()
     RELEASE_ASSERT(m_pendingRequestToSuspendID);
     clearPendingRequestToSuspend();
 
-    if (m_assertion->state() != AssertionState::Suspended)
-        updateAssertionStateNow();
+    if (m_assertion->type() != ProcessAssertionType::Suspended)
+        updateAssertionTypeNow();
 }
 
 void ProcessThrottler::clearPendingRequestToSuspend()
@@ -194,7 +192,7 @@ void ProcessThrottler::sendPrepareToSuspendIPC(IsSuspensionImminent isSuspension
         });
     }
 
-    setAssertionState(isSuspensionImminent == IsSuspensionImminent::Yes ? AssertionState::Suspended : AssertionState::Background);
+    setAssertionType(isSuspensionImminent == IsSuspensionImminent::Yes ? ProcessAssertionType::Suspended : ProcessAssertionType::Background);
 }
 
 void ProcessThrottler::uiAssertionWillExpireImminently()

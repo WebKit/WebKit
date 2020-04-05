@@ -1197,10 +1197,6 @@ void NetworkProcessProxy::sendProcessDidResume()
     if (canSendMessage())
         send(Messages::NetworkProcess::ProcessDidResume(), 0);
 }
-
-void NetworkProcessProxy::didSetAssertionState(AssertionState)
-{
-}
     
 void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
@@ -1404,7 +1400,7 @@ void NetworkProcessProxy::unregisterSchemeForLegacyCustomProtocol(const String& 
 void NetworkProcessProxy::takeUploadAssertion()
 {
     ASSERT(!m_uploadAssertion);
-    m_uploadAssertion = makeUnique<ProcessAssertion>(processIdentifier(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
+    m_uploadAssertion = makeUnique<ProcessAssertion>(processIdentifier(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking);
 }
 
 void NetworkProcessProxy::clearUploadAssertion()
