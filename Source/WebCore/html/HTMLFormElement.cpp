@@ -764,7 +764,7 @@ bool HTMLFormElement::reportValidity()
     return validateInteractively();
 }
 
-#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
+#if ASSERT_ENABLED
 void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem* item) const
 {
     ASSERT(item);
@@ -789,7 +789,7 @@ RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomString& p
     if (!weakElement)
         return nullptr;
     auto element = makeRefPtr(weakElement.get());
-#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
+#if ASSERT_ENABLED
     assertItemCanBeInPastNamesMap(element->asFormNamedItem());
 #endif
     return element;
@@ -797,7 +797,7 @@ RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomString& p
 
 void HTMLFormElement::addToPastNamesMap(FormNamedItem* item, const AtomString& pastName)
 {
-#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
+#if ASSERT_ENABLED
     assertItemCanBeInPastNamesMap(item);
 #endif
     if (pastName.isEmpty())
