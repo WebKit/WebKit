@@ -1,3 +1,17 @@
+2020-04-04  Keith Miller  <keith_miller@apple.com>
+
+        copy jsc CLI into JavaScriptCore.framework earlier
+        https://bugs.webkit.org/show_bug.cgi?id=210018
+
+        Reviewed by Mark Lam.
+
+        Some of our test scripts only copy the JavaScriptCore.framework
+        into the test directory and try to run jsc from there. We should
+        copy the jsc CLI ASAP so we don't need to build all the other test
+        binaries unless we actually need them.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2020-04-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         '\u' should throw an early SyntaxError exception, but instead evaluates to 'u'
