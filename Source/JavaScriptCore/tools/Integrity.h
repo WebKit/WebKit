@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 namespace JSC {
 
 class JSCell;
+class StructureIDTable;
 class VM;
 
 namespace Integrity {
@@ -98,6 +99,9 @@ ALWAYS_INLINE void auditCell(VM& vm, JSValue value)
     if (value.isCell())
         auditCell<auditLevel>(vm, value.asCell());
 }
+
+ALWAYS_INLINE void auditStructureID(StructureIDTable&, StructureID);
+ALWAYS_INLINE void auditStructureID(VM&, StructureID);
 
 } // namespace Integrity
 

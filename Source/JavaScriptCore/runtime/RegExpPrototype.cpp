@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2019 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 #include "ArrayPrototype.h"
 #include "BuiltinNames.h"
 #include "Error.h"
+#include "IntegrityInlines.h"
 #include "JSArray.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
@@ -217,6 +218,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(JSGlobalObject* globalObjec
         return throwVMTypeError(globalObject, scope);
 
     JSObject* thisObject = asObject(thisValue);
+    Integrity::auditStructureID(vm, thisObject->structureID());
 
     StringRecursionChecker checker(globalObject, thisObject);
     EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());

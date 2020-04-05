@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2008, 2009 Torch Mobile, Inc. All rights reserved.
  *  Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
@@ -27,6 +27,7 @@
 #include "DateConversion.h"
 #include "DateInstance.h"
 #include "Error.h"
+#include "IntegrityInlines.h"
 #include "JSCBuiltins.h"
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
@@ -140,9 +141,11 @@ static CFDateFormatterStyle styleFromArgString(const String& string, CFDateForma
     return defaultStyle;
 }
 
-static JSCell* formatLocaleDate(JSGlobalObject* globalObject, CallFrame* callFrame, DateInstance*, double timeInMilliseconds, LocaleDateTimeFormat format)
+static JSCell* formatLocaleDate(JSGlobalObject* globalObject, CallFrame* callFrame, DateInstance* dateObject, double timeInMilliseconds, LocaleDateTimeFormat format)
 {
     VM& vm = globalObject->vm();
+    Integrity::auditStructureID(vm, dateObject->structureID());
+
     CFDateFormatterStyle dateStyle = (format != LocaleTime ? kCFDateFormatterLongStyle : kCFDateFormatterNoStyle);
     CFDateFormatterStyle timeStyle = (format != LocaleDate ? kCFDateFormatterLongStyle : kCFDateFormatterNoStyle);
 
@@ -171,9 +174,11 @@ static JSCell* formatLocaleDate(JSGlobalObject* globalObject, CallFrame* callFra
 
 #elif !UCONFIG_NO_FORMATTING
 
-static JSCell* formatLocaleDate(JSGlobalObject* globalObject, CallFrame*, DateInstance*, double timeInMilliseconds, LocaleDateTimeFormat format)
+static JSCell* formatLocaleDate(JSGlobalObject* globalObject, CallFrame*, DateInstance* dateObject, double timeInMilliseconds, LocaleDateTimeFormat format)
 {
     VM& vm = globalObject->vm();
+    Integrity::auditStructureID(vm, dateObject->structureID());
+
     UDateFormatStyle timeStyle = (format != LocaleDate ? UDAT_LONG : UDAT_NONE);
     UDateFormatStyle dateStyle = (format != LocaleTime ? UDAT_LONG : UDAT_NONE);
 
@@ -311,6 +316,8 @@ static JSCell* formatLocaleDate(JSGlobalObject* globalObject, CallFrame* callFra
 static JSCell* formatLocaleDate(JSGlobalObject* globalObject, CallFrame* callFrame, DateInstance* dateObject, double, LocaleDateTimeFormat format)
 {
     VM& vm = globalObject->vm();
+    Integrity::auditStructureID(vm, dateObject->structureID());
+
     const GregorianDateTime* gregorianDateTime = dateObject->gregorianDateTime(vm);
     if (!gregorianDateTime)
         return jsNontrivialString(vm, "Invalid Date"_s);
@@ -328,6 +335,7 @@ static EncodedJSValue formateDateInstance(JSGlobalObject* globalObject, CallFram
     if (UNLIKELY(!thisDateObj))
         return throwVMTypeError(globalObject, scope);
 
+    Integrity::auditStructureID(vm, thisDateObj->structureID());
     const GregorianDateTime* gregorianDateTime = asUTCVariant
         ? thisDateObj->gregorianDateTimeUTC(vm)
         : thisDateObj->gregorianDateTime(vm);
@@ -543,7 +551,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToISOString(JSGlobalObject* globalObje
     auto* thisDateObj = jsDynamicCast<DateInstance*>(vm, thisValue);
     if (UNLIKELY(!thisDateObj))
         return throwVMTypeError(globalObject, scope);
-    
+
+    Integrity::auditStructureID(vm, thisDateObj->structureID());
     if (!std::isfinite(thisDateObj->internalNumber()))
         return throwVMError(globalObject, scope, createRangeError(globalObject, "Invalid Date"_s));
 
@@ -627,6 +636,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToPrimitiveSymbol(JSGlobalObject* glob
     if (!thisValue.isObject())
         return throwVMTypeError(globalObject, scope, "Date.prototype[Symbol.toPrimitive] expected |this| to be an object.");
     JSObject* thisObject = jsCast<JSObject*>(thisValue);
+    Integrity::auditStructureID(vm, thisObject->structureID());
 
     if (!callFrame->argumentCount())
         return throwVMTypeError(globalObject, scope, "Date.prototype[Symbol.toPrimitive] expected a first argument.");

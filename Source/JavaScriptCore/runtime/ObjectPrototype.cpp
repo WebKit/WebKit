@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 #include "Error.h"
 #include "GetterSetter.h"
 #include "HasOwnPropertyCache.h"
+#include "IntegrityInlines.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSCInlines.h"
@@ -84,6 +85,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(JSGlobalObject* globalObject
     JSObject* valueObj = thisValue.toObject(globalObject);
     if (UNLIKELY(!valueObj))
         return encodedJSValue();
+    Integrity::auditStructureID(globalObject->vm(), valueObj->structureID());
     return JSValue::encode(valueObj);
 }
 
@@ -321,6 +323,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject* globalObjec
     if (!thisObject)
         return JSValue::encode(jsUndefined());
 
+    Integrity::auditStructureID(vm, thisObject->structureID());
     auto result = thisObject->structure(vm)->objectToStringValue();
     if (result)
         return JSValue::encode(result);

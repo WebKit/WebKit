@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,6 +71,16 @@ ALWAYS_INLINE void auditCellRandomly(VM& vm, JSCell* cell)
 {
     if (UNLIKELY(vm.integrityRandom().shouldAudit(vm)))
         auditCellFully(vm, cell);
+}
+
+ALWAYS_INLINE void auditStructureID(StructureIDTable& table, StructureID id)
+{
+    table.validate(id);
+}
+
+ALWAYS_INLINE void auditStructureID(VM& vm, StructureID id)
+{
+    auditStructureID(vm.heap.structureIDTable(), id);
 }
 
 } // namespace Integrity

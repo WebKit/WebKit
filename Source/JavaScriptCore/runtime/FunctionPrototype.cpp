@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "GetterSetter.h"
+#include "IntegrityInlines.h"
 #include "JSAsyncFunction.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
@@ -84,6 +85,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(JSGlobalObject* globalObj
     JSValue thisValue = callFrame->thisValue();
     if (thisValue.inherits<JSFunction>(vm)) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
+        Integrity::auditStructureID(vm, function->structureID());
         if (function->isHostOrBuiltinFunction())
             RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", function->name(vm), "() {\n    [native code]\n}")));
 
@@ -140,11 +142,13 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(JSGlobalObject* globalObj
 
     if (thisValue.inherits<InternalFunction>(vm)) {
         InternalFunction* function = jsCast<InternalFunction*>(thisValue);
+        Integrity::auditStructureID(vm, function->structureID());
         RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", function->name(), "() {\n    [native code]\n}")));
     }
 
     if (thisValue.isObject()) {
         JSObject* object = asObject(thisValue);
+        Integrity::auditStructureID(vm, object->structureID());
         if (object->isFunction(vm))
             RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", object->classInfo(vm)->className, "() {\n    [native code]\n}")));
     }

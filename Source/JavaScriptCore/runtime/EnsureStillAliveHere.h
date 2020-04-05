@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,49 +20,30 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "HeapCell.h"
-
-#include "HeapCellInlines.h"
-#include "MarkedBlockInlines.h"
-#include <wtf/PrintStream.h>
+#pragma once
 
 namespace JSC {
 
-bool HeapCell::isLive()
+#if COMPILER(GCC_COMPATIBLE)
+
+ALWAYS_INLINE void ensureStillAliveHere(uint64_t value)
 {
-    if (isPreciseAllocation())
-        return preciseAllocation().isLive();
-    auto& markedBlockHandle = markedBlock().handle();
-    if (markedBlockHandle.isFreeListed())
-        return !markedBlockHandle.isFreeListedCell(this);
-    return markedBlockHandle.isLive(this);
+    asm volatile ("" : : "r"(value) : "memory");
 }
+
+ALWAYS_INLINE void ensureStillAliveHere(const void* pointer)
+{
+    asm volatile ("" : : "r"(pointer) : "memory");
+}
+
+#else
+
+JS_EXPORT_PRIVATE void ensureStillAliveHere(uint64_t value);
+JS_EXPORT_PRIVATE void ensureStillAliveHere(const void*);
+
+#endif
 
 } // namespace JSC
-
-namespace WTF {
-
-using namespace JSC;
-
-void printInternal(PrintStream& out, HeapCell::Kind kind)
-{
-    switch (kind) {
-    case HeapCell::JSCell:
-        out.print("JSCell");
-        return;
-    case HeapCell::JSCellWithInteriorPointers:
-        out.print("JSCellWithInteriorPointers");
-        return;
-    case HeapCell::Auxiliary:
-        out.print("Auxiliary");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-} // namespace WTF
-

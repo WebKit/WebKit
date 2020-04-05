@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "FunctionPrototype.h"
 #include "GetterSetter.h"
+#include "IntegrityInlines.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyGlobal.h"
 #include "JSWebAssemblyHelpers.h"
@@ -61,6 +62,7 @@ static ALWAYS_INLINE JSWebAssemblyGlobal* getGlobal(JSGlobalObject* globalObject
             createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Global"_s));
         return nullptr;
     }
+    Integrity::auditStructureID(vm, result->structureID());
     return result;
 }
 

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *  Copyright (C) 2015 Jordan Harband (ljharb@gmail.com)
  *
@@ -29,6 +29,7 @@
 #include "Error.h"
 #include "ExecutableBaseInlines.h"
 #include "FrameTracers.h"
+#include "IntegrityInlines.h"
 #include "InterpreterInlines.h"
 #include "IntlCollator.h"
 #include "IntlObject.h"
@@ -979,10 +980,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(JSGlobalObject* globalObjec
         return JSValue::encode(thisValue);
 
     auto* stringObject = jsDynamicCast<StringObject*>(vm, thisValue);
-    if (stringObject)
-        return JSValue::encode(stringObject->internalValue());
+    if (!stringObject)
+        return throwVMTypeError(globalObject, scope);
 
-    return throwVMTypeError(globalObject, scope);
+    Integrity::auditStructureID(vm, stringObject->structureID());
+    return JSValue::encode(stringObject->internalValue());
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(JSGlobalObject* globalObject, CallFrame* callFrame)

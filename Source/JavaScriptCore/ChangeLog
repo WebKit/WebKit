@@ -1,3 +1,73 @@
+2020-04-05  Mark Lam  <mark.lam@apple.com>
+
+        Add some structureID integrity checks to various runtime functions.
+        https://bugs.webkit.org/show_bug.cgi?id=210015
+        <rdar://problem/58116514>
+
+        Reviewed by Keith Miller.
+
+        Specifically, implementations of toString(), toValue(), and a few others.
+        I also moved the HeapCell version of ensureStillAliveHere() into the new
+        EnsureStillAliveHere.h/cpp since it's useful for any pointers, not just HeapCells.
+
+        This change is performance neutral on JetStream 2.0, Speedometer-2, and PLT5.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/HeapCell.cpp:
+        (JSC::ensureStillAliveHere): Deleted.
+        * heap/HeapCell.h:
+        (JSC::ensureStillAliveHere): Deleted.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        * runtime/BigIntPrototype.cpp:
+        (JSC::bigIntProtoFuncToStringImpl):
+        (JSC::bigIntProtoFuncValueOf):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::booleanProtoFuncToString):
+        (JSC::booleanProtoFuncValueOf):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        (JSC::formateDateInstance):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncToPrimitiveSymbol):
+        * runtime/EnsureStillAliveHere.cpp: Added.
+        (JSC::ensureStillAliveHere):
+        * runtime/EnsureStillAliveHere.h: Added.
+        (JSC::ensureStillAliveHere):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::sanitizedToString):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toObjectSlow const):
+        * runtime/NumberPrototype.cpp:
+        (JSC::toThisNumber):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncValueOf):
+        (JSC::objectProtoFuncToString):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncToString):
+        * runtime/StructureIDTable.h:
+        (JSC::StructureIDTable::validate):
+        (JSC::StructureIDTable::isValid): Deleted.
+        * runtime/SymbolPrototype.cpp:
+        (JSC::symbolProtoGetterDescription):
+        (JSC::symbolProtoFuncToString):
+        (JSC::symbolProtoFuncValueOf):
+        * tools/Integrity.h:
+        * tools/IntegrityInlines.h:
+        (JSC::Integrity::auditStructureID):
+        * wasm/js/WebAssemblyGlobalPrototype.cpp:
+        (JSC::getGlobal):
+
 2020-04-05  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Octal escapes should be max 3 digits and syntax errors in Unicode patterns

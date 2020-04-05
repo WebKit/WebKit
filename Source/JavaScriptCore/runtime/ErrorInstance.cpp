@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@
 
 #include "CodeBlock.h"
 #include "InlineCallFrame.h"
+#include "IntegrityInlines.h"
 #include "Interpreter.h"
 #include "JSScope.h"
 #include "JSCInlines.h"
@@ -139,6 +140,7 @@ String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+    Integrity::auditStructureID(vm, structureID());
 
     JSValue nameValue;
     auto namePropertName = vm.propertyNames->name;

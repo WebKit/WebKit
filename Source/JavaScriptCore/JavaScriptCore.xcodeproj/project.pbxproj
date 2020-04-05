@@ -1887,6 +1887,7 @@
 		FE3022D71E42857300BAC493 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D51E42856700BAC493 /* VMInspector.h */; };
 		FE318FE01CAC982F00DFCC54 /* ECMAScriptSpecInternalFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */; };
 		FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3422111D6B818C0032BE88 /* ThrowScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE34EE2124398AAE00AA2E7C /* EnsureStillAliveHere.h in Headers */ = {isa = PBXBuildFile; fileRef = FE34EE2024398A9A00AA2E7C /* EnsureStillAliveHere.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3842332324D51B009DD445 /* OptionsList.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3842312324D51B009DD445 /* OptionsList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE384EE61ADDB7AD0055DE2C /* JSDollarVM.h in Headers */ = {isa = PBXBuildFile; fileRef = FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3A06A61C10B72D00390FDD /* JITBitOrGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */; };
@@ -5121,6 +5122,8 @@
 		FE318FDD1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ECMAScriptSpecInternalFunctions.cpp; sourceTree = "<group>"; };
 		FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMAScriptSpecInternalFunctions.h; sourceTree = "<group>"; };
 		FE3422111D6B818C0032BE88 /* ThrowScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThrowScope.h; sourceTree = "<group>"; };
+		FE34EE2024398A9A00AA2E7C /* EnsureStillAliveHere.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnsureStillAliveHere.h; sourceTree = "<group>"; };
+		FE34EE2224398B8500AA2E7C /* EnsureStillAliveHere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnsureStillAliveHere.cpp; sourceTree = "<group>"; };
 		FE35C2F021B1E6C5000F4CA8 /* Template.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Template.rb; sourceTree = "<group>"; };
 		FE35C2F121B1E6C6000F4CA8 /* Fits.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Fits.rb; sourceTree = "<group>"; };
 		FE35C2F221B1E6C6000F4CA8 /* GeneratedFile.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = GeneratedFile.rb; sourceTree = "<group>"; };
@@ -7110,6 +7113,8 @@
 				A70447EC17A0BD7000F5898E /* DumpContext.h */,
 				FE318FDD1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.cpp */,
 				FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */,
+				FE34EE2224398B8500AA2E7C /* EnsureStillAliveHere.cpp */,
+				FE34EE2024398A9A00AA2E7C /* EnsureStillAliveHere.h */,
 				2AD2EDFA19799E38004D6478 /* EnumerationMode.h */,
 				BC337BEA0E1B00CB0076918A /* Error.cpp */,
 				BC3046060E1F497F003232CF /* Error.h */,
@@ -8926,6 +8931,7 @@
 				0FE050141AA9091100D33B33 /* ArgumentsMode.h in Headers */,
 				79A228361D35D71F00D8E067 /* ArithProfile.h in Headers */,
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
+				FE34EE2124398AAE00AA2E7C /* EnsureStillAliveHere.h in Headers */,
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				FE1E2C402240DD6200F6B729 /* ARM64EAssembler.h in Headers */,
 				A1A009C11831A26E00CF8722 /* ARM64Registers.h in Headers */,

@@ -764,6 +764,7 @@ runtime/DisallowVMReentry.cpp
 runtime/DoublePredictionFuzzerAgent.cpp
 runtime/DumpContext.cpp
 runtime/ECMAScriptSpecInternalFunctions.cpp
+runtime/EnsureStillAliveHere.cpp
 runtime/Error.cpp
 runtime/ErrorConstructor.cpp
 runtime/ErrorHandlingScope.cpp

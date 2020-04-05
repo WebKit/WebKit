@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>.
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "BigIntObject.h"
 #include "Error.h"
+#include "IntegrityInlines.h"
 #include "JSBigInt.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
@@ -101,6 +102,7 @@ static JSValue bigIntProtoFuncToStringImpl(JSGlobalObject* globalObject, CallFra
 
     ASSERT(value);
 
+    Integrity::auditStructureID(vm, value->structureID());
     int32_t radix = extractToStringRadixArgument(globalObject, callFrame->argument(0), scope);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -126,11 +128,14 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(JSGlobalObject* globa
 EncodedJSValue JSC_HOST_CALL bigIntProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
-    if (JSBigInt* value = toThisBigIntValue(vm, callFrame->thisValue()))
-        return JSValue::encode(value);
-    
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMTypeError(globalObject, scope, "'this' value must be a BigInt or BigIntObject"_s);
+
+    JSBigInt* value = toThisBigIntValue(vm, callFrame->thisValue());
+    if (!value)
+        return throwVMTypeError(globalObject, scope, "'this' value must be a BigInt or BigIntObject"_s);
+
+    Integrity::auditStructureID(vm, value->structureID());
+    return JSValue::encode(value);
 }
 
 } // namespace JSC

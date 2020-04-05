@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2008, 2011, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@
 
 #include "Error.h"
 #include "ExceptionHelpers.h"
+#include "IntegrityInlines.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
@@ -80,6 +81,7 @@ EncodedJSValue JSC_HOST_CALL booleanProtoFuncToString(JSGlobalObject* globalObje
     if (UNLIKELY(!thisObject))
         return throwVMTypeError(globalObject, scope);
 
+    Integrity::auditStructureID(vm, thisObject->structureID());
     if (thisObject->internalValue() == jsBoolean(false))
         return JSValue::encode(vm.smallStrings.falseString());
 
@@ -99,6 +101,7 @@ EncodedJSValue JSC_HOST_CALL booleanProtoFuncValueOf(JSGlobalObject* globalObjec
     if (UNLIKELY(!thisObject))
         return throwVMTypeError(globalObject, scope);
 
+    Integrity::auditStructureID(vm, thisObject->structureID());
     return JSValue::encode(thisObject->internalValue());
 }
 

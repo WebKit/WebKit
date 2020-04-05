@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 #include "ErrorPrototype.h"
 
 #include "Error.h"
+#include "IntegrityInlines.h"
 #include "JSFunction.h"
 #include "JSStringInlines.h"
 #include "ObjectPrototype.h"
@@ -82,6 +83,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(JSGlobalObject* globalObject
     if (!thisValue.isObject())
         return throwVMTypeError(globalObject, scope);
     JSObject* thisObj = asObject(thisValue);
+    Integrity::auditStructureID(vm, thisObj->structureID());
 
     // Guard against recursion!
     StringRecursionChecker checker(globalObject, thisObj);

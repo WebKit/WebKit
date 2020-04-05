@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 
 #include "ArrayBufferView.h"
 #include "BlockDirectoryInlines.h"
+#include "IntegrityInlines.h"
 #include "IsoSubspaceInlines.h"
 #include "JSCInlines.h"
 #include "JSCast.h"
@@ -191,6 +192,7 @@ double JSCell::toNumber(JSGlobalObject* globalObject) const
 
 JSObject* JSCell::toObjectSlow(JSGlobalObject* globalObject) const
 {
+    Integrity::auditStructureID(globalObject->vm(), structureID());
     ASSERT(!isObject());
     if (isString())
         return static_cast<const JSString*>(this)->toObject(globalObject);

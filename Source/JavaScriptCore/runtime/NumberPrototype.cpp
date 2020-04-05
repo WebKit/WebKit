@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000,2003 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 
 #include "BigInteger.h"
 #include "Error.h"
+#include "IntegrityInlines.h"
 #include "IntlNumberFormat.h"
 #include "IntlObject.h"
 #include "JSCInlines.h"
@@ -98,6 +99,7 @@ static ALWAYS_INLINE bool toThisNumber(VM& vm, JSValue thisValue, double& x)
     }
 
     if (auto* numberObject = jsDynamicCast<NumberObject*>(vm, thisValue)) {
+        Integrity::auditStructureID(vm, numberObject->structureID());
         x = numberObject->internalValue().asNumber();
         return true;
     }

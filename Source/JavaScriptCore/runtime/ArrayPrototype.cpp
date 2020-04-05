@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "Error.h"
 #include "GetterSetter.h"
+#include "IntegrityInlines.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JSArrayInlines.h"
@@ -605,6 +606,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(JSGlobalObject* globalObject
     JSObject* thisObject = thisValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
+    Integrity::auditStructureID(vm, thisObject->structureID());
     if (!canUseDefaultArrayJoinForToString(vm, thisObject)) {
         // 2. Let func be the result of calling the [[Get]] internal method of array with argument "join".
         JSValue function = JSValue(thisObject).get(globalObject, vm.propertyNames->join);
