@@ -1,3 +1,14 @@
+2020-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSArrayIterator's size is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=210020
+
+        Reviewed by Mark Lam.
+
+        Internal-size of JSArrayIterator should be 3, not 4.
+
+        * runtime/JSArrayIterator.h:
+
 2020-04-05  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r259545: causing CodeSigning error in jsc EWS bot.

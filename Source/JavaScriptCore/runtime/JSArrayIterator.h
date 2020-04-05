@@ -29,15 +29,16 @@
 
 namespace JSC {
 
-class JSArrayIterator final : public JSInternalFieldObjectImpl<4> {
+class JSArrayIterator final : public JSInternalFieldObjectImpl<3> {
 public:
-    using Base = JSInternalFieldObjectImpl<4>;
+    using Base = JSInternalFieldObjectImpl<3>;
 
-    enum class Field : uint8_t { 
+    enum class Field : uint8_t {
         Index = 0,
         IteratedObject,
         Kind,
     };
+    static_assert(numberOfInternalFields == 3);
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
