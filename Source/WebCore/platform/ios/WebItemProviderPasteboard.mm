@@ -857,6 +857,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
 {
     ASSERT(lists.count);
     NSLog(@"%s - %@", __PRETTY_FUNCTION__, lists);
+    WTFReportBacktrace();
     _stagedRegistrationInfoLists = lists;
 }
 

@@ -7079,7 +7079,7 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
     BlockPtr<void()> savedCompletionBlock = _dragDropInteractionState.takeDragStartCompletionBlock();
     ASSERT(savedCompletionBlock);
 
-    NSLog(@"Handling drag start request (started: %d, completion block: %p)", started, savedCompletionBlock.get());
+    RELEASE_LOG(DragAndDrop, "Handling drag start request (started: %d, completion block: %p)", started, savedCompletionBlock.get());
     if (savedCompletionBlock)
         savedCompletionBlock();
 

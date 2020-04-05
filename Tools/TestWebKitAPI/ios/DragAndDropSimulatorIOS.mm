@@ -607,7 +607,6 @@ IGNORE_WARNINGS_END
         NSMutableArray<NSItemProvider *> *itemProviders = [NSMutableArray array];
         NSArray *items = [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] itemsForBeginningSession:_dragSession.get()];
         if (!items.count) {
-            NSLog(@"%s (found no drag items when beginning session)", __PRETTY_FUNCTION__);
             _phase = DragAndDropPhaseCancelled;
             _currentProgress = 1;
             _isDoneWithCurrentRun = true;
@@ -898,7 +897,6 @@ IGNORE_WARNINGS_END
 
 - (NSArray *)_webView:(WKWebView *)webView adjustedDataInteractionItemProvidersForItemProvider:(NSItemProvider *)itemProvider representingObjects:(NSArray *)representingObjects additionalData:(NSDictionary *)additionalData
 {
-    NSLog(@"%s - self.convertItemProvidersBlock := %p; itemProvider.registeredTypeIdentifiers := %@", __PRETTY_FUNCTION__, self.convertItemProvidersBlock, itemProvider.registeredTypeIdentifiers);
     return self.convertItemProvidersBlock ? self.convertItemProvidersBlock(itemProvider, representingObjects, additionalData) : @[ itemProvider ];
 }
 
