@@ -1,3 +1,12 @@
+2020-04-04  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Update test baseline after r259438 and garden crashes
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/menu-list-sends-change-notification-expected.txt:
+
 2020-04-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         '\u' should throw an early SyntaxError exception, but instead evaluates to 'u'

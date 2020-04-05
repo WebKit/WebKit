@@ -2625,6 +2625,8 @@ webkit.org/b/198830 media/track/track-mode-not-changed-by-new-track.html [ Crash
 webkit.org/b/198830 media/video-buffering-allowed.html [ Crash Pass ]
 webkit.org/b/198830 media/video-dom-autoplay.html [ Crash Pass ]
 webkit.org/b/198830 userscripts/user-script-audio-document.html [ Crash Pass ]
+webkit.org/b/198830 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Crash Pass ]
+webkit.org/b/198830 compositing/overflow/overflow-compositing-descendant.html [ Crash Pass ]
 
 webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure Crash Pass ]
 webkit.org/b/205110 media/media-source/media-source-canplaythrough.html [ Crash Pass ]
