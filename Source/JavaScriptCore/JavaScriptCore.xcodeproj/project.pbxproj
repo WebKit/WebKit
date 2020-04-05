@@ -101,6 +101,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 149C276C08902AFE008A9EFC /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
+				5DF7E1CC188E6B87003F9A46 /* Copy jsc into JavaScriptCore.framework */,
 				539966E3237CD6740033B0D2 /* Create Versions/Current/Helpers symlink */,
 			);
 			dependencies = (
@@ -10644,7 +10645,6 @@
 				932F5BDC0822A1C700736975 /* Sources */,
 				932F5BDE0822A1C700736975 /* Frameworks */,
 				5D5D8ABF0E0D0B0300F9C692 /* Create /usr/local/bin/jsc symlink */,
-				53B3E04E2439A089001C4281 /* Copy jsc into JavaScriptCore.framework */,
 			);
 			buildRules = (
 			);
@@ -10896,26 +10896,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# If on a deep-bundle system, set up a link from Helpers to Versions/A/Helpers\n\nif [[ \"${JAVASCRIPTCORE_HELPERS_DIR}\" =~ \"Versions\" ]]; then\n    if [[ \"${DEPLOYMENT_LOCATION}\" == \"NO\" ]]; then\n        ln -fhs Versions/Current/Helpers \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}/../../..\"\n    else\n        ln -fhs Versions/Current/Helpers \"${INSTALL_DIR}/../../..\"\n    fi\nfi\nexit 0\n";
 		};
-		53B3E04E2439A089001C4281 /* Copy jsc into JavaScriptCore.framework */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/jsc",
-			);
-			name = "Copy jsc into JavaScriptCore.framework";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(JAVASCRIPTCORE_HELPERS_DIR)/jsc",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n\n# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the jsc binary to refer to JavaScriptCore.framework relative to its location.\nmkdir -p \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}\"\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}/jsc\"\ninstall_name_tool -change \"${JAVASCRIPTCORE_FRAMEWORKS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}/jsc\"\n\n";
-		};
 		53B4BD091F68AF8900D2BEA3 /* Generate Unified Sources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -11000,6 +10980,22 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"${SKIP_INSTALL}\" == \"NO\" ]]; then\n    cp \"${SRCROOT}/API/tests/testapiScripts/testapi.js\" \"${DSTROOT}${INSTALL_PATH}/testapi.js\"\nfi\n";
+		};
+		5DF7E1CC188E6B87003F9A46 /* Copy jsc into JavaScriptCore.framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/jsc",
+			);
+			name = "Copy jsc into JavaScriptCore.framework";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(JAVASCRIPTCORE_HELPERS_DIR)/jsc",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\n# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the jsc binary to refer to JavaScriptCore.framework relative to its location.\nmkdir -p \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}\"\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}/jsc\"\ninstall_name_tool -change \"${JAVASCRIPTCORE_FRAMEWORKS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_HELPERS_DIR}/jsc\"\n";
 		};
 		65788AA018B409EB00C189FF /* Offline Assemble */ = {
 			isa = PBXShellScriptBuildPhase;

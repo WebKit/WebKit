@@ -1,5 +1,14 @@
 2020-04-05  Mark Lam  <mark.lam@apple.com>
 
+        Rolling out r259545: causing CodeSigning error in jsc EWS bot.
+        https://bugs.webkit.org/show_bug.cgi?id=210018
+
+        Not reviewed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2020-04-05  Mark Lam  <mark.lam@apple.com>
+
         Add some structureID integrity checks to various runtime functions.
         https://bugs.webkit.org/show_bug.cgi?id=210015
         <rdar://problem/58116514>
