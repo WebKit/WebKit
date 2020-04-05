@@ -1,3 +1,10 @@
+2020-04-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, adding missing header inclusions to get
+        non-unified build building.
+
+        * Shared/UserContentControllerParameters.cpp:
+
 2020-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a fourth round of logging to help diagnose <webkit.org/b/209685>

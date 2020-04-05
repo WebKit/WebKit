@@ -27,6 +27,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerIdentifier.h"
+
 namespace WebCore {
 
 class SWClientConnection;

@@ -26,13 +26,13 @@
 #pragma once
 
 #include "JSCJSValue.h"
+#include "StructureIDTable.h"
 #include <wtf/Gigacage.h>
 #include <wtf/Lock.h>
 
 namespace JSC {
 
 class JSCell;
-class StructureIDTable;
 class VM;
 
 namespace Integrity {

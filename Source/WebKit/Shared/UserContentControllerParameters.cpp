@@ -26,6 +26,7 @@
 #include "config.h"
 #include "UserContentControllerParameters.h"
 
+#include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
 

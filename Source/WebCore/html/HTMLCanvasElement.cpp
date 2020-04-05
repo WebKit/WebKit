@@ -35,6 +35,7 @@
 #include "CanvasRenderingContext2D.h"
 #include "DisplayListDrawingContext.h"
 #include "Document.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "GPUBasedCanvasRenderingContext.h"

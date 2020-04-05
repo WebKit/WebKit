@@ -27,6 +27,8 @@
 
 #include "HeapAnalyzer.h"
 #include <functional>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 
