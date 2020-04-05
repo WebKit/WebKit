@@ -145,16 +145,16 @@ public:
     // 2. For each StructureID, the StructureIDTable stores encodedStructureBits
     //    which are encoded from the structure pointer as such:
     //
-    //    ----------------------------------------------------------------
-    //    | 7 entropy bits |                   57 structure pointer bits |
-    //    ----------------------------------------------------------------
+    //    -----------------------------------------------------------------
+    //    | 9 low index bits | 7 entropy bits | 48 structure pointer bits |
+    //    -----------------------------------------------------------------
     //
     //    The entropy bits here are the same 7 bits used in the encoding of the
     //    StructureID for this structure entry in the StructureIDTable.
 
     static constexpr uint32_t s_numberOfNukeBits = 1;
     static constexpr uint32_t s_numberOfEntropyBits = 7;
-    static constexpr uint32_t s_entropyBitsShiftForStructurePointer = (sizeof(intptr_t) * 8) - s_numberOfEntropyBits;
+    static constexpr uint32_t s_entropyBitsShiftForStructurePointer = (sizeof(EncodedStructureBits) * 8) - 16;
 
     static constexpr uint32_t s_maximumNumberOfStructures = 1 << (32 - s_numberOfEntropyBits - s_numberOfNukeBits);
 };
