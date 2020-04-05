@@ -31,12 +31,12 @@ namespace JSC {
 
 ALWAYS_INLINE void ensureStillAliveHere(uint64_t value)
 {
-    asm volatile ("" : : "g"(value) : );
+    asm volatile ("" : : "g"(value) : "memory");
 }
 
 ALWAYS_INLINE void ensureStillAliveHere(const void* pointer)
 {
-    asm volatile ("" : : "g"(pointer) : );
+    asm volatile ("" : : "g"(pointer) : "memory");
 }
 
 #else

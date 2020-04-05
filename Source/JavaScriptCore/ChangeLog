@@ -1,3 +1,17 @@
+2020-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Putting "memory" back to ensureStillAliveHere
+        https://bugs.webkit.org/show_bug.cgi?id=210028
+
+        Reviewed by Keith Miller.
+
+        We put "memory" back to make ensureStillAliveHere compiler-barrier.
+
+        * runtime/EnsureStillAliveHere.h:
+        (JSC::ensureStillAliveHere):
+        * runtime/JSCJSValue.h:
+        (JSC::ensureStillAliveHere):
+
 2020-04-05  Mark Lam  <mark.lam@apple.com>
 
         ARM64 moveConditionallyDouble() for DoubleNotEqualAndOrdered is wrong.
