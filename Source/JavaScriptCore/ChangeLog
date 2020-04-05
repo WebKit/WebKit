@@ -1,3 +1,12 @@
+2020-04-05  David Kilzer  <ddkilzer@apple.com>
+
+        Sort JavaScriptCore Xcode project file
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Sort the project
+        file to try to force buildbots to rebuild and resign
+        JavaScriptCore.framework.  Some bots are stuck with a codesign
+        error after r259545.
+
 2020-04-05  Keith Miller  <keith_miller@apple.com>
 
         ensureStillAliveHere can take the value in any location
