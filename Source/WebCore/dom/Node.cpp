@@ -1751,6 +1751,32 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
     return p;
 }
 
+String Node::debugDescription() const
+{
+    StringBuilder builder;
+
+    builder.append(nodeName());
+
+    if (isTextNode()) {
+        String value = nodeValue();
+        value.replaceWithLiteral('\\', "\\\\");
+        value.replaceWithLiteral('\n', "\\n");
+        
+        const size_t maxDumpLength = 30;
+        if (value.length() > maxDumpLength) {
+            value.truncate(maxDumpLength - 10);
+            value.append("..."_s);
+        }
+        
+        builder.append(' ');
+        builder.append('\"');
+        builder.append(value);
+        builder.append('\"');
+    }
+
+    return builder.toString();
+}
+
 #if ENABLE(TREE_DEBUGGING)
 
 static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, const QualifiedName& name, const char* attrDesc)
@@ -2619,15 +2645,7 @@ void* Node::opaqueRootSlow() const
 
 TextStream& operator<<(TextStream& ts, const Node& node)
 {
-#if ENABLE(TREE_DEBUGGING)
-    const size_t FormatBufferSize = 512;
-    char s[FormatBufferSize];
-    node.formatForDebugger(s, FormatBufferSize);
-    ts << "node " << &node << " " << s;
-#else
-    ts << "node " << &node << " " << node.nodeName();
-#endif
-
+    ts << "node " << &node << " " << node.debugDescription();
     return ts;
 }
 

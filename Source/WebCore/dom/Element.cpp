@@ -2641,6 +2641,41 @@ void Element::finishParsingChildren()
     checkForSiblingStyleChanges(*this, FinishedParsingChildren, ElementTraversal::lastChild(*this), nullptr);
 }
 
+String Element::debugDescription() const
+{
+    StringBuilder builder;
+
+    builder.append(nodeName());
+
+    if (hasID()) {
+        builder.appendLiteral(" id=\'");
+        builder.append(getIdAttribute());
+        builder.append('\'');
+    }
+
+    if (hasClass()) {
+        builder.appendLiteral(" class=\'");
+        size_t classNamesToDump = classNames().size();
+        const size_t maxNumClassNames = 7;
+        bool addEllipsis = false;
+        if (classNamesToDump > maxNumClassNames) {
+            classNamesToDump = maxNumClassNames;
+            addEllipsis = true;
+        }
+        
+        for (size_t i = 0; i < classNamesToDump; ++i) {
+            if (i > 0)
+                builder.append(' ');
+            builder.append(classNames()[i]);
+        }
+        if (addEllipsis)
+            builder.append("...");
+        builder.append('\'');
+    }
+
+    return builder.toString();
+}
+
 #if ENABLE(TREE_DEBUGGING)
 
 void Element::formatForDebugger(char* buffer, unsigned length) const

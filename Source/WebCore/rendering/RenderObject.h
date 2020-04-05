@@ -39,6 +39,10 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class AffineTransform;
@@ -779,6 +783,8 @@ public:
     void initializeFragmentedFlowStateOnInsertion();
     virtual void insertedIntoTree();
 
+    virtual String debugDescription() const;
+
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!
@@ -1105,6 +1111,8 @@ inline bool RenderObject::needsSimplifiedNormalFlowLayoutOnly() const
 }
 
 inline void Node::setRenderer(RenderObject* renderer) { m_rendererWithStyleFlags.setPointer(renderer); }
+
+WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);
 
 #if ENABLE(TREE_DEBUGGING)
 void printRenderTreeForLiveDocuments();

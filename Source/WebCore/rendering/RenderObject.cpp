@@ -71,6 +71,7 @@
 #include "TransformState.h"
 #include <algorithm>
 #include <stdio.h>
+#include <wtf/HexNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/text/TextStream.h>
@@ -1905,6 +1906,27 @@ bool RenderObject::hasNonEmptyVisibleRectRespectingParentFrames() const
     }
 
     return false;
+}
+
+String RenderObject::debugDescription() const
+{
+    StringBuilder builder;
+
+    builder.append(renderName());
+    builder.append(" 0x"_s);
+    builder.append(hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+    builder.append(' ');
+
+    if (node())
+        builder.append(node()->debugDescription());
+    
+    return builder.toString();
+}
+
+TextStream& operator<<(TextStream& ts, const RenderObject& renderer)
+{
+    ts << renderer.debugDescription();
+    return ts;
 }
 
 #if ENABLE(TREE_DEBUGGING)

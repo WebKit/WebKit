@@ -615,6 +615,8 @@ public:
 
     ElementIdentifier createElementIdentifier();
 
+    String debugDescription() const override;
+
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 
@@ -686,7 +688,7 @@ private:
 
     LayoutRect absoluteEventBounds(bool& boundsIncludeAllDescendantElements, bool& includesFixedPositionElements);
     LayoutRect absoluteEventBoundsOfElementAndDescendants(bool& includesFixedPositionElements);
-    
+
 #if ENABLE(TREE_DEBUGGING)
     void formatForDebugger(char* buffer, unsigned length) const override;
 #endif
