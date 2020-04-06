@@ -74,6 +74,7 @@ public:
 
     enum class ForceUpdate { Yes, No };
     void updateCaptionDisplaySizes(ForceUpdate force = ForceUpdate::No);
+    void updateTextTrackRepresentationImageIfNeeded();
     void enteredFullscreen();
     void exitedFullscreen();
 

@@ -1110,6 +1110,9 @@ public:
     void registerForCaptionPreferencesChangedCallbacks(HTMLMediaElement&);
     void unregisterForCaptionPreferencesChangedCallbacks(HTMLMediaElement&);
     void captionPreferencesChanged();
+    void setMediaElementShowingTextTrack(const HTMLMediaElement&);
+    void clearMediaElementShowingTextTrack();
+    void updateTextTrackRepresentationImageIfNeeded();
 #endif
 
     void registerForVisibilityStateChangedCallbacks(VisibilityChangeClient&);
@@ -1791,6 +1794,7 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
     HashSet<HTMLMediaElement*> m_captionPreferencesChangedElements;
+    WeakPtr<HTMLMediaElement> m_mediaElementShowingTextTrack;
 #endif
 
     Element* m_mainArticleElement { nullptr };

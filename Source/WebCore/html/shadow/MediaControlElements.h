@@ -483,27 +483,31 @@ public:
 
     enum class ForceUpdate { Yes, No };
     void updateSizes(ForceUpdate force = ForceUpdate::No);
-    void layoutIfNecessary();
-
     void updateDisplay();
+
+    void updateTextTrackRepresentationImageIfNeeded();
+
     void enteredFullscreen();
     void exitedFullscreen();
 
 private:
     explicit MediaControlTextTrackContainerElement(Document&);
 
+    // Element
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+
+    // TextTrackRepresentationClient
+    RefPtr<Image> createTextTrackRepresentationImage() override;
+    void textTrackRepresentationBoundsChanged(const IntRect&) override;
+
+    void updateTextTrackRepresentationIfNeeded();
+    void clearTextTrackRepresentation();
+
     bool updateVideoDisplaySize();
-    void updateCueStyles();
     void updateActiveCuesFontSize();
     void updateTextStrokeStyle();
     void processActiveVTTCue(VTTCue&);
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-
-    RefPtr<Image> createTextTrackRepresentationImage() override;
-    void textTrackRepresentationBoundsChanged(const IntRect&) override;
-    void updateTextTrackRepresentation();
-    void clearTextTrackRepresentation();
-    void updateTextTrackRepresentationStyle();
+    void updateTextTrackStyle();
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
@@ -520,7 +524,7 @@ private:
     IntRect m_videoDisplaySize;
     int m_fontSize { 0 };
     bool m_fontSizeIsImportant { false };
-    bool m_waitingForFirstLayout { true };
+    bool m_needsGenerateTextTrackRepresentation { false };
 };
 
 #endif

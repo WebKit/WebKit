@@ -1346,6 +1346,12 @@ void Page::updateRendering()
 #endif
 
     layoutIfNeeded();
+
+#if ENABLE(VIDEO_TRACK)
+    forEachDocument([] (Document& document) {
+        document.updateTextTrackRepresentationImageIfNeeded();
+    });
+#endif
 }
 
 void Page::suspendScriptedAnimations()

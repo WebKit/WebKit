@@ -1875,45 +1875,6 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
         updateTextTrackDisplay();
 }
 
-bool HTMLMediaElement::textTracksAreReady() const
-{
-    // 4.8.10.12.1 Text track model
-    // ...
-    // The text tracks of a media element are ready if all the text tracks whose mode was not
-    // in the disabled state when the element's resource selection algorithm last started now
-    // have a text track readiness state of loaded or failed to load.
-    for (unsigned i = 0; i < m_textTracksWhenResourceSelectionBegan.size(); ++i) {
-        if (m_textTracksWhenResourceSelectionBegan[i]->readinessState() == TextTrack::Loading
-            || m_textTracksWhenResourceSelectionBegan[i]->readinessState() == TextTrack::NotLoaded)
-            return false;
-    }
-
-    return true;
-}
-
-void HTMLMediaElement::textTrackReadyStateChanged(TextTrack* track)
-{
-    if (track->readinessState() != TextTrack::Loading
-        && track->mode() != TextTrack::Mode::Disabled) {
-        // The display trees exist as long as the track is active, in this case,
-        // and if the same track is loaded again (for example if the src attribute was changed),
-        // cues can be accumulated with the old ones, that's why they needs to be flushed
-        if (hasMediaControls())
-            mediaControls()->clearTextDisplayContainer();
-        updateTextTrackDisplay();
-    }
-    if (m_player && m_textTracksWhenResourceSelectionBegan.contains(track)) {
-        if (track->readinessState() != TextTrack::Loading)
-            setReadyState(m_player->readyState());
-    } else {
-        // The track readiness state might have changed as a result of the user
-        // clicking the captions button. In this case, a check whether all the
-        // resources have failed loading should be done in order to hide the CC button.
-        if (hasMediaControls() && track->readinessState() == TextTrack::FailedToLoad)
-            mediaControls()->refreshClosedCaptionsButtonVisibility();
-    }
-}
-
 void HTMLMediaElement::audioTrackEnabledChanged(AudioTrack& track)
 {
     if (m_audioTracks && m_audioTracks->contains(track))
@@ -5811,6 +5772,11 @@ void HTMLMediaElement::setTextTrackRepresentation(TextTrackRepresentation* repre
 {
     if (m_player)
         m_player->setTextTrackRepresentation(representation);
+
+    if (representation)
+        document().setMediaElementShowingTextTrack(*this);
+    else
+        document().clearMediaElementShowingTextTrack();
 }
 
 void HTMLMediaElement::syncTextTrackBounds()
@@ -6290,6 +6256,89 @@ bool HTMLMediaElement::closedCaptionsVisible() const
 
 #if ENABLE(VIDEO_TRACK)
 
+bool HTMLMediaElement::textTracksAreReady() const
+{
+    // 4.8.10.12.1 Text track model
+    // ...
+    // The text tracks of a media element are ready if all the text tracks whose mode was not
+    // in the disabled state when the element's resource selection algorithm last started now
+    // have a text track readiness state of loaded or failed to load.
+    for (unsigned i = 0; i < m_textTracksWhenResourceSelectionBegan.size(); ++i) {
+        if (m_textTracksWhenResourceSelectionBegan[i]->readinessState() == TextTrack::Loading
+            || m_textTracksWhenResourceSelectionBegan[i]->readinessState() == TextTrack::NotLoaded)
+            return false;
+    }
+
+    return true;
+}
+
+void HTMLMediaElement::textTrackReadyStateChanged(TextTrack* track)
+{
+    if (track->readinessState() != TextTrack::Loading
+        && track->mode() != TextTrack::Mode::Disabled) {
+        // The display trees exist as long as the track is active, in this case,
+        // and if the same track is loaded again (for example if the src attribute was changed),
+        // cues can be accumulated with the old ones, that's why they needs to be flushed
+        if (hasMediaControls())
+            mediaControls()->clearTextDisplayContainer();
+        updateTextTrackDisplay();
+    }
+    if (m_player && m_textTracksWhenResourceSelectionBegan.contains(track)) {
+        if (track->readinessState() != TextTrack::Loading)
+            setReadyState(m_player->readyState());
+    } else {
+        // The track readiness state might have changed as a result of the user
+        // clicking the captions button. In this case, a check whether all the
+        // resources have failed loading should be done in order to hide the CC button.
+        if (hasMediaControls() && track->readinessState() == TextTrack::FailedToLoad)
+            mediaControls()->refreshClosedCaptionsButtonVisibility();
+    }
+}
+
+void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType checkType)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, checkType);
+    ASSERT(m_textTracks);
+
+    if (m_processingPreferenceChange)
+        return;
+
+    if (document().activeDOMObjectsAreStopped())
+        return;
+
+    bool haveVisibleTextTrack = false;
+    for (unsigned i = 0; i < m_textTracks->length(); ++i) {
+        if (m_textTracks->item(i)->mode() == TextTrack::Mode::Showing) {
+            haveVisibleTextTrack = true;
+            break;
+        }
+    }
+
+    if (checkType == CheckTextTrackVisibility && m_haveVisibleTextTrack == haveVisibleTextTrack) {
+        updateActiveTextTrackCues(currentMediaTime());
+        return;
+    }
+
+    m_haveVisibleTextTrack = haveVisibleTextTrack;
+    m_closedCaptionsVisible = m_haveVisibleTextTrack;
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    if (!m_haveVisibleTextTrack)
+        return;
+
+    ensureMediaControlsShadowRoot();
+    updateTextTrackDisplay();
+#else
+    if (!m_haveVisibleTextTrack && !hasMediaControls() && !createMediaControls())
+        return;
+
+    mediaControls()->changedClosedCaptionsVisibility();
+
+    updateTextTrackDisplay();
+    updateActiveTextTrackCues(currentMediaTime());
+#endif
+}
+
 void HTMLMediaElement::updateTextTrackDisplay()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
@@ -6302,6 +6351,21 @@ void HTMLMediaElement::updateTextTrackDisplay()
         return;
 
     mediaControls()->updateTextTrackDisplay();
+#endif
+}
+
+void HTMLMediaElement::updateTextTrackRepresentationImageIfNeeded()
+{
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    ensureMediaControlsShadowRoot();
+    if (!m_mediaControlsHost)
+        m_mediaControlsHost = MediaControlsHost::create(*this);
+    m_mediaControlsHost->updateTextTrackRepresentationImageIfNeeded();
+#else
+    if (!hasMediaControls() && !createMediaControls())
+        return;
+
+    mediaControls()->updateTextTrackRepresentationImageIfNeeded();
 #endif
 }
 
@@ -6545,51 +6609,6 @@ void HTMLMediaElement::configureMediaControls()
 }
 
 #if ENABLE(VIDEO_TRACK)
-void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType checkType)
-{
-    ALWAYS_LOG(LOGIDENTIFIER, checkType);
-    ASSERT(m_textTracks);
-
-    if (m_processingPreferenceChange)
-        return;
-
-    if (document().activeDOMObjectsAreStopped())
-        return;
-
-    bool haveVisibleTextTrack = false;
-    for (unsigned i = 0; i < m_textTracks->length(); ++i) {
-        if (m_textTracks->item(i)->mode() == TextTrack::Mode::Showing) {
-            haveVisibleTextTrack = true;
-            break;
-        }
-    }
-
-    if (checkType == CheckTextTrackVisibility && m_haveVisibleTextTrack == haveVisibleTextTrack) {
-        updateActiveTextTrackCues(currentMediaTime());
-        return;
-    }
-
-    m_haveVisibleTextTrack = haveVisibleTextTrack;
-    m_closedCaptionsVisible = m_haveVisibleTextTrack;
-
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    if (!m_haveVisibleTextTrack)
-        return;
-
-    ensureMediaControlsShadowRoot();
-    updateTextTrackDisplay();
-#else
-    if (!m_haveVisibleTextTrack && !hasMediaControls())
-        return;
-    if (!hasMediaControls() && !createMediaControls())
-        return;
-
-    mediaControls()->changedClosedCaptionsVisibility();
-
-    updateTextTrackDisplay();
-    updateActiveTextTrackCues(currentMediaTime());
-#endif
-}
 
 void HTMLMediaElement::captionPreferencesChanged()
 {

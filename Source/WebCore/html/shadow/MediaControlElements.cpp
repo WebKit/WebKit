@@ -1105,7 +1105,7 @@ Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement
 
 RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderTextTrackContainerElement>(*this, WTFMove(style));
+    return createRenderer<RenderMediaControlTextTrackContainer>(*this, WTFMove(style));
 }
 
 static bool compareCueIntervalForDisplay(const CueInterval& one, const CueInterval& two)
@@ -1183,7 +1183,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     std::sort(activeCues.begin(), activeCues.end(), &compareCueIntervalForDisplay);
 
     if (mediaController()->closedCaptionsVisible()) {
-        // 10. For each text track cue cue in cues that has not yet had
+        // 10. For each text track cue in cues that has not yet had
         // corresponding CSS boxes added to output, in text track cue order, run the
         // following substeps:
         for (auto& interval : activeCues) {
@@ -1205,8 +1205,22 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     else
         hide();
 
-    if (m_textTrackRepresentation || video.requiresTextTrackRepresentation())
-        updateTextTrackRepresentation();
+    updateTextTrackRepresentationIfNeeded();
+    updateTextTrackStyle();
+    m_needsGenerateTextTrackRepresentation = true;
+}
+
+void MediaControlTextTrackContainerElement::updateTextTrackRepresentationImageIfNeeded()
+{
+    if (!m_needsGenerateTextTrackRepresentation)
+        return;
+
+    m_needsGenerateTextTrackRepresentation = false;
+
+    // We should call m_textTrackRepresentation->update() to paint the subtree of
+    // the RenderTextTrackContainerElement after the layout is clean.
+    if (m_textTrackRepresentation)
+        m_textTrackRepresentation->update();
 }
 
 void MediaControlTextTrackContainerElement::processActiveVTTCue(VTTCue& cue)
@@ -1288,7 +1302,7 @@ void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
         setInlineStyleProperty(CSSPropertyStrokeWidth, strokeWidth, CSSUnitType::CSS_PX, important);
 }
 
-void MediaControlTextTrackContainerElement::updateTextTrackRepresentation()
+void MediaControlTextTrackContainerElement::updateTextTrackRepresentationIfNeeded()
 {
     auto mediaElement = parentMediaElement(this);
     if (!mediaElement)
@@ -1297,10 +1311,9 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentation()
     auto requiresTextTrackRepresentation = mediaElement->requiresTextTrackRepresentation();
     if (!hasChildNodes() || !requiresTextTrackRepresentation) {
         if (m_textTrackRepresentation) {
-            if (!requiresTextTrackRepresentation) {
+            if (!requiresTextTrackRepresentation)
                 clearTextTrackRepresentation();
-                updateSizes(ForceUpdate::Yes);
-            } else
+            else
                 m_textTrackRepresentation->setHidden(true);
         }
         return;
@@ -1309,18 +1322,13 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentation()
     if (!m_textTrackRepresentation) {
         ALWAYS_LOG(LOGIDENTIFIER);
 
-        m_waitingForFirstLayout = true;
         m_textTrackRepresentation = TextTrackRepresentation::create(*this);
         if (document().page())
             m_textTrackRepresentation->setContentScale(document().page()->deviceScaleFactor());
         mediaElement->setTextTrackRepresentation(m_textTrackRepresentation.get());
-        updateSizes();
-        updateTextTrackRepresentationStyle();
     }
 
     m_textTrackRepresentation->setHidden(false);
-    if (!m_waitingForFirstLayout)
-        m_textTrackRepresentation->update();
 }
 
 void MediaControlTextTrackContainerElement::clearTextTrackRepresentation()
@@ -1330,20 +1338,17 @@ void MediaControlTextTrackContainerElement::clearTextTrackRepresentation()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_waitingForFirstLayout = true;
     m_textTrackRepresentation = nullptr;
     if (auto mediaElement = parentMediaElement(this))
         mediaElement->setTextTrackRepresentation(nullptr);
-    updateTextTrackRepresentationStyle();
-    updateActiveCuesFontSize();
 }
 
-void MediaControlTextTrackContainerElement::updateTextTrackRepresentationStyle()
+void MediaControlTextTrackContainerElement::updateTextTrackStyle()
 {
     if (m_textTrackRepresentation) {
+        setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
         setInlineStyleProperty(CSSPropertyWidth, m_videoDisplaySize.size().width(), CSSUnitType::CSS_PX);
         setInlineStyleProperty(CSSPropertyHeight, m_videoDisplaySize.size().height(), CSSUnitType::CSS_PX);
-        setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
         setInlineStyleProperty(CSSPropertyLeft, 0, CSSUnitType::CSS_PX);
         setInlineStyleProperty(CSSPropertyTop, 0, CSSUnitType::CSS_PX);
         return;
@@ -1358,8 +1363,7 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentationStyle()
 
 void MediaControlTextTrackContainerElement::enteredFullscreen()
 {
-    if (hasChildNodes())
-        updateTextTrackRepresentation();
+    updateTextTrackRepresentationIfNeeded();
     updateSizes(ForceUpdate::Yes);
 }
 
@@ -1367,23 +1371,6 @@ void MediaControlTextTrackContainerElement::exitedFullscreen()
 {
     clearTextTrackRepresentation();
     updateSizes(ForceUpdate::Yes);
-}
-
-void MediaControlTextTrackContainerElement::layoutIfNecessary()
-{
-    m_waitingForFirstLayout = false;
-
-    auto sizeChanged = updateVideoDisplaySize();
-    if (m_textTrackRepresentation)
-        m_textTrackRepresentation->update();
-
-    if (!sizeChanged)
-        return;
-
-    // FIXME (121170): This function is called during layout, and should lay out the text tracks immediately.
-    m_taskQueue.enqueueTask([this] () {
-        updateCueStyles();
-    });
 }
 
 bool MediaControlTextTrackContainerElement::updateVideoDisplaySize()
@@ -1411,19 +1398,14 @@ bool MediaControlTextTrackContainerElement::updateVideoDisplaySize()
         return false;
 
     m_videoDisplaySize = videoBox;
-    updateTextTrackRepresentationStyle();
-
     return true;
 }
 
 void MediaControlTextTrackContainerElement::updateSizes(ForceUpdate force)
 {
-    if (updateVideoDisplaySize() || force == ForceUpdate::Yes)
-        updateCueStyles();
-}
+    if (!updateVideoDisplaySize() && force != ForceUpdate::Yes)
+        return;
 
-void MediaControlTextTrackContainerElement::updateCueStyles()
-{
     if (!document().page())
         return;
 
@@ -1433,12 +1415,14 @@ void MediaControlTextTrackContainerElement::updateCueStyles()
 
     mediaElement->syncTextTrackBounds();
 
+    updateActiveCuesFontSize();
+    updateTextStrokeStyle();
     for (auto& activeCue : mediaElement->currentlyActiveCues())
         activeCue.data()->recalculateStyles();
 
-    updateActiveCuesFontSize();
-    updateDisplay();
-    updateTextStrokeStyle();
+    m_taskQueue.enqueueTask([this] () {
+        updateDisplay();
+    });
 }
 
 RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentationImage()
@@ -1472,15 +1456,16 @@ RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentati
     if (!buffer)
         return nullptr;
 
-    layer->paint(buffer->context(), paintingRect, LayoutSize(), { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting }, nullptr, RenderLayer::paintLayerPaintingCompositingAllPhasesFlags());
+    auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags();
+    paintFlags.add(RenderLayer::PaintLayerTemporaryClipRects);
+    layer->paint(buffer->context(), paintingRect, LayoutSize(), { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting }, nullptr, paintFlags);
 
     return ImageBuffer::sinkIntoImage(WTFMove(buffer));
 }
 
 void MediaControlTextTrackContainerElement::textTrackRepresentationBoundsChanged(const IntRect&)
 {
-    if (hasChildNodes())
-        updateTextTrackRepresentation();
+    updateTextTrackRepresentationIfNeeded();
     updateSizes();
 }
 
