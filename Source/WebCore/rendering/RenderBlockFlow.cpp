@@ -3715,8 +3715,11 @@ void RenderBlockFlow::layoutSimpleLines(bool relayoutChildren, LayoutUnit& repai
         SimpleLineLayout::adjustLinePositionsForPagination(simpleLineLayout, *this);
     }
 
-    for (auto& renderer : childrenOfType<RenderObject>(*this))
+    for (auto& renderer : childrenOfType<RenderObject>(*this)) {
+        if (is<RenderText>(renderer))
+            downcast<RenderText>(renderer).deleteLineBoxes();
         renderer.clearNeedsLayout();
+    }
 
     LayoutUnit lineLayoutHeight = SimpleLineLayout::computeFlowHeight(*this, simpleLineLayout);
     LayoutUnit lineLayoutTop = borderAndPaddingBefore();
@@ -3733,8 +3736,11 @@ void RenderBlockFlow::layoutLFCLines(bool, LayoutUnit& repaintLogicalTop, Layout
 
     auto& layoutFormattingContextLineLayout = *this->layoutFormattingContextLineLayout();
 
-    for (auto& renderer : childrenOfType<RenderObject>(*this))
+    for (auto& renderer : childrenOfType<RenderObject>(*this)) {
+        if (is<RenderText>(renderer))
+            downcast<RenderText>(renderer).deleteLineBoxes();
         renderer.clearNeedsLayout();
+    }
 
     layoutFormattingContextLineLayout.layout();
 
