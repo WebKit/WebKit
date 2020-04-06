@@ -60,8 +60,12 @@ LayoutSize ResizeObservation::computeObservedSize() const
         if (downcast<SVGElement>(*m_target).getBoundingBox(svgRect))
             return LayoutSize(svgRect.width(), svgRect.height());
     }
-    if (m_target->renderBox())
-        return m_target->renderBox()->contentSize();
+    auto* box = m_target->renderBox();
+    if (box) {
+        auto contentSize = box->contentSize();
+        return LayoutSize(adjustLayoutUnitForAbsoluteZoom(contentSize.width(), *box), adjustLayoutUnitForAbsoluteZoom(contentSize.height(), *box));
+    }
+
     return LayoutSize();
 }
 
