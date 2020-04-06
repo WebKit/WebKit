@@ -514,7 +514,7 @@
     required-etc-files
     (literal "/"))
 
-(deny file* (with report)
+(deny file*
     (literal "/private/etc/passwd"))
 
 (allow file-read*

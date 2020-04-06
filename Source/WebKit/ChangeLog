@@ -1,3 +1,9 @@
+2020-04-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed sandbox compile fix.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-04-06  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK] Remove unused header in web process
