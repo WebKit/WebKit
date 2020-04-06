@@ -311,8 +311,6 @@ Color BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value, bool
     case CSSValueWebkitFocusRingColor:
         return RenderTheme::singleton().focusRingColor(document().styleColorOptions(&m_style));
     case CSSValueCurrentcolor:
-        // Color is an inherited property so depending on it effectively makes the property inherited.
-        m_style.setHasExplicitlyInheritedProperties();
         return RenderStyle::currentColor();
     default:
         return StyleColor::colorFromKeyword(identifier, document().styleColorOptions(&m_style));

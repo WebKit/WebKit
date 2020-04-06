@@ -212,4 +212,36 @@ bool CSSProperty::isDirectionAwareProperty(CSSPropertyID propertyID)
     }
 }
 
+bool CSSProperty::isColorProperty(CSSPropertyID propertyId)
+{
+    switch (propertyId) {
+    case CSSPropertyColor:
+    case CSSPropertyBackgroundColor:
+    case CSSPropertyBorderBottomColor:
+    case CSSPropertyBorderLeftColor:
+    case CSSPropertyBorderRightColor:
+    case CSSPropertyBorderTopColor:
+    case CSSPropertyFill:
+    case CSSPropertyFloodColor:
+    case CSSPropertyLightingColor:
+    case CSSPropertyOutlineColor:
+    case CSSPropertyStopColor:
+    case CSSPropertyStroke:
+    case CSSPropertyStrokeColor:
+    case CSSPropertyBorderBlockEndColor:
+    case CSSPropertyBorderBlockStartColor:
+    case CSSPropertyBorderInlineEndColor:
+    case CSSPropertyBorderInlineStartColor:
+    case CSSPropertyColumnRuleColor:
+    case CSSPropertyWebkitTextEmphasisColor:
+    case CSSPropertyWebkitTextFillColor:
+    case CSSPropertyWebkitTextStrokeColor:
+    case CSSPropertyTextDecorationColor:
+    case CSSPropertyCaretColor:
+        return true;
+    default:
+        return false;
+    }
+}
+
 } // namespace WebCore

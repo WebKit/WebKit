@@ -2119,6 +2119,17 @@ static bool isImplicitlyInheritedGridOrFlexProperty(CSSPropertyID propertyID)
     }
 }
 
+static bool nonInheritedColorPropertyHasValueCurrentColor(CSSPropertyID propertyID, const RenderStyle* style)
+{
+    if (CSSProperty::isInheritedProperty(propertyID) || !CSSProperty::isColorProperty(propertyID))
+        return false;
+
+    if (!style)
+        return true;
+
+    return RenderStyle::isCurrentColor(style->unresolvedColorForProperty(propertyID));
+}
+
 // In CSS 2.1 the returned object should actually contain the "used values"
 // rather then the "computed values" (despite the name saying otherwise).
 //
@@ -2155,6 +2166,10 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
 
         if (maybeExplicitlyInherited) {
             auto* style = currentElement->renderStyle();
+            // While most color properties are not inherited, the value 'currentcolor' resolves to the value of the inherited 'color' property.
+            if (nonInheritedColorPropertyHasValueCurrentColor(propertyID, style))
+                isInherited = true;
+
             maybeExplicitlyInherited = !style || style->hasExplicitlyInheritedProperties();
         }
 
@@ -2176,7 +2191,19 @@ static bool updateStyleIfNeededForProperty(Element& element, CSSPropertyID prope
 
     document.styleScope().flushPendingUpdate();
 
-    if (hasValidStyleForProperty(element, propertyID))
+    auto hasValidStyle = [&] {
+        auto shorthand = shorthandForProperty(propertyID);
+        if (shorthand.length()) {
+            for (size_t i = 0; i < shorthand.length(); ++i) {
+                if (!hasValidStyleForProperty(element, shorthand.properties()[i]))
+                    return false;
+            }
+            return true;
+        }
+        return hasValidStyleForProperty(element, propertyID);
+    }();
+
+    if (hasValidStyle)
         return false;
 
     document.updateStyleIfNeeded();

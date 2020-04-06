@@ -81,6 +81,7 @@ public:
     static Vector<String> aliasesForProperty(CSSPropertyID);
     static bool isDirectionAwareProperty(CSSPropertyID);
     static bool isDescriptorOnly(CSSPropertyID);
+    static bool isColorProperty(CSSPropertyID);
 
     const StylePropertyMetadata& metadata() const { return m_metadata; }
 

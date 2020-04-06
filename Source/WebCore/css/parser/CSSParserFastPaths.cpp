@@ -179,37 +179,6 @@ static RefPtr<CSSValue> parseSimpleLengthValue(CSSPropertyID propertyId, const S
     return CSSPrimitiveValue::create(number, unit);
 }
 
-static inline bool isColorPropertyID(CSSPropertyID propertyId)
-{
-    switch (propertyId) {
-    case CSSPropertyColor:
-    case CSSPropertyBackgroundColor:
-    case CSSPropertyBorderBottomColor:
-    case CSSPropertyBorderLeftColor:
-    case CSSPropertyBorderRightColor:
-    case CSSPropertyBorderTopColor:
-    case CSSPropertyFill:
-    case CSSPropertyFloodColor:
-    case CSSPropertyLightingColor:
-    case CSSPropertyOutlineColor:
-    case CSSPropertyStopColor:
-    case CSSPropertyStroke:
-    case CSSPropertyStrokeColor:
-    case CSSPropertyBorderBlockEndColor:
-    case CSSPropertyBorderBlockStartColor:
-    case CSSPropertyBorderInlineEndColor:
-    case CSSPropertyBorderInlineStartColor:
-    case CSSPropertyColumnRuleColor:
-    case CSSPropertyWebkitTextEmphasisColor:
-    case CSSPropertyWebkitTextFillColor:
-    case CSSPropertyWebkitTextStrokeColor:
-    case CSSPropertyTextDecorationColor:
-        return true;
-    default:
-        return false;
-    }
-}
-
 // Returns the number of characters which form a valid double
 // and are terminated by the given terminator character
 template <typename CharacterType>
@@ -1311,7 +1280,7 @@ RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, c
         return result;
     if (propertyID == CSSPropertyCaretColor)
         return parseCaretColor(string, context.mode);
-    if (isColorPropertyID(propertyID))
+    if (CSSProperty::isColorProperty(propertyID))
         return parseColor(string, context.mode, CSSValuePool::singleton());
     if (auto result = parseKeywordValue(propertyID, string, context))
         return result;
