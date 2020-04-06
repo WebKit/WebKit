@@ -1,5 +1,16 @@
 2020-04-05  Don Olmstead  <don.olmstead@sony.com>
 
+        [CMake] Use WEBKIT_EXECUTABLE in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=206894
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add a MiniBrowser derived sources directory.
+
+        * Source/cmake/WebKitFS.cmake:
+
+2020-04-05  Don Olmstead  <don.olmstead@sony.com>
+
         [CMake] Add WebKit::WebKit target
         https://bugs.webkit.org/show_bug.cgi?id=210033
 

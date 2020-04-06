@@ -1,10 +1,9 @@
-set(MINIBROWSER_DIR "${TOOLS_DIR}/MiniBrowser/wpe")
-
 set(MiniBrowser_SOURCES
-    ${MINIBROWSER_DIR}/main.cpp
+    main.cpp
 )
 
-set(MiniBrowser_INCLUDE_DIRECTORIES
+set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}
     ${TOOLS_DIR}/wpe/backends/
     ${DERIVED_SOURCES_WPE_API_DIR}
     ${FORWARDING_HEADERS_WPE_DIR}
@@ -16,23 +15,21 @@ set(MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES
     ${WPEBACKEND_FDO_INCLUDE_DIRS}
 )
 
-set(MiniBrowser_LIBRARIES
-    WPE::libwpe
-    WPEToolingBackends
-    WebKit
+set(MiniBrowser_PRIVATE_LIBRARIES
     ${ATK_LIBRARIES}
     ${JavaScriptCore_LIBRARY_NAME}
     ${WPEBACKEND_FDO_LIBRARIES}
+    WPE::libwpe
+    WPEToolingBackends
+    WebKit::WebKit
 )
 
 if (DEVELOPER_MODE)
-    add_definitions(-DWEBKIT_INJECTED_BUNDLE_PATH="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+    list(APPEND MiniBrowser_PRIVATE_DEFINITIONS WEBKIT_INJECTED_BUNDLE_PATH="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 endif ()
 
-include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
-include_directories(SYSTEM ${MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES})
-add_executable(MiniBrowser ${MiniBrowser_SOURCES})
-target_link_libraries(MiniBrowser ${MiniBrowser_LIBRARIES})
+WEBKIT_EXECUTABLE_DECLARE(MiniBrowser)
+WEBKIT_EXECUTABLE(MiniBrowser)
 
 install(TARGETS MiniBrowser DESTINATION "${LIBEXEC_INSTALL_DIR}")
 

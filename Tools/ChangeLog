@@ -1,5 +1,19 @@
 2020-04-05  Don Olmstead  <don.olmstead@sony.com>
 
+        [CMake] Use WEBKIT_EXECUTABLE in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=206894
+
+        Reviewed by Adrian Perez de Castro.
+
+        Modify CMake ports to use WEBKIT_EXECUTABLE when creating their respective
+        MiniBrowsers.
+
+        * MiniBrowser/gtk/CMakeLists.txt:
+        * MiniBrowser/win/CMakeLists.txt:
+        * MiniBrowser/wpe/CMakeLists.txt:
+
+2020-04-05  Don Olmstead  <don.olmstead@sony.com>
+
         [CMake] Add WebKit::WebKit target
         https://bugs.webkit.org/show_bug.cgi?id=210033
 
