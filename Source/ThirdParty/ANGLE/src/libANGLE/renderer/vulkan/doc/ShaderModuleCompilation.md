@@ -10,25 +10,33 @@ with some additional workarounds and emulation. We emulate OpenGL's different de
 y flipping, default uniforms, and OpenGL
 [line segment rasterization](OpenGLLineSegmentRasterization.md). For more info see
 [TranslatorVulkan.cpp][TranslatorVulkan.cpp]. After initial compilation the shaders are not
-complete. They are templated with markers that are filled in later at link time.
+complete. The translator initially assigns resources and in/out variables arbitrary descriptor set,
+binding and location indices. The correct values are determined at link time. For the sake of
+transform feedback, some markers are left in the shader for link-time substitution.
 
-1. **Link-Time Translation**: During a call to `glLinkProgram` the Vulkan back-end can know the
-necessary locations and properties to write to connect the shader stage interfaces. We get the
-completed shader source using ANGLE's [GlslangWrapperVk][GlslangWrapperVk.cpp] helper class. We still
-cannot generate `VkShaderModules` since some ANGLE features like
-[OpenGL line rasterization](OpenGLLineSegmentRasterization.md) emulation depend on draw-time
-information.
+  The translator outputs some feature code conditional to Vulkan specialization constants, which are
+resolved at draw-time. For example,
+[Bresenham line rasterization](OpenGLLineSegmentRasterization.md) emulation.
 
-1. **Draw-time SPIR-V Generation**: Once the application records a draw call we use Khronos'
-[glslang][glslang] to convert the Vulkan-compatible GLSL into SPIR-V.  The SPIR-V is then compiled
-into `VkShaderModules`. For details please see [GlslangWrapperVk.cpp][GlslangWrapperVk.cpp]. The
-`VkShaderModules` are then used by `VkPipelines` with the appropriate specialization constant
-values. Note that we currently don't use [SPIRV-Tools][SPIRV-Tools] to perform any SPIR-V
-optimization. This could be something to improve on in the future.
+1. **Link-Time Compilation and Transformation**: During a call to `glLinkProgram` the Vulkan
+back-end can know the necessary locations and properties to write to connect the shader stage
+interfaces. We get the completed shader source using ANGLE's
+[GlslangWrapperVk][GlslangWrapperVk.cpp] helper class. At this time, we use Khronos'
+[glslang][glslang] to convert the Vulkan-compatible GLSL into SPIR-V. A transformation pass is done
+on the generated SPIR-V to update the arbitrary descriptor set, binding and location indices set in
+step 1. Additionally, component and various transform feedback decorations are added and inactive
+varyings are removed from the shader interface. We currently don't generate `VkShaderModules` at
+this time, but that could be a future optimization.
+
+1. **Draw-time Pipeline Creation**: Once the application records a draw call, the SPIR-V is compiled
+into `VkShaderModule`s. The appropriate specialization constants are then resolved and the
+`VkPipeline` object is created.  Note that we currently don't use [SPIRV-Tools][SPIRV-Tools] to
+perform any SPIR-V optimization. This could be something to improve on in the future.
 
 See the below diagram for a high-level view of the shader translation flow:
 
 <!-- Generated from https://bramp.github.io/js-sequence-diagrams/
+     Note: remove whitespace in - -> arrows.
 participant App
 participant "ANGLE Front-end"
 participant "Vulkan Back-end"
@@ -41,7 +49,7 @@ App->"ANGLE Front-end": glCompileShader (VS)
 "Vulkan Back-end"->"ANGLE Translator": sh::Compile
 "ANGLE Translator"- ->"ANGLE Front-end": return Vulkan-compatible GLSL
 
-Note right of "ANGLE Front-end": Source is templated\nwith markers to be\nfilled at link time.
+Note right of "ANGLE Front-end": Source is using bogus\nVulkan qualifiers to be\ncorrected at link time.
 
 Note right of App: Same for FS, GS, etc...
 
@@ -52,21 +60,19 @@ App->"ANGLE Front-end": glLinkProgram
 
 Note right of "Vulkan Back-end": ProgramVk inits uniforms,\nlayouts, and descriptors.
 
-"Vulkan Back-end"->GlslangWrapperVk: GlslangWrapperVk::GetShaderSource
-GlslangWrapperVk- ->"Vulkan Back-end": return filled-in sources
+"Vulkan Back-end"->GlslangWrapperVk: GlslangWrapperVk::GetShaderSpirvCode
+GlslangWrapperVk->Glslang: GlslangToSpv
+Glslang- ->GlslangWrapperVk: Return SPIR-V
 
-Note right of "Vulkan Back-end": Source is templated with\ndefines to be resolved at\ndraw time.
+Note right of GlslangWrapperVk: Transform SPIR-V
 
+GlslangWrapperVk- ->"Vulkan Back-end": return transformed SPIR-V
 "Vulkan Back-end"- ->"ANGLE Front-end": return success
 
 Note right of App: App execution continues...
 
 App->"ANGLE Front-end": glDrawArrays (any draw)
 "ANGLE Front-end"->"Vulkan Back-end": ContextVk::drawArrays
-
-"Vulkan Back-end"->GlslangWrapperVk: GlslangWrapperVk::GetShaderCode (with defines)
-GlslangWrapperVk->Glslang: GlslangToSpv
-Glslang- ->"Vulkan Back-end": Return SPIR-V
 
 Note right of "Vulkan Back-end": We init VkShaderModules\nand VkPipeline then\nrecord the draw.
 

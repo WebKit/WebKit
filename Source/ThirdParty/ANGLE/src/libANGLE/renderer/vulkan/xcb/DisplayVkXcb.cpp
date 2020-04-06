@@ -11,6 +11,7 @@
 
 #include <xcb/xcb.h>
 
+#include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
 #include "libANGLE/renderer/vulkan/xcb/WindowSurfaceVkXcb.h"
 
@@ -120,5 +121,11 @@ bool IsVulkanXcbDisplayAvailable()
 DisplayImpl *CreateVulkanXcbDisplay(const egl::DisplayState &state)
 {
     return new DisplayVkXcb(state);
+}
+
+angle::Result DisplayVkXcb::waitNativeImpl()
+{
+    XSync(mState.displayId, False);
+    return angle::Result::Continue;
 }
 }  // namespace rx

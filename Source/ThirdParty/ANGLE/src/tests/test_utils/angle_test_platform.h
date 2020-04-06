@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "util/EGLWindow.h"
+#include "util/util_gl.h"
 
 // Driver vendors
 bool IsAdreno();

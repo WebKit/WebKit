@@ -599,6 +599,12 @@ TEST_P(ProgramInterfaceTestES31, GetBufferVariableProperties)
     // on d3d backend. http://anglebug.com/1951
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
+    // Check SSBO support
+    GLint numSupported;
+    glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS, &numSupported);
+    EXPECT_GL_NO_ERROR();
+    ANGLE_SKIP_TEST_IF(numSupported < 2);
+
     constexpr char kVS[] =
         "#version 310 es\n"
         "precision highp float;\n"
@@ -947,6 +953,12 @@ TEST_P(ProgramInterfaceTestES31, GetShaderStorageBlockProperties)
     // TODO(jiajia.qin@intel.com): Don't skip this test once non-simple SSBO sentences are supported
     // on d3d backend. http://anglebug.com/1951
     ANGLE_SKIP_TEST_IF(IsD3D11());
+
+    // Check SSBO support
+    GLint numSupported;
+    glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS, &numSupported);
+    EXPECT_GL_NO_ERROR();
+    ANGLE_SKIP_TEST_IF(numSupported < 3);
 
     constexpr char kVS[] =
         "#version 310 es\n"

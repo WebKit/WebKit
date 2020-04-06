@@ -248,20 +248,20 @@ angle::Result VertexDataManager::prepareVertexData(
     std::vector<TranslatedAttribute> *translatedAttribs,
     GLsizei instances)
 {
-    const gl::State &state             = context->getState();
-    const gl::VertexArray *vertexArray = state.getVertexArray();
-    const auto &vertexAttributes       = vertexArray->getVertexAttributes();
-    const auto &vertexBindings         = vertexArray->getVertexBindings();
+    const gl::State &state                  = context->getState();
+    const gl::ProgramExecutable *executable = state.getProgramExecutable();
+    const gl::VertexArray *vertexArray      = state.getVertexArray();
+    const auto &vertexAttributes            = vertexArray->getVertexAttributes();
+    const auto &vertexBindings              = vertexArray->getVertexBindings();
 
     mDynamicAttribsMaskCache.reset();
-    const gl::Program *program = state.getProgram();
 
     translatedAttribs->clear();
 
     for (size_t attribIndex = 0; attribIndex < vertexAttributes.size(); ++attribIndex)
     {
         // Skip attrib locations the program doesn't use.
-        if (!program->isAttribLocationActive(attribIndex))
+        if (!executable->isAttribLocationActive(attribIndex))
             continue;
 
         const auto &attrib  = vertexAttributes[attribIndex];

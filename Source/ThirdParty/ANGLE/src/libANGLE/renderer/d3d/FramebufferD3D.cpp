@@ -34,18 +34,10 @@ ClearParameters GetClearParameters(const gl::State &state, GLbitfield mask)
     ClearParameters clearParams;
     memset(&clearParams, 0, sizeof(ClearParameters));
 
-    const auto &blendState = state.getBlendState();
+    const auto &blendStateArray = state.getBlendStateArray();
 
-    for (unsigned int i = 0; i < ArraySize(clearParams.clearColor); i++)
-    {
-        clearParams.clearColor[i] = false;
-    }
     clearParams.colorF           = state.getColorClearValue();
     clearParams.colorType        = GL_FLOAT;
-    clearParams.colorMaskRed     = blendState.colorMaskRed;
-    clearParams.colorMaskGreen   = blendState.colorMaskGreen;
-    clearParams.colorMaskBlue    = blendState.colorMaskBlue;
-    clearParams.colorMaskAlpha   = blendState.colorMaskAlpha;
     clearParams.clearDepth       = false;
     clearParams.depthValue       = state.getDepthClearValue();
     clearParams.clearStencil     = false;
@@ -55,15 +47,16 @@ ClearParameters GetClearParameters(const gl::State &state, GLbitfield mask)
     clearParams.scissor          = state.getScissor();
 
     const gl::Framebuffer *framebufferObject = state.getDrawFramebuffer();
-    if (mask & GL_COLOR_BUFFER_BIT)
+    const bool clearColor =
+        (mask & GL_COLOR_BUFFER_BIT) && framebufferObject->hasEnabledDrawBuffer();
+    ASSERT(blendStateArray.size() == gl::IMPLEMENTATION_MAX_DRAW_BUFFERS);
+    for (size_t i = 0; i < blendStateArray.size(); i++)
     {
-        if (framebufferObject->hasEnabledDrawBuffer())
-        {
-            for (unsigned int i = 0; i < ArraySize(clearParams.clearColor); i++)
-            {
-                clearParams.clearColor[i] = true;
-            }
-        }
+        clearParams.clearColor[i]     = clearColor;
+        clearParams.colorMaskRed[i]   = blendStateArray[i].colorMaskRed;
+        clearParams.colorMaskGreen[i] = blendStateArray[i].colorMaskGreen;
+        clearParams.colorMaskBlue[i]  = blendStateArray[i].colorMaskBlue;
+        clearParams.colorMaskAlpha[i] = blendStateArray[i].colorMaskAlpha;
     }
 
     if (mask & GL_DEPTH_BUFFER_BIT)
@@ -114,7 +107,7 @@ angle::Result FramebufferD3D::clearBufferfv(const gl::Context *context,
 
     if (buffer == GL_COLOR)
     {
-        for (unsigned int i = 0; i < ArraySize(clearParams.clearColor); i++)
+        for (unsigned int i = 0; i < clearParams.clearColor.size(); i++)
         {
             clearParams.clearColor[i] = (drawbuffer == static_cast<int>(i));
         }
@@ -138,7 +131,7 @@ angle::Result FramebufferD3D::clearBufferuiv(const gl::Context *context,
 {
     // glClearBufferuiv can only be called to clear a color buffer
     ClearParameters clearParams = GetClearParameters(context->getState(), 0);
-    for (unsigned int i = 0; i < ArraySize(clearParams.clearColor); i++)
+    for (unsigned int i = 0; i < clearParams.clearColor.size(); i++)
     {
         clearParams.clearColor[i] = (drawbuffer == static_cast<int>(i));
     }
@@ -158,7 +151,7 @@ angle::Result FramebufferD3D::clearBufferiv(const gl::Context *context,
 
     if (buffer == GL_COLOR)
     {
-        for (unsigned int i = 0; i < ArraySize(clearParams.clearColor); i++)
+        for (unsigned int i = 0; i < clearParams.clearColor.size(); i++)
         {
             clearParams.clearColor[i] = (drawbuffer == static_cast<int>(i));
         }
@@ -355,6 +348,7 @@ const gl::AttachmentList &FramebufferD3D::getColorAttachmentsForRender(const gl:
 
     // Does not actually free memory
     gl::AttachmentList colorAttachmentsForRender;
+    mColorAttachmentsForRenderMask.reset();
 
     const auto &colorAttachments = mState.getColorAttachments();
     const auto &drawBufferStates = mState.getDrawBufferStates();
@@ -371,10 +365,12 @@ const gl::AttachmentList &FramebufferD3D::getColorAttachmentsForRender(const gl:
             ASSERT(drawBufferState == GL_BACK ||
                    drawBufferState == (GL_COLOR_ATTACHMENT0_EXT + attachmentIndex));
             colorAttachmentsForRender.push_back(&colorAttachment);
+            mColorAttachmentsForRenderMask.set(attachmentIndex);
         }
         else if (!features.mrtPerfWorkaround.enabled)
         {
             colorAttachmentsForRender.push_back(nullptr);
+            mColorAttachmentsForRenderMask.set(attachmentIndex);
         }
     }
 

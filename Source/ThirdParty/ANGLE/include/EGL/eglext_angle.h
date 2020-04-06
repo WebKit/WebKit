@@ -97,6 +97,11 @@
 #define EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE 0x3487
 #endif /* EGL_ANGLE_platform_angle_device_type_swiftshader */
 
+#ifndef EGL_ANGLE_platform_angle_device_type_egl_angle
+#define EGL_ANGLE_platform_angle_device_type_egl_angle
+#define EGL_PLATFORM_ANGLE_DEVICE_TYPE_EGL_ANGLE 0x348E
+#endif /* EGL_ANGLE_platform_angle_device_type_egl_angle */
+
 #ifndef EGL_ANGLE_platform_angle_context_virtualization
 #define EGL_ANGLE_platform_angle_context_virtualization 1
 #define EGL_PLATFORM_ANGLE_CONTEXT_VIRTUALIZATION_ANGLE 0x3481
@@ -197,6 +202,7 @@ EGLAPI EGLint EGLAPIENTRY eglProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limi
 #define EGL_IOSURFACE_USAGE_HINT_ANGLE 0x348A
 #define EGL_IOSURFACE_READ_HINT_ANGLE 0x0001
 #define EGL_IOSURFACE_WRITE_HINT_ANGLE 0x0002
+#define EGL_BIND_TO_TEXTURE_TARGET_ANGLE 0x348D
 #endif /* EGL_ANGLE_iosurface_client_buffer */
 
 #ifndef EGL_ANGLE_create_context_extensions_enabled

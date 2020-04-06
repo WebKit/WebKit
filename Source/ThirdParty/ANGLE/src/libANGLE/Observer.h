@@ -33,7 +33,7 @@ using SubjectIndex = size_t;
 enum class SubjectMessage
 {
     // Used by gl::VertexArray to notify gl::Context of a gl::Buffer binding count change. Triggers
-    // a validation cache update.
+    // a validation cache update. Also used by gl::Texture to notify gl::Framebuffer of loops.
     BindingChanged,
 
     // Only the contents (pixels, bytes, etc) changed in this Subject. Distinct from the object

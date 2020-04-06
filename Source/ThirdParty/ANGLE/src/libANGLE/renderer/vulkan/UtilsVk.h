@@ -67,7 +67,7 @@ class UtilsVk : angle::NonCopyable
         uint32_t indirectBufferOffset    = 0;
         uint32_t dstIndirectBufferOffset = 0;
         uint32_t dstIndexBufferOffset    = 0;
-        uint32_t is32Bit                 = 0;
+        uint32_t indicesBitsWidth        = 0;
     };
 
     struct ConvertLineLoopArrayIndirectParameters

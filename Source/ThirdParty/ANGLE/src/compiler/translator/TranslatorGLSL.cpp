@@ -11,7 +11,6 @@
 #include "compiler/translator/ExtensionGLSL.h"
 #include "compiler/translator/OutputGLSL.h"
 #include "compiler/translator/VersionGLSL.h"
-#include "compiler/translator/tree_ops/EmulatePrecision.h"
 #include "compiler/translator/tree_ops/RewriteRowMajorMatrices.h"
 #include "compiler/translator/tree_ops/RewriteTexelFetchOffset.h"
 #include "compiler/translator/tree_ops/RewriteUnaryMinusOperatorFloat.h"
@@ -118,19 +117,9 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
         }
     }
 
-    bool precisionEmulation =
-        getResources().WEBGL_debug_shader_precision && getPragma().debugShaderPrecision;
-
-    if (precisionEmulation)
-    {
-        EmulatePrecision emulatePrecision(&getSymbolTable());
-        root->traverse(&emulatePrecision);
-        if (!emulatePrecision.updateTree(this, root))
-        {
-            return false;
-        }
-        emulatePrecision.writeEmulationHelpers(sink, getShaderVersion(), getOutputType());
-    }
+    bool precisionEmulation = false;
+    if (!emulatePrecisionIfNeeded(root, sink, &precisionEmulation, getOutputType()))
+        return false;
 
     // Write emulated built-in functions if needed.
     if (!getBuiltInFunctionEmulator().isOutputEmpty())

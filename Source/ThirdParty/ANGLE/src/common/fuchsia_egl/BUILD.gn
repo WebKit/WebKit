@@ -11,20 +11,12 @@ config("config") {
 }
 
 angle_shared_library("fuchsia_egl") {
-  sources = [
-    "fuchsia_egl.c",
-  ]
-  public = [
-    "fuchsia_egl.h",
-  ]
-  public_configs = [":config"]
-  deps = [
-    ":backend",
-  ]
+  sources = [ "fuchsia_egl.c" ]
+  public = [ "fuchsia_egl.h" ]
+  public_configs = [ ":config" ]
+  deps = [ ":backend" ]
 }
 
 angle_source_set("backend") {
-  public = [
-    "fuchsia_egl_backend.h",
-  ]
+  public = [ "fuchsia_egl_backend.h" ]
 }

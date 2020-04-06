@@ -650,6 +650,9 @@
     }
   },
   "GL_DEPTH_COMPONENT24": {
+    "D24_UNORM_X8_UINT": {
+      "GL_UNSIGNED_INT": "LoadR32ToR24G8"
+    },
     "D24_UNORM_S8_UINT": {
       "GL_UNSIGNED_INT": "LoadR32ToR24G8"
     },
@@ -871,6 +874,26 @@
     }
   },
   "GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 1, 16>"
+    }
+  },
+  "GL_COMPRESSED_RED_RGTC1_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 1, 8>"
+    }
+  },
+  "GL_COMPRESSED_SIGNED_RED_RGTC1_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 1, 8>"
+    }
+  },
+  "GL_COMPRESSED_RED_GREEN_RGTC2_EXT": {
+    "NONE": {
+      "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 1, 16>"
+    }
+  },
+  "GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT": {
     "NONE": {
       "GL_UNSIGNED_BYTE": "LoadCompressedToNative<4, 4, 1, 16>"
     }

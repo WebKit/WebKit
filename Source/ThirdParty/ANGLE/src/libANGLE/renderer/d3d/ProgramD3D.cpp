@@ -1047,6 +1047,22 @@ std::unique_ptr<rx::LinkEvent> ProgramD3D::load(const gl::Context *context,
         mD3DShaderStorageBlocks.push_back(shaderStorageBlock);
     }
 
+    const unsigned int image2DUniformCount = stream->readInt<unsigned int>();
+    if (stream->error())
+    {
+        infoLog << "Invalid program binary.";
+        return std::make_unique<LinkEventDone>(angle::Result::Incomplete);
+    }
+
+    ASSERT(mImage2DUniforms.empty());
+    for (unsigned int image2DUniformIndex = 0; image2DUniformIndex < image2DUniformCount;
+         ++image2DUniformIndex)
+    {
+        sh::ShaderVariable image2Duniform;
+        gl::LoadShaderVar(stream, &image2Duniform);
+        mImage2DUniforms.push_back(image2Duniform);
+    }
+
     for (unsigned int ii = 0; ii < gl::IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFERS; ++ii)
     {
         unsigned int index                             = stream->readInt<unsigned int>();
@@ -1291,7 +1307,7 @@ angle::Result ProgramD3D::loadBinaryShaderExecutables(d3d::Context *contextD3D,
             stream->readInt<unsigned int>(), gl::TextureType::_2D));
     }
 
-    initializeUniformStorage(mState.getLinkedShaderStages());
+    initializeUniformStorage(mState.getProgramExecutable().getLinkedShaderStages());
 
     dirtyAllUniforms();
 
@@ -1356,6 +1372,12 @@ void ProgramD3D::save(const gl::Context *context, gl::BinaryOutputStream *stream
         {
             stream->writeIntOrNegOne(shaderStorageBlock.mShaderRegisterIndexes[shaderType]);
         }
+    }
+
+    stream->writeInt(mImage2DUniforms.size());
+    for (const sh::ShaderVariable &image2DUniform : mImage2DUniforms)
+    {
+        gl::WriteShaderVar(stream, image2DUniform);
     }
 
     for (unsigned int ii = 0; ii < gl::IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFERS; ++ii)
@@ -2331,7 +2353,7 @@ const std::vector<D3DUBOCacheUseSB> &ProgramD3D::getShaderUniformBufferCacheUseS
 
 void ProgramD3D::dirtyAllUniforms()
 {
-    mShaderUniformsDirty = mState.getLinkedShaderStages();
+    mShaderUniformsDirty = mState.getProgramExecutable().getLinkedShaderStages();
 }
 
 void ProgramD3D::markUniformsClean()
@@ -3026,8 +3048,10 @@ void ProgramD3D::updateCachedInputLayout(Serial associatedSerial, const gl::Stat
     mCachedInputLayout.clear();
 
     const auto &vertexAttributes = state.getVertexArray()->getVertexAttributes();
+    const gl::AttributesMask &attributesMask =
+        mState.getProgramExecutable().getActiveAttribLocationsMask();
 
-    for (size_t locationIndex : mState.getActiveAttribLocationsMask())
+    for (size_t locationIndex : attributesMask)
     {
         int d3dSemantic = mAttribLocationToD3DSemantic[locationIndex];
 
@@ -3141,7 +3165,7 @@ void ProgramD3D::gatherTransformFeedbackVaryings(const gl::VaryingPacking &varyi
             for (GLuint registerIndex = 0u; registerIndex < registerInfos.size(); ++registerIndex)
             {
                 const auto &registerInfo = registerInfos[registerIndex];
-                const auto &varying      = *registerInfo.packedVarying->varying;
+                const auto &varying      = registerInfo.packedVarying->varying();
                 GLenum transposedType    = gl::TransposeMatrixType(varying.type);
                 int componentCount       = gl::VariableColumnCount(transposedType);
                 ASSERT(!varying.isBuiltIn() && !varying.isStruct());
@@ -3166,14 +3190,6 @@ D3DUniform *ProgramD3D::getD3DUniformFromLocation(GLint location)
 const D3DUniform *ProgramD3D::getD3DUniformFromLocation(GLint location) const
 {
     return mD3DUniforms[mState.getUniformLocations()[location].index];
-}
-
-void ProgramD3D::setPathFragmentInputGen(const std::string &inputName,
-                                         GLenum genMode,
-                                         GLint components,
-                                         const GLfloat *coeffs)
-{
-    UNREACHABLE();
 }
 
 bool ProgramD3D::hasVertexExecutableForCachedInputLayout()

@@ -11,6 +11,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/mac/IOSurfaceSurfaceVkMac.h"
 #include "libANGLE/renderer/vulkan/mac/WindowSurfaceVkMac.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
 
@@ -32,6 +34,16 @@ SurfaceImpl *DisplayVkMac::createWindowSurfaceVk(const egl::SurfaceState &state,
 {
     ASSERT(isValidNativeWindow(window));
     return new WindowSurfaceVkMac(state, window);
+}
+
+SurfaceImpl *DisplayVkMac::createPbufferFromClientBuffer(const egl::SurfaceState &state,
+                                                         EGLenum buftype,
+                                                         EGLClientBuffer clientBuffer,
+                                                         const egl::AttributeMap &attribs)
+{
+    ASSERT(buftype == EGL_IOSURFACE_ANGLE);
+
+    return new IOSurfaceSurfaceVkMac(state, clientBuffer, attribs);
 }
 
 egl::ConfigSet DisplayVkMac::generateConfigs()
@@ -60,6 +72,28 @@ bool IsVulkanMacDisplayAvailable()
 DisplayImpl *CreateVulkanMacDisplay(const egl::DisplayState &state)
 {
     return new DisplayVkMac(state);
+}
+
+void DisplayVkMac::generateExtensions(egl::DisplayExtensions *outExtensions) const
+{
+    outExtensions->iosurfaceClientBuffer =
+        getRenderer()->getFeatures().supportsExternalMemoryHost.enabled;
+
+    DisplayVk::generateExtensions(outExtensions);
+}
+
+egl::Error DisplayVkMac::validateClientBuffer(const egl::Config *configuration,
+                                              EGLenum buftype,
+                                              EGLClientBuffer clientBuffer,
+                                              const egl::AttributeMap &attribs) const
+{
+    ASSERT(buftype == EGL_IOSURFACE_ANGLE);
+
+    if (!IOSurfaceSurfaceVkMac::ValidateAttributes(this, clientBuffer, attribs))
+    {
+        return egl::EglBadAttribute();
+    }
+    return egl::NoError();
 }
 
 }  // namespace rx

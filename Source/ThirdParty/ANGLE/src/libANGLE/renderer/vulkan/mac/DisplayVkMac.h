@@ -25,8 +25,20 @@ class DisplayVkMac : public DisplayVk
     SurfaceImpl *createWindowSurfaceVk(const egl::SurfaceState &state,
                                        EGLNativeWindowType window) override;
 
+    SurfaceImpl *createPbufferFromClientBuffer(const egl::SurfaceState &state,
+                                               EGLenum buftype,
+                                               EGLClientBuffer clientBuffer,
+                                               const egl::AttributeMap &attribs) override;
+
     egl::ConfigSet generateConfigs() override;
     bool checkConfigSupport(egl::Config *config) override;
+
+    void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
+
+    egl::Error validateClientBuffer(const egl::Config *configuration,
+                                    EGLenum buftype,
+                                    EGLClientBuffer clientBuffer,
+                                    const egl::AttributeMap &attribs) const override;
 
     const char *getWSIExtension() const override;
 };

@@ -16,6 +16,10 @@
 #    include <sys/system_properties.h>
 #endif
 
+#if defined(ANGLE_PLATFORM_LINUX)
+#    include <sys/utsname.h>
+#endif
+
 namespace rx
 {
 // Intel
@@ -201,5 +205,51 @@ OSVersion GetMacOSVersion()
     return OSVersion(0, 0, 0);
 }
 #endif
+
+#if defined(ANGLE_PLATFORM_LINUX)
+bool ParseLinuxOSVersion(const char *version, int *major, int *minor, int *patch)
+{
+    errno = 0;  // reset global error flag.
+    char *next;
+    *major = static_cast<int>(strtol(version, &next, 10));
+    if (next == nullptr || *next != '.' || errno != 0)
+    {
+        return false;
+    }
+
+    *minor = static_cast<int>(strtol(next + 1, &next, 10));
+    if (next == nullptr || *next != '.' || errno != 0)
+    {
+        return false;
+    }
+
+    *patch = static_cast<int>(strtol(next + 1, &next, 10));
+    if (errno != 0)
+    {
+        return false;
+    }
+
+    return true;
+}
+#endif
+
+OSVersion GetLinuxOSVersion()
+{
+#if defined(ANGLE_PLATFORM_LINUX)
+    struct utsname uname_info;
+    if (uname(&uname_info) != 0)
+    {
+        return OSVersion(0, 0, 0);
+    }
+
+    int majorVersion = 0, minorVersion = 0, patchVersion = 0;
+    if (ParseLinuxOSVersion(uname_info.release, &majorVersion, &minorVersion, &patchVersion))
+    {
+        return OSVersion(majorVersion, minorVersion, patchVersion);
+    }
+#endif
+
+    return OSVersion(0, 0, 0);
+}
 
 }  // namespace rx

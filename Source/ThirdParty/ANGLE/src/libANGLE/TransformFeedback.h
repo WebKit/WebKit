@@ -94,6 +94,7 @@ class TransformFeedback final : public RefCountObject<TransformFeedbackID>, publ
                                     size_t size);
     const OffsetBindingPointer<Buffer> &getIndexedBuffer(size_t index) const;
     size_t getIndexedBufferCount() const;
+    const std::vector<OffsetBindingPointer<Buffer>> &getIndexedBuffers() const;
 
     GLsizeiptr getVerticesDrawn() const { return mState.getVerticesDrawn(); }
     GLsizeiptr getPrimitivesDrawn() const { return mState.getPrimitivesDrawn(); }

@@ -9,7 +9,6 @@
 #include "angle_gl.h"
 #include "compiler/translator/BuiltInFunctionEmulatorGLSL.h"
 #include "compiler/translator/OutputESSL.h"
-#include "compiler/translator/tree_ops/EmulatePrecision.h"
 #include "compiler/translator/tree_ops/RecordConstantPrecision.h"
 
 namespace sh
@@ -47,19 +46,9 @@ bool TranslatorESSL::translate(TIntermBlock *root,
     // like non-preprocessor tokens.
     writePragma(compileOptions);
 
-    bool precisionEmulation =
-        getResources().WEBGL_debug_shader_precision && getPragma().debugShaderPrecision;
-
-    if (precisionEmulation)
-    {
-        EmulatePrecision emulatePrecision(&getSymbolTable());
-        root->traverse(&emulatePrecision);
-        if (!emulatePrecision.updateTree(this, root))
-        {
-            return false;
-        }
-        emulatePrecision.writeEmulationHelpers(sink, shaderVer, SH_ESSL_OUTPUT);
-    }
+    bool precisionEmulation = false;
+    if (!emulatePrecisionIfNeeded(root, sink, &precisionEmulation, SH_ESSL_OUTPUT))
+        return false;
 
     if (!RecordConstantPrecision(this, root, &getSymbolTable()))
     {

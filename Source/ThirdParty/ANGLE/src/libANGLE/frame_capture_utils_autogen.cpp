@@ -14,427 +14,454 @@
 
 namespace angle
 {
-void WriteParamTypeToStream(std::ostream &os, ParamType paramType, const ParamValue &paramValue)
+void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const ParamCapture &param)
 {
-    switch (paramType)
+    switch (param.type)
     {
         case ParamType::TAlphaTestFunc:
-            WriteParamValueToStream<ParamType::TAlphaTestFunc>(os, paramValue.AlphaTestFuncVal);
+            WriteParamValueReplay<ParamType::TAlphaTestFunc>(os, call,
+                                                             param.value.AlphaTestFuncVal);
             break;
         case ParamType::TBufferBinding:
-            WriteParamValueToStream<ParamType::TBufferBinding>(os, paramValue.BufferBindingVal);
+            WriteParamValueReplay<ParamType::TBufferBinding>(os, call,
+                                                             param.value.BufferBindingVal);
             break;
         case ParamType::TBufferID:
-            WriteParamValueToStream<ParamType::TBufferID>(os, paramValue.BufferIDVal);
+            WriteParamValueReplay<ParamType::TBufferID>(os, call, param.value.BufferIDVal);
             break;
         case ParamType::TBufferIDConstPointer:
-            WriteParamValueToStream<ParamType::TBufferIDConstPointer>(
-                os, paramValue.BufferIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TBufferIDConstPointer>(
+                os, call, param.value.BufferIDConstPointerVal);
             break;
         case ParamType::TBufferIDPointer:
-            WriteParamValueToStream<ParamType::TBufferIDPointer>(os, paramValue.BufferIDPointerVal);
+            WriteParamValueReplay<ParamType::TBufferIDPointer>(os, call,
+                                                               param.value.BufferIDPointerVal);
             break;
         case ParamType::TBufferUsage:
-            WriteParamValueToStream<ParamType::TBufferUsage>(os, paramValue.BufferUsageVal);
+            WriteParamValueReplay<ParamType::TBufferUsage>(os, call, param.value.BufferUsageVal);
             break;
         case ParamType::TClientVertexArrayType:
-            WriteParamValueToStream<ParamType::TClientVertexArrayType>(
-                os, paramValue.ClientVertexArrayTypeVal);
+            WriteParamValueReplay<ParamType::TClientVertexArrayType>(
+                os, call, param.value.ClientVertexArrayTypeVal);
             break;
         case ParamType::TCullFaceMode:
-            WriteParamValueToStream<ParamType::TCullFaceMode>(os, paramValue.CullFaceModeVal);
+            WriteParamValueReplay<ParamType::TCullFaceMode>(os, call, param.value.CullFaceModeVal);
             break;
         case ParamType::TDrawElementsType:
-            WriteParamValueToStream<ParamType::TDrawElementsType>(os,
-                                                                  paramValue.DrawElementsTypeVal);
+            WriteParamValueReplay<ParamType::TDrawElementsType>(os, call,
+                                                                param.value.DrawElementsTypeVal);
             break;
         case ParamType::TFenceNVID:
-            WriteParamValueToStream<ParamType::TFenceNVID>(os, paramValue.FenceNVIDVal);
+            WriteParamValueReplay<ParamType::TFenceNVID>(os, call, param.value.FenceNVIDVal);
             break;
         case ParamType::TFenceNVIDConstPointer:
-            WriteParamValueToStream<ParamType::TFenceNVIDConstPointer>(
-                os, paramValue.FenceNVIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TFenceNVIDConstPointer>(
+                os, call, param.value.FenceNVIDConstPointerVal);
             break;
         case ParamType::TFenceNVIDPointer:
-            WriteParamValueToStream<ParamType::TFenceNVIDPointer>(os,
-                                                                  paramValue.FenceNVIDPointerVal);
+            WriteParamValueReplay<ParamType::TFenceNVIDPointer>(os, call,
+                                                                param.value.FenceNVIDPointerVal);
             break;
         case ParamType::TFramebufferID:
-            WriteParamValueToStream<ParamType::TFramebufferID>(os, paramValue.FramebufferIDVal);
+            WriteParamValueReplay<ParamType::TFramebufferID>(os, call,
+                                                             param.value.FramebufferIDVal);
             break;
         case ParamType::TFramebufferIDConstPointer:
-            WriteParamValueToStream<ParamType::TFramebufferIDConstPointer>(
-                os, paramValue.FramebufferIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TFramebufferIDConstPointer>(
+                os, call, param.value.FramebufferIDConstPointerVal);
             break;
         case ParamType::TFramebufferIDPointer:
-            WriteParamValueToStream<ParamType::TFramebufferIDPointer>(
-                os, paramValue.FramebufferIDPointerVal);
+            WriteParamValueReplay<ParamType::TFramebufferIDPointer>(
+                os, call, param.value.FramebufferIDPointerVal);
             break;
         case ParamType::TGLDEBUGPROC:
-            WriteParamValueToStream<ParamType::TGLDEBUGPROC>(os, paramValue.GLDEBUGPROCVal);
+            WriteParamValueReplay<ParamType::TGLDEBUGPROC>(os, call, param.value.GLDEBUGPROCVal);
             break;
         case ParamType::TGLDEBUGPROCKHR:
-            WriteParamValueToStream<ParamType::TGLDEBUGPROCKHR>(os, paramValue.GLDEBUGPROCKHRVal);
+            WriteParamValueReplay<ParamType::TGLDEBUGPROCKHR>(os, call,
+                                                              param.value.GLDEBUGPROCKHRVal);
             break;
         case ParamType::TGLbitfield:
-            WriteParamValueToStream<ParamType::TGLbitfield>(os, paramValue.GLbitfieldVal);
+            WriteParamValueReplay<ParamType::TGLbitfield>(os, call, param.value.GLbitfieldVal);
             break;
         case ParamType::TGLboolean:
-            WriteParamValueToStream<ParamType::TGLboolean>(os, paramValue.GLbooleanVal);
+            WriteParamValueReplay<ParamType::TGLboolean>(os, call, param.value.GLbooleanVal);
             break;
         case ParamType::TGLbooleanConstPointer:
-            WriteParamValueToStream<ParamType::TGLbooleanConstPointer>(
-                os, paramValue.GLbooleanConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLbooleanConstPointer>(
+                os, call, param.value.GLbooleanConstPointerVal);
             break;
         case ParamType::TGLbooleanPointer:
-            WriteParamValueToStream<ParamType::TGLbooleanPointer>(os,
-                                                                  paramValue.GLbooleanPointerVal);
+            WriteParamValueReplay<ParamType::TGLbooleanPointer>(os, call,
+                                                                param.value.GLbooleanPointerVal);
             break;
         case ParamType::TGLbyte:
-            WriteParamValueToStream<ParamType::TGLbyte>(os, paramValue.GLbyteVal);
+            WriteParamValueReplay<ParamType::TGLbyte>(os, call, param.value.GLbyteVal);
             break;
         case ParamType::TGLbyteConstPointer:
-            WriteParamValueToStream<ParamType::TGLbyteConstPointer>(
-                os, paramValue.GLbyteConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLbyteConstPointer>(
+                os, call, param.value.GLbyteConstPointerVal);
             break;
         case ParamType::TGLcharConstPointer:
-            WriteParamValueToStream<ParamType::TGLcharConstPointer>(
-                os, paramValue.GLcharConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLcharConstPointer>(
+                os, call, param.value.GLcharConstPointerVal);
             break;
         case ParamType::TGLcharConstPointerPointer:
-            WriteParamValueToStream<ParamType::TGLcharConstPointerPointer>(
-                os, paramValue.GLcharConstPointerPointerVal);
+            WriteParamValueReplay<ParamType::TGLcharConstPointerPointer>(
+                os, call, param.value.GLcharConstPointerPointerVal);
             break;
         case ParamType::TGLcharPointer:
-            WriteParamValueToStream<ParamType::TGLcharPointer>(os, paramValue.GLcharPointerVal);
+            WriteParamValueReplay<ParamType::TGLcharPointer>(os, call,
+                                                             param.value.GLcharPointerVal);
             break;
         case ParamType::TGLclampx:
-            WriteParamValueToStream<ParamType::TGLclampx>(os, paramValue.GLclampxVal);
+            WriteParamValueReplay<ParamType::TGLclampx>(os, call, param.value.GLclampxVal);
             break;
         case ParamType::TGLdouble:
-            WriteParamValueToStream<ParamType::TGLdouble>(os, paramValue.GLdoubleVal);
+            WriteParamValueReplay<ParamType::TGLdouble>(os, call, param.value.GLdoubleVal);
             break;
         case ParamType::TGLdoubleConstPointer:
-            WriteParamValueToStream<ParamType::TGLdoubleConstPointer>(
-                os, paramValue.GLdoubleConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLdoubleConstPointer>(
+                os, call, param.value.GLdoubleConstPointerVal);
             break;
         case ParamType::TGLdoublePointer:
-            WriteParamValueToStream<ParamType::TGLdoublePointer>(os, paramValue.GLdoublePointerVal);
+            WriteParamValueReplay<ParamType::TGLdoublePointer>(os, call,
+                                                               param.value.GLdoublePointerVal);
             break;
         case ParamType::TGLeglImageOES:
-            WriteParamValueToStream<ParamType::TGLeglImageOES>(os, paramValue.GLeglImageOESVal);
+            WriteParamValueReplay<ParamType::TGLeglImageOES>(os, call,
+                                                             param.value.GLeglImageOESVal);
             break;
         case ParamType::TGLenum:
-            WriteParamValueToStream<ParamType::TGLenum>(os, paramValue.GLenumVal);
+            WriteParamValueReplay<ParamType::TGLenum>(os, call, param.value.GLenumVal);
             break;
         case ParamType::TGLenumConstPointer:
-            WriteParamValueToStream<ParamType::TGLenumConstPointer>(
-                os, paramValue.GLenumConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLenumConstPointer>(
+                os, call, param.value.GLenumConstPointerVal);
             break;
         case ParamType::TGLenumPointer:
-            WriteParamValueToStream<ParamType::TGLenumPointer>(os, paramValue.GLenumPointerVal);
+            WriteParamValueReplay<ParamType::TGLenumPointer>(os, call,
+                                                             param.value.GLenumPointerVal);
             break;
         case ParamType::TGLfixed:
-            WriteParamValueToStream<ParamType::TGLfixed>(os, paramValue.GLfixedVal);
+            WriteParamValueReplay<ParamType::TGLfixed>(os, call, param.value.GLfixedVal);
             break;
         case ParamType::TGLfixedConstPointer:
-            WriteParamValueToStream<ParamType::TGLfixedConstPointer>(
-                os, paramValue.GLfixedConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLfixedConstPointer>(
+                os, call, param.value.GLfixedConstPointerVal);
             break;
         case ParamType::TGLfixedPointer:
-            WriteParamValueToStream<ParamType::TGLfixedPointer>(os, paramValue.GLfixedPointerVal);
+            WriteParamValueReplay<ParamType::TGLfixedPointer>(os, call,
+                                                              param.value.GLfixedPointerVal);
             break;
         case ParamType::TGLfloat:
-            WriteParamValueToStream<ParamType::TGLfloat>(os, paramValue.GLfloatVal);
+            WriteParamValueReplay<ParamType::TGLfloat>(os, call, param.value.GLfloatVal);
             break;
         case ParamType::TGLfloatConstPointer:
-            WriteParamValueToStream<ParamType::TGLfloatConstPointer>(
-                os, paramValue.GLfloatConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLfloatConstPointer>(
+                os, call, param.value.GLfloatConstPointerVal);
             break;
         case ParamType::TGLfloatPointer:
-            WriteParamValueToStream<ParamType::TGLfloatPointer>(os, paramValue.GLfloatPointerVal);
+            WriteParamValueReplay<ParamType::TGLfloatPointer>(os, call,
+                                                              param.value.GLfloatPointerVal);
             break;
         case ParamType::TGLint:
-            WriteParamValueToStream<ParamType::TGLint>(os, paramValue.GLintVal);
+            WriteParamValueReplay<ParamType::TGLint>(os, call, param.value.GLintVal);
             break;
         case ParamType::TGLint64Pointer:
-            WriteParamValueToStream<ParamType::TGLint64Pointer>(os, paramValue.GLint64PointerVal);
+            WriteParamValueReplay<ParamType::TGLint64Pointer>(os, call,
+                                                              param.value.GLint64PointerVal);
             break;
         case ParamType::TGLintConstPointer:
-            WriteParamValueToStream<ParamType::TGLintConstPointer>(os,
-                                                                   paramValue.GLintConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLintConstPointer>(os, call,
+                                                                 param.value.GLintConstPointerVal);
             break;
         case ParamType::TGLintPointer:
-            WriteParamValueToStream<ParamType::TGLintPointer>(os, paramValue.GLintPointerVal);
+            WriteParamValueReplay<ParamType::TGLintPointer>(os, call, param.value.GLintPointerVal);
             break;
         case ParamType::TGLintptr:
-            WriteParamValueToStream<ParamType::TGLintptr>(os, paramValue.GLintptrVal);
+            WriteParamValueReplay<ParamType::TGLintptr>(os, call, param.value.GLintptrVal);
             break;
         case ParamType::TGLintptrConstPointer:
-            WriteParamValueToStream<ParamType::TGLintptrConstPointer>(
-                os, paramValue.GLintptrConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLintptrConstPointer>(
+                os, call, param.value.GLintptrConstPointerVal);
             break;
         case ParamType::TGLshort:
-            WriteParamValueToStream<ParamType::TGLshort>(os, paramValue.GLshortVal);
+            WriteParamValueReplay<ParamType::TGLshort>(os, call, param.value.GLshortVal);
             break;
         case ParamType::TGLshortConstPointer:
-            WriteParamValueToStream<ParamType::TGLshortConstPointer>(
-                os, paramValue.GLshortConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLshortConstPointer>(
+                os, call, param.value.GLshortConstPointerVal);
             break;
         case ParamType::TGLsizei:
-            WriteParamValueToStream<ParamType::TGLsizei>(os, paramValue.GLsizeiVal);
+            WriteParamValueReplay<ParamType::TGLsizei>(os, call, param.value.GLsizeiVal);
             break;
         case ParamType::TGLsizeiConstPointer:
-            WriteParamValueToStream<ParamType::TGLsizeiConstPointer>(
-                os, paramValue.GLsizeiConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLsizeiConstPointer>(
+                os, call, param.value.GLsizeiConstPointerVal);
             break;
         case ParamType::TGLsizeiPointer:
-            WriteParamValueToStream<ParamType::TGLsizeiPointer>(os, paramValue.GLsizeiPointerVal);
+            WriteParamValueReplay<ParamType::TGLsizeiPointer>(os, call,
+                                                              param.value.GLsizeiPointerVal);
             break;
         case ParamType::TGLsizeiptr:
-            WriteParamValueToStream<ParamType::TGLsizeiptr>(os, paramValue.GLsizeiptrVal);
+            WriteParamValueReplay<ParamType::TGLsizeiptr>(os, call, param.value.GLsizeiptrVal);
             break;
         case ParamType::TGLsizeiptrConstPointer:
-            WriteParamValueToStream<ParamType::TGLsizeiptrConstPointer>(
-                os, paramValue.GLsizeiptrConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLsizeiptrConstPointer>(
+                os, call, param.value.GLsizeiptrConstPointerVal);
             break;
         case ParamType::TGLsync:
-            WriteParamValueToStream<ParamType::TGLsync>(os, paramValue.GLsyncVal);
+            WriteParamValueReplay<ParamType::TGLsync>(os, call, param.value.GLsyncVal);
             break;
         case ParamType::TGLubyte:
-            WriteParamValueToStream<ParamType::TGLubyte>(os, paramValue.GLubyteVal);
+            WriteParamValueReplay<ParamType::TGLubyte>(os, call, param.value.GLubyteVal);
             break;
         case ParamType::TGLubyteConstPointer:
-            WriteParamValueToStream<ParamType::TGLubyteConstPointer>(
-                os, paramValue.GLubyteConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLubyteConstPointer>(
+                os, call, param.value.GLubyteConstPointerVal);
             break;
         case ParamType::TGLubytePointer:
-            WriteParamValueToStream<ParamType::TGLubytePointer>(os, paramValue.GLubytePointerVal);
+            WriteParamValueReplay<ParamType::TGLubytePointer>(os, call,
+                                                              param.value.GLubytePointerVal);
             break;
         case ParamType::TGLuint:
-            WriteParamValueToStream<ParamType::TGLuint>(os, paramValue.GLuintVal);
+            WriteParamValueReplay<ParamType::TGLuint>(os, call, param.value.GLuintVal);
             break;
         case ParamType::TGLuint64:
-            WriteParamValueToStream<ParamType::TGLuint64>(os, paramValue.GLuint64Val);
+            WriteParamValueReplay<ParamType::TGLuint64>(os, call, param.value.GLuint64Val);
             break;
         case ParamType::TGLuint64ConstPointer:
-            WriteParamValueToStream<ParamType::TGLuint64ConstPointer>(
-                os, paramValue.GLuint64ConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLuint64ConstPointer>(
+                os, call, param.value.GLuint64ConstPointerVal);
             break;
         case ParamType::TGLuint64Pointer:
-            WriteParamValueToStream<ParamType::TGLuint64Pointer>(os, paramValue.GLuint64PointerVal);
+            WriteParamValueReplay<ParamType::TGLuint64Pointer>(os, call,
+                                                               param.value.GLuint64PointerVal);
             break;
         case ParamType::TGLuintConstPointer:
-            WriteParamValueToStream<ParamType::TGLuintConstPointer>(
-                os, paramValue.GLuintConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLuintConstPointer>(
+                os, call, param.value.GLuintConstPointerVal);
             break;
         case ParamType::TGLuintPointer:
-            WriteParamValueToStream<ParamType::TGLuintPointer>(os, paramValue.GLuintPointerVal);
+            WriteParamValueReplay<ParamType::TGLuintPointer>(os, call,
+                                                             param.value.GLuintPointerVal);
             break;
         case ParamType::TGLushort:
-            WriteParamValueToStream<ParamType::TGLushort>(os, paramValue.GLushortVal);
+            WriteParamValueReplay<ParamType::TGLushort>(os, call, param.value.GLushortVal);
             break;
         case ParamType::TGLushortConstPointer:
-            WriteParamValueToStream<ParamType::TGLushortConstPointer>(
-                os, paramValue.GLushortConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLushortConstPointer>(
+                os, call, param.value.GLushortConstPointerVal);
             break;
         case ParamType::TGLushortPointer:
-            WriteParamValueToStream<ParamType::TGLushortPointer>(os, paramValue.GLushortPointerVal);
+            WriteParamValueReplay<ParamType::TGLushortPointer>(os, call,
+                                                               param.value.GLushortPointerVal);
             break;
         case ParamType::TGLvoidConstPointer:
-            WriteParamValueToStream<ParamType::TGLvoidConstPointer>(
-                os, paramValue.GLvoidConstPointerVal);
+            WriteParamValueReplay<ParamType::TGLvoidConstPointer>(
+                os, call, param.value.GLvoidConstPointerVal);
             break;
         case ParamType::TGLvoidConstPointerPointer:
-            WriteParamValueToStream<ParamType::TGLvoidConstPointerPointer>(
-                os, paramValue.GLvoidConstPointerPointerVal);
+            WriteParamValueReplay<ParamType::TGLvoidConstPointerPointer>(
+                os, call, param.value.GLvoidConstPointerPointerVal);
             break;
         case ParamType::TGraphicsResetStatus:
-            WriteParamValueToStream<ParamType::TGraphicsResetStatus>(
-                os, paramValue.GraphicsResetStatusVal);
+            WriteParamValueReplay<ParamType::TGraphicsResetStatus>(
+                os, call, param.value.GraphicsResetStatusVal);
             break;
         case ParamType::THandleType:
-            WriteParamValueToStream<ParamType::THandleType>(os, paramValue.HandleTypeVal);
+            WriteParamValueReplay<ParamType::THandleType>(os, call, param.value.HandleTypeVal);
             break;
         case ParamType::TLightParameter:
-            WriteParamValueToStream<ParamType::TLightParameter>(os, paramValue.LightParameterVal);
+            WriteParamValueReplay<ParamType::TLightParameter>(os, call,
+                                                              param.value.LightParameterVal);
             break;
         case ParamType::TLogicalOperation:
-            WriteParamValueToStream<ParamType::TLogicalOperation>(os,
-                                                                  paramValue.LogicalOperationVal);
+            WriteParamValueReplay<ParamType::TLogicalOperation>(os, call,
+                                                                param.value.LogicalOperationVal);
             break;
         case ParamType::TMaterialParameter:
-            WriteParamValueToStream<ParamType::TMaterialParameter>(os,
-                                                                   paramValue.MaterialParameterVal);
+            WriteParamValueReplay<ParamType::TMaterialParameter>(os, call,
+                                                                 param.value.MaterialParameterVal);
             break;
         case ParamType::TMatrixType:
-            WriteParamValueToStream<ParamType::TMatrixType>(os, paramValue.MatrixTypeVal);
+            WriteParamValueReplay<ParamType::TMatrixType>(os, call, param.value.MatrixTypeVal);
             break;
         case ParamType::TMemoryObjectID:
-            WriteParamValueToStream<ParamType::TMemoryObjectID>(os, paramValue.MemoryObjectIDVal);
+            WriteParamValueReplay<ParamType::TMemoryObjectID>(os, call,
+                                                              param.value.MemoryObjectIDVal);
             break;
         case ParamType::TMemoryObjectIDConstPointer:
-            WriteParamValueToStream<ParamType::TMemoryObjectIDConstPointer>(
-                os, paramValue.MemoryObjectIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TMemoryObjectIDConstPointer>(
+                os, call, param.value.MemoryObjectIDConstPointerVal);
             break;
         case ParamType::TMemoryObjectIDPointer:
-            WriteParamValueToStream<ParamType::TMemoryObjectIDPointer>(
-                os, paramValue.MemoryObjectIDPointerVal);
-            break;
-        case ParamType::TPathID:
-            WriteParamValueToStream<ParamType::TPathID>(os, paramValue.PathIDVal);
+            WriteParamValueReplay<ParamType::TMemoryObjectIDPointer>(
+                os, call, param.value.MemoryObjectIDPointerVal);
             break;
         case ParamType::TPointParameter:
-            WriteParamValueToStream<ParamType::TPointParameter>(os, paramValue.PointParameterVal);
+            WriteParamValueReplay<ParamType::TPointParameter>(os, call,
+                                                              param.value.PointParameterVal);
             break;
         case ParamType::TPrimitiveMode:
-            WriteParamValueToStream<ParamType::TPrimitiveMode>(os, paramValue.PrimitiveModeVal);
+            WriteParamValueReplay<ParamType::TPrimitiveMode>(os, call,
+                                                             param.value.PrimitiveModeVal);
             break;
         case ParamType::TProgramPipelineID:
-            WriteParamValueToStream<ParamType::TProgramPipelineID>(os,
-                                                                   paramValue.ProgramPipelineIDVal);
+            WriteParamValueReplay<ParamType::TProgramPipelineID>(os, call,
+                                                                 param.value.ProgramPipelineIDVal);
             break;
         case ParamType::TProgramPipelineIDConstPointer:
-            WriteParamValueToStream<ParamType::TProgramPipelineIDConstPointer>(
-                os, paramValue.ProgramPipelineIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TProgramPipelineIDConstPointer>(
+                os, call, param.value.ProgramPipelineIDConstPointerVal);
             break;
         case ParamType::TProgramPipelineIDPointer:
-            WriteParamValueToStream<ParamType::TProgramPipelineIDPointer>(
-                os, paramValue.ProgramPipelineIDPointerVal);
+            WriteParamValueReplay<ParamType::TProgramPipelineIDPointer>(
+                os, call, param.value.ProgramPipelineIDPointerVal);
             break;
         case ParamType::TProvokingVertexConvention:
-            WriteParamValueToStream<ParamType::TProvokingVertexConvention>(
-                os, paramValue.ProvokingVertexConventionVal);
+            WriteParamValueReplay<ParamType::TProvokingVertexConvention>(
+                os, call, param.value.ProvokingVertexConventionVal);
             break;
         case ParamType::TQueryID:
-            WriteParamValueToStream<ParamType::TQueryID>(os, paramValue.QueryIDVal);
+            WriteParamValueReplay<ParamType::TQueryID>(os, call, param.value.QueryIDVal);
             break;
         case ParamType::TQueryIDConstPointer:
-            WriteParamValueToStream<ParamType::TQueryIDConstPointer>(
-                os, paramValue.QueryIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TQueryIDConstPointer>(
+                os, call, param.value.QueryIDConstPointerVal);
             break;
         case ParamType::TQueryIDPointer:
-            WriteParamValueToStream<ParamType::TQueryIDPointer>(os, paramValue.QueryIDPointerVal);
+            WriteParamValueReplay<ParamType::TQueryIDPointer>(os, call,
+                                                              param.value.QueryIDPointerVal);
             break;
         case ParamType::TQueryType:
-            WriteParamValueToStream<ParamType::TQueryType>(os, paramValue.QueryTypeVal);
+            WriteParamValueReplay<ParamType::TQueryType>(os, call, param.value.QueryTypeVal);
             break;
         case ParamType::TRenderbufferID:
-            WriteParamValueToStream<ParamType::TRenderbufferID>(os, paramValue.RenderbufferIDVal);
+            WriteParamValueReplay<ParamType::TRenderbufferID>(os, call,
+                                                              param.value.RenderbufferIDVal);
             break;
         case ParamType::TRenderbufferIDConstPointer:
-            WriteParamValueToStream<ParamType::TRenderbufferIDConstPointer>(
-                os, paramValue.RenderbufferIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TRenderbufferIDConstPointer>(
+                os, call, param.value.RenderbufferIDConstPointerVal);
             break;
         case ParamType::TRenderbufferIDPointer:
-            WriteParamValueToStream<ParamType::TRenderbufferIDPointer>(
-                os, paramValue.RenderbufferIDPointerVal);
+            WriteParamValueReplay<ParamType::TRenderbufferIDPointer>(
+                os, call, param.value.RenderbufferIDPointerVal);
             break;
         case ParamType::TSamplerID:
-            WriteParamValueToStream<ParamType::TSamplerID>(os, paramValue.SamplerIDVal);
+            WriteParamValueReplay<ParamType::TSamplerID>(os, call, param.value.SamplerIDVal);
             break;
         case ParamType::TSamplerIDConstPointer:
-            WriteParamValueToStream<ParamType::TSamplerIDConstPointer>(
-                os, paramValue.SamplerIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TSamplerIDConstPointer>(
+                os, call, param.value.SamplerIDConstPointerVal);
             break;
         case ParamType::TSamplerIDPointer:
-            WriteParamValueToStream<ParamType::TSamplerIDPointer>(os,
-                                                                  paramValue.SamplerIDPointerVal);
+            WriteParamValueReplay<ParamType::TSamplerIDPointer>(os, call,
+                                                                param.value.SamplerIDPointerVal);
             break;
         case ParamType::TSemaphoreID:
-            WriteParamValueToStream<ParamType::TSemaphoreID>(os, paramValue.SemaphoreIDVal);
+            WriteParamValueReplay<ParamType::TSemaphoreID>(os, call, param.value.SemaphoreIDVal);
             break;
         case ParamType::TSemaphoreIDConstPointer:
-            WriteParamValueToStream<ParamType::TSemaphoreIDConstPointer>(
-                os, paramValue.SemaphoreIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TSemaphoreIDConstPointer>(
+                os, call, param.value.SemaphoreIDConstPointerVal);
             break;
         case ParamType::TSemaphoreIDPointer:
-            WriteParamValueToStream<ParamType::TSemaphoreIDPointer>(
-                os, paramValue.SemaphoreIDPointerVal);
+            WriteParamValueReplay<ParamType::TSemaphoreIDPointer>(
+                os, call, param.value.SemaphoreIDPointerVal);
             break;
         case ParamType::TShaderProgramID:
-            WriteParamValueToStream<ParamType::TShaderProgramID>(os, paramValue.ShaderProgramIDVal);
+            WriteParamValueReplay<ParamType::TShaderProgramID>(os, call,
+                                                               param.value.ShaderProgramIDVal);
             break;
         case ParamType::TShaderProgramIDConstPointer:
-            WriteParamValueToStream<ParamType::TShaderProgramIDConstPointer>(
-                os, paramValue.ShaderProgramIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TShaderProgramIDConstPointer>(
+                os, call, param.value.ShaderProgramIDConstPointerVal);
             break;
         case ParamType::TShaderProgramIDPointer:
-            WriteParamValueToStream<ParamType::TShaderProgramIDPointer>(
-                os, paramValue.ShaderProgramIDPointerVal);
+            WriteParamValueReplay<ParamType::TShaderProgramIDPointer>(
+                os, call, param.value.ShaderProgramIDPointerVal);
             break;
         case ParamType::TShaderType:
-            WriteParamValueToStream<ParamType::TShaderType>(os, paramValue.ShaderTypeVal);
+            WriteParamValueReplay<ParamType::TShaderType>(os, call, param.value.ShaderTypeVal);
             break;
         case ParamType::TShadingModel:
-            WriteParamValueToStream<ParamType::TShadingModel>(os, paramValue.ShadingModelVal);
+            WriteParamValueReplay<ParamType::TShadingModel>(os, call, param.value.ShadingModelVal);
             break;
         case ParamType::TTextureEnvParameter:
-            WriteParamValueToStream<ParamType::TTextureEnvParameter>(
-                os, paramValue.TextureEnvParameterVal);
+            WriteParamValueReplay<ParamType::TTextureEnvParameter>(
+                os, call, param.value.TextureEnvParameterVal);
             break;
         case ParamType::TTextureEnvTarget:
-            WriteParamValueToStream<ParamType::TTextureEnvTarget>(os,
-                                                                  paramValue.TextureEnvTargetVal);
+            WriteParamValueReplay<ParamType::TTextureEnvTarget>(os, call,
+                                                                param.value.TextureEnvTargetVal);
             break;
         case ParamType::TTextureID:
-            WriteParamValueToStream<ParamType::TTextureID>(os, paramValue.TextureIDVal);
+            WriteParamValueReplay<ParamType::TTextureID>(os, call, param.value.TextureIDVal);
             break;
         case ParamType::TTextureIDConstPointer:
-            WriteParamValueToStream<ParamType::TTextureIDConstPointer>(
-                os, paramValue.TextureIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TTextureIDConstPointer>(
+                os, call, param.value.TextureIDConstPointerVal);
             break;
         case ParamType::TTextureIDPointer:
-            WriteParamValueToStream<ParamType::TTextureIDPointer>(os,
-                                                                  paramValue.TextureIDPointerVal);
+            WriteParamValueReplay<ParamType::TTextureIDPointer>(os, call,
+                                                                param.value.TextureIDPointerVal);
             break;
         case ParamType::TTextureTarget:
-            WriteParamValueToStream<ParamType::TTextureTarget>(os, paramValue.TextureTargetVal);
+            WriteParamValueReplay<ParamType::TTextureTarget>(os, call,
+                                                             param.value.TextureTargetVal);
             break;
         case ParamType::TTextureType:
-            WriteParamValueToStream<ParamType::TTextureType>(os, paramValue.TextureTypeVal);
+            WriteParamValueReplay<ParamType::TTextureType>(os, call, param.value.TextureTypeVal);
             break;
         case ParamType::TTransformFeedbackID:
-            WriteParamValueToStream<ParamType::TTransformFeedbackID>(
-                os, paramValue.TransformFeedbackIDVal);
+            WriteParamValueReplay<ParamType::TTransformFeedbackID>(
+                os, call, param.value.TransformFeedbackIDVal);
             break;
         case ParamType::TTransformFeedbackIDConstPointer:
-            WriteParamValueToStream<ParamType::TTransformFeedbackIDConstPointer>(
-                os, paramValue.TransformFeedbackIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TTransformFeedbackIDConstPointer>(
+                os, call, param.value.TransformFeedbackIDConstPointerVal);
             break;
         case ParamType::TTransformFeedbackIDPointer:
-            WriteParamValueToStream<ParamType::TTransformFeedbackIDPointer>(
-                os, paramValue.TransformFeedbackIDPointerVal);
+            WriteParamValueReplay<ParamType::TTransformFeedbackIDPointer>(
+                os, call, param.value.TransformFeedbackIDPointerVal);
+            break;
+        case ParamType::TUniformLocation:
+            WriteParamValueReplay<ParamType::TUniformLocation>(os, call,
+                                                               param.value.UniformLocationVal);
             break;
         case ParamType::TVertexArrayID:
-            WriteParamValueToStream<ParamType::TVertexArrayID>(os, paramValue.VertexArrayIDVal);
+            WriteParamValueReplay<ParamType::TVertexArrayID>(os, call,
+                                                             param.value.VertexArrayIDVal);
             break;
         case ParamType::TVertexArrayIDConstPointer:
-            WriteParamValueToStream<ParamType::TVertexArrayIDConstPointer>(
-                os, paramValue.VertexArrayIDConstPointerVal);
+            WriteParamValueReplay<ParamType::TVertexArrayIDConstPointer>(
+                os, call, param.value.VertexArrayIDConstPointerVal);
             break;
         case ParamType::TVertexArrayIDPointer:
-            WriteParamValueToStream<ParamType::TVertexArrayIDPointer>(
-                os, paramValue.VertexArrayIDPointerVal);
+            WriteParamValueReplay<ParamType::TVertexArrayIDPointer>(
+                os, call, param.value.VertexArrayIDPointerVal);
             break;
         case ParamType::TVertexAttribType:
-            WriteParamValueToStream<ParamType::TVertexAttribType>(os,
-                                                                  paramValue.VertexAttribTypeVal);
+            WriteParamValueReplay<ParamType::TVertexAttribType>(os, call,
+                                                                param.value.VertexAttribTypeVal);
             break;
         case ParamType::TvoidConstPointer:
-            WriteParamValueToStream<ParamType::TvoidConstPointer>(os,
-                                                                  paramValue.voidConstPointerVal);
+            WriteParamValueReplay<ParamType::TvoidConstPointer>(os, call,
+                                                                param.value.voidConstPointerVal);
             break;
         case ParamType::TvoidConstPointerPointer:
-            WriteParamValueToStream<ParamType::TvoidConstPointerPointer>(
-                os, paramValue.voidConstPointerPointerVal);
+            WriteParamValueReplay<ParamType::TvoidConstPointerPointer>(
+                os, call, param.value.voidConstPointerPointerVal);
             break;
         case ParamType::TvoidPointer:
-            WriteParamValueToStream<ParamType::TvoidPointer>(os, paramValue.voidPointerVal);
+            WriteParamValueReplay<ParamType::TvoidPointer>(os, call, param.value.voidPointerVal);
             break;
         case ParamType::TvoidPointerPointer:
-            WriteParamValueToStream<ParamType::TvoidPointerPointer>(
-                os, paramValue.voidPointerPointerVal);
+            WriteParamValueReplay<ParamType::TvoidPointerPointer>(
+                os, call, param.value.voidPointerPointerVal);
             break;
         default:
             os << "unknown";
@@ -600,8 +627,6 @@ const char *ParamTypeToString(ParamType paramType)
             return "const GLuint *";
         case ParamType::TMemoryObjectIDPointer:
             return "GLuint *";
-        case ParamType::TPathID:
-            return "GLuint";
         case ParamType::TPointParameter:
             return "GLenum";
         case ParamType::TPrimitiveMode:
@@ -670,6 +695,8 @@ const char *ParamTypeToString(ParamType paramType)
             return "const GLuint *";
         case ParamType::TTransformFeedbackIDPointer:
             return "GLuint *";
+        case ParamType::TUniformLocation:
+            return "GLenum";
         case ParamType::TVertexArrayID:
             return "GLuint";
         case ParamType::TVertexArrayIDConstPointer:
@@ -720,8 +747,6 @@ ResourceIDType GetResourceIDTypeFromParamType(ParamType paramType)
             return ResourceIDType::MemoryObject;
         case ParamType::TMemoryObjectIDPointer:
             return ResourceIDType::MemoryObject;
-        case ParamType::TPathID:
-            return ResourceIDType::Path;
         case ParamType::TProgramPipelineID:
             return ResourceIDType::ProgramPipeline;
         case ParamType::TProgramPipelineIDConstPointer:
@@ -793,8 +818,6 @@ const char *GetResourceIDTypeName(ResourceIDType resourceIDType)
             return "Framebuffer";
         case ResourceIDType::MemoryObject:
             return "MemoryObject";
-        case ResourceIDType::Path:
-            return "Path";
         case ResourceIDType::ProgramPipeline:
             return "ProgramPipeline";
         case ResourceIDType::Query:

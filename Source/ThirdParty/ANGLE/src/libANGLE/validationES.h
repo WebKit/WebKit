@@ -36,8 +36,7 @@ struct LinkedUniform;
 class Program;
 class Shader;
 
-void SetRobustLengthParam(GLsizei *length, GLsizei value);
-bool IsETC2EACFormat(const GLenum format);
+void SetRobustLengthParam(const GLsizei *length, GLsizei value);
 bool ValidTextureTarget(const Context *context, TextureType type);
 bool ValidTexture2DTarget(const Context *context, TextureType type);
 bool ValidTexture3DTarget(const Context *context, TextureType target);
@@ -48,7 +47,7 @@ bool ValidTexture3DDestinationTarget(const Context *context, TextureTarget targe
 bool ValidTexLevelDestinationTarget(const Context *context, TextureType type);
 bool ValidFramebufferTarget(const Context *context, GLenum target);
 bool ValidMipLevel(const Context *context, TextureType type, GLint level);
-bool ValidImageSizeParameters(Context *context,
+bool ValidImageSizeParameters(const Context *context,
                               TextureType target,
                               GLint level,
                               GLsizei width,
@@ -72,7 +71,7 @@ bool ValidCompressedSubImageSize(const Context *context,
                                  size_t textureWidth,
                                  size_t textureHeight,
                                  size_t textureDepth);
-bool ValidImageDataSize(Context *context,
+bool ValidImageDataSize(const Context *context,
                         TextureType texType,
                         GLsizei width,
                         GLsizei height,
@@ -84,7 +83,7 @@ bool ValidImageDataSize(Context *context,
 
 bool ValidQueryType(const Context *context, QueryType queryType);
 
-bool ValidateWebGLVertexAttribPointer(Context *context,
+bool ValidateWebGLVertexAttribPointer(const Context *context,
                                       VertexAttribType type,
                                       GLboolean normalized,
                                       GLsizei stride,
@@ -94,27 +93,27 @@ bool ValidateWebGLVertexAttribPointer(Context *context,
 // Returns valid program if id is a valid program name
 // Errors INVALID_OPERATION if valid shader is given and returns NULL
 // Errors INVALID_VALUE otherwise and returns NULL
-Program *GetValidProgram(Context *context, ShaderProgramID id);
+Program *GetValidProgram(const Context *context, ShaderProgramID id);
 
 // Returns valid shader if id is a valid shader name
 // Errors INVALID_OPERATION if valid program is given and returns NULL
 // Errors INVALID_VALUE otherwise and returns NULL
-Shader *GetValidShader(Context *context, ShaderProgramID id);
+Shader *GetValidShader(const Context *context, ShaderProgramID id);
 
-bool ValidateAttachmentTarget(Context *context, GLenum attachment);
-bool ValidateRenderbufferStorageParametersBase(Context *context,
+bool ValidateAttachmentTarget(const Context *context, GLenum attachment);
+bool ValidateRenderbufferStorageParametersBase(const Context *context,
                                                GLenum target,
                                                GLsizei samples,
                                                GLenum internalformat,
                                                GLsizei width,
                                                GLsizei height);
-bool ValidateFramebufferRenderbufferParameters(Context *context,
+bool ValidateFramebufferRenderbufferParameters(const Context *context,
                                                GLenum target,
                                                GLenum attachment,
                                                GLenum renderbuffertarget,
                                                RenderbufferID renderbuffer);
 
-bool ValidateBlitFramebufferParameters(Context *context,
+bool ValidateBlitFramebufferParameters(const Context *context,
                                        GLint srcX0,
                                        GLint srcY0,
                                        GLint srcX1,
@@ -126,7 +125,7 @@ bool ValidateBlitFramebufferParameters(Context *context,
                                        GLbitfield mask,
                                        GLenum filter);
 
-bool ValidatePixelPack(Context *context,
+bool ValidatePixelPack(const Context *context,
                        GLenum format,
                        GLenum type,
                        GLint x,
@@ -135,9 +134,9 @@ bool ValidatePixelPack(Context *context,
                        GLsizei height,
                        GLsizei bufSize,
                        GLsizei *length,
-                       void *pixels);
+                       const void *pixels);
 
-bool ValidateReadPixelsBase(Context *context,
+bool ValidateReadPixelsBase(const Context *context,
                             GLint x,
                             GLint y,
                             GLsizei width,
@@ -148,8 +147,8 @@ bool ValidateReadPixelsBase(Context *context,
                             GLsizei *length,
                             GLsizei *columns,
                             GLsizei *rows,
-                            void *pixels);
-bool ValidateReadPixelsRobustANGLE(Context *context,
+                            const void *pixels);
+bool ValidateReadPixelsRobustANGLE(const Context *context,
                                    GLint x,
                                    GLint y,
                                    GLsizei width,
@@ -157,11 +156,11 @@ bool ValidateReadPixelsRobustANGLE(Context *context,
                                    GLenum format,
                                    GLenum type,
                                    GLsizei bufSize,
-                                   GLsizei *length,
-                                   GLsizei *columns,
-                                   GLsizei *rows,
-                                   void *pixels);
-bool ValidateReadnPixelsEXT(Context *context,
+                                   const GLsizei *length,
+                                   const GLsizei *columns,
+                                   const GLsizei *rows,
+                                   const void *pixels);
+bool ValidateReadnPixelsEXT(const Context *context,
                             GLint x,
                             GLint y,
                             GLsizei width,
@@ -169,8 +168,8 @@ bool ValidateReadnPixelsEXT(Context *context,
                             GLenum format,
                             GLenum type,
                             GLsizei bufSize,
-                            void *pixels);
-bool ValidateReadnPixelsRobustANGLE(Context *context,
+                            const void *pixels);
+bool ValidateReadnPixelsRobustANGLE(const Context *context,
                                     GLint x,
                                     GLint y,
                                     GLsizei width,
@@ -178,71 +177,89 @@ bool ValidateReadnPixelsRobustANGLE(Context *context,
                                     GLenum format,
                                     GLenum type,
                                     GLsizei bufSize,
-                                    GLsizei *length,
-                                    GLsizei *columns,
-                                    GLsizei *rows,
-                                    void *data);
+                                    const GLsizei *length,
+                                    const GLsizei *columns,
+                                    const GLsizei *rows,
+                                    const void *data);
 
-bool ValidateGenQueriesEXT(gl::Context *context, GLsizei n, QueryID *ids);
-bool ValidateDeleteQueriesEXT(gl::Context *context, GLsizei n, const QueryID *ids);
-bool ValidateIsQueryEXT(gl::Context *context, QueryID id);
-bool ValidateBeginQueryBase(Context *context, QueryType target, QueryID id);
-bool ValidateBeginQueryEXT(Context *context, QueryType target, QueryID id);
-bool ValidateEndQueryBase(Context *context, QueryType target);
-bool ValidateEndQueryEXT(Context *context, QueryType target);
-bool ValidateQueryCounterEXT(Context *context, QueryID id, QueryType target);
-bool ValidateGetQueryivBase(Context *context, QueryType target, GLenum pname, GLsizei *numParams);
-bool ValidateGetQueryivEXT(Context *context, QueryType target, GLenum pname, GLint *params);
-bool ValidateGetQueryivRobustANGLE(Context *context,
+bool ValidateGenQueriesEXT(const Context *context, GLsizei n, const QueryID *ids);
+bool ValidateDeleteQueriesEXT(const Context *context, GLsizei n, const QueryID *ids);
+bool ValidateIsQueryEXT(const Context *context, QueryID id);
+bool ValidateBeginQueryBase(const Context *context, QueryType target, QueryID id);
+bool ValidateBeginQueryEXT(const Context *context, QueryType target, QueryID id);
+bool ValidateEndQueryBase(const Context *context, QueryType target);
+bool ValidateEndQueryEXT(const Context *context, QueryType target);
+bool ValidateQueryCounterEXT(const Context *context, QueryID id, QueryType target);
+bool ValidateGetQueryivBase(const Context *context,
+                            QueryType target,
+                            GLenum pname,
+                            GLsizei *numParams);
+bool ValidateGetQueryivEXT(const Context *context,
+                           QueryType target,
+                           GLenum pname,
+                           const GLint *params);
+bool ValidateGetQueryivRobustANGLE(const Context *context,
                                    QueryType target,
                                    GLenum pname,
                                    GLsizei bufSize,
-                                   GLsizei *length,
-                                   GLint *params);
-bool ValidateGetQueryObjectValueBase(Context *context,
+                                   const GLsizei *length,
+                                   const GLint *params);
+bool ValidateGetQueryObjectValueBase(const Context *context,
                                      QueryID id,
                                      GLenum pname,
                                      GLsizei *numParams);
-bool ValidateGetQueryObjectivEXT(Context *context, QueryID id, GLenum pname, GLint *params);
-bool ValidateGetQueryObjectivRobustANGLE(Context *context,
+bool ValidateGetQueryObjectivEXT(const Context *context,
+                                 QueryID id,
+                                 GLenum pname,
+                                 const GLint *params);
+bool ValidateGetQueryObjectivRobustANGLE(const Context *context,
                                          QueryID id,
                                          GLenum pname,
                                          GLsizei bufSize,
-                                         GLsizei *length,
-                                         GLint *params);
-bool ValidateGetQueryObjectuivEXT(Context *context, QueryID id, GLenum pname, GLuint *params);
-bool ValidateGetQueryObjectuivRobustANGLE(Context *context,
+                                         const GLsizei *length,
+                                         const GLint *params);
+bool ValidateGetQueryObjectuivEXT(const Context *context,
+                                  QueryID id,
+                                  GLenum pname,
+                                  const GLuint *params);
+bool ValidateGetQueryObjectuivRobustANGLE(const Context *context,
                                           QueryID id,
                                           GLenum pname,
                                           GLsizei bufSize,
-                                          GLsizei *length,
-                                          GLuint *params);
-bool ValidateGetQueryObjecti64vEXT(Context *context, QueryID id, GLenum pname, GLint64 *params);
-bool ValidateGetQueryObjecti64vRobustANGLE(Context *context,
+                                          const GLsizei *length,
+                                          const GLuint *params);
+bool ValidateGetQueryObjecti64vEXT(const Context *context,
+                                   QueryID id,
+                                   GLenum pname,
+                                   GLint64 *params);
+bool ValidateGetQueryObjecti64vRobustANGLE(const Context *context,
                                            QueryID id,
                                            GLenum pname,
                                            GLsizei bufSize,
-                                           GLsizei *length,
+                                           const GLsizei *length,
                                            GLint64 *params);
-bool ValidateGetQueryObjectui64vEXT(Context *context, QueryID id, GLenum pname, GLuint64 *params);
-bool ValidateGetQueryObjectui64vRobustANGLE(Context *context,
+bool ValidateGetQueryObjectui64vEXT(const Context *context,
+                                    QueryID id,
+                                    GLenum pname,
+                                    GLuint64 *params);
+bool ValidateGetQueryObjectui64vRobustANGLE(const Context *context,
                                             QueryID id,
                                             GLenum pname,
                                             GLsizei bufSize,
-                                            GLsizei *length,
+                                            const GLsizei *length,
                                             GLuint64 *params);
 
-bool ValidateUniformCommonBase(Context *context,
-                               gl::Program *program,
-                               GLint location,
+bool ValidateUniformCommonBase(const Context *context,
+                               const Program *program,
+                               UniformLocation location,
                                GLsizei count,
                                const LinkedUniform **uniformOut);
-bool ValidateUniform1ivValue(Context *context,
+bool ValidateUniform1ivValue(const Context *context,
                              GLenum uniformType,
                              GLsizei count,
                              const GLint *value);
 
-ANGLE_INLINE bool ValidateUniformValue(Context *context, GLenum valueType, GLenum uniformType)
+ANGLE_INLINE bool ValidateUniformValue(const Context *context, GLenum valueType, GLenum uniformType)
 {
     // Check that the value type is compatible with uniform type.
     // Do the cheaper test first, for a little extra speed.
@@ -254,44 +271,47 @@ ANGLE_INLINE bool ValidateUniformValue(Context *context, GLenum valueType, GLenu
     return true;
 }
 
-bool ValidateUniformMatrixValue(Context *context, GLenum valueType, GLenum uniformType);
-bool ValidateUniform(Context *context, GLenum uniformType, GLint location, GLsizei count);
-bool ValidateUniformMatrix(Context *context,
+bool ValidateUniformMatrixValue(const Context *context, GLenum valueType, GLenum uniformType);
+bool ValidateUniform(const Context *context,
+                     GLenum uniformType,
+                     UniformLocation location,
+                     GLsizei count);
+bool ValidateUniformMatrix(const Context *context,
                            GLenum matrixType,
-                           GLint location,
+                           UniformLocation location,
                            GLsizei count,
                            GLboolean transpose);
-bool ValidateGetBooleanvRobustANGLE(Context *context,
+bool ValidateGetBooleanvRobustANGLE(const Context *context,
                                     GLenum pname,
                                     GLsizei bufSize,
-                                    GLsizei *length,
-                                    GLboolean *params);
-bool ValidateGetFloatvRobustANGLE(Context *context,
+                                    const GLsizei *length,
+                                    const GLboolean *params);
+bool ValidateGetFloatvRobustANGLE(const Context *context,
                                   GLenum pname,
                                   GLsizei bufSize,
-                                  GLsizei *length,
-                                  GLfloat *params);
-bool ValidateStateQuery(Context *context,
+                                  const GLsizei *length,
+                                  const GLfloat *params);
+bool ValidateStateQuery(const Context *context,
                         GLenum pname,
                         GLenum *nativeType,
                         unsigned int *numParams);
-bool ValidateGetIntegervRobustANGLE(Context *context,
+bool ValidateGetIntegervRobustANGLE(const Context *context,
                                     GLenum pname,
                                     GLsizei bufSize,
-                                    GLsizei *length,
-                                    GLint *data);
-bool ValidateGetInteger64vRobustANGLE(Context *context,
+                                    const GLsizei *length,
+                                    const GLint *data);
+bool ValidateGetInteger64vRobustANGLE(const Context *context,
                                       GLenum pname,
                                       GLsizei bufSize,
-                                      GLsizei *length,
+                                      const GLsizei *length,
                                       GLint64 *data);
-bool ValidateRobustStateQuery(Context *context,
+bool ValidateRobustStateQuery(const Context *context,
                               GLenum pname,
                               GLsizei bufSize,
                               GLenum *nativeType,
                               unsigned int *numParams);
 
-bool ValidateCopyTexImageParametersBase(Context *context,
+bool ValidateCopyTexImageParametersBase(const Context *context,
                                         TextureTarget target,
                                         GLint level,
                                         GLenum internalformat,
@@ -306,10 +326,10 @@ bool ValidateCopyTexImageParametersBase(Context *context,
                                         GLint border,
                                         Format *textureFormatOut);
 
-void RecordDrawModeError(Context *context, PrimitiveMode mode);
-const char *ValidateDrawElementsStates(Context *context);
+void RecordDrawModeError(const Context *context, PrimitiveMode mode);
+const char *ValidateDrawElementsStates(const Context *context);
 
-ANGLE_INLINE bool ValidateDrawBase(Context *context, PrimitiveMode mode)
+ANGLE_INLINE bool ValidateDrawBase(const Context *context, PrimitiveMode mode)
 {
     if (!context->getStateCache().isValidDrawMode(mode))
     {
@@ -334,199 +354,201 @@ ANGLE_INLINE bool ValidateDrawBase(Context *context, PrimitiveMode mode)
     return true;
 }
 
-bool ValidateDrawArraysInstancedBase(Context *context,
+bool ValidateDrawArraysInstancedBase(const Context *context,
                                      PrimitiveMode mode,
                                      GLint first,
                                      GLsizei count,
                                      GLsizei primcount);
-bool ValidateDrawArraysInstancedANGLE(Context *context,
+bool ValidateDrawArraysInstancedANGLE(const Context *context,
                                       PrimitiveMode mode,
                                       GLint first,
                                       GLsizei count,
                                       GLsizei primcount);
-bool ValidateDrawArraysInstancedEXT(Context *context,
+bool ValidateDrawArraysInstancedEXT(const Context *context,
                                     PrimitiveMode mode,
                                     GLint first,
                                     GLsizei count,
                                     GLsizei primcount);
 
-bool ValidateDrawElementsInstancedBase(Context *context,
+bool ValidateDrawElementsInstancedBase(const Context *context,
                                        PrimitiveMode mode,
                                        GLsizei count,
                                        DrawElementsType type,
                                        const void *indices,
                                        GLsizei primcount);
-bool ValidateDrawElementsInstancedANGLE(Context *context,
+bool ValidateDrawElementsInstancedANGLE(const Context *context,
                                         PrimitiveMode mode,
                                         GLsizei count,
                                         DrawElementsType type,
                                         const void *indices,
                                         GLsizei primcount);
-bool ValidateDrawElementsInstancedEXT(Context *context,
+bool ValidateDrawElementsInstancedEXT(const Context *context,
                                       PrimitiveMode mode,
                                       GLsizei count,
                                       DrawElementsType type,
                                       const void *indices,
                                       GLsizei primcount);
 
-bool ValidateDrawInstancedANGLE(Context *context);
-bool ValidateDrawInstancedEXT(Context *context);
+bool ValidateDrawInstancedANGLE(const Context *context);
+bool ValidateDrawInstancedEXT(const Context *context);
 
-bool ValidateFramebufferTextureBase(Context *context,
+bool ValidateFramebufferTextureBase(const Context *context,
                                     GLenum target,
                                     GLenum attachment,
                                     TextureID texture,
                                     GLint level);
 
-bool ValidateGetUniformBase(Context *context, ShaderProgramID program, GLint location);
-bool ValidateGetnUniformfvEXT(Context *context,
+bool ValidateGetUniformBase(const Context *context,
+                            ShaderProgramID program,
+                            UniformLocation location);
+bool ValidateGetnUniformfvEXT(const Context *context,
                               ShaderProgramID program,
-                              GLint location,
+                              UniformLocation location,
                               GLsizei bufSize,
-                              GLfloat *params);
-bool ValidateGetnUniformfvRobustANGLE(Context *context,
+                              const GLfloat *params);
+bool ValidateGetnUniformfvRobustANGLE(const Context *context,
                                       ShaderProgramID program,
-                                      GLint location,
+                                      UniformLocation location,
                                       GLsizei bufSize,
-                                      GLsizei *length,
-                                      GLfloat *params);
-bool ValidateGetnUniformivEXT(Context *context,
+                                      const GLsizei *length,
+                                      const GLfloat *params);
+bool ValidateGetnUniformivEXT(const Context *context,
                               ShaderProgramID program,
-                              GLint location,
+                              UniformLocation location,
                               GLsizei bufSize,
-                              GLint *params);
-bool ValidateGetnUniformivRobustANGLE(Context *context,
+                              const GLint *params);
+bool ValidateGetnUniformivRobustANGLE(const Context *context,
                                       ShaderProgramID program,
-                                      GLint location,
+                                      UniformLocation location,
                                       GLsizei bufSize,
-                                      GLsizei *length,
-                                      GLint *params);
-bool ValidateGetnUniformuivRobustANGLE(Context *context,
+                                      const GLsizei *length,
+                                      const GLint *params);
+bool ValidateGetnUniformuivRobustANGLE(const Context *context,
                                        ShaderProgramID program,
-                                       GLint location,
+                                       UniformLocation location,
                                        GLsizei bufSize,
-                                       GLsizei *length,
-                                       GLuint *params);
-bool ValidateGetUniformfvRobustANGLE(Context *context,
+                                       const GLsizei *length,
+                                       const GLuint *params);
+bool ValidateGetUniformfvRobustANGLE(const Context *context,
                                      ShaderProgramID program,
-                                     GLint location,
+                                     UniformLocation location,
                                      GLsizei bufSize,
-                                     GLsizei *length,
-                                     GLfloat *params);
-bool ValidateGetUniformivRobustANGLE(Context *context,
+                                     const GLsizei *length,
+                                     const GLfloat *params);
+bool ValidateGetUniformivRobustANGLE(const Context *context,
                                      ShaderProgramID program,
-                                     GLint location,
+                                     UniformLocation location,
                                      GLsizei bufSize,
-                                     GLsizei *length,
-                                     GLint *params);
-bool ValidateGetUniformuivRobustANGLE(Context *context,
+                                     const GLsizei *length,
+                                     const GLint *params);
+bool ValidateGetUniformuivRobustANGLE(const Context *context,
                                       ShaderProgramID program,
-                                      GLint location,
+                                      UniformLocation location,
                                       GLsizei bufSize,
-                                      GLsizei *length,
-                                      GLuint *params);
+                                      const GLsizei *length,
+                                      const GLuint *params);
 
-bool ValidateDiscardFramebufferBase(Context *context,
+bool ValidateDiscardFramebufferBase(const Context *context,
                                     GLenum target,
                                     GLsizei numAttachments,
                                     const GLenum *attachments,
                                     bool defaultFramebuffer);
 
-bool ValidateInsertEventMarkerEXT(Context *context, GLsizei length, const char *marker);
-bool ValidatePushGroupMarkerEXT(Context *context, GLsizei length, const char *marker);
+bool ValidateInsertEventMarkerEXT(const Context *context, GLsizei length, const char *marker);
+bool ValidatePushGroupMarkerEXT(const Context *context, GLsizei length, const char *marker);
 
-bool ValidateEGLImageTargetTexture2DOES(Context *context,
-                                        gl::TextureType type,
+bool ValidateEGLImageTargetTexture2DOES(const Context *context,
+                                        TextureType type,
                                         GLeglImageOES image);
-bool ValidateEGLImageTargetRenderbufferStorageOES(Context *context,
+bool ValidateEGLImageTargetRenderbufferStorageOES(const Context *context,
                                                   GLenum target,
                                                   GLeglImageOES image);
 
-bool ValidateBindVertexArrayBase(Context *context, VertexArrayID array);
+bool ValidateBindVertexArrayBase(const Context *context, VertexArrayID array);
 
-bool ValidateProgramBinaryBase(Context *context,
+bool ValidateProgramBinaryBase(const Context *context,
                                ShaderProgramID program,
                                GLenum binaryFormat,
                                const void *binary,
                                GLint length);
-bool ValidateGetProgramBinaryBase(Context *context,
+bool ValidateGetProgramBinaryBase(const Context *context,
                                   ShaderProgramID program,
                                   GLsizei bufSize,
-                                  GLsizei *length,
-                                  GLenum *binaryFormat,
-                                  void *binary);
+                                  const GLsizei *length,
+                                  const GLenum *binaryFormat,
+                                  const void *binary);
 
-bool ValidateDrawBuffersBase(Context *context, GLsizei n, const GLenum *bufs);
+bool ValidateDrawBuffersBase(const Context *context, GLsizei n, const GLenum *bufs);
 
-bool ValidateGetBufferPointervBase(Context *context,
+bool ValidateGetBufferPointervBase(const Context *context,
                                    BufferBinding target,
                                    GLenum pname,
                                    GLsizei *length,
-                                   void **params);
-bool ValidateUnmapBufferBase(Context *context, BufferBinding target);
-bool ValidateMapBufferRangeBase(Context *context,
+                                   void *const *params);
+bool ValidateUnmapBufferBase(const Context *context, BufferBinding target);
+bool ValidateMapBufferRangeBase(const Context *context,
                                 BufferBinding target,
                                 GLintptr offset,
                                 GLsizeiptr length,
                                 GLbitfield access);
-bool ValidateFlushMappedBufferRangeBase(Context *context,
+bool ValidateFlushMappedBufferRangeBase(const Context *context,
                                         BufferBinding target,
                                         GLintptr offset,
                                         GLsizeiptr length);
 
-bool ValidateGenOrDelete(Context *context, GLint n);
+bool ValidateGenOrDelete(const Context *context, GLint n);
 
-bool ValidateRobustEntryPoint(Context *context, GLsizei bufSize);
-bool ValidateRobustBufferSize(Context *context, GLsizei bufSize, GLsizei numParams);
+bool ValidateRobustEntryPoint(const Context *context, GLsizei bufSize);
+bool ValidateRobustBufferSize(const Context *context, GLsizei bufSize, GLsizei numParams);
 
-bool ValidateGetFramebufferAttachmentParameterivBase(Context *context,
+bool ValidateGetFramebufferAttachmentParameterivBase(const Context *context,
                                                      GLenum target,
                                                      GLenum attachment,
                                                      GLenum pname,
                                                      GLsizei *numParams);
 
-bool ValidateGetBufferParameterBase(Context *context,
+bool ValidateGetBufferParameterBase(const Context *context,
                                     BufferBinding target,
                                     GLenum pname,
                                     bool pointerVersion,
                                     GLsizei *numParams);
 
-bool ValidateGetProgramivBase(Context *context,
+bool ValidateGetProgramivBase(const Context *context,
                               ShaderProgramID program,
                               GLenum pname,
                               GLsizei *numParams);
 
-bool ValidateGetRenderbufferParameterivBase(Context *context,
+bool ValidateGetRenderbufferParameterivBase(const Context *context,
                                             GLenum target,
                                             GLenum pname,
                                             GLsizei *length);
 
-bool ValidateGetShaderivBase(Context *context,
+bool ValidateGetShaderivBase(const Context *context,
                              ShaderProgramID shader,
                              GLenum pname,
                              GLsizei *length);
 
-bool ValidateGetTexParameterBase(Context *context,
+bool ValidateGetTexParameterBase(const Context *context,
                                  TextureType target,
                                  GLenum pname,
                                  GLsizei *length);
 
 template <typename ParamType>
-bool ValidateTexParameterBase(Context *context,
+bool ValidateTexParameterBase(const Context *context,
                               TextureType target,
                               GLenum pname,
                               GLsizei bufSize,
                               bool vectorParams,
                               const ParamType *params);
 
-bool ValidateGetVertexAttribBase(Context *context,
+bool ValidateGetVertexAttribBase(const Context *context,
                                  GLuint index,
                                  GLenum pname,
                                  GLsizei *length,
                                  bool pointer,
                                  bool pureIntegerEntryPoint);
 
-ANGLE_INLINE bool ValidateVertexFormat(Context *context,
+ANGLE_INLINE bool ValidateVertexFormat(const Context *context,
                                        GLuint index,
                                        GLint size,
                                        VertexAttribTypeCase validation)
@@ -572,7 +594,7 @@ ANGLE_INLINE bool ValidateVertexFormat(Context *context,
 }
 
 // Note: These byte, short, and int types are all converted to float for the shader.
-ANGLE_INLINE bool ValidateFloatVertexFormat(Context *context,
+ANGLE_INLINE bool ValidateFloatVertexFormat(const Context *context,
                                             GLuint index,
                                             GLint size,
                                             VertexAttribType type)
@@ -581,7 +603,7 @@ ANGLE_INLINE bool ValidateFloatVertexFormat(Context *context,
                                 context->getStateCache().getVertexAttribTypeValidation(type));
 }
 
-ANGLE_INLINE bool ValidateIntegerVertexFormat(Context *context,
+ANGLE_INLINE bool ValidateIntegerVertexFormat(const Context *context,
                                               GLuint index,
                                               GLint size,
                                               VertexAttribType type)
@@ -590,75 +612,77 @@ ANGLE_INLINE bool ValidateIntegerVertexFormat(Context *context,
         context, index, size, context->getStateCache().getIntegerVertexAttribTypeValidation(type));
 }
 
-bool ValidateWebGLFramebufferAttachmentClearType(Context *context,
+bool ValidateWebGLFramebufferAttachmentClearType(const Context *context,
                                                  GLint drawbuffer,
                                                  const GLenum *validComponentTypes,
                                                  size_t validComponentTypeCount);
 
-bool ValidateRobustCompressedTexImageBase(Context *context, GLsizei imageSize, GLsizei dataSize);
+bool ValidateRobustCompressedTexImageBase(const Context *context,
+                                          GLsizei imageSize,
+                                          GLsizei dataSize);
 
-bool ValidateVertexAttribIndex(Context *context, GLuint index);
+bool ValidateVertexAttribIndex(const Context *context, GLuint index);
 
-bool ValidateGetActiveUniformBlockivBase(Context *context,
+bool ValidateGetActiveUniformBlockivBase(const Context *context,
                                          ShaderProgramID program,
                                          GLuint uniformBlockIndex,
                                          GLenum pname,
                                          GLsizei *length);
 
-bool ValidateGetSamplerParameterBase(Context *context,
+bool ValidateGetSamplerParameterBase(const Context *context,
                                      SamplerID sampler,
                                      GLenum pname,
                                      GLsizei *length);
 
 template <typename ParamType>
-bool ValidateSamplerParameterBase(Context *context,
+bool ValidateSamplerParameterBase(const Context *context,
                                   SamplerID sampler,
                                   GLenum pname,
                                   GLsizei bufSize,
                                   bool vectorParams,
                                   const ParamType *params);
 
-bool ValidateGetInternalFormativBase(Context *context,
+bool ValidateGetInternalFormativBase(const Context *context,
                                      GLenum target,
                                      GLenum internalformat,
                                      GLenum pname,
                                      GLsizei bufSize,
                                      GLsizei *numParams);
 
-bool ValidateFramebufferNotMultisampled(Context *context,
-                                        Framebuffer *framebuffer,
+bool ValidateFramebufferNotMultisampled(const Context *context,
+                                        const Framebuffer *framebuffer,
                                         bool needResourceSamples);
 
-bool ValidateMultitextureUnit(Context *context, GLenum texture);
+bool ValidateMultitextureUnit(const Context *context, GLenum texture);
 
 bool ValidateTransformFeedbackPrimitiveMode(const Context *context,
                                             PrimitiveMode transformFeedbackPrimitiveMode,
                                             PrimitiveMode renderPrimitiveMode);
 
 // Common validation for 2D and 3D variants of TexStorage*Multisample.
-bool ValidateTexStorageMultisample(Context *context,
+bool ValidateTexStorageMultisample(const Context *context,
                                    TextureType target,
                                    GLsizei samples,
                                    GLint internalFormat,
                                    GLsizei width,
                                    GLsizei height);
 
-bool ValidateTexStorage2DMultisampleBase(Context *context,
+bool ValidateTexStorage2DMultisampleBase(const Context *context,
                                          TextureType target,
                                          GLsizei samples,
                                          GLint internalFormat,
                                          GLsizei width,
                                          GLsizei height);
 
-bool ValidateGetTexLevelParameterBase(Context *context,
+bool ValidateGetTexLevelParameterBase(const Context *context,
                                       TextureTarget target,
                                       GLint level,
                                       GLenum pname,
                                       GLsizei *length);
 
-bool ValidateMapBufferBase(Context *context, BufferBinding target);
-bool ValidateIndexedStateQuery(Context *context, GLenum pname, GLuint index, GLsizei *length);
-bool ValidateES3TexImage2DParameters(Context *context,
+bool ValidateMapBufferBase(const Context *context, BufferBinding target);
+bool ValidateIndexedStateQuery(const Context *context, GLenum pname, GLuint index, GLsizei *length);
+bool ValidateES3TexImage2DParameters(const Context *context,
                                      TextureTarget target,
                                      GLint level,
                                      GLenum internalformat,
@@ -675,7 +699,7 @@ bool ValidateES3TexImage2DParameters(Context *context,
                                      GLenum type,
                                      GLsizei imageSize,
                                      const void *pixels);
-bool ValidateES3CopyTexImage2DParameters(Context *context,
+bool ValidateES3CopyTexImage2DParameters(const Context *context,
                                          TextureTarget target,
                                          GLint level,
                                          GLenum internalformat,
@@ -688,14 +712,14 @@ bool ValidateES3CopyTexImage2DParameters(Context *context,
                                          GLsizei width,
                                          GLsizei height,
                                          GLint border);
-bool ValidateES3TexStorage2DParameters(Context *context,
+bool ValidateES3TexStorage2DParameters(const Context *context,
                                        TextureType target,
                                        GLsizei levels,
                                        GLenum internalformat,
                                        GLsizei width,
                                        GLsizei height,
                                        GLsizei depth);
-bool ValidateES3TexStorage3DParameters(Context *context,
+bool ValidateES3TexStorage3DParameters(const Context *context,
                                        TextureType target,
                                        GLsizei levels,
                                        GLenum internalformat,
@@ -703,8 +727,11 @@ bool ValidateES3TexStorage3DParameters(Context *context,
                                        GLsizei height,
                                        GLsizei depth);
 
-bool ValidateGetMultisamplefvBase(Context *context, GLenum pname, GLuint index, GLfloat *val);
-bool ValidateSampleMaskiBase(Context *context, GLuint maskNumber, GLbitfield mask);
+bool ValidateGetMultisamplefvBase(const Context *context,
+                                  GLenum pname,
+                                  GLuint index,
+                                  const GLfloat *val);
+bool ValidateSampleMaskiBase(const Context *context, GLuint maskNumber, GLbitfield mask);
 
 // Utility macro for handling implementation methods inside Validation.
 #define ANGLE_HANDLE_VALIDATION_ERR(X) \
@@ -717,7 +744,8 @@ bool ValidateSampleMaskiBase(Context *context, GLuint maskNumber, GLbitfield mas
 // incongruent with the other errors.
 // Inlined for speed.
 template <GLenum ErrorCode = GL_INVALID_FRAMEBUFFER_OPERATION>
-ANGLE_INLINE bool ValidateFramebufferComplete(Context *context, Framebuffer *framebuffer)
+ANGLE_INLINE bool ValidateFramebufferComplete(const Context *context,
+                                              const Framebuffer *framebuffer)
 {
     if (!framebuffer->isComplete(context))
     {
@@ -728,11 +756,11 @@ ANGLE_INLINE bool ValidateFramebufferComplete(Context *context, Framebuffer *fra
     return true;
 }
 
-const char *ValidateDrawStates(Context *context);
+const char *ValidateDrawStates(const Context *context);
 
-void RecordDrawAttribsError(Context *context);
+void RecordDrawAttribsError(const Context *context);
 
-ANGLE_INLINE bool ValidateDrawAttribs(Context *context, int64_t maxVertex)
+ANGLE_INLINE bool ValidateDrawAttribs(const Context *context, int64_t maxVertex)
 {
     if (maxVertex > context->getStateCache().getNonInstancedVertexElementLimit())
     {
@@ -743,7 +771,7 @@ ANGLE_INLINE bool ValidateDrawAttribs(Context *context, int64_t maxVertex)
     return true;
 }
 
-ANGLE_INLINE bool ValidateDrawArraysAttribs(Context *context, GLint first, GLsizei count)
+ANGLE_INLINE bool ValidateDrawArraysAttribs(const Context *context, GLint first, GLsizei count)
 {
     if (!context->isBufferAccessValidationEnabled())
     {
@@ -766,7 +794,7 @@ ANGLE_INLINE bool ValidateDrawArraysAttribs(Context *context, GLint first, GLsiz
     return ValidateDrawAttribs(context, maxVertex);
 }
 
-ANGLE_INLINE bool ValidateDrawInstancedAttribs(Context *context, GLint primcount)
+ANGLE_INLINE bool ValidateDrawInstancedAttribs(const Context *context, GLint primcount)
 {
     if (!context->isBufferAccessValidationEnabled())
     {
@@ -782,7 +810,7 @@ ANGLE_INLINE bool ValidateDrawInstancedAttribs(Context *context, GLint primcount
     return true;
 }
 
-ANGLE_INLINE bool ValidateDrawArraysCommon(Context *context,
+ANGLE_INLINE bool ValidateDrawArraysCommon(const Context *context,
                                            PrimitiveMode mode,
                                            GLint first,
                                            GLsizei count,
@@ -825,7 +853,7 @@ ANGLE_INLINE bool ValidateDrawArraysCommon(Context *context,
     return ValidateDrawArraysAttribs(context, first, count);
 }
 
-ANGLE_INLINE bool ValidateDrawElementsBase(Context *context,
+ANGLE_INLINE bool ValidateDrawElementsBase(const Context *context,
                                            PrimitiveMode mode,
                                            DrawElementsType type)
 {
@@ -855,7 +883,7 @@ ANGLE_INLINE bool ValidateDrawElementsBase(Context *context,
     return true;
 }
 
-ANGLE_INLINE bool ValidateDrawElementsCommon(Context *context,
+ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
                                              PrimitiveMode mode,
                                              GLsizei count,
                                              DrawElementsType type,

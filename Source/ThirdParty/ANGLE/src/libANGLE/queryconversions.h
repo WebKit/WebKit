@@ -119,7 +119,7 @@ GLboolean ConvertToGLBoolean(ParamType param)
 
 // The GL state query API types are: bool, int, uint, float, int64, uint64
 template <typename QueryT>
-void CastStateValues(Context *context,
+void CastStateValues(const Context *context,
                      GLenum nativeType,
                      GLenum pname,
                      unsigned int numParams,

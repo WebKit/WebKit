@@ -3864,7 +3864,7 @@ void Renderer11::initializeFeatures(angle::FeaturesD3D *features) const
     {
         d3d11::InitializeFeatures(mRenderer11DeviceCaps, mAdapterDescription, features);
     }
-    OverrideFeaturesWithDisplayState(features, mDisplay->getState());
+    ApplyFeatureOverrides(features, mDisplay->getState());
 }
 
 DeviceImpl *Renderer11::createEGLDevice()

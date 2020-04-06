@@ -32,6 +32,8 @@ Some simple environment variables control frame capture:
 
  * `ANGLE_CAPTURE_ENABLED`:
    * Set to `0` to disable capture entirely. Default is `1`.
+ * `ANGLE_CAPTURE_COMPRESSION`:
+   * Set to `0` to disable capture compression. Default is `1`.
  * `ANGLE_CAPTURE_OUT_DIR=<path>`:
    * Can specify an alternate replay output directory.
    * Example: `ANGLE_CAPTURE_OUT_DIR=samples/capture_replay`. Default is the CWD.

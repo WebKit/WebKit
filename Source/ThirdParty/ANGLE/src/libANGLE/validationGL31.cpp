@@ -11,17 +11,17 @@
 namespace gl
 {
 
-bool ValidateGetActiveUniformName(Context *context,
+bool ValidateGetActiveUniformName(const Context *context,
                                   ShaderProgramID program,
                                   GLuint uniformIndex,
                                   GLsizei bufSize,
-                                  GLsizei *length,
-                                  GLchar *uniformName)
+                                  const GLsizei *length,
+                                  const GLchar *uniformName)
 {
     return true;
 }
 
-bool ValidatePrimitiveRestartIndex(Context *context, GLuint index)
+bool ValidatePrimitiveRestartIndex(const Context *context, GLuint index)
 {
     return true;
 }

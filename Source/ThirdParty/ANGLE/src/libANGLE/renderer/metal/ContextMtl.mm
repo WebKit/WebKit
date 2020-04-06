@@ -483,16 +483,34 @@ std::string ContextMtl::getRendererDescription() const
 }
 
 // EXT_debug_marker
-void ContextMtl::insertEventMarker(GLsizei length, const char *marker) {}
-void ContextMtl::pushGroupMarker(GLsizei length, const char *marker) {}
-void ContextMtl::popGroupMarker()
+angle::Result ContextMtl::insertEventMarker(GLsizei length, const char *marker)
 {
-    // TODO(hqle
+    return angle::Result::Continue;
+}
+
+angle::Result ContextMtl::pushGroupMarker(GLsizei length, const char *marker)
+{
+    return angle::Result::Continue;
+}
+
+angle::Result ContextMtl::popGroupMarker()
+{
+    return angle::Result::Continue;
 }
 
 // KHR_debug
-void ContextMtl::pushDebugGroup(GLenum source, GLuint id, const std::string &message) {}
-void ContextMtl::popDebugGroup() {}
+angle::Result ContextMtl::pushDebugGroup(const gl::Context *context,
+                                         GLenum source,
+                                         GLuint id,
+                                         const std::string &message)
+{
+    return angle::Result::Continue;
+}
+
+angle::Result ContextMtl::popDebugGroup(const gl::Context *context)
+{
+    return angle::Result::Continue;
+}
 
 // State sync with dirty bits.
 angle::Result ContextMtl::syncState(const gl::Context *context,
@@ -700,8 +718,6 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
                 break;
             case gl::State::DIRTY_BIT_COVERAGE_MODULATION:
                 break;
-            case gl::State::DIRTY_BIT_PATH_RENDERING:
-                break;
             case gl::State::DIRTY_BIT_FRAMEBUFFER_SRGB:
                 break;
             case gl::State::DIRTY_BIT_CURRENT_VALUES:
@@ -846,13 +862,6 @@ ProgramPipelineImpl *ContextMtl::createProgramPipeline(const gl::ProgramPipeline
     // NOTE(hqle): ES 3.0
     UNIMPLEMENTED();
     return nullptr;
-}
-
-// Path object creation
-std::vector<PathImpl *> ContextMtl::createPaths(GLsizei)
-{
-    UNIMPLEMENTED();
-    return std::vector<PathImpl *>();
 }
 
 // Memory object creation.
@@ -1435,8 +1444,7 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
                 ANGLE_TRY(handleDirtyDepthBias(context));
                 break;
             case DIRTY_BIT_STENCIL_REF:
-                mRenderEncoder.setStencilRefVals(mStencilRefFront,
-                                                 mStencilRefBack);
+                mRenderEncoder.setStencilRefVals(mStencilRefFront, mStencilRefBack);
                 break;
             case DIRTY_BIT_BLEND_COLOR:
                 mRenderEncoder.setBlendColor(
@@ -1529,8 +1537,8 @@ angle::Result ContextMtl::handleDirtyActiveTextures(const gl::Context *context)
     const gl::State &glState   = mState;
     const gl::Program *program = glState.getProgram();
 
-    const gl::ActiveTexturePointerArray &textures = glState.getActiveTexturesCache();
-    const gl::ActiveTextureMask &activeTextures   = program->getActiveSamplersMask();
+    const gl::ActiveTexturesCache &textures     = glState.getActiveTexturesCache();
+    const gl::ActiveTextureMask &activeTextures = program->getExecutable().getActiveSamplersMask();
 
     for (size_t textureUnit : activeTextures)
     {
@@ -1589,6 +1597,16 @@ angle::Result ContextMtl::handleDirtyDriverUniforms(const gl::Context *context)
     mDriverUniforms.depthRange[1] = depthRangeFar;
     mDriverUniforms.depthRange[2] = depthRangeDiff;
     mDriverUniforms.depthRange[3] = NeedToInvertDepthRange(depthRangeNear, depthRangeFar) ? -1 : 1;
+
+    // Fill in a mat2 identity matrix, plus padding
+    mDriverUniforms.preRotation[0] = 1.0f;
+    mDriverUniforms.preRotation[1] = 0.0f;
+    mDriverUniforms.preRotation[2] = 0.0f;
+    mDriverUniforms.preRotation[3] = 0.0f;
+    mDriverUniforms.preRotation[4] = 0.0f;
+    mDriverUniforms.preRotation[5] = 1.0f;
+    mDriverUniforms.preRotation[6] = 0.0f;
+    mDriverUniforms.preRotation[7] = 0.0f;
 
     ASSERT(mRenderEncoder.valid());
     mRenderEncoder.setFragmentData(mDriverUniforms, mtl::kDriverUniformsBindingIndex);

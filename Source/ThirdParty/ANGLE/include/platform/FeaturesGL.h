@@ -417,6 +417,19 @@ struct FeaturesGL : FeatureSetBase
         "flush_before_bindframebuffer", FeatureCategory::OpenGLWorkarounds,
         "Flush before glBindFramebuffer as a driver bug workaround",
         &members, "https://bugs.webkit.org/show_bug.cgi?id=206625"};
+
+    // Bugs exist in various OpenGL Intel drivers on Windows that produce incorrect
+    // values for GL_COMPRESSED_SRGB_S3TC_DXT1_EXT format. Replace it with
+    // GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT as it's the closest option allowed by
+    // the WebGL extension spec.
+    Feature avoidDXT1sRGBTextureFormat = {
+        "avoid_dxt1_srgb_texture_format", FeatureCategory::OpenGLWorkarounds,
+        "Replaces DXT1 sRGB with DXT1 sRGB Alpha as a driver bug workaround.", &members};
+
+    // GL_EXT_semaphore_fd doesn't work properly with Mesa 19.3.4 and earlier versions.
+    Feature disableSemaphoreFd = {"disable_semaphore_fd", FeatureCategory::OpenGLWorkarounds,
+                                  "Disable GL_EXT_semaphore_fd extension", &members,
+                                  "https://crbug.com/1046462"};
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

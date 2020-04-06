@@ -1898,7 +1898,7 @@ void Renderer9::clear(const ClearParameters &clearParams,
 
     // Clearing individual buffers other than buffer zero is not supported by Renderer9 and ES 2.0
     bool clearColor = clearParams.clearColor[0];
-    for (unsigned int i = 0; i < ArraySize(clearParams.clearColor); i++)
+    for (unsigned int i = 0; i < clearParams.clearColor.size(); i++)
     {
         ASSERT(clearParams.clearColor[i] == clearColor);
     }
@@ -1948,10 +1948,10 @@ void Renderer9::clear(const ClearParameters &clearParams,
                                            ? 0.0f
                                            : clearParams.colorF.blue));
 
-        if ((formatInfo.redBits > 0 && !clearParams.colorMaskRed) ||
-            (formatInfo.greenBits > 0 && !clearParams.colorMaskGreen) ||
-            (formatInfo.blueBits > 0 && !clearParams.colorMaskBlue) ||
-            (formatInfo.alphaBits > 0 && !clearParams.colorMaskAlpha))
+        if ((formatInfo.redBits > 0 && !clearParams.colorMaskRed[0]) ||
+            (formatInfo.greenBits > 0 && !clearParams.colorMaskGreen[0]) ||
+            (formatInfo.blueBits > 0 && !clearParams.colorMaskBlue[0]) ||
+            (formatInfo.alphaBits > 0 && !clearParams.colorMaskAlpha[0]))
         {
             needMaskedColorClear = true;
         }
@@ -2018,10 +2018,11 @@ void Renderer9::clear(const ClearParameters &clearParams,
 
         if (clearColor)
         {
-            mDevice->SetRenderState(
-                D3DRS_COLORWRITEENABLE,
-                gl_d3d9::ConvertColorMask(clearParams.colorMaskRed, clearParams.colorMaskGreen,
-                                          clearParams.colorMaskBlue, clearParams.colorMaskAlpha));
+            mDevice->SetRenderState(D3DRS_COLORWRITEENABLE,
+                                    gl_d3d9::ConvertColorMask(clearParams.colorMaskRed[0],
+                                                              clearParams.colorMaskGreen[0],
+                                                              clearParams.colorMaskBlue[0],
+                                                              clearParams.colorMaskAlpha[0]));
         }
         else
         {
@@ -3020,7 +3021,7 @@ void Renderer9::initializeFeatures(angle::FeaturesD3D *features) const
     {
         d3d9::InitializeFeatures(features);
     }
-    OverrideFeaturesWithDisplayState(features, mDisplay->getState());
+    ApplyFeatureOverrides(features, mDisplay->getState());
 }
 
 DeviceImpl *Renderer9::createEGLDevice()
@@ -3183,7 +3184,7 @@ angle::Result Renderer9::applyTextures(const gl::Context *context, gl::ShaderTyp
     ASSERT(!programD3D->isSamplerMappingDirty());
 
     // TODO(jmadill): Use the Program's sampler bindings.
-    const gl::ActiveTexturePointerArray &activeTextures = glState.getActiveTexturesCache();
+    const gl::ActiveTexturesCache &activeTextures = glState.getActiveTexturesCache();
 
     const gl::RangeUI samplerRange = programD3D->getUsedSamplerRange(shaderType);
     for (unsigned int samplerIndex = samplerRange.low(); samplerIndex < samplerRange.high();

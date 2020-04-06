@@ -54,7 +54,7 @@ bool ShouldCreateLogMessage(LogSeverity severity)
 #if defined(ANGLE_TRACE_ENABLED)
     return true;
 #elif defined(ANGLE_ENABLE_ASSERTS)
-    return severity != LOG_EVENT;
+    return severity == LOG_FATAL || severity == LOG_ERR || severity == LOG_WARN;
 #else
     return false;
 #endif
@@ -254,7 +254,8 @@ void Trace(LogSeverity severity, const char *message)
                 default:
                     UNREACHABLE();
             }
-            os_log_with_type(OS_LOG_DEFAULT, apple_log_type, "ANGLE: %s: %s\n", LogSeverityName(severity), str.c_str());
+            os_log_with_type(OS_LOG_DEFAULT, apple_log_type, "ANGLE: %s: %s\n",
+                             LogSeverityName(severity), str.c_str());
         }
 #else
         // Note: we use fprintf because <iostream> includes static initializers.

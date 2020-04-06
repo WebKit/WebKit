@@ -11,32 +11,35 @@
 namespace gl
 {
 
-bool ValidateFogCoordPointer(Context *context, GLenum type, GLsizei stride, const void *pointer)
+bool ValidateFogCoordPointer(const Context *context,
+                             GLenum type,
+                             GLsizei stride,
+                             const void *pointer)
 {
     return true;
 }
 
-bool ValidateFogCoordd(Context *context, GLdouble coord)
+bool ValidateFogCoordd(const Context *context, GLdouble coord)
 {
     return true;
 }
 
-bool ValidateFogCoorddv(Context *context, const GLdouble *coord)
+bool ValidateFogCoorddv(const Context *context, const GLdouble *coord)
 {
     return true;
 }
 
-bool ValidateFogCoordf(Context *context, GLfloat coord)
+bool ValidateFogCoordf(const Context *context, GLfloat coord)
 {
     return true;
 }
 
-bool ValidateFogCoordfv(Context *context, const GLfloat *coord)
+bool ValidateFogCoordfv(const Context *context, const GLfloat *coord)
 {
     return true;
 }
 
-bool ValidateMultiDrawArrays(Context *context,
+bool ValidateMultiDrawArrays(const Context *context,
                              PrimitiveMode modePacked,
                              const GLint *first,
                              const GLsizei *count,
@@ -45,7 +48,7 @@ bool ValidateMultiDrawArrays(Context *context,
     return true;
 }
 
-bool ValidateMultiDrawElements(Context *context,
+bool ValidateMultiDrawElements(const Context *context,
                                PrimitiveMode modePacked,
                                const GLsizei *count,
                                DrawElementsType typePacked,
@@ -55,97 +58,97 @@ bool ValidateMultiDrawElements(Context *context,
     return true;
 }
 
-bool ValidatePointParameteri(Context *context, GLenum pname, GLint param)
+bool ValidatePointParameteri(const Context *context, GLenum pname, GLint param)
 {
     return true;
 }
 
-bool ValidatePointParameteriv(Context *context, GLenum pname, const GLint *params)
+bool ValidatePointParameteriv(const Context *context, GLenum pname, const GLint *params)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3b(Context *context, GLbyte red, GLbyte green, GLbyte blue)
+bool ValidateSecondaryColor3b(const Context *context, GLbyte red, GLbyte green, GLbyte blue)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3bv(Context *context, const GLbyte *v)
+bool ValidateSecondaryColor3bv(const Context *context, const GLbyte *v)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3d(Context *context, GLdouble red, GLdouble green, GLdouble blue)
+bool ValidateSecondaryColor3d(const Context *context, GLdouble red, GLdouble green, GLdouble blue)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3dv(Context *context, const GLdouble *v)
+bool ValidateSecondaryColor3dv(const Context *context, const GLdouble *v)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3f(Context *context, GLfloat red, GLfloat green, GLfloat blue)
+bool ValidateSecondaryColor3f(const Context *context, GLfloat red, GLfloat green, GLfloat blue)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3fv(Context *context, const GLfloat *v)
+bool ValidateSecondaryColor3fv(const Context *context, const GLfloat *v)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3i(Context *context, GLint red, GLint green, GLint blue)
+bool ValidateSecondaryColor3i(const Context *context, GLint red, GLint green, GLint blue)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3iv(Context *context, const GLint *v)
+bool ValidateSecondaryColor3iv(const Context *context, const GLint *v)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3s(Context *context, GLshort red, GLshort green, GLshort blue)
+bool ValidateSecondaryColor3s(const Context *context, GLshort red, GLshort green, GLshort blue)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3sv(Context *context, const GLshort *v)
+bool ValidateSecondaryColor3sv(const Context *context, const GLshort *v)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3ub(Context *context, GLubyte red, GLubyte green, GLubyte blue)
+bool ValidateSecondaryColor3ub(const Context *context, GLubyte red, GLubyte green, GLubyte blue)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3ubv(Context *context, const GLubyte *v)
+bool ValidateSecondaryColor3ubv(const Context *context, const GLubyte *v)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3ui(Context *context, GLuint red, GLuint green, GLuint blue)
+bool ValidateSecondaryColor3ui(const Context *context, GLuint red, GLuint green, GLuint blue)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3uiv(Context *context, const GLuint *v)
+bool ValidateSecondaryColor3uiv(const Context *context, const GLuint *v)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3us(Context *context, GLushort red, GLushort green, GLushort blue)
+bool ValidateSecondaryColor3us(const Context *context, GLushort red, GLushort green, GLushort blue)
 {
     return true;
 }
 
-bool ValidateSecondaryColor3usv(Context *context, const GLushort *v)
+bool ValidateSecondaryColor3usv(const Context *context, const GLushort *v)
 {
     return true;
 }
 
-bool ValidateSecondaryColorPointer(Context *context,
+bool ValidateSecondaryColorPointer(const Context *context,
                                    GLint size,
                                    GLenum type,
                                    GLsizei stride,
@@ -154,82 +157,82 @@ bool ValidateSecondaryColorPointer(Context *context,
     return true;
 }
 
-bool ValidateWindowPos2d(Context *context, GLdouble x, GLdouble y)
+bool ValidateWindowPos2d(const Context *context, GLdouble x, GLdouble y)
 {
     return true;
 }
 
-bool ValidateWindowPos2dv(Context *context, const GLdouble *v)
+bool ValidateWindowPos2dv(const Context *context, const GLdouble *v)
 {
     return true;
 }
 
-bool ValidateWindowPos2f(Context *context, GLfloat x, GLfloat y)
+bool ValidateWindowPos2f(const Context *context, GLfloat x, GLfloat y)
 {
     return true;
 }
 
-bool ValidateWindowPos2fv(Context *context, const GLfloat *v)
+bool ValidateWindowPos2fv(const Context *context, const GLfloat *v)
 {
     return true;
 }
 
-bool ValidateWindowPos2i(Context *context, GLint x, GLint y)
+bool ValidateWindowPos2i(const Context *context, GLint x, GLint y)
 {
     return true;
 }
 
-bool ValidateWindowPos2iv(Context *context, const GLint *v)
+bool ValidateWindowPos2iv(const Context *context, const GLint *v)
 {
     return true;
 }
 
-bool ValidateWindowPos2s(Context *context, GLshort x, GLshort y)
+bool ValidateWindowPos2s(const Context *context, GLshort x, GLshort y)
 {
     return true;
 }
 
-bool ValidateWindowPos2sv(Context *context, const GLshort *v)
+bool ValidateWindowPos2sv(const Context *context, const GLshort *v)
 {
     return true;
 }
 
-bool ValidateWindowPos3d(Context *context, GLdouble x, GLdouble y, GLdouble z)
+bool ValidateWindowPos3d(const Context *context, GLdouble x, GLdouble y, GLdouble z)
 {
     return true;
 }
 
-bool ValidateWindowPos3dv(Context *context, const GLdouble *v)
+bool ValidateWindowPos3dv(const Context *context, const GLdouble *v)
 {
     return true;
 }
 
-bool ValidateWindowPos3f(Context *context, GLfloat x, GLfloat y, GLfloat z)
+bool ValidateWindowPos3f(const Context *context, GLfloat x, GLfloat y, GLfloat z)
 {
     return true;
 }
 
-bool ValidateWindowPos3fv(Context *context, const GLfloat *v)
+bool ValidateWindowPos3fv(const Context *context, const GLfloat *v)
 {
     return true;
 }
 
-bool ValidateWindowPos3i(Context *context, GLint x, GLint y, GLint z)
+bool ValidateWindowPos3i(const Context *context, GLint x, GLint y, GLint z)
 {
     return true;
 }
 
-bool ValidateWindowPos3iv(Context *context, const GLint *v)
+bool ValidateWindowPos3iv(const Context *context, const GLint *v)
 {
     return true;
 }
 
-bool ValidateWindowPos3s(Context *context, GLshort x, GLshort y, GLshort z)
+bool ValidateWindowPos3s(const Context *context, GLshort x, GLshort y, GLshort z)
 {
     return true;
 }
 
-bool ValidateWindowPos3sv(Context *context, const GLshort *v)
+bool ValidateWindowPos3sv(const Context *context, const GLshort *v)
 {
     return true;
 }

@@ -25,7 +25,8 @@ struct ConversionBuffer
     ConversionBuffer(RendererVk *renderer,
                      VkBufferUsageFlags usageFlags,
                      size_t initialSize,
-                     size_t alignment);
+                     size_t alignment,
+                     bool hostVisible);
     ~ConversionBuffer();
 
     ConversionBuffer(ConversionBuffer &&other);
@@ -110,7 +111,8 @@ class BufferVk : public BufferImpl
     ConversionBuffer *getVertexConversionBuffer(RendererVk *renderer,
                                                 angle::FormatID formatID,
                                                 GLuint stride,
-                                                size_t offset);
+                                                size_t offset,
+                                                bool hostVisible);
 
   private:
     void initializeStagingBuffer(ContextVk *contextVk, gl::BufferBinding target, size_t size);
@@ -126,7 +128,8 @@ class BufferVk : public BufferImpl
         VertexConversionBuffer(RendererVk *renderer,
                                angle::FormatID formatIDIn,
                                GLuint strideIn,
-                               size_t offsetIn);
+                               size_t offsetIn,
+                               bool hostVisible);
         ~VertexConversionBuffer();
 
         VertexConversionBuffer(VertexConversionBuffer &&other);

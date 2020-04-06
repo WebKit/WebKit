@@ -85,13 +85,6 @@ class ProgramNULL : public ProgramImpl
     void getUniformfv(const gl::Context *context, GLint location, GLfloat *params) const override;
     void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
     void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
-
-    // CHROMIUM_path_rendering
-    // Set parameters to control fragment shader input variable interpolation
-    void setPathFragmentInputGen(const std::string &inputName,
-                                 GLenum genMode,
-                                 GLint components,
-                                 const GLfloat *coeffs) override;
 };
 
 }  // namespace rx

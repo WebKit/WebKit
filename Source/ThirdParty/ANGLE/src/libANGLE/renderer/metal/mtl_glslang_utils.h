@@ -22,12 +22,12 @@ namespace mtl
 void GlslangGetShaderSource(const gl::ProgramState &programState,
                             const gl::ProgramLinkedResources &resources,
                             gl::ShaderMap<std::string> *shaderSourcesOut,
-                            ShaderInterfaceVariableInfoMap *variableInfoMapOut);
+                            ShaderMapInterfaceVariableInfoMap *variableInfoMapOut);
 
 angle::Result GlslangGetShaderSpirvCode(ErrorHandler *context,
                                         const gl::Caps &glCaps,
                                         const gl::ShaderMap<std::string> &shaderSources,
-                                        const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                                        const ShaderMapInterfaceVariableInfoMap &variableInfoMap,
                                         gl::ShaderMap<std::vector<uint32_t>> *shaderCodeOut);
 }  // namespace mtl
 }  // namespace rx

@@ -11,7 +11,7 @@
 namespace gl
 {
 
-bool ValidateClearBufferData(Context *context,
+bool ValidateClearBufferData(const Context *context,
                              GLenum target,
                              GLenum internalformat,
                              GLenum format,
@@ -21,7 +21,7 @@ bool ValidateClearBufferData(Context *context,
     return true;
 }
 
-bool ValidateClearBufferSubData(Context *context,
+bool ValidateClearBufferSubData(const Context *context,
                                 GLenum target,
                                 GLenum internalformat,
                                 GLintptr offset,
@@ -33,17 +33,17 @@ bool ValidateClearBufferSubData(Context *context,
     return true;
 }
 
-bool ValidateGetInternalformati64v(Context *context,
+bool ValidateGetInternalformati64v(const Context *context,
                                    GLenum target,
                                    GLenum internalformat,
                                    GLenum pname,
                                    GLsizei bufSize,
-                                   GLint64 *params)
+                                   const GLint64 *params)
 {
     return true;
 }
 
-bool ValidateGetProgramResourceLocationIndex(Context *context,
+bool ValidateGetProgramResourceLocationIndex(const Context *context,
                                              ShaderProgramID program,
                                              GLenum programInterface,
                                              const GLchar *name)
@@ -51,12 +51,12 @@ bool ValidateGetProgramResourceLocationIndex(Context *context,
     return true;
 }
 
-bool ValidateInvalidateBufferData(Context *context, BufferID buffer)
+bool ValidateInvalidateBufferData(const Context *context, BufferID buffer)
 {
     return true;
 }
 
-bool ValidateInvalidateBufferSubData(Context *context,
+bool ValidateInvalidateBufferSubData(const Context *context,
                                      BufferID buffer,
                                      GLintptr offset,
                                      GLsizeiptr length)
@@ -64,12 +64,12 @@ bool ValidateInvalidateBufferSubData(Context *context,
     return true;
 }
 
-bool ValidateInvalidateTexImage(Context *context, TextureID texture, GLint level)
+bool ValidateInvalidateTexImage(const Context *context, TextureID texture, GLint level)
 {
     return true;
 }
 
-bool ValidateInvalidateTexSubImage(Context *context,
+bool ValidateInvalidateTexSubImage(const Context *context,
                                    TextureID texture,
                                    GLint level,
                                    GLint xoffset,
@@ -82,7 +82,7 @@ bool ValidateInvalidateTexSubImage(Context *context,
     return true;
 }
 
-bool ValidateMultiDrawArraysIndirect(Context *context,
+bool ValidateMultiDrawArraysIndirect(const Context *context,
                                      GLenum mode,
                                      const void *indirect,
                                      GLsizei drawcount,
@@ -91,7 +91,7 @@ bool ValidateMultiDrawArraysIndirect(Context *context,
     return true;
 }
 
-bool ValidateMultiDrawElementsIndirect(Context *context,
+bool ValidateMultiDrawElementsIndirect(const Context *context,
                                        GLenum mode,
                                        GLenum type,
                                        const void *indirect,
@@ -101,7 +101,7 @@ bool ValidateMultiDrawElementsIndirect(Context *context,
     return true;
 }
 
-bool ValidateShaderStorageBlockBinding(Context *context,
+bool ValidateShaderStorageBlockBinding(const Context *context,
                                        ShaderProgramID program,
                                        GLuint storageBlockIndex,
                                        GLuint storageBlockBinding)
@@ -109,7 +109,7 @@ bool ValidateShaderStorageBlockBinding(Context *context,
     return true;
 }
 
-bool ValidateTextureView(Context *context,
+bool ValidateTextureView(const Context *context,
                          TextureID texture,
                          GLenum target,
                          GLuint origtexture,
@@ -122,7 +122,7 @@ bool ValidateTextureView(Context *context,
     return true;
 }
 
-bool ValidateVertexAttribLFormat(Context *context,
+bool ValidateVertexAttribLFormat(const Context *context,
                                  GLuint attribindex,
                                  GLint size,
                                  GLenum type,

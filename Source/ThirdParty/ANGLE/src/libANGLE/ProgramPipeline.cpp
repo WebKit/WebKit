@@ -17,7 +17,10 @@
 namespace gl
 {
 
-ProgramPipelineState::ProgramPipelineState() : mLabel() {}
+ProgramPipelineState::ProgramPipelineState() : mLabel()
+{
+    mExecutable.setProgramPipelineState(this);
+}
 
 ProgramPipelineState::~ProgramPipelineState() {}
 

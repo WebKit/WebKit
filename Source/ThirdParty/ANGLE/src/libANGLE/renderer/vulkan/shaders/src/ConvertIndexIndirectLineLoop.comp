@@ -8,11 +8,28 @@
 //
 // The following defines tweak the functionality, and a different shader is built based on these.
 //
-//  - Flags:
-//    * Is32Bit: Process 32-bit indices, otherwise process 16-bit.
+//  - IndicesBitsWidth:
+//    * Is8Bits:  Process 8-bit indices.
+//    * Is16Bits: Process 16-bit indices.
+//    * Is32Bits: Process 32-bit indices.
 //
 
 #version 450 core
+
+#if Is32Bits
+#define BITSMASK 0xffffffff
+#elif Is16Bits
+#define BITSMASK 0xffff
+#define IDXSHIFT 1                            // 16bits index division shift
+#define SRCSHIFT(index) ((index & 0x1) << 4)  // 16bits data shift value in 32bits index
+#elif Is8Bits
+#define BITSMASK 0xff
+#define IDXSHIFT 2                            // 8bits index division shift
+#define SRCSHIFT(index) ((index & 0x3) << 3)  // 8bits data shift value in 32bits index
+#else
+// Early error out
+#error "Not all bits are accounted for"
+#endif
 
 layout (local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
 
@@ -64,43 +81,42 @@ layout (push_constant) uniform PushConstants
 
 uint GetIndexValue(uint index)
 {
-#ifdef Is32Bit
+#if Is32Bits
     return srcData[index];
-#else
+#elif Is16Bits || Is8Bits
     // srcData points to 32bit words, get the word with our index value
-    uint srcBlock = srcData[index >> 1];
+    uint srcBlock = srcData[index >> IDXSHIFT];
     // Compute the shift necessary to access desired index value
-    uint srcShift = (index & 0x1) << 4;
-    // Only want 16bits
-    uint srcMask = 0xffff;
-
-    // unpacking correct 16bit index value from the 32bit word
-    uint value = (srcBlock >> srcShift) & srcMask;
+    uint srcShift = SRCSHIFT(index);
+    // unpacking correct 8/16 bits index value from the 32bit word
+    uint value = (srcBlock >> srcShift) & BITSMASK;
     return value;
-#endif
+#else
+#error "Not all bits are accounted for"
+#endif // Is32Bits
 }
 
 void PutIndexValue(uint index, uint value)
 {
-#ifdef Is32Bit
+#if Is32Bits
     dstData[dstOffsetDiv4 + index] = value;
-    return;
-#else
+#elif Is16Bits || Is8Bits
     // Compute index into dstData for our index value
-    uint dstIndex = dstOffsetDiv4 + (index >> 1);
+    uint dstIndex = dstOffsetDiv4 + (index >> IDXSHIFT);
     // Get dest index value
     uint srcBlock = dstData[dstIndex];
     // Compute the shift for our index value
-    uint srcShift = (index & 0x1) << 4;
-    uint srcMask = 0xffff;
+    uint srcShift = SRCSHIFT(index);
 
-    // Clear appropriate 16bits of 32bit word
-    srcBlock &= ~(srcMask << srcShift);
-    // Shift value to pack 16bit value into 32bit word
+    // Clear appropriate bits of 32bit word
+    srcBlock &= ~(BITSMASK << srcShift);
+    // Shift value to pack 8/16 bits value into 32bit word
     srcBlock |= value << srcShift;
     // Store updated value in destination
     dstData[dstIndex] = srcBlock;
-#endif
+#else
+#error "Not all bits are accounted for"
+#endif // Is32Bits
 }
 
 void main()
@@ -122,12 +138,7 @@ void main()
     while (indicesRemaining > 0)
     {
         uint indexValue;
-
-#ifdef Is32Bit
-        uint restartValue = 0xffffffff;
-#else
-        uint restartValue = 0xffff;
-#endif
+        uint restartValue = BITSMASK;
         indexValue = GetIndexValue(srcIdx++);
         if (lineSize == 0)
         {

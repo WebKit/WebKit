@@ -30,6 +30,11 @@ angle::Result Semaphore::importFd(Context *context, HandleType handleType, GLint
     return mImplementation->importFd(context, handleType, fd);
 }
 
+angle::Result Semaphore::importZirconHandle(Context *context, HandleType handleType, GLuint handle)
+{
+    return mImplementation->importZirconHandle(context, handleType, handle);
+}
+
 angle::Result Semaphore::wait(Context *context,
                               const BufferBarrierVector &bufferBarriers,
                               const TextureBarrierVector &textureBarriers)

@@ -145,13 +145,6 @@ class ProgramImpl : angle::NonCopyable
                                GLint location,
                                GLuint *params) const                                           = 0;
 
-    // CHROMIUM_path_rendering
-    // Set parameters to control fragment shader input variable interpolation
-    virtual void setPathFragmentInputGen(const std::string &inputName,
-                                         GLenum genMode,
-                                         GLint components,
-                                         const GLfloat *coeffs) = 0;
-
     // Implementation-specific method for ignoring unreferenced uniforms. Some implementations may
     // perform more extensive analysis and ignore some locations that ANGLE doesn't detect as
     // unreferenced. This method is not required to be overriden by a back-end.

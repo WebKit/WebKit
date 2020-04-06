@@ -49,11 +49,11 @@ angle::Result QueryVk::begin(const gl::Context *context)
     if (getType() == gl::QueryType::TransformFeedbackPrimitivesWritten)
     {
         mTransformFeedbackPrimitivesDrawn = 0;
-        contextVk->getCommandGraph()->beginTransformFeedbackEmulatedQuery();
+        // We could consider using VK_QUERY_TYPE_TRANSFORM_FEEDBACK_STREAM_EXT.
         return angle::Result::Continue;
     }
 
-    if (!mQueryHelper.getQueryPool())
+    if (!mQueryHelper.valid())
     {
         ANGLE_TRY(contextVk->getQueryPool(getType())->allocateQuery(contextVk, &mQueryHelper));
     }
@@ -61,17 +61,17 @@ angle::Result QueryVk::begin(const gl::Context *context)
     // Note: TimeElapsed is implemented by using two Timestamp queries and taking the diff.
     if (getType() == gl::QueryType::TimeElapsed)
     {
-        if (!mQueryHelperTimeElapsedBegin.getQueryPool())
+        if (!mQueryHelperTimeElapsedBegin.valid())
         {
             ANGLE_TRY(contextVk->getQueryPool(getType())->allocateQuery(
                 contextVk, &mQueryHelperTimeElapsedBegin));
         }
 
-        mQueryHelperTimeElapsedBegin.writeTimestamp(contextVk);
+        ANGLE_TRY(mQueryHelperTimeElapsedBegin.flushAndWriteTimestamp(contextVk));
     }
     else
     {
-        mQueryHelper.beginQuery(contextVk);
+        ANGLE_TRY(mQueryHelper.beginQuery(contextVk));
     }
 
     return angle::Result::Continue;
@@ -94,15 +94,15 @@ angle::Result QueryVk::end(const gl::Context *context)
             mCachedResult += transformFeedback->getPrimitivesDrawn();
         }
         mCachedResultValid = true;
-        contextVk->getCommandGraph()->endTransformFeedbackEmulatedQuery();
+        // We could consider using VK_QUERY_TYPE_TRANSFORM_FEEDBACK_STREAM_EXT.
     }
     else if (getType() == gl::QueryType::TimeElapsed)
     {
-        mQueryHelper.writeTimestamp(contextVk);
+        ANGLE_TRY(mQueryHelper.flushAndWriteTimestamp(contextVk));
     }
     else
     {
-        mQueryHelper.endQuery(contextVk);
+        ANGLE_TRY(mQueryHelper.endQuery(contextVk));
     }
 
     return angle::Result::Continue;
@@ -114,16 +114,14 @@ angle::Result QueryVk::queryCounter(const gl::Context *context)
 
     mCachedResultValid = false;
 
-    if (!mQueryHelper.getQueryPool())
+    if (!mQueryHelper.valid())
     {
         ANGLE_TRY(contextVk->getQueryPool(getType())->allocateQuery(contextVk, &mQueryHelper));
     }
 
     ASSERT(getType() == gl::QueryType::Timestamp);
 
-    mQueryHelper.writeTimestamp(contextVk);
-
-    return angle::Result::Continue;
+    return mQueryHelper.flushAndWriteTimestamp(contextVk);
 }
 
 angle::Result QueryVk::getResult(const gl::Context *context, bool wait)
@@ -161,19 +159,20 @@ angle::Result QueryVk::getResult(const gl::Context *context, bool wait)
         ANGLE_TRY(contextVk->finishToSerial(mQueryHelper.getStoredQueueSerial()));
     }
 
-    VkQueryResultFlags flags = (wait ? VK_QUERY_RESULT_WAIT_BIT : 0) | VK_QUERY_RESULT_64_BIT;
-
-    VkResult result = mQueryHelper.getQueryPool()->getResults(
-        contextVk->getDevice(), mQueryHelper.getQuery(), 1, sizeof(mCachedResult), &mCachedResult,
-        sizeof(mCachedResult), flags);
-    // If the results are not ready, do nothing.  mCachedResultValid remains false.
-    if (result == VK_NOT_READY)
+    if (wait)
     {
-        // If VK_QUERY_RESULT_WAIT_BIT was given, VK_NOT_READY cannot have been returned.
-        ASSERT(!wait);
-        return angle::Result::Continue;
+        ANGLE_TRY(mQueryHelper.getUint64Result(contextVk, &mCachedResult));
     }
-    ANGLE_VK_TRY(contextVk, result);
+    else
+    {
+        bool available = false;
+        ANGLE_TRY(mQueryHelper.getUint64ResultNonBlocking(contextVk, &mCachedResult, &available));
+        if (!available)
+        {
+            // If the results are not ready, do nothing.  mCachedResultValid remains false.
+            return angle::Result::Continue;
+        }
+    }
 
     double timestampPeriod = renderer->getPhysicalDeviceProperties().limits.timestampPeriod;
 
@@ -192,13 +191,9 @@ angle::Result QueryVk::getResult(const gl::Context *context, bool wait)
         {
             uint64_t timeElapsedEnd = mCachedResult;
 
-            result = mQueryHelperTimeElapsedBegin.getQueryPool()->getResults(
-                contextVk->getDevice(), mQueryHelperTimeElapsedBegin.getQuery(), 1,
-                sizeof(mCachedResult), &mCachedResult, sizeof(mCachedResult), flags);
             // Since the result of the end query of time-elapsed is already available, the
             // result of begin query must be available too.
-            ASSERT(result != VK_NOT_READY);
-            ANGLE_VK_TRY(contextVk, result);
+            ANGLE_TRY(mQueryHelperTimeElapsedBegin.getUint64Result(contextVk, &mCachedResult));
 
             mCachedResult = timeElapsedEnd - mCachedResult;
             mCachedResult = static_cast<uint64_t>(mCachedResult * timestampPeriod);

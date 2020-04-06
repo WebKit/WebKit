@@ -7,8 +7,6 @@
 #ifndef COMPILER_TRANSLATOR_CONSTANTUNION_H_
 #define COMPILER_TRANSLATOR_CONSTANTUNION_H_
 
-#include <assert.h>
-
 #include "compiler/translator/BaseTypes.h"
 #include "compiler/translator/Common.h"
 

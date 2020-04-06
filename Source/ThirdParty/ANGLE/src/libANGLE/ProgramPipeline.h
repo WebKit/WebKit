@@ -15,6 +15,7 @@
 
 #include "common/angleutils.h"
 #include "libANGLE/Debug.h"
+#include "libANGLE/ProgramExecutable.h"
 #include "libANGLE/RefCountObject.h"
 
 namespace rx
@@ -36,10 +37,15 @@ class ProgramPipelineState final : angle::NonCopyable
 
     const std::string &getLabel() const;
 
+    const ProgramExecutable &getExecutable() const { return mExecutable; }
+    ProgramExecutable &getExecutable() { return mExecutable; }
+
   private:
     friend class ProgramPipeline;
 
     std::string mLabel;
+
+    ProgramExecutable mExecutable;
 };
 
 class ProgramPipeline final : public RefCountObject<ProgramPipelineID>, public LabeledObject
@@ -52,6 +58,11 @@ class ProgramPipeline final : public RefCountObject<ProgramPipelineID>, public L
 
     void setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
+
+    const ProgramPipelineState &getState() const { return mState; }
+
+    const ProgramExecutable &getExecutable() const { return mState.getExecutable(); }
+    ProgramExecutable &getExecutable() { return mState.getExecutable(); }
 
     rx::ProgramPipelineImpl *getImplementation() const;
 

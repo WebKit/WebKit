@@ -159,6 +159,8 @@ class StateManager9 final : angle::NonCopyable
 
     bool mUsingZeroColorMaskWorkaround;
 
+    bool mCurSampleAlphaToCoverage;
+
     // Currently applied blend state
     gl::BlendState mCurBlendState;
     gl::ColorF mCurBlendColor;

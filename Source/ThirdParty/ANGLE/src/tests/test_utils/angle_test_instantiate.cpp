@@ -9,12 +9,14 @@
 
 #include "test_utils/angle_test_instantiate.h"
 
+#include <array>
 #include <iostream>
 #include <map>
 
 #include "angle_gl.h"
 #include "common/platform.h"
 #include "common/system_utils.h"
+#include "common/third_party/base/anglebase/no_destructor.h"
 #include "gpu_info_util/SystemInfo.h"
 #include "test_utils/angle_test_configs.h"
 #include "util/EGLWindow.h"
@@ -76,8 +78,6 @@ bool IsNativeConfigSupported(const PlatformParameters &param, OSWindow *osWindow
     return false;
 }
 
-std::map<PlatformParameters, bool> gParamAvailabilityCache;
-
 bool IsAndroidDevice(const std::string &deviceName)
 {
     if (!IsAndroid())
@@ -102,10 +102,26 @@ bool HasSystemVendorID(VendorID vendorID)
     }
     return systemInfo->gpus[systemInfo->activeGPUIndex].vendorId == vendorID;
 }
+
+using ParamAvailabilityCache = std::map<PlatformParameters, bool>;
+
+ParamAvailabilityCache &GetAvailabilityCache()
+{
+    static angle::base::NoDestructor<std::unique_ptr<ParamAvailabilityCache>>
+        sParamAvailabilityCache(new ParamAvailabilityCache());
+    return **sParamAvailabilityCache;
+}
+
+constexpr size_t kMaxConfigNameLen = 100;
+std::array<char, kMaxConfigNameLen> gSelectedConfig;
 }  // namespace
 
-std::string gSelectedConfig;
 bool gSeparateProcessPerConfig = false;
+
+bool IsConfigSelected()
+{
+    return gSelectedConfig[0] != 0;
+}
 
 SystemInfo *GetTestSystemInfo()
 {
@@ -130,7 +146,7 @@ SystemInfo *GetTestSystemInfo()
         // Print complete system info when available.
         // Seems to trip up Android test expectation parsing.
         // Also don't print info when a config is selected to prevent test spam.
-        if (!IsAndroid() && gSelectedConfig.empty())
+        if (!IsAndroid() && !IsConfigSelected())
         {
             PrintSystemInfo(*sSystemInfo);
         }
@@ -433,6 +449,21 @@ bool IsConfigWhitelisted(const SystemInfo &systemInfo, const PlatformParameters 
             }
         }
 
+        // TODO: http://crbug.com/swiftshader/145
+        // Swiftshader does not currently have all the robustness features
+        // we need for ANGLE. In particular, it is unable to detect and recover
+        // from infinitely looping shaders. That bug is the tracker for fixing
+        // that and when resolved we can remove the following code.
+        // This test will disable tests marked with the config WithRobustness
+        // when run with the swiftshader Vulkan driver and on Android.
+        DeviceID deviceID =
+            systemInfo.gpus.empty() ? 0 : systemInfo.gpus[systemInfo.activeGPUIndex].deviceId;
+        if ((param.isSwiftshader() || (IsGoogle(vendorID) && deviceID == kDeviceID_Swiftshader)) &&
+            param.eglParameters.robustness)
+        {
+            return false;
+        }
+
         // Currently we support the GLES and Vulkan back-ends on Android.
         switch (param.getRenderer())
         {
@@ -481,6 +512,15 @@ bool IsConfigSupported(const PlatformParameters &param)
 
 bool IsPlatformAvailable(const PlatformParameters &param)
 {
+    // Disable "null" device when not on ANGLE or in D3D9.
+    if (param.getDeviceType() == EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE)
+    {
+        if (param.driver != GLESDriverType::AngleEGL)
+            return false;
+        if (param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE)
+            return false;
+    }
+
     switch (param.getRenderer())
     {
         case EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE:
@@ -511,15 +551,6 @@ bool IsPlatformAvailable(const PlatformParameters &param)
         case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
 #if !defined(ANGLE_ENABLE_VULKAN)
             return false;
-#elif defined(ANGLE_IS_32_BIT_CPU)
-            // http://anglebug.com/4092
-            //  Currently hitting crashes in SwS w/ 32-bit Windows so skipping for now
-            if (IsWindows() && (param.eglParameters.deviceType ==
-                                EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE))
-            {
-                return false;
-            }
-            break;
 #else
             break;
 #endif
@@ -544,18 +575,18 @@ bool IsPlatformAvailable(const PlatformParameters &param)
 
     bool result = false;
 
-    auto iter = gParamAvailabilityCache.find(param);
-    if (iter != gParamAvailabilityCache.end())
+    auto iter = GetAvailabilityCache().find(param);
+    if (iter != GetAvailabilityCache().end())
     {
         result = iter->second;
     }
     else
     {
-        if (!gSelectedConfig.empty())
+        if (IsConfigSelected())
         {
             std::stringstream strstr;
             strstr << param;
-            if (strstr.str() == gSelectedConfig)
+            if (strstr.str() == std::string(gSelectedConfig.data()))
             {
                 result = true;
             }
@@ -574,10 +605,10 @@ bool IsPlatformAvailable(const PlatformParameters &param)
             }
         }
 
-        gParamAvailabilityCache[param] = result;
+        GetAvailabilityCache()[param] = result;
 
         // Enable this unconditionally to print available platforms.
-        if (!gSelectedConfig.empty())
+        if (IsConfigSelected())
         {
             if (result)
             {
@@ -603,7 +634,7 @@ std::vector<std::string> GetAvailableTestPlatformNames()
 {
     std::vector<std::string> platformNames;
 
-    for (const auto &iter : gParamAvailabilityCache)
+    for (const auto &iter : GetAvailabilityCache())
     {
         if (iter.second)
         {
@@ -617,5 +648,11 @@ std::vector<std::string> GetAvailableTestPlatformNames()
     std::sort(platformNames.begin(), platformNames.end());
 
     return platformNames;
+}
+
+void SetSelectedConfig(const char *selectedConfig)
+{
+    gSelectedConfig.fill(0);
+    strncpy(gSelectedConfig.data(), selectedConfig, kMaxConfigNameLen - 1);
 }
 }  // namespace angle

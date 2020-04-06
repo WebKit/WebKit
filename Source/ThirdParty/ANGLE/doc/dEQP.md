@@ -71,3 +71,15 @@ ANGLE also supports the same set of targets built with GoogleTest, for running
 on the bots. We don't currently recommend using these for local debugging, but
 we do maintain lists of test expectations in `src/tests/deqp_support`. When
 you fix tests, please remove the suppression(s) from the relevant files!
+
+### Running dEQP on Android
+
+Running the tests not using the test runner is tricky, but is necessary in order to get a complete TestResults.qpa from the dEQP tests (since the runner shards the tests, only the results of the last shard will be available when using the test runner). First, use the runner to install the APK, test data and test expectations on the device. After the tests start running, the test runner can be stopped with Ctrl+C. Then, run
+```
+adb shell am start -a android.intent.action.MAIN -n org.chromium.native_test/.NativeUnitTestNativeActivity -e org.chromium.native_test.NativeTest.StdoutFile /sdcard/chromium_tests_root/out.txt
+```
+After the tests finish, get the results with
+```
+adb pull /sdcard/chromium_tests_root/third_party/angle/third_party/deqp/src/data/TestResults.qpa .
+```
+Note: this location might change, one can double-check with `adb logcat -d | grep qpa`.

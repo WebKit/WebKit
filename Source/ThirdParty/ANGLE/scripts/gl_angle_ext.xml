@@ -8,6 +8,15 @@
     gl_angle_ext.xml
         Includes data used to auto-generate ANGLE classes.
     </comment>
+
+    <!-- SECTION: GL parameter class type definitions. -->
+    <groups>
+        <group name="ExternalHandleType">
+            <enum name="GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE"/>
+            <enum name="GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE"/>
+        </group>
+    </groups>
+
     <!-- SECTION: GL command definitions. -->
     <commands namespace="GL">
         <command>
@@ -28,174 +37,6 @@
         <command>
             <proto>void <name>glMatrixLoadIdentityCHROMIUM</name></proto>
             <param><ptype>GLenum</ptype> <name>matrixMode</name></param>
-        </command>
-        <command>
-            <proto>GLuint <name>glGenPathsCHROMIUM</name></proto>
-            <param><ptype>GLsizei</ptype> <name>range</name></param>
-        </command>
-        <command>
-            <proto>void <name>glDeletePathsCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>first</name></param>
-            <param><ptype>GLsizei</ptype> <name>range</name></param>
-        </command>
-        <command>
-            <proto>GLboolean <name>glIsPathCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-        </command>
-        <command>
-            <proto>void <name>glPathCommandsCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-            <param><ptype>GLsizei</ptype> <name>numCommands</name></param>
-            <param><ptype>const GLubyte *</ptype> <name>commands</name></param>
-            <param><ptype>GLsizei</ptype> <name>numCoords</name></param>
-            <param><ptype>GLenum</ptype> <name>coordType</name></param>
-            <param><ptype>const void*</ptype> <name>coords</name></param>
-        </command>
-        <command>
-            <proto>void <name>glPathParameterfCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-            <param><ptype>GLenum</ptype> <name>pname</name></param>
-            <param><ptype>GLfloat</ptype> <name>value</name></param>
-        </command>
-        <command>
-            <proto>void <name>glPathParameteriCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-            <param><ptype>GLenum</ptype> <name>pname</name></param>
-            <param><ptype>GLint</ptype> <name>value</name></param>
-        </command>
-        <command>
-            <proto>void <name>glGetPathParameterfvCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-            <param><ptype>GLenum</ptype> <name>pname</name></param>
-            <param><ptype>GLfloat *</ptype> <name>value</name></param>
-        </command>
-        <command>
-            <proto>void <name>glGetPathParameterivCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-            <param><ptype>GLenum</ptype> <name>pname</name></param>
-            <param><ptype>GLint *</ptype> <name>value</name></param>
-        </command>
-        <command>
-            <proto>void <name>glPathStencilFuncCHROMIUM</name></proto>
-            <param><ptype>GLenum</ptype> <name>func</name></param>
-            <param><ptype>GLint</ptype> <name>ref</name></param>
-            <param><ptype>GLuint</ptype> <name>mask</name></param>
-        </command>
-        <command>
-            <proto>void <name>glStencilFillPathCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-            <param><ptype>GLenum</ptype> <name>fillMode</name></param>
-            <param><ptype>GLuint</ptype> <name>mask</name></param>
-        </command>
-        <command>
-            <proto>void <name>glStencilStrokePathCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-            <param><ptype>GLint</ptype> <name>reference</name></param>
-            <param><ptype>GLuint</ptype> <name>mask</name></param>
-        </command>
-        <command>
-            <proto>void <name>glCoverFillPathCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-            <param><ptype>GLenum</ptype> <name>coverMode</name></param>
-        </command>
-        <command>
-            <proto>void <name>glCoverStrokePathCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-            <param><ptype>GLenum</ptype> <name>coverMode</name></param>
-        </command>
-        <command>
-            <proto>void <name>glStencilThenCoverFillPathCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-            <param><ptype>GLenum</ptype> <name>fillMode</name></param>
-            <param><ptype>GLuint</ptype> <name>mask</name></param>
-            <param><ptype>GLenum</ptype> <name>coverMode</name></param>
-        </command>
-        <command>
-            <proto>void <name>glStencilThenCoverStrokePathCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>path</name></param>
-            <param><ptype>GLint</ptype> <name>reference</name></param>
-            <param><ptype>GLuint</ptype> <name>mask</name></param>
-            <param><ptype>GLenum</ptype> <name>coverMode</name></param>
-        </command>
-        <command>
-            <proto>void <name>glCoverFillPathInstancedCHROMIUM</name></proto>
-            <param><ptype>GLsizei</ptype> <name>numPath</name></param>
-            <param><ptype>GLenum</ptype> <name>pathNameType</name></param>
-            <param><ptype>const void *</ptype> <name>paths</name></param>
-            <param><ptype>GLuint</ptype> <name>pathBase</name></param>
-            <param><ptype>GLenum</ptype> <name>coverMode</name></param>
-            <param><ptype>GLenum</ptype> <name>transformType</name></param>
-            <param><ptype>const GLfloat *</ptype> <name>transformValues</name></param>
-        </command>
-        <command>
-            <proto>void <name>glCoverStrokePathInstancedCHROMIUM</name></proto>
-            <param><ptype>GLsizei</ptype> <name>numPath</name></param>
-            <param><ptype>GLenum</ptype> <name>pathNameType</name></param>
-            <param><ptype>const void *</ptype> <name>paths</name></param>
-            <param><ptype>GLuint</ptype> <name>pathBase</name></param>
-            <param><ptype>GLenum</ptype> <name>coverMode</name></param>
-            <param><ptype>GLenum</ptype> <name>transformType</name></param>
-            <param><ptype>const GLfloat *</ptype> <name>transformValues</name></param>
-        </command>
-        <command>
-            <proto>void <name>glStencilStrokePathInstancedCHROMIUM</name></proto>
-            <param><ptype>GLsizei</ptype> <name>numPath</name></param>
-            <param><ptype>GLenum</ptype> <name>pathNameType</name></param>
-            <param><ptype>const void *</ptype> <name>paths</name></param>
-            <param><ptype>GLuint</ptype> <name>pathBase</name></param>
-            <param><ptype>GLint</ptype> <name>reference</name></param>
-            <param><ptype>GLuint</ptype> <name>mask</name></param>
-            <param><ptype>GLenum</ptype> <name>transformType</name></param>
-            <param><ptype>const GLfloat *</ptype> <name>transformValues</name></param>
-        </command>
-        <command>
-            <proto>void <name>glStencilFillPathInstancedCHROMIUM</name></proto>
-            <param><ptype>GLsizei</ptype> <name>numPaths</name></param>
-            <param><ptype>GLenum</ptype> <name>pathNameType</name></param>
-            <param><ptype>const void *</ptype> <name>paths</name></param>
-            <param><ptype>GLuint</ptype> <name>pathBase</name></param>
-            <param><ptype>GLenum</ptype> <name>fillMode</name></param>
-            <param><ptype>GLuint</ptype> <name>mask</name></param>
-            <param><ptype>GLenum</ptype> <name>transformType</name></param>
-            <param><ptype>const GLfloat *</ptype> <name>transformValues</name></param>
-        </command>
-        <command>
-            <proto>void <name>glStencilThenCoverFillPathInstancedCHROMIUM</name></proto>
-            <param><ptype>GLsizei</ptype> <name>numPaths</name></param>
-            <param><ptype>GLenum</ptype> <name>pathNameType</name></param>
-            <param><ptype>const void *</ptype> <name>paths</name></param>
-            <param><ptype>GLuint</ptype> <name>pathBase</name></param>
-            <param><ptype>GLenum</ptype> <name>fillMode</name></param>
-            <param><ptype>GLuint</ptype> <name>mask</name></param>
-            <param><ptype>GLenum</ptype> <name>coverMode</name></param>
-            <param><ptype>GLenum</ptype> <name>transformType</name></param>
-            <param><ptype>const GLfloat *</ptype> <name>transformValues</name></param>
-        </command>
-        <command>
-            <proto>void <name>glStencilThenCoverStrokePathInstancedCHROMIUM</name></proto>
-            <param><ptype>GLsizei</ptype> <name>numPaths</name></param>
-            <param><ptype>GLenum</ptype> <name>pathNameType</name></param>
-            <param><ptype>const void *</ptype> <name>paths</name></param>
-            <param><ptype>GLuint</ptype> <name>pathBase</name></param>
-            <param><ptype>GLint</ptype> <name>reference</name></param>
-            <param><ptype>GLuint</ptype> <name>mask</name></param>
-            <param><ptype>GLenum</ptype> <name>coverMode</name></param>
-            <param><ptype>GLenum</ptype> <name>transformType</name></param>
-            <param><ptype>const GLfloat *</ptype> <name>transformValues</name></param>
-        </command>
-        <command>
-        <proto>void <name>glBindFragmentInputLocationCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>programs</name></param>
-            <param><ptype>GLint</ptype> <name>location</name></param>
-            <param><ptype>const GLchar *</ptype> <name>name</name></param>
-        </command>
-        <command>
-        <proto>void <name>glProgramPathFragmentInputGenCHROMIUM</name></proto>
-            <param><ptype>GLuint</ptype> <name>program</name></param>
-            <param><ptype>GLint</ptype> <name>location</name></param>
-            <param><ptype>GLenum</ptype> <name>genMode</name></param>
-            <param><ptype>GLint</ptype> <name>components</name></param>
-            <param><ptype>const GLfloat *</ptype> <name>coeffs</name></param>
         </command>
         <command>
         <proto>void <name>glCopyTextureCHROMIUM</name></proto>
@@ -977,7 +818,21 @@
             <param group="PixelType"><ptype>GLenum</ptype> <name>type</name></param>
             <param len="COMPSIZE(target,level,format,type)">void *<name>pixels</name></param>
         </command>
+        <command>
+            <proto>void <name>glImportMemoryZirconHandleANGLE</name></proto>
+            <param><ptype>GLuint</ptype> <name>memory</name></param>
+            <param><ptype>GLuint64</ptype> <name>size</name></param>
+            <param group="ExternalHandleType"><ptype>GLenum</ptype> <name>handleType</name></param>
+            <param><ptype>GLuint</ptype> <name>handle</name></param>
+        </command>
+        <command>
+            <proto>void <name>glImportSemaphoreZirconHandleANGLE</name></proto>
+            <param><ptype>GLuint</ptype> <name>semaphore</name></param>
+            <param group="ExternalHandleType"><ptype>GLenum</ptype> <name>handleType</name></param>
+            <param><ptype>GLuint</ptype> <name>handle</name></param>
+        </command>
     </commands>
+
     <!-- SECTION: ANGLE extension interface definitions -->
     <extensions>
         <extension name="GL_CHROMIUM_bind_uniform_location" supported='gles2'>
@@ -987,37 +842,8 @@
         </extension>
         <extension name="GL_CHROMIUM_framebuffer_mixed_samples" supported='gles2'>
             <require>
-                <command name="glMatrixLoadfCHROMIUM"/>
-                <command name="glMatrixLoadIdentityCHROMIUM"/>
                 <command name="glCoverageModulationCHROMIUM"/>
             </require>
-        </extension>
-        <extension name="GL_CHROMIUM_path_rendering" supported='gles2'>
-        <require>
-            <command name="glGenPathsCHROMIUM"/>
-            <command name="glDeletePathsCHROMIUM"/>
-            <command name="glIsPathCHROMIUM"/>
-            <command name="glPathCommandsCHROMIUM"/>
-            <command name="glPathParameterfCHROMIUM"/>
-            <command name="glPathParameteriCHROMIUM"/>
-            <command name="glGetPathParameterfvCHROMIUM"/>
-            <command name="glGetPathParameterivCHROMIUM"/>
-            <command name="glPathStencilFuncCHROMIUM"/>
-            <command name="glStencilFillPathCHROMIUM"/>
-            <command name="glStencilStrokePathCHROMIUM"/>
-            <command name="glCoverFillPathCHROMIUM"/>
-            <command name="glCoverStrokePathCHROMIUM"/>
-            <command name="glStencilThenCoverFillPathCHROMIUM"/>
-            <command name="glStencilThenCoverStrokePathCHROMIUM"/>
-            <command name="glCoverFillPathInstancedCHROMIUM"/>
-            <command name="glCoverStrokePathInstancedCHROMIUM"/>
-            <command name="glStencilFillPathInstancedCHROMIUM"/>
-            <command name="glStencilStrokePathInstancedCHROMIUM"/>
-            <command name="glStencilThenCoverFillPathInstancedCHROMIUM"/>
-            <command name="glStencilThenCoverStrokePathInstancedCHROMIUM"/>
-            <command name="glBindFragmentInputLocationCHROMIUM"/>
-            <command name="glProgramPathFragmentInputGenCHROMIUM"/>
-        </require>
         </extension>
         <extension name="GL_CHROMIUM_copy_texture" supported='gles2'>
             <require>
@@ -1163,5 +989,23 @@
                 <command name="glGetRenderbufferImageANGLE"/>
             </require>
         </extension>
+        <extension name="GL_ANGLE_memory_object_fuchsia" supported="gl|gles2">
+            <require>
+                <enum name="GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE"/>
+                <command name="glImportMemoryZirconHandleANGLE"/>
+            </require>
+        </extension>
+        <extension name="GL_ANGLE_semaphore_fuchsia" supported="gl|gles2">
+            <require>
+                <enum name="GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE"/>
+                <command name="glImportSemaphoreZirconHandleANGLE"/>
+            </require>
+        </extension>
     </extensions>
+
+    <!-- SECTION: GL enumerant (token) definitions. -->
+    <enums namespace="GL" start="0x93AE" end="0x93AF" vendor="ANGLE">
+        <enum value="0x93AE" name="GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE"/>
+        <enum value="0x93AF" name="GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE"/>
+    </enums>
 </registry>

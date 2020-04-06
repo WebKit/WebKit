@@ -494,11 +494,8 @@ std::size_t BitSetT<N, BitsT, ParamT>::Iterator::getNextBit()
 template <size_t N>
 using BitSet32 = BitSetT<N, uint32_t>;
 
-// ScanForward for 64-bits requires a 64-bit implementation.
-#if defined(ANGLE_IS_64_BIT_CPU)
 template <size_t N>
 using BitSet64 = BitSetT<N, uint64_t>;
-#endif  // defined(ANGLE_IS_64_BIT_CPU)
 
 namespace priv
 {

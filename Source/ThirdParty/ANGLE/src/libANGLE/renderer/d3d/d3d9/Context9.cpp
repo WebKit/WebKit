@@ -131,11 +131,6 @@ ProgramPipelineImpl *Context9::createProgramPipeline(const gl::ProgramPipelineSt
     return nullptr;
 }
 
-std::vector<PathImpl *> Context9::createPaths(GLsizei)
-{
-    return std::vector<PathImpl *>();
-}
-
 MemoryObjectImpl *Context9::createMemoryObject()
 {
     UNREACHABLE();
@@ -303,18 +298,20 @@ std::string Context9::getRendererDescription() const
     return mRenderer->getRendererDescription();
 }
 
-void Context9::insertEventMarker(GLsizei length, const char *marker)
+angle::Result Context9::insertEventMarker(GLsizei length, const char *marker)
 {
     mRenderer->getAnnotator()->setMarker(marker);
+    return angle::Result::Continue;
 }
 
-void Context9::pushGroupMarker(GLsizei length, const char *marker)
+angle::Result Context9::pushGroupMarker(GLsizei length, const char *marker)
 {
     mRenderer->getAnnotator()->beginEvent(marker, marker);
     mMarkerStack.push(std::string(marker));
+    return angle::Result::Continue;
 }
 
-void Context9::popGroupMarker()
+angle::Result Context9::popGroupMarker()
 {
     const char *marker = nullptr;
     if (!mMarkerStack.empty())
@@ -323,18 +320,22 @@ void Context9::popGroupMarker()
         mMarkerStack.pop();
         mRenderer->getAnnotator()->endEvent(marker);
     }
+    return angle::Result::Continue;
 }
 
-void Context9::pushDebugGroup(GLenum source, GLuint id, const std::string &message)
+angle::Result Context9::pushDebugGroup(const gl::Context *context,
+                                       GLenum source,
+                                       GLuint id,
+                                       const std::string &message)
 {
     // Fall through to the EXT_debug_marker functions
-    pushGroupMarker(static_cast<GLsizei>(message.size()), message.c_str());
+    return pushGroupMarker(static_cast<GLsizei>(message.size()), message.c_str());
 }
 
-void Context9::popDebugGroup()
+angle::Result Context9::popDebugGroup(const gl::Context *context)
 {
     // Fall through to the EXT_debug_marker functions
-    popGroupMarker();
+    return popGroupMarker();
 }
 
 angle::Result Context9::syncState(const gl::Context *context,

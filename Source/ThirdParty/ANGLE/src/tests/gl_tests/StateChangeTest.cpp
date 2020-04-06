@@ -10,6 +10,7 @@
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
+#include "util/random_utils.h"
 
 using namespace angle;
 
@@ -250,11 +251,8 @@ TEST_P(StateChangeTest, FramebufferIncompleteStencilAttachment)
 }
 
 // Test that Framebuffer completeness caching works when depth-stencil attachments change.
-TEST_P(StateChangeTest, FramebufferIncompleteDepthStencilAttachment)
+TEST_P(StateChangeTestES3, FramebufferIncompleteDepthStencilAttachment)
 {
-    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
-                       !IsGLExtensionEnabled("GL_OES_packed_depth_stencil"));
-
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
     glBindTexture(GL_TEXTURE_2D, mTextures[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
@@ -1836,8 +1834,9 @@ TEST_P(SimpleStateChangeTest, DrawElementsUBYTEX2ThenDrawElementsUSHORT)
 // verify all the rendering results are the same.
 TEST_P(SimpleStateChangeTest, DrawRepeatUnalignedVboChange)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader() && IsWindows());
+    // http://anglebug.com/4470
+    ANGLE_SKIP_TEST_IF(isSwiftshader() && (IsWindows() || IsLinux()));
+
     const int kRepeat = 2;
 
     // set up VBO, colorVBO is unaligned
@@ -2594,6 +2593,82 @@ TEST_P(SimpleStateChangeTest, RedefineFramebufferTexture)
     simpleDrawWithColor(GLColor::green);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green) << "second draw should be green";
+}
+
+// Trips a bug in the Vulkan back-end where a Texture wouldn't transition correctly.
+TEST_P(SimpleStateChangeTest, DrawAndClearTextureRepeatedly)
+{
+    // Fails on 431.02 driver. http://anglebug.com/3748
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsVulkan());
+
+    // Fails on AMD OpenGL Windows. This configuration isn't maintained.
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsOpenGL());
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glUseProgram(program);
+
+    GLint uniLoc = glGetUniformLocation(program, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, uniLoc);
+    glUniform1i(uniLoc, 0);
+
+    const int numRowsCols = 2;
+    const int cellSize    = getWindowWidth() / 2;
+
+    for (int cellY = 0; cellY < numRowsCols; cellY++)
+    {
+        for (int cellX = 0; cellX < numRowsCols; cellX++)
+        {
+            int seed            = cellX + cellY * numRowsCols;
+            const Vector4 color = RandomVec4(seed, 0.0f, 1.0f);
+
+            // Set the texture to a constant color using glClear and a user FBO.
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            glClearColor(color[0], color[1], color[2], color[3]);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            // Draw a small colored quad to the default FBO using the viewport.
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glViewport(cellX * cellSize, cellY * cellSize, cellSize, cellSize);
+            drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        }
+    }
+
+    // Verify the colored quads were drawn correctly despite no flushing.
+    std::vector<GLColor> pixelData(getWindowWidth() * getWindowHeight());
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 pixelData.data());
+
+    ASSERT_GL_NO_ERROR();
+
+    for (int cellY = 0; cellY < numRowsCols; cellY++)
+    {
+        for (int cellX = 0; cellX < numRowsCols; cellX++)
+        {
+            int seed            = cellX + cellY * numRowsCols;
+            const Vector4 color = RandomVec4(seed, 0.0f, 1.0f);
+
+            GLColor expectedColor(color);
+
+            int testN =
+                cellX * cellSize + cellY * getWindowWidth() * cellSize + getWindowWidth() + 1;
+            GLColor actualColor = pixelData[testN];
+            EXPECT_COLOR_NEAR(expectedColor, actualColor, 1);
+        }
+    }
 }
 
 // Validates disabling cull face really disables it.

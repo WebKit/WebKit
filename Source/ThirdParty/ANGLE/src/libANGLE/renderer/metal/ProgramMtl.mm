@@ -295,13 +295,13 @@ std::unique_ptr<LinkEvent> ProgramMtl::link(const gl::Context *context,
     // assignment done in that function.
     linkResources(resources);
 
-    mtl::GlslangGetShaderSource(mState, resources, &mShaderSource, &mVariableInfoMap);
-
     // NOTE(hqle): Parallelize linking.
-    return std::make_unique<LinkEventDone>(linkImpl(context, infoLog));
+    return std::make_unique<LinkEventDone>(linkImpl(context, resources, infoLog));
 }
 
-angle::Result ProgramMtl::linkImpl(const gl::Context *glContext, gl::InfoLog &infoLog)
+angle::Result ProgramMtl::linkImpl(const gl::Context *glContext,
+                                   const gl::ProgramLinkedResources &resources,
+                                   gl::InfoLog &infoLog)
 {
     ContextMtl *contextMtl = mtl::GetImpl(glContext);
     // NOTE(hqle): No transform feedbacks for now, since we only support ES 2.0 atm
@@ -310,10 +310,15 @@ angle::Result ProgramMtl::linkImpl(const gl::Context *glContext, gl::InfoLog &in
 
     ANGLE_TRY(initDefaultUniformBlocks(glContext));
 
+    // Gather variable info and transform sources.
+    gl::ShaderMap<std::string> shaderSources;
+    ShaderMapInterfaceVariableInfoMap variableInfoMap;
+    mtl::GlslangGetShaderSource(mState, resources, &shaderSources, &variableInfoMap);
+
     // Convert GLSL to spirv code
     gl::ShaderMap<std::vector<uint32_t>> shaderCodes;
-    ANGLE_TRY(mtl::GlslangGetShaderSpirvCode(contextMtl, contextMtl->getCaps(), mShaderSource,
-                                             mVariableInfoMap, &shaderCodes));
+    ANGLE_TRY(mtl::GlslangGetShaderSpirvCode(contextMtl, contextMtl->getCaps(), shaderSources,
+                                             variableInfoMap, &shaderCodes));
 
     // Convert spirv code to MSL
     ANGLE_TRY(convertToMsl(glContext, gl::ShaderType::Vertex, infoLog,
@@ -777,14 +782,6 @@ void ProgramMtl::setUniformMatrix4x3fv(GLint location,
     setUniformMatrixfv<4, 3>(location, count, transpose, value);
 }
 
-void ProgramMtl::setPathFragmentInputGen(const std::string &inputName,
-                                         GLenum genMode,
-                                         GLint components,
-                                         const GLfloat *coeffs)
-{
-    UNIMPLEMENTED();
-}
-
 void ProgramMtl::getUniformfv(const gl::Context *context, GLint location, GLfloat *params) const
 {
     getUniformImpl(location, params, GL_FLOAT);
@@ -872,7 +869,7 @@ angle::Result ProgramMtl::updateTextures(const gl::Context *glContext,
 {
     const auto &glState = glContext->getState();
 
-    const gl::ActiveTexturePointerArray &completeTextures = glState.getActiveTexturesCache();
+    const gl::ActiveTexturesCache &completeTextures = glState.getActiveTexturesCache();
 
     for (gl::ShaderType shaderType : gl::AllGLES2ShaderTypes())
     {

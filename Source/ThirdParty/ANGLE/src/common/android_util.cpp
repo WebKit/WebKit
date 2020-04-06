@@ -266,6 +266,46 @@ GLenum NativePixelFormatToGLInternalFormat(int pixelFormat)
     }
 }
 
+int GLInternalFormatToNativePixelFormat(GLenum internalFormat)
+{
+    switch (internalFormat)
+    {
+        case GL_RGBA8:
+            return AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM;
+        case GL_RGB8:
+            return AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM;
+        case GL_RGB565:
+            return AHARDWAREBUFFER_FORMAT_R5G6B5_UNORM;
+        case GL_BGRA8_EXT:
+            return AHARDWAREBUFFER_FORMAT_B8G8R8A8_UNORM;
+        case GL_RGB5_A1:
+            return AHARDWAREBUFFER_FORMAT_B5G5R5A1_UNORM;
+        case GL_RGBA4:
+            return AHARDWAREBUFFER_FORMAT_B4G4R4A4_UNORM;
+        case GL_RGBA16F:
+            return AHARDWAREBUFFER_FORMAT_R16G16B16A16_FLOAT;
+        case GL_RGB10_A2:
+            return AHARDWAREBUFFER_FORMAT_R10G10B10A2_UNORM;
+        case GL_NONE:
+            return AHARDWAREBUFFER_FORMAT_BLOB;
+        case GL_DEPTH_COMPONENT16:
+            return AHARDWAREBUFFER_FORMAT_D16_UNORM;
+        case GL_DEPTH_COMPONENT24:
+            return AHARDWAREBUFFER_FORMAT_D24_UNORM;
+        case GL_DEPTH24_STENCIL8:
+            return AHARDWAREBUFFER_FORMAT_D24_UNORM_S8_UINT;
+        case GL_DEPTH_COMPONENT32F:
+            return AHARDWAREBUFFER_FORMAT_D32_FLOAT;
+        case GL_DEPTH32F_STENCIL8:
+            return AHARDWAREBUFFER_FORMAT_D32_FLOAT_S8_UINT;
+        case GL_STENCIL_INDEX8:
+            return AHARDWAREBUFFER_FORMAT_S8_UINT;
+        default:
+            WARN() << "Unknown internalFormat: " << internalFormat << ". Treating as 0";
+            return 0;
+    }
+}
+
 AHardwareBuffer *ANativeWindowBufferToAHardwareBuffer(ANativeWindowBuffer *windowBuffer)
 {
     return offsetPointer<AHardwareBuffer>(windowBuffer,

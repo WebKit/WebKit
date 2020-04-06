@@ -225,6 +225,13 @@ Error ValidateConfigAttribute(const Display *display, EGLAttrib attribute)
             }
             break;
 
+        case EGL_BIND_TO_TEXTURE_TARGET_ANGLE:
+            if (!display->getExtensions().iosurfaceClientBuffer)
+            {
+                return EglBadAttribute() << "EGL_ANGLE_iosurface_client_buffer is not enabled.";
+            }
+            break;
+
         default:
             return EglBadAttribute() << "Unknown attribute.";
     }
@@ -556,6 +563,14 @@ Error ValidateGetPlatformDisplayCommon(EGLenum platform,
                             {
                                 return EglBadAttribute()
                                        << "EGL_ANGLE_platform_angle_d3d is not supported";
+                            }
+                            break;
+
+                        case EGL_PLATFORM_ANGLE_DEVICE_TYPE_EGL_ANGLE:
+                            if (!clientExtensions.platformANGLEDeviceTypeEGLANGLE)
+                            {
+                                return EglBadAttribute() << "EGL_ANGLE_platform_angle_device_type_"
+                                                            "egl_angle is not supported";
                             }
                             break;
 
@@ -1874,19 +1889,11 @@ Error ValidateCreatePbufferFromClientBuffer(Display *display,
 
     if (buftype == EGL_IOSURFACE_ANGLE)
     {
-#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
-        if (textureTarget != EGL_TEXTURE_RECTANGLE_ANGLE)
+        if (static_cast<EGLenum>(textureTarget) != config->bindToTextureTarget)
         {
             return EglBadAttribute()
-                   << "EGL_IOSURFACE requires the EGL_TEXTURE_RECTANGLE target on desktop macOS";
+                   << "EGL_IOSURFACE requires the texture target to match the config";
         }
-#else // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
-        if (textureTarget != EGL_TEXTURE_2D)
-        {
-            return EglBadAttribute() << "EGL_IOSURFACE requires the EGL_TEXTURE_2D target on iOS";
-        }
-#endif // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
-
         if (textureFormat != EGL_TEXTURE_RGBA)
         {
             return EglBadAttribute() << "EGL_IOSURFACE requires the EGL_TEXTURE_RGBA format";

@@ -11,87 +11,94 @@
 namespace gl
 {
 
-bool ValidateGetVertexAttribdv(Context *context, GLuint index, GLenum pname, GLdouble *params)
+bool ValidateGetVertexAttribdv(const Context *context,
+                               GLuint index,
+                               GLenum pname,
+                               const GLdouble *params)
 {
     return true;
 }
 
-bool ValidateVertexAttrib1d(Context *context, GLuint index, GLdouble x)
+bool ValidateVertexAttrib1d(const Context *context, GLuint index, GLdouble x)
 {
     return true;
 }
 
-bool ValidateVertexAttrib1dv(Context *context, GLuint index, const GLdouble *v)
+bool ValidateVertexAttrib1dv(const Context *context, GLuint index, const GLdouble *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib1s(Context *context, GLuint index, GLshort x)
+bool ValidateVertexAttrib1s(const Context *context, GLuint index, GLshort x)
 {
     return true;
 }
 
-bool ValidateVertexAttrib1sv(Context *context, GLuint index, const GLshort *v)
+bool ValidateVertexAttrib1sv(const Context *context, GLuint index, const GLshort *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib2d(Context *context, GLuint index, GLdouble x, GLdouble y)
+bool ValidateVertexAttrib2d(const Context *context, GLuint index, GLdouble x, GLdouble y)
 {
     return true;
 }
 
-bool ValidateVertexAttrib2dv(Context *context, GLuint index, const GLdouble *v)
+bool ValidateVertexAttrib2dv(const Context *context, GLuint index, const GLdouble *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib2s(Context *context, GLuint index, GLshort x, GLshort y)
+bool ValidateVertexAttrib2s(const Context *context, GLuint index, GLshort x, GLshort y)
 {
     return true;
 }
 
-bool ValidateVertexAttrib2sv(Context *context, GLuint index, const GLshort *v)
+bool ValidateVertexAttrib2sv(const Context *context, GLuint index, const GLshort *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib3d(Context *context, GLuint index, GLdouble x, GLdouble y, GLdouble z)
+bool ValidateVertexAttrib3d(const Context *context,
+                            GLuint index,
+                            GLdouble x,
+                            GLdouble y,
+                            GLdouble z)
 {
     return true;
 }
 
-bool ValidateVertexAttrib3dv(Context *context, GLuint index, const GLdouble *v)
+bool ValidateVertexAttrib3dv(const Context *context, GLuint index, const GLdouble *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib3s(Context *context, GLuint index, GLshort x, GLshort y, GLshort z)
+bool ValidateVertexAttrib3s(const Context *context, GLuint index, GLshort x, GLshort y, GLshort z)
 {
     return true;
 }
 
-bool ValidateVertexAttrib3sv(Context *context, GLuint index, const GLshort *v)
+bool ValidateVertexAttrib3sv(const Context *context, GLuint index, const GLshort *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4Nbv(Context *context, GLuint index, const GLbyte *v)
+bool ValidateVertexAttrib4Nbv(const Context *context, GLuint index, const GLbyte *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4Niv(Context *context, GLuint index, const GLint *v)
+bool ValidateVertexAttrib4Niv(const Context *context, GLuint index, const GLint *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4Nsv(Context *context, GLuint index, const GLshort *v)
+bool ValidateVertexAttrib4Nsv(const Context *context, GLuint index, const GLshort *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4Nub(Context *context,
+bool ValidateVertexAttrib4Nub(const Context *context,
                               GLuint index,
                               GLubyte x,
                               GLubyte y,
@@ -101,27 +108,27 @@ bool ValidateVertexAttrib4Nub(Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4Nubv(Context *context, GLuint index, const GLubyte *v)
+bool ValidateVertexAttrib4Nubv(const Context *context, GLuint index, const GLubyte *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4Nuiv(Context *context, GLuint index, const GLuint *v)
+bool ValidateVertexAttrib4Nuiv(const Context *context, GLuint index, const GLuint *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4Nusv(Context *context, GLuint index, const GLushort *v)
+bool ValidateVertexAttrib4Nusv(const Context *context, GLuint index, const GLushort *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4bv(Context *context, GLuint index, const GLbyte *v)
+bool ValidateVertexAttrib4bv(const Context *context, GLuint index, const GLbyte *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4d(Context *context,
+bool ValidateVertexAttrib4d(const Context *context,
                             GLuint index,
                             GLdouble x,
                             GLdouble y,
@@ -131,17 +138,17 @@ bool ValidateVertexAttrib4d(Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4dv(Context *context, GLuint index, const GLdouble *v)
+bool ValidateVertexAttrib4dv(const Context *context, GLuint index, const GLdouble *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4iv(Context *context, GLuint index, const GLint *v)
+bool ValidateVertexAttrib4iv(const Context *context, GLuint index, const GLint *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4s(Context *context,
+bool ValidateVertexAttrib4s(const Context *context,
                             GLuint index,
                             GLshort x,
                             GLshort y,
@@ -151,22 +158,22 @@ bool ValidateVertexAttrib4s(Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4sv(Context *context, GLuint index, const GLshort *v)
+bool ValidateVertexAttrib4sv(const Context *context, GLuint index, const GLshort *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4ubv(Context *context, GLuint index, const GLubyte *v)
+bool ValidateVertexAttrib4ubv(const Context *context, GLuint index, const GLubyte *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4uiv(Context *context, GLuint index, const GLuint *v)
+bool ValidateVertexAttrib4uiv(const Context *context, GLuint index, const GLuint *v)
 {
     return true;
 }
 
-bool ValidateVertexAttrib4usv(Context *context, GLuint index, const GLushort *v)
+bool ValidateVertexAttrib4usv(const Context *context, GLuint index, const GLushort *v)
 {
     return true;
 }

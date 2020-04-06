@@ -281,6 +281,17 @@ void FramebufferAttachment::setInitState(InitState initState) const
     mResource->setInitState(mTarget.textureIndex(), initState);
 }
 
+bool FramebufferAttachment::isBoundAsSamplerOrImage() const
+{
+    if (mType != GL_TEXTURE)
+    {
+        return false;
+    }
+
+    const gl::TextureState &textureState = getTexture()->getTextureState();
+    return textureState.isBoundAsImageTexture() || textureState.isBoundAsSamplerTexture();
+}
+
 ////// FramebufferAttachmentObject Implementation //////
 
 FramebufferAttachmentObject::FramebufferAttachmentObject() {}

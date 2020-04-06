@@ -48,12 +48,13 @@ void Context::alphaFuncx(AlphaTestFunc func, GLfixed ref)
 
 void Context::clearColorx(GLfixed red, GLfixed green, GLfixed blue, GLfixed alpha)
 {
-    UNIMPLEMENTED();
+    mState.setColorClearValue(ConvertFixedToFloat(red), ConvertFixedToFloat(green),
+                              ConvertFixedToFloat(blue), ConvertFixedToFloat(alpha));
 }
 
 void Context::clearDepthx(GLfixed depth)
 {
-    UNIMPLEMENTED();
+    mState.setDepthClearValue(clamp01(ConvertFixedToFloat(depth)));
 }
 
 void Context::clientActiveTexture(GLenum texture)
@@ -105,7 +106,7 @@ void Context::colorPointer(GLint size, VertexAttribType type, GLsizei stride, co
 
 void Context::depthRangex(GLfixed n, GLfixed f)
 {
-    UNIMPLEMENTED();
+    mState.setDepthRange(clamp01(ConvertFixedToFloat(n)), clamp01(ConvertFixedToFloat(f)));
 }
 
 void Context::disableClientState(ClientVertexArrayType clientState)
@@ -196,7 +197,18 @@ void Context::getClipPlanex(GLenum plane, GLfixed *equation)
 
 void Context::getFixedv(GLenum pname, GLfixed *params)
 {
-    UNIMPLEMENTED();
+    GLenum nativeType;
+    unsigned int numParams = 0;
+
+    getQueryParameterInfo(pname, &nativeType, &numParams);
+
+    std::vector<GLfloat> paramsf(numParams, 0);
+    CastStateValues(this, nativeType, pname, numParams, paramsf.data());
+
+    for (unsigned int i = 0; i < numParams; i++)
+    {
+        params[i] = ConvertFloatToFixed(paramsf[i]);
+    }
 }
 
 void Context::getLightfv(GLenum light, LightParameter pname, GLfloat *params)
@@ -252,7 +264,8 @@ void Context::getTexEnvxv(TextureEnvTarget target, TextureEnvParameter pname, GL
 
 void Context::getTexParameterxv(TextureType target, GLenum pname, GLfixed *params)
 {
-    UNIMPLEMENTED();
+    const Texture *const texture = getTextureByType(target);
+    QueryTexParameterxv(this, texture, pname, params);
 }
 
 void Context::lightModelf(GLenum pname, GLfloat param)
@@ -311,7 +324,7 @@ void Context::lightxv(GLenum light, LightParameter pname, const GLfixed *params)
 
 void Context::lineWidthx(GLfixed width)
 {
-    UNIMPLEMENTED();
+    mState.setLineWidth(ConvertFixedToFloat(width));
 }
 
 void Context::loadIdentity()
@@ -463,7 +476,7 @@ void Context::pointSizex(GLfixed size)
 
 void Context::polygonOffsetx(GLfixed factor, GLfixed units)
 {
-    UNIMPLEMENTED();
+    mState.setPolygonOffsetParams(ConvertFixedToFloat(factor), ConvertFixedToFloat(units));
 }
 
 void Context::popMatrix()
@@ -490,7 +503,8 @@ void Context::rotatex(GLfixed angle, GLfixed x, GLfixed y, GLfixed z)
 
 void Context::sampleCoveragex(GLclampx value, GLboolean invert)
 {
-    UNIMPLEMENTED();
+    GLclampf valuef = ConvertFixedToFloat(value);
+    mState.setSampleCoverageParams(clamp01(valuef), ConvertToBool(invert));
 }
 
 void Context::scalef(float x, float y, float z)
@@ -555,12 +569,14 @@ void Context::texEnvxv(TextureEnvTarget target, TextureEnvParameter pname, const
 
 void Context::texParameterx(TextureType target, GLenum pname, GLfixed param)
 {
-    UNIMPLEMENTED();
+    Texture *const texture = getTextureByType(target);
+    SetTexParameterx(this, texture, pname, param);
 }
 
 void Context::texParameterxv(TextureType target, GLenum pname, const GLfixed *params)
 {
-    UNIMPLEMENTED();
+    Texture *const texture = getTextureByType(target);
+    SetTexParameterxv(this, texture, pname, params);
 }
 
 void Context::translatef(float x, float y, float z)

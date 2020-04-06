@@ -15,13 +15,13 @@
 namespace angle
 {
 extern bool gCalibration;
-extern Optional<unsigned int> gStepsToRunOverride;
+extern int gStepsToRunOverride;
 extern bool gEnableTrace;
 extern const char *gTraceFile;
 
 inline bool OneFrame()
 {
-    return gStepsToRunOverride.valid() && gStepsToRunOverride.value() == 1;
+    return gStepsToRunOverride == 1;
 }
 }  // namespace angle
 

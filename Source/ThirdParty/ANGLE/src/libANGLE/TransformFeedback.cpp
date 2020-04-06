@@ -326,4 +326,9 @@ void TransformFeedback::onBindingChanged(const Context *context, bool bound)
         }
     }
 }
+
+const std::vector<OffsetBindingPointer<Buffer>> &TransformFeedback::getIndexedBuffers() const
+{
+    return mState.mIndexedBuffers;
+}
 }  // namespace gl

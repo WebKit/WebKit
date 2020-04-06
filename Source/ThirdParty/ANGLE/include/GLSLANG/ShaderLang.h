@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 224
+#define ANGLE_SH_VERSION 226
 
 enum ShShaderSpec
 {
@@ -333,6 +333,9 @@ const ShCompileOptions SH_DISABLE_ARB_TEXTURE_RECTANGLE = UINT64_C(1) << 52;
 // as column-major in ESSL 3.00 and greater shaders.
 const ShCompileOptions SH_REWRITE_ROW_MAJOR_MATRICES = UINT64_C(1) << 53;
 
+// Drop any explicit precision qualifiers from shader.
+const ShCompileOptions SH_IGNORE_PRECISION_QUALIFIERS = UINT64_C(1) << 54;
+
 // Defines alternate strategies for implementing array index clamping.
 enum ShArrayIndexClampingStrategy
 {
@@ -384,6 +387,7 @@ struct ShBuiltInResources
     int EXT_YUV_target;
     int EXT_geometry_shader;
     int EXT_gpu_shader5;
+    int EXT_shader_non_constant_global_initializers;
     int OES_texture_storage_multisample_2d_array;
     int OES_texture_3D;
     int ANGLE_texture_multisample;
@@ -763,12 +767,12 @@ extern const char kDefaultUniformsNameGS[];
 extern const char kDefaultUniformsNameFS[];
 extern const char kDefaultUniformsNameCS[];
 
-// Interface block and variable name containing driver uniforms
+// Interface block and variable names containing driver uniforms
 extern const char kDriverUniformsBlockName[];
 extern const char kDriverUniformsVarName[];
 
-// Interface block array variable name used for atomic counter emulation
-extern const char kAtomicCountersVarName[];
+// Interface block array name used for atomic counter emulation
+extern const char kAtomicCountersBlockName[];
 
 // Line raster emulation varying
 extern const char kLineRasterEmulationPosition[];

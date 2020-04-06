@@ -418,7 +418,6 @@ ANGLE_INSTANTIATE_TEST(TextureUploadFullMipBenchmark,
                        OpenGLOrGLESParams(false),
                        OpenGLOrGLESParams(true),
                        VulkanParams(false),
-                       NullDevice(VulkanParams(false)),
                        VulkanParams(true));
 
 ANGLE_INSTANTIATE_TEST(PBOSubImageBenchmark,

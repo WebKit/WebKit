@@ -7,7 +7,7 @@
 //   String helper functions.
 //
 
-#include "string_utils.h"
+#include "common/string_utils.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -16,6 +16,7 @@
 #include <sstream>
 
 #include "common/platform.h"
+#include "common/system_utils.h"
 
 namespace angle
 {
@@ -209,4 +210,9 @@ bool ReplaceSubstring(std::string *str,
     return true;
 }
 
+std::vector<std::string> GetStringsFromEnvironmentVar(const char *varName, const char *separator)
+{
+    std::string environment = GetEnvironmentVar(varName);
+    return SplitString(environment, separator, TRIM_WHITESPACE, SPLIT_WANT_NONEMPTY);
+}
 }  // namespace angle

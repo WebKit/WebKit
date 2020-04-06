@@ -17,29 +17,25 @@ namespace
 // Test getting the executable path
 TEST(SystemUtils, ExecutablePath)
 {
-#if defined(ANGLE_PLATFORM_FUCHSIA)
     // TODO: fuchsia support. http://anglebug.com/3161
-    return;
-#endif
-
+#if !defined(ANGLE_PLATFORM_FUCHSIA)
     std::string executablePath = GetExecutablePath();
     EXPECT_NE("", executablePath);
+#endif
 }
 
 // Test getting the executable directory
 TEST(SystemUtils, ExecutableDir)
 {
-#if defined(ANGLE_PLATFORM_FUCHSIA)
     // TODO: fuchsia support. http://anglebug.com/3161
-    return;
-#endif
-
+#if !defined(ANGLE_PLATFORM_FUCHSIA)
     std::string executableDir = GetExecutableDirectory();
     EXPECT_NE("", executableDir);
 
     std::string executablePath = GetExecutablePath();
     EXPECT_LT(executableDir.size(), executablePath.size());
     EXPECT_EQ(0, strncmp(executableDir.c_str(), executablePath.c_str(), executableDir.size()));
+#endif
 }
 
 // Test setting environment variables

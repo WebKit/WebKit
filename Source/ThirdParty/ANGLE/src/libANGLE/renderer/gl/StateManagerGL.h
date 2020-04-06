@@ -150,10 +150,6 @@ class StateManagerGL final : angle::NonCopyable
 
     void setCoverageModulation(GLenum components);
 
-    void setPathRenderingModelViewMatrix(const GLfloat *m);
-    void setPathRenderingProjectionMatrix(const GLfloat *m);
-    void setPathRenderingStencilState(GLenum func, GLint ref, GLuint mask);
-
     void setProvokingVertex(GLenum mode);
 
     void pauseTransformFeedback();
@@ -343,12 +339,6 @@ class StateManagerGL final : angle::NonCopyable
     bool mSampleAlphaToOneEnabled;
 
     GLenum mCoverageModulation;
-
-    GLfloat mPathMatrixMV[16];
-    GLfloat mPathMatrixProj[16];
-    GLenum mPathStencilFunc;
-    GLint mPathStencilRef;
-    GLuint mPathStencilMask;
 
     const bool mIsMultiviewEnabled;
 

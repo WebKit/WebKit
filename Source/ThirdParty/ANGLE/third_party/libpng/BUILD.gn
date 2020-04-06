@@ -36,7 +36,5 @@ static_library("libpng") {
   }
   configs -= [ "//build/config/compiler:chromium_code" ]
   public_configs = [ ":libpng_config" ]
-  deps = [
-    "//third_party/zlib:zlib",
-  ]
+  deps = [ "//third_party/zlib:zlib" ]
 }

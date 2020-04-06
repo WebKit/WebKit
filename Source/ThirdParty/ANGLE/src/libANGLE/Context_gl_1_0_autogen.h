@@ -102,7 +102,7 @@
     void indexs(GLshort c);                                                                        \
     void indexsv(const GLshort *c);                                                                \
     void initNames();                                                                              \
-    GLboolean isList(GLuint list);                                                                 \
+    GLboolean isList(GLuint list) const;                                                           \
     void lightModeli(GLenum pname, GLint param);                                                   \
     void lightModeliv(GLenum pname, const GLint *params);                                          \
     void lighti(GLenum light, GLenum pname, GLint param);                                          \

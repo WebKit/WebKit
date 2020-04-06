@@ -92,8 +92,13 @@ egl::Error DisplayVk::waitClient(const gl::Context *context)
 
 egl::Error DisplayVk::waitNative(const gl::Context *context, EGLint engine)
 {
-    UNIMPLEMENTED();
-    return egl::EglBadAccess();
+    ANGLE_TRACE_EVENT0("gpu.angle", "DisplayVk::waitNative");
+    return angle::ResultToEGL(waitNativeImpl());
+}
+
+angle::Result DisplayVk::waitNativeImpl()
+{
+    return angle::Result::Continue;
 }
 
 SurfaceImpl *DisplayVk::createWindowSurface(const egl::SurfaceState &state,
@@ -169,7 +174,7 @@ gl::Version DisplayVk::getMaxConformantESVersion() const
 
 void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
-    outExtensions->createContextRobustness      = true;
+    outExtensions->createContextRobustness      = getRenderer()->getNativeExtensions().robustness;
     outExtensions->surfaceOrientation           = true;
     outExtensions->displayTextureShareGroup     = true;
     outExtensions->robustResourceInitialization = true;
@@ -198,7 +203,8 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->framebufferTargetANDROID = true;
 #endif  // defined(ANGLE_PLATFORM_ANDROID)
 
-    outExtensions->contextPriority = true;
+    // Disable context priority when non-zero memory init is enabled. This enforces a queue order.
+    outExtensions->contextPriority = !getRenderer()->getFeatures().allocateNonZeroMemory.enabled;
     outExtensions->noConfigContext = true;
 
 #if defined(ANGLE_PLATFORM_GGP)

@@ -164,32 +164,32 @@ const DXGISupport &GetDXGISupport_9_3(DXGI_FORMAT dxgiFormat)
         }
         case DXGI_FORMAT_BC4_SNORM:
         {
-            static const DXGISupport info(F_2D | F_3D | F_CUBE, F_DS | F_MIPGEN | F_MS | F_RT, 0);
+            static const DXGISupport info(0, F_DS | F_MIPGEN | F_MS | F_RT, 0);
             return info;
         }
         case DXGI_FORMAT_BC4_TYPELESS:
         {
-            static const DXGISupport info(F_2D | F_3D | F_CUBE, F_DS | F_MIPGEN | F_MS | F_RT | F_SAMPLE, 0);
+            static const DXGISupport info(0, F_DS | F_MIPGEN | F_MS | F_RT | F_SAMPLE, 0);
             return info;
         }
         case DXGI_FORMAT_BC4_UNORM:
         {
-            static const DXGISupport info(F_2D | F_3D | F_CUBE, F_DS | F_MIPGEN | F_MS | F_RT, 0);
+            static const DXGISupport info(0, F_DS | F_MIPGEN | F_MS | F_RT, 0);
             return info;
         }
         case DXGI_FORMAT_BC5_SNORM:
         {
-            static const DXGISupport info(F_2D | F_3D | F_CUBE, F_DS | F_MIPGEN | F_MS | F_RT, 0);
+            static const DXGISupport info(0, F_DS | F_MIPGEN | F_MS | F_RT, 0);
             return info;
         }
         case DXGI_FORMAT_BC5_TYPELESS:
         {
-            static const DXGISupport info(F_2D | F_3D | F_CUBE, F_DS | F_MIPGEN | F_MS | F_RT | F_SAMPLE, 0);
+            static const DXGISupport info(0, F_DS | F_MIPGEN | F_MS | F_RT | F_SAMPLE, 0);
             return info;
         }
         case DXGI_FORMAT_BC5_UNORM:
         {
-            static const DXGISupport info(F_2D | F_3D | F_CUBE, F_DS | F_MIPGEN | F_MS | F_RT, 0);
+            static const DXGISupport info(0, F_DS | F_MIPGEN | F_MS | F_RT, 0);
             return info;
         }
         case DXGI_FORMAT_BC6H_SF16:

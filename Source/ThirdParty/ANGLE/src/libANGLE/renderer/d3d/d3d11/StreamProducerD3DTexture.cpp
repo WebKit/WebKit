@@ -71,6 +71,9 @@ egl::Error GetGLDescFromTex(ID3D11Texture2D *const tex,
         case DXGI_FORMAT_R16G16B16A16_UNORM:
             planeFormats[0] = GL_RGBA16_EXT;
             break;
+        case DXGI_FORMAT_R16G16B16A16_FLOAT:
+            planeFormats[0] = GL_RGBA16F;
+            break;
 
         default:
             return egl::EglBadParameter() << "Unsupported format";

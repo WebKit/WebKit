@@ -11,20 +11,20 @@
 namespace gl
 {
 
-bool ValidateAreTexturesResident(Context *context,
+bool ValidateAreTexturesResident(const Context *context,
                                  GLsizei n,
                                  const GLuint *textures,
-                                 GLboolean *residences)
+                                 const GLboolean *residences)
 {
     return true;
 }
 
-bool ValidateArrayElement(Context *context, GLint i)
+bool ValidateArrayElement(const Context *context, GLint i)
 {
     return true;
 }
 
-bool ValidateCopyTexImage1D(Context *context,
+bool ValidateCopyTexImage1D(const Context *context,
                             GLenum target,
                             GLint level,
                             GLenum internalformat,
@@ -36,7 +36,7 @@ bool ValidateCopyTexImage1D(Context *context,
     return true;
 }
 
-bool ValidateCopyTexSubImage1D(Context *context,
+bool ValidateCopyTexSubImage1D(const Context *context,
                                GLenum target,
                                GLint level,
                                GLint xoffset,
@@ -47,37 +47,40 @@ bool ValidateCopyTexSubImage1D(Context *context,
     return true;
 }
 
-bool ValidateEdgeFlagPointer(Context *context, GLsizei stride, const void *pointer)
+bool ValidateEdgeFlagPointer(const Context *context, GLsizei stride, const void *pointer)
 {
     return true;
 }
 
-bool ValidateIndexPointer(Context *context, GLenum type, GLsizei stride, const void *pointer)
+bool ValidateIndexPointer(const Context *context, GLenum type, GLsizei stride, const void *pointer)
 {
     return true;
 }
 
-bool ValidateIndexub(Context *context, GLubyte c)
+bool ValidateIndexub(const Context *context, GLubyte c)
 {
     return true;
 }
 
-bool ValidateIndexubv(Context *context, const GLubyte *c)
+bool ValidateIndexubv(const Context *context, const GLubyte *c)
 {
     return true;
 }
 
-bool ValidateInterleavedArrays(Context *context, GLenum format, GLsizei stride, const void *pointer)
+bool ValidateInterleavedArrays(const Context *context,
+                               GLenum format,
+                               GLsizei stride,
+                               const void *pointer)
 {
     return true;
 }
 
-bool ValidatePopClientAttrib(Context *context)
+bool ValidatePopClientAttrib(const Context *context)
 {
     return true;
 }
 
-bool ValidatePrioritizeTextures(Context *context,
+bool ValidatePrioritizeTextures(const Context *context,
                                 GLsizei n,
                                 const GLuint *textures,
                                 const GLfloat *priorities)
@@ -85,12 +88,12 @@ bool ValidatePrioritizeTextures(Context *context,
     return true;
 }
 
-bool ValidatePushClientAttrib(Context *context, GLbitfield mask)
+bool ValidatePushClientAttrib(const Context *context, GLbitfield mask)
 {
     return true;
 }
 
-bool ValidateTexSubImage1D(Context *context,
+bool ValidateTexSubImage1D(const Context *context,
                            GLenum target,
                            GLint level,
                            GLint xoffset,

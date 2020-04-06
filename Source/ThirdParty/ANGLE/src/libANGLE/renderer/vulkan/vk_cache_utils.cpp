@@ -353,11 +353,6 @@ DestT Int4Array_Get(const uint8_t *arrayBytes, uint32_t arrayIndex)
     }
 }
 
-// Helper macro that casts to a bitfield type then verifies no bits were dropped.
-#define SetBitField(lhs, rhs)                                         \
-    lhs = static_cast<typename std::decay<decltype(lhs)>::type>(rhs); \
-    ASSERT(static_cast<decltype(rhs)>(lhs) == (rhs))
-
 // When converting a byte number to a transition bit index we can shift instead of divide.
 constexpr size_t kTransitionByteShift = Log2(kGraphicsPipelineDirtyBitBytes);
 
@@ -826,7 +821,7 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
 
     VkPipelineRasterizationLineStateCreateInfoEXT rasterLineState = {};
     rasterLineState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT;
-    // Always enable Bresenham line rasterization if available.
+    // Enable Bresenham line rasterization if available and not multisampling.
     if (rasterAndMS.bits.rasterizationSamples <= 1 &&
         contextVk->getFeatures().bresenhamLineRasterization.enabled)
     {
@@ -1648,6 +1643,37 @@ bool TextureDescriptorDesc::operator==(const TextureDescriptorDesc &other) const
         return true;
 
     return memcmp(mSerials.data(), other.mSerials.data(), sizeof(TexUnitSerials) * mMaxIndex) == 0;
+}
+
+FramebufferDesc::FramebufferDesc()
+{
+    reset();
+}
+
+FramebufferDesc::~FramebufferDesc()                            = default;
+FramebufferDesc::FramebufferDesc(const FramebufferDesc &other) = default;
+FramebufferDesc &FramebufferDesc::operator=(const FramebufferDesc &other) = default;
+
+void FramebufferDesc::update(uint32_t index, AttachmentSerial serial)
+{
+    ASSERT(index < kMaxFramebufferAttachments);
+    mSerials[index] = serial;
+}
+
+size_t FramebufferDesc::hash() const
+{
+    return angle::ComputeGenericHash(&mSerials,
+                                     sizeof(AttachmentSerial) * kMaxFramebufferAttachments);
+}
+
+void FramebufferDesc::reset()
+{
+    memset(&mSerials, 0, sizeof(AttachmentSerial) * kMaxFramebufferAttachments);
+}
+
+bool FramebufferDesc::operator==(const FramebufferDesc &other) const
+{
+    return memcmp(&mSerials, &other.mSerials, sizeof(Serial) * kMaxFramebufferAttachments) == 0;
 }
 
 }  // namespace vk

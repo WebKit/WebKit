@@ -9,20 +9,20 @@
 
 #include "libANGLE/renderer/renderer_utils.h"
 
+#include "common/string_utils.h"
+#include "common/system_utils.h"
+#include "common/utilities.h"
 #include "image_util/copyimage.h"
 #include "image_util/imageformats.h"
-
 #include "libANGLE/AttributeMap.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/Format.h"
-
 #include "platform/Feature.h"
 
 #include <string.h>
-#include "common/utilities.h"
 
 namespace rx
 {
@@ -794,11 +794,18 @@ gl::Rectangle ClipRectToScissor(const gl::State &glState, const gl::Rectangle &r
     return rect;
 }
 
-void OverrideFeaturesWithDisplayState(angle::FeatureSetBase *features,
-                                      const egl::DisplayState &state)
+void ApplyFeatureOverrides(angle::FeatureSetBase *features, const egl::DisplayState &state)
 {
     features->overrideFeatures(state.featureOverridesEnabled, true);
     features->overrideFeatures(state.featureOverridesDisabled, false);
+
+    // Override with environment as well.
+    std::vector<std::string> overridesEnabled =
+        angle::GetStringsFromEnvironmentVar("ANGLE_FEATURE_OVERRIDES_ENABLED", ":");
+    std::vector<std::string> overridesDisabled =
+        angle::GetStringsFromEnvironmentVar("ANGLE_FEATURE_OVERRIDES_DISABLED", ":");
+    features->overrideFeatures(overridesEnabled, true);
+    features->overrideFeatures(overridesDisabled, false);
 }
 
 void GetSamplePosition(GLsizei sampleCount, size_t index, GLfloat *xy)

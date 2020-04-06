@@ -13,9 +13,9 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Fence.h"
 #include "libANGLE/MemoryObject.h"
-#include "libANGLE/Path.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/ProgramPipeline.h"
+#include "libANGLE/Query.h"
 #include "libANGLE/Renderbuffer.h"
 #include "libANGLE/Sampler.h"
 #include "libANGLE/Semaphore.h"
@@ -102,7 +102,6 @@ void TypedResourceManager<ResourceType, HandleAllocatorType, ImplT, IDType>::del
 }
 
 template class ResourceManagerBase<HandleAllocator>;
-template class ResourceManagerBase<HandleRangeAllocator>;
 template class TypedResourceManager<Buffer, HandleAllocator, BufferManager, BufferID>;
 template class TypedResourceManager<Texture, HandleAllocator, TextureManager, TextureID>;
 template class TypedResourceManager<Renderbuffer,
@@ -346,80 +345,6 @@ Sync *SyncManager::getSync(GLuint handle) const
     return mObjectMap.query(handle);
 }
 
-// PathManager Implementation.
-
-PathManager::PathManager() = default;
-
-angle::Result PathManager::createPaths(Context *context, GLsizei range, PathID *createdOut)
-{
-    *createdOut = {0};
-
-    // Allocate client side handles.
-    const GLuint client = mHandleAllocator.allocateRange(static_cast<GLuint>(range));
-    if (client == HandleRangeAllocator::kInvalidHandle)
-    {
-        context->handleError(GL_OUT_OF_MEMORY, "Failed to allocate path handle range.", __FILE__,
-                             ANGLE_FUNCTION, __LINE__);
-        return angle::Result::Stop;
-    }
-
-    const auto &paths = context->getImplementation()->createPaths(range);
-    if (paths.empty())
-    {
-        mHandleAllocator.releaseRange(client, range);
-        context->handleError(GL_OUT_OF_MEMORY, "Failed to allocate path objects.", __FILE__,
-                             ANGLE_FUNCTION, __LINE__);
-        return angle::Result::Stop;
-    }
-
-    for (GLsizei i = 0; i < range; ++i)
-    {
-        rx::PathImpl *impl = paths[static_cast<unsigned>(i)];
-        PathID id          = PathID{client + i};
-        mPaths.assign(id, new Path(impl));
-    }
-    *createdOut = PathID{client};
-    return angle::Result::Continue;
-}
-
-void PathManager::deletePaths(PathID first, GLsizei range)
-{
-    GLuint firstHandle = first.value;
-    for (GLsizei i = 0; i < range; ++i)
-    {
-        GLuint id = firstHandle + i;
-        Path *p   = nullptr;
-        if (!mPaths.erase({id}, &p))
-            continue;
-        delete p;
-    }
-    mHandleAllocator.releaseRange(firstHandle, static_cast<GLuint>(range));
-}
-
-Path *PathManager::getPath(PathID handle) const
-{
-    return mPaths.query(handle);
-}
-
-bool PathManager::hasPath(PathID handle) const
-{
-    return mHandleAllocator.isUsed(GetIDValue(handle));
-}
-
-PathManager::~PathManager()
-{
-    ASSERT(mPaths.empty());
-}
-
-void PathManager::reset(const Context *context)
-{
-    for (auto path : mPaths)
-    {
-        SafeDelete(path.second);
-    }
-    mPaths.clear();
-}
-
 // FramebufferManager Implementation.
 
 // static
@@ -590,5 +515,4 @@ Semaphore *SemaphoreManager::getSemaphore(SemaphoreID handle) const
 {
     return mSemaphores.query(handle);
 }
-
 }  // namespace gl

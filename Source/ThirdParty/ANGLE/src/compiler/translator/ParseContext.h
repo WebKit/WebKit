@@ -136,6 +136,9 @@ class TParseContext : angle::NonCopyable
     unsigned int checkIsValidArraySize(const TSourceLoc &line, TIntermTyped *expr);
     bool checkIsValidQualifierForArray(const TSourceLoc &line, const TPublicType &elementQualifier);
     bool checkArrayElementIsNotArray(const TSourceLoc &line, const TPublicType &elementType);
+    bool checkArrayOfArraysInOut(const TSourceLoc &line,
+                                 const TPublicType &elementType,
+                                 const TType &arrayType);
     bool checkIsNonVoid(const TSourceLoc &line,
                         const ImmutableString &identifier,
                         const TBasicType &type);

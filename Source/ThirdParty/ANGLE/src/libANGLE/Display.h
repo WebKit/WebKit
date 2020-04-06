@@ -51,7 +51,7 @@ using SurfaceSet = std::set<Surface *>;
 
 struct DisplayState final : private angle::NonCopyable
 {
-    DisplayState();
+    DisplayState(EGLNativeDisplayType nativeDisplayId);
     ~DisplayState();
 
     EGLLabelKHR label;
@@ -59,6 +59,7 @@ struct DisplayState final : private angle::NonCopyable
     std::vector<std::string> featureOverridesEnabled;
     std::vector<std::string> featureOverridesDisabled;
     bool featuresAllDisabled;
+    EGLNativeDisplayType displayId;
 };
 
 // Constant coded here as a sanity limit.
@@ -187,7 +188,7 @@ class Display final : public LabeledObject, angle::NonCopyable
     EGLint programCacheResize(EGLint limit, EGLenum mode);
 
     const AttributeMap &getAttributeMap() const { return mAttributeMap; }
-    EGLNativeDisplayType getNativeDisplayId() const { return mDisplayId; }
+    EGLNativeDisplayType getNativeDisplayId() const { return mState.displayId; }
 
     rx::DisplayImpl *getImplementation() const { return mImplementation; }
     Device *getDevice() const;
@@ -237,7 +238,6 @@ class Display final : public LabeledObject, angle::NonCopyable
     DisplayState mState;
     rx::DisplayImpl *mImplementation;
 
-    EGLNativeDisplayType mDisplayId;
     AttributeMap mAttributeMap;
 
     ConfigSet mConfigSet;

@@ -1019,24 +1019,38 @@ TEST_P(ImageTest, ValidationGLEGLImageExternal)
     GLenum validWrapModes[]{
         GL_CLAMP_TO_EDGE,
     };
-    for (auto minFilter : validWrapModes)
+    for (auto wrapMode : validWrapModes)
     {
-        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, minFilter);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, wrapMode);
         EXPECT_GL_NO_ERROR();
-        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, minFilter);
+        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, wrapMode);
         EXPECT_GL_NO_ERROR();
     }
 
-    GLenum invalidWrapModes[]{
-        GL_REPEAT,
-        GL_MIRRORED_REPEAT,
-    };
-    for (auto minFilter : invalidWrapModes)
+    if (IsGLExtensionEnabled("GL_EXT_EGL_image_external_wrap_modes"))
     {
-        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, minFilter);
-        EXPECT_GL_ERROR(GL_INVALID_ENUM);
-        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, minFilter);
-        EXPECT_GL_ERROR(GL_INVALID_ENUM);
+        GLenum validWrapModesEXT[]{GL_REPEAT, GL_MIRRORED_REPEAT};
+        for (auto wrapMode : validWrapModesEXT)
+        {
+            glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, wrapMode);
+            EXPECT_GL_NO_ERROR();
+            glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, wrapMode);
+            EXPECT_GL_NO_ERROR();
+        }
+    }
+    else
+    {
+        GLenum invalidWrapModes[]{
+            GL_REPEAT,
+            GL_MIRRORED_REPEAT,
+        };
+        for (auto wrapMode : invalidWrapModes)
+        {
+            glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, wrapMode);
+            EXPECT_GL_ERROR(GL_INVALID_ENUM);
+            glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, wrapMode);
+            EXPECT_GL_ERROR(GL_INVALID_ENUM);
+        }
     }
 
     // When <target> is set to TEXTURE_EXTERNAL_OES, GenerateMipmap always fails and generates an
