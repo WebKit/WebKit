@@ -155,8 +155,8 @@ FAIL outline-color supports animating as color of #RGBa assert_equals: The value
 FAIL outline-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 FAIL outline-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 PASS outline-offset (type: length) has testAccumulation function 
-FAIL outline-offset: length assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
-FAIL outline-offset: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "0px"
+FAIL outline-offset: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
+FAIL outline-offset: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 PASS outline-width (type: length) has testAccumulation function 
 FAIL outline-width: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
 FAIL outline-width: length of rem assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"

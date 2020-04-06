@@ -181,8 +181,8 @@ PASS outline-color supports animating as color of #RGBa
 PASS outline-color supports animating as color of rgba() 
 PASS outline-color supports animating as color of hsla() 
 PASS outline-offset (type: length) has testInterpolation function 
-FAIL outline-offset supports animating as a length assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
-FAIL outline-offset supports animating as a length of rem assert_equals: The value should be 30px at 500ms expected "30px" but got "0px"
+PASS outline-offset supports animating as a length 
+PASS outline-offset supports animating as a length of rem 
 PASS outline-width (type: length) has testInterpolation function 
 PASS outline-width supports animating as a length 
 PASS outline-width supports animating as a length of rem 

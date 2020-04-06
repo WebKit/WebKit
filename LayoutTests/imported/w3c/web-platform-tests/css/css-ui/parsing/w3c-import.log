@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-valid-mandatory.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-valid-optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-offset-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-offset-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-offset-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-style-invalid.html

@@ -2453,8 +2453,6 @@ float RenderStyle::outlineWidth() const
 
 float RenderStyle::outlineOffset() const
 {
-    if (m_backgroundData->outline.style() == BorderStyle::None)
-        return 0;
     if (outlineStyleIsAuto() == OutlineIsAuto::On)
         return (m_backgroundData->outline.offset() + RenderTheme::platformFocusRingOffset(outlineWidth()));
     return m_backgroundData->outline.offset();
