@@ -58,7 +58,7 @@ public:
         virtual void uiAssertionWillExpireImminently() = 0;
     };
 
-    ProcessAssertion(ProcessID, const String& reason, ProcessAssertionType);
+    ProcessAssertion(ProcessID, ASCIILiteral reason, ProcessAssertionType);
     virtual ~ProcessAssertion();
 
     void setClient(Client& client) { m_client = &client; }
@@ -87,7 +87,7 @@ private:
 
 class ProcessAndUIAssertion final : public ProcessAssertion {
 public:
-    ProcessAndUIAssertion(ProcessID, const String& reason, ProcessAssertionType);
+    ProcessAndUIAssertion(ProcessID, ASCIILiteral reason, ProcessAssertionType);
     ~ProcessAndUIAssertion();
 
     void uiAssertionWillExpireImminently();

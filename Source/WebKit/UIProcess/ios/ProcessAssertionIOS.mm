@@ -299,7 +299,7 @@ static BKSProcessAssertionReason toBKSProcessAssertionReason(ProcessAssertionTyp
     }
 }
 
-ProcessAssertion::ProcessAssertion(pid_t pid, const String& name, ProcessAssertionType assertionType)
+ProcessAssertion::ProcessAssertion(pid_t pid, ASCIILiteral reason, ProcessAssertionType assertionType)
     : m_assertionType(assertionType)
 {
     auto weakThis = makeWeakPtr(*this);
@@ -312,9 +312,11 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& name, ProcessAsserti
             });
         }
     };
-    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() PID %d acquiring assertion for process with PID %d, name '%s'", this, getpid(), pid, name.utf8().data());
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() PID %d acquiring assertion for process with PID %d, name '%s'", this, getpid(), pid, reason.characters());
     
-    m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForAssertionType(assertionType) reason:toBKSProcessAssertionReason(assertionType) name:(NSString *)name withHandler:handler]);
+    NSString *nsReason = [NSString stringWithCString:reason.characters() encoding:NSASCIIStringEncoding];
+    m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForAssertionType(assertionType) reason:toBKSProcessAssertionReason(assertionType) name:nsReason withHandler:handler]);
+
     m_assertion.get().invalidationHandler = ^() {
         dispatch_async(dispatch_get_main_queue(), ^{
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Process assertion for process with PID %d was invalidated", this, pid);
@@ -354,7 +356,7 @@ void ProcessAndUIAssertion::updateRunInBackgroundCount()
     m_isHoldingBackgroundTask = shouldHoldBackgroundTask;
 }
 
-ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType)
+ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, ASCIILiteral reason, ProcessAssertionType assertionType)
     : ProcessAssertion(pid, reason, assertionType)
 {
     updateRunInBackgroundCount();

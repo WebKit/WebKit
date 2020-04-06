@@ -36,7 +36,9 @@ DependencyProcessAssertion::DependencyProcessAssertion(ProcessID targetPID, ASCI
 {
     RBSTarget *target = [RBSTarget targetWithPid:targetPID];
     RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:@"com.apple.webkit" name:@"DependentProcessLink"];
-    m_assertion = adoptNS([[RBSAssertion alloc] initWithExplanation:String { description } target:target attributes:@[domainAttribute]]);
+
+    NSString *nsDescription = [NSString stringWithCString:description.characters() encoding:NSASCIIStringEncoding];
+    m_assertion = adoptNS([[RBSAssertion alloc] initWithExplanation:nsDescription target:target attributes:@[domainAttribute]]);
     NSError *acquisitionError = nil;
     if (![m_assertion acquireWithError:&acquisitionError])
         RELEASE_LOG_ERROR(Process, "DependencyProcessAssertion::DependencyProcessAssertion: Failed to acquire dependency process assertion '%{public}s', error: %{public}@", description.characters(), acquisitionError);

@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-ProcessAssertion::ProcessAssertion(ProcessID, const String&, ProcessAssertionType assertionType)
+ProcessAssertion::ProcessAssertion(ProcessID, ASCIILiteral, ProcessAssertionType assertionType)
     : m_assertionType(assertionType)
 {
 }

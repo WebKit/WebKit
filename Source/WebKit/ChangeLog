@@ -1,3 +1,21 @@
+2020-04-06  Chris Dumez  <cdumez@apple.com>
+
+        ProcessAssertion should use ASCIILiteral for its reason
+        https://bugs.webkit.org/show_bug.cgi?id=210049
+
+        Reviewed by Alex Christensen.
+
+        ProcessAssertion should use ASCIILiteral for its reason, instead of a String.
+
+        * Shared/ios/DependencyProcessAssertionIOS.mm:
+        (WebKit::DependencyProcessAssertion::DependencyProcessAssertion):
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAndUIAssertion::ProcessAndUIAssertion):
+
 2020-04-04  Darin Adler  <darin@apple.com>
 
         Stop using live ranges in DocumentMarkerController
