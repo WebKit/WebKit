@@ -1,3 +1,15 @@
+2020-04-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Add syscall to the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=210048
+
+        Reviewed by Brent Fulgham.
+
+        Add a required syscall to the WebContent sandbox on iOS and macOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-04-06  youenn fablet  <youenn@apple.com>
 
         Add HEVC support in GPU Process for WebRTC

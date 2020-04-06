@@ -1056,6 +1056,7 @@
         (syscall-number SYS_objc_bp_assist_cfg_np) ;; <rdar://problem/55924791>
         (syscall-number SYS_shared_region_map_and_slide_2_np) ;; <rdar://problem/60294880>
         (syscall-number SYS_ulock_wait2) ;; <rdar://problem/58743778>
+        (syscall-number SYS_fstat64_extended) ;; <rdar://problem/61310019>
     )
 )
 
