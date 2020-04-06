@@ -1,10 +1,12 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 *   Copyright (C) 2010-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *   file name:  bytestrie.h
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -306,7 +308,7 @@ public:
          * @return The NUL-terminated byte sequence for the last successful next().
          * @stable ICU 4.8
          */
-        const StringPiece &getString() const { return sp_; }
+        StringPiece getString() const;
         /**
          * @return The value for the last successful next().
          * @stable ICU 4.8
@@ -325,7 +327,6 @@ public:
         int32_t initialRemainingMatchLength_;
 
         CharString *str_;
-        StringPiece sp_;
         int32_t maxLength_;
         int32_t value_;
 

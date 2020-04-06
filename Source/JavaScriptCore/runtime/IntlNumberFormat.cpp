@@ -37,10 +37,7 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
-
-#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
 #include <unicode/ufieldpositer.h>
-#endif
 
 namespace JSC {
 
@@ -430,7 +427,6 @@ void IntlNumberFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
     m_boundFormat.set(vm, this, format);
 }
 
-#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
 void IntlNumberFormat::UFieldPositionIteratorDeleter::operator()(UFieldPositionIterator* iterator) const
 {
     if (iterator)
@@ -464,9 +460,6 @@ ASCIILiteral IntlNumberFormat::partTypeString(UNumberFormatFields field, double 
     case UNUM_EXPONENT_SYMBOL_FIELD:
     case UNUM_EXPONENT_SIGN_FIELD:
     case UNUM_EXPONENT_FIELD:
-#if !defined(U_HIDE_DEPRECATED_API)
-    case UNUM_FIELD_COUNT:
-#endif
     // Any newer additions to the UNumberFormatFields enum should just be considered an "unknown" part.
     default:
         return "unknown"_s;
@@ -544,7 +537,6 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
 
     return parts;
 }
-#endif
 
 } // namespace JSC
 

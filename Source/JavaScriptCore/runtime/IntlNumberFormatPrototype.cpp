@@ -40,9 +40,7 @@
 namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(JSGlobalObject*, CallFrame*);
-#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
 static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(JSGlobalObject*, CallFrame*);
-#endif
 static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(JSGlobalObject*, CallFrame*);
 
 }
@@ -80,12 +78,7 @@ IntlNumberFormatPrototype::IntlNumberFormatPrototype(VM& vm, Structure* structur
 void IntlNumberFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, Structure*)
 {
     Base::finishCreation(vm);
-#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->formatToParts, IntlNumberFormatPrototypeFuncFormatToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-#else
-    UNUSED_PARAM(globalObject);
-#endif
-
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "Object"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
@@ -145,7 +138,6 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(JSGlobalObjec
     return JSValue::encode(boundFormat);
 }
 
-#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
@@ -163,7 +155,6 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(JSGlobal
 
     RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(globalObject, value)));
 }
-#endif
 
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(JSGlobalObject* globalObject, CallFrame* callFrame)
 {

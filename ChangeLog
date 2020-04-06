@@ -1,3 +1,22 @@
+2020-04-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update minimum ICU version to 60.2
+        https://bugs.webkit.org/show_bug.cgi?id=209694
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsAppleWin.cmake:
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+        Indicate 60.2 as minimum version (as required by GTK for supporting Ubuntu 18.04 LTS).
+        Also ensure that the C++ API is hidden for all platforms.
+
 2020-04-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use WEBKIT_EXECUTABLE in MiniBrowser

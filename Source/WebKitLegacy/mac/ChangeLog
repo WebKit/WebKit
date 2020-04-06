@@ -1,3 +1,19 @@
+2020-04-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update minimum ICU version to 60.2
+        https://bugs.webkit.org/show_bug.cgi?id=209694
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:]):
+        (-[NSString _web_widthWithFont:]):
+        * WebCoreSupport/WebVisitedLinkStore.mm:
+        (WebVisitedLinkStore::addVisitedLink):
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator currentTextPointer]):
+        Manually convert between UChar and UniChar/unichar where needed.
+
 2020-04-04  Darin Adler  <darin@apple.com>
 
         Stop using live ranges in DocumentMarkerController

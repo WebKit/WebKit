@@ -1,3 +1,5 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 * Copyright (C) 2004 - 2008, International Business Machines Corporation and
@@ -281,10 +283,14 @@ typedef enum UDateTimeScale {
      */
     UDTS_UNIX_MICROSECONDS_TIME,
 
+#ifndef U_HIDE_DEPRECATED_API
     /**
      * The first unused time scale value. The limit of this enum
+     * @deprecated ICU 59 The numeric value may change over time, see ICU ticket #12420.
      */
     UDTS_MAX_SCALE
+#endif  /* U_HIDE_DEPRECATED_API */
+
 } UDateTimeScale;
 
 /**
@@ -421,12 +427,15 @@ typedef enum UTimeScaleValue {
 
 #endif /* U_HIDE_INTERNAL_API */
 
+#ifndef U_HIDE_DEPRECATED_API
     /**
      * The number of time scale values, in other words limit of this enum.
      * 
      * @see utmscale_getTimeScaleValue
+     * @deprecated ICU 59 The numeric value may change over time, see ICU ticket #12420.
      */
     UTSV_MAX_SCALE_VALUE=11
+#endif  /* U_HIDE_DEPRECATED_API */
 
 } UTimeScaleValue;
 

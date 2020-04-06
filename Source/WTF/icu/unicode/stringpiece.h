@@ -1,3 +1,5 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 // Copyright (C) 2009-2013, International Business Machines
 // Corporation and others. All Rights Reserved.
 //
@@ -40,9 +42,9 @@ U_NAMESPACE_BEGIN
  * in a "const char*" or a "string" wherever a "StringPiece" is
  * expected.
  *
- * Functions or methods may use const StringPiece& parameters to accept either
- * a "const char*" or a "string" value that will be implicitly converted to
- * a StringPiece.
+ * Functions or methods may use StringPiece parameters to accept either a
+ * "const char*" or a "string" value that will be implicitly converted to a
+ * StringPiece.
  *
  * Systematic usage of StringPiece is encouraged as it will reduce unnecessary
  * conversions from "const char*" to "string" and back again.
@@ -66,14 +68,12 @@ class U_COMMON_API StringPiece : public UMemory {
    * @stable ICU 4.2
    */
   StringPiece(const char* str);
-#if U_HAVE_STD_STRING
   /**
    * Constructs from a std::string.
    * @stable ICU 4.2
    */
   StringPiece(const std::string& str)
     : ptr_(str.data()), length_(static_cast<int32_t>(str.size())) { }
-#endif
   /**
    * Constructs from a const char * pointer and a specified length.
    * @param offset a const char * pointer (need not be terminated)

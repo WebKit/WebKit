@@ -1,3 +1,5 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 *
@@ -6,7 +8,7 @@
 *
 *******************************************************************************
 *   file name:  udatpg.h
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -83,9 +85,30 @@ typedef enum UDateTimePatternField {
     UDATPG_FRACTIONAL_SECOND_FIELD,
     /** @stable ICU 3.8 */
     UDATPG_ZONE_FIELD,
-    /** @stable ICU 3.8 */
+
+    /* Do not conditionalize the following with #ifndef U_HIDE_DEPRECATED_API,
+     * it is needed for layout of DateTimePatternGenerator object. */
+    /**
+     * One more than the highest normal UDateTimePatternField value.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
     UDATPG_FIELD_COUNT
 } UDateTimePatternField;
+
+#ifndef U_HIDE_DRAFT_API
+/**
+ * Field display name width constants for udatpg_getFieldDisplayName().
+ * @draft ICU 61
+ */
+typedef enum UDateTimePGDisplayWidth {
+    /** @draft ICU 61 */
+    UDATPG_WIDE,
+    /** @draft ICU 61 */
+    UDATPG_ABBREVIATED,
+    /** @draft ICU 61 */
+    UDATPG_NARROW
+} UDateTimePGDisplayWidth;
+#endif  // U_HIDE_DRAFT_API
 
 /**
  * Masks to control forcing the length of specified fields in the returned
@@ -120,8 +143,13 @@ typedef enum UDateTimePatternConflict {
     UDATPG_BASE_CONFLICT,
     /** @stable ICU 3.8 */
     UDATPG_CONFLICT,
-    /** @stable ICU 3.8 */
+#ifndef U_HIDE_DEPRECATED_API
+    /**
+     * One more than the highest normal UDateTimePatternConflict value.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
     UDATPG_CONFLICT_COUNT
+#endif  // U_HIDE_DEPRECATED_API
 } UDateTimePatternConflict;
 
 /**
@@ -259,7 +287,8 @@ udatpg_getBestPatternWithOptions(UDateTimePatternGenerator *dtpg,
   * Consecutive calls to this function do not affect each other,
   * but this function cannot be used concurrently on a single generator object.
   *
-  * @param dtpg     a pointer to UDateTimePatternGenerator.
+  * @param unusedDtpg     a pointer to UDateTimePatternGenerator.
+  *    This parameter is no longer used. Callers may pass NULL.
   * @param pattern  input pattern, such as "dd/MMM".
   * @param length   the length of pattern.
   * @param skeleton such as "MMMdd"
@@ -270,7 +299,7 @@ udatpg_getBestPatternWithOptions(UDateTimePatternGenerator *dtpg,
   * @stable ICU 3.8
   */
 U_STABLE int32_t U_EXPORT2
-udatpg_getSkeleton(UDateTimePatternGenerator *dtpg,
+udatpg_getSkeleton(UDateTimePatternGenerator *unusedDtpg,
                    const UChar *pattern, int32_t length,
                    UChar *skeleton, int32_t capacity,
                    UErrorCode *pErrorCode);
@@ -288,7 +317,8 @@ udatpg_getSkeleton(UDateTimePatternGenerator *dtpg,
  * Consecutive calls to this function do not affect each other,
  * but this function cannot be used concurrently on a single generator object.
  *
- * @param dtpg     a pointer to UDateTimePatternGenerator.
+ * @param unusedDtpg     a pointer to UDateTimePatternGenerator.
+ *    This parameter is no longer used. Callers may pass NULL.
  * @param pattern  input pattern, such as "dd/MMM".
  * @param length   the length of pattern.
  * @param baseSkeleton such as "Md"
@@ -299,7 +329,7 @@ udatpg_getSkeleton(UDateTimePatternGenerator *dtpg,
  * @stable ICU 3.8
  */
 U_STABLE int32_t U_EXPORT2
-udatpg_getBaseSkeleton(UDateTimePatternGenerator *dtpg,
+udatpg_getBaseSkeleton(UDateTimePatternGenerator *unusedDtpg,
                        const UChar *pattern, int32_t length,
                        UChar *baseSkeleton, int32_t capacity,
                        UErrorCode *pErrorCode);
@@ -395,18 +425,54 @@ udatpg_setAppendItemName(UDateTimePatternGenerator *dtpg,
 
 /**
  * Getter corresponding to setAppendItemNames. Values below 0 or at or above
- * UDATPG_FIELD_COUNT are illegal arguments.
+ * UDATPG_FIELD_COUNT are illegal arguments. Note: The more general function
+ * for getting date/time field display names is udatpg_getFieldDisplayName.
  *
  * @param dtpg   a pointer to UDateTimePatternGenerator.
  * @param field  UDateTimePatternField, such as UDATPG_ERA_FIELD
  * @param pLength A pointer that will receive the length of the name for field.
  * @return name for field
+ * @see udatpg_getFieldDisplayName
  * @stable ICU 3.8
  */
 U_STABLE const UChar * U_EXPORT2
 udatpg_getAppendItemName(const UDateTimePatternGenerator *dtpg,
                          UDateTimePatternField field,
                          int32_t *pLength);
+
+#ifndef U_HIDE_DRAFT_API
+/**
+ * The general interface to get a display name for a particular date/time field,
+ * in one of several possible display widths.
+ *
+ * @param dtpg
+ *          A pointer to the UDateTimePatternGenerator object with the localized
+ *          display names.
+ * @param field
+ *          The desired UDateTimePatternField, such as UDATPG_ERA_FIELD.
+ * @param width
+ *          The desired UDateTimePGDisplayWidth, such as UDATPG_ABBREVIATED.
+ * @param fieldName
+ *          A pointer to a buffer to receive the NULL-terminated display name. If the name
+ *          fits into fieldName but cannot be  NULL-terminated (length == capacity) then
+ *          the error code is set to U_STRING_NOT_TERMINATED_WARNING. If the name doesn't
+ *          fit into fieldName then the error code is set to U_BUFFER_OVERFLOW_ERROR.
+ * @param capacity
+ *          The size of fieldName (in UChars).
+ * @param pErrorCode
+ *          A pointer to a UErrorCode to receive any errors
+ * @return
+ *         The full length of the name; if greater than capacity, fieldName contains a
+ *         truncated result.
+ * @draft ICU 61
+ */
+U_DRAFT int32_t U_EXPORT2
+udatpg_getFieldDisplayName(const UDateTimePatternGenerator *dtpg,
+                           UDateTimePatternField field,
+                           UDateTimePGDisplayWidth width,
+                           UChar *fieldName, int32_t capacity,
+                           UErrorCode *pErrorCode);
+#endif  // U_HIDE_DRAFT_API
 
 /**
  * The DateTimeFormat is a message format pattern used to compose date and

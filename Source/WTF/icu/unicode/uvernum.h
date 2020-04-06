@@ -1,11 +1,13 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
-*   Copyright (C) 2000-2015, International Business Machines
+*   Copyright (C) 2000-2016, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *
 *   file name:  uvernum.h
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -32,13 +34,12 @@
   *  by running the UNIX makefile target 'update-windows-makefiles' in icu/source.
   *
   *
-  * source/common/common.vcproj - update 'Output file name' on the link tab so
+  * source/common/common.vcxproj - update 'Output file name' on the link tab so
   *                   that it contains the new major/minor combination
-  * source/i18n/i18n.vcproj - same as for the common.vcproj
-  * source/layout/layout.vcproj - same as for the common.vcproj
+  * source/i18n/i18n.vcxproj - same as for the common.vcxproj
   * source/layoutex/layoutex.vcproj - same
-  * source/stubdata/stubdata.vcproj - same as for the common.vcproj
-  * source/io/io.vcproj - same as for the common.vcproj
+  * source/stubdata/stubdata.vcproj - same as for the common.vcxproj
+  * source/io/io.vcproj - same as for the common.vcxproj
   * source/data/makedata.mak - change U_ICUDATA_NAME so that it contains
   *                            the new major/minor combination and the Unicode version.
   */
@@ -51,19 +52,19 @@
  *  @stable ICU 2.4
  */
 #define U_COPYRIGHT_STRING \
-  " Copyright (C) 2015, International Business Machines Corporation and others. All Rights Reserved. "
+  " Copyright (C) 2016 and later: Unicode, Inc. and others. License & terms of use: http://www.unicode.org/copyright.html "
 
 /** The current ICU major version as an integer.
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION_MAJOR_NUM 55
+#define U_ICU_VERSION_MAJOR_NUM 62
 
 /** The current ICU minor version as an integer.
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_MINOR_NUM 1
+#define U_ICU_VERSION_MINOR_NUM 2
 
 /** The current ICU patchlevel version as an integer.
  *  This value will change in the subsequent releases of ICU
@@ -83,7 +84,7 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#define U_ICU_VERSION_SUFFIX _55
+#define U_ICU_VERSION_SUFFIX _62
 
 /**
  * \def U_DEF2_ICU_ENTRY_POINT_RENAME
@@ -118,19 +119,26 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.4
  */
-#define U_ICU_VERSION "55.1"
+#define U_ICU_VERSION "62.2"
 
-/** The current ICU library major/minor version as a string without dots, for library name suffixes.
- *  This value will change in the subsequent releases of ICU
- *  @stable ICU 2.6
+/**
+ * The current ICU library major version number as a string, for library name suffixes.
+ * This value will change in subsequent releases of ICU.
+ *
+ * Until ICU 4.8, this was the combination of the single-digit major and minor ICU version numbers
+ * into one string without dots ("48").
+ * Since ICU 49, it is the double-digit major ICU version number.
+ * See http://userguide.icu-project.org/design#TOC-Version-Numbers-in-ICU
+ *
+ * @stable ICU 2.6
  */
-#define U_ICU_VERSION_SHORT "55"
+#define U_ICU_VERSION_SHORT "62"
 
 #ifndef U_HIDE_INTERNAL_API
 /** Data version in ICU4C.
  * @internal ICU 4.4 Internal Use Only
  **/
-#define U_ICU_DATA_VERSION "55.1"
+#define U_ICU_DATA_VERSION "62.2"
 #endif  /* U_HIDE_INTERNAL_API */
 
 /*===========================================================================

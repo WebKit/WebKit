@@ -1,7 +1,9 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
- * Copyright (C) 2009-2014, Google, International Business Machines Corporation and *
- * others. All Rights Reserved.                                                *
+ * Copyright (C) 2009-2016, International Business Machines Corporation,       *
+ * Google, and others. All Rights Reserved.                                    *
  *******************************************************************************
  */
 
@@ -41,18 +43,24 @@ public:
         UTIMEUNIT_HOUR,
         UTIMEUNIT_MINUTE,
         UTIMEUNIT_SECOND,
+#ifndef U_HIDE_DEPRECATED_API
+        /**
+         * One more than the highest normal UTimeUnitFields value.
+         * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+         */
         UTIMEUNIT_FIELD_COUNT
+#endif  // U_HIDE_DEPRECATED_API
     };
 
     /**
      * Create Instance.
-     * @param timeUnitField  time unit field based on which the instance 
+     * @param timeUnitField  time unit field based on which the instance
      *                       is created.
-     * @param status         input-output error code. 
+     * @param status         input-output error code.
      *                       If the timeUnitField is invalid,
      *                       then this will be set to U_ILLEGAL_ARGUMENT_ERROR.
      * @return               a TimeUnit instance
-     * @stable ICU 4.2 
+     * @stable ICU 4.2
      */
     static TimeUnit* U_EXPORT2 createInstance(UTimeUnitFields timeUnitField,
                                               UErrorCode& status);
@@ -60,19 +68,19 @@ public:
 
     /**
      * Override clone.
-     * @stable ICU 4.2 
+     * @stable ICU 4.2
      */
     virtual UObject* clone() const;
 
     /**
      * Copy operator.
-     * @stable ICU 4.2 
+     * @stable ICU 4.2
      */
     TimeUnit(const TimeUnit& other);
 
     /**
      * Assignment operator.
-     * @stable ICU 4.2 
+     * @stable ICU 4.2
      */
     TimeUnit& operator=(const TimeUnit& other);
 
@@ -82,7 +90,7 @@ public:
      * @return The class ID for this object. All objects of a given
      * class have the same class ID.  Objects of other classes have
      * different class IDs.
-     * @stable ICU 4.2 
+     * @stable ICU 4.2
      */
     virtual UClassID getDynamicClassID() const;
 
@@ -90,7 +98,7 @@ public:
      * Returns the class ID for this class. This is used to compare to
      * the return value of getDynamicClassID().
      * @return The class ID for all objects of this class.
-     * @stable ICU 4.2 
+     * @stable ICU 4.2
      */
     static UClassID U_EXPORT2 getStaticClassID();
 
@@ -98,13 +106,13 @@ public:
     /**
      * Get time unit field.
      * @return time unit field.
-     * @stable ICU 4.2 
+     * @stable ICU 4.2
      */
     UTimeUnitFields getTimeUnitField() const;
 
     /**
      * Destructor.
-     * @stable ICU 4.2 
+     * @stable ICU 4.2
      */
     virtual ~TimeUnit();
 
@@ -113,7 +121,7 @@ private:
 
     /**
      * Constructor
-     * @internal ICU 4.2 
+     * @internal (private)
      */
     TimeUnit(UTimeUnitFields timeUnitField);
 

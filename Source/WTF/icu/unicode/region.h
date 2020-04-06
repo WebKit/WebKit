@@ -1,6 +1,8 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
- * Copyright (C) 2014-2015, International Business Machines Corporation and others.
+ * Copyright (C) 2014-2016, International Business Machines Corporation and others.
  * All Rights Reserved.
  *******************************************************************************
  */
@@ -101,13 +103,11 @@ public:
      */
     static const Region* U_EXPORT2 getInstance (int32_t code, UErrorCode &status);
 
-#ifndef U_HIDE_DRAFT_API
     /**
      * Returns an enumeration over the IDs of all known regions that match the given type.
-     * @draft ICU 55
+     * @stable ICU 55
      */
     static StringEnumeration* U_EXPORT2 getAvailable(URegionType type, UErrorCode &status);
-#endif /* U_HIDE_DRAFT_API */
    
     /**
      * Returns a pointer to the region that contains this region.  Returns NULL if this region is code "001" (World)
@@ -127,7 +127,6 @@ public:
      */
     const Region* getContainingRegion(URegionType type) const;
 
-#ifndef U_HIDE_DRAFT_API
     /**
      * Return an enumeration over the IDs of all the regions that are immediate children of this region in the
      * region hierarchy. These returned regions could be either macro regions, territories, or a mixture of the two,
@@ -135,7 +134,7 @@ public:
      * any sub-regions. For example, calling this method with region "150" (Europe) returns an enumeration containing
      * the various sub regions of Europe - "039" (Southern Europe) - "151" (Eastern Europe) - "154" (Northern Europe)
      * and "155" (Western Europe).
-     * @draft ICU 55 
+     * @stable ICU 55
      */
     StringEnumeration* getContainedRegions(UErrorCode &status) const;
 
@@ -144,10 +143,9 @@ public:
      * hierarchy and match the given type.  This API may return an empty enumeration if this region doesn't have any
      * sub-regions that match the given type. For example, calling this method with region "150" (Europe) and type
      * "URGN_TERRITORY" returns a set containing all the territories in Europe ( "FR" (France) - "IT" (Italy) - "DE" (Germany) etc. )
-     * @draft ICU 55 
+     * @stable ICU 55
      */
     StringEnumeration* getContainedRegions( URegionType type, UErrorCode &status ) const;
-#endif /* U_HIDE_DRAFT_API */
  
     /**
      * Returns true if this region contains the supplied other region anywhere in the region hierarchy.
@@ -155,15 +153,13 @@ public:
      */
     UBool contains(const Region &other) const;
 
-#ifndef U_HIDE_DRAFT_API
     /**
      * For deprecated regions, return an enumeration over the IDs of the regions that are the preferred replacement
      * regions for this region.  Returns null for a non-deprecated region.  For example, calling this method with region
      * "SU" (Soviet Union) would return a list of the regions containing "RU" (Russia), "AM" (Armenia), "AZ" (Azerbaijan), etc...
-     * @draft ICU 55 
+     * @stable ICU 55 
      */
     StringEnumeration* getPreferredValues(UErrorCode &status) const;
-#endif /* U_HIDE_DRAFT_API */
 
     /**
      * Return this region's canonical region code.
@@ -216,7 +212,7 @@ private:
      * anything meaningful.
      */
 
-    static void loadRegionData(UErrorCode &status);
+    static void U_CALLCONV loadRegionData(UErrorCode &status);
 
 };
 

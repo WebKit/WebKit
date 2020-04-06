@@ -204,7 +204,7 @@ String keyForCharCode(unichar charCode)
     case NSNextFunctionKey:
         return "Unidentified"_s;
     default:
-        return String(&charCode, 1);
+        return String(reinterpret_cast<UChar*>(&charCode), 1);
     }
 }
 

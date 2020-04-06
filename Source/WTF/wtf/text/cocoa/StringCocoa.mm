@@ -43,7 +43,7 @@ String::String(NSString *str)
         }
 
         Vector<UChar, 1024> ucharBuffer(size);
-        CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), ucharBuffer.data());
+        CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), reinterpret_cast<UniChar*>(ucharBuffer.data()));
         m_impl = StringImpl::create(ucharBuffer.data(), size);
     }
 }

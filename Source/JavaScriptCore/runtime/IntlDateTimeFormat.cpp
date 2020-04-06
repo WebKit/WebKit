@@ -39,11 +39,8 @@
 #include <unicode/ucal.h>
 #include <unicode/udatpg.h>
 #include <unicode/uenum.h>
-#include <wtf/text/StringBuilder.h>
-
-#if JSC_ICU_HAS_UFIELDPOSITER
 #include <unicode/ufieldpositer.h>
-#endif
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 
@@ -65,13 +62,11 @@ void IntlDateTimeFormat::UDateFormatDeleter::operator()(UDateFormat* dateFormat)
         udat_close(dateFormat);
 }
 
-#if JSC_ICU_HAS_UFIELDPOSITER
 void IntlDateTimeFormat::UFieldPositionIteratorDeleter::operator()(UFieldPositionIterator* iterator) const
 {
     if (iterator)
         ufieldpositer_close(iterator);
 }
-#endif
 
 IntlDateTimeFormat* IntlDateTimeFormat::create(VM& vm, Structure* structure)
 {
@@ -913,7 +908,6 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value)
     return jsString(vm, String(result.data(), resultLength));
 }
 
-#if JSC_ICU_HAS_UFIELDPOSITER
 ASCIILiteral IntlDateTimeFormat::partTypeString(UDateFormatField field)
 {
     switch (field) {
@@ -943,10 +937,8 @@ ASCIILiteral IntlDateTimeFormat::partTypeString(UDateFormatField field)
     case UDAT_STANDALONE_DAY_FIELD:
         return "weekday"_s;
     case UDAT_AM_PM_FIELD:
-#if U_ICU_VERSION_MAJOR_NUM >= 57
     case UDAT_AM_PM_MIDNIGHT_NOON_FIELD:
     case UDAT_FLEXIBLE_DAY_PERIOD_FIELD:
-#endif
         return "dayPeriod"_s;
     case UDAT_TIMEZONE_FIELD:
     case UDAT_TIMEZONE_RFC_FIELD:
@@ -969,9 +961,6 @@ ASCIILiteral IntlDateTimeFormat::partTypeString(UDateFormatField field)
     case UDAT_STANDALONE_QUARTER_FIELD:
     case UDAT_RELATED_YEAR_FIELD:
     case UDAT_TIME_SEPARATOR_FIELD:
-#if U_ICU_VERSION_MAJOR_NUM < 58 || !defined(U_HIDE_DEPRECATED_API)
-    case UDAT_FIELD_COUNT:
-#endif
     // Any newer additions to the UDateFormatField enum should just be considered an "unknown" part.
     default:
         return "unknown"_s;
@@ -1047,7 +1036,6 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
 
     return parts;
 }
-#endif
 
 } // namespace JSC
 

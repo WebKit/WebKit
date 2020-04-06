@@ -1,6 +1,8 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 ******************************************************************************
-* Copyright (C) 2010-2014, International Business Machines Corporation and
+* Copyright (C) 2010-2016, International Business Machines Corporation and
 * others. All Rights Reserved.
 ******************************************************************************
 */
@@ -18,6 +20,7 @@
 #if !UCONFIG_NO_FORMATTING
 
 #include "unicode/locid.h"
+#include "unicode/strenum.h"
 #include "unicode/uscript.h"
 #include "unicode/uldnames.h"
 #include "unicode/udisplaycontext.h"
@@ -30,7 +33,7 @@ U_NAMESPACE_BEGIN
  * values, see Locale.
  * @stable ICU 4.4
  */
-class U_I18N_API LocaleDisplayNames : public UObject {
+class U_COMMON_API LocaleDisplayNames : public UObject {
 public:
     /**
      * Destructor.

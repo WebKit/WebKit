@@ -1,15 +1,17 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 ******************************************************************************
-*   Copyright (C) 1996-2015, International Business Machines
+*   Copyright (C) 1996-2016, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ******************************************************************************
 */
 
 /**
- * \file 
+ * \file
  * \brief C++ API: Collation Service.
  */
- 
+
 /**
 * File coll.h
 *
@@ -56,7 +58,7 @@
 
 #include "unicode/uobject.h"
 #include "unicode/ucol.h"
-#include "unicode/normlzr.h"
+#include "unicode/unorm.h"
 #include "unicode/locid.h"
 #include "unicode/uniset.h"
 #include "unicode/umisc.h"
@@ -156,7 +158,7 @@ class CollationKey;
 * @see         CollationKey
 * @see         CollationElementIterator
 * @see         Locale
-* @see         Normalizer
+* @see         Normalizer2
 * @version     2.0 11/15/01
 */
 
@@ -199,6 +201,9 @@ public:
         IDENTICAL  = UCOL_IDENTICAL  // 15
     };
 
+
+    // Cannot use #ifndef U_HIDE_DEPRECATED_API for the following, it is
+    // used by virtual methods that cannot have that conditional.
     /**
      * LESS is returned if source string is compared to be less than target
      * string in the compare() method.
@@ -388,8 +393,8 @@ public:
      * is less than, greater than or equal to another string array.
      * <p>Example of use:
      * <pre>
-     * .       UChar ABC[] = {0x41, 0x42, 0x43, 0};  // = "ABC"
-     * .       UChar abc[] = {0x61, 0x62, 0x63, 0};  // = "abc"
+     * .       char16_t ABC[] = {0x41, 0x42, 0x43, 0};  // = "ABC"
+     * .       char16_t abc[] = {0x61, 0x62, 0x63, 0};  // = "abc"
      * .       UErrorCode status = U_ZERO_ERROR;
      * .       Collator *myCollation =
      * .                         Collator::createInstance(Locale::getUS(), status);
@@ -415,8 +420,8 @@ public:
      *         target
      * @deprecated ICU 2.6 use the overload with UErrorCode &
      */
-    virtual EComparisonResult compare(const UChar* source, int32_t sourceLength,
-                                      const UChar* target, int32_t targetLength)
+    virtual EComparisonResult compare(const char16_t* source, int32_t sourceLength,
+                                      const char16_t* target, int32_t targetLength)
                                       const;
 
     /**
@@ -435,8 +440,8 @@ public:
      * than target
      * @stable ICU 2.6
      */
-    virtual UCollationResult compare(const UChar* source, int32_t sourceLength,
-                                      const UChar* target, int32_t targetLength,
+    virtual UCollationResult compare(const char16_t* source, int32_t sourceLength,
+                                      const char16_t* target, int32_t targetLength,
                                       UErrorCode &status) const = 0;
 
     /**
@@ -479,7 +484,7 @@ public:
      * generated sort keys.
      * If the source string is null, a null collation key will be returned.
      *
-     * Note that sort keys are often less efficient than simply doing comparison.  
+     * Note that sort keys are often less efficient than simply doing comparison.
      * For more details, see the ICU User Guide.
      *
      * @param source the source string to be transformed into a sort key.
@@ -501,7 +506,7 @@ public:
      * generated sort keys.
      * <p>If the source string is null, a null collation key will be returned.
      *
-     * Note that sort keys are often less efficient than simply doing comparison.  
+     * Note that sort keys are often less efficient than simply doing comparison.
      * For more details, see the ICU User Guide.
      *
      * @param source the source string to be transformed into a sort key.
@@ -512,7 +517,7 @@ public:
      * @see CollationKey#compare
      * @stable ICU 2.0
      */
-    virtual CollationKey& getCollationKey(const UChar*source,
+    virtual CollationKey& getCollationKey(const char16_t*source,
                                           int32_t sourceLength,
                                           CollationKey& key,
                                           UErrorCode& status) const = 0;
@@ -616,7 +621,7 @@ public:
      * @see Collator#setReorderCodes
      * @see UScriptCode
      * @see UColReorderCode
-     * @stable ICU 4.8 
+     * @stable ICU 4.8
      */
      virtual int32_t getReorderCodes(int32_t *dest,
                                      int32_t destCapacity,
@@ -626,7 +631,7 @@ public:
      * Sets the ordering of scripts for this collator.
      *
      * <p>The reordering codes are a combination of script codes and reorder codes.
-     * @param reorderCodes An array of script codes in the new order. This can be NULL if the 
+     * @param reorderCodes An array of script codes in the new order. This can be NULL if the
      * length is also set to 0. An empty array will clear any reordering codes on the collator.
      * @param reorderCodesLength The length of reorderCodes.
      * @param status error code
@@ -635,7 +640,7 @@ public:
      * @see Collator#getEquivalentReorderCodes
      * @see UScriptCode
      * @see UColReorderCode
-     * @stable ICU 4.8 
+     * @stable ICU 4.8
      */
      virtual void setReorderCodes(const int32_t* reorderCodes,
                                   int32_t reorderCodesLength,
@@ -647,11 +652,11 @@ public:
      * Beginning with ICU 55, scripts only reorder together if they are primary-equal,
      * for example Hiragana and Katakana.
      *
-     * @param reorderCode The reorder code to determine equivalence for. 
+     * @param reorderCode The reorder code to determine equivalence for.
      * @param dest The array to fill with the script equivalence reordering codes.
-     * @param destCapacity The length of dest. If it is 0, then dest may be NULL and the 
+     * @param destCapacity The length of dest. If it is 0, then dest may be NULL and the
      * function will only return the length of the result without writing any codes (pre-flighting).
-     * @param status A reference to an error code value, which must not indicate 
+     * @param status A reference to an error code value, which must not indicate
      * a failure before the function call.
      * @return The length of the of the reordering code equivalence array.
      * @see ucol_setReorderCodes
@@ -659,7 +664,7 @@ public:
      * @see Collator#setReorderCodes
      * @see UScriptCode
      * @see UColReorderCode
-     * @stable ICU 4.8 
+     * @stable ICU 4.8
      */
     static int32_t U_EXPORT2 getEquivalentReorderCodes(int32_t reorderCode,
                                 int32_t* dest,
@@ -667,7 +672,7 @@ public:
                                 UErrorCode& status);
 
     /**
-     * Get name of the object for the desired Locale, in the desired langauge
+     * Get name of the object for the desired Locale, in the desired language
      * @param objectLocale must be from getAvailableLocales
      * @param displayLocale specifies the desired locale for output
      * @param name the fill-in parameter of the return value
@@ -680,7 +685,7 @@ public:
                                          UnicodeString& name);
 
     /**
-    * Get name of the object for the desired Locale, in the langauge of the
+    * Get name of the object for the desired Locale, in the language of the
     * default locale.
     * @param objectLocale must be from getAvailableLocales
     * @param name the fill-in parameter of the return value
@@ -906,7 +911,7 @@ public:
      * the top of one of the supported reordering groups,
      * and it must not be beyond the last of those groups.
      * See setMaxVariable().
-     * @param varTop one or more (if contraction) UChars to which the variable top should be set
+     * @param varTop one or more (if contraction) char16_ts to which the variable top should be set
      * @param len length of variable top string. If -1 it is considered to be zero terminated.
      * @param status error code. If error code is set, the return value is undefined. Errors set by this function are: <br>
      *    U_CE_NOT_FOUND_ERROR if more than one character was passed and there is no such contraction<br>
@@ -915,7 +920,7 @@ public:
      * @return variable top primary weight
      * @deprecated ICU 53 Call setMaxVariable() instead.
      */
-    virtual uint32_t setVariableTop(const UChar *varTop, int32_t len, UErrorCode &status) = 0;
+    virtual uint32_t setVariableTop(const char16_t *varTop, int32_t len, UErrorCode &status) = 0;
 
     /**
      * Sets the variable top to the primary weight of the specified string.
@@ -924,7 +929,7 @@ public:
      * the top of one of the supported reordering groups,
      * and it must not be beyond the last of those groups.
      * See setMaxVariable().
-     * @param varTop a UnicodeString size 1 or more (if contraction) of UChars to which the variable top should be set
+     * @param varTop a UnicodeString size 1 or more (if contraction) of char16_ts to which the variable top should be set
      * @param status error code. If error code is set, the return value is undefined. Errors set by this function are: <br>
      *    U_CE_NOT_FOUND_ERROR if more than one character was passed and there is no such contraction<br>
      *    U_ILLEGAL_ARGUMENT_ERROR if the variable top is beyond
@@ -981,7 +986,7 @@ public:
      * Sort key byte arrays are zero-terminated and can be compared using
      * strcmp().
      *
-     * Note that sort keys are often less efficient than simply doing comparison.  
+     * Note that sort keys are often less efficient than simply doing comparison.
      * For more details, see the ICU User Guide.
      *
      * @param source string to be processed.
@@ -997,11 +1002,11 @@ public:
                               int32_t resultLength) const = 0;
 
     /**
-     * Get the sort key as an array of bytes from a UChar buffer.
+     * Get the sort key as an array of bytes from a char16_t buffer.
      * Sort key byte arrays are zero-terminated and can be compared using
      * strcmp().
      *
-     * Note that sort keys are often less efficient than simply doing comparison.  
+     * Note that sort keys are often less efficient than simply doing comparison.
      * For more details, see the ICU User Guide.
      *
      * @param source string to be processed.
@@ -1015,7 +1020,7 @@ public:
      * @return Number of bytes needed for storing the sort key
      * @stable ICU 2.2
      */
-    virtual int32_t getSortKey(const UChar*source, int32_t sourceLength,
+    virtual int32_t getSortKey(const char16_t*source, int32_t sourceLength,
                                uint8_t*result, int32_t resultLength) const = 0;
 
     /**
@@ -1111,18 +1116,18 @@ public:
     virtual void setLocales(const Locale& requestedLocale, const Locale& validLocale, const Locale& actualLocale);
 
     /** Get the short definition string for a collator. This internal API harvests the collator's
-     *  locale and the attribute set and produces a string that can be used for opening 
+     *  locale and the attribute set and produces a string that can be used for opening
      *  a collator with the same attributes using the ucol_openFromShortString API.
      *  This string will be normalized.
      *  The structure and the syntax of the string is defined in the "Naming collators"
-     *  section of the users guide: 
+     *  section of the users guide:
      *  http://userguide.icu-project.org/collation/concepts#TOC-Collator-naming-scheme
      *  This function supports preflighting.
-     * 
+     *
      *  This is internal, and intended to be used with delegate converters.
      *
      *  @param locale a locale that will appear as a collators locale in the resulting
-     *                short string definition. If NULL, the locale will be harvested 
+     *                short string definition. If NULL, the locale will be harvested
      *                from the collator.
      *  @param buffer space to hold the resulting string
      *  @param capacity capacity of the buffer

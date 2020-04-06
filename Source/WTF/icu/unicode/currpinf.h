@@ -1,6 +1,8 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
- * Copyright (C) 2009-2011, International Business Machines Corporation and         *
+ * Copyright (C) 2009-2015, International Business Machines Corporation and         *
  * others. All Rights Reserved.                                                *
  *******************************************************************************
  */
@@ -191,6 +193,7 @@ public:
 
 private:
     friend class DecimalFormat;
+    friend class DecimalFormatImpl;
 
     void initialize(const Locale& loc, UErrorCode& status);
    

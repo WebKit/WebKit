@@ -1,3 +1,5 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
  * Copyright (C) 1996-2015, International Business Machines Corporation and
@@ -136,6 +138,19 @@
  * adding the specified (signed) amount of time to a particular time field.
  * For example, subtracting 5 days from the date <code>September 12, 1996</code>
  * results in <code>September 7, 1996</code>.
+ *
+ * <p>
+ * The Japanese calendar uses a combination of era name and year number.
+ * When an emperor of Japan abdicates and a new emperor ascends the throne,
+ * a new era is declared and year number is reset to 1. Even if the date of
+ * abdication is scheduled ahead of time, the new era name might not be
+ * announced until just before the date. In such case, ICU4C may include
+ * a start date of future era without actual era name, but not enabled
+ * by default. ICU4C users who want to test the behavior of the future era
+ * can enable the tentative era by:
+ * <ul>
+ * <li>Environment variable <code>ICU_ENABLE_TENTATIVE_ERA=true</code>.</li>
+ * </ul>
  *
  * @stable ICU 2.0
  */
@@ -423,10 +438,12 @@ enum UCalendarDateFields {
    */
   UCAL_IS_LEAP_MONTH,
 
-  /**
-   * Field count
-   * @stable ICU 2.6
-   */
+    /* Do not conditionalize the following with #ifndef U_HIDE_DEPRECATED_API,
+     * it is needed for layout of Calendar, DateFormat, and other objects */
+    /**
+     * One more than the highest normal UCalendarDateFields value.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
   UCAL_FIELD_COUNT,
 
  /**

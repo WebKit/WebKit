@@ -1,3 +1,5 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 ********************************************************************************
 *   Copyright (C) 1997-2014, International Business Machines
@@ -28,7 +30,7 @@
 #include "unicode/utypes.h"
 
 /**
- * \file 
+ * \file
  * \brief C++ API: Calendar object
  */
 #if !UCONFIG_NO_FORMATTING
@@ -135,7 +137,7 @@ class BasicTimeZone;
  * Calendar resolves the time using the UTC offset before the transition by default.
  * In this example, 1:30 AM is interpreted as 1:30 AM standard time (non-exist),
  * so the final result will be 2:30 AM daylight time.
- * 
+ *
  * <p>On the date switching back to standard time, wall clock time is moved back one
  * hour at 2:00 AM. So wall clock time from 1:00 AM to 1:59 AM occur twice. In this
  * case, the ICU Calendar resolves the time using the UTC offset after the transition
@@ -148,7 +150,7 @@ class BasicTimeZone;
  * <p>
  * <strong>Note:</strong> for some non-Gregorian calendars, different
  * fields may be necessary for complete disambiguation. For example, a full
- * specification of the historial Arabic astronomical calendar requires year,
+ * specification of the historical Arabic astronomical calendar requires year,
  * month, day-of-month <em>and</em> day-of-week in some cases.
  *
  * <p>
@@ -195,6 +197,19 @@ class BasicTimeZone;
  * should use the protected constants in <code>Calendar</code> to
  * specify an extremely early or extremely late date.</p>
  *
+ * <p>
+ * The Japanese calendar uses a combination of era name and year number.
+ * When an emperor of Japan abdicates and a new emperor ascends the throne,
+ * a new era is declared and year number is reset to 1. Even if the date of
+ * abdication is scheduled ahead of time, the new era name might not be
+ * announced until just before the date. In such case, ICU4C may include
+ * a start date of future era without actual era name, but not enabled
+ * by default. ICU4C users who want to test the behavior of the future era
+ * can enable the tentative era by:
+ * <ul>
+ * <li>Environment variable <code>ICU_ENABLE_TENTATIVE_ERA=true</code>.</li>
+ * </ul>
+ *
  * @stable ICU 2.0
  */
 class U_I18N_API Calendar : public UObject {
@@ -233,7 +248,7 @@ public:
         DST_OFFSET,           // Example: 0 or U_MILLIS_PER_HOUR
         YEAR_WOY,             // 'Y' Example: 1..big number - Year of Week of Year
         DOW_LOCAL,            // 'e' Example: 1..7 - Day of Week / Localized
-        
+
         EXTENDED_YEAR,
         JULIAN_DAY,
         MILLISECONDS_IN_DAY,
@@ -901,7 +916,7 @@ public:
     /**
      * Sets the behavior for handling wall time repeating multiple times
      * at negative time zone offset transitions. For example, 1:30 AM on
-     * November 6, 2011 in US Eastern time (Ameirca/New_York) occurs twice;
+     * November 6, 2011 in US Eastern time (America/New_York) occurs twice;
      * 1:30 AM EDT, then 1:30 AM EST one hour later. When <code>UCAL_WALLTIME_FIRST</code>
      * is used, the wall time 1:30AM in this example will be interpreted as 1:30 AM EDT
      * (first occurrence). When <code>UCAL_WALLTIME_LAST</code> is used, it will be
@@ -912,7 +927,7 @@ public:
      * option for this. When the argument is neither <code>UCAL_WALLTIME_FIRST</code>
      * nor <code>UCAL_WALLTIME_LAST</code>, this method has no effect and will keep
      * the current setting.
-     * 
+     *
      * @param option the behavior for handling repeating wall time, either
      * <code>UCAL_WALLTIME_FIRST</code> or <code>UCAL_WALLTIME_LAST</code>.
      * @see #getRepeatedWallTimeOption
@@ -923,7 +938,7 @@ public:
     /**
      * Gets the behavior for handling wall time repeating multiple times
      * at negative time zone offset transitions.
-     * 
+     *
      * @return the behavior for handling repeating wall time, either
      * <code>UCAL_WALLTIME_FIRST</code> or <code>UCAL_WALLTIME_LAST</code>.
      * @see #setRepeatedWallTimeOption
@@ -944,12 +959,12 @@ public:
      * <p>
      * <b>Note:</b>This option is effective only when this calendar is lenient.
      * When the calendar is strict, such non-existing wall time will cause an error.
-     * 
+     *
      * @param option the behavior for handling skipped wall time at positive time zone
      * offset transitions, one of <code>UCAL_WALLTIME_FIRST</code>, <code>UCAL_WALLTIME_LAST</code> and
      * <code>UCAL_WALLTIME_NEXT_VALID</code>.
      * @see #getSkippedWallTimeOption
-     * 
+     *
      * @stable ICU 49
      */
     void setSkippedWallTimeOption(UCalendarWallTimeOption option);
@@ -957,7 +972,7 @@ public:
     /**
      * Gets the behavior for handling skipped wall time at positive time zone offset
      * transitions.
-     * 
+     *
      * @return the behavior for handling skipped wall time, one of
      * <code>UCAL_WALLTIME_FIRST</code>, <code>UCAL_WALLTIME_LAST</code>
      * and <code>UCAL_WALLTIME_NEXT_VALID</code>.
@@ -1739,7 +1754,7 @@ protected:
      * reflects local zone wall time.
      * @internal
      */
-    int32_t computeMillisInDay();
+    double computeMillisInDay();
 
     /**
      * This method can assume EXTENDED_YEAR has been set.
@@ -1750,7 +1765,7 @@ protected:
      *          when this function fails.
      * @internal
      */
-    int32_t computeZoneOffset(double millis, int32_t millisInDay, UErrorCode &ec);
+    int32_t computeZoneOffset(double millis, double millisInDay, UErrorCode &ec);
 
 
     /**
@@ -2169,7 +2184,7 @@ private:
     TimeZone*   fZone;
 
     /**
-     * Option for rpeated wall time
+     * Option for repeated wall time
      * @see #setRepeatedWallTimeOption
      */
     UCalendarWallTimeOption fRepeatedWallTime;
@@ -2454,7 +2469,7 @@ private:
     BasicTimeZone* getBasicTimeZone() const;
 
     /**
-     * Find the previous zone transtion near the given time.
+     * Find the previous zone transition near the given time.
      * @param base The base time, inclusive
      * @param transitionTime Receives the result time
      * @param status The error status

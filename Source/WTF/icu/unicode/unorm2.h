@@ -1,12 +1,14 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2009-2013, International Business Machines
+*   Copyright (C) 2009-2015, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
 *   file name:  unorm2.h
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -30,6 +32,7 @@
 
 #include "unicode/utypes.h"
 #include "unicode/localpointer.h"
+#include "unicode/stringoptions.h"
 #include "unicode/uset.h"
 
 /**
@@ -523,6 +526,78 @@ unorm2_hasBoundaryAfter(const UNormalizer2 *norm2, UChar32 c);
  */
 U_STABLE UBool U_EXPORT2
 unorm2_isInert(const UNormalizer2 *norm2, UChar32 c);
+
+/**
+ * Compares two strings for canonical equivalence.
+ * Further options include case-insensitive comparison and
+ * code point order (as opposed to code unit order).
+ *
+ * Canonical equivalence between two strings is defined as their normalized
+ * forms (NFD or NFC) being identical.
+ * This function compares strings incrementally instead of normalizing
+ * (and optionally case-folding) both strings entirely,
+ * improving performance significantly.
+ *
+ * Bulk normalization is only necessary if the strings do not fulfill the FCD
+ * conditions. Only in this case, and only if the strings are relatively long,
+ * is memory allocated temporarily.
+ * For FCD strings and short non-FCD strings there is no memory allocation.
+ *
+ * Semantically, this is equivalent to
+ *   strcmp[CodePointOrder](NFD(foldCase(NFD(s1))), NFD(foldCase(NFD(s2))))
+ * where code point order and foldCase are all optional.
+ *
+ * UAX 21 2.5 Caseless Matching specifies that for a canonical caseless match
+ * the case folding must be performed first, then the normalization.
+ *
+ * @param s1 First source string.
+ * @param length1 Length of first source string, or -1 if NUL-terminated.
+ *
+ * @param s2 Second source string.
+ * @param length2 Length of second source string, or -1 if NUL-terminated.
+ *
+ * @param options A bit set of options:
+ *   - U_FOLD_CASE_DEFAULT or 0 is used for default options:
+ *     Case-sensitive comparison in code unit order, and the input strings
+ *     are quick-checked for FCD.
+ *
+ *   - UNORM_INPUT_IS_FCD
+ *     Set if the caller knows that both s1 and s2 fulfill the FCD conditions.
+ *     If not set, the function will quickCheck for FCD
+ *     and normalize if necessary.
+ *
+ *   - U_COMPARE_CODE_POINT_ORDER
+ *     Set to choose code point order instead of code unit order
+ *     (see u_strCompare for details).
+ *
+ *   - U_COMPARE_IGNORE_CASE
+ *     Set to compare strings case-insensitively using case folding,
+ *     instead of case-sensitively.
+ *     If set, then the following case folding options are used.
+ *
+ *   - Options as used with case-insensitive comparisons, currently:
+ *
+ *   - U_FOLD_CASE_EXCLUDE_SPECIAL_I
+ *    (see u_strCaseCompare for details)
+ *
+ *   - regular normalization options shifted left by UNORM_COMPARE_NORM_OPTIONS_SHIFT
+ *
+ * @param pErrorCode ICU error code in/out parameter.
+ *                   Must fulfill U_SUCCESS before the function call.
+ * @return <0 or 0 or >0 as usual for string comparisons
+ *
+ * @see unorm_normalize
+ * @see UNORM_FCD
+ * @see u_strCompare
+ * @see u_strCaseCompare
+ *
+ * @stable ICU 2.2
+ */
+U_STABLE int32_t U_EXPORT2
+unorm_compare(const UChar *s1, int32_t length1,
+              const UChar *s2, int32_t length2,
+              uint32_t options,
+              UErrorCode *pErrorCode);
 
 #endif  /* !UCONFIG_NO_NORMALIZATION */
 #endif  /* __UNORM2_H__ */

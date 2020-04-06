@@ -31,8 +31,6 @@
 #include <unicode/unum.h>
 #include <unicode/uvernum.h>
 
-#define HAVE_ICU_FORMAT_DOUBLE_FOR_FIELDS (U_ICU_VERSION_MAJOR_NUM >= 59)
-
 namespace JSC {
 
 class IntlNumberFormatConstructor;
@@ -62,9 +60,7 @@ public:
 
     void initializeNumberFormat(JSGlobalObject*, JSValue locales, JSValue optionsValue);
     JSValue formatNumber(JSGlobalObject*, double number);
-#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
     JSValue formatToParts(JSGlobalObject*, double value);
-#endif
     JSObject* resolvedOptions(JSGlobalObject*);
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
@@ -101,7 +97,6 @@ private:
     bool m_useGrouping { true };
     bool m_initializedNumberFormat { false };
 
-#if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
     struct UFieldPositionIteratorDeleter {
         void operator()(UFieldPositionIterator*) const;
     };
@@ -116,7 +111,6 @@ private:
     };
 
     static ASCIILiteral partTypeString(UNumberFormatFields, double);
-#endif
 };
 
 } // namespace JSC

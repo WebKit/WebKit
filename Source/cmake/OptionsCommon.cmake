@@ -171,3 +171,5 @@ check_type_size("__int128_t" INT128_VALUE)
 if (HAVE_INT128_VALUE)
   SET_AND_EXPOSE_TO_BUILD(HAVE_INT128_T INT128_VALUE)
 endif ()
+
+add_definitions(-DU_SHOW_CPLUSPLUS_API=0)

@@ -1,10 +1,12 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 *   Copyright (C) 2010-2012,2014, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *   file name:  stringtriebuilder.h
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -103,7 +105,7 @@ protected:
     /** @internal */
     virtual int32_t getElementStringLength(int32_t i) const = 0;
     /** @internal */
-    virtual UChar getElementUnit(int32_t i, int32_t unitIndex) const = 0;
+    virtual char16_t getElementUnit(int32_t i, int32_t unitIndex) const = 0;
     /** @internal */
     virtual int32_t getElementValue(int32_t i) const = 0;
 
@@ -118,7 +120,7 @@ protected:
     /** @internal */
     virtual int32_t skipElementsBySomeUnits(int32_t i, int32_t unitIndex, int32_t count) const = 0;
     /** @internal */
-    virtual int32_t indexOfElementWithNextUnit(int32_t i, int32_t unitIndex, UChar unit) const = 0;
+    virtual int32_t indexOfElementWithNextUnit(int32_t i, int32_t unitIndex, char16_t unit) const = 0;
 
     /** @internal */
     virtual UBool matchNodesCanHaveValues() const = 0;
@@ -135,7 +137,7 @@ protected:
     /** @internal */
     static const int32_t kMaxBranchLinearSubNodeLength=5;
 
-    // Maximum number of nested split-branch levels for a branch on all 2^16 possible UChar units.
+    // Maximum number of nested split-branch levels for a branch on all 2^16 possible char16_t units.
     // log2(2^16/kMaxBranchLinearSubNodeLength) rounded up.
     /** @internal */
     static const int32_t kMaxSplitBranchLevels=14;
@@ -184,7 +186,8 @@ protected:
     /** @internal */
     UHashtable *nodes;
 
-#ifndef U_HIDE_INTERNAL_API
+    // Do not conditionalize the following with #ifndef U_HIDE_INTERNAL_API,
+    // it is needed for layout of other objects.
     /** @internal */
     class Node : public UObject {
     public:
@@ -243,6 +246,7 @@ protected:
         int32_t offset;
     };
 
+#ifndef U_HIDE_INTERNAL_API
     // This class should not be overridden because
     // registerFinalValue() compares a stack-allocated FinalValueNode
     // (stack-allocated so that we don't unnecessarily create lots of duplicate nodes)
@@ -252,13 +256,16 @@ protected:
     /** @internal */
     class FinalValueNode : public Node {
     public:
-        FinalValueNode(int32_t v) : Node(0x111111*37+v), value(v) {}
+        FinalValueNode(int32_t v) : Node(0x111111u*37u+v), value(v) {}
         virtual UBool operator==(const Node &other) const;
         virtual void write(StringTrieBuilder &builder);
     protected:
         int32_t value;
     };
+#endif  /* U_HIDE_INTERNAL_API */
 
+    // Do not conditionalize the following with #ifndef U_HIDE_INTERNAL_API,
+    // it is needed for layout of other objects.
     /**
      * @internal 
      */
@@ -269,34 +276,38 @@ protected:
         void setValue(int32_t v) {
             hasValue=TRUE;
             value=v;
-            hash=hash*37+v;
+            hash=hash*37u+v;
         }
     protected:
         UBool hasValue;
         int32_t value;
     };
 
+#ifndef U_HIDE_INTERNAL_API
     /** 
      * @internal 
      */
     class IntermediateValueNode : public ValueNode {
     public:
         IntermediateValueNode(int32_t v, Node *nextNode)
-                : ValueNode(0x222222*37+hashCode(nextNode)), next(nextNode) { setValue(v); }
+                : ValueNode(0x222222u*37u+hashCode(nextNode)), next(nextNode) { setValue(v); }
         virtual UBool operator==(const Node &other) const;
         virtual int32_t markRightEdgesFirst(int32_t edgeNumber);
         virtual void write(StringTrieBuilder &builder);
     protected:
         Node *next;
     };
+#endif  /* U_HIDE_INTERNAL_API */
 
+    // Do not conditionalize the following with #ifndef U_HIDE_INTERNAL_API,
+    // it is needed for layout of other objects.
     /**
      * @internal 
      */
     class LinearMatchNode : public ValueNode {
     public:
         LinearMatchNode(int32_t len, Node *nextNode)
-                : ValueNode((0x333333*37+len)*37+hashCode(nextNode)),
+                : ValueNode((0x333333u*37u+len)*37u+hashCode(nextNode)),
                   length(len), next(nextNode) {}
         virtual UBool operator==(const Node &other) const;
         virtual int32_t markRightEdgesFirst(int32_t edgeNumber);
@@ -305,6 +316,7 @@ protected:
         Node *next;
     };
 
+#ifndef U_HIDE_INTERNAL_API
     /**
      * @internal 
      */
@@ -326,25 +338,25 @@ protected:
         virtual void write(StringTrieBuilder &builder);
         // Adds a unit with a final value.
         void add(int32_t c, int32_t value) {
-            units[length]=(UChar)c;
+            units[length]=(char16_t)c;
             equal[length]=NULL;
             values[length]=value;
             ++length;
-            hash=(hash*37+c)*37+value;
+            hash=(hash*37u+c)*37u+value;
         }
         // Adds a unit which leads to another match node.
         void add(int32_t c, Node *node) {
-            units[length]=(UChar)c;
+            units[length]=(char16_t)c;
             equal[length]=node;
             values[length]=0;
             ++length;
-            hash=(hash*37+c)*37+hashCode(node);
+            hash=(hash*37u+c)*37u+hashCode(node);
         }
     protected:
         Node *equal[kMaxBranchLinearSubNodeLength];  // NULL means "has final value".
         int32_t length;
         int32_t values[kMaxBranchLinearSubNodeLength];
-        UChar units[kMaxBranchLinearSubNodeLength];
+        char16_t units[kMaxBranchLinearSubNodeLength];
     };
 
     /**
@@ -352,15 +364,15 @@ protected:
      */
     class SplitBranchNode : public BranchNode {
     public:
-        SplitBranchNode(UChar middleUnit, Node *lessThanNode, Node *greaterOrEqualNode)
-                : BranchNode(((0x555555*37+middleUnit)*37+
-                              hashCode(lessThanNode))*37+hashCode(greaterOrEqualNode)),
+        SplitBranchNode(char16_t middleUnit, Node *lessThanNode, Node *greaterOrEqualNode)
+                : BranchNode(((0x555555u*37u+middleUnit)*37u+
+                              hashCode(lessThanNode))*37u+hashCode(greaterOrEqualNode)),
                   unit(middleUnit), lessThan(lessThanNode), greaterOrEqual(greaterOrEqualNode) {}
         virtual UBool operator==(const Node &other) const;
         virtual int32_t markRightEdgesFirst(int32_t edgeNumber);
         virtual void write(StringTrieBuilder &builder);
     protected:
-        UChar unit;
+        char16_t unit;
         Node *lessThan;
         Node *greaterOrEqual;
     };
@@ -370,7 +382,7 @@ protected:
     class BranchHeadNode : public ValueNode {
     public:
         BranchHeadNode(int32_t len, Node *subNode)
-                : ValueNode((0x666666*37+len)*37+hashCode(subNode)),
+                : ValueNode((0x666666u*37u+len)*37u+hashCode(subNode)),
                   length(len), next(subNode) {}
         virtual UBool operator==(const Node &other) const;
         virtual int32_t markRightEdgesFirst(int32_t edgeNumber);

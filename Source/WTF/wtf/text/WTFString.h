@@ -327,13 +327,11 @@ public:
 #endif
 
 #if OS(WINDOWS)
-#if U_ICU_VERSION_MAJOR_NUM >= 59
     String(const wchar_t* characters, unsigned length)
         : String(ucharFrom(characters), length) { }
 
     String(const wchar_t* characters)
         : String(ucharFrom(characters)) { }
-#endif
 
     WTF_EXPORT_PRIVATE Vector<wchar_t> wideCharacters() const;
 #endif

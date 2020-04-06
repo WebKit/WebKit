@@ -375,7 +375,7 @@ static void buildQuery(DDScanQueryRef scanQuery, const SimpleRange& contextRange
         }
         // Test for white space nodes, we're coalescing them.
         auto currentTextUpconvertedCharacters = currentText.upconvertedCharacters();
-        const UniChar* currentCharPtr = currentTextUpconvertedCharacters.get();
+        auto currentCharPtr = currentTextUpconvertedCharacters.get();
         
         bool containsOnlyWhiteSpace = true;
         bool hasTab = false;
@@ -414,7 +414,7 @@ static void buildQuery(DDScanQueryRef scanQuery, const SimpleRange& contextRange
             continue;
         }
         
-        auto currentTextCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, currentTextUpconvertedCharacters.get(), currentTextLength));
+        auto currentTextCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(currentTextUpconvertedCharacters.get()), currentTextLength));
         softLink_DataDetectorsCore_DDScanQueryAddTextFragment(scanQuery, currentTextCFString.get(), CFRangeMake(0, currentTextLength), (void *)iteratorCount, (DDTextFragmentMode)0, DDTextCoalescingTypeNone);
         fragmentCount++;
     }

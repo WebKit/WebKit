@@ -83,11 +83,7 @@ TEST(WTF, StringConcatenate_Unsigned)
     EXPECT_STREQ("hello 0 world", makeString("hello ", 0u , " world").utf8().data());
 
     EXPECT_STREQ("hello 42 world", makeString("hello ", static_cast<unsigned char>(42) , " world").utf8().data());
-#if PLATFORM(WIN) || (U_ICU_VERSION_MAJOR_NUM >= 59 && !PLATFORM(COCOA))
     EXPECT_STREQ("hello 42 world", makeString("hello ", static_cast<unsigned short>(42) , " world").utf8().data());
-#else
-    EXPECT_STREQ("hello * world", makeString("hello ", static_cast<unsigned short>(42) , " world").utf8().data()); // Treated as a character.
-#endif
     EXPECT_STREQ("hello 4 world", makeString("hello ", sizeof(int) , " world").utf8().data()); // size_t
     EXPECT_STREQ("hello 4 world", makeString("hello ", offsetof(S, i) , " world").utf8().data()); // size_t
     EXPECT_STREQ("hello 3235839742 world", makeString("hello ", static_cast<size_t>(0xc0defefe), " world").utf8().data());

@@ -35,7 +35,7 @@ RetainPtr<NSString> StringView::createNSString() const
     if (is8Bit())
         return adoptNS([[NSString alloc] initWithBytes:const_cast<LChar*>(characters8()) length:length() encoding:NSISOLatin1StringEncoding]);
 
-    return adoptNS([[NSString alloc] initWithCharacters:const_cast<UChar*>(characters16()) length:length()]);
+    return adoptNS([[NSString alloc] initWithCharacters:reinterpret_cast<unichar*>(const_cast<UChar*>(characters16())) length:length()]);
 }
 
 RetainPtr<NSString> StringView::createNSStringWithoutCopying() const
@@ -43,7 +43,7 @@ RetainPtr<NSString> StringView::createNSStringWithoutCopying() const
     if (is8Bit())
         return adoptNS([[NSString alloc] initWithBytesNoCopy:const_cast<LChar*>(characters8()) length:length() encoding:NSISOLatin1StringEncoding freeWhenDone:NO]);
 
-    return adoptNS([[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(characters16()) length:length() freeWhenDone:NO]);
+    return adoptNS([[NSString alloc] initWithCharactersNoCopy:reinterpret_cast<unichar*>(const_cast<UChar*>(characters16())) length:length() freeWhenDone:NO]);
 }
 
 }

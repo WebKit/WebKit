@@ -105,7 +105,7 @@ static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* c
 
     *charCount = info->length - stringIndex;
     *attributes = info->attributes;
-    return info->cp + stringIndex;
+    return reinterpret_cast<const UniChar*>(info->cp + stringIndex);
 }
 
 void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp, unsigned length, unsigned stringLocation, const Font* font)

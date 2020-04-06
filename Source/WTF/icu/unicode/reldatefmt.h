@@ -1,6 +1,8 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *****************************************************************************
-* Copyright (C) 2014-2015, International Business Machines Corporation and
+* Copyright (C) 2014-2016, International Business Machines Corporation and
 * others.
 * All Rights Reserved.
 *****************************************************************************
@@ -15,6 +17,7 @@
 #include "unicode/utypes.h"
 #include "unicode/uobject.h"
 #include "unicode/udisplaycontext.h"
+#include "unicode/ureldatefmt.h"
 #include "unicode/locid.h"
 
 /**
@@ -22,42 +25,7 @@
  * \brief C++ API: Formats relative dates such as "1 day ago" or "tomorrow"
  */
 
-#if !UCONFIG_NO_FORMATTING && !UCONFIG_NO_BREAK_ITERATION
-
-#ifndef U_HIDE_DRAFT_API
-
-/**
- * The formatting style
- * @draft ICU 54
- */
-typedef enum UDateRelativeDateTimeFormatterStyle {
-
-  /**
-   * Everything spelled out.
-   * @draft ICU 54
-   */
-  UDAT_STYLE_LONG,
-
-  /**
-   * Abbreviations used when possible.
-   * @draft ICU 54
-   */
-  UDAT_STYLE_SHORT,
-
-  /**
-   * Use the shortest possible form.
-   * @draft ICU 54
-   */
-  UDAT_STYLE_NARROW,
-
-  /**
-   * The number of styles.
-   * @draft ICU 54
-   */
-  UDAT_STYLE_COUNT
-} UDateRelativeDateTimeFormatterStyle; 
-
-#endif /* U_HIDE_DRAFT_API */
+#if !UCONFIG_NO_FORMATTING
 
 /**
  * Represents the unit for formatting a relative date. e.g "in 5 days"
@@ -108,11 +76,13 @@ typedef enum UDateRelativeUnit {
      */
     UDAT_RELATIVE_YEARS,
 
+#ifndef U_HIDE_DEPRECATED_API
     /**
-     * Count of items in this enum.
-     * @stable ICU 53
+     * One more than the highest normal UDateRelativeUnit value.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
     UDAT_RELATIVE_UNIT_COUNT
+#endif  // U_HIDE_DEPRECATED_API
 } UDateRelativeUnit;
 
 /**
@@ -195,11 +165,13 @@ typedef enum UDateAbsoluteUnit {
      */
     UDAT_ABSOLUTE_NOW,
 
+#ifndef U_HIDE_DEPRECATED_API
     /**
-     * Count of items in this enum.
-     * @stable ICU 53
+     * One more than the highest normal UDateAbsoluteUnit value.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
     UDAT_ABSOLUTE_UNIT_COUNT
+#endif  // U_HIDE_DEPRECATED_API
 } UDateAbsoluteUnit;
 
 /**
@@ -245,16 +217,20 @@ typedef enum UDateDirection {
      */
     UDAT_DIRECTION_PLAIN,
 
+#ifndef U_HIDE_DEPRECATED_API
     /**
-     * Count of items in this enum.
-     * @stable ICU 53
+     * One more than the highest normal UDateDirection value.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
     UDAT_DIRECTION_COUNT
+#endif  // U_HIDE_DEPRECATED_API
 } UDateDirection;
 
+#if !UCONFIG_NO_BREAK_ITERATION
 
 U_NAMESPACE_BEGIN
 
+class BreakIterator;
 class RelativeDateTimeCacheData;
 class SharedNumberFormat;
 class SharedPluralRules;
@@ -358,7 +334,6 @@ public:
     RelativeDateTimeFormatter(
         const Locale& locale, NumberFormat *nfToAdopt, UErrorCode& status);
 
-#ifndef U_HIDE_DRAFT_API
     /**
      * Create RelativeDateTimeFormatter with given locale, NumberFormat,
      * and capitalization context.
@@ -372,7 +347,7 @@ public:
      * @param capitalizationContext A value from UDisplayContext that pertains to
      * capitalization.
      * @status Any error is returned here. 
-     * @draft ICU 54
+     * @stable ICU 54
      */
     RelativeDateTimeFormatter(
             const Locale& locale,
@@ -380,7 +355,6 @@ public:
             UDateRelativeDateTimeFormatterStyle style,
             UDisplayContext capitalizationContext,
             UErrorCode& status);
-#endif  /* U_HIDE_DRAFT_API */
 
     /**
      * Copy constructor.
@@ -442,6 +416,52 @@ public:
             UErrorCode& status) const;
 
     /**
+     * Format a combination of URelativeDateTimeUnit and numeric offset
+     * using a numeric style, e.g. "1 week ago", "in 1 week",
+     * "5 weeks ago", "in 5 weeks".
+     * 
+     * @param offset    The signed offset for the specified unit. This
+     *                  will be formatted according to this object's
+     *                  NumberFormat object.
+     * @param unit      The unit to use when formatting the relative
+     *                  date, e.g. UDAT_REL_UNIT_WEEK,
+     *                  UDAT_REL_UNIT_FRIDAY.
+     * @param appendTo  The string to which the formatted result will be
+     *                  appended.
+     * @param status    ICU error code returned here.
+     * @return          appendTo
+     * @stable ICU 57
+     */
+    UnicodeString& formatNumeric(
+            double offset,
+            URelativeDateTimeUnit unit,
+            UnicodeString& appendTo,
+            UErrorCode& status) const;
+
+    /**
+     * Format a combination of URelativeDateTimeUnit and numeric offset
+     * using a text style if possible, e.g. "last week", "this week",
+     * "next week", "yesterday", "tomorrow". Falls back to numeric
+     * style if no appropriate text term is available for the specified
+     * offset in the object's locale.
+     *
+     * @param offset    The signed offset for the specified unit.
+     * @param unit      The unit to use when formatting the relative
+     *                  date, e.g. UDAT_REL_UNIT_WEEK,
+     *                  UDAT_REL_UNIT_FRIDAY.
+     * @param appendTo  The string to which the formatted result will be
+     *                  appended.
+     * @param status    ICU error code returned here.
+     * @return          appendTo
+     * @stable ICU 57
+     */
+    UnicodeString& format(
+            double offset,
+            URelativeDateTimeUnit unit,
+            UnicodeString& appendTo,
+            UErrorCode& status) const;
+
+    /**
      * Combines a relative date string and a time string in this object's
      * locale. This is done with the same date-time separator used for the
      * default calendar in this locale.
@@ -466,21 +486,19 @@ public:
      */
     const NumberFormat& getNumberFormat() const;
 
-#ifndef U_HIDE_DRAFT_API
     /**
      * Returns the capitalization context.
      *
-     * @draft ICU 54
+     * @stable ICU 54
      */
     UDisplayContext getCapitalizationContext() const;
 
     /**
      * Returns the format style.
      *
-     * @draft ICU 54
+     * @stable ICU 54
      */
     UDateRelativeDateTimeFormatterStyle getFormatStyle() const;
-#endif  /* U_HIDE_DRAFT_API */
 
 private:
     const RelativeDateTimeCacheData* fCache;
@@ -499,5 +517,6 @@ private:
 
 U_NAMESPACE_END
 
-#endif /* !UCONFIG_NO_FORMATTING && !UCONFIG_NO_BREAK_ITERATION*/
-#endif
+#endif /* !UCONFIG_NO_BREAK_ITERATION */
+#endif /* !UCONFIG_NO_FORMATTING */
+#endif /* __RELDATEFMT_H */

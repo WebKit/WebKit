@@ -183,12 +183,7 @@ static JSValue decode(JSGlobalObject* globalObject, const CharType* characters, 
                 const int sequenceLen = 1 + U8_COUNT_TRAIL_BYTES(b0);
                 if (k <= length - sequenceLen * 3) {
                     charLen = sequenceLen * 3;
-#if U_ICU_VERSION_MAJOR_NUM >= 60
                     uint8_t sequence[U8_MAX_LENGTH];
-#else
-                    // In pre-60 ICU, U8_COUNT_TRAIL_BYTES returns 0..5
-                    uint8_t sequence[6];
-#endif
                     sequence[0] = b0;
                     for (int i = 1; i < sequenceLen; ++i) {
                         const CharType* q = p + i * 3;

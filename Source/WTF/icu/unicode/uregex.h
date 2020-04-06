@@ -1,10 +1,12 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 **********************************************************************
-*   Copyright (C) 2004-2015, International Business Machines
+*   Copyright (C) 2004-2016, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  uregex.h
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   indentation:4
 *
 *   created on: 2004mar09
@@ -487,7 +489,7 @@ uregex_matches64(URegularExpression *regexp,
   *
   *   <p>If the match succeeds then more information can be obtained via the
   *    <code>uregexp_start()</code>, <code>uregexp_end()</code>,
-  *    and <code>uregexp_group()</code> functions.</p>
+  *    and <code>uregex_group()</code> functions.</p>
   *
   *    @param   regexp      The compiled regular expression.
   *    @param   startIndex  The input string (native) index at which to begin matching, or
@@ -516,7 +518,7 @@ uregex_lookingAt(URegularExpression *regexp,
   *
   *   <p>If the match succeeds then more information can be obtained via the
   *    <code>uregexp_start()</code>, <code>uregexp_end()</code>,
-  *    and <code>uregexp_group()</code> functions.</p>
+  *    and <code>uregex_group()</code> functions.</p>
   *
   *    @param   regexp      The compiled regular expression.
   *    @param   startIndex  The input string (native) index at which to begin matching, or
@@ -607,7 +609,6 @@ U_STABLE int32_t U_EXPORT2
 uregex_groupCount(URegularExpression *regexp,
                   UErrorCode         *status);
 
-#ifndef U_HIDE_DRAFT_API
 /**
   * Get the group number corresponding to a named capture group.
   * The returned number can be used with any function that access
@@ -622,9 +623,9 @@ uregex_groupCount(URegularExpression *regexp,
   *                     nul-terminated string.
   * @param  status      A pointer to a UErrorCode to receive any errors.
   *
-  * @draft ICU 55
+  * @stable ICU 55
   */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uregex_groupNumberFromName(URegularExpression *regexp,
                            const UChar        *groupName,
                            int32_t             nameLength,
@@ -646,14 +647,13 @@ uregex_groupNumberFromName(URegularExpression *regexp,
   *                     nul-terminated.
   * @param  status      A pointer to a UErrorCode to receive any errors.
   *
-  * @draft ICU 55
+  * @stable ICU 55
   */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uregex_groupNumberFromCName(URegularExpression *regexp,
                             const char         *groupName,
                             int32_t             nameLength,
                             UErrorCode          *status);
-#endif  /* U_HIDE_DRAFT_API */
 
 /** Extract the string for the specified matching expression or subexpression.
   * Group #0 is the complete string of matched text.

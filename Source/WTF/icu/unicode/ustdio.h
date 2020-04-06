@@ -1,7 +1,9 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1998-2014, International Business Machines
+*   Copyright (C) 1998-2015, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -243,7 +245,6 @@ u_fopen(const char    *filename,
     const char    *locale,
     const char    *codepage);
 
-#ifndef U_HIDE_DRAFT_API
 /**
  * Open a UFILE with a UChar* filename
  * A UFILE is a wrapper around a FILE* that is locale and codepage aware.
@@ -259,14 +260,13 @@ u_fopen(const char    *filename,
  * read from the file. If this paramter is NULL the system default codepage
  * will be used.
  * @return A new UFILE, or NULL if an error occurred.
- * @draft ICU 54
+ * @stable ICU 54
  */
-U_DRAFT UFILE* U_EXPORT2
+U_STABLE UFILE* U_EXPORT2
 u_fopen_u(const UChar    *filename,
     const char    *perm,
     const char    *locale,
     const char    *codepage);
-#endif  /* U_HIDE_DRAFT_API */
 
 /**
  * Open a UFILE on top of an existing FILE* stream. The FILE* stream

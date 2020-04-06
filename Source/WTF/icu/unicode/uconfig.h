@@ -1,10 +1,12 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*  
 **********************************************************************
-*   Copyright (C) 2002-2015, International Business Machines
+*   Copyright (C) 2002-2016, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  uconfig.h
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -74,7 +76,7 @@
 #endif
 
 /**
- * Determines wheter to enable auto cleanup of libraries. 
+ * Determines whether to enable auto cleanup of libraries. 
  * @internal
  */
 #ifndef UCLN_NO_AUTO_CLEANUP
@@ -135,6 +137,15 @@
 #endif
 
 /**
+ * \def UCONFIG_ENABLE_PLUGINS
+ * Determines whether to enable ICU plugins.
+ * @internal
+ */
+#ifndef UCONFIG_ENABLE_PLUGINS
+#define UCONFIG_ENABLE_PLUGINS 0
+#endif
+
+/**
  * \def U_ENABLE_DYLOAD
  * Whether to enable Dynamic loading in ICU.
  * @internal
@@ -151,7 +162,6 @@
 #ifndef U_CHECK_DYLOAD
 #define U_CHECK_DYLOAD 1
 #endif
-
 
 /**
  * \def U_DEFAULT_SHOW_DRAFT
@@ -252,7 +262,8 @@
 
 /**
  * \def UCONFIG_NO_CONVERSION
- * ICU will not completely build with this switch turned on.
+ * ICU will not completely build (compiling the tools fails) with this
+ * switch turned on.
  * This switch turns off all converters.
  *
  * You may want to use this together with U_CHARSET_IS_UTF8 defined to 1
@@ -278,7 +289,7 @@
  * This is not possible on EBCDIC platforms
  * because they need ibm-37 or ibm-1047 default converters.
  *
- * @draft ICU 55
+ * @stable ICU 55
  */
 #ifndef UCONFIG_ONLY_HTML_CONVERSION
 #   define UCONFIG_ONLY_HTML_CONVERSION 0
@@ -310,7 +321,9 @@
  */
 #ifndef UCONFIG_NO_NORMALIZATION
 #   define UCONFIG_NO_NORMALIZATION 0
-#elif UCONFIG_NO_NORMALIZATION
+#endif
+
+#if UCONFIG_NO_NORMALIZATION
     /* common library */
     /* ICU 50 CJK dictionary BreakIterator uses normalization */
 #   define UCONFIG_NO_BREAK_ITERATION 1
@@ -437,9 +450,6 @@
  */
 #ifndef UCONFIG_NO_FILTERED_BREAK_ITERATION
 #   define UCONFIG_NO_FILTERED_BREAK_ITERATION 0
-
-
-
 #endif
 
 #endif

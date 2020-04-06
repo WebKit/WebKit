@@ -1,6 +1,8 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  **********************************************************************
- *   Copyright (C) 1997-2015, International Business Machines
+ *   Copyright (C) 1997-2016, International Business Machines
  *   Corporation and others.  All Rights Reserved.
  **********************************************************************
  *
@@ -32,13 +34,13 @@
  * See UAX #24 Unicode Script Property (http://www.unicode.org/reports/tr24/)
  * and http://www.unicode.org/Public/UCD/latest/ucd/PropertyValueAliases.txt .
  *
- * Starting with ICU 3.6, constants for most ISO 15924 script codes
+ * In addition, constants for many ISO 15924 script codes
  * are included, for use with language tags, CLDR data, and similar.
  * Some of those codes are not used in the Unicode Character Database (UCD).
  * For example, there are no characters that have a UCD script property value of
  * Hans or Hant. All Han ideographs have the Hani script property value in Unicode.
  *
- * Private-use codes Qaaa..Qabx are not included.
+ * Private-use codes Qaaa..Qabx are not included, except as used in the UCD or in CLDR.
  *
  * Starting with ICU 55, script codes are only added when their scripts
  * have been or will certainly be encoded in Unicode,
@@ -300,7 +302,7 @@ typedef enum UScriptCode {
       USCRIPT_REJANG                        = 110,/* Rjng */
       /** @stable ICU 3.8 */
       USCRIPT_SAURASHTRA                    = 111,/* Saur */
-      /** @stable ICU 3.8 */
+      /** Sutton SignWriting @stable ICU 3.8 */
       USCRIPT_SIGN_WRITING                  = 112,/* Sgnw */
       /** @stable ICU 3.8 */
       USCRIPT_SUNDANESE                     = 113,/* Sund */
@@ -424,24 +426,61 @@ typedef enum UScriptCode {
       /** @stable ICU 54 */
       USCRIPT_SIDDHAM                       = 166,/* Sidd */
 
-      /**
-       * One higher than the last script code constant.
-       * This value increases as constants for script codes are added.
-       *
-       * There are constants for Unicode 7 script property values.
-       * There are constants for ISO 15924 script codes assigned on or before 2013-10-12.
-       * There are no constants for private use codes from Qaaa - Qabx
-       * except as used in the UCD.
-       *
-       * @stable ICU 2.2
-       */
-      USCRIPT_CODE_LIMIT    = 167
+      /** @stable ICU 58 */
+      USCRIPT_ADLAM                         = 167,/* Adlm */
+      /** @stable ICU 58 */
+      USCRIPT_BHAIKSUKI                     = 168,/* Bhks */
+      /** @stable ICU 58 */
+      USCRIPT_MARCHEN                       = 169,/* Marc */
+      /** @stable ICU 58 */
+      USCRIPT_NEWA                          = 170,/* Newa */
+      /** @stable ICU 58 */
+      USCRIPT_OSAGE                         = 171,/* Osge */
+
+      /** @stable ICU 58 */
+      USCRIPT_HAN_WITH_BOPOMOFO             = 172,/* Hanb */
+      /** @stable ICU 58 */
+      USCRIPT_JAMO                          = 173,/* Jamo */
+      /** @stable ICU 58 */
+      USCRIPT_SYMBOLS_EMOJI                 = 174,/* Zsye */
+
+      /** @stable ICU 60 */
+      USCRIPT_MASARAM_GONDI                 = 175,/* Gonm */
+      /** @stable ICU 60 */
+      USCRIPT_SOYOMBO                       = 176,/* Soyo */
+      /** @stable ICU 60 */
+      USCRIPT_ZANABAZAR_SQUARE              = 177,/* Zanb */
+
+      /** @stable ICU 62 */
+      USCRIPT_DOGRA                         = 178,/* Dogr */
+      /** @stable ICU 62 */
+      USCRIPT_GUNJALA_GONDI                 = 179,/* Gong */
+      /** @stable ICU 62 */
+      USCRIPT_MAKASAR                       = 180,/* Maka */
+      /** @stable ICU 62 */
+      USCRIPT_MEDEFAIDRIN                   = 181,/* Medf */
+      /** @stable ICU 62 */
+      USCRIPT_HANIFI_ROHINGYA               = 182,/* Rohg */
+      /** @stable ICU 62 */
+      USCRIPT_SOGDIAN                       = 183,/* Sogd */
+      /** @stable ICU 62 */
+      USCRIPT_OLD_SOGDIAN                   = 184,/* Sogo */
+
+#ifndef U_HIDE_DEPRECATED_API
+    /**
+     * One more than the highest normal UScriptCode value.
+     * The highest value is available via u_getIntPropertyMaxValue(UCHAR_SCRIPT).
+     *
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
+    USCRIPT_CODE_LIMIT    = 185
+#endif  // U_HIDE_DEPRECATED_API
 } UScriptCode;
 
 /**
- * Gets the script codes associated with the given locale or ISO 15924 abbreviation or name. 
+ * Gets the script codes associated with the given locale or ISO 15924 abbreviation or name.
  * Fills in USCRIPT_MALAYALAM given "Malayam" OR "Mlym".
- * Fills in USCRIPT_LATIN given "en" OR "en_US" 
+ * Fills in USCRIPT_LATIN given "en" OR "en_US"
  * If the required capacity is greater than the capacity of the destination buffer,
  * then the error code is set to U_BUFFER_OVERFLOW_ERROR and the required capacity is returned.
  *
@@ -452,12 +491,12 @@ typedef enum UScriptCode {
  * @param nameOrAbbrOrLocale name of the script, as given in
  * PropertyValueAliases.txt, or ISO 15924 code or locale
  * @param fillIn the UScriptCode buffer to fill in the script code
- * @param capacity the capacity (size) fo UScriptCode buffer passed in.
+ * @param capacity the capacity (size) of UScriptCode buffer passed in.
  * @param err the error status code.
- * @return The number of script codes filled in the buffer passed in 
+ * @return The number of script codes filled in the buffer passed in
  * @stable ICU 2.4
  */
-U_STABLE int32_t  U_EXPORT2 
+U_STABLE int32_t  U_EXPORT2
 uscript_getCode(const char* nameOrAbbrOrLocale,UScriptCode* fillIn,int32_t capacity,UErrorCode *err);
 
 /**
@@ -470,7 +509,7 @@ uscript_getCode(const char* nameOrAbbrOrLocale,UScriptCode* fillIn,int32_t capac
  * or NULL if scriptCode is invalid
  * @stable ICU 2.4
  */
-U_STABLE const char*  U_EXPORT2 
+U_STABLE const char*  U_EXPORT2
 uscript_getName(UScriptCode scriptCode);
 
 /**
@@ -482,18 +521,18 @@ uscript_getName(UScriptCode scriptCode);
  * @return short script name (4-letter code), or NULL if scriptCode is invalid
  * @stable ICU 2.4
  */
-U_STABLE const char*  U_EXPORT2 
+U_STABLE const char*  U_EXPORT2
 uscript_getShortName(UScriptCode scriptCode);
 
 /**
  * Gets the script code associated with the given codepoint.
- * Returns USCRIPT_MALAYALAM given 0x0D02 
+ * Returns USCRIPT_MALAYALAM given 0x0D02
  * @param codepoint UChar32 codepoint
  * @param err the error status code.
- * @return The UScriptCode, or 0 if codepoint is invalid 
+ * @return The UScriptCode, or 0 if codepoint is invalid
  * @stable ICU 2.4
  */
-U_STABLE UScriptCode  U_EXPORT2 
+U_STABLE UScriptCode  U_EXPORT2
 uscript_getScript(UChar32 codepoint, UErrorCode *err);
 
 /**
@@ -503,9 +542,6 @@ uscript_getScript(UChar32 codepoint, UErrorCode *err);
  *
  * Some characters are commonly used in multiple scripts.
  * For more information, see UAX #24: http://www.unicode.org/reports/tr24/.
- *
- * The Script_Extensions property is provisional. It may be modified or removed
- * in future versions of the Unicode Standard, and thus in ICU.
  * @param c code point
  * @param sc script code
  * @return TRUE if sc is in Script_Extensions(c)
@@ -532,8 +568,6 @@ uscript_hasScript(UChar32 c, UScriptCode sc);
  * U_BUFFER_OVERFLOW_ERROR is set and the number of Script_Extensions is returned.
  * (Usual ICU buffer handling behavior.)
  *
- * The Script_Extensions property is provisional. It may be modified or removed
- * in future versions of the Unicode Standard, and thus in ICU.
  * @param c code point
  * @param scripts output script code array
  * @param capacity capacity of the scripts array

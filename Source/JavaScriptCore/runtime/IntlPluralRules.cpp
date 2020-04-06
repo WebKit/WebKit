@@ -212,7 +212,6 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject)
         options->putDirect(vm, Identifier::fromString(vm, "maximumSignificantDigits"), jsNumber(m_maximumSignificantDigits.value()));
     }
 
-#if HAVE(ICU_PLURALRULES_KEYWORDS)
     JSArray* categories = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (UNLIKELY(!categories)) {
         throwOutOfMemoryError(globalObject, scope);
@@ -232,7 +231,6 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject)
         RETURN_IF_EXCEPTION(scope, { });
     }
     options->putDirect(vm, Identifier::fromString(vm, "pluralCategories"), categories);
-#endif
 
     RELEASE_AND_RETURN(scope, options);
 }
@@ -250,35 +248,11 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value)
     if (!std::isfinite(value))
         return jsNontrivialString(vm, "other"_s);
 
-#if HAVE(ICU_PLURALRULES_WITH_FORMAT)
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 8> result(8);
     auto length = uplrules_selectWithFormat(m_pluralRules.get(), value, m_numberFormat.get(), result.data(), result.size(), &status);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-#else
-    UErrorCode status = U_ZERO_ERROR;
-    Vector<UChar, 32> buffer(32);
-    auto length = unum_formatDouble(m_numberFormat.get(), value, buffer.data(), buffer.size(), nullptr, &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
-        buffer.grow(length);
-        status = U_ZERO_ERROR;
-        unum_formatDouble(m_numberFormat.get(), value, buffer.data(), length, nullptr, &status);
-    }
-    if (U_FAILURE(status))
-        return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-
-    double formatted = unum_parseDouble(m_numberFormat.get(), buffer.data(), length, nullptr, &status);
-    if (U_FAILURE(status))
-        return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-
-    // Can only be 'zero', 'one', 'two', 'few', 'many' or 'other'
-    status = U_ZERO_ERROR;
-    Vector<UChar, 8> result(8);
-    length = uplrules_select(m_pluralRules.get(), formatted, result.data(), result.size(), &status);
-    if (U_FAILURE(status))
-        return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-#endif
 
     return jsString(vm, String(result.data(), length));
 }

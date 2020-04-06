@@ -1,3 +1,37 @@
+2020-04-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update minimum ICU version to 60.2
+        https://bugs.webkit.org/show_bug.cgi?id=209694
+
+        Reviewed by Darin Adler.
+
+        * icu/LICENSE: Deleted.
+        * icu/README: Deleted.
+        Remove leftover files following r219155.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::UFieldPositionIteratorDeleter::operator() const):
+        (JSC::IntlDateTimeFormat::partTypeString):
+        (JSC::IntlDateTimeFormat::formatToParts):
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::finishCreation):
+        (JSC::IntlDateTimeFormatPrototypeFuncFormatToParts):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::partTypeString):
+        (JSC::IntlNumberFormat::formatToParts):
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::finishCreation):
+        (JSC::IntlNumberFormatPrototypeFuncFormatToParts):
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::resolvedOptions):
+        (JSC::IntlPluralRules::select):
+        * runtime/IntlPluralRules.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::decode):
+        Remove obsoleted compile-time version checks.
+
 2020-04-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Clang 10] Fix -Wimplicit-int-float-conversion compilation warnings in JavaScriptCore

@@ -1,6 +1,8 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *****************************************************************************************
-* Copyright (C) 2015, International Business Machines
+* Copyright (C) 2015-2016, International Business Machines
 * Corporation and others. All Rights Reserved.
 *****************************************************************************************
 */
@@ -11,7 +13,6 @@
 #include "unicode/utypes.h"
 
 #if !UCONFIG_NO_FORMATTING
-#ifndef U_HIDE_DRAFT_API
 
 #include "unicode/localpointer.h"
 
@@ -27,10 +28,10 @@
 
 /**
  * Opaque UListFormatter object for use in C
- * @draft ICU 55
+ * @stable ICU 55
  */
 struct UListFormatter;
-typedef struct UListFormatter UListFormatter;  /**< C typedef for struct UListFormatter. @draft ICU 55 */
+typedef struct UListFormatter UListFormatter;  /**< C typedef for struct UListFormatter. @stable ICU 55 */
 
 /**
  * Open a new UListFormatter object using the rules for a given locale.
@@ -46,9 +47,9 @@ typedef struct UListFormatter UListFormatter;  /**< C typedef for struct UListFo
  * @return
  *            A pointer to a UListFormatter object for the specified locale,
  *            or NULL if an error occurred.
- * @draft ICU 55
+ * @stable ICU 55
  */
-U_DRAFT UListFormatter* U_EXPORT2
+U_CAPI UListFormatter* U_EXPORT2
 ulistfmt_open(const char*  locale,
               UErrorCode*  status);
 
@@ -56,9 +57,9 @@ ulistfmt_open(const char*  locale,
  * Close a UListFormatter object. Once closed it may no longer be used.
  * @param listfmt
  *            The UListFormatter object to close.
- * @draft ICU 55
+ * @stable ICU 55
  */
-U_DRAFT void U_EXPORT2
+U_CAPI void U_EXPORT2
 ulistfmt_close(UListFormatter *listfmt);
 
 
@@ -73,7 +74,7 @@ U_NAMESPACE_BEGIN
  *
  * @see LocalPointerBase
  * @see LocalPointer
- * @draft ICU 55
+ * @stable ICU 55
  */
 U_DEFINE_LOCAL_OPEN_POINTER(LocalUListFormatterPointer, UListFormatter, ulistfmt_close);
 
@@ -113,9 +114,9 @@ U_NAMESPACE_END
  *            The total buffer size needed; if greater than resultLength, the
  *            output was truncated. May be <=0 if unable to determine the
  *            total buffer size needed (e.g. for illegal arguments).
- * @draft ICU 55
+ * @stable ICU 55
  */
-U_DRAFT int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 ulistfmt_format(const UListFormatter* listfmt,
                 const UChar* const strings[],
                 const int32_t *    stringLengths,
@@ -124,7 +125,6 @@ ulistfmt_format(const UListFormatter* listfmt,
                 int32_t            resultCapacity,
                 UErrorCode*        status);
 
-#endif /* U_HIDE_DRAFT_API */
 #endif /* #if !UCONFIG_NO_FORMATTING */
 
 #endif

@@ -1707,7 +1707,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         initDataView->set<uint32_t>(0, keyURISize, true);
 
         auto keyURIArray = Uint16Array::create(initDataBuffer.copyRef(), 4, keyURI.length());
-        keyURIArray->setRange(StringView(keyURI).upconvertedCharacters(), keyURI.length() / sizeof(unsigned char), 0);
+        keyURIArray->setRange(reinterpret_cast<const UniChar*>(StringView(keyURI).upconvertedCharacters().get()), keyURI.length() / sizeof(unsigned char), 0);
 
         auto initData = Uint8Array::create(WTFMove(initDataBuffer), 0, byteLength);
         player()->keyNeeded(initData.ptr());

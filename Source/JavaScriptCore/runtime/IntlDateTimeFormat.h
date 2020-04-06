@@ -31,8 +31,6 @@
 #include <unicode/udat.h>
 #include <unicode/uvernum.h>
 
-#define JSC_ICU_HAS_UFIELDPOSITER (U_ICU_VERSION_MAJOR_NUM >= 55)
-
 namespace JSC {
 
 class IntlDateTimeFormatConstructor;
@@ -62,9 +60,7 @@ public:
 
     void initializeDateTimeFormat(JSGlobalObject*, JSValue locales, JSValue options);
     JSValue format(JSGlobalObject*, double value);
-#if JSC_ICU_HAS_UFIELDPOSITER
     JSValue formatToParts(JSGlobalObject*, double value);
-#endif
     JSObject* resolvedOptions(JSGlobalObject*);
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
@@ -120,13 +116,11 @@ private:
     TimeZoneName m_timeZoneName { TimeZoneName::None };
     bool m_initializedDateTimeFormat { false };
 
-#if JSC_ICU_HAS_UFIELDPOSITER
     struct UFieldPositionIteratorDeleter {
         void operator()(UFieldPositionIterator*) const;
     };
 
     static ASCIILiteral partTypeString(UDateFormatField);
-#endif
 };
 
 } // namespace JSC

@@ -151,7 +151,7 @@ public:
     operator NSString *() const { return m_string; }
 #endif
 
-#if OS(WINDOWS) && U_ICU_VERSION_MAJOR_NUM >= 59
+#if OS(WINDOWS)
     AtomString(const wchar_t* characters, unsigned length)
         : AtomString(ucharFrom(characters), length) { }
 

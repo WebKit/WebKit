@@ -1,6 +1,8 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 ***************************************************************************
-* Copyright (C) 1999-2014, International Business Machines Corporation
+* Copyright (C) 1999-2016, International Business Machines Corporation
 * and others. All Rights Reserved.
 ***************************************************************************
 *   Date        Name        Description
@@ -292,7 +294,7 @@ class U_COMMON_API UnicodeSet U_FINAL : public UnicodeFilter {
      * indicating that toPattern() must generate a pattern
      * representation from the inversion list.
      */
-    UChar *pat;
+    char16_t *pat;
     UVector* strings; // maintained in sorted order
     UnicodeSetStringSpan *stringSpan;
 
@@ -307,12 +309,12 @@ public:
      * A bogus set has no value. It is different from an empty set.
      * It can be used to indicate that no set value is available.
      *
-     * @return TRUE if the set is valid, FALSE otherwise
+     * @return TRUE if the set is bogus/invalid, FALSE otherwise
      * @see setToBogus()
      * @stable ICU 4.0
      */
     inline UBool isBogus(void) const;
-    
+
     /**
      * Make this UnicodeSet object invalid.
      * The string will test TRUE with isBogus().
@@ -360,7 +362,7 @@ public:
     UnicodeSet();
 
     /**
-     * Constructs a set containing the given range. If <code>end >
+     * Constructs a set containing the given range. If <code>end <
      * start</code> then an empty set is created.
      *
      * @param start first character, inclusive, of range
@@ -368,6 +370,28 @@ public:
      * @stable ICU 2.4
      */
     UnicodeSet(UChar32 start, UChar32 end);
+
+#ifndef U_HIDE_INTERNAL_API
+    /**
+     * @internal
+     */
+    enum ESerialization {
+      kSerialized  /* result of serialize() */
+    };
+
+    /**
+     * Constructs a set from the output of serialize().
+     *
+     * @param buffer the 16 bit array
+     * @param bufferLen the original length returned from serialize()
+     * @param serialization the value 'kSerialized'
+     * @param status error code
+     *
+     * @internal
+     */
+    UnicodeSet(const uint16_t buffer[], int32_t bufferLen,
+               ESerialization serialization, UErrorCode &status);
+#endif  /* U_HIDE_INTERNAL_API */
 
     /**
      * Constructs a set from the given pattern.  See the class
@@ -867,7 +891,7 @@ public:
      * @stable ICU 3.8
      * @see USetSpanCondition
      */
-    int32_t span(const UChar *s, int32_t length, USetSpanCondition spanCondition) const;
+    int32_t span(const char16_t *s, int32_t length, USetSpanCondition spanCondition) const;
 
     /**
      * Returns the end of the substring of the input string according to the USetSpanCondition.
@@ -900,7 +924,7 @@ public:
      * @stable ICU 3.8
      * @see USetSpanCondition
      */
-    int32_t spanBack(const UChar *s, int32_t length, USetSpanCondition spanCondition) const;
+    int32_t spanBack(const char16_t *s, int32_t length, USetSpanCondition spanCondition) const;
 
     /**
      * Returns the start of the substring of the input string according to the USetSpanCondition.
@@ -1497,6 +1521,7 @@ private:
                       UnicodeString& rebuiltPat,
                       uint32_t options,
                       UnicodeSet& (UnicodeSet::*caseClosure)(int32_t attribute),
+                      int32_t depth,
                       UErrorCode& ec);
 
     //----------------------------------------------------------------

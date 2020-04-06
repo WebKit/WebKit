@@ -1,3 +1,19 @@
+2020-04-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update minimum ICU version to 60.2
+        https://bugs.webkit.org/show_bug.cgi?id=209694
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringConcatenate.cpp:
+        Remove obsoleted compile-time version checks.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::runUIScript):
+        * TestWebKitAPI/Tests/WebCore/LineBreaking.mm:
+        (breakingLocationsFromICU):
+        Manually convert between UChar and UniChar/unichar where needed.
+
 2020-04-06  Rick Waldron  <waldron.rick@gmail.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove unnecessary Test262 harness file and implement $262.IsHTMLDDA

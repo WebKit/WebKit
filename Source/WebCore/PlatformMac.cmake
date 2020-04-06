@@ -84,7 +84,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/editing/ios"
     "${WEBCORE_DIR}/editing/mac"
     "${WEBCORE_DIR}/html/shadow/cocoa"
-    "${WEBCORE_DIR}/icu"
     "${WEBCORE_DIR}/layout/tableformatting"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/loader/cf"

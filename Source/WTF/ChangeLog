@@ -1,3 +1,32 @@
+2020-04-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update minimum ICU version to 60.2
+        https://bugs.webkit.org/show_bug.cgi?id=209694
+
+        Reviewed by Darin Adler.
+
+        This patch has two immediate motivations:
+          1. To properly introduce a minimum ICU version for WebKit as a whole
+             (responding to a pain point identified in bug 209579)
+          2. To support the development of ECMA-402 Intl API features, which JSC is quite behind on
+             (and which often boil down to exposing ICU functionality to JavaScript)
+
+        * icu/LICENSE:
+        * icu/README:
+        * icu/unicode/:
+        Update ICU headers to major version 62, the version included in macOS Mojave.
+
+        * wtf/text/AtomString.h:
+        * wtf/text/WTFString.h:
+        Remove obsoleted compile-time version checks.
+
+        * wtf/text/cocoa/StringCocoa.mm:
+        (WTF::String::String):
+        * wtf/text/cocoa/StringViewCocoa.mm:
+        (WTF::StringView::createNSString const):
+        (WTF::StringView::createNSStringWithoutCopying const):
+        Manually convert between UChar and UniChar/unichar where needed.
+
 2020-04-06  Saam Barati  <sbarati@apple.com>
 
         Implement 1GB of executable memory on arm64

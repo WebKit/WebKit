@@ -1,3 +1,5 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 *
@@ -6,7 +8,7 @@
 *
 *******************************************************************************
 *   file name:  utrace.h
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -64,7 +66,13 @@ typedef enum UTraceFunctionNumber {
     UTRACE_FUNCTION_START=0,
     UTRACE_U_INIT=UTRACE_FUNCTION_START,
     UTRACE_U_CLEANUP,
+#ifndef U_HIDE_DEPRECATED_API
+    /**
+     * One more than the highest normal collation trace location.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
     UTRACE_FUNCTION_LIMIT,
+#endif  // U_HIDE_DEPRECATED_API
 
     UTRACE_CONVERSION_START=0x1000,
     UTRACE_UCNV_OPEN=UTRACE_CONVERSION_START,
@@ -75,7 +83,13 @@ typedef enum UTraceFunctionNumber {
     UTRACE_UCNV_FLUSH_CACHE,
     UTRACE_UCNV_LOAD,
     UTRACE_UCNV_UNLOAD,
+#ifndef U_HIDE_DEPRECATED_API
+    /**
+     * One more than the highest normal collation trace location.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
     UTRACE_CONVERSION_LIMIT,
+#endif  // U_HIDE_DEPRECATED_API
 
     UTRACE_COLLATION_START=0x2000,
     UTRACE_UCOL_OPEN=UTRACE_COLLATION_START,
@@ -87,7 +101,13 @@ typedef enum UTraceFunctionNumber {
     UTRACE_UCOL_STRCOLLITER,
     UTRACE_UCOL_OPEN_FROM_SHORT_STRING,
     UTRACE_UCOL_STRCOLLUTF8, /**< @stable ICU 50 */
+#ifndef U_HIDE_DEPRECATED_API
+    /**
+     * One more than the highest normal collation trace location.
+     * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
+     */
     UTRACE_COLLATION_LIMIT
+#endif  // U_HIDE_DEPRECATED_API
 } UTraceFunctionNumber;
 
 /**
@@ -163,7 +183,7 @@ UTraceData(const void *context, int32_t fnNumber, int32_t level,
   *  tracing functions must themselves filter by checking that the
   *  current thread is the desired thread.
   *
-  *  @param context an uninterpretted pointer.  Whatever is passed in
+  *  @param context an uninterpreted pointer.  Whatever is passed in
   *                 here will in turn be passed to each of the tracing
   *                 functions UTraceEntry, UTraceExit and UTraceData.
   *                 ICU does not use or alter this pointer.
@@ -300,7 +320,7 @@ utrace_getFunctions(const void **context,
   *                 human readable form.  Note that a UTraceData function may choose
   *                 to not format the data;  it could, for example, save it in
   *                 in the raw form it was received (more compact), leaving
-  *                 formatting for a later trace analyis tool.
+  *                 formatting for a later trace analysis tool.
   *  @param outBuf  pointer to a buffer to receive the formatted output.  Output
   *                 will be nul terminated if there is space in the buffer -
   *                 if the length of the requested output < the output buffer size.

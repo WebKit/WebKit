@@ -32,9 +32,6 @@
 #include <unicode/upluralrules.h>
 #include <unicode/uvernum.h>
 
-#define HAVE_ICU_PLURALRULES_KEYWORDS (U_ICU_VERSION_MAJOR_NUM >= 59)
-#define HAVE_ICU_PLURALRULES_WITH_FORMAT (U_ICU_VERSION_MAJOR_NUM >= 59)
-
 namespace JSC {
 
 class IntlPluralRulesConstructor;

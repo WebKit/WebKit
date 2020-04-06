@@ -1,3 +1,5 @@
+// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 *
@@ -6,7 +8,7 @@
 *
 *******************************************************************************
 *   file name:  uenum.h
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:2
 *
@@ -21,7 +23,9 @@
 #include "unicode/localpointer.h"
 
 #if U_SHOW_CPLUSPLUS_API
-#include "unicode/strenum.h"
+U_NAMESPACE_BEGIN
+class StringEnumeration;
+U_NAMESPACE_END
 #endif
 
 /**
