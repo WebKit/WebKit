@@ -1,3 +1,13 @@
+2020-04-05  Gus Caplan  <me@gus.host> and Ross Kirsling  <ross.kirsling@sony.com>
+
+        DLLLauncherMain print to console instead of opening window on fatal error
+        https://bugs.webkit.org/show_bug.cgi?id=206537
+
+        Reviewed by Fujii Hironori.
+
+        * shell/DLLLauncherMain.cpp:
+        (fatalError):
+
 2020-04-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         JSC shell shouldn't treat NUL as a terminator when printing a JS string
