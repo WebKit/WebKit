@@ -1906,13 +1906,9 @@ String RenderObject::debugDescription() const
 {
     StringBuilder builder;
 
-    builder.append(renderName());
-    builder.append(" 0x"_s);
-    builder.append(hex(reinterpret_cast<uintptr_t>(this), Lowercase));
-    builder.append(' ');
-
+    builder.append(renderName(), " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
     if (node())
-        builder.append(node()->debugDescription());
+        builder.append(' ', node()->debugDescription());
     
     return builder.toString();
 }

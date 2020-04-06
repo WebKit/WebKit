@@ -55,6 +55,8 @@ public:
 
     void updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 
+    String debugDescription() const final;
+
 protected:
     Text(Document& document, const String& data, ConstructionType type)
         : CharacterData(document, data, type)

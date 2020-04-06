@@ -77,6 +77,7 @@
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include <JavaScriptCore/HeapInlines.h>
+#include <wtf/HexNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/SHA1.h>
@@ -1754,26 +1755,7 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
 String Node::debugDescription() const
 {
     StringBuilder builder;
-
-    builder.append(nodeName());
-
-    if (isTextNode()) {
-        String value = nodeValue();
-        value.replaceWithLiteral('\\', "\\\\");
-        value.replaceWithLiteral('\n', "\\n");
-        
-        const size_t maxDumpLength = 30;
-        if (value.length() > maxDumpLength) {
-            value.truncate(maxDumpLength - 10);
-            value.append("..."_s);
-        }
-        
-        builder.append(' ');
-        builder.append('\"');
-        builder.append(value);
-        builder.append('\"');
-    }
-
+    builder.append(nodeName(), " 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
     return builder.toString();
 }
 

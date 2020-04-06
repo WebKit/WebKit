@@ -2629,18 +2629,15 @@ String Element::debugDescription() const
 {
     StringBuilder builder;
 
-    builder.append(nodeName());
+    builder.append(ContainerNode::debugDescription());
 
-    if (hasID()) {
-        builder.appendLiteral(" id=\'");
-        builder.append(getIdAttribute());
-        builder.append('\'');
-    }
+    if (hasID())
+        builder.append(" id=\'", getIdAttribute(), '\'');
 
     if (hasClass()) {
         builder.appendLiteral(" class=\'");
         size_t classNamesToDump = classNames().size();
-        const size_t maxNumClassNames = 7;
+        constexpr size_t maxNumClassNames = 7;
         bool addEllipsis = false;
         if (classNamesToDump > maxNumClassNames) {
             classNamesToDump = maxNumClassNames;
@@ -2653,7 +2650,7 @@ String Element::debugDescription() const
             builder.append(classNames()[i]);
         }
         if (addEllipsis)
-            builder.append("...");
+            builder.append(" ...");
         builder.append('\'');
     }
 
