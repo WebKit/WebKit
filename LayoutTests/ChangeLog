@@ -1,3 +1,13 @@
+2020-04-06  Jer Noble  <jer.noble@apple.com>
+
+        [ Mac wk2 ] http/tests/media/track-in-band-hls-metadata.html is flaky crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=209490
+        <rdar://problem/60837555>
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-04-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][WPE] Re-enable WPT web-animations animation-types tests and updating baselines
