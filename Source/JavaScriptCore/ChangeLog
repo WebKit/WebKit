@@ -1,3 +1,16 @@
+2020-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Put ensureStillAliveHere for Integer TypedArrays in GetByVal
+        https://bugs.webkit.org/show_bug.cgi?id=210047
+
+        Reviewed by Mark Lam.
+
+        While r258381 puts ensureStillAliveHere in FTL to keep base alive for float/double TypedArrays,
+        we need to do the same thing for integer TypedArrays too. This patch places it.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+
 2020-04-05  Gus Caplan  <me@gus.host> and Ross Kirsling  <ross.kirsling@sony.com>
 
         DLLLauncherMain print to console instead of opening window on fatal error
