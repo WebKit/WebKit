@@ -1,3 +1,24 @@
+2020-04-06  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Transition most process assertions to RunningBoard
+        https://bugs.webkit.org/show_bug.cgi?id=210065
+        <rdar://problem/61354901>
+
+        Reviewed by Geoffrey Garen.
+
+        Transition most process assertions to RunningBoard, instead of legacy BKSProcessAssertion.
+        The only assertion that still uses BKSProcessAssertion is the MediaPlayback once because
+        we do not have a RunningBoard equivalent for this one yet (see <rdar://problem/61263147>).
+
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKRBSAssertionDelegate assertionWillInvalidate:]):
+        (-[WKRBSAssertionDelegate assertion:didInvalidateWithError:]):
+        (WebKit::runningBoardNameForAssertionType):
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::~ProcessAssertion):
+        (WebKit::ProcessAssertion::processAssertionWasInvalidated):
+
 2020-04-06  Ross Kirsling  <ross.kirsling@sony.com>
 
         Update minimum ICU version to 60.2

@@ -36,8 +36,11 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/RetainPtr.h>
+
+OBJC_CLASS RBSAssertion;
+OBJC_CLASS WKRBSAssertionDelegate;
 OBJC_CLASS BKSProcessAssertion;
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
 
@@ -75,11 +78,14 @@ protected:
 #endif
 
 private:
+    const ProcessAssertionType m_assertionType;
 #if PLATFORM(IOS_FAMILY)
-    RetainPtr<BKSProcessAssertion> m_assertion;
+    const ProcessID m_pid;
+    RetainPtr<RBSAssertion> m_rbsAssertion;
+    RetainPtr<WKRBSAssertionDelegate> m_delegate;
+    RetainPtr<BKSProcessAssertion> m_bksAssertion; // Legacy.
     Validity m_validity { Validity::Unset };
 #endif
-    const ProcessAssertionType m_assertionType;
     Client* m_client { nullptr };
 };
 
