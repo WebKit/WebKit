@@ -1885,6 +1885,10 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to get a record from database without an in-progress transaction"_s };
 
+    auto* objectStoreInfo = infoForObjectStore(objectStoreID);
+    if (!objectStoreInfo)
+        return IDBError { InvalidStateError, "Object store cannot be found in the backing store"_s };
+
     auto key = keyRange.lowerKey;
     if (key.isNull())
         key = IDBKeyData::minimum();
@@ -2003,9 +2007,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     if (!error.isNull())
         return error;
 
-    auto* objectStoreInfo = infoForObjectStore(objectStoreID);
-    ASSERT(objectStoreInfo);
-    resultValue = { keyData, { valueResultBuffer, WTFMove(blobURLs), WTFMove(blobFilePaths) }, objectStoreInfo->keyPath()};
+    resultValue = { keyData, { valueResultBuffer, WTFMove(blobURLs), WTFMove(blobFilePaths) }, objectStoreInfo->keyPath() };
     return IDBError { };
 }
 
