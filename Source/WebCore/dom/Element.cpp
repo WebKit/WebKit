@@ -4534,19 +4534,11 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(Optional<GetAnimationsOption
     // animations targeting that are not registered on this element, one of its pseudo elements or a child's
     // pseudo element.
     if (options && options->subtree) {
-        Vector<RefPtr<WebAnimation>> animations;
-        for (auto& animation : document().getAnimations()) {
-            auto* effect = animation->effect();
-            ASSERT(is<KeyframeEffect>(animation->effect()));
-            auto* target = downcast<KeyframeEffect>(*effect).target();
-            ASSERT(target);
-            if (is<PseudoElement>(target)) {
-                if (contains(downcast<PseudoElement>(*target).hostElement()))
-                    animations.append(animation);
-            } else if (contains(target))
-                animations.append(animation);
-        }
-        return animations;
+        return document().matchingAnimations([&] (Element& target) -> bool {
+            if (is<PseudoElement>(target))
+                return contains(downcast<PseudoElement>(target).hostElement());
+            return contains(&target);
+        });
     }
 
     // For the list of animations to be current, we need to account for any pending CSS changes,

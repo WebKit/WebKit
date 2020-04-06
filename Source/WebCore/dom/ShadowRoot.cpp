@@ -367,4 +367,11 @@ HTMLVideoElement* ShadowRoot::pictureInPictureElement() const
 }
 #endif
 
+Vector<RefPtr<WebAnimation>> ShadowRoot::getAnimations()
+{
+    return document().matchingAnimations([&] (Element& target) -> bool {
+        return target.containingShadowRoot() == this;
+    });
+}
+
 }

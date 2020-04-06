@@ -180,6 +180,16 @@ function waitForNextFrame() {
   });
 }
 
+async function insertFrameAndAwaitLoad(test, iframe, doc) {
+  const eventWatcher = new EventWatcher(test, iframe, ['load']);
+  const event_promise = eventWatcher.wait_for('load');
+
+  doc.body.appendChild(iframe);
+  test.add_cleanup(() => { doc.body.removeChild(iframe); });
+
+  await event_promise;
+}
+
 // Returns 'matrix()' or 'matrix3d()' function string generated from an array.
 function createMatrixFromArray(array) {
   return (array.length == 16 ? 'matrix3d' : 'matrix') + `(${array.join()})`;

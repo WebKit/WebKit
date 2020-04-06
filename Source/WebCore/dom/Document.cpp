@@ -8103,13 +8103,30 @@ DocumentTimeline& Document::timeline()
 
 Vector<RefPtr<WebAnimation>> Document::getAnimations()
 {
+    return matchingAnimations([] (Element& target) -> bool {
+        return !target.containingShadowRoot();
+    });
+}
+
+Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const WTF::Function<bool(Element&)>& function)
+{
     // For the list of animations to be current, we need to account for any pending CSS changes,
     // such as updates to CSS Animations and CSS Transitions.
     updateStyleIfNeeded();
 
-    if (m_timeline)
-        return m_timeline->getAnimations();
-    return { };
+    if (!m_timeline)
+        return { };
+
+    Vector<RefPtr<WebAnimation>> animations;
+    for (auto& animation : m_timeline->getAnimations()) {
+        auto* effect = animation->effect();
+        ASSERT(is<KeyframeEffect>(animation->effect()));
+        auto* target = downcast<KeyframeEffect>(*effect).target();
+        ASSERT(target);
+        if (function(*target))
+            animations.append(animation);
+    }
+    return animations;
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

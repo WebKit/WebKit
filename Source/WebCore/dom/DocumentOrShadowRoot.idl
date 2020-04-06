@@ -43,4 +43,7 @@
 
     // Extensions from Picture-in-Picture API (https://wicg.github.io/picture-in-picture/#documentorshadowroot-extension)
     [Conditional=PICTURE_IN_PICTURE_API, EnabledBySetting=PictureInPictureAPI] readonly attribute Element? pictureInPictureElement;
+
+    // Extension from Web Animations API (https://drafts.csswg.org/web-animations-1/#extensions-to-the-documentorshadowroot-interface-mixin)
+    [EnabledAtRuntime=WebAnimations] sequence<WebAnimation> getAnimations();
 };

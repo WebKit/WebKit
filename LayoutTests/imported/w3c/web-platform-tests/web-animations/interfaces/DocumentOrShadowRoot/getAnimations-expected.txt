@@ -5,7 +5,9 @@ PASS Document.getAnimations() returns script-generated animations in the order t
 PASS Document.getAnimations() does not return a disconnected node 
 PASS Document.getAnimations() does not return an animation with a null target 
 FAIL Document.getAnimations() returns animations on elements inside same-origin iframes assert_equals: expected 1 but got 0
-FAIL ShadowRoot.getAnimations() return all animations in the shadow tree div.shadowRoot.getAnimations is not a function. (In 'div.shadowRoot.getAnimations()', 'div.shadowRoot.getAnimations' is undefined)
-FAIL Document.getAnimations() does NOT return animations in shadow trees assert_array_equals: getAnimations() called on Document does not return animations from shadow trees lengths differ, expected 0 got 1
+FAIL iframe.contentDocument.getAnimations() returns animations on elements inside same-origin Document assert_equals: expected 1 but got 0
+PASS ShadowRoot.getAnimations() return all animations in the shadow tree 
+PASS Document.getAnimations() does NOT return animations in shadow trees 
+PASS ShadowRoot.getAnimations() does NOT return animations in parent document 
 PASS Document.getAnimations() triggers a style change event 
 

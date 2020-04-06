@@ -40,6 +40,7 @@ namespace WebCore {
 class HTMLSlotElement;
 class SlotAssignment;
 class StyleSheetList;
+class WebAnimation;
 
 class ShadowRoot final : public DocumentFragment, public TreeScope {
     WTF_MAKE_ISO_ALLOCATED(ShadowRoot);
@@ -110,6 +111,8 @@ public:
 #if ENABLE(PICTURE_IN_PICTURE_API)
     HTMLVideoElement* pictureInPictureElement() const;
 #endif
+
+    Vector<RefPtr<WebAnimation>> getAnimations();
 
 private:
     ShadowRoot(Document&, ShadowRootMode, DelegatesFocus);

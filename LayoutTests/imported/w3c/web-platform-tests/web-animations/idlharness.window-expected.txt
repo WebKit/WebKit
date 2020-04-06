@@ -140,8 +140,8 @@ PASS Document interface: attribute timeline
 PASS Document interface: operation getAnimations() 
 PASS Document interface: document must inherit property "timeline" with the proper type 
 PASS Document interface: document must inherit property "getAnimations()" with the proper type 
-FAIL ShadowRoot interface: operation getAnimations() assert_own_property: interface prototype object missing non-static operation expected property "getAnimations" missing
-FAIL ShadowRoot interface: shadowRoot must inherit property "getAnimations()" with the proper type assert_inherits: property "getAnimations" not found in prototype chain
+PASS ShadowRoot interface: operation getAnimations() 
+PASS ShadowRoot interface: shadowRoot must inherit property "getAnimations()" with the proper type 
 PASS Element interface: operation animate(object, [object Object],[object Object]) 
 PASS Element interface: operation getAnimations(GetAnimationsOptions) 
 
