@@ -232,7 +232,7 @@ static const double kGravity = 9.80665;
 
         for (auto& client : motionClients) {
             if (client)
-                client->motionChanged(0, 0, 0, accel.x * kGravity, accel.y * kGravity, accel.z * kGravity, 0, 0, 0);
+                client->motionChanged(0, 0, 0, accel.x * kGravity, accel.y * kGravity, accel.z * kGravity, WTF::nullopt, WTF::nullopt, WTF::nullopt);
         }
     });
 }

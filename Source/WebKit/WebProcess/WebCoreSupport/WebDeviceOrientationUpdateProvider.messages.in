@@ -23,6 +23,6 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 messages -> WebDeviceOrientationUpdateProvider {
     DeviceOrientationChanged(double alpha, double beta, double gamma, double compassHeading, double compassAccuracy)
-    DeviceMotionChanged(double xAcceleration, double yAcceleration, double zAcceleration, double xAccelerationIncludingGravity, double yAccelerationIncludingGravity, double zAccelerationIncludingGravity, double xRotationRate, double yRotationRate, double zRotationRate)
+    DeviceMotionChanged(double xAcceleration, double yAcceleration, double zAcceleration, double xAccelerationIncludingGravity, double yAccelerationIncludingGravity, double zAccelerationIncludingGravity, Optional<double> xRotationRate, Optional<double> yRotationRate, Optional<double> zRotationRate)
 }
 #endif

@@ -36,7 +36,7 @@ public:
     virtual ~MotionManagerClient() { };
 
     virtual void orientationChanged(double, double, double, double, double) { }
-    virtual void motionChanged(double, double, double, double, double, double, double, double, double) { }
+    virtual void motionChanged(double, double, double, double, double, double, Optional<double>, Optional<double>, Optional<double>) { }
 };
 
 };
