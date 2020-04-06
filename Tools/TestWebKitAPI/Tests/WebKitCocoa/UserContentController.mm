@@ -513,9 +513,9 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebView)
     RetainPtr<WKWebView> otherWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     [targetWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
-    [otherWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
-
     [targetWebView _test_waitForDidFinishNavigation];
+
+    [otherWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [otherWebView _test_waitForDidFinishNavigation];
 
     expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, redInRGB);
@@ -566,9 +566,9 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewSharedCo
     RetainPtr<WKWebView> otherWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [targetWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
-    [otherWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
-
     [targetWebView _test_waitForDidFinishNavigation];
+
+    [otherWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [otherWebView _test_waitForDidFinishNavigation];
 
     expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, redInRGB);

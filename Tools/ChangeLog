@@ -1,3 +1,16 @@
+2020-04-06  Antoine Quint  <graouts@apple.com>
+
+        [macOS] TestWebKitAPI.WKUserContentController.UserStyleSheetAffectingOnlySpecificWebViewSharedConfiguration is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=209934
+        <rdar://problem/61229832>
+
+        Reviewed by Antti Koivisto.
+
+        Fix a couple of tests which would use `-[WKWebView _test_waitForDidFinishNavigation]` in a way where the navigation may have finished before the method was called.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (TEST):
+
 2020-04-05  Gus Caplan  <me@gus.host> and Ross Kirsling  <ross.kirsling@sony.com>
 
         DLLLauncherMain print to console instead of opening window on fatal error
