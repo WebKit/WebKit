@@ -1,5 +1,53 @@
 2020-04-06  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r259580. rdar://problem/61352477
+
+    CrashTracer: MobileSafari at WebKit: WebKit::SystemPreviewController::updateProgress
+    https://bugs.webkit.org/show_bug.cgi?id=210040
+    rdar://51410841
+    
+    Reviewed by Darin Adler.
+    
+    It appears that the SystemPreviewController on WebPageProxy can
+    become null causing a call to an in-progress download to crash
+    as it tries to talk to the QuickLook delegate. Guard against this
+    by checking the SystemPreviewController each time.
+    
+    * UIProcess/Cocoa/DownloadClient.mm:
+    (WebKit::systemPreviewController):
+    (WebKit::DownloadClient::didReceiveResponse):
+    (WebKit::DownloadClient::didReceiveData):
+    (WebKit::DownloadClient::processDidCrash):
+    (WebKit::DownloadClient::didFinish):
+    (WebKit::DownloadClient::didFail):
+    (WebKit::DownloadClient::didCancel):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259580 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-06  Dean Jackson  <dino@apple.com>
+
+            CrashTracer: MobileSafari at WebKit: WebKit::SystemPreviewController::updateProgress
+            https://bugs.webkit.org/show_bug.cgi?id=210040
+            rdar://51410841
+
+            Reviewed by Darin Adler.
+
+            It appears that the SystemPreviewController on WebPageProxy can
+            become null causing a call to an in-progress download to crash
+            as it tries to talk to the QuickLook delegate. Guard against this
+            by checking the SystemPreviewController each time.
+
+            * UIProcess/Cocoa/DownloadClient.mm:
+            (WebKit::systemPreviewController):
+            (WebKit::DownloadClient::didReceiveResponse):
+            (WebKit::DownloadClient::didReceiveData):
+            (WebKit::DownloadClient::processDidCrash):
+            (WebKit::DownloadClient::didFinish):
+            (WebKit::DownloadClient::didFail):
+            (WebKit::DownloadClient::didCancel):
+
+2020-04-06  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r259315. rdar://problem/61352448
 
     Regression(r253357) DeviceMotionEvent acceleration and rotationRate are null
