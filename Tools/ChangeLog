@@ -1,3 +1,14 @@
+2020-04-06  Jonathan Bedard  <jbedard@apple.com>
+
+        run-api-tests spew "setup_environ_for_server" in verbose mode
+        https://bugs.webkit.org/show_bug.cgi?id=210012
+        <rdar://problem/61306056>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.setup_environ_for_server): Do not log this function when called.
+
 2020-04-06  Antoine Quint  <graouts@apple.com>
 
         [macOS] TestWebKitAPI.WKUserContentController.UserStyleSheetAffectingOnlySpecificWebViewSharedConfiguration is a flaky timeout

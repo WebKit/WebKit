@@ -79,7 +79,6 @@ class IOSSimulatorPort(IOSPort):
         return result
 
     def setup_environ_for_server(self, server_name=None):
-        _log.debug("setup_environ_for_server")
         env = super(IOSSimulatorPort, self).setup_environ_for_server(server_name)
         if server_name == self.driver_name():
             if self.get_option('leaks'):
