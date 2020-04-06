@@ -44,44 +44,47 @@ bool compareAnimationsByCompositeOrder(WebAnimation& lhsAnimation, WebAnimation&
     bool lhsIsCSSTransition = lhsHasOwningElement && is<CSSTransition>(lhsAnimation);
     bool rhsIsCSSTransition = rhsHasOwningElement && is<CSSTransition>(rhsAnimation);
     if (lhsIsCSSTransition || rhsIsCSSTransition) {
-        if (lhsIsCSSTransition == rhsIsCSSTransition) {
-            // Sort transitions first by their generation time, and then by transition-property.
-            // https://drafts.csswg.org/css-transitions-2/#animation-composite-order
-            auto& lhsCSSTransition = downcast<CSSTransition>(lhsAnimation);
-            auto& rhsCSSTransition = downcast<CSSTransition>(rhsAnimation);
-            if (lhsCSSTransition.generationTime() != rhsCSSTransition.generationTime())
-                return lhsCSSTransition.generationTime() < rhsCSSTransition.generationTime();
-            return lhsCSSTransition.transitionProperty().utf8() < rhsCSSTransition.transitionProperty().utf8();
-        }
-        return !rhsIsCSSTransition;
+        if (lhsIsCSSTransition != rhsIsCSSTransition)
+            return !rhsIsCSSTransition;
+
+        // Sort transitions first by their generation time, and then by transition-property.
+        // https://drafts.csswg.org/css-transitions-2/#animation-composite-order
+        auto& lhsCSSTransition = downcast<CSSTransition>(lhsAnimation);
+        auto& rhsCSSTransition = downcast<CSSTransition>(rhsAnimation);
+        if (lhsCSSTransition.generationTime() != rhsCSSTransition.generationTime())
+            return lhsCSSTransition.generationTime() < rhsCSSTransition.generationTime();
+        auto lhsCSSTransitionProperty = lhsCSSTransition.transitionProperty().utf8();
+        auto rhsCSSTransitionProperty = rhsCSSTransition.transitionProperty().utf8();
+        if (lhsCSSTransitionProperty != rhsCSSTransitionProperty)
+            return lhsCSSTransitionProperty < rhsCSSTransitionProperty;
     }
 
     // CSS Animations sort next.
     bool lhsIsCSSAnimation = lhsHasOwningElement && is<CSSAnimation>(lhsAnimation);
     bool rhsIsCSSAnimation = rhsHasOwningElement && is<CSSAnimation>(rhsAnimation);
     if (lhsIsCSSAnimation || rhsIsCSSAnimation) {
-        if (lhsIsCSSAnimation == rhsIsCSSAnimation) {
-            // We must have a list of CSS Animations if we have CSS Animations to sort through.
-            ASSERT(cssAnimationList);
-            ASSERT(!cssAnimationList->isEmpty());
+        if (lhsIsCSSAnimation != rhsIsCSSAnimation)
+            return !rhsIsCSSAnimation;
 
-            // https://drafts.csswg.org/css-animations-2/#animation-composite-order
-            // Sort A and B based on their position in the computed value of the animation-name property of the (common) owning element.
-            auto& lhsBackingAnimation = downcast<CSSAnimation>(lhsAnimation).backingAnimation();
-            auto& rhsBackingAnimation = downcast<CSSAnimation>(rhsAnimation).backingAnimation();
+        // We must have a list of CSS Animations if we have CSS Animations to sort through.
+        ASSERT(cssAnimationList);
+        ASSERT(!cssAnimationList->isEmpty());
 
-            for (size_t i = 0; i < cssAnimationList->size(); ++i) {
-                auto& animation = cssAnimationList->animation(i);
-                if (animation == lhsBackingAnimation)
-                    return true;
-                if (animation == rhsBackingAnimation)
-                    return false;
-            }
+        // https://drafts.csswg.org/css-animations-2/#animation-composite-order
+        // Sort A and B based on their position in the computed value of the animation-name property of the (common) owning element.
+        auto& lhsBackingAnimation = downcast<CSSAnimation>(lhsAnimation).backingAnimation();
+        auto& rhsBackingAnimation = downcast<CSSAnimation>(rhsAnimation).backingAnimation();
 
-            // We should have found either of those CSS animations in the CSS animations list.
-            ASSERT_NOT_REACHED();
+        for (size_t i = 0; i < cssAnimationList->size(); ++i) {
+            auto& animation = cssAnimationList->animation(i);
+            if (animation == lhsBackingAnimation)
+                return true;
+            if (animation == rhsBackingAnimation)
+                return false;
         }
-        return !rhsIsCSSAnimation;
+
+        // We should have found either of those CSS animations in the CSS animations list.
+        ASSERT_NOT_REACHED();
     }
 
     // JS-originated animations sort last based on their position in the global animation list.
