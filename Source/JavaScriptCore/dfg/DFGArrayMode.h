@@ -531,10 +531,9 @@ private:
             if (hasInt32(shape) || hasDouble(shape) || hasContiguous(shape))
                 return asArrayModesIgnoringTypedArrays(shape) | asArrayModesIgnoringTypedArrays(shape | IsArray) | asArrayModesIgnoringTypedArrays(shape | IsArray | CopyOnWrite);
             return asArrayModesIgnoringTypedArrays(shape) | asArrayModesIgnoringTypedArrays(shape | IsArray);
-        default:
-            // This is only necessary for C++ compilers that don't understand enums.
-            return 0;
         }
+        // This is only necessary for C++ compilers that don't understand enums.
+        return 0;
     }
     
     template <typename... Args>
