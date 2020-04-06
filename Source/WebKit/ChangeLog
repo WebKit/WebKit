@@ -1,3 +1,16 @@
+2020-04-06  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GTK] Remove unused header in web process
+        https://bugs.webkit.org/show_bug.cgi?id=210053
+
+        Reviewed by Michael Catanzaro.
+
+        Remove unused headers from code removed in r203774.
+
+        No new tests required.
+
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+
 2020-04-06  Dean Jackson  <dino@apple.com>
 
         CrashTracer: MobileSafari at WebKit: WebKit::SystemPreviewController::updateProgress

@@ -29,10 +29,8 @@
 
 #include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
-#include <WebCore/SoupNetworkSession.h>
 #include <gtk/gtk.h>
 #include <libintl.h>
-#include <libsoup/soup.h>
 
 #if PLATFORM(X11)
 #include <X11/Xlib.h>
