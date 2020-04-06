@@ -1124,19 +1124,18 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int in
     if (index <= 0)
         return { firstPositionInOrBeforeNode(&node), DOWNSTREAM };
 
-    auto range = Range::create(node.document());
-    range->selectNodeContents(node);
-    CharacterIterator it(range.get());
+    auto range = makeRangeSelectingNodeContents(node);
+    CharacterIterator it(range);
     it.advance(index - 1);
 
     if (!it.atEnd() && it.text().length() == 1 && it.text()[0] == '\n') {
         // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines.
         it.advance(1);
         if (!it.atEnd())
-            return VisiblePosition(createLegacyEditingPosition(it.range().start));
+            return { createLegacyEditingPosition(it.range().start) };
     }
 
-    return { it.atEnd() ? range->endPosition() : createLegacyEditingPosition(it.range().end), UPSTREAM };
+    return { createLegacyEditingPosition((it.atEnd() ? range : it.range()).end), UPSTREAM };
 }
 
 // Determines whether two positions are visibly next to each other (first then second)

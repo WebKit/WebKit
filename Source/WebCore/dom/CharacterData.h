@@ -62,13 +62,20 @@ protected:
 private:
     String nodeValue() const final;
     ExceptionOr<void> setNodeValue(const String&) final;
-    bool isCharacterDataNode() const final { return true; }
+    bool virtualIsCharacterData() const final { return true; }
     int maxCharacterOffset() const final;
     void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength);
     void notifyParentAfterChange(ContainerNode::ChildChangeSource);
 
     String m_data;
 };
+
+inline unsigned Node::length() const
+{
+    if (is<CharacterData>(*this))
+        return downcast<CharacterData>(*this).length();
+    return countChildNodes();
+}
 
 } // namespace WebCore
 

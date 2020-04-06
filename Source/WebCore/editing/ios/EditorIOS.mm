@@ -241,7 +241,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, options.contains(PasteOption::IgnoreMailBlockquote) ? MailBlockquoteHandling::IgnoreBlockquote : MailBlockquoteHandling::RespectBlockquote);
 }
 
-void Editor::insertDictationPhrases(Vector<Vector<String>>&& dictationPhrases, RetainPtr<id> metadata)
+void Editor::insertDictationPhrases(Vector<Vector<String>>&& dictationPhrases, id metadata)
 {
     if (m_frame.selection().isNone())
         return;
@@ -249,10 +249,10 @@ void Editor::insertDictationPhrases(Vector<Vector<String>>&& dictationPhrases, R
     if (dictationPhrases.isEmpty())
         return;
 
-    DictationCommandIOS::create(document(), WTFMove(dictationPhrases), WTFMove(metadata))->apply();
+    DictationCommandIOS::create(document(), WTFMove(dictationPhrases), metadata)->apply();
 }
 
-void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& dictationPhrases, RetainPtr<id> metadata, Element& element)
+void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& dictationPhrases, id metadata, Element& element)
 {
     // Clear the composition.
     clear();
@@ -293,20 +293,19 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
         return;
     }
 
-    Text& textNode = downcast<Text>(*element.firstChild());
-    int previousDictationPhraseStart = 0;
+    auto& textNode = downcast<Text>(*element.firstChild());
+    unsigned previousDictationPhraseStart = 0;
     for (auto& interpretations : dictationPhrases) {
-        int dictationPhraseLength = interpretations[0].length();
-        int dictationPhraseEnd = previousDictationPhraseStart + dictationPhraseLength;
+        auto dictationPhraseLength = interpretations[0].length();
         if (interpretations.size() > 1) {
-            auto dictationPhraseRange = Range::create(document(), &textNode, previousDictationPhraseStart, &textNode, dictationPhraseEnd);
-            document().markers().addDictationPhraseWithAlternativesMarker(dictationPhraseRange, interpretations);
+            auto alternatives = interpretations;
+            alternatives.remove(0);
+            document().markers().addMarker(textNode, previousDictationPhraseStart, dictationPhraseLength, DocumentMarker::DictationPhraseWithAlternatives, WTFMove(alternatives));
         }
-        previousDictationPhraseStart = dictationPhraseEnd;
+        previousDictationPhraseStart += dictationPhraseLength;
     }
 
-    auto resultRange = Range::create(document(), &textNode, 0, &textNode, textNode.length());
-    document().markers().addDictationResultMarker(resultRange, metadata);
+    document().markers().addMarker(textNode, 0, textNode.length(), DocumentMarker::DictationResult, retainPtr(metadata));
 
     client()->respondToChangedContents();
 }

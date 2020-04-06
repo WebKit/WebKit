@@ -1,3 +1,22 @@
+2020-04-04  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in DocumentMarkerController
+        https://bugs.webkit.org/show_bug.cgi?id=209985
+
+        Reviewed by Antti Koivisto.
+
+        * fast/scrolling/scrollbar-tickmarks-hittest-expected.txt: Removed.
+        * fast/scrolling/scrollbar-tickmarks-hittest.html: Removed.
+        * fast/scrolling/scrollbar-tickmarks-styled-expected.txt: Removed.
+        * fast/scrolling/scrollbar-tickmarks-styled.html: Removed.
+        * platform/gtk/fast/scrolling/scrollbar-tickmarks-styled-expected.png: Removed.
+        * platform/ios/TestExpectations: Removed expectation for scrollbar-tickmarks.
+        These were Chromium-specific tests.
+
+        * platform/mac-wk1/TestExpectations: Updated to expect flakiness instead of
+        repeatable failures for tests that passed locally.
+        * platform/mac/TestExpectations: Ditto.
+
 2020-04-06  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS debug ] REGRESSION (r259463): http/tests/media/clearkey/collect-webkit-media-session.html is failing

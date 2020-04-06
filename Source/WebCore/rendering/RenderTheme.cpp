@@ -1347,28 +1347,15 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
     }
 }
 
-Color RenderTheme::activeTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
+Color RenderTheme::textSearchHighlightColor(OptionSet<StyleColor::Options> options) const
 {
     auto& cache = colorCache(options);
-    if (!cache.activeTextSearchHighlightColor.isValid())
-        cache.activeTextSearchHighlightColor = platformActiveTextSearchHighlightColor(options);
-    return cache.activeTextSearchHighlightColor;
+    if (!cache.textSearchHighlightColor.isValid())
+        cache.textSearchHighlightColor = platformTextSearchHighlightColor(options);
+    return cache.textSearchHighlightColor;
 }
 
-Color RenderTheme::inactiveTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
-{
-    auto& cache = colorCache(options);
-    if (!cache.inactiveTextSearchHighlightColor.isValid())
-        cache.inactiveTextSearchHighlightColor = platformInactiveTextSearchHighlightColor(options);
-    return cache.inactiveTextSearchHighlightColor;
-}
-
-Color RenderTheme::platformActiveTextSearchHighlightColor(OptionSet<StyleColor::Options>) const
-{
-    return Color(255, 150, 50); // Orange.
-}
-
-Color RenderTheme::platformInactiveTextSearchHighlightColor(OptionSet<StyleColor::Options>) const
+Color RenderTheme::platformTextSearchHighlightColor(OptionSet<StyleColor::Options>) const
 {
     return Color(255, 255, 0); // Yellow.
 }

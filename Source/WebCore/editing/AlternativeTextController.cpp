@@ -154,7 +154,7 @@ bool AlternativeTextController::isSpellingMarkerAllowed(Range& misspellingRange)
 
 void AlternativeTextController::show(Range& rangeToReplace, const String& replacement)
 {
-    FloatRect boundingBox = rootViewRectForRange(&rangeToReplace);
+    auto boundingBox = rootViewRectForRange(rangeToReplace);
     if (boundingBox.isEmpty())
         return;
     m_originalText = plainText(rangeToReplace);
@@ -252,7 +252,7 @@ void AlternativeTextController::timerFired()
             break;
         m_isActive = true;
         m_originalText = plainText(*m_rangeWithAlternative);
-        FloatRect boundingBox = rootViewRectForRange(m_rangeWithAlternative.get());
+        auto boundingBox = rootViewRectForRange(*m_rangeWithAlternative);
         if (!boundingBox.isEmpty()) {
             if (AlternativeTextClient* client = alternativeTextClient())
                 client->showCorrectionAlternative(m_type, boundingBox, m_originalText, replacementString, { });
@@ -272,7 +272,7 @@ void AlternativeTextController::timerFired()
         String topSuggestion = suggestions.first();
         suggestions.remove(0);
         m_isActive = true;
-        FloatRect boundingBox = rootViewRectForRange(m_rangeWithAlternative.get());
+        auto boundingBox = rootViewRectForRange(*m_rangeWithAlternative);
         if (!boundingBox.isEmpty()) {
             if (AlternativeTextClient* client = alternativeTextClient())
                 client->showCorrectionAlternative(m_type, boundingBox, m_originalText, topSuggestion, suggestions);
@@ -287,7 +287,7 @@ void AlternativeTextController::timerFired()
         uint64_t dictationContext = WTF::get<AlternativeDictationContext>(m_details);
         if (!dictationContext)
             return;
-        FloatRect boundingBox = rootViewRectForRange(m_rangeWithAlternative.get());
+        auto boundingBox = rootViewRectForRange(*m_rangeWithAlternative);
         m_isActive = true;
         if (!boundingBox.isEmpty()) {
             if (AlternativeTextClient* client = alternativeTextClient())
@@ -338,17 +338,12 @@ bool AlternativeTextController::isAutomaticSpellingCorrectionEnabled()
     return editorClient() && editorClient()->isAutomaticSpellingCorrectionEnabled();
 }
 
-FloatRect AlternativeTextController::rootViewRectForRange(const Range* range) const
+FloatRect AlternativeTextController::rootViewRectForRange(const SimpleRange& range) const
 {
-    FrameView* view = m_frame.view();
+    auto* view = m_frame.view();
     if (!view)
-        return FloatRect();
-    Vector<FloatQuad> textQuads;
-    range->absoluteTextQuads(textQuads);
-    FloatRect boundingRect;
-    for (auto& textQuad : textQuads)
-        boundingRect.unite(textQuad.boundingBox());
-    return view->contentsToRootView(IntRect(boundingRect));
+        return { };
+    return view->contentsToRootView(unitedBoundingBoxes(RenderObject::absoluteTextQuads(range)));
 }        
 
 void AlternativeTextController::respondToChangedSelection(const VisibleSelection& oldSelection)
@@ -542,8 +537,6 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
         startAlternativeTextUITimer(AlternativeTextTypeReversion);
         break;
     case DocumentMarker::DictationAlternatives: {
-        if (!WTF::holds_alternative<DocumentMarker::DictationData>(marker.data()))
-            return false;
         auto& markerData = WTF::get<DocumentMarker::DictationData>(marker.data());
         if (currentWord != markerData.originalText)
             return false;
@@ -638,7 +631,6 @@ bool AlternativeTextController::insertDictatedText(const String& text, const Vec
 void AlternativeTextController::removeDictationAlternativesForMarker(const DocumentMarker& marker)
 {
 #if USE(DICTATION_ALTERNATIVES)
-    ASSERT(WTF::holds_alternative<DocumentMarker::DictationData>(marker.data()));
     if (auto* client = alternativeTextClient())
         client->removeDictationAlternatives(WTF::get<DocumentMarker::DictationData>(marker.data()).context);
 #else
@@ -649,7 +641,6 @@ void AlternativeTextController::removeDictationAlternativesForMarker(const Docum
 Vector<String> AlternativeTextController::dictationAlternativesForMarker(const DocumentMarker& marker)
 {
 #if USE(DICTATION_ALTERNATIVES)
-    ASSERT(marker.type() == DocumentMarker::DictationAlternatives);
     if (auto* client = alternativeTextClient())
         return client->dictationAlternatives(WTF::get<DocumentMarker::DictationData>(marker.data()).context);
     return Vector<String>();
@@ -662,15 +653,12 @@ Vector<String> AlternativeTextController::dictationAlternativesForMarker(const D
 void AlternativeTextController::applyDictationAlternative(const String& alternativeString)
 {
 #if USE(DICTATION_ALTERNATIVES)
-    Editor& editor = m_frame.editor();
-    RefPtr<Range> selection = editor.selectedRange();
+    auto& editor = m_frame.editor();
+    auto selection = editor.selectedRange();
     if (!selection || !editor.shouldInsertText(alternativeString, selection.get(), EditorInsertAction::Pasted))
         return;
-    DocumentMarkerController& markers = selection->startContainer().document().markers();
-    Vector<RenderedDocumentMarker*> dictationAlternativesMarkers = markers.markersInRange(*selection, DocumentMarker::DictationAlternatives);
-    for (auto* marker : dictationAlternativesMarkers)
+    for (auto* marker : selection->startContainer().document().markers().markersInRange(*selection, DocumentMarker::DictationAlternatives))
         removeDictationAlternativesForMarker(*marker);
-
     applyAlternativeTextToRange(*selection, alternativeString, AlternativeTextTypeDictationAlternatives, markerTypesForAppliedDictationAlternative());
 #else
     UNUSED_PARAM(alternativeString);

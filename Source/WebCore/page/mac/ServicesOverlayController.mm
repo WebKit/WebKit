@@ -190,16 +190,6 @@ void ServicesOverlayController::Highlight::didFinishFadeOutAnimation()
     layer().removeFromParent();
 }
 
-static IntRect textQuadsToBoundingRectForRange(Range& range)
-{
-    Vector<FloatQuad> textQuads;
-    range.absoluteTextQuads(textQuads);
-    FloatRect boundingRect;
-    for (auto& quad : textQuads)
-        boundingRect.unite(quad.boundingBox());
-    return enclosingIntRect(boundingRect);
-}
-
 ServicesOverlayController::ServicesOverlayController(Page& page)
     : m_page(page)
     , m_determineActiveHighlightTimer(*this, &ServicesOverlayController::determineActiveHighlightTimerFired)
@@ -501,17 +491,17 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
     FrameView& mainFrameView = *mainFrame().view();
 
     for (auto& range : phoneNumberRanges) {
-        // FIXME: This will choke if the range wraps around the edge of the view.
-        // What should we do in that case?
-        IntRect rect = textQuadsToBoundingRectForRange(*range);
+        // FIXME: This makes a big rect if the range extends from the end of one line to the start of the next. Handle that case better?
+        auto rect = enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(*range)));
 
         // Convert to the main document's coordinate space.
         // FIXME: It's a little crazy to call contentsToWindow and then windowToContents in order to get the right coordinate space.
         // We should consider adding conversion functions to ScrollView for contentsToDocument(). Right now, contentsToRootView() is
         // not equivalent to what we need when you have a topContentInset or a header banner.
-        FrameView* viewForRange = range->ownerDocument().view();
+        auto* viewForRange = range->ownerDocument().view();
         if (!viewForRange)
             continue;
+
         rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
 
         CGRect cgRect = rect;

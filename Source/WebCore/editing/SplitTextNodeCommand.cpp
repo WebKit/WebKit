@@ -62,7 +62,7 @@ void SplitTextNodeCommand::doApply()
 
     m_text1 = Text::create(document(), WTFMove(prefixText));
     ASSERT(m_text1);
-    document().markers().copyMarkers(m_text2, 0, m_offset, *m_text1, 0);
+    document().markers().copyMarkers(m_text2, { 0, m_offset }, *m_text1);
 
     insertText1AndTrimText2();
 }
@@ -78,7 +78,7 @@ void SplitTextNodeCommand::doUnapply()
 
     m_text2->insertData(0, prefixText);
 
-    document().markers().copyMarkers(*m_text1, 0, prefixText.length(), m_text2, 0);
+    document().markers().copyMarkers(*m_text1, { 0, prefixText.length() }, m_text2);
     m_text1->remove();
 }
 

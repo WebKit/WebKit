@@ -1,3 +1,22 @@
+2020-04-04  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in DocumentMarkerController
+        https://bugs.webkit.org/show_bug.cgi?id=209985
+
+        Reviewed by Antti Koivisto.
+
+        * DOM/DOM.mm:
+        (-[DOMNode absoluteQuadAndInsideFixedPosition:]): Use unitedBoundingBoxes.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleRequestedCandidates): Use RenderObject::absoluteTextQuads.
+        * WebView/WebFrame.mm:
+        (-[WebFrame getDictationResultRanges:andMetadatas:]): Updated since DocumentMarker no
+        longer has a dedicated metadata member function.
+        (-[WebFrame dictationResultMetadataForRange:]):
+        * WebView/WebImmediateActionController.mm:
+        (+[WebImmediateActionController _dictionaryPopupInfoForRange:inFrame:withLookupOptions:indicatorOptions:transition:]):
+        Use RenderObject::absoluteTextQuads.
+
 2020-04-04  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r259095): ASSERTION FAILED: m_videoFullscreenMode != VideoFullscreenModeNone seen with TestWebKitAPI.WebKitLegacy.AudioSessionCategoryIOS

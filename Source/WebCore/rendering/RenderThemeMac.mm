@@ -471,17 +471,10 @@ Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColor::Options> opti
     return colorWithOverrideAlpha(colorFromNSColor([NSColor keyboardFocusIndicatorColor]).rgb(), 1);
 }
 
-Color RenderThemeMac::platformActiveTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeMac::platformTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
 {
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
     return colorFromNSColor([NSColor findHighlightColor]);
-}
-
-Color RenderThemeMac::platformInactiveTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
-{
-    // The inactive color is normally used, since no legacy WebKit client marks a text match as active.
-    // So just return the same color for both states.
-    return platformActiveTextSearchHighlightColor(options);
 }
 
 static FontSelectionValue toFontWeight(NSInteger appKitFontWeight)

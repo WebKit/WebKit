@@ -132,8 +132,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
         return dictionaryPopupInfo;
     }
 
-    Vector<FloatQuad> quads;
-    range.absoluteTextQuads(quads);
+    auto quads = RenderObject::absoluteTextQuads(range);
     if (quads.isEmpty()) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return dictionaryPopupInfo;

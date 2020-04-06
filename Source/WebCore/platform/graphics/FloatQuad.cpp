@@ -227,4 +227,24 @@ bool FloatQuad::isCounterclockwise() const
     return determinant(m_p2 - m_p1, m_p3 - m_p2) < 0;
 }
 
+Vector<FloatRect> boundingBoxes(const Vector<FloatQuad>& quads)
+{
+    Vector<FloatRect> boxes;
+    boxes.reserveInitialCapacity(quads.size());
+    for (const auto& quad : quads)
+        boxes.uncheckedAppend(quad.boundingBox());
+    return boxes;
+}
+
+FloatRect unitedBoundingBoxes(const Vector<FloatQuad>& quads)
+{
+    auto size = quads.size();
+    if (!size)
+        return { };
+    auto result = quads[0].boundingBox();
+    for (size_t i = 1; i < size; ++i)
+        result.uniteEvenIfEmpty(quads[i].boundingBox());
+    return result;
+}
+
 } // namespace WebCore

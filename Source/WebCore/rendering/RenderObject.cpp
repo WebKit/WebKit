@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -86,19 +86,20 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderObject);
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
 
-RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScope(RenderObject* renderObject, bool isForbidden)
+RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScope(const RenderObject& renderObject, bool isForbidden)
     : m_renderObject(renderObject)
-    , m_preexistingForbidden(m_renderObject->isSetNeedsLayoutForbidden())
+    , m_preexistingForbidden(m_renderObject.isSetNeedsLayoutForbidden())
 {
-    m_renderObject->setNeedsLayoutIsForbidden(isForbidden);
+    m_renderObject.setNeedsLayoutIsForbidden(isForbidden);
 }
 
 RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
 {
-    m_renderObject->setNeedsLayoutIsForbidden(m_preexistingForbidden);
+    m_renderObject.setNeedsLayoutIsForbidden(m_preexistingForbidden);
 }
+
 #endif
 
 struct SameSizeAsRenderObject {
@@ -522,11 +523,9 @@ void RenderObject::markContainingBlocksForLayout(ScheduleRelayout scheduleRelayo
     bool hasOutOfFlowPosition = !isText() && style().hasOutOfFlowPosition();
 
     while (ancestor) {
-#ifndef NDEBUG
-        // FIXME: Remove this once we remove the special cases for counters, quotes and mathml
-        // calling setNeedsLayout during preferred width computation.
-        SetLayoutNeededForbiddenScope layoutForbiddenScope(ancestor, isSetNeedsLayoutForbidden());
-#endif
+        // FIXME: Remove this once we remove the special cases for counters, quotes and mathml calling setNeedsLayout during preferred width computation.
+        SetLayoutNeededForbiddenScope layoutForbiddenScope(*ancestor, isSetNeedsLayoutForbidden());
+
         // Don't mark the outermost object of an unrooted subtree. That object will be
         // marked when the subtree is added to the document.
         auto container = ancestor->container();
@@ -714,15 +713,7 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms, bool* wasFixed
     if (useTransforms) {
         Vector<FloatQuad> quads;
         absoluteQuads(quads, wasFixed);
-
-        size_t n = quads.size();
-        if (!n)
-            return IntRect();
-    
-        IntRect result = quads[0].enclosingBoundingBox();
-        for (size_t i = 1; i < n; ++i)
-            result.unite(quads[i].enclosingBoundingBox());
-        return result;
+        return enclosingIntRect(unitedBoundingBoxes(quads));
     }
 
     FloatPoint absPos = localToAbsolute(FloatPoint(), 0 /* ignore transforms */, wasFixed);
@@ -758,21 +749,9 @@ void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
 FloatRect RenderObject::absoluteBoundingBoxRectForRange(const Range* range)
 {
     if (!range)
-        return FloatRect();
-
+        return { };
     range->ownerDocument().updateLayout();
-
-    Vector<FloatQuad> quads;
-    range->absoluteTextQuads(quads);
-
-    if (quads.isEmpty())
-        return FloatRect();
-
-    FloatRect result = quads[0].boundingBox();
-    for (size_t i = 1; i < quads.size(); ++i)
-        result.uniteEvenIfEmpty(quads[i].boundingBox());
-
-    return result;
+    return unitedBoundingBoxes(absoluteTextQuads(*range));
 }
 
 void RenderObject::addAbsoluteRectForLayer(LayoutRect& result)
@@ -1906,6 +1885,21 @@ bool RenderObject::hasNonEmptyVisibleRectRespectingParentFrames() const
     }
 
     return false;
+}
+
+Vector<FloatQuad> RenderObject::absoluteTextQuads(const SimpleRange& range, bool useSelectionHeight)
+{
+    Vector<FloatQuad> quads;
+    for (auto& node : intersectingNodes(range)) {
+        auto renderer = node.renderer();
+        if (renderer && renderer->isBR())
+            renderer->absoluteQuads(quads);
+        else if (is<RenderText>(renderer)) {
+            auto offsetRange = characterDataOffsetRange(range, downcast<CharacterData>(node));
+            quads.appendVector(downcast<RenderText>(*renderer).absoluteQuadsForRange(offsetRange.start, offsetRange.end, useSelectionHeight));
+        }
+    }
+    return quads;
 }
 
 String RenderObject::debugDescription() const

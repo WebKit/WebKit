@@ -1,3 +1,22 @@
+2020-04-04  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in DocumentMarkerController
+        https://bugs.webkit.org/show_bug.cgi?id=209985
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame previousUnperturbedDictationResultBoundaryFromPosition:]):
+        Update since DocumentMarker::metadata no longer exists.
+        (-[WebFrame nextUnperturbedDictationResultBoundaryFromPosition:]):
+        Ditto.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition enclosingRangeWithDictationPhraseAlternatives:]):
+        Update since DocumentMarker::alternatives no longer exists.
+        (-[WebVisiblePosition enclosingRangeWithCorrectionIndicator]):
+        Ditto.
+
 2020-03-12  Alexey Proskuryakov  <ap@apple.com>
 
         rdar://problem/60359230 Mark locationManager:didChangeAuthorizationStatus: as deprecated.

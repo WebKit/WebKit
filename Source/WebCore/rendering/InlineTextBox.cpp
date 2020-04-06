@@ -863,7 +863,7 @@ auto InlineTextBox::resolveStyleForMarkedText(const MarkedText& markedText, cons
 #if PLATFORM(MAC)
         style.textStyles.fillColor = renderer().theme().systemColor(CSSValueAppleSystemLabel, styleColorOptions);
 #endif
-        style.backgroundColor = markedText.marker->isActiveMatch() ? renderer().theme().activeTextSearchHighlightColor(styleColorOptions) : renderer().theme().inactiveTextSearchHighlightColor(styleColorOptions);
+        style.backgroundColor = renderer().theme().textSearchHighlightColor(styleColorOptions);
         break;
     }
     }

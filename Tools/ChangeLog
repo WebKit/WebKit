@@ -1,3 +1,13 @@
+2020-04-04  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in DocumentMarkerController
+        https://bugs.webkit.org/show_bug.cgi?id=209985
+
+        Reviewed by Antti Koivisto.
+
+        * TestWebKitAPI/Tests/WebCore/MarkedText.cpp:
+        (TestWebKitAPI::TEST): Update for change to DocumentMarker constructor.
+
 2020-04-06  Jonathan Bedard  <jbedard@apple.com>
 
         run-api-tests spew "setup_environ_for_server" in verbose mode

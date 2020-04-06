@@ -2325,33 +2325,19 @@ FloatRect FrameSelection::selectionBounds(ClipToVisibleContent clipToVisibleCont
 
 void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangles, TextRectangleHeight textRectHeight) const
 {
-    RenderView* root = m_frame->contentRenderer();
-    if (!root)
+    if (!m_frame->contentRenderer())
         return;
 
-    Vector<FloatRect> textRects;
-    getTextRectangles(textRects, textRectHeight);
-
-    FloatRect visibleContentRect = m_frame->view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
-
-    for (const auto& rect : textRects) {
-        FloatRect intersectionRect = intersection(rect, visibleContentRect);
-        if (!intersectionRect.isEmpty())
-            rectangles.append(intersectionRect);
-    }
-}
-
-void FrameSelection::getTextRectangles(Vector<FloatRect>& rectangles, TextRectangleHeight textRectHeight) const
-{
     RefPtr<Range> range = toNormalizedRange();
     if (!range)
         return;
 
-    Vector<FloatQuad> quads;
-    range->absoluteTextQuads(quads, textRectHeight == TextRectangleHeight::SelectionHeight);
-
-    for (const auto& quad : quads)
-        rectangles.append(quad.boundingBox());
+    auto visibleContentRect = m_frame->view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+    for (auto& rect : boundingBoxes(RenderObject::absoluteTextQuads(*range, textRectHeight == TextRectangleHeight::SelectionHeight))) {
+        auto intersectionRect = intersection(rect, visibleContentRect);
+        if (!intersectionRect.isEmpty())
+            rectangles.append(intersectionRect);
+    }
 }
 
 // Scans logically forward from "start", including any child frames.

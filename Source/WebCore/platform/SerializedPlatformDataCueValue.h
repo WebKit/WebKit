@@ -30,10 +30,6 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/RetainPtr.h>
 
-#if !defined(__OBJC__)
-typedef struct objc_object *id;
-#endif
-
 #if PLATFORM(COCOA)
 using PlatformNativeValue = id;
 #else

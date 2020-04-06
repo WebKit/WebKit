@@ -843,11 +843,8 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
         WebVisiblePosition *currentWebVisiblePosition = [WebVisiblePosition _wrapVisiblePosition:currentVisiblePosition];
         
         auto* currentNode = currentVisiblePosition.deepEquivalent().anchorNode();
-        int lastOffset = lastOffsetForEditing(*currentNode);
-        ASSERT(lastOffset >= 0);
-        if (lastOffset < 0)
-            return currentWebVisiblePosition;
-        
+        unsigned lastOffset = lastOffsetForEditing(*currentNode);
+
         VisiblePosition previousVisiblePosition = currentVisiblePosition.previous();
         if (previousVisiblePosition.isNull())
             return currentWebVisiblePosition;
@@ -863,18 +860,18 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
         // ASSERT(markers.size() == 1);
         if (markers.size() > 1)
             return currentWebVisiblePosition;
-        RenderedDocumentMarker* resultMarker = markers.at(0);
+
+        auto& marker = *markers[0];
         
-        // FIXME: WebCore doesn't always update markers correctly during editing. Bail if resultMarker extends off the edge of 
-        // this node, because that means it's invalid.
-        if (resultMarker->endOffset() > (unsigned)lastOffset)
+        // FIXME: WebCore doesn't always update markers correctly during editing. Bail if resultMarker extends off the edge of this node, because that means it's invalid.
+        if (marker.endOffset() > lastOffset)
             return currentWebVisiblePosition;
         
-        if (![uikitDelegate isUnperturbedDictationResultMarker:resultMarker->metadata()])
+        if (![uikitDelegate isUnperturbedDictationResultMarker:WTF::get<RetainPtr<id>>(marker.data()).get()])
             return currentWebVisiblePosition;
         
-        if (resultMarker->startOffset() > 0)
-            return [WebVisiblePosition _wrapVisiblePosition:VisiblePosition(createLegacyEditingPosition(currentNode, resultMarker->startOffset()))];
+        if (marker.startOffset() > 0)
+            return [WebVisiblePosition _wrapVisiblePosition:VisiblePosition(createLegacyEditingPosition(currentNode, marker.startOffset()))];
         
         currentVisiblePosition = VisiblePosition(createLegacyEditingPosition(currentNode, 0));
     }
@@ -899,11 +896,8 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
         WebVisiblePosition *currentWebVisiblePosition = [WebVisiblePosition _wrapVisiblePosition:currentVisiblePosition];
         
         auto* currentNode = currentVisiblePosition.deepEquivalent().anchorNode();
-        int lastOffset = lastOffsetForEditing(*currentNode);
-        ASSERT(lastOffset >= 0);
-        if (lastOffset < 0)
-            return currentWebVisiblePosition;
-        
+        unsigned lastOffset = lastOffsetForEditing(*currentNode);
+
         VisiblePosition nextVisiblePosition = currentVisiblePosition.next();
         if (nextVisiblePosition.isNull())
             return currentWebVisiblePosition;
@@ -919,18 +913,18 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
         //ASSERT(markers.size() == 1);
         if (markers.size() > 1)
             return currentWebVisiblePosition;
-        DocumentMarker* resultMarker = markers.at(0);
-        
-        // FIXME: WebCore doesn't always update markers correctly during editing. Bail if resultMarker extends off the edge of 
-        // this node, because that means it's invalid.
-        if (resultMarker->endOffset() > static_cast<unsigned>(lastOffset))
+
+        auto& marker = *markers[0];
+
+        // FIXME: WebCore doesn't always update markers correctly during editing. Bail if resultMarker extends off the edge of this node, because that means it's invalid.
+        if (marker.endOffset() > lastOffset)
             return currentWebVisiblePosition;
         
-        if (![uikitDelegate isUnperturbedDictationResultMarker:resultMarker->metadata()])
+        if (![uikitDelegate isUnperturbedDictationResultMarker:WTF::get<RetainPtr<id>>(marker.data()).get()])
             return currentWebVisiblePosition;
         
-        if (resultMarker->endOffset() <= static_cast<unsigned>(lastOffset))
-            return [WebVisiblePosition _wrapVisiblePosition:VisiblePosition(createLegacyEditingPosition(currentNode, resultMarker->endOffset()))];
+        if (marker.endOffset() <= static_cast<unsigned>(lastOffset))
+            return [WebVisiblePosition _wrapVisiblePosition:VisiblePosition(createLegacyEditingPosition(currentNode, marker.endOffset()))];
         
         currentVisiblePosition = VisiblePosition(createLegacyEditingPosition(currentNode, lastOffset));
     }

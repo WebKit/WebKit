@@ -30,17 +30,9 @@
 #include <wtf/RefPtr.h>
 
 #if USE(CFURLCONNECTION)
-
 typedef struct _CFURLAuthChallenge* CFURLAuthChallengeRef;
-
 #else
-
-#ifndef __OBJC__
-typedef struct objc_object *id;
-#endif
-
 OBJC_CLASS NSURLAuthenticationChallenge;
-
 #endif
 
 namespace WebCore {
@@ -49,6 +41,7 @@ class AuthenticationChallenge : public AuthenticationChallengeBase {
 public:
     AuthenticationChallenge() {}
     WEBCORE_EXPORT AuthenticationChallenge(const ProtectionSpace&, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse&, const ResourceError&);
+
 #if USE(CFURLCONNECTION)
     AuthenticationChallenge(CFURLAuthChallengeRef, AuthenticationClient*);
 

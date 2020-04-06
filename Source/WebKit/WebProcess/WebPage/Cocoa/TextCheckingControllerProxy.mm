@@ -138,7 +138,8 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(const AttributedStr
         [attrs enumerateKeysAndObjectsUsingBlock:^(NSAttributedStringKey key, id value, BOOL *stop) {
             if (![value isKindOfClass:[NSString class]])
                 return;
-            markers.addPlatformTextCheckingMarker(attributeCoreRange, key, (NSString *)value);
+            markers.addMarker(attributeCoreRange, WebCore::DocumentMarker::PlatformTextChecking,
+                WebCore::DocumentMarker::PlatformTextCheckingData { key, (NSString *)value });
 
             // FIXME: Switch to constants after rdar://problem/48914153 is resolved.
             if ([key isEqualToString:@"NSSpellingState"]) {
@@ -147,7 +148,7 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(const AttributedStr
                     markers.addMarker(attributeCoreRange, DocumentMarker::Spelling);
                 if (spellingState & NSSpellingStateGrammarFlag) {
                     NSString *userDescription = [attrs objectForKey:@"NSGrammarUserDescription"];
-                    markers.addMarker(attributeCoreRange, DocumentMarker::Grammar, userDescription);
+                    markers.addMarker(attributeCoreRange, DocumentMarker::Grammar, String { userDescription });
                 }
             }
         }];
@@ -156,7 +157,6 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(const AttributedStr
 
 void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const String& annotation, int64_t selectionOffset, uint64_t length)
 {
-    Frame& frame = m_page.corePage()->focusController().focusedOrMainFrame();
     auto rangeAndOffset = rangeAndOffsetRelativeToSelection(selectionOffset, length);
     if (!rangeAndOffset)
         return;
@@ -164,13 +164,13 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
     if (!range)
         return;
 
-    bool removeCoreSpellingMarkers = annotation == "NSSpellingState";
-    frame.document()->markers().filterMarkers(*range, [&] (DocumentMarker* marker) {
-        if (!WTF::holds_alternative<DocumentMarker::PlatformTextCheckingData>(marker->data()))
+    auto removeCoreSpellingMarkers = annotation == "NSSpellingState";
+    auto types = removeCoreSpellingMarkers ? relevantMarkerTypes() : WebCore::DocumentMarker::PlatformTextChecking;
+    m_page.corePage()->focusController().focusedOrMainFrame().document()->markers().filterMarkers(*range, [&] (const DocumentMarker& marker) {
+        if (!WTF::holds_alternative<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()))
             return false;
-        auto& textCheckingData = WTF::get<DocumentMarker::PlatformTextCheckingData>(marker->data());
-        return textCheckingData.key != annotation;
-    }, removeCoreSpellingMarkers ? relevantMarkerTypes() : DocumentMarker::PlatformTextChecking);
+        return WTF::get<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()).key != annotation;
+    }, types);
 }
 
 AttributedString TextCheckingControllerProxy::annotatedSubstringBetweenPositions(const WebCore::VisiblePosition& start, const WebCore::VisiblePosition& end)
@@ -188,10 +188,7 @@ AttributedString TextCheckingControllerProxy::annotatedSubstringBetweenPositions
             continue;
         [string appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:it.text().createNSStringWithoutCopying().get()]).get()];
         auto range = it.range();
-        auto markers = range.start.document().markers().markersInRange(createLiveRange(range), DocumentMarker::PlatformTextChecking);
-        for (const auto* marker : markers) {
-            if (!WTF::holds_alternative<DocumentMarker::PlatformTextCheckingData>(marker->data()))
-                continue;
+        for (auto* marker : range.start.document().markers().markersInRange(range, DocumentMarker::PlatformTextChecking)) {
             auto& data = WTF::get<DocumentMarker::PlatformTextCheckingData>(marker->data());
             auto subrange = resolveCharacterRange(range, { marker->startOffset(), marker->endOffset() - marker->startOffset() });
             [string addAttribute:data.key value:data.value range:characterRange(entireRange, subrange)];

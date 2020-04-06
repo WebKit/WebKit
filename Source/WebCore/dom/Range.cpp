@@ -1177,11 +1177,7 @@ Vector<FloatRect> Range::absoluteRectsForRangeInText(Node* node, RenderText& ren
         return clippedRects;
     }
 
-    Vector<FloatRect> floatRects;
-    floatRects.reserveInitialCapacity(textQuads.size());
-    for (auto& quad : textQuads)
-        floatRects.uncheckedAppend(quad.boundingBox());
-    return floatRects;
+    return boundingBoxes(textQuads);
 }
 
 void Range::absoluteTextRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFixedPosition* inFixed, OptionSet<BoundingRectBehavior> rectOptions) const
@@ -1203,33 +1199,6 @@ void Range::absoluteTextRects(Vector<IntRect>& rects, bool useSelectionHeight, R
             auto rectsForRenderer = absoluteRectsForRangeInText(node, downcast<RenderText>(*renderer), useSelectionHeight, isFixed, rectOptions);
             for (auto& rect : rectsForRenderer)
                 rects.append(enclosingIntRect(rect));
-        } else
-            continue;
-        allFixed &= isFixed;
-        someFixed |= isFixed;
-    }
-
-    if (inFixed)
-        *inFixed = allFixed ? EntirelyFixedPosition : (someFixed ? PartiallyFixedPosition : NotFixedPosition);
-}
-
-void Range::absoluteTextQuads(Vector<FloatQuad>& quads, bool useSelectionHeight, RangeInFixedPosition* inFixed) const
-{
-    bool allFixed = true;
-    bool someFixed = false;
-
-    Node* stopNode = pastLastNode();
-    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(*node)) {
-        RenderObject* renderer = node->renderer();
-        if (!renderer)
-            continue;
-        bool isFixed = false;
-        if (renderer->isBR())
-            renderer->absoluteQuads(quads, &isFixed);
-        else if (is<RenderText>(*renderer)) {
-            unsigned startOffset = node == &startContainer() ? m_start.offset() : 0;
-            unsigned endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<unsigned>::max();
-            quads.appendVector(downcast<RenderText>(*renderer).absoluteQuadsForRange(startOffset, endOffset, useSelectionHeight, false /* ignoreEmptyTextSelections */, &isFixed));
         } else
             continue;
         allFixed &= isFixed;
@@ -1832,8 +1801,7 @@ Vector<FloatRect> Range::borderAndTextRects(CoordinateSpace space, OptionSet<Bou
                 if (space == CoordinateSpace::Client)
                     node->document().convertAbsoluteToClientQuads(elementQuads, renderer->style());
 
-                for (auto& quad : elementQuads)
-                    rects.append(quad.boundingBox());
+                rects.appendVector(boundingBoxes(elementQuads));
             }
         } else if (is<Text>(*node)) {
             if (auto* renderer = downcast<Text>(*node).renderer()) {

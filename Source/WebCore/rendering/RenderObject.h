@@ -3,7 +3,7 @@
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -77,6 +77,7 @@ class SelectionRect;
 #endif
 
 struct PaintInfo;
+struct SimpleRange;
 
 #if PLATFORM(IOS_FAMILY)
 const int caretWidth = 2; // This value should be kept in sync with UIKit. See <rdar://problem/15580601>.
@@ -151,20 +152,12 @@ public:
     // Scrolling is a RenderBox concept, however some code just cares about recursively scrolling our enclosing ScrollableArea(s).
     WEBCORE_EXPORT bool scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&);
 
-    // Convenience function for getting to the nearest enclosing box of a RenderObject.
     WEBCORE_EXPORT RenderBox& enclosingBox() const;
     RenderBoxModelObject& enclosingBoxModelObject() const;
     const RenderBox* enclosingScrollableContainerForSnapping() const;
 
-    // Function to return our enclosing flow thread if we are contained inside one. This
-    // function follows the containing block chain.
-    RenderFragmentedFlow* enclosingFragmentedFlow() const
-    {
-        if (fragmentedFlowState() == NotInsideFragmentedFlow)
-            return nullptr;
-
-        return locateEnclosingFragmentedFlow();
-    }
+    // Return our enclosing flow thread if we are contained inside one. Follows the containing block chain.
+    RenderFragmentedFlow* enclosingFragmentedFlow() const;
 
     WEBCORE_EXPORT bool useDarkAppearance() const;
     OptionSet<StyleColor::Options> styleColorOptions() const;
@@ -172,20 +165,12 @@ public:
 #if ASSERT_ENABLED
     void setHasAXObject(bool flag) { m_hasAXObject = flag; }
     bool hasAXObject() const { return m_hasAXObject; }
+#endif
 
-    // Helper class forbidding calls to setNeedsLayout() during its lifetime.
-    class SetLayoutNeededForbiddenScope {
-    public:
-        explicit SetLayoutNeededForbiddenScope(RenderObject*, bool isForbidden = true);
-        ~SetLayoutNeededForbiddenScope();
-    private:
-        RenderObject* m_renderObject;
-        bool m_preexistingForbidden;
-    };
-#endif // ASSERT_ENABLED
+    // Creates a scope where this object will assert on calls to setNeedsLayout().
+    class SetLayoutNeededForbiddenScope;
 
-    // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
-    // children.
+    // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline children.
     virtual RenderBlock* firstLineBlock() const;
     
     // RenderObject tree manipulation
@@ -393,22 +378,7 @@ public:
 
     bool hasAspectRatio() const { return isReplaced() && (isImage() || isVideo() || isCanvas()); }
     bool isAnonymous() const { return m_bitfields.isAnonymous(); }
-    bool isAnonymousBlock() const
-    {
-        // This function is kept in sync with anonymous block creation conditions in
-        // RenderBlock::createAnonymousBlock(). This includes creating an anonymous
-        // RenderBlock having a DisplayType::Block or DisplayType::Box display. Other classes such as RenderTextFragment
-        // are not RenderBlocks and will return false. See https://bugs.webkit.org/show_bug.cgi?id=56709. 
-        return isAnonymous() && (style().display() == DisplayType::Block || style().display() == DisplayType::Box) && style().styleType() == PseudoId::None && isRenderBlock() && !isListMarker() && !isRenderFragmentedFlow() && !isRenderMultiColumnSet() && !isRenderView()
-#if ENABLE(FULLSCREEN_API)
-            && !isRenderFullScreen()
-            && !isRenderFullScreenPlaceholder()
-#endif
-#if ENABLE(MATHML)
-            && !isRenderMathMLBlock()
-#endif
-            ;
-    }
+    bool isAnonymousBlock() const;
 
     bool isFloating() const { return m_bitfields.floating(); }
 
@@ -450,19 +420,10 @@ public:
     bool hasVisibleBoxDecorations() const { return m_bitfields.boxDecorationState() != NoBoxDecorations; }
     bool backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset);
 
-    bool needsLayout() const
-    {
-        return m_bitfields.needsLayout() || m_bitfields.normalChildNeedsLayout() || m_bitfields.posChildNeedsLayout()
-            || m_bitfields.needsSimplifiedNormalFlowLayout() || m_bitfields.needsPositionedMovementLayout();
-    }
-
+    bool needsLayout() const;
     bool selfNeedsLayout() const { return m_bitfields.needsLayout(); }
     bool needsPositionedMovementLayout() const { return m_bitfields.needsPositionedMovementLayout(); }
-    bool needsPositionedMovementLayoutOnly() const
-    {
-        return m_bitfields.needsPositionedMovementLayout() && !m_bitfields.needsLayout() && !m_bitfields.normalChildNeedsLayout()
-            && !m_bitfields.posChildNeedsLayout() && !m_bitfields.needsSimplifiedNormalFlowLayout();
-    }
+    bool needsPositionedMovementLayoutOnly() const;
 
     bool posChildNeedsLayout() const { return m_bitfields.posChildNeedsLayout(); }
     bool needsSimplifiedNormalFlowLayout() const { return m_bitfields.needsSimplifiedNormalFlowLayout(); }
@@ -512,17 +473,9 @@ public:
     void setPreferredLogicalWidthsDirty(bool, MarkingBehavior = MarkContainingBlockChain);
     void invalidateContainerPreferredLogicalWidths();
     
-    void setNeedsLayoutAndPrefWidthsRecalc()
-    {
-        setNeedsLayout();
-        setPreferredLogicalWidthsDirty(true);
-    }
+    void setNeedsLayoutAndPrefWidthsRecalc();
 
-    void setPositionState(PositionType position)
-    {
-        ASSERT((position != PositionType::Absolute && position != PositionType::Fixed) || isBox());
-        m_bitfields.setPositionedState(static_cast<int>(position));
-    }
+    void setPositionState(PositionType);
     void clearPositionedState() { m_bitfields.clearPositionedState(); }
 
     void setFloating(bool b = true) { m_bitfields.setFloating(b); }
@@ -567,7 +520,7 @@ public:
     VisiblePosition createVisiblePosition(int offset, EAffinity) const;
     VisiblePosition createVisiblePosition(const Position&) const;
 
-    // returns the containing block level element for this element.
+    // Returns the containing block level element for this element.
     WEBCORE_EXPORT RenderBlock* containingBlock() const;
     RenderBlock* containingBlockForObjectInFlow() const;
 
@@ -576,12 +529,9 @@ public:
     FloatPoint absoluteToLocal(const FloatPoint&, MapCoordinatesFlags = 0) const;
 
     // Convert a local quad to absolute coordinates, taking transforms into account.
-    FloatQuad localToAbsoluteQuad(const FloatQuad& quad, MapCoordinatesFlags mode = UseTransforms, bool* wasFixed = nullptr) const
-    {
-        return localToContainerQuad(quad, nullptr, mode, wasFixed);
-    }
+    FloatQuad localToAbsoluteQuad(const FloatQuad&, MapCoordinatesFlags = UseTransforms, bool* wasFixed = nullptr) const;
     // Convert an absolute quad to local coordinates.
-    FloatQuad absoluteToLocalQuad(const FloatQuad&, MapCoordinatesFlags mode = UseTransforms) const;
+    FloatQuad absoluteToLocalQuad(const FloatQuad&, MapCoordinatesFlags = UseTransforms) const;
 
     // Convert a local quad into the coordinate system of container, taking transforms into account.
     WEBCORE_EXPORT FloatQuad localToContainerQuad(const FloatQuad&, const RenderLayerModelObject* repaintContainer, MapCoordinatesFlags = UseTransforms, bool* wasFixed = nullptr) const;
@@ -600,15 +550,14 @@ public:
 
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint&) const { }
 
-    // FIXME: useTransforms should go away eventually
     WEBCORE_EXPORT IntRect absoluteBoundingBoxRect(bool useTransform = true, bool* wasFixed = nullptr) const;
     IntRect absoluteBoundingBoxRectIgnoringTransforms() const { return absoluteBoundingBoxRect(false); }
 
     // Build an array of quads in absolute coords for line boxes
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* /*wasFixed*/ = nullptr) const { }
-
     virtual void absoluteFocusRingQuads(Vector<FloatQuad>&);
 
+    WEBCORE_EXPORT static Vector<FloatQuad> absoluteTextQuads(const SimpleRange&, bool useSelectionHeight = false);
     static FloatRect absoluteBoundingBoxRectForRange(const Range*);
 
     // the rect that will be painted if this object is passed as the paintingRoot
@@ -627,8 +576,7 @@ public:
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 
     // Return the RenderLayerModelObject in the container chain which is responsible for painting this object, or nullptr
-    // if painting is root-relative. This is the container that should be passed to the 'forRepaint'
-    // methods.
+    // if painting is root-relative. This is the container that should be passed to the 'forRepaint' functions.
     RenderLayerModelObject* containerForRepaint() const;
     // Actually do the repaint of rect r for this object which has been computed in the coordinate space
     // of repaintContainer. If repaintContainer is nullptr, repaint via the view.
@@ -646,10 +594,7 @@ public:
 
     // Returns the rect that should be repainted whenever this object changes.  The rect is in the view's
     // coordinate space.  This method deals with outlines and overflow.
-    LayoutRect absoluteClippedOverflowRect() const
-    {
-        return clippedOverflowRectForRepaint(nullptr);
-    }
+    LayoutRect absoluteClippedOverflowRect() const { return clippedOverflowRectForRepaint(nullptr); }
     WEBCORE_EXPORT IntRect pixelSnappedAbsoluteClippedOverflowRect() const;
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const;
     virtual LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const;
@@ -657,10 +602,7 @@ public:
 
     // Given a rect in the object's coordinate space, compute a rect suitable for repainting
     // that rect in view coordinates.
-    LayoutRect computeAbsoluteRepaintRect(const LayoutRect& r) const
-    {
-        return computeRectForRepaint(r, nullptr);
-    }
+    LayoutRect computeAbsoluteRepaintRect(const LayoutRect& rect) const { return computeRectForRepaint(rect, nullptr); }
     // Given a rect in the object's coordinate space, compute a rect suitable for repainting
     // that rect in the coordinate space of repaintContainer.
     LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer) const;
@@ -691,7 +633,7 @@ public:
 
     WEBCORE_EXPORT bool hasNonEmptyVisibleRectRespectingParentFrames() const;
 
-    virtual unsigned int length() const { return 1; }
+    virtual unsigned length() const { return 1; }
 
     bool isFloatingOrOutOfFlowPositioned() const { return (isFloating() || isOutOfFlowPositioned()); }
 
@@ -735,14 +677,9 @@ public:
 
     // Virtual function helpers for the deprecated Flexible Box Layout (display: -webkit-box).
     virtual bool isDeprecatedFlexibleBox() const { return false; }
-
     // Virtual function helper for the new FlexibleBox Layout (display: -webkit-flex).
     virtual bool isFlexibleBox() const { return false; }
-
-    bool isFlexibleBoxIncludingDeprecated() const
-    {
-        return isFlexibleBox() || isDeprecatedFlexibleBox();
-    }
+    bool isFlexibleBoxIncludingDeprecated() const { return isFlexibleBox() || isDeprecatedFlexibleBox(); }
 
     virtual bool isCombineText() const { return false; }
 
@@ -773,10 +710,7 @@ public:
     
     virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& /* additionalOffset */, const RenderLayerModelObject* /* paintContainer */ = nullptr) { };
 
-    LayoutRect absoluteOutlineBounds() const
-    {
-        return outlineBoundsForRepaint(nullptr);
-    }
+    LayoutRect absoluteOutlineBounds() const { return outlineBoundsForRepaint(nullptr); }
 
     virtual void willBeRemovedFromTree();
     void resetFragmentedFlowStateOnRemoval();
@@ -811,17 +745,11 @@ protected:
 
     static bool shouldApplyCompositedContainerScrollsForRepaint();
 
-    static VisibleRectContext visibleRectContextForRepaint()
-    {
-        return VisibleRectContext(false, false, { VisibleRectContextOption::ApplyContainerClip, VisibleRectContextOption::ApplyCompositedContainerScrolls });
-    }
+    static VisibleRectContext visibleRectContextForRepaint();
+
+    bool isSetNeedsLayoutForbidden() const;
 
 private:
-#if ASSERT_ENABLED
-    bool isSetNeedsLayoutForbidden() const { return m_setNeedsLayoutForbidden; }
-    void setNeedsLayoutIsForbidden(bool flag) { m_setNeedsLayoutForbidden = flag; }
-#endif
-
     void addAbsoluteRectForLayer(LayoutRect& result);
     void setLayerNeedsFullRepaint();
     void setLayerNeedsFullRepaintForPositionedMovementLayout();
@@ -838,6 +766,7 @@ private:
     void setHasRareData(bool b) { m_bitfields.setHasRareData(b); }
 
 #if ASSERT_ENABLED
+    void setNeedsLayoutIsForbidden(bool flag) const { m_setNeedsLayoutForbidden = flag; }
     void checkBlockPositionedObjectsNeedLayout();
 #endif
 
@@ -848,8 +777,8 @@ private:
     RenderObject* m_next;
 
 #if ASSERT_ENABLED
-    bool m_hasAXObject             : 1;
-    bool m_setNeedsLayoutForbidden : 1;
+    bool m_hasAXObject : 1;
+    mutable bool m_setNeedsLayoutForbidden : 1;
 #endif
 
 #define ADD_BOOLEAN_BITFIELD(name, Name) \
@@ -996,6 +925,17 @@ private:
 #undef ADD_BOOLEAN_BITFIELD
 };
 
+class RenderObject::SetLayoutNeededForbiddenScope {
+public:
+    explicit SetLayoutNeededForbiddenScope(const RenderObject&, bool isForbidden = true);
+#if ASSERT_ENABLED
+    ~SetLayoutNeededForbiddenScope();
+private:
+    const RenderObject& m_renderObject;
+    bool m_preexistingForbidden;
+#endif
+};
+
 inline Frame& RenderObject::frame() const
 {
     return *document().frame();
@@ -1110,7 +1050,97 @@ inline bool RenderObject::needsSimplifiedNormalFlowLayoutOnly() const
         && !m_bitfields.posChildNeedsLayout() && !m_bitfields.needsPositionedMovementLayout();
 }
 
-inline void Node::setRenderer(RenderObject* renderer) { m_rendererWithStyleFlags.setPointer(renderer); }
+inline RenderFragmentedFlow* RenderObject::enclosingFragmentedFlow() const
+{
+    if (fragmentedFlowState() == NotInsideFragmentedFlow)
+        return nullptr;
+
+    return locateEnclosingFragmentedFlow();
+}
+
+inline bool RenderObject::isAnonymousBlock() const
+{
+    // This function must be kept in sync with anonymous block creation conditions in RenderBlock::createAnonymousBlock().
+    // FIXME: That seems difficult. Can we come up with a simpler way to make behavior correct?
+    // FIXME: Does this relatively long function benefit from being inlined?
+    return isAnonymous()
+        && (style().display() == DisplayType::Block || style().display() == DisplayType::Box)
+        && style().styleType() == PseudoId::None
+        && isRenderBlock()
+#if ENABLE(FULLSCREEN_API)
+        && !isRenderFullScreen()
+        && !isRenderFullScreenPlaceholder()
+#endif
+#if ENABLE(MATHML)
+        && !isRenderMathMLBlock()
+#endif
+        && !isListMarker()
+        && !isRenderFragmentedFlow()
+        && !isRenderMultiColumnSet()
+        && !isRenderView();
+}
+
+inline bool RenderObject::needsLayout() const
+{
+    return m_bitfields.needsLayout()
+        || m_bitfields.normalChildNeedsLayout()
+        || m_bitfields.posChildNeedsLayout()
+        || m_bitfields.needsSimplifiedNormalFlowLayout()
+        || m_bitfields.needsPositionedMovementLayout();
+}
+
+inline bool RenderObject::needsPositionedMovementLayoutOnly() const
+{
+    return m_bitfields.needsPositionedMovementLayout()
+        && !m_bitfields.needsLayout()
+        && !m_bitfields.normalChildNeedsLayout()
+        && !m_bitfields.posChildNeedsLayout()
+        && !m_bitfields.needsSimplifiedNormalFlowLayout();
+}
+
+inline void RenderObject::setNeedsLayoutAndPrefWidthsRecalc()
+{
+    setNeedsLayout();
+    setPreferredLogicalWidthsDirty(true);
+}
+
+inline void RenderObject::setPositionState(PositionType position)
+{
+    ASSERT((position != PositionType::Absolute && position != PositionType::Fixed) || isBox());
+    m_bitfields.setPositionedState(static_cast<int>(position));
+}
+
+inline FloatQuad RenderObject::localToAbsoluteQuad(const FloatQuad& quad, MapCoordinatesFlags mode, bool* wasFixed) const
+{
+    return localToContainerQuad(quad, nullptr, mode, wasFixed);
+}
+
+inline auto RenderObject::visibleRectContextForRepaint() -> VisibleRectContext
+{
+    return { false, false, { VisibleRectContextOption::ApplyContainerClip, VisibleRectContextOption::ApplyCompositedContainerScrolls } };
+}
+
+inline bool RenderObject::isSetNeedsLayoutForbidden() const
+{
+#if ASSERT_ENABLED
+    return m_setNeedsLayoutForbidden;
+#else
+    return false;
+#endif
+}
+
+#if !ASSERT_ENABLED
+
+inline RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScope(const RenderObject&, bool)
+{
+}
+
+#endif
+
+inline void Node::setRenderer(RenderObject* renderer)
+{
+    m_rendererWithStyleFlags.setPointer(renderer);
+}
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);
 

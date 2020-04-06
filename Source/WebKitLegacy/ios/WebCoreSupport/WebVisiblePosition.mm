@@ -404,69 +404,44 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     ASSERT(alternatives);
     if (!alternatives)
         return nil;
-        
+
     // *alternatives should not already point to an array.
-    ASSERT(!(*alternatives));
+    ASSERT(!*alternatives);
     *alternatives = nil;
-        
-    VisiblePosition p = [self _visiblePosition];
-    if (p.isNull())
+
+    auto position = [self _visiblePosition];
+    auto* node = position.deepEquivalent().anchorNode();
+    if (!node)
         return nil;
-        
-    int o = p.deepEquivalent().deprecatedEditingOffset();
-    if (o < 0)
-        return nil;
-    unsigned offset = o;
-    
-    Node* node = p.deepEquivalent().anchorNode();
-    Document& document = node->document();
-    
-    const auto& markers = document.markers().markersFor(*node, DocumentMarker::DictationPhraseWithAlternatives);
-    if (markers.isEmpty())
-        return nil;
-        
-    for (size_t i = 0; i < markers.size(); i++) {
-        const DocumentMarker* marker = markers[i];
+
+    unsigned offset = position.deepEquivalent().deprecatedEditingOffset();
+    auto& document = node->document();
+    for (auto marker : document.markers().markersFor(*node, DocumentMarker::DictationPhraseWithAlternatives)) {
         if (marker->startOffset() <= offset && marker->endOffset() >= offset) {
-            const Vector<String>& markerAlternatives = marker->alternatives();
-            *alternatives = [NSMutableArray arrayWithCapacity:markerAlternatives.size()];
-            for (size_t j = 0; j < markerAlternatives.size(); j++)
-                [(NSMutableArray *)*alternatives addObject:(NSString *)(markerAlternatives[j])];
-                
-            auto range = Range::create(document, node, marker->startOffset(), node, marker->endOffset());
-            return kit(range.ptr());
+            auto& markerAlternatives = WTF::get<Vector<String>>(marker->data());
+            auto array = [NSMutableArray arrayWithCapacity:markerAlternatives.size()];
+            for (auto& alternative : markerAlternatives)
+                [array addObject:alternative];
+            *alternatives = array;
+            return kit(Range::create(document, node, marker->startOffset(), node, marker->endOffset()).ptr());
         }
     }
-        
     return nil;
 }
 
 - (DOMRange *)enclosingRangeWithCorrectionIndicator
 {
-    VisiblePosition p = [self _visiblePosition];
-    if (p.isNull())
+    auto position = [self _visiblePosition];
+    auto* node = position.deepEquivalent().anchorNode();
+    if (!node)
         return nil;
-    
-    int o = p.deepEquivalent().deprecatedEditingOffset();
-    if (o < 0)
-        return nil;
-    unsigned offset = o;
-    
-    Node* node = p.deepEquivalent().anchorNode();
-    Document& document = node->document();
-    
-    const auto& markers = document.markers().markersFor(*node, DocumentMarker::Spelling);
-    if (markers.isEmpty())
-        return nil;
-    
-    for (size_t i = 0; i < markers.size(); i++) {
-        const DocumentMarker* marker = markers[i];
-        if (marker->startOffset() <= offset && marker->endOffset() >= offset) {
-            auto range = Range::create(document, node, marker->startOffset(), node, marker->endOffset());
-            return kit(range.ptr());
-        }
+
+    unsigned offset = position.deepEquivalent().deprecatedEditingOffset();
+    auto& document = node->document();
+    for (auto marker : document.markers().markersFor(*node, DocumentMarker::Spelling)) {
+        if (marker->startOffset() <= offset && marker->endOffset() >= offset)
+            return kit(Range::create(document, node, marker->startOffset(), node, marker->endOffset()).ptr());
     }
-    
     return nil;
 }
 

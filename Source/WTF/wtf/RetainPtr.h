@@ -48,6 +48,10 @@
 #define NS_RELEASES_ARGUMENT
 #endif
 
+#ifndef __OBJC__
+typedef struct objc_object *id;
+#endif
+
 namespace WTF {
 
 // Unlike most most of our smart pointers, RetainPtr can take either the pointer type or the pointed-to type,

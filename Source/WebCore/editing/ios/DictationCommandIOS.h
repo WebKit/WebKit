@@ -30,21 +30,16 @@
 #import "CompositeEditCommand.h"
 #import <wtf/RetainPtr.h>
 
-typedef struct objc_object *id;
-
 namespace WebCore {
 
-class DictationCommandIOS : public CompositeEditCommand {
+class DictationCommandIOS final : public CompositeEditCommand {
 public:
-    static Ref<DictationCommandIOS> create(Document& document, Vector<Vector<String>>&& dictationPhrases, RetainPtr<id> metadata)
-    {
-        return adoptRef(*new DictationCommandIOS(document, WTFMove(dictationPhrases), WTFMove(metadata)));
-    }
+    static Ref<DictationCommandIOS> create(Document&, Vector<Vector<String>>&& dictationPhrases, id metadata);
 
 private:
-    DictationCommandIOS(Document&, Vector<Vector<String>>&& dictationPhrases, RetainPtr<id> metadata);
+    DictationCommandIOS(Document&, Vector<Vector<String>>&& dictationPhrases, id metadata);
 
-    void doApply() override;
+    void doApply() final;
 
     Vector<Vector<String>> m_dictationPhrases;
     RetainPtr<id> m_metadata;

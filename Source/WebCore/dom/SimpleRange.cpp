@@ -54,28 +54,45 @@ bool operator==(const SimpleRange& a, const SimpleRange& b)
     return a.start == b.start && a.end == b.end;
 }
 
-// FIXME: Node::isCharacterData should use an algorithm like this, since I'm assuming it's faster than the isCharacterDataNode virtual call in most cases.
-static bool fastIsCharacterData(const Node& node)
-{
-    return !node.isContainerNode() && (node.isTextNode() || node.isCharacterDataNode());
-}
-
-// FIXME: This should be Node::length since the DOM specification calls this a node's length.
-static unsigned length(const Node& node)
-{
-    if (fastIsCharacterData(node))
-        return downcast<CharacterData>(node).length();
-    return node.countChildNodes();
-}
-
 static BoundaryPoint makeBoundaryPointAfterNodeContents(Node& node)
 {
-    return { node, length(node) };
+    return { node, node.length() };
 }
 
 SimpleRange makeRangeSelectingNodeContents(Node& node)
 {
     return { makeBoundaryPointBeforeNodeContents(node), makeBoundaryPointAfterNodeContents(node) };
+}
+
+RefPtr<Node> IntersectingNodeRange::first() const
+{
+    if (m_range.start.container->isCharacterDataNode())
+        return m_range.start.container.ptr();
+    if (auto child = m_range.start.container->traverseToChildAt(m_range.start.offset))
+        return child;
+    return NodeTraversal::nextSkippingChildren(m_range.start.container);
+}
+
+RefPtr<Node> IntersectingNodeRange::sentinel() const
+{
+    if (m_range.end.container->isCharacterDataNode())
+        return NodeTraversal::nextSkippingChildren(m_range.end.container);
+    if (auto child = m_range.end.container->traverseToChildAt(m_range.end.offset))
+        return child;
+    return NodeTraversal::nextSkippingChildren(m_range.end.container);
+}
+
+OffsetRange characterDataOffsetRange(const SimpleRange& range, const Node& node)
+{
+    return { &node == range.start.container.ptr() ? range.start.offset : 0,
+        &node == range.end.container.ptr() ? range.end.offset : std::numeric_limits<unsigned>::max() };
+}
+
+IntersectingNodeIterator& IntersectingNodeIterator::operator++()
+{
+    ASSERT(m_node);
+    m_node = NodeTraversal::next(*m_node);
+    return *this;
 }
 
 }

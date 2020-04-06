@@ -1,3 +1,37 @@
+2020-04-04  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in DocumentMarkerController
+        https://bugs.webkit.org/show_bug.cgi?id=209985
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/ViewSnapshotStore.h: Removed unused "Cocoa without IOSurface" code paths.
+        * UIProcess/mac/ViewSnapshotStoreMac.mm:
+        (WebKit::ViewSnapshot::create): Ditto.
+        (WebKit::ViewSnapshot::ViewSnapshot): Ditto.
+        (WebKit::ViewSnapshot::setSurface): Ditto.
+        (WebKit::ViewSnapshot::hasImage const): Ditto.
+        (WebKit::ViewSnapshot::clearImage): Ditto.
+        (WebKit::ViewSnapshot::setVolatile): Ditto.
+        (WebKit::ViewSnapshot::asLayerContents): Ditto.
+        (WebKit::ViewSnapshot::asImageForTesting): Ditto.
+        (WebKit::ViewSnapshotStore::snapshottingContext): Deleted.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::replaceRelativeToSelection): Updated since
+        addPlatformTextCheckingMarker no longer exists.
+        (WebKit::TextCheckingControllerProxy::removeAnnotationRelativeToSelection):
+        Updated since filterMarkers passes a reference instead of a pointer now.
+        (WebKit::TextCheckingControllerProxy::annotatedSubstringBetweenPositions):
+        Simplified code a bit by removing local variables.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForRange): Use
+        RenderObject::absoluteTextQuads.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation): Use
+        RenderObject::absoluteTextQuads and unitedBoundingBoxes.
+
 2020-04-06  Per Arne Vollan  <pvollan@apple.com>
 
         Add syscall to the WebContent sandbox

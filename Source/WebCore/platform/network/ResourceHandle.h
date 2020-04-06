@@ -52,9 +52,6 @@ OBJC_CLASS NSDictionary;
 OBJC_CLASS NSError;
 OBJC_CLASS NSURLConnection;
 OBJC_CLASS NSURLRequest;
-#ifndef __OBJC__
-typedef struct objc_object *id;
-#endif
 #endif
 
 #if USE(CFURLCONNECTION)

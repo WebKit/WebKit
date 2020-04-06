@@ -105,17 +105,15 @@ static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition 
     if (!mainResult)
         return nil;
 
-    RetainPtr<DDActionContext> actionContext = adoptNS([allocDDActionContextInstance() init]);
+    auto view = mainResultRange->ownerDocument().view();
+    if (!view)
+        return nil;
+
+    auto actionContext = adoptNS([allocDDActionContextInstance() init]);
     [actionContext setAllResults:@[ (__bridge id)mainResult ]];
     [actionContext setMainResult:mainResult];
 
-    Vector<FloatQuad> quads;
-    mainResultRange->absoluteTextQuads(quads);
-    detectedDataBoundingBox = FloatRect();
-    FrameView* frameView = mainResultRange->ownerDocument().view();
-    for (const auto& quad : quads)
-        detectedDataBoundingBox.unite(frameView->contentsToWindow(quad.enclosingBoundingBox()));
-
+    detectedDataBoundingBox = view->contentsToWindow(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(*mainResultRange))));
     detectedDataRange = mainResultRange;
 
     return actionContext;

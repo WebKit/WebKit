@@ -39,11 +39,16 @@
 
 namespace WebCore {
 
-DictationCommandIOS::DictationCommandIOS(Document& document, Vector<Vector<String>>&& dictationPhrases, RetainPtr<id> metadata)
+DictationCommandIOS::DictationCommandIOS(Document& document, Vector<Vector<String>>&& dictationPhrases, id metadata)
     : CompositeEditCommand(document, EditAction::Dictation)
     , m_dictationPhrases(WTFMove(dictationPhrases))
-    , m_metadata(WTFMove(metadata))
+    , m_metadata(metadata)
 {
+}
+
+Ref<DictationCommandIOS> DictationCommandIOS::create(Document& document, Vector<Vector<String>>&& dictationPhrases, id metadata)
+{
+    return adoptRef(*new DictationCommandIOS(document, WTFMove(dictationPhrases), metadata));
 }
 
 void DictationCommandIOS::doApply()
@@ -54,8 +59,11 @@ void DictationCommandIOS::doApply()
         resultLength += firstInterpretation.length();
         inputText(firstInterpretation, true);
 
-        if (interpretations.size() > 1)
-            document().markers().addDictationPhraseWithAlternativesMarker(*endingSelection().toNormalizedRange(), interpretations);
+        if (interpretations.size() > 1) {
+            auto alternatives = interpretations;
+            alternatives.remove(0);
+            document().markers().addMarker(*endingSelection().toNormalizedRange(), DocumentMarker::DictationPhraseWithAlternatives, WTFMove(alternatives));
+        }
 
         setEndingSelection(VisibleSelection(endingSelection().visibleEnd()));
     }
@@ -73,7 +81,7 @@ void DictationCommandIOS::doApply()
         return;
 
     auto resultRange = resolveCharacterRange(makeRangeSelectingNodeContents(*root), { endOffset - resultLength, endOffset });
-    document().markers().addDictationResultMarker(resultRange, m_metadata);
+    document().markers().addMarker(resultRange, DocumentMarker::DictationResult, m_metadata);
 }
 
 } // namespace WebCore

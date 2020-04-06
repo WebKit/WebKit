@@ -222,9 +222,7 @@ static LayoutUnit resolveLogicalHeightForRow(const Length& rowLogicalHeight)
 
 LayoutUnit RenderTableSection::calcRowLogicalHeight()
 {
-#ifndef NDEBUG
-    SetLayoutNeededForbiddenScope layoutForbiddenScope(this);
-#endif
+    SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
 
     ASSERT(!needsLayout());
 
@@ -538,9 +536,7 @@ void RenderTableSection::relayoutCellIfFlexed(RenderTableCell& cell, int rowInde
 
 void RenderTableSection::layoutRows()
 {
-#ifndef NDEBUG
-    SetLayoutNeededForbiddenScope layoutForbiddenScope(this);
-#endif
+    SetLayoutNeededForbiddenScope layoutForbiddenScope(*this);
 
     ASSERT(!needsLayout());
 

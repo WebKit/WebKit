@@ -27,13 +27,11 @@
 
 #include <WebCore/Color.h>
 #include <WebCore/IntPoint.h>
-#include <WebCore/IntSize.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA)
+#if HAVE(IOSURFACE)
 #include <WebCore/IOSurface.h>
 #endif
 
@@ -41,35 +39,17 @@
 #include <WebCore/RefPtrCairo.h>
 #endif
 
-#if PLATFORM(COCOA)
-#if !defined(__OBJC__)
-typedef struct objc_object *id;
-#endif
-
-OBJC_CLASS CAContext;
-
-#if HAVE(IOSURFACE)
-namespace WebCore {
-class IOSurface;
-}
-#endif
-#endif
-
 namespace WebKit {
 
-class ViewSnapshotStore;
 class WebBackForwardListItem;
 class WebPageProxy;
 
 class ViewSnapshot : public RefCounted<ViewSnapshot> {
 public:
-#if PLATFORM(COCOA)
 #if HAVE(IOSURFACE)
     static Ref<ViewSnapshot> create(std::unique_ptr<WebCore::IOSurface>);
-#else
-    static Ref<ViewSnapshot> create(uint32_t slotID, WebCore::IntSize, size_t imageSizeInBytes);
 #endif
-#elif PLATFORM(GTK)
+#if PLATFORM(GTK)
     static Ref<ViewSnapshot> create(RefPtr<cairo_surface_t>&&);
 #endif
 
@@ -77,7 +57,8 @@ public:
 
     void clearImage();
     bool hasImage() const;
-#if PLATFORM(COCOA)
+
+#if HAVE(IOSURFACE)
     id asLayerContents();
     RetainPtr<CGImageRef> asImageForTesting();
 #endif
@@ -85,7 +66,7 @@ public:
     void setRenderTreeSize(uint64_t renderTreeSize) { m_renderTreeSize = renderTreeSize; }
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
 
-    void setBackgroundColor(WebCore::Color color) { m_backgroundColor = color; }
+    void setBackgroundColor(const WebCore::Color& color) { m_backgroundColor = color; }
     WebCore::Color backgroundColor() const { return m_backgroundColor; }
 
     void setViewScrollPosition(WebCore::IntPoint scrollPosition) { m_viewScrollPosition = scrollPosition; }
@@ -94,7 +75,6 @@ public:
     void setDeviceScaleFactor(float deviceScaleFactor) { m_deviceScaleFactor = deviceScaleFactor; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
-#if PLATFORM(COCOA)
 #if HAVE(IOSURFACE)
     WebCore::IOSurface* surface() const { return m_surface.get(); }
 
@@ -104,11 +84,9 @@ public:
     void setSurface(std::unique_ptr<WebCore::IOSurface>);
 
     WebCore::IOSurface::SurfaceState setVolatile(bool);
-#else
-    WebCore::IntSize size() const { return m_size; }
-    size_t imageSizeInBytes() const { return m_imageSizeInBytes; }
 #endif
-#elif PLATFORM(GTK)
+
+#if PLATFORM(GTK)
     cairo_surface_t* surface() const { return m_surface.get(); }
 
     size_t imageSizeInBytes() const;
@@ -116,22 +94,16 @@ public:
 #endif
 
 private:
-#if PLATFORM(COCOA)
 #if HAVE(IOSURFACE)
     explicit ViewSnapshot(std::unique_ptr<WebCore::IOSurface>);
 
     std::unique_ptr<WebCore::IOSurface> m_surface;
-#else
-    explicit ViewSnapshot(uint32_t slotID, WebCore::IntSize, size_t imageSizeInBytes);
-
-    uint32_t m_slotID;
-    size_t m_imageSizeInBytes;
-    WebCore::IntSize m_size;
 #endif
-#elif PLATFORM(GTK)
+
+#if PLATFORM(GTK)
     explicit ViewSnapshot(RefPtr<cairo_surface_t>&&);
 
-    RefPtr<cairo_surface_t> m_surface { nullptr };
+    RefPtr<cairo_surface_t> m_surface;
 #endif
 
     uint64_t m_renderTreeSize;
@@ -155,10 +127,6 @@ public:
 
     void setDisableSnapshotVolatilityForTesting(bool disable) { m_disableSnapshotVolatility = disable; }
     bool disableSnapshotVolatilityForTesting() const { return m_disableSnapshotVolatility; }
-
-#if !HAVE(IOSURFACE) && HAVE(CORE_ANIMATION_RENDER_SERVER)
-    static CAContext *snapshottingContext();
-#endif
 
 private:
     void didAddImageToSnapshot(ViewSnapshot&);

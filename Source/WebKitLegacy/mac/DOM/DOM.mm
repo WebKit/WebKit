@@ -358,14 +358,9 @@ id <DOMEventTarget> kit(EventTarget* target)
 
     if (quads.size() == 0)
         return zeroQuad();
-
     if (quads.size() == 1)
         return wkQuadFromFloatQuad(quads[0]);
-
-    auto boundingRect = quads[0].boundingBox();
-    for (size_t i = 1; i < quads.size(); ++i)
-        boundingRect.unite(quads[i].boundingBox());
-    return wkQuadFromFloatQuad(boundingRect);
+    return wkQuadFromFloatQuad(unitedBoundingBoxes(quads));
 }
 
 // this method is like - (CGRect)boundingBox, but it accounts for for transforms

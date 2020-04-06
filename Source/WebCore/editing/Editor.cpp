@@ -3076,8 +3076,7 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     // of marker that contains the word in question, and remove marker on that whole range.
     auto wordRange = Range::create(document(), startOfFirstWord.deepEquivalent(), endOfLastWord.deepEquivalent());
 
-    Vector<RenderedDocumentMarker*> markers = document().markers().markersInRange(wordRange, DocumentMarker::DictationAlternatives);
-    for (auto* marker : markers)
+    for (auto* marker : document().markers().markersInRange(wordRange, DocumentMarker::DictationAlternatives))
         m_alternativeTextController->removeDictationAlternativesForMarker(*marker);
 
     OptionSet<DocumentMarker::MarkerType> markerTypesToRemove {
@@ -3626,7 +3625,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
             matches->append(createLiveRange(resultRange));
 
         if (markMatches)
-            document().markers().addMarker(createLiveRange(resultRange), DocumentMarker::TextMatch);
+            document().markers().addMarker(resultRange, DocumentMarker::TextMatch);
 
         // Stop looking if we hit the specified limit. A limit of 0 means no limit.
         if (limit > 0 && matchCount >= limit)

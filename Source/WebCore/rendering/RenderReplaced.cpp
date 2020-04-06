@@ -141,15 +141,10 @@ bool RenderReplaced::shouldDrawSelectionTint() const
 
 inline static bool draggedContentContainsReplacedElement(const Vector<RenderedDocumentMarker*>& markers, const Element& element)
 {
-    if (markers.isEmpty())
-        return false;
-
     for (auto* marker : markers) {
-        auto& draggedContentData = WTF::get<DocumentMarker::DraggedContentData>(marker->data());
-        if (draggedContentData.targetNode == &element)
+        if (WTF::get<RefPtr<Node>>(marker->data()) == &element)
             return true;
     }
-
     return false;
 }
 
@@ -169,9 +164,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
     }
 
-#ifndef NDEBUG
-    SetLayoutNeededForbiddenScope scope(this);
-#endif
+    SetLayoutNeededForbiddenScope scope(*this);
 
     GraphicsContextStateSaver savedGraphicsContext(paintInfo.context(), false);
     if (element() && element()->parentOrShadowHostElement()) {

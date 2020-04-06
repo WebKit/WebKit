@@ -4279,9 +4279,7 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
     RenderObject* renderer = m_nodeToDraw ? m_nodeToDraw->renderer() : nullptr;
     RenderLayer* rootLayer = renderView->layer();
 
-#ifndef NDEBUG
-    RenderElement::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(&rootLayer->renderer());
-#endif
+    RenderObject::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(rootLayer->renderer());
 
     // To work around http://webkit.org/b/135106, ensure that the paint root isn't an inline with culled line boxes.
     // FIXME: This can cause additional content to be included in the snapshot, so remove this once that bug is fixed.

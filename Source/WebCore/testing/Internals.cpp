@@ -1755,12 +1755,6 @@ ExceptionOr<String> Internals::dumpMarkerRects(const String& markerTypeString)
     return rectString.toString();
 }
 
-void Internals::addTextMatchMarker(const Range& range, bool isActive)
-{
-    range.ownerDocument().updateLayoutIgnorePendingStylesheets();
-    range.ownerDocument().markers().addTextMatchMarker(range, isActive);
-}
-
 ExceptionOr<void> Internals::setMarkedTextMatchesAreHighlighted(bool flag)
 {
     Document* document = contextDocument();

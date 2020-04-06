@@ -1757,12 +1757,11 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     for (WebCore::Node* node = root; node; node = WebCore::NodeTraversal::next(*node)) {
         auto markers = document->markers().markersFor(*node);
         for (auto* marker : markers) {
-
             if (marker->type() != WebCore::DocumentMarker::DictationResult)
                 continue;
-            
-            id metadata = marker->metadata();
-            
+
+            id metadata = WTF::get<RetainPtr<id>>(marker->data()).get();
+
             // All result markers should have metadata.
             ASSERT(metadata);
             if (!metadata)
@@ -1801,15 +1800,15 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
     if (!range)
         return nil;
-    
+
     auto markers = core(self)->document()->markers().markersInRange(*core(range), WebCore::DocumentMarker::DictationResult);
-    
+
     // UIKit should only ever give us a DOMRange for a phrase with alternatives, which should not be part of more than one result.
     ASSERT(markers.size() <= 1);
     if (markers.size() == 0)
         return nil;
-    
-    return markers[0]->metadata();
+
+    return WTF::get<RetainPtr<id>>(markers[0]->data()).get();
 }
 
 - (void)recursiveSetUpdateAppearanceEnabled:(BOOL)enabled

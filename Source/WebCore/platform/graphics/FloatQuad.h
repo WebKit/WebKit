@@ -26,14 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FloatQuad_h
-#define FloatQuad_h
+#pragma once
 
-#include "FloatPoint.h"
 #include "FloatRect.h"
 #include "IntRect.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
+
+// FIXME: Seems like this would be better as a struct.
 
 // A FloatQuad is a collection of 4 points, often representing the result of
 // mapping a rectangle through transforms. When initialized from a rect, the
@@ -165,22 +166,15 @@ inline FloatQuad& operator-=(FloatQuad& a, const FloatSize& b)
 
 inline bool operator==(const FloatQuad& a, const FloatQuad& b)
 {
-    return a.p1() == b.p1() &&
-           a.p2() == b.p2() && 
-           a.p3() == b.p3() &&
-           a.p4() == b.p4();
+    return a.p1() == b.p1() && a.p2() == b.p2() && a.p3() == b.p3() && a.p4() == b.p4();
 }
 
 inline bool operator!=(const FloatQuad& a, const FloatQuad& b)
 {
-    return a.p1() != b.p1() ||
-           a.p2() != b.p2() || 
-           a.p3() != b.p3() ||
-           a.p4() != b.p4();
+    return !(a == b);
 }
 
-}   // namespace WebCore
+Vector<FloatRect> boundingBoxes(const Vector<FloatQuad>&);
+WEBCORE_EXPORT FloatRect unitedBoundingBoxes(const Vector<FloatQuad>&);
 
-
-#endif // FloatQuad_h
-
+} // namespace WebCore
