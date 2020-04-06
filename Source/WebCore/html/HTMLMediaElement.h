@@ -379,15 +379,8 @@ public:
 
     void setSelectedTextTrack(TextTrack*);
 
-    bool textTracksAreReady() const;
-    using HTMLMediaElementEnums::TextTrackVisibilityCheckType;
-    void configureTextTrackDisplay(TextTrackVisibilityCheckType checkType = CheckTextTrackVisibility);
-    void updateTextTrackDisplay();
-
     // AudioTrackClient
     void audioTrackEnabledChanged(AudioTrack&) final;
-
-    void textTrackReadyStateChanged(TextTrack*);
 
     // TextTrackClient
     void textTrackKindChanged(TextTrack&) override;
@@ -405,6 +398,9 @@ public:
     void syncTextTrackBounds();
 
     void captionPreferencesChanged();
+    using HTMLMediaElementEnums::TextTrackVisibilityCheckType;
+    void textTrackReadyStateChanged(TextTrack*);
+    void updateTextTrackRepresentationImageIfNeeded();
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -803,6 +799,10 @@ private:
     enum ReconfigureMode { Immediately, AfterDelay };
     void markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMode);
     CaptionUserPreferences::CaptionDisplayMode captionDisplayMode();
+
+    bool textTracksAreReady() const;
+    void configureTextTrackDisplay(TextTrackVisibilityCheckType = CheckTextTrackVisibility);
+    void updateTextTrackDisplay();
 #endif
 
     // These "internal" functions do not check user gesture restrictions.

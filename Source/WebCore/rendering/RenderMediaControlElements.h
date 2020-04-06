@@ -59,10 +59,10 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
 
-class RenderTextTrackContainerElement final : public RenderBlockFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderTextTrackContainerElement);
+class RenderMediaControlTextTrackContainer final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderMediaControlTextTrackContainer);
 public:
-    RenderTextTrackContainerElement(Element&, RenderStyle&&);
+    RenderMediaControlTextTrackContainer(Element&, RenderStyle&&);
 
 private:
     void layout() override;

@@ -405,7 +405,7 @@ void MediaControls::updateTextTrackDisplay()
 
     m_textDisplayContainer->updateDisplay();
 }
-    
+
 void MediaControls::textTrackPreferencesChanged()
 {
     closedCaptionTracksChanged();
@@ -417,6 +417,12 @@ void MediaControls::clearTextDisplayContainer()
 {
     if (m_textDisplayContainer)
         m_textDisplayContainer->removeChildren();
+}
+
+void MediaControls::updateTextTrackRepresentationImageIfNeeded()
+{
+    if (m_textDisplayContainer)
+        m_textDisplayContainer->updateTextTrackRepresentationImageIfNeeded();
 }
 
 #endif

@@ -5457,6 +5457,22 @@ void Document::captionPreferencesChanged()
         element->captionPreferencesChanged();
 }
 
+void Document::setMediaElementShowingTextTrack(const HTMLMediaElement& element)
+{
+    m_mediaElementShowingTextTrack = makeWeakPtr(element);
+}
+
+void Document::clearMediaElementShowingTextTrack()
+{
+    m_mediaElementShowingTextTrack = nullptr;
+}
+
+void Document::updateTextTrackRepresentationImageIfNeeded()
+{
+    if (m_mediaElementShowingTextTrack)
+        m_mediaElementShowingTextTrack->updateTextTrackRepresentationImageIfNeeded();
+}
+
 #endif
 
 void Document::setShouldCreateRenderers(bool f)

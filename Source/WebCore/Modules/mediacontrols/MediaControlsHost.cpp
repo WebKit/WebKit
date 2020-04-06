@@ -165,6 +165,12 @@ void MediaControlsHost::updateTextTrackContainer()
         m_textTrackContainer->updateDisplay();
 }
 
+void MediaControlsHost::updateTextTrackRepresentationImageIfNeeded()
+{
+    if (m_textTrackContainer)
+        m_textTrackContainer->updateTextTrackRepresentationImageIfNeeded();
+}
+
 void MediaControlsHost::enteredFullscreen()
 {
     if (m_textTrackContainer)

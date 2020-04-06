@@ -41,7 +41,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMediaVolumeSliderContainer);
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMediaControlTimelineContainer);
 #if ENABLE(VIDEO_TRACK)
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextTrackContainerElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMediaControlTextTrackContainer);
 #endif
 
 RenderMediaVolumeSliderContainer::RenderMediaVolumeSliderContainer(Element& element, RenderStyle&& style)
@@ -90,12 +90,12 @@ void RenderMediaControlTimelineContainer::layout()
 
 #if ENABLE(VIDEO_TRACK)
 
-RenderTextTrackContainerElement::RenderTextTrackContainerElement(Element& element, RenderStyle&& style)
+RenderMediaControlTextTrackContainer::RenderMediaControlTextTrackContainer(Element& element, RenderStyle&& style)
     : RenderBlockFlow(element, WTFMove(style))
 {
 }
 
-void RenderTextTrackContainerElement::layout()
+void RenderMediaControlTextTrackContainer::layout()
 {
     RenderBlockFlow::layout();
     if (style().display() == DisplayType::None)
@@ -104,7 +104,6 @@ void RenderTextTrackContainerElement::layout()
     ASSERT(mediaControlElementType(element()) == MediaTextTrackDisplayContainer);
 
     LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
-    static_cast<MediaControlTextTrackContainerElement*>(element())->layoutIfNecessary();
 }
 
 #endif // ENABLE(VIDEO_TRACK)
