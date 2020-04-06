@@ -1,3 +1,22 @@
+2020-04-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Clang 10] Fix -Wimplicit-int-float-conversion compilation warnings in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=210038
+
+        Reviewed by Darin Adler.
+
+        Clang 10 reports a compilation warning in JavaScriptCore:
+        > ..\..\Source\JavaScriptCore\bytecode/CodeBlock.cpp(3002,24): warning: implicit conversion from 'unsigned long long' to 'double' changes value from 18446744073709551615 to 18446744073709551616 [-Wimplicit-int-float-conversion]
+        >     if (doubleResult > std::numeric_limits<size_t>::max())
+        >                      ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        Use a template variable maxPlusOne<T> which was added by r259537
+        for the purpose.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::predictedMachineCodeSize): Replaced '>' with '>=',
+        and std::numeric_limits<size_t>::max() with maxPlusOne<size_t>.
+
 2020-04-06  Rick Waldron  <waldron.rick@gmail.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove unnecessary Test262 harness file and implement $262.IsHTMLDDA
