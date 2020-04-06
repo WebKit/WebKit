@@ -1,5 +1,19 @@
 2020-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Since ArrayBufferViewWatchpointAdaptor::add can fire watchpoints, DFG::Plan should check validity of CodeBlock after executing reallyAdd
+        https://bugs.webkit.org/show_bug.cgi?id=210055
+        <rdar://problem/61331962>
+
+        Reviewed by Keith Miller.
+
+        Since ArrayBufferViewWatchpointAdaptor::add can fire watchpoints, it is possible that the DFG CodeBlock is already invalidated after executing DFG::Plan::reallyAdd.
+        We should check CodeBlock's validity again and terminate DFG::Plan::finalizeWithoutNotifyingCallback with CompilationInvalidated if CodeBlock got invalidated.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+
+2020-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Put ensureStillAliveHere for Integer TypedArrays in GetByVal
         https://bugs.webkit.org/show_bug.cgi?id=210047
 
