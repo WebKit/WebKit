@@ -1,5 +1,51 @@
 2020-04-06  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r259424. rdar://problem/61352472
+
+    [JSC] RecordedStatuses's assignment should be guarded by CodeBlock's lock
+    https://bugs.webkit.org/show_bug.cgi?id=209935
+    <rdar://problem/59443383>
+    
+    Reviewed by Mark Lam.
+    
+    Previously RecordedStatuses are not touched by GC. But now, GC visits RecordedStatuses.
+    This means that modifying RecordedStatuses should be guarded by CodeBlock's lock if
+    it is reachable from CodeBlock.
+    In DFG::Plan::reallyAdd, we already installed DFG::JITCode into the CodeBlock so that
+    RecordedStatuses is reachable from CodeBlock. We should lock CodeBlock's lock while
+    performing `WTFMove(RecordedStatuses)`.
+    
+    We do not need to emit write-barrier here because (1) DFG::Plan::reallyAdd is executed
+    while GC is deferred and (2) we emit write-barrier to CodeBlock before deferred GC is executed.
+    
+    * dfg/DFGPlan.cpp:
+    (JSC::DFG::Plan::reallyAdd):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259424 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] RecordedStatuses's assignment should be guarded by CodeBlock's lock
+            https://bugs.webkit.org/show_bug.cgi?id=209935
+            <rdar://problem/59443383>
+
+            Reviewed by Mark Lam.
+
+            Previously RecordedStatuses are not touched by GC. But now, GC visits RecordedStatuses.
+            This means that modifying RecordedStatuses should be guarded by CodeBlock's lock if
+            it is reachable from CodeBlock.
+            In DFG::Plan::reallyAdd, we already installed DFG::JITCode into the CodeBlock so that
+            RecordedStatuses is reachable from CodeBlock. We should lock CodeBlock's lock while
+            performing `WTFMove(RecordedStatuses)`.
+
+            We do not need to emit write-barrier here because (1) DFG::Plan::reallyAdd is executed
+            while GC is deferred and (2) we emit write-barrier to CodeBlock before deferred GC is executed.
+
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::reallyAdd):
+
+2020-04-06  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r259264. rdar://problem/61352442
 
     [JSC] DFGArrayMode::alreadyChecked should have NonArray check when ArrayMode is NonArray+SlowPutArrayStorage
