@@ -32,7 +32,6 @@
 #include "BytecodeStructs.h"
 #include "CallFrame.h"
 #include "ClonedArguments.h"
-#include "CodeProfiling.h"
 #include "DefinePropertyAttributes.h"
 #include "DirectArguments.h"
 #include "Error.h"

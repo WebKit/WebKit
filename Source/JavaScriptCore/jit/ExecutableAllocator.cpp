@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,10 @@
 
 #if ENABLE(JIT)
 
-#include "CodeProfiling.h"
 #include "ExecutableAllocationFuzz.h"
+#include "IterationStatus.h"
 #include "JSCInlines.h"
+#include <type_traits>
 #include <wtf/FileSystem.h>
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageReservation.h>
@@ -92,15 +93,26 @@ namespace JSC {
 using namespace WTF;
 
 #if defined(FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB) && FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB > 0
-static constexpr size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB * 1024 * 1024;
+static constexpr size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB * MB;
 #elif CPU(ARM)
-static constexpr size_t fixedExecutableMemoryPoolSize = 16 * 1024 * 1024;
+static constexpr size_t fixedExecutableMemoryPoolSize = 16 * MB;
 #elif CPU(ARM64)
-static constexpr size_t fixedExecutableMemoryPoolSize = 128 * 1024 * 1024;
-#elif CPU(X86_64)
-static constexpr size_t fixedExecutableMemoryPoolSize = 1024 * 1024 * 1024;
+#if USE(JUMP_ISLANDS)
+static constexpr size_t fixedExecutableMemoryPoolSize = 1 * GB;
+// These sizes guarantee that any jump within an island can jump forwards or backwards
+// to the adjacent island in a single instruction.
+static constexpr size_t regionSize = 112 * MB;
+static constexpr size_t islandRegionSize = 16 * MB;
+static constexpr size_t numberOfRegions = fixedExecutableMemoryPoolSize / regionSize;
+static constexpr size_t islandSizeInBytes = 4;
+static constexpr size_t maxIslandsPerRegion = islandRegionSize / islandSizeInBytes;
 #else
-static constexpr size_t fixedExecutableMemoryPoolSize = 32 * 1024 * 1024;
+static constexpr size_t fixedExecutableMemoryPoolSize = 128 * MB;
+#endif
+#elif CPU(X86_64)
+static constexpr size_t fixedExecutableMemoryPoolSize = 1 * GB;
+#else
+static constexpr size_t fixedExecutableMemoryPoolSize = 32 * MB;
 #endif
 
 #if CPU(ARM)
@@ -313,10 +325,13 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
     if (!isJITEnabled())
         return reservation;
 
+    reservation.size = fixedExecutableMemoryPoolSize;
+#if !USE(JUMP_ISLANDS)
+    // FIXME: Consider making jump islands work with Options::jitMemoryReservationSize
+    // https://bugs.webkit.org/show_bug.cgi?id=209037
     if (Options::jitMemoryReservationSize())
         reservation.size = Options::jitMemoryReservationSize();
-    else
-        reservation.size = fixedExecutableMemoryPoolSize;
+#endif
     reservation.size = std::max(roundUpToMultipleOf(pageSize(), reservation.size), pageSize() * 2);
 
     auto tryCreatePageReservation = [] (size_t reservationSize) {
@@ -363,51 +378,458 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
     return reservation;
 }
 
-class FixedVMPoolExecutableAllocator final : public MetaAllocator {
+class FixedVMPoolExecutableAllocator final {
     WTF_MAKE_FAST_ALLOCATED;
+
+#if USE(JUMP_ISLANDS)
+    class Islands;
+    class RegionAllocator;
+#endif
+
 public:
     FixedVMPoolExecutableAllocator()
-        : MetaAllocator(jitAllocationGranule) // round up all allocations to 32 bytes
+#if USE(JUMP_ISLANDS)
+        : m_allocators(constructFixedSizeArrayWithArguments<RegionAllocator, numberOfRegions>(*this))
+#else
+        : m_allocator(*this)
+#endif
     {
         JITReservation reservation = initializeJITPageReservation();
         m_reservation = WTFMove(reservation.pageReservation);
         if (m_reservation) {
-            addFreshFreeSpace(reservation.base, reservation.size);
+#if USE(JUMP_ISLANDS)
+            uintptr_t start = bitwise_cast<uintptr_t>(memoryStart());
+            uintptr_t reservationEnd = bitwise_cast<uintptr_t>(memoryEnd());
+            for (size_t i = 0; i < numberOfRegions; ++i) {
+                RELEASE_ASSERT(start < reservationEnd);
+                m_allocators[i].m_start = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(start));
+                m_allocators[i].m_end = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(start + regionSize));
+                if (m_allocators[i].end() > reservationEnd) {
+                    // We may have taken a page for the executable only copy thunk.
+                    RELEASE_ASSERT(i == numberOfRegions - 1);
+                    m_allocators[i].m_end = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(reservationEnd));
+                }
+
+                m_allocators[i].addFreshFreeSpace(bitwise_cast<void*>(m_allocators[i].start()), m_allocators[i].allocatorSize());
+
+                RELEASE_ASSERT(m_allocators[i].allocatorSize() < regionSize);
+                RELEASE_ASSERT(m_allocators[i].islandBegin() > m_allocators[i].start());
+                RELEASE_ASSERT(m_allocators[i].islandBegin() < m_allocators[i].end());
+
+                start += regionSize;
+            }
+#else
+            m_allocator.addFreshFreeSpace(reservation.base, reservation.size);
             ASSERT(bytesReserved() == reservation.size); // Since our executable memory is fixed-sized, bytesReserved is never changed after initialization.
+#endif
         }
     }
 
-    virtual ~FixedVMPoolExecutableAllocator();
+    ~FixedVMPoolExecutableAllocator()
+    {
+        m_reservation.deallocate();
+    }
 
     void* memoryStart() { return untagCodePtr<ExecutableMemoryPtrTag>(g_jscConfig.startExecutableMemory); }
     void* memoryEnd() { return untagCodePtr<ExecutableMemoryPtrTag>(g_jscConfig.endExecutableMemory); }
     bool isJITPC(void* pc) { return memoryStart() <= pc && pc < memoryEnd(); }
+    bool isValid() { return !!m_reservation; }
 
-protected:
-    FreeSpacePtr allocateNewSpace(size_t&) override
+    RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes)
     {
-        // We're operating in a fixed pool, so new allocation is always prohibited.
+#if USE(JUMP_ISLANDS)
+        auto locker = holdLock(getLock());
+
+        unsigned start = 0;
+        if (Options::useRandomizingExecutableIslandAllocation())
+            start = cryptographicallyRandomNumber() % m_allocators.size();
+
+        unsigned i = start;
+        while (true) {
+            RegionAllocator& allocator = m_allocators[i];
+            if (RefPtr<ExecutableMemoryHandle> result = allocator.allocate(locker, sizeInBytes))
+                return result;
+            i = (i + 1) % m_allocators.size();
+            if (i == start)
+                break;
+        }
         return nullptr;
+#else
+        return m_allocator.allocate(sizeInBytes);
+#endif // USE(JUMP_ISLANDS)
     }
 
-    void notifyNeedPage(void* page, size_t count) override
+    Lock& getLock() { return m_lock; }
+
+    // Non atomic
+    size_t bytesAllocated() 
     {
-        m_reservation.commit(page, pageSize() * count);
+        size_t result = 0;
+        forEachAllocator([&] (Allocator& allocator) {
+            result += allocator.bytesAllocated();
+        });
+        return result;
+    }
+    size_t bytesReserved() 
+    {
+        size_t result = 0;
+        forEachAllocator([&] (Allocator& allocator) {
+            result += allocator.bytesReserved();
+        });
+        return result;
+    }
+    size_t bytesCommitted()
+    {
+        size_t result = 0;
+        forEachAllocator([&] (Allocator& allocator) {
+            result += allocator.bytesCommitted();
+        });
+        return result;
     }
 
-    void notifyPageIsFree(void* page, size_t count) override
+    bool isInAllocatedMemory(const AbstractLocker& locker, void* address)
     {
-        m_reservation.decommit(page, pageSize() * count);
+#if USE(JUMP_ISLANDS)
+        if (RegionAllocator* allocator = findRegion(bitwise_cast<uintptr_t>(address)))
+            return allocator->isInAllocatedMemory(locker, address);
+        return false;
+#else
+        return m_allocator.isInAllocatedMemory(locker, address);
+#endif
+    }
+
+#if ENABLE(META_ALLOCATOR_PROFILE)
+    void dumpProfile()
+    {
+        forEachAllocator([&] (Allocator& allocator) {
+            allocator.dumpProfile();
+        });
+    }
+#endif
+
+    MetaAllocator::Statistics currentStatistics()
+    {
+        auto locker = holdLock(getLock());
+        MetaAllocator::Statistics result { 0, 0, 0 };
+        forEachAllocator([&] (Allocator& allocator) {
+            auto allocatorStats = allocator.currentStatistics(locker);
+            result.bytesAllocated += allocatorStats.bytesAllocated;
+            result.bytesReserved += allocatorStats.bytesReserved;
+            result.bytesCommitted += allocatorStats.bytesCommitted;
+        });
+        return result;
+    }
+
+#if USE(JUMP_ISLANDS)
+    void handleWillBeReleased(const LockHolder& locker, MetaAllocatorHandle& handle)
+    {
+        if (m_islandsForJumpSourceLocation.isEmpty())
+            return;
+
+        Vector<Islands*, 16> toRemove;
+        void* start = handle.start().untaggedPtr();
+        void* end = handle.end().untaggedPtr();
+        m_islandsForJumpSourceLocation.iterate([&] (Islands& islands, bool& visitLeft, bool& visitRight) {
+            if (start <= islands.key() && islands.key() < end)
+                toRemove.append(&islands);
+            if (islands.key() > start)
+                visitLeft = true;
+            if (islands.key() < end)
+                visitRight = true;
+        });
+
+        for (Islands* islands : toRemove)
+            freeIslands(locker, islands);
+
+        if (ASSERT_ENABLED) {
+            m_islandsForJumpSourceLocation.iterate([&] (Islands& islands, bool& visitLeft, bool& visitRight) {
+                if (start <= islands.key() && islands.key() < end) {
+                    dataLogLn("did not remove everything!");
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+                visitLeft = true;
+                visitRight = true;
+            });
+        }
+    }
+
+    void* makeIsland(uintptr_t jumpLocation, uintptr_t newTarget, bool concurrently)
+    {
+        auto locker = holdLock(getLock());
+        return islandForJumpLocation(locker, jumpLocation, newTarget, concurrently);
     }
 
 private:
-    PageReservation m_reservation;
-};
+    RegionAllocator* findRegion(uintptr_t ptr)
+    {
+        RegionAllocator* result = nullptr;
+        forEachAllocator([&] (RegionAllocator& allocator) {
+            if (allocator.start() <= ptr && ptr < allocator.end()) {
+                result = &allocator;
+                return IterationStatus::Done;
+            }
+            return IterationStatus::Continue;
+        });
+        return result;
+    }
 
-FixedVMPoolExecutableAllocator::~FixedVMPoolExecutableAllocator()
-{
-    m_reservation.deallocate();
-}
+    void freeJumpIslands(const LockHolder&, Islands* islands)
+    {
+        for (CodeLocationLabel<ExecutableMemoryPtrTag> jumpIsland : islands->jumpIslands) {
+            uintptr_t untaggedJumpIsland = bitwise_cast<uintptr_t>(jumpIsland.dataLocation());
+            RegionAllocator* allocator = findRegion(untaggedJumpIsland);
+            RELEASE_ASSERT(allocator);
+            allocator->freeIsland(untaggedJumpIsland);
+        }
+        islands->jumpIslands.clear();
+    }
+
+    void freeIslands(const LockHolder& locker, Islands* islands)
+    {
+        freeJumpIslands(locker, islands);
+        m_islandsForJumpSourceLocation.remove(islands);
+        delete islands;
+    }
+
+    void* islandForJumpLocation(const LockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently)
+    {
+        Islands* islands = m_islandsForJumpSourceLocation.findExact(bitwise_cast<void*>(jumpLocation));
+        if (islands) {
+            // FIXME: We could create some method of reusing already allocated islands here, but it's
+            // unlikely to matter in practice.
+            if (!concurrently)
+                freeJumpIslands(locker, islands);
+        } else {
+            islands = new Islands;
+            islands->jumpSourceLocation = CodeLocationLabel<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(jumpLocation)));
+            m_islandsForJumpSourceLocation.insert(islands);
+        }
+
+        RegionAllocator* allocator = findRegion(jumpLocation > target ? jumpLocation - regionSize : jumpLocation);
+        RELEASE_ASSERT(allocator);
+        void* result = allocator->allocateIsland();
+        void* currentIsland = result;
+        jumpLocation = bitwise_cast<uintptr_t>(currentIsland);
+        while (true) {
+            islands->jumpIslands.append(CodeLocationLabel<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(currentIsland)));
+
+            auto emitJumpTo = [&] (void* target) {
+                RELEASE_ASSERT(ARM64Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), target));
+
+                MacroAssembler jit;
+                auto jump = jit.jump();
+                LinkBuffer linkBuffer(jit, MacroAssemblerCodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, JITCompilationMustSucceed, false);
+                RELEASE_ASSERT(linkBuffer.isValid());
+
+                // We use this to appease the assertion that we're not finalizing on a compiler thread. In this situation, it's
+                // ok to do this on a compiler thread, since the compiler thread is linking a jump to this code (and no other live
+                // code can jump to these islands). It's ok because the CPU protocol for exposing code to other CPUs is:
+                // - Self modifying code fence (what FINALIZE_CODE does below). This does various memory flushes + instruction sync barrier (isb).
+                // - Any CPU that will run the code must run a crossModifyingCodeFence (isb) before running it. Since the code that
+                // has a jump linked to this island hasn't finalized yet, they're guaranteed to finalize there code and run an isb.
+                linkBuffer.setIsJumpIsland();
+
+                linkBuffer.link(jump, CodeLocationLabel<NoPtrTag>(target));
+                FINALIZE_CODE(linkBuffer, NoPtrTag, "Jump Island: %lu", jumpLocation);
+            };
+
+            if (ARM64Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), bitwise_cast<void*>(target))) {
+                emitJumpTo(bitwise_cast<void*>(target));
+                break;
+            }
+
+            uintptr_t nextIslandRegion;
+            if (jumpLocation > target)
+                nextIslandRegion = jumpLocation - regionSize;
+            else
+                nextIslandRegion = jumpLocation + regionSize;
+
+            RegionAllocator* allocator = findRegion(nextIslandRegion);
+            RELEASE_ASSERT(allocator);
+            void* nextIsland = allocator->allocateIsland();
+            emitJumpTo(nextIsland);
+            jumpLocation = bitwise_cast<uintptr_t>(nextIsland);
+            currentIsland = nextIsland;
+        }
+
+        return result;
+    }
+#endif // USE(JUMP_ISLANDS)
+
+private:
+    class Allocator : public MetaAllocator {
+        using Base = MetaAllocator;
+    public:
+        Allocator(FixedVMPoolExecutableAllocator& allocator)
+            : Base(allocator.getLock(), jitAllocationGranule, pageSize()) // round up all allocations to 32 bytes
+            , m_fixedAllocator(allocator)
+        {
+        }
+
+        FreeSpacePtr allocateNewSpace(size_t&) override
+        {
+            // We're operating in a fixed pool, so new allocation is always prohibited.
+            return nullptr;
+        }
+
+        void notifyNeedPage(void* page, size_t count) override
+        {
+            m_fixedAllocator.m_reservation.commit(page, pageSize() * count);
+        }
+
+        void notifyPageIsFree(void* page, size_t count) override
+        {
+            m_fixedAllocator.m_reservation.decommit(page, pageSize() * count);
+        }
+
+        FixedVMPoolExecutableAllocator& m_fixedAllocator;
+    };
+
+#if USE(JUMP_ISLANDS)
+    class RegionAllocator final : public Allocator {
+        using Base = Allocator;
+    public:
+        RegionAllocator(FixedVMPoolExecutableAllocator& allocator)
+            : Base(allocator)
+        {
+        }
+
+        //  ------------------------------------
+        //  | jit allocations -->   <-- islands |
+        //  -------------------------------------
+
+        uintptr_t start() { return bitwise_cast<uintptr_t>(untagCodePtr<ExecutableMemoryPtrTag>(m_start)); }
+        uintptr_t end() { return bitwise_cast<uintptr_t>(untagCodePtr<ExecutableMemoryPtrTag>(m_end)); }
+
+        uintptr_t islandBegin()
+        {
+            // [start, allocatorEnd)
+            return end() - islandRegionSize;
+        }
+
+        uintptr_t allocatorSize()
+        {
+            return islandBegin() - start();
+        }
+
+        size_t islandsPerPage()
+        {
+            size_t islandsPerPage = pageSize() / islandSizeInBytes;
+            ASSERT(islandsPerPage * islandSizeInBytes == pageSize());
+            ASSERT(isPowerOfTwo(islandsPerPage));
+            return islandsPerPage;
+        }
+
+        void release(const LockHolder& locker, MetaAllocatorHandle& handle) final
+        {
+            m_fixedAllocator.handleWillBeReleased(locker, handle);
+            Base::release(locker, handle);
+        }
+
+        void* allocateIsland()
+        {
+            uintptr_t end = this->end();
+            auto findResult = [&] () -> void* {
+                size_t resultBit = islandBits.findClearBit(0);
+                if (resultBit == islandBits.size())
+                    return nullptr;
+                islandBits[resultBit] = true;
+                uintptr_t result = end - ((resultBit + 1) * islandSizeInBytes); 
+                return bitwise_cast<void*>(result);
+            };
+
+            if (void* result = findResult())
+                return result;
+
+            islandBits.resize(islandBits.size() + islandsPerPage());
+            if (UNLIKELY(islandBits.size() > maxIslandsPerRegion))
+                crashOnJumpIslandExhaustion();
+
+            uintptr_t pageBegin = end - (islandBits.size() * islandSizeInBytes); // [islandBegin, end)
+            m_fixedAllocator.m_reservation.commit(bitwise_cast<void*>(pageBegin), pageSize());
+
+            void* result = findResult();
+            RELEASE_ASSERT(result);
+            return result;
+        }
+
+        NEVER_INLINE NO_RETURN_DUE_TO_CRASH void crashOnJumpIslandExhaustion()
+        {
+            CRASH();
+        }
+
+        Optional<size_t> islandBit(uintptr_t island)
+        {
+            uintptr_t end = this->end();
+            if (islandBegin() <= island && island < end)
+                return ((end - island) / islandSizeInBytes) - 1;
+            return WTF::nullopt;
+        }
+
+        void freeIsland(uintptr_t island)
+        {
+            RELEASE_ASSERT(islandBegin() <= island && island < end());
+            size_t bit = islandBit(island).value();
+            RELEASE_ASSERT(!!islandBits[bit]);
+            islandBits[bit] = false;
+        }
+
+        bool isInAllocatedMemory(const AbstractLocker& locker, void* address)
+        {
+            if (Base::isInAllocatedMemory(locker, address))
+                return true;
+            if (Optional<size_t> bit = islandBit(bitwise_cast<uintptr_t>(address))) {
+                if (bit.value() < islandBits.size())
+                    return !!islandBits[bit.value()];
+            }
+            return false;
+        }
+
+        // Range: [start, end)
+        void* m_start;
+        void* m_end;
+        FastBitVector islandBits;
+    };
+#endif // USE(JUMP_ISLANDS)
+
+    template <typename Function>
+    void forEachAllocator(Function function)
+    {
+#if USE(JUMP_ISLANDS)
+        for (RegionAllocator& allocator : m_allocators) {
+            using FunctionResultType = decltype(function(allocator));
+            if constexpr (std::is_same<IterationStatus, FunctionResultType>::value) {
+                if (function(allocator) == IterationStatus::Done)
+                    break;
+            } else {
+                static_assert(std::is_same<void, FunctionResultType>::value);
+                function(allocator);
+            }
+        }
+#else
+        function(m_allocator);
+#endif // USE(JUMP_ISLANDS)
+    }
+
+#if USE(JUMP_ISLANDS)
+    class Islands : public RedBlackTree<Islands, void*>::Node {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        void* key() { return jumpSourceLocation.dataLocation(); }
+        CodeLocationLabel<ExecutableMemoryPtrTag> jumpSourceLocation;
+        Vector<CodeLocationLabel<ExecutableMemoryPtrTag>> jumpIslands;
+    };
+#endif // USE(JUMP_ISLANDS)
+
+    Lock m_lock;
+    PageReservation m_reservation;
+#if USE(JUMP_ISLANDS)
+    std::array<RegionAllocator, numberOfRegions> m_allocators;
+    RedBlackTree<Islands, void*> m_islandsForJumpSourceLocation;
+#else
+    Allocator m_allocator;
+#endif // USE(JUMP_ISLANDS)
+};
 
 // Keep this pointer in a mutable global variable to help Leaks find it.
 // But we do not use this pointer.
@@ -417,7 +839,6 @@ void ExecutableAllocator::initializeUnderlyingAllocator()
     RELEASE_ASSERT(!g_jscConfig.fixedVMPoolExecutableAllocator);
     g_jscConfig.fixedVMPoolExecutableAllocator = new FixedVMPoolExecutableAllocator();
     globalFixedVMPoolExecutableAllocatorToWorkAroundLeaks = g_jscConfig.fixedVMPoolExecutableAllocator;
-    CodeProfiling::notifyAllocator(g_jscConfig.fixedVMPoolExecutableAllocator);
 }
 
 bool ExecutableAllocator::isValid() const
@@ -425,7 +846,7 @@ bool ExecutableAllocator::isValid() const
     FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         return Base::isValid();
-    return !!allocator->bytesReserved();
+    return allocator->isValid();
 }
 
 bool ExecutableAllocator::underMemoryPressure()
@@ -456,11 +877,11 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
     return result;
 }
 
-RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
+RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes, JITCompilationEffort effort)
 {
     FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
-        return Base::allocate(sizeInBytes, ownerUID, effort);
+        return Base::allocate(sizeInBytes, effort);
     if (Options::logExecutableAllocation()) {
         MetaAllocator::Statistics stats = allocator->currentStatistics();
         dataLog("Allocating ", sizeInBytes, " bytes of executable memory with ", stats.bytesAllocated, " bytes allocated, ", stats.bytesReserved, " bytes reserved, and ", stats.bytesCommitted, " committed.\n");
@@ -487,7 +908,7 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes,
         }
     }
 
-    RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes, ownerUID);
+    RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes);
     if (!result) {
         if (effort != JITCompilationCanFail) {
             dataLog("Ran out of executable memory while allocating ", sizeInBytes, " bytes.\n");
@@ -536,6 +957,26 @@ void ExecutableAllocator::dumpProfile()
     if (!allocator)
         return;
     allocator->dumpProfile();
+}
+#endif
+
+#if USE(JUMP_ISLANDS)
+void* ExecutableAllocator::getJumpIslandTo(void* from, void* newDestination)
+{
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    if (!allocator)
+        RELEASE_ASSERT_NOT_REACHED();
+
+    return allocator->makeIsland(bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), false);
+}
+
+void* ExecutableAllocator::getJumpIslandToConcurrently(void* from, void* newDestination)
+{
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    if (!allocator)
+        RELEASE_ASSERT_NOT_REACHED();
+
+    return allocator->makeIsland(bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), true);
 }
 #endif
 

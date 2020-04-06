@@ -919,6 +919,22 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
+    template<PtrTag callTag, PtrTag destTag>
+    static CodeLocationLabel<destTag> prepareForAtomicRepatchNearCallConcurrently(CodeLocationNearCall<callTag> nearCall, CodeLocationLabel<destTag> destination)
+    {
+#if USE(JUMP_ISLANDS)
+        switch (nearCall.callMode()) {
+        case NearCallMode::Tail:
+            return CodeLocationLabel<destTag>(tagCodePtr<destTag>(AssemblerType::prepareForAtomicRelinkJumpConcurrently(nearCall.dataLocation(), destination.dataLocation())));
+        case NearCallMode::Regular:
+            return CodeLocationLabel<destTag>(tagCodePtr<destTag>(AssemblerType::prepareForAtomicRelinkCallConcurrently(nearCall.dataLocation(), destination.untaggedExecutableAddress())));
+        }
+#else
+        UNUSED_PARAM(nearCall);
+        return destination;
+#endif
+    }
+
     template<PtrTag tag>
     static void repatchCompact(CodeLocationDataLabelCompact<tag> dataLabelCompact, int32_t value)
     {

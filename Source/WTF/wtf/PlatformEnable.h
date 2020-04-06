@@ -878,3 +878,7 @@
 #if ENABLE(WEBGL2) && !ENABLE(WEBGL)
 #error "ENABLE(WEBGL2) requires ENABLE(WEBGL)"
 #endif
+
+#if CPU(ARM64) && CPU(ADDRESS64)
+#define USE_JUMP_ISLANDS 1
+#endif

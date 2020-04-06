@@ -131,9 +131,9 @@ static ALWAYS_INLINE void recordLinkOffsets(AssemblerData& assemblerData, int32_
 }
 
 template <typename InstructionType>
-void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCompilationEffort effort)
+void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompilationEffort effort)
 {
-    allocate(macroAssembler, ownerUID, effort);
+    allocate(macroAssembler, effort);
     const size_t initialSize = macroAssembler.m_assembler.codeSize();
     if (didFailToAllocate())
         return;
@@ -295,7 +295,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
 #endif // ENABLE(BRANCH_COMPACTION)
 
 
-void LinkBuffer::linkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCompilationEffort effort)
+void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort effort)
 {
     // Ensure that the end of the last invalidation point does not extend beyond the end of the buffer.
     macroAssembler.label();
@@ -304,7 +304,7 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCom
 #if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
     macroAssembler.m_assembler.buffer().flushConstantPool(false);
 #endif
-    allocate(macroAssembler, ownerUID, effort);
+    allocate(macroAssembler, effort);
     if (!m_didAllocate)
         return;
     ASSERT(m_code);
@@ -318,15 +318,15 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCom
     macroAssembler.m_assembler.relocateJumps(buffer.data(), code);
 #endif
 #elif CPU(ARM_THUMB2)
-    copyCompactAndLinkCode<uint16_t>(macroAssembler, ownerUID, effort);
+    copyCompactAndLinkCode<uint16_t>(macroAssembler, effort);
 #elif CPU(ARM64)
-    copyCompactAndLinkCode<uint32_t>(macroAssembler, ownerUID, effort);
+    copyCompactAndLinkCode<uint32_t>(macroAssembler, effort);
 #endif // !ENABLE(BRANCH_COMPACTION)
 
     m_linkTasks = WTFMove(macroAssembler.m_linkTasks);
 }
 
-void LinkBuffer::allocate(MacroAssembler& macroAssembler, void* ownerUID, JITCompilationEffort effort)
+void LinkBuffer::allocate(MacroAssembler& macroAssembler, JITCompilationEffort effort)
 {
     size_t initialSize = macroAssembler.m_assembler.codeSize();
     if (m_code) {
@@ -344,7 +344,7 @@ void LinkBuffer::allocate(MacroAssembler& macroAssembler, void* ownerUID, JITCom
         initialSize = macroAssembler.m_assembler.codeSize();
     }
 
-    m_executableMemory = ExecutableAllocator::singleton().allocate(initialSize, ownerUID, effort);
+    m_executableMemory = ExecutableAllocator::singleton().allocate(initialSize, effort);
     if (!m_executableMemory)
         return;
     m_code = MacroAssemblerCodePtr<LinkBufferPtrTag>(m_executableMemory->start().retaggedPtr<LinkBufferPtrTag>());
@@ -358,7 +358,7 @@ void LinkBuffer::performFinalization()
         task->run(*this);
 
 #ifndef NDEBUG
-    ASSERT(!isCompilationThread());
+    ASSERT(m_isJumpIsland || !isCompilationThread());
     ASSERT(!m_completed);
     ASSERT(isValid());
     m_completed = true;

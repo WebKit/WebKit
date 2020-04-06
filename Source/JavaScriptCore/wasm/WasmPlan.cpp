@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,6 +127,71 @@ void Plan::fail(const AbstractLocker& locker, String&& errorMessage)
     dataLogLnIf(WasmPlanInternal::verbose, "failing with message: ", errorMessage);
     m_errorMessage = WTFMove(errorMessage);
     complete(locker);
+}
+
+void Plan::updateCallSitesToCallUs(CodeBlock& codeBlock, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace)
+{
+    HashMap<void*, CodeLocationLabel<WasmEntryPtrTag>> stagedCalls;
+    auto stageRepatch = [&] (const Vector<UnlinkedWasmToWasmCall>& callsites) {
+        for (auto& call : callsites) {
+            if (call.functionIndexSpace == functionIndexSpace) {
+                CodeLocationLabel<WasmEntryPtrTag> target = MacroAssembler::prepareForAtomicRepatchNearCallConcurrently(call.callLocation, entrypoint);
+                stagedCalls.add(call.callLocation.dataLocation(), target);
+            }
+        }
+    };
+    for (unsigned i = 0; i < codeBlock.m_wasmToWasmCallsites.size(); ++i) {
+        stageRepatch(codeBlock.m_wasmToWasmCallsites[i]);
+        if (codeBlock.m_llintCallees) {
+            LLIntCallee& llintCallee = codeBlock.m_llintCallees->at(i).get();
+            if (JITCallee* replacementCallee = llintCallee.replacement())
+                stageRepatch(replacementCallee->wasmToWasmCallsites());
+            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee())
+                stageRepatch(osrEntryCallee->wasmToWasmCallsites());
+        }
+        if (BBQCallee* bbqCallee = codeBlock.m_bbqCallees[i].get()) {
+            if (OMGCallee* replacementCallee = bbqCallee->replacement())
+                stageRepatch(replacementCallee->wasmToWasmCallsites());
+            if (OMGForOSREntryCallee* osrEntryCallee = bbqCallee->osrEntryCallee())
+                stageRepatch(osrEntryCallee->wasmToWasmCallsites());
+        }
+    }
+
+    // It's important to make sure we do this before we make any of the code we just compiled visible. If we didn't, we could end up
+    // where we are tiering up some function A to A' and we repatch some function B to call A' instead of A. Another CPU could see
+    // the updates to B but still not have reset its cache of A', which would lead to all kinds of badness.
+    resetInstructionCacheOnAllThreads();
+    WTF::storeStoreFence(); // This probably isn't necessary but it's good to be paranoid.
+
+    codeBlock.m_wasmIndirectCallEntryPoints[functionIndex] = entrypoint;
+
+    auto repatchCalls = [&] (const Vector<UnlinkedWasmToWasmCall>& callsites) {
+        for (auto& call : callsites) {
+            dataLogLnIf(WasmPlanInternal::verbose, "Considering repatching call at: ", RawPointer(call.callLocation.dataLocation()), " that targets ", call.functionIndexSpace);
+            if (call.functionIndexSpace == functionIndexSpace) {
+                dataLogLnIf(WasmPlanInternal::verbose, "Repatching call at: ", RawPointer(call.callLocation.dataLocation()), " to ", RawPointer(entrypoint.executableAddress()));
+                MacroAssembler::repatchNearCall(call.callLocation, stagedCalls.get(call.callLocation.dataLocation()));
+            }
+        }
+    };
+
+    for (unsigned i = 0; i < codeBlock.m_wasmToWasmCallsites.size(); ++i) {
+        repatchCalls(codeBlock.m_wasmToWasmCallsites[i]);
+        if (codeBlock.m_llintCallees) {
+            LLIntCallee& llintCallee = codeBlock.m_llintCallees->at(i).get();
+            if (JITCallee* replacementCallee = llintCallee.replacement())
+                repatchCalls(replacementCallee->wasmToWasmCallsites());
+            if (OMGForOSREntryCallee* osrEntryCallee = llintCallee.osrEntryCallee())
+                repatchCalls(osrEntryCallee->wasmToWasmCallsites());
+        }
+        if (BBQCallee* bbqCallee = codeBlock.m_bbqCallees[i].get()) {
+            if (OMGCallee* replacementCallee = bbqCallee->replacement())
+                repatchCalls(replacementCallee->wasmToWasmCallsites());
+            if (OMGForOSREntryCallee* osrEntryCallee = bbqCallee->osrEntryCallee())
+                repatchCalls(osrEntryCallee->wasmToWasmCallsites());
+        }
+    }
+
 }
 
 Plan::~Plan() { }

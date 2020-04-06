@@ -27,7 +27,6 @@
 #include "CallFrame.h"
 #include "CatchScope.h"
 #include "CodeCache.h"
-#include "CodeProfiling.h"
 #include "Exception.h"
 #include "IdentifierInlines.h"
 #include "Interpreter.h"
@@ -137,8 +136,6 @@ JSValue evaluate(JSGlobalObject* globalObject, const SourceCode& source, JSValue
     auto scope = DECLARE_CATCH_SCOPE(vm);
     RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
-
-    CodeProfiling profile(source);
 
     if (!thisValue || thisValue.isUndefinedOrNull())
         thisValue = globalObject;

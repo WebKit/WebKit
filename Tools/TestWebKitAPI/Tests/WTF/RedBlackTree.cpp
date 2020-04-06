@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
  */
 
 #include "config.h"
+#include <wtf/HashSet.h>
 #include <wtf/RedBlackTree.h>
 #include <wtf/Vector.h>
 
@@ -317,6 +318,87 @@ TEST_F(RedBlackTreeTest, SimpleBestFitSearch)
 TEST_F(RedBlackTreeTest, BiggerBestFitSearch)
 {
     testDriver("+d+d+d+d+d+d+d+d+d+d+f+f+f+f+f+f+f+h+h+i+j+k+l+m+o+p+q+r+z@a@b@c@d@e@f@g@h@i@j@k@l@m@n@o@p@q@r@s@t@u@v@w@x@y@z");
+}
+
+TEST_F(RedBlackTreeTest, Iterate)
+{
+    class Node : public RedBlackTree<Node, unsigned>::Node {
+    public:
+        unsigned value;
+        unsigned key() { return value; }
+    };
+
+    HashSet<unsigned> items;
+    items.add(2);
+    items.add(42);
+    items.add(48);
+    items.add(55);
+    items.add(73);
+    items.add(105);
+    items.add(200);
+    items.add(250);
+    items.add(300);
+
+    RedBlackTree<Node, unsigned> tree;
+    for (unsigned value : items) {
+        Node* node = new Node;
+        node->value = value;
+        tree.insert(node);
+    }
+
+    {
+        HashSet<unsigned> testItems;
+        tree.iterate([&] (Node& node, bool& iterateLeft, bool& iterateRight) {
+            testItems.add(node.value);
+            iterateLeft = true;
+            iterateRight = true;
+        });
+
+        EXPECT_EQ(items, testItems);
+    }
+
+    {
+        HashSet<unsigned> lessThanOrEqual73;
+        tree.iterate([&] (Node& node, bool& iterateLeft, bool& iterateRight) {
+            if (node.value < 73) {
+                iterateRight = true;
+                iterateLeft = true;
+            } else
+                iterateLeft = true;
+
+            if (node.value <= 73)
+                lessThanOrEqual73.add(node.value);
+        });
+
+        EXPECT_EQ(lessThanOrEqual73.size(), static_cast<size_t>(5));
+        EXPECT_TRUE(lessThanOrEqual73.contains(2));
+        EXPECT_TRUE(lessThanOrEqual73.contains(42));
+        EXPECT_TRUE(lessThanOrEqual73.contains(48));
+        EXPECT_TRUE(lessThanOrEqual73.contains(55));
+        EXPECT_TRUE(lessThanOrEqual73.contains(73));
+    }
+
+    {
+        HashSet<unsigned> greaterThan55;
+        tree.iterate([&] (Node& node, bool& iterateLeft, bool& iterateRight) {
+            if (node.value <= 55)
+                iterateRight = true;
+            else {
+                iterateLeft = true;
+                iterateRight = true;
+            }
+
+            if (node.value > 55)
+                greaterThan55.add(node.value);
+        });
+
+        EXPECT_EQ(greaterThan55.size(), static_cast<size_t>(5));
+        EXPECT_TRUE(greaterThan55.contains(73));
+        EXPECT_TRUE(greaterThan55.contains(105));
+        EXPECT_TRUE(greaterThan55.contains(200));
+        EXPECT_TRUE(greaterThan55.contains(250));
+        EXPECT_TRUE(greaterThan55.contains(300));
+    }
 }
 
 } // namespace TestWebKitAPI

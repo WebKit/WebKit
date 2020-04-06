@@ -1,3 +1,36 @@
+2020-04-06  Saam Barati  <sbarati@apple.com>
+
+        Implement 1GB of executable memory on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=208490
+        <rdar://problem/60797127>
+
+        Reviewed by Keith Miller.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocatorTracker::notify):
+        (WTF::MetaAllocatorTracker::release):
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocatorHandle::MetaAllocatorHandle):
+        (WTF::MetaAllocatorHandle::~MetaAllocatorHandle):
+        (WTF::MetaAllocatorHandle::shrink):
+        (WTF::MetaAllocator::MetaAllocator):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        * wtf/MetaAllocator.h:
+        (WTF::MetaAllocatorTracker::find):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        (WTF::MetaAllocator::getLock): Deleted.
+        * wtf/MetaAllocatorHandle.h:
+        (WTF::MetaAllocatorHandle::allocator):
+        (WTF::MetaAllocatorHandle::isManaged): Deleted.
+        (WTF::MetaAllocatorHandle::ownerUID): Deleted.
+        * wtf/PlatformEnable.h:
+        * wtf/RedBlackTree.h:
+        * wtf/StdLibExtras.h:
+        (WTF::constructFixedSizeArrayWithArgumentsImpl):
+        (WTF::constructFixedSizeArrayWithArguments):
+
 2020-04-04  Darin Adler  <darin@apple.com>
 
         Stop using live ranges in DocumentMarkerController

@@ -997,8 +997,6 @@ runtime/WideningNumberPredictionFuzzerAgent.cpp
 JSCBuiltins.cpp
 
 tools/CellList.cpp
-tools/CodeProfile.cpp
-tools/CodeProfiling.cpp
 tools/CompilerTimingScope.cpp
 tools/FunctionOverrides.cpp
 tools/FunctionWhitelist.cpp

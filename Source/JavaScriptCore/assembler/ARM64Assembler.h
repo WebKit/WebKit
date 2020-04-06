@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -783,12 +783,9 @@ public:
         insn(dataProcessing2Source(DATASIZE, rm, DataOp_ASRV, rn, rd));
     }
 
-    ALWAYS_INLINE void b(int32_t offset = 0)
+    ALWAYS_INLINE void b()
     {
-        ASSERT(!(offset & 3));
-        offset >>= 2;
-        ASSERT(offset == (offset << 6) >> 6);
-        insn(unconditionalBranchImmediate(false, offset));
+        insn(unconditionalBranchImmediate(false, 0));
     }
 
     ALWAYS_INLINE void b_cond(Condition cond, int32_t offset = 0)
@@ -831,11 +828,9 @@ public:
         insn(logicalShiftedRegister(DATASIZE, setFlags ? LogicalOp_ANDS : LogicalOp_AND, shift, true, rm, amount, rn, rd));
     }
 
-    ALWAYS_INLINE void bl(int32_t offset = 0)
+    ALWAYS_INLINE void bl()
     {
-        ASSERT(!(offset & 3));
-        offset >>= 2;
-        insn(unconditionalBranchImmediate(true, offset));
+        insn(unconditionalBranchImmediate(true, 0));
     }
 
     ALWAYS_INLINE void blr(RegisterID rn)
@@ -2582,6 +2577,15 @@ public:
     {
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(where)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
+
+#if USE(JUMP_ISLANDS)
+        if (!isInt<26>(offset)) {
+            to = ExecutableAllocator::singleton().getJumpIslandTo(where, to);
+            offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(where)) >> 2;
+            RELEASE_ASSERT(isInt<26>(offset));
+        }
+#endif
+
         int insn = unconditionalBranchImmediate(false, static_cast<int>(offset));
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
         performJITMemcpy(where, &insn, sizeof(int));
@@ -2771,6 +2775,25 @@ public:
         relinkJumpOrCall<BranchType_CALL>(reinterpret_cast<int*>(from) - 1, reinterpret_cast<const int*>(from) - 1, to);
         cacheFlush(reinterpret_cast<int*>(from) - 1, sizeof(int));
     }
+
+#if USE(JUMP_ISLANDS)
+    static void* prepareForAtomicRelinkJumpConcurrently(void* from, void* to)
+    {
+        intptr_t offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(from)) >> 2;
+        ASSERT(static_cast<int>(offset) == offset);
+
+        if (isInt<26>(offset))
+            return to;
+
+        return ExecutableAllocator::singleton().getJumpIslandToConcurrently(from, to);
+    }
+
+    static void* prepareForAtomicRelinkCallConcurrently(void* from, void* to)
+    {
+        from = static_cast<void*>(bitwise_cast<int*>(from) - 1);
+        return prepareForAtomicRelinkJumpConcurrently(from, to);
+    }
+#endif
     
     static void repatchCompact(void* where, int32_t value)
     {
@@ -2872,7 +2895,7 @@ public:
                 return LinkJumpConditionDirect;
 
             return LinkJumpCondition;
-            }
+        }
         case JumpCompareAndBranch:  {
             ASSERT(is4ByteAligned(from));
             ASSERT(is4ByteAligned(to));
@@ -2945,6 +2968,12 @@ public:
         }
     }
 
+    static ALWAYS_INLINE bool canEmitJump(void* from, void* to)
+    {
+        intptr_t diff = (bitwise_cast<intptr_t>(from) - bitwise_cast<intptr_t>(to)) >> 2;
+        return isInt<26>(diff);
+    }
+
 protected:
     template<Datasize size>
     static bool checkMovk(int insn, int _hw, RegisterID _rd)
@@ -2994,8 +3023,16 @@ protected:
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         assertIsNotTagged(to);
         assertIsNotTagged(fromInstruction);
-        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
+        intptr_t offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
+
+#if USE(JUMP_ISLANDS)
+        if (!isInt<26>(offset)) {
+            to = ExecutableAllocator::singleton().getJumpIslandTo(bitwise_cast<void*>(fromInstruction), to);
+            offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction)) >> 2;
+            RELEASE_ASSERT(isInt<26>(offset));
+        }
+#endif
 
         int insn = unconditionalBranchImmediate(isCall, static_cast<int>(offset));
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
@@ -3008,12 +3045,12 @@ protected:
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
-        ASSERT(isInt<26>(offset));
 
         bool useDirect = isInt<19>(offset);
         ASSERT(type == IndirectBranch || useDirect);
 
         if (useDirect || type == DirectBranch) {
+            ASSERT(isInt<19>(offset));
             int insn = compareAndBranchImmediate(is64Bit ? Datasize_64 : Datasize_32, condition == ConditionNE, static_cast<int>(offset), rt);
             RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
             copy(from, &insn, sizeof(int));
@@ -3036,12 +3073,12 @@ protected:
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
-        ASSERT(isInt<26>(offset));
 
         bool useDirect = isInt<19>(offset);
         ASSERT(type == IndirectBranch || useDirect);
 
         if (useDirect || type == DirectBranch) {
+            ASSERT(isInt<19>(offset));
             int insn = conditionalBranchImmediate(static_cast<int>(offset), condition);
             RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
             copy(from, &insn, sizeof(int));
@@ -3065,12 +3102,12 @@ protected:
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
-        ASSERT(isInt<26>(offset));
 
         bool useDirect = isInt<14>(offset);
         ASSERT(type == IndirectBranch || useDirect);
 
         if (useDirect || type == DirectBranch) {
+            ASSERT(isInt<14>(offset));
             int insn = testAndBranchImmediate(condition == ConditionNE, static_cast<int>(bitNumber), static_cast<int>(offset), rt);
             RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
             copy(from, &insn, sizeof(int));

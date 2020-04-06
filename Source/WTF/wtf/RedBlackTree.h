@@ -30,6 +30,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 namespace WTF {
 
@@ -323,6 +324,26 @@ public:
             }
         }
         return best;
+    }
+
+    template <typename Function>
+    void iterate(Function function)
+    {
+        if (!m_root)
+            return;
+
+        Vector<NodeType*, 16> toIterate;
+        toIterate.append(m_root);
+        while (toIterate.size()) {
+            NodeType& current = *toIterate.takeLast();
+            bool iterateLeft = false;
+            bool iterateRight = false;
+            function(current, iterateLeft, iterateRight);
+            if (iterateLeft && current.left())
+                toIterate.append(current.left());
+            if (iterateRight && current.right())
+                toIterate.append(current.right());
+        }
     }
     
     NodeType* first() const

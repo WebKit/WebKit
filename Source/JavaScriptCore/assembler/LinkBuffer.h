@@ -90,7 +90,8 @@ public:
         , m_completed(false)
 #endif
     {
-        linkCode(macroAssembler, ownerUID, effort);
+        UNUSED_PARAM(ownerUID);
+        linkCode(macroAssembler, effort);
     }
 
     template<PtrTag tag>
@@ -107,7 +108,7 @@ public:
 #else
         UNUSED_PARAM(shouldPerformBranchCompaction);
 #endif
-        linkCode(macroAssembler, 0, effort);
+        linkCode(macroAssembler, effort);
     }
 
     ~LinkBuffer()
@@ -122,6 +123,13 @@ public:
     bool isValid() const
     {
         return !didFailToAllocate();
+    }
+
+    void setIsJumpIsland()
+    {
+#if ASSERT_ENABLED
+        m_isJumpIsland = true;
+#endif
     }
     
     // These methods are used to link or set values at code generation time.
@@ -321,12 +329,12 @@ private:
         return m_code.dataLocation();
     }
     
-    void allocate(MacroAssembler&, void* ownerUID, JITCompilationEffort);
+    void allocate(MacroAssembler&, JITCompilationEffort);
 
-    JS_EXPORT_PRIVATE void linkCode(MacroAssembler&, void* ownerUID, JITCompilationEffort);
+    JS_EXPORT_PRIVATE void linkCode(MacroAssembler&, JITCompilationEffort);
 #if ENABLE(BRANCH_COMPACTION)
     template <typename InstructionType>
-    void copyCompactAndLinkCode(MacroAssembler&, void* ownerUID, JITCompilationEffort);
+    void copyCompactAndLinkCode(MacroAssembler&, JITCompilationEffort);
 #endif
 
     void performFinalization();
@@ -348,6 +356,9 @@ private:
     bool m_didAllocate;
 #ifndef NDEBUG
     bool m_completed;
+#endif
+#if ASSERT_ENABLED
+    bool m_isJumpIsland { false };
 #endif
     bool m_alreadyDisassembled { false };
     MacroAssemblerCodePtr<LinkBufferPtrTag> m_code;

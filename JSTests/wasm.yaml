@@ -231,3 +231,6 @@
 - path: wasm/modules/run-from-wasm.wasm
   cmd: runWebAssembly
 
+- path: ../PerformanceTests/JetStream2/wasm-cli.js
+  cmd: runWebAssemblyJetStream2 unless parseRunCommands
+

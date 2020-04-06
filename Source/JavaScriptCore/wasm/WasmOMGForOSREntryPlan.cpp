@@ -103,12 +103,10 @@ void OMGForOSREntryPlan::work(CompilationEffort)
 
     omgEntrypoint.calleeSaveRegisters = WTFMove(parseAndCompileResult.value()->entrypoint.calleeSaveRegisters);
 
-    MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
     ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(mode()));
     Ref<OMGForOSREntryCallee> callee = OMGForOSREntryCallee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), osrEntryScratchBufferSize, m_loopIndex, WTFMove(unlinkedCalls));
     {
         MacroAssembler::repatchPointer(parseAndCompileResult.value()->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
-        entrypoint = callee->entrypoint();
 
         auto locker = holdLock(m_codeBlock->m_lock);
         for (auto& call : callee->wasmToWasmCallsites()) {
@@ -120,11 +118,10 @@ void OMGForOSREntryPlan::work(CompilationEffort)
 
             MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
         }
-    }
-    resetInstructionCacheOnAllThreads();
-    WTF::storeStoreFence();
-    {
-        auto locker = holdLock(m_codeBlock->m_lock);
+
+        resetInstructionCacheOnAllThreads();
+        WTF::storeStoreFence();
+
         {
             switch (m_callee->compilationMode()) {
             case CompilationMode::LLIntMode: {
@@ -145,19 +142,6 @@ void OMGForOSREntryPlan::work(CompilationEffort)
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }
-        }
-        WTF::storeStoreFence();
-        // It is possible that a new OMG callee is added while we release m_codeBlock->lock.
-        // Until we add OMGForOSREntry callee to BBQCallee's m_osrEntryCallee, this new OMG function linking does not happen for this OMGForOSREntry callee.
-        // We re-link this OMGForOSREntry callee again not to miss that chance.
-        for (auto& call : callee->wasmToWasmCallsites()) {
-            MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
-            if (call.functionIndexSpace < m_module->moduleInformation().importFunctionCount())
-                entrypoint = m_codeBlock->m_wasmToWasmExitStubs[call.functionIndexSpace].code();
-            else
-                entrypoint = m_codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(call.functionIndexSpace).entrypoint().retagged<WasmEntryPtrTag>();
-
-            MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
         }
     }
     dataLogLnIf(WasmOMGForOSREntryPlanInternal::verbose, "Finished OMGForOSREntry ", m_functionIndex);

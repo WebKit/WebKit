@@ -1,3 +1,16 @@
+2020-04-06  Saam Barati  <sbarati@apple.com>
+
+        Implement 1GB of executable memory on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=208490
+        <rdar://problem/60797127>
+
+        Reviewed by Keith Miller.
+
+        Run JetStream2 wasm tests.
+
+        * wasm.yaml:
+        * wasm/lowExecutableMemory/executable-memory-oom.js:
+
 2020-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Since ArrayBufferViewWatchpointAdaptor::add can fire watchpoints, DFG::Plan should check validity of CodeBlock after executing reallyAdd

@@ -434,7 +434,6 @@ public:
         : m_codePtr(executableMemory->start().retaggedPtr<tag>())
         , m_executableMemory(WTFMove(executableMemory))
     {
-        ASSERT(m_executableMemory->isManaged());
         ASSERT(m_executableMemory->start());
         ASSERT(m_codePtr);
     }

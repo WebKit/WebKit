@@ -71,7 +71,7 @@ public:
 
     static void dumpProfile() { }
 
-    RefPtr<ExecutableMemoryHandle> allocate(size_t, void*, JITCompilationEffort) { return nullptr; }
+    RefPtr<ExecutableMemoryHandle> allocate(size_t, JITCompilationEffort) { return nullptr; }
 
     static void setJITEnabled(bool) { };
     
@@ -158,7 +158,7 @@ class ExecutableAllocator : private ExecutableAllocatorBase {
 public:
     using Base = ExecutableAllocatorBase;
 
-    static ExecutableAllocator& singleton();
+    JS_EXPORT_PRIVATE static ExecutableAllocator& singleton();
     static void initialize();
     static void initializeUnderlyingAllocator();
 
@@ -176,13 +176,18 @@ public:
     
     JS_EXPORT_PRIVATE static void setJITEnabled(bool);
 
-    RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes, void* ownerUID, JITCompilationEffort);
+    RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes, JITCompilationEffort);
 
     bool isValidExecutableMemory(const AbstractLocker&, void* address);
 
     static size_t committedByteCount();
 
     Lock& getLock() const;
+
+#if USE(JUMP_ISLANDS)
+    JS_EXPORT_PRIVATE void* getJumpIslandTo(void* from, void* newDestination);
+    JS_EXPORT_PRIVATE void* getJumpIslandToConcurrently(void* from, void* newDestination);
+#endif
 
 private:
     ExecutableAllocator() = default;

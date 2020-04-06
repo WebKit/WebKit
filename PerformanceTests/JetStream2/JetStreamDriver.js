@@ -409,9 +409,9 @@ class Driver {
     dumpJSONResultsIfNeeded()
     {
         if (dumpJSONResults) {
-            print("\n");
-            print(this.resultsJSON());
-            print("\n");
+            console.log("\n");
+            console.log(this.resultsJSON());
+            console.log("\n");
         }
     }
 
@@ -725,15 +725,15 @@ class DefaultBenchmark extends Benchmark {
             return;
         }
 
-        print("    Startup:", uiFriendlyNumber(this.firstIteration));
-        print("    Worst Case:", uiFriendlyNumber(this.worst4));
-        print("    Average:", uiFriendlyNumber(this.average));
-        print("    Score:", uiFriendlyNumber(this.score));
+        console.log("    Startup:", uiFriendlyNumber(this.firstIteration));
+        console.log("    Worst Case:", uiFriendlyNumber(this.worst4));
+        console.log("    Average:", uiFriendlyNumber(this.average));
+        console.log("    Score:", uiFriendlyNumber(this.score));
         if (RAMification) {
-            print("    Current Footprint:", uiFriendlyNumber(this.currentFootprint));
-            print("    Peak Footprint:", uiFriendlyNumber(this.peakFootprint));
+            console.log("    Current Footprint:", uiFriendlyNumber(this.currentFootprint));
+            console.log("    Peak Footprint:", uiFriendlyNumber(this.peakFootprint));
         }
-        print("    Wall time:", uiFriendlyDuration(new Date(this.endTime - this.startTime)));
+        console.log("    Wall time:", uiFriendlyDuration(new Date(this.endTime - this.startTime)));
     }
 }
 
@@ -819,14 +819,14 @@ class WSLBenchmark extends Benchmark {
             return;
         }
 
-        print("    Stdlib:", uiFriendlyNumber(this.stdlib));
-        print("    Tests:", uiFriendlyNumber(this.mainRun));
-        print("    Score:", uiFriendlyNumber(this.score));
+        console.log("    Stdlib:", uiFriendlyNumber(this.stdlib));
+        console.log("    Tests:", uiFriendlyNumber(this.mainRun));
+        console.log("    Score:", uiFriendlyNumber(this.score));
         if (RAMification) {
-            print("    Current Footprint:", uiFriendlyNumber(this.currentFootprint));
-            print("    Peak Footprint:", uiFriendlyNumber(this.peakFootprint));
+            console.log("    Current Footprint:", uiFriendlyNumber(this.currentFootprint));
+            console.log("    Peak Footprint:", uiFriendlyNumber(this.peakFootprint));
         }
-        print("    Wall time:", uiFriendlyDuration(new Date(this.endTime - this.startTime)));
+        console.log("    Wall time:", uiFriendlyDuration(new Date(this.endTime - this.startTime)));
     }
 };
 
@@ -975,13 +975,13 @@ class WasmBenchmark extends Benchmark {
             document.getElementById(this.scoreID).innerHTML = uiFriendlyNumber(this.score);
             return;
         }
-        print("    Startup:", uiFriendlyNumber(this.startupTime));
-        print("    Run time:", uiFriendlyNumber(this.runTime));
+        console.log("    Startup:", uiFriendlyNumber(this.startupTime));
+        console.log("    Run time:", uiFriendlyNumber(this.runTime));
         if (RAMification) {
-            print("    Current Footprint:", uiFriendlyNumber(this.currentFootprint));
-            print("    Peak Footprint:", uiFriendlyNumber(this.peakFootprint));
+            console.log("    Current Footprint:", uiFriendlyNumber(this.currentFootprint));
+            console.log("    Peak Footprint:", uiFriendlyNumber(this.peakFootprint));
         }
-        print("    Score:", uiFriendlyNumber(this.score));
+        console.log("    Score:", uiFriendlyNumber(this.score));
     }
 };
 

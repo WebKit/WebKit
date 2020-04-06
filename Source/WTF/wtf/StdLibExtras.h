@@ -489,6 +489,19 @@ ALWAYS_INLINE decltype(auto) makeUniqueWithoutFastMallocCheck(Args&&... args)
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
+template <typename ResultType, size_t... Is, typename ...Args>
+constexpr auto constructFixedSizeArrayWithArgumentsImpl(std::index_sequence<Is...>, Args&&... args) -> std::array<ResultType, sizeof...(Is)>
+{
+    return { ((void)Is, ResultType { std::forward<Args>(args)... })... };
+}
+
+// Construct an std::array with N elements of ResultType, passing Args to each of the N constructors.
+template<typename ResultType, size_t N, typename ...Args>
+constexpr auto constructFixedSizeArrayWithArguments(Args&&... args) -> decltype(auto)
+{
+    auto tuple = std::make_index_sequence<N>();
+    return constructFixedSizeArrayWithArgumentsImpl<ResultType>(tuple, std::forward<Args>(args)...);
+}
 
 } // namespace WTF
 
@@ -514,3 +527,4 @@ using WTF::safeCast;
 using WTF::tryBinarySearch;
 using WTF::makeUnique;
 using WTF::makeUniqueWithoutFastMallocCheck;
+using WTF::constructFixedSizeArrayWithArguments;

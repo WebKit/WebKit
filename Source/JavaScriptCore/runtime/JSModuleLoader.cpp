@@ -29,7 +29,6 @@
 
 #include "BuiltinNames.h"
 #include "CatchScope.h"
-#include "CodeProfiling.h"
 #include "Error.h"
 #include "Exception.h"
 #include "JSCInlines.h"
@@ -399,8 +398,6 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(JSGlobalObject* globalObjec
     if (sourceCode.provider()->sourceType() == SourceProviderSourceType::WebAssembly)
         return JSValue::encode(JSWebAssembly::instantiate(globalObject, promise, moduleKey, jsSourceCode));
 #endif
-
-    CodeProfiling profile(sourceCode);
 
     ParserError error;
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(

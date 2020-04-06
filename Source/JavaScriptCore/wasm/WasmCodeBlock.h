@@ -124,6 +124,7 @@ public:
 
     ~CodeBlock();
 private:
+    friend class Plan;
     friend class BBQPlan;
     friend class OMGPlan;
     friend class OMGForOSREntryPlan;

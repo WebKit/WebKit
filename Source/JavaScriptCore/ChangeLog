@@ -1,3 +1,132 @@
+2020-04-06  Saam Barati  <sbarati@apple.com>
+
+        Implement 1GB of executable memory on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=208490
+        <rdar://problem/60797127>
+
+        Reviewed by Keith Miller.
+
+        This patch implements the 1GB executable memory space on arm64. To make this
+        work, we implement jumps larger than +/-128MB to use jump islands. Jump islands
+        work by splitting up the ~1GB region into 9 112MB chunks (1008 MB total). Each
+        chunk is split into two: 96MB of executable region, and 16MB of jump island region.
+        With this split, any jump inside a jump island region can get to the adjacent
+        island (forwards or backwards) in a single +/-128MB jump. When linking a jump
+        from A to B, where |A - B| > 128MB, we instead point the jump to an island,
+        where this island has a potential series of jumps that finally lands at B.
+        
+        To allocate executable memory, use a MetaAllocator for each 96MB chunk. To
+        allocate islands, we have a bit vector we use to track used and freed islands.
+        We only grow this bit vector as islands are allocated, so it frequently
+        remains empty or very small.
+        
+        The goal of this patch is to have minimal perf impact when not using islands,
+        so the data structures are designed to only incur overhead when actually using
+        islands. We expect the use of islands to be minimal. We use a red black tree
+        to track all island locations. This allows us to deallocate all islands when
+        an executable memory handle is freed. Typically, this red black tree is empty,
+        so freeing an executable memory handle incurs no extra overhead.
+        
+        To make islands work for Wasm, we now have to link tier up code in two phases.
+        Previously, we would just patch jumps concurrently to Wasm threads running after
+        resetting the icache, knowing that we would be able to atomically update the jump
+        instruction to point to the new destination. However, now when repatching these
+        jumps in a world with jump islands, we might need to allocate islands depending
+        on the jump location and its target. So we now allocate and collect the set of islands,
+        then reset the icache, then atomically update the branch to point to the destination
+        (or an island that jumps to the destination). One important implementation detail
+        here is that for normal island repatching, if we have a jump from A to B, and it
+        allocates a set if islands X, we usually can deallocate X when repatching A to go to B'.
+        This is because the typical repatch scenario in JS happens when that code is not being
+        executed. For Wasm though, those islands X might be running while we want to repatch
+        A to go to B'. So instead of deallocating X, we just append to X in this scenario, and
+        we free the new set X' when the code itself is freed.
+        
+        (This patch also fixes a bug in the Wasm LLInt to BBQ tier up that I spotted,
+        where we would publish a LLInt callee's BBQ replacement before we finished
+        linking the outgoing calls of the BBQ replacement.)
+        
+        This patch also removes the old "CodeProfiling" code that has been unused for
+        a long time.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::b):
+        (JSC::ARM64Assembler::bl):
+        (JSC::ARM64Assembler::replaceWithJump):
+        (JSC::ARM64Assembler::prepareForAtomicRelinkJumpConcurrently):
+        (JSC::ARM64Assembler::prepareForAtomicRelinkCallConcurrently):
+        (JSC::ARM64Assembler::computeJumpType):
+        (JSC::ARM64Assembler::canEmitJump):
+        (JSC::ARM64Assembler::linkJumpOrCall):
+        (JSC::ARM64Assembler::linkCompareAndBranch):
+        (JSC::ARM64Assembler::linkConditionalBranch):
+        (JSC::ARM64Assembler::linkTestAndBranch):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::prepareForAtomicRepatchNearCallConcurrently):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        (JSC::LinkBuffer::linkCode):
+        (JSC::LinkBuffer::allocate):
+        (JSC::LinkBuffer::performFinalization):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::setIsJumpIsland):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodeRef::MacroAssemblerCodeRef):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+        (JSC::ExecutableAllocator::initializeUnderlyingAllocator):
+        (JSC::ExecutableAllocator::isValid const):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::getJumpIslandTo):
+        (JSC::ExecutableAllocator::getJumpIslandToConcurrently):
+        (JSC::FixedVMPoolExecutableAllocator::~FixedVMPoolExecutableAllocator): Deleted.
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocatorBase::allocate):
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::moduleLoaderParseModule):
+        * runtime/OptionsList.h:
+        * tools/CodeProfile.cpp:
+        (JSC::truncateTrace): Deleted.
+        (JSC::CodeProfile::sample): Deleted.
+        (JSC::CodeProfile::report): Deleted.
+        * tools/CodeProfile.h:
+        (JSC::CodeProfile::CodeProfile): Deleted.
+        (JSC::CodeProfile::parent): Deleted.
+        (JSC::CodeProfile::addChild): Deleted.
+        (): Deleted.
+        (JSC::CodeProfile::CodeRecord::CodeRecord): Deleted.
+        * tools/CodeProfiling.cpp:
+        (JSC::setProfileTimer): Deleted.
+        (JSC::profilingTimer): Deleted.
+        (JSC::CodeProfiling::sample): Deleted.
+        (JSC::CodeProfiling::notifyAllocator): Deleted.
+        (JSC::CodeProfiling::getOwnerUIDForPC): Deleted.
+        (JSC::CodeProfiling::begin): Deleted.
+        (JSC::CodeProfiling::end): Deleted.
+        * tools/CodeProfiling.h:
+        (): Deleted.
+        (JSC::CodeProfiling::CodeProfiling): Deleted.
+        (JSC::CodeProfiling::~CodeProfiling): Deleted.
+        (JSC::CodeProfiling::enabled): Deleted.
+        (JSC::CodeProfiling::beVerbose): Deleted.
+        (JSC::CodeProfiling::beVeryVerbose): Deleted.
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        * wasm/WasmCodeBlock.h:
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::updateCallSitesToCallUs):
+        * wasm/WasmPlan.h:
+
 2020-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Since ArrayBufferViewWatchpointAdaptor::add can fire watchpoints, DFG::Plan should check validity of CodeBlock after executing reallyAdd
