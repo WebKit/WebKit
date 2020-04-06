@@ -360,11 +360,51 @@ macro(ADD_WEBKIT_PREFIX_HEADER _target)
     endif ()
 endmacro()
 
-set(WebKit_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
+set(WebKit_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS)
+
+set(WebKit_INTERFACE_LIBRARIES WebKit)
+set(WebKit_INTERFACE_INCLUDE_DIRECTORIES
+    ${WebKit_FRAMEWORK_HEADERS_DIR}
+    ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}
 )
+set(WebKit_INTERFACE_DEPENDENCIES
+    NetworkProcess
+    WebProcess
+)
+
+WEBKIT_EXECUTABLE_DECLARE(WebProcess)
+WEBKIT_EXECUTABLE_DECLARE(NetworkProcess)
+
+if (ENABLE_GPU_PROCESS)
+    WEBKIT_EXECUTABLE_DECLARE(GPUProcess)
+    list(APPEND WebKit_INTERFACE_DEPENDENCIES GPUProcess)
+endif ()
+
+if (ENABLE_PLUGIN_PROCESS)
+    WEBKIT_EXECUTABLE_DECLARE(PluginProcess)
+    list(APPEND WebKit_INTERFACE_DEPENDENCIES PluginProcess)
+endif ()
 
 WEBKIT_FRAMEWORK_DECLARE(WebKit)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
+if (WebKit_PUBLIC_FRAMEWORK_HEADERS)
+    WEBKIT_COPY_FILES(WebKit_CopyHeaders
+        DESTINATION ${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit
+        FILES ${WebKit_PUBLIC_FRAMEWORK_HEADERS}
+        FLATTENED
+    )
+    list(APPEND WebKit_DEPENDENCIES WebKit_CopyHeaders)
+endif ()
+
+if (WebKit_PRIVATE_FRAMEWORK_HEADERS)
+    WEBKIT_COPY_FILES(WebKit_CopyPrivateHeaders
+        DESTINATION ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebKit
+        FILES ${WebKit_PRIVATE_FRAMEWORK_HEADERS}
+        FLATTENED
+    )
+    list(APPEND WebKit_INTERFACE_DEPENDENCIES WebKit_CopyPrivateHeaders)
+endif ()
 
 # Helper macro which wraps the generate-message-receiver.py script
 #   _output_source is a list name which will contain generated sources.(eg. WebKit_SOURCES)
@@ -469,42 +509,31 @@ list(APPEND WebKit_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesStoreDefaultsMap.cpp
 )
 
-
 list(APPEND WebKit_SOURCES ${WebKit_DERIVED_SOURCES})
 
 WEBKIT_COMPUTE_SOURCES(WebKit)
-
 WEBKIT_FRAMEWORK(WebKit)
-add_dependencies(WebKit WebCore ${WEBKIT_EXTRA_DEPENDENCIES})
+WEBKIT_FRAMEWORK_TARGET(WebKit)
 ADD_WEBKIT_PREFIX_HEADER(WebKit)
 
-add_executable(WebProcess ${WebProcess_SOURCES})
+list(APPEND WebProcess_PRIVATE_INCLUDE_DIRECTORIES ${WebKit_PRIVATE_INCLUDE_DIRECTORIES})
+WEBKIT_EXECUTABLE(WebProcess)
 ADD_WEBKIT_PREFIX_HEADER(WebProcess)
-target_link_libraries(WebProcess ${WebProcess_LIBRARIES})
-target_include_directories(WebProcess PRIVATE ${WebProcess_INCLUDE_DIRECTORIES})
 
-if (WebKit_WebProcess_OUTPUT_NAME)
-    set_target_properties(WebProcess PROPERTIES OUTPUT_NAME ${WebKit_WebProcess_OUTPUT_NAME})
-endif ()
-
-add_executable(NetworkProcess ${NetworkProcess_SOURCES})
+list(APPEND NetworkProcess_PRIVATE_INCLUDE_DIRECTORIES ${WebKit_PRIVATE_INCLUDE_DIRECTORIES})
+WEBKIT_EXECUTABLE(NetworkProcess)
 ADD_WEBKIT_PREFIX_HEADER(NetworkProcess)
-target_link_libraries(NetworkProcess ${NetworkProcess_LIBRARIES})
-target_include_directories(NetworkProcess PRIVATE ${NetworkProcess_INCLUDE_DIRECTORIES})
-
-if (WebKit_NetworkProcess_OUTPUT_NAME)
-    set_target_properties(NetworkProcess PROPERTIES OUTPUT_NAME ${WebKit_NetworkProcess_OUTPUT_NAME})
-endif ()
 
 if (ENABLE_GPU_PROCESS)
-    add_executable(GPUProcess ${GPUProcess_SOURCES})
+    list(APPEND GPUProcess_PRIVATE_INCLUDE_DIRECTORIES ${WebKit_PRIVATE_INCLUDE_DIRECTORIES})
+    WEBKIT_EXECUTABLE(GPUProcess)
     ADD_WEBKIT_PREFIX_HEADER(GPUProcess)
-    target_link_libraries(GPUProcess ${GPUProcess_LIBRARIES})
-    target_include_directories(GPUProcess PRIVATE ${GPUProcess_INCLUDE_DIRECTORIES})
+endif ()
 
-    if (WebKit_GPUProcess_OUTPUT_NAME)
-        set_target_properties(GPUProcess PROPERTIES OUTPUT_NAME ${WebKit_GPUProcess_OUTPUT_NAME})
-    endif ()
+if (ENABLE_PLUGIN_PROCESS)
+    list(APPEND PluginProcess_PRIVATE_INCLUDE_DIRECTORIES ${WebKit_PRIVATE_INCLUDE_DIRECTORIES})
+    WEBKIT_EXECUTABLE(PluginProcess)
+    ADD_WEBKIT_PREFIX_HEADER(PluginProcess)
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
@@ -514,23 +543,8 @@ if (COMPILER_IS_GCC_OR_CLANG)
     if (ENABLE_GPU_PROCESS)
         WEBKIT_ADD_TARGET_CXX_FLAGS(GPUProcess -Wno-unused-parameter)
     endif ()
-endif ()
-
-# FIXME: Mac should build a plugin process.
-if (ENABLE_PLUGIN_PROCESS AND NOT "${PORT}" STREQUAL "Mac")
-    add_definitions(-DENABLE_PLUGIN_PROCESS=1)
-    add_executable(PluginProcess ${PluginProcess_SOURCES})
-    ADD_WEBKIT_PREFIX_HEADER(PluginProcess)
-    target_link_libraries(PluginProcess ${PluginProcess_LIBRARIES})
-    target_include_directories(PluginProcess PRIVATE ${PluginProcess_INCLUDE_DIRECTORIES})
-    install(TARGETS PluginProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
-
-    if (COMPILER_IS_GCC_OR_CLANG)
+    if (ENABLE_PLUGIN_PROCESS)
         WEBKIT_ADD_TARGET_CXX_FLAGS(PluginProcess -Wno-unused-parameter)
-    endif ()
-
-    if (WebKit_PluginProcess_OUTPUT_NAME)
-      set_target_properties(PluginProcess PROPERTIES OUTPUT_NAME ${WebKit_PluginProcess_OUTPUT_NAME})
     endif ()
 endif ()
 

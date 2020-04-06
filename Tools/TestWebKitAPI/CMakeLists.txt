@@ -268,14 +268,12 @@ if (ENABLE_WEBKIT)
 
     set(TestWebKit_LIBRARIES
         TestWebKitAPIBase
-        WebKit
+        WebKit::WebKit
         gtest
     )
 
     set(TestWebKit_DEPENDENCIES
-        NetworkProcess
         TestWebKitAPIInjectedBundle
-        WebProcess
     )
 
     add_library(TestWebKitAPIBase STATIC
@@ -286,7 +284,7 @@ if (ENABLE_WEBKIT)
     )
     target_compile_definitions(TestWebKitAPIBase PRIVATE BUILDING_TestWebKit)
     target_include_directories(TestWebKitAPIBase PRIVATE ${TestWebKit_PRIVATE_INCLUDE_DIRECTORIES})
-    target_link_libraries(TestWebKitAPIBase PRIVATE WebKit gtest)
+    target_link_libraries(TestWebKitAPIBase PRIVATE WebKit::WebKit gtest)
 
     if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIBase -Wno-dangling-else
@@ -338,7 +336,7 @@ if (ENABLE_WEBKIT)
 
     target_compile_definitions(TestWebKitAPIInjectedBundle PRIVATE BUILDING_TestWebKit)
     target_include_directories(TestWebKitAPIInjectedBundle PRIVATE ${TestWebKit_PRIVATE_INCLUDE_DIRECTORIES})
-    target_link_libraries(TestWebKitAPIInjectedBundle PRIVATE WebKit WTF)
+    target_link_libraries(TestWebKitAPIInjectedBundle PRIVATE WebKit::WebKit WTF)
 
     if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIInjectedBundle -Wno-dangling-else

@@ -2,9 +2,9 @@ include(InspectorGResources.cmake)
 include(GNUInstallDirs)
 
 set(WebKit_OUTPUT_NAME WPEWebKit-${WPE_API_VERSION})
-set(WebKit_WebProcess_OUTPUT_NAME WPEWebProcess)
-set(WebKit_NetworkProcess_OUTPUT_NAME WPENetworkProcess)
-set(WebKit_GPUProcess_OUTPUT_NAME WPEGPUProcess)
+set(WebProcess_OUTPUT_NAME WPEWebProcess)
+set(NetworkProcess_OUTPUT_NAME WPENetworkProcess)
+set(GPUProcess_OUTPUT_NAME WPEGPUProcess)
 
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WPE_API_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DIR})
@@ -59,7 +59,7 @@ add_custom_target(webkitwpe-fake-api-headers
             ${FORWARDING_HEADERS_WPE_DOM_DIR}/wpe
 )
 
-set(WEBKIT_EXTRA_DEPENDENCIES
+list(APPEND WebKit_DEPENDENCIES
     webkitwpe-fake-api-headers
     webkitwpe-forwarding-headers
 )

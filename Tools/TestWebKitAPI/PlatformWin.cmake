@@ -124,9 +124,6 @@ endif ()
 
 # TestWebKit
 if (ENABLE_WEBKIT)
-    add_dependencies(TestWebKitAPIBase WebKitFrameworkHeaders)
-    add_dependencies(TestWebKitAPIInjectedBundle WebKitFrameworkHeaders)
-
     target_sources(TestWebKitAPIInjectedBundle PRIVATE
         win/PlatformUtilitiesWin.cpp
         win/UtilitiesWin.cpp
@@ -147,10 +144,6 @@ if (ENABLE_WEBKIT)
     endif ()
 
     list(APPEND TestWebKit_DEFINITIONS ${webcore_DEFINITIONS})
-
-    list(APPEND TestWebKit_DEPENDENCIES
-        WebKitFrameworkHeaders
-    )
 
     WEBKIT_WRAP_EXECUTABLE(TestWebKit
         SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp

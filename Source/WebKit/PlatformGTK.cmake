@@ -1,10 +1,10 @@
 include(InspectorGResources.cmake)
 
 set(WebKit_OUTPUT_NAME webkit2gtk-${WEBKITGTK_API_VERSION})
-set(WebKit_WebProcess_OUTPUT_NAME WebKitWebProcess)
-set(WebKit_NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
-set(WebKit_GPUProcess_OUTPUT_NAME WebKitGPUProcess)
-set(WebKit_PluginProcess_OUTPUT_NAME WebKitPluginProcess)
+set(WebProcess_OUTPUT_NAME WebKitWebProcess)
+set(NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
+set(GPUProcess_OUTPUT_NAME WebKitGPUProcess)
+set(PluginProcess_OUTPUT_NAME WebKitPluginProcess)
 
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WEBKIT2GTK_DIR})
@@ -835,7 +835,7 @@ add_custom_target(WebKit-fake-api-headers
             ${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}/webkitdom
 )
 
-set(WEBKIT_EXTRA_DEPENDENCIES
+list(APPEND WebKit_DEPENDENCIES
      WebKit-fake-api-headers
      WebKit-forwarding-headers
 )

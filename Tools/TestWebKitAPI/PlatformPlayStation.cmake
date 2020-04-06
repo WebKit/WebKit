@@ -31,9 +31,6 @@ list(APPEND TestWebCore_PRIVATE_LIBRARIES
 
 # TestWebKit
 if (ENABLE_WEBKIT)
-    add_dependencies(TestWebKitAPIBase WebKitFrameworkHeaders)
-    add_dependencies(TestWebKitAPIInjectedBundle WebKitFrameworkHeaders)
-
     target_sources(TestWebKitAPIInjectedBundle PRIVATE
         generic/UtilitiesGeneric.cpp
 
@@ -49,9 +46,5 @@ if (ENABLE_WEBKIT)
 
         playstation/PlatformUtilitiesPlayStation.cpp
         playstation/PlatformWebViewPlayStation.cpp
-    )
-
-    list(APPEND TestWebKit_DEPENDENCIES
-        WebKitFrameworkHeaders
     )
 endif ()

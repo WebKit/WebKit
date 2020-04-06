@@ -23,9 +23,9 @@ set(WebKitTestRunner_SOURCES
 )
 
 set(WebKitTestRunner_LIBRARIES
-    WebKit::JavaScriptCore
     WebCoreTestSupport
-    WebKit
+    WebKit::JavaScriptCore
+    WebKit::WebKit
 )
 
 set(WebKitTestRunner_INCLUDE_DIRECTORIES

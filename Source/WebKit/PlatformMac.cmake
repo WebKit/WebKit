@@ -143,8 +143,8 @@ list(APPEND NetworkProcess_LIBRARIES
 )
 
 # FIXME: These should not have Development in production builds.
-set(WebKit_WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
-set(WebKit_NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
+set(WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
+set(NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
 
 set(WebProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 set(NetworkProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
@@ -532,12 +532,12 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
     WEBKIT_XPC_SERVICE(WebProcess
         "com.apple.WebKit.WebContent"
         ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist
-        ${WebKit_WebProcess_OUTPUT_NAME})
+        ${WebProcess_OUTPUT_NAME})
 
     WEBKIT_XPC_SERVICE(NetworkProcess
         "com.apple.WebKit.Networking"
         ${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-OSX.plist
-        ${WebKit_NetworkProcess_OUTPUT_NAME})
+        ${NetworkProcess_OUTPUT_NAME})
 
     set(WebKit_RESOURCES_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Resources)
     add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb COMMAND

@@ -1,3 +1,24 @@
+2020-04-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::WebKit target
+        https://bugs.webkit.org/show_bug.cgi?id=210033
+
+        Reviewed by Fujii Hironori.
+
+        Use the WebKit::WebKit target for MiniBrowser and TestWebKit. This removes
+        the need to have WebProcess and NetworkProcess as dependencies since they are
+        attached to the WebKit::WebKit target.
+
+        Remove references to WebKitFrameworkHeaders as it is now WebKit_CopyHeaders.
+        It is also a dependency of WebKit::WebKit so it does not need to be listed
+        as a dependency.
+
+        * MiniBrowser/win/CMakeLists.txt:
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformPlayStation.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * WebKitTestRunner/CMakeLists.txt:
+
 2020-04-05  Daniel Bates  <dabates@apple.com>
 
         RequestTextInputContext.Simple iframe sub-tests may sometimes fail

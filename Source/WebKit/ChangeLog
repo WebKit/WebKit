@@ -1,3 +1,31 @@
+2020-04-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::WebKit target
+        https://bugs.webkit.org/show_bug.cgi?id=210033
+
+        Reviewed by Fujii Hironori.
+
+        Use WEBKIT_EXECUTABLE macros for the Process executables. Rename the output
+        file names to fit with the macro's expectations.
+
+        Add Headers.cmake which lists out all the public headers that are currently
+        shared by the PlayStation and Windows ports. This is then included on each
+        platform that is using it. Additionally use WEBKIT_COPY_FILES to create a
+        target which copies headers.
+
+        Finally use WEBKIT_FRAMEWORK_TARGET to create a WebKit target. Its dependent
+        on the WebKit library itself, the processes being built, and any headers that
+        are copied. This ensures that everything is built for dependent targets.
+
+        * CMakeLists.txt:
+        * Headers.cmake: Copied from Source/WebKit/PlatformPlayStation.cmake.
+        * PlatformFTW.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformPlayStation.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+
 2020-04-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, adding missing header inclusions to get

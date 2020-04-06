@@ -56,7 +56,7 @@ if (ENABLE_WEBKIT)
         WebKitBrowserWindow.cpp
     )
     list(APPEND MiniBrowser_LIBRARIES
-        WebKit
+        WebKit::WebKit
     )
 endif ()
 

@@ -1,3 +1,15 @@
+2020-04-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::WebKit target
+        https://bugs.webkit.org/show_bug.cgi?id=210033
+
+        Reviewed by Fujii Hironori.
+
+        Use SET_AND_EXPOSE_TO_BUILD for the Plugin process since ENABLE(PLUGIN_PROCESS)
+        is used in the source code.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2020-04-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r259390.
