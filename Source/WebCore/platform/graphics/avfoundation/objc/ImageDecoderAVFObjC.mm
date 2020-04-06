@@ -421,7 +421,7 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
 {
     auto pixelBuffer = m_decompressionSession->decodeSampleSync(sampleBuffer);
     if (!pixelBuffer) {
-        LOG(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not decode sampleBuffer", this);
+        RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not decode sampleBuffer", this);
         return false;
     }
 
@@ -433,11 +433,16 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
 
     CGImageRef rawImage = nullptr;
     if (noErr != VTCreateCGImageFromCVPixelBuffer(pixelBuffer.get(), nullptr, &rawImage)) {
-        LOG(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not create CGImage from pixelBuffer", this);
+        RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not create CGImage from pixelBuffer", this);
         return false;
     }
 
     ASSERT(iter != m_sampleData.presentationOrder().end());
+    if (iter == m_sampleData.presentationOrder().end()) {
+        RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not find sample buffer entry with specified presentation time", this);
+        return false;
+    }
+
     toSample(iter)->setImage(adoptCF(rawImage));
 
     return true;
