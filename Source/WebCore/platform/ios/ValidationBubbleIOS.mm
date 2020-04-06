@@ -31,72 +31,72 @@
 
 #import <UIKit/UIGeometry.h>
 #import <objc/message.h>
-#import <objc/runtime.h>
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
-static const CGFloat validationBubbleHorizontalPadding = 17;
-static const CGFloat validationBubbleVerticalPadding = 9;
-static const CGFloat validationBubbleMaxLabelWidth = 300;
+// Add a bit of vertical and horizontal padding between the
+// label and its parent view, to avoid laying out the label
+// against the edges of the popover view.
+constexpr CGFloat validationBubbleHorizontalPadding = 17;
+constexpr CGFloat validationBubbleVerticalPadding = 9;
+
+// Avoid making the validation bubble too wide by enforcing a
+// maximum width on the content size of the validation bubble
+// view controller.
+constexpr CGFloat validationBubbleMaxLabelWidth = 300;
+
+// Avoid making the validation bubble too tall by truncating
+// the label to a maximum of 4 lines.
+constexpr NSInteger validationBubbleMaxNumberOfLines = 4;
 
 @interface WebValidationBubbleViewController : UIViewController
-@property (nonatomic, readonly) UILabel *label;
-@property (nonatomic, readonly) CGRect labelFrame;
 @end
 
-static void invokeUIViewControllerSelector(id instance, SEL selector)
+static const void* const validationBubbleViewControllerLabelKey = &validationBubbleViewControllerLabelKey;
+
+static UILabel *label(WebValidationBubbleViewController *controller)
 {
-    objc_super superClass { instance, PAL::getUIViewControllerClass() };
-    auto superclassFunction = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
-    superclassFunction(&superClass, selector);
+    return objc_getAssociatedObject(controller, validationBubbleViewControllerLabelKey);
 }
 
-static void WebValidationBubbleViewController_dealloc(WebValidationBubbleViewController *instance, SEL)
+static void updateLabelFrame(WebValidationBubbleViewController *controller)
 {
-    [instance.label release];
-    [instance setValue:nil forKey:@"_label"];
+    auto frameWithPadding = UIEdgeInsetsInsetRect(controller.view.bounds, controller.view.safeAreaInsets);
+    label(controller).frame = UIEdgeInsetsInsetRect(frameWithPadding, UIEdgeInsetsMake(validationBubbleVerticalPadding, validationBubbleHorizontalPadding, validationBubbleVerticalPadding, validationBubbleHorizontalPadding));
+}
 
-    invokeUIViewControllerSelector(instance, @selector(dealloc));
+static void callSuper(WebValidationBubbleViewController *instance, SEL selector)
+{
+    objc_super superStructure { instance, PAL::getUIViewControllerClass() };
+    auto msgSendSuper = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
+    msgSendSuper(&superStructure, selector);
 }
 
 static void WebValidationBubbleViewController_viewDidLoad(WebValidationBubbleViewController *instance, SEL)
 {
-    invokeUIViewControllerSelector(instance, @selector(viewDidLoad));
+    callSuper(instance, @selector(viewDidLoad));
 
-    UILabel *label = [PAL::allocUILabelInstance() init];
-    label.font = [PAL::getUIFontClass() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleCallout()];
-    label.lineBreakMode = NSLineBreakByTruncatingTail;
-    label.numberOfLines = 4;
-    [instance.view addSubview:label];
-    [instance setValue:label forKey:@"_label"];
+    auto label = adoptNS([PAL::allocUILabelInstance() init]);
+    [label setFont:[PAL::getUIFontClass() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleCallout()]];
+    [label setLineBreakMode:NSLineBreakByTruncatingTail];
+    [label setNumberOfLines:validationBubbleMaxNumberOfLines];
+    [instance.view addSubview:label.get()];
+    objc_setAssociatedObject(instance, validationBubbleViewControllerLabelKey, label.get(), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 static void WebValidationBubbleViewController_viewWillLayoutSubviews(WebValidationBubbleViewController *instance, SEL)
 {
-    invokeUIViewControllerSelector(instance, @selector(viewWillLayoutSubviews));
-
-    instance.label.frame = instance.labelFrame;
+    callSuper(instance, @selector(viewWillLayoutSubviews));
+    updateLabelFrame(instance);
 }
 
 static void WebValidationBubbleViewController_viewSafeAreaInsetsDidChange(WebValidationBubbleViewController *instance, SEL)
 {
-    invokeUIViewControllerSelector(instance, @selector(viewSafeAreaInsetsDidChange));
-
-    instance.label.frame = instance.labelFrame;
-}
-
-static CGRect WebValidationBubbleViewController_labelFrame(WebValidationBubbleViewController *instance, SEL)
-{
-    auto frameWithPadding = UIEdgeInsetsInsetRect(instance.view.bounds, instance.view.safeAreaInsets);
-    return UIEdgeInsetsInsetRect(frameWithPadding, UIEdgeInsetsMake(validationBubbleVerticalPadding, validationBubbleHorizontalPadding, validationBubbleVerticalPadding, validationBubbleHorizontalPadding));
-}
-
-static UILabel *WebValidationBubbleViewController_label(WebValidationBubbleViewController *instance, SEL)
-{
-    return [instance valueForKey:@"_label"];
+    callSuper(instance, @selector(viewSafeAreaInsetsDidChange));
+    updateLabelFrame(instance);
 }
 
 static WebValidationBubbleViewController *allocWebValidationBubbleViewControllerInstance()
@@ -105,13 +105,9 @@ static WebValidationBubbleViewController *allocWebValidationBubbleViewController
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         theClass = objc_allocateClassPair(PAL::getUIViewControllerClass(), "WebValidationBubbleViewController", 0);
-        class_addMethod(theClass, @selector(dealloc), (IMP)WebValidationBubbleViewController_dealloc, "v@:");
         class_addMethod(theClass, @selector(viewDidLoad), (IMP)WebValidationBubbleViewController_viewDidLoad, "v@:");
         class_addMethod(theClass, @selector(viewWillLayoutSubviews), (IMP)WebValidationBubbleViewController_viewWillLayoutSubviews, "v@:");
         class_addMethod(theClass, @selector(viewSafeAreaInsetsDidChange), (IMP)WebValidationBubbleViewController_viewSafeAreaInsetsDidChange, "v@:");
-        class_addMethod(theClass, @selector(label), (IMP)WebValidationBubbleViewController_label, "v@:");
-        class_addMethod(theClass, @selector(labelFrame), (IMP)WebValidationBubbleViewController_labelFrame, "v@:");
-        class_addIvar(theClass, "_label", sizeof(UILabel *), log2(sizeof(UILabel *)), "@");
         objc_registerClassPair(theClass);
     });
     return (WebValidationBubbleViewController *)[theClass alloc];
@@ -177,10 +173,10 @@ ValidationBubble::ValidationBubble(UIView *view, const String& message, const Se
     [m_popoverController setModalPresentationStyle:UIModalPresentationPopover];
     m_tapRecognizer = adoptNS([[WebValidationBubbleTapRecognizer alloc] initWithPopoverController:m_popoverController.get()]);
 
-    UILabel *label = [m_popoverController label];
-    label.text = message;
-    m_fontSize = label.font.pointSize;
-    CGSize labelSize = [label sizeThatFits:CGSizeMake(validationBubbleMaxLabelWidth, CGFLOAT_MAX)];
+    UILabel *validationLabel = label(m_popoverController.get());
+    validationLabel.text = message;
+    m_fontSize = validationLabel.font.pointSize;
+    CGSize labelSize = [validationLabel sizeThatFits:CGSizeMake(validationBubbleMaxLabelWidth, CGFLOAT_MAX)];
     [m_popoverController setPreferredContentSize:CGSizeMake(labelSize.width + validationBubbleHorizontalPadding * 2, labelSize.height + validationBubbleVerticalPadding * 2)];
 }
 
