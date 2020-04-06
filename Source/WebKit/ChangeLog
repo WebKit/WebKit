@@ -1,3 +1,65 @@
+2020-04-06  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r259315. rdar://problem/61352448
+
+    Regression(r253357) DeviceMotionEvent acceleration and rotationRate are null
+    https://bugs.webkit.org/show_bug.cgi?id=209831
+    <rdar://problem/60720953>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    The issue was that DeviceMotionClientIOS::motionChanged() would only initialize the
+    acceleration and rotationRate if [m_motionManager gyroAvailable] returned YES. After
+    r253357, m_motionManager is nil because we get motion data from the UIProcess so
+    [m_motionManager gyroAvailable] would always resolve to NO.
+    
+    To address the issue, I made the rotationRate parameters to motionChanged() optional
+    and we rely on them being set to know if gyro data is available. Note that I did not
+    make the acceleration optional because according to [1], all devices have an
+    accelerometer.
+    
+    [1] https://developer.apple.com/documentation/coremotion/cmmotionmanager/1616094-devicemotionavailable?language=objc
+    
+    * platform/ios/DeviceMotionClientIOS.h:
+    * platform/ios/DeviceMotionClientIOS.mm:
+    (WebCore::DeviceMotionClientIOS::motionChanged):
+    * platform/ios/DeviceOrientationUpdateProvider.h:
+    * platform/ios/MotionManagerClient.h:
+    (WebCore::MotionManagerClient::motionChanged):
+    * platform/ios/WebCoreMotionManager.mm:
+    (-[WebCoreMotionManager sendAccelerometerData:]):
+    
+    Source/WebKit:
+    
+    * UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.h:
+    * UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.mm:
+    (WebKit::WebDeviceOrientationUpdateProviderProxy::motionChanged):
+    * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.cpp:
+    (WebKit::WebDeviceOrientationUpdateProvider::deviceMotionChanged):
+    * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.h:
+    * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.messages.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259315 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-31  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r253357) DeviceMotionEvent acceleration and rotationRate are null
+            https://bugs.webkit.org/show_bug.cgi?id=209831
+            <rdar://problem/60720953>
+
+            Reviewed by Darin Adler.
+
+            * UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.h:
+            * UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.mm:
+            (WebKit::WebDeviceOrientationUpdateProviderProxy::motionChanged):
+            * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.cpp:
+            (WebKit::WebDeviceOrientationUpdateProvider::deviceMotionChanged):
+            * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.h:
+            * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.messages.in:
+
 2020-04-03  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r257209. rdar://problem/61269710

@@ -91,7 +91,7 @@ void DeviceMotionClientIOS::deviceMotionControllerDestroyed()
     [m_motionManager removeMotionClient:this];
 }
 
-void DeviceMotionClientIOS::motionChanged(double xAcceleration, double yAcceleration, double zAcceleration, double xAccelerationIncludingGravity, double yAccelerationIncludingGravity, double zAccelerationIncludingGravity, double xRotationRate, double yRotationRate, double zRotationRate)
+void DeviceMotionClientIOS::motionChanged(double xAcceleration, double yAcceleration, double zAcceleration, double xAccelerationIncludingGravity, double yAccelerationIncludingGravity, double zAccelerationIncludingGravity, Optional<double> xRotationRate, Optional<double> yRotationRate, Optional<double> zRotationRate)
 {
     if (!m_updating)
         return;
@@ -113,12 +113,11 @@ void DeviceMotionClientIOS::motionChanged(double xAcceleration, double yAccelera
 #else
     auto accelerationIncludingGravity = DeviceMotionData::Acceleration::create(xAccelerationIncludingGravity, yAccelerationIncludingGravity, zAccelerationIncludingGravity);
 
-    RefPtr<DeviceMotionData::Acceleration> acceleration;
+    RefPtr<DeviceMotionData::Acceleration> acceleration = DeviceMotionData::Acceleration::create(xAcceleration, yAcceleration, zAcceleration);
     RefPtr<DeviceMotionData::RotationRate> rotationRate;
-    if ([m_motionManager gyroAvailable]) {
-        acceleration = DeviceMotionData::Acceleration::create(xAcceleration, yAcceleration, zAcceleration);
-        rotationRate = DeviceMotionData::RotationRate::create(xRotationRate, yRotationRate, zRotationRate);
-    }
+    // Not all devices have a gyroscope.
+    if (xRotationRate && yRotationRate && zRotationRate)
+        rotationRate = DeviceMotionData::RotationRate::create(*xRotationRate, *yRotationRate, *zRotationRate);
 #endif // PLATFORM(IOS_FAMILY_SIMULATOR)
 
     m_currentDeviceMotionData = DeviceMotionData::create(WTFMove(acceleration), WTFMove(accelerationIncludingGravity), WTFMove(rotationRate), kMotionUpdateInterval);
