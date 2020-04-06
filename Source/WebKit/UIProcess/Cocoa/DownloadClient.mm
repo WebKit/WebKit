@@ -65,6 +65,16 @@ DownloadClient::DownloadClient(id <_WKDownloadDelegate> delegate)
     m_delegateMethods.downloadProcessDidCrash = [delegate respondsToSelector:@selector(_downloadProcessDidCrash:)];
 }
 
+#if USE(SYSTEM_PREVIEW)
+static SystemPreviewController* systemPreviewController(DownloadProxy& downloadProxy)
+{
+    auto* page = downloadProxy.originatingPage();
+    if (!page)
+        return nullptr;
+    return page->systemPreviewController();
+}
+#endif
+
 void DownloadClient::didStart(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
@@ -88,8 +98,8 @@ void DownloadClient::didReceiveResponse(DownloadProxy& downloadProxy, const WebC
     if (downloadProxy.isSystemPreviewDownload() && response.isSuccessful()) {
         downloadProxy.setExpectedContentLength(response.expectedContentLength());
         downloadProxy.setBytesLoaded(0);
-        if (auto* webPage = downloadProxy.originatingPage())
-            webPage->systemPreviewController()->updateProgress(0);
+        if (auto* controller = systemPreviewController(downloadProxy))
+            controller->updateProgress(0);
         return;
     }
 #endif
@@ -103,8 +113,8 @@ void DownloadClient::didReceiveData(DownloadProxy& downloadProxy, uint64_t lengt
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
         downloadProxy.setBytesLoaded(downloadProxy.bytesLoaded() + length);
-        if (auto* webPage = downloadProxy.originatingPage())
-            webPage->systemPreviewController()->updateProgress(static_cast<float>(downloadProxy.bytesLoaded()) / downloadProxy.expectedContentLength());
+        if (auto* controller = systemPreviewController(downloadProxy))
+            controller->updateProgress(static_cast<float>(downloadProxy.bytesLoaded()) / downloadProxy.expectedContentLength());
         return;
     }
 #endif
@@ -164,8 +174,8 @@ void DownloadClient::processDidCrash(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
-        if (auto* webPage = downloadProxy.originatingPage())
-            webPage->systemPreviewController()->cancel();
+        if (auto* controller = systemPreviewController(downloadProxy))
+            controller->cancel();
         releaseActivityTokenIfNecessary(downloadProxy);
         return;
     }
@@ -209,11 +219,11 @@ void DownloadClient::didFinish(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
-        if (auto* webPage = downloadProxy.originatingPage()) {
+        if (auto* controller = systemPreviewController(downloadProxy)) {
             WTF::URL destinationURL = WTF::URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename());
             if (!destinationURL.fragmentIdentifier().length())
                 destinationURL.setFragmentIdentifier(downloadProxy.request().url().fragmentIdentifier());
-            webPage->systemPreviewController()->finish(destinationURL);
+            controller->finish(destinationURL);
         }
         releaseActivityTokenIfNecessary(downloadProxy);
         return;
@@ -228,8 +238,8 @@ void DownloadClient::didFail(DownloadProxy& downloadProxy, const WebCore::Resour
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
-        if (auto* webPage = downloadProxy.originatingPage())
-            webPage->systemPreviewController()->fail(error);
+        if (auto* controller = systemPreviewController(downloadProxy))
+            controller->fail(error);
         releaseActivityTokenIfNecessary(downloadProxy);
         return;
     }
@@ -243,8 +253,8 @@ void DownloadClient::didCancel(DownloadProxy& downloadProxy)
 {
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
-        if (auto* webPage = downloadProxy.originatingPage())
-            webPage->systemPreviewController()->cancel();
+        if (auto* controller = systemPreviewController(downloadProxy))
+            controller->cancel();
         releaseActivityTokenIfNecessary(downloadProxy);
         return;
     }
