@@ -1,3 +1,15 @@
+2020-04-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        JSC shell shouldn't treat NUL as a terminator when printing a JS string
+        https://bugs.webkit.org/show_bug.cgi?id=210037
+
+        Reviewed by Darin Adler.
+
+        * .gitattributes:
+        * ChakraCore.yaml:
+        * ChakraCore/test/es5/hasItem.baseline-jsc: Added.
+        Update baseline and mark it diffable (as plaintext) in spite of containing \0.
+
 2020-04-05  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Octal escapes should be max 3 digits and syntax errors in Unicode patterns

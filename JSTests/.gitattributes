@@ -1,3 +1,5 @@
+ChakraCore/test/es5/hasItem.baseline-jsc diff
+
 test262/test/language/expressions/logical-assignment/lgcl-and-whitespace.js svn-properties=allow-tabs=on
 test262/test/language/expressions/logical-assignment/lgcl-or-whitespace.js svn-properties=allow-tabs=on
 test262/test/language/expressions/logical-assignment/lgcl-nullish-whitespace.js svn-properties=allow-tabs=on

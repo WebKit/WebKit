@@ -1268,7 +1268,8 @@ static EncodedJSValue printInternal(JSGlobalObject* globalObject, CallFrame* cal
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         auto string = cStringFromViewWithString(globalObject, scope, viewWithString);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (fprintf(out, "%s", string.data()) < 0)
+        fwrite(string.data(), sizeof(char), string.length(), out);
+        if (ferror(out))
             goto fail;
     }
 
@@ -1289,7 +1290,9 @@ EncodedJSValue JSC_HOST_CALL functionDebug(JSGlobalObject* globalObject, CallFra
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto string = cStringFromViewWithString(globalObject, scope, viewWithString);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    fprintf(stderr, "--> %s\n", string.data());
+    fputs("--> ", stderr);
+    fwrite(string.data(), sizeof(char), string.length(), stderr);
+    fputc('\n', stderr);
     return JSValue::encode(jsUndefined());
 }
 
@@ -2795,10 +2798,14 @@ static void runInteractive(GlobalObject* globalObject)
         NakedPtr<Exception> evaluationException;
         JSValue returnValue = evaluate(globalObject, jscSource(line, sourceOrigin, sourceOrigin.string()), JSValue(), evaluationException);
 #endif
-        if (evaluationException)
-            printf("Exception: %s\n", evaluationException->value().toWTFString(globalObject).utf8().data());
-        else
-            printf("%s\n", returnValue.toWTFString(globalObject).utf8().data());
+        CString result;
+        if (evaluationException) {
+            fputs("Exception: ", stdout);
+            result = evaluationException->value().toWTFString(globalObject).utf8();
+        } else
+            result = returnValue.toWTFString(globalObject).utf8();
+        fwrite(result.data(), sizeof(char), result.length(), stdout);
+        putchar('\n');
 
         scope.clearException();
         vm.drainMicrotasks();

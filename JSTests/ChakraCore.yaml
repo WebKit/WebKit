@@ -1469,7 +1469,7 @@
 - path: ChakraCore/test/es5/enumerable.js
   cmd: runChakra :baseline, "NoException", "enumerable.baseline-jsc", []
 - path: ChakraCore/test/es5/hasItem.js
-  cmd: runChakra :baseline, "NoException", "hasItem.baseline", []
+  cmd: runChakra :baseline, "NoException", "hasItem.baseline-jsc", []
 - path: ChakraCore/test/es5/regexSpace.js
   cmd: runChakra :baseline, "NoException", "regexSpace.baseline", []
 - path: ChakraCore/test/es5/EnumeratingWithES5.js
