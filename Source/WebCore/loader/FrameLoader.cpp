@@ -1359,9 +1359,6 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
 
-    if (&m_frame.tree().top() != &m_frame)
-        request.setDomainForCachePartition(m_frame.tree().top().document()->domainForCachePartition());
-
     addExtraFieldsToRequest(request, newLoadType, true);
     if (isReload(newLoadType))
         request.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
