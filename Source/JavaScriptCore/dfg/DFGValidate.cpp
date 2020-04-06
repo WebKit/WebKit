@@ -311,6 +311,12 @@ public:
                         VALIDATE((node), !variant.oldStructureForTransition()->dfgShouldWatch());
                     }
                     break;
+                case MultiDeleteByOffset:
+                    for (unsigned i = node->multiDeleteByOffsetData().variants.size(); i--;) {
+                        const DeleteByIdVariant& variant = node->multiDeleteByOffsetData().variants[i];
+                        VALIDATE((node), !variant.newStructure() || !variant.oldStructure()->dfgShouldWatch());
+                    }
+                    break;
                 case MaterializeNewObject:
                     for (RegisteredStructure structure : node->structureSet()) {
                         // This only supports structures that are JSFinalObject or JSArray.

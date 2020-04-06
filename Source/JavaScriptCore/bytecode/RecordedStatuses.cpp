@@ -34,6 +34,7 @@ RecordedStatuses& RecordedStatuses::operator=(RecordedStatuses&& other)
     gets = WTFMove(other.gets);
     puts = WTFMove(other.puts);
     ins = WTFMove(other.ins);
+    deletes = WTFMove(other.deletes);
     shrinkToFit();
     return *this;
 }
@@ -75,9 +76,19 @@ InByIdStatus* RecordedStatuses::addInByIdStatus(const CodeOrigin& codeOrigin, co
     return result;
 }
 
+DeleteByStatus* RecordedStatuses::addDeleteByStatus(const CodeOrigin& codeOrigin, const DeleteByStatus& status)
+{
+    auto statusPtr = makeUnique<DeleteByStatus>(status);
+    DeleteByStatus* result = statusPtr.get();
+    deletes.append(std::make_pair(codeOrigin, WTFMove(statusPtr)));
+    return result;
+}
+
 void RecordedStatuses::visitAggregate(SlotVisitor& slotVisitor)
 {
     for (auto& pair : gets)
+        pair.second->visitAggregate(slotVisitor);
+    for (auto& pair : deletes)
         pair.second->visitAggregate(slotVisitor);
 }
 
@@ -88,6 +99,8 @@ void RecordedStatuses::markIfCheap(SlotVisitor& slotVisitor)
     for (auto& pair : puts)
         pair.second->markIfCheap(slotVisitor);
     for (auto& pair : ins)
+        pair.second->markIfCheap(slotVisitor);
+    for (auto& pair : deletes)
         pair.second->markIfCheap(slotVisitor);
 }
 

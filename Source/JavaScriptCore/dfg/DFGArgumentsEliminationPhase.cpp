@@ -407,6 +407,7 @@ private:
                 case FilterPutByIdStatus:
                 case FilterCallLinkStatus:
                 case FilterInByIdStatus:
+                case FilterDeleteByStatus:
                     break;
 
                 case CheckArrayOrEmpty:
@@ -1266,7 +1267,8 @@ private:
                 case FilterGetByStatus:
                 case FilterPutByIdStatus:
                 case FilterCallLinkStatus:
-                case FilterInByIdStatus: {
+                case FilterInByIdStatus:
+                case FilterDeleteByStatus: {
                     if (!isEliminatedAllocation(node->child1().node()))
                         break;
                     node->remove(m_graph);

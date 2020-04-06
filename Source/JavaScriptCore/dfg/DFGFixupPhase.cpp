@@ -1808,6 +1808,11 @@ private:
             fixEdge<CellUse>(node->child1());
             break;
         }
+
+        case MultiDeleteByOffset:  {
+            fixEdge<CellUse>(node->child1());
+            break;
+        }
             
         case MatchStructure: {
             // FIXME: Introduce a variant of MatchStructure that doesn't do a cell check.
@@ -2579,6 +2584,7 @@ private:
         case FilterGetByStatus:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
+        case FilterDeleteByStatus:
         case InvalidationPoint:
         case CreateArgumentsButterfly:
             break;

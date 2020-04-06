@@ -478,10 +478,7 @@ public:
             || hijacksIndexingHeader();
     }
     
-    bool hasIndexingHeader(const JSCell*) const;
-    bool mayHaveIndexingHeader() const;
-    bool canCacheDeleteIC() const;
-    
+    bool hasIndexingHeader(const JSCell*) const;    
     bool masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject);
 
     PropertyOffset get(VM&, PropertyName);

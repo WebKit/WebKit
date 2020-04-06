@@ -1178,7 +1178,9 @@
 		70ECA6061AFDBEA200449739 /* JSTemplateObjectDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6011AFDBEA200449739 /* JSTemplateObjectDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70ECA6091AFDBEA200449739 /* TemplateObjectDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6041AFDBEA200449739 /* TemplateObjectDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72AAF7CE1D0D31B3005E60BE /* JSCustomGetterSetterFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */; };
+		7311FA32240DB1D3003D48DB /* DeleteByIdVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 7311FA31240DB1D3003D48DB /* DeleteByIdVariant.h */; };
 		734B655523F5C10400A069D1 /* DeletePropertySlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 734B655423F4A33100A069D1 /* DeletePropertySlot.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		73AD062923FF662600F53593 /* DeleteByStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 73AD062823FF662600F53593 /* DeleteByStatus.h */; };
 		73E3799422E0EF6500933565 /* B3ReduceLoopStrength.h in Headers */ = {isa = PBXBuildFile; fileRef = 73E3799322E0EF4F00933565 /* B3ReduceLoopStrength.h */; };
 		7593C898BE714A64BE93A6E7 /* WasmContextInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		790081391E95A8EC0052D7CD /* WasmModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 790081371E95A8EC0052D7CD /* WasmModule.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3974,7 +3976,11 @@
 		70ECA6041AFDBEA200449739 /* TemplateObjectDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateObjectDescriptor.h; sourceTree = "<group>"; };
 		72AAF7CB1D0D318B005E60BE /* JSCustomGetterSetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomGetterSetterFunction.cpp; sourceTree = "<group>"; };
 		72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomGetterSetterFunction.h; sourceTree = "<group>"; };
+		7311FA31240DB1D3003D48DB /* DeleteByIdVariant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeleteByIdVariant.h; sourceTree = "<group>"; };
+		7311FA33240DB249003D48DB /* DeleteByIdVariant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteByIdVariant.cpp; sourceTree = "<group>"; };
+		73190D962400934900F891C9 /* DeleteByStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteByStatus.cpp; sourceTree = "<group>"; };
 		734B655423F4A33100A069D1 /* DeletePropertySlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeletePropertySlot.h; sourceTree = "<group>"; };
+		73AD062823FF662600F53593 /* DeleteByStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeleteByStatus.h; sourceTree = "<group>"; };
 		73E3799322E0EF4F00933565 /* B3ReduceLoopStrength.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ReduceLoopStrength.h; path = b3/B3ReduceLoopStrength.h; sourceTree = "<group>"; };
 		73E3799522E0EF9100933565 /* B3ReduceLoopStrength.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3ReduceLoopStrength.cpp; path = b3/B3ReduceLoopStrength.cpp; sourceTree = "<group>"; };
 		77B25CB2C3094A92A38E1DB3 /* JSModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleLoader.h; sourceTree = "<group>"; };
@@ -8243,6 +8249,10 @@
 				0FC712DD17CD8778008CC93C /* DeferredCompilationCallback.h */,
 				FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */,
 				FE5068641AE246390009DAB7 /* DeferredSourceDump.h */,
+				7311FA33240DB249003D48DB /* DeleteByIdVariant.cpp */,
+				7311FA31240DB1D3003D48DB /* DeleteByIdVariant.h */,
+				73190D962400934900F891C9 /* DeleteByStatus.cpp */,
+				73AD062823FF662600F53593 /* DeleteByStatus.h */,
 				0FBC0AE41496C7C100D4FBDD /* DFGExitProfile.cpp */,
 				0FBC0AE51496C7C100D4FBDD /* DFGExitProfile.h */,
 				0F2EBBAA1DEDF94E00990369 /* DirectEvalCodeCache.cpp */,
@@ -9216,6 +9226,8 @@
 				FE5068651AE246390009DAB7 /* DeferredSourceDump.h in Headers */,
 				473DA4A4764C45FE871B0485 /* DefinePropertyAttributes.h in Headers */,
 				0FBB73BB1DEF8645002C009E /* DeleteAllCodeEffort.h in Headers */,
+				7311FA32240DB1D3003D48DB /* DeleteByIdVariant.h in Headers */,
+				73AD062923FF662600F53593 /* DeleteByStatus.h in Headers */,
 				734B655523F5C10400A069D1 /* DeletePropertySlot.h in Headers */,
 				0F96303C1D4192CD005609D9 /* DestructionMode.h in Headers */,
 				A77A423E17A0BBFD00A8DB81 /* DFGAbstractHeap.h in Headers */,

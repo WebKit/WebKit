@@ -198,6 +198,7 @@ private:
             case FilterPutByIdStatus:
             case FilterCallLinkStatus:
             case FilterInByIdStatus:
+            case FilterDeleteByStatus:
                 break;
 
             case GetByOffset: {
@@ -399,6 +400,7 @@ private:
             case FilterPutByIdStatus:
             case FilterCallLinkStatus:
             case FilterInByIdStatus:
+            case FilterDeleteByStatus:
                 if (node->child1().node() == candidate)
                     node->remove(m_graph);
                 break;

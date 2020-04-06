@@ -3710,6 +3710,41 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_state.setIsValid(false);
         break;
     }
+
+    case MultiDeleteByOffset: {
+        RegisteredStructureSet newSet;
+        TransitionVector transitions;
+
+        // Ordinarily you have to be careful with calling setShouldTryConstantFolding()
+        // because of the effect on compile times, but this node is FTL-only.
+        m_state.setShouldTryConstantFolding(true);
+
+        AbstractValue base = forNode(node->child1());
+
+        if (node->multiDeleteByOffsetData().writesStructures())
+            didFoldClobberStructures();
+
+        for (unsigned i = node->multiDeleteByOffsetData().variants.size(); i--;) {
+            const DeleteByIdVariant& variant = node->multiDeleteByOffsetData().variants[i];
+            RegisteredStructureSet thisSet = *m_graph.addStructureSet(variant.oldStructure());
+            thisSet.filter(base);
+            if (thisSet.isEmpty())
+                continue;
+
+            if (variant.newStructure()) {
+                RegisteredStructure newStructure = m_graph.registerStructure(variant.newStructure());
+                transitions.append(
+                    Transition(m_graph.registerStructure(variant.oldStructure()), newStructure));
+                newSet.add(newStructure);
+            } else
+                newSet.merge(thisSet);
+        }
+
+        observeTransitions(clobberLimit, transitions);
+        if (forNode(node->child1()).changeStructure(m_graph, newSet) == Contradiction)
+            m_state.setIsValid(false);
+        break;
+    }
         
     case GetExecutable: {
         JSValue value = forNode(node->child1()).value();
@@ -4108,6 +4143,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
+    case FilterDeleteByStatus:
     case ClearCatchLocals:
         break;
 
@@ -4286,6 +4322,13 @@ void AbstractInterpreter<AbstractStateType>::filterICStatus(Node* node)
         AbstractValue& value = forNode(node->child1());
         if (value.m_structure.isFinite())
             node->putByIdStatus()->filter(value.m_structure.toStructureSet());
+        break;
+    }
+
+    case FilterDeleteByStatus: {
+        AbstractValue& value = forNode(node->child1());
+        if (value.m_structure.isFinite())
+            node->deleteByStatus()->filter(value.m_structure.toStructureSet());
         break;
     }
 

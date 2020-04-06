@@ -467,6 +467,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
+    case FilterDeleteByStatus:
         write(SideState);
         return;
         
@@ -1276,6 +1277,17 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         if (node->multiPutByOffsetData().reallocatesStorage())
             write(JSObject_butterfly);
         def(HeapLocation(NamedPropertyLoc, heap, node->child1()), LazyNode(node->child2().node()));
+        return;
+    }
+
+    case MultiDeleteByOffset: {
+        read(JSCell_structureID);
+        read(JSObject_butterfly);
+        AbstractHeap heap(NamedProperties, node->multiDeleteByOffsetData().identifierNumber);
+        write(heap);
+        if (node->multiDeleteByOffsetData().writesStructures())
+            write(JSCell_structureID);
+        def(HeapLocation(NamedPropertyLoc, heap, node->child1()), LazyNode(graph.freezeStrong(JSValue())));
         return;
     }
         

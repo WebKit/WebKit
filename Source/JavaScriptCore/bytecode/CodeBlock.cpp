@@ -1500,6 +1500,8 @@ void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
                 result.add(pair.first, ICStatus()).iterator->value.putStatus = pair.second.get();
             for (auto& pair : dfgCommon->recordedStatuses.ins)
                 result.add(pair.first, ICStatus()).iterator->value.inStatus = pair.second.get();
+            for (auto& pair : dfgCommon->recordedStatuses.deletes)
+                result.add(pair.first, ICStatus()).iterator->value.deleteStatus = pair.second.get();
         }
 #endif
     }

@@ -447,11 +447,11 @@ bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
 
-    if (thisObject->isNeutered())
-        return typeError(globalObject, scope, true, typedArrayBufferHasBeenDetachedErrorMessage);
-
-    if (parseIndex(propertyName))
+    if (parseIndex(propertyName)) {
+        if (thisObject->isNeutered())
+            return typeError(globalObject, scope, true, typedArrayBufferHasBeenDetachedErrorMessage);
         return false;
+    }
     
     return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 }

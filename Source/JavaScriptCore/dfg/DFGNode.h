@@ -47,6 +47,7 @@
 #include "DFGTransition.h"
 #include "DFGUseKind.h"
 #include "DFGVariableAccessData.h"
+#include "DeleteByIdVariant.h"
 #include "GetByIdVariant.h"
 #include "JSCJSValue.h"
 #include "Operands.h"
@@ -90,6 +91,13 @@ struct MultiPutByOffsetData {
     
     bool writesStructures() const;
     bool reallocatesStorage() const;
+};
+
+struct MultiDeleteByOffsetData {
+    unsigned identifierNumber;
+    Vector<DeleteByIdVariant, 2> variants;
+
+    bool writesStructures() const;
 };
 
 struct MatchStructureVariant {
@@ -2029,6 +2037,17 @@ public:
         ASSERT(hasMultiPutByOffsetData());
         return *m_opInfo.as<MultiPutByOffsetData*>();
     }
+
+    bool hasMultiDeleteByOffsetData()
+    {
+        return op() == MultiDeleteByOffset;
+    }
+
+    MultiDeleteByOffsetData& multiDeleteByOffsetData()
+    {
+        ASSERT(hasMultiDeleteByOffsetData());
+        return *m_opInfo.as<MultiDeleteByOffsetData*>();
+    }
     
     bool hasMatchStructureData()
     {
@@ -2989,6 +3008,17 @@ public:
     {
         ASSERT(hasPutByIdStatus());
         return m_opInfo.as<PutByIdStatus*>();
+    }
+
+    bool hasDeleteByStatus()
+    {
+        return op() == FilterDeleteByStatus;
+    }
+
+    DeleteByStatus* deleteByStatus()
+    {
+        ASSERT(hasDeleteByStatus());
+        return m_opInfo.as<DeleteByStatus*>();
     }
 
     void dumpChildren(PrintStream& out)

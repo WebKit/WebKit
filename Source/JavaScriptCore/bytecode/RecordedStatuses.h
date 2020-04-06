@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CallLinkStatus.h"
+#include "DeleteByStatus.h"
 #include "GetByStatus.h"
 #include "InByIdStatus.h"
 #include "PutByIdStatus.h"
@@ -47,6 +48,7 @@ struct RecordedStatuses {
     GetByStatus* addGetByStatus(const CodeOrigin&, const GetByStatus&);
     PutByIdStatus* addPutByIdStatus(const CodeOrigin&, const PutByIdStatus&);
     InByIdStatus* addInByIdStatus(const CodeOrigin&, const InByIdStatus&);
+    DeleteByStatus* addDeleteByStatus(const CodeOrigin&, const DeleteByStatus&);
     
     void visitAggregate(SlotVisitor&);
     void markIfCheap(SlotVisitor&);
@@ -63,12 +65,14 @@ struct RecordedStatuses {
         func(gets);
         func(puts);
         func(ins);
+        func(deletes);
     }
     
     Vector<std::pair<CodeOrigin, std::unique_ptr<CallLinkStatus>>> calls;
     Vector<std::pair<CodeOrigin, std::unique_ptr<GetByStatus>>> gets;
     Vector<std::pair<CodeOrigin, std::unique_ptr<PutByIdStatus>>> puts;
     Vector<std::pair<CodeOrigin, std::unique_ptr<InByIdStatus>>> ins;
+    Vector<std::pair<CodeOrigin, std::unique_ptr<DeleteByStatus>>> deletes;
 };
 
 } // namespace JSC

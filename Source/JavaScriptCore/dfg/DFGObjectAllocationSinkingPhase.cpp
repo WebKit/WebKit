@@ -1220,6 +1220,7 @@ private:
         case FilterGetByStatus:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
+        case FilterDeleteByStatus:
             break;
 
         default:
@@ -2570,6 +2571,7 @@ private:
                 case FilterGetByStatus:
                 case FilterPutByIdStatus:
                 case FilterInByIdStatus:
+                case FilterDeleteByStatus:
                     if (node->child1()->isPhantomAllocation())
                         node->removeWithoutChecks();
                     break;

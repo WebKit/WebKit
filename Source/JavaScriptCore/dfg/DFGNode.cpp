@@ -57,6 +57,15 @@ bool MultiPutByOffsetData::reallocatesStorage() const
     return false;
 }
 
+bool MultiDeleteByOffsetData::writesStructures() const
+{
+    for (unsigned i = variants.size(); i--;) {
+        if (variants[i].writesStructures())
+            return true;
+    }
+    return false;
+}
+
 void BranchTarget::dump(PrintStream& out) const
 {
     if (!block)

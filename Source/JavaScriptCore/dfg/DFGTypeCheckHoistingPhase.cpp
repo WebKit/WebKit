@@ -287,6 +287,7 @@ private:
                 case MovHint:
                 case MultiGetByOffset:
                 case MultiPutByOffset:
+                case MultiDeleteByOffset:
                     // Don't count these uses.
                     break;
                     
@@ -362,6 +363,7 @@ private:
                 case MovHint:
                 case MultiGetByOffset:
                 case MultiPutByOffset:
+                case MultiDeleteByOffset:
                     // Don't count these uses.
                     break;
                     

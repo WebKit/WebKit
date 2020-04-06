@@ -2011,12 +2011,7 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
         else {
             structure = Structure::removePropertyTransition(vm, structure, propertyName, offset, &deferredWatchpointFire);
             slot.setHit(offset);
-            if (!structure->outOfLineCapacity() && thisObject->structure(vm)->outOfLineCapacity() && !structure->hasIndexingHeader(thisObject)) {
-                ASSERT(thisObject->m_butterfly);
-                thisObject->nukeStructureAndSetButterfly(vm, thisObject->structureID(), nullptr);
-                offset = invalidOffset;
-                ASSERT(structure->maxOffset() == invalidOffset);
-            }
+            ASSERT(structure->outOfLineCapacity() || !thisObject->structure(vm)->outOfLineCapacity());
             thisObject->setStructure(vm, structure);
         }
 

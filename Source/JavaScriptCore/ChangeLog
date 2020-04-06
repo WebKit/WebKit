@@ -1,3 +1,134 @@
+2020-04-06  Justin Michaud  <justin_michaud@apple.com>
+
+        Allow deleteById to be cached in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=208664
+
+        Reviewed by Saam Barati.
+
+        When we see that the deleteById inline cache only saw one structure, we inline it into the DFG. This involves
+        creating a new node, FilterDeleteByStatus, and then turning these DeleteById nodes into a FilterDeleteByStatus,
+        CheckStructure, PutByOffset, then PutStructure (or just a CheckStructure in the case of a miss). The logic for 
+        pessimising this optimization is the same as for PutById, giving inlined functions the opportunity to use only 
+        the DFG profiling information, while everything else uses the DFG+Baseline information.
+
+        This also adds a MultiDeleteByOffset node, for the case when there are multiple structures seen by the delete. If
+        all of the cases are the same kind of miss, then we only emit a CheckStructure and constant.
+
+        Finally, if we see a delete by val with a single identifier, we inline that too.
+
+        This patch removes a dead code path from deleteProperty that checks if we need to nuke the object's butterfly. 
+        This also fixes a bug where we were checking the neutering status of typed arrays for named properties when we should
+        only check for indexed properties. The behavior of this now matches for all tiers including when cached.
+
+        The benchmark shows a 2x improvement on polyvariant-delete-property, and a 50% improvement on delete-property-allocation-sinking.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::createDelete):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::getICStatusMap):
+        * bytecode/DeleteByIdVariant.cpp: Added.
+        (JSC::DeleteByIdVariant::DeleteByIdVariant):
+        (JSC::DeleteByIdVariant::~DeleteByIdVariant):
+        (JSC::DeleteByIdVariant::operator=):
+        (JSC::DeleteByIdVariant::attemptToMerge):
+        (JSC::DeleteByIdVariant::writesStructures const):
+        (JSC::DeleteByIdVariant::visitAggregate):
+        (JSC::DeleteByIdVariant::markIfCheap):
+        (JSC::DeleteByIdVariant::dump const):
+        (JSC::DeleteByIdVariant::finalize):
+        (JSC::DeleteByIdVariant::dumpInContext const):
+        * bytecode/DeleteByIdVariant.h: Added.
+        (JSC::DeleteByIdVariant::oldStructure const):
+        (JSC::DeleteByIdVariant::newStructure const):
+        (JSC::DeleteByIdVariant::result const):
+        (JSC::DeleteByIdVariant::offset const):
+        (JSC::DeleteByIdVariant::isPropertyUnset const):
+        (JSC::DeleteByIdVariant::identifier const):
+        (JSC::DeleteByIdVariant::overlaps):
+        * bytecode/DeleteByStatus.cpp: Added.
+        (JSC::DeleteByStatus::appendVariant):
+        (JSC::DeleteByStatus::computeForBaseline):
+        (JSC::DeleteByStatus::DeleteByStatus):
+        (JSC::DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::DeleteByStatus::computeFor):
+        (JSC::DeleteByStatus::slowVersion const):
+        (JSC::DeleteByStatus::merge):
+        (JSC::DeleteByStatus::filter):
+        (JSC::DeleteByStatus::singleIdentifier const):
+        (JSC::DeleteByStatus::visitAggregate):
+        (JSC::DeleteByStatus::markIfCheap):
+        (JSC::DeleteByStatus::finalize):
+        (JSC::DeleteByStatus::dump const):
+        * bytecode/DeleteByStatus.h: Added.
+        * bytecode/ICStatusMap.h:
+        * bytecode/RecordedStatuses.cpp:
+        (JSC::RecordedStatuses::operator=):
+        (JSC::RecordedStatuses::addDeleteByStatus):
+        (JSC::RecordedStatuses::visitAggregate):
+        (JSC::RecordedStatuses::markIfCheap):
+        * bytecode/RecordedStatuses.h:
+        (JSC::RecordedStatuses::forEachVector):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterICStatus):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleDeleteById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitDeleteByOffset):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::MultiDeleteByOffsetData::writesStructures const):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasMultiDeleteByOffsetData):
+        (JSC::DFG::Node::multiDeleteByOffsetData):
+        (JSC::DFG::Node::hasDeleteByStatus):
+        (JSC::DFG::Node::deleteByStatus):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * dfg/DFGValidate.cpp:
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiDeleteByOffset):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::deleteProperty):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::mayHaveIndexingHeader const): Deleted.
+        (JSC::Structure::canCacheDeleteIC const): Deleted.
+
 2020-04-06  Saam Barati  <sbarati@apple.com>
 
         Implement 1GB of executable memory on arm64

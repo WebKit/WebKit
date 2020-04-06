@@ -48,6 +48,7 @@
 #include "DFGClobbersExitState.h"
 #include "DFGGraph.h"
 #include "DFGJITCode.h"
+#include "DeleteByStatus.h"
 #include "FunctionCodeBlock.h"
 #include "GetByStatus.h"
 #include "GetterSetter.h"
@@ -249,6 +250,9 @@ private:
     void handlePutById(
         Node* base, CacheableIdentifier, unsigned identifierNumber, Node* value, const PutByIdStatus&,
         bool isDirect, unsigned intructionSize);
+
+    void handleDeleteById(
+        VirtualRegister destination, Node* base, CacheableIdentifier, unsigned identifierNumber, DeleteByStatus);
     
     // Either register a watchpoint or emit a check for this condition. Returns false if the
     // condition no longer holds, and therefore no reasonable check can be emitted.
@@ -4614,6 +4618,104 @@ void ByteCodeParser::handleGetById(
         getter, numberOfParameters - 1, registerOffset, *variant.callLinkStatus(), prediction);
 }
 
+void ByteCodeParser::handleDeleteById(
+    VirtualRegister destination, Node* base, CacheableIdentifier identifier,
+    unsigned identifierNumber, DeleteByStatus deleteByStatus)
+{
+    if (!deleteByStatus.isSimple() || !deleteByStatus.variants().size() || !Options::useAccessInlining()) {
+        set(destination,
+            addToGraph(DeleteById, OpInfo(identifier), base));
+        return;
+    }
+
+    if (deleteByStatus.variants().size() > 1) {
+        if (!m_graph.m_plan.isFTL()
+            || !Options::usePolymorphicAccessInlining()
+            || deleteByStatus.variants().size() > Options::maxPolymorphicAccessInliningListSize()) {
+            set(destination,
+                addToGraph(DeleteById, OpInfo(identifier), base));
+            return;
+        }
+
+        addToGraph(FilterDeleteByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addDeleteByStatus(currentCodeOrigin(), deleteByStatus)), base);
+
+        bool hasHit = false;
+        bool hasMiss = false;
+        bool hasMissNonconfigurable = false;
+
+        for (const DeleteByIdVariant& variant : deleteByStatus.variants()) {
+            m_graph.registerStructure(variant.oldStructure());
+            if (variant.newStructure()) {
+                m_graph.registerStructure(variant.newStructure());
+                hasHit = true;
+            } else if (variant.result())
+                hasMiss = true;
+            else
+                hasMissNonconfigurable = true;
+        }
+
+        if (!hasHit) {
+            if ((hasMiss && !hasMissNonconfigurable) || (!hasMiss && hasMissNonconfigurable)) {
+                StructureSet baseSet;
+
+                for (const DeleteByIdVariant& variant : deleteByStatus.variants())
+                    baseSet.add(variant.oldStructure());
+
+                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(baseSet)), base);
+                set(destination, jsConstant(jsBoolean(deleteByStatus.variants()[0].result())));
+                return;
+            }
+        }
+
+        MultiDeleteByOffsetData* data = m_graph.m_multiDeleteByOffsetData.add();
+        data->variants = deleteByStatus.variants();
+        data->identifierNumber = identifierNumber;
+        set(destination,
+            addToGraph(MultiDeleteByOffset, OpInfo(data), base));
+        return;
+    }
+
+    ASSERT(deleteByStatus.variants().size() == 1);
+    DeleteByIdVariant variant = deleteByStatus.variants()[0];
+
+    if (!variant.newStructure()) {
+        addToGraph(FilterDeleteByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addDeleteByStatus(currentCodeOrigin(), deleteByStatus)), base);
+        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
+        set(destination, jsConstant(jsBoolean(variant.result())));
+        return;
+    }
+
+    addToGraph(FilterDeleteByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addDeleteByStatus(currentCodeOrigin(), deleteByStatus)), base);
+    addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
+    ASSERT(variant.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
+    ASSERT(variant.newStructure());
+    ASSERT(isValidOffset(variant.offset()));
+
+    Node* propertyStorage;
+    Transition* transition = m_graph.m_transitions.add(
+        m_graph.registerStructure(variant.oldStructure()), m_graph.registerStructure(variant.newStructure()));
+
+    if (isInlineOffset(variant.offset()))
+        propertyStorage = base;
+    else
+        propertyStorage = addToGraph(GetButterfly, base);
+
+    StorageAccessData* data = m_graph.m_storageAccessData.add();
+    data->offset = variant.offset();
+    data->identifierNumber = identifierNumber;
+
+    addToGraph(
+        PutByOffset,
+        OpInfo(data),
+        propertyStorage,
+        base,
+        jsConstant(JSValue()));
+
+    addToGraph(PutStructure, OpInfo(transition), base);
+    set(destination, jsConstant(jsBoolean(variant.result())));
+    return;
+}
+
 void ByteCodeParser::emitPutById(
     Node* base, CacheableIdentifier identifier, Node* value, const PutByIdStatus& putByIdStatus, bool isDirect)
 {
@@ -5947,16 +6049,49 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpDelById>();
             Node* base = get(bytecode.m_base);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
+            DeleteByStatus deleteByStatus = DeleteByStatus::computeFor(
+                m_inlineStackTop->m_profiledBlock,
+                m_inlineStackTop->m_baselineMap, m_icContextStack,
+                currentCodeOrigin());
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
-            set(bytecode.m_dst, addToGraph(DeleteById, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), base));
+            auto identifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid);
+            handleDeleteById(bytecode.m_dst, base, identifier, identifierNumber, deleteByStatus);
             NEXT_OPCODE(op_del_by_id);
         }
 
         case op_del_by_val: {
             auto bytecode = currentInstruction->as<OpDelByVal>();
             Node* base = get(bytecode.m_base);
-            Node* key = get(bytecode.m_property);
-            set(bytecode.m_dst, addToGraph(DeleteByVal, base, key));
+            Node* property = get(bytecode.m_property);
+            bool shouldCompileAsDeleteById = false;
+            DeleteByStatus deleteByStatus = DeleteByStatus::computeFor(
+                m_inlineStackTop->m_profiledBlock,
+                m_inlineStackTop->m_baselineMap, m_icContextStack,
+                currentCodeOrigin());
+
+            if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+
+                if (CacheableIdentifier identifier = deleteByStatus.singleIdentifier()) {
+                    UniquedStringImpl* uid = identifier.uid();
+                    unsigned identifierNumber = m_graph.identifiers().ensure(identifier.uid());
+                    if (identifier.isCell()) {
+                        FrozenValue* frozen = m_graph.freezeStrong(identifier.cell());
+                        if (identifier.isSymbolCell())
+                            addToGraph(CheckCell, OpInfo(frozen), property);
+                        else
+                            addToGraph(CheckIdent, OpInfo(uid), property);
+                    } else
+                        addToGraph(CheckIdent, OpInfo(uid), property);
+
+                    handleDeleteById(bytecode.m_dst, base, identifier, identifierNumber, deleteByStatus);
+                    shouldCompileAsDeleteById = true;
+                }
+            }
+
+            if (!shouldCompileAsDeleteById)
+                set(bytecode.m_dst, addToGraph(DeleteByVal, base, property));
             NEXT_OPCODE(op_del_by_val);
         }
 

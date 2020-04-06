@@ -109,6 +109,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
+    case FilterDeleteByStatus:
         break;
 
     case StrCat:

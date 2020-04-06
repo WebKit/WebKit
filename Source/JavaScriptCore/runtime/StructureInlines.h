@@ -228,22 +228,6 @@ inline bool Structure::hasIndexingHeader(const JSCell* cell) const
     return jsCast<const JSArrayBufferView*>(cell)->mode() == WastefulTypedArray;
 }
 
-inline bool Structure::mayHaveIndexingHeader() const
-{
-    if (hasIndexedProperties(indexingType()))
-        return true;
-
-    if (!isTypedView(typedArrayTypeForType(m_blob.type())))
-        return false;
-
-    return true;
-}
-
-inline bool Structure::canCacheDeleteIC() const
-{
-    return !isTypedView(typedArrayTypeForType(m_blob.type()));
-}
-
 inline bool Structure::masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject)
 {
     return typeInfo().masqueradesAsUndefined() && globalObject() == lexicalGlobalObject;

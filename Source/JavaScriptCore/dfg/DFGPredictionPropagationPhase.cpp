@@ -984,6 +984,7 @@ private:
         }
         case DeleteByVal:
         case DeleteById:
+        case MultiDeleteByOffset:
         case LogicalNot:
         case CompareLess:
         case CompareLessEq:
@@ -1395,6 +1396,7 @@ private:
         case FilterGetByStatus:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
+        case FilterDeleteByStatus:
         case ClearCatchLocals:
         case DataViewSet:
         case InvalidationPoint:

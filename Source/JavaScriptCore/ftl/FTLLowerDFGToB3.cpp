@@ -1177,6 +1177,9 @@ private:
         case MultiPutByOffset:
             compileMultiPutByOffset();
             break;
+        case MultiDeleteByOffset:
+            compileMultiDeleteByOffset();
+            break;
         case MatchStructure:
             compileMatchStructure();
             break;
@@ -1569,6 +1572,7 @@ private:
         case FilterGetByStatus:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
+        case FilterDeleteByStatus:
             compileFilterICStatus();
             break;
         case DateGetInt32OrNaN:
@@ -8129,6 +8133,106 @@ private:
         m_out.unreachable();
         
         m_out.appendTo(continuation, lastNext);
+    }
+
+    void compileMultiDeleteByOffset()
+    {
+        LValue base = lowCell(m_node->child1());
+        MultiDeleteByOffsetData& data = m_node->multiDeleteByOffsetData();
+
+        unsigned missConfigurable = 0;
+        unsigned missNonconfigurable = 0;
+
+        for (unsigned i = data.variants.size(); i--;) {
+            DeleteByIdVariant variant = data.variants[i];
+            if (!variant.newStructure()) {
+                if (variant.result())
+                    ++missConfigurable;
+                else
+                    ++missNonconfigurable;
+            }
+        }
+
+        unsigned uniqueCaseCount = data.variants.size();
+        if (missConfigurable)
+            uniqueCaseCount -= missConfigurable - 1;
+        if (missNonconfigurable)
+            uniqueCaseCount -= missNonconfigurable - 1;
+        int trueBlock = missConfigurable ? uniqueCaseCount - 1 : -1;
+        int falseBlock = missNonconfigurable ? uniqueCaseCount - 1 - !!missConfigurable : -1;
+
+        Vector<LBasicBlock, 2> blocks(uniqueCaseCount);
+        for (unsigned i = blocks.size(); i--;)
+            blocks[i] = m_out.newBlock();
+        LBasicBlock exit = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        Vector<SwitchCase, 2> cases;
+        RegisteredStructureSet baseSet;
+        for (unsigned i = data.variants.size(), block = 0; i--;) {
+            DeleteByIdVariant variant = data.variants[i];
+            RegisteredStructure structure = m_graph.registerStructure(variant.oldStructure());
+            baseSet.add(structure);
+            if (variant.newStructure())
+                cases.append(SwitchCase(weakStructureID(structure), blocks[block++], Weight(1)));
+            else
+                cases.append(SwitchCase(weakStructureID(structure), blocks[variant.result() ? trueBlock : falseBlock], Weight(1)));
+        }
+        bool structuresChecked = m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet);
+        emitSwitchForMultiByOffset(base, structuresChecked, cases, exit);
+
+        LBasicBlock lastNext = m_out.m_nextBlock;
+
+        Vector<ValueFromBlock, 2> results;
+
+        for (unsigned i = data.variants.size(), block = 0; i--;) {
+            DeleteByIdVariant variant = data.variants[i];
+            if (!variant.newStructure())
+                continue;
+
+            m_out.appendTo(blocks[block], block + 1 < blocks.size() ? blocks[block + 1] : exit);
+
+            if (variant.newStructure()) {
+                LValue storage;
+
+                if (isInlineOffset(variant.offset()))
+                    storage = base;
+                else
+                    storage = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
+
+                storeProperty(m_out.int64Zero, storage, data.identifierNumber, variant.offset());
+
+                ASSERT(variant.oldStructure()->indexingType() == variant.newStructure()->indexingType());
+                ASSERT(variant.oldStructure()->typeInfo().inlineTypeFlags() == variant.newStructure()->typeInfo().inlineTypeFlags());
+                ASSERT(variant.oldStructure()->typeInfo().type() == variant.newStructure()->typeInfo().type());
+                m_out.store32(
+                    weakStructureID(m_graph.registerStructure(variant.newStructure())), base, m_heaps.JSCell_structureID);
+            }
+
+            results.append(m_out.anchor(variant.result() ? m_out.booleanTrue : m_out.booleanFalse));
+            m_out.jump(continuation);
+            ++block;
+        }
+
+        if (missNonconfigurable) {
+            m_out.appendTo(blocks[falseBlock]);
+            results.append(m_out.anchor(m_out.booleanFalse));
+            m_out.jump(continuation);
+        }
+
+        if (missConfigurable) {
+            m_out.appendTo(blocks[trueBlock], exit);
+            results.append(m_out.anchor(m_out.booleanTrue));
+            m_out.jump(continuation);
+        }
+
+        m_out.appendTo(exit, continuation);
+        if (!structuresChecked)
+            speculate(BadCache, noValue(), nullptr, m_out.booleanTrue);
+        m_out.unreachable();
+
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(Int32, results));
     }
     
     void compileMatchStructure()

@@ -252,6 +252,7 @@ namespace JSC { namespace DFG {
     macro(MultiGetByOffset, NodeResultJS | NodeMustGenerate) \
     macro(PutByOffset, NodeMustGenerate) \
     macro(MultiPutByOffset, NodeMustGenerate) \
+    macro(MultiDeleteByOffset, NodeMustGenerate | NodeResultJS) \
     macro(GetArrayLength, NodeResultInt32) \
     macro(GetVectorLength, NodeResultInt32) \
     macro(GetTypedArrayByteOffset, NodeResultInt32) \
@@ -527,6 +528,7 @@ namespace JSC { namespace DFG {
     macro(FilterGetByStatus, NodeMustGenerate) \
     macro(FilterInByIdStatus, NodeMustGenerate) \
     macro(FilterPutByIdStatus, NodeMustGenerate) \
+    macro(FilterDeleteByStatus, NodeMustGenerate) \
     /* Data view access */ \
     macro(DataViewGetInt, NodeMustGenerate | NodeResultJS) /* The gets are must generate for now because they do bounds checks */ \
     macro(DataViewGetFloat, NodeMustGenerate | NodeResultDouble) \

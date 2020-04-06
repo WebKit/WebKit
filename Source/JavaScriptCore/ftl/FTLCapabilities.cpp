@@ -233,6 +233,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ToThis:
     case MultiGetByOffset:
     case MultiPutByOffset:
+    case MultiDeleteByOffset:
     case ToPrimitive:
     case ToPropertyKey:
     case Throw:
@@ -392,6 +393,7 @@ inline CapabilityLevel canCompile(Node* node)
     case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
+    case FilterDeleteByStatus:
     case CreateThis:
     case CreatePromise:
     case CreateGenerator:

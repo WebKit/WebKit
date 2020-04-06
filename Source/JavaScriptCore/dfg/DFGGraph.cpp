@@ -304,6 +304,12 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
         for (unsigned i = 0; i < data.variants.size(); ++i)
             out.print(comma, inContext(data.variants[i], context));
     }
+    if (node->hasMultiDeleteByOffsetData()) {
+        MultiDeleteByOffsetData& data = node->multiDeleteByOffsetData();
+        out.print(comma, "id", data.identifierNumber, "{", identifiers()[data.identifierNumber], "}");
+        for (unsigned i = 0; i < data.variants.size(); ++i)
+            out.print(comma, inContext(data.variants[i], context));
+    }
     if (node->hasMatchStructureData()) {
         for (MatchStructureVariant& variant : node->matchStructureData().variants)
             out.print(comma, inContext(*variant.structure.get(), context), "=>", variant.result);

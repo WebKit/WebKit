@@ -1,3 +1,62 @@
+2020-04-06  Justin Michaud  <justin_michaud@apple.com>
+
+        Allow deleteById to be cached in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=208664
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/delete-property-allocation-sinking.js: Added.
+        (assert):
+        (noInline.assert.blackbox):
+        (noInline.blackbox.doAlloc1):
+        (noInline.doAlloc1):
+        * microbenchmarks/polyvariant-delete-property.js: Added.
+        (assert):
+        (blackbox):
+        (noInline.blackbox.polyvariant):
+        (doAlloc1):
+        (noInline.doAlloc1.doAlloc2):
+        (noInline.doAlloc2):
+        * stress/delete-property-dfg-inline.js: Added.
+        (assert):
+        (noInline.assert.assert_throws):
+        (noInline.assert_throws.blackbox):
+        (noInline.blackbox.testSingleStructure.doAlloc1):
+        (noInline.blackbox.testSingleStructure):
+        (noInline.testSingleStructure.testInlineSingleStructure.doDelete2):
+        (noInline.testSingleStructure.testInlineSingleStructure.doAlloc2):
+        (noInline.testSingleStructure.testInlineSingleStructure):
+        (noInline.testInlineSingleStructure.testExit.doDelete3):
+        (noInline.testInlineSingleStructure.testExit):
+        (noInline.testExit.testSingleStructureMiss.doAlloc4):
+        (noInline.testExit.testSingleStructureMiss):
+        (noInline.testSingleStructureMiss.testSingleStructureMissStrict.string_appeared_here.doAlloc5):
+        (noInline.testSingleStructureMiss.testSingleStructureMissStrict):
+        (noInline.testSingleStructureMissStrict.testSingleStructureMissNonConfigurable.doAlloc6):
+        (noInline.testSingleStructureMissStrict.testSingleStructureMissNonConfigurable):
+        (noInline.testSingleStructureMissNonConfigurable.testSingleStructureEmpty.doAlloc7):
+        (noInline.testSingleStructureMissNonConfigurable.testSingleStructureEmpty):
+        (noInline.testSingleStructureEmpty.testPolymorphic.doDelete8):
+        (noInline.testSingleStructureEmpty.testPolymorphic):
+        (noInline.testPolymorphic.testPolyvariant.doDelete9):
+        (noInline.testPolymorphic.testPolyvariant.polyvariant):
+        (noInline.testPolymorphic.testPolyvariant):
+        (noInline.testPolyvariant.testConstantFolding.doDelete10):
+        (noInline.testPolyvariant.testConstantFolding):
+        (noInline.testConstantFolding.testObjectSinking.doAlloc11):
+        (noInline.testConstantFolding.testObjectSinking):
+        (noInline.testObjectSinking.testProxy.doAlloc12):
+        (noInline.testObjectSinking.testProxy.noInline.doDelete12):
+        (noInline.testObjectSinking.testProxy):
+        (noInline.testProxy.testTypedArray.doDelete12):
+        (noInline.testProxy.testTypedArray):
+        (noInline.testTypedArray.testMissMixed.doDelete13):
+        (noInline.testTypedArray.testMissMixed):
+        (noInline.testMissMixed.testMissNonMixed.doDelete14):
+        (noInline.testMissMixed.testMissNonMixed):
+        (noInline.testMissNonMixed.testByVal.doDelete15):
+        (noInline.testMissNonMixed.testByVal):
+
 2020-04-06  Saam Barati  <sbarati@apple.com>
 
         Implement 1GB of executable memory on arm64

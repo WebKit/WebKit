@@ -186,6 +186,7 @@ bool doesGC(Graph& graph, Node* node)
     case CheckVarargs:
     case CheckTypeInfoFlags:
     case MultiGetByOffset:
+    case MultiDeleteByOffset:
     case ValueRep:
     case DoubleRep:
     case Int52Rep:
@@ -245,6 +246,7 @@ bool doesGC(Graph& graph, Node* node)
     case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
+    case FilterDeleteByStatus:
     case DateGetInt32OrNaN:
     case DateGetTime:
     case DataViewGetInt:

@@ -509,6 +509,36 @@ private:
                 changed = true;
                 break;
             }
+
+            case MultiDeleteByOffset: {
+                Edge baseEdge = node->child1();
+                Node* base = baseEdge.node();
+                MultiDeleteByOffsetData& data = node->multiDeleteByOffsetData();
+
+                AbstractValue baseValue = m_state.forNode(base);
+
+                m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
+                alreadyHandled = true; // Don't allow the default constant folder to do things to this.
+
+                for (unsigned i = 0; i < data.variants.size(); ++i) {
+                    DeleteByIdVariant& variant = data.variants[i];
+
+                    if (!baseValue.contains(m_graph.registerStructure(variant.oldStructure()))) {
+                        data.variants[i--] = data.variants.last();
+                        data.variants.removeLast();
+                        changed = true;
+                        continue;
+                    }
+                }
+
+                if (data.variants.size() != 1)
+                    break;
+
+                emitDeleteByOffset(
+                    indexInBlock, node, baseValue, data.variants[0], data.identifierNumber);
+                changed = true;
+                break;
+            }
                 
             case MatchStructure: {
                 Edge baseEdge = node->child1();
@@ -1311,6 +1341,45 @@ private:
                 indexInBlock + 1, SpecNone, PutStructure, origin.withInvalidExit(), OpInfo(transition),
                 childEdge);
         }
+    }
+
+    void emitDeleteByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const DeleteByIdVariant& variant, unsigned identifierNumber)
+    {
+        NodeOrigin origin = node->origin;
+        DFG_ASSERT(m_graph, node, origin.exitOK);
+        addBaseCheck(indexInBlock, node, baseValue, m_graph.registerStructure(variant.oldStructure()));
+        node->child1().setUseKind(KnownCellUse);
+
+        if (!variant.newStructure()) {
+            m_graph.convertToConstant(node, jsBoolean(variant.result()));
+            node->origin = node->origin.withInvalidExit();
+            return;
+        }
+
+        Transition* transition = m_graph.m_transitions.add(
+            m_graph.registerStructure(variant.oldStructure()), m_graph.registerStructure(variant.newStructure()));
+
+        Edge propertyStorage;
+
+        if (isInlineOffset(variant.offset()))
+            propertyStorage = node->child1();
+        else
+            propertyStorage = Edge(m_insertionSet.insertNode(
+                indexInBlock, SpecNone, GetButterfly, origin, node->child1()));
+
+        StorageAccessData& data = *m_graph.m_storageAccessData.add();
+        data.offset = variant.offset();
+        data.identifierNumber = identifierNumber;
+
+        Node* clearValue = m_insertionSet.insertNode(indexInBlock, SpecNone, JSConstant, origin, OpInfo(m_graph.freezeStrong(JSValue())));
+        m_insertionSet.insertNode(
+            indexInBlock, SpecNone, PutByOffset, origin, OpInfo(&data), propertyStorage, node->child1(), Edge(clearValue));
+        origin = origin.withInvalidExit();
+        m_insertionSet.insertNode(
+            indexInBlock, SpecNone, PutStructure, origin, OpInfo(transition),
+            node->child1());
+        m_graph.convertToConstant(node, jsBoolean(variant.result()));
+        node->origin = origin;
     }
     
     void addBaseCheck(

@@ -5255,6 +5255,7 @@ void SpeculativeJIT::compile(Node* node)
     case FilterGetByStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
+    case FilterDeleteByStatus:
         m_interpreter.filterICStatus(node);
         noResult(node);
         break;
@@ -5269,6 +5270,7 @@ void SpeculativeJIT::compile(Node* node)
     case ArithIMul:
     case MultiGetByOffset:
     case MultiPutByOffset:
+    case MultiDeleteByOffset:
     case FiatInt52:
     case CheckBadCell:
     case BottomValue:
