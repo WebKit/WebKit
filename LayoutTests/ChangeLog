@@ -1,3 +1,13 @@
+2020-04-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        CanvasRenderingContext2D.drawImage should ignore the EXIF orientation if the image-orientation is none
+        https://bugs.webkit.org/show_bug.cgi?id=209849
+
+        Reviewed by Darin Adler.
+
+        * fast/images/image-orientation-none-canvas-expected.html: Added.
+        * fast/images/image-orientation-none-canvas.html: Added.
+
 2020-04-05  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Computed style for "outline-offset" is wrong when "outline-style" is "none"

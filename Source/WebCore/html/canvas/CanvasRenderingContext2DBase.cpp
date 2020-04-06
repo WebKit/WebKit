@@ -1464,7 +1464,11 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
         return { };
     FloatRect imageRect = FloatRect(FloatPoint(), size(imageElement, ImageSizeType::BeforeDevicePixelRatio));
 
-    auto result = drawImage(imageElement.document(), imageElement.cachedImage(), imageElement.renderer(), imageRect, srcRect, dstRect, op, blendMode);
+    auto orientation = ImageOrientation::FromImage;
+    if (auto* computedStyle = imageElement.computedStyle())
+        orientation = computedStyle->imageOrientation();
+
+    auto result = drawImage(imageElement.document(), imageElement.cachedImage(), imageElement.renderer(), imageRect, srcRect, dstRect, op, blendMode, orientation);
 
     if (!result.hasException())
         checkOrigin(&imageElement);
@@ -1487,7 +1491,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(TypedOMCSSImageValue& 
 }
 #endif
 
-ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, CachedImage* cachedImage, const RenderObject* renderer, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, CachedImage* cachedImage, const RenderObject* renderer, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode, ImageOrientation orientation)
 {
     if (!std::isfinite(dstRect.x()) || !std::isfinite(dstRect.y()) || !std::isfinite(dstRect.width()) || !std::isfinite(dstRect.height())
         || !std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
@@ -1543,7 +1547,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
         downcast<BitmapImage>(*image).updateFromSettings(document.settings());
     }
 
-    ImagePaintingOptions options = { op, blendMode, ImageOrientation::FromImage };
+    ImagePaintingOptions options = { op, blendMode, orientation };
 
     if (rectContainsCanvas(normalizedDstRect)) {
         c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
