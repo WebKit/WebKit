@@ -54,19 +54,25 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
 @end
 #endif // USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(HAVE_AVOBSERVATIONCONTROLLER)
+#if HAVE(AVOBSERVATIONCONTROLLER)
 #if USE(APPLE_INTERNAL_SDK)
 #import <AVKit/AVObservationController.h>
 #else
+
 @class AVKeyValueChange;
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface AVObservationController<Owner> : NSObject
 - (instancetype)initWithOwner:(Owner)owner NS_DESIGNATED_INITIALIZER;
 - (id)startObserving:(id)object keyPath:(NSString *)keyPath includeInitialValue:(BOOL)shouldIncludeInitialValue observationHandler:(void (^)(Owner owner, id observed, AVKeyValueChange *change))observationHandler;
 - (void)stopAllObservation;
 @end
+
+NS_ASSUME_NONNULL_END
+
 #endif
-#endif // HAVE(HAVE_AVOBSERVATIONCONTROLLER)
+#endif // HAVE(AVOBSERVATIONCONTROLLER)
 
 #if PLATFORM(IOS_FAMILY)
 #import <AVKit/AVKit.h>
