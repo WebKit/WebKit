@@ -79,7 +79,6 @@ function testBasicFailureCases() {
     shouldThrowTypeError(() => ({ x: 'hi' })?.(), '({ x: \'hi\' }) is not a function');
     shouldThrowTypeError(() => []?.(), '[] is not a function');
     shouldThrowTypeError(() => ['hi']?.(), '[\'hi\'] is not a function');
-    shouldThrowTypeError(() => masquerader?.(), 'masquerader is not a function');
 }
 noInline(testBasicFailureCases);
 
@@ -105,6 +104,7 @@ shouldBe(null?.['a'].b()['c'], undefined);
 shouldThrowTypeError(() => (() => {})?.()(), '(() => {})?.() is not a function');
 shouldBe((() => {})?.()?.(), undefined);
 shouldBe(null?.()().a['b'], undefined);
+shouldBe(masquerader?.(), null);
 
 const o0 = { a: { b() { return this._b.bind(this); }, _b() { return this.__b; }, __b: { c: 42 } } };
 shouldBe(o0?.a?.['b']?.()?.()?.c, 42);

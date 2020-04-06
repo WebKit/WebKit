@@ -1,3 +1,12 @@
+2020-04-06  Rick Waldron  <waldron.rick@gmail.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove unnecessary Test262 harness file and implement $262.IsHTMLDDA
+        https://bugs.webkit.org/show_bug.cgi?id=187526
+
+        Reviewed by Darin Adler.
+
+        * stress/optional-chaining.js: Adjust test for callable masquerader.
+
 2020-04-06  Justin Michaud  <justin_michaud@apple.com>
 
         Allow deleteById to be cached in the DFG

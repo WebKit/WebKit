@@ -1,3 +1,15 @@
+2020-04-06  Rick Waldron  <waldron.rick@gmail.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove unnecessary Test262 harness file and implement $262.IsHTMLDDA
+        https://bugs.webkit.org/show_bug.cgi?id=187526
+
+        Reviewed by Darin Adler.
+
+        Removed file duplicates functionality of jsc.cpp's GlobalObject::finishCreation.
+
+        * Scripts/test262/Runner.pm:
+        * Scripts/test262/agent.js: Removed.
+
 2020-04-06  Saam Barati  <sbarati@apple.com>
 
         Implement 1GB of executable memory on arm64

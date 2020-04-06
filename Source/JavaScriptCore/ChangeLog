@@ -1,3 +1,30 @@
+2020-04-06  Rick Waldron  <waldron.rick@gmail.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove unnecessary Test262 harness file and implement $262.IsHTMLDDA
+        https://bugs.webkit.org/show_bug.cgi?id=187526
+
+        Reviewed by Darin Adler.
+
+        Test262 harness requires [1] $262.IsHTMLDDA to be an object with [[IsHTMLDDA]] slot [2],
+        much like `document.all`. It is used in a few tests to make sure that runtimes strictly
+        compare values with `null` and `undefined`.
+
+        With this change, `makeMasquerader` returns callable masquerader to mimic `document.all`
+        in the wild. In order to avoid `masqueradesAsUndefinedWatchpoint` being fired during
+        initialization of JSC shell, $262.IsHTMLDDA is a getter.
+
+        [1]: https://github.com/tc39/test262/blob/master/INTERPRETING.md#host-defined-functions
+        [2]: https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
+
+        * jsc.cpp:
+        (functionMakeMasquerader):
+        (functionCallMasquerader):
+        (JSC::Masquerader::Masquerader): Deleted.
+        (JSC::Masquerader::subspaceFor): Deleted.
+        (JSC::Masquerader::create): Deleted.
+        (JSC::Masquerader::createStructure): Deleted.
+        * runtime/JSObject.h:
+
 2020-04-06  Justin Michaud  <justin_michaud@apple.com>
 
         Allow deleteById to be cached in the DFG

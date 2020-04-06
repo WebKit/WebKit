@@ -327,7 +327,6 @@ sub main {
         "$harnessDir/sta.js",
         "$harnessDir/assert.js",
         "$harnessDir/doneprintHandle.js",
-        "$Bin/agent.js"
     );
 
     print $deffh getHarness(\@defaultHarnessFiles);
