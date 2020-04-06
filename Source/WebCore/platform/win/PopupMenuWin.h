@@ -49,6 +49,8 @@ public:
 
     static LPCWSTR popupClassName();
 
+    String debugDescription() const final;
+
 private:
     PopupMenuClient* client() const { return m_popupClient; }
 

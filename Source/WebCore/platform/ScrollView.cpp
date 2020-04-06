@@ -35,6 +35,7 @@
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
+#include <wtf/HexNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/TextStream.h>
 
@@ -1532,6 +1533,11 @@ IntPoint ScrollView::locationOfContents() const
     return result;
 }
 
+String ScrollView::debugDescription() const
+{
+    return makeString("ScrollView 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+}
+
 #if !PLATFORM(COCOA)
 
 void ScrollView::platformAddChild(Widget*)
@@ -1541,10 +1547,6 @@ void ScrollView::platformAddChild(Widget*)
 void ScrollView::platformRemoveChild(Widget*)
 {
 }
-
-#endif
-
-#if !PLATFORM(COCOA)
 
 void ScrollView::platformSetScrollbarsSuppressed(bool)
 {
@@ -1557,10 +1559,6 @@ void ScrollView::platformSetScrollOrigin(const IntPoint&, bool, bool)
 void ScrollView::platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle)
 {
 }
-
-#endif
-
-#if !PLATFORM(COCOA)
 
 void ScrollView::platformSetScrollbarModes()
 {
@@ -1652,6 +1650,6 @@ bool ScrollView::platformIsOffscreen() const
     return false;
 }
 
-#endif
+#endif // !PLATFORM(COCOA)
 
 }

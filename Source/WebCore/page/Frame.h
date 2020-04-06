@@ -190,6 +190,8 @@ public:
 
     bool requestDOMPasteAccess();
 
+    String debugDescription() const;
+
 // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
     WEBCORE_EXPORT void injectUserScripts(UserScriptInjectionTime);

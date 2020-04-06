@@ -449,6 +449,7 @@ private:
     bool setHasScrollbarInternal(RefPtr<Scrollbar>&, ScrollbarOrientation, bool hasBar, bool* contentSizeAffected);
 
     bool isScrollView() const final { return true; }
+    String debugDescription() const override;
 
     void init();
     void destroy();

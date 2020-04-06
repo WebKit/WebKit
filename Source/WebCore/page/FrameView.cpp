@@ -103,13 +103,13 @@
 #include "VelocityData.h"
 #include "VisualViewport.h"
 #include "WheelEventTestMonitor.h"
-#include <wtf/text/TextStream.h>
-
+#include <wtf/HexNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/text/TextStream.h>
 
 #if USE(COORDINATED_GRAPHICS)
 #include "TiledBackingStore.h"
@@ -1423,9 +1423,13 @@ void FrameView::logMockScrollAnimatorMessage(const String& message) const
     StringBuilder builder;
     if (frame().isMainFrame())
         builder.appendLiteral("Main");
-    builder.appendLiteral("FrameView: ");
-    builder.append(message);
+    builder.append("FrameView: ", message);
     document->addConsoleMessage(MessageSource::Other, MessageLevel::Debug, builder.toString());
+}
+
+String FrameView::debugDescription() const
+{
+    return makeString("FrameView 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', frame().debugDescription());
 }
 
 bool FrameView::styleHidesScrollbarWithOrientation(ScrollbarOrientation orientation) const
@@ -5458,7 +5462,7 @@ bool FrameView::shouldPlaceBlockDirectionScrollbarOnLeft() const
 
 TextStream& operator<<(TextStream& ts, const FrameView& view)
 {
-    ts << "FrameView " << &view << " frame " << view.frame();
+    ts << view.debugDescription();
     return ts;
 }
 

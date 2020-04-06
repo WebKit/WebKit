@@ -31,6 +31,10 @@
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class FloatPoint;
@@ -345,6 +349,8 @@ public:
     virtual void logMockScrollAnimatorMessage(const String&) const { };
 
     virtual bool shouldPlaceBlockDirectionScrollbarOnLeft() const = 0;
+    
+    virtual String debugDescription() const = 0;
 
 protected:
     WEBCORE_EXPORT ScrollableArea();
@@ -413,5 +419,7 @@ private:
     unsigned m_scrollShouldClearLatchedState : 1;
     unsigned m_currentScrollBehaviorStatus : 1;
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const ScrollableArea&);
 
 } // namespace WebCore

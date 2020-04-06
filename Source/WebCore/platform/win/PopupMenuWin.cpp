@@ -49,7 +49,9 @@
 #include "ScrollbarThemeWin.h"
 #include "TextRun.h"
 #include "WebCoreInstanceHandle.h"
+#include <wtf/HexNumber.h>
 #include <wtf/WindowsExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 #include <windows.h>
 #include <windowsx.h>
@@ -1080,6 +1082,11 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
     }
 
     return lResult;
+}
+
+String PopupMenuWin::debugDescription() const
+{
+    return makeString("PopupMenuWin 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }
 
 AccessiblePopupMenu::AccessiblePopupMenu(const PopupMenuWin& popupMenu)

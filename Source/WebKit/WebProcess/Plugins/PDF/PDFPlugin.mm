@@ -89,6 +89,7 @@
 #import <WebCore/WheelEventTestMonitor.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
+#import <wtf/HexNumber.h>
 #import <wtf/UUID.h>
 #import <wtf/WTFSemaphore.h>
 #import <wtf/WorkQueue.h>
@@ -1281,6 +1282,11 @@ IntPoint PDFPlugin::convertFromContainingViewToScrollbar(const Scrollbar& scroll
     point.move(pluginView()->location() - scrollbar.location());
     
     return point;
+}
+
+String PDFPlugin::debugDescription() const
+{
+    return makeString("PDFPlugin 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 }
 
 bool PDFPlugin::handleScroll(ScrollDirection direction, ScrollGranularity granularity)

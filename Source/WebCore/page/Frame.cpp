@@ -103,6 +103,7 @@
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <JavaScriptCore/RegularExpression.h>
+#include <wtf/HexNumber.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -1058,9 +1059,23 @@ void Frame::selfOnlyDeref()
     deref();
 }
 
+String Frame::debugDescription() const
+{
+    StringBuilder builder;
+
+    builder.append("Frame 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+    if (isMainFrame())
+        builder.append(" (main frame)"_s);
+
+    if (auto document = this->document())
+        builder.append(' ', document->documentURI());
+    
+    return builder.toString();
+}
+
 TextStream& operator<<(TextStream& ts, const Frame& frame)
 {
-    ts << "Frame " << &frame << " view " << frame.view() << " (is main frame " << frame.isMainFrame() << ") " << (frame.document() ? frame.document()->documentURI() : emptyString());
+    ts << frame.debugDescription();
     return ts;
 }
 

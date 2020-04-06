@@ -926,6 +926,8 @@ public:
 
     void invalidateEventRegion();
 
+    String debugDescription() const final;
+
 private:
 
     void setNextSibling(RenderLayer* next) { m_next = next; }

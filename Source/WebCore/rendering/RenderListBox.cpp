@@ -910,6 +910,11 @@ void RenderListBox::logMockScrollAnimatorMessage(const String& message) const
     document().addConsoleMessage(MessageSource::Other, MessageLevel::Debug, "RenderListBox: " + message);
 }
 
+String RenderListBox::debugDescription() const
+{
+    return RenderObject::debugDescription();
+}
+
 Ref<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;

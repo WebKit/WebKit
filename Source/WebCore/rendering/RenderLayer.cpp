@@ -127,6 +127,7 @@
 #include "TranslateTransformOperation.h"
 #include "WheelEventTestMonitor.h"
 #include <stdio.h>
+#include <wtf/HexNumber.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -3625,6 +3626,36 @@ void RenderLayer::logMockScrollAnimatorMessage(const String& message) const
     renderer().document().addConsoleMessage(MessageSource::Other, MessageLevel::Debug, "RenderLayer: " + message);
 }
 
+String RenderLayer::debugDescription() const
+{
+    StringBuilder builder;
+    builder.append("RenderLayer 0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', size().width(), 'x', size().height());
+
+    if (transform())
+        builder.append(" has transform"_s);
+
+    if (hasFilter())
+        builder.append(" has filter"_s);
+
+    if (hasBackdropFilter())
+        builder.append(" has backdrop filter"_s);
+
+    if (hasBlendMode())
+        builder.append(" has blend mode"_s);
+
+    if (isolatesBlending())
+        builder.append(" isolates blending"_s);
+
+    if (isComposited()) {
+        // Oh for better StringBuilder/TextStream integration.
+        TextStream stream;
+        stream << *backing();
+        builder.append(stream.release());
+    }
+
+    return builder.toString();
+}
+
 int RenderLayer::verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy) const
 {
     if (!m_vBar
@@ -7011,19 +7042,7 @@ TextStream& operator<<(WTF::TextStream& ts, ClipRectsType clipRectsType)
 
 TextStream& operator<<(TextStream& ts, const RenderLayer& layer)
 {
-    ts << "RenderLayer " << &layer << " " << layer.size();
-    if (layer.transform())
-        ts << " has transform";
-    if (layer.hasFilter())
-        ts << " has filter";
-    if (layer.hasBackdropFilter())
-        ts << " has backdrop filter";
-    if (layer.hasBlendMode())
-        ts << " has blend mode";
-    if (layer.isolatesBlending())
-        ts << " isolates blending";
-    if (layer.isComposited())
-        ts << " " << *layer.backing();
+    ts << layer.debugDescription();
     return ts;
 }
 

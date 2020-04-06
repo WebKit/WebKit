@@ -41,6 +41,8 @@
 #include <WebCore/ScrollbarThemeWin.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <windowsx.h>
+#include <wtf/HexNumber.h>
+#include <wtf/text/StringBuilder.h>
 
 #if USE(DIRECT2D)
 #include <WebCore/Direct2DUtilities.h>
@@ -1033,4 +1035,10 @@ void WebPopupMenuProxyWin::configureBackingStore(const WebCore::IntSize& size)
     m_immediateContext->ClearRenderTargetView(m_renderTargetView.get(), DirectX::Colors::BlanchedAlmond); 
 }
 #endif
+
+String WebPopupMenuProxyWin::debugDescription() const
+{
+    return makeString("WebPopupMenuProxyWin 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+}
+
 } // namespace WebKit

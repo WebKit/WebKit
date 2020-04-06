@@ -769,4 +769,10 @@ void ScrollableArea::computeScrollbarValueAndOverhang(float currentPosition, flo
     }
 }
 
+TextStream& operator<<(TextStream& ts, const ScrollableArea& scrollableArea)
+{
+    ts << scrollableArea.debugDescription();
+    return ts;
+}
+
 } // namespace WebCore
