@@ -1,3 +1,71 @@
+2020-04-06  youenn fablet  <youenn@apple.com>
+
+        Add HEVC support in GPU Process for WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=209857
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.h: Copied from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/WebKitUtilities.h.
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.mm: Added.
+        (-[WK_RTCLocalVideoH264H265Decoder initH264DecoderWithCallback:]):
+        (-[WK_RTCLocalVideoH264H265Decoder initH265DecoderWithCallback:]):
+        (-[WK_RTCLocalVideoH264H265Decoder decodeData:size:timeStamp:]):
+        (-[WK_RTCLocalVideoH264H265Decoder releaseDecoder]):
+        (webrtc::videoDecoderCallbacks):
+        (webrtc::setVideoDecoderCallbacks):
+        (webrtc::RemoteVideoDecoder::RemoteVideoDecoder):
+        (webrtc::RemoteVideoDecoder::decodeComplete):
+        (webrtc::RemoteVideoDecoder::InitDecode):
+        (webrtc::RemoteVideoDecoder::Decode):
+        (webrtc::RemoteVideoDecoder::RegisterDecodeCompleteCallback):
+        (webrtc::RemoteVideoDecoder::Release):
+        (webrtc::RemoteVideoDecoderFactory::RemoteVideoDecoderFactory):
+        (webrtc::RemoteVideoDecoderFactory::GetSupportedFormats const):
+        (webrtc::RemoteVideoDecoderFactory::CreateVideoDecoder):
+        (webrtc::createWebKitDecoderFactory):
+        (webrtc::createLocalH264Decoder):
+        (webrtc::createLocalH265Decoder):
+        (webrtc::releaseLocalDecoder):
+        (webrtc::decodeFrame):
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm:
+        (-[WK_RTCLocalVideoH264H265Encoder initWithCodecInfo:]):
+        (-[WK_RTCLocalVideoH264H265Encoder setCallback:]):
+        (-[WK_RTCLocalVideoH264H265Encoder releaseEncoder]):
+        (-[WK_RTCLocalVideoH264H265Encoder startEncodeWithSettings:numberOfCores:]):
+        (-[WK_RTCLocalVideoH264H265Encoder encode:codecSpecificInfo:frameTypes:]):
+        (-[WK_RTCLocalVideoH264H265Encoder setBitrate:framerate:]):
+        (webrtc::createLocalEncoder):
+        (webrtc::releaseLocalEncoder):
+        (webrtc::initializeLocalEncoder):
+        (webrtc::encodeLocalEncoderFrame):
+        (webrtc::setLocalEncoderRates):
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        (): Deleted.
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::videoDecoderCallbacks): Deleted.
+        (webrtc::setVideoDecoderCallbacks): Deleted.
+        (webrtc::RemoteVideoDecoder::RemoteVideoDecoder): Deleted.
+        (webrtc::RemoteVideoDecoder::decodeComplete): Deleted.
+        (webrtc::RemoteVideoDecoder::InitDecode): Deleted.
+        (webrtc::RemoteVideoDecoder::Decode): Deleted.
+        (webrtc::RemoteVideoDecoder::RegisterDecodeCompleteCallback): Deleted.
+        (webrtc::RemoteVideoDecoder::Release): Deleted.
+        (webrtc::RemoteVideoDecoderFactory::RemoteVideoDecoderFactory): Deleted.
+        (webrtc::RemoteVideoDecoderFactory::GetSupportedFormats const): Deleted.
+        (webrtc::RemoteVideoDecoderFactory::CreateVideoDecoder): Deleted.
+        (webrtc::createWebKitDecoderFactory): Deleted.
+        (webrtc::createLocalDecoder): Deleted.
+        (webrtc::releaseLocalDecoder): Deleted.
+        (webrtc::decodeFrame): Deleted.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm:
+        (-[RTCVideoDecoderH265 decode:missingFrames:codecSpecificInfo:renderTimeMs:]):
+        (-[RTCVideoDecoderH265 decodeData:size:timeStamp:]):
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-04-03  David Kilzer  <ddkilzer@apple.com>
 
         [Xcode] Replace ASAN_OTHER_CFLAGS and ASAN_OTHER_CPLUSPLUSFLAGS with $(inherited)

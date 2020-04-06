@@ -34,8 +34,8 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/RemoteVideoSample.h>
+#include <webrtc/sdk/WebKit/WebKitDecoder.h>
 #include <webrtc/sdk/WebKit/WebKitEncoder.h>
-#include <webrtc/sdk/WebKit/WebKitUtilities.h>
 #include <wtf/MediaTime.h>
 
 namespace WebKit {
@@ -53,10 +53,19 @@ LibWebRTCCodecsProxy::~LibWebRTCCodecsProxy()
         webrtc::releaseLocalEncoder(encoder);
 }
 
-void LibWebRTCCodecsProxy::createDecoder(RTCDecoderIdentifier identifier)
+void LibWebRTCCodecsProxy::createH264Decoder(RTCDecoderIdentifier identifier)
 {
     ASSERT(!m_decoders.contains(identifier));
-    m_decoders.add(identifier, webrtc::createLocalDecoder(^(CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) {
+    m_decoders.add(identifier, webrtc::createLocalH264Decoder(^(CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) {
+        if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1)))
+            m_gpuConnectionToWebProcess.connection().send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
+    }));
+}
+
+void LibWebRTCCodecsProxy::createH265Decoder(RTCDecoderIdentifier identifier)
+{
+    ASSERT(!m_decoders.contains(identifier));
+    m_decoders.add(identifier, webrtc::createLocalH265Decoder(^(CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) {
         if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1)))
             m_gpuConnectionToWebProcess.connection().send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
     }));
@@ -80,7 +89,7 @@ void LibWebRTCCodecsProxy::decodeFrame(RTCDecoderIdentifier identifier, uint32_t
         m_gpuConnectionToWebProcess.connection().send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
 }
 
-void LibWebRTCCodecsProxy::createEncoder(RTCEncoderIdentifier identifier, const Vector<std::pair<String, String>>& parameters)
+void LibWebRTCCodecsProxy::createEncoder(RTCEncoderIdentifier identifier, const String& formatName, const Vector<std::pair<String, String>>& parameters)
 {
     ASSERT(!m_encoders.contains(identifier));
 
@@ -88,7 +97,7 @@ void LibWebRTCCodecsProxy::createEncoder(RTCEncoderIdentifier identifier, const 
     for (auto& parameter : parameters)
         rtcParameters.emplace(parameter.first.utf8().data(), parameter.second.utf8().data());
     
-    m_encoders.add(identifier, webrtc::createLocalEncoder(webrtc::SdpVideoFormat { "H264", rtcParameters }, ^(const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info, webrtc::RTPFragmentationHeader* header) {
+    m_encoders.add(identifier, webrtc::createLocalEncoder(webrtc::SdpVideoFormat { formatName.utf8().data(), rtcParameters }, ^(const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info, webrtc::RTPFragmentationHeader* header) {
         
         m_gpuConnectionToWebProcess.connection().send(Messages::LibWebRTCCodecs::CompletedEncoding { identifier, IPC::DataReference { buffer, size }, info, webrtc::WebKitRTPFragmentationHeader { header } }, 0);
     }));

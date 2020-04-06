@@ -72,7 +72,8 @@ public:
         RefPtr<IPC::Connection> connection;
     };
 
-    Decoder* createDecoder();
+    enum class Type { H264, H265 };
+    Decoder* createDecoder(Type);
     int32_t releaseDecoder(Decoder&);
     int32_t decodeFrame(Decoder&, uint32_t timeStamp, const uint8_t*, size_t);
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
@@ -86,7 +87,7 @@ public:
         RefPtr<IPC::Connection> connection;
     };
 
-    Encoder* createEncoder(const std::map<std::string, std::string>&);
+    Encoder* createEncoder(Type, const std::map<std::string, std::string>&);
     int32_t releaseEncoder(Encoder&);
     int32_t initializeEncoder(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
     int32_t encodeFrame(Encoder&, const WebCore::RemoteVideoSample&, bool shouldEncodeAsKeyFrame);

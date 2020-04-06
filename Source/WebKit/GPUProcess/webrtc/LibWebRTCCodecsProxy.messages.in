@@ -24,11 +24,12 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 messages -> LibWebRTCCodecsProxy NotRefCounted {
-    CreateDecoder(WebKit::RTCDecoderIdentifier id)
+    CreateH264Decoder(WebKit::RTCDecoderIdentifier id)
+    CreateH265Decoder(WebKit::RTCDecoderIdentifier id)
     ReleaseDecoder(WebKit::RTCDecoderIdentifier id)
     DecodeFrame(WebKit::RTCDecoderIdentifier id, uint32_t timeStamp, IPC::DataReference data)
 
-    CreateEncoder(WebKit::RTCEncoderIdentifier id, Vector<std::pair<String, String>> parameters);
+    CreateEncoder(WebKit::RTCEncoderIdentifier id, String formatName, Vector<std::pair<String, String>> parameters);
     ReleaseEncoder(WebKit::RTCEncoderIdentifier id)
     InitializeEncoder(WebKit::RTCEncoderIdentifier id, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate)
     EncodeFrame(WebKit::RTCEncoderIdentifier id, WebCore::RemoteVideoSample sample, bool shouldEncodeAsKeyFrame)

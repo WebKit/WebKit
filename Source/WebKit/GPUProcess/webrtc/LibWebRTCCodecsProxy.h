@@ -62,11 +62,12 @@ public:
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void createDecoder(RTCDecoderIdentifier);
+    void createH264Decoder(RTCDecoderIdentifier);
+    void createH265Decoder(RTCDecoderIdentifier);
     void releaseDecoder(RTCDecoderIdentifier);
     void decodeFrame(RTCDecoderIdentifier, uint32_t timeStamp, const IPC::DataReference&);
 
-    void createEncoder(RTCEncoderIdentifier, const Vector<std::pair<String, String>>&);
+    void createEncoder(RTCEncoderIdentifier, const String&, const Vector<std::pair<String, String>>&);
     void releaseEncoder(RTCEncoderIdentifier);
     void initializeEncoder(RTCEncoderIdentifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
     void encodeFrame(RTCEncoderIdentifier, WebCore::RemoteVideoSample&&, bool shouldEncodeAsKeyFrame);

@@ -35,20 +35,25 @@
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/RealtimeVideoUtilities.h>
 #include <WebCore/RemoteVideoSample.h>
-#include <pal/cf/CoreMediaSoftLink.h>
+#include <webrtc/sdk/WebKit/WebKitDecoder.h>
 #include <webrtc/sdk/WebKit/WebKitEncoder.h>
 #include <webrtc/sdk/WebKit/WebKitUtilities.h>
 #include <wtf/MainThread.h>
+
+#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoFormat& format)
 {
-    if (format.name != "H264")
-        return nullptr;
+    if (format.name == "H264")
+        return WebProcess::singleton().libWebRTCCodecs().createDecoder(LibWebRTCCodecs::Type::H264);
 
-    return WebProcess::singleton().libWebRTCCodecs().createDecoder();
+    if (format.name == "H265")
+        return WebProcess::singleton().libWebRTCCodecs().createDecoder(LibWebRTCCodecs::Type::H265);
+
+    return nullptr;
 }
 
 static int32_t releaseVideoDecoder(webrtc::WebKitVideoDecoder decoder)
@@ -69,10 +74,13 @@ static int32_t registerDecodeCompleteCallback(webrtc::WebKitVideoDecoder decoder
 
 static webrtc::WebKitVideoEncoder createVideoEncoder(const webrtc::SdpVideoFormat& format)
 {
-    if (format.name != "H264")
-        return nullptr;
+    if (format.name == "H264")
+        return WebProcess::singleton().libWebRTCCodecs().createEncoder(LibWebRTCCodecs::Type::H264, format.parameters);
 
-    return WebProcess::singleton().libWebRTCCodecs().createEncoder(format.parameters);
+    if (format.name == "H265")
+        return WebProcess::singleton().libWebRTCCodecs().createEncoder(LibWebRTCCodecs::Type::H265, format.parameters);
+
+    return nullptr;
 }
 
 static int32_t releaseVideoEncoder(webrtc::WebKitVideoEncoder encoder)
@@ -148,17 +156,24 @@ void LibWebRTCCodecs::setCallbacks(bool useGPUProcess)
     webrtc::setVideoEncoderCallbacks(createVideoEncoder, releaseVideoEncoder, initializeVideoEncoder, encodeVideoFrame, registerEncodeCompleteCallback, setEncodeRatesCallback);
 }
 
-LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder()
+LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(Type type)
 {
     auto decoder = makeUnique<Decoder>();
     auto* result = decoder.get();
     decoder->identifier = RTCDecoderIdentifier::generateThreadSafe();
 
-    callOnMainRunLoop([this, decoder = WTFMove(decoder)]() mutable {
+    callOnMainRunLoop([this, decoder = WTFMove(decoder), type]() mutable {
         decoder->connection = &WebProcess::singleton().ensureGPUProcessConnection().connection();
 
         auto decoderIdentifier = decoder->identifier;
-        decoder->connection->send(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoderIdentifier }, 0);
+        switch (type) {
+        case Type::H264:
+            decoder->connection->send(Messages::LibWebRTCCodecsProxy::CreateH264Decoder { decoderIdentifier }, 0);
+            break;
+        case Type::H265:
+            decoder->connection->send(Messages::LibWebRTCCodecsProxy::CreateH265Decoder { decoderIdentifier }, 0);
+            break;
+        }
 
         ASSERT(!m_decoders.contains(decoderIdentifier));
         m_decoders.add(decoderIdentifier, WTFMove(decoder));
@@ -238,7 +253,17 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
     webrtc::RemoteVideoDecoder::decodeComplete(decoder->decodedImageCallback, timeStamp, pixelBuffer.get(), remoteSample.time().toDouble());
 }
 
-LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(const std::map<std::string, std::string>& formatParameters)
+static inline String formatNameFromCodecType(LibWebRTCCodecs::Type type)
+{
+    switch (type) {
+    case LibWebRTCCodecs::Type::H264:
+        return "H264"_s;
+    case LibWebRTCCodecs::Type::H265:
+        return "H265"_s;
+    }
+}
+
+LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::map<std::string, std::string>& formatParameters)
 {
     auto encoder = makeUnique<Encoder>();
     auto* result = encoder.get();
@@ -248,11 +273,11 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(const std::map<std::str
     for (auto& keyValue : formatParameters)
         parameters.append(std::make_pair(String::fromUTF8(keyValue.first.data(), keyValue.first.length()), String::fromUTF8(keyValue.second.data(), keyValue.second.length())));
 
-    callOnMainRunLoop([this, encoder = WTFMove(encoder), parameters = WTFMove(parameters)]() mutable {
+    callOnMainRunLoop([this, encoder = WTFMove(encoder), type, parameters = WTFMove(parameters)]() mutable {
         auto encoderIdentifier = encoder->identifier;
         ASSERT(!m_encoders.contains(encoderIdentifier));
 
-        WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoderIdentifier, parameters }, 0);
+        WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoderIdentifier, formatNameFromCodecType(type), parameters }, 0);
         m_encoders.add(encoderIdentifier, WTFMove(encoder));
     });
     return result;

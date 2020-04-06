@@ -34,8 +34,64 @@
 #include "sdk/objc/api/peerconnection/RTCVideoCodecInfo+Private.h"
 #include "sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.h"
 #include "sdk/objc/components/video_codec/RTCVideoEncoderH264.h"
+#include "sdk/objc/components/video_codec/RTCVideoEncoderH265.h"
 #include "sdk/objc/native/src/objc_frame_buffer.h"
 
+
+@interface WK_RTCLocalVideoH264H265Encoder : NSObject
+- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo*)codecInfo;
+- (void)setCallback:(RTCVideoEncoderCallback)callback;
+- (NSInteger)releaseEncoder;
+- (NSInteger)startEncodeWithSettings:(RTCVideoEncoderSettings *)settings numberOfCores:(int)numberOfCores;
+- (NSInteger)encode:(RTCVideoFrame *)frame codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info frameTypes:(NSArray<NSNumber *> *)frameTypes;
+- (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate;
+@end
+
+@implementation WK_RTCLocalVideoH264H265Encoder {
+    RTCVideoEncoderH264 *m_h264Encoder;
+    RTCVideoEncoderH265 *m_h265Encoder;
+}
+
+- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo*)codecInfo {
+    if (self = [super init]) {
+        if ([codecInfo.name isEqualToString:@"H265"])
+            m_h265Encoder = [[RTCVideoEncoderH265 alloc] init];
+        else
+            m_h264Encoder = [[RTCVideoEncoderH264 alloc] init];
+    }
+    return self;
+}
+
+- (void)setCallback:(RTCVideoEncoderCallback)callback {
+    if (m_h264Encoder)
+        return [m_h264Encoder setCallback:callback];
+    return [m_h265Encoder setCallback:callback];
+}
+
+- (NSInteger)releaseEncoder {
+    if (m_h264Encoder)
+        return [m_h264Encoder releaseEncoder];
+    return [m_h265Encoder releaseEncoder];
+}
+
+- (NSInteger)startEncodeWithSettings:(RTCVideoEncoderSettings *)settings numberOfCores:(int)numberOfCores {
+    if (m_h264Encoder)
+        return [m_h264Encoder startEncodeWithSettings:settings numberOfCores:numberOfCores];
+    return [m_h265Encoder startEncodeWithSettings:settings numberOfCores:numberOfCores];
+}
+
+- (NSInteger)encode:(RTCVideoFrame *)frame codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info frameTypes:(NSArray<NSNumber *> *)frameTypes {
+    if (m_h264Encoder)
+        return [m_h264Encoder encode:frame codecSpecificInfo:info frameTypes:frameTypes];
+    return [m_h265Encoder encode:frame codecSpecificInfo:info frameTypes:frameTypes];
+}
+
+- (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
+    if (m_h264Encoder)
+        return [m_h264Encoder setBitrate:bitrateKbit framerate:framerate];
+    return [m_h265Encoder setBitrate:bitrateKbit framerate:framerate];
+}
+@end
 namespace webrtc {
 
 std::unique_ptr<VideoEncoder> VideoEncoderFactoryWithSimulcast::CreateVideoEncoder(const SdpVideoFormat& format)
@@ -150,8 +206,8 @@ void RemoteVideoEncoder::encodeComplete(void* callback, uint8_t* buffer, size_t 
 void* createLocalEncoder(const webrtc::SdpVideoFormat& format, LocalEncoderCallback callback)
 {
     auto *codecInfo = [[RTCVideoCodecInfo alloc] initWithNativeSdpVideoFormat: format];
-    auto *encoder = [[RTCVideoEncoderH264 alloc] initWithCodecInfo:codecInfo];
-    
+    auto *encoder = [[WK_RTCLocalVideoH264H265Encoder alloc] initWithCodecInfo:codecInfo];
+
     [encoder setCallback:^BOOL(RTCEncodedImage *_Nonnull frame, id<RTCCodecSpecificInfo> _Nonnull codecSpecificInfo,  RTCRtpFragmentationHeader *_Nonnull header) {
         EncodedImage encodedImage = [frame nativeEncodedImage];
 
@@ -178,7 +234,7 @@ void* createLocalEncoder(const webrtc::SdpVideoFormat& format, LocalEncoderCallb
 
 void releaseLocalEncoder(LocalEncoder localEncoder)
 {
-    auto *encoder = (__bridge_transfer RTCVideoEncoderH264 *)(localEncoder);
+    auto *encoder = (__bridge_transfer WK_RTCLocalVideoH264H265Encoder *)(localEncoder);
     [encoder releaseEncoder];
 }
 
@@ -192,7 +248,7 @@ void initializeLocalEncoder(LocalEncoder localEncoder, uint16_t width, uint16_t 
     codecSettings.minBitrate = minBitrate;
     codecSettings.maxFramerate = maxFramerate;
 
-    auto *encoder = (__bridge RTCVideoEncoderH264 *)(localEncoder);
+    auto *encoder = (__bridge WK_RTCLocalVideoH264H265Encoder *)(localEncoder);
     [encoder startEncodeWithSettings:[[RTCVideoEncoderSettings alloc] initWithNativeVideoCodec:&codecSettings] numberOfCores:1];
 }
 
@@ -203,13 +259,13 @@ void encodeLocalEncoderFrame(LocalEncoder localEncoder, CVPixelBufferRef pixelBu
         [rtcFrameTypes addObject:@(RTCFrameType(RTCFrameTypeVideoFrameKey))];
 
     auto *videoFrame = [[RTCVideoFrame alloc] initWithBuffer:ToObjCVideoFrameBuffer(pixelBufferToFrame(pixelBuffer)) rotation:RTCVideoRotation(rotation) timeStampNs:timeStamp];
-    auto *encoder = (__bridge RTCVideoEncoderH264 *)(localEncoder);
+    auto *encoder = (__bridge WK_RTCLocalVideoH264H265Encoder *)(localEncoder);
     [encoder encode:videoFrame codecSpecificInfo:nil frameTypes:rtcFrameTypes];
 }
 
 void setLocalEncoderRates(LocalEncoder localEncoder, uint32_t bitRate, uint32_t frameRate)
 {
-    auto *encoder = (__bridge RTCVideoEncoderH264 *)(localEncoder);
+    auto *encoder = (__bridge WK_RTCLocalVideoH264H265Encoder *)(localEncoder);
     [encoder setBitrate:bitRate framerate:frameRate];
 }
 

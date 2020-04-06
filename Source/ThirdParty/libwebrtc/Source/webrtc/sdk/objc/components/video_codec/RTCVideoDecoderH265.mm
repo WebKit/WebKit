@@ -89,7 +89,10 @@ void h265DecompressionOutputCallback(void* decoder,
       codecSpecificInfo:(__nullable id<RTCCodecSpecificInfo>)info
            renderTimeMs:(int64_t)renderTimeMs {
   RTC_DCHECK(inputImage.buffer);
+  return [self decodeData: (uint8_t *)inputImage.buffer.bytes size: inputImage.buffer.length timeStamp: inputImage.timeStamp];
+}
 
+- (NSInteger)decodeData:(const uint8_t *)data size:(size_t)size timeStamp:(uint32_t)timeStamp {
   if (_error != noErr) {
     RTC_LOG(LS_WARNING) << "Last frame decode failed.";
     _error = noErr;
@@ -98,7 +101,7 @@ void h265DecompressionOutputCallback(void* decoder,
 
   rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat =
       rtc::ScopedCF(webrtc::CreateH265VideoFormatDescription(
-          (uint8_t*)inputImage.buffer.bytes, inputImage.buffer.length));
+          (uint8_t*)data, size));
   if (inputFormat) {
     CMVideoDimensions dimensions =
         CMVideoFormatDescriptionGetDimensions(inputFormat.get());
@@ -123,9 +126,10 @@ void h265DecompressionOutputCallback(void* decoder,
     RTC_LOG(LS_WARNING) << "Missing video format. Frame with sps/pps required.";
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
+
   CMSampleBufferRef sampleBuffer = nullptr;
   if (!webrtc::H265AnnexBBufferToCMSampleBuffer(
-          (uint8_t*)inputImage.buffer.bytes, inputImage.buffer.length,
+          (uint8_t*)data, size,
           _videoFormat, &sampleBuffer)) {
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
@@ -134,7 +138,7 @@ void h265DecompressionOutputCallback(void* decoder,
       kVTDecodeFrame_EnableAsynchronousDecompression;
   std::unique_ptr<RTCH265FrameDecodeParams> frameDecodeParams;
   frameDecodeParams.reset(
-      new RTCH265FrameDecodeParams(_callback, inputImage.timeStamp));
+      new RTCH265FrameDecodeParams(_callback, timeStamp));
   OSStatus status = VTDecompressionSessionDecodeFrame(
       _decompressionSession, sampleBuffer, decodeFlags,
       frameDecodeParams.release(), nullptr);
@@ -144,7 +148,7 @@ void h265DecompressionOutputCallback(void* decoder,
   if (status == kVTInvalidSessionErr &&
       [self resetDecompressionSession] == WEBRTC_VIDEO_CODEC_OK) {
     frameDecodeParams.reset(
-        new RTCH265FrameDecodeParams(_callback, inputImage.timeStamp));
+        new RTCH265FrameDecodeParams(_callback, timeStamp));
     status = VTDecompressionSessionDecodeFrame(
         _decompressionSession, sampleBuffer, decodeFlags,
         frameDecodeParams.release(), nullptr);
