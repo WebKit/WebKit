@@ -958,6 +958,8 @@ webkit.org/b/207728 [ Release ] accessibility/press-targets-center-point.html [ 
 
 webkit.org/b/206699 http/tests/media/now-playing-info.html [ Pass Failure ]
 
+webkit.org/b/209989 [ Mojave Debug ] http/tests/media/clearkey/collect-webkit-media-session.html [ Failure ]
+
 webkit.org/b/207779 webgpu/whlsl/dereference-pointer-should-type-check.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207796 [ Release ] fast/box-shadow/hidpi-box-shadow.html [ Pass ImageOnlyFailure ]

@@ -593,6 +593,8 @@ webkit.org/b/171937 imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySe
 webkit.org/b/171814 http/tests/media/hls/video-controls-live-stream.html [ Failure ]
 webkit.org/b/171814 http/tests/media/hls/video-duration-accessibility.html [ Failure ]
 
+webkit.org/b/209989 [ Mojave Debug ] http/tests/media/clearkey/collect-webkit-media-session.html [ Pass Failure ]
+
 webkit.org/b/172331 workers/wasm-long-compile-many.html [ Pass Timeout ]
 
 webkit.org/b/172807 imported/w3c/web-platform-tests/css/selectors/focus-display-none-001.html [ Pass Failure ]
