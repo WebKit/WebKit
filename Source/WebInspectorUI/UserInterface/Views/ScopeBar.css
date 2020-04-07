@@ -25,7 +25,6 @@
 
 .scope-bar {
     padding: 0 3px;
-    overflow: hidden;
 
     --scope-bar-margin-default: 2px;
     --scope-bar-padding-default: 6px;
