@@ -1,3 +1,129 @@
+2020-04-07  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r255542. rdar://problem/61231926
+
+    [JSC] Hold StructureID instead of Structure* in PolyProtoAccessChain and DFG::CommonData
+    https://bugs.webkit.org/show_bug.cgi?id=207086
+    
+    Reviewed by Mark Lam.
+    
+    PolyProtoAccessChain and DFG::CommonData are kept alive so long as associated AccessCase / DFG/FTL CodeBlock
+    is alive. They hold Vector<Structure*> / Vector<WriteBarrier<Structure*>>, but access frequency is low. And
+    We should hold Vector<StructureID> instead to cut 50% of the size.
+    
+    * bytecode/AccessCase.cpp:
+    (JSC::AccessCase::commit):
+    (JSC::AccessCase::forEachDependentCell const):
+    (JSC::AccessCase::doesCalls const):
+    (JSC::AccessCase::visitWeak const):
+    (JSC::AccessCase::propagateTransitions const):
+    (JSC::AccessCase::generateWithGuard):
+    * bytecode/AccessCase.h:
+    * bytecode/CodeBlock.cpp:
+    (JSC::CodeBlock::propagateTransitions):
+    (JSC::CodeBlock::determineLiveness):
+    (JSC::CodeBlock::stronglyVisitWeakReferences):
+    * bytecode/GetByStatus.cpp:
+    (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/InByIdStatus.cpp:
+    (JSC::InByIdStatus::computeFor):
+    (JSC::InByIdStatus::computeForStubInfo):
+    (JSC::InByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/InByIdStatus.h:
+    * bytecode/InstanceOfStatus.cpp:
+    (JSC::InstanceOfStatus::computeFor):
+    (JSC::InstanceOfStatus::computeForStubInfo):
+    * bytecode/InstanceOfStatus.h:
+    * bytecode/PolyProtoAccessChain.cpp:
+    (JSC::PolyProtoAccessChain::create):
+    (JSC::PolyProtoAccessChain::needImpurePropertyWatchpoint const):
+    (JSC::PolyProtoAccessChain::dump const):
+    * bytecode/PolyProtoAccessChain.h:
+    (JSC::PolyProtoAccessChain::chain const):
+    (JSC::PolyProtoAccessChain::forEach const):
+    (JSC::PolyProtoAccessChain::slotBaseStructure const):
+    (JSC::PolyProtoAccessChain:: const): Deleted.
+    * bytecode/PolymorphicAccess.cpp:
+    (JSC::PolymorphicAccess::regenerate):
+    * bytecode/PutByIdStatus.cpp:
+    (JSC::PutByIdStatus::computeForStubInfo):
+    * bytecode/StructureStubInfo.cpp:
+    (JSC::StructureStubInfo::summary const):
+    (JSC::StructureStubInfo::summary):
+    * bytecode/StructureStubInfo.h:
+    * dfg/DFGCommonData.h:
+    * dfg/DFGDesiredWeakReferences.cpp:
+    (JSC::DFG::DesiredWeakReferences::reallyAdd):
+    * dfg/DFGPlan.cpp:
+    (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+    * jit/Repatch.cpp:
+    (JSC::tryCacheGetBy):
+    (JSC::tryCachePutByID):
+    (JSC::tryCacheInByID):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255542 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Hold StructureID instead of Structure* in PolyProtoAccessChain and DFG::CommonData
+            https://bugs.webkit.org/show_bug.cgi?id=207086
+
+            Reviewed by Mark Lam.
+
+            PolyProtoAccessChain and DFG::CommonData are kept alive so long as associated AccessCase / DFG/FTL CodeBlock
+            is alive. They hold Vector<Structure*> / Vector<WriteBarrier<Structure*>>, but access frequency is low. And
+            We should hold Vector<StructureID> instead to cut 50% of the size.
+
+            * bytecode/AccessCase.cpp:
+            (JSC::AccessCase::commit):
+            (JSC::AccessCase::forEachDependentCell const):
+            (JSC::AccessCase::doesCalls const):
+            (JSC::AccessCase::visitWeak const):
+            (JSC::AccessCase::propagateTransitions const):
+            (JSC::AccessCase::generateWithGuard):
+            * bytecode/AccessCase.h:
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::propagateTransitions):
+            (JSC::CodeBlock::determineLiveness):
+            (JSC::CodeBlock::stronglyVisitWeakReferences):
+            * bytecode/GetByStatus.cpp:
+            (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+            * bytecode/InByIdStatus.cpp:
+            (JSC::InByIdStatus::computeFor):
+            (JSC::InByIdStatus::computeForStubInfo):
+            (JSC::InByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+            * bytecode/InByIdStatus.h:
+            * bytecode/InstanceOfStatus.cpp:
+            (JSC::InstanceOfStatus::computeFor):
+            (JSC::InstanceOfStatus::computeForStubInfo):
+            * bytecode/InstanceOfStatus.h:
+            * bytecode/PolyProtoAccessChain.cpp:
+            (JSC::PolyProtoAccessChain::create):
+            (JSC::PolyProtoAccessChain::needImpurePropertyWatchpoint const):
+            (JSC::PolyProtoAccessChain::dump const):
+            * bytecode/PolyProtoAccessChain.h:
+            (JSC::PolyProtoAccessChain::chain const):
+            (JSC::PolyProtoAccessChain::forEach const):
+            (JSC::PolyProtoAccessChain::slotBaseStructure const):
+            (JSC::PolyProtoAccessChain:: const): Deleted.
+            * bytecode/PolymorphicAccess.cpp:
+            (JSC::PolymorphicAccess::regenerate):
+            * bytecode/PutByIdStatus.cpp:
+            (JSC::PutByIdStatus::computeForStubInfo):
+            * bytecode/StructureStubInfo.cpp:
+            (JSC::StructureStubInfo::summary const):
+            (JSC::StructureStubInfo::summary):
+            * bytecode/StructureStubInfo.h:
+            * dfg/DFGCommonData.h:
+            * dfg/DFGDesiredWeakReferences.cpp:
+            (JSC::DFG::DesiredWeakReferences::reallyAdd):
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+            * jit/Repatch.cpp:
+            (JSC::tryCacheGetBy):
+            (JSC::tryCachePutByID):
+            (JSC::tryCacheInByID):
+
 2020-04-06  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r259264. rdar://problem/61352437

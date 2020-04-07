@@ -1126,8 +1126,8 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
         
         dfgCommon->recordedStatuses.markIfCheap(visitor);
         
-        for (auto& weakReference : dfgCommon->weakStructureReferences)
-            weakReference->markIfCheap(visitor);
+        for (StructureID structureID : dfgCommon->weakStructureReferences)
+            vm.getStructure(structureID)->markIfCheap(visitor);
 
         for (auto& transition : dfgCommon->transitions) {
             if (shouldMarkTransition(vm, transition)) {
@@ -1186,8 +1186,9 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, SlotVisitor& visito
         }
     }
     if (allAreLiveSoFar) {
-        for (unsigned i = 0; i < dfgCommon->weakStructureReferences.size(); ++i) {
-            if (!vm.heap.isMarked(dfgCommon->weakStructureReferences[i].get())) {
+        for (StructureID structureID : dfgCommon->weakStructureReferences) {
+            Structure* structure = vm.getStructure(structureID);
+            if (!vm.heap.isMarked(structure)) {
                 allAreLiveSoFar = false;
                 break;
             }
@@ -1676,8 +1677,8 @@ void CodeBlock::stronglyVisitWeakReferences(const ConcurrentJSLocker&, SlotVisit
     for (auto& weakReference : dfgCommon->weakReferences)
         visitor.append(weakReference);
 
-    for (auto& weakStructureReference : dfgCommon->weakStructureReferences)
-        visitor.append(weakStructureReference);
+    for (StructureID structureID : dfgCommon->weakStructureReferences)
+        visitor.appendUnbarriered(visitor.vm().getStructure(structureID));
 
     dfgCommon->livenessHasBeenProved = true;
 #endif    

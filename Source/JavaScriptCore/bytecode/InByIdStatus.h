@@ -113,7 +113,7 @@ public:
 
 private:
 #if ENABLE(DFG_JIT)
-    static InByIdStatus computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, StructureStubInfo*, UniquedStringImpl* uid);
+    static InByIdStatus computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, VM&, StructureStubInfo*, UniquedStringImpl* uid);
 #endif
     bool appendVariant(const InByIdVariant&);
 

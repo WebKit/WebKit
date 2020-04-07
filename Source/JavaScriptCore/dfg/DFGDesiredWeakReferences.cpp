@@ -67,11 +67,12 @@ bool DesiredWeakReferences::contains(JSCell* cell)
 
 void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
 {
+    ASSERT(vm.heap.isDeferred());
     for (JSCell* target : m_references) {
         if (Structure* structure = jsDynamicCast<Structure*>(vm, target)) {
             ConcurrentJSLocker locker(m_codeBlock->m_lock);
-            common->weakStructureReferences.append(
-                WriteBarrier<Structure>(vm, m_codeBlock, structure));
+            // We do not emit WriteBarrier here since (1) GC is deferred and (2) we emit write-barrier on CodeBlock when finishing DFG::Plan::reallyAdd.
+            common->weakStructureReferences.append(structure->id());
         } else {
             // There are weird relationships in how optimized CodeBlocks
             // point to other CodeBlocks. We don't want to have them be
