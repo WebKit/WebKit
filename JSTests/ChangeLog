@@ -1,3 +1,64 @@
+2020-04-07  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r257605. rdar://problem/61231926
+
+    Poly proto should work with property delete transitions
+    https://bugs.webkit.org/show_bug.cgi?id=208261
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/delete-property-poly-proto.js: Added.
+    (A.prototype.set x):
+    (A):
+    (B):
+    
+    Source/JavaScriptCore:
+    
+    This patch fixes a bug where the combination of inline caching
+    and poly proto cause us to cache a setter call along a prototype chain that
+    is no longer the correct setter to call. This is exposed as a result of
+    https://bugs.webkit.org/show_bug.cgi?id=206430 since DefineOwnProperty used
+    to transition to uncacheable dictionary.
+    
+    The case looks like this:
+    A - setter for x redefines x
+    |
+    B
+    |
+    C
+    
+    We set (new C).x
+    
+    Right now, we first call A's setter, then we try to figure out what the state of things
+    were before it was called in order to cache it. We just assume that A's setter still exists, and we cache it
+    without ever checking, In this patch, we ensure that the property exists and the attributes match in order to prevent crashing.
+    
+    In the code, A = target, C = base.
+    
+    Get is correct because it collects caching information before any calls.
+    
+    The bug https://bugs.webkit.org/show_bug.cgi?id=208337 tracks the remaining semantic bugs around this code.
+    
+    * jit/Repatch.cpp:
+    (JSC::tryCachePutByID):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257605 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-27  Justin Michaud  <justin_michaud@apple.com>
+
+            Poly proto should work with property delete transitions
+            https://bugs.webkit.org/show_bug.cgi?id=208261
+
+            Reviewed by Saam Barati.
+
+            * stress/delete-property-poly-proto.js: Added.
+            (A.prototype.set x):
+            (A):
+            (B):
+
 2020-04-03  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r256766. rdar://problem/61231942
