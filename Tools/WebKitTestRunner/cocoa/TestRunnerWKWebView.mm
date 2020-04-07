@@ -55,12 +55,20 @@ struct CustomMenuActionInfo {
     BlockPtr<void()> callback;
 };
 
-@interface TestRunnerWKWebView () <WKUIDelegatePrivate> {
+@interface TestRunnerWKWebView () <WKUIDelegatePrivate
+#if PLATFORM(IOS_FAMILY)
+    , UIGestureRecognizerDelegate
+#endif
+> {
     RetainPtr<NSNumber> m_stableStateOverride;
     BOOL _isInteractingWithFormControl;
     BOOL _scrollingUpdatesDisabled;
     Optional<CustomMenuActionInfo> _customMenuActionInfo;
     RetainPtr<NSArray<NSString *>> _allowedMenuActions;
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr<UITapGestureRecognizer> _windowTapGestureRecognizer;
+    BlockPtr<void()> _windowTapRecognizedCallback;
+#endif
 }
 
 @property (nonatomic, copy) void (^zoomToScaleCompletionHandler)(void);
@@ -172,6 +180,7 @@ IGNORE_WARNINGS_END
     self.didDismissPopoverCallback = nil;
     self.didEndScrollingCallback = nil;
     self.rotationDidEndCallback = nil;
+    self.windowTapRecognizedCallback = nil;
 #endif // PLATFORM(IOS_FAMILY)
 }
 
@@ -409,6 +418,50 @@ IGNORE_WARNINGS_END
         self.rotationDidEndCallback();
 }
 
+- (void)didRecognizeTapOnWindow
+{
+    ASSERT(self.windowTapRecognizedCallback);
+    if (self.windowTapRecognizedCallback)
+        self.windowTapRecognizedCallback();
+}
+
+- (void(^)())windowTapRecognizedCallback
+{
+    return _windowTapRecognizedCallback.get();
+}
+
+- (void)setWindowTapRecognizedCallback:(void(^)())windowTapRecognizedCallback
+{
+    _windowTapRecognizedCallback = windowTapRecognizedCallback;
+
+    if (windowTapRecognizedCallback && !_windowTapGestureRecognizer) {
+        ASSERT(self.window);
+        _windowTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] init]);
+        [_windowTapGestureRecognizer setDelegate:self];
+        [_windowTapGestureRecognizer addTarget:self action:@selector(didRecognizeTapOnWindow)];
+        [self.window addGestureRecognizer:_windowTapGestureRecognizer.get()];
+    } else if (!windowTapRecognizedCallback && _windowTapGestureRecognizer) {
+        [self.window removeGestureRecognizer:_windowTapGestureRecognizer.get()];
+        _windowTapGestureRecognizer = nil;
+    }
+}
+
+- (void)willMoveToWindow:(UIWindow *)window
+{
+    [super willMoveToWindow:window];
+
+    if (_windowTapGestureRecognizer)
+        [self.window removeGestureRecognizer:_windowTapGestureRecognizer.get()];
+}
+
+- (void)didMoveToWindow
+{
+    [super didMoveToWindow];
+
+    if (_windowTapGestureRecognizer)
+        [self.window addGestureRecognizer:_windowTapGestureRecognizer.get()];
+}
+
 - (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content
 {
     self.accessibilitySpeakSelectionContent = content;
@@ -447,6 +500,13 @@ IGNORE_WARNINGS_END
 - (void)_webView:(WKWebView *)webView didDismissFocusedElementViewController:(UIViewController *)controller
 {
     [self _invokeHideKeyboardCallbackIfNecessary];
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return gestureRecognizer == _windowTapGestureRecognizer;
 }
 
 #endif // PLATFORM(IOS_FAMILY)

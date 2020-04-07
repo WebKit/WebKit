@@ -1,3 +1,21 @@
+2020-04-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Preventing touch events should not prevent gestures installed above WKWebView from recognizing
+        https://bugs.webkit.org/show_bug.cgi?id=210080
+        <rdar://problem/61365814>
+
+        Reviewed by Tim Horton.
+
+        Makes a small adjustment to native gesture deferral logic, so that gestures installed above WKWebView (in the
+        view hierarchy) are not prevented from recognizing by WKDeferringGestureRecognizer. This makes it possible for
+        WebKit clients to install custom gestures outside of WKWebView that cannot be prevented by web content, without
+        having to create a separate window and pass touches through to the WKWebView.
+
+        Test: fast/events/touch/ios/prevent-default-with-window-tap-gesture.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+
 2020-04-07  Brian Burg  <bburg@apple.com>
 
         Web Automation: Automation.inspectBrowsingContext should bring Web Inspector to front automatically

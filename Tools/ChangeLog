@@ -1,3 +1,32 @@
+2020-04-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Preventing touch events should not prevent gestures installed above WKWebView from recognizing
+        https://bugs.webkit.org/show_bug.cgi?id=210080
+        <rdar://problem/61365814>
+
+        Reviewed by Tim Horton.
+
+        Add a UIScriptController helper method that allows a test to install a tap gesture recognizer on the UIWindow
+        containing the web view. This method additionally takes a JavaScript callback, which is invoked when the tap
+        gesture is recognized.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::installTapGestureOnWindow):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView resetInteractionCallbacks]):
+        (-[TestRunnerWKWebView didRecognizeTapOnWindow]):
+        (-[TestRunnerWKWebView windowTapRecognizedCallback]):
+        (-[TestRunnerWKWebView setWindowTapRecognizedCallback:]):
+        (-[TestRunnerWKWebView willMoveToWindow:]):
+        (-[TestRunnerWKWebView didMoveToWindow]):
+        (-[TestRunnerWKWebView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::installTapGestureOnWindow):
+
 2020-04-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         test262/Runner.pm ignores "async" flag

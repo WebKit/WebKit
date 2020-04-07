@@ -322,6 +322,8 @@ interface UIScriptController {
     void removeViewFromWindow(object callback);
     void addViewToWindow(object callback);
 
+    void installTapGestureOnWindow(object callback);
+
     void overridePreference(DOMString preference, DOMString value);
 
     void setSafeAreaInsets(double top, double right, double bottom, double left);

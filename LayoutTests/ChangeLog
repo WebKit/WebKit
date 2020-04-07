@@ -1,3 +1,24 @@
+2020-04-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Preventing touch events should not prevent gestures installed above WKWebView from recognizing
+        https://bugs.webkit.org/show_bug.cgi?id=210080
+        <rdar://problem/61365814>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to verify that calling preventDefault() on touchstart doesn't prevent gesture recognizers
+        installed above the WKWebView from recognizing. To do this, we use the new UIScriptController method to add a
+        gesture recognizer to the window containing the web view, and then simulate a tap over an element that prevents
+        the touchstart event.
+
+        * fast/events/touch/ios/prevent-default-with-window-tap-gesture-expected.txt: Added.
+        * fast/events/touch/ios/prevent-default-with-window-tap-gesture.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.async activateElementAfterInstallingTapGestureOnWindow.return.new.Promise.):
+        (window.UIHelper.async activateElementAfterInstallingTapGestureOnWindow.return.new.Promise):
+        (window.UIHelper.async activateElementAfterInstallingTapGestureOnWindow):
+        (window.UIHelper):
+
 2020-04-07  Truitt Savell  <tsavell@apple.com>
 
         Fix my conflict Markers

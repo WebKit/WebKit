@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+    #target {
+        border: solid 1px tomato;
+        width: 200px;
+        height: 200px;
+    }
+</style>
+<script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        description("This test verifies that a gesture recognizer installed on the window containing the web view is not prevented from recognizing if the web page prevents default on touchstart. This test requires WebKitTestRunner.");
+
+        receivedTouchStart = false;
+        const target = document.getElementById("target");
+        target.addEventListener("touchstart", event => {
+            receivedTouchStart = true;
+            event.preventDefault();
+        });
+        await UIHelper.activateElementAfterInstallingTapGestureOnWindow(target);
+
+        testPassed("Tap gesture on window recognized");
+        shouldBeTrue("receivedTouchStart");
+        finishJSTest();
+    });
+</script>
+</head>
+<body>
+    <div id="target"></div>
+</body>
+</html>
