@@ -1,3 +1,13 @@
+2020-04-06  Jonathan Bedard  <jbedard@apple.com>
+
+        ImageDiff: Don't build with ASan in automation
+        https://bugs.webkit.org/show_bug.cgi?id=210057
+        <rdar://problem/61234753>
+
+        Reviewed by David Kilzer.
+
+        * ImageDiff/cg/Configurations/ImageDiff.xcconfig: Disable ASan.
+
 2020-04-06  Kenneth Russell  <kbr@chromium.org>
 
         Update my committer status
