@@ -84,6 +84,14 @@ enum class WaitForOption {
     } \
 while (0)
 
+#define MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, connection, returnValue) do \
+    if (!(assertion)) { \
+        ASSERT(assertion); \
+        (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
+        return (returnValue); \
+    } \
+while (0)
+
 template<typename AsyncReplyResult> struct AsyncReplyError {
     static AsyncReplyResult create() { return { }; };
 };
