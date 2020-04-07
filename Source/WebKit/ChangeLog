@@ -1,3 +1,15 @@
+2020-04-07  Rob Buis  <rbuis@igalia.com>
+
+        Use GlobalFrameIdentifier in NavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=210036
+
+        Reviewed by Darin Adler.
+
+        Adapt to API change.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2020-04-06  Kate Cheney  <katherine_cheney@apple.com>
 
         Create a way to signal if the WKAppBoundDomains list is empty

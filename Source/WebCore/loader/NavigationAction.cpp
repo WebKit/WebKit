@@ -38,10 +38,17 @@
 
 namespace WebCore {
 
+static GlobalFrameIdentifier createGlobalFrameIdentifier(const Document& document)
+{
+    if (document.frame())
+        return { document.frame()->loader().client().pageID().valueOr(PageIdentifier { }), document.frame()->loader().client().frameID().valueOr(FrameIdentifier { }) };
+    return GlobalFrameIdentifier();
+}
+
 NavigationAction::Requester::Requester(const Document& document)
     : m_url { URL { document.url() } }
     , m_origin { makeRefPtr(document.securityOrigin()) }
-    , m_pageIDAndFrameIDPair { document.frame() ? std::make_pair(document.frame()->loader().client().pageID().valueOr(PageIdentifier { }), document.frame()->loader().client().frameID().valueOr(FrameIdentifier { })) : std::make_pair<PageIdentifier, FrameIdentifier>({ }, { }) }
+    , m_globalFrameIdentifier(createGlobalFrameIdentifier(document))
 {
 }
 

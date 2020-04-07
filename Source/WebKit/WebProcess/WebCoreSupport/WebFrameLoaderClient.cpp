@@ -927,7 +927,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     ASSERT(navigationAction.requester());
     auto requester = navigationAction.requester().value();
 
-    auto* requestingFrame = requester.frameID() ? WebProcess::singleton().webFrame(requester.frameID()) : nullptr;
+    auto* requestingFrame = requester.globalFrameIdentifier().frameID ? WebProcess::singleton().webFrame(requester.globalFrameIdentifier().frameID) : nullptr;
     Optional<WebCore::FrameIdentifier> originatingFrameID;
     Optional<WebCore::FrameIdentifier> parentFrameID;
     if (requestingFrame) {
@@ -945,8 +945,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     };
 
     Optional<WebPageProxyIdentifier> originatingPageID;
-    if (requester.pageID()) {
-        if (auto* webPage = WebProcess::singleton().webPage(requester.pageID()))
+    if (auto& pageID = requester.globalFrameIdentifier().pageID) {
+        if (auto* webPage = WebProcess::singleton().webPage(pageID))
             originatingPageID = webPage->webPageProxyIdentifier();
     }
 
