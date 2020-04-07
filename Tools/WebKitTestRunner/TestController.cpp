@@ -1042,6 +1042,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     WKContextSetUseSeparateServiceWorkerProcess(TestController::singleton().context(), false);
 
     WKPageSetMockCameraOrientation(m_mainWebView->page(), 0);
+    resetMockMediaDevices();
 
     // FIXME: This function should also ensure that there is only one page open.
 

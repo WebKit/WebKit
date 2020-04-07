@@ -1,3 +1,16 @@
+2020-04-07  Youenn Fablet  <youenn@apple.com>
+
+        Reset mock capture devices between layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=210098
+
+        Reviewed by Eric Carlson.
+
+        This fixes fast/mediastream/anonymize-device-name.html
+        failure since https://trac.webkit.org/changeset/259477/webkit.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2020-04-06  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r259531?): [iOS] TestWebKitAPI.WebKitLegacy.ScrollingDoesNotPauseMedia is timing out
