@@ -2151,6 +2151,41 @@ class TestUnApplyPatchIfRequired(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_relevant_patch(self):
+        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: JSTests/'
+        self.setupStep(CheckPatchRelevance())
+        self.setProperty('buildername', 'JSC-Tests-EWS')
+        self.assertEqual(CheckPatchRelevance.haltOnFailure, True)
+        self.assertEqual(CheckPatchRelevance.flunkOnFailure, True)
+        self.expectOutcome(result=SUCCESS, state_string='Checked patch relevance')
+        return self.runStep()
+
+    def test_queue_without_relevance_info(self):
+        CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
+        self.setupStep(CheckPatchRelevance())
+        self.setProperty('buildername', 'Commit-Queue')
+        CheckPatchStatusOnEWSQueues.get_patch_status = lambda cls, patch_id, queue: FAILURE
+        self.expectOutcome(result=SUCCESS, state_string='Checked patch relevance')
+        return self.runStep()
+
+    def test_non_relevant_patch(self):
+        CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
+        self.setupStep(CheckPatchRelevance())
+        self.setProperty('buildername', 'JSC-Tests-EWS')
+        self.setProperty('patch_id', '1234')
+        CheckPatchStatusOnEWSQueues.get_patch_status = lambda cls, patch_id, queue: FAILURE
+        self.expectOutcome(result=FAILURE, state_string='Checked patch relevance (failure)')
+        return self.runStep()
+
+
 class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True

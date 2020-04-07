@@ -1,3 +1,15 @@
+2020-04-07  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add unit-test for CheckPatchRelevance build step
+        https://bugs.webkit.org/show_bug.cgi?id=210140
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+        (TestCheckPatchRelevance):
+        (TestCheckPatchRelevance.test_relevant_patch):
+        (TestCheckPatchRelevance.test_non_relevant_patch):
+
 2020-04-07  Kate Cheney  <katherine_cheney@apple.com>
 
         Return app-bound sessions for instances where WKAppBoundDomains is
