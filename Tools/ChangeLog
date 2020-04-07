@@ -1,3 +1,15 @@
+2020-04-06  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use WEBKIT_EXECUTABLE in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=210059
+
+        Reviewed by Fujii Hironori.
+
+        Modify CMake code to use WEBKIT_EXECUTABLE when creating DumpRenderTree.
+
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/PlatformWin.cmake:
+
 2020-04-06  Jonathan Bedard  <jbedard@apple.com>
 
         ImageDiff: Don't build with ASan in automation

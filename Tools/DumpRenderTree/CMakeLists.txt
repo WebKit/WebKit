@@ -1,10 +1,16 @@
-set(WEBKIT_TESTRUNNER_SHARED_DIR "${TOOLS_DIR}/TestRunnerShared/")
-set(WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR "${TOOLS_DIR}/TestRunnerShared/UIScriptContext")
-set(DUMP_RENDER_TREE_BINDINGS_DIR "${TOOLS_DIR}/DumpRenderTree/Bindings")
+set(DumpRenderTree_DIR "${TOOLS_DIR}/DumpRenderTree")
+set(DumpRenderTree_BINDINGS_DIR "${TOOLS_DIR}/DumpRenderTree/Bindings")
+set(WebKitTestRunner_SHARED_DIR "${TOOLS_DIR}/TestRunnerShared/")
+set(WebKitTestRunner_UISCRIPTCONTEXT_DIR "${TOOLS_DIR}/TestRunnerShared/UIScriptContext")
 
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/DumpRenderTree)
+file(MAKE_DIRECTORY ${DumpRenderTree_DERIVED_SOURCES_DIR})
 
 set(DumpRenderTree_SOURCES
+    ${WebKitTestRunner_SHARED_DIR}/Bindings/JSWrapper.cpp
+
+    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
+    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptController.cpp
+
     AccessibilityController.cpp
     AccessibilityTextMarker.cpp
     AccessibilityUIElement.cpp
@@ -16,9 +22,6 @@ set(DumpRenderTree_SOURCES
     TestOptions.cpp
     TestRunner.cpp
     WorkQueue.cpp
-    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
-    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/UIScriptController.cpp
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/Bindings/JSWrapper.cpp
 )
 
 set(DumpRenderTree_LIBRARIES
@@ -26,15 +29,22 @@ set(DumpRenderTree_LIBRARIES
     WebKit::JavaScriptCore
 )
 
-set(DumpRenderTree_INCLUDE_DIRECTORIES
+set(DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}
+    ${DumpRenderTree_DERIVED_SOURCES_DIR}
+    ${DumpRenderTree_DIR}
+    ${WebKitTestRunner_SHARED_DIR}/Bindings
+    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}
+)
+
+list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
+    ${WEBCORE_DIR}/testing/js
+)
+
+list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
+    ${PAL_FRAMEWORK_HEADERS_DIR}
     ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
     ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
-    ${DERIVED_SOURCES_DIR}/DumpRenderTree
-    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}
-    ${WEBKIT_TESTRUNNER_SHARED_DIR}/Bindings
-    ${TOOLS_DIR}/DumpRenderTree
-    ${CMAKE_SOURCE_DIR}/Source
-    ${WEBCORE_DIR}/testing/js
 )
 
 set(TestNetscapePlugIn_SOURCES
@@ -66,37 +76,45 @@ set(TestNetscapePlugIn_SOURCES
     TestNetscapePlugIn/Tests/URLRedirect.cpp
 )
 
+set(TestNetscapePlugIn_PRIVATE_INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}
+    ${DumpRenderTree_DIR}/TestNetscapePlugIn
+    ${DumpRenderTree_DIR}/TestNetscapePlugIn/ForwardingHeaders
+    ${DumpRenderTree_DIR}/TestNetscapePlugIn/Tests
+)
+
+list(APPEND TestNetscapePlugIn_PRIVATE_INCLUDE_DIRECTORIES
+    ${PAL_FRAMEWORK_HEADERS_DIR}
+    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+    ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
+)
+
 set(TestNetscapePlugIn_LIBRARIES
-    WebKit::JavaScriptCore
     WebCoreTestSupport
+    WebKit::JavaScriptCore
 )
 
 set(DumpRenderTree_IDL_FILES
-    "${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/Bindings/UIScriptController.idl"
+    "${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/Bindings/UIScriptController.idl"
 )
 
 GENERATE_BINDINGS(DumpRenderTreeBindings
     OUTPUT_SOURCE DumpRenderTree_SOURCES
     INPUT_FILES ${DumpRenderTree_IDL_FILES}
-    BASE_DIR ${DUMP_RENDER_TREE_BINDINGS_DIR}
+    BASE_DIR ${DumpRenderTree_BINDINGS_DIR}
     IDL_INCLUDES Bindings
     FEATURES ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}
-    DESTINATION ${DERIVED_SOURCES_DIR}/DumpRenderTree
+    DESTINATION ${DumpRenderTree_DERIVED_SOURCES_DIR}
     GENERATOR DumpRenderTree)
 
+set(DumpRenderTree_DEPENDENCIES DumpRenderTreeBindings)
+
+WEBKIT_EXECUTABLE_DECLARE(DumpRenderTree)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
-
-include_directories(${DumpRenderTree_INCLUDE_DIRECTORIES})
-
-add_executable(DumpRenderTree ${DumpRenderTree_SOURCES})
-target_link_libraries(DumpRenderTree ${DumpRenderTree_LIBRARIES})
-add_dependencies(DumpRenderTree DumpRenderTreeBindings)
+WEBKIT_EXECUTABLE(DumpRenderTree)
 
 if (ENABLE_NETSCAPE_PLUGIN_API)
     add_library(TestNetscapePlugIn SHARED ${TestNetscapePlugIn_SOURCES})
-    target_link_libraries(TestNetscapePlugIn ${TestNetscapePlugIn_LIBRARIES})
-endif ()
-
-if (WIN32)
-    add_dependencies(DumpRenderTree DumpRenderTreeLib)
+    target_include_directories(TestNetscapePlugIn PRIVATE ${TestNetscapePlugIn_PRIVATE_INCLUDE_DIRECTORIES})
+    target_link_libraries(TestNetscapePlugIn PRIVATE ${TestNetscapePlugIn_LIBRARIES})
 endif ()

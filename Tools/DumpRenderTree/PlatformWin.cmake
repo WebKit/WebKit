@@ -1,6 +1,4 @@
-set(DumpRenderTreeLib_SOURCES
-    ${DumpRenderTree_SOURCES}
-
+list(APPEND DumpRenderTree_SOURCES
     win/AccessibilityControllerWin.cpp
     win/AccessibilityUIElementWin.cpp
     win/DRTDataObject.cpp
@@ -25,14 +23,6 @@ set(DumpRenderTreeLib_SOURCES
     win/WorkQueueItemWin.cpp
 )
 
-list(APPEND TestNetscapePlugIn_LIBRARIES
-    WebKitLegacy
-)
-
-set(DumpRenderTree_SOURCES
-    ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
-)
-
 list(APPEND TestNetscapePlugIn_SOURCES
     win/TestNetscapePlugin.def
     win/TestNetscapePlugin.rc
@@ -50,9 +40,7 @@ list(APPEND TestNetscapePlugIn_SOURCES
     TestNetscapePlugIn/win/WindowedPluginTest.cpp
 )
 
-if (${WTF_PLATFORM_WIN_CAIRO})
-    add_definitions(-DWIN_CAIRO)
-endif ()
+set(wrapper_DEFINITIONS USE_CONSOLE_ENTRY_POINT)
 
 list(APPEND TestNetscapePlugIn_LIBRARIES
     Msimg32
@@ -60,69 +48,63 @@ list(APPEND TestNetscapePlugIn_LIBRARIES
     WebKitLegacy
 )
 
-list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
-    # FIXME: Remove this when cleaning up dependencies https://bugs.webkit.org/show_bug.cgi?id=196734
-    ${PAL_FRAMEWORK_HEADERS_DIR}
-    win
-    TestNetscapePlugIn
-    TestNetscapePlugIn/ForwardingHeaders
-    TestNetscapePlugIn/Tests
-    TestNetscapePlugIn/win
-    TestNetscapePlugIn/Tests/win
+list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
+    ${DumpRenderTree_DIR}/win
 )
 
-set(DumpRenderTreeLib_LIBRARIES
-    ${DumpRenderTree_LIBRARIES}
+list(APPEND TestNetscapePlugIn_PRIVATE_INCLUDE_DIRECTORIES
+    ${DumpRenderTree_DIR}/TestNetscapePlugIn/win
+    ${DumpRenderTree_DIR}/TestNetscapePlugIn/Tests/win
+)
+
+list(APPEND DumpRenderTree_LIBRARIES
     Comsuppw
     Oleacc
     WebKitLegacy
     WebKitLegacyGUID
 )
 
-set(DumpRenderTree_LIBRARIES
-    shlwapi
-)
-
 if (${WTF_PLATFORM_WIN_CAIRO})
-    list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
-        cairo
+    list(APPEND wrapper_DEFINITIONS WIN_CAIRO)
+    list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
+        ${DumpRenderTree_DIR}/cairo
     )
-    list(APPEND DumpRenderTreeLib_LIBRARIES
+    list(APPEND DumpRenderTree_LIBRARIES
         Cairo::Cairo
     )
-    list(APPEND DumpRenderTreeLib_SOURCES
+    list(APPEND DumpRenderTree_SOURCES
         cairo/PixelDumpSupportCairo.cpp
     )
 else ()
-    list(APPEND DumpRenderTreeLib_LIBRARIES
+    list(APPEND DumpRenderTree_LIBRARIES
         CFNetwork
         CoreText
     )
     if (${USE_DIRECT2D})
-        list(APPEND DumpRenderTreeLib_SOURCES
+        list(APPEND DumpRenderTree_SOURCES
             win/PixelDumpSupportDirect2D.cpp
         )
-        list(APPEND DumpRenderTreeLib_LIBRARIES
+        list(APPEND DumpRenderTree_LIBRARIES
             D2d1
         )
     else ()
-        list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
-            cg
+        list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
+            ${DumpRenderTree_DIR}/cg
         )
-        list(APPEND DumpRenderTreeLib_SOURCES
+        list(APPEND DumpRenderTree_SOURCES
             cg/PixelDumpSupportCG.cpp
         )
-        list(APPEND DumpRenderTreeLib_LIBRARIES
+        list(APPEND DumpRenderTree_LIBRARIES
             CoreGraphics
         )
     endif ()
 endif ()
 
-WEBKIT_ADD_PRECOMPILED_HEADER("DumpRenderTreePrefix.h" "win/DumpRenderTreePrefix.cpp" DumpRenderTreeLib_SOURCES)
+WEBKIT_ADD_PRECOMPILED_HEADER("DumpRenderTreePrefix.h" "win/DumpRenderTreePrefix.cpp" DumpRenderTree_SOURCES)
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${MSVC_RUNTIME_LINKER_FLAGS}")
-add_definitions(-DUSE_CONSOLE_ENTRY_POINT)
 
-add_library(DumpRenderTreeLib SHARED ${DumpRenderTreeLib_SOURCES})
-target_link_libraries(DumpRenderTreeLib ${DumpRenderTreeLib_LIBRARIES})
-
-add_definitions(-D_UNICODE)
+WEBKIT_WRAP_EXECUTABLE(DumpRenderTree
+    SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
+    LIBRARIES shlwapi
+)
+target_compile_definitions(DumpRenderTree PRIVATE ${wrapper_DEFINITIONS})
