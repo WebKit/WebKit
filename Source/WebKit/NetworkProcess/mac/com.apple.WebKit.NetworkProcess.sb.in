@@ -446,3 +446,6 @@
 ;; Needed for TCC.
 (allow mach-lookup
     (global-name "com.apple.tccd"))
+
+(allow file-read* file-write*
+    (home-subpath "/Library/HTTPStorages"))
