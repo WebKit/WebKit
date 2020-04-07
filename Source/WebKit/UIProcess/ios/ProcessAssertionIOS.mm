@@ -46,7 +46,7 @@ using WebKit::ProcessAndUIAssertion;
 static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
 @interface WKProcessAssertionBackgroundTaskManager
-#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+#if HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
     : NSObject <RBSAssertionObserving>
 #else
     : NSObject
@@ -61,7 +61,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
 @implementation WKProcessAssertionBackgroundTaskManager
 {
-#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+#if HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
     RetainPtr<RBSAssertion> _backgroundTask;
 #else
     UIBackgroundTaskIdentifier _backgroundTask;
@@ -84,7 +84,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
     if (!self)
         return nil;
 
-#if !HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
     _backgroundTask = UIBackgroundTaskInvalid;
 #endif
 
@@ -169,7 +169,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
 - (BOOL)_hasBackgroundTask
 {
-#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+#if HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
     return !!_backgroundTask;
 #else
     return _backgroundTask != UIBackgroundTaskInvalid;
@@ -184,7 +184,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
             return;
         }
         RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: beginBackgroundTaskWithName", self);
-#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+#if HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
         RBSTarget *target = [RBSTarget currentProcess];
         RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:@"com.apple.common" name:@"FinishTaskInterruptable"];
         _backgroundTask = adoptNS([[RBSAssertion alloc] initWithExplanation:@"WebKit UIProcess background task" target:target attributes:@[domainAttribute]]);
@@ -204,7 +204,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
         [self _releaseBackgroundTask];
 }
 
-#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+#if HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
 - (void)assertionWillInvalidate:(RBSAssertion *)assertion
 {
     ASSERT(assertion == _backgroundTask.get());
@@ -253,7 +253,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
     if (_applicationIsBackgrounded)
         WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
 
-#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+#if HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
     [_backgroundTask removeObserver:self];
     [_backgroundTask invalidate];
     _backgroundTask = nullptr;
@@ -291,7 +291,7 @@ namespace WebKit {
 
 static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertionType)
 {
-#if HAVE(RUNNINGBOARD_WEBKIT_ASSERTIONS)
+#if HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
     switch (assertionType) {
     case ProcessAssertionType::Suspended:
         return @"Suspended";
@@ -301,11 +301,14 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
         return @"UnboundedNetworking";
     case ProcessAssertionType::Foreground:
         return @"Foreground";
+    case ProcessAssertionType::DependentProcessLink:
+        return @"DependentProcessLink";
     case ProcessAssertionType::MediaPlayback:
         return nil; // FIXME: Name to be defined in <rdar://problem/61263147>.
     }
 #else
-    UNUSED_PARAM(assertionType);
+    if (assertionType == ProcessAssertionType::DependentProcessLink)
+        return @"DependentProcessLink";
     return nil;
 #endif
 }
@@ -325,6 +328,9 @@ static BKSProcessAssertionFlags flagsForAssertionType(ProcessAssertionType asser
     case ProcessAssertionType::Foreground:
     case ProcessAssertionType::MediaPlayback:
         return foregroundTabFlags;
+    case ProcessAssertionType::DependentProcessLink:
+        ASSERT_NOT_REACHED();
+        return backgroundTabFlags;
     }
 }
 
@@ -339,6 +345,9 @@ static BKSProcessAssertionReason toBKSProcessAssertionReason(ProcessAssertionTyp
         return BKSProcessAssertionReasonFinishTaskUnbounded;
     case ProcessAssertionType::MediaPlayback:
         return BKSProcessAssertionReasonMediaPlayback;
+    case ProcessAssertionType::DependentProcessLink:
+        ASSERT_NOT_REACHED();
+        return BKSProcessAssertionReasonExtension;
     }
 }
 

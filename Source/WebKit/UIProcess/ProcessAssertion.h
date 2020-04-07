@@ -50,6 +50,7 @@ enum class ProcessAssertionType {
     UnboundedNetworking,
     Foreground,
     MediaPlayback,
+    DependentProcessLink,
 };
 
 class ProcessAssertion : public CanMakeWeakPtr<ProcessAssertion> {

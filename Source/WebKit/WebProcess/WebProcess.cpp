@@ -31,7 +31,6 @@
 #include "APIPageHandle.h"
 #include "AuthenticationManager.h"
 #include "AuxiliaryProcessMessages.h"
-#include "DependencyProcessAssertion.h"
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
@@ -43,6 +42,7 @@
 #include "NetworkSession.h"
 #include "NetworkSessionCreationParameters.h"
 #include "PluginProcessConnectionManager.h"
+#include "ProcessAssertion.h"
 #include "RemoteAudioSession.h"
 #include "RemoteLegacyCDMFactory.h"
 #include "StorageAreaMap.h"
@@ -299,9 +299,9 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 
     ASSERT(!m_uiProcessDependencyProcessAssertion);
     if (auto remoteProcessID = connection->remoteProcessID())
-        m_uiProcessDependencyProcessAssertion = makeUnique<DependencyProcessAssertion>(remoteProcessID, "WebContent process dependency on UIProcess"_s);
+        m_uiProcessDependencyProcessAssertion = makeUnique<ProcessAssertion>(remoteProcessID, "WebContent process dependency on UIProcess"_s, ProcessAssertionType::DependentProcessLink);
     else
-        RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSuspension, "Unable to create a process depending assertion on UIProcess because remoteProcessID is 0");
+        RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSuspension, "Unable to create a process dependency assertion on UIProcess because remoteProcessID is 0");
 #endif // PLATFORM(IOS_FAMILY)
 
     m_webInspectorInterruptDispatcher->initializeConnection(connection);

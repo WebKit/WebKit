@@ -1,3 +1,31 @@
+2020-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Merge DependencyAssertion into ProcessAssertion
+        https://bugs.webkit.org/show_bug.cgi?id=210076
+
+        Reviewed by Alex Christensen.
+
+        Merge DependencyAssertion into ProcessAssertion. After r259610, ProcessAssertion can use
+        RunningBoard assertions so there is no longer any need to a separate DependencyAssertion
+        class. We can simply introduce a new assertion type to ProcessAssertion.
+
+        * Shared/DependencyProcessAssertion.cpp: Removed.
+        * Shared/DependencyProcessAssertion.h: Removed.
+        * Shared/ios/DependencyProcessAssertionIOS.mm: Removed.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _hasBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _releaseBackgroundTask]):
+        (WebKit::runningBoardNameForAssertionType):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+
 2020-04-07  Alex Christensen  <achristensen@webkit.org>
 
         Simplify and fortify network getNetworkProcessConnection and getGPUProcessConnection

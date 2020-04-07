@@ -3551,9 +3551,6 @@
 		46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListCounts.h; sourceTree = "<group>"; };
 		46DF06391F3905E5001980BB /* NetworkCORSPreflightChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCORSPreflightChecker.cpp; sourceTree = "<group>"; };
 		46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCORSPreflightChecker.h; sourceTree = "<group>"; };
-		46F38E882416D9630059375A /* DependencyProcessAssertion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DependencyProcessAssertion.cpp; sourceTree = "<group>"; };
-		46F38E892416D9630059375A /* DependencyProcessAssertion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DependencyProcessAssertion.h; sourceTree = "<group>"; };
-		46F38E8A2416D9A70059375A /* DependencyProcessAssertionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DependencyProcessAssertionIOS.mm; path = ios/DependencyProcessAssertionIOS.mm; sourceTree = "<group>"; };
 		46F38E8B2416E66D0059375A /* RunningBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunningBoardServicesSPI.h; sourceTree = "<group>"; };
 		46F9B26223526ED0006FE5FA /* WebBackForwardCacheEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardCacheEntry.h; sourceTree = "<group>"; };
 		4960A3BC23C5286400961842 /* WebViewCategory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebViewCategory.h; sourceTree = "<group>"; };
@@ -5968,8 +5965,6 @@
 				99F642D21FABE378009621E9 /* CoordinateSystem.h */,
 				99036AE823A970870000B06A /* DebuggableInfoData.cpp */,
 				99036AE723A970870000B06A /* DebuggableInfoData.h */,
-				46F38E882416D9630059375A /* DependencyProcessAssertion.cpp */,
-				46F38E892416D9630059375A /* DependencyProcessAssertion.h */,
 				2D7FD190223C730F007887F1 /* DocumentEditingContext.h */,
 				2D7FD191223C7310007887F1 /* DocumentEditingContext.mm */,
 				C517388012DF8F4F00EE3F47 /* DragControllerAction.h */,
@@ -6897,7 +6892,6 @@
 			isa = PBXGroup;
 			children = (
 				A7E93CEB192531AA00A1DC48 /* AuxiliaryProcessIOS.mm */,
-				46F38E8A2416D9A70059375A /* DependencyProcessAssertionIOS.mm */,
 				2DA6731920C754B1003CB401 /* DynamicViewportSizeUpdate.h */,
 				2DA9449D1884E4F000ED86DB /* GestureTypes.h */,
 				C5BCE5DA1C50761D00CDE3FA /* InteractionInformationAtPosition.h */,
