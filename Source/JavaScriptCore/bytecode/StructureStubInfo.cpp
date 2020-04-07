@@ -140,7 +140,7 @@ void StructureStubInfo::aboutToDie()
 }
 
 AccessGenerationResult StructureStubInfo::addAccessCase(
-    const GCSafeConcurrentJSLocker& locker, CodeBlock* codeBlock, CacheableIdentifier ident, std::unique_ptr<AccessCase> accessCase)
+    const GCSafeConcurrentJSLocker& locker, JSGlobalObject* globalObject, CodeBlock* codeBlock, CacheableIdentifier ident, std::unique_ptr<AccessCase> accessCase)
 {
     checkConsistency();
 
@@ -219,7 +219,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         // PolymorphicAccess.
         clearBufferedStructures();
         
-        result = u.stub->regenerate(locker, vm, codeBlock, *this);
+        result = u.stub->regenerate(locker, vm, globalObject, codeBlock, *this);
         
         if (StructureStubInfoInternal::verbose)
             dataLog("Regeneration result: ", result, "\n");

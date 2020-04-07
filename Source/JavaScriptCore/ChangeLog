@@ -1,5 +1,37 @@
 2020-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Inlined IC should get right JSGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=210092
+
+        Reviewed by Tadeu Zagallo.
+
+        In DFG / FTL, CodeBlock in AccessCase is the DFG / FTL CodeBlock which includes all the inlined CodeBlocks.
+        If inlining happens with CodeBlock which has different JSGlobalObject, CodeBlock->globalObject() is different
+        to the actual lexical JSGlobalObject of the IC. So basically, we should not rely on codeBlock->globalObject() in IC.
+
+        This patch passes the correct lexical JSGlobalObject to IC to use. We do not retain this JSGlobalObject.
+        Since this is lexical JSGlobalObject of that IC, the owner CodeBlock of this IC should already retain it (even if this
+        JSGlobalObject is one of inlined CodeBlock since the owner CodeBlock retains inlined lower-tier CodeBlocks).
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase):
+        * bytecode/StructureStubInfo.h:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetBy):
+        (JSC::tryCacheArrayGetByVal):
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheDeleteBy):
+        (JSC::tryCacheInByID):
+        (JSC::tryCacheInstanceOf):
+        * tools/JSDollarVM.cpp:
+
+2020-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] $.evalScript should check exception when accessing "global"
         https://bugs.webkit.org/show_bug.cgi?id=210114
         <rdar://problem/61388482>

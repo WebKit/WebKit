@@ -388,14 +388,14 @@ void PolymorphicAccess::commit(
 }
 
 AccessGenerationResult PolymorphicAccess::regenerate(
-    const GCSafeConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+    const GCSafeConcurrentJSLocker& locker, VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
     SuperSamplerScope superSamplerScope(false);
     
     if (PolymorphicAccessInternal::verbose)
         dataLog("Regenerate with m_list: ", listDump(m_list), "\n");
 
-    AccessGenerationState state(vm, codeBlock->globalObject());
+    AccessGenerationState state(vm, globalObject);
 
     state.access = this;
     state.stubInfo = &stubInfo;

@@ -1344,6 +1344,16 @@ static EncodedJSValue customGetValue(JSGlobalObject* globalObject, EncodedJSValu
     return slotValue;
 }
 
+static EncodedJSValue customGetAccessorGlobalObject(JSGlobalObject* globalObject, EncodedJSValue, PropertyName)
+{
+    return JSValue::encode(globalObject);
+}
+
+static EncodedJSValue customGetValueGlobalObject(JSGlobalObject* globalObject, EncodedJSValue, PropertyName)
+{
+    return JSValue::encode(globalObject);
+}
+
 static bool customSetAccessor(JSGlobalObject* globalObject, EncodedJSValue thisObject, EncodedJSValue encodedValue)
 {
     DollarVMAssertScope assertScope;
@@ -1383,6 +1393,11 @@ void JSTestCustomGetterSetter::finishCreation(VM& vm)
         CustomGetterSetter::create(vm, customGetValue, customSetValue), 0);
     putDirectCustomAccessor(vm, Identifier::fromString(vm, "customAccessor"),
         CustomGetterSetter::create(vm, customGetAccessor, customSetAccessor), static_cast<unsigned>(PropertyAttribute::CustomAccessor));
+    putDirectCustomAccessor(vm, Identifier::fromString(vm, "customValueGlobalObject"),
+        CustomGetterSetter::create(vm, customGetValueGlobalObject, nullptr), 0);
+    putDirectCustomAccessor(vm, Identifier::fromString(vm, "customAccessorGlobalObject"),
+        CustomGetterSetter::create(vm, customGetAccessorGlobalObject, nullptr), static_cast<unsigned>(PropertyAttribute::CustomAccessor));
+
 }
 
 const ClassInfo Element::s_info = { "Element", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(Element) };

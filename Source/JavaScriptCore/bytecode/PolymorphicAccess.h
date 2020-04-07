@@ -144,7 +144,7 @@ public:
     AccessGenerationResult addCase(
         const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, std::unique_ptr<AccessCase>);
     
-    AccessGenerationResult regenerate(const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&);
+    AccessGenerationResult regenerate(const GCSafeConcurrentJSLocker&, VM&, JSGlobalObject*, CodeBlock*, StructureStubInfo&);
     
     bool isEmpty() const { return m_list.isEmpty(); }
     unsigned size() const { return m_list.size(); }

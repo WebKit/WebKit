@@ -1367,6 +1367,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     CCallHelpers& jit = *state.jit;
     VM& vm = state.m_vm;
     CodeBlock* codeBlock = jit.codeBlock();
+    JSGlobalObject* globalObject = state.m_globalObject;
     StructureStubInfo& stubInfo = *state.stubInfo;
     JSValueRegs valueRegs = state.valueRegs;
     GPRReg baseGPR = state.baseGPR;
@@ -1657,8 +1658,6 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.setupResults(valueRegs);
             done.append(jit.jump());
 
-            // FIXME: Revisit JSGlobalObject.
-            // https://bugs.webkit.org/show_bug.cgi?id=203204
             slowCase.link(&jit);
             jit.move(loadedValueGPR, GPRInfo::regT0);
 #if USE(JSVALUE32_64)
@@ -1666,7 +1665,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
 #endif
             jit.move(CCallHelpers::TrustedImmPtr(access.callLinkInfo()), GPRInfo::regT2);
-            jit.move(CCallHelpers::TrustedImmPtr(state.m_globalObject), GPRInfo::regT3);
+            jit.move(CCallHelpers::TrustedImmPtr(globalObject), GPRInfo::regT3);
             slowPathCall = jit.nearCall();
             if (m_type == Getter)
                 jit.setupResults(valueRegs);
@@ -1710,17 +1709,17 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // FIXME: Remove this differences in custom values and custom accessors.
             // https://bugs.webkit.org/show_bug.cgi?id=158014
             GPRReg baseForCustom = m_type == CustomValueGetter || m_type == CustomValueSetter ? baseForAccessGPR : baseForCustomGetGPR; 
-            // FIXME: Revisit JSGlobalObject.
-            // https://bugs.webkit.org/show_bug.cgi?id=203204
+            // We do not need to keep globalObject alive since the owner CodeBlock (even if JSGlobalObject* is one of CodeBlock that is inlined and held by DFG CodeBlock)
+            // must keep it alive.
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
                 RELEASE_ASSERT(m_identifier);
                 jit.setupArguments<PropertySlot::GetValueFunc>(
-                    CCallHelpers::TrustedImmPtr(codeBlock->globalObject()),
+                    CCallHelpers::TrustedImmPtr(globalObject),
                     CCallHelpers::CellValue(baseForCustom),
                     CCallHelpers::TrustedImmPtr(uid()));
             } else {
                 jit.setupArguments<PutPropertySlot::PutValueFunc>(
-                    CCallHelpers::TrustedImmPtr(codeBlock->globalObject()),
+                    CCallHelpers::TrustedImmPtr(globalObject),
                     CCallHelpers::CellValue(baseForCustom),
                     valueRegs);
             }
