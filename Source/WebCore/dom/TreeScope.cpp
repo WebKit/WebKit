@@ -100,7 +100,7 @@ void TreeScope::setParentTreeScope(TreeScope& newParentScope)
 
 Element* TreeScope::getElementById(const AtomString& elementId) const
 {
-    if (elementId.isNull())
+    if (elementId.isEmpty())
         return nullptr;
     if (!m_elementsById)
         return nullptr;

@@ -95,7 +95,7 @@ bool DocumentFragment::parseXML(const String& source, Element* contextElement, P
 
 Element* DocumentFragment::getElementById(const AtomString& id) const
 {
-    if (id.isNull())
+    if (id.isEmpty())
         return nullptr;
 
     // Fast path for ShadowRoot, where we are both a DocumentFragment and a TreeScope.
