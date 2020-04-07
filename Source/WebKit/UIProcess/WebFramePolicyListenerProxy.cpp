@@ -46,16 +46,15 @@ WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Reply&& reply, ShouldEx
 
 WebFramePolicyListenerProxy::~WebFramePolicyListenerProxy() = default;
 
-void WebFramePolicyListenerProxy::didReceiveAppBoundDomainResult(bool isNavigatingToAppBoundDomain)
+void WebFramePolicyListenerProxy::didReceiveAppBoundDomainResult(Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     ASSERT(RunLoop::isMain());
 
-    auto isAppBound = isNavigatingToAppBoundDomain ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No;
     if (m_policyResult && m_safeBrowsingWarning) {
         if (m_reply)
-            m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(*m_safeBrowsingWarning), isAppBound);
+            m_reply(WebCore::PolicyAction::Use, m_policyResult->first.get(), m_policyResult->second, WTFMove(*m_safeBrowsingWarning), isNavigatingToAppBoundDomain);
     } else
-        m_isNavigatingToAppBoundDomain = isAppBound;
+        m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
 }
 
 void WebFramePolicyListenerProxy::didReceiveSafeBrowsingResults(RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning)

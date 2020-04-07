@@ -46,7 +46,7 @@ enum class ShouldExpectAppBoundDomainResult : bool { No, Yes };
 class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
 
-    using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&, NavigatingToAppBoundDomain)>;
+    using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&, Optional<NavigatingToAppBoundDomain>)>;
     static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult)
     {
         return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(reply), expectSafeBrowsingResult, expectAppBoundDomainResult));
@@ -58,14 +58,14 @@ public:
     void ignore();
     
     void didReceiveSafeBrowsingResults(RefPtr<SafeBrowsingWarning>&&);
-    void didReceiveAppBoundDomainResult(bool);
+    void didReceiveAppBoundDomainResult(Optional<NavigatingToAppBoundDomain>);
 
 private:
     WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult);
 
     Optional<std::pair<RefPtr<API::WebsitePolicies>, ProcessSwapRequestedByClient>> m_policyResult;
     Optional<RefPtr<SafeBrowsingWarning>> m_safeBrowsingWarning;
-    Optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
+    Optional<Optional<NavigatingToAppBoundDomain>> m_isNavigatingToAppBoundDomain;
     Reply m_reply;
 };
 
