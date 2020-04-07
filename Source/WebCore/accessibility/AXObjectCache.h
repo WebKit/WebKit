@@ -452,7 +452,7 @@ private:
 
     // aria-modal related
     void findModalNodes();
-    void updateCurrentModalNode();
+    Node* currentModalNode();
     bool isNodeVisible(Node*) const;
     void handleModalChange(Node*);
 
@@ -478,11 +478,12 @@ private:
     
     Timer m_liveRegionChangedPostTimer;
     ListHashSet<RefPtr<AccessibilityObject>> m_liveRegionObjectsSet;
-    
+
     Timer m_focusModalNodeTimer;
     Node* m_currentModalNode;
     ListHashSet<Node*> m_modalNodesSet;
-    
+    bool m_modalNodesInitialized { false };
+
     Timer m_performCacheUpdateTimer;
 
     AXTextStateChangeIntent m_textSelectionIntent;
