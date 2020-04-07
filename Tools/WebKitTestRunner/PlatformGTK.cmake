@@ -20,23 +20,22 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 
 list(APPEND WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES
     ${ATK_INCLUDE_DIRS}
-    ${GTK3_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
 )
 
 list(APPEND WebKitTestRunner_LIBRARIES
     Cairo::Cairo
     ${ATK_LIBRARIES}
-    ${GTK3_LIBRARIES}
     ${GLIB_LIBRARIES}
+    GTK::GTK
     WebCore
 )
 
 set(WebKitTestRunnerInjectedBundle_LIBRARIES
     ${ATK_LIBRARIES}
     ${GLIB_LIBRARIES}
-    ${GTK3_LIBRARIES}
     Fontconfig::Fontconfig
+    GTK::GTK
     WebCoreTestSupport
     WebKit
 )

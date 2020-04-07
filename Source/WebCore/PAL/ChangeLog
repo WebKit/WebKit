@@ -1,3 +1,12 @@
+2020-04-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] CMake find module for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=210110
+
+        Reviewed by Don Olmstead.
+
+        * pal/PlatformGTK.cmake: Use the GTK::GTK imported target.
+
 2020-04-05  Peng Liu  <peng.liu6@apple.com>
 
         The value of [AVPlayerViewController isPictureInPicturePossible] is NO in the first attempt to enter PiP

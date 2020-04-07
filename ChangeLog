@@ -1,3 +1,25 @@
+2020-04-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] CMake find module for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=210110
+
+        Reviewed by Don Olmstead.
+
+        Rename FindGTK3.cmake as FindGTK.cmake, make it provide a GTK::GTK imported target,
+        and rewrite the logic to detect which targets (backends) have been built into GTK
+        to use the "targets" pkg-config variable instead of checking for multiple pkg-config
+        modules.
+
+        * Source/cmake/FindGDK3.cmake: Removed.
+        * Source/cmake/FindGTK.cmake: Added.
+        * Source/cmake/FindGTK3.cmake: Removed. This is now unused because the GTK::GTK target
+        will transitively depend on GDK3 when using GTK3 and bring in the compiler and linker
+        options automatically without needing to use a separate find module for GDK.
+        * Source/cmake/OptionsGTK.cmake: Use the GTK::GTK imported target, change variables
+        prefixed with GTK3_ to use the GTK_ prefix, and remove variables which are not needed
+        anymore when using the target (GTK_LIBRARIES, GTK_INCLUDE_DIRS, GDK_LIBRARIES and
+        GDK_INCLUDE_DIRS).
+
 2020-04-06  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use WEBKIT_EXECUTABLE in DumpRenderTree
