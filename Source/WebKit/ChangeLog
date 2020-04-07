@@ -1,3 +1,39 @@
+2020-04-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        Return app-bound sessions for instances where WKAppBoundDomains is
+        empty
+        https://bugs.webkit.org/show_bug.cgi?id=210124
+        <rdar://problem/61276630>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. Behavior confirmed by existing In-App Browser Privacy
+        tests.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        Remove the flag checking if In-App Browser Privacy is enabled. We
+        should return an app-bound session if WKAppBoundDomains is empty so
+        we no longer need to check the flag here.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebPageProxy.h:
+        As described above, we no longer need to check the flag in this
+        instance as we are determining behavior based on the WKAppBoundDomains
+        list. Also moved the logic for checking an empty list to setIsNavigatingToAppBoundDomain,
+        so it should take an Optional (WTF::nullopt indicates an empty list).
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::initializeAppBoundDomains):
+        Use the flag to enable internal debugging for testing purposes.
+
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::filterAppBoundCookies):
+        Flag no longer needed. This should be gated by whether the domains
+        list is empty or not.
+
 2020-04-07  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Add message to message filter in the WebContent sandbox

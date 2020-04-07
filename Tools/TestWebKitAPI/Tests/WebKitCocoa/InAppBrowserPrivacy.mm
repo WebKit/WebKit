@@ -81,11 +81,13 @@ static NSString * const userScriptSource = @"window.wkUserScriptInjected = true"
 
 static void cleanUpInAppBrowserPrivacyTestSettings()
 {
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
     IN_APP_BROWSER_PRIVACY_ADDITIONS_2
 }
 
 static void initializeInAppBrowserPrivacyTestSettings()
 {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
     RunLoop::initializeMainRunLoop();
     WebCore::clearApplicationBundleIdentifierTestingOverride();
     IN_APP_BROWSER_PRIVACY_ADDITIONS
@@ -536,7 +538,6 @@ static void setUpCookieTest()
 TEST(InAppBrowserPrivacy, SetCookieForNonAppBoundDomainFails)
 {
     initializeInAppBrowserPrivacyTestSettings();
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
 
     auto dataStore = [WKWebsiteDataStore defaultDataStore];
     auto webView = adoptNS([TestWKWebView new]);
@@ -581,7 +582,6 @@ TEST(InAppBrowserPrivacy, SetCookieForNonAppBoundDomainFails)
     TestWebKitAPI::Util::run(&gotFlag);
 
     cleanUpInAppBrowserPrivacyTestSettings();
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
     gotFlag = false;
 
     // Check the cookie store to make sure only one cookie was set.
@@ -607,7 +607,7 @@ TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
 {
     // Since we can't set non-app-bound cookies with In-App Browser privacy protections on,
     // we can turn the protections off to set a cookie we will then try to get with protections enabled.
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
+    cleanUpInAppBrowserPrivacyTestSettings();
 
     setUpCookieTest();
     globalCookieStore = [[WKWebsiteDataStore defaultDataStore] httpCookieStore];
@@ -658,7 +658,6 @@ TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
     ASSERT_EQ(cookies.count, 2u);
 
     // Now enable protections and ensure we can only retrieve the app-bound cookies.
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
     initializeInAppBrowserPrivacyTestSettings();
 
     gotFlag = false;
@@ -683,7 +682,6 @@ TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
     gotFlag = false;
     [globalCookieStore deleteCookie:appBoundCookie.get() completionHandler:[]() {
         // Reset flag.
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
         cleanUpInAppBrowserPrivacyTestSettings();
         gotFlag = true;
     }];
@@ -695,7 +693,7 @@ TEST(InAppBrowserPrivacy, GetCookieForURLFails)
 {
     // Since we can't set non-app-bound cookies with In-App Browser privacy protections on,
     // we can turn the protections off to set a cookie we will then try to get with protections enabled.
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
+    cleanUpInAppBrowserPrivacyTestSettings();
     setUpCookieTest();
 
     globalCookieStore = [[WKWebsiteDataStore defaultDataStore] httpCookieStore];
@@ -720,7 +718,6 @@ TEST(InAppBrowserPrivacy, GetCookieForURLFails)
         [globalCookieStore setCookie:appBoundCookie completionHandler:^{
 
             // Now enable protections and ensure we can only retrieve the app-bound cookies.
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
             initializeInAppBrowserPrivacyTestSettings();
 
             [globalCookieStore _getCookiesForURL:[NSURL URLWithString:@"https://webkit.org/"] completionHandler:^(NSArray<NSHTTPCookie *> *cookies) {
@@ -730,7 +727,6 @@ TEST(InAppBrowserPrivacy, GetCookieForURLFails)
                     EXPECT_EQ(cookies.count, 0u);
                     [globalCookieStore deleteCookie:nonAppBoundCookie completionHandler:^{
                         [globalCookieStore deleteCookie:appBoundCookie completionHandler:^{
-                            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
                             cleanUpInAppBrowserPrivacyTestSettings();
                             done = true;
                         }];

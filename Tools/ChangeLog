@@ -1,3 +1,20 @@
+2020-04-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        Return app-bound sessions for instances where WKAppBoundDomains is
+        empty
+        https://bugs.webkit.org/show_bug.cgi?id=210124
+        <rdar://problem/61276630>
+
+        Reviewed by Brent Fulgham.
+
+        Cleaned up tests to turn the flag on at the start of each In-App
+        Browser Privacy test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (cleanUpInAppBrowserPrivacyTestSettings):
+        (initializeInAppBrowserPrivacyTestSettings):
+        (TEST):
+
 2020-04-07  Timothy Hatcher  <timothy@apple.com>
 
         WKUserScripts deferred from injection are not injected if -[WKWebView _notifyUserScripts] is called early.
