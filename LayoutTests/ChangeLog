@@ -1,3 +1,15 @@
+2020-04-07  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Change ATK mapping of the ARIA alert and alertdialog roles
+        https://bugs.webkit.org/show_bug.cgi?id=210121
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-mappings-expected.txt: Updated.
+        * accessibility/gtk/xml-roles-exposed-expected.txt: Updated.
+        * platform/gtk/accessibility/gtk/xml-roles-exposed-expected.txt: Updated.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated.
+
 2020-04-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Preventing touch events should not prevent gestures installed above WKWebView from recognizing

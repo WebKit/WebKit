@@ -3,7 +3,7 @@ Verify exposure of ARIA role values via the 'xml-roles' object attribute.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: AXAlert
+AXRole: AXNotification
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition:  { 0.00000, 0.00000 }
@@ -19,10 +19,10 @@ AXMultiSelectable: 0
 AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
-AXChecked: 0
+AXChecked: 0q
 AXPlatformAttributes: atomic:true, relevant:additions text, live:assertive, container-live-role:alert, container-atomic:true, container-relevant:additions text, container-live:assertive, computed-role:alert, xml-roles:alert, tag:div, toolkit:WebKitGtk
 ------------
-AXRole: AXDialog
+AXRole: AXAlert
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition:  { 0.00000, 0.00000 }

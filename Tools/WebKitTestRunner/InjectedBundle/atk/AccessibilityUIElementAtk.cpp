@@ -428,6 +428,8 @@ const gchar* roleToString(AtkObject* object)
         return "AXMenuBar";
     case ATK_ROLE_MENU_ITEM:
         return "AXMenuItem";
+    case ATK_ROLE_NOTIFICATION:
+        return "AXNotification";
     case ATK_ROLE_PAGE_TAB:
         return "AXTab";
     case ATK_ROLE_PAGE_TAB_LIST:

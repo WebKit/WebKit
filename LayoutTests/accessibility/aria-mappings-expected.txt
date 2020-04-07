@@ -17,11 +17,11 @@ Role for 'body' is: AXRole: AXWebArea
 
 
 role="alert" should give a message with important, and usually time-sensitive, information.
-Role for 'alert' div is: AXRole: AXAlert
+Role for 'alert' div is: AXRole: AXNotification
 
 
 role="alertdialog" is a dialog which contains an alert message.
-Role for 'alertdialog' div is: AXRole: AXDialog
+Role for 'alertdialog' div is: AXRole: AXAlert
 
 
 role="article" is a  section of a page that consists of a composition that forms an independent part of a document, page, or site

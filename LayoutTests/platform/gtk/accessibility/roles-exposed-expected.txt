@@ -488,10 +488,10 @@ div[role=window]
       AXRole: AXSection
       
 div[role=alert]
-      AXRole: AXAlert
+      AXRole: AXNotification
       
 div[role=alertdialog]
-      AXRole: AXDialog
+      AXRole: AXAlert
       
 div[role=application]
       AXRole: AXEmbedded
