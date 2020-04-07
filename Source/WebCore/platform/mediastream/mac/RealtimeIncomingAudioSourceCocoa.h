@@ -30,7 +30,7 @@
 #if USE(LIBWEBRTC)
 
 #include "RealtimeIncomingAudioSource.h"
-
+#include "WebAudioBufferList.h"
 #include <CoreAudio/CoreAudioTypes.h>
 
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
@@ -51,6 +51,10 @@ private:
 
     uint64_t m_numberOfFrames { 0 };
 
+    int m_sampleRate { 0 };
+    size_t m_numberOfChannels { 0 };
+    CAAudioStreamDescription m_streamDescription;
+    std::unique_ptr<WebAudioBufferList> m_audioBufferList;
 #if !RELEASE_LOG_DISABLED
     size_t m_chunksReceived { 0 };
 #endif
