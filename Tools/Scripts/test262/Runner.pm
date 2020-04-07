@@ -795,8 +795,7 @@ sub runTest {
     }
 
     if (exists $data->{flags}) {
-        my @flags = $data->{flags};
-        if (grep $_ eq 'async', @flags) {
+        if (grep $_ eq 'async', @{ $data->{flags} }) {
             $args .= ' --test262-async ';
         }
     }

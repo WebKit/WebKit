@@ -1,3 +1,12 @@
+2020-04-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        test262/Runner.pm ignores "async" flag
+        https://bugs.webkit.org/show_bug.cgi?id=210127
+
+        Reviewed by Ross Kirsling.
+
+        * test262/expectations.yaml: Mark 56 test cases as failing.
+
 2020-04-07  Ross Kirsling  <ross.kirsling@sony.com>
 
         Update JSTests to assume ICU 60+
