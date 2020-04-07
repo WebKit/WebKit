@@ -1,5 +1,16 @@
 2020-04-07  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Gardening, update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=210118
+
+        Unreviewed gardening.
+
+        Add more tests failing in EWS gtk-wk2 bot but not in test bot.
+
+        * platform/gtk/TestExpectations:
+
+2020-04-07  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Gardening, IndexedDB flaky failures
         https://bugs.webkit.org/show_bug.cgi?id=210116
 

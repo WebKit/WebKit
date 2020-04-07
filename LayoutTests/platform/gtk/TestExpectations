@@ -1372,6 +1372,7 @@ webkit.org/b/209727 fast/forms/placeholder-content-line-height.html [ ImageOnlyF
 webkit.org/b/209801 imported/w3c/web-platform-tests/xhr/header-user-agent-sync.htm [ Failure ]
 
 # Tests failing in EWS but not in test bot.
+webkit.org/b/209533 http/tests/appcache/xhr-foreign-resource.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-media.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-range.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-redirect.html [ Failure Pass ]
@@ -1393,6 +1394,15 @@ webkit.org/b/209533 http/tests/cookies/same-site/popup-same-site-post.html [ Fai
 webkit.org/b/209533 http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cookies/same-site/popup-same-site-via-same-site-redirect.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cookies/same-site/popup-same-site.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/security/mixedContent/insecure-css-with-secure-cookies.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/security/mixedContent/insecure-executable-css-with-secure-cookies.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/security/mixedContent/insecure-image-with-securecookie-block.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/security/mixedContent/insecure-image-with-securecookie.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/security/mixedContent/insecure-script-with-secure-cookies.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies-block.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies.html [ Failure Pass ]
+webkit.org/b/209533 http/wpt/service-workers/service-worker-different-process.https.html [ Failure Pass ]
+webkit.org/b/209533 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
