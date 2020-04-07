@@ -795,13 +795,12 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<JSON::Arr
             property->setAliases(WTFMove(aliasesArray));
         }
 
-        const StylePropertyShorthand& shorthand = shorthandForProperty(propertyID);
+        auto shorthand = shorthandForProperty(propertyID);
         if (shorthand.length()) {
             auto longhands = JSON::ArrayOf<String>::create();
-            for (unsigned j = 0; j < shorthand.length(); ++j) {
-                CSSPropertyID longhandID = shorthand.properties()[j];
-                if (isEnabledCSSProperty(longhandID))
-                    longhands->addItem(getPropertyNameString(longhandID));
+            for (auto longhand : shorthand) {
+                if (isEnabledCSSProperty(longhand))
+                    longhands->addItem(getPropertyNameString(longhand));
             }
             property->setLonghands(WTFMove(longhands));
         }

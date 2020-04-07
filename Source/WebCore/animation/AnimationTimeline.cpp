@@ -334,9 +334,8 @@ static bool transitionMatchesProperty(const Animation& transition, CSSPropertyID
     if (mode == Animation::AnimateSingleProperty) {
         auto transitionProperty = transition.property();
         if (transitionProperty != property) {
-            auto shorthand = shorthandForProperty(transitionProperty);
-            for (size_t i = 0; i < shorthand.length(); ++i) {
-                if (shorthand.properties()[i] == property)
+            for (auto longhand : shorthandForProperty(transitionProperty)) {
+                if (longhand == property)
                     return true;
             }
             return false;
@@ -360,9 +359,8 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
         if (mode == Animation::AnimateSingleProperty) {
             auto property = animation.property();
             if (isShorthandCSSProperty(property)) {
-                auto shorthand = shorthandForProperty(property);
-                for (size_t j = 0; j < shorthand.length(); ++j)
-                    transitionProperties.add(shorthand.properties()[j]);
+                for (auto longhand : shorthandForProperty(property))
+                    transitionProperties.add(longhand);
             } else if (property != CSSPropertyInvalid)
                 transitionProperties.add(property);
         } else if (mode == Animation::AnimateAll) {

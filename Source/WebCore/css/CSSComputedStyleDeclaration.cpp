@@ -2194,8 +2194,8 @@ static bool updateStyleIfNeededForProperty(Element& element, CSSPropertyID prope
     auto hasValidStyle = [&] {
         auto shorthand = shorthandForProperty(propertyID);
         if (shorthand.length()) {
-            for (size_t i = 0; i < shorthand.length(); ++i) {
-                if (!hasValidStyleForProperty(element, shorthand.properties()[i]))
+            for (auto longhand : shorthand) {
+                if (!hasValidStyleForProperty(element, longhand))
                     return false;
             }
             return true;

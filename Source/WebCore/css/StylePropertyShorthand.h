@@ -39,6 +39,9 @@ public:
     {
     }
 
+    const CSSPropertyID* begin() const { return properties(); }
+    const CSSPropertyID* end() const { return properties() + length(); }
+
     const CSSPropertyID* properties() const { return m_properties; }
     const StylePropertyShorthand* propertiesForInitialization() const { return m_propertiesForInitialization; }
     unsigned length() const { return m_length; }

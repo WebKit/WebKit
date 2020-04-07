@@ -833,12 +833,12 @@ bool StyleProperties::propertyIsImportant(CSSPropertyID propertyID) const
     if (foundPropertyIndex != -1)
         return propertyAt(foundPropertyIndex).isImportant();
 
-    StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
+    auto shorthand = shorthandForProperty(propertyID);
     if (!shorthand.length())
         return false;
 
-    for (unsigned i = 0; i < shorthand.length(); ++i) {
-        if (!propertyIsImportant(shorthand.properties()[i]))
+    for (auto longhand : shorthand) {
+        if (!propertyIsImportant(longhand))
             return false;
     }
     return true;
@@ -925,8 +925,8 @@ void MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSVal
 
     removePropertiesInSet(shorthand.properties(), shorthand.length());
 
-    for (unsigned i = 0; i < shorthand.length(); ++i)
-        m_propertyVector.append(CSSProperty(shorthand.properties()[i], value.copyRef(), important));
+    for (auto longhand : shorthand)
+        m_propertyVector.append(CSSProperty(longhand, value.copyRef(), important));
 }
 
 bool MutableStyleProperties::setProperty(const CSSProperty& property, CSSProperty* slot)

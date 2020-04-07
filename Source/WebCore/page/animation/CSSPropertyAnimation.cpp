@@ -1761,15 +1761,14 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
     for (size_t i = 0; i < animatableShorthandPropertiesCount; ++i) {
         CSSPropertyID propertyID = animatableShorthandProperties[i];
-        StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
+        auto shorthand = shorthandForProperty(propertyID);
         if (!shorthand.length())
             continue;
 
         Vector<AnimationPropertyWrapperBase*> longhandWrappers;
         longhandWrappers.reserveInitialCapacity(shorthand.length());
-        const CSSPropertyID* properties = shorthand.properties();
-        for (unsigned j = 0; j < shorthand.length(); ++j) {
-            unsigned wrapperIndex = indexFromPropertyID(properties[j]);
+        for (auto longhand : shorthand) {
+            unsigned wrapperIndex = indexFromPropertyID(longhand);
             if (wrapperIndex == cInvalidPropertyWrapperIndex)
                 continue;
             ASSERT(m_propertyWrappers[wrapperIndex]);

@@ -251,12 +251,8 @@ void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID curren
 
 void CSSPropertyParser::addExpandedPropertyForValue(CSSPropertyID property, Ref<CSSValue>&& value, bool important)
 {
-    const StylePropertyShorthand& shorthand = shorthandForProperty(property);
-    unsigned shorthandLength = shorthand.length();
-    ASSERT(shorthandLength);
-    const CSSPropertyID* longhands = shorthand.properties();
-    for (unsigned i = 0; i < shorthandLength; ++i)
-        addProperty(longhands[i], property, value.copyRef(), important);
+    for (auto longhand : shorthandForProperty(property))
+        addProperty(longhand, property, value.copyRef(), important);
 }
 
 bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, const CSSParserTokenRange& range, const CSSParserContext& context, ParsedPropertyVector& parsedProperties, StyleRuleType ruleType)
