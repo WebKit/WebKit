@@ -57,7 +57,7 @@ void WebAutomationSession::inspectBrowsingContext(const String& handle, const bo
     // Don't bring the inspector to front since this may be done automatically.
     // We just want it loaded so it can pause if a breakpoint is hit during a command.
     if (page->inspector()) {
-        page->inspector()->connect();
+        page->inspector()->show();
 
         // Start collecting profile information immediately so the entire session is captured.
         if (optionalEnableAutoCapturing && *optionalEnableAutoCapturing)
