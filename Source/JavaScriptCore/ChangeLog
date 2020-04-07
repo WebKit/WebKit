@@ -1,3 +1,19 @@
+2020-04-07  Saam Barati  <sbarati@apple.com>
+
+        Delete ICs can't cache dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=210147
+        <rdar://problem/61382405>
+
+        Reviewed by Tadeu Zagallo.
+
+        We were happily caching delete IC cases on a dictionary object.
+        This is clearly wrong, as we might cache a miss on a dictionary
+        on a property "P", even though we might add "P" to the structure
+        without transitioning it.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheDeleteBy):
+
 2020-04-07  Tadeu Zagallo  <tzagallo@apple.com>
 
         Not using strict mode within ClassDeclaration statement

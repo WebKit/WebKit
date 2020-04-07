@@ -756,6 +756,16 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
         if (!slot.isCacheableDelete())
             return GiveUpOnCache;
 
+        if (baseValue.asCell()->structure()->isDictionary()) {
+            if (baseValue.asCell()->structure()->hasBeenFlattenedBefore())
+                return GiveUpOnCache;
+            jsCast<JSObject*>(baseValue)->flattenDictionaryObject(vm);
+            return RetryCacheLater;
+        }
+
+        if (oldStructure->isDictionary())
+            return RetryCacheLater;
+
         std::unique_ptr<AccessCase> newCase;
 
         if (slot.isDeleteHit()) {
