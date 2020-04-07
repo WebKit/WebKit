@@ -548,6 +548,8 @@ bool MediaPlayerPrivateGStreamer::isAvailable()
 
     // FIXME: This has not been updated for the playbin3 switch.
     GRefPtr<GstElementFactory> factory = adoptGRef(gst_element_factory_find("playbin"));
+    if (!factory)
+        GST_WARNING("Couldn't find a factory for the playbin element. Media playback will be disabled.");
     return factory;
 }
 
