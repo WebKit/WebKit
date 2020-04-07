@@ -1859,8 +1859,9 @@ EncodedJSValue JSC_HOST_CALL functionDollarEvalScript(JSGlobalObject* globalObje
     String sourceCode = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
-    GlobalObject* realm = jsDynamicCast<GlobalObject*>(vm,
-        callFrame->thisValue().get(globalObject, Identifier::fromString(vm, "global")));
+    JSValue global = callFrame->thisValue().get(globalObject, Identifier::fromString(vm, "global"));
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    GlobalObject* realm = jsDynamicCast<GlobalObject*>(vm, global);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (!realm)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected global to point to a global object"_s)));

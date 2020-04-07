@@ -1,3 +1,14 @@
+2020-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] $.evalScript should check exception when accessing "global"
+        https://bugs.webkit.org/show_bug.cgi?id=210114
+        <rdar://problem/61388482>
+
+        Reviewed by Keith Miller.
+
+        * stress/eval-script-global-access-exception-check.js: Added.
+        (shouldThrow):
+
 2020-04-06  Rick Waldron  <waldron.rick@gmail.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove unnecessary Test262 harness file and implement $262.IsHTMLDDA
