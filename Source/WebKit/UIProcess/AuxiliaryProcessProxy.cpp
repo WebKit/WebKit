@@ -48,6 +48,11 @@ AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
         m_processLauncher->invalidate();
         m_processLauncher = nullptr;
     }
+    auto pendingMessages = WTFMove(m_pendingMessages);
+    for (auto& pendingMessage : pendingMessages) {
+        if (pendingMessage.asyncReplyInfo)
+            pendingMessage.asyncReplyInfo->first(nullptr);
+    }
 }
 
 void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
