@@ -28,6 +28,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "PlatformWheelEvent.h"
+#include "RectEdges.h"
 #include "Region.h"
 #include "ScrollingCoordinator.h"
 #include "WheelEventTestMonitor.h"
@@ -118,10 +119,10 @@ public:
     WEBCORE_EXPORT virtual void currentSnapPointIndicesDidChange(ScrollingNodeID, unsigned horizontal, unsigned vertical) = 0;
 #endif
 
-    void setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom);
+    void setMainFramePinnedState(RectEdges<bool>);
 
     // Can be called from any thread. Will update what edges allow rubber-banding.
-    WEBCORE_EXPORT void setCanRubberBandState(bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom);
+    WEBCORE_EXPORT void setMainFrameCanRubberBand(RectEdges<bool>);
 
     bool isHandlingProgrammaticScroll() const { return m_isHandlingProgrammaticScroll; }
     void setIsHandlingProgrammaticScroll(bool isHandlingProgrammaticScroll) { m_isHandlingProgrammaticScroll = isHandlingProgrammaticScroll; }
@@ -212,10 +213,9 @@ private:
         bool rubberBandsAtRight { true };
         bool rubberBandsAtTop { true };
         bool rubberBandsAtBottom { true };
-        bool mainFramePinnedToTheLeft { true };
-        bool mainFramePinnedToTheRight { true };
-        bool mainFramePinnedToTheTop { true };
-        bool mainFramePinnedToTheBottom { true };
+        
+        RectEdges<bool> canRubberBand  { true, true, true, true };
+        RectEdges<bool> mainFramePinnedState { true, true, true, true };
     };
 
     Lock m_swipeStateMutex;

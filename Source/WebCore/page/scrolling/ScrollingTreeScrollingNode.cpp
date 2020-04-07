@@ -151,6 +151,33 @@ bool ScrollingTreeScrollingNode::scrollLimitReached(const PlatformWheelEvent& wh
     return newScrollPosition == oldScrollPosition;
 }
 
+RectEdges<bool> ScrollingTreeScrollingNode::edgePinnedState() const
+{
+    auto scrollPosition = currentScrollPosition();
+    auto minScrollPosition = minimumScrollPosition();
+    auto maxScrollPosition = maximumScrollPosition();
+
+    // Top, right, bottom, left.
+    return {
+        scrollPosition.y() <= minScrollPosition.y(),
+        scrollPosition.x() >= maxScrollPosition.x(),
+        scrollPosition.y() >= maxScrollPosition.y(),
+        scrollPosition.x() <= minScrollPosition.x()
+    };
+}
+
+bool ScrollingTreeScrollingNode::isRubberBanding() const
+{
+    auto scrollPosition = currentScrollPosition();
+    auto minScrollPosition = minimumScrollPosition();
+    auto maxScrollPosition = maximumScrollPosition();
+
+    return scrollPosition.x() < minScrollPosition.x()
+        || scrollPosition.x() > maxScrollPosition.x()
+        || scrollPosition.y() < minScrollPosition.y()
+        || scrollPosition.y() > maxScrollPosition.y();
+}
+
 FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& scrollPosition, ScrollClamping clamping) const
 {
     if (clamping == ScrollClamping::Clamped)

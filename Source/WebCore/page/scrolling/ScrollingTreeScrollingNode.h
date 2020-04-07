@@ -28,6 +28,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "IntRect.h"
+#include "RectEdges.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include "ScrollableArea.h"
@@ -58,6 +59,9 @@ public:
     FloatPoint currentScrollOffset() const { return ScrollableArea::scrollOffsetFromPosition(m_currentScrollPosition, toFloatSize(m_scrollOrigin)); }
     FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }
     FloatSize scrollDeltaSinceLastCommit() const { return m_currentScrollPosition - m_lastCommittedScrollPosition; }
+    
+    RectEdges<bool> edgePinnedState() const;
+    bool isRubberBanding() const;
 
     // These are imperative; they adjust the scrolling layers.
     void scrollTo(const FloatPoint&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped);

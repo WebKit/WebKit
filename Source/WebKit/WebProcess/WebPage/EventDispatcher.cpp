@@ -124,7 +124,7 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
         // scrolling tree can be notified.
         // We only need to do this at the beginning of the gesture.
         if (platformWheelEvent.phase() == PlatformWheelEventPhaseBegan)
-            scrollingTree->setCanRubberBandState(canRubberBandAtLeft, canRubberBandAtRight, canRubberBandAtTop, canRubberBandAtBottom);
+            scrollingTree->setMainFrameCanRubberBand({ canRubberBandAtTop, canRubberBandAtRight, canRubberBandAtBottom, canRubberBandAtLeft });
 
         ScrollingEventResult result = scrollingTree->tryToHandleWheelEvent(platformWheelEvent);
 

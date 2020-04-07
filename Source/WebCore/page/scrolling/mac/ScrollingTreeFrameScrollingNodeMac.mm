@@ -260,20 +260,8 @@ void ScrollingTreeFrameScrollingNodeMac::updateMainFramePinAndRubberbandState()
 {
     ASSERT(isRootNode());
 
-    auto scrollPosition = currentScrollPosition();
-    bool pinnedToTheLeft = scrollPosition.x() <= minimumScrollPosition().x();
-    bool pinnedToTheRight = scrollPosition.x() >= maximumScrollPosition().x();
-    bool pinnedToTheTop = scrollPosition.y() <= minimumScrollPosition().y();
-    bool pinnedToTheBottom = scrollPosition.y() >= maximumScrollPosition().y();
-
-    scrollingTree().setMainFramePinState(pinnedToTheLeft, pinnedToTheRight, pinnedToTheTop, pinnedToTheBottom);
-
-    bool rubberbanding = scrollPosition.x() < minimumScrollPosition().x()
-        || scrollPosition.x() > maximumScrollPosition().x()
-        || scrollPosition.y() < minimumScrollPosition().y()
-        || scrollPosition.y() > maximumScrollPosition().y();
-    
-    scrollingTree().setMainFrameIsRubberBanding(rubberbanding);
+    scrollingTree().setMainFramePinnedState(edgePinnedState());
+    scrollingTree().setMainFrameIsRubberBanding(isRubberBanding());
 }
 
 unsigned ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea() const

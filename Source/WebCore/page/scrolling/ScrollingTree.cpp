@@ -383,24 +383,18 @@ void ScrollingTree::setMainFrameIsScrollSnapping(bool isScrollSnapping)
     m_treeState.mainFrameIsScrollSnapping = isScrollSnapping;
 }
 
-void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom)
+void ScrollingTree::setMainFramePinnedState(RectEdges<bool> edgePinningState)
 {
     LockHolder locker(m_swipeStateMutex);
 
-    m_swipeState.mainFramePinnedToTheLeft = pinnedToTheLeft;
-    m_swipeState.mainFramePinnedToTheRight = pinnedToTheRight;
-    m_swipeState.mainFramePinnedToTheTop = pinnedToTheTop;
-    m_swipeState.mainFramePinnedToTheBottom = pinnedToTheBottom;
+    m_swipeState.mainFramePinnedState = edgePinningState;
 }
 
-void ScrollingTree::setCanRubberBandState(bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
+void ScrollingTree::setMainFrameCanRubberBand(RectEdges<bool> canRubberBand)
 {
     LockHolder locker(m_swipeStateMutex);
 
-    m_swipeState.rubberBandsAtLeft = canRubberBandAtLeft;
-    m_swipeState.rubberBandsAtRight = canRubberBandAtRight;
-    m_swipeState.rubberBandsAtTop = canRubberBandAtTop;
-    m_swipeState.rubberBandsAtBottom = canRubberBandAtBottom;
+    m_swipeState.canRubberBand = canRubberBand;
 }
 
 // Can be called from the main thread.
@@ -425,13 +419,13 @@ bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wh
 
     LockHolder lock(m_swipeStateMutex);
 
-    if (wheelEvent.deltaX() > 0 && m_swipeState.mainFramePinnedToTheLeft && !m_swipeState.rubberBandsAtLeft)
+    if (wheelEvent.deltaX() > 0 && m_swipeState.mainFramePinnedState.left() && !m_swipeState.canRubberBand.left())
         return true;
-    if (wheelEvent.deltaX() < 0 && m_swipeState.mainFramePinnedToTheRight && !m_swipeState.rubberBandsAtRight)
+    if (wheelEvent.deltaX() < 0 && m_swipeState.mainFramePinnedState.right() && !m_swipeState.canRubberBand.right())
         return true;
-    if (wheelEvent.deltaY() > 0 && m_swipeState.mainFramePinnedToTheTop && !m_swipeState.rubberBandsAtTop)
+    if (wheelEvent.deltaY() > 0 && m_swipeState.mainFramePinnedState.top() && !m_swipeState.canRubberBand.top())
         return true;
-    if (wheelEvent.deltaY() < 0 && m_swipeState.mainFramePinnedToTheBottom && !m_swipeState.rubberBandsAtBottom)
+    if (wheelEvent.deltaY() < 0 && m_swipeState.mainFramePinnedState.bottom() && !m_swipeState.canRubberBand.bottom())
         return true;
 
     return false;
