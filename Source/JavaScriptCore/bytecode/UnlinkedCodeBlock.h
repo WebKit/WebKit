@@ -123,7 +123,6 @@ public:
     enum { CallFunction, ApplyFunction };
 
     bool isConstructor() const { return m_isConstructor; }
-    bool isStrictMode() const { return m_isStrictMode; }
     bool usesEval() const { return m_usesEval; }
     SourceParseMode parseMode() const { return m_parseMode; }
     bool isArrowFunction() const { return isArrowFunctionParseMode(parseMode()); }
@@ -335,7 +334,6 @@ private:
     VirtualRegister m_scopeRegister;
 
     unsigned m_usesEval : 1;
-    unsigned m_isStrictMode : 1;
     unsigned m_isConstructor : 1;
     unsigned m_hasCapturedVariables : 1;
     unsigned m_isBuiltinFunction : 1;

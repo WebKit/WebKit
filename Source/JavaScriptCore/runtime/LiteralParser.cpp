@@ -933,7 +933,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                         m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;
                         return JSValue();
                     }
-                    PutPropertySlot slot(object, m_nullOrCodeBlock ? m_nullOrCodeBlock->isStrictMode() : false);
+                    PutPropertySlot slot(object, m_nullOrCodeBlock ? m_nullOrCodeBlock->ownerExecutable()->isInStrictContext() : false);
                     objectStack.last().put(m_globalObject, ident, lastValue, slot);
                 } else {
                     if (Optional<uint32_t> index = parseIndex(ident))

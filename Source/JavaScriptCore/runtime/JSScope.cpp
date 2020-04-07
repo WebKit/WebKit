@@ -411,7 +411,7 @@ SymbolTable* JSScope::symbolTable(VM& vm)
 
 JSValue JSScope::toThis(JSCell*, JSGlobalObject* globalObject, ECMAMode ecmaMode)
 {
-    if (ecmaMode == StrictMode)
+    if (ecmaMode.isStrict())
         return jsUndefined();
     return globalObject->globalThis();
 }

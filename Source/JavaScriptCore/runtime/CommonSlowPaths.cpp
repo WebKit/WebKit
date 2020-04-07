@@ -379,7 +379,7 @@ SLOW_PATH_DECL(slow_path_to_this)
     // different object that still has the same structure on the fast path since it'll produce
     // the same SpeculatedType. Therefore, we don't need to worry about value profiling on the
     // fast path.
-    auto value = v1.toThis(globalObject, codeBlock->isStrictMode() ? StrictMode : NotStrictMode);
+    auto value = v1.toThis(globalObject, bytecode.m_ecmaMode);
     RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, value, PROFILE_VALUE(value));
 }
 
@@ -988,7 +988,7 @@ SLOW_PATH_DECL(slow_path_del_by_val)
     }
     CHECK_EXCEPTION();
     
-    if (!couldDelete && codeBlock->isStrictMode())
+    if (!couldDelete && bytecode.m_ecmaMode.isStrict())
         THROW(createTypeError(globalObject, UnableToDeletePropertyError));
     
     RETURN(jsBoolean(couldDelete));
@@ -1305,7 +1305,7 @@ SLOW_PATH_DECL(slow_path_put_by_id_with_this)
     JSValue baseValue = GET_C(bytecode.m_base).jsValue();
     JSValue thisVal = GET_C(bytecode.m_thisValue).jsValue();
     JSValue putValue = GET_C(bytecode.m_value).jsValue();
-    PutPropertySlot slot(thisVal, codeBlock->isStrictMode(), codeBlock->putByIdContext());
+    PutPropertySlot slot(thisVal, bytecode.m_ecmaMode.isStrict(), codeBlock->putByIdContext());
     baseValue.putInline(globalObject, ident, putValue, slot);
     END();
 }
@@ -1321,7 +1321,7 @@ SLOW_PATH_DECL(slow_path_put_by_val_with_this)
     
     auto property = subscript.toPropertyKey(globalObject);
     CHECK_EXCEPTION();
-    PutPropertySlot slot(thisValue, codeBlock->isStrictMode());
+    PutPropertySlot slot(thisValue, bytecode.m_ecmaMode.isStrict());
     baseValue.put(globalObject, property, value, slot);
     END();
 }

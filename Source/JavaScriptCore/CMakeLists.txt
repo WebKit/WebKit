@@ -822,6 +822,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/DisallowScope.h
     runtime/DisallowVMReentry.h
     runtime/DumpContext.h
+    runtime/ECMAMode.h
     runtime/EnsureStillAliveHere.h
     runtime/EnumerationMode.h
     runtime/Error.h

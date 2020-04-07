@@ -417,7 +417,7 @@ JSObject* JSString::toObject(JSGlobalObject* globalObject) const
 
 JSValue JSString::toThis(JSCell* cell, JSGlobalObject* globalObject, ECMAMode ecmaMode)
 {
-    if (ecmaMode == StrictMode)
+    if (ecmaMode.isStrict())
         return cell;
     return StringObject::create(globalObject->vm(), globalObject, asString(cell));
 }

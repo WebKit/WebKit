@@ -91,11 +91,11 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
         executable->recordParse(rootNode->features() | arrowContextFeature, rootNode->hasCapturedVariables(), rootNode->lastLine(), endColumn);
 
     bool usesEval = rootNode->features() & EvalFeature;
-    bool isStrictMode = rootNode->features() & StrictModeFeature;
+    ECMAMode ecmaMode = rootNode->features() & StrictModeFeature ? ECMAMode::strict() : ECMAMode::sloppy();
     NeedsClassFieldInitializer needsClassFieldInitializer = NeedsClassFieldInitializer::No;
     if constexpr (std::is_same_v<ExecutableType, DirectEvalExecutable>)
         needsClassFieldInitializer = executable->needsClassFieldInitializer();
-    ExecutableInfo executableInfo(usesEval, isStrictMode, false, false, ConstructorKind::None, scriptMode, SuperBinding::NotNeeded, CacheTypes<UnlinkedCodeBlockType>::parseMode, derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, false, evalContextType);
+    ExecutableInfo executableInfo(usesEval, false, false, ConstructorKind::None, scriptMode, SuperBinding::NotNeeded, CacheTypes<UnlinkedCodeBlockType>::parseMode, derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, false, evalContextType);
 
     UnlinkedCodeBlockType* unlinkedCodeBlock = UnlinkedCodeBlockType::create(vm, executableInfo, codeGenerationMode);
     unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), lineCount, unlinkedEndColumn);
@@ -104,7 +104,7 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
     if (!source.provider()->sourceMappingURLDirective().isNull())
         unlinkedCodeBlock->setSourceMappingURLDirective(source.provider()->sourceMappingURLDirective());
 
-    error = BytecodeGenerator::generate(vm, rootNode.get(), source, unlinkedCodeBlock, codeGenerationMode, variablesUnderTDZ);
+    error = BytecodeGenerator::generate(vm, rootNode.get(), source, unlinkedCodeBlock, codeGenerationMode, variablesUnderTDZ, ecmaMode);
 
     if (error.isValid())
         return nullptr;

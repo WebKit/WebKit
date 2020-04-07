@@ -506,7 +506,7 @@ private:
             
         case ToThis: {
             // ToThis in methods for primitive types should speculate primitive types in strict mode.
-            bool isStrictMode = m_graph.isStrictModeFor(node->origin.semantic);
+            bool isStrictMode = node->ecmaMode().isStrict();
             if (isStrictMode) {
                 if (node->child1()->shouldSpeculateBoolean()) {
                     changed |= mergePrediction(SpecBoolean);

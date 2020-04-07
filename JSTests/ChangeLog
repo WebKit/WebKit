@@ -1,3 +1,19 @@
+2020-04-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Not using strict mode within ClassDeclaration statement
+        https://bugs.webkit.org/show_bug.cgi?id=205578
+        <rdar://problem/58194589>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/inline-strict-delete.js: Added.
+        (assert):
+        (bar):
+        (foo):
+        * stress/superclass-expression-strictness.js: Added.
+        (f.try.c):
+        (f):
+
 2020-04-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         test262/Runner.pm ignores "async" flag

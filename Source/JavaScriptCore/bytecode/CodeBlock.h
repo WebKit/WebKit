@@ -222,9 +222,7 @@ public:
 
     void dumpMathICStats();
 
-    bool isStrictMode() const { return m_unlinkedCode->isStrictMode(); }
     bool isConstructor() const { return m_unlinkedCode->isConstructor(); }
-    ECMAMode ecmaMode() const { return isStrictMode() ? StrictMode : NotStrictMode; }
     CodeType codeType() const { return m_unlinkedCode->codeType(); }
 
     JSParserScriptMode scriptMode() const { return m_unlinkedCode->scriptMode(); }
@@ -232,11 +230,10 @@ public:
     bool hasInstalledVMTrapBreakpoints() const;
     bool installVMTrapBreakpoints();
 
-    inline bool isKnownNotImmediate(VirtualRegister reg)
+    inline bool isKnownCell(VirtualRegister reg)
     {
-        if (reg == thisRegister() && !isStrictMode())
-            return true;
-
+        // FIXME: Consider adding back the optimization where we return true if `reg` is `this` and we're in sloppy mode.
+        // https://bugs.webkit.org/show_bug.cgi?id=210145
         if (reg.isConstant())
             return getConstant(reg).isCell();
 

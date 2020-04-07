@@ -60,12 +60,10 @@ public:
     bool usesEval() const { return m_features & EvalFeature; }
     bool usesArguments() const { return m_features & ArgumentsFeature; }
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
-    bool isStrictMode() const { return m_features & StrictModeFeature; }
     DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }
     EvalContextType evalContextType() const { return static_cast<EvalContextType>(m_evalContextType); }
+    bool isInStrictContext() const { return m_features & StrictModeFeature; }
 
-    ECMAMode ecmaMode() const { return isStrictMode() ? StrictMode : NotStrictMode; }
-        
     void setNeverInline(bool value) { m_neverInline = value; }
     void setNeverOptimize(bool value) { m_neverOptimize = value; }
     void setNeverFTLOptimize(bool value) { m_neverFTLOptimize = value; }

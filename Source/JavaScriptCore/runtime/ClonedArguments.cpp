@@ -178,7 +178,7 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, JSGlobalObject* globa
 
     if (!thisObject->specialsMaterialized()) {
         FunctionExecutable* executable = jsCast<FunctionExecutable*>(thisObject->m_callee->executable());
-        bool isStrictMode = executable->isStrictMode();
+        bool isStrictMode = executable->isInStrictContext();
 
         if (ident == vm.propertyNames->callee) {
             if (isStrictMode) {
@@ -250,7 +250,7 @@ void ClonedArguments::materializeSpecials(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(m_callee->executable());
-    bool isStrictMode = executable->isStrictMode();
+    bool isStrictMode = executable->isInStrictContext();
     
     if (isStrictMode)
         putDirectAccessor(globalObject, vm.propertyNames->callee, this->globalObject(vm)->throwTypeErrorArgumentsCalleeAndCallerGetterSetter(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor);

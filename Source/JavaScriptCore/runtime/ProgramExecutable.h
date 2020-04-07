@@ -71,7 +71,7 @@ public:
         
     DECLARE_INFO;
 
-    ExecutableInfo executableInfo() const { return ExecutableInfo(usesEval(), isStrictMode(), false, false, ConstructorKind::None, JSParserScriptMode::Classic, SuperBinding::NotNeeded, SourceParseMode::ProgramMode, derivedContextType(), NeedsClassFieldInitializer::No, isArrowFunctionContext(), false, EvalContextType::None); }
+    ExecutableInfo executableInfo() const { return ExecutableInfo(usesEval(), false, false, ConstructorKind::None, JSParserScriptMode::Classic, SuperBinding::NotNeeded, SourceParseMode::ProgramMode, derivedContextType(), NeedsClassFieldInitializer::No, isArrowFunctionContext(), false, EvalContextType::None); }
 
     TemplateObjectMap& ensureTemplateObjectMap(VM&);
 

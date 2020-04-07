@@ -2223,6 +2223,53 @@ public:
         m_opInfo = arrayMode.asWord();
         return true;
     }
+
+    bool hasECMAMode()
+    {
+        switch (op()) {
+        case CallEval:
+        case DeleteById:
+        case DeleteByVal:
+        case PutById:
+        case PutByIdDirect:
+        case PutByIdFlush:
+        case PutByIdWithThis:
+        case PutByVal:
+        case PutByValAlias:
+        case PutByValDirect:
+        case PutByValWithThis:
+        case PutDynamicVar:
+        case ToThis:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    ECMAMode ecmaMode()
+    {
+        ASSERT(hasECMAMode());
+        switch (op()) {
+        case CallEval:
+        case DeleteByVal:
+        case PutByValWithThis:
+        case ToThis:
+            return ECMAMode::fromByte(m_opInfo.as<uint8_t>());
+        case DeleteById:
+        case PutById:
+        case PutByIdDirect:
+        case PutByIdFlush:
+        case PutByIdWithThis:
+        case PutByVal:
+        case PutByValAlias:
+        case PutByValDirect:
+        case PutDynamicVar:
+            return ECMAMode::fromByte(m_opInfo2.as<uint8_t>());
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return ECMAMode::strict();
+        }
+    }
     
     bool hasArithMode()
     {

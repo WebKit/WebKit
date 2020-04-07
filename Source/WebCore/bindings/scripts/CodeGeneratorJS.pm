@@ -4591,7 +4591,7 @@ sub GenerateImplementation
             push(@implContent, "    VM& vm = JSC::getVM(&lexicalGlobalObject);\n");
             push(@implContent, "    auto decodedThisValue = JSValue::decode(thisValue);\n");
             push(@implContent, "    if (decodedThisValue.isUndefinedOrNull())\n");
-            push(@implContent, "        decodedThisValue = JSValue(&lexicalGlobalObject).toThis(&lexicalGlobalObject, NotStrictMode);\n");
+            push(@implContent, "        decodedThisValue = JSValue(&lexicalGlobalObject).toThis(&lexicalGlobalObject, ECMAMode::sloppy());\n");
             push(@implContent, "    return $castingFunction(vm, decodedThisValue);\n");
             push(@implContent, "}\n\n");
         } else {
@@ -4607,7 +4607,7 @@ sub GenerateImplementation
 
         # FIXME: Make consistent IDLAttribute<>::cast and IDLOperation<>::cast in case of CustomProxyToJSObject.
         my $castingFunction = $interface->extendedAttributes->{CustomProxyToJSObject} ? "to${className}" : GetCastingHelperForThisObject($interface);
-        my $thisValue = $interface->extendedAttributes->{CustomProxyToJSObject} ? "callFrame.thisValue().toThis(&lexicalGlobalObject, NotStrictMode)" : "callFrame.thisValue()";
+        my $thisValue = $interface->extendedAttributes->{CustomProxyToJSObject} ? "callFrame.thisValue().toThis(&lexicalGlobalObject, ECMAMode::sloppy())" : "callFrame.thisValue()";
         push(@implContent, "template<> inline ${className}* IDLOperation<${className}>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return $castingFunction(JSC::getVM(&lexicalGlobalObject), $thisValue);\n");

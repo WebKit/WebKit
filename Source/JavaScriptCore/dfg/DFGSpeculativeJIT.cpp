@@ -2119,7 +2119,7 @@ void SpeculativeJIT::compileDoublePutByVal(Node* node, SpeculateCellOperand& bas
         addSlowPathGenerator(
             slowPathCall(
                 slowCase, this,
-                m_jit.isStrictModeFor(node->origin.semantic)
+                node->ecmaMode().isStrict()
                     ? (node->op() == PutByValDirect ? operationPutDoubleByValDirectBeyondArrayBoundsStrict : operationPutDoubleByValBeyondArrayBoundsStrict)
                     : (node->op() == PutByValDirect ? operationPutDoubleByValDirectBeyondArrayBoundsNonStrict : operationPutDoubleByValBeyondArrayBoundsNonStrict),
                 NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg, propertyReg, valueReg));
@@ -3150,24 +3150,24 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
         if (node->op() == PutByValDirect) {
             addSlowPathGenerator(slowPathCall(
                 slowPathCases, this,
-                m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValDirectStrict : operationPutByValDirectNonStrict,
+                node->ecmaMode().isStrict() ? operationPutByValDirectStrict : operationPutByValDirectNonStrict,
                 NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), base, property, valueGPR));
         } else {
             addSlowPathGenerator(slowPathCall(
                 slowPathCases, this,
-                m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValStrict : operationPutByValNonStrict,
+                node->ecmaMode().isStrict() ? operationPutByValStrict : operationPutByValNonStrict,
                 NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), base, property, valueGPR));
         }
 #else // not USE(JSVALUE64)
         if (node->op() == PutByValDirect) {
             addSlowPathGenerator(slowPathCall(
                 slowPathCases, this,
-                m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValDirectCellStrict : operationPutByValDirectCellNonStrict,
+                node->ecmaMode().isStrict() ? operationPutByValDirectCellStrict : operationPutByValDirectCellNonStrict,
                 NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), base, JSValueRegs(propertyTagGPR, property), JSValueRegs(valueTagGPR, valueGPR)));
         } else {
             addSlowPathGenerator(slowPathCall(
                 slowPathCases, this,
-                m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValCellStrict : operationPutByValCellNonStrict,
+                node->ecmaMode().isStrict() ? operationPutByValCellStrict : operationPutByValCellNonStrict,
                 NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), base, JSValueRegs(propertyTagGPR, property), JSValueRegs(valueTagGPR, valueGPR)));
         }
 #endif
@@ -3299,7 +3299,7 @@ void SpeculativeJIT::compilePutByValForCellWithString(Node* node, Edge& child1, 
     speculateString(child2, arg2GPR);
 
     flushRegisters();
-    callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValCellStringStrict : operationPutByValCellStringNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3Regs);
+    callOperation(node->ecmaMode().isStrict() ? operationPutByValCellStringStrict : operationPutByValCellStringNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3Regs);
     m_jit.exceptionCheck();
 
     noResult(node);
@@ -3318,7 +3318,7 @@ void SpeculativeJIT::compilePutByValForCellWithSymbol(Node* node, Edge& child1, 
     speculateSymbol(child2, arg2GPR);
 
     flushRegisters();
-    callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValCellSymbolStrict : operationPutByValCellSymbolNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3Regs);
+    callOperation(node->ecmaMode().isStrict() ? operationPutByValCellSymbolStrict : operationPutByValCellSymbolNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3Regs);
     m_jit.exceptionCheck();
 
     noResult(node);
@@ -11326,7 +11326,7 @@ void SpeculativeJIT::compilePutDynamicVar(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
 
     flushRegisters();
-    callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutDynamicVarStrict : operationPutDynamicVarNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), scopeGPR, valueRegs, identifierUID(node->identifierNumber()), node->getPutInfo());
+    callOperation(node->ecmaMode().isStrict() ? operationPutDynamicVarStrict : operationPutDynamicVarNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), scopeGPR, valueRegs, identifierUID(node->identifierNumber()), node->getPutInfo());
     m_jit.exceptionCheck();
     noResult(node);
 }
@@ -12212,7 +12212,7 @@ void SpeculativeJIT::compilePutByIdFlush(Node* node)
     GPRReg scratchGPR = scratch.gpr();
     flushRegisters();
 
-    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->cacheableIdentifier(), NotDirect, MacroAssembler::Jump(), DontSpill);
+    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->cacheableIdentifier(), NotDirect, node->ecmaMode(), MacroAssembler::Jump(), DontSpill);
 
     noResult(node);
 }
@@ -12227,7 +12227,7 @@ void SpeculativeJIT::compilePutById(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg scratchGPR = scratch.gpr();
 
-    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->cacheableIdentifier(), NotDirect);
+    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->cacheableIdentifier(), NotDirect, node->ecmaMode());
 
     noResult(node);
 }
@@ -12242,7 +12242,7 @@ void SpeculativeJIT::compilePutByIdDirect(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg scratchGPR = scratch.gpr();
 
-    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->cacheableIdentifier(), Direct);
+    cachedPutById(node->origin.semantic, baseGPR, valueRegs, scratchGPR, node->cacheableIdentifier(), Direct, node->ecmaMode());
 
     noResult(node);
 }
@@ -12257,7 +12257,7 @@ void SpeculativeJIT::compilePutByIdWithThis(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
 
     flushRegisters();
-    callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByIdWithThisStrict : operationPutByIdWithThis,
+    callOperation(node->ecmaMode().isStrict() ? operationPutByIdWithThisStrict : operationPutByIdWithThis,
         TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, thisRegs, valueRegs, node->cacheableIdentifier().rawBits());
     m_jit.exceptionCheck();
 
@@ -12626,7 +12626,7 @@ void SpeculativeJIT::compileToThis(Node* node)
     m_jit.moveValueRegs(thisValueRegs, tempRegs);
 
     J_JITOperation_GJ function;
-    if (m_jit.isStrictModeFor(node->origin.semantic))
+    if (node->ecmaMode().isStrict())
         function = operationToThisStrict;
     else
         function = operationToThis;
@@ -13822,7 +13822,7 @@ void SpeculativeJIT::compileProfileType(Node* node)
     noResult(node);
 }
 
-void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg scratchGPR, CacheableIdentifier identifier, PutKind putKind, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
+void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg scratchGPR, CacheableIdentifier identifier, PutKind putKind, ECMAMode ecmaMode, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     RegisterSet usedRegisters = this->usedRegisters();
     if (spillMode == DontSpill) {
@@ -13834,7 +13834,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValu
     JITPutByIdGenerator gen(
         m_jit.codeBlock(), codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs::payloadOnly(baseGPR), valueRegs,
-        scratchGPR, m_jit.ecmaModeFor(codeOrigin), putKind);
+        scratchGPR, ecmaMode, putKind);
 
     gen.generateFastPath(m_jit);
 

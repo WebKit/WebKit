@@ -153,7 +153,7 @@ void JITPutByIdGenerator::generateFastPath(MacroAssembler& jit)
 
 V_JITOperation_GSsiJJC JITPutByIdGenerator::slowPathFunction()
 {
-    if (m_ecmaMode == StrictMode) {
+    if (m_ecmaMode.isStrict()) {
         if (m_putKind == Direct)
             return operationPutByIdDirectStrictOptimize;
         return operationPutByIdStrictOptimize;

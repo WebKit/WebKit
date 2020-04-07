@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -111,7 +111,7 @@ JSValue JSValue::toThisSlowCase(JSGlobalObject* globalObject, ECMAMode ecmaMode)
 {
     ASSERT(!isCell());
 
-    if (ecmaMode == StrictMode)
+    if (ecmaMode.isStrict())
         return *this;
 
     if (isInt32() || isDouble())
@@ -189,7 +189,7 @@ bool JSValue::putToPrimitive(JSGlobalObject* globalObject, PropertyName property
 
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter())
-                RELEASE_AND_RETURN(scope, callSetter(globalObject, *this, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode));
+                RELEASE_AND_RETURN(scope, callSetter(globalObject, *this, gs, value, slot.isStrictMode() ? ECMAMode::strict() : ECMAMode::sloppy()));
 
             if (gs.isCustomGetterSetter())
                 return callCustomSetter(globalObject, gs, attributes & PropertyAttribute::CustomAccessor, obj, slot.thisValue(), value);

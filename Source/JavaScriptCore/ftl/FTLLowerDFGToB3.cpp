@@ -2124,7 +2124,7 @@ private:
         
         m_out.appendTo(slowCase, continuation);
         J_JITOperation_GJ function;
-        if (m_graph.isStrictModeFor(m_node->origin.semantic))
+        if (m_node->ecmaMode().isStrict())
             function = operationToThisStrict;
         else
             function = operationToThis;
@@ -3686,7 +3686,7 @@ private:
         LValue thisValue = lowJSValue(m_node->child2());
         LValue value = lowJSValue(m_node->child3());
 
-        vmCall(Void, m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutByIdWithThisStrict : operationPutByIdWithThis,
+        vmCall(Void, m_node->ecmaMode().isStrict() ? operationPutByIdWithThisStrict : operationPutByIdWithThis,
             weakPointer(globalObject), base, thisValue, value, m_out.constIntPtr(m_node->cacheableIdentifier().rawBits()));
     }
 
@@ -3698,7 +3698,7 @@ private:
         LValue property = lowJSValue(m_graph.varArgChild(m_node, 2));
         LValue value = lowJSValue(m_graph.varArgChild(m_node, 3));
 
-        vmCall(Void, m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis,
+        vmCall(Void, m_node->ecmaMode().isStrict() ? operationPutByValWithThisStrict : operationPutByValWithThis,
             weakPointer(globalObject), base, thisValue, property, value);
     }
     
@@ -3971,7 +3971,7 @@ private:
             preparePatchpointForExceptions(patchpoint);
 
         State* state = &m_ftlState;
-        ECMAMode ecmaMode = m_graph.executableFor(node->origin.semantic)->ecmaMode();
+        ECMAMode ecmaMode = node->ecmaMode();
         
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -4831,12 +4831,12 @@ private:
                 V_JITOperation_GCCJ operation = nullptr;
                 if (child2.useKind() == StringUse) {
                     if (m_node->op() == PutByValDirect) {
-                        if (m_graph.isStrictModeFor(m_node->origin.semantic))
+                        if (m_node->ecmaMode().isStrict())
                             operation = operationPutByValDirectCellStringStrict;
                         else
                             operation = operationPutByValDirectCellStringNonStrict;
                     } else {
-                        if (m_graph.isStrictModeFor(m_node->origin.semantic))
+                        if (m_node->ecmaMode().isStrict())
                             operation = operationPutByValCellStringStrict;
                         else
                             operation = operationPutByValCellStringNonStrict;
@@ -4847,12 +4847,12 @@ private:
 
                 if (child2.useKind() == SymbolUse) {
                     if (m_node->op() == PutByValDirect) {
-                        if (m_graph.isStrictModeFor(m_node->origin.semantic))
+                        if (m_node->ecmaMode().isStrict())
                             operation = operationPutByValDirectCellSymbolStrict;
                         else
                             operation = operationPutByValDirectCellSymbolNonStrict;
                     } else {
-                        if (m_graph.isStrictModeFor(m_node->origin.semantic))
+                        if (m_node->ecmaMode().isStrict())
                             operation = operationPutByValCellSymbolStrict;
                         else
                             operation = operationPutByValCellSymbolNonStrict;
@@ -4864,12 +4864,12 @@ private:
 
             V_JITOperation_GJJJ operation;
             if (m_node->op() == PutByValDirect) {
-                if (m_graph.isStrictModeFor(m_node->origin.semantic))
+                if (m_node->ecmaMode().isStrict())
                     operation = operationPutByValDirectStrict;
                 else
                     operation = operationPutByValDirectNonStrict;
             } else {
-                if (m_graph.isStrictModeFor(m_node->origin.semantic))
+                if (m_node->ecmaMode().isStrict())
                     operation = operationPutByValStrict;
                 else
                     operation = operationPutByValNonStrict;
@@ -4915,7 +4915,7 @@ private:
                 }
                 
                 contiguousPutByValOutOfBounds(
-                    m_graph.isStrictModeFor(m_node->origin.semantic)
+                    m_node->ecmaMode().isStrict()
                         ? (m_node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsStrict)
                         : (m_node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsNonStrict : operationPutByValBeyondArrayBoundsNonStrict),
                     base, storage, index, value, continuation);
@@ -4941,7 +4941,7 @@ private:
                 }
                 
                 contiguousPutByValOutOfBounds(
-                    m_graph.isStrictModeFor(m_node->origin.semantic)
+                    m_node->ecmaMode().isStrict()
                         ? (m_node->op() == PutByValDirect ? operationPutDoubleByValDirectBeyondArrayBoundsStrict : operationPutDoubleByValBeyondArrayBoundsStrict)
                         : (m_node->op() == PutByValDirect ? operationPutDoubleByValDirectBeyondArrayBoundsNonStrict : operationPutDoubleByValBeyondArrayBoundsNonStrict),
                     base, storage, index, value, continuation);
@@ -4981,7 +4981,7 @@ private:
             LValue isOutOfBounds = m_out.aboveOrEqual(
                 index, m_out.load32NonNegative(storage, m_heaps.ArrayStorage_vectorLength));
 
-            auto slowPathFunction = m_graph.isStrictModeFor(m_node->origin.semantic)
+            auto slowPathFunction = m_node->ecmaMode().isStrict()
                 ? (m_node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsStrict)
                 : (m_node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsNonStrict : operationPutByValBeyondArrayBoundsNonStrict);
             if (!arrayMode.isOutOfBounds()) {
@@ -5246,7 +5246,7 @@ private:
                             exceptions.get(), optimizationFunction, returnGPR,
                             jit.codeBlock()->globalObjectFor(node->origin.semantic),
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), base,
-                            subscript).call();
+                            subscript, CCallHelpers::TrustedImm32(node->ecmaMode().value())).call();
                         jit.jump().linkTo(done, &jit);
 
                         generator->reportSlowPathCall(slowPathBegin, slowPathCall);
@@ -5275,7 +5275,7 @@ private:
             // https://bugs.webkit.org/show_bug.cgi?id=209397
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
             LValue base = lowJSValue(m_node->child1());
-            setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteByIdGeneric, weakPointer(globalObject), m_out.intPtrZero, base, m_out.constIntPtr(m_node->cacheableIdentifier().rawBits()))));
+            setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteByIdGeneric, weakPointer(globalObject), m_out.intPtrZero, base, m_out.constIntPtr(m_node->cacheableIdentifier().rawBits()), m_out.constInt32(m_node->ecmaMode().value()))));
             break;
         }
 
@@ -5316,7 +5316,7 @@ private:
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
             LValue base = lowJSValue(m_node->child1());
             LValue subscript = lowJSValue(m_node->child2());
-            setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteByValGeneric, weakPointer(globalObject), m_out.intPtrZero, base, subscript)));
+            setBoolean(m_out.notZero64(vmCall(Int64, operationDeleteByValGeneric, weakPointer(globalObject), m_out.intPtrZero, base, subscript, m_out.constInt32(m_node->ecmaMode().value()))));
             return;
         }
 
@@ -9912,7 +9912,8 @@ private:
                 unsigned requiredBytes = sizeof(CallerFrameAndPC) + sizeof(CallFrame*) * 2;
                 requiredBytes = WTF::roundUpToMultipleOf(stackAlignmentBytes(), requiredBytes);
                 jit.subPtr(CCallHelpers::TrustedImm32(requiredBytes), CCallHelpers::stackPointerRegister);
-                jit.setupArguments<decltype(operationCallEval)>(globalObject, GPRInfo::regT1);
+                jit.move(CCallHelpers::TrustedImm32(node->ecmaMode().value()), GPRInfo::regT2);
+                jit.setupArguments<decltype(operationCallEval)>(globalObject, GPRInfo::regT1, GPRInfo::regT2);
                 jit.prepareCallOperation(vm);
                 jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationCallEval)), GPRInfo::nonPreservedNonArgumentGPR0);
                 jit.call(GPRInfo::nonPreservedNonArgumentGPR0, OperationPtrTag);
@@ -13458,7 +13459,7 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         UniquedStringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
-        setJSValue(vmCall(Void, m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutDynamicVarStrict : operationPutDynamicVarNonStrict,
+        setJSValue(vmCall(Void, m_node->ecmaMode().isStrict() ? operationPutDynamicVarStrict : operationPutDynamicVarNonStrict,
             weakPointer(globalObject), lowCell(m_node->child1()), lowJSValue(m_node->child2()), m_out.constIntPtr(uid), m_out.constInt32(m_node->getPutInfo())));
     }
     

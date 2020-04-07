@@ -27,6 +27,7 @@ types [
     :BasicBlockLocation,
     :BoundLabel,
     :DebugHookType,
+    :ECMAMode,
     :ErrorType,
     :GetByIdMode,
     :GetByIdModeMetadata,
@@ -174,6 +175,7 @@ op :argument_count,
 op :to_this,
     args: {
         srcDst: VirtualRegister,
+        ecmaMode: ECMAMode,
     },
     metadata: {
         cachedStructureID: StructureID,
@@ -522,6 +524,7 @@ op :put_by_id_with_this,
         thisValue: VirtualRegister,
         property: unsigned,
         value: VirtualRegister,
+        ecmaMode: ECMAMode,
     }
 
 op :del_by_id,
@@ -529,6 +532,7 @@ op :del_by_id,
         dst: VirtualRegister,
         base: VirtualRegister,
         property: unsigned,
+        ecmaMode: ECMAMode,
     }
 
 op :get_by_val,
@@ -548,6 +552,7 @@ op :put_by_val,
         base: VirtualRegister,
         property: VirtualRegister,
         value: VirtualRegister,
+        ecmaMode: ECMAMode,
     },
     metadata: {
         arrayProfile: ArrayProfile,
@@ -559,6 +564,7 @@ op :put_by_val_with_this,
         thisValue: VirtualRegister,
         property: VirtualRegister,
         value: VirtualRegister,
+        ecmaMode: ECMAMode,
     }
 
 op :put_by_val_direct,
@@ -566,6 +572,7 @@ op :put_by_val_direct,
         base: VirtualRegister,
         property: VirtualRegister,
         value: VirtualRegister,
+        ecmaMode: ECMAMode,
     },
     metadata: {
         arrayProfile: ArrayProfile,
@@ -576,6 +583,7 @@ op :del_by_val,
         dst: VirtualRegister,
         base: VirtualRegister,
         property: VirtualRegister,
+        ecmaMode: ECMAMode,
     }
 
 op :put_getter_by_id,
@@ -778,6 +786,7 @@ op :call_eval,
         callee: VirtualRegister,
         argc: unsigned,
         argv: unsigned,
+        ecmaMode: ECMAMode,
     },
     metadata: {
         callLinkInfo: LLIntCallLinkInfo,

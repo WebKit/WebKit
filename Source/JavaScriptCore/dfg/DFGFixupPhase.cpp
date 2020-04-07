@@ -2837,7 +2837,7 @@ private:
 
     void fixupToThis(Node* node)
     {
-        bool isStrictMode = m_graph.isStrictModeFor(node->origin.semantic);
+        bool isStrictMode = node->ecmaMode().isStrict();
 
         if (isStrictMode) {
             if (node->child1()->shouldSpeculateBoolean()) {

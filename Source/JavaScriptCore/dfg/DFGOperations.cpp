@@ -298,7 +298,7 @@ EncodedJSValue JIT_OPERATION operationToThis(JSGlobalObject* globalObject, Encod
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    return JSValue::encode(JSValue::decode(encodedOp).toThis(globalObject, NotStrictMode));
+    return JSValue::encode(JSValue::decode(encodedOp).toThis(globalObject, ECMAMode::sloppy()));
 }
 
 EncodedJSValue JIT_OPERATION operationToThisStrict(JSGlobalObject* globalObject, EncodedJSValue encodedOp)
@@ -307,7 +307,7 @@ EncodedJSValue JIT_OPERATION operationToThisStrict(JSGlobalObject* globalObject,
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    return JSValue::encode(JSValue::decode(encodedOp).toThis(globalObject, StrictMode));
+    return JSValue::encode(JSValue::decode(encodedOp).toThis(globalObject, ECMAMode::strict()));
 }
 
 JSArray* JIT_OPERATION operationObjectKeys(JSGlobalObject* globalObject, EncodedJSValue encodedObject)
@@ -3385,7 +3385,7 @@ EncodedJSValue JIT_OPERATION operationGetPrototypeOf(JSGlobalObject* globalObjec
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = JSValue::decode(encodedValue).toThis(globalObject, StrictMode);
+    JSValue thisValue = JSValue::decode(encodedValue).toThis(globalObject, ECMAMode::strict());
     if (thisValue.isUndefinedOrNull())
         return throwVMError(globalObject, scope, createNotAnObjectError(globalObject, thisValue));
 

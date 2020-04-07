@@ -717,7 +717,7 @@ public:
     void compileCheckNeutered(Node*);
 
     void cachedGetById(CodeOrigin, JSValueRegs base, JSValueRegs result, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedPutById(CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg scratchGPR, CacheableIdentifier, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
+    void cachedPutById(CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg scratchGPR, CacheableIdentifier, PutKind, ECMAMode, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
     void cachedGetByVal(CodeOrigin, JSValueRegs base, JSValueRegs property, JSValueRegs result, JITCompiler::Jump slowPathTarget);
 
 #if USE(JSVALUE64)

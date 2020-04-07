@@ -1472,19 +1472,6 @@ public:
         return codeBlock()->globalObjectFor(codeOrigin);
     }
     
-    bool isStrictModeFor(CodeOrigin codeOrigin)
-    {
-        auto* inlineCallFrame = codeOrigin.inlineCallFrame();
-        if (!inlineCallFrame)
-            return codeBlock()->isStrictMode();
-        return inlineCallFrame->isStrictMode();
-    }
-    
-    ECMAMode ecmaModeFor(CodeOrigin codeOrigin)
-    {
-        return isStrictModeFor(codeOrigin) ? StrictMode : NotStrictMode;
-    }
-    
     ExecutableBase* executableFor(const CodeOrigin& codeOrigin);
     
     CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)

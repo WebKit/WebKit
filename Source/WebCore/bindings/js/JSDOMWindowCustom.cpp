@@ -626,7 +626,7 @@ static inline JSC::EncodedJSValue jsDOMWindowInstanceFunctionOpenDatabaseBody(JS
 
 template<> inline JSDOMWindow* IDLOperation<JSDOMWindow>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    return toJSDOMWindow(lexicalGlobalObject.vm(), callFrame.thisValue().toThis(&lexicalGlobalObject, NotStrictMode));
+    return toJSDOMWindow(lexicalGlobalObject.vm(), callFrame.thisValue().toThis(&lexicalGlobalObject, JSC::ECMAMode::sloppy()));
 }
 
 EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionOpenDatabase(JSGlobalObject* globalObject, CallFrame* callFrame)

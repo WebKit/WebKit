@@ -57,9 +57,9 @@ shouldBe("A = createClassWithInstanceMethod('foo', 215); (new A)['foo']()", "215
 shouldBe("A = createClassWithInstanceMethod('foo', 216); B = createClassWithInstanceMethod('bar', 217); [(new A)['foo'](), (new B)['bar']()]", "[216, 217]");
 shouldBe("x = 218; class A { [x++]() { return x; } }; (new A)[218]()", "219");
 shouldBe("x = undefined; class A { [(x=220) && 'foo']() { return x; } }; (new A).foo()", "220");
-shouldBe("x = 221; class A { [(x1=x) && x++]() { return x1; } [(x2=x) && x++]() { return x2; } }; [(new A)[221](), (new A)[222]()]", "[221, 222]");
+shouldBe("var x = 221, x1, x2; class A { [(x1=x) && x++]() { return x1; } [(x2=x) && x++]() { return x2; } }; [(new A)[221](), (new A)[222]()]", "[221, 222]");
 shouldBe("x = 1; class A { ['foo' + x++]() { return 223; } ['foo' + x++]() { return 224; } }; [(new A).foo1(), (new A).foo2()]", "[223, 224]");
-shouldBe("x = 1; class A { ['foo' + ++x]() { return 225; } [(x1=x) && 'foo' + x++]() { return 226; } }; [x1, x, (new A).foo2()]", "[2, 3, 226]");
+shouldBe("var x = 1, x1; class A { ['foo' + ++x]() { return 225; } [(x1=x) && 'foo' + x++]() { return 226; } }; [x1, x, (new A).foo2()]", "[2, 3, 226]");
 
 debug('');
 debug('Static methods with computed names');
@@ -72,9 +72,9 @@ shouldBe("A = createClassWithStaticMethod('foo', 315); A['foo']()", "315");
 shouldBe("A = createClassWithStaticMethod('foo', 316); B = createClassWithStaticMethod('bar', 317); [A['foo'](), B['bar']()]", "[316, 317]");
 shouldBe("x = 218; class A { static [x++]() { return x; } }; A[218]()", "219");
 shouldBe("x = undefined; class A { static [(x=220) && 'foo']() { return x; } }; A.foo()", "220");
-shouldBe("x = 221; class A { static [(x1=x) && x++]() { return x1; } static [(x2=x) && x++]() { return x2; } }; [A[221](), A[222]()]", "[221, 222]");
+shouldBe("var x = 221, x1, x2; class A { static [(x1=x) && x++]() { return x1; } static [(x2=x) && x++]() { return x2; } }; [A[221](), A[222]()]", "[221, 222]");
 shouldBe("x = 1; class A { static ['foo' + x++]() { return 223; } static ['foo' + x++]() { return 224; } }; [A.foo1(), A.foo2()]", "[223, 224]");
-shouldBe("x = 1; class A { static ['foo' + ++x]() { return 225; } static [(x1=x) && 'foo' + x++]() { return 226; } }; [x1, x, A.foo2()]", "[2, 3, 226]");
+shouldBe("var x = 1, x1; class A { static ['foo' + ++x]() { return 225; } static [(x1=x) && 'foo' + x++]() { return 226; } }; [x1, x, A.foo2()]", "[2, 3, 226]");
 
 debug('');
 debug('Instance methods with duplicated names');

@@ -441,7 +441,7 @@ public:
     JSObject* globalThisObjectFor(CodeOrigin codeOrigin)
     {
         JSGlobalObject* object = globalObjectFor(codeOrigin);
-        return jsCast<JSObject*>(object->methodTable(m_vm)->toThis(object, object, NotStrictMode));
+        return jsCast<JSObject*>(object->methodTable(m_vm)->toThis(object, object, ECMAMode::sloppy()));
     }
     
     ScriptExecutable* executableFor(InlineCallFrame* inlineCallFrame)
@@ -467,18 +467,6 @@ public:
     CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
     {
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, m_profiledBlock);
-    }
-    
-    bool isStrictModeFor(CodeOrigin codeOrigin)
-    {
-        if (!codeOrigin.inlineCallFrame())
-            return m_codeBlock->isStrictMode();
-        return codeOrigin.inlineCallFrame()->isStrictMode();
-    }
-    
-    ECMAMode ecmaModeFor(CodeOrigin codeOrigin)
-    {
-        return isStrictModeFor(codeOrigin) ? StrictMode : NotStrictMode;
     }
     
     bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)

@@ -79,7 +79,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, Bytecode
         return PutByIdStatus(NoInformation);
     
     ObjectPropertyConditionSet conditionSet;
-    if (!(bytecode.m_flags & PutByIdIsDirect)) {
+    if (!(bytecode.m_flags.isDirect())) {
         conditionSet =
             generateConditionsForPropertySetterMissConcurrently(
                 vm, profiledBlock->globalObject(), structure, uid);

@@ -239,7 +239,7 @@ private:
             
         default: {
             // All of the outermost arguments, except this, are read in sloppy mode.
-            if (!m_graph.m_codeBlock->isStrictMode()) {
+            if (!m_graph.m_codeBlock->ownerExecutable()->isInStrictContext()) {
                 for (unsigned i = m_graph.m_codeBlock->numParameters(); i--;)
                     m_read(virtualRegisterForArgumentIncludingThis(i));
             }
@@ -250,7 +250,7 @@ private:
         
             // Read all of the inline arguments and call frame headers that we didn't already capture.
             for (InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame(); inlineCallFrame; inlineCallFrame = inlineCallFrame->getCallerInlineFrameSkippingTailCalls()) {
-                if (!inlineCallFrame->isStrictMode()) {
+                if (!inlineCallFrame->isInStrictContext()) {
                     for (unsigned i = inlineCallFrame->argumentsWithFixup.size(); i--;)
                         m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgumentIncludingThis(i).offset()));
                 }

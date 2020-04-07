@@ -1819,7 +1819,6 @@ public:
     Ref<UnlinkedMetadataTable> metadata(Decoder& decoder) const { return m_metadata.decode(decoder); }
 
     unsigned usesEval() const { return m_usesEval; }
-    unsigned isStrictMode() const { return m_isStrictMode; }
     unsigned isConstructor() const { return m_isConstructor; }
     unsigned hasCapturedVariables() const { return m_hasCapturedVariables; }
     unsigned isBuiltinFunction() const { return m_isBuiltinFunction; }
@@ -1852,7 +1851,6 @@ private:
     VirtualRegister m_scopeRegister;
 
     unsigned m_usesEval : 1;
-    unsigned m_isStrictMode : 1;
     unsigned m_isConstructor : 1;
     unsigned m_hasCapturedVariables : 1;
     unsigned m_isBuiltinFunction : 1;
@@ -2049,7 +2047,6 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_scopeRegister(cachedCodeBlock.scopeRegister())
 
     , m_usesEval(cachedCodeBlock.usesEval())
-    , m_isStrictMode(cachedCodeBlock.isStrictMode())
     , m_isConstructor(cachedCodeBlock.isConstructor())
     , m_hasCapturedVariables(cachedCodeBlock.hasCapturedVariables())
     , m_isBuiltinFunction(cachedCodeBlock.isBuiltinFunction())
@@ -2235,7 +2232,6 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_thisRegister = codeBlock.m_thisRegister;
     m_scopeRegister = codeBlock.m_scopeRegister;
     m_usesEval = codeBlock.m_usesEval;
-    m_isStrictMode = codeBlock.m_isStrictMode;
     m_isConstructor = codeBlock.m_isConstructor;
     m_hasCapturedVariables = codeBlock.m_hasCapturedVariables;
     m_isBuiltinFunction = codeBlock.m_isBuiltinFunction;

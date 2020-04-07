@@ -774,7 +774,7 @@ private:
             }
 
             case ToThis: {
-                ToThisResult result = isToThisAnIdentity(m_graph.m_vm, m_graph.isStrictModeFor(node->origin.semantic), m_state.forNode(node->child1()));
+                ToThisResult result = isToThisAnIdentity(m_graph.m_vm, node->ecmaMode(), m_state.forNode(node->child1()));
                 if (result == ToThisResult::Identity) {
                     node->convertToIdentity();
                     changed = true;

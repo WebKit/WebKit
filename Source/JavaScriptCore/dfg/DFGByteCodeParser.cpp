@@ -246,13 +246,13 @@ private:
     void handleGetById(
         VirtualRegister destination, SpeculatedType, Node* base, CacheableIdentifier, unsigned identifierNumber, GetByStatus, AccessType, unsigned instructionSize);
     void emitPutById(
-        Node* base, CacheableIdentifier, Node* value,  const PutByIdStatus&, bool isDirect);
+        Node* base, CacheableIdentifier, Node* value,  const PutByIdStatus&, bool isDirect, ECMAMode);
     void handlePutById(
         Node* base, CacheableIdentifier, unsigned identifierNumber, Node* value, const PutByIdStatus&,
-        bool isDirect, unsigned intructionSize);
+        bool isDirect, unsigned intructionSize, ECMAMode);
 
     void handleDeleteById(
-        VirtualRegister destination, Node* base, CacheableIdentifier, unsigned identifierNumber, DeleteByStatus);
+        VirtualRegister destination, Node* base, CacheableIdentifier, unsigned identifierNumber, DeleteByStatus, ECMAMode);
     
     // Either register a watchpoint or emit a check for this condition. Returns false if the
     // condition no longer holds, and therefore no reasonable check can be emitted.
@@ -850,18 +850,18 @@ private:
     }
     
     Node* addCall(
-        VirtualRegister result, NodeType op, const DOMJIT::Signature* signature, Node* callee, int argCount, int registerOffset,
+        VirtualRegister result, NodeType op, OpInfo opInfo, Node* callee, int argCount, int registerOffset,
         SpeculatedType prediction)
     {
         if (op == TailCall) {
             if (allInlineFramesAreTailCalls())
-                return addCallWithoutSettingResult(op, OpInfo(signature), callee, argCount, registerOffset, OpInfo());
+                return addCallWithoutSettingResult(op, opInfo, callee, argCount, registerOffset, OpInfo());
             op = TailCallInlinedCaller;
         }
 
 
         Node* call = addCallWithoutSettingResult(
-            op, OpInfo(signature), callee, argCount, registerOffset, OpInfo(prediction));
+            op, opInfo, callee, argCount, registerOffset, OpInfo(prediction));
         if (result.isValid())
             set(result, call);
         return call;
@@ -1348,7 +1348,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
         }
     }
     
-    Node* callNode = addCall(result, op, nullptr, callTarget, argumentCountIncludingThis, registerOffset, prediction);
+    Node* callNode = addCall(result, op, OpInfo(), callTarget, argumentCountIncludingThis, registerOffset, prediction);
     ASSERT(callNode->op() != TailCallVarargs && callNode->op() != TailCallForwardVarargs);
     return callNode->op() == TailCall ? Terminal : NonTerminal;
 }
@@ -2186,7 +2186,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     Node* myCallTargetNode = getDirect(calleeReg);
     if (couldTakeSlowPath) {
         addCall(
-            result, callOp, nullptr, myCallTargetNode, argumentCountIncludingThis,
+            result, callOp, OpInfo(), myCallTargetNode, argumentCountIncludingThis,
             registerOffset, prediction);
         VERBOSE_LOG("We added a call in the slow path\n");
     } else {
@@ -3660,7 +3660,7 @@ bool ByteCodeParser::handleDOMJITCall(Node* callTarget, VirtualRegister result, 
     ASSERT_WITH_MESSAGE(argumentCountIncludingThis <= JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS_INCLUDING_THIS, "Currently CallDOM does not support an arbitrary length arguments.");
 
     insertChecks();
-    addCall(result, Call, signature, callTarget, argumentCountIncludingThis, registerOffset, prediction);
+    addCall(result, Call, OpInfo(signature), callTarget, argumentCountIncludingThis, registerOffset, prediction);
     return true;
 }
 
@@ -4620,11 +4620,11 @@ void ByteCodeParser::handleGetById(
 
 void ByteCodeParser::handleDeleteById(
     VirtualRegister destination, Node* base, CacheableIdentifier identifier,
-    unsigned identifierNumber, DeleteByStatus deleteByStatus)
+    unsigned identifierNumber, DeleteByStatus deleteByStatus, ECMAMode ecmaMode)
 {
     if (!deleteByStatus.isSimple() || !deleteByStatus.variants().size() || !Options::useAccessInlining()) {
         set(destination,
-            addToGraph(DeleteById, OpInfo(identifier), base));
+            addToGraph(DeleteById, OpInfo(identifier), OpInfo(ecmaMode), base));
         return;
     }
 
@@ -4633,7 +4633,7 @@ void ByteCodeParser::handleDeleteById(
             || !Options::usePolymorphicAccessInlining()
             || deleteByStatus.variants().size() > Options::maxPolymorphicAccessInliningListSize()) {
             set(destination,
-                addToGraph(DeleteById, OpInfo(identifier), base));
+                addToGraph(DeleteById, OpInfo(identifier), OpInfo(ecmaMode), base));
             return;
         }
 
@@ -4717,22 +4717,22 @@ void ByteCodeParser::handleDeleteById(
 }
 
 void ByteCodeParser::emitPutById(
-    Node* base, CacheableIdentifier identifier, Node* value, const PutByIdStatus& putByIdStatus, bool isDirect)
+    Node* base, CacheableIdentifier identifier, Node* value, const PutByIdStatus& putByIdStatus, bool isDirect, ECMAMode ecmaMode)
 {
     if (isDirect)
-        addToGraph(PutByIdDirect, OpInfo(identifier), base, value);
+        addToGraph(PutByIdDirect, OpInfo(identifier), OpInfo(ecmaMode), base, value);
     else
-        addToGraph(putByIdStatus.makesCalls() ? PutByIdFlush : PutById, OpInfo(identifier), base, value);
+        addToGraph(putByIdStatus.makesCalls() ? PutByIdFlush : PutById, OpInfo(identifier), OpInfo(ecmaMode), base, value);
 }
 
 void ByteCodeParser::handlePutById(
     Node* base, CacheableIdentifier identifier, unsigned identifierNumber, Node* value,
-    const PutByIdStatus& putByIdStatus, bool isDirect, unsigned instructionSize)
+    const PutByIdStatus& putByIdStatus, bool isDirect, unsigned instructionSize, ECMAMode ecmaMode)
 {
     if (!putByIdStatus.isSimple() || !putByIdStatus.numVariants() || !Options::useAccessInlining()) {
         if (!putByIdStatus.isSet())
             addToGraph(ForceOSRExit);
-        emitPutById(base, identifier, value, putByIdStatus, isDirect);
+        emitPutById(base, identifier, value, putByIdStatus, isDirect, ecmaMode);
         return;
     }
     
@@ -4740,7 +4740,7 @@ void ByteCodeParser::handlePutById(
         if (!m_graph.m_plan.isFTL() || putByIdStatus.makesCalls()
             || !Options::usePolymorphicAccessInlining()
             || putByIdStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize()) {
-            emitPutById(base, identifier, value, putByIdStatus, isDirect);
+            emitPutById(base, identifier, value, putByIdStatus, isDirect, ecmaMode);
             return;
         }
         
@@ -4749,7 +4749,7 @@ void ByteCodeParser::handlePutById(
                 if (putByIdStatus[variantIndex].kind() != PutByIdVariant::Transition)
                     continue;
                 if (!check(putByIdStatus[variantIndex].conditionSet())) {
-                    emitPutById(base, identifier, value, putByIdStatus, isDirect);
+                    emitPutById(base, identifier, value, putByIdStatus, isDirect, ecmaMode);
                     return;
                 }
             }
@@ -4792,7 +4792,7 @@ void ByteCodeParser::handlePutById(
 
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
         if (!check(variant.conditionSet())) {
-            emitPutById(base, identifier, value, putByIdStatus, isDirect);
+            emitPutById(base, identifier, value, putByIdStatus, isDirect, ecmaMode);
             return;
         }
 
@@ -4859,7 +4859,7 @@ void ByteCodeParser::handlePutById(
 
         Node* loadedValue = load(SpecCellOther, base, identifierNumber, variant);
         if (!loadedValue) {
-            emitPutById(base, identifier, value, putByIdStatus, isDirect);
+            emitPutById(base, identifier, value, putByIdStatus, isDirect, ecmaMode);
             return;
         }
         
@@ -4903,7 +4903,7 @@ void ByteCodeParser::handlePutById(
     }
     
     default: {
-        emitPutById(base, identifier, value, putByIdStatus, isDirect);
+        emitPutById(base, identifier, value, putByIdStatus, isDirect, ecmaMode);
         return;
     } }
 }
@@ -5075,7 +5075,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             
         case op_to_this: {
             Node* op1 = getThis();
-            auto& metadata = currentInstruction->as<OpToThis>().metadata(codeBlock);
+            auto bytecode = currentInstruction->as<OpToThis>();
+            auto& metadata = bytecode.metadata(codeBlock);
             StructureID cachedStructureID = metadata.m_cachedStructureID;
             Structure* cachedStructure = nullptr;
             if (cachedStructureID)
@@ -5086,7 +5087,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
                 || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
-                setThis(addToGraph(ToThis, OpInfo(), OpInfo(getPrediction()), op1));
+                setThis(addToGraph(ToThis, OpInfo(bytecode.m_ecmaMode), OpInfo(getPrediction()), op1));
             } else {
                 addToGraph(
                     CheckStructure,
@@ -5926,7 +5927,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             addVarArgChild(thisValue);
             addVarArgChild(property);
             addVarArgChild(value);
-            addToGraph(Node::VarArg, PutByValWithThis, OpInfo(0), OpInfo(0));
+            addToGraph(Node::VarArg, PutByValWithThis, OpInfo(bytecode.m_ecmaMode), OpInfo(0));
 
             NEXT_OPCODE(op_put_by_val_with_this);
         }
@@ -5996,14 +5997,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(bytecode.m_base);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
-            bool direct = !!(bytecode.m_flags & PutByIdIsDirect);
+            bool direct = bytecode.m_flags.isDirect();
 
             PutByIdStatus putByIdStatus = PutByIdStatus::computeFor(
                 m_inlineStackTop->m_profiledBlock,
                 m_inlineStackTop->m_baselineMap, m_icContextStack,
                 currentCodeOrigin(), m_graph.identifiers()[identifierNumber]);
             
-            handlePutById(base, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid), identifierNumber, value, putByIdStatus, direct, currentInstruction->size());
+            handlePutById(base, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid), identifierNumber, value, putByIdStatus, direct, currentInstruction->size(), bytecode.m_flags.ecmaMode());
             NEXT_OPCODE(op_put_by_id);
         }
 
@@ -6014,8 +6015,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* value = get(bytecode.m_value);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
-
-            addToGraph(PutByIdWithThis, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), base, thisValue, value);
+            addToGraph(PutByIdWithThis, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(bytecode.m_ecmaMode), base, thisValue, value);
             NEXT_OPCODE(op_put_by_id_with_this);
         }
 
@@ -6055,7 +6055,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 currentCodeOrigin());
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
             auto identifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid);
-            handleDeleteById(bytecode.m_dst, base, identifier, identifierNumber, deleteByStatus);
+            handleDeleteById(bytecode.m_dst, base, identifier, identifierNumber, deleteByStatus, bytecode.m_ecmaMode);
             NEXT_OPCODE(op_del_by_id);
         }
 
@@ -6085,13 +6085,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     } else
                         addToGraph(CheckIdent, OpInfo(uid), property);
 
-                    handleDeleteById(bytecode.m_dst, base, identifier, identifierNumber, deleteByStatus);
+                    handleDeleteById(bytecode.m_dst, base, identifier, identifierNumber, deleteByStatus, bytecode.m_ecmaMode);
                     shouldCompileAsDeleteById = true;
                 }
             }
 
             if (!shouldCompileAsDeleteById)
-                set(bytecode.m_dst, addToGraph(DeleteByVal, base, property));
+                set(bytecode.m_dst, addToGraph(DeleteByVal, OpInfo(bytecode.m_ecmaMode), base, property));
             NEXT_OPCODE(op_del_by_val);
         }
 
@@ -6614,7 +6614,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_call_eval: {
             auto bytecode = currentInstruction->as<OpCallEval>();
             int registerOffset = -bytecode.m_argv;
-            addCall(bytecode.m_dst, CallEval, nullptr, get(bytecode.m_callee), bytecode.m_argc, registerOffset, getPrediction());
+            addCall(bytecode.m_dst, CallEval, OpInfo(bytecode.m_ecmaMode), get(bytecode.m_callee), bytecode.m_argc, registerOffset, getPrediction());
             NEXT_OPCODE(op_call_eval);
         }
             
@@ -6963,7 +6963,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (needsDynamicLookup(resolveType, op_put_to_scope)) {
                 ASSERT(identifierNumber != UINT_MAX);
                 uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, getPutInfo.operand());
-                addToGraph(PutDynamicVar, OpInfo(opInfo1), OpInfo(), get(bytecode.m_scope), get(bytecode.m_value));
+                addToGraph(PutDynamicVar, OpInfo(opInfo1), OpInfo(getPutInfo.ecmaMode()), get(bytecode.m_scope), get(bytecode.m_value));
                 NEXT_OPCODE(op_put_to_scope);
             }
 
@@ -6985,7 +6985,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 if (status.numVariants() != 1
                     || status[0].kind() != PutByIdVariant::Replace
                     || status[0].structure().size() != 1) {
-                    addToGraph(PutById, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), get(bytecode.m_scope), get(bytecode.m_value));
+                    addToGraph(PutById, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(bytecode.m_getPutInfo.ecmaMode()), get(bytecode.m_scope), get(bytecode.m_value));
                     break;
                 }
                 Node* base = weakJSConstant(globalObject);
@@ -7631,8 +7631,7 @@ void ByteCodeParser::parseCodeBlock()
                 " for inlining at ", CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT),
                 " ", inlineCallFrame()->directCaller);
         }
-        dataLog(
-            ", isStrictMode = ", codeBlock->ownerExecutable()->isStrictMode(), "\n");
+        dataLogLn();
         codeBlock->baselineVersion()->dumpBytecode();
     }
     
@@ -7739,7 +7738,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, unsigned instructionSize)
         }
 
         if (compiledAsPutById)
-            handlePutById(base, identifier, identifierNumber, value, putByIdStatus, isDirect, instructionSize);
+            handlePutById(base, identifier, identifierNumber, value, putByIdStatus, isDirect, instructionSize, bytecode.m_ecmaMode);
     }
 
     if (!compiledAsPutById) {
@@ -7750,7 +7749,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, unsigned instructionSize)
         addVarArgChild(value);
         addVarArgChild(0); // Leave room for property storage.
         addVarArgChild(0); // Leave room for length.
-        addToGraph(Node::VarArg, isDirect ? PutByValDirect : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(0));
+        addToGraph(Node::VarArg, isDirect ? PutByValDirect : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
         m_exitOK = false; // PutByVal and PutByValDirect must be treated as if they clobber exit state, since FixupPhase may make them generic.
     }
 }

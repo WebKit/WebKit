@@ -47,7 +47,7 @@ inline void tryCachePutToScopeGlobal(
             ResolveType newResolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
             resolveType = newResolveType; // Allow below caching mechanism to kick in.
             ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
+            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode(), metadata.m_getPutInfo.ecmaMode());
             break;
         }
         FALLTHROUGH;
@@ -61,7 +61,7 @@ inline void tryCachePutToScopeGlobal(
             SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
             ASSERT(!entry.isNull());
             ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
+            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode(), metadata.m_getPutInfo.ecmaMode());
             metadata.m_watchpointSet = entry.watchpointSet();
             metadata.m_operand = reinterpret_cast<uintptr_t>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
             return;
@@ -109,7 +109,7 @@ inline void tryCacheGetFromScopeGlobal(
             ResolveType newResolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
             resolveType = newResolveType; // Allow below caching mechanism to kick in.
             ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
+            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode(), metadata.m_getPutInfo.ecmaMode());
             break;
         }
         FALLTHROUGH;
@@ -123,7 +123,7 @@ inline void tryCacheGetFromScopeGlobal(
             SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
             ASSERT(!entry.isNull());
             ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
+            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode(), metadata.m_getPutInfo.ecmaMode());
             metadata.m_watchpointSet = entry.watchpointSet();
             metadata.m_operand = reinterpret_cast<uintptr_t>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
             return;

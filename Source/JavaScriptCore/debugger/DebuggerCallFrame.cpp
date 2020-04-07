@@ -212,9 +212,9 @@ JSValue DebuggerCallFrame::thisValue(VM& vm) const
     if (!thisValue)
         return jsUndefined();
 
-    ECMAMode ecmaMode = NotStrictMode;
-    if (codeBlock && codeBlock->isStrictMode())
-        ecmaMode = StrictMode;
+    ECMAMode ecmaMode = ECMAMode::sloppy();
+    if (codeBlock && codeBlock->ownerExecutable()->isInStrictContext())
+        ecmaMode = ECMAMode::strict();
     return thisValue.toThis(m_validMachineFrame->lexicalGlobalObject(vm), ecmaMode);
 }
 
@@ -253,7 +253,8 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
     VariableEnvironment variablesUnderTDZ;
     JSScope::collectClosureVariablesUnderTDZ(scope()->jsScope(), variablesUnderTDZ);
 
-    auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm)), codeBlock->isStrictMode(), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->needsClassFieldInitializer(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), codeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ);
+    ECMAMode ecmaMode = codeBlock->ownerExecutable()->isInStrictContext() ? ECMAMode::strict() : ECMAMode::sloppy();
+    auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm)), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->needsClassFieldInitializer(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), codeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, ecmaMode);
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();
         catchScope.clearException();

@@ -738,7 +738,7 @@ void repatchPutByID(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue 
         ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, appropriateGenericPutByIdFunction(slot, putKind));
 }
 
-static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeletePropertySlot& slot, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, StructureStubInfo& stubInfo, DelByKind)
+static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeletePropertySlot& slot, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, StructureStubInfo& stubInfo, DelByKind, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     AccessGenerationResult result;
@@ -771,7 +771,7 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
             ASSERT(newStructure->isObject());
             ASSERT(isValidOffset(newOffset));
             newCase = AccessCase::createDelete(vm, codeBlock, propertyName, newOffset, oldStructure, newStructure);
-        } else if (!codeBlock->isStrictMode()) {
+        } else if (!ecmaMode.isStrict()) {
             if (slot.isNonconfigurable())
                 newCase = AccessCase::create(vm, codeBlock, AccessCase::DeleteNonConfigurable, propertyName, invalidOffset, oldStructure, { }, nullptr);
             else
@@ -792,12 +792,12 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
-void repatchDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeletePropertySlot& slot, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, StructureStubInfo& stubInfo, DelByKind kind)
+void repatchDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeletePropertySlot& slot, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, StructureStubInfo& stubInfo, DelByKind kind, ECMAMode ecmaMode)
 {
     SuperSamplerScope superSamplerScope(false);
     VM& vm = globalObject->vm();
 
-    if (tryCacheDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, propertyName, stubInfo, kind) == GiveUpOnCache) {
+    if (tryCacheDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, propertyName, stubInfo, kind, ecmaMode) == GiveUpOnCache) {
         LOG_IC((ICEvent::DelByReplaceWithGeneric, baseValue.classInfoOrNull(globalObject->vm()), Identifier::fromUid(vm, propertyName.uid())));
         if (kind == DelByKind::Normal)
             ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationDeleteByIdGeneric);

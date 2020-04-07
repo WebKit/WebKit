@@ -143,7 +143,7 @@ public:
     {
         // Per https://tc39.github.io/ecma262/#sec-forbidden-extensions, only sloppy-mode non-builtin functions in old-style (pre-ES6) syntactic forms can contain
         // "caller" and "arguments".
-        return !isStrictMode() && parseMode() == SourceParseMode::NormalFunctionMode && !isClassConstructorFunction();
+        return !isInStrictContext() && parseMode() == SourceParseMode::NormalFunctionMode && !isClassConstructorFunction();
     }
     bool hasPrototypeProperty() const
     {

@@ -193,7 +193,7 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
-    return toRef(jsCast<JSObject*>(globalObject->methodTable(vm)->toThis(globalObject, globalObject, NotStrictMode)));
+    return toRef(jsCast<JSObject*>(globalObject->methodTable(vm)->toThis(globalObject, globalObject, ECMAMode::sloppy())));
 }
 
 JSContextGroupRef JSContextGetGroup(JSContextRef ctx)

@@ -1,3 +1,285 @@
+2020-04-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Not using strict mode within ClassDeclaration statement
+        https://bugs.webkit.org/show_bug.cgi?id=205578
+        <rdar://problem/58194589>
+
+        Reviewed by Yusuke Suzuki.
+
+        We correctly set strict mode when parsing classes, but we did not set it when emitting bytecode.
+        However, that means that we can now have a subset of a code block's bytecode that must be run in
+        strict mode, even when the code block itself is not strict. As it turns out, there are only ten
+        opcodes that need to be aware of strictness, so an extra `mode` operand was added to these opcodes.
+        The mode then needs to be propagated through baseline, DFG and FTL.
+
+        * API/APICallbackFunction.h:
+        (JSC::APICallbackFunction::call):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::call):
+        * API/JSContextRef.cpp:
+        (JSContextGetGlobalObject):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/BytecodeDumper.cpp:
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::run):
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpAssumingJITType const):
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isConstructor const):
+        (JSC::CodeBlock::isKnownCell):
+        * bytecode/ExecutableInfo.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::ExecutableInfo::usesEval const):
+        * bytecode/Fits.h:
+        * bytecode/InlineCallFrame.cpp:
+        (JSC::InlineCallFrame::dumpInContext const):
+        * bytecode/InlineCallFrame.h:
+        (JSC::InlineCallFrame::isInStrictContext const):
+        * bytecode/PutByIdFlags.cpp:
+        (WTF::printInternal):
+        * bytecode/PutByIdFlags.h:
+        (JSC::PutByIdFlags::create):
+        (JSC::PutByIdFlags::createDirect):
+        (JSC::PutByIdFlags::isDirect const):
+        (JSC::PutByIdFlags::ecmaMode const):
+        (JSC::PutByIdFlags::PutByIdFlags):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::isConstructor const):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::needsClassFieldInitializer const):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitGetFromScope):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        (JSC::BytecodeGenerator::emitDeleteById):
+        (JSC::BytecodeGenerator::emitPutByVal):
+        (JSC::BytecodeGenerator::emitDirectPutByVal):
+        (JSC::BytecodeGenerator::emitDeleteByVal):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::emitReadOnlyExceptionIfNeeded):
+        (JSC::BytecodeGenerator::emitToThis):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::ecmaMode const):
+        (JSC::StrictModeScope::StrictModeScope):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::EmptyLetExpression::emitBytecode):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        (JSC::BindingNode::bindValue const):
+        (JSC::AssignmentElementNode::bindValue const):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::thisValue const):
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::isToThisAnIdentity):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleDOMJITCall):
+        (JSC::DFG::ByteCodeParser::handleDeleteById):
+        (JSC::DFG::ByteCodeParser::emitPutById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupToThis):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::globalThisObjectFor):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasECMAMode):
+        (JSC::DFG::Node::ecmaMode):
+        * dfg/DFGOpInfo.h:
+        (JSC::DFG::OpInfo::OpInfo):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForCellWithString):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForCellWithSymbol):
+        (JSC::DFG::SpeculativeJIT::compilePutDynamicVar):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdFlush):
+        (JSC::DFG::SpeculativeJIT::compilePutById):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdDirect):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::compileToThis):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileDeleteById):
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileToThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByValWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDeleteById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDeleteByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutDynamicVar):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::internalConstructorName):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        (JSC::Interpreter::execute):
+        * interpreter/Interpreter.h:
+        * jit/AssemblyHelpers.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEval):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITPutByIdGenerator::slowPathFunction):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        * jit/JITInlines.h:
+        (JSC::JIT::linkSlowCaseIfNotJSCell):
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emitSlow_op_del_by_id):
+        (JSC::JIT::emitSlow_op_del_by_val):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheDeleteBy):
+        (JSC::repatchDeleteBy):
+        * jit/Repatch.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::commonCallEval):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlock::usesEval const):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::getOwnPropertySlot):
+        (JSC::ClonedArguments::materializeSpecials):
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockImpl):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPathsInlines.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create):
+        * runtime/DirectEvalExecutable.h:
+        * runtime/ECMAMode.cpp: Copied from Source/JavaScriptCore/bytecode/PutByIdFlags.cpp.
+        (JSC::ECMAMode::dump const):
+        * runtime/ECMAMode.h: Copied from Source/JavaScriptCore/bytecode/PutByIdFlags.h.
+        (JSC::ECMAMode::fromByte):
+        (JSC::ECMAMode::strict):
+        (JSC::ECMAMode::sloppy):
+        (JSC::ECMAMode::isStrict const):
+        (JSC::ECMAMode::value const):
+        (JSC::ECMAMode::ECMAMode):
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::executableInfo const):
+        * runtime/FunctionExecutable.h:
+        * runtime/GetPutInfo.cpp:
+        (JSC::GetPutInfo::dump const):
+        * runtime/GetPutInfo.h:
+        (JSC::GetPutInfo::GetPutInfo):
+        (JSC::GetPutInfo::ecmaMode const):
+        * runtime/GetterSetter.cpp:
+        (JSC::callSetter):
+        * runtime/IndirectEvalExecutable.cpp:
+        (JSC::IndirectEvalExecutable::create):
+        (JSC::IndirectEvalExecutable::IndirectEvalExecutable):
+        * runtime/IndirectEvalExecutable.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toThisSlowCase const):
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toThis):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::selectStructureForNewFuncExp):
+        (JSC::JSFunction::callerGetter):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        (JSC::globalFuncProtoGetter):
+        (JSC::globalFuncProtoSetter):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::toThis):
+        * runtime/JSString.cpp:
+        (JSC::JSString::toThis):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::parse):
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/NullSetterFunction.cpp:
+        (JSC::GetCallerStrictnessFunctor::operator() const):
+        (JSC::NullSetterFunctionInternal::callReturnUndefined):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncValueOf):
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+        (JSC::objectProtoFuncToLocaleString):
+        (JSC::objectProtoFuncToString):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/ProgramExecutable.h:
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyCall):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::isArrowFunctionContext const):
+        (JSC::ScriptExecutable::isInStrictContext const):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayEntry::put):
+
 2020-04-07  Saam Barati  <sbarati@apple.com>
 
         RAMification should have a way of gathering vmmaps for each test at the end of each run

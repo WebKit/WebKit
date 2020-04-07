@@ -287,7 +287,7 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(Op bytecode, PutKind putKind, 
 
     JITPutByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(), propertyName,
-        JSValueRegs(regT0), JSValueRegs(regT1), regT2, m_codeBlock->ecmaMode(), putKind);
+        JSValueRegs(regT0), JSValueRegs(regT1), regT2, bytecode.m_ecmaMode, putKind);
     gen.generateFastPath(*this);
     // IC can write new Structure without write-barrier if a base is cell.
     // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
@@ -311,11 +311,13 @@ void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<S
     VirtualRegister base;
     VirtualRegister property;
     VirtualRegister value;
+    ECMAMode ecmaMode = ECMAMode::strict();
 
     auto load = [&](auto bytecode) {
         base = bytecode.m_base;
         property = bytecode.m_property;
         value = bytecode.m_value;
+        ecmaMode = bytecode.m_ecmaMode;
     };
 
     if (isDirect)
@@ -331,7 +333,7 @@ void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<S
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
     emitGetVirtualRegister(value, regT2);
-    Call call = callOperation(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1, regT2, byValInfo);
+    Call call = callOperation(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1, regT2, byValInfo, TrustedImm32(ecmaMode.value()));
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
@@ -427,7 +429,7 @@ void JIT::emitSlow_op_del_by_id(const Instruction* currentInstruction, Vector<Sl
     Label coldPathBegin = label();
 
     emitGetVirtualRegister(base, regT0);
-    Call call = callOperation(operationDeleteByIdOptimize, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident).rawBits());
+    Call call = callOperation(operationDeleteByIdOptimize, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident).rawBits(), TrustedImm32(bytecode.m_ecmaMode.value()));
     gen.reportSlowPathCall(coldPathBegin, call);
 
     boxBoolean(regT0, JSValueRegs(regT0));
@@ -477,7 +479,7 @@ void JIT::emitSlow_op_del_by_val(const Instruction* currentInstruction, Vector<S
 
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
-    Call call = callOperation(operationDeleteByValOptimize, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, regT1);
+    Call call = callOperation(operationDeleteByValOptimize, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, regT1, TrustedImm32(bytecode.m_ecmaMode.value()));
     gen.reportSlowPathCall(coldPathBegin, call);
 
     boxBoolean(regT0, JSValueRegs(regT0));
@@ -654,7 +656,7 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpPutById>();
     VirtualRegister baseVReg = bytecode.m_base;
     VirtualRegister valueVReg = bytecode.m_value;
-    bool direct = !!(bytecode.m_flags & PutByIdIsDirect);
+    bool direct = bytecode.m_flags.isDirect();
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
     // In order to be able to patch both the Structure, and the object offset, we store one pointer,
@@ -668,7 +670,7 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     JITPutByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident),
-        JSValueRegs(regT0), JSValueRegs(regT1), regT2, m_codeBlock->ecmaMode(),
+        JSValueRegs(regT0), JSValueRegs(regT1), regT2, bytecode.m_flags.ecmaMode(),
         direct ? Direct : NotDirect);
     
     gen.generateFastPath(*this);

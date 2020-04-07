@@ -2903,7 +2903,7 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
         return result;
     }
 
-    if (generator.isStrictMode())
+    if (generator.ecmaMode().isStrict())
         generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
     if (m_assignmentContext == AssignmentContext::AssignmentExpression)
@@ -2920,7 +2920,7 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     RegisterID* returnResult = result.get();
     if (!isReadOnly) {
-        returnResult = generator.emitPutToScope(scope.get(), var, result.get(), generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound, initializationModeForAssignmentContext(m_assignmentContext));
+        returnResult = generator.emitPutToScope(scope.get(), var, result.get(), generator.ecmaMode().isStrict() ? ThrowIfNotFound : DoNotThrowIfNotFound, initializationModeForAssignmentContext(m_assignmentContext));
         generator.emitProfileType(result.get(), var, divotStart(), divotEnd());
     }
 
@@ -3140,7 +3140,7 @@ RegisterID* EmptyLetExpression::emitBytecode(BytecodeGenerator& generator, Regis
     } else {
         RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
         RefPtr<RegisterID> value = generator.emitLoad(nullptr, jsUndefined());
-        generator.emitPutToScope(scope.get(), var, value.get(), generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound, InitializationMode::Initialization);
+        generator.emitPutToScope(scope.get(), var, value.get(), generator.ecmaMode().isStrict() ? ThrowIfNotFound : DoNotThrowIfNotFound, InitializationMode::Initialization);
         generator.emitProfileType(value.get(), var, position(), position() + m_ident.length()); 
     }
 
@@ -3350,13 +3350,13 @@ void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propert
                 generator.emitReadOnlyExceptionIfNeeded(var);
             generator.move(local, propertyName);
         } else {
-            if (generator.isStrictMode())
+            if (generator.ecmaMode().isStrict())
                 generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
             if (var.isReadOnly())
                 generator.emitReadOnlyExceptionIfNeeded(var);
             RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
             generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-            generator.emitPutToScope(scope.get(), var, propertyName, generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound, InitializationMode::NotInitialization);
+            generator.emitPutToScope(scope.get(), var, propertyName, generator.ecmaMode().isStrict() ? ThrowIfNotFound : DoNotThrowIfNotFound, InitializationMode::NotInitialization);
         }
         generator.emitProfileType(propertyName, var, m_lexpr->position(), m_lexpr->position() + ident.length());
     };
@@ -3607,13 +3607,13 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
                     generator.emitReadOnlyExceptionIfNeeded(var);
                 generator.move(local, value);
             } else {
-                if (generator.isStrictMode())
+                if (generator.ecmaMode().isStrict())
                     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
                 if (var.isReadOnly())
                     generator.emitReadOnlyExceptionIfNeeded(var);
                 RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
                 generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-                generator.emitPutToScope(scope.get(), var, value, generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound, InitializationMode::NotInitialization);
+                generator.emitPutToScope(scope.get(), var, value, generator.ecmaMode().isStrict() ? ThrowIfNotFound : DoNotThrowIfNotFound, InitializationMode::NotInitialization);
             }
             generator.emitProfileType(value, var, m_lexpr->position(), m_lexpr->position() + ident.length());
         } else if (m_lexpr->isDotAccessorNode()) {
@@ -4397,6 +4397,8 @@ void ClassDeclNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
 RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    StrictModeScope strictModeScope(generator);
+
     if (m_needsLexicalScope)
         generator.pushLexicalScope(this, BytecodeGenerator::TDZCheckOptimization::Optimize, BytecodeGenerator::NestedScopeType::IsNested);
 
@@ -4831,7 +4833,7 @@ void BindingNode::bindValue(BytecodeGenerator& generator, RegisterID* value) con
             generator.liftTDZCheckIfPossible(var);
         return;
     }
-    if (generator.isStrictMode())
+    if (generator.ecmaMode().isStrict())
         generator.emitExpressionInfo(divotEnd(), divotStart(), divotEnd());
     RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
     generator.emitExpressionInfo(divotEnd(), divotStart(), divotEnd());
@@ -4841,7 +4843,7 @@ void BindingNode::bindValue(BytecodeGenerator& generator, RegisterID* value) con
         generator.emitReadOnlyExceptionIfNeeded(var);
         return;
     }
-    generator.emitPutToScope(scope.get(), var, value, generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound, initializationModeForAssignmentContext(m_bindingContext));
+    generator.emitPutToScope(scope.get(), var, value, generator.ecmaMode().isStrict() ? ThrowIfNotFound : DoNotThrowIfNotFound, initializationModeForAssignmentContext(m_bindingContext));
     generator.emitProfileType(value, var, divotStart(), divotEnd());
     if (m_bindingContext == AssignmentContext::DeclarationStatement || m_bindingContext == AssignmentContext::ConstDeclarationStatement)
         generator.liftTDZCheckIfPossible(var);
@@ -4879,7 +4881,7 @@ void AssignmentElementNode::bindValue(BytecodeGenerator& generator, RegisterID* 
             }
             return;
         }
-        if (generator.isStrictMode())
+        if (generator.ecmaMode().isStrict())
             generator.emitExpressionInfo(divotEnd(), divotStart(), divotEnd());
         RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
         generator.emitTDZCheckIfNecessary(var, nullptr, scope.get());
@@ -4890,7 +4892,7 @@ void AssignmentElementNode::bindValue(BytecodeGenerator& generator, RegisterID* 
         }
         generator.emitExpressionInfo(divotEnd(), divotStart(), divotEnd());
         if (!isReadOnly) {
-            generator.emitPutToScope(scope.get(), var, value, generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound, InitializationMode::NotInitialization);
+            generator.emitPutToScope(scope.get(), var, value, generator.ecmaMode().isStrict() ? ThrowIfNotFound : DoNotThrowIfNotFound, InitializationMode::NotInitialization);
             generator.emitProfileType(value, var, divotStart(), divotEnd());
         }
     } else if (m_assignmentTarget->isDotAccessorNode()) {

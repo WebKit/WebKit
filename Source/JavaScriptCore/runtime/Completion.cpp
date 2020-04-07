@@ -139,7 +139,7 @@ JSValue evaluate(JSGlobalObject* globalObject, const SourceCode& source, JSValue
 
     if (!thisValue || thisValue.isUndefinedOrNull())
         thisValue = globalObject;
-    JSObject* thisObj = jsCast<JSObject*>(thisValue.toThis(globalObject, NotStrictMode));
+    JSObject* thisObj = jsCast<JSObject*>(thisValue.toThis(globalObject, ECMAMode::sloppy()));
     JSValue result = vm.interpreter->executeProgram(source, globalObject, thisObj);
 
     if (scope.exception()) {

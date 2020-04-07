@@ -760,7 +760,8 @@ void SpeculativeJIT::emitCall(Node* node)
         unsigned requiredBytes = sizeof(CallerFrameAndPC) + sizeof(CallFrame*) * 2;
         requiredBytes = WTF::roundUpToMultipleOf(stackAlignmentBytes(), requiredBytes);
         m_jit.subPtr(TrustedImm32(requiredBytes), JITCompiler::stackPointerRegister);
-        m_jit.setupArguments<decltype(operationCallEval)>(TrustedImmPtr::weakPointer(m_graph, globalObject), GPRInfo::regT0);
+        m_jit.move(TrustedImm32(node->ecmaMode().value()), GPRInfo::regT1);
+        m_jit.setupArguments<decltype(operationCallEval)>(TrustedImmPtr::weakPointer(m_graph, globalObject), GPRInfo::regT0, GPRInfo::regT1);
         prepareForExternalCall();
         m_jit.appendCall(operationCallEval);
         m_jit.exceptionCheck();
@@ -2725,9 +2726,9 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg arg3GPR = arg3.gpr();
             flushRegisters();
             if (node->op() == PutByValDirect)
-                callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValDirectStrict : operationPutByValDirectNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3GPR);
+                callOperation(node->ecmaMode().isStrict() ? operationPutByValDirectStrict : operationPutByValDirectNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3GPR);
             else
-                callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValStrict : operationPutByValNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3GPR);
+                callOperation(node->ecmaMode().isStrict() ? operationPutByValStrict : operationPutByValNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), arg1GPR, arg2GPR, arg3GPR);
             m_jit.exceptionCheck();
             
             noResult(node);
@@ -2809,7 +2810,7 @@ void SpeculativeJIT::compile(Node* node)
             if (arrayMode.isOutOfBounds()) {
                 addSlowPathGenerator(slowPathCall(
                     slowCase, this,
-                    m_jit.isStrictModeFor(node->origin.semantic)
+                    node->ecmaMode().isStrict()
                         ? (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsStrict)
                         : (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsNonStrict : operationPutByValBeyondArrayBoundsNonStrict),
                     NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg, propertyReg, valueReg));
@@ -2893,7 +2894,7 @@ void SpeculativeJIT::compile(Node* node)
             if (!slowCases.empty()) {
                 addSlowPathGenerator(slowPathCall(
                     slowCases, this,
-                    m_jit.isStrictModeFor(node->origin.semantic)
+                    node->ecmaMode().isStrict()
                         ? (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsStrict)
                         : (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsNonStrict : operationPutByValBeyondArrayBoundsNonStrict),
                     NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg, propertyReg, valueReg));
@@ -3897,7 +3898,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg valueGPR = value.gpr();
 
         flushRegisters();
-        callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, thisValueGPR, propertyGPR, valueGPR);
+        callOperation(node->ecmaMode().isStrict() ? operationPutByValWithThisStrict : operationPutByValWithThis, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, thisValueGPR, propertyGPR, valueGPR);
         m_jit.exceptionCheck();
 
         noResult(node);
@@ -5467,7 +5468,7 @@ void SpeculativeJIT::compileDeleteById(Node* node)
 
         std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
             slowCases, this, operationDeleteByIdOptimize,
-            resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), JSValueRegs(baseGPR), node->cacheableIdentifier().rawBits());
+            resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), JSValueRegs(baseGPR), node->cacheableIdentifier().rawBits(), TrustedImm32(node->ecmaMode().value()));
 
         m_jit.addDelById(gen, slowPath.get());
         addSlowPathGenerator(WTFMove(slowPath));
@@ -5486,7 +5487,7 @@ void SpeculativeJIT::compileDeleteById(Node* node)
     flushRegisters();
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
-    callOperation(operationDeleteByIdGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, baseRegs, node->cacheableIdentifier().rawBits());
+    callOperation(operationDeleteByIdGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, baseRegs, node->cacheableIdentifier().rawBits(), TrustedImm32(node->ecmaMode().value()));
     m_jit.exceptionCheck();
 
     unblessedBooleanResult(resultGPR, node);
@@ -5525,7 +5526,7 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
 
         std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
             slowCases, this, operationDeleteByValOptimize,
-            resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), JSValueRegs(baseGPR), keyRegs);
+            resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), JSValueRegs(baseGPR), keyRegs, TrustedImm32(node->ecmaMode().value()));
 
         m_jit.addDelByVal(gen, slowPath.get());
         addSlowPathGenerator(WTFMove(slowPath));
@@ -5545,7 +5546,7 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
     flushRegisters();
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
-    callOperation(operationDeleteByValGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, baseRegs, keyRegs);
+    callOperation(operationDeleteByValGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, baseRegs, keyRegs, TrustedImm32(node->ecmaMode().value()));
     m_jit.exceptionCheck();
 
     unblessedBooleanResult(resultGPR, node);

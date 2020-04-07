@@ -547,7 +547,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyCall(JSGlobalObject* globalObjec
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     MarkedArgumentBuffer arguments;
     arguments.append(target);
-    arguments.append(callFrame->thisValue().toThis(globalObject, ECMAMode::StrictMode));
+    arguments.append(callFrame->thisValue().toThis(globalObject, ECMAMode::strict()));
     arguments.append(argArray);
     ASSERT(!arguments.hasOverflowed());
     RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, applyMethod, callType, callData, handler, arguments)));

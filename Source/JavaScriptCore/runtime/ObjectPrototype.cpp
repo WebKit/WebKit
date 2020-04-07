@@ -81,7 +81,7 @@ ObjectPrototype* ObjectPrototype::create(VM& vm, JSGlobalObject* globalObject, S
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSValue thisValue = callFrame->thisValue().toThis(globalObject, StrictMode);
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
     JSObject* valueObj = thisValue.toObject(globalObject);
     if (UNLIKELY(!valueObj))
         return encodedJSValue();
@@ -94,7 +94,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = callFrame->thisValue().toThis(globalObject, StrictMode);
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
     auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSObject* thisObject = thisValue.toObject(globalObject);
@@ -126,7 +126,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(JSGlobalObject* global
     if (!callFrame->argument(0).isObject())
         return JSValue::encode(jsBoolean(false));
 
-    JSValue thisValue = callFrame->thisValue().toThis(globalObject, StrictMode);
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
     JSObject* thisObj = thisValue.toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
@@ -150,7 +150,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, StrictMode).toObject(globalObject);
+    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue get = callFrame->argument(1);
@@ -178,7 +178,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, StrictMode).toObject(globalObject);
+    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue set = callFrame->argument(1);
@@ -206,7 +206,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, StrictMode).toObject(globalObject);
+    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
@@ -236,7 +236,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, StrictMode).toObject(globalObject);
+    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
@@ -269,7 +269,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(JSGlobalObject*
     auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, StrictMode).toObject(globalObject);
+    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     scope.release();
@@ -290,7 +290,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(JSGlobalObject* globa
     // 2. Invoke(V, "toString")
 
     // Let O be the result of calling ToObject passing the this value as the argument.
-    JSObject* object = thisValue.toThis(globalObject, StrictMode).toObject(globalObject);
+    JSObject* object = thisValue.toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // Let toString be the O.[[Get]]("toString", V)
@@ -315,7 +315,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = callFrame->thisValue().toThis(globalObject, StrictMode);
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
     if (thisValue.isUndefinedOrNull())
         return JSValue::encode(thisValue.isUndefined() ? vm.smallStrings.undefinedObjectString() : vm.smallStrings.nullObjectString());
     JSObject* thisObject = thisValue.toObject(globalObject);

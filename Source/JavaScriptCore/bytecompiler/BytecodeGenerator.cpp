@@ -297,14 +297,21 @@ ParserError BytecodeGenerator::generate()
     return ParserError(ParserError::ErrorNone);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
+BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(programNode)
     , m_thisRegister(CallFrame::thisArgumentOffset())
     , m_codeType(GlobalCode)
     , m_vm(vm)
+    , m_usesExceptions(false)
+    , m_expressionTooDeep(false)
+    , m_isBuiltinFunction(false)
+    , m_usesNonStrictEval(false)
+    , m_inTailPosition(false)
+    , m_hasCachedVariablesUnderTDZ(false)
     , m_needsToUpdateArrowFunctionContext(programNode->usesArrowFunction() || programNode->usesEval())
+    , m_ecmaMode(ecmaMode)
 {
     ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables->size());
 
@@ -338,14 +345,17 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     }
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
+BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(functionNode)
     , m_codeType(FunctionCode)
     , m_vm(vm)
+    // FIXME: This should be a flag
+    , m_usesExceptions(false)
+    , m_expressionTooDeep(false)
     , m_isBuiltinFunction(codeBlock->isBuiltinFunction())
-    , m_usesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode())
+    , m_usesNonStrictEval(codeBlock->usesEval() && !ecmaMode.isStrict())
     // FIXME: We should be able to have tail call elimination with the profiler
     // enabled. This is currently not possible because the profiler expects
     // op_will_call / op_did_call pairs before and after a call, which are not
@@ -353,8 +363,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // https://bugs.webkit.org/show_bug.cgi?id=148819
     //
     // Note that we intentionally enable tail call for naked constructors since it does not have special code for "return".
-    , m_inTailPosition(Options::useTailCalls() && !isConstructor() && constructorKind() == ConstructorKind::None && isStrictMode())
+    , m_inTailPosition(Options::useTailCalls() && !isConstructor() && constructorKind() == ConstructorKind::None && ecmaMode.isStrict())
+    , m_hasCachedVariablesUnderTDZ(false)
     , m_needsToUpdateArrowFunctionContext(functionNode->usesArrowFunction() || functionNode->usesEval())
+    , m_ecmaMode(ecmaMode)
     , m_derivedContextType(codeBlock->derivedContextType())
 {
     SymbolTable* functionSymbolTable = SymbolTable::create(m_vm);
@@ -437,7 +449,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())) {
         ASSERT(parseMode != SourceParseMode::GeneratorBodyMode);
         ASSERT(!isAsyncFunctionBodyParseMode(parseMode));
-        bool isDynamicScope = functionNameScopeIsDynamic(codeBlock->usesEval(), codeBlock->isStrictMode());
+        bool isDynamicScope = functionNameScopeIsDynamic(codeBlock->usesEval(), ecmaMode.isStrict());
         bool isFunctionNameCaptured = captures(functionNode->ident().impl());
         bool markAsCaptured = isDynamicScope || isFunctionNameCaptured;
         emitPushFunctionNameScope(functionNode->ident(), &m_calleeRegister, markAsCaptured);
@@ -487,7 +499,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         m_argumentsRegister->ref();
     }
     
-    if (needsArguments && !codeBlock->isStrictMode() && isSimpleParameterList) {
+    if (needsArguments && !ecmaMode.isStrict() && isSimpleParameterList) {
         // If we captured any formal parameter by name, then we use ScopedArguments. Otherwise we
         // use DirectArguments. With ScopedArguments, we lift all of our arguments into the
         // activation.
@@ -520,7 +532,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     entry.disableWatching(m_vm);
                     functionSymbolTable->set(NoLockingNecessary, name, entry);
                 }
-                OpPutToScope::emit(this, m_lexicalEnvironmentRegister, UINT_MAX, virtualRegisterForArgumentIncludingThis(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
+                OpPutToScope::emit(this, m_lexicalEnvironmentRegister, UINT_MAX, virtualRegisterForArgumentIncludingThis(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization, ecmaMode), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
             }
             
             // This creates a scoped arguments object and copies the overflow arguments into the
@@ -558,11 +570,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                 static_cast<const BindingNode*>(parameters.at(i).first)->boundProperty();
             functionSymbolTable->set(NoLockingNecessary, name, SymbolTableEntry(VarOffset(offset)));
             
-            OpPutToScope::emit(this, m_lexicalEnvironmentRegister, addConstant(ident), virtualRegisterForArgumentIncludingThis(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
+            OpPutToScope::emit(this, m_lexicalEnvironmentRegister, addConstant(ident), virtualRegisterForArgumentIncludingThis(1 + i), GetPutInfo(ThrowIfNotFound, LocalClosureVar, InitializationMode::NotInitialization, ecmaMode), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());
         }
     }
     
-    if (needsArguments && (codeBlock->isStrictMode() || !isSimpleParameterList)) {
+    if (needsArguments && (ecmaMode.isStrict() || !isSimpleParameterList)) {
         // Allocate a cloned arguments object.
         OpCreateClonedArguments::emit(this, m_argumentsRegister);
     }
@@ -716,7 +728,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     bool shouldEmitToThis = false;
                     if (functionNode->usesThis() || codeBlock->usesEval() || m_scopeNode->doAnyInnerArrowFunctionsUseThis() || m_scopeNode->doAnyInnerArrowFunctionsUseEval())
                         shouldEmitToThis = true;
-                    else if ((functionNode->usesSuperProperty() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty()) && !codeBlock->isStrictMode()) {
+                    else if ((functionNode->usesSuperProperty() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty()) && !ecmaMode.isStrict()) {
                         // We must emit to_this when we're not in strict mode because we
                         // will convert |this| to an object, and that object may be passed
                         // to a strict function as |this|. This is observable because that
@@ -837,15 +849,21 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
+BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(evalNode)
     , m_thisRegister(CallFrame::thisArgumentOffset())
     , m_codeType(EvalCode)
     , m_vm(vm)
-    , m_usesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode())
+    , m_usesExceptions(false)
+    , m_expressionTooDeep(false)
+    , m_isBuiltinFunction(false)
+    , m_usesNonStrictEval(codeBlock->usesEval() && !ecmaMode.isStrict())
+    , m_inTailPosition(false)
+    , m_hasCachedVariablesUnderTDZ(false)
     , m_needsToUpdateArrowFunctionContext(evalNode->usesArrowFunction() || evalNode->usesEval())
+    , m_ecmaMode(ecmaMode)
     , m_derivedContextType(codeBlock->derivedContextType())
 {
     m_codeBlock->setNumParameters(1);
@@ -895,15 +913,21 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
+BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(moduleProgramNode)
     , m_thisRegister(CallFrame::thisArgumentOffset())
     , m_codeType(ModuleCode)
     , m_vm(vm)
+    , m_usesExceptions(false)
+    , m_expressionTooDeep(false)
+    , m_isBuiltinFunction(false)
     , m_usesNonStrictEval(false)
+    , m_inTailPosition(false)
+    , m_hasCachedVariablesUnderTDZ(false)
     , m_needsToUpdateArrowFunctionContext(moduleProgramNode->usesArrowFunction() || moduleProgramNode->usesEval())
+    , m_ecmaMode(ecmaMode)
 {
     ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables->size());
 
@@ -2399,7 +2423,7 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
             kill(dst),
             scope,
             addConstant(variable.ident()),
-            GetPutInfo(resolveMode, variable.offset().isScope() ? LocalClosureVar : resolveType(), InitializationMode::NotInitialization),
+            GetPutInfo(resolveMode, variable.offset().isScope() ? LocalClosureVar : resolveType(), InitializationMode::NotInitialization, ecmaMode()),
             localScopeDepth(),
             variable.offset().isScope() ? variable.offset().scopeOffset().offset() : 0);
         return dst;
@@ -2426,11 +2450,11 @@ RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable&
         ScopeOffset offset;
         if (variable.offset().isScope()) {
             offset = variable.offset().scopeOffset();
-            getPutInfo = GetPutInfo(resolveMode, LocalClosureVar, initializationMode);
+            getPutInfo = GetPutInfo(resolveMode, LocalClosureVar, initializationMode, ecmaMode());
             symbolTableOrScopeDepth = SymbolTableOrScopeDepth::symbolTable(VirtualRegister { variable.symbolTableConstantIndex() });
         } else {
             ASSERT(resolveType() != LocalClosureVar);
-            getPutInfo = GetPutInfo(resolveMode, resolveType(), initializationMode);
+            getPutInfo = GetPutInfo(resolveMode, resolveType(), initializationMode, ecmaMode());
             symbolTableOrScopeDepth = SymbolTableOrScopeDepth::scopeDepth(localScopeDepth());
         }
         OpPutToScope::emit(this, scope, addConstant(variable.ident()), value, getPutInfo, symbolTableOrScopeDepth, !!offset ? offset.offset() : 0);
@@ -2511,7 +2535,7 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
 
     m_staticPropertyAnalyzer.putById(base, propertyIndex);
 
-    OpPutById::emit(this, base, propertyIndex, value, PutByIdNone); // is not direct
+    OpPutById::emit(this, base, propertyIndex, value, PutByIdFlags::create(ecmaMode())); // is not direct
     return value;
 }
 
@@ -2521,7 +2545,7 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, RegisterID* thisVal
 
     unsigned propertyIndex = addConstant(property);
 
-    OpPutByIdWithThis::emit(this, base, thisValue, propertyIndex, value);
+    OpPutByIdWithThis::emit(this, base, thisValue, propertyIndex, value, ecmaMode());
 
     return value;
 }
@@ -2534,7 +2558,7 @@ RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identif
 
     m_staticPropertyAnalyzer.putById(base, propertyIndex);
 
-    PutByIdFlags type = (putType == PropertyNode::KnownDirect || property != m_vm.propertyNames->underscoreProto) ? PutByIdIsDirect : PutByIdNone;
+    PutByIdFlags type = (putType == PropertyNode::KnownDirect || property != m_vm.propertyNames->underscoreProto) ? PutByIdFlags::createDirect(ecmaMode()) : PutByIdFlags::create(ecmaMode());
     OpPutById::emit(this, base, propertyIndex, value, type);
     return value;
 }
@@ -2594,7 +2618,7 @@ void BytecodeGenerator::emitPutAsyncGeneratorFields(RegisterID* nextFunction)
 
 RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
-    OpDelById::emit(this, dst, base, addConstant(property));
+    OpDelById::emit(this, dst, base, addConstant(property), ecmaMode());
     return dst;
 }
 
@@ -2638,25 +2662,25 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
 
 RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
 {
-    OpPutByVal::emit(this, base, property, value);
+    OpPutByVal::emit(this, base, property, value, ecmaMode());
     return value;
 }
 
 RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value)
 {
-    OpPutByValWithThis::emit(this, base, thisValue, property, value);
+    OpPutByValWithThis::emit(this, base, thisValue, property, value, ecmaMode());
     return value;
 }
 
 RegisterID* BytecodeGenerator::emitDirectPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
 {
-    OpPutByValDirect::emit(this, base, property, value);
+    OpPutByValDirect::emit(this, base, property, value, ecmaMode());
     return value;
 }
 
 RegisterID* BytecodeGenerator::emitDeleteByVal(RegisterID* dst, RegisterID* base, RegisterID* property)
 {
-    OpDelByVal::emit(this, dst, base, property);
+    OpDelByVal::emit(this, dst, base, property, ecmaMode());
     return dst;
 }
 
@@ -3250,7 +3274,10 @@ RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, Expec
     // Emit call.
     ASSERT(dst);
     ASSERT(dst != ignoredResult());
-    CallOp::emit(this, dst, func, callArguments.argumentCountIncludingThis(), callArguments.stackOffset());
+    if constexpr (opcodeID == op_call_eval)
+        CallOp::emit(this, dst, func, callArguments.argumentCountIncludingThis(), callArguments.stackOffset(), ecmaMode());
+    else
+        CallOp::emit(this, dst, func, callArguments.argumentCountIncludingThis(), callArguments.stackOffset());
     
     if (expectedFunction != NoExpectedFunction)
         emitLabel(done.get());
@@ -3793,7 +3820,7 @@ void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, Re
     unsigned numVars = m_codeBlock->numVars();
     pushLexicalScopeInternal(nameScopeEnvironment, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, TDZRequirement::NotUnderTDZ, ScopeType::FunctionNameScope, ScopeRegisterType::Var);
     ASSERT_UNUSED(numVars, m_codeBlock->numVars() == static_cast<int>(numVars + 1)); // Should have only created one new "var" for the function name scope.
-    bool shouldTreatAsLexicalVariable = isStrictMode();
+    bool shouldTreatAsLexicalVariable = ecmaMode().isStrict();
     Variable functionVar = variableForLocalEntry(property, m_lexicalScopeStack.last().m_symbolTable->get(NoLockingNecessary, property.impl()), m_lexicalScopeStack.last().m_symbolTableConstantIndex, shouldTreatAsLexicalVariable);
     emitPutToScope(m_lexicalScopeStack.last().m_scope, functionVar, callee, ThrowIfNotFound, InitializationMode::NotInitialization);
 }
@@ -3976,7 +4003,7 @@ bool BytecodeGenerator::emitReadOnlyExceptionIfNeeded(const Variable& variable)
 {
     // If we're in strict mode, we always throw.
     // If we're not in strict mode, we throw for "const" variables but not the function callee.
-    if (isStrictMode() || variable.isConst()) {
+    if (ecmaMode().isStrict() || variable.isConst()) {
         emitThrowTypeError(Identifier::fromString(m_vm, ReadonlyPropertyWriteError));
         return true;
     }
@@ -5059,7 +5086,7 @@ void StaticPropertyAnalysis::record()
 
 void BytecodeGenerator::emitToThis()
 {
-    OpToThis::emit(this, kill(&m_thisRegister));
+    OpToThis::emit(this, kill(&m_thisRegister), ecmaMode());
 }
 
 } // namespace JSC

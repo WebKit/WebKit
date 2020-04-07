@@ -380,13 +380,14 @@ namespace JSC {
         friend class FinallyContext;
         friend class IndexedForInContext;
         friend class StructureForInContext;
+        friend class StrictModeScope;
     public:
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        BytecodeGenerator(VM&, ProgramNode*, UnlinkedProgramCodeBlock*, OptionSet<CodeGenerationMode>, const VariableEnvironment*);
-        BytecodeGenerator(VM&, FunctionNode*, UnlinkedFunctionCodeBlock*, OptionSet<CodeGenerationMode>, const VariableEnvironment*);
-        BytecodeGenerator(VM&, EvalNode*, UnlinkedEvalCodeBlock*, OptionSet<CodeGenerationMode>, const VariableEnvironment*);
-        BytecodeGenerator(VM&, ModuleProgramNode*, UnlinkedModuleProgramCodeBlock*, OptionSet<CodeGenerationMode>, const VariableEnvironment*);
+        BytecodeGenerator(VM&, ProgramNode*, UnlinkedProgramCodeBlock*, OptionSet<CodeGenerationMode>, const VariableEnvironment*, ECMAMode);
+        BytecodeGenerator(VM&, FunctionNode*, UnlinkedFunctionCodeBlock*, OptionSet<CodeGenerationMode>, const VariableEnvironment*, ECMAMode);
+        BytecodeGenerator(VM&, EvalNode*, UnlinkedEvalCodeBlock*, OptionSet<CodeGenerationMode>, const VariableEnvironment*, ECMAMode);
+        BytecodeGenerator(VM&, ModuleProgramNode*, UnlinkedModuleProgramCodeBlock*, OptionSet<CodeGenerationMode>, const VariableEnvironment*, ECMAMode);
 
         ~BytecodeGenerator();
         
@@ -406,14 +407,14 @@ namespace JSC {
         NeedsClassFieldInitializer needsClassFieldInitializer() const { return m_codeBlock->needsClassFieldInitializer(); }
 
         template<typename Node, typename UnlinkedCodeBlock>
-        static ParserError generate(VM& vm, Node* node, const SourceCode& sourceCode, UnlinkedCodeBlock* unlinkedCodeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* environment)
+        static ParserError generate(VM& vm, Node* node, const SourceCode& sourceCode, UnlinkedCodeBlock* unlinkedCodeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* environment, ECMAMode ecmaMode)
         {
             MonotonicTime before;
             if (UNLIKELY(Options::reportBytecodeCompileTimes()))
                 before = MonotonicTime::now();
 
             DeferGC deferGC(vm.heap);
-            auto bytecodeGenerator = makeUnique<BytecodeGenerator>(vm, node, unlinkedCodeBlock, codeGenerationMode, environment);
+            auto bytecodeGenerator = makeUnique<BytecodeGenerator>(vm, node, unlinkedCodeBlock, codeGenerationMode, environment, ecmaMode);
             auto result = bytecodeGenerator->generate();
 
             if (UNLIKELY(Options::reportBytecodeCompileTimes())) {
@@ -1019,7 +1020,7 @@ namespace JSC {
         bool shouldEmitTypeProfilerHooks() const { return m_codeGenerationMode.contains(CodeGenerationMode::TypeProfiler); }
         bool shouldEmitControlFlowProfilerHooks() const { return m_codeGenerationMode.contains(CodeGenerationMode::ControlFlowProfiler); }
         
-        bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
+        ECMAMode ecmaMode() const { return m_ecmaMode; }
         void setUsesCheckpoints() { m_codeBlock->setHasCheckpoints(); }
 
         SourceParseMode parseMode() const { return m_codeBlock->parseMode(); }
@@ -1297,8 +1298,9 @@ namespace JSC {
         bool m_isBuiltinFunction { false };
         bool m_usesNonStrictEval { false };
         bool m_inTailPosition { false };
-        bool m_needsToUpdateArrowFunctionContext;
         bool m_hasCachedVariablesUnderTDZ { false };
+        bool m_needsToUpdateArrowFunctionContext : 1;
+        ECMAMode m_ecmaMode;
         DerivedContextType m_derivedContextType { DerivedContextType::None };
 
         CompactVariableMap::Handle m_cachedVariablesUnderTDZ;
@@ -1310,6 +1312,14 @@ namespace JSC {
             VirtualRegister completionTypeRegister;
         };
         Vector<CatchEntry> m_exceptionHandlersToEmit;
+    };
+
+    class StrictModeScope : private SetForScope<ECMAMode> {
+    public:
+        StrictModeScope(BytecodeGenerator& generator)
+            : SetForScope(generator.m_ecmaMode, ECMAMode::strict())
+        {
+        }
     };
 
 } // namespace JSC

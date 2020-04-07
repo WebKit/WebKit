@@ -71,10 +71,11 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
 
     bool isClassContext = executable->superBinding() == SuperBinding::Needed;
 
-    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(vm, FunctionCode, ExecutableInfo(function->usesEval(), function->isStrictMode(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction, executable->constructorKind(), scriptMode, executable->superBinding(), parseMode, executable->derivedContextType(), executable->needsClassFieldInitializer(), false, isClassContext, EvalContextType::FunctionEvalContext), codeGenerationMode);
+    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(vm, FunctionCode, ExecutableInfo(function->usesEval(), kind == CodeForConstruct, functionKind == UnlinkedBuiltinFunction, executable->constructorKind(), scriptMode, executable->superBinding(), parseMode, executable->derivedContextType(), executable->needsClassFieldInitializer(), false, isClassContext, EvalContextType::FunctionEvalContext), codeGenerationMode);
 
     VariableEnvironment parentScopeTDZVariables = executable->parentScopeTDZVariables();
-    error = BytecodeGenerator::generate(vm, function.get(), source, result, codeGenerationMode, &parentScopeTDZVariables);
+    ECMAMode ecmaMode = executable->isInStrictContext() ? ECMAMode::strict() : ECMAMode::sloppy();
+    error = BytecodeGenerator::generate(vm, function.get(), source, result, codeGenerationMode, &parentScopeTDZVariables, ecmaMode);
 
     if (error.isValid())
         return nullptr;

@@ -67,7 +67,7 @@ void InlineCallFrame::dumpBriefFunctionInformation(PrintStream& out) const
 void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     out.print(briefFunctionInformation(), ":<", RawPointer(baselineCodeBlock.get()));
-    if (isStrictMode())
+    if (isInStrictContext())
         out.print(" (StrictMode)");
     out.print(", ", directCaller.bytecodeIndex(), ", ", static_cast<Kind>(kind));
     if (isClosureCall)

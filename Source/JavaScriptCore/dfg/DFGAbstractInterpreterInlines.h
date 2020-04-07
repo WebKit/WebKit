@@ -186,10 +186,10 @@ enum class ToThisResult {
     GlobalThis,
     Dynamic,
 };
-inline ToThisResult isToThisAnIdentity(VM& vm, bool isStrictMode, AbstractValue& valueForNode)
+inline ToThisResult isToThisAnIdentity(VM& vm, ECMAMode ecmaMode, AbstractValue& valueForNode)
 {
     // We look at the type first since that will cover most cases and does not require iterating all the structures.
-    if (isStrictMode) {
+    if (ecmaMode.isStrict()) {
         if (valueForNode.m_type && !(valueForNode.m_type & SpecObjectOther))
             return ToThisResult::Identity;
     } else {
@@ -203,20 +203,20 @@ inline ToThisResult isToThisAnIdentity(VM& vm, bool isStrictMode, AbstractValue&
             if (toThisMethod == &JSObject::toThis)
                 return ToThisResult::Identity;
             if (toThisMethod == &JSScope::toThis) {
-                if (isStrictMode)
+                if (ecmaMode.isStrict())
                     return ToThisResult::Undefined;
                 return ToThisResult::GlobalThis;
             }
         }
     }
 
-    if ((isStrictMode || (valueForNode.m_type && !(valueForNode.m_type & ~SpecObject))) && valueForNode.m_structure.isFinite()) {
+    if ((ecmaMode.isStrict() || (valueForNode.m_type && !(valueForNode.m_type & ~SpecObject))) && valueForNode.m_structure.isFinite()) {
         bool allStructuresAreJSScope = !valueForNode.m_structure.isClear();
         bool overridesToThis = false;
         valueForNode.m_structure.forEach([&](RegisteredStructure structure) {
             TypeInfo type = structure->typeInfo();
             ASSERT(type.isObject() || type.type() == StringType || type.type() == SymbolType || type.type() == BigIntType);
-            if (!isStrictMode)
+            if (!ecmaMode.isStrict())
                 ASSERT(type.isObject());
             // We don't need to worry about strings/symbols here since either:
             // 1) We are in strict mode and strings/symbols are not wrapped
@@ -230,7 +230,7 @@ inline ToThisResult isToThisAnIdentity(VM& vm, bool isStrictMode, AbstractValue&
         if (!overridesToThis)
             return ToThisResult::Identity;
         if (allStructuresAreJSScope) {
-            if (isStrictMode)
+            if (ecmaMode.isStrict())
                 return ToThisResult::Undefined;
             return ToThisResult::GlobalThis;
         }
@@ -2730,9 +2730,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ToThis: {
         AbstractValue& source = forNode(node->child1());
         AbstractValue& destination = forNode(node);
-        bool strictMode = m_graph.isStrictModeFor(node->origin.semantic);
+        ECMAMode ecmaMode = node->ecmaMode();
 
-        ToThisResult result = isToThisAnIdentity(m_vm, strictMode, source);
+        ToThisResult result = isToThisAnIdentity(m_vm, ecmaMode, source);
         switch (result) {
         case ToThisResult::Identity:
             m_state.setShouldTryConstantFolding(true);
@@ -2746,7 +2746,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             destination.setType(m_graph, SpecObject);
             break;
         case ToThisResult::Dynamic:
-            if (strictMode)
+            if (ecmaMode.isStrict())
                 destination.makeHeapTop();
             else {
                 destination = source;

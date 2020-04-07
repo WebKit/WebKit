@@ -47,6 +47,7 @@ struct OpInfo {
     explicit OpInfo(RegisteredStructure structure) : m_value(static_cast<uint64_t>(bitwise_cast<uintptr_t>(structure))) { }
     explicit OpInfo(Operand op) : m_value(op.asBits()) { }
     explicit OpInfo(CacheableIdentifier identifier) : m_value(static_cast<uint64_t>(identifier.rawBits())) { }
+    explicit OpInfo(ECMAMode ecmaMode) : m_value(ecmaMode.value()) { }
 
     template <typename T>
     explicit OpInfo(T* ptr)

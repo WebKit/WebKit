@@ -128,7 +128,9 @@ public:
 
 class JITPutByIdGenerator : public JITByIdGenerator {
 public:
-    JITPutByIdGenerator() { }
+    JITPutByIdGenerator()
+        : m_ecmaMode(ECMAMode::strict())
+    { }
 
     JITPutByIdGenerator(
         CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier, JSValueRegs base,

@@ -32,7 +32,7 @@ namespace JSC {
 
 void GetPutInfo::dump(PrintStream& out) const
 {
-    out.print(operand(), "<", resolveMode(), "|", resolveType(), "|", initializationMode(), ">");
+    out.print(operand(), "<", resolveMode(), "|", resolveType(), "|", initializationMode(), "|", ecmaMode(), ">");
 
 }
 

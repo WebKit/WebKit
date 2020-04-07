@@ -701,7 +701,7 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(JSGlobalObject* globa
         repatchPutByID(globalObject, codeBlock, baseObject, structure, identifier, slot, *stubInfo, Direct);
 }
 
-static void putByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, JSValue subscript, JSValue value, ByValInfo* byValInfo)
+static void putByVal(JSGlobalObject* globalObject, JSValue baseValue, JSValue subscript, JSValue value, ByValInfo* byValInfo, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -717,12 +717,12 @@ static void putByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue
 
             byValInfo->arrayProfile->setOutOfBounds();
             scope.release();
-            object->methodTable(vm)->putByIndex(object, globalObject, i, value, codeBlock->isStrictMode());
+            object->methodTable(vm)->putByIndex(object, globalObject, i, value, ecmaMode.isStrict());
             return;
         }
 
         scope.release();
-        baseValue.putByIndex(globalObject, i, value, codeBlock->isStrictMode());
+        baseValue.putByIndex(globalObject, i, value, ecmaMode.isStrict());
         return;
     } else if (subscript.isInt32()) {
         byValInfo->tookSlowPath = true;
@@ -738,15 +738,14 @@ static void putByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue
         byValInfo->tookSlowPath = true;
 
     scope.release();
-    PutPropertySlot slot(baseValue, codeBlock->isStrictMode());
+    PutPropertySlot slot(baseValue, ecmaMode.isStrict());
     baseValue.putInline(globalObject, property, value, slot);
 }
 
-static void directPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* baseObject, JSValue subscript, JSValue value, ByValInfo* byValInfo)
+static void directPutByVal(JSGlobalObject* globalObject, JSObject* baseObject, JSValue subscript, JSValue value, ByValInfo* byValInfo, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    bool isStrictMode = codeBlock->isStrictMode();
 
     if (LIKELY(subscript.isUInt32())) {
         // Despite its name, JSValue::isUInt32 will return true only for positive boxed int32_t; all those values are valid array indices.
@@ -768,7 +767,7 @@ static void directPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, J
         }
 
         scope.release();
-        baseObject->putDirectIndex(globalObject, index, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+        baseObject->putDirectIndex(globalObject, index, value, 0, ecmaMode.isStrict() ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
         return;
     }
 
@@ -778,7 +777,7 @@ static void directPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, J
         if (subscriptAsDouble == subscriptAsUInt32 && isIndex(subscriptAsUInt32)) {
             byValInfo->tookSlowPath = true;
             scope.release();
-            baseObject->putDirectIndex(globalObject, subscriptAsUInt32, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+            baseObject->putDirectIndex(globalObject, subscriptAsUInt32, value, 0, ecmaMode.isStrict() ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
             return;
         }
     }
@@ -790,7 +789,7 @@ static void directPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, J
     if (Optional<uint32_t> index = parseIndex(property)) {
         byValInfo->tookSlowPath = true;
         scope.release();
-        baseObject->putDirectIndex(globalObject, index.value(), value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+        baseObject->putDirectIndex(globalObject, index.value(), value, 0, ecmaMode.isStrict() ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
         return;
     }
 
@@ -798,7 +797,7 @@ static void directPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, J
         byValInfo->tookSlowPath = true;
 
     scope.release();
-    PutPropertySlot slot(baseObject, isStrictMode);
+    PutPropertySlot slot(baseObject, ecmaMode.isStrict());
     CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, property, value, slot);
 }
 
@@ -884,7 +883,7 @@ static OptimizationResult tryPutByValOptimize(JSGlobalObject* globalObject, Call
     return optimizationResult;
 }
 
-void JIT_OPERATION operationPutByValOptimize(JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, ByValInfo* byValInfo)
+void JIT_OPERATION operationPutByValOptimize(JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, ByValInfo* byValInfo, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -902,7 +901,7 @@ void JIT_OPERATION operationPutByValOptimize(JSGlobalObject* globalObject, Encod
         byValInfo->tookSlowPath = true;
         ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), operationPutByValGeneric);
     }
-    RELEASE_AND_RETURN(scope, putByVal(globalObject, codeBlock, baseValue, subscript, value, byValInfo));
+    RELEASE_AND_RETURN(scope, putByVal(globalObject, baseValue, subscript, value, byValInfo, ecmaMode));
 }
 
 static OptimizationResult tryDirectPutByValOptimize(JSGlobalObject* globalObject, CallFrame* callFrame, CodeBlock* codeBlock, JSObject* object, JSValue subscript, ByValInfo* byValInfo, ReturnAddressPtr returnAddress)
@@ -974,7 +973,7 @@ static OptimizationResult tryDirectPutByValOptimize(JSGlobalObject* globalObject
     return optimizationResult;
 }
 
-void JIT_OPERATION operationDirectPutByValOptimize(JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, ByValInfo* byValInfo)
+void JIT_OPERATION operationDirectPutByValOptimize(JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, ByValInfo* byValInfo, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -995,10 +994,10 @@ void JIT_OPERATION operationDirectPutByValOptimize(JSGlobalObject* globalObject,
         ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), operationDirectPutByValGeneric);
     }
 
-    RELEASE_AND_RETURN(scope, directPutByVal(globalObject, codeBlock, object, subscript, value, byValInfo));
+    RELEASE_AND_RETURN(scope, directPutByVal(globalObject, object, subscript, value, byValInfo, ecmaMode));
 }
 
-void JIT_OPERATION operationPutByValGeneric(JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, ByValInfo* byValInfo)
+void JIT_OPERATION operationPutByValGeneric(JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, ByValInfo* byValInfo, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1008,11 +1007,11 @@ void JIT_OPERATION operationPutByValGeneric(JSGlobalObject* globalObject, Encode
     JSValue subscript = JSValue::decode(encodedSubscript);
     JSValue value = JSValue::decode(encodedValue);
 
-    putByVal(globalObject, callFrame->codeBlock(), baseValue, subscript, value, byValInfo);
+    putByVal(globalObject, baseValue, subscript, value, byValInfo, ecmaMode);
 }
 
 
-void JIT_OPERATION operationDirectPutByValGeneric(JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, ByValInfo* byValInfo)
+void JIT_OPERATION operationDirectPutByValGeneric(JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, ByValInfo* byValInfo, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1022,10 +1021,10 @@ void JIT_OPERATION operationDirectPutByValGeneric(JSGlobalObject* globalObject, 
     JSValue subscript = JSValue::decode(encodedSubscript);
     JSValue value = JSValue::decode(encodedValue);
     RELEASE_ASSERT(baseValue.isObject());
-    directPutByVal(globalObject, callFrame->codeBlock(), asObject(baseValue), subscript, value, byValInfo);
+    directPutByVal(globalObject, asObject(baseValue), subscript, value, byValInfo, ecmaMode);
 }
 
-EncodedJSValue JIT_OPERATION operationCallEval(JSGlobalObject* globalObject, CallFrame* calleeFrame)
+EncodedJSValue JIT_OPERATION operationCallEval(JSGlobalObject* globalObject, CallFrame* calleeFrame, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1035,7 +1034,7 @@ EncodedJSValue JIT_OPERATION operationCallEval(JSGlobalObject* globalObject, Cal
     if (!isHostFunction(calleeFrame->guaranteedJSValueCallee(), globalFuncEval))
         return JSValue::encode(JSValue());
 
-    JSValue result = eval(globalObject, calleeFrame);
+    JSValue result = eval(globalObject, calleeFrame, ecmaMode);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     return JSValue::encode(result);
@@ -2163,7 +2162,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyGeneric(JSGlobalObject* 
     return JSValue::encode(jsBoolean(object->hasPropertyGeneric(globalObject, index, PropertySlot::InternalMethodType::GetOwnProperty)));
 }
     
-static bool deleteById(JSGlobalObject* globalObject, CallFrame* callFrame, VM& vm, DeletePropertySlot& slot, JSValue base, const Identifier& ident)
+static bool deleteById(JSGlobalObject* globalObject, VM& vm, DeletePropertySlot& slot, JSValue base, const Identifier& ident, ECMAMode ecmaMode)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -2173,12 +2172,12 @@ static bool deleteById(JSGlobalObject* globalObject, CallFrame* callFrame, VM& v
         return false;
     bool couldDelete = baseObj->methodTable(vm)->deleteProperty(baseObj, globalObject, ident, slot);
     RETURN_IF_EXCEPTION(scope, false);
-    if (!couldDelete && callFrame->codeBlock()->isStrictMode())
+    if (!couldDelete && ecmaMode.isStrict())
         throwTypeError(globalObject, scope, UnableToDeletePropertyError);
     return couldDelete;
 }
 
-size_t JIT_OPERATION operationDeleteByIdOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
+size_t JIT_OPERATION operationDeleteByIdOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2192,21 +2191,21 @@ size_t JIT_OPERATION operationDeleteByIdOptimize(JSGlobalObject* globalObject, S
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
     Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
-    bool result = deleteById(globalObject, callFrame, vm, slot, baseValue, ident);
+    bool result = deleteById(globalObject, vm, slot, baseValue, ident, ecmaMode);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (baseValue.isObject()) {
         if (!parseIndex(ident)) {
             CodeBlock* codeBlock = callFrame->codeBlock();
             if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
-                repatchDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, identifier, *stubInfo, DelByKind::Normal);
+                repatchDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, identifier, *stubInfo, DelByKind::Normal, ecmaMode);
         }
     }
 
     return result;
 }
 
-size_t JIT_OPERATION operationDeleteByIdGeneric(JSGlobalObject* globalObject, StructureStubInfo*, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
+size_t JIT_OPERATION operationDeleteByIdGeneric(JSGlobalObject* globalObject, StructureStubInfo*, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2214,10 +2213,10 @@ size_t JIT_OPERATION operationDeleteByIdGeneric(JSGlobalObject* globalObject, St
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
     Identifier ident = Identifier::fromUid(vm, identifier.uid());
     DeletePropertySlot slot;
-    return deleteById(globalObject, callFrame, vm, slot, JSValue::decode(encodedBase), ident);
+    return deleteById(globalObject, vm, slot, JSValue::decode(encodedBase), ident, ecmaMode);
 }
 
-static bool deleteByVal(JSGlobalObject* globalObject, CallFrame* callFrame, VM& vm, DeletePropertySlot& slot, JSValue base, JSValue key)
+static bool deleteByVal(JSGlobalObject* globalObject, VM& vm, DeletePropertySlot& slot, JSValue base, JSValue key, ECMAMode ecmaMode)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -2236,12 +2235,12 @@ static bool deleteByVal(JSGlobalObject* globalObject, CallFrame* callFrame, VM& 
         couldDelete = baseObj->methodTable(vm)->deleteProperty(baseObj, globalObject, property, slot);
     }
     RETURN_IF_EXCEPTION(scope, false);
-    if (!couldDelete && callFrame->codeBlock()->isStrictMode())
+    if (!couldDelete && ecmaMode.isStrict())
         throwTypeError(globalObject, scope, UnableToDeletePropertyError);
     return couldDelete;
 }
 
-size_t JIT_OPERATION operationDeleteByValOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript)
+size_t JIT_OPERATION operationDeleteByValOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2253,7 +2252,7 @@ size_t JIT_OPERATION operationDeleteByValOptimize(JSGlobalObject* globalObject, 
     DeletePropertySlot slot;
     Structure* oldStructure = baseValue.structureOrNull();
 
-    bool result = deleteByVal(globalObject, callFrame, vm, slot, baseValue, subscript);
+    bool result = deleteByVal(globalObject, vm, slot, baseValue, subscript, ecmaMode);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (baseValue.isObject() && CacheableIdentifier::isCacheableIdentifierCell(subscript)) {
@@ -2264,20 +2263,20 @@ size_t JIT_OPERATION operationDeleteByValOptimize(JSGlobalObject* globalObject, 
             CodeBlock* codeBlock = callFrame->codeBlock();
             CacheableIdentifier identifier = CacheableIdentifier::createFromCell(subscript.asCell());
             if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
-                repatchDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, identifier, *stubInfo, DelByKind::NormalByVal);
+                repatchDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, identifier, *stubInfo, DelByKind::NormalByVal, ecmaMode);
         }
     }
 
     return result;
 }
 
-size_t JIT_OPERATION operationDeleteByValGeneric(JSGlobalObject* globalObject, StructureStubInfo*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript)
+size_t JIT_OPERATION operationDeleteByValGeneric(JSGlobalObject* globalObject, StructureStubInfo*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     DeletePropertySlot slot;
-    return deleteByVal(globalObject, callFrame, vm, slot, JSValue::decode(encodedBase), JSValue::decode(encodedSubscript));
+    return deleteByVal(globalObject, vm, slot, JSValue::decode(encodedBase), JSValue::decode(encodedSubscript), ecmaMode);
 }
 
 JSCell* JIT_OPERATION operationPushWithScope(JSGlobalObject* globalObject, JSCell* currentScopeCell, EncodedJSValue objectValue)
@@ -2544,7 +2543,7 @@ void JIT_OPERATION operationPutToScope(JSGlobalObject* globalObject, const Instr
         return;
     }
 
-    PutPropertySlot slot(scope, codeBlock->isStrictMode(), PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
+    PutPropertySlot slot(scope, getPutInfo.ecmaMode().isStrict(), PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
     scope->methodTable(vm)->put(scope, globalObject, ident, value, slot);
     
     RETURN_IF_EXCEPTION(throwScope, void());

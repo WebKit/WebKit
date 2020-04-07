@@ -166,7 +166,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueRe
 
 ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator& iter, VirtualRegister reg)
 {
-    if (!m_codeBlock->isKnownNotImmediate(reg))
+    if (!m_codeBlock->isKnownCell(reg))
         linkSlowCase(iter);
 }
 
@@ -496,7 +496,7 @@ inline void JIT::emitStore(VirtualRegister reg, const JSValue constant, Register
 
 inline void JIT::emitJumpSlowCaseIfNotJSCell(VirtualRegister reg)
 {
-    if (!m_codeBlock->isKnownNotImmediate(reg)) {
+    if (!m_codeBlock->isKnownCell(reg)) {
         if (reg.isConstant())
             addSlowCase(jump());
         else
@@ -506,7 +506,7 @@ inline void JIT::emitJumpSlowCaseIfNotJSCell(VirtualRegister reg)
 
 inline void JIT::emitJumpSlowCaseIfNotJSCell(VirtualRegister reg, RegisterID tag)
 {
-    if (!m_codeBlock->isKnownNotImmediate(reg)) {
+    if (!m_codeBlock->isKnownCell(reg)) {
         if (reg.isConstant())
             addSlowCase(jump());
         else
@@ -600,7 +600,7 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg)
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, VirtualRegister vReg)
 {
-    if (!m_codeBlock->isKnownNotImmediate(vReg))
+    if (!m_codeBlock->isKnownCell(vReg))
         emitJumpSlowCaseIfNotJSCell(reg);
 }
 

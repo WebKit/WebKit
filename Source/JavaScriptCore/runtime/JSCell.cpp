@@ -152,7 +152,7 @@ bool JSCell::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, u
 
 JSValue JSCell::toThis(JSCell* cell, JSGlobalObject* globalObject, ECMAMode ecmaMode)
 {
-    if (ecmaMode == StrictMode)
+    if (ecmaMode.isStrict())
         return cell;
     return cell->toObject(globalObject);
 }

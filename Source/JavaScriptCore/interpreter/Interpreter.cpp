@@ -101,7 +101,7 @@
 
 namespace JSC {
 
-JSValue eval(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSValue eval(JSGlobalObject* globalObject, CallFrame* callFrame, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -148,7 +148,7 @@ JSValue eval(JSGlobalObject* globalObject, CallFrame* callFrame)
 
     DirectEvalExecutable* eval = callerCodeBlock->directEvalCodeCache().tryGet(programSource, callerCallSiteIndex);
     if (!eval) {
-        if (!callerCodeBlock->isStrictMode()) {
+        if (!ecmaMode.isStrict()) {
             if (programSource.is8Bit()) {
                 LiteralParser<LChar> preparser(globalObject, programSource.characters8(), programSource.length(), NonStrictJSON, callerCodeBlock);
                 if (JSValue parsedObject = preparser.tryLiteralParse())
@@ -165,7 +165,7 @@ JSValue eval(JSGlobalObject* globalObject, CallFrame* callFrame)
         
         VariableEnvironment variablesUnderTDZ;
         JSScope::collectClosureVariablesUnderTDZ(callerScopeChain, variablesUnderTDZ);
-        eval = DirectEvalExecutable::create(globalObject, makeSource(programSource, callerCodeBlock->source().provider()->sourceOrigin()), callerCodeBlock->isStrictMode(), derivedContextType, callerUnlinkedCodeBlock->needsClassFieldInitializer(), isArrowFunctionContext, callerCodeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ);
+        eval = DirectEvalExecutable::create(globalObject, makeSource(programSource, callerCodeBlock->source().provider()->sourceOrigin()), derivedContextType, callerUnlinkedCodeBlock->needsClassFieldInitializer(), isArrowFunctionContext, callerCodeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, ecmaMode);
         EXCEPTION_ASSERT(!!scope.exception() == !eval);
         if (!eval)
             return jsUndefined();
@@ -1057,7 +1057,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
     unsigned numFunctionHoistingCandidates = eval->numFunctionHoistingCandidates();
 
     JSScope* variableObject;
-    if ((numVariables || numTopLevelFunctionDecls) && eval->isStrictMode()) {
+    if ((numVariables || numTopLevelFunctionDecls) && eval->isInStrictContext()) {
         scope = StrictEvalActivation::create(vm, globalObject->strictEvalActivationStructure(), scope);
         variableObject = scope;
     } else {
@@ -1104,7 +1104,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
     UnlinkedEvalCodeBlock* unlinkedCodeBlock = codeBlock->unlinkedEvalCodeBlock();
 
     // We can't declare a "var"/"function" that overwrites a global "let"/"const"/"class" in a sloppy-mode eval.
-    if (variableObject->isGlobalObject() && !eval->isStrictMode() && (numVariables || numTopLevelFunctionDecls)) {
+    if (variableObject->isGlobalObject() && !eval->isInStrictContext() && (numVariables || numTopLevelFunctionDecls)) {
         JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalObject*>(variableObject)->globalLexicalEnvironment();
         for (unsigned i = 0; i < numVariables; ++i) {
             const Identifier& ident = unlinkedCodeBlock->variable(i);
@@ -1128,7 +1128,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
 
     if (numVariables || numTopLevelFunctionDecls || numFunctionHoistingCandidates) {
         BatchedTransitionOptimizer optimizer(vm, variableObject);
-        if (variableObject->next() && !eval->isStrictMode())
+        if (variableObject->next() && !eval->isInStrictContext())
             variableObject->globalObject(vm)->varInjectionWatchpoint()->fireAll(vm, "Executed eval, fired VarInjection watchpoint");
 
         for (unsigned i = 0; i < numVariables; ++i) {
@@ -1144,7 +1144,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
             }
         }
         
-        if (eval->isStrictMode()) {
+        if (eval->isInStrictContext()) {
             for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
                 FunctionExecutable* function = codeBlock->functionDecl(i);
                 PutPropertySlot slot(variableObject);

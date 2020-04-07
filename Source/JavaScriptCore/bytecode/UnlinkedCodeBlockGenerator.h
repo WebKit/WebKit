@@ -50,7 +50,6 @@ public:
     SuperBinding superBinding() const { return m_codeBlock->superBinding(); }
     JSParserScriptMode scriptMode() const { return m_codeBlock->scriptMode(); }
     NeedsClassFieldInitializer needsClassFieldInitializer() const { return m_codeBlock->needsClassFieldInitializer(); }
-    bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
     bool usesEval() const { return m_codeBlock->usesEval(); }
     SourceParseMode parseMode() const { return m_codeBlock->parseMode(); }
     bool isArrowFunction() { return m_codeBlock->isArrowFunction(); }

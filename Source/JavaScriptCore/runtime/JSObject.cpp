@@ -810,7 +810,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 if (!this->structure(vm)->isDictionary())
                     slot.setCacheableSetter(obj, offset);
 
-                bool result = callSetter(globalObject, slot.thisValue(), gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
+                bool result = callSetter(globalObject, slot.thisValue(), gs, value, slot.isStrictMode() ? ECMAMode::strict() : ECMAMode::sloppy());
                 RETURN_IF_EXCEPTION(scope, false);
                 return result;
             }
@@ -1818,7 +1818,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, JSGlobalObject* globalObject, 
         return typeError(globalObject, scope, shouldThrowIfCantSet, "Cannot set prototype of immutable prototype object"_s);
     }
 
-    ASSERT(methodTable(vm)->toThis(this, globalObject, NotStrictMode) == this);
+    ASSERT(methodTable(vm)->toThis(this, globalObject, ECMAMode::sloppy()) == this);
 
     if (this->getPrototypeDirect(vm) == prototype)
         return true;

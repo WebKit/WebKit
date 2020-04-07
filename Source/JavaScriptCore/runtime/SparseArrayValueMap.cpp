@@ -203,7 +203,7 @@ bool SparseArrayEntry::put(JSGlobalObject* globalObject, JSValue thisValue, Spar
         return true;
     }
 
-    RELEASE_AND_RETURN(scope, callSetter(globalObject, thisValue, Base::get(), value, shouldThrow ? StrictMode : NotStrictMode));
+    RELEASE_AND_RETURN(scope, callSetter(globalObject, thisValue, Base::get(), value, shouldThrow ? ECMAMode::strict() : ECMAMode::sloppy()));
 }
 
 JSValue SparseArrayEntry::getNonSparseMode() const

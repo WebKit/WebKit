@@ -68,7 +68,7 @@ bool callSetter(JSGlobalObject* globalObject, JSValue base, JSValue getterSetter
     GetterSetter* getterSetterObj = jsCast<GetterSetter*>(getterSetter);
 
     if (getterSetterObj->isSetterNull())
-        return typeError(globalObject, scope, ecmaMode == StrictMode, ReadonlyPropertyWriteError);
+        return typeError(globalObject, scope, ecmaMode.isStrict(), ReadonlyPropertyWriteError);
 
     JSObject* setter = getterSetterObj->setter();
 

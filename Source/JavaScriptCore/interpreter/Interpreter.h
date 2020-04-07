@@ -150,7 +150,7 @@ namespace JSC {
 #endif // ENABLE(COMPUTED_GOTO_OPCODES)
     };
 
-    JSValue eval(JSGlobalObject*, CallFrame*);
+    JSValue eval(JSGlobalObject*, CallFrame*, ECMAMode);
 
     inline CallFrame* calleeFrameForVarargs(CallFrame* callFrame, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis)
     {

@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject, const SourceCode& source, bool isInStrictContext, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject, const SourceCode& source, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -45,11 +45,11 @@ DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject,
         return 0;
     }
 
-    auto* executable = new (NotNull, allocateCell<DirectEvalExecutable>(vm.heap)) DirectEvalExecutable(globalObject, source, isInStrictContext, derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, isInsideOrdinaryFunction, evalContextType);
+    auto* executable = new (NotNull, allocateCell<DirectEvalExecutable>(vm.heap)) DirectEvalExecutable(globalObject, source, ecmaMode.isStrict(), derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, isInsideOrdinaryFunction, evalContextType);
     executable->finishCreation(vm);
 
     ParserError error;
-    JSParserStrictMode strictMode = executable->isStrictMode() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
+    JSParserStrictMode strictMode = ecmaMode.isStrict() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
 
     // We don't bother with CodeCache here because direct eval uses a specialized DirectEvalCodeCache.

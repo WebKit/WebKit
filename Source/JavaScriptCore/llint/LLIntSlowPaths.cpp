@@ -836,10 +836,10 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     const Identifier& ident = codeBlock->identifier(bytecode.m_property);
     
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
-    PutPropertySlot slot(baseValue, codeBlock->isStrictMode(), codeBlock->putByIdContext());
+    PutPropertySlot slot(baseValue, bytecode.m_flags.ecmaMode().isStrict(), codeBlock->putByIdContext());
 
     Structure* oldStructure = baseValue.isCell() ? baseValue.asCell()->structure(vm) : nullptr;
-    if (bytecode.m_flags & PutByIdIsDirect)
+    if (bytecode.m_flags.isDirect())
         CommonSlowPaths::putDirectWithReify(vm, globalObject, asObject(baseValue), ident, getOperand(callFrame, bytecode.m_value), slot);
     else
         baseValue.putInline(globalObject, ident, getOperand(callFrame, bytecode.m_value), slot);
@@ -888,7 +888,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                             metadata.m_oldStructureID = oldStructure->id();
                             metadata.m_offset = slot.cachedOffset();
                             metadata.m_newStructureID = newStructure->id();
-                            if (!(bytecode.m_flags & PutByIdIsDirect)) {
+                            if (!(bytecode.m_flags.isDirect())) {
                                 StructureChain* chain = newStructure->prototypeChain(globalObject, asObject(baseCell));
                                 ASSERT(chain);
                                 metadata.m_structureChain.set(vm, codeBlock, chain);
@@ -927,7 +927,7 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_id)
     LLINT_CHECK_EXCEPTION();
     bool couldDelete = JSCell::deleteProperty(baseObject, globalObject, codeBlock->identifier(bytecode.m_property));
     LLINT_CHECK_EXCEPTION();
-    if (!couldDelete && codeBlock->isStrictMode())
+    if (!couldDelete && bytecode.m_ecmaMode.isStrict())
         LLINT_THROW(createTypeError(globalObject, UnableToDeletePropertyError));
     LLINT_RETURN(jsBoolean(couldDelete));
 }
@@ -1025,7 +1025,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
     JSValue subscript = getOperand(callFrame, bytecode.m_property);
     JSValue value = getOperand(callFrame, bytecode.m_value);
-    bool isStrictMode = codeBlock->isStrictMode();
+    bool isStrictMode = bytecode.m_ecmaMode.isStrict();
     
     if (LIKELY(subscript.isUInt32())) {
         uint32_t i = subscript.asUInt32();
@@ -1058,7 +1058,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
     JSValue value = getOperand(callFrame, bytecode.m_value);
     RELEASE_ASSERT(baseValue.isObject());
     JSObject* baseObject = asObject(baseValue);
-    bool isStrictMode = codeBlock->isStrictMode();
+    bool isStrictMode = bytecode.m_ecmaMode.isStrict();
     if (LIKELY(subscript.isUInt32())) {
         // Despite its name, JSValue::isUInt32 will return true only for positive boxed int32_t; all those values are valid array indices.
         ASSERT(isIndex(subscript.asUInt32()));
@@ -1112,7 +1112,7 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_val)
     }
     LLINT_CHECK_EXCEPTION();
 
-    if (!couldDelete && codeBlock->isStrictMode())
+    if (!couldDelete && bytecode.m_ecmaMode.isStrict())
         LLINT_THROW(createTypeError(globalObject, UnableToDeletePropertyError));
     
     LLINT_RETURN(jsBoolean(couldDelete));
@@ -1738,7 +1738,7 @@ inline SlowPathReturnType commonCallEval(CallFrame* callFrame, const Instruction
     if (!isHostFunction(calleeAsValue, globalFuncEval))
         RELEASE_AND_RETURN(throwScope, setUpCall(calleeFrame, CodeForCall, calleeAsValue));
     
-    vm.hostCallReturnValue = eval(globalObject, calleeFrame);
+    vm.hostCallReturnValue = eval(globalObject, calleeFrame, bytecode.m_ecmaMode);
     LLINT_CALL_RETURN(globalObject, calleeFrame, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
 }
     
@@ -1874,7 +1874,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     if (metadata.m_getPutInfo.resolveMode() == ThrowIfNotFound && !hasProperty)
         LLINT_THROW(createUndefinedVariableError(globalObject, ident));
 
-    PutPropertySlot slot(scope, codeBlock->isStrictMode(), PutPropertySlot::UnknownContext, isInitialization(metadata.m_getPutInfo.initializationMode()));
+    PutPropertySlot slot(scope, metadata.m_getPutInfo.ecmaMode().isStrict(), PutPropertySlot::UnknownContext, isInitialization(metadata.m_getPutInfo.initializationMode()));
     scope->methodTable(vm)->put(scope, globalObject, ident, value, slot);
     
     CommonSlowPaths::tryCachePutToScopeGlobal(globalObject, codeBlock, bytecode, scope, slot, ident);

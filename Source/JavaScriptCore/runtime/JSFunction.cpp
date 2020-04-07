@@ -75,7 +75,7 @@ Structure* JSFunction::selectStructureForNewFuncExp(JSGlobalObject* globalObject
     bool isBuiltin = executable->isBuiltinFunction();
     if (executable->isArrowFunction())
         return globalObject->arrowFunctionStructure(isBuiltin);
-    if (executable->isStrictMode())
+    if (executable->isInStrictContext())
         return globalObject->strictFunctionStructure(isBuiltin);
     return globalObject->sloppyFunctionStructure(isBuiltin);
 }
@@ -430,7 +430,7 @@ EncodedJSValue JSFunction::callerGetter(JSGlobalObject* globalObject, EncodedJSV
     case SourceParseMode::AsyncGeneratorWrapperMethodMode:
     case SourceParseMode::GeneratorWrapperMethodMode:
     case SourceParseMode::InstanceFieldInitializerMode:
-        if (!function->jsExecutable()->isStrictMode())
+        if (!function->jsExecutable()->isInStrictContext())
             return JSValue::encode(caller);
         return JSValue::encode(throwTypeError(globalObject, scope, "Function.caller used to retrieve strict caller"_s));
     }
