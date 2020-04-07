@@ -76,6 +76,8 @@
 #import <wtf/text/WTFString.h>
 #endif
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
+
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, m_identifier.toUInt64(), m_webPageID.toUInt64(), m_process->processIdentifier(), ##__VA_ARGS__)
 
 namespace WebKit {
@@ -644,7 +646,13 @@ void WebPageProxy::performActionOnElement(uint32_t action)
 
 void WebPageProxy::saveImageToLibrary(const SharedMemory::Handle& imageHandle, uint64_t imageSize)
 {
+    MESSAGE_CHECK(!imageHandle.isNull());
+    MESSAGE_CHECK(imageSize);
+
     auto sharedMemoryBuffer = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryBuffer)
+        return;
+
     auto buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), imageSize);
     pageClient().saveImageToLibrary(WTFMove(buffer));
 }
@@ -1499,5 +1507,6 @@ bool WebPageProxy::shouldUseForegroundPriorityForClientNavigation() const
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED
+#undef MESSAGE_CHECK
 
 #endif // PLATFORM(IOS_FAMILY)
