@@ -267,7 +267,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
 
     uint64_t framesAvailable = sampleCount;
     if (timeStamp < startFrame || timeStamp + sampleCount > endFrame) {
-        if (timeStamp + sampleCount < startFrame || timeStamp > endFrame)
+        if (timeStamp + sampleCount < startFrame || timeStamp >= endFrame)
             framesAvailable = 0;
         else if (timeStamp < startFrame)
             framesAvailable = timeStamp + sampleCount - startFrame;
