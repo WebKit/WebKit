@@ -131,9 +131,9 @@ void PageConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&& 
         if (UNLIKELY(m_page.settings().logsPageMessagesToSystemConsoleEnabled() || shouldPrintExceptions())) {
             if (consoleMessage->type() == MessageType::Image) {
                 ASSERT(consoleMessage->arguments());
-                ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, MessageType::Log, consoleMessage->level(), consoleMessage->arguments()->globalObject(), *consoleMessage->arguments());
+                ConsoleClient::printConsoleMessageWithArguments(consoleMessage->source(), consoleMessage->type(), consoleMessage->level(), consoleMessage->arguments()->globalObject(), *consoleMessage->arguments());
             } else
-                ConsoleClient::printConsoleMessage(MessageSource::ConsoleAPI, MessageType::Log, consoleMessage->level(), consoleMessage->message(), consoleMessage->url(), consoleMessage->line(), consoleMessage->column());
+                ConsoleClient::printConsoleMessage(consoleMessage->source(), consoleMessage->type(), consoleMessage->level(), consoleMessage->message(), consoleMessage->url(), consoleMessage->line(), consoleMessage->column());
         }
     }
 

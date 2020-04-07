@@ -62,6 +62,9 @@ static void appendMessagePrefix(StringBuilder& builder, MessageSource source, Me
 {
     String sourceString;
     switch (source) {
+    case MessageSource::ConsoleAPI:
+        // Default, no need to be more specific.
+        break;
     case MessageSource::XML:
         sourceString = "XML"_s;
         break;
@@ -70,9 +73,6 @@ static void appendMessagePrefix(StringBuilder& builder, MessageSource source, Me
         break;
     case MessageSource::Network:
         sourceString = "NETWORK"_s;
-        break;
-    case MessageSource::ConsoleAPI:
-        sourceString = "CONSOLE"_s;
         break;
     case MessageSource::Storage:
         sourceString = "STORAGE"_s;
@@ -112,29 +112,10 @@ static void appendMessagePrefix(StringBuilder& builder, MessageSource source, Me
         break;
     }
 
-    String levelString;
-    switch (level) {
-    case MessageLevel::Debug:
-        levelString = "DEBUG"_s;
-        break;
-    case MessageLevel::Log:
-        levelString = "LOG"_s;
-        break;
-    case MessageLevel::Info:
-        levelString = "INFO"_s;
-        break;
-    case MessageLevel::Warning:
-        levelString = "WARN"_s;
-        break;
-    case MessageLevel::Error:
-        levelString = "ERROR"_s;
-        break;
-    }
-
     String typeString;
     switch (type) {
     case MessageType::Log:
-        typeString = "LOG"_s;
+        // Default, no need to be more specific.
         break;
     case MessageType::Clear:
         typeString = "CLEAR"_s;
@@ -177,11 +158,34 @@ static void appendMessagePrefix(StringBuilder& builder, MessageSource source, Me
         break;
     }
 
-    builder.append(sourceString);
-    builder.append(' ');
-    builder.append(levelString);
-    builder.append(' ');
-    builder.append(typeString);
+    String levelString;
+    switch (level) {
+    case MessageLevel::Log:
+        // Default, no need to be more specific.
+        if (type == MessageType::Log)
+            levelString = "LOG"_s;
+        break;
+    case MessageLevel::Debug:
+        levelString = "DEBUG"_s;
+        break;
+    case MessageLevel::Info:
+        levelString = "INFO"_s;
+        break;
+    case MessageLevel::Warning:
+        levelString = "WARN"_s;
+        break;
+    case MessageLevel::Error:
+        levelString = "ERROR"_s;
+        break;
+    }
+
+    builder.append("CONSOLE");
+    if (!sourceString.isEmpty())
+        builder.append(' ', sourceString);
+    if (!typeString.isEmpty())
+        builder.append(' ', typeString);
+    if (!levelString.isEmpty())
+        builder.append(' ', levelString);
 }
 
 void ConsoleClient::printConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber)
