@@ -1,3 +1,18 @@
+2020-04-06  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r259531?): [iOS] TestWebKitAPI.WebKitLegacy.ScrollingDoesNotPauseMedia is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=210013
+
+        Reviewed by Daniel Bates.
+
+        Fix mistakes in the test and make it more reliable.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/ScrollingDoesNotPauseMedia.mm:
+        (-[ScrollingDoesNotPauseMediaDelegate handleEvent:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/one-video.html: Added.
+
 2020-04-06  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use WEBKIT_EXECUTABLE in DumpRenderTree
