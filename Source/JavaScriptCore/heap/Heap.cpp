@@ -2899,7 +2899,8 @@ void Heap::notifyIsSafeToCollect()
             [this] () {
                 MonotonicTime initialTime = MonotonicTime::now();
                 Seconds period = Seconds::fromMilliseconds(Options::collectContinuouslyPeriodMS());
-                while (!m_shouldStopCollectingContinuously) {
+                while (true) {
+                    LockHolder locker(m_collectContinuouslyLock);
                     {
                         LockHolder locker(*m_threadLock);
                         if (m_requests.isEmpty()) {
@@ -2909,17 +2910,16 @@ void Heap::notifyIsSafeToCollect()
                         }
                     }
                     
-                    {
-                        LockHolder locker(m_collectContinuouslyLock);
-                        Seconds elapsed = MonotonicTime::now() - initialTime;
-                        Seconds elapsedInPeriod = elapsed % period;
-                        MonotonicTime timeToWakeUp =
-                            initialTime + elapsed - elapsedInPeriod + period;
-                        while (!hasElapsed(timeToWakeUp) && !m_shouldStopCollectingContinuously) {
-                            m_collectContinuouslyCondition.waitUntil(
-                                m_collectContinuouslyLock, timeToWakeUp);
-                        }
+                    Seconds elapsed = MonotonicTime::now() - initialTime;
+                    Seconds elapsedInPeriod = elapsed % period;
+                    MonotonicTime timeToWakeUp =
+                        initialTime + elapsed - elapsedInPeriod + period;
+                    while (!hasElapsed(timeToWakeUp) && !m_shouldStopCollectingContinuously) {
+                        m_collectContinuouslyCondition.waitUntil(
+                            m_collectContinuouslyLock, timeToWakeUp);
                     }
+                    if (m_shouldStopCollectingContinuously)
+                        break;
                 }
             }, ThreadType::GarbageCollection);
     }

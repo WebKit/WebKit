@@ -1,3 +1,48 @@
+2020-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Collect-continuously thread should take m_collectContinuouslyLock while it is waking up concurrent collector thread
+        https://bugs.webkit.org/show_bug.cgi?id=210163
+
+        Reviewed by Saam Barati.
+
+        Collect-Continuously thread has fancy race issue.
+
+        In Heap::preventCollection, we first take m_collectContinuouslyLock to ensure collect-continuously thread is not working, and then
+        we ensure collector thread is stopped by using waitForCollector. However our collect-continuously thread is implemented like this.
+
+                while (!m_shouldStopCollectingContinuously) {
+                    { // (A)
+                        LockHolder locker(*m_threadLock);
+                        if (m_requests.isEmpty()) {
+                            m_requests.append(WTF::nullopt);
+                            m_lastGrantedTicket++;
+                            m_threadCondition->notifyOne(locker);  // (B) WAKING UP concurrent collector thread.
+                        }
+                    }
+
+                    {
+                        LockHolder locker(m_collectContinuouslyLock);
+                        ...
+                        while (!hasElapsed(timeToWakeUp) && !m_shouldStopCollectingContinuously)
+                            m_collectContinuouslyCondition.waitUntil(m_collectContinuouslyLock, timeToWakeUp);
+                    }
+                }
+
+        Even if m_collectContinuouslyLock is taken, collect-continuously thread is still able to wake up concurrent collector thread
+        since (B)'s code is not guarded by m_collectContinuouslyLock. The following sequence can happen,
+
+            1. The main thread calls Heap::preventCollection to ensure all collection is stopped.
+            2. The collect-continuously thread is at (A) point.
+            3. The main thread takes m_collectContinuouslyLock. This is OK.
+            4. The main thread calls waitForCollector to ensure that concurrent collector thread is stopped.
+            5. The collect-continuously thread executes (B). It is allowed since this is not guarded by m_collectContinuouslyLock. So, concurrent collector starts working.
+            6. While the main thread called Heap::preventCollection, concurrent collector starts collection!
+
+        We should guard (A)'s block with m_collectContinuouslyLock too.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::notifyIsSafeToCollect):
+
 2020-04-07  Saam Barati  <sbarati@apple.com>
 
         Delete ICs can't cache dictionaries

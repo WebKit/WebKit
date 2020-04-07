@@ -1,3 +1,13 @@
+2020-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Collect-continuously thread should take m_collectContinuouslyLock while it is waking up concurrent collector thread
+        https://bugs.webkit.org/show_bug.cgi?id=210163
+
+        Reviewed by Saam Barati.
+
+        * stress/collect-continuously-should-not-wake-concurrent-collector-after-prevent-collection-is-called.js: Added.
+        (let.theCode):
+
 2020-04-07  Saam Barati  <sbarati@apple.com>
 
         Delete ICs can't cache dictionaries
