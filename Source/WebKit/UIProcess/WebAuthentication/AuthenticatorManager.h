@@ -84,6 +84,7 @@ private:
     void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) final;
     void selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&) final;
     void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) final;
+    void cancelRequest() final;
 
     // Overriden by MockAuthenticatorManager.
     virtual UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const;

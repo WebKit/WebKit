@@ -83,6 +83,8 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
         if (error) {
             LOG_ERROR("Couldn't authenticate with biometrics: %@", error);
             verification = UserVerification::No;
+            if (error.code == LAErrorUserCancel)
+                verification = UserVerification::Cancel;
         }
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), verification, context = WTFMove(context)] () mutable {
             completionHandler(verification, context.get());

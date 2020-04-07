@@ -1,3 +1,21 @@
+2020-04-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Cancel WebAuthn requests when users cancel LocalAuthentication prompts
+        https://bugs.webkit.org/show_bug.cgi?id=209923
+        <rdar://problem/61223713>
+
+        Reviewed by Brent Fulgham.
+
+        Adds a new test for the change and modifies existing tests to accommodate changes in MockWebAuthenticationConfiguration.idl.
+
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-local-silent.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-local.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-local.https.html:
+
 2020-04-07  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS debug ] REGRESSION (r259463): http/tests/media/clearkey/collect-webkit-media-session.html is failing

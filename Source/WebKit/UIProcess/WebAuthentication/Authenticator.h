@@ -57,6 +57,7 @@ public:
         virtual void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) = 0;
         virtual void selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&) = 0;
         virtual void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) = 0;
+        virtual void cancelRequest() = 0;
     };
 
     virtual ~Authenticator() = default;

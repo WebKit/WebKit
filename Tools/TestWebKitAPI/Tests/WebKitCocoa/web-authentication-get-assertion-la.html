@@ -1,7 +1,7 @@
 <input type="text" id="input">
 <script>
     if (window.internals) {
-        internals.setMockWebAuthenticationConfiguration({ local: { acceptAuthentication: true, acceptAttestation: false } });
+        internals.setMockWebAuthenticationConfiguration({ local: { userVerification: "yes", acceptAttestation: false } });
         internals.withUserGesture(() => { input.focus(); });
     }
 

@@ -51,9 +51,10 @@ class LocalConnection {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(LocalConnection);
 public:
-    enum class UserVerification : bool {
+    enum class UserVerification : uint8_t {
         No,
-        Yes
+        Yes,
+        Cancel
     };
 
     using AttestationCallback = CompletionHandler<void(NSArray *, NSError *)>;

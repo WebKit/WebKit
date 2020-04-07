@@ -274,10 +274,8 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     m_state = State::UserVerified;
     auto& creationOptions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options);
 
-    if (verification == LocalConnection::UserVerification::No) {
-        receiveException({ NotAllowedError, "Couldn't verify user."_s });
+    if (!validateUserVerification(verification))
         return;
-    }
 
     // Here is the keychain schema.
     // kSecAttrLabel: RP ID
@@ -500,10 +498,8 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     ASSERT(m_state == State::ResponseSelected);
     m_state = State::UserVerified;
 
-    if (verification == LocalConnection::UserVerification::No) {
-        receiveException({ NotAllowedError, "Couldn't verify user."_s });
+    if (!validateUserVerification(verification))
         return;
-    }
 
     // Step 10.
     auto authData = buildAuthData(WTF::get<PublicKeyCredentialRequestOptions>(requestData().options).rpId, getAssertionFlags, counter, { });
@@ -586,6 +582,22 @@ void LocalAuthenticator::deleteDuplicateCredential() const
             LOG_ERROR(makeString("Couldn't delete older credential: "_s, status).utf8().data());
         return true;
     });
+}
+
+bool LocalAuthenticator::validateUserVerification(LocalConnection::UserVerification verification) const
+{
+    if (verification == LocalConnection::UserVerification::Cancel) {
+        if (auto* observer = this->observer())
+            observer->cancelRequest();
+        return false;
+    }
+
+    if (verification == LocalConnection::UserVerification::No) {
+        receiveException({ NotAllowedError, "Couldn't verify user."_s });
+        return false;
+    }
+
+    return true;
 }
 
 } // namespace WebKit

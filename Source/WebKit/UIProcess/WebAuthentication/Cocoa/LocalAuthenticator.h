@@ -68,6 +68,7 @@ private:
 
     void receiveException(WebCore::ExceptionData&&, WebAuthenticationStatus = WebAuthenticationStatus::LAError) const;
     void deleteDuplicateCredential() const;
+    bool validateUserVerification(LocalConnection::UserVerification) const;
 
     State m_state { State::Init };
     UniqueRef<LocalConnection> m_connection;

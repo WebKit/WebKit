@@ -3902,6 +3902,7 @@
 		57B8E3D52355864A00D5C5D1 /* FidoAuthenticator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FidoAuthenticator.h; sourceTree = "<group>"; };
 		57B8E3D62355864A00D5C5D1 /* FidoAuthenticator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FidoAuthenticator.cpp; sourceTree = "<group>"; };
 		57BBEA6C22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SOAuthorizationLoadPolicy.h; sourceTree = "<group>"; };
+		57C3E8AC242490D5001E2209 /* WebAuthenticationRequestData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticationRequestData.cpp; sourceTree = "<group>"; };
 		57C6244A234679A400383FE7 /* WebAuthenticationFlags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationFlags.h; sourceTree = "<group>"; };
 		57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAuthenticatorCoordinatorMessages.h; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAuthenticatorCoordinatorMessageReceiver.cpp; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8065,6 +8066,7 @@
 				57DCED9921489F4D0016B847 /* AuthenticatorTransportService.cpp */,
 				57DCED8A214853130016B847 /* AuthenticatorTransportService.h */,
 				57C6244A234679A400383FE7 /* WebAuthenticationFlags.h */,
+				57C3E8AC242490D5001E2209 /* WebAuthenticationRequestData.cpp */,
 				57DCEDA62149F9DA0016B847 /* WebAuthenticationRequestData.h */,
 				57608296202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.cpp */,
 				57608295202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.h */,

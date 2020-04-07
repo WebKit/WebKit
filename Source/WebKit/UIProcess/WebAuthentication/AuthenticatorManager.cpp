@@ -179,9 +179,7 @@ void AuthenticatorManager::cancelRequest(const PageIdentifier& pageID, const Opt
         if (frameID && frameID != pendingFrameID->frameID)
             return;
     }
-    invokePendingCompletionHandler(ExceptionData { NotAllowedError, "Operation timed out."_s });
-    clearState();
-    m_requestTimeOutTimer.stop();
+    cancelRequest();
 }
 
 // The following implements part of Step 20. of https://www.w3.org/TR/webauthn/#createCredential
@@ -192,9 +190,7 @@ void AuthenticatorManager::cancelRequest(const API::WebAuthenticationPanel& pane
     RELEASE_ASSERT(RunLoop::isMain());
     if (!m_pendingCompletionHandler || m_pendingRequestData.panel.get() != &panel)
         return;
-    invokePendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
-    clearState();
-    m_requestTimeOutTimer.stop();
+    cancelRequest();
 }
 
 void AuthenticatorManager::clearStateAsync()
@@ -293,6 +289,13 @@ void AuthenticatorManager::decidePolicyForLocalAuthenticator(CompletionHandler<v
     dispatchPanelClientCall([completionHandler = WTFMove(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
         panel.client().decidePolicyForLocalAuthenticator(WTFMove(completionHandler));
     });
+}
+
+void AuthenticatorManager::cancelRequest()
+{
+    invokePendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
+    clearState();
+    m_requestTimeOutTimer.stop();
 }
 
 UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const

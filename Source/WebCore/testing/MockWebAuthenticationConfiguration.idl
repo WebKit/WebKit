@@ -61,6 +61,14 @@
 
 [
     Conditional=WEB_AUTHN,
+] enum UserVerification {
+    "no",
+    "yes",
+    "cancel"
+};
+
+[
+    Conditional=WEB_AUTHN,
 ] dictionary MockWebAuthenticationConfiguration {
     boolean silentFailure = false;
     MockLocalConfiguration local;
@@ -71,7 +79,7 @@
 [
     Conditional=WEB_AUTHN,
 ] dictionary MockLocalConfiguration {
-    boolean acceptAuthentication = false;
+    UserVerification userVerification = "no";
     boolean acceptAttestation = false;
     DOMString privateKeyBase64;
     DOMString userCertificateBase64;
