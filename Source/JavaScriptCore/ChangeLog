@@ -1,3 +1,18 @@
+2020-04-06  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION: 68000 JSC tests failing.
+        https://bugs.webkit.org/show_bug.cgi?id=210078
+        <rdar://problem/61364513>
+
+        Reviewed by Yusuke Suzuki.
+
+        The missing exception check is in jsc shell's GlobalObject::finishCreation().
+        Since this is just a debugging tool, and this exception will never be thrown in
+        practice, I've placated the validator by RELEASE_ASSERT'ing that the exception
+        will never be thrown.
+
+        * jsc.cpp:
+
 2020-04-06  Ross Kirsling  <ross.kirsling@sony.com>
 
         Update minimum ICU version to 60.2
