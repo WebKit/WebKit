@@ -133,6 +133,9 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
             atEnd = true;
 
         rangeForParagraphSplittingTextNodesIfNeeded(endOfCurrentParagraph, start, end);
+        if (start.isNull() || end.isNull())
+            break;
+
         endOfCurrentParagraph = end;
 
         // FIXME: endOfParagraph can errornously return a position at the beginning of a block element
@@ -241,6 +244,11 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
         if (endStyle->userModify() != UserModify::ReadOnly && !endStyle->collapseWhiteSpace() && end.offsetInContainerNode() && end.offsetInContainerNode() < end.containerNode()->maxCharacterOffset()) {
             RefPtr<Text> endContainer = end.containerText();
             splitTextNode(*endContainer, end.offsetInContainerNode());
+            if (is<Text>(endContainer) && !endContainer->previousSibling()) {
+                start = { };
+                end = { };
+                return;
+            }
             if (isStartAndEndOnSameNode)
                 start = firstPositionInOrBeforeNode(endContainer->previousSibling());
             if (isEndAndEndOfLastParagraphOnSameNode) {

@@ -1,0 +1,1 @@
+Tests indenting pre element that has user-select:all parent. The test passes if WebKit doesn't crash or hit an assertion.
