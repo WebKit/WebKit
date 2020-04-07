@@ -1,3 +1,12 @@
+2020-04-07  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, IndexedDB flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=210116
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-04-06  Jack Lee  <shihchieh_lee@apple.com>
 
         Nullptr crash in CompositeEditCommand::splitTreeToNode when inserting image in anchor element that has uneditable parent
