@@ -1266,8 +1266,10 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 #if ENABLE(SERVICE_WORKER)
     if (!m_serviceWorkerPreferences) {
         m_serviceWorkerPreferences = page->preferencesStore();
-        for (auto& serviceWorkerProcess : m_serviceWorkerProcesses.values())
-            serviceWorkerProcess->updateServiceWorkerPreferencesStore(*m_serviceWorkerPreferences);
+        for (auto& serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
+            if (serviceWorkerProcess)
+                serviceWorkerProcess->updateServiceWorkerPreferencesStore(*m_serviceWorkerPreferences);
+        }
     }
     if (userContentController)
         m_userContentControllerIDForServiceWorker = userContentController->identifier();
@@ -1297,8 +1299,10 @@ void WebProcessPool::updateServiceWorkerUserAgent(const String& userAgent)
     if (m_serviceWorkerUserAgent == userAgent)
         return;
     m_serviceWorkerUserAgent = userAgent;
-    for (auto& serviceWorkerProcess : m_serviceWorkerProcesses.values())
-        serviceWorkerProcess->setServiceWorkerUserAgent(m_serviceWorkerUserAgent);
+    for (auto& serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
+        if (serviceWorkerProcess)
+            serviceWorkerProcess->setServiceWorkerUserAgent(m_serviceWorkerUserAgent);
+    }
 }
 #endif
 
@@ -2101,8 +2105,10 @@ void WebProcessPool::updateProcessAssertions()
         if (!weakThis)
             return;
 #if ENABLE(SERVICE_WORKER)
-        for (auto& serviceWorkerProcess : m_serviceWorkerProcesses.values())
-            serviceWorkerProcess->updateServiceWorkerProcessAssertion();
+        for (auto& serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
+            if (serviceWorkerProcess)
+                serviceWorkerProcess->updateServiceWorkerProcessAssertion();
+        }
 #endif
     });
 }
