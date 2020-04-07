@@ -1,5 +1,3 @@
-//@ skip if $hostOS == "windows"
-
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error(`expected ${expected} but got ${actual}`);
@@ -284,14 +282,11 @@ shouldBe(new Intl.PluralRules('en', {maximumSignificantDigits: 1}).select(1.4), 
 shouldBe(new Intl.PluralRules('en', {type: 'ordinal', maximumSignificantDigits: 2}).select(123), 'other');
 shouldBe(new Intl.PluralRules('en', {type: 'ordinal', maximumSignificantDigits: 3}).select(123.4), 'few');
 
-// These require ICU v59+
-/*
 shouldBe(new Intl.PluralRules('en', {minimumFractionDigits: 1}).select(1), 'other');
 shouldBe(new Intl.PluralRules('en', {minimumSignificantDigits: 2}).select(1), 'other');
 
 // Plural categories are correctly determined
 shouldBe(new Intl.PluralRules('en').resolvedOptions().pluralCategories instanceof Array, true);
-shouldBe(new Intl.PluralRules('ar').resolvedOptions().pluralCategories.join(), 'zero,one,two,few,many,other');
+shouldBe(new Intl.PluralRules('ar').resolvedOptions().pluralCategories.join(), 'few,many,one,two,zero,other');
 shouldBe(new Intl.PluralRules('en').resolvedOptions().pluralCategories.join(), 'one,other');
-shouldBe(new Intl.PluralRules('en', {type: 'ordinal'}).resolvedOptions().pluralCategories.join(), 'one,two,few,other');
-*/
+shouldBe(new Intl.PluralRules('en', {type: 'ordinal'}).resolvedOptions().pluralCategories.join(), 'few,one,two,other');

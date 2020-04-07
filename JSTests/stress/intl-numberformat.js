@@ -1,5 +1,3 @@
-//@ skip if $hostOS == "windows" or $hostOS == "darwin" or $hostOS == "linux"
-
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error(`expected ${expected} but got ${actual}`);
@@ -341,9 +339,9 @@ shouldBe(Intl.NumberFormat('en').format(Number.MIN_VALUE), '0');
 shouldBe(Intl.NumberFormat('en', { maximumSignificantDigits: 15 }).format(Number.MAX_VALUE), '179,769,313,486,232,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000');
 
 // Test locales.
-shouldBe(Intl.NumberFormat('en').format(1234.567), '1,234.567');
-shouldBe(Intl.NumberFormat('es').format(1234.567), '1234,567');
-shouldBe(Intl.NumberFormat('de').format(1234.567), '1.234,567');
+shouldBe(Intl.NumberFormat('en').format(12345.678), '12,345.678');
+shouldBe(Intl.NumberFormat('es').format(12345.678), '12.345,678');
+shouldBe(Intl.NumberFormat('de').format(12345.678), '12.345,678');
 
 // Test numbering systems.
 shouldBe(Intl.NumberFormat('en-u-nu-latn').format(1234.567), '1,234.567');

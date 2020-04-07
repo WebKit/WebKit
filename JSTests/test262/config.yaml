@@ -37,9 +37,6 @@ skip:
     - Intl.RelativeTimeFormat
     - Intl.Segmenter
   paths:
-    # https://bugs.webkit.org/show_bug.cgi?id=192920
-    - test/intl402/NumberFormat/prototype/formatToParts
-
     - test/built-ins/DataView/prototype/getBigInt64
     - test/built-ins/DataView/prototype/getBigUint64
     - test/built-ins/DataView/prototype/setBigInt64
@@ -117,9 +114,6 @@ skip:
     # https://bugs.webkit.org/show_bug.cgi?id=186691
     - test/built-ins/Reflect/ownKeys/return-on-corresponding-order-large-index.js
 
-    # https://bugs.webkit.org/show_bug.cgi?id=192920
-    - test/intl402/PluralRules/prototype/resolvedOptions/order.js
-    - test/intl402/PluralRules/prototype/resolvedOptions/pluralCategories.js
 
     # https://bugs.webkit.org/show_bug.cgi?id=190800
     - test/built-ins/TypedArray/prototype/set/src-typedarray-big-throws.js

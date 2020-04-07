@@ -1,3 +1,21 @@
+2020-04-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update JSTests to assume ICU 60+
+        https://bugs.webkit.org/show_bug.cgi?id=210085
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/intl-collator.js:
+        * stress/intl-constructors-with-proxy.js:
+        * stress/intl-datetimeformat.js:
+        * stress/intl-default-locale.js:
+        * stress/intl-numberformat-format-to-parts.js:
+        * stress/intl-numberformat.js: Ensure a test case doesn't depend on behavior changed in ICU 64.
+        * stress/intl-object.js:
+        * stress/intl-pluralrules.js: Correct two invalid test cases.
+        * test262/config.yaml:
+        Remove skips.
+
 2020-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] ScopedArgumentsTable should handle OOM in tolerant manner
