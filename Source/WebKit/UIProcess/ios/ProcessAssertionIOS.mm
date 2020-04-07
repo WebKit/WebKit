@@ -393,7 +393,6 @@ ProcessAssertion::ProcessAssertion(pid_t pid, ASCIILiteral reason, ProcessAssert
             });
         };
     }
-    ASSERT(m_rbsAssertion || m_bksAssertion);
 }
 
 ProcessAssertion::~ProcessAssertion()

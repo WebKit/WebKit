@@ -1,3 +1,13 @@
+2020-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop bad assertion introduced in r259610.
+
+        On some bots (in particular OpenSource iOS ones), we are unable to take the assertion
+        so this assertion does not hold true.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+
 2020-04-07  Rob Buis  <rbuis@igalia.com>
 
         Use GlobalFrameIdentifier in NavigationAction
