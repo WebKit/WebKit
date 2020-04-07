@@ -6359,7 +6359,7 @@ void HTMLMediaElement::updateTextTrackRepresentationImageIfNeeded()
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     ensureMediaControlsShadowRoot();
     if (!m_mediaControlsHost)
-        m_mediaControlsHost = MediaControlsHost::create(*this);
+        m_mediaControlsHost = MediaControlsHost::create(this);
     m_mediaControlsHost->updateTextTrackRepresentationImageIfNeeded();
 #else
     if (!hasMediaControls() && !createMediaControls())
