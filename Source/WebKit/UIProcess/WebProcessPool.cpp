@@ -39,11 +39,13 @@
 #include "AuxiliaryProcessMessages.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
+#include "GPUProcessConnectionInfo.h"
 #include "GamepadData.h"
 #include "HighPerformanceGraphicsUsageSampler.h"
 #include "LegacyGlobalSettings.h"
 #include "LogInitialization.h"
 #include "Logging.h"
+#include "NetworkProcessConnectionInfo.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
@@ -711,7 +713,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     return *m_networkProcess;
 }
 
-void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessProxy, Vector<std::pair<RefPtr<WebProcessProxy>, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>>&& pendingReplies)
+void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessProxy)
 {
     ASSERT(m_networkProcess);
     ASSERT(&networkProcessProxy == m_networkProcess.get());
@@ -727,13 +729,6 @@ void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessPr
     // Leave the process proxy around during client call, so that the client could query the process identifier.
     m_networkProcess = nullptr;
 
-    // Attempt to re-launch.
-    if (pendingReplies.isEmpty())
-        return;
-    auto& newNetworkProcess = ensureNetworkProcess();
-    for (auto& reply : pendingReplies)
-        newNetworkProcess.getNetworkProcessConnection(*reply.first, WTFMove(reply.second));
-
     terminateServiceWorkers();
 }
 
@@ -747,9 +742,15 @@ void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy)
 void WebProcessPool::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
     ensureNetworkProcess();
-    ASSERT(m_networkProcess);
-
-    m_networkProcess->getNetworkProcessConnection(webProcessProxy, WTFMove(reply));
+    m_networkProcess->getNetworkProcessConnection(webProcessProxy, [this, weakThis = makeWeakPtr(*this), webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy && weakThis)) {
+            WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed first attempt, retrying");
+            ensureNetworkProcess();
+            m_networkProcess->getNetworkProcessConnection(*webProcessProxy, WTFMove(reply));
+            return;
+        }
+        reply(connectionInfo);
+    });
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -764,7 +765,14 @@ void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
 
 void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
 {
-    GPUProcessProxy::singleton().getGPUProcessConnection(webProcessProxy, WTFMove(reply));
+    GPUProcessProxy::singleton().getGPUProcessConnection(webProcessProxy, [this, weakThis = makeWeakPtr(*this), webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy && weakThis)) {
+            WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getGPUProcessConnection: Failed first attempt, retrying");
+            GPUProcessProxy::singleton().getGPUProcessConnection(*webProcessProxy, WTFMove(reply));
+            return;
+        }
+        reply(connectionInfo);
+    });
 }
 #endif
 

@@ -96,9 +96,6 @@ private:
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
-    typedef uint64_t ConnectionRequestIdentifier;
-    void openGPUProcessConnection(ConnectionRequestIdentifier, WebProcessProxy&);
-
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didClose(IPC::Connection&) override;
@@ -109,13 +106,6 @@ private:
 #endif
 
     static GPUProcessProxy* m_singleton;
-
-    struct ConnectionRequest {
-        WeakPtr<WebProcessProxy> webProcess;
-        Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply reply;
-    };
-    ConnectionRequestIdentifier m_connectionRequestIdentifier { 0 };
-    HashMap<ConnectionRequestIdentifier, ConnectionRequest> m_connectionRequests;
 
     ProcessThrottler m_throttler;
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;

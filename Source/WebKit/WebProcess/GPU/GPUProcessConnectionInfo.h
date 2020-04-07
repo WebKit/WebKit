@@ -35,7 +35,7 @@ struct GPUProcessConnectionInfo {
     Optional<audit_token_t> auditToken;
 #endif
 
-    IPC::Connection::Identifier identifier()
+    IPC::Connection::Identifier identifier() const
     {
 #if USE(UNIX_DOMAIN_SOCKETS)
         return IPC::Connection::Identifier(connection.fileDescriptor());

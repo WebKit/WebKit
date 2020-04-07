@@ -108,9 +108,6 @@ NetworkProcessProxy::~NetworkProcessProxy()
 
     if (m_downloadProxyMap)
         m_downloadProxyMap->invalidate();
-
-    for (auto& request : m_connectionRequests.values())
-        request.reply({ });
 }
 
 void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -140,32 +137,18 @@ void NetworkProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
-    m_connectionRequests.add(++m_connectionRequestIdentifier, ConnectionRequest { makeWeakPtr(webProcessProxy), WTFMove(reply) });
-    if (state() == State::Launching)
-        return;
-    openNetworkProcessConnection(m_connectionRequestIdentifier, webProcessProxy);
-}
-
-void NetworkProcessProxy::openNetworkProcessConnection(uint64_t connectionRequestIdentifier, WebProcessProxy& webProcessProxy)
-{
-    connection()->sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID() }, [this, weakThis = makeWeakPtr(this), webProcessProxy = makeWeakPtr(webProcessProxy), connectionRequestIdentifier](auto&& connectionIdentifier, HTTPCookieAcceptPolicy cookieAcceptPolicy) mutable {
-        if (!weakThis)
-            return;
-
-        if (!connectionIdentifier) {
-            // Network process probably crashed, the connection request should have been moved.
-            ASSERT(m_connectionRequests.isEmpty());
-            return;
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because a web process is requesting a connection", this);
+    sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID() }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply), activity = throttler().backgroundActivity("NetworkProcessProxy::getNetworkProcessConnection"_s)](auto&& connectionIdentifier, auto cookieAcceptPolicy) mutable {
+        if (!weakThis) {
+            RELEASE_LOG_ERROR(Process, "NetworkProcessProxy::getNetworkProcessConnection: NetworkProcessProxy deallocated during connection establishment");
+            return reply({ });
         }
 
-        ASSERT(m_connectionRequests.contains(connectionRequestIdentifier));
-        auto request = m_connectionRequests.take(connectionRequestIdentifier);
-
 #if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
-        request.reply(NetworkProcessConnectionInfo { WTFMove(*connectionIdentifier), cookieAcceptPolicy });
+        reply(NetworkProcessConnectionInfo { WTFMove(*connectionIdentifier), cookieAcceptPolicy });
 #elif OS(DARWIN)
         MESSAGE_CHECK(MACH_PORT_VALID(connectionIdentifier->port()));
-        request.reply(NetworkProcessConnectionInfo { IPC::Attachment { connectionIdentifier->port(), MACH_MSG_TYPE_MOVE_SEND }, cookieAcceptPolicy, connection()->getAuditToken() });
+        reply(NetworkProcessConnectionInfo { IPC::Attachment { connectionIdentifier->port(), MACH_MSG_TYPE_MOVE_SEND }, cookieAcceptPolicy, connection()->getAuditToken() });
 #else
         notImplemented();
 #endif
@@ -248,18 +231,8 @@ void NetworkProcessProxy::networkProcessCrashed()
 {
     clearCallbackStates();
 
-    Vector<std::pair<RefPtr<WebProcessProxy>, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> pendingRequests;
-    pendingRequests.reserveInitialCapacity(m_connectionRequests.size());
-    for (auto& request : m_connectionRequests.values()) {
-        if (request.webProcess)
-            pendingRequests.uncheckedAppend(std::make_pair(makeRefPtr(request.webProcess.get()), WTFMove(request.reply)));
-        else
-            request.reply({ });
-    }
-    m_connectionRequests.clear();
-
     // Tell the network process manager to forget about this network process proxy. This will cause us to be deleted.
-    m_processPool.networkProcessCrashed(*this, WTFMove(pendingRequests));
+    m_processPool.networkProcessCrashed(*this);
 }
 
 void NetworkProcessProxy::clearCallbackStates()
@@ -407,14 +380,6 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
         networkProcessCrashed();
         return;
-    }
-
-    auto connectionRequests = WTFMove(m_connectionRequests);
-    for (auto& connectionRequest : connectionRequests.values()) {
-        if (connectionRequest.webProcess)
-            getNetworkProcessConnection(*connectionRequest.webProcess, WTFMove(connectionRequest.reply));
-        else
-            connectionRequest.reply({ });
     }
 
 #if PLATFORM(COCOA)

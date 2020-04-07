@@ -132,11 +132,7 @@ GPUProcessProxy::GPUProcessProxy()
     connect();
 }
 
-GPUProcessProxy::~GPUProcessProxy()
-{
-    for (auto& request : m_connectionRequests.values())
-        request.reply({ });
-}
+GPUProcessProxy::~GPUProcessProxy() = default;
 
 #if ENABLE(MEDIA_STREAM)
 void GPUProcessProxy::setUseMockCaptureDevices(bool value)
@@ -178,16 +174,7 @@ void GPUProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
 {
-    m_connectionRequests.add(++m_connectionRequestIdentifier, ConnectionRequest { makeWeakPtr(webProcessProxy), WTFMove(reply) });
-    if (state() == State::Launching)
-        return;
-    openGPUProcessConnection(m_connectionRequestIdentifier, webProcessProxy);
-}
-
-void GPUProcessProxy::openGPUProcessConnection(ConnectionRequestIdentifier connectionRequestIdentifier, WebProcessProxy& webProcessProxy)
-{
     addSession(webProcessProxy.websiteDataStore());
-    
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     if (m_contextIDForVisibilityPropagation)
         webProcessProxy.didCreateContextInGPUProcessForVisibilityPropagation(m_contextIDForVisibilityPropagation);
@@ -195,24 +182,17 @@ void GPUProcessProxy::openGPUProcessConnection(ConnectionRequestIdentifier conne
         m_processesPendingVisibilityPropagationNotification.append(makeWeakPtr(webProcessProxy));
 #endif
 
-    sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID() }, [this, weakThis = makeWeakPtr(this), webProcessProxy = makeWeakPtr(webProcessProxy), connectionRequestIdentifier](auto&& connectionIdentifier) mutable {
-        if (!weakThis)
-            return;
-
-        if (!connectionIdentifier) {
-            // GPU process probably crashed, the connection request should have been moved.
-            ASSERT(m_connectionRequests.isEmpty());
-            return;
+    RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy is taking a background assertion because a web process is requesting a connection", this);
+    sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID() }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply), activity = throttler().backgroundActivity("GPUProcessProxy::getGPUProcessConnection"_s)](auto&& connectionIdentifier) mutable {
+        if (!weakThis) {
+            RELEASE_LOG_ERROR(Process, "GPUProcessProxy::getGPUProcessConnection: GPUProcessProxy deallocated during connection establishment");
+            return reply({ });
         }
-
-        ASSERT(m_connectionRequests.contains(connectionRequestIdentifier));
-        auto request = m_connectionRequests.take(connectionRequestIdentifier);
-
 #if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
-        request.reply(GPUProcessConnectionInfo { WTFMove(*connectionIdentifier) });
+        reply(GPUProcessConnectionInfo { WTFMove(*connectionIdentifier) });
 #elif OS(DARWIN)
         MESSAGE_CHECK(MACH_PORT_VALID(connectionIdentifier->port()));
-        request.reply(GPUProcessConnectionInfo { IPC::Attachment { connectionIdentifier->port(), MACH_MSG_TYPE_MOVE_SEND }, this->connection()->getAuditToken() });
+        reply(GPUProcessConnectionInfo { IPC::Attachment { connectionIdentifier->port(), MACH_MSG_TYPE_MOVE_SEND }, this->connection()->getAuditToken() });
 #else
         notImplemented();
 #endif
@@ -252,14 +232,6 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
         gpuProcessCrashed();
         return;
-    }
-
-    auto connectionRequests = WTFMove(m_connectionRequests);
-    for (auto& connectionRequest : connectionRequests.values()) {
-        if (connectionRequest.webProcess)
-            getGPUProcessConnection(*connectionRequest.webProcess, WTFMove(connectionRequest.reply));
-        else
-            connectionRequest.reply({ });
     }
     
 #if PLATFORM(IOS_FAMILY)

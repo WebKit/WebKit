@@ -1,3 +1,53 @@
+2020-04-07  Alex Christensen  <achristensen@webkit.org>
+
+        Simplify and fortify network getNetworkProcessConnection and getGPUProcessConnection
+        https://bugs.webkit.org/show_bug.cgi?id=210142
+        <rdar://problem/59488963>
+
+        Reviewed by Youenn Fablet.
+
+        We have reports of hangs inside WebKit::getNetworkProcessConnection that seem to last forever.
+        Some of the reports indicate the network process is being suspended while a connection is being established with it.
+
+        To fix this issue we do three things:
+        1. We take a foregroundActivity when sending an async message to establish a connection.
+        2. We use sendWithAsyncReply which already has logic to handle the case where we are currently launching the process.
+           Instead of the complicated retry logic, we add a retry attempt in WebProcessPool if the connection identifier is invalid.
+        3. Add some release logging so we can better diagnose problems with this flow in the future.
+
+        The functional change is adding the foreground activity, which should prevent some hangs.
+        The rest is just to make this code more sane to understand and debug.
+        I do the same changes to NetworkProcess and GPUProcess because they are intended to be the same.  The latter is based on the former.
+
+        The API test WebKit.NetworkProcessCrashWithPendingConnection covers what happens when the network process crashes during connection establishment.
+        It fails if we don't retry somewhere, which I did in WebProcessPool.  We also need to try again in getNetworkProcessConnection and getGPUProcessConnection.
+        If it fails twice, there's nothing we can do, and we crash the web process to avoid a crash loop.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getGPUProcessConnection):
+        (WebKit::GPUProcessProxy::didFinishLaunching):
+        (WebKit::GPUProcessProxy::~GPUProcessProxy): Deleted.
+        (WebKit::GPUProcessProxy::openGPUProcessConnection): Deleted.
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        (WebKit::NetworkProcessProxy::networkProcessCrashed):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        (WebKit::NetworkProcessProxy::openNetworkProcessConnection): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::networkProcessCrashed):
+        (WebKit::WebProcessPool::getNetworkProcessConnection):
+        (WebKit::WebProcessPool::getGPUProcessConnection):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/GPU/GPUProcessConnectionInfo.h:
+        (WebKit::GPUProcessConnectionInfo::identifier const):
+        (WebKit::GPUProcessConnectionInfo::identifier): Deleted.
+        * WebProcess/Network/NetworkProcessConnectionInfo.h:
+        (WebKit::NetworkProcessConnectionInfo::identifier const):
+        (WebKit::NetworkProcessConnectionInfo::identifier): Deleted.
+
 2020-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         Use RectEdges<> in some scrolling tree code

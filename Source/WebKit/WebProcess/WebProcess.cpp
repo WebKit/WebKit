@@ -1094,16 +1094,20 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
 {
     NetworkProcessConnectionInfo connectionInfo;
     if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(connectionInfo), 0)) {
+        // If we failed the first time, retry once. The attachment may have become invalid
+        // before it was received by the web process if the network process crashed.
+        if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(connectionInfo), 0)) {
 #if PLATFORM(GTK) || PLATFORM(WPE)
-        // GTK+ and WPE ports don't exit on send sync message failure.
-        // In this particular case, the network process can be terminated by the UI process while the
-        // Web process is still initializing, so we always want to exit instead of crashing. This can
-        // happen when the WebView is created and then destroyed quickly.
-        // See https://bugs.webkit.org/show_bug.cgi?id=183348.
-        exit(0);
+            // GTK+ and WPE ports don't exit on send sync message failure.
+            // In this particular case, the network process can be terminated by the UI process while the
+            // Web process is still initializing, so we always want to exit instead of crashing. This can
+            // happen when the WebView is created and then destroyed quickly.
+            // See https://bugs.webkit.org/show_bug.cgi?id=183348.
+            exit(0);
 #else
-        CRASH();
+            CRASH();
 #endif
+        }
     }
 
     return connectionInfo;
@@ -1217,8 +1221,12 @@ WebLoaderStrategy& WebProcess::webLoaderStrategy()
 static GPUProcessConnectionInfo getGPUProcessConnection(IPC::Connection& connection)
 {
     GPUProcessConnectionInfo connectionInfo;
-    if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0))
-        CRASH();
+    if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0)) {
+        // If we failed the first time, retry once. The attachment may have become invalid
+        // before it was received by the web process if the network process crashed.
+        if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0))
+            CRASH();
+    }
 
     return connectionInfo;
 }
