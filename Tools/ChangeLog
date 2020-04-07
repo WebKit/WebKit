@@ -1,3 +1,16 @@
+2020-04-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r259655.
+
+        Caused assertion failures and timeouts on iOS bots
+
+        Reverted changeset:
+
+        "Return app-bound sessions for instances where
+        WKAppBoundDomains is"
+        https://bugs.webkit.org/show_bug.cgi?id=210124
+        https://trac.webkit.org/changeset/259655
+
 2020-04-07  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Change ATK mapping of the ARIA alert and alertdialog roles

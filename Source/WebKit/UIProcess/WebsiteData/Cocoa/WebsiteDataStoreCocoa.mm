@@ -403,13 +403,13 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
     
     static const auto maxAppBoundDomainCount = 10;
     
-    appBoundDomainQueue().dispatch([isInAppBrowserPrivacyEnabled = parameters().networkSessionParameters.isInAppBrowserPrivacyEnabled, forceReinitialization] () mutable {
+    appBoundDomainQueue().dispatch([forceReinitialization] () mutable {
         if (hasInitializedAppBoundDomains && forceReinitialization != ForceReinitialization::Yes)
             return;
         
         NSArray<NSString *> *domains = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"WKAppBoundDomains"];
         
-        RunLoop::main().dispatch([isInAppBrowserPrivacyEnabled, forceReinitialization, domains = retainPtr(domains)] {
+        RunLoop::main().dispatch([forceReinitialization , domains = retainPtr(domains)] {
             if (forceReinitialization == ForceReinitialization::Yes)
                 appBoundDomains().clear();
 
@@ -426,8 +426,7 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
                 if (appBoundDomains().size() >= maxAppBoundDomainCount)
                     break;
             }
-            if (isInAppBrowserPrivacyEnabled)
-                WEBSITE_DATA_STORE_ADDITIONS
+            WEBSITE_DATA_STORE_ADDITIONS
             hasInitializedAppBoundDomains = true;
         });
     });
