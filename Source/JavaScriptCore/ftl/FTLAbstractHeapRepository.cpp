@@ -71,6 +71,7 @@ AbstractHeapRepository::AbstractHeapRepository()
 #undef NUMBERED_ABSTRACT_HEAP_INITIALIZATION
 
     , JSString_value(JSRopeString_fiber0)
+    , JSWrapperObject_internalValue(const_cast<AbstractHeap&>(JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSWrapperObject::Field::WrappedValue)]))
 
     , absolute(&root, "absolute")
 {

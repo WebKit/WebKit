@@ -1525,13 +1525,6 @@ public:
         m_jit.emitAllocateVariableSizedJSObject<ClassType>(vm(), resultGPR, structure, allocationSize, scratchGPR1, scratchGPR2, slowPath);
     }
 
-    template<typename ClassType>
-    void emitAllocateDestructibleObject(GPRReg resultGPR, RegisteredStructure structure, 
-        GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath)
-    {
-        m_jit.emitAllocateDestructibleObject<ClassType>(vm(), resultGPR, structure.get(), scratchGPR1, scratchGPR2, slowPath);
-    }
-
     void emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure, GPRReg storageGPR, unsigned numElements, unsigned vectorLength);
     
     void emitGetLength(InlineCallFrame*, GPRReg lengthGPR, bool includeThis = false);

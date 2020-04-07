@@ -52,5 +52,6 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 };
+static_assert(sizeof(BooleanObject) == sizeof(JSWrapperObject));
 
 } // namespace JSC

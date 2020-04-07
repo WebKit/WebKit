@@ -97,7 +97,6 @@ namespace JSC { namespace FTL {
     macro(JSCell_typeInfoFlags, JSCell::typeInfoFlagsOffset()) \
     macro(JSCell_typeInfoType, JSCell::typeInfoTypeOffset()) \
     macro(JSCell_usefulBytes, JSCell::indexingTypeAndMiscOffset()) \
-    macro(JSDestructibleObject_classInfo, JSDestructibleObject::classInfoOffset()) \
     macro(JSFunction_executableOrRareData, JSFunction::offsetOfExecutableOrRareData()) \
     macro(JSFunction_scope, JSFunction::offsetOfScopeChain()) \
     macro(JSGlobalObject_regExpGlobalData_cachedResult_lastRegExp, JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult() + RegExpCachedResult::offsetOfLastRegExp()) \
@@ -119,7 +118,6 @@ namespace JSC { namespace FTL {
     macro(JSRopeString_fiber2, JSRopeString::offsetOfFiber2()) \
     macro(JSScope_next, JSScope::offsetOfNext()) \
     macro(JSSymbolTableObject_symbolTable, JSSymbolTableObject::offsetOfSymbolTable()) \
-    macro(JSWrapperObject_internalValue, JSWrapperObject::internalValueOffset()) \
     macro(RegExpObject_regExpAndLastIndexIsNotWritableFlag, RegExpObject::offsetOfRegExpAndLastIndexIsNotWritableFlag()) \
     macro(RegExpObject_lastIndex, RegExpObject::offsetOfLastIndex()) \
     macro(ShadowChicken_Packet_callee, OBJECT_OFFSETOF(ShadowChicken::Packet, callee)) \
@@ -214,6 +212,7 @@ public:
 #undef NUMBERED_ABSTRACT_HEAP_DECLARATION
 
     AbstractHeap& JSString_value;
+    AbstractHeap& JSWrapperObject_internalValue;
 
     AbsoluteAbstractHeap absolute;
     

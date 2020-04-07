@@ -1871,14 +1871,6 @@ public:
     }
     void emitConvertValueToBoolean(VM&, JSValueRegs, GPRReg result, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg, FPRReg, bool shouldCheckMasqueradesAsUndefined, JSGlobalObject*, bool negateResult = false);
     
-    template<typename ClassType>
-    void emitAllocateDestructibleObject(VM& vm, GPRReg resultGPR, Structure* structure, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
-    {
-        auto butterfly = TrustedImmPtr(nullptr);
-        emitAllocateJSObject<ClassType>(vm, resultGPR, TrustedImmPtr(structure), butterfly, scratchGPR1, scratchGPR2, slowPath);
-        storePtr(TrustedImmPtr(structure->classInfo()), Address(resultGPR, JSDestructibleObject::classInfoOffset()));
-    }
-    
     void emitInitializeInlineStorage(GPRReg baseGPR, unsigned inlineCapacity)
     {
         for (unsigned i = 0; i < inlineCapacity; ++i)

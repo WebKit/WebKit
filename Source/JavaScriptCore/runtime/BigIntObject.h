@@ -60,5 +60,6 @@ protected:
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSBigInt*);
     JS_EXPORT_PRIVATE BigIntObject(VM&, Structure*);
 };
+static_assert(sizeof(BigIntObject) == sizeof(JSWrapperObject));
 
 } // namespace JSC

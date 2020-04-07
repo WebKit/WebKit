@@ -6398,6 +6398,8 @@ private:
 
     void compileNewStringObject()
     {
+        // FIXME: We should handle this as JSInternalFieldObject allocation.
+        // https://bugs.webkit.org/show_bug.cgi?id=209453
         RegisteredStructure structure = m_node->structure();
         LValue string = lowString(m_node->child1());
 
@@ -6407,7 +6409,6 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
 
         LValue fastResultValue = allocateObject<StringObject>(structure, m_out.intPtrZero, slowCase);
-        m_out.storePtr(m_out.constIntPtr(StringObject::info()), fastResultValue, m_heaps.JSDestructibleObject_classInfo);
         m_out.store64(string, fastResultValue, m_heaps.JSWrapperObject_internalValue);
         mutatorFence();
         ValueFromBlock fastResult = m_out.anchor(fastResultValue);
@@ -7405,6 +7406,8 @@ private:
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         switch (m_node->child1().useKind()) {
         case StringObjectUse: {
+            // FIXME: We should convert this to GetInternalField(0).
+            // https://bugs.webkit.org/show_bug.cgi?id=209453
             LValue cell = lowCell(m_node->child1());
             speculateStringObjectForCell(m_node->child1(), cell);
             setJSValue(m_out.loadPtr(cell, m_heaps.JSWrapperObject_internalValue));

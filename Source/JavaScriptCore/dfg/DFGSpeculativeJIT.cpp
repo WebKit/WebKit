@@ -9861,9 +9861,6 @@ void SpeculativeJIT::compileNewStringObject(Node* node)
         resultGPR, TrustedImmPtr(node->structure()), butterfly, scratch1GPR, scratch2GPR,
         slowPath);
     
-    m_jit.storePtr(
-        TrustedImmPtr(StringObject::info()),
-        JITCompiler::Address(resultGPR, JSDestructibleObject::classInfoOffset()));
 #if USE(JSVALUE64)
     m_jit.store64(
         operandGPR, JITCompiler::Address(resultGPR, JSWrapperObject::internalValueOffset()));

@@ -76,6 +76,7 @@ protected:
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSString*);
     JS_EXPORT_PRIVATE StringObject(VM&, Structure*);
 };
+static_assert(sizeof(StringObject) == sizeof(JSWrapperObject));
 
 JS_EXPORT_PRIVATE StringObject* constructString(VM&, JSGlobalObject*, JSValue);
 
