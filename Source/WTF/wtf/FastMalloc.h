@@ -76,6 +76,8 @@ WTF_EXPORT_PRIVATE void fastDecommitAlignedMemory(void*, size_t);
 
 WTF_EXPORT_PRIVATE void fastEnableMiniMode();
 
+WTF_EXPORT_PRIVATE void fastDisableScavenger();
+
 struct FastMallocStatistics {
     size_t reservedVMBytes;
     size_t committedVMBytes;

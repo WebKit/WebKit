@@ -129,5 +129,8 @@ BEXPORT void setScavengerThreadQOSClass(qos_class_t overrideClass);
 
 BEXPORT void enableMiniMode();
 
+// Used for debugging only.
+BEXPORT void disableScavenger();
+
 } // namespace api
 } // namespace bmalloc

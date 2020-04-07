@@ -135,5 +135,11 @@ void enableMiniMode()
         Scavenger::get()->enableMiniMode();
 }
 
+void disableScavenger()
+{
+    if (!DebugHeap::tryGet())
+        Scavenger::get()->disable();
+}
+
 } } // namespace bmalloc::api
 

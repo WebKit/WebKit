@@ -204,6 +204,9 @@ void Scavenger::enableMiniMode()
 
 void Scavenger::scavenge()
 {
+    if (!m_isEnabled)
+        return;
+
     UniqueLockHolder lock(m_scavengingMutex);
 
     if (verbose) {
@@ -279,6 +282,9 @@ void Scavenger::scavenge()
 #if BUSE(PARTIAL_SCAVENGE)
 void Scavenger::partialScavenge()
 {
+    if (!m_isEnabled)
+        return;
+
     UniqueLockHolder lock(m_scavengingMutex);
 
     if (verbose) {

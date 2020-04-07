@@ -1,3 +1,32 @@
+2020-04-07  Saam Barati  <sbarati@apple.com>
+
+        RAMification should have a way of gathering vmmaps for each test at the end of each run
+        https://bugs.webkit.org/show_bug.cgi?id=210060
+
+        Reviewed by Yusuke Suzuki.
+
+        When I was debugging a memory issue, I needed to gather vmmaps for each
+        RAMification subtest. This patch is checking in the code I wrote to be able
+        to do this. It works by:
+        - Passing in an argument to RAMification saying we want vmmaps at the end of
+        each subtest run.
+        - RAMification invokes jsc with an environment variable that tells the shell
+        to wait for one character of input from stdin before exiting.
+        - The jsc shell also disables the bmalloc scavenger while waiting for input so the
+        vmmap we take from the python runner script represents the "footprint" score
+        of the benchmark. If the scavenger ran, it would end up releasing too much
+        memory for the vmmap to be useful.
+        - The python script runs a vmmap, and then communicates to the jsc process
+        when the vmmap finishes running.
+
+        * JetStream2/RAMification.py:
+        (parseArgs):
+        (BaseRunner.__init__):
+        (BaseRunner.getResults):
+        (LocalRunner.runOneTest):
+        (main):
+        (main.runTestList):
+
 2020-04-06  Saam Barati  <sbarati@apple.com>
 
         Implement 1GB of executable memory on arm64

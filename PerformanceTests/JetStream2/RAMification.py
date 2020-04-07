@@ -43,7 +43,7 @@ oneMB = float(1024 * 1024)
 footprintRE = re.compile("Current Footprint: (\d+(?:.\d+)?)")
 peakFootprintRE = re.compile("Peak Footprint: (\d+(?:.\d+)?)")
 
-TestResult = collections.namedtuple("TestResult", ["name", "returnCode", "footprint", "peakFootprint"])
+TestResult = collections.namedtuple("TestResult", ["name", "returnCode", "footprint", "peakFootprint", "vmmapOutput"])
 
 ramification_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 
@@ -120,6 +120,7 @@ def parseArgs(parser=None):
     parser.add_argument("-l", "--lua", dest="runLuaTests", nargs="?", const=True, default=None, type=optStrToBool, metavar="true / false", help="Run Lua comparison tests [default]")
     parser.add_argument("-n", "--run-no-jit", dest="runNoJITTests", nargs="?", const=True, default=None, type=optStrToBool, metavar="true / false", help="Run no JIT tests [default]")
     parser.add_argument("-o", "--output", dest="jsonFilename", type=str, default=None, metavar="JSON-output-file", help="Path to JSON output")
+    parser.add_argument("-m", "--vmmap", dest="takeVmmap", action="store_true", default=False, help="Take a vmmap after each test")
 
     args = parser.parse_args()
 
@@ -146,6 +147,7 @@ class BaseRunner:
     def __init__(self, args):
         self.rootDir = args.testDir
         self.environmentVars = {}
+        self.vmmapOutput = ""
 
     def setup(self):
         pass
@@ -178,7 +180,7 @@ class BaseRunner:
         self.returnCode = returnCode
 
     def getResults(self):
-        return TestResult(name=self.testName, returnCode=self.returnCode, footprint=self.footprint, peakFootprint=self.peakFootprint)
+        return TestResult(name=self.testName, returnCode=self.returnCode, footprint=self.footprint, peakFootprint=self.peakFootprint, vmmapOutput=self.vmmapOutput)
 
 
 class LocalRunner(BaseRunner):
@@ -200,13 +202,20 @@ class LocalRunner(BaseRunner):
 
         self.resetForTest(test)
 
-        proc = subprocess.Popen(args, cwd=self.rootDir, env=self.environmentVars, stdout=subprocess.PIPE, stderr=None, shell=False)
+        proc = subprocess.Popen(args, cwd=self.rootDir, env=self.environmentVars, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=None, shell=False)
         while True:
             line = proc.stdout.readline()
             if sys.version_info[0] >= 3:
                 line = str(line, "utf-8")
 
             self.processLine(line)
+
+            if "js shell waiting for input to exit" in line:
+                self.vmmapOutput = subprocess.Popen(['vmmap', '--summary', '{}'.format(proc.pid)], shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout.read()
+                if sys.version_info[0] >= 3:
+                    self.vmmapOutput = str(self.vmmapOutput, "utf-8")
+                proc.stdin.write(b"done\n")
+                proc.stdin.flush()
 
             if line == "":
                 break
@@ -225,6 +234,10 @@ def main(parser=None):
     args = parseArgs(parser=parser)
 
     testRunner = args.runner(args)
+
+
+    if args.takeVmmap:
+        testRunner.setEnv("JS_SHELL_WAIT_FOR_INPUT_TO_EXIT", "1")
 
     dyldFrameworkPath = frameworkPathFromExecutablePath(args.jscCommand)
     if dyldFrameworkPath:
@@ -255,6 +268,8 @@ def main(parser=None):
             if testResult.returnCode == 0 and testResult.footprint and testResult.peakFootprint:
                 if args.verbose:
                     print("footprint: {}, peak footprint: {}".format(testResult.footprint, testResult.peakFootprint))
+                    if testResult.vmmapOutput:
+                        print(testResult.vmmapOutput)
                 else:
                     print
 

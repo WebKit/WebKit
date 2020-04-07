@@ -274,6 +274,8 @@ void fastDecommitAlignedMemory(void* ptr, size_t size)
 
 void fastEnableMiniMode() { }
 
+void fastDisableScavenger() { }
+
 void fastMallocDumpMallocStats() { }
 
 } // namespace WTF
@@ -630,6 +632,11 @@ void fastDecommitAlignedMemory(void* ptr, size_t size)
 void fastEnableMiniMode()
 {
     bmalloc::api::enableMiniMode();
+}
+
+void fastDisableScavenger()
+{
+    bmalloc::api::disableScavenger();
 }
 
 } // namespace WTF

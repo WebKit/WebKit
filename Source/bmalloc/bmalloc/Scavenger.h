@@ -74,6 +74,9 @@ public:
 
     void enableMiniMode();
 
+    // Used for debugging only.
+    void disable() { m_isEnabled = false; }
+
 private:
     enum class State { Sleep, Run, RunSoon };
     
@@ -115,6 +118,7 @@ private:
 #endif
     
     Vector<DeferredDecommit> m_deferredDecommits;
+    bool m_isEnabled { true };
 };
 DECLARE_STATIC_PER_PROCESS_STORAGE(Scavenger);
 
