@@ -520,16 +520,7 @@ static Vector<URL> allResourcesURLsForFrame(Frame* frame)
 
 void InspectorPageAgent::getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::Cookie>>& cookies)
 {
-    // If we can get raw cookies.
-    ListHashSet<Cookie> rawCookiesList;
-
-    // If we can't get raw cookies - fall back to String representation
-    StringBuilder stringCookiesList;
-
-    // Return value to getRawCookies should be the same for every call because
-    // the return value is platform/network backend specific, and the call will
-    // always return the same true/false value.
-    bool rawCookiesImplemented = false;
+    ListHashSet<Cookie> allRawCookies;
 
     for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         Document* document = frame->document();
@@ -537,26 +528,16 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector
             continue;
 
         for (auto& url : allResourcesURLsForFrame(frame)) {
-            Vector<Cookie> docCookiesList;
-            rawCookiesImplemented = document->page()->cookieJar().getRawCookies(*document, URL({ }, url), docCookiesList);
+            Vector<Cookie> rawCookiesForURLInDocument;
+            if (!document->page()->cookieJar().getRawCookies(*document, URL({ }, url), rawCookiesForURLInDocument))
+                continue;
 
-            if (!rawCookiesImplemented) {
-                // FIXME: We need duplication checking for the String representation of cookies.
-                // Exceptions are thrown by cookie() in sandboxed frames. That won't happen here
-                // because "document" is the document of the main frame of the page.
-                stringCookiesList.append(document->cookie().releaseReturnValue());
-            } else {
-                for (auto& cookie : docCookiesList)
-                    rawCookiesList.add(cookie);
-            }
+            for (auto& rawCookieForURLInDocument : rawCookiesForURLInDocument)
+                allRawCookies.add(rawCookieForURLInDocument);
         }
     }
 
-    // FIXME: Do not return empty string/empty array. Make returns optional instead. https://bugs.webkit.org/show_bug.cgi?id=80855
-    if (rawCookiesImplemented)
-        cookies = buildArrayForCookies(rawCookiesList);
-    else
-        cookies = JSON::ArrayOf<Inspector::Protocol::Page::Cookie>::create();
+    cookies = buildArrayForCookies(allRawCookies);
 }
 
 static Optional<Cookie> parseCookieObject(ErrorString& errorString, const JSON::Object& cookieObject)
