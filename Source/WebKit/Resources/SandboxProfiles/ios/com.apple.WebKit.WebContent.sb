@@ -1113,6 +1113,7 @@
         (machtrap-number MSC_semaphore_timedwait_trap)
         (machtrap-number MSC_semaphore_wait_trap)
         (machtrap-number MSC_swtch_pri)
+        (machtrap-number MSC_task_name_for_pid)
         (machtrap-number MSC_thread_get_special_reply_port)
         (machtrap-number MSC_thread_self_trap)
     )
