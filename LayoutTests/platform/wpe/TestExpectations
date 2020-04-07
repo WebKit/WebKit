@@ -2256,6 +2256,7 @@ webkit.org/b/201982 fast/images/image-orientation-none.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/exif-orientation-background-image-no-repeat.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/exif-orientation-background-image-repeat.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/exif-orientation-border-image.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/image-orientation-none-canvas.html [ ImageOnlyFailure ]
 
                     imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html [ DumpJSConsoleLogInStdErr ]
 

@@ -1,3 +1,12 @@
+2020-04-06  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening EXIF orientation failure.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] REGRESSION(r254389): fast/text/international/system-language/declarative-language.html is failing

@@ -4435,6 +4435,7 @@ webkit.org/b/201982 fast/images/exif-orientation-border-image.html [ ImageOnlyFa
 webkit.org/b/201982 fast/images/image-orientation-dynamic-from-image.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/image-orientation-dynamic-none.html [ ImageOnlyFailure ]
 webkit.org/b/201982 fast/images/image-orientation-none.html [ ImageOnlyFailure ]
+webkit.org/b/201982 fast/images/image-orientation-none-canvas.html [ ImageOnlyFailure ]
 
 webkit.org/b/202225 accessibility/misspelling-range.html [ Failure ]
 webkit.org/b/202227 compositing/backing/layer-outside-tiled-parent.html [ Failure ]
