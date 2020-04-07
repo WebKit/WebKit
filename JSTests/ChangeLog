@@ -1,5 +1,19 @@
 2020-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] ScopedArgumentsTable should handle OOM in tolerant manner
+        https://bugs.webkit.org/show_bug.cgi?id=210126
+
+        Reviewed by Mark Lam.
+
+        * stress/scoped-arguments-table-should-be-tolerant-for-oom.js: Added.
+        (canThrow):
+        (bar):
+        (get bar):
+        (foo):
+        (i.canThrow):
+
+2020-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Inlined IC should get right JSGlobalObject
         https://bugs.webkit.org/show_bug.cgi?id=210092
 

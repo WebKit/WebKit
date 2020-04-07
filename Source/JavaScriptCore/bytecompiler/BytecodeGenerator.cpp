@@ -505,7 +505,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             // way we lift the value into the scope.
             for (unsigned i = 0; i < parameters.size(); ++i) {
                 ScopeOffset offset = functionSymbolTable->takeNextScopeOffset(NoLockingNecessary);
-                functionSymbolTable->setArgumentOffset(vm, i, offset);
+                bool success = functionSymbolTable->trySetArgumentOffset(vm, i, offset);
+                if (UNLIKELY(!success)) {
+                    m_outOfMemoryDuringConstruction = true;
+                    return;
+                }
                 if (UniquedStringImpl* name = visibleNameForParameter(parameters.at(i).first)) {
                     VarOffset varOffset(offset);
                     SymbolTableEntry entry(varOffset);

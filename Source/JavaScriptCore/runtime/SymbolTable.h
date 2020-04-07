@@ -642,8 +642,12 @@ public:
             if (UNLIKELY(!table))
                 return false;
             m_arguments.set(vm, this, table);
-        } else
-            m_arguments.set(vm, this, m_arguments->setLength(vm, length));
+        } else {
+            ScopedArgumentsTable* table = m_arguments->trySetLength(vm, length);
+            if (UNLIKELY(!table))
+                return false;
+            m_arguments.set(vm, this, table);
+        }
         return true;
     }
 
@@ -653,10 +657,14 @@ public:
         return m_arguments->get(i);
     }
     
-    void setArgumentOffset(VM& vm, uint32_t i, ScopeOffset offset)
+    bool trySetArgumentOffset(VM& vm, uint32_t i, ScopeOffset offset)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(m_arguments);
-        m_arguments.set(vm, this, m_arguments->set(vm, i, offset));
+        auto* maybeCloned = m_arguments->trySet(vm, i, offset);
+        if (!maybeCloned)
+            return false;
+        m_arguments.set(vm, this, maybeCloned);
+        return true;
     }
     
     ScopedArgumentsTable* arguments() const

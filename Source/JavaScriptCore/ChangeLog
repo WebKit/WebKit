@@ -1,5 +1,30 @@
 2020-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] ScopedArgumentsTable should handle OOM in tolerant manner
+        https://bugs.webkit.org/show_bug.cgi?id=210126
+
+        Reviewed by Mark Lam.
+
+        This patch makes ScopedArgumentsTable allocations OOM tolerant to throw OOM error when allocation fails.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedScopedArgumentsTable::decode const):
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::unmapArgument):
+        * runtime/ScopedArgumentsTable.cpp:
+        (JSC::ScopedArgumentsTable::tryClone):
+        (JSC::ScopedArgumentsTable::trySetLength):
+        (JSC::ScopedArgumentsTable::trySet):
+        (JSC::ScopedArgumentsTable::clone): Deleted.
+        (JSC::ScopedArgumentsTable::setLength): Deleted.
+        (JSC::ScopedArgumentsTable::set): Deleted.
+        * runtime/ScopedArgumentsTable.h:
+        * runtime/SymbolTable.h:
+
+2020-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] JSWrapperObject should use JSInternalFieldObjectImpl
         https://bugs.webkit.org/show_bug.cgi?id=210019
 

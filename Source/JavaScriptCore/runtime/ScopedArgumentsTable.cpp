@@ -56,14 +56,6 @@ ScopedArgumentsTable* ScopedArgumentsTable::create(VM& vm)
     return result;
 }
 
-ScopedArgumentsTable* ScopedArgumentsTable::create(VM& vm, uint32_t length)
-{
-    ScopedArgumentsTable* result = create(vm);
-    result->m_length = length;
-    result->m_arguments = ArgumentsPtr::create(length);
-    return result;
-}
-
 ScopedArgumentsTable* ScopedArgumentsTable::tryCreate(VM& vm, uint32_t length)
 {
     void* buffer = tryAllocateCell<ScopedArgumentsTable>(vm.heap);
@@ -79,18 +71,22 @@ ScopedArgumentsTable* ScopedArgumentsTable::tryCreate(VM& vm, uint32_t length)
     return result;
 }
 
-ScopedArgumentsTable* ScopedArgumentsTable::clone(VM& vm)
+ScopedArgumentsTable* ScopedArgumentsTable::tryClone(VM& vm)
 {
-    ScopedArgumentsTable* result = create(vm, m_length);
+    ScopedArgumentsTable* result = tryCreate(vm, m_length);
+    if (UNLIKELY(!result))
+        return nullptr;
     for (unsigned i = m_length; i--;)
         result->at(i) = this->at(i);
     return result;
 }
 
-ScopedArgumentsTable* ScopedArgumentsTable::setLength(VM& vm, uint32_t newLength)
+ScopedArgumentsTable* ScopedArgumentsTable::trySetLength(VM& vm, uint32_t newLength)
 {
     if (LIKELY(!m_locked)) {
-        ArgumentsPtr newArguments = ArgumentsPtr::create(newLength, newLength);
+        ArgumentsPtr newArguments = ArgumentsPtr::tryCreate(newLength, newLength);
+        if (UNLIKELY(!newArguments))
+            return nullptr;
         for (unsigned i = std::min(m_length, newLength); i--;)
             newArguments.at(i, newLength) = this->at(i);
         m_length = newLength;
@@ -98,7 +94,9 @@ ScopedArgumentsTable* ScopedArgumentsTable::setLength(VM& vm, uint32_t newLength
         return this;
     }
     
-    ScopedArgumentsTable* result = create(vm, newLength);
+    ScopedArgumentsTable* result = tryCreate(vm, newLength);
+    if (UNLIKELY(!result))
+        return nullptr;
     for (unsigned i = std::min(m_length, newLength); i--;)
         result->at(i) = this->at(i);
     return result;
@@ -106,12 +104,14 @@ ScopedArgumentsTable* ScopedArgumentsTable::setLength(VM& vm, uint32_t newLength
 
 static_assert(std::is_trivially_destructible<ScopeOffset>::value, "");
 
-ScopedArgumentsTable* ScopedArgumentsTable::set(VM& vm, uint32_t i, ScopeOffset value)
+ScopedArgumentsTable* ScopedArgumentsTable::trySet(VM& vm, uint32_t i, ScopeOffset value)
 {
     ScopedArgumentsTable* result;
-    if (UNLIKELY(m_locked))
-        result = clone(vm);
-    else
+    if (UNLIKELY(m_locked)) {
+        result = tryClone(vm);
+        if (UNLIKELY(!result))
+            return nullptr;
+    } else
         result = this;
     result->at(i) = value;
     return result;

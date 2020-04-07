@@ -143,11 +143,17 @@ void ScopedArguments::overrideThingsIfNecessary(JSGlobalObject* globalObject)
 void ScopedArguments::unmapArgument(JSGlobalObject* globalObject, uint32_t i)
 {
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT_WITH_SECURITY_IMPLICATION(i < m_totalLength);
     unsigned namedLength = m_table->length();
-    if (i < namedLength)
-        m_table.set(vm, this, m_table->set(vm, i, ScopeOffset()));
-    else
+    if (i < namedLength) {
+        auto* maybeCloned = m_table->trySet(vm, i, ScopeOffset());
+        if (UNLIKELY(!maybeCloned)) {
+            throwOutOfMemoryError(globalObject, scope);
+            return;
+        }
+        m_table.set(vm, this, maybeCloned);
+    } else
         storage()[i - namedLength].clear();
 }
 
