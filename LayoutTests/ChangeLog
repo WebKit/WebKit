@@ -1,3 +1,12 @@
+2020-04-07  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ iOS wk2 ] http/wpt/cache-storage/cache-put-keys.https.any.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207496
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-04-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Cancel WebAuthn requests when users cancel LocalAuthentication prompts
