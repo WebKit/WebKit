@@ -1,3 +1,19 @@
+2020-04-07  David Kilzer  <ddkilzer@apple.com>
+
+        VisitedLinkStore.messages.in and VisitedLinkStore::addVisitedLinkHashFromPage() don't agree on type of `linkHash`
+        <https://webkit.org/b/210094>
+        <rdar://problem/60334644>
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        - Don't forward-declare WebCore::SharedStringHash as a class
+          since it is a uint32_t.
+        * UIProcess/VisitedLinkStore.messages.in:
+        - Use WebCore::SharedStringHash type for `linkHash` to fix the
+          type mismatch.
+
 2020-04-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop bad assertion introduced in r259610.
