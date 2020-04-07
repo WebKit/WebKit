@@ -487,6 +487,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
     ParagraphContentIterator iterator { item.start, item.end };
     HashSet<Ref<Node>> excludedNodes;
     HashSet<Ref<Node>> nodesToRemove;
+    RefPtr<Node> nodeToInsertBackAtEnd;
     for (; !iterator.atEnd(); iterator.advance()) {
         auto content = iterator.currentContent();
         
@@ -496,8 +497,13 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         if (!content.isReplacedContent && !content.isTextContent)
             continue;
 
-        if (currentTokenIndex >= item.tokens.size())
+        if (currentTokenIndex >= item.tokens.size()) {
+            if (content.node && !nodeToInsertBackAtEnd && content.isTextContent && content.text == "\n") { // br
+                nodeToInsertBackAtEnd = content.node;
+                continue;
+            }
             return ManipulationFailureType::ContentChanged;
+        }
 
         auto& currentToken = item.tokens[currentTokenIndex];
         if (!content.isReplacedContent && content.text != currentToken.content)
@@ -578,6 +584,8 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
             insertions.append(NodeInsertion { currentElementStack.size() ? currentElementStack.last().ptr() : nullptr, contentNode.releaseNonNull() });
         }
     }
+    if (nodeToInsertBackAtEnd)
+        insertions.append(NodeInsertion { nullptr, nodeToInsertBackAtEnd.releaseNonNull() });
 
     Position insertionPoint = positionBeforeNode(firstContentNode.get()).parentAnchoredEquivalent();
     while (insertionPoint.containerNode() != commonAncestor)
