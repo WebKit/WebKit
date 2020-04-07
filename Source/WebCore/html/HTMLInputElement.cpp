@@ -666,10 +666,10 @@ bool HTMLInputElement::canHaveSelection() const
     return isTextField();
 }
 
-void HTMLInputElement::accessKeyAction(bool sendMouseEvents)
+bool HTMLInputElement::accessKeyAction(bool sendMouseEvents)
 {
     Ref<InputType> protectedInputType(*m_inputType);
-    protectedInputType->accessKeyAction(sendMouseEvents);
+    return protectedInputType->accessKeyAction(sendMouseEvents);
 }
 
 bool HTMLInputElement::isPresentationAttribute(const QualifiedName& name) const

@@ -179,7 +179,7 @@ private:
     virtual void clearTarget() { }
 
     void buildPendingResourcesIfNeeded();
-    void accessKeyAction(bool sendMouseEvents) override;
+    bool accessKeyAction(bool sendMouseEvents) override;
 
 #ifndef NDEBUG
     virtual bool filterOutAnimatableAttribute(const QualifiedName&) const;

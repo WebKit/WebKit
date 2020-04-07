@@ -130,11 +130,11 @@ void BaseChooserOnlyDateAndTimeInputType::handleKeyupEvent(KeyboardEvent& event)
     BaseClickableWithKeyInputType::handleKeyupEvent(*this, event);
 }
 
-void BaseChooserOnlyDateAndTimeInputType::accessKeyAction(bool sendMouseEvents)
+bool BaseChooserOnlyDateAndTimeInputType::accessKeyAction(bool sendMouseEvents)
 {
     BaseDateAndTimeInputType::accessKeyAction(sendMouseEvents);
     ASSERT(element());
-    BaseClickableWithKeyInputType::accessKeyAction(*element(), sendMouseEvents);
+    return BaseClickableWithKeyInputType::accessKeyAction(*element(), sendMouseEvents);
 }
 
 bool BaseChooserOnlyDateAndTimeInputType::isMouseFocusable() const

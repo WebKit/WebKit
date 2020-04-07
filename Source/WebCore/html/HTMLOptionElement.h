@@ -72,7 +72,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
-    void accessKeyAction(bool) final;
+    bool accessKeyAction(bool) final;
 
     void childrenChanged(const ChildChange&) final;
 

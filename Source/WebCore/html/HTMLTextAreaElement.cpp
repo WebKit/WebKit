@@ -500,9 +500,10 @@ bool HTMLTextAreaElement::isValidValue(const String& candidate) const
     return !valueMissing(candidate) && !tooShort(candidate, IgnoreDirtyFlag) && !tooLong(candidate, IgnoreDirtyFlag);
 }
 
-void HTMLTextAreaElement::accessKeyAction(bool)
+bool HTMLTextAreaElement::accessKeyAction(bool)
 {
     focus();
+    return false;
 }
 
 void HTMLTextAreaElement::setCols(unsigned cols)

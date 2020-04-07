@@ -205,7 +205,7 @@ public:
     virtual bool shouldUseInputMethod() const;
     virtual void handleFocusEvent(Node* oldFocusedNode, FocusDirection);
     virtual void handleBlurEvent();
-    virtual void accessKeyAction(bool sendMouseEvents);
+    virtual bool accessKeyAction(bool sendMouseEvents);
     virtual bool canBeSuccessfulSubmitButton();
     virtual void subtreeHasChanged();
     virtual void blur();

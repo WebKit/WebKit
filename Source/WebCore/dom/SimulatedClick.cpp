@@ -81,14 +81,14 @@ static void simulateMouseEvent(const AtomString& eventType, Element& element, Ev
     element.dispatchEvent(SimulatedMouseEvent::create(eventType, element.document().windowProxy(), underlyingEvent, element, source));
 }
 
-void simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouseEventOptions mouseEventOptions, SimulatedClickVisualOptions visualOptions, SimulatedClickSource creationOptions)
+bool simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouseEventOptions mouseEventOptions, SimulatedClickVisualOptions visualOptions, SimulatedClickSource creationOptions)
 {
     if (element.isDisabledFormControl())
-        return;
+        return false;
 
     static NeverDestroyed<HashSet<Element*>> elementsDispatchingSimulatedClicks;
     if (!elementsDispatchingSimulatedClicks.get().add(&element).isNewEntry)
-        return;
+        return false;
 
     if (mouseEventOptions == SendMouseOverUpDownEvents)
         simulateMouseEvent(eventNames().mouseoverEvent, element, underlyingEvent, creationOptions);
@@ -103,6 +103,7 @@ void simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouse
     simulateMouseEvent(eventNames().clickEvent, element, underlyingEvent, creationOptions);
 
     elementsDispatchingSimulatedClicks.get().remove(&element);
+    return true;
 }
 
 } // namespace WebCore

@@ -47,7 +47,7 @@ private:
     bool appendFormData(DOMFormData&, bool) const override;
     void handleKeypressEvent(KeyboardEvent&) override;
     bool canSetStringValue() const override;
-    void accessKeyAction(bool sendMouseEvents) override;
+    bool accessKeyAction(bool sendMouseEvents) override;
     String fallbackValue() const override;
     bool storesValueSeparateFromAttribute() override;
     void setValue(const String&, bool, TextFieldEventBehavior) override;

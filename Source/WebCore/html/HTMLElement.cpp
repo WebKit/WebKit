@@ -705,9 +705,9 @@ void HTMLElement::click()
     simulateClick(*this, nullptr, SendNoEvents, DoNotShowPressedLook, SimulatedClickSource::Bindings);
 }
 
-void HTMLElement::accessKeyAction(bool sendMouseEvents)
+bool HTMLElement::accessKeyAction(bool sendMouseEvents)
 {
-    dispatchSimulatedClick(nullptr, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
+    return dispatchSimulatedClick(nullptr, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 String HTMLElement::title() const

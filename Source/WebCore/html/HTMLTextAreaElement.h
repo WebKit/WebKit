@@ -120,7 +120,7 @@ private:
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) final;
 
-    void accessKeyAction(bool sendMouseEvents) final;
+    bool accessKeyAction(bool sendMouseEvents) final;
 
     bool shouldUseInputMethod() final;
     bool matchesReadWritePseudoClass() const final;

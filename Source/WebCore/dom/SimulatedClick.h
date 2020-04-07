@@ -37,6 +37,6 @@ enum class SimulatedClickSource {
     UserAgent
 };
 
-void simulateClick(Element&, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions, SimulatedClickSource);
+bool simulateClick(Element&, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions, SimulatedClickSource);
 
 } // namespace WebCore

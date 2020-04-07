@@ -73,8 +73,9 @@ RenderPtr<RenderElement> HiddenInputType::createInputRenderer(RenderStyle&&)
     return nullptr;
 }
 
-void HiddenInputType::accessKeyAction(bool)
+bool HiddenInputType::accessKeyAction(bool)
 {
+    return false;
 }
 
 bool HiddenInputType::rendererIsNeeded()

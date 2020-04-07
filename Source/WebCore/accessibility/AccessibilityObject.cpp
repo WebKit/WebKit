@@ -905,15 +905,13 @@ bool AccessibilityObject::press()
     
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, document);
     
-    bool dispatchedTouchEvent = false;
+    bool dispatchedEvent = false;
 #if PLATFORM(IOS_FAMILY)
     if (hasTouchEventListener())
-        dispatchedTouchEvent = dispatchTouchEvent();
+        dispatchedEvent = dispatchTouchEvent();
 #endif
-    if (!dispatchedTouchEvent)
-        pressElement->accessKeyAction(true);
     
-    return true;
+    return dispatchedEvent || pressElement->accessKeyAction(true) || pressElement->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents);
 }
     
 bool AccessibilityObject::dispatchTouchEvent()

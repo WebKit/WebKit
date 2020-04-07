@@ -211,11 +211,11 @@ bool HTMLButtonElement::appendFormData(DOMFormData& formData, bool)
     return true;
 }
 
-void HTMLButtonElement::accessKeyAction(bool sendMouseEvents)
+bool HTMLButtonElement::accessKeyAction(bool sendMouseEvents)
 {
     focus();
 
-    dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
+    return dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 bool HTMLButtonElement::isURLAttribute(const Attribute& attribute) const

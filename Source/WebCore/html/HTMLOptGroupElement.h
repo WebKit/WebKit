@@ -49,7 +49,7 @@ private:
 
     void childrenChanged(const ChildChange&) final;
 
-    void accessKeyAction(bool sendMouseEvents) final;
+    bool accessKeyAction(bool sendMouseEvents) final;
 
     void recalcSelectOptions();
 };

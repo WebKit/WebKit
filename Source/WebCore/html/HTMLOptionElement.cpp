@@ -135,11 +135,14 @@ void HTMLOptionElement::setText(const String &text)
         select->setSelectedIndex(oldSelectedIndex);
 }
 
-void HTMLOptionElement::accessKeyAction(bool)
+bool HTMLOptionElement::accessKeyAction(bool)
 {
     RefPtr<HTMLSelectElement> select = ownerSelectElement();
-    if (select)
+    if (select) {
         select->accessKeySetSelectedIndex(index());
+        return true;
+    }
+    return false;
 }
 
 int HTMLOptionElement::index() const

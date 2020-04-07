@@ -68,7 +68,7 @@ private:
     bool isActivatedSubmit() const final;
     void setActivatedSubmit(bool flag) final;
 
-    void accessKeyAction(bool sendMouseEvents) final;
+    bool accessKeyAction(bool sendMouseEvents) final;
     bool isURLAttribute(const Attribute&) const final;
 
     bool canStartSelection() const final { return false; }

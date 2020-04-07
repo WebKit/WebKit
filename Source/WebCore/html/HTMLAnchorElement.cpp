@@ -274,9 +274,9 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomStri
         HTMLElement::parseAttribute(name, value);
 }
 
-void HTMLAnchorElement::accessKeyAction(bool sendMouseEvents)
+bool HTMLAnchorElement::accessKeyAction(bool sendMouseEvents)
 {
-    dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
+    return dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const

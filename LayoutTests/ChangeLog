@@ -1,3 +1,13 @@
+2020-04-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver can't activate combobox when textfield is inside it
+        https://bugs.webkit.org/show_bug.cgi?id=210081
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/activation-of-input-field-inside-other-element-expected.txt: Added.
+        * accessibility/activation-of-input-field-inside-other-element.html: Added.
+
 2020-04-07  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS ] http/tests/security/appcache-in-private-browsing.html is flaky timing out

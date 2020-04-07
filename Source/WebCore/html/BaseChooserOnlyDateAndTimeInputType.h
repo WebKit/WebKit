@@ -52,7 +52,7 @@ private:
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) override;
     void handleKeypressEvent(KeyboardEvent&) override;
     void handleKeyupEvent(KeyboardEvent&) override;
-    void accessKeyAction(bool sendMouseEvents) override;
+    bool accessKeyAction(bool sendMouseEvents) override;
     bool isMouseFocusable() const override;
     void attributeChanged(const QualifiedName&) override;
 

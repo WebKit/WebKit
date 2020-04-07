@@ -42,7 +42,7 @@ private:
 
     bool isEventTargetedAtInteractiveDescendants(Event&) const;
 
-    void accessKeyAction(bool sendMouseEvents) final;
+    bool accessKeyAction(bool sendMouseEvents) final;
 
     // Overridden to update the hover/active state of the corresponding control.
     void setActive(bool = true, bool pause = false) final;

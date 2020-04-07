@@ -42,7 +42,7 @@ private:
     // Control in the legend's field set that gets focus and access key.
     RefPtr<HTMLFormControlElement> associatedControl();
 
-    void accessKeyAction(bool sendMouseEvents) final;
+    bool accessKeyAction(bool sendMouseEvents) final;
     void focus(bool restorePreviousSelection, FocusDirection) final;
 };
 
