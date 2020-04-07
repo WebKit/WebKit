@@ -304,7 +304,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
                     endOfCurrentParagraph = Position(&textNode, offsetOfNextNewLine);
                     startOfCurrentParagraph = Position(&textNode, offsetOfNextNewLine + 1);
                 }
-                addItem(ManipulationItemData { startOfCurrentParagraph, endOfCurrentParagraph, nullptr, nullQName(), WTFMove(tokensInCurrentParagraph) });
+                addItem(ManipulationItemData { startOfCurrentParagraph, endOfCurrentParagraph, nullptr, nullQName(), std::exchange(tokensInCurrentParagraph, { }) });
                 startOfCurrentParagraph.clear();
             }
             startOfCurrentLine = offsetOfNextNewLine + 1;
