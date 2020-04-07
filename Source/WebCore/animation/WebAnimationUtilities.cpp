@@ -84,11 +84,12 @@ bool compareAnimationsByCompositeOrder(WebAnimation& lhsAnimation, WebAnimation&
         }
 
         // We should have found either of those CSS animations in the CSS animations list.
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     // JS-originated animations sort last based on their position in the global animation list.
     // https://drafts.csswg.org/web-animations-1/#animation-composite-order
+    RELEASE_ASSERT(lhsAnimation.globalPosition() != rhsAnimation.globalPosition() || &lhsAnimation == &rhsAnimation);
     return lhsAnimation.globalPosition() < rhsAnimation.globalPosition();
 }
 

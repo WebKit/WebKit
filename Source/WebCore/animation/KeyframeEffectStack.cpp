@@ -80,11 +80,14 @@ void KeyframeEffectStack::ensureEffectsAreSorted()
         return;
 
     std::sort(m_effects.begin(), m_effects.end(), [&](auto& lhs, auto& rhs) {
+        RELEASE_ASSERT(lhs.get());
+        RELEASE_ASSERT(rhs.get());
+        
         auto* lhsAnimation = lhs->animation();
         auto* rhsAnimation = rhs->animation();
 
-        ASSERT(lhsAnimation);
-        ASSERT(rhsAnimation);
+        RELEASE_ASSERT(lhsAnimation);
+        RELEASE_ASSERT(rhsAnimation);
 
         return compareAnimationsByCompositeOrder(*lhsAnimation, *rhsAnimation, m_cssAnimationList.get());
     });
