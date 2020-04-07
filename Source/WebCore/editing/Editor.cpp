@@ -427,11 +427,8 @@ static bool dispatchClipboardEvent(RefPtr<Element>&& target, ClipboardEventKind 
 
     target->dispatchEvent(event);
     bool noDefaultProcessing = event->defaultPrevented();
-    if (noDefaultProcessing && (kind == ClipboardEventKind::Copy || kind == ClipboardEventKind::Cut)) {
-        auto pasteboard = Pasteboard::createForCopyAndPaste();
-        pasteboard->clear();
-        dataTransfer->commitToPasteboard(*pasteboard);
-    }
+    if (noDefaultProcessing && (kind == ClipboardEventKind::Copy || kind == ClipboardEventKind::Cut))
+        dataTransfer->commitToPasteboard(*Pasteboard::createForCopyAndPaste());
 
     dataTransfer->makeInvalidForSecurity();
 

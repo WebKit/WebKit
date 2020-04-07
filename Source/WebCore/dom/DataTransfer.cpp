@@ -425,8 +425,14 @@ void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
 {
     ASSERT(is<StaticPasteboard>(*m_pasteboard) && !is<StaticPasteboard>(nativePasteboard));
     PasteboardCustomData customData = downcast<StaticPasteboard>(*m_pasteboard).takeCustomData();
-    if (!customData.hasData())
+    if (!customData.hasData()) {
+        // We clear the platform pasteboard here to ensure that the pasteboard doesn't contain any data
+        // that may have been written before starting the drag or copying, and after ending the last
+        // drag session or paste. After pushing the static pasteboard's contents to the platform, the
+        // pasteboard should only contain data that was in the static pasteboard.
+        nativePasteboard.clear();
         return;
+    }
 
     if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
         customData.setOrigin(m_originIdentifier);
@@ -434,6 +440,7 @@ void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
         return;
     }
 
+    nativePasteboard.clear();
     customData.forEachPlatformString([&] (auto& type, auto& string) {
         nativePasteboard.writeString(type, string);
     });
@@ -702,11 +709,6 @@ void DataTransfer::setEffectAllowed(const String& effect)
 void DataTransfer::moveDragState(Ref<DataTransfer>&& other)
 {
     RELEASE_ASSERT(is<StaticPasteboard>(other->pasteboard()));
-    // We clear the platform pasteboard here to ensure that the pasteboard doesn't contain any data
-    // that may have been written before starting the drag, and after ending the last drag session.
-    // After pushing the static pasteboard's contents to the platform, the pasteboard should only
-    // contain data that was in the static pasteboard.
-    m_pasteboard->clear();
     other->commitToPasteboard(*m_pasteboard);
 
     m_dropEffect = other->m_dropEffect;
