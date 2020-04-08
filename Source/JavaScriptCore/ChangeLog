@@ -1,3 +1,18 @@
+2020-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] MultiDeleteByOffset should tell correct result AbstractValue in AI
+        https://bugs.webkit.org/show_bug.cgi?id=210175
+        <rdar://problem/61433817>
+
+        Reviewed by Saam Barati.
+
+        Since the result value of MultiDeleteByOffset should be used, AI should set boolean AbstractValue as a result of MultiDeleteByOffset.
+        We also add MultiDeleteByOffset to DFGStoreBarrierInsertionPhase since it can write StructureID: this means that write-barrier is necessary.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+
 2020-04-08  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Enable offlineasm debug annotations for GCC

@@ -297,7 +297,8 @@ private:
                 break;
             }
                 
-            case MultiPutByOffset: {
+            case MultiPutByOffset:
+            case MultiDeleteByOffset: {
                 considerBarrier(m_node->child1());
                 break;
             }
