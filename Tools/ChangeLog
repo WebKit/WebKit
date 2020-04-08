@@ -1,3 +1,17 @@
+2020-04-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        Return app-bound sessions for instances where WKAppBoundDomains is
+        empty
+        https://bugs.webkit.org/show_bug.cgi?id=210124
+        <rdar://problem/61276630>
+
+        Reviewed by Brent Fulgham.
+
+        Clean up test settings between tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (cleanUpInAppBrowserPrivacyTestSettings):
+
 2020-04-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r259708.

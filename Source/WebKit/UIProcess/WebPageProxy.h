@@ -2282,7 +2282,7 @@ private:
     void tryCloseTimedOut();
     void makeStorageSpaceRequest(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&&);
         
-    void setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL&, NavigatingToAppBoundDomain);
+    void setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL&, Optional<NavigatingToAppBoundDomain>);
     NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain() const { return m_hasNavigatedAwayFromAppBoundDomain; }
         
     const Identifier m_identifier;

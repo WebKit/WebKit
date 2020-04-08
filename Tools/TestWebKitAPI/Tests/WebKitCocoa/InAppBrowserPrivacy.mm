@@ -81,6 +81,7 @@ static NSString * const userScriptSource = @"window.wkUserScriptInjected = true"
 
 static void cleanUpInAppBrowserPrivacyTestSettings()
 {
+    WebCore::clearApplicationBundleIdentifierTestingOverride();
     IN_APP_BROWSER_PRIVACY_ADDITIONS_2
 }
 
