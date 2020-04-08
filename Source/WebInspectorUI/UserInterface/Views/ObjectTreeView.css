@@ -103,7 +103,8 @@
     opacity: 1;
 }
 
-.object-tree.properties-only.json-only .object-tree-property.prototype-property {
+.object-tree.properties-only.json-only .object-tree-property.prototype-property, 
+.object-tree.properties-only.json-only .object-tree-property.prototype-property + .children {
     display: none;
 }
 
