@@ -1,3 +1,11 @@
+2020-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip http/tests/notifications/event-listener-crash.html
+
+        This test should no longer be crashing after r258613.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-04-08  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Crash under WebKit::SandboxExtension::consume

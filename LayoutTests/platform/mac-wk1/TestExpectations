@@ -887,8 +887,6 @@ webkit.org/b/207160 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Fail
 
 webkit.org/b/207167 inspector/unit-tests/server-timing-entry.html [ Pass Timeout ]
 
-webkit.org/b/207237 http/tests/notifications/event-listener-crash.html [ Pass Crash ]
-
 webkit.org/b/207469 [ Debug ] imported/w3c/web-platform-tests/svg/animations/slider-switch.html [ Pass Failure ]
 
 webkit.org/b/207470 [ Debug ] imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_colno.htm [ Pass Failure ]
