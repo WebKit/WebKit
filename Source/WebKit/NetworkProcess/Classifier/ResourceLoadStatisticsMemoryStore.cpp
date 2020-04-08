@@ -872,8 +872,8 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
 
     RegistrableDomainsToBlockCookiesFor domainsToBlock { domainsToBlockAndDeleteCookiesFor, domainsToBlockButKeepCookiesFor, domainsWithUserInteractionAsFirstParty };
 
-    if (debugLoggingEnabled() && !domainsToBlockAndDeleteCookiesFor.isEmpty() && !domainsToBlockButKeepCookiesFor.isEmpty())
-        debugLogDomainsInBatches("block", domainsToBlock);
+    if (debugLoggingEnabled() && (!domainsToBlockAndDeleteCookiesFor.isEmpty() || !domainsToBlockButKeepCookiesFor.isEmpty()))
+        debugLogDomainsInBatches("Applying cross-site tracking restrictions", domainsToBlock);
 
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), store = makeRef(store()), domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
         store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [weakThis = WTFMove(weakThis), store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
@@ -884,8 +884,8 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
                     return;
 
                 if (UNLIKELY(weakThis->debugLoggingEnabled())) {
-                    RELEASE_LOG_INFO(ITPDebug, "Done updating cookie blocking.");
-                    weakThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done updating cookie blocking."_s);
+                    RELEASE_LOG_INFO(ITPDebug, "Done applying cross-site tracking restrictions.");
+                    weakThis->debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, "[ITP] Done applying cross-site tracking restrictions."_s);
                 }
             });
         });

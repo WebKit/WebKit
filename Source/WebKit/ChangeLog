@@ -1,3 +1,23 @@
+2020-04-07  John Wilander  <wilander@apple.com>
+
+        ITP Debug Mode logs should be more generic now that it blocks all third-party cookies by default
+        https://bugs.webkit.org/show_bug.cgi?id=210133
+        <rdar://problem/61399686>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. Just a change of logging.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking):
+            Now logs if either vector has entries and uses more generic language.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking):
+            Now logs if either vector has entries and uses more generic language.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::debugLogDomainsInBatches):
+            Removed hard-coded references to third-party cookie blocking and parameterized it instead.
+
 2020-04-07  Joonghun Park  <jh718.park@samsung.com>
 
         Move the misplaced statement to the proper place where in
