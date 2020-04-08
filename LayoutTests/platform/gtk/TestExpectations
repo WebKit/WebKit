@@ -1370,6 +1370,8 @@ webkit.org/b/209727 fast/forms/placeholder-content-line-height.html [ ImageOnlyF
 webkit.org/b/209801 imported/w3c/web-platform-tests/xhr/header-user-agent-sync.htm [ Failure ]
 
 # Tests failing in EWS but not in test bot.
+webkit.org/b/209533 editing/pasteboard/paste-line-endings-004.html [ Failure Pass ]
+webkit.org/b/209533 fast/repaint/animation-after-layer-scroll.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/appcache/xhr-foreign-resource.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-media.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-range.html [ Failure Pass ]
@@ -1399,7 +1401,11 @@ webkit.org/b/209533 http/tests/security/mixedContent/insecure-image-with-securec
 webkit.org/b/209533 http/tests/security/mixedContent/insecure-script-with-secure-cookies.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies-block.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/workers/service/basic-fetch.https.html [ Failure Pass ]
+webkit.org/b/209533 http/tests/workers/service/shift-reload-navigation.html [ Failure Pass ]
 webkit.org/b/209533 http/wpt/service-workers/service-worker-different-process.https.html [ Failure Pass ]
+webkit.org/b/209533 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.html [ Failure Pass ]
+webkit.org/b/209533 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker.html [ Failure Pass ]
 webkit.org/b/209533 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2725,6 +2731,8 @@ webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-e
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-upgradeneeded-event-exception.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idb-explicit-commit.any.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-invalid.htm [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance.htm [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbindex-query-exception-order.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbindex-rename-errors.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/idbindex-request-source.html [ Failure Pass ]
@@ -2739,6 +2747,9 @@ webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/key-generators/rea
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes.any.serviceworker.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes.any.worker.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-store-cursors.any.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-store.any.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-store.any.serviceworker.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-store.any.worker.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/keygenerator-explicit.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any.worker.html [ Failure Pass ]
@@ -2777,6 +2788,7 @@ webkit.org/b/208326 imported/w3c/web-platform-tests/html/browsers/windows/norefe
 
 webkit.org/b/208327 http/wpt/service-workers/postMessage-fetch-order.https.html [ Failure Pass ]
 webkit.org/b/208327 http/wpt/service-workers/ready.https.window.html [ Failure Pass ]
+webkit.org/b/208327 http/wpt/service-workers/navigation-redirect-main-frame.https.html [ Timeout Pass ]
 
 webkit.org/b/208368 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html [ Failure Pass ]
 
@@ -3235,10 +3247,17 @@ webkit.org/b/209533 animations/font-variations/font-stretch.html [ Timeout Pass 
 webkit.org/b/209533 canvas/philip/tests/2d.canvas.readonly.html [ Timeout Pass ]
 webkit.org/b/209533 compositing/absolute-inside-out-of-view-fixed.html [ Timeout Pass ]
 webkit.org/b/209533 compositing/animation/animated-composited-inside-hidden.html [ Timeout Pass ]
+webkit.org/b/209533 fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Timeout Pass ]
 webkit.org/b/209533 fast/frames/exponential-frames.html [ Timeout Pass ]
+webkit.org/b/209533 fast/selectors/is-backtracking.html [ Timeout Pass ]
+webkit.org/b/209533 fast/selectors/matches-backtracking.html [ Timeout Pass ]
 webkit.org/b/209533 http/tests/appcache/top-frame-2.html [ Timeout Pass ]
 webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Timeout Pass ]
+webkit.org/b/209533 http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Timeout Pass ]
+webkit.org/b/209533 http/tests/security/video-cross-origin-caching.html [ Timeout Pass ]
 webkit.org/b/209533 http/tests/workers/service/Client-properties.html [ Timeout Pass ]
+webkit.org/b/209533 imported/w3c/web-platform-tests/IndexedDB/get-databases.any.html [ Timeout Pass ]
+webkit.org/b/209533 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continue-exception-order.htm [ Timeout Pass ]
 webkit.org/b/209533 media/video-isplayingtoautomotiveheadunit.html [ Timeout Pass ]
 
 # These entries are commented to avoid a lint error of duplicated bug entry.
