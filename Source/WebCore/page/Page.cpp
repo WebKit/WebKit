@@ -2479,10 +2479,13 @@ UserContentProvider& Page::userContentProvider()
 
 void Page::notifyToInjectUserScripts()
 {
+    m_hasBeenNotifiedToInjectUserScripts = true;
+
     for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         for (const auto& pair : m_userScriptsAwaitingNotification)
             frame->injectUserScriptImmediately(pair.first, pair.second.get());
     }
+
     m_userScriptsAwaitingNotification.clear();
 }
 

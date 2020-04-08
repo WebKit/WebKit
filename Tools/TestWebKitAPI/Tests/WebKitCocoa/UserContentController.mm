@@ -843,4 +843,15 @@ TEST(WKUserContentController, UserScriptNotification)
     [webView2 loadTestPageNamed:@"simple"];
     EXPECT_WK_STREQ([delegate waitForAlert], "waited for notification");
     EXPECT_WK_STREQ([delegate waitForAlert], "document parsing ended");
+
+    TestWKWebView *webView3 = [[TestWKWebView new] autorelease];
+    EXPECT_TRUE(webView3._deferrableUserScriptsNeedNotification);
+    [webView3.configuration.userContentController addUserScript:waitsForNotification];
+    [webView3.configuration.userContentController addUserScript:documentEnd];
+    webView3.UIDelegate = delegate;
+    [webView3 loadTestPageNamed:@"simple"];
+    [webView3 _notifyUserScripts];
+    EXPECT_FALSE(webView3._deferrableUserScriptsNeedNotification);
+    EXPECT_WK_STREQ([delegate waitForAlert], "waited for notification");
+    EXPECT_WK_STREQ([delegate waitForAlert], "document parsing ended");
 }
