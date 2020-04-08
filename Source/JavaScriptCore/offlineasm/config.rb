@@ -89,6 +89,10 @@ def shouldEnableDebugAnnotations()
                 end
             end
         end
+    elsif ENV["CMAKE_CXX_COMPILER_ID"] == 'GNU' and
+         ENV["GCC_OFFLINEASM_SOURCE_MAP"] == 'ON'
+      # All GCC versions that can build JSC support debug annotations
+      return true
     end
 
     false

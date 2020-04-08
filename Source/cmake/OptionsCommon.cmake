@@ -112,6 +112,15 @@ if (DEBUG_FISSION)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gdb-index")
 endif ()
 
+set(GCC_OFFLINEASM_SOURCE_MAP_DEFAULT OFF)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    set(GCC_OFFLINEASM_SOURCE_MAP_DEFAULT ON)
+endif ()
+
+option(GCC_OFFLINEASM_SOURCE_MAP
+  "Produce debug line information for offlineasm-generated code"
+  ${GCC_OFFLINEASM_SOURCE_MAP_DEFAULT})
+
 # Enable the usage of OpenMP.
 #  - At this moment, OpenMP is only used as an alternative implementation
 #    to native threads for the parallelization of the SVG filters.
