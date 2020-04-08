@@ -1,3 +1,38 @@
+2020-04-08  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r253346): some Automation commands targeted at an iframe do not return
+        https://bugs.webkit.org/show_bug.cgi?id=210139
+        <rdar://problem/60561009>
+
+        Reviewed by Devin Rousso.
+
+        WebAutomationSession / WebAutomationSessionProxy are singletons, and only one
+        exists at a time in the UIProcess / WebProcess respectively. A recent change was
+        made to call Connection::sendWithAsyncReply from the WebPageProxy object rather
+        than WebProcess. The effect of this is that the WebPage's destinationID is
+        used for the response message rather than the WebProcess.
+
+        Because WebAutomationSessionProxy registers itself as a global IPC message receiver,
+        the page-targeted destinationID cannot find any receivers for the message at the
+        destinationID, which causes an ASSERT in debug builds and a hang in non-debug builds.
+
+        The fix is to continue sending messages via the WebProcess object, whose messages
+        are tagged with a destinationID of 0 (eg, global message receiver). This could alternatively
+        be accomplished by passing a destinationID of 0 to every sendWithAsyncReply, but
+        as is this change is a straightforward partial revert of r253346.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        (WebKit::WebAutomationSession::evaluateJavaScriptFunction):
+        (WebKit::WebAutomationSession::resolveChildFrameHandle):
+        (WebKit::WebAutomationSession::resolveParentFrameHandle):
+        (WebKit::WebAutomationSession::computeElementLayout):
+        (WebKit::WebAutomationSession::selectOptionElement):
+        (WebKit::WebAutomationSession::setFilesForInputFileUpload):
+        (WebKit::WebAutomationSession::getAllCookies):
+        (WebKit::WebAutomationSession::deleteSingleCookie):
+        (WebKit::WebAutomationSession::takeScreenshot):
+
 2020-04-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r259708.
