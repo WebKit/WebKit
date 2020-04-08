@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -246,8 +246,18 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
         paintInfo.context().translate(widgetPaintOffset);
         paintRect.move(-widgetPaintOffset);
     }
+
+    if (paintInfo.eventRegionContext) {
+        AffineTransform transform;
+        transform.translate(contentPaintOffset);
+        paintInfo.eventRegionContext->pushTransform(transform);
+    }
+
     // FIXME: Remove repaintrect enclosing/integral snapping when RenderWidget becomes device pixel snapped.
-    m_widget->paint(paintInfo.context(), snappedIntRect(paintRect), paintInfo.requireSecurityOriginAccessForWidgets ? Widget::SecurityOriginPaintPolicy::AccessibleOriginOnly : Widget::SecurityOriginPaintPolicy::AnyOrigin);
+    m_widget->paint(paintInfo.context(), snappedIntRect(paintRect), paintInfo.requireSecurityOriginAccessForWidgets ? Widget::SecurityOriginPaintPolicy::AccessibleOriginOnly : Widget::SecurityOriginPaintPolicy::AnyOrigin, paintInfo.eventRegionContext);
+
+    if (paintInfo.eventRegionContext)
+        paintInfo.eventRegionContext->popTransform();
 
     if (!widgetPaintOffset.isZero())
         paintInfo.context().translate(-widgetPaintOffset);
@@ -282,7 +292,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if ((paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) && hasOutline())
         paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, size()));
 
-    if (paintInfo.phase != PaintPhase::Foreground)
+    if (paintInfo.phase != PaintPhase::Foreground && (paintInfo.phase != PaintPhase::EventRegion || view().needsLayout()))
         return;
 
     if (style().hasBorderRadius()) {
@@ -303,6 +313,9 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     if (style().hasBorderRadius())
         paintInfo.context().restore();
+
+    if (paintInfo.phase == PaintPhase::EventRegion)
+        return;
 
     // Paint a partially transparent wash over selected widgets.
     if (isSelected() && !document().printing()) {

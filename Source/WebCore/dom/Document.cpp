@@ -4234,6 +4234,19 @@ void Document::elementInActiveChainDidDetach(Element& element)
         m_activeElement = m_activeElement->parentElement();
 }
 
+void Document::invalidateEventRegionsForFrame(HTMLFrameOwnerElement& element)
+{
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return;
+    if (auto* layer = renderer->enclosingLayer()) {
+        if (layer->invalidateEventRegion(RenderLayer::EventRegionInvalidationReason::NonCompositedFrame))
+            return;
+    }
+    if (auto* ownerElement = this->ownerElement())
+        ownerElement->document().invalidateEventRegionsForFrame(*ownerElement);
+}
+
 void Document::invalidateRenderingDependentRegions()
 {
 #if PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)

@@ -140,7 +140,7 @@ void Scrollbar::updateThumbProportion()
     updateThumb();
 }
 
-void Scrollbar::paint(GraphicsContext& context, const IntRect& damageRect, Widget::SecurityOriginPaintPolicy)
+void Scrollbar::paint(GraphicsContext& context, const IntRect& damageRect, Widget::SecurityOriginPaintPolicy, EventRegionContext*)
 {
     if (context.invalidatingControlTints() && theme().supportsControlTints()) {
         invalidate();

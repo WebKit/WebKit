@@ -68,6 +68,12 @@ public:
 
     FrameView& frameView() const { return m_frameView; }
 
+    bool needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly() const { return m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly; };
+    void setNeedsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly(bool value = true) { m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly = value; }
+
+    bool needsEventRegionUpdateForNonCompositedFrame() const { return m_needsEventRegionUpdateForNonCompositedFrame; }
+    void setNeedsEventRegionUpdateForNonCompositedFrame(bool value = true) { m_needsEventRegionUpdateForNonCompositedFrame = value; }
+
     Optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const override;
     void repaintRootContents();
     void repaintViewRectangle(const LayoutRect&) const;
@@ -255,6 +261,8 @@ private:
     bool m_hasSoftwareFilters { false };
     bool m_usesFirstLineRules { false };
     bool m_usesFirstLetterRules { false };
+    bool m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly { false };
+    bool m_needsEventRegionUpdateForNonCompositedFrame { false };
 
     HashMap<RenderElement*, Vector<CachedImage*>> m_renderersWithPausedImageAnimation;
     HashSet<RenderElement*> m_visibleInViewportRenderers;

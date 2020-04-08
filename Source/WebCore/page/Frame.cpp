@@ -305,6 +305,20 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     m_documentIsBeingReplaced = false;
 }
 
+void Frame::invalidateContentEventRegionsIfNeeded()
+{
+    if (!m_page || !m_doc || !m_doc->renderView())
+        return;
+#if PLATFORM(IOS)
+    if (!m_doc->mayHaveElementsWithNonAutoTouchAction())
+        return;
+#endif
+    if (!m_doc->renderView()->compositor().viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint())
+        return;
+    if (m_ownerElement)
+        m_ownerElement->document().invalidateEventRegionsForFrame(*m_ownerElement);
+}
+
 #if ENABLE(ORIENTATION_EVENTS)
 void Frame::orientationChanged()
 {

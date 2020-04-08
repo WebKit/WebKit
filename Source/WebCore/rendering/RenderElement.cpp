@@ -745,7 +745,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         if (needsInvalidateEventRegion()) {
             // Usually the event region gets updated as a result of paint invalidation. Here we need to request an update explicitly.
             if (auto* layer = enclosingLayer())
-                layer->invalidateEventRegion();
+                layer->invalidateEventRegion(RenderLayer::EventRegionInvalidationReason::Style);
         }
 
         if (m_parent && (newStyle.outlineSize() < m_style.outlineSize() || shouldRepaintForStyleDifference(diff)))

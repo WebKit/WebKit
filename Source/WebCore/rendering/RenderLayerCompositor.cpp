@@ -858,6 +858,11 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     InspectorInstrumentation::layerTreeDidChange(&page());
 
+    if (m_renderView.needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly()) {
+        m_renderView.repaintRootContents();
+        m_renderView.setNeedsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly(false);
+    }
+
     return true;
 }
 
@@ -3724,6 +3729,14 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
 }
 
 #endif
+
+bool RenderLayerCompositor::viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint() const
+{
+    // Event regions are only updated on compositing layers. Non-composited layers must
+    // delegate to their enclosing compositing layer for repaint to update the event region
+    // for elements inside them.
+    return !m_renderView.isComposited();
+}
 
 bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor) const
 {

@@ -1,3 +1,17 @@
+2020-04-08  Daniel Bates  <dabates@apple.com>
+
+        Should find touch-action elements inside non-composited iframes
+        https://bugs.webkit.org/show_bug.cgi?id=210041
+        <rdar://problem/61323558>
+
+        Reviewed by Simon Fraser.
+
+        Pass EventRegionContext through. It is unused as it's not applicable for plugin painting.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint):
+        * WebProcess/Plugins/PluginView.h:
+
 2020-04-08  Brady Eidson  <beidson@apple.com>
 
         Fix handling non-linearized PDFs when incremental PDF loading is enabled.

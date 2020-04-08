@@ -1618,11 +1618,12 @@ void RenderLayerBacking::updateEventRegion()
     if (paintsIntoCompositedAncestor())
         return;
 
+    bool needsEventRegionUpdateForNonCompositedFrame = renderer().view().needsEventRegionUpdateForNonCompositedFrame();
     bool hasTouchActionElements = false;
 #if PLATFORM(IOS_FAMILY)
     hasTouchActionElements = renderer().document().mayHaveElementsWithNonAutoTouchAction();
 #endif
-    if (!hasTouchActionElements) {
+    if (!hasTouchActionElements && !needsEventRegionUpdateForNonCompositedFrame) {
         if (m_owningLayer.isRenderViewLayer())
             return;
 
@@ -1666,6 +1667,9 @@ void RenderLayerBacking::updateEventRegion()
 
     if (m_scrolledContentsLayer)
         updateEventRegionForLayer(*m_scrolledContentsLayer);
+
+    if (needsEventRegionUpdateForNonCompositedFrame)
+        renderer().view().setNeedsEventRegionUpdateForNonCompositedFrame(false);
 }
 #endif
 
@@ -2781,7 +2785,7 @@ void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer
     if (!m_owningLayer.isRenderViewLayer())
         m_owningLayer.setNeedsCompositingConfigurationUpdate();
 
-    m_owningLayer.invalidateEventRegion();
+    m_owningLayer.invalidateEventRegion(RenderLayer::EventRegionInvalidationReason::Paint);
 
     auto& frameView = renderer().view().frameView();
     if (m_isMainFrameRenderViewLayer && frameView.isTrackingRepaints())
@@ -2821,7 +2825,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
     if (!m_owningLayer.isRenderViewLayer())
         m_owningLayer.setNeedsCompositingConfigurationUpdate();
 
-    m_owningLayer.invalidateEventRegion();
+    m_owningLayer.invalidateEventRegion(RenderLayer::EventRegionInvalidationReason::Paint);
 
     FloatRect pixelSnappedRectForPainting = snapRectToDevicePixels(r, deviceScaleFactor());
     auto& frameView = renderer().view().frameView();

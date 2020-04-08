@@ -68,7 +68,7 @@ private:
     void setParent(ScrollView*) override;
     void setEnabled(bool) override;
 
-    void paint(GraphicsContext&, const IntRect& damageRect, Widget::SecurityOriginPaintPolicy) override;
+    void paint(GraphicsContext&, const IntRect& damageRect, Widget::SecurityOriginPaintPolicy, EventRegionContext*) override;
 
     void setHoveredPart(ScrollbarPart) override;
     void setPressedPart(ScrollbarPart) override;

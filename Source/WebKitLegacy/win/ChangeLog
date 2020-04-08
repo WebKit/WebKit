@@ -1,3 +1,17 @@
+2020-04-08  Daniel Bates  <dabates@apple.com>
+
+        Should find touch-action elements inside non-composited iframes
+        https://bugs.webkit.org/show_bug.cgi?id=210041
+        <rdar://problem/61323558>
+
+        Reviewed by Simon Fraser.
+
+        Pass EventRegionContext through. It is unused as it's not applicable for plugin painting.
+
+        * Plugins/PluginView.h:
+        * Plugins/PluginViewWin.cpp:
+        (WebCore::PluginView::paint):
+
 2020-04-03  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to make WKUserScripts wait for a notification

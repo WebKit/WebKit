@@ -186,7 +186,7 @@ NSView *Widget::getOuterView() const
     return view;
 }
 
-void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPolicy)
+void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPolicy, EventRegionContext*)
 {
     if (p.paintingDisabled())
         return;

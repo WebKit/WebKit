@@ -305,6 +305,8 @@ public:
     void didPrewarmLocalStorage();
     bool mayPrewarmLocalStorage() const;
 
+    void invalidateContentEventRegionsIfNeeded();
+
 // ========
 
     void selfOnlyRef();

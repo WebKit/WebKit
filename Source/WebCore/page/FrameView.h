@@ -57,6 +57,7 @@ namespace WebCore {
 
 class AXObjectCache;
 class Element;
+class EventRegionContext;
 class FloatSize;
 class Frame;
 class HTMLFrameOwnerElement;
@@ -351,7 +352,7 @@ public:
     void addEmbeddedObjectToUpdate(RenderEmbeddedObject&);
     void removeEmbeddedObjectToUpdate(RenderEmbeddedObject&);
 
-    WEBCORE_EXPORT void paintContents(GraphicsContext&, const IntRect& dirtyRect, SecurityOriginPaintPolicy = SecurityOriginPaintPolicy::AnyOrigin) final;
+    WEBCORE_EXPORT void paintContents(GraphicsContext&, const IntRect& dirtyRect, SecurityOriginPaintPolicy = SecurityOriginPaintPolicy::AnyOrigin, EventRegionContext* = nullptr) final;
 
     struct PaintingState {
         OptionSet<PaintBehavior> paintBehavior;

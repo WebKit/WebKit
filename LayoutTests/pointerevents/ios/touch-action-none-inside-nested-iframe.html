@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe id="testFrame" src="resources/touch-action-none-inside-iframe.html"></iframe>
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function dumpRegion()
+{
+    if (window.internals)
+        results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>

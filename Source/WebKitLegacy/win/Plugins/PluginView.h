@@ -181,7 +181,7 @@ namespace WebCore {
         void setFocus(bool) override;
         void show() override;
         void hide() override;
-        void paint(GraphicsContext&, const IntRect&, Widget::SecurityOriginPaintPolicy) override;
+        void paint(GraphicsContext&, const IntRect&, Widget::SecurityOriginPaintPolicy, EventRegionContext*) override;
         void clipRectChanged() override;
 
         // This method is used by plugins on all platforms to obtain a clip rect that includes clips set by WebCore,

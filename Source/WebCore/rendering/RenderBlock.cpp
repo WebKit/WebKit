@@ -1255,8 +1255,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             paintInfo.eventRegionContext->unite(borderRegion, style());
         }
 
-        // No need to check descendants if we don't have overflow and don't contain floats and the area is already covered.
-        bool needsTraverseDescendants = hasVisualOverflow() || containsFloats() || !paintInfo.eventRegionContext->contains(enclosingIntRect(borderRect));
+        bool needsTraverseDescendants = hasVisualOverflow() || containsFloats() || !paintInfo.eventRegionContext->contains(enclosingIntRect(borderRect)) || view().needsEventRegionUpdateForNonCompositedFrame();
 #if PLATFORM(IOS_FAMILY)
         needsTraverseDescendants = needsTraverseDescendants || document().mayHaveElementsWithNonAutoTouchAction();
 #endif

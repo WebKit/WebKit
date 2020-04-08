@@ -695,7 +695,7 @@ public:
     // front.  The hitTest method looks for mouse events by walking
     // layers that intersect the point from front to back.
     void paint(GraphicsContext&, const LayoutRect& damageRect, const LayoutSize& subpixelOffset = LayoutSize(), OptionSet<PaintBehavior> = PaintBehavior::Normal,
-        RenderObject* subtreePaintRoot = nullptr, OptionSet<PaintLayerFlag> = { }, SecurityOriginPaintPolicy = SecurityOriginPaintPolicy::AnyOrigin);
+        RenderObject* subtreePaintRoot = nullptr, OptionSet<PaintLayerFlag> = { }, SecurityOriginPaintPolicy = SecurityOriginPaintPolicy::AnyOrigin, EventRegionContext* = nullptr);
     bool hitTest(const HitTestRequest&, HitTestResult&);
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
     void paintOverlayScrollbars(GraphicsContext&, const LayoutRect& damageRect, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot = nullptr);
@@ -924,7 +924,10 @@ public:
 
     WEBCORE_EXPORT bool isTransparentRespectingParentFrames() const;
 
-    void invalidateEventRegion();
+    // Invalidation can fail if there is no enclosing compositing layer (e.g. nested iframe)
+    // or the layer does not maintain an event region.
+    enum class EventRegionInvalidationReason { Paint, Style, NonCompositedFrame };
+    bool invalidateEventRegion(EventRegionInvalidationReason);
 
     String debugDescription() const final;
 

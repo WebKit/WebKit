@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe id="testFrame" srcdoc="<div style='touch-action: none; width: 100px; height: 100px; border:1px solid black'></div>" onload="runTest()"></iframe>
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    if (window.internals)
+        results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

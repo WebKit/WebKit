@@ -70,7 +70,7 @@ void Widget::setCursor(const Cursor& cursor)
     view->hostWindow()->setCursor(cursor);
 }
 
-void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy)
+void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, EventRegionContext*)
 {
 }
 

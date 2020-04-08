@@ -530,7 +530,7 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext& context, const 
 #endif
 }
 
-void PluginView::paint(GraphicsContext& context, const IntRect& rect, Widget::SecurityOriginPaintPolicy)
+void PluginView::paint(GraphicsContext& context, const IntRect& rect, Widget::SecurityOriginPaintPolicy, EventRegionContext*)
 {
     if (!m_isStarted) {
         // Draw the "missing plugin" image

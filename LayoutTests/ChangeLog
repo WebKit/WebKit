@@ -1,3 +1,21 @@
+2020-04-08  Daniel Bates  <dabates@apple.com>
+
+        Should find touch-action elements inside non-composited iframes
+        https://bugs.webkit.org/show_bug.cgi?id=210041
+        <rdar://problem/61323558>
+
+        Reviewed by Simon Fraser.
+
+        Add more tests.
+
+        * pointerevents/ios/programmatic-touch-action-none-inside-iframe-expected.txt: Added.
+        * pointerevents/ios/programmatic-touch-action-none-inside-iframe.html: Added.
+        * pointerevents/ios/resources/touch-action-none-inside-iframe.html: Added.
+        * pointerevents/ios/touch-action-none-inside-iframe-expected.txt: Added.
+        * pointerevents/ios/touch-action-none-inside-iframe.html: Added.
+        * pointerevents/ios/touch-action-none-inside-nested-iframe-expected.txt: Added.
+        * pointerevents/ios/touch-action-none-inside-nested-iframe.html: Added.
+
 2020-04-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip http/tests/notifications/event-listener-crash.html

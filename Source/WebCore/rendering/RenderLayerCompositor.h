@@ -358,6 +358,8 @@ public:
 
     bool viewHasTransparentBackground(Color* backgroundColor = nullptr) const;
 
+    bool viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint() const;
+
     bool hasNonMainLayersWithTiledBacking() const { return m_layersWithTiledBackingCount; }
 
     OptionSet<CompositingReason> reasonsForCompositing(const RenderLayer&) const;

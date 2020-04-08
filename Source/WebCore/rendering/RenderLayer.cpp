@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
@@ -4203,11 +4203,15 @@ bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularit
     return ScrollableArea::scroll(direction, granularity, multiplier);
 }
 
-void RenderLayer::paint(GraphicsContext& context, const LayoutRect& damageRect, const LayoutSize& subpixelOffset, OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRoot, OptionSet<PaintLayerFlag> paintFlags, SecurityOriginPaintPolicy paintPolicy)
+void RenderLayer::paint(GraphicsContext& context, const LayoutRect& damageRect, const LayoutSize& subpixelOffset, OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRoot, OptionSet<PaintLayerFlag> paintFlags, SecurityOriginPaintPolicy paintPolicy, EventRegionContext* eventRegionContext)
 {
     OverlapTestRequestMap overlapTestRequests;
 
     LayerPaintingInfo paintingInfo(this, enclosingIntRect(damageRect), paintBehavior, subpixelOffset, subtreePaintRoot, &overlapTestRequests, paintPolicy == SecurityOriginPaintPolicy::AccessibleOriginOnly);
+    if (eventRegionContext) {
+        paintingInfo.eventRegionContext = eventRegionContext;
+        paintFlags.add(RenderLayer::PaintLayerCollectingEventRegion);
+    }
     paintLayer(context, paintingInfo, paintFlags);
 
     for (auto& widget : overlapTestRequests.keys())
@@ -7001,12 +7005,13 @@ bool RenderLayer::isTransparentRespectingParentFrames() const
     return false;
 }
 
-void RenderLayer::invalidateEventRegion()
+bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
 {
+    // FIXME: This should not be conditioned on PLATFORM(IOS_FAMILY). See <https://webkit.org/b/210216>.
 #if PLATFORM(IOS_FAMILY)
     auto* compositingLayer = enclosingCompositingLayerForRepaint();
     if (!compositingLayer)
-        return;
+        return false;
 
     auto maintainsEventRegion = [&] {
         // UI side scroll overlap testing.
@@ -7018,10 +7023,22 @@ void RenderLayer::invalidateEventRegion()
         return false;
     };
 
-    if (!maintainsEventRegion())
-        return;
+    if (reason != EventRegionInvalidationReason::NonCompositedFrame && !maintainsEventRegion())
+        return false;
 
     compositingLayer->setNeedsCompositingConfigurationUpdate();
+
+    if (reason == EventRegionInvalidationReason::NonCompositedFrame) {
+        auto& view = renderer().view();
+        view.setNeedsEventRegionUpdateForNonCompositedFrame();
+        if (renderer().settings().visibleDebugOverlayRegions() & NonFastScrollableRegion)
+            view.setNeedsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly();
+        view.compositor().scheduleCompositingLayerUpdate();
+    }
+    return true;
+#else
+    UNUSED_PARAM(reason);
+    return false;
 #endif
 }
 
