@@ -1,3 +1,16 @@
+2020-04-08  Sihui Liu  <sihui_liu@apple.com>
+
+        [macOS] TestWebKitAPI.WKHTTPCookieStore.WithoutProcessPoolDuplicates is failing
+        https://bugs.webkit.org/show_bug.cgi?id=209992
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure existing cookies are cleared before test. Otherwise, they will affect test result.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (clearCookies):
+        (TEST):
+
 2020-04-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Return app-bound sessions for instances where WKAppBoundDomains is
