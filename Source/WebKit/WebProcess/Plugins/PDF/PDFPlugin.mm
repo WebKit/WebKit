@@ -90,6 +90,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/HexNumber.h>
+#import <wtf/Scope.h>
 #import <wtf/UUID.h>
 #import <wtf/WTFSemaphore.h>
 #import <wtf/WorkQueue.h>
@@ -135,6 +136,11 @@ static const char* annotationStyle =
 // In non-continuous modes, a single scroll event with a magnitude of >= 20px
 // will jump to the next or previous page, to match PDFKit behavior.
 static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
+
+// <rdar://problem/61473378> - PDFKit asks for a "way too large" range when the PDF it is loading
+// incrementally turns out to be non-linearized.
+// We'll assume any size over 4gb is PDFKit noticing non-linearized data.
+static const uint32_t nonLinearizedPDFSentinel = std::numeric_limits<uint32_t>::max();
 
 @interface WKPDFPluginAccessibilityObject : NSObject {
     PDFLayerController *_pdfLayerController;
@@ -693,22 +699,68 @@ void PDFPlugin::verboseLog()
 }
 #endif // !LOG_DISABLED
 
-static size_t dataProviderGetBytesAtPositionCallback(void* info, void* buffer, off_t position, size_t count)
+void PDFPlugin::receivedNonLinearizedPDFSentinel()
 {
-    if (isMainThread()) {
+    m_incrementalPDFLoadingEnabled = false;
+
+    if (!isMainThread()) {
 #if !LOG_DISABLED
-        ((PDFPlugin*)info)->pdfLog(makeString("Handling request for ", count, " bytes at position ", position, " synchronously on the main thread"));
+        pdfLog("Disabling incremental PDF loading on background thread");
 #endif
-        return ((PDFPlugin*)info)->getResourceBytesAtPositionMainThread(buffer, position, count);
+        callOnMainThread([this, protectedThis = makeRef(*this)] {
+            receivedNonLinearizedPDFSentinel();
+        });
+        return;
     }
 
 #if !LOG_DISABLED
-    Ref<PDFPlugin> debugPluginRef = *((PDFPlugin*)info);
+    pdfLog(makeString("Cancelling all ", m_streamLoaderMap.size(), " range request loaders"));
+#endif
+
+    for (auto iterator = m_streamLoaderMap.begin(); iterator != m_streamLoaderMap.end(); iterator = m_streamLoaderMap.begin()) {
+        m_outstandingByteRangeRequests.remove(iterator->value);
+        cancelAndForgetLoader(*iterator->key);
+    }
+
+    if (!m_documentFinishedLoading || m_pdfDocument)
+        return;
+
+    m_pdfDocument = adoptNS([[pdfDocumentClass() alloc] initWithData:rawData()]);
+    installPDFDocument();
+    tryRunScriptsInPDFDocument();
+}
+
+static size_t dataProviderGetBytesAtPositionCallback(void* info, void* buffer, off_t position, size_t count)
+{
+    Ref<PDFPlugin> plugin = *((PDFPlugin*)info);
+
+    if (isMainThread()) {
+#if !LOG_DISABLED
+        plugin->pdfLog(makeString("Handling request for ", count, " bytes at position ", position, " synchronously on the main thread"));
+#endif
+        return plugin->getResourceBytesAtPositionMainThread(buffer, position, count);
+    }
+
+    // It's possible we previously encountered an invalid range and therefore disabled incremental loading,
+    // but PDFDocument is still trying to read data using a different strategy.
+    // Always ignore such requests.
+    if (!plugin->incrementalPDFLoadingEnabled())
+        return 0;
+
+#if !LOG_DISABLED
+    auto debugPluginRef = plugin.copyRef();
     debugPluginRef->incrementThreadsWaitingOnCallback();
     debugPluginRef->pdfLog(makeString("PDF data provider requesting ", count, " bytes at position ", position));
 #endif
 
-    Ref<PDFPlugin> plugin = *((PDFPlugin*)info);
+    if (position > nonLinearizedPDFSentinel) {
+#if !LOG_DISABLED
+        plugin->pdfLog(makeString("Received invalid range request for ", count, " bytes at position ", position, ". PDF is probably not linearized. Falling back to non-incremental loading."));
+#endif
+        plugin->receivedNonLinearizedPDFSentinel();
+        return 0;
+    }
+
     WTF::Semaphore dataSemaphore { 0 };
     size_t bytesProvided = 0;
 
@@ -802,6 +854,12 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
         dataProviderReleaseInfoCallback,
     };
 
+    auto scopeExit = makeScopeExit([protectedPlugin = WTFMove(protectedPlugin)] () mutable {
+        // Keep the PDFPlugin alive until the end of this function and the end
+        // of the last main thread task submitted by this function.
+        callOnMainThread([protectedPlugin = WTFMove(protectedPlugin)] { });
+    });
+
     // Balanced by a deref inside of the dataProviderReleaseInfoCallback
     ref();
 
@@ -809,13 +867,22 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
     CGDataProviderSetProperty(dataProvider.get(), kCGDataProviderHasHighLatency, kCFBooleanTrue);
     m_backgroundThreadDocument = adoptNS([[pdfDocumentClass() alloc] initWithProvider:dataProvider.get()]);
 
+    if (!m_incrementalPDFLoadingEnabled) {
+        m_backgroundThreadDocument = nil;
+        return;
+    }
+
     WTF::Semaphore firstPageSemaphore { 0 };
     auto firstPageQueue = WorkQueue::create("PDF first page work queue");
 
     [m_backgroundThreadDocument preloadDataOfPagesInRange:NSMakeRange(0, 1) onQueue:firstPageQueue->dispatchQueue() completion:[&firstPageSemaphore, this] (NSIndexSet *) mutable {
-        callOnMainThread([this] {
-            adoptBackgroundThreadDocument();
-        });
+        if (m_incrementalPDFLoadingEnabled) {
+            callOnMainThread([this] {
+                adoptBackgroundThreadDocument();
+            });
+        } else
+            m_backgroundThreadDocument = nil;
+
         firstPageSemaphore.signal();
     }];
 
@@ -824,10 +891,6 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
 #if !LOG_DISABLED
     pdfLog("Finished preloading first page");
 #endif
-
-    // The main thread dispatch below removes the last reference to the PDF thread.
-    // It must be the last code executed in this function.
-    callOnMainThread([protectedPlugin = WTFMove(protectedPlugin)] { });
 }
 
 void PDFPlugin::unconditionalCompleteOutstandingRangeRequests()
@@ -1469,6 +1532,7 @@ void PDFPlugin::installPDFDocument()
 {
     ASSERT(m_pdfDocument);
     ASSERT(isMainThread());
+    LOG(IncrementalPDF, "Installing PDF document");
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     maybeClearHighLatencyDataProviderFlag();

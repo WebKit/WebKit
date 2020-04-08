@@ -135,6 +135,8 @@ public:
 #if HAVE(INCREMENTAL_PDF_APIS)
     void getResourceBytesAtPosition(size_t count, off_t position, CompletionHandler<void(const uint8_t*, size_t count)>&&);
     size_t getResourceBytesAtPositionMainThread(void* buffer, off_t position, size_t count);
+    void receivedNonLinearizedPDFSentinel();
+    bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
 #ifndef NDEBUG
     void pdfLog(const String& event);
     size_t incrementThreadsWaitingOnCallback() { return ++m_threadsWaitingOnCallback; }

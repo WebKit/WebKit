@@ -1,3 +1,24 @@
+2020-04-08  Brady Eidson  <beidson@apple.com>
+
+        Fix handling non-linearized PDFs when incremental PDF loading is enabled.
+        <rdar://problem/60619506> and https://bugs.webkit.org/show_bug.cgi?id=210208
+
+        Reviewed by Tim Horton (and I think Geoff Garen, probably. It's confusing.)
+
+        When we try to load a non-linearized PDF with PDFKit, it makes an outlandishly large range request
+        to try to verify the PDF file size.
+        
+        That's covered by <rdar://problem/61473378>
+        
+        Meanwhile we need to detect that and fallback to non-incremental PDF loading.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::receivedInvalidRangeRequest):
+        (WebKit::dataProviderGetBytesAtPositionCallback):
+        (WebKit::PDFPlugin::threadEntry):
+        (WebKit::PDFPlugin::installPDFDocument):
+
 2020-04-08  Per Arne Vollan  <pvollan@apple.com>
 
         Allow use of syscall from the WebContent sandbox
