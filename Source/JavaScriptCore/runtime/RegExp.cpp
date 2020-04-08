@@ -286,9 +286,9 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
     }
 }
 
-int RegExp::match(VM& vm, const String& s, unsigned startOffset, Vector<int>& ovector)
+int RegExp::match(JSGlobalObject* globalObject, const String& s, unsigned startOffset, Vector<int>& ovector)
 {
-    return matchInline(vm, s, startOffset, ovector);
+    return matchInline(globalObject, globalObject->vm(), s, startOffset, ovector);
 }
 
 bool RegExp::matchConcurrently(
@@ -299,7 +299,7 @@ bool RegExp::matchConcurrently(
     if (!hasCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
 
-    position = matchInline<Vector<int>&, Yarr::MatchFrom::CompilerThread>(vm, s, startOffset, ovector);
+    position = matchInline<Vector<int>&, Yarr::MatchFrom::CompilerThread>(nullptr, vm, s, startOffset, ovector);
     if (m_state == ParseError)
         return false;
     return true;
@@ -350,9 +350,9 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
     }
 }
 
-MatchResult RegExp::match(VM& vm, const String& s, unsigned startOffset)
+MatchResult RegExp::match(JSGlobalObject* globalObject, const String& s, unsigned startOffset)
 {
-    return matchInline(vm, s, startOffset);
+    return matchInline(globalObject, globalObject->vm(), s, startOffset);
 }
 
 bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, MatchResult& result)
@@ -362,7 +362,7 @@ bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, Ma
     if (!hasMatchOnlyCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
 
-    result = matchInline<Yarr::MatchFrom::CompilerThread>(vm, s, startOffset);
+    result = matchInline<Yarr::MatchFrom::CompilerThread>(nullptr, vm, s, startOffset);
     return true;
 }
 

@@ -98,7 +98,7 @@ ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::YarrCharSize charSiz
 }
 
 template<typename VectorType, Yarr::MatchFrom matchFrom>
-ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOffset, VectorType& ovector)
+ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm, const String& s, unsigned startOffset, VectorType& ovector)
 {
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchCallCount++;
@@ -108,11 +108,12 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
     compileIfNecessary(vm, s.is8Bit() ? Yarr::Char8 : Yarr::Char16);
 
     auto throwError = [&] {
-        auto throwScope = DECLARE_THROW_SCOPE(vm);
-        // FIXME: Revisit JSGlobalObject.
-        // https://bugs.webkit.org/show_bug.cgi?id=203204
-        JSGlobalObject* globalObject = vm.topCallFrame->lexicalGlobalObject(vm);
-        throwScope.throwException(globalObject, errorToThrow(globalObject));
+        if (matchFrom == Yarr::MatchFrom::CompilerThread)
+            return -1;
+        if (nullOrGlobalObject) {
+            auto throwScope = DECLARE_THROW_SCOPE(vm);
+            throwScope.throwException(nullOrGlobalObject, errorToThrow(nullOrGlobalObject));
+        }
         if (!hasHardError(m_constructionErrorCode))
             reset();
         return -1;
@@ -141,11 +142,8 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
         if (result == Yarr::JSRegExpJITCodeFailure) {
             // JIT'ed code couldn't handle expression, so punt back to the interpreter.
             byteCodeCompileIfNecessary(&vm);
-            if (m_state == ParseError) {
-                if (matchFrom == Yarr::MatchFrom::CompilerThread)
-                    return -1;
+            if (m_state == ParseError)
                 return throwError();
-            }
             result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
         }
 
@@ -232,7 +230,7 @@ ALWAYS_INLINE void RegExp::compileIfNecessaryMatchOnly(VM& vm, Yarr::YarrCharSiz
 }
 
 template<Yarr::MatchFrom matchFrom>
-ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned startOffset)
+ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm, const String& s, unsigned startOffset)
 {
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchOnlyCallCount++;
@@ -242,11 +240,12 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
     compileIfNecessaryMatchOnly(vm, s.is8Bit() ? Yarr::Char8 : Yarr::Char16);
 
     auto throwError = [&] {
-        auto throwScope = DECLARE_THROW_SCOPE(vm);
-        // FIXME: Revisit JSGlobalObject.
-        // https://bugs.webkit.org/show_bug.cgi?id=203204
-        JSGlobalObject* globalObject = vm.topCallFrame->lexicalGlobalObject(vm);
-        throwScope.throwException(globalObject, errorToThrow(globalObject));
+        if (matchFrom == Yarr::MatchFrom::CompilerThread)
+            return MatchResult::failed();
+        if (nullOrGlobalObject) {
+            auto throwScope = DECLARE_THROW_SCOPE(vm);
+            throwScope.throwException(nullOrGlobalObject, errorToThrow(nullOrGlobalObject));
+        }
         if (!hasHardError(m_constructionErrorCode))
             reset();
         return MatchResult::failed();

@@ -188,12 +188,12 @@ int main(int argc, char** argv)
     return res;
 }
 
-static bool testOneRegExp(VM& vm, RegExp* regexp, RegExpTest* regExpTest, bool verbose, unsigned int lineNumber)
+static bool testOneRegExp(JSGlobalObject* globalObject, RegExp* regexp, RegExpTest* regExpTest, bool verbose, unsigned lineNumber)
 {
     bool result = true;
     Vector<int> outVector;
     outVector.resize(regExpTest->expectVector.size());
-    int matchResult = regexp->match(vm, regExpTest->subject, regExpTest->offset, outVector);
+    int matchResult = regexp->match(globalObject, regExpTest->subject, regExpTest->offset, outVector);
 
     if (matchResult != regExpTest->result) {
         result = false;
@@ -465,7 +465,7 @@ static bool runFromFiles(GlobalObject* globalObject, const Vector<String>& files
                 
                 if (regexp && regExpTest) {
                     ++tests;
-                    if (!testOneRegExp(vm, regexp, regExpTest, verbose, lineNumber)) {
+                    if (!testOneRegExp(globalObject, regexp, regExpTest, verbose, lineNumber)) {
                         failures++;
                         printf("Failure on line %u\n", lineNumber);
                     }

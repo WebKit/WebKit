@@ -489,7 +489,7 @@ static ALWAYS_INLINE JSString* removeUsingRegExpSearch(VM& vm, JSGlobalObject* g
     unsigned sourceLen = source.length();
 
     while (true) {
-        MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, source, startPosition);
+        MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, source, startPosition);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (!result)
             break;
@@ -560,7 +560,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
         RETURN_IF_EXCEPTION(scope, nullptr);
         while (true) {
             int* ovector;
-            MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, source, startPosition, &ovector);
+            MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, source, startPosition, &ovector);
             RETURN_IF_EXCEPTION(scope, nullptr);
             if (!result)
                 break;
@@ -620,7 +620,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
     } else {
         do {
             int* ovector;
-            MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, source, startPosition, &ovector);
+            MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, source, startPosition, &ovector);
             RETURN_IF_EXCEPTION(scope, nullptr);
             if (!result)
                 break;

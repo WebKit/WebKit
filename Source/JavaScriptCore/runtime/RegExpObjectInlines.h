@@ -106,7 +106,7 @@ inline MatchResult RegExpObject::matchInline(
 
     if (!regExp->global() && !regExp->sticky()) {
         scope.release();
-        return globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, input, 0);
+        return globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, input, 0);
     }
 
     unsigned lastIndex = getRegExpObjectLastIndexAsUnsigned(globalObject, this, input);
@@ -117,7 +117,7 @@ inline MatchResult RegExpObject::matchInline(
         return MatchResult::failed();
     }
     
-    MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, input, lastIndex);
+    MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, input, lastIndex);
     RETURN_IF_EXCEPTION(scope, { });
     scope.release();
     setLastIndex(globalObject, result.end);
@@ -145,7 +145,7 @@ JSValue collectMatches(VM& vm, JSGlobalObject* globalObject, JSString* string, c
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, s, 0);
+    MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, s, 0);
     RETURN_IF_EXCEPTION(scope, { });
     if (!result)
         return jsNull();
@@ -167,7 +167,7 @@ JSValue collectMatches(VM& vm, JSGlobalObject* globalObject, JSString* string, c
         }
         if (!length)
             end = fixEnd(end);
-        result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, s, end);
+        result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, s, end);
         if (UNLIKELY(scope.exception())) {
             hasException = true;
             return;
@@ -195,7 +195,7 @@ JSValue collectMatches(VM& vm, JSGlobalObject* globalObject, JSString* string, c
                 // will leave the cached result in the state it ought to have had just before the
                 // OOM! On the other hand, if this loop concludes that the result is small enough,
                 // then the iterate() loop below will overwrite the cached result anyway.
-                result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, s, end);
+                result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, s, end);
                 RETURN_IF_EXCEPTION(scope, { });
             } while (result);
             

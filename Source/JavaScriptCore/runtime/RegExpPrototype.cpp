@@ -486,7 +486,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSearchFast(JSGlobalObject* globalObj
     String s = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    MatchResult result = globalObject->regExpGlobalData().performMatch(vm, globalObject, regExp, string, s, 0);
+    MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, s, 0);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(result ? jsNumber(result.start) : jsNumber(-1));
 }
@@ -505,21 +505,28 @@ enum SplitControl {
 
 template<typename ControlFunc, typename PushFunc>
 void genericSplit(
-    VM& vm, RegExp* regexp, const String& input, unsigned inputSize, unsigned& position,
+    JSGlobalObject* globalObject, RegExp* regexp, const String& input, unsigned inputSize, unsigned& position,
     unsigned& matchPosition, bool regExpIsSticky, bool regExpIsUnicode,
     const ControlFunc& control, const PushFunc& push)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     Vector<int> ovector;
         
     while (matchPosition < inputSize) {
-        if (control() == AbortSplit)
-            return;
+        {
+            auto result = control();
+            RETURN_IF_EXCEPTION(scope, void());
+            if (result == AbortSplit)
+                return;
+        }
         
         ovector.shrink(0);
         
         // a. Perform ? Set(splitter, "lastIndex", q, true).
         // b. Let z be ? RegExpExec(splitter, S).
-        int mpos = regexp->match(vm, input, matchPosition, ovector);
+        int mpos = regexp->match(globalObject, input, matchPosition, ovector);
+        RETURN_IF_EXCEPTION(scope, void());
 
         // c. If z is null, let q be AdvanceStringIndex(S, q, unicodeMatching).
         if (mpos < 0) {
@@ -555,8 +562,12 @@ void genericSplit(
         
         // 1. Let T be a String value equal to the substring of S consisting of the elements at indices p (inclusive) through q (exclusive).
         // 2. Perform ! CreateDataProperty(A, ! ToString(lengthA), T).
-        if (push(true, position, matchPosition - position) == AbortSplit)
-            return;
+        {
+            auto result = push(true, position, matchPosition - position);
+            RETURN_IF_EXCEPTION(scope, void());
+            if (result == AbortSplit)
+                return;
+        }
         
         // 5. Let p be e.
         position = matchEnd;
@@ -569,7 +580,9 @@ void genericSplit(
             // a. Let nextCapture be ? Get(z, ! ToString(i)).
             // b. Perform ! CreateDataProperty(A, ! ToString(lengthA), nextCapture).
             int sub = ovector[i * 2];
-            if (push(sub >= 0, sub, ovector[i * 2 + 1] - sub) == AbortSplit)
+            auto result = push(sub >= 0, sub, ovector[i * 2 + 1] - sub);
+            RETURN_IF_EXCEPTION(scope, void());
+            if (result == AbortSplit)
                 return;
         }
         
@@ -630,7 +643,9 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(JSGlobalObject* globalObje
         // b. If z is not null, return A.
         // c. Perform ! CreateDataProperty(A, "0", S).
         // d. Return A.
-        if (!regexp->match(vm, input, 0)) {
+        auto matchResult = regexp->match(globalObject, input, 0);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        if (!matchResult) {
             result->putDirectIndex(globalObject, 0, inputString);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
         }
@@ -646,7 +661,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(JSGlobalObject* globalObje
     unsigned maxSizeForDirectPath = 100000;
     
     genericSplit(
-        vm, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
+        globalObject, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
         [&] () -> SplitControl {
             if (resultLength >= maxSizeForDirectPath)
                 return AbortSplit;
@@ -678,7 +693,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(JSGlobalObject* globalObje
     unsigned savedMatchPosition = matchPosition;
     unsigned dryRunCount = 0;
     genericSplit(
-        vm, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
+        globalObject, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
         [&] () -> SplitControl {
             if (resultLength + dryRunCount > MAX_STORAGE_VECTOR_LENGTH)
                 return AbortSplit;
@@ -690,6 +705,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(JSGlobalObject* globalObje
                 return AbortSplit;
             return ContinueSplit;
         });
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     if (resultLength + dryRunCount > MAX_STORAGE_VECTOR_LENGTH) {
         throwOutOfMemoryError(globalObject, scope);
@@ -701,7 +717,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(JSGlobalObject* globalObje
     matchPosition = savedMatchPosition;
     
     genericSplit(
-        vm, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
+        globalObject, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
         [&] () -> SplitControl {
             return ContinueSplit;
         },

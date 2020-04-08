@@ -67,7 +67,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
         RELEASE_ASSERT(vm.heap.expectDoesGC());
 
     Vector<int, 32> subpatternResults;
-    int position = regExp->matchInline(vm, inputValue, startOffset, subpatternResults);
+    int position = regExp->matchInline(globalObject, vm, inputValue, startOffset, subpatternResults);
     if (position == -1) {
         result = MatchResult::failed();
         return nullptr;

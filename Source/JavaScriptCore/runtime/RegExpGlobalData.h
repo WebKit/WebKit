@@ -48,8 +48,8 @@ public:
     JSValue getLeftContext(JSGlobalObject*);
     JSValue getRightContext(JSGlobalObject*);
 
-    MatchResult performMatch(VM&, JSGlobalObject*, RegExp*, JSString*, const String&, int startOffset, int** ovector);
-    MatchResult performMatch(VM&, JSGlobalObject*, RegExp*, JSString*, const String&, int startOffset);
+    MatchResult performMatch(JSGlobalObject*, RegExp*, JSString*, const String&, int startOffset, int** ovector);
+    MatchResult performMatch(JSGlobalObject*, RegExp*, JSString*, const String&, int startOffset);
     void recordMatch(VM&, JSGlobalObject*, RegExp*, JSString*, const MatchResult&);
 
     static ptrdiff_t offsetOfCachedResult() { return OBJECT_OFFSETOF(RegExpGlobalData, m_cachedResult); }
