@@ -958,3 +958,6 @@ webkit.org/b/209921 [ Debug ] inspector/css/add-css-property.html [ Pass Timeout
 webkit.org/b/210079 [ Debug ] inspector/debugger/evaluateOnCallFrame-errors.html [ Pass Failure ]
 
 webkit.org/b/210134 media/track/track-css-user-override.html [ Pass Failure ]
+
+webkit.org/b/210198 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
+webkit.org/b/210198 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow ]

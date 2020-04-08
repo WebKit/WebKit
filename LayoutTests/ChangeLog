@@ -1,3 +1,12 @@
+2020-04-08  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mac wk1 Debug ] two webgl/2.0.0/conformance2/attribs/gl tests are flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=210198
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-04-08  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Flaky Test: media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html
