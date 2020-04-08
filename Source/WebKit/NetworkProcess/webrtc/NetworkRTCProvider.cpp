@@ -201,60 +201,46 @@ void NetworkRTCProvider::didReceiveNetworkRTCSocketMessage(IPC::Connection& conn
     NetworkRTCSocket(makeObjectIdentifier<LibWebRTCSocketIdentifierType>(decoder.destinationID()), *this).didReceiveMessage(connection, decoder);
 }
 
-#if PLATFORM(COCOA)
 
 void NetworkRTCProvider::createResolver(uint64_t identifier, const String& address)
 {
-    auto resolver = NetworkRTCResolver::create(identifier, [this, identifier](WebCore::DNSAddressesOrError&& result) mutable {
+    WebCore::DNSCompletionHandler completionHandler = [this, identifier](auto&& result) {
         if (!result.has_value()) {
             if (result.error() != WebCore::DNSError::Cancelled)
                 m_connection->connection().send(Messages::WebRTCResolver::ResolvedAddressError(1), identifier);
             return;
         }
 
-        auto addresses = WTF::map(result.value(), [] (auto& address) {
-            return RTCNetwork::IPAddress { rtc::IPAddress { address.getSinAddr() } };
-        });
-
-        m_connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(addresses), identifier);
-    });
-    resolver->start(address);
-    m_resolvers.add(identifier, WTFMove(resolver));
-}
-
-void NetworkRTCProvider::stopResolver(uint64_t identifier)
-{
-    if (auto resolver = m_resolvers.take(identifier))
-        resolver->stop();
-}
-
-#else
-
-void NetworkRTCProvider::createResolver(uint64_t identifier, const String& address)
-{
-    auto completionHandler = [this, identifier](WebCore::DNSAddressesOrError&& result) mutable {
-        if (!result.has_value()) {
-            if (result.error() != WebCore::DNSError::Cancelled)
-                m_connection->connection().send(Messages::WebRTCResolver::ResolvedAddressError(1), identifier);
-            return;
+        Vector<RTCNetwork::IPAddress> ipAddresses;
+        ipAddresses.reserveInitialCapacity(result.value().size());
+        for (auto& address : result.value()) {
+            if (address.isIPv4())
+                ipAddresses.uncheckedAppend(rtc::IPAddress { address.ipv4Address() });
+            else if (address.isIPv6())
+                ipAddresses.uncheckedAppend(rtc::IPAddress { address.ipv6Address() });
         }
 
-        auto addresses = WTF::map(result.value(), [] (auto& address) {
-            return RTCNetwork::IPAddress { rtc::IPAddress { address.getSinAddr() } };
-        });
-
-        m_connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(addresses), identifier);
+        m_connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
     };
 
-    WebCore::resolveDNS(address, identifier, WTFMove(completionHandler));
+#if PLATFORM(COCOA)
+    auto resolver = NetworkRTCResolver::create(identifier, WTFMove(completionHandler));
+    resolver->start(address);
+    m_resolvers.add(identifier, WTFMove(resolver));
+#else
+    WebCore::resolveDNS(address, identifier.toUInt64(), WTFMove(completionHandler));
+#endif
 }
 
 void NetworkRTCProvider::stopResolver(uint64_t identifier)
 {
-    WebCore::stopResolveDNS(identifier);
-}
-
+#if PLATFORM(COCOA)
+    if (auto resolver = m_resolvers.take(identifier))
+        resolver->stop();
+#else
+    WebCore::stopResolveDNS(identifier.toUInt64());
 #endif
+}
 
 void NetworkRTCProvider::closeListeningSockets(Function<void()>&& completionHandler)
 {

@@ -143,9 +143,16 @@ static void resolvedWithObserverCallback(SoupAddress* address, guint status, voi
     Vector<WebCore::IPAddress> addresses;
     addresses.reserveInitialCapacity(1);
     int len;
-    auto* ipAddress = reinterpret_cast<const struct sockaddr_in*>(soup_address_get_sockaddr(address, &len));
-    for (unsigned i = 0; i < sizeof(*ipAddress) / len; i++)
-        addresses.uncheckedAppend(WebCore::IPAddress(ipAddress[i]));
+    // FIXME: Support multiple addresses, IPv6 and IPv4.
+    auto* ipAddress = soup_address_get_sockaddr(address, &len);
+    if (ipAddress) {
+        if (auto address = IPAddress::fromSockAddrIn6(reinterpret_cast<const struct sockaddr_in6&>(*ipAddress)))
+            addresses.uncheckedAppend(*address);
+    }
+    if (addresses.isEmpty()) {
+        completionHandler(makeUnexpected(WebCore::DNSError::CannotResolve));
+        return;
+    }
 
     completionHandler(addresses);
 }
