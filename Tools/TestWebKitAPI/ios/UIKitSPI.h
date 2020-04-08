@@ -268,8 +268,4 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (void)_share:(id)sender;
 @end
 
-@interface UIApplication (Internal)
-+ (NSString *)displayIdentifier;
-@end
-
 #endif // PLATFORM(IOS_FAMILY)

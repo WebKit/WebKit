@@ -1,3 +1,19 @@
+2020-04-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove a workaround that allows many API tests to pass on iOS 13.2
+        https://bugs.webkit.org/show_bug.cgi?id=209709
+
+        Reviewed by Megan Gardner.
+
+        Removes a workaround added in r256297 to get API tests passing on iOS 13.2. This workaround swizzled
+        `-[NSBundle bundleIdentifier]` to return a non-null string, in order to avoid a crash introduced by
+        <rdar://problem/56301207>. This was subsequently fixed in <rdar://problem/56790195>, which has made its way
+        into iOS 13.4.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (+[WKWebView initialize]): Deleted.
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2020-04-08  Sihui Liu  <sihui_liu@apple.com>
 
         [macOS] TestWebKitAPI.WKHTTPCookieStore.WithoutProcessPoolDuplicates is failing
