@@ -512,13 +512,13 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
 SVGHitTestCycleDetectionScope::SVGHitTestCycleDetectionScope(const RenderElement& element)
 {
     m_element = makeWeakPtr(&element);
-    auto result = visitedElements().add(m_element.get());
+    auto result = visitedElements().add(*m_element);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 SVGHitTestCycleDetectionScope::~SVGHitTestCycleDetectionScope()
 {
-    bool result = visitedElements().remove(*m_element.get());
+    bool result = visitedElements().remove(*m_element);
     ASSERT_UNUSED(result, result);
 }
 
