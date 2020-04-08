@@ -1,5 +1,24 @@
 2020-04-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Uncaught Exception: undefined is not an object (evaluating 'this._target.NetworkAgent.getResponseBody')
+        https://bugs.webkit.org/show_bug.cgi?id=210168
+
+        Reviewed by Timothy Hatcher.
+
+        If a script is loaded by the main page and a `Worker`, the `WI.Script` from the `Worker`
+        will be associated with the `WI.Resource` from the main page, the call stack in the Sources
+        Tab will use the `WI.Resource` over the `WI.Script`, but the `WI.Target` for a `Worker` does
+        not have a `NetworkAgent` or `PageAgent`. As such, inside `WI.Resource`, if the `_target` is
+        a `WI.TargetType.Worker`, use the `DebuggerAgent`.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.requestContentFromBackend):
+
+        * UserInterface/Main.html:
+        Drive-by: remove unnecessary `<script>`.
+
+2020-04-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: don't reveal the prototype methods when using the "Expand All" context menu item for property-only object trees
         https://bugs.webkit.org/show_bug.cgi?id=210123
 

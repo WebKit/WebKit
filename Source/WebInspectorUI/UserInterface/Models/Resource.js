@@ -845,14 +845,22 @@ WI.Resource = class Resource extends WI.SourceCode
         if (specialContentPromise)
             return specialContentPromise;
 
-        // If we have the requestIdentifier we can get the actual response for this specific resource.
-        // Otherwise the content will be cached resource data, which might not exist anymore.
-        if (this._requestIdentifier)
-            return this._target.NetworkAgent.getResponseBody(this._requestIdentifier);
+        if (this._target.type === WI.TargetType.Worker) {
+            console.assert(this.isScript);
+            let scriptForTarget = this.scripts.find((script) => script.target === this._target);
+            console.assert(scriptForTarget);
+            if (scriptForTarget)
+                return scriptForTarget.requestContentFromBackend();
+        } else {
+            // If we have the requestIdentifier we can get the actual response for this specific resource.
+            // Otherwise the content will be cached resource data, which might not exist anymore.
+            if (this._requestIdentifier)
+                return this._target.NetworkAgent.getResponseBody(this._requestIdentifier);
 
-        // There is no request identifier or frame to request content from.
-        if (this._parentFrame)
-            return this._target.PageAgent.getResourceContent(this._parentFrame.id, this._url);
+            // There is no request identifier or frame to request content from.
+            if (this._parentFrame)
+                return this._target.PageAgent.getResourceContent(this._parentFrame.id, this._url);
+        }
 
         return Promise.reject(new Error("Content request failed."));
     }
