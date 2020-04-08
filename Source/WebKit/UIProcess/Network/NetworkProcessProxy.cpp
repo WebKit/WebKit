@@ -412,7 +412,7 @@ void NetworkProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProc
 
 void NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier processIdentifier)
 {
-    if (auto* process = WebProcessProxy::processForIdentifier(processIdentifier)) {
+    if (auto process = makeRefPtr(WebProcessProxy::processForIdentifier(processIdentifier))) {
         process->disableServiceWorkers();
         process->requestTermination(ProcessTerminationReason::ExceededCPULimit);
     }

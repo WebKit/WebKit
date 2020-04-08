@@ -1,5 +1,19 @@
 2020-04-08  Chris Dumez  <cdumez@apple.com>
 
+        Ref WebProcessProxy in NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses()
+        https://bugs.webkit.org/show_bug.cgi?id=210196
+
+        Reviewed by Youenn Fablet.
+
+        Ref WebProcessProxy in NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses()
+        since the call to WebProcessProxy::disableServiceWorkers() may cause it to get destroyed
+        otherwise.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses):
+
+2020-04-08  Chris Dumez  <cdumez@apple.com>
+
         Regression(r259610) [RBSTarget targetWithPid:] may throw a 'must specify a valid pid' exception
         https://bugs.webkit.org/show_bug.cgi?id=210159
 
