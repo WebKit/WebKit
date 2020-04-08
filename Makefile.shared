@@ -51,6 +51,7 @@ ifeq ($(findstring UseNewBuildSystem,$(ARGS)),)
 		XCODE_OPTIONS += USE_NEW_BUILD_SYSTEM=YES
 	else
 		XCODE_OPTIONS += -UseNewBuildSystem=NO
+		XCODE_OPTIONS += USE_NEW_BUILD_SYSTEM=NO
 	endif
 endif
 
