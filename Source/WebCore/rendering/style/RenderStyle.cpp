@@ -1661,7 +1661,7 @@ void RenderStyle::adjustTransitions()
     // This is an O(n^2) algorithm but the lists tend to be short, so it is probably OK.
     for (size_t i = 0; i < transitionList->size(); ++i) {
         for (size_t j = i + 1; j < transitionList->size(); ++j) {
-            if (transitionList->animation(i).property() == transitionList->animation(j).property()) {
+            if (transitionList->animation(i).property().id == transitionList->animation(j).property().id) {
                 // toss i
                 transitionList->remove(i);
                 j = i;
@@ -1691,7 +1691,7 @@ const Animation* RenderStyle::transitionForProperty(CSSPropertyID property) cons
         return nullptr;
     for (size_t i = 0, size = transitions->size(); i < size; ++i) {
         auto& animation = transitions->animation(i);
-        if (animation.animationMode() == Animation::AnimateAll || animation.property() == property)
+        if (animation.property().mode == Animation::TransitionMode::All || animation.property().id == property)
             return &animation;
     }
     return nullptr;

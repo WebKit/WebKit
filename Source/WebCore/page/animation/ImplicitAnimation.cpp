@@ -46,7 +46,7 @@ namespace WebCore {
 ImplicitAnimation::ImplicitAnimation(const Animation& transition, CSSPropertyID animatingProperty, Element& element, CompositeAnimation& compositeAnimation, const RenderStyle& fromStyle)
     : AnimationBase(transition, element, compositeAnimation)
     , m_fromStyle(RenderStyle::clonePtr(fromStyle))
-    , m_transitionProperty(transition.property())
+    , m_transitionProperty(transition.property().id)
     , m_animatingProperty(animatingProperty)
 {
 #if PLATFORM(IOS_FAMILY)

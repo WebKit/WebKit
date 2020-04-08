@@ -1,3 +1,17 @@
+2020-04-08  Antoine Quint  <graouts@apple.com>
+
+        transition-property is not computed correctly when transition-duration is set to "inherit"
+        https://bugs.webkit.org/show_bug.cgi?id=204554
+        <rdar://problem/57458091>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test that checks that setting "transition-duration" to "inherit" does not cause "transition-property" to behaves
+        as if "inherit" was implictly set as well.
+
+        * transitions/transition-property-for-element-with-transition-duration-inherit-expected.txt: Added.
+        * transitions/transition-property-for-element-with-transition-duration-inherit.html: Added.
+
 2020-04-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, flaky failures in EWS GTK-WK2

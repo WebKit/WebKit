@@ -33,7 +33,6 @@ Animation::Animation()
     , m_delay(initialDelay())
     , m_duration(initialDuration())
     , m_timingFunction(initialTimingFunction())
-    , m_mode(AnimateAll)
     , m_direction(initialDirection())
     , m_fillMode(static_cast<unsigned>(initialFillMode()))
     , m_playState(static_cast<unsigned>(initialPlayState()))
@@ -59,7 +58,6 @@ Animation::Animation(const Animation& o)
     , m_duration(o.m_duration)
     , m_timingFunction(o.m_timingFunction)
     , m_nameStyleScopeOrdinal(o.m_nameStyleScopeOrdinal)
-    , m_mode(o.m_mode)
     , m_direction(o.m_direction)
     , m_fillMode(o.m_fillMode)
     , m_playState(o.m_playState)
@@ -85,7 +83,6 @@ Animation& Animation::operator=(const Animation& o)
     m_timingFunction = o.m_timingFunction;
     m_nameStyleScopeOrdinal = o.m_nameStyleScopeOrdinal;
     m_property = o.m_property;
-    m_mode = o.m_mode;
     m_direction = o.m_direction;
     m_fillMode = o.m_fillMode;
     m_playState = o.m_playState;
@@ -130,7 +127,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
     if (!result)
         return false;
 
-    return !matchProperties || (m_mode == other.m_mode && m_property == other.m_property && m_propertySet == other.m_propertySet);
+    return !matchProperties || (m_property.mode == other.m_property.mode && m_property.id == other.m_property.id && m_propertySet == other.m_propertySet);
 }
 
 const String& Animation::initialName()
@@ -139,13 +136,13 @@ const String& Animation::initialName()
     return initialValue;
 }
 
-TextStream& operator<<(TextStream& ts, Animation::AnimationMode mode)
+TextStream& operator<<(TextStream& ts, Animation::TransitionProperty transitionProperty)
 {
-    switch (mode) {
-    case Animation::AnimateAll: ts << "all"; break;
-    case Animation::AnimateNone: ts << "none"; break;
-    case Animation::AnimateSingleProperty: ts << "single property"; break;
-    case Animation::AnimateUnknownProperty: ts << "unknown property"; break;
+    switch (transitionProperty.mode) {
+    case Animation::TransitionMode::All: ts << "all"; break;
+    case Animation::TransitionMode::None: ts << "none"; break;
+    case Animation::TransitionMode::SingleProperty: ts << getPropertyName(transitionProperty.id); break;
+    case Animation::TransitionMode::UnknownProperty: ts << "unknown property"; break;
     }
     return ts;
 }
@@ -163,14 +160,13 @@ TextStream& operator<<(TextStream& ts, Animation::AnimationDirection direction)
 
 TextStream& operator<<(TextStream& ts, const Animation& animation)
 {
-    ts.dumpProperty("property", getPropertyName(animation.property()));
+    ts.dumpProperty("property", animation.property());
     ts.dumpProperty("name", animation.name());
     ts.dumpProperty("iteration count", animation.iterationCount());
     ts.dumpProperty("delay", animation.iterationCount());
     ts.dumpProperty("duration", animation.duration());
     if (animation.timingFunction())
         ts.dumpProperty("timing function", *animation.timingFunction());
-    ts.dumpProperty("mode", animation.animationMode());
     ts.dumpProperty("direction", animation.direction());
     ts.dumpProperty("fill-mode", animation.fillMode());
     ts.dumpProperty("play-state", animation.playState());

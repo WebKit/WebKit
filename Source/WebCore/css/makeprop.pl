@@ -769,9 +769,6 @@ sub generateAnimationPropertyInitialValueSetter {
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"setter"};
   my $initial = $propertiesWithStyleBuilderOptions{$name}{"initial"};
   $setterContent .= $indent . "list.animation(0)." . $setter . "(Animation::" . $initial . "());\n";
-  if ($name eq "-webkit-transition-property") {
-    $setterContent .= $indent . "list.animation(0).setAnimationMode(Animation::AnimateAll);\n";
-  }
   $setterContent .= $indent . "for (size_t i = 1; i < list.size(); ++i)\n";
   $setterContent .= $indent . "    list.animation(i)." . getClearFunction($name) . "();\n";
 
@@ -792,7 +789,6 @@ sub generateAnimationPropertyInheritValueSetter {
   my $getter = $propertiesWithStyleBuilderOptions{$name}{"getter"};
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"setter"};
   $setterContent .= $indent . "    list.animation(i)." . $setter . "(parentList->animation(i)." . $getter . "());\n";
-  $setterContent .= $indent . "    list.animation(i).setAnimationMode(parentList->animation(i).animationMode());\n";
   $setterContent .= $indent . "}\n";
   $setterContent .= "\n";
   $setterContent .= $indent . "// Reset any remaining animations to not have the property set.\n";

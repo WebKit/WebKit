@@ -328,11 +328,11 @@ static double transitionCombinedDuration(const Animation* transition)
 
 static bool transitionMatchesProperty(const Animation& transition, CSSPropertyID property)
 {
-    auto mode = transition.animationMode();
-    if (mode == Animation::AnimateNone || mode == Animation::AnimateUnknownProperty)
+    auto mode = transition.property().mode;
+    if (mode == Animation::TransitionMode::None || mode == Animation::TransitionMode::UnknownProperty)
         return false;
-    if (mode == Animation::AnimateSingleProperty) {
-        auto transitionProperty = transition.property();
+    if (mode == Animation::TransitionMode::SingleProperty) {
+        auto transitionProperty = transition.property().id;
         if (transitionProperty != property) {
             for (auto longhand : shorthandForProperty(transitionProperty)) {
                 if (longhand == property)
@@ -355,15 +355,15 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
 
     for (size_t i = 0; i < transitions->size(); ++i) {
         const auto& animation = transitions->animation(i);
-        auto mode = animation.animationMode();
-        if (mode == Animation::AnimateSingleProperty) {
-            auto property = animation.property();
+        auto mode = animation.property().mode;
+        if (mode == Animation::TransitionMode::SingleProperty) {
+            auto property = animation.property().id;
             if (isShorthandCSSProperty(property)) {
                 for (auto longhand : shorthandForProperty(property))
                     transitionProperties.add(longhand);
             } else if (property != CSSPropertyInvalid)
                 transitionProperties.add(property);
-        } else if (mode == Animation::AnimateAll) {
+        } else if (mode == Animation::TransitionMode::All) {
             transitionPropertiesContainAll = true;
             return;
         }

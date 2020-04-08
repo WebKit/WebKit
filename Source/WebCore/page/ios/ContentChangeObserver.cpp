@@ -223,7 +223,7 @@ void ContentChangeObserver::didAddTransition(const Element& element, const Anima
         return;
     if (!transition.isDurationSet() || !transition.isPropertySet())
         return;
-    if (!isObservedPropertyForTransition(transition.property()))
+    if (!isObservedPropertyForTransition(transition.property().id))
         return;
     auto transitionEnd = Seconds { transition.duration() + std::max<double>(0, transition.isDelaySet() ? transition.delay() : 0) };
     if (transitionEnd > maximumDelayForTransitions)

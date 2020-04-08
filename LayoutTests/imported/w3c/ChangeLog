@@ -1,3 +1,15 @@
+2020-04-08  Antoine Quint  <graouts@apple.com>
+
+        transition-property is not computed correctly when transition-duration is set to "inherit"
+        https://bugs.webkit.org/show_bug.cgi?id=204554
+        <rdar://problem/57458091>
+
+        Reviewed by Antti Koivisto.
+
+        Somehow this test progressed slightly, it now fails in the second assertion rather than the first, although it fails still overall.
+
+        * web-platform-tests/css/css-transitions/events-004-expected.txt:
+
 2020-04-07  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-values-4] Support font-relative lh and rlh unit

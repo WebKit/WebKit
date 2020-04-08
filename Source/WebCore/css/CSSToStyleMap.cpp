@@ -424,8 +424,7 @@ void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& valu
 void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& value)
 {
     if (value.treatAsInitialValue(CSSPropertyAnimation)) {
-        animation.setAnimationMode(Animation::AnimateAll);
-        animation.setProperty(CSSPropertyInvalid);
+        animation.setProperty(Animation::initialProperty());
         return;
     }
 
@@ -434,23 +433,20 @@ void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& v
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueAll) {
-        animation.setAnimationMode(Animation::AnimateAll);
-        animation.setProperty(CSSPropertyInvalid);
+        animation.setProperty({ Animation::TransitionMode::All, CSSPropertyInvalid });
         return;
     }
     if (primitiveValue.valueID() == CSSValueNone) {
-        animation.setAnimationMode(Animation::AnimateNone);
-        animation.setProperty(CSSPropertyInvalid);
+        animation.setProperty({ Animation::TransitionMode::None, CSSPropertyInvalid });
         return;
     }
     if (primitiveValue.propertyID() == CSSPropertyInvalid) {
-        animation.setAnimationMode(Animation::AnimateUnknownProperty);
-        animation.setProperty(CSSPropertyInvalid);
+        animation.setProperty({ Animation::TransitionMode::UnknownProperty, CSSPropertyInvalid });
         animation.setUnknownProperty(primitiveValue.stringValue());
         return;
     }
-    animation.setAnimationMode(Animation::AnimateSingleProperty);
-    animation.setProperty(primitiveValue.propertyID());
+
+    animation.setProperty({ Animation::TransitionMode::SingleProperty, primitiveValue.propertyID() });
 }
 
 void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSValue& value)
