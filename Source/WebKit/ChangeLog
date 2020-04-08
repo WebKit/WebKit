@@ -1,3 +1,19 @@
+2020-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r259610) [RBSTarget targetWithPid:] may throw a 'must specify a valid pid' exception
+        https://bugs.webkit.org/show_bug.cgi?id=210159
+
+        Reviewed by Alex Christensen.
+
+        [RBSTarget targetWithPid:] may throw a 'must specify a valid pid' exception since r259610. There
+        are apparently cases where the PID we are passing the ProcessAssertion is 0 (likely process crash
+        on startup). BKSAssertion used to deal with this silently but RBSAssertion actually throws an
+        exception in this case. To maintain the old behavior, we should do an explicit check to make sure
+        the PID is valid before passing it to RunningBoard.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+
 2020-04-08  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Drop usage of deprecated GdkDeviceManager

@@ -359,6 +359,11 @@ ProcessAssertion::ProcessAssertion(pid_t pid, ASCIILiteral reason, ProcessAssert
     NSString *nsReason = [NSString stringWithCString:reason.characters() encoding:NSASCIIStringEncoding];
     NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
     if (runningBoardAssertionName) {
+        if (!pid) {
+            RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process because PID is invalid", this, runningBoardAssertionName, reason.characters());
+            return;
+        }
+
         RBSTarget *target = [RBSTarget targetWithPid:pid];
         RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:@"com.apple.webkit" name:runningBoardAssertionName];
         m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:nsReason target:target attributes:@[domainAttribute]]);
