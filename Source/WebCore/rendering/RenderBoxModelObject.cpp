@@ -1069,6 +1069,7 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer& fillLaye
 {
     StyleImage* image = fillLayer.image();
     FillSizeType type = fillLayer.size().type;
+    auto devicePixelSize = LayoutUnit { 1.0 / document().deviceScaleFactor() };
 
     LayoutSize imageIntrinsicSize;
     if (image) {
@@ -1086,13 +1087,19 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer& fillLaye
 
         if (layerWidth.isFixed())
             tileSize.setWidth(layerWidth.value());
-        else if (layerWidth.isPercentOrCalculated())
-            tileSize.setWidth(valueForLength(layerWidth, positioningAreaSize.width()));
+        else if (layerWidth.isPercentOrCalculated()) {
+            auto resolvedWidth = valueForLength(layerWidth, positioningAreaSize.width());
+            // Non-zero resolved value should always produce some content.
+            tileSize.setWidth(!resolvedWidth ? resolvedWidth : std::max(devicePixelSize, resolvedWidth));
+        }
         
         if (layerHeight.isFixed())
             tileSize.setHeight(layerHeight.value());
-        else if (layerHeight.isPercentOrCalculated())
-            tileSize.setHeight(valueForLength(layerHeight, positioningAreaSize.height()));
+        else if (layerHeight.isPercentOrCalculated()) {
+            auto resolvedHeight = valueForLength(layerHeight, positioningAreaSize.height());
+            // Non-zero resolved value should always produce some content.
+            tileSize.setHeight(!resolvedHeight ? resolvedHeight : std::max(devicePixelSize, resolvedHeight));
+        }
 
         // If one of the values is auto we have to use the appropriate
         // scale to maintain our aspect ratio.
@@ -1128,12 +1135,11 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer& fillLaye
         float horizontalScaleFactor = localImageIntrinsicSize.width() ? (localPositioningAreaSize.width() / localImageIntrinsicSize.width()) : 1;
         float verticalScaleFactor = localImageIntrinsicSize.height() ? (localPositioningAreaSize.height() / localImageIntrinsicSize.height()) : 1;
         float scaleFactor = type == FillSizeType::Contain ? std::min(horizontalScaleFactor, verticalScaleFactor) : std::max(horizontalScaleFactor, verticalScaleFactor);
-        float singleScaledPixel = 1.0 / document().deviceScaleFactor();
         
         if (localImageIntrinsicSize.isEmpty())
             return { };
         
-        return LayoutSize(localImageIntrinsicSize.scaled(scaleFactor).expandedTo({ singleScaledPixel, singleScaledPixel }));
+        return LayoutSize(localImageIntrinsicSize.scaled(scaleFactor).expandedTo({ devicePixelSize, devicePixelSize }));
     }
     }
 
