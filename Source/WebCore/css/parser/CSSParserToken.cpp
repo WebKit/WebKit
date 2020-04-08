@@ -83,6 +83,10 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             if (toASCIILower(data[1]) == 'n')
                 return CSSUnitType::CSS_IN;
             break;
+        case 'l':
+            if (toASCIILower(data[1]) == 'h')
+                return CSSUnitType::CSS_LHS;
+            break;
         case 'm':
             switch (toASCIILower(data[1])) {
             case 'm':
@@ -138,6 +142,10 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             case 'e':
                 if (toASCIILower(data[2]) == 'm')
                     return CSSUnitType::CSS_REMS;
+                break;
+            case 'l':
+                if (toASCIILower(data[2]) == 'h')
+                    return CSSUnitType::CSS_RLHS;
                 break;
             }
         break;

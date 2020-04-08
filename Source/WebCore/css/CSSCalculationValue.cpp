@@ -80,6 +80,8 @@ static CalculationCategory calcUnitCategory(CSSUnitType type)
     case CSSUnitType::CSS_PT:
     case CSSUnitType::CSS_PC:
     case CSSUnitType::CSS_Q:
+    case CSSUnitType::CSS_LHS:
+    case CSSUnitType::CSS_RLHS:
     case CSSUnitType::CSS_REMS:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_VW:
@@ -133,7 +135,9 @@ static CalculationCategory calculationCategoryForCombination(CSSUnitType type)
         return CalculationCategory::Frequency;
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:
+    case CSSUnitType::CSS_LHS:
     case CSSUnitType::CSS_REMS:
+    case CSSUnitType::CSS_RLHS:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_VW:
     case CSSUnitType::CSS_VH:
@@ -195,6 +199,8 @@ static bool hasDoubleValue(CSSUnitType type)
     case CSSUnitType::CSS_DPCM:
     case CSSUnitType::CSS_FR:
     case CSSUnitType::CSS_Q:
+    case CSSUnitType::CSS_LHS:
+    case CSSUnitType::CSS_RLHS:
         return true;
     case CSSUnitType::CSS_UNKNOWN:
     case CSSUnitType::CSS_STRING:

@@ -30,7 +30,9 @@
 
 #pragma once
 
+#include "CSSPropertyNames.h"
 #include <wtf/Assertions.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -39,36 +41,40 @@ class RenderView;
 
 class CSSToLengthConversionData {
 public:
-    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderView* renderView, float zoom, bool computingFontSize = false)
+    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, float zoom, Optional<CSSPropertyID> propertyToCompute = WTF::nullopt)
         : m_style(style)
         , m_rootStyle(rootStyle)
+        , m_parentStyle(parentStyle)
         , m_renderView(renderView)
         , m_zoom(zoom)
         , m_useEffectiveZoom(false)
-        , m_computingFontSize(computingFontSize)
+        , m_propertyToCompute(propertyToCompute)
     {
         ASSERT(zoom > 0);
     }
 
-    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderView* renderView, bool computingFontSize = false)
+    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, Optional<CSSPropertyID> propertyToCompute = WTF::nullopt)
         : m_style(style)
         , m_rootStyle(rootStyle)
+        , m_parentStyle(parentStyle)
         , m_renderView(renderView)
         , m_zoom(1)
         , m_useEffectiveZoom(true)
-        , m_computingFontSize(computingFontSize)
+        , m_propertyToCompute(propertyToCompute)
     {
     }
 
     CSSToLengthConversionData()
-        : CSSToLengthConversionData(nullptr, nullptr, nullptr)
+        : CSSToLengthConversionData(nullptr, nullptr, nullptr, nullptr)
     {
     }
 
     const RenderStyle* style() const { return m_style; }
     const RenderStyle* rootStyle() const { return m_rootStyle; }
+    const RenderStyle* parentStyle() const { return m_parentStyle; }
     float zoom() const;
-    bool computingFontSize() const { return m_computingFontSize; }
+    bool computingFontSize() const { return m_propertyToCompute == CSSPropertyFontSize; }
+    bool computingLineHeight() const { return m_propertyToCompute == CSSPropertyLineHeight; }
 
     double viewportWidthFactor() const;
     double viewportHeightFactor() const;
@@ -77,16 +83,22 @@ public:
 
     CSSToLengthConversionData copyWithAdjustedZoom(float newZoom) const
     {
-        return CSSToLengthConversionData(m_style, m_rootStyle, m_renderView, newZoom, m_computingFontSize);
+        return CSSToLengthConversionData(m_style, m_rootStyle, m_parentStyle, m_renderView, newZoom, m_propertyToCompute);
+    }
+
+    CSSToLengthConversionData copyWithAdjustedZoomAndPropertyToCompute(float zoom, Optional<CSSPropertyID> propertyToCompute) const
+    {
+        return CSSToLengthConversionData(m_style, m_rootStyle, m_parentStyle, m_renderView, zoom, propertyToCompute);
     }
 
 private:
     const RenderStyle* m_style;
     const RenderStyle* m_rootStyle;
+    const RenderStyle* m_parentStyle;
     const RenderView* m_renderView;
     float m_zoom;
     bool m_useEffectiveZoom;
-    bool m_computingFontSize;
+    Optional<CSSPropertyID> m_propertyToCompute;
 };
 
 } // namespace WebCore

@@ -60,7 +60,7 @@ BuilderState::BuilderState(Builder& builder, RenderStyle& style, BuilderContext&
     , m_styleMap(*this)
     , m_style(style)
     , m_context(WTFMove(context))
-    , m_cssToLengthConversionData(&style, rootElementStyle(), document().renderView())
+    , m_cssToLengthConversionData(&style, rootElementStyle(), &parentStyle(), document().renderView())
 {
 }
 

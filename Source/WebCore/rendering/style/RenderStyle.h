@@ -391,6 +391,7 @@ public:
     const Length& specifiedLineHeight() const;
     WEBCORE_EXPORT const Length& lineHeight() const;
     WEBCORE_EXPORT int computedLineHeight() const;
+    int computeLineHeight(const Length&) const;
 
     WhiteSpace whiteSpace() const { return static_cast<WhiteSpace>(m_inheritedFlags.whiteSpace); }
     static bool autoWrap(WhiteSpace);
@@ -1508,6 +1509,7 @@ public:
     static Length initialOneLength() { return Length(1, Fixed); }
     static short initialWidows() { return 2; }
     static short initialOrphans() { return 2; }
+    // Returning -100% percent here means the line-height is not set.
     static Length initialLineHeight() { return Length(-100.0f, Percent); }
     static TextAlignMode initialTextAlign() { return TextAlignMode::Start; }
     static OptionSet<TextDecoration> initialTextDecoration() { return OptionSet<TextDecoration> { }; }

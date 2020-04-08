@@ -63,6 +63,8 @@ enum class CSSUnitType : uint8_t {
     CSS_DPCM = 32,
     CSS_FR = 33,
     CSS_Q = 34,
+    CSS_LHS = 35,
+    CSS_RLHS = 36,
     CSS_PAIR = 100, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
     CSS_UNICODE_RANGE = 102,
     CSS_TURN = 107,

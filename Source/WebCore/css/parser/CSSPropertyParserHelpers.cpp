@@ -253,6 +253,8 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMod
             FALLTHROUGH;
         case CSSUnitType::CSS_EMS:
         case CSSUnitType::CSS_REMS:
+        case CSSUnitType::CSS_LHS:
+        case CSSUnitType::CSS_RLHS:
         case CSSUnitType::CSS_CHS:
         case CSSUnitType::CSS_EXS:
         case CSSUnitType::CSS_PX:

@@ -260,6 +260,8 @@ inline bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
 {
     return type == CSSUnitType::CSS_EMS
         || type == CSSUnitType::CSS_EXS
+        || type == CSSUnitType::CSS_LHS
+        || type == CSSUnitType::CSS_RLHS
         || type == CSSUnitType::CSS_REMS
         || type == CSSUnitType::CSS_CHS
         || type == CSSUnitType::CSS_QUIRKY_EMS;
@@ -271,6 +273,8 @@ inline bool CSSPrimitiveValue::isLength(CSSUnitType type)
         || type == CSSUnitType::CSS_REMS
         || type == CSSUnitType::CSS_CHS
         || type == CSSUnitType::CSS_Q
+        || type == CSSUnitType::CSS_LHS
+        || type == CSSUnitType::CSS_RLHS
         || isViewportPercentageLength(type)
         || type == CSSUnitType::CSS_QUIRKY_EMS;
 }

@@ -45,7 +45,7 @@ float CSSToLengthConversionData::zoom() const
 
 double CSSToLengthConversionData::viewportWidthFactor() const
 {
-    if (m_style && !m_computingFontSize)
+    if (m_style && !computingFontSize())
         const_cast<RenderStyle*>(m_style)->setHasViewportUnits();
 
     if (!m_renderView)
@@ -56,7 +56,7 @@ double CSSToLengthConversionData::viewportWidthFactor() const
 
 double CSSToLengthConversionData::viewportHeightFactor() const
 {
-    if (m_style && !m_computingFontSize)
+    if (m_style && !computingFontSize())
         const_cast<RenderStyle*>(m_style)->setHasViewportUnits();
 
     if (!m_renderView)
@@ -67,7 +67,7 @@ double CSSToLengthConversionData::viewportHeightFactor() const
 
 double CSSToLengthConversionData::viewportMinFactor() const
 {
-    if (m_style && !m_computingFontSize)
+    if (m_style && !computingFontSize())
         const_cast<RenderStyle*>(m_style)->setHasViewportUnits();
 
     if (!m_renderView)
@@ -79,7 +79,7 @@ double CSSToLengthConversionData::viewportMinFactor() const
 
 double CSSToLengthConversionData::viewportMaxFactor() const
 {
-    if (m_style && !m_computingFontSize)
+    if (m_style && !computingFontSize())
         const_cast<RenderStyle*>(m_style)->setHasViewportUnits();
 
     if (!m_renderView)

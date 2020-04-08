@@ -3104,8 +3104,8 @@ webkit.org/b/203334 imported/w3c/web-platform-tests/css/css-values/ic-unit-009.h
 webkit.org/b/203334 imported/w3c/web-platform-tests/css/css-values/ic-unit-010.html [ ImageOnlyFailure ]
 webkit.org/b/203334 imported/w3c/web-platform-tests/css/css-values/ic-unit-011.html [ ImageOnlyFailure ]
 webkit.org/b/203334 imported/w3c/web-platform-tests/css/css-values/ic-unit-012.html [ ImageOnlyFailure ]
-webkit.org/b/203336 imported/w3c/web-platform-tests/css/css-values/lh-unit-001.html [ ImageOnlyFailure ]
-webkit.org/b/203336 imported/w3c/web-platform-tests/css/css-values/lh-unit-002.html [ ImageOnlyFailure ]
+webkit.org/b/203336 imported/w3c/web-platform-tests/css/css-values/lh-unit-001.html [ Pass ]
+webkit.org/b/203336 imported/w3c/web-platform-tests/css/css-values/lh-unit-002.html [ Pass ]
 webkit.org/b/203337 imported/w3c/web-platform-tests/css/css-values/vh-support-atviewport.html [ ImageOnlyFailure ]
 webkit.org/b/203338 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ ImageOnlyFailure ]
 

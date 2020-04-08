@@ -1167,13 +1167,22 @@ inline GridAutoFlow BuilderConverter::convertGridAutoFlow(BuilderState&, const C
     return autoFlow;
 }
 
-inline CSSToLengthConversionData BuilderConverter::csstoLengthConversionDataWithTextZoomFactor(BuilderState& builderState)
+inline float zoomWithTextZoomFactor(BuilderState& builderState)
 {
     if (auto* frame = builderState.document().frame()) {
         float textZoomFactor = builderState.style().textZoom() != TextZoom::Reset ? frame->textZoomFactor() : 1.0f;
-        return builderState.cssToLengthConversionData().copyWithAdjustedZoom(builderState.style().effectiveZoom() * textZoomFactor);
+        return builderState.style().effectiveZoom() * textZoomFactor;
     }
-    return builderState.cssToLengthConversionData();
+    return builderState.cssToLengthConversionData().zoom();
+}
+
+inline CSSToLengthConversionData BuilderConverter::csstoLengthConversionDataWithTextZoomFactor(BuilderState& builderState)
+{
+    float zoom = zoomWithTextZoomFactor(builderState);
+    if (zoom == builderState.cssToLengthConversionData().zoom())
+        return builderState.cssToLengthConversionData();
+
+    return builderState.cssToLengthConversionData().copyWithAdjustedZoom(zoom);
 }
 
 inline Optional<Length> BuilderConverter::convertWordSpacing(BuilderState& builderState, const CSSValue& value)
@@ -1511,7 +1520,8 @@ inline Optional<Length> BuilderConverter::convertLineHeight(BuilderState& builde
         return RenderStyle::initialLineHeight();
 
     if (primitiveValue.isLength()) {
-        Length length = primitiveValue.computeLength<Length>(BuilderConverter::csstoLengthConversionDataWithTextZoomFactor(builderState));
+        auto conversionData = builderState.cssToLengthConversionData().copyWithAdjustedZoomAndPropertyToCompute(zoomWithTextZoomFactor(builderState), CSSPropertyLineHeight);
+        Length length = primitiveValue.computeLength<Length>(conversionData);
         if (multiplier != 1.f)
             length = Length(length.value() * multiplier, Fixed);
         return length;

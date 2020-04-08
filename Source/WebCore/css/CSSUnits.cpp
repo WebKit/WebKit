@@ -142,6 +142,8 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_DPCM: ts << "dpcm"; break;
     case CSSUnitType::CSS_FR: ts << "fr"; break;
     case CSSUnitType::CSS_Q: ts << "q"; break;
+    case CSSUnitType::CSS_LHS: ts << "lh"; break;
+    case CSSUnitType::CSS_RLHS: ts << "rlh"; break;
     case CSSUnitType::CSS_PAIR: ts << "pair"; break;
     case CSSUnitType::CSS_UNICODE_RANGE: ts << "unicode_range"; break;
     case CSSUnitType::CSS_TURN: ts << "turn"; break;
