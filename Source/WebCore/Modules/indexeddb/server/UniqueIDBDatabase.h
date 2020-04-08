@@ -107,7 +107,7 @@ public:
     void enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&&);
 
     void handleDelete(IDBConnectionToClient&, const IDBRequestData&);
-    void immediateCloseForUserDelete();
+    void immediateClose();
 
     void abortActiveTransactions();
 

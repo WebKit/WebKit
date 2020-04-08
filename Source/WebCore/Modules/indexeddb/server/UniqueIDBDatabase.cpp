@@ -1147,9 +1147,9 @@ static void errorOpenDBRequestForUserDelete(ServerOpenDBRequest& request)
         request.connection().didDeleteDatabase(result);
 }
 
-void UniqueIDBDatabase::immediateCloseForUserDelete()
+void UniqueIDBDatabase::immediateClose()
 {
-    LOG(IndexedDB, "UniqueIDBDatabase::immediateCloseForUserDelete");
+    LOG(IndexedDB, "UniqueIDBDatabase::immediateClose");
 
     // Error out all transactions.
     // Pending transactions must be cleared before in-progress transactions,

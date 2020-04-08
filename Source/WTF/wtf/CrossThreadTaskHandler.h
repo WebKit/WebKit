@@ -48,6 +48,9 @@ protected:
     WTF_EXPORT_PRIVATE void suspendAndWait();
     WTF_EXPORT_PRIVATE void resume();
 
+    WTF_EXPORT_PRIVATE void kill();
+    WTF_EXPORT_PRIVATE void setCompletionCallback(Function<void ()>&&);
+
 private:
     void handleTaskRepliesOnMainThread();
     void taskRunLoop();
@@ -68,6 +71,8 @@ private:
 
     CrossThreadQueue<CrossThreadTask> m_taskQueue;
     CrossThreadQueue<CrossThreadTask> m_taskReplyQueue;
+
+    Function<void ()> m_completionCallback;
 };
 
 } // namespace WTF
