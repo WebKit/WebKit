@@ -308,6 +308,8 @@ interface UIScriptController {
 
     readonly attribute DOMString scrollingTreeAsText;
 
+    boolean mayContainEditableElementsInRect(unsigned long x, unsigned long y, unsigned long width, unsigned long height);
+
     object propertiesOfLayerWithID(unsigned long long layerID);
 
     void retrieveSpeakSelectionContent(object callback);

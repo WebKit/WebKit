@@ -1620,10 +1620,14 @@ void RenderLayerBacking::updateEventRegion()
 
     bool needsEventRegionUpdateForNonCompositedFrame = renderer().view().needsEventRegionUpdateForNonCompositedFrame();
     bool hasTouchActionElements = false;
+    bool hasEditableElements = false;
 #if PLATFORM(IOS_FAMILY)
     hasTouchActionElements = renderer().document().mayHaveElementsWithNonAutoTouchAction();
 #endif
-    if (!hasTouchActionElements && !needsEventRegionUpdateForNonCompositedFrame) {
+#if ENABLE(EDITABLE_REGION)
+    hasEditableElements = renderer().document().mayHaveEditableElements();
+#endif
+    if (!hasTouchActionElements && !hasEditableElements && !needsEventRegionUpdateForNonCompositedFrame) {
         if (m_owningLayer.isRenderViewLayer())
             return;
 
@@ -3068,6 +3072,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
     context.translate(-contentOffset);
 
     // The interactive part.
+    // Paint rects for touch action.
     auto& eventRegion = graphicsLayer->eventRegion();
     Color regionColor(0, 0, 255, 50);
     context.setFillColor(regionColor);
@@ -3095,6 +3100,13 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
         for (auto rect : actionRegion->rects())
             context.fillRect(rect);
     }
+
+#if ENABLE(EDITABLE_REGION)
+    // Paint rects for editable elements.
+    context.setFillColor({ 128, 0, 128, 50 });
+    for (auto rect : eventRegion.rectsForEditableElements())
+        context.fillRect(rect);
+#endif
 }
 
 // Up-call from compositing layer drawing callback.

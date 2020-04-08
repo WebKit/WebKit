@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -151,13 +151,14 @@ TEST(RequestTextInputContext, Simple)
 }
 
 // Consider moving this to TestWKWebView if it could be useful to other tests.
-static void webViewLoadHTMLStringAndWaitForDOMLoadEvent(TestWKWebView *webView, NSString *htmlString)
+static void webViewLoadHTMLStringAndWaitForAllFramesToPaint(TestWKWebView *webView, NSString *htmlString)
 {
     ASSERT(webView); // Make passing a nil web view a more obvious failure than a hang.
     bool didFireDOMLoadEvent = false;
     [webView performAfterLoading:[&] { didFireDOMLoadEvent = true; }];
     [webView loadHTMLString:htmlString baseURL:nil];
     TestWebKitAPI::Util::run(&didFireDOMLoadEvent);
+    [webView waitForNextPresentationUpdate];
 }
 
 TEST(RequestTextInputContext, Iframe)
@@ -167,20 +168,65 @@ TEST(RequestTextInputContext, Iframe)
 
     NSArray<_WKTextInputContext *> *contexts;
 
-    webViewLoadHTMLStringAndWaitForDOMLoadEvent(webView.get(), applyIframe(@"<input type='text' style='width: 50px; height: 50px;'>"));
+    webViewLoadHTMLStringAndWaitForAllFramesToPaint(webView.get(), applyIframe(@"<input type='text' style='width: 50px; height: 50px;'>"));
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 200, 50, 50), contexts[0].boundingRect);
 
-    webViewLoadHTMLStringAndWaitForDOMLoadEvent(webView.get(), applyIframe(@"<textarea style='width: 100px; height: 100px;'></textarea>"));
+    webViewLoadHTMLStringAndWaitForAllFramesToPaint(webView.get(), applyIframe(@"<textarea style='width: 100px; height: 100px;'></textarea>"));
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 200, 100, 100), contexts[0].boundingRect);
 
-    webViewLoadHTMLStringAndWaitForDOMLoadEvent(webView.get(), applyIframe(@"<div contenteditable style='width: 100px; height: 100px;'></div>"));
+    webViewLoadHTMLStringAndWaitForAllFramesToPaint(webView.get(), applyIframe(@"<div contenteditable style='width: 100px; height: 100px;'></div>"));
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_EQ(CGRectMake(0, 200, 100, 100), contexts[0].boundingRect);
+}
+
+static CGRect squareCenteredAtPoint(float x, float y, float length)
+{
+    return CGRectMake(x - length / 2, y - length / 2, length, length);
+}
+
+TEST(RequestTextInputContext, NonCompositedOverlap)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    NSArray<_WKTextInputContext *> *contexts;
+
+    [webView synchronouslyLoadTestPageNamed:@"editable-region-composited-and-non-composited-overlap"];
+
+    // Search rect fully contained in non-composited <div>.
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:CGRectMake(270, 150, 10, 10)];
+    EXPECT_EQ(0UL, contexts.count);
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:CGRectMake(170, 150, 10, 10)];
+    EXPECT_EQ(0UL, contexts.count);
+
+    // Search rect overlaps both the non-composited <div> and the editable element.
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:squareCenteredAtPoint(270, 150, 200)];
+    EXPECT_EQ(1UL, contexts.count);
+}
+
+TEST(RequestTextInputContext, CompositedOverlap)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    NSArray<_WKTextInputContext *> *contexts;
+
+    [webView synchronouslyLoadTestPageNamed:@"editable-region-composited-and-non-composited-overlap"];
+
+    // Search rect fully contained in composited <div>.
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:CGRectMake(270, 400, 10, 10)];
+    EXPECT_EQ(0UL, contexts.count);
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:CGRectMake(170, 400, 10, 10)];
+    EXPECT_EQ(0UL, contexts.count);
+
+    // Search rect overlaps both the composited <div> and the editable element.
+    contexts = [webView synchronouslyRequestTextInputContextsInRect:squareCenteredAtPoint(270, 400, 200)];
+    EXPECT_EQ(1UL, contexts.count);
 }
 
 TEST(RequestTextInputContext, DISABLED_FocusTextInputContext)

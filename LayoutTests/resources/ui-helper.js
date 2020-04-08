@@ -1169,6 +1169,21 @@ window.UIHelper = class UIHelper {
                 })();`, resolve);
         });
     }
+
+    static mayContainEditableElementsInRect(x, y, width, height)
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve(false);
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    uiController.doAfterPresentationUpdate(function() {
+                        uiController.uiScriptComplete(uiController.mayContainEditableElementsInRect(${x}, ${y}, ${width}, ${height}));
+                    })
+                })();`, result => resolve(result === "true"));
+        });
+    }
 }
 
 UIHelper.EventStreamBuilder = class {

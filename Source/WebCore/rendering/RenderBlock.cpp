@@ -1257,7 +1257,10 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
         bool needsTraverseDescendants = hasVisualOverflow() || containsFloats() || !paintInfo.eventRegionContext->contains(enclosingIntRect(borderRect)) || view().needsEventRegionUpdateForNonCompositedFrame();
 #if PLATFORM(IOS_FAMILY)
-        needsTraverseDescendants = needsTraverseDescendants || document().mayHaveElementsWithNonAutoTouchAction();
+        needsTraverseDescendants |= document().mayHaveElementsWithNonAutoTouchAction();
+#endif
+#if ENABLE(EDITABLE_REGION)
+        needsTraverseDescendants |= document().mayHaveEditableElements();
 #endif
         if (!needsTraverseDescendants)
             return;

@@ -335,6 +335,7 @@ for this property.
 - (void)_resumeAllMediaPlayback;
 - (void)_closeAllMediaPresentations;
 
+- (BOOL)_mayContainEditableElementsInRect:(CGRect)rect;
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 - (void)_focusTextInputContext:(_WKTextInputContext *)textInputElement completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 

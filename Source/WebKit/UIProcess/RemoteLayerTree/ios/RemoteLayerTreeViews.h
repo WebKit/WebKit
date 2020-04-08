@@ -81,6 +81,10 @@ namespace WebKit {
 OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint&);
 UIScrollView *findActingScrollParent(UIScrollView *, const RemoteLayerTreeHost&);
 
+#if ENABLE(EDITABLE_REGION)
+bool mayContainEditableElementsInRect(UIView *rootView, const WebCore::FloatRect&);
+#endif
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

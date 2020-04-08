@@ -142,6 +142,8 @@ public:
     void copyText(JSStringRef) override;
     void installTapGestureOnWindow(JSValueRef) override;
 
+    bool mayContainEditableElementsInRect(unsigned x, unsigned y, unsigned width, unsigned height) override;
+
     void setDidStartFormControlInteractionCallback(JSValueRef) override;
     void setDidEndFormControlInteractionCallback(JSValueRef) override;
     void setDidShowContextMenuCallback(JSValueRef) override;

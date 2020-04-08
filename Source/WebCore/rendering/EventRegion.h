@@ -70,6 +70,7 @@ public:
 
     bool contains(const IntPoint& point) const { return m_region.contains(point); }
     bool contains(const IntRect& rect) const { return m_region.contains(rect); }
+    bool intersects(const IntRect& rect) const { return m_region.intersects(rect); }
 
     const Region& region() const { return m_region; }
 
@@ -77,6 +78,11 @@ public:
     WEBCORE_EXPORT OptionSet<TouchAction> touchActionsForPoint(const IntPoint&) const;
 
     const Region* regionForTouchAction(TouchAction) const;
+
+#if ENABLE(EDITABLE_REGION)
+    WEBCORE_EXPORT bool containsEditableElementsInRect(const IntRect&) const;
+    Vector<IntRect, 1> rectsForEditableElements() const { return m_editableRegion.rects(); }
+#endif
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<EventRegion> decode(Decoder&);
@@ -90,6 +96,9 @@ private:
 
     Region m_region;
     Vector<Region> m_touchActionRegions;
+#if ENABLE(EDITABLE_REGION)
+    Region m_editableRegion;
+#endif
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const EventRegion&);
@@ -99,6 +108,9 @@ void EventRegion::encode(Encoder& encoder) const
 {
     encoder << m_region;
     encoder << m_touchActionRegions;
+#if ENABLE(EDITABLE_REGION)
+    encoder << m_editableRegion;
+#endif
 }
 
 template<class Decoder>
@@ -118,6 +130,14 @@ Optional<EventRegion> EventRegion::decode(Decoder& decoder)
         return WTF::nullopt;
 
     eventRegion.m_touchActionRegions = WTFMove(*touchActionRegions);
+
+#if ENABLE(EDITABLE_REGION)
+    Optional<Region> editableRegion;
+    decoder >> editableRegion;
+    if (!editableRegion)
+        return WTF::nullopt;
+    eventRegion.m_editableRegion = WTFMove(*editableRegion);
+#endif
 
     return eventRegion;
 }

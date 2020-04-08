@@ -1,5 +1,41 @@
 2020-04-08  Daniel Bates  <dabates@apple.com>
 
+        Track editable elements on screen
+        https://bugs.webkit.org/show_bug.cgi?id=209888
+        <rdar://problem/61196886>
+
+        Reviewed by Simon Fraser.
+
+        Speed up -_requestTextInputContextsInRect when the rect does not intersect any editable
+        elements by over 4450 times on reddit.com! Another way of saying this is that it reduces
+        the time from an average of 303.252ms to 0.0680625ms in a Production build.
+
+        This speed up is accomplished by having the web process track the rects of the editable
+        elements on the page and send this information as a region data structure over to the UI
+        process as part of the EventRegion object. This region is used to determine if there
+        *may* be an editable element inside the rectangele. It never reports a false negative,
+        but it can report a false positive: a rectangle is over an editable element when it
+        actually isn't, (e.g. there is a non-composited element with a higher z-order than the
+        editable element that intersects the search rect).
+
+        * Configurations/FeatureDefines.xcconfig: Add feature define to track editable elements on
+        screen (enabled by default on iOS and iOS Simulator).
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mayContainEditableElementsInRect:]): Added.
+        (-[WKWebView _requestTextInputContextsInRect:completionHandler:]): Checks if the search
+        rects hits an editable element in a RemoteLayerTree node's editable region. If it does
+        not hit any then we know there are no editable elements and return immediately. If it
+        does hit something then we still need to ask the web process to perform a hit test to
+        find the actual elements, respecting z-ordering (which is lost when these elements' rects
+        are united to form the editable region).
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::collectDescendantViewsInRect): Added.
+        (WebKit::mayContainEditableElementsInRect): Added.
+
+2020-04-08  Daniel Bates  <dabates@apple.com>
+
         Should find touch-action elements inside non-composited iframes
         https://bugs.webkit.org/show_bug.cgi?id=210041
         <rdar://problem/61323558>

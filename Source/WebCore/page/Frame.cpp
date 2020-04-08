@@ -309,10 +309,16 @@ void Frame::invalidateContentEventRegionsIfNeeded()
 {
     if (!m_page || !m_doc || !m_doc->renderView())
         return;
+    bool hasTouchActionElements = false;
+    bool hasEditableElements = false;
 #if PLATFORM(IOS)
-    if (!m_doc->mayHaveElementsWithNonAutoTouchAction())
-        return;
+    hasTouchActionElements = m_doc->mayHaveElementsWithNonAutoTouchAction();
 #endif
+#if ENABLE(EDITABLE_REGION)
+    hasEditableElements = m_doc->mayHaveEditableElements();
+#endif
+    if (!hasTouchActionElements && !hasEditableElements)
+        return;
     if (!m_doc->renderView()->compositor().viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint())
         return;
     if (m_ownerElement)

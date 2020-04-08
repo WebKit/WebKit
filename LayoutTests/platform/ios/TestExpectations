@@ -8,6 +8,7 @@
 
 accessibility/ios-simulator [ Pass ]
 displaylists [ Pass ]
+editing/editable-region [ Pass ]
 editing/deleting/ios [ Pass ]
 http/tests/quicklook [ Pass ]
 media/ios [ Pass ]

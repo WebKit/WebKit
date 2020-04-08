@@ -7020,6 +7020,11 @@ bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
         // UI side touch-action resolution.
         if (renderer().document().mayHaveElementsWithNonAutoTouchAction())
             return true;
+#if ENABLE(EDITABLE_REGION)
+        // UI side editable elements resolution.
+        if (renderer().document().mayHaveEditableElements())
+            return true;
+#endif
         return false;
     };
 

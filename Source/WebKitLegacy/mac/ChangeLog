@@ -1,3 +1,15 @@
+2020-04-08  Daniel Bates  <dabates@apple.com>
+
+        Track editable elements on screen
+        https://bugs.webkit.org/show_bug.cgi?id=209888
+        <rdar://problem/61196886>
+
+        Reviewed by Simon Fraser.
+
+        Add feature define to track editable elements on screen (enabled by default on iOS and iOS Simulator).
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2020-04-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r259708.

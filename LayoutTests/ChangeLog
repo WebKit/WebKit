@@ -1,5 +1,49 @@
 2020-04-08  Daniel Bates  <dabates@apple.com>
 
+        Track editable elements on screen
+        https://bugs.webkit.org/show_bug.cgi?id=209888
+        <rdar://problem/61196886>
+
+        Reviewed by Simon Fraser.
+
+        Add some tests. Some of these tests were derived from a torture test page written by Simon Fraser.
+
+        * TestExpectations: Skip directory editing/editable-region everywhere. I will unskip this in the iOS TestExpectations file.
+        * editing/editable-region/fixed-and-absolute-contenteditable-scrolled-expected.txt: Added.
+        * editing/editable-region/fixed-and-absolute-contenteditable-scrolled.html: Added.
+        * editing/editable-region/float-contenteditable-expected.txt: Added.
+        * editing/editable-region/float-contenteditable.html: Added.
+        * editing/editable-region/hit-test-basic-expected.txt: Added.
+        * editing/editable-region/hit-test-basic.html: Added.
+        * editing/editable-region/hit-test-fixed-expected.txt: Added.
+        * editing/editable-region/hit-test-fixed.html: Added.
+        * editing/editable-region/hit-test-overlap-expected.txt: Added.
+        * editing/editable-region/hit-test-overlap.html: Added.
+        * editing/editable-region/iframe-expected.txt: Added.
+        * editing/editable-region/iframe.html: Added.
+        * editing/editable-region/input-basic-expected.txt: Added.
+        * editing/editable-region/input-basic.html: Added.
+        * editing/editable-region/out-hanging-child-of-contenteditable-expected.txt: Added.
+        * editing/editable-region/out-hanging-child-of-contenteditable.html: Added.
+        * editing/editable-region/overflow-scroll-text-field-and-contenteditable-expected.txt: Added.
+        * editing/editable-region/overflow-scroll-text-field-and-contenteditable.html: Added.
+        * editing/editable-region/relative-inside-fixed-contenteditable-scrolled-expected.txt: Added.
+        * editing/editable-region/relative-inside-fixed-contenteditable-scrolled.html: Added.
+        * editing/editable-region/relative-inside-transformed-contenteditable-expected.txt: Added.
+        * editing/editable-region/relative-inside-transformed-contenteditable.html: Added.
+        * editing/editable-region/resources/hit-test-utilities.js: Added.
+        (async shouldHaveEditableElementsInRect):
+        (async shouldNotHaveEditableElementsInRect):
+        (shouldNotHaveEditableElementsInRectForElement):
+        * editing/editable-region/transformed-scrolled-on-top-of-fixed-contenteditables-expected.txt: Added.
+        * editing/editable-region/transformed-scrolled-on-top-of-fixed-contenteditables.html: Added.
+        * platform/ios/TestExpectations: Unskip editing/editable-region.
+        * resources/ui-helper.js:
+        (window.UIHelper.mayContainEditableElementsInRect): Added. Convenience function that turns around
+        and calls the UIScriptController function of the same name and returns a boolean instead of a string.
+
+2020-04-08  Daniel Bates  <dabates@apple.com>
+
         Should find touch-action elements inside non-composited iframes
         https://bugs.webkit.org/show_bug.cgi?id=210041
         <rdar://problem/61323558>

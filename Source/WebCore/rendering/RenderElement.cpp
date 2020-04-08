@@ -739,6 +739,12 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
                 return true;
             if (m_style.effectiveTouchActions() != newStyle.effectiveTouchActions())
                 return true;
+#if ENABLE(EDITABLE_REGION)
+            bool wasEditable = m_style.userModify() != UserModify::ReadOnly;
+            bool isEditable = newStyle.userModify() != UserModify::ReadOnly;
+            if (wasEditable != isEditable)
+                return true;
+#endif
             return false;
         };
 

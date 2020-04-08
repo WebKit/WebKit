@@ -100,6 +100,10 @@ bool EventRegion::operator==(const EventRegion& other) const
 {
     if (m_touchActionRegions != other.m_touchActionRegions)
         return false;
+#if ENABLE(EDITABLE_REGION)
+    if (m_editableRegion != other.m_editableRegion)
+        return false;
+#endif
     return m_region == other.m_region;
 }
 
@@ -108,6 +112,11 @@ void EventRegion::unite(const Region& region, const RenderStyle& style)
     m_region.unite(region);
 
     uniteTouchActions(region, style.effectiveTouchActions());
+
+#if ENABLE(EDITABLE_REGION)
+    if (style.userModify() != UserModify::ReadOnly)
+        m_editableRegion.unite(region);
+#endif
 }
 
 void EventRegion::translate(const IntSize& offset)
@@ -116,6 +125,10 @@ void EventRegion::translate(const IntSize& offset)
 
     for (auto& touchActionRegion : m_touchActionRegions)
         touchActionRegion.translate(offset);
+
+#if ENABLE(EDITABLE_REGION)
+    m_editableRegion.translate(offset);
+#endif
 }
 
 static inline unsigned toIndex(TouchAction touchAction)
@@ -205,6 +218,15 @@ OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) 
     return actions;
 }
 
+#if ENABLE(EDITABLE_REGION)
+
+bool EventRegion::containsEditableElementsInRect(const IntRect& rect) const
+{
+    return m_editableRegion.intersects(rect);
+}
+
+#endif
+
 void EventRegion::dump(TextStream& ts) const
 {
     ts << m_region;
@@ -222,6 +244,13 @@ void EventRegion::dump(TextStream& ts) const
         }
         ts << indent << ")\n";
     }
+
+#if ENABLE(EDITABLE_REGION)
+    if (!m_editableRegion.isEmpty()) {
+        ts << indent << "(editable region" << m_editableRegion;
+        ts << indent << ")\n";
+    }
+#endif
 }
 
 TextStream& operator<<(TextStream& ts, TouchAction touchAction)

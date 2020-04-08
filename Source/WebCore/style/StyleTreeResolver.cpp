@@ -249,6 +249,10 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     if (update.style->touchActions() != TouchAction::Auto && !m_document.quirks().shouldDisablePointerEventsQuirk())
         m_document.setMayHaveElementsWithNonAutoTouchAction();
 #endif
+#if ENABLE(EDITABLE_REGION)
+    if (update.style->userModify() != UserModify::ReadOnly)
+        m_document.setMayHaveEditableElements();
+#endif
 
     return { WTFMove(update), descendantsToResolve, WTFMove(beforeUpdate), WTFMove(afterUpdate) };
 }
