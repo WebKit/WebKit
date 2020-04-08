@@ -1094,6 +1094,12 @@ WTFLogChannel& MediaSource::logChannel() const
 }
 #endif
 
+void MediaSource::failedToCreateRenderer(RendererType type)
+{
+    if (auto context = scriptExecutionContext())
+        context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("MediaSource ", type == RendererType::Video ? "video" : "audio", " renderer creation failed."));
+}
+
 }
 
 #endif

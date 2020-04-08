@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #include "MediaSourcePrivate.h"
+#include "MediaSourcePrivateClient.h"
 #include <wtf/Deque.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
@@ -109,6 +110,9 @@ public:
 
     const void* nextSourceBufferLogIdentifier() { return childLogIdentifier(++m_nextSourceBufferID); }
 #endif
+
+    using RendererType = MediaSourcePrivateClient::RendererType;
+    void failedToCreateRenderer(RendererType);
 
 private:
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
