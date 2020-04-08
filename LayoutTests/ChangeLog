@@ -1,5 +1,14 @@
 2020-04-08  Jason Lawrence  <lawrence.j@apple.com>
 
+        REGRESSION: [ iOS wk2 Debug ] WTFCrash + 14 (Assertions.cpp:309) - WebCore::Page::recomputeTextAutoSizingInAllFrames()
+        https://bugs.webkit.org/show_bug.cgi?id=210205
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-04-08  Jason Lawrence  <lawrence.j@apple.com>
+
         [ iOS wk2 Debug ] WTFCrash + 14 (Assertions.cpp:309) - WebKit::EditorState::postLayoutData()
         https://bugs.webkit.org/show_bug.cgi?id=210201
 

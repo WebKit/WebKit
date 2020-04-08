@@ -1764,3 +1764,5 @@ webkit.org/b/209908 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout
 webkit.org/b/206750 http/tests/security/appcache-in-private-browsing.html [ Pass Timeout ]
 
 webkit.org/b/210201 [ Debug ] editing/editability/empty-document-delete.html [ Pass Crash ]
+
+webkit.org/b/210205 [ Debug ] fast/text/firstline/001.html [ Pass Crash ]
