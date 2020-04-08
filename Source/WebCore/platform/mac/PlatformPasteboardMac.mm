@@ -40,6 +40,15 @@
 
 namespace WebCore {
 
+static bool canWritePasteboardType(const String& type)
+{
+    auto cfString = type.createCFString();
+    if (UTTypeIsDeclared(cfString.get()) || UTTypeIsDynamic(cfString.get()))
+        return true;
+
+    return [(__bridge NSString *)cfString.get() lengthOfBytesUsingEncoding:NSString.defaultCStringEncoding];
+}
+
 PlatformPasteboard::PlatformPasteboard(const String& pasteboardName)
     : m_pasteboard([NSPasteboard pasteboardWithName:pasteboardName])
 {
@@ -317,18 +326,22 @@ int64_t PlatformPasteboard::addTypes(const Vector<String>& pasteboardTypes)
 
 int64_t PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
 {
-    if (pasteboardTypes.isEmpty())
-        return [m_pasteboard declareTypes:@[] owner:nil];
-
-    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] init]);
-    for (size_t i = 0; i < pasteboardTypes.size(); ++i)
-        [types.get() addObject:pasteboardTypes[i]];
-
-    return [m_pasteboard.get() declareTypes:types.get() owner:nil];
+    auto types = adoptNS([[NSMutableArray alloc] init]);
+    for (auto& pasteboardType : pasteboardTypes) {
+        if (!canWritePasteboardType(pasteboardType)) {
+            [types removeAllObjects];
+            break;
+        }
+        [types addObject:pasteboardType];
+    }
+    return [m_pasteboard declareTypes:types.get() owner:nil];
 }
 
 int64_t PlatformPasteboard::setBufferForType(SharedBuffer* buffer, const String& pasteboardType)
 {
+    if (!canWritePasteboardType(pasteboardType))
+        return 0;
+
     BOOL didWriteData = [m_pasteboard setData:buffer ? buffer->createNSData().get() : nil forType:pasteboardType];
     if (!didWriteData)
         return 0;
@@ -359,6 +372,9 @@ int64_t PlatformPasteboard::setColor(const Color& color)
 
 int64_t PlatformPasteboard::setStringForType(const String& string, const String& pasteboardType)
 {
+    if (!canWritePasteboardType(pasteboardType))
+        return 0;
+
     BOOL didWriteData;
 
     if (pasteboardType == String(legacyURLPasteboardType())) {
