@@ -127,7 +127,7 @@ GdkEvent* EventSenderProxy::createMouseButtonEvent(GdkEventType eventType, unsig
     mouseEvent->button.y = m_position.y;
     mouseEvent->button.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformView()));
     g_object_ref(mouseEvent->button.window);
-    gdk_event_set_device(mouseEvent, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(mouseEvent->button.window))));
+    gdk_event_set_device(mouseEvent, gdk_seat_get_pointer(gdk_display_get_default_seat(gdk_window_get_display(mouseEvent->button.window))));
     mouseEvent->button.state = webkitModifiersToGDKModifiers(modifiers) | m_mouseButtonsCurrentlyDown;
     mouseEvent->button.time = GDK_CURRENT_TIME;
     mouseEvent->button.axes = 0;
@@ -303,7 +303,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
     pressEvent->key.state = modifiers;
     pressEvent->key.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformWindow()));
     g_object_ref(pressEvent->key.window);
-    gdk_event_set_device(pressEvent, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(pressEvent->key.window))));
+    gdk_event_set_device(pressEvent, gdk_seat_get_pointer(gdk_display_get_default_seat(gdk_window_get_display(pressEvent->key.window))));
 
     GUniqueOutPtr<GdkKeymapKey> keys;
     gint nKeys;
@@ -374,7 +374,7 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
     event->motion.time = GDK_CURRENT_TIME;
     event->motion.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformView()));
     g_object_ref(event->motion.window);
-    gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(event->motion.window))));
+    gdk_event_set_device(event, gdk_seat_get_pointer(gdk_display_get_default_seat(gdk_window_get_display(event->motion.window))));
     event->motion.state = m_mouseButtonsCurrentlyDown;
     event->motion.axes = 0;
 
@@ -398,7 +398,7 @@ void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
     event->scroll.time = GDK_CURRENT_TIME;
     event->scroll.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformView()));
     g_object_ref(event->scroll.window);
-    gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(event->scroll.window))));
+    gdk_event_set_device(event, gdk_seat_get_pointer(gdk_display_get_default_seat(gdk_window_get_display(event->scroll.window))));
 
     // For more than one tick in a scroll, we need smooth scroll event
     if ((horizontal && vertical) || horizontal > 1 || horizontal < -1 || vertical > 1 || vertical < -1) {
@@ -438,7 +438,7 @@ void EventSenderProxy::continuousMouseScrollBy(int horizontal, int vertical, boo
     event->scroll.time = GDK_CURRENT_TIME;
     event->scroll.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformView()));
     g_object_ref(event->scroll.window);
-    gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(event->scroll.window))));
+    gdk_event_set_device(event, gdk_seat_get_pointer(gdk_display_get_default_seat(gdk_window_get_display(event->scroll.window))));
 
     event->scroll.direction = GDK_SCROLL_SMOOTH;
     event->scroll.delta_x = -horizontal / pixelsPerScrollTick;
@@ -481,7 +481,7 @@ GUniquePtr<GdkEvent> EventSenderProxy::createTouchEvent(GdkEventType eventType, 
     touchEvent->touch.sequence = static_cast<GdkEventSequence*>(GINT_TO_POINTER(id));
     touchEvent->touch.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformView()));
     g_object_ref(touchEvent->touch.window);
-    gdk_event_set_device(touchEvent.get(), gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(touchEvent->button.window))));
+    gdk_event_set_device(touchEvent.get(), gdk_seat_get_pointer(gdk_display_get_default_seat(gdk_window_get_display(touchEvent->button.window))));
     touchEvent->touch.time = GDK_CURRENT_TIME;
 
     return touchEvent;

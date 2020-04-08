@@ -535,8 +535,10 @@ static GUniquePtr<GdkEvent> createScrollEvent(GtkWidget* widget, double xDelta, 
     event->scroll.is_stop = !xDelta && !yDelta;
     event->scroll.window = GDK_WINDOW(g_object_ref(window));
     gdk_event_set_screen(event.get(), gdk_window_get_screen(window));
-    gdk_event_set_device(event.get(), gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(window))));
-    gdk_event_set_source_device(event.get(), gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(window))));
+
+    GdkDevice* pointer = gdk_seat_get_pointer(gdk_display_get_default_seat(gdk_window_get_display(window)));
+    gdk_event_set_device(event.get(), pointer);
+    gdk_event_set_source_device(event.get(), pointer);
 
     return event;
 }

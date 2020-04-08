@@ -90,7 +90,7 @@ static void doKeyStroke(GtkWidget* viewWidget, unsigned int keyVal)
     event->key.state = 0;
     event->key.window = gtk_widget_get_window(viewWidget);
     g_object_ref(event->key.window);
-    gdk_event_set_device(event.get(), gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(viewWidget))));
+    gdk_event_set_device(event.get(), gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(viewWidget))));
 
     // When synthesizing an event, an invalid hardware_keycode value can cause it to be badly processed by GTK+.
     GUniqueOutPtr<GdkKeymapKey> keys;
@@ -130,7 +130,7 @@ static void doMouseButtonEvent(GtkWidget* viewWidget, GdkEventType eventType, in
     event->button.state = 0;
     event->button.window = gtk_widget_get_window(viewWidget);
     g_object_ref(event->button.window);
-    event->button.device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(viewWidget)));
+    event->button.device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(viewWidget)));
 
     int xRoot, yRoot;
     gdk_window_get_root_coords(gtk_widget_get_window(viewWidget), x, y, &xRoot, &yRoot);
@@ -162,7 +162,7 @@ void PlatformWebView::simulateMouseMove(unsigned x, unsigned y, WKEventModifiers
         gtk_widget_show(m_window);
     event->motion.window = gtk_widget_get_window(viewWidget);
     g_object_ref(event->motion.window);
-    event->motion.device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(viewWidget)));
+    event->motion.device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(viewWidget)));
 
     int xRoot, yRoot;
     gdk_window_get_root_coords(gtk_widget_get_window(viewWidget), x, y, &xRoot, &yRoot);

@@ -1,3 +1,30 @@
+2020-04-08  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Drop usage of deprecated GdkDeviceManager
+        https://bugs.webkit.org/show_bug.cgi?id=210179
+
+        Reviewed by Adrian Perez de Castro.
+
+        Replace GdkDeviceManager usage for GdkSeat.
+        For GTK4 further changes will be needed but this is a
+        start.
+
+        * TestWebKitAPI/glib/WebKitGLib/gtk/WebViewTestGtk.cpp:
+        (WebViewTest::mouseMoveTo):
+        (WebViewTest::keyStroke):
+        (WebViewTest::doMouseButtonEvent):
+        * TestWebKitAPI/gtk/PlatformWebViewGtk.cpp:
+        (TestWebKitAPI::doKeyStroke):
+        (TestWebKitAPI::doMouseButtonEvent):
+        (TestWebKitAPI::PlatformWebView::simulateMouseMove):
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::createMouseButtonEvent):
+        (WTR::EventSenderProxy::keyDown):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::continuousMouseScrollBy):
+        (WTR::EventSenderProxy::createTouchEvent):
+
 2020-04-08  Keith Rollin  <krollin@apple.com>
 
         Enable the use of XCBuild by default in Apple builds
