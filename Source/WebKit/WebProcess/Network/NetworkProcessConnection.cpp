@@ -319,8 +319,10 @@ void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, Mes
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
 
-    for (auto* frame : WebProcess::singleton().webFrames())
-        frame->addConsoleMessage(source, level, message);
+    for (auto* frame : WebProcess::singleton().webFrames()) {
+        if (frame->isMainFrame())
+            frame->addConsoleMessage(source, level, message);
+    }
 }
 
 } // namespace WebKit
