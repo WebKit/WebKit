@@ -1,3 +1,17 @@
+2020-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Ensure base cache path exists before calculating disk cache capacity
+        https://bugs.webkit.org/show_bug.cgi?id=209338
+
+        Reviewed by Adrian Perez de Castro.
+
+        The base cache path might not exist yet in Cache::open() since it's Storage::open() the one calling
+        FileSystem::makeAllDirectories() with the final cache directory. In such case, computeCapacity() fails because
+        FileSystem::getVolumeFreeSpace() needs an existing file.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::open):
+
 2020-04-08  Keith Rollin  <krollin@apple.com>
 
         Enable the use of XCBuild by default in Apple builds

@@ -78,6 +78,9 @@ static size_t computeCapacity(CacheModel cacheModel, const String& cachePath)
 
 RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePath, OptionSet<CacheOption> options, PAL::SessionID sessionID)
 {
+    if (!FileSystem::makeAllDirectories(cachePath))
+        return nullptr;
+
     auto capacity = computeCapacity(networkProcess.cacheModel(), cachePath);
     auto storage = Storage::open(cachePath, options.contains(CacheOption::TestingMode) ? Storage::Mode::AvoidRandomness : Storage::Mode::Normal, capacity);
 
