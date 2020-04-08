@@ -52,6 +52,12 @@
                 { "name": "storageId", "$ref": "StorageId" },
                 { "name": "key", "type": "string" }
             ]
+        },
+        {
+            "name": "clearDOMStorageItems",
+            "parameters": [
+                { "name": "storageId", "$ref": "StorageId" }
+            ]
         }
     ],
     "events": [

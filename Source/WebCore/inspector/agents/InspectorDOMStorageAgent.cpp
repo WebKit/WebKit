@@ -145,6 +145,18 @@ void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString& errorString, co
     storageArea->removeItem(frame, key);
 }
 
+void InspectorDOMStorageAgent::clearDOMStorageItems(ErrorString& errorString, const JSON::Object& storageId)
+{
+    Frame* frame;
+    auto storageArea = findStorageArea(errorString, storageId, frame);
+    if (!storageArea) {
+        errorString = "Missing storage for given storageId"_s;
+        return;
+    }
+
+    storageArea->clear(frame);
+}
+
 String InspectorDOMStorageAgent::storageId(Storage& storage)
 {
     Document* document = storage.frame()->document();

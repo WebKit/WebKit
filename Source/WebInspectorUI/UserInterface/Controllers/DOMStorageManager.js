@@ -131,13 +131,13 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
             domStorage.itemAdded(key, value);
     }
 
-    itemUpdated(storageId, key, oldValue, value)
+    itemUpdated(storageId, key, oldValue, newValue)
     {
         console.assert(this._enabled);
 
         let domStorage = this._domStorageForIdentifier(storageId);
         if (domStorage)
-            domStorage.itemUpdated(key, oldValue, value);
+            domStorage.itemUpdated(key, oldValue, newValue);
     }
 
     // InspectorObserver

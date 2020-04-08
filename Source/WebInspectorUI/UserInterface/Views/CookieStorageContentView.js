@@ -42,6 +42,10 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
+
+        this._clearButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-clear", WI.UIString("Clear Cookies"), "Images/NavigationItemTrash.svg", 15, 15);
+        this._clearButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._clearButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleClearNavigationItemClicked, this);
     }
 
     // Public
@@ -52,6 +56,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         if (this._setCookieButtonNavigationItem)
             navigationItems.push(this._setCookieButtonNavigationItem);
         navigationItems.push(this._refreshButtonNavigationItem);
+        navigationItems.push(this._clearButtonNavigationItem);
         return navigationItems;
     }
 
@@ -390,6 +395,15 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     _refreshButtonClicked(event)
     {
         this._reloadCookies();
+    }
+
+    _handleClearNavigationItemClicked(event)
+    {
+        let target = WI.assumingMainTarget();
+        for (let cookie of this._cookies.splice(0))
+            target.PageAgent.deleteCookie(cookie.name, cookie.url);
+
+        this._table.reloadData();
     }
 
     _reloadCookies()

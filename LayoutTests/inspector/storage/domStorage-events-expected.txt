@@ -13,7 +13,7 @@ PASS: Should have value 'xvalue'.
 PASS: WI.DOMStorageObject.Event.ItemUpdated
 PASS: Should update key 'x'.
 PASS: Should have oldValue 'value1'.
-PASS: Should have new value 'value2'.
+PASS: Should have newValue 'value2'.
 PASS: WI.DOMStorageObject.Event.ItemRemoved
 PASS: Should remove key 'x'.
 PASS: WI.DOMStorageObject.Event.ItemsCleared
@@ -29,7 +29,7 @@ PASS: Should have value 'xvalue'.
 PASS: WI.DOMStorageObject.Event.ItemUpdated
 PASS: Should update key 'x'.
 PASS: Should have oldValue 'value1'.
-PASS: Should have new value 'value2'.
+PASS: Should have newValue 'value2'.
 PASS: WI.DOMStorageObject.Event.ItemRemoved
 PASS: Should remove key 'x'.
 PASS: WI.DOMStorageObject.Event.ItemsCleared

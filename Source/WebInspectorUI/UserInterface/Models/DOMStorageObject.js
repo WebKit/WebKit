@@ -75,38 +75,64 @@ WI.DOMStorageObject = class DOMStorageObject extends WI.Object
 
     removeItem(key)
     {
+        console.assert(this._entries.has(key));
+
         let target = WI.assumingMainTarget();
-        target.DOMStorageAgent.removeDOMStorageItem(this._id, key);
+        return target.DOMStorageAgent.removeDOMStorageItem(this._id, key);
     }
 
     setItem(key, value)
     {
         let target = WI.assumingMainTarget();
-        target.DOMStorageAgent.setDOMStorageItem(this._id, key, value);
+        return target.DOMStorageAgent.setDOMStorageItem(this._id, key, value);
     }
+
+    clear()
+    {
+        let target = WI.assumingMainTarget();
+
+        // COMPATIBILITY (iOS 13.4): DOMStorage.clearDOMStorageItems did not exist yet.
+        if (!target.hasCommand("DOMStorage.clearDOMStorageItems")) {
+            let promises = [];
+            for (let key of this._entries.keys())
+                promises.push(this.removeItem(key));
+            return Promise.all(promises);
+        }
+
+        return target.DOMStorageAgent.clearDOMStorageItems(this._id);
+    }
+
+    // DOMStorageManager
 
     itemsCleared()
     {
         this._entries.clear();
+
         this.dispatchEventToListeners(WI.DOMStorageObject.Event.ItemsCleared);
     }
 
     itemRemoved(key)
     {
-        this._entries.delete(key);
+        let removed = this._entries.delete(key);
+        console.assert(removed);
+
         this.dispatchEventToListeners(WI.DOMStorageObject.Event.ItemRemoved, {key});
     }
 
     itemAdded(key, value)
     {
+        console.assert(!this._entries.has(key));
         this._entries.set(key, value);
+
         this.dispatchEventToListeners(WI.DOMStorageObject.Event.ItemAdded, {key, value});
     }
 
-    itemUpdated(key, oldValue, value)
+    itemUpdated(key, oldValue, newValue)
     {
-        this._entries.set(key, value);
-        this.dispatchEventToListeners(WI.DOMStorageObject.Event.ItemUpdated, {key, oldValue, value});
+        console.assert(this._entries.get(key) === oldValue);
+        this._entries.set(key, newValue);
+
+        this.dispatchEventToListeners(WI.DOMStorageObject.Event.ItemUpdated, {key, oldValue, newValue});
     }
 };
 

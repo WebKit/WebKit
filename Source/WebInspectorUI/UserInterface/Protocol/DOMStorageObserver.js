@@ -43,8 +43,8 @@ WI.DOMStorageObserver = class DOMStorageObserver extends InspectorBackend.Dispat
         WI.domStorageManager.itemAdded(storageId, key, value);
     }
 
-    domStorageItemUpdated(storageId, key, oldValue, value)
+    domStorageItemUpdated(storageId, key, oldValue, newValue)
     {
-        WI.domStorageManager.itemUpdated(storageId, key, oldValue, value);
+        WI.domStorageManager.itemUpdated(storageId, key, oldValue, newValue);
     }
 };

@@ -1,5 +1,46 @@
 2020-04-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Storage: cannot clear out multiple or all local storage entries
+        https://bugs.webkit.org/show_bug.cgi?id=209867
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/DOMStorageObject.js:
+        (WI.DOMStorageObject.prototype.removeItem):
+        (WI.DOMStorageObject.prototype.setItem):
+        (WI.DOMStorageObject.prototype.clear): Added.
+        (WI.DOMStorageObject.prototype.itemsCleared):
+        (WI.DOMStorageObject.prototype.itemRemoved):
+        (WI.DOMStorageObject.prototype.itemAdded):
+        (WI.DOMStorageObject.prototype.itemUpdated):
+        Add some assertions.
+
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WI.DOMStorageContentView):
+        (WI.DOMStorageContentView.prototype.get navigationItems):
+        (WI.DOMStorageContentView.prototype._handleClearNavigationItemClicked): Added.
+        Add a "Clear" navigation item that calls the new `DOMStorage.clearDOMStorageItems`.
+
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype.removeChild):
+        If the removed item was selected, select the next (or previous if there is no next) item.
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView):
+        (WI.CookieStorageContentView.prototype.get navigationItems):
+        (WI.CookieStorageContentView.prototype._handleClearNavigationItemClicked): Added.
+        Drive-by: also add a "Clear" navigation item that calls `Page.deleteCookie` for each row.
+
+        * UserInterface/Protocol/DOMStorageObserver.js:
+        (WI.DOMStorageObserver.prototype.domStorageItemUpdated):
+        * UserInterface/Controllers/DOMStorageManager.js:
+        (WI.DOMStorageManager.prototype.itemUpdated):
+        Drive-by: rename `value` to `newValue` to match the protocol.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2020-04-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: undefined is not an object (evaluating 'this._target.NetworkAgent.getResponseBody')
         https://bugs.webkit.org/show_bug.cgi?id=210168
 

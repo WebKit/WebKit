@@ -1,0 +1,38 @@
+Tests for DOMStorage.removeDOMStorageItem.
+
+
+== Running test suite: DOMStorage.removeDOMStorageItem
+-- Running test case: DOMStorage.removeDOMStorageItem.Session
+PASS: Should have a DOMStorageObject for sessionStorage.
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Removing 'foo'...
+
+Getting DOM storage entries...
+[]
+
+
+-- Running test case: DOMStorage.removeDOMStorageItem.Local
+PASS: Should have a DOMStorageObject for localStorage.
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Removing 'foo'...
+
+Getting DOM storage entries...
+[]
+
+

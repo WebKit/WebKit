@@ -25,15 +25,15 @@ function test()
 
             if (count === 1) {
                 InspectorTest.pass("WI.DOMStorageObject.Event.ItemAdded");
-                InspectorTest.expectThat(event.data.key === "foo", "Should add key 'foo'.");
-                InspectorTest.expectThat(event.data.value === "value1", "Should have value 'value1'.");
+                InspectorTest.expectEqual(event.data.key, "foo", "Should add key 'foo'.");
+                InspectorTest.expectEqual(event.data.value, "value1", "Should have value 'value1'.");
                 return;
             }
 
             if (count === 2) {
                 InspectorTest.pass("WI.DOMStorageObject.Event.ItemAdded");
-                InspectorTest.expectThat(event.data.key === "x", "Should add key 'x'.");
-                InspectorTest.expectThat(event.data.value === "xvalue", "Should have value 'xvalue'.");
+                InspectorTest.expectEqual(event.data.key, "x", "Should add key 'x'.");
+                InspectorTest.expectEqual(event.data.value, "xvalue", "Should have value 'xvalue'.");
                 return;
             }
 
@@ -43,15 +43,15 @@ function test()
         storageObject.awaitEvent(WI.DOMStorageObject.Event.ItemRemoved)
         .then((event) => {
             InspectorTest.pass("WI.DOMStorageObject.Event.ItemRemoved");
-            InspectorTest.expectThat(event.data.key === "foo", "Should remove key 'x'.");
+            InspectorTest.expectEqual(event.data.key, "foo", "Should remove key 'x'.");
         });
 
         storageObject.awaitEvent(WI.DOMStorageObject.Event.ItemUpdated)
         .then((event) => {
             InspectorTest.pass("WI.DOMStorageObject.Event.ItemUpdated");
-            InspectorTest.expectThat(event.data.key === "foo", "Should update key 'x'.");
-            InspectorTest.expectThat(event.data.oldValue === "value1", "Should have oldValue 'value1'.");
-            InspectorTest.expectThat(event.data.value === "value2", "Should have new value 'value2'.");
+            InspectorTest.expectEqual(event.data.key, "foo", "Should update key 'x'.");
+            InspectorTest.expectEqual(event.data.oldValue, "value1", "Should have oldValue 'value1'.");
+            InspectorTest.expectEqual(event.data.newValue, "value2", "Should have newValue 'value2'.");
         });
 
         storageObject.awaitEvent(WI.DOMStorageObject.Event.ItemsCleared)

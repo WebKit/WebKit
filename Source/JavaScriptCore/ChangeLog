@@ -1,3 +1,13 @@
+2020-04-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Storage: cannot clear out multiple or all local storage entries
+        https://bugs.webkit.org/show_bug.cgi?id=209867
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/DOMStorage.json:
+        Add a `clearDOMStorageItems` command instead of calling `removeDOMStorageItem` for each key.
+
 2020-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] MultiDeleteByOffset should tell correct result AbstractValue in AI

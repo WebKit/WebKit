@@ -1230,6 +1230,8 @@ WI.DataGrid = class DataGrid extends WI.View
         if (child.parent !== this)
             return;
 
+        let wasSelected = this.selectedNode === child || child.selected;
+
         child.deselect();
         child._detach();
 
@@ -1240,6 +1242,8 @@ WI.DataGrid = class DataGrid extends WI.View
         if (child.nextSibling)
             child.nextSibling.previousSibling = child.previousSibling;
 
+        let nextChildToSelect = wasSelected ? (child.nextSibling || child.previousSibling) : null;
+
         child.dataGrid = null;
         child.parent = null;
         child.nextSibling = null;
@@ -1247,6 +1251,8 @@ WI.DataGrid = class DataGrid extends WI.View
 
         if (this.children.length <= 0)
             this.hasChildren = false;
+        else if (nextChildToSelect)
+            nextChildToSelect.select();
 
         console.assert(!child.isPlaceholderNode, "Shouldn't delete the placeholder node.");
     }
