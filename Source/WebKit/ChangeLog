@@ -1,3 +1,13 @@
+2020-04-08  Brady Eidson  <beidson@apple.com>
+
+        Handle [PDFDocument initWithProvider:] returning nil
+        <rdar://problem/61482395> and https://bugs.webkit.org/show_bug.cgi?id=210224
+
+        Reviewed by Geoff Garen.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::threadEntry): Treat a nil PDFDocument as "non-linearized, fallback to normal loading"
+
 2020-04-08  Daniel Bates  <dabates@apple.com>
 
         Track editable elements on screen
