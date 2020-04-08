@@ -44,22 +44,12 @@
 #include <sys/mman.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(IOS_JIT_RESTRICTIONS)
 #include <wtf/cocoa/Entitlements.h>
 #endif
 
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
-
-#if PLATFORM(COCOA)
-#define HAVE_REMAP_JIT 1
-#endif
-
-#if HAVE(REMAP_JIT)
-#if CPU(ARM64) && PLATFORM(IOS_FAMILY)
-#define USE_EXECUTE_ONLY_JIT_WRITE_FUNCTION 1
-#endif
-#endif
 
 #if OS(DARWIN)
 #include <mach/mach.h>
@@ -124,7 +114,7 @@ static constexpr double executablePoolReservationFraction = 0.25;
 static bool isJITEnabled()
 {
     bool jitEnabled = !g_jscConfig.jitDisabled;
-#if PLATFORM(IOS_FAMILY) && (CPU(ARM64) || CPU(ARM))
+#if HAVE(IOS_JIT_RESTRICTIONS)
     return processHasEntitlement("dynamic-codesigning") && jitEnabled;
 #else
     return jitEnabled;
@@ -140,7 +130,7 @@ void ExecutableAllocator::setJITEnabled(bool enabled)
 
     g_jscConfig.jitDisabled = !enabled;
 
-#if PLATFORM(IOS_FAMILY) && (CPU(ARM64) || CPU(ARM))
+#if HAVE(IOS_JIT_RESTRICTIONS)
     if (!enabled) {
         // Because of an OS quirk, even after the JIT region has been unmapped,
         // the OS thinks that region is reserved, and as such, can cause Gigacage
@@ -168,7 +158,7 @@ void ExecutableAllocator::setJITEnabled(bool enabled)
 
 #if OS(DARWIN) && HAVE(REMAP_JIT)
 
-#if CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
+#if USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
 static ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerator(void* writableAddr, void* stubBase, size_t stubSize)
 {
     using namespace ARM64Registers;
@@ -240,7 +230,7 @@ static ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerato
     // asyncDisassembly option as our caller will set our pages execute only.
     return linkBuffer.finalizeCodeWithoutDisassembly<JITThunkPtrTag>();
 }
-#else // not CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
+#else // not USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
 static void genericWriteToJITRegion(off_t offset, const void* data, size_t dataSize)
 {
     memcpy((void*)(g_jscConfig.startOfFixedWritableMemoryPool + offset), data, dataSize);
@@ -259,7 +249,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> ALWAYS_INLINE jitWriteThunkGenerato
     auto codePtr = MacroAssemblerCodePtr<JITThunkPtrTag>(tagCFunctionPtr<JITThunkPtrTag>(function));
     return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(codePtr);
 }
-#endif // CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
+#endif // USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
 
 static ALWAYS_INLINE void initializeSeparatedWXHeaps(void* stubBase, size_t stubSize, void* jitBase, size_t jitSize)
 {

@@ -353,7 +353,7 @@ static void overrideDefaults()
     Options::mediumHeapRAMFraction() = 0.9;
 #endif
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && defined(__LP64__)
+#if ENABLE(SIGILL_CRASH_ANALYZER)
     Options::useSigillCrashAnalyzer() = true;
 #endif
 

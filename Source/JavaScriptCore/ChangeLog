@@ -1,3 +1,18 @@
+2020-04-08  Tim Horton  <timothy_horton@apple.com>
+
+        Rearrange and simplify some JSC feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=210152
+
+        Reviewed by Saam Barati.
+
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteConnectionToTarget::dispatchAsyncOnTarget):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::isJITEnabled):
+        (JSC::ExecutableAllocator::setJITEnabled):
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+
 2020-04-08  Keith Rollin  <krollin@apple.com>
 
         Enable the use of XCBuild by default in Apple builds
