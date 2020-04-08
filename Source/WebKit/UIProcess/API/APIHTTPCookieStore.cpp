@@ -38,8 +38,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/HTTPCookieStoreAdditions.h>
 #else
-#define IN_APP_BROWSER_PRIVACY_ENABLED false
-#define IMPLEMENT_IN_APP_BROWSER_PRIVACY_ENABLED
+#define IMPLEMENT_IN_APP_BROWSER_PRIVACY_ENABLED false
 #endif
 
 using namespace WebKit;
@@ -66,9 +65,8 @@ void HTTPCookieStore::filterAppBoundCookies(const Vector<WebCore::Cookie>& cooki
 {
     Vector<WebCore::Cookie> appBoundCookies;
 #if PLATFORM(IOS_FAMILY)
-    m_owningDataStore->getAppBoundDomains([this, protectedThis = makeRef(*this), cookies, appBoundCookies = WTFMove(appBoundCookies), completionHandler = WTFMove(completionHandler)] (auto& domains) mutable {
-        if (m_owningDataStore->parameters().networkSessionParameters.isInAppBrowserPrivacyEnabled || IN_APP_BROWSER_PRIVACY_ENABLED) {
-            IMPLEMENT_IN_APP_BROWSER_PRIVACY_ENABLED
+    m_owningDataStore->getAppBoundDomains([cookies, appBoundCookies = WTFMove(appBoundCookies), completionHandler = WTFMove(completionHandler)] (auto& domains) mutable {
+        if (!domains.isEmpty() && IMPLEMENT_IN_APP_BROWSER_PRIVACY_ENABLED) {
             for (auto& cookie : cookies) {
                 if (domains.contains(WebCore::RegistrableDomain::uncheckedCreateFromHost(cookie.domain)))
                     appBoundCookies.append(cookie);
