@@ -411,8 +411,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.mimeTypesMap = commonMimeTypesMap();
 
     SandboxExtension::Handle mapDBHandle;
-    SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb", WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport);
-    parameters.mapDBExtensionHandle = WTFMove(mapDBHandle);
+    if (SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb", WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport))
+        parameters.mapDBExtensionHandle = WTFMove(mapDBHandle);
 #endif
     
 #if PLATFORM(IOS)

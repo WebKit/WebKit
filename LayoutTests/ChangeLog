@@ -1,3 +1,13 @@
+2020-04-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Crash under WebKit::SandboxExtension::consume
+        https://bugs.webkit.org/show_bug.cgi?id=210188
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/sandbox/mac/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/mac/sandbox-mach-lookup.html:
+
 2020-04-08  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [macOS debug] Layout Test imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-readyState.html is a flaky failure
