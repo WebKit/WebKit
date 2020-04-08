@@ -238,6 +238,11 @@ public:
         if (!m_enabled)
             return false;
 
+#if USE(SYSTEMD)
+        if (channel.state == WTFLogChannelState::Off)
+            return false;
+#endif
+
         if (level <= WTFLogLevel::Error)
             return true;
 

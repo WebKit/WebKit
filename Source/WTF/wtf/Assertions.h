@@ -541,7 +541,10 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 
 #if USE(JOURNALD) && !RELEASE_LOG_DISABLED
 #define PUBLIC_LOG_STRING "s"
-#define SD_JOURNAL_SEND(channel, priority, file, line, function, ...) sd_journal_send_with_location("CODE_FILE=" file, "CODE_LINE=" line, function, "WEBKIT_SUBSYSTEM=%s", LOG_CHANNEL(channel).subsystem, "WEBKIT_CHANNEL=%s", LOG_CHANNEL(channel).name, "PRIORITY=%i", priority, "MESSAGE=" __VA_ARGS__, nullptr)
+#define SD_JOURNAL_SEND(channel, priority, file, line, function, ...) do { \
+    if (LOG_CHANNEL(channel).state != WTFLogChannelState::Off) \
+        sd_journal_send_with_location("CODE_FILE=" file, "CODE_LINE=" line, function, "WEBKIT_SUBSYSTEM=%s", LOG_CHANNEL(channel).subsystem, "WEBKIT_CHANNEL=%s", LOG_CHANNEL(channel).name, "PRIORITY=%i", priority, "MESSAGE=" __VA_ARGS__, nullptr); \
+} while (0)
 
 #define _XSTRINGIFY(line) #line
 #define _STRINGIFY(line) _XSTRINGIFY(line)

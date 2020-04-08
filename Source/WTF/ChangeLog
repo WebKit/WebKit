@@ -1,3 +1,14 @@
+2020-04-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Release logs are unconditionally filling the journal
+        https://bugs.webkit.org/show_bug.cgi?id=209421
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * wtf/Assertions.h: Don't send logs to systemd for disabled log channels.
+        * wtf/Logger.h:
+        (WTF::Logger::willLog const): Ditto.
+
 2020-04-07  Chris Dumez  <cdumez@apple.com>
 
         Merge DependencyAssertion into ProcessAssertion
