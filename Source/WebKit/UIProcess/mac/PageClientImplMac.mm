@@ -277,10 +277,8 @@ void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newT
     m_impl->toolTipChanged(oldToolTip, newToolTip);
 }
 
-void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider)
+void PageClientImpl::didCommitLoadForMainFrame(const String&, bool)
 {
-    UNUSED_PARAM(mimeType);
-    UNUSED_PARAM(useCustomContentProvider);
     m_impl->updateSupportsArbitraryLayoutModes();
     m_impl->dismissContentRelativeChildWindowsWithAnimation(true);
     m_impl->clearPromisedDragImage();

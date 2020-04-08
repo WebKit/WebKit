@@ -1,3 +1,13 @@
+2020-04-08  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: [iOS] WebPageProxy::didCommitLoadForFrame should not crash with null or empty `mimeType` parameter
+        <https://webkit.org/b/209994>
+        <rdar://problem/60068700>
+
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        - Remove UNUSED_PARAM() in lieu of deleting parameter names.
+
 2020-04-08  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Remove unused WebProcessPool::sendToAllProcessesRelaunchingThemIfNecessary and WebProcessPool::sendToOneProcess
