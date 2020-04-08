@@ -76,6 +76,10 @@ void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer& observer
 
 void RealtimeMediaSource::setInterrupted(bool interrupted, bool pageMuted)
 {
+#if RELEASE_LOG_DISABLED
+    UNUSED_PARAM(pageMuted);
+#endif
+
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, interrupted, ", page muted : ", pageMuted);
     setMuted(interrupted);
 }
