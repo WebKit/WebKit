@@ -435,6 +435,20 @@ bool Quirks::shouldPreventPointerMediaQueryFromEvaluatingToCoarse() const
     auto host = m_document->topDocument().url().host();
     return equalLettersIgnoringASCIICase(host, "shutterstock.com") || host.endsWithIgnoringASCIICase(".shutterstock.com");
 }
+
+bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType, EventTarget* target) const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (is<Element>(target) && touchEventType == eventNames().touchendEvent && equalLettersIgnoringASCIICase(m_document->topDocument().url().host(), "sites.google.com")) {
+        auto& classList = downcast<Element>(*target).classList();
+        return classList.contains("DPvwYc") && classList.contains("sm8sCf");
+    }
+
+    return false;
+}
+
 #endif
 
 bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
