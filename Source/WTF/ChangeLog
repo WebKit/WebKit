@@ -1,3 +1,12 @@
+2020-04-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK4] Make PAL::systemBeep() work
+        https://bugs.webkit.org/show_bug.cgi?id=210158
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/Platform.h: Define a value for GDK_VERSION_MIN_REQUIRED suitable for GTK4.
+
 2020-04-08  Tim Horton  <timothy_horton@apple.com>
 
         Rearrange and simplify some JSC feature flags

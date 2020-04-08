@@ -1,3 +1,13 @@
+2020-04-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK4] Make PAL::systemBeep() work
+        https://bugs.webkit.org/show_bug.cgi?id=210158
+
+        Reviewed by Carlos Garcia Campos.
+
+        * pal/system/gtk/SoundGtk.cpp:
+        (PAL::systemBeep): Use gdk_display_beep(), which works both with GTK3 and GTK4.
+
 2020-04-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] CMake find module for GTK4

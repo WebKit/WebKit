@@ -26,7 +26,8 @@ namespace PAL {
 
 void systemBeep()
 {
-    gdk_beep();
+    if (auto* display = gdk_display_get_default())
+        gdk_display_beep(display);
 }
 
 } // namespace PAL
