@@ -770,8 +770,8 @@ TEST(FloatRect, EnclosingIntRect)
     EXPECT_EQ(789, enclosed.maxY());
 
     WebCore::FloatRect maxIntRect(INT_MIN, INT_MIN, 0, 0);
-    maxIntRect.shiftMaxXEdgeTo(INT_MAX);
-    maxIntRect.shiftMaxYEdgeTo(INT_MAX);
+    maxIntRect.shiftMaxXEdgeTo(30);
+    maxIntRect.shiftMaxYEdgeTo(30);
 
     auto enclosed2 = WebCore::enclosingIntRect(maxIntRect);
 

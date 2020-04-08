@@ -1,3 +1,23 @@
+2020-04-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Clang 10] Fix -Wimplicit-int-float-conversion compilation warnings in TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=210067
+
+        Reviewed by Darin Adler.
+
+        There are test cases for overflow, non-overflow, underflow and
+        non-underflow edge cases in WTF.clampToIntegerFloat test.
+        maxPlusOne<int> can be used for overflow edge case, INT_MIN for
+        non-underflow. This change added code to calculate values for
+        non-overflow and underflow cases.
+
+        * TestWebKitAPI/Tests/WTF/MathExtras.cpp:
+        (TestWebKitAPI::TEST(WTF.clampToIntegerFloat)):
+        * TestWebKitAPI/Tests/WebCore/FloatRect.cpp:
+        (TestWebKitAPI::TEST(FloatRect.EnclosingIntRect)): Replaced
+        shiftMaxXEdgeTo(INT_MAX) with shiftMaxXEdgeTo(0) because it also
+        causes overflow for enclosingIntRect.
+
 2020-04-07  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add unit tests for layout tests factories
