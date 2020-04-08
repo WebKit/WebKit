@@ -1,5 +1,52 @@
 2020-04-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r259338. rdar://problem/61269727
+
+    Support resolution of IPv6 STUN/TURN addresses
+    https://bugs.webkit.org/show_bug.cgi?id=209808
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Add family access to IPAddress to support both IPv4 and IPv6.
+    Store IPAddress internal value as IPv6 and cast them to IPv4 on demand.
+    
+    * platform/network/DNS.h:
+    * platform/network/soup/DNSResolveQueueSoup.cpp:
+    (WebCore::resolvedWithObserverCallback):
+    
+    Source/WebKit:
+    
+    Update code to support IPv6 addresses when doing DNS resolution of TURN/STUN servers.
+    Refactor code to share more code between Cocoa ports and non Cocoa ports.
+    Manually tested with external IPv6 TURN servers.
+    
+    * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+    (WebKit::NetworkRTCProvider::createResolver):
+    * NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp:
+    (WebKit::resolvedName):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259338 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-01  youenn fablet  <youenn@apple.com>
+
+            Support resolution of IPv6 STUN/TURN addresses
+            https://bugs.webkit.org/show_bug.cgi?id=209808
+
+            Reviewed by Eric Carlson.
+
+            Update code to support IPv6 addresses when doing DNS resolution of TURN/STUN servers.
+            Refactor code to share more code between Cocoa ports and non Cocoa ports.
+            Manually tested with external IPv6 TURN servers.
+
+            * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+            (WebKit::NetworkRTCProvider::createResolver):
+            * NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp:
+            (WebKit::resolvedName):
+
+2020-04-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r259316. rdar://problem/61269751
 
     IndexedDB: destroy WebIDBServer when session is removed in network process
