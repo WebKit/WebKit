@@ -1,3 +1,11 @@
+2020-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Update expectations after r259705
+
+        Remove expectations of tests that are passing after r259705.
+
+        * platform/gtk/TestExpectations:
+
 2020-04-07  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-values-4] Support font-relative lh and rlh unit

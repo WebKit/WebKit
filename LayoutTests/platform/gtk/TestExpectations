@@ -1321,8 +1321,6 @@ webkit.org/b/208121 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Fa
 
 webkit.org/b/208123 http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header.html [ Failure ]
 
-webkit.org/b/208180 http/wpt/prefetch/link-prefetch-cross-origin-vary-cookie.html [ Failure ]
-
 webkit.org/b/208181 fast/hidpi/filters-and-image-buffer-resolution.html [ ImageOnlyFailure ]
 
 webkit.org/b/208182 fast/repaint/backgroundSizeRepaint.html [ ImageOnlyFailure ]
@@ -3173,9 +3171,6 @@ webkit.org/b/201272 http/tests/websocket/tests/hybi/bad-handshake-crash.html [ T
 # Also crashing with others in webkit.org/b/198830
 webkit.org/b/201274 media/presentationmodechanged-fired-once.html [ Timeout Crash ]
 
-webkit.org/b/202245 http/tests/workers/service/Client-properties-subframe.html [ Timeout ]
-webkit.org/b/202245 http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html [ Timeout ]
-
 webkit.org/b/99036 pointer-lock/pointerlockchange-event-on-lock-lost.html [ Timeout ]
 webkit.org/b/99036 pointer-lock/pointerlockelement-null-when-pending.html [ Timeout ]
 
@@ -3199,7 +3194,6 @@ webkit.org/b/206873 media/media-source/media-source-seek-redundant-append.html [
 
 webkit.org/b/206876 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Timeout ]
 
-webkit.org/b/207711 http/tests/cookies/double-quoted-value-with-semi-colon.html [ Timeout ]
 webkit.org/b/207711 [ Release ] fast/history/page-cache-webdatabase-pending-transaction.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Timeout ]
@@ -3538,8 +3532,6 @@ webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Failure ]
 webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Pass Failure ]
-
-webkit.org/b/204230 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
 
 webkit.org/b/68512 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 
@@ -4334,7 +4326,6 @@ webkit.org/b/193631 fast/text/font-variations-feature-detection.html [ ImageOnly
 webkit.org/b/193632 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
 
 webkit.org/b/193323 http/wpt/cache-storage/cache-quota.any.html [ Failure ]
-webkit.org/b/205921 http/wpt/cache-storage/cache-quota-add.any.html [ Failure ]
 
 webkit.org/b/193638 webkit.org/b/198830 media/video-webkit-playsinline.html [ Failure Crash ]
 
@@ -4467,41 +4458,17 @@ webkit.org/b/202229 css-dark-mode/color-scheme-meta.html [ Failure ]
 webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-css.html [ Failure ]
 webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-meta.html [ Failure ]
 
-webkit.org/b/202234 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
-webkit.org/b/202234 http/tests/IndexedDB/storage-limit-2.https.html [ Failure ]
-webkit.org/b/202234 http/tests/IndexedDB/storage-limit.https.html [ Failure ]
-webkit.org/b/202234 storage/indexeddb/storage-limit.html [ Failure ]
-webkit.org/b/202234 storage/indexeddb/request-size-estimate.html [ Failure ]
-
 webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Timeout ]
 
 # These indexeddb tests below started failing in the same range 251425-251429
 webkit.org/b/206367 storage/indexeddb/result-request-cycle.html [ Failure ]
 webkit.org/b/206367 storage/indexeddb/value-cursor-cycle.html [ Failure ]
 
-webkit.org/b/202236 http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html [ Failure ]
-webkit.org/b/202237 http/tests/appcache/document-cookie-http-only.php [ Failure ]
-
-webkit.org/b/202238 http/tests/cache-storage/cache-clearing-all.https.html [ Failure ]
-webkit.org/b/202238 http/tests/cache-storage/cache-clearing-origin.https.html [ Failure ]
-webkit.org/b/202238 http/tests/cache-storage/cache-origins.https.html [ Failure ]
-
-webkit.org/b/202240 http/tests/cookies/private-cookie-storage.html [ Failure ]
-
-webkit.org/b/202241 [ Release ] http/tests/inspector/network/resource-timing.html [ Failure ]
-
 webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http.html [ Failure ]
 webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html [ Failure ]
 webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html [ Failure ]
 webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html [ Failure ]
-webkit.org/b/202242 http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html [ Failure ]
 
-webkit.org/b/202245 http/tests/workers/service/ServiceWorkerGlobalScope_register.html [ Failure ]
-webkit.org/b/202245 http/tests/workers/service/registration-updateViaCache-none-importScripts.html [ Failure ]
-webkit.org/b/202245 http/tests/workers/service/self_registration.html [ Failure ]
-webkit.org/b/202245 http/tests/workers/service/service-worker-getRegistration.html [ Failure ]
-webkit.org/b/202245 [ Release ] http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Failure Timeout ]
-webkit.org/b/202245 [ Debug ] http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Timeout ]
 webkit.org/b/202245 http/wpt/service-workers/extendableEvent.https.html [ Failure ]
 webkit.org/b/202245 http/wpt/service-workers/fetchEvent.https.html [ Failure ]
 webkit.org/b/202245 http/wpt/service-workers/navigation-redirect.https.html [ Failure ]
