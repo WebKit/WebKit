@@ -1,3 +1,14 @@
+2020-04-08  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Update import of libdl stubs for new Angle dladdr use
+        https://bugs.webkit.org/show_bug.cgi?id=210200
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+        Use find_package to get libdl wrappers on playstation, include
+        them in both executables and shared libraries.
+
 2020-04-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r259708.
