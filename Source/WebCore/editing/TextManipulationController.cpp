@@ -239,6 +239,9 @@ static bool isAttributeForTextManipulation(const QualifiedName& nameToCheck)
 
 void TextManipulationController::observeParagraphs(const Position& start, const Position& end)
 {
+    if (start.isNull() || end.isNull())
+        return;
+
     auto document = makeRefPtr(start.document());
     ASSERT(document);
     ParagraphContentIterator iterator { start, end };
