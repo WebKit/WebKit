@@ -1,5 +1,24 @@
 2020-04-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Search: populate the search field with the current selection when using the global search shortcut
+        https://bugs.webkit.org/show_bug.cgi?id=210207
+
+        Reviewed by Timothy Hatcher.
+
+        Add a setting to control whether the global search (⇧⌘F) should be populated by the current
+        selection (if it exists), allowing for a quicker flow for "show me everywhere this exists".
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+
+        * UserInterface/Base/Main.js:
+        (WI._focusSearchField)
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2020-04-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Storage: cannot clear out multiple or all local storage entries
         https://bugs.webkit.org/show_bug.cgi?id=209867
 

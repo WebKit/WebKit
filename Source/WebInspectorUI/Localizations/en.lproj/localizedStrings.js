@@ -615,6 +615,8 @@ localizedStrings["General"] = "General";
 localizedStrings["Getter"] = "Getter";
 localizedStrings["Global Code"] = "Global Code";
 localizedStrings["Global Lexical Environment"] = "Global Lexical Environment";
+/* Settings tab checkbox label for whether the global search should populate from the current selection. */
+localizedStrings["Global Search From Selection @ Settings"] = "%s from selection";
 localizedStrings["Global Variables"] = "Global Variables";
 localizedStrings["Grammar"] = "Grammar";
 /* Name of Graphics Tab */

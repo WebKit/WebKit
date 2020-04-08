@@ -251,6 +251,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let searchGroup = generalSettingsView.addGroup(WI.UIString("Search:", "Search: @ Settings", "Settings tab label for search related settings"));
         searchGroup.addSetting(WI.settings.searchCaseSensitive, WI.UIString("Case Sensitive", "Case Sensitive @ Settings", "Settings tab checkbox label for whether searches should be case sensitive."));
         searchGroup.addSetting(WI.settings.searchRegularExpression, WI.UIString("Regular Expression", "Regular Expression @ Settings", "Settings tab checkbox label for whether searches should be treated as regular expressions."));
+        searchGroup.addSetting(WI.settings.searchFromSelection, WI.UIString("%s from selection", "Global Search From Selection @ Settings", "Settings tab checkbox label for whether the global search should populate from the current selection.").format(WI.searchKeyboardShortcut.displayName));
 
         generalSettingsView.addSeparator();
 
