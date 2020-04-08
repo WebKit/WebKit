@@ -34,9 +34,10 @@ import string
 import struct
 
 
-def addSummaryAndSyntheticFormattersForRawBitmaskType(debugger, type_name, enumerator_value_to_name_map):
+def addSummaryAndSyntheticFormattersForRawBitmaskType(debugger, type_name, enumerator_value_to_name_map, flags_mask=None):
     class GeneratedRawBitmaskProvider(RawBitmaskProviderBase):
         ENUMERATOR_VALUE_TO_NAME_MAP = enumerator_value_to_name_map.copy()
+        FLAGS_MASK = flags_mask
 
     def raw_bitmask_summary_provider(valobj, dict):
         provider = GeneratedRawBitmaskProvider(valobj, dict)
@@ -103,6 +104,19 @@ def __lldb_init_module(debugger, dict):
         0x00400000: "WebEventFlagMaskRightOptionKey",
         0x01000000: "WebEventFlagMaskRightCommandKey",
     })
+
+    # AppKit
+    NSEventModifierFlagDeviceIndependentFlagsMask = 0xffff0000
+    addSummaryAndSyntheticFormattersForRawBitmaskType(debugger, "NSEventModifierFlags", {
+        1 << 16: "NSEventModifierFlagCapsLock",
+        1 << 17: "NSEventModifierFlagShift",
+        1 << 18: "NSEventModifierFlagControl",
+        1 << 19: "NSEventModifierFlagOption",
+        1 << 20: "NSEventModifierFlagCommand",
+        1 << 21: "NSEventModifierFlagNumericPad",
+        1 << 22: "NSEventModifierFlagHelp",
+        1 << 23: "NSEventModifierFlagFunction",
+    }, flags_mask=NSEventModifierFlagDeviceIndependentFlagsMask)
 
 
 def WTFString_SummaryProvider(valobj, dict):
@@ -823,12 +837,16 @@ class WTFOptionSetProvider(FlagEnumerationProvider):
 
 class RawBitmaskProviderBase(FlagEnumerationProvider):
     ENUMERATOR_VALUE_TO_NAME_MAP = {}
+    FLAGS_MASK = None  # Useful when a bitmask represents multiple disjoint sets of flags (e.g. NSEventModifierFlags).
 
     def _enumerator_value_to_name_map(self):
         return self.ENUMERATOR_VALUE_TO_NAME_MAP
 
     def _bitmask(self):
-        return self.valobj.GetValueAsUnsigned(0)
+        result = self.valobj.GetValueAsUnsigned(0)
+        if self.FLAGS_MASK is not None:
+            result = result & self.FLAGS_MASK
+        return result
 
 
 class WTFCompactPointerTupleProvider(object):

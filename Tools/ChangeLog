@@ -1,3 +1,23 @@
+2020-04-08  Daniel Bates  <dabates@apple.com>
+
+        [lldb-webkit] Pretty-print NSEventModifierFlags
+        https://bugs.webkit.org/show_bug.cgi?id=210193
+
+        Reviewed by Jer Noble.
+
+        Enumerations such as NSEventModifierFlags describe disjoint sets of flags. In the case of
+        NSEventModifierFlags it describes both device independent and dependent flags. When pretty
+        printing such types one or more sets of flags may not be publically available. So, add
+        support masking off such inaccessible sets of flags before pretty printing the rest of
+        the set.
+
+        * lldb/lldb_webkit.py:
+        (addSummaryAndSyntheticFormattersForRawBitmaskType):
+        (addSummaryAndSyntheticFormattersForRawBitmaskType.GeneratedRawBitmaskProvider):
+        (__lldb_init_module):
+        (RawBitmaskProviderBase):
+        (RawBitmaskProviderBase._bitmask):
+
 2020-04-08  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Improve summary for CheckPatchRelevance build step (follow-up fix)
