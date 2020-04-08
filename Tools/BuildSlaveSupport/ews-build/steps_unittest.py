@@ -2165,7 +2165,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'JSC-Tests-EWS')
         self.assertEqual(CheckPatchRelevance.haltOnFailure, True)
         self.assertEqual(CheckPatchRelevance.flunkOnFailure, True)
-        self.expectOutcome(result=SUCCESS, state_string='Checked patch relevance')
+        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
     def test_queue_without_relevance_info(self):
@@ -2173,7 +2173,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CheckPatchRelevance())
         self.setProperty('buildername', 'Commit-Queue')
         CheckPatchStatusOnEWSQueues.get_patch_status = lambda cls, patch_id, queue: FAILURE
-        self.expectOutcome(result=SUCCESS, state_string='Checked patch relevance')
+        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
     def test_non_relevant_patch(self):
@@ -2182,7 +2182,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'JSC-Tests-EWS')
         self.setProperty('patch_id', '1234')
         CheckPatchStatusOnEWSQueues.get_patch_status = lambda cls, patch_id, queue: FAILURE
-        self.expectOutcome(result=FAILURE, state_string='Checked patch relevance (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t contain relevant changes')
         return self.runStep()
 
 

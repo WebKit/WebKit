@@ -1,3 +1,17 @@
+2020-04-07  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Improve summary for CheckPatchRelevance build step
+        https://bugs.webkit.org/show_bug.cgi?id=210146
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckPatchRelevance): Improved success message.
+        (CheckPatchRelevance.start):
+        (CheckPatchRelevance.getResultSummary): Improved failure message.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py: Updated accordingly.
+
 2020-04-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Cancel WebAuthn requests when users cancel LocalAuthentication prompts

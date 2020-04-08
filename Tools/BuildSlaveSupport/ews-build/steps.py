@@ -243,7 +243,7 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
 class CheckPatchRelevance(buildstep.BuildStep):
     name = 'check-patch-relevance'
     description = ['check-patch-relevance running']
-    descriptionDone = ['Checked patch relevance']
+    descriptionDone = ['Patch contains relevant changes']
     flunkOnFailure = True
     haltOnFailure = True
 
@@ -332,12 +332,16 @@ class CheckPatchRelevance(buildstep.BuildStep):
             self.finished(SUCCESS)
             return None
 
-        self._addToLog('stdio', 'This patch does not have relevant changes.')
+        self._addToLog('stdio', 'This patch does not contain relevant changes.')
         self.finished(FAILURE)
         self.build.results = SKIPPED
-        self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
+        self.build.buildFinished(['Patch {} doesn\'t contain relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
         return None
 
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {u'step': u'Patch doesn\'t contain relevant changes'}
+        return super(CheckPatchRelevance, self).getResultSummary()
 
 class BugzillaMixin(object):
     addURLs = False
