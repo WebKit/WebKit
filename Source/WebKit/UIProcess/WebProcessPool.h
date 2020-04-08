@@ -192,8 +192,6 @@ public:
 
     template<typename T> void sendToAllProcesses(const T& message);
     template<typename T> void sendToAllProcessesForSession(const T& message, PAL::SessionID);
-    template<typename T> void sendToAllProcessesRelaunchingThemIfNecessary(const T& message);
-    template<typename T> void sendToOneProcess(T&& message);
 
     // Sends the message to WebProcess or NetworkProcess as approporiate for current process model.
     template<typename T> void sendToNetworkingProcess(T&& message);
@@ -841,35 +839,6 @@ void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::Session
         WebProcessProxy* process = m_processes[i].get();
         if (process->canSendMessage() && !process->isPrewarmed() && process->sessionID() == sessionID)
             process->send(T(message), 0);
-    }
-}
-
-template<typename T>
-void WebProcessPool::sendToAllProcessesRelaunchingThemIfNecessary(const T& message)
-{
-    // FIXME (Multi-WebProcess): WebProcessPool doesn't track processes that have exited, so it cannot relaunch these. Perhaps this functionality won't be needed in this mode.
-    sendToAllProcesses(message);
-}
-
-template<typename T>
-void WebProcessPool::sendToOneProcess(T&& message)
-{
-    bool messageSent = false;
-    size_t processCount = m_processes.size();
-    for (size_t i = 0; i < processCount; ++i) {
-        WebProcessProxy* process = m_processes[i].get();
-        if (process->canSendMessage()) {
-            process->send(std::forward<T>(message), 0);
-            messageSent = true;
-            break;
-        }
-    }
-
-    if (!messageSent) {
-        prewarmProcess();
-        RefPtr<WebProcessProxy> process = m_processes.last();
-        if (process->canSendMessage())
-            process->send(std::forward<T>(message), 0);
     }
 }
 
