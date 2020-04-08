@@ -217,4 +217,8 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVURLAsset
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVURLAssetRequiresCustomURLLoadingKey, NSString *, PAL_EXPORT)
 #endif
 
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AVFoundation, AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout, void, (AVCaptureSession *session), (session))
+#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
 #endif // USE(AVFOUNDATION)

@@ -290,6 +290,11 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVRouteDetectorMultipleRoutesDe
 #define AVRouteDetectorMultipleRoutesDetectedDidChangeNotification PAL::get_AVFoundation_AVRouteDetectorMultipleRoutesDetectedDidChangeNotification()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionMediaServicesWereResetNotification, NSString *)
 #define AVAudioSessionMediaServicesWereResetNotification PAL::get_AVFoundation_AVAudioSessionMediaServicesWereResetNotification()
-#endif //  PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AVFoundation, AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout, void, (AVCaptureSession *session), (session))
+#define AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout softLink_AVFoundation_AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout
+#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 #endif // USE(AVFOUNDATION)
