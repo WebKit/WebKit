@@ -208,6 +208,7 @@ class TestLayoutTestsFactory(TestCase):
         factory = factories.macOSWK1Factory(platform='mac-mojave', configuration='release', architectures=["x86_64"])
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='mac-mojave', configuration='release', architectures=["x86_64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.CheckPatchRelevance),
             _BuildStepFactory(steps.ValidatePatch),
             _BuildStepFactory(steps.PrintConfiguration),
             _BuildStepFactory(steps.CheckOutSource),
@@ -224,6 +225,7 @@ class TestLayoutTestsFactory(TestCase):
         factory = factories.macOSWK1Factory(platform='mac-mojave', configuration='debug', architectures=["x86_64"])
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='mac-mojave', configuration='debug', architectures=["x86_64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.CheckPatchRelevance),
             _BuildStepFactory(steps.ValidatePatch),
             _BuildStepFactory(steps.PrintConfiguration),
             _BuildStepFactory(steps.CheckOutSource),

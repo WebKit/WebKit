@@ -280,6 +280,19 @@ class CheckPatchRelevance(buildstep.BuildStep):
         'Tools/Scripts/webkitdirs.pm',
     ]
 
+    wk1_paths = [
+        'Source/WebKitLegacy',
+        'Source/WebCore',
+        'Source/WebInspectorUI',
+        'Source/WebDriver',
+        'Source/WTF',
+        'Source/bmalloc',
+        'Source/JavaScriptCore',
+        'Source/ThirdParty',
+        'LayoutTests',
+        'Tools',
+    ]
+
     webkitpy_paths = [
         'Tools/Scripts/webkitpy/',
         'Tools/QueueStatusServer/',
@@ -290,6 +303,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
         'services-ews': services_paths,
         'jsc': jsc_paths,
         'webkitpy': webkitpy_paths,
+        'wk1-tests': wk1_paths,
     }
 
     def _patch_is_relevant(self, patch, builderName):

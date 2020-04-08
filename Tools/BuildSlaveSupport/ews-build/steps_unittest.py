@@ -2159,7 +2159,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def test_relevant_patch(self):
+    def test_relevant_jsc_patch(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: JSTests/'
         self.setupStep(CheckPatchRelevance())
         self.setProperty('buildername', 'JSC-Tests-EWS')
@@ -2168,12 +2168,23 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
-    def test_queue_without_relevance_info(self):
-        CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
+    def test_relevant_wk1_patch(self):
+        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Source/WebKitLegacy'
         self.setupStep(CheckPatchRelevance())
-        self.setProperty('buildername', 'Commit-Queue')
-        CheckPatchStatusOnEWSQueues.get_patch_status = lambda cls, patch_id, queue: FAILURE
+        self.setProperty('buildername', 'macOS-Mojave-Release-WK1-Tests-EWS')
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.runStep()
+
+    def test_queues_without_relevance_info(self):
+        CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
+        queues = ['Commit-Queue', 'Style-EWS', 'Apply-WatchList-EWS', 'GTK-Build-EWS', 'GTK-WK2-Tests-EWS',
+                  'iOS-13-Build-EWS', 'iOS-13-Simulator-Build-EWS', 'iOS-13-Simulator-WK2-Tests-EWS',
+                  'macOS-Mojave-Release-Build-EWS', 'macOS-Mojave-Release-WK2-Tests-EWS', 'macOS-Mojave-Debug-Build-EWS',
+                  'Windows-EWS', 'WinCairo-EWS', 'WPE-EWS', 'WebKitPerl-Tests-EWS']
+        for queue in queues:
+            self.setupStep(CheckPatchRelevance())
+            self.setProperty('buildername', queue)
+            self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
     def test_non_relevant_patch(self):
@@ -2181,7 +2192,6 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CheckPatchRelevance())
         self.setProperty('buildername', 'JSC-Tests-EWS')
         self.setProperty('patch_id', '1234')
-        CheckPatchStatusOnEWSQueues.get_patch_status = lambda cls, patch_id, queue: FAILURE
         self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t contain relevant changes')
         return self.runStep()
 

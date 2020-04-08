@@ -111,8 +111,8 @@ class TestFactory(Factory):
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
 
-    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments)
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, checkRelevance=False, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments, checkRelevance=checkRelevance)
         if platform == 'gtk':
             self.addStep(InstallGtkDependencies())
         self.getProduct()
@@ -151,6 +151,9 @@ class macOSBuildFactory(BuildFactory):
 
 class macOSWK1Factory(TestFactory):
     LayoutTestClass = RunWebKit1Tests
+
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, checkRelevance=False, **kwargs):
+        super(macOSWK1Factory, self).__init__(platform=platform, configuration=configuration, architectures=architectures, additionalArguments=additionalArguments, checkRelevance=True, **kwargs)
 
 
 class macOSWK2Factory(TestFactory):
