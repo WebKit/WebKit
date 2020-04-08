@@ -1,3 +1,12 @@
+2020-04-08  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [macOS debug] Layout Test imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-readyState.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=187911
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-04-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Storage: cannot clear out multiple or all local storage entries
