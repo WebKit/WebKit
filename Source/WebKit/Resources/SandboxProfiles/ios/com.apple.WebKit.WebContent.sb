@@ -554,8 +554,8 @@
     (deny ipc-posix-sem-create ipc-posix-sem-post ipc-posix-sem-unlink ipc-posix-sem-wait)
     (allow ipc-posix-sem-open))
 
-(allow mach-lookup (with telemetry)
-    (global-name "com.apple.runningboard") ;; Needed by process assertion code (ProcessTaskStateObserver).
+(deny mach-lookup (with telemetry-backtrace)
+    (global-name "com.apple.runningboard")
 )
 
 (allow system-sched

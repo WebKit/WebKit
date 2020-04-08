@@ -296,12 +296,6 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
     m_eventDispatcher->initializeConnection(connection);
 #if PLATFORM(IOS_FAMILY)
     m_viewUpdateDispatcher->initializeConnection(connection);
-
-    ASSERT(!m_uiProcessDependencyProcessAssertion);
-    if (auto remoteProcessID = connection->remoteProcessID())
-        m_uiProcessDependencyProcessAssertion = makeUnique<ProcessAssertion>(remoteProcessID, "WebContent process dependency on UIProcess"_s, ProcessAssertionType::DependentProcessLink);
-    else
-        RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSuspension, "Unable to create a process dependency assertion on UIProcess because remoteProcessID is 0");
 #endif // PLATFORM(IOS_FAMILY)
 
     m_webInspectorInterruptDispatcher->initializeConnection(connection);

@@ -1,3 +1,28 @@
+2020-04-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to the runningboard service in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=209933
+
+        Reviewed by Chris Dumez.
+
+        Creating the dependency process assertion in the WebContent process requires access to runningboard, but since
+        this is only done on process startup, we can issue a temporary extension to the runningboard service, which
+        will be immediately revoked after the process assertion has been created.
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup.html
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-04-07  John Wilander  <wilander@apple.com>
 
         ITP Debug Mode logs should be more generic now that it blocks all third-party cookies by default

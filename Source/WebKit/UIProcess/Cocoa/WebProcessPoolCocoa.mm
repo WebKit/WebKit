@@ -388,6 +388,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         SandboxExtension::createHandleForMachLookup("com.apple.diagnosticd", WTF::nullopt, diagnosticsExtensionHandle, SandboxExtension::Flags::NoReport);
         parameters.diagnosticsExtensionHandle = WTFMove(diagnosticsExtensionHandle);
     }
+
+    SandboxExtension::Handle runningboardExtensionHandle;
+    SandboxExtension::createHandleForMachLookup("com.apple.runningboard", WTF::nullopt, runningboardExtensionHandle, SandboxExtension::Flags::NoReport);
+    parameters.runningboardExtensionHandle = WTFMove(runningboardExtensionHandle);
 #endif
     
 #if PLATFORM(COCOA)
