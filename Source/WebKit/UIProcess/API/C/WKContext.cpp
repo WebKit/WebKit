@@ -670,3 +670,8 @@ void WKContextSetUseSeparateServiceWorkerProcess(WKContextRef contextRef, bool u
 {
     WebKit::toImpl(contextRef)->setUseSeparateServiceWorkerProcess(useSeparateServiceWorkerProcess);
 }
+
+void WKContextSetPrimaryWebsiteDataStore(WKContextRef contextRef, WKWebsiteDataStoreRef websiteDataStore)
+{
+    WebKit::toImpl(contextRef)->setPrimaryDataStore(*WebKit::toImpl(websiteDataStore));
+}

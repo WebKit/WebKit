@@ -3111,7 +3111,12 @@ PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parent
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(defaultWebsiteDataStore(), true);
+    WKContextSetPrimaryWebsiteDataStore(context, defaultWebsiteDataStore());
+#else
     WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKContextGetWebsiteDataStore(context), true);
+#endif
     return context;
 }
 

@@ -1,3 +1,19 @@
+2020-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] WTR: fix handling of WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=210106
+
+        Reviewed by Adrian Perez de Castro.
+
+        The TestController::defaultWebsiteDataStore() is created and used but never really assigned to the
+        context. Since we are not assigning a WebsiteDataStore to the context, and we don't use the default
+        WebsiteDataStore, when a new page is created, we end up creating the default one (with the default config,
+        instead of the one created by WTR).
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::platformAdjustContext): Set defaultWebsiteDataStore() as the primary data store of the
+        context like the GLib API does.
+
 2020-04-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Clang 10] Fix -Wimplicit-int-float-conversion compilation warnings in TestWebKitAPI

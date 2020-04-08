@@ -119,6 +119,8 @@ WK_EXPORT void WKContextClearLegacyPrivateBrowsingLocalStorage(WKContextRef cont
 
 WK_EXPORT void WKContextSetUseSeparateServiceWorkerProcess(WKContextRef context, bool forceServiceWorkerProcess);
 
+WK_EXPORT void WKContextSetPrimaryWebsiteDataStore(WKContextRef context, WKWebsiteDataStoreRef websiteDataStore);
+
 #ifdef __cplusplus
 }
 #endif
