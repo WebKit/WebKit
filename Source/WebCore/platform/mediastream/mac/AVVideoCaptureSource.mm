@@ -394,6 +394,9 @@ bool AVVideoCaptureSource::setupSession()
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
 
     m_session = adoptNS([PAL::allocAVCaptureSessionInstance() init]);
+#if PLATFORM(IOS_FAMILY)
+    AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout(m_session.get());
+#endif
     [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];
 
     [m_session beginConfiguration];
