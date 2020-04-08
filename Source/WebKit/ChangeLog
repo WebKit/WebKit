@@ -1,3 +1,16 @@
+2020-04-07  Joonghun Park  <jh718.park@samsung.com>
+
+        Move the misplaced statement to the proper place where in
+        RESOURCE_LOAD_STATISTICS macro.
+
+        This patch removes the build warning below since r259275.
+        warning: unused variable ‘sameSiteStrictEnforcementEnabled’ [-Wunused-variable]
+
+        No new tests, no new behavior changes.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2020-04-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Cancel WebAuthn requests when users cancel LocalAuthentication prompts
