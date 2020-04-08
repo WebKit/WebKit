@@ -2192,7 +2192,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CheckPatchRelevance())
         self.setProperty('buildername', 'JSC-Tests-EWS')
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t contain relevant changes')
+        self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
         return self.runStep()
 
 
