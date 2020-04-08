@@ -808,7 +808,8 @@ void SpeculativeJIT::emitCall(Node* node)
         unsigned requiredBytes = sizeof(CallerFrameAndPC) + sizeof(CallFrame*) * 2;
         requiredBytes = WTF::roundUpToMultipleOf(stackAlignmentBytes(), requiredBytes);
         m_jit.subPtr(TrustedImm32(requiredBytes), JITCompiler::stackPointerRegister);
-        m_jit.setupArguments<decltype(operationCallEval)>(TrustedImmPtr::weakPointer(m_graph, globalObject), GPRInfo::regT0);
+        m_jit.move(TrustedImm32(node->ecmaMode().value()), GPRInfo::regT1);
+        m_jit.setupArguments<decltype(operationCallEval)>(TrustedImmPtr::weakPointer(m_graph, globalObject), GPRInfo::regT0, GPRInfo::regT1);
         prepareForExternalCall();
         m_jit.appendCall(operationCallEval);
         m_jit.exceptionCheck();
@@ -1784,12 +1785,12 @@ void SpeculativeJIT::compileContiguousPutByVal(Node* node, BaseOperandType& base
         if (node->op() == PutByValDirect) {
             addSlowPathGenerator(slowPathCall(
                 slowCase, this,
-                m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValDirectBeyondArrayBoundsNonStrict,
+                node->ecmaMode().isStrict() ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValDirectBeyondArrayBoundsNonStrict,
                 NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg, propertyReg, JSValueRegs(valueTag, valuePayloadReg)));
         } else {
             addSlowPathGenerator(slowPathCall(
                 slowCase, this,
-                m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
+                node->ecmaMode().isStrict() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
                 NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg, propertyReg, JSValueRegs(valueTag, valuePayloadReg)));
         }
     }
@@ -2629,9 +2630,9 @@ void SpeculativeJIT::compile(Node* node)
             
             flushRegisters();
             if (node->op() == PutByValDirect)
-                callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValDirectCellStrict : operationPutByValDirectCellNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs);
+                callOperation(node->ecmaMode().isStrict() ? operationPutByValDirectCellStrict : operationPutByValDirectCellNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs);
             else
-                callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValCellStrict : operationPutByValCellNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs);
+                callOperation(node->ecmaMode().isStrict() ? operationPutByValCellStrict : operationPutByValCellNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs);
             m_jit.exceptionCheck();
             
             noResult(node);
@@ -2742,12 +2743,12 @@ void SpeculativeJIT::compile(Node* node)
                 if (node->op() == PutByValDirect) {
                     addSlowPathGenerator(slowPathCall(
                         slowCases, this,
-                        m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValDirectBeyondArrayBoundsNonStrict,
+                        node->ecmaMode().isStrict() ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValDirectBeyondArrayBoundsNonStrict,
                         NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg, propertyReg, JSValueRegs(valueTagReg, valuePayloadReg)));
                 } else {
                     addSlowPathGenerator(slowPathCall(
                         slowCases, this,
-                        m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
+                        node->ecmaMode().isStrict() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
                         NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg, propertyReg, JSValueRegs(valueTagReg, valuePayloadReg)));
                 }
             }
@@ -2782,7 +2783,7 @@ void SpeculativeJIT::compile(Node* node)
         JSValueRegs valueRegs = value.jsValueRegs();
 
         flushRegisters();
-        callOperation(m_jit.isStrictModeFor(node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis,
+        callOperation(node->ecmaMode().isStrict() ? operationPutByValWithThisStrict : operationPutByValWithThis,
             TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, thisRegs, propertyRegs, valueRegs);
         m_jit.exceptionCheck();
 
@@ -4293,7 +4294,7 @@ void SpeculativeJIT::compileDeleteById(Node* node)
     value.use();
 
     flushRegisters();
-    callOperation(operationDeleteByIdGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, valueRegs, node->cacheableIdentifier().rawBits());
+    callOperation(operationDeleteByIdGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, valueRegs, node->cacheableIdentifier().rawBits(), TrustedImm32(node->ecmaMode().value()));
     m_jit.exceptionCheck();
 
     unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
@@ -4313,7 +4314,7 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
     key.use();
 
     flushRegisters();
-    callOperation(operationDeleteByValGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, baseRegs, keyRegs);
+    callOperation(operationDeleteByValGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, baseRegs, keyRegs, TrustedImm32(node->ecmaMode().value()));
     m_jit.exceptionCheck();
 
     unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);

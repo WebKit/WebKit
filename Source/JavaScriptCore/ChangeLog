@@ -1,3 +1,27 @@
+2020-04-08  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC][32-bits] Build failure after r259676 (Not using strict mode within ClassDeclaration statement)
+        https://bugs.webkit.org/show_bug.cgi?id=210176
+
+        Reviewed by Aakash Jain.
+
+        Fixed 32-bit paths to match changes in r259676.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileDeleteById):
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEval):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_id):
+
 2020-04-08  Tim Horton  <timothy_horton@apple.com>
 
         Rearrange and simplify some JSC feature flags

@@ -229,7 +229,8 @@ bool JIT::compileCallEval(const OpCallEval& bytecode)
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
 
-    callOperation(operationCallEval, m_codeBlock->globalObject(), regT1);
+    move(TrustedImm32(bytecode.m_ecmaMode.value()), regT2);
+    callOperation(operationCallEval, m_codeBlock->globalObject(), regT1, regT2);
 
     addSlowCase(branchIfEmpty(regT1));
 
