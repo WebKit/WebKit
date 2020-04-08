@@ -7961,12 +7961,12 @@ Logger& Document::logger()
     
 Optional<PageIdentifier> Document::pageID() const
 {
-    return m_frame->loader().client().pageID();
+    return m_frame->loader().pageID();
 }
 
 Optional<FrameIdentifier> Document::frameID() const
 {
-    return m_frame->loader().client().frameID();
+    return m_frame->loader().frameID();
 }
 
 void Document::registerArticleElement(Element& article)

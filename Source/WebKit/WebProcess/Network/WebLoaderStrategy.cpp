@@ -273,7 +273,7 @@ static void addParametersShared(const Frame* frame, NetworkResourceLoadParameter
 
     if (auto* ownerElement = frame->ownerElement()) {
         if (auto* parentFrame = ownerElement->document().frame())
-            parameters.parentFrameID = parentFrame->loader().client().frameID();
+            parameters.parentFrameID = parentFrame->loader().frameID();
     }
 }
 

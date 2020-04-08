@@ -54,8 +54,8 @@
 #endif
 
 #define IS_ALLOWED (m_frame.page() ? m_frame.page()->sessionID().isAlwaysOnLoggingAllowed() : false)
-#define PAGE_ID (m_frame.loader().client().pageID().valueOr(PageIdentifier()).toUInt64())
-#define FRAME_ID (m_frame.loader().client().frameID().valueOr(FrameIdentifier()).toUInt64())
+#define PAGE_ID (m_frame.loader().pageID().valueOr(PageIdentifier()).toUInt64())
+#define FRAME_ID (m_frame.loader().frameID().valueOr(FrameIdentifier()).toUInt64())
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(IS_ALLOWED, Loading, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] PolicyChecker::" fmt, this, PAGE_ID, FRAME_ID, ##__VA_ARGS__)
 
 namespace WebCore {

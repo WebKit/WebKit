@@ -80,7 +80,6 @@
 #include "FormController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "FullscreenManager.h"
 #include "GCObservation.h"
@@ -2583,7 +2582,7 @@ uint64_t Internals::elementIdentifier(Element& element) const
 uint64_t Internals::frameIdentifier(const Document& document) const
 {
     if (auto* page = document.page())
-        return page->mainFrame().loader().client().frameID().valueOr(FrameIdentifier { }).toUInt64();
+        return page->mainFrame().loader().frameID().valueOr(FrameIdentifier { }).toUInt64();
     return 0;
 }
 

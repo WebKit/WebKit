@@ -31,7 +31,6 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "NetworkStorageSession.h"
 #include "NetworkingContext.h"
@@ -75,8 +74,8 @@ String CookieJar::cookies(Document& document, const URL& url) const
     Optional<FrameIdentifier> frameID;
     Optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
-        frameID = frame->loader().client().frameID();
-        pageID = frame->loader().client().pageID();
+        frameID = frame->loader().frameID();
+        pageID = frame->loader().pageID();
     }
 
     std::pair<String, bool> result;
@@ -98,8 +97,8 @@ CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(const Doc
     Optional<FrameIdentifier> frameID;
     Optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
-        frameID = frame->loader().client().frameID();
-        pageID = frame->loader().client().pageID();
+        frameID = frame->loader().frameID();
+        pageID = frame->loader().pageID();
     }
 
     return { document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url) };
@@ -110,8 +109,8 @@ void CookieJar::setCookies(Document& document, const URL& url, const String& coo
     Optional<FrameIdentifier> frameID;
     Optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
-        frameID = frame->loader().client().frameID();
-        pageID = frame->loader().client().pageID();
+        frameID = frame->loader().frameID();
+        pageID = frame->loader().pageID();
     }
 
     if (auto* session = m_storageSessionProvider->storageSession())
@@ -145,8 +144,8 @@ String CookieJar::cookieRequestHeaderFieldValue(Document& document, const URL& u
     Optional<FrameIdentifier> frameID;
     Optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
-        frameID = frame->loader().client().frameID();
-        pageID = frame->loader().client().pageID();
+        frameID = frame->loader().frameID();
+        pageID = frame->loader().pageID();
     }
 
     auto result = cookieRequestHeaderFieldValue(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url));
@@ -160,8 +159,8 @@ bool CookieJar::getRawCookies(const Document& document, const URL& url, Vector<C
     Optional<FrameIdentifier> frameID;
     Optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
-        frameID = frame->loader().client().frameID();
-        pageID = frame->loader().client().pageID();
+        frameID = frame->loader().frameID();
+        pageID = frame->loader().pageID();
     }
 
     if (auto* session = m_storageSessionProvider->storageSession())

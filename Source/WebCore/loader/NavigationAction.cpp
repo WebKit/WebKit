@@ -32,7 +32,6 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "HistoryItem.h"
 #include "MouseEvent.h"
 
@@ -41,7 +40,7 @@ namespace WebCore {
 static GlobalFrameIdentifier createGlobalFrameIdentifier(const Document& document)
 {
     if (document.frame())
-        return { document.frame()->loader().client().pageID().valueOr(PageIdentifier { }), document.frame()->loader().client().frameID().valueOr(FrameIdentifier { }) };
+        return { document.frame()->loader().pageID().valueOr(PageIdentifier { }), document.frame()->loader().frameID().valueOr(FrameIdentifier { }) };
     return GlobalFrameIdentifier();
 }
 

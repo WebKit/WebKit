@@ -1,3 +1,16 @@
+2020-04-08  Rob Buis  <rbuis@igalia.com>
+
+        Make more use of FrameLoader pageID/frameID getters
+        https://bugs.webkit.org/show_bug.cgi?id=210182
+
+        Reviewed by Chris Dumez.
+
+        Make more use of FrameLoader pageID/frameID getters, before
+        this change they were only used internally in FrameLoader.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::addParametersShared):
+
 2020-04-08  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up: [iOS] WebPageProxy::didCommitLoadForFrame should not crash with null or empty `mimeType` parameter
