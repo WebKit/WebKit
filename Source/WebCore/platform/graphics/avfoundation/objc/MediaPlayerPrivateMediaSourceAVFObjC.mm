@@ -759,9 +759,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
     [m_sampleBufferDisplayLayer setName:@"MediaPlayerPrivateMediaSource AVSampleBufferDisplayLayer"];
 #endif
 
-    ASSERT(m_sampleBufferDisplayLayer);
     if (!m_sampleBufferDisplayLayer) {
         ERROR_LOG(LOGIDENTIFIER, "Failed to create AVSampleBufferDisplayLayer");
+        if (m_mediaSourcePrivate)
+            m_mediaSourcePrivate->failedToCreateRenderer(MediaSourcePrivateAVFObjC::RendererType::Video);
         setNetworkState(MediaPlayer::NetworkState::DecodeError);
         return;
     }
@@ -769,7 +770,16 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
     if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:)])
         m_sampleBufferDisplayLayer.get().preventsDisplaySleepDuringVideoPlayback = NO;
 
-    [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
+    @try {
+        [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
+    } @catch(NSException *exception) {
+        ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer addRenderer:] threw an exception: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ASSERT_NOT_REACHED();
+
+        setNetworkState(MediaPlayer::NetworkState::DecodeError);
+        return;
+    }
+
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setVideoLayer(m_sampleBufferDisplayLayer.get());
     m_videoFullscreenLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), snappedIntRect(m_player->playerContentBoxRect()).size());
@@ -1128,6 +1138,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 void MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer(AVSampleBufferAudioRenderer* audioRenderer)
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
+    if (!audioRenderer) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     if (!m_sampleBufferAudioRendererMap.add((__bridge CFTypeRef)audioRenderer, AudioRendererProperties()).isNewEntry)
         return;
 
@@ -1135,7 +1150,15 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [audioRenderer setVolume:m_player->volume()];
     [audioRenderer setAudioTimePitchAlgorithm:(m_player->preservesPitch() ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed)];
 
-    [m_synchronizer addRenderer:audioRenderer];
+    @try {
+        [m_synchronizer addRenderer:audioRenderer];
+    } @catch(NSException *exception) {
+        ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferRenderSynchronizer addRenderer:] threw an exception: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        ASSERT_NOT_REACHED();
+
+        setNetworkState(MediaPlayer::NetworkState::DecodeError);
+        return;
+    }
     m_player->renderingModeChanged();
 }
 
