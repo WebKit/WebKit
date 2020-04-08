@@ -457,12 +457,16 @@ void WebsiteDataStore::beginAppBoundDomainCheck(const URL& requestURL, WebFrameP
     ASSERT(RunLoop::isMain());
 
     if (shouldTreatURLProtocolAsAppBound(requestURL)) {
-        listener.didReceiveAppBoundDomainResult(true);
+        listener.didReceiveAppBoundDomainResult(NavigatingToAppBoundDomain::Yes);
         return;
     }
 
     ensureAppBoundDomains([domain = WebCore::RegistrableDomain(requestURL), listener = makeRef(listener)] (auto& domains) mutable {
-        listener->didReceiveAppBoundDomainResult(domains.contains(domain));
+        if (domains.isEmpty()) {
+            listener->didReceiveAppBoundDomainResult(WTF::nullopt);
+            return;
+        }
+        listener->didReceiveAppBoundDomainResult(domains.contains(domain) ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No);
     });
 }
 
