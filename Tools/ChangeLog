@@ -1,5 +1,20 @@
 2020-04-07  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] Add unit tests for layout tests factories
+        https://bugs.webkit.org/show_bug.cgi?id=210150
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories_unittest.py:
+        (TestLayoutTestsFactory):
+        (TestLayoutTestsFactory.test_macos_wk1_release_factory): Added unit-test.
+        (TestLayoutTestsFactory.test_macos_wk1_debug_factory): Ditto.
+        (TestLayoutTestsFactory.test_macos_wk2_factory): Ditto.
+        (TestLayoutTestsFactory.test_ios_wk2_factory): Ditto.
+        (TestGTKFactory): Renamed.
+
+2020-04-07  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Improve summary for CheckPatchRelevance build step
         https://bugs.webkit.org/show_bug.cgi?id=210146
 
