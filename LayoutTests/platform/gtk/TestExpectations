@@ -1373,21 +1373,6 @@ webkit.org/b/209801 imported/w3c/web-platform-tests/xhr/header-user-agent-sync.h
 webkit.org/b/209533 editing/pasteboard/paste-line-endings-004.html [ Failure Pass ]
 webkit.org/b/209533 fast/repaint/animation-after-layer-scroll.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/appcache/xhr-foreign-resource.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-media.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-range.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-redirect.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-request-headers.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-request-max-stale.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-revalidation-new-expire-header.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-validation-attachment.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-validation-no-body.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-validation.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-vary-no-body.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-vary.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/resource-becomes-uncacheable.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cookies/same-site/popup-cross-site-post.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cookies/same-site/popup-cross-site.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cookies/same-site/popup-same-site-post.html [ Failure Pass ]
@@ -1948,7 +1933,6 @@ webkit.org/b/160133 css3/masking/mask-svg-no-fragmentId-tiled.html [ ImageOnlyFa
 
 webkit.org/b/160135 http/tests/security/contentSecurityPolicy/video-with-http-url-allowed-by-csp-media-src-star.html [ Failure Pass ]
 webkit.org/b/160136 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure Pass ]
-webkit.org/b/162685 http/tests/cache/disk-cache/disk-cache-204-status-code.html [ Failure Pass ]
 
 webkit.org/b/160137 svg/custom/non-scaling-stroke-update.svg [ ImageOnlyFailure Pass ]
 
@@ -2698,18 +2682,13 @@ webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failur
 webkit.org/b/208126 http/tests/cookies/document-cookie-after-showModalDialog.html [ Failure Pass ]
 webkit.org/b/208126 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Failure Pass ]
 
-webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-disable.html [ Failure Pass ]
 webkit.org/b/208139 http/tests/cache/link-prefetch-main-resource.html [ Failure Pass ]
-webkit.org/b/208139 http/tests/inspector/network/resource-response-source-disk-cache.html [ Failure Pass ]
-webkit.org/b/208139 http/tests/inspector/network/resource-sizes-disk-cache.html [ Failure Pass ]
 webkit.org/b/208139 http/wpt/fetch/disable-speculative-load-for-xhr-and-fetch-loads.html [ Failure Pass ]
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/api/basic/conditional-get.html [ Failure Pass ]
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/api/request/request-cache-default.html [ Failure Pass ]
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/api/request/request-cache-force-cache.html [ Failure Pass ]
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.html [ Failure Pass ]
 webkit.org/b/208139 imported/w3c/web-platform-tests/service-workers/service-worker/update-no-cache-request-headers.https.html [ Failure Pass ]
-webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-307-status-code.html [ Failure Pass ]
-webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-404-status-code.html [ Failure Pass ]
 webkit.org/b/208139 http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Failure Pass ]
 webkit.org/b/208139 imported/w3c/web-platform-tests/cors/304.htm [ Failure Pass ]
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/304-update.html [ Failure Pass ]
@@ -2718,7 +2697,6 @@ webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/heuristic.h
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.html [ Failure Pass ]
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/status.html [ Failure Pass ]
 webkit.org/b/208139 imported/w3c/web-platform-tests/fetch/http-cache/vary.html [ Failure Pass ]
-webkit.org/b/208139 http/wpt/prefetch/link-prefetch-skip-disk-cache.html [ Failure Pass ]
 
 webkit.org/b/208248 http/tests/cookies/document-cookie-set-expired-cookie.html [ Failure Pass ]
 
@@ -2775,8 +2753,6 @@ webkit.org/b/208301 editing/pasteboard/paste-line-endings-003.html [ Failure Pas
 webkit.org/b/208301 editing/pasteboard/paste-line-endings-007.html [ Failure Pass ]
 webkit.org/b/208301 editing/pasteboard/paste-text-005.html [ Failure Pass ]
 webkit.org/b/208301 editing/pasteboard/pasting-into-p-should-not-nest-p.html [ Failure Pass ]
-
-webkit.org/b/208304 http/tests/cache/disk-cache/speculative-validation/validation-request.html [ Failure Pass ]
 
 webkit.org/b/208305 imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html [ Failure Pass ]
 
@@ -3252,7 +3228,6 @@ webkit.org/b/209533 fast/frames/exponential-frames.html [ Timeout Pass ]
 webkit.org/b/209533 fast/selectors/is-backtracking.html [ Timeout Pass ]
 webkit.org/b/209533 fast/selectors/matches-backtracking.html [ Timeout Pass ]
 webkit.org/b/209533 http/tests/appcache/top-frame-2.html [ Timeout Pass ]
-webkit.org/b/209533 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Timeout Pass ]
 webkit.org/b/209533 http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Timeout Pass ]
 webkit.org/b/209533 http/tests/security/video-cross-origin-caching.html [ Timeout Pass ]
 webkit.org/b/209533 http/tests/workers/service/Client-properties.html [ Timeout Pass ]
