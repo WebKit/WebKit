@@ -1,3 +1,16 @@
+2020-04-08  Zalan Bujtas  <zalan@apple.com>
+
+        [Win] Gardening, update baselines
+
+        Unreviewed gardening.
+
+        Rebaseline after r259296.
+
+        * platform/win/css2.1/20110323/margin-applies-to-006-expected.txt:
+        * platform/win/fast/forms/form-hides-table-expected.txt:
+        * platform/win/fast/table/table-insert-before-non-anonymous-block-expected.txt:
+        * platform/win/tables/mozilla_expected_failures/dom/appendCol1-expected.txt:
+
 2020-04-08  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk1 Debug ] two webgl/2.0.0/conformance2/attribs/gl tests are flaky timing out.
