@@ -86,6 +86,9 @@
 
 - (Class <WKWebViewContentProvider>)providerForMIMEType:(const String&)mimeType
 {
+    if (mimeType.isEmpty())
+        return nil;
+
     const auto& representation = _contentProviderForMIMEType.find(mimeType);
 
     if (representation == _contentProviderForMIMEType.end())

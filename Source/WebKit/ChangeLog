@@ -1,3 +1,25 @@
+2020-04-08  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] WebPageProxy::didCommitLoadForFrame should not crash with null or empty `mimeType` parameter
+        <https://webkit.org/b/209994>
+        <rdar://problem/60068700>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:]):
+        - Extract logic for `representationClass` since
+          -[WKWebViewContentProviderRegistry providerForMIMEType:] may
+          return nil.
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry providerForMIMEType:]):
+        - Add early return if `mimeType` is null or empty as those are
+          not valid keys for `_contentProviderForMIMEType`.
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        - Add UNUSED_PARAM() for when -Wno-unused-parameter is removed
+          in place of GCC_WARN_UNUSED_VARIABLE=YES.
+
 2020-04-08  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r253346): some Automation commands targeted at an iframe do not return
