@@ -366,6 +366,8 @@ bool RenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
     if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
         return false;
 
+    SVGHitTestCycleDetectionScope hitTestScope(*this);
+
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_PATH_HITTESTING, request, style().pointerEvents());
     bool isVisible = (style().visibility() == Visibility::Visible);
     if (isVisible || !hitRules.requireVisible) {

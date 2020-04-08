@@ -407,6 +407,9 @@ void SVGRenderSupport::clipContextToCSSClippingArea(GraphicsContext& context, co
 
 bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const FloatPoint& point)
 {
+    if (SVGHitTestCycleDetectionScope::isVisiting(renderer))
+        return false;
+
     ClipPathOperation* clipPathOperation = renderer.style().clipPath();
     if (is<ShapeClipPathOperation>(clipPathOperation) || is<BoxClipPathOperation>(clipPathOperation))
         return isPointInCSSClippingArea(renderer, point);
@@ -505,5 +508,34 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
 }
 
 #endif
+
+SVGHitTestCycleDetectionScope::SVGHitTestCycleDetectionScope(const RenderElement& element)
+{
+    m_element = makeWeakPtr(&element);
+    auto result = visitedElements().add(m_element.get());
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+SVGHitTestCycleDetectionScope::~SVGHitTestCycleDetectionScope()
+{
+    bool result = visitedElements().remove(*m_element.get());
+    ASSERT_UNUSED(result, result);
+}
+
+WeakHashSet<RenderElement>& SVGHitTestCycleDetectionScope::visitedElements()
+{
+    static NeverDestroyed<WeakHashSet<RenderElement>> s_visitedElements;
+    return s_visitedElements;
+}
+
+bool SVGHitTestCycleDetectionScope::isEmpty()
+{
+    return visitedElements().computesEmpty();
+}
+
+bool SVGHitTestCycleDetectionScope::isVisiting(const RenderElement& element)
+{
+    return visitedElements().contains(element);
+}
 
 }

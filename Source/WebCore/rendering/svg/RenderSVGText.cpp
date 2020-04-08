@@ -440,6 +440,8 @@ bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResul
             if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
                 return false;       
 
+            SVGHitTestCycleDetectionScope hitTestScope(*this);
+
             HitTestLocation hitTestLocation(LayoutPoint(flooredIntPoint(localPoint)));
             return RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), hitTestAction);
         }

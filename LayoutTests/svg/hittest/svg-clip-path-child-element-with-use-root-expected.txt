@@ -1,0 +1,1 @@
+Tests SVG hit test with a recursive clipPath. Test passes if WebKit does not crash. PASS

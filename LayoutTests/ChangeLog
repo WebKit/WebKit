@@ -1,3 +1,16 @@
+2020-04-08  Doug Kelly  <dougk@apple.com>
+
+        Hit test with clipPath referencing parent element causes infinite recursion
+        https://bugs.webkit.org/show_bug.cgi?id=209773
+        <rdar://problem/60002347>
+
+        Reviewed by Geoffrey Garen.
+
+        * svg/hittest/svg-clip-path-child-element-with-use-expected.txt: Added.
+        * svg/hittest/svg-clip-path-child-element-with-use-root-expected.txt: Added.
+        * svg/hittest/svg-clip-path-child-element-with-use-root.html: Added.
+        * svg/hittest/svg-clip-path-child-element-with-use.html: Added.
+
 2020-04-08  Antoine Quint  <graouts@apple.com>
 
         transition-property is not computed correctly when transition-duration is set to "inherit"

@@ -165,7 +165,9 @@ bool RenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTest
 
     if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
         return false;
-                
+
+    SVGHitTestCycleDetectionScope hitTestScope(*this);
+
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
         if (child->nodeAtFloatPoint(request, result, localPoint, hitTestAction)) {
             updateHitTestResult(result, LayoutPoint(localPoint));
