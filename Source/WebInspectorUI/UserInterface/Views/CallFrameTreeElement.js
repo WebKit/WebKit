@@ -37,7 +37,8 @@ WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeEleme
         this._callFrame = callFrame;
         this._isActiveCallFrame = false;
 
-         if (isAsyncBoundaryCallFrame) {
+        this._isAsyncBoundaryCallFrame = isAsyncBoundaryCallFrame;
+         if (this._isAsyncBoundaryCallFrame) {
             this.addClassName("async-boundary");
             this.selectable = false;
          }
@@ -66,7 +67,12 @@ WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeEleme
     // Public
 
     get callFrame() { return this._callFrame; }
-    get isActiveCallFrame() { return this._isActiveCallFrame; }
+    get isAsyncBoundaryCallFrame() { return this._isAsyncBoundaryCallFrame; }
+
+    get isActiveCallFrame()
+    {
+        return this._isActiveCallFrame;
+    }
 
     set isActiveCallFrame(x)
     {

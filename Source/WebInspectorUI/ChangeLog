@@ -1,3 +1,25 @@
+2020-04-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: support copying selected call frame(s) in the Call Stack
+        https://bugs.webkit.org/show_bug.cgi?id=210172
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SourcesTabContentView.js:
+        (WI.SourcesTabContentView.prototype.handleCopyEvent): Added.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype.handleCopyEvent): Added.
+        Copy the function name and source location for each selected call frame. If the selected
+        call frames span an async boundary, include the async boundary in the form `--- <name> ---`
+        where name is the reason for the async behavior (e.g. `addEventListener`). If the selected
+        call frames span multiple threads (e.g. `Worker`), include the thread name and indent all
+        of the call frames for that thread.
+
+        * UserInterface/Views/CallFrameTreeElement.js:
+        (WI.CallFrameTreeElement):
+        (WI.CallFrameTreeElement.prototype.get isAsyncBoundaryCallFrame): Added.
+
 2020-04-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: focus outline of scope bar is clipped

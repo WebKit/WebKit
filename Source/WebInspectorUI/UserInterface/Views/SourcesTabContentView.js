@@ -108,6 +108,12 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
             treeElement.revealAndSelect();
     }
 
+    handleCopyEvent(event)
+    {
+        if (this.navigationSidebarPanel.element.contains(WI.currentFocusElement))
+            this.navigationSidebarPanel.handleCopyEvent(event);
+    }
+
     // Private
 
     _handleDebuggerPaused(event)

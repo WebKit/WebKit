@@ -122,7 +122,19 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._pauseReasonContainer.appendChild(this._pauseReasonSection.element);
 
         this._callStackTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
+        this._callStackTreeOutline.allowsMultipleSelection = true;
         this._callStackTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
+        this._callStackTreeOutline.populateContextMenu = (contextMenu, event, treeElement) => {
+            if (this._callStackTreeOutline.selectedTreeElements.length) {
+                contextMenu.appendItem(WI.UIString("Copy"), () => {
+                    this.handleCopyEvent(event);
+                });
+
+                contextMenu.appendSeparator();
+            }
+
+            WI.TreeOutline.prototype.populateContextMenu(contextMenu, event, treeElement);
+        };
 
         let callStackRow = new WI.DetailsSectionRow;
         callStackRow.element.appendChild(this._callStackTreeOutline.element);
@@ -580,6 +592,79 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         console.assert(false, "Didn't find a TreeElement for representedObject", representedObject);
         return null;
+    }
+
+    handleCopyEvent(event)
+    {
+        let selectedTreeElements = new Set(this._callStackTreeOutline.selectedTreeElements);
+        if (!selectedTreeElements.size)
+            return;
+
+        let treeElement = this._callStackTreeOutline.children[0];
+
+        const ignoreHidden = true;
+        const skipUnrevealed = true;
+        const stayWithin = null;
+        const dontPopulate = true;
+        while (!treeElement.revealed(ignoreHidden))
+            treeElement = treeElement.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate);
+
+        let indentString = WI.indentString();
+        let threads = [];
+        let asyncBoundary = null;
+
+        while (treeElement) {
+            if (treeElement instanceof WI.ThreadTreeElement) {
+                threads.push({
+                    name: treeElement.mainTitle,
+                    frames: [],
+                });
+
+                asyncBoundary = null;
+            } else if (treeElement instanceof WI.CallFrameTreeElement) {
+                if (treeElement.isAsyncBoundaryCallFrame) {
+                    asyncBoundary = treeElement.mainTitle;
+                } else if (selectedTreeElements.has(treeElement)) {
+                    if (asyncBoundary) {
+                        threads.lastValue.frames.push("--- " + asyncBoundary + " ---");
+                        asyncBoundary = null;
+                    }
+
+                    let line = treeElement.mainTitle;
+
+                    let sourceCodeLocation = treeElement.callFrame.sourceCodeLocation;
+                    if (sourceCodeLocation)
+                        line += " (" + sourceCodeLocation.displayLocationString() + ")";
+
+                    threads.lastValue.frames.push(line);
+                }
+            }
+
+            treeElement = treeElement.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate);
+        }
+
+        let multipleFramesSelected = threads.filter(({frames}) => frames.length).length > 1;
+
+        let lines = [];
+        for (let {name, frames} of threads) {
+            if (multipleFramesSelected)
+                lines.push(name);
+
+            for (let frame of frames) {
+                let prefix = "";
+                if (multipleFramesSelected)
+                    prefix = indentString;
+                lines.push(prefix + frame);
+            }
+        }
+        if (!lines.length)
+            return;
+
+        setTimeout(() => {
+            InspectorFrontendHost.copyText(lines.join("\n"));
+        });
+
+        event.stop();
     }
 
     // Protected
