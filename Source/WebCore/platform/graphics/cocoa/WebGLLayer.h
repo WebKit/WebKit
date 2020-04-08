@@ -66,8 +66,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #endif
 }
 
-@property (nonatomic) NakedPtr<WebCore::GraphicsContextGLOpenGL> context;
-
 - (id)initWithGraphicsContextGL:(NakedPtr<WebCore::GraphicsContextGLOpenGL>)context;
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;

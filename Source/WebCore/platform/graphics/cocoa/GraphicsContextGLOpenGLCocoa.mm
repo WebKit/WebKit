@@ -582,6 +582,10 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
         gl::DeleteFramebuffers(1, &m_fbo);
 #endif
 
+        // Release the WebGLLayer before destroying the underlying
+        // context to enable it to do any necessary cleanups.
+        m_webGLLayer = nullptr;
+
 #if USE(OPENGL_ES)
         [EAGLContext setCurrentContext:0];
         [static_cast<EAGLContext *>(m_contextObj) release];
@@ -592,7 +596,6 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
         EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         EGL_DestroyContext(m_displayObj, m_contextObj);
 #endif
-        [m_webGLLayer setContext:nullptr];
     }
 
     LOG(WebGL, "Destroyed a GraphicsContextGLOpenGL (%p).", this);
