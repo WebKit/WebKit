@@ -3187,8 +3187,6 @@ webkit.org/b/206149 webrtc/peer-connection-remote-audio-mute.html [ Timeout ]
 
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure Timeout Pass ]
 webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Failure Timeout Pass ]
-webkit.org/b/202736 storage/indexeddb/modern/handle-user-delete.html [ Timeout ]
-webkit.org/b/202736 storage/indexeddb/modern/new-database-after-user-delete.html [ Timeout ]
 
 webkit.org/b/206873 media/media-source/media-source-seek-redundant-append.html [ Timeout ]
 
@@ -4469,11 +4467,7 @@ webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-b
 webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html [ Failure ]
 webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html [ Failure ]
 
-webkit.org/b/202245 http/wpt/service-workers/extendableEvent.https.html [ Failure ]
-webkit.org/b/202245 http/wpt/service-workers/fetchEvent.https.html [ Failure ]
-webkit.org/b/202245 http/wpt/service-workers/navigation-redirect.https.html [ Failure ]
 webkit.org/b/202245 http/wpt/service-workers/online.https.html [ Failure Pass ]
-webkit.org/b/202245 imported/w3c/web-platform-tests/service-workers/service-worker/installing.https.html [ Failure ]
 webkit.org/b/204636 http/wpt/service-workers/header-filtering.https.html [ Failure Timeout Pass ]
 
 webkit.org/b/202457 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_canvas.html [ Failure ]
