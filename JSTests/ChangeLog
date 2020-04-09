@@ -1,5 +1,19 @@
 2020-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] ModuleEnvironment do not have JSGlobalLexicalEnvironment as its upper scope
+        https://bugs.webkit.org/show_bug.cgi?id=193347
+
+        Reviewed by Tadeu Zagallo.
+
+        * stress/global-lexical-environment-access-from-module.js: Added.
+        (shouldBe):
+        (import.string_appeared_here.then):
+        * stress/resources/global-lexical-environment-access-from-module-child.js: Added.
+        (export.read):
+        (export.write):
+
+2020-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, skip JSTests/stress/intl-canonicalize-locale-list-error-oom.js if memoryLimited
         <rdar://problem/61533598>
 

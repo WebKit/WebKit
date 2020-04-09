@@ -6677,15 +6677,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (needsVarInjectionChecks(resolveType))
                 m_graph.watchpoints().addLazily(m_inlineStackTop->m_codeBlock->globalObject()->varInjectionWatchpoint());
 
-            // FIXME: Currently, module code do not query to JSGlobalLexicalEnvironment. So this case should be removed once it is fixed.
-            // https://bugs.webkit.org/show_bug.cgi?id=193347
-            if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module) {
-                if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
-                    JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
-                    unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
-                    if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
-                        addToGraph(ForceOSRExit);
-                }
+            if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
+                JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+                unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
+                if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
+                    addToGraph(ForceOSRExit);
             }
 
             switch (resolveType) {
@@ -6793,12 +6789,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             switch (resolveType) {
             case GlobalProperty:
             case GlobalPropertyWithVarInjectionChecks: {
-                // FIXME: Currently, module code do not query to JSGlobalLexicalEnvironment. So this case should be removed once it is fixed.
-                // https://bugs.webkit.org/show_bug.cgi?id=193347
-                if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module) {
-                    if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
-                        addToGraph(ForceOSRExit);
-                }
+                if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
+                    addToGraph(ForceOSRExit);
 
                 SpeculatedType prediction = getPrediction();
 
@@ -6970,12 +6962,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             switch (resolveType) {
             case GlobalProperty:
             case GlobalPropertyWithVarInjectionChecks: {
-                // FIXME: Currently, module code do not query to JSGlobalLexicalEnvironment. So this case should be removed once it is fixed.
-                // https://bugs.webkit.org/show_bug.cgi?id=193347
-                if (m_inlineStackTop->m_codeBlock->scriptMode() != JSParserScriptMode::Module) {
-                    if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
-                        addToGraph(ForceOSRExit);
-                }
+                if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
+                    addToGraph(ForceOSRExit);
 
                 PutByIdStatus status;
                 if (uid)

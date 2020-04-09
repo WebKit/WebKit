@@ -1,3 +1,12 @@
+2020-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ModuleEnvironment do not have JSGlobalLexicalEnvironment as its upper scope
+        https://bugs.webkit.org/show_bug.cgi?id=193347
+
+        Reviewed by Tadeu Zagallo.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/inline-async-execorder-expected.txt:
+
 2020-04-08  Chris Dumez  <cdumez@apple.com>
 
         querySelector("#\u0000") should match an element with ID U+FFFD

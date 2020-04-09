@@ -42,8 +42,6 @@ public:
     using Base = JSLexicalEnvironment;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
-    static JSModuleEnvironment* create(VM&, Structure*, JSScope*, SymbolTable*, JSValue initialValue, AbstractModuleRecord*);
-
     static JSModuleEnvironment* create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue, AbstractModuleRecord* moduleRecord)
     {
         Structure* structure = globalObject->moduleEnvironmentStructure();
@@ -81,6 +79,8 @@ public:
 
 private:
     JSModuleEnvironment(VM&, Structure*, JSScope*, SymbolTable*);
+
+    static JSModuleEnvironment* create(VM&, Structure*, JSScope*, SymbolTable*, JSValue initialValue, AbstractModuleRecord*);
 
     void finishCreation(VM&, JSValue initialValue, AbstractModuleRecord*);
 
