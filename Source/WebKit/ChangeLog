@@ -1,5 +1,21 @@
 2020-04-09  Simon Fraser  <simon.fraser@apple.com>
 
+        eventSender.monitorWheelEvents() should clear latching state
+        https://bugs.webkit.org/show_bug.cgi?id=210288
+
+        Reviewed by Tim Horton.
+
+        Use monitorWheelEvents() as a trigger to clear scroll latching state, both main-thread (via Page)
+        and scrolling thread (via ScrollingTree).
+
+        Page::ensureWheelEventTestMonitor() had side-effects, so hide it, and have clients explicitly call Page::startMonitoringWheelEvents().
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageStartMonitoringScrollOperations):
+        (WKBundlePageRegisterScrollOperationCompletionCallback):
+
+2020-04-09  Simon Fraser  <simon.fraser@apple.com>
+
         Reset view navigation gesture state between tests
         https://bugs.webkit.org/show_bug.cgi?id=210283
 

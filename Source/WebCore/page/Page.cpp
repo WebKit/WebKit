@@ -2641,18 +2641,26 @@ bool Page::isMonitoringWheelEvents() const
     return !!m_wheelEventTestMonitor;
 }
 
-WheelEventTestMonitor& Page::ensureWheelEventTestMonitor()
+void Page::startMonitoringWheelEvents()
 {
-    if (!m_wheelEventTestMonitor) {
-        m_wheelEventTestMonitor = adoptRef(new WheelEventTestMonitor(*this));
-        // We need to update the scrolling coordinator so that the mainframe scrolling node can expect wheel event test triggers.
-        if (auto* frameView = mainFrame().view()) {
-            if (m_scrollingCoordinator) {
-                m_scrollingCoordinator->startMonitoringWheelEvents();
-                m_scrollingCoordinator->updateIsMonitoringWheelEventsForFrameView(*frameView);
-            }
+    ensureWheelEventTestMonitor().clearAllTestDeferrals();
+
+#if ENABLE(WHEEL_EVENT_LATCHING)
+    resetLatchingState();
+#endif
+
+    if (auto* frameView = mainFrame().view()) {
+        if (m_scrollingCoordinator) {
+            m_scrollingCoordinator->startMonitoringWheelEvents();
+            m_scrollingCoordinator->updateIsMonitoringWheelEventsForFrameView(*frameView);
         }
     }
+}
+
+WheelEventTestMonitor& Page::ensureWheelEventTestMonitor()
+{
+    if (!m_wheelEventTestMonitor)
+        m_wheelEventTestMonitor = adoptRef(new WheelEventTestMonitor(*this));
 
     return *m_wheelEventTestMonitor;
 }

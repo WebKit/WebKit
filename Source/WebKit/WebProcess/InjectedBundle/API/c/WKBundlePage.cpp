@@ -702,7 +702,7 @@ void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef pageRef)
     if (!page)
         return;
 
-    page->ensureWheelEventTestMonitor().clearAllTestDeferrals();
+    page->startMonitoringWheelEvents();
 }
 
 bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageRef, WKBundlePageTestNotificationCallback callback, bool expectWheelEndOrCancel, bool expectMomentumEnd, void* context)
@@ -715,9 +715,11 @@ bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageR
     if (!page || !page->isMonitoringWheelEvents())
         return false;
     
-    page->ensureWheelEventTestMonitor().setTestCallbackAndStartMonitoring(expectWheelEndOrCancel, expectMomentumEnd, [=]() {
-        callback(context);
-    });
+    if (auto wheelEventTestMonitor = page->wheelEventTestMonitor()) {
+        wheelEventTestMonitor->setTestCallbackAndStartMonitoring(expectWheelEndOrCancel, expectMomentumEnd, [=]() {
+            callback(context);
+        });
+    }
     return true;
 }
 

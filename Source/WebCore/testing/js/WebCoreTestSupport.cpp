@@ -85,7 +85,7 @@ void monitorWheelEvents(WebCore::Frame& frame)
     if (!page)
         return;
 
-    page->ensureWheelEventTestMonitor().clearAllTestDeferrals();
+    page->startMonitoringWheelEvents();
 }
 
 void setWheelEventMonitorTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WebCore::Frame& frame, JSContextRef context, JSObjectRef jsCallbackFunction)
@@ -95,11 +95,13 @@ void setWheelEventMonitorTestCallbackAndStartMonitoring(bool expectWheelEndOrCan
         return;
 
     JSValueProtect(context, jsCallbackFunction);
-    
-    page->ensureWheelEventTestMonitor().setTestCallbackAndStartMonitoring(expectWheelEndOrCancel, expectMomentumEnd, [=](void) {
-        JSObjectCallAsFunction(context, jsCallbackFunction, nullptr, 0, nullptr, nullptr);
-        JSValueUnprotect(context, jsCallbackFunction);
-    });
+
+    if (auto wheelEventTestMonitor = page->wheelEventTestMonitor()) {
+        wheelEventTestMonitor->setTestCallbackAndStartMonitoring(expectWheelEndOrCancel, expectMomentumEnd, [=](void) {
+            JSObjectCallAsFunction(context, jsCallbackFunction, nullptr, 0, nullptr, nullptr);
+            JSValueUnprotect(context, jsCallbackFunction);
+        });
+    }
 }
 
 void clearWheelEventTestMonitor(WebCore::Frame& frame)
