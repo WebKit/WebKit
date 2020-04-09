@@ -1,3 +1,26 @@
+2020-04-09  Youenn Fablet  <youenn@apple.com>
+
+        [MacOS] REGRESSION (r253275): Stopping a cloned audio capture track should not stop the original audio track
+        https://bugs.webkit.org/show_bug.cgi?id=210259
+        <rdar://problem/61466486>
+
+        Reviewed by Eric Carlson.
+
+        We changed video track cloning so that each cloned track would get its own source.
+        The source is getting video sample from the real capture source.
+        The real capture source will get stopped if all its client sources are stopped.
+
+        For audio, we are still using the same audio source for each track.
+        We should thus not close the source until all its tracks are stopped.
+        To do so, we reuse RealtimeMediaSource::requestToEnd instead of directly sending
+        the order to stop observing the remote audio source.
+
+        Test: fast/mediastream/mediastreamtrack-audio-clone.html
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::requestToEnd):
+        (WebKit::UserMediaCaptureManager::Source::stopBeingObserved): Deleted.
+
 2020-04-09  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Clean-up use of deprecated GtkAction

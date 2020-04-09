@@ -250,12 +250,9 @@ private:
     void beginConfiguration() final { }
     void commitConfiguration() final { }
     bool setShouldApplyRotation(bool /* shouldApplyRotation */) final;
-
-
     void applyConstraints(const WebCore::MediaConstraints&, ApplyConstraintsHandler&&) final;
-
-    void requestToEnd(RealtimeMediaSource::Observer&) { stopBeingObserved(); }
-    void stopBeingObserved();
+    void requestToEnd(Observer&) final;
+    void stopBeingObserved() final;
 
     RealtimeMediaSourceIdentifier m_id;
     UserMediaCaptureManager& m_manager;
@@ -502,6 +499,20 @@ Ref<RealtimeMediaSource> UserMediaCaptureManager::cloneVideoSource(Source& sourc
 void UserMediaCaptureManager::Source::stopBeingObserved()
 {
     connection()->send(Messages::UserMediaCaptureManagerProxy::RequestToEnd { m_id }, 0);
+}
+
+void UserMediaCaptureManager::Source::requestToEnd(Observer& observer)
+{
+    switch (type()) {
+    case Type::Audio:
+        RealtimeMediaSource::requestToEnd(observer);
+        break;
+    case Type::Video:
+        stopBeingObserved();
+        break;
+    case Type::None:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)

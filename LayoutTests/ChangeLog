@@ -1,3 +1,14 @@
+2020-04-09  Youenn Fablet  <youenn@apple.com>
+
+        [MacOS] Stopping a cloned audio capture track should not stop the original audio track
+        https://bugs.webkit.org/show_bug.cgi?id=210259
+        <rdar://problem/61466486>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/mediastreamtrack-audio-clone-expected.txt: Added.
+        * fast/mediastream/mediastreamtrack-audio-clone.html: Added.
+
 2020-04-09  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] crypto/subtle/rsa-indexeddb.html is flaky timing out.
