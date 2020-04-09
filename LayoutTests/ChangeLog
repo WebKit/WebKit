@@ -1,6 +1,17 @@
 2020-04-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=210248
+
+        Unreviewed gardening.
+
+        Add tests failing after r259705.
+
+        * platform/gtk/TestExpectations:
+
+2020-04-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update TestExpectations
         https://bugs.webkit.org/show_bug.cgi?id=210234
 
         Unreviewed gardening.
