@@ -292,6 +292,9 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if ((paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) && hasOutline())
         paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, size()));
 
+    // FIXME: Shouldn't check if the frame view needs layout during event region painting. This is a workaround
+    // for the fact that non-composited frames depend on their enclosing compositing layer to perform an event
+    // region update on their behalf. See <https://webkit.org/b/210311> for more details.
     bool needsEventRegionContentPaint = paintInfo.phase == PaintPhase::EventRegion && is<FrameView>(m_widget) && !downcast<FrameView>(*m_widget).needsLayout();
     if (paintInfo.phase != PaintPhase::Foreground && !needsEventRegionContentPaint)
         return;
