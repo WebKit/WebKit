@@ -1,3 +1,14 @@
+2020-04-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WebDriver] Gardening, update expectations of several WebDriver tests.
+        https://bugs.webkit.org/show_bug.cgi?id=210229
+
+        Reviewed by Carlos Garcia Campos.
+
+        Clean up tests expected to fail but passed.
+
+        * TestExpectations.json:
+
 2020-03-04  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver] Update screenshot/user_prompt expectations.
