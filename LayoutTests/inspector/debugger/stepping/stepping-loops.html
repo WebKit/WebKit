@@ -74,6 +74,12 @@ function entryForBreakContinue() {
     }
 }
 
+function entryForWithCommas() {
+    debugger;
+    for (let i = 0, length = 0; length = 2, i < length; length = 1, ++i)
+        a();
+}
+
 // ---------
 
 function test()
@@ -230,6 +236,30 @@ function test()
                 "over", // complete: (i === 1) [i=2]
                 "over", // complete: (i === 2) [i=2]
                 "over", // complete: break - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ForWithCommasStepOver",
+        description: "Should be able to step over every comma separated init and condition in traditional for loops.",
+        expression: "setTimeout(entryForWithCommas)",
+        steps: [
+            "over",
+                "over", // complete: let i = 0
+                "over", // complete: length = 0
+                "over", // complete: length = 2
+                "over", // complete: i < length
+                "over", // complete: a()
+                "over", // complete: length = 1
+                "over", // complete: ++i
+                "over", // complete: length = 2
+                "over", // complete: i < length [i=1]
+                "over", // complete: a()
+                "over", // complete: length = 1
+                "over", // complete: ++i
+                "over", // complete: length = 2
+                "over", // complete: i < length [i=2] - leaving entry
             "resume",
         ]
     });

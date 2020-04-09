@@ -327,7 +327,9 @@ function test()
         // a(), b(), a();
         steps: [
             "over",
-                "over", // complete: a(), b(), a()
+                "over", // a()
+                "over", // b()
+                "over", // a()
             "resume"
         ]
     });

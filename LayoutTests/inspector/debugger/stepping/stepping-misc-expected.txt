@@ -389,7 +389,7 @@ PASS: Should have used all steps.
 
 -- Running test case: Debugger.stepping.VariableDeclaration
 EXPRESSION: setTimeout(entryVariableDeclaration)
-STEPS: over, in, in, in, resume
+STEPS: over, in, in, in, in, in, in, resume
 PAUSED (debugger-statement)
 PAUSE AT entryVariableDeclaration:58:5
      54    }
@@ -411,6 +411,16 @@ PAUSE AT entryVariableDeclaration:59:5
      61            y = 2;
 
 ACTION: step-in
+PAUSE AT entryVariableDeclaration:60:9
+     56    function entryVariableDeclaration() {
+     57        debugger;
+     58        var a = 1,
+ ->  59            |x = 1;
+     60        let b = 2,
+     61            y = 2;
+     62        const c = 3,
+
+ACTION: step-in
 PAUSE AT entryVariableDeclaration:61:5
      57        debugger;
      58        var a = 1,
@@ -421,6 +431,16 @@ PAUSE AT entryVariableDeclaration:61:5
      63            z = 3;
 
 ACTION: step-in
+PAUSE AT entryVariableDeclaration:62:9
+     58        var a = 1,
+     59            x = 1;
+     60        let b = 2,
+ ->  61            |y = 2;
+     62        const c = 3,
+     63            z = 3;
+     64    }
+
+ACTION: step-in
 PAUSE AT entryVariableDeclaration:63:5
      59            x = 1;
      60        let b = 2,
@@ -429,6 +449,16 @@ PAUSE AT entryVariableDeclaration:63:5
      63            z = 3;
      64    }
      65    
+
+ACTION: step-in
+PAUSE AT entryVariableDeclaration:64:9
+     60        let b = 2,
+     61            y = 2;
+     62        const c = 3,
+ ->  63            |z = 3;
+     64    }
+     65    
+     66    function entryDestructuring() {
 
 ACTION: step-in
 PAUSE AT entryVariableDeclaration:65:2

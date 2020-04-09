@@ -108,6 +108,12 @@ function entryIfWithNotOperation() {
         a();
 }
 
+function entryIfWithCommas() {
+    debugger;
+    if (a(), b(), a())
+        b();
+}
+
 // ---------
 
 function test()
@@ -281,6 +287,20 @@ function test()
                 "in",   // !false
                 "over", // a()
                 "in",   // !!truth
+                "over", // a() - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithCommas",
+        description: "Should pause before each comma sub-expression.",
+        expression: "setTimeout(entryIfWithCommas)",
+        steps: [
+            "over",
+                "over", // a()
+                "over", // b()
+                "over", // a()
                 "over", // a() - leaving entry
             "resume",
         ]

@@ -1,5 +1,23 @@
 2020-04-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Debugger: treat comma sub-expressions as separate statements
+        https://bugs.webkit.org/show_bug.cgi?id=209998
+
+        Reviewed by Joseph Pecoraro.
+
+        Minifiers sometimes use `,` instead of `;` as a way of compressing multiple statements into
+        a single statement (e.g. inside an `if` conditional). This makes stepping through minified
+        code much less useful, as our current stepping logic is based on expressions (not including
+        step in or step out). In most cases, we do actually want to treat each sub-expression in a
+        comma expression as a statement so as to emulate the behaviour as if there were `;` instead.
+
+        * UserInterface/Workers/Formatter/JSFormatter.js:
+        (JSFormatter.prototype._isLikelyToHaveNewline):
+        (JSFormatter.prototype._handleTokenAtNode):
+        Put each sub-expression in a comma expression on it's own line.
+
+2020-04-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Search: populate the search field with the current selection when using the global search shortcut
         https://bugs.webkit.org/show_bug.cgi?id=210207
 

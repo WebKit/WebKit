@@ -1,3 +1,29 @@
+2020-04-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: treat comma sub-expressions as separate statements
+        https://bugs.webkit.org/show_bug.cgi?id=209998
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/debugger/breakpoints/resources/dump-functions.js:
+        * inspector/debugger/breakpoints/resources/dump-general.js:
+        * inspector/debugger/breakpoints/resolved-dump-all-pause-locations-expected.txt:
+        * inspector/debugger/breakpoints/resolved-dump-each-line-expected.txt:
+        * inspector/debugger/stepping/stepOver.html:
+        * inspector/debugger/stepping/stepOver-expected.txt:
+        * inspector/debugger/stepping/stepping-function-calls.html:
+        * inspector/debugger/stepping/stepping-function-calls-expected.txt:
+        * inspector/debugger/stepping/stepping-loops.html:
+        * inspector/debugger/stepping/stepping-loops-expected.txt:
+        * inspector/debugger/stepping/stepping-misc.html:
+        * inspector/debugger/stepping/stepping-misc-expected.txt:
+        * inspector/formatting/resources/javascript-tests/for-statements.js:
+        * inspector/formatting/resources/javascript-tests/for-statements-expected.js:
+        * inspector/formatting/resources/javascript-tests/if-statements.js:
+        * inspector/formatting/resources/javascript-tests/if-statements-expected.js:
+        * inspector/formatting/resources/javascript-tests/sample-jquery-expected.js:
+        * inspector/formatting/resources/javascript-tests/sample-jquery-expected.js:
+
 2020-04-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, update baselines after r259296

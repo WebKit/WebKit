@@ -975,7 +975,7 @@ PASS: Should have used all steps.
 
 -- Running test case: Debugger.stepping.ComplexStatement4
 EXPRESSION: setTimeout(entryCommaExpression)
-STEPS: over, over, resume
+STEPS: over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryCommaExpression:51:5
      47    }
@@ -992,6 +992,26 @@ PAUSE AT entryCommaExpression:52:5
      49    function entryCommaExpression() {
      50        debugger;
  ->  51        |a(), b(), a();
+     52    }
+     53    
+     54    function entryDotPropertyAccessCall() {
+
+ACTION: step-over
+PAUSE AT entryCommaExpression:52:10
+     48    
+     49    function entryCommaExpression() {
+     50        debugger;
+ ->  51        a(), |b(), a();
+     52    }
+     53    
+     54    function entryDotPropertyAccessCall() {
+
+ACTION: step-over
+PAUSE AT entryCommaExpression:52:15
+     48    
+     49    function entryCommaExpression() {
+     50        debugger;
+ ->  51        a(), b(), |a();
      52    }
      53    
      54    function entryDotPropertyAccessCall() {

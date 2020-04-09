@@ -838,8 +838,175 @@ PAUSE AT entryForBreakContinue:75:2
      73        }
  ->  74    }|
      75    
-     76    // ---------
-     77    
+     76    function entryForWithCommas() {
+     77        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ForWithCommasStepOver
+EXPRESSION: setTimeout(entryForWithCommas)
+STEPS: over, over, over, over, over, over, over, over, over, over, over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryForWithCommas:78:5
+     74    }
+     75    
+     76    function entryForWithCommas() {
+ ->  77        |debugger;
+     78        for (let i = 0, length = 0; length = 2, i < length; length = 1, ++i)
+     79            a();
+     80    }
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:10
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (|let i = 0, length = 0; length = 2, i < length; length = 1, ++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:21
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (let i = 0, |length = 0; length = 2, i < length; length = 1, ++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:33
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (let i = 0, length = 0; |length = 2, i < length; length = 1, ++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:45
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (let i = 0, length = 0; length = 2, |i < length; length = 1, ++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:80:9
+     76    function entryForWithCommas() {
+     77        debugger;
+     78        for (let i = 0, length = 0; length = 2, i < length; length = 1, ++i)
+ ->  79            |a();
+     80    }
+     81    
+     82    // ---------
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:57
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (let i = 0, length = 0; length = 2, i < length; |length = 1, ++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:69
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (let i = 0, length = 0; length = 2, i < length; length = 1, |++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:33
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (let i = 0, length = 0; |length = 2, i < length; length = 1, ++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:45
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (let i = 0, length = 0; length = 2, |i < length; length = 1, ++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:80:9
+     76    function entryForWithCommas() {
+     77        debugger;
+     78        for (let i = 0, length = 0; length = 2, i < length; length = 1, ++i)
+ ->  79            |a();
+     80    }
+     81    
+     82    // ---------
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:57
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (let i = 0, length = 0; length = 2, i < length; |length = 1, ++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:69
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (let i = 0, length = 0; length = 2, i < length; length = 1, |++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:33
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (let i = 0, length = 0; |length = 2, i < length; length = 1, ++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:79:45
+     75    
+     76    function entryForWithCommas() {
+     77        debugger;
+ ->  78        for (let i = 0, length = 0; length = 2, |i < length; length = 1, ++i)
+     79            a();
+     80    }
+     81    
+
+ACTION: step-over
+PAUSE AT entryForWithCommas:81:2
+     77        debugger;
+     78        for (let i = 0, length = 0; length = 2, i < length; length = 1, ++i)
+     79            a();
+ ->  80    }|
+     81    
+     82    // ---------
+     83    
 
 ACTION: resume
 RESUMED

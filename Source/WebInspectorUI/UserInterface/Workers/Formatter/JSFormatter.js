@@ -201,19 +201,26 @@ JSFormatter = class JSFormatter
 
     _isLikelyToHaveNewline(node)
     {
-        let nodeType = node.type;
-        return nodeType === "IfStatement"
-            || nodeType === "ForStatement"
-            || nodeType === "ForOfStatement"
-            || nodeType === "ForInStatement"
-            || nodeType === "WhileStatement"
-            || nodeType === "DoWhileStatement"
-            || nodeType === "SwitchStatement"
-            || nodeType === "TryStatement"
-            || nodeType === "FunctionDeclaration"
-            || nodeType === "ClassDeclaration"
-            || nodeType === "BlockStatement"
-            || nodeType === "WithStatement";
+        switch (node.type) {
+        case "BlockStatement":
+        case "ClassDeclaration":
+        case "DoWhileStatement":
+        case "ForInStatement":
+        case "ForOfStatement":
+        case "ForStatement":
+        case "FunctionDeclaration":
+        case "IfStatement":
+        case "SwitchStatement":
+        case "TryStatement":
+        case "WhileStatement":
+        case "WithStatement":
+            return true;
+
+        case "ExpressionStatement":
+            return node.expression.type === "SequenceExpression";
+        }
+
+        return false;
     }
 
     _isRangeWhitespace(from, to)
@@ -285,13 +292,24 @@ JSFormatter = class JSFormatter
             return;
         }
 
-        if (nodeType === "CallExpression" || nodeType === "ArrayExpression" || nodeType === "ArrayPattern" || nodeType === "ObjectPattern" || nodeType === "SequenceExpression") {
+        if (nodeType === "CallExpression" || nodeType === "ArrayExpression" || nodeType === "ArrayPattern" || nodeType === "ObjectPattern") {
             if (tokenValue === ",") {
                 builder.appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
             builder.appendToken(tokenValue, tokenOffset);
+            return;
+        }
+
+        if (nodeType === "SequenceExpression") {
+            builder.appendToken(tokenValue, tokenOffset);
+            if (tokenValue === ",") {
+                if (node.parent.type === "ExpressionStatement")
+                    this._appendNewline(node);
+                else
+                    builder.appendSpace();
+            }
             return;
         }
 

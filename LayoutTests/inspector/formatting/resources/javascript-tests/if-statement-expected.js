@@ -165,3 +165,6 @@ if (true) {
 if (true)
     if (true)
         1;
+
+if (1, 2, 3) {}
+if (1, 2, 3) {}

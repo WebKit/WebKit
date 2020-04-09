@@ -47,3 +47,6 @@ if(true){if(false)if(true)true;else false;else if(true)true;else false;}
 if (true)
 if (true)
 1;
+
+if(1,2,3){}
+if  (  1  ,  2  ,  3  )  {  }

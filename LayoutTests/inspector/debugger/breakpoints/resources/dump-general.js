@@ -208,3 +208,9 @@ if (o1["p1"])
 
 if (String.raw`test`)
     a();
+
+a(), b(), c();
+
+a(),
+b(),
+c();

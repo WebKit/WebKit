@@ -3042,8 +3042,13 @@ RegisterID* ReadModifyBracketNode::emitBytecode(BytecodeGenerator& generator, Re
 RegisterID* CommaNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     CommaNode* node = this;
-    for (; node && node->next(); node = node->next())
+    for (; node->next(); node = node->next()) {
         generator.emitNode(generator.ignoredResult(), node->m_expr);
+
+        // Don't emit a debug hook for the first expression, as that should've already happened in
+        // the containing statement.
+        generator.emitDebugHook(node->next()->m_expr);
+    }
     return generator.emitNodeInTailPosition(dst, node->m_expr);
 }
 

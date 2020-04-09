@@ -34,17 +34,27 @@ for((1);(2);(3)) {1}
 for ( 1 ; 2 ; 3 ) 1
 for ( 1 ; 2 ; 3 ) {1}
 
+for(var x=1;x<10;++x)1;
 for(var x=1;x<len;++x)1;
 for(var x=1,len=10;x<len;++x)1;
+for(var x=1,len=10;len=20,x<len;++x)1;
+for(var x=1,len=10;len=20,x<len;len=15,++x)1;
 
+for(x=1;x<10;++x){1}
 for(x=1;x<len;++x){1}
 for(x=1,len=10;x<len;++x){1}
+for(x=1,len=10;len=20,x<len;++x){1}
+for(x=1,len=10;len=20,x<len;len=15,++x){1}
 
+for(var x=1;x<10;++x){1}
 for(var x=1;x<len;++x){1}
 for(var x=1,len=10;x<len;++x){1}
+for(var x=1,len=10;len=20,x<len;len=15,++x){1}
 
-for(var x=1;x<len;++x){1}
-for(var x=1,len=10;x<len;++x){1}
+for(  var  x  =  1  ;  x  <  10  ;  ++x  )  {  1  }  
+for(  var  x  =  1  ;  x  <  len  ;  ++x  )  {  1  }  
+for(  var  x  =  1  ,  len  =  10  ;  x  <  len  ;  ++x  )  {  1  }
+for(  var  x  =  1  ,  len  =  10  ;  len  =  20  ,  x  <  len  ;  len  =  15  ,  ++x  )  {  1  }
 
 for(1;2;3)for(4;5;6)for(7;8;9);
 for(1;2;3){if(true){for(4;5;6)0}for(7;8;9);}

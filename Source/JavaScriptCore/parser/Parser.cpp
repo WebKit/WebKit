@@ -809,6 +809,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
 {
     ASSERT(declarationType == DeclarationType::LetDeclaration || declarationType == DeclarationType::VarDeclaration || declarationType == DeclarationType::ConstDeclaration);
     TreeExpression head = 0;
+    JSTokenLocation headLocation;
     TreeExpression tail = 0;
     const Identifier* lastIdent;
     JSToken lastIdentToken; 
@@ -818,6 +819,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
         lastPattern = TreeDestructuringPattern(0);
         JSTokenLocation location(tokenLocation());
         next();
+        if (head) {
+            // Move the location of subsequent declarations after the comma.
+            location = tokenLocation();
+        }
         TreeExpression node = 0;
         declarations++;
         bool hasInitializer = false;
@@ -888,13 +893,15 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
         }
 
         if (node) {
-            if (!head)
+            if (!head) {
                 head = node;
-            else if (!tail) {
-                head = context.createCommaExpr(location, head);
-                tail = context.appendToCommaExpr(location, head, head, node);
-            } else
+                headLocation = location;
+            } else {
+                if (!tail)
+                    head = tail = context.createCommaExpr(headLocation, head);
                 tail = context.appendToCommaExpr(location, head, tail, node);
+                recordPauseLocation(context.breakpointLocation(tail));
+            }
         }
     } while (match(COMMA));
     if (lastIdent)
@@ -3697,7 +3704,7 @@ template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(TreeBuilder& context)
 {
     failIfStackOverflow();
-    JSTokenLocation location(tokenLocation());
+    JSTokenLocation headLocation(tokenLocation());
     TreeExpression node = parseAssignmentExpression(context);
     failIfFalse(node, "Cannot parse expression");
     context.setEndOffset(node, m_lastTokenEndPosition.offset);
@@ -3706,17 +3713,21 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(T
     next();
     m_parserState.nonTrivialExpressionCount++;
     m_parserState.nonLHSCount++;
+    JSTokenLocation tailLocation(tokenLocation());
     TreeExpression right = parseAssignmentExpression(context);
     failIfFalse(right, "Cannot parse expression in a comma expression");
     context.setEndOffset(right, m_lastTokenEndPosition.offset);
-    typename TreeBuilder::Comma head = context.createCommaExpr(location, node);
-    typename TreeBuilder::Comma tail = context.appendToCommaExpr(location, head, head, right);
+    typename TreeBuilder::Comma head = context.createCommaExpr(headLocation, node);
+    typename TreeBuilder::Comma tail = context.appendToCommaExpr(tailLocation, head, head, right);
+    recordPauseLocation(context.breakpointLocation(tail));
     while (match(COMMA)) {
         next(TreeBuilder::DontBuildStrings);
+        tailLocation = tokenLocation();
         right = parseAssignmentExpression(context);
         failIfFalse(right, "Cannot parse expression in a comma expression");
         context.setEndOffset(right, m_lastTokenEndPosition.offset);
-        tail = context.appendToCommaExpr(location, head, tail, right);
+        tail = context.appendToCommaExpr(tailLocation, head, tail, right);
+        recordPauseLocation(context.breakpointLocation(tail));
     }
     context.setEndOffset(head, m_lastTokenEndPosition.offset);
     return head;

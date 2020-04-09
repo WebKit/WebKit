@@ -810,7 +810,7 @@ PAUSE AT entryIfWithNotOperation:108:9
  -> 107            |a();
     108    }
     109    
-    110    // ---------
+    110    function entryIfWithCommas() {
 
 ACTION: step-over
 PAUSE AT entryIfWithNotOperation:109:2
@@ -819,8 +819,75 @@ PAUSE AT entryIfWithNotOperation:109:2
     107            a();
  -> 108    }|
     109    
-    110    // ---------
-    111    
+    110    function entryIfWithCommas() {
+    111        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.IfWithCommas
+EXPRESSION: setTimeout(entryIfWithCommas)
+STEPS: over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryIfWithCommas:112:5
+    108    }
+    109    
+    110    function entryIfWithCommas() {
+ -> 111        |debugger;
+    112        if (a(), b(), a())
+    113            b();
+    114    }
+
+ACTION: step-over
+PAUSE AT entryIfWithCommas:113:9
+    109    
+    110    function entryIfWithCommas() {
+    111        debugger;
+ -> 112        if (|a(), b(), a())
+    113            b();
+    114    }
+    115    
+
+ACTION: step-over
+PAUSE AT entryIfWithCommas:113:14
+    109    
+    110    function entryIfWithCommas() {
+    111        debugger;
+ -> 112        if (a(), |b(), a())
+    113            b();
+    114    }
+    115    
+
+ACTION: step-over
+PAUSE AT entryIfWithCommas:113:19
+    109    
+    110    function entryIfWithCommas() {
+    111        debugger;
+ -> 112        if (a(), b(), |a())
+    113            b();
+    114    }
+    115    
+
+ACTION: step-over
+PAUSE AT entryIfWithCommas:114:9
+    110    function entryIfWithCommas() {
+    111        debugger;
+    112        if (a(), b(), a())
+ -> 113            |b();
+    114    }
+    115    
+    116    // ---------
+
+ACTION: step-over
+PAUSE AT entryIfWithCommas:115:2
+    111        debugger;
+    112        if (a(), b(), a())
+    113            b();
+ -> 114    }|
+    115    
+    116    // ---------
+    117    
 
 ACTION: resume
 RESUMED
