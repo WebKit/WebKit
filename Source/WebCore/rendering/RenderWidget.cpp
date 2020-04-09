@@ -292,7 +292,8 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if ((paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) && hasOutline())
         paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, size()));
 
-    if (paintInfo.phase != PaintPhase::Foreground && (paintInfo.phase != PaintPhase::EventRegion || view().needsLayout()))
+    bool needsEventRegionContentPaint = paintInfo.phase == PaintPhase::EventRegion && is<FrameView>(m_widget) && !downcast<FrameView>(*m_widget).needsLayout();
+    if (paintInfo.phase != PaintPhase::Foreground && !needsEventRegionContentPaint)
         return;
 
     if (style().hasBorderRadius()) {
