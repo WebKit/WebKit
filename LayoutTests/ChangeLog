@@ -1,5 +1,16 @@
 2020-04-09  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Gardening, flaky failures in EWS GTK-WK2
+        https://bugs.webkit.org/show_bug.cgi?id=210268
+
+        Unreviewed gardening.
+
+        Mark tests only failing in EWS GTK-WK2 as flaky.
+
+        * platform/gtk/TestExpectations:
+
+2020-04-09  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Gardening, update TestExpectations
         https://bugs.webkit.org/show_bug.cgi?id=210257
 
