@@ -43,6 +43,7 @@ class CallLinkInfo;
 
 namespace Wasm {
 
+class CodeBlock;
 struct Context;
 
 class Plan : public ThreadSafeRefCounted<Plan> {

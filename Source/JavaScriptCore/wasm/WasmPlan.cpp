@@ -33,7 +33,9 @@
 #include "WasmBinding.h"
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
+#include "WasmCodeBlock.h"
 #include "WasmFaultSignalHandler.h"
+#include "WasmMachineThreads.h"
 #include "WasmMemory.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>

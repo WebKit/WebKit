@@ -1,3 +1,13 @@
+2020-04-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Wasm] Build fix for non-unified builds
+        https://bugs.webkit.org/show_bug.cgi?id=210277
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/WasmPlan.cpp: Added missing includes.
+        * wasm/WasmPlan.h: Forward declare CodeBlock.
+
 2020-04-09  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         getOwnPropertyDescriptor() is incorrect with Proxy of exotic object
