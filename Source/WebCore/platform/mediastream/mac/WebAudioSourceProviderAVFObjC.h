@@ -46,10 +46,7 @@ namespace WebCore {
 class AudioSampleDataSource;
 class CAAudioStreamDescription;
 
-class WEBCORE_EXPORT WebAudioSourceProviderAVFObjC final
-    : public WebAudioSourceProvider
-    , MediaStreamTrackPrivate::Observer
-    , RealtimeMediaSource::AudioSampleObserver {
+class WEBCORE_EXPORT WebAudioSourceProviderAVFObjC final : public WebAudioSourceProvider, MediaStreamTrackPrivate::Observer {
 public:
     static Ref<WebAudioSourceProviderAVFObjC> create(MediaStreamTrackPrivate&);
     virtual ~WebAudioSourceProviderAVFObjC();
@@ -65,13 +62,11 @@ private:
     void setClient(AudioSourceProviderClient*) final;
 
     // MediaStreamTrackPrivate::Observer
+    void audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
     void trackEnded(MediaStreamTrackPrivate&) final { }
     void trackMutedChanged(MediaStreamTrackPrivate&) final { }
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { }
-    void trackEnabledChanged(MediaStreamTrackPrivate&) final;
-
-    // RealtimeMediaSource::AudioSampleObserver
-    void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    void trackEnabledChanged(MediaStreamTrackPrivate&) final { }
 
     size_t m_listBufferSize { 0 };
     Optional<CAAudioStreamDescription> m_inputDescription;
@@ -82,10 +77,8 @@ private:
     uint64_t m_readCount { 0 };
     AudioSourceProviderClient* m_client { nullptr };
     MediaStreamTrackPrivate* m_captureSource { nullptr };
-    Ref<RealtimeMediaSource> m_source;
     Lock m_mutex;
     bool m_connected { false };
-    bool m_enabled { true };
 };
 
 }

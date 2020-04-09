@@ -55,7 +55,6 @@ class RealtimeOutgoingAudioSource
     : public ThreadSafeRefCounted<RealtimeOutgoingAudioSource, WTF::DestructionThread::Main>
     , public webrtc::AudioSourceInterface
     , private MediaStreamTrackPrivate::Observer
-    , private RealtimeMediaSource::AudioSampleObserver
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -109,6 +108,7 @@ private:
 
     void sourceMutedChanged();
     void sourceEnabledChanged();
+    virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) { };
 
     virtual bool isReachingBufferedAudioDataHighLimit() { return false; };
     virtual bool isReachingBufferedAudioDataLowLimit() { return false; };
@@ -118,6 +118,7 @@ private:
     // MediaStreamTrackPrivate::Observer API
     void trackMutedChanged(MediaStreamTrackPrivate&) final { sourceMutedChanged(); }
     void trackEnabledChanged(MediaStreamTrackPrivate&) final { sourceEnabledChanged(); }
+    void audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount) { audioSamplesAvailable(mediaTime, data, description, sampleCount); }
     void trackEnded(MediaStreamTrackPrivate&) final { }
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { }
 

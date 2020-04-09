@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaRecorder);
 
-MediaRecorder::CreatorFunction MediaRecorder::m_customCreator = nullptr;
+creatorFunction MediaRecorder::m_customCreator = nullptr;
 
 ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<MediaStream>&& stream, Options&& options)
 {
@@ -59,15 +59,15 @@ ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<Me
     return recorder;
 }
 
-void MediaRecorder::setCustomPrivateRecorderCreator(CreatorFunction creator)
+void MediaRecorder::setCustomPrivateRecorderCreator(creatorFunction creator)
 {
     m_customCreator = creator;
 }
 
-std::unique_ptr<MediaRecorderPrivate> MediaRecorder::createMediaRecorderPrivate(Document& document, MediaStreamPrivate& stream)
+std::unique_ptr<MediaRecorderPrivate> MediaRecorder::createMediaRecorderPrivate(Document& document, const MediaStreamPrivate& stream)
 {
     if (m_customCreator)
-        return m_customCreator(stream);
+        return m_customCreator();
 
 #if PLATFORM(COCOA)
     auto* page = document.page();
@@ -225,6 +225,11 @@ void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
 void MediaRecorder::sampleBufferUpdated(MediaStreamTrackPrivate& track, MediaSample& mediaSample)
 {
     m_private->sampleBufferUpdated(track, mediaSample);
+}
+
+void MediaRecorder::audioSamplesAvailable(MediaStreamTrackPrivate& track, const MediaTime& mediaTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
+{
+    m_private->audioSamplesAvailable(track, mediaTime, audioData, description, sampleCount);
 }
 
 bool MediaRecorder::virtualHasPendingActivity() const

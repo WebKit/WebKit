@@ -466,10 +466,8 @@ Ref<Internals> Internals::create(Document& document)
 Internals::~Internals()
 {
 #if ENABLE(MEDIA_STREAM)
-    if (m_trackSource) {
-        m_trackSource->removeObserver(*this);
-        m_trackSource->removeAudioSampleObserver(*this);
-    }
+    if (m_track)
+        m_track->source().removeObserver(*this);
 #endif
 }
 
@@ -1641,9 +1639,9 @@ void Internals::setMediaCaptureRequiresSecureConnection(bool enabled)
         page->settings().setMediaCaptureRequiresSecureConnection(enabled);
 }
 
-static std::unique_ptr<MediaRecorderPrivate> createRecorderMockSource(MediaStreamPrivate& stream)
+static std::unique_ptr<MediaRecorderPrivate> createRecorderMockSource()
 {
-    return std::unique_ptr<MediaRecorderPrivateMock>(new MediaRecorderPrivateMock(stream));
+    return std::unique_ptr<MediaRecorderPrivateMock>(new MediaRecorderPrivateMock);
 }
 
 void Internals::setCustomPrivateRecorderCreator()
@@ -4927,9 +4925,8 @@ void Internals::setCameraMediaStreamTrackOrientation(MediaStreamTrack& track, in
 
 void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
 {
-    m_trackSource = &track.source();
-    m_trackSource->addObserver(*this);
-    m_trackSource->addAudioSampleObserver(*this);
+    m_track = &track;
+    m_track->source().addObserver(*this);
 }
 
 void Internals::grabNextMediaStreamTrackFrame(TrackFramePromise&& promise)
@@ -4943,7 +4940,7 @@ void Internals::videoSampleAvailable(MediaSample& sample)
     if (!m_nextTrackFramePromise)
         return;
 
-    auto& videoSettings = m_trackSource->settings();
+    auto& videoSettings = m_track->source().settings();
     if (!videoSettings.width() || !videoSettings.height())
         return;
     

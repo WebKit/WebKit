@@ -54,16 +54,11 @@ Ref<WebAudioSourceProviderAVFObjC> WebAudioSourceProviderAVFObjC::create(MediaSt
 
 WebAudioSourceProviderAVFObjC::WebAudioSourceProviderAVFObjC(MediaStreamTrackPrivate& source)
     : m_captureSource(&source)
-    , m_source(source.source())
-    , m_enabled(source.enabled())
 {
-    m_source->addAudioSampleObserver(*this);
 }
 
 WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC()
 {
-    m_source->removeAudioSampleObserver(*this);
-
     auto locker = holdLock(m_mutex);
 
     if (m_connected && m_captureSource)
@@ -170,15 +165,10 @@ void WebAudioSourceProviderAVFObjC::unprepare()
     }
 }
 
-void WebAudioSourceProviderAVFObjC::trackEnabledChanged(MediaStreamTrackPrivate& track)
-{
-    m_enabled = track.enabled();
-}
-
 // May get called on a background thread.
-void WebAudioSourceProviderAVFObjC::audioSamplesAvailable(const MediaTime&, const PlatformAudioData& data, const AudioStreamDescription& description, size_t frameCount)
+void WebAudioSourceProviderAVFObjC::audioSamplesAvailable(MediaStreamTrackPrivate& track, const MediaTime&, const PlatformAudioData& data, const AudioStreamDescription& description, size_t frameCount)
 {
-    if (!m_enabled || !m_connected)
+    if (!track.enabled())
         return;
 
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);

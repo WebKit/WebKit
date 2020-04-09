@@ -38,6 +38,8 @@ class Blob;
 class Document;
 class MediaRecorderPrivate;
 
+typedef std::unique_ptr<MediaRecorderPrivate>(*creatorFunction)();
+
 class MediaRecorder final
     : public ActiveDOMObject
     , public RefCounted<MediaRecorder>
@@ -60,9 +62,7 @@ public:
     
     static ExceptionOr<Ref<MediaRecorder>> create(Document&, Ref<MediaStream>&&, Options&& = { });
     
-    using CreatorFunction = std::unique_ptr<MediaRecorderPrivate>(*)(MediaStreamPrivate&);
-
-    WEBCORE_EXPORT static void setCustomPrivateRecorderCreator(CreatorFunction);
+    WEBCORE_EXPORT static void setCustomPrivateRecorderCreator(creatorFunction);
     
     RecordingState state() const { return m_state; }
     
@@ -78,7 +78,7 @@ public:
 private:
     MediaRecorder(Document&, Ref<MediaStream>&&, std::unique_ptr<MediaRecorderPrivate>&&, Options&& = { });
 
-    static std::unique_ptr<MediaRecorderPrivate> createMediaRecorderPrivate(Document&, MediaStreamPrivate&);
+    static std::unique_ptr<MediaRecorderPrivate> createMediaRecorderPrivate(Document&, const MediaStreamPrivate&);
     
     Document* document() const;
 
@@ -107,8 +107,9 @@ private:
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { };
     void trackEnabledChanged(MediaStreamTrackPrivate&) final { };
     void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) final;
-
-    static CreatorFunction m_customCreator;
+    void audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    
+    static creatorFunction m_customCreator;
     
     Options m_options;
     Ref<MediaStream> m_stream;

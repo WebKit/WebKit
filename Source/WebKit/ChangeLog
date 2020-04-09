@@ -1,3 +1,16 @@
+2020-04-09  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        Unreviewed, reverting r259816.
+
+        This commit broke the webkit build for macOS and iOS
+
+        Reverted changeset:
+
+        "Introduce a RealtimeMediaSource observer dedicated to
+        receiving audio samples"
+        https://bugs.webkit.org/show_bug.cgi?id=210180
+        https://trac.webkit.org/changeset/259816
+
 2020-04-09  Simon Fraser  <simon.fraser@apple.com>
 
         eventSender.monitorWheelEvents() should clear latching state

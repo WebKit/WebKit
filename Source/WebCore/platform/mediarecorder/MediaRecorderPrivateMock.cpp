@@ -33,51 +33,30 @@
 
 namespace WebCore {
 
-MediaRecorderPrivateMock::MediaRecorderPrivateMock(MediaStreamPrivate& stream)
+void MediaRecorderPrivateMock::sampleBufferUpdated(const MediaStreamTrackPrivate& track, MediaSample&)
 {
-    auto selectedTracks = MediaRecorderPrivate::selectTracks(stream);
-    if (selectedTracks.audioTrack) {
-        m_audioTrackID = selectedTracks.audioTrack->id();
-        setAudioSource(&selectedTracks.audioTrack->source());
-    }
-    if (selectedTracks.videoTrack)
-        m_videoTrackID = selectedTracks.videoTrack->id();
+    generateMockString(track);
 }
 
-MediaRecorderPrivateMock::~MediaRecorderPrivateMock()
+void MediaRecorderPrivateMock::audioSamplesAvailable(const MediaStreamTrackPrivate& track, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
 {
-    setAudioSource(nullptr);
+    generateMockString(track);
 }
 
-void MediaRecorderPrivateMock::stopRecording()
-{
-    setAudioSource(nullptr);
-}
-
-void MediaRecorderPrivateMock::sampleBufferUpdated(const MediaStreamTrackPrivate&, MediaSample&)
+void MediaRecorderPrivateMock::generateMockString(const MediaStreamTrackPrivate& track)
 {
     auto locker = holdLock(m_bufferLock);
-    m_buffer.append("Video Track ID: ");
-    m_buffer.append(m_videoTrackID);
-    generateMockCounterString();
-}
-
-void MediaRecorderPrivateMock::audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
-{
-    auto locker = holdLock(m_bufferLock);
-    m_buffer.append("Audio Track ID: ");
-    m_buffer.append(m_audioTrackID);
-    generateMockCounterString();
-}
-
-void MediaRecorderPrivateMock::generateMockCounterString()
-{
+    if (track.type() == RealtimeMediaSource::Type::Audio)
+        m_buffer.append("Audio Track ID: ");
+    else
+        m_buffer.append("Video Track ID: ");
+    m_buffer.append(track.id());
     m_buffer.append(" Counter: ");
     m_buffer.appendNumber(++m_counter);
     m_buffer.append("\r\n---------\r\n");
 }
 
-void MediaRecorderPrivateMock::fetchData(FetchDataCallback&& completionHandler)
+void MediaRecorderPrivateMock::fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, const String&)>&& completionHandler)
 {
     auto locker = holdLock(m_bufferLock);
     Vector<uint8_t> value(m_buffer.length());
