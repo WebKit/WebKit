@@ -27,8 +27,6 @@
 #include "config.h"
 #include "IntlPluralRules.h"
 
-#if ENABLE(INTL)
-
 #include "Error.h"
 #include "IntlObject.h"
 #include "IntlPluralRulesConstructor.h"
@@ -258,5 +256,3 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value)
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

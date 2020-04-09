@@ -114,7 +114,6 @@ class SubtagRegistry:
         if self.fileDate:
             file.write("// language-subtag-registry file date: {}\n".format(self.fileDate))
         file.write("\n#pragma once\n")
-        file.write("\n#if ENABLE(INTL)\n")
         file.write("\nnamespace JSC {\n")
         self.dumpLookup(file, "intlPreferredLanguageTag", self.languageMap)
         self.dumpLookup(file, "intlPreferredExtlangTag", self.extlangMap)
@@ -122,7 +121,6 @@ class SubtagRegistry:
         self.dumpLookup(file, "intlRedundantLanguageTag", self.redundantMap)
         self.dumpLookup(file, "intlGrandfatheredLanguageTag", self.grandfatheredMap)
         file.write("\n} // namespace JSC\n")
-        file.write("\n#endif // ENABLE(INTL)\n")
 
     def dumpLookup(self, file, name, map):
         file.write("\nstatic String {}(const String& tag)\n{{\n".format(name))

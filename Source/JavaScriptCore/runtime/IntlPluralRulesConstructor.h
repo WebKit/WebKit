@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(INTL)
-
 #include "InternalFunction.h"
 #include "IntlObject.h"
 
@@ -57,5 +55,3 @@ private:
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(IntlPluralRulesConstructor, InternalFunction);
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

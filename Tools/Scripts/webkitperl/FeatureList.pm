@@ -109,7 +109,6 @@ my (
     $inspectorAlternateDispatchersSupport,
     $inspectorTelemetrySupport,
     $intersectionObserverSupport,
-    $intlSupport,
     $iosGestureEventsSupport,
     $iosTouchEventsSupport,
     $jitSupport,
@@ -376,9 +375,6 @@ my @features = (
 
     { option => "intersection-observer", desc => "Enable Intersection Observer support",
       define => "ENABLE_INTERSECTION_OBSERVER", value => \$intersectionObserverSupport },
-
-    { option => "intl", desc => "Toggle Intl support",
-      define => "ENABLE_INTL", value => \$intlSupport },
 
     { option => "ios-gesture-events", desc => "Toggle iOS gesture events support",
       define => "ENABLE_IOS_GESTURE_EVENTS", value => \$iosGestureEventsSupport },

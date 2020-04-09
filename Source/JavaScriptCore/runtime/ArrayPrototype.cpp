@@ -698,9 +698,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(JSGlobalObject* global
     JSStringJoiner stringJoiner(globalObject, ',', length);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-#if ENABLE(INTL)
     ArgList arguments(callFrame);
-#endif
     for (unsigned i = 0; i < length; ++i) {
         JSValue element = thisObject->getIndex(globalObject, i);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -712,11 +710,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(JSGlobalObject* global
             CallData callData;
             CallType callType = getCallData(vm, conversionFunction, callData);
             if (callType != CallType::None) {
-#if ENABLE(INTL)
                 element = call(globalObject, conversionFunction, callType, callData, element, arguments);
-#else
-                element = call(globalObject, conversionFunction, callType, callData, element, *vm.emptyList);
-#endif
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
             }
         }

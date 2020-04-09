@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INTL)
-
 #include "JSObject.h"
 #include <unicode/unum.h>
 #include <unicode/upluralrules.h>
@@ -90,5 +88,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

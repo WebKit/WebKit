@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(INTL)
-
 #include "JSObject.h"
 
 namespace JSC {
@@ -57,6 +55,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)
-

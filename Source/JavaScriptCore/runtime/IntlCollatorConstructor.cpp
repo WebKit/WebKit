@@ -28,8 +28,6 @@
 #include "config.h"
 #include "IntlCollatorConstructor.h"
 
-#if ENABLE(INTL)
-
 #include "Error.h"
 #include "IntlCollator.h"
 #include "IntlCollatorPrototype.h"
@@ -143,5 +141,3 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(JSGlo
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

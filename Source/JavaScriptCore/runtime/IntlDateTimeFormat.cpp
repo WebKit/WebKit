@@ -27,8 +27,6 @@
 #include "config.h"
 #include "IntlDateTimeFormat.h"
 
-#if ENABLE(INTL)
-
 #include "DateInstance.h"
 #include "Error.h"
 #include "IntlDateTimeFormatConstructor.h"
@@ -1038,5 +1036,3 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

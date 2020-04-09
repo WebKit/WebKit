@@ -27,8 +27,6 @@
 #include "config.h"
 #include "IntlCollatorPrototype.h"
 
-#if ENABLE(INTL)
-
 #include "Error.h"
 #include "IntlCollator.h"
 #include "JSBoundFunction.h"
@@ -150,5 +148,3 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeFuncResolvedOptions(JSGlobalOb
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

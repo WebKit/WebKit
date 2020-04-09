@@ -27,8 +27,6 @@
 #include "config.h"
 #include "IntlPluralRulesConstructor.h"
 
-#if ENABLE(INTL)
-
 #include "Error.h"
 #include "IntlObject.h"
 #include "IntlPluralRules.h"
@@ -127,5 +125,3 @@ EncodedJSValue JSC_HOST_CALL IntlPluralRulesConstructorFuncSupportedLocalesOf(JS
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

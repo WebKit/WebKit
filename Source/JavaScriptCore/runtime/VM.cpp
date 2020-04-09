@@ -72,10 +72,10 @@
 #include "IncrementalSweeper.h"
 #include "IndirectEvalExecutable.h"
 #include "Interpreter.h"
-#include "IntlCollatorConstructor.h"
-#include "IntlDateTimeFormatConstructor.h"
-#include "IntlNumberFormatConstructor.h"
-#include "IntlPluralRulesConstructor.h"
+#include "IntlCollator.h"
+#include "IntlDateTimeFormat.h"
+#include "IntlNumberFormat.h"
+#include "IntlPluralRules.h"
 #include "IsoHeapCellType.h"
 #include "IsoInlinedHeapCellType.h"
 #include "JITCode.h"
@@ -217,13 +217,6 @@
 #include "JSCCallbackFunction.h"
 #endif
 
-#if ENABLE(INTL)
-#include "IntlCollator.h"
-#include "IntlDateTimeFormat.h"
-#include "IntlNumberFormat.h"
-#include "IntlPluralRules.h"
-#endif
-
 namespace JSC {
 
 #if ENABLE(JIT)
@@ -341,12 +334,10 @@ VM::VM(VMType vmType, HeapType heapType)
     , callbackAPIWrapperGlobalObjectHeapCellType(IsoHeapCellType::create<JSCallbackObject<JSAPIWrapperGlobalObject>>())
     , jscCallbackFunctionHeapCellType(IsoHeapCellType::create<JSCCallbackFunction>())
 #endif
-#if ENABLE(INTL)
     , intlCollatorHeapCellType(IsoHeapCellType::create<IntlCollator>())
     , intlDateTimeFormatHeapCellType(IsoHeapCellType::create<IntlDateTimeFormat>())
     , intlNumberFormatHeapCellType(IsoHeapCellType::create<IntlNumberFormat>())
     , intlPluralRulesHeapCellType(IsoHeapCellType::create<IntlPluralRules>())
-#endif
 #if ENABLE(WEBASSEMBLY)
     , webAssemblyCodeBlockHeapCellType(IsoHeapCellType::create<JSWebAssemblyCodeBlock>())
     , webAssemblyFunctionHeapCellType(IsoHeapCellType::create<WebAssemblyFunction>())
@@ -1513,12 +1504,10 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(apiWrapperObjectSpace, apiWrapperObjectH
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jscCallbackFunctionSpace, jscCallbackFunctionHeapCellType.get(), JSCCallbackFunction)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackAPIWrapperGlobalObjectSpace, callbackAPIWrapperGlobalObjectHeapCellType.get(), JSCallbackObject<JSAPIWrapperGlobalObject>)
 #endif
-#if ENABLE(INTL)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlCollatorSpace, intlCollatorHeapCellType.get(), IntlCollator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlDateTimeFormatSpace, intlDateTimeFormatHeapCellType.get(), IntlDateTimeFormat)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlNumberFormatSpace, intlNumberFormatHeapCellType.get(), IntlNumberFormat)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlPluralRulesSpace, intlPluralRulesHeapCellType.get(), IntlPluralRules)
-#endif
 #if ENABLE(WEBASSEMBLY)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jsToWasmICCalleeSpace, cellHeapCellType.get(), JSToWasmICCallee)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyCodeBlockSpace, webAssemblyCodeBlockHeapCellType.get(), JSWebAssemblyCodeBlock) // Hash:0x9ad995cd

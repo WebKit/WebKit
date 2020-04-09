@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INTL)
-
 #include "JSObject.h"
 
 struct UCollator;
@@ -97,5 +95,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

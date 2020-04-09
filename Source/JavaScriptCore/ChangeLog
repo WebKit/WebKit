@@ -1,3 +1,61 @@
+2020-04-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Remove ENABLE_INTL define
+        https://bugs.webkit.org/show_bug.cgi?id=210164
+
+        Reviewed by Darin Adler.
+
+        * Scripts/generateIntlCanonicalizeLanguage.py:
+        * builtins/DatePrototype.js:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToLocaleString):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::finishCreation):
+        * runtime/IntlCollator.cpp:
+        * runtime/IntlCollator.h:
+        * runtime/IntlCollatorConstructor.cpp:
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlCollatorPrototype.cpp:
+        * runtime/IntlCollatorPrototype.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        * runtime/IntlDateTimeFormatPrototype.h:
+        * runtime/IntlNumberFormat.cpp:
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/IntlObject.cpp:
+        * runtime/IntlObject.h:
+        * runtime/IntlObjectInlines.h:
+        * runtime/IntlPluralRules.cpp:
+        * runtime/IntlPluralRules.h:
+        * runtime/IntlPluralRulesConstructor.cpp:
+        * runtime/IntlPluralRulesConstructor.h:
+        * runtime/IntlPluralRulesPrototype.cpp:
+        * runtime/IntlPluralRulesPrototype.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::defaultCollator const):
+        (JSC::JSGlobalObject::pluralRulesStructure):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncDateTimeFormat):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToLocaleString):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::stringProtoFuncLocaleCompare):
+        (JSC::stringProtoFuncToLocaleUpperCase):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2020-04-08  Daniel Bates  <dabates@apple.com>
 
         Track editable elements on screen

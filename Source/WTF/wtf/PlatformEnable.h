@@ -328,10 +328,6 @@
 #define ENABLE_INSPECTOR_TELEMETRY 0
 #endif
 
-#if !defined(ENABLE_INTL)
-#define ENABLE_INTL 0
-#endif
-
 #if !defined(ENABLE_LAYOUT_FORMATTING_CONTEXT)
 #define ENABLE_LAYOUT_FORMATTING_CONTEXT 0
 #endif

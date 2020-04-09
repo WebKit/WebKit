@@ -27,8 +27,6 @@
 #include "config.h"
 #include "IntlNumberFormatPrototype.h"
 
-#if ENABLE(INTL)
-
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "IntlNumberFormat.h"
@@ -179,5 +177,3 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(JSGlob
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

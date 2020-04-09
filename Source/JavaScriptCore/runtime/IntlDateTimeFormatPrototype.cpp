@@ -27,8 +27,6 @@
 #include "config.h"
 #include "IntlDateTimeFormatPrototype.h"
 
-#if ENABLE(INTL)
-
 #include "BuiltinNames.h"
 #include "DateConstructor.h"
 #include "Error.h"
@@ -193,5 +191,3 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(JSGl
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

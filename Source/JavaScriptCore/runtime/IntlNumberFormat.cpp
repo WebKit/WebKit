@@ -28,8 +28,6 @@
 #include "config.h"
 #include "IntlNumberFormat.h"
 
-#if ENABLE(INTL)
-
 #include "CatchScope.h"
 #include "Error.h"
 #include "IntlNumberFormatConstructor.h"
@@ -539,5 +537,3 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

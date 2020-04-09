@@ -28,8 +28,6 @@
 #include "config.h"
 #include "IntlObject.h"
 
-#if ENABLE(INTL)
-
 #include "Error.h"
 #include "FunctionPrototype.h"
 #include "IntlCanonicalizeLanguage.h"
@@ -1038,5 +1036,3 @@ EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(JSGlobalObject* g
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

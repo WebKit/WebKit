@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(INTL)
-
 #include "BuiltinNames.h"
 #include "IntlObject.h"
 #include "JSObject.h"
@@ -61,5 +59,3 @@ JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(JSGlobalObje
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

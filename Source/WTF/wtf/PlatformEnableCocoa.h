@@ -247,10 +247,6 @@
 #define ENABLE_DATA_DETECTION 1
 #endif
 
-#if !defined(ENABLE_INTL)
-#define ENABLE_INTL 1
-#endif
-
 /* FIXME: This should probably be HAVE_FAST_JIT_PERMISSIONS and may be entirely unnecessary due to runtime checking support via os_thread_self_restrict_rwx_is_supported() */
 #if !defined(ENABLE_FAST_JIT_PERMISSIONS) && CPU(ARM64) && !(OS(TVOS) || OS(WATCHOS)) && USE(APPLE_INTERNAL_SDK)
 #define ENABLE_FAST_JIT_PERMISSIONS 1

@@ -27,8 +27,6 @@
 #include "config.h"
 #include "IntlNumberFormatConstructor.h"
 
-#if ENABLE(INTL)
-
 #include "Error.h"
 #include "IntlNumberFormat.h"
 #include "IntlNumberFormatPrototype.h"
@@ -144,5 +142,3 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(J
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

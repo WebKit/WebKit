@@ -27,8 +27,6 @@
 #include "config.h"
 #include "IntlPluralRulesPrototype.h"
 
-#if ENABLE(INTL)
-
 #include "Error.h"
 #include "IntlPluralRules.h"
 #include "JSCInlines.h"
@@ -112,5 +110,3 @@ EncodedJSValue JSC_HOST_CALL IntlPluralRulesPrototypeFuncResolvedOptions(JSGloba
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

@@ -28,8 +28,6 @@
 #include "config.h"
 #include "IntlCollator.h"
 
-#if ENABLE(INTL)
-
 #include "CatchScope.h"
 #include "Error.h"
 #include "IntlCollatorConstructor.h"
@@ -40,7 +38,6 @@
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 #include <unicode/ucol.h>
-#include <wtf/unicode/Collator.h>
 
 namespace JSC {
 
@@ -436,5 +433,3 @@ void IntlCollator::setBoundCompare(VM& vm, JSBoundFunction* format)
 }
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)

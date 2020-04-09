@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(INTL)
-
 #include "JSCJSValueInlines.h"
 #include "JSObject.h"
 
@@ -81,5 +79,3 @@ String bestAvailableLocale(const HashSet<String>& availableLocales, const String
 Vector<String> numberingSystemsForLocale(const String& locale);
 
 } // namespace JSC
-
-#endif // ENABLE(INTL)
