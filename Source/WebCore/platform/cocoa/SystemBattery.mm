@@ -39,22 +39,25 @@ void setSystemHasBattery(bool battery)
 
 bool systemHasBattery()
 {
-    if (hasBattery.hasValue())
-        return *hasBattery;
-
-    RetainPtr<CFTypeRef> powerSourcesInfo = adoptCF(IOPSCopyPowerSourcesInfo());
-    if (!powerSourcesInfo)
-        return false;
-    RetainPtr<CFArrayRef> powerSourcesList = adoptCF(IOPSCopyPowerSourcesList(powerSourcesInfo.get()));
-    if (!powerSourcesList)
-        return false;
-    for (CFIndex i = 0, count = CFArrayGetCount(powerSourcesList.get()); i < count; ++i) {
-        CFDictionaryRef description = IOPSGetPowerSourceDescription(powerSourcesInfo.get(), CFArrayGetValueAtIndex(powerSourcesList.get(), i));
-        CFTypeRef value = CFDictionaryGetValue(description, CFSTR(kIOPSTypeKey));
-        if (!value || CFEqual(value, CFSTR(kIOPSInternalBatteryType)))
-            return true;
+    if (!hasBattery.hasValue()) {
+        hasBattery = [] {
+            RetainPtr<CFTypeRef> powerSourcesInfo = adoptCF(IOPSCopyPowerSourcesInfo());
+            if (!powerSourcesInfo)
+                return false;
+            RetainPtr<CFArrayRef> powerSourcesList = adoptCF(IOPSCopyPowerSourcesList(powerSourcesInfo.get()));
+            if (!powerSourcesList)
+                return false;
+            for (CFIndex i = 0, count = CFArrayGetCount(powerSourcesList.get()); i < count; ++i) {
+                CFDictionaryRef description = IOPSGetPowerSourceDescription(powerSourcesInfo.get(), CFArrayGetValueAtIndex(powerSourcesList.get(), i));
+                CFTypeRef value = CFDictionaryGetValue(description, CFSTR(kIOPSTypeKey));
+                if (!value || CFEqual(value, CFSTR(kIOPSInternalBatteryType)))
+                    return true;
+            }
+            return false;
+        }();
     }
-    return false;
+
+    return *hasBattery;
 }
 
 }
