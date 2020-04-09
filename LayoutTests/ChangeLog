@@ -1,3 +1,17 @@
+2020-04-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=210257
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/accessibility/roles-exposed-expected.txt: Updated baseline after r259671.
+        * platform/wpe/fast/ruby/bopomofo-mixed-expected.txt: New baseline after r258990.
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-003-expected.txt: New baseline after r259059.
+        * platform/wpe/imported/w3c/web-platform-tests/css/selectors/focus-visible-009-expected.txt:  New baseline after r259194.
+        * platform/wpe/accessibility/menu-list-sends-change-notification-expected.txt: New baseline after r259438.
+
 2020-04-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update TestExpectations

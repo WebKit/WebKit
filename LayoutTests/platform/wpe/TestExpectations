@@ -694,10 +694,15 @@ webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/text-b
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-023.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-022.xht [ ImageOnlyFailure ]
 
+webkit.org/b/209330 imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
+
+webkit.org/b/209801 imported/w3c/web-platform-tests/xhr/header-user-agent-sync.htm [ Failure ]
+
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure ]
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html [ Failure ]
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html [ Failure ]
+webkit.org/b/210226 http/tests/cache/partitioned-cache.html [ Failure ]
 
 webkit.org/b/210236 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
 webkit.org/b/210236 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
@@ -709,6 +714,8 @@ webkit.org/b/210236 webgl/2.0.0/conformance2/glsl3/bool-type-cast-bug-uint-ivec-
 webkit.org/b/210236 webgl/webgl-vertex-array-object-defined.html [ Failure ]
 
 webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Failure ]
+
+webkit.org/b/210255 http/wpt/notifications/constructor-basic-bfcache.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
@@ -1670,7 +1677,6 @@ webkit.org/b/201983 accessibility/math-foreign-content.html [ Missing ]
 webkit.org/b/201983 accessibility/math-mo-fences-and-separators.html [ Missing ]
 webkit.org/b/201983 accessibility/math-text.html [ Missing ]
 webkit.org/b/201983 accessibility/media-element.html [ Missing ]
-webkit.org/b/201983 accessibility/menu-list-sends-change-notification.html [ Missing ]
 webkit.org/b/201983 accessibility/meter-element.html [ Missing ]
 webkit.org/b/201983 accessibility/platform-name.html [ Missing ]
 webkit.org/b/201983 accessibility/svg-element-with-aria-role.html [ Missing ]
