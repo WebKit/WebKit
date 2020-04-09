@@ -52,10 +52,10 @@ public:
     API::Object* object() const { return m_object.get(); }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, UserData&);
+    static bool decode(IPC::Decoder&, UserData&) WARN_UNUSED_RETURN;
 
     static void encode(IPC::Encoder&, const API::Object*);
-    static bool decode(IPC::Decoder&, RefPtr<API::Object>&);
+    static bool decode(IPC::Decoder&, RefPtr<API::Object>&) WARN_UNUSED_RETURN;
 
 private:
     static void encode(IPC::Encoder&, const API::Object&);

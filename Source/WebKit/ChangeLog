@@ -1,5 +1,20 @@
 2020-04-09  David Kilzer  <ddkilzer@apple.com>
 
+        UserData::decode should add bounds checks
+        <https://webkit.org/b/210247>
+        <rdar://problem/61467748>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/UserData.cpp:
+        (WebKit::UserData::decode):
+        - Add bounds checks using WTF::isInBounds<size_t>.
+        * Shared/UserData.h:
+        (WebKit::UserData::decode):
+        - Add WARN_UNUSED_RETURN.
+
+2020-04-09  David Kilzer  <ddkilzer@apple.com>
+
         Follow-up: WTF::Persistence::VectorCoder and IPC::VectorArgumentCoder should do bounds checking without crashing
         <https://webkit.org/b/210227>
         <rdar://problem/60832243>
