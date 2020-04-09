@@ -36,8 +36,6 @@ class ResourceResponse;
 enum class ContentSecurityPolicyHeaderType {
     Report,
     Enforce,
-    PrefixedReport,
-    PrefixedEnforce,
 };
 
 class ContentSecurityPolicyResponseHeaders {

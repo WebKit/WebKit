@@ -435,8 +435,6 @@ static bool isSafeCrossOriginResponseHeader(HTTPHeaderName name)
         || name == HTTPHeaderName::XContentTypeOptions
         || name == HTTPHeaderName::XDNSPrefetchControl
         || name == HTTPHeaderName::XFrameOptions
-        || name == HTTPHeaderName::XWebKitCSP
-        || name == HTTPHeaderName::XWebKitCSPReportOnly
         || name == HTTPHeaderName::XXSSProtection;
 }
 
