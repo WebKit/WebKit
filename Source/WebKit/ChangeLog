@@ -1,3 +1,15 @@
+2020-04-09  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::Persistence::Coder and WTF::Persistence::Decoder should use WARN_UNUSED_RETURN
+        <https://webkit.org/b/210238>
+        <rdar://problem/61491575>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+        - Add missing return value check for decode.decode().
+
 2020-04-09  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Add routines to message filter in the WebContent sandbox
