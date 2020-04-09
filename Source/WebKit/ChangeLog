@@ -1,3 +1,9 @@
+2020-04-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix WebContent process launching after r259758.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-04-08  Brady Eidson  <beidson@apple.com>
 
         Enable incremental PDF loading.
