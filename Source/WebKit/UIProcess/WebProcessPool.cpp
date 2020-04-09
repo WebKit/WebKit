@@ -143,6 +143,7 @@
 #define WEB_PROCESS_POOL_ADDITIONS
 #define WEB_PROCESS_POOL_ADDITIONS_2
 #define WEB_PROCESS_POOL_ADDITIONS_3
+#define WEB_PROCESS_POOL_ADDITIONS_4
 #endif
 
 #define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
@@ -265,6 +266,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         WTF::setProcessPrivileges(allPrivileges());
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
         Process::setIdentifier(WebCore::ProcessIdentifier::generate());
+        WEB_PROCESS_POOL_ADDITIONS_4
     });
 
     if (!m_websiteDataStore && WebKit::WebsiteDataStore::defaultDataStoreExists())

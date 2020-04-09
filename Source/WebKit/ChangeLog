@@ -1,3 +1,19 @@
+2020-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r257758): Launch time performance regression
+        https://bugs.webkit.org/show_bug.cgi?id=210157
+        <rdar://problem/61119881>
+
+        Reviewed by Alex Christensen.
+
+        Address a launch time performance regression in the WebProcessPool constructor
+        by starting a potentially slow server call in the constructor, and only waiting
+        for its result if it has not been received when the value is needed.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebProcessPool::WebProcessPool): Start initialization function in constructor,
+        rather than blocking for the 
+
 2020-04-08  Alex Christensen  <achristensen@webkit.org>
 
         WKWebViews should behave as if they had loaded something after restoring session state
