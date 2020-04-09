@@ -1,3 +1,12 @@
+2020-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Remove platform specific results for http/tests/appcache/history-test.html
+
+        This was a progression, not a regression.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/appcache/history-test-expected.txt: Removed.
+
 2020-04-09  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, flaky failures in EWS GTK-WK2

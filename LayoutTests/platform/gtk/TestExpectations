@@ -1367,7 +1367,6 @@ webkit.org/b/209727 fast/forms/placeholder-content-line-height.html [ ImageOnlyF
 
 webkit.org/b/209801 imported/w3c/web-platform-tests/xhr/header-user-agent-sync.htm [ Failure ]
 
-webkit.org/b/210226 http/tests/appcache/history-test.html [ Failure ]
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html [ Failure ]
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html [ Failure ]
