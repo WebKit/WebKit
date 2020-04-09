@@ -1,3 +1,14 @@
+2020-04-09  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add unit tests to ensure that step names are valid identifier
+        https://bugs.webkit.org/show_bug.cgi?id=210289
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestStepNameShouldBeValidIdentifier):
+        (TestStepNameShouldBeValidIdentifier.test_step_names_are_valid): unit-test to validate step names.
+
 2020-04-09  Jonathan Bedard  <jbedard@apple.com>
 
         Buildbot: Force crash log submission after each test run

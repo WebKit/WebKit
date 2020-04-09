@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import inspect
 import operator
 import os
 import shutil
@@ -29,6 +30,7 @@ from buildbot.process import remotetransfer
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.test.fake.remotecommand import Expect, ExpectRemoteRef, ExpectShell
 from buildbot.test.util.steps import BuildStepMixin
+from buildbot.util import identifiers as buildbot_identifiers
 from mock import call
 from twisted.internet import error, reactor
 from twisted.python import failure, log
@@ -202,6 +204,17 @@ def uploadFileWithContentsOfString(string, timestamp=None):
         if timestamp:
             writer.remote_utime(timestamp)
     return behavior
+
+
+class TestStepNameShouldBeValidIdentifier(BuildStepMixinAdditions, unittest.TestCase):
+    def test_step_names_are_valid(self):
+        import steps
+        build_step_classes = inspect.getmembers(steps, inspect.isclass)
+        for build_step in build_step_classes:
+            if 'name' in vars(build_step[1]):
+                name = build_step[1].name
+                self.assertFalse(' ' in name, 'step name "{}" contain space.'.format(name))
+                self.assertTrue(buildbot_identifiers.ident_re.match(name), 'step name "{}" is not a valid buildbot identifier.'.format(name))
 
 
 class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
