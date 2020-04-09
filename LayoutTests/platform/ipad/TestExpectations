@@ -64,4 +64,3 @@ webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-004.html [ Pass ]
 
 media/picture-in-picture [ Pass ]
 
-webkit.org/b/207274 [ Debug ] compositing/shared-backing/sharing-child-contributes-to-overlap.html [ Pass Crash ]
