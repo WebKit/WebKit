@@ -1371,6 +1371,12 @@ webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursor
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html [ Failure ]
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html [ Failure ]
 
+webkit.org/b/210233 http/tests/media/media-stream/device-change-event-in-iframe.html [ Failure Pass ]
+
+webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass ]
+
+webkit.org/b/210274 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/none-load-from-cache-storage.https.html [ Failure Pass ]
+
 # Tests failing in EWS but not in test bot.
 webkit.org/b/209533 editing/pasteboard/paste-line-endings-004.html [ Failure Pass ]
 webkit.org/b/209533 editing/pasteboard/paste-line-endings-005.html [ Failure ImageOnlyFailure Pass ]
