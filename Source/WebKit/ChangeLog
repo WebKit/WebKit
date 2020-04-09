@@ -1,3 +1,15 @@
+2020-04-09  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add routines to message filter in the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=210293
+
+        Reviewed by Geoffrey Garen.
+
+        Add required routines to the message filter in the WebContent process. This set of routines was compiled
+        from local testing, and is therefore probably not the complete set.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-04-09  Megan Gardner  <megan_gardner@apple.com>
 
         [iOS] Date and time form controls are presented at the wrong size in some modes
