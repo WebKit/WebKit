@@ -1,3 +1,15 @@
+2020-04-09  Saam Barati  <sbarati@apple.com>
+
+        We can still cache delete in strict mode as long as the property is not "non-configurable"
+        https://bugs.webkit.org/show_bug.cgi?id=210148
+
+        Reviewed by Tadeu Zagallo.
+
+        * microbenchmarks/delete-cache-strict-mode.js: Added.
+        (assert):
+        (doDel):
+        (doDelByVal):
+
 2020-04-09  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         getOwnPropertyDescriptor() is incorrect with Proxy of exotic object

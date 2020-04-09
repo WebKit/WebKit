@@ -781,12 +781,13 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
             ASSERT(newStructure->isObject());
             ASSERT(isValidOffset(newOffset));
             newCase = AccessCase::createDelete(vm, codeBlock, propertyName, newOffset, oldStructure, newStructure);
-        } else if (!ecmaMode.isStrict()) {
-            if (slot.isNonconfigurable())
-                newCase = AccessCase::create(vm, codeBlock, AccessCase::DeleteNonConfigurable, propertyName, invalidOffset, oldStructure, { }, nullptr);
-            else
-                newCase = AccessCase::create(vm, codeBlock, AccessCase::DeleteMiss, propertyName, invalidOffset, oldStructure, { }, nullptr);
-        }
+        } else if (slot.isNonconfigurable()) {
+            if (ecmaMode.isStrict())
+                return GiveUpOnCache;
+
+            newCase = AccessCase::create(vm, codeBlock, AccessCase::DeleteNonConfigurable, propertyName, invalidOffset, oldStructure, { }, nullptr);
+        } else
+            newCase = AccessCase::create(vm, codeBlock, AccessCase::DeleteMiss, propertyName, invalidOffset, oldStructure, { }, nullptr);
 
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, propertyName, WTFMove(newCase));
 

@@ -1,3 +1,18 @@
+2020-04-09  Saam Barati  <sbarati@apple.com>
+
+        We can still cache delete in strict mode as long as the property is not "non-configurable"
+        https://bugs.webkit.org/show_bug.cgi?id=210148
+
+        Reviewed by Tadeu Zagallo.
+
+        We were incorrectly not inline caching all delete misses in strict mode.
+        We only must to not cache deletes on non-configurable properties in strict
+        mode, as that should throw a runtime error. Delete misses can still be cached
+        in strict mode without any issues. This is a 4x speedup on the microbenchmark.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheDeleteBy):
+
 2020-04-09  Sergio Villar Senin  <svillar@igalia.com>
 
         [Wasm] Build fix for non-unified builds
