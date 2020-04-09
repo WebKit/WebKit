@@ -1,3 +1,93 @@
+2020-04-09  Mark Lam  <mark.lam@apple.com>
+
+        Implement a more efficient tagCFunction() tool.
+        https://bugs.webkit.org/show_bug.cgi?id=210254
+
+        Reviewed by Keith Miller.
+
+        Putting tagCFunction() to use.
+
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3MathExtras.cpp:
+        * b3/B3ReduceLoopStrength.cpp:
+        (JSC::B3::ReduceLoopStrength::reduceByteCopyLoopsToMemcpy):
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3_5.cpp:
+        (testCallSimple):
+        (testCallRare):
+        (testCallRareLive):
+        (testCallSimplePure):
+        (testCallFunctionWithHellaArguments):
+        (testCallFunctionWithHellaArguments2):
+        (testCallFunctionWithHellaArguments3):
+        (testCallSimpleDouble):
+        (testCallSimpleFloat):
+        (testCallFunctionWithHellaDoubleArguments):
+        (testCallFunctionWithHellaFloatArguments):
+        (testLinearScanWithCalleeOnStack):
+        * b3/testb3_6.cpp:
+        (testInterpreter):
+        * b3/testb3_7.cpp:
+        (testLICMPure):
+        (testLICMPureSideExits):
+        (testLICMPureWritesPinned):
+        (testLICMPureWrites):
+        (testLICMReadsLocalState):
+        (testLICMReadsPinned):
+        (testLICMReads):
+        (testLICMPureNotBackwardsDominant):
+        (testLICMPureFoiledByChild):
+        (testLICMPureNotBackwardsDominantFoiledByChild):
+        (testLICMExitsSideways):
+        (testLICMWritesLocalState):
+        (testLICMWrites):
+        (testLICMFence):
+        (testLICMWritesPinned):
+        (testLICMControlDependent):
+        (testLICMControlDependentNotBackwardsDominant):
+        (testLICMControlDependentSideExits):
+        (testLICMReadsPinnedWritesPinned):
+        (testLICMReadsWritesDifferentHeaps):
+        (testLICMReadsWritesOverlappingHeaps):
+        (testLICMDefaultCall):
+        (testShuffleDoesntTrashCalleeSaves):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::emitRestoreArguments):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::osrWriteBarrier):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::ensureShadowChickenPacket):
+        * jit/JITOperations.cpp:
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::slowPathFor):
+        (JSC::nativeForGenerator):
+        (JSC::boundFunctionCallGenerator):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addTableGet):
+        (JSC::Wasm::B3IRGenerator::addTableSet):
+        (JSC::Wasm::B3IRGenerator::addRefFunc):
+        (JSC::Wasm::B3IRGenerator::addTableSize):
+        (JSC::Wasm::B3IRGenerator::addTableGrow):
+        (JSC::Wasm::B3IRGenerator::addTableFill):
+        (JSC::Wasm::B3IRGenerator::addGrowMemory):
+        (JSC::Wasm::B3IRGenerator::setGlobal):
+        (JSC::Wasm::B3IRGenerator::emitWriteBarrierForJSWrapper):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32Popcnt>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64Popcnt>):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::triggerOMGEntryTierUpThunkGenerator):
+
 2020-04-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: treat comma sub-expressions as separate statements

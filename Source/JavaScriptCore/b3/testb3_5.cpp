@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1916,7 +1916,7 @@ void testCallSimple(int a, int b)
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Int32, Origin(),
-            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunction, B3CCallPtrTag)),
+            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(simpleFunction)),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
 
@@ -1943,7 +1943,7 @@ void testCallRare(int a, int b)
         proc, Return, Origin(),
         rare->appendNew<CCallValue>(
             proc, Int32, Origin(),
-            rare->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunction, B3CCallPtrTag)),
+            rare->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(simpleFunction)),
             rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
             rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
 
@@ -1972,7 +1972,7 @@ void testCallRareLive(int a, int b, int c)
             proc, Add, Origin(),
             rare->appendNew<CCallValue>(
                 proc, Int32, Origin(),
-                rare->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunction, B3CCallPtrTag)),
+                rare->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(simpleFunction)),
                 rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
                 rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)),
             rare->appendNew<Value>(
@@ -1990,7 +1990,7 @@ void testCallSimplePure(int a, int b)
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Int32, Origin(), Effects::none(),
-            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunction, B3CCallPtrTag)),
+            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(simpleFunction)),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
 
@@ -2013,7 +2013,7 @@ void testCallFunctionWithHellaArguments()
 
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Int32, Origin(),
-        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaArguments, B3CCallPtrTag)));
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(functionWithHellaArguments)));
     call->appendArgs(args);
 
     root->appendNewControlValue(proc, Return, Origin(), call);
@@ -2039,7 +2039,7 @@ void testCallFunctionWithHellaArguments2()
 
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Int64, Origin(),
-        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaArguments2, B3CCallPtrTag)));
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(functionWithHellaArguments2)));
     call->appendArgs(args);
 
     root->appendNewControlValue(proc, Return, Origin(), call);
@@ -2061,7 +2061,7 @@ void testCallFunctionWithHellaArguments3()
 
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Int32, Origin(),
-        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaArguments3, B3CCallPtrTag)));
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(functionWithHellaArguments3)));
     call->appendArgs(args);
 
     root->appendNewControlValue(proc, Return, Origin(), call);
@@ -2112,7 +2112,7 @@ void testCallSimpleDouble(double a, double b)
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Double, Origin(),
-            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunctionDouble, B3CCallPtrTag)),
+            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(simpleFunctionDouble)),
             root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)));
 
@@ -2138,7 +2138,7 @@ void testCallSimpleFloat(float a, float b)
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Float, Origin(),
-            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunctionFloat, B3CCallPtrTag)),
+            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(simpleFunctionFloat)),
             floatValue1,
             floatValue2));
 
@@ -2161,7 +2161,7 @@ void testCallFunctionWithHellaDoubleArguments()
 
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Double, Origin(),
-        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaDoubleArguments, B3CCallPtrTag)));
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(functionWithHellaDoubleArguments)));
     call->appendArgs(args);
 
     root->appendNewControlValue(proc, Return, Origin(), call);
@@ -2185,7 +2185,7 @@ void testCallFunctionWithHellaFloatArguments()
 
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Float, Origin(),
-        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaFloatArguments, B3CCallPtrTag)));
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(functionWithHellaFloatArguments)));
     call->appendArgs(args);
 
     root->appendNewControlValue(proc, Return, Origin(), call);
@@ -2208,7 +2208,7 @@ void testLinearScanWithCalleeOnStack()
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Int32, Origin(),
-            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunction, B3CCallPtrTag)),
+            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<B3CCallPtrTag>(simpleFunction)),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
 

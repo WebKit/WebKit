@@ -1,3 +1,23 @@
+2020-04-09  Mark Lam  <mark.lam@apple.com>
+
+        Implement a more efficient tagCFunction() tool.
+        https://bugs.webkit.org/show_bug.cgi?id=210254
+
+        Reviewed by Keith Miller.
+
+        The current tagCFunctionPtr() tool does some extra work that is not needed if
+        we are tagging a known function and not a potentially arbitrary pointer.  For
+        example,
+        1. it doesn't need to do a null check.
+        2. it doesn't need to authenticate the function address.  
+        3. The RELEASE_ASSERT used to enforce that authentication can also go away.
+
+        We should only use tagCFunction() (instead of tagCFunctionPtr()) if we know for
+        certain that we're operating on a C/C++ function, and not some arbitrary pointer.
+
+        * wtf/PtrTag.h:
+        (WTF::tagCFunction):
+
 2020-04-08  David Kilzer  <ddkilzer@apple.com>
 
         WTF::Persistence::VectorCoder and IPC::VectorArgumentCoder should use checked arithmetic

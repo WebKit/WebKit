@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -320,6 +320,20 @@ inline PtrType tagCFunctionPtr(PtrType ptr, PtrTag tag)
 template<PtrTag tag, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
 inline PtrType tagCFunctionPtr(PtrType ptr) { return tagCFunctionPtr(ptr, tag); }
 
+template<PtrTag newTag, typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
+inline FunctionType tagCFunction(FunctionType func)
+{
+    ASSERT(isTaggedWith(func, CFunctionPtrTag));
+    ASSERT(newTag != CFunctionPtrTag);
+    return ptrauth_auth_and_resign(func, ptrauth_key_function_pointer, 0, ptrauth_key_process_dependent_code, newTag);
+}
+
+template<typename ReturnType, PtrTag newTag, typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
+inline ReturnType tagCFunction(FunctionType func)
+{
+    return bitwise_cast<ReturnType>(tagCFunction<newTag>(func));
+}
+
 template<PtrTagAction tagAction, typename PtrType>
 inline PtrType untagCFunctionPtrImpl(PtrType ptr, PtrTag tag)
 {
@@ -521,6 +535,15 @@ inline PtrType tagCFunctionPtr(PtrType ptr, PtrTag) { return ptr; }
 template<PtrTag, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
 inline PtrType tagCFunctionPtr(PtrType ptr) { return ptr; }
 
+template<PtrTag newTag, typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
+inline FunctionType tagCFunction(FunctionType func) { return func; }
+
+template<typename ReturnType, PtrTag newTag, typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
+inline ReturnType tagCFunction(FunctionType func)
+{
+    return bitwise_cast<ReturnType>(tagCFunction<newTag>(func));
+}
+
 template<typename T, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value && !std::is_same<T, PtrType>::value>>
 inline T untagCFunctionPtr(PtrType ptr, PtrTag) { return bitwise_cast<T>(ptr); }
 
@@ -578,6 +601,7 @@ using WTF::tagCodePtr;
 using WTF::untagCodePtr;
 using WTF::retagCodePtr;
 using WTF::removeCodePtrTag;
+using WTF::tagCFunction;
 using WTF::tagCFunctionPtr;
 using WTF::untagCFunctionPtr;
 using WTF::tagInt;

@@ -1064,7 +1064,7 @@ static SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame
             }
 
             return encodeResult(
-                tagCFunctionPtr<void*, JSEntryPtrTag>(getHostCallReturnValue),
+                tagCFunction<void*, JSEntryPtrTag>(getHostCallReturnValue),
                 reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
     
@@ -1092,7 +1092,7 @@ static SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame
                 reinterpret_cast<void*>(KeepTheFrame));
         }
 
-        return encodeResult(tagCFunctionPtr<void*, JSEntryPtrTag>(getHostCallReturnValue), reinterpret_cast<void*>(KeepTheFrame));
+        return encodeResult(tagCFunction<void*, JSEntryPtrTag>(getHostCallReturnValue), reinterpret_cast<void*>(KeepTheFrame));
     }
     
     ASSERT(constructType == ConstructType::None);

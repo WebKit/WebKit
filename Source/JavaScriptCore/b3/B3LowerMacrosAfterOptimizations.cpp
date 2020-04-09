@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,9 +100,9 @@ private:
                 Value* functionAddress = nullptr;
                 if (m_value->type() == Double) {
                     double (*ceilDouble)(double) = ceil;
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunctionPtr(ceilDouble, B3CCallPtrTag));
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<B3CCallPtrTag>(ceilDouble));
                 } else if (m_value->type() == Float)
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunctionPtr(ceilf, B3CCallPtrTag));
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<B3CCallPtrTag>(ceilf));
                 else
                     RELEASE_ASSERT_NOT_REACHED();
 
@@ -122,9 +122,9 @@ private:
                 Value* functionAddress = nullptr;
                 if (m_value->type() == Double) {
                     double (*floorDouble)(double) = floor;
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunctionPtr(floorDouble, B3CCallPtrTag));
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<B3CCallPtrTag>(floorDouble));
                 } else if (m_value->type() == Float)
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunctionPtr(floorf, B3CCallPtrTag));
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<B3CCallPtrTag>(floorf));
                 else
                     RELEASE_ASSERT_NOT_REACHED();
 
