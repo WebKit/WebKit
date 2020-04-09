@@ -1,3 +1,15 @@
+2020-04-08  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit::ShareableBitmap::Handle::decode() should validate m_size instance variables
+        <https://webkit.org/b/210211>
+        <rdar://problem/60543986>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Handle::decode): Return early if
+        either m_size instance variable is less than zero.
+
 2020-04-08  Alex Christensen  <achristensen@webkit.org>
 
         _corsDisablingPatterns should allow security policy access to those patterns

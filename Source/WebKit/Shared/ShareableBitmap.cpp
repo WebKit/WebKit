@@ -54,6 +54,8 @@ bool ShareableBitmap::Handle::decode(IPC::Decoder& decoder, Handle& handle)
         return false;
     if (!decoder.decode(handle.m_size))
         return false;
+    if (handle.m_size.width() < 0 || handle.m_size.height() < 0)
+        return false;
     if (!decoder.decode(handle.m_configuration))
         return false;
     return true;
