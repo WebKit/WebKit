@@ -15,7 +15,7 @@
     <key>incremental_pdf</key>
     <dict>
         <key>Enabled</key>
-        <false/>
+        <true/>
     </dict>
     <key>WebGL2</key>
     <dict>
