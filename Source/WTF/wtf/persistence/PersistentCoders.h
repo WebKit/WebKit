@@ -160,7 +160,10 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
         if (!decoder.decode(decodedSize))
             return false;
 
-        auto size = safeCast<size_t>(decodedSize);
+        if (!isInBounds<size_t>(decodedSize))
+            return false;
+
+        auto size = static_cast<size_t>(decodedSize);
 
         // Since we know the total size of the elements, we can allocate the vector in
         // one fell swoop. Before allocating we must however make sure that the decoder buffer
@@ -171,8 +174,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
         Vector<T, inlineCapacity> temp;
         temp.grow(size);
 
-        Checked<size_t> checkedSize(size);
-        decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), (checkedSize * sizeof(T)).unsafeGet());
+        decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T));
 
         vector.swap(temp);
         return true;

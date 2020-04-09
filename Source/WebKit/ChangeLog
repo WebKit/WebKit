@@ -1,3 +1,21 @@
+2020-04-09  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: WTF::Persistence::VectorCoder and IPC::VectorArgumentCoder should do bounds checking without crashing
+        <https://webkit.org/b/210227>
+        <rdar://problem/60832243>
+
+        Reviewed by Alex Christensen.
+
+        * Platform/IPC/ArgumentCoders.h:
+        - Add missing call to decoder.markInvalid() if decoding of
+          `decodedSize` fails.
+        - Replace safeCast<size_t> with isInBounds<size_t> so that we
+          don't crash if `decodedSize` is too big.  Instead we fail
+          decoding by marking the decoder invalid and returning early.
+        - Revert checked arithemtic for multiplication since
+          bufferIsLargeEnoughToContain<T(size) already did this check
+          for us.
+
 2020-04-08  David Kilzer  <ddkilzer@apple.com>
 
         WTF::Persistence::VectorCoder and IPC::VectorArgumentCoder should use checked arithmetic
