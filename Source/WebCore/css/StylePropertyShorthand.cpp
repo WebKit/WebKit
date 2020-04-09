@@ -25,13 +25,6 @@
 
 namespace WebCore {
 
-StylePropertyShorthand borderAbridgedShorthand()
-{
-    static const CSSPropertyID borderAbridgedProperties[] = { CSSPropertyBorderWidth, CSSPropertyBorderStyle, CSSPropertyBorderColor };
-    static const StylePropertyShorthand propertiesForInitialization[] = { borderWidthShorthand(), borderStyleShorthand(), borderColorShorthand() };
-    return StylePropertyShorthand(CSSPropertyBorder, borderAbridgedProperties, propertiesForInitialization);
-}
-
 StylePropertyShorthand animationShorthandForParsing()
 {
     // Animation-name must come last, so that keywords for other properties in the shorthand

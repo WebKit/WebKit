@@ -31,9 +31,8 @@ public:
     StylePropertyShorthand() = default;
 
     template<unsigned numProperties>
-    StylePropertyShorthand(CSSPropertyID id, const CSSPropertyID (&properties)[numProperties], const StylePropertyShorthand* propertiesForInitialization = nullptr)
+    StylePropertyShorthand(CSSPropertyID id, const CSSPropertyID (&properties)[numProperties])
         : m_properties(properties)
-        , m_propertiesForInitialization(propertiesForInitialization)
         , m_length(numProperties)
         , m_shorthandID(id)
     {
@@ -43,13 +42,11 @@ public:
     const CSSPropertyID* end() const { return properties() + length(); }
 
     const CSSPropertyID* properties() const { return m_properties; }
-    const StylePropertyShorthand* propertiesForInitialization() const { return m_propertiesForInitialization; }
     unsigned length() const { return m_length; }
     CSSPropertyID id() const { return m_shorthandID; }
 
 private:
     const CSSPropertyID* m_properties { nullptr };
-    const StylePropertyShorthand* m_propertiesForInitialization { nullptr };
     unsigned m_length { 0 };
     CSSPropertyID m_shorthandID { CSSPropertyInvalid };
 };
@@ -57,7 +54,6 @@ private:
 // Custom StylePropertyShorthand functions.
 StylePropertyShorthand animationShorthandForParsing();
 StylePropertyShorthand transitionShorthandForParsing();
-StylePropertyShorthand borderAbridgedShorthand();
 
 // Returns empty value if the property is not a shorthand.
 // The implementation is generated in StylePropertyShorthandFunctions.cpp.
