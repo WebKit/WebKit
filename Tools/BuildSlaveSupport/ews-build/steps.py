@@ -1308,7 +1308,7 @@ class CompileWebKit(shell.Compile):
             elif platform == 'gtk':
                 steps_to_add.append(InstallGtkDependencies())
             if self.getProperty('group') == 'jsc':
-                steps_to_add.append(CompileJSCToT())
+                steps_to_add.append(CompileJSCWithoutPatch())
             else:
                 steps_to_add.append(CompileWebKitWithoutPatch())
             steps_to_add.append(AnalyzeCompileWebKitResults())
@@ -1328,7 +1328,7 @@ class CompileWebKit(shell.Compile):
 
 
 class CompileWebKitWithoutPatch(CompileWebKit):
-    name = 'compile-webkit-tot'
+    name = 'compile-webkit-without-patch'
     haltOnFailure = False
 
     def doStepIf(self, step):
@@ -1347,12 +1347,12 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
     descriptionDone = ['analyze-compile-webkit-results']
 
     def start(self):
-        compile_tot_step = CompileWebKitWithoutPatch.name
+        compile_without_patch_step = CompileWebKitWithoutPatch.name
         if self.getProperty('group') == 'jsc':
-            compile_tot_step = CompileJSCToT.name
-        compile_webkit_tot_result = self.getStepResult(compile_tot_step)
+            compile_without_patch_step = CompileJSCWithoutPatch.name
+        compile_without_patch_result = self.getStepResult(compile_without_patch_step)
 
-        if compile_webkit_tot_result == FAILURE:
+        if compile_without_patch_result == FAILURE:
             self.finished(FAILURE)
             message = 'Unable to build WebKit without patch, retrying build'
             self.descriptionDone = message
@@ -1394,8 +1394,8 @@ class CompileJSC(CompileWebKit):
         return shell.Compile.getResultSummary(self)
 
 
-class CompileJSCToT(CompileJSC):
-    name = 'compile-jsc-tot'
+class CompileJSCWithoutPatch(CompileJSC):
+    name = 'compile-jsc-without-patch'
 
     def evaluateCommand(self, cmd):
         return shell.Compile.evaluateCommand(self, cmd)
@@ -1514,7 +1514,7 @@ class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
             self.setProperty('patchFailedTests', True)
             self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(),
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
-                                                CompileJSCToT(),
+                                                CompileJSCWithoutPatch(),
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
                                                 KillOldProcesses(),
                                                 RunJSCTestsWithoutPatch(),

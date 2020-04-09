@@ -1,3 +1,18 @@
+2020-04-09  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] rename CompileJSCToT to CompileJSCWithoutPatch
+        https://bugs.webkit.org/show_bug.cgi?id=210265
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileWebKitWithoutPatch): Drive-by fix to rename similar name.
+        (AnalyzeCompileWebKitResults.start): Ditto.
+        (CompileWebKit.evaluateCommand): Renamed CompileJSCToT to CompileJSCWithoutPatch.
+        (CompileJSCWithoutPatch): Ditto.
+        (ReRunJavaScriptCoreTests.evaluateCommand): Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2020-04-09  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Clean-up use of deprecated GtkAction

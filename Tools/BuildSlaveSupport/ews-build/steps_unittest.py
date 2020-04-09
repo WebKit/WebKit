@@ -37,7 +37,7 @@ from twisted.trial import unittest
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
-                   CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCToT, CompileWebKit,
+                   CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch, CompileWebKit,
                    CompileWebKitWithoutPatch, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, ExtractBuiltProduct, ExtractTestResults,
                    FindModifiedChangeLogs, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
@@ -1082,7 +1082,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         self.assertEqual(self.getProperty('build_finish_summary'), 'Patch 1234 does not build')
         return rc
 
-    def test_patch_with_ToT_failure(self):
+    def test_patch_with_trunk_failure(self):
         previous_steps = [
             mock_step(CompileWebKit(), results=FAILURE),
             mock_step(CompileWebKitWithoutPatch(), results=FAILURE),
@@ -1130,7 +1130,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
-class TestCompileJSCToT(BuildStepMixinAdditions, unittest.TestCase):
+class TestCompileJSCWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -1139,7 +1139,7 @@ class TestCompileJSCToT(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success(self):
-        self.setupStep(CompileJSCToT())
+        self.setupStep(CompileJSCWithoutPatch())
         self.setProperty('fullPlatform', 'jsc-only')
         self.setProperty('configuration', 'release')
         self.setProperty('patchFailedToBuild', 'True')
@@ -1154,7 +1154,7 @@ class TestCompileJSCToT(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(CompileJSCToT())
+        self.setupStep(CompileJSCWithoutPatch())
         self.setProperty('fullPlatform', 'jsc-only')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
