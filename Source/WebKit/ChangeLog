@@ -1,3 +1,30 @@
+2020-04-09  Megan Gardner  <megan_gardner@apple.com>
+
+        Popovers are dismissed immediately when they try and bring up the keyboard.
+        https://bugs.webkit.org/show_bug.cgi?id=210230
+        <rdar://problem/60385504>
+
+        Reviewed by Darin Adler.
+
+        When popovers use keyboards we dismiss them because the
+        web view loses firstResponder. We already have ways of 
+        retaining focus when we lose first responde, so extend that
+        code to cover the case where a keyboard comes up in a popover.
+
+        We are also callling controlBeginEditing twice on refocusing a
+        popover due to behaviour with touch and syntheticClick, so 
+        keep up from presenting the popover twice, and allow for the focus
+        count to be correclty incremented and decremented.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView preserveFocus]):
+        (-[WKContentView releaseFocus]):
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        (-[WKDateTimePopover popoverWasDismissed:]):
+        (-[WKDateTimePopover controlBeginEditing]):
+        (-[WKDateTimePopover controlEndEditing]):
+
 2020-04-09  David Kilzer  <ddkilzer@apple.com>
 
         Add using WTF::isInBounds to CheckedArithmetic.h

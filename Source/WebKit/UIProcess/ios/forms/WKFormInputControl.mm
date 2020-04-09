@@ -50,6 +50,8 @@ using namespace WebKit;
 @interface WKDateTimePopover : WKFormRotatingAccessoryPopover<WKFormControl> {
     RetainPtr<WKDateTimePopoverViewController> _viewController;
     WKContentView *_view;
+    BOOL _presenting;
+    BOOL _preservingFocus;
 }
 - (id)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode;
 - (WKDateTimePopoverViewController *)viewController;
@@ -334,6 +336,18 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     [_view page]->setFocusedElementValue(String());
 }
 
+- (void)popoverWasDismissed:(WKRotatingPopover *)popover
+{
+    [super popoverWasDismissed:popover];
+    
+    if (popover == self) {
+        if (_preservingFocus) {
+            [_view releaseFocus];
+            _preservingFocus = NO;
+        }
+    }
+}
+
 - (id)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode
 {
     if (!(self = [super initWithView:view]))
@@ -377,12 +391,21 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
 - (void)controlBeginEditing
 {
-    [self presentPopoverAnimated:NO];
-    [_viewController.get().innerControl controlBeginEditing];
+    if (!_presenting) {
+        _presenting = YES;
+        [self presentPopoverAnimated:NO];
+        [_viewController.get().innerControl controlBeginEditing];
+        
+        if (_view.focusedElementInformation.elementType == InputType::Time || _view.focusedElementInformation.elementType == InputType::DateTimeLocal) {
+            _preservingFocus = YES;
+            [_view preserveFocus];
+        }
+    }
 }
 
 - (void)controlEndEditing
 {
+    _presenting = NO;
     [self dismissPopoverAnimated:NO];
     [_viewController.get().innerControl controlEndEditing];
 }

@@ -6658,6 +6658,16 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return NO;
 }
 
+- (void)preserveFocus
+{
+    [_webView _incrementFocusPreservationCount];
+}
+
+- (void)releaseFocus
+{
+    [_webView _decrementFocusPreservationCount];
+}
+
 - (void)_preserveFocusWithToken:(id <NSCopying, NSSecureCoding>)token destructively:(BOOL)destructively
 {
     if (!_inputPeripheral) {

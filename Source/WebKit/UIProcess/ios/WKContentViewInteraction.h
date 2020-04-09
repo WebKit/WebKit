@@ -530,6 +530,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (BOOL)hasHiddenContentEditable;
 - (void)generateSyntheticEditingCommand:(WebKit::SyntheticEditingCommandType)command;
 
+- (void)preserveFocus;
+- (void)releaseFocus;
+
 // UIWebFormAccessoryDelegate protocol
 - (void)accessoryDone;
 
