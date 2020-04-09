@@ -1031,11 +1031,6 @@ String FrameLoader::outgoingReferrer() const
     return frame->loader().m_outgoingReferrer;
 }
 
-String FrameLoader::outgoingOrigin() const
-{
-    return m_frame.document()->securityOrigin().toString();
-}
-
 bool FrameLoader::checkIfFormActionAllowedByCSP(const URL& url, bool didReceiveRedirectResponse) const
 {
     if (m_submittedFormURL.isEmpty())

@@ -168,7 +168,6 @@ public:
     ReferrerPolicy effectiveReferrerPolicy() const;
     String referrer() const;
     WEBCORE_EXPORT String outgoingReferrer() const;
-    String outgoingOrigin() const;
 
     WEBCORE_EXPORT DocumentLoader* activeDocumentLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
