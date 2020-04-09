@@ -376,6 +376,9 @@ void TextManipulationController::scheduleObservartionUpdate()
             auto start = startOfParagraph(firstPositionInOrBeforeNode(element.ptr()));
             auto end = endOfParagraph(lastPositionInOrAfterNode(element.ptr()));
 
+            if (start.isNull() || end.isNull())
+                continue;
+
             auto key = makeHashablePositionRange(start, end);
             if (!paragraphSets.add(key).isNewEntry)
                 continue;

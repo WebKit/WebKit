@@ -843,6 +843,47 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenBRIsInserted)
     EXPECT_WK_STREQ("<p>helllo, <br><b>worrld</b></p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+TEST(TextManipulation, CompleteTextManipulationAvoidCrashingWhenContentIsRemoved)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+    auto *tokens = items[0].tokens;
+    EXPECT_EQ(tokens.count, 1UL);
+
+    __block bool done = false;
+    [webView performAfterReceivingMessage:@"DoneRemovingParagraph" action:^{
+        done = true;
+    }];
+
+    [webView stringByEvaluatingJavaScript:
+        @"const paragraph = document.createElement('p');"
+        "paragraph.textContent = 'Hello world';"
+        "document.body.appendChild(paragraph);"
+        "setTimeout(() => { paragraph.remove(); webkit.messageHandlers.testHandler.postMessage('DoneRemovingParagraph') })"];
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[(_WKTextManipulationItem *)createItem(items[0].identifier, {
+        { tokens[0].identifier, @"Simple HTML file!" },
+    })] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+
+    EXPECT_WK_STREQ("Simple HTML file!", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
 TEST(TextManipulation, CompleteTextManipulationShouldPreserveImagesAsExcludedTokens)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);

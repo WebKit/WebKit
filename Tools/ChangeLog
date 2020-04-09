@@ -1,3 +1,18 @@
+2020-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add an API test for <https://trac.webkit.org/r259766>
+        https://bugs.webkit.org/show_bug.cgi?id=210294
+
+        Reviewed by Tim Horton.
+
+        Exercise the pathological case fixed in r259766 by inserting and then immediately removing a paragraph element
+        after starting text manipulation. This test also revealed an existing issue in TextManipulationController, where
+        we will end up hitting a debug assertion when trying to insert { null position, null position } into a HashMap
+        underneath `TextManipulationController::scheduleObservartionUpdate`.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-04-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reset view navigation gesture state between tests
