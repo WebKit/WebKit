@@ -418,6 +418,11 @@ void ViewGestureController::removeSwipeSnapshot()
         return;
     }
 
+    resetState();
+}
+
+void ViewGestureController::resetState()
+{
     [m_snapshotView removeFromSuperview];
     m_snapshotView = nullptr;
     
@@ -431,6 +436,12 @@ void ViewGestureController::removeSwipeSnapshot()
     m_backgroundColorForCurrentSnapshot = WebCore::Color();
 
     didEndGesture();
+}
+
+void ViewGestureController::reset()
+{
+    removeSwipeSnapshot();
+    resetState();
 }
 
 bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection direction)

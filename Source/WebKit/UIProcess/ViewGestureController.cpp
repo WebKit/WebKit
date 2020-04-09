@@ -129,12 +129,16 @@ ViewGestureController::GestureID ViewGestureController::takeNextGestureID()
 
 void ViewGestureController::willBeginGesture(ViewGestureType type)
 {
+    LOG(ViewGestures, "ViewGestureController::willBeginGesture %d", (int)type);
+
     m_activeGestureType = type;
     m_currentGestureID = takeNextGestureID();
 }
 
 void ViewGestureController::didEndGesture()
 {
+    LOG(ViewGestures, "ViewGestureController::didEndGesture");
+
     m_activeGestureType = ViewGestureType::None;
     m_currentGestureID = 0;
 }
@@ -430,12 +434,16 @@ bool ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe(Platf
 
 bool ViewGestureController::PendingSwipeTracker::handleEvent(PlatformScrollEvent event)
 {
+    LOG(ViewGestures, "PendingSwipeTracker::handleEvent - state %d", (int)m_state);
+
     if (scrollEventCanEndSwipe(event)) {
         reset("gesture ended");
         return false;
     }
 
     if (m_state == State::None) {
+        LOG(ViewGestures, "PendingSwipeTracker::handleEvent - scroll can become swipe %d shouldIgnorePinnedState %d, page will handle scrolls %d", scrollEventCanBecomeSwipe(event, m_direction), m_shouldIgnorePinnedState, m_webPageProxy.willHandleHorizontalScrollEvents());
+
         if (!scrollEventCanBecomeSwipe(event, m_direction))
             return false;
 
@@ -453,10 +461,11 @@ bool ViewGestureController::PendingSwipeTracker::handleEvent(PlatformScrollEvent
 
 void ViewGestureController::PendingSwipeTracker::eventWasNotHandledByWebCore(PlatformScrollEvent event)
 {
+    LOG(ViewGestures, "Swipe Start Hysteresis - WebCore didn't handle event, state %d", (int)m_state);
+
     if (m_state != State::WaitingForWebCore)
         return;
 
-    LOG(ViewGestures, "Swipe Start Hysteresis - WebCore didn't handle event");
     m_state = State::None;
     m_cumulativeDelta = FloatSize();
     tryToStartSwipe(event);

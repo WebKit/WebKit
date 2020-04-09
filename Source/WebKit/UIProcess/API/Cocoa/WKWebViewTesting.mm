@@ -143,6 +143,17 @@
 #endif
 }
 
+- (void)_resetNavigationGestureStateForTesting
+{
+#if PLATFORM(MAC)
+    if (auto gestureController = _impl->gestureController())
+        gestureController->reset();
+#else
+    if (_gestureController)
+        _gestureController->reset();
+#endif
+}
+
 - (void)_setDefersLoadingForTesting:(BOOL)defersLoading
 {
     _page->setDefersLoadingForTesting(defersLoading);
