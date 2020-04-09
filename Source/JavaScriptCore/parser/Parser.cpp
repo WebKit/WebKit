@@ -897,8 +897,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
                 head = node;
                 headLocation = location;
             } else {
-                if (!tail)
+                if (!tail) {
                     head = tail = context.createCommaExpr(headLocation, head);
+                    recordPauseLocation(context.breakpointLocation(head));
+                }
                 tail = context.appendToCommaExpr(location, head, tail, node);
                 recordPauseLocation(context.breakpointLocation(tail));
             }
@@ -3718,6 +3720,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(T
     failIfFalse(right, "Cannot parse expression in a comma expression");
     context.setEndOffset(right, m_lastTokenEndPosition.offset);
     typename TreeBuilder::Comma head = context.createCommaExpr(headLocation, node);
+    recordPauseLocation(context.breakpointLocation(head));
     typename TreeBuilder::Comma tail = context.appendToCommaExpr(tailLocation, head, head, right);
     recordPauseLocation(context.breakpointLocation(tail));
     while (match(COMMA)) {

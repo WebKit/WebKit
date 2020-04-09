@@ -199,30 +199,6 @@ JSFormatter = class JSFormatter
         return (parent.type === "ForStatement" || parent.type === "ForInStatement" || parent.type === "ForOfStatement") && node !== parent.body;
     }
 
-    _isLikelyToHaveNewline(node)
-    {
-        switch (node.type) {
-        case "BlockStatement":
-        case "ClassDeclaration":
-        case "DoWhileStatement":
-        case "ForInStatement":
-        case "ForOfStatement":
-        case "ForStatement":
-        case "FunctionDeclaration":
-        case "IfStatement":
-        case "SwitchStatement":
-        case "TryStatement":
-        case "WhileStatement":
-        case "WithStatement":
-            return true;
-
-        case "ExpressionStatement":
-            return node.expression.type === "SequenceExpression";
-        }
-
-        return false;
-    }
-
     _isRangeWhitespace(from, to)
     {
         let substring = this._sourceText.substring(from, to);
@@ -332,7 +308,6 @@ JSFormatter = class JSFormatter
         }
 
         if (nodeType === "BlockStatement") {
-            let isSingleStatementArrowFunctionWithUnlikelyMultilineContent = node.parent.type === "ArrowFunctionExpression" && node.body.length === 1 && !this._isLikelyToHaveNewline(node.body[0]);
             if (tokenValue === "{") {
                 // Class methods we put the opening brace on its own line.
                 if (node.parent && node.parent.parent && node.parent.parent.type === "MethodDefinition" && node.body.length) {
@@ -343,13 +318,13 @@ JSFormatter = class JSFormatter
                     return;
                 }
                 builder.appendToken(tokenValue, tokenOffset);
-                if (node.body.length && !isSingleStatementArrowFunctionWithUnlikelyMultilineContent)
+                if (node.body.length)
                     this._appendNewline(node);
                 builder.indent();
                 return;
             }
             if (tokenValue === "}") {
-                if (node.body.length && !isSingleStatementArrowFunctionWithUnlikelyMultilineContent)
+                if (node.body.length)
                     this._appendNewline(node);
                 builder.dedent();
                 builder.appendToken(tokenValue, tokenOffset);

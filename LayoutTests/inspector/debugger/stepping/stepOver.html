@@ -17,7 +17,7 @@ function testStatements() {
 function testFunctions() {
     debugger;
     let before = 1;
-    testAlert("function log 1");
+    a();
     let after = 2;
 }
 
@@ -38,11 +38,16 @@ function testLocalFunction() {
 
 function testCommas() {
     debugger;
-    let a = 1,
-        b = 2,
-        c = 3;
-    testAlert("comma log 1"), testAlert("comma log 2"), testAlert("comma log 3");
+    let x = 1,
+        y = 2,
+        z = 3;
+    a(), b(), c();
+    true && (a(), b(), c());
 }
+
+function a() { }
+function b() { }
+function c() { }
 
 // ---------
 

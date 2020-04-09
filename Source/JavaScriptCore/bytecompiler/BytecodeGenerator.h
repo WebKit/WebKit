@@ -1312,6 +1312,11 @@ namespace JSC {
             VirtualRegister completionTypeRegister;
         };
         Vector<CatchEntry> m_exceptionHandlersToEmit;
+
+        struct {
+            JSTextPosition position;
+            DebugHookType type { DidExecuteProgram };
+        } m_lastDebugHook;
     };
 
     class StrictModeScope : private SetForScope<ECMAMode> {

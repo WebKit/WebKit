@@ -1,3 +1,26 @@
+2020-04-09  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: debug hooks should also be emitted for the first sub-expression in a comma expression
+        https://bugs.webkit.org/show_bug.cgi?id=210253
+
+        Reviewed by Joseph Pecoraro.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CommaNode::emitBytecode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::parseExpression):
+        We should emit debug hooks and record pause locations for the first sub-expression in comma
+        expressions, as the comma expression is not always standalone (e.g. `true && (a(), b())`).
+
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDebugHook):
+        Save the `JSTextPosition` and `DebugHookType` of the last debug hook, using them to prevent
+        any additional debug hooks from being emitted if they have the same `JSTextPosition` and
+        `DebugHookType`. This prevents the debugger from pausing twice at the beginning of an
+        expression statement (e.g. `|a(), b();`).
+
 2020-04-09  Saam Barati  <sbarati@apple.com>
 
         We can still cache delete in strict mode as long as the property is not "non-configurable"

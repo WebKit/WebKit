@@ -3535,8 +3535,14 @@ void BytecodeGenerator::emitPopWithScope()
 
 void BytecodeGenerator::emitDebugHook(DebugHookType debugHookType, const JSTextPosition& divot)
 {
-    if (!shouldEmitDebugHooks())
+    if (LIKELY(!shouldEmitDebugHooks()))
         return;
+
+    if (m_lastDebugHook.position == divot && m_lastDebugHook.type == debugHookType)
+        return;
+
+    m_lastDebugHook.position = divot;
+    m_lastDebugHook.type = debugHookType;
 
     emitExpressionInfo(divot, divot, divot);
     OpDebug::emit(this, debugHookType, false);

@@ -3093,6 +3093,7 @@ PAUSES AT: 214:0
 -=> 214    |b(),
     215    c();
     216    
+    217    true && (a(), b(), c());
 
 
 INSERTING AT: 215:0
@@ -3102,9 +3103,30 @@ PAUSES AT: 215:0
     214    b(),
 -=> 215    |c();
     216    
+    217    true && (a(), b(), c());
+    218    
 
 
 INSERTING AT: 216:0
+PAUSES AT: 217:0
+    213    a(),
+    214    b(),
+    215    c();
+ -> 216    #
+ => 217    |true && (a(), b(), c());
+    218    
+
+
+INSERTING AT: 217:0
+PAUSES AT: 217:0
+    214    b(),
+    215    c();
+    216    
+-=> 217    |true && (a(), b(), c());
+    218    
+
+
+INSERTING AT: 218:0
 PRODUCES: Could not resolve breakpoint
 
 -- Running test case: Debugger.resolvedBreakpoint.dumpEachLine.Functions

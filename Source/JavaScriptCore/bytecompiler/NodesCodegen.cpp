@@ -3043,12 +3043,10 @@ RegisterID* CommaNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 {
     CommaNode* node = this;
     for (; node->next(); node = node->next()) {
+        generator.emitDebugHook(node->m_expr);
         generator.emitNode(generator.ignoredResult(), node->m_expr);
-
-        // Don't emit a debug hook for the first expression, as that should've already happened in
-        // the containing statement.
-        generator.emitDebugHook(node->next()->m_expr);
     }
+    generator.emitDebugHook(node->m_expr);
     return generator.emitNodeInTailPosition(dst, node->m_expr);
 }
 

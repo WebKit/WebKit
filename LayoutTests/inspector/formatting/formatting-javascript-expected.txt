@@ -5,6 +5,7 @@ Test JavaScript formatting.
 -- Running test case: JSFormatter
 PASS: arrow-functions.js
 PASS: classes.js
+PASS: comma-expressions.js
 PASS: comments-and-preserve-newlines.js
 PASS: comments-only.js
 PASS: do-while-statement.js

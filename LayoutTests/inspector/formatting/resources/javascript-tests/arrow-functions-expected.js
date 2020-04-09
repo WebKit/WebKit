@@ -1,12 +1,20 @@
 x => x;
 x => x * x;
-x => {x * x};
-x => {x * x;};
+x => {
+    x * x
+};
+x => {
+    x * x;
+};
 () => 1;
 (x) => x;
 (x) => x * x;
-(x) => {x * x};
-(x) => {x * x;};
+(x) => {
+    x * x
+};
+(x) => {
+    x * x;
+};
 
 x => {
     x *= x;
@@ -36,7 +44,9 @@ foo((a=1, b, ) => b);
 
 async x => x
 async (x) => x
-async (x) => {x}
+async (x) => {
+    x
+}
 
 a => {
     for (b of [])
