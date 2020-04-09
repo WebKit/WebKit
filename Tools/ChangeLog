@@ -1,3 +1,22 @@
+2020-04-09  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] rename CompileWebKitToT to CompileWebKitWithoutPatch
+        https://bugs.webkit.org/show_bug.cgi?id=210190
+
+        Reviewed by Alex Christensen.
+
+        * BuildSlaveSupport/ews-build/steps.py: Renamed CompileWebKitToT to CompileWebKitWithoutPatch.
+        (CompileWebKit.evaluateCommand):
+        (CompileWebKitWithoutPatch):
+        (AnalyzeCompileWebKitResults.start):
+        (ReRunWebKitTests.evaluateCommand):
+        (ReRunAPITests.evaluateCommand):
+        (CompileWebKitToT): Deleted.
+        (CompileWebKitToT.doStepIf): Deleted.
+        (CompileWebKitToT.hideStepIf): Deleted.
+        (CompileWebKitToT.evaluateCommand): Deleted.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Updated unit-tests accordingly.
+
 2020-04-08  Alex Christensen  <achristensen@webkit.org>
 
         _corsDisablingPatterns should allow security policy access to those patterns

@@ -1310,7 +1310,7 @@ class CompileWebKit(shell.Compile):
             if self.getProperty('group') == 'jsc':
                 steps_to_add.append(CompileJSCToT())
             else:
-                steps_to_add.append(CompileWebKitToT())
+                steps_to_add.append(CompileWebKitWithoutPatch())
             steps_to_add.append(AnalyzeCompileWebKitResults())
             # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
             self.build.addStepsAfterCurrentStep(steps_to_add)
@@ -1327,7 +1327,7 @@ class CompileWebKit(shell.Compile):
         return shell.Compile.getResultSummary(self)
 
 
-class CompileWebKitToT(CompileWebKit):
+class CompileWebKitWithoutPatch(CompileWebKit):
     name = 'compile-webkit-tot'
     haltOnFailure = False
 
@@ -1347,7 +1347,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
     descriptionDone = ['analyze-compile-webkit-results']
 
     def start(self):
-        compile_tot_step = CompileWebKitToT.name
+        compile_tot_step = CompileWebKitWithoutPatch.name
         if self.getProperty('group') == 'jsc':
             compile_tot_step = CompileJSCToT.name
         compile_webkit_tot_result = self.getStepResult(compile_tot_step)
@@ -1818,7 +1818,7 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 ExtractTestResults(identifier='rerun'),
                                                 UnApplyPatchIfRequired(),
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
-                                                CompileWebKitToT(),
+                                                CompileWebKitWithoutPatch(),
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
                                                 KillOldProcesses(),
                                                 RunWebKitTestsWithoutPatch()])
@@ -2174,7 +2174,7 @@ class ReRunAPITests(RunAPITests):
                 steps_to_add.append(InstallWpeDependencies())
             elif platform == 'gtk':
                 steps_to_add.append(InstallGtkDependencies())
-            steps_to_add.append(CompileWebKitToT())
+            steps_to_add.append(CompileWebKitWithoutPatch())
             steps_to_add.append(ValidatePatch(verifyBugClosed=False, addURLs=False))
             steps_to_add.append(KillOldProcesses())
             steps_to_add.append(RunAPITestsWithoutPatch())
