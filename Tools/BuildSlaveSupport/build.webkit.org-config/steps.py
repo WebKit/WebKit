@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -138,6 +138,20 @@ class KillOldProcesses(shell.Compile):
     description = ["killing old processes"]
     descriptionDone = ["killed old processes"]
     command = ["python", "./Tools/BuildSlaveSupport/kill-old-processes", "buildbot"]
+
+
+class TriggerCrashLogSubmission(shell.Compile):
+    name = "trigger-crash-log-submission"
+    description = ["triggering crash log submission"]
+    descriptionDone = ["triggered crash log submission"]
+    command = ["python", "./Tools/BuildSlaveSupport/trigger-crash-log-submission"]
+
+
+class WaitForCrashCollection(shell.Compile):
+    name = "wait-for-crash-collection"
+    description = ["waiting for crash collection to quiesce"]
+    descriptionDone = ["crash collection has quiesced"]
+    command = ["python", "./Tools/BuildSlaveSupport/wait-for-crash-collection", "--timeout", str(5 * 60)]
 
 
 class CleanBuildIfScheduled(shell.Compile):

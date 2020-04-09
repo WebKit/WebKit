@@ -1633,6 +1633,36 @@ class KillOldProcesses(shell.Compile):
         return shell.Compile.getResultSummary(self)
 
 
+class TriggerCrashLogSubmission(shell.Compile):
+    name = 'trigger-crash-log-submission'
+    description = ['triggering crash log submission']
+    descriptionDone = ['Triggered crash log submission']
+    command = ['python', 'Tools/BuildSlaveSupport/trigger-crash-log-submission']
+
+    def __init__(self, **kwargs):
+        super(TriggerCrashLogSubmission, self).__init__(timeout=60, logEnviron=False, **kwargs)
+
+    def getResultSummary(self):
+        if self.results in [FAILURE, EXCEPTION]:
+            return {u'step': u'Failed to trigger crash log submission'}
+        return shell.Compile.getResultSummary(self)
+
+
+class WaitForCrashCollection(shell.Compile):
+    name = 'wait for crash collection'
+    description = ['waiting-for-crash-collection-to-quiesce']
+    descriptionDone = ['Crash collection has quiesced']
+    command = ['python', 'Tools/BuildSlaveSupport/wait-for-crash-collection', '--timeout', str(5 * 60)]
+
+    def __init__(self, **kwargs):
+        super(WaitForCrashCollection, self).__init__(timeout=6 * 60, logEnviron=False, **kwargs)
+
+    def getResultSummary(self):
+        if self.results in [FAILURE, EXCEPTION]:
+            return {u'step': u'Crash log collection process still running'}
+        return shell.Compile.getResultSummary(self)
+
+
 class RunWebKitTests(shell.Test):
     name = 'layout-tests'
     description = ['layout-tests running']

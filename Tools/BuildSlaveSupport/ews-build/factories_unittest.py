@@ -216,8 +216,10 @@ class TestLayoutTestsFactory(TestCase):
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.DownloadBuiltProduct),
             _BuildStepFactory(steps.ExtractBuiltProduct),
+            _BuildStepFactory(steps.WaitForCrashCollection),
             _BuildStepFactory(steps.KillOldProcesses),
             _BuildStepFactory(steps.RunWebKit1Tests),
+            _BuildStepFactory(steps.TriggerCrashLogSubmission),
             _BuildStepFactory(steps.SetBuildSummary),
         ])
 
@@ -233,8 +235,10 @@ class TestLayoutTestsFactory(TestCase):
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.DownloadBuiltProduct),
             _BuildStepFactory(steps.ExtractBuiltProduct),
+            _BuildStepFactory(steps.WaitForCrashCollection),
             _BuildStepFactory(steps.KillOldProcesses),
             _BuildStepFactory(steps.RunWebKit1Tests),
+            _BuildStepFactory(steps.TriggerCrashLogSubmission),
             _BuildStepFactory(steps.SetBuildSummary),
         ])
 
@@ -249,8 +253,10 @@ class TestLayoutTestsFactory(TestCase):
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.DownloadBuiltProduct),
             _BuildStepFactory(steps.ExtractBuiltProduct),
+            _BuildStepFactory(steps.WaitForCrashCollection),
             _BuildStepFactory(steps.KillOldProcesses),
             _BuildStepFactory(steps.RunWebKitTests),
+            _BuildStepFactory(steps.TriggerCrashLogSubmission),
             _BuildStepFactory(steps.SetBuildSummary),
         ])
 
@@ -265,8 +271,10 @@ class TestLayoutTestsFactory(TestCase):
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.DownloadBuiltProduct),
             _BuildStepFactory(steps.ExtractBuiltProduct),
+            _BuildStepFactory(steps.WaitForCrashCollection),
             _BuildStepFactory(steps.KillOldProcesses),
             _BuildStepFactory(steps.RunWebKitTests),
+            _BuildStepFactory(steps.TriggerCrashLogSubmission),
             _BuildStepFactory(steps.SetBuildSummary),
         ])
 

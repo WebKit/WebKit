@@ -84,6 +84,9 @@ class TestFactory(Factory):
         if platform == 'wincairo':
             self.addStep(InstallWinCairoDependencies())
 
+        if platform.startswith('mac') or platform.startswith('ios-simulator'):
+            self.addStep(WaitForCrashCollection())
+
         if self.JSCTestClass:
             self.addStep(self.JSCTestClass())
         if self.LayoutTestClass:
@@ -101,6 +104,10 @@ class TestFactory(Factory):
         self.addStep(RunBuiltinsTests())
         if not platform.startswith('win'):
             self.addStep(RunDashboardTests())
+
+        if platform.startswith('mac') or platform.startswith('ios-simulator'):
+            self.addStep(TriggerCrashLogSubmission())
+
         if self.LayoutTestClass:
             self.addStep(ArchiveTestResults())
             self.addStep(UploadTestResults())

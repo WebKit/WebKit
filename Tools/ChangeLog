@@ -1,3 +1,39 @@
+2020-04-09  Jonathan Bedard  <jbedard@apple.com>
+
+        Buildbot: Force crash log submission after each test run
+        https://bugs.webkit.org/show_bug.cgi?id=210202
+        <rdar://problem/60508929>
+
+        Reviewed by Aakash Jain and Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/factories.py:
+        (TestFactory.__init__): Add steps triggering crash uploads and waiting for crash
+        collection to quiesce.
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (TriggerCrashCollection): Add step to trigger crash collection.
+        (WaitForCrashCollection): Add step to wait for for crash collection process to quiesce.
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (BuildStepsConstructorTest): Update Apple testing steps to include crash log collection.
+        * BuildSlaveSupport/ews-build/factories.py:
+        (TestFactory):
+        (TestFactory.__init__): Add willTriggerCrashLogSubmission variable.
+        (iOSTestsFactory):
+        (macOSWK1Factory):
+        (macOSWK2Factory):
+        * BuildSlaveSupport/ews-build/factories_unittest.py:
+        (TestLayoutTestsFactory.test_macos_wk1_release_factory):
+        (TestLayoutTestsFactory.test_macos_wk1_debug_factory):
+        (TestLayoutTestsFactory.test_macos_wk2_factory):
+        (TestLayoutTestsFactory.test_ios_wk2_factory):
+        * BuildSlaveSupport/ews-build/steps.py:
+        (TriggerCrashLogSubmission):
+        (WaitForCrashCollection):
+        * BuildSlaveSupport/trigger-crash-collection: Added.
+        * BuildSlaveSupport/wait-for-crash-collection: Added.
+        (pid_for_name): Given a process name, return the PID for that process.
+        (cpu_percentage): Return float representing the current CPU usage of the provided PID.
+        (main):
+
 2020-04-09  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] rename CompileJSCToT to CompileJSCWithoutPatch
