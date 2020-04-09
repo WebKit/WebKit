@@ -1,3 +1,32 @@
+2020-04-09  Keith Rollin  <krollin@apple.com>
+
+        Set ENTITLEMENTS_REQUIRED=NO for some Xcode build targets
+        https://bugs.webkit.org/show_bug.cgi?id=210250
+        <rdar://problem/61502270>
+
+        Reviewed by Jonathan Bedard.
+
+        When building with the public version of Xcode 11.4, with XCBuild
+        enabled, and targeting the iOS device, some build targets issue an
+        error like:
+
+            error: An empty identity is not valid when signing a binary for
+                the product type 'Command-line Tool'. (in target 'yasm' from
+                project 'libwebrtc')
+
+        A comment in <rdar://problem/47092353> suggests setting
+        ENTITLEMENTS_REQUIRED=NO to relax the requirement. To that end, when
+        building with the public Xcode, establish that setting for the
+        affected targets.
+
+        With this change, we can also remove
+        IDEProvisioningProfileSupportRelaxed=YES from webkitdirs.pm.
+
+        * Scripts/webkitdirs.pm:
+        (XcodeOptions):
+        * TestWebKitAPI/Configurations/TestWTF.xcconfig:
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+
 2020-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add an API test for <https://trac.webkit.org/r259766>
