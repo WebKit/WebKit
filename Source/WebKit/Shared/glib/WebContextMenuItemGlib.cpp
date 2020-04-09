@@ -78,6 +78,7 @@ WebContextMenuItemGlib::WebContextMenuItemGlib(GAction* action, const String& ti
 }
 
 #if PLATFORM(GTK)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 WebContextMenuItemGlib::WebContextMenuItemGlib(GtkAction* action)
     : WebContextMenuItemData(GTK_IS_TOGGLE_ACTION(action) ? CheckableActionType : ActionType, ContextMenuItemBaseApplicationTag, String::fromUTF8(gtk_action_get_label(action)), gtk_action_get_sensitive(action), GTK_IS_TOGGLE_ACTION(action) ? gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)) : false)
 {
@@ -85,6 +86,7 @@ WebContextMenuItemGlib::WebContextMenuItemGlib(GtkAction* action)
     createActionIfNeeded();
     g_object_set_data_full(G_OBJECT(m_gAction.get()), "webkit-gtk-action", g_object_ref(m_gtkAction), g_object_unref);
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 WebContextMenuItemGlib::~WebContextMenuItemGlib()
@@ -94,8 +96,10 @@ WebContextMenuItemGlib::~WebContextMenuItemGlib()
 GUniquePtr<char> WebContextMenuItemGlib::buildActionName() const
 {
 #if PLATFORM(GTK)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (m_gtkAction)
         return GUniquePtr<char>(g_strdup(gtk_action_get_name(m_gtkAction)));
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     static uint64_t actionID = 0;
@@ -117,6 +121,7 @@ void WebContextMenuItemGlib::createActionIfNeeded()
     }
 
 #if PLATFORM(GTK)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Create the GtkAction for backwards compatibility only.
     if (!m_gtkAction) {
         if (type() == CheckableActionType) {
@@ -129,6 +134,7 @@ void WebContextMenuItemGlib::createActionIfNeeded()
     }
 
     g_signal_connect_object(m_gAction.get(), "activate", G_CALLBACK(gtk_action_activate), m_gtkAction, G_CONNECT_SWAPPED);
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 

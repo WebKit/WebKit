@@ -180,10 +180,10 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_gaction(GAction* action
  * Stock actions are handled automatically by WebKit so that, for example,
  * when a menu item created with a %WEBKIT_CONTEXT_MENU_ACTION_STOP is
  * activated the action associated will be handled by WebKit and the current
- * load operation will be stopped. You can get the #GtkAction of a
+ * load operation will be stopped. You can get the #GAction of a
  * #WebKitContextMenuItem created with a #WebKitContextMenuAction with
- * webkit_context_menu_item_get_action() and connect to #GtkAction::activate signal
- * to be notified when the item is activated. But you can't prevent the associated
+ * webkit_context_menu_item_get_gaction() and connect to the #GSimpleAction::activate signal
+ * to be notified when the item is activated, but you can't prevent the associated
  * action from being performed.
  *
  * Returns: the newly created #WebKitContextMenuItem object.

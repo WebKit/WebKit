@@ -112,23 +112,20 @@ public:
         return 0;
     }
 
-    void checkActionState(GtkAction* action, unsigned state)
+    void checkActionState(GAction* action, unsigned state)
     {
-        if (state & Visible)
-            g_assert_true(gtk_action_get_visible(action));
-        else
-            g_assert_false(gtk_action_get_visible(action));
-
         if (state & Enabled)
-            g_assert_true(gtk_action_get_sensitive(action));
+            g_assert_true(g_action_get_enabled(action));
         else
-            g_assert_false(gtk_action_get_sensitive(action));
+            g_assert_false(g_action_get_enabled(action));
 
-        if (GTK_IS_TOGGLE_ACTION(action)) {
+        const GVariantType* type = g_action_get_state_type(action);
+        if (type && g_variant_type_equal(type, G_VARIANT_TYPE_BOOLEAN)) {
+            GRefPtr<GVariant> actionState = adoptGRef(g_action_get_state(action));
             if (state & Checked)
-                g_assert_true(gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
+                g_assert_true(g_variant_get_boolean(actionState.get()));
             else
-                g_assert_false(gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
+                g_assert_false(g_variant_get_boolean(actionState.get()));
         }
     }
 
@@ -150,7 +147,7 @@ public:
 
         g_assert_cmpint(webkit_context_menu_item_get_stock_action(item), ==, stockAction);
 
-        checkActionState(action, state);
+        checkActionState(gAction, state);
 
         return g_list_next(items);
     }
@@ -166,7 +163,6 @@ public:
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         GtkAction* action = webkit_context_menu_item_get_action(item);
         g_assert_true(GTK_IS_ACTION(action));
-        G_GNUC_END_IGNORE_DEPRECATIONS;
 
         GAction* gAction = webkit_context_menu_item_get_gaction(item);
         g_assert_true(G_IS_ACTION(gAction));
@@ -181,8 +177,9 @@ public:
 
         g_assert_cmpint(webkit_context_menu_item_get_stock_action(item), ==, WEBKIT_CONTEXT_MENU_ACTION_CUSTOM);
         g_assert_cmpstr(gtk_action_get_label(action), ==, label);
+        G_GNUC_END_IGNORE_DEPRECATIONS;
 
-        checkActionState(action, state);
+        checkActionState(gAction, state);
 
         return g_list_next(items);
     }
@@ -204,7 +201,7 @@ public:
         GAction* gAction = webkit_context_menu_item_get_gaction(item);
         g_assert_true(G_IS_ACTION(gAction));
 
-        checkActionState(action, state);
+        checkActionState(gAction, state);
 
         WebKitContextMenu* subMenu = webkit_context_menu_item_get_submenu(item);
         g_assert_true(WEBKIT_IS_CONTEXT_MENU(subMenu));
@@ -655,6 +652,7 @@ static void testContextMenuPopulateMenu(ContextMenuCustomTest* test, gconstpoint
     test->loadHtml("<html><body>WebKitGTK Context menu tests</body></html>", "file:///");
     test->waitUntilLoadFinished();
 
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
     // Create a custom menu item.
     GRefPtr<GtkAction> action = adoptGRef(gtk_action_new("WebKitGTKCustomAction", "Custom _Action", nullptr, nullptr));
     test->setAction(action.get());
@@ -670,6 +668,7 @@ static void testContextMenuPopulateMenu(ContextMenuCustomTest* test, gconstpoint
     test->toggleCustomMenuItemAndWaitUntilToggled(gtk_action_get_label(toggleAction.get()));
     g_assert_false(test->m_activated);
     g_assert_true(test->m_toggled);
+    G_GNUC_END_IGNORE_DEPRECATIONS;
 
     // Create a custom menu item using GAction.
     GRefPtr<GAction> gAction = adoptGRef(G_ACTION(g_simple_action_new("WebKitGTKCustomGAction", nullptr)));

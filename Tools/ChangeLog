@@ -1,3 +1,18 @@
+2020-04-09  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Clean-up use of deprecated GtkAction
+        https://bugs.webkit.org/show_bug.cgi?id=210273
+
+        Reviewed by Carlos Garcia Campos.
+
+        GtkAction is deprecated so remove usage of it in the
+        context menu API tests and guard its API usage when
+        we still need to use it to test the deprecated WebKitGTK+ API
+        exposing GtkAction.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestContextMenu.cpp:
+        (testContextMenuPopulateMenu):
+
 2020-04-09  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] rename CompileWebKitToT to CompileWebKitWithoutPatch
