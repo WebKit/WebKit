@@ -1,3 +1,15 @@
+2020-04-08  Chris Dumez  <cdumez@apple.com>
+
+        querySelector("#\u0000") should match an element with ID U+FFFD
+        https://bugs.webkit.org/show_bug.cgi?id=210119
+
+        Reviewed by Darin Adler.
+
+        Import test coverage from upstream WPT.
+
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-escapes-expected.txt: Added.
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-escapes.html: Added.
+
 2020-04-08  Rob Buis  <rbuis@igalia.com>
 
         Import fetch/origin/assorted.window.js

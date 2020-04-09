@@ -1302,11 +1302,12 @@ Ref<StringImpl> StringImpl::replace(UChar target, UChar replacement)
     UChar* data;
     auto newImpl = createUninitializedInternalNonEmpty(m_length, data);
 
-    for (i = 0; i != m_length; ++i) {
-        UChar character = m_data16[i];
+    memcpy(data, m_data16, i * sizeof(UChar));
+    for (unsigned j = i; j != m_length; ++j) {
+        UChar character = m_data16[j];
         if (character == target)
             character = replacement;
-        data[i] = character;
+        data[j] = character;
     }
     return newImpl;
 }

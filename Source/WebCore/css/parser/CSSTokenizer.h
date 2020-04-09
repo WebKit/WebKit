@@ -54,6 +54,8 @@ public:
     Vector<String>&& escapedStringsForAdoption() { return WTFMove(m_stringPool); }
 
 private:
+    CSSTokenizer(String&&, CSSParserObserverWrapper*);
+
     CSSParserToken nextToken();
 
     UChar consume();
