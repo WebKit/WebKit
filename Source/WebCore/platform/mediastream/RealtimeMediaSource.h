@@ -69,7 +69,7 @@ struct CaptureSourceOrError;
 
 class WEBCORE_EXPORT RealtimeMediaSource
     : public ThreadSafeRefCounted<RealtimeMediaSource, WTF::DestructionThread::MainRunLoop>
-    , public CanMakeWeakPtr<RealtimeMediaSource>
+    , public CanMakeWeakPtr<RealtimeMediaSource, WeakPtrFactoryInitialization::Eager>
 #if !RELEASE_LOG_DISABLED
     , protected LoggerHelper
 #endif
@@ -92,8 +92,14 @@ public:
         // Called on the main thread.
         virtual void videoSampleAvailable(MediaSample&) { }
 
+        virtual void hasStartedProducingAudioData() { }
+    };
+    class AudioSampleObserver {
+    public:
+        virtual ~AudioSampleObserver() = default;
+
         // May be called on a background thread.
-        virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) { }
+        virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) = 0;
     };
 
     virtual ~RealtimeMediaSource() = default;
@@ -130,6 +136,9 @@ public:
 
     WEBCORE_EXPORT void addObserver(Observer&);
     WEBCORE_EXPORT void removeObserver(Observer&);
+
+    WEBCORE_EXPORT void addAudioSampleObserver(AudioSampleObserver&);
+    WEBCORE_EXPORT void removeAudioSampleObserver(AudioSampleObserver&);
 
     const IntSize size() const;
     void setSize(const IntSize&);
@@ -253,8 +262,11 @@ private:
     String m_persistentID;
     Type m_type;
     String m_name;
-    mutable RecursiveLock m_observersLock;
     HashSet<Observer*> m_observers;
+
+    mutable RecursiveLock m_audioSampleObserversLock;
+    HashSet<AudioSampleObserver*> m_audioSampleObservers;
+
     IntSize m_size;
     IntSize m_intrinsicSize;
     double m_frameRate { 30 };
@@ -272,6 +284,7 @@ private:
     bool m_interrupted { false };
     bool m_captureDidFailed { false };
     bool m_isEnded { false };
+    bool m_hasSentStartProducedAudioData { false };
 };
 
 struct CaptureSourceOrError {

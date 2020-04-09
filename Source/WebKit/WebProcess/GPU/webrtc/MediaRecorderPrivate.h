@@ -44,18 +44,21 @@ class MediaStreamPrivate;
 
 namespace WebKit {
 
-class MediaRecorderPrivate final : public WebCore::MediaRecorderPrivate, public SharedRingBufferStorage::Client, public CanMakeWeakPtr<MediaRecorderPrivate> {
+class MediaRecorderPrivate final
+    : public WebCore::MediaRecorderPrivate
+    , public SharedRingBufferStorage::Client
+    , public CanMakeWeakPtr<MediaRecorderPrivate> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit MediaRecorderPrivate(const WebCore::MediaStreamPrivate&);
+    explicit MediaRecorderPrivate(WebCore::MediaStreamPrivate&);
     ~MediaRecorderPrivate();
 
 private:
     // WebCore::MediaRecorderPrivate
     void sampleBufferUpdated(const WebCore::MediaStreamTrackPrivate&, WebCore::MediaSample&) final;
-    void audioSamplesAvailable(const WebCore::MediaStreamTrackPrivate&, const WTF::MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t) final;
     void fetchData(CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&, const String& mimeType)>&&) final;
     void stopRecording() final;
+    void audioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t) final;
 
     // SharedRingBufferStorage::Client
     void storageChanged(SharedMemory*);

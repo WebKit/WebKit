@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class WebAudioSourceProvider : public ThreadSafeRefCounted<WebAudioSourceProvider>, public AudioSourceProvider {
+class WebAudioSourceProvider : public ThreadSafeRefCounted<WebAudioSourceProvider, WTF::DestructionThread::Main>, public AudioSourceProvider {
 };
 
 }

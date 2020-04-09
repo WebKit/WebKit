@@ -50,6 +50,7 @@ using namespace WebCore;
 
 class UserMediaCaptureManagerProxy::SourceProxy
     : public RealtimeMediaSource::Observer
+    , public RealtimeMediaSource::AudioSampleObserver
     , public SharedRingBufferStorage::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -60,11 +61,13 @@ public:
         , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(makeUniqueRef<SharedRingBufferStorage>(this)))
     {
         m_source->addObserver(*this);
+        m_source->addAudioSampleObserver(*this);
     }
 
     ~SourceProxy()
     {
         storage().invalidate();
+        m_source->removeAudioSampleObserver(*this);
         m_source->removeObserver(*this);
     }
 

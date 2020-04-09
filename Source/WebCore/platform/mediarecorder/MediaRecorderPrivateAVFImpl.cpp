@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create(const MediaStreamPrivate& stream)
+std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create(MediaStreamPrivate& stream)
 {
     // FIXME: we will need to implement support for multiple audio/video tracks
     // Currently we only choose the first track as the recorded track.
@@ -51,11 +51,15 @@ std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create
     String audioTrackId;
     if (selectedTracks.audioTrack)
         audioTrackId = selectedTracks.audioTrack->id();
+
     String videoTrackId;
     if (selectedTracks.videoTrack)
         videoTrackId = selectedTracks.videoTrack->id();
 
-    return makeUnique<MediaRecorderPrivateAVFImpl>(writer.releaseNonNull(), WTFMove(audioTrackId), WTFMove(videoTrackId));
+    auto recorder = makeUnique<MediaRecorderPrivateAVFImpl>(writer.releaseNonNull(), WTFMove(audioTrackId), WTFMove(videoTrackId));
+    if (selectedTracks.audioTrack)
+        recorder->setAudioSource(&selectedTracks.audioTrack->source());
+    return recorder;
 }
 
 MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateWriter>&& writer, String&& audioTrackId, String&& videoTrackId)
@@ -65,6 +69,11 @@ MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivat
 {
 }
 
+MediaRecorderPrivateAVFImpl::~MediaRecorderPrivateAVFImpl()
+{
+    setAudioSource(nullptr);
+}
+
 void MediaRecorderPrivateAVFImpl::sampleBufferUpdated(const MediaStreamTrackPrivate& track, MediaSample& sampleBuffer)
 {
     if (track.id() != m_recordedVideoTrackID)
@@ -72,10 +81,8 @@ void MediaRecorderPrivateAVFImpl::sampleBufferUpdated(const MediaStreamTrackPriv
     m_writer->appendVideoSampleBuffer(sampleBuffer.platformSample().sample.cmSampleBuffer);
 }
 
-void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(const MediaStreamTrackPrivate& track, const WTF::MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
+void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(const WTF::MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
-    if (track.id() != m_recordedAudioTrackID)
-        return;
     ASSERT(is<WebAudioBufferList>(data));
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
     m_writer->appendAudioSampleBuffer(data, description, mediaTime, sampleCount);
@@ -83,10 +90,11 @@ void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(const MediaStreamTrackPr
 
 void MediaRecorderPrivateAVFImpl::stopRecording()
 {
+    setAudioSource(nullptr);
     m_writer->stopRecording();
 }
 
-void MediaRecorderPrivateAVFImpl::fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, const String&)>&& completionHandler)
+void MediaRecorderPrivateAVFImpl::fetchData(FetchDataCallback&& completionHandler)
 {
     m_writer->fetchData([completionHandler = WTFMove(completionHandler), mimeType = mimeType()](auto&& buffer) mutable {
         completionHandler(WTFMove(buffer), mimeType);

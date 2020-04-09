@@ -84,6 +84,7 @@ public:
     MediaStreamTrackPrivateVector tracks() const;
     bool hasTracks() const { return !m_trackSet.isEmpty(); }
     void forEachTrack(const Function<void(const MediaStreamTrackPrivate&)>&) const;
+    void forEachTrack(const Function<void(MediaStreamTrackPrivate&)>&);
     MediaStreamTrackPrivate* activeVideoTrack() { return m_activeVideoTrack; }
 
     bool active() const { return m_isActive; }

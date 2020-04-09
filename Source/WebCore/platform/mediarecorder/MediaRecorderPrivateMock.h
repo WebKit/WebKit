@@ -34,18 +34,27 @@ namespace WebCore {
 
 class MediaStreamTrackPrivate;
 
-class WEBCORE_EXPORT MediaRecorderPrivateMock final : public MediaRecorderPrivate {
+class WEBCORE_EXPORT MediaRecorderPrivateMock final
+    : public MediaRecorderPrivate {
+public:
+    explicit MediaRecorderPrivateMock(MediaStreamPrivate&);
+    ~MediaRecorderPrivateMock();
+
 private:
+    // MediaRecorderPrivate
     void sampleBufferUpdated(const MediaStreamTrackPrivate&, MediaSample&) final;
-    void audioSamplesAvailable(const MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
-    void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, const String&)>&&) final;
+    void fetchData(FetchDataCallback&&) final;
+    void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    void stopRecording() final;
+
     const String& mimeType();
-    
-    void generateMockString(const MediaStreamTrackPrivate&);
+    void generateMockCounterString();
 
     mutable Lock m_bufferLock;
     StringBuilder m_buffer;
     unsigned m_counter { 0 };
+    String m_audioTrackID;
+    String m_videoTrackID;
 };
 
 } // namespace WebCore

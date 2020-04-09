@@ -1,3 +1,27 @@
+2020-04-09  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a RealtimeMediaSource observer dedicated to receiving audio samples
+        https://bugs.webkit.org/show_bug.cgi?id=210180
+
+        Reviewed by Eric Carlson.
+
+        Update SourceProxy to be an AudioSampleObserver.
+        Update MediaRecorder to only listen for audio samples if GPU remote writer is successfully created.
+        It also stops listening to audio samples as soon as stopping the recording.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::SourceProxy):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::~SourceProxy):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::MediaRecorderPrivate):
+        (WebKit::MediaRecorderPrivate::~MediaRecorderPrivate):
+        (WebKit::MediaRecorderPrivate::audioSamplesAvailable):
+        (WebKit::MediaRecorderPrivate::stopRecording):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+        * WebProcess/GPU/webrtc/MediaRecorderProvider.cpp:
+        (WebKit::MediaRecorderProvider::createMediaRecorderPrivate):
+        * WebProcess/GPU/webrtc/MediaRecorderProvider.h:
+
 2020-04-09  David Kilzer  <ddkilzer@apple.com>
 
         WTF::Persistence::Coder and WTF::Persistence::Decoder should use WARN_UNUSED_RETURN
