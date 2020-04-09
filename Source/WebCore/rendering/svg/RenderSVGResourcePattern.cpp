@@ -185,13 +185,13 @@ bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const Rend
 
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToText)) {
         if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
-            context->setTextDrawingMode(TextModeFill);
+            context->setTextDrawingMode(TextDrawingMode::Fill);
 
 #if USE(CG)
             context->applyFillPattern();
 #endif
         } else if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
-            context->setTextDrawingMode(TextModeStroke);
+            context->setTextDrawingMode(TextDrawingMode::Stroke);
 
 #if USE(CG)
             context->applyStrokePattern();

@@ -416,7 +416,7 @@ void SetState::encode(Encoder& encoder) const
         encoder << state.strokeThickness;
 
     if (changeFlags.contains(GraphicsContextState::TextDrawingModeChange))
-        encoder.encodeEnum(state.textDrawingMode);
+        encoder << state.textDrawingMode;
 
     if (changeFlags.contains(GraphicsContextState::StrokeColorChange))
         encoder << state.strokeColor;
@@ -568,11 +568,12 @@ Optional<Ref<SetState>> SetState::decode(Decoder& decoder)
     }
 
     if (stateChange.m_changeFlags.contains(GraphicsContextState::TextDrawingModeChange)) {
-        TextDrawingModeFlags textDrawingMode;
-        if (!decoder.decodeEnum(textDrawingMode))
+        Optional<TextDrawingModeFlags> textDrawingMode;
+        decoder >> textDrawingMode;
+        if (!textDrawingMode)
             return WTF::nullopt;
 
-        stateChange.m_state.textDrawingMode = textDrawingMode;
+        stateChange.m_state.textDrawingMode = WTFMove(*textDrawingMode);
     }
 
     if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeColorChange)) {

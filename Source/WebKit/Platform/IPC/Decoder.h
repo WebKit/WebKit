@@ -104,10 +104,10 @@ public:
     bool decode(double&);
     Decoder& operator>>(Optional<double>&);
 
-    template<typename E>
-    auto decode(E& e) -> std::enable_if_t<std::is_enum<E>::value, bool>
+    template<typename E, typename = std::enable_if_t<std::is_enum<E>::value>>
+    bool decode(E& e)
     {
-        uint64_t value;
+        typename std::underlying_type<E>::type value;
         if (!decode(value))
             return false;
         if (!isValidEnum<E>(value))
@@ -117,10 +117,10 @@ public:
         return true;
     }
 
-    template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
+    template<typename E, typename = std::enable_if_t<std::is_enum<E>::value>>
     Decoder& operator>>(Optional<E>& optional)
     {
-        Optional<uint64_t> value;
+        Optional<typename std::underlying_type<E>::type> value;
         *this >> value;
         if (value && isValidEnum<E>(*value))
             optional = static_cast<E>(*value);
@@ -129,12 +129,10 @@ public:
 
     template<typename T> bool decodeEnum(T& result)
     {
-        static_assert(sizeof(T) <= 8, "Enum type T must not be larger than 64 bits!");
-
-        uint64_t value;
+        typename std::underlying_type<T>::type value;
         if (!decode(value))
             return false;
-        
+
         result = static_cast<T>(value);
         return true;
     }

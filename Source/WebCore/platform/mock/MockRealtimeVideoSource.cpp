@@ -353,7 +353,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     IntSize captureSize = this->captureSize();
     FloatPoint timeLocation(captureSize.width() * .05, captureSize.height() * .15);
     context.setFillColor(Color::white);
-    context.setTextDrawingMode(TextModeFill);
+    context.setTextDrawingMode(TextDrawingMode::Fill);
     String string = makeString(pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds), '.', pad('0', 3, milliseconds % 1000));
     context.drawText(timeFont, TextRun((StringView(string))), timeLocation);
 
