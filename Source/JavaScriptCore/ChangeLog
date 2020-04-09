@@ -1,3 +1,27 @@
+2020-04-09  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        getOwnPropertyDescriptor() is incorrect with Proxy of exotic object
+        https://bugs.webkit.org/show_bug.cgi?id=200560
+
+        Reviewed by Yusuke Suzuki.
+
+        PropertyAttribute::CustomValue path in JSObject::getOwnPropertyDescriptor() needs to perform
+        getDirect() on correct target. A correct target may be different since getOwnPropertySlot()
+        may return not *own* property.
+
+        This change removes a hack that was covering only JSProxy case and invokes getDirect() on
+        slotBase(), ensuring ProxyObject instances with exotic targets return correct descriptors
+        and aligning JSC with V8 and SpiderMonkey.
+
+        getDirect() can be safely called on slotBase(): if getOwnPropertySlot() result is returned
+        from JS code of ProxyObject's trap, it will never be a PropertyAttribute::CustomValue.
+
+        This patch also moves setCustomDescriptor() down below to avoid mutating a descriptor when
+        returning `false`.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+
 2020-04-09  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Fix CLOOP build

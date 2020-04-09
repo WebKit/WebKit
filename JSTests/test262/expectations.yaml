@@ -672,9 +672,6 @@ test/built-ins/Array/prototype/splice/S15.4.4.12_A3_T1.js:
 test/built-ins/Array/prototype/splice/clamps-length-to-integer-limit.js:
   default: 'Test262Error: Length is 2**53 - 1 Expected SameValue(«4294967295», «9007199254740991») to be true'
   strict mode: 'Test262Error: Length is 2**53 - 1 Expected SameValue(«4294967295», «9007199254740991») to be true'
-test/built-ins/Array/prototype/splice/create-proxy.js:
-  default: 'TypeError: Attempted to assign to readonly property.'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
 test/built-ins/Array/prototype/splice/create-species-length-exceeding-integer-limit.js:
   default: 'Test262Error: length and deleteCount were correctly clamped to 2^53-1 Expected SameValue(«4294967295», «9007199254740991») to be true'
   strict mode: 'Test262Error: length and deleteCount were correctly clamped to 2^53-1 Expected SameValue(«4294967295», «9007199254740991») to be true'
@@ -1255,15 +1252,6 @@ test/built-ins/Proxy/create-target-is-revoked-proxy.js:
 test/built-ins/Proxy/defineProperty/trap-is-undefined-target-is-proxy.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Proxy/getOwnPropertyDescriptor/trap-is-missing-target-is-proxy.js:
-  default: "TypeError: undefined is not an object (evaluating 'originalDesc.enumerable')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'originalDesc.enumerable')"
-test/built-ins/Proxy/getOwnPropertyDescriptor/trap-is-null-target-is-proxy.js:
-  default: "TypeError: undefined is not an object (evaluating 'originalDesc.value')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'originalDesc.value')"
-test/built-ins/Proxy/getOwnPropertyDescriptor/trap-is-undefined-target-is-proxy.js:
-  default: "TypeError: undefined is not an object (evaluating 'originalDesc.value')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'originalDesc.value')"
 test/built-ins/Proxy/ownKeys/trap-is-undefined-target-is-proxy.js:
   default: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
   strict mode: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
@@ -1273,15 +1261,6 @@ test/built-ins/Proxy/set/trap-is-missing-receiver-multiple-calls-index.js:
 test/built-ins/Proxy/set/trap-is-missing-receiver-multiple-calls.js:
   default: 'Test262Error: Expected [foo] and [foo, foo, foo] to have the same contents. getOwnPropertyDescriptor: key present on [[ProxyTarget]]'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Proxy/set/trap-is-missing-target-is-proxy.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'TypeError: Attempting to change configurable attribute of unconfigurable property.'
-test/built-ins/Proxy/set/trap-is-null-target-is-proxy.js:
-  default: 'Test262Error: Expected [1, 2, 3] and [] to have the same contents. '
-  strict mode: 'TypeError: Attempting to change configurable attribute of unconfigurable property.'
-test/built-ins/Proxy/set/trap-is-undefined-target-is-proxy.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/built-ins/Reflect/ownKeys/order-after-define-property.js:
   default: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
   strict mode: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '

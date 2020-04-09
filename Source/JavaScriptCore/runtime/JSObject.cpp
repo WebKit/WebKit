@@ -3479,44 +3479,23 @@ bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyNa
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSC::PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
 
     bool result = methodTable(vm)->getOwnPropertySlot(this, globalObject, propertyName, slot);
     EXCEPTION_ASSERT(!scope.exception() || !result);
     if (!result)
         return false;
 
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=200560
-    // This breaks the assumption that getOwnPropertySlot should return "own" property.
-    // We should fix DebuggerScope, ProxyObject etc. to remove this.
-    //
-    // DebuggerScope::getOwnPropertySlot() (and possibly others) may return attributes from the prototype chain
-    // but getOwnPropertyDescriptor() should only work for 'own' properties so we exit early if we detect that
-    // the property is not an own property.
-    if (slot.slotBase() != this && slot.slotBase()) {
-        JSProxy* jsProxy = jsDynamicCast<JSProxy*>(vm, this);
-        if (!jsProxy || jsProxy->target() != slot.slotBase()) {
-            // Try ProxyObject.
-            ProxyObject* proxyObject = jsDynamicCast<ProxyObject*>(vm, this);
-            if (!proxyObject || proxyObject->target() != slot.slotBase())
-                return false;
-        }
-    }
-
     if (slot.isAccessor())
         descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes());
     else if (slot.attributes() & PropertyAttribute::CustomAccessor) {
-        descriptor.setCustomDescriptor(slot.attributes());
-
-        JSObject* thisObject = this;
-        if (auto* proxy = jsDynamicCast<JSProxy*>(vm, this))
-            thisObject = proxy->target();
-
         CustomGetterSetter* getterSetter;
         if (slot.isCustomAccessor())
             getterSetter = slot.customGetterSetter();
         else {
+            ASSERT(slot.slotBase());
+            JSObject* thisObject = slot.slotBase();
+
             JSValue maybeGetterSetter = thisObject->getDirect(vm, propertyName);
             if (!maybeGetterSetter) {
                 thisObject->reifyAllStaticProperties(globalObject);
@@ -3530,6 +3509,7 @@ bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyNa
         if (!getterSetter)
             return false;
 
+        descriptor.setCustomDescriptor(slot.attributes());
         if (getterSetter->getter())
             descriptor.setGetter(getCustomGetterSetterFunctionForGetterSetter(globalObject, propertyName, getterSetter, JSCustomGetterSetterFunction::Type::Getter));
         if (getterSetter->setter())
