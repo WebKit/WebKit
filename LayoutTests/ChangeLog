@@ -1,5 +1,16 @@
 2020-04-08  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Gardening, update baselines after r259296
+        https://bugs.webkit.org/show_bug.cgi?id=210242
+
+        Unreviewed gardening.
+
+        * platform/wpe/css2.1/20110323/margin-applies-to-006-expected.txt:
+        * platform/wpe/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/dom/appendCol1-expected.txt:
+
+2020-04-08  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Gardening, update TestExpectations
         https://bugs.webkit.org/show_bug.cgi?id=210240
 
