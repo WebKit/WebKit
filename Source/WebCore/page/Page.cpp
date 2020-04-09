@@ -291,6 +291,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     , m_deviceOrientationUpdateProvider(WTFMove(pageConfiguration.deviceOrientationUpdateProvider))
 #endif
+    , m_corsDisablingPatterns(WTFMove(pageConfiguration.corsDisablingPatterns))
     , m_loadsSubresources(pageConfiguration.loadsSubresources)
     , m_loadsFromNetwork(pageConfiguration.loadsFromNetwork)
 {
@@ -330,14 +331,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if USE(LIBWEBRTC)
     m_libWebRTCProvider->supportsH265(RuntimeEnabledFeatures::sharedFeatures().webRTCH265CodecEnabled());
 #endif
-
-    m_corsDisablingPatterns.reserveInitialCapacity(pageConfiguration.corsDisablingPatterns.size());
-    for (auto&& pattern : WTFMove(pageConfiguration.corsDisablingPatterns)) {
-        UserContentURLPattern parsedPattern(WTFMove(pattern));
-        if (parsedPattern.isValid())
-            m_corsDisablingPatterns.uncheckedAppend(WTFMove(parsedPattern));
-    }
-    m_corsDisablingPatterns.shrinkToFit();
     
     if (!pageConfiguration.userScriptsShouldWaitUntilNotification)
         m_hasBeenNotifiedToInjectUserScripts = true;

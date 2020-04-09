@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class SecurityOrigin;
+class UserContentURLPattern;
 
 class SecurityPolicy {
 public:
@@ -66,12 +67,13 @@ public:
     static bool restrictAccessToLocal();
     static bool allowSubstituteDataAccessToLocal();
 
+    WEBCORE_EXPORT static void allowAccessTo(const UserContentURLPattern&);
     WEBCORE_EXPORT static void addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
     WEBCORE_EXPORT static void removeOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
     WEBCORE_EXPORT static void resetOriginAccessWhitelists();
 
-    static bool isAccessWhiteListed(const SecurityOrigin* activeOrigin, const SecurityOrigin* targetOrigin);
-    static bool isAccessToURLWhiteListed(const SecurityOrigin* activeOrigin, const URL&);
+    static bool isAccessWhiteListed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL);
+    static bool isAccessWhiteListed(const SecurityOrigin& activeOrigin, const URL& targetURL);
 };
 
 } // namespace WebCore
