@@ -288,7 +288,7 @@ void ImageSource::cacheNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t i
 
     // Do not cache the NativeImage if adding its frameByes to the MemoryCache will cause numerical overflow.
     size_t frameBytes = size().unclampedArea() * sizeof(uint32_t);
-    if (!WTF::isInBounds<unsigned>(frameBytes + decodedSize()))
+    if (!isInBounds<unsigned>(frameBytes + decodedSize()))
         return;
 
     // Move the new image to the cache.

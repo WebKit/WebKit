@@ -345,7 +345,7 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         if (!decoder.decode(decodedSize))
             return false;
 
-        if (!WTF::isInBounds<size_t>(decodedSize))
+        if (!isInBounds<size_t>(decodedSize))
             return false;
 
         auto size = static_cast<size_t>(decodedSize);
@@ -386,7 +386,7 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         if (!decoder.decode(decodedSize))
             return false;
 
-        if (!WTF::isInBounds<size_t>(decodedSize))
+        if (!isInBounds<size_t>(decodedSize))
             return false;
 
         auto size = static_cast<size_t>(decodedSize);

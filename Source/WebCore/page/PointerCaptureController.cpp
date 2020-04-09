@@ -144,7 +144,7 @@ void PointerCaptureController::elementWasRemoved(Element& element)
             // When the pointer capture target override is no longer connected, the pending pointer capture target override and pointer capture target
             // override nodes SHOULD be cleared and also a PointerEvent named lostpointercapture corresponding to the captured pointer SHOULD be fired
             // at the document.
-            ASSERT(WTF::isInBounds<PointerID>(keyAndValue.key));
+            ASSERT(isInBounds<PointerID>(keyAndValue.key));
             auto pointerId = static_cast<PointerID>(keyAndValue.key);
             auto pointerType = capturingData.pointerType;
             releasePointerCapture(&element, pointerId);

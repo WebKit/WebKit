@@ -1,5 +1,16 @@
 2020-04-09  David Kilzer  <ddkilzer@apple.com>
 
+        Add using WTF::isInBounds to CheckedArithmetic.h
+        <https://webkit.org/b/210299>
+
+        Reviewed by Darin Adler.
+
+        * wtf/CheckedArithmetic.h:
+        - Add `using WTF::isInBounds` statement so this function may be
+          used unprefixed outside the WTF project.
+
+2020-04-09  David Kilzer  <ddkilzer@apple.com>
+
         WTF::Persistence::Coder and WTF::Persistence::Decoder should use WARN_UNUSED_RETURN
         <https://webkit.org/b/210238>
         <rdar://problem/61491575>

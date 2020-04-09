@@ -372,7 +372,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
             return false;
         }
 
-        if (!WTF::isInBounds<size_t>(decodedSize)) {
+        if (!isInBounds<size_t>(decodedSize)) {
             decoder.markInvalid();
             return false;
         }
@@ -407,7 +407,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
             return WTF::nullopt;
         }
 
-        if (!WTF::isInBounds<size_t>(decodedSize)) {
+        if (!isInBounds<size_t>(decodedSize)) {
             decoder.markInvalid();
             return WTF::nullopt;
         }

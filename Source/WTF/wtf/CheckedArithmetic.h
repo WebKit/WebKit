@@ -1006,5 +1006,6 @@ using WTF::CrashOnOverflow;
 using WTF::RecordOverflow;
 using WTF::checkedSum;
 using WTF::differenceOverflows;
+using WTF::isInBounds;
 using WTF::productOverflows;
 using WTF::sumOverflows;

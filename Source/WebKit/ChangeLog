@@ -1,3 +1,15 @@
+2020-04-09  David Kilzer  <ddkilzer@apple.com>
+
+        Add using WTF::isInBounds to CheckedArithmetic.h
+        <https://webkit.org/b/210299>
+
+        Reviewed by Darin Adler.
+
+        * Platform/IPC/ArgumentCoders.h:
+        * Shared/UserData.cpp:
+        (WebKit::UserData::decode):
+        - Remove WTF:: prefix from isInBounds().
+
 2020-04-09  Keith Rollin  <krollin@apple.com>
 
         Set ENTITLEMENTS_REQUIRED=NO for some Xcode build targets

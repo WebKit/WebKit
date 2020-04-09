@@ -162,7 +162,7 @@ unsigned long long Blob::size() const
         // FIXME: JavaScript cannot represent sizes as large as unsigned long long, we need to
         // come up with an exception to throw if file size is not representable.
         unsigned long long actualSize = ThreadableBlobRegistry::blobSize(m_internalURL);
-        m_size = WTF::isInBounds<long long>(actualSize) ? actualSize : 0;
+        m_size = isInBounds<long long>(actualSize) ? actualSize : 0;
     }
 
     return *m_size;

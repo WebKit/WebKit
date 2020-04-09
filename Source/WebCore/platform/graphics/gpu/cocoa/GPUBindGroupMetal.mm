@@ -55,12 +55,12 @@ static Optional<GPUBufferBinding> tryGetResourceAsBufferBinding(const GPUBinding
         LOG(WebGPU, "%s: Invalid MTLBuffer in GPUBufferBinding!", functionName);
         return WTF::nullopt;
     }
-    if (!WTF::isInBounds<NSUInteger>(bufferBinding.size) || bufferBinding.size > bufferBinding.buffer->byteLength()) {
+    if (!isInBounds<NSUInteger>(bufferBinding.size) || bufferBinding.size > bufferBinding.buffer->byteLength()) {
         LOG(WebGPU, "%s: GPUBufferBinding size is too large!", functionName);
         return WTF::nullopt;
     }
     // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
-    if (!WTF::isInBounds<NSUInteger>(bufferBinding.offset)) {
+    if (!isInBounds<NSUInteger>(bufferBinding.offset)) {
         LOG(WebGPU, "%s: Buffer offset is too large!", functionName);
         return WTF::nullopt;
     }
