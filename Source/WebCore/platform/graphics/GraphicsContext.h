@@ -98,14 +98,14 @@ class Path;
 class TextRun;
 class TransformationMatrix;
 
-enum class TextDrawingMode : uint8_t {
-    Fill = 1 << 0,
-    Stroke = 1 << 1,
+enum TextDrawingMode {
+    TextModeFill = 1 << 0,
+    TextModeStroke = 1 << 1,
 #if ENABLE(LETTERPRESS)
-    Letterpress = 1 << 2,
+    TextModeLetterpress = 1 << 2,
 #endif
 };
-using TextDrawingModeFlags = OptionSet<TextDrawingMode>;
+typedef unsigned TextDrawingModeFlags;
 
 enum StrokeStyle {
     NoStroke,
@@ -210,7 +210,7 @@ struct GraphicsContextState {
     float strokeThickness { 0 };
     float shadowBlur { 0 };
 
-    TextDrawingModeFlags textDrawingMode { TextDrawingMode::Fill };
+    TextDrawingModeFlags textDrawingMode { TextModeFill };
 
     Color strokeColor { Color::black };
     Color fillColor { Color::black };

@@ -132,7 +132,7 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     if (!platformCALayer->isOpaque() && platformCALayer->supportsSubpixelAntialiasedText() && platformCALayer->acceleratesDrawing()) {
         graphicsContext.setStrokeColor(linearGlyphMaskOutlineColor);
         graphicsContext.setStrokeThickness(4.5);
-        graphicsContext.setTextDrawingMode(TextDrawingModeFlags { TextDrawingMode::Fill, TextDrawingMode::Stroke });
+        graphicsContext.setTextDrawingMode(TextModeFill | TextModeStroke);
     }
 
     graphicsContext.setFillColor(platformCALayer->acceleratesDrawing() ? acceleratedContextLabelColor : unacceleratedContextLabelColor);

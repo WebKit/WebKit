@@ -167,7 +167,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
         }
 #endif
 
-        context->setTextDrawingMode(resourceMode.contains(RenderSVGResourceMode::ApplyToFill) ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
+        context->setTextDrawingMode(resourceMode.contains(RenderSVGResourceMode::ApplyToFill) ? TextModeFill : TextModeStroke);
     }
 
     const SVGRenderStyle& svgStyle = style.svgStyle();

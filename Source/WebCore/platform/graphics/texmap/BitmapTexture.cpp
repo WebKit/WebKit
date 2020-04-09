@@ -45,7 +45,7 @@ void BitmapTexture::updateContents(TextureMapper&, GraphicsLayer* sourceLayer, c
 
     GraphicsContext& context = imageBuffer->context();
     context.setImageInterpolationQuality(InterpolationQuality::Default);
-    context.setTextDrawingMode(TextDrawingMode::Fill);
+    context.setTextDrawingMode(TextModeFill);
 
     IntRect sourceRect(targetRect);
     sourceRect.setLocation(offset);

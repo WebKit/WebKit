@@ -491,7 +491,7 @@ void encode(Encoder& encoder, CFNumberRef number)
     bool result = CFNumberGetValue(number, numberType, buffer.data());
     ASSERT_UNUSED(result, result);
 
-    encoder << static_cast<uint8_t>(numberType);
+    encoder.encodeEnum(numberType);
     encoder << IPC::DataReference(buffer);
 }
 
@@ -537,11 +537,9 @@ static size_t sizeForNumberType(CFNumberType numberType)
 
 bool decode(Decoder& decoder, RetainPtr<CFNumberRef>& result)
 {
-    Optional<uint8_t> numberTypeFromIPC;
-    decoder >> numberTypeFromIPC;
-    if (!numberTypeFromIPC || *numberTypeFromIPC > kCFNumberMaxType)
+    CFNumberType numberType;
+    if (!decoder.decodeEnum(numberType))
         return false;
-    auto numberType = static_cast<CFNumberType>(*numberTypeFromIPC);
 
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
@@ -573,17 +571,15 @@ void encode(Encoder& encoder, CFStringRef string)
     numConvertedBytes = CFStringGetBytes(string, range, encoding, 0, false, buffer.data(), buffer.size(), &bufferLength);
     ASSERT(numConvertedBytes == length);
 
-    encoder << static_cast<UInt32>(encoding);
+    encoder.encodeEnum(encoding);
     encoder << IPC::DataReference(buffer);
 }
 
 bool decode(Decoder& decoder, RetainPtr<CFStringRef>& result)
 {
-    UInt32 encodingFromIPC;
-    if (!decoder.decode(encodingFromIPC))
+    CFStringEncoding encoding;
+    if (!decoder.decodeEnum(encoding))
         return false;
-    // FIXME: Should we validate that this value is an expected value?
-    auto encoding = static_cast<CFStringEncoding>(encodingFromIPC);
 
     if (!CFStringIsEncodingAvailable(encoding))
         return false;

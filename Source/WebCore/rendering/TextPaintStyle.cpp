@@ -185,12 +185,12 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
     TextDrawingModeFlags newMode = mode;
 #if ENABLE(LETTERPRESS)
     if (paintStyle.useLetterpressEffect)
-        newMode.add(TextDrawingMode::Letterpress);
+        newMode |= TextModeLetterpress;
     else
-        newMode.remove(TextDrawingMode::Letterpress);
+        newMode &= ~TextModeLetterpress;
 #endif
     if (paintStyle.strokeWidth > 0 && paintStyle.strokeColor.isVisible())
-        newMode.add(TextDrawingMode::Stroke);
+        newMode |= TextModeStroke;
     if (mode != newMode) {
         context.setTextDrawingMode(newMode);
         mode = newMode;
@@ -201,10 +201,10 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
 #endif
 
     Color fillColor = fillColorType == UseEmphasisMarkColor ? paintStyle.emphasisMarkColor : paintStyle.fillColor;
-    if (mode.contains(TextDrawingMode::Fill) && (fillColor != context.fillColor()))
+    if (mode & TextModeFill && (fillColor != context.fillColor()))
         context.setFillColor(fillColor);
 
-    if (mode & TextDrawingMode::Stroke) {
+    if (mode & TextModeStroke) {
         if (paintStyle.strokeColor != context.strokeColor())
             context.setStrokeColor(paintStyle.strokeColor);
         if (paintStyle.strokeWidth != context.strokeThickness())
