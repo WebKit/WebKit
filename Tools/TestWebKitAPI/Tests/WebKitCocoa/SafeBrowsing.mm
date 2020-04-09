@@ -239,6 +239,37 @@ TEST(SafeBrowsing, GoBack)
     EXPECT_TRUE(didCloseCalled);
 }
 
+TEST(SafeBrowsing, GoBackAfterRestoreFromSessionState)
+{
+    auto webView1 = adoptNS([WKWebView new]);
+    [webView1 loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView1 _test_waitForDidFinishNavigation];
+    _WKSessionState *state = [webView1 _sessionState];
+
+    ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [TestLookupContext methodForSelector:@selector(sharedLookupContext)]);
+
+    auto delegate = adoptNS([SafeBrowsingNavigationDelegate new]);
+    auto webView2 = adoptNS([WKWebView new]);
+    [webView2 configuration].preferences.fraudulentWebsiteWarningEnabled = YES;
+    [webView2 setNavigationDelegate:delegate.get()];
+    [webView2 setUIDelegate:delegate.get()];
+    [webView2 _restoreSessionState:state andNavigate:YES];
+    EXPECT_FALSE(warningShown);
+    while (![webView2 _safeBrowsingWarning])
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_TRUE(warningShown);
+#if !PLATFORM(MAC)
+    [[webView2 _safeBrowsingWarning] didMoveToWindow];
+#endif
+    EXPECT_FALSE(didCloseCalled);
+    goBack([webView2 _safeBrowsingWarning]);
+    EXPECT_FALSE(didCloseCalled);
+    WKBackForwardList *list = [webView2 backForwardList];
+    EXPECT_FALSE(!!list.backItem);
+    EXPECT_FALSE(!!list.forwardItem);
+    EXPECT_TRUE([list.currentItem.URL.path hasSuffix:@"/simple.html"]);
+}
+
 template<typename ViewType> void visitUnsafeSite(ViewType *view)
 {
     [view performSelector:NSSelectorFromString(@"clickedOnLink:") withObject:[NSURL URLWithString:@"WKVisitUnsafeWebsiteSentinel"]];

@@ -1,3 +1,18 @@
+2020-04-08  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebViews should behave as if they had loaded something after restoring session state
+        https://bugs.webkit.org/show_bug.cgi?id=210097
+        <rdar://problem/58778490>
+
+        Reviewed by Chris Dumez.
+
+        Specifically, we don't want to close a WKWebView after restoring the session state into another
+        WKWebView into it then navigating to a phishing page.  We want to be at the previous page after
+        the user clicks "Go back".
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionState):
+
 2020-04-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Add curly braces after one line if statement for the case when we aren't using the internal SDK

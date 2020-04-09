@@ -5136,15 +5136,15 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
                 m_pageLoadState.commitChanges();
             }
 
-            m_pageClient->showSafeBrowsingWarning(*safeBrowsingWarning, [protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), policyAction] (auto&& result) mutable {
+            m_pageClient->showSafeBrowsingWarning(*safeBrowsingWarning, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), policyAction] (auto&& result) mutable {
                 switchOn(result, [&] (const URL& url) {
                     completionHandler(PolicyAction::Ignore);
-                    protectedThis->loadRequest({ url });
+                    loadRequest({ url });
                 }, [&] (ContinueUnsafeLoad continueUnsafeLoad) {
                     switch (continueUnsafeLoad) {
                     case ContinueUnsafeLoad::No:
-                        if (!protectedThis->hasCommittedAnyProvisionalLoads())
-                            protectedThis->m_uiClient->close(protectedThis.ptr());
+                        if (!hasCommittedAnyProvisionalLoads() && !m_sessionStateWasRestoredByAPIRequest)
+                            m_uiClient->close(protectedThis.ptr());
                         completionHandler(PolicyAction::Ignore);
                         break;
                     case ContinueUnsafeLoad::Yes:

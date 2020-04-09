@@ -1,3 +1,14 @@
+2020-04-08  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebViews should behave as if they had loaded something after restoring session state
+        https://bugs.webkit.org/show_bug.cgi?id=210097
+        <rdar://problem/58778490>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (TEST):
+
 2020-04-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         Remove ENABLE_INTL define
