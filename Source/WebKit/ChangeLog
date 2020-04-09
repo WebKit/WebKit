@@ -1,3 +1,16 @@
+2020-04-08  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::Persistence::VectorCoder and IPC::VectorArgumentCoder should use checked arithmetic
+        <https://webkit.org/b/210227>
+        <rdar://problem/60832243>
+
+        Reviewed by Alex Christensen.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::VectorArgumentCoder::decode):
+        - Use safeCast<> to cast from uint64_t to size_t.
+        - Use checked arithemtic for multiplication.
+
 2020-04-08  Alexey Proskuryakov  <ap@apple.com>
 
         Fix WebContent process launching after r259758.

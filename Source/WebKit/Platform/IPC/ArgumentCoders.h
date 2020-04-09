@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "Encoder.h"
 #include <utility>
 #include <wtf/Box.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/SHA1.h>
@@ -365,9 +366,11 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     
     static bool decode(Decoder& decoder, Vector<T, inlineCapacity, OverflowHandler, minCapacity>& vector)
     {
-        uint64_t size;
-        if (!decoder.decode(size))
+        uint64_t decodedSize;
+        if (!decoder.decode(decodedSize))
             return false;
+
+        auto size = safeCast<size_t>(decodedSize);
 
         // Since we know the total size of the elements, we can allocate the vector in
         // one fell swoop. Before allocating we must however make sure that the decoder buffer
@@ -380,7 +383,8 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
         Vector<T, inlineCapacity, OverflowHandler, minCapacity> temp;
         temp.grow(size);
 
-        if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T), alignof(T))) {
+        Checked<size_t> checkedSize(size);
+        if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), (checkedSize * sizeof(T)).unsafeGet(), alignof(T))) {
             decoder.markInvalid();
             return false;
         }
@@ -391,10 +395,12 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     
     static Optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> decode(Decoder& decoder)
     {
-        uint64_t size;
-        if (!decoder.decode(size))
+        uint64_t decodedSize;
+        if (!decoder.decode(decodedSize))
             return WTF::nullopt;
-        
+
+        auto size = safeCast<size_t>(decodedSize);
+
         // Since we know the total size of the elements, we can allocate the vector in
         // one fell swoop. Before allocating we must however make sure that the decoder buffer
         // is big enough.
@@ -406,7 +412,8 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
         Vector<T, inlineCapacity, OverflowHandler, minCapacity> vector;
         vector.grow(size);
 
-        if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(vector.data()), size * sizeof(T), alignof(T))) {
+        Checked<size_t> checkedSize(size);
+        if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(vector.data()), (checkedSize * sizeof(T)).unsafeGet(), alignof(T))) {
             decoder.markInvalid();
             return WTF::nullopt;
         }

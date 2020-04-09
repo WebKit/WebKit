@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include <utility>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -170,7 +171,8 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
         Vector<T, inlineCapacity> temp;
         temp.grow(size);
 
-        decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T));
+        Checked<size_t> checkedSize(size);
+        decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), (checkedSize * sizeof(T)).unsafeGet());
 
         vector.swap(temp);
         return true;

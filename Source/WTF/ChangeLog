@@ -1,3 +1,15 @@
+2020-04-08  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::Persistence::VectorCoder and IPC::VectorArgumentCoder should use checked arithmetic
+        <https://webkit.org/b/210227>
+        <rdar://problem/60832243>
+
+        Reviewed by Alex Christensen.
+
+        * wtf/persistence/PersistentCoders.h:
+        (WTF::Persistence::VectorCoder::decode):
+        - Use checked arithemtic for multiplication.
+
 2020-04-08  Chris Dumez  <cdumez@apple.com>
 
         querySelector("#\u0000") should match an element with ID U+FFFD
