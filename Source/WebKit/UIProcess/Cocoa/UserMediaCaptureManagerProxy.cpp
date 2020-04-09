@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
+#include "Connection.h"
 #include "SharedRingBufferStorage.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
@@ -41,6 +42,8 @@
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/UniqueRef.h>
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &m_connectionProxy->connection())
 
 namespace WebKit {
 using namespace WebCore;
@@ -294,8 +297,8 @@ void UserMediaCaptureManagerProxy::applyConstraints(RealtimeMediaSourceIdentifie
 
 void UserMediaCaptureManagerProxy::clone(RealtimeMediaSourceIdentifier clonedID, RealtimeMediaSourceIdentifier newSourceID)
 {
-    ASSERT(m_proxies.contains(clonedID));
-    ASSERT(!m_proxies.contains(newSourceID));
+    MESSAGE_CHECK(m_proxies.contains(clonedID));
+    MESSAGE_CHECK(!m_proxies.contains(newSourceID));
     if (auto* proxy = m_proxies.get(clonedID))
         m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, m_connectionProxy->connection(), proxy->source().clone()));
 }
@@ -323,5 +326,7 @@ void UserMediaCaptureManagerProxy::setOrientation(uint64_t orientation)
 }
 
 }
+
+#undef MESSAGE_CHECK
 
 #endif

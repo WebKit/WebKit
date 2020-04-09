@@ -1,5 +1,18 @@
 2020-04-08  David Kilzer  <ddkilzer@apple.com>
 
+        UserMediaCaptureManagerProxy::clone should validate its parameters
+        <https://webkit.org/b/210221>
+        <rdar://problem/61063019>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (MESSAGE_CHECK): Define (and undef) new macro for assertion.
+        (WebKit::UserMediaCaptureManagerProxy::clone): Change ASSERT()
+        to MESSAGE_CHECK().
+
+2020-04-08  David Kilzer  <ddkilzer@apple.com>
+
         WebKit::ShareableBitmap::Handle::decode() should validate m_size instance variables
         <https://webkit.org/b/210211>
         <rdar://problem/60543986>
