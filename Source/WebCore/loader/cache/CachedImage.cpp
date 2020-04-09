@@ -268,6 +268,11 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
     return m_image.get();
 }
 
+bool CachedImage::hasSVGImage() const
+{
+    return m_image && m_image->isSVGImage();
+}
+
 void CachedImage::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL)
 {
     if (containerSize.isEmpty())
@@ -432,6 +437,12 @@ void CachedImage::CachedImageObserver::changedInRect(const Image& image, const I
 {
     for (auto cachedImage : m_cachedImages)
         cachedImage->changedInRect(image, rect);
+}
+
+void CachedImage::CachedImageObserver::scheduleTimedRenderingUpdate(const Image& image)
+{
+    for (auto cachedImage : m_cachedImages)
+        cachedImage->scheduleTimedRenderingUpdate(image);
 }
 
 inline void CachedImage::clearImage()
@@ -682,6 +693,16 @@ void CachedImage::changedInRect(const Image& image, const IntRect* rect)
     if (&image != m_image)
         return;
     notifyObservers(rect);
+}
+
+void CachedImage::scheduleTimedRenderingUpdate(const Image& image)
+{
+    if (&image != m_image)
+        return;
+
+    CachedResourceClientWalker<CachedImageClient> walker(m_clients);
+    while (auto* client = walker.next())
+        client->scheduleTimedRenderingUpdate();
 }
 
 bool CachedImage::currentFrameKnownToBeOpaque(const RenderElement* renderer)

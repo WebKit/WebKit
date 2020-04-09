@@ -528,6 +528,7 @@ public:
     bool canDestroyDecodedData(const Image&) override { return true; }
     void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* = nullptr, DecodingStatus = DecodingStatus::Invalid) override { }
     void changedInRect(const Image&, const IntRect* = nullptr) override { }
+    void scheduleTimedRenderingUpdate(const Image&) override { }
 
 private:
     ImageBitmapImageObserver(String mimeType, long long expectedContentLength, const URL& sourceUrl)

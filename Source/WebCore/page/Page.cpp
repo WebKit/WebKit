@@ -29,6 +29,7 @@
 #include "BackForwardController.h"
 #include "CSSAnimationController.h"
 #include "CacheStorageProvider.h"
+#include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ConstantPropertyMap.h"
@@ -104,6 +105,7 @@
 #include "ResourceUsageOverlay.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGImage.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptedAnimationController.h"
@@ -1298,6 +1300,13 @@ void Page::scheduleRenderingUpdate()
     renderingUpdateScheduler().scheduleRenderingUpdate();
 }
 
+void Page::scheduleTimedRenderingUpdate()
+{
+    if (chrome().client().scheduleTimedRenderingUpdate())
+        return;
+    renderingUpdateScheduler().scheduleTimedRenderingUpdate();
+}
+
 // https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
 void Page::updateRendering()
 {
@@ -1349,6 +1358,13 @@ void Page::updateRendering()
         document.updateResizeObservations(*this);
     });
 #endif
+
+    forEachDocument([] (Document& document) {
+        for (auto& image : document.cachedResourceLoader().allCachedSVGImages()) {
+            if (auto* page = image->internalPage())
+                page->updateRendering();
+        }
+    });
 
     layoutIfNeeded();
     doAfterUpdateRendering();

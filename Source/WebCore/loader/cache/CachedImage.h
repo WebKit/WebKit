@@ -56,6 +56,7 @@ public:
     WEBCORE_EXPORT Image* image(); // Returns the nullImage() if the image is not available yet.
     WEBCORE_EXPORT Image* imageForRenderer(const RenderObject*); // Returns the nullImage() if the image is not available yet.
     bool hasImage() const { return m_image.get(); }
+    bool hasSVGImage() const;
     bool currentFrameKnownToBeOpaque(const RenderElement*);
 
     std::pair<Image*, float> brokenImage(float deviceScaleFactor) const; // Returns an image and the image's resolution scale factor.
@@ -152,6 +153,7 @@ private:
         bool canDestroyDecodedData(const Image&) final;
         void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid) final;
         void changedInRect(const Image&, const IntRect*) final;
+        void scheduleTimedRenderingUpdate(const Image&) final;
 
         HashSet<CachedImage*> m_cachedImages;
     };
@@ -162,6 +164,7 @@ private:
     bool canDestroyDecodedData(const Image&);
     void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid);
     void changedInRect(const Image&, const IntRect*);
+    void scheduleTimedRenderingUpdate(const Image&);
 
     void updateBufferInternal(SharedBuffer&);
 

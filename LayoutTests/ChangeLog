@@ -1,3 +1,17 @@
+2020-04-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION: CSS animations inside an embedded SVG image do not animate
+        https://bugs.webkit.org/show_bug.cgi?id=209370
+
+        Reviewed by Simon Fraser.
+
+        * svg/animations/css-animation-background-svg-expected.html: Added.
+        * svg/animations/css-animation-background-svg.html: Added.
+        * svg/animations/css-animation-embedded-svg-expected.html: Added.
+        * svg/animations/css-animation-embedded-svg.html: Added.
+        * svg/animations/css-animation-hover-svg-expected.html: Added.
+        * svg/animations/css-animation-hover-svg.html: Added.
+
 2020-04-09  Keith Miller  <keith_miller@apple.com>
 
         Remove legacy X-WebKit-CSP header support

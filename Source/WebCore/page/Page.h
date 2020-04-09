@@ -478,6 +478,7 @@ public:
     WEBCORE_EXPORT void updateRendering();
     
     WEBCORE_EXPORT void scheduleRenderingUpdate();
+    void scheduleTimedRenderingUpdate();
 
     WEBCORE_EXPORT void suspendScriptedAnimations();
     WEBCORE_EXPORT void resumeScriptedAnimations();
