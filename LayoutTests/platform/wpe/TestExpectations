@@ -694,6 +694,22 @@ webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/text-b
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-023.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-022.xht [ ImageOnlyFailure ]
 
+webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure ]
+webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
+webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html [ Failure ]
+webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html [ Failure ]
+
+webkit.org/b/210236 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
+webkit.org/b/210236 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
+webkit.org/b/210236 webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.html [ Failure ]
+webkit.org/b/210236 webgl/2.0.0/conformance2/glsl3/array-assign-constructor.html [ Failure ]
+webkit.org/b/210236 webgl/2.0.0/conformance2/glsl3/array-assign.html [ Failure ]
+webkit.org/b/210236 webgl/2.0.0/conformance2/glsl3/array-element-increment.html [ Failure ]
+webkit.org/b/210236 webgl/2.0.0/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec.html [ Failure ]
+webkit.org/b/210236 webgl/webgl-vertex-array-object-defined.html [ Failure ]
+
+webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
