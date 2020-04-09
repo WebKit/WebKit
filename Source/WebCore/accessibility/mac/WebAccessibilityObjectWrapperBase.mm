@@ -304,6 +304,7 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
 - (void)attachIsolatedObject:(AXCoreObject*)isolatedObject
 {
     ASSERT(isolatedObject && (_identifier == InvalidAXID || _identifier == isolatedObject->objectID()));
+    ASSERT(m_axObject && isolatedObject->objectID() == m_axObject->objectID());
     m_isolatedObject = isolatedObject;
     if (_identifier == InvalidAXID)
         _identifier = m_isolatedObject->objectID();

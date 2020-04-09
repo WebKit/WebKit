@@ -186,11 +186,11 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
     auto* axParent = axObject.parentObject();
     AXID parentID = axParent ? axParent->objectID() : InvalidAXID;
 
+    LockHolder locker { m_changeLogLock };
     if (auto object = nodeForID(axID)) {
         ASSERT(object->objectID() == axID);
         auto newObject = AXIsolatedObject::create(axObject, m_treeID, parentID);
 
-        LockHolder locker { m_changeLogLock };
         // The new object should have the same children as the old one.
         newObject->m_childrenIDs = object->m_childrenIDs;
         // Remove the old object and set the new one to be updated on the AX thread.
@@ -212,18 +212,17 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
 {
     ASSERT(isMainThread());
     AXID axObjectID = axObject.objectID();
+
+    LockHolder locker { m_changeLogLock };
     auto object = nodeForID(axObjectID);
     if (!object)
         return; // nothing to update.
 
+    auto removals = object->m_childrenIDs;
+    locker.unlockEarly();
+
     const auto& axChildren = axObject.children();
     auto axChildrenIDs = axObject.childrenIDs();
-
-    LockHolder locker { m_changeLogLock };
-    auto removals = object->m_childrenIDs;
-    // Make the children IDs of the isolated object to be the same as the AXObject's.
-    object->m_childrenIDs = axChildrenIDs;
-    locker.unlockEarly();
 
     for (size_t i = 0; i < axChildrenIDs.size(); ++i) {
         size_t index = removals.find(axChildrenIDs[i]);
@@ -231,7 +230,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
             removals.remove(index);
         else {
             // This is a new child, add it to the tree.
-            generateSubtree(*axChildren[i], axObjectID, false);
+            generateSubtree(*axChildren[i], axObjectID, true);
         }
     }
 
@@ -239,6 +238,12 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
     // axObject. Thus, remove them from the tree.
     for (const AXID& childID : removals)
         removeSubtree(childID);
+
+    {
+        // Lastly, make the children IDs of the isolated object to be the same as the AXObject's.
+        LockHolder locker { m_changeLogLock };
+        object->m_childrenIDs = axChildrenIDs;
+    }
 }
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedUIElement()
@@ -331,29 +336,39 @@ void AXIsolatedTree::applyPendingChanges()
     }
 
     for (const auto& item : m_pendingAppends) {
-        ASSERT(item.m_isolatedObject->wrapper() || item.m_wrapper);
+        // Either the new object has a wrapper already attached, or one is passed to be attached, not both.
+        ASSERT((item.m_isolatedObject->wrapper() || item.m_wrapper)
+            && !(item.m_isolatedObject->wrapper() && item.m_wrapper));
         AXID axID = item.m_isolatedObject->objectID();
         if (axID == InvalidAXID)
             continue;
 
+        auto& wrapper = item.m_wrapper ? item.m_wrapper : item.m_isolatedObject->wrapper();
+
         if (auto object = m_readerThreadNodeMap.get(axID)) {
             if (object != &item.m_isolatedObject.get()
-                && (object->wrapper() == item.m_wrapper || object->wrapper() == item.m_isolatedObject->wrapper())) {
+                && object->wrapper() == wrapper.get()) {
                 // The new IsolatedObject is a replacement for an existing object
-                // as the result of an update. Thus detach the existing one before
-                // adding the new one.
+                // as the result of an update. Thus detach the wrapper from the
+                // existing object and attach it to the new one.
                 object->detachWrapper(AccessibilityDetachmentType::ElementDestroyed);
+                item.m_isolatedObject->attachPlatformWrapper(wrapper.get());
             }
             m_readerThreadNodeMap.remove(axID);
         }
 
-        if (m_readerThreadNodeMap.add(axID, item.m_isolatedObject.get()) && item.m_wrapper)
-            m_readerThreadNodeMap.get(axID)->attachPlatformWrapper(item.m_wrapper.get());
+        if (!item.m_isolatedObject->wrapper()) {
+            // The new object hasn't been attached a wrapper yet, so attach it.
+            item.m_isolatedObject->attachPlatformWrapper(wrapper.get());
+        }
 
+        auto addResult = m_readerThreadNodeMap.add(axID, item.m_isolatedObject.get());
+        // The newly added object must have a wrapper.
+        ASSERT_UNUSED(addResult, addResult.iterator->value->wrapper());
         // The reference count of the just added IsolatedObject must be 2
         // because it is referenced by m_readerThreadNodeMap and m_pendingAppends.
         // When m_pendingAppends is cleared, the object will be held only by m_readerThreadNodeMap.
-        ASSERT(m_readerThreadNodeMap.get(axID)->refCount() == 2);
+        ASSERT_UNUSED(addResult, addResult.iterator->value->refCount() == 2);
     }
     m_pendingAppends.clear();
 }
