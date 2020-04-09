@@ -426,8 +426,9 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
                 if (appBoundDomains().size() >= maxAppBoundDomainCount)
                     break;
             }
-            if (isInAppBrowserPrivacyEnabled)
+            if (isInAppBrowserPrivacyEnabled) {
                 WEBSITE_DATA_STORE_ADDITIONS
+            }
             hasInitializedAppBoundDomains = true;
         });
     });
