@@ -115,16 +115,19 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
         break;
     default:
         break;
-   }
+    }
+    
+    _datePicker = adoptNS([[UIDatePicker alloc] init]);
 
-    auto size = currentUserInterfaceIdiomIsPad() ? [UIPickerView defaultSizeForCurrentOrientation] : [UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation];
-
-    _datePicker = adoptNS([[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)]);
+    [_datePicker setDatePickerMode:mode];
+    [_datePicker setHidden:NO];
+    
 #if HAVE(UIDATEPICKER_STYLE)
     [_datePicker setPreferredDatePickerStyle:[self datePickerStyle]];
 #endif
-    _datePicker.get().datePickerMode = mode;
-    _datePicker.get().hidden = NO;
+    
+    auto size = [_datePicker sizeThatFits:CGSizeMake(view.frame.size.width, 0)];
+    [_datePicker setFrame:CGRectMake(0, 0, size.width, size.height)];
     
     if ([self shouldPresentGregorianCalendar:view.focusedElementInformation])
         _datePicker.get().calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
@@ -339,9 +342,14 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     _view = view;
     _viewController = adoptNS([[WKDateTimePopoverViewController alloc] initWithView:view datePickerMode:mode]);
     UIDatePicker *datePicker = [(WKDateTimePicker *)_viewController.get().innerControl datePicker];
-    CGFloat popoverWidth = [datePicker _contentWidth];
-    CGFloat popoverHeight = _viewController.get().view.frame.size.height;
-    [_viewController setPreferredContentSize:CGSizeMake(popoverWidth, popoverHeight)];
+
+    if (view.focusedElementInformation.elementType == InputType::Month) {
+        CGFloat popoverWidth = [datePicker _contentWidth];
+        CGFloat popoverHeight = _viewController.get().view.frame.size.height;
+        [_viewController setPreferredContentSize:CGSizeMake(popoverWidth, popoverHeight)];
+    } else
+        [_viewController setPreferredContentSize:datePicker.frame.size];
+    
     [_viewController setEdgesForExtendedLayout:UIRectEdgeNone];
     [_viewController setTitle:_view.focusedElementInformation.title];
 

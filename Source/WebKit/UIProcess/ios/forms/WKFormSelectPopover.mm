@@ -398,10 +398,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (!(self = [super initWithView:view]))
         return nil;
-    
-    CGRect frame;
-    frame.origin = CGPointZero;
-    frame.size = [UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation];
 
     _tableViewController = adoptNS([[WKSelectTableViewController alloc] initWithView:view hasGroups:hasGroups]);
     [_tableViewController setPopover:self];
