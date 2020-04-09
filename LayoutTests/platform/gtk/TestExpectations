@@ -1333,8 +1333,6 @@ webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-
 
 webkit.org/b/208294 fast/images/image-map-outline-in-positioned-container.html [ ImageOnlyFailure ]
 
-webkit.org/b/209046 inspector/animation/lifecycle-css-animation.html [ Failure ]
-
 webkit.org/b/209163 webrtc/audio-video-element-playing.html [ Failure ]
 
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/central-baseline-alignment-002.xht [ ImageOnlyFailure ]
@@ -4025,7 +4023,6 @@ webkit.org/b/176021 fast/events/overflow-viewport-renderer-deleted.html [ Missin
 webkit.org/b/176648 fast/repaint/inline-outline-repaint.html [ ImageOnlyFailure ]
 webkit.org/b/176648 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
 webkit.org/b/176648 fast/selectors/040.html [ ImageOnlyFailure ]
-webkit.org/b/176648 fast/text/decorations-vertical-underline.html [ ImageOnlyFailure ]
 webkit.org/b/176648 fast/text/mark-matches-broken-line-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/176648 fast/text/mark-matches-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/176648 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
@@ -4152,9 +4149,6 @@ webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-ori
 webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-recontruct-loca-001.xht [ ImageOnlyFailure ]
 webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/directory-knowntags-001.xht [ ImageOnlyFailure ]
 webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-origlength-003.xht [ ImageOnlyFailure ]
-
-# Fails consistently on Release, times out consistently in Debug
-webkit.org/b/185912 fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Failure Timeout ]
 
 webkit.org/b/185913 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Failure ]
 
@@ -4717,6 +4711,12 @@ imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-007.html [ Pa
 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ Pass ]
+
+# Passing since r259006.
+imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-010.html [ Pass ]
+
+# Passing since r259532.
+imported/w3c/web-platform-tests/css/css-ui/outline-019.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
