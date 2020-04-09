@@ -37,9 +37,6 @@ CrossThreadTaskHandler::CrossThreadTaskHandler(const char* threadName, Autodrain
     Locker<Lock> locker(m_taskThreadCreationLock);
     Thread::create(threadName, [this] {
         taskRunLoop();
-
-        if (m_completionCallback)
-            m_completionCallback();
     })->detach();
 }
 
@@ -133,17 +130,6 @@ void CrossThreadTaskHandler::resume()
         m_shouldSuspend = false;
         m_shouldSuspendCondition.notifyOne();
     }
-}
-
-void CrossThreadTaskHandler::setCompletionCallback(Function<void ()>&& completionCallback)
-{
-    m_completionCallback = WTFMove(completionCallback);
-}
-
-void CrossThreadTaskHandler::kill()
-{
-    m_taskQueue.kill();
-    m_taskReplyQueue.kill();
 }
 
 } // namespace WTF
