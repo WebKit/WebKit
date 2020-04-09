@@ -1,3 +1,10 @@
+2020-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, skip JSTests/stress/intl-canonicalize-locale-list-error-oom.js if memoryLimited
+        <rdar://problem/61533598>
+
+        * stress/intl-canonicalize-locale-list-error-oom.js:
+
 2020-04-09  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         ProxyObject::defineOwnProperty() should conditionally throw on falsy trap result
