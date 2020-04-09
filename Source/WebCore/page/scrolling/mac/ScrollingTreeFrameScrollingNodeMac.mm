@@ -153,7 +153,7 @@ ScrollingEventResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const 
     if (!canHaveScrollbars())
         return ScrollingEventResult::DidNotHandleEvent;
 
-    m_delegate.handleWheelEvent(wheelEvent);
+    bool handled = m_delegate.handleWheelEvent(wheelEvent);
 
 #if ENABLE(CSS_SCROLL_SNAP)
     if (isRootNode())
@@ -165,8 +165,7 @@ ScrollingEventResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const 
     scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());
     scrollingTree().handleWheelEventPhase(wheelEvent.phase());
     
-    // FIXME: This needs to return whether the event was handled.
-    return ScrollingEventResult::DidHandleEvent;
+    return handled ? ScrollingEventResult::DidHandleEvent : ScrollingEventResult::DidNotHandleEvent;
 }
 
 FloatPoint ScrollingTreeFrameScrollingNodeMac::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamp) const

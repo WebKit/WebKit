@@ -94,7 +94,7 @@ private:
 #endif
 
 #if ENABLE(ASYNC_SCROLLING)
-    void sendDidReceiveEvent(WebCore::PageIdentifier, const WebEvent&, bool didHandleEvent);
+    static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEvent::Type, bool didHandleEvent);
 #endif
 
     Ref<WorkQueue> m_queue;

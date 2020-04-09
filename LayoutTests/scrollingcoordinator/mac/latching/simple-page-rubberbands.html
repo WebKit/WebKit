@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+
+        var minXOffset;
+        var maxXOffset;
+        var minYOffset;
+        var maxYOffset;
+
+        function reset()
+        {
+            minXOffset = 0;
+            maxXOffset = -1000;
+            minYOffset = 0;
+            maxYOffset = -1000;
+        }
+
+        async function scrollTest()
+        {
+            description('Swipes should rubber-band on each side.');
+        
+            window.addEventListener('scroll', () => {
+                minXOffset = Math.min(minXOffset, window.pageXOffset);
+                maxXOffset = Math.max(maxXOffset, window.pageXOffset);
+
+                minYOffset = Math.min(minYOffset, window.pageYOffset);
+                maxYOffset = Math.max(maxYOffset, window.pageYOffset);
+            }, false);
+
+
+            if (!window.eventSender) {
+                finishJSTest();
+                return;
+            }
+
+            reset();
+            debug('');
+            debug('Swipe to the left');
+            
+            await UIHelper.mouseWheelScrollAt(10, 10, 1, 0, 10, 0);
+            shouldBeTrue('minXOffset < 0');
+            shouldBe('maxXOffset', '0');
+            shouldBe('minYOffset', '0');
+            shouldBe('maxYOffset', '0');
+
+            reset();
+            debug('');
+            debug('Swipe to the right');
+            await UIHelper.mouseWheelScrollAt(10, 10, -1, 0, -10, 0);
+            shouldBe('minXOffset', '0');
+            shouldBeTrue('maxXOffset > 0');
+            shouldBe('minYOffset', '0');
+            shouldBe('maxYOffset', '0');
+
+            reset();
+            debug('');
+            debug('Swipe down');
+            await UIHelper.mouseWheelScrollAt(10, 10, 0, -1, 0, -10);
+            shouldBe('minXOffset', '0');
+            shouldBe('maxXOffset', '0');
+            shouldBe('minYOffset', '0');
+            shouldBeTrue('maxYOffset > 0');
+
+            reset();
+            debug('');
+            debug('Swipe up');
+            await UIHelper.mouseWheelScrollAt(10, 10, 0, 1, 0, 10);
+            shouldBe('minXOffset', '0');
+            shouldBe('maxXOffset', '0');
+            shouldBeTrue('minYOffset < 0');
+            shouldBe('maxYOffset', '0');
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            scrollTest();
+        }, false);
+    </script>
+</head>
+<body>
+    
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

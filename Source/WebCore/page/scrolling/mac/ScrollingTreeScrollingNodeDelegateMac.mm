@@ -111,6 +111,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::isScrollSnapInProgress() const
 
 // FIXME: We should find a way to share some of the code from newGestureIsStarting(), isAlreadyPinnedInDirectionOfGesture(),
 // allowsVerticalStretching(), and allowsHorizontalStretching() with the implementation in ScrollAnimatorMac.
+// This is also the same as PlatformWheelEvent::shouldConsiderLatching().
 static bool newGestureIsStarting(const PlatformWheelEvent& wheelEvent)
 {
     return wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseBegan;
@@ -140,8 +141,12 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const Pla
     }
     case ScrollElasticityNone:
         return false;
-    case ScrollElasticityAllowed:
+    case ScrollElasticityAllowed: {
+        auto scrollDirection = ScrollController::directionFromEvent(wheelEvent, ScrollEventAxis::Horizontal);
+        if (scrollDirection)
+            return shouldRubberBandInDirection(scrollDirection.value());
         return true;
+    }
     }
 
     ASSERT_NOT_REACHED();
@@ -158,8 +163,12 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching(const Platf
     }
     case ScrollElasticityNone:
         return false;
-    case ScrollElasticityAllowed:
+    case ScrollElasticityAllowed: {
+        auto scrollDirection = ScrollController::directionFromEvent(wheelEvent, ScrollEventAxis::Vertical);
+        if (scrollDirection)
+            return shouldRubberBandInDirection(scrollDirection.value());
         return true;
+    }
     }
 
     ASSERT_NOT_REACHED();
@@ -184,6 +193,7 @@ IntSize ScrollingTreeScrollingNodeDelegateMac::stretchAmount() const
     return stretch;
 }
 
+// FIXME: Share more with ScrollingTreeScrollingNode::edgePinnedState().
 bool ScrollingTreeScrollingNodeDelegateMac::pinnedInDirection(const FloatSize& delta) const
 {
     FloatSize limitDelta;
@@ -223,8 +233,12 @@ bool ScrollingTreeScrollingNodeDelegateMac::canScrollVertically() const
     return hasEnabledVerticalScrollbar();
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection(ScrollDirection) const
+bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection(ScrollDirection direction) const
 {
+    if (scrollingNode().isRootNode())
+        return scrollingTree().mainFrameCanRubberBandInDirection(direction);
+
+    // FIXME: Consult the node.
     return true;
 }
 

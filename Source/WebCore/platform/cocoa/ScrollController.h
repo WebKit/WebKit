@@ -146,6 +146,11 @@ public:
 #endif
 #endif
 
+    static FloatSize wheelDeltaBiasingTowardsVertical(const PlatformWheelEvent&);
+
+    enum class WheelAxisBias { None, Vertical };
+    static Optional<ScrollDirection> directionFromEvent(const PlatformWheelEvent&, Optional<ScrollEventAxis>, WheelAxisBias = WheelAxisBias::None);
+
 private:
 #if ENABLE(RUBBER_BANDING)
     void startSnapRubberbandTimer();
@@ -153,7 +158,8 @@ private:
     void snapRubberBand();
     void snapRubberBandTimerFired();
 
-    bool shouldRubberBandInHorizontalDirection(const PlatformWheelEvent&);
+    bool shouldRubberBandInHorizontalDirection(const PlatformWheelEvent&) const;
+    bool shouldRubberBandInDirection(ScrollDirection) const;
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)

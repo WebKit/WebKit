@@ -101,7 +101,8 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
 
     if (!asyncFrameOrOverflowScrollingEnabled()) {
         if (m_rootNode)
-            m_rootNode->handleWheelEvent(wheelEvent);
+            return m_rootNode->handleWheelEvent(wheelEvent);
+
         return ScrollingEventResult::DidNotHandleEvent;
     }
 
@@ -395,6 +396,20 @@ void ScrollingTree::setMainFrameCanRubberBand(RectEdges<bool> canRubberBand)
     LockHolder locker(m_swipeStateMutex);
 
     m_swipeState.canRubberBand = canRubberBand;
+}
+
+bool ScrollingTree::mainFrameCanRubberBandInDirection(ScrollDirection direction)
+{
+    LockHolder locker(m_swipeStateMutex);
+
+    switch (direction) {
+    case ScrollUp: return m_swipeState.canRubberBand.top();
+    case ScrollDown: return m_swipeState.canRubberBand.bottom();
+    case ScrollLeft: return m_swipeState.canRubberBand.left();
+    case ScrollRight: return m_swipeState.canRubberBand.right();
+    };
+
+    return false;
 }
 
 // Can be called from the main thread.

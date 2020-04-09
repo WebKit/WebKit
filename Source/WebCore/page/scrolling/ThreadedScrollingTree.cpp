@@ -49,20 +49,19 @@ ThreadedScrollingTree::~ThreadedScrollingTree()
     ASSERT(!m_scrollingCoordinator);
 }
 
-ScrollingEventResult ThreadedScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent)
+ScrollingEventResult ThreadedScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent, CompletionFunction&& completionFunction)
 {
     if (shouldHandleWheelEventSynchronously(wheelEvent))
         return ScrollingEventResult::SendToMainThread;
 
-    if (willWheelEventStartSwipeGesture(wheelEvent))
-        return ScrollingEventResult::DidNotHandleEvent;
-
     RefPtr<ThreadedScrollingTree> protectedThis(this);
-    ScrollingThread::dispatch([protectedThis, wheelEvent] {
-        protectedThis->handleWheelEvent(wheelEvent);
+    ScrollingThread::dispatch([protectedThis, wheelEvent, completionFunc = WTFMove(completionFunction)] {
+        auto result = protectedThis->handleWheelEvent(wheelEvent);
+        if (completionFunc)
+            completionFunc(result);
     });
     
-    return ScrollingEventResult::DidHandleEvent;
+    return ScrollingEventResult::SendToScrollingThread;
 }
 
 ScrollingEventResult ThreadedScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)

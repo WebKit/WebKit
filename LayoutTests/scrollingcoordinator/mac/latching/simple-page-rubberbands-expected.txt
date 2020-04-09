@@ -1,0 +1,33 @@
+Swipes should rubber-band on each side.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Swipe to the left
+PASS minXOffset < 0 is true
+PASS maxXOffset is 0
+PASS minYOffset is 0
+PASS maxYOffset is 0
+
+Swipe to the right
+PASS minXOffset is 0
+PASS maxXOffset > 0 is true
+PASS minYOffset is 0
+PASS maxYOffset is 0
+
+Swipe down
+PASS minXOffset is 0
+PASS maxXOffset is 0
+PASS minYOffset is 0
+PASS maxYOffset > 0 is true
+
+Swipe up
+PASS minXOffset is 0
+PASS maxXOffset is 0
+PASS minYOffset < 0 is true
+PASS maxYOffset is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

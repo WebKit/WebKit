@@ -178,7 +178,7 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
 
 bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent& event)
 {
-    ScrollingEventResult result = m_scrollingTree->tryToHandleWheelEvent(event);
+    ScrollingEventResult result = m_scrollingTree->tryToHandleWheelEvent(event, nullptr);
     return result == ScrollingEventResult::DidHandleEvent; // FIXME: handle other values.
 }
 

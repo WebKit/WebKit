@@ -104,9 +104,14 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         return false;
 #endif
     if (wheelEvent.phase() == PlatformWheelEventPhaseBegan) {
-        // First, check if we should rubber-band at all.
-        if (m_client.pinnedInDirection(FloatSize(-wheelEvent.deltaX(), 0))
-            && !shouldRubberBandInHorizontalDirection(wheelEvent))
+        // FIXME: Trying to decide if a gesture is horizontal or vertical at the "began" phase is very error-prone.
+        auto direction = directionFromEvent(wheelEvent, ScrollEventAxis::Horizontal);
+        // FIXME: pinnedInDirection() needs cleanup.
+        if (direction && m_client.pinnedInDirection(FloatSize(-wheelEvent.deltaX(), 0)) && !shouldRubberBandInDirection(direction.value()))
+            return false;
+
+        direction = directionFromEvent(wheelEvent, ScrollEventAxis::Vertical);
+        if (direction && m_client.pinnedInDirection(FloatSize(0, -wheelEvent.deltaY())) && !shouldRubberBandInDirection(direction.value()))
             return false;
 
         m_inScrollGesture = true;
@@ -164,6 +169,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     deltaY += eventCoalescedDeltaY;
 
     // Slightly prefer scrolling vertically by applying the = case to deltaY
+    // FIXME: Use wheelDeltaBiasingTowardsVertical().
     if (fabsf(deltaY) >= fabsf(deltaX))
         deltaX = 0;
     else
@@ -225,6 +231,8 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         }
     }
 
+    bool handled = true;
+
     if (deltaX || deltaY) {
         if (!(shouldStretch || isVerticallyStretched || isHorizontallyStretched)) {
             if (deltaY) {
@@ -239,6 +247,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
             if (!m_client.allowsHorizontalStretching(wheelEvent)) {
                 deltaX = 0;
                 eventCoalescedDeltaX = 0;
+                handled = false;
             } else if (deltaX && !isHorizontallyStretched && !m_client.pinnedInDirection(FloatSize(deltaX, 0))) {
                 deltaX *= scrollWheelMultiplier();
 
@@ -249,6 +258,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
             if (!m_client.allowsVerticalStretching(wheelEvent)) {
                 deltaY = 0;
                 eventCoalescedDeltaY = 0;
+                handled = false;
             } else if (deltaY && !isVerticallyStretched && !m_client.pinnedInDirection(FloatSize(0, deltaY))) {
                 deltaY *= scrollWheelMultiplier();
 
@@ -281,9 +291,68 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         m_lastMomentumScrollTimestamp = 0;
     }
 
-    return true;
+    return handled;
 }
-#endif
+#endif // PLATFORM(MAC)
+
+FloatSize ScrollController::wheelDeltaBiasingTowardsVertical(const PlatformWheelEvent& wheelEvent)
+{
+    auto deltaX = wheelEvent.deltaX();
+    auto deltaY = wheelEvent.deltaY();
+
+    if (fabsf(deltaY) >= fabsf(deltaX))
+        deltaX = 0;
+    else
+        deltaY = 0;
+
+    return { deltaX, deltaY };
+}
+
+Optional<ScrollDirection> ScrollController::directionFromEvent(const PlatformWheelEvent& wheelEvent, Optional<ScrollEventAxis> axis, WheelAxisBias bias)
+{
+    // FIXME: It's impossible to infer direction from a single event, since the start of a gesture is either zero or
+    // has small deltas on both axes.
+
+    auto wheelDelta = FloatSize { wheelEvent.deltaX(), wheelEvent.deltaY() };
+    if (bias == WheelAxisBias::Vertical)
+        wheelDelta = wheelDeltaBiasingTowardsVertical(wheelEvent);
+
+    if (axis) {
+        switch (axis.value()) {
+        case ScrollEventAxis::Vertical:
+            if (wheelDelta.height() < 0)
+                return ScrollDown;
+
+            if (wheelDelta.height() > 0)
+                return ScrollUp;
+            break;
+
+        case ScrollEventAxis::Horizontal:
+            if (wheelDelta.width() > 0)
+                return ScrollLeft;
+
+            if (wheelDelta.width() < 0)
+                return ScrollRight;
+        }
+
+        return WTF::nullopt;
+    }
+
+    // Check Y first because vertical scrolling dominates.
+    if (wheelDelta.height() < 0)
+        return ScrollDown;
+
+    if (wheelDelta.height() > 0)
+        return ScrollUp;
+
+    if (wheelDelta.width() > 0)
+        return ScrollLeft;
+
+    if (wheelDelta.width() < 0)
+        return ScrollRight;
+
+    return WTF::nullopt;
+}
 
 #if ENABLE(RUBBER_BANDING)
 static inline float roundTowardZero(float num)
@@ -421,16 +490,21 @@ void ScrollController::snapRubberBand()
     m_snapRubberbandTimerIsActive = true;
 }
 
-bool ScrollController::shouldRubberBandInHorizontalDirection(const PlatformWheelEvent& wheelEvent)
+bool ScrollController::shouldRubberBandInHorizontalDirection(const PlatformWheelEvent& wheelEvent) const
 {
-    if (wheelEvent.deltaX() > 0)
-        return m_client.shouldRubberBandInDirection(ScrollLeft);
-    if (wheelEvent.deltaX() < 0)
-        return m_client.shouldRubberBandInDirection(ScrollRight);
+    auto direction = directionFromEvent(wheelEvent, ScrollEventAxis::Horizontal);
+    if (direction)
+        return shouldRubberBandInDirection(direction.value());
 
     return true;
 }
-#endif
+
+bool ScrollController::shouldRubberBandInDirection(ScrollDirection direction) const
+{
+    return m_client.shouldRubberBandInDirection(direction);
+}
+
+#endif // ENABLE(RUBBER_BANDING)
 
 #if ENABLE(CSS_SCROLL_SNAP)
 

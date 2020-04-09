@@ -1,3 +1,35 @@
+2020-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scroll] Horizontal scrolls can trigger unwanted back swipes
+        https://bugs.webkit.org/show_bug.cgi?id=210095
+        <rdar://problem/61376245>
+
+        Reviewed by Tim Horton.
+
+        With async overflow/frame scrolling, EventDispatcher::wheelEvent() can't immediately
+        determine whether the scrolling tree handled the scroll; we have to wait until the
+        event has been processed by the scrolling thread. To allow that, add a
+        ScrollingEventResult::SendToScrollingThread return value and a give tryToHandleWheelEvent()
+        a callback that's called when the scrolling thread is done with the event. EventDispatcher
+        uses that to send the "didReceiveEvent" with "handled" back to the UI process, which then
+        proceeds with history or reading list swipes.
+
+        Various fixes were necessary to correctly determine whether the event was handled.
+        
+        ScrollingTreeFrameScrollingNodeMac::handleWheelEvent() didn't return an accurate ScrollingEventResult,
+        and ScrollController didn't return false in cases where rubber-banding was disabled (which broke navigation swipes
+        and reading list navigation).
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::handleWheelEvent):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::tryToHandleWheelEvent):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        (WebKit::EventDispatcher::sendDidReceiveEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+
 2020-04-09  Alex Christensen  <achristensen@webkit.org>
 
         IPC serialization of enums should serialize std::underlying_type instead of uint64_t

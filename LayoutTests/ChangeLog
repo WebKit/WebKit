@@ -1,3 +1,22 @@
+2020-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scroll] Horizontal scrolls can trigger unwanted back swipes
+        https://bugs.webkit.org/show_bug.cgi?id=210095
+        <rdar://problem/61376245>
+
+        Reviewed by Tim Horton.
+
+        Tests that rubberbanding works on a simple page, and that edge swipes work on a simple page.
+
+        Edge swipes inside overflow:scroll are still broken by latching and will be fixed later.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.async mouseWheelScrollAt):
+        * scrollingcoordinator/mac/latching/main-frame-back-swipe-expected.txt: Added.
+        * scrollingcoordinator/mac/latching/main-frame-back-swipe.html: Added.
+        * scrollingcoordinator/mac/latching/simple-page-rubberbands-expected.txt: Added.
+        * scrollingcoordinator/mac/latching/simple-page-rubberbands.html: Added.
+
 2020-04-09  Youenn Fablet  <youenn@apple.com>
 
         [MacOS] Stopping a cloned audio capture track should not stop the original audio track

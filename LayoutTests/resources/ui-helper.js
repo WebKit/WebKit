@@ -28,13 +28,23 @@ window.UIHelper = class UIHelper {
         eventSender.mouseMoveTo(x2, y2);
         eventSender.mouseUp();
     }
-    
-    static async mouseWheelScrollAt(x, y)
+
+    static async mouseWheelScrollAt(x, y, beginX, beginY, deltaX, deltaY)
     {
+        if (beginX === undefined)
+            beginX = 0;
+        if (beginY === undefined)
+            beginY = -1;
+
+        if (deltaX === undefined)
+            deltaX = 0;
+        if (deltaY === undefined)
+            deltaY = -10;
+
         eventSender.monitorWheelEvents();
         eventSender.mouseMoveTo(x, y);
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(beginX, beginY, "began", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(deltaX, deltaY, "changed", "none");
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
         return new Promise(resolve => {
             eventSender.callAfterScrollingCompletes(() => {

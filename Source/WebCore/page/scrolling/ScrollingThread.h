@@ -48,7 +48,7 @@ class ScrollingThread {
     WTF_MAKE_NONCOPYABLE(ScrollingThread);
 
 public:
-    static bool isCurrentThread();
+    WEBCORE_EXPORT static bool isCurrentThread();
     WEBCORE_EXPORT static void dispatch(Function<void ()>&&);
 
     // Will dispatch the given function on the main thread once all pending functions

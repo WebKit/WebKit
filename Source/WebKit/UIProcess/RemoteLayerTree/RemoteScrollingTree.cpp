@@ -61,7 +61,7 @@ RemoteScrollingTree::~RemoteScrollingTree()
 {
 }
 
-ScrollingEventResult RemoteScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent)
+ScrollingEventResult RemoteScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent, CompletionFunction&&)
 {
     if (shouldHandleWheelEventSynchronously(wheelEvent))
         return ScrollingEventResult::SendToMainThread;
