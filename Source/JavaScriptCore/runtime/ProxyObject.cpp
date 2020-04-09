@@ -226,7 +226,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(JSGlobalObject* globalObje
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
+        throwTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
         return false;
     }
 
@@ -246,7 +246,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(JSGlobalObject* globalObje
     RETURN_IF_EXCEPTION(scope, false);
 
     if (!trapResult.isUndefined() && !trapResult.isObject()) {
-        throwVMTypeError(globalObject, scope, "result of 'getOwnPropertyDescriptor' call should either be an Object or undefined"_s);
+        throwTypeError(globalObject, scope, "result of 'getOwnPropertyDescriptor' call should either be an Object or undefined"_s);
         return false;
     }
 
@@ -258,13 +258,13 @@ bool ProxyObject::performInternalMethodGetOwnProperty(JSGlobalObject* globalObje
         if (!isTargetPropertyDescriptorDefined)
             return false;
         if (!targetPropertyDescriptor.configurable()) {
-            throwVMTypeError(globalObject, scope, "When the result of 'getOwnPropertyDescriptor' is undefined the target must be configurable"_s);
+            throwTypeError(globalObject, scope, "When the result of 'getOwnPropertyDescriptor' is undefined the target must be configurable"_s);
             return false;
         }
         bool isExtensible = target->isExtensible(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         if (!isExtensible) {
-            throwVMTypeError(globalObject, scope, "When 'getOwnPropertyDescriptor' returns undefined, the 'target' of a Proxy should be extensible"_s);
+            throwTypeError(globalObject, scope, "When 'getOwnPropertyDescriptor' returns undefined, the 'target' of a Proxy should be extensible"_s);
             return false;
         }
 
@@ -281,17 +281,17 @@ bool ProxyObject::performInternalMethodGetOwnProperty(JSGlobalObject* globalObje
         trapResultAsDescriptor, isTargetPropertyDescriptorDefined, targetPropertyDescriptor, throwException);
     RETURN_IF_EXCEPTION(scope, false);
     if (!valid) {
-        throwVMTypeError(globalObject, scope, "Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test"_s);
+        throwTypeError(globalObject, scope, "Result from 'getOwnPropertyDescriptor' fails the IsCompatiblePropertyDescriptor test"_s);
         return false;
     }
 
     if (!trapResultAsDescriptor.configurable()) {
         if (!isTargetPropertyDescriptorDefined || targetPropertyDescriptor.configurable()) {
-            throwVMTypeError(globalObject, scope, "Result from 'getOwnPropertyDescriptor' can't be non-configurable when the 'target' doesn't have it as an own property or if it is a configurable own property on 'target'"_s);
+            throwTypeError(globalObject, scope, "Result from 'getOwnPropertyDescriptor' can't be non-configurable when the 'target' doesn't have it as an own property or if it is a configurable own property on 'target'"_s);
             return false;
         }
         if (trapResultAsDescriptor.writablePresent() && !trapResultAsDescriptor.writable() && targetPropertyDescriptor.writable()) {
-            throwVMTypeError(globalObject, scope, "Result from 'getOwnPropertyDescriptor' can't be non-configurable and non-writable when the target's property is writable"_s);
+            throwTypeError(globalObject, scope, "Result from 'getOwnPropertyDescriptor' can't be non-configurable and non-writable when the target's property is writable"_s);
             return false;
         }
     }
@@ -330,7 +330,7 @@ bool ProxyObject::performHasProperty(JSGlobalObject* globalObject, PropertyName 
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
+        throwTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
         return false;
     }
 
@@ -358,13 +358,13 @@ bool ProxyObject::performHasProperty(JSGlobalObject* globalObject, PropertyName 
         RETURN_IF_EXCEPTION(scope, false);
         if (isPropertyDescriptorDefined) {
             if (!descriptor.configurable()) {
-                throwVMTypeError(globalObject, scope, "Proxy 'has' must return 'true' for non-configurable properties"_s);
+                throwTypeError(globalObject, scope, "Proxy 'has' must return 'true' for non-configurable properties"_s);
                 return false;
             }
             bool isExtensible = target->isExtensible(globalObject);
             RETURN_IF_EXCEPTION(scope, false);
             if (!isExtensible) {
-                throwVMTypeError(globalObject, scope, "Proxy 'has' must return 'true' for a non-extensible 'target' object with a configurable property"_s);
+                throwTypeError(globalObject, scope, "Proxy 'has' must return 'true' for a non-extensible 'target' object with a configurable property"_s);
                 return false;
             }
         }
@@ -433,7 +433,7 @@ bool ProxyObject::performPut(JSGlobalObject* globalObject, JSValue putValue, JSV
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
+        throwTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
         return false;
     }
 
@@ -458,7 +458,7 @@ bool ProxyObject::performPut(JSGlobalObject* globalObject, JSValue putValue, JSV
     RETURN_IF_EXCEPTION(scope, false);
     if (!trapResultAsBool) {
         if (shouldThrow)
-            throwVMTypeError(globalObject, scope, makeString("Proxy object's 'set' trap returned falsy value for property '", String(propertyName.uid()), "'"));
+            throwTypeError(globalObject, scope, makeString("Proxy object's 'set' trap returned falsy value for property '", String(propertyName.uid()), "'"));
         return false;
     }
 
@@ -470,11 +470,11 @@ bool ProxyObject::performPut(JSGlobalObject* globalObject, JSValue putValue, JSV
             bool isSame = sameValue(globalObject, descriptor.value(), putValue);
             RETURN_IF_EXCEPTION(scope, false);
             if (!isSame) {
-                throwVMTypeError(globalObject, scope, "Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'"_s);
+                throwTypeError(globalObject, scope, "Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'"_s);
                 return false;
             }
         } else if (descriptor.isAccessorDescriptor() && !descriptor.configurable() && descriptor.setter().isUndefined()) {
-            throwVMTypeError(globalObject, scope, "Proxy handler's 'set' method on a non-configurable accessor property without a setter should return false"_s);
+            throwTypeError(globalObject, scope, "Proxy handler's 'set' method on a non-configurable accessor property without a setter should return false"_s);
             return false;
         }
     }
@@ -638,7 +638,7 @@ bool ProxyObject::performDelete(JSGlobalObject* globalObject, PropertyName prope
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
+        throwTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
         return false;
     }
 
@@ -669,13 +669,13 @@ bool ProxyObject::performDelete(JSGlobalObject* globalObject, PropertyName prope
     EXCEPTION_ASSERT(!scope.exception() || !result);
     if (result) {
         if (!descriptor.configurable()) {
-            throwVMTypeError(globalObject, scope, "Proxy handler's 'deleteProperty' method should return false when the target's property is not configurable"_s);
+            throwTypeError(globalObject, scope, "Proxy handler's 'deleteProperty' method should return false when the target's property is not configurable"_s);
             return false;
         }
         bool targetIsExtensible = target->isExtensible(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         if (!targetIsExtensible) {
-            throwVMTypeError(globalObject, scope, "Proxy handler's 'deleteProperty' method should return false when the target has property and is not extensible"_s);
+            throwTypeError(globalObject, scope, "Proxy handler's 'deleteProperty' method should return false when the target has property and is not extensible"_s);
             return false;
         }
     }
@@ -720,7 +720,7 @@ bool ProxyObject::performPreventExtensions(JSGlobalObject* globalObject)
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
+        throwTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
         return false;
     }
 
@@ -746,7 +746,7 @@ bool ProxyObject::performPreventExtensions(JSGlobalObject* globalObject)
         bool targetIsExtensible = target->isExtensible(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         if (targetIsExtensible) {
-            throwVMTypeError(globalObject, scope, "Proxy's 'preventExtensions' trap returned true even though its target is extensible. It should have returned false"_s);
+            throwTypeError(globalObject, scope, "Proxy's 'preventExtensions' trap returned true even though its target is extensible. It should have returned false"_s);
             return false;
         }
     }
@@ -772,7 +772,7 @@ bool ProxyObject::performIsExtensible(JSGlobalObject* globalObject)
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
+        throwTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
         return false;
     }
 
@@ -801,11 +801,11 @@ bool ProxyObject::performIsExtensible(JSGlobalObject* globalObject)
     if (trapResultAsBool != isTargetExtensible) {
         if (isTargetExtensible) {
             ASSERT(!trapResultAsBool);
-            throwVMTypeError(globalObject, scope, "Proxy object's 'isExtensible' trap returned false when the target is extensible. It should have returned true"_s);
+            throwTypeError(globalObject, scope, "Proxy object's 'isExtensible' trap returned false when the target is extensible. It should have returned true"_s);
         } else {
             ASSERT(!isTargetExtensible);
             ASSERT(trapResultAsBool);
-            throwVMTypeError(globalObject, scope, "Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false"_s);
+            throwTypeError(globalObject, scope, "Proxy object's 'isExtensible' trap returned true when the target is non-extensible. It should have returned false"_s);
         }
     }
     
@@ -838,7 +838,7 @@ bool ProxyObject::performDefineOwnProperty(JSGlobalObject* globalObject, Propert
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
+        throwTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
         return false;
     }
 
@@ -865,8 +865,11 @@ bool ProxyObject::performDefineOwnProperty(JSGlobalObject* globalObject, Propert
     bool trapResultAsBool = trapResult.toBoolean(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
 
-    if (!trapResultAsBool)
+    if (!trapResultAsBool) {
+        if (shouldThrow)
+            throwTypeError(globalObject, scope, makeString("Proxy's 'defineProperty' trap returned falsy value for property '", String(propertyName.uid()), "'"));
         return false;
+    }
 
     PropertyDescriptor targetDescriptor;
     bool isTargetDescriptorDefined = target->getOwnPropertyDescriptor(globalObject, propertyName, targetDescriptor);
@@ -878,11 +881,11 @@ bool ProxyObject::performDefineOwnProperty(JSGlobalObject* globalObject, Propert
 
     if (!isTargetDescriptorDefined) {
         if (!targetIsExtensible) {
-            throwVMTypeError(globalObject, scope, "Proxy's 'defineProperty' trap returned true even though getOwnPropertyDescriptor of the Proxy's target returned undefined and the target is non-extensible"_s);
+            throwTypeError(globalObject, scope, "Proxy's 'defineProperty' trap returned true even though getOwnPropertyDescriptor of the Proxy's target returned undefined and the target is non-extensible"_s);
             return false;
         }
         if (settingConfigurableToFalse) {
-            throwVMTypeError(globalObject, scope, "Proxy's 'defineProperty' trap returned true for a non-configurable field even though getOwnPropertyDescriptor of the Proxy's target returned undefined"_s);
+            throwTypeError(globalObject, scope, "Proxy's 'defineProperty' trap returned true for a non-configurable field even though getOwnPropertyDescriptor of the Proxy's target returned undefined"_s);
             return false;
         }
 
@@ -896,11 +899,11 @@ bool ProxyObject::performDefineOwnProperty(JSGlobalObject* globalObject, Propert
     bool isCompatibleDescriptor = validateAndApplyPropertyDescriptor(globalObject, nullptr, propertyName, targetIsExtensible, descriptor, isCurrentDefined, current, throwException);
     RETURN_IF_EXCEPTION(scope, false);    
     if (!isCompatibleDescriptor) {
-        throwVMTypeError(globalObject, scope, "Proxy's 'defineProperty' trap did not define a property on its target that is compatible with the trap's input descriptor"_s);
+        throwTypeError(globalObject, scope, "Proxy's 'defineProperty' trap did not define a property on its target that is compatible with the trap's input descriptor"_s);
         return false;
     }
     if (settingConfigurableToFalse && targetDescriptor.configurable()) {
-        throwVMTypeError(globalObject, scope, "Proxy's 'defineProperty' trap did not define a non-configurable property on its target even though the input descriptor to the trap said it must do so"_s);
+        throwTypeError(globalObject, scope, "Proxy's 'defineProperty' trap did not define a non-configurable property on its target even though the input descriptor to the trap said it must do so"_s);
         return false;
     }
     if (targetDescriptor.isDataDescriptor() && !targetDescriptor.configurable() && targetDescriptor.writable()) {
@@ -931,7 +934,7 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
     }
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
+        throwTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
         return;
     }
 
@@ -1023,7 +1026,7 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
 
     for (UniquedStringImpl* impl : targetNonConfigurableKeys) {
         if (removeIfContainedInUncheckedResultKeys(impl) == IsNotContainedIn) {
-            throwVMTypeError(globalObject, scope, makeString("Proxy object's 'target' has the non-configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
+            throwTypeError(globalObject, scope, makeString("Proxy object's 'target' has the non-configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
             return;
         }
     }
@@ -1031,13 +1034,13 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
     if (!targetIsExensible) {
         for (UniquedStringImpl* impl : targetConfigurableKeys) {
             if (removeIfContainedInUncheckedResultKeys(impl) == IsNotContainedIn) {
-                throwVMTypeError(globalObject, scope, makeString("Proxy object's non-extensible 'target' has configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
+                throwTypeError(globalObject, scope, makeString("Proxy object's non-extensible 'target' has configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
                 return;
             }
         }
 
         if (uncheckedResultKeys.size()) {
-            throwVMTypeError(globalObject, scope, "Proxy handler's 'ownKeys' method returned a key that was not present in its non-extensible target"_s);
+            throwTypeError(globalObject, scope, "Proxy handler's 'ownKeys' method returned a key that was not present in its non-extensible target"_s);
             return;
         }
     }
@@ -1110,7 +1113,7 @@ bool ProxyObject::performSetPrototype(JSGlobalObject* globalObject, JSValue prot
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
+        throwTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
         return false;
     }
 
@@ -1136,7 +1139,7 @@ bool ProxyObject::performSetPrototype(JSGlobalObject* globalObject, JSValue prot
     
     if (!trapResultAsBool) {
         if (shouldThrowIfCantSet)
-            throwVMTypeError(globalObject, scope, "Proxy 'setPrototypeOf' returned false indicating it could not set the prototype value. The operation was expected to succeed"_s);
+            throwTypeError(globalObject, scope, "Proxy 'setPrototypeOf' returned false indicating it could not set the prototype value. The operation was expected to succeed"_s);
         return false;
     }
 
@@ -1150,7 +1153,7 @@ bool ProxyObject::performSetPrototype(JSGlobalObject* globalObject, JSValue prot
     bool isSame = sameValue(globalObject, prototype, targetPrototype);
     RETURN_IF_EXCEPTION(scope, false);
     if (!isSame) {
-        throwVMTypeError(globalObject, scope, "Proxy 'setPrototypeOf' trap returned true when its target is non-extensible and the new prototype value is not the same as the current prototype value. It should have returned false"_s);
+        throwTypeError(globalObject, scope, "Proxy 'setPrototypeOf' trap returned true when its target is non-extensible and the new prototype value is not the same as the current prototype value. It should have returned false"_s);
         return false;
     }
 
@@ -1175,7 +1178,7 @@ JSValue ProxyObject::performGetPrototype(JSGlobalObject* globalObject)
 
     JSValue handlerValue = this->handler();
     if (handlerValue.isNull()) {
-        throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
+        throwTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
         return { };
     }
 
@@ -1196,7 +1199,7 @@ JSValue ProxyObject::performGetPrototype(JSGlobalObject* globalObject)
     RETURN_IF_EXCEPTION(scope, { });
 
     if (!trapResult.isObject() && !trapResult.isNull()) {
-        throwVMTypeError(globalObject, scope, "Proxy handler's 'getPrototypeOf' trap should either return an object or null"_s);
+        throwTypeError(globalObject, scope, "Proxy handler's 'getPrototypeOf' trap should either return an object or null"_s);
         return { };
     }
 
@@ -1210,7 +1213,7 @@ JSValue ProxyObject::performGetPrototype(JSGlobalObject* globalObject)
     bool isSame = sameValue(globalObject, targetPrototype, trapResult);
     RETURN_IF_EXCEPTION(scope, { });
     if (!isSame) {
-        throwVMTypeError(globalObject, scope, "Proxy's 'getPrototypeOf' trap for a non-extensible target should return the same value as the target's prototype"_s);
+        throwTypeError(globalObject, scope, "Proxy's 'getPrototypeOf' trap for a non-extensible target should return the same value as the target's prototype"_s);
         return { };
     }
 

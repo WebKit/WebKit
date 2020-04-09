@@ -1,3 +1,12 @@
+2020-04-09  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        ProxyObject::defineOwnProperty() should conditionally throw on falsy trap result
+        https://bugs.webkit.org/show_bug.cgi?id=210267
+
+        Reviewed by Ross Kirsling.
+
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
 2020-04-09  Saam Barati  <sbarati@apple.com>
 
         We can still cache delete in strict mode as long as the property is not "non-configurable"
