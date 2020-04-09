@@ -1,3 +1,21 @@
+2020-04-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        WKAccessibilityRootObject must run on the main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=210306
+
+        Reviewed by Chris Fleizach.
+
+        WKAccessibilityRootObject needs to run on the main thread because makes
+        calls into Document and Page. So reverting the change to make it run on
+        the AX thread. This means that we cannot simulate getting the root
+        object on the secondary thread at the moment, as it would with an
+        accessibility client that supports isolated tree mode. So it is a
+        tradeoff made for the time being to be able to make progress in testing
+        the rest of the functionality of AXIsolatedTree/Object.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::AccessibilityController::accessibleElementById):
+
 2020-04-09  David Kilzer  <ddkilzer@apple.com>
 
         Add using WTF::isInBounds to CheckedArithmetic.h
