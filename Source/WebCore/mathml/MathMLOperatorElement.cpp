@@ -198,18 +198,7 @@ const MathMLElement::Length& MathMLOperatorElement::minSize()
 
 const MathMLElement::Length& MathMLOperatorElement::maxSize()
 {
-    if (m_maxSize)
-        return m_maxSize.value();
-
-    const AtomString& value = attributeWithoutSynchronization(MathMLNames::maxsizeAttr);
-    if (value == "infinity") {
-        Length maxsize;
-        maxsize.type = LengthType::Infinity;
-        m_maxSize = maxsize;
-    } else
-        m_maxSize = parseMathMLLength(value);
-
-    return m_maxSize.value();
+    return cachedMathMLLength(MathMLNames::maxsizeAttr, m_maxSize);
 }
 
 void MathMLOperatorElement::childrenChanged(const ChildChange& change)
