@@ -290,7 +290,7 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(Op bytecode, PutKind putKind, 
         JSValueRegs(regT0), JSValueRegs(regT1), regT2, bytecode.m_ecmaMode, putKind);
     gen.generateFastPath(*this);
     // IC can write new Structure without write-barrier if a base is cell.
-    // We emit write-barrier unconditionally since we know baseVRege is a cell.
+    // We emit write-barrier unconditionally since we know base is a cell.
     emitWriteBarrier(base, UnconditionalWriteBarrier);
     doneCases.append(jump());
 
@@ -408,7 +408,7 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, JSValueRegs(regT0));
 
     // IC can write new Structure without write-barrier if a base is cell.
-    // We emit write-barrier unconditionally since we know baseVRege is a cell.
+    // We emit write-barrier unconditionally since we know base is a cell.
     // We should emit write-barrier at the end of sequence since write-barrier clobbers registers.
     emitWriteBarrier(base, UnconditionalWriteBarrier);
 }
@@ -457,7 +457,7 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
 
     // We should emit write-barrier at the end of sequence since write-barrier clobbers registers.
     // IC can write new Structure without write-barrier if a base is cell.
-    // We emit write-barrier unconditionally since we know baseVRege is a cell.
+    // We emit write-barrier unconditionally since we know base is a cell.
     emitWriteBarrier(base, UnconditionalWriteBarrier);
 }
 
@@ -675,7 +675,7 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     m_putByIds.append(gen);
     
     // IC can write new Structure without write-barrier if a base is cell.
-    // We emit write-barrier unconditionally since we know baseVRege is a cell.
+    // We emit write-barrier unconditionally since we know base is a cell.
     emitWriteBarrier(baseVReg, UnconditionalWriteBarrier);
 }
 
