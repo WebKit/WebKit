@@ -2134,6 +2134,8 @@ static void testCagePreservesPACFailureBit()
     if (isARM64E()) {
         CHECK_NOT_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
         CHECK_NOT_EQ(invoke<void*>(cage, taggedNotCagedPtr, 1), ptr);
+        void* cagedTaggedNotCagedPtr = invoke<void*>(cage, taggedNotCagedPtr, 1);
+        CHECK_NOT_EQ(cagedTaggedNotCagedPtr, removeArrayPtrTag(cagedTaggedNotCagedPtr));
     } else
         CHECK_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
 
