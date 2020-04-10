@@ -8,16 +8,7 @@
         <script src=../media-controls.js></script>
 
         <script>
-            function finishTest()
-            {
-                consoleWrite("<br>** Track should not be visible. **");
-                testExpected("video.textTracks[0].mode", "disabled");
-
-                consoleWrite("");
-                endTest();
-            }
-
-            function seeked()
+            async function seeked()
             {
                 consoleWrite("<br>** Track should be visible, cue should be styled appropriately. **");
                 testExpected("video.textTracks[0].mode", "showing");
@@ -31,8 +22,12 @@
                 consoleWrite("<br>** Change caption display mode to generate a notification. **");
                 run("setCaptionDisplayMode('ForcedOnly')");
 
-                // The notification is sent asynchronously, so check after a brief pause.
-                timer = setTimeout(finishTest, 100);
+                // The notification is sent asynchronously.
+                consoleWrite("<br>** Track should not be visible. **");
+                await testExpectedEventually("video.textTracks[0].mode", "disabled");
+
+                consoleWrite("");
+                endTest();
             }
 
             function canplaythrough()

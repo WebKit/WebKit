@@ -1,3 +1,14 @@
+2020-04-10  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION: (r259850)[ Mac wk1 Debug ] media/track/track-user-stylesheet.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=210350
+
+        Reviewed by Daniel Bates.
+
+        Make the test reliable by replacing the timer-based approach with testExpectedEventually.
+
+        * media/track/track-user-stylesheet.html:
+
 2020-04-10  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Null ptr Deref in RadioButtonGroups::updateCheckedState

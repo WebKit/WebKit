@@ -398,7 +398,8 @@ void CaptionUserPreferences::setCaptionsStyleSheetOverride(const String& overrid
 
     m_captionsStyleSheetOverride = override;
     updateCaptionStyleSheetOverride();
-    captionPreferencesChanged();
+    if (!m_timer.isActive())
+        m_timer.startOneShot(0_s);
 }
 
 void CaptionUserPreferences::updateCaptionStyleSheetOverride()

@@ -1,3 +1,15 @@
+2020-04-10  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION: (r259850)[ Mac wk1 Debug ] media/track/track-user-stylesheet.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=210350
+
+        Reviewed by Daniel Bates.
+
+        Revert the change in r259850.
+
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::setCaptionsStyleSheetOverride):
+
 2020-04-10  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Null ptr Deref in RadioButtonGroups::updateCheckedState
