@@ -1,3 +1,47 @@
+2020-04-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r258411. rdar://problem/61410180
+
+    [iOS] 9 imported/w3c/web-platform-tests/pointerevents/pointerevent tests are failing since import in r253630
+    https://bugs.webkit.org/show_bug.cgi?id=209064
+    <rdar://problem/60330378>
+    
+    Reviewed by Simon Fraser.
+    
+    In r253630 we imported a host of new and updated WPT tests and these included changes to testdriver.js that our testdriver-vendor.js
+    implementation didn't know to handle. Specifically, pauses are now added after each pointer action to add a 16ms delay.
+    
+    It was a mistake to use a stationary touch for pauses, instead we shuld just increase the time offset with the value set in the pause
+    and avoid changing any other state, so no resetting the last known x and y values, or adding a new touch into the event stream that
+    will be passed to UIScriptController.
+    
+    And since there is now a built-in pause between pointer actions, there is also no need to set a harcoded value for a default
+    timeoffset, this is now provided directly by the action input.
+    
+    * web-platform-tests/resources/testdriver-vendor.js:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258411 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-13  Antoine Quint  <graouts@apple.com>
+
+            [iOS] 9 imported/w3c/web-platform-tests/pointerevents/pointerevent tests are failing since import in r253630
+            https://bugs.webkit.org/show_bug.cgi?id=209064
+            <rdar://problem/60330378>
+
+            Reviewed by Simon Fraser.
+
+            In r253630 we imported a host of new and updated WPT tests and these included changes to testdriver.js that our testdriver-vendor.js
+            implementation didn't know to handle. Specifically, pauses are now added after each pointer action to add a 16ms delay.
+
+            It was a mistake to use a stationary touch for pauses, instead we shuld just increase the time offset with the value set in the pause
+            and avoid changing any other state, so no resetting the last known x and y values, or adding a new touch into the event stream that
+            will be passed to UIScriptController.
+
+            And since there is now a built-in pause between pointer actions, there is also no need to set a harcoded value for a default
+            timeoffset, this is now provided directly by the action input.
+
+            * web-platform-tests/resources/testdriver-vendor.js:
+
 2020-03-30  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r258493. rdar://problem/61064864

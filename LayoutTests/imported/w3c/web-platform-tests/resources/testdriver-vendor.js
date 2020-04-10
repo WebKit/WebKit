@@ -77,7 +77,7 @@ function dispatchTouchActions(actions, options = { insertPauseAfterPointerUp: fa
             timeOffset
         };
 
-        let timeOffsetIncrease = 0.05;
+        let timeOffsetIncrease = 0;
 
         switch (action.type) {
         case "pointerMove":
@@ -108,23 +108,23 @@ function dispatchTouchActions(actions, options = { insertPauseAfterPointerUp: fa
             break;
         case "pause":
             timeOffsetIncrease = action.duration / 1000;
-            touch.phase = "stationary";
-            if (!pointerDown)
-                id++;
             break;
         default:
             return Promise.reject(new Error(`Unknown action type "${action.type}".`));
         }
 
-        x = touch.x;
-        y = touch.y;
+        if (action.type !== "pause") {
+            x = touch.x;
+            y = touch.y;
+        }
 
         if (!pointerDown && touch.phase == "moved")
             continue;
 
         timeOffset += timeOffsetIncrease;
 
-        events.push(command);
+        if (action.type !== "pause")
+            events.push(command);
     }
 
     const stream = JSON.stringify({ events });
