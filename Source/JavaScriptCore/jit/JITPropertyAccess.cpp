@@ -290,8 +290,9 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(Op bytecode, PutKind putKind, 
         JSValueRegs(regT0), JSValueRegs(regT1), regT2, bytecode.m_ecmaMode, putKind);
     gen.generateFastPath(*this);
     // IC can write new Structure without write-barrier if a base is cell.
-    // We emit write-barrier unconditionally since we know base is a cell.
-    emitWriteBarrier(base, UnconditionalWriteBarrier);
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
     doneCases.append(jump());
 
     Label coldPathBegin = label();
@@ -408,9 +409,10 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, JSValueRegs(regT0));
 
     // IC can write new Structure without write-barrier if a base is cell.
-    // We emit write-barrier unconditionally since we know base is a cell.
     // We should emit write-barrier at the end of sequence since write-barrier clobbers registers.
-    emitWriteBarrier(base, UnconditionalWriteBarrier);
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
 }
 
 void JIT::emitSlow_op_del_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -457,8 +459,9 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
 
     // We should emit write-barrier at the end of sequence since write-barrier clobbers registers.
     // IC can write new Structure without write-barrier if a base is cell.
-    // We emit write-barrier unconditionally since we know base is a cell.
-    emitWriteBarrier(base, UnconditionalWriteBarrier);
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
 }
 
 void JIT::emitSlow_op_del_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -675,8 +678,9 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     m_putByIds.append(gen);
     
     // IC can write new Structure without write-barrier if a base is cell.
-    // We emit write-barrier unconditionally since we know base is a cell.
-    emitWriteBarrier(baseVReg, UnconditionalWriteBarrier);
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(baseVReg, ShouldFilterBase);
 }
 
 void JIT::emitSlow_op_put_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

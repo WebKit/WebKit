@@ -1,3 +1,21 @@
+2020-04-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r259849 and r259851.
+        https://bugs.webkit.org/show_bug.cgi?id=210328
+
+        Crash in LayoutTests (Requested by yusukesuzuki on #webkit).
+
+        Reverted changesets:
+
+        "[JSC] Use UnconditionalWriteBarrier in Baseline effectively
+        to reduce code size"
+        https://bugs.webkit.org/show_bug.cgi?id=209395
+        https://trac.webkit.org/changeset/259849
+
+        "Unreviewed, fix typo in comment"
+        https://bugs.webkit.org/show_bug.cgi?id=209395
+        https://trac.webkit.org/changeset/259851
+
 2020-04-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix typo in comment

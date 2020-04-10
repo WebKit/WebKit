@@ -369,9 +369,10 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(Op bytecode, PutKind putKind, 
     // reload the registers.
     //
     // IC can write new Structure without write-barrier if a base is cell.
-    // We emit write-barrier unconditionally since we know base is a cell.
     // We are emitting write-barrier before writing here but this is OK since 32bit JSC does not have concurrent GC.
-    emitWriteBarrier(base, UnconditionalWriteBarrier);
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
     emitLoadPayload(base, regT0);
     emitLoad(value, regT3, regT2);
 
@@ -622,8 +623,9 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     m_putByIds.append(gen);
     
     // IC can write new Structure without write-barrier if a base is cell.
-    // We emit write-barrier unconditionally since we know base is a cell.
-    emitWriteBarrier(base, UnconditionalWriteBarrier);
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
 }
 
 void JIT::emitSlow_op_put_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
