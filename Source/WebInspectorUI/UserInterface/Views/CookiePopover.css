@@ -56,8 +56,8 @@
     -webkit-appearance: none;
 }
 
-.popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"]).invalid {
-    color: var(--error-text-color);
+.popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"]):matches(:invalid, .invalid) {
+    border-color: var(--error-text-color);
 }
 
 @media (prefers-color-scheme: dark) {

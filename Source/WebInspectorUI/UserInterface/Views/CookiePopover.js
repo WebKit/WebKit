@@ -51,12 +51,8 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         if (!this._targetElement)
             return null;
 
-        let name = this._nameInputElement.value || this._nameInputElement.placeholder;
+        let name = this._nameInputElement.value;
         if (!name)
-            return null;
-
-        let value = this._valueInputElement.value || this._valueInputElement.placeholder;
-        if (!value)
             return null;
 
         let domain = this._domainInputElement.value || this._domainInputElement.placeholder;
@@ -83,7 +79,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
 
         let data = {
             name,
-            value,
+            value: this._valueInputElement.value,
             domain,
             path,
             httpOnly: this._httpOnlyCheckboxElement.checked,
@@ -124,8 +120,8 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
             data.sameSite = cookie.sameSite;
         } else {
             let urlComponents = WI.networkManager.mainFrame.mainResource.urlComponents;
-            data.name = WI.unlocalizedString("name");
-            data.value = WI.unlocalizedString("value");
+            data.name = "";
+            data.value = "";
             data.domain = urlComponents.host;
             data.path = urlComponents.path;
             data.expires = this._defaultExpires().toLocaleString();
@@ -180,6 +176,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         }
 
         this._nameInputElement = createInputRow("name", WI.UIString("Name"), "text", data.name).inputElement;
+        this._nameInputElement.required = true;
 
         this._valueInputElement = createInputRow("value", WI.UIString("Value"), "text", data.value).inputElement;
 
@@ -202,8 +199,10 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         this._sameSiteSelectElement = document.createElement("select");
         for (let sameSiteType of Object.values(WI.Cookie.SameSiteType)) {
             let optionElement = this._sameSiteSelectElement.appendChild(document.createElement("option"));
-            optionElement.textContent = sameSiteType;
+            optionElement.value = sameSiteType;
+            optionElement.textContent = WI.Cookie.displayNameForSameSiteType(sameSiteType);
         }
+        this._sameSiteSelectElement.value = data.sameSite;
         createRow("same-site", WI.unlocalizedString("SameSite"), this._sameSiteSelectElement);
 
         let toggleExpiresRow = () => {

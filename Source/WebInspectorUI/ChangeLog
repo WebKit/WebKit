@@ -1,5 +1,26 @@
 2020-04-09  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Storage: should be able to set a cookie with no value
+        https://bugs.webkit.org/show_bug.cgi?id=210237
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CookiePopover.js:
+        (WI.CookiePopover.prototype.get serializedData):
+        Require an explicitly set `name` instead of falling back to the `placeholder`. Allow the
+        `value` to be an empty string.
+
+        (WI.CookiePopover.prototype.show):
+        Don't have default placeholder values for `name` or `value` for the reasons above.
+        Drive-by: if an existing `WI.Cookie` is provided, use its `SameSite` value.
+
+        * UserInterface/Views/CookiePopover.css: Added.
+        (.popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"]):matches(:invalid, .invalid)): Added.
+        (.popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"]).invalid): Deleted.
+        Instead of changing the text color, change the border color.
+
+2020-04-09  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Debugger: debug hooks should also be emitted for the first sub-expression in a comma expression
         https://bugs.webkit.org/show_bug.cgi?id=210253
 
