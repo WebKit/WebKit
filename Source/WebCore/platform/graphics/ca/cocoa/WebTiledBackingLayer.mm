@@ -51,14 +51,6 @@
     [super dealloc];
 }
 
-- (id)initWithLayer:(id)layer
-{
-    UNUSED_PARAM(layer);
-
-    ASSERT_NOT_REACHED();
-    return nil;
-}
-
 - (WebCore::TileController*)createTileController:(WebCore::PlatformCALayer*)rootLayer
 {
     ASSERT(!_tileController);
