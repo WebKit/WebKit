@@ -38,6 +38,7 @@
 #include <WebCore/XUniquePtr.h>
 
 #if PLATFORM(GTK)
+#include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <gtk/gtkx.h>
 #endif
@@ -61,7 +62,7 @@ static Display* getPluginDisplay()
 #if PLATFORM(GTK)
     // Since we're a gdk/gtk app, we'll (probably?) have the same X connection as any gdk-based
     // plugins, so we can return that. We might want to add other implementations here later.
-    return GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
+    return gdk_x11_get_default_xdisplay();
 #else
     return nullptr;
 #endif
@@ -70,7 +71,7 @@ static Display* getPluginDisplay()
 static inline int x11Screen()
 {
 #if PLATFORM(GTK)
-    return gdk_screen_get_number(gdk_screen_get_default());
+    return gdk_x11_screen_get_screen_number(gdk_screen_get_default());
 #else
     return 0;
 #endif
