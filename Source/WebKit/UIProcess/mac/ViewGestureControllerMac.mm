@@ -609,11 +609,6 @@ void ViewGestureController::removeSwipeSnapshot()
         return;
     }
 
-    resetState();
-}
-
-void ViewGestureController::resetState()
-{
     if (m_currentSwipeSnapshot)
         m_currentSwipeSnapshot->setVolatile(true);
     m_currentSwipeSnapshot = nullptr;
@@ -640,13 +635,6 @@ void ViewGestureController::resetState()
     m_backgroundColorForCurrentSnapshot = Color();
 
     didEndGesture();
-}
-
-void ViewGestureController::reset()
-{
-    removeSwipeSnapshot();
-    resetState();
-    m_swipeCancellationTracker = nil; // FIXME: Move to reset state()?
 }
 
 double ViewGestureController::magnification() const
