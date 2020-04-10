@@ -1,5 +1,19 @@
 2020-04-10  Philippe Normand  <pnormand@igalia.com>
 
+        [GTK][WPE] Flatpak error when running run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=209229
+
+        Reviewed by Žan Doberšek.
+
+        Report `flatpak build` spawned process errors only in verbose mode.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.execute_command):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.run_gdb):
+
+2020-04-10  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Improved sccache support
         https://bugs.webkit.org/show_bug.cgi?id=210027
 

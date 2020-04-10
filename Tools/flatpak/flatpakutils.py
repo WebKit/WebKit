@@ -446,6 +446,22 @@ class WebkitFlatpak:
         self.use_icecream = False
         self.icc_version = None
 
+    def execute_command(self, args, stdout=None, stderr=None):
+        _log.debug('Running in sandbox: %s\n' % ' '.join(args))
+        result = 0
+        try:
+            result = subprocess.check_call(args, stdout=stdout, stderr=stderr)
+        except subprocess.CalledProcessError as err:
+            if self.verbose:
+                cmd = ' '.join(err.cmd)
+                message = "'%s' returned a non-zero exit code." % cmd
+                if stderr:
+                    with open(stderr.name, 'r') as stderrf:
+                        message += " Stderr: %s" % stderrf.read()
+                Console.error_message(message)
+            return err.returncode
+        return result
+
     def clean_args(self):
         os.environ["FLATPAK_USER_DIR"] = os.environ.get("WEBKIT_FLATPAK_USER_DIR", FLATPAK_USER_DIR_PATH)
         try:
@@ -693,13 +709,9 @@ class WebkitFlatpak:
             gst_env = self.setup_gstbuild(building)
 
         flatpak_command += extra_flatpak_args + [self.flatpak_build_path] + gst_env + args
-        _log.debug('Running in sandbox: %s\n' % ' '.join(flatpak_command))
 
         try:
-            subprocess.check_call(flatpak_command, stdout=stdout)
-        except subprocess.CalledProcessError as e:
-            sys.stderr.write(str(e) + "\n")
-            return e.returncode
+            return self.execute_command(flatpak_command, stdout=stdout)
         except KeyboardInterrupt:
             return 0
 
@@ -827,14 +839,10 @@ class WebkitFlatpak:
                     cmd = ["coredumpctl", "--since=%s" % self.gdb_stack_trace, "dump"]
                 else:
                     cmd = ["coredumpctl", "dump"] + shlex.split(self.coredumpctl_matches)
-                try:
-                    subprocess.check_call(cmd, stdout=coredump, stderr=stderr)
-                except subprocess.CalledProcessError as err:
-                    with open(stderr.name, 'r') as stderrf:
-                        stderr = stderrf.read()
-                    cmd = ' '.join(err.cmd)
-                    Console.message("'%s' returned a non-zero exit code. Stderr: %s", cmd, stderr)
-                    return err.returncode
+
+                result = self.execute_command(cmd, stdout=coredump, stderr=stderr)
+                if result != 0:
+                    return result
 
                 with open(stderr.name, 'r') as stderrf:
                     stderr = stderrf.read()
