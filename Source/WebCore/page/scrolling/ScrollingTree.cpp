@@ -45,7 +45,6 @@
 namespace WebCore {
 
 ScrollingTree::ScrollingTree() = default;
-
 ScrollingTree::~ScrollingTree() = default;
 
 bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent& wheelEvent)
@@ -53,13 +52,10 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
     // This method is invoked by the event handling thread
     LockHolder lock(m_treeStateMutex);
 
-    bool shouldSetLatch = wheelEvent.shouldConsiderLatching();
-    
-    if (hasLatchedNode() && !shouldSetLatch)
+    if (m_latchingController.latchedNodeForEvent(wheelEvent))
         return false;
 
-    if (shouldSetLatch)
-        m_treeState.latchedNodeID = 0;
+    m_latchingController.receivedWheelEvent(wheelEvent);
     
     if (!m_treeState.eventTrackingRegions.isEmpty() && m_rootNode) {
         FloatPoint position = wheelEvent.position();
@@ -79,25 +75,16 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
     return false;
 }
 
-void ScrollingTree::setOrClearLatchedNode(const PlatformWheelEvent& wheelEvent, ScrollingNodeID nodeID)
-{
-    if (wheelEvent.shouldConsiderLatching()) {
-        LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree " << this << " setOrClearLatchedNode: setting latched node " << nodeID);
-        setLatchedNode(nodeID);
-    } else if (wheelEvent.shouldResetLatching()) {
-        LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree " << this << " setOrClearLatchedNode: clearing latched node (was " << latchedNode() << ")");
-        clearLatchedNode();
-    }
-}
-
 ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree " << this << " handleWheelEvent (async scrolling enabled: " << asyncFrameOrOverflowScrollingEnabled() << ")");
+    LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree " << this << " handleWheelEvent (async scrolling enabled: " << asyncFrameOrOverflowScrollingEnabled() << ")");
 
     LockHolder locker(m_treeMutex);
 
     if (isMonitoringWheelEvents())
         receivedWheelEvent(wheelEvent);
+
+    m_latchingController.receivedWheelEvent(wheelEvent);
 
     if (!asyncFrameOrOverflowScrollingEnabled()) {
         if (m_rootNode)
@@ -106,29 +93,29 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
         return ScrollingEventResult::DidNotHandleEvent;
     }
 
-    if (hasLatchedNode()) {
-        LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree::handleWheelEvent: has latched node " << latchedNode());
-        auto* node = nodeForID(latchedNode());
+    if (auto latchedNodeID = m_latchingController.latchedNodeForEvent(wheelEvent)) {
+        LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree::handleWheelEvent: has latched node " << latchedNodeID);
+        auto* node = nodeForID(latchedNodeID.value());
         if (is<ScrollingTreeScrollingNode>(node))
             return downcast<ScrollingTreeScrollingNode>(*node).handleWheelEvent(wheelEvent);
     }
 
-    if (m_rootNode) {
-        FloatPoint position = wheelEvent.position();
-        position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
-        auto node = scrollingNodeForPoint(position);
+    FloatPoint position = wheelEvent.position();
+    position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
+    auto node = scrollingNodeForPoint(position);
 
-        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position << "\n");
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position);
 
-        while (node) {
-            if (is<ScrollingTreeScrollingNode>(*node)) {
-                auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
-                // FIXME: this needs to consult latching logic.
-                if (scrollingNode.handleWheelEvent(wheelEvent) == ScrollingEventResult::DidHandleEvent)
-                    return ScrollingEventResult::DidHandleEvent;
+    while (node) {
+        if (is<ScrollingTreeScrollingNode>(*node)) {
+            auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
+            // FIXME: this needs to consult latching logic.
+            if (scrollingNode.handleWheelEvent(wheelEvent) == ScrollingEventResult::DidHandleEvent) {
+                m_latchingController.nodeDidHandleEvent(wheelEvent, scrollingNode.scrollingNodeID());
+                return ScrollingEventResult::DidHandleEvent;
             }
-            node = node->parent();
         }
+        node = node->parent();
     }
     return ScrollingEventResult::DidNotHandleEvent;
 }
@@ -195,8 +182,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
     updateTreeFromStateNode(rootNode, orphanNodes, unvisitedNodes);
     
     for (auto nodeID : unvisitedNodes) {
-        if (nodeID == m_treeState.latchedNodeID)
-            clearLatchedNode();
+        m_latchingController.nodeWasRemoved(nodeID);
         
         LOG(Scrolling, "ScrollingTree::commitTreeState - removing unvisited node %" PRIu64, nodeID);
         m_nodeMap.remove(nodeID);
@@ -341,9 +327,25 @@ void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeNode& node)
     }
 }
 
+Optional<ScrollingNodeID> ScrollingTree::latchedNodeID() const
+{
+    return m_latchingController.latchedNodeID();
+}
+
+void ScrollingTree::clearLatchedNode()
+{
+    m_latchingController.clearLatchedNode();
+}
+
 void ScrollingTree::setAsyncFrameOrOverflowScrollingEnabled(bool enabled)
 {
     m_asyncFrameOrOverflowScrollingEnabled = enabled;
+}
+
+FloatPoint ScrollingTree::mainFrameScrollPosition() const
+{
+    ASSERT(m_treeStateMutex.isLocked());
+    return m_treeState.mainFrameScrollPosition;
 }
 
 void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
@@ -456,24 +458,6 @@ bool ScrollingTree::scrollingPerformanceLoggingEnabled()
     return m_scrollingPerformanceLoggingEnabled;
 }
 
-ScrollingNodeID ScrollingTree::latchedNode()
-{
-    LockHolder locker(m_treeStateMutex);
-    return m_treeState.latchedNodeID;
-}
-
-void ScrollingTree::setLatchedNode(ScrollingNodeID node)
-{
-    LockHolder locker(m_treeStateMutex);
-    m_treeState.latchedNodeID = node;
-}
-
-void ScrollingTree::clearLatchedNode()
-{
-    LockHolder locker(m_treeStateMutex);
-    m_treeState.latchedNodeID = 0;
-}
-
 String ScrollingTree::scrollingTreeAsText(ScrollingStateTreeAsTextBehavior behavior)
 {
     TextStream ts(TextStream::LineMode::MultipleLine);
@@ -484,8 +468,8 @@ String ScrollingTree::scrollingTreeAsText(ScrollingStateTreeAsTextBehavior behav
 
         LockHolder locker(m_treeStateMutex);
 
-        if (m_treeState.latchedNodeID)
-            ts.dumpProperty("latched node", m_treeState.latchedNodeID);
+        if (auto latchedNodeID = m_latchingController.latchedNodeID())
+            ts.dumpProperty("latched node", latchedNodeID.value());
 
         if (!m_treeState.mainFrameScrollPosition.isZero())
             ts.dumpProperty("main frame scroll position", m_treeState.mainFrameScrollPosition);

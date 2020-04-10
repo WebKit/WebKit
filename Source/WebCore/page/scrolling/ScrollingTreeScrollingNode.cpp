@@ -120,6 +120,20 @@ void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNo
     m_isFirstCommit = false;
 }
 
+bool ScrollingTreeScrollingNode::isLatchedNode() const
+{
+    return scrollingTree().latchedNodeID() == scrollingNodeID();
+}
+
+bool ScrollingTreeScrollingNode::canScrollWithWheelEvent(const PlatformWheelEvent& wheelEvent) const
+{
+    if (!canHaveScrollbars())
+        return false;
+
+    // We always rubber-band the latched node, or the root node.
+    return isLatchedNode() || isRootNode() || !scrollLimitReached(wheelEvent);
+}
+
 ScrollingEventResult ScrollingTreeScrollingNode::handleWheelEvent(const PlatformWheelEvent&)
 {
     return ScrollingEventResult::DidNotHandleEvent;
@@ -146,7 +160,7 @@ FloatPoint ScrollingTreeScrollingNode::maximumScrollPosition() const
 bool ScrollingTreeScrollingNode::scrollLimitReached(const PlatformWheelEvent& wheelEvent) const
 {
     FloatPoint oldScrollPosition = currentScrollPosition();
-    FloatPoint newScrollPosition = oldScrollPosition + FloatSize(wheelEvent.deltaX(), -wheelEvent.deltaY());
+    FloatPoint newScrollPosition = oldScrollPosition + FloatSize(-wheelEvent.deltaX(), -wheelEvent.deltaY());
     newScrollPosition = newScrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
     return newScrollPosition == oldScrollPosition;
 }

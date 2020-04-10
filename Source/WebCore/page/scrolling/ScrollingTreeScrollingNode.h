@@ -53,6 +53,7 @@ public:
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void commitStateAfterChildren(const ScrollingStateNode&) override;
 
+    virtual bool canScrollWithWheelEvent(const PlatformWheelEvent&) const;
     virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
 
     FloatPoint currentScrollPosition() const { return m_currentScrollPosition; }
@@ -124,6 +125,8 @@ protected:
 
     const FloatSize& reachableContentsSize() const { return m_reachableContentsSize; }
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
+    
+    bool isLatchedNode() const;
 
     // If the totalContentsSize changes in the middle of a rubber-band, we still want to use the old totalContentsSize for the sake of
     // computing the stretchAmount(). Using the old value will keep the animation smooth. When there is no rubber-band in progress at

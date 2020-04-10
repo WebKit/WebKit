@@ -150,7 +150,7 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren(const Scrollin
 
 ScrollingEventResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    if (!canHaveScrollbars())
+    if (!canScrollWithWheelEvent(wheelEvent))
         return ScrollingEventResult::DidNotHandleEvent;
 
     bool handled = m_delegate.handleWheelEvent(wheelEvent);
@@ -162,7 +162,6 @@ ScrollingEventResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const 
     if (m_delegate.activeScrollSnapIndexDidChange())
         scrollingTree().setActiveScrollSnapIndices(scrollingNodeID(), m_delegate.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal), m_delegate.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
 #endif
-    scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());
     scrollingTree().handleWheelEventPhase(wheelEvent.phase());
     
     return handled ? ScrollingEventResult::DidHandleEvent : ScrollingEventResult::DidNotHandleEvent;

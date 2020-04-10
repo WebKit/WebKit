@@ -1,3 +1,20 @@
+2020-04-09  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scrolling] Vertical scrolls over a horizontally scrollable overflow are captured
+        https://bugs.webkit.org/show_bug.cgi?id=210320
+
+        Reviewed by Tim Horton.
+
+        Tests for horizontal inside vertical overflow, test that hit-testing inside scrolled-to-limit horizontal scrollers
+        still allows for swipe navigation, and test the latching timeout.
+
+        * fast/scrolling/latching/iframe-latch-small-deltas-expected.txt:
+        * fast/scrolling/latching/iframe-latch-small-deltas.html:
+        * scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe-expected.txt: Added.
+        * scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe.html: Added.
+        * scrollingcoordinator/mac/latching/horizontal-overflow-in-vertical-overflow-expected.txt: Added.
+        * scrollingcoordinator/mac/latching/horizontal-overflow-in-vertical-overflow.html: Added.
+
 2020-04-10  Simon Fraser  <simon.fraser@apple.com>
 
         Hit-testing a WebTiledBackingLayer with an animation asserts

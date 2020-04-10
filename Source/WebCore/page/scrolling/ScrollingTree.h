@@ -31,7 +31,9 @@
 #include "PlatformWheelEvent.h"
 #include "RectEdges.h"
 #include "Region.h"
-#include "ScrollingCoordinator.h"
+#include "ScrollTypes.h"
+#include "ScrollingCoordinatorTypes.h"
+#include "ScrollingTreeLatchingController.h"
 #include "WheelEventTestMonitor.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -51,6 +53,7 @@ class ScrollingTreePositionedNode;
 class ScrollingTreeScrollingNode;
 
 class ScrollingTree : public ThreadSafeRefCounted<ScrollingTree> {
+friend class ScrollingTreeLatchingController;
 public:
     WEBCORE_EXPORT ScrollingTree();
     WEBCORE_EXPORT virtual ~ScrollingTree();
@@ -140,13 +143,8 @@ public:
     bool scrollingPerformanceLoggingEnabled();
 
     ScrollingTreeFrameScrollingNode* rootNode() const { return m_rootNode.get(); }
-
-    ScrollingNodeID latchedNode();
-    void setLatchedNode(ScrollingNodeID);
+    Optional<ScrollingNodeID> latchedNodeID() const;
     void clearLatchedNode();
-
-    bool hasLatchedNode() const { return m_treeState.latchedNodeID; }
-    void setOrClearLatchedNode(const PlatformWheelEvent&, ScrollingNodeID);
 
     bool hasFixedOrSticky() const { return !!m_fixedOrStickyNodeCount; }
     void fixedOrStickyNodeAdded() { ++m_fixedOrStickyNodeCount; }
@@ -173,6 +171,7 @@ public:
     virtual void unlockLayersForHitTesting() { }
 
 protected:
+    FloatPoint mainFrameScrollPosition() const;
     void setMainFrameScrollPosition(FloatPoint);
 
     WEBCORE_EXPORT virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
@@ -195,13 +194,13 @@ private:
     using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
     ScrollingTreeNodeMap m_nodeMap;
 
+    ScrollingTreeLatchingController m_latchingController;
     RelatedNodesMap m_overflowRelatedNodesMap;
 
     HashSet<Ref<ScrollingTreeOverflowScrollProxyNode>> m_activeOverflowScrollProxyNodes;
     HashSet<Ref<ScrollingTreePositionedNode>> m_activePositionedNodes;
 
     struct TreeState {
-        ScrollingNodeID latchedNodeID { 0 };
         EventTrackingRegions eventTrackingRegions;
         FloatPoint mainFrameScrollPosition;
         bool mainFrameIsRubberBanding { false };

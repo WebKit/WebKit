@@ -101,7 +101,7 @@ void ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers()
 
 ScrollingEventResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    if (!canHaveScrollbars())
+    if (!canScrollWithWheelEvent(wheelEvent))
         return ScrollingEventResult::DidNotHandleEvent;
 
     if (wheelEvent.deltaX() || wheelEvent.deltaY()) {
@@ -128,8 +128,6 @@ ScrollingEventResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent
         m_kineticAnimation->clearScrollHistory();
     }
 #endif
-
-    scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());
 
     return ScrollingEventResult::DidHandleEvent;
 }

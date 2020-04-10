@@ -69,14 +69,13 @@ void ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren(const Scrol
 
 ScrollingEventResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    if (!canHaveScrollbars())
+    if (!canScrollWithWheelEvent(wheelEvent))
         return ScrollingEventResult::DidNotHandleEvent;
 
     m_delegate.handleWheelEvent(wheelEvent);
 
     // FIXME: Scroll snap
 
-    scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());
     scrollingTree().handleWheelEventPhase(wheelEvent.phase());
     
     // FIXME: This needs to return whether the event was handled.

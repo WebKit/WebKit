@@ -905,6 +905,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/scrolling/ScrollingTree.h
     page/scrolling/ScrollingTreeFrameHostingNode.h
     page/scrolling/ScrollingTreeFrameScrollingNode.h
+    page/scrolling/ScrollingTreeLatchingController.h
     page/scrolling/ScrollingTreeNode.h
     page/scrolling/ScrollingTreeOverflowScrollingNode.h
     page/scrolling/ScrollingTreeScrollingNode.h

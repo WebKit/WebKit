@@ -116,7 +116,7 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateAfterChildren(const Scro
 
 ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    if (!canHaveScrollbars())
+    if (!canScrollWithWheelEvent(wheelEvent))
         return ScrollingEventResult::DidNotHandleEvent;
 
     if (wheelEvent.deltaX() || wheelEvent.deltaY()) {
@@ -143,8 +143,6 @@ ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(co
         m_kineticAnimation->clearScrollHistory();
     }
 #endif
-
-    scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());
 
     // FIXME: This needs to return whether the event was handled.
     return ScrollingEventResult::DidHandleEvent;

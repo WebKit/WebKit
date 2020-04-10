@@ -13,7 +13,7 @@ After wait
 PASS iframeTarget.contentWindow.pageYOffset is 500
 PASS window.pageYOffset is 200
 FAIL iframeTarget.contentWindow.pageYOffset should be 480. Was 500.
-FAIL window.pageYOffset should be 200. Was 180.
+PASS window.pageYOffset is 200
 PASS successfullyParsed is true
 
 TEST COMPLETE
