@@ -10,16 +10,6 @@
     </head>
     <body>
         <video id="video" autoplay></video>
-        <br>
-        <video id="video1" loop autoplay playsInline></video>
-        <video id="video2" loop autoplay playsInline></video>
-        <video id="video3" loop autoplay playsInline></video>
-        <video id="video4" loop autoplay playsInline></video>
-        <br>
-        <video id="video10" loop autoplay playsInline></video>
-        <video id="video20" loop autoplay playsInline></video>
-        <video id="video30" loop autoplay playsInline></video>
-        <video id="video40" loop autoplay playsInline></video>
         <script src ="routines.js"></script>
         <script>
 video = document.getElementById("video");
@@ -72,101 +62,6 @@ promise_test((test) => {
         return video.play();
     });
 }, "Remote media stream autoplay");
-
-promise_test(async (test) => {
-    if (window.internals)
-        internals.setMediaElementRestrictions(video1, "");
-
-    video1.src = findMediaFile("video", "../media/content/audio-tracks");
-    await video1.play();
-
-    await video1.pause();
-
-    video4.srcObject = await navigator.mediaDevices.getUserMedia({ video : true });
-
-    while (video4.paused)
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-    assert_true(video1.paused, "paused video");
-
-    video1.remove();
-}, "Granting getUserMedia should not start paused media 1");
-
-promise_test(async (test) => {
-    if (window.internals)
-        internals.setMediaElementRestrictions(video2, "");
-
-    video2.src = findMediaFile("video", "../media/content/audio-tracks");
-    await video2.play();
-
-    let removedVideo2 = video2;
-    removedVideo2.remove();
-
-    let cptr = 0;
-    while (++cptr < 20 && !removedVideo2.paused)
-        await new Promise(resolve => setTimeout(resolve, 50));
-    assert_true(removedVideo2.paused, "out of DOM video should get paused");
-
-    video4.srcObject = await navigator.mediaDevices.getUserMedia({ video : true });
-
-    while (video4.paused)
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-    assert_true(removedVideo2.paused, "out of DOM video should not restart after getUserMedia call");
-}, "Granting getUserMedia should not start paused media 2");
-
-promise_test(async (test) => {
-    if (window.internals)
-        internals.setMediaElementRestrictions(video3, "");
-
-    video3.src = findMediaFile("video", "../media/content/audio-tracks");
-    await video3.play();
-
-    video4.srcObject = await navigator.mediaDevices.getUserMedia({ video : true });
-
-    while (video4.paused)
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-    assert_false(video3.paused, "still playing video");
-
-    video3.remove();
-}, "Granting getUserMedia should not start paused media 3");
-
-promise_test(async (test) => {
-    if (window.internals) {
-        internals.setMediaElementRestrictions(video10, "RequireUserGestureForVideoRateChange");
-        internals.setMediaElementRestrictions(video20, "RequireUserGestureForVideoRateChange");
-        internals.setMediaElementRestrictions(video30, "RequireUserGestureForVideoRateChange");
-        internals.setMediaElementRestrictions(video40, "RequireUserGestureForVideoRateChange");
-    }
-
-    video10.src = findMediaFile("video", "../media/content/audio-tracks");
-    video20.src = findMediaFile("video", "../media/content/audio-tracks");
-    video30.src = findMediaFile("video", "../media/content/audio-tracks");
-
-    await new Promise(resolve => setTimeout(resolve, 50));
-    assert_true(video10.paused, "paused video");
-    assert_true(video20.paused, "paused video");
-    assert_true(video30.paused, "paused video");
-
-    video10.pause();
-    let removedVideo20 = video20;
-    removedVideo20.remove();
-
-    video40.srcObject = await navigator.mediaDevices.getUserMedia({ video : true });
-
-    while (video40.paused)
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-    assert_true(video10.paused, "paused video");
-    assert_true(removedVideo20.paused, "out of DOM video");
-    assert_true(video30.paused, "still not autoplaying video");
-
-    video10.remove();
-    video30.remove();
-    video40.remove();
-}, "Granting getUserMedia should not start paused media or media that cannot autoplay due to autoplay restrictions");
-
         </script>
     </body>
 </html>

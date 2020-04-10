@@ -1,3 +1,55 @@
+2020-04-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r255832. rdar://problem/61601064
+
+    Improve stability of webrtc/video-autoplay.html by splitting tests in multiple files
+    https://bugs.webkit.org/show_bug.cgi?id=207252
+    
+    Reviewed by Eric Carlson.
+    
+    webrtc/video-autplay.html is flaky on bots.
+    On debug bots, removing the video element from the DOM does not always pause it in a timely manner.
+    To improve reliability, we split tests in individual files.
+    Removing flakiness expectation from video-autoplay.html since it no longer contains the flaky tests.
+    
+    * TestExpectations:
+    * webrtc/video-autoplay-expected.txt:
+    * webrtc/video-autoplay.html:
+    * webrtc/video-autoplay1-expected.txt: Added.
+    * webrtc/video-autoplay1.html: Added.
+    * webrtc/video-autoplay2-expected.txt: Added.
+    * webrtc/video-autoplay2.html: Added.
+    * webrtc/video-autoplay3-expected.txt: Added.
+    * webrtc/video-autoplay3.html: Added.
+    * webrtc/video-autoplay4-expected.txt: Added.
+    * webrtc/video-autoplay4.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255832 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-02-05  youenn fablet  <youenn@apple.com>
+
+            Improve stability of webrtc/video-autoplay.html by splitting tests in multiple files
+            https://bugs.webkit.org/show_bug.cgi?id=207252
+
+            Reviewed by Eric Carlson.
+
+            webrtc/video-autplay.html is flaky on bots.
+            On debug bots, removing the video element from the DOM does not always pause it in a timely manner.
+            To improve reliability, we split tests in individual files.
+            Removing flakiness expectation from video-autoplay.html since it no longer contains the flaky tests.
+
+            * TestExpectations:
+            * webrtc/video-autoplay-expected.txt:
+            * webrtc/video-autoplay.html:
+            * webrtc/video-autoplay1-expected.txt: Added.
+            * webrtc/video-autoplay1.html: Added.
+            * webrtc/video-autoplay2-expected.txt: Added.
+            * webrtc/video-autoplay2.html: Added.
+            * webrtc/video-autoplay3-expected.txt: Added.
+            * webrtc/video-autoplay3.html: Added.
+            * webrtc/video-autoplay4-expected.txt: Added.
+            * webrtc/video-autoplay4.html: Added.
+
 2020-03-30  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r258837. rdar://problem/61064858
