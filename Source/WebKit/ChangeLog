@@ -1,3 +1,15 @@
+2020-04-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add routines to message filter in the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=210338
+
+        Reviewed by Geoffrey Garen.
+
+        Add required routines to the message filter in the WebContent sandbox on iOS. These have been observed
+        being in use during local testing.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-04-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reset view navigation gesture state between tests

@@ -1137,6 +1137,7 @@
                 io_registry_entry_get_property_bytes
                 io_registry_entry_get_registry_entry_id
                 io_server_version
+                io_service_close
                 io_service_get_matching_service_bin
                 io_service_get_matching_services_bin
                 io_service_open_extended
@@ -1144,6 +1145,7 @@
                 mach_port_set_attributes
                 mach_vm_copy
                 mach_vm_map_external
+                mach_vm_region
                 mach_vm_remap_external
                 semaphore_create
                 semaphore_destroy
