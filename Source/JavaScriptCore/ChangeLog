@@ -1,5 +1,39 @@
 2020-04-10  Mark Lam  <mark.lam@apple.com>
 
+        Use more PAC diversity for JIT probe code.
+        https://bugs.webkit.org/show_bug.cgi?id=210252
+        <rdar://problem/54490367>
+
+        Reviewed by Keith Miller.
+
+        Introducing new PtrTags:
+            JITProbePtrTag - for the client probe function.
+            JITProbeTrampolinePtrTag - for calling the ctiMasmProbeTrampoline.
+            JITProbeExecutorPtrTag - for calling the probe executor.
+                Currently, this is only the Probe::executeProbe().
+            JITProbeStackInitializationFunctionPtrTag - for calling the optional stack
+                initialization function that the client probe function may set.
+
+        We'll now use these in the JIT probe mechanism instead of adopting the default
+        CFunctionPtrTag.
+
+        * assembler/MacroAssembler.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerPrinter.h:
+        (JSC::MacroAssembler::print):
+        * assembler/ProbeContext.h:
+        * runtime/JSCPtrTag.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::callWithStackSizeProbeFunction):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+
+2020-04-10  Mark Lam  <mark.lam@apple.com>
+
         [Follow up] Fix bad tests in testmasm's testCagePreservesPACFailureBit().
         https://bugs.webkit.org/show_bug.cgi?id=210314
         <rdar://problem/61556785>

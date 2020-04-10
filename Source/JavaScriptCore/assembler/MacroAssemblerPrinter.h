@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "JSCPtrTag.h"
 #include "MacroAssembler.h"
 #include "Printer.h"
 #include "ProbeContext.h"
@@ -232,12 +233,12 @@ template<typename... Arguments>
 inline void MacroAssembler::print(Arguments&&... arguments)
 {
     auto printRecordList = Printer::makePrintRecordList(std::forward<Arguments>(arguments)...);
-    probe(Printer::printCallback, printRecordList);
+    probe(tagCFunction<JITProbePtrTag>(Printer::printCallback), printRecordList);
 }
 
 inline void MacroAssembler::print(Printer::PrintRecordList* printRecordList)
 {
-    probe(Printer::printCallback, printRecordList);
+    probe(tagCFunction<JITProbePtrTag>(Printer::printCallback), printRecordList);
 }
 
 #endif // ENABLE(MASM_PROBE)
