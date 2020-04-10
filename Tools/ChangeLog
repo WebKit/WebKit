@@ -1,3 +1,36 @@
+2020-04-10  Alicia Boya García  <aboya@igalia.com>
+
+        [Tools] jhbuild should respect PKG_CONFIG_PATH
+        https://bugs.webkit.org/show_bug.cgi?id=210280
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Our jhbuildrc adds the system paths to PKG_CONFIG_PATH. This is not
+        necessary, as they are included implicitly by pkg-config, e.g.
+
+        $ mkdir /tmp/empty
+        $ PKG_CONFIG_PATH=/tmp/empty pkg-config --cflags glib-2.0
+        -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include
+
+        Apart from not being necessary, it is problematic because it makes
+        impossible to override system libraries in jhbuild-wrapper.
+
+        $ PKG_CONFIG_PATH=/home/ntrrgc/Apps/gst-1.10-prefix/lib/pkgconfig/ jhbuild-wrapper --gtk run bash
+        /webkit/WebKitBuild/DependenciesGTK/Root/lib64/pkgconfig:/webkit/WebKitBuild/DependenciesGTK/Root/lib/pkgconfig:/webkit/WebKitBuild/DependenciesGTK/Root/share/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig:/home/ntrrgc/Apps/gst-1.10-prefix/lib/pkgconfig
+
+        Note /usr/share/pkgconfig and /usr/lib64/pkgconfig are taking priority
+        over the user environment.
+
+        This patch removes that code, so that the user PKG_CONFIG_PATH takes
+        priority over the system default paths, while these keep having effect
+        too as explained before.
+
+        $ PKG_CONFIG_PATH=/home/ntrrgc/Apps/gst-1.10-prefix/lib/pkgconfig jhbuild-wrapper --gtk run bash
+        /webkit/WebKitBuild/DependenciesGTK/Root/lib64/pkgconfig:/webkit/WebKitBuild/DependenciesGTK/Root/lib/pkgconfig:/webkit/WebKitBuild/DependenciesGTK/Root/share/pkgconfig:/home/ntrrgc/Apps/gst-1.10-prefix/lib/pkgconfig
+
+        * jhbuild/jhbuildrc_common.py:
+        (init):
+
 2020-04-10  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Flatpak build broken when using 'git config core.webkitbranchbuild=true'

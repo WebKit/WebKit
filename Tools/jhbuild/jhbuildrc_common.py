@@ -71,12 +71,7 @@ def init(jhbuildrc_globals, jhbuild_platform):
     # to use only the plugins we build in JHBuild.
     os.environ['GST_PLUGIN_SYSTEM_PATH'] = ''
 
-    # Use system libraries while building.
     addpath = jhbuildrc_globals['addpath']
-    system_libdirs = jhbuildrc_globals['system_libdirs']
-    for libdir in system_libdirs:
-        addpath('PKG_CONFIG_PATH', os.path.join(libdir, 'pkgconfig'))
-    addpath('PKG_CONFIG_PATH', os.path.join(os.sep, 'usr', 'share', 'pkgconfig'))
 
     prefix = jhbuildrc_globals['prefix']
     addpath('CMAKE_PREFIX_PATH', prefix)
