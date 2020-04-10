@@ -5144,10 +5144,10 @@ void Internals::terminateServiceWorker(ServiceWorker& worker, DOMPromiseDeferred
     });
 }
 
-void Internals::isServiceWorkerRunning(ServiceWorker& worker, DOMPromiseDeferred<IDLBoolean>&& promise)
+void Internals::whenServiceWorkerIsTerminated(ServiceWorker& worker, DOMPromiseDeferred<void>&& promise)
 {
-    return ServiceWorkerProvider::singleton().serviceWorkerConnection().isServiceWorkerRunning(worker.identifier(), [promise = WTFMove(promise)](bool result) mutable {
-        promise.resolve(result);
+    return ServiceWorkerProvider::singleton().serviceWorkerConnection().whenServiceWorkerIsTerminatedForTesting(worker.identifier(), [promise = WTFMove(promise)]() mutable {
+        promise.resolve();
     });
 }
 #endif

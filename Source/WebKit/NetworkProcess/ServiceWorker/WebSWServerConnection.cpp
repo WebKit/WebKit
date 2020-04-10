@@ -464,10 +464,12 @@ void WebSWServerConnection::terminateWorkerFromClient(ServiceWorkerIdentifier se
     worker->terminate(WTFMove(callback));
 }
 
-void WebSWServerConnection::isServiceWorkerRunning(ServiceWorkerIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
+void WebSWServerConnection::whenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& completionHandler)
 {
     auto* worker = SWServerWorker::existingWorkerForIdentifier(identifier);
-    completionHandler(worker ? worker->isRunning() : false);
+    if (!worker || worker->isNotRunning())
+        return completionHandler();
+    worker->whenTerminated(WTFMove(completionHandler));
 }
 
 PAL::SessionID WebSWServerConnection::sessionID() const

@@ -248,9 +248,9 @@ void WebSWClientConnection::terminateWorkerForTesting(ServiceWorkerIdentifier id
     sendWithAsyncReply(Messages::WebSWServerConnection::TerminateWorkerFromClient { identifier }, WTFMove(callback));
 }
 
-void WebSWClientConnection::isServiceWorkerRunning(ServiceWorkerIdentifier identifier, CompletionHandler<void(bool)>&& callback)
+void WebSWClientConnection::whenServiceWorkerIsTerminatedForTesting(ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWServerConnection::IsServiceWorkerRunning { identifier }, WTFMove(callback));
+    sendWithAsyncReply(Messages::WebSWServerConnection::WhenServiceWorkerIsTerminatedForTesting { identifier }, WTFMove(callback));
 }
 
 void WebSWClientConnection::updateThrottleState()

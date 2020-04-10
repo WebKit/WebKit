@@ -685,6 +685,15 @@ void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, R
         return;
     }
 
+    if (worker->isTerminating()) {
+        worker->whenTerminated([this, weakThis = makeWeakPtr(this), identifier, callback = WTFMove(callback)]() mutable {
+            if (!weakThis)
+                return callback(nullptr);
+            runServiceWorkerIfNecessary(identifier, WTFMove(callback));
+        });
+        return;
+    }
+
     if (!contextConnection) {
         auto& serviceWorkerRunRequestsForOrigin = m_serviceWorkerRunRequests.ensure(worker->registrableDomain(), [] {
             return HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>> { };
@@ -712,8 +721,9 @@ bool SWServer::runServiceWorker(ServiceWorkerIdentifier identifier)
     if (!worker->registration())
         return false;
 
-    auto addResult = m_runningOrTerminatingWorkers.add(identifier, *worker);
-    ASSERT_UNUSED(addResult, addResult.isNewEntry || worker->isTerminating());
+    ASSERT(!worker->isTerminating());
+    ASSERT(!m_runningOrTerminatingWorkers.contains(identifier));
+    m_runningOrTerminatingWorkers.add(identifier, *worker);
 
     worker->setState(SWServerWorker::State::Running);
 
@@ -738,15 +748,15 @@ void SWServer::markAllWorkersForRegistrableDomainAsTerminated(const RegistrableD
 
 void SWServer::workerContextTerminated(SWServerWorker& worker)
 {
-    worker.setState(SWServerWorker::State::NotRunning);
-
-    if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
-        jobQueue->cancelJobsFromServiceWorker(worker.identifier());
-
     // At this point if no registrations are referencing the worker then it will be destroyed,
     // removing itself from the m_workersByID map.
     auto result = m_runningOrTerminatingWorkers.take(worker.identifier());
     ASSERT_UNUSED(result, result && result->ptr() == &worker);
+
+    worker.setState(SWServerWorker::State::NotRunning);
+
+    if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
+        jobQueue->cancelJobsFromServiceWorker(worker.identifier());
 }
 
 void SWServer::fireInstallEvent(SWServerWorker& worker)

@@ -33,11 +33,8 @@ async function waitForServiceWorkerNoLongerRunning(worker)
     if (!window.internals)
         return Promise.reject("requires internals");
 
-    let count = 100;
-    while (--count > 0 && await internals.isServiceWorkerRunning(worker)) {
-        worker.postMessage("test");
-        await new Promise(resolve => setTimeout(resolve, 50));
-    }
-    if (count === 0)
-        return Promise.reject("service worker is still running");
+    const promise = internals.whenServiceWorkerIsTerminated(worker);
+    let timer = setInterval(() => worker.postMessage("test"), 50);
+    await promise;
+    clearInterval(timer);
 }

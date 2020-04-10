@@ -104,6 +104,12 @@ void SWServerWorker::terminate(CompletionHandler<void()>&& callback)
     }
 }
 
+void SWServerWorker::whenTerminated(CompletionHandler<void()>&& callback)
+{
+    ASSERT(isRunning() || isTerminating());
+    m_terminationCallbacks.append(WTFMove(callback));
+}
+
 void SWServerWorker::startTermination(CompletionHandler<void()>&& callback)
 {
     auto* contextConnection = this->contextConnection();
@@ -296,6 +302,7 @@ void SWServerWorker::callWhenActivatedHandler(bool success)
 void SWServerWorker::setState(State state)
 {
     ASSERT(state != State::Running || m_registration);
+    ASSERT(state != State::Running || m_state != State::Terminating);
     m_state = state;
 
     switch (state) {

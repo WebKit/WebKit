@@ -1,3 +1,14 @@
+2020-04-10  Youenn Fablet  <youenn@apple.com>
+
+        SWServer should not run a service worker that is terminating
+        https://bugs.webkit.org/show_bug.cgi?id=210044
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/resources/routines.js:
+        (async waitForServiceWorkerNoLongerRunning):
+        Use new internals API.
+
 2020-04-09  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION: (r258434) [ Mac WK1 ] media/track/track-css-user-override.html is a flaky failure

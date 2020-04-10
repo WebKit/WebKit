@@ -42,10 +42,10 @@ messages -> WebSWServerConnection NotRefCounted {
     UnregisterServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier identifier)
 
     TerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> () Async
+    WhenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier workerIdentifier) -> () Async
 
     SetThrottleState(bool isThrottleable)
     StoreRegistrationsOnDisk() -> () Async
-    IsServiceWorkerRunning(WebCore::ServiceWorkerIdentifier workerIdentifier) -> (bool isRunning) Async
 }
 
 #endif // ENABLE(SERVICE_WORKER)

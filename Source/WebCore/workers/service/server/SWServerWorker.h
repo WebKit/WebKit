@@ -63,6 +63,7 @@ public:
     WEBCORE_EXPORT ~SWServerWorker();
 
     WEBCORE_EXPORT void terminate(CompletionHandler<void()>&& = [] { });
+    WEBCORE_EXPORT void whenTerminated(CompletionHandler<void()>&&);
 
     WEBCORE_EXPORT void whenActivated(CompletionHandler<void(bool)>&&);
 
@@ -73,6 +74,7 @@ public:
     };
     bool isRunning() const { return m_state == State::Running; }
     bool isTerminating() const { return m_state == State::Terminating; }
+    bool isNotRunning() const { return m_state == State::NotRunning; }
     void setState(State);
 
     SWServer* server() { return m_server.get(); }
