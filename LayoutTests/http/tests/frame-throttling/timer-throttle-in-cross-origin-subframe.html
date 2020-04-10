@@ -68,7 +68,6 @@
 
     window.onmessage = function(message)
     {
-        debug("Received message: " + message.data);
         if (message.data === "timerReachedMaxNestingLevel") {
             if (++messagesReceived == 2)
                 runTest();
