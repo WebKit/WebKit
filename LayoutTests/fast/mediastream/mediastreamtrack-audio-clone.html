@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Clone an audio capture track.</title>
+    <script src="../../webrtc/routines.js"></script>
+    <script src="../../resources/gc.js"></script>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+    var context = new webkitAudioContext();
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+
+        const audioTrack = stream.getAudioTracks()[0];
+        const audioTrackClone = audioTrack.clone();
+
+        audioTrack.stop();
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        const results = await analyseAudio(new MediaStream([audioTrackClone]), 200, context);
+        assert_true(results.heardHum, "Heard hum from cloned track");
+
+        assert_equals(audioTrack.readyState, "ended");
+        assert_equals(audioTrackClone.readyState, "live");
+    }, "Stopping the audio track should not stop the audio track clone");
+
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+
+        const audioTrack = stream.getAudioTracks()[0];
+        const audioTrackClone = audioTrack.clone();
+
+        audioTrackClone.stop();
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        const results = await analyseAudio(new MediaStream([audioTrack]), 200, context);
+        assert_true(results.heardHum, "Heard hum from track");
+
+        assert_equals(audioTrackClone.readyState, "ended");
+        assert_equals(audioTrack.readyState, "live");
+    }, "Stopping the audio track clone should not stop the audio track");
+
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+
+        const audioTrack = stream.getAudioTracks()[0];
+        audioTrack.clone();
+        gc();
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        const results = await analyseAudio(new MediaStream([audioTrack]), 200, context);
+        assert_true(results.heardHum, "Heard hum from track");
+
+        assert_equals(audioTrack.readyState, "live");
+    }, "Collecting the audio track clone should not stop the audio track");
+</script>
+</body>
+</html>
