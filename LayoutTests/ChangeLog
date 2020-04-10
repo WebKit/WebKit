@@ -1,5 +1,14 @@
 2020-04-10  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ Mac wk2 Debug ] media/modern-media-controls/media-controller/media-controller-auto-hide.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=210349
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-04-10  Jason Lawrence  <lawrence.j@apple.com>
+
         REGRESSION: [ MacOS WK1 & iOS ] Layout Tests in media/media-fragments/ are flaky
         https://bugs.webkit.org/show_bug.cgi?id=187557
 
