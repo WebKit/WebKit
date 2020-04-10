@@ -1,1 +1,20 @@
+2020-04-10  Peng Liu  <peng.liu6@apple.com>
+
+        Add null pointer checkings in WebFullScreenManager
+        https://bugs.webkit.org/show_bug.cgi?id=210291
+
+        Reviewed by Daniel Bates.
+
+        Add null pointer checkings for "element" and "m_element" in WebFullScreenManager.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::screenRectOfContents):
+        (WebKit::WebFullScreenManager::enterFullScreenForElement):
+        (WebKit::WebFullScreenManager::willEnterFullScreen):
+        (WebKit::WebFullScreenManager::didEnterFullScreen):
+        (WebKit::WebFullScreenManager::willExitFullScreen):
+        (WebKit::WebFullScreenManager::didExitFullScreen):
+        (WebKit::WebFullScreenManager::setAnimatingFullScreen):
+        (WebKit::WebFullScreenManager::requestExitFullScreen):
+
 == Rolled over to ChangeLog-2020-04-10 ==
