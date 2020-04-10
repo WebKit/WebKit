@@ -1,3 +1,15 @@
+2020-04-09  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION: (r258434) [ Mac WK1 ] media/track/track-css-user-override.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=210134
+
+        Reviewed by Eric Carlson.
+
+        Make the test reliable by replacing the timer and testExpected based approach
+        with the approach based on testExpectedEventually. Also remove unnecessary code.
+
+        * media/track/track-css-user-override.html:
+
 2020-04-09  Cathie Chen  <cathiechen@igalia.com>
 
         Import test for programmatic scrolling scrollend event

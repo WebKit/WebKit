@@ -10,7 +10,7 @@
         <script>
             var seekCount = 0;
 
-            function seeked()
+            async function seeked()
             {
                 var currentCue = textTrackDisplayElement(video, 'cue');
 
@@ -23,34 +23,29 @@
                 document.head.appendChild(styleElement);
                 stylesheet = styleElement.sheet;
                 run("stylesheet.insertRule('video::cue { color: purple; background-color: lime; }', 0)");
-                document.body.offsetTop;
                 testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).color", "rgb(128, 0, 128)");
                 testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor", "rgb(0, 255, 0)");
 
                 consoleWrite("<br>** Add an override, without '!important' **");
-                document.body.offsetTop;
                 run("internals.setCaptionsStyleSheetOverride('video::cue { color: blue; background-color: yellow; }')");
                 consoleWrite("internals.captionsStyleSheetOverride = " + internals.captionsStyleSheetOverride());
-                document.body.offsetTop;
                 testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).color", "rgb(128, 0, 128)");
                 testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor", "rgb(0, 255, 0)");
 
                 consoleWrite("<br>** Mark background-color '!important' **");
                 run("internals.setCaptionsStyleSheetOverride('video::cue { color: blue ; background-color: yellow !important; }')");
-                // The style is not immediately updated, schedule the rest of the test with a zero timeout timer.
-                setTimeout(function() {
-                    testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).color", "rgb(128, 0, 128)");
-                    testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor", "rgb(255, 255, 0)");
+                testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).color", "rgb(128, 0, 128)");
+                // The style is not immediately updated.
+                await testExpectedEventually("getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor", "rgb(255, 255, 0)");
 
-                    consoleWrite("<br>** Mark color '!important' **");
-                    run("stylesheet.insertRule('video::cue { color: blue !important; background-color: yellow  !important; }', 0)");
-                    document.body.offsetTop;
-                    testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).color", "rgb(0, 0, 255)");
-                    testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor", "rgb(255, 255, 0)");
+                consoleWrite("<br>** Mark color '!important' **");
+                run("stylesheet.insertRule('video::cue { color: blue !important; background-color: yellow  !important; }', 0)");
+                // The style is not immediately updated.
+                await testExpectedEventually("getComputedStyle(textTrackDisplayElement(video, 'cue')).color", "rgb(0, 0, 255)");
+                testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor", "rgb(255, 255, 0)");
 
-                    consoleWrite("");
-                    endTest();
-                }, 100);
+                consoleWrite("");
+                endTest();
             }
 
             function loaded()
@@ -64,7 +59,7 @@
                 waitForEvent('canplaythrough', function() { video.currentTime = .5; });
             }
 
-        setCaptionDisplayMode('Automatic');
+            setCaptionDisplayMode('Automatic');
         </script>
     </head>
     <body onload="loaded()">
