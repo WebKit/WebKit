@@ -2282,7 +2282,7 @@ void FrameView::scrollElementToRect(const Element& element, const IntRect& rect)
     setScrollPosition(IntPoint(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
 }
 
-void FrameView::setScrollPosition(const ScrollPosition& scrollPosition, ScrollClamping clamping, bool animated)
+void FrameView::setScrollPosition(const ScrollPosition& scrollPosition, ScrollClamping clamping, AnimatedScroll animated)
 {
     LOG_WITH_STREAM(Scrolling, stream << "FrameView::setScrollPosition " << scrollPosition << " , clearing anchor");
 
@@ -2295,7 +2295,7 @@ void FrameView::setScrollPosition(const ScrollPosition& scrollPosition, ScrollCl
     Page* page = frame().page();
     if (page && page->isMonitoringWheelEvents())
         scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
-    if (animated)
+    if (animated == AnimatedScroll::Yes)
         scrollToOffsetWithAnimation(scrollOffsetFromPosition(scrollPosition), currentScrollType(), clamping);
     else
         ScrollView::setScrollPosition(scrollPosition, clamping);

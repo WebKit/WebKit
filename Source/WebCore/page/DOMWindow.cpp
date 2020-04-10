@@ -1688,12 +1688,9 @@ void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping
 
     // FIXME: Should we use document()->scrollingElement()?
     // See https://bugs.webkit.org/show_bug.cgi?id=205059
-    if (useSmoothScrolling(scrollToOptions.behavior.valueOr(ScrollBehavior::Auto), document()->documentElement())) {
-        view->scrollToOffsetWithAnimation(layoutPos, ScrollType::Programmatic, clamping);
-        return;
-    }
+    AnimatedScroll animated = useSmoothScrolling(scrollToOptions.behavior.valueOr(ScrollBehavior::Auto), document()->documentElement()) ? AnimatedScroll::Yes : AnimatedScroll::No;
 
-    view->setContentsScrollPosition(layoutPos, clamping);
+    view->setContentsScrollPosition(layoutPos, clamping, animated);
 }
 
 bool DOMWindow::allowedToChangeWindowGeometry() const

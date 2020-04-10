@@ -60,6 +60,11 @@ enum class ScrollBehaviorStatus : uint8_t {
     InNonNativeAnimation,
 };
 
+enum class AnimatedScroll : uint8_t {
+    No,
+    Yes
+};
+
 inline ScrollDirection logicalToPhysical(ScrollLogicalDirection direction, bool isVertical, bool isFlipped)
 {
     switch (direction) {

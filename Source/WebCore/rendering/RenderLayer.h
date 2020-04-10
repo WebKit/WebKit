@@ -450,9 +450,9 @@ public:
     WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
     WEBCORE_EXPORT void scrollToOffsetWithAnimation(const ScrollOffset&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
 
-    void scrollToXPosition(int x, ScrollType, ScrollClamping = ScrollClamping::Clamped, bool animated = false);
-    void scrollToYPosition(int y, ScrollType, ScrollClamping = ScrollClamping::Clamped, bool animated = false);
-    void scrollToPosition(const ScrollPosition&, ScrollType, ScrollClamping = ScrollClamping::Clamped, bool animated = false);
+    void scrollToXPosition(int x, ScrollType, ScrollClamping = ScrollClamping::Clamped, AnimatedScroll = AnimatedScroll::No);
+    void scrollToYPosition(int y, ScrollType, ScrollClamping = ScrollClamping::Clamped, AnimatedScroll = AnimatedScroll::No);
+    void setScrollPosition(const ScrollPosition&, ScrollType, ScrollClamping = ScrollClamping::Clamped, AnimatedScroll = AnimatedScroll::No);
 
     // These are only used by marquee.
     void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollType::Programmatic, ScrollClamping::Unclamped); }
@@ -466,9 +466,8 @@ public:
 
     void availableContentSizeChanged(AvailableSizeChangeReason) final;
 
-    enum AutoscrollStatus { NotInProgress, InProgress };
     // "absoluteRect" is in scaled document coordinates.
-    void scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&, AutoscrollStatus = AutoscrollStatus::NotInProgress);
+    void scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&);
 
     bool scrollsOverflow() const;
     bool hasScrollableHorizontalOverflow() const;

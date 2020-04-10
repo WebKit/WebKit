@@ -232,7 +232,7 @@ public:
 
     // Scroll position used by web-exposed features (has legacy iOS behavior).
     WEBCORE_EXPORT IntPoint contentsScrollPosition() const;
-    void setContentsScrollPosition(const IntPoint&, ScrollClamping = ScrollClamping::Clamped);
+    void setContentsScrollPosition(const IntPoint&, ScrollClamping = ScrollClamping::Clamped, AnimatedScroll = AnimatedScroll::No);
 
 #if PLATFORM(IOS_FAMILY)
     int actualScrollX() const { return unobscuredContentRect().x(); }
@@ -262,7 +262,7 @@ public:
     ScrollPosition cachedScrollPosition() const { return m_cachedScrollPosition; }
 
     // Functions for scrolling the view.
-    virtual void setScrollPosition(const ScrollPosition&, ScrollClamping = ScrollClamping::Clamped, bool animated = false);
+    virtual void setScrollPosition(const ScrollPosition&, ScrollClamping = ScrollClamping::Clamped, AnimatedScroll = AnimatedScroll::No);
 
     void scrollBy(const IntSize& s) { return setScrollPosition(scrollPosition() + s); }
 

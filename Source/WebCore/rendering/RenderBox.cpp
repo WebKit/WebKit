@@ -581,7 +581,7 @@ static void setupWheelEventMonitor(RenderLayer& layer)
     layer.scrollAnimator().setWheelEventTestMonitor(page.wheelEventTestMonitor());
 }
 
-void RenderBox::setScrollLeft(int newLeft, ScrollType scrollType, ScrollClamping clamping, bool animated)
+void RenderBox::setScrollLeft(int newLeft, ScrollType scrollType, ScrollClamping clamping, AnimatedScroll animated)
 {
     if (!hasOverflowClip() || !layer())
         return;
@@ -589,7 +589,7 @@ void RenderBox::setScrollLeft(int newLeft, ScrollType scrollType, ScrollClamping
     layer()->scrollToXPosition(newLeft, scrollType, clamping, animated);
 }
 
-void RenderBox::setScrollTop(int newTop, ScrollType scrollType, ScrollClamping clamping, bool animated)
+void RenderBox::setScrollTop(int newTop, ScrollType scrollType, ScrollClamping clamping, AnimatedScroll animated)
 {
     if (!hasOverflowClip() || !layer())
         return;
@@ -597,12 +597,12 @@ void RenderBox::setScrollTop(int newTop, ScrollType scrollType, ScrollClamping c
     layer()->scrollToYPosition(newTop, scrollType, clamping, animated);
 }
 
-void RenderBox::setScrollPosition(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping, bool animated)
+void RenderBox::setScrollPosition(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping, AnimatedScroll animated)
 {
     if (!hasOverflowClip() || !layer())
         return;
     setupWheelEventMonitor(*layer());
-    layer()->scrollToPosition(position, scrollType, clamping, animated);
+    layer()->setScrollPosition(position, scrollType, clamping, animated);
 }
 
 void RenderBox::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
