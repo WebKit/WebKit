@@ -1,3 +1,12 @@
+2020-04-09  Cathie Chen  <cathiechen@igalia.com>
+
+        Import test for programmatic scrolling scrollend event
+        https://bugs.webkit.org/show_bug.cgi?id=210281
+
+        Reviewed by Frédéric Wang.
+
+        * tests-options.json:
+
 2020-04-09  Daniel Bates  <dabates@apple.com>
 
         [iOS]: New test landed for r259762 landed broken: editing/editable-region/hit-test-overlap.html

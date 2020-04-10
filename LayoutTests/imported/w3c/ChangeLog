@@ -1,3 +1,18 @@
+2020-04-09  Cathie Chen  <cathiechen@igalia.com>
+
+        Import test for programmatic scrolling scrollend event
+        https://bugs.webkit.org/show_bug.cgi?id=210281
+
+        Reviewed by Frédéric Wang.
+
+        Import test cases.
+
+        * web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll-expected.txt: Added.
+        * web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html: Added.
+        * web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView-expected.txt: Added.
+        * web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html: Added.
+        * web-platform-tests/dom/events/scrolling/w3c-import.log:
+
 2020-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] ModuleEnvironment do not have JSGlobalLexicalEnvironment as its upper scope
