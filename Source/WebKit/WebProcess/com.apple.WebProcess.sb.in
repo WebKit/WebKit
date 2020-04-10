@@ -120,17 +120,13 @@
         (iokit-registry-entry-class "IOAccelerationUserClient")
         (iokit-registry-entry-class "IOSurfaceRootUserClient")
         (iokit-registry-entry-class "IOSurfaceSendRight"))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101600
     ;; CoreVideo CVCGDisplayLink
     (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-        (with report) (with telemetry)
-#endif
         (iokit-registry-entry-class "IOFramebufferSharedUserClient"))
+#endif
     ;; H.264 Acceleration
     (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-        (with report) (with telemetry)
-#endif
         (iokit-registry-entry-class "AppleIntelMEUserClient")
         (iokit-registry-entry-class "AppleSNBFBUserClient"))
     ;; QuartzCore
@@ -604,20 +600,30 @@
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_TEMP_DIR")))
 
 ;; IOKit user clients
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101600
 (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-    (with report) (with telemetry)
-#endif
     (iokit-user-client-class "AppleMultitouchDeviceUserClient")
     (iokit-user-client-class "IOHIDParamUserClient")
     (iokit-user-client-class "IOAudioControlUserClient")
     (iokit-user-client-class "IOAudioEngineUserClient")
-    ;; Following is needed due to <rdar://problem/10427451> && <rdar://problem/10808817>
-    (iokit-user-client-class "AudioAUUC"))
+)
+#endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600
+(deny iokit-open
+    (with send-signal SIGKILL)
+    (iokit-user-client-class "AppleMultitouchDeviceUserClient")
+    (iokit-user-client-class "IOHIDParamUserClient")
+    (iokit-user-client-class "IOAudioControlUserClient")
+    (iokit-user-client-class "IOAudioEngineUserClient")
+    (iokit-registry-entry-class "IOFramebufferSharedUserClient")
+)
+#endif
 
 (allow iokit-open
     (iokit-user-client-class "AppleUpstreamUserClient")
     (iokit-user-client-class "RootDomainUserClient") ;; Needed by WebCore::PerformanceMonitor
+    (iokit-user-client-class "AudioAUUC") ;; <rdar://problem/10427451> && <rdar://problem/10808817>
 )
 
 ;; cookied.
@@ -717,6 +723,9 @@
 
 ;; Needed to support encrypted media playback <rdar://problem/40038478>
 (allow mach-lookup
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 101500
+    (with telemetry-backtrace)
+#endif
     (global-name "com.apple.SecurityServer")
     (global-name "com.apple.ocspd"))
 

@@ -205,7 +205,7 @@
 ;;;
 (define-once (opengl)
     ;; Items not seen in testing
-    (allow iokit-open (with report) (with telemetry)
+    (deny iokit-open (with telemetry-backtrace)
            (iokit-connection "IOGPU")
            (iokit-user-client-class
                 "AGXCommandQueue"
@@ -357,14 +357,13 @@
     (allow mach-lookup
         (global-name "com.apple.CARenderServer"))
 
-    ; UIKit-required IOKit nodes.
-    (allow iokit-open  (with report) (with telemetry)
-        (iokit-user-client-class "AppleJPEGDriverUserClient")
+    (deny iokit-open (with telemetry-backtrace)
         (iokit-user-client-class "IOSurfaceSendRight")
     )
 
     ; WebKit-required IOKit classes
     (allow iokit-open
+        (iokit-user-client-class "AppleJPEGDriverUserClient")
         (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; Media rendering into pixel buffers
         (iokit-user-client-class "IOSurfaceRootUserClient") ;; Needed by Tiled Grid code.
     )
