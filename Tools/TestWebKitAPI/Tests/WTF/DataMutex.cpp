@@ -25,6 +25,9 @@
  */
 
 #include "config.h"
+
+// For this file, we force checks even if we're running on release.
+#define ENABLE_DATA_MUTEX_CHECKS 1
 #include <wtf/DataMutex.h>
 
 using namespace WTF;
@@ -34,23 +37,49 @@ namespace TestWebKitAPI {
 struct MyStructure {
     int number;
 };
-DataMutex<MyStructure> myDataMutex;
 
 TEST(WTF_DataMutex, TakingTheMutex)
 {
-    Lock* mutex;
+    DataMutex<MyStructure> myDataMutex;
+
+    OwnerAwareLock* mutex;
     {
         DataMutex<MyStructure>::LockedWrapper wrapper(myDataMutex);
         mutex = &wrapper.mutex();
-        ASSERT_TRUE(mutex->isHeld());
+        ASSERT_TRUE(mutex->isLocked());
         wrapper->number = 5;
+
+        wrapper.runUnlocked([mutex]() {
+            ASSERT_FALSE(mutex->isLocked());
+        });
+        ASSERT_TRUE(mutex->isLocked());
     }
-    ASSERT_FALSE(mutex->isHeld());
+    ASSERT_FALSE(mutex->isLocked());
 
     {
         DataMutex<MyStructure>::LockedWrapper wrapper(myDataMutex);
         EXPECT_EQ(wrapper->number, 5);
     }
+}
+
+TEST(WTF_DataMutex, RunUnlockedIllegalAccessDeathTest)
+{
+    ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+    DataMutex<MyStructure> myDataMutex;
+    DataMutex<MyStructure>::LockedWrapper wrapper(myDataMutex);
+    wrapper->number = 5;
+
+    ASSERT_DEATH(wrapper.runUnlocked([&]() {
+        wrapper->number++;
+    }), "");
+}
+
+TEST(WTF_DataMutex, DoubleLockDeathTest)
+{
+    ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+    DataMutex<MyStructure> myDataMutex;
+    DataMutex<MyStructure>::LockedWrapper wrapper1(myDataMutex);
+    ASSERT_DEATH(DataMutex<MyStructure>::LockedWrapper wrapper2(myDataMutex), "");
 }
 
 } // namespace TestWebKitAPI
