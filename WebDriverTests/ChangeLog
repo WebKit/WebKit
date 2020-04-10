@@ -1,3 +1,14 @@
+2020-04-10  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WebDriver] Gardening, remove spurious entry
+        https://bugs.webkit.org/show_bug.cgi?id=210333
+
+        Unreviewed gardening.
+
+        All subtests in the test were passing, so the entry can be deleted.
+
+        * TestExpectations.json:
+
 2020-04-09  Diego Pino Garcia  <dpino@igalia.com>
 
         [WebDriver] Gardening, update expectations of several WebDriver tests.

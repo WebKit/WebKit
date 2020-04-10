@@ -503,23 +503,6 @@
             }
         }
     },
-    "imported/w3c/webdriver/tests/fullscreen_window/fullscreen.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/204065"}},
-        "subtests": {
-            "test_no_browsing_context": {
-                "expected": {"all": {"status": ["PASS"]}}
-            },
-            "test_fullscreen": {
-                "expected": {"all": {"status": ["PASS"]}}
-            },
-            "test_payload": {
-                "expected": {"all": {"status": ["PASS"]}}
-            },
-            "test_fullscreen_twice_is_idempotent": {
-                "expected": {"all": {"status": ["PASS"]}}
-            }
-        }
-    },
     "imported/w3c/webdriver/tests/permissions/set.py": {
         "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/192978"}}
     },
