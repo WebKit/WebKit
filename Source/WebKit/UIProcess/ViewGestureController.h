@@ -162,6 +162,7 @@ public:
     void checkForActiveLoads();
 
     void removeSwipeSnapshot();
+    void reset();
 
     void setSwipeGestureEnabled(bool enabled) { m_swipeGestureEnabled = enabled; }
     bool isSwipeGestureEnabled() { return m_swipeGestureEnabled; }
@@ -184,6 +185,7 @@ private:
     static GestureID takeNextGestureID();
     void willBeginGesture(ViewGestureType);
     void didEndGesture();
+    void resetState();
 
     void didStartProvisionalOrSameDocumentLoadForMainFrame();
 

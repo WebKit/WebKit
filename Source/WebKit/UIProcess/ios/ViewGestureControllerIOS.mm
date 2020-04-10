@@ -418,19 +418,32 @@ void ViewGestureController::removeSwipeSnapshot()
         return;
     }
 
+    resetState();
+}
+
+void ViewGestureController::resetState()
+{
     [m_snapshotView removeFromSuperview];
     m_snapshotView = nullptr;
     
     m_snapshotRemovalTargetRenderTreeSize = 0;
 
-    m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureSnapshotWasRemoved();
-    m_webPageProxyForBackForwardListForCurrentSwipe = nullptr;
+    if (m_webPageProxyForBackForwardListForCurrentSwipe) {
+        m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureSnapshotWasRemoved();
+        m_webPageProxyForBackForwardListForCurrentSwipe = nullptr;
+    }
 
     m_swipeTransitionContext = nullptr;
 
     m_backgroundColorForCurrentSnapshot = WebCore::Color();
 
     didEndGesture();
+}
+
+void ViewGestureController::reset()
+{
+    removeSwipeSnapshot();
+    resetState();
 }
 
 bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection direction)

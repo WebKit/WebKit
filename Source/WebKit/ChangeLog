@@ -1,3 +1,28 @@
+2020-04-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reset view navigation gesture state between tests
+        https://bugs.webkit.org/show_bug.cgi?id=210283
+
+        Re-land r259818 with a null-check on m_webPageProxyForBackForwardListForCurrentSwipe.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _resetNavigationGestureStateForTesting]):
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::willBeginGesture):
+        (WebKit::ViewGestureController::didEndGesture):
+        (WebKit::ViewGestureController::PendingSwipeTracker::handleEvent):
+        (WebKit::ViewGestureController::PendingSwipeTracker::eventWasNotHandledByWebCore):
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        (WebKit::ViewGestureController::resetState):
+        (WebKit::ViewGestureController::reset):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        (WebKit::ViewGestureController::resetState):
+        (WebKit::ViewGestureController::reset):
+
 2020-04-10  David Kilzer  <ddkilzer@apple.com>
 
         Add WARN_UNUSED_RETURN to decode methods in WebCoreArgumentCoders

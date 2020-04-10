@@ -45,6 +45,7 @@
 
 - (BOOL)_beginBackSwipeForTesting;
 - (BOOL)_completeBackSwipeForTesting;
+- (void)_resetNavigationGestureStateForTesting;
 - (void)_setDefersLoadingForTesting:(BOOL)defersLoading;
 
 - (void)_setShareSheetCompletesImmediatelyWithResolutionForTesting:(BOOL)resolved;
