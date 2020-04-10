@@ -1,3 +1,64 @@
+2020-04-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r259802. rdar://problem/61477495
+
+    Source/WebKit:
+    [MacOS] REGRESSION (r253275): Stopping a cloned audio capture track should not stop the original audio track
+    https://bugs.webkit.org/show_bug.cgi?id=210259
+    <rdar://problem/61466486>
+    
+    Reviewed by Eric Carlson.
+    
+    We changed video track cloning so that each cloned track would get its own source.
+    The source is getting video sample from the real capture source.
+    The real capture source will get stopped if all its client sources are stopped.
+    
+    For audio, we are still using the same audio source for each track.
+    We should thus not close the source until all its tracks are stopped.
+    To do so, we reuse RealtimeMediaSource::requestToEnd instead of directly sending
+    the order to stop observing the remote audio source.
+    
+    Test: fast/mediastream/mediastreamtrack-audio-clone.html
+    
+    * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+    (WebKit::UserMediaCaptureManager::Source::requestToEnd):
+    (WebKit::UserMediaCaptureManager::Source::stopBeingObserved): Deleted.
+    
+    LayoutTests:
+    [MacOS] Stopping a cloned audio capture track should not stop the original audio track
+    https://bugs.webkit.org/show_bug.cgi?id=210259
+    <rdar://problem/61466486>
+    
+    Reviewed by Eric Carlson.
+    
+    * fast/mediastream/mediastreamtrack-audio-clone-expected.txt: Added.
+    * fast/mediastream/mediastreamtrack-audio-clone.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259802 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-09  Youenn Fablet  <youenn@apple.com>
+
+            [MacOS] REGRESSION (r253275): Stopping a cloned audio capture track should not stop the original audio track
+            https://bugs.webkit.org/show_bug.cgi?id=210259
+            <rdar://problem/61466486>
+
+            Reviewed by Eric Carlson.
+
+            We changed video track cloning so that each cloned track would get its own source.
+            The source is getting video sample from the real capture source.
+            The real capture source will get stopped if all its client sources are stopped.
+
+            For audio, we are still using the same audio source for each track.
+            We should thus not close the source until all its tracks are stopped.
+            To do so, we reuse RealtimeMediaSource::requestToEnd instead of directly sending
+            the order to stop observing the remote audio source.
+
+            Test: fast/mediastream/mediastreamtrack-audio-clone.html
+
+            * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+            (WebKit::UserMediaCaptureManager::Source::requestToEnd):
+            (WebKit::UserMediaCaptureManager::Source::stopBeingObserved): Deleted.
+
 2020-04-09  Alan Coon  <alancoon@apple.com>
 
         Revert r259689. rdar://problem/61269751
