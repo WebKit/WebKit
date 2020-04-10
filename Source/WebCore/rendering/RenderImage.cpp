@@ -376,6 +376,8 @@ void RenderImage::notifyFinished(CachedResource& newImage)
 
     if (is<HTMLImageElement>(element()))
         page().didFinishLoadingImageForElement(downcast<HTMLImageElement>(*element()));
+
+    RenderReplaced::notifyFinished(newImage);
 }
 
 void RenderImage::setImageDevicePixelRatio(float factor)

@@ -26,6 +26,7 @@
 #include "RenderElement.h"
 
 #include "AXObjectCache.h"
+#include "CachedResourceLoader.h"
 #if PLATFORM(IOS_FAMILY)
 #include "ContentChangeObserver.h"
 #endif
@@ -1320,10 +1321,21 @@ VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, Im
     return isVisible ? VisibleInViewportState::Yes : VisibleInViewportState::No;
 }
 
+void RenderElement::notifyFinished(CachedResource& resource)
+{
+    document().cachedResourceLoader().notifyFinished(resource);
+}
+
 void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
 {
     if (hasPausedImageAnimations())
         view().removeRendererWithPausedImageAnimations(*this, cachedImage);
+}
+
+void RenderElement::scheduleTimedRenderingUpdate()
+{
+    if (auto* page = document().page())
+        page->scheduleTimedRenderingUpdate();
 }
 
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage& cachedImage)

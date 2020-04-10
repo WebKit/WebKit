@@ -48,6 +48,8 @@ public:
     virtual VisibleInViewportState imageFrameAvailable(CachedImage& image, ImageAnimatingState, const IntRect* changeRect) { imageChanged(&image, changeRect); return VisibleInViewportState::No; }
 
     virtual void didRemoveCachedImageClient(CachedImage&) { }
+
+    virtual void scheduleTimedRenderingUpdate() { }
 };
 
 } // namespace WebCore
