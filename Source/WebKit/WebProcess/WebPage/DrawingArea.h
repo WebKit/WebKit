@@ -79,6 +79,8 @@ public:
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) = 0;
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) = 0;
 
+    virtual void sendEnterAcceleratedCompositingModeIfNeeded() { }
+
     // FIXME: These should be pure virtual.
     virtual void forceRepaint() { }
     virtual bool forceRepaintAsync(CallbackID) { return false; }

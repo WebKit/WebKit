@@ -46,6 +46,7 @@ private:
 
     void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
     void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
+    void didFirstLayerFlush(uint64_t /* backingStoreStateID */, const LayerTreeContext&) override;
 
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;

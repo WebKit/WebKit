@@ -432,6 +432,7 @@ public:
     void toolTipChanged(const String& oldToolTip, const String& newToolTip);
 
     void setAcceleratedCompositingRootLayer(CALayer *);
+    void setAcceleratedCompositingRootLayerAfterFlush(CALayer *);
     CALayer *acceleratedCompositingRootLayer() const { return m_rootLayer.get(); }
 
     void setThumbnailView(_WKThumbnailView *);

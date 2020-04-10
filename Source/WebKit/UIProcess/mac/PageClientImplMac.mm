@@ -533,6 +533,14 @@ void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& lay
     m_impl->setAcceleratedCompositingRootLayer(renderLayer);
 }
 
+void PageClientImpl::didFirstLayerFlush(const LayerTreeContext& layerTreeContext)
+{
+    ASSERT(!layerTreeContext.isEmpty());
+
+    CALayer *renderLayer = [CALayer _web_renderLayerWithContextID:layerTreeContext.contextID];
+    m_impl->setAcceleratedCompositingRootLayerAfterFlush(renderLayer);
+}
+
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
     m_impl->setAcceleratedCompositingRootLayer(nil);

@@ -3812,7 +3812,25 @@ void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
 {
     [rootLayer web_disableAllActions];
 
+    // This is the process-swap case. We add the new layer behind the existing root layer and mark it as hidden.
+    // This way, the new layer gets accelerated compositing but won't be visible until
+    // setAcceleratedCompositingRootLayerAfterFlush() is called, in order to prevent flashing.
+    if (m_rootLayer && rootLayer) {
+        if (m_thumbnailView)
+            return;
+
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+
+        rootLayer.hidden = YES;
+        [[m_layerHostingView layer] insertSublayer:rootLayer atIndex:0];
+
+        [CATransaction commit];
+        return;
+    }
+
     m_rootLayer = rootLayer;
+    rootLayer.hidden = NO;
 
     if (m_thumbnailView) {
         updateThumbnailViewLayer();
@@ -3825,6 +3843,12 @@ void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
     [m_layerHostingView layer].sublayers = rootLayer ? @[ rootLayer ] : nil;
 
     [CATransaction commit];
+}
+
+void WebViewImpl::setAcceleratedCompositingRootLayerAfterFlush(CALayer *rootLayer)
+{
+    m_rootLayer = nullptr; // Make sure we replace the existing layer.
+    setAcceleratedCompositingRootLayer(rootLayer);
 }
 
 void WebViewImpl::setThumbnailView(_WKThumbnailView *thumbnailView)

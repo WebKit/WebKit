@@ -1179,6 +1179,7 @@ public:
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
+    void didFirstLayerFlush(const LayerTreeContext&);
 
     void addEditCommand(WebEditCommandProxy&);
     void removeEditCommand(WebEditCommandProxy&);
@@ -1741,7 +1742,7 @@ private:
     void updateThrottleState();
     void updateHiddenPageThrottlingAutoIncreases();
 
-    bool suspendCurrentPageIfPossible(API::Navigation&, Optional<WebCore::FrameIdentifier> mainFrameID, ProcessSwapRequestedByClient, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode);
+    bool suspendCurrentPageIfPossible(API::Navigation&, Optional<WebCore::FrameIdentifier> mainFrameID, ProcessSwapRequestedByClient, ShouldDelayClosingUntilFirstLayerFlush);
 
     enum class ResetStateReason {
         PageInvalidated,

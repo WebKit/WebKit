@@ -811,7 +811,7 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
         send(Messages::WebPage::PostInjectedBundleMessage(message.messageName, UserData(process().transformObjectsToHandles(message.messageBody.get()).get())));
 }
 
-bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Optional<FrameIdentifier> mainFrameID, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
+bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Optional<FrameIdentifier> mainFrameID, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
 {
     m_suspendedPageKeptToPreventFlashing = nullptr;
     m_lastSuspendedPage = nullptr;
@@ -843,7 +843,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
         return false;
     }
 
-    bool needsSuspendedPageToPreventFlashing = shouldDelayClosingUntilEnteringAcceleratedCompositingMode == ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::Yes;
+    bool needsSuspendedPageToPreventFlashing = shouldDelayClosingUntilFirstLayerFlush == ShouldDelayClosingUntilFirstLayerFlush::Yes;
     if (!needsSuspendedPageToPreventFlashing && (!fromItem || !shouldUseBackForwardCache())) {
         if (!fromItem)
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i there is no associated WebBackForwardListItem", m_process->processIdentifier());
@@ -853,7 +853,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
     }
 
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Suspending current page for process pid %i", m_process->processIdentifier());
-    auto suspendedPage = makeUnique<SuspendedPageProxy>(*this, m_process.copyRef(), *mainFrameID, shouldDelayClosingUntilEnteringAcceleratedCompositingMode);
+    auto suspendedPage = makeUnique<SuspendedPageProxy>(*this, m_process.copyRef(), *mainFrameID, shouldDelayClosingUntilFirstLayerFlush);
 
     LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, identifier().toUInt64(), suspendedPage->loggingString(), m_process->processIdentifier(), fromItem ? fromItem->itemID().logString() : 0);
 
@@ -3277,12 +3277,12 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
 
     ASSERT(m_process.ptr() != &m_provisionalPage->process());
 
-    auto shouldDelayClosingUntilEnteringAcceleratedCompositingMode = ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::No;
+    auto shouldDelayClosingUntilFirstLayerFlush = ShouldDelayClosingUntilFirstLayerFlush::No;
 #if PLATFORM(MAC)
     // On macOS, when not using UI-side compositing, we need to make sure we do not close the page in the previous process until we've
     // entered accelerated compositing for the new page or we will flash on navigation.
     if (drawingArea()->type() == DrawingAreaTypeTiledCoreAnimation)
-        shouldDelayClosingUntilEnteringAcceleratedCompositingMode = ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::Yes;
+        shouldDelayClosingUntilFirstLayerFlush = ShouldDelayClosingUntilFirstLayerFlush::Yes;
 #endif
 
     if (m_isLayerTreeFrozenDueToSwipeAnimation)
@@ -3292,7 +3292,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
     auto* navigation = navigationState().navigation(m_provisionalPage->navigationID());
-    bool didSuspendPreviousPage = navigation ? suspendCurrentPageIfPossible(*navigation, mainFrameIDInPreviousProcess, m_provisionalPage->processSwapRequestedByClient(), shouldDelayClosingUntilEnteringAcceleratedCompositingMode) : false;
+    bool didSuspendPreviousPage = navigation ? suspendCurrentPageIfPossible(*navigation, mainFrameIDInPreviousProcess, m_provisionalPage->processSwapRequestedByClient(), shouldDelayClosingUntilFirstLayerFlush) : false;
     m_process->removeWebPage(*this, m_websiteDataStore.ptr() == &m_provisionalPage->process().websiteDataStore() ? WebProcessProxy::EndsUsingDataStore::No : WebProcessProxy::EndsUsingDataStore::Yes);
 
     // There is no way we'll be able to return to the page in the previous page so close it.
@@ -7822,9 +7822,17 @@ void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layer
     ASSERT(m_drawingArea->type() == DrawingAreaTypeTiledCoreAnimation);
 #endif
     pageClient().enterAcceleratedCompositingMode(layerTreeContext);
+}
+
+void WebPageProxy::didFirstLayerFlush(const LayerTreeContext& layerTreeContext)
+{
+#if PLATFORM(MAC)
+    ASSERT(m_drawingArea->type() == DrawingAreaTypeTiledCoreAnimation);
+#endif
+    pageClient().didFirstLayerFlush(layerTreeContext);
 
     if (m_lastSuspendedPage)
-        m_lastSuspendedPage->pageEnteredAcceleratedCompositingMode();
+        m_lastSuspendedPage->pageDidFirstLayerFlush();
     m_suspendedPageKeptToPreventFlashing = nullptr;
 }
 

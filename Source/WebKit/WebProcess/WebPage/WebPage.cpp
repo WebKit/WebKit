@@ -5857,6 +5857,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
     if (!frame->isMainFrame())
         return;
 
+    if (m_drawingArea)
+        m_drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
+
     ASSERT(!frame->coreFrame()->loader().stateMachine().creatingInitialEmptyDocument());
     unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
 

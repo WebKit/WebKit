@@ -144,6 +144,7 @@ private:
     // FIXME: These should be pure virtual.
     virtual void enterAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
     virtual void updateAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
+    virtual void didFirstLayerFlush(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
 #if PLATFORM(COCOA)
     virtual void didUpdateGeometry() { }
 

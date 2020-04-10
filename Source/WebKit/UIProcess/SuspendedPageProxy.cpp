@@ -94,12 +94,12 @@ static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
 }
 #endif
 
-SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, FrameIdentifier mainFrameID, ShouldDelayClosingUntilEnteringAcceleratedCompositingMode shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
+SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, FrameIdentifier mainFrameID, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
     : m_page(page)
     , m_webPageID(page.webPageID())
     , m_process(WTFMove(process))
     , m_mainFrameID(mainFrameID)
-    , m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode(shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
+    , m_shouldDelayClosingUntilFirstLayerFlush(shouldDelayClosingUntilFirstLayerFlush)
     , m_suspensionTimeoutTimer(RunLoop::main(), this, &SuspendedPageProxy::suspensionTimedOut)
 #if PLATFORM(IOS_FAMILY)
     , m_suspensionActivity(m_process->throttler().backgroundActivity("Page suspension for back/forward cache"_s).moveToUniquePtr())
@@ -183,9 +183,9 @@ void SuspendedPageProxy::close()
     send(Messages::WebPage::Close());
 }
 
-void SuspendedPageProxy::pageEnteredAcceleratedCompositingMode()
+void SuspendedPageProxy::pageDidFirstLayerFlush()
 {
-    m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode = ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::No;
+    m_shouldDelayClosingUntilFirstLayerFlush = ShouldDelayClosingUntilFirstLayerFlush::No;
 
     if (m_shouldCloseWhenEnteringAcceleratedCompositingMode) {
         // We needed the suspended page to stay alive to avoid flashing. Now we can get rid of it.
@@ -200,8 +200,8 @@ bool SuspendedPageProxy::pageIsClosedOrClosing() const
 
 void SuspendedPageProxy::closeWithoutFlashing()
 {
-    RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::closeWithoutFlashing() shouldDelayClosingUntilEnteringAcceleratedCompositingMode? %d", this, m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode == ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::Yes);
-    if (m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode == ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::Yes) {
+    RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::closeWithoutFlashing() shouldDelayClosingUntilFirstLayerFlush? %d", this, m_shouldDelayClosingUntilFirstLayerFlush == ShouldDelayClosingUntilFirstLayerFlush::Yes);
+    if (m_shouldDelayClosingUntilFirstLayerFlush == ShouldDelayClosingUntilFirstLayerFlush::Yes) {
         m_shouldCloseWhenEnteringAcceleratedCompositingMode = true;
         return;
     }

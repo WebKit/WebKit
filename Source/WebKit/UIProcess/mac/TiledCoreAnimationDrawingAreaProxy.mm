@@ -113,6 +113,11 @@ void TiledCoreAnimationDrawingAreaProxy::updateAcceleratedCompositingMode(uint64
     m_webPageProxy.updateAcceleratedCompositingMode(layerTreeContext);
 }
 
+void TiledCoreAnimationDrawingAreaProxy::didFirstLayerFlush(uint64_t /* backingStoreStateID */, const LayerTreeContext& layerTreeContext)
+{
+    m_webPageProxy.didFirstLayerFlush(layerTreeContext);
+}
+
 void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
 {
     ASSERT(m_isWaitingForDidUpdateGeometry);

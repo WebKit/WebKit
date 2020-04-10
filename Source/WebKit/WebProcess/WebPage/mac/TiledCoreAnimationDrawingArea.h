@@ -106,7 +106,8 @@ private:
     void addTransactionCallbackID(CallbackID) override;
     void setShouldScaleViewToFitDocument(bool) override;
 
-    void sendEnterAcceleratedCompositingModeIfNeeded();
+    void sendEnterAcceleratedCompositingModeIfNeeded() override;
+    void sendDidFirstLayerFlushIfNeeded();
 
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
@@ -169,6 +170,7 @@ private:
     bool m_shouldScaleViewToFitDocument { false };
     bool m_isScalingViewToFitDocument { false };
     bool m_needsSendEnterAcceleratedCompositingMode { true };
+    bool m_needsSendDidFirstLayerFlush { true };
 };
 
 inline bool TiledCoreAnimationDrawingArea::addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones)

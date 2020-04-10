@@ -1,3 +1,72 @@
+2020-04-10  Chris Dumez  <cdumez@apple.com>
+
+        First render after a process swap does not use accelerated rendering
+        https://bugs.webkit.org/show_bug.cgi?id=210297
+        <rdar://problem/61432515>
+
+        Reviewed by Antti Koivisto.
+
+        To prevent flashing on navigation when process-swapping, we were delaying the
+        DrawingAreaProxy::EnterAcceleratedCompositingMode IPC message from the WebProcess
+        to the UIProcess, until the new page is ready to display. The reason we did this
+        is that the EnterAcceleratedCompositingMode IPC message ends up setting the root
+        CALayer so the new content would become visible on screen. However, another side
+        effect of this is that we would also delay the point until which we get
+        accelerated rendering, which would negatively impact early page load performance.
+
+        To address the issue, the following changes were made:
+        1. We no longer delay the DrawingAreaProxy::EnterAcceleratedCompositingMode IPC.
+           In non process-swap cases, we send it as soon as the DrawingArea is constructed.
+           In process-swap cases, we send it as soon as we commit the load since this is
+           when the provisional drawing area gets committed and happens before we have
+           any content to paint.
+        2. In the UIProcess, when we get the DrawingAreaProxy::EnterAcceleratedCompositingMode
+           IPC and we already have a root layer, we add the new one behind the existing one
+           instead of replacing the existing one. As a result, the new layer will get
+           accelerated compositing but will not be visible on screen yet.
+        3. Introduce a new DrawingAreaProxy::DidFirstLayerFlush IPC which gets send at the
+           point where we used to send the EnterAcceleratedCompositingMode IPC, meaning where
+           the new content is ready to display. When the UIProcess receives this IPC, it
+           actually replaces the root layer with the new layer so that the new content visible.
+
+        After this patch, our CALayers get accelerated compositing right away after a
+        process-swap but we still do not see any blank-flashing on navigation.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setAcceleratedCompositingRootLayer):
+        (WebKit::WebViewImpl::setAcceleratedCompositingRootLayerAfterFlush):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::didFirstLayerFlush):
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didFirstLayerFlush):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::pageDidFirstLayerFlush):
+        (WebKit::SuspendedPageProxy::closeWithoutFlashing):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didFirstLayerFlush):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::didFirstLayerFlush):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::sendEnterAcceleratedCompositingModeIfNeeded):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::sendDidFirstLayerFlushIfNeeded):
+        (WebKit::TiledCoreAnimationDrawingArea::sendEnterAcceleratedCompositingModeIfNeeded):
+        (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+
 2020-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Unable to select text by tap-hold or double tap-hold when allowsLinkPreview property is set to NO
