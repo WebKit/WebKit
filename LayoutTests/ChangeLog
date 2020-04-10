@@ -1,3 +1,119 @@
+2020-04-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r259829. rdar://problem/61596883
+
+    Remove legacy X-WebKit-CSP header support
+    https://bugs.webkit.org/show_bug.cgi?id=210256
+    Source/WebCore:
+    
+    <rdar://problem/60634363>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Supporting this header is causes compatibly issues for some sites
+    and they appear to be misconfigured. Additionally, no other
+    browser has supported these headers in many years. This patch
+    removes all support for the legacy X-WebKit-CSP header.
+    
+    * dom/Document.cpp:
+    (WebCore::Document::processHttpEquiv):
+    * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+    (WebCore::ContentSecurityPolicyDirectiveList::ContentSecurityPolicyDirectiveList):
+    * page/csp/ContentSecurityPolicyResponseHeaders.cpp:
+    (WebCore::ContentSecurityPolicyResponseHeaders::ContentSecurityPolicyResponseHeaders):
+    * page/csp/ContentSecurityPolicyResponseHeaders.h:
+    * platform/network/HTTPHeaderNames.in:
+    * platform/network/ResourceResponseBase.cpp:
+    (WebCore::isSafeCrossOriginResponseHeader):
+    
+    LayoutTests:
+    
+    Reviewed by Geoffrey Garen.
+    
+    Fix tests so they ensure we don't respect legacy CSP headers anymore.
+    
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked.html:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked.html:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked.html:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked.html:
+    * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-blocked.html:
+    * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-invalidnonce-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-invalidnonce.html:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy.php:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2.php:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.php:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2.php:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2.php:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.php:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2.php:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked.html:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259829 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-09  Keith Miller  <keith_miller@apple.com>
+
+            Remove legacy X-WebKit-CSP header support
+            https://bugs.webkit.org/show_bug.cgi?id=210256
+
+            Reviewed by Geoffrey Garen.
+
+            Fix tests so they ensure we don't respect legacy CSP headers anymore.
+
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked.html:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked.html:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked.html:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked.html:
+            * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-blocked-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-blocked.html:
+            * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-invalidnonce-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-invalidnonce.html:
+            * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy.php:
+            * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php:
+            * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2.php:
+            * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.php:
+            * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2.php:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy2.php:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.php:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2.php:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked.html:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html:
+
 2020-04-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r255832. rdar://problem/61601064

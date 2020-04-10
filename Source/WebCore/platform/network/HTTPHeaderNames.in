@@ -102,8 +102,6 @@ X-Content-Type-Options
 X-DNS-Prefetch-Control
 X-Frame-Options
 X-SourceMap
-X-WebKit-CSP
-X-WebKit-CSP-Report-Only
 X-XSS-Protection
 X-Temp-Tablet
 
