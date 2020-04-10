@@ -474,9 +474,10 @@ void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const RegistrableDoma
             if (isRedirect || wasNavigatedAfterShortDelayWithoutUserInteraction) {
                 if (redirectingDomainStatistics.topFrameUniqueRedirectsTo.add(targetDomain).isNewEntry)
                     statisticsWereUpdated = true;
-                if (redirectingDomainStatistics.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement.add(targetDomain).isNewEntry)
+                if (isRedirect && redirectingDomainStatistics.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement.add(targetDomain).isNewEntry) {
                     statisticsWereUpdated = true;
-                RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8().data(), targetDomain.string().utf8().data());
+                    RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8().data(), targetDomain.string().utf8().data());
+                }
                 auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
                 if (targetStatistics.topFrameUniqueRedirectsFrom.add(sourceDomain).isNewEntry)
                     statisticsWereUpdated = true;
@@ -949,7 +950,8 @@ bool ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor(ResourceLoa
 
 bool ResourceLoadStatisticsMemoryStore::shouldEnforceSameSiteStrictFor(ResourceLoadStatistics& resourceStatistic, bool shouldCheckForGrandfathering)
 {
-    if (!isSameSiteStrictEnforcementEnabled() || (shouldCheckForGrandfathering && resourceStatistic.grandfathered))
+    if ((!isSameSiteStrictEnforcementEnabled() && !shouldEnforceSameSiteStrictForSpecificDomain(resourceStatistic.registrableDomain))
+        || (shouldCheckForGrandfathering && resourceStatistic.grandfathered))
         return false;
 
     if (resourceStatistic.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement.size() > parameters().minimumTopFrameRedirectsForSameSiteStrictEnforcement) {
@@ -986,7 +988,6 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryS
             if (shouldEnforceSameSiteStrictFor(statistic, shouldCheckForGrandfathering)) {
                 toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic.registrableDomain);
                 RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Scheduled %" PUBLIC_LOG_STRING " to have its cookies set to SameSite=strict.", statistic.registrableDomain.string().utf8().data());
-
             }
         }
 

@@ -1627,8 +1627,10 @@ void ResourceLoadStatisticsDatabaseStore::logFrameNavigation(const RegistrableDo
                     return;
                 }
                 insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
-                insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
-                RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8().data(), targetDomain.string().utf8().data());
+                if (isRedirect) {
+                    insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
+                    RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8().data(), targetDomain.string().utf8().data());
+                }
                 insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
                 statisticsWereUpdated = true;
             }
@@ -2424,7 +2426,8 @@ bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor(const Dom
 
 bool ResourceLoadStatisticsDatabaseStore::shouldEnforceSameSiteStrictFor(DomainData& resourceStatistic, bool shouldCheckForGrandfathering)
 {
-    if (!isSameSiteStrictEnforcementEnabled() || (shouldCheckForGrandfathering && resourceStatistic.grandfathered))
+    if ((!isSameSiteStrictEnforcementEnabled() && !shouldEnforceSameSiteStrictForSpecificDomain(resourceStatistic.registrableDomain))
+        || (shouldCheckForGrandfathering && resourceStatistic.grandfathered))
         return false;
 
     if (resourceStatistic.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement > parameters().minimumTopFrameRedirectsForSameSiteStrictEnforcement) {

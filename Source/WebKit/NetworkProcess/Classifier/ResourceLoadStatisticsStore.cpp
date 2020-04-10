@@ -535,6 +535,17 @@ bool ResourceLoadStatisticsStore::hasStatisticsExpired(const ResourceLoadStatist
     return hasStatisticsExpired(resourceStatistic.mostRecentUserInteractionTime, operatingDatesWindow);
 }
 
+bool ResourceLoadStatisticsStore::shouldEnforceSameSiteStrictForSpecificDomain(const RegistrableDomain& domain) const
+{
+    static NeverDestroyed<HashSet<RegistrableDomain>> domains = [] {
+        HashSet<RegistrableDomain> set;
+        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("yahoo.co.jp"_s));
+        return set;
+    }();
+
+    return domains.get().contains(domain);
+}
+
 void ResourceLoadStatisticsStore::setMaxStatisticsEntries(size_t maximumEntryCount)
 {
     ASSERT(!RunLoop::isMain());

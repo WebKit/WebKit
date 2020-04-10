@@ -1,3 +1,32 @@
+2020-04-10  John Wilander  <wilander@apple.com>
+
+        Add capability to opt in specific domains into SameSite=strict bounce tracking protection
+        https://bugs.webkit.org/show_bug.cgi?id=210347
+        <rdar://problem/61593323>
+
+        Reviewed by Brent Fulgham.
+
+        This change adds an additional opt-in condition to the shouldEnforceSameSiteStrictFor()
+        functions in both ResourceLoadStatisticsMemoryStore and ResourceLoadStatisticsDatabaseStore.
+
+        No new tests. This adds domain specific logic, quirk-style. The logFrameNavigation()
+        changes are covered by existing tests.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logFrameNavigation):
+            Now only captures real redirects for the purposes of the SameSite=strict rule.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::shouldEnforceSameSiteStrictFor):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::logFrameNavigation):
+            Now only captures real redirects for the purposes of the SameSite=strict rule.
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldEnforceSameSiteStrictFor):
+        (WebKit::ResourceLoadStatisticsMemoryStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor):
+            Removed stray newline.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::shouldEnforceSameSiteStrictForSpecificDomain const):
+           The new function with domains to subject to the new rule.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+
 2020-04-10  Chris Dumez  <cdumez@apple.com>
 
         First render after a process swap does not use accelerated rendering

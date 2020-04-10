@@ -204,6 +204,7 @@ protected:
     bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const;
     void scheduleStatisticsProcessingRequestIfNecessary();
     void mergeOperatingDates(Vector<OperatingDate>&&);
+    bool shouldEnforceSameSiteStrictForSpecificDomain(const RegistrableDomain&) const;
     virtual Vector<RegistrableDomain> ensurePrevalentResourcesForDebugMode() = 0;
     virtual RegistrableDomainsToDeleteOrRestrictWebsiteDataFor registrableDomainsToDeleteOrRestrictWebsiteDataFor() = 0;
     virtual void pruneStatisticsIfNeeded() = 0;
