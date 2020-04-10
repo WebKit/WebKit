@@ -1,5 +1,24 @@
 2020-04-10  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Generate one IceCC archive per toolchain
+        https://bugs.webkit.org/show_bug.cgi?id=210189
+
+        Reviewed by Žan Doberšek.
+
+        Add a utility option to webkit-flatpak so it regenerated
+        toolchains without needing a full SDK reinstall. Also we now
+        generate a self-contained toolchain archive embedding GCC and one
+        embedding CLang.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.setup_icecc):
+        (WebkitFlatpak.setup_dev_env):
+
+2020-04-10  Philippe Normand  <pnormand@igalia.com>
+
         [GTK][WPE] Flatpak error when running run-webkit-tests
         https://bugs.webkit.org/show_bug.cgi?id=209229
 

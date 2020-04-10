@@ -393,6 +393,8 @@ class WebkitFlatpak:
                              dest="user_command")
         general.add_argument('--available', action='store_true', dest="check_available", help='Check if required dependencies are available.'),
         general.add_argument("--use-icecream", dest="use_icecream", help="Use the distributed icecream (icecc) compiler.", action="store_true")
+        general.add_argument("-r", "--regenerate-toolchains", dest="regenerate_toolchains", action="store_true",
+                             help="Regenerate IceCC distribuable toolchain archives")
 
         debugoptions = parser.add_argument_group("Debugging")
         debugoptions.add_argument("--gdb", nargs="?", help="Activate gdb, passing extra args to it if wanted.")
@@ -444,7 +446,8 @@ class WebkitFlatpak:
         self.cmakeargs = ""
 
         self.use_icecream = False
-        self.icc_version = None
+        self.icc_version = {}
+        self.regenerate_toolchains = False
 
     def execute_command(self, args, stdout=None, stderr=None):
         _log.debug('Running in sandbox: %s\n' % ' '.join(args))
@@ -485,8 +488,8 @@ class WebkitFlatpak:
 
         self.flatpak_build_path = os.environ["FLATPAK_USER_DIR"]
 
-        build_root = os.path.join(self.source_root, 'WebKitBuild')
-        self.build_path = os.path.join(build_root, self.platform, self.build_type)
+        self.build_root = os.path.join(self.source_root, 'WebKitBuild')
+        self.build_path = os.path.join(self.build_root, self.platform, self.build_type)
         self.config_file = os.path.join(self.flatpak_build_path, 'webkit_flatpak_config.json')
 
         Console.quiet = self.quiet
@@ -535,7 +538,7 @@ class WebkitFlatpak:
             raise RuntimeError('GST_BUILD_PATH set to %s but it doesn\'t seem to be a valid `gst-build` checkout.' % gst_dir)
 
         gst_builddir = os.path.join(self.sandbox_source_root, "WebKitBuild", 'gst-build')
-        if not os.path.exists(os.path.join(self.source_root, 'WebKitBuild', 'gst-build', 'build.ninja')):
+        if not os.path.exists(os.path.join(self.build_root, 'gst-build', 'build.ninja')):
             if not building:
                 raise RuntimeError('Trying to enter gst-build env from %s but it is not built, make sure to rebuild webkit.' % gst_dir)
 
@@ -687,7 +690,7 @@ class WebkitFlatpak:
             _log.debug("Enabling network access for the remote sccache")
             flatpak_command.append(share_network_option)
 
-        if self.use_icecream:
+        if self.use_icecream and not self.regenerate_toolchains:
             _log.debug('Enabling the icecream compiler')
             if share_network_option not in flatpak_command:
                 flatpak_command.append(share_network_option)
@@ -695,9 +698,14 @@ class WebkitFlatpak:
 
             n_cores = multiprocessing.cpu_count() * 3
             _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
+            toolchain_name = os.environ.get("CC", "gcc")
+            toolchain_path = self.icc_version[toolchain_name]
+            if not os.path.isfile(toolchain_path):
+                Console.error_message("%s is not a valid IceCC toolchain. Please run webkit-flatpak -r")
+                return 1
             forwarded.update({
                 "CCACHE_PREFIX": "icecc",
-                "ICECC_VERSION": self.icc_version,
+                "ICECC_VERSION": toolchain_path,
                 "NUMBER_OF_PROCESSORS": n_cores,
             })
 
@@ -757,19 +765,32 @@ class WebkitFlatpak:
             json_config = {'icecc_version': self.icc_version}
             json.dump(json_config, config)
 
-    def setup_icecc(self):
+    def setup_icecc(self, name):
         with tempfile.NamedTemporaryFile() as tmpfile:
-            self.run_in_sandbox('icecc', '--build-native', stdout=tmpfile, cwd=self.source_root)
+            toolchain_path = "/usr/bin/%s" % name
+            self.run_in_sandbox('icecc', '--build-native', toolchain_path, stdout=tmpfile, cwd=self.source_root)
             tmpfile.flush()
             tmpfile.seek(0)
             icc_version_filename, = re.findall(r'.*creating (.*)', tmpfile.read())
-            self.icc_version = os.path.join(self.source_root, icc_version_filename)
+            toolchains_directory = os.path.join(self.build_root, "Toolchains")
+            if not os.path.isdir(toolchains_directory):
+                os.makedirs(toolchains_directory)
+            archive_filename = os.path.join(toolchains_directory, "webkit-sdk-%s-%s" % (name, icc_version_filename))
+            os.rename(icc_version_filename, archive_filename)
+            self.icc_version[name] = archive_filename
+            Console.message("Created %s self-contained toolchain archive", archive_filename)
 
     def setup_dev_env(self):
         if not os.path.exists(os.path.join(self.flatpak_build_path, "runtime", "org.webkit.Sdk")) or self.update:
             self.install_all()
-            if self.use_icecream:
-                self.setup_icecc()
+            regenerate_toolchains = True
+        else:
+            regenerate_toolchains = self.regenerate_toolchains
+
+        if regenerate_toolchains:
+            self.icc_version = {}
+            self.setup_icecc("gcc")
+            self.setup_icecc("clang")
             self.save_config()
 
         if not self.update:
