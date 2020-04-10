@@ -159,17 +159,23 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
 
         for (auto order : paintOrder) {
             switch (order) {
-            case PaintType::Fill:
-                m_context.setTextDrawingMode(textDrawingMode & ~TextModeStroke);
+            case PaintType::Fill: {
+                auto textDrawingModeWithoutStroke = textDrawingMode;
+                textDrawingModeWithoutStroke.remove(TextDrawingMode::Stroke);
+                m_context.setTextDrawingMode(textDrawingModeWithoutStroke);
                 paintTextWithShadows(shadowToUse, shadowColorFilter, *m_font, textRun, boxRect, textOrigin, startOffset, endOffset, nullAtom(), 0, false);
                 shadowToUse = nullptr;
                 m_context.setTextDrawingMode(textDrawingMode);
                 break;
-            case PaintType::Stroke:
-                m_context.setTextDrawingMode(textDrawingMode & ~TextModeFill);
+            }
+            case PaintType::Stroke: {
+                auto textDrawingModeWithoutFill = textDrawingMode;
+                textDrawingModeWithoutFill.remove(TextDrawingMode::Fill);
+                m_context.setTextDrawingMode(textDrawingModeWithoutFill);
                 paintTextWithShadows(shadowToUse, shadowColorFilter, *m_font, textRun, boxRect, textOrigin, startOffset, endOffset, nullAtom(), 0, paintStyle.strokeWidth > 0);
                 shadowToUse = nullptr;
                 m_context.setTextDrawingMode(textDrawingMode);
+            }
                 break;
             case PaintType::Markers:
                 continue;

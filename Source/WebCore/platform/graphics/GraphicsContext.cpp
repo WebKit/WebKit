@@ -285,7 +285,7 @@ void GraphicsContextStateChange::dump(TextStream& ts) const
         ts.dumpProperty("stroke-thickness", m_state.strokeThickness);
 
     if (m_changeFlags.contains(GraphicsContextState::TextDrawingModeChange))
-        ts.dumpProperty("text-drawing-mode", m_state.textDrawingMode);
+        ts.dumpProperty("text-drawing-mode", m_state.textDrawingMode.toRaw());
 
     if (m_changeFlags.contains(GraphicsContextState::StrokeColorChange))
         ts.dumpProperty("stroke-color", m_state.strokeColor);

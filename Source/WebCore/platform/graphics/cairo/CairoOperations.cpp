@@ -315,7 +315,7 @@ static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFon
 static void drawGlyphsShadow(PlatformContextCairo& platformContext, const ShadowState& shadowState, TextDrawingModeFlags textDrawingMode, const FloatSize& shadowOffset, const Color& shadowColor, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, FontSmoothingMode fontSmoothingMode)
 {
     ShadowBlur shadow({ shadowState.blur, shadowState.blur }, shadowState.offset, shadowState.color, shadowState.ignoreTransforms);
-    if (!(textDrawingMode & TextModeFill) || shadow.type() == ShadowBlur::NoShadow)
+    if (!textDrawingMode.contains(TextDrawingMode::Fill) || shadow.type() == ShadowBlur::NoShadow)
         return;
 
     if (!shadowState.isRequired(platformContext)) {
@@ -832,7 +832,7 @@ void drawGlyphs(PlatformContextCairo& platformContext, const FillSource& fillSou
     cairo_t* cr = platformContext.cr();
     cairo_save(cr);
 
-    if (textDrawingMode & TextModeFill) {
+    if (textDrawingMode.contains(TextDrawingMode::Fill)) {
         prepareForFilling(cr, fillSource, AdjustPatternForGlobalAlpha);
         drawGlyphsToContext(cr, scaledFont, syntheticBoldOffset, glyphs, fontSmoothingMode);
     }
@@ -841,7 +841,7 @@ void drawGlyphs(PlatformContextCairo& platformContext, const FillSource& fillSou
     // twice the size of the width of the text we will not ask cairo to stroke
     // the text as even one single stroke would cover the full wdth of the text.
     //  See https://bugs.webkit.org/show_bug.cgi?id=33759.
-    if (textDrawingMode & TextModeStroke && strokeThickness < 2 * xOffset) {
+    if (textDrawingMode.contains(TextDrawingMode::Stroke) && strokeThickness < 2 * xOffset) {
         prepareForStroking(cr, strokeSource, PreserveAlpha);
         cairo_set_line_width(cr, strokeThickness);
 

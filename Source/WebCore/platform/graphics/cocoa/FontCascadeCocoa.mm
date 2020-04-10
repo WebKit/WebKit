@@ -91,7 +91,7 @@ static inline void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& 
 static inline bool shouldUseLetterpressEffect(const GraphicsContext& context)
 {
 #if ENABLE(LETTERPRESS)
-    return context.textDrawingMode() & TextModeLetterpress;
+    return context.textDrawingMode().contains(TextDrawingMode::Letterpress);
 #else
     UNUSED_PARAM(context);
     return false;
@@ -278,7 +278,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         }
     };
 
-    bool hasSimpleShadow = context.textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur && !platformData.isColorBitmapFont() && (!context.shadowsIgnoreTransforms() || contextCTM.isIdentityOrTranslationOrFlipped()) && !context.isInTransparencyLayer();
+    bool hasSimpleShadow = context.textDrawingMode() == TextDrawingMode::Fill && shadowColor.isValid() && !shadowBlur && !platformData.isColorBitmapFont() && (!context.shadowsIgnoreTransforms() || contextCTM.isIdentityOrTranslationOrFlipped()) && !context.isInTransparencyLayer();
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         context.clearShadow();

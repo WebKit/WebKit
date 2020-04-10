@@ -491,7 +491,7 @@ void encode(Encoder& encoder, CFNumberRef number)
     bool result = CFNumberGetValue(number, numberType, buffer.data());
     ASSERT_UNUSED(result, result);
 
-    encoder.encodeEnum(numberType);
+    encoder << static_cast<uint8_t>(numberType);
     encoder << IPC::DataReference(buffer);
 }
 
@@ -537,9 +537,11 @@ static size_t sizeForNumberType(CFNumberType numberType)
 
 bool decode(Decoder& decoder, RetainPtr<CFNumberRef>& result)
 {
-    CFNumberType numberType;
-    if (!decoder.decodeEnum(numberType))
+    Optional<uint8_t> numberTypeFromIPC;
+    decoder >> numberTypeFromIPC;
+    if (!numberTypeFromIPC || *numberTypeFromIPC > kCFNumberMaxType)
         return false;
+    auto numberType = static_cast<CFNumberType>(*numberTypeFromIPC);
 
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
@@ -571,15 +573,17 @@ void encode(Encoder& encoder, CFStringRef string)
     numConvertedBytes = CFStringGetBytes(string, range, encoding, 0, false, buffer.data(), buffer.size(), &bufferLength);
     ASSERT(numConvertedBytes == length);
 
-    encoder.encodeEnum(encoding);
+    encoder << static_cast<uint32_t>(encoding);
     encoder << IPC::DataReference(buffer);
 }
 
 bool decode(Decoder& decoder, RetainPtr<CFStringRef>& result)
 {
-    CFStringEncoding encoding;
-    if (!decoder.decodeEnum(encoding))
+    Optional<uint32_t> encodingFromIPC;
+    decoder >> encodingFromIPC;
+    if (!encodingFromIPC)
         return false;
+    auto encoding = static_cast<CFStringEncoding>(*encodingFromIPC);
 
     if (!CFStringIsEncodingAvailable(encoding))
         return false;

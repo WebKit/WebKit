@@ -558,7 +558,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
             maskImageContext.setStrokeThickness(c->strokeThickness());
         }
 
-        maskImageContext.setTextDrawingMode(fill ? TextModeFill : TextModeStroke);
+        maskImageContext.setTextDrawingMode(fill ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
 
         if (useMaxWidth) {
             maskImageContext.translate(location - maskRect.location());
@@ -578,7 +578,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     }
 #endif
 
-    c->setTextDrawingMode(fill ? TextModeFill : TextModeStroke);
+    c->setTextDrawingMode(fill ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
 
     GraphicsContextStateSaver stateSaver(*c);
     if (useMaxWidth) {

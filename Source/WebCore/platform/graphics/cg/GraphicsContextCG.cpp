@@ -1760,19 +1760,15 @@ void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
     ASSERT(hasPlatformContext());
 
     CGContextRef context = platformContext();
-    switch (mode) {
-    case TextModeFill:
-        CGContextSetTextDrawingMode(context, kCGTextFill);
-        break;
-    case TextModeStroke:
-        CGContextSetTextDrawingMode(context, kCGTextStroke);
-        break;
-    case TextModeFill | TextModeStroke:
+    
+    bool fill = mode.contains(TextDrawingMode::Fill);
+    bool stroke = mode.contains(TextDrawingMode::Stroke);
+    if (fill && stroke)
         CGContextSetTextDrawingMode(context, kCGTextFillStroke);
-        break;
-    default:
-        break;
-    }
+    else if (fill)
+        CGContextSetTextDrawingMode(context, kCGTextFill);
+    else if (stroke)
+        CGContextSetTextDrawingMode(context, kCGTextStroke);
 }
 
 void GraphicsContext::setPlatformStrokeColor(const Color& color)

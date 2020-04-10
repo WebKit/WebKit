@@ -1,3 +1,19 @@
+2020-04-09  Alex Christensen  <achristensen@webkit.org>
+
+        IPC serialization of enums should serialize std::underlying_type instead of uint64_t
+        https://bugs.webkit.org/show_bug.cgi?id=210228
+
+        Reviewed by Chris Dumez and Darin Adler.
+
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::decode):
+        (IPC::Decoder::operator>>):
+        (IPC::Decoder::decodeEnum):
+        * Platform/IPC/Encoder.h:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::encode):
+        (IPC::decode):
+
 2020-04-08  Darin Adler  <darin@apple.com>
 
         [Cocoa] Simplify NSArray, NSDictionary, and NSNumber idioms throughout WebKit

@@ -61,9 +61,7 @@ public:
 
     template<typename T> void encodeEnum(T t)
     {
-        COMPILE_ASSERT(sizeof(T) <= sizeof(uint64_t), enum_type_must_not_be_larger_than_64_bits);
-
-        encode(static_cast<uint64_t>(t));
+        encode(static_cast<typename std::underlying_type<T>::type>(t));
     }
 
     template<typename T, std::enable_if_t<!std::is_enum<typename std::remove_const_t<std::remove_reference_t<T>>>::value>* = nullptr>
@@ -75,7 +73,7 @@ public:
     template<typename T, std::enable_if_t<std::is_enum<T>::value>* = nullptr>
     Encoder& operator<<(T&& t)
     {
-        encode(static_cast<uint64_t>(t));
+        encode(static_cast<typename std::underlying_type<T>::type>(t));
         return *this;
     }
 
@@ -113,10 +111,8 @@ private:
     template<typename E>
     auto encode(E value) -> std::enable_if_t<std::is_enum<E>::value>
     {
-        static_assert(sizeof(E) <= sizeof(uint64_t), "Enum type must not be larger than 64 bits.");
-
-        ASSERT(isValidEnum<E>(static_cast<uint64_t>(value)));
-        encode(static_cast<uint64_t>(value));
+        ASSERT(isValidEnum<E>(static_cast<typename std::underlying_type<E>::type>(value)));
+        encode(static_cast<typename std::underlying_type<E>::type>(value));
     }
 
     void encodeHeader();
