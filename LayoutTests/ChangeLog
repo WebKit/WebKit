@@ -1,5 +1,111 @@
 2020-04-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r259830. rdar://problem/61596886
+
+    REGRESSION: CSS animations inside an embedded SVG image do not animate
+    https://bugs.webkit.org/show_bug.cgi?id=209370
+    
+    Patch by Said Abou-Hallawa <sabouhallawa@apple.com> on 2020-04-09
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    If WebAnimation is enabled and the SVGImage includes CSS animations, the
+    DocumentTimeline is added to the SVGDocument of the embedded SVGImage.
+    Because the SVGImage has its own Page the RenderingUpdate is scheduled
+    and the updateRendering steps run in this Page.
+    
+    The Page of the SVGImage is inactive such that scheduling RenderingUpdate
+    fails; therefore the updateRendering steps never run and the CSS animation
+    never advances.
+    
+    The fix is:
+    
+    1) Scheduling the RenderingUpdate: This has to happen in the Page which
+       contains the renderer of the SVGImage. Because DocumentTimeline is
+       added to SVGDocument, this scheduling will go through these hubs:
+            - DocumentTimeline
+            - Page
+            - ChromeClient -> SVGImageChromeClient
+            - SVGImage
+            - ImageObserver -> CachedImageObserver
+            - CachedImage
+            - CachedImageClient -> RenderElement
+            - Page
+    
+    2) Running the updateRendering steps: Each document in the Page will
+       enumerate its cached SVGImages. The updateRendering of the Page of
+       each SVGImage will be called.
+    
+    To make enumerating the cached SVGImages of a Document faster, the URL
+    of the cached SVGImage will be added to the cachedSVGImagesURLs of
+    CachedResourceLoader when notifyFinished() is called for associated
+    CachedImage.
+    
+    Tests: svg/animations/css-animation-background-svg.html
+           svg/animations/css-animation-embedded-svg.html
+           svg/animations/css-animation-hover-svg.html
+    
+    * animation/DocumentTimeline.cpp:
+    (WebCore::DocumentTimeline::scheduleAnimationResolution):
+    (WebCore::DocumentTimeline::updateAnimationsAndSendEvents):
+    * html/ImageBitmap.cpp:
+    * loader/cache/CachedImage.cpp:
+    (WebCore::CachedImage::hasSVGImage const):
+    (WebCore::CachedImage::CachedImageObserver::scheduleTimedRenderingUpdate):
+    (WebCore::CachedImage::scheduleTimedRenderingUpdate):
+    * loader/cache/CachedImage.h:
+    * loader/cache/CachedImageClient.h:
+    (WebCore::CachedImageClient::scheduleTimedRenderingUpdate):
+    * loader/cache/CachedResourceLoader.cpp:
+    (WebCore::isSVGImageCachedResource):
+    (WebCore::cachedResourceSVGImage):
+    (WebCore::CachedResourceLoader::notifyFinished):
+    (WebCore:: const):
+    * loader/cache/CachedResourceLoader.h:
+    * page/ChromeClient.h:
+    (WebCore::ChromeClient::scheduleTimedRenderingUpdate):
+    * page/Page.cpp:
+    (WebCore::Page::scheduleTimedRenderingUpdate):
+    (WebCore::Page::updateRendering):
+    * page/Page.h:
+    * platform/graphics/ImageObserver.h:
+    * rendering/RenderElement.cpp:
+    (WebCore::RenderElement::notifyFinished):
+    (WebCore::RenderElement::scheduleTimedRenderingUpdate):
+    * rendering/RenderElement.h:
+    * rendering/RenderImage.cpp:
+    (WebCore::RenderImage::notifyFinished):
+    * svg/graphics/SVGImage.h:
+    * svg/graphics/SVGImageClients.h:
+    
+    LayoutTests:
+    
+    * svg/animations/css-animation-background-svg-expected.html: Added.
+    * svg/animations/css-animation-background-svg.html: Added.
+    * svg/animations/css-animation-embedded-svg-expected.html: Added.
+    * svg/animations/css-animation-embedded-svg.html: Added.
+    * svg/animations/css-animation-hover-svg-expected.html: Added.
+    * svg/animations/css-animation-hover-svg.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259830 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            REGRESSION: CSS animations inside an embedded SVG image do not animate
+            https://bugs.webkit.org/show_bug.cgi?id=209370
+
+            Reviewed by Simon Fraser.
+
+            * svg/animations/css-animation-background-svg-expected.html: Added.
+            * svg/animations/css-animation-background-svg.html: Added.
+            * svg/animations/css-animation-embedded-svg-expected.html: Added.
+            * svg/animations/css-animation-embedded-svg.html: Added.
+            * svg/animations/css-animation-hover-svg-expected.html: Added.
+            * svg/animations/css-animation-hover-svg.html: Added.
+
+2020-04-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r259829. rdar://problem/61596883
 
     Remove legacy X-WebKit-CSP header support

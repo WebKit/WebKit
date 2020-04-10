@@ -69,6 +69,7 @@
 #include "ResourceTiming.h"
 #include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGImage.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
@@ -781,6 +782,20 @@ static FetchOptions::Destination destinationForType(CachedResource::Type type)
     return FetchOptions::Destination::EmptyString;
 }
 
+static inline bool isSVGImageCachedResource(const CachedResource* resource)
+{
+    if (!resource || !is<CachedImage>(*resource))
+        return false;
+    return downcast<CachedImage>(*resource).hasSVGImage();
+}
+
+static inline SVGImage* cachedResourceSVGImage(CachedResource* resource)
+{
+    if (!isSVGImageCachedResource(resource))
+        return nullptr;
+    return downcast<SVGImage>(downcast<CachedImage>(*resource).image());
+}
+
 ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, DeferOption defer)
 {
     if (!frame() || !frame()->page()) {
@@ -1383,6 +1398,25 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource& resource)
 
     --m_requestCount;
     ASSERT(m_requestCount > -1);
+}
+
+void CachedResourceLoader::notifyFinished(const CachedResource& resource)
+{
+    if (isSVGImageCachedResource(&resource))
+        m_cachedSVGImagesURLs.add(resource.url());
+}
+
+Vector<Ref<SVGImage>> CachedResourceLoader::allCachedSVGImages() const
+{
+    Vector<Ref<SVGImage>> allCachedSVGImages;
+
+    for (auto& cachedSVGImageURL : m_cachedSVGImagesURLs) {
+        auto* resource = cachedResource(cachedSVGImageURL);
+        if (auto* image = cachedResourceSVGImage(resource))
+            allCachedSVGImages.append(*image);
+    }
+        
+    return allCachedSVGImages;
 }
 
 ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest&& request)
