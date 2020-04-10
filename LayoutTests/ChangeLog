@@ -1,3 +1,16 @@
+2020-04-10  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: selection.isRange() in InsertListCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=210170
+        <rdar://problem/61410397>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test for the crash.
+
+        * editing/inserting/insert-list-in-table-assert-expected.txt: Added.
+        * editing/inserting/insert-list-in-table-assert.html: Added.
+
 2020-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Unable to select text by tap-hold or double tap-hold when allowsLinkPreview property is set to NO

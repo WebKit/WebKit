@@ -1,3 +1,19 @@
+2020-04-10  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: selection.isRange() in InsertListCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=210170
+        <rdar://problem/61410397>
+
+        Reviewed by Wenson Hsieh.
+
+        If selectionForParagraphIteration returns a non-range selection, there is no need for finding
+        multiple paragraphs. And since non-range selection is handled, the assertion can be removed.
+
+        Test: editing/inserting/insert-list-in-table-assert.html
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+
 2020-04-10  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Bad style sharing between sibling elements with different part attributes
