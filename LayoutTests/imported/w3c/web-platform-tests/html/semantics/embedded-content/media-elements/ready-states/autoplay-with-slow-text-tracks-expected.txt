@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: line 32: TypeError: null is not an object (evaluating 'track.track.cues.length')
-CONSOLE MESSAGE: line 32: TypeError: null is not an object (evaluating 'track.track.cues.length')
-CONSOLE MESSAGE: line 32: TypeError: null is not an object (evaluating 'track.track.cues.length')
-CONSOLE MESSAGE: line 32: TypeError: null is not an object (evaluating 'track.track.cues.length')
-CONSOLE MESSAGE: line 32: TypeError: null is not an object (evaluating 'track.track.cues.length')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'track.track.cues.length')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'track.track.cues.length')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'track.track.cues.length')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'track.track.cues.length')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'track.track.cues.length')
 
 FAIL autoplay with slow text tracks TypeError: null is not an object (evaluating 'track.track.cues.length')
 

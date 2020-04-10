@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 2: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 
 PASS url check test 
 

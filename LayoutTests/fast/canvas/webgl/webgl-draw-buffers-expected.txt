@@ -1,8 +1,8 @@
 CONSOLE MESSAGE: WebGL: INVALID_ENUM: getParameter: invalid parameter name, WEBGL_draw_buffers not enabled
 CONSOLE MESSAGE: WebGL: INVALID_ENUM: getParameter: invalid parameter name, WEBGL_draw_buffers not enabled
-CONSOLE MESSAGE: line 43: *** Error compiling FRAGMENT_SHADER '[object WebGLShader]':ERROR: 0:2: 'GL_EXT_draw_buffers' : extension is not supported
+CONSOLE MESSAGE: *** Error compiling FRAGMENT_SHADER '[object WebGLShader]':ERROR: 0:2: 'GL_EXT_draw_buffers' : extension is not supported
 
-CONSOLE MESSAGE: line 43: Error in compiling shader
+CONSOLE MESSAGE: Error in compiling shader
 CONSOLE MESSAGE: WebGL: INVALID_ENUM: framebufferTexture2D: invalid attachment
 CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawBuffersWEBGL: more than one buffer
 CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawBuffersWEBGL: more than one buffer

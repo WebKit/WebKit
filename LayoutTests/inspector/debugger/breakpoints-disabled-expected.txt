@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: line 7: throwing TestError
-CONSOLE MESSAGE: line 12: testCatch
-CONSOLE MESSAGE: line 7: throwing TestError
-CONSOLE MESSAGE: line 16: catch TestError
-CONSOLE MESSAGE: line 18: DONE
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: testCatch
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: catch TestError
+CONSOLE MESSAGE: DONE
 Check that special breakpoints aren't hit when breakpoints are disabled.
 
 

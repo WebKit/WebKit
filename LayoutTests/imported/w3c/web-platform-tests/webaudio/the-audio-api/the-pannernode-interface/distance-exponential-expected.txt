@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 121: TypeError: undefined is not an object (evaluating 'context.startRendering().then')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'context.startRendering().then')
 
 Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.startRendering().then')
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 16: Unhandled Promise Rejection: TypeError: The WritableStream.ready getter can only be used on instances of WritableStream
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: The WritableStream.ready getter can only be used on instances of WritableStream
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream

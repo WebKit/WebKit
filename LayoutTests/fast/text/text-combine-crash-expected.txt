@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 149: TypeError: undefined is not an object (evaluating 'document.forms[2].__lookupGetter__')
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '&'
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'document.forms[2].__lookupGetter__')
+CONSOLE MESSAGE: SyntaxError: Unexpected token '&'
 Test passes if there's no crash.
 
 ￼￼￼

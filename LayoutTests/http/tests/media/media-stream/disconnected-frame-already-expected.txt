@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 24: TypeError: null is not an object (evaluating 'iframeNavigator.mediaDevices.getUserMedia')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'iframeNavigator.mediaDevices.getUserMedia')
 Tests that when a getUserMedia request is made after its frame has been disconnected, no callbacks are made and no crash occurs.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

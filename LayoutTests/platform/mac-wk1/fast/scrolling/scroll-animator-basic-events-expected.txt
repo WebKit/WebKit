@@ -1,12 +1,12 @@
-CONSOLE MESSAGE: line 27: RenderLayer: mouseEnteredContentArea
-CONSOLE MESSAGE: line 27: RenderLayer: mouseMovedInContentArea
-CONSOLE MESSAGE: line 28: RenderLayer: mouseEnteredVerticalScrollbar
-CONSOLE MESSAGE: line 28: RenderLayer: mouseMovedInContentArea
-CONSOLE MESSAGE: line 29: RenderLayer: mouseIsDownInVerticalScrollbar
-CONSOLE MESSAGE: line 30: RenderLayer: mouseIsUpInVerticalScrollbar
-CONSOLE MESSAGE: line 30: RenderLayer: mouseMovedInContentArea
-CONSOLE MESSAGE: line 31: RenderLayer: mouseExitedVerticalScrollbar
-CONSOLE MESSAGE: line 31: RenderLayer: mouseExitedContentArea
+CONSOLE MESSAGE: RenderLayer: mouseEnteredContentArea
+CONSOLE MESSAGE: RenderLayer: mouseMovedInContentArea
+CONSOLE MESSAGE: RenderLayer: mouseEnteredVerticalScrollbar
+CONSOLE MESSAGE: RenderLayer: mouseMovedInContentArea
+CONSOLE MESSAGE: RenderLayer: mouseIsDownInVerticalScrollbar
+CONSOLE MESSAGE: RenderLayer: mouseIsUpInVerticalScrollbar
+CONSOLE MESSAGE: RenderLayer: mouseMovedInContentArea
+CONSOLE MESSAGE: RenderLayer: mouseExitedVerticalScrollbar
+CONSOLE MESSAGE: RenderLayer: mouseExitedContentArea
 PASS successfullyParsed is true
 
 TEST COMPLETE

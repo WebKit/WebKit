@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 50: ReferenceError: Can't find variable: BroadcastChannel
+CONSOLE MESSAGE: ReferenceError: Can't find variable: BroadcastChannel
 
 
 Harness Error (FAIL), message = ReferenceError: Can't find variable: BroadcastChannel

@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 21: video loaded
+CONSOLE MESSAGE: video loaded
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/text-track-blocked.html from loading a resource from http://127.0.0.1:8000/media-resources/track/captions-webvtt/captions-fast.vtt
-CONSOLE MESSAGE: line 14: vttError
+CONSOLE MESSAGE: vttError
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

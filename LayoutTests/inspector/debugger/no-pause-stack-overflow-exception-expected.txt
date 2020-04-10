@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 10: RangeError: Maximum call stack size exceeded.
+CONSOLE MESSAGE: RangeError: Maximum call stack size exceeded.
 Test we do not pause on a StackOverflow Exception.
 
 

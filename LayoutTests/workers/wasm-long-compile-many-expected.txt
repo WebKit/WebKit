@@ -1,24 +1,24 @@
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 29: Good result
-CONSOLE MESSAGE: line 5: Finished test
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Finished test
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 1: Warning: feConvolveMatrix: problem parsing edgeMode="DUPLICATE". Filtered element will not be displayed.
-CONSOLE MESSAGE: line 1: Warning: feConvolveMatrix: problem parsing edgeMode="WRAP". Filtered element will not be displayed.
-CONSOLE MESSAGE: line 1: Warning: feConvolveMatrix: problem parsing edgeMode="NONE". Filtered element will not be displayed.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing edgeMode="DUPLICATE". Filtered element will not be displayed.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing edgeMode="WRAP". Filtered element will not be displayed.
+CONSOLE MESSAGE: Warning: feConvolveMatrix: problem parsing edgeMode="NONE". Filtered element will not be displayed.
 This test checks the case-sensitivity of SVGAnimatedEnumeration elements
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

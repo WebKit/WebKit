@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 17: Error: Problem parsing d="none"
-CONSOLE MESSAGE: line 18: Error: Problem parsing d="# invalid"
-CONSOLE MESSAGE: line 19: Error: Problem parsing d="m 0 0 l 3 -4 z # ignored suffix v 123"
-CONSOLE MESSAGE: line 21: Error: Problem parsing d="m 0 0 l -9 11 -123 z # ignore last l parameter"
+CONSOLE MESSAGE: Error: Problem parsing d="none"
+CONSOLE MESSAGE: Error: Problem parsing d="# invalid"
+CONSOLE MESSAGE: Error: Problem parsing d="m 0 0 l 3 -4 z # ignored suffix v 123"
+CONSOLE MESSAGE: Error: Problem parsing d="m 0 0 l -9 11 -123 z # ignore last l parameter"
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 100x100

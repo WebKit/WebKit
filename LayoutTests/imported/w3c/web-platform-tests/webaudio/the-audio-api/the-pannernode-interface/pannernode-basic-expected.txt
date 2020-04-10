@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 58: TypeError: undefined is not an object (evaluating 'panner.positionX.value')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'panner.positionX.value')
 
 Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'panner.positionX.value')
 

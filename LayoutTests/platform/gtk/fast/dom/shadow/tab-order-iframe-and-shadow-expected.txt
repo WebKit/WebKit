@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 104: ReferenceError: Can't find variable: log
+CONSOLE MESSAGE: ReferenceError: Can't find variable: log
 This tests that pressing Tab key should traverse into iframe and shadow tree, and pressing Shift-Tab should reverse the order.
 
 Should move from input-01 to input-13 in forward

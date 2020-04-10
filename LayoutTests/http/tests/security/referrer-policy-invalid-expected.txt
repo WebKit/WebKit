@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 8: Failed to set referrer policy: The value 'invalid' is not one of 'no-referrer', 'no-referrer-when-downgrade', 'same-origin', 'origin', 'strict-origin', 'origin-when-cross-origin', 'strict-origin-when-cross-origin' or 'unsafe-url'.
+CONSOLE MESSAGE: Failed to set referrer policy: The value 'invalid' is not one of 'no-referrer', 'no-referrer-when-downgrade', 'same-origin', 'origin', 'strict-origin', 'origin-when-cross-origin', 'strict-origin-when-cross-origin' or 'unsafe-url'.
 This test checks an invalid referrer policy when navigating from an insecure URL to another insecure URL. The test passes if the printed referrer is not empty.
 
 

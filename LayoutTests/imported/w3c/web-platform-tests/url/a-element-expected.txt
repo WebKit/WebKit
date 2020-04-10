@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 19: Blocked setting data:, as the base URL because it does not have an allowed scheme.
+CONSOLE MESSAGE: Blocked setting data:, as the base URL because it does not have an allowed scheme.
 
 PASS Loading data… 
 PASS Parsing: <http://example	.

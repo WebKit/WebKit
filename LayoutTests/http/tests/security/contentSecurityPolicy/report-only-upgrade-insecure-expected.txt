@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.
-CONSOLE MESSAGE: line 1: [Report Only] Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 ALERT: PASS
 CSP report received:
 CONTENT_TYPE: application/csp-report

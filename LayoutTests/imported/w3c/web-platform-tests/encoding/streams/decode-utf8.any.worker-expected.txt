@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 11: TypeError: undefined is not a constructor (evaluating 'new self[arrayBufferOrSharedArrayBuffer](0)')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new self[arrayBufferOrSharedArrayBuffer](0)')
 
 Harness Error (FAIL), message = TypeError: undefined is not a constructor (evaluating 'new self[arrayBufferOrSharedArrayBuffer](0)')
 

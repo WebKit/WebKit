@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 67: inner exception
-CONSOLE MESSAGE: line 69: outer exception
+CONSOLE MESSAGE: inner exception
+CONSOLE MESSAGE: outer exception
 Checks that $exception is the value of the current exception, even in nested catch blocks.
 
 

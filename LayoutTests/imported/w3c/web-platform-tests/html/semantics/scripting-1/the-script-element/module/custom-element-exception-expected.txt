@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 26: Error: custom element error
+CONSOLE MESSAGE: Error: custom element error
 
 PASS Test that exceptions from the constructor of a custom element inside a module are propagated as expected.
  

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: dynamically added script element
+CONSOLE MESSAGE: dynamically added script element
 WI.Frame.extraScriptCollection.
 
 

@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 10: Should always fail.
-CONSOLE MESSAGE: line 22: ASSERT message
+CONSOLE MESSAGE: Should always fail.
+CONSOLE MESSAGE: ASSERT message
 Test that a failing console.assert will pause in the debugger with an optional message.
 
 Should not pause on passing assert.

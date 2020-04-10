@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 215: TypeError: status.setAttribute is not a function. (In 'status.setAttribute("fill", passes == 7 ? "lime" : "red")', 'status.setAttribute' is undefined)
+CONSOLE MESSAGE: TypeError: status.setAttribute is not a function. (In 'status.setAttribute("fill", passes == 7 ? "lime" : "red")', 'status.setAttribute' is undefined)
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

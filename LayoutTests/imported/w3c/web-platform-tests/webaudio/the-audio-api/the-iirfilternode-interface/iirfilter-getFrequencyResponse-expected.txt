@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 42: TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter([1], [1, -0.9])', 'context.createIIRFilter' is undefined)
+CONSOLE MESSAGE: TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter([1], [1, -0.9])', 'context.createIIRFilter' is undefined)
 
 Harness Error (FAIL), message = TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter([1], [1, -0.9])', 'context.createIIRFilter' is undefined)
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 7: Error while parsing the 'sandbox' attribute: 'allow-popups-to-escape-sandbox' is an invalid sandbox flag.
+CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-popups-to-escape-sandbox' is an invalid sandbox flag.
 
 
 FAIL Check that popups from a sandboxed iframe escape the sandbox if

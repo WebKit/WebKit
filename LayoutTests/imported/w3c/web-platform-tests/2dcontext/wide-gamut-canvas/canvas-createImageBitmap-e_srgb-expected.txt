@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 423: TypeError: testCanvas.convertToBlob is not a function. (In 'testCanvas.convertToBlob(encodeOptions)', 'testCanvas.convertToBlob' is undefined)
+CONSOLE MESSAGE: TypeError: testCanvas.convertToBlob is not a function. (In 'testCanvas.convertToBlob(encodeOptions)', 'testCanvas.convertToBlob' is undefined)
 
 Harness Error (FAIL), message = TypeError: testCanvas.convertToBlob is not a function. (In 'testCanvas.convertToBlob(encodeOptions)', 'testCanvas.convertToBlob' is undefined)
 

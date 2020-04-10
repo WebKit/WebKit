@@ -1,16 +1,16 @@
-CONSOLE MESSAGE: line 26: MainFrameView: mouseEnteredContentArea
-CONSOLE MESSAGE: line 26: MainFrameView: mouseMovedInContentArea
-CONSOLE MESSAGE: line 27: RenderLayer: mouseEnteredContentArea
-CONSOLE MESSAGE: line 27: RenderLayer: mouseMovedInContentArea
-CONSOLE MESSAGE: line 27: MainFrameView: mouseMovedInContentArea
-CONSOLE MESSAGE: line 28: RenderLayer: mouseEnteredVerticalScrollbar
-CONSOLE MESSAGE: line 28: RenderLayer: mouseMovedInContentArea
-CONSOLE MESSAGE: line 28: MainFrameView: mouseMovedInContentArea
-CONSOLE MESSAGE: line 29: RenderLayer: mouseIsDownInVerticalScrollbar
-CONSOLE MESSAGE: line 30: RenderLayer: mouseIsUpInVerticalScrollbar
-CONSOLE MESSAGE: line 31: RenderLayer: mouseExitedVerticalScrollbar
-CONSOLE MESSAGE: line 31: RenderLayer: mouseExitedContentArea
-CONSOLE MESSAGE: line 31: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: MainFrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: RenderLayer: mouseEnteredContentArea
+CONSOLE MESSAGE: RenderLayer: mouseMovedInContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: RenderLayer: mouseEnteredVerticalScrollbar
+CONSOLE MESSAGE: RenderLayer: mouseMovedInContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: RenderLayer: mouseIsDownInVerticalScrollbar
+CONSOLE MESSAGE: RenderLayer: mouseIsUpInVerticalScrollbar
+CONSOLE MESSAGE: RenderLayer: mouseExitedVerticalScrollbar
+CONSOLE MESSAGE: RenderLayer: mouseExitedContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 PASS successfullyParsed is true
 
 TEST COMPLETE

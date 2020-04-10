@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 8: TypeError: undefined is not an object (evaluating '[].x.x')
-CONSOLE MESSAGE: line 18: Assertion message
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating '[].x.x')
+CONSOLE MESSAGE: Assertion message
 Test that pausing in different ways triggers different pause reasons.
 
 

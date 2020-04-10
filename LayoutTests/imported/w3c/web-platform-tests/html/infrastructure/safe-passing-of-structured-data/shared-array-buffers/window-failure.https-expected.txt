@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: SharedArrayBuffer
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedArrayBuffer
 
 Harness Error (TIMEOUT), message = null
 

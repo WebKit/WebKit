@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 13: TypeError: MouseEventConstructor is not a constructor (evaluating 'new MouseEvent("click")')
+CONSOLE MESSAGE: TypeError: MouseEventConstructor is not a constructor (evaluating 'new MouseEvent("click")')
 This tests html link element activation behavior when url is null
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

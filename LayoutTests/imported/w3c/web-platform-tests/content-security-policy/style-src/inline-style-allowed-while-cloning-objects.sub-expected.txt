@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 118: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
 This test ensures that styles can be set by object.cloneNode()
 
 This is a div (nodes)

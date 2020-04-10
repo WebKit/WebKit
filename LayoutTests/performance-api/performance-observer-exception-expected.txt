@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 23: EXCEPTION MESSAGE IN CALLBACK
+CONSOLE MESSAGE: EXCEPTION MESSAGE IN CALLBACK
 Ensure PerformanceObserver Exceptions are propogated.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

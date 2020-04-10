@@ -1,11 +1,11 @@
-CONSOLE MESSAGE: line 17: MainFrameView: mouseEnteredContentArea
-CONSOLE MESSAGE: line 17: MainFrameView: mouseMovedInContentArea
-CONSOLE MESSAGE: line 18: FrameView: mouseEnteredHorizontalScrollbar
-CONSOLE MESSAGE: line 18: FrameView: mouseEnteredContentArea
-CONSOLE MESSAGE: line 18: MainFrameView: mouseMovedInContentArea
-CONSOLE MESSAGE: line 19: FrameView: mouseExitedHorizontalScrollbar
-CONSOLE MESSAGE: line 19: FrameView: mouseExitedContentArea
-CONSOLE MESSAGE: line 19: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: MainFrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: FrameView: mouseEnteredHorizontalScrollbar
+CONSOLE MESSAGE: FrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: FrameView: mouseExitedHorizontalScrollbar
+CONSOLE MESSAGE: FrameView: mouseExitedContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 PASS successfullyParsed is true
 
 TEST COMPLETE

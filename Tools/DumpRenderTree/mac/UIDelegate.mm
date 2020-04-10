@@ -81,7 +81,6 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
         return;
 
     NSString *message = [dictionary objectForKey:@"message"];
-    NSNumber *lineNumber = [dictionary objectForKey:@"lineNumber"];
 
     NSRange range = [message rangeOfString:@"file://"];
     if (range.location != NSNotFound)
@@ -89,8 +88,6 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
     auto out = gTestRunner->dumpJSConsoleLogInStdErr() ? stderr : stdout;
     fprintf(out, "CONSOLE MESSAGE: ");
-    if ([lineNumber intValue])
-        fprintf(out, "line %d: ", [lineNumber intValue]);
     fprintf(out, "%s\n", [message UTF8String]);
 }
 

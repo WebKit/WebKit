@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 85: TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
+CONSOLE MESSAGE: TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
                 context, {numberOfInputs: context.destination.channelCount})')
 
 Harness Error (FAIL), message = TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(

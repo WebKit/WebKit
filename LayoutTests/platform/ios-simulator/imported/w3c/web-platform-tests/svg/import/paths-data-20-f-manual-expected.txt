@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: line 54: Error: Problem parsing d="M280,120 h25 a25,25 0 6 0 -25,25 z"
-CONSOLE MESSAGE: line 58: Error: Problem parsing d="M360,120 h-25 a25,25 0 1 -1 25,25 z"
-CONSOLE MESSAGE: line 66: Error: Problem parsing d="M200,200 h-25 a25,2501 025,-25 z"
-CONSOLE MESSAGE: line 70: Error: Problem parsing d="M280,200 h25 a25 25 0 1 7 -25 -25 z"
-CONSOLE MESSAGE: line 74: Error: Problem parsing d="M360,200 h-25 a25,25 0 -1 0 25,-25 z"
+CONSOLE MESSAGE: Error: Problem parsing d="M280,120 h25 a25,25 0 6 0 -25,25 z"
+CONSOLE MESSAGE: Error: Problem parsing d="M360,120 h-25 a25,25 0 1 -1 25,25 z"
+CONSOLE MESSAGE: Error: Problem parsing d="M200,200 h-25 a25,2501 025,-25 z"
+CONSOLE MESSAGE: Error: Problem parsing d="M280,200 h25 a25 25 0 1 7 -25 -25 z"
+CONSOLE MESSAGE: Error: Problem parsing d="M360,200 h-25 a25,25 0 -1 0 25,-25 z"
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 16: [object Proxy]
-CONSOLE MESSAGE: line 30: 0
-CONSOLE MESSAGE: line 31: [object Proxy]
-CONSOLE MESSAGE: line 32: 1
+CONSOLE MESSAGE: [object Proxy]
+CONSOLE MESSAGE: 0
+CONSOLE MESSAGE: [object Proxy]
+CONSOLE MESSAGE: 1
 Tests for the console.log with Proxy objects.
 
 

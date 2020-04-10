@@ -1,13 +1,13 @@
-CONSOLE MESSAGE: line 21: log message
-CONSOLE MESSAGE: line 22: log message
-CONSOLE MESSAGE: line 23: log message
-CONSOLE MESSAGE: line 24: log message
-CONSOLE MESSAGE: line 25: log message
-CONSOLE MESSAGE: line 26: log message
-CONSOLE MESSAGE: line 28: log message
-CONSOLE MESSAGE: line 1: 1
-CONSOLE MESSAGE: line 1: 2
-CONSOLE MESSAGE: line 1: 3
+CONSOLE MESSAGE: log message
+CONSOLE MESSAGE: log message
+CONSOLE MESSAGE: log message
+CONSOLE MESSAGE: log message
+CONSOLE MESSAGE: log message
+CONSOLE MESSAGE: log message
+CONSOLE MESSAGE: log message
+CONSOLE MESSAGE: 1
+CONSOLE MESSAGE: 2
+CONSOLE MESSAGE: 3
 CONSOLE MESSAGE: Viewport
 CONSOLE MESSAGE: Viewport
 CONSOLE MESSAGE: Viewport

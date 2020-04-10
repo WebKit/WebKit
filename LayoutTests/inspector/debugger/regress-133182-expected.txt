@@ -1,10 +1,10 @@
-CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating '({}).a.b')
-CONSOLE MESSAGE: line 3: TypeError: undefined is not an object (evaluating '({}).a.b')
-CONSOLE MESSAGE: line 8: NotFoundError: The object can not be found here.
-CONSOLE MESSAGE: line 24: exception in host function
-CONSOLE MESSAGE: line 13: exception string
-CONSOLE MESSAGE: line 18: [object Object]
-CONSOLE MESSAGE: line 18: Error: error message
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating '({}).a.b')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating '({}).a.b')
+CONSOLE MESSAGE: NotFoundError: The object can not be found here.
+CONSOLE MESSAGE: exception in host function
+CONSOLE MESSAGE: exception string
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: Error: error message
 Regression test for https://bugs.webkit.org/show_bug.cgi?id=133182
 
 Stepping after breaking on uncaught exceptions should not crash.

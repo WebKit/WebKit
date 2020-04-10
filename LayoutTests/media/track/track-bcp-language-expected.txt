@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 49: The language '-sl' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 24: The language 'zhHant' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: The language '-sl' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: The language 'zhHant' is not a valid BCP 47 language tag.
 Test that TextTrackBase.validBCP47Language is set and reset correctly.
 
 

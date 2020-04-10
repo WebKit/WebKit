@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 22: ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.
-CONSOLE MESSAGE: line 22: ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.
-CONSOLE MESSAGE: line 22: ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.
+CONSOLE MESSAGE: ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.
+CONSOLE MESSAGE: ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.
+CONSOLE MESSAGE: ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.
 
 FAIL setRequestHeader("") sends a blank string assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"
 FAIL setRequestHeader(" ") sends the string " " assert_equals: expected "Content-Type: \n" but got "Content-Type:  \n"

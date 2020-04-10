@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 44: Test if state of stateless form control types are not saved.
+CONSOLE MESSAGE: Test if state of stateless form control types are not saved.
 PASS There is a state for hidden
 PASS There is a state for text
 PASS There is a state for tel

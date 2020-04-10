@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 83: Unable to post message to http://example.com. Recipient has origin .
+CONSOLE MESSAGE: Unable to post message to http://example.com. Recipient has origin .
 
 Tests for async stack traces.
 

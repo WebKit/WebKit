@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 15: Error: Problem parsing d="M 25 50 h 10 B 0 m 10 0 h 10 b 0 m 10 0 h 10"
+CONSOLE MESSAGE: Error: Problem parsing d="M 25 50 h 10 B 0 m 10 0 h 10 b 0 m 10 0 h 10"
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 100x100

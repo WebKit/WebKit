@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 8: Use of window.prompt is not allowed while unloading a page.
+CONSOLE MESSAGE: Use of window.prompt is not allowed while unloading a page.
 This test verifies that prompts are forbidden when leaving a webpage.
 
 Prompts include alert, confirm, prompt, and showModalDialog.

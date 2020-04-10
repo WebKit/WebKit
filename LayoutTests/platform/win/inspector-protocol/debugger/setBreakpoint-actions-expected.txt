@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 19: log-action-before
-CONSOLE MESSAGE: line 1: eval-action
-CONSOLE MESSAGE: line 19: log-action-after
-CONSOLE MESSAGE: line 19: log-action-before
-CONSOLE MESSAGE: line 1: eval-action
-CONSOLE MESSAGE: line 19: log-action-after
+CONSOLE MESSAGE: log-action-before
+CONSOLE MESSAGE: eval-action
+CONSOLE MESSAGE: log-action-after
+CONSOLE MESSAGE: log-action-before
+CONSOLE MESSAGE: eval-action
+CONSOLE MESSAGE: log-action-after
 Debugger.setBreakpoint options.actions
 
 Found breakpoint.js

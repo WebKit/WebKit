@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 24: TypeError: undefined is not an object (evaluating 'navigation_entry.type')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'navigation_entry.type')
 Description
 
 This test validates the values of the window.performance.redirectCount and the window.performance.timing.redirectStart/End times for a same-origin server side redirect navigation.

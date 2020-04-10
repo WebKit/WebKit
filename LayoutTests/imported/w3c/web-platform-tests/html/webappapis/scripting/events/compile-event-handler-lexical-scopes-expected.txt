@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 167: SyntaxError: Unexpected identifier 'a'
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'a'
 
 
 

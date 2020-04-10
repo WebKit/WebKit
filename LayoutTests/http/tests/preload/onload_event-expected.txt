@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 34: <link rel=preload> must have a valid `as` value
-CONSOLE MESSAGE: line 35: <link rel=preload> must have a valid `as` value
-CONSOLE MESSAGE: line 36: <link rel=preload> must have a valid `as` value
-CONSOLE MESSAGE: line 37: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: <link rel=preload> must have a valid `as` value
 PASS successfullyParsed is true
 
 TEST COMPLETE

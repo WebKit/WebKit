@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: TypeError: null is not an object (evaluating 'top.log')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'top.log')
 FAILED (This TC requires JavaScript enabled)
 
 Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'top.log')

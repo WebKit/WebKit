@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 61: InvalidStateError: DOM Exception 11: An attempt was made to use an object that is not, or is no longer, usable.
+CONSOLE MESSAGE: InvalidStateError: DOM Exception 11: An attempt was made to use an object that is not, or is no longer, usable.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x595

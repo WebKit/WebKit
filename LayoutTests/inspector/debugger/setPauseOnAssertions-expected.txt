@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 8: Failing assertion
-CONSOLE MESSAGE: line 8: Failing assertion
+CONSOLE MESSAGE: Failing assertion
+CONSOLE MESSAGE: Failing assertion
 Debugger.setPauseOnAssertions
 
 

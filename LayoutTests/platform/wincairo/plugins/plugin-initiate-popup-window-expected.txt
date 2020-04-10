@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 17: window count: 1
+CONSOLE MESSAGE: window count: 1
 MISSING PLUGIN BUTTON PRESSED
 FAIL: Timed out waiting for notifyDone to be called
 

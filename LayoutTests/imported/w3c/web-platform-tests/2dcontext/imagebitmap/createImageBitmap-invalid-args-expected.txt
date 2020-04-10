@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 142: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
 
 PASS createImageBitmap with an HTMLCanvasElement source and sw set to 0 
 PASS createImageBitmap with an HTMLCanvasElement source and sh set to 0 

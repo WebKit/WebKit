@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 9: TypeError: Module specifier does not start with "/", "./", or "../".
-CONSOLE MESSAGE: line 9: TypeError: Importing a module script failed.
-CONSOLE MESSAGE: line 6: Cocoa is Sweet.
-CONSOLE MESSAGE: line 7: %o
-CONSOLE MESSAGE: line 6: Cocoa is Sweet. Cappuccino is Awesome.
-CONSOLE MESSAGE: line 7: %o
+CONSOLE MESSAGE: TypeError: Module specifier does not start with "/", "./", or "../".
+CONSOLE MESSAGE: TypeError: Importing a module script failed.
+CONSOLE MESSAGE: Cocoa is Sweet.
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: Cocoa is Sweet. Cappuccino is Awesome.
+CONSOLE MESSAGE: %o
 Tests for RuntimeManager operations.
 
 

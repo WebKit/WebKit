@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
 html5lib Parser Test
 
 

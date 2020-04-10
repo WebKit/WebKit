@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: SecurityError: Blocked a frame with origin "null" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "null" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 ALERT: PASS: Exception thrown successfully.
 Opener Frame
 

@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 1: [object Object]
-CONSOLE MESSAGE: line 1: function nodeType() {
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: function nodeType() {
     [native code]
 }
 document.title

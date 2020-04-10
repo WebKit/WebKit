@@ -5,20 +5,20 @@ CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
-CONSOLE MESSAGE: line 2890: TypeError: undefined is not an object (evaluating 'e.error')
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 72: Unhandled Promise Rejection: Error
-CONSOLE MESSAGE: line 137: Unhandled Promise Rejection: Error
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error
-CONSOLE MESSAGE: line 2890: TypeError: undefined is not an object (evaluating 'e.error')
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: line 2890: TypeError: undefined is not an object (evaluating 'e.error')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
-CONSOLE MESSAGE: line 92: Unhandled Promise Rejection: Error
-CONSOLE MESSAGE: line 112: Unhandled Promise Rejection: Error
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.error')
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.error')
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error
 CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: Cannot create an ImageBitmap from an empty buffer
 

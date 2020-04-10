@@ -1,6 +1,6 @@
 frame "<!--frame1-->" - has 1 onunload handler(s)
 frame "<!--frame1-->" - has 1 onunload handler(s)
-CONSOLE MESSAGE: line 32: TypeError: undefined is not an object (evaluating 'navigation_frame.performance.getEntriesByType("navigation")[0].type')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'navigation_frame.performance.getEntriesByType("navigation")[0].type')
 Description
 
 This test validates the value of window.performance.getEntriesByType("navigation")[0].type with a forward and back navigation.

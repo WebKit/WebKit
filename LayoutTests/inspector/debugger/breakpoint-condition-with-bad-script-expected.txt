@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 9: SyntaxError: Unexpected keyword 'else'
+CONSOLE MESSAGE: SyntaxError: Unexpected keyword 'else'
 The debugger should not crash when executing a bad script for testing a breakpoint condition.
 
 Found breakpoint.js

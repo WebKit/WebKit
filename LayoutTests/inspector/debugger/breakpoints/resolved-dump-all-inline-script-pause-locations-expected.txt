@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 4: here 1
-CONSOLE MESSAGE: line 6: here 2
+CONSOLE MESSAGE: here 1
+CONSOLE MESSAGE: here 2
 Checking all resolved breakpoint locations in a script.
 
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 16: ReferenceError: Can't find variable: runRepaintAndPixelTest
+CONSOLE MESSAGE: ReferenceError: Can't find variable: runRepaintAndPixelTest
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x216

@@ -1,12 +1,12 @@
-CONSOLE MESSAGE: line 7: %o
-CONSOLE MESSAGE: line 7: %o
-CONSOLE MESSAGE: line 7: %o
-CONSOLE MESSAGE: line 9: Thrown exception
-CONSOLE MESSAGE: line 7: %o
-CONSOLE MESSAGE: line 9: Promise.reject
-CONSOLE MESSAGE: line 9: Rejection
-CONSOLE MESSAGE: line 7: %o
-CONSOLE MESSAGE: line 7: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: Thrown exception
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: Promise.reject
+CONSOLE MESSAGE: Rejection
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
 Tests for RuntimeManager operations.
 
 

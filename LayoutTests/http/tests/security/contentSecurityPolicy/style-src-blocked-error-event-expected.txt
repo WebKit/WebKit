@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 21: Refused to load the stylesheet 'http://localhost:8000/security/contentSecurityPolicy/resources/style-set-red.css' because it violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'".
+CONSOLE MESSAGE: Refused to load the stylesheet 'http://localhost:8000/security/contentSecurityPolicy/resources/style-set-red.css' because it violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'".
 
 A test paragraph
 

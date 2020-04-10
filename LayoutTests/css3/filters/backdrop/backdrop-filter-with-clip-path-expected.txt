@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 4: Viewport argument value "200px" for key "width" was truncated to its numeric prefix.
+CONSOLE MESSAGE: Viewport argument value "200px" for key "width" was truncated to its numeric prefix.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x8

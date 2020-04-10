@@ -496,7 +496,7 @@ HRESULT UIDelegate::runBeforeUnloadConfirmPanelWithMessage(_In_opt_ IWebView* /*
     return S_OK;
 }
 
-HRESULT UIDelegate::webViewAddMessageToConsole(_In_opt_ IWebView* /*sender*/, _In_ BSTR message, int lineNumber, _In_ BSTR url, BOOL isError)
+HRESULT UIDelegate::webViewAddMessageToConsole(_In_opt_ IWebView* /*sender*/, _In_ BSTR message, int /* lineNumber */ , _In_ BSTR url, BOOL isError)
 {
     if (done)
         return S_OK;
@@ -512,8 +512,6 @@ HRESULT UIDelegate::webViewAddMessageToConsole(_In_opt_ IWebView* /*sender*/, _I
 
     auto out = gTestRunner->dumpJSConsoleLogInStdErr() ? stderr : testResult;
     fprintf(out, "CONSOLE MESSAGE: ");
-    if (lineNumber)
-        fprintf(out, "line %d: ", lineNumber);
     fprintf(out, "%s\n", toUTF8(newMessage).c_str());
     return S_OK;
 }

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 31: SyntaxError: No identifiers allowed directly after numeric literal
+CONSOLE MESSAGE: SyntaxError: No identifiers allowed directly after numeric literal
 
 Harness Error (FAIL), message = SyntaxError: No identifiers allowed directly after numeric literal
 

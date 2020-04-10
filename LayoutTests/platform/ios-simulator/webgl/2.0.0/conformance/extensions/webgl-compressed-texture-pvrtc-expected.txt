@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 276: TypeError: wtu.drawQuad is not a function. (In 'wtu.drawQuad(gl)', 'wtu.drawQuad' is undefined)
+CONSOLE MESSAGE: TypeError: wtu.drawQuad is not a function. (In 'wtu.drawQuad(gl)', 'wtu.drawQuad' is undefined)
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-pvrtc.html

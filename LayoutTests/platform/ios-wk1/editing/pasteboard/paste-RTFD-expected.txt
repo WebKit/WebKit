@@ -1,7 +1,7 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-CONSOLE MESSAGE: line 33: TypeError: undefined is not an object (evaluating 'objc('NSPasteboard').generalPasteboard')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'objc('NSPasteboard').generalPasteboard')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

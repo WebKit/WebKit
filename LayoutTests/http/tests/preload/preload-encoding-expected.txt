@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: SyntaxError: Invalid character '\u2073'
+CONSOLE MESSAGE: SyntaxError: Invalid character '\u2073'
 First load a script with a wrong charset then again with the right one. Second attempt should work and 'scriptSuccess' should be set to true. 'successfullyParsed' will be undefined.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

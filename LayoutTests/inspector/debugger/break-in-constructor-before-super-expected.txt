@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 16: before super
-CONSOLE MESSAGE: line 19: after super
+CONSOLE MESSAGE: before super
+CONSOLE MESSAGE: after super
 Pause in constructor before super should not crash.
 
 

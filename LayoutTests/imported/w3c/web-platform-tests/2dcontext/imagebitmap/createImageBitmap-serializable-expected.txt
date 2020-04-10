@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 2: TypeError: Type error
+CONSOLE MESSAGE: TypeError: Type error
 
 PASS Serialize ImageBitmap created from an HTMLCanvasElement 
 PASS Serialize ImageBitmap created from an HTMLVideoElement 

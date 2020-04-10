@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 12: Error: Out of memory
+CONSOLE MESSAGE: Error: Out of memory
 Test we do not pause on a OutOfMemory Exception.
 
 

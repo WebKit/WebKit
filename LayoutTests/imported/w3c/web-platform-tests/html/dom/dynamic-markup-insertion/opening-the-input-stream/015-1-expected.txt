@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 4: TypeError: undefined is not an object (evaluating 'parent.tests')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'parent.tests')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

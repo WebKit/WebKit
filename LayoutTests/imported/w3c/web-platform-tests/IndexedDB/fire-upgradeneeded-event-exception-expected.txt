@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 31: Error
-CONSOLE MESSAGE: line 37: Error
-CONSOLE MESSAGE: line 44: Error
+CONSOLE MESSAGE: Error
+CONSOLE MESSAGE: Error
+CONSOLE MESSAGE: Error
 CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
-CONSOLE MESSAGE: line 62: Error
-CONSOLE MESSAGE: line 70: Error
+CONSOLE MESSAGE: Error
+CONSOLE MESSAGE: Error
 
 PASS Exception in upgradeneeded handler 
 PASS Exception in upgradeneeded listener 

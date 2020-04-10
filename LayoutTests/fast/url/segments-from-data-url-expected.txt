@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 50: Blocked setting data:text/plain,baseURL as the base URL because it does not have an allowed scheme.
+CONSOLE MESSAGE: Blocked setting data:text/plain,baseURL as the base URL because it does not have an allowed scheme.
 Test URL segmentation
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,10 +1,10 @@
-CONSOLE MESSAGE: line 17: 
-CONSOLE MESSAGE: line 18: *** Test 'auto' value resolution for the document root node. ***
-CONSOLE MESSAGE: line 96: 
-CONSOLE MESSAGE: line 97: *** Test 'auto' value resolution for the shadow DOM root node. ***
-CONSOLE MESSAGE: line 104: 
-CONSOLE MESSAGE: line 149: 
-CONSOLE MESSAGE: line 150: *** Test 'auto' value resolution for the shadow DOM 'slotted' elements. ***
+CONSOLE MESSAGE: 
+CONSOLE MESSAGE: *** Test 'auto' value resolution for the document root node. ***
+CONSOLE MESSAGE: 
+CONSOLE MESSAGE: *** Test 'auto' value resolution for the shadow DOM root node. ***
+CONSOLE MESSAGE: 
+CONSOLE MESSAGE: 
+CONSOLE MESSAGE: *** Test 'auto' value resolution for the shadow DOM 'slotted' elements. ***
 Test to verify auto value resolution works as expected in root elements (eg. document root / shadow roots / slotted elements / elements inside slot)
 
 

@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 1: <script> script evaluation
-CONSOLE MESSAGE: line 14: 'click' event dispatched
-CONSOLE MESSAGE: line 20: timer fired
+CONSOLE MESSAGE: <script> script evaluation
+CONSOLE MESSAGE: 'click' event dispatched
+CONSOLE MESSAGE: timer fired
 Tests for generating a ScriptProfiler.Event with ScriptProfiler.EventType.Other type. Web script evaluations are classified as "Other".
 
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 9: Created Database 'Database With Space'
+CONSOLE MESSAGE: Created Database 'Database With Space'
 
 == Running test suite: IndexedDB.requestDatabaseNames.spaces
 -- Running test case: ClearDatabases

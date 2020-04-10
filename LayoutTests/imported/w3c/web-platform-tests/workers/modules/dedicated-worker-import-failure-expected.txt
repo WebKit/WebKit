@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 3: SyntaxError: Unexpected token '*'. import call expects exactly one argument.
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected string literal './non-existent-script.js'. import call expects exactly one argument.
+CONSOLE MESSAGE: SyntaxError: Unexpected token '*'. import call expects exactly one argument.
+CONSOLE MESSAGE: SyntaxError: Unexpected string literal './non-existent-script.js'. import call expects exactly one argument.
 
 FAIL importScripts() on module worker should throw an exception. assert_equals: expected "TypeError" but got "LOADED"
 PASS Static import on classic worker should throw an exception. 

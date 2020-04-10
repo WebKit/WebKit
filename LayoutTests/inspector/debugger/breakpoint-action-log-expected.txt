@@ -1,13 +1,13 @@
-CONSOLE MESSAGE: line 1: `42`
-CONSOLE MESSAGE: line 1: '42'
-CONSOLE MESSAGE: line 1: abc
-CONSOLE MESSAGE: line 1: {abc}
-CONSOLE MESSAGE: line 1: {abc}
-CONSOLE MESSAGE: line 1: {abc}
-CONSOLE MESSAGE: line 1: abc
-CONSOLE MESSAGE: line 1: 137
-CONSOLE MESSAGE: line 1: close curly brace in RegExp: true
-CONSOLE MESSAGE: line 1: 42 and {"x":1,"y":2}
+CONSOLE MESSAGE: `42`
+CONSOLE MESSAGE: '42'
+CONSOLE MESSAGE: abc
+CONSOLE MESSAGE: {abc}
+CONSOLE MESSAGE: {abc}
+CONSOLE MESSAGE: {abc}
+CONSOLE MESSAGE: abc
+CONSOLE MESSAGE: 137
+CONSOLE MESSAGE: close curly brace in RegExp: true
+CONSOLE MESSAGE: 42 and {"x":1,"y":2}
 Testing that "Log" breakpoint actions work correctly.
 
 

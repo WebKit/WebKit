@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 2: TypeError: null is not an object (evaluating 'document.body.innerHTML')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'document.body.innerHTML')
 

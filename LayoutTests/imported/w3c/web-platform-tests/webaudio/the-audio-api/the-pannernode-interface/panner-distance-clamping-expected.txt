@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 67: ReferenceError: Can't find variable: PannerNode
+CONSOLE MESSAGE: ReferenceError: Can't find variable: PannerNode
 
 Harness Error (FAIL), message = ReferenceError: Can't find variable: PannerNode
 

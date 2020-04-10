@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 3: ReferenceError: Can't find variable: Worker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: Worker
 
 Harness Error (FAIL), message = ReferenceError: Can't find variable: Worker
 

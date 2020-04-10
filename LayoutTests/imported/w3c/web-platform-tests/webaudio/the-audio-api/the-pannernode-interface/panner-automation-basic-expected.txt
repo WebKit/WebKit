@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 241: TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')
 
 Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')
 

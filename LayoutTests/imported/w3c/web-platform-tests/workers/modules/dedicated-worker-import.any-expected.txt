@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 3: SyntaxError: Unexpected token '*'. import call expects exactly one argument.
-CONSOLE MESSAGE: line 3: SyntaxError: Unexpected token '*'. import call expects exactly one argument.
-CONSOLE MESSAGE: line 3: SyntaxError: Unexpected token '*'. import call expects exactly one argument.
+CONSOLE MESSAGE: SyntaxError: Unexpected token '*'. import call expects exactly one argument.
+CONSOLE MESSAGE: SyntaxError: Unexpected token '*'. import call expects exactly one argument.
+CONSOLE MESSAGE: SyntaxError: Unexpected token '*'. import call expects exactly one argument.
 
 Harness Error (FAIL), message = SyntaxError: Unexpected token '*'. import call expects exactly one argument.
 

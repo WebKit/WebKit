@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 29: CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save().
-CONSOLE MESSAGE: line 29: CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save().
+CONSOLE MESSAGE: CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save().
+CONSOLE MESSAGE: CanvasRenderingContext2D.save() has been called without a matching restore() too many times. Ignoring save().
 This test verifies that the size of CanvasRenderingContext2D state stack does not grow beyond a certain limit.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 14: Error: this is an exception
+CONSOLE MESSAGE: Error: this is an exception
 SUCCESS

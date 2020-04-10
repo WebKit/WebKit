@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 38: ReferenceError: Can't find variable: runRepaintTest
+CONSOLE MESSAGE: ReferenceError: Can't find variable: runRepaintTest
 Hidden Text
 Hidden Text
 (GraphicsLayer

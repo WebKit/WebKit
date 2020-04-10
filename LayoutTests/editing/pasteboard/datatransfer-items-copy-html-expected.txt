@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: string
+CONSOLE MESSAGE: ReferenceError: Can't find variable: string
 This tests copying HTML markup using dataTransfer.items. To manually test, click on "Copy text" and paste (Command+V on Mac Control+V elsewhere).
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

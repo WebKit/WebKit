@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 97: WebGL: INVALID_ENUM: getParameter: invalid parameter name, WEBGL_debug_renderer_info not enabled
-CONSOLE MESSAGE: line 101: WebGL: INVALID_ENUM: getParameter: invalid parameter name, WEBGL_debug_renderer_info not enabled
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: getParameter: invalid parameter name, WEBGL_debug_renderer_info not enabled
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: getParameter: invalid parameter name, WEBGL_debug_renderer_info not enabled
 This test verifies the functionality of the WEBGL_debug_renderer_info extension, if it is available.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

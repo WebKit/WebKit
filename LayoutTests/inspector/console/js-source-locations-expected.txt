@@ -1,11 +1,11 @@
-CONSOLE MESSAGE: line 1: error script
-CONSOLE MESSAGE: line 1: warn script
-CONSOLE MESSAGE: line 5: error script
-CONSOLE MESSAGE: line 6: warn script
-CONSOLE MESSAGE: line 7: TypeError: undefined is not an object (evaluating '[].x.x')
-CONSOLE MESSAGE: line 9: warn 1
-CONSOLE MESSAGE: line 9: error 1
-CONSOLE MESSAGE: line 10: error 2
+CONSOLE MESSAGE: error script
+CONSOLE MESSAGE: warn script
+CONSOLE MESSAGE: error script
+CONSOLE MESSAGE: warn script
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating '[].x.x')
+CONSOLE MESSAGE: warn 1
+CONSOLE MESSAGE: error 1
+CONSOLE MESSAGE: error 2
 Tests that JavaScript errors and warnings from inline script tags and external files are sent to the console with correct line and column information.
 
 {"source":"console-api","level":"error","text":"error script","location":"errors.js:1:14","parameters":[{"type":"string"}]}

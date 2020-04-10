@@ -1,3 +1,18 @@
+2020-04-10  Devin Rousso  <drousso@apple.com>
+
+        Changes to shared testing JS files should not cause test failures due to console message line numbers changing
+        https://bugs.webkit.org/show_bug.cgi?id=210303
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:addMessageToConsole:withSource:]):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::webViewAddMessageToConsole):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willAddMessageToConsole):
+
 2020-04-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reset view navigation gesture state between tests

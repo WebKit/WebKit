@@ -1,12 +1,12 @@
-CONSOLE MESSAGE: line 27: Worker finished
-CONSOLE MESSAGE: line 27: Worker finished
-CONSOLE MESSAGE: line 27: Worker finished
-CONSOLE MESSAGE: line 27: Worker finished
-CONSOLE MESSAGE: line 27: Worker finished
-CONSOLE MESSAGE: line 27: Worker finished
-CONSOLE MESSAGE: line 27: Worker finished
-CONSOLE MESSAGE: line 27: Worker finished
-CONSOLE MESSAGE: line 8: Finished running
+CONSOLE MESSAGE: Worker finished
+CONSOLE MESSAGE: Worker finished
+CONSOLE MESSAGE: Worker finished
+CONSOLE MESSAGE: Worker finished
+CONSOLE MESSAGE: Worker finished
+CONSOLE MESSAGE: Worker finished
+CONSOLE MESSAGE: Worker finished
+CONSOLE MESSAGE: Worker finished
+CONSOLE MESSAGE: Finished running
 PASS successfullyParsed is true
 
 TEST COMPLETE

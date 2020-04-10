@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 49: WebGL: INVALID_VALUE: vertexAttribPointer: bad offset
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: vertexAttribPointer: bad offset
 PASS: vertexAttribPointer should have an error.
 

@@ -1,16 +1,16 @@
-CONSOLE MESSAGE: line 16: MainFrameView: mouseEnteredContentArea
-CONSOLE MESSAGE: line 16: MainFrameView: mouseMovedInContentArea
-CONSOLE MESSAGE: line 17: RenderListBox: mouseEnteredContentArea
-CONSOLE MESSAGE: line 17: RenderListBox: mouseMovedInContentArea
-CONSOLE MESSAGE: line 17: MainFrameView: mouseMovedInContentArea
-CONSOLE MESSAGE: line 18: RenderListBox: mouseEnteredVerticalScrollbar
-CONSOLE MESSAGE: line 18: RenderListBox: mouseMovedInContentArea
-CONSOLE MESSAGE: line 18: MainFrameView: mouseMovedInContentArea
-CONSOLE MESSAGE: line 19: RenderListBox: mouseIsDownInVerticalScrollbar
-CONSOLE MESSAGE: line 20: RenderListBox: mouseIsUpInVerticalScrollbar
-CONSOLE MESSAGE: line 21: RenderListBox: mouseExitedVerticalScrollbar
-CONSOLE MESSAGE: line 21: RenderListBox: mouseExitedContentArea
-CONSOLE MESSAGE: line 21: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: MainFrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: RenderListBox: mouseEnteredContentArea
+CONSOLE MESSAGE: RenderListBox: mouseMovedInContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: RenderListBox: mouseEnteredVerticalScrollbar
+CONSOLE MESSAGE: RenderListBox: mouseMovedInContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: RenderListBox: mouseIsDownInVerticalScrollbar
+CONSOLE MESSAGE: RenderListBox: mouseIsUpInVerticalScrollbar
+CONSOLE MESSAGE: RenderListBox: mouseExitedVerticalScrollbar
+CONSOLE MESSAGE: RenderListBox: mouseExitedContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 PASS successfullyParsed is true
 
 TEST COMPLETE

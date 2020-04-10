@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 151: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
 ALERT: PASS: window.Attr should be 'function Attr() {    [native code]}' and is.
 ALERT: PASS: window.CDATASection should be 'function CDATASection() {    [native code]}' and is.
 ALERT: PASS: window.CharacterData should be 'function CharacterData() {    [native code]}' and is.
@@ -96,7 +96,7 @@ ALERT: PASS: window.devicePixelRatio should be '1' and is.
 ALERT: PASS: window.document should be '[object HTMLDocument]' and is.
 ALERT: PASS: window.embeds should be 'undefined' and is.
 ALERT: PASS: window.event should be 'undefined' and is.
-CONSOLE MESSAGE: line 14: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
 ALERT: PASS: window.frameElement should be 'null' and is.
 ALERT: PASS: window.frames should be '[object Window]' and is.
 ALERT: PASS: window.history should be '[object History]' and is.

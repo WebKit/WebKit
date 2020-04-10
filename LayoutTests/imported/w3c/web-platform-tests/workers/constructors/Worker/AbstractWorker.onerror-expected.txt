@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token ')'
+CONSOLE MESSAGE: SyntaxError: Unexpected token ')'
 
 PASS AbstractWorker.onerror 
 

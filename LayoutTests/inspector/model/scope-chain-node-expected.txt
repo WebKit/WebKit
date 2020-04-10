@@ -1,23 +1,23 @@
-CONSOLE MESSAGE: line 36: Variables
-CONSOLE MESSAGE: line 4: normal
-CONSOLE MESSAGE: line 10: if
-CONSOLE MESSAGE: line 18: else
-CONSOLE MESSAGE: line 25: while
-CONSOLE MESSAGE: line 33: do
-CONSOLE MESSAGE: line 39: for
-CONSOLE MESSAGE: line 46: for-in
-CONSOLE MESSAGE: line 53: for-of
-CONSOLE MESSAGE: line 62: case
-CONSOLE MESSAGE: line 67: default
-CONSOLE MESSAGE: line 75: try
-CONSOLE MESSAGE: line 84: catch
-CONSOLE MESSAGE: line 92: finally
-CONSOLE MESSAGE: line 99: block
-CONSOLE MESSAGE: line 106: with
-CONSOLE MESSAGE: line 119: nested blocks
-CONSOLE MESSAGE: line 130: class (method)
-CONSOLE MESSAGE: line 139: class (static)
-CONSOLE MESSAGE: line 145: normal
+CONSOLE MESSAGE: Variables
+CONSOLE MESSAGE: normal
+CONSOLE MESSAGE: if
+CONSOLE MESSAGE: else
+CONSOLE MESSAGE: while
+CONSOLE MESSAGE: do
+CONSOLE MESSAGE: for
+CONSOLE MESSAGE: for-in
+CONSOLE MESSAGE: for-of
+CONSOLE MESSAGE: case
+CONSOLE MESSAGE: default
+CONSOLE MESSAGE: try
+CONSOLE MESSAGE: catch
+CONSOLE MESSAGE: finally
+CONSOLE MESSAGE: block
+CONSOLE MESSAGE: with
+CONSOLE MESSAGE: nested blocks
+CONSOLE MESSAGE: class (method)
+CONSOLE MESSAGE: class (static)
+CONSOLE MESSAGE: normal
 Tests for the WI.ScopeChainNode model object.
 
 

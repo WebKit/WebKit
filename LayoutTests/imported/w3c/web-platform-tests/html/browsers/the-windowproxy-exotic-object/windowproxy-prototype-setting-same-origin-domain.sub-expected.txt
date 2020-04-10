@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 7: SecurityError: Attempted to use a non-registrable domain.
+CONSOLE MESSAGE: SecurityError: Attempted to use a non-registrable domain.
 
 
 FAIL Same-origin-domain prerequisite check: the original prototype is accessible assert_not_equals: got disallowed value null

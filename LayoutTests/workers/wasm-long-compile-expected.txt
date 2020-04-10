@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 28: Good result
-CONSOLE MESSAGE: line 4: Finished test
+CONSOLE MESSAGE: Good result
+CONSOLE MESSAGE: Finished test
 PASS successfullyParsed is true
 
 TEST COMPLETE

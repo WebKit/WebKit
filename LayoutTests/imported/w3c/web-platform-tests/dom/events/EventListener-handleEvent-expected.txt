@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 46: [object Object]
-CONSOLE MESSAGE: line 101: TypeError: 'handleEvent' property of event listener should be callable
-CONSOLE MESSAGE: line 122: TypeError: 'handleEvent' property of event listener should be callable
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
+CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
 
 PASS calls `handleEvent` method of `EventListener` 
 PASS rethrows errors when getting `handleEvent` 

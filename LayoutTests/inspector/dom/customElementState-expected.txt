@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 91: failedElementError
+CONSOLE MESSAGE: failedElementError
 Test for DOMNode.customElementState.
 
 Uncaught exception in test page: failedElementError [customElementState.html:91]

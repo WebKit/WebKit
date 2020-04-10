@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 25: [object Object]
+CONSOLE MESSAGE: [object Object]
 Test that certain InjectedScriptSource operations are not observable by user code.
 
 

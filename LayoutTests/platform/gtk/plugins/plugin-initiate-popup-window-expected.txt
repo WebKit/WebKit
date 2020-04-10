@@ -1,15 +1,15 @@
 CONSOLE MESSAGE: PLUGIN: updateEvt
 CONSOLE MESSAGE: PLUGIN: updateEvt
-CONSOLE MESSAGE: line 17: window count: 1
+CONSOLE MESSAGE: window count: 1
 CONSOLE MESSAGE: PLUGIN: getFocusEvent
 CONSOLE MESSAGE: PLUGIN: mouseDown at (12, 12)
-CONSOLE MESSAGE: line 30: window count: 2
+CONSOLE MESSAGE: window count: 2
 CONSOLE MESSAGE: PLUGIN: loseFocusEvent
 CONSOLE MESSAGE: PLUGIN: getFocusEvent
 CONSOLE MESSAGE: PLUGIN: mouseDown at (52, 12)
 CONSOLE MESSAGE: PLUGIN: mouseUp at (52, 12)
 CONSOLE MESSAGE: PLUGIN: keyDown 'p'
-CONSOLE MESSAGE: line 52: window count: 3
+CONSOLE MESSAGE: window count: 3
 CONSOLE MESSAGE: PLUGIN: keyUp 'p'
 
 

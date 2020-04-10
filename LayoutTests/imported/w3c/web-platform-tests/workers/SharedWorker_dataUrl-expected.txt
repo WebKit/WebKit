@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 6: ReferenceError: Can't find variable: SharedWorker
-CONSOLE MESSAGE: line 6: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
 
 
 Harness Error (TIMEOUT), message = null

@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 15: The page loaded successfully.
-CONSOLE MESSAGE: line 3: This page should load.
+CONSOLE MESSAGE: The page loaded successfully.
+CONSOLE MESSAGE: This page should load.
 
 
 --------

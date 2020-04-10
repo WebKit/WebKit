@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 34: Font status: unloaded
-CONSOLE MESSAGE: line 36: Font loaded
+CONSOLE MESSAGE: Font status: unloaded
+CONSOLE MESSAGE: Font loaded
 This test should not time out, and should say "SUCCESS".
 Hello
 SUCCESS

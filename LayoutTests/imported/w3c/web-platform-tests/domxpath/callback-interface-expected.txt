@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 56: [object Object]
-CONSOLE MESSAGE: line 46: XPathNSResolver does not have a lookupNamespaceURI method.
-CONSOLE MESSAGE: line 46: XPathNSResolver does not have a lookupNamespaceURI method.
-CONSOLE MESSAGE: line 46: XPathNSResolver does not have a lookupNamespaceURI method.
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: XPathNSResolver does not have a lookupNamespaceURI method.
+CONSOLE MESSAGE: XPathNSResolver does not have a lookupNamespaceURI method.
+CONSOLE MESSAGE: XPathNSResolver does not have a lookupNamespaceURI method.
 
 PASS callable resolver 
 PASS callable resolver: result is not cached 

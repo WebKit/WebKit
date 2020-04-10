@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 2: SyntaxError: Cannot declare a let variable twice: 'duplicate'.
+CONSOLE MESSAGE: SyntaxError: Cannot declare a let variable twice: 'duplicate'.
 Making sure we don't crash when having a top-level syntax error.
 
 

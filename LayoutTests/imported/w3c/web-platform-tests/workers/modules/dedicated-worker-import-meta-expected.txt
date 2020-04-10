@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: SyntaxError: import.meta is only valid inside modules.
+CONSOLE MESSAGE: SyntaxError: import.meta is only valid inside modules.
 
 Harness Error (FAIL), message = SyntaxError: import.meta is only valid inside modules.
 

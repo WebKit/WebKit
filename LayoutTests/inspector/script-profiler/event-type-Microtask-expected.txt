@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 8: Promise Microtask Fired
+CONSOLE MESSAGE: Promise Microtask Fired
 Tests for generating a ScriptProfiler.Event with ScriptProfiler.EventType.Microtask type.
 
 

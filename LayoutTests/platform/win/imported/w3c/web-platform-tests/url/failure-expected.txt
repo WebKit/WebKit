@@ -1,76 +1,76 @@
-CONSOLE MESSAGE: line 38: Not allowed to load local resource: example:1
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL ''.
+CONSOLE MESSAGE: Not allowed to load local resource: example:1
+CONSOLE MESSAGE: Unable to open a window with invalid URL ''.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL ''.
+CONSOLE MESSAGE: Unable to open a window with invalid URL ''.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL ''.
+CONSOLE MESSAGE: Unable to open a window with invalid URL ''.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'http://user:pass@/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'http://user:pass@/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'http://foo:-80/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'http://foo:-80/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'http://user@/www.example.com'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'http://user@/www.example.com'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'http://@/www.example.com'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'http://@/www.example.com'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https:@/www.example.com'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https:@/www.example.com'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'http://a:b@/www.example.com'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'http://a:b@/www.example.com'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'http://@:www.example.com'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'http://@:www.example.com'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://�'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://�'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://%EF%BF%BD'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://%EF%BF%BD'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://x x:12'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://x x:12'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'http://[www.google.com]/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'http://[www.google.com]/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'sc://
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'sc:// /'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'sc://
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'sc:// /'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'sc://@/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'sc://@/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'sc://te@s:t@/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'sc://te@s:t@/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'sc://:/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'sc://:/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'sc://:12/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'sc://:12/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'sc://[/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'sc://[/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'sc://\/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'sc://\/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'sc://]/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'sc://]/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'ftp://example.com%80/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'ftp://example.com%80/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'ftp://example.com%A0/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'ftp://example.com%A0/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://example.com%80/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://example.com%80/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://example.com%A0/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://example.com%A0/'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://[0::0::0]'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://[0::0::0]'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://[0:.0]'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://[0:.0]'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://[0:0:]'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://[0:0:]'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://[0:1:2:3:4:5:6:7.0.0.0.1]'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://[0:1:2:3:4:5:6:7.0.0.0.1]'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://[0:1.00.0.0.0]'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://[0:1.00.0.0.0]'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://[0:1.290.0.0.0]'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://[0:1.290.0.0.0]'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'https://[0:1.23.23]'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'https://[0:1.23.23]'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'http://?'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'http://?'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'http://#'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'http://#'.
 
-CONSOLE MESSAGE: line 38: Unable to open a window with invalid URL 'non-special://[:80/'.
+CONSOLE MESSAGE: Unable to open a window with invalid URL 'non-special://[:80/'.
 
 
 PASS Loading data… 

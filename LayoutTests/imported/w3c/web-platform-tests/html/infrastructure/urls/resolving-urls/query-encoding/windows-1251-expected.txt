@@ -1,10 +1,10 @@
-CONSOLE MESSAGE: line 575: WebSocket connection to 'ws://localhost:49001/echo-query?%C3%A5' failed: WebSocket is closed before the connection is established.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:49001/echo-query?%C3%A5' failed: WebSocket is closed before the connection is established.
 CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=1188282a-ca52-4f4d-bdf6-608096286893' because non CSS MIME types are not allowed in strict mode.
 CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=9ca7bfe6-3b53-4239-8cc6-ae919066b3fd' because non CSS MIME types are not allowed in strict mode.
 CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=9f7181df-04f9-4485-b25b-16c4c3895af3' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: line 2: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: line 2: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: line 2: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 
 Harness Error (TIMEOUT), message = null
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 12: Unhandled Promise Rejection: error2: error2!
+CONSOLE MESSAGE: Unhandled Promise Rejection: error2: error2!
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
 
 Harness Error (FAIL), message = Unhandled rejection: error1!

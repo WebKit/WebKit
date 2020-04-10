@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 2: [object Object]
+CONSOLE MESSAGE: [object Object]
 
 FAIL Evaluation errors are cached in intermediate module scripts assert_equals: expected 5 but got 4
 

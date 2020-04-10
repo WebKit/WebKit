@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 159: TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')
 
 Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')
 

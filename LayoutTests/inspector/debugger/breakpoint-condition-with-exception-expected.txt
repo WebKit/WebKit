@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating 'this.will.cause')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'this.will.cause')
 The debugger should not pause on exceptions thrown while executing the breakpoint conditions.
 
 Found breakpoint.js

@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 9: [object Window]
-CONSOLE MESSAGE: line 10: [object Console]
-CONSOLE MESSAGE: line 11: string
-CONSOLE MESSAGE: line 9: [object Window]
-CONSOLE MESSAGE: line 10: [object Console]
-CONSOLE MESSAGE: line 11: string
+CONSOLE MESSAGE: [object Window]
+CONSOLE MESSAGE: [object Console]
+CONSOLE MESSAGE: string
+CONSOLE MESSAGE: [object Window]
+CONSOLE MESSAGE: [object Console]
+CONSOLE MESSAGE: string
 Checking whether console.log can be stepped into or not, depending on the value of WI.settings.pauseForInternalScripts.
 
 

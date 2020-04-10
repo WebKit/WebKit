@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 139: Exception thrown as a part of test
+CONSOLE MESSAGE: Exception thrown as a part of test
 
 PASS Upgrading a custom element must enqueue attributeChangedCallback on each attribute 
 PASS Upgrading a custom element not must enqueue attributeChangedCallback on unobserved attributes 

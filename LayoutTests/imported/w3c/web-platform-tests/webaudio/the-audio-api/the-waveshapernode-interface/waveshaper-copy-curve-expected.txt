@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 31: SyntaxError: The string did not match the expected pattern.
+CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
 
 Harness Error (FAIL), message = SyntaxError: The string did not match the expected pattern.
 

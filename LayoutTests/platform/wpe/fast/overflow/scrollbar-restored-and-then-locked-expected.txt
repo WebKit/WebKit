@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 31: TypeError: testRunner.setScrollbarPolicy is not a function. (In 'testRunner.setScrollbarPolicy('vertical', 'off')', 'testRunner.setScrollbarPolicy' is undefined)
+CONSOLE MESSAGE: TypeError: testRunner.setScrollbarPolicy is not a function. (In 'testRunner.setScrollbarPolicy('vertical', 'off')', 'testRunner.setScrollbarPolicy' is undefined)
 Test for bug 29431 [Qt] REGRESSION:(r50665) QWebFrame::setScrollBarPolicy(Qt::Vertical,Qt::ScrollBarAlwaysOff) has no effect.
 
 This test ensures the correctness of two scrollbar behaviour:

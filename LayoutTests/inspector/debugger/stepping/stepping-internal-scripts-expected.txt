@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 9: [object Window]
-CONSOLE MESSAGE: line 10: [object Console]
-CONSOLE MESSAGE: line 11: string
-CONSOLE MESSAGE: line 9: [object Window]
-CONSOLE MESSAGE: line 10: [object Console]
-CONSOLE MESSAGE: line 11: string
+CONSOLE MESSAGE: [object Window]
+CONSOLE MESSAGE: [object Console]
+CONSOLE MESSAGE: string
+CONSOLE MESSAGE: [object Window]
+CONSOLE MESSAGE: [object Console]
+CONSOLE MESSAGE: string
 Checking pause locations when stepping in and over statements that make use of Internal scripts.
 
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 251: callback not yet supported
+CONSOLE MESSAGE: callback not yet supported
 
 PASS DataTransfer interface: existence and properties of interface object 
 PASS DataTransfer interface object length 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 84: TypeError: buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(bufferData, 0)', 'buffer.copyToChannel' is undefined)
+CONSOLE MESSAGE: TypeError: buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(bufferData, 0)', 'buffer.copyToChannel' is undefined)
 
 Harness Error (FAIL), message = TypeError: buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(bufferData, 0)', 'buffer.copyToChannel' is undefined)
 

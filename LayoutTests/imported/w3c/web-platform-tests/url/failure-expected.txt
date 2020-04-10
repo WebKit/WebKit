@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 38: Not allowed to load local resource: example:1
+CONSOLE MESSAGE: Not allowed to load local resource: example:1
 
 PASS Loading data… 
 FAIL URL's href: file://example:1/ should throw assert_throws: function "() => url.href = test.input" did not throw

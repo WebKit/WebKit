@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 35: TypeError: undefined is not an object (evaluating 'document.forms[0].outerHTML')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'document.forms[0].outerHTML')
 layer at (0,0) size 785x693
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x693

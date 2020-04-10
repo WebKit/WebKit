@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 58: ReferenceError: Can't find variable: wp_test
-CONSOLE MESSAGE: line 30: ReferenceError: Can't find variable: test_true
+CONSOLE MESSAGE: ReferenceError: Can't find variable: wp_test
+CONSOLE MESSAGE: ReferenceError: Can't find variable: test_true
 
 Harness Error (FAIL), message = ReferenceError: Can't find variable: wp_test
 

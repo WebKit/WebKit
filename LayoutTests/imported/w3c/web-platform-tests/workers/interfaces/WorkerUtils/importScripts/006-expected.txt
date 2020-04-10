@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 12: DataCloneError: The object can not be cloned.
+CONSOLE MESSAGE: DataCloneError: The object can not be cloned.
 
 Harness Error (FAIL), message = DataCloneError: The object can not be cloned.
 

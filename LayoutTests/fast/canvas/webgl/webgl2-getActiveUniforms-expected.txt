@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: WebGL: INVALID_ENUM: getActiveUniforms: invalid parameter name
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: getActiveUniforms: invalid parameter name
 Checks for proper getActiveUniforms() behavior on a simple WebGL 2 program.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

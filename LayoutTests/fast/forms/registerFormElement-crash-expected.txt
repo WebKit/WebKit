@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 17: PASS: did not crash
+CONSOLE MESSAGE: PASS: did not crash
 

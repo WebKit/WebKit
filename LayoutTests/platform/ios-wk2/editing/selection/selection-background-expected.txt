@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 13: TypeError: undefined is not a function (evaluating 'window.testRunner.setMainFrameIsFirstResponder(false)')
+CONSOLE MESSAGE: TypeError: undefined is not a function (evaluating 'window.testRunner.setMainFrameIsFirstResponder(false)')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

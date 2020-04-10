@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 5: TypeError: new WritableStream().getWriter is not a function. (In 'new WritableStream().getWriter()', 'new WritableStream().getWriter' is undefined)
-CONSOLE MESSAGE: line 61: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'methodRealm.WritableStreamDefaultWriter.prototype')
+CONSOLE MESSAGE: TypeError: new WritableStream().getWriter is not a function. (In 'new WritableStream().getWriter()', 'new WritableStream().getWriter' is undefined)
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'methodRealm.WritableStreamDefaultWriter.prototype')
 
 Harness Error (FAIL), message = Unhandled rejection: undefined is not an object (evaluating 'methodRealm.WritableStreamDefaultWriter.prototype')
 

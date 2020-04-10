@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating 'this.will.cause')
-CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating 'this.will.cause')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'this.will.cause')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'this.will.cause')
 Debugger.setBreakpoint options.condition or options.action with exception
 
 Found breakpoint.js

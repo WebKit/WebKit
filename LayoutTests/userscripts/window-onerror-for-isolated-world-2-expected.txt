@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 30: Error: Error in main world inline script.
+CONSOLE MESSAGE: Error: Error in main world inline script.
 Test that window.onerror and "error" event listeners from isolated world are invoked for uncaught exceptions in user scripts running in isolate worlds as well as for exceptions in the main world.Bug 8519.
 
 user script window.onerror: Error: Error in user script inline script. at undefined:33:20 Error: Error in user script inline script.

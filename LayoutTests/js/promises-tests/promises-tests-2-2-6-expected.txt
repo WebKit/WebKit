@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 6077: Unhandled Promise Rejection: [object Object]
-CONSOLE MESSAGE: line 6077: Unhandled Promise Rejection: [object Object]
-CONSOLE MESSAGE: line 6077: Unhandled Promise Rejection: [object Object]
-CONSOLE MESSAGE: line 6077: Unhandled Promise Rejection: [object Object]
-CONSOLE MESSAGE: line 6077: Unhandled Promise Rejection: [object Object]
-CONSOLE MESSAGE: line 6077: Unhandled Promise Rejection: [object Object]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Object]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Object]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Object]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Object]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Object]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Object]
 Test Promise with Promise A+ tests 2.2.6.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

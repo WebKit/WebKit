@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 12: TypeError: ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
+CONSOLE MESSAGE: TypeError: ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
 
 Harness Error (FAIL), message = TypeError: ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
 

@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: line 34: Unhandled Promise Rejection: TypeError: Not enough arguments
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Not enough arguments
 
 Harness Error (TIMEOUT), message = null
 

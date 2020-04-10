@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 Ensure that data cannot be retrieved from a canvas tainted by a video resource with remote subresources when CORS is not enabled.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

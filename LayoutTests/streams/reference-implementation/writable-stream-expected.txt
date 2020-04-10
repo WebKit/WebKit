@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.error')
 CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 
 Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'e.error')

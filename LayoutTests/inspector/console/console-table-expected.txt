@@ -1,11 +1,11 @@
-CONSOLE MESSAGE: line 3: 
-CONSOLE MESSAGE: line 3: apple,orange,banana
-CONSOLE MESSAGE: line 3: [object Object]
-CONSOLE MESSAGE: line 3: [object Object]
-CONSOLE MESSAGE: line 3: John,Smith,Jane,Doe,Emily,Jones
-CONSOLE MESSAGE: line 3: [object Object],[object Object],[object Object]
-CONSOLE MESSAGE: line 3: [object Object],[object Object],[object Object]
-CONSOLE MESSAGE: line 3: [object Object],[object Object]
+CONSOLE MESSAGE: 
+CONSOLE MESSAGE: apple,orange,banana
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: John,Smith,Jane,Doe,Emily,Jones
+CONSOLE MESSAGE: [object Object],[object Object],[object Object]
+CONSOLE MESSAGE: [object Object],[object Object],[object Object]
+CONSOLE MESSAGE: [object Object],[object Object]
 
 STEP: console.table([])
 {

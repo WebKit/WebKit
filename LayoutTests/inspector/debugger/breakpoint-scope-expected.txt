@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Paused at line: 4, column: 8
+CONSOLE MESSAGE: Paused at line: 4, column: 8
 Testing that we can access scope in various functions.
 
 Starting Test

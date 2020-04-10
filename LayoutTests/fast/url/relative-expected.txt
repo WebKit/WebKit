@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 50: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: line 50: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: line 50: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: line 50: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: line 50: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
-CONSOLE MESSAGE: line 50: Blocked setting data:asdf as the base URL because it does not have an allowed scheme.
+CONSOLE MESSAGE: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
+CONSOLE MESSAGE: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
+CONSOLE MESSAGE: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
+CONSOLE MESSAGE: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
+CONSOLE MESSAGE: Blocked setting data:foobar as the base URL because it does not have an allowed scheme.
+CONSOLE MESSAGE: Blocked setting data:asdf as the base URL because it does not have an allowed scheme.
 Test resolution of relative URLs.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

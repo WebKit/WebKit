@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Log from API Evaluated Script
+CONSOLE MESSAGE: Log from API Evaluated Script
 Tests for generating a ScriptProfiler.Event with ScriptProfiler.EventType.API type.
 
 

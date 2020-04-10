@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 49: Error: Invalid value for <circle> attribute r="1,0"
-CONSOLE MESSAGE: line 57: Error: Invalid value for <circle> attribute r="1,0"
-CONSOLE MESSAGE: line 65: Error: Invalid value for <circle> attribute r="1,0"
+CONSOLE MESSAGE: Error: Invalid value for <circle> attribute r="1,0"
+CONSOLE MESSAGE: Error: Invalid value for <circle> attribute r="1,0"
+CONSOLE MESSAGE: Error: Invalid value for <circle> attribute r="1,0"
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

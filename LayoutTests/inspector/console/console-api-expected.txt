@@ -1,20 +1,20 @@
-CONSOLE MESSAGE: line 3: console.log
-CONSOLE MESSAGE: line 3: console.warn
-CONSOLE MESSAGE: line 3: console.error
-CONSOLE MESSAGE: line 3: console.debug
-CONSOLE MESSAGE: line 3: console.info
-CONSOLE MESSAGE: line 3: assertion message
-CONSOLE MESSAGE: line 3: string message
-CONSOLE MESSAGE: line 3: message
-CONSOLE MESSAGE: line 3: message
-CONSOLE MESSAGE: line 3: message
-CONSOLE MESSAGE: line 3: message
-CONSOLE MESSAGE: line 3: message
-CONSOLE MESSAGE: line 3: [object Object]
-CONSOLE MESSAGE: line 3: [object Object]
-CONSOLE MESSAGE: line 3: groupName
+CONSOLE MESSAGE: console.log
+CONSOLE MESSAGE: console.warn
+CONSOLE MESSAGE: console.error
+CONSOLE MESSAGE: console.debug
+CONSOLE MESSAGE: console.info
+CONSOLE MESSAGE: assertion message
+CONSOLE MESSAGE: string message
+CONSOLE MESSAGE: message
+CONSOLE MESSAGE: message
+CONSOLE MESSAGE: message
+CONSOLE MESSAGE: message
+CONSOLE MESSAGE: message
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object Object]
 CONSOLE MESSAGE: groupName
-CONSOLE MESSAGE: line 3: collapsedGroupName
+CONSOLE MESSAGE: groupName
+CONSOLE MESSAGE: collapsedGroupName
 CONSOLE MESSAGE: collapsedGroupName
 
 STEP: console.log('console.log')

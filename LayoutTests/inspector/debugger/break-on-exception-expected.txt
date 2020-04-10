@@ -1,16 +1,16 @@
-CONSOLE MESSAGE: line 7: throwing TestError
-CONSOLE MESSAGE: line 8: TestError
-CONSOLE MESSAGE: line 22: testFinally
-CONSOLE MESSAGE: line 7: throwing TestError
-CONSOLE MESSAGE: line 26: finally
-CONSOLE MESSAGE: line 8: TestError
-CONSOLE MESSAGE: line 31: testThrowingThruNativeCode
-CONSOLE MESSAGE: line 7: throwing TestError
-CONSOLE MESSAGE: line 8: TestError
-CONSOLE MESSAGE: line 12: testCatch
-CONSOLE MESSAGE: line 7: throwing TestError
-CONSOLE MESSAGE: line 16: catch TestError
-CONSOLE MESSAGE: line 18: DONE
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: testFinally
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: finally
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: testThrowingThruNativeCode
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: testCatch
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: catch TestError
+CONSOLE MESSAGE: DONE
 Checking pause locations when pausing on all exceptions.
 
 

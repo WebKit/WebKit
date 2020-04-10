@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 2: inside named-eval.js
-CONSOLE MESSAGE: line 3: TypeError: undefined is not an object (evaluating '({}).x.x')
+CONSOLE MESSAGE: inside named-eval.js
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating '({}).x.x')
 Console messages in named evaluations should have call frames with the correct name.
 
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 32: [blocked] The page at https://127.0.0.1:8443/ssl/mixedContent/insecure-websocket.html was not allowed to run insecure content from ws://127.0.0.1:8880/websocket/tests/hybi/echo.
+CONSOLE MESSAGE: [blocked] The page at https://127.0.0.1:8443/ssl/mixedContent/insecure-websocket.html was not allowed to run insecure content from ws://127.0.0.1:8880/websocket/tests/hybi/echo.
 
 Test that we do not crash when handling mixed content events.
 

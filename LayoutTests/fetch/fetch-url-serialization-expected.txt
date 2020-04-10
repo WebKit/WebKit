@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 18: Blocked setting data:, as the base URL because it does not have an allowed scheme.
+CONSOLE MESSAGE: Blocked setting data:, as the base URL because it does not have an allowed scheme.
 
 PASS Testing Request url 'http://example	.
 org' with base 'http://example.org/foo/bar' 

@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/media-filtered.html from loading a resource from http://localhost:8000/media/resources/test.mp4
-CONSOLE MESSAGE: line 14: Video error
+CONSOLE MESSAGE: Video error
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

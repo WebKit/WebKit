@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 6: Test passes if it does not crash
+CONSOLE MESSAGE: Test passes if it does not crash
 

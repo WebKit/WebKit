@@ -1,18 +1,18 @@
-CONSOLE MESSAGE: line 1: test message
-CONSOLE MESSAGE: line 1: test message
-CONSOLE MESSAGE: line 1: test message
-CONSOLE MESSAGE: line 1: test message
-CONSOLE MESSAGE: line 1: test message
-CONSOLE MESSAGE: line 1: test message
-CONSOLE MESSAGE: line 1: different message
-CONSOLE MESSAGE: line 1: different message
-CONSOLE MESSAGE: line 1: test message
-CONSOLE MESSAGE: line 1: equal parameter values
-CONSOLE MESSAGE: line 1: equal parameter values
-CONSOLE MESSAGE: line 1: object
-CONSOLE MESSAGE: line 1: object
-CONSOLE MESSAGE: line 1: level
-CONSOLE MESSAGE: line 1: level
+CONSOLE MESSAGE: test message
+CONSOLE MESSAGE: test message
+CONSOLE MESSAGE: test message
+CONSOLE MESSAGE: test message
+CONSOLE MESSAGE: test message
+CONSOLE MESSAGE: test message
+CONSOLE MESSAGE: different message
+CONSOLE MESSAGE: different message
+CONSOLE MESSAGE: test message
+CONSOLE MESSAGE: equal parameter values
+CONSOLE MESSAGE: equal parameter values
+CONSOLE MESSAGE: object
+CONSOLE MESSAGE: object
+CONSOLE MESSAGE: level
+CONSOLE MESSAGE: level
 Test for the Console.messageRepeatCountUpdated event.
 
 

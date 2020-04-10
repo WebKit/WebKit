@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 20: ReferenceError: Can't find variable: AudioWorklet
+CONSOLE MESSAGE: ReferenceError: Can't find variable: AudioWorklet
 
 Harness Error (FAIL), message = ReferenceError: Can't find variable: AudioWorklet
 

@@ -1,7 +1,7 @@
 Blocked access to external URL http://some.nonexistant.test/fail
 Blocked access to external URL http://some.nonexistant.test/fail
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected end of script
-CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: undefinedfn
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: ReferenceError: Can't find variable: undefinedfn
 
 PASS Script parse-inline 
 PASS Script parse-ext 

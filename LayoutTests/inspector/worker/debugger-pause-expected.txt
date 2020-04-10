@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 14: TypeError: undefined is not an object (evaluating '[].x.x')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating '[].x.x')
 Ensure we can pause in Workers.
 
 

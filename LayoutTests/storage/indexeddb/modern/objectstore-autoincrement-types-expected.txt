@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: line 44: runGetTest(): blob
-CONSOLE MESSAGE: line 44: runGetTest(): file
-CONSOLE MESSAGE: line 44: runGetTest(): imageData
-CONSOLE MESSAGE: line 44: runGetTest(): fileList
-CONSOLE MESSAGE: line 61: runGetAllTest()
+CONSOLE MESSAGE: runGetTest(): blob
+CONSOLE MESSAGE: runGetTest(): file
+CONSOLE MESSAGE: runGetTest(): imageData
+CONSOLE MESSAGE: runGetTest(): fileList
+CONSOLE MESSAGE: runGetAllTest()
 Test IndexedDB's IDBObjectStore auto-increment feature with more types.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
