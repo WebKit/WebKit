@@ -2910,12 +2910,11 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
         generator.emitTDZCheckIfNecessary(var, nullptr, scope.get());
     if (dst == generator.ignoredResult())
         dst = 0;
-    RefPtr<RegisterID> result = generator.emitNode(dst, m_right);
+    RefPtr<RegisterID> result = generator.emitNode(dst, m_right); // Execute side effects first.
     if (isReadOnly) {
-        RegisterID* result = generator.emitNode(dst, m_right); // Execute side effects first.
         bool threwException = generator.emitReadOnlyExceptionIfNeeded(var);
         if (threwException)
-            return result;
+            return result.get();
     }
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     RegisterID* returnResult = result.get();
