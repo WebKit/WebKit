@@ -41,14 +41,6 @@ ContentSecurityPolicyResponseHeaders::ContentSecurityPolicyResponseHeaders(const
     if (!policyValue.isEmpty())
         m_headers.append({ policyValue, ContentSecurityPolicyHeaderType::Report });
 
-    policyValue = response.httpHeaderField(HTTPHeaderName::XWebKitCSP);
-    if (!policyValue.isEmpty())
-        m_headers.append({ policyValue, ContentSecurityPolicyHeaderType::PrefixedEnforce });
-
-    policyValue = response.httpHeaderField(HTTPHeaderName::XWebKitCSPReportOnly);
-    if (!policyValue.isEmpty())
-        m_headers.append({ policyValue, ContentSecurityPolicyHeaderType::PrefixedReport });
-
     m_httpStatusCode = response.httpStatusCode();
 }
 

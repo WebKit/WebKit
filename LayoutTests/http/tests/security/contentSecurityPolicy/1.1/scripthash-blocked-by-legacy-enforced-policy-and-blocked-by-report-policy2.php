@@ -13,9 +13,9 @@ if (window.testRunner) {
 </script>
 </head>
 <body>
-<p id="result">PASS did not execute script.</p>
+<p id="result">FAIL did not execute script.</p>
 <script>
-document.getElementById("result").textContent = "FAIL did execute script.";
+document.getElementById("result").textContent = "PASS did execute script.";
 </script>
 <iframe src="../resources/echo-report.php?test=/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2.php"></iframe>
 </body>

@@ -11,9 +11,9 @@ if (window.testRunner)
 </script>
 </head>
 <body>
-<p id="result">PASS did not execute script.</p>
+<p id="result">FAIL did not execute script.</p>
 <script nonce="dummy">
-document.getElementById("result").textContent = "FAIL did execute script.";
+document.getElementById("result").textContent = "PASS did execute script.";
 </script>
 </body>
 </html>

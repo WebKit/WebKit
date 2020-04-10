@@ -6,17 +6,17 @@
 <html>
 <head>
 <script nonce="dump-as-text">
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.dumpAsText();
-    testRunner.dumpChildFramesAsText();
-}
 </script>
 </head>
 <body>
-<p id="result">PASS did not execute script.</p>
+<p id="result">FAIL did not execute script.</p>
 <script nonce="dummy">
-document.getElementById("result").textContent = "FAIL did execute script.";
+document.getElementById("result").textContent = "PASS did execute script.";
 </script>
+<!-- Call testRunner.dumpChildFramesAsText() and load
 <iframe src="../resources/echo-report.php?test=/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-legacy-enforced-policy-and-allowed-by-report-policy.php"></iframe>
+once we fix reporting of nonce violations for report-only policies. See <https://bugs.webkit.org/show_bug.cgi?id=159830>. -->
 </body>
 </html>
