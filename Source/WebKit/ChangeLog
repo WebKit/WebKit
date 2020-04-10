@@ -1,3 +1,40 @@
+2020-04-10  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to handle proxy authentication and require secure proxy connections
+        https://bugs.webkit.org/show_bug.cgi?id=210343
+        <rdar://problem/61546396> <rdar://problem/61546519> and <rdar://problem/61546658>
+
+        Reviewed by Geoffrey Garen.
+
+        I also use WKWebViewConfiguration.connectionProxyDictionary instead of CFURLRequestSetProxySettings
+        to set proxy settings.  The equivalence of this behavior is covered by the API tests.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration preventsSystemHTTPProxyAuthentication]):
+        (-[_WKWebsiteDataStoreConfiguration setPreventsSystemHTTPProxyAuthentication:]):
+        (-[_WKWebsiteDataStoreConfiguration requiresSecureHTTPSProxyConnection]):
+        (-[_WKWebsiteDataStoreConfiguration setRequiresSecureHTTPSProxyConnection:]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::preventsSystemHTTPProxyAuthentication const):
+        (WebKit::WebsiteDataStoreConfiguration::setPreventsSystemHTTPProxyAuthentication):
+        (WebKit::WebsiteDataStoreConfiguration::requiresSecureHTTPSProxyConnection const):
+        (WebKit::WebsiteDataStoreConfiguration::setRequiresSecureHTTPSProxyConnection):
+
 2020-04-10  Chris Dumez  <cdumez@apple.com>
 
         [IPC Hardening] WebDeviceOrientationAndMotionAccessController::shouldAllowAccess() should not crash on invalid input

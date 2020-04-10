@@ -193,7 +193,9 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (copy) NSData *_sourceApplicationAuditTokenData;
 @property (nullable, copy) NSString *_sourceApplicationBundleIdentifier;
 @property (nullable, copy) NSString *_sourceApplicationSecondaryIdentifier;
-@property BOOL _shouldSkipPreferredClientCertificateLookup NS_AVAILABLE(10_10, 8_0);
+@property BOOL _shouldSkipPreferredClientCertificateLookup;
+@property BOOL _preventsSystemHTTPProxyAuthentication;
+@property BOOL _requiresSecureHTTPSProxyConnection;
 #if PLATFORM(IOS_FAMILY)
 @property (nullable, copy) NSString *_CTDataConnectionServiceType;
 #endif

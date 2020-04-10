@@ -91,6 +91,8 @@ struct NetworkSessionCreationParameters {
     bool suppressesConnectionTerminationOnSystemChange { false };
     bool allowsServerPreconnect { true };
     bool isInAppBrowserPrivacyEnabled { false };
+    bool requiresSecureHTTPSProxyConnection { false };
+    bool preventsSystemHTTPProxyAuthentication { false };
     
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };

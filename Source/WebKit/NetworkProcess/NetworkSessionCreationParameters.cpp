@@ -78,6 +78,8 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << suppressesConnectionTerminationOnSystemChange;
     encoder << allowsServerPreconnect;
     encoder << isInAppBrowserPrivacyEnabled;
+    encoder << requiresSecureHTTPSProxyConnection;
+    encoder << preventsSystemHTTPProxyAuthentication;
     encoder << resourceLoadStatisticsParameters;
 }
 
@@ -240,6 +242,16 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!isInAppBrowserPrivacyEnabled)
         return WTF::nullopt;
 
+    Optional<bool> requiresSecureHTTPSProxyConnection;
+    decoder >> requiresSecureHTTPSProxyConnection;
+    if (!requiresSecureHTTPSProxyConnection)
+        return WTF::nullopt;
+    
+    Optional<bool> preventsSystemHTTPProxyAuthentication;
+    decoder >> preventsSystemHTTPProxyAuthentication;
+    if (!preventsSystemHTTPProxyAuthentication)
+        return WTF::nullopt;
+
     Optional<ResourceLoadStatisticsParameters> resourceLoadStatisticsParameters;
     decoder >> resourceLoadStatisticsParameters;
     if (!resourceLoadStatisticsParameters)
@@ -284,6 +296,8 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*suppressesConnectionTerminationOnSystemChange)
         , WTFMove(*allowsServerPreconnect)
         , WTFMove(*isInAppBrowserPrivacyEnabled)
+        , WTFMove(*requiresSecureHTTPSProxyConnection)
+        , WTFMove(*preventsSystemHTTPProxyAuthentication)
         , WTFMove(*resourceLoadStatisticsParameters)
     }};
 }

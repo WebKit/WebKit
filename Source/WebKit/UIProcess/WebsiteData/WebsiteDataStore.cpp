@@ -2231,6 +2231,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.suppressesConnectionTerminationOnSystemChange = m_configuration->suppressesConnectionTerminationOnSystemChange();
     networkSessionParameters.allowsServerPreconnect = m_configuration->allowsServerPreconnect();
     networkSessionParameters.resourceLoadStatisticsParameters = WTFMove(resourceLoadStatisticsParameters);
+    networkSessionParameters.requiresSecureHTTPSProxyConnection = m_configuration->requiresSecureHTTPSProxyConnection();
+    networkSessionParameters.preventsSystemHTTPProxyAuthentication = m_configuration->preventsSystemHTTPProxyAuthentication();
+
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
 
 #if ENABLE(INDEXED_DATABASE)

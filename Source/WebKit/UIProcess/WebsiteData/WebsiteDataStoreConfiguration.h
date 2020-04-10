@@ -153,6 +153,12 @@ public:
     bool allowsServerPreconnect() const { return m_allowsServerPreconnect; }
     void setAllowsServerPreconnect(bool allows) { m_allowsServerPreconnect = allows; }
 
+    bool preventsSystemHTTPProxyAuthentication() const { return m_preventsSystemHTTPProxyAuthentication; }
+    void setPreventsSystemHTTPProxyAuthentication(bool prevents) { m_preventsSystemHTTPProxyAuthentication = prevents; }
+
+    bool requiresSecureHTTPSProxyConnection() const { return m_requiresSecureHTTPSProxyConnection; };
+    void setRequiresSecureHTTPSProxyConnection(bool requires) { m_requiresSecureHTTPSProxyConnection = requires; }
+
 private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
@@ -194,6 +200,8 @@ private:
     bool m_testingSessionEnabled { false };
     bool m_suppressesConnectionTerminationOnSystemChange { false };
     bool m_allowsServerPreconnect { true };
+    bool m_preventsSystemHTTPProxyAuthentication { false };
+    bool m_requiresSecureHTTPSProxyConnection { false };
     unsigned m_testSpeedMultiplier { 1 };
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;

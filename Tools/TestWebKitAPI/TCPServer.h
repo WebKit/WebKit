@@ -55,6 +55,7 @@ public:
     
 #if HAVE(SSL)
     static void respondWithOK(SSL*);
+    static void startSecureConnection(Socket, Function<void(SSL*)>&& secureConnectionHandler, bool requestClientCertificate = false, Optional<uint16_t> maxTLSVersion = WTF::nullopt);
 #endif
     static void respondWithChallengeThenOK(Socket);
 

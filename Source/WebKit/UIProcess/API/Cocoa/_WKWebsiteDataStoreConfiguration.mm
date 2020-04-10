@@ -418,6 +418,26 @@ static void checkURLArgument(NSURL *url)
     _configuration->setDataConnectionServiceType(type);
 }
 
+- (BOOL)preventsSystemHTTPProxyAuthentication
+{
+    return _configuration->preventsSystemHTTPProxyAuthentication();
+}
+
+- (void)setPreventsSystemHTTPProxyAuthentication:(BOOL)prevents
+{
+    _configuration->setPreventsSystemHTTPProxyAuthentication(prevents);
+}
+
+- (BOOL)requiresSecureHTTPSProxyConnection
+{
+    return _configuration->requiresSecureHTTPSProxyConnection();
+}
+
+- (void)setRequiresSecureHTTPSProxyConnection:(BOOL)requires
+{
+    _configuration->setRequiresSecureHTTPSProxyConnection(requires);
+}
+
 - (void)setProxyConfiguration:(NSDictionary *)configuration
 {
     _configuration->setProxyConfiguration((__bridge CFDictionaryRef)[configuration copy]);

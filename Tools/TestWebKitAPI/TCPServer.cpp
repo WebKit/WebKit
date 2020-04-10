@@ -134,87 +134,90 @@ TCPServer::TCPServer(Function<void(Socket)>&& connectionHandler, size_t connecti
 }
 
 #if HAVE(SSL)
+void TCPServer::startSecureConnection(Socket socket, Function<void(SSL*)>&& secureConnectionHandler, bool requestClientCertificate, Optional<uint16_t> maxTLSVersion)
+{
+    SSL_library_init();
+
+    ssl::unique_ptr<SSL_CTX> ctx(SSL_CTX_new(TLS_with_buffers_method()));
+
+    // This is a test certificate from BoringSSL.
+    String certPEM(
+    "MIICWDCCAcGgAwIBAgIJAPuwTC6rEJsMMA0GCSqGSIb3DQEBBQUAMEUxCzAJBgNV"
+    "BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX"
+    "aWRnaXRzIFB0eSBMdGQwHhcNMTQwNDIzMjA1MDQwWhcNMTcwNDIyMjA1MDQwWjBF"
+    "MQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50"
+    "ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKB"
+    "gQDYK8imMuRi/03z0K1Zi0WnvfFHvwlYeyK9Na6XJYaUoIDAtB92kWdGMdAQhLci"
+    "HnAjkXLI6W15OoV3gA/ElRZ1xUpxTMhjP6PyY5wqT5r6y8FxbiiFKKAnHmUcrgfV"
+    "W28tQ+0rkLGMryRtrukXOgXBv7gcrmU7G1jC2a7WqmeI8QIDAQABo1AwTjAdBgNV"
+    "HQ4EFgQUi3XVrMsIvg4fZbf6Vr5sp3Xaha8wHwYDVR0jBBgwFoAUi3XVrMsIvg4f"
+    "Zbf6Vr5sp3Xaha8wDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQUFAAOBgQA76Hht"
+    "ldY9avcTGSwbwoiuIqv0jTL1fHFnzy3RHMLDh+Lpvolc5DSrSJHCP5WuK0eeJXhr"
+    "T5oQpHL9z/cCDLAKCKRa4uV0fhEdOWBqyR9p8y5jJtye72t6CuFUV5iqcpF4BH4f"
+    "j2VNHwsSrJwkD4QUGlUtH7vwnQmyCFxZMmWAJg==");
+    Vector<uint8_t> certDER;
+    base64Decode(certPEM, certDER, WTF::Base64DecodeOptions::Base64Default);
+    ssl::unique_ptr<CRYPTO_BUFFER> cert(CRYPTO_BUFFER_new(certDER.data(), certDER.size(), nullptr));
+    ASSERT(cert);
+
+    // This is a test key from BoringSSL.
+    char kKeyPEM[] =
+    "-----BEGIN RSA PRIVATE KEY-----\n"
+    "MIICXgIBAAKBgQDYK8imMuRi/03z0K1Zi0WnvfFHvwlYeyK9Na6XJYaUoIDAtB92\n"
+    "kWdGMdAQhLciHnAjkXLI6W15OoV3gA/ElRZ1xUpxTMhjP6PyY5wqT5r6y8FxbiiF\n"
+    "KKAnHmUcrgfVW28tQ+0rkLGMryRtrukXOgXBv7gcrmU7G1jC2a7WqmeI8QIDAQAB\n"
+    "AoGBAIBy09Fd4DOq/Ijp8HeKuCMKTHqTW1xGHshLQ6jwVV2vWZIn9aIgmDsvkjCe\n"
+    "i6ssZvnbjVcwzSoByhjN8ZCf/i15HECWDFFh6gt0P5z0MnChwzZmvatV/FXCT0j+\n"
+    "WmGNB/gkehKjGXLLcjTb6dRYVJSCZhVuOLLcbWIV10gggJQBAkEA8S8sGe4ezyyZ\n"
+    "m4e9r95g6s43kPqtj5rewTsUxt+2n4eVodD+ZUlCULWVNAFLkYRTBCASlSrm9Xhj\n"
+    "QpmWAHJUkQJBAOVzQdFUaewLtdOJoPCtpYoY1zd22eae8TQEmpGOR11L6kbxLQsk\n"
+    "aMly/DOnOaa82tqAGTdqDEZgSNmCeKKknmECQAvpnY8GUOVAubGR6c+W90iBuQLj\n"
+    "LtFp/9ihd2w/PoDwrHZaoUYVcT4VSfJQog/k7kjE4MYXYWL8eEKg3WTWQNECQQDk\n"
+    "104Wi91Umd1PzF0ijd2jXOERJU1wEKe6XLkYYNHWQAe5l4J4MWj9OdxFXAxIuuR/\n"
+    "tfDwbqkta4xcux67//khAkEAvvRXLHTaa6VFzTaiiO8SaFsHV3lQyXOtMrBpB5jd\n"
+    "moZWgjHvB2W9Ckn7sDqsPB+U2tyX0joDdQEyuiMECDY8oQ==\n"
+    "-----END RSA PRIVATE KEY-----\n";
+
+    ssl::unique_ptr<BIO> privateKeyBIO(BIO_new_mem_buf(kKeyPEM, strlen(kKeyPEM)));
+    ssl::unique_ptr<EVP_PKEY> privateKey(PEM_read_bio_PrivateKey(privateKeyBIO.get(), nullptr, nullptr, nullptr));
+    ASSERT(privateKey);
+
+    SSL_CTX_set_chain_and_key(ctx.get(), reinterpret_cast<CRYPTO_BUFFER *const *>(&cert), 1, privateKey.get(), nullptr);
+
+    if (requestClientCertificate) {
+        SSL_CTX_set_custom_verify(ctx.get(), SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, [] (SSL* ssl, uint8_t*) -> ssl_verify_result_t {
+            auto chain = SSL_get0_peer_certificates(ssl);
+            EXPECT_EQ(sk_CRYPTO_BUFFER_num(chain), 2u);
+            auto cert = sk_CRYPTO_BUFFER_value(chain, 0);
+            auto expectedCert = testCertificate();
+            EXPECT_EQ(CRYPTO_BUFFER_len(cert), expectedCert.size());
+            EXPECT_TRUE(!memcmp(CRYPTO_BUFFER_data(cert), expectedCert.data(), expectedCert.size()));
+            return ssl_verify_ok;
+        });
+    }
+
+    if (maxTLSVersion)
+        SSL_CTX_set_max_proto_version(ctx.get(), *maxTLSVersion);
+
+    ssl::unique_ptr<SSL> ssl(SSL_new(ctx.get()));
+    ASSERT(ssl);
+    SSL_set_fd(ssl.get(), socket);
+
+    auto acceptResult = SSL_accept(ssl.get());
+    secureConnectionHandler(acceptResult > 0 ? ssl.get() : nullptr);
+};
+
 TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler, Optional<uint16_t> maxTLSVersion)
 {
-    auto startSecureConnection = [secureConnectionHandler = WTFMove(secureConnectionHandler), protocol, maxTLSVersion] (Socket socket) {
-        SSL_library_init();
-
-        ssl::unique_ptr<SSL_CTX> ctx(SSL_CTX_new(TLS_with_buffers_method()));
-
-        // This is a test certificate from BoringSSL.
-        String certPEM(
-        "MIICWDCCAcGgAwIBAgIJAPuwTC6rEJsMMA0GCSqGSIb3DQEBBQUAMEUxCzAJBgNV"
-        "BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX"
-        "aWRnaXRzIFB0eSBMdGQwHhcNMTQwNDIzMjA1MDQwWhcNMTcwNDIyMjA1MDQwWjBF"
-        "MQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50"
-        "ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKB"
-        "gQDYK8imMuRi/03z0K1Zi0WnvfFHvwlYeyK9Na6XJYaUoIDAtB92kWdGMdAQhLci"
-        "HnAjkXLI6W15OoV3gA/ElRZ1xUpxTMhjP6PyY5wqT5r6y8FxbiiFKKAnHmUcrgfV"
-        "W28tQ+0rkLGMryRtrukXOgXBv7gcrmU7G1jC2a7WqmeI8QIDAQABo1AwTjAdBgNV"
-        "HQ4EFgQUi3XVrMsIvg4fZbf6Vr5sp3Xaha8wHwYDVR0jBBgwFoAUi3XVrMsIvg4f"
-        "Zbf6Vr5sp3Xaha8wDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQUFAAOBgQA76Hht"
-        "ldY9avcTGSwbwoiuIqv0jTL1fHFnzy3RHMLDh+Lpvolc5DSrSJHCP5WuK0eeJXhr"
-        "T5oQpHL9z/cCDLAKCKRa4uV0fhEdOWBqyR9p8y5jJtye72t6CuFUV5iqcpF4BH4f"
-        "j2VNHwsSrJwkD4QUGlUtH7vwnQmyCFxZMmWAJg==");
-        Vector<uint8_t> certDER;
-        base64Decode(certPEM, certDER, WTF::Base64DecodeOptions::Base64Default);
-        ssl::unique_ptr<CRYPTO_BUFFER> cert(CRYPTO_BUFFER_new(certDER.data(), certDER.size(), nullptr));
-        ASSERT(cert);
-
-        // This is a test key from BoringSSL.
-        char kKeyPEM[] =
-        "-----BEGIN RSA PRIVATE KEY-----\n"
-        "MIICXgIBAAKBgQDYK8imMuRi/03z0K1Zi0WnvfFHvwlYeyK9Na6XJYaUoIDAtB92\n"
-        "kWdGMdAQhLciHnAjkXLI6W15OoV3gA/ElRZ1xUpxTMhjP6PyY5wqT5r6y8FxbiiF\n"
-        "KKAnHmUcrgfVW28tQ+0rkLGMryRtrukXOgXBv7gcrmU7G1jC2a7WqmeI8QIDAQAB\n"
-        "AoGBAIBy09Fd4DOq/Ijp8HeKuCMKTHqTW1xGHshLQ6jwVV2vWZIn9aIgmDsvkjCe\n"
-        "i6ssZvnbjVcwzSoByhjN8ZCf/i15HECWDFFh6gt0P5z0MnChwzZmvatV/FXCT0j+\n"
-        "WmGNB/gkehKjGXLLcjTb6dRYVJSCZhVuOLLcbWIV10gggJQBAkEA8S8sGe4ezyyZ\n"
-        "m4e9r95g6s43kPqtj5rewTsUxt+2n4eVodD+ZUlCULWVNAFLkYRTBCASlSrm9Xhj\n"
-        "QpmWAHJUkQJBAOVzQdFUaewLtdOJoPCtpYoY1zd22eae8TQEmpGOR11L6kbxLQsk\n"
-        "aMly/DOnOaa82tqAGTdqDEZgSNmCeKKknmECQAvpnY8GUOVAubGR6c+W90iBuQLj\n"
-        "LtFp/9ihd2w/PoDwrHZaoUYVcT4VSfJQog/k7kjE4MYXYWL8eEKg3WTWQNECQQDk\n"
-        "104Wi91Umd1PzF0ijd2jXOERJU1wEKe6XLkYYNHWQAe5l4J4MWj9OdxFXAxIuuR/\n"
-        "tfDwbqkta4xcux67//khAkEAvvRXLHTaa6VFzTaiiO8SaFsHV3lQyXOtMrBpB5jd\n"
-        "moZWgjHvB2W9Ckn7sDqsPB+U2tyX0joDdQEyuiMECDY8oQ==\n"
-        "-----END RSA PRIVATE KEY-----\n";
-
-        ssl::unique_ptr<BIO> privateKeyBIO(BIO_new_mem_buf(kKeyPEM, strlen(kKeyPEM)));
-        ssl::unique_ptr<EVP_PKEY> privateKey(PEM_read_bio_PrivateKey(privateKeyBIO.get(), nullptr, nullptr, nullptr));
-        ASSERT(privateKey);
-
-        SSL_CTX_set_chain_and_key(ctx.get(), reinterpret_cast<CRYPTO_BUFFER *const *>(&cert), 1, privateKey.get(), nullptr);
-
-        if (protocol == Protocol::HTTPSWithClientCertificateRequest) {
-            SSL_CTX_set_custom_verify(ctx.get(), SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, [] (SSL* ssl, uint8_t*) -> ssl_verify_result_t {
-                auto chain = SSL_get0_peer_certificates(ssl);
-                EXPECT_EQ(sk_CRYPTO_BUFFER_num(chain), 2u);
-                auto cert = sk_CRYPTO_BUFFER_value(chain, 0);
-                auto expectedCert = testCertificate();
-                EXPECT_EQ(CRYPTO_BUFFER_len(cert), expectedCert.size());
-                EXPECT_TRUE(!memcmp(CRYPTO_BUFFER_data(cert), expectedCert.data(), expectedCert.size()));
-                return ssl_verify_ok;
-            });
-        }
-
-        if (maxTLSVersion)
-            SSL_CTX_set_max_proto_version(ctx.get(), *maxTLSVersion);
-
-        ssl::unique_ptr<SSL> ssl(SSL_new(ctx.get()));
-        ASSERT(ssl);
-        SSL_set_fd(ssl.get(), socket);
-
-        auto acceptResult = SSL_accept(ssl.get());
-        secureConnectionHandler(acceptResult > 0 ? ssl.get() : nullptr);
-    };
-
     switch (protocol) {
     case Protocol::HTTPS:
     case Protocol::HTTPSWithClientCertificateRequest:
-        m_connectionHandler = WTFMove(startSecureConnection);
+        m_connectionHandler = [secureConnectionHandler = WTFMove(secureConnectionHandler), protocol, maxTLSVersion] (Socket socket) mutable {
+            startSecureConnection(socket, WTFMove(secureConnectionHandler), protocol == Protocol::HTTPSWithClientCertificateRequest, maxTLSVersion);
+        };
         break;
     case Protocol::HTTPSProxy:
-        m_connectionHandler = [startSecureConnection = WTFMove(startSecureConnection)] (Socket socket) {
+        m_connectionHandler = [secureConnectionHandler = WTFMove(secureConnectionHandler)] (Socket socket) mutable {
             char readBuffer[1000];
             auto bytesRead = ::read(socket, readBuffer, sizeof(readBuffer));
             EXPECT_GT(bytesRead, 0);
@@ -225,7 +228,7 @@ TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionH
             "Connection: close\r\n\r\n";
             auto bytesWritten = ::write(socket, responseHeader, strlen(responseHeader));
             EXPECT_EQ(static_cast<size_t>(bytesWritten), strlen(responseHeader));
-            startSecureConnection(socket);
+            startSecureConnection(socket, WTFMove(secureConnectionHandler));
         };
         break;
     }
