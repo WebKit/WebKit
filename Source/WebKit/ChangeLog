@@ -1,3 +1,17 @@
+2020-04-10  Chris Dumez  <cdumez@apple.com>
+
+        [IPC Hardening] WebDeviceOrientationAndMotionAccessController::shouldAllowAccess() should not crash on invalid input
+        https://bugs.webkit.org/show_bug.cgi?id=210359
+        <rdar://problem/60092453>
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure the security origin is a valid HashMap key before trying to do a HashMap lookup.
+        The security origin is coming from IPC and thus cannot be trusted.
+
+        * UIProcess/WebsiteData/WebDeviceOrientationAndMotionAccessController.cpp:
+        (WebKit::WebDeviceOrientationAndMotionAccessController::cachedDeviceOrientationPermission const):
+
 2020-04-10  John Wilander  <wilander@apple.com>
 
         Add capability to opt in specific domains into SameSite=strict bounce tracking protection

@@ -62,6 +62,9 @@ void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPagePro
 
 DeviceOrientationOrMotionPermissionState WebDeviceOrientationAndMotionAccessController::cachedDeviceOrientationPermission(const SecurityOriginData& origin) const
 {
+    if (!m_deviceOrientationPermissionDecisions.isValidKey(origin))
+        return DeviceOrientationOrMotionPermissionState::Denied;
+
     auto it = m_deviceOrientationPermissionDecisions.find(origin);
     if (it == m_deviceOrientationPermissionDecisions.end())
         return DeviceOrientationOrMotionPermissionState::Prompt;
