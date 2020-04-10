@@ -1,3 +1,17 @@
+2020-04-10  Daniel Bates  <dabates@apple.com>
+
+        mayContainEditableElementsInRect() can terminate search once the search rect is wholly contained inside a layer
+        https://bugs.webkit.org/show_bug.cgi?id=210340
+
+        Reviewed by Simon Fraser.
+
+        Update test and test results. Add "will-transform: transform" to more strongly hint
+        to the engine to create a compositing layer for the overlapping element in the
+        composting sub-test.
+
+        * editing/editable-region/hit-test-overlap-expected.txt:
+        * editing/editable-region/hit-test-overlap.html:
+
 2020-04-10  Chris Dumez  <cdumez@apple.com>
 
         [ Mac wk1 ] fast/images/animated-gif-restored-from-bfcache.html is a flaky failure

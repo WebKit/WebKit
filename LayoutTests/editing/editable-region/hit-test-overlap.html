@@ -55,7 +55,7 @@
     <h2>Composited overlap</h2>
     <div id="composited-container" class="container">
         <div class="editable" style="margin: 10px; height: 100px"></div>
-        <div class="overlapper" style="transform: translateZ(0)"></div>
+        <div class="overlapper" style="will-change: transform; transform: translateZ(0)"></div>
     </div>
 
     <div id="first-tap-point" class="tap-point" style="top: 150px; left: 270px"></div>
@@ -90,8 +90,8 @@ async function runTest()
     containerComputedStyle = window.getComputedStyle(container);
     overlapper = container.querySelector(".overlapper");
     borderLength = parseInt(containerComputedStyle.borderLeftWidth, 10); // Assumes uniform border width
-    await shouldHaveEditableElementsInRect(container.offsetLeft + borderLength, container.offsetTop + borderLength, overlapper.offsetWidth - borderLength, container.offsetHeight - borderLength);
-    await shouldHaveEditableElementsInRectForElement(document.getElementById("second-tap-point"));
+    await shouldNotHaveEditableElementsInRect(container.offsetLeft + borderLength, container.offsetTop + borderLength, overlapper.offsetWidth - borderLength, container.offsetHeight - borderLength);
+    await shouldNotHaveEditableElementsInRectForElement(document.getElementById("second-tap-point"));
     await shouldHaveEditableElementsInRect(container.offsetLeft + overlapper.offsetWidth + borderLength, container.offsetTop + borderLength, container.offsetWidth - overlapper.offsetWidth - borderLength, container.offsetHeight - borderLength);
 
     let testContainer = document.getElementById("test-container");

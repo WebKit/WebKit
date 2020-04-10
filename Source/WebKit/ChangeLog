@@ -1,3 +1,17 @@
+2020-04-10  Daniel Bates  <dabates@apple.com>
+
+        mayContainEditableElementsInRect() can terminate search once the search rect is wholly contained inside a layer
+        https://bugs.webkit.org/show_bug.cgi?id=210340
+
+        Reviewed by Simon Fraser.
+
+        Reduce false positives. This makes mayContainEditableElementsInRect() return false when the
+        search rect is wholly contained inside a higher paint order layer with no editable elements
+        that overlaps a layer with editable elements.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::mayContainEditableElementsInRect):
+
 2020-04-10  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Add routines to message filter in the WebContent sandbox

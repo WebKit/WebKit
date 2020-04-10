@@ -123,9 +123,14 @@ bool mayContainEditableElementsInRect(UIView *rootView, const WebCore::FloatRect
     for (auto *view : WTF::makeReversedRange(viewsInRect)) {
         if (![view isKindOfClass:WKCompositingView.class])
             continue;
+        auto* node = RemoteLayerTreeNode::forCALayer(view.layer);
+        if (!node)
+            continue;
         WebCore::IntRect rectToTest { [view convertRect:rect fromView:rootView] };
-        if (auto* node = RemoteLayerTreeNode::forCALayer(view.layer); node && node->eventRegion().containsEditableElementsInRect(rectToTest))
+        if (node->eventRegion().containsEditableElementsInRect(rectToTest))
             return true;
+        if (node->eventRegion().contains(rectToTest))
+            return false;
     }
     return false;
 }
