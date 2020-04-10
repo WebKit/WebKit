@@ -118,8 +118,8 @@ void DragAndDropHandler::startDrag(Ref<SelectionData>&& selection, DragOperation
     GRefPtr<GtkTargetList> targetList = PasteboardHelper::singleton().targetListForSelectionData(*m_draggingSelectionData);
 
     GUniquePtr<GdkEvent> currentEvent(gtk_get_current_event());
-    GdkDragContext* context = gtk_drag_begin(m_page.viewWidget(), targetList.get(), dragOperationToGdkDragActions(dragOperation),
-        GDK_BUTTON_PRIMARY, currentEvent.get());
+    GdkDragContext* context = gtk_drag_begin_with_coordinates(m_page.viewWidget(), targetList.get(), dragOperationToGdkDragActions(dragOperation),
+        GDK_BUTTON_PRIMARY, currentEvent.get(), -1, -1);
 
     m_dragContext = context;
 

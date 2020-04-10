@@ -1,3 +1,17 @@
+2020-04-10  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Drop deprecated Drag and Drop API use
+        https://bugs.webkit.org/show_bug.cgi?id=210327
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use gtk_drag_begin_with_coordinates(), even if we let it guess the
+        coordinates itself from the event, as gtk_drag_begin() is
+        deprecated.
+
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::startDrag):
+
 2020-04-09  David Kilzer  <ddkilzer@apple.com>
 
         Add WARN_UNUSED_RETURN to decode methods in Source/WebKit/Platform/IPC
