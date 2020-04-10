@@ -1,3 +1,17 @@
+2020-04-10  Devin Rousso  <drousso@apple.com>
+
+        The rhs in `ReadModifyResolveNode` should be evaluated before throwing an exception if the lhs is read-only
+        https://bugs.webkit.org/show_bug.cgi?id=210317
+
+        Reviewed by Ross Kirsling.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::emitReadModifyAssignment):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        If the corresponding `Variable` is read-only, pass it to `emitReadModifyAssignment` as an
+        additional optionl argument, where it will be used to `emitReadOnlyExceptionIfNeeded` after
+        the rhs is emitted.
+
 2020-04-10  Mark Lam  <mark.lam@apple.com>
 
         Use more PAC diversity for JIT probe code.

@@ -2752,7 +2752,7 @@ RegisterID* ConditionalNode::emitBytecode(BytecodeGenerator& generator, Register
 // ------------------------------ ReadModifyResolveNode -----------------------------------
 
 // FIXME: should this be moved to be a method on BytecodeGenerator?
-static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(BytecodeGenerator& generator, RegisterID* dst, RegisterID* src1, ExpressionNode* m_right, Operator oper, OperandTypes types, ReadModifyResolveNode* emitExpressionInfoForMe = 0)
+static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(BytecodeGenerator& generator, RegisterID* dst, RegisterID* src1, ExpressionNode* m_right, Operator oper, OperandTypes types, ReadModifyResolveNode* emitExpressionInfoForMe = nullptr, Variable* emitReadOnlyExceptionIfNeededForMe = nullptr)
 {
     OpcodeID opcodeID;
     switch (oper) {
@@ -2763,8 +2763,13 @@ static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(BytecodeGenerator& gen
         opcodeID = op_div;
         break;
     case Operator::PlusEq:
-        if (m_right->isAdd() && m_right->resultDescriptor().definitelyIsString())
-            return static_cast<AddNode*>(m_right)->emitStrcat(generator, dst, src1, emitExpressionInfoForMe);
+        if (m_right->isAdd() && m_right->resultDescriptor().definitelyIsString()) {
+            RegisterID* result = static_cast<AddNode*>(m_right)->emitStrcat(generator, dst, src1, emitExpressionInfoForMe);
+            if (emitReadOnlyExceptionIfNeededForMe)
+                generator.emitReadOnlyExceptionIfNeeded(*emitReadOnlyExceptionIfNeededForMe);
+            return result;
+        }
+
         opcodeID = op_add;
         break;
     case Operator::MinusEq:
@@ -2801,10 +2806,17 @@ static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(BytecodeGenerator& gen
 
     RegisterID* src2 = generator.emitNode(m_right);
 
+    if (emitReadOnlyExceptionIfNeededForMe) {
+        bool threwException = generator.emitReadOnlyExceptionIfNeeded(*emitReadOnlyExceptionIfNeededForMe);
+        if (threwException)
+            return src2;
+    }
+
     // Certain read-modify nodes require expression info to be emitted *after* m_right has been generated.
     // If this is required the node is passed as 'emitExpressionInfoForMe'; do so now.
     if (emitExpressionInfoForMe)
         generator.emitExpressionInfo(emitExpressionInfoForMe->divot(), emitExpressionInfoForMe->divotStart(), emitExpressionInfoForMe->divotEnd());
+
     RegisterID* result = generator.emitBinaryOp(opcodeID, dst, src1, src2, types);
     if (oper == Operator::URShift)
         return generator.emitUnaryOp<OpUnsigned>(result, result);
@@ -2818,8 +2830,7 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
     if (RegisterID* local = var.local()) {
         generator.emitTDZCheckIfNecessary(var, local, nullptr);
         if (var.isReadOnly()) {
-            generator.emitReadOnlyExceptionIfNeeded(var);
-            RegisterID* result = emitReadModifyAssignment(generator, generator.finalDestination(dst), local, m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()));
+            RegisterID* result = emitReadModifyAssignment(generator, generator.finalDestination(dst), local, m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()), nullptr, &var);
             generator.emitProfileType(result, divotStart(), divotEnd());
             return result;
         }
@@ -2842,12 +2853,7 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
     RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
     RefPtr<RegisterID> value = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, ThrowIfNotFound);
     generator.emitTDZCheckIfNecessary(var, value.get(), nullptr);
-    if (var.isReadOnly()) {
-        bool threwException = generator.emitReadOnlyExceptionIfNeeded(var);
-        if (threwException)
-            return value.get();
-    }
-    RefPtr<RegisterID> result = emitReadModifyAssignment(generator, generator.finalDestination(dst, value.get()), value.get(), m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()), this);
+    RefPtr<RegisterID> result = emitReadModifyAssignment(generator, generator.finalDestination(dst, value.get()), value.get(), m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()), this, var.isReadOnly() ? &var : nullptr);
     RegisterID* returnResult = result.get();
     if (!var.isReadOnly()) {
         returnResult = generator.emitPutToScope(scope.get(), var, result.get(), ThrowIfNotFound, InitializationMode::NotInitialization);

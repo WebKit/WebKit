@@ -1,3 +1,12 @@
+2020-04-10  Devin Rousso  <drousso@apple.com>
+
+        The rhs in `ReadModifyResolveNode` should be evaluated before throwing an exception if the lhs is read-only
+        https://bugs.webkit.org/show_bug.cgi?id=210317
+
+        Reviewed by Ross Kirsling.
+
+        * stress/const-read-modify-assignment-eval-rhs-before-exception.js: Added.
+
 2020-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] ModuleEnvironment do not have JSGlobalLexicalEnvironment as its upper scope
