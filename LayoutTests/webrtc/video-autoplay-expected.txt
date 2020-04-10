@@ -1,12 +1,7 @@
- 
-  
+
 
 PASS Ensuring autoplay does not work on regular video elements 
 PASS Ensuring autoplay does not work on regular video elements when getUserMedia is on 
 PASS Local media stream autoplay 
 PASS Remote media stream autoplay 
-PASS Granting getUserMedia should not start paused media 1 
-PASS Granting getUserMedia should not start paused media 2 
-PASS Granting getUserMedia should not start paused media 3 
-PASS Granting getUserMedia should not start paused media or media that cannot autoplay due to autoplay restrictions 
 
