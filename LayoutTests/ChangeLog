@@ -1,3 +1,14 @@
+2020-04-10  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] Bad style sharing between sibling elements with different part attributes
+        https://bugs.webkit.org/show_bug.cgi?id=210249
+        <rdar://problem/61547528>
+
+        Reviewed by Daniel Bates.
+
+        * fast/css/shadow-parts/shadow-part-style-sharing-expected.html: Added.
+        * fast/css/shadow-parts/shadow-part-style-sharing.html: Added.
+
 2020-04-10  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update TestExpectations
