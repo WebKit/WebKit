@@ -1,5 +1,3 @@
-//@ skip if $hostOS == "windows"
-
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error(`expected ${expected} but got ${actual}`);

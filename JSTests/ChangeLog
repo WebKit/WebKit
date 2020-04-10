@@ -1,3 +1,14 @@
+2020-04-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed gardening for JSTests/stress. Remove skips that were forgotten in r259658.
+
+        * stress/array-toLocaleString.js:
+        * stress/date-toLocaleString.js:
+        * stress/number-toLocaleString.js:
+        * stress/string-localeCompare.js:
+        * stress/string-toLocaleLowerCase.js:
+        * stress/string-toLocaleUpperCase.js:
+
 2020-04-10  Devin Rousso  <drousso@apple.com>
 
         The rhs in `ReadModifyResolveNode` should be evaluated before throwing an exception if the lhs is read-only
