@@ -1,3 +1,25 @@
+2020-04-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r259099. rdar://problem/59610140
+
+    Unreviewed test gardening for iOS API tests.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+    (TEST):
+    * TestWebKitAPI/Tests/ios/FocusPreservationTests.mm:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259099 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed test gardening for iOS API tests.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+            (TEST):
+            * TestWebKitAPI/Tests/ios/FocusPreservationTests.mm:
+            (TestWebKitAPI::TEST):
+
 2020-02-21  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r257077. rdar://problem/59676879
