@@ -251,7 +251,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
         }
 
         auto* textNode = currentTextChild.textNode();
-        auto* beforeChild = currentTextChild.nextSibling();
+        auto beforeChild = makeWeakPtr(currentTextChild.nextSibling());
         auto inlineWrapperForDisplayContents = makeWeakPtr(currentTextChild.inlineWrapperForDisplayContents());
         auto hasInlineWrapperForDisplayContents = inlineWrapperForDisplayContents.get();
         m_builder.destroy(currentTextChild);
@@ -268,7 +268,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
         RenderTextFragment& remainingText = *newRemainingText;
         ASSERT_UNUSED(hasInlineWrapperForDisplayContents, hasInlineWrapperForDisplayContents == inlineWrapperForDisplayContents.get());
         remainingText.setInlineWrapperForDisplayContents(inlineWrapperForDisplayContents.get());
-        m_builder.attach(*textContentParent, WTFMove(newRemainingText), beforeChild);
+        m_builder.attach(*textContentParent, WTFMove(newRemainingText), beforeChild.get());
 
         // FIXME: Make attach the final step so that we don't need to keep firstLetter around.
         auto& firstLetter = *newFirstLetter;
