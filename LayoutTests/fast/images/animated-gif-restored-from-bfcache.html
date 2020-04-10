@@ -1,13 +1,13 @@
 <!-- webkit-test-runner [ enableBackForwardCache=true ] -->
 <script>
-    if (window.testRunner)
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
         testRunner.dumpAsText();
+    }
 
     function runTest() {
-        if (window.internals && window.testRunner) {
+        if (window.internals)
             internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
-            testRunner.waitUntilDone();
-        }
 
         var image = document.getElementById("image");
         var console = document.getElementById("console");            
@@ -36,13 +36,13 @@
         }, 10);
     }
 
-    window.onpageshow = function(event) {
-        if (!event.persisted && window.testRunner) {
-            testRunner.queueLoad("about:blank");
-            testRunner.queueBackNavigation(1);
-            return;
-        }
+    onload = () => {
+        setTimeout(() => {
+            window.location = "../history/resources/page-cache-helper.html";
+        }, 0);
+    }
 
+    window.onpageshow = function(event) {
         if (event.persisted)
             runTest();
     }

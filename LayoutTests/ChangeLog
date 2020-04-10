@@ -1,3 +1,19 @@
+2020-04-10  Chris Dumez  <cdumez@apple.com>
+
+        [ Mac wk1 ] fast/images/animated-gif-restored-from-bfcache.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=206950
+        <rdar://problem/58998008>
+
+        Reviewed by Alex Christensen.
+
+        Make sure the test calls testRunner.waitUntilDone() synchronously when loaded instead
+        of doing it later on only when returning from the back/forward cache. Also, trigger
+        the navigation in a setTimeout(0) in the load event and rely on the
+        page-cache-helper.html like other back/forward cache tests do.
+
+        * fast/images/animated-gif-restored-from-bfcache.html:
+        * platform/mac-wk1/TestExpectations:
+
 2020-04-10  Simon Fraser  <simon.fraser@apple.com>
 
         fast/scrolling/latching/iframe-latch-small-deltas.html is flakey
