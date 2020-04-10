@@ -1,3 +1,14 @@
+2020-04-10  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Improved sccache support
+        https://bugs.webkit.org/show_bug.cgi?id=210027
+
+        Reviewed by Žan Doberšek.
+
+        * Source/cmake/WebKitCCache.cmake: Check for sccache if one of its
+        environment variables has been set as well, otherwise the local
+        disk cache would be used, if WEBKIT_USE_SCCACHE is set to 1.
+
 2020-04-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         Remove ENABLE_INTL define

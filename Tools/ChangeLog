@@ -1,3 +1,16 @@
+2020-04-10  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Improved sccache support
+        https://bugs.webkit.org/show_bug.cgi?id=210027
+
+        Reviewed by Žan Doberšek.
+
+        Whitelist SCCACHE environment variables into the sandbox and allow
+        network access when one of those has been set.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-04-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r259818.

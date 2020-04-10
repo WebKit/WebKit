@@ -624,6 +624,7 @@ class WebkitFlatpak:
             "GTK",
             "ICECC",
             "JSC",
+            "SCCACHE",
             "WEBKIT",
             "WEBKIT2",
             "WPE",
@@ -662,10 +663,19 @@ class WebkitFlatpak:
             if var_tokens[0] in env_var_prefixes_to_keep or envvar in env_vars_to_keep or var_tokens[-1] in env_var_suffixes_to_keep:
                 forwarded[envvar] = value
 
+        share_network_option = "--share=network"
+        remote_sccache_configs = set(["SCCACHE_REDIS", "SCCACHE_BUCKET", "SCCACHE_MEMCACHED",
+                                      "SCCACHE_GCS_BUCKET", "SCCACHE_AZURE_CONNECTION_STRING",
+                                      "WEBKIT_USE_SCCACHE"])
+        if remote_sccache_configs.intersection(set(os.environ.keys())):
+            _log.debug("Enabling network access for the remote sccache")
+            flatpak_command.append(share_network_option)
+
         if self.use_icecream:
             _log.debug('Enabling the icecream compiler')
-            flatpak_command.extend(["--share=network",
-                                    "--bind-mount=/var/run/icecc=/var/run/icecc"])
+            if share_network_option not in flatpak_command:
+                flatpak_command.append(share_network_option)
+            flatpak_command.append("--bind-mount=/var/run/icecc=/var/run/icecc")
 
             n_cores = multiprocessing.cpu_count() * 3
             _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
