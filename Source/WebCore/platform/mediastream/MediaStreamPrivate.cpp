@@ -121,6 +121,12 @@ void MediaStreamPrivate::forEachTrack(const Function<void(const MediaStreamTrack
         callback(*track);
 }
 
+void MediaStreamPrivate::forEachTrack(const Function<void(MediaStreamTrackPrivate&)>& callback)
+{
+    for (auto& track : m_trackSet.values())
+        callback(*track);
+}
+
 void MediaStreamPrivate::updateActiveState(NotifyClientOption notifyClientOption)
 {
     bool newActiveState = false;

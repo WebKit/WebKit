@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-std::unique_ptr<MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(const MediaStreamPrivate& stream)
+std::unique_ptr<MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream)
 {
     return MediaRecorderPrivateAVFImpl::create(stream);
 }

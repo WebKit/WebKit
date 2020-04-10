@@ -60,15 +60,29 @@ RealtimeMediaSource::RealtimeMediaSource(Type type, String&& name, String&& devi
     m_hashedID = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(m_persistentID, m_idHashSalt);
 }
 
+void RealtimeMediaSource::addAudioSampleObserver(RealtimeMediaSource::AudioSampleObserver& observer)
+{
+    ASSERT(isMainThread());
+    auto locker = holdLock(m_audioSampleObserversLock);
+    m_audioSampleObservers.add(&observer);
+}
+
+void RealtimeMediaSource::removeAudioSampleObserver(RealtimeMediaSource::AudioSampleObserver& observer)
+{
+    ASSERT(isMainThread());
+    auto locker = holdLock(m_audioSampleObserversLock);
+    m_audioSampleObservers.remove(&observer);
+}
+
 void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer& observer)
 {
-    auto locker = holdLock(m_observersLock);
+    ASSERT(isMainThread());
     m_observers.add(&observer);
 }
 
 void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer& observer)
 {
-    auto locker = holdLock(m_observersLock);
+    ASSERT(isMainThread());
     m_observers.remove(&observer);
     if (m_observers.isEmpty())
         stopBeingObserved();
@@ -116,16 +130,10 @@ void RealtimeMediaSource::setInterruptedForTesting(bool interrupted)
     notifyMutedChange(interrupted);
 }
 
-void RealtimeMediaSource::forEachObserver(const WTF::Function<void(Observer&)>& apply) const
+void RealtimeMediaSource::forEachObserver(const Function<void(Observer&)>& apply) const
 {
-    Vector<Observer*> observersCopy;
-    {
-        auto locker = holdLock(m_observersLock);
-        observersCopy = copyToVector(m_observers);
-    }
-    for (auto* observer : observersCopy) {
-        auto locker = holdLock(m_observersLock);
-        // Make sure the observer has not been destroyed.
+    ASSERT(isMainThread());
+    for (auto* observer : copyToVector(m_observers)) {
         if (!m_observers.contains(observer))
             continue;
         apply(*observer);
@@ -182,9 +190,22 @@ void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
 
 void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)
 {
-    forEachObserver([&](auto& observer) {
-        observer.audioSamplesAvailable(time, audioData, description, numberOfFrames);
-    });
+    if (!m_hasSentStartProducedAudioData) {
+        callOnMainThread([this, weakThis = makeWeakPtr(this)] {
+            if (!weakThis)
+                return;
+            if (m_hasSentStartProducedAudioData)
+                return;
+            m_hasSentStartProducedAudioData = true;
+            forEachObserver([&](auto& observer) {
+                observer.hasStartedProducingAudioData();
+            });
+        });
+    }
+
+    auto locker = holdLock(m_audioSampleObserversLock);
+    for (auto* observer : m_audioSampleObservers)
+        observer->audioSamplesAvailable(time, audioData, description, numberOfFrames);
 }
 
 void RealtimeMediaSource::start()

@@ -62,15 +62,12 @@ public:
         virtual void trackEnabledChanged(MediaStreamTrackPrivate&) = 0;
         virtual void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) { };
         virtual void readyStateChanged(MediaStreamTrackPrivate&) { };
-
-        // May get called on a background thread.
-        virtual void audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) { };
     };
 
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&);
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id);
 
-    virtual ~MediaStreamTrackPrivate();
+    WEBCORE_EXPORT virtual ~MediaStreamTrackPrivate();
 
     const String& id() const { return m_id; }
     const String& label() const;
@@ -100,6 +97,7 @@ public:
     Ref<MediaStreamTrackPrivate> clone();
 
     RealtimeMediaSource& source() { return m_source.get(); }
+    const RealtimeMediaSource& source() const { return m_source.get(); }
     WEBCORE_EXPORT RealtimeMediaSource::Type type() const;
 
     void endTrack();
@@ -132,15 +130,15 @@ public:
 private:
     MediaStreamTrackPrivate(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id);
 
-    // RealtimeMediaSourceObserver
+    // RealtimeMediaSource::Observer
     void sourceStarted() final;
     void sourceStopped() final;
     void sourceMutedChanged() final;
     void sourceSettingsChanged() final;
     bool preventSourceFromStopping() final;
     void videoSampleAvailable(MediaSample&) final;
-    void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
     void audioUnitWillStart() final;
+    void hasStartedProducingAudioData() final;
 
     void updateReadyState();
 

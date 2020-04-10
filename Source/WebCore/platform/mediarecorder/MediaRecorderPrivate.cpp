@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-MediaRecorderPrivate::AudioVideoSelectedTracks MediaRecorderPrivate::selectTracks(const MediaStreamPrivate& stream)
+MediaRecorderPrivate::AudioVideoSelectedTracks MediaRecorderPrivate::selectTracks(MediaStreamPrivate& stream)
 {
     AudioVideoSelectedTracks selectedTracks;
     stream.forEachTrack([&](auto& track) {

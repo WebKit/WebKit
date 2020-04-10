@@ -560,7 +560,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVolume(float volume)
     ALWAYS_LOG(LOGIDENTIFIER, volume);
     m_volume = volume;
     for (const auto& track : m_audioTrackMap.values())
-        track->setVolume(m_muted ? 0 : m_volume);
+        track->setVolume(m_volume);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setMuted(bool muted)
@@ -571,7 +571,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setMuted(bool muted)
     ALWAYS_LOG(LOGIDENTIFIER, muted);
     m_muted = muted;
     for (const auto& track : m_audioTrackMap.values())
-        track->setVolume(m_muted ? 0 : m_volume);
+        track->setMuted(m_muted);
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::hasVideo() const
