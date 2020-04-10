@@ -1,3 +1,38 @@
+2020-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unable to select text by tap-hold or double tap-hold when allowsLinkPreview property is set to NO
+        https://bugs.webkit.org/show_bug.cgi?id=210191
+        <rdar://problem/60454016>
+
+        Reviewed by Tim Horton.
+
+        In iOS 13.4, UIWKTextInteractionAssistant no longer uses the (misleadingly-named) "force press" gesture to drive
+        text selection when performing a long press. Instead, it now uses the UIVariableDelayLoupeGestureRecognizer,
+        i.e. the text interaction assistant's loupe gesture recognizer.
+
+        The highlight long press gesture, which is only enabled when `allowsLinkPreview` is set to `NO`, is currently
+        allowed to recognize alongside the force press gesture but not the loupe gesture. This means that when link
+        previews are disabled, we'll end up allowing the highlight long press gesture to prevent text selection. A
+        similar issue already exists for the tap-and-half gesture as well.
+
+        To fix this, we allow the highlight long press gesture to recognize alongside both gestures.
+
+        Test: editing/selection/ios/select-text-with-link-preview-disabled.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (tapAndAHalfRecognizerClass):
+
+        While UITapAndAHalfRecognizer is declared in a UIKit private header, it is (perhaps unintentionally) not
+        exported, so attempting to call +[UITapAndAHalfRecognizer class] leads to a linker error. Work around this by
+        dynamically grabbing the `Class` from the class name.
+
+        The tap and half gesture recognizer is private in UIKit and only used for text interaction gestures, so we
+        always want the highlight long press gesture to be able to recognize alongside it.
+
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+
+        Also clean up some existing code by replacing `.get().`s with Objective-C bracket operators.
+
 2020-04-10  Brent Fulgham  <bfulgham@apple.com>
 
         Switch unused IOKit classes from allow-with-report to deny-with-report

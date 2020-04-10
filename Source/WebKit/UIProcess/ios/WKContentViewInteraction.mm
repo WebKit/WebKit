@@ -2035,6 +2035,16 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return (a == x && b == y) || (b == x && a == y);
 }
 
+static Class tapAndAHalfRecognizerClass()
+{
+    static dispatch_once_t onceToken;
+    static Class theClass;
+    dispatch_once(&onceToken, ^{
+        theClass = NSClassFromString(@"UITapAndAHalfRecognizer");
+    });
+    return theClass;
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -2056,21 +2066,31 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return YES;
 #endif
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
 #if PLATFORM(MACCATALYST)
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _textInteractionAssistant.get().loupeGesture, _textInteractionAssistant.get().forcePressGesture))
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, [_textInteractionAssistant loupeGesture], [_textInteractionAssistant forcePressGesture]))
         return YES;
 
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), _textInteractionAssistant.get().loupeGesture))
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), [_textInteractionAssistant loupeGesture]))
         return YES;
 
     if (([gestureRecognizer isKindOfClass:[_UILookupGestureRecognizer class]] && [otherGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) || ([otherGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]] && [gestureRecognizer isKindOfClass:[_UILookupGestureRecognizer class]]))
         return YES;
-#endif
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _textInteractionAssistant.get().forcePressGesture))
-        return YES;
-#endif
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), _textInteractionAssistant.get().singleTapGesture))
+#endif // PLATFORM(MACCATALYST)
+
+    if (gestureRecognizer == _highlightLongPressGestureRecognizer.get() || otherGestureRecognizer == _highlightLongPressGestureRecognizer.get()) {
+        auto forcePressGesture = [_textInteractionAssistant forcePressGesture];
+        if (gestureRecognizer == forcePressGesture || otherGestureRecognizer == forcePressGesture)
+            return YES;
+
+        auto loupeGesture = [_textInteractionAssistant loupeGesture];
+        if (gestureRecognizer == loupeGesture || otherGestureRecognizer == loupeGesture)
+            return YES;
+
+        if ([gestureRecognizer isKindOfClass:tapAndAHalfRecognizerClass()] || [otherGestureRecognizer isKindOfClass:tapAndAHalfRecognizerClass()])
+            return YES;
+    }
+
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), [_textInteractionAssistant singleTapGesture]))
         return YES;
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), _nonBlockingDoubleTapGestureRecognizer.get()))

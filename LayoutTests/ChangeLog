@@ -1,3 +1,16 @@
+2020-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unable to select text by tap-hold or double tap-hold when allowsLinkPreview property is set to NO
+        https://bugs.webkit.org/show_bug.cgi?id=210191
+        <rdar://problem/60454016>
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that text can be selected by long pressing when link previews are disabled.
+
+        * editing/selection/ios/select-text-with-link-preview-disabled-expected.txt: Added.
+        * editing/selection/ios/select-text-with-link-preview-disabled.html: Added.
+
 2020-04-10  Daniel Bates  <dabates@apple.com>
 
         mayContainEditableElementsInRect() can terminate search once the search rect is wholly contained inside a layer
