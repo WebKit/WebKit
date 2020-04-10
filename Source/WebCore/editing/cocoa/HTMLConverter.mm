@@ -539,7 +539,7 @@ static NSParagraphStyle *defaultParagraphStyle()
     if (!defaultParagraphStyle) {
         defaultParagraphStyle = [[PlatformNSParagraphStyle defaultParagraphStyle] mutableCopy];
         [defaultParagraphStyle setDefaultTabInterval:36];
-        [defaultParagraphStyle setTabStops:[NSArray array]];
+        [defaultParagraphStyle setTabStops:@[]];
     }
     return defaultParagraphStyle;
 }
@@ -1027,7 +1027,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
     float strokeWidth = 0.0;
     if (_caches->floatPropertyValueForNode(element, CSSPropertyWebkitTextStrokeWidth, strokeWidth)) {
         float textStrokeWidth = strokeWidth / ([font pointSize] * 0.01);
-        [attrs setObject:[NSNumber numberWithDouble:textStrokeWidth] forKey:NSStrokeWidthAttributeName];
+        [attrs setObject:@(textStrokeWidth) forKey:NSStrokeWidthAttributeName];
     }
     if (strokeColor)
         [attrs setObject:strokeColor forKey:NSStrokeColorAttributeName];
@@ -1042,7 +1042,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
             if (UIFloatIsZero(kernVal))
                 [attrs setObject:@0.0 forKey:NSKernAttributeName]; // auto and normal, the other possible values, are both "kerning enabled"
             else
-                [attrs setObject:[NSNumber numberWithDouble:kernVal] forKey:NSKernAttributeName];
+                [attrs setObject:@(kernVal) forKey:NSKernAttributeName];
         }
     }
 
@@ -1074,7 +1074,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
 
     float baselineOffset = 0.0;
     if (_caches->floatPropertyValueForNode(element, CSSPropertyVerticalAlign, baselineOffset))
-        [attrs setObject:[NSNumber numberWithDouble:baselineOffset] forKey:NSBaselineOffsetAttributeName];
+        [attrs setObject:@(baselineOffset) forKey:NSBaselineOffsetAttributeName];
 
     String textShadow = _caches->propertyValueForNode(element, CSSPropertyTextShadow);
     if (textShadow.length() > 4) {
@@ -1556,7 +1556,7 @@ void HTMLConverter::_processMetaElementWithName(NSString *name, NSString *conten
         if (versionNumber > 0.0) {
             // ??? this should be keyed off of version number in future
             [_documentAttrs removeObjectForKey:NSConvertedDocumentAttribute];
-            [_documentAttrs setObject:[NSNumber numberWithDouble:versionNumber] forKey:NSCocoaVersionDocumentAttribute];
+            [_documentAttrs setObject:@(versionNumber) forKey:NSCocoaVersionDocumentAttribute];
         }
 #if PLATFORM(IOS_FAMILY)
     } else if (NSOrderedSame == [@"Generator" compare:name options:NSCaseInsensitiveSearch]) {
@@ -1672,8 +1672,8 @@ void HTMLConverter::_addTableForElement(Element *tableElement)
     }
     
     [_textTables addObject:table.get()];
-    [_textTableSpacings addObject:[NSNumber numberWithDouble:cellSpacingVal]];
-    [_textTablePaddings addObject:[NSNumber numberWithDouble:cellPaddingVal]];
+    [_textTableSpacings addObject:@(cellSpacingVal)];
+    [_textTablePaddings addObject:@(cellPaddingVal)];
     [_textTableRows addObject:[NSNumber numberWithInteger:0]];
     [_textTableRowArrays addObject:[NSMutableArray array]];
 }

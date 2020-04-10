@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS_FAMILY)
-
-#import "WebVisiblePosition.h"
 #import "WebVisiblePositionInternal.h"
 
+#if PLATFORM(IOS_FAMILY)
+
+#import "DOMNodeInternal.h"
+#import "DOMRangeInternal.h"
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/Editing.h>
 #import <WebCore/FrameSelection.h>
@@ -41,12 +42,8 @@
 #import <WebCore/TextFlags.h>
 #import <WebCore/TextGranularity.h>
 #import <WebCore/TextIterator.h>
-#import <WebCore/VisiblePosition.h>
 #import <WebCore/VisibleUnits.h>
-
-
-#import "DOMNodeInternal.h"
-#import "DOMRangeInternal.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 using namespace WebCore;
 
@@ -418,11 +415,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     auto& document = node->document();
     for (auto marker : document.markers().markersFor(*node, DocumentMarker::DictationPhraseWithAlternatives)) {
         if (marker->startOffset() <= offset && marker->endOffset() >= offset) {
-            auto& markerAlternatives = WTF::get<Vector<String>>(marker->data());
-            auto array = [NSMutableArray arrayWithCapacity:markerAlternatives.size()];
-            for (auto& alternative : markerAlternatives)
-                [array addObject:alternative];
-            *alternatives = array;
+            *alternatives = createNSArray(WTF::get<Vector<String>>(marker->data())).autorelease();
             return kit(Range::create(document, node, marker->startOffset(), node, marker->endOffset()).ptr());
         }
     }

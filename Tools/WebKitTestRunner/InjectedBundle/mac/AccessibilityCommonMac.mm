@@ -55,7 +55,7 @@ NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRe
     NSMutableDictionary *parameterizedAttribute = [NSMutableDictionary dictionary];
     
     if (startElement && startElement->platformUIElement())
-        [parameterizedAttribute setObject:(id)startElement->platformUIElement() forKey:@"AXStartElement"];
+        [parameterizedAttribute setObject:startElement->platformUIElement() forKey:@"AXStartElement"];
     
     [parameterizedAttribute setObject:(isDirectionNext) ? @"AXDirectionNext" : @"AXDirectionPrevious" forKey:@"AXDirection"];
     

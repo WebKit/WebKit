@@ -175,7 +175,7 @@ Cookie::operator NSHTTPCookie * _Nullable () const
     }
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
-    [properties setObject:[NSNumber numberWithDouble:created / 1000.0 - NSTimeIntervalSince1970] forKey:@"Created"];
+    [properties setObject:@(created / 1000.0 - NSTimeIntervalSince1970) forKey:@"Created"];
 #endif
 
     auto* portString = portStringFromVector(ports);

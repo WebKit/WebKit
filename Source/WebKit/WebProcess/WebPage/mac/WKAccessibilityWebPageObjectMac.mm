@@ -47,7 +47,6 @@
 #import <WebCore/Scrollbar.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
-#import <wtf/ObjCRuntimeExtras.h>
 
 namespace ax = WebCore::Accessibility;
 
@@ -142,16 +141,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)accessibilityActionNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    return [NSArray array];
+    return @[];
 }
 
 - (NSArray *)accessibilityChildren
 {
     id wrapper = [self accessibilityRootObjectWrapper];
     if (!wrapper)
-        return [NSArray array];
+        return @[];
     
-    return [NSArray arrayWithObject:wrapper];
+    return @[wrapper];
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

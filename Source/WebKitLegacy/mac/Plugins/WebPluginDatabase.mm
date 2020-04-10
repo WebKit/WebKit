@@ -390,11 +390,11 @@ static NSArray *additionalWebPlugInPaths;
     // For example, if there is a QuickTime.plugin in the users's home directory
     // that is used instead of the /Library/Internet Plug-ins version.
     // The purpose is to allow non-admin users to update their plug-ins.
-    return [NSArray arrayWithObjects:
+    return @[
         [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"],
         @"/Library/Internet Plug-Ins",
         [[NSBundle mainBundle] builtInPlugInsPath],
-        nil];
+    ];
 #else
     // iOS plug-ins are all located in /System/Library/Internet Plug-Ins
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -406,7 +406,7 @@ static NSArray *additionalWebPlugInPaths;
     NSString* platformRootDir = [NSString stringWithUTF8String:WebKitPlatformSystemRootDirectory()];
     NSString *systemDir = [platformRootDir stringByAppendingPathComponent:@"System/Library"];
 #endif
-    return [NSArray arrayWithObject:[systemDir stringByAppendingPathComponent:@"Internet Plug-Ins"]];
+    return @[[systemDir stringByAppendingPathComponent:@"Internet Plug-Ins"]];
 #endif
 }
 

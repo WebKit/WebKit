@@ -947,7 +947,7 @@ kern_return_t WKPCIdentifierInfo(mach_port_t clientPort, uint64_t serverIdentifi
         const char* str = identifier->string();
         info = [NSData dataWithBytesNoCopy:(void*)str length:strlen(str) freeWhenDone:NO];
     } else 
-        info = [NSNumber numberWithInt:identifier->number()];
+        info = @(identifier->number());
 
     NSData *data = [NSPropertyListSerialization dataWithPropertyList:info format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];
     ASSERT(data);

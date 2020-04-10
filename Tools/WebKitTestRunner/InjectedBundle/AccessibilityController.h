@@ -90,7 +90,7 @@ private:
     AccessibilityController();
 
 #if PLATFORM(COCOA)
-    RetainPtr<NotificationHandler> m_globalNotificationHandler;
+    RetainPtr<id> m_globalNotificationHandler;
 #elif USE(ATK)
     RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif

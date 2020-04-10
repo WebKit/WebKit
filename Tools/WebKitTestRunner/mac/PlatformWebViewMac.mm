@@ -223,10 +223,10 @@ void PlatformWebView::changeWindowScaleIfNeeded(float newScale)
 
     // Instead of re-constructing the current window, let's fake resize it to ensure that the scale change gets picked up.
     forceWindowFramesChanged();
+
     // Changing the scaling factor on the window does not trigger NSWindowDidChangeBackingPropertiesNotification. We need to send the notification manually.
-    RetainPtr<NSMutableDictionary> notificationUserInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:1]);
-    [notificationUserInfo setObject:[NSNumber numberWithDouble:currentScale] forKey:NSBackingPropertyOldScaleFactorKey];
-    [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidChangeBackingPropertiesNotification object:m_window userInfo:notificationUserInfo.get()];
+    NSDictionary *userInfo = @{ NSBackingPropertyOldScaleFactorKey: @(currentScale) };
+    [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidChangeBackingPropertiesNotification object:m_window userInfo:userInfo];
 }
 
 void PlatformWebView::forceWindowFramesChanged()

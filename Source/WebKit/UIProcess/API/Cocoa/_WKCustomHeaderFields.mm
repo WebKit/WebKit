@@ -28,6 +28,7 @@
 
 #import "_WKCustomHeaderFieldsInternal.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation _WKCustomHeaderFields
 
@@ -68,20 +69,12 @@
 
 - (NSArray<NSString *> *)thirdPartyDomains
 {
-    auto& domains = _fields->thirdPartyDomains();
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:domains.size()];
-    for (auto& domain : domains)
-        [array addObject:domain];
-    return array;
+    return createNSArray(_fields->thirdPartyDomains()).autorelease();
 }
 
 - (void)setThirdPartyDomains:(NSArray<NSString *> *)thirdPartyDomains
 {
-    Vector<String> domains;
-    domains.reserveInitialCapacity(thirdPartyDomains.count);
-    for (NSString *domain in thirdPartyDomains)
-        domains.uncheckedAppend(domain);
-    _fields->setThirdPartyDomains(WTFMove(domains));
+    _fields->setThirdPartyDomains(makeVector<String>(thirdPartyDomains));
 }
 
 - (API::Object&)_apiObject

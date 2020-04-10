@@ -48,7 +48,7 @@ static NO_RETURN void raiseDOMErrorException(WebCore::ExceptionCode ec)
     else
         reason = [[NSString alloc] initWithFormat:@"*** %@ %d", DOMException, description.legacyCode];
 
-    NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithInt:description.legacyCode], DOMException, nil];
+    NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@(description.legacyCode), DOMException, nil];
 
     NSException *exception = [NSException exceptionWithName:DOMException reason:reason userInfo:userInfo];
 

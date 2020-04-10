@@ -267,7 +267,7 @@ TEST(InAppBrowserPrivacy, AppBoundDomains)
     initializeInAppBrowserPrivacyTestSettings();
     isDone = false;
     [[WKWebsiteDataStore defaultDataStore] _appBoundDomains:^(NSArray<NSString *> *domains) {
-        NSArray *domainsToCompare = [NSArray arrayWithObjects:@"127.0.0.1", @"apple.com", @"bar.com", @"example.com", @"foo.com", @"localhost", @"testdomain1",  @"webkit.org", nil];
+        NSArray *domainsToCompare = @[@"127.0.0.1", @"apple.com", @"bar.com", @"example.com", @"foo.com", @"localhost", @"testdomain1",  @"webkit.org"];
 
         NSArray *sortedDomains = [domains sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
 

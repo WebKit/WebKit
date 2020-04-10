@@ -445,7 +445,7 @@ static NSDictionary *textReplacementChangeDictionary(AXCoreObject& object, AXTex
     NSMutableDictionary *change = [[NSMutableDictionary alloc] initWithCapacity:4];
     [change setObject:@(platformEditTypeForWebCoreEditType(type)) forKey:NSAccessibilityTextEditType];
     if (length > AXValueChangeTruncationLength) {
-        [change setObject:[NSNumber numberWithInt:length] forKey:NSAccessibilityTextChangeValueLength];
+        [change setObject:@(length) forKey:NSAccessibilityTextChangeValueLength];
         text = [text substringToIndex:AXValueChangeTruncationLength];
     }
     [change setObject:text forKey:NSAccessibilityTextChangeValue];

@@ -1,3 +1,157 @@
+2020-04-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Simplify NSArray, NSDictionary, and NSNumber idioms throughout WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=210138
+
+        Reviewed by Alex Christensen.
+
+        * DOM/DOM.mm:
+        (kit): Deleted overload that takes Vector<IntRect>.
+        (-[DOMNode textRects]): Use createNSArray.
+        (-[DOMRange textRects]): Ditto.
+
+        * DOM/ExceptionHandlers.mm:
+        (raiseDOMErrorException): Use @().
+
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList dictionaryRepresentation]): Use @{}.
+
+        * History/WebHistory.mm:
+        (+[WebHistoryPrivate initialize]): Use @{}.
+        (-[WebHistory _sendNotification:entries:]): Use @{}.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]): Use makeVector<String>.
+        (-[WebHistoryItem dictionaryRepresentation:]): Use createNSArray and @().
+
+        * History/WebURLsWithTitles.m:
+        (+[WebURLsWithTitles arrayWithIFURLsWithTitlesPboardType]): Use @[].
+        (+[WebURLsWithTitles writeURLs:andTitles:toPasteboard:]): Use @[].
+
+        * Misc/WebCache.mm:
+        (+[WebCache statistics]): Use @[], @{}, and @().
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics memoryStatistics]): Ditto.
+
+        * Misc/WebKitErrors.m:
+        (-[NSError _webkit_initWithDomain:code:URL:]): Use @().
+        (+[NSError _registerWebKitErrors]): Use @().
+        (-[NSError _initWithPluginErrorCode:contentURL:pluginPageURL:pluginName:MIMEType:]): Use @().
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:]): Use @{}.
+        (-[NSString _web_widthWithFont:]): Use @{}.
+
+        * Misc/WebNSFileManagerExtras.mm: Removed unneeded include.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (+[NSPasteboard _web_dragTypesForURL]): Use @[].
+        (-[NSPasteboard _web_writeURL:andTitle:types:]): Use @[].
+        (+[NSPasteboard _web_setFindPasteboardString:withOwner:]): Use @[].
+
+        * Misc/WebNSURLExtras.mm: Removed unneeded include.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost): Use @{}.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCIdentifierInfo): Use @().
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray): Use @().
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm: Removed unneeded include.
+        * Plugins/WebBasePluginPackage.mm: Ditto.
+
+        * Plugins/WebPluginContainerCheck.mm:
+        (-[WebPluginContainerCheck _actionInformationWithURL:]): Use @{}.
+
+        * Plugins/WebPluginDatabase.mm:
+        (+[WebPluginDatabase _defaultPlugInPaths]): Use @[].
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager databasesWithOrigin:]): Use createNSArray.
+
+        * WebCoreSupport/CorrectionPanel.mm:
+        (CorrectionPanel::show): Use createNSArray.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::addMessageToConsole): Use @().
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (attributesForAttributedStringConversion): Use @().
+        (WebEditorClient::getGuessesForWord): Use makeVector<String>.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::actionDictionary const): Use @().
+        (kit): Deleted overload that takes Vector<String>.
+        (pluginView): Use @{}.
+        (WebFrameLoaderClient::createPlugin): Use createNSArray, @{}, and @().
+        (WebFrameLoaderClient::createJavaAppletWidget): Use createNSArray.
+
+        * WebCoreSupport/WebOpenPanelResultListener.mm:
+        (-[WebOpenPanelResultListener chooseFilenames:]): Use makeVector<String>.
+        (-[WebOpenPanelResultListener chooseFilename:displayString:iconImage:]): Use @[].
+        (-[WebOpenPanelResultListener chooseFilenames:displayString:iconImage:]): Use makeVector<String>.
+
+        * WebCoreSupport/WebSelectionServiceController.mm:
+        (WebSelectionServiceController::handleSelectionServiceClick):
+        Comment out an unused argument.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _rectsForRange:]): Use createNSArrray.
+        (-[WebFrame _computePageRectsWithPrintScaleFactor:pageSize:]): Use createNSArray and @[].
+        (-[WebFrame childFrames]): Use @[].
+
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLView _selectionPasteboardTypes]): Use @[].
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): Use @[].
+        (-[WebHTMLView knowsPageRange:]): Use @[].
+        (-[WebHTMLView accessibilityAttributeValue:]): Use @[].
+        (-[WebHTMLView copyFont:]): Use @[].
+        (-[WebHTMLView _interpretKeyEvent:savingCommands:]): Use @[].
+        (-[WebHTMLView selectionTextRects]): Use createNSArray.
+        (-[WebHTMLView rectsForTextMatches]): Use createNSArray and @[].
+
+        * WebView/WebPDFRepresentation.mm: Removed unneeded include.
+        (+[WebPDFRepresentation postScriptMIMETypes]): Use @[].
+        (+[WebPDFRepresentation supportedMIMETypes]): Use @[].
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView elementAtPoint:]): Use @{} and @().
+        (-[WebPDFView viewState]): Use @().
+        (-[WebPDFView selectionTextRects]): Use @[].
+        (-[WebPDFView pasteboardTypesForSelection]): Use @[].
+        (-[WebPDFView _menuItemsFromPDFKitForEvent:]): Use @().
+        (-[WebPDFView _openWithFinder:]): Use @{} and @().
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Use @().
+        (-[WebPreferences _setUnsignedIntValue:forKey:]): Use @().
+        (+[WebPreferences _setInitialDefaultTextEncodingToSystemEncoding]): Use @().
+        (-[WebPreferences setStorageBlockingPolicy:]): Use @{} and @().
+
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::sourceParsed): Use @().
+
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController _placePopupWindow:]): Use @{}.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Use makeVector<String>.
+        (-[WebView _contentsOfUserInterfaceItem:]): Use @().
+        (toStringVector): Deleted.
+        (+[WebView _addUserScriptToGroup:world:source:url:whitelist:blacklist:injectionTime:injectedFrames:]):
+        Use makeVector<String>.
+        (+[WebView _addUserStyleSheetToGroup:world:source:url:whitelist:blacklist:injectedFrames:]):
+        Use makeVector<String>.
+        (-[WebView _elementAtWindowPoint:]): Use @{}.
+        (-[WebView pasteboardTypesForSelection]): Use @[].
+        (-[WebView pasteboardTypesForElement:]): Use @[].
+        (-[WebView rectsForTextMatches]): Use @[].
+        (-[WebView _searchWithGoogleFromMenu:]): Use @[].
+        (-[WebView _setFontWhitelist:]): Use makeVector<String>.
+
 2020-04-08  Daniel Bates  <dabates@apple.com>
 
         Track editable elements on screen

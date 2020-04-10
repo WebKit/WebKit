@@ -1044,7 +1044,7 @@ RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *character, uint64_t timesta
     while (time < endTime) {
         NSMutableDictionary *newEvent = [endEvent mutableCopy];
         double timeRatio = (time - startTime) / (endTime - startTime);
-        newEvent[HIDEventTimeOffsetKey] = [NSNumber numberWithDouble:(time)];
+        newEvent[HIDEventTimeOffsetKey] = @(time);
         
         NSEnumerator *startEnumerator = [startTouches objectEnumerator];
         NSDictionary *startTouch;

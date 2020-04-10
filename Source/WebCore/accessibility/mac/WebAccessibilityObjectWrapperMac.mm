@@ -78,7 +78,7 @@
 #import "WebCoreFrameView.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
-#import <wtf/ObjCRuntimeExtras.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(TREE_DEBUGGING)
 #import <wtf/text/StringBuilder.h>
@@ -645,14 +645,8 @@ static std::pair<AccessibilitySearchTextCriteria, AccessibilityTextOperation> ac
     if ([replacementStringParameter isKindOfClass:[NSString class]])
         operation.replacementText = replacementStringParameter;
 
-    if ([searchStringsParameter isKindOfClass:[NSArray class]]) {
-        size_t searchStringsCount = static_cast<size_t>([searchStringsParameter count]);
-        criteria.searchStrings.reserveInitialCapacity(searchStringsCount);
-        for (NSString *searchString in searchStringsParameter) {
-            if ([searchString isKindOfClass:[NSString class]])
-                criteria.searchStrings.uncheckedAppend(searchString);
-        }
-    }
+    if ([searchStringsParameter isKindOfClass:[NSArray class]])
+        criteria.searchStrings = makeVector<String>(searchStringsParameter);
 
     return std::make_pair(criteria, operation);
 }
@@ -665,14 +659,8 @@ static AccessibilitySearchTextCriteria accessibilitySearchTextCriteriaForParamet
     NSString *start = [params objectForKey:NSAccessibilitySearchTextStartFrom];
     NSString *direction = [params objectForKey:NSAccessibilitySearchTextDirection];
 
-    if ([searchStrings isKindOfClass:[NSArray class]]) {
-        size_t searchStringsCount = static_cast<size_t>([searchStrings count]);
-        criteria.searchStrings.reserveInitialCapacity(searchStringsCount);
-        for (NSString *searchString in searchStrings) {
-            if ([searchString isKindOfClass:[NSString class]])
-                criteria.searchStrings.uncheckedAppend(searchString);
-        }
-    }
+    if ([searchStrings isKindOfClass:[NSArray class]])
+        criteria.searchStrings = makeVector<String>(searchStrings);
 
     if ([start isKindOfClass:[NSString class]]) {
         if ([start isEqualToString:NSAccessibilitySearchTextStartFromBegin])
@@ -1019,9 +1007,9 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     // set super/sub scripting
     VerticalAlign alignment = style.verticalAlign();
     if (alignment == VerticalAlign::Sub)
-        AXAttributeStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, [NSNumber numberWithInt:(-1)], range);
+        AXAttributeStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, @(-1), range);
     else if (alignment == VerticalAlign::Super)
-        AXAttributeStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, [NSNumber numberWithInt:1], range);
+        AXAttributeStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, @(1), range);
     else
         [attrString removeAttribute:NSAccessibilitySuperscriptTextAttribute range:range];
     
@@ -1074,7 +1062,7 @@ static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrS
     int quoteLevel = obj->blockquoteLevel();
     
     if (quoteLevel)
-        [attrString addAttribute:NSAccessibilityBlockQuoteLevelAttribute value:[NSNumber numberWithInt:quoteLevel] range:range];
+        [attrString addAttribute:NSAccessibilityBlockQuoteLevelAttribute value:@(quoteLevel) range:range];
     else
         [attrString removeAttribute:NSAccessibilityBlockQuoteLevelAttribute range:range];
 }
@@ -1153,7 +1141,7 @@ static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrStri
     }
     
     if (parentHeadingLevel)
-        [attrString addAttribute:@"AXHeadingLevel" value:[NSNumber numberWithInt:parentHeadingLevel] range:range];
+        [attrString addAttribute:@"AXHeadingLevel" value:@(parentHeadingLevel) range:range];
     else
         [attrString removeAttribute:@"AXHeadingLevel" range:range];
 }
@@ -1312,17 +1300,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // All elements should get ShowMenu and ScrollToVisible.
     // But certain earlier VoiceOver versions do not support scroll to visible, and it confuses them to see it in the list.
-    static NSArray *defaultElementActions = [[NSArray alloc] initWithObjects:NSAccessibilityShowMenuAction, NSAccessibilityScrollToVisibleAction, nil];
+    static NSArray *defaultElementActions = [@[NSAccessibilityShowMenuAction, NSAccessibilityScrollToVisibleAction] retain];
 
     // Action elements allow Press.
     // The order is important to VoiceOver, which expects the 'default' action to be the first action. In this case the default action should be press.
-    static NSArray *actionElementActions = [[NSArray alloc] initWithObjects:NSAccessibilityPressAction, NSAccessibilityShowMenuAction, NSAccessibilityScrollToVisibleAction, nil];
+    static NSArray *actionElementActions = [@[NSAccessibilityPressAction, NSAccessibilityShowMenuAction, NSAccessibilityScrollToVisibleAction] retain];
 
     // Menu elements allow Press and Cancel.
     static NSArray *menuElementActions = [[actionElementActions arrayByAddingObject:NSAccessibilityCancelAction] retain];
 
     // Slider elements allow Increment/Decrement.
-    static NSArray *sliderActions = [[defaultElementActions arrayByAddingObjectsFromArray:[NSArray arrayWithObjects:NSAccessibilityIncrementAction, NSAccessibilityDecrementAction, nil]] retain];
+    static NSArray *sliderActions = [[defaultElementActions arrayByAddingObjectsFromArray:@[NSAccessibilityIncrementAction, NSAccessibilityDecrementAction]] retain];
 
     NSArray *actions;
     if (backingObject->supportsPressAction())
@@ -1888,14 +1876,6 @@ static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityCh
     }
 }
 
-static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
-{
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
-    for (const auto& string : vector)
-        [array addObject:string];
-    return array;
-}
-
 - (id)textMarkerRangeForSelection
 {
     VisibleSelection selection = self.axBackingObject->selection();
@@ -2402,9 +2382,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if ([attributeName isEqualToString:@"AXLoaded"])
             return [NSNumber numberWithBool:backingObject->isLoaded()];
         if ([attributeName isEqualToString:@"AXLayoutCount"])
-            return [NSNumber numberWithInt:backingObject->layoutCount()];
+            return @(backingObject->layoutCount());
         if ([attributeName isEqualToString:NSAccessibilityLoadingProgressAttribute])
-            return [NSNumber numberWithDouble:backingObject->estimatedLoadingProgress()];
+            return @(backingObject->estimatedLoadingProgress());
         if ([attributeName isEqualToString:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute])
             return [NSNumber numberWithBool:backingObject->preventKeyboardDOMEventDispatch()];
         if ([attributeName isEqualToString:NSAccessibilityCaretBrowsingEnabledAttribute])
@@ -2418,7 +2398,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             int length = backingObject->textLength();
             if (length < 0)
                 return nil;
-            return [NSNumber numberWithUnsignedInt:length];
+            return @(length);
         }
         if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
             String selectedText = backingObject->selectedText();
@@ -2447,7 +2427,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (lineNumber < 0)
                 return nil;
 
-            return [NSNumber numberWithInt:lineNumber];
+            return @(lineNumber);
         }
     }
 
@@ -2506,16 +2486,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if (backingObject->roleValue() == AccessibilityRole::SliderThumb)
             return [NSNumber numberWithFloat:backingObject->parentObject()->valueForRange()];
         if (backingObject->isHeading())
-            return [NSNumber numberWithInt:backingObject->headingLevel()];
+            return @(backingObject->headingLevel());
 
         if (backingObject->isCheckboxOrRadio() || backingObject->isMenuItem() || backingObject->isSwitch() || backingObject->isToggleButton()) {
             switch (backingObject->checkboxOrRadioValue()) {
             case AccessibilityButtonState::Off:
-                return [NSNumber numberWithInt:0];
+                return @(0);
             case AccessibilityButtonState::On:
-                return [NSNumber numberWithInt:1];
+                return @(1);
             case AccessibilityButtonState::Mixed:
-                return [NSNumber numberWithInt:2];
+                return @(2);
             }
         }
 
@@ -2535,7 +2515,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
 
         if (backingObject->isTabItem())
-            return [NSNumber numberWithInt:backingObject->isSelected()];
+            return @(backingObject->isSelected());
 
         if (backingObject->isColorWell()) {
             int r, g, b;
@@ -2691,7 +2671,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if (backingObject->isTableColumn()) {
         if ([attributeName isEqualToString:NSAccessibilityIndexAttribute])
-            return [NSNumber numberWithUnsignedInt:backingObject->columnIndex()];
+            return @(backingObject->columnIndex());
 
         // rows attribute for a column is the list of all the elements in that column at each row
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute]
@@ -2742,7 +2722,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
         // TreeRoles do not support columns, but Mac AX expects to be able to ask about columns at the least.
         if ([attributeName isEqualToString:NSAccessibilityColumnsAttribute])
-            return [NSArray array];
+            return @[];
     }
 
     if ([attributeName isEqualToString:NSAccessibilityIndexAttribute]) {
@@ -2760,13 +2740,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             size_t count = rowsCopy.size();
             for (size_t k = 0; k < count; ++k)
                 if (rowsCopy[k]->wrapper() == self)
-                    return [NSNumber numberWithUnsignedInt:k];
+                    return @(k);
 
             return nil;
         }
 
         if (backingObject->isTableRow())
-            return [NSNumber numberWithInt:backingObject->rowIndex()];
+            return @(backingObject->rowIndex());
     }
 
     // The rows that are considered inside this row.
@@ -2801,7 +2781,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         int level = backingObject->hierarchicalLevel();
         if (level > 0)
             level -= 1;
-        return [NSNumber numberWithInt:level];
+        return @(level);
     }
     if ([attributeName isEqualToString:NSAccessibilityDisclosingAttribute])
         return [NSNumber numberWithBool:backingObject->isExpanded()];
@@ -2832,9 +2812,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
-        return [NSNumber numberWithUnsignedInt:backingObject->blockquoteLevel()];
+        return @(backingObject->blockquoteLevel());
     if ([attributeName isEqualToString:@"AXTableLevel"])
-        return [NSNumber numberWithInt:backingObject->tableLevel()];
+        return @(backingObject->tableLevel());
 
     if ([attributeName isEqualToString: NSAccessibilityLinkedUIElementsAttribute]) {
         AccessibilityObject::AccessibilityChildrenVector linkedUIElements;
@@ -2851,7 +2831,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString: NSAccessibilityServesAsTitleForUIElementsAttribute] && backingObject->isMenuButton()) {
         AccessibilityObject* uiElement = downcast<AccessibilityRenderObject>(*backingObject).menuForMenuButton();
         if (uiElement)
-            return [NSArray arrayWithObject:uiElement->wrapper()];
+            return @[uiElement->wrapper()];
     }
 
     if ([attributeName isEqualToString:NSAccessibilityTitleUIElementAttribute]) {
@@ -2921,17 +2901,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString:NSAccessibilityARIAPosInSetAttribute])
-        return [NSNumber numberWithInt:backingObject->posInSet()];
+        return @(backingObject->posInSet());
     if ([attributeName isEqualToString:NSAccessibilityARIASetSizeAttribute])
-        return [NSNumber numberWithInt:backingObject->setSize()];
+        return @(backingObject->setSize());
 
     if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
         return [NSNumber numberWithBool:backingObject->isARIAGrabbed()];
 
-    if ([attributeName isEqualToString:NSAccessibilityDropEffectsAttribute]) {
-        Vector<String> dropEffects = backingObject->determineARIADropEffects();
-        return convertStringsToNSArray(dropEffects);
-    }
+    if ([attributeName isEqualToString:NSAccessibilityDropEffectsAttribute])
+        return createNSArray(backingObject->determineARIADropEffects()).autorelease();
 
     if ([attributeName isEqualToString:NSAccessibilityPlaceholderValueAttribute])
         return backingObject->placeholderValue();
@@ -3016,7 +2994,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilityDOMClassListAttribute]) {
         Vector<String> classList;
         backingObject->classList(classList);
-        return convertStringsToNSArray(classList);
+        return createNSArray(classList).autorelease();
     }
 
     // This allows us to connect to a plugin that creates a shadow node for editing (like PDFs).
@@ -4101,7 +4079,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             VisiblePosition visiblePos = [protectedSelf visiblePositionForTextMarker:textMarker];
             return backingObject->lineForPosition(visiblePos);
         });
-        return [NSNumber numberWithInt:result];
+        return @(result);
     }
 
     if ([attribute isEqualToString:@"AXTextMarkerRangeForLine"]) {
@@ -4329,7 +4307,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         });
         if (length < 0)
             return nil;
-        return [NSNumber numberWithInt:length];
+        return @(length);
     }
 
     // Used only by DumpRenderTree (so far).
@@ -4379,7 +4357,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             int lineNumber = backingObject->doAXLineForIndex([number intValue]);
             if (lineNumber < 0)
                 return nil;
-            return [NSNumber numberWithUnsignedInt:lineNumber];
+            return @(lineNumber);
         }
 
         if ([attribute isEqualToString: (NSString *)kAXRangeForLineParameterizedAttribute]) {

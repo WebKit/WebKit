@@ -48,17 +48,17 @@
     return adopt(JSStringCreateWithCFString((__bridge CFStringRef)self));
 }
 
-NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef context, AccessibilityUIElement *startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
+NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly)
 {
     NSMutableDictionary *parameterizedAttribute = [NSMutableDictionary dictionary];
     
     if (startElement && startElement->platformUIElement())
-        [parameterizedAttribute setObject:(id)startElement->platformUIElement() forKey:@"AXStartElement"];
-    
+        [parameterizedAttribute setObject:startElement->platformUIElement() forKey:@"AXStartElement"];
+
     [parameterizedAttribute setObject:(isDirectionNext) ? @"AXDirectionNext" : @"AXDirectionPrevious" forKey:@"AXDirection"];
-    
+
     [parameterizedAttribute setObject:@(resultsLimit) forKey:@"AXResultsLimit"];
-    
+
     if (searchKey) {
         id searchKeyParameter = nil;
         if (JSValueIsString(context, searchKey)) {

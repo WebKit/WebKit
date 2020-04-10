@@ -250,5 +250,8 @@ WEBCORE_EXPORT IntRect enclosingIntRect(const NSRect&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const IntRect&);
 
-} // namespace WebCore
+#ifdef __OBJC__
+WEBCORE_EXPORT id makeNSArrayElement(const IntRect&);
+#endif
 
+} // namespace WebCore

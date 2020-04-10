@@ -112,8 +112,7 @@ using namespace WebKit;
             [buttons addObject:button];
             [self addSubview:button];
         }
-        RetainPtr<NSArray> colorButtonsRow = buttons;
-        [colorButtons addObject:colorButtonsRow.get()];
+        [colorButtons addObject:buttons];
     }
     _colorButtons = colorButtons;
 

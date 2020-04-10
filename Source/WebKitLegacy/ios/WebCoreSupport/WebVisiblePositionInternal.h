@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebVisiblePosition.h"
+#if PLATFORM(IOS_FAMILY)
 
+#import "WebVisiblePosition.h"
 #import <WebCore/VisiblePosition.h>
 
 @interface WebVisiblePosition (Internal)
@@ -33,3 +34,5 @@
 - (WebCore::VisiblePosition)_visiblePosition;
 
 @end
+
+#endif

@@ -28,7 +28,8 @@
 
 #if USE(DICTATION_ALTERNATIVES)
 
-#import <WebCore/FloatRect.h>
+#import "FloatRect.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if USE(APPKIT)
 #import <AppKit/NSSpellChecker.h>
@@ -47,12 +48,7 @@ uint64_t AlternativeTextUIController::addAlternatives(const RetainPtr<NSTextAlte
 
 Vector<String> AlternativeTextUIController::alternativesForContext(uint64_t context)
 {
-    NSTextAlternatives *textAlternatives = m_contextController.alternativesForContext(context);
-    Vector<String> alternativeStrings;
-    alternativeStrings.reserveInitialCapacity(textAlternatives.alternativeStrings.count);
-    for (NSString *string in textAlternatives.alternativeStrings)
-        alternativeStrings.uncheckedAppend(string);
-    return alternativeStrings;
+    return makeVector<String>(m_contextController.alternativesForContext(context).alternativeStrings);
 }
 
 void AlternativeTextUIController::clear()

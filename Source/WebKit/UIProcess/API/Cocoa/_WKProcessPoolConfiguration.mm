@@ -29,6 +29,7 @@
 #import "LegacyGlobalSettings.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation _WKProcessPoolConfiguration
 
@@ -176,51 +177,22 @@
 
 - (NSArray *)cachePartitionedURLSchemes
 {
-    auto schemes = _processPoolConfiguration->cachePartitionedURLSchemes();
-    if (schemes.isEmpty())
-        return @[];
-
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:schemes.size()];
-    for (const auto& scheme : schemes)
-        [array addObject:(NSString *)scheme];
-
-    return array;
+    return createNSArray(_processPoolConfiguration->cachePartitionedURLSchemes()).autorelease();
 }
 
 - (void)setCachePartitionedURLSchemes:(NSArray *)cachePartitionedURLSchemes
 {
-    Vector<String> schemes;
-    for (id urlScheme in cachePartitionedURLSchemes) {
-        if ([urlScheme isKindOfClass:[NSString class]])
-            schemes.append(String((NSString *)urlScheme));
-    }
-    
-    _processPoolConfiguration->setCachePartitionedURLSchemes(WTFMove(schemes));
+    _processPoolConfiguration->setCachePartitionedURLSchemes(makeVector<String>(cachePartitionedURLSchemes));
 }
 
 - (NSArray *)alwaysRevalidatedURLSchemes
 {
-    auto& schemes = _processPoolConfiguration->alwaysRevalidatedURLSchemes();
-    if (schemes.isEmpty())
-        return @[];
-
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:schemes.size()];
-    for (auto& scheme : schemes)
-        [array addObject:(NSString *)scheme];
-
-    return array;
+    return createNSArray(_processPoolConfiguration->alwaysRevalidatedURLSchemes()).autorelease();
 }
 
 - (void)setAlwaysRevalidatedURLSchemes:(NSArray *)alwaysRevalidatedURLSchemes
 {
-    Vector<String> schemes;
-    schemes.reserveInitialCapacity(alwaysRevalidatedURLSchemes.count);
-    for (id scheme in alwaysRevalidatedURLSchemes) {
-        if ([scheme isKindOfClass:[NSString class]])
-            schemes.append((NSString *)scheme);
-    }
-
-    _processPoolConfiguration->setAlwaysRevalidatedURLSchemes(WTFMove(schemes));
+    _processPoolConfiguration->setAlwaysRevalidatedURLSchemes(makeVector<String>(alwaysRevalidatedURLSchemes));
 }
 
 - (NSString *)sourceApplicationBundleIdentifier

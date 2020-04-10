@@ -518,7 +518,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 
 - (void)setItemProviders:(NSArray<__kindof NSItemProvider *> *)itemProviders
 {
-    itemProviders = itemProviders ?: [NSArray array];
+    itemProviders = itemProviders ?: @[ ];
     if (_itemProviders == itemProviders || [_itemProviders isEqualToArray:itemProviders])
         return;
 

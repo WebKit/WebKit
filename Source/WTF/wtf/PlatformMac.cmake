@@ -18,6 +18,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     cocoa/NSURLExtras.h
     cocoa/RuntimeApplicationChecksCocoa.h
     cocoa/SoftLinking.h
+    cocoa/VectorCocoa.h
 
     darwin/WeakLinking.h
 

@@ -117,7 +117,7 @@ static RetainPtr<NSDictionary> systemFontModificationAttributes(FontSelectionVal
     [traitsDictionary setObject:@YES forKey:static_cast<NSString *>(kCTFontUIFontDesignTrait)];
 
     if (italic)
-        [traitsDictionary setObject:[NSNumber numberWithInt:kCTFontItalicTrait] forKey:static_cast<NSString *>(kCTFontSymbolicTrait)];
+        [traitsDictionary setObject:@(kCTFontItalicTrait) forKey:static_cast<NSString *>(kCTFontSymbolicTrait)];
 
     return @{ static_cast<NSString *>(kCTFontTraitsAttribute) : traitsDictionary.get() };
 }

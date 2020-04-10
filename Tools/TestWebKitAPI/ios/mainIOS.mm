@@ -37,9 +37,7 @@ int main(int argc, char** argv)
     if (!argumentDomain)
         argumentDomain = [[NSMutableDictionary alloc] init];
     
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @YES,    @"WebKitLinkedOnOrAfterEverything",
-                          nil];
+    NSDictionary *dict = @{ @"WebKitLinkedOnOrAfterEverything": @YES };
 
     [argumentDomain addEntriesFromDictionary:dict];
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain forName:NSArgumentDomain];

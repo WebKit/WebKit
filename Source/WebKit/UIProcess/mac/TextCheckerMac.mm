@@ -33,6 +33,7 @@
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringView.h>
 
 @interface NSSpellChecker (WebNSSpellCheckerDetails)
@@ -435,13 +436,10 @@ void TextChecker::updateSpellingUIWithMisspelledWord(SpellDocumentTag, const Str
 
 void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
-    auto corrections = adoptNS([[NSMutableArray alloc] init]);
-    for (auto& guess : grammarDetail.guesses)
-        [corrections addObject:guess];
     NSDictionary *detail = @{
         NSGrammarRange : [NSValue valueWithRange:grammarDetail.range],
         NSGrammarUserDescription : grammarDetail.userDescription,
-        NSGrammarCorrections : corrections.get(),
+        NSGrammarCorrections : createNSArray(grammarDetail.guesses).get(),
     };
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:detail];
 }
@@ -459,10 +457,7 @@ void TextChecker::getGuessesForWord(SpellDocumentTag spellDocumentTag, const Str
         [checker checkString:context range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:options inSpellDocumentWithTag:spellDocumentTag orthography:&orthography wordCount:0];
         language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:context orthography:orthography];
     }
-    NSArray* stringsArray = [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word language:language inSpellDocumentWithTag:spellDocumentTag];
-
-    for (NSString *guess in stringsArray)
-        guesses.append(guess);
+    guesses = makeVector<String>([checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word language:language inSpellDocumentWithTag:spellDocumentTag]);
 }
 
 void TextChecker::learnWord(SpellDocumentTag, const String& word)

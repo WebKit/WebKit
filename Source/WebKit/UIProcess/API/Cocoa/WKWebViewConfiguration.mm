@@ -46,6 +46,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/URLParser.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
@@ -897,20 +898,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSArray<NSString *> *)_corsDisablingPatterns
 {
-    auto& vector = _pageConfiguration->corsDisablingPatterns();
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
-    for (auto& pattern : vector)
-        [array addObject:pattern];
-    return array;
+    return createNSArray(_pageConfiguration->corsDisablingPatterns()).autorelease();
 }
 
 - (void)_setCORSDisablingPatterns:(NSArray<NSString *> *)patterns
 {
-    Vector<String> vector;
-    vector.reserveInitialCapacity(patterns.count);
-    for (NSString *pattern in patterns)
-        vector.uncheckedAppend(pattern);
-    _pageConfiguration->setCORSDisablingPatterns(WTFMove(vector));
+    _pageConfiguration->setCORSDisablingPatterns(makeVector<String>(patterns));
 }
 
 - (void)_setLoadsFromNetwork:(BOOL)loads

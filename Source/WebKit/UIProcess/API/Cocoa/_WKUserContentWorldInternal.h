@@ -27,26 +27,6 @@
 
 @class WKContentWorld;
 
-namespace API {
-
-inline Vector<WTF::String> toStringVector(NSArray *input)
-{
-    Vector<WTF::String> vector;
-
-    NSUInteger size = input.count;
-    if (!size)
-        return vector;
-
-    vector.reserveInitialCapacity(size);
-    for (id string : input) {
-        if ([string isKindOfClass:[NSString class]])
-            vector.uncheckedAppend(string);
-    }
-    return vector;
-}
-
-}
-
 @interface _WKUserContentWorld () <WKObject> {
 @package
     RetainPtr<WKContentWorld> _contentWorld;

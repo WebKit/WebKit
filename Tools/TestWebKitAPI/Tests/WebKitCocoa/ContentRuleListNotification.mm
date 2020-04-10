@@ -34,6 +34,7 @@
 #import <WebKit/_WKContentRuleListAction.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
 
 static bool receivedNotification;
@@ -58,15 +59,6 @@ struct Notification {
     }
 };
 
-static Vector<String> toVector(NSArray<NSString *> *array)
-{
-    Vector<String> vector;
-    vector.reserveInitialCapacity(array.count);
-    for (NSString *string in array)
-        vector.append(string);
-    return vector;
-}
-
 static Vector<Notification> notificationList;
 static RetainPtr<NSURL> notificationURL;
 static RetainPtr<NSString> notificationIdentifier;
@@ -88,7 +80,7 @@ static RetainPtr<NSString> notificationIdentifier;
 
 - (void)_webView:(WKWebView *)webView contentRuleListWithIdentifier:(NSString *)identifier performedAction:(_WKContentRuleListAction *)action forURL:(NSURL *)url
 {
-    notificationList.append({ identifier, url.absoluteString, !!action.blockedLoad, !!action.blockedCookies, !!action.madeHTTPS, toVector(action.notifications) });
+    notificationList.append({ identifier, url.absoluteString, !!action.blockedLoad, !!action.blockedCookies, !!action.madeHTTPS, makeVector<String>(action.notifications) });
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask

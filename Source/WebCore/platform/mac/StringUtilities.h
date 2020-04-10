@@ -32,8 +32,4 @@ namespace WebCore {
 
 WEBCORE_EXPORT bool stringMatchesWildcardString(const String& stringToBeMatched, const String& wildcardString);
 
-#ifdef __OBJC__
-WEBCORE_EXPORT Vector<String> webCoreStringVectorFromNSStringArray(NSArray<NSString *> *);
-#endif // defined(__OBJC__)
-
 }

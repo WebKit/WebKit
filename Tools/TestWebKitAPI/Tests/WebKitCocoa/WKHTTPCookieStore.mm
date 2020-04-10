@@ -372,7 +372,7 @@ TEST(WKHTTPCookieStore, CreationTime)
     [cookieProperties setObject:@"cookieValue" forKey:NSHTTPCookieValue];
     [cookieProperties setObject:@".www.webkit.org" forKey:NSHTTPCookieDomain];
     [cookieProperties setObject:@"/path" forKey:NSHTTPCookiePath];
-    RetainPtr<NSNumber> creationTime = [NSNumber numberWithDouble:100000];
+    RetainPtr<NSNumber> creationTime = @(100000);
     [cookieProperties setObject:creationTime.get() forKey:@"Created"];
     RetainPtr<NSHTTPCookie> cookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
 

@@ -94,6 +94,7 @@
 #import <wtf/UUID.h>
 #import <wtf/WTFSemaphore.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
 #if HAVE(INCREMENTAL_PDF_APIS)
@@ -2405,10 +2406,7 @@ void PDFPlugin::openWithNativeApplication()
 
 void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types)
 {
-    Vector<String> pasteboardTypes;
-
-    for (NSString *type in types)
-        pasteboardTypes.append(type);
+    auto pasteboardTypes = makeVector<String>(types);
 
     int64_t newChangeCount;
     auto& webProcess = WebProcess::singleton();

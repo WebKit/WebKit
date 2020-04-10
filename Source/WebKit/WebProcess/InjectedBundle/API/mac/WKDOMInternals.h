@@ -109,8 +109,4 @@ WKDOMText *toWKDOMText(WebCore::Text*);
 WebCore::Range* toWebCoreRange(WKDOMRange *);
 WKDOMRange *toWKDOMRange(WebCore::Range*);
 
-// -- Helpers --
-
-NSArray *toNSArray(const Vector<WebCore::IntRect>&);
-
 } // namespace WebKit

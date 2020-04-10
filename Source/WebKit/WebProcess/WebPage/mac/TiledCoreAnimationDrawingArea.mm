@@ -526,7 +526,7 @@ void TiledCoreAnimationDrawingArea::suspendPainting()
 
     // This is a signal to media frameworks; it does not actively pause anything.
     [m_hostingLayer setValue:@YES forKey:@"NSCAViewRenderPaused"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidPauseNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:m_hostingLayer.get() forKey:@"layer"]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidPauseNotification" object:nil userInfo:@{ @"layer": m_hostingLayer.get() }];
 }
 
 void TiledCoreAnimationDrawingArea::resumePainting()
@@ -539,7 +539,7 @@ void TiledCoreAnimationDrawingArea::resumePainting()
     m_isPaintingSuspended = false;
 
     [m_hostingLayer setValue:@NO forKey:@"NSCAViewRenderPaused"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:m_hostingLayer.get() forKey:@"layer"]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:@{ @"layer": m_hostingLayer.get() }];
 }
 
 void TiledCoreAnimationDrawingArea::setViewExposedRect(Optional<FloatRect> viewExposedRect)

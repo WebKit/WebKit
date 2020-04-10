@@ -75,7 +75,7 @@
     uint64_t notificationID = [notification notificationID];
     ASSERT(_notifications.contains(notificationID));
 
-    [(__bridge WebView *)_notificationViewMap.get(notificationID) _notificationsDidClose:[NSArray arrayWithObject:[NSNumber numberWithUnsignedLongLong:notificationID]]];
+    [(__bridge WebView *)_notificationViewMap.get(notificationID) _notificationsDidClose:@[[NSNumber numberWithUnsignedLongLong:notificationID]]];
 }
 
 - (void)notificationDestroyed:(WebNotification *)notification

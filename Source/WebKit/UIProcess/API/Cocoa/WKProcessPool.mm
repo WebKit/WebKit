@@ -55,6 +55,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThreadSystemInterface.h>
@@ -610,10 +611,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 - (void)_getActivePagesOriginsInWebProcessForTesting:(pid_t)pid completionHandler:(void(^)(NSArray<NSString *> *))completionHandler
 {
     _processPool->activePagesOriginsInWebProcessForTesting(pid, [completionHandler = makeBlockPtr(completionHandler)] (Vector<String>&& activePagesOrigins) {
-        NSMutableArray<NSString *> *array = [[[NSMutableArray alloc] initWithCapacity:activePagesOrigins.size()] autorelease];
-        for (auto& origin : activePagesOrigins)
-            [array addObject:origin];
-        completionHandler(array);
+        completionHandler(createNSArray(activePagesOrigins).get());
     });
 }
 

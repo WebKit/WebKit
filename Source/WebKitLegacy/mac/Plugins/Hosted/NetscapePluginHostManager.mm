@@ -141,16 +141,13 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
     NSString *pluginHostAppPath = [[NSBundle bundleForClass:[WebNetscapePluginPackage class]] pathForAuxiliaryExecutable:pluginHostAppName];
     NSString *pluginHostAppExecutablePath = [[NSBundle bundleWithPath:pluginHostAppPath] executablePath];
 
-    NSDictionary *launchProperties = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                      pluginHostAppExecutablePath, @"pluginHostPath",
-                                      [NSNumber numberWithInt:pluginArchitecture], @"cpuType",
-                                      preferredBundleLocalizationName(), @"localization",
-                                      nil];
-
+    NSDictionary *launchProperties = @{
+        @"pluginHostPath": pluginHostAppExecutablePath,
+        @"cpuType": @(pluginArchitecture),
+        @"localization": preferredBundleLocalizationName(),
+    };
     NSData *data = [NSPropertyListSerialization dataWithPropertyList:launchProperties format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];
     ASSERT(data);
-
-    [launchProperties release];
 
     kern_return_t kr = _WKPASpawnPluginHost(m_pluginVendorPort, reinterpret_cast<uint8_t*>(const_cast<void*>([data bytes])), [data length], &pluginHostPort);
 

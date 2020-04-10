@@ -26,7 +26,6 @@
 #import "config.h"
 #import <wtf/URL.h>
 
-#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/URLParser.h>
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/cocoa/NSURLExtras.h>

@@ -52,7 +52,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/NakedRef.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/URL.h>

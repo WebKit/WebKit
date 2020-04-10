@@ -697,7 +697,8 @@ bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
 }
 
 #if ENABLE(AVF_CAPTIONS)
-static const NSArray* mediaDescriptionForKind(PlatformTextTrack::TrackKind kind)
+
+static const NSArray *mediaDescriptionForKind(PlatformTextTrack::TrackKind kind)
 {
     static bool manualSelectionMode = MTEnableCaption2015BehaviorPtr() && MTEnableCaption2015BehaviorPtr()();
     if (manualSelectionMode)
@@ -705,18 +706,18 @@ static const NSArray* mediaDescriptionForKind(PlatformTextTrack::TrackKind kind)
 
     // FIXME: Match these to correct types:
     if (kind == PlatformTextTrack::Caption)
-        return [NSArray arrayWithObjects: AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, nil];
+        return @[ AVMediaCharacteristicTranscribesSpokenDialogForAccessibility ];
 
     if (kind == PlatformTextTrack::Subtitle)
-        return [NSArray arrayWithObjects: AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, nil];
+        return @[ AVMediaCharacteristicTranscribesSpokenDialogForAccessibility ];
 
     if (kind == PlatformTextTrack::Description)
-        return [NSArray arrayWithObjects: AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, AVMediaCharacteristicDescribesMusicAndSoundForAccessibility, nil];
+        return @[ AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, AVMediaCharacteristicDescribesMusicAndSoundForAccessibility ];
 
     if (kind == PlatformTextTrack::Forced)
-        return [NSArray arrayWithObjects: AVMediaCharacteristicContainsOnlyForcedSubtitles, nil];
+        return @[ AVMediaCharacteristicContainsOnlyForcedSubtitles ];
 
-    return [NSArray arrayWithObjects: AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, nil];
+    return @[ AVMediaCharacteristicTranscribesSpokenDialogForAccessibility ];
 }
     
 void MediaPlayerPrivateAVFoundationObjC::notifyTrackModeChanged()
@@ -754,8 +755,8 @@ void MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState()
         }
     }
 }
-#endif
 
+#endif
 
 static NSURL *canonicalURL(const URL& url)
 {
@@ -785,7 +786,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
 
     RetainPtr<NSMutableDictionary> options = adoptNS([[NSMutableDictionary alloc] init]);    
 
-    [options.get() setObject:[NSNumber numberWithInt:AVAssetReferenceRestrictionForbidRemoteReferenceToLocal | AVAssetReferenceRestrictionForbidLocalReferenceToRemote] forKey:AVURLAssetReferenceRestrictionsKey];
+    [options.get() setObject:@(AVAssetReferenceRestrictionForbidRemoteReferenceToLocal | AVAssetReferenceRestrictionForbidLocalReferenceToRemote) forKey:AVURLAssetReferenceRestrictionsKey];
 
     RetainPtr<NSMutableDictionary> headerFields = adoptNS([[NSMutableDictionary alloc] init]);
 
@@ -989,7 +990,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 
     const NSTimeInterval avPlayerOutputAdvanceInterval = 2;
 
-    RetainPtr<NSArray> subtypes = adoptNS([[NSArray alloc] initWithObjects:[NSNumber numberWithUnsignedInt:kCMSubtitleFormatType_WebVTT], nil]);
+    RetainPtr<NSArray> subtypes = adoptNS([[NSArray alloc] initWithObjects:@(kCMSubtitleFormatType_WebVTT), nil]);
     m_legibleOutput = adoptNS([PAL::allocAVPlayerItemLegibleOutputInstance() initWithMediaSubtypesForNativeRepresentation:subtypes.get()]);
     [m_legibleOutput.get() setSuppressesPlayerRendering:YES];
 
@@ -1028,7 +1029,7 @@ void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
     INFO_LOG(LOGIDENTIFIER);
     auto weakThis = makeWeakPtr(*this);
 
-    [m_avAsset.get() loadValuesAsynchronouslyForKeys:[NSArray arrayWithObjects:@"playable", @"tracks", nil] completionHandler:^{
+    [m_avAsset.get() loadValuesAsynchronouslyForKeys:@[@"playable", @"tracks"] completionHandler:^{
         callOnMainThread([weakThis] {
             if (weakThis)
                 weakThis->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetPlayabilityKnown);
@@ -2171,7 +2172,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
 #if USE(VIDEOTOOLBOX)
     NSDictionary* attributes = nil;
 #else
-    NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey, nil];
+    NSDictionary* attributes = @{ kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
 #endif
     m_videoOutput = adoptNS([PAL::allocAVPlayerItemVideoOutputInstance() initWithPixelBufferAttributes:attributes]);
     ASSERT(m_videoOutput);

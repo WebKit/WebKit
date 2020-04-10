@@ -30,7 +30,6 @@
 #import "NSURLExtras.h"
 
 #import <wtf/Function.h>
-#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URLHelpers.h>
 #import <wtf/URLParser.h>

@@ -126,6 +126,7 @@
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringConcatenate.h>
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -3668,7 +3669,7 @@ id WebViewImpl::accessibilityAttributeValue(NSString *attribute, id parameter)
 
             if (!child)
                 return nil;
-        return [NSArray arrayWithObject:child];
+        return @[child];
     }
     if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
         return NSAccessibilityGroupRole;
@@ -4043,11 +4044,7 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
             return false;
         }
 
-        Vector<String> fileNames;
-
-        for (NSString *file in files)
-            fileNames.append(file);
-        m_page->createSandboxExtensionsIfNeeded(fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
+        m_page->createSandboxExtensionsIfNeeded(makeVector<String>(files), sandboxExtensionHandle, sandboxExtensionForUpload);
     }
 
     String draggingPasteboardName = draggingInfo.draggingPasteboard.name;
@@ -4335,7 +4332,7 @@ NSArray *WebViewImpl::namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestin
     if (!m_promisedURL.isEmpty())
         FileSystem::setMetadataURL(String(path), m_promisedURL);
 
-    return [NSArray arrayWithObject:[path lastPathComponent]];
+    return @[[path lastPathComponent]];
 }
 
 void WebViewImpl::requestDOMPasteAccess(const WebCore::IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
@@ -4749,7 +4746,7 @@ Vector<WebCore::KeypressCommand> WebViewImpl::collectKeyboardLayoutCommandsForEv
     if (NSTextInputContext *context = inputContext())
         [context handleEventByKeyboardLayout:event];
     else
-        [m_view interpretKeyEvents:[NSArray arrayWithObject:event]];
+        [m_view interpretKeyEvents:@[event]];
 
     m_collectedKeypressCommands = nullptr;
 

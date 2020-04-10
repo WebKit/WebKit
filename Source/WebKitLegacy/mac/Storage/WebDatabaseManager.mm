@@ -31,10 +31,10 @@
 #import "WebDatabaseManagerClient.h"
 #import "WebPlatformStrategies.h"
 #import "WebSecurityOriginInternal.h"
-
 #import <WebCore/DatabaseManager.h>
 #import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(INDEXED_DATABASE)
 #import "WebDatabaseProvider.h"
@@ -106,11 +106,7 @@ static NSString *databasesDirectoryPath();
 {
     if (!origin)
         return nil;
-    Vector<String> nameVector = DatabaseTracker::singleton().databaseNames([origin _core]->data());
-    NSMutableArray *names = [[NSMutableArray alloc] initWithCapacity:nameVector.size()];
-    for (auto& name : nameVector)
-        [names addObject:(NSString *)name];
-    return [names autorelease];
+    return createNSArray(DatabaseTracker::singleton().databaseNames([origin _core]->data())).autorelease();
 }
 
 - (NSDictionary *)detailsForDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin

@@ -136,6 +136,7 @@
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/UUID.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/TextStream.h>
 
@@ -438,7 +439,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
             pageConfiguration->setPageGroup(WebKit::WebPageGroup::create(groupIdentifier).ptr());
     }
 
-    pageConfiguration->setAdditionalSupportedImageTypes(WebCore::webCoreStringVectorFromNSStringArray([_configuration _additionalSupportedImageTypes]));
+    pageConfiguration->setAdditionalSupportedImageTypes(makeVector<String>([_configuration _additionalSupportedImageTypes]));
 
     pageConfiguration->preferences()->setSuppressesIncrementalRendering(!![_configuration suppressesIncrementalRendering]);
 

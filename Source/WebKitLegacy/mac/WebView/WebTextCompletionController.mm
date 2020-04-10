@@ -137,7 +137,7 @@ using namespace WebCore;
     ALLOW_DEPRECATED_DECLARATIONS_END
     windowFrame.size.height = numberToShow * [_tableView rowHeight] + (numberToShow + 1) * [_tableView intercellSpacing].height;
     windowFrame.origin.y -= windowFrame.size.height;
-    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont systemFontOfSize:12.0f], NSFontAttributeName, nil];
+    NSDictionary *attributes = @{ NSFontAttributeName: [NSFont systemFontOfSize:12.0f] };
     CGFloat maxWidth = 0;
     int maxIndex = -1;
     for (NSUInteger i = 0; i < numberToShow; i++) {

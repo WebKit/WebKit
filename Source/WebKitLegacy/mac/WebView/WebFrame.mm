@@ -108,6 +108,7 @@
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/markup.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebMailDelegate.h"
@@ -1091,6 +1092,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 }
 
 #if PLATFORM(IOS_FAMILY)
+
 - (BOOL)needsLayout
 {
     // Needed for Mail <rdar://problem/6228038>
@@ -1107,39 +1109,26 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     return _private->coreFrame->loader().loadsSynchronously();
 }
 
-// FIXME: selection
-
 - (NSArray *)_rectsForRange:(DOMRange *)domRange
 {
     auto* range = core(domRange);
-    
+    if (!range)
+        return @[];
     Vector<WebCore::IntRect> intRects;
     range->absoluteTextRects(intRects, NO);
-    unsigned size = intRects.size();
-    
-    NSMutableArray *rectArray = [NSMutableArray arrayWithCapacity:size];
-    for (unsigned i = 0; i < size; i++) {
-        [rectArray addObject:[NSValue valueWithRect:(CGRect )intRects[i]]];
-    }
-    
-    return rectArray;
+    return createNSArray(intRects).autorelease();
 }
 
 - (DOMRange *)_selectionRangeForFirstPoint:(CGPoint)first secondPoint:(CGPoint)second
 {
-    WebCore::VisiblePosition firstPos = [self _visiblePositionForPoint:first];
-    WebCore::VisiblePosition secondPos = [self _visiblePositionForPoint:second];
-    WebCore::VisibleSelection selection(firstPos, secondPos);
-    DOMRange *range = kit(selection.toNormalizedRange().get());
-    return range;    
+    auto firstPosition = [self _visiblePositionForPoint:first];
+    auto secondPosition = [self _visiblePositionForPoint:second];
+    return kit(WebCore::VisibleSelection(firstPosition, secondPosition).toNormalizedRange().get());
 }
 
 - (DOMRange *)_selectionRangeForPoint:(CGPoint)point
 {
-    WebCore::VisiblePosition pos = [self _visiblePositionForPoint:point];
-    WebCore::VisibleSelection selection(pos);
-    DOMRange *range = kit(selection.toNormalizedRange().get());
-    return range;
+    return kit(WebCore::VisibleSelection([self _visiblePositionForPoint:point]).toNormalizedRange().get());
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -2271,21 +2260,21 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
     if (printScaleFactor <= 0) {
         LOG_ERROR("printScaleFactor has bad value %.2f", printScaleFactor);
-        return [NSArray array];
+        return @[];
     }
 
     if (!_private->coreFrame)
-        return [NSArray array];
+        return @[];
     if (!_private->coreFrame->document())
-        return [NSArray array];
+        return @[];
     if (!_private->coreFrame->view())
-        return [NSArray array];
+        return @[];
     if (!_private->coreFrame->view()->documentView())
-        return [NSArray array];
+        return @[];
 
     auto* root = _private->coreFrame->document()->renderView();
     if (!root)
-        return [NSArray array];
+        return @[];
 
     const auto& documentRect = root->documentRect();
     float printWidth = root->style().isHorizontalWritingMode() ? static_cast<float>(documentRect.width()) / printScaleFactor : pageSize.width;
@@ -2293,13 +2282,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
     WebCore::PrintContext printContext(_private->coreFrame);
     printContext.computePageRectsWithPageSize(WebCore::FloatSize(printWidth, printHeight), true);
-    const Vector<WebCore::IntRect>& pageRects = printContext.pageRects();
-
-    size_t size = pageRects.size();
-    NSMutableArray *pages = [NSMutableArray arrayWithCapacity:size];
-    for (size_t i = 0; i < size; ++i)
-        [pages addObject:[NSValue valueWithRect:NSRect(pageRects[i])]];
-    return pages;
+    return createNSArray(printContext.pageRects()).autorelease();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -2623,7 +2606,7 @@ static NSURL *createUniqueWebDataURL()
 {
     auto coreFrame = _private->coreFrame;
     if (!coreFrame)
-        return [NSArray array];
+        return @[];
     NSMutableArray *children = [NSMutableArray arrayWithCapacity:coreFrame->tree().childCount()];
     for (WebCore::Frame* child = coreFrame->tree().firstChild(); child; child = child->tree().nextSibling())
         [children addObject:kit(child)];

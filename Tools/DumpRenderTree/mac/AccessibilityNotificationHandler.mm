@@ -29,31 +29,18 @@
  */
 
 #import "config.h"
-#import "DumpRenderTree.h"
 #import "AccessibilityNotificationHandler.h"
-#import "AccessibilityUIElement.h"
 
+#import "AccessibilityCommonMac.h"
+#import "AccessibilityUIElement.h"
+#import "DumpRenderTree.h"
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WebFrame.h>
 #import <objc/runtime.h>
-#import <wtf/RetainPtr.h>
 
 @interface NSObject (WebAccessibilityObjectWrapperAdditions)
 + (void)accessibilitySetShouldRepostNotifications:(BOOL)repost;
-@end
-
-@interface NSString (JSStringRefAdditions)
-- (JSRetainPtr<JSStringRef>)createJSStringRef;
-@end
-
-@implementation NSString (JSStringRefAdditions)
-
-- (JSRetainPtr<JSStringRef>)createJSStringRef
-{
-    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)self));
-}
-
 @end
 
 @implementation AccessibilityNotificationHandler
@@ -132,27 +119,22 @@ static JSValueRef makeValueRefForValue(JSContextRef context, id value)
     return nullptr;
 }
 
-static JSValueRef makeArrayRefForArray(JSContextRef context, NSArray *array)
+static JSObjectRef makeArrayRefForArray(JSContextRef context, NSArray *array)
 {
     NSUInteger count = array.count;
     JSValueRef arguments[count];
-
     for (NSUInteger i = 0; i < count; i++)
         arguments[i] = makeValueRefForValue(context, [array objectAtIndex:i]);
-
     return JSObjectMakeArray(context, count, arguments, nullptr);
 }
 
-static JSValueRef makeObjectRefForDictionary(JSContextRef context, NSDictionary *dictionary)
+static JSObjectRef makeObjectRefForDictionary(JSContextRef context, NSDictionary *dictionary)
 {
     JSObjectRef object = JSObjectMake(context, nullptr, nullptr);
-
-    [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *stop)
-    {
-        if (JSValueRef propertyValue = makeValueRefForValue(context, obj))
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL* stop) {
+        if (auto propertyValue = makeValueRefForValue(context, value))
             JSObjectSetProperty(context, object, [key createJSStringRef].get(), propertyValue, kJSPropertyAttributeNone, nullptr);
     }];
-
     return object;
 }
 

@@ -447,7 +447,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     String cookieString = cookieStr.contains('=') ? cookieStr : cookieStr + "=";
 
     NSURL *cookieURL = url;
-    NSDictionary *headerFields = [NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"];
+    NSDictionary *headerFields = @{ @"Set-Cookie": cookieString };
 
 #if PLATFORM(MAC)
     NSArray *unfilteredCookies = [NSHTTPCookie _parsedCookiesWithResponseHeaderFields:headerFields forURL:cookieURL];

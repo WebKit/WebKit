@@ -53,8 +53,8 @@ HidService::HidService(Observer& observer)
 {
     m_manager = adoptCF(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
     NSDictionary *matchingDictionary = @{
-        @kIOHIDPrimaryUsagePageKey: adoptNS([NSNumber numberWithInt:kCtapHidUsagePage]).get(),
-        @kIOHIDPrimaryUsageKey: adoptNS([NSNumber numberWithInt:kCtapHidUsage]).get()
+        @kIOHIDPrimaryUsagePageKey: @(kCtapHidUsagePage),
+        @kIOHIDPrimaryUsageKey: @(kCtapHidUsage),
     };
     IOHIDManagerSetDeviceMatching(m_manager.get(), (__bridge CFDictionaryRef)matchingDictionary);
     IOHIDManagerRegisterDeviceMatchingCallback(m_manager.get(), deviceAddedCallback, this);

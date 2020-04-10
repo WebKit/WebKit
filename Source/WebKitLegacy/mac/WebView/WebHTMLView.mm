@@ -149,6 +149,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(MAC)
 #import "WebNSEventExtras.h"
@@ -1995,7 +1996,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 + (NSArray *)_selectionPasteboardTypes
 {
     // FIXME: We should put data for NSHTMLPboardType on the pasteboard but Microsoft Excel doesn't like our format of HTML (3640423).
-    return [NSArray arrayWithObjects:WebArchivePboardType, WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(), WebCore::legacyStringPasteboardType(), nil];
+    return @[WebArchivePboardType, WebCore::legacyRTFDPasteboardType(), WebCore::legacyRTFPasteboardType(), WebCore::legacyStringPasteboardType()];
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -4404,7 +4405,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (draggingElementURL)
         [[NSFileManager defaultManager] _webkit_setMetadataURL:[draggingElementURL absoluteString] referrer:nil atPath:path];
     
-    return [NSArray arrayWithObject:[path lastPathComponent]];
+    return @[[path lastPathComponent]];
 }
 
 // MARK: NSDraggingSource
@@ -4881,7 +4882,7 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::Frame* coreF
     // a blank page (with correct-looking header and footer if that option is on), which matches
     // the behavior of IE and Camino at least.
     if ([newPageRects count] == 0)
-        newPageRects = [NSArray arrayWithObject:[NSValue valueWithRect:NSMakeRect(0, 0, 1, 1)]];
+        newPageRects = @[[NSValue valueWithRect:NSMakeRect(0, 0, 1, 1)]];
 
     _private->pageRects = newPageRects;
 
@@ -5019,7 +5020,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString: NSAccessibilityChildrenAttribute]) {
         id accTree = [[self _frame] accessibilityRoot];
         if (accTree)
-            return [NSArray arrayWithObject:accTree];
+            return @[accTree];
         return nil;
     }
     return [super accessibilityAttributeValue:attributeName];
@@ -5292,7 +5293,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSFontPboard];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    [fontPasteboard declareTypes:[NSArray arrayWithObject:WebCore::legacyFontPasteboardType()] owner:nil];
+    [fontPasteboard declareTypes:@[WebCore::legacyFontPasteboardType()] owner:nil];
     [fontPasteboard setData:[self _selectionStartFontAttributesAsRTF] forType:WebCore::legacyFontPasteboardType()];
 }
 
@@ -6023,7 +6024,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
         // execute the calls immediately. DOM events like keydown are tweaked to have keyCode of 229, and canceling them has no effect.
         // Unfortunately, there is no real difference between plain text input and IM processing - for example, AppKit queries hasMarkedText
         // when typing with U.S. keyboard, and inserts marked text for dead keys.
-        [self interpretKeyEvents:[NSArray arrayWithObject:macEvent]];
+        [self interpretKeyEvents:@[macEvent]];
     } else {
         // Are there commands that could just cause text insertion if executed via Editor?
         // WebKit doesn't have enough information about mode to decide how they should be treated, so we leave it upon WebCore
@@ -6834,18 +6835,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (![self _hasSelection])
         return nil;
 
-    Vector<WebCore::FloatRect> list;
+    Vector<WebCore::FloatRect> rects;
     if (auto* coreFrame = core([self _frame]))
-        coreFrame->selection().getClippedVisibleTextRectangles(list);
-
-    size_t size = list.size();
-
-    NSMutableArray *result = [NSMutableArray arrayWithCapacity:size];
-
-    for (size_t i = 0; i < size; ++i)
-        [result addObject:[NSValue valueWithRect:list[i]]];
-
-    return result;
+        coreFrame->selection().getClippedVisibleTextRectangles(rects);
+    return createNSArray(rects).autorelease();
 }
 
 - (NSView *)selectionView
@@ -7131,17 +7124,12 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
 {
     auto* coreFrame = core([self _frame]);
     if (!coreFrame)
-        return [NSArray array];
+        return @[];
     auto* document = coreFrame->document();
     if (!document)
-        return [NSArray array];
+        return @[];
 
-    Vector<WebCore::FloatRect> rects = document->markers().renderedRectsForMarkers(WebCore::DocumentMarker::TextMatch);
-    unsigned count = rects.size();
-    NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
-    for (unsigned index = 0; index < count; ++index)
-        [result addObject:[NSValue valueWithRect:rects[index]]];    
-    return result;
+    return createNSArray(document->markers().renderedRectsForMarkers(WebCore::DocumentMarker::TextMatch)).autorelease();
 }
 
 - (BOOL)_findString:(NSString *)string options:(WebFindOptions)options

@@ -30,6 +30,7 @@
 
 #import "WebPageProxy.h"
 #import "WebViewImpl.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 static inline NSCorrectionIndicatorType correctionIndicatorType(WebCore::AlternativeTextType alternativeTextType)
 {
@@ -65,28 +66,25 @@ CorrectionPanel::~CorrectionPanel()
 void CorrectionPanel::show(NSView *view, WebViewImpl& webViewImpl, AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
     dismissInternal(ReasonForDismissingAlternativeTextIgnored, false);
-    
+
     if (!view)
         return;
 
     NSInteger spellCheckerDocumentTag = webViewImpl.spellCheckerDocumentTag();
 
-    NSString* replacedStringAsNSString = replacedString;
-    NSString* replacementStringAsNSString = replacementString;
+    NSString *replacedStringAsNSString = replacedString;
+    NSString *replacementStringAsNSString = replacementString;
+
     m_view = view;
     m_spellCheckerDocumentTag = spellCheckerDocumentTag;
     NSCorrectionIndicatorType indicatorType = correctionIndicatorType(type);
     
-    NSMutableArray* alternativeStrings = 0;
-    if (!alternativeReplacementStrings.isEmpty()) {
-        size_t size = alternativeReplacementStrings.size();
-        alternativeStrings = [NSMutableArray arrayWithCapacity:size];
-        for (size_t i = 0; i < size; ++i)
-            [alternativeStrings addObject:(NSString*)alternativeReplacementStrings[i]];
-    }
+    RetainPtr<NSArray> alternativeStrings;
+    if (!alternativeReplacementStrings.isEmpty())
+        alternativeStrings = createNSArray(alternativeReplacementStrings);
 
     NSSpellChecker* spellChecker = [NSSpellChecker sharedSpellChecker];
-    [spellChecker showCorrectionIndicatorOfType:indicatorType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:boundingBoxOfReplacedString view:m_view.get() completionHandler:^(NSString* acceptedString) {
+    [spellChecker showCorrectionIndicatorOfType:indicatorType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings.get() forStringInRect:boundingBoxOfReplacedString view:m_view.get() completionHandler:^(NSString* acceptedString) {
         handleAcceptedReplacement(webViewImpl, acceptedString, replacedStringAsNSString, replacementStringAsNSString, indicatorType);
     }];
 }

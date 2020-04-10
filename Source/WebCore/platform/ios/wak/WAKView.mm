@@ -284,15 +284,15 @@ static void _WAKCopyWrapper(const void *value, void *context)
 {
     CFArrayRef subviews = WKViewGetSubviews([self _viewRef]);
     if (!subviews)
-        return [NSArray array];
+        return @[ ];
     
     CFIndex count = CFArrayGetCount(subviews);
     if (count == 0)
-        return [NSArray array];
+        return @[ ];
     
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
     if (!result)
-        return [NSArray array];
+        return @[ ];
     
     CFArrayApplyFunction(subviews, CFRangeMake(0, count), _WAKCopyWrapper, (void*)result);
     

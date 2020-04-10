@@ -118,7 +118,7 @@ void MockLocalConnection::getAttestation(SecKeyRef, NSData *, NSData *, Attestat
 
         auto attestationCertificate = adoptCF(SecCertificateCreateWithData(NULL, (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:configuration.local->userCertificateBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get()));
         auto attestationIssuingCACertificate = adoptCF(SecCertificateCreateWithData(NULL, (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:configuration.local->intermediateCACertificateBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get()));
-        callback([NSArray arrayWithObjects: (__bridge id)attestationCertificate.get(), (__bridge id)attestationIssuingCACertificate.get(), nil], NULL);
+        callback(@[ (__bridge id)attestationCertificate.get(), (__bridge id)attestationIssuingCACertificate.get()], NULL);
     });
 }
 

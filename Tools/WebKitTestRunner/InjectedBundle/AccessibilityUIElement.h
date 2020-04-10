@@ -35,11 +35,8 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
-#ifdef __OBJC__
-typedef id PlatformUIElement;
-#else
-typedef struct objc_object* PlatformUIElement;
-#endif
+#include <wtf/RetainPtr.h>
+using PlatformUIElement = id;
 #elif HAVE(ACCESSIBILITY) && USE(ATK)
 #include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>
@@ -47,14 +44,6 @@ typedef struct objc_object* PlatformUIElement;
 typedef GRefPtr<AtkObject> PlatformUIElement;
 #else
 typedef void* PlatformUIElement;
-#endif
-
-#if PLATFORM(COCOA)
-#ifdef __OBJC__
-typedef id NotificationHandler;
-#else
-typedef struct objc_object* NotificationHandler;
-#endif
 #endif
 
 namespace WTR {
@@ -66,7 +55,13 @@ public:
 
     ~AccessibilityUIElement();
 
+#if PLATFORM(COCOA)
+    id platformUIElement() { return m_element.get(); }
+#endif
+#if !PLATFORM(COCOA)
     PlatformUIElement platformUIElement() { return m_element; }
+#endif
+
     virtual JSClassRef wrapperClass();
 
     static JSObjectRef makeJSAccessibilityUIElement(JSContextRef, const AccessibilityUIElement&);
@@ -356,12 +351,15 @@ private:
     AccessibilityUIElement(PlatformUIElement);
     AccessibilityUIElement(const AccessibilityUIElement&);
 
+#if !PLATFORM(COCOA)
     PlatformUIElement m_element;
-    
+#endif
+
     // A retained, platform specific object used to help manage notifications for this object.
 #if HAVE(ACCESSIBILITY)
 #if PLATFORM(COCOA)
-    NotificationHandler m_notificationHandler;
+    RetainPtr<id> m_element;
+    RetainPtr<id> m_notificationHandler;
 
     void getLinkedUIElements(Vector<RefPtr<AccessibilityUIElement> >&);
     void getDocumentLinks(Vector<RefPtr<AccessibilityUIElement> >&);
@@ -378,4 +376,8 @@ private:
 #endif
 };
     
+#ifdef __OBJC__
+inline Optional<RefPtr<AccessibilityUIElement>> makeVectorElement(const RefPtr<AccessibilityUIElement>*, id element) { return { { AccessibilityUIElement::create(element) } }; }
+#endif
+
 } // namespace WTR

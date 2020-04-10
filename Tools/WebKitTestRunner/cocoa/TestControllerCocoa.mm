@@ -52,6 +52,7 @@
 #import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <wtf/MainThread.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
 namespace WTR {
@@ -101,10 +102,9 @@ void TestController::cocoaPlatformInitialize()
     String resourceLoadStatisticsFolder = String(dumpRenderTreeTemp) + '/' + "ResourceLoadStatistics";
     [[NSFileManager defaultManager] createDirectoryAtPath:resourceLoadStatisticsFolder withIntermediateDirectories:YES attributes:nil error: nil];
     String fullBrowsingSessionResourceLog = resourceLoadStatisticsFolder + '/' + "full_browsing_session_resourceLog.plist";
-    NSDictionary *resourceLogPlist = [[NSDictionary alloc] initWithObjectsAndKeys: [NSNumber numberWithInt:1], @"version", nil];
+    NSDictionary *resourceLogPlist = @{ @"version": @(1) };
     if (![resourceLogPlist writeToFile:fullBrowsingSessionResourceLog atomically:YES])
         WTFCrash();
-    [resourceLogPlist release];
 }
 
 WKContextRef TestController::platformContext()
@@ -333,12 +333,8 @@ void TestController::getAllStorageAccessEntries()
     if (!parentView)
         return;
 
-    [globalWebViewConfiguration.websiteDataStore _getAllStorageAccessEntriesFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *nsDomains) {
-        Vector<String> domains;
-        domains.reserveInitialCapacity(nsDomains.count);
-        for (NSString *domain : nsDomains)
-            domains.uncheckedAppend(domain);
-        m_currentInvocation->didReceiveAllStorageAccessEntries(domains);
+    [globalWebViewConfiguration.websiteDataStore _getAllStorageAccessEntriesFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *domains) {
+        m_currentInvocation->didReceiveAllStorageAccessEntries(makeVector<String>(domains));
     }];
 }
 
@@ -348,12 +344,8 @@ void TestController::loadedThirdPartyDomains()
     if (!parentView)
         return;
     
-    [globalWebViewConfiguration.websiteDataStore _loadedThirdPartyDomainsFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *nsDomains) {
-        Vector<String> domains;
-        domains.reserveInitialCapacity(nsDomains.count);
-        for (NSString *domain : nsDomains)
-            domains.uncheckedAppend(domain);
-        m_currentInvocation->didReceiveLoadedThirdPartyDomains(WTFMove(domains));
+    [globalWebViewConfiguration.websiteDataStore _loadedThirdPartyDomainsFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *domains) {
+        m_currentInvocation->didReceiveLoadedThirdPartyDomains(makeVector<String>(domains));
     }];
 }
 
@@ -388,7 +380,7 @@ void TestController::getWebViewCategory()
             category = "WebBrowser";
             break;
         }
-        m_currentInvocation->didReceiveWebViewCategory(category);
+        m_currentInvocation->didReceiveWebViewCategory(WTFMove(category));
     }];
 }
 
@@ -495,10 +487,7 @@ void TestController::installCustomMenuAction(const String& name, bool dismissesA
 void TestController::setAllowedMenuActions(const Vector<String>& actions)
 {
 #if PLATFORM(IOS_FAMILY)
-    auto actionNames = adoptNS([[NSMutableArray<NSString *> alloc] initWithCapacity:actions.size()]);
-    for (auto& action : actions)
-        [actionNames addObject:action];
-    [m_mainWebView->platformView() setAllowedMenuActions:actionNames.get()];
+    [m_mainWebView->platformView() setAllowedMenuActions:createNSArray(actions).get()];
 #else
     UNUSED_PARAM(actions);
 #endif

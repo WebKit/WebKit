@@ -70,14 +70,13 @@ static NSMutableDictionary *descriptions = nil;
 - (instancetype)_webkit_initWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
 {
     // Insert a localized string here for those folks not savvy to our category methods.
-    NSDictionary *descriptionsDict = [descriptions objectForKey:domain];
-    NSString *localizedDescription = descriptionsDict ? [descriptionsDict objectForKey:[NSNumber numberWithInt:code]] : nil;
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSString *localizedDescription = [[descriptions objectForKey:domain] objectForKey:@(code)];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
         URL, @"NSErrorFailingURLKey",
         [URL absoluteString], NSURLErrorFailingURLStringErrorKey,
         localizedDescription, NSLocalizedDescriptionKey,
         nil];
-    return [self initWithDomain:domain code:code userInfo:dict];
+    return [self initWithDomain:domain code:code userInfo:userInfo];
 }
 
 @end
@@ -91,21 +90,21 @@ static NSMutableDictionary *descriptions = nil;
         @autoreleasepool {
             NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
                 // Policy errors
-                WebKitErrorDescriptionCannotShowMIMEType,                   [NSNumber numberWithInt: WebKitErrorCannotShowMIMEType],
-                WebKitErrorDescriptionCannotShowURL,                        [NSNumber numberWithInt: WebKitErrorCannotShowURL],
-                WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   [NSNumber numberWithInt: WebKitErrorFrameLoadInterruptedByPolicyChange],
-                WebKitErrorDescriptionCannotUseRestrictedPort,              [NSNumber numberWithInt: WebKitErrorCannotUseRestrictedPort],
-                WebKitErrorDescriptionFrameLoadBlockedByContentFilter,      [NSNumber numberWithInt: WebKitErrorFrameLoadBlockedByContentFilter],
+                WebKitErrorDescriptionCannotShowMIMEType,                   @(WebKitErrorCannotShowMIMEType),
+                WebKitErrorDescriptionCannotShowURL,                        @(WebKitErrorCannotShowURL),
+                WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   @(WebKitErrorFrameLoadInterruptedByPolicyChange),
+                WebKitErrorDescriptionCannotUseRestrictedPort,              @(WebKitErrorCannotUseRestrictedPort),
+                WebKitErrorDescriptionFrameLoadBlockedByContentFilter,      @(WebKitErrorFrameLoadBlockedByContentFilter),
 
                 // Plug-in and java errors
-                WebKitErrorDescriptionCannotFindPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotFindPlugIn],
-                WebKitErrorDescriptionCannotLoadPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotLoadPlugIn],
-                WebKitErrorDescriptionJavaUnavailable,                      [NSNumber numberWithInt: WebKitErrorJavaUnavailable],
-                WebKitErrorDescriptionPlugInCancelledConnection,            [NSNumber numberWithInt: WebKitErrorPlugInCancelledConnection],
-                WebKitErrorDescriptionPlugInWillHandleLoad,                 [NSNumber numberWithInt: WebKitErrorPlugInWillHandleLoad],
+                WebKitErrorDescriptionCannotFindPlugin,                     @(WebKitErrorCannotFindPlugIn),
+                WebKitErrorDescriptionCannotLoadPlugin,                     @(WebKitErrorCannotLoadPlugIn),
+                WebKitErrorDescriptionJavaUnavailable,                      @(WebKitErrorJavaUnavailable),
+                WebKitErrorDescriptionPlugInCancelledConnection,            @(WebKitErrorPlugInCancelledConnection),
+                WebKitErrorDescriptionPlugInWillHandleLoad,                 @(WebKitErrorPlugInWillHandleLoad),
 
                 // Geolocation errors
-                WebKitErrorDescriptionGeolocationLocationUnknown,           [NSNumber numberWithInt: WebKitErrorGeolocationLocationUnknown],
+                WebKitErrorDescriptionGeolocationLocationUnknown,           @(WebKitErrorGeolocationLocationUnknown),
                 nil];
 
             [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
@@ -139,7 +138,7 @@ static NSMutableDictionary *descriptions = nil;
     
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     NSDictionary *descriptionsForWebKitErrorDomain = [descriptions objectForKey:WebKitErrorDomain];
-    NSString *localizedDescription = [descriptionsForWebKitErrorDomain objectForKey:[NSNumber numberWithInt:code]];
+    NSString *localizedDescription = [descriptionsForWebKitErrorDomain objectForKey:@(code)];
     if (localizedDescription)
         [userInfo setObject:localizedDescription forKey:NSLocalizedDescriptionKey];
     if (contentURL) {

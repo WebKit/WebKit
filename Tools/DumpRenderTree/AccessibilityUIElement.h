@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,18 +32,12 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
-#ifdef __OBJC__
-typedef id PlatformUIElement;
-#else
-typedef struct objc_object* PlatformUIElement;
-#endif
+#include <wtf/RetainPtr.h>
 #elif PLATFORM(WIN)
 #undef _WINSOCKAPI_
 #define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
-
 #include <WebCore/COMPtr.h>
 #include <oleacc.h>
-
 typedef COMPtr<IAccessible> PlatformUIElement;
 #elif HAVE(ACCESSIBILITY) && PLATFORM(GTK)
 #include "AccessibilityNotificationHandlerAtk.h"
@@ -53,21 +47,22 @@ typedef AtkObject* PlatformUIElement;
 typedef void* PlatformUIElement;
 #endif
 
-#if PLATFORM(COCOA)
-#ifdef __OBJC__
-typedef id NotificationHandler;
-#else
-typedef struct objc_object* NotificationHandler;
-#endif
-#endif
-
 class AccessibilityUIElement {
 public:
+#if PLATFORM(COCOA)
+    AccessibilityUIElement(id);
+#endif
+#if !PLATFORM(COCOA)
     AccessibilityUIElement(PlatformUIElement);
-    AccessibilityUIElement(const AccessibilityUIElement&);
-    ~AccessibilityUIElement();
+#endif
 
+#if PLATFORM(COCOA)
+    id platformUIElement() const { return m_element.get(); }
+#endif
+
+#if !PLATFORM(COCOA)
     PlatformUIElement platformUIElement() const { return m_element; }
+#endif
 
     static JSObjectRef makeJSAccessibilityUIElement(JSContextRef, const AccessibilityUIElement&);
 
@@ -318,10 +313,9 @@ public:
     bool isSearchField() const;
     
     AccessibilityTextMarkerRange textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*);
-    
 #endif // PLATFORM(IOS_FAMILY)
 
-#if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     // Returns an ordered list of supported actions for an element.
     JSRetainPtr<JSStringRef> supportedActions();
     
@@ -332,11 +326,14 @@ public:
     
 private:
     static JSClassRef getJSClass();
+
+#if !PLATFORM(COCOA)
     PlatformUIElement m_element;
+#endif
     
 #if PLATFORM(COCOA)
-    // A retained, platform specific object used to help manage notifications for this object.
-    NotificationHandler m_notificationHandler;
+    RetainPtr<id> m_element;
+    RetainPtr<id> m_notificationHandler;
 #endif
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(GTK)

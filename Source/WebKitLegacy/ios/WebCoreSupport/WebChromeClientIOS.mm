@@ -63,6 +63,7 @@
 #import <WebCore/WebCoreThreadMessage.h>
 #import <wtf/HashMap.h>
 #import <wtf/RefPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 NSString * const WebOpenPanelConfigurationAllowMultipleFilesKey = @"WebOpenPanelConfigurationAllowMultipleFilesKey";
 NSString * const WebOpenPanelConfigurationMediaCaptureTypeKey = @"WebOpenPanelConfigurationMediaCaptureTypeKey";
@@ -134,17 +135,13 @@ void WebChromeClientIOS::runOpenPanel(Frame&, FileChooser& chooser)
     BOOL allowMultipleFiles = settings.allowsMultipleFiles;
     WebOpenPanelResultListener *listener = [[WebOpenPanelResultListener alloc] initWithChooser:chooser];
 
-    NSMutableArray *mimeTypes = [NSMutableArray arrayWithCapacity:settings.acceptMIMETypes.size()];
-    for (auto& type : settings.acceptMIMETypes)
-        [mimeTypes addObject:type];
-
     WebMediaCaptureType captureType = WebMediaCaptureTypeNone;
 #if ENABLE(MEDIA_CAPTURE)
     captureType = webMediaCaptureType(settings.mediaCaptureType);
 #endif
     NSDictionary *configuration = @{
         WebOpenPanelConfigurationAllowMultipleFilesKey: @(allowMultipleFiles),
-        WebOpenPanelConfigurationMimeTypesKey: mimeTypes,
+        WebOpenPanelConfigurationMimeTypesKey: createNSArray(settings.acceptMIMETypes).get(),
         WebOpenPanelConfigurationMediaCaptureTypeKey: @(captureType)
     };
 

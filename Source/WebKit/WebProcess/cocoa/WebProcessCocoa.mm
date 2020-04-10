@@ -88,6 +88,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
@@ -664,12 +665,7 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
 void WebProcess::getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
 #if PLATFORM(MAC)
-    auto activeOriginsAsNSStrings = activePagesOrigins(m_pageMap);
-    Vector<String> activeOrigins;
-    activeOrigins.reserveInitialCapacity([activeOriginsAsNSStrings count]);
-    for (NSString* activeOrigin in activeOriginsAsNSStrings.get())
-        activeOrigins.uncheckedAppend(activeOrigin);
-    completionHandler(WTFMove(activeOrigins));
+    completionHandler(makeVector<String>(activePagesOrigins(m_pageMap).get()));
 #else
     completionHandler({ });
 #endif

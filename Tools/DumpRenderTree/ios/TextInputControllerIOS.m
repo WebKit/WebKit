@@ -76,7 +76,7 @@
     if (!range)
         return nil;
 
-    return [NSArray arrayWithObjects:@([range startOffset]), @([range endOffset]), nil];
+    return @[@([range startOffset]), @([range endOffset])];
 }
 
 - (void)insertText:(NSString *)text

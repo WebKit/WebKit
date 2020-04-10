@@ -41,7 +41,6 @@
 #import <WebCore/Page.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
-#import <wtf/ObjCRuntimeExtras.h>
 
 @implementation WKAccessibilityWebPageObjectBase
 

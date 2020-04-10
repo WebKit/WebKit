@@ -255,7 +255,7 @@ void InjectedBundle::setBundleParameter(const String& key, const IPC::DataRefere
     }
 
     if (!m_bundleParameters && parameter)
-        m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:[NSDictionary dictionary]]);
+        m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:@{ }]);
 
     [m_bundleParameters setParameter:parameter forKey:key];
 }

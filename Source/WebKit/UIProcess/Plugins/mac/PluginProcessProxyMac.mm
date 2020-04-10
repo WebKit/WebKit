@@ -40,6 +40,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
 @interface WKPlaceholderModalWindow : NSWindow 
@@ -251,11 +252,7 @@ void PluginProcessProxy::launchProcess(const String& launchPath, const Vector<St
     if (!shouldLaunchProcess(m_pluginProcessAttributes, launchPath, arguments))
         return completionHandler(false);
 
-    RetainPtr<NSMutableArray> argumentsArray = adoptNS([[NSMutableArray alloc] initWithCapacity:arguments.size()]);
-    for (size_t i = 0; i < arguments.size(); ++i)
-        [argumentsArray addObject:(NSString *)arguments[i]];
-
-    [NSTask launchedTaskWithLaunchPath:launchPath arguments:argumentsArray.get()];
+    [NSTask launchedTaskWithLaunchPath:launchPath arguments:createNSArray(arguments).get()];
     completionHandler(true);
 }
 
@@ -265,10 +262,10 @@ static bool isJavaUpdaterURL(const PluginProcessAttributes& pluginProcessAttribu
     if (![url isFileURL])
         return false;
 
-    NSArray *javaUpdaterAppNames = [NSArray arrayWithObjects:@"Java Updater.app", @"JavaUpdater.app", nil];
+    NSArray *javaUpdaterAppNames = @[@"Java Updater.app", @"JavaUpdater.app"];
 
     for (NSString *javaUpdaterAppName in javaUpdaterAppNames) {
-        NSString *javaUpdaterPath = [NSString pathWithComponents:[NSArray arrayWithObjects:(NSString *)pluginProcessAttributes.moduleInfo.path, @"Contents/Resources", javaUpdaterAppName, nil]];
+        NSString *javaUpdaterPath = [NSString pathWithComponents:@[(NSString *)pluginProcessAttributes.moduleInfo.path, @"Contents/Resources", javaUpdaterAppName]];
         if ([url.path isEqualToString:javaUpdaterPath])
             return YES;
     }
@@ -289,20 +286,16 @@ void PluginProcessProxy::launchApplicationAtURL(const String& urlString, const V
     if (!shouldLaunchApplicationAtURL(m_pluginProcessAttributes, urlString))
         return completionHandler(false);
 
-    RetainPtr<NSMutableArray> argumentsArray = adoptNS([[NSMutableArray alloc] initWithCapacity:arguments.size()]);
-    for (size_t i = 0; i < arguments.size(); ++i)
-        [argumentsArray addObject:(NSString *)arguments[i]];
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSDictionary *configuration = [NSDictionary dictionaryWithObject:argumentsArray.get() forKey:NSWorkspaceLaunchConfigurationArguments];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    auto configuration = @{ NSWorkspaceLaunchConfigurationArguments: createNSArray(arguments).get() };
     [[NSWorkspace sharedWorkspace] launchApplicationAtURL:[NSURL URLWithString:urlString] options:NSWorkspaceLaunchAsync configuration:configuration error:nullptr];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     completionHandler(true);
 }
 
 static bool isSilverlightPreferencesURL(const PluginProcessAttributes& pluginProcessAttributes, const String& urlString)
 {
-    NSURL *silverlightPreferencesURL = [NSURL fileURLWithPathComponents:[NSArray arrayWithObjects:(NSString *)pluginProcessAttributes.moduleInfo.path, @"Contents/Resources/Silverlight Preferences.app", nil]];
+    NSURL *silverlightPreferencesURL = [NSURL fileURLWithPathComponents:@[(NSString *)pluginProcessAttributes.moduleInfo.path, @"Contents/Resources/Silverlight Preferences.app"]];
 
     return [[NSURL URLWithString:urlString] isEqual:silverlightPreferencesURL];
 }

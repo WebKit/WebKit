@@ -817,7 +817,7 @@ TEST(WKUserContentController, InjectUserScriptImmediately)
 
 TEST(WKUserContentController, UserScriptNotification)
 {
-    WKUserScript *waitsForNotification = [[[WKUserScript alloc] _initWithSource:@"alert('waited for notification')" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES legacyWhitelist:[NSArray array] legacyBlacklist:[NSArray array] associatedURL:[NSURL URLWithString:@"test:///script"] contentWorld:[WKContentWorld defaultClientWorld] deferRunningUntilNotification:YES] autorelease];
+    WKUserScript *waitsForNotification = [[[WKUserScript alloc] _initWithSource:@"alert('waited for notification')" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES legacyWhitelist:@[] legacyBlacklist:@[] associatedURL:[NSURL URLWithString:@"test:///script"] contentWorld:[WKContentWorld defaultClientWorld] deferRunningUntilNotification:YES] autorelease];
     WKUserScript *documentEnd = [[[WKUserScript alloc] initWithSource:@"alert('document parsing ended')" injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES] autorelease];
 
     TestWKWebView *webView1 = [[TestWKWebView new] autorelease];

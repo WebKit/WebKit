@@ -279,5 +279,8 @@ WEBCORE_EXPORT IntRect roundedIntRect(const FloatRect&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatRect&);
 
-}
+#ifdef __OBJC__
+WEBCORE_EXPORT id makeNSArrayElement(const FloatRect&);
+#endif
 
+}

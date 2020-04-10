@@ -58,10 +58,12 @@
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ScriptController.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/Touch.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/HashMap.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/WAKAppKitStubs.h>
@@ -177,15 +179,6 @@ static Class elementClass(const QualifiedName& tag, Class defaultClass)
     if (!objcClass)
         objcClass = defaultClass;
     return objcClass;
-}
-
-static NSArray *kit(const Vector<IntRect>& rects)
-{
-    size_t size = rects.size();
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:size];
-    for (size_t i = 0; i < size; ++i)
-        [array addObject:[NSValue valueWithRect:rects[i]]];
-    return array;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -514,7 +507,7 @@ id <DOMEventTarget> kit(EventTarget* target)
         return nil;
     Vector<WebCore::IntRect> rects;
     node.textRects(rects);
-    return kit(rects);
+    return createNSArray(rects).autorelease();
 }
 
 @end
@@ -631,12 +624,11 @@ id <DOMEventTarget> kit(EventTarget* target)
 
 - (NSArray *)textRects
 {
-    // FIXME: The call to updateLayoutIgnorePendingStylesheets should be moved into WebCore::Range.
     auto& range = *core(self);
     Vector<WebCore::IntRect> rects;
     range.ownerDocument().updateLayoutIgnorePendingStylesheets();
     range.absoluteTextRects(rects);
-    return kit(rects);
+    return createNSArray(rects).autorelease();
 }
 
 - (NSArray *)lineBoxRects

@@ -146,25 +146,20 @@ static void* runJavaScriptThread(void* arg)
     if ([aClass isEqualToString:@"NSCFBoolean"])
         return @YES;
     if ([aClass isEqualToString:@"NSCFNumber"])
-        return [NSNumber numberWithInt:1];
+        return @(1);
     if ([aClass isEqualToString:@"NSCFString"])
         return @"";
     if ([aClass isEqualToString:@"WebScriptObject"])
         return self;
     if ([aClass isEqualToString:@"NSArray"])
-        return [NSArray array];
+        return @[];
 
     return nil;
 }
 
 - (NSArray *)arrayOfString
 {
-    NSString *strings[3];
-    strings[0] = @"one";
-    strings[1] = @"two";
-    strings[2] = @"three";
-    NSArray *array = [NSArray arrayWithObjects:strings count:3];
-    return array;
+    return @[ @"one", @"two", @"three" ];
 }
 
 - (BOOL)identityIsEqual:(WebScriptObject *)a :(WebScriptObject *)b
@@ -217,9 +212,11 @@ static void* runJavaScriptThread(void* arg)
     if ([[webScriptObject evaluateWebScript:@"({ })"] class] != [webScriptObject class])
         return false;
 
-    [webScriptObject setValue:[NSNumber numberWithInt:666] forKey:@"key"];
-    if (![[webScriptObject valueForKey:@"key"] isKindOfClass:[NSNumber class]] ||
-        ![[webScriptObject valueForKey:@"key"] isEqualToNumber:[NSNumber numberWithInt:666]])
+    [webScriptObject setValue:@(666) forKey:@"key"];
+    id value = [webScriptObject valueForKey:@"key"];
+    if (![value isKindOfClass:NSNumber.class])
+        return false;
+    if (![value isEqualToNumber:@(666)])
         return false;
 
     [webScriptObject removeWebScriptKey:@"key"];
@@ -272,7 +269,7 @@ static void* runJavaScriptThread(void* arg)
 
 - (NSArray *)testArray
 {
-    return [NSArray array];
+    return @[];
 }
 
 - (NSArray *)testArrayOfObjects

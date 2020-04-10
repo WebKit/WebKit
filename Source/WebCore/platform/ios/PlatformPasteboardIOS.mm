@@ -39,12 +39,14 @@
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIPasteboard.h>
-#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringHash.h>
+
+#import <pal/ios/UIKitSoftLink.h>
 
 #define PASTEBOARD_SUPPORTS_ITEM_PROVIDERS (PLATFORM(IOS_FAMILY) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV)))
 #define PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA (PASTEBOARD_SUPPORTS_ITEM_PROVIDERS && !PLATFORM(MACCATALYST))
@@ -74,8 +76,7 @@ PlatformPasteboard::PlatformPasteboard(const String&)
 
 void PlatformPasteboard::getTypes(Vector<String>& types)
 {
-    for (NSString *pasteboardType in [m_pasteboard pasteboardTypes])
-        types.append(pasteboardType);
+    types = makeVector<String>([m_pasteboard pasteboardTypes]);
 }
 
 RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& type)
@@ -587,10 +588,7 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
             // events, we need an additional in-memory representation of the pasteboard types array that contains
             // all of the custom types. We use the teamData property, available on NSItemProvider on iOS, to store
             // this information, since the contents of teamData are immediately available prior to the drop.
-            NSMutableArray<NSString *> *typesAsNSArray = [NSMutableArray array];
-            for (auto& type : data.orderedTypes())
-                [typesAsNSArray addObject:type];
-            NSDictionary *teamDataDictionary = @{ @(originKeyForTeamData) : data.origin(), @(customTypesKeyForTeamData) : typesAsNSArray };
+            NSDictionary *teamDataDictionary = @{ @(originKeyForTeamData) : data.origin(), @(customTypesKeyForTeamData) : createNSArray(data.orderedTypes()).get() };
             if (NSData *teamData = [NSKeyedArchiver archivedDataWithRootObject:teamDataDictionary requiringSecureCoding:YES error:nullptr]) {
                 [representationsToRegister setTeamData:teamData];
                 [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
@@ -753,11 +751,7 @@ void PlatformPasteboard::updateSupportedTypeIdentifiers(const Vector<String>& ty
     if (![m_pasteboard respondsToSelector:@selector(updateSupportedTypeIdentifiers:)])
         return;
 
-    NSMutableArray *typesArray = [NSMutableArray arrayWithCapacity:types.size()];
-    for (const auto& type : types)
-        [typesArray addObject:(NSString *)type];
-
-    [m_pasteboard updateSupportedTypeIdentifiers:typesArray];
+    [m_pasteboard updateSupportedTypeIdentifiers:createNSArray(types).get()];
 }
 
 int64_t PlatformPasteboard::write(const PasteboardCustomData& data)

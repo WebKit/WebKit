@@ -1983,7 +1983,7 @@ void TestInvocation::didSetHasHadUserInteraction()
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
 }
 
-void TestInvocation::didReceiveAllStorageAccessEntries(Vector<String>& domains)
+void TestInvocation::didReceiveAllStorageAccessEntries(Vector<String>&& domains)
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidReceiveAllStorageAccessEntries"));
     
@@ -2005,7 +2005,7 @@ void TestInvocation::didReceiveLoadedThirdPartyDomains(Vector<String>&& domains)
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), messageBody.get());
 }
 
-void TestInvocation::didReceiveWebViewCategory(String& webViewCategory)
+void TestInvocation::didReceiveWebViewCategory(String&& webViewCategory)
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidReceiveWebViewCategory"));
     

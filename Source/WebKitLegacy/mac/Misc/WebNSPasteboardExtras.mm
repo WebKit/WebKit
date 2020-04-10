@@ -106,7 +106,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
 
 + (NSArray *)_web_dragTypesForURL
 {
-    return [NSArray arrayWithObjects:
+    return @[
         WebURLsWithTitlesPboardType,
         legacyURLPasteboardType(),
         WebURLPboardType,
@@ -114,7 +114,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
         legacyStringPasteboardType(),
         legacyFilenamesPasteboardType(),
         legacyFilesPromisePasteboardType(),
-        nil];
+    ];
 }
 
 - (NSURL *)_web_bestURL
@@ -177,7 +177,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
     if ([types containsObject:legacyStringPasteboardType()])
         [self setString:[URL _web_userVisibleString] forType:legacyStringPasteboardType()];
     if ([types containsObject:WebURLsWithTitlesPboardType])
-        [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:[NSArray arrayWithObject:title] toPasteboard:self];
+        [WebURLsWithTitles writeURLs:@[URL] andTitles:@[title] toPasteboard:self];
 }
 
 + (int)_web_setFindPasteboardString:(NSString *)string withOwner:(id)owner
@@ -185,7 +185,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSPasteboard *findPasteboard = [NSPasteboard pasteboardWithName:NSFindPboard];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    [findPasteboard declareTypes:[NSArray arrayWithObject:legacyStringPasteboardType()] owner:owner];
+    [findPasteboard declareTypes:@[legacyStringPasteboardType()] owner:owner];
     [findPasteboard setString:string forType:legacyStringPasteboardType()];
     return [findPasteboard changeCount];
 }

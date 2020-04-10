@@ -586,7 +586,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
         return asString(value)->value(rootObject->globalObject());
 
     if (value.isNumber())
-        return [NSNumber numberWithDouble:value.asNumber()];
+        return @(value.asNumber());
 
     if (value.isBoolean())
         return [NSNumber numberWithBool:value.asBoolean()];

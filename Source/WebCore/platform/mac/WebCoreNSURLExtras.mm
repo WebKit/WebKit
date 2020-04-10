@@ -31,7 +31,6 @@
 
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/Function.h>
-#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <unicode/uchar.h>

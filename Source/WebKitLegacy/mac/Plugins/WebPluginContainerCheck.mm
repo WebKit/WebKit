@@ -107,11 +107,11 @@
 
 - (NSDictionary *)_actionInformationWithURL:(NSURL *)URL
 {
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-               [NSNumber numberWithInt:WebNavigationTypePlugInRequest], WebActionNavigationTypeKey,
-               [NSNumber numberWithInt:0], WebActionModifierFlagsKey,
-               URL, WebActionOriginalURLKey,
-               nil];
+    return @{
+        WebActionNavigationTypeKey: @(WebNavigationTypePlugInRequest),
+        WebActionModifierFlagsKey: @(0),
+        WebActionOriginalURLKey: URL,
+    };
 }
 
 - (void)_askPolicyDelegate

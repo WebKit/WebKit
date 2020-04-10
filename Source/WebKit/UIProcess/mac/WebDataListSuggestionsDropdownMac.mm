@@ -379,10 +379,10 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
 
 - (void)notifyAccessibilityClients:(NSString *)info
 {
-    NSDictionary<NSAccessibilityNotificationUserInfoKey, id> *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-        NSAccessibilityPriorityKey, @(NSAccessibilityPriorityHigh),
-        NSAccessibilityAnnouncementKey, info, nil];
-    NSAccessibilityPostNotificationWithUserInfo(NSApp, NSAccessibilityAnnouncementRequestedNotification, userInfo);
+    NSAccessibilityPostNotificationWithUserInfo(NSApp, NSAccessibilityAnnouncementRequestedNotification, @{
+        NSAccessibilityPriorityKey: @(NSAccessibilityPriorityHigh),
+        NSAccessibilityAnnouncementKey: info,
+    });
 }
 
 - (void)moveSelectionByDirection:(const String&)direction

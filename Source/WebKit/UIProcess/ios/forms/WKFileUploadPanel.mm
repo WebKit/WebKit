@@ -666,12 +666,12 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
 
     [self _dismissDisplayAnimated:YES];
 
-    [self _processMediaInfoDictionaries:[NSArray arrayWithObject:info]
+    [self _processMediaInfoDictionaries:@[info]
         successBlock:^(NSArray *processedResults, NSString *displayString) {
             ASSERT([processedResults count] == 1);
             _WKFileUploadItem *result = [processedResults objectAtIndex:0];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self _chooseFiles:[NSArray arrayWithObject:result.fileURL] displayString:displayString iconImage:result.displayImage];
+                [self _chooseFiles:@[result.fileURL] displayString:displayString iconImage:result.displayImage];
             });
         }
         failureBlock:^{

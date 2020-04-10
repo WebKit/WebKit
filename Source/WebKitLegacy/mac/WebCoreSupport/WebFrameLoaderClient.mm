@@ -131,6 +131,7 @@
 #import <wtf/NakedPtr.h>
 #import <wtf/Ref.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -1572,8 +1573,8 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const WebCore::NavigationAc
     NSURL *originalURL = action.url();
 
     NSMutableDictionary *result = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithInt:static_cast<int>(action.type())], WebActionNavigationTypeKey,
-        [NSNumber numberWithInt:modifierFlags], WebActionModifierFlagsKey,
+        @(static_cast<int>(action.type())), WebActionNavigationTypeKey,
+        @(modifierFlags), WebActionModifierFlagsKey,
         originalURL, WebActionOriginalURLKey,
         nil];
 
@@ -1585,9 +1586,9 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const WebCore::NavigationAc
         [element release];
 
         if (mouseEventData->isTrusted)
-            [result setObject:[NSNumber numberWithInt:mouseEventData->button] forKey:WebActionButtonKey];
+            [result setObject:@(mouseEventData->button) forKey:WebActionButtonKey];
         else
-            [result setObject:[NSNumber numberWithInt:WebCore::NoButton] forKey:WebActionButtonKey];
+            [result setObject:@(WebCore::NoButton) forKey:WebActionButtonKey];
     }
 
     if (formState)
@@ -1694,15 +1695,6 @@ WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& ur
     return WebCore::ObjectContentType::None;
 }
 
-static NSMutableArray* kit(const Vector<String>& vector)
-{
-    unsigned len = vector.size();
-    NSMutableArray* array = [NSMutableArray arrayWithCapacity:len];
-    for (unsigned x = 0; x < len; x++)
-        [array addObject:vector[x]];
-    return array;
-}
-
 static String parameterValue(const Vector<String>& paramNames, const Vector<String>& paramValues, const char* name)
 {
     size_t size = paramNames.size();
@@ -1720,37 +1712,39 @@ static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
 {
     WebHTMLView *docView = (WebHTMLView *)[[frame frameView] documentView];
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-        
+
     WebPluginController *pluginController = [docView _pluginController];
-    
+
     // Store attributes in a dictionary so they can be passed to WebPlugins.
     NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:attributeValues forKeys:attributeNames];
-    
+
     [pluginPackage load];
     Class viewFactory = [pluginPackage viewFactory];
     
     NSView *view = nil;
     NSDictionary *arguments = nil;
-    
-    if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
-        arguments = [NSDictionary dictionaryWithObjectsAndKeys:
-            baseURL, WebPlugInBaseURLKey,
-            attributes, WebPlugInAttributesKey,
-            pluginController, WebPlugInContainerKey,
-            [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
-            [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
-            element, WebPlugInContainingElementKey,
-            nil];
-        LOG(Plugins, "arguments:\n%@", arguments);
+
 IGNORE_WARNINGS_BEGIN("undeclared-selector")
-    } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
+    auto oldSelector = @selector(pluginViewWithArguments:);
 IGNORE_WARNINGS_END
-        arguments = [NSDictionary dictionaryWithObjectsAndKeys:
-            baseURL, WebPluginBaseURLKey,
-            attributes, WebPluginAttributesKey,
-            pluginController, WebPluginContainerKey,
-            element, WebPlugInContainingElementKey,
-            nil];
+
+    if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
+        arguments = @{
+            WebPlugInBaseURLKey: baseURL,
+            WebPlugInAttributesKey: attributes,
+            WebPlugInContainerKey: pluginController,
+            WebPlugInModeKey: @(loadManually ? WebPlugInModeFull : WebPlugInModeEmbed),
+            WebPlugInShouldLoadMainResourceKey: [NSNumber numberWithBool:!loadManually],
+            WebPlugInContainingElementKey: element,
+        };
+        LOG(Plugins, "arguments:\n%@", arguments);
+    } else if ([viewFactory respondsToSelector:oldSelector]) {
+        arguments = @{
+            WebPluginBaseURLKey: baseURL,
+            WebPluginAttributesKey: attributes,
+            WebPluginContainerKey: pluginController,
+            WebPlugInContainingElementKey: element,
+        };
         LOG(Plugins, "arguments:\n%@", arguments);
     }
 
@@ -1919,15 +1913,15 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
     auto* document = core(m_webFrame.get())->document();
     NSURL *baseURL = document->baseURL();
     NSURL *pluginURL = url;
-    NSMutableArray *attributeKeys = kit(paramNames);
+    auto attributeKeys = createNSArray(paramNames);
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     SEL selector = @selector(webView:plugInViewWithArguments:);
     if ([[webView UIDelegate] respondsToSelector:selector]) {
-        NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:kit(paramValues) forKeys:attributeKeys];
+        NSDictionary *attributes = @{ attributeKeys.get(): createNSArray(paramValues).get() };
         NSDictionary *arguments = [[NSDictionary alloc] initWithObjectsAndKeys:
             attributes, WebPlugInAttributesKey,
-            [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
+            @(loadManually ? WebPlugInModeFull : WebPlugInModeEmbed), WebPlugInModeKey,
             [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
             kit(&element), WebPlugInContainingElementKey,
             // FIXME: We should be passing base URL, see <https://bugs.webkit.org/show_bug.cgi?id=35215>.
@@ -1936,11 +1930,10 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
 
         NSView *view = CallUIDelegate(webView, selector, arguments);
 
-        [attributes release];
         [arguments release];
 
         if (view)
-            return adoptRef(new PluginWidget(view));
+            return adoptRef(*new PluginWidget(view));
     }
 #endif
 
@@ -1953,7 +1946,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
         MIMEType = mimeType;
         pluginPackage = [webView _pluginForMIMEType:mimeType];
     }
-    
+
     NSString *extension = [[pluginURL path] pathExtension];
 
 #if PLATFORM(IOS_FAMILY)
@@ -1979,7 +1972,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
                 downcast<WebCore::RenderEmbeddedObject>(*element.renderer()).setPluginUnavailabilityReason(WebCore::RenderEmbeddedObject::InsecurePluginVersion);
         } else {
             if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
-                view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys, kit(paramValues), baseURL, kit(&element), loadManually);
+                view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys.get(), createNSArray(paramValues).get(), baseURL, kit(&element), loadManually);
 #if ENABLE(NETSCAPE_PLUGIN_API)
             else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
                 WebBaseNetscapePluginView *pluginView = [[[NETSCAPE_PLUGIN_VIEW alloc]
@@ -1988,8 +1981,8 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
                     URL:pluginURL
                     baseURL:baseURL
                     MIMEType:MIMEType
-                    attributeKeys:attributeKeys
-                    attributeValues:kit(paramValues)
+                    attributeKeys:attributeKeys.get()
+                    attributeValues:createNSArray(paramValues).get()
                     loadManually:loadManually
                     element:&element] autorelease];
 
@@ -2083,8 +2076,8 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createJavaAppletWidget(const WebCo
                     URL:nil
                     baseURL:baseURL
                     MIMEType:MIMEType
-                    attributeKeys:kit(paramNames)
-                    attributeValues:kit(paramValues)
+                    attributeKeys:createNSArray(paramNames).get()
+                    attributeValues:createNSArray(paramValues).get()
                     loadManually:NO
                     element:&element] autorelease];
                 if (view)

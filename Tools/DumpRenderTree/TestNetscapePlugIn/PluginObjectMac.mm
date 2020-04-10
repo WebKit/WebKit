@@ -48,21 +48,21 @@ CFTypeRef createCoreAnimationLayer()
     RetainPtr<CALayer> caLayer = adoptNS([[TestPluginLayer alloc] init]);
 
     NSNull *nullValue = [NSNull null];
-    NSDictionary *actions = [NSDictionary dictionaryWithObjectsAndKeys:
-                             nullValue, @"anchorPoint",
-                             nullValue, @"bounds",
-                             nullValue, @"contents",
-                             nullValue, @"contentsRect",
-                             nullValue, @"opacity",
-                             nullValue, @"position",
-                             nullValue, @"shadowColor",
-                             nullValue, @"sublayerTransform",
-                             nullValue, @"sublayers",
-                             nullValue, @"transform",
-                             nullValue, @"zPosition",
-                             nil];
+    NSDictionary *actions = @{
+        @"anchorPoint": nullValue,
+        @"bounds": nullValue,
+        @"contents": nullValue,
+        @"contentsRect": nullValue,
+        @"opacity": nullValue,
+        @"position": nullValue,
+        @"shadowColor": nullValue,
+        @"sublayerTransform": nullValue,
+        @"sublayers": nullValue,
+        @"transform": nullValue,
+        @"zPosition": nullValue,
+    };
     // Turn off default animations.
-    [caLayer setStyle:[NSDictionary dictionaryWithObject:actions forKey:@"actions"]];
+    [caLayer setStyle:@{ @"actions": actions }];
     [caLayer setNeedsDisplayOnBoundsChange:YES];
 
     [caLayer setBounds:CGRectMake(0, 0, 200, 100)];
@@ -76,7 +76,7 @@ CFTypeRef createCoreAnimationLayer()
 
     CALayer *sublayer = [CALayer layer];
     // Turn off default animations.
-    [sublayer setStyle:[NSDictionary dictionaryWithObject:actions forKey:@"actions"]];
+    [sublayer setStyle:@{ @"actions": actions }];
 
     color = CGColorCreateGenericRGB(0, 0, 0, 0.75);
     [sublayer setBackgroundColor:color];

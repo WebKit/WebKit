@@ -1716,7 +1716,7 @@ TEST(WKAttachmentTestsIOS, TargetedPreviewsWhenDroppingImages)
     [secondItem setSuggestedName:@"apple"];
 
     [simulator setDropAnimationTiming:DropAnimationShouldFinishBeforeHandlingDrop];
-    [simulator setExternalItemProviders:[NSArray arrayWithObjects:firstItem.get(), secondItem.get(), nil] defaultDropPreviews:[NSArray arrayWithObjects:firstPreview.get(), secondPreview.get(), nil]];
+    [simulator setExternalItemProviders:@[firstItem.get(), secondItem.get()] defaultDropPreviews:@[firstPreview.get(), secondPreview.get()]];
     [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(450, 450)];
 
     EXPECT_EQ([simulator delayedDropPreviews].count, 2U);
@@ -1755,7 +1755,7 @@ TEST(WKAttachmentTestsIOS, TargetedPreviewIsClippedWhenDroppingTallImage)
     [item setSuggestedName:@"green"];
 
     [simulator setDropAnimationTiming:DropAnimationShouldFinishBeforeHandlingDrop];
-    [simulator setExternalItemProviders:[NSArray arrayWithObject:item.get()] defaultDropPreviews:[NSArray arrayWithObject:preview.get()]];
+    [simulator setExternalItemProviders:@[item.get()] defaultDropPreviews:@[preview.get()]];
     [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(350, 350)];
 
     EXPECT_EQ([simulator delayedDropPreviews].count, 1U);

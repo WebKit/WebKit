@@ -1,3 +1,157 @@
+2020-04-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Simplify NSArray, NSDictionary, and NSNumber idioms throughout WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=210138
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm: Remove uneeded include.
+        * Platform/mac/StringUtilities.mm: Ditto.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::replacedNSConcreteTask_launch): Use makeVector<String>.
+        (WebKit::replacedNSWorkspace_launchApplicationAtURL_options_configuration_error):
+        Ditto.
+
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toSupportedNetworks): Deleted.
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest): Use createNSArray.
+
+        * Shared/mac/PasteboardTypes.mm:
+        (WebKit::PasteboardTypes::forEditing): Use @[].
+        (WebKit::PasteboardTypes::forURL): Ditto.
+        (WebKit::PasteboardTypes::forImages): Ditto.
+        (WebKit::PasteboardTypes::forImagesWithArchive): Ditto.
+        (WebKit::PasteboardTypes::forSelection): Ditto.
+
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm:
+        (-[WKContentRuleListStore getAvailableContentRuleListIdentifiers:]): Use createNSArray.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _getActivePagesOriginsInWebProcessForTesting:completionHandler:]): Ditto.
+
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:userContentWorld:]):
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:associatedURL:userContentWorld:]):
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:contentWorld:]):
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:associatedURL:contentWorld:]):
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:associatedURL:contentWorld:deferRunningUntilNotification:]):
+        Use makeVector<String>.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setupPageConfiguration:]): Use makeVector<String>.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _corsDisablingPatterns]): Use createNSArray.
+        (-[WKWebViewConfiguration _setCORSDisablingPatterns:]): Use makeVector<String>.
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _contentsOfUserInterfaceItem:]): Use @().
+        * UIProcess/API/Cocoa/_WKContentRuleListAction.mm:
+        (-[_WKContentRuleListAction notifications]): Use createNSArray.
+        * UIProcess/API/Cocoa/_WKCustomHeaderFields.mm:
+        (-[_WKCustomHeaderFields thirdPartyDomains]): Use createNSArray.
+        (-[_WKCustomHeaderFields setThirdPartyDomains:]): Use makeVector<String>.
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration cachePartitionedURLSchemes]): Use createNSArray.
+        (-[_WKProcessPoolConfiguration setCachePartitionedURLSchemes:]): Use makeVector<String>.
+        (-[_WKProcessPoolConfiguration alwaysRevalidatedURLSchemes]): Use createNSArray.
+        (-[_WKProcessPoolConfiguration setAlwaysRevalidatedURLSchemes:]): Use makeVector<String>.
+
+        * UIProcess/API/Cocoa/_WKUserContentWorldInternal.h:
+        (API::toStringVector): Deleted.
+
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:userContentWorld:]):
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:baseURL:userContentWorld:]):
+        Use makeVector<String>.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::accessibilityAttributeValue): Use @[].
+        (WebKit::WebViewImpl::performDragOperation): Use makeVector<String>.
+        (WebKit::WebViewImpl::namesOfPromisedFilesDroppedAtDestination): Use @[].
+        (WebKit::WebViewImpl::collectKeyboardLayoutCommandsForEvent): Use @[].
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::launchProcess): Use createNSArray.
+        (WebKit::isJavaUpdaterURL): Use @[].
+        (WebKit::PluginProcessProxy::launchApplicationAtURL): Use @{} and createNSArray.
+        (WebKit::isSilverlightPreferencesURL): Use @[].
+
+        * UIProcess/WebAuthentication/Cocoa/HidService.mm:
+        (WebKit::HidService::HidService): Use @() and fixed an over-release mistake.
+        This code was doing adoptNS on the result of +[NSNumberWithInt:], which is incorrect.
+
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::getAttestation const): Use @[].
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textStylingAtPosition:inDirection:]): Use @().
+        (-[WKContentView requestRectsToEvadeForSelectionCommandsWithCompletionHandler:]): Use createNSArray.
+        (-[WKContentView _itemsForBeginningOrAddingToSessionWithRegistrationLists:stagedDragSource:]):
+        Fixed a wasteful call to autorelease where we are adding an item to a dictionary. Calling get
+        is more efficient and still correct.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel imagePickerController:didFinishPickingMediaWithInfo:]): Use @[].
+
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        (-[WKColorMatrixView initWithFrame:colorMatrix:]): Removed uneeded RetainPtr
+        local variable.
+
+        * UIProcess/mac/CorrectionPanel.mm:
+        (WebKit::CorrectionPanel::show): Use createNSArray.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString): Use createNSArray.
+        (WebKit::TextChecker::getGuessesForWord): Use makeVector<String>.
+
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _adjustPrintingMarginsForHeaderAndFooter]): Use @().
+
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (arrayFromRects): Deleted.
+        (-[WKTextFinderClient didFindStringMatchesWithRects:didWrapAround:]): Use createNSArray.
+
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (-[WKDataListSuggestionsController notifyAccessibilityClients:]): Use @{}
+        and fix a bug where this was creating a backwards dictionary. So this never
+        could have been working before, making me wonder how we test it.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::searchTheWeb): Use @[].
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.h: Removed toNSArray.
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        (WebKit::toNSArray): Deleted.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+        (-[WKDOMNode textRects]): Use createNSArray.
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange textRects]): Ditto.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::setBundleParameter): Use @{}.
+
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        (WebKit::makeRenderLayer): Use @[].
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::writeItemsToPasteboard): Use makeVector<String>.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationDidEnterBackground): Use @().
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::suspendPainting): Use @{}.
+        (WebKit::TiledCoreAnimationDrawingArea::resumePainting): Use @{}.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        Removed an unneeded include.
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm: Ditto.
+        (-[WKAccessibilityWebPageObject accessibilityActionNames]): Use @[].
+        (-[WKAccessibilityWebPageObject accessibilityChildren]): Use @[].
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::getActivePagesOriginsForTesting): Use makeVector<String>.
+
 2020-04-09  Megan Gardner  <megan_gardner@apple.com>
 
         Popovers are dismissed immediately when they try and bring up the keyboard.

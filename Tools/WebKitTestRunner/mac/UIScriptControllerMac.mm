@@ -259,7 +259,7 @@ void UIScriptControllerMac::activateAtPoint(long x, long y, JSValueRef callback)
 void UIScriptControllerMac::copyText(JSStringRef text)
 {
     NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
-    [pasteboard declareTypes:[NSArray arrayWithObject:NSPasteboardTypeString] owner:nil];
+    [pasteboard declareTypes:@[NSPasteboardTypeString] owner:nil];
     [pasteboard setString:text->string() forType:NSPasteboardTypeString];
 }
 

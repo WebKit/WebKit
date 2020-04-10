@@ -249,7 +249,7 @@ TEST(PasteWebArchive, WebArchiveTypeIdentifier)
     auto archive = adoptNS([[WebArchive alloc] initWithMainResource:mainResource.get() subresources:nil subframeArchives:nil]);
 
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    [pasteboard declareTypes:[NSArray arrayWithObject:(__bridge NSString *)kUTTypeWebArchive] owner:nil];
+    [pasteboard declareTypes:@[(__bridge NSString *)kUTTypeWebArchive] owner:nil];
     [pasteboard setData:[archive data] forType:(__bridge NSString *)kUTTypeWebArchive];
 
     auto webView = createWebViewWithCustomPasteboardDataEnabled();

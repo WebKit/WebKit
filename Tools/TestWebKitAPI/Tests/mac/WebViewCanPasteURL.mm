@@ -37,7 +37,7 @@ TEST(WebKitLegacy, WebViewCanPasteURL)
     WebView *webView = [[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil];
     [webView setEditable:YES];
 
-    [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
+    [[NSPasteboard generalPasteboard] declareTypes:@[NSURLPboardType] owner:nil];
     [[NSURL URLWithString:@"http://www.webkit.org/"] writeToPasteboard:[NSPasteboard generalPasteboard]];
     [webView paste:nil];
 

@@ -27,6 +27,7 @@
 
 #import <WebCore/FileChooser.h>
 #import <wtf/RefPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/Icon.h>
@@ -64,11 +65,7 @@ using namespace WebCore;
     ASSERT(_chooser);
     if (!_chooser)
         return;
-    NSUInteger count = [filenames count];
-    Vector<String> names(count);
-    for (NSUInteger i = 0; i < count; i++)
-        names[i] = [filenames objectAtIndex:i];
-    _chooser->chooseFiles(names);
+    _chooser->chooseFiles(makeVector<String>(filenames));
     _chooser = nullptr;
 }
 
@@ -76,7 +73,7 @@ using namespace WebCore;
 
 - (void)chooseFilename:(NSString *)filename displayString:(NSString *)displayString iconImage:(CGImageRef)imageRef
 {
-    [self chooseFilenames:[NSArray arrayWithObject:filename] displayString:displayString iconImage:imageRef];
+    [self chooseFilenames:@[filename] displayString:displayString iconImage:imageRef];
 }
 
 - (void)chooseFilenames:(NSArray *)filenames displayString:(NSString *)displayString iconImage:(CGImageRef)imageRef
@@ -85,11 +82,7 @@ using namespace WebCore;
     if (!_chooser)
         return;
 
-    Vector<String> names;
-    names.reserveInitialCapacity([filenames count]);
-    for (NSString *filename in filenames)
-        names.uncheckedAppend(filename);
-    _chooser->chooseMediaFiles(names, displayString, Icon::createIconForImage(imageRef).get());
+    _chooser->chooseMediaFiles(makeVector<String>(filenames), displayString, Icon::createIconForImage(imageRef).get());
     _chooser = nullptr;
 }
 

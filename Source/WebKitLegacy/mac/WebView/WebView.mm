@@ -243,7 +243,6 @@
 #import <wtf/FileSystem.h>
 #import <wtf/HashTraits.h>
 #import <wtf/MainThread.h>
-#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RefCountedLeakCounter.h>
@@ -254,6 +253,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
 #if !PLATFORM(IOS_FAMILY)
@@ -2923,7 +2923,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setLoadsImagesAutomatically([preferences loadsImagesAutomatically]);
     settings.setLoadsSiteIconsIgnoringImageLoadingSetting([preferences loadsSiteIconsIgnoringImageLoadingPreference]);
 
-    WebCore::setAdditionalSupportedImageTypes(WebCore::webCoreStringVectorFromNSStringArray([preferences additionalSupportedImageTypes]));
+    WebCore::setAdditionalSupportedImageTypes(makeVector<String>([preferences additionalSupportedImageTypes]));
 
 #if PLATFORM(IOS_FAMILY)
     settings.setShouldPrintBackgrounds(true);
@@ -4528,7 +4528,7 @@ IGNORE_WARNINGS_END
         auto* validationBubble = _private->formValidationBubble.get();
         String message = validationBubble ? validationBubble->message() : emptyString();
         double fontSize = validationBubble ? validationBubble->fontSize() : 0;
-        return @{ userInterfaceItem: @{ @"message": (NSString *)message, @"fontSize": [NSNumber numberWithDouble:fontSize] } };
+        return @{ userInterfaceItem: @{ @"message": (NSString *)message, @"fontSize": @(fontSize) } };
     }
 
     return nil;
@@ -4644,22 +4644,6 @@ IGNORE_WARNINGS_END
 #endif
 }
 
-static Vector<String> toStringVector(NSArray* patterns)
-{
-    Vector<String> patternsVector;
-
-    NSUInteger count = [patterns count];
-    if (!count)
-        return patternsVector;
-
-    for (NSUInteger i = 0; i < count; ++i) {
-        id entry = [patterns objectAtIndex:i];
-        if ([entry isKindOfClass:[NSString class]])
-            patternsVector.append(String((NSString *)entry));
-    }
-    return patternsVector;
-}
-
 + (void)_addUserScriptToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url
                     whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist
                 injectionTime:(WebUserScriptInjectionTime)injectionTime
@@ -4681,7 +4665,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!world)
         return;
 
-    auto userScript = makeUnique<WebCore::UserScript>(source, url, toStringVector(whitelist), toStringVector(blacklist), injectionTime == WebInjectAtDocumentStart ? WebCore::UserScriptInjectionTime::DocumentStart : WebCore::UserScriptInjectionTime::DocumentEnd, injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::WaitForNotificationBeforeInjecting::No);
+    auto userScript = makeUnique<WebCore::UserScript>(source, url, makeVector<String>(whitelist), makeVector<String>(blacklist), injectionTime == WebInjectAtDocumentStart ? WebCore::UserScriptInjectionTime::DocumentStart : WebCore::UserScriptInjectionTime::DocumentEnd, injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::WaitForNotificationBeforeInjecting::No);
     viewGroup->userContentController().addUserScript(*core(world), WTFMove(userScript));
 }
 
@@ -4704,7 +4688,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!world)
         return;
 
-    auto styleSheet = makeUnique<WebCore::UserStyleSheet>(source, url, toStringVector(whitelist), toStringVector(blacklist), injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::UserStyleUserLevel);
+    auto styleSheet = makeUnique<WebCore::UserStyleSheet>(source, url, makeVector<String>(whitelist), makeVector<String>(blacklist), injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::UserStyleUserLevel);
     viewGroup->userContentController().addUserStyleSheet(*core(world), WTFMove(styleSheet), WebCore::InjectInExistingDocuments);
 }
 
@@ -6737,7 +6721,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         NSPoint point = [documentView convertPoint:windowPoint fromView:nil];
         return [(NSView <WebDocumentElement> *)documentView elementAtPoint:point];
     }
-    return [NSDictionary dictionaryWithObject:[frameView webFrame] forKey:WebElementFrameKey];
+    return @{ WebElementFrameKey: [frameView webFrame] };
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
@@ -7025,7 +7009,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
         return [(NSView <WebDocumentSelection> *)documentView pasteboardTypesForSelection];
     }
-    return [NSArray array];
+    return @[];
 }
 
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
@@ -7047,7 +7031,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     } else if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
         return [self pasteboardTypesForSelection];
     }
-    return [NSArray array];
+    return @[];
 }
 
 - (void)writeElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
@@ -8018,7 +8002,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
 - (NSArray *)rectsForTextMatches
 {
     if (_private->closed)
-        return [NSArray array];
+        return @[];
 
     NSMutableArray *result = [NSMutableArray array];
     WebFrame *frame = [self mainFrame];
@@ -9075,7 +9059,7 @@ FORWARD(toggleUnderline)
     }
 
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
-    [pasteboard declareTypes:[NSArray arrayWithObject:WebCore::legacyStringPasteboardType()] owner:nil];
+    [pasteboard declareTypes:@[WebCore::legacyStringPasteboardType()] owner:nil];
     NSMutableString *s = [selectedString mutableCopy];
     const unichar nonBreakingSpaceCharacter = 0xA0;
     NSString *nonBreakingSpaceString = [NSString stringWithCharacters:&nonBreakingSpaceCharacter length:1];
@@ -10169,17 +10153,16 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 @end
 
 @implementation WebView (WebViewFontSelection)
+
 + (void)_setFontWhitelist:(NSArray *)whitelist
 {
 #if !PLATFORM(MAC)
     UNUSED_PARAM(whitelist);
 #else
-    Vector<String> vector;
-    for (NSString *string in whitelist)
-        vector.append(string);
-    WebCore::FontCache::setFontWhitelist(vector);
+    WebCore::FontCache::setFontWhitelist(makeVector<String>(whitelist));
 #endif
 }
+
 @end
 
 #if PLATFORM(IOS_FAMILY)

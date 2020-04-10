@@ -56,6 +56,7 @@
 #import <sysexits.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 const CFStringRef kLSPlugInBundleIdentifierKey = CFSTR("LSPlugInBundleIdentifierKey");
 
@@ -256,12 +257,7 @@ static void replacedNSConcreteTask_launch(NSTask *self, SEL _cmd)
 {
     String launchPath = self.launchPath;
 
-    Vector<String> arguments;
-    arguments.reserveInitialCapacity(self.arguments.count);
-    for (NSString *argument in self.arguments)
-        arguments.uncheckedAppend(argument);
-
-    if (PluginProcess::singleton().launchProcess(launchPath, arguments))
+    if (PluginProcess::singleton().launchProcess(launchPath, makeVector<String>(self.arguments)))
         return;
 
     NSConcreteTask_launch(self, _cmd);
@@ -271,16 +267,8 @@ static NSRunningApplication *(*NSWorkspace_launchApplicationAtURL_options_config
 
 static NSRunningApplication *replacedNSWorkspace_launchApplicationAtURL_options_configuration_error(NSWorkspace *self, SEL _cmd, NSURL *url, NSWorkspaceLaunchOptions options, NSDictionary *configuration, NSError **error)
 {
-    Vector<String> arguments;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (NSArray *argumentsArray = [configuration objectForKey:NSWorkspaceLaunchConfigurationArguments]) {
-        if ([argumentsArray isKindOfClass:[NSArray array]]) {
-            for (NSString *argument in argumentsArray) {
-                if ([argument isKindOfClass:[NSString class]])
-                    arguments.append(argument);
-            }
-        }
-    }
+    auto arguments = makeVector<String>([configuration objectForKey:NSWorkspaceLaunchConfigurationArguments]);
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (PluginProcess::singleton().launchApplicationAtURL(URL(url).string(), arguments)) {

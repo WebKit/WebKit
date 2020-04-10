@@ -54,6 +54,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -346,19 +347,8 @@ WebHistoryItem *kit(HistoryItem* item)
     if ([dict _webkit_boolForKey:lastVisitWasFailureKey])
         core(_private)->setLastVisitWasFailure(true);
     
-    if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey]) {
-        auto redirectURLsVector = makeUnique<Vector<String>>();
-        redirectURLsVector->reserveInitialCapacity([redirectURLs count]);
-
-        for (id redirectURL in redirectURLs) {
-            if (![redirectURL isKindOfClass:[NSString class]])
-                continue;
-
-            redirectURLsVector->uncheckedAppend((NSString *)redirectURL);
-        }
-
-        _private->_redirectURLs = WTFMove(redirectURLsVector);
-    }
+    if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey])
+        _private->_redirectURLs = makeUnique<Vector<String>>(makeVector<String>(redirectURLs));
 
     NSArray *childDicts = [dict objectForKey:childrenKey];
     if (childDicts) {
@@ -436,16 +426,9 @@ WebHistoryItem *kit(HistoryItem* item)
     }
     if (coreItem->lastVisitWasFailure())
         [dict setObject:@YES forKey:lastVisitWasFailureKey];
-    if (Vector<String>* redirectURLs = _private->_redirectURLs.get()) {
-        size_t size = redirectURLs->size();
-        ASSERT(size);
-        NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:size];
-        for (size_t i = 0; i < size; ++i)
-            [result addObject:(NSString *)redirectURLs->at(i)];
-        [dict setObject:result forKey:redirectURLsKey];
-        [result release];
-    }
-    
+    if (auto redirectURLs = _private->_redirectURLs.get())
+        [dict setObject:createNSArray(*redirectURLs).get() forKey:redirectURLsKey];
+
 #if PLATFORM(IOS_FAMILY)
     if (includesChildren && coreItem->children().size()) {
 #else
@@ -468,8 +451,8 @@ WebHistoryItem *kit(HistoryItem* item)
         [dict setObject:viewportArguments forKey:@"WebViewportArguments"];
 
     IntPoint scrollPosition = core(_private)->scrollPosition();
-    [dict setObject:[NSNumber numberWithInt:scrollPosition.x()] forKey:scrollPointXKey];
-    [dict setObject:[NSNumber numberWithInt:scrollPosition.y()] forKey:scrollPointYKey];
+    [dict setObject:@(scrollPosition.x()) forKey:scrollPointXKey];
+    [dict setObject:@(scrollPosition.y()) forKey:scrollPointYKey];
 #endif
 
     return dict;

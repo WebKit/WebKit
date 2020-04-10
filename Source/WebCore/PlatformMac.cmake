@@ -307,16 +307,18 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/TransformationMatrixCG.cpp
     platform/graphics/cg/UTIRegistry.cpp
 
-    platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm
-    platform/graphics/cocoa/GraphicsContextCocoa.mm
+    platform/graphics/cocoa/FloatRectCocoa.mm
     platform/graphics/cocoa/FontCacheCoreText.cpp
     platform/graphics/cocoa/FontCascadeCocoa.mm
     platform/graphics/cocoa/FontCocoa.mm
     platform/graphics/cocoa/FontDescriptionCocoa.cpp
     platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp
     platform/graphics/cocoa/FontPlatformDataCocoa.mm
+    platform/graphics/cocoa/GraphicsContextCocoa.mm
+    platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm
     platform/graphics/cocoa/IOSurface.mm
     platform/graphics/cocoa/IOSurfacePoolCocoa.mm
+    platform/graphics/cocoa/IntRectCocoa.mm
     platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
     platform/graphics/cocoa/WebCoreCALayerExtras.mm
     platform/graphics/cocoa/WebCoreDecompressionSession.mm
@@ -335,7 +337,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/ComplexTextControllerCoreText.mm
     platform/graphics/mac/DisplayRefreshMonitorMac.cpp
     platform/graphics/mac/FloatPointMac.mm
-    platform/graphics/mac/FloatRectMac.mm
     platform/graphics/mac/FloatSizeMac.mm
     platform/graphics/mac/FontCacheMac.mm
     platform/graphics/mac/FontCustomPlatformData.cpp
@@ -343,7 +344,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/IconMac.mm
     platform/graphics/mac/ImageMac.mm
     platform/graphics/mac/IntPointMac.mm
-    platform/graphics/mac/IntRectMac.mm
     platform/graphics/mac/IntSizeMac.mm
     platform/graphics/mac/PDFDocumentImageMac.mm
     platform/graphics/mac/SimpleFontDataCoreText.cpp

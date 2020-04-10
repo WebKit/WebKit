@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,10 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MIMETypeRegistry.h"
+#import "config.h"
+#import "MIMETypeRegistry.h"
 
-#include <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
+#import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebCore {
 
@@ -38,16 +39,7 @@ String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
 
 Vector<String> MIMETypeRegistry::getExtensionsForMIMEType(const String& type)
 {
-    NSArray *stringsArray = [[NSURLFileTypeMappings sharedMappings] extensionsForMIMEType:(NSString *)type];
-    Vector<String> stringsVector = Vector<String>();
-    unsigned count = [stringsArray count];
-    if (count > 0) {
-        NSEnumerator* enumerator = [stringsArray objectEnumerator];
-        NSString* string;
-        while ((string = [enumerator nextObject]) != nil)
-            stringsVector.append(string);
-    }
-    return stringsVector;
+    return makeVector<String>([[NSURLFileTypeMappings sharedMappings] extensionsForMIMEType:type]);
 }
 
 String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)

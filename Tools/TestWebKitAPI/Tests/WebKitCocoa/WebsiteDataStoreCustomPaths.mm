@@ -218,7 +218,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
         EXPECT_EQ([records count], (unsigned long)3);
         for (id record in records) {
             if ([[record displayName] isEqual: @"apple.com"]) {
-                [dataStore removeDataOfTypes:types.get() forDataRecords:[NSArray arrayWithObject:record] completionHandler:^() {
+                [dataStore removeDataOfTypes:types.get() forDataRecords:@[record] completionHandler:^() {
                     receivedScriptMessage = true;
                     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:frameIDBPath.get().path]);
                 }];

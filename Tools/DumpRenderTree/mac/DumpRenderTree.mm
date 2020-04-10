@@ -92,9 +92,9 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <getopt.h>
+#import <objc/runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/FastMalloc.h>
-#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
@@ -1180,7 +1180,7 @@ static void addTestPluginsToPluginSearchPath(const char* executablePath)
 {
 #if !PLATFORM(IOS_FAMILY)
     NSString *pwd = [[NSString stringWithUTF8String:executablePath] stringByDeletingLastPathComponent];
-    [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
+    [WebPluginDatabase setAdditionalWebPlugInPaths:@[pwd]];
     [[WebPluginDatabase sharedDatabase] refresh];
 #endif
 }
@@ -1948,7 +1948,7 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
 
 #if !PLATFORM(IOS_FAMILY)
     // Clear the contents of the general pasteboard
-    [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+    [[NSPasteboard generalPasteboard] declareTypes:@[NSStringPboardType] owner:nil];
 #endif
 
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(options.additionalSupportedImageTypes.c_str());

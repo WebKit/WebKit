@@ -22,11 +22,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import "CorrectionPanel.h"
 
 #import "WebViewInternal.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if USE(AUTOCORRECTION_PANEL)
+
 using namespace WebCore;
 
 static inline NSCorrectionIndicatorType correctionIndicatorType(AlternativeTextType alternativeTextType)
@@ -69,15 +72,11 @@ void CorrectionPanel::show(WebView* view, AlternativeTextType type, const FloatR
     m_view = view;
     NSCorrectionIndicatorType indicatorType = correctionIndicatorType(type);
     
-    NSMutableArray* alternativeStrings = 0;
-    if (!alternativeReplacementStrings.isEmpty()) {
-        size_t size = alternativeReplacementStrings.size();
-        alternativeStrings = [NSMutableArray arrayWithCapacity:size];
-        for (size_t i = 0; i < size; ++i)
-            [alternativeStrings addObject:(NSString*)alternativeReplacementStrings[i]];
-    }
+    RetainPtr<NSArray> alternativeStrings;
+    if (!alternativeReplacementStrings.isEmpty())
+        alternativeStrings = createNSArray(alternativeReplacementStrings);
 
-    [[NSSpellChecker sharedSpellChecker] showCorrectionIndicatorOfType:indicatorType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings forStringInRect:[view _convertRectFromRootView:boundingBoxOfReplacedString] view:m_view.get() completionHandler:^(NSString* acceptedString) {
+    [[NSSpellChecker sharedSpellChecker] showCorrectionIndicatorOfType:indicatorType primaryString:replacementStringAsNSString alternativeStrings:alternativeStrings.get() forStringInRect:[view _convertRectFromRootView:boundingBoxOfReplacedString] view:m_view.get() completionHandler:^(NSString* acceptedString) {
         handleAcceptedReplacement(acceptedString, replacedStringAsNSString, replacementStringAsNSString, indicatorType);
     }];
 }

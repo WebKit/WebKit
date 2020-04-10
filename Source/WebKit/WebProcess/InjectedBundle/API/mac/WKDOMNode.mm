@@ -30,6 +30,7 @@
 #import "WKBundleAPICast.h"
 #import "WKDOMInternals.h"
 #import <WebCore/Document.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKDOMNode
 
@@ -112,7 +113,7 @@
         return nil;
     Vector<WebCore::IntRect> rects;
     _impl->textRects(rects);
-    return WebKit::toNSArray(rects);
+    return createNSArray(rects).autorelease();
 }
 
 @end
@@ -121,8 +122,7 @@
 
 - (WKBundleNodeHandleRef)_copyBundleNodeHandleRef
 {
-    auto nodeHandle = WebKit::InjectedBundleNodeHandle::getOrCreate(_impl.get());
-    return toAPI(nodeHandle.leakRef());
+    return toAPI(WebKit::InjectedBundleNodeHandle::getOrCreate(_impl.get()).leakRef());
 }
 
 @end

@@ -1322,28 +1322,28 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, JSGloba
     JSLockHolder lock(vm);
 
     if (value.isString()) {
-        [array addObject:[NSNumber numberWithInt:StringValueType]];
+        [array addObject:@(StringValueType)];
         [array addObject:asString(value)->value(lexicalGlobalObject)];
     } else if (value.isNumber()) {
-        [array addObject:[NSNumber numberWithInt:DoubleValueType]];
-        [array addObject:[NSNumber numberWithDouble:value.toNumber(lexicalGlobalObject)]];
+        [array addObject:@(DoubleValueType)];
+        [array addObject:@(value.toNumber(lexicalGlobalObject))];
     } else if (value.isBoolean()) {
-        [array addObject:[NSNumber numberWithInt:BoolValueType]];
+        [array addObject:@(BoolValueType)];
         [array addObject:[NSNumber numberWithBool:value.toBoolean(lexicalGlobalObject)]];
     } else if (value.isNull())
-        [array addObject:[NSNumber numberWithInt:NullValueType]];
+        [array addObject:@(NullValueType)];
     else if (value.isObject()) {
         JSObject* object = asObject(value);
         uint64_t objectID;
         if (getObjectID(this, object, objectID)) {
-            [array addObject:[NSNumber numberWithInt:NPObjectValueType]];
-            [array addObject:[NSNumber numberWithInt:objectID]];
+            [array addObject:@(NPObjectValueType)];
+            [array addObject:@(objectID)];
         } else {
-            [array addObject:[NSNumber numberWithInt:JSObjectValueType]];
-            [array addObject:[NSNumber numberWithInt:m_localObjects.idForObject(vm, object)]];
+            [array addObject:@(JSObjectValueType)];
+            [array addObject:@(m_localObjects.idForObject(vm, object))];
         }
     } else
-        [array addObject:[NSNumber numberWithInt:VoidValueType]];
+        [array addObject:@(VoidValueType)];
 }
 
 void NetscapePluginInstanceProxy::marshalValue(JSGlobalObject* lexicalGlobalObject, JSValue value, data_t& resultData, mach_msg_type_number_t& resultLength)

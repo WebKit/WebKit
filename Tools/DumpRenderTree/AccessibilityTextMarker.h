@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AccessibilityTextMarker_h
-#define AccessibilityTextMarker_h
+#pragma once
 
 #include <JavaScriptCore/JSObjectRef.h>
 
@@ -36,14 +35,12 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
-typedef CFTypeRef PlatformTextMarker;
-typedef CFTypeRef PlatformTextMarkerRange;
+using PlatformTextMarker = id;
+using PlatformTextMarkerRange = id;
 #else
 typedef void* PlatformTextMarker;
 typedef void* PlatformTextMarkerRange;
 #endif
-
-class AccessibilityUIElement;
 
 class AccessibilityTextMarker {
 public:
@@ -58,8 +55,8 @@ public:
     
 private:
     static JSClassRef getJSClass();
-#if SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
-    RetainPtr<PlatformTextMarker> m_textMarker;
+#if PLATFORM(MAC)
+    RetainPtr<id> m_textMarker;
 #else
     PlatformTextMarker m_textMarker;
 #endif
@@ -79,8 +76,8 @@ public:
     static JSClassRef getJSClass();
 
 private:
-#if SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
-    RetainPtr<PlatformTextMarkerRange> m_textMarkerRange;
+#if PLATFORM(MAC)
+    RetainPtr<id> m_textMarkerRange;
 #else
     PlatformTextMarkerRange m_textMarkerRange;
 #endif
@@ -89,7 +86,7 @@ private:
 AccessibilityTextMarker* toTextMarker(JSObjectRef object);
 AccessibilityTextMarkerRange* toTextMarkerRange(JSObjectRef object);
 
-#if !SUPPORTS_AX_TEXTMARKERS
+#if !PLATFORM(COCOA)
 inline AccessibilityTextMarker::AccessibilityTextMarker(PlatformTextMarker) { }
 inline AccessibilityTextMarker::AccessibilityTextMarker(const AccessibilityTextMarker&) { }
 inline AccessibilityTextMarker::~AccessibilityTextMarker() { }
@@ -102,5 +99,3 @@ inline AccessibilityTextMarkerRange::~AccessibilityTextMarkerRange() { }
 inline bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange*) { return false; }
 inline PlatformTextMarkerRange AccessibilityTextMarkerRange::platformTextMarkerRange() const { return m_textMarkerRange; }
 #endif
-
-#endif // AccessibilityUIElement_h

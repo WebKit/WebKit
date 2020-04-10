@@ -99,7 +99,7 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
         else
             point.y += [font descender];
 
-        [self drawAtPoint:point withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, textColor, NSForegroundColorAttributeName, nil]];
+        [self drawAtPoint:point withAttributes:@{ NSFontAttributeName: font, NSForegroundColorAttributeName: textColor }];
     }
 }
 
@@ -115,7 +115,7 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
         return webCoreFont.width(run);
     }
 
-    return [self sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;
+    return [self sizeWithAttributes:@{ NSFontAttributeName: font }].width;
 }
 
 #endif // PLATFORM(MAC)

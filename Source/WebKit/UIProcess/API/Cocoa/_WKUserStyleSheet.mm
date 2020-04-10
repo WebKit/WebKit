@@ -33,6 +33,7 @@
 #import "WebKit2Initialize.h"
 #import "WebPageProxy.h"
 #import "_WKUserContentWorldInternal.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation _WKUserStyleSheet
 
@@ -71,7 +72,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
     WebKit::InitializeWebKit2();
 
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { WTF::String(source), API::UserStyleSheet::generateUniqueURL(), API::toStringVector(legacyWhitelist), API::toStringVector(legacyBlacklist), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserStyleUserLevel }, *userContentWorld->_contentWorld->_contentWorld);
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { WTF::String(source), API::UserStyleSheet::generateUniqueURL(), makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserStyleUserLevel }, *userContentWorld->_contentWorld->_contentWorld);
 
     return self;
 }
@@ -84,7 +85,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
     WebKit::InitializeWebKit2();
 
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { WTF::String(source), {  URL(), WTF::String([baseURL _web_originalDataAsWTFString]) }, API::toStringVector(legacyWhitelist), API::toStringVector(legacyBlacklist), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserStyleUserLevel }, *userContentWorld->_contentWorld->_contentWorld);
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { WTF::String(source), {  URL(), WTF::String([baseURL _web_originalDataAsWTFString]) }, makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserStyleUserLevel }, *userContentWorld->_contentWorld->_contentWorld);
 
     return self;
 }

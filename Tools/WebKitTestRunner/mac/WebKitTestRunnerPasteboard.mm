@@ -82,7 +82,7 @@ static NSMutableDictionary *localPasteboards;
 // of the usual WebScriptObject that is passed around
 - (NSInteger)declareType:(NSString *)type owner:(id)newOwner
 {
-    return [self declareTypes:[NSArray arrayWithObject:type] owner:newOwner];
+    return [self declareTypes:@[type] owner:newOwner];
 }
 
 @end

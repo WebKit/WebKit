@@ -94,7 +94,7 @@ static bool didReportException = false;
     };
 
     context[@"callMeBack"] = ^(JSValue *functionValue) {
-        [functionValue callWithArguments:[NSArray array]];
+        [functionValue callWithArguments:@[]];
     };
 
     context[@"checkForMyCustomProperty"] = ^(JSValue *element) {

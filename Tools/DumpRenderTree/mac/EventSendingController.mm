@@ -440,7 +440,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     assert([jsFilePaths isKindOfClass:[WebScriptObject class]]);
 
     NSPasteboard *pboard = [NSPasteboard pasteboardWithUniqueName];
-    [pboard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+    [pboard declareTypes:@[NSFilenamesPboardType] owner:nil];
 
     NSURL *currentTestURL = [NSURL URLWithString:[[mainFrame webView] mainFrameURL]];
 
@@ -1493,8 +1493,8 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
     for (SyntheticTouch *currTouch in touches) {
         [touchLocations addObject:[NSValue valueWithCGPoint:currTouch.location]];
-        [touchIdentifiers addObject:[NSNumber numberWithUnsignedInt:currTouch.identifier]];
-        [touchPhases addObject:[NSNumber numberWithUnsignedInt:currTouch.phase]];
+        [touchIdentifiers addObject:@(currTouch.identifier)];
+        [touchPhases addObject:@(currTouch.phase)];
 
         if ((currTouch.phase == UITouchPhaseEnded) || (currTouch.phase == UITouchPhaseCancelled))
             continue;

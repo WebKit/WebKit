@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
-typedef CFTypeRef PlatformTextMarkerRange;
+using PlatformTextMarkerRange = id;
 #else
 typedef void* PlatformTextMarkerRange;
 #endif
@@ -57,7 +57,7 @@ private:
     AccessibilityTextMarkerRange(const AccessibilityTextMarkerRange&);
     
 #if PLATFORM(COCOA)
-    RetainPtr<PlatformTextMarkerRange> m_textMarkerRange;
+    RetainPtr<id> m_textMarkerRange;
 #else
     PlatformTextMarkerRange m_textMarkerRange;
 #endif
@@ -67,4 +67,8 @@ private:
 inline bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange*) { return false; }
 #endif
     
+#ifdef __OBJC__
+inline Optional<RefPtr<AccessibilityTextMarkerRange>> makeVectorElement(const RefPtr<AccessibilityTextMarkerRange>*, id range) { return { { AccessibilityTextMarkerRange::create(range) } }; }
+#endif
+
 } // namespace WTR

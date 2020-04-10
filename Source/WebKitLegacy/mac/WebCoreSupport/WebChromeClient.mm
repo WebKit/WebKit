@@ -460,8 +460,8 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
     NSString *messageSource = stringForMessageSource(source);
     NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
         (NSString *)message, @"message",
-        [NSNumber numberWithUnsignedInt:lineNumber], @"lineNumber",
-        [NSNumber numberWithUnsignedInt:columnNumber], @"columnNumber",
+        @(lineNumber), @"lineNumber",
+        @(columnNumber), @"columnNumber",
         (NSString *)sourceURL, @"sourceURL",
         messageSource, @"MessageSource",
         stringForMessageLevel(level), @"MessageLevel",

@@ -199,22 +199,20 @@ using namespace WebCore;
 
 + (NSDictionary *)memoryStatistics
 {
-    WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
-    
+    auto fastMallocStatistics = WTF::fastMallocStatistics();
     JSLockHolder lock(commonVM());
     size_t heapSize = commonVM().heap.size();
     size_t heapFree = commonVM().heap.capacity() - heapSize;
-    GlobalMemoryStatistics globalMemoryStats = globalMemoryStatistics();
-    
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-                [NSNumber numberWithInt:fastMallocStatistics.reservedVMBytes], @"FastMallocReservedVMBytes",
-                [NSNumber numberWithInt:fastMallocStatistics.committedVMBytes], @"FastMallocCommittedVMBytes",
-                [NSNumber numberWithInt:fastMallocStatistics.freeListBytes], @"FastMallocFreeListBytes",
-                [NSNumber numberWithInt:heapSize], @"JavaScriptHeapSize",
-                [NSNumber numberWithInt:heapFree], @"JavaScriptFreeSize",
-                [NSNumber numberWithUnsignedInt:(unsigned int)globalMemoryStats.stackBytes], @"JavaScriptStackSize",
-                [NSNumber numberWithUnsignedInt:(unsigned int)globalMemoryStats.JITBytes], @"JavaScriptJITSize",
-            nil];
+    auto globalMemoryStats = globalMemoryStatistics();
+    return @{
+        @"FastMallocReservedVMBytes": @(fastMallocStatistics.reservedVMBytes),
+        @"FastMallocCommittedVMBytes": @(fastMallocStatistics.committedVMBytes),
+        @"FastMallocFreeListBytes": @(fastMallocStatistics.freeListBytes),
+        @"JavaScriptHeapSize": @(heapSize),
+        @"JavaScriptFreeSize": @(heapFree),
+        @"JavaScriptStackSize": @(globalMemoryStats.stackBytes),
+        @"JavaScriptJITSize": @(globalMemoryStats.JITBytes),
+    };
 }
 
 + (void)returnFreeMemoryToSystem

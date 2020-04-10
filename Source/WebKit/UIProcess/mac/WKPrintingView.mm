@@ -145,8 +145,8 @@ static BOOL isForcingPreviewUpdate;
         ASSERT(![infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey]);
         originalTopMargin = [info topMargin];
         originalBottomMargin = [info bottomMargin];
-        [infoDictionary setObject:[NSNumber numberWithDouble:originalTopMargin] forKey:WebKitOriginalTopPrintingMarginKey];
-        [infoDictionary setObject:[NSNumber numberWithDouble:originalBottomMargin] forKey:WebKitOriginalBottomPrintingMarginKey];
+        [infoDictionary setObject:@(originalTopMargin) forKey:WebKitOriginalTopPrintingMarginKey];
+        [infoDictionary setObject:@(originalBottomMargin) forKey:WebKitOriginalBottomPrintingMarginKey];
     } else {
         ASSERT([originalTopMarginNumber isKindOfClass:[NSNumber class]]);
         ASSERT([[infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey] isKindOfClass:[NSNumber class]]);

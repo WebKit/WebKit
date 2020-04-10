@@ -32,7 +32,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
-typedef CFTypeRef PlatformTextMarker;
+using PlatformTextMarker = id;
 #else
 typedef void* PlatformTextMarker;
 #endif

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AccessibilityController_h
-#define AccessibilityController_h
+#pragma once
 
 #include "AccessibilityUIElement.h"
 #include <JavaScriptCore/JSObjectRef.h>
@@ -32,9 +31,11 @@
 #include <string>
 #include <wtf/HashMap.h>
 #include <wtf/Platform.h>
+
 #if PLATFORM(WIN)
 #include <windows.h>
 #endif
+
 #if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
 #include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>
@@ -94,8 +95,8 @@ private:
     HashMap<PlatformUIElement, JSObjectRef> m_notificationListeners;
 #endif
 
-#if PLATFORM(COCOA) || PLATFORM(IOS_FAMILY)
-    RetainPtr<NotificationHandler> m_globalNotificationHandler;
+#if PLATFORM(COCOA)
+    RetainPtr<id> m_globalNotificationHandler;
 #endif
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
@@ -104,5 +105,3 @@ private:
     
     void platformResetToConsistentState();
 };
-
-#endif // AccessibilityController_h

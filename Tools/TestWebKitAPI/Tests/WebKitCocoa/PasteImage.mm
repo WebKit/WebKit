@@ -39,13 +39,13 @@
 #if PLATFORM(MAC)
 void writeImageDataToPasteboard(NSString *type, NSData *data)
 {
-    [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:type] owner:nil];
+    [[NSPasteboard generalPasteboard] declareTypes:@[type] owner:nil];
     [[NSPasteboard generalPasteboard] setData:data forType:type];
 }
 #else
 void writeImageDataToPasteboard(NSString *type, NSData *data)
 {
-    [[UIPasteboard generalPasteboard] setItems:@[[NSDictionary dictionaryWithObject:data forKey:type]]];
+    [[UIPasteboard generalPasteboard] setItems:@[@{ type: data }]];
 }
 #endif
 
@@ -155,8 +155,8 @@ TEST(PasteImage, RevealSelectionAfterPastingImage)
 #if PLATFORM(MAC)
 void writeBundleFileToPasteboard(id object)
 {
-    [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
-    [[NSPasteboard generalPasteboard] writeObjects:[NSArray arrayWithObjects:object, nil]];
+    [[NSPasteboard generalPasteboard] declareTypes:@[NSFilenamesPboardType] owner:nil];
+    [[NSPasteboard generalPasteboard] writeObjects:@[object]];
 }
 
 TEST(PasteImage, PasteGIFFile)

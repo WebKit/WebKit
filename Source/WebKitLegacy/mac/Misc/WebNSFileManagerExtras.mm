@@ -34,7 +34,6 @@
 #import <sys/stat.h>
 #import <wtf/Assertions.h>
 #import <wtf/FileSystem.h>
-#import <wtf/ObjCRuntimeExtras.h>
 
 @implementation NSFileManager (WebNSFileManagerExtras)
 

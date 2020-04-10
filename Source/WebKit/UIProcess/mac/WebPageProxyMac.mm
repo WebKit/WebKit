@@ -160,7 +160,7 @@ void WebPageProxy::searchWithSpotlight(const String& string)
 void WebPageProxy::searchTheWeb(const String& string)
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
-    [pasteboard declareTypes:[NSArray arrayWithObject:legacyStringPasteboardType()] owner:nil];
+    [pasteboard declareTypes:@[legacyStringPasteboardType()] owner:nil];
     [pasteboard setString:string forType:legacyStringPasteboardType()];
     
     NSPerformService(@"Search With %WebSearchProvider@", pasteboard);

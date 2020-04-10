@@ -119,8 +119,7 @@
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebEvent.h>
 #import <WebCore/WritingDirection.h>
-#import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
-#import <pal/ios/ManagedConfigurationSoftLink.h>
+#import <WebKit/WebSelectionRect.h> // FIXME: WebKit should not include WebKitLegacy headers!
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
@@ -135,6 +134,7 @@
 #import <wtf/SetForScope.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(DRAG_SUPPORT)
@@ -167,6 +167,8 @@
 #if USE(DICTATION_ALTERNATIVES)
 #import <WebCore/TextAlternativeWithRange.h>
 #endif
+
+#import <pal/ios/ManagedConfigurationSoftLink.h>
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
@@ -3185,7 +3187,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         [result setObject:(id)font.get() forKey:NSFontAttributeName];
     
     if (typingAttributes & WebKit::AttributeUnderline)
-        [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+        [result setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
 
     return result;
 }
@@ -3984,10 +3986,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         }
 
         strongSelf->_page->requestEvasionRectsAboveSelection([completion = WTFMove(completion)] (auto& rects) {
-            auto rectsAsValues = adoptNS([[NSMutableArray alloc] initWithCapacity:rects.size()]);
-            for (auto& floatRect : rects)
-                [rectsAsValues addObject:[NSValue valueWithCGRect:floatRect]];
-            completion(rectsAsValues.get());
+            completion(createNSArray(rects).get());
         });
     });
 }
@@ -7410,7 +7409,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     for (NSItemProvider *itemProvider in adjustedItemProviders) {
         auto item = adoptNS([[UIDragItem alloc] initWithItemProvider:itemProvider]);
         [item _setPrivateLocalContext:@(stagedDragSource.itemIdentifier)];
-        [dragItems addObject:item.autorelease()];
+        [dragItems addObject:item.get()];
     }
 
     return dragItems;
@@ -8440,7 +8439,6 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
                 @"isImage": [NSNumber numberWithBool:_positionInformation.isImage],
                 @"imageURL": _positionInformation.imageURL.isValid() ? WTF::userVisibleString(_positionInformation.imageURL) : @""
             } };
-
         NSString *url = [_previewItemController previewData][UIPreviewDataLink];
         return @{ userInterfaceItem: @{
             @"url": url,

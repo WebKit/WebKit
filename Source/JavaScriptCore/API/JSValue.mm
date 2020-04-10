@@ -46,7 +46,6 @@
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
-#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 #import <wtf/text/StringHash.h>
@@ -742,7 +741,7 @@ static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef co
             // Normalize the number, so it will unique correctly in the hash map -
             // it's nicer not to leak this internal implementation detail!
             value = JSValueMakeNumber(context, JSValueToNumber(context, value, 0));
-            primitive = [NSNumber numberWithDouble:JSValueToNumber(context, value, 0)];
+            primitive = @(JSValueToNumber(context, value, 0));
         } else if (JSValueIsString(context, value)) {
             // Would be nice to unique strings, too.
             auto jsstring = adoptRef(JSValueToStringCopy(context, value, 0));
@@ -837,7 +836,7 @@ id valueToNumber(JSGlobalContextRef context, JSValueRef value, JSValueRef* excep
         return JSValueToBoolean(context, value) ? @YES : @NO;
 
     double result = JSValueToNumber(context, value, exception);
-    return [NSNumber numberWithDouble:*exception ? std::numeric_limits<double>::quiet_NaN() : result];
+    return @(*exception ? std::numeric_limits<double>::quiet_NaN() : result);
 }
 
 id valueToString(JSGlobalContextRef context, JSValueRef value, JSValueRef* exception)

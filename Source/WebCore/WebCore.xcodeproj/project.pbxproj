@@ -12769,11 +12769,11 @@
 		B27535480B053814002CE64F /* IntSizeHash.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IntSizeHash.h; sourceTree = "<group>"; };
 		B275354A0B053814002CE64F /* ColorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ColorMac.mm; sourceTree = "<group>"; };
 		B275354B0B053814002CE64F /* FloatPointMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatPointMac.mm; sourceTree = "<group>"; };
-		B275354C0B053814002CE64F /* FloatRectMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatRectMac.mm; sourceTree = "<group>"; };
+		B275354C0B053814002CE64F /* FloatRectCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatRectCocoa.mm; sourceTree = "<group>"; };
 		B275354D0B053814002CE64F /* FloatSizeMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatSizeMac.mm; sourceTree = "<group>"; };
 		B275354E0B053814002CE64F /* ImageMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageMac.mm; sourceTree = "<group>"; };
 		B275354F0B053814002CE64F /* IntPointMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntPointMac.mm; sourceTree = "<group>"; };
-		B27535500B053814002CE64F /* IntRectMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntRectMac.mm; sourceTree = "<group>"; };
+		B27535500B053814002CE64F /* IntRectCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntRectCocoa.mm; sourceTree = "<group>"; };
 		B27535510B053814002CE64F /* IntSizeMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntSizeMac.mm; sourceTree = "<group>"; };
 		B27535520B053814002CE64F /* Path.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Path.cpp; sourceTree = "<group>"; };
 		B27535530B053814002CE64F /* Path.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Path.h; sourceTree = "<group>"; };
@@ -25147,7 +25147,6 @@
 				49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */,
 				2DE70022192FE82A00B0975C /* DisplayRefreshMonitorMac.h */,
 				B275354B0B053814002CE64F /* FloatPointMac.mm */,
-				B275354C0B053814002CE64F /* FloatRectMac.mm */,
 				B275354D0B053814002CE64F /* FloatSizeMac.mm */,
 				B2AFFC740D00A5C10030074D /* FontCacheMac.mm */,
 				B2AFFC750D00A5C10030074D /* FontCustomPlatformData.cpp */,
@@ -25156,7 +25155,6 @@
 				B275358D0B053A66002CE64F /* IconMac.mm */,
 				B275354E0B053814002CE64F /* ImageMac.mm */,
 				B275354F0B053814002CE64F /* IntPointMac.mm */,
-				B27535500B053814002CE64F /* IntRectMac.mm */,
 				B27535510B053814002CE64F /* IntSizeMac.mm */,
 				2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */,
 				163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */,
@@ -25513,6 +25511,7 @@
 			children = (
 				F48D2AA32159740D00C6752B /* ColorCocoa.h */,
 				F48D2AA42159740D00C6752B /* ColorCocoa.mm */,
+				B275354C0B053814002CE64F /* FloatRectCocoa.mm */,
 				1C3969CF1B74211E002BCFA7 /* FontCacheCoreText.cpp */,
 				C2458E611FE8979E00594759 /* FontCacheCoreText.h */,
 				B2AFFC780D00A5C10030074D /* FontCascadeCocoa.mm */,
@@ -25525,6 +25524,7 @@
 				49FFBF1C11C8550E006A7118 /* GraphicsContextGLOpenGLCocoa.mm */,
 				CDA595962146DF7800A84185 /* HEVCUtilitiesCocoa.h */,
 				CDA595972146DF7800A84185 /* HEVCUtilitiesCocoa.mm */,
+				B27535500B053814002CE64F /* IntRectCocoa.mm */,
 				2D0B4AA918DA1CCD00434DE1 /* IOSurface.h */,
 				2D0B4AAA18DA1CCD00434DE1 /* IOSurface.mm */,
 				AD9FF6E01908391D003B61E0 /* IOSurfacePoolCocoa.mm */,

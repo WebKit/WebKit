@@ -1,3 +1,23 @@
+2020-04-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Simplify NSArray, NSDictionary, and NSNumber idioms throughout WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=210138
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::runOpenPanel): Use createNSArray.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition enclosingRangeWithDictationPhraseAlternatives:]):
+        Use createNSArray.
+
+        * WebCoreSupport/WebVisiblePositionInternal.h:
+        Added #if so that this correctly doesn't compile anything on Mac.
+
+        * WebView/WebPDFViewIOS.mm:
+        (+[WebPDFView supportedMIMETypes]): Use @[].
+
 2020-04-04  Darin Adler  <darin@apple.com>
 
         Stop using live ranges in DocumentMarkerController

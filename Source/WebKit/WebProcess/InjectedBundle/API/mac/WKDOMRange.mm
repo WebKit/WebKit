@@ -31,6 +31,7 @@
 #import "WKDOMInternals.h"
 #import <WebCore/Document.h>
 #import <WebCore/VisibleUnits.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKDOMRange
 
@@ -130,7 +131,7 @@
     _impl->ownerDocument().updateLayoutIgnorePendingStylesheets();
     Vector<WebCore::IntRect> rects;
     _impl->absoluteTextRects(rects);
-    return WebKit::toNSArray(rects);
+    return createNSArray(rects).autorelease();
 }
 
 - (WKDOMRange *)rangeByExpandingToWordBoundaryByCharacters:(NSUInteger)characters inDirection:(WKDOMRangeDirection)direction

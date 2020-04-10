@@ -71,50 +71,49 @@ class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
 
 + (NSArray *)statistics
 {
-    WebCore::MemoryCache::Statistics s = WebCore::MemoryCache::singleton().getStatistics();
-
-    return [NSArray arrayWithObjects:
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:s.images.count], @"Images",
-            [NSNumber numberWithInt:s.cssStyleSheets.count], @"CSS",
+    auto s = WebCore::MemoryCache::singleton().getStatistics();
+    return @[
+        @{
+            @"Images": @(s.images.count),
+            @"CSS": @(s.cssStyleSheets.count),
 #if ENABLE(XSLT)
-            [NSNumber numberWithInt:s.xslStyleSheets.count], @"XSL",
+            @"XSL": @(s.xslStyleSheets.count),
 #else
-            [NSNumber numberWithInt:0], @"XSL",
+            @"XSL": @(0),
 #endif
-            [NSNumber numberWithInt:s.scripts.count], @"JavaScript",
-            nil],
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:s.images.size], @"Images",
-            [NSNumber numberWithInt:s.cssStyleSheets.size] ,@"CSS",
+            @"JavaScript": @(s.scripts.count),
+        },
+        @{
+            @"Images": @(s.images.size),
+            @"CSS": @(s.cssStyleSheets.size),
 #if ENABLE(XSLT)
-            [NSNumber numberWithInt:s.xslStyleSheets.size], @"XSL",
+            @"XSL": @(s.xslStyleSheets.size),
 #else
-            [NSNumber numberWithInt:0], @"XSL",
+            @"XSL": @(0),
 #endif
-            [NSNumber numberWithInt:s.scripts.size], @"JavaScript",
-            nil],
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:s.images.liveSize], @"Images",
-            [NSNumber numberWithInt:s.cssStyleSheets.liveSize] ,@"CSS",
+            @"JavaScript": @(s.scripts.size),
+        },
+        @{
+            @"Images": @(s.images.liveSize),
+            @"CSS": @(s.cssStyleSheets.liveSize),
 #if ENABLE(XSLT)
-            [NSNumber numberWithInt:s.xslStyleSheets.liveSize], @"XSL",
+            @"XSL": @(s.xslStyleSheets.liveSize),
 #else
-            [NSNumber numberWithInt:0], @"XSL",
+            @"XSL": @(0),
 #endif
-            [NSNumber numberWithInt:s.scripts.liveSize], @"JavaScript",
-            nil],
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:s.images.decodedSize], @"Images",
-            [NSNumber numberWithInt:s.cssStyleSheets.decodedSize] ,@"CSS",
+            @"JavaScript": @(s.scripts.liveSize),
+        },
+        @{
+            @"Images": @(s.images.decodedSize),
+            @"CSS": @(s.cssStyleSheets.decodedSize),
 #if ENABLE(XSLT)
-            [NSNumber numberWithInt:s.xslStyleSheets.decodedSize], @"XSL",
+            @"XSL": @(s.xslStyleSheets.decodedSize),
 #else
-            [NSNumber numberWithInt:0], @"XSL",
+            @"XSL": @(0),
 #endif
-            [NSNumber numberWithInt:s.scripts.decodedSize], @"JavaScript",
-            nil],
-        nil];
+            @"JavaScript": @(s.scripts.decodedSize),
+        },
+    ];
 }
 
 + (void)empty

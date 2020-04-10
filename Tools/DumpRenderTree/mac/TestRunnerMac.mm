@@ -173,19 +173,16 @@ void TestRunner::clearApplicationCacheForOrigin(JSStringRef url)
     [origin release];
 }
 
-JSValueRef originsArrayToJS(JSContextRef context, NSArray *origins)
+static JSObjectRef originsArrayToJS(JSContextRef context, NSArray *origins)
 {
-    NSUInteger count = [origins count];
-
-    JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
-    JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
+    auto count = [origins count];
+    auto array = JSObjectMakeArray(context, 0, nullptr, nullptr);
     for (NSUInteger i = 0; i < count; i++) {
         NSString *origin = [[origins objectAtIndex:i] databaseIdentifier];
         auto originJS = adopt(JSStringCreateWithCFString((__bridge CFStringRef)origin));
-        JSObjectSetPropertyAtIndex(context, arrayObj, i, JSValueMakeString(context, originJS.get()), 0);
+        JSObjectSetPropertyAtIndex(context, array, i, JSValueMakeString(context, originJS.get()), 0);
     }
-
-    return arrayResult;
+    return array;
 }
 
 JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)

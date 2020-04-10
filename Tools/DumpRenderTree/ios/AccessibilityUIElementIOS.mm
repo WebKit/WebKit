@@ -41,24 +41,9 @@
 
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
-AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
+AccessibilityUIElement::AccessibilityUIElement(id element)
     : m_element(element)
-    , m_notificationHandler(0)
 {
-    [m_element retain];
-}
-
-AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& other)
-    : m_element(other.m_element)
-    , m_notificationHandler(0)
-
-{
-    [m_element retain];
-}
-
-AccessibilityUIElement::~AccessibilityUIElement()
-{
-    [m_element release];
 }
 
 @interface NSObject (UIAccessibilityHidden)
@@ -462,9 +447,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const
 
 AccessibilityTextMarkerRange AccessibilityUIElement::lineTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
 {
-    id startTextMarker = [m_element lineStartMarkerForMarker:(id)textMarker->platformTextMarker()];
-    id endTextMarker = [m_element lineEndMarkerForMarker:(id)textMarker->platformTextMarker()];
-    NSArray *textMarkers = [NSArray arrayWithObjects:startTextMarker, endTextMarker, nil];
+    id startTextMarker = [m_element lineStartMarkerForMarker:textMarker->platformTextMarker()];
+    id endTextMarker = [m_element lineEndMarkerForMarker:textMarker->platformTextMarker()];
+    NSArray *textMarkers = @[startTextMarker, endTextMarker];
     
     id textMarkerRange = [m_element textMarkerRangeForMarkers:textMarkers];
     return AccessibilityTextMarkerRange(textMarkerRange);
@@ -472,7 +457,7 @@ AccessibilityTextMarkerRange AccessibilityUIElement::lineTextMarkerRangeForTextM
 
 AccessibilityTextMarkerRange AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange* startRange, bool forward)
 {
-    id misspellingRange = [m_element misspellingTextMarkerRange:(id)startRange->platformTextMarkerRange() forward:forward];
+    id misspellingRange = [m_element misspellingTextMarkerRange:startRange->platformTextMarkerRange() forward:forward];
     return AccessibilityTextMarkerRange(misspellingRange);
 }
 
@@ -503,34 +488,34 @@ void AccessibilityUIElement::resetSelectedTextMarkerRange()
 
 int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange* range)
 {
-    id textMarkers = (id)range->platformTextMarkerRange();
+    id textMarkers = range->platformTextMarkerRange();
     return [m_element lengthForTextMarkers:textMarkers];
 }
 
 AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
 {
-    NSArray *textMarkers = [NSArray arrayWithObjects:(id)startMarker->platformTextMarker(), (id)endMarker->platformTextMarker(), nil];
+    NSArray *textMarkers = @[startMarker->platformTextMarker(), endMarker->platformTextMarker()];
     id textMarkerRange = [m_element textMarkerRangeForMarkers:textMarkers];
     return AccessibilityTextMarkerRange(textMarkerRange);
 }
 
 AccessibilityTextMarker AccessibilityUIElement::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
 {
-    id textMarkers = (id)range->platformTextMarkerRange();
+    id textMarkers = range->platformTextMarkerRange();
     id textMarker = [m_element startOrEndTextMarkerForTextMarkers:textMarkers isStart:YES];
     return AccessibilityTextMarker(textMarker);
 }
 
 AccessibilityTextMarker AccessibilityUIElement::endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
 {
-    id textMarkers = (id)range->platformTextMarkerRange();
+    id textMarkers = range->platformTextMarkerRange();
     id textMarker = [m_element startOrEndTextMarkerForTextMarkers:textMarkers isStart:NO];
     return AccessibilityTextMarker(textMarker);
 }
 
 AccessibilityUIElement AccessibilityUIElement::accessibilityElementForTextMarker(AccessibilityTextMarker* marker)
 {
-    id obj = [m_element accessibilityObjectForTextMarker:(id)marker->platformTextMarker()];
+    id obj = [m_element accessibilityObjectForTextMarker:marker->platformTextMarker()];
     if (obj)
         return AccessibilityUIElement(obj);
     return nullptr;
@@ -553,19 +538,19 @@ AccessibilityTextMarker AccessibilityUIElement::textMarkerForPoint(int x, int y)
 
 AccessibilityTextMarker AccessibilityUIElement::previousTextMarker(AccessibilityTextMarker* textMarker)
 {
-    id previousMarker = [m_element previousMarkerForMarker:(id)textMarker->platformTextMarker()];
+    id previousMarker = [m_element previousMarkerForMarker:textMarker->platformTextMarker()];
     return AccessibilityTextMarker(previousMarker);
 }
 
 AccessibilityTextMarker AccessibilityUIElement::nextTextMarker(AccessibilityTextMarker* textMarker)
 {
-    id nextMarker = [m_element nextMarkerForMarker:(id)textMarker->platformTextMarker()];
+    id nextMarker = [m_element nextMarkerForMarker:textMarker->platformTextMarker()];
     return AccessibilityTextMarker(nextMarker);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange* markerRange)
 {
-    id textMarkers = (id)markerRange->platformTextMarkerRange();
+    id textMarkers = markerRange->platformTextMarkerRange();
     if (!textMarkers || ![textMarkers isKindOfClass:[NSArray class]])
         return createEmptyJSString();
     return [[m_element stringForTextMarkers:textMarkers] createJSStringRef];
@@ -670,7 +655,7 @@ AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeMatchesTextN
 {
     NSArray *textMarkers = nil;
     if (startMarker->platformTextMarker() && endMarker->platformTextMarker())
-        textMarkers = [NSArray arrayWithObjects:(id)startMarker->platformTextMarker(), (id)endMarker->platformTextMarker(), nil];
+        textMarkers = @[startMarker->platformTextMarker(), endMarker->platformTextMarker()];
     id textMarkerRange = [m_element textMarkerRangeFromMarkers:textMarkers withText:[NSString stringWithJSStringRef:text]];
     return AccessibilityTextMarkerRange(textMarkerRange);
 }

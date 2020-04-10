@@ -39,25 +39,25 @@
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <wtf/Assertions.h>
-#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WebPDFRepresentation
 
 + (NSArray *)postScriptMIMETypes
 {
-    return [NSArray arrayWithObjects:
+    return @[
         @"application/postscript",
-        nil];
+    ];
 }
 
 + (NSArray *)supportedMIMETypes
 {
     return [[[self class] postScriptMIMETypes] arrayByAddingObjectsFromArray:
-        [NSArray arrayWithObjects:
+        @[
             @"text/pdf",
             @"application/pdf",
-            nil]];
+        ]
+    ];
 }
 
 + (Class)PDFDocumentClass

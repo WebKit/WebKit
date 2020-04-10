@@ -201,7 +201,7 @@ TEST(WKWebsiteDataStore, RemoveNonPersistentCredentials)
     TestWebKitAPI::Util::run(&done);
 
     done = false;
-    [websiteDataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] forDataRecords:[NSArray arrayWithObject:expectedRecord.get()] completionHandler:^(void) {
+    [websiteDataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] forDataRecords:@[expectedRecord.get()] completionHandler:^(void) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

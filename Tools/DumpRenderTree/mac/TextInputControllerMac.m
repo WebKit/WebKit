@@ -387,7 +387,7 @@ NSString *NSTextInsertionUndoableAttributeName;
 
     if (textInput) {
         NSRange range = [textInput markedRange];
-        return [NSArray arrayWithObjects:[NSNumber numberWithUnsignedInt:range.location], [NSNumber numberWithUnsignedInt:range.length], nil];
+        return @[@(range.location), @(range.length)];
     }
 
     return nil;
@@ -399,7 +399,7 @@ NSString *NSTextInsertionUndoableAttributeName;
 
     if (textInput) {
         NSRange range = [textInput selectedRange];
-        return [NSArray arrayWithObjects:[NSNumber numberWithUnsignedInt:range.location], [NSNumber numberWithUnsignedInt:range.length], nil];
+        return @[@(range.location), @(range.length)];
     }
 
     return nil;
@@ -415,12 +415,7 @@ NSString *NSTextInsertionUndoableAttributeName;
             rect.origin = [[webView window] convertScreenToBase:rect.origin];
             rect = [webView convertRect:rect fromView:nil];
         }
-        return [NSArray arrayWithObjects:
-            [NSNumber numberWithFloat:rect.origin.x],
-            [NSNumber numberWithFloat:rect.origin.y],
-            [NSNumber numberWithFloat:rect.size.width],
-            [NSNumber numberWithFloat:rect.size.height],
-            nil];
+        return @[ @(rect.origin.x), @(rect.origin.y), @(rect.size.width), @(rect.size.height) ];
     }
 
     return nil;
@@ -484,7 +479,7 @@ NSString *NSTextInsertionUndoableAttributeName;
     if (!subStringWithAlternative)
         return nil;
 
-    NSTextAlternatives* alternativeObject = [[[NSTextAlternatives alloc] initWithPrimaryString:subStringWithAlternative alternativeStrings:[NSArray arrayWithObject:alternative]] autorelease];
+    NSTextAlternatives* alternativeObject = [[[NSTextAlternatives alloc] initWithPrimaryString:subStringWithAlternative alternativeStrings:@[alternative]] autorelease];
     if (!alternativeObject)
         return nil;
 
@@ -538,7 +533,7 @@ NSString *NSTextInsertionUndoableAttributeName;
 
     [modifiers release];
     
-    id result = [inputMethodHandler callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObjects:inputMethodHandler, eventParam, nil]];
+    id result = [inputMethodHandler callWebScriptMethod:@"call" withArguments:@[inputMethodHandler, eventParam]];
     if (![result respondsToSelector:@selector(boolValue)] || ![result boolValue]) {
         IGNORE_WARNINGS_BEGIN("undeclared-selector")
         [sender doCommandBySelector:@selector(noop:)]; // AppKit sends noop: if the ime does not handle an event

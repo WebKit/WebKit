@@ -1,3 +1,25 @@
+2020-04-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Simplify NSArray, NSDictionary, and NSNumber idioms throughout WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=210138
+
+        Reviewed by Alex Christensen.
+
+        * WTF.xcodeproj/project.pbxproj: Added VectorCocoa.h.
+        * wtf/PlatformMac.cmake: Ditto.
+
+        * wtf/cocoa/NSURLExtras.mm: Removed unneeded include.
+        * wtf/cocoa/URLCocoa.mm: Ditto.
+
+        * wtf/cocoa/VectorCocoa.h: Added. Contains createNSArray and makeVector
+        function templates for converting NSArray to and from Vector.
+
+        * wtf/text/WTFString.h: Added makeNSArrayElement and makeVectorElement
+        functions, making createNSArray and makeVector compatible with String.
+        * wtf/text/cocoa/StringCocoa.mm:
+        (WTF::makeNSArrayElement): Added.
+        (WTF::makeVectorElement): Added.
+
 2020-04-09  David Kilzer  <ddkilzer@apple.com>
 
         Add using WTF::isInBounds to CheckedArithmetic.h

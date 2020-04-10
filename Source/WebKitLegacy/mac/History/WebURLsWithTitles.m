@@ -41,7 +41,7 @@
     static NSArray *cannedArray = nil;
 
     if (cannedArray == nil) {
-        cannedArray = [[NSArray arrayWithObject:WebURLsWithTitlesPboardType] retain];
+        cannedArray = [@[WebURLsWithTitlesPboardType] retain];
     }
 
     return cannedArray;
@@ -73,7 +73,7 @@
         [titlesOrEmptyStrings addObject:(titles == nil) ? @"" : [[titles objectAtIndex:index] _webkit_stringByTrimmingWhitespace]];
     }
 
-    [pasteboard setPropertyList:[NSArray arrayWithObjects:URLStrings, titlesOrEmptyStrings, nil]
+    [pasteboard setPropertyList:@[URLStrings, titlesOrEmptyStrings]
                         forType:WebURLsWithTitlesPboardType];
 }
 

@@ -43,7 +43,7 @@ static void makeRenderLayer(CALayer *pluginLayer, uint32_t layerHostingContextID
     CALayer *renderLayer = [CALayer _web_renderLayerWithContextID:layerHostingContextID];
     [renderLayer setFrame:[pluginLayer bounds]];
     [renderLayer setAutoresizingMask:kCALayerWidthSizable | kCALayerHeightSizable];
-    [pluginLayer setSublayers:[NSArray arrayWithObject:renderLayer]];
+    [pluginLayer setSublayers:@[renderLayer]];
 }
 
 PlatformLayer* PluginProxy::pluginLayer()

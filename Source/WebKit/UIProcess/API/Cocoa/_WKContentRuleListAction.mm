@@ -26,6 +26,8 @@
 #import "config.h"
 #import "_WKContentRuleListActionInternal.h"
 
+#import <wtf/cocoa/VectorCocoa.h>
+
 @implementation _WKContentRuleListAction
 
 - (void)dealloc
@@ -52,14 +54,10 @@
 
 - (NSArray<NSString *> *)notifications
 {
-    const auto& vector = _action->notifications();
+    auto& vector = _action->notifications();
     if (vector.isEmpty())
         return nil;
-
-    NSMutableArray<NSString *> *array = [[[NSMutableArray alloc] initWithCapacity:vector.size()] autorelease];
-    for (const auto& notification : vector)
-        [array addObject:notification];
-    return array;
+    return createNSArray(vector).autorelease();
 }
 
 - (API::Object&)_apiObject

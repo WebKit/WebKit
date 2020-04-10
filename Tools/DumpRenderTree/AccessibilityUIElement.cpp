@@ -307,6 +307,15 @@ static JSValueRef indexOfChildCallback(JSContextRef context, JSObjectRef functio
     return JSValueMakeNumber(context, (double)toAXElement(thisObject)->indexOfChild(childElement));
 }
 
+static JSObjectRef convertElementsToObjectArray(JSContextRef context, const Vector<AccessibilityUIElement>& elements)
+{
+    auto array = JSObjectMakeArray(context, 0, nullptr, nullptr);
+    unsigned size = elements.size();
+    for (unsigned i = 0; i < size; ++i)
+        JSObjectSetPropertyAtIndex(context, array, i, AccessibilityUIElement::makeJSAccessibilityUIElement(context, elements[i]), 0);
+    return array;
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 static JSValueRef headerElementAtIndexCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -327,20 +336,14 @@ static JSValueRef elementsForRangeCallback(JSContextRef context, JSObjectRef fun
 {
     if (argumentCount != 2)
         return 0;
-    
+
     unsigned location = JSValueToNumber(context, arguments[0], exception);
     unsigned length = JSValueToNumber(context, arguments[1], exception);
-    
+
     Vector<AccessibilityUIElement> elements;
     toAXElement(thisObject)->elementsForRange(location, length, elements);
-    
-    JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
-    JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
-    unsigned elementsSize = elements.size();
-    for (unsigned k = 0; k < elementsSize; ++k)
-        JSObjectSetPropertyAtIndex(context, arrayObj, k, AccessibilityUIElement::makeJSAccessibilityUIElement(context, elements[k]), 0);
-    
-    return arrayResult;
+
+    return convertElementsToObjectArray(context, elements);
 }
 
 static JSValueRef increaseTextSelectionCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -615,30 +618,18 @@ static JSValueRef stringAttributeValueCallback(JSContextRef context, JSObjectRef
     return result;
 }
 
-static JSValueRef convertElementsToObjectArray(JSContextRef context, Vector<AccessibilityUIElement>& elements, JSValueRef* exception)
-{
-    JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
-    JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
-
-    size_t elementCount = elements.size();
-    for (size_t i = 0; i < elementCount; ++i)
-        JSObjectSetPropertyAtIndex(context, arrayObj, i, AccessibilityUIElement::makeJSAccessibilityUIElement(context, elements[i]), 0);
-
-    return arrayResult;
-}
-
 static JSValueRef columnHeadersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     Vector<AccessibilityUIElement> elements;
     toAXElement(thisObject)->columnHeaders(elements);
-    return convertElementsToObjectArray(context, elements, exception);
+    return convertElementsToObjectArray(context, elements);
 }
 
 static JSValueRef rowHeadersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     Vector<AccessibilityUIElement> elements;
     toAXElement(thisObject)->rowHeaders(elements);
-    return convertElementsToObjectArray(context, elements, exception);
+    return convertElementsToObjectArray(context, elements);
 }
 
 static JSValueRef uiElementArrayAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -650,7 +641,7 @@ static JSValueRef uiElementArrayAttributeValueCallback(JSContextRef context, JSO
     
     Vector<AccessibilityUIElement> elements;
     toAXElement(thisObject)->uiElementArrayAttributeValue(attribute.get(), elements);
-    return convertElementsToObjectArray(context, elements, exception);
+    return convertElementsToObjectArray(context, elements);
 }
 
 static JSValueRef uiElementAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

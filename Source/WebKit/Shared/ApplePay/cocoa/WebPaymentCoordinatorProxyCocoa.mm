@@ -32,10 +32,12 @@
 #import "WebPaymentCoordinatorProxy.h"
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentHeaders.h>
-#import <pal/cocoa/PassKitSoftLink.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
+#import <pal/cocoa/PassKitSoftLink.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebPaymentCoordinatorProxyCocoaAdditions.mm>
@@ -131,14 +133,6 @@ static PKMerchantCapability toPKMerchantCapabilities(const WebCore::ApplePaySess
     return result;
 }
 
-static RetainPtr<NSArray> toSupportedNetworks(const Vector<String>& supportedNetworks)
-{
-    auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:supportedNetworks.size()]);
-    for (auto& supportedNetwork : supportedNetworks)
-        [result addObject:supportedNetwork];
-    return result;
-}
-
 static PKShippingType toPKShippingType(WebCore::ApplePaySessionPaymentRequest::ShippingType shippingType)
 {
     switch (shippingType) {
@@ -212,7 +206,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     [result setRequiredBillingContactFields:toPKContactFields(paymentRequest.requiredBillingContactFields()).get()];
     [result setRequiredShippingContactFields:toPKContactFields(paymentRequest.requiredShippingContactFields()).get()];
 
-    [result setSupportedNetworks:toSupportedNetworks(paymentRequest.supportedNetworks()).get()];
+    [result setSupportedNetworks:createNSArray(paymentRequest.supportedNetworks()).get()];
     [result setMerchantCapabilities:toPKMerchantCapabilities(paymentRequest.merchantCapabilities())];
 
     [result setShippingType:toPKShippingType(paymentRequest.shippingType())];

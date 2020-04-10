@@ -28,11 +28,11 @@
 #import "AccessibilityTextMarker.h"
 #import "DumpRenderTree.h"
 
-#if SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 // MARK: AccessibilityTextMarker
 
-AccessibilityTextMarker::AccessibilityTextMarker(PlatformTextMarker marker)
+AccessibilityTextMarker::AccessibilityTextMarker(id marker)
     : m_textMarker(marker)
 {
 }
@@ -48,17 +48,17 @@ AccessibilityTextMarker::~AccessibilityTextMarker()
 
 bool AccessibilityTextMarker::isEqual(AccessibilityTextMarker* other)
 {
-    return [(__bridge id)platformTextMarker() isEqual:(__bridge id)other->platformTextMarker()];
+    return [platformTextMarker() isEqual:other->platformTextMarker()];
 }
 
-PlatformTextMarker AccessibilityTextMarker::platformTextMarker() const 
+id AccessibilityTextMarker::platformTextMarker() const
 { 
     return m_textMarker.get();
 }
 
 // MARK: AccessibilityTextMarkerRange
 
-AccessibilityTextMarkerRange::AccessibilityTextMarkerRange(PlatformTextMarkerRange markerRange)
+AccessibilityTextMarkerRange::AccessibilityTextMarkerRange(id markerRange)
     : m_textMarkerRange(markerRange)
 {
 }
@@ -74,12 +74,12 @@ AccessibilityTextMarkerRange::~AccessibilityTextMarkerRange()
 
 bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange* other)
 {
-    return [(__bridge id)platformTextMarkerRange() isEqual:(__bridge id)other->platformTextMarkerRange()];
+    return [platformTextMarkerRange() isEqual:other->platformTextMarkerRange()];
 }
 
-PlatformTextMarkerRange AccessibilityTextMarkerRange::platformTextMarkerRange() const
+id AccessibilityTextMarkerRange::platformTextMarkerRange() const
 {
     return m_textMarkerRange.get();
 }
 
-#endif // SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

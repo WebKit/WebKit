@@ -162,7 +162,7 @@ bool MediaRecorderPrivateWriter::setVideoInput(int width, int height)
     ASSERT(!m_videoInput);
     
     NSDictionary *compressionProperties = @{
-        AVVideoAverageBitRateKey : [NSNumber numberWithInt:width * height * 12],
+        AVVideoAverageBitRateKey : @(width * height * 12),
         AVVideoExpectedSourceFrameRateKey : @(30),
         AVVideoMaxKeyFrameIntervalKey : @(120),
         AVVideoProfileLevelKey : AVVideoProfileLevelH264MainAutoLevel
@@ -170,8 +170,8 @@ bool MediaRecorderPrivateWriter::setVideoInput(int width, int height)
 
     NSDictionary *videoSettings = @{
         AVVideoCodecKey: AVVideoCodecH264,
-        AVVideoWidthKey: [NSNumber numberWithInt:width],
-        AVVideoHeightKey: [NSNumber numberWithInt:height],
+        AVVideoWidthKey: @(width),
+        AVVideoHeightKey: @(height),
         AVVideoCompressionPropertiesKey: compressionProperties
     };
     

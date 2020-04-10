@@ -40,7 +40,7 @@ WebSelectionServiceController::WebSelectionServiceController(WebView *webView)
 {
 }
 
-void WebSelectionServiceController::handleSelectionServiceClick(WebCore::FrameSelection& selection, const Vector<String>& telephoneNumbers, const WebCore::IntPoint& point)
+void WebSelectionServiceController::handleSelectionServiceClick(WebCore::FrameSelection& selection, const Vector<String>& /*telephoneNumbers*/, const WebCore::IntPoint& point)
 {
     Page* page = [m_webView page];
     if (!page)

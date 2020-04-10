@@ -158,21 +158,21 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 - (NSDictionary *)dictionaryRepresentation
 {
     BackForwardList *coreBFList = core(self);
-    
+
     auto& historyItems = coreBFList->entries();
     unsigned size = historyItems.size();
     NSMutableArray *entriesArray = [[NSMutableArray alloc] initWithCapacity:size];
     for (unsigned i = 0; i < size; ++i)
         [entriesArray addObject:[kit(const_cast<WebCore::HistoryItem*>(historyItems[i].ptr())) dictionaryRepresentationIncludingChildren:NO]];
-    
-    NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-        entriesArray, WebBackForwardListDictionaryEntriesKey,
-        [NSNumber numberWithUnsignedInt:coreBFList->current()], WebBackForwardListDictionaryCurrentKey,
-        [NSNumber numberWithInt:coreBFList->capacity()], WebBackForwardListDictionaryCapacityKey,
-        nil];
-        
+
+    NSDictionary *dictionary = @{
+        WebBackForwardListDictionaryEntriesKey: entriesArray,
+        WebBackForwardListDictionaryCurrentKey: @(coreBFList->current()),
+        WebBackForwardListDictionaryCapacityKey: @(coreBFList->capacity()),
+    };
+
     [entriesArray release];
-    
+
     return dictionary;
 }
 

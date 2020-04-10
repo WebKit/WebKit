@@ -2136,7 +2136,7 @@ static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrS
     int quoteLevel = blockquoteLevel(renderer);
     
     if (quoteLevel)
-        [attrString addAttribute:UIAccessibilityTokenBlockquoteLevel value:[NSNumber numberWithInt:quoteLevel] range:range];
+        [attrString addAttribute:UIAccessibilityTokenBlockquoteLevel value:@(quoteLevel) range:range];
     else
         [attrString removeAttribute:UIAccessibilityTokenBlockquoteLevel range:range];
 }
@@ -2150,7 +2150,7 @@ static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrStri
     int parentHeadingLevel = parentObject->headingLevel();
     
     if (parentHeadingLevel)
-        [attrString addAttribute:UIAccessibilityTokenHeadingLevel value:[NSNumber numberWithInt:parentHeadingLevel] range:range];
+        [attrString addAttribute:UIAccessibilityTokenHeadingLevel value:@(parentHeadingLevel) range:range];
     else
         [attrString removeAttribute:UIAccessibilityTokenHeadingLevel range:range];
 }
@@ -2443,7 +2443,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (!startMarker || !endMarker)
         return nil;
     
-    return [NSArray arrayWithObjects:startMarker, endMarker, nil];
+    return @[startMarker, endMarker];
 }
 
 - (WebAccessibilityTextMarker *)textMarkerForPosition:(NSInteger)position
@@ -2468,7 +2468,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (!startMarker || !endMarker)
         return nil;
     
-    NSArray* array = [self arrayOfTextForTextMarkers:[NSArray arrayWithObjects:startMarker, endMarker, nil] attributed:attributed];
+    NSArray* array = [self arrayOfTextForTextMarkers:@[startMarker, endMarker] attributed:attributed];
     Class returnClass = attributed ? [NSMutableAttributedString class] : [NSMutableString class];
     id returnValue = [[(NSString *)[returnClass alloc] init] autorelease];
     
@@ -2586,7 +2586,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (!startMarker || !endMarker)
         return nil;
     
-    NSArray* array = [self arrayOfTextForTextMarkers:[NSArray arrayWithObjects:startMarker, endMarker, nil] attributed:NO];
+    NSArray* array = [self arrayOfTextForTextMarkers:@[startMarker, endMarker] attributed:NO];
     NSMutableArray* elements = [NSMutableArray array];
     for (id element in array) {
         if (![element isKindOfClass:[AccessibilityObjectWrapper class]])
@@ -2852,7 +2852,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     WebAccessibilityTextMarker* end = [WebAccessibilityTextMarker startOrEndTextMarkerForRange:range isStart:NO cache:self.axBackingObject->axObjectCache()];
     if (!start || !end)
         return nil;
-    return [NSArray arrayWithObjects:start, end, nil];
+    return @[start, end];
 }
 
 - (NSString *)accessibilityExpandedTextValue

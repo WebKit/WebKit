@@ -28,14 +28,9 @@
 #include "IntSize.h"
 #include <cmath>
 
-#if PLATFORM(MAC) && defined __OBJC__
-#import <Foundation/NSGeometry.h>
-#endif
-
 #if USE(CG)
 typedef struct CGPoint CGPoint;
 #endif
-
 
 #if !PLATFORM(IOS_FAMILY)
 #if OS(DARWIN)

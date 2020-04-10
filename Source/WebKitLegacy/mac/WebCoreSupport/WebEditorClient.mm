@@ -83,6 +83,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -457,7 +458,7 @@ static NSDictionary *attributesForAttributedStringConversion()
     static NSString * const NSExcludedElementsDocumentAttribute = @"ExcludedElements";
 #endif
 
-    NSDictionary *dictionary = [NSDictionary dictionaryWithObject:excludedElements forKey:NSExcludedElementsDocumentAttribute];
+    NSDictionary *dictionary = @{ NSExcludedElementsDocumentAttribute: excludedElements };
 
     [excludedElements release];
 
@@ -1079,15 +1080,9 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
         [checker checkString:context range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:options inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:&orthography wordCount:0];
         language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:context orthography:orthography];
     }
-    NSArray* stringsArray = [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word language:language inSpellDocumentWithTag:spellCheckerDocumentTag()];
-    unsigned count = [stringsArray count];
-
-    if (count > 0) {
-        NSEnumerator *enumerator = [stringsArray objectEnumerator];
-        NSString *string;
-        while ((string = [enumerator nextObject]) != nil)
-            guesses.append(string);
-    }
+    NSArray *stringsArray = [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word language:language inSpellDocumentWithTag:spellCheckerDocumentTag()];
+    if (stringsArray.count)
+        guesses = makeVector<String>(stringsArray);
 }
 
 #endif // !PLATFORM(IOS_FAMILY)

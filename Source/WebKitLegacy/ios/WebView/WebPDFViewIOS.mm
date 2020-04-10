@@ -75,10 +75,10 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
 
 + (NSArray *)supportedMIMETypes
 {
-    return [NSArray arrayWithObjects:
+    return @[
         @"text/pdf",
         @"application/pdf",
-        nil];
+    ];
 }
 
 + (CGColorRef)shadowColor

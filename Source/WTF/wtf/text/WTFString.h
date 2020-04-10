@@ -454,6 +454,13 @@ template<> struct IntegerToStringConversionTrait<String> {
     static String flush(LChar* characters, unsigned length, void*) { return { characters, length }; }
 };
 
+#ifdef __OBJC__
+
+WTF_EXPORT_PRIVATE RetainPtr<id> makeNSArrayElement(const String&);
+WTF_EXPORT_PRIVATE Optional<String> makeVectorElement(const String*, id);
+
+#endif
+
 // Definitions of string operations
 
 inline String::String(StringImpl& string)

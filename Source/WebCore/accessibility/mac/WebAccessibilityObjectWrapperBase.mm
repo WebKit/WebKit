@@ -65,6 +65,7 @@
 #import "TextCheckingHelper.h"
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(MAC)
 #import <pal/spi/mac/HIServicesSPI.h>
@@ -692,6 +693,13 @@ static AccessibilitySearchKey accessibilitySearchKeyForString(const String& valu
     return static_cast<int>(searchKey) ? searchKey : AccessibilitySearchKey::AnyType;
 }
 
+static Optional<AccessibilitySearchKey> makeVectorElement(const AccessibilitySearchKey*, id arrayElement)
+{
+    if (![arrayElement isKindOfClass:NSString.class])
+        return WTF::nullopt;
+    return { { accessibilitySearchKeyForString(arrayElement) } };
+}
+
 AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(const NSDictionary *parameterizedAttribute)
 {
     NSString *directionParameter = [parameterizedAttribute objectForKey:@"AXDirection"];
@@ -730,16 +738,9 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParamet
     
     if ([searchKeyParameter isKindOfClass:[NSString class]])
         criteria.searchKeys.append(accessibilitySearchKeyForString(searchKeyParameter));
-    else if ([searchKeyParameter isKindOfClass:[NSArray class]]) {
-        size_t searchKeyCount = static_cast<size_t>([searchKeyParameter count]);
-        criteria.searchKeys.reserveInitialCapacity(searchKeyCount);
-        for (size_t i = 0; i < searchKeyCount; ++i) {
-            NSString *searchKey = [searchKeyParameter objectAtIndex:i];
-            if ([searchKey isKindOfClass:[NSString class]])
-                criteria.searchKeys.uncheckedAppend(accessibilitySearchKeyForString(searchKey));
-        }
-    }
-    
+    else if ([searchKeyParameter isKindOfClass:[NSArray class]])
+        criteria.searchKeys = makeVector<AccessibilitySearchKey>(searchKeyParameter);
+
     return criteria;
 }
 
