@@ -147,6 +147,9 @@ macro callSlowPath(slowPath)
     restoreStateAfterCCall()
 end
 
+macro cagedPrimitive(ptr, length, scratch, scratch2)
+end
+
 macro doVMEntry(makeCall)
     functionPrologue()
     pushCalleeSaves()
@@ -1511,6 +1514,23 @@ end)
 
 
 llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metadata, return)
+    macro finishIntGetByVal(resultPayload, scratch)
+        get(m_dst, scratch)
+        storei Int32Tag, TagOffset[cfr, scratch, 8]
+        storei resultPayload, PayloadOffset[cfr, scratch, 8]
+        valueProfile(OpGetByVal, t5, Int32Tag, resultPayload)
+        dispatch()
+    end
+
+    macro finishDoubleGetByVal(result, scratch1, scratch2, scratch3)
+        get(m_dst, scratch1)
+        fd2ii result, scratch2, scratch3
+        storei scratch3, TagOffset[cfr, scratch1, 8]
+        storei scratch2, PayloadOffset[cfr, scratch1, 8]
+        valueProfile(OpGetByVal, t5, scratch3, scratch2)
+        dispatch()
+    end
+
     metadata(t5, t2)
     get(m_base, t2)
     loadConstantOrVariablePayload(size, t2, CellTag, t0, .opGetByValSlow)
@@ -1541,7 +1561,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
 
 .opGetByValNotDouble:
     subi ArrayStorageShape, t2
-    bia t2, SlowPutArrayStorageShape - ArrayStorageShape, .opGetByValSlow
+    bia t2, SlowPutArrayStorageShape - ArrayStorageShape, .opGetByValNotIndexedStorage
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t3], .opGetByValSlow
     loadi ArrayStorage::m_vector + TagOffset[t3, t1, 8], t2
     loadi ArrayStorage::m_vector + PayloadOffset[t3, t1, 8], t1
@@ -1554,6 +1574,9 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     storei t1, PayloadOffset[cfr, t0, 8]
     valueProfile(OpGetByVal, t5, t2, t1)
     dispatch()
+
+.opGetByValNotIndexedStorage:
+    getByValTypedArray(t0, t1, finishIntGetByVal, finishDoubleGetByVal, .opGetByValSlow)
 
 .opGetByValSlow:
     callSlowPath(_llint_slow_path_get_by_val)

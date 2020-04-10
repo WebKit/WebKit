@@ -1147,6 +1147,104 @@ macro arrayProfile(offset, cellAndIndexingType, metadata, scratch)
     loadb JSCell::m_indexingTypeAndMisc[cell], indexingType
 end
 
+macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, slowPath)
+    # First lets check if we even have a typed array. This lets us do some boilerplate up front.
+    loadb JSCell::m_type[base], t2
+    subi FirstTypedArrayType, t2
+    biaeq t2, NumberOfTypedArrayTypesExcludingDataView, slowPath
+    
+    # Sweet, now we know that we have a typed array. Do some basic things now.
+
+    if ARM64E
+        const length = t6
+        const scratch = t7
+        loadi JSArrayBufferView::m_length[base], length
+        biaeq index, length, slowPath
+    else
+        # length and scratch are intentionally undefined on this branch because they are not used on other platforms.
+        biaeq index, JSArrayBufferView::m_length[base], slowPath
+    end
+
+    loadp JSArrayBufferView::m_vector[base], t3
+    cagedPrimitive(t3, length, base, scratch)
+
+    # Now bisect through the various types:
+    #    Int8ArrayType,
+    #    Uint8ArrayType,
+    #    Uint8ClampedArrayType,
+    #    Int16ArrayType,
+    #    Uint16ArrayType,
+    #    Int32ArrayType,
+    #    Uint32ArrayType,
+    #    Float32ArrayType,
+    #    Float64ArrayType,
+
+    bia t2, Uint16ArrayType - FirstTypedArrayType, .opGetByValAboveUint16Array
+
+    # We have one of Int8ArrayType .. Uint16ArrayType.
+    bia t2, Uint8ClampedArrayType - FirstTypedArrayType, .opGetByValInt16ArrayOrUint16Array
+
+    # We have one of Int8ArrayType ... Uint8ClampedArrayType
+    bia t2, Int8ArrayType - FirstTypedArrayType, .opGetByValUint8ArrayOrUint8ClampedArray
+
+    # We have Int8ArrayType.
+    loadbsi [t3, index], t0
+    finishIntGetByVal(t0, t1)
+
+.opGetByValUint8ArrayOrUint8ClampedArray:
+    bia t2, Uint8ArrayType - FirstTypedArrayType, .opGetByValUint8ClampedArray
+
+    # We have Uint8ArrayType.
+    loadb [t3, index], t0
+    finishIntGetByVal(t0, t1)
+
+.opGetByValUint8ClampedArray:
+    # We have Uint8ClampedArrayType.
+    loadb [t3, index], t0
+    finishIntGetByVal(t0, t1)
+
+.opGetByValInt16ArrayOrUint16Array:
+    # We have either Int16ArrayType or Uint16ClampedArrayType.
+    bia t2, Int16ArrayType - FirstTypedArrayType, .opGetByValUint16Array
+
+    # We have Int16ArrayType.
+    loadhsi [t3, index, 2], t0
+    finishIntGetByVal(t0, t1)
+
+.opGetByValUint16Array:
+    # We have Uint16ArrayType.
+    loadh [t3, index, 2], t0
+    finishIntGetByVal(t0, t1)
+
+.opGetByValAboveUint16Array:
+    # We have one of Int32ArrayType .. Float64ArrayType.
+    bia t2, Uint32ArrayType - FirstTypedArrayType, .opGetByValFloat32ArrayOrFloat64Array
+
+    # We have either Int32ArrayType or Uint32ArrayType
+    bia t2, Int32ArrayType - FirstTypedArrayType, .opGetByValUint32Array
+
+    # We have Int32ArrayType.
+    loadi [t3, index, 4], t0
+    finishIntGetByVal(t0, t1)
+
+.opGetByValUint32Array:
+    # We have Uint32ArrayType.
+    # This is the hardest part because of large unsigned values.
+    loadi [t3, index, 4], t0
+    bilt t0, 0, slowPath # This case is still awkward to implement in LLInt.
+    finishIntGetByVal(t0, t1)
+
+.opGetByValFloat32ArrayOrFloat64Array:
+    # We have one of Float32ArrayType or Float64ArrayType. Sadly, we cannot handle Float32Array
+    # inline yet. That would require some offlineasm changes.
+    bieq t2, Float32ArrayType - FirstTypedArrayType, slowPath
+
+    # We have Float64ArrayType.
+    loadd [t3, index, 8], ft0
+    bdnequn ft0, ft0, slowPath
+    finishDoubleGetByVal(ft0, t0, t1, t2)
+end
+
 macro skipIfIsRememberedOrInEden(cell, slowPath)
     memfence
     bba JSCell::m_cellState[cell], BlackThreshold, .done

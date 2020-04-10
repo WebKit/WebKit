@@ -1,3 +1,19 @@
+2020-04-10  Caio Lima  <ticaiolima@gmail.com>
+
+        [LLInt] Add fast path for TypedArray access on LLInt 32-bits
+        https://bugs.webkit.org/show_bug.cgi?id=210217
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is adding fast path case for in-bound TypedArray access on
+        32-bits LLInt. Since instructions are the same for both architectures,
+        we are refactoring this part of code to `LowLevelInterpreter.asm` and
+        reusing it into `LowLevelInterpreter32_64.asm`.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2020-04-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r259849 and r259851.
