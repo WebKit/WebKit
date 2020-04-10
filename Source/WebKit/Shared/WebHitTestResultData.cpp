@@ -157,6 +157,13 @@ bool WebHitTestResultData::decode(IPC::Decoder& decoder, WebHitTestResultData& h
     if (!decoder.decode(hitTestResultData.imageSize))
         return false;
 
+    if (hitTestResultData.imageSharedMemory) {
+        // SharedMemory:size() is rounded up to the nearest page.
+        if (hitTestResultData.imageSize > hitTestResultData.imageSharedMemory->size())
+            return false;
+    } else if (hitTestResultData.imageSize)
+        return false;
+
     bool hasLinkTextIndicator;
     if (!decoder.decode(hasLinkTextIndicator))
         return false;
