@@ -37,7 +37,7 @@ template<typename T> struct Coder {
         t.encode(encoder);
     }
 
-    static bool decode(Decoder& decoder, T& t)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, T& t)
     {
         return T::decode(decoder, t);
     }

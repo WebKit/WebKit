@@ -1,3 +1,20 @@
+2020-04-10  David Kilzer  <ddkilzer@apple.com>
+
+        Add WARN_UNUSED_RETURN to decode methods in Source/WTF
+        <https://webkit.org/b/210323>
+        <rdar://problem/61565764>
+
+        Reviewed by Darin Adler.
+
+        * wtf/MediaTime.h:
+        * wtf/MonotonicTime.h:
+        * wtf/ObjectIdentifier.h:
+        (WTF::ObjectIdentifier::decode):
+        * wtf/Seconds.h:
+        * wtf/URL.h:
+        * wtf/persistence/PersistentCoder.h:
+        (WTF::Persistence::Coder::decode):
+
 2020-04-08  Darin Adler  <darin@apple.com>
 
         [Cocoa] Simplify NSArray, NSDictionary, and NSNumber idioms throughout WebKit

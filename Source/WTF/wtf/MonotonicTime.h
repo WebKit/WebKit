@@ -144,7 +144,7 @@ public:
         encoder << m_value;
     }
 
-    template<class Decoder>
+    template<class Decoder> WARN_UNUSED_RETURN
     static Optional<MonotonicTime> decode(Decoder& decoder)
     {
         Optional<double> time;
@@ -154,7 +154,7 @@ public:
         return MonotonicTime::fromRawSeconds(*time);
     }
 
-    template<class Decoder>
+    template<class Decoder> WARN_UNUSED_RETURN
     static bool decode(Decoder& decoder, MonotonicTime& time)
     {
         double value;
