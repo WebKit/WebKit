@@ -1,5 +1,25 @@
 2020-04-10  Alicia Boya García  <aboya@igalia.com>
 
+        [Tools] Fix gdb WebCoreQualifiedNamePrinter
+        https://bugs.webkit.org/show_bug.cgi?id=210109
+
+        Reviewed by Daniel Bates.
+
+        My gdb was throwing exceptions like this when printing
+        QualifiedName's:
+
+        File "/webkit/Tools/gdb/webkit.py", line 205, in __init__
+          self.val['m_impl']['m_prefix']['m_string'])
+        gdb.error: There is no member or method named m_prefix.
+
+        This patch adds a missing m_ptr indirection to traverse
+        RefPtr<QualifiedNameImpl>, fixing the issue.
+
+        * gdb/webkit.py:
+        (WebCoreQualifiedNamePrinter.__init__):
+
+2020-04-10  Alicia Boya García  <aboya@igalia.com>
+
         [Tools] jhbuild should respect PKG_CONFIG_PATH
         https://bugs.webkit.org/show_bug.cgi?id=210280
 
