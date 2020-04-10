@@ -1,3 +1,22 @@
+2020-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use UnconditionalWriteBarrier in Baseline effectively to reduce code size
+        https://bugs.webkit.org/show_bug.cgi?id=209395
+
+        Reviewed by Tadeu Zagallo.
+
+        In put/delete we always need to emit write-barrier if the base is a cell since IC can write things (writing new StructureID etc.).
+        We should use emitWriteBarrier with UnconditionalWriteBarrier to remove unnecessary branch.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_put_by_id):
+
 2020-04-09  Mark Lam  <mark.lam@apple.com>
 
         Fix bad tests in testmasm's testCagePreservesPACFailureBit().
