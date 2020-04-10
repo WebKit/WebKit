@@ -34,9 +34,10 @@ bool widgetIsOnscreenToplevelWindow(GtkWidget*);
 template<typename GdkEventType>
 WallTime wallTimeForEvent(const GdkEventType* event)
 {
-    if (event->time == GDK_CURRENT_TIME)
+    const auto eventTime = gdk_event_get_time(reinterpret_cast<GdkEvent*>(const_cast<GdkEventType*>(event)));
+    if (eventTime == GDK_CURRENT_TIME)
         return WallTime::now();
-    return MonotonicTime::fromRawSeconds(event->time / 1000.).approximateWallTime();
+    return MonotonicTime::fromRawSeconds(eventTime / 1000.).approximateWallTime();
 }
 
 template<>
