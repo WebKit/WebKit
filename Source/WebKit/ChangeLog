@@ -1,3 +1,21 @@
+2020-04-10  David Kilzer  <ddkilzer@apple.com>
+
+        Add WARN_UNUSED_RETURN to decode methods in WebCoreArgumentCoders
+        <https://webkit.org/b/210322>
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::decodeSharedBuffer):
+        (IPC::decodeTypesAndData):
+        (IPC::decodeImage):
+        (IPC::decodeOptionalImage):
+        (IPC::decodeNativeImage):
+        (IPC::decodeOptionalNativeImage):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::decodeNSError):
+
 2020-04-10  Peng Liu  <peng.liu6@apple.com>
 
         Add null pointer checkings in WebFullScreenManager

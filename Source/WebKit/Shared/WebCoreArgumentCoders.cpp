@@ -146,7 +146,7 @@ static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
 #endif
 }
 
-static bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
+static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
 {
     uint64_t bufferSize = 0;
     if (!decoder.decode(bufferSize))
@@ -190,7 +190,7 @@ static void encodeTypesAndData(Encoder& encoder, const Vector<String>& types, co
         encodeSharedBuffer(encoder, buffer.get());
 }
 
-static bool decodeTypesAndData(Decoder& decoder, Vector<String>& types, Vector<RefPtr<SharedBuffer>>& data)
+static WARN_UNUSED_RETURN bool decodeTypesAndData(Decoder& decoder, Vector<String>& types, Vector<RefPtr<SharedBuffer>>& data)
 {
     if (!decoder.decode(types))
         return false;
@@ -1050,7 +1050,7 @@ static void encodeImage(Encoder& encoder, Image& image)
     encoder << handle;
 }
 
-static bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
+static WARN_UNUSED_RETURN bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
 {
     Optional<bool> didCreateGraphicsContext;
     decoder >> didCreateGraphicsContext;
@@ -1079,7 +1079,7 @@ static void encodeOptionalImage(Encoder& encoder, Image* image)
         encodeImage(encoder, *image);
 }
 
-static bool decodeOptionalImage(Decoder& decoder, RefPtr<Image>& image)
+static WARN_UNUSED_RETURN bool decodeOptionalImage(Decoder& decoder, RefPtr<Image>& image)
 {
     image = nullptr;
 
@@ -1122,7 +1122,7 @@ static void encodeNativeImage(Encoder& encoder, NativeImagePtr image)
     encoder << handle;
 }
 
-static bool decodeNativeImage(Decoder& decoder, NativeImagePtr& nativeImage)
+static WARN_UNUSED_RETURN bool decodeNativeImage(Decoder& decoder, NativeImagePtr& nativeImage)
 {
     Optional<bool> didCreateGraphicsContext;
     decoder >> didCreateGraphicsContext;
@@ -1157,7 +1157,7 @@ static void encodeOptionalNativeImage(Encoder& encoder, NativeImagePtr image)
         encodeNativeImage(encoder, image);
 }
 
-static bool decodeOptionalNativeImage(Decoder& decoder, NativeImagePtr& image)
+static WARN_UNUSED_RETURN bool decodeOptionalNativeImage(Decoder& decoder, NativeImagePtr& image)
 {
     image = nullptr;
 
@@ -1722,7 +1722,7 @@ bool ArgumentCoder<DatabaseDetails>::decode(Decoder& decoder, DatabaseDetails& d
 
 template<> struct ArgumentCoder<PasteboardCustomData::Entry> {
     static void encode(Encoder&, const PasteboardCustomData::Entry&);
-    static bool decode(Decoder&, PasteboardCustomData::Entry&);
+    static bool decode(Decoder&, PasteboardCustomData::Entry&) WARN_UNUSED_RETURN;
 };
 
 void ArgumentCoder<PasteboardCustomData::Entry>::encode(Encoder& encoder, const PasteboardCustomData::Entry& data)

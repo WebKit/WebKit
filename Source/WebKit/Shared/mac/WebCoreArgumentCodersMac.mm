@@ -385,7 +385,7 @@ void ArgumentCoder<WebCore::ResourceError>::encodePlatformData(Encoder& encoder,
     encodeNSError(encoder, resourceError.nsError());
 }
 
-static bool decodeNSError(Decoder& decoder, RetainPtr<NSError>& nsError)
+static WARN_UNUSED_RETURN bool decodeNSError(Decoder& decoder, RetainPtr<NSError>& nsError)
 {
     String domain;
     if (!decoder.decode(domain))
