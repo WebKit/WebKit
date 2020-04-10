@@ -37,7 +37,7 @@ void ArgumentCoder<WallTime>::encode(Encoder& encoder, const WallTime& time)
     encoder << time.secondsSinceEpoch().value();
 }
 
-bool ArgumentCoder<WallTime>::decode(Decoder& decoder, WallTime& time)
+WARN_UNUSED_RETURN bool ArgumentCoder<WallTime>::decode(Decoder& decoder, WallTime& time)
 {
     double value;
     if (!decoder.decode(value))
@@ -47,7 +47,7 @@ bool ArgumentCoder<WallTime>::decode(Decoder& decoder, WallTime& time)
     return true;
 }
 
-Optional<WallTime> ArgumentCoder<WallTime>::decode(Decoder& decoder)
+WARN_UNUSED_RETURN Optional<WallTime> ArgumentCoder<WallTime>::decode(Decoder& decoder)
 {
     Optional<double> time;
     decoder >> time;
@@ -61,7 +61,7 @@ void ArgumentCoder<AtomString>::encode(Encoder& encoder, const AtomString& atomS
     encoder << atomString.string();
 }
 
-bool ArgumentCoder<AtomString>::decode(Decoder& decoder, AtomString& atomString)
+WARN_UNUSED_RETURN bool ArgumentCoder<AtomString>::decode(Decoder& decoder, AtomString& atomString)
 {
     String string;
     if (!decoder.decode(string))
@@ -84,7 +84,7 @@ void ArgumentCoder<CString>::encode(Encoder& encoder, const CString& string)
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length, 1);
 }
 
-bool ArgumentCoder<CString>::decode(Decoder& decoder, CString& result)
+WARN_UNUSED_RETURN bool ArgumentCoder<CString>::decode(Decoder& decoder, CString& result)
 {
     uint32_t length;
     if (!decoder.decode(length))
@@ -131,7 +131,7 @@ void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), alignof(UChar));
 }
 
-template <typename CharacterType>
+template <typename CharacterType> WARN_UNUSED_RETURN
 static inline Optional<String> decodeStringText(Decoder& decoder, uint32_t length)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
@@ -148,7 +148,7 @@ static inline Optional<String> decodeStringText(Decoder& decoder, uint32_t lengt
     return string;
 }
 
-Optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
+WARN_UNUSED_RETURN Optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
 {
     uint32_t length;
     if (!decoder.decode(length))
@@ -168,7 +168,7 @@ Optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
     return decodeStringText<UChar>(decoder, length);
 }
 
-bool ArgumentCoder<String>::decode(Decoder& decoder, String& result)
+WARN_UNUSED_RETURN bool ArgumentCoder<String>::decode(Decoder& decoder, String& result)
 {
     Optional<String> string;
     decoder >> string;
@@ -183,7 +183,7 @@ void ArgumentCoder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& d
     encoder.encodeFixedLengthData(digest.data(), sizeof(digest), 1);
 }
 
-bool ArgumentCoder<SHA1::Digest>::decode(Decoder& decoder, SHA1::Digest& digest)
+WARN_UNUSED_RETURN bool ArgumentCoder<SHA1::Digest>::decode(Decoder& decoder, SHA1::Digest& digest)
 {
     return decoder.decodeFixedLengthData(digest.data(), sizeof(digest), 1);
 }
@@ -195,7 +195,7 @@ void ArgumentCoder<audit_token_t>::encode(Encoder& encoder, const audit_token_t&
         encoder << auditToken.val[i];
 }
 
-bool ArgumentCoder<audit_token_t>::decode(Decoder& decoder, audit_token_t& auditToken)
+WARN_UNUSED_RETURN bool ArgumentCoder<audit_token_t>::decode(Decoder& decoder, audit_token_t& auditToken)
 {
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(auditToken.val); i++) {
         if (!decoder.decode(auditToken.val[i]))
@@ -209,7 +209,7 @@ void ArgumentCoder<Monostate>::encode(Encoder&, const Monostate&)
 {
 }
 
-Optional<Monostate> ArgumentCoder<Monostate>::decode(Decoder&)
+WARN_UNUSED_RETURN Optional<Monostate> ArgumentCoder<Monostate>::decode(Decoder&)
 {
     return Monostate { };
 }

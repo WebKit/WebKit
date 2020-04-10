@@ -86,7 +86,7 @@ public:
 #endif
 
     void encode(Encoder&) const;
-    static bool decode(Decoder&, Attachment&);
+    static bool decode(Decoder&, Attachment&) WARN_UNUSED_RETURN;
     
 private:
     Type m_type;

@@ -99,13 +99,13 @@ template<typename T> struct ArgumentCoder {
         t.encode(encoder);
     }
 
-    template<typename U = T, std::enable_if_t<UsesLegacyDecoder<U>::argumentCoderValue>* = nullptr>
+    template<typename U = T, std::enable_if_t<UsesLegacyDecoder<U>::argumentCoderValue>* = nullptr> WARN_UNUSED_RETURN
     static bool decode(Decoder& decoder, U& u)
     {
         return U::decode(decoder, u);
     }
 
-    template<typename U = T, std::enable_if_t<UsesModernDecoder<U>::argumentCoderValue>* = nullptr>
+    template<typename U = T, std::enable_if_t<UsesModernDecoder<U>::argumentCoderValue>* = nullptr> WARN_UNUSED_RETURN
     static Optional<U> decode(Decoder& decoder)
     {
         return U::decode(decoder);

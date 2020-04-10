@@ -46,7 +46,7 @@ public:
         encoder << m_imageData;
     }
 
-    static Optional<ImageDataReference> decode(Decoder& decoder)
+    static WARN_UNUSED_RETURN Optional<ImageDataReference> decode(Decoder& decoder)
     {
         Optional<RefPtr<WebCore::ImageData>> imageData;
         decoder >> imageData;

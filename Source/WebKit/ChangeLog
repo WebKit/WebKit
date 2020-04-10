@@ -1,3 +1,43 @@
+2020-04-09  David Kilzer  <ddkilzer@apple.com>
+
+        Add WARN_UNUSED_RETURN to decode methods in Source/WebKit/Platform/IPC
+        <https://webkit.org/b/210316>
+
+        Reviewed by Alex Christensen.
+
+        * Platform/IPC/ArgumentCoder.h:
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WallTime>::decode):
+        (IPC::ArgumentCoder<AtomString>::decode):
+        (IPC::ArgumentCoder<CString>::decode):
+        (IPC::ArgumentCoder<String>::decode):
+        (IPC::ArgumentCoder<SHA1::Digest>::decode):
+        (IPC::ArgumentCoder<audit_token_t>::decode):
+        (IPC::ArgumentCoder<Monostate>::decode):
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::SimpleArgumentCoder::decode):
+        (IPC::ArgumentCoder<OptionSet<T>>::decode):
+        (IPC::ArgumentCoder<Optional<T>>::decode):
+        (IPC::ArgumentCoder<Box<T>>::decode):
+        (IPC::TupleDecoderImpl::decode):
+        (IPC::TupleDecoderImpl<Type>::decode):
+        (IPC::TupleDecoder::decode):
+        (IPC::TupleDecoder<0>::decode):
+        (IPC::VariantCoder::decode):
+        * Platform/IPC/Attachment.h:
+        * Platform/IPC/DataReference.h:
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::decodeEnum):
+        * Platform/IPC/FormDataReference.h:
+        (IPC::FormDataReference::decode):
+        * Platform/IPC/ImageDataReference.h:
+        (IPC::ImageDataReference::decode):
+        * Platform/IPC/SharedBufferDataReference.h:
+        (IPC::SharedBufferDataReference::decode):
+        * Platform/IPC/StringReference.h:
+        * Platform/IPC/cocoa/MachPort.h:
+        (IPC::MachPort::decode):
+
 2020-04-09  Alex Christensen  <achristensen@webkit.org>
 
         IPC serialization of enums should serialize std::underlying_type instead of uint64_t

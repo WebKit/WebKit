@@ -68,7 +68,7 @@ public:
     }
 
     void encode(Encoder&) const;
-    static bool decode(Decoder&, DataReference&);
+    static bool decode(Decoder&, DataReference&) WARN_UNUSED_RETURN;
 
 private:
     const uint8_t* m_data { nullptr };
