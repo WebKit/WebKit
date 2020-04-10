@@ -1,5 +1,20 @@
 2020-04-10  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Flatpak build broken when using 'git config core.webkitbranchbuild=true'
+        https://bugs.webkit.org/show_bug.cgi?id=210292
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/webkitdirs.pm:
+        (getUserFlatpakPath): Ensure we probe for UserFlatpak always in
+        WebKitBuild, wether we're doing a "git branch" build or not.
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.is_branch_build):
+        (WebkitFlatpak.run_in_sandbox): Make and bind-mount default build
+        directory only when not doing "git branch" builds.
+
+2020-04-10  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Generate one IceCC archive per toolchain
         https://bugs.webkit.org/show_bug.cgi?id=210189
 

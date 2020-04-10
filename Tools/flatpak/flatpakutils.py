@@ -557,6 +557,19 @@ class WebkitFlatpak:
 
         return [os.path.join(gst_dir, 'gst-env.py'), '--builddir', gst_builddir, '--srcdir', gst_dir]
 
+    def is_branch_build(self):
+        git_branch_name = subprocess.check_output(("git", "rev-parse", "--abbrev-ref", "HEAD")).decode("utf-8").strip()
+        for option_name in ("branch.%s.webKitBranchBuild" % git_branch_name,
+                            "webKitBranchBuild"):
+            try:
+                output = subprocess.check_output(("git", "config", "--bool", option_name)).strip()
+            except subprocess.CalledProcessError:
+                continue
+
+            if output == "true":
+                return True
+        return False
+
     def run_in_sandbox(self, *args, **kwargs):
         self.setup_builddir(stdout=kwargs.get("stdout", sys.stdout))
         cwd = kwargs.pop("cwd", None)
@@ -596,7 +609,7 @@ class WebkitFlatpak:
                            "--bind-mount=/run/systemd/journal=/run/systemd/journal",
                            "--bind-mount=%s=%s" % (self.sandbox_source_root, self.source_root)]
 
-        if args and args[0].endswith("build-webkit"):
+        if args and args[0].endswith("build-webkit") and not self.is_branch_build():
             # Ensure self.build_path exists.
             try:
                 os.makedirs(self.build_path)
@@ -606,8 +619,9 @@ class WebkitFlatpak:
 
         # We mount WebKitBuild/PORTNAME/BuildType to /app/webkit/WebKitBuild/BuildType
         # so we can build WPE and GTK in a same source tree.
-        # The bind-mount is always needed, not only when running build-webkit.
-        flatpak_command.append("--bind-mount=%s=%s" % (sandbox_build_path, self.build_path))
+        # The bind-mount is always needed, excepted during the initial setup (SDK install/updates).
+        if os.path.isdir(self.build_path):
+            flatpak_command.append("--bind-mount=%s=%s" % (sandbox_build_path, self.build_path))
 
         forwarded = {
             "WEBKIT_TOP_LEVEL": "/app/",

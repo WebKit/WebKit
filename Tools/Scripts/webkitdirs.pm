@@ -2052,7 +2052,12 @@ sub getJhbuildPath()
 
 sub getUserFlatpakPath()
 {
-    my @flatpakPath = File::Spec->splitdir(baseProductDir());
+    my $productDir = baseProductDir();
+    if (isGit() && isGitBranchBuild() && gitBranch()) {
+        my $branch = gitBranch();
+        $productDir =~ s/$branch//;
+    }
+    my @flatpakPath = File::Spec->splitdir($productDir);
     push(@flatpakPath, "UserFlatpak");
     return File::Spec->catdir(@flatpakPath);
 }
