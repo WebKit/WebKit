@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2132,9 +2132,8 @@ static void testCagePreservesPACFailureBit()
     void* taggedNotCagedPtr = tagArrayPtr(notCagedPtr, 1);
 
     if (isARM64E()) {
-        // FIXME: This won't work if authentication failures trap but I don't know how to test for that right now.
         CHECK_NOT_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
-        CHECK_EQ(invoke<void*>(cage, taggedNotCagedPtr, 1), untagArrayPtr(taggedPtr, 2));
+        CHECK_NOT_EQ(invoke<void*>(cage, taggedNotCagedPtr, 1), ptr);
     } else
         CHECK_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
 
@@ -2150,11 +2149,10 @@ static void testCagePreservesPACFailureBit()
 
     CHECK_EQ(invoke<void*>(cageWithoutAuthentication, taggedPtr), taggedPtr);
     if (isARM64E()) {
-        // FIXME: This won't work if authentication failures trap but I don't know how to test for that right now.
         CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), taggedNotCagedPtr);
-        CHECK_NOT_EQ(untagArrayPtr(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), 1), notCagedPtr);
+        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), tagArrayPtr(notCagedPtr, 1));
         CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), taggedPtr);
-        CHECK_NOT_EQ(untagArrayPtr(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), 1), ptr);
+        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), tagArrayPtr(ptr, 1));
     }
 
     Gigacage::free(Gigacage::Primitive, ptr);
