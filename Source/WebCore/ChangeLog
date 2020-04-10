@@ -1,3 +1,18 @@
+2020-04-10  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Null ptr Deref in RadioButtonGroups::updateCheckedState
+        https://bugs.webkit.org/show_bug.cgi?id=210353
+
+        Reviewed by Chris Dumez.
+
+        This crash happened when the default checked setter was called for an input element and RadioButtonGroup was NULL.
+        Added condition to dereference the group only if it is non-null.
+
+        Test: fast/forms/input-element-default-checked-setter-crash.html
+
+        * dom/RadioButtonGroups.cpp:
+        (WebCore::RadioButtonGroups::updateCheckedState):
+
 2020-04-10  Jack Lee  <shihchieh_lee@apple.com>
 
         ASSERTION FAILED: selection.isRange() in InsertListCommand::doApply

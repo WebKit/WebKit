@@ -228,7 +228,8 @@ void RadioButtonGroups::updateCheckedState(HTMLInputElement& element)
     ASSERT(element.isRadioButton());
     if (element.name().isEmpty())
         return;
-    m_nameToGroupMap.get(element.name().impl())->updateCheckedState(element);
+    if (auto* group = m_nameToGroupMap.get(element.name().impl()))
+        group->updateCheckedState(element);
 }
 
 void RadioButtonGroups::requiredStateChanged(HTMLInputElement& element)
