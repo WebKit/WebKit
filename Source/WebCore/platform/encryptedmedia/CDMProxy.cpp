@@ -287,9 +287,10 @@ void CDMInstanceProxy::mergeKeysFrom(const KeyStore& keyStore)
     // FIXME: Notify JS when appropriate.
     ASSERT(isMainThread());
     m_keyStore.merge(keyStore);
-    LOG(EME, "EME - CDMInstanceProxy - merging keys into proxy instance and notifying CDMProxy of changes");
-    ASSERT(m_cdmProxy);
-    m_cdmProxy->updateKeyStore(keyStore);
+    if (m_cdmProxy) {
+        LOG(EME, "EME - CDMInstanceProxy - merging keys into proxy instance and notifying CDMProxy of changes");
+        m_cdmProxy->updateKeyStore(keyStore);
+    }
 }
 
 void CDMInstanceProxy::removeAllKeysFrom(const KeyStore& keyStore)

@@ -88,6 +88,7 @@ public:
     bool addKeys(Vector<RefPtr<Key>>&&);
     bool add(RefPtr<Key>&&);
     bool remove(const RefPtr<Key>&);
+    bool hasKeys() const { return m_keys.size(); }
     unsigned numKeys() const { return m_keys.size(); }
     const Vector<uint8_t>& keyValue(const Vector<uint8_t>& keyID) const;
     KeyStatusVector allKeysAsReleased() const;
@@ -151,6 +152,10 @@ public:
     {
         m_cdmProxy = WTFMove(proxy);
         m_cdmProxy->setInstance(this);
+        // The CDM instance may be attached after an update(). Not
+        // recommended, but apps and the W3C test-suite do this.
+        if (m_keyStore.hasKeys())
+            m_cdmProxy->updateKeyStore(m_keyStore);
     }
     void mergeKeysFrom(const KeyStore&);
     void removeAllKeysFrom(const KeyStore&);
