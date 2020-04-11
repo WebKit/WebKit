@@ -243,8 +243,8 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-err
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-trackdefaults.html [ Failure ]
+webkit.org/b/167108 webkit.org/b/210341 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Failure Crash ]
+webkit.org/b/167108 webkit.org/b/210342 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-trackdefaults.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefault.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [ Failure ]
 
@@ -1325,7 +1325,7 @@ webkit.org/b/208181 fast/hidpi/filters-and-image-buffer-resolution.html [ ImageO
 
 webkit.org/b/208182 fast/repaint/backgroundSizeRepaint.html [ ImageOnlyFailure ]
 
-webkit.org/b/208631 compositing/repaint/fixed-background-scroll.html [ Failure ]
+webkit.org/b/208631 compositing/repaint/fixed-background-scroll.html [ Failure Pass ]
 
 webkit.org/b/208633 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Failure ]
 webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure ]
@@ -2016,7 +2016,7 @@ webkit.org/b/179755 media/video-empty-source.html [ Pass Crash ]
 
 webkit.org/b/180369 http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Pass Crash ]
 
-webkit.org/b/178784 [ Release ] inspector/console/webcore-logging.html [ Failure Crash ]
+webkit.org/b/178784 [ Release ] inspector/console/webcore-logging.html [ Pass Crash ]
 
 webkit.org/b/181030 wasm/iframe-postmessage.html [ Pass Failure ]
 webkit.org/b/179948 [ Release ] fast/hidpi/filters-reference.html [ Pass ImageOnlyFailure ]
@@ -2392,7 +2392,7 @@ webkit.org/b/198830 media/track/track-cue-css.html [ ImageOnlyFailure Failure Pa
 webkit.org/b/198830 media/track/track-cue-left-align.html [ Pass Crash ]
 webkit.org/b/198830 media/track/track-cue-mutable-fragment.html [ Crash Failure Pass ]
 webkit.org/b/198830 media/track/track-cue-mutable-text.html [ Crash Failure ]
-webkit.org/b/198830 media/track/track-cues-sorted-before-dispatch.html [ Pass Crash ]
+webkit.org/b/198830 webkit.org/b/210372 media/track/track-cues-sorted-before-dispatch.html [ Crash Failure Timeout Pass ]
 webkit.org/b/198830 media/track/track-insert-after-load-crash.html [ Pass Crash ]
 webkit.org/b/198830 media/track/video-track.html [ Pass Crash ]
 webkit.org/b/198830 media/video-autoplay-allowed-but-fullscreen-required.html [ Pass Crash ]
@@ -2497,7 +2497,7 @@ webkit.org/b/198830 [ Release ] media/track/track-css-cue-lifetime.html [ Pass C
 webkit.org/b/198830 [ Release ] media/track/track-css-matching-default.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/track/track-cue-line-position.html [ Pass Crash ]
 webkit.org/b/198830 media/track/track-in-band-metadata-display-order.html [ Pass Crash Failure ]
-webkit.org/b/198830 [ Release ] media/track/track-user-stylesheet.html [ Pass Crash ]
+webkit.org/b/198830 webkit.org/b/210373 [ Release ] media/track/track-user-stylesheet.html [ Failure Pass Crash ]
 webkit.org/b/198830 [ Release ] media/video-controls-transformed.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/video-controls-visible-exiting-fullscreen.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/video-defaultplaybackrate-before-load.html [ Pass Crash ]
@@ -2653,7 +2653,7 @@ webkit.org/b/198830 media/track/track-mode-not-changed-by-new-track.html [ Crash
 webkit.org/b/198830 media/video-buffering-allowed.html [ Crash Pass ]
 webkit.org/b/198830 media/video-dom-autoplay.html [ Crash Pass ]
 webkit.org/b/198830 userscripts/user-script-audio-document.html [ Crash Pass ]
-webkit.org/b/198830 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Crash Pass ]
+webkit.org/b/198830 webkit.org/b/210374 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Failure Crash Pass ]
 webkit.org/b/198830 compositing/overflow/overflow-compositing-descendant.html [ Crash Pass ]
 
 webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure Crash Pass ]
@@ -2736,7 +2736,7 @@ webkit.org/b/208291 webanimations/accelerated-animation-renderer-change.html [ P
 
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/event-dispatch-active-flag.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Failure Pass ]
-webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Failure Pass ]
+webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Failure Timeout Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/fire-upgradeneeded-event-exception.html [ Failure Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/get-databases.any.html [ Timeout Pass ]
 webkit.org/b/208292 imported/w3c/web-platform-tests/IndexedDB/get-databases.any.worker.html [ Failure Pass ]
@@ -2896,6 +2896,8 @@ webkit.org/b/210274 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 
 webkit.org/b/210360 [ Release ] webrtc/video-update-often.html [ Pass Crash ]
 webkit.org/b/210370 [ Release ] media/track/text-track-cue-is-reachable.html [ Pass Crash ]
+
+webkit.org/b/210375 imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3216,7 +3218,7 @@ webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout Crash ]
 
 webkit.org/b/195135 storage/indexeddb/IDBObject-leak.html [ Timeout Failure Pass ]
 
-webkit.org/b/196198 http/tests/media/video-play-stall-seek.html [ Timeout Failure ]
+webkit.org/b/196198 http/tests/media/video-play-stall-seek.html [ Slow Failure Pass ]
 
 webkit.org/b/196250 inspector/console/heapSnapshot.html [ Timeout ]
 

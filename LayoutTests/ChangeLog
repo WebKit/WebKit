@@ -1,3 +1,12 @@
+2020-04-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening of flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=210376
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-04-10  Simon Fraser  <simon.fraser@apple.com>
 
         [macOS] Fix scrollbar display for async-scrolling overflow
