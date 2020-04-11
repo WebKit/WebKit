@@ -1,3 +1,20 @@
+2020-04-10  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: Add WARN_UNUSED_RETURN to decode methods in Source/WTF
+        <https://webkit.org/b/210323>
+        <rdar://problem/61565764>
+
+        Changes based on feedback from Alex Christensen and Darin Adler:
+        - Remove WARN_UNUSED_RETURN from methods returning Optional<>.
+        - Place WARN_UNUSED_RETURN consistently before the return type.
+
+        * wtf/MediaTime.h:
+        * wtf/MonotonicTime.h:
+        * wtf/ObjectIdentifier.h:
+        (WTF::ObjectIdentifier::decode):
+        * wtf/Seconds.h:
+        * wtf/URL.h:
+
 2020-04-10  Alicia Boya García  <aboya@igalia.com>
 
         [WTF] DataMutex: Add runUnlocked()

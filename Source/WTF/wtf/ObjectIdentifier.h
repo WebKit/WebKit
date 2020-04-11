@@ -70,8 +70,7 @@ public:
         encoder << m_identifier;
     }
 
-    template<typename Decoder> WARN_UNUSED_RETURN
-    static Optional<ObjectIdentifier> decode(Decoder& decoder)
+    template<typename Decoder> static Optional<ObjectIdentifier> decode(Decoder& decoder)
     {
         Optional<uint64_t> identifier;
         decoder >> identifier;

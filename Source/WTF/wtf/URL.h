@@ -192,8 +192,8 @@ public:
 #endif
 
     template <class Encoder> void encode(Encoder&) const;
-    template <class Decoder> static bool decode(Decoder&, URL&) WARN_UNUSED_RETURN;
-    template <class Decoder> static Optional<URL> decode(Decoder&) WARN_UNUSED_RETURN;
+    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, URL&);
+    template <class Decoder> static Optional<URL> decode(Decoder&);
 
 private:
     friend class URLParser;

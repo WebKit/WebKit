@@ -227,7 +227,7 @@ public:
         encoder << m_value;
     }
 
-    template<class Decoder> WARN_UNUSED_RETURN
+    template<class Decoder>
     static Optional<Seconds> decode(Decoder& decoder)
     {
         Optional<double> seconds;
@@ -237,8 +237,8 @@ public:
         return Seconds(*seconds);
     }
 
-    template<class Decoder> WARN_UNUSED_RETURN
-    static bool decode(Decoder& decoder, Seconds& seconds)
+    template<class Decoder>
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Seconds& seconds)
     {
         double value;
         if (!decoder.decode(value))
