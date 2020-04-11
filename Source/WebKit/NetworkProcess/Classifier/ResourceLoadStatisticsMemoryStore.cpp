@@ -476,7 +476,11 @@ void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const RegistrableDoma
                     statisticsWereUpdated = true;
                 if (isRedirect && redirectingDomainStatistics.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement.add(targetDomain).isNewEntry) {
                     statisticsWereUpdated = true;
-                    RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8().data(), targetDomain.string().utf8().data());
+
+                    if (UNLIKELY(debugLoggingEnabled())) {
+                        RELEASE_LOG_INFO(ITPDebug, "Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8().data(), targetDomain.string().utf8().data());
+                        debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("Did set '", sourceDomain.string(), "' as making a top frame redirect to '", targetDomain.string(), "'."));
+                    }
                 }
                 auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
                 if (targetStatistics.topFrameUniqueRedirectsFrom.add(sourceDomain).isNewEntry)
@@ -987,7 +991,11 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryS
             }
             if (shouldEnforceSameSiteStrictFor(statistic, shouldCheckForGrandfathering)) {
                 toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic.registrableDomain);
-                RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Scheduled %" PUBLIC_LOG_STRING " to have its cookies set to SameSite=strict.", statistic.registrableDomain.string().utf8().data());
+
+                if (UNLIKELY(debugLoggingEnabled())) {
+                    RELEASE_LOG_INFO(ITPDebug, "Scheduled %" PUBLIC_LOG_STRING " to have its cookies set to SameSite=strict.", statistic.registrableDomain.string().utf8().data());
+                    debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("Scheduled '", statistic.registrableDomain.string(), "' to have its cookies set to SameSite=strict'."));
+                }
             }
         }
 

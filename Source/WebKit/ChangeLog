@@ -1,3 +1,17 @@
+2020-04-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add `broadcastConsoleMessage` calls for new ITPDebug logs after r259275
+        https://bugs.webkit.org/show_bug.cgi?id=210362
+
+        Reviewed by John Wilander.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logFrameNavigation):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::logFrameNavigation):
+        (WebKit::ResourceLoadStatisticsMemoryStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor):
+
 2020-04-10  Chris Dumez  <cdumez@apple.com>
 
         [IPC Hardening] WebHitTestResultData IPC decoder should validate imageSharedMemory / imageSize
