@@ -1,3 +1,16 @@
+2020-04-10  Darin Adler  <darin@apple.com>
+
+        Move more from live range to SimpleRange: callers of absoluteTextRects
+        https://bugs.webkit.org/show_bug.cgi?id=210369
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame closestCaretRectInMarkedTextRangeForPoint:]): Use
+        RenderObject::absoluteTextRects instead of Range::absoluteTextRects.
+        Also added some missing null checks and reorganized the function a
+        bit to make it more direct and slightly cleaerer.
+
 2020-04-08  Darin Adler  <darin@apple.com>
 
         [Cocoa] Simplify NSArray, NSDictionary, and NSNumber idioms throughout WebKit

@@ -1145,11 +1145,9 @@ Node* Range::pastLastNode() const
 
 IntRect Range::absoluteBoundingBox(OptionSet<BoundingRectBehavior> rectOptions) const
 {
-    IntRect result;
     Vector<IntRect> rects;
-    bool useSelectionHeight = false;
-    RangeInFixedPosition* inFixed = nullptr;
-    absoluteTextRects(rects, useSelectionHeight, inFixed, rectOptions);
+    absoluteTextRects(rects, false, rectOptions);
+    IntRect result;
     for (auto& rect : rects)
         result.unite(rect);
     return result;
@@ -1180,7 +1178,7 @@ Vector<FloatRect> Range::absoluteRectsForRangeInText(Node* node, RenderText& ren
     return boundingBoxes(textQuads);
 }
 
-void Range::absoluteTextRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFixedPosition* inFixed, OptionSet<BoundingRectBehavior> rectOptions) const
+void Range::absoluteTextRects(Vector<IntRect>& rects, bool useSelectionHeight, OptionSet<BoundingRectBehavior> rectOptions) const
 {
     // FIXME: This function should probably return FloatRects.
 
@@ -1204,9 +1202,6 @@ void Range::absoluteTextRects(Vector<IntRect>& rects, bool useSelectionHeight, R
         allFixed &= isFixed;
         someFixed |= isFixed;
     }
-
-    if (inFixed)
-        *inFixed = allFixed ? EntirelyFixedPosition : (someFixed ? PartiallyFixedPosition : NotFixedPosition);
 }
 
 #if PLATFORM(IOS_FAMILY)

@@ -1,3 +1,23 @@
+2020-04-10  Darin Adler  <darin@apple.com>
+
+        Move more from live range to SimpleRange: callers of absoluteTextRects
+        https://bugs.webkit.org/show_bug.cgi?id=210369
+
+        Reviewed by Anders Carlsson.
+
+        * DOM/DOM.mm:
+        (-[DOMNode textRects]): Moved implementation here. There's no reason for Node
+        to have a textRects function, since it's a layout/rendering operation and a
+        single node is also an unusual special case, but for now we will keep this
+        legacy method for compatibility with old clients.
+        (-[DOMRange textRects]): Changed to call RenderObject::absoluteTextRects
+        instead of Range::absoluteTextRects.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _rectsForRange:]): Changed to call -[DOMRange textRects] instead
+        of Range::absoluteTextRects. Don't really need two identical methods but
+        probably need to keep this around for compatiblitiy.
+
 2020-04-08  Darin Adler  <darin@apple.com>
 
         [Cocoa] Simplify NSArray, NSDictionary, and NSNumber idioms throughout WebKit

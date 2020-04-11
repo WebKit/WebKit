@@ -202,10 +202,9 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             m_findMatches.clear();
             Vector<IntRect> matchRects;
             if (auto range = m_webPage->corePage()->selection().firstRange()) {
-                range->absoluteTextRects(matchRects);
-                m_findMatches.append(range);
+                matchRects = RenderObject::absoluteTextRects(*range);
+                m_findMatches.append(WTFMove(range));
             }
-
             m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchRects, matchCount, m_foundStringMatchIndex, didWrap == DidWrap::Yes));
         }
     }
@@ -292,11 +291,8 @@ void FindController::findStringMatches(const String& string, FindOptions options
     m_webPage->corePage()->findStringMatchingRanges(string, core(options), maxMatchCount, m_findMatches, indexForSelection);
 
     Vector<Vector<IntRect>> matchRects;
-    for (size_t i = 0; i < m_findMatches.size(); ++i) {
-        Vector<IntRect> rects;
-        m_findMatches[i]->absoluteTextRects(rects);
-        matchRects.append(WTFMove(rects));
-    }
+    for (auto& range : m_findMatches)
+        matchRects.append(RenderObject::absoluteTextRects(*range));
 
     m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, indexForSelection));
 

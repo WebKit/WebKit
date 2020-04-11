@@ -3365,6 +3365,8 @@ static inline void collapseCaretWidth(IntRect& rect)
 
 IntRect Editor::firstRectForRange(Range* range) const
 {
+    range->ownerDocument().updateLayout();
+
     VisiblePosition startVisiblePosition(range->startPosition(), DOWNSTREAM);
 
     if (range->collapsed()) {
@@ -3378,7 +3380,7 @@ IntRect Editor::firstRectForRange(Range* range) const
     VisiblePosition endVisiblePosition(range->endPosition(), UPSTREAM);
 
     if (inSameLine(startVisiblePosition, endVisiblePosition))
-        return enclosingIntRect(RenderObject::absoluteBoundingBoxRectForRange(range));
+        return enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(*range)));
 
     LayoutUnit extraWidthToEndOfLine;
     IntRect startCaretRect = RenderedPosition(startVisiblePosition).absoluteRect(&extraWidthToEndOfLine);

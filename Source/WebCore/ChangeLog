@@ -1,3 +1,51 @@
+2020-04-10  Darin Adler  <darin@apple.com>
+
+        Move more from live range to SimpleRange: callers of absoluteTextRects
+        https://bugs.webkit.org/show_bug.cgi?id=210369
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Node.cpp:
+        (WebCore::Node::textRects const): Deleted.
+        * dom/Node.h: Updated for the above.
+
+        * dom/Range.cpp:
+        (WebCore::Range::absoluteBoundingBox const): Updated since absoluteTextRects
+        no longer has a RangeInFixedPosition* argument.
+        (WebCore::Range::absoluteTextRects const): Removed the unused RangeInFixedPosition*
+        argument.
+        * dom/Range.h: Got rid of unused RangeInFixedPosition type and also removed
+        RangeInFixedPosition* argument from the absoluteTextRects function. Later will
+        remove absoluteTextRects entirely.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::firstRectForRange const): Use RenderObject::absoluteTextQuads
+        and unitedBoundingBoxes rather than using RenderObject::absoluteBoundingBoxRectForRange.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange): Use SimpleRange rather than
+        live ranges.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::setContainerAndOffsetForRange): Moved from int to unsigned.
+        (WebCore::HTMLTextFormControlElement::selection const): Return Optional<SimpleRange>
+        rather than a live range.
+        * html/HTMLTextFormControlElement.h: Updated for the change above.
+
+        * page/TextIndicator.cpp:
+        (WebCore::initializeIndicator): Updated since absoluteTextRects no longer takes
+        a RangeInFixedPosition* argument.
+
+        * rendering/HighlightData.h: Removed stray obsolete declaration.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteBoundingBoxRectForRange): Deleted. Callers can
+        use absoluteTextQuads directly. We need to cut down on the number of separate
+        functions that are not really separate concepts, and this was used in only one place.
+        (WebCore::RenderObject::absoluteTextRects): Added. Replaces Range::absoluteTextRects
+        for all callers outside the live range class and will eventually replace it entirely.
+        * rendering/RenderObject.h: Updated for the above.
+
 2020-04-11  Devin Rousso  <drousso@apple.com>
 
         REGRESSION (Safari 13.1?): Web Inspector: Debugger hang at breakpoint when using Keyboard Maestro

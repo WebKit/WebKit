@@ -34,6 +34,7 @@
 #import "DOMElementInternal.h"
 #import "DOMHTMLElementInternal.h"
 #import "DOMNodeInternal.h"
+#import "DOMPrivate.h"
 #import "DOMRangeInternal.h"
 #import "WebArchiveInternal.h"
 #import "WebChromeClient.h"
@@ -1109,14 +1110,9 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     return _private->coreFrame->loader().loadsSynchronously();
 }
 
-- (NSArray *)_rectsForRange:(DOMRange *)domRange
+- (NSArray *)_rectsForRange:(DOMRange *)range
 {
-    auto* range = core(domRange);
-    if (!range)
-        return @[];
-    Vector<WebCore::IntRect> intRects;
-    range->absoluteTextRects(intRects, NO);
-    return createNSArray(intRects).autorelease();
+    return range ? range.textRects : @[];
 }
 
 - (DOMRange *)_selectionRangeForFirstPoint:(CGPoint)first secondPoint:(CGPoint)second

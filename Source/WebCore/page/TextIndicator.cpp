@@ -337,7 +337,7 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Ran
 #endif
     else {
         Vector<IntRect> absoluteTextRects;
-        range.absoluteTextRects(absoluteTextRects, textRectHeight == FrameSelection::TextRectangleHeight::SelectionHeight, nullptr, Range::BoundingRectBehavior::RespectClipping);
+        range.absoluteTextRects(absoluteTextRects, textRectHeight == FrameSelection::TextRectangleHeight::SelectionHeight, Range::BoundingRectBehavior::RespectClipping);
 
         textRects.reserveInitialCapacity(absoluteTextRects.size());
         for (auto& rect : absoluteTextRects)

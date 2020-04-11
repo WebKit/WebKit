@@ -37,8 +37,6 @@
 #endif
 
 namespace WebCore {
-
-struct OldSelectionData;
     
 class HighlightData {
 public:

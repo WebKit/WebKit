@@ -30,6 +30,8 @@
 #import "WKBundleAPICast.h"
 #import "WKDOMInternals.h"
 #import <WebCore/Document.h>
+#import <WebCore/RenderObject.h>
+#import <WebCore/SimpleRange.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKDOMNode
@@ -111,9 +113,7 @@
     _impl->document().updateLayoutIgnorePendingStylesheets();
     if (!_impl->renderer())
         return nil;
-    Vector<WebCore::IntRect> rects;
-    _impl->textRects(rects);
-    return createNSArray(rects).autorelease();
+    return createNSArray(WebCore::RenderObject::absoluteTextRects(WebCore::makeRangeSelectingNodeContents(*_impl))).autorelease();
 }
 
 @end

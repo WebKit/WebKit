@@ -2554,13 +2554,6 @@ void Node::removedLastRef()
     delete this;
 }
 
-void Node::textRects(Vector<IntRect>& rects) const
-{
-    auto range = Range::create(document());
-    range->selectNodeContents(const_cast<Node&>(*this));
-    range->absoluteTextRects(rects);
-}
-
 unsigned Node::connectedSubframeCount() const
 {
     return hasRareData() ? rareData()->connectedSubframeCount() : 0;

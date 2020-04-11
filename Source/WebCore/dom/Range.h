@@ -107,12 +107,6 @@ public:
 
     ShadowRoot* shadowRoot() const;
 
-    enum RangeInFixedPosition {
-        NotFixedPosition,
-        PartiallyFixedPosition,
-        EntirelyFixedPosition
-    };
-    
     enum class BoundingRectBehavior : uint8_t {
         RespectClipping = 1 << 0,
         UseVisibleBounds = 1 << 1,
@@ -121,7 +115,7 @@ public:
     };
 
     // Not transform-friendly
-    WEBCORE_EXPORT void absoluteTextRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr, OptionSet<BoundingRectBehavior> = { }) const;
+    WEBCORE_EXPORT void absoluteTextRects(Vector<IntRect>&, bool useSelectionHeight = false, OptionSet<BoundingRectBehavior> = { }) const;
     WEBCORE_EXPORT IntRect absoluteBoundingBox(OptionSet<BoundingRectBehavior> = { }) const;
 
     // Transform-friendly

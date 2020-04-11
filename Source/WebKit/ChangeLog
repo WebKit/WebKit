@@ -1,3 +1,24 @@
+2020-04-10  Darin Adler  <darin@apple.com>
+
+        Move more from live range to SimpleRange: callers of absoluteTextRects
+        https://bugs.webkit.org/show_bug.cgi?id=210369
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+        (-[WKDOMNode textRects]): Moved implementation here. There's no reason for Node
+        to have a textRects function, since it's a layout/rendering operation and a
+        single node is also an unusual special case, but for now at least we will keep
+        this legacy method.
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange textRects]): Changed to call RenderObject::absoluteTextRects
+        instead of Range::absoluteTextRects.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll): Use
+        RenderObject::absoluteTextRects instead of Range::absoluteRectRects.
+        (WebKit::FindController::findStringMatches): Ditto.
+
 2020-04-10  Pablo Saavedra  <psaavedra@igalia.com>
 
         [GTK][WPE] Replace fopen/fclose by fopen/fseek functions in MemoryPressureMonitor

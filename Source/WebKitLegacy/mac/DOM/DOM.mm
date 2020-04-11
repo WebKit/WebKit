@@ -74,9 +74,6 @@
 using namespace JSC;
 using namespace WebCore;
 
-// FIXME: These methods should move into the implementation files of the DOM classes
-// and this file should be eliminated.
-
 //------------------------------------------------------------------------------------------
 // DOMNode
 
@@ -505,9 +502,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     node.document().updateLayoutIgnorePendingStylesheets();
     if (!node.renderer())
         return nil;
-    Vector<WebCore::IntRect> rects;
-    node.textRects(rects);
-    return createNSArray(rects).autorelease();
+    return createNSArray(RenderObject::absoluteTextRects(makeRangeSelectingNodeContents(node))).autorelease();
 }
 
 @end
@@ -625,10 +620,8 @@ id <DOMEventTarget> kit(EventTarget* target)
 - (NSArray *)textRects
 {
     auto& range = *core(self);
-    Vector<WebCore::IntRect> rects;
     range.ownerDocument().updateLayoutIgnorePendingStylesheets();
-    range.absoluteTextRects(rects);
-    return createNSArray(rects).autorelease();
+    return createNSArray(RenderObject::absoluteTextRects(range)).autorelease();
 }
 
 - (NSArray *)lineBoxRects

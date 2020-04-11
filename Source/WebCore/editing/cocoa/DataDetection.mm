@@ -490,7 +490,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
         currentTopLevelIndex++;
     }
 
-    Vector<Vector<RefPtr<Range>>> allResultRanges;
+    Vector<Vector<SimpleRange>> allResultRanges;
     TextIterator iterator(*contextRange);
     CFIndex iteratorCount = 0;
 
@@ -503,19 +503,17 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
         for (; iteratorCount < iteratorTargetAdvanceCount; ++iteratorCount)
             iterator.advance();
 
-        Vector<RefPtr<Range>> fragmentRanges;
-        RefPtr<Range> currentRange = createLiveRange(iterator.range());
+        Vector<SimpleRange> fragmentRanges;
         CFIndex fragmentIndex = queryRange.start.queryIndex;
         if (fragmentIndex == queryRange.end.queryIndex) {
             CharacterRange fragmentRange;
             fragmentRange.location = queryRange.start.offset;
             fragmentRange.length = queryRange.end.offset - queryRange.start.offset;
-            fragmentRanges.append(createLiveRange(resolveCharacterRange(*currentRange, fragmentRange)));
+            fragmentRanges.append(resolveCharacterRange(iterator.range(), fragmentRange));
         } else {
-            if (!queryRange.start.offset)
-                fragmentRanges.append(currentRange);
-            else
-                fragmentRanges.append(Range::create(currentRange->ownerDocument(), &currentRange->startContainer(), currentRange->startOffset() + queryRange.start.offset, &currentRange->endContainer(), currentRange->endOffset()));
+            auto range = iterator.range();
+            range.start.offset += queryRange.start.offset;
+            fragmentRanges.append(range);
         }
         
         while (fragmentIndex < queryRange.end.queryIndex) {
@@ -524,18 +522,18 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
             for (; iteratorCount < iteratorTargetAdvanceCount; ++iteratorCount)
                 iterator.advance();
 
-            currentRange = createLiveRange(iterator.range());
-            RefPtr<Range> fragmentRange = (fragmentIndex == queryRange.end.queryIndex) ?  Range::create(currentRange->ownerDocument(), &currentRange->startContainer(), currentRange->startOffset(), &currentRange->endContainer(), currentRange->startOffset() + queryRange.end.offset) : currentRange;
-            RefPtr<Range> previousRange = fragmentRanges.last();
-            if (&previousRange->startContainer() == &fragmentRange->startContainer()) {
-                fragmentRange = Range::create(currentRange->ownerDocument(), &previousRange->startContainer(), previousRange->startOffset(), &fragmentRange->endContainer(), fragmentRange->endOffset());
-                fragmentRanges.last() = fragmentRange;
-            } else
+            auto fragmentRange = iterator.range();
+            if (fragmentIndex == queryRange.end.queryIndex)
+                fragmentRange.end.offset = fragmentRange.start.offset + queryRange.end.offset;
+            auto& previousRange = fragmentRanges.last();
+            if (previousRange.start.container.ptr() == fragmentRange.start.container.ptr())
+                previousRange.end = fragmentRange.end;
+            else
                 fragmentRanges.append(fragmentRange);
         }
         allResultRanges.append(WTFMove(fragmentRanges));
     }
-    
+
     auto tz = adoptCF(CFTimeZoneCopyDefault());
     NSDate *referenceDate = [context objectForKey:getkDataDetectorsReferenceDateKey()] ?: [NSDate date];
     Text* lastTextNodeToUpdate = nullptr;
@@ -565,13 +563,13 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
         Vector<std::pair<Position, Position>> rangeBoundaries;
         rangeBoundaries.reserveInitialCapacity(resultRanges.size());
         for (auto& range : resultRanges)
-            rangeBoundaries.uncheckedAppend({ range->startPosition(), range->endPosition() });
+            rangeBoundaries.uncheckedAppend({ createLegacyEditingPosition(range.start), createLegacyEditingPosition(range.end) });
 
         NSString *identifier = dataDetectorStringForPath(indexPaths[resultIndex].get());
         NSString *correspondingURL = constructURLStringForResult(coreResult, identifier, referenceDate, (NSTimeZone *)tz.get(), types);
         bool didModifyDOM = false;
 
-        if (!correspondingURL || searchForLinkRemovingExistingDDLinks(resultRanges.first()->startContainer(), resultRanges.last()->endContainer(), didModifyDOM))
+        if (!correspondingURL || searchForLinkRemovingExistingDDLinks(resultRanges.first().start.container, resultRanges.last().end.container, didModifyDOM))
             continue;
         
         if (didModifyDOM) {
@@ -587,14 +585,14 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
         BOOL shouldUseLightLinks = softLink_DataDetectorsCore_DDShouldUseLightLinksForResult(coreResult, [indexPaths[resultIndex] length] > 1);
 
         for (auto& range : resultRanges) {
-            auto* parentNode = range->startContainer().parentNode();
+            auto* parentNode = range.start.container->parentNode();
             if (!parentNode)
                 continue;
 
-            if (!is<Text>(range->startContainer()))
+            if (!is<Text>(range.start.container))
                 continue;
 
-            auto& currentTextNode = downcast<Text>(range->startContainer());
+            auto& currentTextNode = downcast<Text>(range.start.container.get());
             Document& document = currentTextNode.document();
             String textNodeData;
 
@@ -602,18 +600,18 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
                 if (lastTextNodeToUpdate)
                     lastTextNodeToUpdate->setData(lastNodeContent);
                 contentOffset = 0;
-                if (range->startOffset() > 0)
-                    textNodeData = currentTextNode.data().substring(0, range->startOffset());
+                if (range.start.offset > 0)
+                    textNodeData = currentTextNode.data().substring(0, range.start.offset);
             } else
-                textNodeData = currentTextNode.data().substring(contentOffset, range->startOffset() - contentOffset);
+                textNodeData = currentTextNode.data().substring(contentOffset, range.start.offset - contentOffset);
 
             if (!textNodeData.isEmpty()) {
                 parentNode->insertBefore(Text::create(document, textNodeData), &currentTextNode);
-                contentOffset = range->startOffset();
+                contentOffset = range.start.offset;
             }
 
             // Create the actual anchor node and insert it before the current node.
-            textNodeData = currentTextNode.data().substring(range->startOffset(), range->endOffset() - range->startOffset());
+            textNodeData = currentTextNode.data().substring(range.start.offset, range.end.offset - range.start.offset);
             Ref<Text> newTextNode = Text::create(document, textNodeData);
             parentNode->insertBefore(newTextNode.copyRef(), &currentTextNode);
             
@@ -652,9 +650,9 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
 
             parentNode->insertBefore(WTFMove(anchorElement), &currentTextNode);
 
-            contentOffset = range->endOffset();
+            contentOffset = range.end.offset;
 
-            lastNodeContent = currentTextNode.data().substring(range->endOffset(), currentTextNode.length() - range->endOffset());
+            lastNodeContent = currentTextNode.data().substring(range.end.offset, currentTextNode.length() - range.end.offset);
             lastTextNodeToUpdate = &currentTextNode;
         }        
     }

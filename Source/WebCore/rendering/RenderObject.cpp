@@ -746,14 +746,6 @@ void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
     }
 }
 
-FloatRect RenderObject::absoluteBoundingBoxRectForRange(const Range* range)
-{
-    if (!range)
-        return { };
-    range->ownerDocument().updateLayout();
-    return unitedBoundingBoxes(absoluteTextQuads(*range));
-}
-
 void RenderObject::addAbsoluteRectForLayer(LayoutRect& result)
 {
     if (hasLayer())
@@ -1900,6 +1892,22 @@ Vector<FloatQuad> RenderObject::absoluteTextQuads(const SimpleRange& range, bool
         }
     }
     return quads;
+}
+
+Vector<IntRect> RenderObject::absoluteTextRects(const SimpleRange& range, bool useSelectionHeight)
+{
+    Vector<IntRect> rects;
+    for (auto& node : intersectingNodes(range)) {
+        auto renderer = node.renderer();
+        if (renderer && renderer->isBR())
+            renderer->absoluteRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
+        else if (is<RenderText>(renderer)) {
+            auto offsetRange = characterDataOffsetRange(range, downcast<CharacterData>(node));
+            for (auto& quad : downcast<RenderText>(*renderer).absoluteQuadsForRange(offsetRange.start, offsetRange.end, useSelectionHeight))
+                rects.append(quad.enclosingBoundingBox());
+        }
+    }
+    return rects;
 }
 
 String RenderObject::debugDescription() const

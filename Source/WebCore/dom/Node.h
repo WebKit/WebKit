@@ -493,8 +493,6 @@ public:
     void unregisterTransientMutationObserver(MutationObserverRegistration&);
     void notifyMutationObserversNodeWillDetach();
 
-    WEBCORE_EXPORT void textRects(Vector<IntRect>&) const;
-
     unsigned connectedSubframeCount() const;
     void incrementConnectedSubframeCount(unsigned amount = 1);
     void decrementConnectedSubframeCount(unsigned amount = 1);

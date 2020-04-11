@@ -558,7 +558,7 @@ public:
     virtual void absoluteFocusRingQuads(Vector<FloatQuad>&);
 
     WEBCORE_EXPORT static Vector<FloatQuad> absoluteTextQuads(const SimpleRange&, bool useSelectionHeight = false);
-    static FloatRect absoluteBoundingBoxRectForRange(const Range*);
+    WEBCORE_EXPORT static Vector<IntRect> absoluteTextRects(const SimpleRange&, bool useSelectionHeight = false);
 
     // the rect that will be painted if this object is passed as the paintingRoot
     WEBCORE_EXPORT LayoutRect paintingRootRect(LayoutRect& topLevelRect);
