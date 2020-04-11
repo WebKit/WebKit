@@ -618,6 +618,7 @@ localizedStrings["Global Lexical Environment"] = "Global Lexical Environment";
 /* Settings tab checkbox label for whether the global search should populate from the current selection. */
 localizedStrings["Global Search From Selection @ Settings"] = "%s from selection";
 localizedStrings["Global Variables"] = "Global Variables";
+localizedStrings["Go to variable"] = "Go to variable";
 localizedStrings["Grammar"] = "Grammar";
 /* Name of Graphics Tab */
 localizedStrings["Graphics Tab Name"] = "Graphics";
@@ -1122,7 +1123,6 @@ localizedStrings["Show All Nodes (%d More)"] = "Show All Nodes (%d More)";
 localizedStrings["Show Console"] = "Show Console";
 localizedStrings["Show Console tab"] = "Show Console tab";
 localizedStrings["Show Elements"] = "Show Elements";
-localizedStrings["Show Jump to Effective Property Button"] = "Show Jump to Effective Property Button";
 localizedStrings["Show Path"] = "Show Path";
 localizedStrings["Show Remaining (%d)"] = "Show Remaining (%d)";
 localizedStrings["Show Scope Chain on pause"] = "Show Scope Chain on pause";
@@ -1131,6 +1131,8 @@ localizedStrings["Show all resources"] = "Show all resources";
 localizedStrings["Show compositing borders"] = "Show compositing borders";
 localizedStrings["Show full certificate"] = "Show full certificate";
 localizedStrings["Show hidden tabs"] = "Show hidden tabs";
+localizedStrings["Show jump to effective property button"] = "Show jump to effective property button";
+localizedStrings["Show jump to variable declaration button"] = "Show jump to variable declaration button";
 localizedStrings["Show only for selected node"] = "Show only for selected node";
 localizedStrings["Show page rulers and node border lines"] = "Show page rulers and node border lines";
 localizedStrings["Show rulers"] = "Show rulers";

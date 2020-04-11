@@ -783,13 +783,29 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 let rawTokens = tokens.slice(startIndex, i + 1);
                 let variableNameIndex = rawTokens.findIndex((token) => token.value.startsWith("--") && /\bvariable-2\b/.test(token.type));
                 if (variableNameIndex !== -1) {
-                    let contents = [];
+                    let contents = rawTokens.slice(0, variableNameIndex + 1);
+
+                    if (WI.settings.experimentalEnableStyelsJumpToVariableDeclaration.value && this._property.ownerStyle.type !== WI.CSSStyleDeclaration.Type.Computed && this._delegate && this._delegate.spreadsheetStylePropertySelectByProperty) {
+                        const dontCreateIfMissing = true;
+                        let effectiveVariableProperty = this._property.ownerStyle.nodeStyles.effectivePropertyForName(rawTokens[variableNameIndex].value, dontCreateIfMissing);
+                        if (effectiveVariableProperty) {
+                            let arrowElement = WI.createGoToArrowButton();
+                            arrowElement.classList.add("select-variable-property");
+                            arrowElement.title = WI.UIString("Go to variable");
+                            arrowElement.addEventListener("click", (event) => {
+                                event.stop();
+                                this._delegate.spreadsheetStylePropertySelectByProperty(effectiveVariableProperty);
+                            });
+                            contents.push(arrowElement);
+                        }
+                    }
+
                     let fallbackStartIndex = rawTokens.findIndex((value, i) => i > variableNameIndex + 1 && /\bm-css\b/.test(value.type));
                     if (fallbackStartIndex !== -1) {
-                        contents.pushAll(rawTokens.slice(0, fallbackStartIndex));
+                        contents.pushAll(rawTokens.slice(variableNameIndex + 1, fallbackStartIndex));
                         contents.pushAll(this._replaceSpecialTokens(rawTokens.slice(fallbackStartIndex, i)));
                     } else
-                        contents.pushAll(rawTokens.slice(0, i));
+                        contents.pushAll(rawTokens.slice(variableNameIndex + 1, i));
                     contents.push(token);
 
                     let text = rawTokens.reduce((accumulator, token) => accumulator + token.value, "");

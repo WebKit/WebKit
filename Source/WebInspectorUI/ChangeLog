@@ -1,3 +1,29 @@
+2020-04-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: CSS: variables should have a go-to arrow to quickly jump to the definition
+        https://bugs.webkit.org/show_bug.cgi?id=195775
+        <rdar://problem/48905785>
+
+        Reviewed by Timothy Hatcher.
+
+        Often when debugging/editing styles that use CSS variables, the desired workflow is to
+        modify the variable itself, not that specific usage. This is especially helpful when editing
+        colors saved in CSS variables.
+
+        Add an always visible go-to arrow immediately after the variable (e.g. `--XYZ (->)`) that
+        will jump to the declaration of the variable elsewhere in the style cascade.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._addVariableTokens):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property .select-variable-property): Added.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2020-04-09  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Storage: should be able to set a cookie with no value

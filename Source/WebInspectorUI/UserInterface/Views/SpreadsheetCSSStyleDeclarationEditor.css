@@ -194,6 +194,15 @@ body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.dis
     color: var(--syntax-highlight-string-color);
 }
 
+.spreadsheet-style-declaration-editor .property .select-variable-property {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    -webkit-margin-start: 2px;
+    vertical-align: -1px;
+    cursor: pointer;
+}
+
 .spreadsheet-style-declaration-editor .property .select-effective-property {
     display: none;
     height: 10px;
