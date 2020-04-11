@@ -1,3 +1,45 @@
+2020-04-10  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK][WPE] Replace fopen/fclose by fopen/fseek functions in MemoryPressureMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=209942
+
+        Reviewed by Adrian Perez de Castro.
+
+        Replacing the open()/close() logic to get the data from /proc/meminfo,
+        /proc/self/cgroup, ... with a new logic where the files are just
+        opened once and we just perform a seek to the initial position of
+        of an unbuffered file.
+
+        Also refactoring of some logic:
+
+        - Added the CGroupMemoryController class what encapsulates the logic
+          to calculate the the total memory and the memory usage with
+          cgroups.
+        - CGroupMemoryController encpasulates the FILE pointers to the
+          relative files to cgroups.
+        - The memInfoFile, zoneInfoFile and cgroupControllerFile are now
+          opened once in the Thread::create() invoked by the
+          MemoryPressureMonitor::start().
+
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        (WebKit::lowWatermarkPages):
+        (WebKit::calculateMemoryAvailable):
+        (WebKit::getCgroupFile):
+        (WebKit::getCgroupControllerPath):
+        (WebKit::systemMemoryUsedAsPercentage):
+        (WebKit::MemoryPressureMonitor::start):
+        (WebKit::CGroupMemoryController::setMemoryControllerPath):
+        (WebKit::CGroupMemoryController::disposeMemoryController):
+        (WebKit::CGroupMemoryController::getCgroupFileValue):
+        (WebKit::CGroupMemoryController::getMemoryTotalWithCgroup):
+        (WebKit::CGroupMemoryController::getMemoryUsageWithCgroup):
+        (WebKit::getCgroupFileValue): Deleted.
+        (WebKit::getMemoryTotalWithCgroup): Deleted.
+        (WebKit::getMemoryUsageWithCgroup): Deleted.
+        * UIProcess/linux/MemoryPressureMonitor.h:
+        (WebKit::CGroupMemoryController::isActive):
+        (WebKit::CGroupMemoryController::~CGroupMemoryController):
+
 2020-04-10  Alex Christensen  <achristensen@webkit.org>
 
         PersistentCoders should use modern decoding syntax

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2016, 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,37 @@ public:
 private:
     MemoryPressureMonitor() = default;
     bool m_started { false };
+};
+
+class CGroupMemoryController {
+public:
+    CGroupMemoryController() = default;
+    bool isActive() { return !m_cgroupMemoryControllerPath.isNull(); };
+
+    void setMemoryControllerPath(CString);
+
+    size_t getMemoryTotalWithCgroup();
+    size_t getMemoryUsageWithCgroup();
+
+    ~CGroupMemoryController()
+    {
+        disposeMemoryController();
+    }
+
+private:
+    CString m_cgroupMemoryControllerPath;
+
+    FILE* m_cgroupMemoryMemswLimitInBytesFile;
+    FILE* m_cgroupMemoryLimitInBytesFile;
+    FILE* m_cgroupMemoryUsageInBytesFile;
+
+    FILE* m_cgroupV2MemoryMemswMaxFile;
+    FILE* m_cgroupV2MemoryMaxFile;
+    FILE* m_cgroupV2MemoryHighFile;
+    FILE* m_cgroupV2MemoryCurrentFile;
+
+    void disposeMemoryController();
+    size_t getCgroupFileValue(FILE*);
 };
 
 } // namespace WebKit
