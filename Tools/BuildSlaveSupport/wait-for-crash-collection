@@ -70,7 +70,7 @@ def main():
 
     pid = pid_for_name(SUBMIT_DIAG_INFO)
     if not pid:
-        print('Failed to find {}'.format(SUBMIT_DIAG_INFO))
+        print('Failed to find any running process for {}'.format(SUBMIT_DIAG_INFO))
         return 0
     print('Found {} running with PID {}'.format(SUBMIT_DIAG_INFO, pid))
 

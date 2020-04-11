@@ -1,3 +1,13 @@
+2020-04-11  Aakash Jain  <aakash_jain@apple.com>
+
+        Buildbot: Force crash log submission after each test run (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=210202
+        <rdar://problem/60508929>
+
+        Unreviewed follow-up fix.
+
+        * BuildSlaveSupport/wait-for-crash-collection: Improved error message.
+
 2020-04-11  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style should warn about 'decode' functions with missing WARN_UNUSED_RETURN attribute
