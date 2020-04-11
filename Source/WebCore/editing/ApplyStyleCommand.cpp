@@ -1091,7 +1091,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle& style, const Position& s
     // Move it to the next deep quivalent position to avoid removing the style from this node.
     // e.g. if pushDownStart was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead.
     auto* pushDownStartContainer = pushDownStart.containerNode();
-    if (is<Text>(pushDownStartContainer) && pushDownStart.computeOffsetInContainerNode() == pushDownStartContainer->maxCharacterOffset())
+    if (is<Text>(pushDownStartContainer) && static_cast<unsigned>(pushDownStart.computeOffsetInContainerNode()) == downcast<Text>(*pushDownStartContainer).length())
         pushDownStart = nextVisuallyDistinctCandidate(pushDownStart);
     // If pushDownEnd is at the start of a text node, then this node is not fully selected.
     // Move it to the previous deep equivalent position to avoid removing the style from this node.

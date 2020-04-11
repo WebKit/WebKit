@@ -597,7 +597,7 @@ void DocumentMarkerController::shiftMarkers(Node& node, unsigned startOffset, in
         // FIXME: No obvious reason this should be iOS-specific. Remove the #if at some point.
         int targetStartOffset = marker.startOffset() + delta;
         int targetEndOffset = marker.endOffset() + delta;
-        if (targetStartOffset >= node.maxCharacterOffset() || targetEndOffset <= 0) {
+        if (static_cast<unsigned>(targetStartOffset) >= node.length() || targetEndOffset <= 0) {
             list->remove(i);
             continue;
         }
@@ -615,7 +615,7 @@ void DocumentMarkerController::shiftMarkers(Node& node, unsigned startOffset, in
                 list->remove(i);
                 continue;
             }
-            marker.setEndOffset(targetEndOffset < node.maxCharacterOffset() ? targetEndOffset : node.maxCharacterOffset());
+            marker.setEndOffset(std::min<unsigned>(targetEndOffset, node.length()));
             didShiftMarker = true;
         }
 #endif

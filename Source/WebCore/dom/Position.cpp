@@ -207,7 +207,7 @@ int Position::computeOffsetInContainerNode() const
     case PositionIsBeforeChildren:
         return 0;
     case PositionIsAfterChildren:
-        return lastOffsetInNode(m_anchorNode.get());
+        return m_anchorNode->length();
     case PositionIsOffsetInAnchor:
         return minOffsetForNode(m_anchorNode.get(), m_offset);
     case PositionIsBeforeAnchor:

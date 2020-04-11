@@ -1134,7 +1134,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const SimpleRan
     if (!endNode->isCharacterDataNode()) {
         if (endOffset > 0 && endOffset <= endNode->countChildNodes()) {
             endNode = endNode->traverseToChildAt(endOffset - 1);
-            endOffset = lastOffsetInNode(endNode);
+            endOffset = endNode->length();
         }
     }
 

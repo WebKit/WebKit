@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CharacterData.h"
 #include "ContainerNode.h"
 #include "EditingBoundary.h"
 #include "TextAffinity.h"
@@ -237,8 +238,6 @@ Position positionInParentAfterNode(Node*);
 Position positionBeforeNode(Node* anchorNode);
 Position positionAfterNode(Node* anchorNode);
 
-int lastOffsetInNode(Node*);
-
 // firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to countChildNodes()
 Position firstPositionInNode(Node* anchorNode);
 Position lastPositionInNode(Node* anchorNode);
@@ -306,11 +305,6 @@ inline Position positionAfterNode(Node* anchorNode)
     return Position(anchorNode, Position::PositionIsAfterAnchor);
 }
 
-inline int lastOffsetInNode(Node* node)
-{
-    return node->isCharacterDataNode() ? node->maxCharacterOffset() : node->countChildNodes();
-}
-
 // firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to countChildNodes()
 inline Position firstPositionInNode(Node* anchorNode)
 {
@@ -322,32 +316,29 @@ inline Position firstPositionInNode(Node* anchorNode)
 inline Position lastPositionInNode(Node* anchorNode)
 {
     if (anchorNode->isTextNode())
-        return Position(anchorNode, lastOffsetInNode(anchorNode), Position::PositionIsOffsetInAnchor);
+        return Position(anchorNode, anchorNode->length(), Position::PositionIsOffsetInAnchor);
     return Position(anchorNode, Position::PositionIsAfterChildren);
 }
 
 inline int minOffsetForNode(Node* anchorNode, unsigned offset)
 {
-    if (anchorNode->isCharacterDataNode())
-        return std::min<unsigned>(offset, anchorNode->maxCharacterOffset());
+    if (is<CharacterData>(*anchorNode))
+        return std::min(offset, downcast<CharacterData>(*anchorNode).length());
 
     unsigned newOffset = 0;
     for (Node* node = anchorNode->firstChild(); node && newOffset < offset; node = node->nextSibling())
         newOffset++;
-    
     return newOffset;
 }
 
 inline bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode)
 {
-    if (anchorNode->isCharacterDataNode())
-        return offset < static_cast<unsigned>(anchorNode->maxCharacterOffset());
+    if (is<CharacterData>(*anchorNode))
+        return offset < downcast<CharacterData>(*anchorNode).length();
 
     unsigned currentOffset = 0;
     for (Node* node = anchorNode->firstChild(); node && currentOffset < offset; node = node->nextSibling())
         currentOffset++;
-    
-    
     return offset < currentOffset;
 }
 

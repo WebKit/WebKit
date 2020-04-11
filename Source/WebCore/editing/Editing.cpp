@@ -377,18 +377,11 @@ TextDirection directionOfEnclosingBlock(const Position& position)
 // on a Position before using it to create a DOM Range, or an exception will be thrown.
 int lastOffsetForEditing(const Node& node)
 {
-    if (node.isCharacterDataNode())
-        return node.maxCharacterOffset();
+    if (node.isCharacterDataNode() || node.hasChildNodes())
+        return node.length();
 
-    if (node.hasChildNodes())
-        return node.countChildNodes();
-
-    // NOTE: This should preempt the countChildNodes() for, e.g., select nodes.
-    // FIXME: What does the comment above mean?
-    if (editingIgnoresContent(node))
-        return 1;
-
-    return 0;
+    // FIXME: Might be more helpful to return 1 for any node where editingIgnoresContent is true, even one that happens to have child nodes, like a select element with option node children.
+    return editingIgnoresContent(node) ? 1 : 0;
 }
 
 bool isAmbiguousBoundaryCharacter(UChar character)

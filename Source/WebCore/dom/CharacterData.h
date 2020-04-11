@@ -63,7 +63,6 @@ private:
     String nodeValue() const final;
     ExceptionOr<void> setNodeValue(const String&) final;
     bool virtualIsCharacterData() const final { return true; }
-    int maxCharacterOffset() const final;
     void setDataAndUpdate(const String&, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength);
     void notifyParentAfterChange(ContainerNode::ChildChangeSource);
 

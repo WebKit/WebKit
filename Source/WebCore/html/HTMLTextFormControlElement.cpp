@@ -468,7 +468,7 @@ RefPtr<Range> HTMLTextFormControlElement::selection() const
     for (RefPtr<Node> node = innerText->firstChild(); node; node = NodeTraversal::next(*node, innerText.get())) {
         ASSERT(!node->firstChild());
         ASSERT(node->isTextNode() || node->hasTagName(brTag));
-        int length = node->isTextNode() ? lastOffsetInNode(node.get()) : 1;
+        int length = is<Text>(*node) ? downcast<Text>(*node).length() : 1;
 
         if (offset <= start && start <= offset + length)
             setContainerAndOffsetForRange(node.get(), start - offset, startNode, start);

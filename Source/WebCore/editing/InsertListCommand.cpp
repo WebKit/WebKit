@@ -256,7 +256,7 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
             if (rangeStartIsInList && newList)
                 currentSelection->setStart(*newList, 0);
             if (rangeEndIsInList && newList)
-                currentSelection->setEnd(*newList, lastOffsetInNode(newList.get()));
+                currentSelection->setEnd(*newList, newList->length());
 
             setEndingSelection(VisiblePosition(firstPositionInNode(newList.get())));
 

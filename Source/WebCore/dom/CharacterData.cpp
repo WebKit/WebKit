@@ -239,9 +239,4 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
     InspectorInstrumentation::characterDataModified(document(), *this);
 }
 
-int CharacterData::maxCharacterOffset() const
-{
-    return static_cast<int>(length());
-}
-
 } // namespace WebCore

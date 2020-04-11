@@ -1497,8 +1497,8 @@ RefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelection&
     // e.g. if pos was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead. 
     // We only do this for range because caret at Position("hello", 5) in <b>hello</b>world should give you font-weight: bold. 
     Node* positionNode = position.containerNode(); 
-    if (selection.isRange() && positionNode && positionNode->isTextNode() && position.computeOffsetInContainerNode() == positionNode->maxCharacterOffset()) 
-        position = nextVisuallyDistinctCandidate(position); 
+    if (selection.isRange() && is<Text>(positionNode) && static_cast<unsigned>(position.computeOffsetInContainerNode()) == downcast<Text>(*positionNode).length())
+        position = nextVisuallyDistinctCandidate(position);
 
     Element* element = position.element();
     if (!element)

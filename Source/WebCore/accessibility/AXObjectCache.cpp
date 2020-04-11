@@ -2664,7 +2664,7 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
     if (&node != characterOffset.node && AccessibilityObject::replacedNodeNeedsCharacter(nextSibling))
         return startOrEndCharacterOffsetForRange(rangeForNodeContents(nextSibling), false);
 
-    if ((!suffixLength && node.isTextNode() && static_cast<int>(next) <= node.maxCharacterOffset()) || (node.renderer() && node.renderer()->isBR() && !next)) {
+    if ((!suffixLength && node.isTextNode() && next <= node.length()) || (node.renderer() && node.renderer()->isBR() && !next)) {
         // The next variable contains a usable index into a text node
         if (node.isTextNode())
             return traverseToOffsetInRange(rangeForNodeContents(&node), next, TraverseOptionValidateOffset);

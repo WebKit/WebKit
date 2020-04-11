@@ -147,8 +147,8 @@ inline void RangeBoundaryPoint::setToStartOfNode(Ref<Node>&& container)
 inline void RangeBoundaryPoint::setToEndOfNode(Ref<Node>&& container)
 {
     m_containerNode = WTFMove(container);
-    if (m_containerNode->isCharacterDataNode()) {
-        m_offsetInContainer = m_containerNode->maxCharacterOffset();
+    if (is<CharacterData>(*m_containerNode)) {
+        m_offsetInContainer = downcast<CharacterData>(*m_containerNode).length();
         m_childBeforeBoundary = nullptr;
     } else {
         m_childBeforeBoundary = m_containerNode->lastChild();

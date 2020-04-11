@@ -637,7 +637,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
         return VisiblePosition(it.atEnd() ? searchRange->startPosition() : pos, DOWNSTREAM);
 
     auto& node = it.atEnd() ? searchRange->startContainer() : it.range().start.container.get();
-    if ((!suffixLength && node.isTextNode() && static_cast<int>(next) <= node.maxCharacterOffset()) || (node.renderer() && node.renderer()->isBR() && !next)) {
+    if ((!suffixLength && is<Text>(node) && next <= downcast<Text>(node).length()) || (node.renderer() && node.renderer()->isBR() && !next)) {
         // The next variable contains a usable index into a text node
         return VisiblePosition(createLegacyEditingPosition(&node, next), DOWNSTREAM);
     }

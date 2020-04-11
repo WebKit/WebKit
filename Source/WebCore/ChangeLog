@@ -1,3 +1,80 @@
+2020-04-08  Darin Adler  <darin@apple.com>
+
+        Use Node::length to replace Node::maxCharacterOffset and lastOffsetInNode; switch more offsets from int to unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=210246
+
+        Reviewed by Antti Koivisto.
+
+        - The recently-added Node::length, which matches the DOM specification terminology
+          for node offsets as used in ranges, is the same as the existing maxCharacterOffset
+          and lastOffsetInNode functions. Deleted all uses of those and replaced them
+          with calls to Node::length. One of the benefits of this is that Node::length is
+          implemented more efficiently and is not a virtual function. Another is consistently
+          matching the DOM specification terminology.
+        - Many offsets, including the ones in live ranges, are currently implemented as signed
+          in WebKit, but are specified as unsigned in the DOM and HTML specifications. This
+          has very little observable effect from JavaScript that can affect website compatibility,
+          but it's still helpful to be consistent both with the specification and internally.
+          Accordingly, changed some of these to unsigned; more to come later.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::previousBoundary): Use length instead of
+        maxCharacterOffset.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::maxCharacterOffset const): Deleted.
+        * dom/CharacterData.h: Deleted maxCharacterOffset override.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::shiftMarkers): Use length instead of
+        maxCharacterOffset.
+
+        * dom/Node.cpp:
+        (WebCore::Node::maxCharacterOffset const): Deleted.
+        * dom/Node.h: Deleted maxCharacterOffset.
+
+        * dom/Position.cpp:
+        (WebCore::Position::computeOffsetInContainerNode const): Use length instead
+        of lastOffsetInNode.
+
+        * dom/Position.h:
+        (WebCore::lastOffsetInNode): Deleted.
+        (WebCore::lastPositionInNode): Use length instead of lastOffsetInNode.
+        (WebCore::minOffsetForNode): Use length instead of maxCharacterOffset.
+        (WebCore::offsetIsBeforeLastNodeOffset): Ditto.
+
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::setToEndOfNode): Use length instead of
+        maxCharacterOffset.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::isNewLineAtPosition): Use length instead of maxCharacterOffset.
+        (WebCore::ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded):
+        Ditto.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeInlineStyle): Use length instead of
+        maxCharacterOffset.
+
+        * editing/Editing.cpp:
+        (WebCore::lastOffsetForEditing): Use length instead of mmaxCharacterOffset
+        and countChildNodes. Also improved the comment here.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::styleAtSelectionStart): Use length instead of
+        maxCharacterOffset.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApplyForSingleParagraph): Use length instead
+        of lastOffsetInNode.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        USe length instead of lastOffsetInNode.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousBoundary): Use length instead of maxCharacterOffset.
+
 2020-04-10  Alex Christensen  <achristensen@webkit.org>
 
         PersistentCoders should use modern decoding syntax
