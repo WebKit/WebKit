@@ -591,6 +591,22 @@ class _FunctionState(object):
         start_modifiers = _rfind_in_lines(r';|\{|\}|((private|public|protected):)|(#.*)', elided, self.parameter_start_position, Position(0, 0))
         return SingleLineView(elided, start_modifiers, self.function_name_start_position).single_line.strip()
 
+    def post_modifiers(self):
+        """Returns the modifiers after the function declaration such as attributes."""
+        elided = self._clean_lines.elided
+        return SingleLineView(elided, self.parameter_end_position, self.body_start_position).single_line.strip()
+
+    def has_attribute(self, attribute_regex):
+        regex = r'\b{attribute_regex}\b'.format(attribute_regex=attribute_regex)
+        return bool(search(regex, self.modifiers_and_return_type())) or bool(search(regex, self.post_modifiers()))
+
+    def has_return_type(self, return_type_regex):
+        regex = r'\b{return_type_regex}$'.format(return_type_regex=return_type_regex)
+        return bool(search(regex, self.modifiers_and_return_type()))
+
+    def is_static(self):
+        return bool(search(r'\bstatic\b', self.modifiers_and_return_type()))
+
     def is_virtual(self):
         return bool(search(r'\bvirtual\b', self.modifiers_and_return_type()))
 
@@ -1795,6 +1811,14 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
     """
     if line_number != function_state.body_start_position.row:
         return
+
+    # Check for decode() functions that don't have WARN_UNUSED_RETURN attribute.
+    if function_state.current_function.split('..')[-1].startswith('decode'):
+        if file_extension == 'h' or (function_state.is_static() or function_state.is_declaration):
+            if function_state.has_return_type('(auto|bool)'):
+                if not function_state.has_attribute('WARN_UNUSED_RETURN'):
+                    error(line_number, 'security/missing_warn_unused_return', 5,
+                          'decode() function returning a value is missing WARN_UNUSED_RETURN attribute')
 
     parameter_list = function_state.parameter_list()
     for parameter in parameter_list:
@@ -4265,6 +4289,7 @@ class CppChecker(object):
         'runtime/wtf_make_unique',
         'runtime/wtf_move',
         'security/assertion',
+        'security/missing_warn_unused_return',
         'security/printf',
         'security/temp_file',
         'softlink/framework',

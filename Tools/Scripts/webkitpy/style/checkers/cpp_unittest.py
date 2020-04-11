@@ -314,6 +314,21 @@ class CppStyleTestBase(unittest.TestCase):
         basic_error_rules = ('-', '+build/header_guard')
         return self.perform_lint(code, filename, basic_error_rules)
 
+    def perform_function_definition_check(self, file_name, lines, expected_warning):
+        file_extension = file_name.split('.')[1]
+        clean_lines = cpp_style.CleansedLines([lines])
+        function_state = cpp_style._FunctionState(5)
+        error_collector = ErrorCollector(self.assertTrue)
+
+        cpp_style.detect_functions(clean_lines, 0, function_state, error_collector)
+        self.assertEqual(function_state.in_a_function, True)
+        self.assertEqual(error_collector.results(), '')
+
+        class_state = cpp_style._ClassState()
+        cpp_style.check_function_definition(file_name, file_extension, clean_lines, 0, class_state, function_state,
+                                            error_collector)
+        self.assertEqual(error_collector.results(), expected_warning)
+
     # Perform lint and compare the error message with "expected_message".
     def assert_lint(self, code, expected_message, file_name='foo.cpp'):
         self.assertEqual(expected_message, self.perform_single_line_lint(code, file_name))
@@ -2942,6 +2957,83 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('long int a : 30;', errmsg)
         self.assert_lint('int a = 1 ? 0 : 30;', '')
         self.assert_lint('bool a : 1;', '')
+
+    def test_decode_functions_missing_warn_unused_return(self):
+        warning_expected = 'decode() function returning a value is missing WARN_UNUSED_RETURN attribute' \
+                           '  [security/missing_warn_unused_return] [5]'
+        warning_none = ''
+
+        self.perform_function_definition_check(
+            'foo.cpp',
+            'static bool decode() { return false; }',
+            warning_expected)
+        self.perform_function_definition_check(
+            'foo.cpp',
+            'static WARN_UNUSED_RETURN bool decode() { return false; }',
+            warning_none)
+
+        self.perform_function_definition_check(
+            'foo.cpp',
+            'static inline bool decodeStringText(Decoder& decoder, uint32_t length, String& result)\n'
+            '{',
+            warning_expected)
+        self.perform_function_definition_check(
+            'foo.cpp',
+            'static inline WARN_UNUSED_RETURN bool decodeStringText(Decoder& decoder, uint32_t length, String& result)\n'
+            '{',
+            warning_none)
+
+        self.perform_function_definition_check(
+            'foo.h',
+            'static bool decode(Decoder& decoder, std::pair<T, U>& pair)\n'
+            '{',
+            warning_expected)
+        self.perform_function_definition_check(
+            'foo.cpp',
+            'static WARN_UNUSED_RETURN bool decode(Decoder& decoder, std::pair<T, U>& pair)\n'
+            '{',
+            warning_none)
+
+        self.perform_function_definition_check(
+            'Source/WTF/wtf/foo.h',
+            'WTF_EXPORT_PRIVATE static bool decode(Decoder&, AtomString&);',
+            warning_expected)
+        self.perform_function_definition_check(
+            'Source/WTF/wtf/foo.h',
+            'WTF_EXPORT_PRIVATE static bool decode(Decoder&, AtomString&) WARN_UNUSED_RETURN;',
+            warning_none)
+
+        self.perform_function_definition_check(
+            'Source/WTF/wtf/foo.h',
+            '    template<typename E>\n'
+            '    auto decode(E& e) -> std::enable_if_t<std::is_enum<E>::value, bool>\n'
+            '    {',
+            warning_expected)
+        self.perform_function_definition_check(
+            'Source/WTF/wtf/foo.h',
+            '    template<typename E> WARN_UNUSED_RETURN\n'
+            '    auto decode(E& e) -> std::enable_if_t<std::is_enum<E>::value, bool>\n'
+            '    {',
+            warning_none)
+
+        self.perform_function_definition_check(
+            'Source/WTF/wtf/foo.h',
+            '    template<typename E>\n'
+            '    bool decode(E& e) -> std::enable_if_t<std::is_enum<E>::value, bool>\n'
+            '    {',
+            warning_expected)
+        self.perform_function_definition_check(
+            'Source/WTF/wtf/foo.h',
+            '    template<typename E> WARN_UNUSED_RETURN\n'
+            '    bool decode(E& e) -> std::enable_if_t<std::is_enum<E>::value, bool>\n'
+            '    {',
+            warning_none)
+
+        self.perform_function_definition_check(
+            'Source/WTF/wtf/foo.h',
+            '    static Optional<std::tuple<>> decode(Decoder&)\n'
+            '    {',
+            warning_none)
 
 
 class CleansedLinesTest(unittest.TestCase):
