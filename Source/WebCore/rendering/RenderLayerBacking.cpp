@@ -1237,10 +1237,8 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     m_subpixelOffsetFromRenderer = primaryGraphicsLayerOffsetFromRenderer.m_subpixelOffset;
     m_hasSubpixelRounding = !m_subpixelOffsetFromRenderer.isZero() || compositedBounds().size() != primaryGraphicsLayerRect.size();
 
-    if (primaryGraphicsLayerOffsetFromRenderer.m_devicePixelOffset != m_graphicsLayer->offsetFromRenderer()) {
+    if (primaryGraphicsLayerOffsetFromRenderer.m_devicePixelOffset != m_graphicsLayer->offsetFromRenderer())
         m_graphicsLayer->setOffsetFromRenderer(primaryGraphicsLayerOffsetFromRenderer.m_devicePixelOffset);
-        positionOverflowControlsLayers();
-    }
 
     // If we have a layer that clips children, position it.
     LayoutRect clippingBox;
@@ -1402,6 +1400,8 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     updateBackdropFiltersGeometry();
 #endif
     updateAfterWidgetResize();
+
+    positionOverflowControlsLayers();
 
     if (subpixelOffsetFromRendererChanged(oldSubpixelOffsetFromRenderer, m_subpixelOffsetFromRenderer, deviceScaleFactor()) && canIssueSetNeedsDisplay())
         setContentsNeedDisplay();

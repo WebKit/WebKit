@@ -3730,9 +3730,6 @@ void RenderLayer::positionOverflowControls(const IntSize& offsetFromRoot)
         m_scrollCorner->setFrameRect(scrollCorner);
     if (m_resizer)
         m_resizer->setFrameRect(resizerCornerRect(*this, borderBox));
-
-    if (isComposited())
-        backing()->positionOverflowControlsLayers();
 }
 
 int RenderLayer::scrollWidth() const

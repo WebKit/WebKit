@@ -1,5 +1,23 @@
 2020-04-10  Simon Fraser  <simon.fraser@apple.com>
 
+        [macOS] Fix scrollbar display for async-scrolling overflow
+        https://bugs.webkit.org/show_bug.cgi?id=194101
+
+        Reviewed by Tim Horton.
+
+        We need to call positionOverflowControlsLayers() from RenderLayerBacking::updateGeometry(),
+        otherwise, on first load, scrollbar layers have no size because we try to position them
+        before we've created them.
+
+        Test: fast/scrolling/mac/overflow-scrollbars-should-be-visible.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::positionOverflowControls):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+
+2020-04-10  Simon Fraser  <simon.fraser@apple.com>
+
         [Async overflow] Can't scroll vertically while over a horizontal scroller in this content
         https://bugs.webkit.org/show_bug.cgi?id=210356
         <rdar://problem/60523731>

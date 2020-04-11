@@ -1,3 +1,15 @@
+2020-04-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [macOS] Fix scrollbar display for async-scrolling overflow
+        https://bugs.webkit.org/show_bug.cgi?id=194101
+
+        Reviewed by Tim Horton.
+
+        Mismatch ref test that tests that overlay scrollbars show up.
+
+        * fast/scrolling/mac/overflow-scrollbars-should-be-visible-expected-mismatch.html: Added.
+        * fast/scrolling/mac/overflow-scrollbars-should-be-visible.html: Added.
+
 2020-04-10  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Flaky test gardening.
