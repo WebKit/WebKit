@@ -5078,6 +5078,32 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return CGRectZero;
 }
 
+#if USE(TEXT_INTERACTION_ADDITIONS)
+
+- (void)_willBeginTextInteractionInTextInputContext:(_WKTextInputContext *)context
+{
+    ASSERT(context);
+    _page->setShouldRevealCurrentSelectionAfterInsertion(false);
+    _page->setCanShowPlaceholder(context._textInputContext, false);
+    [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+}
+
+- (void)_didFinishTextInteractionInTextInputContext:(_WKTextInputContext *)context
+{
+    ASSERT(context);
+    [self _stopSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+    _page->setCanShowPlaceholder(context._textInputContext, true);
+    // Mark to zoom to reveal the newly focused element on the next editor state update.
+    // Then tell the web process to reveal the current selection, which will send us (the
+    // UI process) an editor state update.
+    // FIXME: Only do this if focus changed since -willBeginTextInteractionInTextInputContext was called.
+    // See <rdar://problem/60997530> for more details.
+    _page->setWaitingForPostLayoutEditorStateUpdateAfterFocusingElement(true);
+    _page->setShouldRevealCurrentSelectionAfterInsertion(true);
+}
+
+#endif
+
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
 
 - (void)modifierFlagsDidChangeFrom:(UIKeyModifierFlags)oldFlags to:(UIKeyModifierFlags)newFlags

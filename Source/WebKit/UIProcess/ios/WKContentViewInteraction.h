@@ -96,10 +96,6 @@ class WebPageProxy;
 struct WebAutocorrectionContext;
 }
 
-@class _UICursorInteraction;
-@class _UILookupGestureRecognizer;
-@class _UIHighlightView;
-@class UITargetedPreview;
 @class WebEvent;
 @class WKActionSheetAssistant;
 @class WKContextMenuElementInfo;
@@ -110,6 +106,12 @@ struct WebAutocorrectionContext;
 @class WKHighlightLongPressGestureRecognizer;
 @class WKMouseGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
+@class _WKTextInputContext;
+
+@class UITargetedPreview;
+@class _UICursorInteraction;
+@class _UILookupGestureRecognizer;
+@class _UIHighlightView;
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
 typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
@@ -563,6 +565,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if HAVE(PENCILKIT)
 - (WKDrawingCoordinator *)_drawingCoordinator;
+#endif
+
+#if USE(TEXT_INTERACTION_ADDITIONS)
+- (void)_willBeginTextInteractionInTextInputContext:(_WKTextInputContext *)context;
+- (void)_didFinishTextInteractionInTextInputContext:(_WKTextInputContext *)context;
 #endif
 
 - (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context;
