@@ -60,6 +60,7 @@
 #include <pal/system/Sound.h>
 #include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
@@ -574,15 +575,16 @@ bool InspectorFrontendHost::showCertificate(const String& serializedCertificate)
     if (!base64Decode(serializedCertificate, data))
         return false;
 
-    CertificateInfo certificateInfo;
     WTF::Persistence::Decoder decoder(data.data(), data.size());
-    if (!decoder.decode(certificateInfo))
+    Optional<CertificateInfo> certificateInfo;
+    decoder >> certificateInfo;
+    if (!certificateInfo)
         return false;
 
-    if (certificateInfo.isEmpty())
+    if (certificateInfo->isEmpty())
         return false;
 
-    m_client->showCertificate(certificateInfo);
+    m_client->showCertificate(*certificateInfo);
     return true;
 }
 

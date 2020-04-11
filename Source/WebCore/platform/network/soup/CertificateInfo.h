@@ -76,15 +76,18 @@ template<> struct Coder<GRefPtr<GByteArray>> {
         encoder.encodeFixedLengthData(byteArray->data, byteArray->len);
     }
 
-    static bool decode(Decoder &decoder, GRefPtr<GByteArray>& byteArray)
+    static Optional<GRefPtr<GByteArray>> decode(Decoder& decoder)
     {
-        uint32_t size;
-        if (!decoder.decode(size))
-            return false;
+        Optional<uint32_t> size;
+        decoder >> size;
+        if (!size)
+            return WTF::nullopt;
 
-        byteArray = adoptGRef(g_byte_array_sized_new(size));
-        g_byte_array_set_size(byteArray.get(), size);
-        return decoder.decodeFixedLengthData(byteArray->data, size);
+        GRefPtr<GByteArray> byteArray = adoptGRef(g_byte_array_sized_new(*size));
+        g_byte_array_set_size(byteArray.get(), *size);
+        if (!decoder.decodeFixedLengthData(byteArray->data, *size))
+            return WTF::nullopt;
+        return byteArray;
     }
 };
 
@@ -139,25 +142,29 @@ template<> struct Coder<WebCore::CertificateInfo> {
         encoder << static_cast<uint32_t>(certificateInfo.tlsErrors());
     }
 
-    static bool decode(Decoder& decoder, WebCore::CertificateInfo& certificateInfo)
+    static Optional<WebCore::CertificateInfo> decode(Decoder& decoder)
     {
-        Vector<GRefPtr<GByteArray>> certificatesDataList;
-        if (!decoder.decode(certificatesDataList))
-            return false;
+        Optional<Vector<GRefPtr<GByteArray>>> certificatesDataList;
+        decoder >> certificatesDataList;
+        if (!certificatesDataList)
+            return WTF::nullopt;
 
-        if (certificatesDataList.isEmpty())
-            return true;
-        auto certificate = certificateFromCertificatesDataList(certificatesDataList);
+        WebCore::CertificateInfo certificateInfo;
+        if (certificatesDataList->isEmpty())
+            return certificateInfo;
+
+        auto certificate = certificateFromCertificatesDataList(certificatesDataList.value());
         if (!certificate)
-            return false;
+            return WTF::nullopt;
         certificateInfo.setCertificate(certificate.get());
 
-        uint32_t tlsErrors;
-        if (!decoder.decode(tlsErrors))
-            return false;
-        certificateInfo.setTLSErrors(static_cast<GTlsCertificateFlags>(tlsErrors));
+        Optional<uint32_t> tlsErrors;
+        decoder >> tlsErrors;
+        if (!tlsErrors)
+            return WTF::nullopt;
+        certificateInfo.setTLSErrors(static_cast<GTlsCertificateFlags>(*tlsErrors));
 
-        return true;
+        return certificateInfo;
     }
 };
 

@@ -179,20 +179,49 @@ static Optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& 
             return false;
 
         WTF::Persistence::Decoder decoder(data, size);
-        if (!decoder.decode(metaData.version))
+        
+        Optional<uint32_t> version;
+        decoder >> version;
+        if (!version)
             return false;
-        if (!decoder.decode(metaData.sourceSize))
+        metaData.version = WTFMove(*version);
+
+        Optional<uint64_t> sourceSize;
+        decoder >> sourceSize;
+        if (!sourceSize)
             return false;
-        if (!decoder.decode(metaData.actionsSize))
+        metaData.sourceSize = WTFMove(*sourceSize);
+
+        Optional<uint64_t> actionsSize;
+        decoder >> actionsSize;
+        if (!actionsSize)
             return false;
-        if (!decoder.decode(metaData.filtersWithoutConditionsBytecodeSize))
+        metaData.actionsSize = WTFMove(*actionsSize);
+
+        Optional<uint64_t> filtersWithoutConditionsBytecodeSize;
+        decoder >> filtersWithoutConditionsBytecodeSize;
+        if (!filtersWithoutConditionsBytecodeSize)
             return false;
-        if (!decoder.decode(metaData.filtersWithConditionsBytecodeSize))
+        metaData.filtersWithoutConditionsBytecodeSize = WTFMove(*filtersWithoutConditionsBytecodeSize);
+
+        Optional<uint64_t> filtersWithConditionsBytecodeSize;
+        decoder >> filtersWithConditionsBytecodeSize;
+        if (!filtersWithConditionsBytecodeSize)
             return false;
-        if (!decoder.decode(metaData.conditionedFiltersBytecodeSize))
+        metaData.filtersWithConditionsBytecodeSize = WTFMove(*filtersWithConditionsBytecodeSize);
+
+        Optional<uint64_t> conditionedFiltersBytecodeSize;
+        decoder >> conditionedFiltersBytecodeSize;
+        if (!conditionedFiltersBytecodeSize)
             return false;
-        if (!decoder.decode(metaData.conditionsApplyOnlyToDomain))
+        metaData.conditionedFiltersBytecodeSize = WTFMove(*conditionedFiltersBytecodeSize);
+
+        Optional<uint32_t> conditionsApplyOnlyToDomain;
+        decoder >> conditionsApplyOnlyToDomain;
+        if (!conditionsApplyOnlyToDomain)
             return false;
+        metaData.conditionsApplyOnlyToDomain = WTFMove(*conditionsApplyOnlyToDomain);
+
         success = true;
         return false;
     });

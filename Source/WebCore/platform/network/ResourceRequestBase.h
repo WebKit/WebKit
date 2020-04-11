@@ -25,14 +25,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceRequestBase_h
-#define ResourceRequestBase_h
+#pragma once
 
 #include "FormData.h"
 #include "FrameLoaderTypes.h"
 #include "HTTPHeaderMap.h"
 #include "IntRect.h"
 #include "ResourceLoadPriority.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -283,64 +283,88 @@ ALWAYS_INLINE void ResourceRequestBase::encodeBase(Encoder& encoder) const
     encoder << m_httpMethod;
     encoder << m_httpHeaderFields;
     encoder << m_responseContentDispositionEncodingFallbackArray;
-    encoder.encodeEnum(m_cachePolicy);
+    encoder << m_cachePolicy;
     encoder << m_allowCookies;
-    encoder.encodeEnum(m_sameSiteDisposition);
+    encoder << m_sameSiteDisposition;
     encoder << m_isTopSite;
-    encoder.encodeEnum(m_priority);
-    encoder.encodeEnum(m_requester);
+    encoder << m_priority;
+    encoder << m_requester;
 }
 
 template<class Decoder>
 ALWAYS_INLINE bool ResourceRequestBase::decodeBase(Decoder& decoder)
 {
-    if (!decoder.decode(m_url))
+    Optional<URL> url;
+    decoder >> url;
+    if (!url)
         return false;
+    m_url = WTFMove(*url);
 
-    if (!decoder.decode(m_timeoutInterval))
+    Optional<double> timeoutInterval;
+    decoder >> timeoutInterval;
+    if (!timeoutInterval)
         return false;
+    m_timeoutInterval = WTFMove(*timeoutInterval);
 
-    String firstPartyForCookies;
-    if (!decoder.decode(firstPartyForCookies))
+    Optional<String> firstPartyForCookies;
+    decoder >> firstPartyForCookies;
+    if (!firstPartyForCookies)
         return false;
-    m_firstPartyForCookies = URL({ }, firstPartyForCookies);
+    m_firstPartyForCookies = URL({ }, *firstPartyForCookies);
 
-    if (!decoder.decode(m_httpMethod))
+    Optional<String> httpMethod;
+    decoder >> httpMethod;
+    if (!httpMethod)
         return false;
+    m_httpMethod = WTFMove(*httpMethod);
 
-    if (!decoder.decode(m_httpHeaderFields))
+    Optional<HTTPHeaderMap> fields;
+    decoder >> fields;
+    if (!fields)
         return false;
+    m_httpHeaderFields = WTFMove(*fields);
 
-    if (!decoder.decode(m_responseContentDispositionEncodingFallbackArray))
+    Optional<Vector<String>> array;
+    decoder >> array;
+    if (!array)
         return false;
+    m_responseContentDispositionEncodingFallbackArray = WTFMove(*array);
 
-    ResourceRequestCachePolicy cachePolicy;
-    if (!decoder.decodeEnum(cachePolicy))
+    Optional<ResourceRequestCachePolicy> cachePolicy;
+    decoder >> cachePolicy;
+    if (!cachePolicy)
         return false;
-    m_cachePolicy = cachePolicy;
+    m_cachePolicy = *cachePolicy;
 
-    bool allowCookies;
-    if (!decoder.decode(allowCookies))
+    Optional<bool> allowCookies;
+    decoder >> allowCookies;
+    if (!allowCookies)
         return false;
-    m_allowCookies = allowCookies;
+    m_allowCookies = *allowCookies;
 
-    SameSiteDisposition sameSiteDisposition;
-    if (!decoder.decodeEnum(sameSiteDisposition))
+    Optional<SameSiteDisposition> sameSiteDisposition;
+    decoder >> sameSiteDisposition;
+    if (!sameSiteDisposition)
         return false;
-    m_sameSiteDisposition = sameSiteDisposition;
+    m_sameSiteDisposition = *sameSiteDisposition;
 
-    bool isTopSite;
-    if (!decoder.decode(isTopSite))
+    Optional<bool> isTopSite;
+    decoder >> isTopSite;
+    if (!isTopSite)
         return false;
-    m_isTopSite = isTopSite;
+    m_isTopSite = *isTopSite;
 
-    ResourceLoadPriority priority;
-    if (!decoder.decodeEnum(priority))
+    Optional<ResourceLoadPriority> priority;
+    decoder >> priority;
+    if (!priority)
         return false;
-    m_priority = priority;
+    m_priority = *priority;
 
-    if (!decoder.decodeEnum(m_requester))
+    Optional<Requester> requester;
+    decoder >> requester;
+    if (!requester)
         return false;
+    m_requester = *requester;
 
     return true;
 }
@@ -361,4 +385,41 @@ bool ResourceRequestBase::decodeWithoutPlatformData(Decoder& decoder)
 
 } // namespace WebCore
 
-#endif // ResourceRequestBase_h
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ResourceRequestCachePolicy> {
+    using values = EnumValues<
+        WebCore::ResourceRequestCachePolicy,
+        WebCore::ResourceRequestCachePolicy::UseProtocolCachePolicy,
+        WebCore::ResourceRequestCachePolicy::ReloadIgnoringCacheData,
+        WebCore::ResourceRequestCachePolicy::ReturnCacheDataElseLoad,
+        WebCore::ResourceRequestCachePolicy::ReturnCacheDataDontLoad,
+        WebCore::ResourceRequestCachePolicy::DoNotUseAnyCache,
+        WebCore::ResourceRequestCachePolicy::RefreshAnyCacheData
+    >;
+};
+
+template<> struct EnumTraits<WebCore::ResourceRequestBase::SameSiteDisposition> {
+    using values = EnumValues<
+        WebCore::ResourceRequestBase::SameSiteDisposition,
+        WebCore::ResourceRequestBase::SameSiteDisposition::Unspecified,
+        WebCore::ResourceRequestBase::SameSiteDisposition::SameSite,
+        WebCore::ResourceRequestBase::SameSiteDisposition::CrossSite
+    >;
+};
+
+template<> struct EnumTraits<WebCore::ResourceRequestBase::Requester> {
+    using values = EnumValues<
+        WebCore::ResourceRequestBase::Requester,
+        WebCore::ResourceRequestBase::Requester::Unspecified,
+        WebCore::ResourceRequestBase::Requester::Main,
+        WebCore::ResourceRequestBase::Requester::XHR,
+        WebCore::ResourceRequestBase::Requester::Fetch,
+        WebCore::ResourceRequestBase::Requester::Media,
+        WebCore::ResourceRequestBase::Requester::ImportScripts,
+        WebCore::ResourceRequestBase::Requester::Ping,
+        WebCore::ResourceRequestBase::Requester::Beacon
+    >;
+};
+
+} // namespace WTF

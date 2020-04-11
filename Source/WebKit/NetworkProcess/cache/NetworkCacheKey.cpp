@@ -173,9 +173,47 @@ void Key::encode(WTF::Persistence::Encoder& encoder) const
     encoder << m_partitionHash;
 }
 
-bool Key::decode(WTF::Persistence::Decoder& decoder, Key& key)
+Optional<Key> Key::decode(WTF::Persistence::Decoder& decoder)
 {
-    return decoder.decode(key.m_partition) && decoder.decode(key.m_type) && decoder.decode(key.m_identifier) && decoder.decode(key.m_range) && decoder.decode(key.m_hash) && decoder.decode(key.m_partitionHash);
+    Key key;
+    
+    Optional<String> partition;
+    decoder >> partition;
+    if (!partition)
+        return WTF::nullopt;
+    key.m_partition = WTFMove(*partition);
+
+    Optional<String> type;
+    decoder >> type;
+    if (!type)
+        return WTF::nullopt;
+    key.m_type = WTFMove(*type);
+
+    Optional<String> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return WTF::nullopt;
+    key.m_identifier = WTFMove(*identifier);
+
+    Optional<String> range;
+    decoder >> range;
+    if (!range)
+        return WTF::nullopt;
+    key.m_range = WTFMove(*range);
+
+    Optional<HashType> hash;
+    decoder >> hash;
+    if (!hash)
+        return WTF::nullopt;
+    key.m_hash = WTFMove(*hash);
+
+    Optional<HashType> partitionHash;
+    decoder >> partitionHash;
+    if (!partitionHash)
+        return WTF::nullopt;
+    key.m_partitionHash = WTFMove(*partitionHash);
+
+    return { WTFMove(key) };
 }
 
 }

@@ -1,3 +1,33 @@
+2020-04-10  Alex Christensen  <achristensen@webkit.org>
+
+        PersistentCoders should use modern decoding syntax
+        https://bugs.webkit.org/show_bug.cgi?id=207497
+
+        Reviewed by Darin Adler.
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::showCertificate):
+        * loader/FetchOptions.h:
+        (WebCore::FetchOptions::decodePersistent):
+        * page/csp/ContentSecurityPolicyResponseHeaders.h:
+        (WebCore::ContentSecurityPolicyResponseHeaders::encode const):
+        (WebCore::ContentSecurityPolicyResponseHeaders::decode):
+        * platform/PasteboardCustomData.cpp:
+        (WebCore::PasteboardCustomData::fromSharedBuffer):
+        * platform/network/ResourceLoadPriority.h:
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::encodeBase const):
+        (WebCore::ResourceRequestBase::decodeBase):
+        * platform/network/cf/CertificateInfo.h:
+        (WTF::Persistence::decodeCFData):
+        (WTF::Persistence::decodeSecTrustRef):
+        (WTF::Persistence::decodeCertificateChain):
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::encode):
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::decode):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::doPushChanges):
+        (WebCore::RegistrationDatabase::importRecords):
+
 2020-04-10  Simon Fraser  <simon.fraser@apple.com>
 
         [macOS] Fix scrollbar display for async-scrolling overflow

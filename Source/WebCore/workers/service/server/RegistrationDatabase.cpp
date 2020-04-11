@@ -342,7 +342,7 @@ void RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
         data.contentSecurityPolicy.encode(cspEncoder);
 
         WTF::Persistence::Encoder scriptResourceMapEncoder;
-        scriptResourceMapEncoder.encode(data.scriptResourceMap);
+        scriptResourceMapEncoder << data.scriptResourceMap;
 
         if (sql.bindText(1, data.registration.key.toDatabaseKey()) != SQLITE_OK
             || sql.bindText(2, data.registration.scopeURL.protocolHostAndPort()) != SQLITE_OK
@@ -392,19 +392,23 @@ String RegistrationDatabase::importRecords()
         Vector<uint8_t> contentSecurityPolicyData;
         sql.getColumnBlobAsVector(9, contentSecurityPolicyData);
         WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyData.data(), contentSecurityPolicyData.size());
-        ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
-        if (contentSecurityPolicyData.size() && !ContentSecurityPolicyResponseHeaders::decode(cspDecoder, contentSecurityPolicy))
-            continue;
+        Optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicy;
+        if (contentSecurityPolicyData.size()) {
+            cspDecoder >> contentSecurityPolicy;
+            if (!contentSecurityPolicy)
+                continue;
+        }
 
         auto referrerPolicy = sql.getColumnText(10);
 
         Vector<uint8_t> scriptResourceMapData;
         sql.getColumnBlobAsVector(11, scriptResourceMapData);
-        HashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
+        Optional<HashMap<URL, ServiceWorkerContextData::ImportedScript>> scriptResourceMap;
 
         WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapData.data(), scriptResourceMapData.size());
         if (scriptResourceMapData.size()) {
-            if (!scriptResourceMapDecoder.decode(scriptResourceMap))
+            scriptResourceMapDecoder >> scriptResourceMap;
+            if (!scriptResourceMap)
                 continue;
         }
 
@@ -418,7 +422,7 @@ String RegistrationDatabase::importRecords()
         auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, WTF::nullopt, WTF::nullopt, WTFMove(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, WTFMove(scriptResourceMap) };
+        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, WTFMove(*scriptResourceMap) };
 
         callOnMainThread([protectedThis = makeRef(*this), contextData = contextData.isolatedCopy()]() mutable {
             protectedThis->addRegistrationToStore(WTFMove(contextData));

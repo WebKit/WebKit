@@ -40,21 +40,26 @@ void Coder<WebCore::HTTPHeaderMap>::encode(Encoder& encoder, const WebCore::HTTP
     }
 }
 
-bool Coder<WebCore::HTTPHeaderMap>::decode(Decoder& decoder, WebCore::HTTPHeaderMap& headers)
+Optional<WebCore::HTTPHeaderMap> Coder<WebCore::HTTPHeaderMap>::decode(Decoder& decoder)
 {
-    uint64_t headersSize;
-    if (!decoder.decode(headersSize))
-        return false;
-    for (uint64_t i = 0; i < headersSize; ++i) {
-        String name;
-        if (!decoder.decode(name))
-            return false;
-        String value;
-        if (!decoder.decode(value))
-            return false;
-        headers.append(name, value);
+    Optional<uint64_t> headersSize;
+    decoder >> headersSize;
+    if (!headersSize)
+        return WTF::nullopt;
+
+    WebCore::HTTPHeaderMap headers;
+    for (uint64_t i = 0; i < *headersSize; ++i) {
+        Optional<String> name;
+        decoder >> name;
+        if (!name)
+            return WTF::nullopt;
+        Optional<String> value;
+        decoder >> value;
+        if (!value)
+            return WTF::nullopt;
+        headers.append(WTFMove(*name), WTFMove(*value));
     }
-    return true;
+    return WTFMove(headers);
 }
 
 }

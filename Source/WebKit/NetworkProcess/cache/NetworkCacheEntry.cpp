@@ -112,31 +112,41 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
     auto entry = makeUnique<Entry>(storageEntry);
 
     WTF::Persistence::Decoder decoder(storageEntry.header.data(), storageEntry.header.size());
-    if (!decoder.decode(entry->m_response))
+    WebCore::ResourceResponse response;
+    if (!WebCore::ResourceResponse::decode(decoder, response))
         return nullptr;
+    entry->m_response = WTFMove(response);
     entry->m_response.setSource(WebCore::ResourceResponse::Source::DiskCache);
 
-    bool hasVaryingRequestHeaders;
-    if (!decoder.decode(hasVaryingRequestHeaders))
+    Optional<bool> hasVaryingRequestHeaders;
+    decoder >> hasVaryingRequestHeaders;
+    if (!hasVaryingRequestHeaders)
         return nullptr;
 
-    if (hasVaryingRequestHeaders) {
-        if (!decoder.decode(entry->m_varyingRequestHeaders))
+    if (*hasVaryingRequestHeaders) {
+        Optional<Vector<std::pair<String, String>>> varyingRequestHeaders;
+        decoder >> varyingRequestHeaders;
+        if (!varyingRequestHeaders)
             return nullptr;
+        entry->m_varyingRequestHeaders = WTFMove(*varyingRequestHeaders);
     }
 
-    bool isRedirect;
-    if (!decoder.decode(isRedirect))
+    Optional<bool> isRedirect;
+    decoder >> isRedirect;
+    if (!isRedirect)
         return nullptr;
 
-    if (isRedirect) {
+    if (*isRedirect) {
         entry->m_redirectRequest.emplace();
         if (!entry->m_redirectRequest->decodeWithoutPlatformData(decoder))
             return nullptr;
     }
 
-    if (!decoder.decode(entry->m_maxAgeCap))
+    Optional<Optional<Seconds>> maxAgeCap;
+    decoder >> maxAgeCap;
+    if (!maxAgeCap)
         return nullptr;
+    entry->m_maxAgeCap = WTFMove(*maxAgeCap);
 
     if (!decoder.verifyChecksum()) {
         LOG(NetworkCache, "(NetworkProcess) checksum verification failure\n");

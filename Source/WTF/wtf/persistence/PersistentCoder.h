@@ -30,16 +30,16 @@ namespace Persistence {
 
 class Decoder;
 class Encoder;
-    
+
 template<typename T> struct Coder {
     static void encode(Encoder& encoder, const T& t)
     {
         t.encode(encoder);
     }
 
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, T& t)
+    static Optional<T> decode(Decoder& decoder)
     {
-        return T::decode(decoder, t);
+        return T::decode(decoder);
     }
 };
 

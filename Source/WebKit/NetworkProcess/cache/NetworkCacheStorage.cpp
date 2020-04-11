@@ -438,24 +438,58 @@ static bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
     bool success = false;
     fileData.apply([&metaData, &success](const uint8_t* data, size_t size) {
         WTF::Persistence::Decoder decoder(data, size);
-        if (!decoder.decode(metaData.cacheStorageVersion))
+        
+        Optional<unsigned> cacheStorageVersion;
+        decoder >> cacheStorageVersion;
+        if (!cacheStorageVersion)
             return false;
-        if (!decoder.decode(metaData.key))
+        metaData.cacheStorageVersion = WTFMove(*cacheStorageVersion);
+
+        Optional<Key> key;
+        decoder >> key;
+        if (!key)
             return false;
-        if (!decoder.decode(metaData.timeStamp))
+        metaData.key = WTFMove(*key);
+
+        Optional<WallTime> timeStamp;
+        decoder >> timeStamp;
+        if (!timeStamp)
             return false;
-        if (!decoder.decode(metaData.headerHash))
+        metaData.timeStamp = WTFMove(*timeStamp);
+
+        Optional<SHA1::Digest> headerHash;
+        decoder >> headerHash;
+        if (!headerHash)
             return false;
-        if (!decoder.decode(metaData.headerSize))
+        metaData.headerHash = WTFMove(*headerHash);
+
+        Optional<uint64_t> headerSize;
+        decoder >> headerSize;
+        if (!headerSize)
             return false;
-        if (!decoder.decode(metaData.bodyHash))
+        metaData.headerSize = WTFMove(*headerSize);
+
+        Optional<SHA1::Digest> bodyHash;
+        decoder >> bodyHash;
+        if (!bodyHash)
             return false;
-        if (!decoder.decode(metaData.bodySize))
+        metaData.bodyHash = WTFMove(*bodyHash);
+
+        Optional<uint64_t> bodySize;
+        decoder >> bodySize;
+        if (!bodySize)
             return false;
-        if (!decoder.decode(metaData.isBodyInline))
+        metaData.bodySize = WTFMove(*bodySize);
+
+        Optional<bool> isBodyInline;
+        decoder >> isBodyInline;
+        if (!isBodyInline)
             return false;
+        metaData.isBodyInline = WTFMove(*isBodyInline);
+
         if (!decoder.verifyChecksum())
             return false;
+
         metaData.headerOffset = decoder.currentOffset();
         success = true;
         return false;

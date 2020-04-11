@@ -37,14 +37,14 @@ void Coder<AtomString>::encode(Encoder& encoder, const AtomString& atomString)
     encoder << atomString.string();
 }
 
-bool Coder<AtomString>::decode(Decoder& decoder, AtomString& atomString)
+Optional<AtomString> Coder<AtomString>::decode(Decoder& decoder)
 {
-    String string;
-    if (!decoder.decode(string))
-        return false;
+    Optional<String> string;
+    decoder >> string;
+    if (!string)
+        return WTF::nullopt;
 
-    atomString = string;
-    return true;
+    return {{ WTFMove(*string) }};
 }
 
 void Coder<CString>::encode(Encoder& encoder, const CString& string)
@@ -60,31 +60,29 @@ void Coder<CString>::encode(Encoder& encoder, const CString& string)
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length);
 }
 
-bool Coder<CString>::decode(Decoder& decoder, CString& result)
+Optional<CString> Coder<CString>::decode(Decoder& decoder)
 {
-    uint32_t length;
-    if (!decoder.decode(length))
-        return false;
+    Optional<uint32_t> length;
+    decoder >> length;
+    if (!length)
+        return WTF::nullopt;
 
     if (length == std::numeric_limits<uint32_t>::max()) {
         // This is the null string.
-        result = CString();
-        return true;
+        return CString();
     }
 
     // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.bufferIsLargeEnoughToContain<char>(length))
-        return false;
+    if (!decoder.bufferIsLargeEnoughToContain<char>(*length))
+        return WTF::nullopt;
 
     char* buffer;
-    CString string = CString::newUninitialized(length, buffer);
-    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length))
-        return false;
+    CString string = CString::newUninitialized(*length, buffer);
+    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), *length))
+        return WTF::nullopt;
 
-    result = string;
-    return true;
+    return WTFMove(string);
 }
-
 
 void Coder<String>::encode(Encoder& encoder, const String& string)
 {
@@ -106,40 +104,40 @@ void Coder<String>::encode(Encoder& encoder, const String& string)
 }
 
 template <typename CharacterType>
-static inline WARN_UNUSED_RETURN bool decodeStringText(Decoder& decoder, uint32_t length, String& result)
+static inline Optional<String> decodeStringText(Decoder& decoder, uint32_t length)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
     if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length))
-        return false;
+        return WTF::nullopt;
 
     CharacterType* buffer;
     String string = String::createUninitialized(length, buffer);
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType)))
-        return false;
+        return WTF::nullopt;
     
-    result = string;
-    return true;    
+    return WTFMove(string);
 }
 
-bool Coder<String>::decode(Decoder& decoder, String& result)
+Optional<String> Coder<String>::decode(Decoder& decoder)
 {
-    uint32_t length;
-    if (!decoder.decode(length))
-        return false;
+    Optional<uint32_t> length;
+    decoder >> length;
+    if (!length)
+        return WTF::nullopt;
 
-    if (length == std::numeric_limits<uint32_t>::max()) {
+    if (*length == std::numeric_limits<uint32_t>::max()) {
         // This is the null string.
-        result = String();
-        return true;
+        return String();
     }
 
-    bool is8Bit;
-    if (!decoder.decode(is8Bit))
-        return false;
+    Optional<bool> is8Bit;
+    decoder >> is8Bit;
+    if (!is8Bit)
+        return WTF::nullopt;
 
-    if (is8Bit)
-        return decodeStringText<LChar>(decoder, length, result);
-    return decodeStringText<UChar>(decoder, length, result);
+    if (*is8Bit)
+        return decodeStringText<LChar>(decoder, *length);
+    return decodeStringText<UChar>(decoder, *length);
 }
 
 void Coder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& digest)
@@ -147,9 +145,12 @@ void Coder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& digest)
     encoder.encodeFixedLengthData(digest.data(), sizeof(digest));
 }
 
-bool Coder<SHA1::Digest>::decode(Decoder& decoder, SHA1::Digest& digest)
+Optional<SHA1::Digest> Coder<SHA1::Digest>::decode(Decoder& decoder)
 {
-    return decoder.decodeFixedLengthData(digest.data(), sizeof(digest));
+    SHA1::Digest tmp;
+    if (!decoder.decodeFixedLengthData(tmp.data(), sizeof(tmp)))
+        return WTF::nullopt;
+    return WTFMove(tmp);
 }
 
 }

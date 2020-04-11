@@ -112,23 +112,22 @@ void Caches::storeOrigin(CompletionCallback&& completionHandler)
 
 Optional<WebCore::ClientOrigin> Caches::readOrigin(const Data& data)
 {
-    // FIXME: We should be able to use modern decoders for persistent data.
-    WebCore::SecurityOriginData topOrigin, clientOrigin;
     WTF::Persistence::Decoder decoder(data.data(), data.size());
 
-    if (!decoder.decode(topOrigin.protocol))
+    Optional<WebCore::SecurityOriginData> topOrigin;
+    decoder >> topOrigin;
+    if (!topOrigin)
         return WTF::nullopt;
-    if (!decoder.decode(topOrigin.host))
+
+    Optional<WebCore::SecurityOriginData> clientOrigin;
+    decoder >> clientOrigin;
+    if (!clientOrigin)
         return WTF::nullopt;
-    if (!decoder.decode(topOrigin.port))
-        return WTF::nullopt;
-    if (!decoder.decode(clientOrigin.protocol))
-        return WTF::nullopt;
-    if (!decoder.decode(clientOrigin.host))
-        return WTF::nullopt;
-    if (!decoder.decode(clientOrigin.port))
-        return WTF::nullopt;
-    return WebCore::ClientOrigin { WTFMove(topOrigin), WTFMove(clientOrigin) };
+
+    return {{
+        WTFMove(*topOrigin),
+        WTFMove(*clientOrigin)
+    }};
 }
 
 void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
@@ -411,23 +410,26 @@ static inline Data encodeCacheNames(const Vector<Cache>& caches)
 static inline Expected<Vector<std::pair<String, String>>, Error> decodeCachesNames(const Data& data)
 {
     WTF::Persistence::Decoder decoder(data.data(), data.size());
-    uint64_t count;
-    if (!decoder.decode(count))
+    Optional<uint64_t> count;
+    decoder >> count;
+    if (!count)
         return makeUnexpected(Error::ReadDisk);
 
     Vector<std::pair<String, String>> names;
-    if (!names.tryReserveCapacity(count))
+    if (!names.tryReserveCapacity(*count))
         return makeUnexpected(Error::ReadDisk);
 
-    for (size_t index = 0; index < count; ++index) {
-        String name;
-        if (!decoder.decode(name))
+    for (size_t index = 0; index < *count; ++index) {
+        Optional<String> name;
+        decoder >> name;
+        if (!name)
             return makeUnexpected(Error::ReadDisk);
-        String uniqueName;
-        if (!decoder.decode(uniqueName))
+        Optional<String> uniqueName;
+        decoder >> uniqueName;
+        if (!uniqueName)
             return makeUnexpected(Error::ReadDisk);
 
-        names.uncheckedAppend(std::pair<String, String> { WTFMove(name), WTFMove(uniqueName) });
+        names.uncheckedAppend({ WTFMove(*name), WTFMove(*uniqueName) });
     }
     return names;
 }

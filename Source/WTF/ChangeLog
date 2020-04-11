@@ -1,3 +1,38 @@
+2020-04-10  Alex Christensen  <achristensen@webkit.org>
+
+        PersistentCoders should use modern decoding syntax
+        https://bugs.webkit.org/show_bug.cgi?id=207497
+
+        Reviewed by Darin Adler.
+
+        This paves the way for more serialized types that do not have a default constructor.
+
+        * wtf/persistence/PersistentCoder.h:
+        (WTF::Persistence::Coder::encode):
+        (WTF::Persistence::Coder::decode):
+        * wtf/persistence/PersistentCoders.cpp:
+        (WTF::Persistence::Coder<AtomString>::decode):
+        (WTF::Persistence::Coder<CString>::decode):
+        (WTF::Persistence::decodeStringText):
+        (WTF::Persistence::Coder<String>::decode):
+        (WTF::Persistence::Coder<SHA1::Digest>::decode):
+        * wtf/persistence/PersistentCoders.h:
+        (WTF::Persistence::Coder<Optional<T>>::decode):
+        (WTF::Persistence::Coder<Seconds>::decode):
+        (WTF::Persistence::Coder<WallTime>::decode):
+        * wtf/persistence/PersistentDecoder.cpp:
+        (WTF::Persistence::Decoder::decodeNumber):
+        (WTF::Persistence::Decoder::operator>>):
+        (WTF::Persistence::Decoder::decode): Deleted.
+        * wtf/persistence/PersistentDecoder.h:
+        (WTF::Persistence::Decoder::operator>>):
+        (WTF::Persistence::Decoder::decode): Deleted.
+        (WTF::Persistence::Decoder::decodeEnum): Deleted.
+        * wtf/persistence/PersistentEncoder.h:
+        (WTF::Persistence::Encoder::operator<<):
+        (WTF::Persistence::Encoder::encode): Deleted.
+        (WTF::Persistence::Encoder::encodeEnum): Deleted.
+
 2020-04-10  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up: Add WARN_UNUSED_RETURN to decode methods in Source/WTF

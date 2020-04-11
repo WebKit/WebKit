@@ -62,62 +62,63 @@ void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size)
 }
 
 template<typename Type>
-void Encoder::encodeNumber(Type value)
+Encoder& Encoder::encodeNumber(Type value)
 {
     Encoder::updateChecksumForNumber(m_sha1, value);
 
     uint8_t* buffer = grow(sizeof(Type));
     memcpy(buffer, &value, sizeof(Type));
+    return *this;
 }
 
-void Encoder::encode(bool value)
+Encoder& Encoder::operator<<(bool value)
 {
-    encodeNumber(value);
+    return encodeNumber(value);
 }
 
-void Encoder::encode(uint8_t value)
+Encoder& Encoder::operator<<(uint8_t value)
 {
-    encodeNumber(value);
+    return encodeNumber(value);
 }
 
-void Encoder::encode(uint16_t value)
+Encoder& Encoder::operator<<(uint16_t value)
 {
-    encodeNumber(value);
+    return encodeNumber(value);
 }
 
-void Encoder::encode(int16_t value)
+Encoder& Encoder::operator<<(int16_t value)
 {
-    encodeNumber(value);
+    return encodeNumber(value);
 }
 
-void Encoder::encode(uint32_t value)
+Encoder& Encoder::operator<<(uint32_t value)
 {
-    encodeNumber(value);
+    return encodeNumber(value);
 }
 
-void Encoder::encode(uint64_t value)
+Encoder& Encoder::operator<<(uint64_t value)
 {
-    encodeNumber(value);
+    return encodeNumber(value);
 }
 
-void Encoder::encode(int32_t value)
+Encoder& Encoder::operator<<(int32_t value)
 {
-    encodeNumber(value);
+    return encodeNumber(value);
 }
 
-void Encoder::encode(int64_t value)
+Encoder& Encoder::operator<<(int64_t value)
 {
-    encodeNumber(value);
+    return encodeNumber(value);
 }
 
-void Encoder::encode(float value)
+Encoder& Encoder::operator<<(float value)
 {
-    encodeNumber(value);
+    return encodeNumber(value);
 }
 
-void Encoder::encode(double value)
+Encoder& Encoder::operator<<(double value)
 {
-    encodeNumber(value);
+    return encodeNumber(value);
 }
 
 void Encoder::encodeChecksum()

@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceLoadPriority_h
-#define ResourceLoadPriority_h
+#pragma once
+
+#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
@@ -54,7 +55,19 @@ inline ResourceLoadPriority& operator--(ResourceLoadPriority& priority)
     return priority = static_cast<ResourceLoadPriority>(static_cast<int>(priority) - 1);
 }
 
-}
+} // namespace WebCore
 
-#endif
+namespace WTF {
 
+template<> struct EnumTraits<WebCore::ResourceLoadPriority> {
+    using values = EnumValues<
+        WebCore::ResourceLoadPriority,
+        WebCore::ResourceLoadPriority::VeryLow,
+        WebCore::ResourceLoadPriority::Low,
+        WebCore::ResourceLoadPriority::Medium,
+        WebCore::ResourceLoadPriority::High,
+        WebCore::ResourceLoadPriority::VeryHigh
+    >;
+};
+
+} // namespace WTF

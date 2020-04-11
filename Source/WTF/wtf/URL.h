@@ -248,10 +248,11 @@ bool URL::decode(Decoder& decoder, URL& url)
 template <class Decoder>
 Optional<URL> URL::decode(Decoder& decoder)
 {
-    String string;
-    if (!decoder.decode(string))
+    Optional<String> string;
+    decoder >> string;
+    if (!string)
         return WTF::nullopt;
-    return URL(URL(), string);
+    return URL(URL(), WTFMove(*string));
 }
 
 WTF_EXPORT_PRIVATE bool equalIgnoringFragmentIdentifier(const URL&, const URL&);

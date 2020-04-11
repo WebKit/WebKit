@@ -969,7 +969,7 @@ void InspectorNetworkAgent::getSerializedCertificate(ErrorString& errorString, c
     }
 
     WTF::Persistence::Encoder encoder;
-    encoder << certificate.value();
+    WTF::Persistence::Coder<WebCore::CertificateInfo>::encode(encoder, certificate.value());
     *serializedCertificate = base64Encode(encoder.buffer(), encoder.bufferSize());
 }
 

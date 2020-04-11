@@ -92,7 +92,7 @@ template<class Encoder>
 void ResourceResponse::encode(Encoder& encoder) const
 {
     ResourceResponseBase::encode(encoder);
-    encoder.encodeEnum(m_soupFlags);
+    encoder << static_cast<uint64_t>(m_soupFlags);
 }
 
 template<class Decoder>
@@ -100,8 +100,12 @@ bool ResourceResponse::decode(Decoder& decoder, ResourceResponse& response)
 {
     if (!ResourceResponseBase::decode(decoder, response))
         return false;
-    if (!decoder.decodeEnum(response.m_soupFlags))
+    Optional<uint64_t> soupFlags;
+    decoder >> soupFlags;
+    if (!soupFlags)
         return false;
+    // FIXME: Verify that this is a valid value for SoupMessageFlags.
+    response.m_soupFlags = static_cast<SoupMessageFlags>(*soupFlags);
     return true;
 }
 

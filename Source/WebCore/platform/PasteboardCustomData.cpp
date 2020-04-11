@@ -98,23 +98,29 @@ PasteboardCustomData PasteboardCustomData::fromSharedBuffer(const SharedBuffer& 
 
     PasteboardCustomData result;
     auto decoder = buffer.decoder();
-    unsigned version;
-    if (!decoder.decode(version) || version > maxSupportedDataSerializationVersionNumber)
+    Optional<unsigned> version;
+    decoder >> version;
+    if (!version || *version > maxSupportedDataSerializationVersionNumber)
         return { };
 
-    if (!decoder.decode(result.m_origin))
+    Optional<String> origin;
+    decoder >> origin;
+    if (!origin)
+        return { };
+    result.m_origin = WTFMove(*origin);
+
+    Optional<HashMap<String, String>> sameOriginCustomStringData;
+    decoder >> sameOriginCustomStringData;
+    if (!sameOriginCustomStringData)
         return { };
 
-    HashMap<String, String> sameOriginCustomStringData;
-    if (!decoder.decode(sameOriginCustomStringData))
+    Optional<Vector<String>> orderedTypes;
+    decoder >> orderedTypes;
+    if (!orderedTypes)
         return { };
 
-    Vector<String> orderedTypes;
-    if (!decoder.decode(orderedTypes))
-        return { };
-
-    for (auto& type : orderedTypes)
-        result.writeStringInCustomData(type, sameOriginCustomStringData.get(type));
+    for (auto& type : *orderedTypes)
+        result.writeStringInCustomData(type, sameOriginCustomStringData->get(type));
 
     return result;
 }

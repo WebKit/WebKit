@@ -49,37 +49,65 @@ void SubresourceInfo::encode(WTF::Persistence::Encoder& encoder) const
     encoder << m_isSameSite;
     encoder << m_firstPartyForCookies;
     encoder << m_requestHeaders;
-    encoder.encodeEnum(m_priority);
+    encoder << m_priority;
 }
 
-bool SubresourceInfo::decode(WTF::Persistence::Decoder& decoder, SubresourceInfo& info)
+Optional<SubresourceInfo> SubresourceInfo::decode(WTF::Persistence::Decoder& decoder)
 {
-    if (!decoder.decode(info.m_key))
-        return false;
-    if (!decoder.decode(info.m_lastSeen))
-        return false;
-    if (!decoder.decode(info.m_firstSeen))
-        return false;
-    
-    if (!decoder.decode(info.m_isTransient))
-        return false;
-    
+    SubresourceInfo info;
+
+    Optional<Key> key;
+    decoder >> key;
+    if (!key)
+        return WTF::nullopt;
+    info.m_key = WTFMove(*key);
+
+    Optional<WallTime> lastSeen;
+    decoder >> lastSeen;
+    if (!lastSeen)
+        return WTF::nullopt;
+    info.m_lastSeen = WTFMove(*lastSeen);
+
+    Optional<WallTime> firstSeen;
+    decoder >> firstSeen;
+    if (!firstSeen)
+        return WTF::nullopt;
+    info.m_firstSeen = WTFMove(*firstSeen);
+
+    Optional<bool> isTransient;
+    decoder >> isTransient;
+    if (!isTransient)
+        return WTF::nullopt;
+    info.m_isTransient = WTFMove(*isTransient);
+
     if (info.m_isTransient)
-        return true;
+        return { WTFMove(info) };
 
-    if (!decoder.decode(info.m_isSameSite))
-        return false;
+    Optional<bool> isSameSite;
+    decoder >> isSameSite;
+    if (!isSameSite)
+        return WTF::nullopt;
+    info.m_isSameSite = WTFMove(*isSameSite);
 
-    if (!decoder.decode(info.m_firstPartyForCookies))
-        return false;
+    Optional<URL> firstPartyForCookies;
+    decoder >> firstPartyForCookies;
+    if (!firstPartyForCookies)
+        return WTF::nullopt;
+    info.m_firstPartyForCookies = WTFMove(*firstPartyForCookies);
 
-    if (!decoder.decode(info.m_requestHeaders))
-        return false;
+    Optional<WebCore::HTTPHeaderMap> requestHeaders;
+    decoder >> requestHeaders;
+    if (!requestHeaders)
+        return WTF::nullopt;
+    info.m_requestHeaders = WTFMove(*requestHeaders);
 
-    if (!decoder.decodeEnum(info.m_priority))
-        return false;
+    Optional<WebCore::ResourceLoadPriority> priority;
+    decoder >> priority;
+    if (!priority)
+        return WTF::nullopt;
+    info.m_priority = WTFMove(*priority);
     
-    return true;
+    return { WTFMove(info) };
 }
 
 bool SubresourceInfo::isFirstParty() const
@@ -103,8 +131,11 @@ std::unique_ptr<SubresourcesEntry> SubresourcesEntry::decodeStorageRecord(const 
     auto entry = makeUnique<SubresourcesEntry>(storageEntry);
 
     WTF::Persistence::Decoder decoder(storageEntry.header.data(), storageEntry.header.size());
-    if (!decoder.decode(entry->m_subresources))
+    Optional<Vector<SubresourceInfo>> subresources;
+    decoder >> subresources;
+    if (!subresources)
         return nullptr;
+    entry->m_subresources = WTFMove(*subresources);
 
     if (!decoder.verifyChecksum()) {
         LOG(NetworkCache, "(NetworkProcess) checksum verification failure\n");

@@ -51,20 +51,28 @@ struct ServiceWorkerContextData {
             encoder << script << responseURL << mimeType;
         }
 
-        template<class Decoder> static bool decode(Decoder& decoder, ImportedScript& script)
+        template<class Decoder> static Optional<ImportedScript> decode(Decoder& decoder)
         {
-            ImportedScript importedScript;
-            if (!decoder.decode(importedScript.script))
-                return false;
-
-            if (!decoder.decode(importedScript.responseURL))
-                return false;
-
-            if (!decoder.decode(importedScript.mimeType))
-                return false;
-
-            script = WTFMove(importedScript);
-            return true;
+            Optional<String> script;
+            decoder >> script;
+            if (!script)
+                return WTF::nullopt;
+            
+            Optional<URL> responseURL;
+            decoder >> responseURL;
+            if (!responseURL)
+                return WTF::nullopt;
+            
+            Optional<String> mimeType;
+            decoder >> mimeType;
+            if (!mimeType)
+                return WTF::nullopt;
+            
+            return {{
+                WTFMove(*script),
+                WTFMove(*responseURL),
+                WTFMove(*mimeType)
+            }};
         }
     };
 

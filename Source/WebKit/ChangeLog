@@ -1,3 +1,35 @@
+2020-04-10  Alex Christensen  <achristensen@webkit.org>
+
+        PersistentCoders should use modern decoding syntax
+        https://bugs.webkit.org/show_bug.cgi?id=207497
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::decodeDOMCacheRecord):
+        (WebKit::CacheStorage::Cache::decodeRecordHeader):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::readOrigin):
+        (WebKit::CacheStorage::decodeCachesNames):
+        * NetworkProcess/cache/NetworkCacheCoders.cpp:
+        (WTF::Persistence::Coder<WebCore::HTTPHeaderMap>::decode):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::Key::decode):
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::decodeRecordMetaData):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourceInfo::encode const):
+        (WebKit::NetworkCache::SubresourceInfo::decode):
+        (WebKit::NetworkCache::SubresourcesEntry::decodeStorageRecord):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+        * Shared/UserData.cpp:
+        (WebKit::UserData::decode):
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::decodeContentRuleListMetaData):
+
 2020-04-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add `broadcastConsoleMessage` calls for new ITPDebug logs after r259275

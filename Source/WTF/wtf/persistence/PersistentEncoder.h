@@ -45,31 +45,30 @@ public:
     WTF_EXPORT_PRIVATE void encodeChecksum();
     WTF_EXPORT_PRIVATE void encodeFixedLengthData(const uint8_t*, size_t);
 
-    template<typename E> auto encode(E value) -> std::enable_if_t<std::is_enum<E>::value>
+    template<typename T, std::enable_if_t<std::is_enum<T>::value>* = nullptr>
+    Encoder& operator<<(const T& t)
     {
-        static_assert(sizeof(E) <= sizeof(uint64_t), "Enum type must not be larger than 64 bits.");
-
-        ASSERT(isValidEnum<E>(static_cast<uint64_t>(value)));
-        encode(static_cast<uint64_t>(value));
+        static_assert(sizeof(T) <= sizeof(uint64_t), "Enum type must not be larger than 64 bits.");
+        return *this << static_cast<uint64_t>(t);
     }
 
-    template<typename T> void encodeEnum(T t)
-    {
-        COMPILE_ASSERT(sizeof(T) <= sizeof(uint64_t), enum_type_must_not_be_larger_than_64_bits);
-
-        encode(static_cast<uint64_t>(t));
-    }
-
-    template<typename T> auto encode(const T& t) -> std::enable_if_t<!std::is_enum<T>::value>
+    template<typename T, std::enable_if_t<!std::is_enum<T>::value && !std::is_arithmetic<typename std::remove_const<T>>::value>* = nullptr>
+    Encoder& operator<<(const T& t)
     {
         Coder<T>::encode(*this, t);
-    }
-
-    template<typename T> Encoder& operator<<(const T& t)
-    {
-        encode(t);
         return *this;
     }
+
+    WTF_EXPORT_PRIVATE Encoder& operator<<(bool);
+    WTF_EXPORT_PRIVATE Encoder& operator<<(uint8_t);
+    WTF_EXPORT_PRIVATE Encoder& operator<<(uint16_t);
+    WTF_EXPORT_PRIVATE Encoder& operator<<(uint32_t);
+    WTF_EXPORT_PRIVATE Encoder& operator<<(uint64_t);
+    WTF_EXPORT_PRIVATE Encoder& operator<<(int16_t);
+    WTF_EXPORT_PRIVATE Encoder& operator<<(int32_t);
+    WTF_EXPORT_PRIVATE Encoder& operator<<(int64_t);
+    WTF_EXPORT_PRIVATE Encoder& operator<<(float);
+    WTF_EXPORT_PRIVATE Encoder& operator<<(double);
 
     const uint8_t* buffer() const { return m_buffer.data(); }
     size_t bufferSize() const { return m_buffer.size(); }
@@ -80,18 +79,8 @@ public:
     static constexpr bool isIPCEncoder = false;
 
 private:
-    WTF_EXPORT_PRIVATE void encode(bool);
-    WTF_EXPORT_PRIVATE void encode(uint8_t);
-    WTF_EXPORT_PRIVATE void encode(uint16_t);
-    WTF_EXPORT_PRIVATE void encode(uint32_t);
-    WTF_EXPORT_PRIVATE void encode(uint64_t);
-    WTF_EXPORT_PRIVATE void encode(int16_t);
-    WTF_EXPORT_PRIVATE void encode(int32_t);
-    WTF_EXPORT_PRIVATE void encode(int64_t);
-    WTF_EXPORT_PRIVATE void encode(float);
-    WTF_EXPORT_PRIVATE void encode(double);
 
-    template<typename Type> void encodeNumber(Type);
+    template<typename Type> Encoder& encodeNumber(Type);
 
     uint8_t* grow(size_t);
 

@@ -369,10 +369,11 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         break;
 
     case API::Object::Type::CertificateInfo: {
-        WebCore::CertificateInfo certificateInfo;
-        if (!decoder.decode(certificateInfo))
+        Optional<WebCore::CertificateInfo> certificateInfo;
+        decoder >> certificateInfo;
+        if (!certificateInfo)
             return false;
-        result = WebCertificateInfo::create(certificateInfo);
+        result = WebCertificateInfo::create(*certificateInfo);
         break;
     }
 

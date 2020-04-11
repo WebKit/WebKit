@@ -30,8 +30,7 @@
 #include <wtf/Box.h>
 #include <wtf/Optional.h>
 #include <wtf/Seconds.h>
-#include <wtf/persistence/PersistentDecoder.h>
-#include <wtf/persistence/PersistentEncoder.h>
+#include <wtf/persistence/PersistentCoder.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
