@@ -109,12 +109,19 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
     while (node) {
         if (is<ScrollingTreeScrollingNode>(*node)) {
             auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
-            // FIXME: this needs to consult latching logic.
             if (scrollingNode.handleWheelEvent(wheelEvent) == ScrollingEventResult::DidHandleEvent) {
                 m_latchingController.nodeDidHandleEvent(wheelEvent, scrollingNode.scrollingNodeID());
                 return ScrollingEventResult::DidHandleEvent;
             }
         }
+
+        if (is<ScrollingTreeOverflowScrollProxyNode>(*node)) {
+            if (auto relatedNode = nodeForID(downcast<ScrollingTreeOverflowScrollProxyNode>(*node).overflowScrollingNodeID())) {
+                node = relatedNode;
+                continue;
+            }
+        }
+
         node = node->parent();
     }
     return ScrollingEventResult::DidNotHandleEvent;

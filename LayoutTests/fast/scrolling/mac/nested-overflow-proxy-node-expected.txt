@@ -1,0 +1,13 @@
+Horizontal scrolling content
+here
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS horizontalOverflowScrollEventCount is 0
+PASS verticalOverflowScrollEventCount > 0 is true
+PASS windowScrollEventCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

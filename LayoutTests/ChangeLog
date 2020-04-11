@@ -1,3 +1,15 @@
+2020-04-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow] Can't scroll vertically while over a horizontal scroller in this content
+        https://bugs.webkit.org/show_bug.cgi?id=210356
+        <rdar://problem/60523731>
+
+        Reviewed by Tim Horton.
+
+        * fast/scrolling/mac/absolute-in-overflow-scroll.html:
+        * fast/scrolling/mac/nested-overflow-proxy-node-expected.txt: Added.
+        * fast/scrolling/mac/nested-overflow-proxy-node.html: Added.
+
 2020-04-10  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION: (r259850)[ Mac wk1 Debug ] media/track/track-user-stylesheet.html is flaky failing.

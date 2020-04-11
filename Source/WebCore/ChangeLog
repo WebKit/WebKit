@@ -1,3 +1,23 @@
+2020-04-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow] Can't scroll vertically while over a horizontal scroller in this content
+        https://bugs.webkit.org/show_bug.cgi?id=210356
+        <rdar://problem/60523731>
+
+        Reviewed by Tim Horton.
+
+        https://dozermapper.github.io/gitbook/documentation/customconverter.html has style
+        that triggers mismatched containing block and z-order layer trees, triggering the creation
+        of an "overflow scroll proxy node" in the scrolling tree.
+
+        If we encounter such a node in our ancestor tree walk while deciding which node to send
+        a wheel event too, we need to jump to the node that the proxy node is representing.
+
+        Test: fast/scrolling/mac/nested-overflow-proxy-node.html
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+
 2020-04-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r259764.
