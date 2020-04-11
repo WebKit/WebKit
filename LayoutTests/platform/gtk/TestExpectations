@@ -2591,6 +2591,7 @@ webkit.org/b/198830 [ Release ] media/video-no-autoplay.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/video-reverse-play-duration.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/video-unmuted-after-play-holds-sleep-assertion.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-removed.html [ ImageOnlyFailure Crash ] 
+webkit.org/b/198830 [ Release ] media/video-colorspace-yuv422.html [ Pass Crash ]
 
 webkit.org/b/198830 webkit.org/b/76280 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html [ Pass Crash Failure ]
 
@@ -2892,6 +2893,9 @@ webkit.org/b/210233 http/tests/media/media-stream/device-change-event-in-iframe.
 webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass ]
 
 webkit.org/b/210274 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/none-load-from-cache-storage.https.html [ Failure Pass ]
+
+webkit.org/b/210360 [ Release ] webrtc/video-update-often.html [ Pass Crash ]
+webkit.org/b/210370 [ Release ] media/track/text-track-cue-is-reachable.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

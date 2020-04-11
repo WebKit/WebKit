@@ -1,3 +1,12 @@
+2020-04-10  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Flaky test gardening.
+
+        Unreviewed test gardening.
+
+        * platform/gtk-wayland/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-04-10  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow] Can't scroll vertically while over a horizontal scroller in this content
