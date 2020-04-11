@@ -154,9 +154,10 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
     LockHolder lockHolder(m_layerHitTestMutex);
 
     auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode)->rootContentsLayer();
+    auto pointInContentsLayer = [rootContentsLayer convertPoint:point fromLayer:[rootContentsLayer superlayer]];
 
     Vector<CALayer *, 16> layersAtPoint;
-    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), point);
+    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), pointInContentsLayer);
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found " << layersAtPoint.size() << " layers");
 #if !LOG_DISABLED

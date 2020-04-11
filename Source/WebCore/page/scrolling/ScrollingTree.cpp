@@ -77,7 +77,7 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
 
 ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree " << this << " handleWheelEvent (async scrolling enabled: " << asyncFrameOrOverflowScrollingEnabled() << ")");
+    LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree " << this << " handleWheelEvent " << wheelEvent);
 
     LockHolder locker(m_treeMutex);
 

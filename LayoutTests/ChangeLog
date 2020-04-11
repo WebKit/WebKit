@@ -1,3 +1,15 @@
+2020-04-11  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow] Can't scroll overflow:scroll in sideways-scrollable RTL document
+        https://bugs.webkit.org/show_bug.cgi?id=210389
+
+        Reviewed by Tim Horton.
+
+        * fast/scrolling/mac/async-scroll-overflow-rtl-expected.txt: Added.
+        * fast/scrolling/mac/async-scroll-overflow-rtl-zoomed-expected.txt: Added.
+        * fast/scrolling/mac/async-scroll-overflow-rtl-zoomed.html: Added.
+        * fast/scrolling/mac/async-scroll-overflow-rtl.html: Added.
+
 2020-04-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening of encrypted-media tests

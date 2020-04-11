@@ -1,3 +1,24 @@
+2020-04-11  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow] Can't scroll overflow:scroll in sideways-scrollable RTL document
+        https://bugs.webkit.org/show_bug.cgi?id=210389
+
+        Reviewed by Tim Horton.
+
+        ScrollingTree::handleWheelEvent() converts the event coordinates from view to "content"
+        coordinates, but we then jump into hit-testing on CALayers. In a sideways-scrollable
+        RTL document, the root content layer has a negative X offset which corresponds to
+        scrollOrigin; we need to map the point into the coordinate space of this layer
+        before entering layer-based hit-testing.
+
+        Tests: fast/scrolling/mac/async-scroll-overflow-rtl-zoomed.html
+               fast/scrolling/mac/async-scroll-overflow-rtl.html
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+        * page/scrolling/mac/ScrollingTreeMac.mm:
+        (ScrollingTreeMac::scrollingNodeForPoint):
+
 2020-04-10  Darin Adler  <darin@apple.com>
 
         Move more from live range to SimpleRange: callers of absoluteTextRects
