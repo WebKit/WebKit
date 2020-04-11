@@ -1911,21 +1911,6 @@ test/built-ins/WeakRef/proto-from-ctor-realm.js:
 test/built-ins/WeakSet/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object WeakSet]», «[object WeakSet]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object WeakSet]», «[object WeakSet]») to be true'
-test/intl402/BigInt/prototype/toLocaleString/de-DE.js:
-  default: 'RangeError: toString() radix argument must be between 2 and 36'
-  strict mode: 'RangeError: toString() radix argument must be between 2 and 36'
-test/intl402/BigInt/prototype/toLocaleString/default-options-object-prototype.js:
-  default: 'RangeError: toString() radix argument must be between 2 and 36'
-  strict mode: 'RangeError: toString() radix argument must be between 2 and 36'
-test/intl402/BigInt/prototype/toLocaleString/en-US.js:
-  default: 'RangeError: toString() radix argument must be between 2 and 36'
-  strict mode: 'RangeError: toString() radix argument must be between 2 and 36'
-test/intl402/BigInt/prototype/toLocaleString/returns-same-results-as-NumberFormat.js:
-  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
-  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
-test/intl402/BigInt/prototype/toLocaleString/throws-same-exceptions-as-NumberFormat.js:
-  default: "Test262Error: BigInt.prototype.toLocaleString didn't throw exception for locales null. Expected a TypeError but got a RangeError"
-  strict mode: "Test262Error: BigInt.prototype.toLocaleString didn't throw exception for locales null. Expected a TypeError but got a RangeError"
 test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
   default: 'Test262Error: "kn" should be returned in locale. Expected SameValue(«false», «true») to be true'
   strict mode: 'Test262Error: "kn" should be returned in locale. Expected SameValue(«false», «true») to be true'

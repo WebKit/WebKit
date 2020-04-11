@@ -330,25 +330,53 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     m_initializedNumberFormat = true;
 }
 
-JSValue IntlNumberFormat::formatNumber(JSGlobalObject* globalObject, double number)
+// https://tc39.es/ecma402/#sec-formatnumber
+JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // 11.3.4 FormatNumber abstract operation (ECMA-402 2.0)
     if (!m_initializedNumberFormat)
         return throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s);
 
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> buffer(32);
-    auto length = unum_formatDouble(m_numberFormat.get(), number, buffer.data(), buffer.size(), nullptr, &status);
+    auto length = unum_formatDouble(m_numberFormat.get(), value, buffer.data(), buffer.size(), nullptr, &status);
     if (status == U_BUFFER_OVERFLOW_ERROR) {
         buffer.grow(length);
         status = U_ZERO_ERROR;
-        unum_formatDouble(m_numberFormat.get(), number, buffer.data(), length, nullptr, &status);
+        unum_formatDouble(m_numberFormat.get(), value, buffer.data(), length, nullptr, &status);
     }
     if (U_FAILURE(status))
-        return throwException(globalObject, scope, createError(globalObject, "Failed to format a number."_s));
+        return throwTypeError(globalObject, scope, "Failed to format a number."_s);
+
+    return jsString(vm, String(buffer.data(), length));
+}
+
+JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, JSBigInt* value)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!m_initializedNumberFormat)
+        return throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s);
+
+    auto string = value->toString(globalObject, 10);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    ASSERT(string.is8Bit() && string.isAllASCII());
+    auto* rawString = reinterpret_cast<const char*>(string.characters8());
+
+    UErrorCode status = U_ZERO_ERROR;
+    Vector<UChar, 32> buffer(32);
+    auto length = unum_formatDecimal(m_numberFormat.get(), rawString, string.length(), buffer.data(), buffer.size(), nullptr, &status);
+    if (status == U_BUFFER_OVERFLOW_ERROR) {
+        buffer.grow(length);
+        status = U_ZERO_ERROR;
+        unum_formatDecimal(m_numberFormat.get(), rawString, string.length(), buffer.data(), length, nullptr, &status);
+    }
+    if (U_FAILURE(status))
+        return throwTypeError(globalObject, scope, "Failed to format a BigInt."_s);
 
     return jsString(vm, String(buffer.data(), length));
 }

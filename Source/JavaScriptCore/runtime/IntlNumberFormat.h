@@ -57,7 +57,8 @@ public:
     DECLARE_INFO;
 
     void initializeNumberFormat(JSGlobalObject*, JSValue locales, JSValue optionsValue);
-    JSValue formatNumber(JSGlobalObject*, double number);
+    JSValue format(JSGlobalObject*, double);
+    JSValue format(JSGlobalObject*, JSBigInt*);
     JSValue formatToParts(JSGlobalObject*, double value);
     JSObject* resolvedOptions(JSGlobalObject*);
 

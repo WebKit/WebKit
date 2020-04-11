@@ -1,3 +1,36 @@
+2020-04-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ECMA-402] Properly implement BigInt.prototype.toLocaleString
+        https://bugs.webkit.org/show_bug.cgi?id=209782
+
+        Reviewed by Darin Adler.
+
+        Our BigInt's toLocaleString has been simply falling back to toString instead of following ECMA-402.
+        (https://tc39.es/ecma402/#sup-bigint.prototype.tolocalestring)
+
+        Since {Number, BigInt}.prototype.toLocaleString are internally the same as Intl.NumberFormat.prototype.format,
+        this patch simultaneously lets the latter method take a BigInt argument.
+        (https://tc39.es/ecma402/#sec-number-format-functions)
+
+        This patch continues to use the old unum_* API instead of ICU 62's new unumf_* API,
+        as the latter would require a large refactor as well as fallback paths.
+        (This will, however, be a prerequisite for https://bugs.webkit.org/show_bug.cgi?id=209774.)
+
+        * runtime/BigIntPrototype.cpp:
+        (JSC::bigIntProtoFuncToString):
+        (JSC::bigIntProtoFuncToLocaleString):
+        (JSC::bigIntProtoFuncToStringImpl): Deleted.
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::format):
+        (JSC::IntlNumberFormat::formatNumber): Deleted.
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatFuncFormat):
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        (JSC::IntlNumberFormatFuncFormatNumber): Deleted.
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToLocaleString):
+
 2020-04-10  Devin Rousso  <drousso@apple.com>
 
         The rhs in `ReadModifyResolveNode` should be evaluated before throwing an exception if the lhs is read-only

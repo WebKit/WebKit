@@ -1,3 +1,5 @@
+//@ runBigIntEnabled
+
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error(`expected ${expected} but got ${actual}`);
@@ -439,3 +441,10 @@ shouldThrow(() => Intl.NumberFormat.prototype.resolvedOptions.call(5), TypeError
     shouldBe(Intl.NumberFormat.call(legacy, 'en-u-nu-arab').format(1.2345), '١٫٢٣٥');
     shouldBe(Intl.NumberFormat.apply(incompat) !== incompat, true);
 }
+
+// BigInt tests
+shouldBe(Intl.NumberFormat().format(0n), '0');
+shouldBe(Intl.NumberFormat().format(BigInt(1)), '1');
+shouldBe(Intl.NumberFormat('ar').format(123456789n), '١٢٣٬٤٥٦٬٧٨٩');
+shouldBe(Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(123456789n), '一二三,四五六,七八九');
+shouldBe(Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(123456n), '123,000');

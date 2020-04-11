@@ -578,10 +578,10 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(JSGlobalObject* globa
     if (!toThisNumber(vm, callFrame->thisValue(), x))
         return throwVMToThisNumberError(globalObject, scope, callFrame->thisValue());
 
-    IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
+    auto* numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
     numberFormat->initializeNumberFormat(globalObject, callFrame->argument(0), callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatNumber(globalObject, x)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, x)));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)

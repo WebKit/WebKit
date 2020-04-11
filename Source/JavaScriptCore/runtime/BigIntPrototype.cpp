@@ -30,6 +30,7 @@
 #include "BigIntObject.h"
 #include "Error.h"
 #include "IntegrityInlines.h"
+#include "IntlNumberFormat.h"
 #include "JSBigInt.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
@@ -91,14 +92,14 @@ static ALWAYS_INLINE JSBigInt* toThisBigIntValue(VM& vm, JSValue thisValue)
     return nullptr;
 }
 
-static JSValue bigIntProtoFuncToStringImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSBigInt* value = toThisBigIntValue(vm, callFrame->thisValue());
     if (!value)
-        return throwTypeError(globalObject, scope, "'this' value must be a BigInt or BigIntObject"_s);
+        return throwVMTypeError(globalObject, scope, "'this' value must be a BigInt or BigIntObject"_s);
 
     ASSERT(value);
 
@@ -110,19 +111,24 @@ static JSValue bigIntProtoFuncToStringImpl(JSGlobalObject* globalObject, CallFra
     RETURN_IF_EXCEPTION(scope, { });
     scope.release();
     if (resultString.length() == 1)
-        return vm.smallStrings.singleCharacterString(resultString[0]);
+        return JSValue::encode(vm.smallStrings.singleCharacterString(resultString[0]));
 
-    return jsNontrivialString(vm, resultString);
-}
-
-EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
-{
-    return JSValue::encode(bigIntProtoFuncToStringImpl(globalObject, callFrame));
+    return JSValue::encode(jsNontrivialString(vm, resultString));
 }
 
 EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(bigIntProtoFuncToStringImpl(globalObject, callFrame));
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSBigInt* value = toThisBigIntValue(vm, callFrame->thisValue());
+    if (!value)
+        return throwVMTypeError(globalObject, scope, "'this' value must be a BigInt or BigIntObject"_s);
+
+    auto* numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
+    numberFormat->initializeNumberFormat(globalObject, callFrame->argument(0), callFrame->argument(1));
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, value)));
 }
 
 EncodedJSValue JSC_HOST_CALL bigIntProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)
