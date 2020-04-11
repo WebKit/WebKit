@@ -1649,7 +1649,7 @@ class TriggerCrashLogSubmission(shell.Compile):
 
 
 class WaitForCrashCollection(shell.Compile):
-    name = 'wait for crash collection'
+    name = 'wait-for-crash-collection'
     description = ['waiting-for-crash-collection-to-quiesce']
     descriptionDone = ['Crash collection has quiesced']
     command = ['python', 'Tools/BuildSlaveSupport/wait-for-crash-collection', '--timeout', str(5 * 60)]
