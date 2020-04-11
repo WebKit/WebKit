@@ -1722,7 +1722,7 @@ bool ArgumentCoder<DatabaseDetails>::decode(Decoder& decoder, DatabaseDetails& d
 
 template<> struct ArgumentCoder<PasteboardCustomData::Entry> {
     static void encode(Encoder&, const PasteboardCustomData::Entry&);
-    static bool decode(Decoder&, PasteboardCustomData::Entry&) WARN_UNUSED_RETURN;
+    static WARN_UNUSED_RETURN bool decode(Decoder&, PasteboardCustomData::Entry&);
 };
 
 void ArgumentCoder<PasteboardCustomData::Entry>::encode(Encoder& encoder, const PasteboardCustomData::Entry& data)

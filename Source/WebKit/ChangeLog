@@ -1,3 +1,16 @@
+2020-04-11  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: Add WARN_UNUSED_RETURN to decode methods in WebCoreArgumentCoders
+        <https://webkit.org/b/210322>
+        <rdar://problem/61565148>
+
+        Changes based on feedback from Alex Christensen and Darin Adler:
+        - Remove WARN_UNUSED_RETURN from methods returning Optional<>.
+        - Place WARN_UNUSED_RETURN consistently before the return type.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+
 2020-04-11  Daniel Bates  <dabates@apple.com>
 
         Add text interaction delegate functions
