@@ -1,3 +1,24 @@
+2020-04-11  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION (Safari 13.1?): Web Inspector: Debugger hang at breakpoint when using Keyboard Maestro
+        https://bugs.webkit.org/show_bug.cgi?id=210177
+        <rdar://problem/61485723>
+
+        Reviewed by Joseph Pecoraro.
+
+        Partial revert of r251036 <https://webkit.org/b/202716> to go back to using AppKit APIs
+        instead of `CFRunLoopRunInMode`. Only seems to affect WebKitLegacy.
+
+        * inspector/PageScriptDebugServer.h:
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePausedInternal):
+        (WebCore::PageScriptDebugServer::platformShouldContinueRunningEventLoopWhilePaused):
+        * inspector/mac/PageScriptDebugServerMac.mm: Added.
+        (WebCore::PageScriptDebugServer::platformShouldContinueRunningEventLoopWhilePaused):
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-04-08  Darin Adler  <darin@apple.com>
 
         Use Node::length to replace Node::maxCharacterOffset and lastOffsetInNode; switch more offsets from int to unsigned

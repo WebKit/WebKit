@@ -10681,6 +10681,7 @@
 		91278D6021DEDAF000B57184 /* WorkerAuditAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerAuditAgent.h; sourceTree = "<group>"; };
 		913FE5982362799900F9446A /* InspectorAnimationAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InspectorAnimationAgent.cpp; path = inspector/agents/InspectorAnimationAgent.cpp; sourceTree = SOURCE_ROOT; };
 		913FE59A2362799900F9446A /* InspectorAnimationAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InspectorAnimationAgent.h; path = inspector/agents/InspectorAnimationAgent.h; sourceTree = SOURCE_ROOT; };
+		9174EA5D2440F9A50008349C /* PageScriptDebugServerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageScriptDebugServerMac.mm; sourceTree = "<group>"; };
 		9175CE5721E281EB00DF2C27 /* InspectorAuditDOMObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditDOMObject.cpp; sourceTree = "<group>"; };
 		9175CE5721E281EB00DF2C28 /* JSInspectorAuditDOMObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorAuditDOMObject.cpp; sourceTree = "<group>"; };
 		9175CE5821E281EC00DF2C27 /* InspectorAuditDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAuditDOMObject.h; sourceTree = "<group>"; };
@@ -17629,6 +17630,7 @@
 			isa = PBXGroup;
 			children = (
 				A5B81C831FAA44060037D1E6 /* agents */,
+				9174EA5C2440F98A0008349C /* mac */,
 				A584FE311864D5AF00843B10 /* CommandLineAPIHost.cpp */,
 				A584FE321864D5AF00843B10 /* CommandLineAPIHost.h */,
 				A584FE331864D5AF00843B10 /* CommandLineAPIHost.idl */,
@@ -21753,6 +21755,14 @@
 				892ABE6716EEE2E5009F3587 /* JSStorageUsageCallback.h */,
 			);
 			name = Quota;
+			sourceTree = "<group>";
+		};
+		9174EA5C2440F98A0008349C /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				9174EA5D2440F9A50008349C /* PageScriptDebugServerMac.mm */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		93309D86099E64910056E581 /* editing */ = {

@@ -112,6 +112,8 @@ html/shadow/mac/ImageControlsRootElementMac.cpp
 
 history/mac/HistoryItemMac.mm
 
+inspector/mac/PageScriptDebugServerMac.mm
+
 loader/archive/cf/LegacyWebArchive.cpp
 loader/archive/cf/LegacyWebArchiveMac.mm
 

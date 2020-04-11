@@ -116,7 +116,7 @@ void PageScriptDebugServer::runEventLoopWhilePausedInternal()
     m_page.incrementNestedRunLoopCount();
 
     while (!m_doneProcessingDebuggerEvents) {
-        if (RunLoop::cycle() == RunLoop::CycleResult::Stop)
+        if (!platformShouldContinueRunningEventLoopWhilePaused())
             break;
     }
 
@@ -175,5 +175,12 @@ void PageScriptDebugServer::setJavaScriptPaused(Frame& frame, bool paused)
         }
     }
 }
+
+#if !PLATFORM(MAC)
+bool PageScriptDebugServer::platformShouldContinueRunningEventLoopWhilePaused()
+{
+    return RunLoop::cycle() != RunLoop::CycleResult::Stop;
+}
+#endif // !PLATFORM(MAC)
 
 } // namespace WebCore
