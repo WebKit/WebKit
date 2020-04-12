@@ -566,6 +566,7 @@ void WaylandCompositor::bindSurfaceToWebPage(WaylandCompositor::Surface* surface
     if (!webPage)
         return;
 
+    unbindWebPage(*webPage);
     surface->setWebPage(webPage);
     m_pageMap.set(webPage, makeWeakPtr(*surface));
 }
