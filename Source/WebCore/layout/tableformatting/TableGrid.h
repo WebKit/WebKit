@@ -38,15 +38,16 @@
 namespace WebCore {
 namespace Layout {
 class Box;
+class ContainerBox;
 
 class TableGrid {
     WTF_MAKE_ISO_ALLOCATED(TableGrid);
 public:
     TableGrid();
 
-    void appendCell(const Box&);
-    void insertCell(const Box&, const Box& before);
-    void removeCell(const Box&);
+    void appendCell(const ContainerBox&);
+    void insertCell(const ContainerBox&, const ContainerBox& before);
+    void removeCell(const ContainerBox&);
 
     void setHorizontalSpacing(LayoutUnit horizontalSpacing) { m_horizontalSpacing = horizontalSpacing; }
     LayoutUnit horizontalSpacing() const { return m_horizontalSpacing; }
@@ -61,7 +62,7 @@ public:
     // Column represents a vertical set of slots in the grid. A column has horizontal position and width.
     class Column {
     public:
-        Column(const Box*);
+        Column(const ContainerBox*);
 
         void setLogicalLeft(LayoutUnit);
         LayoutUnit logicalLeft() const;
@@ -72,14 +73,14 @@ public:
         bool isFixedWidth() const;
 
         void setHasFixedWidthCell() { m_hasFixedWidthCell = true; }
-        const Box* box() const { return m_layoutBox.get(); }
+        const ContainerBox* box() const { return m_layoutBox.get(); }
 
     private:
         bool hasFixedWidthCell() const { return m_hasFixedWidthCell; }
 
         LayoutUnit m_computedLogicalWidth;
         LayoutUnit m_computedLogicalLeft;
-        WeakPtr<const Box> m_layoutBox;
+        WeakPtr<const ContainerBox> m_layoutBox;
         bool m_hasFixedWidthCell { false };
 
 #if ASSERT_ENABLED
@@ -95,7 +96,7 @@ public:
         const ColumnList& list() const { return m_columnList; }
         size_t size() const { return m_columnList.size(); }
 
-        void addColumn(const Box&);
+        void addColumn(const ContainerBox&);
         void addAnonymousColumn();
 
         LayoutUnit logicalWidth() const { return m_columnList.last().logicalRight() - m_columnList.first().logicalLeft(); }
@@ -106,7 +107,7 @@ public:
 
     class Row {
     public:
-        Row(const Box&);
+        Row(const ContainerBox&);
 
         void setLogicalTop(LayoutUnit logicalTop) { m_logicalTop = logicalTop; }
         LayoutUnit logicalTop() const { return m_logicalTop; }
@@ -115,12 +116,12 @@ public:
         void setLogicalHeight(LayoutUnit logicalHeight) { m_logicalHeight = logicalHeight; }
         LayoutUnit logicalHeight() const { return m_logicalHeight; }
 
-        const Box& box() const { return *m_layoutBox.get(); }
+        const ContainerBox& box() const { return *m_layoutBox.get(); }
 
     private:
         LayoutUnit m_logicalTop;
         LayoutUnit m_logicalHeight;
-        WeakPtr<const Box> m_layoutBox;
+        WeakPtr<const ContainerBox> m_layoutBox;
     };
 
     class Rows {
@@ -129,7 +130,7 @@ public:
         RowList& list() { return m_rowList; }
         const RowList& rowList() const { return m_rowList; }
 
-        void addRow(const Box&);
+        void addRow(const ContainerBox&);
 
         size_t size() const { return m_rowList.size(); }
 
@@ -141,7 +142,7 @@ public:
     class Cell : public CanMakeWeakPtr<Cell> {
         WTF_MAKE_ISO_ALLOCATED_INLINE(Cell);
     public:
-        Cell(const Box&, SlotPosition, CellSpan);
+        Cell(const ContainerBox&, SlotPosition, CellSpan);
 
         size_t startColumn() const { return m_position.column; }
         size_t endColumn() const { return m_position.column + m_span.column; }
@@ -157,10 +158,10 @@ public:
 
         bool isFixedWidth() const;
 
-        const Box& box() const { return *m_layoutBox.get(); }
+        const ContainerBox& box() const { return *m_layoutBox.get(); }
 
     private:
-        WeakPtr<const Box> m_layoutBox;
+        WeakPtr<const ContainerBox> m_layoutBox;
         SlotPosition m_position;
         CellSpan m_span;
     };

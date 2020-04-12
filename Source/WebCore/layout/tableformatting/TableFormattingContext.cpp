@@ -122,9 +122,8 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, Invalidatio
     cellDisplayBox.setContentBoxWidth(contentWidth);
 
     ASSERT(cellBox.establishesBlockFormattingContext());
-    if (is<ContainerBox>(cellBox) && downcast<ContainerBox>(cellBox).hasInFlowOrFloatingChild()) {
-        auto& formattingContextRoot = downcast<ContainerBox>(cellBox);
-        auto formattingContextForCellContent = LayoutContext::createFormattingContext(formattingContextRoot, layoutState());
+    if (cellBox.hasInFlowOrFloatingChild()) {
+        auto formattingContextForCellContent = LayoutContext::createFormattingContext(cellBox, layoutState());
         auto horizontalConstraintsForCellContent = Geometry::horizontalConstraintsForInFlow(cellDisplayBox);
         auto verticalConstraintsForCellContent = Geometry::verticalConstraintsForInFlow(cellDisplayBox);
         formattingContextForCellContent->layoutInFlowContent(invalidationState, horizontalConstraintsForCellContent, verticalConstraintsForCellContent);
@@ -219,7 +218,7 @@ void TableFormattingContext::ensureTableGrid()
             auto columnSpanCount = column->columnSpan();
             ASSERT(columnSpanCount > 0);
             while (columnSpanCount--)
-                columns.addColumn(*column);
+                columns.addColumn(downcast<ContainerBox>(*column));
         }
     }
 
@@ -230,7 +229,7 @@ void TableFormattingContext::ensureTableGrid()
             ASSERT(row->isTableRow());
             for (auto* cell = downcast<ContainerBox>(*row).firstChild(); cell; cell = cell->nextSibling()) {
                 ASSERT(cell->isTableCell());
-                tableGrid.appendCell(*cell);
+                tableGrid.appendCell(downcast<ContainerBox>(*cell));
             }
         }
     }
@@ -251,7 +250,7 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPre
 
         auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(cellBox);
         if (!intrinsicWidth) {
-            intrinsicWidth = geometry().intrinsicWidthConstraintsForCell(downcast<ContainerBox>(cellBox));
+            intrinsicWidth = geometry().intrinsicWidthConstraintsForCell(cellBox);
             formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
         }
         // Spanner cells put their intrinsic widths on the initial slots.

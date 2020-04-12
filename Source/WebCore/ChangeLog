@@ -1,5 +1,32 @@
 2020-04-12  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Column, Row and Cell boxes are always ContainerBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=210402
+
+        Reviewed by Antti Koivisto.
+
+        These boxes are always ContainerBox types.
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        (WebCore::Layout::TableFormattingContext::ensureTableGrid):
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::Column::Column):
+        (WebCore::Layout::TableGrid::Columns::addColumn):
+        (WebCore::Layout::TableGrid::Rows::addRow):
+        (WebCore::Layout::TableGrid::Row::Row):
+        (WebCore::Layout::TableGrid::Cell::Cell):
+        (WebCore::Layout::TableGrid::appendCell):
+        (WebCore::Layout::TableGrid::insertCell):
+        (WebCore::Layout::TableGrid::removeCell):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::Column::box const):
+        (WebCore::Layout::TableGrid::Row::box const):
+        (WebCore::Layout::TableGrid::Cell::box const):
+
+2020-04-12  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Add support for fixed width columns
         https://bugs.webkit.org/show_bug.cgi?id=210401
 
