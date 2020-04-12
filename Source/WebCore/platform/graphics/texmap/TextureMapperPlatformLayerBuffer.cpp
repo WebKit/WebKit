@@ -87,6 +87,11 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerBuff
         {
             notImplemented();
             return nullptr;
+        },
+        [](const ExternalOESTexture&)
+        {
+            notImplemented();
+            return nullptr;
         });
 }
 
@@ -141,6 +146,10 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
                     texture.yuvToRgbMatrix, m_extraFlags, m_size, targetRect, modelViewMatrix, opacity);
                 break;
             }
+        },
+        [&](const ExternalOESTexture& texture) {
+            ASSERT(texture.id);
+            texmapGL.drawTextureExternalOES(texture.id, m_extraFlags, m_size, targetRect, modelViewMatrix, opacity);
         });
 }
 

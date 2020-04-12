@@ -773,7 +773,12 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& pr
     glUseProgram(program.programID());
 
     bool repeatWrap = wrapMode() == RepeatWrap && m_contextAttributes.supportsNPOTTextures;
-    GLenum target = flags & ShouldUseARBTextureRect ? GLenum(GL_TEXTURE_RECTANGLE_ARB) : GLenum(GL_TEXTURE_2D);
+    GLenum target;
+    if (flags & ShouldUseExternalOESTextureRect)
+        target = GLenum(GL_TEXTURE_EXTERNAL_OES);
+    else
+        target = flags & ShouldUseARBTextureRect ? GLenum(GL_TEXTURE_RECTANGLE_ARB) : GLenum(GL_TEXTURE_2D);
+
     for (unsigned i = 0; i < texturesAndSamplers.size(); ++i) {
         auto& textureAndSampler = texturesAndSamplers[i];
 
@@ -959,6 +964,13 @@ Ref<BitmapTexture> TextureMapperGL::createTexture(GLint internalFormat)
 std::unique_ptr<TextureMapper> TextureMapper::platformCreateAccelerated()
 {
     return makeUnique<TextureMapperGL>();
+}
+
+void TextureMapperGL::drawTextureExternalOES(GLuint texture, Flags flags, const IntSize& size, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
+{
+    Ref<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::Option::TextureExternalOES);
+    drawTexturedQuadWithProgram(program.get(), { { texture, program->externalOESTextureLocation() } },
+        flags | TextureMapperGL::ShouldUseExternalOESTextureRect, size, targetRect, modelViewMatrix, opacity);
 }
 
 };

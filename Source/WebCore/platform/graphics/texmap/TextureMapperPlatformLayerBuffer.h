@@ -53,7 +53,10 @@ public:
         std::array<unsigned, 3> yuvPlaneOffset;
         std::array<GLfloat, 9> yuvToRgbMatrix;
     };
-    using TextureVariant = WTF::Variant<RGBTexture, YUVTexture>;
+    struct ExternalOESTexture {
+        GLuint id;
+    };
+    using TextureVariant = WTF::Variant<RGBTexture, YUVTexture, ExternalOESTexture>;
 
     TextureMapperPlatformLayerBuffer(TextureVariant&&, const IntSize&, TextureMapperGL::Flags, GLint internalFormat);
 

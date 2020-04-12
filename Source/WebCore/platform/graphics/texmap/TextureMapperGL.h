@@ -56,7 +56,8 @@ public:
         ShouldRotateTexture270 = 0x40,
         ShouldConvertTextureBGRAToRGBA = 0x80,
         ShouldConvertTextureARGBToRGBA = 0x100,
-        ShouldNotBlend = 0x200
+        ShouldNotBlend = 0x200,
+        ShouldUseExternalOESTextureRect = 0x400
     };
 
     typedef int Flags;
@@ -86,6 +87,7 @@ public:
     void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);
 
     void setEnableEdgeDistanceAntialiasing(bool enabled) { m_enableEdgeDistanceAntialiasing = enabled; }
+    void drawTextureExternalOES(GLuint texture, Flags, const IntSize&, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
 
 private:
     void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, uint32_t texture, Flags, const IntSize&, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
