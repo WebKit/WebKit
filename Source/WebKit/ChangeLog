@@ -1,3 +1,17 @@
+2020-04-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Public API should not allow trying to register a special URI scheme
+        https://bugs.webkit.org/show_bug.cgi?id=209900
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_register_uri_scheme): Use g_return_if_fail() to
+        check at the public API level whether the passed URI scheme is
+        special and bail out early.
+
 2020-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] [2.28.0] The Yelp build crashes if DISPLAY is not set
