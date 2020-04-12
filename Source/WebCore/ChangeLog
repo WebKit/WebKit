@@ -1,5 +1,31 @@
 2020-04-12  Darin Adler  <darin@apple.com>
 
+        Refactor and tighten up the CSSVariableReferenceValue class
+        https://bugs.webkit.org/show_bug.cgi?id=210406
+
+        Reviewed by Anders Carlsson.
+
+        * css/CSSCustomPropertyValue.h: Remove uneeded forward declaration of
+        CSSVariableReferenceValue, since it's not used here. Added inclde of
+        CSSVariableData.h since the use of Variant in this class does require
+        that header, which we were getting indirectly before from
+        CSSVariableReferenceValue.h in some translation units.
+
+        * css/CSSVariableReferenceValue.cpp:
+        (WebCore::CSSVariableReferenceValue::CSSVariableReferenceValue): Moved here
+        from the header.
+        (WebCore::CSSVariableReferenceValue::create): Ditto.
+        (WebCore::CSSVariableReferenceValue::equals const): Ditto.
+        (WebCore::CSSVariableReferenceValue::customCSSText const): Use non-null to
+        indicate this is not serialized.
+        * css/CSSVariableReferenceValue.h: Reduced includes, inlining, marked
+        constructor explicit, removed unneeded m_serialized boolean.
+
+        * rendering/style/StyleCustomPropertyData.h: Remove unneeded include
+        of CSSVariableReferenceValue.h, not used here.
+
+2020-04-12  Darin Adler  <darin@apple.com>
+
         Fix some strange uses of start/endOfDocument
         https://bugs.webkit.org/show_bug.cgi?id=210408
 

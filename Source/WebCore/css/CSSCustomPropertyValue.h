@@ -25,19 +25,16 @@
 
 #pragma once
 
-#include "CSSRegisteredCustomProperty.h"
 #include "CSSValue.h"
+#include "CSSVariableData.h"
 #include "CSSVariableReferenceValue.h"
 #include "Length.h"
 #include "StyleImage.h"
-#include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CSSParserToken;
-class CSSVariableReferenceValue;
 class RenderStyle;
 
 class CSSCustomPropertyValue final : public CSSValue {
@@ -85,9 +82,9 @@ public:
     String customCSSText() const;
 
     const AtomString& name() const { return m_name; }
-    bool isResolved() const  { return !WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(m_value); }
-    bool isUnset() const  { return WTF::holds_alternative<CSSValueID>(m_value) && WTF::get<CSSValueID>(m_value) == CSSValueUnset; }
-    bool isInvalid() const  { return WTF::holds_alternative<CSSValueID>(m_value) && WTF::get<CSSValueID>(m_value) == CSSValueInvalid; }
+    bool isResolved() const { return !WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(m_value); }
+    bool isUnset() const { return WTF::holds_alternative<CSSValueID>(m_value) && WTF::get<CSSValueID>(m_value) == CSSValueUnset; }
+    bool isInvalid() const { return WTF::holds_alternative<CSSValueID>(m_value) && WTF::get<CSSValueID>(m_value) == CSSValueInvalid; }
 
     const VariantValue& value() const { return m_value; }
 
@@ -110,7 +107,7 @@ private:
         , m_stringValue(other.m_stringValue)
         , m_serialized(other.m_serialized)
     {
-        // No copy constructor for Ref<CSSVariableData>, so we have to do this ourselves
+        // No copy constructor for Ref<>, so we have to do this ourselves
         auto visitor = WTF::makeVisitor([&](const Ref<CSSVariableReferenceValue>& value) {
             m_value = value.copyRef();
         }, [&](const CSSValueID& value) {
@@ -129,7 +126,7 @@ private:
     VariantValue m_value;
     
     mutable String m_stringValue;
-    mutable bool m_serialized { false };
+    mutable bool m_serialized { false }; // FIXME: Should use null m_stringValue instead of a separate boolean.
 };
 
 } // namespace WebCore
