@@ -55,7 +55,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._customIndent = false;
         this._selectable = selectable;
 
-        this._cachedNumberOfDescendents = 0;
+        this._cachedNumberOfDescendants = 0;
 
         let comparator = (a, b) => {
             function getLevel(treeElement) {
@@ -445,7 +445,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         var elements = this._knownTreeElements[element.identifier];
         if (!elements.includes(element)) {
             elements.push(element);
-            this._cachedNumberOfDescendents++;
+            this._cachedNumberOfDescendants++;
         }
 
         if (this.virtualized)
@@ -461,7 +461,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
         if (this._knownTreeElements[element.identifier]) {
             if (this._knownTreeElements[element.identifier].remove(element))
-                this._cachedNumberOfDescendents--;
+                this._cachedNumberOfDescendants--;
         }
 
         if (this.virtualized)
@@ -772,7 +772,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     selectionControllerNumberOfItems(controller)
     {
-        return this._cachedNumberOfDescendents;
+        return this._cachedNumberOfDescendants;
     }
 
     selectionControllerSelectionDidChange(controller, deselectedItems, selectedItems)

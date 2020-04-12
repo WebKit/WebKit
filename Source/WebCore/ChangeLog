@@ -1,5 +1,25 @@
 2020-04-12  Darin Adler  <darin@apple.com>
 
+        Fix a few mispellings of descendant and propagation
+        https://bugs.webkit.org/show_bug.cgi?id=210409
+
+        Reviewed by Mark Lam.
+
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchWheelEvent): "propagation"
+        * dom/TreeScopeOrderedMap.cpp:
+        (WebCore::TreeScopeOrderedMap::getAllElementsById const):
+        "descendants". Also refactored this function a bit.
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canShowControlsManager const):
+        "descendants"
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::resetFrameRendererAndDescendants): "descendants"
+        (WebCore::RenderFrameSet::positionFrames): "descendants"
+        (WebCore::RenderFrameSet::positionFramesWithFlattening): "descendants"
+
+2020-04-12  Darin Adler  <darin@apple.com>
+
         Refactor and tighten up the CSSVariableReferenceValue class
         https://bugs.webkit.org/show_bug.cgi?id=210406
 

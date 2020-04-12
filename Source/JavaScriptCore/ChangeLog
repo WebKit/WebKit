@@ -1,3 +1,13 @@
+2020-04-12  Darin Adler  <darin@apple.com>
+
+        Fix a few mispellings of descendant and propagation
+        https://bugs.webkit.org/show_bug.cgi?id=210409
+
+        Reviewed by Mark Lam.
+
+        * ftl/FTLAbstractHeap.h: "descendants"
+        * offlineasm/ast.rb: "descendants"
+
 2020-04-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ECMA-402] WebKit Intl does not allow calendar and numberingSystem options

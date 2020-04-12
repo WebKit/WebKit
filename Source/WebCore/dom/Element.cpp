@@ -396,7 +396,7 @@ bool Element::dispatchWheelEvent(const PlatformWheelEvent& platformEvent)
     // Events with no deltas are important because they convey platform information about scroll gestures
     // and momentum beginning or ending. However, those events should not be sent to the DOM since some
     // websites will break. They need to be dispatched because dispatching them will call into the default
-    // event handler, and our platform code will correctly handle the phase changes. Calling stopPropogation()
+    // event handler, and our platform code will correctly handle the phase changes. Calling stopPropagation()
     // will prevent the event from being sent to the DOM, but will still call the default event handler.
     // FIXME: Move this logic into WheelEvent::create.
     if (!platformEvent.deltaX() && !platformEvent.deltaY())

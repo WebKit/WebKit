@@ -31,7 +31,7 @@ require "config"
 #
 # node.children -> Returns an array of immediate children.
 #
-# node.descendents -> Returns an array of all strict descendants (children
+# node.descendants -> Returns an array of all strict descendants (children
 #     and children of children, transitively).
 #
 # node.flatten -> Returns an array containing the strict descendants and

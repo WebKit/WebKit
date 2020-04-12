@@ -102,7 +102,7 @@ public:
     // Print information about this heap and its ancestors. This is the default.
     void dump(PrintStream&) const;
 
-    // Print information about this heap and its descendents. This is a multi-line dump.
+    // Print information about this heap and its descendants. This is a multi-line dump.
     void deepDump(PrintStream&, unsigned indent = 0) const;
 
 private:

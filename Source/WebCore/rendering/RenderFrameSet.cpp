@@ -494,7 +494,7 @@ void RenderFrameSet::layout()
     clearNeedsLayout();
 }
 
-static void resetFrameRendererAndDescendents(RenderBox* frameSetChild, RenderFrameSet& parentFrameSet)
+static void resetFrameRendererAndDescendants(RenderBox* frameSetChild, RenderFrameSet& parentFrameSet)
 {
     if (!frameSetChild)
         return;
@@ -544,7 +544,7 @@ void RenderFrameSet::positionFrames()
         yPos += height + borderThickness;
     }
 
-    resetFrameRendererAndDescendents(child, *this);
+    resetFrameRendererAndDescendants(child, *this);
 }
 
 void RenderFrameSet::positionFramesWithFlattening()
@@ -647,7 +647,7 @@ void RenderFrameSet::positionFramesWithFlattening()
     if (repaintNeeded)
         repaint();
 
-    resetFrameRendererAndDescendents(child, *this);
+    resetFrameRendererAndDescendants(child, *this);
 }
 
 bool RenderFrameSet::flattenFrameSet() const
