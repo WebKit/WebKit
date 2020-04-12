@@ -280,7 +280,7 @@ shouldBe(Intl.DateTimeFormat('ar-sa').resolvedOptions().locale, 'ar-SA');
 shouldBe(Intl.DateTimeFormat('fa-IR').resolvedOptions().calendar, 'persian');
 shouldBe(Intl.DateTimeFormat('ar').resolvedOptions().numberingSystem, 'arab');
 
-shouldBe(Intl.DateTimeFormat('en', { calendar:'dangi' }).resolvedOptions().calendar, 'gregory');
+shouldBe(Intl.DateTimeFormat('en', { calendar: 'dangi' }).resolvedOptions().calendar, 'dangi');
 shouldBe(Intl.DateTimeFormat('en-u-ca-bogus').resolvedOptions().locale, 'en');
 shouldBe(Intl.DateTimeFormat('en-u-ca-bogus').resolvedOptions().calendar, 'gregory');
 shouldBe(Intl.DateTimeFormat('en-u-ca-buddhist').resolvedOptions().locale, 'en-u-ca-buddhist');
@@ -327,7 +327,7 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-tbla', { timeZone: 'America/Los_An
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-civil', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/13/1437');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-rgsa', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437');
 
-shouldBe(Intl.DateTimeFormat('en', { numberingSystem:'gujr' }).resolvedOptions().numberingSystem, 'latn');
+shouldBe(Intl.DateTimeFormat('en', { numberingSystem: 'gujr' }).resolvedOptions().numberingSystem, 'gujr');
 shouldBe(Intl.DateTimeFormat('en-u-nu-bogus').resolvedOptions().locale, 'en');
 shouldBe(Intl.DateTimeFormat('en-u-nu-bogus').resolvedOptions().numberingSystem, 'latn');
 shouldBe(Intl.DateTimeFormat('en-u-nu-latn').resolvedOptions().numberingSystem, 'latn');

@@ -1,3 +1,28 @@
+2020-04-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ECMA-402] WebKit Intl does not allow calendar and numberingSystem options
+        https://bugs.webkit.org/show_bug.cgi?id=209784
+
+        Reviewed by Myles C. Maxfield.
+
+        As an alternative to using `ca` and `nu` extensions in the locale string:
+          - the Intl.DateTimeFormat constructor needs to be able to take `calendar` and `numberingSystem` options
+            https://tc39.es/ecma402/#sec-initializedatetimeformat
+          - the Intl.NumberFormat needs to be able to take a `numberingSystem` option
+            https://tc39.es/ecma402/#sec-initializenumberformat
+
+        Since we already support `ca` and `nu`, this is a very simple addition.
+        The only interesting part is that we must verify that values for these options are 3-8 alphanumeric characters.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        (JSC::IntlNumberFormat::resolvedOptions):
+        * runtime/IntlObject.cpp:
+        (JSC::isUnicodeLocaleIdentifierType):
+        * runtime/IntlObject.h:
+
 2020-04-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ECMA-402] Properly implement BigInt.prototype.toLocaleString

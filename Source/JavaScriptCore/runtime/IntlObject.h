@@ -78,4 +78,6 @@ String removeUnicodeLocaleExtension(const String& locale);
 String bestAvailableLocale(const HashSet<String>& availableLocales, const String& requestedLocale);
 Vector<String> numberingSystemsForLocale(const String& locale);
 
+bool isUnicodeLocaleIdentifierType(StringView);
+
 } // namespace JSC

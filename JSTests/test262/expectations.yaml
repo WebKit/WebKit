@@ -1920,18 +1920,6 @@ test/intl402/Collator/proto-from-ctor-realm.js:
 test/intl402/Collator/usage-de.js:
   default: 'Test262Error: Expected [Ä, AE] and [AE, Ä] to have the same contents. search'
   strict mode: 'Test262Error: Expected [Ä, AE] and [AE, Ä] to have the same contents. search'
-test/intl402/DateTimeFormat/constructor-calendar-numberingSystem-order.js:
-  default: 'Test262Error: Expected [localeMatcher, hour12] and [localeMatcher, calendar, numberingSystem, hour12] to have the same contents. '
-  strict mode: 'Test262Error: Expected [localeMatcher, hour12] and [localeMatcher, calendar, numberingSystem, hour12] to have the same contents. '
-test/intl402/DateTimeFormat/constructor-options-calendar-invalid.js:
-  default: 'Test262Error: new Intl.DateTimeFormat("en", {calendar: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: new Intl.DateTimeFormat("en", {calendar: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/DateTimeFormat/constructor-options-numberingSystem-invalid.js:
-  default: 'Test262Error: new Intl.DateTimeFormat("en", {numberingSystem: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: new Intl.DateTimeFormat("en", {numberingSystem: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/DateTimeFormat/numbering-system-calendar-options.js:
-  default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
-  strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
 test/intl402/DateTimeFormat/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
@@ -1968,18 +1956,6 @@ test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
 test/intl402/Intl/getCanonicalLocales/preferred-variant.js:
   default: 'Test262Error: Expected SameValue(«ja-Latn-alalc97», «ja-Latn-hepburn-heploc») to be true'
   strict mode: 'Test262Error: Expected SameValue(«ja-Latn-alalc97», «ja-Latn-hepburn-heploc») to be true'
-test/intl402/NumberFormat/constructor-numberingSystem-order.js:
-  default: 'Test262Error: Expected [localeMatcher, style] and [localeMatcher, numberingSystem, style] to have the same contents. '
-  strict mode: 'Test262Error: Expected [localeMatcher, style] and [localeMatcher, numberingSystem, style] to have the same contents. '
-test/intl402/NumberFormat/constructor-options-numberingSystem-invalid.js:
-  default: 'Test262Error: new Intl.NumberFormat("en", {numberingSystem: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: new Intl.NumberFormat("en", {numberingSystem: ""}) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/NumberFormat/constructor-options-throwing-getters.js:
-  default: 'Test262Error: Exception from numberingSystem getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Exception from numberingSystem getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
-test/intl402/NumberFormat/numbering-system-options.js:
-  default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
-  strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(«arab», «latn») to be true"
 test/intl402/NumberFormat/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'

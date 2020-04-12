@@ -174,6 +174,16 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     RETURN_IF_EXCEPTION(scope, void());
     opt.add("localeMatcher"_s, matcher);
 
+    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, nullptr, nullptr);
+    RETURN_IF_EXCEPTION(scope, void());
+    if (!numberingSystem.isNull()) {
+        if (!isUnicodeLocaleIdentifierType(numberingSystem)) {
+            throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_s);
+            return;
+        }
+        opt.add("nu"_s, numberingSystem);
+    }
+
     auto& availableLocales = intlNumberFormatAvailableLocales();
     auto result = resolveLocale(globalObject, availableLocales, requestedLocales, opt, relevantNumberExtensionKeys, WTF_ARRAY_LENGTH(relevantNumberExtensionKeys), IntlNFInternal::localeData);
 
@@ -430,7 +440,7 @@ JSObject* IntlNumberFormat::resolvedOptions(JSGlobalObject* globalObject)
 
     JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsString(vm, m_locale));
-    options->putDirect(vm, Identifier::fromString(vm, "numberingSystem"), jsString(vm, m_numberingSystem));
+    options->putDirect(vm, vm.propertyNames->numberingSystem, jsString(vm, m_numberingSystem));
     options->putDirect(vm, Identifier::fromString(vm, "style"), jsNontrivialString(vm, styleString(m_style)));
     if (m_style == Style::Currency) {
         options->putDirect(vm, Identifier::fromString(vm, "currency"), jsNontrivialString(vm, m_currency));
