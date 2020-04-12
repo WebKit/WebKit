@@ -1,3 +1,9 @@
+2020-03-14  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Fix windows build by making configSizeToProtect stay 4KB.
+
+        * runtime/JSCConfig.h:
+
 2020-03-13  Saam Barati  <sbarati@apple.com>
 
         configSizeToProtect should be 16KB

@@ -34,7 +34,11 @@ class ExecutableAllocator;
 class FixedVMPoolExecutableAllocator;
 class VM;
 
+#if !OS(WINDOWS)
 constexpr size_t ConfigSizeToProtect = 16 * KB;
+#else
+constexpr size_t ConfigSizeToProtect = 4 * KB;
+#endif
 
 #if ENABLE(SEPARATED_WX_HEAP)
 using JITWriteSeparateHeapsFunction = void (*)(off_t, const void*, size_t);
