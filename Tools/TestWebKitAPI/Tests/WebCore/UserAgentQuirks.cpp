@@ -40,6 +40,7 @@ static void assertUserAgentForURLHasChromeBrowserQuirk(const char* url)
     EXPECT_TRUE(uaString.contains("Safari"));
     EXPECT_FALSE(uaString.contains("Chromium"));
     EXPECT_FALSE(uaString.contains("Firefox"));
+    EXPECT_FALSE(uaString.contains("Version"));
 }
 
 static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url)
@@ -50,6 +51,7 @@ static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url)
     EXPECT_FALSE(uaString.contains("Safari"));
     EXPECT_FALSE(uaString.contains("Chromium"));
     EXPECT_TRUE(uaString.contains("Firefox"));
+    EXPECT_FALSE(uaString.contains("Version"));
 }
 
 static void assertUserAgentForURLHasLinuxPlatformQuirk(const char* url)
@@ -90,6 +92,7 @@ TEST(UserAgentTest, Quirks)
 
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.net/");
+    assertUserAgentForURLHasChromeBrowserQuirk("http://auth.mayohr.com/");
 
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://accounts.youtube.com/");
     assertUserAgentForURLHasFirefoxBrowserQuirk("http://docs.google.com/");

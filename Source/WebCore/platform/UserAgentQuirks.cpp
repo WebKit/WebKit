@@ -62,11 +62,17 @@ static bool isGoogle(const URL& url)
 // that works in Chrome that WebKit cannot handle. Prefer other quirks instead.
 static bool urlRequiresChromeBrowser(const URL& url)
 {
-    String baseDomain = topPrivatelyControlledDomain(url.host().toString());
+    String domain = url.host().toString();
+    String baseDomain = topPrivatelyControlledDomain(domain);
 
     // Needed for fonts on many sites to work with WebKit.
     // https://bugs.webkit.org/show_bug.cgi?id=147296
     if (baseDomain == "typekit.net" || baseDomain == "typekit.com")
+        return true;
+
+    // This site completely blocks the login page with WebKitGTK's standard user
+    // agent and ask users to use Google Chrome or Microsoft Internet Explorer.
+    if (domain == "auth.mayohr.com")
         return true;
 
     return false;
