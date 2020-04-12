@@ -1,3 +1,19 @@
+2020-04-11  Jack Lee  <shihchieh_lee@apple.com>
+
+        Infinite loop in InsertListCommand::doApply()
+        https://bugs.webkit.org/show_bug.cgi?id=210354
+        <rdar://problem/61427778>
+
+        Reviewed by Darin Adler.
+
+        Function startOfNextParagraph may return an empty position. Added null check to exit the while loop
+        and stop looking for next paragraph.
+
+        Test: editing/inserting/insert-list-end-of-table.html
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+
 2020-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK1] Touch Bar flashes when typing in Vietnamese in Mail

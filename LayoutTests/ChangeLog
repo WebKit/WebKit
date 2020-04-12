@@ -1,3 +1,16 @@
+2020-04-11  Jack Lee  <shihchieh_lee@apple.com>
+
+        Infinite loop in InsertListCommand::doApply()
+        https://bugs.webkit.org/show_bug.cgi?id=210354
+        <rdar://problem/61427778>
+
+        Reviewed by Darin Adler.
+
+        Added a regression test for the crash.
+
+        * editing/inserting/insert-list-end-of-table-expected.txt: Added.
+        * editing/inserting/insert-list-end-of-table.html: Added.
+
 2020-04-11  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow] Can't scroll overflow:scroll in sideways-scrollable RTL document

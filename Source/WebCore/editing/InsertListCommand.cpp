@@ -145,7 +145,7 @@ void InsertListCommand::doApply()
 
                 RefPtr<Range> currentSelection = endingSelection().firstRange();
                 VisiblePosition startOfCurrentParagraph = startOfSelection;
-                while (!inSameParagraph(startOfCurrentParagraph, startOfLastParagraph, CanCrossEditingBoundary)) {
+                while (!startOfCurrentParagraph.isNull() && !inSameParagraph(startOfCurrentParagraph, startOfLastParagraph, CanCrossEditingBoundary)) {
                     // doApply() may operate on and remove the last paragraph of the selection from the document
                     // if it's in the same list item as startOfCurrentParagraph. Return early to avoid an
                     // infinite loop and because there is no more work to be done.
