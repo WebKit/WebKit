@@ -1,5 +1,19 @@
 2020-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Page is not drawn with PSON, hardware acceleration and address typed in URL bar
+        https://bugs.webkit.org/show_bug.cgi?id=208091
+
+        Reviewed by Michael Catanzaro.
+
+        This happens only when accelerated compositing mode policy is set to always. In this case, the
+        bindSurfaceToWebPage wayland message is received before the WebPageProxy has updated the web page identifier. We
+        should always check if there's a provisional page and get its web page identifier.
+
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::bindSurfaceToWebPage):
+
+2020-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][PSON] Crash in WaylandCompositor::Surface destructor with USE_WPE_RENDERER disabled
         https://bugs.webkit.org/show_bug.cgi?id=209345
 
