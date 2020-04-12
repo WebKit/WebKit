@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-alignas(PageSize) JS_EXPORT_PRIVATE Config g_jscConfig;
+alignas(ConfigSizeToProtect) JS_EXPORT_PRIVATE Config g_jscConfig;
 
 void Config::disableFreezingForTesting()
 {

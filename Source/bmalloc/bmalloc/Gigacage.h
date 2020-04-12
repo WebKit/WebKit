@@ -66,16 +66,16 @@ BINLINE const char* name(Kind kind)
 
 #if GIGACAGE_ENABLED
 
+constexpr size_t configSizeToProtect = 16 * bmalloc::Sizes::kB;
+
 #if BOS_EFFECTIVE_ADDRESS_WIDTH < 48
 constexpr size_t primitiveGigacageSize = 2 * bmalloc::Sizes::GB;
 constexpr size_t jsValueGigacageSize = 2 * bmalloc::Sizes::GB;
 constexpr size_t maximumCageSizeReductionForSlide = bmalloc::Sizes::GB / 4;
-constexpr size_t configSizeToProtect = 16 * bmalloc::Sizes::kB;
 #else
 constexpr size_t primitiveGigacageSize = 32 * bmalloc::Sizes::GB;
 constexpr size_t jsValueGigacageSize = 16 * bmalloc::Sizes::GB;
 constexpr size_t maximumCageSizeReductionForSlide = 4 * bmalloc::Sizes::GB;
-constexpr size_t configSizeToProtect = 4 * bmalloc::Sizes::kB;
 #endif
 
 // In Linux, if `vm.overcommit_memory = 2` is specified, mmap with large size can fail if it exceeds the size of RAM.
