@@ -66,7 +66,7 @@ BINLINE const char* name(Kind kind)
 
 #if GIGACAGE_ENABLED
 
-#if BCPU(ARM64)
+#if BOS_EFFECTIVE_ADDRESS_WIDTH < 48
 constexpr size_t primitiveGigacageSize = 2 * bmalloc::Sizes::GB;
 constexpr size_t jsValueGigacageSize = 2 * bmalloc::Sizes::GB;
 constexpr size_t maximumCageSizeReductionForSlide = bmalloc::Sizes::GB / 4;
