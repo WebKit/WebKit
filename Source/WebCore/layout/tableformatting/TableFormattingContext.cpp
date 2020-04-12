@@ -64,14 +64,14 @@ TableFormattingContext::TableFormattingContext(const ContainerBox& formattingCon
 void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints&)
 {
     auto& grid = formattingState().tableGrid();
-    auto& columnsContext = grid.columnsContext();
+    auto& columns = grid.columns();
 
     computeAndDistributeExtraHorizontalSpace(horizontalConstraints.logicalWidth);
     // 1. Position each column.
     // FIXME: This should also deal with collapsing borders etc.
     auto horizontalSpacing = grid.horizontalSpacing();
     auto columnLogicalLeft = horizontalSpacing;
-    for (auto& column : columnsContext.columns()) {
+    for (auto& column : columns.list()) {
         column.setLogicalLeft(columnLogicalLeft);
         columnLogicalLeft += (column.logicalWidth() + horizontalSpacing);
     }
@@ -80,15 +80,15 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     auto& cellList = grid.cells();
     ASSERT(!cellList.isEmpty());
     for (auto& cell : cellList) {
-        auto& cellLayoutBox = cell->tableCellBox;
-        layoutTableCellBox(*cell, invalidationState, horizontalConstraints);
+        auto& cellBox = cell->box();
+        layoutCell(*cell, invalidationState, horizontalConstraints);
         // FIXME: Add support for column and row spanning and this requires a 2 pass layout.
-        auto& row = grid.rows().at(cell->startRow());
-        row.setLogicalHeight(std::max(row.logicalHeight(), geometryForBox(cellLayoutBox).marginBoxHeight()));
+        auto& row = grid.rows().list().at(cell->startRow());
+        row.setLogicalHeight(std::max(row.logicalHeight(), geometryForBox(cellBox).marginBoxHeight()));
     }
     // This is after the second pass when cell heights are fully computed.
     auto rowLogicalTop = grid.verticalSpacing();
-    for (auto& row : grid.rows()) {
+    for (auto& row : grid.rows().list()) {
         row.setLogicalTop(rowLogicalTop);
         rowLogicalTop += (row.logicalHeight() + grid.verticalSpacing());
     }
@@ -99,19 +99,19 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     setComputedGeometryForRows();
 }
 
-void TableFormattingContext::layoutTableCellBox(const TableGrid::CellInfo& cell, InvalidationState& invalidationState, const HorizontalConstraints& horizontalConstraints)
+void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, InvalidationState& invalidationState, const HorizontalConstraints& horizontalConstraints)
 {
-    auto& cellLayoutBox = cell.tableCellBox;
-    computeBorderAndPadding(cellLayoutBox, horizontalConstraints);
+    auto& cellBox = cell.box();
+    computeBorderAndPadding(cellBox, horizontalConstraints);
     // Margins do not apply to internal table elements.
-    auto& cellDisplayBox = formattingState().displayBox(cellLayoutBox);
+    auto& cellDisplayBox = formattingState().displayBox(cellBox);
     cellDisplayBox.setHorizontalMargin({ });
     cellDisplayBox.setHorizontalComputedMargin({ });
     // Don't know the actual position yet.
     cellDisplayBox.setTopLeft({ });
     auto contentWidth = [&] {
         auto& grid = formattingState().tableGrid();
-        auto& columnList = grid.columnsContext().columns();
+        auto& columnList = grid.columns().list();
         auto logicalWidth = LayoutUnit { };
         for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
             logicalWidth += columnList.at(columnIndex).logicalWidth();
@@ -121,26 +121,26 @@ void TableFormattingContext::layoutTableCellBox(const TableGrid::CellInfo& cell,
     }();
     cellDisplayBox.setContentBoxWidth(contentWidth);
 
-    ASSERT(cellLayoutBox.establishesBlockFormattingContext());
-    if (is<ContainerBox>(cellLayoutBox) && downcast<ContainerBox>(cellLayoutBox).hasInFlowOrFloatingChild()) {
-        auto& formattingContextRoot = downcast<ContainerBox>(cellLayoutBox);
+    ASSERT(cellBox.establishesBlockFormattingContext());
+    if (is<ContainerBox>(cellBox) && downcast<ContainerBox>(cellBox).hasInFlowOrFloatingChild()) {
+        auto& formattingContextRoot = downcast<ContainerBox>(cellBox);
         auto formattingContextForCellContent = LayoutContext::createFormattingContext(formattingContextRoot, layoutState());
         auto horizontalConstraintsForCellContent = Geometry::horizontalConstraintsForInFlow(cellDisplayBox);
         auto verticalConstraintsForCellContent = Geometry::verticalConstraintsForInFlow(cellDisplayBox);
         formattingContextForCellContent->layoutInFlowContent(invalidationState, horizontalConstraintsForCellContent, verticalConstraintsForCellContent);
     }
     cellDisplayBox.setVerticalMargin({ { }, { } });
-    cellDisplayBox.setContentBoxHeight(geometry().tableCellHeightAndMargin(cellLayoutBox).contentHeight);
+    cellDisplayBox.setContentBoxHeight(geometry().tableCellHeightAndMargin(cellBox).contentHeight);
     // FIXME: Check what to do with out-of-flow content.
 }
 
 void TableFormattingContext::positionTableCells()
 {
     auto& grid = formattingState().tableGrid();
-    auto& rowList = grid.rows();
-    auto& columnList = grid.columnsContext().columns();
+    auto& rowList = grid.rows().list();
+    auto& columnList = grid.columns().list();
     for (auto& cell : grid.cells()) {
-        auto& cellDisplayBox = formattingState().displayBox(cell->tableCellBox);
+        auto& cellDisplayBox = formattingState().displayBox(cell->box());
         cellDisplayBox.setTop(rowList.at(cell->startRow()).logicalTop());
         cellDisplayBox.setLeft(columnList.at(cell->startColumn()).logicalLeft());
     }
@@ -149,10 +149,9 @@ void TableFormattingContext::positionTableCells()
 void TableFormattingContext::setComputedGeometryForRows()
 {
     auto& grid = formattingState().tableGrid();
-    auto rowWidth = grid.columnsContext().logicalWidth() + 2 * grid.horizontalSpacing();
+    auto rowWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
 
-    auto& rowList = grid.rows();
-    for (auto& row : rowList) {
+    for (auto& row : grid.rows().list()) {
         auto& rowDisplayBox = formattingState().displayBox(row.box());
         initializeDisplayBoxToBlank(rowDisplayBox);
         rowDisplayBox.setContentBoxHeight(row.logicalHeight());
@@ -164,14 +163,14 @@ void TableFormattingContext::setComputedGeometryForRows()
 void TableFormattingContext::setComputedGeometryForSections()
 {
     auto& grid = formattingState().tableGrid();
-    auto sectionWidth = grid.columnsContext().logicalWidth() + 2 * grid.horizontalSpacing();
+    auto sectionWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
 
     for (auto& section : childrenOfType<Box>(root())) {
         auto& sectionDisplayBox = formattingState().displayBox(section);
         initializeDisplayBoxToBlank(sectionDisplayBox);
         // FIXME: Size table sections properly.
         sectionDisplayBox.setContentBoxWidth(sectionWidth);
-        sectionDisplayBox.setContentBoxHeight(grid.rows().last().logicalBottom() + grid.verticalSpacing());
+        sectionDisplayBox.setContentBoxHeight(grid.rows().list().last().logicalBottom() + grid.verticalSpacing());
     }
 }
 
@@ -211,13 +210,13 @@ void TableFormattingContext::ensureTableGrid()
         colgroup = colgroupCandidate;
 
     if (colgroup) {
-        auto& columnsContext = tableGrid.columnsContext();
+        auto& columns = tableGrid.columns();
         for (auto* column = downcast<ContainerBox>(*colgroup).firstChild(); column; column = column->nextSibling()) {
             ASSERT(column->isTableColumn());
             auto columnSpanCount = column->columnSpan();
             ASSERT(columnSpanCount > 0);
             while (columnSpanCount--)
-                columnsContext.addColumn(column);
+                columns.addColumn(*column);
         }
     }
 
@@ -244,34 +243,34 @@ void TableFormattingContext::computePreferredWidthForColumns()
     //    If the specified 'width' (W) of the cell is greater than MCW, W is the minimum cell width. A value of 'auto' means that MCW is the minimum cell width.
     //    Also, calculate the "maximum" cell width of each cell: formatting the content without breaking lines other than where explicit line breaks occur.
     for (auto& cell : grid.cells()) {
-        auto& tableCellBox = cell->tableCellBox;
-        ASSERT(tableCellBox.establishesFormattingContext());
+        auto& cellBox = cell->box();
+        ASSERT(cellBox.establishesFormattingContext());
 
-        auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(tableCellBox);
+        auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(cellBox);
         if (!intrinsicWidth) {
             intrinsicWidth = IntrinsicWidthConstraints { };
-            if (is<ContainerBox>(tableCellBox) && downcast<ContainerBox>(tableCellBox).hasInFlowOrFloatingChild())
-                intrinsicWidth = LayoutContext::createFormattingContext(downcast<ContainerBox>(tableCellBox), layoutState())->computedIntrinsicWidthConstraints();
-            intrinsicWidth = geometry().constrainByMinMaxWidth(tableCellBox, *intrinsicWidth);
-            auto border = geometry().computedBorder(tableCellBox);
-            auto padding = *geometry().computedPadding(tableCellBox, { });
+            if (is<ContainerBox>(cellBox) && downcast<ContainerBox>(cellBox).hasInFlowOrFloatingChild())
+                intrinsicWidth = LayoutContext::createFormattingContext(downcast<ContainerBox>(cellBox), layoutState())->computedIntrinsicWidthConstraints();
+            intrinsicWidth = geometry().constrainByMinMaxWidth(cellBox, *intrinsicWidth);
+            auto border = geometry().computedBorder(cellBox);
+            auto padding = *geometry().computedPadding(cellBox, { });
 
             intrinsicWidth->expand(border.horizontal.width() + padding.horizontal.width());
-            formattingState.setIntrinsicWidthConstraintsForBox(tableCellBox, *intrinsicWidth);
+            formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
         }
 
-        auto columnSpan = cell->size.width();
+        auto columnSpan = cell->size().width();
         auto slotIntrinsicWidth = FormattingContext::IntrinsicWidthConstraints { intrinsicWidth->minimum / columnSpan, intrinsicWidth->maximum / columnSpan };
-        auto initialPosition = cell->position;
+        auto initialPosition = cell->position();
         for (auto i = 0; i < columnSpan; ++i)
             grid.slot({ initialPosition.x() + i, initialPosition.y() })->widthConstraints = slotIntrinsicWidth;
     }
     // 2. For each column, determine a maximum and minimum column width from the cells that span only that column.
     //    The minimum is that required by the cell with the largest minimum cell width (or the column 'width', whichever is larger).
     //    The maximum is that required by the cell with the largest maximum cell width (or the column 'width', whichever is larger).
-    auto& columns = grid.columnsContext().columns();
+    auto& columnList = grid.columns().list();
     int numberOfRows = grid.rows().size();
-    int numberOfColumns = columns.size();
+    int numberOfColumns = columnList.size();
     for (int columnIndex = 0; columnIndex < numberOfColumns; ++columnIndex) {
         auto columnIntrinsicWidths = FormattingContext::IntrinsicWidthConstraints { };
         for (int rowIndex = 0; rowIndex < numberOfRows; ++rowIndex) {
@@ -280,13 +279,13 @@ void TableFormattingContext::computePreferredWidthForColumns()
             columnIntrinsicWidths.maximum = std::max(slot->widthConstraints.maximum, columnIntrinsicWidths.maximum);
         }
         // Now that we have the content driven min/max widths, check if <col> sets a preferred width on this column.
-        if (auto* columnBox = columns[columnIndex].columnBox()) {
+        if (auto* columnBox = columnList[columnIndex].box()) {
             if (auto columnPreferredWidth = geometry().computedColumnWidth(*columnBox)) {
                 // Let's stay at least as wide as the preferred width.
                 columnIntrinsicWidths.minimum = std::max(columnIntrinsicWidths.minimum, *columnPreferredWidth);
             }
         }
-        columns[columnIndex].setWidthConstraints(columnIntrinsicWidths);
+        columnList[columnIndex].setWidthConstraints(columnIntrinsicWidths);
     }
 }
 
@@ -304,17 +303,17 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
     // CAPMIN, and MIN. However, if either CAPMIN or the maximum width required by the columns plus cell spacing or borders (MAX) is
     // less than that of the containing block, use max(MAX, CAPMIN).
     auto distributeExtraHorizontalSpace = [&](auto extraHorizontalSpace) {
-        auto& columns = grid.columnsContext().columns();
-        ASSERT(!columns.isEmpty());
+        auto& columnList = grid.columns().list();
+        ASSERT(!columnList.isEmpty());
 
         auto tableMinimumContentWidth = tableWidthConstraints.minimum - grid.totalHorizontalSpacing();
         auto adjustabledHorizontalSpace = tableMinimumContentWidth;
-        auto numberOfColumns = columns.size();
+        auto numberOfColumns = columnList.size();
         // Fixed width columns don't participate in available space distribution.
-        for (auto& column : columns) {
+        for (auto& column : columnList) {
             if (!column.hasFixedWidth())
                 continue;
-            auto columnFixedWidth = *column.columnBox()->columnWidth();
+            auto columnFixedWidth = *column.box()->columnWidth();
             column.setLogicalWidth(columnFixedWidth);
 
             --numberOfColumns;
@@ -324,7 +323,7 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
             return;
         // FIXME: Right now just distribute the extra space equaly among the columns using the minimum width.
         ASSERT(adjustabledHorizontalSpace > 0);
-        for (auto& column : columns) {
+        for (auto& column : columnList) {
             if (column.hasFixedWidth())
                 continue;
             auto columnExtraSpace = extraHorizontalSpace / adjustabledHorizontalSpace * column.widthConstraints().minimum;
@@ -349,10 +348,10 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
 
 void TableFormattingContext::useAsContentLogicalWidth(WidthConstraintsType type)
 {
-    auto& columns = formattingState().tableGrid().columnsContext().columns();
-    ASSERT(!columns.isEmpty());
+    auto& columnList = formattingState().tableGrid().columns().list();
+    ASSERT(!columnList.isEmpty());
 
-    for (auto& column : columns)
+    for (auto& column : columnList)
         column.setLogicalWidth(type == WidthConstraintsType::Minimum ? column.widthConstraints().minimum : column.widthConstraints().maximum);
 }
 

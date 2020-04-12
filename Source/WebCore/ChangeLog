@@ -1,3 +1,81 @@
+2020-04-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Cleanup class/struct/variable names in TableGrid/TableFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=210397
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for the column spanner work.
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        (WebCore::Layout::TableFormattingContext::positionTableCells):
+        (WebCore::Layout::TableFormattingContext::setComputedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::setComputedGeometryForSections):
+        (WebCore::Layout::TableFormattingContext::ensureTableGrid):
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+        (WebCore::Layout::TableFormattingContext::useAsContentLogicalWidth):
+        (WebCore::Layout::TableFormattingContext::layoutTableCellBox): Deleted.
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::Column::Column):
+        (WebCore::Layout::TableGrid::Column::hasFixedWidth const):
+        (WebCore::Layout::TableGrid::Columns::addColumn):
+        (WebCore::Layout::TableGrid::Columns::addAnonymousColumn):
+        (WebCore::Layout::TableGrid::Rows::addRow):
+        (WebCore::Layout::TableGrid::Row::Row):
+        (WebCore::Layout::TableGrid::Cell::Cell):
+        (WebCore::Layout::TableGrid::Slot::Slot):
+        (WebCore::Layout::TableGrid::slot):
+        (WebCore::Layout::TableGrid::appendCell):
+        (WebCore::Layout::TableGrid::insertCell):
+        (WebCore::Layout::TableGrid::removeCell):
+        (WebCore::Layout::TableGrid::widthConstraints):
+        (WebCore::Layout::TableGrid::ColumnsContext::addColumn): Deleted.
+        (WebCore::Layout::TableGrid::CellInfo::CellInfo): Deleted.
+        (WebCore::Layout::TableGrid::SlotInfo::SlotInfo): Deleted.
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::totalHorizontalSpacing const):
+        (WebCore::Layout::TableGrid::hasComputedWidthConstraints const):
+        (WebCore::Layout::TableGrid::Column::box const):
+        (WebCore::Layout::TableGrid::Columns::list):
+        (WebCore::Layout::TableGrid::Columns::list const):
+        (WebCore::Layout::TableGrid::Columns::size const):
+        (WebCore::Layout::TableGrid::Columns::logicalWidth const):
+        (WebCore::Layout::TableGrid::Row::logicalBottom const):
+        (WebCore::Layout::TableGrid::Row::box const):
+        (WebCore::Layout::TableGrid::Rows::list):
+        (WebCore::Layout::TableGrid::Rows::rowList const):
+        (WebCore::Layout::TableGrid::Rows::size const):
+        (WebCore::Layout::TableGrid::Cell::startColumn const):
+        (WebCore::Layout::TableGrid::Cell::endColumn const):
+        (WebCore::Layout::TableGrid::Cell::startRow const):
+        (WebCore::Layout::TableGrid::Cell::endRow const):
+        (WebCore::Layout::TableGrid::Cell::columnSpan const):
+        (WebCore::Layout::TableGrid::Cell::rowSpan const):
+        (WebCore::Layout::TableGrid::Cell::position const):
+        (WebCore::Layout::TableGrid::Cell::size const):
+        (WebCore::Layout::TableGrid::Cell::box const):
+        (WebCore::Layout::TableGrid::columns const):
+        (WebCore::Layout::TableGrid::columns):
+        (WebCore::Layout::TableGrid::rows const):
+        (WebCore::Layout::TableGrid::rows):
+        (WebCore::Layout::TableGrid::cells):
+        (WebCore::Layout::TableGrid::CellInfo::startColumn const): Deleted.
+        (WebCore::Layout::TableGrid::CellInfo::endColumn const): Deleted.
+        (WebCore::Layout::TableGrid::CellInfo::startRow const): Deleted.
+        (WebCore::Layout::TableGrid::CellInfo::endRow const): Deleted.
+        (WebCore::Layout::TableGrid::CellInfo::columnSpan const): Deleted.
+        (WebCore::Layout::TableGrid::CellInfo::rowSpan const): Deleted.
+        (WebCore::Layout::TableGrid::Column::columnBox const): Deleted.
+        (WebCore::Layout::TableGrid::ColumnsContext::columns): Deleted.
+        (WebCore::Layout::TableGrid::ColumnsContext::columns const): Deleted.
+        (WebCore::Layout::TableGrid::ColumnsContext::logicalWidth const): Deleted.
+        (WebCore::Layout::TableGrid::columnsContext const): Deleted.
+        (WebCore::Layout::TableGrid::columnsContext): Deleted.
+
 2020-04-11  Jack Lee  <shihchieh_lee@apple.com>
 
         Infinite loop in InsertListCommand::doApply()
