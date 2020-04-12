@@ -175,6 +175,7 @@ void GStreamerRegistryScanner::initialize()
             m_codecMap.add(AtomString("vp9"), vp9DecoderAvailable.isUsingHardware);
             m_codecMap.add(AtomString("x-vp9"), vp9DecoderAvailable.isUsingHardware);
             m_codecMap.add(AtomString("vp9.0"), vp9DecoderAvailable.isUsingHardware);
+            m_codecMap.add(AtomString("vp09*"), vp9DecoderAvailable.isUsingHardware);
         }
         if (opusSupported)
             m_mimeTypeSet.add(AtomString("audio/webm"));
