@@ -30,10 +30,12 @@
 
 #include <memory>
 #include <wtf/Lock.h>
-#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace Nicosia {
+
+class Scene;
 
 class SceneIntegration : public ThreadSafeRefCounted<SceneIntegration> {
 public:
@@ -44,9 +46,9 @@ public:
         virtual void requestUpdate() = 0;
     };
 
-    static Ref<SceneIntegration> create(Client& client)
+    static Ref<SceneIntegration> create(Scene& scene, Client& client)
     {
-        return adoptRef(*new SceneIntegration(client));
+        return adoptRef(*new SceneIntegration(scene, client));
     }
     ~SceneIntegration();
 
@@ -69,10 +71,11 @@ public:
     std::unique_ptr<UpdateScope> createUpdateScope();
 
 private:
-    explicit SceneIntegration(Client&);
+    explicit SceneIntegration(Scene&, Client&);
 
     struct {
         Lock lock;
+        RefPtr<Scene> scene;
         Client* object { nullptr };
     } m_client;
 };

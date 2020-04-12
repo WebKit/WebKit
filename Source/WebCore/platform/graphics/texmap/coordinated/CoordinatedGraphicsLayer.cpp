@@ -245,7 +245,6 @@ void CoordinatedGraphicsLayer::syncPosition(const FloatPoint& p)
         return;
 
     GraphicsLayer::syncPosition(p);
-    m_nicosia.delta.positionChanged = true;
     didChangeGeometry(FlushNotification::NotRequired);
 }
 
@@ -288,7 +287,6 @@ void CoordinatedGraphicsLayer::syncBoundsOrigin(const FloatPoint& boundsOrigin)
         return;
 
     GraphicsLayer::syncBoundsOrigin(boundsOrigin);
-    m_nicosia.delta.boundsOriginChanged = true;
     didChangeGeometry(FlushNotification::NotRequired);
 }
 

@@ -56,6 +56,7 @@ CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordin
     , m_paintingEngine(Nicosia::PaintingEngine::create())
 {
     m_nicosia.scene = Nicosia::Scene::create();
+    m_nicosia.sceneIntegration = Nicosia::SceneIntegration::create(*m_nicosia.scene, *this);
     m_state.nicosia.scene = m_nicosia.scene;
 
     m_rootLayer = GraphicsLayer::create(this, *this);
@@ -76,6 +77,8 @@ CompositingCoordinator::~CompositingCoordinator()
 
 void CompositingCoordinator::invalidate()
 {
+    m_nicosia.sceneIntegration->invalidate();
+
     m_rootLayer = nullptr;
     purgeBackingStores();
 }
@@ -279,7 +282,7 @@ void CompositingCoordinator::attachLayer(CoordinatedGraphicsLayer* layer)
     {
         auto& compositionLayer = layer->compositionLayer();
         m_nicosia.state.layers.add(compositionLayer);
-        compositionLayer->setSceneIntegration(m_client.sceneIntegration());
+        compositionLayer->setSceneIntegration(m_nicosia.sceneIntegration.copyRef());
     }
     m_registeredLayers.add(layer->id(), layer);
     layer->setNeedsVisibleRectAdjustment();
@@ -301,6 +304,11 @@ void CompositingCoordinator::purgeBackingStores()
 Nicosia::PaintingEngine& CompositingCoordinator::paintingEngine()
 {
     return *m_paintingEngine;
+}
+
+void CompositingCoordinator::requestUpdate()
+{
+    m_client.updateScene();
 }
 
 } // namespace WebKit

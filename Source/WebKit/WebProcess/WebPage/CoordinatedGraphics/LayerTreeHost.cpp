@@ -52,7 +52,6 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     , m_surface(AcceleratedSurface::create(webPage, *this))
     , m_viewportController(webPage.size())
     , m_layerFlushTimer(RunLoop::main(), this, &LayerTreeHost::layerFlushTimerFired)
-    , m_sceneIntegration(Nicosia::SceneIntegration::create(*this))
     , m_coordinator(webPage, *this)
     , m_displayID(std::numeric_limits<uint32_t>::max() - m_webPage.identifier().toUInt64())
 {
@@ -86,7 +85,6 @@ LayerTreeHost::~LayerTreeHost()
 {
     cancelPendingLayerFlush();
 
-    m_sceneIntegration->invalidate();
     m_coordinator.invalidate();
     m_compositor->invalidate();
     m_surface = nullptr;
@@ -360,19 +358,14 @@ void LayerTreeHost::commitSceneState(const CoordinatedGraphicsState& state)
     m_compositor->updateSceneState(state);
 }
 
-RefPtr<Nicosia::SceneIntegration> LayerTreeHost::sceneIntegration()
+void LayerTreeHost::updateScene()
 {
-    return m_sceneIntegration.copyRef();
+    m_compositor->updateScene();
 }
 
 void LayerTreeHost::frameComplete()
 {
     m_compositor->frameComplete();
-}
-
-void LayerTreeHost::requestUpdate()
-{
-    m_compositor->updateScene();
 }
 
 uint64_t LayerTreeHost::nativeSurfaceHandleForCompositing()

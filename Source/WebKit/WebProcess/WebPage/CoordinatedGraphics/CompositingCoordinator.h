@@ -37,6 +37,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/NicosiaBuffer.h>
 #include <WebCore/NicosiaPlatformLayer.h>
+#include <WebCore/NicosiaSceneIntegration.h>
 
 namespace Nicosia {
 class PaintingEngine;
@@ -52,7 +53,8 @@ namespace WebKit {
 
 class CompositingCoordinator final : public WebCore::GraphicsLayerClient
     , public WebCore::CoordinatedGraphicsLayerClient
-    , public WebCore::GraphicsLayerFactory {
+    , public WebCore::GraphicsLayerFactory
+    , public Nicosia::SceneIntegration::Client {
     WTF_MAKE_NONCOPYABLE(CompositingCoordinator);
 public:
     class Client {
@@ -60,7 +62,7 @@ public:
         virtual void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) = 0;
         virtual void notifyFlushRequired() = 0;
         virtual void commitSceneState(const WebCore::CoordinatedGraphicsState&) = 0;
-        virtual RefPtr<Nicosia::SceneIntegration> sceneIntegration() = 0;
+        virtual void updateScene() = 0;
     };
 
     CompositingCoordinator(WebPage&, CompositingCoordinator::Client&);
@@ -105,6 +107,9 @@ private:
     // GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
 
+    // Nicosia::SceneIntegration::Client
+    void requestUpdate() override;
+
     void initializeRootCompositingLayerIfNeeded();
 
     void purgeBackingStores();
@@ -120,6 +125,7 @@ private:
 
     struct {
         RefPtr<Nicosia::Scene> scene;
+        RefPtr<Nicosia::SceneIntegration> sceneIntegration;
         Nicosia::Scene::State state;
     } m_nicosia;
     WebCore::CoordinatedGraphicsState m_state;
