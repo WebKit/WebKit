@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,10 +21,14 @@
 #include "config.h"
 #include <wtf/text/TextBreakIteratorInternalICU.h>
 
+#include <array>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WTF {
+
+// Buffer sized to hold ASCII locale ID strings up to 32 characters long.
+using LocaleIDBuffer = std::array<char, 33>;
 
 static Variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
 {
@@ -45,11 +49,9 @@ TextBreakIterator::TextBreakIterator(StringView string, Mode mode, const AtomStr
 {
 }
 
-static constexpr int maxLocaleStringLength = 32;
-
-static inline RetainPtr<CFStringRef> textBreakLocalePreference()
+static RetainPtr<CFStringRef> textBreakLocalePreference()
 {
-    RetainPtr<CFPropertyListRef> locale = adoptCF(CFPreferencesCopyValue(CFSTR("AppleTextBreakLocale"),
+    auto locale = adoptCF(CFPreferencesCopyValue(CFSTR("AppleTextBreakLocale"),
         kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     if (!locale || CFGetTypeID(locale.get()) != CFStringGetTypeID())
         return nullptr;
@@ -58,60 +60,42 @@ static inline RetainPtr<CFStringRef> textBreakLocalePreference()
 
 static RetainPtr<CFStringRef> topLanguagePreference()
 {
-    RetainPtr<CFArrayRef> languagesArray = adoptCF(CFLocaleCopyPreferredLanguages());
-    if (!languagesArray)
-        return nullptr;
-    if (!CFArrayGetCount(languagesArray.get()))
+    auto languagesArray = adoptCF(CFLocaleCopyPreferredLanguages());
+    if (!languagesArray || !CFArrayGetCount(languagesArray.get()))
         return nullptr;
     return static_cast<CFStringRef>(CFArrayGetValueAtIndex(languagesArray.get(), 0));
 }
 
-static void getLocale(CFStringRef locale, char localeStringBuffer[maxLocaleStringLength])
+static LocaleIDBuffer localeIDInBuffer(CFStringRef string)
 {
-    // Empty string means "root locale", and that is what we use if we can't get a preference.
-    localeStringBuffer[0] = 0;
-    if (!locale)
-        return;
-    CFStringGetCString(locale, localeStringBuffer, maxLocaleStringLength, kCFStringEncodingASCII);
-}
-
-static void getSearchLocale(char localeStringBuffer[maxLocaleStringLength])
-{
-    getLocale(topLanguagePreference().get(), localeStringBuffer);
+    // Empty string means "root locale", and is what we use if we can't get a preference.
+    LocaleIDBuffer buffer;
+    if (!string || !CFStringGetCString(string, buffer.data(), buffer.size(), kCFStringEncodingASCII))
+        buffer.front() = '\0';
+    return buffer;
 }
 
 const char* currentSearchLocaleID()
 {
-    static char localeStringBuffer[maxLocaleStringLength];
-    static bool gotSearchLocale = false;
-    if (!gotSearchLocale) {
-        getSearchLocale(localeStringBuffer);
-        gotSearchLocale = true;
-    }
-    return localeStringBuffer;
+    static const auto buffer = localeIDInBuffer(topLanguagePreference().get());
+    return buffer.data();
 }
 
-static void getTextBreakLocale(char localeStringBuffer[maxLocaleStringLength])
+static RetainPtr<CFStringRef> textBreakLocale()
 {
     // If there is no text break locale, use the top language preference.
-    RetainPtr<CFStringRef> locale = textBreakLocalePreference();
-    if (locale) {
-        if (RetainPtr<CFStringRef> canonicalLocale = adoptCF(CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, locale.get())))
-            locale = canonicalLocale;
-    } else
-        locale = topLanguagePreference();
-    getLocale(locale.get(), localeStringBuffer);
+    auto locale = textBreakLocalePreference();
+    if (!locale)
+        return topLanguagePreference();
+    if (auto canonicalLocale = adoptCF(CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, locale.get())))
+        return canonicalLocale;
+    return locale;
 }
 
 const char* currentTextBreakLocaleID()
 {
-    static char localeStringBuffer[maxLocaleStringLength];
-    static bool gotTextBreakLocale = false;
-    if (!gotTextBreakLocale) {
-        getTextBreakLocale(localeStringBuffer);
-        gotTextBreakLocale = true;
-    }
-    return localeStringBuffer;
+    static const auto buffer = localeIDInBuffer(textBreakLocale().get());
+    return buffer.data();
 }
 
 }

@@ -1,3 +1,23 @@
+2020-04-12  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Minor tweaks to code to get locale strings to remove one-time-initialization booleans
+        https://bugs.webkit.org/show_bug.cgi?id=210410
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/cocoa/TextBreakIteratorInternalICUCocoa.cpp:
+        (WTF::textBreakLocalePreference): Use auto, and no need to explicitly mark this inline.
+        (WTF::topLanguagePreference): Use auto.
+        (WTF::localeIDInBuffer): Renamed from getLocale. Changed to return a std::array and to
+        handle failure cases afterward rather than by initializing beforehand.
+        (WTF::getSearchLocale): Deleted.
+        (WTF::currentSearchLocaleID): Using "static const auto", wrote this in a straightforward
+        and compact way, using localeIDInBuffer and topLanguagePreference.
+        (WTF::textBreakLocale): Renamed from getTextBreakLocale and changed to return a
+        RetainPtr<CFStringRef>.
+        (WTF::currentTextBreakLocaleID): Using "static const auto", wrote this in a straightforward
+        and compact way, using localeIDInBuffer and textBreakLocale.
+
 2020-04-12  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up: WTF::Persistence::Coder and WTF::Persistence::Decoder should use WARN_UNUSED_RETURN
