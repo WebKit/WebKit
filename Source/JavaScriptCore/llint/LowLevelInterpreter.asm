@@ -1422,9 +1422,9 @@ if not (C_LOOP or C_LOOP_WIN)
         const address = a1
         const zeroValue = a2
     
-        loadp vmOrStartSP::m_lastStackTop[vmOrStartSP], address
+        loadp VM::m_lastStackTop[vmOrStartSP], address
         move sp, zeroValue
-        storep zeroValue, vmOrStartSP::m_lastStackTop[vmOrStartSP]
+        storep zeroValue, VM::m_lastStackTop[vmOrStartSP]
         move sp, vmOrStartSP
 
         bpbeq sp, address, .zeroFillDone

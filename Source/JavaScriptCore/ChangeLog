@@ -1,3 +1,10 @@
+2020-03-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, build fix after r258717
+        https://bugs.webkit.org/show_bug.cgi?id=199295
+
+        * llint/LowLevelInterpreter.asm:
+
 2020-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         sanitizeStackForVMImpl writes below stack pointer, triggers huge warning spam from valgrind
