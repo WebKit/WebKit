@@ -28,6 +28,7 @@
 
 #if PLATFORM(WAYLAND) && USE(EGL) && !USE(WPE_RENDERER)
 
+#include "ProvisionalPageProxy.h"
 #include "WebKitWaylandServerProtocol.h"
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -558,7 +559,9 @@ void WaylandCompositor::bindSurfaceToWebPage(WaylandCompositor::Surface* surface
 {
     WebPageProxy* webPage = nullptr;
     for (auto* page : m_pageMap.keys()) {
-        if (page->webPageID() == pageID) {
+        auto* provisionalPage = page->provisionalPageProxy();
+        auto webPageID = provisionalPage ? provisionalPage->webPageID() : page->webPageID();
+        if (webPageID == pageID) {
             webPage = page;
             break;
         }
