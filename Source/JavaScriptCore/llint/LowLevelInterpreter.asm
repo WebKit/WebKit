@@ -1418,22 +1418,26 @@ if not (C_LOOP or C_LOOP_WIN)
         if X86 or X86_WIN
             loadp 4[sp], a0
         end
-        const vm = a0
+        const vmOrStartSP = a0
         const address = a1
         const zeroValue = a2
     
-        loadp VM::m_lastStackTop[vm], address
+        loadp vmOrStartSP::m_lastStackTop[vmOrStartSP], address
+        move sp, zeroValue
+        storep zeroValue, vmOrStartSP::m_lastStackTop[vmOrStartSP]
+        move sp, vmOrStartSP
+
         bpbeq sp, address, .zeroFillDone
-    
+        move address, sp
+
         move 0, zeroValue
     .zeroFillLoop:
         storep zeroValue, [address]
         addp PtrSize, address
-        bpa sp, address, .zeroFillLoop
+        bpa vmOrStartSP, address, .zeroFillLoop
 
     .zeroFillDone:
-        move sp, address
-        storep address, VM::m_lastStackTop[vm]
+        move vmOrStartSP, sp
         ret
     
     # VMEntryRecord* vmEntryRecord(const EntryFrame* entryFrame)
