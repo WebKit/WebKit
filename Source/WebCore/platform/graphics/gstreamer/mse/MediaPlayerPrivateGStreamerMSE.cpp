@@ -36,7 +36,6 @@
 #include "MIMETypeRegistry.h"
 #include "MediaDescription.h"
 #include "MediaPlayer.h"
-#include "NotImplemented.h"
 #include "PlaybackPipeline.h"
 #include "SourceBufferPrivateGStreamer.h"
 #include "TimeRanges.h"
@@ -173,7 +172,7 @@ void MediaPlayerPrivateGStreamerMSE::seek(const MediaTime& time)
     if (UNLIKELY(!m_pipeline || m_didErrorOccur))
         return;
 
-    GST_INFO("[Seek] seek attempt to %s secs", toString(time).utf8().data());
+    GST_INFO_OBJECT(pipeline(), "[Seek] seek attempt to %s secs", toString(time).utf8().data());
 
     // Avoid useless seeking.
     MediaTime current = currentMediaTime();
@@ -191,19 +190,19 @@ void MediaPlayerPrivateGStreamerMSE::seek(const MediaTime& time)
         return;
     }
 
-    GST_DEBUG("Seeking from %s to %s seconds", toString(current).utf8().data(), toString(time).utf8().data());
+    GST_DEBUG_OBJECT(pipeline(), "Seeking from %s to %s seconds", toString(current).utf8().data(), toString(time).utf8().data());
 
     MediaTime previousSeekTime = m_seekTime;
     m_seekTime = time;
 
-    if (!doSeek()) {
+    if (!doSeek(m_seekTime, m_playbackRate, static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE))) {
         m_seekTime = previousSeekTime;
-        GST_WARNING("Seeking to %s failed", toString(time).utf8().data());
+        GST_WARNING_OBJECT(pipeline(), "Seeking to %s failed", toString(time).utf8().data());
         return;
     }
 
     m_isEndReached = false;
-    GST_DEBUG("m_isSeeking=%s, m_seekTime=%s", boolForPrinting(m_isSeeking), toString(m_seekTime).utf8().data());
+    GST_DEBUG_OBJECT(pipeline(), "m_isSeeking=%s, m_seekTime=%s", boolForPrinting(m_isSeeking), toString(m_seekTime).utf8().data());
 }
 
 void MediaPlayerPrivateGStreamerMSE::configurePlaySink()
@@ -242,18 +241,11 @@ void MediaPlayerPrivateGStreamerMSE::notifySeekNeedsDataForTime(const MediaTime&
     }
 }
 
-bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime&, float, GstSeekFlags)
+bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rate, GstSeekFlags seekType)
 {
-    // Use doSeek() instead. If anybody is calling this version of doSeek(), something is wrong.
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool MediaPlayerPrivateGStreamerMSE::doSeek()
-{
-    MediaTime seekTime = m_seekTime;
-    double rate = m_player->rate();
-    GstSeekFlags seekType = static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE);
+    // FIXME: Make a copy here because in some cases below it is modified. This
+    // sounds like a bad idea and should be investigated further.
+    MediaTime seekTime = position;
 
     // Always move to seeking state to report correct 'currentTime' while pending for actual seek to complete.
     m_isSeeking = true;
@@ -262,7 +254,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
     GstState state, newState;
     GstStateChangeReturn getStateResult = gst_element_get_state(m_pipeline.get(), &state, &newState, 0);
     if (getStateResult == GST_STATE_CHANGE_FAILURE || getStateResult == GST_STATE_CHANGE_NO_PREROLL) {
-        GST_DEBUG("[Seek] cannot seek, current state change is %s", gst_element_state_change_return_get_name(getStateResult));
+        GST_DEBUG_OBJECT(pipeline(), "[Seek] cannot seek, current state change is %s", gst_element_state_change_return_get_name(getStateResult));
         webKitMediaSrcSetReadyForSamples(WEBKIT_MEDIA_SRC(m_source.get()), true);
         m_isSeeking = false;
         return false;
@@ -284,7 +276,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
         else if (!m_gstSeekCompleted)
             reason = "Previous seek is not finished yet";
 
-        GST_DEBUG("[Seek] Delaying the seek: %s", reason.data());
+        GST_DEBUG_OBJECT(pipeline(), "[Seek] Delaying the seek: %s", reason.data());
 
         m_isSeekPending = true;
 
@@ -311,7 +303,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
             const MediaTime miniGap = MediaTime(1, 10);
             MediaTime nearest = m_mediaSource->buffered()->nearest(seekTime);
             if (nearest.isValid() && nearest > seekTime && (nearest - seekTime) <= miniGap && isTimeBuffered(nearest + miniGap)) {
-                GST_DEBUG("[Seek] Changed the seek target time from %s to %s, a near point in the future", toString(seekTime).utf8().data(), toString(nearest).utf8().data());
+                GST_DEBUG_OBJECT(pipeline(), "[Seek] Changed the seek target time from %s to %s, a near point in the future", toString(seekTime).utf8().data(), toString(nearest).utf8().data());
                 seekTime = nearest;
             }
         }
@@ -319,10 +311,10 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
 
     // Check if MSE has samples for requested time and defer actual seek if needed.
     if (!isTimeBuffered(seekTime)) {
-        GST_DEBUG("[Seek] Delaying the seek: MSE is not ready");
+        GST_DEBUG_OBJECT(pipeline(), "[Seek] Delaying the seek: MSE is not ready");
         GstStateChangeReturn setStateResult = gst_element_set_state(m_pipeline.get(), GST_STATE_PAUSED);
         if (setStateResult == GST_STATE_CHANGE_FAILURE) {
-            GST_DEBUG("[Seek] Cannot seek, failed to pause playback pipeline.");
+            GST_DEBUG_OBJECT(pipeline(), "[Seek] Cannot seek, failed to pause playback pipeline.");
             webKitMediaSrcSetReadyForSamples(WEBKIT_MEDIA_SRC(m_source.get()), true);
             m_isSeeking = false;
             return false;
@@ -341,7 +333,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
         return m_isSeeking;
     }
 
-    GST_DEBUG("We can seek now");
+    GST_DEBUG_OBJECT(pipeline(), "We can seek now");
 
     MediaTime startTime = seekTime, endTime = MediaTime::invalidTime();
 
@@ -353,7 +345,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
     if (!rate)
         rate = 1;
 
-    GST_DEBUG("Actual seek to %s, end time:  %s, rate: %f", toString(startTime).utf8().data(), toString(endTime).utf8().data(), rate);
+    GST_DEBUG_OBJECT(pipeline(), "Actual seek to %s, end time:  %s, rate: %f", toString(startTime).utf8().data(), toString(endTime).utf8().data(), rate);
 
     // This will call notifySeekNeedsData() after some time to tell that the pipeline is ready for sample enqueuing.
     webKitMediaSrcPrepareSeek(WEBKIT_MEDIA_SRC(m_source.get()), seekTime);
@@ -363,12 +355,12 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
         webKitMediaSrcSetReadyForSamples(WEBKIT_MEDIA_SRC(m_source.get()), true);
         m_isSeeking = false;
         m_gstSeekCompleted = true;
-        GST_DEBUG("doSeek(): gst_element_seek() failed, returning false");
+        GST_DEBUG_OBJECT(pipeline(), "doSeek(): gst_element_seek() failed, returning false");
         return false;
     }
 
     // The samples will be enqueued in notifySeekNeedsData().
-    GST_DEBUG("doSeek(): gst_element_seek() succeeded, returning true");
+    GST_DEBUG_OBJECT(pipeline(), "doSeek(): gst_element_seek() succeeded, returning true");
     return true;
 }
 
@@ -389,7 +381,7 @@ void MediaPlayerPrivateGStreamerMSE::maybeFinishSeek()
     if (m_isSeekPending) {
         GST_DEBUG("[Seek] Committing pending seek to %s", toString(m_seekTime).utf8().data());
         m_isSeekPending = false;
-        if (!doSeek()) {
+        if (!doSeek(m_seekTime, m_playbackRate, static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE))) {
             GST_WARNING("[Seek] Seeking to %s failed", toString(m_seekTime).utf8().data());
             m_cachedPosition = MediaTime::invalidTime();
         }
@@ -405,11 +397,6 @@ void MediaPlayerPrivateGStreamerMSE::maybeFinishSeek()
     // Right now we can use m_seekTime as a fallback.
     m_canFallBackToLastFinishedSeekPosition = true;
     timeChanged();
-}
-
-void MediaPlayerPrivateGStreamerMSE::updatePlaybackRate()
-{
-    notImplemented();
 }
 
 bool MediaPlayerPrivateGStreamerMSE::seeking() const
@@ -467,18 +454,13 @@ void MediaPlayerPrivateGStreamerMSE::seekCompleted()
     GST_DEBUG("MSE seek completed");
     m_mseSeekCompleted = true;
 
-    doSeek();
+    doSeek(m_seekTime, m_playbackRate, static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE));
 
     if (!seeking() && m_readyState >= MediaPlayer::ReadyState::HaveFutureData)
         changePipelineState(GST_STATE_PLAYING);
 
     if (!seeking())
         m_player->timeChanged();
-}
-
-void MediaPlayerPrivateGStreamerMSE::setRate(float)
-{
-    notImplemented();
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamerMSE::buffered() const
