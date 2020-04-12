@@ -64,7 +64,7 @@ public:
     CString toString() const;
 
     void encode(Encoder&) const;
-    static bool decode(Decoder&, StringReference&) WARN_UNUSED_RETURN;
+    static WARN_UNUSED_RETURN bool decode(Decoder&, StringReference&);
 
     struct Hash {
         static unsigned hash(const StringReference& a);

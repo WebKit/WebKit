@@ -67,7 +67,7 @@ public:
         encoder << sandboxExtensionHandles;
     }
 
-    static WARN_UNUSED_RETURN Optional<FormDataReference> decode(Decoder& decoder)
+    static Optional<FormDataReference> decode(Decoder& decoder)
     {
         Optional<bool> hasFormData;
         decoder >> hasFormData;

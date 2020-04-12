@@ -105,7 +105,7 @@ template<typename T> struct ArgumentCoder {
         return U::decode(decoder, u);
     }
 
-    template<typename U = T, std::enable_if_t<UsesModernDecoder<U>::argumentCoderValue>* = nullptr> WARN_UNUSED_RETURN
+    template<typename U = T, std::enable_if_t<UsesModernDecoder<U>::argumentCoderValue>* = nullptr>
     static Optional<U> decode(Decoder& decoder)
     {
         return U::decode(decoder);

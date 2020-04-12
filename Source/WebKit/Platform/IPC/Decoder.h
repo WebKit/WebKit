@@ -78,30 +78,30 @@ public:
     }
     void markInvalid() { m_bufferPos = nullptr; }
 
-    bool decodeFixedLengthData(uint8_t*, size_t, unsigned alignment) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t*, size_t, unsigned alignment);
 
     // The data in the data reference here will only be valid for the lifetime of the ArgumentDecoder object.
-    bool decodeVariableLengthByteArray(DataReference&) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decodeVariableLengthByteArray(DataReference&);
 
-    bool decode(bool&) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decode(bool&);
     Decoder& operator>>(Optional<bool>&);
-    bool decode(uint8_t&) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decode(uint8_t&);
     Decoder& operator>>(Optional<uint8_t>&);
-    bool decode(uint16_t&) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decode(uint16_t&);
     Decoder& operator>>(Optional<uint16_t>&);
-    bool decode(uint32_t&) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decode(uint32_t&);
     Decoder& operator>>(Optional<uint32_t>&);
-    bool decode(uint64_t&) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decode(uint64_t&);
     Decoder& operator>>(Optional<uint64_t>&);
-    bool decode(int16_t&) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decode(int16_t&);
     Decoder& operator>>(Optional<int16_t>&);
-    bool decode(int32_t&) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decode(int32_t&);
     Decoder& operator>>(Optional<int32_t>&);
-    bool decode(int64_t&) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decode(int64_t&);
     Decoder& operator>>(Optional<int64_t>&);
-    bool decode(float&) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decode(float&);
     Decoder& operator>>(Optional<float>&);
-    bool decode(double&) WARN_UNUSED_RETURN;
+    WARN_UNUSED_RETURN bool decode(double&);
     Decoder& operator>>(Optional<double>&);
 
     template<typename E, typename = std::enable_if_t<std::is_enum<E>::value>> WARN_UNUSED_RETURN

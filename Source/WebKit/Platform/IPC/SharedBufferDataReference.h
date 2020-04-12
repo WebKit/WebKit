@@ -53,7 +53,7 @@ public:
         encoder << m_buffer;
     }
 
-    static WARN_UNUSED_RETURN Optional<SharedBufferDataReference> decode(Decoder& decoder)
+    static Optional<SharedBufferDataReference> decode(Decoder& decoder)
     {
         Optional<RefPtr<WebCore::SharedBuffer>> buffer;
         decoder >> buffer;

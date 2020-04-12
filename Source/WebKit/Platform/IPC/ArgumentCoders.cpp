@@ -131,7 +131,7 @@ void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), alignof(UChar));
 }
 
-template <typename CharacterType> WARN_UNUSED_RETURN
+template <typename CharacterType>
 static inline Optional<String> decodeStringText(Decoder& decoder, uint32_t length)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
