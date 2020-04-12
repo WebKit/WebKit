@@ -1,3 +1,22 @@
+2020-04-12  Chris Dumez  <cdumez@apple.com>
+
+        fast/dom/timer-throttling-hidden-page.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=210355
+        <rdar://problem/61462972>
+
+        Reviewed by Sam Weinig.
+
+        The test was changing the page's visiblity to 'hidden' using testRunner.setPageVisibility("hidden")
+        in the first timer call and then expecting that by the 5th timer iteration, the page would actually
+        be hidden for timer throtting to kick in. While this happen to work most of the time, this would
+        cause flakiness because testRunner.setPageVisibility("hidden") involves an async IPC to the
+        UIProcess and then an IPC back to the WebProcess to update the page's activity state.
+
+        To address the issue, we now listen for the 'visibilitychange' event and only start the test / timer
+        once document.hidden actually returns true.
+
+        * fast/dom/timer-throttling-hidden-page.html:
+
 2020-04-11  Jack Lee  <shihchieh_lee@apple.com>
 
         Infinite loop in InsertListCommand::doApply()
