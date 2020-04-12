@@ -275,7 +275,9 @@ static GstStateChangeReturn webKitGLVideoSinkChangeState(GstElement* element, Gs
 
     switch (transition) {
     case GST_STATE_CHANGE_NULL_TO_READY:
+#if GST_CHECK_VERSION(1, 14, 0)
     case GST_STATE_CHANGE_READY_TO_READY:
+#endif
     case GST_STATE_CHANGE_READY_TO_PAUSED: {
         if (!priv->glDisplayElementContext)
             priv->glDisplayElementContext = requestGLContext(sink, GST_GL_DISPLAY_CONTEXT_TYPE);
