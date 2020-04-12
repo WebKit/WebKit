@@ -107,7 +107,7 @@ ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(co
         auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
 
         auto updateScope = compositionLayer.createUpdateScope();
-        scrollBy({ wheelEvent.deltaX(), -wheelEvent.deltaY() });
+        scrollBy({ -wheelEvent.deltaX(), -wheelEvent.deltaY() });
     }
 
     scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());

@@ -58,7 +58,7 @@ bool ScrollGestureController::handleEvent(const struct wpe_input_touch_event_raw
                 touchPoint->time, m_start.x, m_start.y,
                 0, 0, 0,
             };
-            m_axisEvent.x_axis = m_offset.x - touchPoint->x;
+            m_axisEvent.x_axis = -(m_offset.x - touchPoint->x);
             m_axisEvent.y_axis = -(m_offset.y - touchPoint->y);
 #else
             m_axisEvent = {
