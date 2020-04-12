@@ -55,16 +55,13 @@ public:
     void setVerticalSpacing(LayoutUnit verticalSpacing) { m_verticalSpacing = verticalSpacing; }
     LayoutUnit verticalSpacing() const { return m_verticalSpacing; }
 
-    bool hasComputedWidthConstraints() const { return m_intrinsicWidthConstraints.hasValue(); }
-    FormattingContext::IntrinsicWidthConstraints widthConstraints();
+    void setWidthConstraints(FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
+    Optional<FormattingContext::IntrinsicWidthConstraints> widthConstraints() { return m_intrinsicWidthConstraints; }
 
-    // Column represents a vertical set of slots in the grid. A column has min/max and final width.
+    // Column represents a vertical set of slots in the grid. A column has horizontal position and width.
     class Column {
     public:
         Column(const Box*);
-
-        void setWidthConstraints(FormattingContext::IntrinsicWidthConstraints);
-        FormattingContext::IntrinsicWidthConstraints widthConstraints() const;
 
         void setLogicalLeft(LayoutUnit);
         LayoutUnit logicalLeft() const;
@@ -72,18 +69,20 @@ public:
         void setLogicalWidth(LayoutUnit);
         LayoutUnit logicalWidth() const;
 
-        bool hasFixedWidth() const;
+        bool isFixedWidth() const;
 
+        void setHasFixedWidthCell() { m_hasFixedWidthCell = true; }
         const Box* box() const { return m_layoutBox.get(); }
 
     private:
-        FormattingContext::IntrinsicWidthConstraints m_widthConstraints;
+        bool hasFixedWidthCell() const { return m_hasFixedWidthCell; }
+
         LayoutUnit m_computedLogicalWidth;
         LayoutUnit m_computedLogicalLeft;
         WeakPtr<const Box> m_layoutBox;
+        bool m_hasFixedWidthCell { false };
 
 #if ASSERT_ENABLED
-        bool m_hasWidthConstraints { false };
         bool m_hasComputedWidth { false };
         bool m_hasComputedLeft { false };
 #endif
@@ -156,6 +155,8 @@ public:
         SlotPosition position() const { return m_position; }
         CellSpan span() const { return m_span; }
 
+        bool isFixedWidth() const;
+
         const Box& box() const { return *m_layoutBox.get(); }
 
     private:
@@ -164,13 +165,34 @@ public:
         CellSpan m_span;
     };
 
-    struct Slot {
+    class Slot {
+    public:
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         Slot() = default;
-        Slot(Cell&);
+        Slot(Cell&, bool isColumnSpanned, bool isRowSpanned);
 
-        WeakPtr<Cell> cell;
-        FormattingContext::IntrinsicWidthConstraints widthConstraints;
+        const Cell& cell() const { return *m_cell; }
+        Cell& cell() { return *m_cell; }
+
+        const FormattingContext::IntrinsicWidthConstraints& widthConstraints() const { return m_widthConstraints; }
+        void setWidthConstraints(const FormattingContext::IntrinsicWidthConstraints& widthConstraints) { m_widthConstraints = widthConstraints; }
+
+        // Initial slot position for a spanning cell.
+        // <td></td><td colspan=2></td> [1, 0] slot has column span of 2.
+        bool hasColumnSpan() const { return m_cell->columnSpan() > 1 && !isColumnSpanned(); }
+        bool hasRowSpan() const { return m_cell->rowSpan() > 1 && !isRowSpanned(); }
+
+        // Non-initial spanned slot.
+        // <td></td><td colspan=2></td> [2, 0] slot is column spanned by [1, 0].
+        // <td></td><td></td><td></td>
+        bool isColumnSpanned() const { return m_isColumnSpanned; }
+        bool isRowSpanned() const { return m_isRowSpanned; }
+
+    private:
+        WeakPtr<Cell> m_cell;
+        bool m_isColumnSpanned { false };
+        bool m_isRowSpanned { false };
+        FormattingContext::IntrinsicWidthConstraints m_widthConstraints;
     };
 
     const Columns& columns() const { return m_columns; }
@@ -183,6 +205,7 @@ public:
     Cells& cells() { return m_cells; }
 
     Slot* slot(SlotPosition);
+    bool isSpanned(SlotPosition);
 
 private:
     using SlotMap = WTF::HashMap<SlotPosition, std::unique_ptr<Slot>>;

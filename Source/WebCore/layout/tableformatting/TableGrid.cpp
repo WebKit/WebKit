@@ -40,20 +40,6 @@ TableGrid::Column::Column(const Box* columnBox)
 {
 }
 
-void TableGrid::Column::setWidthConstraints(FormattingContext::IntrinsicWidthConstraints widthConstraints)
-{
-#if ASSERT_ENABLED
-    m_hasWidthConstraints = true;
-#endif
-    m_widthConstraints = widthConstraints;
-}
-
-FormattingContext::IntrinsicWidthConstraints TableGrid::Column::widthConstraints() const
-{
-    ASSERT(m_hasWidthConstraints);
-    return m_widthConstraints;
-}
-
 void TableGrid::Column::setLogicalWidth(LayoutUnit computedLogicalWidth)
 {
 #if ASSERT_ENABLED
@@ -82,10 +68,9 @@ LayoutUnit TableGrid::Column::logicalLeft() const
     return m_computedLogicalLeft;
 }
 
-bool TableGrid::Column::hasFixedWidth() const
+bool TableGrid::Column::isFixedWidth() const
 {
-    // FIXME: This only covers the <col> attribute case.
-    return box() && box()->columnWidth();
+    return hasFixedWidthCell() || (box() && box()->columnWidth());
 }
 
 void TableGrid::Columns::addColumn(const Box& columnBox)
@@ -115,8 +100,15 @@ TableGrid::Cell::Cell(const Box& cellBox, SlotPosition position, CellSpan span)
 {
 }
 
-TableGrid::Slot::Slot(Cell& cell)
-    : cell(makeWeakPtr(cell))
+bool TableGrid::Cell::isFixedWidth() const
+{
+    return box().style().logicalWidth().isFixed();
+}
+
+TableGrid::Slot::Slot(Cell& cell, bool isColumnSpanned, bool isRowSpanned)
+    : m_cell(makeWeakPtr(cell))
+    , m_isColumnSpanned(isColumnSpanned)
+    , m_isRowSpanned(isRowSpanned)
 {
 }
 
@@ -154,17 +146,25 @@ void TableGrid::appendCell(const Box& cellBox)
     }
     auto cell = makeUnique<Cell>(cellBox, initialSlotPosition, CellSpan { columnSpan, rowSpan });
     // Row and column spanners create additional slots.
-    for (size_t row = 1; row <= rowSpan; ++row) {
-        for (size_t column = 1; column <= columnSpan; ++column) {
-            auto position = SlotPosition { initialSlotPosition.column + column - 1, initialSlotPosition.row + row - 1 };
+    for (size_t row = 0; row < rowSpan; ++row) {
+        for (auto column = cell->startColumn(); column < cell->endColumn(); ++column) {
+            auto position = SlotPosition { column, cell->startRow() + row };
             ASSERT(!m_slotMap.contains(position));
-            m_slotMap.add(position, makeUnique<Slot>(*cell));
+            // This slot is spanned by a cell at the initial slow position.
+            auto isColumnSpanned = column != cell->startColumn();
+            auto isRowSpanned = !!row;
+            m_slotMap.add(position, makeUnique<Slot>(*cell, isColumnSpanned, isRowSpanned));
         }
     }
     // Initialize columns/rows if needed.
     auto missingNumberOfColumns = std::max<int>(0, initialSlotPosition.column + columnSpan - m_columns.size());
     for (auto column = 0; column < missingNumberOfColumns; ++column)
         m_columns.addAnonymousColumn();
+
+    if (cell->isFixedWidth()) {
+        for (auto column = cell->startColumn(); column < cell->endColumn(); ++column)
+            m_columns.list()[column].setHasFixedWidthCell();
+    }
 
     if (isInNewRow)
         m_rows.addRow(cellBox.parent());
@@ -181,19 +181,6 @@ void TableGrid::insertCell(const Box& cellBox, const Box& before)
 void TableGrid::removeCell(const Box& cellBox)
 {
     UNUSED_PARAM(cellBox);
-}
-
-FormattingContext::IntrinsicWidthConstraints TableGrid::widthConstraints()
-{
-    // FIXME: Add constraint invalidation for incremental layouts.
-    if (m_intrinsicWidthConstraints)
-        return *m_intrinsicWidthConstraints;
-
-    m_intrinsicWidthConstraints = FormattingContext::IntrinsicWidthConstraints { };
-    for (auto& column : m_columns.list())
-        *m_intrinsicWidthConstraints += column.widthConstraints();
-    m_intrinsicWidthConstraints->expand(totalHorizontalSpacing());
-    return *m_intrinsicWidthConstraints;
 }
 
 }

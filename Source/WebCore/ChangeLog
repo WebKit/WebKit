@@ -1,5 +1,53 @@
 2020-04-12  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Add support for fixed width columns
+        https://bugs.webkit.org/show_bug.cgi?id=210401
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for adding support for spanner cells.
+        Fixed width columns (<col> and <td>) don't participate in the spanner width distribution.
+
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::IntrinsicWidthConstraints::operator-=):
+        * layout/Verification.cpp:
+        (WebCore::Layout::areEssentiallyEqual):
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns): Deleted.
+        (WebCore::Layout::TableFormattingContext::useAsContentLogicalWidth): Deleted.
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::intrinsicWidthConstraintsForCell):
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::Column::isFixedWidth const):
+        (WebCore::Layout::TableGrid::Cell::isFixedWidth const):
+        (WebCore::Layout::TableGrid::Slot::Slot):
+        (WebCore::Layout::TableGrid::appendCell):
+        (WebCore::Layout::TableGrid::Column::setWidthConstraints): Deleted.
+        (WebCore::Layout::TableGrid::Column::widthConstraints const): Deleted.
+        (WebCore::Layout::TableGrid::Column::hasFixedWidth const): Deleted.
+        (WebCore::Layout::TableGrid::widthConstraints): Deleted.
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::setWidthConstraints):
+        (WebCore::Layout::TableGrid::widthConstraints):
+        (WebCore::Layout::TableGrid::Column::setHasFixedWidthCell):
+        (WebCore::Layout::TableGrid::Column::hasFixedWidthCell const):
+        (WebCore::Layout::TableGrid::Slot::cell const):
+        (WebCore::Layout::TableGrid::Slot::cell):
+        (WebCore::Layout::TableGrid::Slot::widthConstraints const):
+        (WebCore::Layout::TableGrid::Slot::setWidthConstraints):
+        (WebCore::Layout::TableGrid::Slot::hasColumnSpan const):
+        (WebCore::Layout::TableGrid::Slot::hasRowSpan const):
+        (WebCore::Layout::TableGrid::Slot::isColumnSpanned const):
+        (WebCore::Layout::TableGrid::Slot::isRowSpanned const):
+        (WebCore::Layout::TableGrid::hasComputedWidthConstraints const): Deleted.
+
+2020-04-12  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Introduce dedicated SlotPosition/CellSpan structs
         https://bugs.webkit.org/show_bug.cgi?id=210399
 

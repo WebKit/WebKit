@@ -180,13 +180,16 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedInt
     // a generic shrink-to fit block level box like a float box would be just sized to the computed value of "width", tables
     // can actually be streched way over.
     auto& grid = formattingState().tableGrid();
-    if (!grid.hasComputedWidthConstraints()) {
-        // 1. Ensure each cell slot is occupied by at least one cell.
-        ensureTableGrid();
-        // 2. Compute the minimum/maximum width of each column.
-        computePreferredWidthForColumns();
-    }
-    return grid.widthConstraints();
+    if (auto computedWidthConstraints = grid.widthConstraints())
+        return *computedWidthConstraints;
+
+    // 1. Ensure each cell slot is occupied by at least one cell.
+    ensureTableGrid();
+    // 2. Compute the minimum/maximum width of each column.
+    auto computedWidthConstraints = computedPreferredWidthForColumns();
+    computedWidthConstraints.expand(grid.totalHorizontalSpacing());
+    grid.setWidthConstraints(computedWidthConstraints);
+    return computedWidthConstraints;
 }
 
 void TableFormattingContext::ensureTableGrid()
@@ -233,67 +236,84 @@ void TableFormattingContext::ensureTableGrid()
     }
 }
 
-void TableFormattingContext::computePreferredWidthForColumns()
+FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColumns()
 {
     auto& formattingState = this->formattingState();
     auto& grid = formattingState.tableGrid();
-    ASSERT(!grid.hasComputedWidthConstraints());
+    ASSERT(!grid.widthConstraints());
 
     // 1. Calculate the minimum content width (MCW) of each cell: the formatted content may span any number of lines but may not overflow the cell box.
     //    If the specified 'width' (W) of the cell is greater than MCW, W is the minimum cell width. A value of 'auto' means that MCW is the minimum cell width.
     //    Also, calculate the "maximum" cell width of each cell: formatting the content without breaking lines other than where explicit line breaks occur.
     for (auto& cell : grid.cells()) {
         auto& cellBox = cell->box();
-        ASSERT(cellBox.establishesFormattingContext());
+        ASSERT(cellBox.establishesBlockFormattingContext());
 
         auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(cellBox);
         if (!intrinsicWidth) {
-            intrinsicWidth = IntrinsicWidthConstraints { };
-            if (is<ContainerBox>(cellBox) && downcast<ContainerBox>(cellBox).hasInFlowOrFloatingChild())
-                intrinsicWidth = LayoutContext::createFormattingContext(downcast<ContainerBox>(cellBox), layoutState())->computedIntrinsicWidthConstraints();
-            intrinsicWidth = geometry().constrainByMinMaxWidth(cellBox, *intrinsicWidth);
-            auto border = geometry().computedBorder(cellBox);
-            auto padding = *geometry().computedPadding(cellBox, { });
-
-            intrinsicWidth->expand(border.horizontal.width() + padding.horizontal.width());
+            intrinsicWidth = geometry().intrinsicWidthConstraintsForCell(downcast<ContainerBox>(cellBox));
             formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
         }
-
-        auto columnSpan = cell->span().column;
-        auto slotIntrinsicWidth = FormattingContext::IntrinsicWidthConstraints { intrinsicWidth->minimum / columnSpan, intrinsicWidth->maximum / columnSpan };
-        auto initialPosition = cell->position();
-        for (size_t i = 0; i < columnSpan; ++i)
-            grid.slot({ initialPosition.column + i, initialPosition.row })->widthConstraints = slotIntrinsicWidth;
+        // Spanner cells put their intrinsic widths on the initial slots.
+        grid.slot(cell->position())->setWidthConstraints(*intrinsicWidth);
     }
-    // 2. For each column, determine a maximum and minimum column width from the cells that span only that column.
-    //    The minimum is that required by the cell with the largest minimum cell width (or the column 'width', whichever is larger).
-    //    The maximum is that required by the cell with the largest maximum cell width (or the column 'width', whichever is larger).
+
     auto& columnList = grid.columns().list();
-    auto numberOfRows = grid.rows().size();
-    auto numberOfColumns = columnList.size();
-    for (size_t columnIndex = 0; columnIndex < numberOfColumns; ++columnIndex) {
-        auto columnIntrinsicWidths = FormattingContext::IntrinsicWidthConstraints { };
-        for (size_t rowIndex = 0; rowIndex < numberOfRows; ++rowIndex) {
-            auto* slot = grid.slot({ columnIndex, rowIndex });
-            columnIntrinsicWidths.minimum = std::max(slot->widthConstraints.minimum, columnIntrinsicWidths.minimum);
-            columnIntrinsicWidths.maximum = std::max(slot->widthConstraints.maximum, columnIntrinsicWidths.maximum);
-        }
-        // Now that we have the content driven min/max widths, check if <col> sets a preferred width on this column.
-        if (auto* columnBox = columnList[columnIndex].box()) {
-            if (auto columnPreferredWidth = geometry().computedColumnWidth(*columnBox)) {
-                // Let's stay at least as wide as the preferred width.
-                columnIntrinsicWidths.minimum = std::max(columnIntrinsicWidths.minimum, *columnPreferredWidth);
+    Vector<Optional<LayoutUnit>> fixedWidthColumns;
+    for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
+        auto fixedWidth = [&] () -> Optional<LayoutUnit> {
+            auto* columnBox = columnList[columnIndex].box();
+            if (!columnBox) {
+                // Anoynmous columns don't have associated layout boxes.
+                return { };
+            }
+            if (auto width = columnBox->columnWidth())
+                return width;
+            return geometry().computedColumnWidth(*columnBox);
+        };
+        fixedWidthColumns.append(fixedWidth());
+    }
+
+    Vector<FormattingContext::IntrinsicWidthConstraints> columnIntrinsicWidths;
+    // Collect he min/max width for each column and finalize the preferred width for the table.
+    for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
+        columnIntrinsicWidths.append(FormattingContext::IntrinsicWidthConstraints { });
+        for (size_t rowIndex = 0; rowIndex < grid.rows().size(); ++rowIndex) {
+            auto& slot = *grid.slot({ columnIndex, rowIndex });
+            if (slot.hasColumnSpan()) {
+                auto& cell = slot.cell();
+                auto widthConstraintsToDistribute = slot.widthConstraints();
+                auto numberOfNonFixedSpannedColumns = cell.columnSpan();
+                for (size_t columnSpanIndex = cell.startColumn(); columnSpanIndex < cell.endColumn(); ++columnSpanIndex) {
+                    if (auto fixedWidth = fixedWidthColumns[columnSpanIndex]) {
+                        widthConstraintsToDistribute -= *fixedWidth;
+                        --numberOfNonFixedSpannedColumns;
+                    }
+                }
+                for (size_t columnSpanIndex = cell.startColumn(); columnSpanIndex < cell.endColumn(); ++columnSpanIndex) {
+                    columnIntrinsicWidths[columnIndex].minimum = std::max(widthConstraintsToDistribute.minimum / numberOfNonFixedSpannedColumns, columnIntrinsicWidths[columnIndex].minimum);
+                    columnIntrinsicWidths[columnIndex].maximum = std::max(widthConstraintsToDistribute.maximum / numberOfNonFixedSpannedColumns, columnIntrinsicWidths[columnIndex].maximum);
+                }
+            } else {
+                auto columnFixedWidth = fixedWidthColumns[columnIndex];
+                auto widthConstraints = !columnFixedWidth ? slot.widthConstraints() : FormattingContext::IntrinsicWidthConstraints { *columnFixedWidth, *columnFixedWidth };
+                columnIntrinsicWidths[columnIndex].minimum = std::max(widthConstraints.minimum, columnIntrinsicWidths[columnIndex].minimum);
+                columnIntrinsicWidths[columnIndex].maximum = std::max(widthConstraints.maximum, columnIntrinsicWidths[columnIndex].maximum);
             }
         }
-        columnList[columnIndex].setWidthConstraints(columnIntrinsicWidths);
     }
+    auto tableWidthConstraints = IntrinsicWidthConstraints { };
+    for (auto& columnIntrinsicWidth : columnIntrinsicWidths)
+        tableWidthConstraints += columnIntrinsicWidth;
+    return tableWidthConstraints;
 }
 
-void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit containingBlockWidth)
+void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit availableHorizontalSpace)
 {
     auto& grid = formattingState().tableGrid();
-    ASSERT(grid.hasComputedWidthConstraints());
-    auto tableWidthConstraints = grid.widthConstraints();
+    auto& columns = grid.columns();
+    auto& rows = grid.rows();
+    auto tableWidthConstraints = *grid.widthConstraints();
 
     // Column and caption widths influence the final table width as follows:
     // If the 'table' or 'inline-table' element's 'width' property has a computed value (W) other than 'auto', the used width is the greater of
@@ -302,16 +322,58 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
     // If the 'table' or 'inline-table' element has 'width: auto', the used width is the greater of the table's containing block width,
     // CAPMIN, and MIN. However, if either CAPMIN or the maximum width required by the columns plus cell spacing or borders (MAX) is
     // less than that of the containing block, use max(MAX, CAPMIN).
-    auto distributeExtraHorizontalSpace = [&](auto extraHorizontalSpace) {
+    auto distributeExtraHorizontalSpace = [&] (auto horizontalSpaceToDistribute) {
         auto& columnList = grid.columns().list();
         ASSERT(!columnList.isEmpty());
 
-        auto tableMinimumContentWidth = tableWidthConstraints.minimum - grid.totalHorizontalSpacing();
-        auto adjustabledHorizontalSpace = tableMinimumContentWidth;
+        // 1. Collect minimum widths across columns but ignore spanning cells first.
+        Vector<float> columnMinimumWidths;
+        Vector<SlotPosition> spanningCellPositionList;
+        for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+            for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
+                auto& slot = *grid.slot({ columnIndex, rowIndex });
+                if (slot.hasColumnSpan()) {
+                    spanningCellPositionList.append({ columnIndex, rowIndex });
+                    continue;
+                }
+                if (slot.isColumnSpanned())
+                    continue;
+                if (!rowIndex)
+                    columnMinimumWidths.append(slot.widthConstraints().minimum);
+                else
+                    columnMinimumWidths[columnIndex] = std::max<float>(columnMinimumWidths[columnIndex], slot.widthConstraints().minimum);
+            }
+        }
+        // 2. Distribute the spanning cells' mimimum widths across the columns using the non-spanning minium widths.
+        // e.g. [ 1 ][ 5 ][ 1 ]
+        //      [    9   ][ 1 ]
+        // The minimum widths are: [ 2 ][ 7 ][ 1 ]
+        for (auto spanningCellPosition : spanningCellPositionList) {
+            auto& slot = *grid.slot(spanningCellPosition);
+            auto& cell = slot.cell();
+            ASSERT(slot.hasColumnSpan());
+            float currentSpanningMinimumWidth = 0;
+            // 1. Collect the non-spaning minimum widths.
+            for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
+                currentSpanningMinimumWidth += columnMinimumWidths[columnIndex];
+            float spanningMinimumWidth = slot.widthConstraints().minimum;
+            if (currentSpanningMinimumWidth >= spanningMinimumWidth) {
+                // The spanning cell fits the spanned columns just fine. Nothing to distribute.
+                continue;
+            }
+            // 2. Distribute the extra minimum width among the spanned columns based on the minimum colmn width.
+            // e.g. spanning mimimum width: [   9   ]. Current minimum widths for the spanned columns: [ 1 ] [ 2 ]
+            // New minimum widths: [ 3 ] [ 6 ].
+            auto spaceToDistribute = spanningMinimumWidth - currentSpanningMinimumWidth;
+            for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
+                columnMinimumWidths[columnIndex] += spaceToDistribute / currentSpanningMinimumWidth * columnMinimumWidths[columnIndex];
+        }
+        // 3. Distribute the extra space using the final minimum widths.
+        float adjustabledHorizontalSpace = tableWidthConstraints.minimum - grid.totalHorizontalSpacing();
         auto numberOfColumns = columnList.size();
         // Fixed width columns don't participate in available space distribution.
         for (auto& column : columnList) {
-            if (!column.hasFixedWidth())
+            if (!column.isFixedWidth())
                 continue;
             auto columnFixedWidth = *column.box()->columnWidth();
             column.setLogicalWidth(columnFixedWidth);
@@ -321,38 +383,35 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
         }
         if (!numberOfColumns || !adjustabledHorizontalSpace)
             return;
-        // FIXME: Right now just distribute the extra space equaly among the columns using the minimum width.
         ASSERT(adjustabledHorizontalSpace > 0);
-        for (auto& column : columnList) {
-            if (column.hasFixedWidth())
+        for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
+            auto& column = columns.list()[columnIndex];
+            if (column.isFixedWidth())
                 continue;
-            auto columnExtraSpace = extraHorizontalSpace / adjustabledHorizontalSpace * column.widthConstraints().minimum;
-            column.setLogicalWidth(column.widthConstraints().minimum + columnExtraSpace);
+            auto columnExtraSpace = horizontalSpaceToDistribute / adjustabledHorizontalSpace * columnMinimumWidths[columnIndex];
+            column.setLogicalWidth(LayoutUnit { columnMinimumWidths[columnIndex] + columnExtraSpace });
         }
     };
 
-    if (auto contentWidth = geometry().computedContentWidth(root(), containingBlockWidth)) {
-        if (*contentWidth > tableWidthConstraints.minimum)
-            distributeExtraHorizontalSpace(*contentWidth - tableWidthConstraints.minimum);
-        else
-            useAsContentLogicalWidth(WidthConstraintsType::Minimum);
-    } else {
-        if (tableWidthConstraints.minimum > containingBlockWidth)
-            useAsContentLogicalWidth(WidthConstraintsType::Minimum);
-        else if (tableWidthConstraints.maximum <= containingBlockWidth)
-            useAsContentLogicalWidth(WidthConstraintsType::Maximum);
-        else
-            distributeExtraHorizontalSpace(containingBlockWidth - tableWidthConstraints.minimum);
-    }
-}
+    enum class WidthConstraintsType { Minimum, Maximum };
+    auto distributeMinOrMax = [&] (WidthConstraintsType type) {
+        for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
+            auto logicalWidth = LayoutUnit { };
+            for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+                auto widthConstraints = grid.slot({ columnIndex, rowIndex })->widthConstraints();
+                logicalWidth = std::max(logicalWidth, type == WidthConstraintsType::Minimum ? widthConstraints.minimum : widthConstraints.maximum); 
+            }
+            columns.list()[columnIndex].setLogicalWidth(logicalWidth);
+        }
+    };
 
-void TableFormattingContext::useAsContentLogicalWidth(WidthConstraintsType type)
-{
-    auto& columnList = formattingState().tableGrid().columns().list();
-    ASSERT(!columnList.isEmpty());
-
-    for (auto& column : columnList)
-        column.setLogicalWidth(type == WidthConstraintsType::Minimum ? column.widthConstraints().minimum : column.widthConstraints().maximum);
+    ASSERT(availableHorizontalSpace >= tableWidthConstraints.minimum);
+    if (availableHorizontalSpace == tableWidthConstraints.minimum)
+        distributeMinOrMax(WidthConstraintsType::Minimum);
+    else if (availableHorizontalSpace == tableWidthConstraints.maximum)
+        distributeMinOrMax(WidthConstraintsType::Maximum);
+    else
+        distributeExtraHorizontalSpace(availableHorizontalSpace - tableWidthConstraints.minimum);
 }
 
 }

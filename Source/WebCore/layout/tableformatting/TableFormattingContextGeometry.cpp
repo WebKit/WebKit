@@ -55,6 +55,34 @@ Optional<LayoutUnit> TableFormattingContext::Geometry::computedColumnWidth(const
     return columnBox.columnWidth();
 }
 
+FormattingContext::IntrinsicWidthConstraints TableFormattingContext::Geometry::intrinsicWidthConstraintsForCell(const ContainerBox& cellBox)
+{
+    auto fixedMarginBorderAndPadding = [&] {
+        auto& style = cellBox.style();
+        return fixedValue(style.marginStart()).valueOr(0)
+            + LayoutUnit { style.borderLeftWidth() }
+            + fixedValue(style.paddingLeft()).valueOr(0)
+            + fixedValue(style.paddingRight()).valueOr(0)
+            + LayoutUnit { style.borderRightWidth() }
+            + fixedValue(style.marginEnd()).valueOr(0);
+    };
+
+    auto computedIntrinsicWidthConstraints = [&] {
+        // Even fixed width cells expand to their minimum content width
+        // <td style="width: 10px">test_content</td> will size to max(minimum content width, computed width).
+        auto intrinsicWidthConstraints = FormattingContext::IntrinsicWidthConstraints { };
+        if (cellBox.hasChild())
+            intrinsicWidthConstraints = LayoutContext::createFormattingContext(cellBox, layoutState())->computedIntrinsicWidthConstraints();
+        if (auto width = fixedValue(cellBox.style().logicalWidth()))
+            return FormattingContext::IntrinsicWidthConstraints { std::max(intrinsicWidthConstraints.minimum, *width), std::max(intrinsicWidthConstraints.maximum, *width) };
+        return intrinsicWidthConstraints;
+    };
+    // FIXME Check for box-sizing: border-box;
+    auto intrinsicWidthConstraints = constrainByMinMaxWidth(cellBox, computedIntrinsicWidthConstraints());
+    intrinsicWidthConstraints.expand(fixedMarginBorderAndPadding());
+    return intrinsicWidthConstraints;
+}
+
 }
 }
 

@@ -71,6 +71,7 @@ public:
     struct IntrinsicWidthConstraints {
         void expand(LayoutUnit horizontalValue);
         IntrinsicWidthConstraints& operator+=(const IntrinsicWidthConstraints&);
+        IntrinsicWidthConstraints& operator-=(LayoutUnit);
 
         LayoutUnit minimum;
         LayoutUnit maximum;
@@ -225,6 +226,13 @@ inline FormattingContext::IntrinsicWidthConstraints& FormattingContext::Intrinsi
 {
     minimum += other.minimum;
     maximum += other.maximum;
+    return *this;
+}
+
+inline FormattingContext::IntrinsicWidthConstraints& FormattingContext::IntrinsicWidthConstraints::operator-=(LayoutUnit value)
+{
+    minimum -= value;
+    maximum -= value;
     return *this;
 }
 
