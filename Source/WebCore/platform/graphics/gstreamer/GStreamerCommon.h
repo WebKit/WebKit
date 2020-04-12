@@ -219,7 +219,7 @@ private:
 void connectSimpleBusMessageCallback(GstElement* pipeline);
 void disconnectSimpleBusMessageCallback(GstElement* pipeline);
 
-enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux };
+enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX };
 
 bool isGStreamerPluginAvailable(const char* name);
 

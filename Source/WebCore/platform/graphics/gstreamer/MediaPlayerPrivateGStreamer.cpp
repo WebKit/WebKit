@@ -286,6 +286,10 @@ public:
 #if USE(GSTREAMER_GL)
     virtual void waitForCPUSync()
     {
+        // No need for OpenGL synchronization when using the OpenMAX decoder.
+        if (m_videoDecoderPlatform == GstVideoDecoderPlatform::OpenMAX)
+            return;
+
         GstGLSyncMeta* meta = gst_buffer_get_gl_sync_meta(m_buffer.get());
         if (meta) {
             GstMemory* mem = gst_buffer_peek_memory(m_buffer.get(), 0);
@@ -3042,6 +3046,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
             player->m_videoDecoderPlatform = GstVideoDecoderPlatform::Video4Linux;
         else if (g_str_has_prefix(elementName.get(), "imxvpudec"))
             player->m_videoDecoderPlatform = GstVideoDecoderPlatform::ImxVPU;
+        else if (g_str_has_prefix(elementName.get(), "omx"))
+            player->m_videoDecoderPlatform = GstVideoDecoderPlatform::OpenMAX;
 
 #if USE(TEXTURE_MAPPER_GL)
         player->updateTextureMapperFlags();
