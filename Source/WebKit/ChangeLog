@@ -1,5 +1,15 @@
 2020-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Use gdk_window_move_to_rect() to position popup menus
+        https://bugs.webkit.org/show_bug.cgi?id=210069
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu):
+
+2020-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Page is not drawn with PSON, hardware acceleration and address typed in URL bar
         https://bugs.webkit.org/show_bug.cgi?id=208091
 

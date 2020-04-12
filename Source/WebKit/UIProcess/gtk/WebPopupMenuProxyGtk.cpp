@@ -252,6 +252,14 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
     if (!itemHeight)
         return;
 
+    auto* toplevel = gtk_widget_get_toplevel(m_webView);
+    if (GTK_IS_WINDOW(toplevel)) {
+        gtk_window_set_transient_for(GTK_WINDOW(m_popup), GTK_WINDOW(toplevel));
+        gtk_window_group_add_window(gtk_window_get_group(GTK_WINDOW(toplevel)), GTK_WINDOW(m_popup));
+    }
+    gtk_window_set_attached_to(GTK_WINDOW(m_popup), m_webView);
+    gtk_window_set_screen(GTK_WINDOW(m_popup), gtk_widget_get_screen(m_webView));
+
     auto* display = gtk_widget_get_display(m_webView);
     auto* monitor = gdk_display_get_monitor_at_window(display, gtk_widget_get_window(m_webView));
     GdkRectangle area;
@@ -268,12 +276,15 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
     gtk_widget_set_size_request(m_popup, width, -1);
     gtk_scrolled_window_set_min_content_height(swindow, itemCount * itemHeight);
 
+    IntPoint menuPosition = convertWidgetPointToScreenPoint(m_webView, rect.location());
+#if GTK_CHECK_VERSION(3, 24, 0)
+    GdkRectangle windowRect = { menuPosition.x(), menuPosition.y(), rect.width(), rect.height() };
+    gdk_window_move_to_rect(gtk_widget_get_window(m_popup), &windowRect, GDK_GRAVITY_SOUTH_WEST, GDK_GRAVITY_NORTH_WEST,
+        static_cast<GdkAnchorHints>(GDK_ANCHOR_FLIP | GDK_ANCHOR_SLIDE | GDK_ANCHOR_RESIZE), 0, 0);
+#else
     GtkRequisition menuRequisition;
     gtk_widget_get_preferred_size(m_popup, &menuRequisition, nullptr);
-    IntPoint menuPosition = convertWidgetPointToScreenPoint(m_webView, rect.location());
-    // FIXME: We can't ensure the menu will be on screen in Wayland.
-    // https://blog.gtk.org/2016/07/15/future-of-relative-window-positioning/
-    // https://gitlab.gnome.org/GNOME/gtk/issues/997
+
     if (menuPosition.x() + menuRequisition.width > area.x + area.width)
         menuPosition.setX(area.x + area.width - menuRequisition.width);
 
@@ -283,14 +294,7 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
     else
         menuPosition.move(0, -menuRequisition.height);
     gtk_window_move(GTK_WINDOW(m_popup), menuPosition.x(), menuPosition.y());
-
-    auto* toplevel = gtk_widget_get_toplevel(m_webView);
-    if (GTK_IS_WINDOW(toplevel)) {
-        gtk_window_set_transient_for(GTK_WINDOW(m_popup), GTK_WINDOW(toplevel));
-        gtk_window_group_add_window(gtk_window_get_group(GTK_WINDOW(toplevel)), GTK_WINDOW(m_popup));
-    }
-    gtk_window_set_attached_to(GTK_WINDOW(m_popup), m_webView);
-    gtk_window_set_screen(GTK_WINDOW(m_popup), gtk_widget_get_screen(m_webView));
+#endif
 
     const GdkEvent* event = m_client->currentlyProcessedMouseDownEvent() ? m_client->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
     m_device = event ? gdk_event_get_device(event) : nullptr;
