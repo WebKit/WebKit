@@ -9866,10 +9866,8 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
         [_private->_plainTextTouchBar setCustomizationIdentifier:@"WebPlainTextTouchBar"];
     }
 
-    if ([NSSpellChecker isAutomaticTextCompletionEnabled] && !_private->_isCustomizingTouchBar) {
-        BOOL shouldShowCandidateList = !coreFrame->selection().selection().isRange() || coreFrame->editor().ignoreSelectionChanges();
-        [self.candidateList updateWithInsertionPointVisibility:shouldShowCandidateList];
-    }
+    if ([NSSpellChecker isAutomaticTextCompletionEnabled] && !_private->_isCustomizingTouchBar && !coreFrame->editor().ignoreSelectionChanges())
+        [self.candidateList updateWithInsertionPointVisibility:!coreFrame->selection().selection().isRange()];
 
     if (coreFrame->selection().selection().isInPasswordField()) {
         // We don't request candidates for password fields. If the user was previously in a non-password field, then the

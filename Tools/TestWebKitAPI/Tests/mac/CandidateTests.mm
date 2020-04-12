@@ -25,11 +25,13 @@
 
 #include "config.h"
 
+#import "AppKitSPI.h"
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
+#if PLATFORM(MAC)
 
 static bool webViewWasDeallocated = false;
 static bool didFinishLoad = false;
@@ -123,10 +125,10 @@ TEST(CandidateTests, DISABLED_RequestCandidatesForTextInput)
 
 TEST(CandidateTests, DoNotRequestCandidatesForPasswordInput)
 {
-    WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    auto webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     [webView forceRequestCandidatesForTesting];
-    CandidateRequestFrameLoadDelegate *delegate = [[CandidateRequestFrameLoadDelegate alloc] init];
-    [webView setFrameLoadDelegate:delegate];
+    auto delegate = adoptNS([[CandidateRequestFrameLoadDelegate alloc] init]);
+    [webView setFrameLoadDelegate:delegate.get()];
     
     NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"focus-inputs" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:contentURL]];
@@ -139,10 +141,40 @@ TEST(CandidateTests, DoNotRequestCandidatesForPasswordInput)
     if ([webView shouldRequestCandidates])
         candidatesWereRequested = true;
 
-    [webView release];
     EXPECT_FALSE(candidatesWereRequested);
 }
 
+static BOOL candidateListWasHidden = NO;
+static BOOL candidateListWasShown = NO;
+static void updateCandidateListWithVisibility(id, SEL, BOOL visible)
+{
+    if (visible)
+        candidateListWasShown = YES;
+    else
+        candidateListWasHidden = YES;
 }
 
-#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
+TEST(CandidateTests, DoNotHideCandidatesDuringTextReplacement)
+{
+    InstanceMethodSwizzler visibilityUpdateSwizzler { NSCandidateListTouchBarItem.class, @selector(updateWithInsertionPointVisibility:), reinterpret_cast<IMP>(updateCandidateListWithVisibility) };
+
+    auto webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    [webView forceRequestCandidatesForTesting];
+
+    auto delegate = adoptNS([[CandidateRequestFrameLoadDelegate alloc] init]);
+    [webView setFrameLoadDelegate:delegate.get()];
+    [[webView mainFrame] loadHTMLString:@"<body contenteditable>Hello world<script>document.body.focus()</script>" baseURL:nil];
+    TestWebKitAPI::Util::run(&didFinishLoad);
+
+    auto textToInsert = adoptNS([[NSMutableAttributedString alloc] initWithString:@"Goodbye"]);
+    [textToInsert addAttribute:NSTextInputReplacementRangeAttributeName value:NSStringFromRange(NSMakeRange(0, 5)) range:NSMakeRange(0, 7)];
+    [webView insertText:textToInsert.get()];
+
+    EXPECT_WK_STREQ("Goodbye world", [webView stringByEvaluatingJavaScriptFromString:@"document.body.innerText"]);
+    EXPECT_FALSE(candidateListWasHidden);
+    EXPECT_TRUE(candidateListWasShown);
+}
+
+}
+
+#endif // PLATFORM(MAC)

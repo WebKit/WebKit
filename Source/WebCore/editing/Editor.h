@@ -119,8 +119,8 @@ enum class TemporarySelectionOption : uint8_t {
 
 class TemporarySelectionChange {
 public:
-    TemporarySelectionChange(Frame&, Optional<VisibleSelection> = WTF::nullopt, OptionSet<TemporarySelectionOption> = { });
-    ~TemporarySelectionChange();
+    WEBCORE_EXPORT TemporarySelectionChange(Frame&, Optional<VisibleSelection> = WTF::nullopt, OptionSet<TemporarySelectionOption> = { });
+    WEBCORE_EXPORT ~TemporarySelectionChange();
 
 private:
     void setSelection(const VisibleSelection&);
@@ -132,6 +132,19 @@ private:
     bool m_appearanceUpdatesWereEnabled;
 #endif
     Optional<VisibleSelection> m_selectionToRestore;
+};
+
+class IgnoreSelectionChangeForScope {
+public:
+    IgnoreSelectionChangeForScope(Frame& frame)
+        : m_selectionChange(frame, WTF::nullopt, TemporarySelectionOption::IgnoreSelectionChanges)
+    {
+    }
+
+    ~IgnoreSelectionChangeForScope() = default;
+
+private:
+    TemporarySelectionChange m_selectionChange;
 };
 
 class Editor {

@@ -65,6 +65,7 @@ NSString * const NSInspectorBarTextForegroundColorItemIdentifier = @"NSInspector
 NSString * const NSInspectorBarTextBackgroundColorItemIdentifier = @"NSInspectorBarTextBackgroundColorItemIdentifier";
 NSString * const NSInspectorBarFontStyleItemIdentifier = @"NSInspectorBarFontStyleItemIdentifier";
 NSString * const NSInspectorBarTextAlignmentItemIdentifier = @"NSInspectorBarTextAlignmentItemIdentifier";
+NSString * const NSTextInputReplacementRangeAttributeName = @"NSTextInputReplacementRangeAttributeName";
 
 @interface __NSInspectorBarItemController : NSObject
 - (instancetype)initWithInspectorBar:(NSInspectorBar *)bar NS_DESIGNATED_INITIALIZER;

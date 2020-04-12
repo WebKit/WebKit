@@ -250,7 +250,7 @@ bool DragController::performDragOperation(const DragData& dragData)
     removeAllDroppedImagePlaceholders();
 
     SetForScope<bool> isPerformingDrop(m_isPerformingDrop, true);
-    TemporarySelectionChange ignoreSelectionChanges(m_page.focusController().focusedOrMainFrame(), WTF::nullopt, TemporarySelectionOption::IgnoreSelectionChanges);
+    IgnoreSelectionChangeForScope ignoreSelectionChanges { m_page.focusController().focusedOrMainFrame() };
 
     m_documentUnderMouse = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
 
@@ -1388,7 +1388,7 @@ void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>
     if (!frame)
         return;
 
-    TemporarySelectionChange selectionChange(*frame, WTF::nullopt, { TemporarySelectionOption::IgnoreSelectionChanges });
+    IgnoreSelectionChangeForScope selectionChange { *frame };
 
     auto fragment = DocumentFragment::create(*document);
     for (auto& size : imageSizes) {

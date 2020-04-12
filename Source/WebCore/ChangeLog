@@ -1,3 +1,41 @@
+2020-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK1] Touch Bar flashes when typing in Vietnamese in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=210394
+        <rdar://problem/60099560>
+
+        Reviewed by Tim Horton.
+
+        See WebKitLegacy/mac/ChangeLog for more details.
+
+        Currently, many users of TemporarySelectionChange use it to temporarily avoid propagating selection changes to
+        the client layer during temporary selection changes. This involves creating a TemporarySelectionChange without
+        a new selection, but with the `IgnoreSelectionChanges` option specified, which makes us call `Editor::
+        setIgnoreSelectionChanges` to suppress selection change notifications.
+
+        Do a bit of cleanup in this area by introducing IgnoreSelectionChangeForScope, which wraps a
+        TemporarySelectionChange and makes it easier for a handful of call sites that currently use
+        TemporarySelectionChange to hide selection changes from the client layer to get their desired behavior.
+
+        Test: CandidateTests.DoNotHideCandidatesDuringTextReplacement
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedSelection):
+        * editing/Editor.h:
+        (WebCore::TemporarySelectionChange::TemporarySelectionChange):
+        (WebCore::IgnoreSelectionChangeForScope::IgnoreSelectionChangeForScope):
+        * page/DragController.cpp:
+        (WebCore::DragController::performDragOperation):
+        (WebCore::DragController::insertDroppedImagePlaceholdersAtCaret):
+
+        Replace these:
+
+                `TemporarySelectionChange ignoreSelectionChanges { frame, WTF::nullopt, TemporarySelectionOption::IgnoreSelectionChanges };`
+
+        ...with these instead:
+
+                `IgnoreSelectionChangeForScope ignoreSelectionChanges { *frame };`
+
 2020-04-11  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow] Can't scroll overflow:scroll in sideways-scrollable RTL document

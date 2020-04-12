@@ -1,3 +1,25 @@
+2020-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK1] Touch Bar flashes when typing in Vietnamese in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=210394
+        <rdar://problem/60099560>
+
+        Reviewed by Tim Horton.
+
+        Add an API test that inserts an attributed string with the text replacement attribute, and verifies that we
+        show the candidate list when inserting the string, and also don't temporarily hide the candidate list in the
+        process of doing so.
+
+        To achieve this, we swizzle out calls to -[NSCandidateListTouchBarItem updateWithInsertionPointVisibility:] to
+        detect when the candidate list is either hidden or made visible.
+
+        * TestWebKitAPI/Tests/TestWebKitAPI/mac/AppKitSPI.h:
+        * TestWebKitAPI/Tests/mac/CandidateTests.mm:
+
+        Fix a leak in an adjacent test too, while I'm touching this file.
+
+        (TestWebKitAPI::updateCandidateListWithVisibility):
+
 2020-04-11  Aakash Jain  <aakash_jain@apple.com>
 
         Buildbot: Force crash log submission after each test run (follow-up fix)

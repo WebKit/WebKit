@@ -1,3 +1,44 @@
+2020-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK1] Touch Bar flashes when typing in Vietnamese in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=210394
+        <rdar://problem/60099560>
+
+        Reviewed by Tim Horton.
+
+        In recent versions of macOS, changes to the animation of the candidate list touch bar item when it is expanded
+        or collapsed using -updateWithInsertionPointVisibility: mean that back-to-back calls to hide and show the
+        candidate list during the same runloop now result in a visible flicker, whereas it would remain still in prior
+        releases.
+
+        Combined with how `-[WebHTMLView insertText:]` in WebKitLegacy causes multiple selection change updates if the
+        argument is an attributed string with the text replacement attribute, this means that there is now a visible
+        flicker in the touch bar when using input methods that rely on the `NSTextInputReplacementRangeAttributeName`
+        attribute. One such input method is Simple Telex (Vietnamese), when typing causes characters in other parts of
+        the word to gain diacritics.
+
+        To fix this, we make two small adjustments in WebKitLegacy (see below).
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView insertText:]):
+
+        While inserting text (which may be an NSAttibutedString or NSString), we may come across an attribute indicating
+        which part of the document to replace. In this case, we will select this range in the document before inserting
+        the given text.
+
+        This selection change is propagated to the client layer, which makes us briefly think that we have a ranged
+        selection, causing the flicker described above. Address this by suppressing selection change notifications while
+        we're selecting the range to replace, using the new `IgnoreSelectionChangeForScope` RAII object (see WebCore
+        changes for more detail).
+
+        * WebView/WebView.mm:
+        (-[WebView updateTextTouchBar]):
+
+        When updating the text touch bar (which contains the candidate list item) after a selection change, we currently
+        handle the case where selection changes are ignored by hiding the candidate list; this doesn't seem right, since
+        selection changes that are ignored should simply be ignored by the client. To fix this, push the
+        `ignoreSelectionChanges()` check into the if statement.
+
 2020-04-10  Darin Adler  <darin@apple.com>
 
         Move more from live range to SimpleRange: callers of absoluteTextRects
