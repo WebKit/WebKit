@@ -1,3 +1,20 @@
+2020-04-12  Darin Adler  <darin@apple.com>
+
+        Fix some strange uses of start/endOfDocument
+        https://bugs.webkit.org/show_bug.cgi?id=210408
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame moveSelectionToStart]): Call startOfDocument on the document;
+        there is no need to pass a particular VisiblePosition, since all it gets
+        from the VisiblePosition is the document.
+        (-[WebFrame moveSelectionToEnd]): Ditto, for endOfDocument.
+        (-[WebFrame startPosition]): Call startOfDocument on the document rather
+        than using code to find the document element, since the function works
+        on any node.
+        (-[WebFrame endPosition]): Ditto.
+
 2020-04-10  Darin Adler  <darin@apple.com>
 
         Move more from live range to SimpleRange: callers of absoluteTextRects

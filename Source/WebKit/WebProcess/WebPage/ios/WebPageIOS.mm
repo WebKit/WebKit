@@ -2308,7 +2308,7 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
     for (size_t i = 0; i < oldText.length(); ++i)
         position = position.previous();
     if (position.isNull())
-        position = startOfDocument(static_cast<Node*>(frame.document()->documentElement()));
+        position = startOfDocument(frame.document());
     auto range = Range::create(*frame.document(), position, frame.selection().selection().start());
 
     if (plainTextForContext(range.ptr()) != oldText)
@@ -2416,7 +2416,7 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
             for (size_t i = 0; i < originalText.length(); ++i)
                 position = position.previous();
             if (position.isNull())
-                position = startOfDocument(static_cast<Node*>(frame.document()->documentElement()));
+                position = startOfDocument(frame.document());
             range = Range::create(*frame.document(), position, frame.selection().selection().start());
             textForRange = plainTextForContext(range.get());
             unsigned loopCount = 0;

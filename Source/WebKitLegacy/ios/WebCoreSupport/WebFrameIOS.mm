@@ -597,18 +597,14 @@ using namespace WebCore;
 
 - (void)moveSelectionToStart
 {
-    Frame *frame = [self coreFrame];
-    FrameSelection& frameSelection = frame->selection();
-    VisiblePosition start = startOfDocument(frameSelection.selection().start());
-    frameSelection.moveTo(start);
+    auto& frame = *self.coreFrame;
+    frame.selection().moveTo(startOfDocument(frame.document()));
 }
 
 - (void)moveSelectionToEnd
 {
-    Frame *frame = [self coreFrame];
-    FrameSelection& frameSelection = frame->selection();
-    VisiblePosition end =  endOfDocument(frameSelection.selection().end());
-    frameSelection.moveTo(end);
+    auto& frame = *self.coreFrame;
+    frame.selection().moveTo(endOfDocument(frame.document()));
 }
 
 - (void)moveSelectionToPoint:(CGPoint)point
@@ -808,16 +804,12 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
 
 - (WebVisiblePosition *)startPosition
 {
-    Frame *frame = [self coreFrame];
-    Element *rootElement = frame->document()->documentElement();
-    return [WebVisiblePosition _wrapVisiblePosition:startOfDocument(static_cast<Node*>(rootElement))];
+    return [WebVisiblePosition _wrapVisiblePosition:startOfDocument(self.coreFrame->document())];
 }
 
 - (WebVisiblePosition *)endPosition
 {
-    Frame *frame = [self coreFrame];
-    Element *rootElement = frame->document()->documentElement();
-    return [WebVisiblePosition _wrapVisiblePosition:endOfDocument(static_cast<Node*>(rootElement))];
+    return [WebVisiblePosition _wrapVisiblePosition:endOfDocument(self.coreFrame->document())];
 }
 
 - (BOOL)renderedCharactersExceed:(NSUInteger)threshold

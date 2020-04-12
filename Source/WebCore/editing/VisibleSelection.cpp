@@ -383,8 +383,8 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             break;
         }
         case DocumentBoundary:
-            m_start = startOfDocument(VisiblePosition(m_start, m_affinity)).deepEquivalent();
-            m_end = endOfDocument(VisiblePosition(m_end, m_affinity)).deepEquivalent();
+            m_start = startOfDocument(m_start.document()).deepEquivalent();
+            m_end = endOfDocument(m_end.document()).deepEquivalent();
             break;
         case ParagraphBoundary:
             m_start = startOfParagraph(VisiblePosition(m_start, m_affinity)).deepEquivalent();
