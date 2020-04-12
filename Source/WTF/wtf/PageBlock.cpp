@@ -44,7 +44,7 @@ static size_t s_pageMask;
 
 inline size_t systemPageSize()
 {
-    return getpagesize();
+    return sysconf(_SC_PAGESIZE);
 }
 
 #elif OS(WINDOWS)
@@ -62,9 +62,11 @@ inline size_t systemPageSize()
 
 size_t pageSize()
 {
-    if (!s_pageSize)
+    if (!s_pageSize) {
         s_pageSize = systemPageSize();
-    ASSERT(isPowerOfTwo(s_pageSize));
+        RELEASE_ASSERT(isPowerOfTwo(s_pageSize));
+        RELEASE_ASSERT_WITH_MESSAGE(s_pageSize <= CeilingOnPageSize, "CeilingOnPageSize is too low, raise it in PageBlock.h!");
+    }
     return s_pageSize;
 }
 
