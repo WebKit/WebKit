@@ -284,12 +284,13 @@ void HTMLTextAreaElement::defaultEventHandler(Event& event)
 
 void HTMLTextAreaElement::subtreeHasChanged()
 {
-    setChangedSinceLastFormControlChangeEvent(true);
     setFormControlValueMatchesRenderer(false);
     updateValidity();
 
     if (!focused())
         return;
+
+    setChangedSinceLastFormControlChangeEvent(true);
 
     if (RefPtr<Frame> frame = document().frame())
         frame->editor().textDidChangeInTextArea(this);

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script>
+function test() {
+  const select = document.querySelector('select');
+  select.setCustomValidity('validity');
+  select.reportValidity();
+
+  const textarea = document.querySelector('textarea');
+  textarea.setRangeText('lol');
+  select.autofocus = true;
+
+  setTimeout(() => {
+    select.reportValidity();
+    textarea.blur();
+  }, 0);
+}
+</script>
+<body onload='test()'>
+  <p>The onchange should not be triggered by textarea when it got something changed without being focused. Pass if not crashed, and the focused select box is displayed.</p>
+  <select></select>
+  <textarea onchange="document.all[2].appendChild(document.querySelector('select'));"></textarea>
+</body>
