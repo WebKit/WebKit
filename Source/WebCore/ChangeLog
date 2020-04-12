@@ -1,5 +1,31 @@
 2020-04-12  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Add support for column spanners
+        https://bugs.webkit.org/show_bug.cgi?id=210403
+
+        Reviewed by Antti Koivisto.
+
+        Table width constraint computation with spanner support is as follows:
+
+        1. Collect each cells' width constraints.
+        2. Collect fixed column widths set by <colgroup>'s and <col>s.
+        3. Find the min/max width for each columns using the cell constraints and the <col> fixed widths but ignore column spans.
+        4. Distribute column spanning cells min/max widths.
+        5. Add them all up and return the computed min/max widths.
+
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::IntrinsicWidthConstraints::operator-=):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::intrinsicWidthConstraintsForCell):
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::Columns::hasFixedColumnsOnly const):
+        * layout/tableformatting/TableGrid.h:
+
+2020-04-12  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Column, Row and Cell boxes are always ContainerBoxes
         https://bugs.webkit.org/show_bug.cgi?id=210402
 

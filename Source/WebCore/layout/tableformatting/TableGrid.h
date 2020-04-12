@@ -100,6 +100,7 @@ public:
         void addAnonymousColumn();
 
         LayoutUnit logicalWidth() const { return m_columnList.last().logicalRight() - m_columnList.first().logicalLeft(); }
+        bool hasFixedColumnsOnly() const;
 
     private:
         ColumnList m_columnList;

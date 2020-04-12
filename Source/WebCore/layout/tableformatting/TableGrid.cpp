@@ -83,6 +83,15 @@ void TableGrid::Columns::addAnonymousColumn()
     m_columnList.append({ nullptr });
 }
 
+bool TableGrid::Columns::hasFixedColumnsOnly() const
+{
+    for (auto& column : m_columnList) {
+        if (!column.isFixedWidth())
+            return false;
+    }
+    return true;
+}
+
 void TableGrid::Rows::addRow(const ContainerBox& rowBox)
 {
     m_rowList.append({ rowBox });
