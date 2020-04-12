@@ -711,6 +711,18 @@ static void browserWindowFinalize(GObject *gObject)
         gtk_main_quit();
 }
 
+static void browserWindowDispose(GObject *gObject)
+{
+    BrowserWindow *window = BROWSER_WINDOW(gObject);
+
+    if (window->parentWindow) {
+        g_object_remove_weak_pointer(G_OBJECT(window->parentWindow), (gpointer *)&window->parentWindow);
+        window->parentWindow = NULL;
+    }
+
+    G_OBJECT_CLASS(browser_window_parent_class)->dispose(gObject);
+}
+
 static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 {
     GtkWidget *toolbar = gtk_toolbar_new();
@@ -1126,6 +1138,7 @@ static void browser_window_class_init(BrowserWindowClass *klass)
     GObjectClass *gobjectClass = G_OBJECT_CLASS(klass);
 
     gobjectClass->constructed = browserWindowConstructed;
+    gobjectClass->dispose = browserWindowDispose;
     gobjectClass->finalize = browserWindowFinalize;
 
     GtkWidgetClass *widgetClass = GTK_WIDGET_CLASS(klass);
