@@ -280,6 +280,8 @@ webkit.org/b/158923 media/airplay-autoplay.html [ Timeout ]
 webkit.org/b/134979 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure Timeout ]
 webkit.org/b/163523 media/track/track-manual-mode.html [ Failure Timeout ]
 
+webkit.org/b/196198 http/tests/media/video-play-stall-seek.html [ Timeout Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////

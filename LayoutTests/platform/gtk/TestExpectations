@@ -2655,6 +2655,8 @@ webkit.org/b/198830 media/video-dom-autoplay.html [ Crash Pass ]
 webkit.org/b/198830 userscripts/user-script-audio-document.html [ Crash Pass ]
 webkit.org/b/198830 webkit.org/b/210374 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Failure Crash Pass ]
 webkit.org/b/198830 compositing/overflow/overflow-compositing-descendant.html [ Crash Pass ]
+webkit.org/b/198830 media/video-plays-past-end-of-test.html [ Crash Pass ]
+webkit.org/b/198830 media/audio-play-with-video-element.html [ Crash Pass ]
 
 webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure Crash Pass ]
 webkit.org/b/205110 media/media-source/media-source-canplaythrough.html [ Crash Pass ]
@@ -2898,6 +2900,8 @@ webkit.org/b/210370 [ Release ] media/track/text-track-cue-is-reachable.html [ P
 webkit.org/b/210375 imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Pass Crash ]
+
+webkit.org/b/206877 imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3222,7 +3226,8 @@ webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout Crash ]
 
 webkit.org/b/195135 storage/indexeddb/IDBObject-leak.html [ Timeout Failure Pass ]
 
-webkit.org/b/196198 http/tests/media/video-play-stall-seek.html [ Slow Failure Pass ]
+webkit.org/b/196198 [ Release ] http/tests/media/video-play-stall-seek.html [ Timeout Failure Pass ]
+webkit.org/b/196198 [ Debug ] http/tests/media/video-play-stall-seek.html [ Timeout Failure ]
 
 webkit.org/b/196250 inspector/console/heapSnapshot.html [ Timeout ]
 
@@ -4543,7 +4548,6 @@ webkit.org/b/202457 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-
 webkit.org/b/202459 imported/w3c/web-platform-tests/2dcontext/compositing/2d.composite.globalAlpha.canvascopy.html [ Failure ]
 
 webkit.org/b/202460 imported/w3c/web-platform-tests/2dcontext/image-smoothing/imagesmoothing.html [ Failure ]
-webkit.org/b/206877 imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure ]
 
 webkit.org/b/202744 compositing/layer-creation/absolute-in-async-overflow-scroll.html [ Failure ]
 webkit.org/b/202744 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
