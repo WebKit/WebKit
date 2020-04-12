@@ -1,3 +1,15 @@
+2020-04-12  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: WTF::Persistence::Coder and WTF::Persistence::Decoder should use WARN_UNUSED_RETURN
+        <https://webkit.org/b/210238>
+        <rdar://problem/61491575>
+
+        Changes based on feedback from Alex Christensen and Darin Adler:
+        - Remove WARN_UNUSED_RETURN from methods returning Optional<>.
+        - Place WARN_UNUSED_RETURN consistently before the return type.
+
+        * wtf/persistence/PersistentDecoder.h:
+
 2020-04-10  Alex Christensen  <achristensen@webkit.org>
 
         PersistentCoders should use modern decoding syntax
