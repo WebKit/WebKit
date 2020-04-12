@@ -1,5 +1,17 @@
 2020-04-12  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Add table support to BlockFormattingContext::Geometry::inFlowWidthAndMargin
+        https://bugs.webkit.org/show_bug.cgi?id=210400
+
+        Reviewed by Antti Koivisto.
+
+        Use a slightly modified shrink-to-fit logic to compute the table width.
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin):
+
+2020-04-12  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Cleanup class/struct/variable names in TableGrid/TableFormattingContext
         https://bugs.webkit.org/show_bug.cgi?id=210397
 
