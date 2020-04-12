@@ -31,6 +31,8 @@
 #include "LayoutPoint.h"
 #include "LayoutRect.h"
 #include "MarginTypes.h"
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -209,6 +211,48 @@ inline InlineLayoutUnit maxInlineLayoutUnit()
 #endif
 }
 
+struct SlotPosition {
+    SlotPosition() = default;
+    SlotPosition(size_t column, size_t row);
+
+    size_t column { 0 };
+    size_t row { 0 };
+};
+
+inline SlotPosition::SlotPosition(size_t column, size_t row)
+    : column(column)
+    , row(row)
+{
+}
+
+inline bool operator==(const SlotPosition& a, const SlotPosition& b)
+{
+    return a.column == b.column && a.row == b.row;
+}
+
+struct CellSpan {
+    size_t column { 1 };
+    size_t row { 1 };
+};
+
 }
 }
+
+namespace WTF {
+struct SlotPositionHash {
+    static unsigned hash(const WebCore::Layout::SlotPosition& slotPosition) { return pairIntHash(slotPosition.column, slotPosition.row); }
+    static bool equal(const WebCore::Layout::SlotPosition& a, const WebCore::Layout::SlotPosition& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+template<> struct HashTraits<WebCore::Layout::SlotPosition> : GenericHashTraits<WebCore::Layout::SlotPosition> {
+    static WebCore::Layout::SlotPosition emptyValue() { return WebCore::Layout::SlotPosition(0, WebCore::intMinForLayoutUnit); }
+
+    static void constructDeletedValue(WebCore::Layout::SlotPosition& slot) { slot = WebCore::Layout::SlotPosition(WebCore::intMinForLayoutUnit, 0); }
+    static bool isDeletedValue(const WebCore::Layout::SlotPosition& slot) { return slot == WebCore::Layout::SlotPosition(WebCore::intMinForLayoutUnit, 0); }
+};
+template<> struct DefaultHash<WebCore::Layout::SlotPosition> {
+    typedef SlotPositionHash Hash;
+};
+}
+
 #endif

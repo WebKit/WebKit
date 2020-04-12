@@ -1,5 +1,43 @@
 2020-04-12  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Introduce dedicated SlotPosition/CellSpan structs
+        https://bugs.webkit.org/show_bug.cgi?id=210399
+
+        Reviewed by Antti Koivisto.
+
+        SlotPosition.column/row and CellSpan.column/row read better.
+
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::SlotPosition::SlotPosition):
+        (WebCore::Layout::operator==):
+        (WTF::SlotPositionHash::hash):
+        (WTF::SlotPositionHash::equal):
+        (WTF::HashTraits<WebCore::Layout::SlotPosition>::emptyValue):
+        (WTF::HashTraits<WebCore::Layout::SlotPosition>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::Layout::SlotPosition>::isDeletedValue):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::setRowSpan):
+        (WebCore::Layout::Box::setColumnSpan):
+        (WebCore::Layout::Box::rowSpan const):
+        (WebCore::Layout::Box::columnSpan const):
+        * layout/layouttree/LayoutBox.h:
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns):
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::Cell::Cell):
+        (WebCore::Layout::TableGrid::appendCell):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::Cell::startColumn const):
+        (WebCore::Layout::TableGrid::Cell::endColumn const):
+        (WebCore::Layout::TableGrid::Cell::startRow const):
+        (WebCore::Layout::TableGrid::Cell::endRow const):
+        (WebCore::Layout::TableGrid::Cell::columnSpan const):
+        (WebCore::Layout::TableGrid::Cell::rowSpan const):
+        (WebCore::Layout::TableGrid::Cell::span const):
+        (WebCore::Layout::TableGrid::Cell::size const): Deleted.
+
+2020-04-12  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Add table support to BlockFormattingContext::Geometry::inFlowWidthAndMargin
         https://bugs.webkit.org/show_bug.cgi?id=210400
 

@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutUnits.h"
 #include "RenderStyle.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -150,11 +151,11 @@ public:
     const RenderStyle& style() const { return m_style; }
 
     // FIXME: Find a better place for random DOM things.
-    void setRowSpan(unsigned);
-    unsigned rowSpan() const;
+    void setRowSpan(size_t);
+    size_t rowSpan() const;
 
-    void setColumnSpan(unsigned);
-    unsigned columnSpan() const;
+    void setColumnSpan(size_t);
+    size_t columnSpan() const;
 
     void setColumnWidth(LayoutUnit);
     Optional<LayoutUnit> columnWidth() const;
@@ -178,8 +179,7 @@ private:
     public:
         BoxRareData() = default;
 
-        unsigned rowSpan { 1 };
-        unsigned columnSpan { 1 };
+        CellSpan tableCellSpan;
         Optional<LayoutUnit> columnWidth;
     };
 

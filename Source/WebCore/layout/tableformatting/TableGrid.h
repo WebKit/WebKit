@@ -28,7 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
-#include "IntPointHash.h"
+#include "LayoutUnits.h"
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/IsoMallocInlines.h>
@@ -138,32 +138,30 @@ public:
         RowList m_rowList;
     };
 
-    using SlotPosition = IntPoint;
-    using CellSize = IntSize;
     // Cell represents a <td> or <th>. It can span multiple slots in the grid.
     class Cell : public CanMakeWeakPtr<Cell> {
         WTF_MAKE_ISO_ALLOCATED_INLINE(Cell);
     public:
-        Cell(const Box&, SlotPosition, CellSize);
+        Cell(const Box&, SlotPosition, CellSpan);
 
-        size_t startColumn() const { return m_position.x(); }
-        size_t endColumn() const { return m_position.x() + m_size.width(); }
+        size_t startColumn() const { return m_position.column; }
+        size_t endColumn() const { return m_position.column + m_span.column; }
 
-        size_t startRow() const { return m_position.y(); }
-        size_t endRow() const { return m_position.y() + m_size.height(); }
+        size_t startRow() const { return m_position.row; }
+        size_t endRow() const { return m_position.row + m_span.row; }
 
-        size_t columnSpan() const { return m_size.width(); }
-        size_t rowSpan() const { return m_size.height(); }
+        size_t columnSpan() const { return m_span.column; }
+        size_t rowSpan() const { return m_span.row; }
 
         SlotPosition position() const { return m_position; }
-        CellSize size() const { return m_size; }
+        CellSpan span() const { return m_span; }
 
         const Box& box() const { return *m_layoutBox.get(); }
 
     private:
         WeakPtr<const Box> m_layoutBox;
         SlotPosition m_position;
-        CellSize m_size;
+        CellSpan m_span;
     };
 
     struct Slot {
@@ -201,4 +199,5 @@ private:
 
 }
 }
+
 #endif

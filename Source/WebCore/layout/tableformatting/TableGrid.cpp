@@ -108,10 +108,10 @@ TableGrid::Row::Row(const Box& rowBox)
 {
 }
 
-TableGrid::Cell::Cell(const Box& cellBox, SlotPosition position, CellSize size)
+TableGrid::Cell::Cell(const Box& cellBox, SlotPosition position, CellSpan span)
     : m_layoutBox(makeWeakPtr(cellBox))
     , m_position(position)
-    , m_size(size)
+    , m_span(span)
 {
 }
 
@@ -131,8 +131,8 @@ TableGrid::Slot* TableGrid::slot(SlotPosition position)
 
 void TableGrid::appendCell(const Box& cellBox)
 {
-    int rowSpan = cellBox.rowSpan();
-    int columnSpan = cellBox.columnSpan();
+    auto rowSpan = cellBox.rowSpan();
+    auto columnSpan = cellBox.columnSpan();
     auto isInNewRow = !cellBox.previousSibling();
     auto initialSlotPosition = SlotPosition { };
 
@@ -141,28 +141,28 @@ void TableGrid::appendCell(const Box& cellBox)
         auto lastSlotPosition = lastCell->position();
         // First table cell in this row?
         if (isInNewRow)
-            initialSlotPosition = SlotPosition { 0, lastSlotPosition.y() + 1 };
+            initialSlotPosition = SlotPosition { 0, lastSlotPosition.row + 1 };
         else
-            initialSlotPosition = SlotPosition { lastSlotPosition.x() + 1, lastSlotPosition.y() };
+            initialSlotPosition = SlotPosition { lastSlotPosition.column + 1, lastSlotPosition.row };
 
         // Pick the next available slot by avoiding row and column spanners.
         while (true) {
             if (!m_slotMap.contains(initialSlotPosition))
                 break;
-            initialSlotPosition.move(1, 0);
+            ++initialSlotPosition.column;
         }
     }
-    auto cell = makeUnique<Cell>(cellBox, initialSlotPosition, CellSize { columnSpan, rowSpan });
+    auto cell = makeUnique<Cell>(cellBox, initialSlotPosition, CellSpan { columnSpan, rowSpan });
     // Row and column spanners create additional slots.
-    for (int row = 1; row <= rowSpan; ++row) {
-        for (int column = 1; column <= columnSpan; ++column) {
-            auto position = SlotPosition { initialSlotPosition.x() + column - 1, initialSlotPosition.y() + row - 1 };
+    for (size_t row = 1; row <= rowSpan; ++row) {
+        for (size_t column = 1; column <= columnSpan; ++column) {
+            auto position = SlotPosition { initialSlotPosition.column + column - 1, initialSlotPosition.row + row - 1 };
             ASSERT(!m_slotMap.contains(position));
             m_slotMap.add(position, makeUnique<Slot>(*cell));
         }
     }
     // Initialize columns/rows if needed.
-    auto missingNumberOfColumns = std::max<int>(0, initialSlotPosition.x() + columnSpan - m_columns.size()); 
+    auto missingNumberOfColumns = std::max<int>(0, initialSlotPosition.column + columnSpan - m_columns.size());
     for (auto column = 0; column < missingNumberOfColumns; ++column)
         m_columns.addAnonymousColumn();
 

@@ -387,28 +387,28 @@ bool Box::isPaddingApplicable() const
         && !isTableColumn();
 }
 
-void Box::setRowSpan(unsigned rowSpan)
+void Box::setRowSpan(size_t rowSpan)
 {
-    ensureRareData().rowSpan = rowSpan;
+    ensureRareData().tableCellSpan.row = rowSpan;
 }
 
-void Box::setColumnSpan(unsigned columnSpan)
+void Box::setColumnSpan(size_t columnSpan)
 {
-    ensureRareData().columnSpan = columnSpan;
+    ensureRareData().tableCellSpan.column = columnSpan;
 }
 
-unsigned Box::rowSpan() const
+size_t Box::rowSpan() const
 {
     if (!hasRareData())
         return 1;
-    return rareData().rowSpan;
+    return rareData().tableCellSpan.row;
 }
 
-unsigned Box::columnSpan() const
+size_t Box::columnSpan() const
 {
     if (!hasRareData())
         return 1;
-    return rareData().columnSpan;
+    return rareData().tableCellSpan.column;
 }
 
 void Box::setColumnWidth(LayoutUnit columnWidth)

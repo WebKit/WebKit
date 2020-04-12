@@ -259,21 +259,21 @@ void TableFormattingContext::computePreferredWidthForColumns()
             formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
         }
 
-        auto columnSpan = cell->size().width();
+        auto columnSpan = cell->span().column;
         auto slotIntrinsicWidth = FormattingContext::IntrinsicWidthConstraints { intrinsicWidth->minimum / columnSpan, intrinsicWidth->maximum / columnSpan };
         auto initialPosition = cell->position();
-        for (auto i = 0; i < columnSpan; ++i)
-            grid.slot({ initialPosition.x() + i, initialPosition.y() })->widthConstraints = slotIntrinsicWidth;
+        for (size_t i = 0; i < columnSpan; ++i)
+            grid.slot({ initialPosition.column + i, initialPosition.row })->widthConstraints = slotIntrinsicWidth;
     }
     // 2. For each column, determine a maximum and minimum column width from the cells that span only that column.
     //    The minimum is that required by the cell with the largest minimum cell width (or the column 'width', whichever is larger).
     //    The maximum is that required by the cell with the largest maximum cell width (or the column 'width', whichever is larger).
     auto& columnList = grid.columns().list();
-    int numberOfRows = grid.rows().size();
-    int numberOfColumns = columnList.size();
-    for (int columnIndex = 0; columnIndex < numberOfColumns; ++columnIndex) {
+    auto numberOfRows = grid.rows().size();
+    auto numberOfColumns = columnList.size();
+    for (size_t columnIndex = 0; columnIndex < numberOfColumns; ++columnIndex) {
         auto columnIntrinsicWidths = FormattingContext::IntrinsicWidthConstraints { };
-        for (int rowIndex = 0; rowIndex < numberOfRows; ++rowIndex) {
+        for (size_t rowIndex = 0; rowIndex < numberOfRows; ++rowIndex) {
             auto* slot = grid.slot({ columnIndex, rowIndex });
             columnIntrinsicWidths.minimum = std::max(slot->widthConstraints.minimum, columnIntrinsicWidths.minimum);
             columnIntrinsicWidths.maximum = std::max(slot->widthConstraints.maximum, columnIntrinsicWidths.maximum);
