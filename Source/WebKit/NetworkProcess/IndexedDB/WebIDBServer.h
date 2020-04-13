@@ -87,9 +87,11 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void dispatchToThread(WTF::Function<void()>&&);
+    void close();
 
 private:
     WebIDBServer(PAL::SessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&&);
+    ~WebIDBServer();
 
     void postTask(WTF::Function<void()>&&);
 
@@ -97,6 +99,7 @@ private:
     bool m_isSuspended { false };
 
     HashMap<IPC::Connection::UniqueID, std::unique_ptr<WebIDBConnectionToClient>> m_connectionMap;
+    HashSet<IPC::Connection*> m_connections;
 };
 
 } // namespace WebKit

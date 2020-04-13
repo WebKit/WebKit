@@ -53,7 +53,12 @@ WebIDBServer::WebIDBServer(PAL::SessionID sessionID, const String& directory, ID
     });
     semaphore.wait();
 }
-    
+
+WebIDBServer::~WebIDBServer()
+{
+    ASSERT(RunLoop::isMain());
+}
+
 void WebIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime, CompletionHandler<void()>&& callback)
 {
     ASSERT(RunLoop::isMain());
@@ -335,6 +340,7 @@ void WebIDBServer::addConnection(IPC::Connection& connection, WebCore::ProcessId
         LockHolder locker(m_server->lock());
         m_server->registerConnection(iter->value->connectionToClient());
     });
+    m_connections.add(&connection);
     connection.addThreadMessageReceiver(Messages::WebIDBServer::messageReceiverName(), this);
 }
 
@@ -342,6 +348,7 @@ void WebIDBServer::removeConnection(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
 
+    m_connections.remove(&connection);
     connection.removeThreadMessageReceiver(Messages::WebIDBServer::messageReceiverName());
     postTask([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID()] {
         auto connection = m_connectionMap.take(connectionID);
@@ -363,6 +370,27 @@ void WebIDBServer::postTask(Function<void()>&& task)
 void WebIDBServer::dispatchToThread(Function<void()>&& task)
 {
     CrossThreadTaskHandler::postTask(CrossThreadTask(WTFMove(task)));
+}
+
+void WebIDBServer::close()
+{
+    ASSERT(RunLoop::isMain());
+
+    // Remove the references held by IPC::Connection.
+    for (auto* connection : m_connections)
+        connection->removeThreadMessageReceiver(Messages::WebIDBServer::messageReceiverName());
+
+    CrossThreadTaskHandler::setCompletionCallback([protectedThis = makeRef(*this)]() mutable {
+        ASSERT(!RunLoop::isMain());
+        callOnMainRunLoop([protectedThis = WTFMove(protectedThis)]() mutable { });
+    });
+
+    postTask([this]() mutable {
+        m_connectionMap.clear();
+        m_server = nullptr;
+
+        CrossThreadTaskHandler::kill();
+    });
 }
 
 } // namespace WebKit
