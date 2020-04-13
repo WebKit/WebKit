@@ -44,6 +44,8 @@ private:
     template<class FriendDelegate>
     friend ErrorCode parse(FriendDelegate&, const String& pattern, bool isUnicode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed);
 
+    enum class UnicodeParseContext : uint8_t { PatternCodePoint, GroupName };
+
     /*
      * CharacterClassParserDelegate:
      *
@@ -505,7 +507,7 @@ private:
 
         // UnicodeEscape
         case 'u': {
-            int codePoint = tryConsumeUnicodeEscape<UnicodeEscapeContext::CharacterEscape>();
+            int codePoint = tryConsumeUnicodeEscape<UnicodeParseContext::PatternCodePoint>();
             if (hasError(m_errorCode))
                 break;
 
@@ -532,10 +534,13 @@ private:
         return true;
     }
 
+    template<UnicodeParseContext context>
     UChar32 consumePossibleSurrogatePair()
     {
+        bool unicodePatternOrGroupName = m_isUnicode || context == UnicodeParseContext::GroupName;
+
         UChar32 ch = consume();
-        if (U16_IS_LEAD(ch) && m_isUnicode && (patternRemaining() > 0)) {
+        if (U16_IS_LEAD(ch) && unicodePatternOrGroupName && !atEndOfPattern()) {
             ParseState state = saveState();
 
             UChar32 surrogate2 = consume();
@@ -591,7 +596,7 @@ private:
                 break;
 
             default:
-                characterClassConstructor.atomPatternCharacter(consumePossibleSurrogatePair(), true);
+                characterClassConstructor.atomPatternCharacter(consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>(), true);
             }
 
             if (hasError(m_errorCode))
@@ -833,7 +838,7 @@ private:
             }
 
             default:
-                m_delegate.atomPatternCharacter(consumePossibleSurrogatePair());
+                m_delegate.atomPatternCharacter(consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>());
                 lastTokenWasAnAtom = true;
             }
 
@@ -977,20 +982,20 @@ private:
         return peek() - '0';
     }
 
-    enum class UnicodeEscapeContext : uint8_t { CharacterEscape, IdentifierName };
-
-    template<UnicodeEscapeContext context>
+    template<UnicodeParseContext context>
     int tryConsumeUnicodeEscape()
     {
         ASSERT(!hasError(m_errorCode));
 
+        bool unicodePatternOrGroupName = m_isUnicode || context == UnicodeParseContext::GroupName;
+
         if (!tryConsume('u') || atEndOfPattern()) {
-            if (m_isUnicode || context == UnicodeEscapeContext::IdentifierName)
+            if (unicodePatternOrGroupName)
                 m_errorCode = ErrorCode::InvalidUnicodeEscape;
             return -1;
         }
 
-        if (m_isUnicode && tryConsume('{')) {
+        if (unicodePatternOrGroupName && tryConsume('{')) {
             int codePoint = 0;
             do {
                 if (atEndOfPattern() || !isASCIIHexDigit(peek())) {
@@ -1016,13 +1021,13 @@ private:
 
         int codeUnit = tryConsumeHex(4);
         if (codeUnit == -1) {
-            if (m_isUnicode || context == UnicodeEscapeContext::IdentifierName)
+            if (unicodePatternOrGroupName)
                 m_errorCode = ErrorCode::InvalidUnicodeEscape;
             return -1;
         }
 
         // If we have the first of a surrogate pair, look for the second.
-        if (U16_IS_LEAD(codeUnit) && m_isUnicode && patternRemaining() >= 6 && peek() == '\\') {
+        if (U16_IS_LEAD(codeUnit) && unicodePatternOrGroupName && patternRemaining() >= 6 && peek() == '\\') {
             ParseState state = saveState();
             consume();
 
@@ -1041,9 +1046,9 @@ private:
     int tryConsumeIdentifierCharacter()
     {
         if (tryConsume('\\'))
-            return tryConsumeUnicodeEscape<UnicodeEscapeContext::IdentifierName>();
+            return tryConsumeUnicodeEscape<UnicodeParseContext::GroupName>();
 
-        return consumePossibleSurrogatePair();
+        return consumePossibleSurrogatePair<UnicodeParseContext::GroupName>();
     }
 
     bool isIdentifierStart(int ch)

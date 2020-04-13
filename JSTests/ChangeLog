@@ -1,3 +1,16 @@
+2020-04-13  Michael Saboff  <msaboff@apple.com>
+
+        [YARR] Allow for Unicode named capture group identifiers in non-Unicode regular expressions
+        https://bugs.webkit.org/show_bug.cgi?id=210309
+
+        Reviewed by Ross Kirsling.
+
+        * stress/regexp-named-capture-groups.js: New test added.
+        (shouldBe):
+        (shouldThrowInvalidGroupSpecifierName):
+        * test262/expectations.yaml: Updated for now failing tests.
+        When test262 gets updated for this change, this can be reverted.
+
 2020-04-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ECMA-402] WebKit Intl does not allow calendar and numberingSystem options

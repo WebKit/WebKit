@@ -1,3 +1,25 @@
+2020-04-10  Michael Saboff  <msaboff@apple.com>
+
+        [YARR] Allow for Unicode named capture group identifiers in non-Unicode regular expressions
+        https://bugs.webkit.org/show_bug.cgi?id=210309
+
+        Reviewed by Ross Kirsling.
+
+        Update YARR pattern processing to allow for non-BMP unicode identifier characters in named capture groups.
+
+        This change was discussed and approved at the March/April 2020 TC-39 meeting.
+        See https://github.com/tc39/ecma262/pull/1869 for the discussion and change.
+
+        Updated tryConsumeUnicodeEscape() to allow for unicode escapes in non-unicode flagged regex's.
+        Added the same support to consumePossibleSurrogatePair().
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::consumePossibleSurrogatePair):
+        (JSC::Yarr::Parser::parseCharacterClass):
+        (JSC::Yarr::Parser::parseTokens):
+        (JSC::Yarr::Parser::tryConsumeUnicodeEscape):
+        (JSC::Yarr::Parser::tryConsumeIdentifierCharacter):
+
 2020-04-13  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix various build warnings
