@@ -1,3 +1,24 @@
+2020-04-13  Charlie Turner  <cturner@igalia.com>
+
+        [EME][GStreamer] remove m_cdmInstance ASSERT in cdmInstanceDetached
+        https://bugs.webkit.org/show_bug.cgi?id=210331
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        In tests that reset the src very quickly, the MediaKeys can be
+        installed and then the src is reset before an attachment message
+        is sent. Hence, detachment can result in no CDM currently
+        existing.
+
+        Covered by imported/w3c/web-platform-tests/encrypted-media.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::cdmInstanceDetached): Only
+        assert if the CDM instance has been set before detachment.
+        (WebCore::MediaPlayerPrivateGStreamer::attemptToDecryptWithInstance):
+        Do not need the .get(), the operator== overload in RefPtr does
+        this for us, and it makes the code more consistent.
+
 2020-04-13  Rob Buis  <rbuis@igalia.com>
 
         Remove return parameter from FrameLoader::closeURL

@@ -3780,25 +3780,21 @@ void MediaPlayerPrivateGStreamer::cdmInstanceAttached(CDMInstance& instance)
 void MediaPlayerPrivateGStreamer::cdmInstanceDetached(CDMInstance& instance)
 {
     ASSERT(isMainThread());
-
-    if (m_cdmInstance != &instance) {
-        GST_WARNING("passed CDMInstance %p is different from stored one %p", &instance, m_cdmInstance.get());
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
     ASSERT(m_pipeline);
 
+    if (!m_cdmInstance)
+        return;
+
+    ASSERT(m_cdmInstance == &instance);
     GST_DEBUG_OBJECT(m_pipeline.get(), "detaching CDM instance %p, setting empty context", m_cdmInstance.get());
     m_cdmInstance = nullptr;
-
     GRefPtr<GstContext> context = adoptGRef(gst_context_new("drm-cdm-proxy", FALSE));
     gst_element_set_context(GST_ELEMENT(m_pipeline.get()), context.get());
 }
 
 void MediaPlayerPrivateGStreamer::attemptToDecryptWithInstance(CDMInstance& instance)
 {
-    ASSERT(m_cdmInstance.get() == &instance);
+    ASSERT(m_cdmInstance == &instance);
     GST_TRACE("instance %p, current stored %p", &instance, m_cdmInstance.get());
     attemptToDecryptWithLocalInstance();
 }
