@@ -1,3 +1,19 @@
+2020-04-13  Youenn Fablet  <youenn@apple.com>
+
+        Fix mute/unmute of CoreAudioCapture sources after revision 257914
+        https://bugs.webkit.org/show_bug.cgi?id=210381
+
+        Reviewed by Eric Carlson.
+
+       Clone tests for having both GPU and non GPU test runs.
+
+        * platform/ios/mediastream/audio-muted-in-background-tab-gpu-process-expected.txt: Added.
+        * platform/ios/mediastream/audio-muted-in-background-tab-gpu-process.html: Copied from LayoutTests/platform/ios/mediastream/audio-muted-in-background-tab.html.
+        * platform/ios/mediastream/audio-muted-in-background-tab.html:
+        * platform/ios/mediastream/getUserMedia-single-capture-gpu-process-expected.txt: Added.
+        * platform/ios/mediastream/getUserMedia-single-capture-gpu-process.html: Copied from LayoutTests/platform/ios/mediastream/getUserMedia-single-capture.html.
+        * platform/ios/mediastream/getUserMedia-single-capture.html:
+
 2020-04-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Pre-fill columnIntrinsicWidths vector

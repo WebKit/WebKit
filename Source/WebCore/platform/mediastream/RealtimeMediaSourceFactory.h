@@ -43,9 +43,9 @@ public:
     virtual ~SingleSourceFactory() = default;
 
     virtual void setActiveSource(RealtimeMediaSource&);
-    void unsetActiveSource(RealtimeMediaSource&);
+    virtual void unsetActiveSource(RealtimeMediaSource&);
 
-    RealtimeMediaSource* activeSource() { return m_activeSource; }
+    virtual RealtimeMediaSource* activeSource() { return m_activeSource; }
 
 private:
     RealtimeMediaSource* m_activeSource { nullptr };

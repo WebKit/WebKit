@@ -726,11 +726,19 @@ void CoreAudioCaptureSource::initializeToStartProducingData()
 
 CoreAudioCaptureSource::~CoreAudioCaptureSource()
 {
+#if PLATFORM(IOS_FAMILY)
+    CoreAudioCaptureSourceFactory::singleton().unsetActiveSource(*this);
+#endif
+
     unit().removeClient(*this);
 }
 
 void CoreAudioCaptureSource::startProducingData()
 {
+#if PLATFORM(IOS_FAMILY)
+    CoreAudioCaptureSourceFactory::singleton().setActiveSource(*this);
+#endif
+
     initializeToStartProducingData();
     unit().startProducingData();
 }

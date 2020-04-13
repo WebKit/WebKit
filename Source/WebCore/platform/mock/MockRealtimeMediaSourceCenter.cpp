@@ -135,7 +135,7 @@ private:
     CaptureDeviceManager& displayCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().displayCaptureDeviceManager(); }
 };
 
-class MockRealtimeAudioSourceFactory : public AudioCaptureFactory {
+class MockRealtimeAudioSourceFactory final : public AudioCaptureFactory {
 public:
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints) final
     {
@@ -148,6 +148,9 @@ public:
 private:
 #if PLATFORM(IOS_FAMILY)
     void setAudioCapturePageState(bool interrupted, bool pageMuted) final { CoreAudioCaptureSourceFactory::singleton().setAudioCapturePageState(interrupted, pageMuted); }
+    void setActiveSource(RealtimeMediaSource& source) final { CoreAudioCaptureSourceFactory::singleton().setActiveSource(source); }
+    void unsetActiveSource(RealtimeMediaSource& source) final { CoreAudioCaptureSourceFactory::singleton().unsetActiveSource(source); }
+    RealtimeMediaSource* activeSource() final { return CoreAudioCaptureSourceFactory::singleton().activeSource(); }
 #endif
     CaptureDeviceManager& audioCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().audioCaptureDeviceManager(); }
 };

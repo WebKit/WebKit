@@ -1,3 +1,23 @@
+2020-04-13  Youenn Fablet  <youenn@apple.com>
+
+        Fix mute/unmute of CoreAudioCapture sources after revision 257914
+        https://bugs.webkit.org/show_bug.cgi?id=210381
+
+        Reviewed by Eric Carlson.
+
+        Revert part of revision 257914 since we still need the active source registration/unregistration when capturing in web process.
+        Make sure mock factory delegates all active source handling to CoreAudioCaptureSourceFactory,
+        now that the mock factory is using CoreAudioCaptureSources with a mock share dunit.
+
+        Tests: platform/ios/mediastream/audio-muted-in-background-tab-gpu-process.html
+               platform/ios/mediastream/getUserMedia-single-capture-gpu-process.html
+
+        * platform/mediastream/RealtimeMediaSourceFactory.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::~CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::startProducingData):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+
 2020-04-13  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix various build warnings
