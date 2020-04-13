@@ -5,7 +5,7 @@ Green
 Blue
 Blue
 Red
-Black
+Blue
 Red
 
 PASS Preconditions. 
@@ -13,5 +13,5 @@ PASS Invalidate :is() for simple selector arguments.
 PASS Invalidate :is() for compound selector arguments. 
 PASS Invalidate :is() for complex selector arguments. 
 PASS Invalidate nested :is(). 
-PASS Test specificity of :is(). 
+FAIL Test specificity of :is(). assert_equals: expected "rgb(0, 0, 255)" but got "rgb(0, 0, 0)"
 

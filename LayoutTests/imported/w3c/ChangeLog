@@ -1,3 +1,23 @@
+2020-04-12  Antti Koivisto  <antti@apple.com>
+
+        Update imported/w3c/web-platform-tests/css/selectors/invalidation/is.html
+        https://bugs.webkit.org/show_bug.cgi?id=210418
+
+        Unreviewed.
+
+        Also some other minor updates from syncing css/selectors from WPT repo.
+
+        * web-platform-tests/css/selectors/invalidation/defined.html:
+        * web-platform-tests/css/selectors/invalidation/is-expected.txt:
+
+        Specificify subtest is correctly FAIL.
+
+        * web-platform-tests/css/selectors/invalidation/is.html:
+        * web-platform-tests/css/selectors/invalidation/selectorText-dynamic-001.html:
+        * web-platform-tests/css/selectors/invalidation/sheet-going-away-001.html:
+        * web-platform-tests/css/selectors/invalidation/sheet-going-away-002.html:
+        * web-platform-tests/css/selectors/x-pseudo-element.html:
+
 2020-04-10  Devin Rousso  <drousso@apple.com>
 
         Changes to shared testing JS files should not cause test failures due to console message line numbers changing
