@@ -1,0 +1,77 @@
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Responding with testUser:testPassword
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/protected-script.php?testId=2 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/protected-script.php?testId=3 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/protected-script.php?testId=6 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/protected-script.php?testId=7 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/protected-script.php?testId=10 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/protected-script.php?testId=11 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Blocked http://127.0.0.1:8000/security/resources/protected-script.php?testId=12 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked http://127.0.0.1:8000/security/resources/protected-script.php?testId=13 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/protected-script.php?testId=14 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/protected-script.php?testId=15 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/protected-script.php?testId=18 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/protected-script.php?testId=19 from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did not load script with origin https://127.0.0.1:8443.
+
+PASS did not load script with origin https://localhost:8443.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did not load script with origin https://127.0.0.1:8443.
+
+PASS did not load script with origin https://localhost:8443.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did not load script with origin https://127.0.0.1:8443.
+
+PASS did not load script with origin https://localhost:8443.
+
+PASS did not load script with origin http://127.0.0.1:8000.
+
+PASS did not load script with origin http://127.0.0.1:8000.
+
+PASS did not load script with origin https://127.0.0.1:8443.
+
+PASS did not load script with origin https://localhost:8443.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did not load script with origin https://127.0.0.1:8443.
+
+PASS did not load script with origin https://localhost:8443.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

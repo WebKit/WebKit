@@ -1,3 +1,26 @@
+2020-04-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        module's default cross-origin value should be "anonymous"
+        https://bugs.webkit.org/show_bug.cgi?id=210326
+
+        Reviewed by Sam Weinig.
+
+        The original spec was using "omit" crossorigin for modules when crossorigin is not set / empty.
+        However, the spec is changed to sending requests with "same-origin" credentials ("anonymous" crossorigin mode)
+        by default. We should follow it.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestModuleScript):
+        * dom/ScriptElementCachedScriptFetcher.cpp:
+        (WebCore::ScriptElementCachedScriptFetcher::requestModuleScript const):
+        * dom/ScriptElementCachedScriptFetcher.h:
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::PreloadRequest::resourceRequest):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script): While this is not directly related to this patch, added new tests found that we are returning
+        null StringView if the resource is zero byte. This totally works, but JSC::Parser has assertion that this is non-null
+        StringView. For zero byte CachedScript resource, we should return non-null empty StringView instead.
+
 2020-04-13  Charlie Turner  <cturner@igalia.com>
 
         [EME][GStreamer] remove m_cdmInstance ASSERT in cdmInstanceDetached
