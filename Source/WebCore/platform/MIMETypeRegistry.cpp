@@ -58,12 +58,6 @@
 #include "PreviewConverter.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/AdditionalSystemPreviewTypes.h>
-#else
-#define ADDITIONAL_SYSTEM_PREVIEW_TYPES
-#endif
-
 namespace WebCore {
 
 const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedImageMIMETypes()
@@ -704,7 +698,8 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::systemPreview
         // Unofficial, but supported because we documented them.
         "model/usd",
         "model/vnd.pixar.usd",
-        ADDITIONAL_SYSTEM_PREVIEW_TYPES
+        // Reality files.
+        "model/vnd.reality"
     };
     return systemPreviewMIMETypes;
 }

@@ -35,12 +35,6 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/AdditionalUTIMappings.h>
-#else
-#define ADDITIONAL_UTI_MAPPINGS
-#endif
-
 namespace WebCore {
 
 String MIMETypeFromUTI(const String& uti)
@@ -98,7 +92,7 @@ static String UTIFromUnknownMIMEType(const String& mimeType)
             { "model/vnd.usdz+zip"_s, "com.pixar.universal-scene-description-mobile"_s },
             { "model/usd"_s, "com.pixar.universal-scene-description-mobile"_s },
             { "model/vnd.pixar.usd"_s, "com.pixar.universal-scene-description-mobile"_s },
-            ADDITIONAL_UTI_MAPPINGS
+            { "model/vnd.reality"_s, "com.apple.reality"_s }
         };
 
         HashMap<String, String, ASCIICaseInsensitiveHash> map;
