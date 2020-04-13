@@ -60,6 +60,9 @@ IDBServer::IDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPa
 IDBServer::~IDBServer()
 {
     ASSERT(!isMainThread());
+
+    for (auto& database : m_uniqueIDBDatabaseMap.values())
+        database->immediateClose();
 }
 
 void IDBServer::registerConnection(IDBConnectionToClient& connection)
@@ -534,7 +537,7 @@ void IDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime)
 
     HashSet<UniqueIDBDatabase*> openDatabases;
     for (auto& database : m_uniqueIDBDatabaseMap.values())
-        database->immediateCloseForUserDelete();
+        database->immediateClose();
 
     m_uniqueIDBDatabaseMap.clear();
 
@@ -561,7 +564,7 @@ void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginDat
     }
 
     for (auto& database : openDatabases) {
-        database->immediateCloseForUserDelete();
+        database->immediateClose();
         m_uniqueIDBDatabaseMap.remove(database->identifier());
     }
 
