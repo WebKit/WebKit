@@ -1,3 +1,12 @@
+2020-04-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, WebRTC flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=210444
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-04-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r260003.
