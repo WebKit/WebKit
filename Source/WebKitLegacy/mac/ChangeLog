@@ -1,3 +1,19 @@
+2020-04-13  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r259843): "Missing Plug-In" when dragging an image into Mail Compose
+        https://bugs.webkit.org/show_bug.cgi?id=210458
+        <rdar://problem/61735361>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+        r259843 changed this code from making a dictionary with a set of key->object mappings
+        to making a dictionary with an array of keys as its only key and an array of objects
+        as that key's value. Not quite the same thing.
+
+        Go back to dictionaryWithObjects:forKeys:.
+
 2020-04-13  David Kilzer  <ddkilzer@apple.com>
 
         Fix clang static analyzer warnings about unused instance variables in WebIconDatabase, WKView
