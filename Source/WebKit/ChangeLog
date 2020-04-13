@@ -1,3 +1,16 @@
+2020-04-13  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove redundant move in return statement.
+
+        Return statement already returns rvalue,
+        so we don't need move here.
+
+        This patch removes the build warning below since r259922.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        * NetworkProcess/cache/NetworkCacheCoders.cpp:
+        (WTF::Persistence::Coder<WebCore::HTTPHeaderMap>::decode):
+
 2020-04-13  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix various build warnings

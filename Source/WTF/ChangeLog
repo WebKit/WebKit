@@ -1,3 +1,19 @@
+2020-04-13  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove redundant move in return statement.
+
+        Return statement already returns rvalue,
+        so we don't need move here.
+
+        This patch removes the build warning below since r259922.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        * wtf/persistence/PersistentCoders.cpp:
+        (WTF::Persistence::Coder<CString>::decode):
+        (WTF::Persistence::decodeStringText):
+        (WTF::Persistence::Coder<SHA1::Digest>::decode):
+        * wtf/persistence/PersistentCoders.h:
+
 2020-04-12  Mark Lam  <mark.lam@apple.com>
 
         Enable the ability to build the ASM LLInt for ARMv7k.

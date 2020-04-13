@@ -217,7 +217,7 @@ static Optional<RetainPtr<SecTrustRef>> decodeSecTrustRef(Decoder& decoder)
     if (!trust)
         return WTF::nullopt;
 
-    return WTFMove(trust);
+    return trust;
 }
 #endif
 

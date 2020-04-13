@@ -81,7 +81,7 @@ Optional<CString> Coder<CString>::decode(Decoder& decoder)
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), *length))
         return WTF::nullopt;
 
-    return WTFMove(string);
+    return string;
 }
 
 void Coder<String>::encode(Encoder& encoder, const String& string)
@@ -115,7 +115,7 @@ static inline Optional<String> decodeStringText(Decoder& decoder, uint32_t lengt
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType)))
         return WTF::nullopt;
     
-    return WTFMove(string);
+    return string;
 }
 
 Optional<String> Coder<String>::decode(Decoder& decoder)
@@ -150,7 +150,7 @@ Optional<SHA1::Digest> Coder<SHA1::Digest>::decode(Decoder& decoder)
     SHA1::Digest tmp;
     if (!decoder.decodeFixedLengthData(tmp.data(), sizeof(tmp)))
         return WTF::nullopt;
-    return WTFMove(tmp);
+    return tmp;
 }
 
 }

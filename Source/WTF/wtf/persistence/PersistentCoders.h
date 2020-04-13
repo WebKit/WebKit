@@ -141,7 +141,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<false, T, inlineC
         }
 
         tmp.shrinkToFit();
-        return WTFMove(tmp);
+        return tmp;
     }
 };
 
@@ -176,7 +176,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
         if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T)))
             return WTF::nullopt;
 
-        return WTFMove(temp);
+        return temp;
     }
 };
 
@@ -217,7 +217,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             }
         }
 
-        return WTFMove(tempHashMap);
+        return tempHashMap;
     }
 };
 
@@ -251,7 +251,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Coder<
             }
         }
 
-        return WTFMove(tempHashSet);
+        return tempHashSet;
     }
 };
 

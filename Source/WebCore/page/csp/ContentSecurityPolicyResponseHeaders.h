@@ -111,7 +111,7 @@ Optional<ContentSecurityPolicyResponseHeaders> ContentSecurityPolicyResponseHead
         return WTF::nullopt;
     headers.m_httpStatusCode = *httpStatusCode;
 
-    return WTFMove(headers);
+    return headers;
 }
 
 } // namespace WebCore

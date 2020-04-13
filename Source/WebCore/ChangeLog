@@ -1,3 +1,20 @@
+2020-04-13  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove redundant move in return statement.
+
+        Return statement already returns rvalue,
+        so we don't need move here.
+
+        This patch removes the build warning below since r259922.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        No new tests, no new behaviours.
+
+        * page/csp/ContentSecurityPolicyResponseHeaders.h:
+        (WebCore::ContentSecurityPolicyResponseHeaders::decode):
+        * platform/network/cf/CertificateInfoCFNet.cpp:
+        (WTF::Persistence::decodeSecTrustRef):
+
 2020-04-13  Youenn Fablet  <youenn@apple.com>
 
         Fix mute/unmute of CoreAudioCapture sources after revision 257914

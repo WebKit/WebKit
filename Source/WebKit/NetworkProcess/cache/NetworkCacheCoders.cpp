@@ -59,7 +59,7 @@ Optional<WebCore::HTTPHeaderMap> Coder<WebCore::HTTPHeaderMap>::decode(Decoder& 
             return WTF::nullopt;
         headers.append(WTFMove(*name), WTFMove(*value));
     }
-    return WTFMove(headers);
+    return headers;
 }
 
 }
