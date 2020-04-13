@@ -180,18 +180,22 @@ class BugzillaBeautifulSoup():
             self.browser['Bugzilla_login'] = username
             self.browser['Bugzilla_password'] = password
             self.browser.find_control("Bugzilla_restrictlogin").items[0].selected = False
-            response = self.browser.submit()
+            try:
+                response = self.browser.submit()
+            except:
+                _log.error('Unexpected error while authenticating to bugzilla.')
+                continue
 
             match = re.search("<title>(.+?)</title>", response.read())
             # If the resulting page has a title, and it contains the word
             # "invalid" assume it's the login failure page.
             if match and re.search("Invalid", match.group(1), re.IGNORECASE):
                 errorMessage = 'Bugzilla login failed: {}'.format(match.group(1))
-                if attempts >= 5:
+                if attempts >= 3:
                     # raise an exception only if this was the last attempt
                     raise Exception(errorMessage)
                 _log.error(errorMessage)
-                time.sleep(5)
+                time.sleep(3)
             else:
                 authenticated = True
 
