@@ -1,3 +1,17 @@
+2020-04-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add message filtering to all iokit open rules
+        https://bugs.webkit.org/show_bug.cgi?id=210352
+
+        Reviewed by Sam Weinig.
+
+        Apply message filtering with reports and telemetry to all iokit-open rules in the WebContent process' sandbox on iOS
+        to gain a better understanding of which iokit-open rules we can investigate.
+
+        No new tests, since adding telemetry will not introduce a change in behavior.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-04-13  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove redundant move in return statement.

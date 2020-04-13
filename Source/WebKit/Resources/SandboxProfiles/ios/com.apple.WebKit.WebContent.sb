@@ -87,7 +87,16 @@
 
 (define-once (framebuffer-access)
     (allow iokit-open
-           (iokit-user-client-class "IOMobileFramebufferUserClient"))
+        (iokit-user-client-class "IOMobileFramebufferUserClient")
+        (when (defined? 'iokit-external-method)
+            (apply-message-filter
+                (allow (with report) (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-method
+                    iokit-external-trap)
+            )
+        )
+    )
 
     ; IOMobileFramebuffer
     (with-filter (iokit-registry-entry-class "IOMobileFramebuffer")
@@ -222,9 +231,17 @@
     ;; Items with known uses
     (allow iokit-open
         (iokit-connection "IOGPU")
-        (iokit-user-client-class
-            "AGXDeviceUserClient" ;; Used by WebGL
-    ))
+        (iokit-user-client-class "AGXDeviceUserClient") ;; Used by WebGL
+        (when (defined? 'iokit-external-method)
+            (apply-message-filter
+                (allow (with report) (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap)
+                (allow (with telemetry)
+                    iokit-external-method)
+            )
+        )
+    )
 
     (allow iokit-get-properties
         (iokit-property "IOGLBundleName")
@@ -361,11 +378,42 @@
         (iokit-user-client-class "IOSurfaceSendRight")
     )
 
-    ; WebKit-required IOKit classes
     (allow iokit-open
         (iokit-user-client-class "AppleJPEGDriverUserClient")
+        (when (defined? 'iokit-external-method)
+            (apply-message-filter
+                (allow (with report) (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-method
+                    iokit-external-trap)
+            )
+        )
+    )
+
+    ; WebKit-required IOKit classes
+    (allow iokit-open
         (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; Media rendering into pixel buffers
+        (when (defined? 'iokit-external-method)
+            (apply-message-filter
+                (allow (with report) (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-method
+                    iokit-external-trap)
+            )
+        )
+    )
+
+    (allow iokit-open
         (iokit-user-client-class "IOSurfaceRootUserClient") ;; Needed by Tiled Grid code.
+        (when (defined? 'iokit-external-method)
+            (apply-message-filter
+                (allow (with report) (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap)
+                (allow (with telemetry)
+                    iokit-external-method)
+            )
+        )
     )
 
     ;; Silence sandbox violations from apps trying to create the empty plist if it doesn't exist.
@@ -1160,17 +1208,6 @@
                 thread_suspend
                 )
             )
-        )
-    )
-)
-
-(when (defined? 'iokit-external-method)
-    (allow iokit-open
-        (apply-message-filter (with report) (with telemetry)
-            (allow
-             iokit-external-method
-             iokit-async-external-method
-             iokit-external-trap)
         )
     )
 )
