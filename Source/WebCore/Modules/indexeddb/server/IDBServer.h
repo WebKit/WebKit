@@ -110,9 +110,6 @@ public:
 
     Lock& lock() { return m_lock; };
 
-    void addDatabase(UniqueIDBDatabase& database) { m_allUniqueIDBDatabases.add(database); }
-    void removeDatabase(UniqueIDBDatabase& database) { m_allUniqueIDBDatabases.remove(database); }
-
 private:
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
     
@@ -125,7 +122,6 @@ private:
     PAL::SessionID m_sessionID;
     HashMap<IDBConnectionIdentifier, RefPtr<IDBConnectionToClient>> m_connectionMap;
     HashMap<IDBDatabaseIdentifier, std::unique_ptr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
-    WeakHashSet<UniqueIDBDatabase> m_allUniqueIDBDatabases;
 
     HashMap<uint64_t, UniqueIDBDatabaseConnection*> m_databaseConnections;
     HashMap<IDBResourceIdentifier, UniqueIDBDatabaseTransaction*> m_transactions;
