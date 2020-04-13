@@ -550,14 +550,14 @@ if (ENABLE_WAYLAND_TARGET)
         DEPENDS ${WEBKIT_DIR}/Shared/gtk/WebKitWaylandProtocol.xml
         COMMAND ${WAYLAND_SCANNER} server-header ${WEBKIT_DIR}/Shared/gtk/WebKitWaylandProtocol.xml ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitWaylandServerProtocol.h
         COMMAND ${WAYLAND_SCANNER} client-header ${WEBKIT_DIR}/Shared/gtk/WebKitWaylandProtocol.xml ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitWaylandClientProtocol.h
-        COMMAND ${WAYLAND_SCANNER} code ${WEBKIT_DIR}/Shared/gtk/WebKitWaylandProtocol.xml ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitWaylandClientProtocol.c
+        COMMAND ${WAYLAND_SCANNER} private-code ${WEBKIT_DIR}/Shared/gtk/WebKitWaylandProtocol.xml ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKitWaylandClientProtocol.c
         VERBATIM
     )
 
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/pointer-constraints-unstable-v1-protocol.c
         DEPENDS ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml
-        COMMAND ${WAYLAND_SCANNER} code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/pointer-constraints-unstable-v1-protocol.c
+        COMMAND ${WAYLAND_SCANNER} private-code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/pointer-constraints-unstable-v1-protocol.c
         COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/pointer-constraints-unstable-v1-client-protocol.h
         VERBATIM
     )
@@ -565,7 +565,7 @@ if (ENABLE_WAYLAND_TARGET)
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/relative-pointer-unstable-v1-protocol.c
         DEPENDS ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml
-        COMMAND ${WAYLAND_SCANNER} code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/relative-pointer-unstable-v1-protocol.c
+        COMMAND ${WAYLAND_SCANNER} private-code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/relative-pointer-unstable-v1-protocol.c
         COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/relative-pointer-unstable-v1-client-protocol.h
         VERBATIM
     )

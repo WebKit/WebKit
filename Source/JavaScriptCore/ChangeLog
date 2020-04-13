@@ -1,3 +1,16 @@
+2020-04-13  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fix various build warnings
+        https://bugs.webkit.org/show_bug.cgi?id=210429
+
+        Reviewed by Mark Lam.
+
+        Fix -Wimplicit-fallthrough warning by adding a default case CRASH() to prevent the inner
+        switch from falling through to the outer switch.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::alreadyChecked const):
+
 2020-04-12  Mark Lam  <mark.lam@apple.com>
 
         Enable the ability to build the ASM LLInt for ARMv7k.

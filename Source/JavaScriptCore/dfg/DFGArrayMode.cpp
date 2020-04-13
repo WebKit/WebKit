@@ -562,6 +562,8 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
             }
             return true;
         }
+        default:
+            CRASH();
         }
         
     case Array::DirectArguments:

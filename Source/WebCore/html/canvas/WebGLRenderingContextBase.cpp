@@ -4198,6 +4198,7 @@ void WebGLRenderingContextBase::texImage2DBase(GCGLenum target, GCGLint level, G
 #if USE(ANGLE)
     m_context->getExtensions().texImage2DRobustANGLE(target, level, internalFormat, width, height, border, format, type, byteLength, pixels);
 #else
+    UNUSED_PARAM(byteLength);
     // FIXME: For now we ignore any errors returned.
     auto tex = validateTextureBinding("texImage2D", target, true);
     ASSERT(validateTexFuncParameters("texImage2D", TexImage, target, level, internalFormat, width, height, border, format, type));
