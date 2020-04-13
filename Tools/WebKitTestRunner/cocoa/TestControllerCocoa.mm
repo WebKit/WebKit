@@ -123,6 +123,11 @@ void TestController::platformAddTestOptions(TestOptions& options) const
         options.contextOptions.enableProcessSwapOnNavigation = true;
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnWindowOpen"])
         options.contextOptions.enableProcessSwapOnWindowOpen = true;
+
+#if PLATFORM(IOS_FAMILY)
+    if (options.enableInAppBrowserPrivacy)
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
+#endif
 }
 
 void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOptions& options)

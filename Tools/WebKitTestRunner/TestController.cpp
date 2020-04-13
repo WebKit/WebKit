@@ -1513,6 +1513,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableCaptureAudioInGPUProcess = parseBooleanTestHeaderValue(value);
         else if (key == "allowTopNavigationToDataURLs")
             testOptions.allowTopNavigationToDataURLs = parseBooleanTestHeaderValue(value);
+        else if (key == "enableInAppBrowserPrivacy")
+            testOptions.enableInAppBrowserPrivacy = parseBooleanTestHeaderValue(value);
         
         pairStart = pairEnd + 1;
     }

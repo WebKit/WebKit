@@ -214,6 +214,8 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     if (shouldRestoreFirstResponder)
         [mainWebView()->platformView() becomeFirstResponder];
 
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"WebKitDebugIsInAppBrowserPrivacyEnabled"];
+
     return true;
 }
 

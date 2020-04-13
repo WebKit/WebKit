@@ -1,3 +1,16 @@
+2020-04-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        http/tests/in-app-browser-privacy/app-bound-domain.html is a constant failure on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=210344
+        <rdar://problem/61583925>
+
+        Reviewed by Brent Fulgham.
+
+        Update comment to match changes in TestOptions.
+
+        * http/tests/in-app-browser-privacy/app-bound-domain.html:
+        * http/tests/in-app-browser-privacy/switch-session-on-navigation-to-app-bound-domain.html:
+
 2020-04-13  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS ] REGRESSION(r260024) inspector/css/selector-dynamic-specificity.html is constantly failing
