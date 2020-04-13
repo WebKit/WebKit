@@ -1,3 +1,33 @@
+2020-04-13  Rob Buis  <rbuis@igalia.com>
+
+        Remove addExtraFieldsToSubresourceRequest
+        https://bugs.webkit.org/show_bug.cgi?id=210407
+
+        Reviewed by Darin Adler.
+
+        Remove addExtraFieldsToSubresourceRequest since it can be replaced by
+        calling addExtraFieldsToRequest. The loadType parameter is not taken
+        into account by defaultRequestCachingPolicy so FrameLoadType::Standard
+        rather than m_loadType is passed.
+
+        This patch also replaces the isMainResource boolean parameter with an enum.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        (WebCore::FrameLoader::addExtraFieldsToSubresourceRequest): Deleted.
+        * loader/FrameLoader.h:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+
 2020-04-12  Darin Adler  <darin@apple.com>
 
         Fix a few mispellings of descendant and propagation

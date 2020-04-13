@@ -284,8 +284,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     // Navigation algorithm is setting up the request before sending it to CachedResourceLoader?CachedResource.
     // So no need for extra fields for MainResource.
     if (type() != Type::MainResource)
-        frameLoader.addExtraFieldsToSubresourceRequest(m_resourceRequest);
-
+        frameLoader.addExtraFieldsToRequest(m_resourceRequest, IsMainResource::No);
 
     // FIXME: It's unfortunate that the cache layer and below get to know anything about fragment identifiers.
     // We should look into removing the expectation of that knowledge from the platform network stacks.
