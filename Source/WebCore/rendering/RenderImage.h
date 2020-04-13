@@ -102,8 +102,6 @@ protected:
         imageChanged(imageResource().imagePtr());
     }
 
-    void incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize&);
-
 private:
     const char* renderName() const override { return "RenderImage"; }
 
@@ -147,7 +145,6 @@ private:
     String m_altText;
     std::unique_ptr<RenderImageResource> m_imageResource;
     bool m_needsToSetSizeForAltText { false };
-    bool m_didIncrementVisuallyNonEmptyPixelCount { false };
     bool m_isGeneratedContent { false };
     bool m_hasShadowControls { false };
     float m_imageDevicePixelRatio { 1 };

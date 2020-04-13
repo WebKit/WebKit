@@ -690,6 +690,8 @@ protected:
 
     bool skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const;
 
+    void incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize&);
+
 private:
     bool replacedMinMaxLogicalHeightComputesAsNone(SizeType) const;
 

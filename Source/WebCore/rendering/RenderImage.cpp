@@ -909,13 +909,4 @@ RenderBox* RenderImage::embeddedContentBox() const
     return nullptr;
 }
 
-void RenderImage::incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize& size)
-{
-    if (m_didIncrementVisuallyNonEmptyPixelCount)
-        return;
-
-    view().frameView().incrementVisuallyNonEmptyPixelCount(size);
-    m_didIncrementVisuallyNonEmptyPixelCount = true;
-}
-
 } // namespace WebCore
