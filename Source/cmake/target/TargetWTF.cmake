@@ -12,6 +12,7 @@ if (NOT TARGET WebKit::WTF)
         # Should add Apple::CoreFoundation here when https://bugs.webkit.org/show_bug.cgi?id=205085 lands
         INTERFACE_LINK_LIBRARIES "ICU::data;ICU::i18n;ICU::uc"
     )
+    set(WTF_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/../include/private/WTF")
     target_include_directories(WebKit::WTF INTERFACE
         ${WTF_FRAMEWORK_HEADERS_DIR}
     )
