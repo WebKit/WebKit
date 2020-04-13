@@ -1,3 +1,16 @@
+2020-04-13  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS ] REGRESSION(r260024) inspector/css/selector-dynamic-specificity.html is constantly failing
+        https://bugs.webkit.org/show_bug.cgi?id=210450
+
+        Removing a test that is no longer supported.
+
+        Unreviewed test gardening.
+
+        * inspector/css/selector-dynamic-specificity-expected.txt: Removed.
+        * inspector/css/selector-dynamic-specificity.html: Removed.
+        * platform/mac/TestExpectations:
+
 2020-04-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         module's default cross-origin value should be "anonymous"
