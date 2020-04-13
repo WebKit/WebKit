@@ -1427,6 +1427,10 @@ static bool desktopClassBrowsingRecommendedForRequest(const WebCore::ResourceReq
     if (equalLettersIgnoringASCIICase(host, "fidelity.com") || host.endsWithIgnoringASCIICase(".fidelity.com"))
         return false;
 
+    // FIXME: Remove this quirk when <rdar://problem/61733101> is complete.
+    if (equalLettersIgnoringASCIICase(host, "roblox.com") || host.endsWithIgnoringASCIICase(".roblox.com"))
+        return false;
+
     return true;
 }
 
