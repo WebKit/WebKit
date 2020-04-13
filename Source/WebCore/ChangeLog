@@ -1,3 +1,24 @@
+2020-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        When drawing an image srcRect and imageRect have to be in the orientation of destRect
+        https://bugs.webkit.org/show_bug.cgi?id=210364
+
+        Reviewed by Darin Adler.
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        Use the renderer to get the orientation of the image if it is available.
+        Otherwise fall back to computedStyle().
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw):
+        For async image decoding, we will use the none oriented size as the
+        sizeForDrawing. imageRect must be in the same orientation as destRect.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        srcRect must be in the same orientation as destRect.
+
 2020-04-13  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove redundant move in return statement.

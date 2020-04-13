@@ -1,3 +1,16 @@
+2020-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        When drawing an image srcRect and imageRect have to be in the orientation of destRect
+        https://bugs.webkit.org/show_bug.cgi?id=210364
+
+        Reviewed by Darin Adler.
+
+        * fast/images/image-orientation-none-canvas.html:
+        Make this test for images with "visibility: hidden;" only. This guarantees
+        the images have renderers. Images with "display: none;" will be covered
+        in another patch because the width and height is currently incorrect if
+        "image-orientation: none;".
+
 2020-04-13  Youenn Fablet  <youenn@apple.com>
 
         Fix mute/unmute of CoreAudioCapture sources after revision 257914

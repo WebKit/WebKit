@@ -1465,7 +1465,9 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
     FloatRect imageRect = FloatRect(FloatPoint(), size(imageElement, ImageSizeType::BeforeDevicePixelRatio));
 
     auto orientation = ImageOrientation::FromImage;
-    if (auto* computedStyle = imageElement.computedStyle())
+    if (auto* renderer = imageElement.renderer())
+        orientation = renderer->style().imageOrientation();
+    else if (auto* computedStyle = imageElement.computedStyle())
         orientation = computedStyle->imageOrientation();
 
     auto result = drawImage(imageElement.document(), imageElement.cachedImage(), imageElement.renderer(), imageRect, srcRect, dstRect, op, blendMode, orientation);
