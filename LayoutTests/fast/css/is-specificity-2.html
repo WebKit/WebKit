@@ -15,12 +15,8 @@
         background-color: green;
     }
 
-    /* The only dynamic selector that matches is "*". Every rules except the first one (* selector) should override the style defined here.
-       Background-color is defined by the two tag selectors above.
-       Color is defined below by the star rule. It has the same specificity but a higher position.
-       Border overrides the black border defined in the first rule. */
     :is(#foo, .bar, target.notthere, *, foo>bar) {
-        background-color: red;
+        background-color: white;
         color: blue;
         border: none;
     }
@@ -30,7 +26,6 @@
 </style>
 </head>
 <body>
-    <p>This test the specificity of :is() with a dynamic specificity of zero. The test passes if the text "target" is displayed white on green background.</p>
     <target>Target</target>
 </body>
 </html>

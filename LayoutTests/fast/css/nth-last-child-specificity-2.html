@@ -2,7 +2,7 @@
 <html>
 <head>
 <style>
-    /* The specifity varies with the element being matched. */
+    /* (1, 1, 0) */
     :nth-last-child(even of .foo, #bar, target) {
         background-color: red;
         color: white;
@@ -30,11 +30,10 @@
 </style>
 </head>
 <body>
-    <p>This test the specificity of :nth-last-child() with dynamic specificity. If the test pass, the style of each line should match its text description.</p>
     <div>
         <target>White text on red background with a purple border.</target>
         <target>Black text on white background.</target>
-        <target class="foo">White text on green background with a purple border.</target>
+        <target class="foo">White text on red background with a purple border.</target>
         <target class="foo">Red text on green background.</target>
         <target id="bar">White text on red background with a purple border.</target>
         <target id="bar">Black text on white background with a blue border.</target>

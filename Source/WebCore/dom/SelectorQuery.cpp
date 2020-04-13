@@ -124,8 +124,7 @@ inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, 
     SelectorChecker selectorChecker(element.document());
     SelectorChecker::CheckingContext selectorCheckingContext(SelectorChecker::Mode::QueryingRules);
     selectorCheckingContext.scope = rootNode.isDocumentNode() ? nullptr : &rootNode;
-    unsigned ignoredSpecificity;
-    return selectorChecker.match(*selectorData.selector, element, selectorCheckingContext, ignoredSpecificity);
+    return selectorChecker.match(*selectorData.selector, element, selectorCheckingContext);
 }
 
 inline Element* SelectorDataList::selectorClosest(const SelectorData& selectorData, Element& element, const ContainerNode& rootNode) const
@@ -133,8 +132,7 @@ inline Element* SelectorDataList::selectorClosest(const SelectorData& selectorDa
     SelectorChecker selectorChecker(element.document());
     SelectorChecker::CheckingContext selectorCheckingContext(SelectorChecker::Mode::QueryingRules);
     selectorCheckingContext.scope = rootNode.isDocumentNode() ? nullptr : &rootNode;
-    unsigned ignoredSpecificity;
-    if (!selectorChecker.match(*selectorData.selector, element, selectorCheckingContext, ignoredSpecificity))
+    if (!selectorChecker.match(*selectorData.selector, element, selectorCheckingContext))
         return nullptr;
     return &element;
 }

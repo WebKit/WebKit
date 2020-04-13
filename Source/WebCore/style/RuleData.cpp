@@ -61,28 +61,23 @@ struct SameSizeAsRuleData {
 
 COMPILE_ASSERT(sizeof(RuleData) == sizeof(SameSizeAsRuleData), RuleData_should_stay_small);
 
-static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CSSSelector& selector)
+static inline bool computeMatchesBasedOnRuleHash(const CSSSelector& selector)
 {
     if (selector.tagHistory())
-        return MatchBasedOnRuleHash::None;
+        return false;
 
     if (selector.match() == CSSSelector::Tag) {
         const QualifiedName& tagQualifiedName = selector.tagQName();
         const AtomString& selectorNamespace = tagQualifiedName.namespaceURI();
-        if (selectorNamespace == starAtom() || selectorNamespace == xhtmlNamespaceURI) {
-            if (tagQualifiedName == anyQName())
-                return MatchBasedOnRuleHash::Universal;
-            return MatchBasedOnRuleHash::ClassC;
-        }
-        return MatchBasedOnRuleHash::None;
+        return selectorNamespace == starAtom() || selectorNamespace == xhtmlNamespaceURI;
     }
     if (SelectorChecker::isCommonPseudoClassSelector(&selector))
-        return MatchBasedOnRuleHash::ClassB;
+        return true;
     if (selector.match() == CSSSelector::Id)
-        return MatchBasedOnRuleHash::ClassA;
+        return true;
     if (selector.match() == CSSSelector::Class)
-        return MatchBasedOnRuleHash::ClassB;
-    return MatchBasedOnRuleHash::None;
+        return true;
+    return false;
 }
 
 static bool selectorCanMatchPseudoElement(const CSSSelector& rootSelector)
@@ -163,7 +158,7 @@ RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned 
     , m_selectorIndex(selectorIndex)
     , m_selectorListIndex(selectorListIndex)
     , m_position(position)
-    , m_matchBasedOnRuleHash(static_cast<unsigned>(computeMatchBasedOnRuleHash(*selector())))
+    , m_matchesBasedOnRuleHash(computeMatchesBasedOnRuleHash(*selector()))
     , m_canMatchPseudoElement(selectorCanMatchPseudoElement(*selector()))
     , m_containsUncommonAttributeSelector(computeContainsUncommonAttributeSelector(*selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))

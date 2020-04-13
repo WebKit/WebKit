@@ -101,9 +101,9 @@ public:
         PseudoIdSet pseudoIDSet;
     };
 
-    bool match(const CSSSelector&, const Element&, CheckingContext&, unsigned& specificity) const;
+    bool match(const CSSSelector&, const Element&, CheckingContext&) const;
 
-    bool matchHostPseudoClass(const CSSSelector&, const Element&, CheckingContext&, unsigned& specificity) const;
+    bool matchHostPseudoClass(const CSSSelector&, const Element&, CheckingContext&) const;
 
     static bool isCommonPseudoClassSelector(const CSSSelector*);
     static bool matchesFocusPseudoClass(const Element&);
@@ -116,9 +116,9 @@ public:
     struct LocalContext;
     
 private:
-    MatchResult matchRecursively(CheckingContext&, const LocalContext&, PseudoIdSet&, unsigned& specificity) const;
-    bool checkOne(CheckingContext&, const LocalContext&, MatchType&, unsigned& specificity) const;
-    bool matchSelectorList(CheckingContext&, const LocalContext&, const Element&, const CSSSelectorList&, unsigned& specificity) const;
+    MatchResult matchRecursively(CheckingContext&, const LocalContext&, PseudoIdSet&) const;
+    bool checkOne(CheckingContext&, const LocalContext&, MatchType&) const;
+    bool matchSelectorList(CheckingContext&, const LocalContext&, const Element&, const CSSSelectorList&) const;
 
     bool checkScrollbarPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
 

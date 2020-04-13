@@ -1291,8 +1291,7 @@ void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const JSON::
             SelectorChecker::CheckingContext context(SelectorChecker::Mode::ResolvingStyle);
             context.pseudoId = pseudoId;
 
-            unsigned ignoredSpecificity;
-            if (selectorChecker.match(*selector, descendantElement, context, ignoredSpecificity)) {
+            if (selectorChecker.match(*selector, descendantElement, context)) {
                 if (seenNodes.add(&descendantElement))
                     nodeList.append(descendantElement);
             }

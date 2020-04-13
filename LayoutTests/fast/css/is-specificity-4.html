@@ -2,26 +2,21 @@
 <html>
 <head>
 <style>
-    /* The position of :is() should override this rule. */
     container > target {
         border: 5px solid black;
         color: blue;
     }
 
-    /* A class rule should supersede the following :is() because it has higher specificity. */
     .target {
         color: white;
     }
 
-    /* The only subselector that matches is "container > target". It should override the simple "target"
-       selector but be superseded by anything larger than two tagnames. */
-    :is(foo.bar, bar.foo, container > target, foo#bar, bar#foo) {
+    :is(foo, foo, container > target) {
         background-color: green;
         color: purple;
         border: 25px solid red;
     }
 
-    /* Those two rules only have score one tagname, they cannot take precedence over :is(). */
     target {
         background-color: red;
     }
@@ -29,14 +24,12 @@
         color: black;
     }
 
-    /* This rule should have the same specificity as the :is() but higher position. */
     container > target {
         border: none;
     }
 </style>
 </head>
 <body>
-    <p>This test the dynamic specificity of :is() with a complex selector. The text succeed if the text "Target" shows up in white on green background.</p>
     <container>
         <target class="target">Target</target>
     </container>

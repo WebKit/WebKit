@@ -1,3 +1,12 @@
+2020-04-13  Antti Koivisto  <antti@apple.com>
+
+        [CSS Selectors] Selectors Level 4 specificity calculation for pseudo classes
+        https://bugs.webkit.org/show_bug.cgi?id=210419
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/selectors/invalidation/is-expected.txt:
+
 2020-04-12  Antti Koivisto  <antti@apple.com>
 
         Update imported/w3c/web-platform-tests/css/selectors/invalidation/is.html
